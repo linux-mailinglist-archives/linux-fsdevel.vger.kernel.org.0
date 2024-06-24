@@ -1,125 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-22234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22235-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C139149CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 14:28:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11203914A45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 14:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17F3E284356
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 12:28:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 422621C231DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 12:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD42913BAFE;
-	Mon, 24 Jun 2024 12:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B0813C8FE;
+	Mon, 24 Jun 2024 12:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjQ2gUgE"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="HKfHHn7u";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SqE/KFUp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F07137C2A;
-	Mon, 24 Jun 2024 12:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E959F1386DA;
+	Mon, 24 Jun 2024 12:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719232100; cv=none; b=ac8WDJ/NUaAJwmJ8QXI5Zy0MTNP3qlR4adbyBJ+ixZCh0etcgjFuf0vf7GpiY3WUvTtXbBSqajNngz1ExVGs8WebglErLhLyMli943y7i2X0zZu/wArY33ipFk4hMBp47v2uUpHjPaH0IHsn6r9ydxIenA4tDCjZ7pQe3pcDjCw=
+	t=1719232631; cv=none; b=u5PKPBsMQh5BdRTxwEXl6ZxRP6b4l3dIEgTLuKi3VEAAUeeWAOEp9KanPjqZH4nLOOmlXWzur+VSf/VFgGNZQaIMb93F9I0tPJU5iaiqsh4NriKvmAueQ+qYBINSvrMelxKwlKip5zoukTXLIwncXVJ82V1yWr6bz8Bke7p4cH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719232100; c=relaxed/simple;
-	bh=vDRm043puDoGOMdb6yxVqyoLpLEK0Mr7K2kShYPQA4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MCXoY63wg7y4yJJsRCo3nO+0VB4UyrPdOVTYy+c25U2YkkKKijYULvW62JBVooFH2anB6L11foNIMhhKRRKz98ln1oNjxqySHotqds4H/6ulw3/uCH2LIigaoYvh7C8tjhEecSPeqPi7zy0Lk73Ql0X5heJ9d+mAmwlhaCsG1+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjQ2gUgE; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a724b9b34b0so123007666b.1;
-        Mon, 24 Jun 2024 05:28:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719232097; x=1719836897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xHJsxhxdOLaqizliJLOPpaKHXoqhdyk0yF3LIbtNF28=;
-        b=fjQ2gUgEx3MlqtXHGQaCz3zuAIa54ALaXXrBTvEfqoEzfhvHYFe/qG1Rul+NMtmame
-         7lE1GEl/DOXfoPR3abMSi4SNip9GxFuo6SuI7DzIWtsO4tUpUzmbw30Sq/gcpY8n6o2e
-         yiFDlVpBCHKpMsr8JGegRysONZx2D4Lk+Srnil/zbagjhMoHp4bXrzY9zKiYCMFrxzLw
-         RSuhg2DYAsjIZvEMPpxUlNMDAoAb7FFrpD372ih/QcbM2Kh1aP4vEfnCtffwRBmKL6qV
-         Ru85gOmzaGkO578gcEcCJsf3mZf8hbIM/GHLXPNKQs9uWcezdVK+pSWf6BO1wEoWFbrX
-         N8zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719232097; x=1719836897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xHJsxhxdOLaqizliJLOPpaKHXoqhdyk0yF3LIbtNF28=;
-        b=XkJ5hbVrTdN/bxBIxnYXJYODuJcaXNtH835sSI6FMV+tlotZwf3qIz6Z+0Ld4Eemrr
-         uHmJkgNGjC88fZuDQW6W17eRDU4nf2XC6BL/QaTHlBp1KAeDPPPQ6AJFnbSHCzThYfCP
-         BI35P3rZ+RcD9gRYxqSJZJMeH6tO/l5M+rPuRIP0ZyYPsnK5FkANBdNbBuzoxMPFmHrt
-         ozKwTAvwDLvsj3efWM9KDncbmaTPuI/lSw5Oh8TcKCk6f0yzjrgbf6m75yEUbbvrDuLm
-         +TsAHgXz9Oxo7E+dOZYXK3g0DE65fALnAAWDm/dUn6T7L9GIGzOfUge8DlyVvjYmiRn+
-         do/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUaoj3PljwfGmbGnoy8oBr/2RKrrFqaa9nz/fl/+iAcWHD0E8NHdMPWo/2lZIvbbwfLtqYwy4RCWyDy8xVwKUsZE65/jAdtUZC9HJqh2v0RqejpG4AqbVxNxuleG7fR6THq2dD/QfkYUVjWA5/M0E1amQPIA0EzqamFN9khSbw7Db24zQZCt10=
-X-Gm-Message-State: AOJu0Yx6LONvsMl4a59/AgrSjzI5z1jkneWUEg3aVaDYCO0Z7N9R0hWr
-	oZHAZkyi5V0t5OXOXQYgNaF+PbF0e+sctVaG8+gwWkEFC79yC1OSTrBWSb+RviPN1a3e/VGVqnT
-	CzOT3wuIBVsqnq13iOU/3RHCUpVM=
-X-Google-Smtp-Source: AGHT+IFLuihGCVppoutdyi8cBVHlab+e+O4qV5jLbe5dJIxrWHY4mdjCw71NzObZvquv4leyc73TcWAQqFe10tnNgqU=
-X-Received: by 2002:a17:907:c5c7:b0:a72:52a6:a06b with SMTP id
- a640c23a62f3a-a7252a6a114mr194276366b.46.1719232096844; Mon, 24 Jun 2024
- 05:28:16 -0700 (PDT)
+	s=arc-20240116; t=1719232631; c=relaxed/simple;
+	bh=TbmH+yoyAgf4fe9CUvwuV5yJgzh5ZHwbkVCsLRZgEQ8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=UyEObqEv0W7q47teygKnMYdf+FuJzUPP+2QoJRe/Len2hnAvPYUzi9gww2O4ecbPQBXejxKwAZE+6IhAPorNIXblrp4elQvOYBxt3TyFdFkgbqzlXzvE3Vc0J5OTHS1M2PaDsXvI7syb2fIGp6aJihVJYiJgSQ5mFo9X+J+LYjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=HKfHHn7u; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SqE/KFUp; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 07C5B11400E4;
+	Mon, 24 Jun 2024 08:37:08 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 24 Jun 2024 08:37:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1719232628; x=1719319028; bh=lFXvov0ksU
+	8Pc4ucksxO9SvwB7S7ZcSyst60pbeeZH8=; b=HKfHHn7umsdW+0c1ehuSJQ99eI
+	Myjn3JHII41XjBGkBE82U3ZLF1gpqJUHWfu0fD1R2wDTT4O5lDapBn9tPESvQu77
+	8adNnRplVreG2sPNDp0X/rfGleHLut9Gk/BSzkxRKhL04EDXsG1YRKgxv6IL6gBV
+	hiECEd8aKPxpc7cvdwq2YkiIfftlQjXB9+KAYBuvYvOjmxwZ7/F9l3LRlEL5RFo3
+	063MmLg36ab0j12O1asXtLt3D5DVUiK5EvC72HFvCSk3AleE/g7i2STrQpvD5No4
+	i+lJKlbqcQQIUGGQGOvBpwpmcMBptK7y9aRt5R4yzWI1IbKl5+ANpAHr7VSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719232628; x=1719319028; bh=lFXvov0ksU8Pc4ucksxO9SvwB7S7
+	ZcSyst60pbeeZH8=; b=SqE/KFUphRWeVMJb+kfwzgwN1/Hu23nlRESAJfYgc8ML
+	pUz2mmmI8F5nmEqE+5ox0g/rjJ6d0Zb285uqwFyeJQcQZsscUdL/sXj/UaEluip+
+	Y8hGi2uVUqhxSS2j+Tg9/Mp0Zm2wYNokTin+aYRk4BLKmOWC6+/LDFt4sIkWw2DL
+	h/Je6x5AernFk742JykHMAJAodzv6NFC7WvmD1gw90TOsbHe5Ze1AinDq0CmjjKA
+	Z95MIl9q9aP4NXQ+7dphFhlbY9tl+CfCvo6YBxD12RGqejBt7qQshI8pAPifYgLG
+	pqaC18LuaHL4DH+Btw3GZ5ixeMLofnITMxBNO+thYQ==
+X-ME-Sender: <xms:cWh5ZrLj7Is9v5gIq1mXIwuK3B6Z67FMFXi_sBM56MqeKqAR64n6TQ>
+    <xme:cWh5ZvL6fPST5egK7_VqUyPLzOA0tCn6X6DlKYOektXFx1cgWvkKCjEMrv6PEjXyW
+    4yPi_m7QPeT9rWgx9c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeguddgheegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:cWh5ZjudJI3oixudlca83stC9GtoJPVF-yfqIooUyooPVxKMkRay5w>
+    <xmx:cWh5ZkZgIV_EAxNKJdd3dn5ts0jsz0iQNgpwAoaYwIkaiwKIL8UoqA>
+    <xmx:cWh5ZiamgC5g2Z463RDvkqIdIU3iA-8c5MxvqJ4odiwM6cjvoG_-fQ>
+    <xmx:cWh5ZoB--wGmM0xyN9laN1DWgxiskyw40gTH9IFx_cFQRyZCDpYBHA>
+    <xmx:c2h5ZhnZnhgadejE1PelPCjBJhfYQ9s6ZgcSotBgFkM80Ux8nV4bq0wf>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 838B9B6008D; Mon, 24 Jun 2024 08:37:05 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624085037.33442-2-xry111@xry111.site> <e2lv3qamggymdjqzujvyhsd2q34jy5tryniac7d446tlaebqwy@5x4zn7z4d3xz>
- <b635271e73b35487a06cf17176243e6ce4cfcd58.camel@xry111.site>
-In-Reply-To: <b635271e73b35487a06cf17176243e6ce4cfcd58.camel@xry111.site>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 24 Jun 2024 14:28:03 +0200
-Message-ID: <CAGudoHFQ1SnKubuDsSxE39W+MR6Af2PbHkrNwAAbZFb-9ETswQ@mail.gmail.com>
-Subject: Re: [PATCH v2] vfs: Shortcut AT_EMPTY_PATH early for statx, and add
- AT_NO_PATH for statx and fstatat
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Alejandro Colomar <alx@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>, 
-	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Icenowy Zheng <uwu@icenowy.me>, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <eaa0ffaf-e42d-4b86-9eed-534684815cf8@app.fastmail.com>
+In-Reply-To: <20240620162316.3674955-15-arnd@kernel.org>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+ <20240620162316.3674955-15-arnd@kernel.org>
+Date: Mon, 24 Jun 2024 14:36:45 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Arnd Bergmann" <arnd@kernel.org>,
+ Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ linux-mips@vger.kernel.org, "Helge Deller" <deller@gmx.de>,
+ linux-parisc@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+ "Andreas Larsson" <andreas@gaisler.com>, sparclinux@vger.kernel.org,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ linuxppc-dev@lists.ozlabs.org, "Brian Cain" <bcain@quicinc.com>,
+ linux-hexagon@vger.kernel.org, guoren <guoren@kernel.org>,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ "Heiko Carstens" <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
+ "Rich Felker" <dalias@libc.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ "Xi Ruoyao" <libc-alpha@sourceware.org>,
+ "musl@lists.openwall.com" <musl@lists.openwall.com>,
+ "LTP List" <ltp@lists.linux.it>, stable@vger.kernel.org
+Subject: Re: [PATCH 14/15] asm-generic: unistd: fix time32 compat syscall handling
+Content-Type: text/plain
 
-On Mon, Jun 24, 2024 at 2:19=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
-e:
+On Thu, Jun 20, 2024, at 18:23, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> On Mon, 2024-06-24 at 11:04 +0200, Mateusz Guzik wrote:
-> > Below is a diff which compiles but is untested. It adds AT_EMPTY_PATH +
-> > NULL as suggsted by Linus, but it can be adjusted for AT_NO_PATH (which
-> > would be my preffered option, or better yet not do that and add fstatx)=
-.
-> >
-> > It does not do the hack to 0-check if a pointer was passed along with
-> > AT_EMPTY_PATH but that again is an easy addition.
-> >
-> > Feel free to take without attribution:
+> arch/riscv/ appears to have accidentally enabled the compat time32
+> syscalls in 64-bit kernels even though the native 32-bit ABI does
+> not expose those.
 >
-> I'd still like to make it Co-developed-by: or just From: you.  Could you
-> give a S-o-b?
+> Address this by adding another level of indirection, checking for both
+> the target ABI (32 or 64) and the __ARCH_WANT_TIME32_SYSCALLS macro.
 >
-
-I just trivially shuffled some things around and did not even test, so
-I'm not signing off on squat here. :)
-
-However, if you insist you can add something like "Written after
-picking up an initial patch written by Mateusz Guzik, see [link goes
-here]" or similar.
-
-> And with this change AT_FDCWD with AT_EMPTY_PATH and NULL path does not
-> work.  For consistency it'd be better to make it work too:
+> The macro arguments are meant to follow the syscall.tbl format, the idea
+> here is that by the end of the series, all other syscalls are changed
+> to the same format to make it possible to move all architectures over
+> to generating the system call table consistently.
+> Only this patch needs to be backported though.
 >
+> Cc: stable@vger.kernel.org # v5.19+
+> Fixes: 7eb6369d7acf ("RISC-V: Add support for rv32 userspace via COMPAT")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Good catch, I have no opinion which way to fix it.
+I had pulled this in from my longer series, but as the kernel
+build bot reported, this produced build time regressions, so
+I'll drop it from the v6.10 fixes and will integrated it back
+as part of the cleanup series.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+     Arnd
 
