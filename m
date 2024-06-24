@@ -1,106 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-22275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5869159FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 00:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B182915A23
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 00:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42AB8B20E24
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 22:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9DFE284B3F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 22:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252721A2573;
-	Mon, 24 Jun 2024 22:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99821A2563;
+	Mon, 24 Jun 2024 22:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="es3/LXg2"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="M+ii0MEY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157591A2559
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 22:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A9847A64;
+	Mon, 24 Jun 2024 22:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719268854; cv=none; b=jRtcfJVFana9WbuU3gED2s2dQss+fOpx8zGAxaBxMYnLWMJl+uDJuqrryanc98G+zAqZ8k34kTf76bfhtJcMxUDddL1Ccg3WXtV2JJHKfRLAa8unU2+zpjIFpGh+jz7q2yPujJJnqdlFbNEnGQyh6T1h0Pg/ardbTOw6FhZkbcg=
+	t=1719269856; cv=none; b=kAIGuzyXaPHO8Si4fD2CB9hm8WbHxnFftBEcCr2DWY1i8HMRXf4K8SeN4fUZtPAJJHkkrdq1703cUlhBK8jXDWKeI8Z119ltUW5RYjerI2Bf7da3iZp5ELXNItp9afkzWRSwN9w64u0g3WZy6rVsCz6I71d/RtyZq9eQZbrVxgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719268854; c=relaxed/simple;
-	bh=gZ5KsvuOtYJvO4Wv7/pCCF+MwuC23XNnjC2DTewuZJk=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=ghRdn7T1DPwZ3ZeDG+NkYlWEdM8aStmbX6NQNGVF9QM8nOfygG5fp547TvS78DUfmJqhJedSFvBqUOeYmhFODRTgf3xmLhIpZKuiR+vJwpkwPg3qxIKQVOg0vMMAzWTWEOr3AMvihQNKtppeG2pCOHkpHLJy0Y4q3o313h9OYRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=es3/LXg2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719268851;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uxl1z2W74gbsX4wZ/0gxAsnxfLwDVydXk+S+lJvdUno=;
-	b=es3/LXg280ryqVRj3I8N6MkRkOy/fhv7ZCIFNA4FYKOIqzJZxP3jrWqmbi3Jadyu5TRs9r
-	S1KRygqiEA6RDaz4LPe97J1aP9R0r+absYUJBdaaAjKrFb4qkvzNayy4WOAyyI0XwYXqpq
-	kpwhNiV1MYeRWGNzebJWDjXBZP+Pa1A=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-202-TVIlF1LsNRqMsUGuKySzHg-1; Mon,
- 24 Jun 2024 18:40:45 -0400
-X-MC-Unique: TVIlF1LsNRqMsUGuKySzHg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07B2119560AF;
-	Mon, 24 Jun 2024 22:40:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.111])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 776231955D8D;
-	Mon, 24 Jun 2024 22:40:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <ZnmRGyuSZKtmJVhG@casper.infradead.org>
-References: <ZnmRGyuSZKtmJVhG@casper.infradead.org> <614257.1719228181@warthog.procyon.org.uk>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-mm@kvack.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix netfs_page_mkwrite() to check folio->mapping is valid
+	s=arc-20240116; t=1719269856; c=relaxed/simple;
+	bh=EoGCiuCUqCOahZlHGiZn0NU6mzQ3qIP8gF3nsrpABCc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=F/erihp7MiPBnS2CeSSpo2QqCZRGh+b+m5/qcs28VY/jUpMPCG39AZHFRjN8E5knbtjzP5OoEMyOC7DpgLQIDb/am47usE1a7BKZWOw4BKvOcvY4/zk725j965ofWnkEmMdJoc1lAkMnoHUaVmlnTr26b2YVGbKpC2E72lueRnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=M+ii0MEY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446C4C2BBFC;
+	Mon, 24 Jun 2024 22:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719269855;
+	bh=EoGCiuCUqCOahZlHGiZn0NU6mzQ3qIP8gF3nsrpABCc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=M+ii0MEY3a4aLmXaLBAbJ+qg46e/jNWyjWXNNy6YZ2uredvUQaSOkk1hmlP1/8BXA
+	 FJBhL55E22poQrelNPt27QnCIHjromd2chCYd/2oYoW1fqL5ojLpUWWXNDLDc0V5Gb
+	 0IO8499jZ7gedxsciTP4QeUfRAzECbUVJRwKLHC0=
+Date: Mon, 24 Jun 2024 15:57:34 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Peter Xu <peterx@redhat.com>
+Cc: Audra Mitchell <audra@redhat.com>, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, jack@suse.cz, aarcange@redhat.com,
+ rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, shuah@kernel.org,
+ linux-kselftest@vger.kernel.org, raquini@redhat.com
+Subject: Re: [PATCH v2 1/3] Fix userfaultfd_api to return EINVAL as expected
+Message-Id: <20240624155734.c93d8297922575a5b25797e1@linux-foundation.org>
+In-Reply-To: <Zng-rfCPvSaGvL7p@x1n>
+References: <20240621181224.3881179-1-audra@redhat.com>
+	<20240621180330.6993d5fd0bda4da230e45f0d@linux-foundation.org>
+	<Zng-rfCPvSaGvL7p@x1n>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <720578.1719268838.1@warthog.procyon.org.uk>
-Date: Mon, 24 Jun 2024 23:40:38 +0100
-Message-ID: <720579.1719268838@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Sun, 23 Jun 2024 11:26:37 -0400 Peter Xu <peterx@redhat.com> wrote:
 
-> >  	if (folio_lock_killable(folio) < 0)
-> >  		goto out;
-> > +	if (folio->mapping != mapping) {
-> > +		ret = VM_FAULT_NOPAGE | VM_FAULT_LOCKED;
-> > +		goto out;
-> > +	}
+> > > Fixes: e06f1e1dd499 ("userfaultfd: wp: enabled write protection in userfaultfd API")
+> > 
+> > A userspace-triggerable WARN is bad.  I added cc:stable to this.
 > 
-> Have you tested this?
+> Andrew,
+> 
+> Note that this change may fix a WARN, but it may also start to break
+> userspace which might be worse if it happens, IMHO.  I forgot to mention
+> that here, but only mentioned that in v1, and from that POV not copying
+> stable seems the right thing.
+> 
+> https://lore.kernel.org/all/ZjuIEH8TW2tWcqXQ@x1n/
+> 
+>         In summary: I think we can stick with Fixes on e06f1e1dd499, but we
+>         don't copy stable.  The major reason we don't copy stable here is
+>         not only about complexity of such backport, but also that there can
+>         be apps trying to pass in unsupported bits (even if the kernel
+>         didn't support it) but keep using MISSING mode only, then we
+>         shouldn't fail them easily after a stable upgrade.  Just smells
+>         dangerous to backport.
 
-I've tried to.  generic/247 can trigger it, but the race happens rarely.
-
-> I'd expect it to throw some VM assertions.
-
-I didn't see any.
-
-I guess VM_FAULT_LOCKED is not universally handled by the caller and that I
-should unlock the folio myself instead.
-
-David
-
+OK.  And I'll move it into the 6.11-rc1 queue, for the next merge window.
 
