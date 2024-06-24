@@ -1,154 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-22236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD24914AE9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 14:44:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18E2914AFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 14:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F355A1C232FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 12:44:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E021C2244C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 12:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE2B13D2B5;
-	Mon, 24 Jun 2024 12:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9502713C9AF;
+	Mon, 24 Jun 2024 12:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+Xb7Eqj"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OAf6pynk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Dq00BKlg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E322913C8E8;
-	Mon, 24 Jun 2024 12:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB1C137906;
+	Mon, 24 Jun 2024 12:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719233031; cv=none; b=fSrH3m3zS/3Ry4MZWrV1pJ+r3kWPLY3Sl6ZgmfvgRrc7l1BW0Sth3rC3pIRR9vgqoLKYu+qNefy5xQCdeJzDRaWwpzHBiqKoanX7Ww0COpWys+L6w6ra5e6PPyLcXHnB2gtgI4Da/cs57n8RGSETDDxySXWr2EIDmZqFm2Jyfok=
+	t=1719233385; cv=none; b=UgAT+uoUEqF9+uNz1fGIIN4ax04AM6K5SPBnrfnwjwJxBiYbobhxb1FkVAus4C4Py3ZLj3nr9oqT0ysrVL+uPR263vVJ99rQI6es8ZeC2/lEyo9a1lR3hX9sEJIIU8GpDlQ+2Gif9y8PJqrSxpCPnsGowQ1Z/XrN5XbuMMrkG9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719233031; c=relaxed/simple;
-	bh=jApaBCYVztKacSl0tD+xU7VMd3kepWna98tjFc2atXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/2ukfNJGOWddPgioz9TXmcSatVsjnWR+a8oKS9zRtxgy3i13r/TRes5bqBmvS9Go/nDBvOwPp+BDEw5Hw77GwRbrPFq2EMKLdhWG7MNGJuPFDfLyWCI/141gJSweoGoOv+uof1LW4RD50yNR2yuDu3vGEoaQqJb+mu3OCBp7a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+Xb7Eqj; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-70024655285so2526972a34.0;
-        Mon, 24 Jun 2024 05:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719233029; x=1719837829; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bBWUBcLCVdqut0FXaHBFebSPJlfehSuxQfvsdHPCuNs=;
-        b=S+Xb7EqjVxc3j3OoCJTYc54j11b3C4cb6lIr7QTpudNbDtnEdEj+s9NLS3LlxrUYii
-         hBSUQtIGshHm6GjQBRlFsCBISGB69EMt0F5UYANMw5q5Ug/4dd2gDXu4y3khnEmNxxa+
-         sP1xjDu/4MEn5Sc3lAncEzeYDFC2zhIpMNi3WJrqiZaj/X+USMn68RD5NpRVJxEOPH9J
-         2WM47z8CzwO+E8cMAEHga8wMUFz87dXrs74MCZb0zHpF4/X/3LDgFZpN1t3/FWxZKo0J
-         +2LahXjsIcrS6eEqbaZlVsgUWvzIfTAduQnB28XNqsf04BlEYJQ92sbjAucxMgpsZdiV
-         luyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719233029; x=1719837829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bBWUBcLCVdqut0FXaHBFebSPJlfehSuxQfvsdHPCuNs=;
-        b=S18PyGBUQch1qXLh0W7dBBdChUqPm/WFjlbnfMBxdCUhO8ctw4EqmckyNZFYKvCULT
-         YhvzNX49nzhwWQNY5vE4zPDO6GhgQclnnhcx8XX7brvCfrnSP/7CCa3PP+XiETFba+ka
-         p1ycRUGV8gIL58J12CtgPM8jAkeEJoeBN6vw41UjAXYh0STneDzKhZ1Mp1K5egQILG7O
-         MiYPv9xNkbtIxI9de0Zz6hP9mhZoEN/YbJ2/QL6B6AvBz/Azigcp3luKhreBnAvD1Web
-         wQ9GCktUtJEy1WGyFt48l8YeJgQN06GfLR4e+1xz6d2/wG+AbWwwWQJqq3DT0jzdC9ft
-         shBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGuaG6ff2V6feO4rT4/mvHI3GqRxnHn5meNZpLUYEhUY+BD0sYfZzp9VH6DiBrnqn1fuCewqC1ADi45RFhu4/721ozL4iUwg8df/5DSA8B99t7Bci7PFqkEKzckq3ck3nAPwxQfn6TFwpqPA==
-X-Gm-Message-State: AOJu0YyZYN0pvVBki/2UnSac0XhiV7GyRx9WY79/8sVuW6M1aPVikVel
-	QdUniOXPkdLFDjT3j1UUMS6LYE8mRSLD12KWrd9g2SPSMf1xghBukMzl1Q==
-X-Google-Smtp-Source: AGHT+IHPKGaTZmBW+rU8cmPJFtr0bAvrNnbe4mzzl1KvoXfv+a11ztewBoNJxWmG2lMzzhvIIdBv+w==
-X-Received: by 2002:a9d:7385:0:b0:6f9:6065:5253 with SMTP id 46e09a7af769-700b1301e32mr4701499a34.38.1719233028841;
-        Mon, 24 Jun 2024 05:43:48 -0700 (PDT)
-Received: from Borg-110.local (syn-070-114-203-196.res.spectrum.com. [70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7009c658d2fsm1166374a34.56.2024.06.24.05.43.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 05:43:48 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Mon, 24 Jun 2024 07:43:47 -0500
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-Message-ID: <w47upqsgruckx6i43gaqkdr7lhgacggonr2uwodapfb7n2byqr@yeiiri5wluob>
-References: <cover.1708709155.git.john@groves.net>
- <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
- <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
- <CAOQ4uxg9WyQ_Ayh7Za_PJ2u_h-ncVUafm5NZqT_dt4oHBMkFQg@mail.gmail.com>
- <kejfka5wyedm76eofoziluzl7pq3prys2utvespsiqzs3uxgom@66z2vs4pe22v>
- <CAJfpegvQefgKOKMWC8qGTDAY=qRmxPvWkg2QKzNUiag1+q5L+Q@mail.gmail.com>
- <l2zbsuyxzwcozrozzk2ywem7beafmidzp545knnrnkxlqxd73u@itmqyy4ao43i>
- <CAJfpegsr-5MU-S4obTsu89=SazuG8zXmO6ymrjn5_BLofSRXdg@mail.gmail.com>
+	s=arc-20240116; t=1719233385; c=relaxed/simple;
+	bh=KW2K4lEnELwtLG0Du0+Zd4BIXmuwRSaKhU0g1LsZhUA=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=AJRb4307peY9QD4FY4mM8UP/2Ks2rBKItjyhcsiw9F/r6MpuG9O1iTXCFEY+zIYytZWz9SX6ulTxmEvz6KFaHyZATrSJ8Sh/JoPGGxoYBSt3KS4IgS8zjSQ+O3wQgk40hMP7cVJOE89zETR4opysH1py8Uabs1JKtV36IMQZ+3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OAf6pynk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Dq00BKlg; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 260581380261;
+	Mon, 24 Jun 2024 08:49:43 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 24 Jun 2024 08:49:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1719233383; x=1719319783; bh=Q8W2Cb9GFW
+	M70Zj4xc8kK2Hh9EKM/M/jx4sXVXZP+3s=; b=OAf6pynk2o03dZJWLhP6GDlAxJ
+	FMzfO/dvmu5fdm73KzJkM1LnqZGKiKn8CWVYsp3dmTWuDMIBIWoYhh6vr1PW7c6x
+	X5LLN/7eWAiAuZTLwhw+VUqqHf/WvPmCXqJDig+xPglKZij5IPl5KtV2yQyAxnsD
+	V1GG4MDIVSLDsKwjPsxPmBBV4u9O2xItNLnF0HYeDMjv9qLxKXMYzGjYQ50qHvmA
+	N6s5NOtIl699D5DB1/+EIrhDEEBAP+IWmDeno9UkcqBqYZpcufjbu0upHnUzcXr2
+	Uwjk1/dGhC556BTXFBhLGJOUYuOfFFx3PBDQarsAG0OBGIbwBX3ZQVy/aeKw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719233383; x=1719319783; bh=Q8W2Cb9GFWM70Zj4xc8kK2Hh9EKM
+	/M/jx4sXVXZP+3s=; b=Dq00BKlgKaP2cR5obvsJardd5sHd9Ykq5efCVVGog+nY
+	ejg8pe39LicQJvVJMJm98jFZiE0f5sU/BNIAmMZuBWD1s7b8wUOZH7IDRkxnwy9L
+	20pktHRucFeYXNE8Ov04HVCEA1mEOvh5mU9lzG3rsABEr3hCEeNYiqzxo9zeIYVR
+	T+sGC+SoCmPqOmsC2r1jv3RZbqG/zCeNgo2QrLfN4qSqSFK+KJdLRzqz52+V6OCA
+	dw0oNLNkKYuuWhoJa4+CFdfVM2wVo2hJrGCoZ1aiu6zdwVt1SmP5qMy7hluTdjHd
+	XTdZ86xdE0oeOHzrvwGoKVglC+HKu92EOVB7LKAx2g==
+X-ME-Sender: <xms:ZWt5Zmo9Zflv53gEv_xAYaz3ZgjN2LFMq8ZcaazgXEXKTVDHZjnmRw>
+    <xme:ZWt5Zkp-9vYTfxoCtBTsQ_a9xtN_zmiG9sTGVTG72IV7B3s9gCacCtNBhFM2a8QLz
+    uG4BdynV8hhJAhxjfo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeguddgheejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:ZWt5ZrOZAiz2nbP-dxzpKXw26eHKJrS1YOSSsbwyBud5s6eAvob2OA>
+    <xmx:ZWt5Zl6vGUPX59Lw3lY0Tyt1AdaaAdHcaT0BjBh9fr_8i7EtcLhUdQ>
+    <xmx:ZWt5Zl7jaRBngBaLhLO40vwqouxH1t5VOYZFgId6_qSRFoJE-4wUSQ>
+    <xmx:ZWt5Zljf6r7CH-Ty6sABQ5-XQgqnuX2oE8HXfOHCkmmOE2ObsTof6g>
+    <xmx:Z2t5ZhF7Cw9mWCj0vKv96n8S7QkrlfALxn7h6emOqKQiQkmifdr12eOL>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id C7FAFB60092; Mon, 24 Jun 2024 08:49:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsr-5MU-S4obTsu89=SazuG8zXmO6ymrjn5_BLofSRXdg@mail.gmail.com>
+Message-Id: <2b46da4c-fbe8-4b97-abf4-96aa7ddc1a9a@app.fastmail.com>
+In-Reply-To: 
+ <e0e373fa13636a403322fd0ba96915fd25dbbefa.camel@physik.fu-berlin.de>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+ <20240620162316.3674955-10-arnd@kernel.org>
+ <366548c1a0d9749e42c0d0c993414a353c9b0b02.camel@physik.fu-berlin.de>
+ <9d4ba5e5-bb7f-432e-9354-47cc84eaa9e1@app.fastmail.com>
+ <e0e373fa13636a403322fd0ba96915fd25dbbefa.camel@physik.fu-berlin.de>
+Date: Mon, 24 Jun 2024 14:49:20 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Arnd Bergmann" <arnd@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Cc: "Rich Felker" <dalias@libc.org>, "Andreas Larsson" <andreas@gaisler.com>,
+ guoren <guoren@kernel.org>,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, sparclinux@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ "Helge Deller" <deller@gmx.de>, linux-sh@vger.kernel.org,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ "Heiko Carstens" <hca@linux.ibm.com>,
+ "musl@lists.openwall.com" <musl@lists.openwall.com>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "LTP List" <ltp@lists.linux.it>, "Brian Cain" <bcain@quicinc.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Xi Ruoyao" <libc-alpha@sourceware.org>, linux-parisc@vger.kernel.org,
+ linux-mips@vger.kernel.org, stable@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 09/15] sh: rework sync_file_range ABI
+Content-Type: text/plain
 
-On 24/05/23 03:57PM, Miklos Szeredi wrote:
-> [trimming CC list]
-> 
-> On Thu, 23 May 2024 at 04:49, John Groves <John@groves.net> wrote:
-> 
-> > - memmap=<size>!<hpa_offset> will reserve a pretend pmem device at <hpa_offset>
-> > - memmap=<size>$<hpa_offset> will reserve a pretend dax device at <hpa_offset>
-> 
-> Doesn't get me a /dev/dax or /dev/pmem
-> 
-> Complete qemu command line:
-> 
-> qemu-kvm -s -serial none -parallel none -kernel
-> /home/mszeredi/git/linux/arch/x86/boot/bzImage -drive
-> format=raw,file=/home/mszeredi/root_fs,index=0,if=virtio -drive
-> format=raw,file=/home/mszeredi/images/ubd1,index=1,if=virtio -chardev
-> stdio,id=virtiocon0,signal=off -device virtio-serial -device
-> virtconsole,chardev=virtiocon0 -cpu host -m 8G -net user -net
-> nic,model=virtio -fsdev local,security_model=none,id=fsdev0,path=/home
-> -device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare -device
-> virtio-rng-pci -smp 4 -append 'root=/dev/vda console=hvc0
-> memmap=4G$4G'
-> 
-> root@kvm:~/famfs# scripts/chk_efi.sh
-> This system is neither Ubuntu nor Fedora. It is identified as debian.
-> /sys/firmware/efi not found; probably not efi
->  not found; probably nof efi
-> /boot/efi/EFI not found; probably not efi
-> /boot/efi/EFI/BOOT not found; probably not efi
-> /boot/efi/EFI/ not found; probably not efi
-> /boot/efi/EFI//grub.cfg not found; probably nof efi
-> Probably not efi; errs=6
-> 
-> Thanks,
-> Miklos
+On Mon, Jun 24, 2024, at 08:14, John Paul Adrian Glaubitz wrote:
+> On Fri, 2024-06-21 at 11:41 +0200, Arnd Bergmann wrote:
+>> On Fri, Jun 21, 2024, at 10:44, John Paul Adrian Glaubitz wrote:
+>> > Did you also check what order libc uses? I would expect libc on SuperH 
+>> > misordering the
+>> > arguments as well unless I am missing something. Or do we know that the 
+>> > code is actually
+>> > currently broken?
+>> 
+>> Yes, I checked glibc, musl and uclibc-ng for all the cases in
+>> which the ABI made no sense, as well as to check that my analysis
+>> of the kernel sources matches the expectations of the libc.
+>
+> OK, awesome.
+>
+> Will you send a v2 so I can ack the updated version of the patch?
+>
+> I'm also fine with the patch going through your tree, as I would
+> like to start with the changes for v6.11 this week.
 
-I'm baffled as to why the memmap thing is not working for you. I don't see
-anything amiss in your config file, but the actual plumbing of that kernel 
-option isn't anything I've worked on. Out of curiosity, are you running on x86?
+I should be able to get a v2 out today and apply that to my
+asm-generic tree to have in linux-next before I send the
+pull request.
 
-Have you tried the 's/$/!/' method with memmap? That should give you a pmem
-device instead, which you will see with 'ndctl list', and can convert to
-devdax with ndctl (recipe above in this thread). Note that 4GiB is the minimum
-size that famfs supports.
-
-A quick status on where I am with famfs: I've made progress on my substantial
-learning curve with fuse, and have come up with a strategy for the famfs fuse 
-daemon to access metadata in a way that leverages the current famfs user space 
-without excessive re-writing (which is encouraging). 
-
-I haven't started test-hacking dax_iomap_* enabled files into the fuse
-kmod yet; initial RFCs in that area are probably a few weeks out, but 
-definitely coming - undoubtedly with a lot of questions.
-
-Regards,
-John
-
-
+       Arnd
 
