@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-22264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF72291546C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 18:39:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1171B915479
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 18:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3C41C20B30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 16:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3614B1F22EBB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 16:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706611A00CA;
-	Mon, 24 Jun 2024 16:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1748F1A00F5;
+	Mon, 24 Jun 2024 16:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uL3MGier"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hR9kAiRb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9731D53C;
-	Mon, 24 Jun 2024 16:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D4D19DF89;
+	Mon, 24 Jun 2024 16:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247092; cv=none; b=SB2D1KNhVP/f10ycDdKhgO+RMRcx/3O/Of7pDDT+O6MHSRaHEl16ubUa9sbkvXlJL/zuyniYJaCFLx2zGynEvwzsJK46kgQqWfl5dK/U9o4rgtOv4SNzDXQAx9CLjSFfhwdkRTzqSCD36WCMF6VABIHfISVXCuSyiH/j4cuYiCc=
+	t=1719247099; cv=none; b=p8qTO3AHq5nkuyQJn7sr9bGEFSe4mGuYNEmOx5Gpc8ElnyUaEweftzO2dFCJ+1KXDjS/TOYXwOhPOUcCKcDxLhc79E3GGdKBflFcZQ8eOch8DfmRlgXYNUVijvy8RKM9ZsejB+MC9DxRHjJQqtz0SgLnWOCUKz3KA9CyIk1XGaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247092; c=relaxed/simple;
-	bh=IgP0M8xmd5rjKhDPUrYgB64lu58oqh0y0crOb4BZD9U=;
+	s=arc-20240116; t=1719247099; c=relaxed/simple;
+	bh=YaBYUnqmG+n4LXnma2Z355DDZuqflriGSA+my20kuNc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=faAdyZFzSKeZCIW4NbV/SCjFkibdeKOXCVKCNUd1eKQJsvjFg1hfllZMRn04LbmsYyaay3mOthXzcbWnnOvD2wVAYKP2DHky5zcVm7sk1k/mgjpNXt3LNRWAuwzTmYU/kfvSMFCFugUYFMVw2urMi/oyRWYGh5JsLA2pRJxQuZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uL3MGier; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A628C32786;
-	Mon, 24 Jun 2024 16:38:05 +0000 (UTC)
+	 MIME-Version; b=NbkwEPAyIP12Dc0iWy6tEfhT+UFm/axKeew/etLlb+MaPo1rqNns8nXvHMK8q2yaKap4Mieta9bOX/sR2LpWSPyYCfOrfTS4bPi4tvXg7NuFpBYhX/VXno5wKIWSe+RZ7zkxQNhIhRqKFr8dK05w5qUUqSR3tUyOhuWUWXfHJls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hR9kAiRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C59C8C32782;
+	Mon, 24 Jun 2024 16:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719247092;
-	bh=IgP0M8xmd5rjKhDPUrYgB64lu58oqh0y0crOb4BZD9U=;
+	s=k20201202; t=1719247099;
+	bh=YaBYUnqmG+n4LXnma2Z355DDZuqflriGSA+my20kuNc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uL3MGier3znplmaR7ZT6dWU/wpMoIe4gnslzma/NaCokwco6hNNz/242/pTrmZOnN
-	 4+wIbkcqyl/+nWHsL0pDj8yUnBc1srg2b1tkEQOhMgZsgAfiqSysXcAabbIc6PqjLB
-	 W58PkXZvWU6v4pKUO7S+b/c83SFUzAmR3qQdGO4WdA8Cj04KVUFj4pJZ/vguuTwqXJ
-	 XVQzo8MhTcluDAglatkg1lY1q27QSmzXYOZq7NErvn0v2tJfhwmD46fByBV5VQh52r
-	 Meb9HdgzdfdnxkPDa/ongCQL8TK5a/lXXQtjPtmxTRxxTPI7hjInVaJq2O/gyGnV1/
-	 otrEBJFQ1xLOQ==
+	b=hR9kAiRbkPdSRmhr6Eizj3di1WfTP49V/w1YOyPaZim5rmw36OARQQmRPJoJIgcc+
+	 S4v6weKyemGxTeHfB6coHy40+7J8WwAqDr2nZbjBKjkhR9pEXksYh4lK6/uVwva9ag
+	 DxvpQk7ryDzKF8/l6QScCn61hEnSrMxLQrk7/f3P77LzhPLcr9Y0MRsnu/mYbLIeMl
+	 wEA4icKt3bELxbwttXXVIjoQjV4+pH+CiRResb8t2jJV/+LRGOsJqZQCouZxyctCWJ
+	 M/pWQWarPBHgrmvXXw9jiSVKx7MmK8dQ9v5SoJljL0czI9ePB0E2yF+juRGV4cW/Wr
+	 G9znttjNqjk7A==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-arch@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -73,9 +73,9 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	libc-alpha@sourceware.org,
 	musl@lists.openwall.com,
 	stable@vger.kernel.org
-Subject: [PATCH v2 08/13] sh: rework sync_file_range ABI
-Date: Mon, 24 Jun 2024 18:37:06 +0200
-Message-Id: <20240624163707.299494-9-arnd@kernel.org>
+Subject: [PATCH v2 09/13] csky, hexagon: fix broken sys_sync_file_range
+Date: Mon, 24 Jun 2024 18:37:07 +0200
+Message-Id: <20240624163707.299494-10-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240624163707.299494-1-arnd@kernel.org>
 References: <20240624163707.299494-1-arnd@kernel.org>
@@ -89,71 +89,49 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The unusual function calling conventions on SuperH ended up causing
-sync_file_range to have the wrong argument order, with the 'flags'
-argument getting sorted before 'nbytes' by the compiler.
+Both of these architectures require u64 function arguments to be
+passed in even/odd pairs of registers or stack slots, which in case of
+sync_file_range would result in a seven-argument system call that is
+not currently possible. The system call is therefore incompatible with
+all existing binaries.
 
-In userspace, I found that musl, glibc, uclibc and strace all expect the
-normal calling conventions with 'nbytes' last, so changing the kernel
-to match them should make all of those work.
-
-In order to be able to also fix libc implementations to work with existing
-kernels, they need to be able to tell which ABI is used. An easy way
-to do this is to add yet another system call using the sync_file_range2
-ABI that works the same on all architectures.
-
-Old user binaries can now work on new kernels, and new binaries can
-try the new sync_file_range2() to work with new kernels or fall back
-to the old sync_file_range() version if that doesn't exist.
+While it would be possible to implement support for seven arguments
+like on mips, it seems better to use a six-argument version, either
+with the normal argument order but misaligned as on most architectures
+or with the reordered sync_file_range2() calling conventions as on
+arm and powerpc.
 
 Cc: stable@vger.kernel.org
-Fixes: 75c92acdd5b1 ("sh: Wire up new syscalls.")
+Acked-by: Guo Ren <guoren@kernel.org>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/sh/kernel/sys_sh32.c           | 11 +++++++++++
- arch/sh/kernel/syscalls/syscall.tbl |  3 ++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ arch/csky/include/uapi/asm/unistd.h    | 1 +
+ arch/hexagon/include/uapi/asm/unistd.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/sh/kernel/sys_sh32.c b/arch/sh/kernel/sys_sh32.c
-index 9dca568509a5..d6f4afcb0e87 100644
---- a/arch/sh/kernel/sys_sh32.c
-+++ b/arch/sh/kernel/sys_sh32.c
-@@ -59,3 +59,14 @@ asmlinkage int sys_fadvise64_64_wrapper(int fd, u32 offset0, u32 offset1,
- 				 (u64)len0 << 32 | len1, advice);
- #endif
- }
-+
-+/*
-+ * swap the arguments the way that libc wants them instead of
-+ * moving flags ahead of the 64-bit nbytes argument
-+ */
-+SYSCALL_DEFINE6(sh_sync_file_range6, int, fd, SC_ARG64(offset),
-+                SC_ARG64(nbytes), unsigned int, flags)
-+{
-+        return ksys_sync_file_range(fd, SC_VAL64(loff_t, offset),
-+                                    SC_VAL64(loff_t, nbytes), flags);
-+}
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index bbf83a2db986..c55fd7696d40 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -321,7 +321,7 @@
- 311	common	set_robust_list			sys_set_robust_list
- 312	common	get_robust_list			sys_get_robust_list
- 313	common	splice				sys_splice
--314	common	sync_file_range			sys_sync_file_range
-+314	common	sync_file_range			sys_sh_sync_file_range6
- 315	common	tee				sys_tee
- 316	common	vmsplice			sys_vmsplice
- 317	common	move_pages			sys_move_pages
-@@ -395,6 +395,7 @@
- 385	common	pkey_alloc			sys_pkey_alloc
- 386	common	pkey_free			sys_pkey_free
- 387	common	rseq				sys_rseq
-+388	common	sync_file_range2		sys_sync_file_range2
- # room for arch specific syscalls
- 393	common	semget				sys_semget
- 394	common	semctl				sys_semctl
+diff --git a/arch/csky/include/uapi/asm/unistd.h b/arch/csky/include/uapi/asm/unistd.h
+index 7ff6a2466af1..e0594b6370a6 100644
+--- a/arch/csky/include/uapi/asm/unistd.h
++++ b/arch/csky/include/uapi/asm/unistd.h
+@@ -6,6 +6,7 @@
+ #define __ARCH_WANT_SYS_CLONE3
+ #define __ARCH_WANT_SET_GET_RLIMIT
+ #define __ARCH_WANT_TIME32_SYSCALLS
++#define __ARCH_WANT_SYNC_FILE_RANGE2
+ #include <asm-generic/unistd.h>
+ 
+ #define __NR_set_thread_area	(__NR_arch_specific_syscall + 0)
+diff --git a/arch/hexagon/include/uapi/asm/unistd.h b/arch/hexagon/include/uapi/asm/unistd.h
+index 432c4db1b623..21ae22306b5d 100644
+--- a/arch/hexagon/include/uapi/asm/unistd.h
++++ b/arch/hexagon/include/uapi/asm/unistd.h
+@@ -36,5 +36,6 @@
+ #define __ARCH_WANT_SYS_VFORK
+ #define __ARCH_WANT_SYS_FORK
+ #define __ARCH_WANT_TIME32_SYSCALLS
++#define __ARCH_WANT_SYNC_FILE_RANGE2
+ 
+ #include <asm-generic/unistd.h>
 -- 
 2.39.2
 
