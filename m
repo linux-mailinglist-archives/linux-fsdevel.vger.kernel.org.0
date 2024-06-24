@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-22263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24132915461
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 18:39:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF72291546C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 18:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA241F22144
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 16:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3C41C20B30
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 16:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A9A19FA81;
-	Mon, 24 Jun 2024 16:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706611A00CA;
+	Mon, 24 Jun 2024 16:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MA6YpC9s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uL3MGier"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D28B19DFB7;
-	Mon, 24 Jun 2024 16:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9731D53C;
+	Mon, 24 Jun 2024 16:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247086; cv=none; b=DU95ixqXiLO48dCI7y6QYlO6w1BbOFeF62rikG6Ay4w7pJ9kll7xuRfQQDC2tHw1T8q9nAuD1t3KaR7+0WsiAqqzSZ3xhN8f4gy2OhFM9VCzUnhDbWONMcbuQ+cqC/sgVUatuNV4M6tAxKQBiKY6KbIS11i5+8EFdu0mebAMRoI=
+	t=1719247092; cv=none; b=SB2D1KNhVP/f10ycDdKhgO+RMRcx/3O/Of7pDDT+O6MHSRaHEl16ubUa9sbkvXlJL/zuyniYJaCFLx2zGynEvwzsJK46kgQqWfl5dK/U9o4rgtOv4SNzDXQAx9CLjSFfhwdkRTzqSCD36WCMF6VABIHfISVXCuSyiH/j4cuYiCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247086; c=relaxed/simple;
-	bh=Yld920r0RtbTIWfv/K1ktHHZa1x6/WlhOuqRmTTIL9g=;
+	s=arc-20240116; t=1719247092; c=relaxed/simple;
+	bh=IgP0M8xmd5rjKhDPUrYgB64lu58oqh0y0crOb4BZD9U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sjbnp4Fqi06IlbYkwHOTVaT2du/QWSXqeeMffS/fVnFloU+fUetHuCHRgFdps3C5V05FjaTJCgiYWFV1I4qoVHTAPZm4OBIQ5IxRwy7kqoq+GALpMMstxKlhSy0Aq/hcC99ecBfNxbQfU9eGgtv2xefbPM1Xd9sJAZ5Ehs2lxs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MA6YpC9s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0311C32782;
-	Mon, 24 Jun 2024 16:37:59 +0000 (UTC)
+	 MIME-Version; b=faAdyZFzSKeZCIW4NbV/SCjFkibdeKOXCVKCNUd1eKQJsvjFg1hfllZMRn04LbmsYyaay3mOthXzcbWnnOvD2wVAYKP2DHky5zcVm7sk1k/mgjpNXt3LNRWAuwzTmYU/kfvSMFCFugUYFMVw2urMi/oyRWYGh5JsLA2pRJxQuZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uL3MGier; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A628C32786;
+	Mon, 24 Jun 2024 16:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719247085;
-	bh=Yld920r0RtbTIWfv/K1ktHHZa1x6/WlhOuqRmTTIL9g=;
+	s=k20201202; t=1719247092;
+	bh=IgP0M8xmd5rjKhDPUrYgB64lu58oqh0y0crOb4BZD9U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MA6YpC9sVzdIMJY3yXUezOn7PWETZcYbL4g92f5UEGH/ghpkrvEpRPe/fgJNLMgN9
-	 hOL+qz18JG5TgRhwrcDox6o9KKI3eevrpi+uBBtkJprjHPQuwBx8sUESyzmF3RGeGY
-	 bj5pY+QIBImJzQgsbGwEkrp9DhhueyIq4pSdTcbnYyT7AKeP0/foYukmbb3Ju3s/NW
-	 zL91vrxot7tRj6MYRhxQ2eJIH0S/qg/ZUwIVJQ6/A6OOCJw2sN/itlx8n9p61bnANH
-	 UbFnUG6/quwSk/GMr4J0EB8UJ1+CtRon5YM3caHcyVJQoPyOhwNXCawgGGqaM/fEgs
-	 Tz2THC1+GpIlA==
+	b=uL3MGier3znplmaR7ZT6dWU/wpMoIe4gnslzma/NaCokwco6hNNz/242/pTrmZOnN
+	 4+wIbkcqyl/+nWHsL0pDj8yUnBc1srg2b1tkEQOhMgZsgAfiqSysXcAabbIc6PqjLB
+	 W58PkXZvWU6v4pKUO7S+b/c83SFUzAmR3qQdGO4WdA8Cj04KVUFj4pJZ/vguuTwqXJ
+	 XVQzo8MhTcluDAglatkg1lY1q27QSmzXYOZq7NErvn0v2tJfhwmD46fByBV5VQh52r
+	 Meb9HdgzdfdnxkPDa/ongCQL8TK5a/lXXQtjPtmxTRxxTPI7hjInVaJq2O/gyGnV1/
+	 otrEBJFQ1xLOQ==
 From: Arnd Bergmann <arnd@kernel.org>
 To: linux-arch@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -71,10 +71,11 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	libc-alpha@sourceware.org,
-	musl@lists.openwall.com
-Subject: [PATCH v2 07/13] powerpc: restore some missing spu syscalls
-Date: Mon, 24 Jun 2024 18:37:05 +0200
-Message-Id: <20240624163707.299494-8-arnd@kernel.org>
+	musl@lists.openwall.com,
+	stable@vger.kernel.org
+Subject: [PATCH v2 08/13] sh: rework sync_file_range ABI
+Date: Mon, 24 Jun 2024 18:37:06 +0200
+Message-Id: <20240624163707.299494-9-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240624163707.299494-1-arnd@kernel.org>
 References: <20240624163707.299494-1-arnd@kernel.org>
@@ -88,47 +89,71 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-A couple of system calls were inadventently removed from the table during
-a bugfix for 32-bit powerpc entry. Restore the original behavior.
+The unusual function calling conventions on SuperH ended up causing
+sync_file_range to have the wrong argument order, with the 'flags'
+argument getting sorted before 'nbytes' by the compiler.
 
-Fixes: e23750623835 ("powerpc/32: fix syscall wrappers with 64-bit arguments of unaligned register-pairs")
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+In userspace, I found that musl, glibc, uclibc and strace all expect the
+normal calling conventions with 'nbytes' last, so changing the kernel
+to match them should make all of those work.
+
+In order to be able to also fix libc implementations to work with existing
+kernels, they need to be able to tell which ABI is used. An easy way
+to do this is to add yet another system call using the sync_file_range2
+ABI that works the same on all architectures.
+
+Old user binaries can now work on new kernels, and new binaries can
+try the new sync_file_range2() to work with new kernels or fall back
+to the old sync_file_range() version if that doesn't exist.
+
+Cc: stable@vger.kernel.org
+Fixes: 75c92acdd5b1 ("sh: Wire up new syscalls.")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/powerpc/kernel/syscalls/syscall.tbl | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/sh/kernel/sys_sh32.c           | 11 +++++++++++
+ arch/sh/kernel/syscalls/syscall.tbl |  3 ++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index c6b0546b284d..ebae8415dfbb 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -230,8 +230,10 @@
- 178	nospu 	rt_sigsuspend			sys_rt_sigsuspend		compat_sys_rt_sigsuspend
- 179	32	pread64				sys_ppc_pread64			compat_sys_ppc_pread64
- 179	64	pread64				sys_pread64
-+179	spu	pread64				sys_pread64
- 180	32	pwrite64			sys_ppc_pwrite64		compat_sys_ppc_pwrite64
- 180	64	pwrite64			sys_pwrite64
-+180	spu	pwrite64			sys_pwrite64
- 181	common	chown				sys_chown
- 182	common	getcwd				sys_getcwd
- 183	common	capget				sys_capget
-@@ -246,6 +248,7 @@
- 190	common	ugetrlimit			sys_getrlimit			compat_sys_getrlimit
- 191	32	readahead			sys_ppc_readahead		compat_sys_ppc_readahead
- 191	64	readahead			sys_readahead
-+191	spu	readahead			sys_readahead
- 192	32	mmap2				sys_mmap2			compat_sys_mmap2
- 193	32	truncate64			sys_ppc_truncate64		compat_sys_ppc_truncate64
- 194	32	ftruncate64			sys_ppc_ftruncate64		compat_sys_ppc_ftruncate64
-@@ -293,6 +296,7 @@
- 232	nospu	set_tid_address			sys_set_tid_address
- 233	32	fadvise64			sys_ppc32_fadvise64		compat_sys_ppc32_fadvise64
- 233	64	fadvise64			sys_fadvise64
-+233	spu	fadvise64			sys_fadvise64
- 234	nospu	exit_group			sys_exit_group
- 235	nospu	lookup_dcookie			sys_ni_syscall
- 236	common	epoll_create			sys_epoll_create
+diff --git a/arch/sh/kernel/sys_sh32.c b/arch/sh/kernel/sys_sh32.c
+index 9dca568509a5..d6f4afcb0e87 100644
+--- a/arch/sh/kernel/sys_sh32.c
++++ b/arch/sh/kernel/sys_sh32.c
+@@ -59,3 +59,14 @@ asmlinkage int sys_fadvise64_64_wrapper(int fd, u32 offset0, u32 offset1,
+ 				 (u64)len0 << 32 | len1, advice);
+ #endif
+ }
++
++/*
++ * swap the arguments the way that libc wants them instead of
++ * moving flags ahead of the 64-bit nbytes argument
++ */
++SYSCALL_DEFINE6(sh_sync_file_range6, int, fd, SC_ARG64(offset),
++                SC_ARG64(nbytes), unsigned int, flags)
++{
++        return ksys_sync_file_range(fd, SC_VAL64(loff_t, offset),
++                                    SC_VAL64(loff_t, nbytes), flags);
++}
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index bbf83a2db986..c55fd7696d40 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -321,7 +321,7 @@
+ 311	common	set_robust_list			sys_set_robust_list
+ 312	common	get_robust_list			sys_get_robust_list
+ 313	common	splice				sys_splice
+-314	common	sync_file_range			sys_sync_file_range
++314	common	sync_file_range			sys_sh_sync_file_range6
+ 315	common	tee				sys_tee
+ 316	common	vmsplice			sys_vmsplice
+ 317	common	move_pages			sys_move_pages
+@@ -395,6 +395,7 @@
+ 385	common	pkey_alloc			sys_pkey_alloc
+ 386	common	pkey_free			sys_pkey_free
+ 387	common	rseq				sys_rseq
++388	common	sync_file_range2		sys_sync_file_range2
+ # room for arch specific syscalls
+ 393	common	semget				sys_semget
+ 394	common	semctl				sys_semctl
 -- 
 2.39.2
 
