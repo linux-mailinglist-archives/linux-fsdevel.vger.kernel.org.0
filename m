@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-22251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65569152E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:51:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C40099152E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6762820BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD212820F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E843A19D8B4;
-	Mon, 24 Jun 2024 15:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1CC19DF40;
+	Mon, 24 Jun 2024 15:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="lSxD/iBK"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="lHYtiONw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF90119D8A5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0E319D8AF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719244247; cv=none; b=DYif1p8FrdK7qbGHsUyYVMtCb9HGu7K2LBc5IuY9BFM/U4TnPeqYgUJgxfCP9qURGhR2SbX2lPwa8UnLXAUrlyQlAfr6OqpIXshgr/NB+LauH2/MlgIhH6UPMM2qhVO0SODir7/l9rVUnkuReosGFUBgBC+Ls8PuzWDAWqPPqVE=
+	t=1719244248; cv=none; b=M0vfazNok6Oph2QebsUEfaV6Ezp+T/ggoYTL7flM9X8AOqxBIwbQA69gTFYtOpCjRVfj7NU+e+PG4D4k97fgXef3F6JXtFPo89anxkiCpKP+4Trg53SAti3H27zFPAlh7h9/DG6c5vmMmguMHheFaUrFS+zXwAJDQvEUkjehUmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719244247; c=relaxed/simple;
-	bh=38LHEfgALOYC66sa1e+K/n/lc4uBFNnqfHrvdHUL1oU=;
+	s=arc-20240116; t=1719244248; c=relaxed/simple;
+	bh=GWwnakjkuG1wF7ZPqr9VZkWVkliKt//yimgDB+eDC6k=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lkjjJxGgn6sAPvBPPMgatKX3OITrl482mD37H2tRH9uuYQsMB65aNhOXbx1pLF6hRfu1bIrFmPmg5e42+ZcjTCcz7vpFgebOoX3rOTVIByzPuYS8NJS25sG8T6sxuZiO7/R9h+6amqjo65Pk1Tic07L5RfFuw/EZ/7tk1pqlhMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=lSxD/iBK; arc=none smtp.client-ip=209.85.222.181
+	 MIME-Version; b=RD6WVTsCchhtI06Ruz2cxJRhs8EN7CMo9UlAL4IbuyQpSdnpLIvprOvTTsAlbmzw0HHB0rDzwMyP8JZo9+S94BROvwKIfAbR48SHE2q/f0OullIMnbZPmwyPfC/QW49xzRzaOblXl6nB1m4Q66yGeFAtr18P5AkW3RA996cciWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=lHYtiONw; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-797dcb558ebso279233785a.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:45 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-62fe76c0a61so41325917b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719244245; x=1719849045; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719244246; x=1719849046; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SByAZNLq5sTtspyyUJQCXuY/e1cubv1bllAaHfOCEUA=;
-        b=lSxD/iBKe+NmS+9vps4LiDo0GFFxDJ8d0mv4CWV/RWglVoEDujC+pBKKhtvGdpVG64
-         v1rhAzsPA7iRv9EinqSY9+Sd9nV+kal8e00OLfbWAxrL0po1oQ4mYTS6KmG1pamnGE9S
-         nshuY6hMuVrka1jGw1JTHdXgHsG5BvhnSCV9DOBEWOLk1vTUsjGGUXkJ/kFAAdtOzTnh
-         MD0Ap/I1dATd83uwI7sygHEUt+trHYQ2VtQAFotlaLjTXfDZvz974fNQF13ZrJycnXaZ
-         DPwbwmPh+XGt9ykMH6kVGDHrkuG9KanDTocSnV1vCcLCDlOzkl4NOsgJ5mqJoUWtdSsa
-         1PNQ==
+        bh=1aP/ldgWbu2+XT8YO2t/nVvVclNabe2RrR4wVmboSZo=;
+        b=lHYtiONwpU4ln2GDhFHbWE9FozR14XnOrwxaG6THcb3oA10UOKu7g0F0m27pM5v8Hm
+         Ul3wLSCQaqc66mOAN7yTGiw9NJxWyUZKSNUNSx4CHx2pNQmZ+g1dYhEuzOw9pazn0yND
+         UoFIsrvMlIChLWBGcQh6mLJDIc5Foglb1W5a6pBsqDQ8yBF0/mxZoienHCV6maAU1t+s
+         oQVKu5BQJuIg+FmMIO2+fgXYXuXGhZhyrDkPoEzkz6hkKRJ+LvAodRoRSkhLATss7bYs
+         d2raTCN1ygOaOMozLJlIMih1DzMHQtSl/lrlMJeIEbPb4rnhVcCt57ydtjE7Tr3GfMfi
+         1gvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719244245; x=1719849045;
+        d=1e100.net; s=20230601; t=1719244246; x=1719849046;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SByAZNLq5sTtspyyUJQCXuY/e1cubv1bllAaHfOCEUA=;
-        b=kx+g3D3JZ6VZFkhXz/VYs/amnGhAtLP6kIpFZuRzfzn/IIjFbvC2n2FDCpS4y38Dmz
-         d/SP6gzmMEjzdryVhibV2pTmA4u1PxnVGe7Za/sAZuyYoWlz1lWyFWkODYz/bObi/gkf
-         WYix9RNGuTtt9RTNq1QMWS48A0meLm2vEMuMLYJP0kOkW61ISL3JShqP6c4d95waLW4N
-         K/o4A57ie0s6sItJm39Lj8/qS7CwDWALgCGBq09GXQLE0XIn3LGlTTAcpKzl/LDa0A4v
-         yrqxzDC6nViPu00x0urT/vqA7jFg4L46PGyrsknibgou2RsjUfZx+I7CdfHJgBzkxeMB
-         AbUA==
-X-Gm-Message-State: AOJu0YxFPFLyXNKk6WEu4VNvUMGlTHUAUAllSOLb8kfmES3qgPq1lLV6
-	hJVNYSO6iLiNZmaRqoRV3Am6G+q4sXbILdwCuVbjw+B2kyi2B4o641v4VlTYF9dVT3d0SLJnDql
-	P
-X-Google-Smtp-Source: AGHT+IHFJvs5Y62A4s2+4NyD91rMTfDMUQMyM96uSFMGWMijNiyZvoyZ2a3OpABQ3ov2M0eFA1Aicw==
-X-Received: by 2002:a05:622a:114:b0:440:c5bc:db7e with SMTP id d75a77b69052e-444d932b0b7mr44519051cf.66.1719244244738;
-        Mon, 24 Jun 2024 08:50:44 -0700 (PDT)
+        bh=1aP/ldgWbu2+XT8YO2t/nVvVclNabe2RrR4wVmboSZo=;
+        b=ZX19M7vOEOZBsKnxphfH9D80iki0IgFDs5eLVdUzWgr/6WAV7IcD+C4Rc87wkbkxl+
+         LdrU0vrRETSBfXR2IRmjjJMRifL1buC7xNqXYsokgR+gV1GN9rhUpbOHnk3PikAxpsz6
+         Y4uE4I5uBprvV0icgAYntBaJLiy4ugwKirHG8TRvCJDXXY0+mgYHthNW/MBtEcoySUML
+         sSRIHW9KohyDdxh3UQUyRiU2crPDswoCq11AT3kfY6Ob0QR6i6qLoU6NzNKqFAw3enVH
+         RBz9ScosmvOX5VK/X+d/hbXaJ9TOHtuqrXUiL0Fnig04DbgJRQ7jnsjq5hNPELQaCuZM
+         vaLg==
+X-Gm-Message-State: AOJu0Yx2xqFDdXvPGf6FpIPreqSvA2/V30NZ8jAUUI2yiBfVteP5OxEf
+	ox8hDq4UhxGW/lzU+4L8d3TmIs+NtwOt5ttFal1qomdLJLIOUseJIXZXPmBetXGe1un98cQ/9DM
+	Q
+X-Google-Smtp-Source: AGHT+IFcs18Fh0C+uER0RjZHd4S0uGPnIGPl54a1zVQndbkivmVpaqrO120CPd6ku5cvS0ILPXvI9Q==
+X-Received: by 2002:a81:848f:0:b0:622:c892:6ae7 with SMTP id 00721157ae682-643af6ebd94mr24990347b3.12.1719244245856;
+        Mon, 24 Jun 2024 08:50:45 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c2c3d97esm43764861cf.62.2024.06.24.08.50.44
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f14a3cd92sm29354037b3.102.2024.06.24.08.50.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 08:50:44 -0700 (PDT)
+        Mon, 24 Jun 2024 08:50:45 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	kernel-team@fb.com
-Subject: [PATCH 5/8] fs: Allow listmount() in foreign mount namespace
-Date: Mon, 24 Jun 2024 11:49:48 -0400
-Message-ID: <49930bdce29a8367a213eb14c1e68e7e49284f86.1719243756.git.josef@toxicpanda.com>
+Subject: [PATCH 6/8] fs: Allow statmount() in foreign mount namespace
+Date: Mon, 24 Jun 2024 11:49:49 -0400
+Message-ID: <52a2e17e50ba7aa420bc8bae1d9e88ff593395c1.1719243756.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1719243756.git.josef@toxicpanda.com>
 References: <cover.1719243756.git.josef@toxicpanda.com>
@@ -87,141 +87,55 @@ Content-Transfer-Encoding: 8bit
 
 From: Christian Brauner <brauner@kernel.org>
 
-Expand struct mnt_id_req to add an optional mnt_ns_id field.  When this
-field is populated, listmount() will be performed on the specified mount
-namespace, provided the currently application has CAP_SYS_ADMIN in its
-user namespace and the mount namespace is a child of the current
-namespace.
+This patch makes use of the new mnt_ns_id field in struct mnt_id_req to
+allow users to stat mount entries not in their mount namespace.  The
+rules are the same as listmount(), the user must have CAP_SYS_ADMIN in
+their user namespace and the target mount namespace must be a child of
+the current namespace.
 
 Co-developed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/namespace.c             | 88 ++++++++++++++++++++++++++++++--------
- include/uapi/linux/mount.h |  2 +
- 2 files changed, 72 insertions(+), 18 deletions(-)
+ fs/namespace.c | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 3c6711fec3cd..1b422fd5f267 100644
+index 1b422fd5f267..6d44537fd78c 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -5125,7 +5125,7 @@ static int copy_mnt_id_req(const struct mnt_id_req __user *req,
- 	int ret;
- 	size_t usize;
- 
--	BUILD_BUG_ON(sizeof(struct mnt_id_req) != MNT_ID_REQ_SIZE_VER0);
-+	BUILD_BUG_ON(sizeof(struct mnt_id_req) != MNT_ID_REQ_SIZE_VER1);
- 
- 	ret = get_user(usize, &req->size);
- 	if (ret)
-@@ -5143,6 +5143,58 @@ static int copy_mnt_id_req(const struct mnt_id_req __user *req,
+@@ -4977,10 +4977,8 @@ static int statmount_fs_type(struct kstatmount *s, struct seq_file *seq)
  	return 0;
  }
  
-+static struct mount *listmnt_next(struct mount *curr, bool reverse)
-+{
-+	struct rb_node *node;
-+
-+	if (reverse)
-+		node = rb_prev(&curr->mnt_node);
-+	else
-+		node = rb_next(&curr->mnt_node);
-+
-+	return node_to_mount(node);
-+}
-+
-+static int grab_requested_root(struct mnt_namespace *ns, struct path *root)
-+{
-+	struct mount *first;
-+
-+	rwsem_assert_held(&namespace_sem);
-+
-+	/* We're looking at our own ns, just use get_fs_root. */
-+	if (ns == current->nsproxy->mnt_ns) {
-+		get_fs_root(current->fs, root);
-+		return 0;
-+	}
-+
-+	/*
-+	 * We have to find the first mount in our ns and use that, however it
-+	 * may not exist, so handle that properly.
-+	 */
-+	if (RB_EMPTY_ROOT(&ns->mounts))
-+		return -ENOENT;
-+
-+	first = listmnt_next(ns->root, false);
-+	if (!first)
-+		return -ENOENT;
-+	root->mnt = mntget(&first->mnt);
-+	root->dentry = dget(root->mnt->mnt_root);
-+	return 0;
-+}
-+
-+/*
-+ * If the user requested a specific mount namespace id, look that up and return
-+ * that, or if not simply grab a passive reference on our mount namespace and
-+ * return that.
-+ */
-+static struct mnt_namespace *grab_requested_mnt_ns(u64 mnt_ns_id)
-+{
-+	if (mnt_ns_id)
-+		return lookup_mnt_ns(mnt_ns_id);
-+	refcount_inc(&current->nsproxy->mnt_ns->passive);
-+	return current->nsproxy->mnt_ns;
-+}
-+
- SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+-static void statmount_mnt_ns_id(struct kstatmount *s)
++static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
+ {
+-	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
+-
+ 	s->sm.mask |= STATMOUNT_MNT_NS_ID;
+ 	s->sm.mnt_ns_id = ns->seq;
+ }
+@@ -5082,7 +5080,7 @@ static int do_statmount(struct kstatmount *s)
+ 		err = statmount_string(s, STATMOUNT_MNT_POINT);
+ 
+ 	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
+-		statmount_mnt_ns_id(s);
++		statmount_mnt_ns_id(s, ns);
+ 
+ 	if (err)
+ 		return err;
+@@ -5199,6 +5197,7 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
  		struct statmount __user *, buf, size_t, bufsize,
  		unsigned int, flags)
-@@ -5188,30 +5240,21 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
- 	return ret;
- }
- 
--static struct mount *listmnt_next(struct mount *curr, bool reverse)
--{
--	struct rb_node *node;
--
--	if (reverse)
--		node = rb_prev(&curr->mnt_node);
--	else
--		node = rb_next(&curr->mnt_node);
--
--	return node_to_mount(node);
--}
--
--static ssize_t do_listmount(u64 mnt_parent_id, u64 last_mnt_id, u64 *mnt_ids,
--			    size_t nr_mnt_ids, bool reverse)
-+static ssize_t do_listmount(struct mnt_namespace *ns, u64 mnt_parent_id,
-+			    u64 last_mnt_id, u64 *mnt_ids, size_t nr_mnt_ids,
-+			    bool reverse)
  {
- 	struct path root __free(path_put) = {};
--	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
- 	struct path orig;
- 	struct mount *r, *first;
- 	ssize_t ret;
- 
- 	rwsem_assert_held(&namespace_sem);
- 
--	get_fs_root(current->fs, &root);
-+	ret = grab_requested_root(ns, &root);
-+	if (ret)
-+		return ret;
-+
- 	if (mnt_parent_id == LSMT_ROOT) {
- 		orig = root;
- 	} else {
-@@ -5263,6 +5306,7 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
- {
- 	u64 *kmnt_ids __free(kvfree) = NULL;
- 	const size_t maxcount = 1000000;
 +	struct mnt_namespace *ns __free(mnt_ns_release) = NULL;
+ 	struct vfsmount *mnt;
  	struct mnt_id_req kreq;
- 	ssize_t ret;
- 
-@@ -5289,8 +5333,16 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
- 	if (!kmnt_ids)
- 		return -ENOMEM;
+ 	struct kstatmount ks;
+@@ -5213,13 +5212,28 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+ 	if (ret)
+ 		return ret;
  
 +	ns = grab_requested_mnt_ns(kreq.mnt_ns_id);
 +	if (!ns)
@@ -231,29 +145,38 @@ index 3c6711fec3cd..1b422fd5f267 100644
 +	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
 +		return -ENOENT;
 +
- 	scoped_guard(rwsem_read, &namespace_sem)
--		ret = do_listmount(kreq.mnt_id, kreq.param, kmnt_ids,
-+		ret = do_listmount(ns, kreq.mnt_id, kreq.param, kmnt_ids,
- 				   nr_mnt_ids, (flags & LISTMOUNT_REVERSE));
+ retry:
+ 	ret = prepare_kstatmount(&ks, &kreq, buf, bufsize, seq_size);
+ 	if (ret)
+ 		return ret;
  
- 	if (copy_to_user(mnt_ids, kmnt_ids, ret * sizeof(*mnt_ids)))
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index a07508aee518..ee1559cd6764 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -189,10 +189,12 @@ struct mnt_id_req {
- 	__u32 spare;
- 	__u64 mnt_id;
- 	__u64 param;
-+	__u64 mnt_ns_id;
- };
+ 	down_read(&namespace_sem);
+-	mnt = lookup_mnt_in_ns(kreq.mnt_id, current->nsproxy->mnt_ns);
++	/* Has the namespace already been emptied? */
++	if (kreq.mnt_ns_id && RB_EMPTY_ROOT(&ns->mounts)) {
++		up_read(&namespace_sem);
++		kvfree(ks.seq.buf);
++		return -ENOENT;
++	}
++
++	mnt = lookup_mnt_in_ns(kreq.mnt_id, ns);
+ 	if (!mnt) {
+ 		up_read(&namespace_sem);
+ 		kvfree(ks.seq.buf);
+@@ -5227,7 +5241,12 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+ 	}
  
- /* List of all mnt_id_req versions. */
- #define MNT_ID_REQ_SIZE_VER0	24 /* sizeof first published struct */
-+#define MNT_ID_REQ_SIZE_VER1	32 /* sizeof second published struct */
- 
- /*
-  * @mask bits for statmount(2)
+ 	ks.mnt = mnt;
+-	get_fs_root(current->fs, &ks.root);
++	ret = grab_requested_root(ns, &ks.root);
++	if (ret) {
++		up_read(&namespace_sem);
++		kvfree(ks.seq.buf);
++		return ret;
++	}
+ 	ret = do_statmount(&ks);
+ 	path_put(&ks.root);
+ 	up_read(&namespace_sem);
 -- 
 2.43.0
 
