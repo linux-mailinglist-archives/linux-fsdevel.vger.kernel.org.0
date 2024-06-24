@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-22247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75359152DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:50:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5677E9152E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D17A1F22F8E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:50:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A24E8B250B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F26019D881;
-	Mon, 24 Jun 2024 15:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E10E19D894;
+	Mon, 24 Jun 2024 15:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="bIpyUH9u"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Pt4hFpqq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5713954276
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BE119D09C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719244242; cv=none; b=MdEHe/8C5EdYLCBO7axrFUY3jBtrxu4HjcuNb7DuL3FtOTNfdFyx+CHEQhzSDlGTleoGAv97UR9jvYl+5eYweffQtZYrgbRvUv/Ir7n5u7VInLWsHMEALDfVrEvwJlf4hGQFqoHSrAizG2GLRL8dhKJYwTNvGj38U+TriSjHam8=
+	t=1719244244; cv=none; b=S2w7FngF3y464iqznEdet7EaXF/Wc4DJgslCzCohWq3UMTI5pNA6z4mj+31POM4oPERORH3z9NWqFDw8pBxb/P0MVAq73Ac9xcy0DNzp/IAe44QLggMR+OQASVAEznSSlV1De6VZnUNzXpSaqblRsRi4sgFLThifI8Ti/8U8rFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719244242; c=relaxed/simple;
-	bh=NKlVLeAlB/O4BqR1dTzw3WF3hpAo8lWj2ebWanDhls4=;
+	s=arc-20240116; t=1719244244; c=relaxed/simple;
+	bh=K+A2IEqmBZeJw1GjB89iMPUcRsnzPu0hHoAFUAYhBvw=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aZ44vmffCfr/nmBf1S3knA0urdX1d7lvj65eVlC4UGd4+pqT3ocbXZnlLuKcfAD5FOsfoXpAyGUsqeaSw0FLIRJK0RFnspH782GSIghh59DhcbTGzbBQOC5RXVzn0q0N9rfSbIy6EHgYr1eNJIVU4jOdD/5TGUoRoiartfqN950=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=bIpyUH9u; arc=none smtp.client-ip=209.85.128.170
+	 MIME-Version; b=MpeSHTtjXP9Cp9/rC4CqlFko2/GZ8HU0anXbW8zmyoG666DZHaw/TmNmchwbLDif+Py3r6hit+tv8ohSG6hmiS0OSsTMiKwyriGSERW6yJB6utKOpdnFP91ph+ih52VnQfnk4Kh5H/N+xorZE8c7f/FLuejtbolHqLAZWBwYQwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Pt4hFpqq; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-63bd10df78dso41713647b3.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:41 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-797f2d8b408so301008985a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719244240; x=1719849040; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719244241; x=1719849041; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qkm1rXAti7t12K0xpdW01teSJVvN4Hn65SQw4TAqa5U=;
-        b=bIpyUH9urYxtJVtLhGRxI63reAH4p8RRgk4Razn4lcF1VefXL+oAmWoofsA9i8bkBX
-         QCUsGGRrorzk3+wUtTQTZxSlPmy2kfskGqEoci3TgkgcaD5xgXf1btYGQfzEajLpQNvj
-         ny3AJ09a74ahjkt7eFzaUiHfBhUoEgXJl3VfUzDu0fW1fht7in2q0SCjA52b/rduC4jE
-         6dNSn+X95CLws+Ty7fGdI+Mz3Y176biRAAhxGblvY2hjnJe0XPm3v/V3ljR2c0RRfc7d
-         oG+2VRxu+IHqFVv7wvKjAKZobNSP7frTQtENm3mqsltNJY9Ak/SOBVDjT7+phMVpis+h
-         SWKw==
+        bh=6flFxXVVqJLCrwleRzZ+Be3V8Fb6aljcx7RgVVG27BY=;
+        b=Pt4hFpqqtQFv2cCkoJ+umBpGX8X2V1UZTg4vCpNFvzXnlSnZbRkSuTrI/vkFR0YS4l
+         fvn6x/ojHBGw+0EpBUwR3LSwEvhbNpCYQE3md1ezW+4Cvy4hvLiMQWDzMuN+etuTMxbo
+         ufjPYWS+GujpL2+nujdjJ5rIVt3f/Zt7u/5sk/3SukZrg+wyqEc6NKDWrC6IpQpS7vAK
+         CbWF/1/3D0eJ9+jMG9xC9ChJOHzXwfXI+k03iofL0GAkRN+aDjBp2l3cBLKsULVgrFHb
+         A7mFG4hWvUA+2PPI+NDPL0N/RAoMO6TjlaJGopOej2MvDHbsALtPEITzVddUhNSQys2x
+         megQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719244240; x=1719849040;
+        d=1e100.net; s=20230601; t=1719244241; x=1719849041;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qkm1rXAti7t12K0xpdW01teSJVvN4Hn65SQw4TAqa5U=;
-        b=TrD8JLWYoejFuYtVBhplercRjdM9bro12eJZYlUcLWbFbb/eR34An2PBu1yVjF9UA4
-         N3eTS6OVuQ0+PAP2IuFso/StNxtvEzdtxd82pM8pweiZqrGt/LfBgx6jkPNMbdXhTFKc
-         BeC2s4RrjQF/xaSMrL6SCWFQgVBhnNpL6nPcj1tOKmhCj41vbzvn6lVWr1YlDzZnrA2u
-         sHSeAy2JMO3zHoPvBOTR2n7sHfvxk7tJcy6sl3pdOV3sf7iNMOI0hLMu8x2RzRwm3t0S
-         SsVrZq+y+7m4PtILtiym7XTGocHxZC5vQxRhd4gdoxSv4zd1FkM0Nxuxvfk1TjRu8o7a
-         tm7A==
-X-Gm-Message-State: AOJu0Yw+vEM+2LuERoQOnzeKP1BhPeWSNJhzt3L9BqaD5NB8WZ/8fq5F
-	CRnr15AgdWI3mnGggjqRR4Qgy8Ht8x0VC7ehHaEPBovN9jCPBhOfwg1NcPGraQsGwy8ScJ3aig8
-	D
-X-Google-Smtp-Source: AGHT+IGl01cxu0A+BNMzJ7rD+/DpNgA2kt0JVSdstEnb1cOoFJhIiX3z9uZSWjq7GjFfQ7nZ6q0U/w==
-X-Received: by 2002:a81:ad26:0:b0:645:25d:b741 with SMTP id 00721157ae682-645026cf997mr27543967b3.11.1719244240220;
-        Mon, 24 Jun 2024 08:50:40 -0700 (PDT)
+        bh=6flFxXVVqJLCrwleRzZ+Be3V8Fb6aljcx7RgVVG27BY=;
+        b=eA3Yx7lLS+ad6DvUiPhKxrvHjKZssqeflX+7LzGkkN+QuQ+YPVz8R32ZcNbzGuELl8
+         N58GipJHaMCvRwQiNls6KWtQImVPU0ICjRxX1rDFOeSeXOpYj7TT0nt6XI/BI+CVTYN2
+         Bdf70/zvVwPdef7lcHREDVzXntS5h3zMBG97sbRWpauFjNTXwIMPyRfjzxv8+M3Y+CDF
+         7lrJDYm4BmLa36R7NKkxS3Eww+FO2MqzMqzpahoG7UOp4bq6TlCE7oeXdX5kL79zCUFl
+         NTd+TWxqCw8ZyrlJMUEilJ0pTl0DuWa9iIIODQKxRYX2VfMMFJu6kWnjqo1mQi/bc0Cw
+         SNdA==
+X-Gm-Message-State: AOJu0YxcAIG4kLAMciv73F5Q73vFmWnuhXQXXTdeBuDpCMDPoFyYwPdP
+	FehIzOKnWlgy4gHwLAUPfyRJs5KjL0Qt0wtA/vRuAKJWjYP0g/1yFwg7JfniE4XIO93lpThlF52
+	Z
+X-Google-Smtp-Source: AGHT+IEaqtS08rspOq71bml1N+L7TsL4csT1IcVHvWCuQ4XJlL3xpw9EKFakg6+JBoecluoS6QcRVQ==
+X-Received: by 2002:a05:620a:318a:b0:795:573d:6192 with SMTP id af79cd13be357-79be702b585mr654482685a.77.1719244241335;
+        Mon, 24 Jun 2024 08:50:41 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f1192454fsm29770147b3.39.2024.06.24.08.50.39
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce91d8bdsm323771985a.76.2024.06.24.08.50.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 08:50:39 -0700 (PDT)
+        Mon, 24 Jun 2024 08:50:41 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	kernel-team@fb.com
-Subject: [PATCH 1/8] fs: relax permissions for listmount()
-Date: Mon, 24 Jun 2024 11:49:44 -0400
-Message-ID: <8adc0d3f4f7495faacc6a7c63095961f7f1637c7.1719243756.git.josef@toxicpanda.com>
+Subject: [PATCH 2/8] fs: relax permissions for statmount()
+Date: Mon, 24 Jun 2024 11:49:45 -0400
+Message-ID: <bf5961d71ec479ba85806766b0d8d96043e67bba.1719243756.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1719243756.git.josef@toxicpanda.com>
 References: <cover.1719243756.git.josef@toxicpanda.com>
@@ -88,27 +88,35 @@ Content-Transfer-Encoding: 8bit
 From: Christian Brauner <brauner@kernel.org>
 
 It is sufficient to have capabilities in the owning user namespace of
-the mount namespace to list all mounts regardless of whether they are
-reachable or not.
+the mount namespace to stat a mount regardless of whether it's reachable
+or not.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/namespace.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 4238c886394d..253cd8087d4e 100644
+index 253cd8087d4e..45df82f2a059 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -5107,7 +5107,7 @@ static ssize_t do_listmount(u64 mnt_parent_id, u64 last_mnt_id, u64 *mnt_ids,
+@@ -4933,6 +4933,7 @@ static int copy_statmount_to_user(struct kstatmount *s)
+ static int do_statmount(struct kstatmount *s)
+ {
+ 	struct mount *m = real_mount(s->mnt);
++	struct mnt_namespace *ns = m->mnt_ns;
+ 	int err;
+ 
+ 	/*
+@@ -4940,7 +4941,7 @@ static int do_statmount(struct kstatmount *s)
  	 * mounts to show users.
  	 */
- 	if (!is_path_reachable(real_mount(orig.mnt), orig.dentry, &root) &&
+ 	if (!is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
 -	    !ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN))
 +	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
  		return -EPERM;
  
- 	ret = security_sb_statfs(orig.dentry);
+ 	err = security_sb_statfs(s->mnt->mnt_root);
 -- 
 2.43.0
 
