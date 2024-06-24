@@ -1,77 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-22246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CE79152DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:50:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75359152DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7CF2820F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:50:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D17A1F22F8E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5730D19D094;
-	Mon, 24 Jun 2024 15:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F26019D881;
+	Mon, 24 Jun 2024 15:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="fCCqbUDK"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="bIpyUH9u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543ED1D53C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5713954276
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719244241; cv=none; b=pTLzLUwONt6G3hm0vTb2Q2SekQ1uf1Or5g4qu6xw4J6JCyqxD2/VN/yZP+o0t3SNIt6tCp7+ZRyo7Ij/wyuSg6+JrcwuGFTSpMpnFdzmJ+PLvCK50ogxdz5z/tBc0Ss9yEhl3Oa/6GF3xv+cA8FKFJhXvuUJwrGoqOQNy8vbUNg=
+	t=1719244242; cv=none; b=MdEHe/8C5EdYLCBO7axrFUY3jBtrxu4HjcuNb7DuL3FtOTNfdFyx+CHEQhzSDlGTleoGAv97UR9jvYl+5eYweffQtZYrgbRvUv/Ir7n5u7VInLWsHMEALDfVrEvwJlf4hGQFqoHSrAizG2GLRL8dhKJYwTNvGj38U+TriSjHam8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719244241; c=relaxed/simple;
-	bh=AcXSgJviOfnpFMYrB7qa+YYutwJU73uTBASPD7sbCYk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=mwjJ27+YCJ3wtRPdjvtyjJNynm01v6xvbZ6cQsEr6oHR4bxWv2PrLg/tlVmHSmzuXc0n6FV4HPVcjEkh0fxxsGoPdHjsGUVwB1MxHUYVaYfrMVx2X5sk5hdGSHM/N3t66KyVxfWu9oi+20uW0c/Qf/P78o5EOMpPD4t0YTOnA5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=fCCqbUDK; arc=none smtp.client-ip=209.85.219.170
+	s=arc-20240116; t=1719244242; c=relaxed/simple;
+	bh=NKlVLeAlB/O4BqR1dTzw3WF3hpAo8lWj2ebWanDhls4=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aZ44vmffCfr/nmBf1S3knA0urdX1d7lvj65eVlC4UGd4+pqT3ocbXZnlLuKcfAD5FOsfoXpAyGUsqeaSw0FLIRJK0RFnspH782GSIghh59DhcbTGzbBQOC5RXVzn0q0N9rfSbIy6EHgYr1eNJIVU4jOdD/5TGUoRoiartfqN950=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=bIpyUH9u; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e02bda4aba3so4613770276.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:40 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-63bd10df78dso41713647b3.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719244239; x=1719849039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLgQK881bMd+8UR0jrCVA/izBGZlf9yBdyaqSchEtrQ=;
-        b=fCCqbUDKyIUAmrXuJVbRB6TYSZr2hcUVMux7yMA8rFULwxROTd1QASdN1YY0ULtgKG
-         +6CIXHT93PQJ2cStChVtS3zkij2WsdGeAre/ylFK4QSY6zINPrZoeSxtalMK/3tRyT0o
-         xGpc4CX+mx1c2yHULtmTuqdinDUyrXMqq2C3GQ4RgXpoLK+PxptyR0PTRPGTkftOdBIf
-         HFRGD6qWEsNTTox7hG6RgMVqQveI0uQr0HnXb1BwDTSLHeQ8iXh6o6uwnnL03ZIacZCz
-         lSePRr2PL4em4mgfpAWf2civVeO/66vzIg5nez2DiT3CDglKWbtZE6BgEM2vMrjKk+6C
-         JHHg==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719244240; x=1719849040; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qkm1rXAti7t12K0xpdW01teSJVvN4Hn65SQw4TAqa5U=;
+        b=bIpyUH9urYxtJVtLhGRxI63reAH4p8RRgk4Razn4lcF1VefXL+oAmWoofsA9i8bkBX
+         QCUsGGRrorzk3+wUtTQTZxSlPmy2kfskGqEoci3TgkgcaD5xgXf1btYGQfzEajLpQNvj
+         ny3AJ09a74ahjkt7eFzaUiHfBhUoEgXJl3VfUzDu0fW1fht7in2q0SCjA52b/rduC4jE
+         6dNSn+X95CLws+Ty7fGdI+Mz3Y176biRAAhxGblvY2hjnJe0XPm3v/V3ljR2c0RRfc7d
+         oG+2VRxu+IHqFVv7wvKjAKZobNSP7frTQtENm3mqsltNJY9Ak/SOBVDjT7+phMVpis+h
+         SWKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719244239; x=1719849039;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLgQK881bMd+8UR0jrCVA/izBGZlf9yBdyaqSchEtrQ=;
-        b=cY0ZuTrJpUyQFgee6JRdEEMHwfADNixbm2KyNDlbKiZShwAJHkQOtH6MLBOGCY16+S
-         msNZjX3acgSoAIw9F3yjucgeyMxkTvYDTKEnOVjNd4UvAAFWxhBusS9RHyt0mf8cTOCL
-         tVvgIQ3yYIZJUTOavEtaIhjZdLG+4yAQFt+SbojlH5YQM7LkQjufVKMfkOb8sk44oliF
-         aoE+I+fb8QxcDIB47s78lXrte6W0PYL8ucngiyUXFMvMS3YYRpRvSgYAb0tTJr7x4qj4
-         lXDYvhYiB1Uih/1jOs/YrFElgy5FlbmziE9nv/z1GeW3nYLSQ2bty7lQfsYWeKN+L6uv
-         w+AA==
-X-Gm-Message-State: AOJu0YwpRB86MJNzVyGkPwbYMDqFZUQIxXdEG/BlCwspni+R6FmA096+
-	6rW/0/DFwxp+14nrXZap55e0vO+PnY2uwwtsQVnYNWlS5z0IbrKH3b+RAdaWVm1AAyB779hTrkU
-	W
-X-Google-Smtp-Source: AGHT+IGvmR9uyRorstnYlvohFuzDppOOmsHAviPndD2XaUQ91OkyrEYLCAZRpveSEhdKIolwNL4rgw==
-X-Received: by 2002:a25:cec8:0:b0:dfd:be95:f305 with SMTP id 3f1490d57ef6-e0303f2ab11mr4473561276.5.1719244239097;
-        Mon, 24 Jun 2024 08:50:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719244240; x=1719849040;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qkm1rXAti7t12K0xpdW01teSJVvN4Hn65SQw4TAqa5U=;
+        b=TrD8JLWYoejFuYtVBhplercRjdM9bro12eJZYlUcLWbFbb/eR34An2PBu1yVjF9UA4
+         N3eTS6OVuQ0+PAP2IuFso/StNxtvEzdtxd82pM8pweiZqrGt/LfBgx6jkPNMbdXhTFKc
+         BeC2s4RrjQF/xaSMrL6SCWFQgVBhnNpL6nPcj1tOKmhCj41vbzvn6lVWr1YlDzZnrA2u
+         sHSeAy2JMO3zHoPvBOTR2n7sHfvxk7tJcy6sl3pdOV3sf7iNMOI0hLMu8x2RzRwm3t0S
+         SsVrZq+y+7m4PtILtiym7XTGocHxZC5vQxRhd4gdoxSv4zd1FkM0Nxuxvfk1TjRu8o7a
+         tm7A==
+X-Gm-Message-State: AOJu0Yw+vEM+2LuERoQOnzeKP1BhPeWSNJhzt3L9BqaD5NB8WZ/8fq5F
+	CRnr15AgdWI3mnGggjqRR4Qgy8Ht8x0VC7ehHaEPBovN9jCPBhOfwg1NcPGraQsGwy8ScJ3aig8
+	D
+X-Google-Smtp-Source: AGHT+IGl01cxu0A+BNMzJ7rD+/DpNgA2kt0JVSdstEnb1cOoFJhIiX3z9uZSWjq7GjFfQ7nZ6q0U/w==
+X-Received: by 2002:a81:ad26:0:b0:645:25d:b741 with SMTP id 00721157ae682-645026cf997mr27543967b3.11.1719244240220;
+        Mon, 24 Jun 2024 08:50:40 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02e65e0149sm3306191276.57.2024.06.24.08.50.38
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f1192454fsm29770147b3.39.2024.06.24.08.50.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 08:50:38 -0700 (PDT)
+        Mon, 24 Jun 2024 08:50:39 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	kernel-team@fb.com
-Subject: [PATCH 0/8] Support foreign mount namespace with statmount/listmount
-Date: Mon, 24 Jun 2024 11:49:43 -0400
-Message-ID: <cover.1719243756.git.josef@toxicpanda.com>
+Subject: [PATCH 1/8] fs: relax permissions for listmount()
+Date: Mon, 24 Jun 2024 11:49:44 -0400
+Message-ID: <8adc0d3f4f7495faacc6a7c63095961f7f1637c7.1719243756.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1719243756.git.josef@toxicpanda.com>
+References: <cover.1719243756.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,62 +85,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Christian Brauner <brauner@kernel.org>
 
-Currently the only way to iterate over mount entries in mount namespaces that
-aren't your own is to trawl through /proc in order to find /proc/$PID/mountinfo
-for the mount namespace that you want.  This is hugely inefficient, so extend
-both statmount() and listmount() to allow specifying a mount namespace id in
-order to get to mounts in other mount namespaces.
+It is sufficient to have capabilities in the owning user namespace of
+the mount namespace to list all mounts regardless of whether they are
+reachable or not.
 
-There are a few components to this
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-1. Having a global index of the mount namespace based on the ->seq value in the
-   mount namespace.  This gives us a unique identifier that isn't re-used.
-2. Support looking up mount namespaces based on that unique identifier, and
-   validating the user has permission to access the given mount namespace.
-3. Provide a new ioctl() on nsfs in order to extract the unique identifier we
-   can use for statmount() and listmount().
-
-The code is relatively straightforward, and there is a selftest provided to
-validate everything works properly.
-
-This is based on vfs.all as of last week, so must be applied onto a tree that
-has Christians error handling rework in this area.  If you wish you can pull the
-tree directly here
-
-https://github.com/josefbacik/linux/tree/listmount.combined
-
-Christian and I collaborated on this series, which is why there's patches from
-both of us in this series.
-
-Josef
-
-Christian Brauner (4):
-  fs: relax permissions for listmount()
-  fs: relax permissions for statmount()
-  fs: Allow listmount() in foreign mount namespace
-  fs: Allow statmount() in foreign mount namespace
-
-Josef Bacik (4):
-  fs: keep an index of current mount namespaces
-  fs: export the mount ns id via statmount
-  fs: add an ioctl to get the mnt ns id from nsfs
-  selftests: add a test for the foreign mnt ns extensions
-
- fs/mount.h                                    |   2 +
- fs/namespace.c                                | 240 ++++++++++--
- fs/nsfs.c                                     |  14 +
- include/uapi/linux/mount.h                    |   6 +-
- include/uapi/linux/nsfs.h                     |   2 +
- .../selftests/filesystems/statmount/Makefile  |   2 +-
- .../filesystems/statmount/statmount.h         |  46 +++
- .../filesystems/statmount/statmount_test.c    |  53 +--
- .../filesystems/statmount/statmount_test_ns.c | 360 ++++++++++++++++++
- 9 files changed, 659 insertions(+), 66 deletions(-)
- create mode 100644 tools/testing/selftests/filesystems/statmount/statmount.h
- create mode 100644 tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 4238c886394d..253cd8087d4e 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5107,7 +5107,7 @@ static ssize_t do_listmount(u64 mnt_parent_id, u64 last_mnt_id, u64 *mnt_ids,
+ 	 * mounts to show users.
+ 	 */
+ 	if (!is_path_reachable(real_mount(orig.mnt), orig.dentry, &root) &&
+-	    !ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN))
++	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	ret = security_sb_statfs(orig.dentry);
 -- 
 2.43.0
 
