@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-22252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40099152E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A7EB9152E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD212820F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A1E281F96
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1CC19DF40;
-	Mon, 24 Jun 2024 15:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373CB19DF45;
+	Mon, 24 Jun 2024 15:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="lHYtiONw"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Lmd6tAnv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0E319D8AF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539A719D8BC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719244248; cv=none; b=M0vfazNok6Oph2QebsUEfaV6Ezp+T/ggoYTL7flM9X8AOqxBIwbQA69gTFYtOpCjRVfj7NU+e+PG4D4k97fgXef3F6JXtFPo89anxkiCpKP+4Trg53SAti3H27zFPAlh7h9/DG6c5vmMmguMHheFaUrFS+zXwAJDQvEUkjehUmk=
+	t=1719244249; cv=none; b=PZq1eZxS0Mc1R+BZi+L8JjAiKp/tav5gt/g/ZBwiRt49b4fqI9wo6KRfd7y2S3B4GzP8ah/hrmSUdnNdZ8CSfWU9w14dLfZhYYsJ3xWBenImoqx6O+Shpu9wTcb9HpWLodSFwgectgsf0PvnLcdm72GXH+6uGe7pI5bMWpt41o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719244248; c=relaxed/simple;
-	bh=GWwnakjkuG1wF7ZPqr9VZkWVkliKt//yimgDB+eDC6k=;
+	s=arc-20240116; t=1719244249; c=relaxed/simple;
+	bh=UNoAuN2n5KhnVagp3Pwrk7e62KXgFGLdI/OS8bbvPnI=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RD6WVTsCchhtI06Ruz2cxJRhs8EN7CMo9UlAL4IbuyQpSdnpLIvprOvTTsAlbmzw0HHB0rDzwMyP8JZo9+S94BROvwKIfAbR48SHE2q/f0OullIMnbZPmwyPfC/QW49xzRzaOblXl6nB1m4Q66yGeFAtr18P5AkW3RA996cciWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=lHYtiONw; arc=none smtp.client-ip=209.85.128.175
+	 MIME-Version; b=PRXULM2oLhcspsoOp5KFjjETCV6jrKMMnTDAEXZi53+6ecVAIMmfOFqCahj4vvQDVfwZsAHgWimPjXm32kYjC3LrH7NEXtgMVQ2CGPc4ZoexGogM7xUDFmnCP1unJbABygdvVaA4Fu/fsaO6qRNMRHJ1DsArBXeQFpjsxiwkROM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Lmd6tAnv; arc=none smtp.client-ip=209.85.219.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-62fe76c0a61so41325917b3.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:46 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso4652349276.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719244246; x=1719849046; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719244247; x=1719849047; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1aP/ldgWbu2+XT8YO2t/nVvVclNabe2RrR4wVmboSZo=;
-        b=lHYtiONwpU4ln2GDhFHbWE9FozR14XnOrwxaG6THcb3oA10UOKu7g0F0m27pM5v8Hm
-         Ul3wLSCQaqc66mOAN7yTGiw9NJxWyUZKSNUNSx4CHx2pNQmZ+g1dYhEuzOw9pazn0yND
-         UoFIsrvMlIChLWBGcQh6mLJDIc5Foglb1W5a6pBsqDQ8yBF0/mxZoienHCV6maAU1t+s
-         oQVKu5BQJuIg+FmMIO2+fgXYXuXGhZhyrDkPoEzkz6hkKRJ+LvAodRoRSkhLATss7bYs
-         d2raTCN1ygOaOMozLJlIMih1DzMHQtSl/lrlMJeIEbPb4rnhVcCt57ydtjE7Tr3GfMfi
-         1gvA==
+        bh=X08K0+5ubUz+4Dtb/n6m51W7n5tM+ufs3byELYmxH1A=;
+        b=Lmd6tAnvQlSaaLdSThQi2sSlJc+tf2rVtZOzGLfyRHlt9BZzOqWVQacK7TMqTQ6AYv
+         OfHAS+dxn3r8RzlBlmAfaz1cZNjVcM3pJe6rnjpdPQhXBq6af9CscArkY8v868sVxpOk
+         Uq1MeZHipxTr6SQtpjjhnXrgumg6NEqQfzQaPTfNRvP/50P7P9aPdxVoLVsH89s5cpt7
+         SG8ZxtVCRlNby6MjrKhwRcoApcekihgusHOXICKuHNLVyyn2VjpJAJGk+JVhynmGydeB
+         jh7wPqLtqBiZWAG/BQvUlBGxqkKU6v7whyimHeLbZlDi8sUalZ+jdT3LN5L9l+4cqpJT
+         igmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719244246; x=1719849046;
+        d=1e100.net; s=20230601; t=1719244247; x=1719849047;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1aP/ldgWbu2+XT8YO2t/nVvVclNabe2RrR4wVmboSZo=;
-        b=ZX19M7vOEOZBsKnxphfH9D80iki0IgFDs5eLVdUzWgr/6WAV7IcD+C4Rc87wkbkxl+
-         LdrU0vrRETSBfXR2IRmjjJMRifL1buC7xNqXYsokgR+gV1GN9rhUpbOHnk3PikAxpsz6
-         Y4uE4I5uBprvV0icgAYntBaJLiy4ugwKirHG8TRvCJDXXY0+mgYHthNW/MBtEcoySUML
-         sSRIHW9KohyDdxh3UQUyRiU2crPDswoCq11AT3kfY6Ob0QR6i6qLoU6NzNKqFAw3enVH
-         RBz9ScosmvOX5VK/X+d/hbXaJ9TOHtuqrXUiL0Fnig04DbgJRQ7jnsjq5hNPELQaCuZM
-         vaLg==
-X-Gm-Message-State: AOJu0Yx2xqFDdXvPGf6FpIPreqSvA2/V30NZ8jAUUI2yiBfVteP5OxEf
-	ox8hDq4UhxGW/lzU+4L8d3TmIs+NtwOt5ttFal1qomdLJLIOUseJIXZXPmBetXGe1un98cQ/9DM
-	Q
-X-Google-Smtp-Source: AGHT+IFcs18Fh0C+uER0RjZHd4S0uGPnIGPl54a1zVQndbkivmVpaqrO120CPd6ku5cvS0ILPXvI9Q==
-X-Received: by 2002:a81:848f:0:b0:622:c892:6ae7 with SMTP id 00721157ae682-643af6ebd94mr24990347b3.12.1719244245856;
-        Mon, 24 Jun 2024 08:50:45 -0700 (PDT)
+        bh=X08K0+5ubUz+4Dtb/n6m51W7n5tM+ufs3byELYmxH1A=;
+        b=etgDPBstJf46dTC1JKvfs31dtFgYLvA9pLLw/yBU7FLnalf8Qi/gezxsUME2OUdR2n
+         yi2+lMy3EcsAeMU6Qhyh6Hzv550eZU+SXFQ7RwiQ8ZbZUdRKu6CyAOFXLkmEGzIHG460
+         0LhptfdWo36BnqOc3zEaOauRnxG190CNI6bC2LlIvkhE2YWKUIH7XWllbIvCgTe3NOLk
+         lpiF6JQsGXi4I0X2fuf63N25Ydhbq0RF12tUyE6ftyujy/VH446s6kKI1SXmEK9Gz9e5
+         WgGnNo5UGz5Q1aIeYxFEid01+1LgL87ce2eKV027p7EfKiK4+6o4z9EOTM/MmW9dSpoz
+         LvVA==
+X-Gm-Message-State: AOJu0YzFmMYLOULBW0gD4nmHpe+htKpZUiH6u+DFmTZsJZ3mLoVCBg8x
+	muigCU+YG6PB7mUEilP+d7dMAA0s1sPW4TM+57I9w0ReB1t4HtC+dQ6W+6dp5dgKCRxHuFj86T2
+	R
+X-Google-Smtp-Source: AGHT+IGGDpNMWAqjctL7iQDQzsUjtxHg2UtzjpHu2kOO+8ymSyyqZQkqGrzwLsMAmWrMYfFWvbwPmA==
+X-Received: by 2002:a25:a503:0:b0:dfe:73d8:4593 with SMTP id 3f1490d57ef6-e02fc34f307mr5325972276.48.1719244247035;
+        Mon, 24 Jun 2024 08:50:47 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f14a3cd92sm29354037b3.102.2024.06.24.08.50.45
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02e6116e09sm3291522276.11.2024.06.24.08.50.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 08:50:45 -0700 (PDT)
+        Mon, 24 Jun 2024 08:50:46 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	kernel-team@fb.com
-Subject: [PATCH 6/8] fs: Allow statmount() in foreign mount namespace
-Date: Mon, 24 Jun 2024 11:49:49 -0400
-Message-ID: <52a2e17e50ba7aa420bc8bae1d9e88ff593395c1.1719243756.git.josef@toxicpanda.com>
+Subject: [PATCH 7/8] fs: add an ioctl to get the mnt ns id from nsfs
+Date: Mon, 24 Jun 2024 11:49:50 -0400
+Message-ID: <180449959d5a756af7306d6bda55f41b9d53e3cb.1719243756.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1719243756.git.josef@toxicpanda.com>
 References: <cover.1719243756.git.josef@toxicpanda.com>
@@ -85,98 +85,62 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Christian Brauner <brauner@kernel.org>
+In order to utilize the listmount() and statmount() extensions that
+allow us to call them on different namespaces we need a way to get the
+mnt namespace id from user space.  Add an ioctl to nsfs that will allow
+us to extract the mnt namespace id in order to make these new extensions
+usable.
 
-This patch makes use of the new mnt_ns_id field in struct mnt_id_req to
-allow users to stat mount entries not in their mount namespace.  The
-rules are the same as listmount(), the user must have CAP_SYS_ADMIN in
-their user namespace and the target mount namespace must be a child of
-the current namespace.
-
-Co-developed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/namespace.c | 31 +++++++++++++++++++++++++------
- 1 file changed, 25 insertions(+), 6 deletions(-)
+ fs/nsfs.c                 | 14 ++++++++++++++
+ include/uapi/linux/nsfs.h |  2 ++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 1b422fd5f267..6d44537fd78c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4977,10 +4977,8 @@ static int statmount_fs_type(struct kstatmount *s, struct seq_file *seq)
- 	return 0;
- }
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 07e22a15ef02..af352dadffe1 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -12,6 +12,7 @@
+ #include <linux/nsfs.h>
+ #include <linux/uaccess.h>
  
--static void statmount_mnt_ns_id(struct kstatmount *s)
-+static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
- {
--	struct mnt_namespace *ns = current->nsproxy->mnt_ns;
--
- 	s->sm.mask |= STATMOUNT_MNT_NS_ID;
- 	s->sm.mnt_ns_id = ns->seq;
- }
-@@ -5082,7 +5080,7 @@ static int do_statmount(struct kstatmount *s)
- 		err = statmount_string(s, STATMOUNT_MNT_POINT);
++#include "mount.h"
+ #include "internal.h"
  
- 	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
--		statmount_mnt_ns_id(s);
-+		statmount_mnt_ns_id(s, ns);
- 
- 	if (err)
- 		return err;
-@@ -5199,6 +5197,7 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
- 		struct statmount __user *, buf, size_t, bufsize,
- 		unsigned int, flags)
- {
-+	struct mnt_namespace *ns __free(mnt_ns_release) = NULL;
- 	struct vfsmount *mnt;
- 	struct mnt_id_req kreq;
- 	struct kstatmount ks;
-@@ -5213,13 +5212,28 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
- 	if (ret)
- 		return ret;
- 
-+	ns = grab_requested_mnt_ns(kreq.mnt_ns_id);
-+	if (!ns)
-+		return -ENOENT;
+ static struct vfsmount *nsfs_mnt;
+@@ -143,6 +144,19 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+ 		argp = (uid_t __user *) arg;
+ 		uid = from_kuid_munged(current_user_ns(), user_ns->owner);
+ 		return put_user(uid, argp);
++	case NS_GET_MNTNS_ID: {
++		struct mnt_namespace *mnt_ns;
++		__u64 __user *idp;
++		__u64 id;
 +
-+	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
-+	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
-+		return -ENOENT;
++		if (ns->ops->type != CLONE_NEWNS)
++			return -EINVAL;
 +
- retry:
- 	ret = prepare_kstatmount(&ks, &kreq, buf, bufsize, seq_size);
- 	if (ret)
- 		return ret;
- 
- 	down_read(&namespace_sem);
--	mnt = lookup_mnt_in_ns(kreq.mnt_id, current->nsproxy->mnt_ns);
-+	/* Has the namespace already been emptied? */
-+	if (kreq.mnt_ns_id && RB_EMPTY_ROOT(&ns->mounts)) {
-+		up_read(&namespace_sem);
-+		kvfree(ks.seq.buf);
-+		return -ENOENT;
++		mnt_ns = container_of(ns, struct mnt_namespace, ns);
++		idp = (__u64 __user *)arg;
++		id = mnt_ns->seq;
++		return put_user(id, idp);
 +	}
-+
-+	mnt = lookup_mnt_in_ns(kreq.mnt_id, ns);
- 	if (!mnt) {
- 		up_read(&namespace_sem);
- 		kvfree(ks.seq.buf);
-@@ -5227,7 +5241,12 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+ 	default:
+ 		return -ENOTTY;
  	}
+diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+index a0c8552b64ee..56e8b1639b98 100644
+--- a/include/uapi/linux/nsfs.h
++++ b/include/uapi/linux/nsfs.h
+@@ -15,5 +15,7 @@
+ #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
+ /* Get owner UID (in the caller's user namespace) for a user namespace */
+ #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
++/* Get the id for a mount namespace */
++#define NS_GET_MNTNS_ID		_IO(NSIO, 0x5)
  
- 	ks.mnt = mnt;
--	get_fs_root(current->fs, &ks.root);
-+	ret = grab_requested_root(ns, &ks.root);
-+	if (ret) {
-+		up_read(&namespace_sem);
-+		kvfree(ks.seq.buf);
-+		return ret;
-+	}
- 	ret = do_statmount(&ks);
- 	path_put(&ks.root);
- 	up_read(&namespace_sem);
+ #endif /* __LINUX_NSFS_H */
 -- 
 2.43.0
 
