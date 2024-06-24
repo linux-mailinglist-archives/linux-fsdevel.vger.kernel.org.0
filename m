@@ -1,177 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-22238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD9C914DC0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 14:53:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E07F914F39
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41A49B23B78
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 12:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0D7281465
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 13:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB95913D526;
-	Mon, 24 Jun 2024 12:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC7A1422DD;
+	Mon, 24 Jun 2024 13:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hj8g+3Oo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZCi/NfA7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pd+4fAoo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D4E1E868;
-	Mon, 24 Jun 2024 12:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24A11419A9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 13:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719233591; cv=none; b=rh7WCkuRvxT1sXT14/zKzJYs+ND4uE0/MhrwKEZCj6R7pMjEuAQr6w+cyVIHyzCeTmh9Q1PH3NzCP5GJ5BfDzQ4oFwWC4NyMLMA62VjdxIrkwAYGB9zT3S+xXFEYojb5xxYjM6TXZBSJt87ODagm509Y0bfbWmLF9N1tSCzSrVw=
+	t=1719237258; cv=none; b=r/vqrFuR3gbQEHTgbl9sgQrMQfxjfqy0Ndpea3e2C6HxdW1/EoQTBqQF+dMAq8aUU+xaUFFYBiGMTHyggDMZUSydkz8ZMKHTAtRpLLnFogsOjtxjqxYvt22UQakcgEGsjp1kYaBLXMfAS4LQn3K2Og2sS3PddvMdsZtQeFz04Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719233591; c=relaxed/simple;
-	bh=gkOCJdJk+yKTW4RqeE1LxGsDvjSflGa8F/6v/0JODbY=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=F1bLJsyUCvUJDZYviBF19UzMOkleWyLVIZGnhLXnyYeBxXPxoMZAgp3VxixgLxqcyZMG3pXyFK+aUUbsCkH/cq2KdLkUQ1kets2TvWwURsHlDVnM1TdtA+TzxnWlZ5CZiEDQq+erlWQT75g5RJv6nadLDpRy8MrP+kPS8uo9tOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hj8g+3Oo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZCi/NfA7; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 8F9E313801B5;
-	Mon, 24 Jun 2024 08:53:08 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 24 Jun 2024 08:53:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1719233588; x=1719319988; bh=xWKRucLiTm
-	pWwmmRX8FZ+pQR2gzXCPeFFp5WbUeFfbU=; b=hj8g+3OooVka8gNBjbWNY0qyAL
-	Z6vhvHJoz9J9I0++1woXG7Ge7EifFpbLdlmvrkBZicJ0Vuzhe4E65yfemaw0dpnz
-	ezbi2d09aLDF7ImuAp7ePDjUCcxqHHTdYBm1BZek/TB0JoKaPQYXQIQoZ6Ju8mOB
-	wJHI0OVjjjp4u23oFnNEB7nzInWRR+TgaFrQTVv59rGbcP+I49knsJba70p5D5dX
-	Q5dWWoC06j/c71Hvbmvv7UXEBlX1BHogMWVK0cFu3TYfKqxJtX6AOJv/ZHj8k8Wz
-	mczS6v5JUo7LbjeTVmLp9rK2m7s3ayQKBQJwHt4h6ceJB75BnOFzmPxvTpcQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719233588; x=1719319988; bh=xWKRucLiTmpWwmmRX8FZ+pQR2gzX
-	CPeFFp5WbUeFfbU=; b=ZCi/NfA7A/RQ9uffYWdnOth3zq0Nr7nYZ6oyyv9JWPOj
-	xm28gfJIalTQ9/Kdb3z5NDEv5ViTQHpwDzh6N2EeBHUDTVkRXgciUBMMS7AkgJUj
-	m/mZbf+ejaW10hmpd2gpqA98HnK/cBDtPVX3x7KTkifmry6qtJLpqiIaPkXjblZ4
-	K7U1Q9y0NRupMUuTkp76UIKEdKjVDI2+kJz8w5XDLyPvrBl9f3pDL8siN6LnFZYc
-	NHOsGh9Hg19uIehl2i3Z+NCBcSIcICMOlvBqO5de2EYJe0DcK20O5S+BIXOjPhfU
-	Ags7pPfYnlnunrnOo2Ffj4stHt2oG0X14wweQw4qyQ==
-X-ME-Sender: <xms:NGx5ZiVg1gGRlt9ve2AaCtdW00-4mkL4YYmnOlzPKKmgIemKoVjYew>
-    <xme:NGx5ZulJumI0JaGXmMii6JT6fzQIe9Qzlss726rjLTBIdsG1udtt43SlcJaGFmM4z
-    _U7v720kyBtwitGg-E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeguddgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:NGx5ZmYm5Y8_qZxXMutSnpZE-wAmIMkn8Co-Mc0N0PmSj90GZrpw9g>
-    <xmx:NGx5ZpVp_EN-CxgbfK-hH9-RsnW40Aj5LDE45CtCcZJj11OxT0IahQ>
-    <xmx:NGx5ZsmW9IB7O6E2KjShAvsf5qyGRubEB8ghp8lTi4rt0SC82Pq-OQ>
-    <xmx:NGx5Zudlz3chAaIISEKXN8oIN5P3itL3KhonJd_OA7jWYnsbt1Oh_g>
-    <xmx:NGx5ZnCn48KYTyY9DzCFIK7ydsxiaLAQcCK1tdYkGjcqKFPdDXZkeYYz>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 47B3CB6008D; Mon, 24 Jun 2024 08:53:08 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1719237258; c=relaxed/simple;
+	bh=O5+IgKLm1vEoEvrobEa1GxPlnjCw72AcGZptrcBydQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJlehNzSmaVLyKk78yWyvu0T/W9JOy3aa45i2USdYCTAXiC/xank5Guk9MZ45U694NnaBYEP+JRqsVH+4hR2nokwX/7KZsBP+oT19XD0rl2xATX3KSo4Ynwq/sK8GoGIWL0zaEfguHCZvmrkF6GlScDJNRXv1DUggpkFr1OYdYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pd+4fAoo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719237255;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B77pEoc7buh1Ruqfn82dEw1pJ+gpFKLmMx1Y4IU5wno=;
+	b=Pd+4fAoo6zs3p53x084vQ0rK3StBwUiz0JaQjgtO+oYyTvxLR78JwLbQPioPZiKjfMQP1z
+	XPESBSreRGBHaxxWlehnaA33AEFeRRmbyaXoPObMAdIU7+Jk+pYNnSoazKCLKiNns8puyg
+	ZVRJn/M61OLN50jRPbUugllWBQ7AkHE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-286-QFm1hXAgNv-oKoLZs_M4Hw-1; Mon,
+ 24 Jun 2024 09:54:09 -0400
+X-MC-Unique: QFm1hXAgNv-oKoLZs_M4Hw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFFF5195609F;
+	Mon, 24 Jun 2024 13:54:02 +0000 (UTC)
+Received: from fedora (unknown [10.22.33.154])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C6813000219;
+	Mon, 24 Jun 2024 13:53:59 +0000 (UTC)
+Date: Mon, 24 Jun 2024 09:53:57 -0400
+From: Audra Mitchell <audra@redhat.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	aarcange@redhat.com, akpm@linux-foundation.org,
+	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, raquini@redhat.com
+Subject: Re: [PATCH v2 3/3] Turn off test_uffdio_wp if
+ CONFIG_PTE_MARKER_UFFD_WP is not configured.
+Message-ID: <Znl6dfM_qbH3hIvH@fedora>
+References: <20240621181224.3881179-1-audra@redhat.com>
+ <20240621181224.3881179-3-audra@redhat.com>
+ <ZnXwT_vkyVbIJefN@x1n>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <b31072d5-865b-4cda-be37-d93c36397d39@app.fastmail.com>
-In-Reply-To: <20240620162316.3674955-3-arnd@kernel.org>
-References: <20240620162316.3674955-1-arnd@kernel.org>
- <20240620162316.3674955-3-arnd@kernel.org>
-Date: Mon, 24 Jun 2024 14:52:47 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Arnd Bergmann" <arnd@kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- linux-mips@vger.kernel.org, "Helge Deller" <deller@gmx.de>,
- linux-parisc@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- "Andreas Larsson" <andreas@gaisler.com>, sparclinux@vger.kernel.org,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org, "Brian Cain" <bcain@quicinc.com>,
- linux-hexagon@vger.kernel.org, guoren <guoren@kernel.org>,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- "Heiko Carstens" <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
- "Rich Felker" <dalias@libc.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- "Xi Ruoyao" <libc-alpha@sourceware.org>,
- "musl@lists.openwall.com" <musl@lists.openwall.com>,
- "LTP List" <ltp@lists.linux.it>, stable@vger.kernel.org
-Subject: Re: [PATCH 02/15] syscalls: fix compat_sys_io_pgetevents_time64 usage
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnXwT_vkyVbIJefN@x1n>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Jun 20, 2024, at 18:23, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Fri, Jun 21, 2024 at 05:27:43PM -0400, Peter Xu wrote:
+> On Fri, Jun 21, 2024 at 02:12:24PM -0400, Audra Mitchell wrote:
+> > If CONFIG_PTE_MARKER_UFFD_WP is disabled, then testing with test_uffdio_up
+> 
+> Here you're talking about pte markers, then..
+> 
+> > enables calling uffdio_regsiter with the flag UFFDIO_REGISTER_MODE_WP. The
+> > kernel ensures in vma_can_userfault() that if CONFIG_PTE_MARKER_UFFD_WP
+> > is disabled, only allow the VM_UFFD_WP on anonymous vmas.
+> > 
+> > Signed-off-by: Audra Mitchell <audra@redhat.com>
+> > ---
+> >  tools/testing/selftests/mm/uffd-stress.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
+> > index b9b6d858eab8..2601c9dfadd6 100644
+> > --- a/tools/testing/selftests/mm/uffd-stress.c
+> > +++ b/tools/testing/selftests/mm/uffd-stress.c
+> > @@ -419,6 +419,9 @@ static void parse_test_type_arg(const char *raw_type)
+> >  	test_uffdio_wp = test_uffdio_wp &&
+> >  		(features & UFFD_FEATURE_PAGEFAULT_FLAG_WP);
+> >  
+> > +	if (test_type != TEST_ANON && !(features & UFFD_FEATURE_WP_UNPOPULATED))
+> > +		test_uffdio_wp = false;
+> 
+> ... here you're checking against wp_unpopulated.  I'm slightly confused.
+> 
+> Are you running this test over shmem/hugetlb when the WP feature isn't
+> supported?
 >
-> Using sys_io_pgetevents() as the entry point for compat mode tasks
-> works almost correctly, but misses the sign extension for the min_nr
-> and nr arguments.
->
-> This was addressed on parisc by switching to
-> compat_sys_io_pgetevents_time64() in commit 6431e92fc827 ("parisc:
-> io_pgetevents_time64() needs compat syscall in 32-bit compat mode"),
-> as well as by using more sophisticated system call wrappers on x86 and
-> s390. However, arm64, mips, powerpc, sparc and riscv still have the
-> same bug.
->
-> Changes all of them over to use compat_sys_io_pgetevents_time64()
-> like parisc already does. This was clearly the intention when the
-> function was originally added, but it got hooked up incorrectly in
-> the tables.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 48166e6ea47d ("y2038: add 64-bit time_t syscalls to all 32-bit 
-> architectures")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm64/include/asm/unistd32.h         | 2 +-
->  arch/mips/kernel/syscalls/syscall_n32.tbl | 2 +-
->  arch/mips/kernel/syscalls/syscall_o32.tbl | 2 +-
->  arch/powerpc/kernel/syscalls/syscall.tbl  | 2 +-
->  arch/s390/kernel/syscalls/syscall.tbl     | 2 +-
->  arch/sparc/kernel/syscalls/syscall.tbl    | 2 +-
->  arch/x86/entry/syscalls/syscall_32.tbl    | 2 +-
->  include/uapi/asm-generic/unistd.h         | 2 +-
->  8 files changed, 8 insertions(+), 8 deletions(-)
+> I'm wondering whether you're looking for UFFD_FEATURE_WP_HUGETLBFS_SHMEM
+> instead.
 
-The build bot reported a randconfig regressions with this
-patch, which I've now fixed up like this:
+I can confirm, its all really confusing... So in userfaultfd_api, we disable
+three features if CONFIG_PTE_MARKER_UFFD_WP is not enabled- including 
+UFFD_FEATURE_WP_UNPOPULATED:
 
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index d7eee421d4bc..b696b85ac63e 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -46,8 +46,8 @@ COND_SYSCALL(io_getevents_time32);
- COND_SYSCALL(io_getevents);
- COND_SYSCALL(io_pgetevents_time32);
- COND_SYSCALL(io_pgetevents);
--COND_SYSCALL_COMPAT(io_pgetevents_time32);
- COND_SYSCALL_COMPAT(io_pgetevents);
-+COND_SYSCALL_COMPAT(io_pgetevents_time64);
- COND_SYSCALL(io_uring_setup);
- COND_SYSCALL(io_uring_enter);
- COND_SYSCALL(io_uring_register);
+#ifndef CONFIG_PTE_MARKER_UFFD_WP
+        uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
+        uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
+        uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
+#endif
 
-This was already broken on parisc the same way, but the
-mistake in sys_ni.c turned into a link failure for every
-compat architecture after my patch.
+If you run the userfaultfd selftests with the run_vmtests script we get
+several failures stemming from trying to call uffdio_regsiter with the flag 
+UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault() 
+that if CONFIG_PTE_MARKER_UFFD_WP is disabled, only allow the VM_UFFD_WP -
+which is set when you pass the UFFDIO_REGISTER_MODE_WP flag - on 
+anonymous vmas.
 
-      Arnd
+In parse_test_type_arg() I added the features check against 
+UFFD_FEATURE_WP_UNPOPULATED as it seemed the most well know feature/flag. I'm 
+more than happy to take any suggestions and adapt them if you have any! 
+
+Thanks in advance and happy Monday!
+
+-- Audra
+
+
+ 
+> Thanks,
+> 
+> > +
+> >  	close(uffd);
+> >  	uffd = -1;
+> >  }
+> > -- 
+> > 2.44.0
+> > 
+> 
+> -- 
+> Peter Xu
+> 
+
 
