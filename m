@@ -1,95 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-22245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B692E915260
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:30:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04CE79152DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 17:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719F02831B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:30:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7CF2820F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 15:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7B519CCE4;
-	Mon, 24 Jun 2024 15:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5730D19D094;
+	Mon, 24 Jun 2024 15:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oTDMZlN4"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="fCCqbUDK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CF71EB48;
-	Mon, 24 Jun 2024 15:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543ED1D53C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719243041; cv=none; b=AbQSehuDUpWbH+9qqIGUudHbIo3FZfA2ibJBNj07xoixe8ukvOpDhJ8ykT+15FU4nsLBuzTHXFwh++wel/aePosqlM2VAq/EH8DJdvQXV9YqVSgln8FUpcS2dxo68gNMTqsxWkg717/wp27oocdSLalWcn1i1wl0xB4YeizzNJE=
+	t=1719244241; cv=none; b=pTLzLUwONt6G3hm0vTb2Q2SekQ1uf1Or5g4qu6xw4J6JCyqxD2/VN/yZP+o0t3SNIt6tCp7+ZRyo7Ij/wyuSg6+JrcwuGFTSpMpnFdzmJ+PLvCK50ogxdz5z/tBc0Ss9yEhl3Oa/6GF3xv+cA8FKFJhXvuUJwrGoqOQNy8vbUNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719243041; c=relaxed/simple;
-	bh=HRhQJtabtRMNCUnl8RTGBTId6p/EedjvtfBS1qbdgPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YDpmHWTCziXyV11xqzL8sJViOoNy7zlJmkkRU56VpddGzn8uL3/qavmMgNY7OBWno8ex6ddGIPvdYpe6YxZzFsn88c5mSpfWQgXhHdJEloiW8aWWAnkp4rEV4EZy/T8mqMuIjfbtrFGUlZ2Y3GPPTBJqNfFPNk1KkaRTA6UYcGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oTDMZlN4; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ibOseP3v+dBm3ryF8qHTc4kO0U1WTtO4bLBS/mcVu34=; b=oTDMZlN4SXslRY4K7g3pCQbGMD
-	qsQfoMhI7YcQdflI7frvY7DJgaYzXxOaWibqzG6uc5Tk0XaPw7hpthbydXCkPWid9i1LM6i3DM70O
-	tVGdEkKpNjmUaCi1AFIyvQ4gayZE3VzExPtj0+6X1+S+buOV8PjD7DNDqBnJIJwCt4y4cznv3XzUv
-	gppbQlBZQWKJ6N0xlzAklb69xw+NFgMTMq95gPTeXMVK0CYuC28uPkIX5+eW2IiPG/ttMySf9X1pl
-	56A4Yhnr4i2nBoObwCBbKkhSN6RJryWtvDqIGWTJvPuoJeYjyibwp0ybu94RNtpbC24EAo1bXsdaf
-	c1HBWJBQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sLleN-0000000ABa2-439g;
-	Mon, 24 Jun 2024 15:30:36 +0000
-Date: Mon, 24 Jun 2024 16:30:35 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>,
-	Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-	v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix netfs_page_mkwrite() to check folio->mapping
- is valid
-Message-ID: <ZnmRGyuSZKtmJVhG@casper.infradead.org>
-References: <614257.1719228181@warthog.procyon.org.uk>
+	s=arc-20240116; t=1719244241; c=relaxed/simple;
+	bh=AcXSgJviOfnpFMYrB7qa+YYutwJU73uTBASPD7sbCYk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=mwjJ27+YCJ3wtRPdjvtyjJNynm01v6xvbZ6cQsEr6oHR4bxWv2PrLg/tlVmHSmzuXc0n6FV4HPVcjEkh0fxxsGoPdHjsGUVwB1MxHUYVaYfrMVx2X5sk5hdGSHM/N3t66KyVxfWu9oi+20uW0c/Qf/P78o5EOMpPD4t0YTOnA5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=fCCqbUDK; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e02bda4aba3so4613770276.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719244239; x=1719849039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yLgQK881bMd+8UR0jrCVA/izBGZlf9yBdyaqSchEtrQ=;
+        b=fCCqbUDKyIUAmrXuJVbRB6TYSZr2hcUVMux7yMA8rFULwxROTd1QASdN1YY0ULtgKG
+         +6CIXHT93PQJ2cStChVtS3zkij2WsdGeAre/ylFK4QSY6zINPrZoeSxtalMK/3tRyT0o
+         xGpc4CX+mx1c2yHULtmTuqdinDUyrXMqq2C3GQ4RgXpoLK+PxptyR0PTRPGTkftOdBIf
+         HFRGD6qWEsNTTox7hG6RgMVqQveI0uQr0HnXb1BwDTSLHeQ8iXh6o6uwnnL03ZIacZCz
+         lSePRr2PL4em4mgfpAWf2civVeO/66vzIg5nez2DiT3CDglKWbtZE6BgEM2vMrjKk+6C
+         JHHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719244239; x=1719849039;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yLgQK881bMd+8UR0jrCVA/izBGZlf9yBdyaqSchEtrQ=;
+        b=cY0ZuTrJpUyQFgee6JRdEEMHwfADNixbm2KyNDlbKiZShwAJHkQOtH6MLBOGCY16+S
+         msNZjX3acgSoAIw9F3yjucgeyMxkTvYDTKEnOVjNd4UvAAFWxhBusS9RHyt0mf8cTOCL
+         tVvgIQ3yYIZJUTOavEtaIhjZdLG+4yAQFt+SbojlH5YQM7LkQjufVKMfkOb8sk44oliF
+         aoE+I+fb8QxcDIB47s78lXrte6W0PYL8ucngiyUXFMvMS3YYRpRvSgYAb0tTJr7x4qj4
+         lXDYvhYiB1Uih/1jOs/YrFElgy5FlbmziE9nv/z1GeW3nYLSQ2bty7lQfsYWeKN+L6uv
+         w+AA==
+X-Gm-Message-State: AOJu0YwpRB86MJNzVyGkPwbYMDqFZUQIxXdEG/BlCwspni+R6FmA096+
+	6rW/0/DFwxp+14nrXZap55e0vO+PnY2uwwtsQVnYNWlS5z0IbrKH3b+RAdaWVm1AAyB779hTrkU
+	W
+X-Google-Smtp-Source: AGHT+IGvmR9uyRorstnYlvohFuzDppOOmsHAviPndD2XaUQ91OkyrEYLCAZRpveSEhdKIolwNL4rgw==
+X-Received: by 2002:a25:cec8:0:b0:dfd:be95:f305 with SMTP id 3f1490d57ef6-e0303f2ab11mr4473561276.5.1719244239097;
+        Mon, 24 Jun 2024 08:50:39 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02e65e0149sm3306191276.57.2024.06.24.08.50.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 08:50:38 -0700 (PDT)
+From: Josef Bacik <josef@toxicpanda.com>
+To: linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org,
+	kernel-team@fb.com
+Subject: [PATCH 0/8] Support foreign mount namespace with statmount/listmount
+Date: Mon, 24 Jun 2024 11:49:43 -0400
+Message-ID: <cover.1719243756.git.josef@toxicpanda.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <614257.1719228181@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 12:23:01PM +0100, David Howells wrote:
-> @@ -508,6 +509,10 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_gr
->  
->  	if (folio_lock_killable(folio) < 0)
->  		goto out;
-> +	if (folio->mapping != mapping) {
-> +		ret = VM_FAULT_NOPAGE | VM_FAULT_LOCKED;
-> +		goto out;
-> +	}
+Hello,
 
-Have you tested this?  I'd expect it to throw some VM assertions.
+Currently the only way to iterate over mount entries in mount namespaces that
+aren't your own is to trawl through /proc in order to find /proc/$PID/mountinfo
+for the mount namespace that you want.  This is hugely inefficient, so extend
+both statmount() and listmount() to allow specifying a mount namespace id in
+order to get to mounts in other mount namespaces.
 
-        ret = vmf->vma->vm_ops->page_mkwrite(vmf);
-        /* Restore original flags so that caller is not surprised */
-        vmf->flags = old_flags;
-        if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE)))
-                return ret;
-...
-                if (unlikely(!tmp || (tmp &
-                                      (VM_FAULT_ERROR | VM_FAULT_NOPAGE)))) {
-                        folio_put(folio);
-                        return tmp;
-                }
+There are a few components to this
 
-So you locked the folio, then called folio_put() without unlocking it.
-Usually the VM complains noisily if you free a locked folio.
+1. Having a global index of the mount namespace based on the ->seq value in the
+   mount namespace.  This gives us a unique identifier that isn't re-used.
+2. Support looking up mount namespaces based on that unique identifier, and
+   validating the user has permission to access the given mount namespace.
+3. Provide a new ioctl() on nsfs in order to extract the unique identifier we
+   can use for statmount() and listmount().
+
+The code is relatively straightforward, and there is a selftest provided to
+validate everything works properly.
+
+This is based on vfs.all as of last week, so must be applied onto a tree that
+has Christians error handling rework in this area.  If you wish you can pull the
+tree directly here
+
+https://github.com/josefbacik/linux/tree/listmount.combined
+
+Christian and I collaborated on this series, which is why there's patches from
+both of us in this series.
+
+Josef
+
+Christian Brauner (4):
+  fs: relax permissions for listmount()
+  fs: relax permissions for statmount()
+  fs: Allow listmount() in foreign mount namespace
+  fs: Allow statmount() in foreign mount namespace
+
+Josef Bacik (4):
+  fs: keep an index of current mount namespaces
+  fs: export the mount ns id via statmount
+  fs: add an ioctl to get the mnt ns id from nsfs
+  selftests: add a test for the foreign mnt ns extensions
+
+ fs/mount.h                                    |   2 +
+ fs/namespace.c                                | 240 ++++++++++--
+ fs/nsfs.c                                     |  14 +
+ include/uapi/linux/mount.h                    |   6 +-
+ include/uapi/linux/nsfs.h                     |   2 +
+ .../selftests/filesystems/statmount/Makefile  |   2 +-
+ .../filesystems/statmount/statmount.h         |  46 +++
+ .../filesystems/statmount/statmount_test.c    |  53 +--
+ .../filesystems/statmount/statmount_test_ns.c | 360 ++++++++++++++++++
+ 9 files changed, 659 insertions(+), 66 deletions(-)
+ create mode 100644 tools/testing/selftests/filesystems/statmount/statmount.h
+ create mode 100644 tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
+
+-- 
+2.43.0
+
 
