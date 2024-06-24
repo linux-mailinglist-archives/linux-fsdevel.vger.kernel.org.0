@@ -1,104 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-22277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D34C915A2A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 00:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F21915A67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 01:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C74E5B22A08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 22:58:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DAAAB20953
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 23:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F2C1A257B;
-	Mon, 24 Jun 2024 22:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567801A2C3E;
+	Mon, 24 Jun 2024 23:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIgX487J"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lj2YUkz+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF151A254A;
-	Mon, 24 Jun 2024 22:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747211A2C06
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 23:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719269905; cv=none; b=FDEa5iKgXpamGEvgrIv0TXZA0zklAL/AL7bFAyABp2EjKE/qTKPVJX3aX7zBZM8dxxAdKYAr+oz+0s0KyfBk9vWTuiZyZV7j55kce4KrPdGkG5Kf5HMcrgIREG/d8YUB4KZXUFziAWK0xmWTAlni4NfkoWXjyEEnvNZaq6kKA+Y=
+	t=1719271738; cv=none; b=mrdNIwpzdFwknqrwbAi48CIS1WoIFvsWWtrX5vNluGbj0YUqrqXtrmNnZCUJHKvafPEAbpfUEXMQ2xzyA6GxQLGNf6rQ+d6GtR4OIkVDO2//zqqF3qNhyyO3xsiYBwZRg/SZNhai8Wrcy1410CFdebox90o3K+qa6lmqMw5tYps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719269905; c=relaxed/simple;
-	bh=iA7soJkpGVIKt7XVvk8Avygo72QDsaSjKA52TLDa3y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=URc6vSgslW+dcyjRN9juuWhGRfDdGunBGkF8nEfadyVxE/U6pOZGpka81dIKh2Il1nxJMr6skOUGVe+Za1XK0zwNP99x+/SYBsas/FR08ZAQVYs+ImJr/E2/U/ZiZ8dHPcI0uzjEUdGaZmWeTEmKH7s/pe8TcF2DWYSzofVAZhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIgX487J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53667C2BBFC;
-	Mon, 24 Jun 2024 22:58:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719269904;
-	bh=iA7soJkpGVIKt7XVvk8Avygo72QDsaSjKA52TLDa3y4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cIgX487JN8lhIWwtdU5liMps5jnB/iuFfCdxzShBm0+k16Zc6TUnzq5B+IfX9ao9h
-	 bvCAPx5R4d2FID4jv+PXsrL3rU+CdxSXD0FEz55Yytha/MVXjP4qDCMIOV76mfGvUK
-	 RzGVX3+vG7RP3qfmNcGzcY77s6ybP1HFlnIdfemDqWPpp9e6OAcDCjkcf7enJbDEf8
-	 z/T3Hgac1qVPR5zIsLevzeNCOVA2NJzbYir9lUyWmKJLRPzp9Z+AUFtGO0zgS3MJx/
-	 CQS1ogR3PouW+eiO0maCC1Dwix1Dx4KUlCAD21OPYpzKHeecDTqvnNx0TENlrK+VwA
-	 cR4rL1FSGnaMw==
-Date: Mon, 24 Jun 2024 16:58:19 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Nitesh Shetty <nj.shetty@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Bart Van Assche <bvanassche@acm.org>,
-	Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
-	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-Message-ID: <Znn6C-C73Tps3WJk@kbusch-mbp.dhcp.thefacebook.com>
-References: <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
- <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
- <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
- <20240601055931.GB5772@lst.de>
- <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
- <20240604044042.GA29094@lst.de>
- <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
- <20240605082028.GC18688@lst.de>
- <CGME20240624105121epcas5p3a5a8c73bd5ef19c02e922e5829a4dff0@epcas5p3.samsung.com>
- <66795280.630a0220.f3ccd.b80cSMTPIN_ADDED_BROKEN@mx.google.com>
+	s=arc-20240116; t=1719271738; c=relaxed/simple;
+	bh=PoyedOSrLslMpcZQkdr7wxw6LDAVWLOCZchvs+PQ4E0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QFnsk7wz65IFLjKapB9DWJIsK548vdFTOrs4mU+mc0iX7DrYdlZchfUvLGi5zJB0M1fU9texBMuIaRQdIEA+sWIqZ+JzvMTBQtIhQUUGU6n8/uDp3RL0djzX+KI/pNEzwlOARYksLbo3vq0Winj839DMHP0AZmLfGeudIRmgr3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lj2YUkz+; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02b58759c2so9681333276.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 16:28:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719271735; x=1719876535; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FEnvDY+YQtOlDLldfWY9bO5cHBXotclBQZRJTAhLrGQ=;
+        b=lj2YUkz+6BbU3CtVtmDBgEn/AyEwck95YPAoY7NjZrq/xYTfkTkmUSoGhGaS39L6HQ
+         6xnPXupoE6sxrB7vMxI9E6p+gXHRhTrv47fHIKzit3szMOUo4yOkdxN5DMsV/DRtF+87
+         6dFNnCm/PF7O0/7vpf2NXoh/gBFsJVu38onMci+8YzlrSUIEX/QlOP8K/nLFldNVOEO3
+         Z6CIT/oLvxPWvPnGvoUVtLr7tdvsJn72XlqRkRxfuH/L/emchZ38ofpfk7cn5z0Ohmuy
+         TAZ64LV9oDbfL7XwyfODiEhplgU0JGnSj54K/vuIvRQk3JdW6pK5AM9OuA0AOzk7VFU9
+         V9Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719271735; x=1719876535;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FEnvDY+YQtOlDLldfWY9bO5cHBXotclBQZRJTAhLrGQ=;
+        b=IjZWWnTv56Az7uHIcFtqNzUjtj500LOy5/qCYrg4XyfRUxmQfRHNVJnlXMDAu3rgrU
+         nWGQVexZVxD8ABLVVVo0EG/cFdcCNiyQNCojb+mGJtxezKsieA4Y9VSZpQYqPy3n6KBm
+         4uau77eq31QVMvU6QJT1x4aU7usVz/Ui3PPfcv38zqkK+8E12xJIXJwF3a2muaTXvnON
+         ptE89a7dhDqXPW66crVkhQgUP6Ak65GO+nBNS+RWx4q6u/K6AZX9T/yEowkfWVPzh7M+
+         KcgNbqs/qoMLomOiIH+7wHZZmv4cCIBnoyZ/A2ffRLemwRaf1Sxh8LR2xyd6NkDdLVFB
+         JXtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOKCmOGe14kWrafbM4nEBGtDcBMJpT/AaZo31mqz5NS23boPtfLvhAA7IU4WRjVq81i8Ooias1ZYnnWHzyOUPSsqH4Fy9/6qsil7oxtg==
+X-Gm-Message-State: AOJu0YwhIZtY+v9RXmOdM8Hn/TvbCX+KDXZ/FghsLL7RoHOGKcd1IuKy
+	QS/HTPZ/KihJnu7N0p8vJzlrMmd1H/yGM0+j0vZNOl/Glqd/WZrwOiwADUgLaHfeLSISsoaZXom
+	/1Q==
+X-Google-Smtp-Source: AGHT+IGo0nBr4OMWeDQdXO7gLmA8943vaa7AUjGpvpzDg1f7Z8BrI79oFtF9sCT7oXO1KDCB6pUDmCcxQng=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a05:6902:1081:b0:dff:4788:ea88 with SMTP id
+ 3f1490d57ef6-e0303d692f7mr20462276.0.1719271735356; Mon, 24 Jun 2024 16:28:55
+ -0700 (PDT)
+Date: Mon, 24 Jun 2024 23:26:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66795280.630a0220.f3ccd.b80cSMTPIN_ADDED_BROKEN@mx.google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Message-ID: <20240624232718.1154427-1-edliaw@google.com>
+Subject: [PATCH v6 00/13] Centralize _GNU_SOURCE definition into lib.mk
+From: Edward Liaw <edliaw@google.com>
+To: linux-kselftest@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>, 
+	Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Fenghua Yu <fenghua.yu@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, usama.anjum@collabora.com, seanjc@google.com, 
+	kernel-team@android.com, Edward Liaw <edliaw@google.com>, linux-mm@kvack.org, 
+	iommu@lists.linux.dev, kvm@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-sgx@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 24, 2024 at 04:14:07PM +0530, Nitesh Shetty wrote:
-> c. List/ctx based approach:
-> A new member is added to bio, bio_copy_ctx, which will a union with
-> bi_integrity. Idea is once a copy bio reaches blk_mq_submit_bio, it will
-> add the bio to this list.
+Centralizes the definition of _GNU_SOURCE into lib.mk and addresses all
+resulting macro redefinition warnings.
 
-Is there a reason to tie this to CONFIG_BLK_DEV_INTEGRITY? Why not use
-the bio_io_vec? There's no user data here, so that's unused, right?
+These patches will need to be merged in one shot to avoid redefinition
+warnings.
 
-> 1. Send the destination BIO, once this reaches blk_mq_submit_bio, this
-> will add the destination BIO to the list inside bi_copy_ctx and return
-> without forming any request.
-> 2. Send source BIO, once this reaches blk_mq_submit_bio, this will
-> retrieve the destination BIO from bi_copy_ctx and form a request with
-> destination BIO and source BIO. After this request will be sent to
-> driver.
+The initial attempt at this patch was abandoned because it affected
+lines in many source files and caused a large amount of churn. However,
+from earlier discussions, centralizing _GNU_SOURCE is still desireable.
+This attempt limits the changes to 1 source file and 12 Makefiles.
 
-Like Damien, I also don't see the point of the 2-bio requirement. Treat
-it like discard, and drivers can allocate "special".
+v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
+v2: https://lore.kernel.org/linux-kselftest/20240507214254.2787305-1-edliaw@google.com/
+ - Add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+   location.
+ - Remove #define _GNU_SOURCE from source code to resolve redefinition
+   warnings.
+v3: https://lore.kernel.org/linux-kselftest/20240509200022.253089-1-edliaw@google.com/
+ - Rebase onto linux-next 20240508.
+ - Split patches by directory.
+ - Add -D_GNU_SOURCE directly to CFLAGS in lib.mk.
+ - Delete additional _GNU_SOURCE definitions from source code in
+   linux-next.
+ - Delete additional -D_GNU_SOURCE flags from Makefiles.
+v4: https://lore.kernel.org/linux-kselftest/20240510000842.410729-1-edliaw@google.com/
+ - Rebase onto linux-next 20240509.
+ - Remove Fixes tag from patches that drop _GNU_SOURCE definition.
+ - Restore space between comment and includes for selftests/damon.
+v5: https://lore.kernel.org/linux-kselftest/20240522005913.3540131-1-edliaw@google.com/
+ - Rebase onto linux-next 20240521
+ - Drop initial patches that modify KHDR_INCLUDES.
+ - Incorporate Mark Brown's patch to replace static_assert with warning.
+ - Don't drop #define _GNU_SOURCE from nolibc and wireguard.
+ - Change Makefiles for x86 and vDSO to append to CFLAGS.
+v6:
+ - Rewrite patch to use -D_GNU_SOURCE= form in lib.mk.
+ - Reduce the amount of churn significantly by allowing definition to
+   coexist with source code macro defines.
+
+
+Edward Liaw (13):
+  selftests/mm: Define _GNU_SOURCE to an empty string
+  selftests: Add -D_GNU_SOURCE= to CFLAGS in lib.mk
+  selftests/net: Append to lib.mk CFLAGS in Makefile
+  selftests/exec: Drop redundant -D_GNU_SOURCE CFLAGS in Makefile
+  selftests/futex: Drop redundant -D_GNU_SOURCE CFLAGS in Makefile
+  selftests/intel_pstate: Drop redundant -D_GNU_SOURCE CFLAGS in
+    Makefile
+  selftests/iommu: Drop redundant -D_GNU_SOURCE CFLAGS in Makefile
+  selftests/kvm: Drop redundant -D_GNU_SOURCE CFLAGS in Makefile
+  selftests/proc: Drop redundant -D_GNU_SOURCE CFLAGS in Makefile
+  selftests/resctrl: Drop redundant -D_GNU_SOURCE CFLAGS in Makefile
+  selftests/ring-buffer: Drop redundant -D_GNU_SOURCE CFLAGS in Makefile
+  selftests/riscv: Drop redundant -D_GNU_SOURCE CFLAGS in Makefile
+  selftests/sgx: Append CFLAGS from lib.mk to HOST_CFLAGS
+
+ tools/testing/selftests/exec/Makefile             | 1 -
+ tools/testing/selftests/futex/functional/Makefile | 2 +-
+ tools/testing/selftests/intel_pstate/Makefile     | 2 +-
+ tools/testing/selftests/iommu/Makefile            | 2 --
+ tools/testing/selftests/kvm/Makefile              | 2 +-
+ tools/testing/selftests/lib.mk                    | 3 +++
+ tools/testing/selftests/mm/thuge-gen.c            | 2 +-
+ tools/testing/selftests/net/Makefile              | 2 +-
+ tools/testing/selftests/net/tcp_ao/Makefile       | 2 +-
+ tools/testing/selftests/proc/Makefile             | 1 -
+ tools/testing/selftests/resctrl/Makefile          | 2 +-
+ tools/testing/selftests/ring-buffer/Makefile      | 1 -
+ tools/testing/selftests/riscv/mm/Makefile         | 2 +-
+ tools/testing/selftests/sgx/Makefile              | 2 +-
+ 14 files changed, 12 insertions(+), 14 deletions(-)
+
+--
+2.45.2.741.gdbec12cfda-goog
+
 
