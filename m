@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-22269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C71915751
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 21:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC184915752
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 21:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B46AB280CF9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 19:41:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6781B280E9F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Jun 2024 19:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215501A0710;
-	Mon, 24 Jun 2024 19:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0161A072C;
+	Mon, 24 Jun 2024 19:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="FD9qguVQ"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Jy8cDez/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AEC1A01C7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 19:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6761A01C8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 19:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719258069; cv=none; b=pSvKlwJpTGjvjHJm/MI/EZmcGd2j5syN8mJL6JENtM4c6zcyXeDkxVD0WyBoCekhHTEWBYHkXHyrgjSre26ij2bmhqta3m94jxqkee78PtbyrvbfQmN6acdj17ldljWuLHnNLc5ie7uPNAWJWAONyvBhcoXWCzJnkpLFeYiLEJU=
+	t=1719258071; cv=none; b=Xw1mxN0b1pZyLWCz+Ki5NIL5kodtitE0fu/LwcNmT9FxwnexfIkf9i7kfzRqRBg58pfTHKiwTmZwn5IdtTO1hZDbIV1MmxF5P2OcG9/8BAP7yE8LkrZ4KYva3o4h5/Lky0zPjMyXqickx5mNrZGDou+gvM43J62oY4zQMfQmAoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719258069; c=relaxed/simple;
-	bh=uzxwDEpdZWbOlWe+EVCBC/uCl/ucKlhIkrhQYs8YMNQ=;
+	s=arc-20240116; t=1719258071; c=relaxed/simple;
+	bh=JY8desCnZGfGCcwAJYVAT/H3v4UHKfupLgaJk2Z97jI=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HehP0ObcTqzXuXjLb2AXfAuw3mq5TDyeeQOIZE/BDaqzCJJvxgRw5RLZ6GFzI5aUJLXCShGYpuANbGQqwa2tDkjis1Enodt4giFaLcKbGKJHASbsAc8io5LB0nOzVcWXS2D+jXjcfZP13TVD8ICkxxseo/AxbjfVR85nI1tTwvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=FD9qguVQ; arc=none smtp.client-ip=209.85.210.52
+	 MIME-Version; b=NcxIXtzkfrVdMloSamt0Ud2JVjL4YBUfUDUeugeLcYE7yhzPGYWM5I5NdUObr5d1mc+ozin+gt98uGO8rmDmB7oxWzN72D2SJ/lKZ3tV9GbFPfrhMdxuqTj0p0mfG6IM5ojEHn9c3arK+WrZ/auhwntglbqJ1BZGee9sJIFQFdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Jy8cDez/; arc=none smtp.client-ip=209.85.160.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7008acebf3fso2095542a34.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 12:41:07 -0700 (PDT)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-25d0d16e38eso839182fac.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 12:41:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719258067; x=1719862867; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719258068; x=1719862868; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HKDHOAdA7jAJSq+nL+j4X9y2JU2i+CxKLmyZslQ93Zk=;
-        b=FD9qguVQ/1iknMSECgLkZVSBWEE2/Ygj/T518gElzvaQ9L3qan2Sb7dw7rmFPH4SYB
-         vxCTeJqDpTPiqXju2+GhCkIrNZmkBzFHVYdKvxXY1MCiK1/LkYApJ+e+8RGHwAvYP+kf
-         qWzjy9FEC9hPk9LfN5uZA2tCB0i4b+hgWf437n1Og6WYOLW2ITxu5NQ1sGhunVEruBN3
-         +qgMiMg8uYks7i8gE+7ufYgwTsTHEVFFYfEjfX+MQ8rkSI5Id2Xui8Kln0BHWw7R7jp2
-         2Ygu5IiX042uNwPdGwwtM1RetMc1NbSU0mSLmIqumNWOZg1yLJ0bnW+85UJ5t+2WbIHx
-         mZyA==
+        bh=7Mn4lrx/Zmh33vObbaTy4J8GMzf6Ir22NpWlaU7qZ+M=;
+        b=Jy8cDez/JmrK+XYbmnsPYcNo8Qr3CNtwRDMyWAvuWZdxbg43vupElyGLhcPOjJwhQw
+         ZGI9etkQDhDwhxbYNR4UI6Oul6OdpLnFpELi4pzXv9WEswU24qxnIaowjFjVWVNasmWX
+         DqL/2N+8zU/CUvmJ7EOsTkDZ194xsjZEl/aeJkmWuKwl7zAVWLuUi2vsuNRkYaxRkESh
+         EhwHZ/EPwgrM0bCoxzfCCnR3v2uMGWOx9amWDEzXLrjQmWj8oQGinoWNkNH9QwzjWdMd
+         ohQQrEXuhQGW4Ylky2jz11wlgiVSdUpPC2o/JLD/TEq5lCsz5ZTkpdi9bIjl+OWRuCMp
+         vnFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719258067; x=1719862867;
+        d=1e100.net; s=20230601; t=1719258068; x=1719862868;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HKDHOAdA7jAJSq+nL+j4X9y2JU2i+CxKLmyZslQ93Zk=;
-        b=syO2NOlMW7JXPWZaGIuegGn4cKrXSKrA0+OHQjHAL0Z92bbwDJVeIAwEtH1YTfFJq0
-         AwL/FEiuJsskiOUKFy7mvEBr5dBHplD8ZeVHVH4tlwwfeDIRdbyLhD3qBu5uQCQ2Ka13
-         HbHEX/YeWLIdP1/G0iHIY/CckUyWDzlS6PH8wDCZDB+PyhR8R8wegc0wPc4tdLKcyR9M
-         Ffei8DDh4lGwKQuHPYaYBkLuK+2EFdQKIoQhcCsXmJcznFLiY9RuV4ighykeNVkjRGUq
-         x/PW0z9+oUbeONG7dNh5A6hwmTX8hKFPXjE5oRKGoyh6qHADLq3f/MyEN75fhfuMsV9+
-         EjWQ==
-X-Gm-Message-State: AOJu0YwL0elUGfl8nEtUR03UhgHCYPC7udwfKeKSrtX9NLclm5Kxtgki
-	siN45OJvDmjQY1NEWsOArbZq2pKigOadaFZ6HxkxNgvY5ETIvs/Qh4fKbEhNvh8nzeRqbMllCb4
-	g
-X-Google-Smtp-Source: AGHT+IFa3/tvXh8OckQVNoG+/SEBA5252iL4LtiV7YMybMMezqoS/Pe1/jTdxTmIpcRl3zQcoouiIw==
-X-Received: by 2002:a05:6870:b151:b0:254:77f7:7bdd with SMTP id 586e51a60fabf-25d0198d044mr6312396fac.50.1719258066883;
-        Mon, 24 Jun 2024 12:41:06 -0700 (PDT)
+        bh=7Mn4lrx/Zmh33vObbaTy4J8GMzf6Ir22NpWlaU7qZ+M=;
+        b=ujtA360slqEy1mr7XfwqFXVDZQZAirecVCNKB1QC1SHCHFNQgeVNb5/78IcujyqoFr
+         4oju8xrUnnyQrVd73wJ/T9tpcnlslD1XCQYtYBVjkSfS6k9s4qBj0fn0tDw7VBCP0twM
+         3xJI3MKGoCizzKul9U2rDJkGYpm7BvaMS5P9KcY4HaB9Ss3kKGhmjg3Ubzsa+DtuUcfa
+         yGqCsWMi3cBuGXuGbpJ0kmrD1FIv64go5kg+vldR4SNYTEG/34DLmSwBCrzbOsqUqJLs
+         YtGQLyN7mgD+X1imYUOT92Hl8EEKNue7HdYffLSrG8P0/JCIaP3f9e5aUdFSr8H1Kc2v
+         zarQ==
+X-Gm-Message-State: AOJu0Yz2KiHN3QgszSqYvKhAGTCOTpQ+AUQDjP1ODA7qz2RJuKOps52G
+	KIRdBrLo+Pgzb0Z47FUIyDm85/1i1LxcZNZ05qAPDZtWH0FQAlfJ1IVZB8myVTbOwnefI+4p1ES
+	J
+X-Google-Smtp-Source: AGHT+IFhHtqnr4BvIholprKhwsCe6LjGyXizQ9Be97t+HwWgmHx+kgx0cXBu/JEeJwQKiaVKS//1XQ==
+X-Received: by 2002:a05:6870:e242:b0:254:783d:aeb4 with SMTP id 586e51a60fabf-25d06cad9a8mr5788510fac.35.1719258067909;
+        Mon, 24 Jun 2024 12:41:07 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce89d612sm341032685a.5.2024.06.24.12.41.06
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce931bf0sm341929085a.112.2024.06.24.12.41.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 12:41:06 -0700 (PDT)
+        Mon, 24 Jun 2024 12:41:07 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	kernel-team@fb.com
-Subject: [PATCH 1/4] fs: rename show_mnt_opts -> show_vfsmnt_opts
-Date: Mon, 24 Jun 2024 15:40:50 -0400
-Message-ID: <fb363c62ffbf78a18095d596a19b8412aa991251.1719257716.git.josef@toxicpanda.com>
+Subject: [PATCH 2/4] fs: add a helper to show all the options for a mount
+Date: Mon, 24 Jun 2024 15:40:51 -0400
+Message-ID: <ba65606c5f233c6d937dfa690325e95712a69a95.1719257716.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1719257716.git.josef@toxicpanda.com>
 References: <cover.1719257716.git.josef@toxicpanda.com>
@@ -85,45 +85,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This name is more consistent with what the helper does, which is to just
-show the vfsmount options.
+In order to add the ability to export the mount options via statmount()
+we need a helper to combine all the various mount option things we do
+for /proc/mounts and /proc/$PID/mountinfo.  The helper for /proc/mounts
+can use this helper, however mountinfo is slightly (and infuriatingly)
+different, so it can only be used in one place.  This helper will be
+used in a followup patch to export mount options via statmount().
 
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/proc_namespace.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/internal.h       |  5 +++++
+ fs/proc_namespace.c | 25 ++++++++++++++++++-------
+ 2 files changed, 23 insertions(+), 7 deletions(-)
 
+diff --git a/fs/internal.h b/fs/internal.h
+index 84f371193f74..dc40c9d4173f 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -321,3 +321,8 @@ struct stashed_operations {
+ int path_from_stashed(struct dentry **stashed, struct vfsmount *mnt, void *data,
+ 		      struct path *path);
+ void stashed_dentry_prune(struct dentry *dentry);
++
++/*
++ * fs/proc_namespace.c
++ */
++int show_mount_opts(struct seq_file *seq, struct vfsmount *mnt);
 diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index 0a808951b7d3..e133b507ddf3 100644
+index e133b507ddf3..19bffd9d80dc 100644
 --- a/fs/proc_namespace.c
 +++ b/fs/proc_namespace.c
-@@ -61,7 +61,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
- 	return security_sb_show_options(m, sb);
+@@ -84,6 +84,22 @@ static void show_vfsmnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		seq_puts(m, ",idmapped");
  }
  
--static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
-+static void show_vfsmnt_opts(struct seq_file *m, struct vfsmount *mnt)
++int show_mount_opts(struct seq_file *seq, struct vfsmount *mnt)
++{
++	struct dentry *dentry = mnt->mnt_root;
++	struct super_block *sb = dentry->d_sb;
++	int ret;
++
++	seq_puts(seq, __mnt_is_readonly(mnt) ? "ro" : "rw");
++	ret = show_sb_opts(seq, sb);
++	if (ret)
++		return ret;
++	show_vfsmnt_opts(seq, mnt);
++	if (sb->s_op->show_options)
++		ret = sb->s_op->show_options(seq, dentry);
++	return ret;
++}
++
+ static inline void mangle(struct seq_file *m, const char *s)
  {
- 	static const struct proc_fs_opts mnt_opts[] = {
- 		{ MNT_NOSUID, ",nosuid" },
-@@ -124,7 +124,7 @@ static int show_vfsmnt(struct seq_file *m, struct vfsmount *mnt)
- 	err = show_sb_opts(m, sb);
- 	if (err)
+ 	seq_escape(m, s, " \t\n\\#");
+@@ -120,13 +136,8 @@ static int show_vfsmnt(struct seq_file *m, struct vfsmount *mnt)
  		goto out;
--	show_mnt_opts(m, mnt);
-+	show_vfsmnt_opts(m, mnt);
- 	if (sb->s_op->show_options)
- 		err = sb->s_op->show_options(m, mnt_path.dentry);
+ 	seq_putc(m, ' ');
+ 	show_type(m, sb);
+-	seq_puts(m, __mnt_is_readonly(mnt) ? " ro" : " rw");
+-	err = show_sb_opts(m, sb);
+-	if (err)
+-		goto out;
+-	show_vfsmnt_opts(m, mnt);
+-	if (sb->s_op->show_options)
+-		err = sb->s_op->show_options(m, mnt_path.dentry);
++	seq_putc(m, ' ');
++	err = show_mount_opts(m, mnt);
  	seq_puts(m, " 0 0\n");
-@@ -153,7 +153,7 @@ static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
- 		goto out;
- 
- 	seq_puts(m, mnt->mnt_flags & MNT_READONLY ? " ro" : " rw");
--	show_mnt_opts(m, mnt);
-+	show_vfsmnt_opts(m, mnt);
- 
- 	/* Tagged fields ("foo:X" or "bar") */
- 	if (IS_MNT_SHARED(r))
+ out:
+ 	return err;
 -- 
 2.43.0
 
