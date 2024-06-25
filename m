@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-22428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45893917072
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 20:45:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7452291707F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 20:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8EFD28CAC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 18:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 091B41F215C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 18:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F056717C7DC;
-	Tue, 25 Jun 2024 18:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F90A17C7D0;
+	Tue, 25 Jun 2024 18:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QZkezehZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R5+sqn5s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFC7177991
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 18:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B50417C7B8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 18:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719340999; cv=none; b=X9BbOVv8MK7jKWv7HjeIWvzRR38mgUAmu1imxC3+xjYrSSm4PfiMhliLVR4nlCG1UoFpjaNsjHL3P0vogL9taZj3I4s898hQdDPqhnt+9OwrjwYMRxyIr71hGF1qBqbcYPkor2Yw8Xkmht2tz7kL5Ic/N8ZbntvwYc+4oid3mao=
+	t=1719341098; cv=none; b=VQQolWaoKrF3wehtPSPngKPKTL9RFICA+6ke+bOhl+tnh78LyK11vT0/8yeGuZaNhsG7rPOumquoErE5CTrEj0TwbN8/NVjdi1yOSc49Cnc8UTVSVN9SybwhqpYGsCufPnFOa/eXBqnaxK2t2JDKmfdKv2WRsslkDrDOt4T/hW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719340999; c=relaxed/simple;
-	bh=4T8zplSVDGP/25a2/9dQBVYyzCn7VHheFPmanqVzF7s=;
+	s=arc-20240116; t=1719341098; c=relaxed/simple;
+	bh=HXCgRLTaZhs0CuuDEAA1FZlwgspo02JuhnLeqpKgQ8k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qvTBvTu3Mmd4Iu8UDPkreL8zTN8smGH44B5sDJZea9Monxcs+8bScF8BM1wUR5n42m3fJ7XPPF3aJsBJ365XgUnwV2AL3sJkVtHG02yC0uuntFW14ZxUbi1k6iCVYltzTS8XC49KsAbSjjWBhV5wfJnLS83f0poID35KAR8G7C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QZkezehZ; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=DIfKtVqsIG+z2iFZZD+8cZ0Xa7h/zMCfax2NUx6BEP4QjpPnJYb18iy4iFLJ4b5ArwTb9kVMvjGEvRa6kJh5Ah4B3ryR1U1HN/WGvULktiVJIJmVXD/IYIm8lxRG00VlHIIpfO70kJgxQ1X9pA2OfpdW0slK/5Hbbi0nc/0IxNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R5+sqn5s; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719340996;
+	s=mimecast20190719; t=1719341095;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BKlZK3pNZ+wzGcnEvjLqIaoCKeBTm9H3YzmiNb6G+3g=;
-	b=QZkezehZIcsehrtpIwgS1Ie8r+mu16aaYrj/p0MSotmP4PoBTbgGPIVp0O5W/cio7cjS03
-	/7inDkKQWBTBDZ9ri6He4O+R0W5gNm/HoXFb62TeU7H7IXsDTdUJt2o+lC2TCeVJ6EIIcz
-	0SH5GIO4Dc1D6MJBCMyIGikg+7nWM+Y=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=QK1faKLibJEiJW14KCJjCzw7/lN5wcXNxBNe5e7d8Ss=;
+	b=R5+sqn5sFlmtnhX9CYI1XZabN0jSy6aFVz2WuU2cPIu0MYDj7ZEpwK906EofKQTtwlMuq/
+	HqMLKXJJDw+hqjS97Mw1gtA8f8rPnBSht/IfELCA4QP44iWF5Chrh8qsnA6h6eTxj0H6D7
+	ZDAfoqEdJ3tnuuu2YYjUueTi8KvTSxo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-528-3cC4ZrboO-Ods_ipSI-HPQ-1; Tue, 25 Jun 2024 14:43:14 -0400
-X-MC-Unique: 3cC4ZrboO-Ods_ipSI-HPQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3644be85453so3155981f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 11:43:14 -0700 (PDT)
+ us-mta-113-DbnBNa0wO_6L53SctMQq0A-1; Tue, 25 Jun 2024 14:44:54 -0400
+X-MC-Unique: DbnBNa0wO_6L53SctMQq0A-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4217a6a00d8so37771095e9.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 11:44:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719340993; x=1719945793;
+        d=1e100.net; s=20230601; t=1719341093; x=1719945893;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=BKlZK3pNZ+wzGcnEvjLqIaoCKeBTm9H3YzmiNb6G+3g=;
-        b=a4vy8FYi+1YEu7lVOQ+vHIEpb8meUAowIiNsDB6fbw1kaiDAhDURfKr2i0QZpn403p
-         0GgKuEs9FlWk+jbieeUC9DLWIZveDGTz9fuGJMpl0qM5f20eNxdjBXYw2d7aObhuigZo
-         LXWteO6Oqnv24PYKebv5pjv8e0Pt78szzWYPJ8nqy04IjKqlbKxmCb+9EfOPTX9pWej+
-         viJcMCeAXdJiLZ3r+9f6dWKsbI58L1KgPP/57VHeIH7lrt7crLiHeIAdyHnFGQwqLz+e
-         RqODxOg1CVKpEBkEWLN7vLed1G/lYlXpDKpOF1HQ7tftyLSmOMk8HAyTu8vRZGo0nDXN
-         Bh/Q==
-X-Gm-Message-State: AOJu0YwzLxhaSX8Y8VFr7JxDnZJb6g3deGvoJu8pIv34iq71ot/e00ck
-	KoLZ2WEhPTy9bilOSVwqr3Vq9s5871awN4G0C/EvldI2y/dV9VBTUza33ygUYULvWGLrgoD1jyZ
-	GzSRftE3Ayc5kpqKMtzjWnmw7GmvgJXKDynTlVBOQ6ZIoBB+EGOfON550P5RXcC0=
-X-Received: by 2002:a05:6000:184d:b0:366:ebc4:2574 with SMTP id ffacd0b85a97d-366ebc425fdmr6053845f8f.33.1719340993701;
-        Tue, 25 Jun 2024 11:43:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE40JIDmew9s1ZPwIzg7JyzT8Oeg/+C7vF7SC0rIHkvt7fva8hqcnM0roa+VTY43CmqAbnaTA==
-X-Received: by 2002:a05:6000:184d:b0:366:ebc4:2574 with SMTP id ffacd0b85a97d-366ebc425fdmr6053826f8f.33.1719340993195;
-        Tue, 25 Jun 2024 11:43:13 -0700 (PDT)
+        bh=QK1faKLibJEiJW14KCJjCzw7/lN5wcXNxBNe5e7d8Ss=;
+        b=vpPIs2YgwdrUzpy9LCeOM3KYnxiH+9b37qQ4CrPHExHKjCF1mRotxga7LZgeJfX0p9
+         J6xwSEhHxC71dnalfebNa3fnloaECaDUzU74KMaotY9dy8ZLOG2AXGWG8OzY6Wzi6Blr
+         DM1EynMwoFdzMLhTvAQZedvHbsCHFS1Ax25C9RCpfrVoRpXvfpqrYC8MzF0AY+J1W/wA
+         9mvIAiSD1eXO1HK1/+P2CQ+9MWKZ/AjK0u2zu8MZtfDa5OhuM8H5jeJKiSZPRAzqG+US
+         MQehraWO4u6uv9sSrbYqyr4PZmWRnYr5EoxLepyv9QW1CW5LghrH23dBBeTzbNPB1kKb
+         OZdg==
+X-Gm-Message-State: AOJu0YxNcitrPtMwqBNx/qeM2+qgWyaXIkrkumOS8+nR9p9swuYhjtIv
+	/0QTFGcHrJ4uP5PD4uoPOoTbLf3ND/PwCO7XYiM/7XPpZOp7E86fCpYUIuo334Jriem4RLzJwsi
+	dC6p1yaEWfLTICfvj+nyahOQB4ka+mGMh7fpqyULRiWP2WW1Ng2R6PSanhr0Q/tc=
+X-Received: by 2002:adf:e912:0:b0:365:ebb6:35e4 with SMTP id ffacd0b85a97d-366e4ed3237mr5840100f8f.23.1719341093385;
+        Tue, 25 Jun 2024 11:44:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8IbgAiXyWyfFB9aA2SFjDNPPr2ccyVQH3VOdtvxAzDCDfreb/NZK51bDZkXunfoebBpv32g==
+X-Received: by 2002:adf:e912:0:b0:365:ebb6:35e4 with SMTP id ffacd0b85a97d-366e4ed3237mr5840087f8f.23.1719341092949;
+        Tue, 25 Jun 2024 11:44:52 -0700 (PDT)
 Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663ada00e7sm13679617f8f.112.2024.06.25.11.43.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638d9c1aasm13546599f8f.55.2024.06.25.11.44.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 11:43:12 -0700 (PDT)
-Message-ID: <ca1d734c-e755-4730-bcaa-a439a9635c38@redhat.com>
-Date: Tue, 25 Jun 2024 20:43:11 +0200
+        Tue, 25 Jun 2024 11:44:52 -0700 (PDT)
+Message-ID: <dc1be69e-4598-4fdf-a46e-3b2756ae27de@redhat.com>
+Date: Tue, 25 Jun 2024 20:44:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,15 +82,15 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] mm/filemap: Make MAX_PAGECACHE_ORDER acceptable to
- xarray
+Subject: Re: [PATCH 2/4] mm/filemap: Skip to allocate PMD-sized folios if
+ needed
 To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
  hughd@google.com, torvalds@linux-foundation.org, zhenyzha@redhat.com,
  shan.gavin@gmail.com
 References: <20240625090646.1194644-1-gshan@redhat.com>
- <20240625090646.1194644-2-gshan@redhat.com>
+ <20240625090646.1194644-3-gshan@redhat.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -138,14 +138,14 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240625090646.1194644-2-gshan@redhat.com>
+In-Reply-To: <20240625090646.1194644-3-gshan@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 25.06.24 11:06, Gavin Shan wrote:
-> The largest page cache order can be HPAGE_PMD_ORDER (13) on ARM64
-> with 64KB base page size. The xarray entry with this order can't
-> be split as the following error messages indicate.
+> On ARM64, HPAGE_PMD_ORDER is 13 when the base page size is 64KB. The
+> PMD-sized page cache can't be supported by xarray as the following
+> error messages indicate.
 > 
 > ------------[ cut here ]------------
 > WARNING: CPU: 35 PID: 7484 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
@@ -189,45 +189,38 @@ On 25.06.24 11:06, Gavin Shan wrote:
 >   el0t_64_sync_handler+0x134/0x150
 >   el0t_64_sync+0x17c/0x180
 > 
-> Fix it by decreasing MAX_PAGECACHE_ORDER to the largest supported order
-> by xarray. For this specific case, MAX_PAGECACHE_ORDER is dropped from
-> 13 to 11 when CONFIG_BASE_SMALL is disabled.
+> Fix it by skipping to allocate PMD-sized page cache when its size
+> is larger than MAX_PAGECACHE_ORDER. For this specific case, we will
+> fall to regular path where the readahead window is determined by BDI's
+> sysfs file (read_ahead_kb).
 > 
-> Fixes: 4f6617011910 ("filemap: Allow __filemap_get_folio to allocate large folios")
-> Cc: stable@kernel.org # v6.6+
+> Fixes: 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
+> Cc: stable@kernel.org # v5.18+
 > Suggested-by: David Hildenbrand <david@redhat.com>
 > Signed-off-by: Gavin Shan <gshan@redhat.com>
 > ---
->   include/linux/pagemap.h | 11 +++++++++--
->   1 file changed, 9 insertions(+), 2 deletions(-)
+>   mm/filemap.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 59f1df0cde5a..a0a026d2d244 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -354,11 +354,18 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
->    * a good order (that's 1MB if you're using 4kB pages)
->    */
->   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-> +#define PREFERRED_MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
->   #else
-> -#define MAX_PAGECACHE_ORDER	8
-> +#define PREFERRED_MAX_PAGECACHE_ORDER	8
->   #endif
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 876cc64aadd7..b306861d9d36 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3124,7 +3124,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
 >   
-> +/*
-> + * xas_split_alloc() does not support arbitrary orders. This implies no
-> + * 512MB THP on ARM64 with 64KB base page size.
-> + */
-> +#define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
-> +#define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
-> +
->   /**
->    * mapping_set_large_folios() - Indicate the file supports large folios.
->    * @mapping: The file.
+>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>   	/* Use the readahead code, even if readahead is disabled */
+> -	if (vm_flags & VM_HUGEPAGE) {
+> +	if ((vm_flags & VM_HUGEPAGE) && HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER) {
+>   		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+>   		ractl._index &= ~((unsigned long)HPAGE_PMD_NR - 1);
+>   		ra->size = HPAGE_PMD_NR;
 
-Thanks!
+As discussed, one option is for using min(HPAGE_PMD_ORDER, 
+MAX_PAGECACHE_ORDER) here, but it also doesn't quite result in the 
+expected performance results on arm64 with 64k.
+
+This code dates back to PMD-THP times, so we'll leave it like that for now.
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
