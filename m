@@ -1,187 +1,358 @@
-Return-Path: <linux-fsdevel+bounces-22387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E02D916BEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:08:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49245916CE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D2A1F24032
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:08:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1B981F25844
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5096517F367;
-	Tue, 25 Jun 2024 15:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B221C17624A;
+	Tue, 25 Jun 2024 15:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ofAZaNkM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1doW03W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B175117E91E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 15:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9A5176AA2;
+	Tue, 25 Jun 2024 15:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327755; cv=none; b=kCM4Q7Gv8z1TkFRqbHESeGu8sIoxappFX1vO/PaVRn9p4QgZffFcSjPRyWXZjkYg+afufsOuZb83LJgQuH58cGupasbvx5IaeYYv721QhNNlUe7hGjcd7SfvagbRI/hlGSukd9gKbnOJK2a4tJKvcG3X5DTI2K6PDghVg1RtNVo=
+	t=1719328701; cv=none; b=IsvFzgQTZepI5BZU8eizh1Om/XELB6SNpb6dDSSjx2JTmhEJ13KSMcL1zyZ3oQb8u7KuQj1+jkBpdGKwWfrF9qDDUybqA8mwmbL9X5V5HQLlvz+Z6mZoPVv8OL5ZApX4OtTCYcAgCWWF3KXlgYEtyNea8GVBliO5uyCreJEALXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327755; c=relaxed/simple;
-	bh=b7Nw5okBQqCcvaFHn1Nk+C1gVZREh2E97VU0CLvXzlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUHhyGtJx2cF+uUov+9BfM9F+tosnj/bSJMEuM+5be7RP5VjblV1jnRPmqX06M7esfrjEpyQ483w0xzoMeDdfljgAlOAw4OX52sgmle5SIa07ZFo/EORY0ggaVT2DNf5wMM+q0JoCaoP9guoSQkpf6D2+N3mtqzeT0nFVk/SwuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ofAZaNkM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0A2C4AF10;
-	Tue, 25 Jun 2024 15:02:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719327755;
-	bh=b7Nw5okBQqCcvaFHn1Nk+C1gVZREh2E97VU0CLvXzlw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ofAZaNkMDxxH2DY7u5+34QJaM7L5MB/yAFG2rSv16uS/TyRD0wXLWw2kqsY558Q2h
-	 6I5iIlK7r6uxONlcHzy5kpWYvLmBEZHE7sejn1+FE52sDFfTyIjQFmoB2nJjldgD1v
-	 M4tZ0ziOtlws7LmJgUcSxau5jbLG0dtQlzD9B5E0Px/ydRBudFWs7IYLQXT9yhv58l
-	 6n3e1yxKxMg8GxT1XdVeL9KVWM0j7fMXcBDyAL8bMHzYxYrxndkLMPJrJZIwnFCLej
-	 vUyH/ZHe9vMNsZlbkQTXOHHncQPwm93DfEoDWzpc3AvKtmK3IrZChy35N+JChCSKLo
-	 qwzwpXPCa4cyw==
-Date: Tue, 25 Jun 2024 17:02:31 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	kernel-team@fb.com
-Subject: Re: [PATCH 7/8] fs: add an ioctl to get the mnt ns id from nsfs
-Message-ID: <20240625-wacklig-wahlzettel-ae6415b17adb@brauner>
-References: <cover.1719243756.git.josef@toxicpanda.com>
- <180449959d5a756af7306d6bda55f41b9d53e3cb.1719243756.git.josef@toxicpanda.com>
- <14330f15065f92a88c7c0364cba3e26c294293a4.camel@kernel.org>
- <20240625-darunter-wieweit-9ced87b1df0b@brauner>
- <1833a18f7935aed5df264ed295d1084672234541.camel@kernel.org>
+	s=arc-20240116; t=1719328701; c=relaxed/simple;
+	bh=//afb4HxqkZE9JBDAwKV2hS2+zyYoD+WoU6vmKwfyiQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KHuzEBokjzBC+/v3edCvZAZ2/XVZ+KbHP6vaQOOgpE16X3xWKufCkvV55kDsHWADV+6IYqkSHABTu0ekcYvpe6XCdiHGaSY5h502n/xeNuWgqYz0h9GutBW8aH0UlpahlR7KRPGC/oLgQhaAkCFYH9lG2xq6NzqZXNqjqnTmQEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1doW03W; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57d07464aa9so5615929a12.2;
+        Tue, 25 Jun 2024 08:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719328697; x=1719933497; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d7K9/OAqcp9elU8MJpErul/3yisyVQlixbedGfcPQ8s=;
+        b=K1doW03W6FgjJF5U8ervIZiaQw2YGX9nB/6rT57JgCpQvsms6ilWyDTFoQQ3Dtb9U+
+         GUPpklSdQ/HBhbA088LiI6zpgRsyPvOciq/sJilTuuEqxb6+DeluKn/U5EeymYXuF/6q
+         Trn+TpLZyFFr8cvp3RGJ+cOC0n6XKCIfT4TDK69GQFuJodMR+qlIhip2W/KJyfFuHTfM
+         izkujVArj6TKZz6gjpkMVQXOvtwi2Opt9tgFPz7yuLNdynQGcysR9fWdCshSoX6Awt3i
+         GPdskyz8PxMMUj2wKYHC6jw5cwIkSl1RpJv4zCPm/Xg+T5vVQ9IzYyr8xijaj0MX/0A9
+         kfkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719328697; x=1719933497;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d7K9/OAqcp9elU8MJpErul/3yisyVQlixbedGfcPQ8s=;
+        b=UWq9oSao8lIbfOxRCC7n7Wk4NnH2MWHRnwRL/W7Z+CzWyrghIDx1bXMbXwMetvk8fH
+         ivc2ZcfTV6C7n+i5QooOQ3NvAo/tduAZCmmVjaU7JCU6RNOEQLPRJGQgiHMag0lHniZo
+         waTpYZthv5N74NLeMXlRHmIk9VVBVkGXBgkqT8/xjT2953oIkAsPoRlXJwwXjLij5ySx
+         x+SzeP96yEMWNEhOjRkqe8dq8JDrEWvklVHdfH/anbu2RHEmZyJwUnz1r1WZ71UZRJ/A
+         8ms+0gkQPnrLU6+4ZBiH6jCHhwwNdh+kYh20MLlCe5X++FVTwS/q9ZqECU2bP15uzZmR
+         m0QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUx7Xq0Mcr9fj/S5EvzLCdXJ3dAioA1J3ORK3Hrp411bzCbeFVOZvtuCXVijSCqWWCOPVV2oiChDQrqDliQoG2VYNjzCOiD5kbtkr2jNfs2UjLsfuAFQBSx6UGFEeWw2EaD9bU+z089XoVHFdYIbHFLu8R0lnjzXJ8dh0BZ4H5xKnq2XJ4a
+X-Gm-Message-State: AOJu0YzWDrBJ8YocpsshqZBcoHytZWxsqyEoSru3401AKHoCm0KOdn8j
+	uYY6/fGKmRzJwKFQ0hALpig9mOvlLFMhJdVrWRF96GZ7QzKu5P1b
+X-Google-Smtp-Source: AGHT+IFl+RYMWk0teCpgl2p3EYIq4/8ncn6vdi2jZWyA1BmPD0hU+ICE3+vCaRKmxQGQDKJwaeV9Gg==
+X-Received: by 2002:a50:8a93:0:b0:57c:8262:6409 with SMTP id 4fb4d7f45d1cf-57d4bd69fe5mr4976694a12.14.1719328697148;
+        Tue, 25 Jun 2024 08:18:17 -0700 (PDT)
+Received: from f.. (cst-prg-81-171.cust.vodafone.cz. [46.135.81.171])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3056301bsm6055217a12.89.2024.06.25.08.18.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 08:18:16 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	axboe@kernel.dk,
+	torvalds@linux-foundation.org,
+	xry111@xry111.site,
+	loongarch@lists.linux.dev,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Date: Tue, 25 Jun 2024 17:18:06 +0200
+Message-ID: <20240625151807.620812-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1833a18f7935aed5df264ed295d1084672234541.camel@kernel.org>
 
-On Tue, Jun 25, 2024 at 10:50:57AM GMT, Jeff Layton wrote:
-> On Tue, 2024-06-25 at 16:21 +0200, Christian Brauner wrote:
-> > On Tue, Jun 25, 2024 at 10:10:29AM GMT, Jeff Layton wrote:
-> > > On Mon, 2024-06-24 at 11:49 -0400, Josef Bacik wrote:
-> > > > In order to utilize the listmount() and statmount() extensions that
-> > > > allow us to call them on different namespaces we need a way to get
-> > > > the
-> > > > mnt namespace id from user space.  Add an ioctl to nsfs that will
-> > > > allow
-> > > > us to extract the mnt namespace id in order to make these new
-> > > > extensions
-> > > > usable.
-> > > > 
-> > > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > > > ---
-> > > >  fs/nsfs.c                 | 14 ++++++++++++++
-> > > >  include/uapi/linux/nsfs.h |  2 ++
-> > > >  2 files changed, 16 insertions(+)
-> > > > 
-> > > > diff --git a/fs/nsfs.c b/fs/nsfs.c
-> > > > index 07e22a15ef02..af352dadffe1 100644
-> > > > --- a/fs/nsfs.c
-> > > > +++ b/fs/nsfs.c
-> > > > @@ -12,6 +12,7 @@
-> > > >  #include <linux/nsfs.h>
-> > > >  #include <linux/uaccess.h>
-> > > >  
-> > > > +#include "mount.h"
-> > > >  #include "internal.h"
-> > > >  
-> > > >  static struct vfsmount *nsfs_mnt;
-> > > > @@ -143,6 +144,19 @@ static long ns_ioctl(struct file *filp, unsigned
-> > > > int ioctl,
-> > > >  		argp = (uid_t __user *) arg;
-> > > >  		uid = from_kuid_munged(current_user_ns(), user_ns-
-> > > > > owner);
-> > > >  		return put_user(uid, argp);
-> > > > +	case NS_GET_MNTNS_ID: {
-> > > > +		struct mnt_namespace *mnt_ns;
-> > > > +		__u64 __user *idp;
-> > > > +		__u64 id;
-> > > > +
-> > > > +		if (ns->ops->type != CLONE_NEWNS)
-> > > > +			return -EINVAL;
-> > > > +
-> > > > +		mnt_ns = container_of(ns, struct mnt_namespace, ns);
-> > > > +		idp = (__u64 __user *)arg;
-> > > > +		id = mnt_ns->seq;
-> > > > +		return put_user(id, idp);
-> > > > +	}
-> > > >  	default:
-> > > >  		return -ENOTTY;
-> > > >  	}
-> > > > diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
-> > > > index a0c8552b64ee..56e8b1639b98 100644
-> > > > --- a/include/uapi/linux/nsfs.h
-> > > > +++ b/include/uapi/linux/nsfs.h
-> > > > @@ -15,5 +15,7 @@
-> > > >  #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
-> > > >  /* Get owner UID (in the caller's user namespace) for a user
-> > > > namespace */
-> > > >  #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
-> > > > +/* Get the id for a mount namespace */
-> > > > +#define NS_GET_MNTNS_ID		_IO(NSIO, 0x5)
-> > > >  
-> > > >  #endif /* __LINUX_NSFS_H */
-> > > 
-> > > Thinking about this more...
-> > > 
-> > > Would it also make sense to wire up a similar ioctl in pidfs? It seems
-> > > like it might be nice to just open a pidfd for pid and then issue the
-> > > above to get its mntns id, rather than having to grovel around in nsfs.
-> > 
-> > I had a different idea yesterday: get a mount namespace fd from a pidfd
-> > in fact, get any namespace fd based on a pidfd. It's the equivalent to:
-> > /proc/$pid/ns* and then you can avoid having to go via procfs at all.
-> 
-> That would work too. I'd specifically like to be able to avoid crawling
-> around in /proc/<pid> as much as possible.
+The newly used helper also checks for empty ("") paths.
 
-Yes, this would do just that for namespaces and it is a natural
-extension of what I added some time ago, namely that you can already use
-a pidfd in lieu of a namespace fd in setns. For example, you can do:
+NULL paths with any flag value other than AT_EMPTY_PATH go the usual
+route and end up with -EFAULT to retain compatibility (Rust is abusing
+calls of the sort to detect availability of statx).
 
-setns(pidfd, CLONE_NEWNS | CLONE_NEWUSER | CLONE_NEWPID | CLONE_NEWNET | ...)
+This avoids path lookup code, lockref management, memory allocation and
+in case of NULL path userspace memory access (which can be quite
+expensive with SMAP on x86_64).
 
-to switch to the namespaces of another task (atomically ) where the
-kernel also takes care of the ordering between owning user namespace and
-other namespaces for the caller.
+Benchmarked with statx(..., AT_EMPTY_PATH, ...) running on Sapphire
+Rapids, with the "" path for the first two cases and NULL for the last
+one.
 
-(This still lacks a SETNS_PIDFD_ALL extension that would amount to
-switching all namespaces that are different from the caller's current
-namespaces (bc right now you would get EPERM if you're in the same user
-namespace as the target).)
+Results in ops/s:
+stock:     4231237
+pre-check: 5944063 (+40%)
+NULL path: 6601619 (+11%/+56%)
 
-> At this point, I think we're still stuck with having to walk /proc to
-> know what pids currently exist though, right? I don't think there is
-> any way to walk all the pids just using pidfds is there?
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-No, that doesn't exist right now. But it wouldn't be out of the question
-to add something like this (but it would have to be a new data structure
-most likely) if the use-case is sufficiently compelling.
+Diffed against fs-next and assumes c050122bdbb4 ("fs: new helper
+vfs_empty_path()") from vfs.empty.path is already applied.
 
-However, a container manager will know what what processes it tracks and
-it doesn't have to crawl /proc and so there it's immediately useful.
+WARNING: io_uring remains untested (modulo compilation). I presume
+Jens has a handy way of making sure things still work. 
 
-Another thing is that I find it useful if there's a connection between
-two interfaces, say pidfs and nsfs so that you could go from a pidfd to
-a namespace fd. But I find it odd if we just duplicate nsfs ioctls on
-top of pidfs.
+While the io_uring part can be added at a later date, I'm trying to
+avoid a scenario where someone has code which works with the NULL path
+and breaks when moving to io_uring. I am not going to argue about it ,
+worst case changes to io_uring can be trivially dropped and someone(tm)
+can add their own variant whenever they see fit.
 
-> 
-> > 
-> > Needs to be governed by ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS).
-> > 
-> > (We also need an ioctl() on the pidfd to get to the PID without procfs btw.
-> 
-> A PIDFS_GET_PID ioctl seems like a reasonable thing to add.
-> -- 
-> Jeff Layton <jlayton@kernel.org>
+v3:
+- also support AT_STATX* flags for NULL and ""
+
+v2:
+- support glibc passing AT_NO_AUTOMOUNT | AT_EMPTY_PATH
+- tidy up some commentary
+- drop the fdget_raw CLASS addition as it is already present in newer
+  trees
+
+ fs/internal.h    |   2 +
+ fs/stat.c        | 107 +++++++++++++++++++++++++++++++++++------------
+ io_uring/statx.c |  22 ++++++----
+ 3 files changed, 96 insertions(+), 35 deletions(-)
+
+diff --git a/fs/internal.h b/fs/internal.h
+index 84f371193f74..1d820018e6dc 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -247,6 +247,8 @@ extern const struct dentry_operations ns_dentry_operations;
+ int getname_statx_lookup_flags(int flags);
+ int do_statx(int dfd, struct filename *filename, unsigned int flags,
+ 	     unsigned int mask, struct statx __user *buffer);
++int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
++		struct statx __user *buffer);
+ 
+ /*
+  * fs/splice.c:
+diff --git a/fs/stat.c b/fs/stat.c
+index 5039c34a385d..3778e605eac8 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -214,6 +214,43 @@ int getname_statx_lookup_flags(int flags)
+ 	return lookup_flags;
+ }
+ 
++static int vfs_statx_path(struct path *path, int flags, struct kstat *stat,
++			  u32 request_mask)
++{
++	int error = vfs_getattr(path, stat, request_mask, flags);
++
++	if (request_mask & STATX_MNT_ID_UNIQUE) {
++		stat->mnt_id = real_mount(path->mnt)->mnt_id_unique;
++		stat->result_mask |= STATX_MNT_ID_UNIQUE;
++	} else {
++		stat->mnt_id = real_mount(path->mnt)->mnt_id;
++		stat->result_mask |= STATX_MNT_ID;
++	}
++
++	if (path->mnt->mnt_root == path->dentry)
++		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
++	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
++
++	/* Handle STATX_DIOALIGN for block devices. */
++	if (request_mask & STATX_DIOALIGN) {
++		struct inode *inode = d_backing_inode(path->dentry);
++
++		if (S_ISBLK(inode->i_mode))
++			bdev_statx_dioalign(inode, stat);
++	}
++
++	return error;
++}
++
++static int vfs_statx_fd(int fd, int flags, struct kstat *stat,
++			  u32 request_mask)
++{
++	CLASS(fd_raw, f)(fd);
++	if (!f.file)
++		return -EBADF;
++	return vfs_statx_path(&f.file->f_path, flags, stat, request_mask);
++}
++
+ /**
+  * vfs_statx - Get basic and extra attributes by filename
+  * @dfd: A file descriptor representing the base dir for a relative filename
+@@ -243,36 +280,13 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
+ retry:
+ 	error = filename_lookup(dfd, filename, lookup_flags, &path, NULL);
+ 	if (error)
+-		goto out;
+-
+-	error = vfs_getattr(&path, stat, request_mask, flags);
+-
+-	if (request_mask & STATX_MNT_ID_UNIQUE) {
+-		stat->mnt_id = real_mount(path.mnt)->mnt_id_unique;
+-		stat->result_mask |= STATX_MNT_ID_UNIQUE;
+-	} else {
+-		stat->mnt_id = real_mount(path.mnt)->mnt_id;
+-		stat->result_mask |= STATX_MNT_ID;
+-	}
+-
+-	if (path.mnt->mnt_root == path.dentry)
+-		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+-	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
+-
+-	/* Handle STATX_DIOALIGN for block devices. */
+-	if (request_mask & STATX_DIOALIGN) {
+-		struct inode *inode = d_backing_inode(path.dentry);
+-
+-		if (S_ISBLK(inode->i_mode))
+-			bdev_statx_dioalign(inode, stat);
+-	}
+-
++		return error;
++	error = vfs_statx_path(&path, flags, stat, request_mask);
+ 	path_put(&path);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+ 		goto retry;
+ 	}
+-out:
+ 	return error;
+ }
+ 
+@@ -683,16 +697,40 @@ int do_statx(int dfd, struct filename *filename, unsigned int flags,
+ 	return cp_statx(&stat, buffer);
+ }
+ 
++int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
++	     struct statx __user *buffer)
++{
++	struct kstat stat;
++	int error;
++
++	if (mask & STATX__RESERVED)
++		return -EINVAL;
++	if ((flags & AT_STATX_SYNC_TYPE) == AT_STATX_SYNC_TYPE)
++		return -EINVAL;
++
++	/* STATX_CHANGE_COOKIE is kernel-only for now. Ignore requests
++	 * from userland.
++	 */
++	mask &= ~STATX_CHANGE_COOKIE;
++
++	error = vfs_statx_fd(fd, flags, &stat, mask);
++	if (error)
++		return error;
++
++	return cp_statx(&stat, buffer);
++}
++
+ /**
+  * sys_statx - System call to get enhanced stats
+  * @dfd: Base directory to pathwalk from *or* fd to stat.
+- * @filename: File to stat or "" with AT_EMPTY_PATH
++ * @filename: File to stat or either NULL or "" with AT_EMPTY_PATH
+  * @flags: AT_* flags to control pathwalk.
+  * @mask: Parts of statx struct actually required.
+  * @buffer: Result buffer.
+  *
+  * Note that fstat() can be emulated by setting dfd to the fd of interest,
+- * supplying "" as the filename and setting AT_EMPTY_PATH in the flags.
++ * supplying "" (or preferably NULL) as the filename and setting AT_EMPTY_PATH
++ * in the flags.
+  */
+ SYSCALL_DEFINE5(statx,
+ 		int, dfd, const char __user *, filename, unsigned, flags,
+@@ -700,8 +738,23 @@ SYSCALL_DEFINE5(statx,
+ 		struct statx __user *, buffer)
+ {
+ 	int ret;
++	unsigned lflags;
+ 	struct filename *name;
+ 
++	/*
++	 * Short-circuit handling of NULL and "" paths.
++	 *
++	 * For a NULL path we require and accept only the AT_EMPTY_PATH flag
++	 * (possibly |'d with AT_STATX flags).
++	 *
++	 * However, glibc on 32-bit architectures implements fstatat as statx
++	 * with the "" pathname and AT_NO_AUTOMOUNT | AT_EMPTY_PATH flags.
++	 * Supporting this results in the uglification below.
++	 */
++	lflags = flags & ~(AT_NO_AUTOMOUNT | AT_STATX_SYNC_TYPE);
++	if (lflags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
++		return do_statx_fd(dfd, flags & ~AT_NO_AUTOMOUNT, mask, buffer);
++
+ 	name = getname_flags(filename, getname_statx_lookup_flags(flags));
+ 	ret = do_statx(dfd, name, flags, mask, buffer);
+ 	putname(name);
+diff --git a/io_uring/statx.c b/io_uring/statx.c
+index f7f9b202eec0..2b27af51fc12 100644
+--- a/io_uring/statx.c
++++ b/io_uring/statx.c
+@@ -23,6 +23,7 @@ struct io_statx {
+ int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_statx *sx = io_kiocb_to_cmd(req, struct io_statx);
++	struct filename *filename;
+ 	const char __user *path;
+ 
+ 	if (sqe->buf_index || sqe->splice_fd_in)
+@@ -36,14 +37,16 @@ int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	sx->buffer = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+ 	sx->flags = READ_ONCE(sqe->statx_flags);
+ 
+-	sx->filename = getname_flags(path,
+-				     getname_statx_lookup_flags(sx->flags));
+-
+-	if (IS_ERR(sx->filename)) {
+-		int ret = PTR_ERR(sx->filename);
+-
++	if ((sx->flags & (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE)) ==
++	    (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE) &&
++	    vfs_empty_path(sx->dfd, path)) {
+ 		sx->filename = NULL;
+-		return ret;
++	} else {
++		filename = getname_flags(path,
++					 getname_statx_lookup_flags(sx->flags));
++		if (IS_ERR(filename))
++			return PTR_ERR(filename);
++		sx->filename = filename;
+ 	}
+ 
+ 	req->flags |= REQ_F_NEED_CLEANUP;
+@@ -58,7 +61,10 @@ int io_statx(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
+ 
+-	ret = do_statx(sx->dfd, sx->filename, sx->flags, sx->mask, sx->buffer);
++	if (sx->filename == NULL)
++		ret = do_statx_fd(sx->dfd, sx->flags, sx->mask, sx->buffer);
++	else
++		ret = do_statx(sx->dfd, sx->filename, sx->flags, sx->mask, sx->buffer);
+ 	io_req_set_res(req, ret, 0);
+ 	return IOU_OK;
+ }
+-- 
+2.43.0
+
 
