@@ -1,139 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-22418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFBB916F7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 19:43:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A6B916F96
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 19:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087B0286007
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:43:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ECD41F22FD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B98B16F82A;
-	Tue, 25 Jun 2024 17:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463C61779B1;
+	Tue, 25 Jun 2024 17:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W/OYHY+F"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AxyY+edZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06C916F91C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 17:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACCF4437A;
+	Tue, 25 Jun 2024 17:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719337429; cv=none; b=iO3GkE7o30oTFThaE2pVNPZWuwusU/MpdnFnC+lbUYYNKZs+et9MpM6KaPr1MyJJFC9Sh0APDu2IUmlDNBwldjdWnelcd3qX/ug6nLMCaTO6fCOH8P0wsmGcFGwTqEMFxoSAXScakBzIYBt/+KmAEEme2+tMcBfvugawesCSEeg=
+	t=1719337919; cv=none; b=TtD08h3Nt1UO5GlhZ+gdeLpUTb6gOcqzExO6P/HGydKpfywW6X7UBItRsl+YfgDev5zWx4SJELKDW4gTbW5rrveGaeu6JDtK9Ch+pnR/kLQDz7lDzX20htU0APdOa4QJnMx97jLmCHzbafpSMSQzoltqVoP/D1RNhE80GR6tkII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719337429; c=relaxed/simple;
-	bh=5VgSZVq02U6IsfJaYVV8DFuJwm1vUyaN05VICVFOxus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oCMNa1eyvgUVpwdhKN0iqaDOFl4eA5JdG/1GR5U+l9DJ8DV2o+LVM0m905OUFJpaLjQ0RVdjCibJQ3QGyQFCpi34WIIfRbv7+7KTSCDX5iKFH0+buQY7nu5P/2s+gKvYDEak39cvF4RGuo28usmXNzfZU2c9cvoUEoIAwHpb1b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W/OYHY+F; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fa4b332645so13765ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 10:43:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719337427; x=1719942227; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4NkneRAeqFnNlsteKCtsOu3L6FUBOoIj11zyXycSDMA=;
-        b=W/OYHY+FqOuGsUAAM/lAWLh82jL8pplO7SJnUwwrO5+kVHVMmM+qm1p0l/ljd52Tjr
-         sapjoSSvANCNt13dUiMSMmpURFAWKTHL0/eackqcJ5vm31hhOZ1WcbOcaKwAg1nUQOM2
-         N1A91yG5/2ThGzxAToDfafgeHDt8+cGHwTAxIb4+xXiaRzeTO+TiSavGywEsWYrP8GG5
-         DpdWAwyyuRD6dqG2nTvI069vEr8suShUjKeyuxtkj4lG+aDid2BtndGi9pFpMOF2N0em
-         es5rQfRY5O5lvrFryaerqqlmlWngtc1MK5jfFXTqkmEKX16BE0Rfc/YBiLMUmtx3eEHl
-         +ZZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719337427; x=1719942227;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4NkneRAeqFnNlsteKCtsOu3L6FUBOoIj11zyXycSDMA=;
-        b=lN7mASKLE7TLE/MA7xDYV1WtwkzjcN6kVCFiya7iLZTlmNCXPh+4FuR/+YAFAklFSK
-         D1S6Tei6vuU9E1jqyRTf5FhtHXaKtWWRwWi2YaAWh8OsDN6UTBEpfTuxODi0Omgv8N7d
-         Ey7FbxqyZnN+Rqeh8ouVUKqIEYQO/vdKCLuHm7ibxF9iB9bgN/w062Gh0sCrUjF18BF6
-         7mdqF+wzgV4mckKUl7ifvev6Fn95B8jCtGs5A3WJ5I5wU2NH3y1bzni1zgrgUTXlPCZV
-         vPyQh3cZXVtgyt5EiWpcZIJWT+kmZegRabo7s4A9yXvUQ58uMl6d7/XDoaqzZ297VDk3
-         6+Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZGqrDRueJ2zs3RFXaqZpeSgHCA6jocKJMPUPtlNXDWYhCdvoiB3FLmULvTZYj2Ucfb8yehl7KjHq0QeJz0bwAlPOY/I4BjmWMqV0gSw==
-X-Gm-Message-State: AOJu0Yy/bZFGyXUekDADK1w9Arkb2Ur9XxJEPRoL1w7xuDKekRj+Mp6x
-	c6WhDOlvdQtxFIrzFRNgV/7IZMZykTZnBdquy1F3mHD1q4UMDpEC90BEpkI2IQ==
-X-Google-Smtp-Source: AGHT+IE3GbbrPTfGHz1QMDfN5VvYW2z9EAbtcbC6WTIkswzUwNwFll/14uYbFQbRSRjJoZ445WDIng==
-X-Received: by 2002:a17:902:fb90:b0:1f8:9300:5361 with SMTP id d9443c01a7336-1fa6cae64cemr3548585ad.27.1719337426194;
-        Tue, 25 Jun 2024 10:43:46 -0700 (PDT)
-Received: from google.com ([2620:15c:2d:3:9a90:b76f:c388:1248])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d5ad9sm84394175ad.204.2024.06.25.10.43.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 10:43:45 -0700 (PDT)
-Date: Tue, 25 Jun 2024 10:43:41 -0700
-From: Isaac Manjarres <isaacmanjarres@google.com>
-To: John Stultz <jstultz@google.com>
-Cc: tglx@linutronix.de, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	saravanak@google.com, Manish Varma <varmam@google.com>,
-	Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5] fs: Improve eventpoll logging to stop indicting
- timerfd
-Message-ID: <ZnsBzfSPZlrhpB1t@google.com>
-References: <20240606172813.2755930-1-isaacmanjarres@google.com>
- <CANDhNCqhJRLgvhAong-5zjsfwk2sL7pNbK0EqWsPcaA+AuzxDQ@mail.gmail.com>
+	s=arc-20240116; t=1719337919; c=relaxed/simple;
+	bh=Q3I/DJtp9NDVkqs+20MrQgr7hwwyZDKKO8eL+lYNdlg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mgXchYAr+vMWjUIQRFze4Sez7C+m/JSrBFwlBVhDF5Hh2P0+pMbXlxanhIMMAAeyZeBNf27IOGaL5692waTeP4dtEfdMyQooZbBxGwPx9w0RMx0PkFGKlp6lnt1qQkMO3OTAM8vBF8rWd60fg00mNc+iVjnrxbODajIGzlHMET4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AxyY+edZ; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=mGekqOl4DEHyJGZJHQjAmkGp/lL8oAzm7NpLKvz5LoE=; b=AxyY+edZxqjYXu6wQusE3cnwut
+	RTtl+04ITa3JIfFfN44D+gLCIA83xgFVNzZ2gaPdU/D4dKFtv6e9dDoE6aD1K8Nnx+P4RcrJ4Lc8U
+	gZuf8q1uSsSscVef8hfmomKtzIF33AndgUbHB1RQEbV0UWUeBnHO35AoZkO0firMWgVzSiWiHjc2I
+	yCxXxPUcsbpcV7eSHVOrTGAYV0vI7IYKBqSE4DAZMUMc/vrphNQJXmll+bQR2rZ1dPR0BjododCpf
+	T6mFhx5GPBp9qSRuyHLzfz3ZQ3O/zVqcsNwC38TO1f0jULRGhb2r8LLqBeuEBy/iFHnkcEAJwHX40
+	I3kwm1xg==;
+Received: from 179-125-70-190-dinamico.pombonet.net.br ([179.125.70.190] helo=quatroqueijos.lan)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sMAKa-007Oa3-Kq; Tue, 25 Jun 2024 19:51:49 +0200
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	linux-kernel@vger.kernel.org,
+	Gwendal Grignou <gwendal@chromium.org>,
+	dlunev@chromium.org,
+	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Subject: [PATCH v2 0/2] fat: add support for directories without . and .. entries
+Date: Tue, 25 Jun 2024 14:51:31 -0300
+Message-Id: <20240625175133.922758-1-cascardo@igalia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCqhJRLgvhAong-5zjsfwk2sL7pNbK0EqWsPcaA+AuzxDQ@mail.gmail.com>
 
-On Mon, Jun 24, 2024 at 11:03:43AM -0700, John Stultz wrote:
-> On Thu, Jun 6, 2024 at 10:28 AM 'Isaac J. Manjarres' via kernel-team
-> <kernel-team@android.com> wrote:
-> >
-> > From: Manish Varma <varmam@google.com>
-> >
-> > timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
-> > it names them after the underlying file descriptor, and since all
-> > timerfd file descriptors are named "[timerfd]" (which saves memory on
-> > systems like desktops with potentially many timerfd instances), all
-> > wakesources created as a result of using the eventpoll-on-timerfd idiom
-> > are called... "[timerfd]".
-> >
-> > However, it becomes impossible to tell which "[timerfd]" wakesource is
-> > affliated with which process and hence troubleshooting is difficult.
-> 
-> While your explanation above is understandable, I feel like it might
-> benefit from a more concrete example to show why this is problematic?
-> It feels like the description gets into the weeds pretty quickly and
-> makes it hard to understand the importance of the change.
+Some FAT filesystems do not have . and .. entries in some directories.
+Currently, such filesystems are not mounted because such directories will
+have no links. They are also corrupted as inodes are evicted and that leads
+to such directories clusters being marked as freed. Later mounts will then
+error out when finding such clusters.
 
-> 
-> Again the N:P.F mapping is clear, but maybe including a specific
-> before and after example would help?
-> 
-> Additionally, once you have this better named wakesource, can you
-> provide a specific example to illustrate a bit on how this
-> specifically helps the troubleshooting that was difficult before?
-> 
-> thanks
-> -john
+These two commits allow those filesystems to be mounted and . and .. to
+still appear when listing such directories.
 
-Hi John,
+v2:
+- Also ignore the absence of . directory and always have at least two links.
+- Add a second commit to always emit . and .. at readdir.
 
-Thanks for your feedback on this! I'm more than happy to add more
-details to the commit text. I'll go ahead and add an example to
-showcase a scenario where the proposed changes make debugging easier.
+Thadeu Lima de Souza Cascardo (2):
+  fat: ignore . and .. subdirs and always add links to dirs
+  fat: always use dir_emit_dots and ignore . and .. entries
 
-I'll send out v6 of the patch soon.
+ fs/fat/dir.c   | 28 ++++++++++++----------------
+ fs/fat/inode.c |  2 +-
+ 2 files changed, 13 insertions(+), 17 deletions(-)
 
---Isaac
+-- 
+2.34.1
+
 
