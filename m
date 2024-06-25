@@ -1,130 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-22414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A636916D4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:41:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22141916D80
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2711C2149A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DF5CB24A40
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9CD16F859;
-	Tue, 25 Jun 2024 15:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AB4170824;
+	Tue, 25 Jun 2024 15:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UpxxbCIz"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dsY/v5Sq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C5D1CABB;
-	Tue, 25 Jun 2024 15:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82ECF16C68B;
+	Tue, 25 Jun 2024 15:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719330097; cv=none; b=o+2AQDGqRVlOjGU6HyLlEIfVSJTAfDMkEeUnejGc55xeulbAk3z8auJCj88iiaC+a9mEFxVDi7vMc3LqzDy2trZRP8JrPHgO3TxOVMkbazMx8bnGVQRJPUbhx8FNfJjZnNBF87D7+2njSpYwrEJuW6nbjWMOkktVM1PvvhW2LiI=
+	t=1719330733; cv=none; b=UwNVIVWbZny/au9OFApt1MwEeHP/7fGSjiZ2Y/pwSI9t4I8oXhD1/YbkIFBWZltFMf/eC0EoqfLWPqN/xSUq4LW2LECWfAgVlkBZTAkDttVhjlb7yWl+dIfUQlO9yLx+ioD6b1Qw0IcNosvkORwyPcRZQoNO/l+zm2dY5Fl3TMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719330097; c=relaxed/simple;
-	bh=LiL5hKWe2xoajjxT1kgvhN8TLhkyWDzL+X2Uj2AAUzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dkqxmmzcGQDyUXWMlcBojuQpWkuExufBh0w+G31m8qcgwZl5zwvwIF+daCnPrv/n7G5oVsOqioZiu9RMYgAW76GepCs1uUJN2nzlZ3lOVoU8yg/vwhcbQXq5a3yMd280ypJOhe0YADRa1RYf1fDTY6Umg35e39ca2/6y4AX2zsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UpxxbCIz; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719330096; x=1750866096;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LiL5hKWe2xoajjxT1kgvhN8TLhkyWDzL+X2Uj2AAUzM=;
-  b=UpxxbCIzjY7bXFSwYsa63TY707JDFPVrEsz5JvjRz8Szn8SVygq2Gxgn
-   B/OkTRTZ0isXa6i/nRpCe+VE3O2QhWeDlMfuV5X1umHe8vWzLXOlDik0i
-   tpHPALKdUJYGeDmQviJ3tG6mc22UrZj3EgURGT6IgsKts8Ven07op8MR6
-   AVr0LxAiA8IF30GviHsB6XF7fQfBT8l+jQw3bT1j0ztpUf4apTz1Vz7rl
-   kXyLQxs6NwXp6hdq53OSPUOZfKAaJZDAlTGJ6tV2zqoIyLM15rSQPstBD
-   72teLeOF8iCjcTT4ToBNbVSGz/LuoWBoCdBUq/vSdX6D/BDdpN8yi0z7A
-   A==;
-X-CSE-ConnectionGUID: +iyBdgLNRFm8ENFMtcZfnw==
-X-CSE-MsgGUID: fGTeIAeST9CoZ743/z4qFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="20240961"
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="20240961"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 08:41:36 -0700
-X-CSE-ConnectionGUID: 8pwsUsu1TMCAik3rgwzd6Q==
-X-CSE-MsgGUID: AvaPvVgVRNe7ygwyRm7Hcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="43507791"
-Received: from wenjun3x-mobl1.ccr.corp.intel.com (HELO [10.124.232.196]) ([10.124.232.196])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 08:41:32 -0700
-Message-ID: <f2f127fc-5098-4e86-b2b9-ade8b438a1e6@intel.com>
-Date: Tue, 25 Jun 2024 23:41:30 +0800
+	s=arc-20240116; t=1719330733; c=relaxed/simple;
+	bh=X0jmIyIPh1W9m4kEceQUttmnpBYHpgQNokutD/esj/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fl43As/2x5DOIPupy/jyTUAd7JRxbdXu8yqU1nGcwwmtnJfHpEcVnhUCWSMHbfm9QZ5F+V/e++kBGFJ2sYe2K/Fh8fhEjPEwEMG2bitD01LituzukvvvttJwMjrjo+o9MAwQLG42TbDyxXmpxTXIlhuptTSIT7Q7FB7WYS7dh24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dsY/v5Sq; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YLsgCo5mZCWyV+0LgwK8z9FDMC5L3Jf20O6mHZiQ8gQ=; b=dsY/v5Sq61qwbM7R6F+sukc/5F
+	s4pfkym86Ioii1ii/qPd5ZqDZkuY9WsN7UoMvQY4lfJ1lcZzBtW6itoMxdSn5Ub+HH/tx4xHNov6m
+	QGudwmzCdubFhgmb0f+BNB+nLfijhUGE5CX9l0G0wAK70y7f8/1WWveqep28w5Zu3ew/qt4OkvZC/
+	4T56yO2ivoaK2M419qqC/0vYp92diIr1H9nkDDhhBPQo0X9k2rwoFy02miSlQOzFYWPPtE+rgfVnm
+	0kIQUAZN8kOkQq6vmukUW0D/p13DhJ/Bzgwe3O0+9o65RwpCOeNUI6CI/y0C25q4GL0h9fJPjXjbO
+	OVf9HL6Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sM8Si-0000000BHaO-06Hw;
+	Tue, 25 Jun 2024 15:52:04 +0000
+Date: Tue, 25 Jun 2024 16:52:03 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
+	brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 02/10] filemap: allocate mapping_min_order folios in
+ the page cache
+Message-ID: <ZnrnozlE0EggQ_w3@casper.infradead.org>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-3-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] fs/file.c: conditionally clear full_fds
-To: Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, mjguzik@gmail.com,
- edumazet@google.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
- tim.c.chen@intel.com, tim.c.chen@linux.intel.com, yu.ma@intel.com
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240622154904.3774273-1-yu.ma@intel.com>
- <20240622154904.3774273-3-yu.ma@intel.com>
- <20240625115442.kkrqy6yvy6qpct4y@quack3>
-Content-Language: en-US
-From: "Ma, Yu" <yu.ma@intel.com>
-In-Reply-To: <20240625115442.kkrqy6yvy6qpct4y@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625114420.719014-3-kernel@pankajraghav.com>
 
+On Tue, Jun 25, 2024 at 11:44:12AM +0000, Pankaj Raghav (Samsung) wrote:
+> Co-developed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-On 6/25/2024 7:54 PM, Jan Kara wrote:
-> On Sat 22-06-24 11:49:03, Yu Ma wrote:
->> 64 bits in open_fds are mapped to a common bit in full_fds_bits. It is very
->> likely that a bit in full_fds_bits has been cleared before in
->> __clear_open_fds()'s operation. Check the clear bit in full_fds_bits before
->> clearing to avoid unnecessary write and cache bouncing. See commit fc90888d07b8
->> ("vfs: conditionally clear close-on-exec flag") for a similar optimization.
->> Together with patch 1, they improves pts/blogbench-1.1.0 read for 27%, and write
->> for 14% on Intel ICX 160 cores configuration with v6.10-rc4.
->>
->> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
->> Signed-off-by: Yu Ma <yu.ma@intel.com>
-> Nice. Feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
->
-> 								Honza
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Copy that, thanks Honza :)
+after fixing the nits below
 
+> +/**
+> + * mapping_align_index() - Align index based on the min
+> + * folio order of the page cache.
 
->> ---
->>   fs/file.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/file.c b/fs/file.c
->> index 50e900a47107..b4d25f6d4c19 100644
->> --- a/fs/file.c
->> +++ b/fs/file.c
->> @@ -268,7 +268,9 @@ static inline void __set_open_fd(unsigned int fd, struct fdtable *fdt)
->>   static inline void __clear_open_fd(unsigned int fd, struct fdtable *fdt)
->>   {
->>   	__clear_bit(fd, fdt->open_fds);
->> -	__clear_bit(fd / BITS_PER_LONG, fdt->full_fds_bits);
->> +	fd /= BITS_PER_LONG;
->> +	if (test_bit(fd, fdt->full_fds_bits))
->> +	    __clear_bit(fd, fdt->full_fds_bits);
->>   }
->>   
->>   static inline bool fd_is_open(unsigned int fd, const struct fdtable *fdt)
->> -- 
->> 2.43.0
->>
++ * mapping_align_index - Align index for this mapping.
+
+> @@ -1165,7 +1186,7 @@ static inline vm_fault_t folio_lock_or_retry(struct folio *folio,
+>  void folio_wait_bit(struct folio *folio, int bit_nr);
+>  int folio_wait_bit_killable(struct folio *folio, int bit_nr);
+>  
+> -/* 
+> +/*
+>   * Wait for a folio to be unlocked.
+>   *
+>   * This must be called with the caller "holding" the folio,
+
+Unnecessary whitespace change
+
 
