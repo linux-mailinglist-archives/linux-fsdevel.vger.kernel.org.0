@@ -1,132 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-22352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22353-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F93D9168D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:28:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E1D9168D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E088A1F2331C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023EB1F2319E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFED515F3FF;
-	Tue, 25 Jun 2024 13:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C223615ADBB;
+	Tue, 25 Jun 2024 13:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ma0ZWeIs"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m+c+rnjF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bK/P1zsA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m+c+rnjF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bK/P1zsA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DA8132111;
-	Tue, 25 Jun 2024 13:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667211E4BF;
+	Tue, 25 Jun 2024 13:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719322117; cv=none; b=EI/VeTRBslvPu1F0uKbonJRz8cO07s3pvazX7jzC+932XsbUe0Svv8kkN3leSXJXG2ykAVr6KTVYh2RvW5dQC8LdWHrUcVQNokXKvaqQs8Aekd9+0lFA2JMRqcT05TFD+n7IqR0Ek/IsLrg8RI+F23ZmsiHTOe5CXrNPwkufgg0=
+	t=1719322239; cv=none; b=CucFcEyFG2QKkdWQQSjF/h1KWu173pHMWyxe8NSurSR0uHma46kWwdjdyk5nOadViSD2+lYnPgCOUDJmy2X82beKRcxLK9iMNcRmHfTEtjX1vpO4dnbf/URbiN/fJxOkaDIUKIeqK4BhsSX0bwIf7B+mLNtRxQ2/SKayuA6pOZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719322117; c=relaxed/simple;
-	bh=z9OmWM3s1K1ncuEuDaWGd5+40KI3CtsDflUO9C7WTmw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n3wYspH3MxbUCBXKqSmqQP2/pAC0qbhEJNuczvmDf9X/e0NFFNA+jz0iHazcqfAZeIRATbpPjFFv/+bL3hq49wdz4OVie445LGPoCt6DeLTtMpyiLdm89zHSw3IvKorv6k3yDmFdIOahbbgIHGNb0vhZTEuyso7hi9VBWoWuiCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ma0ZWeIs; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so715861866b.2;
-        Tue, 25 Jun 2024 06:28:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719322114; x=1719926914; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=twrq3YnBSjJhRTnvJDFrfdhu7ZaNu/NjtYoaAMWAVO0=;
-        b=ma0ZWeIsHHqsCuoF1a/CB4UiKaonOpcXK8FNVcEHfKicuLPNZlGow1l3WKOjF4K3hB
-         YCrWp0udo0/8GjP+kjVGN6kwb3a3QEXz1aDYQEtjBUVgC8OGxgWFuqgyTjmnrc7+BI7Y
-         qW74eH7jzFxoiPY+e0FznyO8SVlqpU0CCfjRddBsVzSFfJLXi8w5gLUanjiUQvojk3HX
-         NwD6cr+/nRM6lC70k29vswnlDbTO4ApinV9rKXTeYglodvkNAK2b3GAMb6hbbn4hax8z
-         IcDPGZ4rwF75DN03pyno9UYuX1t2QN7iewQU7O8jPwrzyTEe3zAwx4kgLY6a4tb7kilz
-         h9ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719322114; x=1719926914;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=twrq3YnBSjJhRTnvJDFrfdhu7ZaNu/NjtYoaAMWAVO0=;
-        b=ONM+fs/sx8iwDkKdwYxME7cP+W8YBKYg62ExErVmYLsXaHBEc/Vv6dgsZSwaoZdZHZ
-         mQX4NlMaPRYybP9uHy3q4CcOZarrpg23q1v79ozrNQgJX7bTKb5Rz/sYEeY/GDwRrr9u
-         zrhucPsaDPYEwxdbXDlRIUJu2Mwc4ndJrWH+Nen4PnV180PsXrhrckLQVJ1DbJSRtsuD
-         KPa4RpeINVyE2R2eBmifq3tcoW53rldqGwQ4r8FAgN0sJkvShYPQPXs1vha95B3dbgCc
-         43PJo3ZBQqBF0H7okwNglWHnDrFybtmTgPqmlLkzgAUIKhrKwAa+id7dHVvESVXUrC2H
-         8muQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwJRKVdzh5wMYjgbnMuXjQ3xXPx1ogUHuZsLyriBczWN/EkB5YNofnEr9AMMTmxlMEXv3A8NJd1sFbs9O/JNKWCnqkqUsLXMo0KURKtN0B4H5bqfkNJmsQvcbiNwt7p3JLcy7s1j8sUQ+0TX+a3gLTuETCSgYbfR11aPC8ZSEuq1lhGroF
-X-Gm-Message-State: AOJu0YxIwAS8LQ9fGtk5w4/1yfKPT+SDPdGZcefwBue2JHkbOSqU74RW
-	Zk6JZQsYmoJWzOKTKSaLs2T6YvReA8OwSqgpCiJBbqqPV5SFJxHADmE6lxscIiHPvYHaFib4gEI
-	xTXWw+0ZRnEvse/98JUSjNO2KLJaqY7Wy
-X-Google-Smtp-Source: AGHT+IGC9qUNP5wS0HfWpa9ydA0hwYy4dB0Lp0WzcrwuUkaDrU+VycUa7Tkz3Bvd4nc/Igdf+rsu8XiUACdnZ7+e9Gs=
-X-Received: by 2002:a17:906:714c:b0:a72:40cc:22cb with SMTP id
- a640c23a62f3a-a7245ccdda4mr460752366b.21.1719322113633; Tue, 25 Jun 2024
- 06:28:33 -0700 (PDT)
+	s=arc-20240116; t=1719322239; c=relaxed/simple;
+	bh=JhzjXgKifu5/D/SKFpApR3mOJjj8LGEoCdENPo+xmCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S9SAw0tzU87bnkZwZXNLZmgHSQku1yghdxUgqcFf90Iy7xFmUwc7O0WtSqKfJdvXls9+fqavZ3DbwmoEkMVpEVKG8345hNiFlp5DSGTFHT3SD+bxhp9vF2Ldqr57LbX/5wJqWdrkjflmyiYPGBd47D2+wXmWIVPz0oPRU5xtv7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m+c+rnjF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bK/P1zsA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m+c+rnjF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bK/P1zsA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7CA9D21A4F;
+	Tue, 25 Jun 2024 13:30:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719322235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=of4oMpIBerQ3izREzdCQfoHy6/sqMBDaWKJerWvYlbU=;
+	b=m+c+rnjFq3PVOve8WmerFuB0FI6bnxtB3JnGPbqNO8VrZ3BHoXEjjTNDgglDoti5ajnNnq
+	Wr3L97LZmG9e5fByE381uDYd5DtG5VRiqEflsAHQFKdVnAepJzM8VIqCmt2XfKx+MDTSeO
+	hGmz/nSDv9JMZVQ1QWwds4RxqxX5Umk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719322235;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=of4oMpIBerQ3izREzdCQfoHy6/sqMBDaWKJerWvYlbU=;
+	b=bK/P1zsAVzS4UyR1m/4z23cthsd9sfKj4M/9ksOP49BVKykHvPWF6+pFgMHhyMae5Eilq3
+	z2kMVrVfd8RYjyBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=m+c+rnjF;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="bK/P1zsA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719322235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=of4oMpIBerQ3izREzdCQfoHy6/sqMBDaWKJerWvYlbU=;
+	b=m+c+rnjFq3PVOve8WmerFuB0FI6bnxtB3JnGPbqNO8VrZ3BHoXEjjTNDgglDoti5ajnNnq
+	Wr3L97LZmG9e5fByE381uDYd5DtG5VRiqEflsAHQFKdVnAepJzM8VIqCmt2XfKx+MDTSeO
+	hGmz/nSDv9JMZVQ1QWwds4RxqxX5Umk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719322235;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=of4oMpIBerQ3izREzdCQfoHy6/sqMBDaWKJerWvYlbU=;
+	b=bK/P1zsAVzS4UyR1m/4z23cthsd9sfKj4M/9ksOP49BVKykHvPWF6+pFgMHhyMae5Eilq3
+	z2kMVrVfd8RYjyBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 70C0B13A9A;
+	Tue, 25 Jun 2024 13:30:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /smCG3vGemYzGgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 25 Jun 2024 13:30:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2E12FA08A4; Tue, 25 Jun 2024 15:30:31 +0200 (CEST)
+Date: Tue, 25 Jun 2024 15:30:31 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Yu Ma <yu.ma@intel.com>,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, edumazet@google.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v2 3/3] fs/file.c: remove sanity_check from alloc_fd()
+Message-ID: <20240625133031.jjew3uevvrgwgviw@quack3>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-4-yu.ma@intel.com>
+ <20240625120834.rhkm3p5by5jfc3bw@quack3>
+ <CAGudoHGYQwigyQSqm97zyUafxaOCo0VoHZmcYzF1KtqmX=npUg@mail.gmail.com>
+ <CAGudoHH4ixO6n2BgMGx7EEYvLS2Agb8WBz_RM55HjCWBQ5tMLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
- <fa1a8a0b01cd8c53d290cf431b9c1ffc6305ef0d.camel@xry111.site>
-In-Reply-To: <fa1a8a0b01cd8c53d290cf431b9c1ffc6305ef0d.camel@xry111.site>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 25 Jun 2024 15:28:20 +0200
-Message-ID: <CAGudoHHn+N2oUJH9DE86gDFxntV46CxrLtC7=B6dTOjxM4mQOA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, axboe@kernel.dk, torvalds@linux-foundation.org, 
-	loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHH4ixO6n2BgMGx7EEYvLS2Agb8WBz_RM55HjCWBQ5tMLg@mail.gmail.com>
+X-Rspamd-Queue-Id: 7CA9D21A4F
+X-Spam-Score: -4.01
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On Tue, Jun 25, 2024 at 3:24=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
-e:
->
-> On Tue, 2024-06-25 at 13:00 +0200, Mateusz Guzik wrote:
-> > +     if (flags =3D=3D AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
->
-> Could it be
->
-> if ((flags & AT_EMPTY_PATH) && vfs_empty_path(dfd, filename))
->
-> instead?
->
-> When fstatat is implemented with statx AT_NO_AUTOMOUNT is needed, or at
-> least Glibc developers think it's needed:
->
-> #if FSTATAT_USE_STATX
->
-> static inline int
-> fstatat64_time64_statx (int fd, const char *file, struct __stat64_t64 *bu=
-f,
->             int flag)
-> {
->   /* 32-bit kABI with default 64-bit time_t, e.g. arc, riscv32.   Also
->      64-bit time_t support is done through statx syscall.  */
->   struct statx tmp;
->   int r =3D INTERNAL_SYSCALL_CALL (statx, fd, file, AT_NO_AUTOMOUNT | fla=
-g,
->                  STATX_BASIC_STATS, &tmp);
->
-> so "flags =3D=3D AT_EMPTY_PATH" won't be true if Glibc implements fstatat
-> and fstat via statx (on LoongArch and 32-bit platforms).
->
-> I was just surprised when I saw a 100%+ improve for statx("",
-> AT_EMPTY_PATH) but not stat on the Loongson machine.
->
+On Tue 25-06-24 15:11:23, Mateusz Guzik wrote:
+> On Tue, Jun 25, 2024 at 3:09 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >
+> > On Tue, Jun 25, 2024 at 2:08 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Sat 22-06-24 11:49:04, Yu Ma wrote:
+> > > > alloc_fd() has a sanity check inside to make sure the struct file mapping to the
+> > > > allocated fd is NULL. Remove this sanity check since it can be assured by
+> > > > exisitng zero initilization and NULL set when recycling fd.
+> > >   ^^^ existing  ^^^ initialization
+> > >
+> > > Well, since this is a sanity check, it is expected it never hits. Yet
+> > > searching the web shows it has hit a few times in the past :). So would
+> > > wrapping this with unlikely() give a similar performance gain while keeping
+> > > debugability? If unlikely() does not help, I agree we can remove this since
+> > > fd_install() actually has the same check:
+> > >
+> > > BUG_ON(fdt->fd[fd] != NULL);
+> > >
+> > > and there we need the cacheline anyway so performance impact is minimal.
+> > > Now, this condition in alloc_fd() is nice that it does not take the kernel
+> > > down so perhaps we could change the BUG_ON to WARN() dumping similar kind
+> > > of info as alloc_fd()?
+> > >
+> >
+> > Christian suggested just removing it.
+> >
+> > To my understanding the problem is not the branch per se, but the the
+> > cacheline bounce of the fd array induced by reading the status.
+> >
+> > Note the thing also nullifies the pointer, kind of defeating the
+> > BUG_ON in fd_install.
+> >
+> > I'm guessing it's not going to hurt to branch on it after releasing
+> > the lock and forego nullifying, more or less:
+> > diff --git a/fs/file.c b/fs/file.c
+> > index a3b72aa64f11..d22b867db246 100644
+> > --- a/fs/file.c
+> > +++ b/fs/file.c
+> > @@ -524,11 +524,11 @@ static int alloc_fd(unsigned start, unsigned
+> > end, unsigned flags)
+> >          */
+> >         error = -EMFILE;
+> >         if (fd >= end)
+> > -               goto out;
+> > +               goto out_locked;
+> >
+> >         error = expand_files(files, fd);
+> >         if (error < 0)
+> > -               goto out;
+> > +               goto out_locked;
+> >
+> >         /*
+> >          * If we needed to expand the fs array we
+> > @@ -546,15 +546,15 @@ static int alloc_fd(unsigned start, unsigned
+> > end, unsigned flags)
+> >         else
+> >                 __clear_close_on_exec(fd, fdt);
+> >         error = fd;
+> > -#if 1
+> > -       /* Sanity check */
+> > -       if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
+> > +       spin_unlock(&files->file_lock);
+> > +
+> > +       if (unlikely(rcu_access_pointer(fdt->fd[fd]) != NULL)) {
+> >                 printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
+> > -               rcu_assign_pointer(fdt->fd[fd], NULL);
+> >         }
+> > -#endif
+> 
+> Now that I sent it it is of course not safe to deref without
+> protection from either rcu or the lock, so this would have to be
+> wrapped with rcu_read_lock, which makes it even less appealing.
+> 
+> Whacking the thing as in the submitted patch seems like the best way
+> forward here. :)
 
-It can't be like that specifically because we still need to catch
-bogus AT flags.
+Yeah, as I wrote, I'm fine removing it, in particular if Christian is of
+the same opinion. I was more musing about whether we should make the check
+in fd_install() less aggressive since it is now more likely to trigger...
 
-I'm going to poke a little bit and send a v2, thanks.
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
