@@ -1,206 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-22316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3B02916525
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 12:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FB7916553
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 12:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 985CE2823B0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 10:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B6FD1F23205
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 10:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5583714B961;
-	Tue, 25 Jun 2024 10:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D2714A4DC;
+	Tue, 25 Jun 2024 10:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GDIuGNll";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VDTO+LRc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GDIuGNll";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VDTO+LRc"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UHNTXEcY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K4hrgVPk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UHNTXEcY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K4hrgVPk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC4714B07C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 10:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FC514A4CC;
+	Tue, 25 Jun 2024 10:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719310756; cv=none; b=RlBwhm0hi5/qmJI1+sA7p59yhRkoEC8TLFsNKSxcF0YgDrFLQ+LoYiF0wX68HUdlnwlsTk5gqOflSIaMljmsNooXb+qVwG9tly+hGbj8cOCwe4xLW7DxVVATfijlHVfOddAFhcBjZ8aoVsu24Mpv70kEbE0jbL7hufseP+csfeA=
+	t=1719311818; cv=none; b=JoLbtrHY5w7009S9uxsZQimOfg7zuruqTiF5QKS8FdXYcVkCfIG0N8w9uQIlqFo7CGHXZjFu5DvDn3avz53HME/vD9diSl+qGHwz5LNsmeFyCuxAdwc0e31ic8VWaGobvcmmnzoUPrWq11hcO55OwMDA54x1S3jsW/o531SIqMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719310756; c=relaxed/simple;
-	bh=Bu7YUmZoT9vACQSaTZDW2SetomtAJn73UDFWVLSHt8E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QPz0M0yiGN32tiX4frMvlOSm4/pH571o2sNP8SNxMlC+YrPiYCfzMWqIZxwW2aFelmq0SJkQ/FAMUIxBKTndj/OxKPVb04wjnNJkEdcHG9rxNKiHMh9/Lh0/gwP2i/LqjtLYPQUJtQOdfqwTPpnN4VOD2lRdhP3R9WNl+9RC8Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GDIuGNll; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VDTO+LRc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GDIuGNll; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VDTO+LRc; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1719311818; c=relaxed/simple;
+	bh=V9ge5PEsq68iK3SY4uv+xZ7ugwu//+dBKqZw3UujnRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jC6ujPyqbUn38tGQiPYX5JjNOYyIy0CGf61KeJSxLeNAdnejtyy/7QYj+MLVCbU7V37suXRnqHstQuHWPUIkWzfpi6KrymRiXbEvugkPKCG756lluU1zX8vLZyaS9Ib3xL3/drrIkMH0qyV12pWQlt4vJLfzldTrMFqU8k8kI+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UHNTXEcY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K4hrgVPk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UHNTXEcY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K4hrgVPk; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9A0FB21A79;
-	Tue, 25 Jun 2024 10:19:10 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 07E1C21A6D;
+	Tue, 25 Jun 2024 10:36:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719310750; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	t=1719311814; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vyxwvvsZ7JcW5Bl3ExPGCArwxKk1bgXwcn4XRHBgVco=;
-	b=GDIuGNll6Qe2PeuRVsfKphDYbItj3AF5g43txEQCUQJAggZ6VXUKHHY9bZ+gjMr0yY+GbI
-	84qjRTOGYMW7tJYx9O8On/Hr4C6H5HGwZNYJh8AeeCGpo6BSXa6XpwI3TC56DJ9C30Yhau
-	7dz3o12FaNDLe8XcftJwZ+VT9nQNvb0=
+	bh=dOxH/mMch9vEgRGxLUd6OPps9sVmCT7La0oUktmP5zQ=;
+	b=UHNTXEcYWrxhg/B3pQMUz3EPQff483y7WiABrapkhI9mF8ExRZdPqtQpk64SwipcNEO0ym
+	1kut2p4LK2ZoU8NFYvdeNmGkv9k96+hfh2C1pRXssOXfnlKXhATfYmcqDHN3MMgVb7m8mR
+	QAL2P2dlEx6dxjRJjcGuAGYt2DULEtg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719310750;
+	s=susede2_ed25519; t=1719311814;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vyxwvvsZ7JcW5Bl3ExPGCArwxKk1bgXwcn4XRHBgVco=;
-	b=VDTO+LRc94g0SdBAa/BekynpkCYovk3M7Lh9FdpVcOjuso/mEHBO7mhbuyV1D8UlapQz14
-	poFwR1XOAms4beAQ==
+	bh=dOxH/mMch9vEgRGxLUd6OPps9sVmCT7La0oUktmP5zQ=;
+	b=K4hrgVPkXEqGdu2WS2DwQcu2yvoQyTJzq0WTISScDkHGSMT/XKAwdQ/gO5Tbg8T2YnfvGd
+	hpCFg4cHhHGNP3Bw==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GDIuGNll;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=VDTO+LRc
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UHNTXEcY;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=K4hrgVPk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719310750; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	t=1719311814; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vyxwvvsZ7JcW5Bl3ExPGCArwxKk1bgXwcn4XRHBgVco=;
-	b=GDIuGNll6Qe2PeuRVsfKphDYbItj3AF5g43txEQCUQJAggZ6VXUKHHY9bZ+gjMr0yY+GbI
-	84qjRTOGYMW7tJYx9O8On/Hr4C6H5HGwZNYJh8AeeCGpo6BSXa6XpwI3TC56DJ9C30Yhau
-	7dz3o12FaNDLe8XcftJwZ+VT9nQNvb0=
+	bh=dOxH/mMch9vEgRGxLUd6OPps9sVmCT7La0oUktmP5zQ=;
+	b=UHNTXEcYWrxhg/B3pQMUz3EPQff483y7WiABrapkhI9mF8ExRZdPqtQpk64SwipcNEO0ym
+	1kut2p4LK2ZoU8NFYvdeNmGkv9k96+hfh2C1pRXssOXfnlKXhATfYmcqDHN3MMgVb7m8mR
+	QAL2P2dlEx6dxjRJjcGuAGYt2DULEtg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719310750;
+	s=susede2_ed25519; t=1719311814;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vyxwvvsZ7JcW5Bl3ExPGCArwxKk1bgXwcn4XRHBgVco=;
-	b=VDTO+LRc94g0SdBAa/BekynpkCYovk3M7Lh9FdpVcOjuso/mEHBO7mhbuyV1D8UlapQz14
-	poFwR1XOAms4beAQ==
+	bh=dOxH/mMch9vEgRGxLUd6OPps9sVmCT7La0oUktmP5zQ=;
+	b=K4hrgVPkXEqGdu2WS2DwQcu2yvoQyTJzq0WTISScDkHGSMT/XKAwdQ/gO5Tbg8T2YnfvGd
+	hpCFg4cHhHGNP3Bw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E8CE13ADA;
-	Tue, 25 Jun 2024 10:19:10 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC6491384C;
+	Tue, 25 Jun 2024 10:36:53 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1ZjMIp6ZemaFWQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 25 Jun 2024 10:19:10 +0000
+	id RvegOcWdemYsXwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 25 Jun 2024 10:36:53 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 19B82A095B; Tue, 25 Jun 2024 12:19:10 +0200 (CEST)
+	id 90444A090B; Tue, 25 Jun 2024 12:36:53 +0200 (CEST)
+Date: Tue, 25 Jun 2024 12:36:53 +0200
 From: Jan Kara <jack@suse.cz>
-To: <linux-mm@kvack.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	<linux-fsdevel@vger.kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH 10/10] readahead: Simplify gotos in page_cache_sync_ra()
-Date: Tue, 25 Jun 2024 12:19:00 +0200
-Message-Id: <20240625101909.12234-10-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20240625100859.15507-1-jack@suse.cz>
-References: <20240625100859.15507-1-jack@suse.cz>
+To: zippermonkey <zzippermonkey@outlook.com>
+Cc: zhangpengpeng0808@gmail.com, akpm@linux-foundation.org,
+	bruzzhang@tencent.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	vernhao@tencent.com, willy@infradead.org, zigiwang@tencent.com,
+	jack@suse.cz
+Subject: Re: [PATCH RFC] mm/readahead: Fix repeat initial_readahead
+Message-ID: <20240625103653.uzabtus3yq2lo3o6@quack3>
+References: <20240618114941.5935-1-zhangpengpeng0808@gmail.com>
+ <SYBP282MB2224E68F688DD74FFEA86AA6B9D52@SYBP282MB2224.AUSP282.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1867; i=jack@suse.cz; h=from:subject; bh=Bu7YUmZoT9vACQSaTZDW2SetomtAJn73UDFWVLSHt8E=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBmepmUjRLlwaM3NNckyBBmL/c1D6Ha48fvdYE17Sg7 YsrS5YCJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZnqZlAAKCRCcnaoHP2RA2djbCA DfC3XEexGDrUgHi3trjPNNDxHxAd2Pva0wrWmypURWj66YlO7SJWQpMNasQ2bKT9dqrU14g+aQdOtM ywVLaQ89uqqhzMyYqN2QD7GWOJhPsAnmjiDF0HoGOb4kjYN1xw8cDvsXeRHBrvTZk33sducrLHSQ3d uPmmSNSQt7JMFIerXvN0yyWyTJIIJmkdgio0e/Y5bR0C+ftUFk5bI7hZaBu74XjehHu6ZkCCzLv1Fn xfdbJ6zFIi1KAjYcd82rXzJdRbit6boVBpqlf8W4tMlaG2m9qhkM8nWwC3QvkSEODq4U6f2nwlkQm2 Lhs8n/XI7CFY64o2ljZ6XcCcF7PvIo
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.89 / 50.00];
-	BAYES_HAM(-2.88)[99.49%];
-	MID_CONTAINS_FROM(1.00)[];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SYBP282MB2224E68F688DD74FFEA86AA6B9D52@SYBP282MB2224.AUSP282.PROD.OUTLOOK.COM>
+X-Rspamd-Queue-Id: 07E1C21A6D
+X-Spam-Score: -3.98
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.98 / 50.00];
+	BAYES_HAM(-2.97)[99.88%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
+	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
 	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DKIM_TRACE(0.00)[suse.cz:+]
+	FREEMAIL_TO(0.00)[outlook.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,outlook.com];
+	TO_DN_SOME(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,linux-foundation.org,tencent.com,vger.kernel.org,kvack.org,infradead.org,suse.cz];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email]
 X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 9A0FB21A79
-X-Spam-Flag: NO
-X-Spam-Score: -2.89
-X-Spam-Level: 
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-Unify all conditions for initial readahead to simplify goto logic in
-page_cache_sync_ra(). No functional changes.
+On Tue 25-06-24 14:28:34, zippermonkey wrote:
+> To illustrate this problem, I created the following example:
+> 
+> Assuming that the process reads sequentially from the beginning of the file
+> and
+> calls the `page_cache_sync_readahead` function. In this sync readahead
+> function,
+> since the index is 0, it will proceed to `initial_readahead` and initialize
+> `ra_state`. It allocates a folio with an order of 2 and marks it as
+> PG_readahead.
+> Next, because` (folio_test_readahead(folio))` is true, the
+> page_cache_async_ra
+> function is called, which causes the `ra_state` to be initialized again.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- mm/readahead.c | 26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
+Good spotting guys! There are actually more problems in the readahead code.
+I have just pushed out a patch series [1] addressing several issues that
+should also address the problem you've found. Can you please test whether
+it provides a similar speedup as your fix (sorry, I forgot to CC you on the
+series)? Thanks!
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 12c0d2215329..d68d5ce657a7 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -532,20 +532,19 @@ void page_cache_sync_ra(struct readahead_control *ractl,
- 	}
- 
- 	max_pages = ractl_max_pages(ractl, req_count);
-+	prev_index = (unsigned long long)ra->prev_pos >> PAGE_SHIFT;
- 	/*
--	 * start of file or oversized read
--	 */
--	if (!index || req_count > max_pages)
--		goto initial_readahead;
--
--	/*
--	 * sequential cache miss
-+	 * A start of file, oversized read, or sequential cache miss:
- 	 * trivial case: (index - prev_index) == 1
- 	 * unaligned reads: (index - prev_index) == 0
- 	 */
--	prev_index = (unsigned long long)ra->prev_pos >> PAGE_SHIFT;
--	if (index - prev_index <= 1UL)
--		goto initial_readahead;
-+	if (!index || req_count > max_pages || index - prev_index <= 1UL) {
-+		ra->start = index;
-+		ra->size = get_init_ra_size(req_count, max_pages);
-+		ra->async_size = ra->size > req_count ? ra->size - req_count :
-+							ra->size >> 1;
-+		goto readit;
-+	}
- 
- 	/*
- 	 * Query the page cache and look for the traces(cached history pages)
-@@ -572,13 +571,6 @@ void page_cache_sync_ra(struct readahead_control *ractl,
- 	ra->start = index;
- 	ra->size = min(contig_count + req_count, max_pages);
- 	ra->async_size = 1;
--	goto readit;
--
--initial_readahead:
--	ra->start = index;
--	ra->size = get_init_ra_size(req_count, max_pages);
--	ra->async_size = ra->size > req_count ? ra->size - req_count :
--						ra->size >> 1;
- readit:
- 	ractl->_index = ra->start;
- 	page_cache_ra_order(ractl, ra, 0);
+[1] https://lore.kernel.org/20240625100859.15507-1-jack@suse.cz
+
+								Honza
 -- 
-2.35.3
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
