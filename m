@@ -1,135 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-22364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495D5916A15
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 16:18:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B966916A23
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 16:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9B401F24418
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 14:18:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D2FE1C21B2E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 14:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAC4BE71;
-	Tue, 25 Jun 2024 14:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B5F169AD0;
+	Tue, 25 Jun 2024 14:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="D0BPU37/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Grkxs7UY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8574816C437
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 14:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621F4158D7C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 14:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719325081; cv=none; b=VQ0lh3HX1fPyhA8Vb+t0UNa38yCsCHkGwgoPHnu1hnshY3OxWZTgtTf1f5nT2sVMtsdWZ/3PATBYaIrGsGRjMLXq1HzhFAEyGAZtLtv8dVnfreWo4ZKedZTyqMvFjUbjK9ArDWsTy5L42TPKtXlWOM8VR77ArnpFw6HXLLNA6S8=
+	t=1719325273; cv=none; b=eNO/7lpMPhyCQ4EVTbslASYleD3MKv2UPcaZ5Xgnec3+t3JosyjgvhUuFmA3NYHRf0Ay2mYbX5g30sJcxXMJkrH3pFWzwuBXAR/pY5LehDkv/acifah2heWJH/1xrZWfgAOi3XUJXExir60mCSHO/ZFR1FhELpn9uAS5qVB6ciI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719325081; c=relaxed/simple;
-	bh=flhR04wwLwq728Hwn32qhwRAtEfaDbaUqRqoiKFz64M=;
+	s=arc-20240116; t=1719325273; c=relaxed/simple;
+	bh=Ufq/5wat4DEu0bfHDex7KDp+N8ySGxBNakyWeLwjYgg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpXWSXZ4FjVd/UqIw4lLPc4XIv0hHCxkuuz8SeXC195J0vumI/jVhKtO+IlnpPva1OOVcz4zhvGQgy4xDNrCCI9TTpAlqoP2ESw6SOliKzvOxd4eJ59hOjotQgdnyt13USxXZjYYi48SLpgnuDJ3ARJmlhfdtZWcHmAdKVMFI4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=D0BPU37/; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-700cd43564eso128897a34.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 07:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719325077; x=1719929877; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QlING8gjdiD01zYrCX7A/o6Z2iI5mQrjCPHaxdU6BxM=;
-        b=D0BPU37/xmQRIdrxu8oIpzA/zTUAtvs59GByjmEgqhOibPJRW+Yjtov4Ti7t+IiXsp
-         ABnMDmoWVQdCXd9sdjiXUiLoFuJHpZhA7L7rf1jlmtT7poM12yyJIq5vH4/f20RmsZj2
-         oKTMmESkT9XhvjExgWXV2jOjqtVH+FTD7qB7JhHnyWhxrK1e97HehDThgbR54noxTwhR
-         P1igfTaYMtX6z5zGD6IHghy1yxh1okLiiFlRCqeFruA6FKzSnLLhT2SGfoOdqyXTvswy
-         AyBrGO3kMzmSkRCVioeK/fVDeiHLPejlgM9pXQkBjjfVBmhwJ8D0JgPBUqWDB/bZaMgh
-         zALA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719325077; x=1719929877;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QlING8gjdiD01zYrCX7A/o6Z2iI5mQrjCPHaxdU6BxM=;
-        b=Ly4AglFKp9MkI3yL2xuObs4q4do39ay4YILrIe6xf3xB3eueH6mVHCS445IYU1C0UY
-         9LVjUbE4zuFyIRkCw4MyMLEexDixy70AXKmCS6+SPBVwPRdzDxr5yC6u4oJxSPEnddOn
-         1LHLO4W/oFlGjIurN6rxvmz5JUvVu7uNFzZ/LedxulFpyHRJRMQdxp2I1K9xYLGoJTGn
-         +Q08utOX0Cz7koeTkz7BnbWBkh5cMrm9dCFDkIQdWyCGeq62CTKMDlFLrXODhqp7EM9J
-         2SzXrDhoJDR3mUZXNLfkVG53zGiaOlD18KGKainA3Mr6KsWBwOzOedPFqlridIO8gqiR
-         ussA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJGD7LoDDbnB8qTcOYkk6ZiFSEbdSZlbliGTRuAGUphIvPKyO050dC2dlv5mMwJxDiLzNX5Ml4YYDVkmiQI8A0lODWhABLJbfbpcXEeQ==
-X-Gm-Message-State: AOJu0YwKlH/GAobJPSpntd7Cby3wp9pBOHyfwmR1sQoJryOcuJQ9Cgwl
-	T58C4q/P3qSTcHIi66l8Jxq9Gn1FnJUzCII6tPZeZ8g51ETaZCpcUnz/QZ1aloM=
-X-Google-Smtp-Source: AGHT+IHG3KmkQ6OtmMYfCfQ4Pp3WOFghAqpeGTHK4apDcZQ5JY2OwihJ/0IPT8gJF21r6LZ9jdNgsQ==
-X-Received: by 2002:a9d:675a:0:b0:700:adba:6749 with SMTP id 46e09a7af769-700adba689dmr8741304a34.21.1719325077496;
-        Tue, 25 Jun 2024 07:17:57 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79c10f8ce1asm3058485a.63.2024.06.25.07.17.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 07:17:57 -0700 (PDT)
-Date: Tue, 25 Jun 2024 10:17:56 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Karel Zak <kzak@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=mku6/3RPusgQ1w9W+uc3bkjMFa0tPNW7G22zbSk07FgKjFvudX4jIaV5Ct6k9QVQXjSiIxJRdaDp6NqxYEykgZeyV7XTVRoBPON9TdTx4SpZ4XRFkh1ig/lnk2HWWi+ecbOBURe9hvtyPFPdKd6Whf4cZ0JTgLCnj31RN5xE7ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Grkxs7UY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17022C32781;
+	Tue, 25 Jun 2024 14:21:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719325273;
+	bh=Ufq/5wat4DEu0bfHDex7KDp+N8ySGxBNakyWeLwjYgg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Grkxs7UY+oPpKdL+DDKItpykLfWQysBqcqp65mExYq0/wPryvjzPqm+D63kn58HOS
+	 Npq+lpmokFez9izl38jbE3bkQVsLakEP0wKFiROX+mytGe592ccGPp9MhiXJ0UkdvA
+	 PssB+YQphHbu995cdEIIfKwkgLMHobJR4uHN82BxQOllr269GjdIdM1V/SR0TMp4Q2
+	 26T6HZJS9CJRBzYzzKM5V1/wprkrFRzkgNMM1cz5XBwBK+pWEPEcrW0aNdJcuBEl90
+	 /8oOBofBHeJUIN33kpi4QM8qxWq8WqBJk5SkPJdzHWoxsRGWnBS2rwl2hBfJk8mFTA
+	 RtxyIOjlPg9pQ==
+Date: Tue, 25 Jun 2024 16:21:09 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
 	kernel-team@fb.com
-Subject: Re: [PATCH 0/4] Add the ability to query mount options in statmount
-Message-ID: <20240625141756.GA2946846@perftesting>
-References: <cover.1719257716.git.josef@toxicpanda.com>
- <20240625-tragbar-sitzgelegenheit-48f310320058@brauner>
- <20240625130008.GA2945924@perftesting>
- <CAJfpeguAarrLmXq+54Tj3Bf3+5uhq4kXOfVytEAOmh8RpUDE6w@mail.gmail.com>
- <20240625-beackern-bahnstation-290299dade30@brauner>
- <5j2codcdntgdt4wpvzgbadg4r5obckor37kk4sglora2qv5kwu@wsezhlieuduj>
+Subject: Re: [PATCH 7/8] fs: add an ioctl to get the mnt ns id from nsfs
+Message-ID: <20240625-darunter-wieweit-9ced87b1df0b@brauner>
+References: <cover.1719243756.git.josef@toxicpanda.com>
+ <180449959d5a756af7306d6bda55f41b9d53e3cb.1719243756.git.josef@toxicpanda.com>
+ <14330f15065f92a88c7c0364cba3e26c294293a4.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5j2codcdntgdt4wpvzgbadg4r5obckor37kk4sglora2qv5kwu@wsezhlieuduj>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14330f15065f92a88c7c0364cba3e26c294293a4.camel@kernel.org>
 
-On Tue, Jun 25, 2024 at 03:52:03PM +0200, Karel Zak wrote:
-> On Tue, Jun 25, 2024 at 03:35:17PM GMT, Christian Brauner wrote:
-> > On Tue, Jun 25, 2024 at 03:04:40PM GMT, Miklos Szeredi wrote:
-> > > On Tue, 25 Jun 2024 at 15:00, Josef Bacik <josef@toxicpanda.com> wrote:
-> > > 
-> > > > We could go this way I suppose, but again this is a lot of work, and honestly I
-> > > > just want to log mount options into some database so I can go looking for people
-> > > > doing weird shit on my giant fleet of machines/containers.  Would the iter thing
-> > > > make the overlayfs thing better?  Yeah for sure.  Do we care?  I don't think so,
-> > > > we just want all the options, and we can all strsep/strtok with a comma.
-> > > 
-> > > I think we can live with the monolithic option block.  However I'd
-> > > prefer the separator to be a null character, thus the options could be
-> > > sent unescaped.  That way the iterator will be a lot simpler to
-> > > implement.
+On Tue, Jun 25, 2024 at 10:10:29AM GMT, Jeff Layton wrote:
+> On Mon, 2024-06-24 at 11:49 -0400, Josef Bacik wrote:
+> > In order to utilize the listmount() and statmount() extensions that
+> > allow us to call them on different namespaces we need a way to get
+> > the
+> > mnt namespace id from user space.  Add an ioctl to nsfs that will
+> > allow
+> > us to extract the mnt namespace id in order to make these new
+> > extensions
+> > usable.
 > > 
-> > For libmount it means writing a new parser and Karel prefers the ","
-> > format so I would like to keep the current format.
->  
-> Sorry for the misunderstanding. I had a chat with Christian about it
-> when I was out of my office (and phone chats are not ideal for this).
+> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > ---
+> >  fs/nsfs.c                 | 14 ++++++++++++++
+> >  include/uapi/linux/nsfs.h |  2 ++
+> >  2 files changed, 16 insertions(+)
+> > 
+> > diff --git a/fs/nsfs.c b/fs/nsfs.c
+> > index 07e22a15ef02..af352dadffe1 100644
+> > --- a/fs/nsfs.c
+> > +++ b/fs/nsfs.c
+> > @@ -12,6 +12,7 @@
+> >  #include <linux/nsfs.h>
+> >  #include <linux/uaccess.h>
+> >  
+> > +#include "mount.h"
+> >  #include "internal.h"
+> >  
+> >  static struct vfsmount *nsfs_mnt;
+> > @@ -143,6 +144,19 @@ static long ns_ioctl(struct file *filp, unsigned
+> > int ioctl,
+> >  		argp = (uid_t __user *) arg;
+> >  		uid = from_kuid_munged(current_user_ns(), user_ns-
+> > >owner);
+> >  		return put_user(uid, argp);
+> > +	case NS_GET_MNTNS_ID: {
+> > +		struct mnt_namespace *mnt_ns;
+> > +		__u64 __user *idp;
+> > +		__u64 id;
+> > +
+> > +		if (ns->ops->type != CLONE_NEWNS)
+> > +			return -EINVAL;
+> > +
+> > +		mnt_ns = container_of(ns, struct mnt_namespace, ns);
+> > +		idp = (__u64 __user *)arg;
+> > +		id = mnt_ns->seq;
+> > +		return put_user(id, idp);
+> > +	}
+> >  	default:
+> >  		return -ENOTTY;
+> >  	}
+> > diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+> > index a0c8552b64ee..56e8b1639b98 100644
+> > --- a/include/uapi/linux/nsfs.h
+> > +++ b/include/uapi/linux/nsfs.h
+> > @@ -15,5 +15,7 @@
+> >  #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
+> >  /* Get owner UID (in the caller's user namespace) for a user
+> > namespace */
+> >  #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
+> > +/* Get the id for a mount namespace */
+> > +#define NS_GET_MNTNS_ID		_IO(NSIO, 0x5)
+> >  
+> >  #endif /* __LINUX_NSFS_H */
 > 
-> I thought Miklos had suggested using a space (" ") as the separator, but
-> after reading the entire email thread, I now understand that Miklos'
-> suggestion is to use \0 (zero) as the options separator.
+> Thinking about this more...
 > 
-> I have no issue with using \0, as it will make things much simpler.
+> Would it also make sense to wire up a similar ioctl in pidfs? It seems
+> like it might be nice to just open a pidfd for pid and then issue the
+> above to get its mntns id, rather than having to grovel around in nsfs.
 
-What I mean was "we can all strsep/strtok with a comma" I meant was in
-userspace.  statmount() gives you the giant block, it's up to user space to
-parse it.
+I had a different idea yesterday: get a mount namespace fd from a pidfd
+in fact, get any namespace fd based on a pidfd. It's the equivalent to:
+/proc/$pid/ns* and then you can avoid having to go via procfs at all.
 
-I can change the kernel to do this for you, and then add a mnt_opts_len field so
-you know how big of a block you get.
+Needs to be governed by ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS).
 
-But that means getting the buffer, and going back through it and replacing every
-',' with a '\0', because I'm sure as hell not going and changing all of our
-->show_options() callbacks to not put in a ','.
-
-Is this the direction we want to go?  Thanks,
-
-Josef
+(We also need an ioctl() on the pidfd to get to the PID without procfs btw.)
 
