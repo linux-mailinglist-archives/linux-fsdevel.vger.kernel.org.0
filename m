@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-22445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D45C917329
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 23:18:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C19917333
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 23:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69451F22156
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 21:18:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 102AE286FA8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 21:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C0117E465;
-	Tue, 25 Jun 2024 21:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9671F17F4E3;
+	Tue, 25 Jun 2024 21:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eaddj1WG"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lagVaS03"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0392B176252;
-	Tue, 25 Jun 2024 21:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E989176AAF;
+	Tue, 25 Jun 2024 21:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719350291; cv=none; b=RD71gFf1N35Q0H40B2IEMXgY7cMTvKzip6WlsrlDekS1LeEaltUHdeFIJrlQaPjlKDzrxyzkLPluKwWofPiMFDHEd548qsOTtNVqLW0VXZcZ0okRsOaRfuL86oUk6azTKPLbB7/jzj4eQWNF8huIzgDcKuYqyTiR8Rx57u3c4wY=
+	t=1719350293; cv=none; b=EPPValsNzz8UNx5UNqyiYy18swANRopNgnx2apRvIZ+oIXBV2uFMxN+uB9cYxUjNeV2NoISn8K82KuU0KJTq8TjcOO07D7BqxIc+8+5KUS7yvVDxVmsW4bbCor6YVOb8dvs+AaablVb5TYwD3KMdw3StXdJzGYD4okcUiwfCn1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719350291; c=relaxed/simple;
-	bh=k7WG3rwgkOEy8+g7ol3n2RpCqSOWutW6VRpzXP8z8oA=;
+	s=arc-20240116; t=1719350293; c=relaxed/simple;
+	bh=z22rC2d+tdG992WQD+/IlVFv4wF2WVaOL0fVpFvwpBs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n1uZO+51CJF8mFk32T6tge2jtUQ9WGu3i3dB7ydeHj+gHM9d43WF2CtF0g/8qwXwckjOFivSa0dB95fbUWK3LYOdK0hN8RCymoqBJ4cZXPJtNdxSIUC5DBJXKqewutAWqXFEYWWJmeeZ+2mcDrcQ/akkRKF+2W8wCJNfvwV2yCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eaddj1WG; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=Vb0mr09c88NSaopy15pZ175fkM5gm/1yltzgGoB9Cq8D0RArm3VyRLZu4COk2VOYn9UbbrUTIs9HSazI3IXfLPgpg2/dOWzGbi7jYNXfUuR0iCURsdY4GI4PDc0ErXeZ6siLnj+Uedj9Tiwz60LzuKTt01X4AYFqVTsDslLszJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lagVaS03; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=40AQCIbaWR3aQUx2SpMr2/LydQuRZnfIDFJXoDJax6c=; b=eaddj1WGAmbB/NFaLU1SskSYtu
-	4zKTkZdka8SGo2Hc9zZFGH7d+R4UZL4kV05r7K/tjWtVmF/HZNUgdLqcQJlxVAmemOlb/D61tqhHU
-	ZSlzJqlUvbc1MlPfSlwJc/LL+10+b7myE6sk0t5lQjmslDBOee+04GxqPMhzJkdTEONnMkdV6E7yD
-	50s+DaQnXAMfkA8RHXSBhC9gaWiHdd//9hwAyWNAE5ploFwBJqMVk7sz+8qEP7W8FS42ZaNfel0k+
-	EPia/5g0DkdcvhC6aj0mJuy3Z2fq0pkReftHDEwJLTPytKWb6RrulY4NFfxqOTK1HZAU2IrHkfgUt
-	dBNfbs3w==;
+	bh=xaYHyg9fqZq3nYOQo5wO57AGN36TvtPlQVk14puk+DA=; b=lagVaS03mlmoCwvSrG6D+LUG2+
+	Fi55kw6uylROLhR/b3asWKar4z1DVfPI8Zx6eDePs065Aw2GJbU27/jXON88nl8ly2UFNzFMdyhq6
+	xTFAmVMHRX1eaXc7E6kr82Ajx4DFJnY3CJ7ihI9Pd0OhdowQEbi2q1kpQdaKWFIlTnN4CHIHEDDzL
+	Se0Kh1j4fHy1a0QowgVfVWo9xFpFIqCzZR98LoKFyACcY7CrqGQwia1FtNalh4ZAIDFryr/Ei058o
+	N/EIBYRHlOp4HycUSP75Jl20rW784nZ/HnkbYkyFPBbZYUE95akF2oceXMqy8WKuLf/cPCotiHCkR
+	bMQscKvA==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sMDYF-0000000BXYW-2iGQ;
+	id 1sMDYG-0000000BXYc-1UQV;
 	Tue, 25 Jun 2024 21:18:08 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-kernel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-fsdevel@vger.kernel.org,
 	maple-tree@lists.infradead.org
-Subject: [PATCH v2 3/5] rosebush: Add test suite
-Date: Tue, 25 Jun 2024 22:17:58 +0100
-Message-ID: <20240625211803.2750563-4-willy@infradead.org>
+Subject: [PATCH v2 4/5] tools: Add support for running rosebush tests in userspace
+Date: Tue, 25 Jun 2024 22:17:59 +0100
+Message-ID: <20240625211803.2750563-5-willy@infradead.org>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240625211803.2750563-1-willy@infradead.org>
 References: <20240625211803.2750563-1-willy@infradead.org>
@@ -63,190 +63,136 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is not a very sophisticated test suite yet, but it helped find
-a few bugs and provides a framework for adding more tests as more
-bugs are found.
+Enable make -C tools/testing/radix-tree.  Much easier to debug than
+an in-kernel module.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- lib/Kconfig.debug   |   3 +
- lib/Makefile        |   1 +
- lib/test_rosebush.c | 140 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 144 insertions(+)
- create mode 100644 lib/test_rosebush.c
+ tools/include/linux/rosebush.h        |  1 +
+ tools/testing/radix-tree/.gitignore   |  1 +
+ tools/testing/radix-tree/Makefile     |  6 ++++-
+ tools/testing/radix-tree/kunit/test.h | 20 +++++++++++++++
+ tools/testing/radix-tree/rosebush.c   | 36 +++++++++++++++++++++++++++
+ 5 files changed, 63 insertions(+), 1 deletion(-)
+ create mode 100644 tools/include/linux/rosebush.h
+ create mode 100644 tools/testing/radix-tree/kunit/test.h
+ create mode 100644 tools/testing/radix-tree/rosebush.c
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 59b6765d86b8..f3cfd79d8dbd 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2447,6 +2447,9 @@ config TEST_RHASHTABLE
- 
- 	  If unsure, say N.
- 
-+config TEST_ROSEBUSH
-+	tristate "Test the Rosebush data structure"
-+
- config TEST_IDA
- 	tristate "Perform selftest on IDA functions"
- 
-diff --git a/lib/Makefile b/lib/Makefile
-index 723e6c90b58d..de4edefc2c11 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -76,6 +76,7 @@ obj-$(CONFIG_TEST_LIST_SORT) += test_list_sort.o
- obj-$(CONFIG_TEST_MIN_HEAP) += test_min_heap.o
- obj-$(CONFIG_TEST_LKM) += test_module.o
- obj-$(CONFIG_TEST_VMALLOC) += test_vmalloc.o
-+obj-$(CONFIG_TEST_ROSEBUSH) += test_rosebush.o
- obj-$(CONFIG_TEST_RHASHTABLE) += test_rhashtable.o
- obj-$(CONFIG_TEST_SORT) += test_sort.o
- obj-$(CONFIG_TEST_USER_COPY) += test_user_copy.o
-diff --git a/lib/test_rosebush.c b/lib/test_rosebush.c
+diff --git a/tools/include/linux/rosebush.h b/tools/include/linux/rosebush.h
 new file mode 100644
-index 000000000000..59c342e7a5b3
+index 000000000000..3f12f4288250
 --- /dev/null
-+++ b/lib/test_rosebush.c
-@@ -0,0 +1,140 @@
-+#include <linux/rosebush.h>
-+#include <kunit/test.h>
++++ b/tools/include/linux/rosebush.h
+@@ -0,0 +1 @@
++#include "../../../include/linux/rosebush.h"
+diff --git a/tools/testing/radix-tree/.gitignore b/tools/testing/radix-tree/.gitignore
+index 49bccb90c35b..fb154f26bdab 100644
+--- a/tools/testing/radix-tree/.gitignore
++++ b/tools/testing/radix-tree/.gitignore
+@@ -9,3 +9,4 @@ radix-tree.c
+ xarray
+ maple
+ ma_xa_benchmark
++rosebush
+diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
+index 7527f738b4a1..982ff4b7fdeb 100644
+--- a/tools/testing/radix-tree/Makefile
++++ b/tools/testing/radix-tree/Makefile
+@@ -4,7 +4,7 @@ CFLAGS += -I. -I../../include -I../../../lib -g -Og -Wall \
+ 	  -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined
+ LDFLAGS += -fsanitize=address -fsanitize=undefined
+ LDLIBS+= -lpthread -lurcu
+-TARGETS = main idr-test multiorder xarray maple
++TARGETS = main idr-test multiorder xarray maple rosebush
+ CORE_OFILES := xarray.o radix-tree.o idr.o linux.o test.o find_bit.o bitmap.o \
+ 			 slab.o maple.o
+ OFILES = main.o $(CORE_OFILES) regression1.o regression2.o regression3.o \
+@@ -36,6 +36,8 @@ xarray: $(CORE_OFILES)
+ 
+ maple: $(CORE_OFILES)
+ 
++rosebush: $(CORE_OFILES)
 +
-+static void iter_rbh(struct kunit *test, struct rbh *rbh, u32 hash, void *p)
-+{
-+	RBH_ITER(iter, rbh, hash);
-+	void *q;
+ multiorder: multiorder.o $(CORE_OFILES)
+ 
+ clean:
+@@ -62,6 +64,8 @@ xarray.o: ../../../lib/xarray.c ../../../lib/test_xarray.c
+ 
+ maple.o: ../../../lib/maple_tree.c ../../../lib/test_maple_tree.c
+ 
++rosebush.o: ../../../lib/rosebush.c ../../../lib/test_rosebush.c
 +
-+	rcu_read_lock();
-+	q = rbh_next(&iter);
-+	KUNIT_EXPECT_PTR_EQ_MSG(test, p, q,
-+		"rbh_next hash:%u returned %px, expected %px", hash, q, p);
-+	q = rbh_next(&iter);
-+	KUNIT_EXPECT_PTR_EQ_MSG(test, NULL, q,
-+		"rbh_next hash:%u returned %px, expected NULL", hash, q);
-+	rcu_read_unlock();
-+}
+ generated/map-shift.h:
+ 	@if ! grep -qws $(SHIFT) generated/map-shift.h; then		\
+ 		echo "#define XA_CHUNK_SHIFT $(SHIFT)" >		\
+diff --git a/tools/testing/radix-tree/kunit/test.h b/tools/testing/radix-tree/kunit/test.h
+new file mode 100644
+index 000000000000..0805e3695762
+--- /dev/null
++++ b/tools/testing/radix-tree/kunit/test.h
+@@ -0,0 +1,20 @@
++struct kunit {
++};
 +
-+static void check_empty_rbh(struct kunit *test, struct rbh *rbh)
-+{
-+	iter_rbh(test, rbh, 0, NULL);
-+	iter_rbh(test, rbh, 1, NULL);
-+	iter_rbh(test, rbh, 17, NULL);
-+	iter_rbh(test, rbh, 42, NULL);
-+}
++struct kunit_case {
++	void (*run_case)(struct kunit *test);
++};
 +
-+static void test_insert(struct kunit *test, struct rbh *rbh, u32 hash)
-+{
-+	void *p = (void *)((hash << 1) | 1UL);
-+	int err;
++struct kunit_suite {
++	char *name;
++	struct kunit_case *test_cases;
++};
 +
-+	err = rbh_insert(rbh, hash, p);
-+	KUNIT_EXPECT_EQ(test, err, 0);
++#define KUNIT_CASE(test_name) { .run_case = test_name, }
++#define kunit_test_suite(x)
 +
-+	iter_rbh(test, rbh, hash, p);
-+}
++#define KUNIT_EXPECT_EQ(test, left, right)				\
++	KUNIT_EXPECT_PTR_EQ_MSG(test, left, right, NULL)
++#define KUNIT_EXPECT_PTR_EQ_MSG(test, left, right, fmt, ...)		\
++	assert(left == right)
 +
-+static void test_reserve(struct kunit *test, struct rbh *rbh, u32 hash)
-+{
-+	int err;
-+
-+	err = rbh_reserve(rbh, hash);
-+	KUNIT_EXPECT_EQ(test, err, 0);
-+
-+	iter_rbh(test, rbh, hash, NULL);
-+}
-+
-+static void test_use(struct kunit *test, struct rbh *rbh, u32 hash)
-+{
-+	void *p = (void *)((hash << 1) | 1UL);
-+	int err;
-+
-+	err = rbh_use(rbh, hash, p);
-+	KUNIT_EXPECT_EQ(test, err, 0);
-+
-+	iter_rbh(test, rbh, hash, p);
-+}
-+
-+static void test_remove(struct kunit *test, struct rbh *rbh, u32 hash)
-+{
-+	void *p = (void *)((hash << 1) | 1UL);
-+	int err;
-+
-+	err = rbh_remove(rbh, hash, p);
-+	KUNIT_EXPECT_EQ(test, err, 0);
-+
-+	iter_rbh(test, rbh, hash, NULL);
-+}
-+
-+static DEFINE_ROSEBUSH(rosebush);
-+
+diff --git a/tools/testing/radix-tree/rosebush.c b/tools/testing/radix-tree/rosebush.c
+new file mode 100644
+index 000000000000..51703737833e
+--- /dev/null
++++ b/tools/testing/radix-tree/rosebush.c
+@@ -0,0 +1,36 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Conduct a number of tests on a rosebush that has never been used.
-+ * They should all return NULL or an errno.  We're looking for crashes
-+ * here.
++ * rosebush.c: Userspace testing for rosebush test-suite
++ * Copyright (c) 2024 Oracle Corporation
++ * Author: Matthew Wilcox <willy@infradead.org>
 + */
-+static void empty(struct kunit *test)
++
++#include "test.h"
++#include <stdlib.h>
++#include <time.h>
++
++#define module_init(x)
++#define module_exit(x)
++#define MODULE_AUTHOR(x)
++#define MODULE_LICENSE(x)
++#define dump_stack()	assert(0)
++
++#include "../../../lib/rosebush.c"
++#include "../../../lib/test_rosebush.c"
++
++int __weak main(void)
 +{
-+	int err;
-+
-+	check_empty_rbh(test, &rosebush);
-+	err = rbh_remove(&rosebush, 0, test);
-+	KUNIT_EXPECT_EQ(test, err, -ENOENT);
-+	err = rbh_use(&rosebush, 0, test);
-+	KUNIT_EXPECT_EQ(test, err, -ENOENT);
-+	KUNIT_EXPECT_EQ(test, rosebush.rbh_table, 0);
-+}
-+
-+static void first(struct kunit *test)
-+{
-+	int err;
-+
-+	test_insert(test, &rosebush, 5);
-+	check_empty_rbh(test, &rosebush);
-+	test_remove(test, &rosebush, 5);
-+	check_empty_rbh(test, &rosebush);
-+
-+	err = rbh_remove(&rosebush, 5, NULL);
-+	KUNIT_EXPECT_EQ(test, err, -ENOENT);
-+	test_reserve(test, &rosebush, 5);
-+	err = rbh_remove(&rosebush, 5, test);
-+	KUNIT_EXPECT_EQ(test, err, -ENOENT);
-+	err = rbh_remove(&rosebush, 5, NULL);
-+	KUNIT_EXPECT_EQ(test, err, 0);
-+	err = rbh_remove(&rosebush, 5, NULL);
-+	KUNIT_EXPECT_EQ(test, err, -ENOENT);
-+
-+	test_reserve(test, &rosebush, 5);
-+	test_use(test, &rosebush, 5);
-+	err = rbh_remove(&rosebush, 5, NULL);
-+	KUNIT_EXPECT_EQ(test, err, -ENOENT);
-+	test_remove(test, &rosebush, 5);
-+}
-+
-+static void grow(struct kunit *test)
-+{
++	struct kunit test;
 +	int i;
 +
-+	for (i = 3; i < 3333; i += 2)
-+		test_insert(test, &rosebush, i);
++	assert(rosebush_suite.test_cases == rosebush_cases);
 +
-+	rbh_destroy(&rosebush);
++	for (i = 0; i < ARRAY_SIZE(rosebush_cases); i++) {
++		if (!rosebush_cases[i].run_case)
++			continue;
++		printf("i = %d %p\n", i, rosebush_cases[i].run_case);
++		rosebush_cases[i].run_case(&test);
++	}
++
++	return 0;
 +}
-+
-+static struct kunit_case rosebush_cases[] __refdata = {
-+	KUNIT_CASE(empty),
-+	KUNIT_CASE(first),
-+	KUNIT_CASE(grow),
-+	{}
-+};
-+
-+static struct kunit_suite rosebush_suite = {
-+	.name = "rosebush",
-+	.test_cases = rosebush_cases,
-+};
-+
-+kunit_test_suite(rosebush_suite);
-+
-+MODULE_AUTHOR("Matthew Wilcox (Oracle) <willy@infradead.org>");
-+MODULE_LICENSE("GPL");
 -- 
 2.43.0
 
