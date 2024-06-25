@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-22331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97611916681
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:47:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DC9916688
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52BD428A341
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 11:47:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84D26B25BB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 11:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978511607AC;
-	Tue, 25 Jun 2024 11:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B5516A39E;
+	Tue, 25 Jun 2024 11:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="kipkGJg1"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Fe81Kwt6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7044A15ECE5;
-	Tue, 25 Jun 2024 11:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8A2149E05;
+	Tue, 25 Jun 2024 11:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315898; cv=none; b=VzgotbUO/RIwElnUreaSWWRHw+19U6qmDejUKpZeG3q3qlsH+AwE2BSgdB/RrpcblSh7x0wnzvAUAFaHpST/SL44vrqgt3k/PVsg4UT6X76k8I2y8gVmzP2pN9223pERy4Fmr1utzZpNO5Hyxx6I9qUQnDbvELTwcvGHLFPiWRs=
+	t=1719315910; cv=none; b=LUwUhNuJvN2fp++4IuCqgwEkjF6oIPLRw/eyyjm9KZ1ixdgFxDm718oV9tIgkcSXlIabZJoZJMyPCde1nRHCMwM+rJvYSPaQ5am4z2/sD+nrgQTURIf/Vvp1lGXamRpmOJUJxbOOshna1aju4dS2eAfTGWH9T2aLEFDtTYHKJIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315898; c=relaxed/simple;
-	bh=Sv9E3U1vrEuoSMMHMwfb5YdKHNu1CJKxciCkR7PpDe4=;
+	s=arc-20240116; t=1719315910; c=relaxed/simple;
+	bh=TrEZBGPQYh2ggik6hp60VNNJxI1OqLfHu6df+uN5O/s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MrPrdNXuEWyzZoNdVzpeCbwyk6fkh9v+IaJqXNwxGpQoMAiT9W1RdkZk8D9o4QQ93r1ufv0Zv+s9BBOzqsfaDbxtGDv6AkvUOo21vFW6J2Ma4R/K1bkjaLsqyEGYEb0z+nFsHo3YNr0257Dp+X6H+OGUqyE3hEUVOOpA8g+xj58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=kipkGJg1; arc=none smtp.client-ip=80.241.56.151
+	 MIME-Version; b=eiUgIIYv3wegj3xieBBRTJlEQ05gQ25DDM7XMbgcsa3bHBefQoUknUVxbVm3kEOpr5U1OlbhQTGNcDIKh0OMhpGq7UJ+5Fhec5r3FGkcPmXvcl+ZTlq0H5erJeYB3qy7JdSMVa73uEqRkJPWCDIJWZc5gCcMH9iuYIspegNagQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Fe81Kwt6; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W7jg86wgjz9sss;
-	Tue, 25 Jun 2024 13:44:52 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W7jgD5q1Fz9sSN;
+	Tue, 25 Jun 2024 13:44:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1719315893;
+	s=MBO0001; t=1719315896;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kZG/lL31K25//iaIAV7jBbt1MNjj987Sk8ll7Dxjdts=;
-	b=kipkGJg13H64tB3xNiHrnDUQlknoj9SB5UwPL7W747iM43EClbh9mwGs/CrYevYpL7dwy5
-	yCNI2/rrK1OKsdZopIkCOHXT0eQ6Cqxr9v6msmK6G6JfpTTj1qEENLSiThEgtM/qhXGYMX
-	GaWME0bvdKddSrBN8BOmm6NEQdQb4JpLcTqhPcYf2UJjmDDA2Xp3FaeTfjicWVxjfRpSkH
-	nGUAu9grTCZ5xhJqILNQJrmMUyBu58f462EuVQDsqJF1tezZUcNuXmDw0tb/2iO5yXZCA3
-	qC/qL2yIXVEpw0zMc8ARKspky8n5jArAa6O92MNAB1BYNhkxgeYOBO/aixYVcw==
+	bh=ZPgRCkuUCpyOtqJkbk+wuiLppcoF4MzwGnJJC5c2ZmU=;
+	b=Fe81Kwt6Af5fMxMJiq/2qofMmiyDbAdqQBxAjJKvZTgpRyA1GbhEOaXfqHeN+MBNMjxyIk
+	h4FOGgYu2BZYLLS87eNULxWmW3qwiNPnurXlZBLkbjPhsMt0YsZlvaWgru2OSdYOxAFyex
+	lEHc7rEpuSRR/h4W23j5fB7kDEMDtDhgNvLabR8JssFB2MO1KcSYQoteqUfygD88+OfXho
+	pim21mKjg8k3xJW1IcKjFWb8ZFw5VGBaqE+MJ+L2BMmocd3CRXhnIm4yIntoxsIagmc+sI
+	IychVXiMupepFH89+MgO+fXxTrjeV74yKU68HTPXmmRgPBJ+20d/2Tfb1enx/A==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: david@fromorbit.com,
 	willy@infradead.org,
@@ -69,11 +69,10 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	kernel@pankajraghav.com,
 	hch@lst.de,
-	Zi Yan <zi.yan@sent.com>,
-	Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH v8 07/10] xfs: use kvmalloc for xattr buffers
-Date: Tue, 25 Jun 2024 11:44:17 +0000
-Message-ID: <20240625114420.719014-8-kernel@pankajraghav.com>
+	Zi Yan <zi.yan@sent.com>
+Subject: [PATCH v8 08/10] xfs: expose block size in stat
+Date: Tue, 25 Jun 2024 11:44:18 +0000
+Message-ID: <20240625114420.719014-9-kernel@pankajraghav.com>
 In-Reply-To: <20240625114420.719014-1-kernel@pankajraghav.com>
 References: <20240625114420.719014-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -83,108 +82,41 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4W7jg86wgjz9sss
+X-Rspamd-Queue-Id: 4W7jgD5q1Fz9sSN
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-Pankaj Raghav reported that when filesystem block size is larger
-than page size, the xattr code can use kmalloc() for high order
-allocations. This triggers a useless warning in the allocator as it
-is a __GFP_NOFAIL allocation here:
+For block size larger than page size, the unit of efficient IO is
+the block size, not the page size. Leaving stat() to report
+PAGE_SIZE as the block size causes test programs like fsx to issue
+illegal ranges for operations that require block size alignment
+(e.g. fallocate() insert range). Hence update the preferred IO size
+to reflect the block size in this case.
 
-static inline
-struct page *rmqueue(struct zone *preferred_zone,
-                        struct zone *zone, unsigned int order,
-                        gfp_t gfp_flags, unsigned int alloc_flags,
-                        int migratetype)
-{
-        struct page *page;
+This change is based on a patch originally from Dave Chinner.[1]
 
-        /*
-         * We most definitely don't want callers attempting to
-         * allocate greater than order-1 page units with __GFP_NOFAIL.
-         */
->>>>    WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
-...
+[1] https://lwn.net/ml/linux-fsdevel/20181107063127.3902-16-david@fromorbit.com/
 
-Fix this by changing all these call sites to use kvmalloc(), which
-will strip the NOFAIL from the kmalloc attempt and if that fails
-will do a __GFP_NOFAIL vmalloc().
-
-This is not an issue that productions systems will see as
-filesystems with block size > page size cannot be mounted by the
-kernel; Pankaj is developing this functionality right now.
-
-Reported-by: Pankaj Raghav <kernel@pankajraghav.com>
-Fixes: f078d4ea8276 ("xfs: convert kmem_alloc() to kmalloc()")
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- fs/xfs/libxfs/xfs_attr_leaf.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ fs/xfs/xfs_iops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/libxfs/xfs_attr_leaf.c b/fs/xfs/libxfs/xfs_attr_leaf.c
-index b9e98950eb3d..09f4cb061a6e 100644
---- a/fs/xfs/libxfs/xfs_attr_leaf.c
-+++ b/fs/xfs/libxfs/xfs_attr_leaf.c
-@@ -1138,10 +1138,7 @@ xfs_attr3_leaf_to_shortform(
- 
- 	trace_xfs_attr_leaf_to_sf(args);
- 
--	tmpbuffer = kmalloc(args->geo->blksize, GFP_KERNEL | __GFP_NOFAIL);
--	if (!tmpbuffer)
--		return -ENOMEM;
--
-+	tmpbuffer = kvmalloc(args->geo->blksize, GFP_KERNEL | __GFP_NOFAIL);
- 	memcpy(tmpbuffer, bp->b_addr, args->geo->blksize);
- 
- 	leaf = (xfs_attr_leafblock_t *)tmpbuffer;
-@@ -1205,7 +1202,7 @@ xfs_attr3_leaf_to_shortform(
- 	error = 0;
- 
- out:
--	kfree(tmpbuffer);
-+	kvfree(tmpbuffer);
- 	return error;
- }
- 
-@@ -1613,7 +1610,7 @@ xfs_attr3_leaf_compact(
- 
- 	trace_xfs_attr_leaf_compact(args);
- 
--	tmpbuffer = kmalloc(args->geo->blksize, GFP_KERNEL | __GFP_NOFAIL);
-+	tmpbuffer = kvmalloc(args->geo->blksize, GFP_KERNEL | __GFP_NOFAIL);
- 	memcpy(tmpbuffer, bp->b_addr, args->geo->blksize);
- 	memset(bp->b_addr, 0, args->geo->blksize);
- 	leaf_src = (xfs_attr_leafblock_t *)tmpbuffer;
-@@ -1651,7 +1648,7 @@ xfs_attr3_leaf_compact(
- 	 */
- 	xfs_trans_log_buf(trans, bp, 0, args->geo->blksize - 1);
- 
--	kfree(tmpbuffer);
-+	kvfree(tmpbuffer);
- }
- 
- /*
-@@ -2330,7 +2327,7 @@ xfs_attr3_leaf_unbalance(
- 		struct xfs_attr_leafblock *tmp_leaf;
- 		struct xfs_attr3_icleaf_hdr tmphdr;
- 
--		tmp_leaf = kzalloc(state->args->geo->blksize,
-+		tmp_leaf = kvzalloc(state->args->geo->blksize,
- 				GFP_KERNEL | __GFP_NOFAIL);
- 
- 		/*
-@@ -2371,7 +2368,7 @@ xfs_attr3_leaf_unbalance(
- 		}
- 		memcpy(save_leaf, tmp_leaf, state->args->geo->blksize);
- 		savehdr = tmphdr; /* struct copy */
--		kfree(tmp_leaf);
-+		kvfree(tmp_leaf);
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index a00dcbc77e12..da5c13150315 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -562,7 +562,7 @@ xfs_stat_blksize(
+ 			return 1U << mp->m_allocsize_log;
  	}
  
- 	xfs_attr3_leaf_hdr_to_disk(state->args->geo, save_leaf, &savehdr);
+-	return PAGE_SIZE;
++	return max_t(uint32_t, PAGE_SIZE, mp->m_sb.sb_blocksize);
+ }
+ 
+ STATIC int
 -- 
 2.44.1
 
