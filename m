@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-22430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D784D917082
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 20:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F26FD917091
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 20:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928A228CBE4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 18:46:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71EC28A75B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 18:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2AF17C9F0;
-	Tue, 25 Jun 2024 18:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1330317C211;
+	Tue, 25 Jun 2024 18:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eCqiuLXC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FCyS6JPz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CFD144306
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 18:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE719179206
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 18:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719341133; cv=none; b=bK0HVMG/Mv4PzP/f1Atu6xO3PWKE5fCKJdJHea+r21l/g8TTJR0EPSmP+e15IVo8RzF3Uq2uVbHsHCT/Q17ykW8GErynfTmaXxSA49zU4QRYVA80NAOCxYtDZp08edxdnkqrO3Hwuz85eLJ+fzBOj9gyZDZM4QY7/k/ANfQlMgc=
+	t=1719341415; cv=none; b=qAachKr5TEcfKvWhNtkHDjnBqcKo+YcYX7QAexJhObkV9v8SYAzdDGSEyOMUWN8IZCyyd8LaWor1yMCabmTJ+WlrayLqcKdEUUNadOsvgX4xwJBTGSEQyOy7cT7nCZ02qGv8c/EQWXZNOkopDqKsG8a1A6um8hiUBoEGyUWtAF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719341133; c=relaxed/simple;
-	bh=f6wEjdMroIWa2KudBybywiojNtD/TF3hmz+cZhCHmmA=;
+	s=arc-20240116; t=1719341415; c=relaxed/simple;
+	bh=R9fUK/tto7a5gKjfGU+T7PmCRDvOJCmSH1TUOopW+fg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lkF34iv19+QvAlAejlDF4KvOYE9bml49wGOt+dADHvB8KuB2ImuQl1s87SqWP2yYUCpXJ+bp2COfU0rchTzNh9Rp9CKEUrUQsKFRihBUBTRT2zyuJz63Pa0tKdlz3c3DaDZOrQLM07JtRGmk7QvEQhU43Kc8AgUjrOgUy7jf8iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eCqiuLXC; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=McdPxJAZ6jWHEmjf6ys0MqH6Nj8ZPZEylgX6zo4N8/EsrNzXKzJWuO8guXlldnHJ4hf7C+2FZgKhXw1aQnXLH0f3j/uI1eb4JMSLSfr91KQ3QmJ/6+iLlx6fQtOquWtUO9ls194WAT/e2H8NI+1dEqKEVL7Elx3KrNxjNybZmQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FCyS6JPz; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719341130;
+	s=mimecast20190719; t=1719341412;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zA1sfCnwaI00JLsryL4EWJ4v/kiLawL4YnZiavHAE0w=;
-	b=eCqiuLXCthSXFhUOlEeXyeWzVKWVz5cGl4yoNwA6O3EbChg8KG/utQOAZt1XPbckYq4IDK
-	0xgJJblqcKImiBKFxJfs3xOYBQHgNeM5hWfUuVriBlP380MqOO/qhvtbfUNfQhanrKC8ES
-	4UkjhBHd2hoaZFZDVof3hnH5FUyLAWM=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=odVIaSYrxaWpaSKjLzWweUG/JsyIz8UD/vDjoG8NHfs=;
+	b=FCyS6JPzZtsX4D8fJEzAS/L1IvxgvqIpMPYSLeJlttuTfrr3cEd0wrHc1NSb4+gQ2TU1uf
+	Zp6N4ajFeDhc6IjyAOG46RrBIwPUNYzF7BQg08X1ydVvgy4GQmfOH29tSq6+BR3CSevmzQ
+	w4IVyh4+mRlIbOHqacHq73AuB1IOJ88=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-600-tDh6BzGnOjilRwW3LKjpTg-1; Tue, 25 Jun 2024 14:45:29 -0400
-X-MC-Unique: tDh6BzGnOjilRwW3LKjpTg-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3625b8355b5so3633836f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 11:45:28 -0700 (PDT)
+ us-mta-352-0SAIiTtPOJeV-U6B-R51Gw-1; Tue, 25 Jun 2024 14:50:10 -0400
+X-MC-Unique: 0SAIiTtPOJeV-U6B-R51Gw-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ec5100480bso32206301fa.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 11:50:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719341128; x=1719945928;
+        d=1e100.net; s=20230601; t=1719341409; x=1719946209;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=zA1sfCnwaI00JLsryL4EWJ4v/kiLawL4YnZiavHAE0w=;
-        b=etza52PIt4FUputbcSxWEXCZdOddzgB2scrjfxa3m88rieeMSbESvXVGgzVJ0BlPlI
-         NVxQxAe6AY8sBBgLIGaF3oXpqP9FwbYnGJbBCyQiOuzuJfBL32CLe9Je6VwWDiLXvWp1
-         Ox+1iTKmsFPuqx+AG70ODtdLL+wGOgGFY3uNdqjB22RZAeyZvsRqMlTbBmXKRYfOA/JE
-         iKJjF7LCFUJyZ1J/QivfZeNi+iVFzkkRmFBz+D4coz9QnXY+siYAwySh0KLFI4t7yZUY
-         1sQCToFIy2iQ1tM0zxCkRvMO4BMDxgMlXTDleD6Py+Hj0Nm3wGXijk4m/XXkPdYX/j7m
-         ataw==
-X-Gm-Message-State: AOJu0YzycsSvxhXVNjIcF2pMM06c4v65QSojkQDSZ97O6761UQ1r6GlO
-	qBnfXYsHeqcUo45DKVtCNcXqUKTWAb2thTWSO+tP+QBvjhsNVgq8gk+uXPE5Eeli1LK8j5NiNBt
-	qDOBaZqwEJX3DQcrankPrfgaQs3SeuAxi8hDk/o0tNJyzlxqb9xMaOLrcr3YZ3ZE=
-X-Received: by 2002:a05:6000:1f82:b0:366:ef00:2b9e with SMTP id ffacd0b85a97d-366ef002c27mr7101972f8f.6.1719341127854;
-        Tue, 25 Jun 2024 11:45:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfdpJoLVZJdorlDSVeSg4JxRw4gw+nAELC2PBUzZAhFg0tnRx6/7grD3rrau3obFYrS/TqAg==
-X-Received: by 2002:a05:6000:1f82:b0:366:ef00:2b9e with SMTP id ffacd0b85a97d-366ef002c27mr7101954f8f.6.1719341127423;
-        Tue, 25 Jun 2024 11:45:27 -0700 (PDT)
+        bh=odVIaSYrxaWpaSKjLzWweUG/JsyIz8UD/vDjoG8NHfs=;
+        b=jTwvsER/bxUGEmjHr1HRWE1hw5y2ilLDENtZmw0V4c7JKQobKSHYdaMZPjJwGZWcpK
+         P9azUrqmvzwXXDiZT07YzjF//IpHp+pRX/nvHOMAavwqdwNvwGUq6Fs//WDeCW98gDVO
+         VSndGMT09Konrsw4WnvcYbnPjXyjrCqlJgy1RcqQF/Y48VIedKqiAsLefH1DHy9MI2oe
+         Bcao7IorTZ8n0UoKuxd8bj0603aeutKMMrmkvTcbcQwvDDxpQ5MgTxNu4SBAiBX1kDI2
+         I3AGu6IqYpgzhIQeo5cD7iWYBxfmuleo//z24YscmH3togwiV9LizS6pG7o+zuoKS9OJ
+         m4IQ==
+X-Gm-Message-State: AOJu0YyWhW3fOcl3sfxQQ4EJy/jvcb78OlTqmNDoKzYCrb5d+KnYZsZj
+	z910y/Q7Xs3aqfoqKVXqGZ04dy6V5DdujxPblVcbf/sfnKdE1+vuO2W4ZUJ+YU/njUpCzP7vaFs
+	NOyERTHKlhmsqBGuRGFUyuJaPc2mD/EW7JVlzdMEAbP/QDyy3/hb/KyZPPLijCTg=
+X-Received: by 2002:a05:6512:688:b0:52c:9d31:3f25 with SMTP id 2adb3069b0e04-52ce185f6edmr5855148e87.43.1719341409296;
+        Tue, 25 Jun 2024 11:50:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGY+AXPX5nUhOVeBUY4Ch3TU9HFqtaTpZftm0gRPBqeEs6D4qe0etswXP/nompbKVIwRlychA==
+X-Received: by 2002:a05:6512:688:b0:52c:9d31:3f25 with SMTP id 2adb3069b0e04-52ce185f6edmr5855137e87.43.1719341408799;
+        Tue, 25 Jun 2024 11:50:08 -0700 (PDT)
 Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638f858fbsm13642539f8f.65.2024.06.25.11.45.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0c5492sm224286325e9.24.2024.06.25.11.50.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 11:45:27 -0700 (PDT)
-Message-ID: <6a8fa8aa-fb6f-485b-92b6-868a522bd7fc@redhat.com>
-Date: Tue, 25 Jun 2024 20:45:26 +0200
+        Tue, 25 Jun 2024 11:50:08 -0700 (PDT)
+Message-ID: <f14a1ff2-6c25-4cf7-abf7-1428e62272b0@redhat.com>
+Date: Tue, 25 Jun 2024 20:50:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,15 +82,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] mm/readahead: Limit page cache size in
- page_cache_ra_order()
+Subject: Re: [PATCH 4/4] mm/shmem: Disable PMD-sized page cache if needed
 To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
  hughd@google.com, torvalds@linux-foundation.org, zhenyzha@redhat.com,
- shan.gavin@gmail.com
+ shan.gavin@gmail.com, Ryan Roberts <ryan.roberts@arm.com>
 References: <20240625090646.1194644-1-gshan@redhat.com>
- <20240625090646.1194644-4-gshan@redhat.com>
+ <20240625090646.1194644-5-gshan@redhat.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -138,51 +137,168 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240625090646.1194644-4-gshan@redhat.com>
+In-Reply-To: <20240625090646.1194644-5-gshan@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 25.06.24 11:06, Gavin Shan wrote:
-> In page_cache_ra_order(), the maximal order of the page cache to be
-> allocated shouldn't be larger than MAX_PAGECACHE_ORDER. Otherwise,
-> it's possible the large page cache can't be supported by xarray when
-> the corresponding xarray entry is split.
+> For shmem files, it's possible that PMD-sized page cache can't be
+> supported by xarray. For example, 512MB page cache on ARM64 when
+> the base page size is 64KB can't be supported by xarray. It leads
+> to errors as the following messages indicate when this sort of xarray
+> entry is split.
 > 
-> For example, HPAGE_PMD_ORDER is 13 on ARM64 when the base page size
-> is 64KB. The PMD-sized page cache can't be supported by xarray.
+> WARNING: CPU: 34 PID: 7578 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
+> Modules linked in: binfmt_misc nft_fib_inet nft_fib_ipv4 nft_fib_ipv6   \
+> nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject        \
+> nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4  \
+> ip_set rfkill nf_tables nfnetlink vfat fat virtio_balloon drm fuse xfs  \
+> libcrc32c crct10dif_ce ghash_ce sha2_ce sha256_arm64 sha1_ce virtio_net \
+> net_failover virtio_console virtio_blk failover dimlib virtio_mmio
+> CPU: 34 PID: 7578 Comm: test Kdump: loaded Tainted: G W 6.10.0-rc5-gavin+ #9
+> Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-1.el9 05/24/2024
+> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> pc : xas_split_alloc+0xf8/0x128
+> lr : split_huge_page_to_list_to_order+0x1c4/0x720
+> sp : ffff8000882af5f0
+> x29: ffff8000882af5f0 x28: ffff8000882af650 x27: ffff8000882af768
+> x26: 0000000000000cc0 x25: 000000000000000d x24: ffff00010625b858
+> x23: ffff8000882af650 x22: ffffffdfc0900000 x21: 0000000000000000
+> x20: 0000000000000000 x19: ffffffdfc0900000 x18: 0000000000000000
+> x17: 0000000000000000 x16: 0000018000000000 x15: 52f8004000000000
+> x14: 0000e00000000000 x13: 0000000000002000 x12: 0000000000000020
+> x11: 52f8000000000000 x10: 52f8e1c0ffff6000 x9 : ffffbeb9619a681c
+> x8 : 0000000000000003 x7 : 0000000000000000 x6 : ffff00010b02ddb0
+> x5 : ffffbeb96395e378 x4 : 0000000000000000 x3 : 0000000000000cc0
+> x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
+> Call trace:
+>   xas_split_alloc+0xf8/0x128
+>   split_huge_page_to_list_to_order+0x1c4/0x720
+>   truncate_inode_partial_folio+0xdc/0x160
+>   shmem_undo_range+0x2bc/0x6a8
+>   shmem_fallocate+0x134/0x430
+>   vfs_fallocate+0x124/0x2e8
+>   ksys_fallocate+0x4c/0xa0
+>   __arm64_sys_fallocate+0x24/0x38
+>   invoke_syscall.constprop.0+0x7c/0xd8
+>   do_el0_svc+0xb4/0xd0
+>   el0_svc+0x44/0x1d8
+>   el0t_64_sync_handler+0x134/0x150
+>   el0t_64_sync+0x17c/0x180
+> 
+> Fix it by disabling PMD-sized page cache when HPAGE_PMD_ORDER is
+> larger than MAX_PAGECACHE_ORDER.
 > 
 > Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Gavin Shan <gshan@redhat.com>
+> ---
+>   mm/shmem.c | 15 +++++++++++++--
+>   1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index a8b181a63402..5453875e3810 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -541,8 +541,9 @@ static bool shmem_confirm_swap(struct address_space *mapping,
+>   
+>   static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
+>   
+> -bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
+> -		   struct mm_struct *mm, unsigned long vm_flags)
+> +static bool __shmem_is_huge(struct inode *inode, pgoff_t index,
+> +			    bool shmem_huge_force, struct mm_struct *mm,
+> +			    unsigned long vm_flags)
+>   {
+>   	loff_t i_size;
+>   
+> @@ -573,6 +574,16 @@ bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
+>   	}
+>   }
+>   
+> +bool shmem_is_huge(struct inode *inode, pgoff_t index,
+> +		   bool shmem_huge_force, struct mm_struct *mm,
+> +		   unsigned long vm_flags)
+> +{
+> +	if (!__shmem_is_huge(inode, index, shmem_huge_force, mm, vm_flags))
+> +		return false;
+> +
+> +	return HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER;
 
-Heh, you came up with this yourself concurrently :) so feel free to drop 
-that.
+Why not check for that upfront?
+
+> +}
+> +
+>   #if defined(CONFIG_SYSFS)
+>   static int shmem_parse_huge(const char *str)
+>   {
+
+This should make __thp_vma_allowable_orders() happy for shmem, and consequently, also khugepaged IIRC.
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
-> Signed-off-by: Gavin Shan <gshan@redhat.com>
-> ---
->   mm/readahead.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index c1b23989d9ca..817b2a352d78 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -503,11 +503,11 @@ void page_cache_ra_order(struct readahead_control *ractl,
->   
->   	limit = min(limit, index + ra->size - 1);
->   
-> -	if (new_order < MAX_PAGECACHE_ORDER) {
-> +	if (new_order < MAX_PAGECACHE_ORDER)
->   		new_order += 2;
-> -		new_order = min_t(unsigned int, MAX_PAGECACHE_ORDER, new_order);
-> -		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
-> -	}
-> +
-> +	new_order = min_t(unsigned int, MAX_PAGECACHE_ORDER, new_order);
-> +	new_order = min_t(unsigned int, new_order, ilog2(ra->size));
->   
->   	/* See comment in page_cache_ra_unbounded() */
->   	nofs = memalloc_nofs_save();
+
+@Ryan,
+
+should we do something like the following on top? The use of PUD_ORDER for ordinary pagecache is
+wrong. Really only DAX is special and can support that in its own weird ways.
+
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 2aa986a5cd1b..ac63233fed6c 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -72,14 +72,25 @@ extern struct kobj_attribute shmem_enabled_attr;
+  #define THP_ORDERS_ALL_ANON    ((BIT(PMD_ORDER + 1) - 1) & ~(BIT(0) | BIT(1)))
+  
+  /*
+- * Mask of all large folio orders supported for file THP.
++ * Mask of all large folio orders supported for FSDAX THP.
+   */
+-#define THP_ORDERS_ALL_FILE    (BIT(PMD_ORDER) | BIT(PUD_ORDER))
++#define THP_ORDERS_ALL_DAX     (BIT(PMD_ORDER) | BIT(PUD_ORDER))
++
++
++/*
++ * Mask of all large folio orders supported for ordinary pagecache (file/shmem)
++ * THP.
++ */
++#if PMD_ORDER <= MAX_PAGECACHE_ORDER
++#define THP_ORDERS_ALL_FILE    0
++#else
++#define THP_ORDERS_ALL_FILE    (BIT(PMD_ORDER))
++#endif
+  
+  /*
+   * Mask of all large folio orders supported for THP.
+   */
+-#define THP_ORDERS_ALL         (THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_FILE)
++#define THP_ORDERS_ALL         (THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_FILE )
+  
+  #define TVA_SMAPS              (1 << 0)        /* Will be used for procfs */
+  #define TVA_IN_PF              (1 << 1)        /* Page fault handler */
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 89932fd0f62e..95d4a2edae39 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -88,9 +88,15 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+         bool smaps = tva_flags & TVA_SMAPS;
+         bool in_pf = tva_flags & TVA_IN_PF;
+         bool enforce_sysfs = tva_flags & TVA_ENFORCE_SYSFS;
++
+         /* Check the intersection of requested and supported orders. */
+-       orders &= vma_is_anonymous(vma) ?
+-                       THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
++       if (vma_is_anonymous(vma))
++               orders &= THP_ORDERS_ALL_ANON;
++       else if (vma_is_dax(vma))
++               orders &= THP_ORDERS_ALL_DAX;
++       else
++               orders &= THP_ORDERS_ALL_FILE;
++
+         if (!orders)
+                 return 0;
+  
+
+
 
 -- 
 Cheers,
