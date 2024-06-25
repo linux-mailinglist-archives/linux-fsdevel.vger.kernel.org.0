@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-22384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B6E916BE0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:07:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00246916BE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BB32B23DBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D44D1F26F24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1F1157461;
-	Tue, 25 Jun 2024 15:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B14B17E46C;
+	Tue, 25 Jun 2024 15:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STatpgD2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1tf4EPZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A3F16FF52;
-	Tue, 25 Jun 2024 15:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C979216FF52;
+	Tue, 25 Jun 2024 15:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327740; cv=none; b=jXdYOwHswPtgQ910RBrYQ2NTEzJXktHAMBlSCxwvzOpOqXNIopeGWWGGSy67n0RlS9FXKvSJQ2Gt2AtP0StGDYsPki0zI0wd+4uWknpcOrQWhxPBvRTDkkfl4ezmH/fRaikAWSIbMdTHXFnizPs4CUKwCYkkt50tNWjAooC5Z4c=
+	t=1719327746; cv=none; b=LBzWmf7glyBkgP/8Znz1EDN67TSUrkx61GL+CaUSsBZyS7VAOY0xaEVTlD0yh5VQYvSyoijowYdouYDdewfYzM61xsdEvp/tKLlNRwMx200CT2uiTLiahsgpsKx12lqYwamJL1jsctw9ovUv2nQC+GBCDXQsYXao66QN5mz6Qjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327740; c=relaxed/simple;
-	bh=TfNpxv0/YFgIFj+ehQEMyQU6+Dwt53rcvRO+chZ3qhs=;
+	s=arc-20240116; t=1719327746; c=relaxed/simple;
+	bh=TArF8eu7bR+kdEQcw0PtiH938ElhCp6XbYhZJoxTCrM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UDxamwtPJgrKC32r3f3e4FE1W/qF3M/02P6d9vwDoPW0brIJu80jwAxZM1X0EOeYRhD0EuMlI8pLPT0guZzi31iuj6902w+Z2b10v7bASES/AbJKY9MSG8uGyJzMuQLosDGLYNTc95BPtYmwfV1KCZDojC88/OrGzFOk86Fsjg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STatpgD2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E37DC32786;
-	Tue, 25 Jun 2024 15:02:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=kouCM8jMEV4cPKBzsia/pMN1/25XozqOEiI+5Y+DD9mxzt+9V1AjEPKr8J3QAryK2s9PIHBeNwTURrzcNfe1oD4uv/8S6wWAPawRJAhEMuqAqd+uOWA9+zDcwwDZ2zdfiTrENjYyXZOgtJiD+ni+ZY8WyCLXc8eYAVBqDSbjHdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1tf4EPZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4C9C32781;
+	Tue, 25 Jun 2024 15:02:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719327739;
-	bh=TfNpxv0/YFgIFj+ehQEMyQU6+Dwt53rcvRO+chZ3qhs=;
+	s=k20201202; t=1719327746;
+	bh=TArF8eu7bR+kdEQcw0PtiH938ElhCp6XbYhZJoxTCrM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=STatpgD2i8PfRN0VLtvr3/xO4Z576aE4SkCdSBU+uuppRnLcsEIl09YBQW4P3cJV/
-	 5nPYryHHx8XOBERPro9tvUe7WHZE9e5zrrsmu7uDiDGlt1rb2tHMZJyRsZFXpQEZbv
-	 Lfh5wJSR/w+YIO2f5HKJz3uW0rCPkXav7nCEaYXnujgz7Vxlwu6k8bfME/aWKN5ZK4
-	 +2Vo7VpnCsfDzZhfVcVlex8iIkQZT7mslYD9IJbK3Wc8cUNQI++3PPJT5fRkID/Tew
-	 +NOBLkJNPrtlIgMIPIPBPIpmMOxPyPr2D7FfuK1tqs8YknrdtCYI4ZF7jIhEJFDKm/
-	 WGGoVGXke1AWw==
+	b=T1tf4EPZxQepBQJZ+2P0ysocX15TlkKsctCglrLlJlpjTmopmLVcDgRZfo2fIdmZD
+	 Lv/NFHftNTdwBf3DqfZoSYfV6WuoyPIQEs2TNGXOriUMN11am9Hf5vq5ldwCQf9dmn
+	 0E6qSnfvlSNhImxN7J/5Esjy55MKMRoTeQxGdu/7rc+s6RaBqycPQCbJ1TvVIWnutd
+	 b0q5gHzn3xZPm6Kw8+HEdwKQCSqhFutpjECRBpgQ1baiTggkrS2AIXDeYXF3KKOsEf
+	 YDaxMulmfJyDO7V7EcDfLhjZVhoJxdoOD6NAE0/79RPpuNfB41K0JcAzwYXIXZ95se
+	 U9cnQ8VrLX3Iw==
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 25 Jun 2024 15:57:42 +0100
-Subject: [PATCH v9 14/39] arm64/gcs: Allow GCS usage at EL0 and EL1
+Date: Tue, 25 Jun 2024 15:57:43 +0100
+Subject: [PATCH v9 15/39] arm64/idreg: Add overrride for GCS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-arm64-gcs-v9-14-0f634469b8f0@kernel.org>
+Message-Id: <20240625-arm64-gcs-v9-15-0f634469b8f0@kernel.org>
 References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
 In-Reply-To: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -77,64 +77,68 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
  Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.14-dev-d4707
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1532; i=broonie@kernel.org;
- h=from:subject:message-id; bh=TfNpxv0/YFgIFj+ehQEMyQU6+Dwt53rcvRO+chZ3qhs=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmett9AN60q5kvIlR1ZcHcKPpCsET41XbuQScM991y
- JwD1yJmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZnrbfQAKCRAk1otyXVSH0PcTB/
- 9cpj20UTw99E9XrZQ4iq0JEfF+LAfyUcO1sE6bwkbyJu9xmMka/NS5vgBpaOVjWQHlLEA6PK8spBiM
- JKjkW5k7zeUW013lpa/iWiADA05kVin3SSzAVcRf9B/NoQ54ZJZjL/mHEhbeli16FDg4o3tJB5JOdv
- rddkE38qEE2zTtwySZ4pPFsqhi0Q44wMfZMrK0kuM+OPrCiPeoNUhtmczNkkW8l7SJ39SMwuNex5IP
- hWJE6EQjChRcge1YsVTmS/BdZdzg7R9HuIcMkXpq9JMQ2N6RpiOLZTx5hO97OoApANlVjDrX2w+rdp
- lXc8DUnhi7lkYJ83O1dvM78CD4A9ri
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2079; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=TArF8eu7bR+kdEQcw0PtiH938ElhCp6XbYhZJoxTCrM=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmett9kBlIGznTOvZYNu30sR1HSi39oURagt2PuqvD
+ Y/xML0+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZnrbfQAKCRAk1otyXVSH0KppB/
+ 9h/NsU5ZbvEakpJLVgdEkxvY5UpqOW1ugkUmSI7i1GKJvwyAjnAS2GjipTcPYY971hQbCdfHwZcLlW
+ cGE4g62zQz3KJInv2E7a5LvVkEoEx9xQoaz4HTnvgXRkvw7mt57wnleIJzA434vuYSF783mIrrb/33
+ UM4KkpS3btWvRrCRi2VY8VDuFhRhvl/BAYFalo/nvTDQt/Bivon71MD9KXQCaREWjPFWn45DqF5xqc
+ fgB9TM3IcC9LyqQXwPr+ng36ckx4ht13tLxNrKJmclwsKt2v/DvuX9vgsKXW5FMhSnNTPvaVjaVXuC
+ UWd9Pvf2d8i4vTpWJR3H1tCTBLdgiV
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-There is a control HCRX_EL2.GCSEn which must be set to allow GCS
-features to take effect at lower ELs and also fine grained traps for GCS
-usage at EL0 and EL1.  Configure all these to allow GCS usage by EL0 and
-EL1.
+Hook up an override for GCS, allowing it to be disabled from the command
+line by specifying arm64.nogcs in case there are problems.
 
 Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/el2_setup.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt | 6 ++++++
+ arch/arm64/kernel/pi/idreg-override.c           | 2 ++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-index fd87c4b8f984..36aa40c19e85 100644
---- a/arch/arm64/include/asm/el2_setup.h
-+++ b/arch/arm64/include/asm/el2_setup.h
-@@ -27,6 +27,14 @@
- 	ubfx	x0, x0, #ID_AA64MMFR1_EL1_HCX_SHIFT, #4
- 	cbz	x0, .Lskip_hcrx_\@
- 	mov_q	x0, HCRX_HOST_FLAGS
-+
-+        /* Enable GCS if supported */
-+	mrs_s	x1, SYS_ID_AA64PFR1_EL1
-+	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
-+	cbz	x1, .Lset_hcrx_\@
-+	orr	x0, x0, #HCRX_EL2_GCSEn
-+
-+.Lset_hcrx_\@:
- 	msr_s	SYS_HCRX_EL2, x0
- .Lskip_hcrx_\@:
- .endm
-@@ -191,6 +199,15 @@
- 	orr	x0, x0, #HFGxTR_EL2_nPIR_EL1
- 	orr	x0, x0, #HFGxTR_EL2_nPIRE0_EL1
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b600df82669d..c1151d547b81 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -437,9 +437,15 @@
+ 	arm64.nobti	[ARM64] Unconditionally disable Branch Target
+ 			Identification support
  
-+	/* GCS depends on PIE so we don't check it if PIE is absent */
-+	mrs_s	x1, SYS_ID_AA64PFR1_EL1
-+	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
-+	cbz	x1, .Lset_fgt_\@
++	arm64.nogcs	[ARM64] Unconditionally disable Guarded Control Stack
++			support
 +
-+	/* Disable traps of access to GCS registers at EL0 and EL1 */
-+	orr	x0, x0, #HFGxTR_EL2_nGCS_EL1_MASK
-+	orr	x0, x0, #HFGxTR_EL2_nGCS_EL0_MASK
+ 	arm64.nomops	[ARM64] Unconditionally disable Memory Copy and Memory
+ 			Set instructions support
+ 
++	arm64.nopauth	[ARM64] Unconditionally disable Pointer Authentication
++			support
 +
- .Lset_fgt_\@:
- 	msr_s	SYS_HFGRTR_EL2, x0
- 	msr_s	SYS_HFGWTR_EL2, x0
+ 	arm64.nomte	[ARM64] Unconditionally disable Memory Tagging Extension
+ 			support
+ 
+diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
+index 29d4b6244a6f..2bb709d78405 100644
+--- a/arch/arm64/kernel/pi/idreg-override.c
++++ b/arch/arm64/kernel/pi/idreg-override.c
+@@ -133,6 +133,7 @@ static const struct ftr_set_desc pfr1 __prel64_initconst = {
+ 	.override	= &id_aa64pfr1_override,
+ 	.fields		= {
+ 		FIELD("bt", ID_AA64PFR1_EL1_BT_SHIFT, NULL ),
++		FIELD("gcs", ID_AA64PFR1_EL1_GCS_SHIFT, NULL),
+ 		FIELD("mte", ID_AA64PFR1_EL1_MTE_SHIFT, NULL),
+ 		FIELD("sme", ID_AA64PFR1_EL1_SME_SHIFT, pfr1_sme_filter),
+ 		{}
+@@ -215,6 +216,7 @@ static const struct {
+ 	{ "arm64.nosve",		"id_aa64pfr0.sve=0" },
+ 	{ "arm64.nosme",		"id_aa64pfr1.sme=0" },
+ 	{ "arm64.nobti",		"id_aa64pfr1.bt=0" },
++	{ "arm64.nogcs",		"id_aa64pfr1.gcs=0" },
+ 	{ "arm64.nopauth",
+ 	  "id_aa64isar1.gpi=0 id_aa64isar1.gpa=0 "
+ 	  "id_aa64isar1.api=0 id_aa64isar1.apa=0 "
 
 -- 
 2.39.2
