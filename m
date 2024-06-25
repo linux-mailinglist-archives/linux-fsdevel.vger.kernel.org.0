@@ -1,246 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-22298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B454E9161B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 10:54:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69AA9161E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 11:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CFA3287190
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 08:54:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2285EB24347
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 09:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FC4148FF5;
-	Tue, 25 Jun 2024 08:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911DC149018;
+	Tue, 25 Jun 2024 09:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v+9AZcbR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XlTDAOuP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v+9AZcbR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XlTDAOuP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c869Lkjz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37B3146A92;
-	Tue, 25 Jun 2024 08:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFBC148FEC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 09:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719305655; cv=none; b=WVuoYEtBFVo9L6vF6NpJvkWj7e6fLbdat9Xa3Zf4Jx+RcVta9wvBDi9t3NHKTILz1Tp78uyVCQCu+X6WwOAoWFVBEZJMbacXdn+fbFwGmaP4OhHw0JvDuoyZGtabe8C80By8gaXdg9HJuUekA3HY64w7TRxseU0jkvgCQdyYyMw=
+	t=1719306444; cv=none; b=E0jdkNcNXoHbZ/r9W+Xliwe6tBvwZBTpzBW759PEdeoUCsTrCKsnvo7N7apF4EpwhoH5dYa9FwB6snwyp4KlgMQjs/SmQv8OkZAiOkbrYqS5kQyx/+Oe/j0dhIhVhYwM6dRBrYz6wJ8geYIyGaAEK1K+ohUmQCUXtqUn5rEBGIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719305655; c=relaxed/simple;
-	bh=bkFP8nw/oGL2K5jvWI18IvJmPA1/d1daWZ9k+VnEBGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uWD4THiNFxyAYhvOXvRtx4yMpAnPt1v6b6mqvmmiGtV/RsJKBwYPvfaU2CIPswF4zVp9/1NMRvawBcUHbAJ9J3vo3s/UDvJkl1fXkY8QC+GnHeodFy4dIEtb7f+Ud9nFpYT5LDgB4fT7+su8Ezevk9sylxKVMl4dMQfDq46MRtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v+9AZcbR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XlTDAOuP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v+9AZcbR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XlTDAOuP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1719306444; c=relaxed/simple;
+	bh=ZGfj4GR2TZboiw4CW0qAZwxYBJWKBD1WvDxia8p52VA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XttvfbQQCOyx2X1rLaaRWmeNQiPx/DsAMzYTlY5WXDW8FR0moUXBRrfsyQ1TMyzw2Bx2/twUmmEmVw/MmOvFZVzqHAXiUv2c2mhg1ulNcCt2H3OLGfN4hal5CG3jmX4JAQ32xop+Tgb8cp63Od2Fot03nHvQuIeG6S7bPJm0z3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c869Lkjz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719306441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HhE9Ca9CX/1k2IL1D3853ePqCbKiPcGhrbBvznh+l8I=;
+	b=c869Lkjz86d1BVU9THPIeSEwvtp8p/3PRjsii/T9WjYDv2pf1TEbIYyiG1ujTH0/RZcOQ7
+	+65o802om3lYdVLExfgWX2kM6LLzE/nQLUk20RmsHwLrOkJdraesii0rhtOrqvX9jSNIWi
+	1X/VFXIWjwp9cB/2/celojwcTD+7WCk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-271-kCbIwANPM0iHMkxZZDZyqw-1; Tue,
+ 25 Jun 2024 05:07:12 -0400
+X-MC-Unique: kCbIwANPM0iHMkxZZDZyqw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A4BF21F7D3;
-	Tue, 25 Jun 2024 08:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719305651; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dLtP8yR3zI88QJSRwPEXeVNKhmP5aSeQ9B2p9bauRMs=;
-	b=v+9AZcbRcR8uiec0HN3k6Y0VXfau6dUarUZKm0eztY6ICrhDKEXvi0gFnhaOTj/kmhXand
-	X0udk7xlTvoG+fspyLFnfyTtVds7gDnb/cCVyLsFsU6N0Y8lsQYFgFpWQgygQOs7W2odvs
-	Kne8ZrFsttU/ibd1EI+/nvjaoq8/mxQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719305651;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dLtP8yR3zI88QJSRwPEXeVNKhmP5aSeQ9B2p9bauRMs=;
-	b=XlTDAOuP69AJePLAGJjIrATe2D+NxYp4uKvFLH162ooRJYjQwHCpzRsiegnHPmEdIwxqfz
-	8DhBObACrWJ0mSDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=v+9AZcbR;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=XlTDAOuP
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719305651; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dLtP8yR3zI88QJSRwPEXeVNKhmP5aSeQ9B2p9bauRMs=;
-	b=v+9AZcbRcR8uiec0HN3k6Y0VXfau6dUarUZKm0eztY6ICrhDKEXvi0gFnhaOTj/kmhXand
-	X0udk7xlTvoG+fspyLFnfyTtVds7gDnb/cCVyLsFsU6N0Y8lsQYFgFpWQgygQOs7W2odvs
-	Kne8ZrFsttU/ibd1EI+/nvjaoq8/mxQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719305651;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dLtP8yR3zI88QJSRwPEXeVNKhmP5aSeQ9B2p9bauRMs=;
-	b=XlTDAOuP69AJePLAGJjIrATe2D+NxYp4uKvFLH162ooRJYjQwHCpzRsiegnHPmEdIwxqfz
-	8DhBObACrWJ0mSDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9714F13AC1;
-	Tue, 25 Jun 2024 08:54:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FFjfJLOFemZTPAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 25 Jun 2024 08:54:11 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3DFACA08A4; Tue, 25 Jun 2024 10:54:11 +0200 (CEST)
-Date: Tue, 25 Jun 2024 10:54:11 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2] vfs: remove redundant smp_mb for thp handling in
- do_dentry_open
-Message-ID: <20240625085411.yqowxadalnha5t3f@quack3>
-References: <20240624085402.493630-1-mjguzik@gmail.com>
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B4991955E72;
+	Tue, 25 Jun 2024 09:07:11 +0000 (UTC)
+Received: from gshan-thinkpadx1nanogen2.remote.csb (unknown [10.67.24.180])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 22ABA1955E82;
+	Tue, 25 Jun 2024 09:07:03 +0000 (UTC)
+From: Gavin Shan <gshan@redhat.com>
+To: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	david@redhat.com,
+	djwong@kernel.org,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	hughd@google.com,
+	torvalds@linux-foundation.org,
+	zhenyzha@redhat.com,
+	shan.gavin@gmail.com
+Subject: [PATCH 0/4] mm/filemap: Limit page cache size to that supported by xarray
+Date: Tue, 25 Jun 2024 19:06:42 +1000
+Message-ID: <20240625090646.1194644-1-gshan@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624085402.493630-1-mjguzik@gmail.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: A4BF21F7D3
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon 24-06-24 10:54:02, Mateusz Guzik wrote:
-> opening for write performs:
-> 
-> if (f->f_mode & FMODE_WRITE) {
-> [snip]
->         smp_mb();
->         if (filemap_nr_thps(inode->i_mapping)) {
-> [snip]
->         }
-> }
-> 
-> filemap_nr_thps on kernels built without CONFIG_READ_ONLY_THP_FOR
-> expands to 0, allowing the compiler to eliminate the entire thing, with
-> exception of the fence (and the branch leading there).
-> 
-> So happens required synchronisation between i_writecount and nr_thps
-> changes is already provided by the full fence coming from
-> get_write_access -> atomic_inc_unless_negative, thus the smp_mb instance
-> above can be removed regardless of CONFIG_READ_ONLY_THP_FOR.
-> 
-> While I updated commentary in places claiming to match the now-removed
-> fence, I did not try to patch them to act on the compile option.
-> 
-> I did not bother benchmarking it, not issuing a spurious full fence in
-> the fast path does not warrant justification from perf standpoint.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Currently, xarray can't support arbitrary page cache size. More details
+can be found from the WARN_ON() statement in xas_split_alloc(). In our
+test whose code is attached below, we hit the WARN_ON() on ARM64 system
+where the base page size is 64KB and huge page size is 512MB. The issue
+was reported long time ago and some discussions on it can be found here
+[1].
 
-Yeah, I didn't like the ifdef but this version looks good to me. Feel free
-to add:
+[1] https://www.spinics.net/lists/linux-xfs/msg75404.html 
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+In order to fix the issue, we need to adjust MAX_PAGECACHE_ORDER to one
+supported by xarray and avoid PMD-sized page cache if needed. The code
+changes are suggested by David Hildenbrand.
 
-								Honza
+PATCH[1] adjusts MAX_PAGECACHE_ORDER to that supported by xarray
+PATCH[2-3] avoids PMD-sized page cache in the synchronous readahead path
+PATCH[4] avoids PMD-sized page cache for shmem files if needed
 
-> ---
-> 
-> v2:
-> - just whack the fence instead of ifdefing
-> - change To recipient, the person who committed the original change is
->   no longer active
-> 
->  fs/open.c       |  9 ++++-----
->  mm/khugepaged.c | 10 +++++-----
->  2 files changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index 28f2fcbebb1b..64976b6dc75f 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -986,12 +986,11 @@ static int do_dentry_open(struct file *f,
->  	 */
->  	if (f->f_mode & FMODE_WRITE) {
->  		/*
-> -		 * Paired with smp_mb() in collapse_file() to ensure nr_thps
-> -		 * is up to date and the update to i_writecount by
-> -		 * get_write_access() is visible. Ensures subsequent insertion
-> -		 * of THPs into the page cache will fail.
-> +		 * Depends on full fence from get_write_access() to synchronize
-> +		 * against collapse_file() regarding i_writecount and nr_thps
-> +		 * updates. Ensures subsequent insertion of THPs into the page
-> +		 * cache will fail.
->  		 */
-> -		smp_mb();
->  		if (filemap_nr_thps(inode->i_mapping)) {
->  			struct address_space *mapping = inode->i_mapping;
->  
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index 409f67a817f1..2e017585f813 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1997,9 +1997,9 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
->  	if (!is_shmem) {
->  		filemap_nr_thps_inc(mapping);
->  		/*
-> -		 * Paired with smp_mb() in do_dentry_open() to ensure
-> -		 * i_writecount is up to date and the update to nr_thps is
-> -		 * visible. Ensures the page cache will be truncated if the
-> +		 * Paired with the fence in do_dentry_open() -> get_write_access()
-> +		 * to ensure i_writecount is up to date and the update to nr_thps
-> +		 * is visible. Ensures the page cache will be truncated if the
->  		 * file is opened writable.
->  		 */
->  		smp_mb();
-> @@ -2187,8 +2187,8 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
->  	if (!is_shmem && result == SCAN_COPY_MC) {
->  		filemap_nr_thps_dec(mapping);
->  		/*
-> -		 * Paired with smp_mb() in do_dentry_open() to
-> -		 * ensure the update to nr_thps is visible.
-> +		 * Paired with the fence in do_dentry_open() -> get_write_access()
-> +		 * to ensure the update to nr_thps is visible.
->  		 */
->  		smp_mb();
->  	}
-> -- 
-> 2.43.0
-> 
+Test program
+============
+# cat test.c
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/syscall.h>
+#include <sys/mman.h>
+
+#define TEST_XFS_FILENAME	"/tmp/data"
+#define TEST_SHMEM_FILENAME	"/dev/shm/data"
+#define TEST_MEM_SIZE		0x20000000
+
+int main(int argc, char **argv)
+{
+	const char *filename;
+	int fd = 0;
+	void *buf = (void *)-1, *p;
+	int pgsize = getpagesize();
+	int ret;
+
+	if (pgsize != 0x10000) {
+		fprintf(stderr, "64KB base page size is required\n");
+		return -EPERM;
+	}
+
+	system("echo force > /sys/kernel/mm/transparent_hugepage/shmem_enabled");
+	system("rm -fr /tmp/data");
+	system("rm -fr /dev/shm/data");
+	system("echo 1 > /proc/sys/vm/drop_caches");
+
+	/* Open xfs or shmem file */
+	filename = TEST_XFS_FILENAME;
+	if (argc > 1 && !strcmp(argv[1], "shmem"))
+		filename = TEST_SHMEM_FILENAME;
+
+	fd = open(filename, O_CREAT | O_RDWR | O_TRUNC);
+	if (fd < 0) {
+		fprintf(stderr, "Unable to open <%s>\n", filename);
+		return -EIO;
+	}
+
+	/* Extend file size */
+	ret = ftruncate(fd, TEST_MEM_SIZE);
+	if (ret) {
+		fprintf(stderr, "Error %d to ftruncate()\n", ret);
+		goto cleanup;
+	}
+
+	/* Create VMA */
+	buf = mmap(NULL, TEST_MEM_SIZE,
+		   PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+	if (buf == (void *)-1) {
+		fprintf(stderr, "Unable to mmap <%s>\n", filename);
+		goto cleanup;
+	}
+
+	fprintf(stdout, "mapped buffer at 0x%p\n", buf);
+	ret = madvise(buf, TEST_MEM_SIZE, MADV_HUGEPAGE);
+        if (ret) {
+		fprintf(stderr, "Unable to madvise(MADV_HUGEPAGE)\n");
+		goto cleanup;
+	}
+
+	/* Populate VMA */
+	ret = madvise(buf, TEST_MEM_SIZE, MADV_POPULATE_WRITE);
+	if (ret) {
+		fprintf(stderr, "Error %d to madvise(MADV_POPULATE_WRITE)\n", ret);
+		goto cleanup;
+	}
+
+	/* Punch the file to enforce xarray split */
+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
+        		TEST_MEM_SIZE - pgsize, pgsize);
+	if (ret)
+		fprintf(stderr, "Error %d to fallocate()\n", ret);
+
+cleanup:
+	if (buf != (void *)-1)
+		munmap(buf, TEST_MEM_SIZE);
+	if (fd > 0)
+		close(fd);
+
+	return 0;
+}
+
+# gcc test.c -o test
+# cat /proc/1/smaps | grep KernelPageSize | head -n 1
+KernelPageSize:       64 kB
+# ./test shmem
+   :
+------------[ cut here ]------------
+WARNING: CPU: 17 PID: 5253 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
+Modules linked in: nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib  \
+nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct    \
+nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4    \
+ip_set nf_tables rfkill nfnetlink vfat fat virtio_balloon          \
+drm fuse xfs libcrc32c crct10dif_ce ghash_ce sha2_ce sha256_arm64  \
+virtio_net sha1_ce net_failover failover virtio_console virtio_blk \
+dimlib virtio_mmio
+CPU: 17 PID: 5253 Comm: test Kdump: loaded Tainted: G W 6.10.0-rc5-gavin+ #12
+Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-1.el9 05/24/2024
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : xas_split_alloc+0xf8/0x128
+lr : split_huge_page_to_list_to_order+0x1c4/0x720
+sp : ffff80008a92f5b0
+x29: ffff80008a92f5b0 x28: ffff80008a92f610 x27: ffff80008a92f728
+x26: 0000000000000cc0 x25: 000000000000000d x24: ffff0000cf00c858
+x23: ffff80008a92f610 x22: ffffffdfc0600000 x21: 0000000000000000
+x20: 0000000000000000 x19: ffffffdfc0600000 x18: 0000000000000000
+x17: 0000000000000000 x16: 0000018000000000 x15: 3374004000000000
+x14: 0000e00000000000 x13: 0000000000002000 x12: 0000000000000020
+x11: 3374000000000000 x10: 3374e1c0ffff6000 x9 : ffffb463a84c681c
+x8 : 0000000000000003 x7 : 0000000000000000 x6 : ffff00011c976ce0
+x5 : ffffb463aa47e378 x4 : 0000000000000000 x3 : 0000000000000cc0
+x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
+Call trace:
+ xas_split_alloc+0xf8/0x128
+ split_huge_page_to_list_to_order+0x1c4/0x720
+ truncate_inode_partial_folio+0xdc/0x160
+ shmem_undo_range+0x2bc/0x6a8
+ shmem_fallocate+0x134/0x430
+ vfs_fallocate+0x124/0x2e8
+ ksys_fallocate+0x4c/0xa0
+ __arm64_sys_fallocate+0x24/0x38
+ invoke_syscall.constprop.0+0x7c/0xd8
+ do_el0_svc+0xb4/0xd0
+ el0_svc+0x44/0x1d8
+ el0t_64_sync_handler+0x134/0x150
+ el0t_64_sync+0x17c/0x180
+
+Gavin Shan (4):
+  mm/filemap: Make MAX_PAGECACHE_ORDER acceptable to xarray
+  mm/filemap: Skip to allocate PMD-sized folios if needed
+  mm/readahead: Limit page cache size in page_cache_ra_order()
+  mm/shmem: Disable PMD-sized page cache if needed
+
+ include/linux/pagemap.h | 11 +++++++++--
+ mm/filemap.c            |  2 +-
+ mm/readahead.c          |  8 ++++----
+ mm/shmem.c              | 15 +++++++++++++--
+ 4 files changed, 27 insertions(+), 9 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.45.1
+
 
