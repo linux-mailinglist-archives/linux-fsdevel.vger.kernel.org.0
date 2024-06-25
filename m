@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-22394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20DF916C18
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE80916C1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0581F2AF04
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:10:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFE261F2B2BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9092170847;
-	Tue, 25 Jun 2024 15:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9588181BAF;
+	Tue, 25 Jun 2024 15:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hClRKRD7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abiwsMY7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2678816EBF3;
-	Tue, 25 Jun 2024 15:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C5116EC03;
+	Tue, 25 Jun 2024 15:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327806; cv=none; b=hXKIPKDSatjBpyTZ6GBFRzd6kLPIVYhsdXbOI5HU5IiBO05kUH2Az9Bw8aMvKYcSdZj/hNUBqNzblLort9gH7nZykG1COOZiNLhRpeJoT1Rd+VuWV8p6DNyPfMJ7bXYyGNLk1wbHXK/f+wTEG3ABn8m2dRksknLLEhhOcE9rJqc=
+	t=1719327813; cv=none; b=QvutwnySWhfiHT8otdm7If7OIU/KQjo+qVW5rJjvfTYWiFFobAGUqeOe2qij0oUQ7f7UgmaoNxWGtlkJw+vCXZ65AW6XFGcD0xMIgkOno78Cx3EyJCEOGBeX3fF8ntUgMx6Dm2wRfktTvsGPyOpoB/h7fC4sFGSVIbW7OxTzYSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327806; c=relaxed/simple;
-	bh=r8OeCheZca08aBPplXRLI2j23mHYi0JAXY2pfIZIwuo=;
+	s=arc-20240116; t=1719327813; c=relaxed/simple;
+	bh=CZyk2Foz6/MDwSr5OV2kQ3tmU9mYoHXOdRBxLAAsKpQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mSzqFKjvGSmzXka3eyFElKXXgkMAeJqwg5vXFrUoEOapDVbaL9ySKo48vsRY514tivkJGk1S7NmyiHJXQpuAGHHPrRaYeRPJNfrIxyg3VBkioOJ14yfNmgAJUm6KprbhDZKIzcRPf0rrFt6qN7BCLMrtBs9WQXG2Xthb7ZN1oiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hClRKRD7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEB3FC32782;
-	Tue, 25 Jun 2024 15:03:18 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rrl/Hyu5l9EPEmuu26XKj+d5PsmGK7Tqilih9oyeXzkL+IgtDxuogwhji2v+0D1sK7zA+JIO+g9fNXENlj1nDcpHV2SEugjeVtwKOZhz3u4oNptwFUJpmkLCACUFAWYiA/WNDYdXtJ/aiEnayyq7OZvuc/QsNPYFLcpNhoSwbgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abiwsMY7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 367EBC4AF09;
+	Tue, 25 Jun 2024 15:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719327805;
-	bh=r8OeCheZca08aBPplXRLI2j23mHYi0JAXY2pfIZIwuo=;
+	s=k20201202; t=1719327812;
+	bh=CZyk2Foz6/MDwSr5OV2kQ3tmU9mYoHXOdRBxLAAsKpQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hClRKRD7piPsmFvjSFelRmACKwTiERJyuvd2cpFA52Xa0MVhvYHUOVNlQ4SznwKJk
-	 m2FKwh6jTTWvU6XygXHpLhm1E7bukpTifj7+HULrqmLZR1l5kU2GO5UZzF2Nfd5k5a
-	 deH8UCBeYMRuDN+WCSWgVWIUEXZjDqaXKDea5/vIq7ty8jCdYbgBwdeyPX+5duQKnp
-	 CNrSWbtD28SzkYRXQVYwX8sBgIzVgzzsEmHiBnW6t/YNXhP9mIZe+EP4HlA25d/tFa
-	 g/RqM2Bam5hyakaUjrjk5p6bc7jYIM3ZwwV4y9P9f+V3DgEeV3orNSMcGyAveLy9X+
-	 PtEGJwrXQEV0Q==
+	b=abiwsMY7+KvzHS4P9PmFpFGCEhgfRkYRU7IEtlsNfXBRypV5ugB2bGrkEJVvM8I4j
+	 9jcbbyT2tLv5vZNCVrPo4QacHCxBo49K7KyoRyuf5AaoLK297ouS0MCDrgjsNC+cxJ
+	 ar6ISZYKU+e5OttraAVt88d998Ryen6dnW5Z6k24XXjBNpV4RH6erpy6S89sxCTMhF
+	 FGk7xs+oq90NGpEM3Ur5oVqrHGiAM08LqTGvs1dVIusEI0L4vPAwF9t0nEhDp6iwP0
+	 UgkHCwtpKQ1h0ZvO+E1ISnbEf6yvg0H0J6gZDCvrs3SSZF4PTWcs/Ypo3CRVhKdl0G
+	 8CxEaKwvgepOA==
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 25 Jun 2024 15:57:51 +0100
-Subject: [PATCH v9 23/39] arm64/signal: Set up and restore the GCS context
- for signal handlers
+Date: Tue, 25 Jun 2024 15:57:52 +0100
+Subject: [PATCH v9 24/39] arm64/signal: Expose GCS state in signal frames
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-arm64-gcs-v9-23-0f634469b8f0@kernel.org>
+Message-Id: <20240625-arm64-gcs-v9-24-0f634469b8f0@kernel.org>
 References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
 In-Reply-To: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -78,266 +77,223 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
  Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.14-dev-d4707
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7410; i=broonie@kernel.org;
- h=from:subject:message-id; bh=r8OeCheZca08aBPplXRLI2j23mHYi0JAXY2pfIZIwuo=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmetuEbXRZZuhSHnJ6VyUSqEQSOYDxx6u7HeN7f9ZJ
- B3xTvrOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZnrbhAAKCRAk1otyXVSH0Gm/B/
- 9fu4otU/PRfg472GGYRkOwItAA/+lli+0iyVjt37Lx9gcU58pDpd95YMHivPSiDykcQJ9T++NIVHBs
- IwhEe3VA7qkgf+nSQh/NrzUewhi8H4ckf4Arl/iQP0hzg86VqGH4h90eisyQ0w4d30MCT4V382m31u
- sDedl6FhVAwsyh3tuGLFXgpTczq4muq62KzV2t4xQQMT93A5NgGGZ5CGFfatWskiObMEHgz9E4Qj5w
- mpsRi3TIbfFkWWzPx6y0niUXbLpFmptpgF1HR6Hz5qS3wl6HcY8ZAUeC6W8xbdKrKqLkJ2hPFGpq8q
- zkpaoSr4a7VMG6Zky8x9Q8GOIhuVPz
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6094; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=CZyk2Foz6/MDwSr5OV2kQ3tmU9mYoHXOdRBxLAAsKpQ=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmetuF7m/PmlelddEg/bBFW5FD/h5PxHRPz1T4ZL/z
+ fGWGm8+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZnrbhQAKCRAk1otyXVSH0PsAB/
+ 43/MMGsHECfy2LfiwF5beeX/KzMJ+QU6tHv9Rsszt32thb32vCsuGfKKH71Xe+3E247nIHvEtd7KWo
+ 7CwsIx7fNvbl16Me6s6NdDzluCb6pKjVw9XCUQUwwVFDVuIkDVk6azKRlXnn5W8r4K0uSyqiyAAulY
+ x0W2qVfgGP5KrrZ0PuIpTSNi/DEec8WvurCvULvwfQyuvqZd9YSZNkmIJ0ruD1syAofnCIIrmQSUdP
+ ueVupKXYI60989eIQZmtXS92XE9GTHjq2fl7FlGX36E7MyL3KSo5mV46Q/dNNDctkUc+1bhwk2bdsM
+ zbLzeHeBTZytsjveH0XBKROeaAjqZy
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-When invoking a signal handler we use the GCS configuration and stack
-for the current thread.
+Add a context for the GCS state and include it in the signal context when
+running on a system that supports GCS. We reuse the same flags that the
+prctl() uses to specify which GCS features are enabled and also provide the
+current GCS pointer.
 
-Since we implement signal return by calling the signal handler with a
-return address set up pointing to a trampoline in the vDSO we need to
-also configure any active GCS for this by pushing a frame for the
-trampoline onto the GCS.  If we do not do this then signal return will
-generate a GCS protection fault.
-
-In order to guard against attempts to bypass GCS protections via signal
-return we only allow returning with GCSPR_EL0 pointing to an address
-where it was previously preempted by a signal.  We do this by pushing a
-cap onto the GCS, this takes the form of an architectural GCS cap token
-with the top bit set and token type of 0 which we add on signal entry
-and validate and pop off on signal return.  The combination of the top
-bit being set and the token type mean that this can't be interpreted as
-a valid token or address.
+We do not support enabling GCS via signal return, there is a conflict
+between specifying GCSPR_EL0 and allocation of a new GCS and this is not
+an ancticipated use case.  We also enforce GCS configuration locking on
+signal return.
 
 Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/gcs.h |   1 +
- arch/arm64/kernel/signal.c   | 134 +++++++++++++++++++++++++++++++++++++++++--
- arch/arm64/mm/gcs.c          |   1 +
- 3 files changed, 131 insertions(+), 5 deletions(-)
+ arch/arm64/include/uapi/asm/sigcontext.h |   9 +++
+ arch/arm64/kernel/signal.c               | 108 +++++++++++++++++++++++++++++++
+ 2 files changed, 117 insertions(+)
 
-diff --git a/arch/arm64/include/asm/gcs.h b/arch/arm64/include/asm/gcs.h
-index 48c97e63e56a..f50660603ecf 100644
---- a/arch/arm64/include/asm/gcs.h
-+++ b/arch/arm64/include/asm/gcs.h
-@@ -9,6 +9,7 @@
- #include <asm/uaccess.h>
+diff --git a/arch/arm64/include/uapi/asm/sigcontext.h b/arch/arm64/include/uapi/asm/sigcontext.h
+index 8a45b7a411e0..c2d61e8efc84 100644
+--- a/arch/arm64/include/uapi/asm/sigcontext.h
++++ b/arch/arm64/include/uapi/asm/sigcontext.h
+@@ -176,6 +176,15 @@ struct zt_context {
+ 	__u16 __reserved[3];
+ };
  
- struct kernel_clone_args;
-+struct ksignal;
++#define GCS_MAGIC	0x47435300
++
++struct gcs_context {
++	struct _aarch64_ctx head;
++	__u64 gcspr;
++	__u64 features_enabled;
++	__u64 reserved;
++};
++
+ #endif /* !__ASSEMBLY__ */
  
- static inline void gcsb_dsync(void)
- {
+ #include <asm/sve_context.h>
 diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 4a77f4976e11..a1e0aa38bff9 100644
+index a1e0aa38bff9..f034a1a1d194 100644
 --- a/arch/arm64/kernel/signal.c
 +++ b/arch/arm64/kernel/signal.c
-@@ -25,6 +25,7 @@
- #include <asm/elf.h>
- #include <asm/exception.h>
- #include <asm/cacheflush.h>
-+#include <asm/gcs.h>
- #include <asm/ucontext.h>
- #include <asm/unistd.h>
- #include <asm/fpsimd.h>
-@@ -34,6 +35,37 @@
- #include <asm/traps.h>
- #include <asm/vdso.h>
+@@ -88,6 +88,7 @@ struct rt_sigframe_user_layout {
+ 
+ 	unsigned long fpsimd_offset;
+ 	unsigned long esr_offset;
++	unsigned long gcs_offset;
+ 	unsigned long sve_offset;
+ 	unsigned long tpidr2_offset;
+ 	unsigned long za_offset;
+@@ -217,6 +218,8 @@ struct user_ctxs {
+ 	u32 zt_size;
+ 	struct fpmr_context __user *fpmr;
+ 	u32 fpmr_size;
++	struct gcs_context __user *gcs;
++	u32 gcs_size;
+ };
+ 
+ static int preserve_fpsimd_context(struct fpsimd_context __user *ctx)
+@@ -636,6 +639,83 @@ extern int restore_zt_context(struct user_ctxs *user);
+ 
+ #endif /* ! CONFIG_ARM64_SME */
  
 +#ifdef CONFIG_ARM64_GCS
-+/* Extra bit set in the address distinguishing a signal cap token. */
-+#define GCS_SIGNAL_CAP_FLAG BIT(63)
 +
-+#define GCS_SIGNAL_CAP(addr) ((((unsigned long)addr) & GCS_CAP_ADDR_MASK) | \
-+			      GCS_SIGNAL_CAP_FLAG)
-+
-+static bool gcs_signal_cap_valid(u64 addr, u64 val)
++static int preserve_gcs_context(struct gcs_context __user *ctx)
 +{
++	int err = 0;
++	u64 gcspr;
++
 +	/*
-+	 * The top bit should be set, this is an invalid address for
-+	 * EL0 and will only be set for caps created by signals.
++	 * We will add a cap token to the frame, include it in the
++	 * GCSPR_EL0 we report to support stack switching via
++	 * sigreturn.
 +	 */
-+	if (!(val & GCS_SIGNAL_CAP_FLAG))
-+		return false;
++	gcs_preserve_current_state();
++	gcspr = current->thread.gcspr_el0;
++	if (task_gcs_el0_enabled(current))
++		gcspr -= 8;
 +
-+	/* The rest should be a standard architectural cap token. */
-+	val &= ~GCS_SIGNAL_CAP_FLAG;
++	__put_user_error(GCS_MAGIC, &ctx->head.magic, err);
++	__put_user_error(sizeof(*ctx), &ctx->head.size, err);
++	__put_user_error(gcspr, &ctx->gcspr, err);
++	__put_user_error(0, &ctx->reserved, err);
++	__put_user_error(current->thread.gcs_el0_mode,
++			 &ctx->features_enabled, err);
 +
-+	/* The cap must not have a token set */
-+	if (GCS_CAP_TOKEN(val) != 0)
-+		return false;
-+
-+	/* The cap must store the VA the cap was stored at */
-+	if (GCS_CAP_ADDR(addr) != GCS_CAP_ADDR(val))
-+		return false;
-+
-+	return true;
++	return err;
 +}
-+#endif
 +
- /*
-  * Do a signal return; undo the signal stack. These are aligned to 128-bit.
-  */
-@@ -860,6 +892,50 @@ static int restore_sigframe(struct pt_regs *regs,
- 	return err;
- }
- 
-+#ifdef CONFIG_ARM64_GCS
-+static int gcs_restore_signal(void)
++static int restore_gcs_context(struct user_ctxs *user)
 +{
-+	u64 gcspr_el0, cap;
-+	int ret;
++	u64 gcspr, enabled;
++	int err = 0;
 +
-+	if (!system_supports_gcs())
-+		return 0;
-+
-+	if (!(current->thread.gcs_el0_mode & PR_SHADOW_STACK_ENABLE))
-+		return 0;
-+
-+	gcspr_el0 = read_sysreg_s(SYS_GCSPR_EL0);
-+
-+	/*
-+	 * GCSPR_EL0 should be pointing at a capped GCS, read the cap...
-+	 */
-+	gcsb_dsync();
-+	ret = copy_from_user(&cap, (__user void*)gcspr_el0, sizeof(cap));
-+	if (ret)
-+		return -EFAULT;
-+
-+	/*
-+	 * ...then check that the cap is the actual GCS before
-+	 * restoring it.
-+	 */
-+	if (!gcs_signal_cap_valid(gcspr_el0, cap))
++	if (user->gcs_size != sizeof(*user->gcs))
 +		return -EINVAL;
 +
-+	/* Invalidate the token to prevent reuse */
-+	put_user_gcs(0, (__user void*)gcspr_el0, &ret);
-+	if (ret != 0)
-+		return -EFAULT;
++	__get_user_error(gcspr, &user->gcs->gcspr, err);
++	__get_user_error(enabled, &user->gcs->features_enabled, err);
++	if (err)
++		return err;
 +
-+	current->thread.gcspr_el0 = gcspr_el0 + sizeof(cap);
++	/* Don't allow unknown modes */
++	if (enabled & ~PR_SHADOW_STACK_SUPPORTED_STATUS_MASK)
++		return -EINVAL;
++
++	err = gcs_check_locked(current, enabled);
++	if (err != 0)
++		return err;
++
++	/* Don't allow enabling */
++	if (!task_gcs_el0_enabled(current) &&
++	    (enabled & PR_SHADOW_STACK_ENABLE))
++		return -EINVAL;
++
++	/* If we are disabling disable everything */
++	if (!(enabled & PR_SHADOW_STACK_ENABLE))
++		enabled = 0;
++
++	current->thread.gcs_el0_mode = enabled;
++
++	/*
++	 * We let userspace set GCSPR_EL0 to anything here, we will
++	 * validate later in gcs_restore_signal().
++	 */
++	current->thread.gcspr_el0 = gcspr;
 +	write_sysreg_s(current->thread.gcspr_el0, SYS_GCSPR_EL0);
 +
 +	return 0;
 +}
 +
-+#else
-+static int gcs_restore_signal(void) { return 0; }
-+#endif
++#else /* ! CONFIG_ARM64_GCS */
 +
- SYSCALL_DEFINE0(rt_sigreturn)
++/* Turn any non-optimised out attempts to use these into a link error: */
++extern int preserve_gcs_context(void __user *ctx);
++extern int restore_gcs_context(struct user_ctxs *user);
++
++#endif /* ! CONFIG_ARM64_GCS */
++
+ static int parse_user_sigframe(struct user_ctxs *user,
+ 			       struct rt_sigframe __user *sf)
  {
- 	struct pt_regs *regs = current_pt_regs();
-@@ -886,6 +962,9 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 	if (restore_altstack(&frame->uc.uc_stack))
- 		goto badframe;
+@@ -653,6 +733,7 @@ static int parse_user_sigframe(struct user_ctxs *user,
+ 	user->za = NULL;
+ 	user->zt = NULL;
+ 	user->fpmr = NULL;
++	user->gcs = NULL;
  
-+	if (gcs_restore_signal())
-+		goto badframe;
-+
- 	return regs->regs[0];
+ 	if (!IS_ALIGNED((unsigned long)base, 16))
+ 		goto invalid;
+@@ -758,6 +839,17 @@ static int parse_user_sigframe(struct user_ctxs *user,
+ 			user->fpmr_size = size;
+ 			break;
  
- badframe:
-@@ -1130,7 +1209,50 @@ static int get_sigframe(struct rt_sigframe_user_layout *user,
- 	return 0;
- }
- 
--static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
-+#ifdef CONFIG_ARM64_GCS
++		case GCS_MAGIC:
++			if (!system_supports_gcs())
++				goto invalid;
 +
-+static int gcs_signal_entry(__sigrestore_t sigtramp, struct ksignal *ksig)
-+{
-+	unsigned long __user *gcspr_el0;
-+	int ret = 0;
++			if (user->gcs)
++				goto invalid;
 +
-+	if (!system_supports_gcs())
-+		return 0;
++			user->gcs = (struct gcs_context __user *)head;
++			user->gcs_size = size;
++			break;
 +
-+	if (!task_gcs_el0_enabled(current))
-+		return 0;
-+
-+	/*
-+	 * We are entering a signal handler, current register state is
-+	 * active.
-+	 */
-+	gcspr_el0 = (unsigned long __user *)read_sysreg_s(SYS_GCSPR_EL0);
-+
-+	/*
-+	 * Push a cap and the GCS entry for the trampoline onto the GCS.
-+	 */
-+	put_user_gcs((unsigned long)sigtramp, gcspr_el0 - 2, &ret);
-+	put_user_gcs(GCS_SIGNAL_CAP(gcspr_el0 - 1), gcspr_el0 - 1, &ret);
-+	if (ret != 0)
-+		return ret;
-+
-+	gcsb_dsync();
-+
-+	gcspr_el0 -= 2;
-+	write_sysreg_s((unsigned long)gcspr_el0, SYS_GCSPR_EL0);
-+
-+	return 0;
-+}
-+#else
-+
-+static int gcs_signal_entry(__sigrestore_t sigtramp, struct ksignal *ksig)
-+{
-+	return 0;
-+}
-+
-+#endif
-+
-+static int setup_return(struct pt_regs *regs, struct ksignal *ksig,
- 			 struct rt_sigframe_user_layout *user, int usig)
- {
- 	__sigrestore_t sigtramp;
-@@ -1138,7 +1260,7 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
- 	regs->regs[0] = usig;
- 	regs->sp = (unsigned long)user->sigframe;
- 	regs->regs[29] = (unsigned long)&user->next_frame->fp;
--	regs->pc = (unsigned long)ka->sa.sa_handler;
-+	regs->pc = (unsigned long)ksig->ka.sa.sa_handler;
- 
- 	/*
- 	 * Signal delivery is a (wacky) indirect function call in
-@@ -1178,12 +1300,14 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
- 		sme_smstop();
+ 		case EXTRA_MAGIC:
+ 			if (have_extra_context)
+ 				goto invalid;
+@@ -877,6 +969,9 @@ static int restore_sigframe(struct pt_regs *regs,
+ 			err = restore_fpsimd_context(&user);
  	}
  
--	if (ka->sa.sa_flags & SA_RESTORER)
--		sigtramp = ka->sa.sa_restorer;
-+	if (ksig->ka.sa.sa_flags & SA_RESTORER)
-+		sigtramp = ksig->ka.sa.sa_restorer;
- 	else
- 		sigtramp = VDSO_SYMBOL(current->mm->context.vdso, sigtramp);
- 
- 	regs->regs[30] = (unsigned long)sigtramp;
++	if (err == 0 && system_supports_gcs() && user.gcs)
++		err = restore_gcs_context(&user);
 +
-+	return gcs_signal_entry(sigtramp, ksig);
- }
+ 	if (err == 0 && system_supports_tpidr2() && user.tpidr2)
+ 		err = restore_tpidr2_context(&user);
  
- static int setup_rt_frame(int usig, struct ksignal *ksig, sigset_t *set,
-@@ -1206,7 +1330,7 @@ static int setup_rt_frame(int usig, struct ksignal *ksig, sigset_t *set,
- 	err |= __save_altstack(&frame->uc.uc_stack, regs->sp);
- 	err |= setup_sigframe(&user, regs, set);
- 	if (err == 0) {
--		setup_return(regs, &ksig->ka, &user, usig);
-+		err = setup_return(regs, ksig, &user, usig);
- 		if (ksig->ka.sa.sa_flags & SA_SIGINFO) {
- 			err |= copy_siginfo_to_user(&frame->info, &ksig->info);
- 			regs->regs[1] = (unsigned long)&frame->info;
-diff --git a/arch/arm64/mm/gcs.c b/arch/arm64/mm/gcs.c
-index 918d50ba53c6..7429a4b3600e 100644
---- a/arch/arm64/mm/gcs.c
-+++ b/arch/arm64/mm/gcs.c
-@@ -6,6 +6,7 @@
- #include <linux/types.h>
+@@ -999,6 +1094,13 @@ static int setup_sigframe_layout(struct rt_sigframe_user_layout *user,
+ 			return err;
+ 	}
  
- #include <asm/cpufeature.h>
-+#include <asm/gcs.h>
- #include <asm/page.h>
++	if (system_supports_gcs()) {
++		err = sigframe_alloc(user, &user->gcs_offset,
++				     sizeof(struct gcs_context));
++		if (err)
++			return err;
++	}
++
+ 	if (system_supports_sve() || system_supports_sme()) {
+ 		unsigned int vq = 0;
  
- static unsigned long alloc_gcs(unsigned long addr, unsigned long size,
+@@ -1099,6 +1201,12 @@ static int setup_sigframe(struct rt_sigframe_user_layout *user,
+ 		__put_user_error(current->thread.fault_code, &esr_ctx->esr, err);
+ 	}
+ 
++	if (system_supports_gcs() && err == 0 && user->gcs_offset) {
++		struct gcs_context __user *gcs_ctx =
++			apply_user_offset(user, user->gcs_offset);
++		err |= preserve_gcs_context(gcs_ctx);
++	}
++
+ 	/* Scalable Vector Extension state (including streaming), if present */
+ 	if ((system_supports_sve() || system_supports_sme()) &&
+ 	    err == 0 && user->sve_offset) {
 
 -- 
 2.39.2
