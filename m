@@ -1,206 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-22332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702A2916684
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:47:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E79A9166A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD3228A7FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 11:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108A81F22303
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 11:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2513153506;
-	Tue, 25 Jun 2024 11:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3C214BF98;
+	Tue, 25 Jun 2024 11:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="JUEjC0St"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qFfTLU/f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8IiHEfLD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qFfTLU/f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8IiHEfLD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9927114AD38;
-	Tue, 25 Jun 2024 11:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A701494A0;
+	Tue, 25 Jun 2024 11:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315910; cv=none; b=gZ3p5a3+P3mIkaxiDlr1MTn2xu5w5o1OhdUc6fzeKtCTrFHP3R6RzVtIxnMj7sRnCVLAUTfH8mF5EzemMrenjkdJ72tX3kfjepFMCLjVuTHN/YSgWcSSRlRgawDqZXWhqS5TORLhoTNhUjDhdowN8Q/MgsTwMtzxoEplR/cwWN0=
+	t=1719316381; cv=none; b=rM9qGqhAJFbJd6rJiQMbhCG15ahim0Z7ZzYK0LO2ZxuZhq1pSi4Oo9io1x7VPYdGMFVD8b1SW7fcpgzZlfTh5JgFdYJKOzm5VDNfOMUX6pdv2/hwSpj823peeBjlNxqVcBMaUGTUC3ONe2lcfy0lT8CGP8NlsAvRunfzyNWIvYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315910; c=relaxed/simple;
-	bh=O0/2LUKfYiFUblD3u9m7Y13StU5ozfkcPwrLPBl3W0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AGHYDSeqPaFwelrIymKB42ReuVOIhoAsxHTc/eMLV7ve7QiuuF5T5p2S73pq6gqFVd+cJ70coLeDK7iakaSIThlzope4t2Vvec3uXdpP/1CUWhy8RLj+lSNd2wusgvuaJHj0QVnw4zLFP92xW2tslLCUk2P6tXrzBldcRDBOfVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=JUEjC0St; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	s=arc-20240116; t=1719316381; c=relaxed/simple;
+	bh=yEXI9upsTGwmng1fzr/TmblhbgESfn49eFsRtzhxKMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8MtgZQEYpfWFlu/+jPapf/oKDO2FJtXlsbIEZhoDRyIMuYJigjsLBEOMex8+6YeGOZLECZnXJRXqNxGKyhM1hV5qP3Pz2oO0+hld6PMUfq381M2/eBrimg040JvnQ9TeZE67bwzym1NNQTXiOvhcboUKGd98DE6FDP7QoURqks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qFfTLU/f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8IiHEfLD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qFfTLU/f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8IiHEfLD; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W7jgN6pNYz9spK;
-	Tue, 25 Jun 2024 13:45:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1719315905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8FDD121A74;
+	Tue, 25 Jun 2024 11:52:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719316377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fyS4GVf4PvByyE0IUbrr3l1s3P7v70XANt/sXrYXYDk=;
-	b=JUEjC0StwOgXBgGlDaXdgJYKqaINIckvwir1VzS6vaPsaIuGOoRoH4bIEBnAPSiFaBTsij
-	Wg2CeEeSf29wU8MOtLW7DEWlkJx7/q2myVSyUGY5xc9IZvT+AKXe2l99KwhqW1jGBua1DY
-	PO4ofn3aJAnp4NBPB0RiKD2wMATzgAVn0gOz1gYoxGohcI4Odo85hvIEI/JYspGsH/3XKh
-	bgJrG01RH+pzSMq8l41ho4jHg0lItICn8DvmfnmldRRQAMKy7e/U573JD1xzBsoh4GFzkh
-	Pii6SUSGTYeX37Tx0bkk7i3xlrnBQ5+9hkU5tj7xhJ8HJ/fGXAPpPx5/7kqEzA==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: david@fromorbit.com,
-	willy@infradead.org,
-	chandan.babu@oracle.com,
-	djwong@kernel.org,
-	brauner@kernel.org,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com,
-	linux-mm@kvack.org,
-	john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org,
-	hare@suse.de,
-	p.raghav@samsung.com,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org,
-	kernel@pankajraghav.com,
-	hch@lst.de,
-	Zi Yan <zi.yan@sent.com>
-Subject: [PATCH v8 10/10] xfs: enable block size larger than page size support
-Date: Tue, 25 Jun 2024 11:44:20 +0000
-Message-ID: <20240625114420.719014-11-kernel@pankajraghav.com>
-In-Reply-To: <20240625114420.719014-1-kernel@pankajraghav.com>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
+	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
+	b=qFfTLU/feSIY+EL+6nPRavFzspOM/dJdK3v5F2BlmPNoOiENE4myYURQSXCFpXm/5KmZA2
+	of63qoq/wSVl4Xj29vqXOrjxOyLWDMTPy/HWtwOXNbhg3ZwkZHLI2jV/Im5/OkHDqa2fui
+	ShIYL2MqqIxGAEOYURuLn4h/doAiALs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719316377;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
+	b=8IiHEfLD271bS+UYd+Tfo//IJ4Em+a6JhIiifj/ICepXl2IwZnhQjxk4/5KzEFitcuBVK1
+	iUJ0sZXiSIQeOwCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719316377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
+	b=qFfTLU/feSIY+EL+6nPRavFzspOM/dJdK3v5F2BlmPNoOiENE4myYURQSXCFpXm/5KmZA2
+	of63qoq/wSVl4Xj29vqXOrjxOyLWDMTPy/HWtwOXNbhg3ZwkZHLI2jV/Im5/OkHDqa2fui
+	ShIYL2MqqIxGAEOYURuLn4h/doAiALs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719316377;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
+	b=8IiHEfLD271bS+UYd+Tfo//IJ4Em+a6JhIiifj/ICepXl2IwZnhQjxk4/5KzEFitcuBVK1
+	iUJ0sZXiSIQeOwCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7770C13A9A;
+	Tue, 25 Jun 2024 11:52:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0/0jHZmvemYWeAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 25 Jun 2024 11:52:57 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3054BA083E; Tue, 25 Jun 2024 13:52:57 +0200 (CEST)
+Date: Tue, 25 Jun 2024 13:52:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: Yu Ma <yu.ma@intel.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	mjguzik@gmail.com, edumazet@google.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+Message-ID: <20240625115257.piu47hzjyw5qnsa6@quack3>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-2-yu.ma@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240622154904.3774273-2-yu.ma@intel.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org,intel.com,linux.intel.com];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+On Sat 22-06-24 11:49:02, Yu Ma wrote:
+> There is available fd in the lower 64 bits of open_fds bitmap for most cases
+> when we look for an available fd slot. Skip 2-levels searching via
+> find_next_zero_bit() for this common fast path.
+> 
+> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
+> free slot is available there, as:
+> (1) The fd allocation algorithm would always allocate fd from small to large.
+> Lower bits in open_fds bitmap would be used much more frequently than higher
+> bits.
+> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
+> it would never be shrunk. The search size increases but there are few open fds
+> available here.
+> (3) find_next_zero_bit() itself has a fast path inside to speed up searching
+> when size<=64.
+> 
+> Besides, "!start" is added to fast path condition to ensure the allocated fd is
+> greater than start (i.e. >=0), given alloc_fd() is only called in two scenarios:
+> (1) Allocating a new fd (the most common usage scenario) via
+> get_unused_fd_flags() to find fd start from bit 0 in fdt (i.e. start==0).
+> (2) Duplicating a fd (less common usage) via dup_fd() to find a fd start from
+> old_fd's index in fdt, which is only called by syscall fcntl.
+> 
+> With the fast path added in alloc_fd(), pts/blogbench-1.1.0 read is improved
+> by 17% and write by 9% on Intel ICX 160 cores configuration with v6.10-rc4.
+> 
+> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Yu Ma <yu.ma@intel.com>
+> ---
+>  fs/file.c | 35 +++++++++++++++++++++--------------
+>  1 file changed, 21 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index a3b72aa64f11..50e900a47107 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -515,28 +515,35 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>  	if (fd < files->next_fd)
+>  		fd = files->next_fd;
+>  
+> -	if (fd < fdt->max_fds)
+> +	error = -EMFILE;
+> +	if (likely(fd < fdt->max_fds)) {
+> +		if (~fdt->open_fds[0] && !start) {
+> +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
 
-Page cache now has the ability to have a minimum order when allocating
-a folio which is a prerequisite to add support for block size > page
-size.
+So I don't think this is quite correct. If files->next_fd is set, we could
+end up calling find_next_zero_bit() starting from quite high offset causing
+a regression? Also because we don't expand in this case, we could cause access
+beyond end of fdtable?
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
-@hch and @Dave I have retained the min_folio_order to be in the inode
-struct as the discussion about moving this to xfs_mount is still open.
+Finally, AFAIU this speeds up the lookup for cases where fd < 64 is
+available at the cost of cases where the first long is full (there we
+unnecessarily load open_fds[0] into cache). Did you check if the cost is
+visible (e.g. by making blogbench occupy first 64 fds before starting its
+load)?
 
- fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
- fs/xfs/libxfs/xfs_shared.h |  3 +++
- fs/xfs/xfs_icache.c        |  6 ++++--
- fs/xfs/xfs_mount.c         |  1 -
- fs/xfs/xfs_super.c         | 18 ++++++++++--------
- 5 files changed, 22 insertions(+), 11 deletions(-)
+								Honza
 
-diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-index 14c81f227c5b..1e76431d75a4 100644
---- a/fs/xfs/libxfs/xfs_ialloc.c
-+++ b/fs/xfs/libxfs/xfs_ialloc.c
-@@ -3019,6 +3019,11 @@ xfs_ialloc_setup_geometry(
- 		igeo->ialloc_align = mp->m_dalign;
- 	else
- 		igeo->ialloc_align = 0;
-+
-+	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-+		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-+	else
-+		igeo->min_folio_order = 0;
- }
- 
- /* Compute the location of the root directory inode that is laid out by mkfs. */
-diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
-index 34f104ed372c..e67a1c7cc0b0 100644
---- a/fs/xfs/libxfs/xfs_shared.h
-+++ b/fs/xfs/libxfs/xfs_shared.h
-@@ -231,6 +231,9 @@ struct xfs_ino_geometry {
- 	/* precomputed value for di_flags2 */
- 	uint64_t	new_diflags2;
- 
-+	/* minimum folio order of a page cache allocation */
-+	unsigned int	min_folio_order;
-+
- };
- 
- #endif /* __XFS_SHARED_H__ */
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 088ac200b026..e0f911f326e6 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -88,7 +88,8 @@ xfs_inode_alloc(
- 
- 	/* VFS doesn't initialise i_mode! */
- 	VFS_I(ip)->i_mode = 0;
--	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-+	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 
- 	XFS_STATS_INC(mp, vn_active);
- 	ASSERT(atomic_read(&ip->i_pincount) == 0);
-@@ -325,7 +326,8 @@ xfs_reinit_inode(
- 	inode->i_uid = uid;
- 	inode->i_gid = gid;
- 	inode->i_state = state;
--	mapping_set_large_folios(inode->i_mapping);
-+	mapping_set_folio_min_order(inode->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 	return error;
- }
- 
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index 3949f720b535..c6933440f806 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -134,7 +134,6 @@ xfs_sb_validate_fsb_count(
- {
- 	uint64_t		max_bytes;
- 
--	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
- 	ASSERT(sbp->sb_blocklog >= BBSHIFT);
- 
- 	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 27e9f749c4c7..b8a93a8f35ca 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1638,16 +1638,18 @@ xfs_fs_fill_super(
- 		goto out_free_sb;
- 	}
- 
--	/*
--	 * Until this is fixed only page-sized or smaller data blocks work.
--	 */
- 	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
--		xfs_warn(mp,
--		"File system with blocksize %d bytes. "
--		"Only pagesize (%ld) or less will currently work.",
-+		if (!xfs_has_crc(mp)) {
-+			xfs_warn(mp,
-+"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
- 				mp->m_sb.sb_blocksize, PAGE_SIZE);
--		error = -ENOSYS;
--		goto out_free_sb;
-+			error = -ENOSYS;
-+			goto out_free_sb;
-+		}
-+
-+		xfs_warn(mp,
-+"EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
-+			mp->m_sb.sb_blocksize);
- 	}
- 
- 	/* Ensure this filesystem fits in the page cache limits */
+> +			goto fastreturn;
+> +		}
+>  		fd = find_next_fd(fdt, fd);
+> +	}
+> +
+> +	if (unlikely(fd >= fdt->max_fds)) {
+> +		error = expand_files(files, fd);
+> +		if (error < 0)
+> +			goto out;
+> +		/*
+> +		 * If we needed to expand the fs array we
+> +		 * might have blocked - try again.
+> +		 */
+> +		if (error)
+> +			goto repeat;
+> +	}
+>  
+> +fastreturn:
+>  	/*
+>  	 * N.B. For clone tasks sharing a files structure, this test
+>  	 * will limit the total number of files that can be opened.
+>  	 */
+> -	error = -EMFILE;
+> -	if (fd >= end)
+> +	if (unlikely(fd >= end))
+>  		goto out;
+>  
+> -	error = expand_files(files, fd);
+> -	if (error < 0)
+> -		goto out;
+> -
+> -	/*
+> -	 * If we needed to expand the fs array we
+> -	 * might have blocked - try again.
+> -	 */
+> -	if (error)
+> -		goto repeat;
+> -
+>  	if (start <= files->next_fd)
+>  		files->next_fd = fd + 1;
+>  
+> -- 
+> 2.43.0
+> 
 -- 
-2.44.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
