@@ -1,58 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-22367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F8B916B02
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 16:51:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1608916B3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 16:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9D9B267ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 14:51:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A4FA281D4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 14:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A3316E89E;
-	Tue, 25 Jun 2024 14:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B3B16E888;
+	Tue, 25 Jun 2024 14:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fg1wZLMI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJDWR5Eh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7DE16D4F6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 14:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E4F170825;
+	Tue, 25 Jun 2024 14:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327060; cv=none; b=CR/Xc1S19xFO6CaOPBT5Mo4H3tBFluOxB0HFrVfBqEhfpx+vH6AxB/V5EJWWaPuWbDLehITRwky4bJN8CPNHjfKb1DN8Pr6xVRlxjWfw59jeo0xyWRAwWSq1y1SH6nWfEjqfWf323Aj7rC8xuFkC3fL9OrTk9sP7thDWYqrpSSA=
+	t=1719327283; cv=none; b=e/R95Rw71x/UgLQgepjqh/hPEOkfaxLg/XrLhJpC0puLUnrSYGd9K/9lEukC92SfouFyi2e6cnX7w2Umc8sN2Yp7U+QFQwXsp7hQByhAj5pXiRO2FfkzPBWZ3lZWPHP62AmcEb0nJ2U9ciGBBJUoyq9IzReYpcDNuSPNH9qWAbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327060; c=relaxed/simple;
-	bh=uB851uHl5zL7gOn3qL/TRpyATmASFUOK4v5Tgo8/w7I=;
+	s=arc-20240116; t=1719327283; c=relaxed/simple;
+	bh=OnlecF0L+WuiOOe//vNstn8JovvMxwxc6c0feuDVQJs=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ITtNoGl5hif3kmaH7Z+Cfs+rwiTkjHSnIe1x9x78FalCP5SILwxAmjUzsmGVsrWzZvdahz43hd2tK7esu3UbYkTaM0k1Aci1bui4q5Cpz93fWLofK6mpLJ4b2UQSsOYSFN0UsYu7VbrHtAP85iv5tCSweXVXzQrbvPB9MDZbYbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fg1wZLMI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3446C32781;
-	Tue, 25 Jun 2024 14:50:58 +0000 (UTC)
+	 Content-Type:MIME-Version; b=YKTIXEZbV+E7TUeRoX/Tcr/FBLzwMJob+2GfIfShuSvOE91W2juIUA7uicOFPMBywyc32tLIUAephVO00T7spF90THHLYUFrktIJsR1c1isfY8lJcodm3DzMAPlYwU4C3YxyIPRVDHzErVZ05Bc3niktjgd+ctY2kqHR64KSsMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJDWR5Eh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CDBC32786;
+	Tue, 25 Jun 2024 14:54:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719327059;
-	bh=uB851uHl5zL7gOn3qL/TRpyATmASFUOK4v5Tgo8/w7I=;
+	s=k20201202; t=1719327283;
+	bh=OnlecF0L+WuiOOe//vNstn8JovvMxwxc6c0feuDVQJs=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Fg1wZLMIbVto1rchCC6XcfbeJy5KjFqfSQNQy7QO74kfiL3hzxia7NkjKyLv9gSI1
-	 myOqTki316VMegyK0Fd+4KznwTAG2ES80eRsp8lmFlYTW1vXk1tiDlBfLYw5ZpYBSL
-	 ooaMJC5gdVwdemQP+KnuWUFEK6cqo3nLgzchXImJjNP1l/hWjjB7uOt9no9XBjPqAR
-	 qp7cGuzEdNo7zJQjsBlZIiVkCVHn7kHJR4vS+g8TFFihMlkoSTKKb5U6ZOQmBMaaAV
-	 YaMS2969R4xOuTTHPKXXUtVER3F8hm0G/Gn7THRiRL8PpGU8C227llTBczHI8kitRG
-	 2SdUnTwpPNt5g==
-Message-ID: <1833a18f7935aed5df264ed295d1084672234541.camel@kernel.org>
-Subject: Re: [PATCH 7/8] fs: add an ioctl to get the mnt ns id from nsfs
+	b=gJDWR5EhbVC6GZbZadZAFf7L+GhlVlKDhry5FwnN+wa0K8mmi1Qcuvtz6zbKkZK3i
+	 bF0f/9w9yGTBMz0ii0BiyL6eM9eDIS6sH+eSeN2Zjx65DPLW9qKCKhz0an3vvLkQNq
+	 QTumE9xPp4cAh26FRje2V0IX4r4J6GLzDHYdfs2u5FFR+/AEiTEijIs5nSrFvMgGTs
+	 Jer9upuIHAseZVGwnXJ7rEuwCrs2CH33/dGvrlSm9257uirjGJ634gsSAYSQXU+Kwt
+	 WQJRSGrctibMhPZ0Xlkh6EWDc5PMNIyWx6p0/cyJF8zw9yycJdQWW7craS0UrNhAOC
+	 MhEppcMevufFg==
+Message-ID: <2545edf023b2a364672f73d3ae6d90c702310b3f.camel@kernel.org>
+Subject: Re: [PATCH v2] netfs: Fix netfs_page_mkwrite() to check
+ folio->mapping is valid
 From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	kernel-team@fb.com
-Date: Tue, 25 Jun 2024 10:50:57 -0400
-In-Reply-To: <20240625-darunter-wieweit-9ced87b1df0b@brauner>
-References: <cover.1719243756.git.josef@toxicpanda.com>
-	 <180449959d5a756af7306d6bda55f41b9d53e3cb.1719243756.git.josef@toxicpanda.com>
-	 <14330f15065f92a88c7c0364cba3e26c294293a4.camel@kernel.org>
-	 <20240625-darunter-wieweit-9ced87b1df0b@brauner>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>, Matthew Wilcox
+ <willy@infradead.org>, netfs@lists.linux.dev, v9fs@lists.linux.dev, 
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-mm@kvack.org,  linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 25 Jun 2024 10:54:40 -0400
+In-Reply-To: <780211.1719318546@warthog.procyon.org.uk>
+References: <614257.1719228181@warthog.procyon.org.uk>
+	 <780211.1719318546@warthog.procyon.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
@@ -63,99 +65,104 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2024-06-25 at 16:21 +0200, Christian Brauner wrote:
-> On Tue, Jun 25, 2024 at 10:10:29AM GMT, Jeff Layton wrote:
-> > On Mon, 2024-06-24 at 11:49 -0400, Josef Bacik wrote:
-> > > In order to utilize the listmount() and statmount() extensions that
-> > > allow us to call them on different namespaces we need a way to get
-> > > the
-> > > mnt namespace id from user space.=C2=A0 Add an ioctl to nsfs that wil=
-l
-> > > allow
-> > > us to extract the mnt namespace id in order to make these new
-> > > extensions
-> > > usable.
-> > >=20
-> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > > ---
-> > > =C2=A0fs/nsfs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 ++++++++++++++
-> > > =C2=A0include/uapi/linux/nsfs.h |=C2=A0 2 ++
-> > > =C2=A02 files changed, 16 insertions(+)
-> > >=20
-> > > diff --git a/fs/nsfs.c b/fs/nsfs.c
-> > > index 07e22a15ef02..af352dadffe1 100644
-> > > --- a/fs/nsfs.c
-> > > +++ b/fs/nsfs.c
-> > > @@ -12,6 +12,7 @@
-> > > =C2=A0#include <linux/nsfs.h>
-> > > =C2=A0#include <linux/uaccess.h>
-> > > =C2=A0
-> > > +#include "mount.h"
-> > > =C2=A0#include "internal.h"
-> > > =C2=A0
-> > > =C2=A0static struct vfsmount *nsfs_mnt;
-> > > @@ -143,6 +144,19 @@ static long ns_ioctl(struct file *filp, unsigned
-> > > int ioctl,
-> > > =C2=A0		argp =3D (uid_t __user *) arg;
-> > > =C2=A0		uid =3D from_kuid_munged(current_user_ns(), user_ns-
-> > > > owner);
-> > > =C2=A0		return put_user(uid, argp);
-> > > +	case NS_GET_MNTNS_ID: {
-> > > +		struct mnt_namespace *mnt_ns;
-> > > +		__u64 __user *idp;
-> > > +		__u64 id;
-> > > +
-> > > +		if (ns->ops->type !=3D CLONE_NEWNS)
-> > > +			return -EINVAL;
-> > > +
-> > > +		mnt_ns =3D container_of(ns, struct mnt_namespace, ns);
-> > > +		idp =3D (__u64 __user *)arg;
-> > > +		id =3D mnt_ns->seq;
-> > > +		return put_user(id, idp);
-> > > +	}
-> > > =C2=A0	default:
-> > > =C2=A0		return -ENOTTY;
-> > > =C2=A0	}
-> > > diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
-> > > index a0c8552b64ee..56e8b1639b98 100644
-> > > --- a/include/uapi/linux/nsfs.h
-> > > +++ b/include/uapi/linux/nsfs.h
-> > > @@ -15,5 +15,7 @@
-> > > =C2=A0#define NS_GET_NSTYPE		_IO(NSIO, 0x3)
-> > > =C2=A0/* Get owner UID (in the caller's user namespace) for a user
-> > > namespace */
-> > > =C2=A0#define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
-> > > +/* Get the id for a mount namespace */
-> > > +#define NS_GET_MNTNS_ID		_IO(NSIO, 0x5)
-> > > =C2=A0
-> > > =C2=A0#endif /* __LINUX_NSFS_H */
-> >=20
-> > Thinking about this more...
-> >=20
-> > Would it also make sense to wire up a similar ioctl in pidfs? It seems
-> > like it might be nice to just open a pidfd for pid and then issue the
-> > above to get its mntns id, rather than having to grovel around in nsfs.
+On Tue, 2024-06-25 at 13:29 +0100, David Howells wrote:
+> =C2=A0=C2=A0=C2=A0=20
+> Fix netfs_page_mkwrite() to check that folio->mapping is valid once
+> it has
+> taken the folio lock (as filemap_page_mkwrite() does).=C2=A0 Without this=
+,
+> generic/247 occasionally oopses with something like the following:
 >=20
-> I had a different idea yesterday: get a mount namespace fd from a pidfd
-> in fact, get any namespace fd based on a pidfd. It's the equivalent to:
-> /proc/$pid/ns* and then you can avoid having to go via procfs at all.
-
-That would work too. I'd specifically like to be able to avoid crawling
-around in /proc/<pid> as much as possible.
-
-At this point, I think we're still stuck with having to walk /proc to
-know what pids currently exist though, right? I don't think there is
-any way to walk all the pids just using pidfds is there?
-
+> =C2=A0=C2=A0=C2=A0 BUG: kernel NULL pointer dereference, address: 0000000=
+000000000
+> =C2=A0=C2=A0=C2=A0 #PF: supervisor read access in kernel mode
+> =C2=A0=C2=A0=C2=A0 #PF: error_code(0x0000) - not-present page
 >=20
-> Needs to be governed by ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)=
-.
+> =C2=A0=C2=A0=C2=A0 RIP: 0010:trace_event_raw_event_netfs_folio+0x61/0xc0
+> =C2=A0=C2=A0=C2=A0 ...
+> =C2=A0=C2=A0=C2=A0 Call Trace:
+> =C2=A0=C2=A0=C2=A0=C2=A0 <TASK>
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? __die_body+0x1a/0x60
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? page_fault_oops+0x6e/0xa0
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? exc_page_fault+0xc2/0xe0
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? asm_exc_page_fault+0x22/0x30
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? trace_event_raw_event_netfs_folio+0x61/0xc0
+> =C2=A0=C2=A0=C2=A0=C2=A0 trace_netfs_folio+0x39/0x40
+> =C2=A0=C2=A0=C2=A0=C2=A0 netfs_page_mkwrite+0x14c/0x1d0
+> =C2=A0=C2=A0=C2=A0=C2=A0 do_page_mkwrite+0x50/0x90
+> =C2=A0=C2=A0=C2=A0=C2=A0 do_pte_missing+0x184/0x200
+> =C2=A0=C2=A0=C2=A0=C2=A0 __handle_mm_fault+0x42d/0x500
+> =C2=A0=C2=A0=C2=A0=C2=A0 handle_mm_fault+0x121/0x1f0
+> =C2=A0=C2=A0=C2=A0=C2=A0 do_user_addr_fault+0x23e/0x3c0
+> =C2=A0=C2=A0=C2=A0=C2=A0 exc_page_fault+0xc2/0xe0
+> =C2=A0=C2=A0=C2=A0=C2=A0 asm_exc_page_fault+0x22/0x30
 >=20
-> (We also need an ioctl() on the pidfd to get to the PID without procfs bt=
-w.
+> This is due to the invalidate_inode_pages2_range() issued at the end
+> of the
+> DIO write interfering with the mmap'd writes.
+>=20
+> Fixes: 102a7e2c598c ("netfs: Allow buffered shared-writeable mmap
+> through netfs_page_mkwrite()")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: netfs@lists.linux.dev
+> cc: v9fs@lists.linux.dev
+> cc: linux-afs@lists.infradead.org
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-mm@kvack.org
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+> Changes
+> =3D=3D=3D=3D=3D=3D=3D
+> ver #2)
+> =C2=A0- Actually unlock the folio rather than returning VM_FAULT_LOCKED
+> with
+> =C2=A0=C2=A0 VM_FAULT_NOPAGE.
+>=20
+> =C2=A0fs/netfs/buffered_write.c |=C2=A0=C2=A0=C2=A0 8 +++++++-
+> =C2=A01 file changed, 7 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+> index 07bc1fd43530..270f8ebf8328 100644
+> --- a/fs/netfs/buffered_write.c
+> +++ b/fs/netfs/buffered_write.c
+> @@ -523,6 +523,7 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault
+> *vmf, struct netfs_group *netfs_gr
+> =C2=A0	struct netfs_group *group;
+> =C2=A0	struct folio *folio =3D page_folio(vmf->page);
+> =C2=A0	struct file *file =3D vmf->vma->vm_file;
+> +	struct address_space *mapping =3D file->f_mapping;
+> =C2=A0	struct inode *inode =3D file_inode(file);
+> =C2=A0	struct netfs_inode *ictx =3D netfs_inode(inode);
+> =C2=A0	vm_fault_t ret =3D VM_FAULT_RETRY;
+> @@ -534,6 +535,11 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault
+> *vmf, struct netfs_group *netfs_gr
+> =C2=A0
+> =C2=A0	if (folio_lock_killable(folio) < 0)
+> =C2=A0		goto out;
+> +	if (folio->mapping !=3D mapping) {
+> +		folio_unlock(folio);
+> +		ret =3D VM_FAULT_NOPAGE;
+> +		goto out;
+> +	}
+> =C2=A0
+> =C2=A0	if (folio_wait_writeback_killable(folio)) {
+> =C2=A0		ret =3D VM_FAULT_LOCKED;
+> @@ -549,7 +555,7 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault
+> *vmf, struct netfs_group *netfs_gr
+> =C2=A0	group =3D netfs_folio_group(folio);
+> =C2=A0	if (group !=3D netfs_group && group !=3D
+> NETFS_FOLIO_COPY_TO_CACHE) {
+> =C2=A0		folio_unlock(folio);
+> -		err =3D filemap_fdatawait_range(inode->i_mapping,
+> +		err =3D filemap_fdatawait_range(mapping,
+> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 folio_pos(folio),
+> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 folio_pos(folio) +
+> folio_size(folio));
+> =C2=A0		switch (err) {
+>=20
+>=20
 
-A PIDFS_GET_PID ioctl seems like a reasonable thing to add.
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
