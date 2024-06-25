@@ -1,171 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-22292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93A4915B81
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 03:11:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B157F915EB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 08:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD72E1C21151
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 01:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D62A31C21A3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 06:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F54B14005;
-	Tue, 25 Jun 2024 01:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5E7145FF1;
+	Tue, 25 Jun 2024 06:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jj2JFXDF"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="kMKIkUXC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0703C152
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 01:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAEE1B806;
+	Tue, 25 Jun 2024 06:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719277851; cv=none; b=ADAl4N0nw1VNa1+pY+iMJDiDCAQdVgmqFaaglwQwt6xXV8J2PVPA8Znj4hPd4Hd8lWBHVcka1PEwAtBV4q0H/Hdzwey7N67SY9Uga4V0YKWnMvBQYEoDn/9C6/qnrZ5qxso/WB9PpC9lmDDMdq8CAKWWOn7eTdzaMw3CAaIyPzM=
+	t=1719295934; cv=none; b=oony8bf1leb2i0a+rNk6DQBSKtXGz5DNI6IYKC2ur6Z0/jWqci1KKN5JPWas++U85XX9rmVPepcek2j2AmnaHe8cN4yYTlriplgQJwJ8yat6h5Uul+K2Rb+kyl2n954h0/hzHOkvXqCxJGAfqD5TUzISTEMLygF8IyIFn00caSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719277851; c=relaxed/simple;
-	bh=/fYbx5c87Kw+R0HL5HIFgxuTB0c3Hz6eMNBQFrAcOZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I7sz0aJG88FZv/5OkW845iEwhpLWoUzjElCJq/jtNu5FjRJdXOa6hk9dWA4twRsG3aOH50RBlFbXX2pn46qd2lGUE/ruOmBeUqo46C297iy5ifJtTS5Ov+IFv1iGf3x2RP8m4R4LRR/Xad8e0lZFZ4nxUZr7SgoHLSYyebPP1cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jj2JFXDF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719277848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1y+mfhT1zOllffounRCp6OrS2eaKNKCgyHOP8s75z3E=;
-	b=Jj2JFXDFWiyLuhlWF6oGYyvAGX6I9Mg+UDwlAT6h7APnKp6xDwo3k7VxdHgNiFZgNFNSIz
-	zp8Kb4NjKcf/lbfKs94FeebV/qqrgsru3Zqcda3TwUmZYFUiiZ3DlMvRPTV6vjuzpUgqli
-	xX3aFpWoZrNIqacET6sxA43atj28Xqo=
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
- [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-84-XmU0I4fuM-6ye4q_fbq-jQ-1; Mon, 24 Jun 2024 21:10:46 -0400
-X-MC-Unique: XmU0I4fuM-6ye4q_fbq-jQ-1
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-2547e18cb07so8339492fac.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Jun 2024 18:10:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719277846; x=1719882646;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1y+mfhT1zOllffounRCp6OrS2eaKNKCgyHOP8s75z3E=;
-        b=h4qSjqTH3hBOboztxv2jvodtvoanTCREH83FwcR8yP4inLAiSu6VI15lWSSKe7Lrd4
-         wzs970elrssxrExQXAfVFIXAdqr6LfHpRtMidzKVNrmgZ7yenr10WO1/fMMt2Un6ZPe7
-         cHF8pPbOOE2/+6EA/d46y4gd/zmgcut8SyapExyr1IxTtZ5SHJ20r3lxQ5N9uiFY0EDG
-         uIRsDzjpQ/65NVtpx0Zig7OOk+D8/bUqqinun+web2Ya1vXZxUo3ewmw4n5RMtuA60f5
-         sdOV4pzC3emzk5PxEVUIuExpRmNzdekOtEmeHkD5IzTF6xiUCfme0atZQl3stKB2oZrT
-         Ct6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUoYcmdCBKLKcAe15lhy4WqHt+nn2vksdrVKLJDYvdVzbVpARsRLY4yBCPab7h4af/jeHH1ui/oalUKt5uLstysELm35yK4U8JkclPwtg==
-X-Gm-Message-State: AOJu0YzkzOVMakNnTi2GRB6EM/Nx/rpbfuSZ28Q9ItsZNHWU6/bip3rO
-	irCNZWlTjo4dQzUBmmJHsVNJlYU67Ge2ZcoM3tCfgIhuq3go9dOUs99LbknDtuIrg7DhEUAV5sc
-	CDnhBqMREwSZ7sjfcTTM93uhMwqr2MtL2TI0JVu1GQ9Rlnk/9CoS9Y3sunH/AlX8=
-X-Received: by 2002:a05:6870:b622:b0:251:46d:d32a with SMTP id 586e51a60fabf-25d016733b1mr6417136fac.8.1719277845829;
-        Mon, 24 Jun 2024 18:10:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqiYmCXDL4VUWqb2tZ/iirellmnhtOelPOH+85HtiykbTPosUsDRSmNX8v5SNiPPCse1NLFA==
-X-Received: by 2002:a05:6870:b622:b0:251:46d:d32a with SMTP id 586e51a60fabf-25d016733b1mr6417122fac.8.1719277845504;
-        Mon, 24 Jun 2024 18:10:45 -0700 (PDT)
-Received: from [192.168.68.50] ([43.252.112.224])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716b479281esm6141262a12.38.2024.06.24.18.10.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 18:10:44 -0700 (PDT)
-Message-ID: <f73a27ca-91d4-4b1c-a2e3-ef07e56bccf3@redhat.com>
-Date: Tue, 25 Jun 2024 11:10:38 +1000
+	s=arc-20240116; t=1719295934; c=relaxed/simple;
+	bh=A9l5QJ5wVUxN0j1TWgVqhhHFCdASWZMj33PGqLt6VA0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=b4nabD8O1g8vM98AvMhvOhz9h+88q3ljAqTLSNGcMKUVfZvwrT25sAMFwvZwokWMEEwu5NHB8R3oMFQUWmMg+4WqsLCLCEn3ELvLin/syKK1hX3DLGjwCByhaavGQqf0BCBl/tyofMvFe5XU4qFkW5Z2uOzpZxy5SDfGe8tRDLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=kMKIkUXC; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=QR3y2Y/czPDzz8uhrOTX+qZKGKnv9qtlOLRYnVuIPwY=; t=1719295930; x=1719900730; 
+	b=kMKIkUXCpW4k/lh4bfIHLQJ7yXaQaua42W5My0YpiNHiilmaG69pdb5IiE9StEvH36UYTlg2wfF
+	Tdb/CPgfLOpILqYOWYZS7k0EvxHiB4Yz6K+AIaa5OtXhE9YR5RjGJ4STuCmmYTd8HRVm+pACcRawL
+	EVS4LdZZkx88lnlVGO7hwGqOdh0gF+Kg22Ipn2MdidppsNRFw/yqNvlnXtamDkZEYlONN/1b8Vl0s
+	oPBAMYWW7go097qgb9r16qmHKOvCsm2PLjS56KL1M/z+bU8T/eKUNkYZNAKl9ItLFseIrud1TmZ9t
+	Ci3ZLg7RBgLYlLuJny8/YueTY14197NeyvAA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sLzPJ-00000002pcY-2WGY; Tue, 25 Jun 2024 08:11:58 +0200
+Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sLzPJ-00000001jTk-3HF5; Tue, 25 Jun 2024 08:11:57 +0200
+Message-ID: <b7e20a2dbf5bad8cae0227644b2f78531dd6ef5a.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v2 08/13] sh: rework sync_file_range ABI
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Arnd Bergmann <arnd@kernel.org>, linux-arch@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, Helge Deller
+ <deller@gmx.de>, linux-parisc@vger.kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+ sparclinux@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+ linuxppc-dev@lists.ozlabs.org, Brian Cain <bcain@quicinc.com>,
+ linux-hexagon@vger.kernel.org, Guo Ren <guoren@kernel.org>, 
+ linux-csky@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
+ linux-s390@vger.kernel.org, Rich Felker <dalias@libc.org>, 
+ linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+ linux-fsdevel@vger.kernel.org, libc-alpha@sourceware.org, 
+ musl@lists.openwall.com, stable@vger.kernel.org
+Date: Tue, 25 Jun 2024 08:11:56 +0200
+In-Reply-To: <20240624163707.299494-9-arnd@kernel.org>
+References: <20240624163707.299494-1-arnd@kernel.org>
+	 <20240624163707.299494-9-arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Endless calls to xas_split_alloc() due to corrupted xarray entry
-To: David Hildenbrand <david@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Zhenyu Zhang <zhenyzha@redhat.com>,
- Linux XFS <linux-xfs@vger.kernel.org>,
- Linux Filesystems Development <linux-fsdevel@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Shaoqin Huang <shahuang@redhat.com>, Chandan Babu R
- <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-References: <CAJFLiB+J4mKGDOppp=1moMe2aNqeJhM9F2cD4KPTXoM6nzb5RA@mail.gmail.com>
- <ZRFbIJH47RkQuDid@debian.me> <ZRci1L6qneuZA4mo@casper.infradead.org>
- <91bceeda-7964-2509-a1f1-4a2be49ebc60@redhat.com>
- <6d3687fd-e11b-4d78-9944-536bb1d731de@redhat.com>
- <ZnLrq4vJnfSNZ0wg@casper.infradead.org>
- <CAHk-=who82OKiXyTiCG3rUaiicO_OB9prVvZQBzg6GDGhdp+Ew@mail.gmail.com>
- <75c1936b-bb08-423d-9a17-0da133cbee01@redhat.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <75c1936b-bb08-423d-9a17-0da133cbee01@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 6/20/24 5:58 AM, David Hildenbrand wrote:
-> On 19.06.24 17:48, Linus Torvalds wrote:
->> On Wed, 19 Jun 2024 at 07:31, Matthew Wilcox <willy@infradead.org> wrote:
->>>
->>> Actually, it's 11.  We can't split an order-12 folio because we'd have
->>> to allocate two levels of radix tree, and I decided that was too much
->>> work.  Also, I didn't know that ARM used order-13 PMD size at the time.
->>>
->>> I think this is the best fix (modulo s/12/11/).
->>
->> Can we use some more descriptive thing than the magic constant 11 that
->> is clearly very subtle.
->>
->> Is it "XA_CHUNK_SHIFT * 2 - 1"
-> 
-> That's my best guess as well :)
-> 
->>
->> IOW, something like
->>
->>     #define MAX_XAS_ORDER (XA_CHUNK_SHIFT * 2 - 1)
->>     #define MAX_PAGECACHE_ORDER min(HPAGE_PMD_ORDER,12)
->>
->> except for the non-TRANSPARENT_HUGEPAGE case where it currently does
->>
->>    #define MAX_PAGECACHE_ORDER    8
->>
->> and I assume that "8" is just "random round value, smaller than 11"?
-> 
-> Yes, that matches my understanding.
-> 
-> Maybe to be safe for !THP as well, something ike:
-> 
-> +++ b/include/linux/pagemap.h
-> @@ -354,11 +354,18 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
->    * a good order (that's 1MB if you're using 4kB pages)
->    */
->   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -#define MAX_PAGECACHE_ORDER    HPAGE_PMD_ORDER
-> +#define WANTED_MAX_PAGECACHE_ORDER    HPAGE_PMD_ORDER
->   #else
-> -#define MAX_PAGECACHE_ORDER    8
-> +#define WANTED_MAX_PAGECACHE_ORDER    8
->   #endif
-> 
-> +/*
-> + * xas_split_alloc() does not support arbitrary orders yet. This implies no
-> + * 512MB THP on arm64 with 64k.
-> + */
-> +#define MAX_XAS_ORDER        (XA_CHUNK_SHIFT * 2 - 1)
-> +#define MAX_PAGECACHE_ORDER    min(MAX_XAS_ORDER, WANTED_MAX_PAGECACHE_ORDER)
+On Mon, 2024-06-24 at 18:37 +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The unusual function calling conventions on SuperH ended up causing
+> sync_file_range to have the wrong argument order, with the 'flags'
+> argument getting sorted before 'nbytes' by the compiler.
+>=20
+> In userspace, I found that musl, glibc, uclibc and strace all expect the
+> normal calling conventions with 'nbytes' last, so changing the kernel
+> to match them should make all of those work.
+>=20
+> In order to be able to also fix libc implementations to work with existin=
+g
+> kernels, they need to be able to tell which ABI is used. An easy way
+> to do this is to add yet another system call using the sync_file_range2
+> ABI that works the same on all architectures.
+>=20
+> Old user binaries can now work on new kernels, and new binaries can
+> try the new sync_file_range2() to work with new kernels or fall back
+> to the old sync_file_range() version if that doesn't exist.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 75c92acdd5b1 ("sh: Wire up new syscalls.")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/sh/kernel/sys_sh32.c           | 11 +++++++++++
+>  arch/sh/kernel/syscalls/syscall.tbl |  3 ++-
+>  2 files changed, 13 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/sh/kernel/sys_sh32.c b/arch/sh/kernel/sys_sh32.c
+> index 9dca568509a5..d6f4afcb0e87 100644
+> --- a/arch/sh/kernel/sys_sh32.c
+> +++ b/arch/sh/kernel/sys_sh32.c
+> @@ -59,3 +59,14 @@ asmlinkage int sys_fadvise64_64_wrapper(int fd, u32 of=
+fset0, u32 offset1,
+>  				 (u64)len0 << 32 | len1, advice);
+>  #endif
+>  }
 > +
->   /**
->    * mapping_set_large_folios() - Indicate the file supports large folios.
->    * @mapping: The file.
+> +/*
+> + * swap the arguments the way that libc wants them instead of
+> + * moving flags ahead of the 64-bit nbytes argument
+> + */
+> +SYSCALL_DEFINE6(sh_sync_file_range6, int, fd, SC_ARG64(offset),
+> +                SC_ARG64(nbytes), unsigned int, flags)
+> +{
+> +        return ksys_sync_file_range(fd, SC_VAL64(loff_t, offset),
+> +                                    SC_VAL64(loff_t, nbytes), flags);
+> +}
+> diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscall=
+s/syscall.tbl
+> index bbf83a2db986..c55fd7696d40 100644
+> --- a/arch/sh/kernel/syscalls/syscall.tbl
+> +++ b/arch/sh/kernel/syscalls/syscall.tbl
+> @@ -321,7 +321,7 @@
+>  311	common	set_robust_list			sys_set_robust_list
+>  312	common	get_robust_list			sys_get_robust_list
+>  313	common	splice				sys_splice
+> -314	common	sync_file_range			sys_sync_file_range
+> +314	common	sync_file_range			sys_sh_sync_file_range6
+>  315	common	tee				sys_tee
+>  316	common	vmsplice			sys_vmsplice
+>  317	common	move_pages			sys_move_pages
+> @@ -395,6 +395,7 @@
+>  385	common	pkey_alloc			sys_pkey_alloc
+>  386	common	pkey_free			sys_pkey_free
+>  387	common	rseq				sys_rseq
+> +388	common	sync_file_range2		sys_sync_file_range2
+>  # room for arch specific syscalls
+>  393	common	semget				sys_semget
+>  394	common	semctl				sys_semctl
 
-Thanks David. I'm checking if shmem needs the similar limitation and test patches.
-I will post them for review once they're ready.
+Acked-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-Thanks,
-Gavin
+Adrian
 
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
