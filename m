@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-22399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CDD916C3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:12:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7DC916C44
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 17:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848A9280F4C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:12:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7AF11F2C45E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D46217967C;
-	Tue, 25 Jun 2024 15:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F99F1849C1;
+	Tue, 25 Jun 2024 15:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/22fLgn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tavxR+nK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CB2178390;
-	Tue, 25 Jun 2024 15:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B3517107C;
+	Tue, 25 Jun 2024 15:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327842; cv=none; b=gegJcmHyV/oqPCT2LxOgUPX4ECU0M060mJnreFUEVmlLBlZJQH5bbfGorZovAhMCI43HvGXYsvT5cKyJCv/+fFVuikdh5E6Uqs6baRn4T3Bl1AwhX/Ywss9XTiomjm6HXqgBiYer8NfnF6lifZ9dRFQ0uxiOJ9nwUOXPkxlLcXc=
+	t=1719327849; cv=none; b=qWtBu3/K2qcTWXd0NMkLetjJ/RrpBOKxMerXlnimBh/22yzYr873bP5ksQzME3TK1JjHfYX0rGNe4jHlqvQxegIXaUoakD35z+gDCAWMqOJT4zo2eglh8XLs2e7GC61ynVqjKJHzsnrJm800uV2m0Hu3n0nZW/WIhN9s0Iwx94Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327842; c=relaxed/simple;
-	bh=18sWPiMz/2PRxXCIvtfcK7spgh5pr5ZrfaiB3z+47E4=;
+	s=arc-20240116; t=1719327849; c=relaxed/simple;
+	bh=b9Gx7QUiEPIAdR9RNFo057BasR3/TeEIE9B40jmDJ/c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=czpcJxUjr8gogMoc5fIFktDUHfc254OQon4fcbt+nL4yLpknhuh3uJcRZHfa3zevq5UUM0iWfzRu84Q2Kxn4yYeoJs6L9aOFPZk97d2XxlxGygJbu5gunnHB/JRJs/BLIYGfcWPKShSWwQsiMlIuNnN0EKucUiXDpn+hWFz8WRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/22fLgn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 952C8C32786;
-	Tue, 25 Jun 2024 15:03:54 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=HQ/bLY6t7JywL8YVu+AETVCQeaO7vusqiCcikTgVJI3ejVxd4SlK7o4v4G5HKx6V4rRBrwuLkGrVvwO1QIrSmBFdnjtjcqGF3anNhuhu0pUI38EuKYhW5dbNQ4cfoCW20Hb4oXViK/55WGsBphlXOAHndhAo0ZbgjeFGVeFYeX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tavxR+nK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1362BC32781;
+	Tue, 25 Jun 2024 15:04:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719327841;
-	bh=18sWPiMz/2PRxXCIvtfcK7spgh5pr5ZrfaiB3z+47E4=;
+	s=k20201202; t=1719327849;
+	bh=b9Gx7QUiEPIAdR9RNFo057BasR3/TeEIE9B40jmDJ/c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=L/22fLgnVrCDuOa9AvI6QdbD1mU2fPLWMyOny0LJICnsPQ+OE/mai2HAC7OkLXWrJ
-	 pcjmdvOHUArp132IpQ/J7Z21Sv/jOjoC6HDAqdUKWzSDHPvfBs0pcnv8FRQWxrb3Sr
-	 FraOwe39xbpr7uXa7BJ61D/F5eof33J8kY9ZTgInPA47/sgIlBPg/f8C2pZayWI2YR
-	 nrWC+5A2Hs6TAQQZSCany+TRS3b/filwuFp/OmO63FLC5Pow0ctynPP+i3tlzxgMWn
-	 ycNQHDCO02rxEI6Wbb971VZMdfryYPFOk1DSQOosLTixKz+ahicdLElvrOaKYhN9HJ
-	 TYvGOxzLrD3vA==
+	b=tavxR+nKLIiH02ssJeoEROBXmOsCstTILDhWkKXxGu60OsgiMLuDIKVo0pL6GtCmE
+	 igPSP6RIQSQWfikzRMGnE1Kg/67CHxNork4mRYKI3D96sfMbYWvsSFQl3IOmRa/Sf4
+	 mRBbETLNbBhApzSodjPWF64W2dhM+zeIMkgpyuJ/OGB/QVYcC8rdr+Gm2ZH2a9dTQO
+	 +ie8cUyHrEBDEw9rUgJ52SuTROV/Atv37rarClR6qcQhAf0oPjoMDxiJZAhnY63WRF
+	 10koRgwnGojMJHrP7lJKHTgsKkLjfX59wpBQd7C+FiFvMud/7otZgv4IbZEzQvVpJG
+	 zIHRIuySEFbYA==
 From: Mark Brown <broonie@kernel.org>
-Date: Tue, 25 Jun 2024 15:57:56 +0100
-Subject: [PATCH v9 28/39] kselftest: Provide shadow stack enable helpers
- for arm64
+Date: Tue, 25 Jun 2024 15:57:57 +0100
+Subject: [PATCH v9 29/39] selftests/clone3: Enable arm64 shadow stack
+ testing
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-arm64-gcs-v9-28-0f634469b8f0@kernel.org>
+Message-Id: <20240625-arm64-gcs-v9-29-0f634469b8f0@kernel.org>
 References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
 In-Reply-To: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -78,74 +78,63 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
  Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.14-dev-d4707
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2438; i=broonie@kernel.org;
- h=from:subject:message-id; bh=18sWPiMz/2PRxXCIvtfcK7spgh5pr5ZrfaiB3z+47E4=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhrSq2x0KqV3vs2a/V1Pb7Be8+t4u7WmabwqCORe9/xTgHr+8
- zNa2k9GYhYGRi0FWTJFl7bOMVenhElvnP5r/CmYQKxPIFAYuTgGYiHcj+292TZ+CQLdbi9mYW8zEN2
- X1LjihftFL8fvMrGl2EZzskwXMdeZ+eBMrWuqa2borvMb24hZlk386KTFbd8ltvyeVsXVOUuDr1asv
- 5ZQFu/QfNL7cmbnl1obSPh5WI7muxXX+i5PSXV4x/kwPf7jnbGuQWhhDb1TwV5+nwho3/2t21fw80T
- +/J3pniDibQTHbr237989ZsoBNX6Ly+1zl60weQQfadrmbdbHmndF47pjSx75Xe2qA22mzq809x4pu
- SvLH7TaZ1mPz6YWxRt70D7HrehQD3Njlrr2cmpYzdT2bxNJMr5m6ejY8x25oC3rm7/86pfBzBmdA0f
- namwlBHDZhJpa9tqHSxU6cK8oB
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1471; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=b9Gx7QUiEPIAdR9RNFo057BasR3/TeEIE9B40jmDJ/c=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmetuJPYum8zU2drU0QkG0Oevd9R7hfLQlztVXJmOP
+ AMNcKOSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZnrbiQAKCRAk1otyXVSH0BxTB/
+ 9RAJG8vNMCnKeW0ZaJ2eAuj74/NV9s5bUsk5CVhSS9OmMa/aJ+gGWY94HaF0LO0M1jlnry4Je6LXUz
+ N04y86o4L+9c3XkvE+GTl1jJ/1Gkna5RVE2LXbIbT8mRZiwGQSJdDveYSoa2Bj37DHov5V1RP25uMZ
+ wGWAuPensfQp/ZFhSyZUpW4mSTgmdApUyOm6005OB6HsSqlcTKdRwjD6o7DEhh+iNAcTBm4+UR8ROm
+ 936rXsxL2yXXYX24fQXH0f8hiOJNgnDfmeHYMdbPZxh/xgFapx45UVH2J4t9am/rGr4blvsGhgPbUV
+ BEAqQPu/bmkwHrSC+EwrYkGwBWaNjY
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Allow test programs to use the shadow stack helpers on arm64.
+In order to test shadow stack support in clone3() the clone3() selftests
+need to have a fully inline clone3() call, provide one for arm64.
 
-Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- tools/testing/selftests/ksft_shstk.h | 37 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ tools/testing/selftests/clone3/clone3_selftests.h | 26 +++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/tools/testing/selftests/ksft_shstk.h b/tools/testing/selftests/ksft_shstk.h
-index 85d0747c1802..302957a0bbd5 100644
---- a/tools/testing/selftests/ksft_shstk.h
-+++ b/tools/testing/selftests/ksft_shstk.h
-@@ -50,6 +50,43 @@ static inline __attribute__((always_inline)) void enable_shadow_stack(void)
+diff --git a/tools/testing/selftests/clone3/clone3_selftests.h b/tools/testing/selftests/clone3/clone3_selftests.h
+index 38d82934668a..e32915085333 100644
+--- a/tools/testing/selftests/clone3/clone3_selftests.h
++++ b/tools/testing/selftests/clone3/clone3_selftests.h
+@@ -69,6 +69,32 @@ static pid_t __always_inline sys_clone3(struct __clone_args *args, size_t size)
  
- #endif
- 
-+#ifdef __aarch64__
-+#define PR_SET_SHADOW_STACK_STATUS      75
-+# define PR_SHADOW_STACK_ENABLE         (1UL << 0)
-+
-+#define my_syscall2(num, arg1, arg2)                                          \
-+({                                                                            \
-+	register long _num  __asm__ ("x8") = (num);                           \
-+	register long _arg1 __asm__ ("x0") = (long)(arg1);                    \
-+	register long _arg2 __asm__ ("x1") = (long)(arg2);                    \
-+	register long _arg3 __asm__ ("x2") = 0;                               \
-+	register long _arg4 __asm__ ("x3") = 0;                               \
-+	register long _arg5 __asm__ ("x4") = 0;                               \
-+	                                                                      \
-+	__asm__  volatile (                                                   \
-+		"svc #0\n"                                                    \
-+		: "=r"(_arg1)                                                 \
-+		: "r"(_arg1), "r"(_arg2),                                     \
-+		  "r"(_arg3), "r"(_arg4),                                     \
-+		  "r"(_arg5), "r"(_num)					      \
-+		: "memory", "cc"                                              \
-+	);                                                                    \
-+	_arg1;                                                                \
-+})
-+
-+#define ENABLE_SHADOW_STACK
-+static inline __attribute__((always_inline))  void enable_shadow_stack(void)
+ 	return ret;
+ }
++#elif defined(__aarch64__)
++static pid_t __always_inline sys_clone3(struct __clone_args *args, size_t size)
 +{
-+	int ret;
++	register long _num  __asm__ ("x8") = __NR_clone3;
++	register long _args __asm__ ("x0") = (long)(args);
++	register long _size __asm__ ("x1") = (long)(size);
++	register long arg2 __asm__ ("x2") = 0;
++	register long arg3 __asm__ ("x3") = 0;
++	register long arg4 __asm__ ("x4") = 0;
 +
-+	ret = my_syscall2(__NR_prctl, PR_SET_SHADOW_STACK_STATUS,
-+			  PR_SHADOW_STACK_ENABLE);
-+	if (ret == 0)
-+		shadow_stack_enabled = true;
++	__asm__ volatile (
++		"svc #0\n"
++		: "=r"(_args)
++		: "r"(_args), "r"(_size),
++		  "r"(_num), "r"(arg2),
++		  "r"(arg3), "r"(arg4)
++		: "memory", "cc"
++	);
++
++	if ((int)_args < 0) {
++		errno = -((int)_args);
++		return -1;
++	}
++
++	return _args;
 +}
-+
-+#endif
-+
- #ifndef __NR_map_shadow_stack
- #define __NR_map_shadow_stack 453
- #endif
+ #else
+ static pid_t sys_clone3(struct __clone_args *args, size_t size)
+ {
 
 -- 
 2.39.2
