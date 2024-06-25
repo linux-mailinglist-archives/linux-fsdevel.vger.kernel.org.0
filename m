@@ -1,174 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-22440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4CF9171F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 22:00:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E09AD917255
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 22:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3901F240BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 20:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A87B2826CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 20:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BE418C340;
-	Tue, 25 Jun 2024 19:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C979D17CA05;
+	Tue, 25 Jun 2024 20:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dyQwe7WI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UROBW369"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F52B17D88A;
-	Tue, 25 Jun 2024 19:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B9D3A8CB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 20:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719345309; cv=none; b=u6gi08kZWjNcaAvjAx7GPzzNkQOeIyk1PfFXEsb9wDgpGI/CduDdTH+ZVvrVLj7gzzl6gmREacWk65DOzH7fSAPghqnEyNEj3wmKcDFj+HRFwZ4aQ8hxERrIFNKL4Q7BGJAGHFMVG7+PcqvVIpprUci0iuIqadPEI+X9DFJcMho=
+	t=1719346555; cv=none; b=eJPW1xoavBNOXvrc5VasziTyKyIQDxGcJM7LjJrJoWy+f8zHx9M00X7uK1N4TmrLUVNlXG70x0nQDwiqlZxdrtKrElRrmYOn1+Tdlx7QmfWykTQBLhSDHBiHBTK//55G+HD6DNte6nOD/ud6zrj6qrRfHvMArTFJ1Adch6YALDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719345309; c=relaxed/simple;
-	bh=iryRieb8apbUc/yfZMhRfoh3RNQGqab+OXS41szrIkY=;
+	s=arc-20240116; t=1719346555; c=relaxed/simple;
+	bh=ELcWQhB2VgoA2DVOCh723lXJ0P6Db50p6h/pMgxyPzc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=geK/9Z0UZGlysPsDawDaRqgPNEVETh8/XwUwyw7tDJXRaKtS2ggnaNNoM1mAR+oBBmk1fInevxZVVfkzVSSgMMDt1d0s48pG9FagSNDgV1M0qVq0I9Yts+Yls9Dq+k6rEBMZdZlPHx+apEaq+ymKwElrUtFo/G4EE/e5miD69lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dyQwe7WI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A3CC4AF15;
-	Tue, 25 Jun 2024 19:55:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719345309;
-	bh=iryRieb8apbUc/yfZMhRfoh3RNQGqab+OXS41szrIkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dyQwe7WIj+zocWYiUw3cHhZV5+PDYpkK3BjrhL2xsTmPEVGvqj8JS6dl8utuCM0hM
-	 wbm98fEscGvP/viec9OYqxh0oyERTSpn1y4mvEiNI6SdcXaZ99jcrcQCJO9bZlG4x7
-	 IuGAGVDltc8+e8tGpvwWzhrIml8O1LWfv4oJ2/icb2pi5+OjfZ1wkD7Q+AIkvnSDaS
-	 RnRFqT5Xu+EmKgBtUDa3T308bZg8bjZ5DmffyVY3zy0TSr4XSc6bo4FcbBWaelLnae
-	 N+8ch2ZGvgM1pU7pwy/NgxG3E6q/0MBcqc88ZcwOilXixMM3+z2agGzRFIHRgFthM+
-	 fPbnTSwlrE1og==
-Date: Tue, 25 Jun 2024 21:55:05 +0200
-From: Alejandro Colomar <alx@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ntoxelpduf10ch28+gE/tZE16S4lZzHKpIKW31a53An7qgknDit64E85tLCx3DAwi/w35UspWYvlb3U9ntSRR92NPlZsQkDioClZvB9+QLmGAohGZG2PLAqCiZy6GqKajxqj2gM8KKVUZXez3mLumF2PdO1lwA/PGlQszFmBPpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UROBW369; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719346552;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6OkjovobCgktWlNO3uxsBo5l0DXloPj5Z0prLakMgBg=;
+	b=UROBW369YH8ssc7y4WaoLth7Euwb3OgnZ6Hh5cFo/HREbHO1o+9a4lu3280wk3d+IWPBRA
+	N68JIUIKa44XnV9k9oeIiYAkN5fV670BZFOC1Z+lVkjGDSgsWgFTeB3GbrQWjp107IcwfZ
+	I5GjVGgQ+6DLyj921zv9cjEO9E20ZPU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-605-7XcsioedNaeYRaQ0Vn_8Fw-1; Tue,
+ 25 Jun 2024 16:15:49 -0400
+X-MC-Unique: 7XcsioedNaeYRaQ0Vn_8Fw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D0B241955F16;
+	Tue, 25 Jun 2024 20:15:48 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.225.185])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 719051955D88;
+	Tue, 25 Jun 2024 20:15:45 +0000 (UTC)
+Date: Tue, 25 Jun 2024 22:15:42 +0200
+From: Karel Zak <kzak@redhat.com>
 To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
-Subject: Re: [PATCH 1/3] statx.2: Document STATX_MNT_ID_UNIQUE
-Message-ID: <tqs2e6l65hyntuxsfsbgjra5gnnrtyfwfynmml54dkf3dsjtyp@at5ov7rptpma>
-References: <cover.1719341580.git.josef@toxicpanda.com>
- <a45b2623a25357f33978b49963dad5f99b984386.1719341580.git.josef@toxicpanda.com>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH 0/8] Support foreign mount namespace with
+ statmount/listmount
+Message-ID: <npjgmcq4fhwucpr3aysbb4gsbxkufsfaruqnpmzemuearxkfmc@3cqlmwrz5l2w>
+References: <cover.1719243756.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bximcu3znwvhfc6z"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a45b2623a25357f33978b49963dad5f99b984386.1719341580.git.josef@toxicpanda.com>
+In-Reply-To: <cover.1719243756.git.josef@toxicpanda.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+On Mon, Jun 24, 2024 at 11:49:43AM GMT, Josef Bacik wrote:
+> Currently the only way to iterate over mount entries in mount namespaces that
+> aren't your own is to trawl through /proc in order to find /proc/$PID/mountinfo
+> for the mount namespace that you want.  This is hugely inefficient, so extend
+> both statmount() and listmount() to allow specifying a mount namespace id in
+> order to get to mounts in other mount namespaces.
 
---bximcu3znwvhfc6z
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
-Subject: Re: [PATCH 1/3] statx.2: Document STATX_MNT_ID_UNIQUE
-References: <cover.1719341580.git.josef@toxicpanda.com>
- <a45b2623a25357f33978b49963dad5f99b984386.1719341580.git.josef@toxicpanda.com>
-MIME-Version: 1.0
-In-Reply-To: <a45b2623a25357f33978b49963dad5f99b984386.1719341580.git.josef@toxicpanda.com>
+Thank you for this. It will improve the efficiency of tools such as lsns(8).
 
-On Tue, Jun 25, 2024 at 02:56:04PM GMT, Josef Bacik wrote:
-> Linux 6.8 adds STATX_MNT_ID_UNIQUE support
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/?id=3D98d2b43081972
->=20
-> Add the text and explanation to the statx man page.
->=20
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+    Karel
 
-Hi Josef,
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
-Thanks for the patch.  I've applied it with some minor tweaks.  I
-changed mostly the line breaks (see /Use semantic newlines/ in
-man-pages(7)).
-
-<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
-mit/?h=3Dcontrib&id=3D080218fbb88a94db7a9b24858ee5bad2610f13d5>
-
-Have a lovely night!
-Alex
-
-> ---
->  man/man2/statx.2 | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->=20
-> diff --git a/man/man2/statx.2 b/man/man2/statx.2
-> index 0dcf7e20b..3d5ecd651 100644
-> --- a/man/man2/statx.2
-> +++ b/man/man2/statx.2
-> @@ -234,7 +234,7 @@ .SH DESCRIPTION
->  .I mask
->  is an ORed combination of the following constants:
->  .P
-> -.in +4n
-> +.in +1n
->  .TS
->  lB l.
->  STATX_TYPE	Want stx_mode & S_IFMT
-> @@ -255,6 +255,7 @@ .SH DESCRIPTION
->  STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
->  STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
->  	(since Linux 6.1; support varies by filesystem)
-> +STATX_MNT_ID_UNIQUE	Want unique stx_mnt_id (since Linux 6.8)
->  .TE
->  .in
->  .P
-> @@ -410,11 +411,18 @@ .SH DESCRIPTION
->  .TP
->  .I stx_mnt_id
->  .\" commit fa2fcf4f1df1559a0a4ee0f46915b496cc2ebf60
-> -The mount ID of the mount containing the file.
-> +If using STATX_MNT_ID, this is the mount ID of the mount containing the =
-file.
->  This is the same number reported by
->  .BR name_to_handle_at (2)
->  and corresponds to the number in the first field in one of the records in
->  .IR /proc/self/mountinfo .
-> +.IP
-> +If using STATX_MNT_ID_UNIQUE, this is the unique mount ID of the mount
-> +containing the file.  This is the number reported by
-> +.BR listmount (2)
-> +and is the ID used to query the mount with
-> +.BR statmount (2) .
-> +It is guaranteed to not be reused while the system is running.
->  .TP
->  .I stx_dio_mem_align
->  The alignment (in bytes) required for user memory buffers for direct I/O
-> --=20
-> 2.43.0
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---bximcu3znwvhfc6z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZ7IJMACgkQnowa+77/
-2zJ0CA//dmc3il6zPdQm2nyTb+L1OFdWfS2zb6DTk6xLaGwQb5BXJLYwg04c05Jx
-jF0K2d+WbP65ckHXLSCKvliNZ7CjHTJ1g82vW+vbHsAUv78Loe6eON4lcthoJkiD
-BPNqT2VF2ZsLdOt5utXEc1s1RKTklccgum6jnxnxfkD8iJCcBOnUD0oPIADeE6kZ
-otdWU+8Noq4uyitnTOx4g7cKElkR3k4zs6T2VDRRlbPY0aHok2f4jRoKcKxCYxXP
-h8+1HrRL447966biGRLF+thPWUpvRwqmHiip9djr1MhhdtIf4F7faRlKN5Q77TkU
-G5o4V4XtH4HkbE65NDFizMxZLzz303S9EydFXhvI8vOyhnhpXxa3yNQIj68M9a6O
-i6bYGstZdxrSvl1oXQkourkCcWT43DcxzS6y4Kdem9O82AzJ7FgL/hNIO2txmrkK
-zUiYNZQV06AMc2//0cxqQh8hef7dDMTODHjGOniHFD6PnK9rSxCu7d6fyObbMhoz
-21qY7kC6LjSDXubvd9XqQ8cZpXl8fvZR6S8G0IE0VBA7uqE/doXl8lLwd7cL9wq0
-Zd/RFOoAefAndgVVEsZqpeqZd2/LLKhxzeIKXUVdgRqxqxSJxDBZ22e8mIkZ8uc0
-/uX+2lcq5nLAuS3jfzW5fYzFUy3iZbizd7VwjbVvL5NYwZZuzAE=
-=+/3W
------END PGP SIGNATURE-----
-
---bximcu3znwvhfc6z--
 
