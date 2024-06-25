@@ -1,90 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-22323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8CB9165AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:01:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D300591666B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC1F1C22EBE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 11:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD68288032
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 11:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF10D145B32;
-	Tue, 25 Jun 2024 11:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE64B14C58A;
+	Tue, 25 Jun 2024 11:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JM1eg0Dw"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="kySvDD/n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6BC14AD24;
-	Tue, 25 Jun 2024 11:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4931494A0;
+	Tue, 25 Jun 2024 11:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719313260; cv=none; b=Pj24ZXca6OGnWXsaWIVOz/smFmNciyI6zEhuGqwn6IvECRl6GaH7dWreHEqTxGXUfUSuxDUCBr3Pt2koLRKStAHesTNBsXTkK4X5trtzICsHFOETPTIctVzzX1LzRRuzuBvEOgNcrTeudx+b6pgS68nS2Rr+L6C2nk0aF5hLzqA=
+	t=1719315877; cv=none; b=a5fcAc1nwlLUqnDZUohZ8AMC7v/8wqEMDnH29uOHkHZK+dIBK4Bwzni2pqwP06crRnutLo9nLAUW5Ko8VLzpuHP0QOd4BuINHaMYKG/7Qn/QBGH8cju0MVLwR7Osm4YfGgMgE2MqX3sfHR3V6PfArASjx/i0ck+lbs8nPi/JsWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719313260; c=relaxed/simple;
-	bh=Qx9nn4N/0uGydqFiWspNCnMlo9JldIIWKGZCDF/mhZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MfURCKajDuZ0wGYD17BGD6PKzdl4GgOD7rX5n+Diujlh64CpfQ2lFFRt8DJlCtWw6hjb1BH4nVUJKzz8pcJlWsnuO9eNdS51s+yUKXOrMcMt9eyyNMX83Y1CZL9UTUuFJvvQ7+LMizIMMsVwGP4WEskJVCMJvjd/G/2sLdS9kIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JM1eg0Dw; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a724e067017so278147066b.0;
-        Tue, 25 Jun 2024 04:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719313257; x=1719918057; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PDtwFciM4nTzlZf6ylZvaFvsdHMJWGfNAlLJgEeCQsA=;
-        b=JM1eg0DwXecIN+t5QcPbnp5mU24AkoXVE9NFa3YetzmYuqdBOcpk/CSnnPs3Vb1eTc
-         Dc1LO9jgu37Nhx6yRypxY63RNg6qtZkpqMy342BNAPjw2zHcjxKSWidO14wev7w30YG9
-         BkQrzeqCocf/ENEUoBJk5Se1LAl710OfdXpMhEFdyH8R5R10GgHgbP4Jenm81Ue4/Y+d
-         kFnFJjOPsbKkgNAEoa3ZiFJGr5QprAjqR9iNKGZdLa4YYoVcSb4oTlm3qd3FRV85YAFr
-         v4c2Jh/PvrXP4yUhFIDVZWnGbH3sFGE8rP2h07Xa7/zqehljPJ8e5LK1oldQ3+M6ONJv
-         gA/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719313257; x=1719918057;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PDtwFciM4nTzlZf6ylZvaFvsdHMJWGfNAlLJgEeCQsA=;
-        b=JEqVThQ3ZKJN6rYF2eWILYR0ustO1JRTwnYo6m++1m8s90JO8fr+ttuSjj4bX9Wid3
-         ElIrh/Srp/TpMwGBmhBcx9kIAN1J1IejczwURIywgmI5saiARgDZGYsToB1OreyRDMvG
-         /h/DFvO56lF4pIAmJuSnaBT6bxpei9Pa60C0OTrJgPO4JXr+cGUEYLLY50hJB1Nwr1cZ
-         nTE0PTgLBGAgaeOng6/4HPGy94s1KQzIgJ5J2fZs79waJqZ0dU0xaYgg2gRsV9mIgyBX
-         p9tH7YxWxuP0yJ7RtuyOMu0JJr38erWm6OmIsBhL4vt4g8lTncj+k3oTaGkGoqYJf4qe
-         YkwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUod9h1n/35ogJx0tLLdwylmNkeIh7rY7np2/UUHxdHAD99up1bBkyczLz0BZ3YzZ+QCjQIXHKEUBYgqoFmU3UxI3GkXCj5VLJZw61PnwQiNmDWFtSc6pmRJudenU5K/wapwYCfQ70nPE6L4rvWQsdMpp1+azCsP4ro6mF+j8TbBM2SIz/
-X-Gm-Message-State: AOJu0YwOa92F8Wl6zZHZFXjuZFFGZHnvI4sAkiNPxbIZmq19T0nj5IFX
-	SMFxUHXZfWyzhVnRIXFsl3g/O6lcu15igNDvVyPAtCsyU7OxlmHg
-X-Google-Smtp-Source: AGHT+IFRTq88DKEIGsB/us3b8O3gHDEVsHBBdW8y2F64wmd0hTEryoAiUGyf/l8EJQYEkL/YHFmbDA==
-X-Received: by 2002:a17:907:774b:b0:a6e:57ff:7700 with SMTP id a640c23a62f3a-a7245b8522bmr412104166b.42.1719313256623;
-        Tue, 25 Jun 2024 04:00:56 -0700 (PDT)
-Received: from f.. (cst-prg-81-171.cust.vodafone.cz. [46.135.81.171])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724162f037sm337272566b.194.2024.06.25.04.00.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 04:00:56 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1719315877; c=relaxed/simple;
+	bh=eeVUGRc/d2AhjYvp2iaZcYGrK1l23XGEMp6ntMJF5uQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Djm7tVed9faKIuXL83PRLCglU4sV/Q98yQgs4TEtCaJOmwFqLEv4HFCBJZjCYG/h6XuI5zJrc3Styq5gK5K6uXFK7FTOEZK3WdkcGDK2re1Q4nYWY/ndVLD34exzgPXXziBTYDr+wpJLfZ1FqRF3Orc1sWh+Y99nPuaa3wSorck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=kySvDD/n; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W7jfd2YL4z9sWC;
+	Tue, 25 Jun 2024 13:44:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1719315865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MKFoJ3j4KB+I/qDQQrYOSbOqrOpG0UvaNnSzD6LfMBw=;
+	b=kySvDD/nXc/Hs9+I7BRh+UVlcdHThmgtpTwEvLXk5xkZmwR4voWwC7i/AoHPW7N8Qyz76C
+	w/GloDHjcxSc80CoscheghvDuGACxOpuxG/giKR9ACXpRnHGkylrWsiVSCwDZsSCRpdvmI
+	+HdzdxyF7SQ/6egiwEy9WGIinvnY9yQKWDNZgBZHRNaVOBXZIC5ysurjSeD//gFYn1/HUR
+	WL+KpqBXAPZZ341CRvrnc3LAanWaineXW4jOE2aSDS9lCg1X9zVJtGSx5gS3Kf7WLqxwp/
+	Ey7ZR4VtDu61rjCQoGAUvMA+FYVWvc+bIE33AhIc9nd4QbLaSUBGRzzvYCOBIQ==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: david@fromorbit.com,
+	willy@infradead.org,
+	chandan.babu@oracle.com,
+	djwong@kernel.org,
+	brauner@kernel.org,
+	akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com,
+	linux-mm@kvack.org,
+	john.g.garry@oracle.com,
 	linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	axboe@kernel.dk,
-	torvalds@linux-foundation.org,
-	xry111@xry111.site,
-	loongarch@lists.linux.dev,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-Date: Tue, 25 Jun 2024 13:00:28 +0200
-Message-ID: <20240625110029.606032-3-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240625110029.606032-1-mjguzik@gmail.com>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
+	hare@suse.de,
+	p.raghav@samsung.com,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org,
+	kernel@pankajraghav.com,
+	hch@lst.de,
+	Zi Yan <zi.yan@sent.com>
+Subject: [PATCH v8 00/10] enable bs > ps in XFS
+Date: Tue, 25 Jun 2024 11:44:10 +0000
+Message-ID: <20240625114420.719014-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,214 +80,110 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The newly used helper also checks for 0-sized buffers.
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-This avoids path lookup code, lockref management, memory allocation and
-in case of NULL path userspace memory access (which can be quite
-expensive with SMAP on x86_64).
+This is the eight version of the series that enables block size > page size
+(Large Block Size) in XFS.
+The context and motivation can be seen in cover letter of the RFC v1 [0].
+We also recorded a talk about this effort at LPC [1], if someone would
+like more context on this effort.
 
-statx with AT_EMPTY_PATH paired with "" or NULL argument as appropriate
-issued on Sapphire Rapids (ops/s):
-stock:     4231237
-0-check:   5944063 (+40%)
-NULL path: 6601619 (+11%/+56%)
+A lot of emphasis has been put on testing using kdevops, starting with an XFS
+baseline [3]. The testing has been split into regression and progression.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- fs/internal.h    |  2 ++
- fs/stat.c        | 90 ++++++++++++++++++++++++++++++++++--------------
- io_uring/statx.c | 23 +++++++------
- 3 files changed, 80 insertions(+), 35 deletions(-)
+Regression testing:
+In regression testing, we ran the whole test suite to check for regressions on
+existing profiles due to the page cache changes.
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 1caa6a8f666f..0a018ebcaf49 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -244,6 +244,8 @@ extern const struct dentry_operations ns_dentry_operations;
- int getname_statx_lookup_flags(int flags);
- int do_statx(int dfd, struct filename *filename, unsigned int flags,
- 	     unsigned int mask, struct statx __user *buffer);
-+int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
-+		struct statx __user *buffer);
- 
- /*
-  * fs/splice.c:
-diff --git a/fs/stat.c b/fs/stat.c
-index 106684034fdb..1214826f3a36 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -214,6 +214,43 @@ int getname_statx_lookup_flags(int flags)
- 	return lookup_flags;
- }
- 
-+static int vfs_statx_path(struct path *path, int flags, struct kstat *stat,
-+			  u32 request_mask)
-+{
-+	int error = vfs_getattr(path, stat, request_mask, flags);
-+
-+	if (request_mask & STATX_MNT_ID_UNIQUE) {
-+		stat->mnt_id = real_mount(path->mnt)->mnt_id_unique;
-+		stat->result_mask |= STATX_MNT_ID_UNIQUE;
-+	} else {
-+		stat->mnt_id = real_mount(path->mnt)->mnt_id;
-+		stat->result_mask |= STATX_MNT_ID;
-+	}
-+
-+	if (path->mnt->mnt_root == path->dentry)
-+		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
-+	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
-+
-+	/* Handle STATX_DIOALIGN for block devices. */
-+	if (request_mask & STATX_DIOALIGN) {
-+		struct inode *inode = d_backing_inode(path->dentry);
-+
-+		if (S_ISBLK(inode->i_mode))
-+			bdev_statx_dioalign(inode, stat);
-+	}
-+
-+	return error;
-+}
-+
-+static int vfs_statx_fd(int fd, int flags, struct kstat *stat,
-+			  u32 request_mask)
-+{
-+	CLASS(fd_raw, f)(fd);
-+	if (!f.file)
-+		return -EBADF;
-+	return vfs_statx_path(&f.file->f_path, flags, stat, request_mask);
-+}
-+
- /**
-  * vfs_statx - Get basic and extra attributes by filename
-  * @dfd: A file descriptor representing the base dir for a relative filename
-@@ -243,36 +280,13 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
- retry:
- 	error = filename_lookup(dfd, filename, lookup_flags, &path, NULL);
- 	if (error)
--		goto out;
--
--	error = vfs_getattr(&path, stat, request_mask, flags);
--
--	if (request_mask & STATX_MNT_ID_UNIQUE) {
--		stat->mnt_id = real_mount(path.mnt)->mnt_id_unique;
--		stat->result_mask |= STATX_MNT_ID_UNIQUE;
--	} else {
--		stat->mnt_id = real_mount(path.mnt)->mnt_id;
--		stat->result_mask |= STATX_MNT_ID;
--	}
--
--	if (path.mnt->mnt_root == path.dentry)
--		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
--	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
--
--	/* Handle STATX_DIOALIGN for block devices. */
--	if (request_mask & STATX_DIOALIGN) {
--		struct inode *inode = d_backing_inode(path.dentry);
--
--		if (S_ISBLK(inode->i_mode))
--			bdev_statx_dioalign(inode, stat);
--	}
--
-+		return error;
-+	error = vfs_statx_path(&path, flags, stat, request_mask);
- 	path_put(&path);
- 	if (retry_estale(error, lookup_flags)) {
- 		lookup_flags |= LOOKUP_REVAL;
- 		goto retry;
- 	}
--out:
- 	return error;
- }
- 
-@@ -677,6 +691,29 @@ int do_statx(int dfd, struct filename *filename, unsigned int flags,
- 	return cp_statx(&stat, buffer);
- }
- 
-+int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
-+	     struct statx __user *buffer)
-+{
-+	struct kstat stat;
-+	int error;
-+
-+	if (mask & STATX__RESERVED)
-+		return -EINVAL;
-+	if ((flags & AT_STATX_SYNC_TYPE) == AT_STATX_SYNC_TYPE)
-+		return -EINVAL;
-+
-+	/* STATX_CHANGE_COOKIE is kernel-only for now. Ignore requests
-+	 * from userland.
-+	 */
-+	mask &= ~STATX_CHANGE_COOKIE;
-+
-+	error = vfs_statx_fd(fd, flags, &stat, mask);
-+	if (error)
-+		return error;
-+
-+	return cp_statx(&stat, buffer);
-+}
-+
- /**
-  * sys_statx - System call to get enhanced stats
-  * @dfd: Base directory to pathwalk from *or* fd to stat.
-@@ -696,6 +733,9 @@ SYSCALL_DEFINE5(statx,
- 	int ret;
- 	struct filename *name;
- 
-+	if (flags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
-+		return do_statx_fd(dfd, flags, mask, buffer);
-+
- 	name = getname_flags(filename, getname_statx_lookup_flags(flags), NULL);
- 	ret = do_statx(dfd, name, flags, mask, buffer);
- 	putname(name);
-diff --git a/io_uring/statx.c b/io_uring/statx.c
-index abb874209caa..fe967ecb1762 100644
---- a/io_uring/statx.c
-+++ b/io_uring/statx.c
-@@ -23,6 +23,7 @@ struct io_statx {
- int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_statx *sx = io_kiocb_to_cmd(req, struct io_statx);
-+	struct filename *filename;
- 	const char __user *path;
- 
- 	if (sqe->buf_index || sqe->splice_fd_in)
-@@ -36,15 +37,14 @@ int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	sx->buffer = u64_to_user_ptr(READ_ONCE(sqe->addr2));
- 	sx->flags = READ_ONCE(sqe->statx_flags);
- 
--	sx->filename = getname_flags(path,
--				     getname_statx_lookup_flags(sx->flags),
--				     NULL);
--
--	if (IS_ERR(sx->filename)) {
--		int ret = PTR_ERR(sx->filename);
--
--		sx->filename = NULL;
--		return ret;
-+	sx->filename = NULL;
-+	if (!(sx->flags == AT_EMPTY_PATH && vfs_empty_path(sx->dfd, path))) {
-+		filename = getname_flags(path,
-+					 getname_statx_lookup_flags(sx->flags),
-+					 NULL);
-+		if (IS_ERR(filename))
-+			return PTR_ERR(filename);
-+		sx->filename = filename;
- 	}
- 
- 	req->flags |= REQ_F_NEED_CLEANUP;
-@@ -59,7 +59,10 @@ int io_statx(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
- 
--	ret = do_statx(sx->dfd, sx->filename, sx->flags, sx->mask, sx->buffer);
-+	if (sx->filename == NULL)
-+		ret = do_statx_fd(sx->dfd, sx->flags, sx->mask, sx->buffer);
-+	else
-+		ret = do_statx(sx->dfd, sx->filename, sx->flags, sx->mask, sx->buffer);
- 	io_req_set_res(req, ret, 0);
- 	return IOU_OK;
- }
+I also ran split_huge_page_test selftest on XFS filesystem to check for
+huge page splits in min order chunks is done correctly.
+
+No regressions were found with these patches added on top.
+
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+compare it with existing support, an ARM VM with 64k base page system (without
+our patches) was used as a reference to check for actual failures due to LBS
+support in a 4k base page size system.
+
+There are some tests that assumes block size < page size that needs to be fixed.
+We have a tree with fixes for xfstests [4], most of the changes have been posted
+already, and only a few minor changes need to be posted. Already part of these
+changes has been upstreamed to fstests, and new tests have also been written and
+are out for review, namely for mmap zeroing-around corner cases, compaction
+and fsstress races on mm, and stress testing folio truncation on file mapped
+folios.
+
+No new failures were found with the LBS support.
+
+We've done some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+patches applied, and detected no regressions.
+
+We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
+
+For those who want this in a git tree we have this up on a kdevops
+large-block-minorder-for-next-v8 tag [6].
+
+[0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+[3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+[5] https://github.com/iovisor/bcc/pull/4813
+[6] https://github.com/linux-kdevops/linux/
+[7] https://lore.kernel.org/linux-kernel/Zl20pc-YlIWCSy6Z@casper.infradead.org/#t
+
+Changes since v7:
+- Move by min_nrpages in page_cache_ra_unbounded if we found a folio as
+  we don't have a stable reference.
+- Rename iomap_init to iomap_pagecache_init and add a new iomap_dio_init
+  and mark the zero_fs_64k memory as RO.
+- Simplified calculation in xfs_sb_validate_fsb_count().
+- Collected RVB from willy, Darrick and Hannes.
+
+Dave Chinner (1):
+  xfs: use kvmalloc for xattr buffers
+
+Luis Chamberlain (1):
+  mm: split a folio in minimum folio order chunks
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (7):
+  filemap: allocate mapping_min_order folios in the page cache
+  readahead: allocate folios with mapping_min_order in readahead
+  filemap: cap PTE range to be created to allowed zero fill in
+    folio_map_range()
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/iomap/buffered-io.c        |   4 +-
+ fs/iomap/direct-io.c          |  30 +++++++++-
+ fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+ fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+ fs/xfs/libxfs/xfs_shared.h    |   3 +
+ fs/xfs/xfs_icache.c           |   6 +-
+ fs/xfs/xfs_iops.c             |   2 +-
+ fs/xfs/xfs_mount.c            |   8 ++-
+ fs/xfs/xfs_super.c            |  18 +++---
+ include/linux/huge_mm.h       |  14 +++--
+ include/linux/pagemap.h       | 109 +++++++++++++++++++++++++++++-----
+ mm/filemap.c                  |  36 +++++++----
+ mm/huge_memory.c              |  55 +++++++++++++++--
+ mm/readahead.c                |  85 +++++++++++++++++++-------
+ 14 files changed, 309 insertions(+), 81 deletions(-)
+
+
+base-commit: b992b79ca8bc336fa8e2c80990b5af80ed8f36fd
 -- 
-2.43.0
+2.44.1
 
 
