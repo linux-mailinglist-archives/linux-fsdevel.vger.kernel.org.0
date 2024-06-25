@@ -1,156 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-22356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A499F916926
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:40:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA658916976
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 15:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C781B23E2E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:40:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E56C1F21DFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Jun 2024 13:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4158615FA7C;
-	Tue, 25 Jun 2024 13:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BC416726E;
+	Tue, 25 Jun 2024 13:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dl4RF2WV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iaaRAEgt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A513F15F31D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 13:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95171607B3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 13:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719322799; cv=none; b=CZelVrUmKKMzpE/A64dJoVWKyEkTISbcLdy4X1jI4XCJOddza2YNhjC2qs0AbMcscZfwnmh4M/Veqc5gHpmpeAvxX07BKJDGVa/Ddt+nGXwydfOKTwSCqN71pUrJ624CAvzGzFQVYyKzAOTOjvewKYm8OyNhKUiI/ndUvAOpafg=
+	t=1719323542; cv=none; b=DV+zMLLaHIIQtSz4xxh9E7UEWrc/DfxFJVptsiDVddK4lVbndaWQBZvmk8tnbhFzEuAOQ0v/Rz8Z7mjno3utqO0uiXKE0iLJjqmMhOugI3B2UbgGgFcrfY6NoouWci/LYVEvuIlf7XHPhXZZ3MSdCTnW04yrXq1+1rvK4kUUBLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719322799; c=relaxed/simple;
-	bh=5To5uKUyWMRZ95WUyglljS6cWXaCKHmjhhbDaSK1P78=;
+	s=arc-20240116; t=1719323542; c=relaxed/simple;
+	bh=Wxh6uiXAMO4I3DTDXfJXRI4F8TQaeJleQ/G2AmIRyms=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jTl+hsqLWgLCvcf+0P+0oppOz2BMYKRqYDlWUsI2rxZJxeifUfiLC4MkEqUQlWMKCazZiLBsOs3VQY0jqehMvoHw7martnSmOOg/BqZMRgZbYof9IX7k4K1ldnhhORYy8qCVzQLRDJGFrb4KvvxfOEpeuf7FPAEPwEPUslpaxfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dl4RF2WV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF119C32781;
-	Tue, 25 Jun 2024 13:39:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719322799;
-	bh=5To5uKUyWMRZ95WUyglljS6cWXaCKHmjhhbDaSK1P78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dl4RF2WVmJZ9bIkW5QuYLzmRyEy8nLuiVW2BwULZk2jXzG5aHtDbofy6oklrnXZhJ
-	 FPKVcILIyRg3BM7IxzgYkFYz5G5jfVv9LgEcew3fp72IkXKbw9cuZnGFya2Q8NVJPN
-	 JTQEzY/DIh5RM9qrEKkCsmnlHIC377ydjAI4Ul9A8/LQuLyBJUf10f8ZwUNNAgigYa
-	 vq/4K5MKzCDoy/LvZ/q0kmj/zC9Zmd/KOYBPNjNI/svd5+S/qhJGiJn6ePwh/v35Iv
-	 bUR0c/mzIgYqgfVh9q36q4+OZVglZAx7anuAxgQzgOisr5AwPJoSuNR4Uf0uGK6rmJ
-	 zEu0Bagu9SjzA==
-Date: Tue, 25 Jun 2024 15:39:55 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	kernel-team@fb.com
-Subject: Re: [PATCH 3/8] fs: keep an index of current mount namespaces
-Message-ID: <20240625-prall-gelenk-753f382e6608@brauner>
-References: <cover.1719243756.git.josef@toxicpanda.com>
- <e5fdd78a90f5b00a75bd893962a70f52a2c015cd.1719243756.git.josef@toxicpanda.com>
- <050ce2c523cc6f2651da4ca50aae1544c5b09730.camel@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CnauuF3XZa5HSOpY4yxstbpT8XUgfjEi3bQeh4roofl3Vz+wFH1xqv1uKf//wukR0lp/Z4QaVLriyEVy9DAavmjkdpX/an6URCLHwK/BxhsK26syk6Z0LNnX3XsJscn6s2XmpABDbNF03iOTGpDiHAEDETQ571Q5uGAflXaQg48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iaaRAEgt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719323539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/TyBaAkDLc1Y8EqDMhzWflhZ7MKBd9UB9CBjBKtwPYg=;
+	b=iaaRAEgts61G00I0tjTUSv7NEgQ5+qxosuoTqe5A/5iyoKD9GnFwsz1XUnqqdzkEMXRoYF
+	meruDM3EzT0AzYteA01mgEk+aHk9qu28mv1POaJSgUZy2bqD7uyBVpVLhZ03yygTveyAxD
+	En6vQrsBq6z56CDhrDUFAH/U7w4S7vg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-261-SpSGJ6dVNSuUpb5vv-8QsQ-1; Tue,
+ 25 Jun 2024 09:52:14 -0400
+X-MC-Unique: SpSGJ6dVNSuUpb5vv-8QsQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CD89219560B3;
+	Tue, 25 Jun 2024 13:52:08 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.225.185])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F8BF1956050;
+	Tue, 25 Jun 2024 13:52:06 +0000 (UTC)
+Date: Tue, 25 Jun 2024 15:52:03 +0200
+From: Karel Zak <kzak@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH 0/4] Add the ability to query mount options in statmount
+Message-ID: <5j2codcdntgdt4wpvzgbadg4r5obckor37kk4sglora2qv5kwu@wsezhlieuduj>
+References: <cover.1719257716.git.josef@toxicpanda.com>
+ <20240625-tragbar-sitzgelegenheit-48f310320058@brauner>
+ <20240625130008.GA2945924@perftesting>
+ <CAJfpeguAarrLmXq+54Tj3Bf3+5uhq4kXOfVytEAOmh8RpUDE6w@mail.gmail.com>
+ <20240625-beackern-bahnstation-290299dade30@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <050ce2c523cc6f2651da4ca50aae1544c5b09730.camel@kernel.org>
+In-Reply-To: <20240625-beackern-bahnstation-290299dade30@brauner>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Jun 25, 2024 at 09:03:03AM GMT, Jeff Layton wrote:
-> On Mon, 2024-06-24 at 11:49 -0400, Josef Bacik wrote:
-> > In order to allow for listmount() to be used on different namespaces we
-> > need a way to lookup a mount ns by its id.  Keep a rbtree of the current
-> > !anonymous mount name spaces indexed by ID that we can use to look up
-> > the namespace.
+On Tue, Jun 25, 2024 at 03:35:17PM GMT, Christian Brauner wrote:
+> On Tue, Jun 25, 2024 at 03:04:40PM GMT, Miklos Szeredi wrote:
+> > On Tue, 25 Jun 2024 at 15:00, Josef Bacik <josef@toxicpanda.com> wrote:
 > > 
-> > Co-developed-by: Christian Brauner <brauner@kernel.org>
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/mount.h     |   2 +
-> >  fs/namespace.c | 113 ++++++++++++++++++++++++++++++++++++++++++++++++-
-> >  2 files changed, 113 insertions(+), 2 deletions(-)
+> > > We could go this way I suppose, but again this is a lot of work, and honestly I
+> > > just want to log mount options into some database so I can go looking for people
+> > > doing weird shit on my giant fleet of machines/containers.  Would the iter thing
+> > > make the overlayfs thing better?  Yeah for sure.  Do we care?  I don't think so,
+> > > we just want all the options, and we can all strsep/strtok with a comma.
 > > 
-> > diff --git a/fs/mount.h b/fs/mount.h
-> > index 4adce73211ae..ad4b1ddebb54 100644
-> > --- a/fs/mount.h
-> > +++ b/fs/mount.h
-> > @@ -16,6 +16,8 @@ struct mnt_namespace {
-> >  	u64 event;
-> >  	unsigned int		nr_mounts; /* # of mounts in the namespace */
-> >  	unsigned int		pending_mounts;
-> > +	struct rb_node		mnt_ns_tree_node; /* node in the mnt_ns_tree */
-> > +	refcount_t		passive; /* number references not pinning @mounts */
-> >  } __randomize_layout;
-> >  
-> >  struct mnt_pcp {
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 45df82f2a059..babdebdb0a9c 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -78,6 +78,8 @@ static struct kmem_cache *mnt_cache __ro_after_init;
-> >  static DECLARE_RWSEM(namespace_sem);
-> >  static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-> >  static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > +static DEFINE_RWLOCK(mnt_ns_tree_lock);
-> > +static struct rb_root mnt_ns_tree = RB_ROOT; /* protected by namespace_sem */
-> >  
-> >  struct mount_kattr {
-> >  	unsigned int attr_set;
-> > @@ -103,6 +105,109 @@ EXPORT_SYMBOL_GPL(fs_kobj);
-> >   */
-> >  __cacheline_aligned_in_smp DEFINE_SEQLOCK(mount_lock);
-> >  
-> > +static int mnt_ns_cmp(u64 seq, const struct mnt_namespace *ns)
-> > +{
-> > +	u64 seq_b = ns->seq;
-> > +
-> > +	if (seq < seq_b)
-> > +		return -1;
-> > +	if (seq > seq_b)
-> > +		return 1;
-> > +	return 0;
-> > +}
-> > +
-> > +static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
-> > +{
-> > +	if (!node)
-> > +		return NULL;
-> > +	return rb_entry(node, struct mnt_namespace, mnt_ns_tree_node);
-> > +}
-> > +
-> > +static bool mnt_ns_less(struct rb_node *a, const struct rb_node *b)
-> > +{
-> > +	struct mnt_namespace *ns_a = node_to_mnt_ns(a);
-> > +	struct mnt_namespace *ns_b = node_to_mnt_ns(b);
-> > +	u64 seq_a = ns_a->seq;
-> > +
-> > +	return mnt_ns_cmp(seq_a, ns_b) < 0;
-> > +}
-> > +
-> > +static void mnt_ns_tree_add(struct mnt_namespace *ns)
-> > +{
-> > +	guard(write_lock)(&mnt_ns_tree_lock);
-> > +	rb_add(&ns->mnt_ns_tree_node, &mnt_ns_tree, mnt_ns_less);
-> > +}
-> > +
-> > +static void mnt_ns_release(struct mnt_namespace *ns)
-> > +{
-> > +	lockdep_assert_not_held(&mnt_ns_tree_lock);
-> > +
+> > I think we can live with the monolithic option block.  However I'd
+> > prefer the separator to be a null character, thus the options could be
+> > sent unescaped.  That way the iterator will be a lot simpler to
+> > implement.
 > 
-> Why is it bad to hold this lock here? AFAICT, put_user_ns just does a
-> schedule_work when the counter goes to 0. Granted, I don't see a reason
-> why you would want to hold it here, but usually that sort of assertion
-> means that it _must_ be forbidden.
+> For libmount it means writing a new parser and Karel prefers the ","
+> format so I would like to keep the current format.
+ 
+Sorry for the misunderstanding. I had a chat with Christian about it
+when I was out of my office (and phone chats are not ideal for this).
 
-I just annotate locking assumptions liberally. There's no reason to take
-the lock there and there's no current codepath that needs to hold it so
-don't waste cycles and hold it when we don't have to.
+I thought Miklos had suggested using a space (" ") as the separator, but
+after reading the entire email thread, I now understand that Miklos'
+suggestion is to use \0 (zero) as the options separator.
+
+I have no issue with using \0, as it will make things much simpler.
+
+    Karel
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
 
