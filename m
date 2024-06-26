@@ -1,161 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-22459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7506F917541
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 02:37:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93ABE91754D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 02:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD7B2844ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 00:37:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2DA28119D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 00:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02688F5C;
-	Wed, 26 Jun 2024 00:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DB6BE6C;
+	Wed, 26 Jun 2024 00:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CG6CcWs3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YoUHPSQX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735D779D3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 00:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236DF79EF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 00:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719362233; cv=none; b=neFSOireTzWg6p34psp1vNV6Mnq/4nFYY+L41kn3/zsmYJNfT5/h7oJv42/REv+PWZPqXfXg2CVBfujWazKDyHetAP26Op9uWy4Fp1l2spnxRk22QbYd3KAgG7f0feKPQowhKI1Z51A4fWW3FIeYGBmXvtdBdDWhUjvNgGGdGi8=
+	t=1719362533; cv=none; b=rSfNEmzAoX4SAhnXuJhufjJlpcNhO3L/iNNqX7m0lzEvEje0aTvIpki98Udzx1oxzDJKadCWRN1KEVT/tgtFWbanAGNlHCYckrKvyieGWbeZ6GUn+R90VSGPvSQ0BElICBo751Qze/CPcEgYwP9/eC8kHFWJpqQVSsmjLXbz1WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719362233; c=relaxed/simple;
-	bh=S+YCG6Gtni5r+dPZPXoehUVpJrUKGN5ylG+dZOH2LZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h9x7BhLb0LBwcBRcAEnLZpQnPmi+6K/fQ98XG/d+01/bWHbCDrrbBTkhK6D3SnPr/dvachPWtZvQ3D+GFeiQ2PjzCasmElMFr1q5YWdsPx0viLDKqMfAJaprgEgVK5a21kgVI91drohGn+hd8KmcskZFf0+UfczpgAp9oI5dGSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CG6CcWs3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719362230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7XSa6ZpfJ2JlPT3g8OgBf9PZ5iAj39OSQpGesaTNmpY=;
-	b=CG6CcWs3D4w4x6rrDahtBJLeWWVbPIakmot5v+E7cNbC97ViuCp28eNWe8ThXitKxFJh1a
-	7gcOOIlKVnmecbPrMTnJSVMvW1dRNjye8XR7X4u0Q9nwpKdOgqEBYSJJssCF+J6TPKb8KR
-	72s51n523j8rmaDZ66Duo+jeIyzL0Co=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-VIgVh1AMMLypD7wjQkX-2Q-1; Tue, 25 Jun 2024 20:37:08 -0400
-X-MC-Unique: VIgVh1AMMLypD7wjQkX-2Q-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2c7a6c639bfso7765339a91.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 17:37:08 -0700 (PDT)
+	s=arc-20240116; t=1719362533; c=relaxed/simple;
+	bh=3rsZiF+YKH21/TXG3S46bL21vyEJD44mnnURl//ORSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ghhHrfpSfeBqv7NdPar+8uAskxVeseWw5cBGxNeOkSRFQ8A8xf8vB5yfTiJMiQKs+8oBaieJYa/ZWCisXlRmzUeFgMDcwQ8Vc+RzfR4VmO+h5VYdRH2xD3Pou5nC2AD0jrDivO5NuCz5Yv0plCgb2cdo/NxVxbSFwuMNfjI08z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YoUHPSQX; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso3874a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Jun 2024 17:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719362530; x=1719967330; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3rsZiF+YKH21/TXG3S46bL21vyEJD44mnnURl//ORSg=;
+        b=YoUHPSQXYfD85e2T8/e1Wsz4wBnQflvo73ho0pQ8fWAQjFMX2MxdjKg7QSflQfXQH+
+         wk0AISvKM4A362jbObC2dSY8kZCoNSJGFpSBd2mu7XTKIJFq1Yp8Hzyo32f7Via8oqTM
+         r9VyrpHSMplEKkygRd/3HallLVEkDp0nc+ZA7e89lnRyWlj8HN6M5tkokFkA9LYbt2Oo
+         aJms0VFeVlpjvmqY5fl8QR3QcbX8JNd87cB7G4Cc/RyWI0oP99n5Xu9w64IQekzTx+ZX
+         c6xOKjQQtIBnMLtIq4O9CleqvpHBZvoFamF4QIRBXhvBJm2bv9DgmIFaX8j9MNc77TJr
+         ycfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719362227; x=1719967027;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7XSa6ZpfJ2JlPT3g8OgBf9PZ5iAj39OSQpGesaTNmpY=;
-        b=e9OxDCyQkiaAodrug9K0D/k4t/kcSAQd5sX4AEZE+pnPy8CvHDIqG1loyA9VkPkAwx
-         8p/R5h+j6taiqzHcu/yh7q0T9Y7AYGstJIdhoKO1kTae3PtKaowF3VUZE7L1cLbmyFIn
-         FSBNRpna5H9FSClz7Ki4sf0PhY1AcHtMbiKgXJhPxd810kjcqnvKFH3kInai0oBg8MAF
-         ufrkQCcl2tGQMzYlqTKYLfIoisK/JvQuau8meH5AinfHUho8Rw+S6hUlcnnYDl2Z6WQC
-         7B4BYQYEpQOr5eXNMJB+x+TxoqvLMGxu8fvw3wX4NQXWH0qEVBwXfP/F/PjP7v1OidVa
-         sxeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMYzOTyAJ9RcLWoGQpsL/M/aGNY4M+twjIFBZb4WSChdlJZOI5ywPLzDLsBLATSM3WjzUScCH5zPawrjUSqMwS7Y0N7DMtFsc3fITdWg==
-X-Gm-Message-State: AOJu0Yyk4ES8qb9DRRU9P768hWFRgoAmMO/bqEWONtxaDEZAc1fHnVjC
-	nuZ0MPJSzBaz8nzgLOyHVwSgKPIsGrYF+Afc0riHV8+ZyR03dKSiLejpdNGY59HlHYrpMciKY8m
-	mN1iXN8/thkVXVba6rkvNIYMu8J0EG/aTWXCatu4cmu58txcWdR+Yj3gTp3ch1kg=
-X-Received: by 2002:a17:902:ecc8:b0:1f9:c289:737c with SMTP id d9443c01a7336-1fa1d683c1emr106652815ad.60.1719362227390;
-        Tue, 25 Jun 2024 17:37:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEDjNcz0viQEwIaipBp6N0yRlPUsIKoKAYuglwG9H2KqNectD+G314m4fAwmTDdbJQL9ffogQ==
-X-Received: by 2002:a17:902:ecc8:b0:1f9:c289:737c with SMTP id d9443c01a7336-1fa1d683c1emr106652695ad.60.1719362226970;
-        Tue, 25 Jun 2024 17:37:06 -0700 (PDT)
-Received: from [192.168.68.50] ([43.252.112.224])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c6ec0sm88110985ad.169.2024.06.25.17.37.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 17:37:06 -0700 (PDT)
-Message-ID: <4b05bdae-22e8-4906-b255-5edd381b3d21@redhat.com>
-Date: Wed, 26 Jun 2024 10:37:00 +1000
+        d=1e100.net; s=20230601; t=1719362530; x=1719967330;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3rsZiF+YKH21/TXG3S46bL21vyEJD44mnnURl//ORSg=;
+        b=rIg6EGlc2YRyGtCX/IDGIHQU97bdvkUS5gnDZZq+0NH9DLiWN3b4Oy5CSneoGq4SR7
+         xYsv3dNgLVdmhzCNZmMv+yqkPCDEQMC4Ivtu4kL7lE//6IYXF4pe4s5G79LrAZClselT
+         Z97wqMaY+6uyDQ5gX6mtTtQwIkSNByhrOberr7bGxQiiarkLMuYHiL6v0ikScZJHdtDI
+         VSV8rR3fmhnTrFBaWTCFxgFsmFHbALRfiR9YBYJbLXAjJWe4kvPvlhosHZQ/PAlxhR4M
+         TUiXzu2XikjCAtvO+KMteP/CySLnpMkXFFQNeinbkyvYpgPBIZ9+pUIGD1RGOK4q6pUo
+         diYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUQ73wyh4rqyXwO2jIhe/QNnu2ggdTIZr/15TWHVFhzPt9e5ndaEuHCiQ2WKBfTQzoPchdxNxd2X3H5x+fLH+mJAgB3xmrMadUf+dckQ==
+X-Gm-Message-State: AOJu0YxwVBcI2X0nRt65AwlCBak9eFbaorv3oO+ztL31JHVPAJ8aLaVx
+	HpRQhrLl2Z5dd9cNk5uVJ+gyR7wWNaC84ADjY327amAP4nNS6BDlAz4cjFZWeWVg2JzuAYtRnL/
+	itUtiZBodQx8Gzh+bqZzNlMxVtTtASvsldkTz
+X-Google-Smtp-Source: AGHT+IGUXAlcvcMko36NsFRWvk/yokhIRPBWv9q08BRYzOrubTf08XRl+aiyThoXu6xpKOFOPHi5N+LFI2IN9m/bLcI=
+X-Received: by 2002:a05:6402:26c7:b0:57c:b712:47b5 with SMTP id
+ 4fb4d7f45d1cf-583311be705mr113643a12.4.1719362530203; Tue, 25 Jun 2024
+ 17:42:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] mm/filemap: Limit page cache size to that supported
- by xarray
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, willy@infradead.org,
- hughd@google.com, torvalds@linux-foundation.org, zhenyzha@redhat.com,
- shan.gavin@gmail.com
-References: <20240625090646.1194644-1-gshan@redhat.com>
- <20240625113720.a2fa982b5cb220b1068e5177@linux-foundation.org>
- <33d9e4b3-4455-4431-81dc-e621cf383c22@redhat.com>
- <20240625115855.eb7b9369c0ddd74d6d96c51e@linux-foundation.org>
- <f27d4fa3-0b0f-4646-b6c3-45874f005b46@redhat.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <f27d4fa3-0b0f-4646-b6c3-45874f005b46@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240624232718.1154427-1-edliaw@google.com> <20240625135234.d52ef77c0d84cb19d37dc44f@linux-foundation.org>
+ <f975fe76-92f4-4af0-a91d-0f3d8938f6b2@linuxfoundation.org>
+In-Reply-To: <f975fe76-92f4-4af0-a91d-0f3d8938f6b2@linuxfoundation.org>
+From: Edward Liaw <edliaw@google.com>
+Date: Tue, 25 Jun 2024 17:41:42 -0700
+Message-ID: <CAG4es9V0XAqe-eqPgjU+sdRS00VOEr0Xda1Dv-gtfEvqsODjiw@mail.gmail.com>
+Subject: Re: [PATCH v6 00/13] Centralize _GNU_SOURCE definition into lib.mk
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kselftest@vger.kernel.org, 
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Fenghua Yu <fenghua.yu@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, usama.anjum@collabora.com, seanjc@google.com, 
+	kernel-team@android.com, linux-mm@kvack.org, iommu@lists.linux.dev, 
+	kvm@vger.kernel.org, netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-sgx@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/26/24 5:05 AM, David Hildenbrand wrote:
-> On 25.06.24 20:58, Andrew Morton wrote:
->> On Tue, 25 Jun 2024 20:51:13 +0200 David Hildenbrand <david@redhat.com> wrote:
->>
->>>> I could split them and feed 1&2 into 6.10-rcX and 3&4 into 6.11-rc1.  A
->>>> problem with this approach is that we're putting a basically untested
->>>> combination into -stable: 1&2 might have bugs which were accidentally
->>>> fixed in 3&4.  A way to avoid this is to add cc:stable to all four
->>>> patches.
->>>>
->>>> What are your thoughts on this matter?
->>>
->>> Especially 4 should also be CC stable, so likely we should just do it
->>> for all of them.
->>
->> Fine.  A Fixes: for 3 & 4 would be good.  Otherwise we're potentially
->> asking for those to be backported further than 1 & 2, which seems
->> wrong.
-> 
-> 4 is shmem fix, which likely dates back a bit longer.
-> 
->>
->> Then again, by having different Fixes: in the various patches we're
->> suggesting that people split the patch series apart as they slot things
->> into the indicated places.  In other words, it's not a patch series at
->> all - it's a sprinkle of independent fixes.  Are we OK thinking of it
->> in that fashion?
-> 
-> The common themes is "pagecache cannot handle > order-11", #1-3 tackle "ordinary" file THP, #4 tackles shmem THP.
-> 
-> So I'm not sure we should be splitting it apart. It's just that shmem THP arrived before file THP :)
-> 
+On Tue, Jun 25, 2024 at 4:34=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.o=
+rg> wrote:
+>
+> On 6/25/24 14:52, Andrew Morton wrote:
+> > On Mon, 24 Jun 2024 23:26:09 +0000 Edward Liaw <edliaw@google.com> wrot=
+e:
+> >
+> >> Centralizes the definition of _GNU_SOURCE into lib.mk and addresses al=
+l
+> >> resulting macro redefinition warnings.
+> >>
+> >> These patches will need to be merged in one shot to avoid redefinition
+> >> warnings.
+> >
+> > Yes, please do this as a single patch and resend?
+>
+> Since the change is limited to makefiles and one source file
+> we can manage it with one patch.
+>
+> Please send single patch and I will apply to next and we can resolve
+> conflicts if any before the merge window rolls around.
 
-I rechecked the history, it's a bit hard to have precise fix tag for PATCH[4].
-Please let me know if you have a better one for PATCH[4].
+Sounds good, I sent:
+https://lore.kernel.org/linux-kselftest/20240625223454.1586259-1-edliaw@goo=
+gle.com
 
-#4
-   Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-   Cc: stable@kernel.org # v4.10+
-   Fixes: 552446a41661 ("shmem: Convert shmem_add_to_page_cache to XArray")
-   Cc: stable@kernel.org # v4.20+
-#3
-   Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
-   Cc: stable@kernel.org # v5.18+
-#2
-   Fixes: 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
-   Cc: stable@kernel.org # v5.18+
-#1
-   Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
-   Cc: stable@kernel.org # v5.18+
-
-I probably need to move PATCH[3] before PATCH[2] since PATCH[1] and PATCH[2]
-point to same commit.
-
-Thanks,
-Gavin
-
+>
+> thanks,
+> -- Shuah
 
