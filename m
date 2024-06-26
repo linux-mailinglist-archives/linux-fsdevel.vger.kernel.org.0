@@ -1,125 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-22464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBF891765E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 04:51:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F28591768E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 05:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10983B22BCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 02:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC816283304
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 03:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDD43AC16;
-	Wed, 26 Jun 2024 02:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB0045BFC;
+	Wed, 26 Jun 2024 02:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PPGQD/Es"
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="SYMIz9Dr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1A714A81;
-	Wed, 26 Jun 2024 02:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C1B33DD;
+	Wed, 26 Jun 2024 02:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719370256; cv=none; b=nmiRB6XwppP0hy1nyOQ2bBSh2jiU7vsgbEBhQsI64/+gz4rNREr7NSfkkyR/OYTJUf5A35b19LSKthJ+T6hYaj3cFeaQF6+salqc5r8RPSKmY4MMUpZwFGCGqzN/xsUtFCXPXmQt4SdjJGOUnuFKxFCQbw6j+rUGQv9btfNMYo0=
+	t=1719370796; cv=none; b=olZCxBeMX+ETP88EkByqIupyh9pwl446fWdg5I76IpWaxACsygxJVClo1+dgR1NKSLLRQySqZlmxP8cuerFHnLtT/8jWUNB4x/t3hepq9GfaVYH6YMzhR/9/OXPzbDj7ZirC/D1uV203hJDePMtXJJFckCSmSMFMbGCa55qg4M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719370256; c=relaxed/simple;
-	bh=I+Mmm7O8zWsVG9k4of9tiyj3aKGe9eU+KFhKPGSFyKM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r3fSpNCNqMEUcww/oQnOyTvoiCYTXyI+lJxypahmLgYYtoed0kPYN4TNVImTiF0Le8LeOkl3TvWDOy080f+7ZWWuwLpEivab22lHi1+gOktgsjPhVHO/jNPFp2xmA4iyzXzqMTRrKu7/mkxlVOnBZv73jEbAoMr4g1I1H7pVz9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PPGQD/Es; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=fFFOK
-	vSRi6Ay443e2K7KzltG1+t1YPDbN1yuinD8/Nk=; b=PPGQD/EsvA0Z+MY/IMniF
-	hOPxc8wWMMMHDa1tpDilBGc8lUHnN+ZQgh+p1olSHX5AWzda45w/5lHbj5Y3A23j
-	lxuG58iieCXnxglAAMSH+RmrMgEGGtaRkeuC4XigpkPdAEoTJIMpbQ76emlCqK2R
-	RYnLsm1NJHgsMugixX8wsk=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDXT0W6gXtm8PInAg--.40265S6;
-	Wed, 26 Jun 2024 10:49:38 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: vbabka@suse.cz,
-	svetly.todorov@memverge.com,
-	ran.xiaokai@zte.com.cn,
-	baohua@kernel.org,
-	ryan.roberts@arm.com,
-	peterx@redhat.com,
-	ziy@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
-Date: Wed, 26 Jun 2024 02:49:24 +0000
-Message-Id: <20240626024924.1155558-3-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240626024924.1155558-1-ranxiaokai627@163.com>
-References: <20240626024924.1155558-1-ranxiaokai627@163.com>
+	s=arc-20240116; t=1719370796; c=relaxed/simple;
+	bh=FybX7jlh5zC2JfmBcLWv6sG2UCu6xZEjoTUwjpFLwBg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=khXyaauheEon5Jt9s/9opev9PEwaWDQw2a892F1o69lrvKOtRnD4ryfwRN8qM+2ue96kMyC/UkOsyFaMx16qk6Gu0P258v3d+hfB9l6pK082vZAKkaAYHmNsGvbf5c3mWVghOIoUImEsLphtt0ySwn0BRlDTHWBDJ7uZUy6FTZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=SYMIz9Dr; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1719370793;
+	bh=FybX7jlh5zC2JfmBcLWv6sG2UCu6xZEjoTUwjpFLwBg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=SYMIz9DrpuoPFtFaL+l/ALpvMKOpPj+gRWnvLg1vXoRK+Wjv53dsXgJdDUQnLLg6/
+	 Zu/JFxNTVBZARB1HELrlDFRdP3/FaboffFLqh0OHIBVS8grAXnOhd1K9M6Pxuptpp7
+	 u1OjORTq+b/k2nzeQXLq3f78pQCRo6JFEYn3DOYg=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384))
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 0584566F92;
+	Tue, 25 Jun 2024 22:59:51 -0400 (EDT)
+Message-ID: <0763d386dfd0d4b4a28744bac744b5e823144f0b.camel@xry111.site>
+Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, axboe@kernel.dk, 
+	torvalds@linux-foundation.org, loongarch@lists.linux.dev
+Date: Wed, 26 Jun 2024 10:59:50 +0800
+In-Reply-To: <20240625151807.620812-1-mjguzik@gmail.com>
+References: <20240625151807.620812-1-mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXT0W6gXtm8PInAg--.40265S6
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZF4rKrW3uF43urykAryxKrg_yoW8WFykpr
-	Z3GF9rArWkW3Z8Ar18Xw1qkry8Kr98WF4Utayakw1Iv3ZxXwnrKFW8tw4FyFy7XFyxAan2
-	vayDuF13Za4DuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UMuWJUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiMwQKTGXAmE8lKgABsN
 
-From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+On Tue, 2024-06-25 at 17:18 +0200, Mateusz Guzik wrote:
+> +	if ((sx->flags & (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE)) =3D=3D
+> +	=C2=A0=C2=A0=C2=A0 (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE) &&
+> +	=C2=A0=C2=A0=C2=A0 vfs_empty_path(sx->dfd, path)) {
+> =C2=A0		sx->filename =3D NULL;
+> -		return ret;
 
-KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
-pages, which means of any order, but KPF_THP should only be set
-when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
-("mm: thp: support allocation of anonymous multi-size THP"),
-multiple orders of folios can be allocated and mapped to userspace,
-so the folio_test_large() check is not sufficient here,
-replace it with folio_test_pmd_mappable() to fix this.
+AT_STATX_SYNC_TYPE =3D=3D AT_STATX_FORCE_SYNC | AT_STATX_DONT_SYNC but
+AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC obviously contradicts with
+each other.  Thus valid uses of statx won't satisfy this condition.
 
-Also kpageflags is not only for userspace memory but for all valid pfn
-pages,including slab pages or drivers used pages, so the PG_lru and
-is_anon check are unnecessary here.
+And I guess the condition here should be same as the condition in
+SYSCALL_DEFINE5(statx) or am I wrong?
 
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
----
- fs/proc/page.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
-
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 2fb64bdb64eb..3e7b70449c2f 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -146,19 +146,13 @@ u64 stable_page_flags(const struct page *page)
- 		u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
- 	else
- 		u |= 1 << KPF_COMPOUND_TAIL;
-+
- 	if (folio_test_hugetlb(folio))
- 		u |= 1 << KPF_HUGE;
--	/*
--	 * We need to check PageLRU/PageAnon
--	 * to make sure a given page is a thp, not a non-huge compound page.
--	 */
--	else if (folio_test_large(folio)) {
--		if ((k & (1 << PG_lru)) || is_anon)
--			u |= 1 << KPF_THP;
--		else if (is_huge_zero_folio(folio)) {
-+	else if (folio_test_pmd_mappable(folio)) {
-+		u |= 1 << KPF_THP;
-+		if (is_huge_zero_folio(folio))
- 			u |= 1 << KPF_ZERO_PAGE;
--			u |= 1 << KPF_THP;
--		}
- 	} else if (is_zero_pfn(page_to_pfn(page)))
- 		u |= 1 << KPF_ZERO_PAGE;
- 
--- 
-2.15.2
-
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
