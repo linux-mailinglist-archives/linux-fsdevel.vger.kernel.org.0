@@ -1,57 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-22539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44557918EB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 20:41:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2DC918ECD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 20:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9DF6B21408
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 18:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7839A2832C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 18:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6EE190687;
-	Wed, 26 Jun 2024 18:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1940190066;
+	Wed, 26 Jun 2024 18:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRCEHB39"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWY+gloX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF2E18FC85;
-	Wed, 26 Jun 2024 18:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFAB33C5;
+	Wed, 26 Jun 2024 18:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719427270; cv=none; b=FqKvgHkz8bHT6E8n4MA1KAZgI1JVkjg1oU/3+o4wfi2kuNm7xK4f0jRlXA14lHKhXy3KD0BvPnshe41/Qln76YBGwsM3SxyA9F8P9dhxncZNyS26LDNs4L58uYbtCmTZMQhbKkm9x5xM7y0VGIBVl22KzGc3dFlcXfKH/4OKTE4=
+	t=1719427692; cv=none; b=jYBRd86gjZYHm4mZ70r2e01cXb3k28otF9580ujcn5z5sFweg8X2BryUF3b9uePQevl04DfPOS/A8+PdDqZNXSrU72Ltqfp5YvAwKUahiuFzgucvlSkZ4yDatE/U1x+sBADSTUTmJyw5btxVrZblarhEziMiPAMvojWxaB8VJ94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719427270; c=relaxed/simple;
-	bh=P15pVHpQBQLCg8IsjhfmV7XSADkHliiKfTQZGsJMbMI=;
+	s=arc-20240116; t=1719427692; c=relaxed/simple;
+	bh=MXyRv2/EuUiRnqhiVTr61Ncqv5aY90G16hLqfEyeGDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZbRwrPZDhE/uLxDnAkn/qjtDrHGjeKA2LplFnzYsK58cn6QHbkQnLNquJ5eq1OK/+m38o4nrj7DKnia5Xa9kRXmmNxpf913vCoR11eJYGSeKKBpWmf1vyvmYpadeb4bOoTD7bgutOplwQDi9ui3GXvLZ76IRUT58R31w/p39tV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRCEHB39; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7369C116B1;
-	Wed, 26 Jun 2024 18:41:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7iWHIhmaSB0c1OznyQdNU/ZKssHmbpsCreyJjDBl0MzhzRA4GsKnINCNAFcSrb1HGQ0eY1jXOl4410HM2PoTdKdQ4NtHasvz558d9WqG/lS+bDollb1VWXM8Q8htQWTYf2iwC3eMim9PWFizsYAOHfYVpK4KJ8F8C19QULjA6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWY+gloX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803A9C116B1;
+	Wed, 26 Jun 2024 18:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719427270;
-	bh=P15pVHpQBQLCg8IsjhfmV7XSADkHliiKfTQZGsJMbMI=;
+	s=k20201202; t=1719427691;
+	bh=MXyRv2/EuUiRnqhiVTr61Ncqv5aY90G16hLqfEyeGDc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sRCEHB39kZ1Bg4xlDyS4eI4v92uj/sSgG6mtRnAGTTIosAesliDDP4Od1abUUxmkz
-	 9DsOo1aas8NVBGdnDbrbBiG23d8aaXVNuHGfUxM+mxVbCr0UfaJCWzv3Yl/RNDfPss
-	 P3436S5tIZN0HWEPDDMhS51KeG/20LrKewgKjwiG3zWy27pkkYlvcL3WqeQ27CTfQ7
-	 tJgrufj8HR3SuebNH/h/c16s60Mgc3hNsXEAjW4IpWblRKLDDbDjKF4DXNwd3Kb9UE
-	 lmcS47aWXZUvdw00BqLzqtd0uDv64aL+Sx99RMJuhjz7YR/cuSdHKVIuD4j7drdvnN
-	 WVbhc/JrpuNlA==
-Date: Wed, 26 Jun 2024 20:41:06 +0200
+	b=JWY+gloX1tgUFyZWAI3YnonC4fKMGtbEvXQzke019LYMYyEW3dfLtBq2yQ+/zYkIR
+	 r05Hl50V7te5V+pKcdOe/HIljDgZQDdqOW+lB5AqUwrMNF7me6N1CHyd/TnAiC0/P0
+	 VBxH7vuPAViIH+8UK5Uakez8AjZR/XJ9A6h99UfvWtLjO+cKy1QYPUti61jZKoABN7
+	 ugu3VDEr3fBPabliKF9l62A7aOc7Lb17Cqjxjupzzf8uH9U7ZaIiN41Wa9AQPx70zP
+	 n9EKUoskgG0gWx2VnLqp/8FpHHIiyQqQNXyRn7ZDW5kKDAAKvtB6uHU7eGtxe6jQDt
+	 leCY6mhctLaig==
+Date: Wed, 26 Jun 2024 20:48:08 +0200
 From: Alejandro Colomar <alx@kernel.org>
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
 	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
-Subject: Re: [PATCH v2 0/2] man-pages: add documentation for
+Subject: Re: [PATCH v3 0/2] man-pages: add documentation for
  statmount/listmount
-Message-ID: <gsfbaxnh7blhcldfbnhup4wqb2e6gsccpgy4aoyglohvwkoly5@fcctrxviaspy>
-References: <cover.1719417184.git.josef@toxicpanda.com>
- <t6z4z33wkaf2ufqzt4dtkpw2xdjrr67pm5p5leikj3uj3ahhkg@jzssz7gcv2h5>
- <20240626180434.GA3370416@perftesting>
+Message-ID: <zg4fe5xw3gp5tvrcrp5yk2e4ogkmrzv3q3omh3c33ybbfbczib@ev5vhgjjljec>
+References: <cover.1719425922.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,12 +57,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zjyapvzhyvduedj7"
+	protocol="application/pgp-signature"; boundary="r2ldyc6l75eqxkt6"
 Content-Disposition: inline
-In-Reply-To: <20240626180434.GA3370416@perftesting>
+In-Reply-To: <cover.1719425922.git.josef@toxicpanda.com>
 
 
---zjyapvzhyvduedj7
+--r2ldyc6l75eqxkt6
 Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -72,89 +70,159 @@ From: Alejandro Colomar <alx@kernel.org>
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
 	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
-Subject: Re: [PATCH v2 0/2] man-pages: add documentation for
+Subject: Re: [PATCH v3 0/2] man-pages: add documentation for
  statmount/listmount
-References: <cover.1719417184.git.josef@toxicpanda.com>
- <t6z4z33wkaf2ufqzt4dtkpw2xdjrr67pm5p5leikj3uj3ahhkg@jzssz7gcv2h5>
- <20240626180434.GA3370416@perftesting>
+References: <cover.1719425922.git.josef@toxicpanda.com>
 MIME-Version: 1.0
-In-Reply-To: <20240626180434.GA3370416@perftesting>
+In-Reply-To: <cover.1719425922.git.josef@toxicpanda.com>
 
 Hi Josef,
 
-On Wed, Jun 26, 2024 at 02:04:34PM GMT, Josef Bacik wrote:
-> On Wed, Jun 26, 2024 at 07:02:26PM +0200, Alejandro Colomar wrote:
-> > You can
-> >=20
-> > 	$ make lint build check -j8 -k
-> > 	$ make lint build check
-> >=20
-> > to see the full list of failures.
+On Wed, Jun 26, 2024 at 02:21:38PM GMT, Josef Bacik wrote:
+> V2: https://lore.kernel.org/linux-fsdevel/cover.1719417184.git.josef@toxi=
+cpanda.com/
+> V1: https://lore.kernel.org/linux-fsdevel/cover.1719341580.git.josef@toxi=
+cpanda.com/
 >=20
-> I captured the output of
+> v2->v3:
+> - Removed a spurious \t comment in listmount.2 (took me a while to figure=
+ out
+>   why it was needed in statmount.2 but not listmount.2, it's because it l=
+ets you
+>   know that there's a TS in the manpage).
+
+Yep; here's the Makefile relevant rule:
+
+$ grepc -x mk -tr _LINT_man_tbl share/mk/
+share/mk/lint/man/tbl.mk:$(_LINT_man_tbl): %.lint-man.tbl.touch: % $(MK) | =
+$$(@D)/
+	$(info	$(INFO_)GREP		$@)
+	$(HEAD) -n1 <$< \
+	| if $(GREP) '\\" t$$' >/dev/null; then \
+		$(CAT) <$< \
+		| if ! $(GREP) '^\.TS$$' >/dev/null; then \
+			>&2 $(ECHO) "$<:1: spurious '\\\" t' comment:"; \
+			>&2 $(HEAD) -n1 <$<; \
+			exit 1; \
+		fi; \
+	else \
+		$(CAT) <$< \
+		| if $(GREP) '^\.TS$$' >/dev/null; then \
+			>&2 $(ECHO) "$<:1: missing '\\\" t' comment:"; \
+			>&2 $(HEAD) -n1 <$<; \
+			exit 1; \
+		fi; \
+	fi
+	$(TAIL) -n+2 <$< \
+	| if $(GREP) '\\" t$$' >/dev/null; then \
+		>&2 $(ECHO) "$<: spurious '\\\" t' not in first line:"; \
+		>&2 $(GREP) -n '\\" t$$' $< /dev/null; \
+		exit 1; \
+	fi
+	$(TOUCH) $@
+
+Maybe I should expand those error messages to be a little bit more
+clear.
+
+> - Fixed some unbalanced " in both pages
+> - Removed a EE in the nf section which is apparently not needed
+
+You need to do:
+
+=2Enf
+foo
+=2Efi
+=2EEX
+bar
+=2EEE
+
+You cannot nest them.  The following code is wrong (I discovered that
+recently):
+
+=2Enf
+foo
+=2EEX
+bar
+=2EEE
+=2Efi
+
+See this commit:
+
+<https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=3Da=
+911df9e88dedc801bed50eb92c26002729af9c0>
+commit a911df9e88dedc801bed50eb92c26002729af9c0
+Author: Alejandro Colomar <alx@kernel.org>
+Date:   Mon Jun 17 01:18:39 2024 +0200
+
+    man/, share/mk/: Fix nested EX/EE within nf/fi
+   =20
+    EX/EE can't be nested within nf/ni.  The mandoc(1) reports weren't
+    spurious.
+   =20
+    Re-enable the mandoc(1) warnings, and fix the code.
+   =20
+    Fixes: 31203a0c8dbf ("share/mk/: Globally disable two spurious mandoc(1=
+) wa>
+    Link: <https://lists.gnu.org/archive/html/groff/2024-06/msg00019.html>
+    Reported-by: Douglas McIlroy <douglas.mcilroy@dartmouth.edu>
+    Cc: "G. Branden Robinson" <branden@debian.org>
+    Signed-off-by: Alejandro Colomar <alx@kernel.org>
+
+
+> v1->v2:
+> - Dropped the statx patch as Alejandro already took it (thanks!)
+> - Reworked everything to use semantic newlines
+> - Addressed all of the comments on the statmount.2 man page
 >=20
-> make lint build check -j8 -k > out.txt 2>&1
+> Got more of the checks to run so found more issues, fixed those up, but n=
+o big
+> changes.  Thanks,
 
-Hmmm, please do the following steps to have a cleaner log:
+Thanks.  I'll review the patches soon, hopefully.
 
-	## Let's see if the build system itself complains:
-	$ make nothing >out0.txt
-
-	## Skip checkpatch stuff:
-	$ make -t lint-c-checkpatch
-
-	## Make fast stuff that doesn't break:
-	$ make lint build check -j8 -k >/dev/null 2>/dev/null
-
-	## Now log the remaining errors:
-	$ make lint build check >out.txt 2>&1
-
-> and pasted it here
->=20
-> https://paste.centos.org/view/ed3387a9
-
-BTW, you seem to also be missing cppcheck(1), which at least in Debian
-is provided in the cppcheck package.  It also seems to be available in
-Fedora, but I don't know if your system will have it.
-
-> Clang messes up a bunch for a variety of different pages.
-
-I suspect the Clang errors to be due to missing libbsd-dev.
-
-> Also I did hit some mandoc warnings on this series, I'll post a v3 in a m=
-oment
-> with those things fixed.  Thanks,
-
-Thank you!
-
-Have a lovely day!
+Have a lovely night!
 Alex
 
 >=20
 > Josef
+>=20
+> Josef Bacik (2):
+>   statmount.2: New page describing the statmount syscall
+>   listmount.2: New page describing the listmount syscall
+>=20
+>  man/man2/listmount.2 | 111 +++++++++++++++++
+>  man/man2/statmount.2 | 285 +++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 396 insertions(+)
+>  create mode 100644 man/man2/listmount.2
+>  create mode 100644 man/man2/statmount.2
+>=20
+> --=20
+> 2.43.0
+>=20
+>=20
 
 --=20
 <https://www.alejandro-colomar.es/>
 
---zjyapvzhyvduedj7
+--r2ldyc6l75eqxkt6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZ8YMIACgkQnowa+77/
-2zIYWg/+J8BZN3S5dK1pHTeXYOfEUh7fjFdYG73NGjakpQGPWjPAax49hORTP1GB
-Iq6nGvTyBQ/zD2z3wJK1GZFxBJhJ67OeN7RGInp2diNF+VJjYaSyyBM9SX+Mpqa/
-gXye4nh9GXlgE2fLvqpENZxHM3kXcg3JD+yjbL2lFfK8gp6b5I6eq/Fhrjhz7d92
-hrIKL65He0cg8QxreyZ445bvUozhfNn9PlA2gd2YIjKgwFOKds6thGLuXPP329AC
-MDq5cNy+XUBdIV9zIXxpSoPrx6of1HXYjFtTynn3HFFA9OBrqxa7GHSI8JdOiciB
-llRXR4gMEJRoJ8AxInbZ/23OQaTFl62vZFs/nN863a3m1suEW3d2VDCZXyQ3L//U
-g4Xdpst7mj+WCqqBIOM96nbJ9nQ03TI6Y14y9LvXHicxGTscNHymhOXMiNW5cbz7
-8rirq//1LzuhF23jtfxopEQxAfnEkAEb1lCYCv23mVVv95XhJuzmQJQ2d35DiPBf
-/8KzmMCZEGYsE91G1fWFt0YdUra+XnZ/w9MYrofD7R58+M2dLWYYLKLmphkgoOVU
-gBaFELm/NHZ85dJNF8ZRekhr/c6pEUWCqSu20WpswIV5/i4JaiXof+HEheh3kVgo
-D56tQswECNpIl6oUAVxKQ6vfy8QNjMe/90OEJ+FgEMSbEZKybGc=
-=rnn6
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZ8YmgACgkQnowa+77/
+2zLHRBAAjaTtj1/Ym66rGd/gDx+HCqb2DkcnUELoP8INvCLtXqPfA7VhXvmjQ/cc
+W4MKmz316lQYK/u4UiSvTIuato972LgQiF/swefG5UnEYCxSLcDj5RBMuf824Hps
+qiE7LfabMQeMbEImK282rmtniXhD7STiY5MRDYlnloU+0dLnQFY4ukacExHh5wbq
+elYrdAUqMQIATTMaPEyiECzRhRxsTkWU9WhSByOZTSXV7qSKF++ObQadES7ylFZM
+nvBrI8IubnoDMRxC3mDdL1KRQWsINn+hhtEFutjmW1sozB9uqFrOFISOSFSpnEZJ
+RYvil7bhkLalnppUwJg2w6Y1hb0SE7/0d5flKB7LKsIUOVzGZcb8/t6A8H4R4lKw
++KE6vIFwqulIhdONGPX3LcktHrI6bX+3VUxxok6jXBn5ploRbkP2Mgpd+eLEsojH
+Mk0+JP8Dw0MMCXFeMDPxiYQuUqjZEd8XoxA3QD4XyHzaSYmCZu+IBLEg3makBTGX
+Y0LkECBxG5MJF79qF0OWcK2gfafFI/eaoplNR+bGuATvQvkskGoi9KJuzGVpJqVE
+8w1CslMV5qj/L4pW++oG0YOT4b9Ek8kfpUy32Icrgu1JkdA4eKE8N1/HESJuOxVp
+vSfvN1vn6cDKY/oNhGCWLU6CrUl4iz1NfOplF6YTr0Q3GEQAiC8=
+=9a+l
 -----END PGP SIGNATURE-----
 
---zjyapvzhyvduedj7--
+--r2ldyc6l75eqxkt6--
 
