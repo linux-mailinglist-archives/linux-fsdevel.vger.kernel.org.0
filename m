@@ -1,73 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-22511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D83591822A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:18:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9CA91822D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8312865C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18021C233E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0933A1862AA;
-	Wed, 26 Jun 2024 13:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91021186E39;
+	Wed, 26 Jun 2024 13:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfkYJ13z"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fl3agbKg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599D818628D;
-	Wed, 26 Jun 2024 13:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3A71862BB;
+	Wed, 26 Jun 2024 13:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719407780; cv=none; b=XYmKzBswQvblPzKriHlVUEhZsWDEinCAfOs/aIaLJu9rmO+YZyW7F5Ae5Wy0eGt82nOjFQ1BHSxKdYW5lZHe3+GayCceTSGosdljbudH9u2llC37ICrmSxTMR+KWwbiKGhNvxwCzhGu/za9IOou/jduWIIr745pAOTQE/KlRqHg=
+	t=1719407791; cv=none; b=OXiUizLINbLU21K4j9mXzvNWWfZnYeaieQjQPc0rGfF7CsOeWYFmOSVTbJtF+DdJBaVNoW7m0qIXEC6egqBD3pHmeyZJjONzemaXNDpvx3AM/rpjO3jVxQuSEbU7RhVIk1AQlrX439EoAYuXASweri6YEA05VuEZADAZqi6IfSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719407780; c=relaxed/simple;
-	bh=V7D5WN39TEPTg1ZX2xRMHcPRu52TjM3lQojgbcFDHjI=;
+	s=arc-20240116; t=1719407791; c=relaxed/simple;
+	bh=atkpYglgRpg19Eiw/3VSBe0DTTAk3D2dF51fgCmxR04=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ei4rHHR9L43+lmbrRZHJZa0WLCj//13IVgB1znSvACj3ZoGPsLaujMl/mo1rGNizlznMwr5yTA6tkhmQKeUDIRRU3YDSuyhYxEGJEoUn36bNHGbxDkBn/PImppQ3L67JKF+8tn4G4Ld/d3/olF9AZ6BV5iQOr3irBTFKHg7lwys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfkYJ13z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39DF8C2BD10;
-	Wed, 26 Jun 2024 13:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719407780;
-	bh=V7D5WN39TEPTg1ZX2xRMHcPRu52TjM3lQojgbcFDHjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TfkYJ13ztwLMcfMlYnYQ8zXya09i11g0JljVaOOsPtuEuAEMaQvpboKR37dmGH0v3
-	 S/aV/ukLgGe5HEx0Db1GTN8C9j5nVjPjFLTbE0Db5HMHDmUHsgAPfT/5tWC6upzSEM
-	 heWXdMwgYVhS4WaZ1aieD6OCXs8iet+uJDqZC68U40h+WY3HY+DqIoptsdWLdpD5H3
-	 tB7Kr0zM/pCXpsPWcgyKYuuNK3f1H7ixhYxqsxAy3Unaib+0+N2fEZFtdQGc4SUY+7
-	 cl45cSlKZloFF9WZv6MoRSbHvbp7KkmnnxnD89Xn6POoIlzIK++q5G6rdkKrqYaA10
-	 EKdcWGXRECS9g==
-Date: Wed, 26 Jun 2024 15:16:13 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Baokun Li <libaokun@huaweicloud.com>
-Cc: netfs@lists.linux.dev, dhowells@redhat.com, jlayton@kernel.org, 
-	hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com, wozizhi@huawei.com, 
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH RESEND 0/5] cachefiles: some bugfixes for withdraw and
- xattr
-Message-ID: <20240626-ballungszentrum-zugfahrt-b45c1790ed7b@brauner>
-References: <20240522115911.2403021-1-libaokun@huaweicloud.com>
- <4f357745-67a6-4f2e-8d69-2f72dc8a42d0@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FrFb5kwTBfH6PrssWGwy25lfRrF0J1OLA+KcZCtWtGPErdwVyGym5L2Eh4cSn7OklpWV9au/axLBe8QJOmOuQUWcd5vfTjyvVdQmVDEfVn+PMn3w+1EVBNrt5+QoUUbOxyhNY56sglp8vLBR7NwMKTBHNFlEul8yGt+NZQ5iAIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fl3agbKg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=n8inThiMQEz9yjJS5aRivSJNY95ObkUqVgdsqaqITkY=; b=fl3agbKgUPaKUcciG3cBHn0gXs
+	owQBxjR+f/GVXap2MsWCUxXAkC/EKXRhoi8rQ8sSFdHAA8DjbkYioT0VDaFMzsIp24h8Y314aQ7Ni
+	F0M4HAqsmgz9DhvcujLUYS6KOV1qtLRbwGFDcZIyV+aOh+rdK5MWYRr6mgHSOZHh2gEpZEZIjehvD
+	fsEmoQrHfbopHyngwWLzqwLVCDtjOituJap6rTKAuVBzNYnCum99ESXYhTdwfHqey2XHOj9taU8A1
+	QvVLpYwKgn2+rw3oeLxNSiy383OvZxg0Xz2wTVgupcTklTq6M/+v2BxjETptkTzM7b+3qbDshBqTl
+	kgM0bhGw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sMSVe-0000000CLp8-3XHe;
+	Wed, 26 Jun 2024 13:16:26 +0000
+Date: Wed, 26 Jun 2024 14:16:26 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	maple-tree@lists.infradead.org
+Subject: Re: [PATCH v2 2/5] rosebush: Add new data structure
+Message-ID: <ZnwUqpHXGpzK2dEV@casper.infradead.org>
+References: <20240625211803.2750563-1-willy@infradead.org>
+ <20240625211803.2750563-3-willy@infradead.org>
+ <ZntUZjXKBVDuAufy@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4f357745-67a6-4f2e-8d69-2f72dc8a42d0@huaweicloud.com>
+In-Reply-To: <ZntUZjXKBVDuAufy@gallifrey>
 
-On Wed, Jun 26, 2024 at 11:03:10AM GMT, Baokun Li wrote:
-> A gentle ping.
+On Tue, Jun 25, 2024 at 11:36:06PM +0000, Dr. David Alan Gilbert wrote:
+> > +Overview
+> > +========
+> > +
+> > +Rosebush is a hashtable, different from the rhashtable.  It is scalable
+> > +(one spinlock per bucket), resizing in two dimensions (number and size
+> > +of buckets),
+> 
+> Is that old - I thought the cover letter said v2 had fixed size buckets?
 
-Hm? That's upstream in
+Thanks.
 
-commit a82c13d29985 ('Merge patch series "cachefiles: some bugfixes and cleanups for ondemand requests"')
+ Rosebush is a hashtable, different from the rhashtable.  It is scalable
+-(one spinlock per bucket), resizing in two dimensions (number and size
+-of buckets), and concurrent (can be iterated under the RCU read lock).
+-It is designed to minimise dependent cache misses, which can stall a
+-modern CPU for thousands of instructions.
++(one spinlock per bucket), resizing (number of buckets), and concurrent
++(can be iterated under the RCU read lock).  It is designed to minimise
++dependent cache misses, which can stall a modern CPU for thousands
++of instructions.
+
+
 
