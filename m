@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-22474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF68B917766
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 06:33:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D330E91776F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 06:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB96E1C2120D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 04:33:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A3A5B23144
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 04:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5117F15885E;
-	Wed, 26 Jun 2024 04:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F377013AD28;
+	Wed, 26 Jun 2024 04:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DT6ENWHU"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="koPQBPRr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE20014F9E0;
-	Wed, 26 Jun 2024 04:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0DA13A404;
+	Wed, 26 Jun 2024 04:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719376277; cv=none; b=R6ffyLSxZx+G59Wj4yBQnFSh3lAP1k4e1vf0mn/MRfhWh0fp3wdDyvgtZg2iRxB6+lFWZb/sLiZG3ZHYNaM7+FFLME7STYnKLRGZ+49mMHT0319Q8111dpk108IlrJjcT6yV7Ash3OB67euJRD7oUFrjw9UJF0fpi09jX4ABpik=
+	t=1719376430; cv=none; b=carOJMLEfYAbRlBfP+8se19E8Z0i3Pt94WUDstXuop1bngcQxHM6xz7aAb9VXaBA4tbW24+taslo/Ggl7l8ZSxDjpY9pU+5cDVnJSwu9T692Xfq9owY4/FUCeo9DARfVVdBuIOZAM6qZfhUWtP3t7+dUOLTVHLD5Frh+OmeFizI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719376277; c=relaxed/simple;
-	bh=RJOeGqax6JoYjAfq9DLPFiimUs5ZHcSto1H9DnAKfNw=;
+	s=arc-20240116; t=1719376430; c=relaxed/simple;
+	bh=5FBDKrgKM4bBLhlI29ixgHfey9ibUTQTSdkgIvJzWeU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WIR/7Pn8g746wce7drb3C2y8M140316E85vqeLSJmPz3ELO6mJzpNUHFkyI3wao+Ie9XzR5PAK6lq70JybHvOmwlCPWkM+ngdi7Sc9PoZjzsy2ON4nvAekN3mj6Fdh34OTQ8kr37WbZulF5UsYmzdBhOzBdFUFDQnVU/64z9OGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DT6ENWHU; arc=none smtp.client-ip=220.197.31.4
+	 MIME-Version; b=cRL6pgWQmPWxH+4nTS6JtQDq39hqN1OrDliQUlGDYIQ5q/q6mo8qs419PgOfFPw3437lTo8J6KpI98wSNMZv1F15e3SzRdj8uDne0P30GdOgxUkRFpYAmsF3Xi9XLIrXsZBJNZfSBjz+lh6K3h1mEqD9+4PN+8OlpEUyJh0wXN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=koPQBPRr; arc=none smtp.client-ip=45.254.50.219
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=AFaTt
-	yuJ68VmYg9yBKPjPkv3Q9fuc+z8xPwml6AHFaU=; b=DT6ENWHUDa2SOzgt1IuX0
-	UnHTzzGhT/aaxYXllqIyF3TURBb4c70Mr/pe8BbpuITLdkLKXZMPU5QtqIRKQ5HS
-	V/JkZPR6GZIKpkSNpzJQxdBfiIy28JAfMbhXILjHiWzxSdijpwomRiYGd/aLGpkO
-	zGFM6oYTGIWcEpzYxEtl3o=
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ZLi/E
+	p1EGjtsxREnkh4R2fNt0gBVDDmLr+/Dsf0yMRs=; b=koPQBPRrfCTOqxjhum2kl
+	CsAU0Z3v5X6RZMemadmCTtbsuoy8uCrttQPc/+6Tk8As5Sq3AHhrvgmyPyxwXTQW
+	AftaK2fDnl90WQiHgCVvNBt4Rofh4Z5cE7SFNxiVu/sysIqG1651k4oByHLdhdLz
+	xk8Ub7WQjGfWgqYkTsV2Nk=
 Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g2-0 (Coremail) with SMTP id _____wDnr+ZSmXtm99EUAg--.42408S4;
-	Wed, 26 Jun 2024 12:30:12 +0800 (CST)
+	by gzga-smtp-mta-g0-5 (Coremail) with SMTP id _____wD3fyTomXtmoLEPAg--.31175S4;
+	Wed, 26 Jun 2024 12:32:41 +0800 (CST)
 From: ran xiaokai <ranxiaokai627@163.com>
 To: ziy@nvidia.com
 Cc: yang.yang29@zte.com.cn,
@@ -54,12 +54,12 @@ Cc: yang.yang29@zte.com.cn,
 	svetly.todorov@memverge.com,
 	vbabka@suse.cz,
 	willy@infradead.org
-Subject: Re: [PATCH 1/2] mm: Constify folio_order()/folio_test_pmd_mappable()
-Date: Wed, 26 Jun 2024 04:30:10 +0000
-Message-Id: <20240626043010.1156065-1-ranxiaokai627@163.com>
+Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
+Date: Wed, 26 Jun 2024 04:32:40 +0000
+Message-Id: <20240626043240.1156168-1-ranxiaokai627@163.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <D29MAAR3YBI6.3G6PVIR1SJACO@nvidia.com>
-References: <D29MAAR3YBI6.3G6PVIR1SJACO@nvidia.com>
+In-Reply-To: <D29M7U8SPSYJ.39VMTRSKXW140@nvidia.com>
+References: <D29M7U8SPSYJ.39VMTRSKXW140@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,73 +67,80 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnr+ZSmXtm99EUAg--.42408S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar1fuF45GryfKw4rGr1xKrg_yoW5JF48pF
-	yDCFn7tFW0krW5uryDta1IyryYq39FgFWjyFy7Kry7Jas8t3sF93Wq9w1YkFn3GrZ7CF1I
-	ga17WFyYga4UJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUk73kUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/xtbB0hYKTGWXym5ASQAAsd
+X-CM-TRANSID:_____wD3fyTomXtmoLEPAg--.31175S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AF1kuFWrAw4xtF18KrWfKrg_yoW8ury5pr
+	WrGasrAr4kKF98urn2qFnFyry0q3s8WF4Uta4ak3W3Z3ZrZr92kFWjvw1FkFnrZryxAws2
+	va1DWFy2vas8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUvksDUUUUU=
+X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqRoKTGVOBGSxdwACs6
 
 > On Tue Jun 25, 2024 at 10:49 PM EDT, ran xiaokai wrote:
 > > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 > >
-> > Constify folio_order()/folio_test_pmd_mappable().
-> > No functional changes, just a preparation for the next patch.
+> > KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
+> > pages, which means of any order, but KPF_THP should only be set
+> > when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
+> > ("mm: thp: support allocation of anonymous multi-size THP"),
+> > multiple orders of folios can be allocated and mapped to userspace,
+> > so the folio_test_large() check is not sufficient here,
+> > replace it with folio_test_pmd_mappable() to fix this.
+> >
+> > Also kpageflags is not only for userspace memory but for all valid pfn
+> > pages,including slab pages or drivers used pages, so the PG_lru and
+> > is_anon check are unnecessary here.
 > 
-> What warning/error are you seeing when you just apply patch 2? I wonder why it
-> did not show up in other places. Thanks.
+> But THP is userspace memory. slab pages or driver pages cannot be THP.
 
-fs/proc/page.c: In function 'stable_page_flags':
-fs/proc/page.c:152:35: warning: passing argument 1 of 'folio_test_pmd_mappable' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-  152 |  else if (folio_test_pmd_mappable(folio)) {
-      |                                   ^~~~~
-In file included from include/linux/mm.h:1115,
-                 from include/linux/memblock.h:12,
-                 from fs/proc/page.c:2:
-include/linux/huge_mm.h:380:58: note: expected 'struct folio *' but argument is of type 'const struct folio *'
-  380 | static inline bool folio_test_pmd_mappable(struct folio *folio)
-
-u64 stable_page_flags(const struct page *page)
-{
-	const struct folio *folio; // the const definition causes the warning
-	...
-}
-
-As almost all the folio_test_XXX(flags) have converted to received
-a const parameter, it is Ok to also do this for folio_order()?
-
+I see, the THP naming implies userspace memory. Not only compound order.
+ 
 > >
 > > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 > > ---
-> >  include/linux/huge_mm.h | 2 +-
-> >  include/linux/mm.h      | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >  fs/proc/page.c | 14 ++++----------
+> >  1 file changed, 4 insertions(+), 10 deletions(-)
 > >
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index 2aa986a5cd1b..8d66e4eaa1bc 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -377,7 +377,7 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
-> >   * folio_test_pmd_mappable - Can we map this folio with a PMD?
-> >   * @folio: The folio to test
-> >   */
-> > -static inline bool folio_test_pmd_mappable(struct folio *folio)
-> > +static inline bool folio_test_pmd_mappable(const struct folio *folio)
-> >  {
-> >  	return folio_order(folio) >= HPAGE_PMD_ORDER;
-> >  }
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 9a5652c5fadd..b1c11371a2a3 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -1105,7 +1105,7 @@ static inline unsigned int compound_order(struct page *page)
-> >   *
-> >   * Return: The order of the folio.
-> >   */
-> > -static inline unsigned int folio_order(struct folio *folio)
-> > +static inline unsigned int folio_order(const struct folio *folio)
-> >  {
-> >  	if (!folio_test_large(folio))
-> >  		return 0;
+> > diff --git a/fs/proc/page.c b/fs/proc/page.c
+> > index 2fb64bdb64eb..3e7b70449c2f 100644
+> > --- a/fs/proc/page.c
+> > +++ b/fs/proc/page.c
+> > @@ -146,19 +146,13 @@ u64 stable_page_flags(const struct page *page)
+> >  		u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
+> >  	else
+> >  		u |= 1 << KPF_COMPOUND_TAIL;
+> > +
+> Unnecessary new line.
+
+yes, will fix.
+
+> 
+> >  	if (folio_test_hugetlb(folio))
+> >  		u |= 1 << KPF_HUGE;
+> > -	/*
+> > -	 * We need to check PageLRU/PageAnon
+> > -	 * to make sure a given page is a thp, not a non-huge compound page.
+> > -	 */
+> > -	else if (folio_test_large(folio)) {
+> > -		if ((k & (1 << PG_lru)) || is_anon)
+> > -			u |= 1 << KPF_THP;
+> > -		else if (is_huge_zero_folio(folio)) {
+> > +	else if (folio_test_pmd_mappable(folio)) {
+> > +		u |= 1 << KPF_THP;
+> 
+> lru and anon check should stay.
+
+thanks, will fix.
+
+> 
+> > +		if (is_huge_zero_folio(folio))
+> >  			u |= 1 << KPF_ZERO_PAGE;
+> > -			u |= 1 << KPF_THP;
+> > -		}
+> >  	} else if (is_zero_pfn(page_to_pfn(page)))
+> >  		u |= 1 << KPF_ZERO_PAGE;
+> >  
+> 
+> -- 
+> Best Regards,
+> Yan, Zi
 
 
