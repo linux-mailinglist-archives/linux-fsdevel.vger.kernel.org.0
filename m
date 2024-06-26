@@ -1,85 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-22467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F28591768E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 05:00:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A5B917692
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 05:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC816283304
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 03:00:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9CD1F22F95
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 03:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB0045BFC;
-	Wed, 26 Jun 2024 02:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="SYMIz9Dr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C526142AB3;
+	Wed, 26 Jun 2024 03:03:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from xry111.site (xry111.site [89.208.246.23])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C1B33DD;
-	Wed, 26 Jun 2024 02:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C56811CB8;
+	Wed, 26 Jun 2024 03:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719370796; cv=none; b=olZCxBeMX+ETP88EkByqIupyh9pwl446fWdg5I76IpWaxACsygxJVClo1+dgR1NKSLLRQySqZlmxP8cuerFHnLtT/8jWUNB4x/t3hepq9GfaVYH6YMzhR/9/OXPzbDj7ZirC/D1uV203hJDePMtXJJFckCSmSMFMbGCa55qg4M4=
+	t=1719371002; cv=none; b=RAks4FttbROe+oClZkR8w2J7/1Jm0k6l5ezbv20HxQekQHAUCCVTNdTGk2YsYyLpF776T5QzZYlTkK2GVIrYY76BMzzas2rMjlYkXUuF1O2bgq6zsFDdXZ5cedLu2htgJhrs4XK5JLMeOxUrV7H31P0PlORfXOZJJkCJdei37NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719370796; c=relaxed/simple;
-	bh=FybX7jlh5zC2JfmBcLWv6sG2UCu6xZEjoTUwjpFLwBg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=khXyaauheEon5Jt9s/9opev9PEwaWDQw2a892F1o69lrvKOtRnD4ryfwRN8qM+2ue96kMyC/UkOsyFaMx16qk6Gu0P258v3d+hfB9l6pK082vZAKkaAYHmNsGvbf5c3mWVghOIoUImEsLphtt0ySwn0BRlDTHWBDJ7uZUy6FTZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=SYMIz9Dr; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1719370793;
-	bh=FybX7jlh5zC2JfmBcLWv6sG2UCu6xZEjoTUwjpFLwBg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SYMIz9DrpuoPFtFaL+l/ALpvMKOpPj+gRWnvLg1vXoRK+Wjv53dsXgJdDUQnLLg6/
-	 Zu/JFxNTVBZARB1HELrlDFRdP3/FaboffFLqh0OHIBVS8grAXnOhd1K9M6Pxuptpp7
-	 u1OjORTq+b/k2nzeQXLq3f78pQCRo6JFEYn3DOYg=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384))
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 0584566F92;
-	Tue, 25 Jun 2024 22:59:51 -0400 (EDT)
-Message-ID: <0763d386dfd0d4b4a28744bac744b5e823144f0b.camel@xry111.site>
-Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, axboe@kernel.dk, 
-	torvalds@linux-foundation.org, loongarch@lists.linux.dev
-Date: Wed, 26 Jun 2024 10:59:50 +0800
-In-Reply-To: <20240625151807.620812-1-mjguzik@gmail.com>
-References: <20240625151807.620812-1-mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1719371002; c=relaxed/simple;
+	bh=czBM482pH9l++pF3ssBG1WFBJnTvb536DFZk7EolOfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u8u9UnZqXdG9tiKWPz6MY8ig5jXvhaHk+BWtd0kmD0iS02Z73sTnk0tr6FsYC/I1dWG/uPdF9HQjVJZyNaYcXYQ2DYaYpHreZ8XLIfyxhWjhBW9UNDzmUGbql7Df2CSldNYs4Q/uq3nIjZVx1KPnEtFlxfUz2Jof4VH2q5nfTjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W862Z6wDwz4f3kvL;
+	Wed, 26 Jun 2024 11:03:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 1C0F41A0572;
+	Wed, 26 Jun 2024 11:03:15 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAXQn7uhHtmOLVmAQ--.51004S3;
+	Wed, 26 Jun 2024 11:03:14 +0800 (CST)
+Message-ID: <4f357745-67a6-4f2e-8d69-2f72dc8a42d0@huaweicloud.com>
+Date: Wed, 26 Jun 2024 11:03:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 0/5] cachefiles: some bugfixes for withdraw and
+ xattr
+To: netfs@lists.linux.dev, dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
+ zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
+ wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
+References: <20240522115911.2403021-1-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <20240522115911.2403021-1-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgAXQn7uhHtmOLVmAQ--.51004S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF13WrW3AryDKrWxAF18Krg_yoW8WrW5pF
+	WakF43ArykW397Grn3Jr45JF1fA3yfJF4vgw17Wr1UAwn5Xr1YvF4Iyr15ZFyUCrn7tws3
+	t3WjgFy7Ww1UA3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAFBV1jkHn9PQADsW
 
-On Tue, 2024-06-25 at 17:18 +0200, Mateusz Guzik wrote:
-> +	if ((sx->flags & (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE)) =3D=3D
-> +	=C2=A0=C2=A0=C2=A0 (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE) &&
-> +	=C2=A0=C2=A0=C2=A0 vfs_empty_path(sx->dfd, path)) {
-> =C2=A0		sx->filename =3D NULL;
-> -		return ret;
+A gentle ping.
 
-AT_STATX_SYNC_TYPE =3D=3D AT_STATX_FORCE_SYNC | AT_STATX_DONT_SYNC but
-AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC obviously contradicts with
-each other.  Thus valid uses of statx won't satisfy this condition.
+On 2024/5/22 19:59, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+>
+> Hi all!
+>
+> There are some fixes for some cachefiles generic processes. We found these
+> issues when testing the on-demand mode, but the non-on-demand mode is also
+> involved. The following is a brief overview of the patches, see the patches
+> for more details.
+>
+> Patch 1-2: Add fscache_try_get_volume() helper function to avoid
+> fscache_volume use-after-free on cache withdrawal.
+>
+> Patch 3: Fix cachefiles_lookup_cookie() and cachefiles_withdraw_cache()
+> concurrency causing cachefiles_volume use-after-free.
+>
+> Patch 4-5: Propagate error codes returned by vfs_getxattr() to avoid
+> endless loops.
+>
+> Comments and questions are, as always, welcome.
+>
+> Thanks,
+> Baokun
+>
+> Baokun Li (5):
+>    netfs, fscache: export fscache_put_volume() and add
+>      fscache_try_get_volume()
+>    cachefiles: fix slab-use-after-free in fscache_withdraw_volume()
+>    cachefiles: fix slab-use-after-free in cachefiles_withdraw_cookie()
+>    cachefiles: correct the return value of
+>      cachefiles_check_volume_xattr()
+>    cachefiles: correct the return value of cachefiles_check_auxdata()
+>
+>   fs/cachefiles/cache.c          | 45 +++++++++++++++++++++++++++++++++-
+>   fs/cachefiles/volume.c         |  1 -
+>   fs/cachefiles/xattr.c          |  5 +++-
+>   fs/netfs/fscache_volume.c      | 14 +++++++++++
+>   fs/netfs/internal.h            |  2 --
+>   include/linux/fscache-cache.h  |  6 +++++
+>   include/trace/events/fscache.h |  4 +++
+>   7 files changed, 72 insertions(+), 5 deletions(-)
+>
 
-And I guess the condition here should be same as the condition in
-SYSCALL_DEFINE5(statx) or am I wrong?
+-- 
+With Best Regards,
+Baokun Li
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
 
