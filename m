@@ -1,223 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-22527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C7B918665
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 17:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A02991873C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 18:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33D241F22D16
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C11528759D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 16:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174DFEEDD;
-	Wed, 26 Jun 2024 15:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6719D18EFE4;
+	Wed, 26 Jun 2024 16:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="NkVG6Tr6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YPv+SDn7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180C618EFC0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 15:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2271118E758;
+	Wed, 26 Jun 2024 16:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719417414; cv=none; b=QbHX1/4vxHqtuxp3+QbmqHRaCWqI44+uGNVQOT/B9+3LnSP5V8eqZZk1DWWMfamvPITV+U6N392NfQjxAdwzcOJjpCmbaxQUzZDEBXQrGKv0wJcRkFDI3biiS9CPs7++b+uDcIewHOLmVrSlB7yDLTGW8FuLJNHIggffFPTWFUA=
+	t=1719418986; cv=none; b=UkE6E3Lto6R3TbZgyOqb1qBOqRybfpZrVT1w4nntNkT7CYKGLgqQ7dYU1AVJkVdTJ7JPh5gMKzoY2+MtzK0p/ItD7bMFGwvVivV3uR+ZkSthMRKUAtJCnrOewnbN0OpuizKfl6EZxnNg6O/1CJ3HWC3nFCOdx6idk1CkwInBcAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719417414; c=relaxed/simple;
-	bh=A+yHe0ceQT8ZgEDbc5qYM4e9GtmAta2qO4IpV3DPLps=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GMRBJk/zQjf199zXOMR0Y32sDwLXxvRb2vpvwoxSGSWwHTMUK6+Zk8CvbUVHE6yrtBQyyWrjqOAQnGwF+DPiKwM4OkrT94dk3pDD2MTWZlUVj/qdytk43HGbD8kilP1Y+t+mF3jCldmCcMIllqyHzRgWBsVgJPCA8Lz3H6BdvwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=NkVG6Tr6; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-79c06c08149so102298785a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 08:56:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719417412; x=1720022212; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=10WXgcGJ8V7XA6aqCXiHxcPSg/sBDgQ5k80z5AUhucU=;
-        b=NkVG6Tr6MjUZZ8id+RnGX9vYacVtwwWT/OuksXaOpH3B6tknyxK6HkzAP53eAk9tpF
-         BcA3ZlfRchfDFu92idUV9R8QwOorl7IdiOy66kss1VVI7YMLkLCrAATxNW/3KbvfZWBW
-         Qvfz1kgZ+pRVa2E0ov7XsZxBPdAivTioN4m7l8leS1FYjLM040D6RjSdWdRrY2FdU1bA
-         RifDsEYfaDt4LpN4OthiJfrDUkZALLayjhiQ8fUmBmTUgncz7TMxixK1/h+HcO2qfq17
-         88cKJOwdy4l1IpRmB6JRnTFykKYoHmXuHm9jA9zueyGclA1PR7qxSQqBlJ0mZ8+L0/n+
-         Q/cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719417412; x=1720022212;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=10WXgcGJ8V7XA6aqCXiHxcPSg/sBDgQ5k80z5AUhucU=;
-        b=vJAx73wV0WyisPVu21+koBrmUhm6vGkMhgPzSOh+p1qbGyXC6bCB0H5ej/Vx/F/rBZ
-         bJJVZnSelzI9PBS7qs511ma2CH9Fi3WETVD29R43tPw/lzkUmGkn1YWc+/uvwu8F6fwz
-         hAlsRlQx/usVHVNeMKiiYpn+yoM+CA7kI+7KqlzMDEHk79BwOCpq7CwTx+PvI6CSeC0G
-         nIyJOXaHXZvdWuNa/+LRGM5bZp4FFi14ICuPtwG3yozzjumcxMjX1SU28sel6zorEJy3
-         oJUa8Q5+kKRUK+YdM3iJ1NzTSBTkRDB+TxreKnNxUplWgYsxufkYoe3Pz6iRtlFNTV5Z
-         oEgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/AA7y8QBfUWb3dDDKrx54OHdmUfL+pRfYS915Y2TqQrXBaPNa8JDUK4gwIeWemwtemyGiCEeuQjiQHKvMPsVyvu8mXqboU1gtmuzVKA==
-X-Gm-Message-State: AOJu0YzGdAMl5/z2DIE9dStCyqlz/OjaNVfvXwmZvDzZP1OmfwDkhvkX
-	0ywIPttfkOAkBHegbNS/dVpdySlZdmi/u8zmyni1xqBnU0u4OHctuJrSJhFAZYtdwazH5JlZ7wo
-	N
-X-Google-Smtp-Source: AGHT+IHChebJBTl3JTXJ9gtlPz1P7nas/qckMxRBEzsORxOm2x2GIZaGeDtCJhf/VIRcG/UJhGfCyw==
-X-Received: by 2002:a0c:cb08:0:b0:6b4:fbec:952f with SMTP id 6a1803df08f44-6b53bcd3e9bmr117767176d6.25.1719417411922;
-        Wed, 26 Jun 2024 08:56:51 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ef32f9csm55814036d6.91.2024.06.26.08.56.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 08:56:51 -0700 (PDT)
-From: Josef Bacik <josef@toxicpanda.com>
-To: alx@kernel.org,
-	linux-man@vger.kernel.org,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	mszeredi@redhat.com,
-	kernel-team@fb.com
-Subject: [PATCH v2 2/2] listmount.2: New page describing the listmount syscall
-Date: Wed, 26 Jun 2024 11:56:08 -0400
-Message-ID: <fd4fc27f121664feeabb891990c19d173603b01e.1719417184.git.josef@toxicpanda.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1719417184.git.josef@toxicpanda.com>
-References: <cover.1719417184.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1719418986; c=relaxed/simple;
+	bh=6gFjRqnmAlZ+KmWeNakm51Ebba0HMPjTrguhw4sm/E0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ne7ONDYM4siVWJW6R29+PHHY34RqM3SYiY+qmdU/K7275DL6Haq7Pw3dMhSGDmEQGvWnoe1PwlgFqMzYM/XnShP4PP/2kYp87/M0CzTgqYFhU4nSuXQCParwq7W9sLQhCTLFhfYrdq++ifpdsO7HwYSV+nl8MYHaDRJK/ptREXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YPv+SDn7; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719418984; x=1750954984;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6gFjRqnmAlZ+KmWeNakm51Ebba0HMPjTrguhw4sm/E0=;
+  b=YPv+SDn7/EhbHb3HgVmYD1gHLPuUSgtsAH/+SVu0IMUDFIzLBUn+NavU
+   DeNMJQxUwS8PREfnIyBJRjHNsWle//Hr2XzOw8crUDtGkLS/WBWSDimcm
+   j878TWe3w7agPSbOeFSqmCd1qCzvUVAtTcP0WVB4su1zNSeNmC1gjcFrf
+   fuN3sBkLnQI+1iiHXvA8qCtwWJU+/8zisrVs4sxnm6Qb41m4n4oP0iqo4
+   hMyfCVynLvrCQDfcTJAkSDuCNb0RZ3jn8/FTWG6dR9d8lZM4LpOgd53sS
+   ORus+ZB/O/FjJHsJv5sp9BCIJbVTf9qLT+ZJWn3jkHm1KJxyTUJYC2Jlq
+   w==;
+X-CSE-ConnectionGUID: EB1HoWh4R6ikNx7AIbO69A==
+X-CSE-MsgGUID: Eul6hx8DTPWticHZs8pJhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16651449"
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="16651449"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:23:03 -0700
+X-CSE-ConnectionGUID: aqVxw+UeSm2pAi9hLFlh0g==
+X-CSE-MsgGUID: 49XKsDlLR0O245zfXBJvQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="43930121"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 26 Jun 2024 09:23:00 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMVQ9-000FNi-1r;
+	Wed, 26 Jun 2024 16:22:57 +0000
+Date: Thu, 27 Jun 2024 00:21:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: ran xiaokai <ranxiaokai627@163.com>, akpm@linux-foundation.org,
+	willy@infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, vbabka@suse.cz,
+	svetly.todorov@memverge.com, ran.xiaokai@zte.com.cn,
+	baohua@kernel.org, ryan.roberts@arm.com, peterx@redhat.com,
+	ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable
+ compound pages
+Message-ID: <202406262300.iAURISyJ-lkp@intel.com>
+References: <20240626024924.1155558-3-ranxiaokai627@163.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626024924.1155558-3-ranxiaokai627@163.com>
 
-Add some documentation for the new listmount syscall.
+Hi ran,
 
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
----
- man/man2/listmount.2 | 114 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100644 man/man2/listmount.2
+kernel test robot noticed the following build errors:
 
-diff --git a/man/man2/listmount.2 b/man/man2/listmount.2
-new file mode 100644
-index 000000000..4e046ef39
---- /dev/null
-+++ b/man/man2/listmount.2
-@@ -0,0 +1,114 @@
-+'\" t
-+.\" Copyright (c) 2024 Josef Bacik <josef@toxicpanda.com>
-+.\"
-+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-+.\"
-+.TH listmount 2 (date) "Linux man-pages (unreleased)"
-+.SH NAME
-+listmount \- get a list of mount ID's
-+.SH LIBRARY
-+Standard C library
-+.RI ( libc ", " \-lc )
-+.SH SYNOPSIS
-+.nf
-+.BR "#include <linux/mount.h>" "  /* Definition of struct mnt_id_req constants */"
-+.B #include <unistd.h>
-+.P
-+.BI "int syscall(SYS_listmount, struct mnt_id_req * " req ,
-+.BI "            u64 * " mnt_ids ", size_t " nr_mnt_ids ,
-+.BI "            unsigned long " flags " );
-+.P
-+.B #include <linux/mount.h>
-+.P
-+.EX
-+.B struct mnt_id_req {
-+.BR "    __u32 size;" "    /* sizeof(struct mnt_id_req) */"
-+.BR "    __u64 mnt_id;" "  /* The parent mnt_id being searched */"
-+.BR "    __u64 param;" "   /* The next mnt_id we want to find */"
-+.B };
-+.EE
-+.fi
-+.P
-+.IR Note :
-+glibc provides no wrapper for
-+.BR listmount (),
-+necessitating the use of
-+.BR syscall (2).
-+.SH DESCRIPTION
-+To access the mounts in your namespace,
-+you must have CAP_SYS_ADMIN in the user namespace.
-+.P
-+This function returns a list of mount IDs under the
-+.BR req.mnt_id .
-+This is meant to be used in conjuction with
-+.BR statmount (2)
-+in order to provide a way to iterate and discover mounted file systems.
-+.SS The mnt_id_req structure
-+.I req.size
-+is used by the kernel to determine which struct
-+.I mnt_id_req
-+is being passed in,
-+it should always be set to sizeof(struct mnt_id req).
-+.P
-+.I req.mnt_id
-+is the parent mnt_id that we will list from,
-+which can either be
-+.B LSMT_ROOT
-+which means the root mount of the current mount namespace,
-+or a mount ID obtained from either
-+.BR statx (2)
-+using
-+.B STATX_MNT_ID_UNIQUE
-+or from
-+.BR listmount (2) .
-+.P
-+.I req.param
-+is used to tell the kernel what mount ID to start the list from.
-+This is useful if multiple calls to
-+.BR listmount (2)
-+are required.
-+This can be set to the last mount ID returned + 1 in order to
-+resume from a previous spot in the list.
-+.SH RETURN VALUE
-+On success, the number of entries filled into
-+.I mnt_ids
-+is returned, 0 if there are no more mounts left.
-+On error, \-1 is returned, and
-+.I errno
-+is set to indicate the error.
-+.SH ERRORS
-+.TP
-+.B EPERM
-+Permission is denied for accessing this mount.
-+.TP
-+.B EFAULT
-+.I req
-+or
-+.I mnt_ids
-+is NULL or points to a location outside the process's
-+accessible address space.
-+.TP
-+.B EINVAL
-+Invalid flag specified in
-+.IR flags .
-+.TP
-+.B EINVAL
-+.I req
-+is of insufficient size to be utilized.
-+.B E2BIG
-+.I req
-+is too large,
-+the limit is the architectures page size.
-+.TP
-+.B ENOENT
-+The specified
-+.I req.mnt_id
-+doesn't exist.
-+.TP
-+.B ENOMEM
-+Out of memory (i.e., kernel memory).
-+.SH STANDARDS
-+Linux.
-+.SH SEE ALSO
-+.BR statmount (2),
-+.BR statx (2)
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.10-rc5 next-20240625]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/ran-xiaokai/mm-Constify-folio_order-folio_test_pmd_mappable/20240626-113027
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240626024924.1155558-3-ranxiaokai627%40163.com
+patch subject: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406262300.iAURISyJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> fs/proc/page.c:151:35: error: passing 'const struct folio *' to parameter of type 'struct folio *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     151 |         else if (folio_test_pmd_mappable(folio)) {
+         |                                          ^~~~~
+   include/linux/huge_mm.h:438:58: note: passing argument to parameter 'folio' here
+     438 | static inline bool folio_test_pmd_mappable(struct folio *folio)
+         |                                                          ^
+   1 error generated.
+
+
+vim +151 fs/proc/page.c
+
+   108	
+   109	u64 stable_page_flags(const struct page *page)
+   110	{
+   111		const struct folio *folio;
+   112		unsigned long k;
+   113		unsigned long mapping;
+   114		bool is_anon;
+   115		u64 u = 0;
+   116	
+   117		/*
+   118		 * pseudo flag: KPF_NOPAGE
+   119		 * it differentiates a memory hole from a page with no flags
+   120		 */
+   121		if (!page)
+   122			return 1 << KPF_NOPAGE;
+   123		folio = page_folio(page);
+   124	
+   125		k = folio->flags;
+   126		mapping = (unsigned long)folio->mapping;
+   127		is_anon = mapping & PAGE_MAPPING_ANON;
+   128	
+   129		/*
+   130		 * pseudo flags for the well known (anonymous) memory mapped pages
+   131		 */
+   132		if (page_mapped(page))
+   133			u |= 1 << KPF_MMAP;
+   134		if (is_anon) {
+   135			u |= 1 << KPF_ANON;
+   136			if (mapping & PAGE_MAPPING_KSM)
+   137				u |= 1 << KPF_KSM;
+   138		}
+   139	
+   140		/*
+   141		 * compound pages: export both head/tail info
+   142		 * they together define a compound page's start/end pos and order
+   143		 */
+   144		if (page == &folio->page)
+   145			u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
+   146		else
+   147			u |= 1 << KPF_COMPOUND_TAIL;
+   148	
+   149		if (folio_test_hugetlb(folio))
+   150			u |= 1 << KPF_HUGE;
+ > 151		else if (folio_test_pmd_mappable(folio)) {
+   152			u |= 1 << KPF_THP;
+   153			if (is_huge_zero_folio(folio))
+   154				u |= 1 << KPF_ZERO_PAGE;
+   155		} else if (is_zero_pfn(page_to_pfn(page)))
+   156			u |= 1 << KPF_ZERO_PAGE;
+   157	
+   158		/*
+   159		 * Caveats on high order pages: PG_buddy and PG_slab will only be set
+   160		 * on the head page.
+   161		 */
+   162		if (PageBuddy(page))
+   163			u |= 1 << KPF_BUDDY;
+   164		else if (page_count(page) == 0 && is_free_buddy_page(page))
+   165			u |= 1 << KPF_BUDDY;
+   166	
+   167		if (PageOffline(page))
+   168			u |= 1 << KPF_OFFLINE;
+   169		if (PageTable(page))
+   170			u |= 1 << KPF_PGTABLE;
+   171		if (folio_test_slab(folio))
+   172			u |= 1 << KPF_SLAB;
+   173	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
