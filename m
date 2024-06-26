@@ -1,228 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-22540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2DC918ECD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 20:48:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E263491974B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 21:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7839A2832C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 18:48:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52898B2331F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 19:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1940190066;
-	Wed, 26 Jun 2024 18:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4661922C9;
+	Wed, 26 Jun 2024 19:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWY+gloX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j5EP0pAy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFAB33C5;
-	Wed, 26 Jun 2024 18:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F086119149D;
+	Wed, 26 Jun 2024 19:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719427692; cv=none; b=jYBRd86gjZYHm4mZ70r2e01cXb3k28otF9580ujcn5z5sFweg8X2BryUF3b9uePQevl04DfPOS/A8+PdDqZNXSrU72Ltqfp5YvAwKUahiuFzgucvlSkZ4yDatE/U1x+sBADSTUTmJyw5btxVrZblarhEziMiPAMvojWxaB8VJ94=
+	t=1719429204; cv=none; b=lFbEt7wBZZO3XuGOT0XMDk4twmF2YYiuI6fCdo1AFrTK6uxc0rQ6L6PsQ2Bq40tTWpBo5UIkeH8UTRI0hJzQ4PS61PRcxIHwm78meOTVhAF8BUOjUeIc/8+VAoiShdwIiO51Msfjg8XAYSbJboWePNqCB/ApItjj1RC0CKlw4RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719427692; c=relaxed/simple;
-	bh=MXyRv2/EuUiRnqhiVTr61Ncqv5aY90G16hLqfEyeGDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7iWHIhmaSB0c1OznyQdNU/ZKssHmbpsCreyJjDBl0MzhzRA4GsKnINCNAFcSrb1HGQ0eY1jXOl4410HM2PoTdKdQ4NtHasvz558d9WqG/lS+bDollb1VWXM8Q8htQWTYf2iwC3eMim9PWFizsYAOHfYVpK4KJ8F8C19QULjA6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWY+gloX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803A9C116B1;
-	Wed, 26 Jun 2024 18:48:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719427691;
-	bh=MXyRv2/EuUiRnqhiVTr61Ncqv5aY90G16hLqfEyeGDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JWY+gloX1tgUFyZWAI3YnonC4fKMGtbEvXQzke019LYMYyEW3dfLtBq2yQ+/zYkIR
-	 r05Hl50V7te5V+pKcdOe/HIljDgZQDdqOW+lB5AqUwrMNF7me6N1CHyd/TnAiC0/P0
-	 VBxH7vuPAViIH+8UK5Uakez8AjZR/XJ9A6h99UfvWtLjO+cKy1QYPUti61jZKoABN7
-	 ugu3VDEr3fBPabliKF9l62A7aOc7Lb17Cqjxjupzzf8uH9U7ZaIiN41Wa9AQPx70zP
-	 n9EKUoskgG0gWx2VnLqp/8FpHHIiyQqQNXyRn7ZDW5kKDAAKvtB6uHU7eGtxe6jQDt
-	 leCY6mhctLaig==
-Date: Wed, 26 Jun 2024 20:48:08 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
-Subject: Re: [PATCH v3 0/2] man-pages: add documentation for
- statmount/listmount
-Message-ID: <zg4fe5xw3gp5tvrcrp5yk2e4ogkmrzv3q3omh3c33ybbfbczib@ev5vhgjjljec>
-References: <cover.1719425922.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1719429204; c=relaxed/simple;
+	bh=MWTBysIiZBjdlvLaaaaFkn1GlDBtZ5ei9Z3XWrXTXCY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dQty+3b9rFUlfsIx6x9qOYAX59OTNeSiqBGdgn1I8PKH91WxpT9+VLG4jK0HU+pDeFrMhMj0phSzkk+3RAj3KRLlZ4gjz5hB9GNie4lBXktuftG9qN1oL+FD4+G9+qQvDT+QaKvMnsb1dYkcN4bKYI85f385Mcr4Pj24foenLNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j5EP0pAy; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a72517e6225so530235166b.0;
+        Wed, 26 Jun 2024 12:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719429201; x=1720034001; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QbHp1m88v5P1bw/uDYtoRLbiy7jJybUGKhLATYsYsAY=;
+        b=j5EP0pAyv3722cQmXdOd/wqJiheM4db6YLzu7Rhf1a1v2oqXKsm8SmUMOlIQ4eKzD2
+         aV9AMKYCIyh/3WT4V6Pr2BrCHbiUrd6D1NUE6dyl9R/lELygFLVZf6FcOvGQ60vwQBYV
+         EWRXFgP/2RKwL3gBTqj3Lu3JsvL9N08/g0jBcG3NGIm84BboqknhbEFlUtS9QDhnHTIw
+         vHiL1gZkJ6iWHY2dBaQ4xooKjfoetdffuTUDj1A6Csc3QiA1B+M965Ag4DjDe2wLwjov
+         vRMDrjJwTjfY+lKEk8ZxJn4uCWvMBgiVuyUXMDBqb3ZPbLfaj1bJDOvHNmUPLX7j9ZpT
+         uf+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719429201; x=1720034001;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QbHp1m88v5P1bw/uDYtoRLbiy7jJybUGKhLATYsYsAY=;
+        b=M0zCOaVgjhNSPIa+iqlXXRs4pGq/YFO71XEiD4M8nGxDBToSah1KzumJu+fJ1ikGsy
+         C3KlZyxcNTuKtToYQLdpAMf0tkEv/VmNzLqGpggfGNFK9RPzUu7TLFkOqEeaKGfko9lx
+         f3m6cixArSljl+RuouedpgeNVTbKs5n3BtRevMJgafgdASFmvSSEuHMjjXW7Vu6us+Do
+         9zsXZ/URsct6oIqOOr6tU/67ovsmJ2zTs7LW63ftKf+J+qiG5ndUar8lf8DSNlzgirXN
+         ITsync785rVKSmFjfgzpmkuuoxcEMPLjEpqql4mmERnqtNPNkDOVVqL7SAY/R46I8Zb5
+         XuEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCH1TqeVqWbH3p4phQZWO7nsxINR4+4LQykeE+/koPRHG8qC79Zhodt5Yo3pGqw0cKeFd1p3z63z9WbvLaejKYkXfrwzXfvBiVH7yvQDCxvJIR0QsRII43mI21syy6fLFWDarJndr37EYaZA==
+X-Gm-Message-State: AOJu0YxCZHWXPDzLk1Gb/NZ/90TNN4Q7mJLnYDEzx0bp6CLR7quZEMJp
+	fzxkEcuQ3QQi1GT0vlyHckVIKZhRJtJ3fQXovzRXvk4OFH/7YLsA/tNhWwe+fTfo3C9uQ4UqUcE
+	kr+D2qxPqCjxCOoKTaNHzPNe5ulA=
+X-Google-Smtp-Source: AGHT+IEXp5RQKNfI9JqKuIBclAPVcd4xCVBCu6z7CwGa+cRrF9EVaQwPab8PcE/ZZKeA3pwviZCg+oL0UIWvh26ZbQ8=
+X-Received: by 2002:a17:906:9c96:b0:a72:5598:f03d with SMTP id
+ a640c23a62f3a-a725598f1dfmr749547666b.59.1719429201169; Wed, 26 Jun 2024
+ 12:13:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r2ldyc6l75eqxkt6"
-Content-Disposition: inline
-In-Reply-To: <cover.1719425922.git.josef@toxicpanda.com>
-
-
---r2ldyc6l75eqxkt6
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20240614163416.728752-1-yu.ma@intel.com> <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-2-yu.ma@intel.com> <20240625115257.piu47hzjyw5qnsa6@quack3>
+ <20240625125309.y2gs4j5jr35kc4z5@quack3> <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
+ <20240626115427.d3x7g3bf6hdemlnq@quack3>
+In-Reply-To: <20240626115427.d3x7g3bf6hdemlnq@quack3>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 26 Jun 2024 21:13:07 +0200
+Message-ID: <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+To: Jan Kara <jack@suse.cz>
+Cc: "Ma, Yu" <yu.ma@intel.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	edumazet@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, 
+	tim.c.chen@intel.com, tim.c.chen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
-Subject: Re: [PATCH v3 0/2] man-pages: add documentation for
- statmount/listmount
-References: <cover.1719425922.git.josef@toxicpanda.com>
-MIME-Version: 1.0
-In-Reply-To: <cover.1719425922.git.josef@toxicpanda.com>
 
-Hi Josef,
+On Wed, Jun 26, 2024 at 1:54=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> So maybe I'm wrong but I think the biggest benefit of your code compared =
+to
+> plain find_next_fd() is exactly in that we don't have to load full_fds_bi=
+ts
+> into cache. So I'm afraid that using full_fds_bits in the condition would
+> destroy your performance gains. Thinking about this with a fresh head how
+> about putting implementing your optimization like:
+>
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *fdt=
+, unsigned int start)
+>         unsigned int maxbit =3D maxfd / BITS_PER_LONG;
+>         unsigned int bitbit =3D start / BITS_PER_LONG;
+>
+> +       /*
+> +        * Optimistically search the first long of the open_fds bitmap. I=
+t
+> +        * saves us from loading full_fds_bits into cache in the common c=
+ase
+> +        * and because BITS_PER_LONG > start >=3D files->next_fd, we have=
+ quite
+> +        * a good chance there's a bit free in there.
+> +        */
+> +       if (start < BITS_PER_LONG) {
+> +               unsigned int bit;
+> +
+> +               bit =3D find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, =
+start);
+> +               if (bit < BITS_PER_LONG)
+> +                       return bit;
+> +       }
+> +
+>         bitbit =3D find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit)=
+ * BITS_PER_LONG;
+>         if (bitbit >=3D maxfd)
+>                 return maxfd;
+>
+> Plus your optimizations with likely / unlikely. This way the code flow in
+> alloc_fd() stays more readable, we avoid loading the first open_fds long
+> into cache if it is full, and we should get all the performance benefits?
+>
 
-On Wed, Jun 26, 2024 at 02:21:38PM GMT, Josef Bacik wrote:
-> V2: https://lore.kernel.org/linux-fsdevel/cover.1719417184.git.josef@toxi=
-cpanda.com/
-> V1: https://lore.kernel.org/linux-fsdevel/cover.1719341580.git.josef@toxi=
-cpanda.com/
->=20
-> v2->v3:
-> - Removed a spurious \t comment in listmount.2 (took me a while to figure=
- out
->   why it was needed in statmount.2 but not listmount.2, it's because it l=
-ets you
->   know that there's a TS in the manpage).
+Huh.
 
-Yep; here's the Makefile relevant rule:
+So when I read the patch previously I assumed this is testing the bit
+word for the map containing next_fd (whatever it is), avoiding looking
+at the higher level bitmap and inlining the op (instead of calling the
+fully fledged func for bit scans).
 
-$ grepc -x mk -tr _LINT_man_tbl share/mk/
-share/mk/lint/man/tbl.mk:$(_LINT_man_tbl): %.lint-man.tbl.touch: % $(MK) | =
-$$(@D)/
-	$(info	$(INFO_)GREP		$@)
-	$(HEAD) -n1 <$< \
-	| if $(GREP) '\\" t$$' >/dev/null; then \
-		$(CAT) <$< \
-		| if ! $(GREP) '^\.TS$$' >/dev/null; then \
-			>&2 $(ECHO) "$<:1: spurious '\\\" t' comment:"; \
-			>&2 $(HEAD) -n1 <$<; \
-			exit 1; \
-		fi; \
-	else \
-		$(CAT) <$< \
-		| if $(GREP) '^\.TS$$' >/dev/null; then \
-			>&2 $(ECHO) "$<:1: missing '\\\" t' comment:"; \
-			>&2 $(HEAD) -n1 <$<; \
-			exit 1; \
-		fi; \
-	fi
-	$(TAIL) -n+2 <$< \
-	| if $(GREP) '\\" t$$' >/dev/null; then \
-		>&2 $(ECHO) "$<: spurious '\\\" t' not in first line:"; \
-		>&2 $(GREP) -n '\\" t$$' $< /dev/null; \
-		exit 1; \
-	fi
-	$(TOUCH) $@
+I did not mentally register this is in fact only checking for the
+beginning of the range of the entire thing. So apologies from my end
+as based on my feedback some work was done and I'm going to ask to
+further redo it.
 
-Maybe I should expand those error messages to be a little bit more
-clear.
+blogbench spawns 100 or so workers, say total fd count hovers just
+above 100. say this lines up with about half of more cases in practice
+for that benchmark.
 
-> - Fixed some unbalanced " in both pages
-> - Removed a EE in the nf section which is apparently not needed
+Even so, that's a benchmark-specific optimization. A busy web server
+can have literally tens of thousands of fds open (and this is a pretty
+mundane case), making the 0-63 range not particularly interesting.
 
-You need to do:
+That aside I think the patchset is in the wrong order -- first patch
+tries to not look at the higher level bitmap, while second reduces
+stores made there. This makes it quite unclear how much is it worth to
+reduce looking there if atomics are conditional.
 
-=2Enf
-foo
-=2Efi
-=2EEX
-bar
-=2EEE
+So here is what I propose in terms of the patches:
+1. NULL check removal, sprinkling of likely/unlikely and expand_files
+call avoidance; no measurements done vs stock kernel for some effort
+saving, just denote in the commit message there is less work under the
+lock and treat it as baseline
+2. conditional higher level bitmap clear as submitted; benchmarked against =
+1
+3. open_fds check within the range containing fd, avoiding higher
+level bitmap if a free slot is found. this should not result in any
+func calls if successful; benchmarked against the above
 
-You cannot nest them.  The following code is wrong (I discovered that
-recently):
+Optionally the bitmap routines can grow variants which always inline
+and are used here. If so that would probably land between 1 and 2 on
+the list.
 
-=2Enf
-foo
-=2EEX
-bar
-=2EEE
-=2Efi
+You noted you know about blogbench bugs and have them fixed. Would be
+good to post a link to a pull request or some other spot for a
+reference.
 
-See this commit:
-
-<https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=3Da=
-911df9e88dedc801bed50eb92c26002729af9c0>
-commit a911df9e88dedc801bed50eb92c26002729af9c0
-Author: Alejandro Colomar <alx@kernel.org>
-Date:   Mon Jun 17 01:18:39 2024 +0200
-
-    man/, share/mk/: Fix nested EX/EE within nf/fi
-   =20
-    EX/EE can't be nested within nf/ni.  The mandoc(1) reports weren't
-    spurious.
-   =20
-    Re-enable the mandoc(1) warnings, and fix the code.
-   =20
-    Fixes: 31203a0c8dbf ("share/mk/: Globally disable two spurious mandoc(1=
-) wa>
-    Link: <https://lists.gnu.org/archive/html/groff/2024-06/msg00019.html>
-    Reported-by: Douglas McIlroy <douglas.mcilroy@dartmouth.edu>
-    Cc: "G. Branden Robinson" <branden@debian.org>
-    Signed-off-by: Alejandro Colomar <alx@kernel.org>
-
-
-> v1->v2:
-> - Dropped the statx patch as Alejandro already took it (thanks!)
-> - Reworked everything to use semantic newlines
-> - Addressed all of the comments on the statmount.2 man page
->=20
-> Got more of the checks to run so found more issues, fixed those up, but n=
-o big
-> changes.  Thanks,
-
-Thanks.  I'll review the patches soon, hopefully.
-
-Have a lovely night!
-Alex
-
->=20
-> Josef
->=20
-> Josef Bacik (2):
->   statmount.2: New page describing the statmount syscall
->   listmount.2: New page describing the listmount syscall
->=20
->  man/man2/listmount.2 | 111 +++++++++++++++++
->  man/man2/statmount.2 | 285 +++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 396 insertions(+)
->  create mode 100644 man/man2/listmount.2
->  create mode 100644 man/man2/statmount.2
->=20
-> --=20
-> 2.43.0
->=20
->=20
-
+I'll be best if the vfs folk comment on what they want here.
 --=20
-<https://www.alejandro-colomar.es/>
-
---r2ldyc6l75eqxkt6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZ8YmgACgkQnowa+77/
-2zLHRBAAjaTtj1/Ym66rGd/gDx+HCqb2DkcnUELoP8INvCLtXqPfA7VhXvmjQ/cc
-W4MKmz316lQYK/u4UiSvTIuato972LgQiF/swefG5UnEYCxSLcDj5RBMuf824Hps
-qiE7LfabMQeMbEImK282rmtniXhD7STiY5MRDYlnloU+0dLnQFY4ukacExHh5wbq
-elYrdAUqMQIATTMaPEyiECzRhRxsTkWU9WhSByOZTSXV7qSKF++ObQadES7ylFZM
-nvBrI8IubnoDMRxC3mDdL1KRQWsINn+hhtEFutjmW1sozB9uqFrOFISOSFSpnEZJ
-RYvil7bhkLalnppUwJg2w6Y1hb0SE7/0d5flKB7LKsIUOVzGZcb8/t6A8H4R4lKw
-+KE6vIFwqulIhdONGPX3LcktHrI6bX+3VUxxok6jXBn5ploRbkP2Mgpd+eLEsojH
-Mk0+JP8Dw0MMCXFeMDPxiYQuUqjZEd8XoxA3QD4XyHzaSYmCZu+IBLEg3makBTGX
-Y0LkECBxG5MJF79qF0OWcK2gfafFI/eaoplNR+bGuATvQvkskGoi9KJuzGVpJqVE
-8w1CslMV5qj/L4pW++oG0YOT4b9Ek8kfpUy32Icrgu1JkdA4eKE8N1/HESJuOxVp
-vSfvN1vn6cDKY/oNhGCWLU6CrUl4iz1NfOplF6YTr0Q3GEQAiC8=
-=9a+l
------END PGP SIGNATURE-----
-
---r2ldyc6l75eqxkt6--
+Mateusz Guzik <mjguzik gmail.com>
 
