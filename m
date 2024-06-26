@@ -1,107 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-22520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234A5918522
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 17:02:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22FD91859D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 17:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE44289174
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:02:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EF63B28FD2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BD71891BD;
-	Wed, 26 Jun 2024 15:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3AF18A932;
+	Wed, 26 Jun 2024 15:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="bXchXX1Z"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lJN7YtHE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0241891A7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 15:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF2A6BB26;
+	Wed, 26 Jun 2024 15:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719414151; cv=none; b=pNLmyxcNNypBpxHBq4XIraD6Mem3ZoThk2qdcpgblnGieOMFVyJUN6zo1RJ+nEMIup9evJnAiAI8MhBYIsxd425JXsOa95hQzULqk6hV+V4NV2syB6pDg9FMQPR42D7WVpys11gMggXQ+4JBW78JCwA7n4r8HeB9y2Qc5F0FEGw=
+	t=1719414978; cv=none; b=CLK8y2sJIqBXGeLvQ1mngx9xR3f5cyaoO65lb7TQM526kkp0022Effx8DObdvHSq9mSnTSMNfUN6V11/oHdTBLVfexJBhfl5iOWdYzbzN8yPVVhwY5Jv9gCM66h1MS8skX24kQ22Q1TjuQ0XojD66EnpyBq3t/Fn8C3B0mh01mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719414151; c=relaxed/simple;
-	bh=IgNBlbOpf1DxNT0twqhMkos/RJG5o9tckGzN741UmLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qkkQ5WXlDMnWqCK5I4Rhtq3c4cMRy3zuSkJXd/kUwajS/kaFSmRzuQ3kbbCih5JfMF9+uUcET4U6qHbp2NsywvCFnh/587/jO5ZVrea4RUedM+bEqBlcXj713M0TDFnVRD/qh08AVa4rn16XiSmYNIRuvZquIAqYq8RuIx0YziA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=bXchXX1Z; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f9c4ec8e04so3077415ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 08:02:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719414148; x=1720018948; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wtL2/RZ3d00iaa623m8Saevl3iucbD0YDNmUEjoIQNA=;
-        b=bXchXX1Zl4sAmDe606RFshQr0LgsIiT1q3WtHbBNA+8jV2Seqw56ICEH/1Vv56pyww
-         L1tLWtH3MUTLt4w4U5QSN4pfG+t8DqizqTW4Pkb+CE7xLMRg/HB7WFEOoNbEPbTgQKvD
-         zk4r6yB7u2gGGXdTuxeghO/nZ4J/9HJDG/iOfYJURpmZlGUjePCAaixQ4rJ6RqNAES/y
-         tE172yrHiiX8D+pCQYHO+JPCmaWh0r0WmY1Vjw5ZEyQmE0LsSYnZ+qMOrAirkuhPosWU
-         1pU7gdj1LlkWDgHLF5ta3WnpBilf0KXEI4mwg+U0Icanta6WZU7td7cOWpcxUjF9z5LV
-         0Lfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719414148; x=1720018948;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wtL2/RZ3d00iaa623m8Saevl3iucbD0YDNmUEjoIQNA=;
-        b=n3QxwZ0ChOWAbimqKMAzxvDYRapeycUrG41RehQQsh2V95J82I4ajDAytoXA6ZlCvj
-         sfTtAuyqbpcxZdJfl7upuNvweR0zHjvchScs2PSlx5uS8CR5/IZBHpNcDyfJNfGAecvz
-         Hulp8UH2xKu5HoI9MpXDX5vwNbOGFTNxiAr1UIMEEPSFLNgOIRMspRdNV39Lh4mkvPdF
-         OUUgZ1FrJGUUoU3GpuOYEutm5TAeAOVXmR80sDaazeAWYCUbd529cUEWie3E0ZgGzE3G
-         MQBnq94pHS5MZgpeXuihYp48w4yHiUpEAUAkNZwvSk3lNmZEAqynzhjDDJEUNgGzfZt8
-         8Qdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEgKt35aiQs3yi3RBzjdmou7RK3pkWcjVAxoqYyHWWVnO4ezBzP//wJ7jrT7K7Q7E81KPKHIewll7BilW+94w+KmZfXYlvAamPLllVCw==
-X-Gm-Message-State: AOJu0Yy+nwyyykksr6qZ39yvYSgLF3d6rR/QfdAmz/HtM+3ZGhdgDgCy
-	NCgSbYxH2AHgomi9SgQXRymM/bUUSl4rXPEikbZ6uWh8hxb0KAZKd1Kgt4W1UnVuvhAHJj9SmlH
-	JHZE=
-X-Google-Smtp-Source: AGHT+IES7/6m+LnbNG2Wez/0xukcHO3azrcRyMBPgOedLXHcq7TetakMG8dgyHzp5CKg6I5TQ+b1+Q==
-X-Received: by 2002:a17:903:94:b0:1fa:1a7c:9a05 with SMTP id d9443c01a7336-1fa1a7c9d36mr124122535ad.6.1719414148374;
-        Wed, 26 Jun 2024 08:02:28 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb32b9edsm100519705ad.118.2024.06.26.08.02.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 08:02:27 -0700 (PDT)
-Message-ID: <0e2da871-7e28-4660-a9d4-4fbf6bfe24cd@kernel.dk>
-Date: Wed, 26 Jun 2024 09:02:26 -0600
+	s=arc-20240116; t=1719414978; c=relaxed/simple;
+	bh=EwQMoBprrvluUbNzkLTyFZpWfn561qwV0HjoO8qZynY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHK/kPIIK+8yzjt0lOOEErtnv1kF0OQTS0UaI5VrV4fh5z1QVzR0bfyesKfYrDEUmiOyviCfUMCE1oio0g0YrGHZooJfsJnsNkHvXPa4nOZjjEbxdaYTYc6Xr0X/0c8r9aPQOAPVnjekHuRbpGYl8evEBXeluTZEWw5QUXqOc/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lJN7YtHE; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5EdOTGvxwbvxyfWt8EtSyA/AQ5B1tWpg+LU4ga2BqOQ=; b=lJN7YtHE9IfSxh4tNAjP1Db3rU
+	0SRI9Hi3XvVCHa5v3PYaptaqaFQzSofr/frIbKOEXyxJXAlPxlJ0M0o89TMRLNnH6Xm8yT/umbKu1
+	CWYW9kKnVJn8SvlSZm1Kigf/lQ7kg0oRzmCGzj0ZQPXJpwvw29cNpBiRHsEmSRr9Kbo26/LwYc2GS
+	YSq08gWhsaswRfsGENO5xEXZCdzLD5pam0GG2wK7Zi2Qk/cj6HKNlbI9/GQrXrVaMSegRNErKphXg
+	V9pO5eYx0J4O05dDw+DGGo8nsVCRdGfUAqM1XqhEOj6UoBa+hu+wrQ3JV0NaYZ9mkdezryUVZyKKz
+	A7m3uSqw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sMUNK-0000000CTXw-1wR1;
+	Wed, 26 Jun 2024 15:15:58 +0000
+Date: Wed, 26 Jun 2024 16:15:58 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Zi Yan <ziy@nvidia.com>, ran xiaokai <ranxiaokai627@163.com>,
+	akpm@linux-foundation.org, vbabka@suse.cz,
+	svetly.todorov@memverge.com, ran.xiaokai@zte.com.cn,
+	baohua@kernel.org, peterx@redhat.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable
+ compound pages
+Message-ID: <Znwwrnk77J0xfNxu@casper.infradead.org>
+References: <20240626024924.1155558-1-ranxiaokai627@163.com>
+ <20240626024924.1155558-3-ranxiaokai627@163.com>
+ <D29M7U8SPSYJ.39VMTRSKXW140@nvidia.com>
+ <1907a8c0-9860-4ca0-be59-bec0e772332b@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-To: Mateusz Guzik <mjguzik@gmail.com>, Xi Ruoyao <xry111@xry111.site>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, torvalds@linux-foundation.org,
- loongarch@lists.linux.dev
-References: <20240625151807.620812-1-mjguzik@gmail.com>
- <0763d386dfd0d4b4a28744bac744b5e823144f0b.camel@xry111.site>
- <CAGudoHH4LORQUXp18s8CPPLHQMi=qG9aHsCXTp2cXuT6J9PK6A@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAGudoHH4LORQUXp18s8CPPLHQMi=qG9aHsCXTp2cXuT6J9PK6A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1907a8c0-9860-4ca0-be59-bec0e772332b@arm.com>
 
-On 6/26/24 7:39 AM, Mateusz Guzik wrote:
-> I am going to fix this up and write a io_uring testcase, then submit a
-> v4. Maybe today or tomorrow.
+On Wed, Jun 26, 2024 at 12:07:04PM +0100, Ryan Roberts wrote:
+> On 26/06/2024 04:06, Zi Yan wrote:
+> > On Tue Jun 25, 2024 at 10:49 PM EDT, ran xiaokai wrote:
+> >> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> >>
+> >> KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
+> >> pages, which means of any order, but KPF_THP should only be set
+> >> when the folio is a 2M pmd mappable THP. 
+> 
+> Why should KPF_THP only be set on 2M THP? What problem does it cause as it is
+> currently configured?
+> 
+> I would argue that mTHP is still THP so should still have the flag. And since
+> these smaller mTHP sizes are disabled by default, only mTHP-aware user space
+> will be enabling them, so I'll naively state that it should not cause compat
+> issues as is.
+> 
+> Also, the script at tools/mm/thpmaps relies on KPF_THP being set for all mTHP
+> sizes to function correctly. So that would need to be reworked if making this
+> change.
 
-Sounds good, on both incremental and test case. I can just stage it
-separately in a branch with Christian's branch pulled in.
-
-Thanks!
-
--- 
-Jens Axboe
-
+I told you you'd run into trouble calling them "mTHP" ...
 
