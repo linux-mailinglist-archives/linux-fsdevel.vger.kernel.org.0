@@ -1,124 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-22514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7099182C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:40:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3761D91835E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4477F1F2218B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:40:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6BB2876C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E460D1849FB;
-	Wed, 26 Jun 2024 13:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C674184119;
+	Wed, 26 Jun 2024 13:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQUjrFFw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G4U3NGVv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3642183066;
-	Wed, 26 Jun 2024 13:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1CB14EC65
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 13:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719409203; cv=none; b=WrJiITZ3JEa4YjV3ZCL0VeW3ndGEP24TpJIwxEllrkBOekY95M3HDHRJxBBoci23pO3Rj5RmXqOK4WUxr8MED/XCBNkD/EaU6rnZpem4cpPsYSleXYETCCbr8VrJeswxGeYtVbO7M3rmZT2Roo8gNLn//lghioPv61WeRHjOazk=
+	t=1719410009; cv=none; b=UGoa2HPUcgoMpRPdGHhEVxc5zyaQtZEEPoXrXrOkcG//MGq1hSbw+7XcVlj6lVrdsC3xbItL+dv+RxevmuWQYMy8cp9YOWFs2wVvbCZSI9XatR/VtlgUztTAQoLhA9C/v77+i46dcvVN5Jkv71WOHCJs1gTifRGBOpAOgpI8n8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719409203; c=relaxed/simple;
-	bh=Gqu0PPKIwlu8QuP2Vr7fBcBkhvn7fHduxivYLrhRASU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p1auwMc18h77Ayxiep+2pttP3eHH2s6leIvXgWKJgfpcqDCcYtMmrF4pgphbApu/hDcaXa+eOJNO4kV89UAltEmz32Ps6LouuBawbQW5RfZWwaXD29MGZnPI1yQiFhwMVlyiVoGfAvRXk5geMuU15umfzg8eoc/uBMie5PspgPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQUjrFFw; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ec17eb4493so91299731fa.2;
-        Wed, 26 Jun 2024 06:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719409200; x=1720014000; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z2rgHVkzSP1+jy0s2RuB1Mh0tkpnHZ/bSgJ6vFvgRzo=;
-        b=JQUjrFFwf1IYGzamdeC1Hkq11d6+RjpcdnSulrmokNdkR8QOF0//ku3N12PAboUKEb
-         LAR+mhQrNEaNTGX98EpL/thcT7x/H9WKOtqxK2iTNmV4xl1QXg22updh29RtBozat4DX
-         b6pQXRvgdWDTfzSJg4f+5RGBylBm7yj5n1m2C24pjCFTVeMsnnG1eqLXtsK3WmfBAT7D
-         uq7yQH7kVW52ZTDMwETRfVAb7Ft7WnmvM9V97fz8lNC00wCcbPl6yBYNUC8H8qNCu1Eg
-         YqNneAzYohqaDjwwqapSrjFhgiyGtal5YOh2k8tE/vs/ddQFCzEAsGX986I0MrUvrFYa
-         wt1A==
+	s=arc-20240116; t=1719410009; c=relaxed/simple;
+	bh=A2o+l3NuRNw2a+iRKsLea/VZp78l6U646vGfevTxLB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IIbVa/FZY4Ur2AZMwUqog4vla/KmEG13ti35u+sE+7N+Z2I1WOQEMrPEOD9SOFVQuSJzYJDPWQ5Wiui1sWIvOf/kuJyBNrDukyKwlqRTkaieqrCp+xxVDTeRvFj5A1ckAdAMW9sOrD26+JTWsq3joSQGB3UhsS2Rt9KPHNxQRPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G4U3NGVv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719410007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6L/CySx21VlY9lkKLs/UvRv4ham7l6zFWPjNK0vJEd8=;
+	b=G4U3NGVvhW6/ThD4blwT6mVmWPNzZSryL4PDJe1GnTiIMMBiCBjjO3rY/pfZ7scipKhdsI
+	b9+FXX+nc8B+w/kEZWQg68GYiEEN13mit36JFuPUxrg+KfvgJEEvijzx2zkb16zshOnVnK
+	GDp9iNqThQ/fRg7W42ZqZ7jr+5+2JG0=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-625-BGOAK69dP-WtwC6HH1_Ckg-1; Wed, 26 Jun 2024 09:53:25 -0400
+X-MC-Unique: BGOAK69dP-WtwC6HH1_Ckg-1
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-43e2c5354f9so14968631cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 06:53:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719409200; x=1720014000;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z2rgHVkzSP1+jy0s2RuB1Mh0tkpnHZ/bSgJ6vFvgRzo=;
-        b=wAClwnQASP9qqMGpXdnVCbsAecWhiRUSivK8bZ9A/ZxNhxY986R2ZzzhTwU8JpjyJO
-         s3S1rC0UweP+yhSsWkxOCGDCHIgYZ2b5D2xyA8mfwBoIRUsZL4BplLJ0rZMGk96ZZC80
-         ks54Vm5HCf1/PPRWDZM+00z2ua6uoxTz24qXihttsqELBu1034ytDaJPsHWHAx6DZpQR
-         ZCP47VTZt1+moPiZ3MNc/pslvjz/bsD9nm113LtFIJxwEIYhpViBN9MKOYda8Z/ImWMg
-         NRyLiA863lYXDRBb5rnBGvxKMLPXYZh0Y7171oHZZhRi211v+XNbdtjUukovw0qzaWTX
-         0YAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFopAOCTkla4a5pTgtD8UcdIDK2cCFJSCdr0B+TkUNAL3r68/jelPkcuHqrq6JKA0IwHZQLx6Iq6w3pkV3W50fAbVzyZdrb7bHYOZa0S5sH8pczKeXDhJEM/rvVhy9FtVgGomImEF9L2irRJcKWXZkFuX7P2lUY/oVE6XhUERlHfRdBX2D
-X-Gm-Message-State: AOJu0YzLVIzKxK9BUurJPE6nA5tw+S4EX0u56BtyyrWsk3vlFK4gz1pO
-	9+iBdlRV9oQxqndtBo8N2jFPTx6o35zqJ5+YkORJVnN7Q3/GbuV29oBZyhOU0bAdtFs44Z6yVR1
-	jXRZIttCAwdY6PcmkyzKMQTltOY/nDxmq
-X-Google-Smtp-Source: AGHT+IGk0pHam1HcXl3oj5p0qyRebtuWcVPso250LB/Bc8g6Hkc3v3sN/kBayKvUzph5ne4gUS0Lvblrc1cqdICkuqo=
-X-Received: by 2002:a2e:7c07:0:b0:2ec:4f0c:36f9 with SMTP id
- 38308e7fff4ca-2ec5b31d140mr86286441fa.36.1719409199559; Wed, 26 Jun 2024
- 06:39:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719410005; x=1720014805;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6L/CySx21VlY9lkKLs/UvRv4ham7l6zFWPjNK0vJEd8=;
+        b=D8T3tB1J+hzzKmYI5Ut20WSOtYN5XM/bP7uX2vZjRztXhAgaFnBgMYWiEY+7YB0Fky
+         YivdsDoNHSV+Kpkv0tusnETQs7SscOwisEbXegA17M/OhMc3gnUnac3m3Zqry8dweLYQ
+         OyKeOOlLLATKNDwnmWz+L+NjTYdPfMx6e9yodLLElicGKCs9KdBzUzEbI33fHnRzlZc/
+         Osjd4nJ4z7xuf044LtqU5VB9gYUCbc+3b9x1VAWbLywkiCDZFg71fR1RJdcHxiF7txY4
+         N50v4Ltno+zHvswg+ioBlvZw1MlWtC4XBp33XrgyZgdOAsZzJzAVqJSMRQPj3nmCcxqS
+         n9ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUJi0H77/OxSoNyN4tZSOPOdks8AQR4Yb1orixtcqyclqJX/XjfbxlPtrmSUaMV115LEU0vKTTDe7wUXgCAdN54f92yDgUCQvwpCw12lg==
+X-Gm-Message-State: AOJu0YzUPXO3h3jEdT/OVe6dkqFQMrv9G0GQ/ewCnGGWa00GNSVT9PMM
+	b56Okbp/RWeCZBiKGwCGOV1rxyt7RPk4aTHyru44UdOilQz1jRV/MO2HmEe8TZP5pI8FySFd5Uj
+	L83yiVH8muT/PnHFa+ev+czlKylFAXTpSOfgVSQ99h86nJdJC0nINNR5gCOIOhMQ=
+X-Received: by 2002:a05:620a:29c5:b0:79d:53d0:95af with SMTP id af79cd13be357-79d53d098f6mr146858885a.2.1719410004600;
+        Wed, 26 Jun 2024 06:53:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfg5gp8Vxw/erpGLqvLxIwWQrtznQgrqGbKZUsqsdxrw8Gui1u4uAwFXpio7u+OhtBKCeLlg==
+X-Received: by 2002:a05:620a:29c5:b0:79d:53d0:95af with SMTP id af79cd13be357-79d53d098f6mr146856185a.2.1719410003910;
+        Wed, 26 Jun 2024 06:53:23 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79c082c7433sm137223985a.53.2024.06.26.06.53.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 06:53:23 -0700 (PDT)
+Date: Wed, 26 Jun 2024 09:53:20 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Audra Mitchell <audra@redhat.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	aarcange@redhat.com, akpm@linux-foundation.org,
+	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, raquini@redhat.com,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v3 3/3] Turn off test_uffdio_wp if
+ CONFIG_PTE_MARKER_UFFD_WP is not configured.
+Message-ID: <ZnwdUJmo7-7tjcB3@x1n>
+References: <20240626130513.120193-1-audra@redhat.com>
+ <20240626130513.120193-3-audra@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625151807.620812-1-mjguzik@gmail.com> <0763d386dfd0d4b4a28744bac744b5e823144f0b.camel@xry111.site>
-In-Reply-To: <0763d386dfd0d4b4a28744bac744b5e823144f0b.camel@xry111.site>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 26 Jun 2024 15:39:47 +0200
-Message-ID: <CAGudoHH4LORQUXp18s8CPPLHQMi=qG9aHsCXTp2cXuT6J9PK6A@mail.gmail.com>
-Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, axboe@kernel.dk, torvalds@linux-foundation.org, 
-	loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240626130513.120193-3-audra@redhat.com>
 
-On Wed, Jun 26, 2024 at 4:59=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wrot=
-e:
->
-> On Tue, 2024-06-25 at 17:18 +0200, Mateusz Guzik wrote:
-> > +     if ((sx->flags & (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE)) =3D=3D
-> > +         (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE) &&
-> > +         vfs_empty_path(sx->dfd, path)) {
-> >               sx->filename =3D NULL;
-> > -             return ret;
->
-> AT_STATX_SYNC_TYPE =3D=3D AT_STATX_FORCE_SYNC | AT_STATX_DONT_SYNC but
-> AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC obviously contradicts with
-> each other.  Thus valid uses of statx won't satisfy this condition.
->
+On Wed, Jun 26, 2024 at 09:05:13AM -0400, Audra Mitchell wrote:
+> If CONFIG_PTE_MARKER_UFFD_WP is disabled, then we turn off three features
+> in userfaultfd_api (UFFD_FEATURE_WP_HUGETLBFS_SHMEM,
+> UFFD_FEATURE_WP_UNPOPULATED, and UFFD_FEATURE_WP_ASYNC). Currently this
+> test always will call uffdio_regsiter with the flag
+> UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault
+> that if the feature UFFD_FEATURE_WP_HUGETLBFS_SHMEM is disabled, only
+> allow the VM_UFFD_WP on anonymous vmas, meaning our call to
+> uffdio_regsiter will fail. We still want to be able to run the test even
+> if we have CONFIG_PTE_MARKER_UFFD_WP disabled, so check to see if the
+> feature UFFD_FEATURE_WP_HUGETLBFS_SHMEM has been turned off in the test
+> and if so, disable us from calling uffdio_regsiter with the flag
+> UFFDIO_REGISTER_MODE_WP.
+> 
+> Signed-off-by: Audra Mitchell <audra@redhat.com>
 
-I don't know wtf I was thinking, this is indeed bogus.
+Reviewed-by: Peter Xu <peterx@redhat.com>
 
-> And I guess the condition here should be same as the condition in
-> SYSCALL_DEFINE5(statx) or am I wrong?
->
+> ---
+>  tools/testing/selftests/mm/uffd-stress.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
+> index b9b6d858eab8..3266ae885f75 100644
+> --- a/tools/testing/selftests/mm/uffd-stress.c
+> +++ b/tools/testing/selftests/mm/uffd-stress.c
+> @@ -419,6 +419,9 @@ static void parse_test_type_arg(const char *raw_type)
+>  	test_uffdio_wp = test_uffdio_wp &&
+>  		(features & UFFD_FEATURE_PAGEFAULT_FLAG_WP);
+>  
+> +	if (test_type != TEST_ANON && !(features & UFFD_FEATURE_WP_HUGETLBFS_SHMEM))
+> +		test_uffdio_wp = false;
+> +
+>  	close(uffd);
+>  	uffd = -1;
+>  }
+> -- 
+> 2.44.0
+> 
 
-That I disagree with. The AUTOMOUNT thing is a glibc-local problem for
-fstatat. Unless if you mean the if should be of similar sort modulo
-the flag. :)
+-- 
+Peter Xu
 
-I am going to fix this up and write a io_uring testcase, then submit a
-v4. Maybe today or tomorrow.
-
-> --
-> Xi Ruoyao <xry111@xry111.site>
-> School of Aerospace Science and Technology, Xidian University
-
-
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
