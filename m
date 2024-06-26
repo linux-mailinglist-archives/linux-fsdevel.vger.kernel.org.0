@@ -1,123 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-22508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 714819181AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:06:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC089181A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02ABA2817C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:06:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F99FB2451E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517BF184121;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B59F18410B;
 	Wed, 26 Jun 2024 13:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bJJqpqLD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwRXBlQU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F281836DD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 13:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2BC1836ED;
+	Wed, 26 Jun 2024 13:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719407134; cv=none; b=Pg+5gFP6e9h9+DMT57gW7BCjiidZzXdd+OuDmhqAqaU5HQBfYjx+HkwIowm/ZGMagX8Gwli6Ch+fxw1490+g287uOFh2Tk4AOu3k1A3cOTnw1Mwd/vQkQjr4I8I6W4CVt1LLViC7+68OZVjFQ5LIPPOl2Bua684Q+NOiEUoswkM=
+	t=1719407134; cv=none; b=JDUiuQOXvIiu5h8tPTk96BG3eQecRMf8LEBVcaSmJws1v+n5zzJn3rR8j0iOF7PZAm97GmtjZaR/X1ST8IFFwe7XrJPsCpgKCxMUVxOFTCHHI2QQ6Z7qCtEhe998tpsfm4LiGC2ABVR6oVhzrtO4Ujy1o8gd3rrzriIJsjxmN1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719407134; c=relaxed/simple;
-	bh=qEhLQdr86USC/5RuNtoQJZNoL2ffiEHDGtZJnWtPsXA=;
+	bh=L9sxjHFX8ft02tNJgQEXub7nlBwYh461vYlEPqWuW8s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=vFbcgxeBajz3S6kEPJ51kUGljdjFM2EPc3xTwasvgizMUKz6uFLSoN6cXrYh7oKNjmEtMU4/Ag+KIiaxww6MmHEC0Nl5Wei1bEJH2iCOGVZMM+rsGKluNcXkurF+2+gVCcDmPorLLTUg9rAz67ngrMhvEJ3gCf/tFv0Dj9rdIA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bJJqpqLD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719407132;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JykDiXdqlJ6ciyv4C7jHD9UAaumemJj0MYtCVwinG38=;
-	b=bJJqpqLDkAevLn455Q4WkgiCOBAN4AZErYXrk6ORX6XEbR/tY5oXSYTLonL+8Zv5Tz/rHQ
-	HUaXL530G9wJKv08ieLv+VYwsDRIbn4xJUEbNef56p/08/p0fF2slMqDaB+2iWmu/6FGMw
-	tXla26UEmHHjCRkWv39L1L+uX6yQSHk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-18-ITRtfxPeOlmGxIiufKwUFg-1; Wed,
- 26 Jun 2024 09:05:31 -0400
-X-MC-Unique: ITRtfxPeOlmGxIiufKwUFg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 04A4E19560A7;
-	Wed, 26 Jun 2024 13:05:28 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.34.168])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 117261956050;
-	Wed, 26 Jun 2024 13:05:24 +0000 (UTC)
-From: Audra Mitchell <audra@redhat.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
+	 MIME-Version:Content-Type; b=pg91RYyikaRS+AnJQKcKmwpp5Bfsfi/elwH6/x/ForWPiXD6O5Qzsn3tliOWC7xRzkmEzP+hCSUvLV7Ga/lMYtWJnddxqScCixw2/8l6Y3/fsFJYUlijcZIP1h0dGgSbFYlsOq79ad3/Y9im6ydQF7Ia70BrRIEfK03jwGgXOn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwRXBlQU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79945C32789;
+	Wed, 26 Jun 2024 13:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719407134;
+	bh=L9sxjHFX8ft02tNJgQEXub7nlBwYh461vYlEPqWuW8s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lwRXBlQUTsERI5uoFG49aP5nvfavq94uqaFY36y49nsP7tCvlxSxr0fXFrpIsI+24
+	 JfhkBL2wmMjAsWP3dT1SpeH3sY+JLoXRYy/uJVbz7e08zQuLCDl3Y4nNEStnZ7J5aV
+	 MbJhGHVbr/tpE80DeOWMEaIaZQenaow1/PhyDHfUC0HNAIzyuQ050NAjn93ZQqRvbS
+	 u4ShL/gtdG0D8fHyFhaJWJyFvbWoEsp4n4QVUXv0nKDW2TiVixrojAnXnrgIhxPDVs
+	 5qFnD8z77Lg/mA4D+TVI+7N9+V5vJoeNV3mC08uxjgj8oxJt4YhVH70dORwYjqCDCo
+	 vCKCcqhLtJm9A==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
 	jack@suse.cz,
-	aarcange@redhat.com,
-	akpm@linux-foundation.org,
-	rppt@linux.vnet.ibm.com,
-	shli@fb.com,
-	peterx@redhat.com,
-	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	raquini@redhat.com,
-	linux-mm@kvack.org
-Subject: [PATCH v3 3/3] Turn off test_uffdio_wp if CONFIG_PTE_MARKER_UFFD_WP is not configured.
-Date: Wed, 26 Jun 2024 09:05:13 -0400
-Message-ID: <20240626130513.120193-3-audra@redhat.com>
-In-Reply-To: <20240626130513.120193-1-audra@redhat.com>
-References: <20240626130513.120193-1-audra@redhat.com>
+	linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	axboe@kernel.dk,
+	torvalds@linux-foundation.org,
+	xry111@xry111.site,
+	loongarch@lists.linux.dev
+Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Date: Wed, 26 Jun 2024 15:05:23 +0200
+Message-ID: <20240626-karawane-sozialistisch-7d67edb47e1d@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240625151807.620812-1-mjguzik@gmail.com>
+References: <20240625151807.620812-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1278; i=brauner@kernel.org; h=from:subject:message-id; bh=L9sxjHFX8ft02tNJgQEXub7nlBwYh461vYlEPqWuW8s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTVCIm+EjTwCvN76r61cCerhL/M8sgXElyP/I/uOrcre pdQrkp4RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERu/2VkmLX2bZ7nhZiG7aaT 9lSFOU7rfmty+U+1jbXchHsBRgfCJRn+ly3bvnPne1+py7e4JbesSHi87cj0oGspE67Nq7woUfa xiQEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-If CONFIG_PTE_MARKER_UFFD_WP is disabled, then we turn off three features
-in userfaultfd_api (UFFD_FEATURE_WP_HUGETLBFS_SHMEM,
-UFFD_FEATURE_WP_UNPOPULATED, and UFFD_FEATURE_WP_ASYNC). Currently this
-test always will call uffdio_regsiter with the flag
-UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault
-that if the feature UFFD_FEATURE_WP_HUGETLBFS_SHMEM is disabled, only
-allow the VM_UFFD_WP on anonymous vmas, meaning our call to
-uffdio_regsiter will fail. We still want to be able to run the test even
-if we have CONFIG_PTE_MARKER_UFFD_WP disabled, so check to see if the
-feature UFFD_FEATURE_WP_HUGETLBFS_SHMEM has been turned off in the test
-and if so, disable us from calling uffdio_regsiter with the flag
-UFFDIO_REGISTER_MODE_WP.
+On Tue, 25 Jun 2024 17:18:06 +0200, Mateusz Guzik wrote:
+> The newly used helper also checks for empty ("") paths.
+> 
+> NULL paths with any flag value other than AT_EMPTY_PATH go the usual
+> route and end up with -EFAULT to retain compatibility (Rust is abusing
+> calls of the sort to detect availability of statx).
+> 
+> This avoids path lookup code, lockref management, memory allocation and
+> in case of NULL path userspace memory access (which can be quite
+> expensive with SMAP on x86_64).
+> 
+> [...]
 
-Signed-off-by: Audra Mitchell <audra@redhat.com>
----
- tools/testing/selftests/mm/uffd-stress.c | 3 +++
- 1 file changed, 3 insertions(+)
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
-index b9b6d858eab8..3266ae885f75 100644
---- a/tools/testing/selftests/mm/uffd-stress.c
-+++ b/tools/testing/selftests/mm/uffd-stress.c
-@@ -419,6 +419,9 @@ static void parse_test_type_arg(const char *raw_type)
- 	test_uffdio_wp = test_uffdio_wp &&
- 		(features & UFFD_FEATURE_PAGEFAULT_FLAG_WP);
- 
-+	if (test_type != TEST_ANON && !(features & UFFD_FEATURE_WP_HUGETLBFS_SHMEM))
-+		test_uffdio_wp = false;
-+
- 	close(uffd);
- 	uffd = -1;
- }
--- 
-2.44.0
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+      https://git.kernel.org/vfs/vfs/c/33b321ac3a51
 
