@@ -1,150 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-22547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749F891997D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 22:54:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6B69199DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 23:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DE422834D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 20:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D24728296B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 21:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F4019306A;
-	Wed, 26 Jun 2024 20:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E176C19309C;
+	Wed, 26 Jun 2024 21:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WjjofFyt"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="CYFa51uV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646B48F47;
-	Wed, 26 Jun 2024 20:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E532AF1A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 21:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719435284; cv=none; b=pwkTR1GiWa/RsFEGYgwFUlqLswfkdc/yNyqbzpeUspQkohJx62Cg9P6UciMw+BfTYcM42xaGkpZEMlNw2EVLc8HRg8gUSqVVXw5L9I7c7S1zm8ZZx5gNynacYzQYkXNM6l5mjuEg4tcF2belEKr+Jooa6vUDIyms5RhZc+kw+Qo=
+	t=1719438251; cv=none; b=HboDezoeciww8GoGBGnQRQoib6c/Qgb25mLQjKymmrCd0cPpbUhagogGas4dg7EOLzv61v5Z/xNTiWN0O0HRynxyhbFWFmVCj59dgQjXPWGYbOAMKXF9nCHuxqzNAbzoYUxrvzp0VyKp3/Ce0hsOLb3eGFxuFNPdHIX+jkf0C5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719435284; c=relaxed/simple;
-	bh=zEMXbnBoRRda3mdOzdaRMplmfd7vbWJnu3aq+jGq+Uw=;
+	s=arc-20240116; t=1719438251; c=relaxed/simple;
+	bh=V9EuyUl2ls4FeArP3NylY+Sy3E+SCePkw5Hb7n8K/GI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/KI38tLKrRqImlxByVXBEejR/edYKorYqWs3WDREW9mz1ipVFwfk4+TS3VFbal8Ae1jYU1Lsw5ushfWtX834UwrztIAd3ja7uX7glZRqnenmiYyg5RJt6Z5ta1NndKtLzD8ZekpbGK6imQXPdvGWgcDiT1raU2CEDUngePVBg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WjjofFyt; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=0MaWDSzUymrD19+o4vqZ4gUCAu6OrygEIztpx1MGf1w=; b=WjjofFytOFt+muSmGP6W8FRO/F
-	ogy5ZKRWrwtYxOMni6oqwKFkjpN0NwfCS4PQKP95FyfyKmZQ7VOxlr9a5plK+99kfFpsOfe4i0ry+
-	lh5a4b3Wcdar0cmVRifQfpzEjh0u/nvqzg/rHczCixX4m9nkZn6pJW+J2ZEhwInQRS0LmAGQMDfFw
-	9lvSLfjUUE77tUO3F8TuPum3gG/5e2WZZNPI526tv+N15OUDBgpmkL/QIYem32xteQqTrG6g8kYys
-	lfNXXBRpWANiIoxeyYzz5rT9jWHwILEa/DDC9o+vU08ODcHhE+/QUKnUvg1JlnK6m7gDKjfR76r1V
-	4OBT1DwQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sMZf5-0000000Clbm-2fdN;
-	Wed, 26 Jun 2024 20:54:39 +0000
-Date: Wed, 26 Jun 2024 21:54:39 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Gavin Shan <gshan@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	djwong@kernel.org, hughd@google.com, torvalds@linux-foundation.org,
-	zhenyzha@redhat.com, shan.gavin@gmail.com
-Subject: Re: [PATCH 0/4] mm/filemap: Limit page cache size to that supported
- by xarray
-Message-ID: <ZnyAD24AQFzlKAhD@casper.infradead.org>
-References: <20240625090646.1194644-1-gshan@redhat.com>
- <20240625113720.a2fa982b5cb220b1068e5177@linux-foundation.org>
- <33d9e4b3-4455-4431-81dc-e621cf383c22@redhat.com>
- <20240625115855.eb7b9369c0ddd74d6d96c51e@linux-foundation.org>
- <f27d4fa3-0b0f-4646-b6c3-45874f005b46@redhat.com>
- <4b05bdae-22e8-4906-b255-5edd381b3d21@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bOFVFJpQpaB8YLfGsUn8WV2zPraj6GY8nGeZmfFTs53RTU9pe8S9Cef5N5FvPSikkOlI8BjGKUbfwwt4fWmXGfE13m+GcsGaZ8uZRhDGvZTnCk+E4NGPjjvL+oFKcP80XB4MYalsQ7qY4PLtEVJlcX6CLgHPs5Zfc6j2rYT5cEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=CYFa51uV; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-444fa363d1aso8945371cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 14:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719438249; x=1720043049; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jjNG4R1vZNPfH956v4J0OTtHbyuKxsK4TtmNrljMZDU=;
+        b=CYFa51uVVbz1h8P1DLXe+LwlYxPenbl54+07mwTc9FzrMCcLpTj8ONoFCYeFz4qRLm
+         53eM+0qTtOIef930igIa7kZYQnkLPHTDuOnA+92J+REH3rjCLwFpjeby0wrDHsCXQpcN
+         DPc71iOU1X0ldBoWa7iAuUfkHbq+njrQe0XkJwtingrudGLOXCj9RJquKYDTXLVqWLXd
+         xfLlJfgPROUIfexPl+o7oyaXyErVVARQXAqK/0ix8XsnFkycUljp7IKgc8/C1oLLRhPi
+         3/DEFh15bVMEKFhnGAoZ46krm/tlXtcTY9S3Wdwl10oHq89jpcZtj+kQIM6Mp2EqzM1Q
+         FKug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719438249; x=1720043049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jjNG4R1vZNPfH956v4J0OTtHbyuKxsK4TtmNrljMZDU=;
+        b=WPm1/8u9P4ObgvQBRw1C546x5h+qh/8zswNdCUzaBNtDJQ7C2BUajoHvOn393k0l5l
+         d9tf+pPl8D2d9CxA42vBpx6PpNTJ3bPgqXZrZPFV6q7dphuqQf26YPXO3GcFcS2pjyzq
+         uOS7i1ly7sU+zpIF7F+Xqdb3i85X+lvqGjCDJ942Iks4BwLLJbVF7lw4vAm6a5EuZL6e
+         FFE0HU+aUpaga3+W55ZZMShyweZjJp9GXQFyy5SUlz479Xd3mNv7G3Nl2kzVGuh7iLyP
+         z5RLK6Eazt6C9/DCic3OOZT7JqQdXOcbZ4eb19pG+Lq1rNPbjt+cP/rW084cIc9ALkAz
+         kQpg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2BFehpNV6p3HiicWHeqvQLeQ6aa/LICItmeWomh9l5sZrAJL4pyU0tZVolkmF5kE8YTF+Md5ofroPIJlCkGYrjNCESWtxdG8M0D8ktA==
+X-Gm-Message-State: AOJu0Yyy0ERhUurtyqT+tHnM2XWHVQJGp1Uah+cCpltieBI/Nm5+c82n
+	T/4/YQCUJwEzQahvFmYMucK9Rm0dFCu6iqV5oJUApoe/B7gBiVyLyJhk7eSOtfc=
+X-Google-Smtp-Source: AGHT+IF8WfCEFzI3B+9W0m8Gl2Lh73d5ucYGeDd2e+9DtVLqoWqH8tHCuEQa4FBQgkv1OZMAnZL4/Q==
+X-Received: by 2002:a05:622a:1a83:b0:446:371b:1b9f with SMTP id d75a77b69052e-446371b2083mr23201741cf.22.1719438248726;
+        Wed, 26 Jun 2024 14:44:08 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44501893592sm18084161cf.37.2024.06.26.14.44.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 14:44:08 -0700 (PDT)
+Date: Wed, 26 Jun 2024 17:44:07 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: linux-man@vger.kernel.org, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com,
+	kernel-team@fb.com
+Subject: Re: [PATCH v2 0/2] man-pages: add documentation for
+ statmount/listmount
+Message-ID: <20240626214407.GA3602100@perftesting>
+References: <cover.1719417184.git.josef@toxicpanda.com>
+ <t6z4z33wkaf2ufqzt4dtkpw2xdjrr67pm5p5leikj3uj3ahhkg@jzssz7gcv2h5>
+ <20240626180434.GA3370416@perftesting>
+ <gsfbaxnh7blhcldfbnhup4wqb2e6gsccpgy4aoyglohvwkoly5@fcctrxviaspy>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4b05bdae-22e8-4906-b255-5edd381b3d21@redhat.com>
+In-Reply-To: <gsfbaxnh7blhcldfbnhup4wqb2e6gsccpgy4aoyglohvwkoly5@fcctrxviaspy>
 
-On Wed, Jun 26, 2024 at 10:37:00AM +1000, Gavin Shan wrote:
-> On 6/26/24 5:05 AM, David Hildenbrand wrote:
-> > On 25.06.24 20:58, Andrew Morton wrote:
-> > > On Tue, 25 Jun 2024 20:51:13 +0200 David Hildenbrand <david@redhat.com> wrote:
-> > > 
-> > > > > I could split them and feed 1&2 into 6.10-rcX and 3&4 into 6.11-rc1.  A
-> > > > > problem with this approach is that we're putting a basically untested
-> > > > > combination into -stable: 1&2 might have bugs which were accidentally
-> > > > > fixed in 3&4.  A way to avoid this is to add cc:stable to all four
-> > > > > patches.
-> > > > > 
-> > > > > What are your thoughts on this matter?
-> > > > 
-> > > > Especially 4 should also be CC stable, so likely we should just do it
-> > > > for all of them.
-> > > 
-> > > Fine.  A Fixes: for 3 & 4 would be good.  Otherwise we're potentially
-> > > asking for those to be backported further than 1 & 2, which seems
-> > > wrong.
-> > 
-> > 4 is shmem fix, which likely dates back a bit longer.
-> > 
-> > > 
-> > > Then again, by having different Fixes: in the various patches we're
-> > > suggesting that people split the patch series apart as they slot things
-> > > into the indicated places.  In other words, it's not a patch series at
-> > > all - it's a sprinkle of independent fixes.  Are we OK thinking of it
-> > > in that fashion?
-> > 
-> > The common themes is "pagecache cannot handle > order-11", #1-3 tackle "ordinary" file THP, #4 tackles shmem THP.
-> > 
-> > So I'm not sure we should be splitting it apart. It's just that shmem THP arrived before file THP :)
-> > 
+On Wed, Jun 26, 2024 at 08:41:06PM +0200, Alejandro Colomar wrote:
+> Hi Josef,
 > 
-> I rechecked the history, it's a bit hard to have precise fix tag for PATCH[4].
-> Please let me know if you have a better one for PATCH[4].
+> On Wed, Jun 26, 2024 at 02:04:34PM GMT, Josef Bacik wrote:
+> > On Wed, Jun 26, 2024 at 07:02:26PM +0200, Alejandro Colomar wrote:
+> > > You can
+> > > 
+> > > 	$ make lint build check -j8 -k
+> > > 	$ make lint build check
+> > > 
+> > > to see the full list of failures.
+> > 
+> > I captured the output of
+> > 
+> > make lint build check -j8 -k > out.txt 2>&1
 > 
-> #4
->   Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
->   Cc: stable@kernel.org # v4.10+
->   Fixes: 552446a41661 ("shmem: Convert shmem_add_to_page_cache to XArray")
->   Cc: stable@kernel.org # v4.20+
-> #3
->   Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
->   Cc: stable@kernel.org # v5.18+
-> #2
->   Fixes: 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
->   Cc: stable@kernel.org # v5.18+
-> #1
->   Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
->   Cc: stable@kernel.org # v5.18+
+> Hmmm, please do the following steps to have a cleaner log:
+> 
+> 	## Let's see if the build system itself complains:
+> 	$ make nothing >out0.txt
+> 
+> 	## Skip checkpatch stuff:
+> 	$ make -t lint-c-checkpatch
+> 
+> 	## Make fast stuff that doesn't break:
+> 	$ make lint build check -j8 -k >/dev/null 2>/dev/null
+> 
+> 	## Now log the remaining errors:
+> 	$ make lint build check >out.txt 2>&1
+> 
+> > and pasted it here
+> > 
+> > https://paste.centos.org/view/ed3387a9
+> 
+> BTW, you seem to also be missing cppcheck(1), which at least in Debian
+> is provided in the cppcheck package.  It also seems to be available in
+> Fedora, but I don't know if your system will have it.
+> 
+> > Clang messes up a bunch for a variety of different pages.
+> 
+> I suspect the Clang errors to be due to missing libbsd-dev.
+> 
 
-I actually think it's this:
+Ok well those two things fixed most of the errors, now I'm down to just this
 
-commit 6b24ca4a1a8d
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Sat Jun 27 22:19:08 2020 -0400
+https://paste.centos.org/view/acd71eb7
 
-    mm: Use multi-index entries in the page cache
+I'm on Fedora btw. Thanks,
 
-    We currently store large folios as 2^N consecutive entries.  While this
-    consumes rather more memory than necessary, it also turns out to be buggy.
-    A writeback operation which starts within a tail page of a dirty folio will
-    not write back the folio as the xarray's dirty bit is only set on the
-    head index.  With multi-index entries, the dirty bit will be found no
-    matter where in the folio the operation starts.
-
-    This does end up simplifying the page cache slightly, although not as
-    much as I had hoped.
-
-    Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-    Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-
-Before this, we could split an arbitrary size folio to order 0.  After
-it, we're limited to whatever the xarray allows us to split.
+Josef
 
