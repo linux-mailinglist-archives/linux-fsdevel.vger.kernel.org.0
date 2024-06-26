@@ -1,100 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-22516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C45918386
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:58:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838D391848C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 16:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8928F1F215D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:58:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8E62899DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 14:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E8B185E70;
-	Wed, 26 Jun 2024 13:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D891891A4;
+	Wed, 26 Jun 2024 14:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIa6qEx1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE841850B8;
-	Wed, 26 Jun 2024 13:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BF0185E56;
+	Wed, 26 Jun 2024 14:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410295; cv=none; b=YnBwYUEwG5l0BGWCWjEqoMb7YmbAt2x1vHZD/EQcdBKJMGujFJ2I01AtZo6/VRUvIsjwT6N724gSjQ/tWTvJeZ2jYgkHuiNt3XTMbiPx8ci+yvjIvB4K05aViKWm2Vq5Ddwf5Jza6bCwOq8dAlr3lyEbtcRv6hyAkWLw+VqTk1I=
+	t=1719412551; cv=none; b=lkftixY2k+jZDv8entFMi8Bb9BcjVFEBtTxaeu2Z+5e4/pjYEd6p07ZErthbA9vihVGAHREZk058Vg21uUJNwoP32cR95HgPWiOsPrgMWSc7hAWdWt1L+XTPbCygd86csU3hGwfvCMw3/DEGjpgaVvARHPXtCxqDsJ64F1pHNKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410295; c=relaxed/simple;
-	bh=gBr8PCzn+D3ELiMEpL79fGfTNAj+Hb36Tf9km+5Pfr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sKpOofSG8kij8Z+/kYAY+QN1y2oMPqASyWltCcLoDUJxpXUGt/TAV5aHqlB9hVCdvPYbQiWSc+/aTwqx7QOmZGLVCISIwCKz7xbvhGK2Ta6OnyStHnf+pDmarFnnEyj9y6KJb+qTEfruc8g1ic8j7PRt0qxS2I81vzRTA7npFBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB36EC116B1;
-	Wed, 26 Jun 2024 13:58:13 +0000 (UTC)
-Date: Wed, 26 Jun 2024 09:58:12 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Takaya Saeki <takayas@chromium.org>, Matthew Wilcox
- <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Junichi Uekawa
- <uekawa@chromium.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [PATCH v2] filemap: add trace events for get_pages, map_pages,
- and fault
-Message-ID: <20240626095812.2c5ffb72@rorschach.local.home>
-In-Reply-To: <20240626213157.e2d1b916bcb28d97620043d1@kernel.org>
-References: <20240620161903.3176859-1-takayas@chromium.org>
-	<20240626213157.e2d1b916bcb28d97620043d1@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719412551; c=relaxed/simple;
+	bh=hSAGlFcDGCBe8j/KBvTOtfot2WD0pgkHaRN4Bt6K8XM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOi5RoayjEPwvhmtAuCGMdg+i6R1JuvXh99IpyRbpzvu7/1yODrtQN1xg6PEEnUbZ6GbrHY4aCRrpq3UOBaLck121Ha+sJ9iujC8KNCBpGTjdYPnLnZwKznv3RCcfXvpOgFc5OHp/owqM8QObD9wGjes6ztUPJYJoLHXvNkvGLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIa6qEx1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE30C116B1;
+	Wed, 26 Jun 2024 14:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719412550;
+	bh=hSAGlFcDGCBe8j/KBvTOtfot2WD0pgkHaRN4Bt6K8XM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cIa6qEx16kAoJqXOuMqm/7/SKWYYqrdK5ttvvwc+PEg/TmjtIvoKpsKXnKdRF8dkY
+	 2GKoZr7yhuiUp4QaHuKZsTObFc8WXIbdG08idt9UCJgdn44G5YzuaQ5VCNeHjyViOt
+	 0o2BkPYYWJ7RCmzCXeKQ5LWtNyDHjy9NlZke2mvPXf6t6BiOUAMBzsdpcEv/j3iLsp
+	 vce4zdEZ/58asBJeGkoFeecmSXzi9oibpfaIyoHydawOXumTXJHr2sYs6YAPLuFGkh
+	 bOxWHhN3vSdOeFZPXgn20OzRPE4V3ZsDXgt6JdDz4aIH077VvAw99MDhGzBZWY0ZS0
+	 jeF9znO5rzVUg==
+Date: Wed, 26 Jun 2024 16:35:45 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Xi Ruoyao <xry111@xry111.site>, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	axboe@kernel.dk, torvalds@linux-foundation.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Message-ID: <20240626-stehplatz-radius-cbf511594b34@brauner>
+References: <20240625151807.620812-1-mjguzik@gmail.com>
+ <0763d386dfd0d4b4a28744bac744b5e823144f0b.camel@xry111.site>
+ <CAGudoHH4LORQUXp18s8CPPLHQMi=qG9aHsCXTp2cXuT6J9PK6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHH4LORQUXp18s8CPPLHQMi=qG9aHsCXTp2cXuT6J9PK6A@mail.gmail.com>
 
-On Wed, 26 Jun 2024 21:31:57 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> On Thu, 20 Jun 2024 16:19:03 +0000
-> Takaya Saeki <takayas@chromium.org> wrote:
+On Wed, Jun 26, 2024 at 03:39:47PM GMT, Mateusz Guzik wrote:
+> On Wed, Jun 26, 2024 at 4:59 AM Xi Ruoyao <xry111@xry111.site> wrote:
+> >
+> > On Tue, 2024-06-25 at 17:18 +0200, Mateusz Guzik wrote:
+> > > +     if ((sx->flags & (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE)) ==
+> > > +         (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE) &&
+> > > +         vfs_empty_path(sx->dfd, path)) {
+> > >               sx->filename = NULL;
+> > > -             return ret;
+> >
+> > AT_STATX_SYNC_TYPE == AT_STATX_FORCE_SYNC | AT_STATX_DONT_SYNC but
+> > AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC obviously contradicts with
+> > each other.  Thus valid uses of statx won't satisfy this condition.
+> >
 > 
-> > To allow precise tracking of page caches accessed, add new tracepoints
-> > that trigger when a process actually accesses them.
-> > 
-> > The ureadahead program used by ChromeOS traces the disk access of
-> > programs as they start up at boot up. It uses mincore(2) or the
-> > 'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
-> > this information in a "pack" file and on subsequent boots, it will read
-> > the pack file and call readahead(2) on the information so that disk
-> > storage can be loaded into RAM before the applications actually need it.
-> > 
-> > A problem we see is that due to the kernel's readahead algorithm that
-> > can aggressively pull in more data than needed (to try and accomplish
-> > the same goal) and this data is also recorded. The end result is that
-> > the pack file contains a lot of pages on disk that are never actually
-> > used. Calling readahead(2) on these unused pages can slow down the
-> > system boot up times.
-> > 
-> > To solve this, add 3 new trace events, get_pages, map_pages, and fault.
-> > These will be used to trace the pages are not only pulled in from disk,
-> > but are actually used by the application. Only those pages will be
-> > stored in the pack file, and this helps out the performance of boot up.
-> > 
-> > With the combination of these 3 new trace events and
-> > mm_filemap_add_to_page_cache, we observed a reduction in the pack file
-> > by 7.3% - 20% on ChromeOS varying by device.
-> >   
+> I don't know wtf I was thinking, this is indeed bogus.
 > 
-> This looks good to me from the trace-event point of view.
+> > And I guess the condition here should be same as the condition in
+> > SYSCALL_DEFINE5(statx) or am I wrong?
+> >
 > 
-> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> That I disagree with. The AUTOMOUNT thing is a glibc-local problem for
+> fstatat. Unless if you mean the if should be of similar sort modulo
+> the flag. :)
+> 
+> I am going to fix this up and write a io_uring testcase, then submit a
+> v4. Maybe today or tomorrow.
 
-I added my reviewed-by on the last patch, you could have added it on
-this one as it didn't change as much. But anyway, here it is again:
-
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
+Fwiw, I had already dropped the io_uring bits when I pushed to
+#vfs.mount. So just put that as a separate patch on top.
 
