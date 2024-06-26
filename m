@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-22466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E298C917661
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 04:51:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CBF891765E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 04:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D07B2844B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 02:51:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10983B22BCA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 02:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0934CB36;
-	Wed, 26 Jun 2024 02:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDD43AC16;
+	Wed, 26 Jun 2024 02:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TZ6yf5S8"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PPGQD/Es"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7422D61FEA;
-	Wed, 26 Jun 2024 02:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1A714A81;
+	Wed, 26 Jun 2024 02:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719370271; cv=none; b=SYznjipwyHnP4q2pv/S4TNFOz1p708gYCGIaaQA5Yg4QM2rfiURk8+q1oIC2sNwWFsr98ag6rBvrKSnXksa65aGwl1985Nz5dIMYrUsIcjR10WMtmF8RPcG5st1+CZGBqQQO82hKQGWcLx8HM89ZD8zX6OMgy9F4tkLNnRyGrVI=
+	t=1719370256; cv=none; b=nmiRB6XwppP0hy1nyOQ2bBSh2jiU7vsgbEBhQsI64/+gz4rNREr7NSfkkyR/OYTJUf5A35b19LSKthJ+T6hYaj3cFeaQF6+salqc5r8RPSKmY4MMUpZwFGCGqzN/xsUtFCXPXmQt4SdjJGOUnuFKxFCQbw6j+rUGQv9btfNMYo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719370271; c=relaxed/simple;
-	bh=/5cAxMS0zmwZ3u43nrJI4+ak0vUk7GAEvG8iuXIvbuY=;
+	s=arc-20240116; t=1719370256; c=relaxed/simple;
+	bh=I+Mmm7O8zWsVG9k4of9tiyj3aKGe9eU+KFhKPGSFyKM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YI8iXKqa8FA8IaQhTpmE976o8VFCOGGgn+sjkMx90s/isNIGWfXwmsH4hG2JvGAwEVUkbH8TfEB5qU23u3DWbZsu4xxWwxp5t8pd3ieQ9ytwPFqObe3MzU+jv9SmV6V2oHd60vVXh43A7xEXt/mpAi35A70L2O5Ox3dVcZwp100=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TZ6yf5S8; arc=none smtp.client-ip=220.197.31.5
+	 MIME-Version; b=r3fSpNCNqMEUcww/oQnOyTvoiCYTXyI+lJxypahmLgYYtoed0kPYN4TNVImTiF0Le8LeOkl3TvWDOy080f+7ZWWuwLpEivab22lHi1+gOktgsjPhVHO/jNPFp2xmA4iyzXzqMTRrKu7/mkxlVOnBZv73jEbAoMr4g1I1H7pVz9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PPGQD/Es; arc=none smtp.client-ip=220.197.31.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=wo14P
-	WeIUY9EYOh0eaVerCi6XcBJRd3XZw/te6DPwYs=; b=TZ6yf5S8wc7BKoK/5Szih
-	NRYHE961BDZepEeW6lqkF5QSzp1ILsFM2nIKaAMff2ZhVyrARdq3bQSBnV1YNnmP
-	5H8QsUvnne04DejIazZ/motEPBgQiOBZ2zMEoW2MjSsBqRd6o4Pbbr0dgvYXK7bM
-	sPRtpv75zUunjNnq2ZTye8=
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=fFFOK
+	vSRi6Ay443e2K7KzltG1+t1YPDbN1yuinD8/Nk=; b=PPGQD/EsvA0Z+MY/IMniF
+	hOPxc8wWMMMHDa1tpDilBGc8lUHnN+ZQgh+p1olSHX5AWzda45w/5lHbj5Y3A23j
+	lxuG58iieCXnxglAAMSH+RmrMgEGGtaRkeuC4XigpkPdAEoTJIMpbQ76emlCqK2R
+	RYnLsm1NJHgsMugixX8wsk=
 Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDXT0W6gXtm8PInAg--.40265S5;
-	Wed, 26 Jun 2024 10:49:36 +0800 (CST)
+	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDXT0W6gXtm8PInAg--.40265S6;
+	Wed, 26 Jun 2024 10:49:38 +0800 (CST)
 From: ran xiaokai <ranxiaokai627@163.com>
 To: akpm@linux-foundation.org,
 	willy@infradead.org
@@ -51,9 +51,9 @@ Cc: vbabka@suse.cz,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/2] mm: Constify folio_order()/folio_test_pmd_mappable()
-Date: Wed, 26 Jun 2024 02:49:23 +0000
-Message-Id: <20240626024924.1155558-2-ranxiaokai627@163.com>
+Subject: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
+Date: Wed, 26 Jun 2024 02:49:24 +0000
+Message-Id: <20240626024924.1155558-3-ranxiaokai627@163.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240626024924.1155558-1-ranxiaokai627@163.com>
 References: <20240626024924.1155558-1-ranxiaokai627@163.com>
@@ -64,50 +64,60 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXT0W6gXtm8PInAg--.40265S5
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJr13ZF4rZrW7Kr48JryfXrb_yoW8GrW3pF
-	WDCFn7KrW0yFy5CrykGa17Ary5X39rWFy2yFyag3W7Jas8t3s29w4v9w1YyF1fGrW8AF4x
-	Za17WFWF9FyUJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UlhFsUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiMwQKTGXAmE8lKgAAsM
+X-CM-TRANSID:_____wDXT0W6gXtm8PInAg--.40265S6
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZF4rKrW3uF43urykAryxKrg_yoW8WFykpr
+	Z3GF9rArWkW3Z8Ar18Xw1qkry8Kr98WF4Utayakw1Iv3ZxXwnrKFW8tw4FyFy7XFyxAan2
+	vayDuF13Za4DuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UMuWJUUUUU=
+X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiMwQKTGXAmE8lKgABsN
 
 From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 
-Constify folio_order()/folio_test_pmd_mappable().
-No functional changes, just a preparation for the next patch.
+KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
+pages, which means of any order, but KPF_THP should only be set
+when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
+("mm: thp: support allocation of anonymous multi-size THP"),
+multiple orders of folios can be allocated and mapped to userspace,
+so the folio_test_large() check is not sufficient here,
+replace it with folio_test_pmd_mappable() to fix this.
+
+Also kpageflags is not only for userspace memory but for all valid pfn
+pages,including slab pages or drivers used pages, so the PG_lru and
+is_anon check are unnecessary here.
 
 Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 ---
- include/linux/huge_mm.h | 2 +-
- include/linux/mm.h      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/proc/page.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 2aa986a5cd1b..8d66e4eaa1bc 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -377,7 +377,7 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
-  * folio_test_pmd_mappable - Can we map this folio with a PMD?
-  * @folio: The folio to test
-  */
--static inline bool folio_test_pmd_mappable(struct folio *folio)
-+static inline bool folio_test_pmd_mappable(const struct folio *folio)
- {
- 	return folio_order(folio) >= HPAGE_PMD_ORDER;
- }
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 9a5652c5fadd..b1c11371a2a3 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1105,7 +1105,7 @@ static inline unsigned int compound_order(struct page *page)
-  *
-  * Return: The order of the folio.
-  */
--static inline unsigned int folio_order(struct folio *folio)
-+static inline unsigned int folio_order(const struct folio *folio)
- {
- 	if (!folio_test_large(folio))
- 		return 0;
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index 2fb64bdb64eb..3e7b70449c2f 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -146,19 +146,13 @@ u64 stable_page_flags(const struct page *page)
+ 		u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
+ 	else
+ 		u |= 1 << KPF_COMPOUND_TAIL;
++
+ 	if (folio_test_hugetlb(folio))
+ 		u |= 1 << KPF_HUGE;
+-	/*
+-	 * We need to check PageLRU/PageAnon
+-	 * to make sure a given page is a thp, not a non-huge compound page.
+-	 */
+-	else if (folio_test_large(folio)) {
+-		if ((k & (1 << PG_lru)) || is_anon)
+-			u |= 1 << KPF_THP;
+-		else if (is_huge_zero_folio(folio)) {
++	else if (folio_test_pmd_mappable(folio)) {
++		u |= 1 << KPF_THP;
++		if (is_huge_zero_folio(folio))
+ 			u |= 1 << KPF_ZERO_PAGE;
+-			u |= 1 << KPF_THP;
+-		}
+ 	} else if (is_zero_pfn(page_to_pfn(page)))
+ 		u |= 1 << KPF_ZERO_PAGE;
+ 
 -- 
 2.15.2
 
