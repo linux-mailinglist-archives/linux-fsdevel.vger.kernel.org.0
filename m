@@ -1,149 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-22531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FAC9187F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 18:53:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8365B91881D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 19:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929982843C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 16:52:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 898EDB217BC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 17:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88C818FC8B;
-	Wed, 26 Jun 2024 16:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDB118FC69;
+	Wed, 26 Jun 2024 17:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ReY6pkAa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2rmnaUX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63841F94C;
-	Wed, 26 Jun 2024 16:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3526213AA4C;
+	Wed, 26 Jun 2024 17:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719420773; cv=none; b=E3i0FfhWUpAJFKA2+YOS9zb1PYCvc13ytSTeBU3X02Og6OvDC9EmBYHEvUoxh+8gP0QLD4ztaruZoLj8bPpKUIL8dBDi9mVLd4jYxqrbrWGmxc4uawZ3ovsk+FIC/xLyuf5CT9cH0CmyyfpSmsB8Bh9NTPlftsUUHq9TWxOch1I=
+	t=1719421350; cv=none; b=DV2h2pkKXNKT7rRHHY20TesLwyacsnhyFur2j1yibv0DvqSEFzZ610HSIVJsxNGKWNDh2UvCp0JdJCfqH+PdKXOrtv1dseSITMxbDraIMBWY1ZHopf/7AKT4HrTeez6Amc1ViujylbTvwJgn+CXBk1FYUuccrtJFJcTrqcKaBos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719420773; c=relaxed/simple;
-	bh=RqiwFZ3/x5mZbBYDbfsmFO2HZkjcTWfLQWKMBl63Jj4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bcqkqdUZYHK+JPOuCHm07xVEor/bFBtVBP29IYfdEjnySqVsJ/+SMr0NGMGupAwL4EuoZe8XMJ+PgCCXLwTaiDKIVRAkG8PDb+BzG1t813WRajkP5VrpqmwJkWus3jdxUV9+2Y/2BlOpVtWgSVmxxS/G1BSI1W6MG2itIkKcnZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ReY6pkAa; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719420772; x=1750956772;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=RqiwFZ3/x5mZbBYDbfsmFO2HZkjcTWfLQWKMBl63Jj4=;
-  b=ReY6pkAa7xZ48YaYVN11kmP1emU9ZOJF2Yd5YShvr2MUB9ZyubYj8+Xy
-   uATJ2MctdOly3KMlxFWkuUyEVy7ARa4sKGPdHww2FxlubQzPNcexSx+ti
-   oj2LyzZXS9BqSKdJPwm4r0qk8BlXx6UMLYbr8iLPthwl5muRUhd0DN36o
-   mL4wxniq4fV5SM00+Y5AGqeTUm7Yq3sPE2fElGFj/Cq+FBibHpIwtfz3A
-   an6dGj9EdKUgUH7xAyfOOWN1gQpeVoooqN4PTxq4/WmRWRMDea8glkiv7
-   g6M/dI+X0dKTVW2MzCiHUx0rF7LqxZlyJkaM2kAwu3ESOx4R5sIjWwAld
-   A==;
-X-CSE-ConnectionGUID: i8GlrM7kRRGOf9Nvy6owtQ==
-X-CSE-MsgGUID: c+Dywl41RQGQaqa36V+5UQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16343908"
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="16343908"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:52:51 -0700
-X-CSE-ConnectionGUID: wV5umO2eSzSLji7TE8F4LQ==
-X-CSE-MsgGUID: MHTBxJDjQdqxx30vEaLIPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="44780133"
-Received: from anagara1-mobl.amr.corp.intel.com (HELO [10.209.55.145]) ([10.209.55.145])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:52:50 -0700
-Message-ID: <3d553b6571eaa878e4ce68898113d73c9c1ed87d.camel@linux.intel.com>
-Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Jan Kara <jack@suse.cz>, "Ma, Yu" <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, mjguzik@gmail.com, 
- edumazet@google.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,  pan.deng@intel.com, tianyou.li@intel.com,
- tim.c.chen@intel.com
-Date: Wed, 26 Jun 2024 09:52:50 -0700
-In-Reply-To: <690de703aeee089f86beca5cb90d3d43dcd7df56.camel@linux.intel.com>
-References: <20240614163416.728752-1-yu.ma@intel.com>
-	 <20240622154904.3774273-1-yu.ma@intel.com>
-	 <20240622154904.3774273-2-yu.ma@intel.com>
-	 <20240625115257.piu47hzjyw5qnsa6@quack3>
-	 <20240625125309.y2gs4j5jr35kc4z5@quack3>
-	 <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
-	 <20240626115427.d3x7g3bf6hdemlnq@quack3>
-	 <690de703aeee089f86beca5cb90d3d43dcd7df56.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+	s=arc-20240116; t=1719421350; c=relaxed/simple;
+	bh=AlbTRzpYkYNZX0jniCSeWu+/qk14Ofv7q3SZYGsVm/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JmjIUWKoP/r7vHY76oKaBAMIAtFDMw0luKvnWcgEqkhWd5HS91dYxyF5oS976APxn5h1JPKkWU/mY+oVf9KFrjoDNPfej3qfArvwmcMfnBi7r36Uy6vz6RziOZZjRLGPS/NJI97f9/cqlcAAEHZxeV1hU2nh4cUGFZYpXhNTsWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2rmnaUX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F94FC116B1;
+	Wed, 26 Jun 2024 17:02:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719421349;
+	bh=AlbTRzpYkYNZX0jniCSeWu+/qk14Ofv7q3SZYGsVm/E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i2rmnaUXmSGG5zBrWmF334//NDXgecStREjQdC+rXLLOBhdQOFGzsSQ4bVnPWsg6i
+	 FbeVUJzDFJ4pbXBdDYpHZgVzobNcY3bzk7EvHged8tkRGHaNvSf63IQ1DiT/26vzFP
+	 V7eyBFB/X/iwdUlpzDwtht3WscCNLMQ8njzFTuRBMgPuJ9rcQjRBMVCmDikCc3MN2p
+	 Si2Z+Q5n/aKm7wAt1XzSzDoSHykmlOCltWHnsYHiZmu7TEhubr1swigMq39/k7UiXX
+	 yvRGef/bHz3S6iz8KDDD8m8H/k8y7YG+MBUPE4tPG0ldu3QF5cQQW5mfTsOoqXvEIT
+	 7+w3gM0pJGpZQ==
+Date: Wed, 26 Jun 2024 19:02:26 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
+Subject: Re: [PATCH v2 0/2] man-pages: add documentation for
+ statmount/listmount
+Message-ID: <t6z4z33wkaf2ufqzt4dtkpw2xdjrr67pm5p5leikj3uj3ahhkg@jzssz7gcv2h5>
+References: <cover.1719417184.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vfcxupcgjbbzmfvz"
+Content-Disposition: inline
+In-Reply-To: <cover.1719417184.git.josef@toxicpanda.com>
 
-On Wed, 2024-06-26 at 09:43 -0700, Tim Chen wrote:
-> On Wed, 2024-06-26 at 13:54 +0200, Jan Kara wrote:
-> >=20
-> >=20
-> > Indeed, thanks for correcting me! next_fd is just a lower bound for the
-> > first free fd.
-> >=20
-> > > The conditions
-> > > should either be like it is in patch or if (!start && !test_bit(0,
-> > > fdt->full_fds_bits)), the latter should also have the bitmap loading =
-cost,
-> > > but another point is that a bit in full_fds_bits represents 64 bits i=
-n
-> > > open_fds, no matter fd >64 or not, full_fds_bits should be loaded any=
- way,
-> > > maybe we can modify the condition to use full_fds_bits ?
-> >=20
-> > So maybe I'm wrong but I think the biggest benefit of your code compare=
-d to
-> > plain find_next_fd() is exactly in that we don't have to load full_fds_=
-bits
-> > into cache. So I'm afraid that using full_fds_bits in the condition wou=
-ld
-> > destroy your performance gains. Thinking about this with a fresh head h=
-ow
-> > about putting implementing your optimization like:
-> >=20
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *f=
-dt, unsigned int start)
-> >         unsigned int maxbit =3D maxfd / BITS_PER_LONG;
-> >         unsigned int bitbit =3D start / BITS_PER_LONG;
-> > =20
-> > +       /*
-> > +        * Optimistically search the first long of the open_fds bitmap.=
- It
-> > +        * saves us from loading full_fds_bits into cache in the common=
- case
-> > +        * and because BITS_PER_LONG > start >=3D files->next_fd, we ha=
-ve quite
-> > +        * a good chance there's a bit free in there.
-> > +        */
-> > +       if (start < BITS_PER_LONG) {
-> > +               unsigned int bit;
-> > +
-> > +               bit =3D find_next_zero_bit(fdt->open_fds, BITS_PER_LONG=
-, start);
+
+--vfcxupcgjbbzmfvz
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
+Subject: Re: [PATCH v2 0/2] man-pages: add documentation for
+ statmount/listmount
+References: <cover.1719417184.git.josef@toxicpanda.com>
+MIME-Version: 1.0
+In-Reply-To: <cover.1719417184.git.josef@toxicpanda.com>
+
+Hi Josef,
+
+On Wed, Jun 26, 2024 at 11:56:06AM GMT, Josef Bacik wrote:
+> V1: https://lore.kernel.org/linux-fsdevel/cover.1719341580.git.josef@toxi=
+cpanda.com/
 >=20
-> Say start is 31 (< BITS_PER_LONG)
-> bit found here could be 32 and greater than start.  Do we care if we retu=
-rn bit > start?
+> v1->v2:
+> - Dropped the statx patch as Alejandro already took it (thanks!)
+> - Reworked everything to use semantic newlines
+> - Addressed all of the comments on the statmount.2 man page
+>=20
+> I'm still unable to run anything other than make check, and if I do `make=
+ -t
+> lint-c-checkpatch` and then run make check lint build it fails almost
+> immediately on other unrelated things, so I think I'm too dumb to know ho=
+w to
+> check these patches before I send them.  However I did my best to follow =
+all of
+> the suggestions.  Thanks,
 
-Sorry, I mean to say that we could find a bit like 30 that is less than sta=
-rt instead
-of the other way round.=20
+I'm interested in learning what problems contributors face, so please
+let me know those issues, if you don't mind.
 
-Tim
+You can
+
+	$ make lint build check -j8 -k
+	$ make lint build check
+
+to see the full list of failures.
+
+Have a lovely day!
+Alex
+
+>=20
+> Josef
+>=20
+> Josef Bacik (2):
+>   statmount.2: New page describing the statmount syscall
+>   listmount.2: New page describing the listmount syscall
+>=20
+>  man/man2/listmount.2 | 114 +++++++++++++++++
+>  man/man2/statmount.2 | 289 +++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 403 insertions(+)
+>  create mode 100644 man/man2/listmount.2
+>  create mode 100644 man/man2/statmount.2
+>=20
+> --=20
+> 2.43.0
+>=20
 >=20
 
+--=20
+<https://www.alejandro-colomar.es/>
+
+--vfcxupcgjbbzmfvz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZ8SaIACgkQnowa+77/
+2zKgdg/+Mbbds5DVU9ozvsZgoPnQZpL7SjKl6KZ2Qss4Drw/SV2iS/3yVmlUTVmi
+9E+tnfIGq7R22vCE1blQAPjL6OAdT6MlxWzkDcam8qe/izBWb8O9C0q/8tgVNyld
+bORldy61S3g1bqsTGvMOuAssC/DWPY/X0VYuEH9jEwfD9VIjDu27j1lKBA+b2w5y
+680xUK/g+wgQWbBa6nBwthckWS4vj6VgsB4fisUODC5K1MJ1VBeKEgb+qsTGwcvm
+MfgaHqx/s/6N8HT3avRRPB2jDjRT/NfrKo4NddsI1ygXHUlm3E/KLbG7F0kzDWD5
+1mSua3YUkii8JQrX63eMwrSNIKbChFaOU3svuLSkj6i+V5OChJ1L8s91TizREoGa
+xU/6ASRPpmJLM0stXBtZsmsdKf1TeNVtCdmXb9eU0Je3hGNg9G2i8mLB2JSFedwR
+0OvkLfDrWMyGi1IT/THPCn5pwBJkOBY6N7QaMk5/FVnPFtLTudWfFO2pigVm+aZW
+raqyxxhZRPlyRU5qSMYBn9uxhWQWM0SGtqsPSK7P9ikCh+Ffp0NreWPJL/oXk/5U
+R5heRSvBVxwTOhhrWsFUFITtaiOrE3sogQ4xGLzdffjiZfMy5c/eqUsATGHCjv6W
+CRWzBPiHl2JSNBEEl06pl/apiF71pkgc6JcOTW7hH9YWxA/CZrw=
+=kxZX
+-----END PGP SIGNATURE-----
+
+--vfcxupcgjbbzmfvz--
 
