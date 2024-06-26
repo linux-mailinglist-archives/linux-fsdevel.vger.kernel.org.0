@@ -1,109 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-22513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5436091825B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:28:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7099182C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 15:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E26F3B27017
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4477F1F2218B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC994181CE5;
-	Wed, 26 Jun 2024 13:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E460D1849FB;
+	Wed, 26 Jun 2024 13:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQUjrFFw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2428181326;
-	Wed, 26 Jun 2024 13:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3642183066;
+	Wed, 26 Jun 2024 13:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719408526; cv=none; b=g7ZPGGecp4LvzfBxMHg0TecYduW3cSqkANt985GUCO0kwTAnd89Ocx6go9BDETQFIaN+ikwM45QFtdvZMzSJ7fy5R9K3mMcUqFCvHUTdlVsnvSjTBPbT6FX0klsDR6CP+Iqt9rs/VogwiHfHk/ilNaFm2I1Mr3FqtlY+tJiifXI=
+	t=1719409203; cv=none; b=WrJiITZ3JEa4YjV3ZCL0VeW3ndGEP24TpJIwxEllrkBOekY95M3HDHRJxBBoci23pO3Rj5RmXqOK4WUxr8MED/XCBNkD/EaU6rnZpem4cpPsYSleXYETCCbr8VrJeswxGeYtVbO7M3rmZT2Roo8gNLn//lghioPv61WeRHjOazk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719408526; c=relaxed/simple;
-	bh=dC6GP9/oaLl6FQTpY3wSzhic8KMRpCzvW8QGmRCpcpA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MM1XKPVAfYvat05taxokXXUuzvoT8fsUhzCRNxacx5Qk+5BpyWs5AdgOu6cNYRkbffWbNFWMxzs2TRRjTKZ3YxQbkKMqWoKbbO+mm0jttgIgkLklQWiEHGxeQn2oHEmpCFE7pjNrlww8gflUAOPyAcjpOdREt1wRELI471K+KzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W8MwD6WKnz4f3l1m;
-	Wed, 26 Jun 2024 21:28:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 15A2A1A0170;
-	Wed, 26 Jun 2024 21:28:41 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgD3IH2CF3xm2VGPAQ--.5318S3;
-	Wed, 26 Jun 2024 21:28:38 +0800 (CST)
-Message-ID: <f3a1084a-5b0d-4e4c-b78b-1a67082fc172@huaweicloud.com>
-Date: Wed, 26 Jun 2024 21:28:34 +0800
+	s=arc-20240116; t=1719409203; c=relaxed/simple;
+	bh=Gqu0PPKIwlu8QuP2Vr7fBcBkhvn7fHduxivYLrhRASU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p1auwMc18h77Ayxiep+2pttP3eHH2s6leIvXgWKJgfpcqDCcYtMmrF4pgphbApu/hDcaXa+eOJNO4kV89UAltEmz32Ps6LouuBawbQW5RfZWwaXD29MGZnPI1yQiFhwMVlyiVoGfAvRXk5geMuU15umfzg8eoc/uBMie5PspgPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQUjrFFw; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ec17eb4493so91299731fa.2;
+        Wed, 26 Jun 2024 06:40:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719409200; x=1720014000; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z2rgHVkzSP1+jy0s2RuB1Mh0tkpnHZ/bSgJ6vFvgRzo=;
+        b=JQUjrFFwf1IYGzamdeC1Hkq11d6+RjpcdnSulrmokNdkR8QOF0//ku3N12PAboUKEb
+         LAR+mhQrNEaNTGX98EpL/thcT7x/H9WKOtqxK2iTNmV4xl1QXg22updh29RtBozat4DX
+         b6pQXRvgdWDTfzSJg4f+5RGBylBm7yj5n1m2C24pjCFTVeMsnnG1eqLXtsK3WmfBAT7D
+         uq7yQH7kVW52ZTDMwETRfVAb7Ft7WnmvM9V97fz8lNC00wCcbPl6yBYNUC8H8qNCu1Eg
+         YqNneAzYohqaDjwwqapSrjFhgiyGtal5YOh2k8tE/vs/ddQFCzEAsGX986I0MrUvrFYa
+         wt1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719409200; x=1720014000;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z2rgHVkzSP1+jy0s2RuB1Mh0tkpnHZ/bSgJ6vFvgRzo=;
+        b=wAClwnQASP9qqMGpXdnVCbsAecWhiRUSivK8bZ9A/ZxNhxY986R2ZzzhTwU8JpjyJO
+         s3S1rC0UweP+yhSsWkxOCGDCHIgYZ2b5D2xyA8mfwBoIRUsZL4BplLJ0rZMGk96ZZC80
+         ks54Vm5HCf1/PPRWDZM+00z2ua6uoxTz24qXihttsqELBu1034ytDaJPsHWHAx6DZpQR
+         ZCP47VTZt1+moPiZ3MNc/pslvjz/bsD9nm113LtFIJxwEIYhpViBN9MKOYda8Z/ImWMg
+         NRyLiA863lYXDRBb5rnBGvxKMLPXYZh0Y7171oHZZhRi211v+XNbdtjUukovw0qzaWTX
+         0YAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFopAOCTkla4a5pTgtD8UcdIDK2cCFJSCdr0B+TkUNAL3r68/jelPkcuHqrq6JKA0IwHZQLx6Iq6w3pkV3W50fAbVzyZdrb7bHYOZa0S5sH8pczKeXDhJEM/rvVhy9FtVgGomImEF9L2irRJcKWXZkFuX7P2lUY/oVE6XhUERlHfRdBX2D
+X-Gm-Message-State: AOJu0YzLVIzKxK9BUurJPE6nA5tw+S4EX0u56BtyyrWsk3vlFK4gz1pO
+	9+iBdlRV9oQxqndtBo8N2jFPTx6o35zqJ5+YkORJVnN7Q3/GbuV29oBZyhOU0bAdtFs44Z6yVR1
+	jXRZIttCAwdY6PcmkyzKMQTltOY/nDxmq
+X-Google-Smtp-Source: AGHT+IGk0pHam1HcXl3oj5p0qyRebtuWcVPso250LB/Bc8g6Hkc3v3sN/kBayKvUzph5ne4gUS0Lvblrc1cqdICkuqo=
+X-Received: by 2002:a2e:7c07:0:b0:2ec:4f0c:36f9 with SMTP id
+ 38308e7fff4ca-2ec5b31d140mr86286441fa.36.1719409199559; Wed, 26 Jun 2024
+ 06:39:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 0/5] cachefiles: some bugfixes for withdraw and
- xattr
-To: Christian Brauner <brauner@kernel.org>
-Cc: netfs@lists.linux.dev, dhowells@redhat.com, jlayton@kernel.org,
- hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
- zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- Baokun Li <libaokun@huaweicloud.com>
-References: <20240522115911.2403021-1-libaokun@huaweicloud.com>
- <4f357745-67a6-4f2e-8d69-2f72dc8a42d0@huaweicloud.com>
- <20240626-ballungszentrum-zugfahrt-b45c1790ed7b@brauner>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <20240626-ballungszentrum-zugfahrt-b45c1790ed7b@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgD3IH2CF3xm2VGPAQ--.5318S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFyDCFy5JryUuryxJryUGFg_yoWxuwb_uF
-	95uF97C3ykCrWj9a17WFW5ArsxKFyxX3sYywn7XFy3K34furWkAF4rGFZxAry3GFWrJF95
-	Cas8Wanavw1aqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4kFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOmhFUU
-	UUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAGBV1jkHpckwAAsa
+References: <20240625151807.620812-1-mjguzik@gmail.com> <0763d386dfd0d4b4a28744bac744b5e823144f0b.camel@xry111.site>
+In-Reply-To: <0763d386dfd0d4b4a28744bac744b5e823144f0b.camel@xry111.site>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 26 Jun 2024 15:39:47 +0200
+Message-ID: <CAGudoHH4LORQUXp18s8CPPLHQMi=qG9aHsCXTp2cXuT6J9PK6A@mail.gmail.com>
+Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, axboe@kernel.dk, torvalds@linux-foundation.org, 
+	loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/6/26 21:16, Christian Brauner wrote:
-> On Wed, Jun 26, 2024 at 11:03:10AM GMT, Baokun Li wrote:
->> A gentle ping.
-> Hm? That's upstream in
+On Wed, Jun 26, 2024 at 4:59=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
 >
-> commit a82c13d29985 ('Merge patch series "cachefiles: some bugfixes and cleanups for ondemand requests"')
-Due to the large number of patches, these patches have been
-divided into three patch sets according to their dependencies.
+> On Tue, 2024-06-25 at 17:18 +0200, Mateusz Guzik wrote:
+> > +     if ((sx->flags & (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE)) =3D=3D
+> > +         (AT_EMPTY_PATH | AT_STATX_SYNC_TYPE) &&
+> > +         vfs_empty_path(sx->dfd, path)) {
+> >               sx->filename =3D NULL;
+> > -             return ret;
+>
+> AT_STATX_SYNC_TYPE =3D=3D AT_STATX_FORCE_SYNC | AT_STATX_DONT_SYNC but
+> AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC obviously contradicts with
+> each other.  Thus valid uses of statx won't satisfy this condition.
+>
 
-The 12 patches that have been merged in are the largest set,
-and there are two other sets that have not yet been merged in.
+I don't know wtf I was thinking, this is indeed bogus.
 
-The current patch set is one of the unmerged sets, and the other
-set is:
-https://patchwork.kernel.org/project/linux-fsdevel/list/?series=853409
+> And I guess the condition here should be same as the condition in
+> SYSCALL_DEFINE5(statx) or am I wrong?
+>
 
-Thanks,
+That I disagree with. The AUTOMOUNT thing is a glibc-local problem for
+fstatat. Unless if you mean the if should be of similar sort modulo
+the flag. :)
 
--- 
-With Best Regards,
-Baokun Li
+I am going to fix this up and write a io_uring testcase, then submit a
+v4. Maybe today or tomorrow.
 
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
+
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
