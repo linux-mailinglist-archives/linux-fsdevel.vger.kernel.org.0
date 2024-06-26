@@ -1,244 +1,320 @@
-Return-Path: <linux-fsdevel+bounces-22484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E7C917F72
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:19:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2B6918047
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 13:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8C571C21EC1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 11:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520182832E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 11:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7019317DE1E;
-	Wed, 26 Jun 2024 11:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A5A17F36D;
+	Wed, 26 Jun 2024 11:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nU03CrAk"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="raMl5Av/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FYQE0SC5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="raMl5Av/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FYQE0SC5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEAB13AD11;
-	Wed, 26 Jun 2024 11:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719400758; cv=fail; b=Yey89nKP707xuhmmimW64SwtuBWj6YxJxVtkS14GYbEWFkj4lXFZLMCzsF6JlUx6a6Qtv2FZ0G43l610OjlfyoczV7p1e+e9tpxupdg4hoicqXpIOwmx1Ssb/tNbafbj6moksOiwheBeopNwY/A5CKxSMcdtf6T31FXRYkPfd4Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719400758; c=relaxed/simple;
-	bh=5r2g4VT+oaK7m4tretpi7MwTdtZQvpmifk0JQgAozUw=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:To:From:References:
-	 In-Reply-To:MIME-Version; b=E4bma+JfWXyxxneQx29/vjrap24bgWUHun5PGZy72zq+h37vF4VzieIAqKK4sQbHovYozLNs6UCQDaJYntzZtpHfiWdSKVnRC6G96ReiUPTz3tXaXsOn99U4lgtkZYTpCa5j94k1mhY601F5UzEQdaU+K//aBhquR4cSp8aM4Wg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nU03CrAk; arc=fail smtp.client-ip=40.107.220.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=db//jm6t5y3lLckvjRdXe13WIPktH90rQz9MOgqB6sdrc3p0Sc/NZABIBy5P5rdVUn+YPeD3+pO9gRdP/cX7nxOCwonSS0QFaHNzja0MJhYXwwXrNhWlALO9iDKbOEMXVWKR5hAQy1UTQEuuzK+XXBruTTjUoUkPsGOcEJr5d0Vg4jun+auOAm/RVYv/FBK7OLzr83V3VIYWXpycATJGx/jJ4h8Zxw8mQCquqQAjetPNl43b55sonmVGEmHc418c7/Gw9WViVtsmCH46ox9WirTvySi7CHjOsk40sAnOX5rU2akFCedOLDjKqa85ZMfLAuGszOz3lnsWiqq0iL64sQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qq1A5eE9JGkYqNIPjhMbS0E311nvqkD0/z94AtDUG6o=;
- b=G4C7Lw7za2U/3wj+XqJJ6Wpt5gydEQuYY8fNes+8IHsHUS/5gO7L7I8got+0V/FPn43/9wtruF8nJ5dGiQLs89m8zbFronwrL2m+rEDR1M60Bvk6rop1Wjc0xJTwhh3AD7upOiC8URRYM8KU8ku0ohIqIyE3PfdFgddcFPJAcgKL831bDlxMLTJxiWgpwfgAOzdq/Kf/XBLGVya8CKt578eTNFNm9SmWQMUJcHU1yj2xxoo4Ejc5bZ5GoH1r+yUAri6rvzotpmkG4bMp4tB1homrJEhvHOt8IaKSMZnKRy6JRJkq5NNHKhkD+MhCsUSw8iud2walaHKKYiVgQFiL6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qq1A5eE9JGkYqNIPjhMbS0E311nvqkD0/z94AtDUG6o=;
- b=nU03CrAkSet4PWObOwd60dMnnc4Hy3XjFDFlodaZ0fNq9B9SzWre+dgK+oGQ3bvrFHW8B6ihbOz8YAd8KC7Vv4U4Xn7q23M3PVZnmTFzanoc3Jl4LO06FFOZK29tOooTokz4qW9Lta5cT5kPGFG1JhPXpME2uq8NVTV4eenO0dTd5ivm1v0o5HgbTBDT1+HuyH/yqIC48b9b7qoPysvVVmk5t12lEF/sRxtxSiL8KFTIuk6ukBxC5qlA5nf6V+SKvZNk6vKeQz8P0EmZyyLj/KRWvUtIA8pG4f+39caYTP+pKCenBtRJzwJiBBplqc/uZuLQk1Fbyk7Oiz5hjfSFoA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
- CH3PR12MB7595.namprd12.prod.outlook.com (2603:10b6:610:14c::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Wed, 26 Jun
- 2024 11:19:13 +0000
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e]) by DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e%4]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 11:19:12 +0000
-Content-Type: multipart/signed;
- boundary=37da5ace343511f7224c33adcd545766c7d9811109edb023769814f7ff3a;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Wed, 26 Jun 2024 07:19:10 -0400
-Message-Id: <D29WP4G2ZWDB.WBZKGKDS93LH@nvidia.com>
-Subject: Re: [PATCH 1/2] mm: Constify
- folio_order()/folio_test_pmd_mappable()
-Cc: <yang.yang29@zte.com.cn>, <si.hao@zte.com.cn>,
- <akpm@linux-foundation.org>, <baohua@kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-mm@kvack.org>, <peterx@redhat.com>, <ran.xiaokai@zte.com.cn>,
- <ryan.roberts@arm.com>, <svetly.todorov@memverge.com>, <vbabka@suse.cz>,
- <willy@infradead.org>
-To: "ran xiaokai" <ranxiaokai627@163.com>
-From: "Zi Yan" <ziy@nvidia.com>
-X-Mailer: aerc 0.17.0
-References: <D29MAAR3YBI6.3G6PVIR1SJACO@nvidia.com>
- <20240626043010.1156065-1-ranxiaokai627@163.com>
-In-Reply-To: <20240626043010.1156065-1-ranxiaokai627@163.com>
-X-ClientProxiedBy: BL1PR13CA0306.namprd13.prod.outlook.com
- (2603:10b6:208:2c1::11) To DS7PR12MB5744.namprd12.prod.outlook.com
- (2603:10b6:8:73::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898FF149E06;
+	Wed, 26 Jun 2024 11:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719402871; cv=none; b=LhwCmKZqRjNy3w2kqKm7u+rwgus8ZsZVtFyL8A4EXNArE9MvVJQii7PnTLqpuzb5dpC0+kZTt/zsCxVmoznCGjCmq2AKLWQGkfzS4H2QyxX0fXtXjNtppzGooM/TskaymO8n35c9zTcxKaWPm9BMb/rDqSzgRmo2QzffoJ3YUwU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719402871; c=relaxed/simple;
+	bh=boDIopYnqO4P4NEPfMNr06+WimcJciiKHHal+1Bjkd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sfuFcki6TrQpAcexZya33HKR/XiHf//J21YK1lYV7hGWREjGxtMlBvxnxWeJqMHAsIhioHjwHPtgNS4yPaZb72PPSCQwsL88AtehayCbOdn8wIJxI4WSFlcnZK1WCwQkO/vDo0hxB2LFYikJPZyxz4qtZy9WL8v/Ylu3fN3D2bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=raMl5Av/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FYQE0SC5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=raMl5Av/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FYQE0SC5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8C0FD21ACE;
+	Wed, 26 Jun 2024 11:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719402867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8jdMtu3iSZNngR8dnxl3fkVRY+pOtnN97BZybFpmE24=;
+	b=raMl5Av/AjEtW3otRVVhoT+HqtmeRSfD6MESxE/R7Yg5uy3Jwu9thj+xRVInF3gxdoTl4B
+	ZFrXfLSLOM8W9umHWUo7gWUAn44/kSKcRjixjHUDRpHKKUUkwwmRBkvUxL78eHjmq1GlYa
+	FYyMI4Ri4yyx8QUN9RsjLDUCsb569MM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719402867;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8jdMtu3iSZNngR8dnxl3fkVRY+pOtnN97BZybFpmE24=;
+	b=FYQE0SC5dVXIakJQkesRIbLlnJgogaY6OlAAUrUsQdQy/n+Z9KyQcTKGEbT6ftHo9GHYNl
+	9sJsK3CcYtA57dDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="raMl5Av/";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=FYQE0SC5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719402867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8jdMtu3iSZNngR8dnxl3fkVRY+pOtnN97BZybFpmE24=;
+	b=raMl5Av/AjEtW3otRVVhoT+HqtmeRSfD6MESxE/R7Yg5uy3Jwu9thj+xRVInF3gxdoTl4B
+	ZFrXfLSLOM8W9umHWUo7gWUAn44/kSKcRjixjHUDRpHKKUUkwwmRBkvUxL78eHjmq1GlYa
+	FYyMI4Ri4yyx8QUN9RsjLDUCsb569MM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719402867;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8jdMtu3iSZNngR8dnxl3fkVRY+pOtnN97BZybFpmE24=;
+	b=FYQE0SC5dVXIakJQkesRIbLlnJgogaY6OlAAUrUsQdQy/n+Z9KyQcTKGEbT6ftHo9GHYNl
+	9sJsK3CcYtA57dDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E20413AAD;
+	Wed, 26 Jun 2024 11:54:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lsPFHnMBfGYWIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 26 Jun 2024 11:54:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 37362A082B; Wed, 26 Jun 2024 13:54:27 +0200 (CEST)
+Date: Wed, 26 Jun 2024 13:54:27 +0200
+From: Jan Kara <jack@suse.cz>
+To: "Ma, Yu" <yu.ma@intel.com>
+Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	mjguzik@gmail.com, edumazet@google.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+Message-ID: <20240626115427.d3x7g3bf6hdemlnq@quack3>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-2-yu.ma@intel.com>
+ <20240625115257.piu47hzjyw5qnsa6@quack3>
+ <20240625125309.y2gs4j5jr35kc4z5@quack3>
+ <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|CH3PR12MB7595:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca319079-4d61-45b1-64fd-08dc95d1ce88
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230038|366014|376012|7416012|1800799022;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UW5YWktHSjFqSUJoMUUzYXdXaXVaZHlQVjQ2ZHREREZFRithVXgyVXFCU2Za?=
- =?utf-8?B?NktEQVYrTU1EdTRjNTR4Q2hYQnBuUFYwLzBjK2NoL3lDTGxxbTZsaE5JU1la?=
- =?utf-8?B?MXdLYndHRDRpNU9VSjNYbFBjZXV4L3djNjFpNUJVYnB2cEVYaktTbmlBUFdG?=
- =?utf-8?B?ZThITzJnNC92M0UreFNKQlhRR3N0V1VBdmZyZVA1YUYwUUx3cXhBaitkYndN?=
- =?utf-8?B?UWd1MEVzRmp4M2R3NVNIaHQzTk05cEpTRlp0QmpmNm9Ld0dXUURncXVOYzJK?=
- =?utf-8?B?YXNzVnQ5bVoxdHRnWThFRitSdE1iRmlNYk5OU2E5eW5kQldyakFyeDE2MzNX?=
- =?utf-8?B?MURnVW0wUU9RY1M5REdVMVh2S21hVUhYQlFyOUF1WFJYcnRmdmkyM2MwRnNa?=
- =?utf-8?B?STh0SHFCUjFiaEVLMnYyQ0M2Yk1abU5ma2tJUWh4dlZENVBJQWtaeDBYRWFH?=
- =?utf-8?B?QkQ5OHBZNXJlYTRQdTF1SzNRQ29pTG5pYWtVM3gvUUVMN0J1SmlhaFpQYlZq?=
- =?utf-8?B?em1kWHd5TDNZaXBTNStQdkdyNURwbVNiUjEwdlE3MlBzMnhmOHIxTlYrenlq?=
- =?utf-8?B?ZlEzQkNkSkc0MWVlUk9HbzY4bFdYd2xFeGVjcDc0bk0zb2RqWHhtZlhIQjBy?=
- =?utf-8?B?bFpwV3QvT1NzeGttdXl1Y2p2K3c5b0xtWmQySk1iVDVKMjBWYklxYkxsb08w?=
- =?utf-8?B?dnBBbkhHTkUwYitVNTdKaWpXOXRVRmQzQVkvcitTbGpsQ1NCYzlCSzBEUW55?=
- =?utf-8?B?RGpIVDc5OGhsVWtHanJtOTZIZWsyajlNdkRvYTdjc1M1S0FsbUJWUjJJb0M3?=
- =?utf-8?B?eDRla2dSckJBeGtHS1VpSVJlQmJ2emxqekpNcjRsbzROclIzLzBOVkJMSjRh?=
- =?utf-8?B?em9kWlNFbTUveENWMDdQK09aam5hQkc1a1NLM3NEazBSWGtSd29rNG5HTHFp?=
- =?utf-8?B?cHh0VGZIdDd4bEc2b2ZCWUFDMGtMV2VRNnJlN1liWFhlVEtZWFRPbVNMY0xT?=
- =?utf-8?B?NTAxdWFiQ1o4RU1IODZTYnFsUnhKZ25lTWlEVlluQVlkbVUxVFJxTzhlR1Vw?=
- =?utf-8?B?a2szYTJZYWF6U1lDMVg1dEhobURhWUh0SG1hQ2JGRnZRaGVTYzlSZUlzTGZF?=
- =?utf-8?B?Sm94Vk1RMUNQQ2pUNmt0MGt6T1ArRlp6eVZocVhXbnhVZUhxU1pqYTQ5bXgr?=
- =?utf-8?B?S1pIWTN3dG5lYjFTaHBEK0p4dWpabzZJTnJBYmk4dlUrSDBkcUxuaWF5dDAz?=
- =?utf-8?B?VzNIRkFqMStiMWlPQlkvdmlGNUI1OE01R2cyOStNa3pvNEtuQkhJaTRKdUVo?=
- =?utf-8?B?ekJZTUhwMm43R1hlT2M0Z01keEgzWUlmSzd0d3VTYVUweE5SSEM3Q2VkUEo0?=
- =?utf-8?B?UEo0NWh5YVN2bkdEbEhkTVBqcU9JUEtxM05LUVVObTNpYXhxalQxU1RQMGw4?=
- =?utf-8?B?eXAxVmZxME81Um0rOVVOREJWYXpGY0pFZmNkbXB5MlM4OTlkQUxVbjhkYmVk?=
- =?utf-8?B?SXNEVmljSk9taHVTRFQvSHkrSk92eWtrZ1Z1UXRGRGk0WktQY0ZETGhEOGFm?=
- =?utf-8?B?VnpoYlNRak9kOWZGSU1XZ0VZVGxqUUFmTy8wbnp5eW1ScDJpQ2kwMVV6RGVO?=
- =?utf-8?B?TW1TUXl0VXFpaGJKRFRMdHFEbjFFaHpmUlBiSmdWdktkbVFvQzNhNWFwaFlW?=
- =?utf-8?B?dWlpQVB3Mk1FenFjMlU0ci9UbTVaM0hhL043VU96T3NtN09oOGczZGVMUkNv?=
- =?utf-8?B?NHBtbXB6dUF4Z1NnS0VJTnFvQUhaaWowMmlSS251dkxZM2pnazFCOVU2bklu?=
- =?utf-8?B?WUhkbi9HcE5oWFBvejdBdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(376012)(7416012)(1800799022);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SnAvZmRVdElPZ0JYZmJGbU5JTEJmL3NqbnJ3dHF5UDRNc3RiS3FuZUNJVmg4?=
- =?utf-8?B?UTlOMjJjY1N6MkdmVE13NzBwZmsrVStZNGhiVDFtaGVuVGN0WGdxL3I4WHVV?=
- =?utf-8?B?eFdvbzlBL1MrV0hUWUF3RVZwN3pmZDVmQ3o3cFZQdFZ3ek8xc3p4M1hSdE0v?=
- =?utf-8?B?eUpUS2NYWG5ObldpeUdZdlVVaGdtQTFnc3pTVzZEcXp3ZXFyUmtvRHRob0Z4?=
- =?utf-8?B?UFlTRFNFUU9tdlpPSEwrT1UxMG15dWlXSkd4ZWRRSytQUnlVYVk0dkJJaGZS?=
- =?utf-8?B?bk5VTHZSbTdvYTlNM2greDNRL3ZLeGFOWlFQNVdGNlZkOHdTcXFqb1lsWGYr?=
- =?utf-8?B?L2JEd245dGhtbG50N2JOVDhoa01RT3I5dkhBZG1RbUEveG44RFRYVGJlWVFG?=
- =?utf-8?B?MDdQNHRDT0lGRWhXZTRmcmdXditUMDZRVWRKSXNTbnlIRk9Tb2phR1o0Y2Jr?=
- =?utf-8?B?R0s0VFZwOWJWY3hqaWwrSTZUOXI1YVo3SCt5M1l4YzliT1I3dFhKWEtGeUc1?=
- =?utf-8?B?Tm0xazU2ZkwwNWhmeVZ6K3dDM0dVdTNCamUvUWN4UERTd2NIZHdPZy91bW5v?=
- =?utf-8?B?T0JRVVlhLzJCNEhoakdPSWVsTTE3ZTZCT2VCbGsrUDhXOVRYS0o2Yk0yZ1Jy?=
- =?utf-8?B?LzZLaitZdXZpb3dmam9ZVWJNaW1jNFp0UnlwcFVGNWlGZTBMNlN0YjdQK01N?=
- =?utf-8?B?WWt3aEhybElUbDJlUVhyY2lmV3Q0WjMvRlpTOTJQUjRLdmo5M21MNk8vYUU5?=
- =?utf-8?B?anB0SkU0SFZkQjZLVjRXQWt2TVhicWkvQTJ5dVYwVkJLbWYzU0lpQlR2MEJE?=
- =?utf-8?B?QVJ5YktWVHZsd1Y1Yk9zZVBVdERuUlBQc0VuK3MvN2NubTg4OHBoN1dGVCto?=
- =?utf-8?B?cGVYNVN2cTgrbDlhVi94VVhJV3YxUVRyVE1ubWlLYjNyZG9qaS91dUdaSkJL?=
- =?utf-8?B?Rm1RbVVzdTZ4ZVY3TUV1U2JwQUJONnJBVVBjdjZDL0ptSXZnQnUzK2xzZnp6?=
- =?utf-8?B?NnA4ME5WaE94ZEgzNENtcU84MFRwSHJGTFR1aWVGZ212bWMyS2s3Unp3MTJY?=
- =?utf-8?B?S2hYZFRNTjZXcnp4bjIycElUQXB0aEpUZVdValdnRjllMXZ1SmZGMUNIbnR5?=
- =?utf-8?B?dXlpcWpGUDBrajZCeS8rMGk5eUt4cFNmRkI2UEMrdHQ2SDVxbEpNMHZsTENo?=
- =?utf-8?B?WmYwQnV1eVNlSXhVdEMwaWhBMm5sRXFKbC8wT2xPUkM2V2VXUkRpQzFsQnFZ?=
- =?utf-8?B?Ny9DbHFJUmdDbFBuY1RRMVVMbjZpeVFqZUk0bCt1ZHBjRy9GQnIzakxqMjgv?=
- =?utf-8?B?ek4waCszOVNlSTM4L0xxNHFOT3ZXUFg5VXllVUtLMzdueERrTm1vT29LUG5C?=
- =?utf-8?B?d0RHR3ZaLzROWDlpTVpCd0xFZmF3blhCVCtOVEU3Ym5zV2REeHpYRmgwdDdR?=
- =?utf-8?B?U2E3QmJyRHQxN25zVmpwUkE1cUVzaE0zRmhFM1NENGtvOGdJQ2xEekcxZTdk?=
- =?utf-8?B?cTduZEdINlBaVHdsZmFLT1BucUkyODNxSEw2eERCVk1NeGpLTW5ITDdqcEVr?=
- =?utf-8?B?b09iRG1mRzdaSXR1RkRudHgyYWJwczRMRjkvYTZwMmJLdUZsM0w1cjFTY0RE?=
- =?utf-8?B?TXhVQkZXakk5ZkswQnR4cUJ5bFVkeDZWWUdyeG9iOGEwcTdYa2hWVEdTbFBO?=
- =?utf-8?B?emdJMVZOUEh3MWVQNmJTWHNOdWcvbGQyVmNmZ291LzczQ1AvelIxckg0c3BO?=
- =?utf-8?B?Z0dVaVJBcnZsazR1dTl0YUN5QzlBYmk4RDBNeEdhOWtXdGVGWFROSWZEaUFV?=
- =?utf-8?B?cytjSHk4cXpZbmR4czBoSEpBWDUyZUNhclZOMWlRdjl5SzJSdFRPQjJpUVhS?=
- =?utf-8?B?TWdwTG44UlFyc1hja1ZyMzlGU1VLcUdkQWhRZlVFV09KK3NyWW84UVNMWVBT?=
- =?utf-8?B?blNaNXNjUTlPRDRhZC96aURxTk0rbzVmRW9aNnZzdHpsRUxDL2tpUmZnNGlY?=
- =?utf-8?B?aEM4QkpNWkJIaE5OK2dnMHJRK0orcXhNR0pvN2VXNVJrQXZib1JTNUloN2pG?=
- =?utf-8?B?bWVHclVGaGt6WVNrMm5kWWRsb0Fzb1MveDF0RXJUQXdDaEVYOGpZSGcxbkFy?=
- =?utf-8?Q?8Qx0=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca319079-4d61-45b1-64fd-08dc95d1ce88
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 11:19:12.6690
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fRCo1x8AsLV6sLVA7YswD5G3ki73oK3qGW28Rf+F/5fnHlWdC9X8ebhZKYxoAExS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7595
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
+X-Rspamd-Queue-Id: 8C0FD21ACE
+X-Spam-Score: -4.01
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,zeniv.linux.org.uk,kernel.org,gmail.com,google.com,vger.kernel.org,intel.com,linux.intel.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,intel.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
---37da5ace343511f7224c33adcd545766c7d9811109edb023769814f7ff3a
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Tue 25-06-24 23:33:34, Ma, Yu wrote:
+> On 6/25/2024 8:53 PM, Jan Kara wrote:
+> > On Tue 25-06-24 13:52:57, Jan Kara wrote:
+> > > On Sat 22-06-24 11:49:02, Yu Ma wrote:
+> > > > There is available fd in the lower 64 bits of open_fds bitmap for most cases
+> > > > when we look for an available fd slot. Skip 2-levels searching via
+> > > > find_next_zero_bit() for this common fast path.
+> > > > 
+> > > > Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
+> > > > free slot is available there, as:
+> > > > (1) The fd allocation algorithm would always allocate fd from small to large.
+> > > > Lower bits in open_fds bitmap would be used much more frequently than higher
+> > > > bits.
+> > > > (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
+> > > > it would never be shrunk. The search size increases but there are few open fds
+> > > > available here.
+> > > > (3) find_next_zero_bit() itself has a fast path inside to speed up searching
+> > > > when size<=64.
+> > > > 
+> > > > Besides, "!start" is added to fast path condition to ensure the allocated fd is
+> > > > greater than start (i.e. >=0), given alloc_fd() is only called in two scenarios:
+> > > > (1) Allocating a new fd (the most common usage scenario) via
+> > > > get_unused_fd_flags() to find fd start from bit 0 in fdt (i.e. start==0).
+> > > > (2) Duplicating a fd (less common usage) via dup_fd() to find a fd start from
+> > > > old_fd's index in fdt, which is only called by syscall fcntl.
+> > > > 
+> > > > With the fast path added in alloc_fd(), pts/blogbench-1.1.0 read is improved
+> > > > by 17% and write by 9% on Intel ICX 160 cores configuration with v6.10-rc4.
+> > > > 
+> > > > Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> > > > Signed-off-by: Yu Ma <yu.ma@intel.com>
+> > > > ---
+> > > >   fs/file.c | 35 +++++++++++++++++++++--------------
+> > > >   1 file changed, 21 insertions(+), 14 deletions(-)
+> > > > 
+> > > > diff --git a/fs/file.c b/fs/file.c
+> > > > index a3b72aa64f11..50e900a47107 100644
+> > > > --- a/fs/file.c
+> > > > +++ b/fs/file.c
+> > > > @@ -515,28 +515,35 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+> > > >   	if (fd < files->next_fd)
+> > > >   		fd = files->next_fd;
+> > > > -	if (fd < fdt->max_fds)
+> > > > +	error = -EMFILE;
+> > > > +	if (likely(fd < fdt->max_fds)) {
+> > > > +		if (~fdt->open_fds[0] && !start) {
+> > > > +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
+> > > So I don't think this is quite correct. If files->next_fd is set, we could
+> > > end up calling find_next_zero_bit() starting from quite high offset causing
+> > > a regression? Also because we don't expand in this case, we could cause access
+> > > beyond end of fdtable?
+> > OK, I've misunderstood the next_fd logic. next_fd is the lowest 0-bit in
+> > the open_fds bitmap so if next_fd is big, the ~fdt->open_fds[0] should
+> > be false. As such the above condition could be rewritten as:
+> > 
+> > 		if (!start && files->next_fd < BITS_PER_LONG)
+> > 
+> > to avoid loading the first bitmap long if we know it is full? Or we could
+> > maybe go as far as:
+> > 
+> > 		if (!start && fd < BITS_PER_LONG && !test_bit(fd, fdt->open_fds))
+> > 			goto fastreturn;
+> > 
+> > because AFAIU this should work in exactly the same cases as your code?
+> > 
+> > 								Honza
+> 
+> Thanks Honza for the good concern and suggestions here, while both above
+> conditions are not enough to ensure that there is available fd in the first
+> 64 bits of open_fds. As next_fd just means there is no available fd before
+> next_fd, just imagine that fd from 0 to 66 are already occupied, now fd=3 is
+> returned back, then next_fd would be set as 3 per fd recycling logic (i.e.
+> in __put_unused_fd()), next time when alloc_fd() being called, it would
+> return fd=3 to the caller and set next_fd=4. Then next time when alloc_fd()
+> being called again, next_fd==4, but actually it's already been occupied. So
+> find_next_zero_bit() is needed to find the real 0 bit anyway.
 
-On Wed Jun 26, 2024 at 12:30 AM EDT, ran xiaokai wrote:
-> > On Tue Jun 25, 2024 at 10:49 PM EDT, ran xiaokai wrote:
-> > > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > >
-> > > Constify folio_order()/folio_test_pmd_mappable().
-> > > No functional changes, just a preparation for the next patch.
-> >=20
-> > What warning/error are you seeing when you just apply patch 2? I wonder=
- why it
-> > did not show up in other places. Thanks.
->
-> fs/proc/page.c: In function 'stable_page_flags':
-> fs/proc/page.c:152:35: warning: passing argument 1 of 'folio_test_pmd_map=
-pable' discards 'const' qualifier from pointer target type [-Wdiscarded-qua=
-lifiers]
->   152 |  else if (folio_test_pmd_mappable(folio)) {
->       |                                   ^~~~~
-> In file included from include/linux/mm.h:1115,
->                  from include/linux/memblock.h:12,
->                  from fs/proc/page.c:2:
-> include/linux/huge_mm.h:380:58: note: expected 'struct folio *' but argum=
-ent is of type 'const struct folio *'
->   380 | static inline bool folio_test_pmd_mappable(struct folio *folio)
->
-> u64 stable_page_flags(const struct page *page)
-> {
-> 	const struct folio *folio; // the const definition causes the warning
-> 	...
+Indeed, thanks for correcting me! next_fd is just a lower bound for the
+first free fd.
 
-Please include the warning in the commit log to explain the change.
+> The conditions
+> should either be like it is in patch or if (!start && !test_bit(0,
+> fdt->full_fds_bits)), the latter should also have the bitmap loading cost,
+> but another point is that a bit in full_fds_bits represents 64 bits in
+> open_fds, no matter fd >64 or not, full_fds_bits should be loaded any way,
+> maybe we can modify the condition to use full_fds_bits ?
 
-> }
->
-> As almost all the folio_test_XXX(flags) have converted to received
-> a const parameter, it is Ok to also do this for folio_order()?
+So maybe I'm wrong but I think the biggest benefit of your code compared to
+plain find_next_fd() is exactly in that we don't have to load full_fds_bits
+into cache. So I'm afraid that using full_fds_bits in the condition would
+destroy your performance gains. Thinking about this with a fresh head how
+about putting implementing your optimization like:
 
-Yes.
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
+        unsigned int maxbit = maxfd / BITS_PER_LONG;
+        unsigned int bitbit = start / BITS_PER_LONG;
+ 
++       /*
++        * Optimistically search the first long of the open_fds bitmap. It
++        * saves us from loading full_fds_bits into cache in the common case
++        * and because BITS_PER_LONG > start >= files->next_fd, we have quite
++        * a good chance there's a bit free in there.
++        */
++       if (start < BITS_PER_LONG) {
++               unsigned int bit;
++
++               bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
++               if (bit < BITS_PER_LONG)
++                       return bit;
++       }
++
+        bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
+        if (bitbit >= maxfd)
+                return maxfd;
 
+Plus your optimizations with likely / unlikely. This way the code flow in
+alloc_fd() stays more readable, we avoid loading the first open_fds long
+into cache if it is full, and we should get all the performance benefits?
 
---37da5ace343511f7224c33adcd545766c7d9811109edb023769814f7ff3a
-Content-Type: application/pgp-signature; name="signature.asc"
+								Honza
 
------BEGIN PGP SIGNATURE-----
-
-iQJDBAABCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmZ7+TAPHHppeUBudmlk
-aWEuY29tAAoJEOJ/noEUByhUH2gQAI1wzmMxbD4f31lTY2coexf2YiEJrQ1oXATI
-ObaNcxaxWbYq8Z5+An+oxelWthL0w7yD4w3k/ZOokBQwfCMeAdni5tCAuRIf9JAt
-7YsB9TBtWXCvOnP9aYQb5CxBAW9bh94wc6pLGnScjzc/IZ1mgOA8V7/Lg1vIGEzj
-u6oFD6Kd7BUYJXoxGffAjRRFjpk3NMmIKSjbaqUQowwyr+XHv3fpwF+5Dy4nR9Jv
-FxJVHDprfLPqnZe91xB8yq3vtx2ct/VNvs5zvN4JGFaljWks7xPnjzSf5yIpRUzu
-zuqSlEQ0dmYG/7aoJ5wr4ioxgEX7H5cA0MjRNu1IhF759aoiihWOfbr6usgnQsc4
-eK+rWxsCLBfTfFKpyfQ9RFoCJgOSVoYtIkjSE029dm74bf9l3Xvac+WZSV4LLUAg
-gzPF3dm4yPL/qk6kPiJIEDueIhylmbZrpHyXw5wfUiBtedXhOJd0W9DeC04ypuyD
-kMi3N+Yko0bKVHj32VrlKr4GkMfoCWqTPzpypx8/Fmj++IGPybFtFBocZ41WK7vp
-9YJNRdtgFSWtXcHilqHx1PbrXkD79cMfYvoT67gBQ0q33JurxYG+xdwJKLIwd87J
-BrwFEU2UmMSpX5SIiQ05uWa92k6wlmvR6BvKAXhZKf6VcuIBiTfIxUHg4SkWqert
-GddTt7mL
-=WND4
------END PGP SIGNATURE-----
-
---37da5ace343511f7224c33adcd545766c7d9811109edb023769814f7ff3a--
+ 
+> > > > +			goto fastreturn;
+> > > > +		}
+> > > >   		fd = find_next_fd(fdt, fd);
+> > > > +	}
+> > > > +
+> > > > +	if (unlikely(fd >= fdt->max_fds)) {
+> > > > +		error = expand_files(files, fd);
+> > > > +		if (error < 0)
+> > > > +			goto out;
+> > > > +		/*
+> > > > +		 * If we needed to expand the fs array we
+> > > > +		 * might have blocked - try again.
+> > > > +		 */
+> > > > +		if (error)
+> > > > +			goto repeat;
+> > > > +	}
+> > > > +fastreturn:
+> > > >   	/*
+> > > >   	 * N.B. For clone tasks sharing a files structure, this test
+> > > >   	 * will limit the total number of files that can be opened.
+> > > >   	 */
+> > > > -	error = -EMFILE;
+> > > > -	if (fd >= end)
+> > > > +	if (unlikely(fd >= end))
+> > > >   		goto out;
+> > > > -	error = expand_files(files, fd);
+> > > > -	if (error < 0)
+> > > > -		goto out;
+> > > > -
+> > > > -	/*
+> > > > -	 * If we needed to expand the fs array we
+> > > > -	 * might have blocked - try again.
+> > > > -	 */
+> > > > -	if (error)
+> > > > -		goto repeat;
+> > > > -
+> > > >   	if (start <= files->next_fd)
+> > > >   		files->next_fd = fd + 1;
+> > > > -- 
+> > > > 2.43.0
+> > > > 
+> > > -- 
+> > > Jan Kara <jack@suse.com>
+> > > SUSE Labs, CR
+> > > 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
