@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-22486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6A0918077
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 14:03:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D143918086
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 14:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68571C23F42
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 12:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3F628377A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Jun 2024 12:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65880180A76;
-	Wed, 26 Jun 2024 12:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F2C180A80;
+	Wed, 26 Jun 2024 12:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmwHbF78"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9RSHzt7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C5E15A856
-	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 12:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B810C180A76
+	for <linux-fsdevel@vger.kernel.org>; Wed, 26 Jun 2024 12:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719403408; cv=none; b=k/u4uLVrR+WWeZDhH7xbW7IhrWvHRDD8/cMIJC0mZRl8PqXt+yFSJ1n8GbUz8YCeuto9htksieicXXGb6rp/XRPK1pBD/W+fByvCSKxwfI6m6wWSdzzjsIFKQfePkOlhlUQr3+sXan9RBaU3j057f2pE2oOfQL1kiOc7vAhDs7U=
+	t=1719403537; cv=none; b=G56WxPc5cJ0A4DLq5/4k5W7LXrnQMfKnN0hMpjzdFBnYhtR6JSz09zdq5buDYCtGjqHLtE1M23xqtJR9DwOQRicTIBuy9u88sJ8yBK7xME/A0LMVIMWYmr1H/evWqJ0z55b+4uttVvSUK/rbH29Wvm2w4eTr9EAJgYUQzgG51yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719403408; c=relaxed/simple;
-	bh=MenChi4xWY9BwIcSq8UBGUeucwU//POkeYn0TanNEkg=;
+	s=arc-20240116; t=1719403537; c=relaxed/simple;
+	bh=2qATlfpOqGVz8nAkHzYagUGZQkhQM0eXbfdnVhDn0BA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CGXvhoXMURbJfgxxA8Nw6j8MODkKWeb1p+DnxY/9Yu18JmwGoKiyMSPl1Jb7tH72AjwkQdWkZ0UIUkONG5fUWxLG9he0Qj9pVqo6ls8JiqRZ4lgpes+w13Tl/T8KnC3cD/OaYFLaebROPmxAGiqRWrejgMjVUZcd8un3Dudnlmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmwHbF78; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1868CC4AF0A;
-	Wed, 26 Jun 2024 12:03:26 +0000 (UTC)
+	 MIME-Version:Content-Type; b=jNGWBM5Y2f2M2Af1yWphWllmaJc9iBX4mE8rbjNfldprYPTC2zJ+55eOyzBFm/amzF80JJ+fo65Xpz7NtFPKEqmFep4SuhjD6X1rZQCK8BiEJvdA5KSuUUAO0BBw7UK3PPUoQG0xEupRH+E0Hpz7JWxZG7Yia4KApt1c0eB8Fw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9RSHzt7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B803C2BD10;
+	Wed, 26 Jun 2024 12:05:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719403408;
-	bh=MenChi4xWY9BwIcSq8UBGUeucwU//POkeYn0TanNEkg=;
+	s=k20201202; t=1719403537;
+	bh=2qATlfpOqGVz8nAkHzYagUGZQkhQM0eXbfdnVhDn0BA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nmwHbF78TpdP8H7+wAQyxCSNkGbSz1LTf+q1HZEm/VIWIkhkRu73MjZGsO++BdPmn
-	 dTkGYvN0mF29oxp+Lm9D0N/TqrhRWpqjOaXnh7zAat2xZfkITe6ic4WhnaoEJJcL2t
-	 YpC9ytvc/l0D5YP7/LNoxcP/ifrU1LsVspFOPUjdHLK9QEIbpK2zxDdTkoW9V3xLy/
-	 0Ocj22u/apssMMBi4fW+X+PagF6IQooFyN/HIrm31esDDYcax18PKLn7TcIPxx5E5C
-	 8NjAZmKNUGPHbDyuaB13rHoxmtLLOMEv8rEePlAf6oMC55WGybydhVG6aCfoLg0dIY
-	 nJuuD5aM9aTrg==
+	b=P9RSHzt7+ovBt+vuIJ2GisIilEsolZtIeSeBHrdO3MbWB/CkF5PWe2gl5OareQ/D5
+	 TUC44s2QrN0WQX1jK8Tj1nZjUvToqpwRt3FQUPSdZZsSYxhrUr0WF3nNKJ8k3OgMQ9
+	 UoReNEsGbmLZ0FMdYtMKGfHToMI4JpuojQBWub/OVT81EHnKmTzWledC61WBdZiyLU
+	 fAeJDRhXmePiEiAy5yM53odJWWFv64s7iEo3L6DyD0KT7CBarxeuYa/ZJomLXWD+pX
+	 LBqVXgmrMnJCp2CBPd4aP7YsT5NLiFUBlYbcyA8+LdaHFFcofLPCXsFLyRLOZIIpG0
+	 xd9BMSpRpUmtw==
 From: Christian Brauner <brauner@kernel.org>
 To: linux-fsdevel@vger.kernel.org,
 	kernel-team@fb.com,
 	Josef Bacik <josef@toxicpanda.com>
 Cc: Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 0/8] Support foreign mount namespace with statmount/listmount
-Date: Wed, 26 Jun 2024 14:03:21 +0200
-Message-ID: <20240626-tunlichst-instruieren-2d823e2eb754@brauner>
+Subject: Re: (subset) [PATCH 0/4] Add the ability to query mount options in statmount
+Date: Wed, 26 Jun 2024 14:03:48 +0200
+Message-ID: <20240626-pfirsich-geworben-2e4ab43da783@brauner>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1719243756.git.josef@toxicpanda.com>
-References: <cover.1719243756.git.josef@toxicpanda.com>
+In-Reply-To: <cover.1719257716.git.josef@toxicpanda.com>
+References: <cover.1719257716.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,20 +59,33 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1988; i=brauner@kernel.org; h=from:subject:message-id; bh=MenChi4xWY9BwIcSq8UBGUeucwU//POkeYn0TanNEkg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTVMHdeFBDYtHm2VUdgeTanwQyeOUXHfV+l2f0LWx5wj kX2yx7vjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkcWc3wV7iNeZvguifnS/Lr p8s0aAe9ltSU7Ej8XRK82Xz62ukdlowM05K7uXa3JAtfYljsbX4lM6TBerexxo2w/fUTfCa4HGf lBAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2176; i=brauner@kernel.org; h=from:subject:message-id; bh=2qATlfpOqGVz8nAkHzYagUGZQkhQM0eXbfdnVhDn0BA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTVsHA5xnZuNzdaXye227stYX5kkOwhxX45DrEFy1Ruf eHjtlPpKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmIihBCPDxbI44w+C6oxx+xfv S5++VEdlpZNmQ8py5jlGXwy+8M32Y2RYba0t9v++QmRYmsMUBWbFvDTtlOLuQwvs39vwvtjYc4k VAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 24 Jun 2024 11:49:43 -0400, Josef Bacik wrote:
-> Currently the only way to iterate over mount entries in mount namespaces that
-> aren't your own is to trawl through /proc in order to find /proc/$PID/mountinfo
-> for the mount namespace that you want.  This is hugely inefficient, so extend
-> both statmount() and listmount() to allow specifying a mount namespace id in
-> order to get to mounts in other mount namespaces.
+On Mon, 24 Jun 2024 15:40:49 -0400, Josef Bacik wrote:
+> Currently if you want to get mount options for a mount and you're using
+> statmount(), you still have to open /proc/mounts to parse the mount options.
+> statmount() does have the ability to store an arbitrary string however,
+> additionally the way we do that is with a seq_file, which is also how we use
+> ->show_options for the individual file systems.
 > 
-> There are a few components to this
+> Extent statmount() to have a flag for fetching the mount options of a mount.
+> This allows users to not have to parse /proc mount for anything related to a
+> mount.  I've extended the existing statmount() test to validate this feature
+> works as expected.  As you can tell from the ridiculous amount of silly string
+> parsing, this is a huge win for users and climate change as we will no longer
+> have to waste several cycles parsing strings anymore.
 > 
 > [...]
+
+* Changed to only call sb->d_op->show_options() so we only show filesystem
+  mount options.
+* Fixed/tweaked selftests to parse /proc/self/mountinfo directly and look for
+  mount options, skipping over vfs generic superblock mount options.
+* Since Karel is fine with keeping "," let's keep it.
+
+---
 
 Applied to the vfs.mount branch of the vfs/vfs.git tree.
 Patches in the vfs.mount branch should appear in linux-next soon.
@@ -89,20 +102,10 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs.mount
 
-[1/8] fs: relax permissions for listmount()
-      https://git.kernel.org/vfs/vfs/c/ebfdd03a9748
-[2/8] fs: relax permissions for statmount()
-      https://git.kernel.org/vfs/vfs/c/a2f1759d19d1
-[3/8] fs: keep an index of current mount namespaces
-      https://git.kernel.org/vfs/vfs/c/0e79b98f19f8
-[4/8] fs: export the mount ns id via statmount
-      https://git.kernel.org/vfs/vfs/c/c64449b0b4ae
-[5/8] fs: Allow listmount() in foreign mount namespace
-      https://git.kernel.org/vfs/vfs/c/047afedd2e22
-[6/8] fs: Allow statmount() in foreign mount namespace
-      https://git.kernel.org/vfs/vfs/c/1661e867c946
-[7/8] fs: add an ioctl to get the mnt ns id from nsfs
-      https://git.kernel.org/vfs/vfs/c/00c8d859151b
-[8/8] selftests: add a test for the foreign mnt ns extensions
-      https://git.kernel.org/vfs/vfs/c/f0f1033dd078
+[1/4] fs: rename show_mnt_opts -> show_vfsmnt_opts
+      https://git.kernel.org/vfs/vfs/c/429fc05aefd3
+[3/4] fs: export mount options via statmount()
+      https://git.kernel.org/vfs/vfs/c/f363afa8cbe0
+[4/4] sefltests: extend the statmount test for mount options
+      https://git.kernel.org/vfs/vfs/c/06bedc037f74
 
