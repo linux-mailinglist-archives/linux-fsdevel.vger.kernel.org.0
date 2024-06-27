@@ -1,196 +1,326 @@
-Return-Path: <linux-fsdevel+bounces-22666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D67F91AF10
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 20:28:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7418B91AF40
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 20:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6814B299D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 18:28:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2952878D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 18:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179C019AD6D;
-	Thu, 27 Jun 2024 18:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BB4194A4E;
+	Thu, 27 Jun 2024 18:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FlVezMTI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEC/mSWY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AAD199E93
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 18:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F133D18054;
+	Thu, 27 Jun 2024 18:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719512897; cv=none; b=Z2n+7UPCDkuGQhv6sETSFwvWAMe7SvIss7JHQhpyBuKwPK1H53ZpuwnsTx4w8/jCwB3u6FZyag/Okd8pyLkrBC9TCMizcFC4UHv/+cqlQFHa9jBncU4rS+L3gWdDqBddAjCRvw5Pu7LhMksxqVzkbQOOpverFq3t0/2A5PLd8Cw=
+	t=1719513937; cv=none; b=Xzazg90E0oSwxsCsEEtle7eXHGxTS8C6cFuF/8QwcW/Q10V29QGIBdem6tKe0rrfBq68ESG/k9Dv2or60JIihF1LmThGMjjPuFE4G7iw8s86KAiDU/62z5cCQFo6i8uWnxTSCVqHCqZrEdikPGSEXy9/CKf9cvD7378NhKGhTio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719512897; c=relaxed/simple;
-	bh=znZYdAxiCH+A4HSUYxdQ4KMlHNsFqZCMj0c2MPydib8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QvdrDG0FB86I+YBtRqP49mZw3CvmXM7Sdl5wWTUiNd4Uh4uL6x1naYoFTUbEbNTFuQLQXJDfvaJw9YL2rREDITrq0et2YFGDykHkruAYH6ohJ5ebA2rOZgm7zLjld6tkcGCTz9VzsXFhi2iphzYIhTtlQWisx+VQSQ13s410ELA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FlVezMTI; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6325b04c275so85161377b3.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 11:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1719512895; x=1720117695; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=98TupyMqQC1h7iKyPO2OiBrTMZxN0LnlBq3D8HsG6iQ=;
-        b=FlVezMTIJ/YQ4YAZO1HeMEoptpvxo2jXd8OtgBagb7MKfOcjl8UXlWsLccw9whwbDr
-         WSd399nKg2hNajER0xXnqT9YoXVUd3RwfpWU+I6NXmOPNTyfEoIpTwfOUcFN54F6hI4r
-         hwQsQ+/8n7RRqldW0MSDarJmxBVGQIGr4UkLsiMSt82FKSGYLCHJSnmSrDJGCM0HVANJ
-         Z8ah9LT6y6hyt+xN4deOn0aOt05wUYyOb3HzMlD6h9er01atVnwb31RCidUH36D43Vyr
-         LvZQUEylBWyJuIUkW96WsHQLl5PlZbwmHnrkJMNtXgUutatlzhleoSVoprWtvmrDsH3N
-         jxMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719512895; x=1720117695;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=98TupyMqQC1h7iKyPO2OiBrTMZxN0LnlBq3D8HsG6iQ=;
-        b=rRBq56PuXJJ63nJygCr8CRl1EFCMmMM09nzg7xRFdHHRNcpGcQI9Ho1asYm2zXEvmd
-         axj7CVqD8wDeRLp+km63xOc9PgkwRR2YBvVj4JFsjcT4JI17vN3QxuptsWZ2MPJrm5HU
-         JFLStwb73HdSoJZt4d5hX7XdnZtPi5CwjqIIsjN3BdmHxYB9SstOp5T7Wq3ejsa/x7ws
-         fs697rUwUYZ3aULwxPZfmXxGIRDs/RKhkj+OzIFXvUQlPP8nVfHT7JTifQ6Ka8M3XXoB
-         s1kB1kfgoKqzPEfkN4LGPT7tlP4DW9vz5RDlQcTP036Oid2MkQTNLcb1mVZEfrKFlwRP
-         LnMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXE8mxNlPNbS3UZfPGZ+VBpbgjvmO7FlQcD2jisAOFs1TUY0t8tsqIgHlm+bXKDByRpCbJnzZ+NfN3UrOIR0VZ+Q5rF7rQQyN5hxCoBEg==
-X-Gm-Message-State: AOJu0YwQ8K3UifFuLwBUA5NKsyVmshNcDmb12QeIkUXALQWvAV2p6niB
-	/Jhag/LRO9v1QDkB64lYVDBEjzflkTdqxP0nsKm31qzaBQ83uzaKLWpHdkzhsydTvri3zW9Fq5m
-	kIGvtyEA1Sjrp3tv3EK6/f+2ocl/hsz2LTu5Cg43GDfIRPzo9yg==
-X-Google-Smtp-Source: AGHT+IHPccPItdwbPf9SbuGTEOB2ovjw2eaRKM0smvqTd0DyTnkstyegr0fB3+Bwc6TtmPyuyZGZolGjCRz5Cl5ngm8=
-X-Received: by 2002:a25:7d47:0:b0:df7:8dca:1ef2 with SMTP id
- 3f1490d57ef6-e0303f34dd7mr14761280276.34.1719512894883; Thu, 27 Jun 2024
- 11:28:14 -0700 (PDT)
+	s=arc-20240116; t=1719513937; c=relaxed/simple;
+	bh=YIRjgfoOz1zwpTjnd7qoDst83c4pOm4phGIXwwTTlno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMP+jvQ7b3gJYwSE8hYO7fifpNoKqAGhvCEByUV1TPIwYeDoyTv46+vmQUpbIdkcJWsNnjoR/si6Qo2Ga/DLlvPXtRVTQ5f6Y/iyO8fsMNQs/7h7M4bMbHcjSH8qQ+PGrnuPmsUN1BeILG2l0hQpzcBrdk8wuLYPYbQh4iF7eB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEC/mSWY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6744BC2BBFC;
+	Thu, 27 Jun 2024 18:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719513936;
+	bh=YIRjgfoOz1zwpTjnd7qoDst83c4pOm4phGIXwwTTlno=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=eEC/mSWYMRMfPE7D3H5v8kqWb8cr7Q1/pe4pl+qZ4eGiZmkaav5n46C0QrfKvAA9Y
+	 4smwwYsGDnttU2ISy545CfPu3yDtxOV0DSFpYDfGVYyH+9Au1T7qJ+qpBA/DSXWPWF
+	 KPpPemqvQgUWk0MO4dnwG+o8xscbrKajbeN/ty9Ng2hQcPoFsIRm9YOeX8ifeiryhq
+	 6QMwobwBBYimdgePm3yJNdsrEZ+7xXKSEJfabzt8cq4WGgAhmkK/DVpCQPYScn+n1q
+	 DxXYEGQlbK5qMx/wJ7/XLx6bZCLRCV6kRZLRidrNnJ2kzXjB43WmaQBi5Y1A+LVf+l
+	 NMPG+FEb/7++A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 625D3CE0A70; Thu, 27 Jun 2024 11:45:34 -0700 (PDT)
+Date: Thu, 27 Jun 2024 11:45:34 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>,
+	jmorris@namei.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, serge@hallyn.com,
+	syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <cd36f364-2430-49e7-9430-7076a315b76f@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
+ <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net>
+ <202406271019.BF8123A5@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000076ba3b0617f65cc8@google.com> <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
- <20240515.Yoo5chaiNai9@digikod.net> <20240516.doyox6Iengou@digikod.net> <20240627.Voox5yoogeum@digikod.net>
-In-Reply-To: <20240627.Voox5yoogeum@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 27 Jun 2024 14:28:03 -0400
-Message-ID: <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
-Subject: Re: [syzbot] [lsm?] general protection fault in hook_inode_free_security
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Kees Cook <keescook@chromium.org>, 
-	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202406271019.BF8123A5@keescook>
 
-On Thu, Jun 27, 2024 at 9:34=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> I didn't find specific issues with Landlock's code except the extra
-> check in hook_inode_free_security().  It looks like inode->i_security is
-> a dangling pointer, leading to UAF.
->
-> Reading security_inode_free() comments, two things looks weird to me:
->
-> > /**
-> >  * security_inode_free() - Free an inode's LSM blob
-> >  * @inode: the inode
-> >  *
-> >  * Deallocate the inode security structure and set @inode->i_security t=
-o NULL.
->
-> I don't see where i_security is set to NULL.
+On Thu, Jun 27, 2024 at 11:12:43AM -0700, Kees Cook wrote:
+> On Thu, Jun 27, 2024 at 03:34:41PM +0200, Mickaël Salaün wrote:
+> > I didn't find specific issues with Landlock's code except the extra
+> > check in hook_inode_free_security().  It looks like inode->i_security is
+> > a dangling pointer, leading to UAF.
+> > 
+> > Reading security_inode_free() comments, two things looks weird to me:
+> > > /**
+> > >  * security_inode_free() - Free an inode's LSM blob
+> > >  * @inode: the inode
+> > >  *
+> > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
+> > 
+> > I don't see where i_security is set to NULL.
+> 
+> Yeah, I don't either...
+> 
+> > >  */
+> > > void security_inode_free(struct inode *inode)
+> > > {
+> > 
+> > Shouldn't we add this check here?
+> > if (!inode->i_security)
+> > 	return;
+> 
+> Probably, yes. The LSMs that check for NULL i_security in the free hook
+> all do so right at the beginning...
 
-The function header comments are known to be a bit suspect, a side
-effect of being detached from the functions for many years, this may
-be one of those cases.  I tried to fix up the really awful ones when I
-moved the comments back, back I didn't have time to go through each
-one in detail.  Patches to correct the function header comments are
-welcome and encouraged! :)
+Given your fix below, I am assuming that they do this check within some
+sort of an RCU read-side critical section.
 
-> >  */
-> > void security_inode_free(struct inode *inode)
-> > {
->
-> Shouldn't we add this check here?
-> if (!inode->i_security)
->         return;
+> > > 	call_void_hook(inode_free_security, inode);
+> > > 	/*
+> > > 	 * The inode may still be referenced in a path walk and
+> > > 	 * a call to security_inode_permission() can be made
+> > > 	 * after inode_free_security() is called. Ideally, the VFS
+> > > 	 * wouldn't do this, but fixing that is a much harder
+> > > 	 * job. For now, simply free the i_security via RCU, and
+> > > 	 * leave the current inode->i_security pointer intact.
+> > > 	 * The inode will be freed after the RCU grace period too.
+> > 
+> > It's not clear to me why this should be safe if an LSM try to use the
+> > partially-freed blob after the hook calls and before the actual blob
+> > free.
+> 
+> Yeah, it's not clear to me what the expected lifetime is here. How is
+> inode_permission() being called if all inode reference counts are 0? It
+> does seem intentional, though.
+> 
+> The RCU logic was introduced in commit 3dc91d4338d6 ("SELinux: Fix possible
+> NULL pointer dereference in selinux_inode_permission()"), with much
+> discussion:
+> https://lore.kernel.org/lkml/20140109101932.0508dec7@gandalf.local.home/
+> (This commit seems to remove setting "i_security = NULL", though, which
+> the comment implies is intended, but then it also seems to depend on
+> finding a NULL?)
+> 
+> LSMs using i_security are:
+> 
+> security/bpf/hooks.c:   .lbs_inode = sizeof(struct bpf_storage_blob),
+> security/integrity/evm/evm_main.c:      .lbs_inode = sizeof(struct evm_iint_cache),
+> security/integrity/ima/ima_main.c:      .lbs_inode = sizeof(struct ima_iint_cache *),
+> security/landlock/setup.c:      .lbs_inode = sizeof(struct landlock_inode_security),
+> security/selinux/hooks.c:       .lbs_inode = sizeof(struct inode_security_struct),
+> security/smack/smack_lsm.c:     .lbs_inode = sizeof(struct inode_smack),
+> 
+> SELinux is still checking for NULL. See selinux_inode() and
+> selinux_inode_free_security(), as do bpf_inode() and
+> bpf_inode_storage_free(). evm and ima also check for NULL.
+> 
+> landlock_inode() does not, though.
+> 
+> Smack doesn't hook the free, but it should still check for NULL, and it's not.
+> 
+> So I think this needs fixing in Landlock and Smack.
+> 
+> I kind of think that the LSM infrastructure needs to provide a common
+> helper for the "access the blob" action, as we've got it repeated in
+> each LSM, and we have 2 implementations that are missing NULL checks...
+> 
+> > 
+> > > 	 */
+> > > 	if (inode->i_security)
+> > > 		call_rcu((struct rcu_head *)inode->i_security,
+> > > 			 inode_free_by_rcu);
+> > 
+> > And then:
+> > inode->i_security = NULL;
+> > 
+> > But why call_rcu()?  i_security is not protected by RCU barriers.
+> 
+> I assume it's because security_inode_free() via __destroy_inode() via
+> destroy_inode() via evict() via iput_final() via iput() may be running
+> in interrupt context?
+> 
+> But I still don't see where i_security gets set to NULL. This won't fix
+> the permissions hook races for Landlock and Smack, but should make
+> lifetime a bit more clear?
+> 
+> 
+> diff --git a/security/security.c b/security/security.c
+> index 9c3fb2f60e2a..a8658ebcaf0c 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1613,7 +1613,8 @@ static void inode_free_by_rcu(struct rcu_head *head)
+>   */
+>  void security_inode_free(struct inode *inode)
+>  {
+> -	call_void_hook(inode_free_security, inode);
+> +	struct rcu_head *inode_blob = inode->i_security;
+> +
+>  	/*
+>  	 * The inode may still be referenced in a path walk and
+>  	 * a call to security_inode_permission() can be made
+> @@ -1623,9 +1624,11 @@ void security_inode_free(struct inode *inode)
+>  	 * leave the current inode->i_security pointer intact.
+>  	 * The inode will be freed after the RCU grace period too.
+>  	 */
+> -	if (inode->i_security)
+> -		call_rcu((struct rcu_head *)inode->i_security,
+> -			 inode_free_by_rcu);
+> +	if (inode_blob) {
+> +		call_void_hook(inode_free_security, inode);
+> +		inode->i_security = NULL;
+> +		call_rcu(inode_blob, inode_free_by_rcu);
+> +	}
+>  }
 
-Unless I'm remembering something wrong, I believe we *should* always
-have a valid i_security pointer each time we are called, if not
-something has gone wrong, e.g. the security_inode_free() hook is no
-longer being called from the right place.  If we add a NULL check, we
-should probably have a WARN_ON(), pr_err(), or something similar to
-put some spew on the console/logs.
+This approach looks plausible to me.
 
-All that said, it would be good to hear some confirmation from the VFS
-folks that the security_inode_free() hook is located in a spot such
-that once it exits it's current RCU critical section it is safe to
-release the associated LSM state.
+							Thanx, Paul
 
-It's also worth mentioning that while we always allocate i_security in
-security_inode_alloc() right now, I can see a world where we allocate
-the i_security field based on need using the lsm_blob_size info (maybe
-that works today?  not sure how kmem_cache handled 0 length blobs?).
-The result is that there might be a legitimate case where i_security
-is NULL, yet we still want to call into the LSM using the
-inode_free_security() implementation hook.
-
-> >       call_void_hook(inode_free_security, inode);
-> >       /*
-> >        * The inode may still be referenced in a path walk and
-> >        * a call to security_inode_permission() can be made
-> >        * after inode_free_security() is called. Ideally, the VFS
-> >        * wouldn't do this, but fixing that is a much harder
-> >        * job. For now, simply free the i_security via RCU, and
-> >        * leave the current inode->i_security pointer intact.
-> >        * The inode will be freed after the RCU grace period too.
->
-> It's not clear to me why this should be safe if an LSM try to use the
-> partially-freed blob after the hook calls and before the actual blob
-> free.
-
-I had the same thought while looking at this just now.  At least in
-the SELinux case I think this "works" simply because SELinux doesn't
-do much here, it just drops the inode from a SELinux internal list
-(long story) and doesn't actually release any memory or reset the
-inode's SELinux state (there really isn't anything to "free" in the
-SELinux case).  I haven't checked the other LSMs, but they may behave
-similarly.
-
-We may want (need?) to consider two LSM implementation hooks called
-from within security_inode_free(): the first where the existing
-inode_free_security() implementation hook is called, the second inside
-the inode_free_by_rcu() callback immediately before the i_security
-data is free'd.
-
-... or we find a better placement in the VFS for
-security_inode_free(), is that is possible.  It may not be, our VFS
-friends should be able to help here.
-
-> >        */
-> >       if (inode->i_security)
-> >               call_rcu((struct rcu_head *)inode->i_security,
-> >                        inode_free_by_rcu);
->
-> And then:
-> inode->i_security =3D NULL;
-
-According to the comment we may still need i_security for permission
-checks.  See my comment about decomposing the LSM implementation into
-two hooks to better handle this for LSMs.
-
-> But why call_rcu()?  i_security is not protected by RCU barriers.
-
-I believe the issue is that the inode is protected by RCU and that
-affects the lifetime of the i_security blob.
-
---=20
-paul-moore.com
+>  /**
+> 
+> 
+> -Kees
+> 
+> > 
+> > > }
+> > 
+> > 
+> > On Thu, May 16, 2024 at 09:31:21AM GMT, Mickaël Salaün wrote:
+> > > Adding membarrier experts.
+> > > 
+> > > On Wed, May 15, 2024 at 05:12:58PM +0200, Mickaël Salaün wrote:
+> > > > On Thu, May 09, 2024 at 08:01:49PM -0400, Paul Moore wrote:
+> > > > > On Wed, May 8, 2024 at 3:32 PM syzbot
+> > > > > <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com> wrote:
+> > > > > >
+> > > > > > Hello,
+> > > > > >
+> > > > > > syzbot found the following issue on:
+> > > > > >
+> > > > > > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+> > > > > > git tree:       upstream
+> > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=14a46760980000
+> > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+> > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=5446fbf332b0602ede0b
+> > > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > > > >
+> > > > > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > > > >
+> > > > > > Downloadable assets:
+> > > > > > disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/disk-dccb07f2.raw.xz
+> > > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinux-dccb07f2.xz
+> > > > > > kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/bzImage-dccb07f2.xz
+> > > > > >
+> > > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > > > > Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+> > > > > >
+> > > > > > general protection fault, probably for non-canonical address 0xdffffc018f62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> > > > > > KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000c7b17a8af]
+> > > > > > CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+> > > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> > > > > > RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
+> > > > > 
+> > > > > Possibly a Landlock issue, Mickaël?
+> > > > 
+> > > > It looks like security_inode_free() is called two times on the same
+> > > > inode.  This could happen if an inode labeled by Landlock is put
+> > > > concurrently with release_inode() for a closed ruleset or with
+> > > > hook_sb_delete().  I didn't find any race condition that could lead to
+> > > > two calls to iput() though.  Could WRITE_ONCE(object->underobj, NULL)
+> > > > change anything even if object->lock is locked?
+> > 
+> > I don't think so anymore, the issue is with i_security, not the blob
+> > content.
+> > 
+> > > > 
+> > > > A bit unrelated but looking at the SELinux code, I see that selinux_inode()
+> > > > checks `!inode->i_security`.  In which case could this happen?
+> > 
+> > I think this shouldn't happen, and that might actually be an issue for
+> > SELinux.  See my above comment about security_free_inode().
+> > 
+> > > > 
+> > > > > 
+> > > > > > Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
+> > > > > > RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
+> > > > > > RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
+> > > > > > RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
+> > > > > > RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
+> > > > > > R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
+> > > > > > R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
+> > > > > > FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+> > > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > > CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
+> > > > > > Call Trace:
+> > > > > >  <TASK>
+> > > > > >  security_inode_free+0x4a/0xd0 security/security.c:1613
+> > > > > >  __destroy_inode+0x2d9/0x650 fs/inode.c:286
+> > > > > >  destroy_inode fs/inode.c:309 [inline]
+> > > > > >  evict+0x521/0x630 fs/inode.c:682
+> > > > > >  dispose_list fs/inode.c:700 [inline]
+> > > > > >  evict_inodes+0x5f9/0x690 fs/inode.c:750
+> > > > > >  generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
+> > > > > >  kill_block_super+0x44/0x90 fs/super.c:1675
+> > > > > >  deactivate_locked_super+0xc6/0x130 fs/super.c:472
+> > > > > >  cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+> > > > > >  task_work_run+0x251/0x310 kernel/task_work.c:180
+> > > > > >  exit_task_work include/linux/task_work.h:38 [inline]
+> > > > > >  do_exit+0xa1b/0x27e0 kernel/exit.c:878
+> > > > > >  do_group_exit+0x207/0x2c0 kernel/exit.c:1027
+> > > > > >  __do_sys_exit_group kernel/exit.c:1038 [inline]
+> > > > > >  __se_sys_exit_group kernel/exit.c:1036 [inline]
+> > > > > >  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
+> > > > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > > > > >  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > > > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > > > RIP: 0033:0x7f731567dd69
+> > > > > > Code: Unable to access opcode bytes at 0x7f731567dd3f.
+> > > > > > RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > > > > > RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
+> > > > > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > > > > > RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
+> > > > > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
+> > > > > > R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
+> > > > > >  </TASK>
+> > > > > > Modules linked in:
+> > > > > > ---[ end trace 0000000000000000 ]---
+> > > > > 
+> > > > > -- 
+> > > > > paul-moore.com
+> > > > > 
+> 
+> -- 
+> Kees Cook
 
