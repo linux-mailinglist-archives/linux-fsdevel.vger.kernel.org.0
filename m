@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-22613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5931391A422
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 12:41:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A744391A426
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 12:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4061C21399
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 10:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA75A1C218B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 10:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA11E13F44E;
-	Thu, 27 Jun 2024 10:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4759F1428EC;
+	Thu, 27 Jun 2024 10:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGw97+xM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjNyjBp7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDA014F12D;
-	Thu, 27 Jun 2024 10:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC5013D281;
+	Thu, 27 Jun 2024 10:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719484797; cv=none; b=JtMfuM+o/1TRCK3AD2FFGVGiV3WfzLcxj209GPIZH0LhnkDnaKIOYjP0y0UhXj4U+ZDQJHVSo0Sg/QxloKB316E9JpK0uDNvOGBzHEZDhWA5EUWKrN5aABsvfOOkT+hWuFqtWBehLhms5C+Ce/Ba+4ZeADNjdA2vNDIlyBQ8Hhw=
+	t=1719484799; cv=none; b=Xd3KnerOZUeF+59CdZWAPk4QI5S5GLwznUSmcApbJ9tMV5zqNzpuDAhBROqDHT/uvcaaOhYrNt95qYCnoCXUH25I4HOd5geG6rZbGhY3BFANLlLbHQdOPwmJBV8fait1Nw8NY5fuijt2DtqEW689C5JucWtCazsmb2mBsxKTLVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719484797; c=relaxed/simple;
-	bh=hGdDLjsSChXJ9bePyGsYe4I6qwek+5knQYcKhzZEyXg=;
+	s=arc-20240116; t=1719484799; c=relaxed/simple;
+	bh=8otN8pYw2yYWd/KTkG9zZWzoLQO0Y18fi+TcvkJMKdQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xuib3GbCA62yIn4PVJasNFH1/l95f1eS6gYKVIR5hgAH6sI1BaoM/o9yNIScQcclLjZpdrkMRJ3pIIrERq9I+UyZNCa/5hG3/o9gUcnkoj2+2jgkQOsOGpociE888figeaj0llh4C5B5uQpuBXPe67olphfLAQaj7CTYYHndkUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGw97+xM; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=ZT9ucEr3o9JND/7NUSXIPamsKtlMF3oETdWTkitARbdCldaUAXvhGBFIKGQp7G2oCcTOmCG6F9ZKMElgWnHlMWtX1su3QxQVP0eL70KfDIY1lfsCxSc2t3jJAKfg90eVCLtPqGSUrMpxlr443jtRwouBFcbPcQV0Jwy/e7dUO+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjNyjBp7; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-425624255f3so6968815e9.0;
-        Thu, 27 Jun 2024 03:39:54 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4248ea53493so33266765e9.3;
+        Thu, 27 Jun 2024 03:39:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719484793; x=1720089593; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719484795; x=1720089595; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NWYOXuCXP6e46p+DWPm2mdKXMIhkuMXGRD48/DvCa1o=;
-        b=AGw97+xMNEPVfNhlwp+RD57Zk1UQ+DcML1BweEVYeUpMWjB4H8E5gDjA+Gbjbyp+L3
-         4NWDykQHYagzTF36ScUL0tDF+NXRIpVT2Pes1I/xpaESMIg18uQoJdmdBBRw+LzDbZoE
-         +QVvQsONZXDxVf9tPK742Bj6soLZADftt/E4/Wk8SuyHa+L2+XD78mjoO3WK/OvApHGD
-         ssnYq3Dc7M1bh3+CQ57Q8qtZR0YRreYXlWfPB9aPKxDgKTH2vQ/G8xNrIAeLvQAuHlza
-         U8+a0N5IsgOtK0f60d4/iKodjm6tY8MvFnn1wpwXrkZVCBX3xjjpg5X+D2Z1D1xQRjVV
-         ci8g==
+        bh=i95qGVaXxjw7zvH94XJkK+bfCi6ykqv5zlEolXgTOVo=;
+        b=cjNyjBp7ZVT/b2tpK7l/jWinDWDdZ1PkdJDOHNW2ZI1gHXkRLHkTboFokjsA1XzOys
+         lvL2ZCS9tCl64AbYksUrKVrDHx4DrIOdOnaqKwUmsd0GQcWoa5Psj5OEMgCjpLFoL0wb
+         V0NVMFhdZVUWO8zC/6ROBe/uKu9k4zqaahpmjzYIa5WsG0C97YEcpzPOtjCkvr8nWR2I
+         NR9syNsX6hbT+OE9pTQPju+S2tVqS0J92sFaoxrA0OwOqEipRdB2X+Lv2vnSyepu5mV5
+         U9BsydcFtUG3tJXj8EDPd/gwT4J6Tf9RwSmXsSg8ugjOvCDF2LEIby0LHNO0DgtfxgWz
+         Vqmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719484793; x=1720089593;
+        d=1e100.net; s=20230601; t=1719484795; x=1720089595;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NWYOXuCXP6e46p+DWPm2mdKXMIhkuMXGRD48/DvCa1o=;
-        b=aPEnCezAPeAZwFVhvpT++9JlYHvD3O0/kJwqvKy1wedw3CJQh+NqWrIjb0zjO+RISr
-         Zr7OnXG3RCw/kVu4EP/2Eq75ejVjgIms0gYoLr9p7gtvAufgwzYjcA4fxsZXKAbLSCI2
-         EW0WbOiurAbpv2CksctPX8O+Wfy8lUHWs79XlzLY47MRuMrl/8qxU55mjAEpPUjwbUoZ
-         ON/efPgrEDrp/G13We9kYg3Lgfto/oOcnmGdNQGSzbMTgsw18mDTzrLMXr+tCI1yevBH
-         9SGqnZkIEpXW9xENpMRHOcp7GLacQuVHd5WJT2j32aXmW8vzksQmOuDpwOzxhjOzKoWw
-         kwgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6OL5qSwtA+t5FLUQbIHaGJGlTyrvI5PdRNnPWrLmHHUYxKdIz86wZqptlMUx4PRAM7nWwmvnUFoeBSz+VNbsu9LBmseo+4hDtST4y
-X-Gm-Message-State: AOJu0YxqUeBTgd9dBFYvQfFFwT0WGcIHmPEu0Fcoa7y9tRswcMHs7R/p
-	awk5eaUHEEUWVgij9TQ8ANqp/UV5Rfuu0TDq/drNTO6mUOVTfjUC
-X-Google-Smtp-Source: AGHT+IFbxgAT5IP7LDnM6uEx/lcUppkAS+xdNFjPD+9JwByQLdlaqAQCQOArV4DjqcasmPK0V2DCPw==
-X-Received: by 2002:a05:600c:4507:b0:421:805f:ab3c with SMTP id 5b1f17b1804b1-42564371addmr15241355e9.14.1719484793023;
-        Thu, 27 Jun 2024 03:39:53 -0700 (PDT)
+        bh=i95qGVaXxjw7zvH94XJkK+bfCi6ykqv5zlEolXgTOVo=;
+        b=AltvXqQ1ASaLuiah5O6QBWXqx2nY6vA9PYjo/q25XhJvDPAxdopavtWXmBNYd1ozx0
+         QS0YbFMvGqXrWTXMtAvJ/X/he886MeyUZCp8tJ6c2xdaPauFAM/Lhcl4SnaaSHq0eIgS
+         KEI9bgwvTaOhytQRjXrndne/dOiaAU6zJuQAr6HItQeeQhQATnqG3jo5fvhrJCDw0mMT
+         5HbwKLUj7kgecAXayxcjHUVwa05IuHk7pWx+aYbjlIIMOBKuGh9BboEF5ODxw6TQw9td
+         n0DSBvoyrCY7Ps4KYtedNKboGOPrwFv0qdh9G1z8xgn5tpSIllVaOkg75/J55lfGK5qh
+         nbVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUR5R6Sm5hUG7FWb92pgP/4QJpVP2p5z96leB6eSgEFyKozWFRNtYk+KiJfDpQfxWFh1J6aaXtxzAa8crE4c+eE5Tm1cmUVd5h858Bz
+X-Gm-Message-State: AOJu0Yw+a17/XQpPRkoPoEBqKkIhFvp9fFfLQehDySxec9f0vku4JtKs
+	FIW+f5tkP0YmlABsc8qVmP8bhBe9XtphICzu2bLC0UYEjvCfklFK
+X-Google-Smtp-Source: AGHT+IHC8nt0UCeVURWjTKy9nx1UL9phcSdevnEUzU6MeJ4lwvlTehK0ralroPTnX5kmfcgj2U74gQ==
+X-Received: by 2002:a05:600c:a388:b0:424:ab90:598 with SMTP id 5b1f17b1804b1-424ab900645mr44354325e9.11.1719484794951;
+        Thu, 27 Jun 2024 03:39:54 -0700 (PDT)
 Received: from lucifer.home ([2a00:23cc:d20f:ba01:bb66:f8b2:a0e8:6447])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42564bb6caasm19957195e9.33.2024.06.27.03.39.50
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42564bb6caasm19957195e9.33.2024.06.27.03.39.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 03:39:51 -0700 (PDT)
+        Thu, 27 Jun 2024 03:39:53 -0700 (PDT)
 From: Lorenzo Stoakes <lstoakes@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org,
@@ -82,9 +82,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	Kees Cook <kees@kernel.org>,
 	Suren Baghdasaryan <surenb@google.com>,
 	Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [RFC PATCH 6/7] tools: separate out shared radix-tree components
-Date: Thu, 27 Jun 2024 11:39:31 +0100
-Message-ID: <c23f1b80c62bc906267a8b144befe7ac96daa88c.1719481836.git.lstoakes@gmail.com>
+Subject: [RFC PATCH 7/7] tools: add skeleton code for userland testing of VMA logic
+Date: Thu, 27 Jun 2024 11:39:32 +0100
+Message-ID: <22777632a0ed9d2dadbc8d7f0689d65281af0f50.1719481836.git.lstoakes@gmail.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <cover.1719481836.git.lstoakes@gmail.com>
 References: <cover.1719481836.git.lstoakes@gmail.com>
@@ -96,461 +96,1208 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The core components contained within the radix-tree tests which provide
-shims for kernel headers and access to the maple tree are useful for
-testing other things, so separate them out and make the radix tree tests
-dependent on the shared components.
+Establish a new userland VMA unit testing implementation under
+tools/testing which utilises existing logic providing maple tree support in
+userland utilising the now-shared code previously exclusive to radix tree
+testing.
 
-This lays the groundwork for us to add VMA tests of the newly introduced
-vma.c file.
+This provides fundamental VMA operations whose API is defined in mm/vma.h,
+while stubbing out superfluous functionality.
+
+This exists as a proof-of-concept, with the test implementation functional
+and sufficient to allow userland compilation of vma.c, but containing only
+cursory tests to demonstrate basic functionality.
 
 Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
 ---
- tools/testing/radix-tree/Makefile             | 68 +++----------------
- tools/testing/radix-tree/maple.c              | 14 +---
- tools/testing/radix-tree/xarray.c             |  9 +--
- tools/testing/shared/autoconf.h               |  2 +
- tools/testing/{radix-tree => shared}/bitmap.c |  0
- tools/testing/{radix-tree => shared}/linux.c  |  0
- .../{radix-tree => shared}/linux/bug.h        |  0
- .../{radix-tree => shared}/linux/cpu.h        |  0
- .../{radix-tree => shared}/linux/idr.h        |  0
- .../{radix-tree => shared}/linux/init.h       |  0
- .../{radix-tree => shared}/linux/kconfig.h    |  0
- .../{radix-tree => shared}/linux/kernel.h     |  0
- .../{radix-tree => shared}/linux/kmemleak.h   |  0
- .../{radix-tree => shared}/linux/local_lock.h |  0
- .../{radix-tree => shared}/linux/lockdep.h    |  0
- .../{radix-tree => shared}/linux/maple_tree.h |  0
- .../{radix-tree => shared}/linux/percpu.h     |  0
- .../{radix-tree => shared}/linux/preempt.h    |  0
- .../{radix-tree => shared}/linux/radix-tree.h |  0
- .../{radix-tree => shared}/linux/rcupdate.h   |  0
- .../{radix-tree => shared}/linux/xarray.h     |  0
- tools/testing/shared/maple-shared.h           |  9 +++
- tools/testing/shared/maple-shim.c             |  7 ++
- tools/testing/shared/shared.h                 | 34 ++++++++++
- tools/testing/shared/shared.mk                | 68 +++++++++++++++++++
- .../testing/shared/trace/events/maple_tree.h  |  5 ++
- tools/testing/shared/xarray-shared.c          |  5 ++
- tools/testing/shared/xarray-shared.h          |  4 ++
- 28 files changed, 147 insertions(+), 78 deletions(-)
- create mode 100644 tools/testing/shared/autoconf.h
- rename tools/testing/{radix-tree => shared}/bitmap.c (100%)
- rename tools/testing/{radix-tree => shared}/linux.c (100%)
- rename tools/testing/{radix-tree => shared}/linux/bug.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/cpu.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/idr.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/init.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/kconfig.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/kernel.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/kmemleak.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/local_lock.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/lockdep.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/maple_tree.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/percpu.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/preempt.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/radix-tree.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/rcupdate.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/xarray.h (100%)
- create mode 100644 tools/testing/shared/maple-shared.h
- create mode 100644 tools/testing/shared/maple-shim.c
- create mode 100644 tools/testing/shared/shared.h
- create mode 100644 tools/testing/shared/shared.mk
- create mode 100644 tools/testing/shared/trace/events/maple_tree.h
- create mode 100644 tools/testing/shared/xarray-shared.c
- create mode 100644 tools/testing/shared/xarray-shared.h
+ MAINTAINERS                            |   1 +
+ tools/testing/vma/.gitignore           |   7 +
+ tools/testing/vma/Makefile             |  18 +
+ tools/testing/vma/errors.txt           |   0
+ tools/testing/vma/generated/autoconf.h |   2 +
+ tools/testing/vma/linux/atomic.h       |  19 +
+ tools/testing/vma/linux/mmzone.h       |  37 ++
+ tools/testing/vma/main.c               | 161 +++++
+ tools/testing/vma/vma.h                |   3 +
+ tools/testing/vma/vma_internal.h       | 843 +++++++++++++++++++++++++
+ tools/testing/vma/vma_stub.c           |   6 +
+ 11 files changed, 1097 insertions(+)
+ create mode 100644 tools/testing/vma/.gitignore
+ create mode 100644 tools/testing/vma/Makefile
+ create mode 100644 tools/testing/vma/errors.txt
+ create mode 100644 tools/testing/vma/generated/autoconf.h
+ create mode 100644 tools/testing/vma/linux/atomic.h
+ create mode 100644 tools/testing/vma/linux/mmzone.h
+ create mode 100644 tools/testing/vma/main.c
+ create mode 100644 tools/testing/vma/vma.h
+ create mode 100644 tools/testing/vma/vma_internal.h
+ create mode 100644 tools/testing/vma/vma_stub.c
 
-diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
-index 7527f738b4a1..29d607063749 100644
---- a/tools/testing/radix-tree/Makefile
-+++ b/tools/testing/radix-tree/Makefile
-@@ -1,29 +1,16 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0847cb5903ab..410062bd8e21 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23983,6 +23983,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+ F:	mm/vma.c
+ F:	mm/vma.h
+ F:	mm/vma_internal.h
++F:	tools/testing/vma
  
--CFLAGS += -I. -I../../include -I../../../lib -g -Og -Wall \
--	  -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined
--LDFLAGS += -fsanitize=address -fsanitize=undefined
--LDLIBS+= -lpthread -lurcu
--TARGETS = main idr-test multiorder xarray maple
--CORE_OFILES := xarray.o radix-tree.o idr.o linux.o test.o find_bit.o bitmap.o \
--			 slab.o maple.o
--OFILES = main.o $(CORE_OFILES) regression1.o regression2.o regression3.o \
--	 regression4.o tag_check.o multiorder.o idr-test.o iteration_check.o \
--	 iteration_check_2.o benchmark.o
+ VMALLOC
+ M:	Andrew Morton <akpm@linux-foundation.org>
+diff --git a/tools/testing/vma/.gitignore b/tools/testing/vma/.gitignore
+new file mode 100644
+index 000000000000..a8b785063b1c
+--- /dev/null
++++ b/tools/testing/vma/.gitignore
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0-only
++generated/bit-length.h
++generated/map-shift.h
++idr.c
++main
++radix-tree.c
++vma.c
+diff --git a/tools/testing/vma/Makefile b/tools/testing/vma/Makefile
+new file mode 100644
+index 000000000000..50d2a69ddff8
+--- /dev/null
++++ b/tools/testing/vma/Makefile
+@@ -0,0 +1,18 @@
++# SPDX-License-Identifier: GPL-2.0
++
 +.PHONY: default
- 
--ifndef SHIFT
--	SHIFT=3
--endif
++
 +default: main
- 
--ifeq ($(BUILD), 32)
--	CFLAGS += -m32
--	LDFLAGS += -m32
--LONG_BIT := 32
--endif
++
 +include ../shared/shared.mk
- 
--ifndef LONG_BIT
--LONG_BIT := $(shell getconf LONG_BIT)
--endif
-+TARGETS = main idr-test multiorder xarray maple
-+CORE_OFILES = $(SHARED_OFILES) xarray.o maple.o test.o
-+OFILES = main.o $(CORE_OFILES) regression1.o regression2.o \
-+	 regression3.o regression4.o tag_check.o multiorder.o idr-test.o \
-+	iteration_check.o iteration_check_2.o benchmark.o
- 
- targets: generated/map-shift.h generated/bit-length.h $(TARGETS)
- 
-@@ -32,46 +19,13 @@ main:	$(OFILES)
- idr-test.o: ../../../lib/test_ida.c
- idr-test: idr-test.o $(CORE_OFILES)
- 
--xarray: $(CORE_OFILES)
-+xarray: $(CORE_OFILES) xarray.o
- 
--maple: $(CORE_OFILES)
-+maple: $(CORE_OFILES) maple.o
- 
- multiorder: multiorder.o $(CORE_OFILES)
- 
- clean:
- 	$(RM) $(TARGETS) *.o radix-tree.c idr.c generated/map-shift.h generated/bit-length.h
- 
--vpath %.c ../../lib
--
--$(OFILES): Makefile *.h */*.h generated/map-shift.h generated/bit-length.h \
--	../../include/linux/*.h \
--	../../include/asm/*.h \
--	../../../include/linux/xarray.h \
--	../../../include/linux/maple_tree.h \
--	../../../include/linux/radix-tree.h \
--	../../../lib/radix-tree.h \
--	../../../include/linux/idr.h
--
--radix-tree.c: ../../../lib/radix-tree.c
--	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
--
--idr.c: ../../../lib/idr.c
--	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
--
--xarray.o: ../../../lib/xarray.c ../../../lib/test_xarray.c
--
--maple.o: ../../../lib/maple_tree.c ../../../lib/test_maple_tree.c
--
--generated/map-shift.h:
--	@if ! grep -qws $(SHIFT) generated/map-shift.h; then		\
--		echo "#define XA_CHUNK_SHIFT $(SHIFT)" >		\
--				generated/map-shift.h;			\
--	fi
--
--generated/bit-length.h: FORCE
--	@if ! grep -qws CONFIG_$(LONG_BIT)BIT generated/bit-length.h; then   \
--		echo "Generating $@";                                        \
--		echo "#define CONFIG_$(LONG_BIT)BIT 1" > $@;                 \
--	fi
--
--FORCE: ;
-+$(OFILES): $(SHARED_DEPS) *.h */*.h
-diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-index f1caf4bcf937..5b53ecf22fc4 100644
---- a/tools/testing/radix-tree/maple.c
-+++ b/tools/testing/radix-tree/maple.c
-@@ -8,20 +8,8 @@
-  * difficult to handle in kernel tests.
-  */
- 
--#define CONFIG_DEBUG_MAPLE_TREE
--#define CONFIG_MAPLE_SEARCH
--#define MAPLE_32BIT (MAPLE_NODE_SLOTS > 31)
-+#include "maple-shared.h"
- #include "test.h"
--#include <stdlib.h>
--#include <time.h>
--#include "linux/init.h"
--
--#define module_init(x)
--#define module_exit(x)
--#define MODULE_AUTHOR(x)
--#define MODULE_LICENSE(x)
--#define dump_stack()	assert(0)
--
- #include "../../../lib/maple_tree.c"
- #include "../../../lib/test_maple_tree.c"
- 
-diff --git a/tools/testing/radix-tree/xarray.c b/tools/testing/radix-tree/xarray.c
-index f20e12cbbfd4..253208a8541b 100644
---- a/tools/testing/radix-tree/xarray.c
-+++ b/tools/testing/radix-tree/xarray.c
-@@ -4,16 +4,9 @@
-  * Copyright (c) 2018 Matthew Wilcox <willy@infradead.org>
-  */
- 
--#define XA_DEBUG
-+#include "xarray-shared.h"
- #include "test.h"
- 
--#define module_init(x)
--#define module_exit(x)
--#define MODULE_AUTHOR(x)
--#define MODULE_LICENSE(x)
--#define dump_stack()	assert(0)
--
--#include "../../../lib/xarray.c"
- #undef XA_DEBUG
- #include "../../../lib/test_xarray.c"
- 
-diff --git a/tools/testing/shared/autoconf.h b/tools/testing/shared/autoconf.h
++
++OFILES = main.o $(SHARED_OFILES) maple-shim.o vma_stub.o
++TARGETS = main
++
++vma.c: ../../../mm/vma.c
++	cp $< $@
++
++main:	$(OFILES)
++
++clean:
++	$(RM) $(TARGETS) *.o radix-tree.c idr.c generated/map-shift.h generated/bit-length.h
+diff --git a/tools/testing/vma/errors.txt b/tools/testing/vma/errors.txt
+new file mode 100644
+index 000000000000..e69de29bb2d1
+diff --git a/tools/testing/vma/generated/autoconf.h b/tools/testing/vma/generated/autoconf.h
 new file mode 100644
 index 000000000000..92dc474c349b
 --- /dev/null
-+++ b/tools/testing/shared/autoconf.h
++++ b/tools/testing/vma/generated/autoconf.h
 @@ -0,0 +1,2 @@
 +#include "bit-length.h"
 +#define CONFIG_XARRAY_MULTI 1
-diff --git a/tools/testing/radix-tree/bitmap.c b/tools/testing/shared/bitmap.c
-similarity index 100%
-rename from tools/testing/radix-tree/bitmap.c
-rename to tools/testing/shared/bitmap.c
-diff --git a/tools/testing/radix-tree/linux.c b/tools/testing/shared/linux.c
-similarity index 100%
-rename from tools/testing/radix-tree/linux.c
-rename to tools/testing/shared/linux.c
-diff --git a/tools/testing/radix-tree/linux/bug.h b/tools/testing/shared/linux/bug.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/bug.h
-rename to tools/testing/shared/linux/bug.h
-diff --git a/tools/testing/radix-tree/linux/cpu.h b/tools/testing/shared/linux/cpu.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/cpu.h
-rename to tools/testing/shared/linux/cpu.h
-diff --git a/tools/testing/radix-tree/linux/idr.h b/tools/testing/shared/linux/idr.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/idr.h
-rename to tools/testing/shared/linux/idr.h
-diff --git a/tools/testing/radix-tree/linux/init.h b/tools/testing/shared/linux/init.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/init.h
-rename to tools/testing/shared/linux/init.h
-diff --git a/tools/testing/radix-tree/linux/kconfig.h b/tools/testing/shared/linux/kconfig.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/kconfig.h
-rename to tools/testing/shared/linux/kconfig.h
-diff --git a/tools/testing/radix-tree/linux/kernel.h b/tools/testing/shared/linux/kernel.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/kernel.h
-rename to tools/testing/shared/linux/kernel.h
-diff --git a/tools/testing/radix-tree/linux/kmemleak.h b/tools/testing/shared/linux/kmemleak.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/kmemleak.h
-rename to tools/testing/shared/linux/kmemleak.h
-diff --git a/tools/testing/radix-tree/linux/local_lock.h b/tools/testing/shared/linux/local_lock.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/local_lock.h
-rename to tools/testing/shared/linux/local_lock.h
-diff --git a/tools/testing/radix-tree/linux/lockdep.h b/tools/testing/shared/linux/lockdep.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/lockdep.h
-rename to tools/testing/shared/linux/lockdep.h
-diff --git a/tools/testing/radix-tree/linux/maple_tree.h b/tools/testing/shared/linux/maple_tree.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/maple_tree.h
-rename to tools/testing/shared/linux/maple_tree.h
-diff --git a/tools/testing/radix-tree/linux/percpu.h b/tools/testing/shared/linux/percpu.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/percpu.h
-rename to tools/testing/shared/linux/percpu.h
-diff --git a/tools/testing/radix-tree/linux/preempt.h b/tools/testing/shared/linux/preempt.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/preempt.h
-rename to tools/testing/shared/linux/preempt.h
-diff --git a/tools/testing/radix-tree/linux/radix-tree.h b/tools/testing/shared/linux/radix-tree.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/radix-tree.h
-rename to tools/testing/shared/linux/radix-tree.h
-diff --git a/tools/testing/radix-tree/linux/rcupdate.h b/tools/testing/shared/linux/rcupdate.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/rcupdate.h
-rename to tools/testing/shared/linux/rcupdate.h
-diff --git a/tools/testing/radix-tree/linux/xarray.h b/tools/testing/shared/linux/xarray.h
-similarity index 100%
-rename from tools/testing/radix-tree/linux/xarray.h
-rename to tools/testing/shared/linux/xarray.h
-diff --git a/tools/testing/shared/maple-shared.h b/tools/testing/shared/maple-shared.h
+diff --git a/tools/testing/vma/linux/atomic.h b/tools/testing/vma/linux/atomic.h
 new file mode 100644
-index 000000000000..3d847edd149d
+index 000000000000..298b0fb7aab2
 --- /dev/null
-+++ b/tools/testing/shared/maple-shared.h
-@@ -0,0 +1,9 @@
++++ b/tools/testing/vma/linux/atomic.h
+@@ -0,0 +1,19 @@
++#ifndef atomic_t
++#define atomic_t int32_t
++#endif
++
++#ifndef atomic_inc
++#define atomic_inc(x) uatomic_inc(x)
++#endif
++
++#ifndef atomic_read
++#define atomic_read(x) uatomic_read(x)
++#endif
++
++#ifndef atomic_set
++#define atomic_set(x, y) do {} while (0)
++#endif
++
++#ifndef U8_MAX
++#define U8_MAX UCHAR_MAX
++#endif
+diff --git a/tools/testing/vma/linux/mmzone.h b/tools/testing/vma/linux/mmzone.h
+new file mode 100644
+index 000000000000..71546e15bdd3
+--- /dev/null
++++ b/tools/testing/vma/linux/mmzone.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _TOOLS_MMZONE_H
++#define _TOOLS_MMZONE_H
++
++#include <linux/atomic.h>
++
++struct pglist_data *first_online_pgdat(void);
++struct pglist_data *next_online_pgdat(struct pglist_data *pgdat);
++
++#define for_each_online_pgdat(pgdat)			\
++	for (pgdat = first_online_pgdat();		\
++	     pgdat;					\
++	     pgdat = next_online_pgdat(pgdat))
++
++enum zone_type {
++	__MAX_NR_ZONES
++};
++
++#define MAX_NR_ZONES __MAX_NR_ZONES
++#define MAX_PAGE_ORDER 10
++#define MAX_ORDER_NR_PAGES (1 << MAX_PAGE_ORDER)
++
++#define pageblock_order		MAX_PAGE_ORDER
++#define pageblock_nr_pages	BIT(pageblock_order)
++#define pageblock_align(pfn)	ALIGN((pfn), pageblock_nr_pages)
++#define pageblock_start_pfn(pfn)	ALIGN_DOWN((pfn), pageblock_nr_pages)
++
++struct zone {
++	atomic_long_t		managed_pages;
++};
++
++typedef struct pglist_data {
++	struct zone node_zones[MAX_NR_ZONES];
++
++} pg_data_t;
++
++#endif
+diff --git a/tools/testing/vma/main.c b/tools/testing/vma/main.c
+new file mode 100644
+index 000000000000..b29eeb0daf31
+--- /dev/null
++++ b/tools/testing/vma/main.c
+@@ -0,0 +1,161 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <assert.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++#include "maple-shared.h"
++#include "vma_internal.h"
++#include "vma.h"
++
++/*
++ * This skeleton implementation doesn't necessarily clean up after itself
++ * very well, so don't check for leaks.
++ */
++const char *__asan_default_options(void) { return "detect_leaks=0"; }
++
++static void test_simple_merge(void)
++{
++	struct vm_area_struct *vma;
++	unsigned long flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
++	struct mm_struct mm = {};
++	struct vm_area_struct vma_left = {
++		.vm_mm = &mm,
++		.vm_start = 0,
++		.vm_end = 0x1000,
++		.vm_pgoff = 0,
++		.vm_flags = flags,
++	};
++	struct vm_area_struct vma_middle = {
++		.vm_mm = &mm,
++		.vm_start = 0x1000,
++		.vm_end = 0x2000,
++		.vm_pgoff = 1,
++		.vm_flags = flags,
++	};
++	struct vm_area_struct vma_right = {
++		.vm_mm = &mm,
++		.vm_start = 0x2000,
++		.vm_end = 0x3000,
++		.vm_pgoff = 2,
++		.vm_flags = flags,
++	};
++	VMA_ITERATOR(vmi, &mm, 0x1000);
++
++	assert(!vma_link(&mm, &vma_left));
++	assert(!vma_link(&mm, &vma_middle));
++	assert(!vma_link(&mm, &vma_right));
++
++	vma = vma_merge_new_vma(&vmi, &vma_left, &vma_middle, 0x1000,
++				0x2000, 1);
++	assert(vma != NULL);
++
++	assert(vma->vm_start == 0);
++	assert(vma->vm_end == 0x3000);
++	assert(vma->vm_pgoff == 0);
++	assert(vma->vm_flags == flags);
++}
++
++static void test_simple_modify(void)
++{
++	struct vm_area_struct *vma;
++	unsigned long flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
++	struct mm_struct mm = {};
++	struct vm_area_struct init_vma = {
++		.vm_mm = &mm,
++		.vm_start = 0,
++		.vm_end = 0x3000,
++		.vm_flags = flags,
++	};
++	VMA_ITERATOR(vmi, &mm, 0x1000);
++
++	assert(!vma_link(&mm, &init_vma));
++
++	/*
++	 * The flags will not be changed, the vma_modify_flags() function
++	 * performs the merge/split only.
++	 */
++	vma = vma_modify_flags(&vmi, NULL, &init_vma,
++			       0x1000, 0x2000, VM_READ | VM_MAYREAD);
++	assert(vma != NULL);
++	/* We modify the provided VMA, and on split allocate new VMAs. */
++	assert(vma == &init_vma);
++
++	assert(vma->vm_start == 0x1000);
++	assert(vma->vm_end == 0x2000);
++	assert(vma->vm_pgoff == 1);
++
++	/*
++	 * Now walk through the three split VMAs and make sure they are as
++	 * expected.
++	 */
++
++	vma_iter_set(&vmi, 0);
++	vma = vma_iter_load(&vmi);
++
++	assert(vma->vm_start == 0);
++	assert(vma->vm_end == 0x1000);
++	assert(vma->vm_pgoff == 0);
++
++	vma = vma_next(&vmi);
++
++	assert(vma->vm_start == 0x1000);
++	assert(vma->vm_end == 0x2000);
++	assert(vma->vm_pgoff == 1);
++
++	vma = vma_next(&vmi);
++
++	assert(vma->vm_start == 0x2000);
++	assert(vma->vm_end == 0x3000);
++	assert(vma->vm_pgoff == 2);
++}
++
++static void test_simple_expand(void)
++{
++	unsigned long flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
++	struct mm_struct mm = {};
++	struct vm_area_struct vma = {
++		.vm_mm = &mm,
++		.vm_start = 0,
++		.vm_end = 0x1000,
++		.vm_flags = flags,
++	};
++	VMA_ITERATOR(vmi, &mm, 0);
++
++	assert(!vma_expand(&vmi, &vma, 0, 0x3000, 0, NULL));
++
++	assert(vma.vm_start == 0);
++	assert(vma.vm_end == 0x3000);
++	assert(vma.vm_pgoff == 0);
++}
++
++static void test_simple_shrink(void)
++{
++	unsigned long flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
++	struct mm_struct mm = {};
++	struct vm_area_struct vma = {
++		.vm_mm = &mm,
++		.vm_start = 0,
++		.vm_end = 0x3000,
++		.vm_flags = flags,
++	};
++	VMA_ITERATOR(vmi, &mm, 0);
++
++	assert(!vma_shrink(&vmi, &vma, 0, 0x1000, 0));
++
++	assert(vma.vm_start == 0);
++	assert(vma.vm_end == 0x1000);
++	assert(vma.vm_pgoff == 0);
++}
++
++int main(void)
++{
++	maple_tree_init();
++
++	test_simple_merge();
++	test_simple_modify();
++	test_simple_expand();
++	test_simple_shrink();
++
++	return EXIT_SUCCESS;
++}
+diff --git a/tools/testing/vma/vma.h b/tools/testing/vma/vma.h
+new file mode 100644
+index 000000000000..87a6cb222b63
+--- /dev/null
++++ b/tools/testing/vma/vma.h
+@@ -0,0 +1,3 @@
 +/* SPDX-License-Identifier: GPL-2.0+ */
 +
-+#define CONFIG_DEBUG_MAPLE_TREE
-+#define CONFIG_MAPLE_SEARCH
-+#define MAPLE_32BIT (MAPLE_NODE_SLOTS > 31)
-+#include "shared.h"
-+#include <stdlib.h>
-+#include <time.h>
-+#include "linux/init.h"
-diff --git a/tools/testing/shared/maple-shim.c b/tools/testing/shared/maple-shim.c
++#include "../../../mm/vma.h"
+diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
 new file mode 100644
-index 000000000000..640df76f483e
+index 000000000000..8be8cbecf3b8
 --- /dev/null
-+++ b/tools/testing/shared/maple-shim.c
-@@ -0,0 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
++++ b/tools/testing/vma/vma_internal.h
+@@ -0,0 +1,843 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
 +
-+/* Very simple shim around the maple tree. */
++#ifndef __TESTING_VMA_VMA_INTERNAL_H
++#define __TESTING_VMA_VMA_INTERNAL_H
++
++#define __private
++#define __bitwise
++#define __randomize_layout
++
++#define CONFIG_MMU
++#define CONFIG_PER_VMA_LOCK
++
++#include <stdlib.h>
++
++#include <linux/list.h>
++#include <linux/maple_tree.h>
++#include <linux/mm.h>
++#include <linux/rbtree.h>
++#include <linux/rwsem.h>
++
++#define VM_WARN_ON(_expr)
++#define VM_WARN_ON_ONCE(_expr)
++#define VM_BUG_ON(_expr)
++#define VM_BUG_ON_VMA(_expr, _vma) ((void)(_expr))
++
++#define VM_NONE		0x00000000
++#define VM_READ		0x00000001
++#define VM_WRITE	0x00000002
++#define VM_EXEC		0x00000004
++#define VM_SHARED	0x00000008
++#define VM_MAYREAD	0x00000010
++#define VM_MAYWRITE	0x00000020
++#define VM_GROWSDOWN	0x00000100
++#define VM_PFNMAP	0x00000400
++#define VM_LOCKED	0x00002000
++#define VM_IO           0x00004000
++#define VM_DONTEXPAND	0x00040000
++#define VM_ACCOUNT	0x00100000
++#define VM_MIXEDMAP	0x10000000
++#define VM_STACK	VM_GROWSDOWN
++#define VM_SHADOW_STACK	VM_NONE
++#define VM_SOFTDIRTY	0
++
++#define VM_ACCESS_FLAGS (VM_READ | VM_WRITE | VM_EXEC)
++#define VM_SPECIAL (VM_IO | VM_DONTEXPAND | VM_PFNMAP | VM_MIXEDMAP)
++
++#define FIRST_USER_ADDRESS	0UL
++#define USER_PGTABLES_CEILING	0UL
++
++#define vma_policy(vma) NULL
++
++#define down_write_nest_lock(sem, nest_lock)
++
++#define pgprot_val(x)		((x).pgprot)
++#define __pgprot(x)		((pgprot_t) { (x) } )
++
++#define for_each_vma(__vmi, __vma)					\
++	while (((__vma) = vma_next(&(__vmi))) != NULL)
++
++/* The MM code likes to work with exclusive end addresses */
++#define for_each_vma_range(__vmi, __vma, __end)				\
++	while (((__vma) = vma_find(&(__vmi), (__end))) != NULL)
++
++#define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
++
++#define PHYS_PFN(x)	((unsigned long)((x) >> PAGE_SHIFT))
++
++#define test_and_set_bit(nr, addr) __test_and_set_bit(nr, addr)
++#define test_and_clear_bit(nr, addr) __test_and_clear_bit(nr, addr)
++
++#define TASK_SIZE ((1ul << 47)-PAGE_SIZE)
++
++#define AS_MM_ALL_LOCKS 2
++
++#define current NULL
++
++/* We hardcode this for now. */
++#define sysctl_max_map_count 0x1000000UL
++
++#define pgoff_t unsigned long
++typedef unsigned long	pgprotval_t;
++typedef struct pgprot { pgprotval_t pgprot; } pgprot_t;
++typedef unsigned long vm_flags_t;
++typedef __bitwise unsigned int vm_fault_t;
++
++typedef struct refcount_struct {
++	atomic_t refs;
++} refcount_t;
++
++struct kref {
++	refcount_t refcount;
++};
++
++struct anon_vma {
++	struct anon_vma *root;
++	struct rb_root_cached rb_root;
++};
++
++struct anon_vma_chain {
++	struct anon_vma *anon_vma;
++	struct list_head same_vma;
++};
++
++struct anon_vma_name {
++	struct kref kref;
++	/* The name needs to be at the end because it is dynamically sized. */
++	char name[];
++};
++
++struct vma_iterator {
++	struct ma_state mas;
++};
++
++#define VMA_ITERATOR(name, __mm, __addr)				\
++	struct vma_iterator name = {					\
++		.mas = {						\
++			.tree = &(__mm)->mm_mt,				\
++			.index = __addr,				\
++			.node = NULL,					\
++			.status = ma_start,				\
++		},							\
++	}
++
++struct address_space {
++	struct rb_root_cached	i_mmap;
++	unsigned long		flags;
++	atomic_t		i_mmap_writable;
++};
++
++struct vm_userfaultfd_ctx {};
++struct mempolicy {};
++struct mmu_gather {};
++struct mutex {};
++#define DEFINE_MUTEX(mutexname) \
++	struct mutex mutexname = {}
++
++struct mm_struct {
++	struct maple_tree mm_mt;
++	int map_count;			/* number of VMAs */
++	unsigned long total_vm;	   /* Total pages mapped */
++	unsigned long locked_vm;   /* Pages that have PG_mlocked set */
++	unsigned long data_vm;	   /* VM_WRITE & ~VM_SHARED & ~VM_STACK */
++	unsigned long exec_vm;	   /* VM_EXEC & ~VM_WRITE & ~VM_STACK */
++	unsigned long stack_vm;	   /* VM_STACK */
++};
++
++struct vma_lock {
++	struct rw_semaphore lock;
++};
++
++
++struct file {
++	struct address_space	*f_mapping;
++};
++
++struct vm_area_struct {
++	/* The first cache line has the info for VMA tree walking. */
++
++	union {
++		struct {
++			/* VMA covers [vm_start; vm_end) addresses within mm */
++			unsigned long vm_start;
++			unsigned long vm_end;
++		};
++#ifdef CONFIG_PER_VMA_LOCK
++		struct rcu_head vm_rcu;	/* Used for deferred freeing. */
++#endif
++	};
++
++	struct mm_struct *vm_mm;	/* The address space we belong to. */
++	pgprot_t vm_page_prot;          /* Access permissions of this VMA. */
++
++	/*
++	 * Flags, see mm.h.
++	 * To modify use vm_flags_{init|reset|set|clear|mod} functions.
++	 */
++	union {
++		const vm_flags_t vm_flags;
++		vm_flags_t __private __vm_flags;
++	};
++
++#ifdef CONFIG_PER_VMA_LOCK
++	/* Flag to indicate areas detached from the mm->mm_mt tree */
++	bool detached;
++
++	/*
++	 * Can only be written (using WRITE_ONCE()) while holding both:
++	 *  - mmap_lock (in write mode)
++	 *  - vm_lock->lock (in write mode)
++	 * Can be read reliably while holding one of:
++	 *  - mmap_lock (in read or write mode)
++	 *  - vm_lock->lock (in read or write mode)
++	 * Can be read unreliably (using READ_ONCE()) for pessimistic bailout
++	 * while holding nothing (except RCU to keep the VMA struct allocated).
++	 *
++	 * This sequence counter is explicitly allowed to overflow; sequence
++	 * counter reuse can only lead to occasional unnecessary use of the
++	 * slowpath.
++	 */
++	int vm_lock_seq;
++	struct vma_lock *vm_lock;
++#endif
++
++	/*
++	 * For areas with an address space and backing store,
++	 * linkage into the address_space->i_mmap interval tree.
++	 *
++	 */
++	struct {
++		struct rb_node rb;
++		unsigned long rb_subtree_last;
++	} shared;
++
++	/*
++	 * A file's MAP_PRIVATE vma can be in both i_mmap tree and anon_vma
++	 * list, after a COW of one of the file pages.	A MAP_SHARED vma
++	 * can only be in the i_mmap tree.  An anonymous MAP_PRIVATE, stack
++	 * or brk vma (with NULL file) can only be in an anon_vma list.
++	 */
++	struct list_head anon_vma_chain; /* Serialized by mmap_lock &
++					  * page_table_lock */
++	struct anon_vma *anon_vma;	/* Serialized by page_table_lock */
++
++	/* Function pointers to deal with this struct. */
++	const struct vm_operations_struct *vm_ops;
++
++	/* Information about our backing store: */
++	unsigned long vm_pgoff;		/* Offset (within vm_file) in PAGE_SIZE
++					   units */
++	struct file * vm_file;		/* File we map to (can be NULL). */
++	void * vm_private_data;		/* was vm_pte (shared mem) */
++
++#ifdef CONFIG_ANON_VMA_NAME
++	/*
++	 * For private and shared anonymous mappings, a pointer to a null
++	 * terminated string containing the name given to the vma, or NULL if
++	 * unnamed. Serialized by mmap_lock. Use anon_vma_name to access.
++	 */
++	struct anon_vma_name *anon_name;
++#endif
++#ifdef CONFIG_SWAP
++	atomic_long_t swap_readahead_info;
++#endif
++#ifndef CONFIG_MMU
++	struct vm_region *vm_region;	/* NOMMU mapping region */
++#endif
++#ifdef CONFIG_NUMA
++	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
++#endif
++#ifdef CONFIG_NUMA_BALANCING
++	struct vma_numab_state *numab_state;	/* NUMA Balancing state */
++#endif
++	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
++} __randomize_layout;
++
++struct vm_fault {};
++
++struct vm_operations_struct {
++	void (*open)(struct vm_area_struct * area);
++	/**
++	 * @close: Called when the VMA is being removed from the MM.
++	 * Context: User context.  May sleep.  Caller holds mmap_lock.
++	 */
++	void (*close)(struct vm_area_struct * area);
++	/* Called any time before splitting to check if it's allowed */
++	int (*may_split)(struct vm_area_struct *area, unsigned long addr);
++	int (*mremap)(struct vm_area_struct *area);
++	/*
++	 * Called by mprotect() to make driver-specific permission
++	 * checks before mprotect() is finalised.   The VMA must not
++	 * be modified.  Returns 0 if mprotect() can proceed.
++	 */
++	int (*mprotect)(struct vm_area_struct *vma, unsigned long start,
++			unsigned long end, unsigned long newflags);
++	vm_fault_t (*fault)(struct vm_fault *vmf);
++	vm_fault_t (*huge_fault)(struct vm_fault *vmf, unsigned int order);
++	vm_fault_t (*map_pages)(struct vm_fault *vmf,
++			pgoff_t start_pgoff, pgoff_t end_pgoff);
++	unsigned long (*pagesize)(struct vm_area_struct * area);
++
++	/* notification that a previously read-only page is about to become
++	 * writable, if an error is returned it will cause a SIGBUS */
++	vm_fault_t (*page_mkwrite)(struct vm_fault *vmf);
++
++	/* same as page_mkwrite when using VM_PFNMAP|VM_MIXEDMAP */
++	vm_fault_t (*pfn_mkwrite)(struct vm_fault *vmf);
++
++	/* called by access_process_vm when get_user_pages() fails, typically
++	 * for use by special VMAs. See also generic_access_phys() for a generic
++	 * implementation useful for any iomem mapping.
++	 */
++	int (*access)(struct vm_area_struct *vma, unsigned long addr,
++		      void *buf, int len, int write);
++
++	/* Called by the /proc/PID/maps code to ask the vma whether it
++	 * has a special name.  Returning non-NULL will also cause this
++	 * vma to be dumped unconditionally. */
++	const char *(*name)(struct vm_area_struct *vma);
++
++#ifdef CONFIG_NUMA
++	/*
++	 * set_policy() op must add a reference to any non-NULL @new mempolicy
++	 * to hold the policy upon return.  Caller should pass NULL @new to
++	 * remove a policy and fall back to surrounding context--i.e. do not
++	 * install a MPOL_DEFAULT policy, nor the task or system default
++	 * mempolicy.
++	 */
++	int (*set_policy)(struct vm_area_struct *vma, struct mempolicy *new);
++
++	/*
++	 * get_policy() op must add reference [mpol_get()] to any policy at
++	 * (vma,addr) marked as MPOL_SHARED.  The shared policy infrastructure
++	 * in mm/mempolicy.c will do this automatically.
++	 * get_policy() must NOT add a ref if the policy at (vma,addr) is not
++	 * marked as MPOL_SHARED. vma policies are protected by the mmap_lock.
++	 * If no [shared/vma] mempolicy exists at the addr, get_policy() op
++	 * must return NULL--i.e., do not "fallback" to task or system default
++	 * policy.
++	 */
++	struct mempolicy *(*get_policy)(struct vm_area_struct *vma,
++					unsigned long addr, pgoff_t *ilx);
++#endif
++	/*
++	 * Called by vm_normal_page() for special PTEs to find the
++	 * page for @addr.  This is useful if the default behavior
++	 * (using pte_page()) would not find the correct page.
++	 */
++	struct page *(*find_special_page)(struct vm_area_struct *vma,
++					  unsigned long addr);
++};
++
++static inline void vma_iter_invalidate(struct vma_iterator *vmi)
++{
++	mas_pause(&vmi->mas);
++}
++
++static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
++{
++	return __pgprot(pgprot_val(oldprot) | pgprot_val(newprot));
++}
++
++static inline pgprot_t vm_get_page_prot(unsigned long vm_flags)
++{
++	return __pgprot(vm_flags);
++}
++
++static inline bool is_shared_maywrite(vm_flags_t vm_flags)
++{
++	return (vm_flags & (VM_SHARED | VM_MAYWRITE)) ==
++		(VM_SHARED | VM_MAYWRITE);
++}
++
++static inline bool vma_is_shared_maywrite(struct vm_area_struct *vma)
++{
++	return is_shared_maywrite(vma->vm_flags);
++}
++
++static inline struct vm_area_struct *vma_next(struct vma_iterator *vmi)
++{
++	/*
++	 * Uses mas_find() to get the first VMA when the iterator starts.
++	 * Calling mas_next() could skip the first entry.
++	 */
++	return mas_find(&vmi->mas, ULONG_MAX);
++}
++
++static inline bool vma_lock_alloc(struct vm_area_struct *vma)
++{
++	vma->vm_lock = calloc(1, sizeof(struct vma_lock));
++
++	if (!vma->vm_lock)
++		return false;
++
++	init_rwsem(&vma->vm_lock->lock);
++	vma->vm_lock_seq = -1;
++
++	return true;
++}
++
++static inline struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
++{
++	struct vm_area_struct *new = calloc(1, sizeof(struct vm_area_struct));
++
++	if (!new)
++		return NULL;
++
++	memcpy(new, orig, sizeof(*new));
++	if (!vma_lock_alloc(new)) {
++		free(new);
++		return NULL;
++	}
++	INIT_LIST_HEAD(&new->anon_vma_chain);
++
++	return new;
++}
++
++/*
++ * These are defined in vma.h, but sadly vm_stat_account() is referenced by
++ * kernel/fork.c, so we have to these broadly available there, and temporarily
++ * define them here to resolve the dependency cycle.
++ */
++
++#define is_exec_mapping(flags) \
++	((flags & (VM_EXEC | VM_WRITE | VM_STACK)) == VM_EXEC)
++
++#define is_stack_mapping(flags) \
++	(((flags & VM_STACK) == VM_STACK) || (flags & VM_SHADOW_STACK))
++
++#define is_data_mapping(flags) \
++	((flags & (VM_WRITE | VM_SHARED | VM_STACK)) == VM_WRITE)
++
++static inline void vm_stat_account(struct mm_struct *mm, vm_flags_t flags,
++				   long npages)
++{
++	WRITE_ONCE(mm->total_vm, READ_ONCE(mm->total_vm)+npages);
++
++	if (is_exec_mapping(flags))
++		mm->exec_vm += npages;
++	else if (is_stack_mapping(flags))
++		mm->stack_vm += npages;
++	else if (is_data_mapping(flags))
++		mm->data_vm += npages;
++}
++
++#undef is_exec_mapping
++#undef is_stack_mapping
++#undef is_data_mapping
++
++/* Currently stubbed but we may later wish to un-stub. */
++static inline void vm_acct_memory(long pages);
++static inline void vm_unacct_memory(long pages)
++{
++	vm_acct_memory(-pages);
++}
++
++static inline void mapping_allow_writable(struct address_space *mapping)
++{
++	atomic_inc(&mapping->i_mmap_writable);
++}
++
++static inline void vma_set_range(struct vm_area_struct *vma,
++				 unsigned long start, unsigned long end,
++				 pgoff_t pgoff)
++{
++	vma->vm_start = start;
++	vma->vm_end = end;
++	vma->vm_pgoff = pgoff;
++}
++
++static inline void vma_assert_write_locked(struct vm_area_struct *);
++static inline void vma_mark_detached(struct vm_area_struct *vma, bool detached)
++{
++	/* When detaching vma should be write-locked */
++	if (detached)
++		vma_assert_write_locked(vma);
++	vma->detached = detached;
++}
++
++static inline
++struct vm_area_struct *vma_find(struct vma_iterator *vmi, unsigned long max)
++{
++	return mas_find(&vmi->mas, max - 1);
++}
++
++static inline
++struct vm_area_struct *vma_iter_prev_range(struct vma_iterator *vmi)
++{
++	return mas_prev_range(&vmi->mas, 0);
++}
++
++static inline int vma_iter_clear_gfp(struct vma_iterator *vmi,
++			unsigned long start, unsigned long end, gfp_t gfp)
++{
++	__mas_set_range(&vmi->mas, start, end - 1);
++	mas_store_gfp(&vmi->mas, NULL, gfp);
++	if (unlikely(mas_is_err(&vmi->mas)))
++		return -ENOMEM;
++
++	return 0;
++}
++
++static inline void mmap_assert_locked(struct mm_struct *);
++static inline struct vm_area_struct *find_vma_intersection(struct mm_struct *mm,
++						unsigned long start_addr,
++						unsigned long end_addr)
++{
++	unsigned long index = start_addr;
++
++	mmap_assert_locked(mm);
++	return mt_find(&mm->mm_mt, &index, end_addr - 1);
++}
++
++static inline
++struct vm_area_struct *vma_lookup(struct mm_struct *mm, unsigned long addr)
++{
++	return mtree_load(&mm->mm_mt, addr);
++}
++
++static inline struct vm_area_struct *vma_prev(struct vma_iterator *vmi)
++{
++	return mas_prev(&vmi->mas, 0);
++}
++
++static inline void vma_iter_set(struct vma_iterator *vmi, unsigned long addr)
++{
++	mas_set(&vmi->mas, addr);
++}
++
++static inline bool vma_is_anonymous(struct vm_area_struct *vma)
++{
++	return !vma->vm_ops;
++}
++
++/* Defined in vma.h, so temporarily define here to avoid circular dependency. */
++#define vma_iter_load(vmi) \
++	mas_walk(&(vmi)->mas)
++
++static inline struct vm_area_struct *
++find_vma_prev(struct mm_struct *mm, unsigned long addr,
++			struct vm_area_struct **pprev)
++{
++	struct vm_area_struct *vma;
++	VMA_ITERATOR(vmi, mm, addr);
++
++	vma = vma_iter_load(&vmi);
++	*pprev = vma_prev(&vmi);
++	if (!vma)
++		vma = vma_next(&vmi);
++	return vma;
++}
++
++#undef vma_iter_load
++
++static inline void vma_iter_init(struct vma_iterator *vmi,
++		struct mm_struct *mm, unsigned long addr)
++{
++	mas_init(&vmi->mas, &mm->mm_mt, addr);
++}
++
++/* Stubbed functions. */
++
++static inline struct anon_vma_name *anon_vma_name(struct vm_area_struct *vma)
++{
++	return NULL;
++}
++
++static inline bool is_mergeable_vm_userfaultfd_ctx(struct vm_area_struct *vma,
++					struct vm_userfaultfd_ctx vm_ctx)
++{
++	return true;
++}
++
++static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
++				    struct anon_vma_name *anon_name2)
++{
++	return true;
++}
++
++static inline void might_sleep(void)
++{
++}
++
++static inline unsigned long vma_pages(struct vm_area_struct *vma)
++{
++	return (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
++}
++
++static inline void fput(struct file *)
++{
++}
++
++static inline void mpol_put(struct mempolicy *)
++{
++}
++
++static inline void __vm_area_free(struct vm_area_struct *)
++{
++}
++
++static inline void vm_area_free(struct vm_area_struct *)
++{
++}
++
++static inline void lru_add_drain(void)
++{
++}
++
++static inline void tlb_gather_mmu(struct mmu_gather *, struct mm_struct *)
++{
++}
++
++static inline void update_hiwater_rss(struct mm_struct *)
++{
++}
++
++static inline void update_hiwater_vm(struct mm_struct *)
++{
++}
++
++static inline void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
++		      struct vm_area_struct *vma, unsigned long start_addr,
++		      unsigned long end_addr, unsigned long tree_end,
++		      bool mm_wr_locked)
++{
++	(void)tlb;
++	(void)mas;
++	(void)vma;
++	(void)start_addr;
++	(void)end_addr;
++	(void)tree_end;
++	(void)mm_wr_locked;
++}
++
++static inline void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
++		   struct vm_area_struct *vma, unsigned long floor,
++		   unsigned long ceiling, bool mm_wr_locked)
++{
++	(void)tlb;
++	(void)mas;
++	(void)vma;
++	(void)floor;
++	(void)ceiling;
++	(void)mm_wr_locked;
++}
++
++static inline void mapping_unmap_writable(struct address_space *)
++{
++}
++
++static inline void flush_dcache_mmap_lock(struct address_space *)
++{
++}
++
++static inline void tlb_finish_mmu(struct mmu_gather *)
++{
++}
++
++static inline void get_file(struct file *)
++{
++}
++
++static inline int vma_dup_policy(struct vm_area_struct *, struct vm_area_struct *)
++{
++	return 0;
++}
++
++static inline int anon_vma_clone(struct vm_area_struct *, struct vm_area_struct *)
++{
++	return 0;
++}
++
++static inline void vma_start_write(struct vm_area_struct *)
++{
++}
++
++static inline void vma_adjust_trans_huge(struct vm_area_struct *vma,
++					 unsigned long start,
++					 unsigned long end,
++					 long adjust_next)
++{
++	(void)vma;
++	(void)start;
++	(void)end;
++	(void)adjust_next;
++}
++
++static inline void vma_iter_free(struct vma_iterator *)
++{
++}
++
++static inline void vm_acct_memory(long pages)
++{
++}
++
++static inline void vma_interval_tree_insert(struct vm_area_struct *,
++					    struct rb_root_cached *)
++{
++}
++
++static inline void vma_interval_tree_remove(struct vm_area_struct *,
++					    struct rb_root_cached *)
++{
++}
++
++static inline void flush_dcache_mmap_unlock(struct address_space *)
++{
++}
++
++static inline void anon_vma_interval_tree_insert(struct anon_vma_chain*,
++						 struct rb_root_cached *)
++{
++}
++
++static inline void anon_vma_interval_tree_remove(struct anon_vma_chain*,
++						 struct rb_root_cached *)
++{
++}
++
++static inline void uprobe_mmap(struct vm_area_struct *)
++{
++}
++
++static inline void uprobe_munmap(struct vm_area_struct *vma,
++				 unsigned long start, unsigned long end)
++{
++	(void)vma;
++	(void)start;
++	(void)end;
++}
++
++static inline void i_mmap_lock_write(struct address_space *)
++{
++}
++
++static inline void anon_vma_lock_write(struct anon_vma *)
++{
++}
++
++static inline void vma_assert_write_locked(struct vm_area_struct *)
++{
++}
++
++static inline void unlink_anon_vmas(struct vm_area_struct *)
++{
++}
++
++static inline void anon_vma_unlock_write(struct anon_vma *)
++{
++}
++
++static inline void i_mmap_unlock_write(struct address_space *)
++{
++}
++
++static inline void anon_vma_merge(struct vm_area_struct *,
++				  struct vm_area_struct *)
++{
++}
++
++static inline int userfaultfd_unmap_prep(struct vm_area_struct *vma,
++					 unsigned long start,
++					 unsigned long end,
++					 struct list_head *unmaps)
++{
++	(void)vma;
++	(void)start;
++	(void)end;
++	(void)unmaps;
++
++	return 0;
++}
++
++static inline void mmap_write_downgrade(struct mm_struct *)
++{
++}
++
++static inline void mmap_read_unlock(struct mm_struct *)
++{
++}
++
++static inline void mmap_write_unlock(struct mm_struct *)
++{
++}
++
++static inline bool can_modify_mm(struct mm_struct *mm,
++				 unsigned long start,
++				 unsigned long end)
++{
++	(void)mm;
++	(void)start;
++	(void)end;
++
++	return true;
++}
++
++static inline void arch_unmap(struct mm_struct *mm,
++				 unsigned long start,
++				 unsigned long end)
++{
++	(void)mm;
++	(void)start;
++	(void)end;
++}
++
++static inline void mmap_assert_locked(struct mm_struct *)
++{
++}
++
++static inline bool mpol_equal(struct mempolicy *, struct mempolicy *)
++{
++	return true;
++}
++
++static inline void khugepaged_enter_vma(struct vm_area_struct *vma,
++			  unsigned long vm_flags)
++{
++	(void)vma;
++	(void)vm_flags;
++}
++
++static inline bool mapping_can_writeback(struct address_space *)
++{
++	return true;
++}
++
++static inline bool is_vm_hugetlb_page(struct vm_area_struct *)
++{
++	return false;
++}
++
++static inline bool vma_soft_dirty_enabled(struct vm_area_struct *)
++{
++	return false;
++}
++
++static inline bool userfaultfd_wp(struct vm_area_struct *)
++{
++	return false;
++}
++
++static inline void mmap_assert_write_locked(struct mm_struct *)
++{
++}
++
++static inline void mutex_lock(struct mutex *)
++{
++}
++
++static inline void mutex_unlock(struct mutex *)
++{
++}
++
++static inline bool mutex_is_locked(struct mutex *)
++{
++	return true;
++}
++
++static inline bool signal_pending(void *)
++{
++	return false;
++}
++
++#endif /* __TESTING_VMA_VMA_INTERNAL_H */
+diff --git a/tools/testing/vma/vma_stub.c b/tools/testing/vma/vma_stub.c
+new file mode 100644
+index 000000000000..d081122ce951
+--- /dev/null
++++ b/tools/testing/vma/vma_stub.c
+@@ -0,0 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +
 +#include "maple-shared.h"
 +
-+#include "../../../lib/maple_tree.c"
-diff --git a/tools/testing/shared/shared.h b/tools/testing/shared/shared.h
-new file mode 100644
-index 000000000000..495602e60b65
---- /dev/null
-+++ b/tools/testing/shared/shared.h
-@@ -0,0 +1,34 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <linux/types.h>
-+#include <linux/bug.h>
-+#include <linux/kernel.h>
-+#include <linux/bitops.h>
-+
-+#include <linux/gfp.h>
-+#include <linux/types.h>
-+#include <linux/rcupdate.h>
-+
-+#ifndef module_init
-+#define module_init(x)
-+#endif
-+
-+#ifndef module_exit
-+#define module_exit(x)
-+#endif
-+
-+#ifndef MODULE_AUTHOR
-+#define MODULE_AUTHOR(x)
-+#endif
-+
-+#ifndef MODULE_LICENSE
-+#define MODULE_LICENSE(x)
-+#endif
-+
-+#ifndef MODULE_DESCRIPTION
-+#define MODULE_DESCRIPTION(x)
-+#endif
-+
-+#ifndef dump_stack
-+#define dump_stack()	assert(0)
-+#endif
-diff --git a/tools/testing/shared/shared.mk b/tools/testing/shared/shared.mk
-new file mode 100644
-index 000000000000..69a6a528eaed
---- /dev/null
-+++ b/tools/testing/shared/shared.mk
-@@ -0,0 +1,68 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+CFLAGS += -I../shared -I. -I../../include -I../../../lib -g -Og -Wall \
-+	  -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined
-+LDFLAGS += -fsanitize=address -fsanitize=undefined
-+LDLIBS += -lpthread -lurcu
-+SHARED_OFILES = xarray-shared.o radix-tree.o idr.o linux.o find_bit.o bitmap.o \
-+	slab.o
-+SHARED_DEPS = Makefile ../shared/shared.mk ../shared/*.h generated/map-shift.h \
-+	generated/bit-length.h generated/autoconf.h \
-+	../../include/linux/*.h \
-+	../../include/asm/*.h \
-+	../../../include/linux/xarray.h \
-+	../../../include/linux/maple_tree.h \
-+	../../../include/linux/radix-tree.h \
-+	../../../lib/radix-tree.h \
-+	../../../include/linux/idr.h
-+
-+ifndef SHIFT
-+	SHIFT=3
-+endif
-+
-+ifeq ($(BUILD), 32)
-+	CFLAGS += -m32
-+	LDFLAGS += -m32
-+LONG_BIT := 32
-+endif
-+
-+ifndef LONG_BIT
-+LONG_BIT := $(shell getconf LONG_BIT)
-+endif
-+
-+%.o: ../shared/%.c
-+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
-+
-+vpath %.c ../../lib
-+
-+$(SHARED_OFILES): $(SHARED_DEPS)
-+
-+radix-tree.c: ../../../lib/radix-tree.c
-+	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
-+
-+idr.c: ../../../lib/idr.c
-+	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
-+
-+xarray-shared.o: ../shared/xarray-shared.c ../../../lib/xarray.c \
-+	../../../lib/test_xarray.c
-+
-+maple-shared.o: ../shared/maple-shared.c ../../../lib/maple_tree.c \
-+	../../../lib/test_maple_tree.c
-+
-+generated/autoconf.h:
-+	cp ../shared/autoconf.h generated/autoconf.h
-+
-+generated/map-shift.h:
-+	@if ! grep -qws $(SHIFT) generated/map-shift.h; then            \
-+		echo "Generating $@";                                   \
-+		echo "#define XA_CHUNK_SHIFT $(SHIFT)" >                \
-+				generated/map-shift.h;                  \
-+	fi
-+
-+generated/bit-length.h: FORCE
-+	@if ! grep -qws CONFIG_$(LONG_BIT)BIT generated/bit-length.h; then   \
-+		echo "Generating $@";                                        \
-+		echo "#define CONFIG_$(LONG_BIT)BIT 1" > $@;                 \
-+	fi
-+
-+FORCE: ;
-diff --git a/tools/testing/shared/trace/events/maple_tree.h b/tools/testing/shared/trace/events/maple_tree.h
-new file mode 100644
-index 000000000000..97d0e1ddcf08
---- /dev/null
-+++ b/tools/testing/shared/trace/events/maple_tree.h
-@@ -0,0 +1,5 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+
-+#define trace_ma_op(a, b) do {} while (0)
-+#define trace_ma_read(a, b) do {} while (0)
-+#define trace_ma_write(a, b, c, d) do {} while (0)
-diff --git a/tools/testing/shared/xarray-shared.c b/tools/testing/shared/xarray-shared.c
-new file mode 100644
-index 000000000000..e90901958dcd
---- /dev/null
-+++ b/tools/testing/shared/xarray-shared.c
-@@ -0,0 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+#include "xarray-shared.h"
-+
-+#include "../../../lib/xarray.c"
-diff --git a/tools/testing/shared/xarray-shared.h b/tools/testing/shared/xarray-shared.h
-new file mode 100644
-index 000000000000..ac2d16ff53ae
---- /dev/null
-+++ b/tools/testing/shared/xarray-shared.h
-@@ -0,0 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+
-+#define XA_DEBUG
-+#include "shared.h"
++/* Imported from mm/vma.c by the Makefile. */
++#include "vma.c"
 -- 
 2.45.1
 
