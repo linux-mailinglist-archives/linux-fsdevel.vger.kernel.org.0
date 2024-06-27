@@ -1,318 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-22698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC6D91B28E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 01:14:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0676391B308
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 01:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FF961F23518
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 23:14:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B4C6B210BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 23:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53B61A2FBF;
-	Thu, 27 Jun 2024 23:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AABB1A38E1;
+	Thu, 27 Jun 2024 23:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ez7rmtiH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2076.outbound.protection.outlook.com [40.107.100.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DD01A2FA0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 23:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719530032; cv=none; b=W+4VXP5uKBVvLKoUEGjHC46zcSgkOmCReC+2PvEGdux7S6DhRCpyL5uAbxFndqZiWMDgvuOQpTdkAkl2IbPnCHw0tMq9g0d02OvgSOeQ0JEBKpyW89bdtXqbqtc+m5vIGy/VJZfPJgrQziOHXoIld8uiOOiE3m15/2ocbLzsFsg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719530032; c=relaxed/simple;
-	bh=EazZ1+Eks7daWoGpF6OcAwnhZW0x18d4oV+PJszIr1g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=FPUiPHCybZPEwAoMgDPTnN5dtJkB35OaYuKk+YKKIHNrZpwwHYcDBGycMqMO1jKgJ/iyPmG+99cjGNdaOCSr0zk4w6Ch/6P2MnvR11mE4ORupEodhycCBITZL6FpZcz2BvkP1sc0k5D7UI6605Mx1DCsUVAwFC/z/I8CHvcn4Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7f3d933ce7dso142001839f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 16:13:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719530030; x=1720134830;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jj10ORnN6oj6VvX7wqQ7EphmxN4B+rwEvERQ+ZN7VeU=;
-        b=i+xYyhDRtquzowwkDuBEiewk2ERuApyf63C8tpjgDaN7seX0T6/Y86veV6l54f/zQA
-         YoLMFuMHzxkhnL5nKBlGCe/BCALIfIohbW+640JXCG6ADrTSASz7AXc9AN009Qr5uPF3
-         JoOkR179mXEsZIJydaUrEIRyzkvBwy64zNPj4r6OdLPiJDp1fRHnSmnff+Avcxi+uIB8
-         JqsvU6JSRRSRRacct+1WUiI6evRJA5weSXAVD1Bp0PHF7ZdUVeNaCUehGSCP/jUg18XP
-         4i1lpvkwbsTV8JoEiYrhwQKnp1swWXQwF/xAcyY3vVT8rEe5/q+I15kbXA1IcOM1dMIN
-         39wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAC93D1rljNe70uI03dH4m/Cs3iVTa0riR+XDuze2ACJErbfwOjCsdGIuWR4TU0xkJBYgHgBGue7Ee8cVT6YFwcn5thHEB54hBSVKh3Q==
-X-Gm-Message-State: AOJu0YzUrmvEgrTIsxFbmCCzhxNXjlAHz6mjaEuajJOLmea7Vm4KPujk
-	aiRFO2+gYRt53CMnKLVBwps8IFAgx+7ReP89MjiPIcgdrXD5nuESq8DuWg65d9HIJ5kQIkpaexN
-	OlGNEFg4eiIQeMkjfMGltivU1liuf49TBSOzdaEaE3RULgFrvH5ztQuk=
-X-Google-Smtp-Source: AGHT+IEI35ZNAYXAVQ7FgLZ+2UqBRKbq0qw5Be1+ZLSyFT+IEGcgARTkYuIHzBCFf6gpQYUNDieBpghaYX0IPodWybG/2DbltqdL
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD77D1A2549;
+	Thu, 27 Jun 2024 23:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719532514; cv=fail; b=guuEyF6sLLERMW0rOF+2afJ9cUR+qwgGFu2ci+dSdpsczyP8FgLSRYsDukd/ry4Qi2JzT3yr/zYIT+fIQbRHi5rZ1LsQAOBlbgE/iHJ93cApU5P0BGUtoRspC7S6aOrqhOh8oWB5m+0fk7bDhRxM3XmVgkqtkz8zR/aHOnmx9Wg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719532514; c=relaxed/simple;
+	bh=9KMOc1ULTi8NsqW/adTosZFxZXkuj/w4SN6kz3hgzfE=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=gGXf+4X/tXoCrGfT7DWSXLG3lS9ZN+1my3cNHZHCae/VJWfuwXF2iGmJ9mHl6Vy3fV1DXop3wiIvDLmMUtVSKUD0ZmAZPstkSqxepK+Elayz0sXqwe+X29MesTvycv5FMYjXUR068GsQ1Ff6tyWBUYFO//9MN3funM787BhSMWQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ez7rmtiH; arc=fail smtp.client-ip=40.107.100.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LXe8jbM9mEdRe1vsaeTAv87NZruohK0XVpfXfr3RlcUvZiCODccTEyaYhtbM4F0sFmGgm1JkRYY4vIzGbyTBjYhyOcyalcyiyZEdDrfthkVC5wQ3jE2RaQHiwqo2u2D1wCQid4GixA+VyvRGIMs+mWzTrR/UK6aosw+OMh5yx3CPL5ID+N8SAsomKMFy+91qn1aB4rkF6uBQ72olZbGGI7E8ModhjwQhThJvYrE/KUK++7hPsZwm+mmn5mty/zZT1e7eDZgv3LhUEpvsr9+LqPEAIXALoY0ybIRoPc10ENsjsD1ag1IEm2rG1NkORPDjKKc4S39jreH2KIoK7waeQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r5XVoYwQuDg+GQxyx5siP3T4svWGIJrj+ZagRfnWls4=;
+ b=QpcqlQe/ZyLb42yFEWFPalk6bsjulH//9xbp9yXdSilKSvcKJwQKdqeyvMvayNNs4Kz58QeckCW2JuHp4w7laVa/3artbEAnY4s3QZD89Q2dtLlIFceYu65iZmXLnF/Ij1ZG9INQey6jvWwVuQ++2Z0/4pIsflzZiP1ZaKP4JJQxyIOBLzXU29LfRDoLpLm+8QLKoER1MgUba73TQVQckTTUX+pAbtM5w5jLmVG1S18t99gstfs7WumMUUJLMvu27Tjwc4DsvfQAnLAurH/6drPGDLucIF/5EWHWEPgNLKFG4gUP4R8+MtHAHmuHETcN2POPQiUazHvEOrwVrLpf4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r5XVoYwQuDg+GQxyx5siP3T4svWGIJrj+ZagRfnWls4=;
+ b=Ez7rmtiH/nOHT5pwpBHDMDRl/SBlQjbvL7+xjJ14w69SECCk1fRM+0r7QZhgnmHsucQGV6jXUeev1XQaH8/04QKKtW1YNIetZzWgyWj4Awzmn+0uN/matD77T+/6Gc/m1HHg7UoQF36xFjaWfe5evG/W1aJEcK7UL+hZlbBiMvqamHVntPpc6lOW+gXXoJoAK6jEXdXDneZNivFoudtI1RmyyjvugnQBKcKk0uHU3zQfO1WC+2Qlahswod9TCkNw6ijg13OsusCzI0GtrCeirlcfiOKdePQfHMlqlu2FB9PpONrDN6/PH5TxcaCW9bBCOOl4lIl4URU4B9WOIrFVuw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ MW6PR12MB7070.namprd12.prod.outlook.com (2603:10b6:303:238::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7698.35; Thu, 27 Jun 2024 23:55:06 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%6]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
+ 23:55:06 +0000
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+ <e626eda568267e1f86d5c30c24bc62474b45f6c3.1719386613.git-series.apopple@nvidia.com>
+ <20240627053343.GD14837@lst.de>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+ dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+ jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
+ mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
+ ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
+ tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+ jhubbard@nvidia.com, david@fromorbit.com
+Subject: Re: [PATCH 04/13] fs/dax: Add dax_page_free callback
+Date: Fri, 28 Jun 2024 09:48:24 +1000
+In-reply-to: <20240627053343.GD14837@lst.de>
+Message-ID: <87h6de54by.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY4P282CA0005.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:a0::15) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8c:b0:375:dad7:a664 with SMTP id
- e9e14a558f8ab-3763f74fbc3mr12586135ab.6.1719530029778; Thu, 27 Jun 2024
- 16:13:49 -0700 (PDT)
-Date: Thu, 27 Jun 2024 16:13:49 -0700
-In-Reply-To: <CAKYAXd-YWYRkbPis9wh+hkAX1zPkY=ozK8Bsp1+2PRUPs24rTQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009b1e39061be7480a@google.com>
-Subject: Re: [syzbot] [exfat?] possible deadlock in exfat_iterate (2)
-From: syzbot <syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org
-Cc: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MW6PR12MB7070:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b44b16d-8c7a-44b3-f14a-08dc97048f7e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SPGdZo8TfYwVvMzhdP6QmxPRGi7srD29uFwCixlsojXCdRLKEAteUlXWMpKo?=
+ =?us-ascii?Q?ERQ0DQBhJMTLlPpym3G8tAjWf04rEY0+Py5hIVqZDjdEtMG33B8YPB1WUTNe?=
+ =?us-ascii?Q?kgOIXn3kTUSLHVZp9z2G0lSZglWNmFC0vsrGemyvxdqImWJlkBWXubM1m3+i?=
+ =?us-ascii?Q?Hs69oQnh8ejlyC9fuipM9eUSz/JUqz+onempibaXV/SLe7tqHcsW2tjlK3d+?=
+ =?us-ascii?Q?5QQtj3VuxtKlfaNEQkSDIxuUeB8XKsTX7jy4Y5lz+oegqXBGOjB6rssaJe0n?=
+ =?us-ascii?Q?Mx213JljFLMvx+5230+BmSWvTgyOWZPzISUnkrMiL9auzQj8WOwmIaFR4h9z?=
+ =?us-ascii?Q?SDHgYUgNPBJyXwxVA2do7VfkrU8RCJ8wi0g5Ge6Tc2EAlitqQ1EY2mYatng5?=
+ =?us-ascii?Q?vfO/DYklslQ8AaLvmGuLl0AOs8UQdbBIvEs6VhotqEpSc9kc/Hzom444NpTT?=
+ =?us-ascii?Q?Uk17E4ymMPIWZ78YPlbNKc2eXOH6JNs01nHRZM4yFpFSJ/w435SeGPFzJ33G?=
+ =?us-ascii?Q?BMumsWjPspU+CTZMSkvPVJAoBe16jTwqOKwrKFbrBiD6HInE5sIy2ZNpSDi5?=
+ =?us-ascii?Q?DAywerDXxjhK8id7PS4wsSv7ozedmgW+tu+21JlzX1u8WAciCghmJ/ujRsy8?=
+ =?us-ascii?Q?vJHYk3Iz0ey7YKRuwHOzE9Vppom8x5I3FSCUhXyOs9YPtybmSK5y1djbOLnL?=
+ =?us-ascii?Q?ROYOrDDXdzfJx2JZlR90Y/6dUP57AoOAnTKeutVQpKDauhWvtWetHYZhLtJW?=
+ =?us-ascii?Q?VV1nKtbKesyD920rieWJ9SOf9LM3zqMbS9wHmEwUYG0/cy9A1L0RT+MCwmcq?=
+ =?us-ascii?Q?mWdlAJlF8vOQiHDcbmFEhzHKUp4Lfu1XcWdHxKIf14a3cNnx2v18U9wDPfuD?=
+ =?us-ascii?Q?4OcqAKwGpYt8hUTCmLg3uEOS0PmN+J/d+aYeXE4N0YNQTiEUutqGh6+3NZN9?=
+ =?us-ascii?Q?joDbnMIKyqzsiVspWKQtCCBED/QjtnS/7n284P9cXbJB1JdqxjKkAJH6u1OH?=
+ =?us-ascii?Q?pKThAT3zSv0BTLS8BaFnSFxQhePLhXakoErQO9s2WrQ+PB6UonT93OQk3XG1?=
+ =?us-ascii?Q?L7sRWRWyPCEn77tFg/G+tzRLnihsPrrXhP/rD9h0eXfFJI6Mnhs1UkNxTCkc?=
+ =?us-ascii?Q?SgzNfyzj5YUpEKZGvLjxY49gQVt18AT2BPkuREpfhtIj3py4RpM5xMGoNmnp?=
+ =?us-ascii?Q?n1TcAz3KpI0baNwrPjJqvelMOM88IvVzKQQ+07sCYZqzIkhkafs1iUspWyIo?=
+ =?us-ascii?Q?ZHlkjxc5ij1LlpgCz7N62ILFvZW403T6UEwF60RvVbKyAesn3hshw+kJe1h4?=
+ =?us-ascii?Q?2x8XMuEaWQO92iv7ESqFlPwc9Dd+8LgyyFLFU8IPL7NO4w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tkitERBnPU1pVbMOLz75E/q0I+6Jb3wBSk3hRXD93QNit8SPL/tDG2xlCdxZ?=
+ =?us-ascii?Q?4rXtSpcUSCimDfUKLPTZsjF3t9vVlQ2PwG+p9KV8beM9YiExjV2E4XVPNhV1?=
+ =?us-ascii?Q?gRMUkQMeg83tq7XhzxFl7s49v4qzqYrhfkdnt0vsND+i9RCicYuJwyc4JbMY?=
+ =?us-ascii?Q?2LUeFF/nqm8Y9QA9rJwDTA1QKuJGl1pw8uKH4Xcs9hY/Kv1oREgBsiUyEwSF?=
+ =?us-ascii?Q?SZyh/VAZJqDVJ+QHw0BwmL8xgcLGr06AaLomEoETtqlSN848KzTtZMzammUt?=
+ =?us-ascii?Q?hWuCtKrB2H+lCn9L8K5MvL3QFNw613jnszfmqfkwV11o4wmrX0xHSU1Zz4aV?=
+ =?us-ascii?Q?rNWxxGI9ds6H2ojYikPqsTo56EEdnNnp7lYK7jRlrQhF9UatUzWnYyP0Ehh8?=
+ =?us-ascii?Q?Nbn8/N3DYhZag/ngv/0vu8uLjkO5zTud8PiBHQe8j3ef2JgWUCg0G+vuztkN?=
+ =?us-ascii?Q?boh4uiEuIzbjjCvwDKyThOW+5ADPetF8nKZYDk02yJ552qmV4ksijbA59+Lk?=
+ =?us-ascii?Q?gLZO/116BmNDMBBBHOgBjI7P7U7cNkBBKvboiF3vr/Ry6iFBk/Sz5n6IAgDE?=
+ =?us-ascii?Q?54rHOZTksM7njfweGQhWrEyWGIuejg+T8qTrzYC+RzAQYZ9ud0iHCn0bvzTC?=
+ =?us-ascii?Q?ZqaF/1npXaMk0cFzedKtaMFSAhu4mulqKhqv+Wtl1VCZkVokuxNFIEDeNEEU?=
+ =?us-ascii?Q?0iz2HEbwY4k0gtzzbMmxwE4N8IQgm7WAKP99J/HsM24zEQKls6t2616+bAD+?=
+ =?us-ascii?Q?ZLvymMJrfpQwWleWjfywi/nWsjSLnehAcOUni6V2C4cMuLOww1m7rI1gE47o?=
+ =?us-ascii?Q?P311zMtj0Uq+atMV6AoWexuJPWNUGVPr1t+aG4AZPfzS4GRCkhKXOARB185S?=
+ =?us-ascii?Q?Uo3W3saymTu2YBhJaqXfMpbQtGU+Wf3igKTTsSPoNfyrVIOMU6+RzqcFusdz?=
+ =?us-ascii?Q?6Nq3dqlhBScPUGvARkg1/C5E5i1lk/c/QMQofuX+RVhBZB147zik1HiVP+B/?=
+ =?us-ascii?Q?AKci3YR4eZey7PWYZecXQuFqzy6xBgMKi5T6GQx8BHmqQqTlOQeU8UogfMyK?=
+ =?us-ascii?Q?i2LXjzJFqkfvafaxi5Bxago8EcHj7eJ+kH6qqaPIm5HB/KrlivDjnAk3LvaH?=
+ =?us-ascii?Q?XvD2kFg9WdxGQRTikcVcTl6Ydu/QTTWFZgyB0TTZzw3uDVa7d/SuRfWHl+mA?=
+ =?us-ascii?Q?Fiuane5u7W2o08oElwBRRxP9DwMurUphw8Qu4EH5tCnXa/Laxj2ZKXcWselW?=
+ =?us-ascii?Q?armMdxPE1NHP8o16lb3XSc2d2ESXpyCKZ/lTcp/vDzSbYNiprGN1ccnCK75n?=
+ =?us-ascii?Q?OA0MgM1Ewx2fVsP1KXpjrUUwpv9x5CNn4oLJuu0Gw1ZGIAApIy3px6/qbZga?=
+ =?us-ascii?Q?1zJVOhuF27djBBsNePcQGnP95Clgs3H3sjDRS8J8PRvPG6QuiCtDTstIgzTw?=
+ =?us-ascii?Q?z20TLx7mt4kv0YKxXkxo0ZSjD3AVeG/n52h087c0pNYWRBk2T92swmD7gbvA?=
+ =?us-ascii?Q?ujjyV1ulXqBW2oS7n3Jq/ja1qmPN78fEQWQqWXNksUuzlOshgYMb6Mv4S8w1?=
+ =?us-ascii?Q?+iFcM+vKpGWL/pxh0SncWia4iwZfsmneHU/RsUWg?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b44b16d-8c7a-44b3-f14a-08dc97048f7e
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 23:55:02.4467
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oRDrO8BAmSekk8UJnkD7mxe7Gnu0KiIBE7zQZqcDA2rCfQ62abWPR/hEU8Ol3oQlJ8QFPFFhxHfF3WjF/0ahPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB7070
 
-> #syz test git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.=
-git dev
 
-This crash does not have a reproducer. I cannot test it.
+Christoph Hellwig <hch@lst.de> writes:
 
+> On Thu, Jun 27, 2024 at 10:54:19AM +1000, Alistair Popple wrote:
+>> When a fs dax page is freed it has to notify filesystems that the page
+>> has been unpinned/unmapped and is free. Currently this involves
+>> special code in the page free paths to detect a transition of refcount
+>> from 2 to 1 and to call some fs dax specific code.
+>> 
+>> A future change will require this to happen when the page refcount
+>> drops to zero. In this case we can use the existing
+>> pgmap->ops->page_free() callback so wire that up for all devices that
+>> support FS DAX (nvdimm and virtio).
 >
-> 2024=EB=85=84 6=EC=9B=94 27=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 9:58,=
- syzbot
-> <syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com>=EB=8B=98=EC=9D=B4=
- =EC=9E=91=EC=84=B1:
->>
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    55027e689933 Merge tag 'input-for-v6.10-rc5' of git://gi=
-t...
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16390ac19800=
-00
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D53ab35b55612=
-9242
->> dashboard link: https://syzkaller.appspot.com/bug?extid=3Ddf3558df416094=
-51e4ac
->> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for =
-Debian) 2.40
->> userspace arch: i386
->>
->> Unfortunately, I don't have any reproducer for this issue yet.
->>
->> Downloadable assets:
->> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/=
-7bc7510fe41f/non_bootable_disk-55027e68.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/a36929b5a065/vmlin=
-ux-55027e68.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/d72de6f61ddc/=
-bzImage-55027e68.xz
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the com=
-mit:
->> Reported-by: syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com
->>
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->> WARNING: possible circular locking dependency detected
->> 6.10.0-rc5-syzkaller-00018-g55027e689933 #0 Not tainted
->> ------------------------------------------------------
->> syz-executor.2/6265 is trying to acquire lock:
->> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux=
-/sched/mm.h:334 [inline]
->> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/sl=
-ub.c:3891 [inline]
->> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c=
-:3981 [inline]
->> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __do_kmalloc_node mm/slub=
-.c:4121 [inline]
->> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __kmalloc_noprof+0xb5/0x4=
-20 mm/slub.c:4135
->>
->> but task is already holding lock:
->> ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x33f/0=
-xad0 fs/exfat/dir.c:256
->>
->> which lock already depends on the new lock.
->>
->>
->> the existing dependency chain (in reverse order) is:
->>
->> -> #1 (&sbi->s_lock#2){+.+.}-{3:3}:
->>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->>        __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
->>        exfat_evict_inode+0x25b/0x340 fs/exfat/inode.c:725
->>        evict+0x2ed/0x6c0 fs/inode.c:667
->>        iput_final fs/inode.c:1741 [inline]
->>        iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
->>        iput+0x5c/0x80 fs/inode.c:1757
->>        dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
->>        __dentry_kill+0x1d0/0x600 fs/dcache.c:603
->>        shrink_kill fs/dcache.c:1048 [inline]
->>        shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
->>        prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
->>        super_cache_scan+0x32a/0x550 fs/super.c:221
->>        do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
->>        shrink_slab_memcg mm/shrinker.c:548 [inline]
->>        shrink_slab+0xa87/0x1310 mm/shrinker.c:626
->>        shrink_one+0x493/0x7c0 mm/vmscan.c:4790
->>        shrink_many mm/vmscan.c:4851 [inline]
->>        lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
->>        shrink_node mm/vmscan.c:5910 [inline]
->>        kswapd_shrink_node mm/vmscan.c:6720 [inline]
->>        balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
->>        kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
->>        kthread+0x2c1/0x3a0 kernel/kthread.c:389
->>        ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
->>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->>
->> -> #0 (fs_reclaim){+.+.}-{0:0}:
->>        check_prev_add kernel/locking/lockdep.c:3134 [inline]
->>        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
->>        validate_chain kernel/locking/lockdep.c:3869 [inline]
->>        __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
->>        lock_acquire kernel/locking/lockdep.c:5754 [inline]
->>        lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
->>        __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
->>        fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
->>        might_alloc include/linux/sched/mm.h:334 [inline]
->>        slab_pre_alloc_hook mm/slub.c:3891 [inline]
->>        slab_alloc_node mm/slub.c:3981 [inline]
->>        __do_kmalloc_node mm/slub.c:4121 [inline]
->>        __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
->>        kmalloc_noprof include/linux/slab.h:664 [inline]
->>        kmalloc_array_noprof include/linux/slab.h:699 [inline]
->>        __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
->>        exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
->>        exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
->>        exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
->>        exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
->>        wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
->>        iterate_dir+0x53e/0xb60 fs/readdir.c:110
->>        __do_sys_getdents64 fs/readdir.c:409 [inline]
->>        __se_sys_getdents64 fs/readdir.c:394 [inline]
->>        __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
->>        do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->>        __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->>        do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->>        entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->>
->> other info that might help us debug this:
->>
->>  Possible unsafe locking scenario:
->>
->>        CPU0                    CPU1
->>        ----                    ----
->>   lock(&sbi->s_lock#2);
->>                                lock(fs_reclaim);
->>                                lock(&sbi->s_lock#2);
->>   lock(fs_reclaim);
->>
->>  *** DEADLOCK ***
->>
->> 3 locks held by syz-executor.2/6265:
->>  #0: ffff88801db114c8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xeb=
-/0x180 fs/file.c:1191
->>  #1: ffff8880483da9e8 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: wra=
-p_directory_iterator+0x5a/0xe0 fs/readdir.c:56
->>  #2: ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x=
-33f/0xad0 fs/exfat/dir.c:256
->>
->> stack backtrace:
->> CPU: 0 PID: 6265 Comm: syz-executor.2 Not tainted 6.10.0-rc5-syzkaller-0=
-0018-g55027e689933 #0
->> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1=
-.16.2-1 04/01/2014
->> Call Trace:
->>  <TASK>
->>  __dump_stack lib/dump_stack.c:88 [inline]
->>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
->>  check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
->>  check_prev_add kernel/locking/lockdep.c:3134 [inline]
->>  check_prevs_add kernel/locking/lockdep.c:3253 [inline]
->>  validate_chain kernel/locking/lockdep.c:3869 [inline]
->>  __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
->>  lock_acquire kernel/locking/lockdep.c:5754 [inline]
->>  lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
->>  __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
->>  fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
->>  might_alloc include/linux/sched/mm.h:334 [inline]
->>  slab_pre_alloc_hook mm/slub.c:3891 [inline]
->>  slab_alloc_node mm/slub.c:3981 [inline]
->>  __do_kmalloc_node mm/slub.c:4121 [inline]
->>  __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
->>  kmalloc_noprof include/linux/slab.h:664 [inline]
->>  kmalloc_array_noprof include/linux/slab.h:699 [inline]
->>  __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
->>  exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
->>  exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
->>  exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
->>  exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
->>  wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
->>  iterate_dir+0x53e/0xb60 fs/readdir.c:110
->>  __do_sys_getdents64 fs/readdir.c:409 [inline]
->>  __se_sys_getdents64 fs/readdir.c:394 [inline]
->>  __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
->>  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->>  __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->>  do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->> RIP: 0023:0xf72f8579
->> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 =
-00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 9=
-0 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
->> RSP: 002b:00000000f5ec95ac EFLAGS: 00000292 ORIG_RAX: 00000000000000dc
->> RAX: ffffffffffffffda RBX: 000000000000000a RCX: 0000000020002ec0
->> RDX: 0000000000001000 RSI: 0000000000000000 RDI: 0000000000000000
->> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
->> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->>  </TASK>
->> ----------------
->> Code disassembly (best guess), 2 bytes skipped:
->>    0:   10 06                   adc    %al,(%rsi)
->>    2:   03 74 b4 01             add    0x1(%rsp,%rsi,4),%esi
->>    6:   10 07                   adc    %al,(%rdi)
->>    8:   03 74 b0 01             add    0x1(%rax,%rsi,4),%esi
->>    c:   10 08                   adc    %cl,(%rax)
->>    e:   03 74 d8 01             add    0x1(%rax,%rbx,8),%esi
->>   1e:   00 51 52                add    %dl,0x52(%rcx)
->>   21:   55                      push   %rbp
->>   22:   89 e5                   mov    %esp,%ebp
->>   24:   0f 34                   sysenter
->>   26:   cd 80                   int    $0x80
->> * 28:   5d                      pop    %rbp <-- trapping instruction
->>   29:   5a                      pop    %rdx
->>   2a:   59                      pop    %rcx
->>   2b:   c3                      ret
->>   2c:   90                      nop
->>   2d:   90                      nop
->>   2e:   90                      nop
->>   2f:   90                      nop
->>   30:   8d b4 26 00 00 00 00    lea    0x0(%rsi,%riz,1),%esi
->>   37:   8d b4 26 00 00 00 00    lea    0x0(%rsi,%riz,1),%esi
->>
->>
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->>
->> If the report is already addressed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->>
->> If you want to overwrite report's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
->>
->> If the report is a duplicate of another one, reply with:
->> #syz dup: exact-subject-of-another-report
->>
->> If you want to undo deduplication, reply with:
->> #syz undup
+> Given that ->page_ffree is only called from free_zone_device_folio
+> and right next to a switch on the the type, can't we just do the
+> wake_up_var there without the somewhat confusing indirect call that
+> just back in common code without any driver logic?
+
+Longer term I'm hoping we can get rid of that switch on type entirely as
+I don't think the whole get/put_dev_pagemap() thing is very useful. Less
+indirection is good though so will move the wake_up_var there.
 
