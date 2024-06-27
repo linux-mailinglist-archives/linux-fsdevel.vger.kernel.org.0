@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-22578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84EFB919C93
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 03:01:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79EEE919C9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 03:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B741F23745
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 01:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27DDB283382
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 01:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCFA1A29A;
-	Thu, 27 Jun 2024 01:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CE11CD20;
+	Thu, 27 Jun 2024 01:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwls8z49"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ksKFkOIP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C058A17984;
-	Thu, 27 Jun 2024 01:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D7C1CA96;
+	Thu, 27 Jun 2024 01:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719450038; cv=none; b=YA1uD6iRmovsiWirvhBi3iW0qd9NozbHVTTZ89dnERvM68OG4iMvMjbT9Zz8O+6zx/9eOHzu3lg0bnplYZyLjzFxupHewfr17u03JHIWsdthhy35+Bpu/fWRMuuhXs9q7zurBF9QBQ6hpFWBzQ9QaFLQHii0m+ZZZ/pvxumhY6w=
+	t=1719450042; cv=none; b=o5nWBA1FqUCiKmdl+98w/mVlY690rTr/kcfCPkCEnm1eM0g0gwXHQvS87eWodU+NRtbC9BuzTcHaolv+G1u15lRB+xltoNXIoky2O2StMIrAgRhkrma5sZRyMo+4fxCDTpSOFuLXd0h+SuclrEFXmyhcpxhupUmADjODs8SqSo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719450038; c=relaxed/simple;
-	bh=nUcEwSwalHgLZDUtP3erKKCOQirbIJlYfFYWIa0nODA=;
+	s=arc-20240116; t=1719450042; c=relaxed/simple;
+	bh=TvAqWM+1osikcEDt9i0N4WD9vik81z9fLBMKtBzROY8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mx2Jj19rw9NuGBM1Oy7dY76IZjA9gWjv2j3bgnx920GzQhGO3mlO9rDo9X462qxpiUAEIl3UZu1IFREZS7byIUggnQ/YL78L2l5tIXuqajrGuy0OwVVOcbvh0ZOF7l4ZsWil4zoU7xnN8quSIyiz6JSLquZrrupOqFzLzbgYJrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwls8z49; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90D1CC116B1;
-	Thu, 27 Jun 2024 01:00:36 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=UGAfe31vgdc5t9b4v4HWPYZG4CBWHZhlW6oe0DDPpIDH6E6J+Ua23japNVTF1LAQM3IroNkPzdc6IJylKMyb0apsa4U/IasLCVrNTLep8HrSy2MCTGJbVDQAEoLqTPj4Aa2yJOjSI0pUwBOOigV4vPUoZLrlJJGIF/Z1Y2y9s8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ksKFkOIP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC7AC4AF0B;
+	Thu, 27 Jun 2024 01:00:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719450038;
-	bh=nUcEwSwalHgLZDUtP3erKKCOQirbIJlYfFYWIa0nODA=;
+	s=k20201202; t=1719450040;
+	bh=TvAqWM+1osikcEDt9i0N4WD9vik81z9fLBMKtBzROY8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gwls8z49Bh6Z5E9hFJjXsBHm9SIs3cp2ZvAOef69OmFSUYxfKHGAVuX7LlJovim/5
-	 SOafG37Usb6GgKtzkT0nz61+eEqb8xuu4hcpr7Hp8uXmTD9dHHTJYoJky7EOIrUzKS
-	 xPXP68NHYs6kL5d2drislL3eImS37sOgVS5w8cIee2N1ffPopUER5AIJKrYBI9CUTa
-	 H/cCqB0eyQLUc4dFwsYoUV9Tu5W9/EX4j4y82h1eqmSF3IEsqTMRSRDxFEa8dZBvhF
-	 Bvu5d61LKLUifHm4lGDnvgWLQDNH+VloCxi+AOd2FGnxxOkPj4PKblhSCxJVwkWDiK
-	 Bezx1LULDHrag==
+	b=ksKFkOIPD8B+IxtigbTwAuwg7Zi3C4sksnJDk2qwCJDFyBnx1CPl9lxXsmpzlgulQ
+	 oLA6EsYD01q3aGiBq4BfIGKTX52cJ08PoKvb/WjeTLD7aXGncsmrJ5iQqkIs6koBN5
+	 PntCYREhRs+JdmWkpQPu4EYd2sOl9h5/ef20IY8uXouz6gRCbIZn6/h+Cu9qX++hGI
+	 wWq1wfUzUDxJm8GlIJ7HqUjuKqY4jEcJInvTHEOkFgVNG8iGkrKAsAUbep1WEVNkDa
+	 7//UcWBy59SpfzyrHYM9wjhLB9RsJ7Qt0zcefYSVywwoenGVR3Jq4SIO75qebeN1JB
+	 Cb1MI9Oqjs3LQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 26 Jun 2024 21:00:22 -0400
-Subject: [PATCH 02/10] fs: uninline inode_get_ctime and
+Date: Wed, 26 Jun 2024 21:00:23 -0400
+Subject: [PATCH 03/10] fs: tracepoints for inode_needs_update_time and
  inode_set_ctime_to_ts
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-mgtime-v1-2-a189352d0f8f@kernel.org>
+Message-Id: <20240626-mgtime-v1-3-a189352d0f8f@kernel.org>
 References: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
 In-Reply-To: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -72,99 +72,143 @@ Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2576; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=nUcEwSwalHgLZDUtP3erKKCOQirbIJlYfFYWIa0nODA=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmfLmu8R1wuP4JGpygk6wU7fHbGTPeS3QYH6KLh
- UBB5zc49iOJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZny5rgAKCRAADmhBGVaC
- FabcD/4mM1N+8adbvf5i1jdMSPTFwAr4F+w2yWSohHk9014i/dOuMmEmBpgENJ9AtMK5P2y/bv+
- P4MY+eEzXnZ05buHgOs0fdObTEpWuMllwhp2KLU68Z2WG+m11BNai7RUYL0EBU31kOwlFLhRVbq
- ZTMo+6ORcgl4cWZXadf1Tn01l3772cp/xMeDoyS7kDe3MjgcYqxBwzIiLLAXLiBuqbpAXS5rrnP
- QEn6NCAGzt+LK1V+YTfi1YVsfMyHmROqpLaQ1XzN7SwmwPErX+ZAy/Cc5aImHBmQcaaTE9hq4Bm
- s6Tc+KRNHo9U75RN/LaCGPOfbOchz4QB78rXLAOEGt2GHWzBb2Djp3g81jLUpVNRajBNPmlVUdw
- +HqFECfXB6Mo3uUmG8pJo6++cuB9YZaGG+XVolyOHgH8THScVWV8qKc3XWA5Gph32Xgp34I0g+v
- rUqtcNJdxkVIThR5M0aJP7NBzNupu/cXUq4GzXMB465v30QcD9xvBcknMCWM18UgfD2x33oRuHV
- SNxQLu6ZlxnzkGbki8odyQYjD/cDeYIwq2kiQNrxlG+y5m7q1ypr6sfh41VWgY9xHiHNSCZOoPr
- ZNw8ruynyO9s8OBJfE2sgYZvJw7bRXa69ctiGQGq0u0sbxgokuiDD/3m1oody4GB9YB7nDqAI0u
- W20ZxJx5YHBWvEg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3425; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=TvAqWM+1osikcEDt9i0N4WD9vik81z9fLBMKtBzROY8=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmfLmu38o34Gc3uLqCC/KtRitsdQUwQQbBScUNZ
+ xY97hHdyEiJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZny5rgAKCRAADmhBGVaC
+ FUP6EACD4iVg9GXP9iA3Hn8lRNdHlGJ6Zy6M9ZhDcO6x6OiRZzdFfP0NgHKsFPdn2OnfETkahlZ
+ GUYNkkiTUcbmS8kx8uGOv0t2By1BwU5Gig2xbUvCChWSNLlpJhfcSACoiyd3Z59dwnqyIlknHWL
+ 8lAD6m4QwwRpgRn8dz96Nbern/BwQ0MwgiSe7fxAD3xczDWM9eA7g9oxyCUy0x4Cgm+whV328Z9
+ hVdTS7f3eBcfHjWyeP1EnceVlTAsZs55rwZp/uq53sUR8IZE31t8KK3XM2rOrGg6SXH51CWroSb
+ 45P0mbHembc5ibT3BDy30BAAEXJscI/6aAaL1BfiROPo1JseAG/df7eQmzoAmTlFy9t+UvqCnhd
+ 7c2goYMJrTEA3tUyWUa0RwqW6+bDSu3Gv2LxV4qNB0WaQF/rIGLZ6hdnysOdxXn80tLhbfatHuX
+ YGY/56WUTpv9/Z5ooc6sHzggBFFcg0dFcPodRFmWgU4xTPL/xHRvRCpRSMLnPdW7mv4n3eswylP
+ Q6K9QndkigtGk0lmq2U3HKGnXQR0K5wAJa9j1z1I3itPf1HVhdOxbBdQo5JOWaCOpXwovRowb4v
+ pAEjUph2heWJ8O4jIFjj59Ct5FN1CInMMqtcROERa4vnmgpo4B2FVbZ8yTNqEDCkpdZaG2hby5r
+ 9MAyoeJnmKNLXKw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Move both functions to fs/inode.c as they have grown a little large for
-inlining.
+Add a new tracepoint for when we're testing whether the timestamps need
+updating, and around the update itself.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/inode.c         | 25 +++++++++++++++++++++++++
- include/linux/fs.h | 13 ++-----------
- 2 files changed, 27 insertions(+), 11 deletions(-)
+ fs/inode.c                       |  4 +++
+ include/trace/events/timestamp.h | 76 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
 
 diff --git a/fs/inode.c b/fs/inode.c
-index e0815acc5abb..7b0a73ed499d 100644
+index 7b0a73ed499d..5d2b0dfe48c3 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -2501,6 +2501,31 @@ struct timespec64 current_time(struct inode *inode)
- }
- EXPORT_SYMBOL(current_time);
+@@ -22,6 +22,8 @@
+ #include <linux/iversion.h>
+ #include <linux/rw_hint.h>
+ #include <trace/events/writeback.h>
++#define CREATE_TRACE_POINTS
++#include <trace/events/timestamp.h>
+ #include "internal.h"
  
-+/**
-+ * inode_get_ctime - fetch the current ctime from the inode
-+ * @inode: inode from which to fetch ctime
-+ *
-+ * Grab the current ctime tv_nsec field from the inode, mask off the
-+ * I_CTIME_QUERIED flag and return it. This is mostly intended for use by
-+ * internal consumers of the ctime that aren't concerned with ensuring a
-+ * fine-grained update on the next change (e.g. when preparing to store
-+ * the value in the backing store for later retrieval).
-+ */
-+struct timespec64 inode_get_ctime(const struct inode *inode)
-+{
-+	ktime_t ctime = inode->__i_ctime;
-+
-+	return ktime_to_timespec64(ctime);
-+}
-+EXPORT_SYMBOL(inode_get_ctime);
-+
-+struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespec64 ts)
-+{
-+	inode->__i_ctime = ktime_set(ts.tv_sec, ts.tv_nsec);
-+	return ts;
-+}
-+EXPORT_SYMBOL(inode_set_ctime_to_ts);
-+
- /**
-  * inode_set_ctime_current - set the ctime to current_time
-  * @inode: inode
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 5139dec085f2..4b10db12725d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1608,10 +1608,8 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
- 	return inode_set_mtime_to_ts(inode, ts);
+ /*
+@@ -2096,6 +2098,7 @@ static int inode_needs_update_time(struct inode *inode)
+ 	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
+ 		sync_it |= S_VERSION;
+ 
++	trace_inode_needs_update_time(inode, &now, &ts, sync_it);
+ 	return sync_it;
  }
  
--static inline struct timespec64 inode_get_ctime(const struct inode *inode)
--{
--	return ktime_to_timespec64(inode->__i_ctime);
--}
-+struct timespec64 inode_get_ctime(const struct inode *inode);
-+struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespec64 ts);
- 
- static inline time64_t inode_get_ctime_sec(const struct inode *inode)
+@@ -2522,6 +2525,7 @@ EXPORT_SYMBOL(inode_get_ctime);
+ struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespec64 ts)
  {
-@@ -1623,13 +1621,6 @@ static inline long inode_get_ctime_nsec(const struct inode *inode)
- 	return inode_get_ctime(inode).tv_nsec;
+ 	inode->__i_ctime = ktime_set(ts.tv_sec, ts.tv_nsec);
++	trace_inode_set_ctime_to_ts(inode, &ts);
+ 	return ts;
  }
- 
--static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
--						      struct timespec64 ts)
--{
--	inode->__i_ctime = ktime_set(ts.tv_sec, ts.tv_nsec);
--	return ts;
--}
--
- /**
-  * inode_set_ctime - set the ctime in the inode
-  * @inode: inode in which to set the ctime
+ EXPORT_SYMBOL(inode_set_ctime_to_ts);
+diff --git a/include/trace/events/timestamp.h b/include/trace/events/timestamp.h
+new file mode 100644
+index 000000000000..35ff875d3800
+--- /dev/null
++++ b/include/trace/events/timestamp.h
+@@ -0,0 +1,76 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM timestamp
++
++#if !defined(_TRACE_TIMESTAMP_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_TIMESTAMP_H
++
++#include <linux/tracepoint.h>
++#include <linux/fs.h>
++
++TRACE_EVENT(inode_needs_update_time,
++	TP_PROTO(struct inode *inode,
++		 struct timespec64 *now,
++		 struct timespec64 *ctime,
++		 int sync_it),
++
++	TP_ARGS(inode, now, ctime, sync_it),
++
++	TP_STRUCT__entry(
++		__field(dev_t,			dev)
++		__field(ino_t,			ino)
++		__field(time64_t,		now_sec)
++		__field(time64_t,		ctime_sec)
++		__field(long,			now_nsec)
++		__field(long,			ctime_nsec)
++		__field(int,			sync_it)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->ino		= inode->i_ino;
++		__entry->sync_it	= sync_it;
++		__entry->now_sec	= now->tv_sec;
++		__entry->ctime_sec	= ctime->tv_sec;
++		__entry->now_nsec	= now->tv_nsec;
++		__entry->ctime_nsec	= ctime->tv_nsec;
++		__entry->sync_it	= sync_it;
++	),
++
++	TP_printk("ino=%d:%d:%ld sync_it=%d now=%llu.%ld ctime=%llu.%lu",
++		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino,
++		__entry->sync_it,
++		__entry->now_sec, __entry->now_nsec,
++		__entry->ctime_sec, __entry->ctime_nsec
++	)
++);
++
++TRACE_EVENT(inode_set_ctime_to_ts,
++	TP_PROTO(struct inode *inode,
++		 struct timespec64 *ts),
++
++	TP_ARGS(inode, ts),
++
++	TP_STRUCT__entry(
++		__field(dev_t,			dev)
++		__field(ino_t,			ino)
++		__field(time64_t,		ts_sec)
++		__field(long,			ts_nsec)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->ino		= inode->i_ino;
++		__entry->ts_sec		= ts->tv_sec;
++		__entry->ts_nsec	= ts->tv_nsec;
++	),
++
++	TP_printk("ino=%d:%d:%ld ts=%llu.%lu",
++		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino,
++		__entry->ts_sec, __entry->ts_nsec
++	)
++);
++#endif /* _TRACE_TIMESTAMP_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
 
 -- 
 2.45.2
