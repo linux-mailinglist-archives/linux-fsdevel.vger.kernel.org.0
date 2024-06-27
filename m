@@ -1,143 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-22640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2A491AB76
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 17:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CB791AB64
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 17:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A998B284DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 15:29:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 240941C24C6E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 15:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8381991B9;
-	Thu, 27 Jun 2024 15:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07651990C8;
+	Thu, 27 Jun 2024 15:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgHDvq+1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9008E197A61;
-	Thu, 27 Jun 2024 15:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D0F199233;
+	Thu, 27 Jun 2024 15:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719502108; cv=none; b=fASkRQSpSoOg+8bqam3X+KxU4JScZjZqBSVKSROAg8DKPXJ8gjp4eqqyhjNjHiXVZo9JqmSfCJrwvJtQwcfCSK4WREJBmgnUzxKZI8VBmmAqAANJONubbuDEUkmEJG1KApG9s9dfvysWcf6znvP5e+stO+26hCcWfim11X2gRQk=
+	t=1719502394; cv=none; b=FQ4HEDUyrdg7lPvLcCfpWs1up/Ai0oq5UFERa5y9DzVWaMGuktlDw1NLX5pEVf86cH0m5pf/Y1c0fM4ocxe9Hd4nsA0dNmQNGdB/0HevW2GuanlypILIzfOUjYnibpuXE/crgRMLryqAviUva6AoTsctg46F7Oj1VSeDE4UtXDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719502108; c=relaxed/simple;
-	bh=HbuetP97OhPn2PucQXYuYhb6lAy9dew5SWP2gwy7epk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ItvZU2VGrFqKt9O013UWsveR9UA0FEHSs06+qPN/ALGUjXrfrs5/gW1otHIqUcDv59sYQ8ZvFuRc8k4rxVXjgtubCO1u42H0+0ZnBM6bJSfKSOLLhW/5aSY3svz6lQEnQTku2UvEPbUo3zqlMTYcxIfJIKCkUKm772+UKncGA2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-	by mail.parknet.co.jp (Postfix) with ESMTPSA id C45A62055FA2;
-	Fri, 28 Jun 2024 00:28:16 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 45RFSFAl004936
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 00:28:16 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 45RFSFFO018977
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 00:28:15 +0900
-Received: (from hirofumi@localhost)
-	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 45RFSEDH018975;
-	Fri, 28 Jun 2024 00:28:14 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gwendal
- Grignou <gwendal@chromium.org>, dlunev@chromium.org
-Subject: Re: [PATCH v2 2/2] fat: always use dir_emit_dots and ignore . and
- .. entries
-In-Reply-To: <Zn1gQeWToPNkp9nt@quatroqueijos.cascardo.eti.br> (Thadeu Lima de
-	Souza Cascardo's message of "Thu, 27 Jun 2024 09:51:13 -0300")
-References: <20240625175133.922758-1-cascardo@igalia.com>
-	<20240625175133.922758-3-cascardo@igalia.com>
-	<871q4kae58.fsf@mail.parknet.co.jp>
-	<ZnxwEtmYeZcKopJK@quatroqueijos.cascardo.eti.br>
-	<87a5j7v517.fsf@mail.parknet.co.jp>
-	<Zn1gQeWToPNkp9nt@quatroqueijos.cascardo.eti.br>
-Date: Fri, 28 Jun 2024 00:28:14 +0900
-Message-ID: <87jzial81d.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719502394; c=relaxed/simple;
+	bh=VuDA6GVm6ZnqWfwRL6Xl9pYd73Bj8ZY3AonKSNGQsAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cVIeuCf04ruwy7Yvgqv/l0l1oP8KsQCH/KpkFU0D+ya9Nuo/4sUeHy+QQip4KzFg/COxGe5Fma1ghBGeL6RfcvOhzV6HjlIbJ4r3cGwIF2R3u5EkuLm4utCG0gf0xODCC1mpDeyq2FtMgHmApLC3mKzD92pznc9TxXC/wHF/bS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgHDvq+1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4B4C2BBFC;
+	Thu, 27 Jun 2024 15:33:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719502393;
+	bh=VuDA6GVm6ZnqWfwRL6Xl9pYd73Bj8ZY3AonKSNGQsAY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AgHDvq+1NSlAHfMDDmXVM/hKZIRWxLeKMv1gQFnZVYyOpAT/dqtNzIVMZ7zKdK4I6
+	 Pk1hsuFMoAx5aMDci/JLTvkwP0fcLNu7/ShigKZUOr/oB4kpX5Lvn8QWjt4oC9Zks3
+	 HYA/RIxJ05wESANO1p6vtl1W3TAbNTGrVHYSwTA/R/biQGn7AfdksZTWcybUmjh1nu
+	 Rte0kakjfnqw5OOboYB4VJb+GCVQ8o3fRNQYvGrJMJ9/E9jrQjhDaU67gce+WQsWDo
+	 V+CZ4U3EjGxSYWOByIo9JE22N4QnmUaSNEdyEUYc/dVviIx25FTRNZ6UiljeTEPc4+
+	 icGJ+UiDrYmEA==
+Date: Thu, 27 Jun 2024 17:33:08 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, "Ma, Yu" <yu.ma@intel.com>, 
+	viro@zeniv.linux.org.uk, edumazet@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+Message-ID: <20240627-laufschuhe-hergibt-8158b7b6b206@brauner>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-2-yu.ma@intel.com>
+ <20240625115257.piu47hzjyw5qnsa6@quack3>
+ <20240625125309.y2gs4j5jr35kc4z5@quack3>
+ <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
+ <20240626115427.d3x7g3bf6hdemlnq@quack3>
+ <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
 
-Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
+On Wed, Jun 26, 2024 at 09:13:07PM GMT, Mateusz Guzik wrote:
+> On Wed, Jun 26, 2024 at 1:54 PM Jan Kara <jack@suse.cz> wrote:
+> > So maybe I'm wrong but I think the biggest benefit of your code compared to
+> > plain find_next_fd() is exactly in that we don't have to load full_fds_bits
+> > into cache. So I'm afraid that using full_fds_bits in the condition would
+> > destroy your performance gains. Thinking about this with a fresh head how
+> > about putting implementing your optimization like:
+> >
+> > --- a/fs/file.c
+> > +++ b/fs/file.c
+> > @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
+> >         unsigned int maxbit = maxfd / BITS_PER_LONG;
+> >         unsigned int bitbit = start / BITS_PER_LONG;
+> >
+> > +       /*
+> > +        * Optimistically search the first long of the open_fds bitmap. It
+> > +        * saves us from loading full_fds_bits into cache in the common case
+> > +        * and because BITS_PER_LONG > start >= files->next_fd, we have quite
+> > +        * a good chance there's a bit free in there.
+> > +        */
+> > +       if (start < BITS_PER_LONG) {
+> > +               unsigned int bit;
+> > +
+> > +               bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
+> > +               if (bit < BITS_PER_LONG)
+> > +                       return bit;
+> > +       }
+> > +
+> >         bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
+> >         if (bitbit >= maxfd)
+> >                 return maxfd;
+> >
+> > Plus your optimizations with likely / unlikely. This way the code flow in
+> > alloc_fd() stays more readable, we avoid loading the first open_fds long
+> > into cache if it is full, and we should get all the performance benefits?
+> >
+> 
+> Huh.
+> 
+> So when I read the patch previously I assumed this is testing the bit
+> word for the map containing next_fd (whatever it is), avoiding looking
+> at the higher level bitmap and inlining the op (instead of calling the
+> fully fledged func for bit scans).
+> 
+> I did not mentally register this is in fact only checking for the
+> beginning of the range of the entire thing. So apologies from my end
+> as based on my feedback some work was done and I'm going to ask to
+> further redo it.
+> 
+> blogbench spawns 100 or so workers, say total fd count hovers just
+> above 100. say this lines up with about half of more cases in practice
+> for that benchmark.
+> 
+> Even so, that's a benchmark-specific optimization. A busy web server
+> can have literally tens of thousands of fds open (and this is a pretty
+> mundane case), making the 0-63 range not particularly interesting.
+> 
+> That aside I think the patchset is in the wrong order -- first patch
+> tries to not look at the higher level bitmap, while second reduces
+> stores made there. This makes it quite unclear how much is it worth to
+> reduce looking there if atomics are conditional.
+> 
+> So here is what I propose in terms of the patches:
+> 1. NULL check removal, sprinkling of likely/unlikely and expand_files
+> call avoidance; no measurements done vs stock kernel for some effort
+> saving, just denote in the commit message there is less work under the
+> lock and treat it as baseline
+> 2. conditional higher level bitmap clear as submitted; benchmarked against 1
+> 3. open_fds check within the range containing fd, avoiding higher
+> level bitmap if a free slot is found. this should not result in any
+> func calls if successful; benchmarked against the above
+> 
+> Optionally the bitmap routines can grow variants which always inline
+> and are used here. If so that would probably land between 1 and 2 on
+> the list.
+> 
+> You noted you know about blogbench bugs and have them fixed. Would be
+> good to post a link to a pull request or some other spot for a
+> reference.
+> 
+> I'll be best if the vfs folk comment on what they want here.
 
->> First of all, I'm not thinking this is the fix, I'm thinking this as the
->> workaround of broken formatter (because the windows's fsck also think it
->> as broken). So very low priority to support.
->> 
->> As said, I also think low chance to break the userspace. However it
->> changes real offset to pseudo offset. So if userspace saved it to
->> persistent space, breaks userspace. Unlikely, but I think there is no
->> value to change the behavior for workaround.
->
-> So I started doing some investigation and that lead me to the following
-> code from fs/fat/inode.c:
->
-> static void fat_evict_inode(struct inode *inode)
-> {
-> 	truncate_inode_pages_final(&inode->i_data);
-> 	if (!inode->i_nlink) {
-> 		inode->i_size = 0;
-> 		fat_truncate_blocks(inode, 0);
-> 	} else
-> 		fat_free_eofblocks(inode);
-> [...]
->
-> That is, since the directory has no links, once it is evicted (which
-> happens right after reading the number of subdirectories and failing
-> verification), it is truncated. That means all clusters are marked as FREE.
-> Then, later, if trying to fsck or mount this filesystem again, the
-> directory entry is removed or further errors show up (as an EOF is
-> expected, not a FREE cluster).
->
-> And that is caused by attributing a number of 0 links. I looked it up on
-> how other filesystems handle this situation and I found out that exfat adds
-> 2 to the number of subdirectories, just as I am suggesting. When
-> enumerating the directories (at its readdir), it also relies on
-> dir_emit_dots for all cases.
-
-Because exfat doesn't have "."/".." always, IIRC.
-
-> As for programs persisting the offset, the manpage for telldir has on its
-> NOTES section:
->
-> """
-> Application programs should treat this strictly as an opaque value, making
-> no assumptions about its contents.
-> """
->
-> I know this doesn't refer to persisting or not that opaque value, but any
-> other changes to the directory would change the offset of its current
-> subdirectories and given those values are opaque, no assumptions should be
-> made. And unless we find such programs in the wild, the same argunent could
-> be made that there may be programs that expect . and .. to be at offset 0
-> and 1, like every filesystem that uses dir_emit_dots does.
->
-> I understand the cautiousness to prevent regressions, but I did the work
-> here to test and understand the changes that are being proposed. I even
-> looked into another way of preventing the further corruption, but that
-> convinced me even more that the right fix is to assign a minimum number of
-> links to directories and I found precedence to this.
-
-I seriously recommend to change app that make this, or changing the fsck
-to fix this. Because this looks like broken as FAT.
-
-Honestly I'm not accepting willingly though, the way to add the
-workaround for this would be, detect this breakage and warn it, then
-mark the dir inode as broken. And add the workaround codes only for
-broken dir inode, and make it work for all operations (just make
-mountable and readable is not enough, at least write must not corrupt fs
-or panic etc.), without changing the behavior of correct inodes.
-
-Thanks.
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Optimizing only the < BIT_PER_LONG seems less desirable then making it
+work for arbitrary next_fd. Imho, it'll also be easier to follow if
+everything follows the same logic.
 
