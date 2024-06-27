@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-22567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB546919C40
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 02:56:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8618B919C47
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 02:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2346284328
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 00:56:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF60284295
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 00:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22081F945;
-	Thu, 27 Jun 2024 00:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F4328DCC;
+	Thu, 27 Jun 2024 00:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kOUHuXR2"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lUrLIacI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2080.outbound.protection.outlook.com [40.107.220.80])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9921CA93;
-	Thu, 27 Jun 2024 00:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD1F8836;
+	Thu, 27 Jun 2024 00:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719449703; cv=fail; b=QHBhVc8xsqSzkXVEhbZ1NtyR4ZKwxQqjqsk/QKJROIsK8EPQt8LHrHbERxgai13AngOtmbpIgCMoAddTIoABhBvLyse54AO9fiI1A6eEdGzMmVZfSrF2yIRClCcYfkcCfVW/wLDnVZfezemhaiy1h946ZrfS6CXEpHUAXJHqzSQ=
+	t=1719449709; cv=fail; b=pEsC/ffPRvWT5gn0Mo5yzREPaihNdk/NW1kP76ClnykRm5iMxsyx9EWgbVbeovpIYnmg9w3OmN34vbvrCkOxYUUcg1Mw7ZaHDKjy5sofCfDPMaNb+krN3ssdeQQShx6XD18xMGs0bhsVnm2cfWcnFMhU0jufrOMyJl1ko8seNCI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719449703; c=relaxed/simple;
-	bh=lDuSfWUlhgjSc0DqR3/BqME9u3aJfNYh5FNr5DoKrC4=;
+	s=arc-20240116; t=1719449709; c=relaxed/simple;
+	bh=yiYk4ZVhdGpw6I2jrZ29ITRgyICdMhOWkgra/OxKjYU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=d1DmlEXN9vH4sSBmMjBMt8vhRAOFuuv4xtOorTZWjCJUZqw+qbE7DZxKfUX32XeGu1T2rl1u449MjzRvRp8yzXyC+D1mNBYlgUl1Hq8k3dLLWz9whyeMz/e0jnvufNHFlKFYMUpUzz8bVBi4bBiYMlETjPHxkx6vuRxjEbBHc8E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kOUHuXR2; arc=fail smtp.client-ip=40.107.220.80
+	 Content-Type:MIME-Version; b=F6szShBMBpQVxImgThpWfNSaEgFjFESz4CQCcWVT8vsugYRA1dHWf9Cv67VWuauPHoKsgltAKlFtjzWdOh3p8abVuTVD7/oDIku1ghHH6XjPxWji1LdREG6PC84rWX1qlt4IgLHqITebX3wPRRVi/t+IExoGjXZ3OUMaXVl/ScE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lUrLIacI; arc=fail smtp.client-ip=40.107.220.57
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y/+1im9Wg+1Hj8R5eBNK8Ghn4Zm1iAhxp9RbURrEcsMP4+RBF1l40BlsOmF395e4rz9r30Dun4Ng1PJTr3NQZkUxIoyVojbDuheWHDYiisBuJbfsXwEA6sp3cgSvH4wPzCnU0XGg7a02TY2uWFJIFkTk2pEiXA0/14br45vP98u23N4b49VTOnVR94/vH7au0kpmrvxX1I6uacq0lyDXwiHU59sRbSttJihZiXYcLwEUfd8GlOfxtQVrotxNEvHewG/pTxf9npSgXBEFEoYvrMWk3e0PQCLbDiajnkG94ESUvo5n4vtfRDpdg0mNfq81gtgnWau9Zs0JiAFVYzMiCQ==
+ b=PRQ9UMZVvQJlGA1JyILEsfYbqGIwEwcdKAXQOgmUNiWA7P5AQt9oPzwXy5HujfzfKUarlk6coiYV6cLGmxLazadSEJvpmn+pqf4QJEt/8/pXTfg68uCcISI/yL5E1YsF3vaybffvplTJy8EkA4JJ+CO8fkS7AsToXc9Omzyh3N2qRvY0Yi6wZZH/Lsc2rjUHuDL/9Nkaj5doFnP1AG1wWP9RxejgaG3vhkkVgKt1NmJHAQvTOozBRD3IJusfadKlHe3PtjQ6pniG+jKVOgXOMhWzAZlRFUCqUT+UuLFqf0R2Tincz34zt5iKMKaoBF0FogEiG3tZnWuA7fYlDse6rw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rl2/HlMeBklMNcqOSvoLzCBY1HST5wM2+mfyJFbUiaU=;
- b=VYupiNs2b3HFY7Emjyqi51Bus0msopOJQT4/7fLXaaLQoghV4A3FDqV/7NRg8IpVt6LdvuKDuFSlNcT41hamZX13MW2eVDPbLEa3PlTU2hQpQSxENF4Ic5TOeQbX9s7Z6hYU0ldzY2Q2/7JosGIJzq37+yqEnB5tQP60quzCCoJeobOjDsNorkqtYJaj2kj0WvpDwDzBoBKWsPJHI4xrBbxsUykKxY8xUUBWVWg6201yNsNNjwXh7T2ypJaxmGaU0rvxcobcCurborophAR5vx9XskHt6J7L9fFQND0GV8nGUpQZV2EPEd3C7KFS6Gx8dntFJRaltVBnWkzmLdZgRA==
+ bh=LwTuajmqH/Dz9iq8vwzSLICD/nvk7k2MSnhgTVOPjdk=;
+ b=SotSGtBw5bAhGNtC1Jzioabd3HF5PsxXFPJbKEL9RoX+3N0+VsGo7IL8Qe7r2aWxAp3ObpOBxcxIL0iPbCLTDP4CDRR2k5jSmAgX8xjxFb4uzAUp9ntweB/7NhtLO/ozD5oGBBZfY7OiX51JXc0tI624Kx1jVgpWxd4S9mYPG+ep2QS1FdGSQ65tHdRlPFLhiDSKH9ajsxxBku29Kjr4H16fJQjX14676H6p68anhXCpufLQyI/tMmZ1sfijJa43BfAF98kwqCLJTDNskUs5oNOioroeBFIpAMGZ6CjDdS73R4N/0ZqMC+9n0FxJW88TNDgGHipvP8uvyVHMtdi0Fw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rl2/HlMeBklMNcqOSvoLzCBY1HST5wM2+mfyJFbUiaU=;
- b=kOUHuXR21vB7ce/V7GuZoaUnCR6Ly3cOMrMN5O+55V5E2ePUCoeYQZHtU9al7B39p8nBcnKZYejwz8vIXQVjpxUfLS6gS/WJFx6Vz4s0XNX0WTuRdPQw1ugoiRCDFV2UChqWe1PbFd4b7I+jcGfr++XMLnbpCb5o5t2EqTbWagIF5dC1FmZM56zTkIryIASqfF73MlVClejuyWK6PLPv6Z/5ge5YSjlAyI8R7wQsvXmofaWax0noBOWKeNfM3OhfNCzs/5y1gCMbXECrABa77E/hrrt+LQGfsAY2rvsOYmSOQYieMikdjEOcwzLw2JNeeonfL6tqPlLuUn8C5rpBYw==
+ bh=LwTuajmqH/Dz9iq8vwzSLICD/nvk7k2MSnhgTVOPjdk=;
+ b=lUrLIacIPI/ywe/gFyfRXydzEzVgb5vC+zFqv2bWT+0XpKyMlLqNiNEv8jyYDHVVFpF4V/N/MtcjeNh9Q/J17rsPMvSZCXsYMYLr0MwSv+XAk1xHRiU5WYC9vk8oYm9j1717bX6nCSKxYYKchAHIGzNGMljvpVEnnHTf9TZFQj88jGCTTOapOle7GsFWHTg32kyjJMdx3j7Fji3QfePoiU5dxwU9JPS4oEwgB4Ja2uy+pUUDae1moUe70tvba9NR/QGZ90Klvv/TIeWw05lYZkOVR2zR6dw99KPgl4ZjNmZAFzMY6IMzhfPHOiJ3Di2h4JCOjhxun4qKotOwseAp3A==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
  MW6PR12MB7071.namprd12.prod.outlook.com (2603:10b6:303:238::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.32; Thu, 27 Jun 2024 00:54:58 +0000
+ 15.20.7698.32; Thu, 27 Jun 2024 00:55:04 +0000
 Received: from DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
  ([fe80::953f:2f80:90c5:67fe%6]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
- 00:54:58 +0000
+ 00:55:04 +0000
 From: Alistair Popple <apopple@nvidia.com>
 To: dan.j.williams@intel.com,
 	vishal.l.verma@intel.com,
@@ -89,18 +89,17 @@ Cc: catalin.marinas@arm.com,
 	jhubbard@nvidia.com,
 	hch@lst.de,
 	david@fromorbit.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH 05/13] mm: Allow compound zone device pages
-Date: Thu, 27 Jun 2024 10:54:20 +1000
-Message-ID: <e5caa5ac3592dfd360ca44604a5b7c8b499976e8.1719386613.git-series.apopple@nvidia.com>
+	Alistair Popple <apopple@nvidia.com>
+Subject: [PATCH 06/13] mm/memory: Add dax_insert_pfn
+Date: Thu, 27 Jun 2024 10:54:21 +1000
+Message-ID: <50013c1ee52b5bb1213571bff66780568455f54c.1719386613.git-series.apopple@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
 References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SY6PR01CA0046.ausprd01.prod.outlook.com
- (2603:10c6:10:e9::15) To DS0PR12MB7726.namprd12.prod.outlook.com
+X-ClientProxiedBy: SY5P282CA0090.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:201::17) To DS0PR12MB7726.namprd12.prod.outlook.com
  (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -110,299 +109,255 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MW6PR12MB7071:EE_
-X-MS-Office365-Filtering-Correlation-Id: f711c151-0360-4be8-10a1-08dc9643c443
+X-MS-Office365-Filtering-Correlation-Id: f829664a-b39b-46d3-4f65-08dc9643c831
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?I+Ji6DziS2gkSBQKiQfxM5SJwLCreKhG+0QwMpZvAC2RABGzBiRnU7q4c8Bv?=
- =?us-ascii?Q?Hw/Ksx4GXTqSvm99bfrxKMNCYaBq1D3WGBQMJ61FHarpVDilQKFMZ0ilzGV+?=
- =?us-ascii?Q?+PwujpBoS2Fvkp0eWMkaITtHavAC9/87++syCxczWfG2IzX7RRbPKu3riLUy?=
- =?us-ascii?Q?18QOO6FnUhAepKuZrHyvavlx7cDd84v6NTzy1ryPUnCiU9Ern/yEbt4jppIb?=
- =?us-ascii?Q?QhiWYE9dH6yt7+o8dPXHC6i7z5s0XpWRFrT5+9l/d4cGJ6GPid0owrxMaqbC?=
- =?us-ascii?Q?ufTQ1Cp7hbZCSxkvlBvrLPEMVXsfd9iuIghdFE+eo9n3B+NMqca8q8eH3Z2i?=
- =?us-ascii?Q?WgEaG8/sGIFIj52ttpvn4hVXdTDJMPQktthkd1C07jLD2otWReGHB/xemh7i?=
- =?us-ascii?Q?fiTfjoACXyTuLPeau2YceaCgwXwPWBw9FODDxGEsZ+3rt+79ZbJYpadGBtFz?=
- =?us-ascii?Q?qNY4T8NwpmPQ78Sivor21NkmphqGp1G97jJqgzbGYbh2wEZSt3lGp/Y8zE5E?=
- =?us-ascii?Q?0IS5cqk9eg6isHJp1caalP/te6uskAa/g0At2Z1ryoOKwv0YNkWqqA8QqYkT?=
- =?us-ascii?Q?yfE6P9tSYfb+jf/gGFnqj/7wviS0Wui3YOLxDlDXuSJaHJe4sEnAq1vUW190?=
- =?us-ascii?Q?8kVoc9u27Tqy4wCVGfhMGD3dHGq+BD5BRFXIZB9jtf3J29Gfc2jDeA9ouRvs?=
- =?us-ascii?Q?Zvck5dUdmRpCwfAq8MGZ04/2Beu4DbltfkxInksKgzrcHvoV+pkBfLqSR1iS?=
- =?us-ascii?Q?Hv3WW6hp8py3ZJpWOOtF6YFNWipLhRoY4c+laS6NE4ZH7lM4JXo2VxcWWXQZ?=
- =?us-ascii?Q?ggd0DjQxlqI1/TxP/WFj+x1pJD7kKX84H6nkXGTmlJLDBr4iHRwhzeaqpCud?=
- =?us-ascii?Q?2wx3nyKwzYd+LbIqgjBAReMwr6SmGNuqQOr77nJD2YQftm6Pa+uZU/vJ7SOZ?=
- =?us-ascii?Q?1MUa30SSmCdYzKksB7iEGmuGD7vUWUed0j3nC2kGiTRqcOJ8o5jgmBsffr/j?=
- =?us-ascii?Q?3hzX3kOP8pdq7rJNBXVRKVX2sndFQ0BZb3tCT68gyYT9J/xXMP81gYdP75ZE?=
- =?us-ascii?Q?Fr+OREijch5jxLgzVWXYQI1n1r2n4veyde8jH2JvlXl69zsP7lVeVZCDnoH3?=
- =?us-ascii?Q?0FRX1UU/cUvRYwHCu0fWNq9bwBLVvIQDqCeV2Snim/AlIebjsQuR2Edsyp81?=
- =?us-ascii?Q?U2ZMRvGkVh6cnKwr7BIyUlBCdm3a48zkagJmwKdNmbqv9qrouqV4dzsCqFNy?=
- =?us-ascii?Q?y92ECKr0s4wIOHik4fpH19k/Nc9Jks6l9LUDTeg2tipSPyMt4Wor2D73wJxP?=
- =?us-ascii?Q?mzX2vmY4VdvvJ6SWO4jZULPGqZRv7FQX3KCuTUJSIKtjCQ=3D=3D?=
+	=?us-ascii?Q?lYXynZNeE0+XENjHJM0WN4qEdMZjjd6nLh0DgkAMDNpJSxN8LmPNHzTyQ0qY?=
+ =?us-ascii?Q?PIm9wx2aC06AlJYDXpYQ4qX4Ry0J+4AkQovojUMHpvdWESfdk48hRdEHNks6?=
+ =?us-ascii?Q?iI95PGkEHYkI4+/Q3nhyuao5pv1NwqOAUfHZSY+Q0XI2r1iDzRtS7CviPVwg?=
+ =?us-ascii?Q?juWQVT0Syb05lkpi4jOhoUJkuauY4xmeRqeNpojheVzruW3NLmBo34szDisf?=
+ =?us-ascii?Q?F25nzo+s5j9o+H3g/NC8gb0coC/txPJ0x3MlbAx8xtvqLUQQP/J4q4NIy7AY?=
+ =?us-ascii?Q?UrXUiDZ1AL5M5kxRApYMvFVTbyz+c4O/SLF2U3FeU8K2CurPPMqJi5PU9mvf?=
+ =?us-ascii?Q?kluoBLzVrCSJrPJCwOEzT7yr/e5P9kp48EfKYe9cxsWZomvZZXmAwgvgkTHZ?=
+ =?us-ascii?Q?NShcLgF9MPeaqR4L4qpRnS+nkYD9OaJrwjv7PWH+1E9V5RxjKYrOdFa4xwKA?=
+ =?us-ascii?Q?Jscu4t0xyQQdNVSYynvm+2TKum24alwQewLK8xACj29y1ublCfTYBZ3Nabho?=
+ =?us-ascii?Q?fNPs8021qR3+Lc4qFD6uVpDuzO+pMWvaytkSlJ64PutcyQhxP/Yiqz6JmbLb?=
+ =?us-ascii?Q?YKGAXpFTTjIano+35mundFPP/M9AMgNJaotCYWgJJQa3rLv0EgzL+ip7OEz3?=
+ =?us-ascii?Q?+KVBCHFOK+6TMkcwcEUYi5BQSNS9XslcXGTeVShovqfZ64bXogVe48bJUFd1?=
+ =?us-ascii?Q?Za/sKldN+QrcmtX3HjfoKZivSqZ0CeW3FRBImdy4c+z6NjGV/CXBqkn8DzMi?=
+ =?us-ascii?Q?wyVd/z3KKFG4K9dCFJv8uWt6/NXvECp3YZG5n8rzOTfT4zxrSzlFViiAcAnG?=
+ =?us-ascii?Q?FZ56QeuKrnK/bm4f1LURHPFbmlR9v2+wMMNT51gRmGw2JG/R53rUwMQdCuhw?=
+ =?us-ascii?Q?HofJx6pgsu+w07CznWWz4uG2+11TIDhIeAAx462U9cvXFcO8PErK3R+Medmh?=
+ =?us-ascii?Q?Dxqw8ZUfMkVXCO8HGU1Q4IDFUeO7OolWYx5asTi0eIyvuHEbUwp2tQ4XMfxn?=
+ =?us-ascii?Q?F/mAn3B3mBs3y+GGVV3ba+RWR3Pe1lcxibb34ibnkphVNp/x2Drvu0nhFszz?=
+ =?us-ascii?Q?7Ksx4EFA7N6+4ksSsuN/edZwu0WfJaoGVibWUyWwEMUNeItsSShjKOzf1szj?=
+ =?us-ascii?Q?yrvgFFh71fBgN/kFCbFUNYVr3Aknfo/XQdfrxUX9bosPaXLY78ltdVm/Yeoe?=
+ =?us-ascii?Q?OeZ6Jj2CheB7ci4lwVqRul42B5kyhBAQgQXulOccVUWqm0b1rXjNG2Pc4HqQ?=
+ =?us-ascii?Q?AbtF0JScDW7Rl/6xCIZpJxHHxuAkfiw6mbuvwqd9+sjr3ywY6sy5116nb8W7?=
+ =?us-ascii?Q?1evlxZo8qa3vNS3br4WTpvEX8gmYzdf97+ZvOYxAHwfZGw=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eg8znclncNP70gE2sr1mpDccRz5CdT4JR/6cDRuJxQfgnqNkDBCyE/HCzZgw?=
- =?us-ascii?Q?/D8xQEEBxmQkrwnGWiSGbcHGkP49lPpLn4zw7+U4hn7aGs8RINWsie1kd468?=
- =?us-ascii?Q?qNBXmt4IulTYb176mDV8vbYayQJ6OSULS6wEBYqDCrOHSr+rrsnh0uKFk2JA?=
- =?us-ascii?Q?TIVOBJwbNsIRrXReLfb0hyZ/UMSUGXAAKYnr/4EOTApxnzmLsPpxhYBuNtBi?=
- =?us-ascii?Q?KUj9oHCzMzHY6CK8Iq1wXmGV5GrZUzw1sRQSrTWuD8xo57FOFKfVJzvqqRuI?=
- =?us-ascii?Q?KjFKppP5htNPbAQ61q0fudAWdqTxFVjOlO/Znfc9ucHNmjEg4clzGl4Ecr9G?=
- =?us-ascii?Q?gXYB0Q7wZqtiHWkURhnl92M/GTm6Wie9HLg7zQmgzVijUKfjw9s//oJzL/DS?=
- =?us-ascii?Q?9q00GGbmHZpvjOwNcx+K7OedcuyDBiqg/zlxRC89rG/+kRRy2ZXYQLuGT3Xl?=
- =?us-ascii?Q?TxmqDBQKX7N/M6I1DmOyqdS7rU9WZFODjxfezqQsPa+ODATdIdSvxHm73z3J?=
- =?us-ascii?Q?a5Ctc49Zz8MpqphLKIhtACoFZK4kDpaoj0kOvjFObWVZEB7BYkP5huWrInZ1?=
- =?us-ascii?Q?kaiMTjKhhjA+Yvk+V/gOXjr1T9Nt48gh8bOrl6Bn5kEguB3IDMIVn2i3FYbS?=
- =?us-ascii?Q?gt7ebSV87VEEMsPs4ZhbY4GTarxWRVCUSeje7ZoBuhcWhK2Sngha0D+s5M7O?=
- =?us-ascii?Q?pvfsHwuoPJZX2Z7JUqnd+hlZ6wc+rlJye+lOdMAHwix8W1AjWWeA01fkijw+?=
- =?us-ascii?Q?XaPgHLrXmsI2cPyExA1Kt2z8BO0kIiDC5lQlA7zy98bjw/HbwjCWCMvAToKx?=
- =?us-ascii?Q?xpYXEntzf0GaiMGpMz3tsLSEnGZuRmcVvMNA4RpGervMh7EjhJsF5JpwcINN?=
- =?us-ascii?Q?wkp2cRoHSLJRFLqyFqhltaoLG8NE9Mfvi2AmOxBwkjX/kGkJgu7GN5QGeBaS?=
- =?us-ascii?Q?xVOfQTIH1SYNdXf08p2w3kwcxQdss9cOMMZSpbty5wtSWfZUGPSLpJ4Vp1sn?=
- =?us-ascii?Q?o0H7exCI4D8GpILYrbemqdY+ByLRgUPj2X7sr/NYFsti86/eZzHSr22tre+H?=
- =?us-ascii?Q?tJsACJSMpqxet/+DHa/O4x4HS+ZRweY3U4nwYhSZSq9JVTqmisMmqmQc/2vx?=
- =?us-ascii?Q?yIptj9OfEaOccG9FCgkK3wgucqbIP4nTHcRu7lNwytH1fSNnZkSZrXA8sdrh?=
- =?us-ascii?Q?/etJT5/yiyAHb/INvjcTckpJqnCS1pszbZUdazWaZLFB9nd8C2GbY99ibH5K?=
- =?us-ascii?Q?bFnIuAK5h6UV6RoD3uPHFiqz/TSRlOfkmuUMkJHS8d9pmOCxLPFgikFYBT0j?=
- =?us-ascii?Q?rshK6KHxvbx/mSeADY6qphgrI7lYDvAZR/UbnKfVQay4Sz2uFJVRXSgD30OT?=
- =?us-ascii?Q?QnoP+zd1alTBQRIS+0oPXba7Cd/yQdi59e+w5kIUlvc1U4RVW+r4iMJFcEi7?=
- =?us-ascii?Q?khu/c+F0QuAeWzuz7t8CZ4HVa31fiJCwMdK/DuIEBzesKcPv5qY9hClXlQWH?=
- =?us-ascii?Q?ulo4UjYw6kTS14syFEJO/XFQbFQYJj1HJD59o/fAZacTGthbxKKyiHYL45P0?=
- =?us-ascii?Q?2JDtOVt9/N5fIgNSV8g7xOeVG6Mck64Ye7V3lJbV?=
+	=?us-ascii?Q?c49ryrsnGaEKkZ0paxxpf8ffnzOPK3NhW6sv9Z9P/3NjUpF8jPcWaewk2EMC?=
+ =?us-ascii?Q?bJKkmI4Lo9aTM5kPWJllBB0yaYEVZ7eXRHq7CfBSqfdYqoKk8EjAAurW0fpr?=
+ =?us-ascii?Q?3mzs48tY+Do7b4td9ae5z24KRN2EE6L9Z5sUwGG0keGYsCEXk3rdx5FP25lB?=
+ =?us-ascii?Q?PSAmJNqs5foW+atTN8PuQeSfYjZAXoaIGZLjWEmNWjkjSG7NTmNd4249hvPZ?=
+ =?us-ascii?Q?Km4P1IuxG/3ENWj29PAY7gYqVX/jaM/EIZJz59f2K1ECnbHhluuCc6XkBTOe?=
+ =?us-ascii?Q?XbTYqo3L9GKH6iJIWMNxiqU3boQKigjJxQ3Tt/Ln84k3g550uhSwcYV7YQ0o?=
+ =?us-ascii?Q?4arjqnT+s1xiErJPM9ub71r176CPAy1mzfpH1I9UVzQCAM6TcWdV2scrw3Gr?=
+ =?us-ascii?Q?pvWYGX2yNzk3zjA3Ofc6DF5E5vmpoz5FlTIvS5bhawMW9vOUkLm8i2bJoia6?=
+ =?us-ascii?Q?I20UPKcYRLRDsBXemmIkHvYXiJD1HmjVEfgiNAc5SWmR4ZxhXNIvBfTmvzky?=
+ =?us-ascii?Q?AkOVLoGXclj1g6iu6KF17YtbhuSB0Zb4Q+87O1jSMTwrOs8Yk0Q3qW/EdaqP?=
+ =?us-ascii?Q?K9XjymTlxNIHc6HK5L+X6ouPfdCR1jJpykJ+r7q0XWvYE5E9hV4dqncixJMw?=
+ =?us-ascii?Q?Diz8HwJ9BLhsnR54vBHfaNgGAxElfQuI/+7MxvuJMnp4BntCGq0yBvC2h6pg?=
+ =?us-ascii?Q?y3jWpI9I0GWVnTbTE2Z/7PylfP70TLu5NfpyvL0gFRLeFiCxeRBQEPmDEOHg?=
+ =?us-ascii?Q?CgGBq9Zf2p90YHiwvpPi4HZeiu2w/y3tGbM5ew40WyoJsiDnavdb9VBlPaVX?=
+ =?us-ascii?Q?4P1ZE5cMhAgSfQcq5wd7q2pvKMrI3cGLvIhCmI0pkPrXEdZySeHV5eEEM72G?=
+ =?us-ascii?Q?K+J/bozOrj7dXJYvZqLHlxU7NYW646DFfviZ7I4RM8UBaBuRagksg7SDOwNy?=
+ =?us-ascii?Q?+RgfBDpp7esWbsSDu7y1W7aKiW1nVKSgDay9S820p6FORmaF9WEUnauRZilV?=
+ =?us-ascii?Q?Oyl/iVkiK3nIxohSPGlMD2IM5a4d7yWl10sLQ2yXkGKUid7HySJXAidXf9Er?=
+ =?us-ascii?Q?QsuyryMPZWXRgdEm6ObzOudLTTvz93A8R2DnPFFY4nSLz6gTTIQ7WvlUZniq?=
+ =?us-ascii?Q?ngsrbouQNZNvBM1ALPFj9Piv1DP/n5yelLFqd7o5+hx2zCDBBIDnCNPI7yPf?=
+ =?us-ascii?Q?PC8lZDuVfZkQE5Dfk1yOkSbw+lJwf96BDu9VuQjeP6cRL42Wx8TvESanzzVt?=
+ =?us-ascii?Q?j1W0YwAHDHnMm5tP1XS5raDJyYSY9zw6VuANTsYI9bcg7Xbbsuig8PKMDi90?=
+ =?us-ascii?Q?F6vSCz9pszOqX+u1rdirc8feRelHbHn6bQ1poL/RpZ1qizRoom0xo9Pwlt7N?=
+ =?us-ascii?Q?poMX+DopxM35juBU38KNIcSvkeblPpwsjVakYztjLrR2Vg7bmmU10qG6xsWg?=
+ =?us-ascii?Q?Tln6xnr/sSaj0rdNiBjn3X5Ej/AqDlowSfHzv65BOkIC5p58du503QpbkUH4?=
+ =?us-ascii?Q?UJH7EikznB9Iw1qSQTAxVVcwnrrMOsh98Orp7f0remHuNP30BOEz56U776vf?=
+ =?us-ascii?Q?8quyUGzvdO7tTDnoyLxIni5Nsv8IPTrS9z5GOWPm?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f711c151-0360-4be8-10a1-08dc9643c443
+X-MS-Exchange-CrossTenant-Network-Message-Id: f829664a-b39b-46d3-4f65-08dc9643c831
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 00:54:58.1109
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 00:55:04.8153
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tbwm5sX7q/04XauDJ1H5ddMRfz6qo7yI/87yFCY3o44qcGCzXLX2dDCYOwcdXdzP4mFGU1u0mvsUFn6L9nbGQg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: VP+IB+RrKOqGr43kzXBieunOvUrssGRIP9nq84UcCbyyH4uUIkcIvvcuTsr07JP1Uuf/DAVI/7xcJTTj2DABTA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB7071
 
-Zone device pages are used to represent various type of device memory
-managed by device drivers. Currently compound zone device pages are
-not supported. This is because MEMORY_DEVICE_FS_DAX pages are the only
-user of higher order zone device pages and have their own page
-reference counting.
+Currently to map a DAX page the DAX driver calls vmf_insert_pfn. This
+creates a special devmap PTE entry for the pfn but does not take a
+reference on the underlying struct page for the mapping. This is
+because DAX page refcounts are treated specially, as indicated by the
+presence of a devmap entry.
 
-A future change will unify FS DAX reference counting with normal page
-reference counting rules and remove the special FS DAX reference
-counting. Supporting that requires compound zone device pages.
-
-Supporting compound zone device pages requires compound_head() to
-distinguish between head and tail pages whilst still preserving the
-special struct page fields that are specific to zone device pages.
-
-A tail page is distinguished by having bit zero being set in
-page->compound_head, with the remaining bits pointing to the head
-page. For zone device pages page->compound_head is shared with
-page->pgmap.
-
-The page->pgmap field is common to all pages within a memory section.
-Therefore pgmap is the same for both head and tail pages and we can
-use the same scheme to distinguish tail pages. To obtain the pgmap for
-a tail page a new accessor is introduced to fetch it from
-compound_head.
+To allow DAX page refcounts to be managed the same as normal page
+refcounts introduce dax_insert_pfn. This will take a reference on the
+underlying page much the same as vmf_insert_page, except it also
+permits upgrading an existing mapping to be writable if
+requested/possible.
 
 Signed-off-by: Alistair Popple <apopple@nvidia.com>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
 ---
+ include/linux/mm.h |  4 ++-
+ mm/memory.c        | 79 ++++++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 76 insertions(+), 7 deletions(-)
 
-In response to the RFC Matthew Wilcox pointed out that we could move
-the pgmap field to the folio. Morally I think that's where pgmap
-belongs, so I it's a good idea that I just haven't had a change to
-implement yet. I suspect there will be at least a v2 of this series
-though so will probably do it then.
----
- drivers/gpu/drm/nouveau/nouveau_dmem.c |  2 +-
- drivers/pci/p2pdma.c                   |  2 +-
- include/linux/memremap.h               | 12 +++++++++---
- include/linux/migrate.h                |  2 +-
- lib/test_hmm.c                         |  2 +-
- mm/hmm.c                               |  2 +-
- mm/memory.c                            |  2 +-
- mm/memremap.c                          |  8 ++++----
- mm/migrate_device.c                    |  4 ++--
- 9 files changed, 21 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-index 6fb65b0..18d74a7 100644
---- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-@@ -88,7 +88,7 @@ struct nouveau_dmem {
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 9a5652c..b84368b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1080,6 +1080,8 @@ int vma_is_stack_for_current(struct vm_area_struct *vma);
+ struct mmu_gather;
+ struct inode;
  
- static struct nouveau_dmem_chunk *nouveau_page_to_chunk(struct page *page)
- {
--	return container_of(page->pgmap, struct nouveau_dmem_chunk, pagemap);
-+	return container_of(page_dev_pagemap(page), struct nouveau_dmem_chunk, pagemap);
- }
- 
- static struct nouveau_drm *page_to_drm(struct page *page)
-diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-index 1e9ea32..d9b422a 100644
---- a/drivers/pci/p2pdma.c
-+++ b/drivers/pci/p2pdma.c
-@@ -195,7 +195,7 @@ static const struct attribute_group p2pmem_group = {
- 
- static void p2pdma_page_free(struct page *page)
- {
--	struct pci_p2pdma_pagemap *pgmap = to_p2p_pgmap(page->pgmap);
-+	struct pci_p2pdma_pagemap *pgmap = to_p2p_pgmap(page_dev_pagemap(page));
- 	/* safe to dereference while a reference is held to the percpu ref */
- 	struct pci_p2pdma *p2pdma =
- 		rcu_dereference_protected(pgmap->provider->p2pdma, 1);
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 3f7143a..6505713 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -140,6 +140,12 @@ struct dev_pagemap {
- 	};
- };
- 
-+static inline struct dev_pagemap *page_dev_pagemap(const struct page *page)
-+{
-+	WARN_ON(!is_zone_device_page(page));
-+	return compound_head(page)->pgmap;
-+}
++extern void prep_compound_page(struct page *page, unsigned int order);
 +
- static inline bool pgmap_has_memory_failure(struct dev_pagemap *pgmap)
- {
- 	return pgmap->ops && pgmap->ops->memory_failure;
-@@ -161,7 +167,7 @@ static inline bool is_device_private_page(const struct page *page)
- {
- 	return IS_ENABLED(CONFIG_DEVICE_PRIVATE) &&
- 		is_zone_device_page(page) &&
--		page->pgmap->type == MEMORY_DEVICE_PRIVATE;
-+		page_dev_pagemap(page)->type == MEMORY_DEVICE_PRIVATE;
- }
- 
- static inline bool folio_is_device_private(const struct folio *folio)
-@@ -173,13 +179,13 @@ static inline bool is_pci_p2pdma_page(const struct page *page)
- {
- 	return IS_ENABLED(CONFIG_PCI_P2PDMA) &&
- 		is_zone_device_page(page) &&
--		page->pgmap->type == MEMORY_DEVICE_PCI_P2PDMA;
-+		page_dev_pagemap(page)->type == MEMORY_DEVICE_PCI_P2PDMA;
- }
- 
- static inline bool is_device_coherent_page(const struct page *page)
- {
- 	return is_zone_device_page(page) &&
--		page->pgmap->type == MEMORY_DEVICE_COHERENT;
-+		page_dev_pagemap(page)->type == MEMORY_DEVICE_COHERENT;
- }
- 
- static inline bool folio_is_device_coherent(const struct folio *folio)
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 2ce13e8..e31acc0 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -200,7 +200,7 @@ struct migrate_vma {
- 	unsigned long		end;
- 
- 	/*
--	 * Set to the owner value also stored in page->pgmap->owner for
-+	 * Set to the owner value also stored in page_dev_pagemap(page)->owner for
- 	 * migrating out of device private memory. The flags also need to
- 	 * be set to MIGRATE_VMA_SELECT_DEVICE_PRIVATE.
- 	 * The caller should always set this field when using mmu notifier
-diff --git a/lib/test_hmm.c b/lib/test_hmm.c
-index b823ba7..a02d709 100644
---- a/lib/test_hmm.c
-+++ b/lib/test_hmm.c
-@@ -195,7 +195,7 @@ static int dmirror_fops_release(struct inode *inode, struct file *filp)
- 
- static struct dmirror_chunk *dmirror_page_to_chunk(struct page *page)
- {
--	return container_of(page->pgmap, struct dmirror_chunk, pagemap);
-+	return container_of(page_dev_pagemap(page), struct dmirror_chunk, pagemap);
- }
- 
- static struct dmirror_device *dmirror_page_to_device(struct page *page)
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 93aebd9..26e1905 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -248,7 +248,7 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 		 * just report the PFN.
- 		 */
- 		if (is_device_private_entry(entry) &&
--		    pfn_swap_entry_to_page(entry)->pgmap->owner ==
-+		    page_dev_pagemap(pfn_swap_entry_to_page(entry))->owner ==
- 		    range->dev_private_owner) {
- 			cpu_flags = HMM_PFN_VALID;
- 			if (is_writable_device_private_entry(entry))
+ /*
+  * compound_order() can be called without holding a reference, which means
+  * that niceties like page_folio() don't work.  These callers should be
+@@ -3624,6 +3626,8 @@ int vm_map_pages(struct vm_area_struct *vma, struct page **pages,
+ 				unsigned long num);
+ int vm_map_pages_zero(struct vm_area_struct *vma, struct page **pages,
+ 				unsigned long num);
++vm_fault_t dax_insert_pfn(struct vm_area_struct *vma,
++		unsigned long addr, pfn_t pfn, bool write);
+ vm_fault_t vmf_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+ 			unsigned long pfn);
+ vm_fault_t vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
 diff --git a/mm/memory.c b/mm/memory.c
-index 25a77c4..ce48a05 100644
+index ce48a05..4f26a1f 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -3994,7 +3994,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 			 */
- 			get_page(vmf->page);
- 			pte_unmap_unlock(vmf->pte, vmf->ptl);
--			ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
-+			ret = page_dev_pagemap(vmf->page)->ops->migrate_to_ram(vmf);
- 			put_page(vmf->page);
- 		} else if (is_hwpoison_entry(entry)) {
- 			ret = VM_FAULT_HWPOISON;
-diff --git a/mm/memremap.c b/mm/memremap.c
-index caccbd8..13c1d5b 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -458,8 +458,8 @@ EXPORT_SYMBOL_GPL(get_dev_pagemap);
- 
- void free_zone_device_folio(struct folio *folio)
- {
--	if (WARN_ON_ONCE(!folio->page.pgmap->ops ||
--			!folio->page.pgmap->ops->page_free))
-+	if (WARN_ON_ONCE(!page_dev_pagemap(&folio->page)->ops ||
-+			!page_dev_pagemap(&folio->page)->ops->page_free))
- 		return;
- 
- 	mem_cgroup_uncharge(folio);
-@@ -486,7 +486,7 @@ void free_zone_device_folio(struct folio *folio)
- 	 * to clear folio->mapping.
- 	 */
- 	folio->mapping = NULL;
--	folio->page.pgmap->ops->page_free(folio_page(folio, 0));
-+	page_dev_pagemap(&folio->page)->ops->page_free(folio_page(folio, 0));
- 
- 	if (folio->page.pgmap->type == MEMORY_DEVICE_PRIVATE ||
- 	    folio->page.pgmap->type == MEMORY_DEVICE_COHERENT)
-@@ -505,7 +505,7 @@ void zone_device_page_init(struct page *page)
- 	 * Drivers shouldn't be allocating pages after calling
- 	 * memunmap_pages().
- 	 */
--	WARN_ON_ONCE(!percpu_ref_tryget_live(&page->pgmap->ref));
-+	WARN_ON_ONCE(!percpu_ref_tryget_live(&page_dev_pagemap(page)->ref));
- 	set_page_count(page, 1);
- 	lock_page(page);
+@@ -1989,14 +1989,42 @@ static int validate_page_before_insert(struct page *page)
  }
-diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-index aecc719..4fdd8fa 100644
---- a/mm/migrate_device.c
-+++ b/mm/migrate_device.c
-@@ -135,7 +135,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 			page = pfn_swap_entry_to_page(entry);
- 			if (!(migrate->flags &
- 				MIGRATE_VMA_SELECT_DEVICE_PRIVATE) ||
--			    page->pgmap->owner != migrate->pgmap_owner)
-+			    page_dev_pagemap(page)->owner != migrate->pgmap_owner)
- 				goto next;
  
- 			mpfn = migrate_pfn(page_to_pfn(page)) |
-@@ -156,7 +156,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 				goto next;
- 			else if (page && is_device_coherent_page(page) &&
- 			    (!(migrate->flags & MIGRATE_VMA_SELECT_DEVICE_COHERENT) ||
--			     page->pgmap->owner != migrate->pgmap_owner))
-+			     page_dev_pagemap(page)->owner != migrate->pgmap_owner))
- 				goto next;
- 			mpfn = migrate_pfn(pfn) | MIGRATE_PFN_MIGRATE;
- 			mpfn |= pte_write(pte) ? MIGRATE_PFN_WRITE : 0;
+ static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
+-			unsigned long addr, struct page *page, pgprot_t prot)
++			unsigned long addr, struct page *page, pgprot_t prot, bool mkwrite)
+ {
+ 	struct folio *folio = page_folio(page);
++	pte_t entry = ptep_get(pte);
+ 
+-	if (!pte_none(ptep_get(pte)))
++	if (!pte_none(entry)) {
++		if (mkwrite) {
++			/*
++			 * For read faults on private mappings the PFN passed
++			 * in may not match the PFN we have mapped if the
++			 * mapped PFN is a writeable COW page.  In the mkwrite
++			 * case we are creating a writable PTE for a shared
++			 * mapping and we expect the PFNs to match. If they
++			 * don't match, we are likely racing with block
++			 * allocation and mapping invalidation so just skip the
++			 * update.
++			 */
++			if (pte_pfn(entry) != page_to_pfn(page)) {
++				WARN_ON_ONCE(!is_zero_pfn(pte_pfn(entry)));
++				return -EFAULT;
++			}
++			entry = maybe_mkwrite(entry, vma);
++			entry = pte_mkyoung(entry);
++			if (ptep_set_access_flags(vma, addr, pte, entry, 1))
++				update_mmu_cache(vma, addr, pte);
++			return 0;
++		}
+ 		return -EBUSY;
++	}
++
+ 	/* Ok, finally just insert the thing.. */
+ 	folio_get(folio);
++	if (mkwrite)
++		entry = maybe_mkwrite(mk_pte(page, prot), vma);
++	else
++		entry = mk_pte(page, prot);
+ 	inc_mm_counter(vma->vm_mm, mm_counter_file(folio));
+ 	folio_add_file_rmap_pte(folio, page, vma);
+ 	set_pte_at(vma->vm_mm, addr, pte, mk_pte(page, prot));
+@@ -2011,7 +2039,7 @@ static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
+  * pages reserved for the old functions anyway.
+  */
+ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+-			struct page *page, pgprot_t prot)
++			struct page *page, pgprot_t prot, bool mkwrite)
+ {
+ 	int retval;
+ 	pte_t *pte;
+@@ -2024,7 +2052,7 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+ 	pte = get_locked_pte(vma->vm_mm, addr, &ptl);
+ 	if (!pte)
+ 		goto out;
+-	retval = insert_page_into_pte_locked(vma, pte, addr, page, prot);
++	retval = insert_page_into_pte_locked(vma, pte, addr, page, prot, mkwrite);
+ 	pte_unmap_unlock(pte, ptl);
+ out:
+ 	return retval;
+@@ -2040,7 +2068,7 @@ static int insert_page_in_batch_locked(struct vm_area_struct *vma, pte_t *pte,
+ 	err = validate_page_before_insert(page);
+ 	if (err)
+ 		return err;
+-	return insert_page_into_pte_locked(vma, pte, addr, page, prot);
++	return insert_page_into_pte_locked(vma, pte, addr, page, prot, false);
+ }
+ 
+ /* insert_pages() amortizes the cost of spinlock operations
+@@ -2177,7 +2205,7 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
+ 		BUG_ON(vma->vm_flags & VM_PFNMAP);
+ 		vm_flags_set(vma, VM_MIXEDMAP);
+ 	}
+-	return insert_page(vma, addr, page, vma->vm_page_prot);
++	return insert_page(vma, addr, page, vma->vm_page_prot, false);
+ }
+ EXPORT_SYMBOL(vm_insert_page);
+ 
+@@ -2451,7 +2479,7 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
+ 		 * result in pfn_t_has_page() == false.
+ 		 */
+ 		page = pfn_to_page(pfn_t_to_pfn(pfn));
+-		err = insert_page(vma, addr, page, pgprot);
++		err = insert_page(vma, addr, page, pgprot, mkwrite);
+ 	} else {
+ 		return insert_pfn(vma, addr, pfn, pgprot, mkwrite);
+ 	}
+@@ -2464,6 +2492,43 @@ static vm_fault_t __vm_insert_mixed(struct vm_area_struct *vma,
+ 	return VM_FAULT_NOPAGE;
+ }
+ 
++vm_fault_t dax_insert_pfn(struct vm_area_struct *vma,
++		unsigned long addr, pfn_t pfn_t, bool write)
++{
++	pgprot_t pgprot = vma->vm_page_prot;
++	unsigned long pfn = pfn_t_to_pfn(pfn_t);
++	struct page *page = pfn_to_page(pfn);
++	int err;
++
++	if (addr < vma->vm_start || addr >= vma->vm_end)
++		return VM_FAULT_SIGBUS;
++
++	track_pfn_insert(vma, &pgprot, pfn_t);
++
++	if (!pfn_modify_allowed(pfn, pgprot))
++		return VM_FAULT_SIGBUS;
++
++	/*
++	 * We refcount the page normally so make sure pfn_valid is true.
++	 */
++	if (!pfn_t_valid(pfn_t))
++		return VM_FAULT_SIGBUS;
++
++	WARN_ON_ONCE(pfn_t_devmap(pfn_t));
++
++	if (WARN_ON(is_zero_pfn(pfn) && write))
++		return VM_FAULT_SIGBUS;
++
++	err = insert_page(vma, addr, page, pgprot, write);
++	if (err == -ENOMEM)
++		return VM_FAULT_OOM;
++	if (err < 0 && err != -EBUSY)
++		return VM_FAULT_SIGBUS;
++
++	return VM_FAULT_NOPAGE;
++}
++EXPORT_SYMBOL_GPL(dax_insert_pfn);
++
+ vm_fault_t vmf_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
+ 		pfn_t pfn)
+ {
 -- 
 git-series 0.9.1
 
