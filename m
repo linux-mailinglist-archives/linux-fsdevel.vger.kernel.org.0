@@ -1,278 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-22627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 429D791A723
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 14:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBB391A858
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 15:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 673741C245E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 12:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB33B28551E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 13:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC441849C2;
-	Thu, 27 Jun 2024 12:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A403194C62;
+	Thu, 27 Jun 2024 13:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AfkddwTD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680391836D0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 12:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFF813B7A3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 13:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719493101; cv=none; b=iw7GqEBmJrNprUUfd8M4dgi4vhoW5/d6r5/6ueA+NwH7P4uUBRrHkKfOIDjB/P2/cup1gWJMQphllvaOIpb9uADaq0+7i1jYXkiHfgPnHEp99oIS5xJW9o70g771vJmxaMxjSr7RHPULolF+qMmvQXrljTjy1dVwpZ4+5JLa4p0=
+	t=1719496359; cv=none; b=Qg4dSPjVnSIe7Cs5vuwasdQyQfyVnS6WzCW66o839c2MpOWyQLJ98zWazNF/89tEj+pGNg3nC9Pc+nRV3a3auusiwZ41LWFz619oEQ7F7bmK52AnaixwAxpdqa/iW3ybLVUgOOw8U7vFSJe07oY/EhjE+oT5m3h/PK4pZMSLmA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719493101; c=relaxed/simple;
-	bh=jpeoYNh/2I4ArZNrhiN2R8d8Pg4wzU7Qn6keDXvwOjk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lGz7wJgWDeuyprucjISb2HbI16N59A0aL1kxurTk2i2msjXKOEQCdEfuLEWZbDmRx+xGRMvI9cVA3tJ5gcr1Rd0YFkKvIsDfY+cvvd0sSTqWrUhqVLf+DrLDlR5FCjXldAfAv8S+0cTC2eZDrxy2v1SNmqFSlwqvkJHgSPR+mQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-37715eaa486so34788725ab.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 05:58:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719493098; x=1720097898;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h9JzpylPnYBoMCUezeQZztT3YnyQHUAysOaFuhmh2ws=;
-        b=i8T82kCJIX++L4EaYNMR+XE1gnnN9homSm2NyGfImuDxaCQ1jxqVUEDBbHd2OwW5TZ
-         X75RcgcojP15Ndq2YPq5yb56SfNt5ZP5MSN7YExN1SZb8G/bHz0cSzNTX6tSYnNF44w+
-         E+vnAydPEspl1VMBiZ+oV96fv3ev1HgvYgbBWW7an1kG7iJ7PpRTWIMDq+WNPf78DilV
-         0VsSf58KP6SmYmOm01H3oPmmgwKDig2hDb2NTY37hjUP0yMWDg8Ppo1Pl9MLfACMT8d9
-         YKY60kwCU8RE8/jutHj0SMBjWYa6mUU0N6H4vvaIL9aoxsJMSF4RMaLePatizsf0pdmF
-         b82w==
-X-Forwarded-Encrypted: i=1; AJvYcCUF+Fj1u46wDn1kEE/VWI6N21tKOx9JKwzZWwXKDUa/jSKRvNrn1csUeHjSfzt0M8j/3lGB9F7LYVDNhvzBxgnl6Ioabkwh0IcwbkkbKA==
-X-Gm-Message-State: AOJu0YwKxQFxpGPpABXZtI8aFWnpBXC4NJgXtrOglxY4SSA6+tZ576qE
-	AQm6wJgTppz9rs3J1blysTI4r3xtkYciejqtmEU6iq+JghhGK7u7YBLwUoJX05PSzHdiLhPxCYR
-	Bsww4huuHAnoLmqOoPKSJoevgyHNpZo2iwe3ZkDLgpYWszBdv5CuI0Rw=
-X-Google-Smtp-Source: AGHT+IH/KB0/l9s/pTuSk2SC2qHzYJUYzysWI5UwkvIeKdvnTpWBHnSHr6jfAGHkVjaTOAsd1W4i/9SGL1e4AhrpAXJyJM6Ovb66
+	s=arc-20240116; t=1719496359; c=relaxed/simple;
+	bh=/KGcaMMLpW+cPCLswh+ZTPNFikc4ZR2cfrB0fKOggys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWbB0TGjR9Ey2JZZYtzjwkQEqU03v4a6/kz0h0X+ocHezIoJkg4//97FKixoBHgBst6t2i+GU8It9gt02HWyoMXV3h/es8sWjtKPcccPHGL1GqDqVDqstaouBOBNf7tKGIqExIANXDb+O8eTOeBHXmAQSj0Ww1qvWbwOqGURxxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AfkddwTD; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4W8zzx4v0ZzQNB;
+	Thu, 27 Jun 2024 15:33:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1719495229;
+	bh=j7p8L183zHrWXMe1/dPD2xjc7OmYlClg1l8s6YGVw5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AfkddwTDO9HHRCyCS9+Mt1eVARW6hGWfDqGAmwMS5K3tVc9ml7+jdw8C5Z5BZuaQ+
+	 O42GodJXDQbuHP394Tfkzo+wdNqAepgeZmeq0b/6/Ibc+zQjvUjbHA4nPuxgT8Vq+c
+	 6bs9UrL/uRV9MwxnFMHKye3TgRqBPgS2REFI1zjs=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4W8zzv4SgWzbgH;
+	Thu, 27 Jun 2024 15:33:47 +0200 (CEST)
+Date: Thu, 27 Jun 2024 15:33:41 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, 
+	jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <20240627.lee3Sookaim0@digikod.net>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
+ <20240516.doyox6Iengou@digikod.net>
+ <7fde537a-b807-4ffd-895d-4b63e0ebd4df@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2187:b0:377:117e:e25e with SMTP id
- e9e14a558f8ab-377117ee8femr6620895ab.0.1719493098620; Thu, 27 Jun 2024
- 05:58:18 -0700 (PDT)
-Date: Thu, 27 Jun 2024 05:58:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000565ec5061bdeafd5@google.com>
-Subject: [syzbot] [exfat?] possible deadlock in exfat_iterate (2)
-From: syzbot <syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7fde537a-b807-4ffd-895d-4b63e0ebd4df@efficios.com>
+X-Infomaniak-Routing: alpha
 
-Hello,
+On Thu, May 16, 2024 at 09:07:29AM GMT, Mathieu Desnoyers wrote:
+> On 2024-05-16 03:31, Mickaël Salaün wrote:
+> > Adding membarrier experts.
+> 
+> I do not see how this relates to the membarrier(2) system call.
 
-syzbot found the following issue on:
+I meant SMP barrier and RCU, so mostly Paul E. McKenney.
+I'll remove you from the thread.
 
-HEAD commit:    55027e689933 Merge tag 'input-for-v6.10-rc5' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16390ac1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=53ab35b556129242
-dashboard link: https://syzkaller.appspot.com/bug?extid=df3558df41609451e4ac
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-55027e68.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a36929b5a065/vmlinux-55027e68.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d72de6f61ddc/bzImage-55027e68.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc5-syzkaller-00018-g55027e689933 #0 Not tainted
-------------------------------------------------------
-syz-executor.2/6265 is trying to acquire lock:
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:334 [inline]
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:3891 [inline]
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:3981 [inline]
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __do_kmalloc_node mm/slub.c:4121 [inline]
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
-
-but task is already holding lock:
-ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x33f/0xad0 fs/exfat/dir.c:256
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&sbi->s_lock#2){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       exfat_evict_inode+0x25b/0x340 fs/exfat/inode.c:725
-       evict+0x2ed/0x6c0 fs/inode.c:667
-       iput_final fs/inode.c:1741 [inline]
-       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
-       iput+0x5c/0x80 fs/inode.c:1757
-       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
-       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
-       shrink_kill fs/dcache.c:1048 [inline]
-       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
-       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
-       super_cache_scan+0x32a/0x550 fs/super.c:221
-       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
-       shrink_slab_memcg mm/shrinker.c:548 [inline]
-       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
-       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
-       shrink_many mm/vmscan.c:4851 [inline]
-       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
-       shrink_node mm/vmscan.c:5910 [inline]
-       kswapd_shrink_node mm/vmscan.c:6720 [inline]
-       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
-       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
-       kthread+0x2c1/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (fs_reclaim){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
-       lock_acquire kernel/locking/lockdep.c:5754 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
-       __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
-       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
-       might_alloc include/linux/sched/mm.h:334 [inline]
-       slab_pre_alloc_hook mm/slub.c:3891 [inline]
-       slab_alloc_node mm/slub.c:3981 [inline]
-       __do_kmalloc_node mm/slub.c:4121 [inline]
-       __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
-       kmalloc_noprof include/linux/slab.h:664 [inline]
-       kmalloc_array_noprof include/linux/slab.h:699 [inline]
-       __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
-       exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
-       exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
-       exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
-       exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
-       wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
-       iterate_dir+0x53e/0xb60 fs/readdir.c:110
-       __do_sys_getdents64 fs/readdir.c:409 [inline]
-       __se_sys_getdents64 fs/readdir.c:394 [inline]
-       __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&sbi->s_lock#2);
-                               lock(fs_reclaim);
-                               lock(&sbi->s_lock#2);
-  lock(fs_reclaim);
-
- *** DEADLOCK ***
-
-3 locks held by syz-executor.2/6265:
- #0: ffff88801db114c8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xeb/0x180 fs/file.c:1191
- #1: ffff8880483da9e8 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: wrap_directory_iterator+0x5a/0xe0 fs/readdir.c:56
- #2: ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x33f/0xad0 fs/exfat/dir.c:256
-
-stack backtrace:
-CPU: 0 PID: 6265 Comm: syz-executor.2 Not tainted 6.10.0-rc5-syzkaller-00018-g55027e689933 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
- fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
- might_alloc include/linux/sched/mm.h:334 [inline]
- slab_pre_alloc_hook mm/slub.c:3891 [inline]
- slab_alloc_node mm/slub.c:3981 [inline]
- __do_kmalloc_node mm/slub.c:4121 [inline]
- __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
- kmalloc_noprof include/linux/slab.h:664 [inline]
- kmalloc_array_noprof include/linux/slab.h:699 [inline]
- __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
- exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
- exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
- exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
- exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
- wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
- iterate_dir+0x53e/0xb60 fs/readdir.c:110
- __do_sys_getdents64 fs/readdir.c:409 [inline]
- __se_sys_getdents64 fs/readdir.c:394 [inline]
- __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf72f8579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5ec95ac EFLAGS: 00000292 ORIG_RAX: 00000000000000dc
-RAX: ffffffffffffffda RBX: 000000000000000a RCX: 0000000020002ec0
-RDX: 0000000000001000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+> > 
+> > On Wed, May 15, 2024 at 05:12:58PM +0200, Mickaël Salaün wrote:
+> > > On Thu, May 09, 2024 at 08:01:49PM -0400, Paul Moore wrote:
+> > > > On Wed, May 8, 2024 at 3:32 PM syzbot
+> > > > <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com> wrote:
+> > > > > 
+> > > > > Hello,
+> > > > > 
+> > > > > syzbot found the following issue on:
+> > > > > 
+> > > > > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+> > > > > git tree:       upstream
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=14a46760980000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=5446fbf332b0602ede0b
+> > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > > > 
+> > > > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > > > 
+> > > > > Downloadable assets:
+> > > > > disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/disk-dccb07f2.raw.xz
+> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinux-dccb07f2.xz
+> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/bzImage-dccb07f2.xz
+> > > > > 
+> > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > > > Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+> > > > > 
+> > > > > general protection fault, probably for non-canonical address 0xdffffc018f62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> > > > > KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000c7b17a8af]
+> > > > > CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> > > > > RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
+> > > > 
+> > > > Possibly a Landlock issue, Mickaël?
+> > > 
+> > > It looks like security_inode_free() is called two times on the same
+> > > inode.  This could happen if an inode labeled by Landlock is put
+> > > concurrently with release_inode() for a closed ruleset or with
+> > > hook_sb_delete().  I didn't find any race condition that could lead to
+> > > two calls to iput() though.  Could WRITE_ONCE(object->underobj, NULL)
+> > > change anything even if object->lock is locked?
+> > > 
+> > > A bit unrelated but looking at the SELinux code, I see that selinux_inode()
+> > > checks `!inode->i_security`.  In which case could this happen?
+> > > 
+> > > > 
+> > > > > Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
+> > > > > RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
+> > > > > RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
+> > > > > RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
+> > > > > RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
+> > > > > R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
+> > > > > R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
+> > > > > FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
+> > > > > Call Trace:
+> > > > >   <TASK>
+> > > > >   security_inode_free+0x4a/0xd0 security/security.c:1613
+> > > > >   __destroy_inode+0x2d9/0x650 fs/inode.c:286
+> > > > >   destroy_inode fs/inode.c:309 [inline]
+> > > > >   evict+0x521/0x630 fs/inode.c:682
+> > > > >   dispose_list fs/inode.c:700 [inline]
+> > > > >   evict_inodes+0x5f9/0x690 fs/inode.c:750
+> > > > >   generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
+> > > > >   kill_block_super+0x44/0x90 fs/super.c:1675
+> > > > >   deactivate_locked_super+0xc6/0x130 fs/super.c:472
+> > > > >   cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+> > > > >   task_work_run+0x251/0x310 kernel/task_work.c:180
+> > > > >   exit_task_work include/linux/task_work.h:38 [inline]
+> > > > >   do_exit+0xa1b/0x27e0 kernel/exit.c:878
+> > > > >   do_group_exit+0x207/0x2c0 kernel/exit.c:1027
+> > > > >   __do_sys_exit_group kernel/exit.c:1038 [inline]
+> > > > >   __se_sys_exit_group kernel/exit.c:1036 [inline]
+> > > > >   __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
+> > > > >   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > > > >   do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > > > >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > > RIP: 0033:0x7f731567dd69
+> > > > > Code: Unable to access opcode bytes at 0x7f731567dd3f.
+> > > > > RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > > > > RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
+> > > > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > > > > RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
+> > > > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
+> > > > > R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
+> > > > >   </TASK>
+> > > > > Modules linked in:
+> > > > > ---[ end trace 0000000000000000 ]---
+> > > > 
+> > > > -- 
+> > > > paul-moore.com
+> > > > 
+> 
+> -- 
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> https://www.efficios.com
+> 
+> 
 
