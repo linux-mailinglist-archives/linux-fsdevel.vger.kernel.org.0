@@ -1,169 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-22670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A9D491AFB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 21:31:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12C291AFBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 21:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4D61F239BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 19:31:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8E61C22399
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 19:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D3719D8BD;
-	Thu, 27 Jun 2024 19:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA6D4500D;
+	Thu, 27 Jun 2024 19:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MN7bT+6E"
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="d1+0Qs1u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9BD19D8AA;
-	Thu, 27 Jun 2024 19:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7399B4D8AC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 19:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719516673; cv=none; b=IAN/5xDYGEoUce0I2LtPq9upPWh0anAWzomde8CKAcI9MvFt7RgJmOFpYL9+2ki+iGnY/OB79HTQsclqy/UvXcVsIBdUzXpgj80Qiq1wHLGn1nzB//v9KkbJxyeyFgLGmSFbHPKwF8l327pFO9Mmf4xmTYLR3y8SMkVqFEX54zU=
+	t=1719516690; cv=none; b=tm6ylpaYoq1wTAXeqia6BiYXbHj2cH7sCauX3QQvScpATxGW9w47iz9LRZ8UpW+spwQTaXOosn9c3oewuZAyS+z2uTaXGTmyK/YEDoyxP7ISSn2G6nx2QFvhAbgftFcfimmm+6Rsp4siFC/7BSmSiOd/z8Fjp6M5LA50jMsdKyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719516673; c=relaxed/simple;
-	bh=Cz5VpmWszFF38N4E1COvFngYrmJ9V2WuQ83ifQGj52w=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LbBLMGFaAF8/seSVtgmXaKoi1vgerjnZQnEtTNidEdiZQXnNkR0Ysc6/ReAXylkkm5NjA6TmpH2deb0mKKWmmfn2skJeQprgmkPr0sbiswRvUUQ50+Apwl+IyozctDKs5OmMxkjDtcxoBWzUwhbnRBLe1xDah+s0kbPLXHzQbOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MN7bT+6E; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4249196a361so38549175e9.0;
-        Thu, 27 Jun 2024 12:31:11 -0700 (PDT)
+	s=arc-20240116; t=1719516690; c=relaxed/simple;
+	bh=1WDS2AQgpymRP2QXgn1kI0il61QYOAw1AXEQeE298Ik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h9DMeuESWYXLgjS4cU1px3dZQ3c/EOZkW+cwlsDX7/yrlAR9y8LDT2B9aCePhQXLiMZcH+YZqjY22zw7ZZRT50IEcJrn8xst3N+yRqkudCk9z7nlrIZXb+//YtuvC5+zxIjU8WZz9ENWLrXs5nXzgBYUzSsLsdeDWUDTE7Snw3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=d1+0Qs1u; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec5f1b4ee7so5783951fa.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 12:31:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719516670; x=1720121470; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ny6HkmE+qY2SG56r9G2DPsCtupADeB7549mmgxbkcn8=;
-        b=MN7bT+6E2IzqNI7JolQA2+LEbvvM3uKWHDxuhX47NFtWLeY3kgE37UvYuRGS9L/FLA
-         V6U06MZPuazpBWdzhT5sWAVEnp5ynPMrm4aj2TKG+XXi8eXbHFQuf4i7baPl//8i2Hv+
-         qOas39unZewCL9RoVNsZItEg+rnY+mc4ngqLGuMNM4pYIKKy8a8TNj0KMigWSpSmeus1
-         gP34y6qfWSzRbI6RCqkHkyDX46ChDf3Mcqrb6NOJfbLqL9+l5cP6bRir/OvdSjmWSYKC
-         XD/VyYGJ4KqnYhhu03tbY6fTMi1QkQw5SnnSZVwDCiHfJD8iQohrI3C1u9KvWzvATq9/
-         b6ng==
+        d=mihalicyn.com; s=mihalicyn; t=1719516685; x=1720121485; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0uZEamPUO6yUzxqg3ZAiorpvMsEHy+mCNtlItIcU6TI=;
+        b=d1+0Qs1uUdSBkYYEw4rYga5gUZA3ohrC8iwLkoZiOEwhAIoKEGnc4+hj1blwK2Yw8s
+         Woqfevd74CcYeqIWOTFRxNiT5Tj98Zmu3c/4wDTRRIsV4NTZwGD+BT4eOwzcDqnHefsJ
+         Jd5kqZ2V0ay8+OLyW6mZ7a2Uzw19ShxVQ06tI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719516670; x=1720121470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ny6HkmE+qY2SG56r9G2DPsCtupADeB7549mmgxbkcn8=;
-        b=YHZQCnwm2wjE8RluYToGRMWUfNKzrWXxlWLO/vEBt/Fv5AvDyeGlQJSTTQpHw5okRS
-         c3379WIOT+AHT7IpMPHxhR2VPYMRmno9JeZPhdeh31dqbymzA+hClCC9WlP8BpsMAMGE
-         k2tnk9iyY2PHrXjVWyR34zTAu78DgGvmkmF4W24WnohhXOXQWMfgQDw43AQ49cafMgOZ
-         I6dwT1SviwQ2gdsRWlpEsrYz1jdb21VaqdvltSAIRB6ytJts7+gNLbAy3f4EPuIYMBBN
-         6OGulJ4cnjBzZ6/Qygy8gqvhVhZNohL7kJqSFCx7abXqewQ77X1sjDOjCIfw7Mvth938
-         1Usw==
-X-Forwarded-Encrypted: i=1; AJvYcCVel6KxNmp4Ve2sj4BQ5LOO1NF7Gn1ADxDb6cCBHPJhIlNGWzKk4seEzvMZkdepmI498Po8f/01knx4TpBovdj4w+dGxZsDYCMYM8/+Cst6aAUxPXscfKI5HGk37GLycjsgrtEys3KczldGbg==
-X-Gm-Message-State: AOJu0YxcPMutJ02CF1KTj7APGzY6BU9ykp2IxQ00avx9boO/SGMCiuWH
-	xuypeyAMlq7Xe0JjNyWUwvz0eXllobCyCRujDdcLaLozpHh4QiUv
-X-Google-Smtp-Source: AGHT+IFdGRQfUdkuH5BgVEfuVw+NW9O3Tjn8vpqf3zKF2lgWTc6D8XAyOko55+jbazGHrKeARtK6gQ==
-X-Received: by 2002:a7b:c3d8:0:b0:424:a4ab:444f with SMTP id 5b1f17b1804b1-424a4ab464cmr56536255e9.33.1719516669623;
-        Thu, 27 Jun 2024 12:31:09 -0700 (PDT)
-Received: from localhost ([2a00:23cc:d20f:ba01:bb66:f8b2:a0e8:6447])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5ba67sm5239905e9.19.2024.06.27.12.31.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 12:31:08 -0700 (PDT)
-Date: Thu, 27 Jun 2024 20:31:07 +0100
-From: Lorenzo Stoakes <lstoakes@gmail.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [RFC PATCH 7/7] tools: add skeleton code for userland testing of
- VMA logic
-Message-ID: <f005a7b0-ca31-4d39-b2d5-00f5546d610a@lucifer.local>
-References: <cover.1719481836.git.lstoakes@gmail.com>
- <22777632a0ed9d2dadbc8d7f0689d65281af0f50.1719481836.git.lstoakes@gmail.com>
- <202406270957.C0E5E8057@keescook>
- <5zuowniex4sxy6l7erbsg5fiirf4d4f5fbpz2upay2igiwa2xk@vuezoh2wbqf4>
+        d=1e100.net; s=20230601; t=1719516685; x=1720121485;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0uZEamPUO6yUzxqg3ZAiorpvMsEHy+mCNtlItIcU6TI=;
+        b=S18KQ2Y4kIoUbm/ycO4/DLFQKwcJFhHb86EuoEhd/gj7fS8GNrwDjs2FI2uJbNHkmt
+         OYUV7C6i1+y395da8ipmwN6nzUIO8wEWqjn9brNJf8ZLqwDbozI/ozz7tpk9gpUgICf7
+         Vi6EJ7DBSg2tRDCpM8y9ydDO28vSi2NYye4jSnZAQv3LAXihwS3XxgL5VA1YRXluUPKr
+         Pn2Sk8S4ldiQYGhjrztIok6eYnSN9aG3HjDKOGHo+UgtrwM7uIxInEdeBGp0ReFpbq9F
+         PM3TjHaD6c3Cpb0YCJGXtvWqMI9yjcoJa2+wnMN6KjnOErFZUhItqphm6zdxBXn6+jhf
+         xLXw==
+X-Gm-Message-State: AOJu0YxIkyX97v/YzanXcvo+ftQsTCLKX8f4M48SF9Gpir8shbLP6WV6
+	OyNyYrm6mHJ1OQBhk6dvVa9KmTkZ1aZdpNxJiU1Dh4XXz+guZddjOHUc1RCXab6d+dIPsniGIYA
+	FBSkuq0PFCi1riVE9n8hdTyWhZoL9YnLc3IrxVA==
+X-Google-Smtp-Source: AGHT+IGYbeIpF88uwHjYHb/uvL6enbFx4XM+L7o1MmMiQyL/VEz0XdZfbRyhX0Cbr+/k052guCZCS0lJRMJyVPoaiAM=
+X-Received: by 2002:a2e:80da:0:b0:2ec:42a2:7e25 with SMTP id
+ 38308e7fff4ca-2ec5619c255mr94496161fa.3.1719516684890; Thu, 27 Jun 2024
+ 12:31:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5zuowniex4sxy6l7erbsg5fiirf4d4f5fbpz2upay2igiwa2xk@vuezoh2wbqf4>
+References: <20240619-work-ns_ioctl-v1-1-7c0097e6bb6b@kernel.org>
+In-Reply-To: <20240619-work-ns_ioctl-v1-1-7c0097e6bb6b@kernel.org>
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Thu, 27 Jun 2024 21:31:13 +0200
+Message-ID: <CAJqdLrp1nzoJTsDm0NLUnP6NWuh=s2qLjhuj1EW1k1g4G+5HKA@mail.gmail.com>
+Subject: Re: [PATCH] nsfs: add pid translation ioctls
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Stephane Graber <stgraber@stgraber.org>, 
+	Tycho Andersen <tandersen@netflix.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Joel Fernandes <joel@joelfernandes.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 27, 2024 at 02:25:36PM -0400, Liam R. Howlett wrote:
-> * Kees Cook <kees@kernel.org> [240627 12:58]:
-> > On Thu, Jun 27, 2024 at 11:39:32AM +0100, Lorenzo Stoakes wrote:
-> > > Establish a new userland VMA unit testing implementation under
-> > > tools/testing which utilises existing logic providing maple tree support in
-> > > userland utilising the now-shared code previously exclusive to radix tree
-> > > testing.
-> > >
-> > > This provides fundamental VMA operations whose API is defined in mm/vma.h,
-> > > while stubbing out superfluous functionality.
-> > >
-> > > This exists as a proof-of-concept, with the test implementation functional
-> > > and sufficient to allow userland compilation of vma.c, but containing only
-> > > cursory tests to demonstrate basic functionality.
-> >
-> > Interesting! Why do you want to have this in userspace instead of just
-> > wiring up what you have here to KUnit so testing can be performed by
-> > existing CI systems that are running all the KUnit tests?
+Am Mi., 19. Juni 2024 um 15:50 Uhr schrieb Christian Brauner
+<brauner@kernel.org>:
 >
-> The primary reason we did the maple tree testing in userspace was for
-> speed of testing.  We don't need to build the kernel, but a subset of
-> APIs.  Debugging problems is also much quicker since we can instrument
-> and rebuild, iterate down faster.  Tracing every call to the maple tree
-> on boot alone is massive.
+> Add ioctl()s to translate pids between pid namespaces.
 >
-> It is also difficult to verify the vma correctness without exposing APIs
-> we don't want exported (or, I guess, parse proc files..).  On my side, I
-> have a module for testing the overall interface while I have more tests
-> on the userspace side that poke and prod on internal states, and
-> userspace rcu testing is possible.  I expect the same issues on the vma
-> side.
+> LXCFS is a tiny fuse filesystem used to virtualize various aspects of
+> procfs. LXCFS is run on the host. The files and directories it creates
+> can be bind-mounted by e.g. a container at startup and mounted over the
+> various procfs files the container wishes to have virtualized. When e.g.
+> a read request for uptime is received, LXCFS will receive the pid of the
+> reader. In order to virtualize the corresponding read, LXCFS needs to
+> know the pid of the init process of the reader's pid namespace. In order
+> to do this, LXCFS first needs to fork() two helper processes. The first
+> helper process setns() to the readers pid namespace. The second helper
+> process is needed to create a process that is a proper member of the pid
+> namespace. The second helper process then creates a ucred message with
+> ucred.pid set to 1 and sends it back to LXCFS. The kernel will translate
+> the ucred.pid field to the corresponding pid number in LXCFS's pid
+> namespace. This way LXCFS can learn the init pid number of the reader's
+> pid namespace and can go on to virtualize. Since these two forks() are
+> costly LXCFS maintains an init pid cache that caches a given pid for a
+> fixed amount of time. The cache is pruned during new read requests.
+> However, even with the cache the hit of the two forks() is singificant
+> when a very large number of containers are running. With this simple
+> patch we add an ns ioctl that let's a caller retrieve the init pid nr of
+> a pid namespace through its pid namespace fd. This significantly
+> improves performance with a very simple change.
 >
-> Adding tests can also be made very efficient with tracepoints dumping
-> something to add to an array, for example.
+> Support translation of pids and tgids. Other concepts can be added but
+> there are no obvious users for this right now.
 >
-> Finally, you have ultimate control on what other functions return (or
-> do) - so you can fail allocations to test error paths, for example.  Or
-> set the external function to fail after N allocations.  This comes in
-> handy when a syzbot reports a failed allocation at line X caused a
-> crash.
+> To protect against races pidfds can be used to check whether the process
+> is still valid. If needed, this can also be extended to work on pidfds
+> directly.
 >
-> This has worked out phenomenally on the maple tree side.  I've been able
-> to record boot failures and import them, syzbot tests, and fuzzer tests.
-> The result is a huge list of tests that allowed me to rewrite my node
-> replacement algorithm and have it just work, once it passed the
-> collected tests.
->
-> I haven't used kunit as much as I have userspace testing, so I cannot
-> say if all of these points are not possible, but I didn't see a way to
-> test races like I do with rcu in userspace.
->
-> Thanks,
-> Liam
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Liam's response is excellent, and obviously I agree
-wholeheartedly. Additionally, I'm not really experienced with kunit, but
-surely it's implemented as a kernel module somehow? If so, these interfaces
-are largely not exported so it wouldn't be functional as a unit test.
+Dear Christian,
 
-And also as Liam says, it'd be very difficult to test this stuff _in_ the
-kernel without unwanted side-effects triggering and it'd be very difficult
-to isolate or mock components we don't want to play a role (for instance -
-rlimits that we might not be able to control).
+This is an amazing idea! Thanks for implementing and posting this!
 
-But overall (again as Liam says) the performance benefit, flexibility and
-ability to recreate things at a whim are huge.
+Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
-And the fact maple tree (which forms a HUGE part of these VMA operations)
-and related radix tree and other shims/stubs already exist means that it
-wasn't anywhere near as huge a task to implement this as it would be
-otherwise.
+> ---
+> ---
+>  fs/nsfs.c                 | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/nsfs.h |  8 ++++++++
+>  2 files changed, 55 insertions(+)
+>
+> diff --git a/fs/nsfs.c b/fs/nsfs.c
+> index 07e22a15ef02..4a4d7b1eb38c 100644
+> --- a/fs/nsfs.c
+> +++ b/fs/nsfs.c
+> @@ -8,9 +8,11 @@
+>  #include <linux/magic.h>
+>  #include <linux/ktime.h>
+>  #include <linux/seq_file.h>
+> +#include <linux/pid_namespace.h>
+>  #include <linux/user_namespace.h>
+>  #include <linux/nsfs.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/cleanup.h>
+>
+>  #include "internal.h"
+>
+> @@ -123,9 +125,12 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+>                         unsigned long arg)
+>  {
+>         struct user_namespace *user_ns;
+> +       struct pid_namespace *pid_ns;
+> +       struct task_struct *tsk;
+>         struct ns_common *ns = get_proc_ns(file_inode(filp));
+>         uid_t __user *argp;
+>         uid_t uid;
+> +       pid_t pid_nr;
+>
+>         switch (ioctl) {
+>         case NS_GET_USERNS:
+> @@ -143,6 +148,48 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+>                 argp = (uid_t __user *) arg;
+>                 uid = from_kuid_munged(current_user_ns(), user_ns->owner);
+>                 return put_user(uid, argp);
+> +       case NS_GET_PID_FROM_PIDNS:
+> +               fallthrough;
+> +       case NS_GET_TGID_FROM_PIDNS:
+> +               fallthrough;
+> +       case NS_GET_PID_IN_PIDNS:
+> +               fallthrough;
+> +       case NS_GET_TGID_IN_PIDNS:
+> +               if (ns->ops->type != CLONE_NEWPID)
+> +                       return -EINVAL;
+> +
+> +               pid_ns = container_of(ns, struct pid_namespace, ns);
+> +
+> +               guard(rcu)();
+> +               if (ioctl == NS_GET_PID_IN_PIDNS ||
+> +                   ioctl == NS_GET_TGID_IN_PIDNS)
+> +                       tsk = find_task_by_vpid(arg);
+> +               else
+> +                       tsk = find_task_by_pid_ns(arg, pid_ns);
+> +               if (!tsk)
+> +                       return -ESRCH;
+> +
+> +               switch (ioctl) {
+> +               case NS_GET_PID_FROM_PIDNS:
+> +                       pid_nr = task_pid_vnr(tsk);
+> +                       break;
+> +               case NS_GET_TGID_FROM_PIDNS:
+> +                       pid_nr = task_tgid_vnr(tsk);
+> +                       break;
+> +               case NS_GET_PID_IN_PIDNS:
+> +                       pid_nr = task_pid_nr_ns(tsk, pid_ns);
+> +                       break;
+> +               case NS_GET_TGID_IN_PIDNS:
+> +                       pid_nr = task_tgid_nr_ns(tsk, pid_ns);
+> +                       break;
+> +               default:
+> +                       pid_nr = 0;
+> +                       break;
+> +               }
+> +               if (!pid_nr)
+> +                       return -ESRCH;
+> +
+> +               return pid_nr;
+>         default:
+>                 return -ENOTTY;
+>         }
+> diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+> index a0c8552b64ee..faeb9195da08 100644
+> --- a/include/uapi/linux/nsfs.h
+> +++ b/include/uapi/linux/nsfs.h
+> @@ -15,5 +15,13 @@
+>  #define NS_GET_NSTYPE          _IO(NSIO, 0x3)
+>  /* Get owner UID (in the caller's user namespace) for a user namespace */
+>  #define NS_GET_OWNER_UID       _IO(NSIO, 0x4)
+> +/* Translate pid from target pid namespace into the caller's pid namespace. */
+> +#define NS_GET_PID_FROM_PIDNS  _IOR(NSIO, 0x5, int)
+> +/* Return thread-group leader id of pid in the callers pid namespace. */
+> +#define NS_GET_TGID_FROM_PIDNS _IOR(NSIO, 0x7, int)
+> +/* Translate pid from caller's pid namespace into a target pid namespace. */
+> +#define NS_GET_PID_IN_PIDNS    _IOR(NSIO, 0x6, int)
+> +/* Return thread-group leader id of pid in the target pid namespace. */
+> +#define NS_GET_TGID_IN_PIDNS   _IOR(NSIO, 0x8, int)
+>
+>  #endif /* __LINUX_NSFS_H */
+>
+> ---
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+> change-id: 20240619-work-ns_ioctl-447979cf0820
+>
 
