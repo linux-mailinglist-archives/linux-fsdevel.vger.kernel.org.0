@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-22576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5D0919C85
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 03:00:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E527919C8D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 03:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF552864C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 01:00:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4C3EB20E7A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 01:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0376AC0;
-	Thu, 27 Jun 2024 01:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A591171C;
+	Thu, 27 Jun 2024 01:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9ba/YQc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uu9bKpll"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374E24C62;
-	Thu, 27 Jun 2024 01:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B49D299;
+	Thu, 27 Jun 2024 01:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719450034; cv=none; b=He0RPVxCXXEtnYX0+BUOySTuxvgF5nMxG1Z7mDwuf+k+8ogogIXpQprqOl48w5qG47nkLWXNKLmbe6Czr9aPu5ZDDhnUgowZiP66o1zjZa/4kVQRozDMv/z1wtSFneuWuOjeHWxnySWKhEqrFTDjDeOZmjjJS8IiYXrQkWLNd04=
+	t=1719450036; cv=none; b=cDGFIRmO1YJI3WNXQkOLh8znnfBy7EodGlv3mOADFVAa+SegsuNy4lquDEoiUJRhSnytehWhSIDUzxF5t8NP3ai+ZxivE19tc6T45249PA2Aycy1ykWmCt08VuaTTuzf4Y1pF9Y5sCbCOzo1QKhKg0UcF6onkxDJeznaX35OLhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719450034; c=relaxed/simple;
-	bh=LUacYIlT79rW04FeLla3/n41llR1qlk2oIplHlsSCo8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=C+V4ZHKdhToK6fhXbpM1oPUEjO4AJ4DwN7v5FvcWb4fl/4ajfSeMNgsn/JjeFivqnuHpPxEne/b9/AQ/hq3gVCGOKP4fZUks/rQPTl6gPgm2mRLcC+QEBlxgSr9tnepo3Jp7i5+6TPMACZx7WSfQ/t0QkWuybE4hqlQGd/L/K78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9ba/YQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C54C116B1;
-	Thu, 27 Jun 2024 01:00:31 +0000 (UTC)
+	s=arc-20240116; t=1719450036; c=relaxed/simple;
+	bh=G1sIrGm75KvOwnRqj2Qr6NVY9492uXV9G5iKNcaenQ4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nV7R7hJPUS+4x3MoLMfa5fEyEpL58GO+/fVPs7Ihk6MkYJ4wrEvq4UW8UZ4MOfXVIkHesVnDr+xd71hUsn8MDxpCCTheo8E5LkP7kyZgTEtbv7+K0XpBIHuDzFteoh/PyB/kRMcM7QvLLkaec9eA+TzremttYWeJkU5cE8v38no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uu9bKpll; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AE4CC4AF07;
+	Thu, 27 Jun 2024 01:00:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719450034;
-	bh=LUacYIlT79rW04FeLla3/n41llR1qlk2oIplHlsSCo8=;
-	h=From:Subject:Date:To:Cc:From;
-	b=X9ba/YQcgXhwCm8/TJ8Uh4mp258noDC2rr0AaFBl0BEPkB9XQSpA9M/tEdKbW40tB
-	 X+Z6OGP+Si5nRlkpsVLibkf4AiJAhojO5s5V4kpdXBIJSvoviXwiDj2FaKW9uWMIAF
-	 4MJe8FP26sA3j5dAvuApRF0se7CFUhvx/9I/7Ypf06bwRsiLc+H3ZydlyzSjxhuOQy
-	 R4nTwxqZPHonjDzgUF/boDRbHPm/GCueYfwTcNMQfuNdRA6mEcLGkfR/cpyvCK45yD
-	 JEtcOJ0ldQB1gqsLGla+o6eQDD+OE0qG0jN1ui8Y+8pFdGfOAeReIE+TaGQIdyro9B
-	 lzDTU8RbwnwwQ==
+	s=k20201202; t=1719450036;
+	bh=G1sIrGm75KvOwnRqj2Qr6NVY9492uXV9G5iKNcaenQ4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=uu9bKpllUfrdSsygooj3Il3q8igpsvcmeAJH22XWhg0c7R4ESyKAy6ypVts8fty9Q
+	 A4rOJR86fnWgQq6PivWKbjaJlnw70+VkTI7DxzP60N2Qrir9Ic2bnuGZY/Mn3Kmx5Y
+	 5O2ksEpKXnGnV02Ipp03xM+6wdkL/rOB0LvOe1tMB76udcWzWHkFgREjMAvwSO8liD
+	 62ifGHWLFKbFpThGH6t5XGg0SqzlkqAPGYdd97REc6rKf9Shq9XTLEajv6JPfzo53X
+	 Uxs4hQ1uF5VqaGNENGK+CE6KwJhtX1VVXAPDIijDBZZ6duDZxgFvzxWTznJk0QMxVs
+	 KZor/o/3gWLEQ==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH 00/10] fs: multigrain timestamp redux
-Date: Wed, 26 Jun 2024 21:00:20 -0400
-Message-Id: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
+Date: Wed, 26 Jun 2024 21:00:21 -0400
+Subject: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,9 +52,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKS5fGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyMz3dz0kszcVF3T5BQLgyRDixQLQwMloOKCotS0zAqwQdGxtbUA/AJ
- kIFgAAAA=
+Message-Id: <20240626-mgtime-v1-1-a189352d0f8f@kernel.org>
+References: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
+In-Reply-To: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
  Steven Rostedt <rostedt@goodmis.org>, 
@@ -71,87 +71,121 @@ Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3126; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=LUacYIlT79rW04FeLla3/n41llR1qlk2oIplHlsSCo8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmfLmuyaAFpK8/qwLflf3v4ChVsLVE+AkNZRWYo
- JubBGmnD9+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZny5rgAKCRAADmhBGVaC
- FcVxEACn53hnX+vD8wOy1qsZk+3QM/qqzDCO7uy8RgExJI106gkJfuFX8+lcL+HRdrW2QfOGSw+
- hO7Mt3G37n3x1PsLI2i2L3wKymPJkPtkN0gCUDRhqkHhXfjGWMiAYKcupUoOQgd3/5sUw/wVOCn
- gxb4joKDPQjyDOuFdQP/iiNryS6CSID8IXYPqpgksIsTrI82/iB6MW5X0/XiO53z+TGnMEIyLHy
- P62o2CEnPUm77LjIIamrxVwCpX1qLDDUt4zXOf5PU+KQq+Cmo+3hFTZEYW1qFsWUOPaKoGLW2vc
- cCHBezSmioQNmG4EyshecGnFRdqkKvZM69d9AXpw0PjJOpF1X90HsqY9e46vLExXidPMU3sOo01
- dFvdrSLUHmDnX7cmaEakCVuKv+EQRzodyHNKI12T9IsuPl0cXsJVgWTlunlLF2nnHPp4uGiC0K6
- Dx0bk6gvhtz/eH66y2wnXWr0Q3xAMJ/SxYdqWfIArsqDw7LBA40+erE6CKTDPAf9VRsfTcO0ura
- SaHhLn470dWvbxOVa/L15AfDgNL+Y24+RWVrD3UYAOmDIKDyj3Ki+s8359EemA9FRV8FGJhjUhL
- ij+SmnVh0io7cDczz/QZh+y5Cy/DLAd3/lDWZuSoTZVLrvn5tepmBjcI0URpN1uvHG6ODJ3s/3M
- vO1R8IE1b5/DaDA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3344; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=G1sIrGm75KvOwnRqj2Qr6NVY9492uXV9G5iKNcaenQ4=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmfLmuOgyuFN9FzwPSoACp7/4FgL4U5ewrxzQPi
+ h6LGQNjmoCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZny5rgAKCRAADmhBGVaC
+ FX5ZEACvzw0eK1vFpOnF4nZM3s2zL0NqyeFfw2IuIbYubO0XzKfU/GlcdGAVZD1/oDZDN9X2Ntx
+ tkSoujXFDXsMigQyoXVvDfxIpYSjogrB25YHg+5iMFM+/GLPQhReln8cY/xzbjx01IVuO0RXKE4
+ QCqFhVlV/I1AzaZ+xC2NOv8CXa/Gf1nSyV1llrK8t0wQT048zrREZqwJy2evRRRJ3ecwRRPh4cl
+ IEJsjenGZNFF5pqNreGFh5eywBPrseN4m29EXntKoztrVnT8HM9FGHWXYI90hiugYxhtyUMLBl9
+ k7VrSVP5poWdnKgzfthiYN1qmCk4JMEVj0HsIcRPmQi+9kO9CtqDiWvTjKnLsTrNgCcvxWA7s3J
+ fvxvlclGfrgwuT45eja71AqaiM3GYchiM0VjQebvZ8xZXFmqYsti088EqvJ+wjJH9xJgv9zRC66
+ G9eLzUdSnUckzPOx0BwcdvqOXD8/Dj2hrMXaC/2odyLZwF8XteERYsiPxnY88U2mWd5XGSXAouK
+ D7d0B/OWH5OAovkc6IwLogJExZW8lY8ce4ubLrVbK8TVE5J1NsCvk2Jtj1jsTPlg/8qmVIWjqTz
+ hfSDMcxZZ7/Njq2slc2PrWO+jzycNYolqZgeqH2NlccufsMKSRU4NLkED1LWFh8ynH9T1lR1mMw
+ YmEPaOvwMbs8P+g==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-At LSF/MM this year, we had a discussion about the inode change
-attribute. At the time I mentioned that I thought I could salvage the
-multigrain timestamp work that had to be reverted last year [1].  That
-version had to be reverted because it was possible for a file to get a
-coarse grained timestamp that appeared to be earlier than another file
-that had recently gotten a fine-grained stamp.
+The ctime is not settable to arbitrary values. It always comes from the
+system clock, so we'll never stamp an inode with a value that can't be
+represented there. If we disregard people setting their system clock
+past the year 2262, there is no reason we can't replace the ctime fields
+with a ktime_t.
 
-This version corrects the problem by establishing a global ctime_floor
-value that should prevent this from occurring. In the above situation
-that was problematic before, the two files might end up with the same
-timestamp value, but they won't appear to have been modified in the
-wrong order.
+Switch the ctime fields to a single ktime_t. Move the i_generation down
+above i_fsnotify_mask and then move the i_version into the resulting 8
+byte hole. This shrinks struct inode by 8 bytes total, and should
+improve the cache footprint as the i_version and ctime are usually
+updated together.
 
-That problem was discovered by the test-stat-time gnulib test. Note that
-that test still fails on multigrain timestamps, but that's because its
-method of determining the minimum delay that will show a timestamp
-change will no longer work with multigrain timestamps. I have a patch to
-change the testcase to use a different method that I will post soon.
-
-The big question with this set is whether the performance will be
-suitable. The testing I've done seems to show performance parity with
-multigrain timestamps enabled, but it's hard to rule this out regressing
-some workload.
-
-This set is based on top of Christian's vfs.misc branch (which has the
-earlier change to track inode timestamps as discrete integers). If there
-are no major objections, I'd like to let this soak in linux-next for a
-bit to see if any problems shake out.
-
-[1]: https://lore.kernel.org/linux-fsdevel/20230807-mgctime-v7-0-d1dec143a704@kernel.org/
+The one downside I can see to switching to a ktime_t is that if someone
+has a filesystem with files on it that has ctimes outside the ktime_t
+range (before ~1678 AD or after ~2262 AD), we won't be able to display
+them properly in stat() without some special treatment in the
+filesystem. The operating assumption here is that that is not a
+practical problem.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Jeff Layton (10):
-      fs: turn inode ctime fields into a single ktime_t
-      fs: uninline inode_get_ctime and inode_set_ctime_to_ts
-      fs: tracepoints for inode_needs_update_time and inode_set_ctime_to_ts
-      fs: add infrastructure for multigrain timestamps
-      fs: add percpu counters to count fine vs. coarse timestamps
-      fs: have setattr_copy handle multigrain timestamps appropriately
-      xfs: switch to multigrain timestamps
-      ext4: switch to multigrain timestamps
-      btrfs: convert to multigrain timestamps
-      tmpfs: add support for multigrain timestamps
+ include/linux/fs.h | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
- fs/attr.c                        |  52 +++++++--
- fs/btrfs/file.c                  |  25 +----
- fs/btrfs/super.c                 |   3 +-
- fs/ext4/super.c                  |   2 +-
- fs/inode.c                       | 222 +++++++++++++++++++++++++++++++++++----
- fs/stat.c                        |  39 ++++++-
- fs/xfs/libxfs/xfs_trans_inode.c  |   6 +-
- fs/xfs/xfs_iops.c                |   6 +-
- fs/xfs/xfs_super.c               |   2 +-
- include/linux/fs.h               |  61 +++++++----
- include/trace/events/timestamp.h | 173 ++++++++++++++++++++++++++++++
- mm/shmem.c                       |   2 +-
- 12 files changed, 514 insertions(+), 79 deletions(-)
----
-base-commit: 33b321ac3a51e590225585f41c7412b86e987a0d
-change-id: 20240626-mgtime-5cd80b18d810
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 5ff362277834..5139dec085f2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -662,11 +662,10 @@ struct inode {
+ 	loff_t			i_size;
+ 	time64_t		i_atime_sec;
+ 	time64_t		i_mtime_sec;
+-	time64_t		i_ctime_sec;
+ 	u32			i_atime_nsec;
+ 	u32			i_mtime_nsec;
+-	u32			i_ctime_nsec;
+-	u32			i_generation;
++	ktime_t			__i_ctime;
++	atomic64_t		i_version;
+ 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
+ 	unsigned short          i_bytes;
+ 	u8			i_blkbits;
+@@ -701,7 +700,6 @@ struct inode {
+ 		struct hlist_head	i_dentry;
+ 		struct rcu_head		i_rcu;
+ 	};
+-	atomic64_t		i_version;
+ 	atomic64_t		i_sequence; /* see futex */
+ 	atomic_t		i_count;
+ 	atomic_t		i_dio_count;
+@@ -724,6 +722,8 @@ struct inode {
+ 	};
+ 
+ 
++	u32			i_generation;
++
+ #ifdef CONFIG_FSNOTIFY
+ 	__u32			i_fsnotify_mask; /* all events this inode cares about */
+ 	/* 32-bit hole reserved for expanding i_fsnotify_mask */
+@@ -1608,29 +1608,25 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
+ 	return inode_set_mtime_to_ts(inode, ts);
+ }
+ 
+-static inline time64_t inode_get_ctime_sec(const struct inode *inode)
++static inline struct timespec64 inode_get_ctime(const struct inode *inode)
+ {
+-	return inode->i_ctime_sec;
++	return ktime_to_timespec64(inode->__i_ctime);
+ }
+ 
+-static inline long inode_get_ctime_nsec(const struct inode *inode)
++static inline time64_t inode_get_ctime_sec(const struct inode *inode)
+ {
+-	return inode->i_ctime_nsec;
++	return inode_get_ctime(inode).tv_sec;
+ }
+ 
+-static inline struct timespec64 inode_get_ctime(const struct inode *inode)
++static inline long inode_get_ctime_nsec(const struct inode *inode)
+ {
+-	struct timespec64 ts = { .tv_sec  = inode_get_ctime_sec(inode),
+-				 .tv_nsec = inode_get_ctime_nsec(inode) };
+-
+-	return ts;
++	return inode_get_ctime(inode).tv_nsec;
+ }
+ 
+ static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
+ 						      struct timespec64 ts)
+ {
+-	inode->i_ctime_sec = ts.tv_sec;
+-	inode->i_ctime_nsec = ts.tv_nsec;
++	inode->__i_ctime = ktime_set(ts.tv_sec, ts.tv_nsec);
+ 	return ts;
+ }
+ 
 
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.45.2
 
 
