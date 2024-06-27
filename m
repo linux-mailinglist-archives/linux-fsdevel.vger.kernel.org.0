@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-22612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2755D91A420
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 12:41:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5931391A422
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 12:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D43284152
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 10:41:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4061C21399
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 10:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013CD14F136;
-	Thu, 27 Jun 2024 10:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA11E13F44E;
+	Thu, 27 Jun 2024 10:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OT55KlSK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGw97+xM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C492A14F115;
-	Thu, 27 Jun 2024 10:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDA014F12D;
+	Thu, 27 Jun 2024 10:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719484794; cv=none; b=Hb85oR2C4mtPJ83oI//qIAbQuiyMANXiaA+KluyLfvcvCU80LXwVXNbrUbOrbLGm/6IrA19xeTptNkfTFBZrntl0RprLOrVOc05rwm2HOpO3iwpk3AYO3+R6dgH3e95NyuyPACDXJ/ZkUJ0iP87Xio3dhOQvyF/6+rI33UkLsN8=
+	t=1719484797; cv=none; b=JtMfuM+o/1TRCK3AD2FFGVGiV3WfzLcxj209GPIZH0LhnkDnaKIOYjP0y0UhXj4U+ZDQJHVSo0Sg/QxloKB316E9JpK0uDNvOGBzHEZDhWA5EUWKrN5aABsvfOOkT+hWuFqtWBehLhms5C+Ce/Ba+4ZeADNjdA2vNDIlyBQ8Hhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719484794; c=relaxed/simple;
-	bh=Gagml2vWKb4HTLerZRwBKq3Is+4TMHNPAjmAwDGGOrg=;
+	s=arc-20240116; t=1719484797; c=relaxed/simple;
+	bh=hGdDLjsSChXJ9bePyGsYe4I6qwek+5knQYcKhzZEyXg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Iq770LEbI9iCiQD4RNVTyci4QoFlGrFqLtcDjxZTiEMxINEwXK8SN7jUhkoEdmBRbBqc+cTRhs6GOL60WK06LA7NN4UpkSuMoo2ND2a7p7jkqtOg74eL3At2stARnrqw5fb6PjthhtkHs6P0n/Cqo7IhbD07PTu6P9yJt0TxRtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OT55KlSK; arc=none smtp.client-ip=209.85.167.47
+	 MIME-Version; b=Xuib3GbCA62yIn4PVJasNFH1/l95f1eS6gYKVIR5hgAH6sI1BaoM/o9yNIScQcclLjZpdrkMRJ3pIIrERq9I+UyZNCa/5hG3/o9gUcnkoj2+2jgkQOsOGpociE888figeaj0llh4C5B5uQpuBXPe67olphfLAQaj7CTYYHndkUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGw97+xM; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52cdd893e5cso5918576e87.1;
-        Thu, 27 Jun 2024 03:39:52 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-425624255f3so6968815e9.0;
+        Thu, 27 Jun 2024 03:39:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719484791; x=1720089591; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719484793; x=1720089593; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+VCM3WkcoPjwO3U6PrjTKLd51325lQXJKBmY5RFuANs=;
-        b=OT55KlSKY629TGYaRxrgU1ygv+/4KLSRApzewn5GNug8s0tzOGOrhBCsyTj26m90uk
-         QFYn+Dl6pmQB7EDmuEQ6flPCOf0YX2d3b1tYn4xwNpd5orAno/Wj06GfohwmU2mEASuF
-         IukVA5SlqsqsvyLIKJYcVpBmtPWL3BK30Ixk29f3i+Bv76lBOS+5Ka+hY8EhQMWdFhaJ
-         Eh3a9G+fnBqrhZHW4AKSButMRMKsS2wR7Ktgdqoxhft8cXldPFeTztagt1SndkeKORDL
-         uBBa/RribHUFvFAwVvJBiXOkcuEbG1bPEm+TndTjsnh1RG2Sy/TJieBJYZu08ONsGogi
-         4woQ==
+        bh=NWYOXuCXP6e46p+DWPm2mdKXMIhkuMXGRD48/DvCa1o=;
+        b=AGw97+xMNEPVfNhlwp+RD57Zk1UQ+DcML1BweEVYeUpMWjB4H8E5gDjA+Gbjbyp+L3
+         4NWDykQHYagzTF36ScUL0tDF+NXRIpVT2Pes1I/xpaESMIg18uQoJdmdBBRw+LzDbZoE
+         +QVvQsONZXDxVf9tPK742Bj6soLZADftt/E4/Wk8SuyHa+L2+XD78mjoO3WK/OvApHGD
+         ssnYq3Dc7M1bh3+CQ57Q8qtZR0YRreYXlWfPB9aPKxDgKTH2vQ/G8xNrIAeLvQAuHlza
+         U8+a0N5IsgOtK0f60d4/iKodjm6tY8MvFnn1wpwXrkZVCBX3xjjpg5X+D2Z1D1xQRjVV
+         ci8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719484791; x=1720089591;
+        d=1e100.net; s=20230601; t=1719484793; x=1720089593;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+VCM3WkcoPjwO3U6PrjTKLd51325lQXJKBmY5RFuANs=;
-        b=rb3BMSt9TxZCECntEFUvE1aCD4/uQnPUfxxi5cXXv7BybGCsrGtEbnLDpMARHNztO6
-         1aOUzROsQAt/hPNUR6y0DUI62v4IojYDC08iq07nlHpsWjzPSPUT3GfdfwVlB+Mvl6tN
-         rzV3apW2X+JApRwG0nVU1vwWBlxaEGOVa+tsgAaNaKHIexA6MN8ZlfjMiMCeAbvA4N12
-         fEYBK0FKSthLQBdKvOuFz99sOdJ/l5AjCfdxr8k420simzhhexIQaLXqyQDaJ2MaR32q
-         1ZR+Y5pkg+4mpP+GIo68M2VVILRL5TPcfHny+UDRpzS0mZI+r57gl/+1Tl/D+cEzjl4Y
-         rhHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUahOub9Y3KXPMwcbjJ9/vPV+Lm74KOz0bqmGx726GAExpT9a8h+Ki8JBznhAoPAQlKNGStCNWNqbKQC8mzcqrhNgoTfV9YmHJhzcue
-X-Gm-Message-State: AOJu0YzCfcdmhIvtTWPstjuu+qfrxaFgqrVUP5aGeBtvxrW0su6At2/f
-	QUbTXe1pUu3d2mXSH68pWe5v/fLuXZTaibSZEiRtVKtH1PfkJpgH
-X-Google-Smtp-Source: AGHT+IHG22q5gGPmyn4JxHMfF43Pxa48+aJZpq9H1yljtLt1rsVh3WR/Ktwueqi2rt34Jzl/0priJQ==
-X-Received: by 2002:a05:6512:b0d:b0:52c:f3fa:86c with SMTP id 2adb3069b0e04-52cf3fa14famr7561011e87.18.1719484790765;
-        Thu, 27 Jun 2024 03:39:50 -0700 (PDT)
+        bh=NWYOXuCXP6e46p+DWPm2mdKXMIhkuMXGRD48/DvCa1o=;
+        b=aPEnCezAPeAZwFVhvpT++9JlYHvD3O0/kJwqvKy1wedw3CJQh+NqWrIjb0zjO+RISr
+         Zr7OnXG3RCw/kVu4EP/2Eq75ejVjgIms0gYoLr9p7gtvAufgwzYjcA4fxsZXKAbLSCI2
+         EW0WbOiurAbpv2CksctPX8O+Wfy8lUHWs79XlzLY47MRuMrl/8qxU55mjAEpPUjwbUoZ
+         ON/efPgrEDrp/G13We9kYg3Lgfto/oOcnmGdNQGSzbMTgsw18mDTzrLMXr+tCI1yevBH
+         9SGqnZkIEpXW9xENpMRHOcp7GLacQuVHd5WJT2j32aXmW8vzksQmOuDpwOzxhjOzKoWw
+         kwgA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6OL5qSwtA+t5FLUQbIHaGJGlTyrvI5PdRNnPWrLmHHUYxKdIz86wZqptlMUx4PRAM7nWwmvnUFoeBSz+VNbsu9LBmseo+4hDtST4y
+X-Gm-Message-State: AOJu0YxqUeBTgd9dBFYvQfFFwT0WGcIHmPEu0Fcoa7y9tRswcMHs7R/p
+	awk5eaUHEEUWVgij9TQ8ANqp/UV5Rfuu0TDq/drNTO6mUOVTfjUC
+X-Google-Smtp-Source: AGHT+IFbxgAT5IP7LDnM6uEx/lcUppkAS+xdNFjPD+9JwByQLdlaqAQCQOArV4DjqcasmPK0V2DCPw==
+X-Received: by 2002:a05:600c:4507:b0:421:805f:ab3c with SMTP id 5b1f17b1804b1-42564371addmr15241355e9.14.1719484793023;
+        Thu, 27 Jun 2024 03:39:53 -0700 (PDT)
 Received: from lucifer.home ([2a00:23cc:d20f:ba01:bb66:f8b2:a0e8:6447])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42564bb6caasm19957195e9.33.2024.06.27.03.39.49
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42564bb6caasm19957195e9.33.2024.06.27.03.39.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 03:39:49 -0700 (PDT)
+        Thu, 27 Jun 2024 03:39:51 -0700 (PDT)
 From: Lorenzo Stoakes <lstoakes@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org,
@@ -82,9 +82,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	Kees Cook <kees@kernel.org>,
 	Suren Baghdasaryan <surenb@google.com>,
 	Lorenzo Stoakes <lstoakes@gmail.com>
-Subject: [RFC PATCH 5/7] MAINTAINERS: Add entry for new VMA files
-Date: Thu, 27 Jun 2024 11:39:30 +0100
-Message-ID: <22f916d5e6d24e095a5537ab590fe26cedabd749.1719481836.git.lstoakes@gmail.com>
+Subject: [RFC PATCH 6/7] tools: separate out shared radix-tree components
+Date: Thu, 27 Jun 2024 11:39:31 +0100
+Message-ID: <c23f1b80c62bc906267a8b144befe7ac96daa88c.1719481836.git.lstoakes@gmail.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <cover.1719481836.git.lstoakes@gmail.com>
 References: <cover.1719481836.git.lstoakes@gmail.com>
@@ -96,38 +96,461 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The vma files contain logic split from mmap.c for the most part and are all
-relevant to VMA logic, so maintain the same reviewers for both.
+The core components contained within the radix-tree tests which provide
+shims for kernel headers and access to the maple tree are useful for
+testing other things, so separate them out and make the radix tree tests
+dependent on the shared components.
+
+This lays the groundwork for us to add VMA tests of the newly introduced
+vma.c file.
 
 Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
 ---
- MAINTAINERS | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ tools/testing/radix-tree/Makefile             | 68 +++----------------
+ tools/testing/radix-tree/maple.c              | 14 +---
+ tools/testing/radix-tree/xarray.c             |  9 +--
+ tools/testing/shared/autoconf.h               |  2 +
+ tools/testing/{radix-tree => shared}/bitmap.c |  0
+ tools/testing/{radix-tree => shared}/linux.c  |  0
+ .../{radix-tree => shared}/linux/bug.h        |  0
+ .../{radix-tree => shared}/linux/cpu.h        |  0
+ .../{radix-tree => shared}/linux/idr.h        |  0
+ .../{radix-tree => shared}/linux/init.h       |  0
+ .../{radix-tree => shared}/linux/kconfig.h    |  0
+ .../{radix-tree => shared}/linux/kernel.h     |  0
+ .../{radix-tree => shared}/linux/kmemleak.h   |  0
+ .../{radix-tree => shared}/linux/local_lock.h |  0
+ .../{radix-tree => shared}/linux/lockdep.h    |  0
+ .../{radix-tree => shared}/linux/maple_tree.h |  0
+ .../{radix-tree => shared}/linux/percpu.h     |  0
+ .../{radix-tree => shared}/linux/preempt.h    |  0
+ .../{radix-tree => shared}/linux/radix-tree.h |  0
+ .../{radix-tree => shared}/linux/rcupdate.h   |  0
+ .../{radix-tree => shared}/linux/xarray.h     |  0
+ tools/testing/shared/maple-shared.h           |  9 +++
+ tools/testing/shared/maple-shim.c             |  7 ++
+ tools/testing/shared/shared.h                 | 34 ++++++++++
+ tools/testing/shared/shared.mk                | 68 +++++++++++++++++++
+ .../testing/shared/trace/events/maple_tree.h  |  5 ++
+ tools/testing/shared/xarray-shared.c          |  5 ++
+ tools/testing/shared/xarray-shared.h          |  4 ++
+ 28 files changed, 147 insertions(+), 78 deletions(-)
+ create mode 100644 tools/testing/shared/autoconf.h
+ rename tools/testing/{radix-tree => shared}/bitmap.c (100%)
+ rename tools/testing/{radix-tree => shared}/linux.c (100%)
+ rename tools/testing/{radix-tree => shared}/linux/bug.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/cpu.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/idr.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/init.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/kconfig.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/kernel.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/kmemleak.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/local_lock.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/lockdep.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/maple_tree.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/percpu.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/preempt.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/radix-tree.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/rcupdate.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/xarray.h (100%)
+ create mode 100644 tools/testing/shared/maple-shared.h
+ create mode 100644 tools/testing/shared/maple-shim.c
+ create mode 100644 tools/testing/shared/shared.h
+ create mode 100644 tools/testing/shared/shared.mk
+ create mode 100644 tools/testing/shared/trace/events/maple_tree.h
+ create mode 100644 tools/testing/shared/xarray-shared.c
+ create mode 100644 tools/testing/shared/xarray-shared.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 098d214f78d9..0847cb5903ab 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23971,6 +23971,19 @@ F:	include/uapi/linux/vsockmon.h
- F:	net/vmw_vsock/
- F:	tools/testing/vsock/
+diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
+index 7527f738b4a1..29d607063749 100644
+--- a/tools/testing/radix-tree/Makefile
++++ b/tools/testing/radix-tree/Makefile
+@@ -1,29 +1,16 @@
+ # SPDX-License-Identifier: GPL-2.0
  
-+VMA
-+M:	Andrew Morton <akpm@linux-foundation.org>
-+R:	Liam R. Howlett <Liam.Howlett@oracle.com>
-+R:	Vlastimil Babka <vbabka@suse.cz>
-+R:	Lorenzo Stoakes <lstoakes@gmail.com>
-+L:	linux-mm@kvack.org
-+S:	Maintained
-+W:	http://www.linux-mm.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-+F:	mm/vma.c
-+F:	mm/vma.h
-+F:	mm/vma_internal.h
+-CFLAGS += -I. -I../../include -I../../../lib -g -Og -Wall \
+-	  -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined
+-LDFLAGS += -fsanitize=address -fsanitize=undefined
+-LDLIBS+= -lpthread -lurcu
+-TARGETS = main idr-test multiorder xarray maple
+-CORE_OFILES := xarray.o radix-tree.o idr.o linux.o test.o find_bit.o bitmap.o \
+-			 slab.o maple.o
+-OFILES = main.o $(CORE_OFILES) regression1.o regression2.o regression3.o \
+-	 regression4.o tag_check.o multiorder.o idr-test.o iteration_check.o \
+-	 iteration_check_2.o benchmark.o
++.PHONY: default
+ 
+-ifndef SHIFT
+-	SHIFT=3
+-endif
++default: main
+ 
+-ifeq ($(BUILD), 32)
+-	CFLAGS += -m32
+-	LDFLAGS += -m32
+-LONG_BIT := 32
+-endif
++include ../shared/shared.mk
+ 
+-ifndef LONG_BIT
+-LONG_BIT := $(shell getconf LONG_BIT)
+-endif
++TARGETS = main idr-test multiorder xarray maple
++CORE_OFILES = $(SHARED_OFILES) xarray.o maple.o test.o
++OFILES = main.o $(CORE_OFILES) regression1.o regression2.o \
++	 regression3.o regression4.o tag_check.o multiorder.o idr-test.o \
++	iteration_check.o iteration_check_2.o benchmark.o
+ 
+ targets: generated/map-shift.h generated/bit-length.h $(TARGETS)
+ 
+@@ -32,46 +19,13 @@ main:	$(OFILES)
+ idr-test.o: ../../../lib/test_ida.c
+ idr-test: idr-test.o $(CORE_OFILES)
+ 
+-xarray: $(CORE_OFILES)
++xarray: $(CORE_OFILES) xarray.o
+ 
+-maple: $(CORE_OFILES)
++maple: $(CORE_OFILES) maple.o
+ 
+ multiorder: multiorder.o $(CORE_OFILES)
+ 
+ clean:
+ 	$(RM) $(TARGETS) *.o radix-tree.c idr.c generated/map-shift.h generated/bit-length.h
+ 
+-vpath %.c ../../lib
+-
+-$(OFILES): Makefile *.h */*.h generated/map-shift.h generated/bit-length.h \
+-	../../include/linux/*.h \
+-	../../include/asm/*.h \
+-	../../../include/linux/xarray.h \
+-	../../../include/linux/maple_tree.h \
+-	../../../include/linux/radix-tree.h \
+-	../../../lib/radix-tree.h \
+-	../../../include/linux/idr.h
+-
+-radix-tree.c: ../../../lib/radix-tree.c
+-	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
+-
+-idr.c: ../../../lib/idr.c
+-	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
+-
+-xarray.o: ../../../lib/xarray.c ../../../lib/test_xarray.c
+-
+-maple.o: ../../../lib/maple_tree.c ../../../lib/test_maple_tree.c
+-
+-generated/map-shift.h:
+-	@if ! grep -qws $(SHIFT) generated/map-shift.h; then		\
+-		echo "#define XA_CHUNK_SHIFT $(SHIFT)" >		\
+-				generated/map-shift.h;			\
+-	fi
+-
+-generated/bit-length.h: FORCE
+-	@if ! grep -qws CONFIG_$(LONG_BIT)BIT generated/bit-length.h; then   \
+-		echo "Generating $@";                                        \
+-		echo "#define CONFIG_$(LONG_BIT)BIT 1" > $@;                 \
+-	fi
+-
+-FORCE: ;
++$(OFILES): $(SHARED_DEPS) *.h */*.h
+diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+index f1caf4bcf937..5b53ecf22fc4 100644
+--- a/tools/testing/radix-tree/maple.c
++++ b/tools/testing/radix-tree/maple.c
+@@ -8,20 +8,8 @@
+  * difficult to handle in kernel tests.
+  */
+ 
+-#define CONFIG_DEBUG_MAPLE_TREE
+-#define CONFIG_MAPLE_SEARCH
+-#define MAPLE_32BIT (MAPLE_NODE_SLOTS > 31)
++#include "maple-shared.h"
+ #include "test.h"
+-#include <stdlib.h>
+-#include <time.h>
+-#include "linux/init.h"
+-
+-#define module_init(x)
+-#define module_exit(x)
+-#define MODULE_AUTHOR(x)
+-#define MODULE_LICENSE(x)
+-#define dump_stack()	assert(0)
+-
+ #include "../../../lib/maple_tree.c"
+ #include "../../../lib/test_maple_tree.c"
+ 
+diff --git a/tools/testing/radix-tree/xarray.c b/tools/testing/radix-tree/xarray.c
+index f20e12cbbfd4..253208a8541b 100644
+--- a/tools/testing/radix-tree/xarray.c
++++ b/tools/testing/radix-tree/xarray.c
+@@ -4,16 +4,9 @@
+  * Copyright (c) 2018 Matthew Wilcox <willy@infradead.org>
+  */
+ 
+-#define XA_DEBUG
++#include "xarray-shared.h"
+ #include "test.h"
+ 
+-#define module_init(x)
+-#define module_exit(x)
+-#define MODULE_AUTHOR(x)
+-#define MODULE_LICENSE(x)
+-#define dump_stack()	assert(0)
+-
+-#include "../../../lib/xarray.c"
+ #undef XA_DEBUG
+ #include "../../../lib/test_xarray.c"
+ 
+diff --git a/tools/testing/shared/autoconf.h b/tools/testing/shared/autoconf.h
+new file mode 100644
+index 000000000000..92dc474c349b
+--- /dev/null
++++ b/tools/testing/shared/autoconf.h
+@@ -0,0 +1,2 @@
++#include "bit-length.h"
++#define CONFIG_XARRAY_MULTI 1
+diff --git a/tools/testing/radix-tree/bitmap.c b/tools/testing/shared/bitmap.c
+similarity index 100%
+rename from tools/testing/radix-tree/bitmap.c
+rename to tools/testing/shared/bitmap.c
+diff --git a/tools/testing/radix-tree/linux.c b/tools/testing/shared/linux.c
+similarity index 100%
+rename from tools/testing/radix-tree/linux.c
+rename to tools/testing/shared/linux.c
+diff --git a/tools/testing/radix-tree/linux/bug.h b/tools/testing/shared/linux/bug.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/bug.h
+rename to tools/testing/shared/linux/bug.h
+diff --git a/tools/testing/radix-tree/linux/cpu.h b/tools/testing/shared/linux/cpu.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/cpu.h
+rename to tools/testing/shared/linux/cpu.h
+diff --git a/tools/testing/radix-tree/linux/idr.h b/tools/testing/shared/linux/idr.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/idr.h
+rename to tools/testing/shared/linux/idr.h
+diff --git a/tools/testing/radix-tree/linux/init.h b/tools/testing/shared/linux/init.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/init.h
+rename to tools/testing/shared/linux/init.h
+diff --git a/tools/testing/radix-tree/linux/kconfig.h b/tools/testing/shared/linux/kconfig.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/kconfig.h
+rename to tools/testing/shared/linux/kconfig.h
+diff --git a/tools/testing/radix-tree/linux/kernel.h b/tools/testing/shared/linux/kernel.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/kernel.h
+rename to tools/testing/shared/linux/kernel.h
+diff --git a/tools/testing/radix-tree/linux/kmemleak.h b/tools/testing/shared/linux/kmemleak.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/kmemleak.h
+rename to tools/testing/shared/linux/kmemleak.h
+diff --git a/tools/testing/radix-tree/linux/local_lock.h b/tools/testing/shared/linux/local_lock.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/local_lock.h
+rename to tools/testing/shared/linux/local_lock.h
+diff --git a/tools/testing/radix-tree/linux/lockdep.h b/tools/testing/shared/linux/lockdep.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/lockdep.h
+rename to tools/testing/shared/linux/lockdep.h
+diff --git a/tools/testing/radix-tree/linux/maple_tree.h b/tools/testing/shared/linux/maple_tree.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/maple_tree.h
+rename to tools/testing/shared/linux/maple_tree.h
+diff --git a/tools/testing/radix-tree/linux/percpu.h b/tools/testing/shared/linux/percpu.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/percpu.h
+rename to tools/testing/shared/linux/percpu.h
+diff --git a/tools/testing/radix-tree/linux/preempt.h b/tools/testing/shared/linux/preempt.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/preempt.h
+rename to tools/testing/shared/linux/preempt.h
+diff --git a/tools/testing/radix-tree/linux/radix-tree.h b/tools/testing/shared/linux/radix-tree.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/radix-tree.h
+rename to tools/testing/shared/linux/radix-tree.h
+diff --git a/tools/testing/radix-tree/linux/rcupdate.h b/tools/testing/shared/linux/rcupdate.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/rcupdate.h
+rename to tools/testing/shared/linux/rcupdate.h
+diff --git a/tools/testing/radix-tree/linux/xarray.h b/tools/testing/shared/linux/xarray.h
+similarity index 100%
+rename from tools/testing/radix-tree/linux/xarray.h
+rename to tools/testing/shared/linux/xarray.h
+diff --git a/tools/testing/shared/maple-shared.h b/tools/testing/shared/maple-shared.h
+new file mode 100644
+index 000000000000..3d847edd149d
+--- /dev/null
++++ b/tools/testing/shared/maple-shared.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
 +
- VMALLOC
- M:	Andrew Morton <akpm@linux-foundation.org>
- R:	Uladzislau Rezki <urezki@gmail.com>
++#define CONFIG_DEBUG_MAPLE_TREE
++#define CONFIG_MAPLE_SEARCH
++#define MAPLE_32BIT (MAPLE_NODE_SLOTS > 31)
++#include "shared.h"
++#include <stdlib.h>
++#include <time.h>
++#include "linux/init.h"
+diff --git a/tools/testing/shared/maple-shim.c b/tools/testing/shared/maple-shim.c
+new file mode 100644
+index 000000000000..640df76f483e
+--- /dev/null
++++ b/tools/testing/shared/maple-shim.c
+@@ -0,0 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++/* Very simple shim around the maple tree. */
++
++#include "maple-shared.h"
++
++#include "../../../lib/maple_tree.c"
+diff --git a/tools/testing/shared/shared.h b/tools/testing/shared/shared.h
+new file mode 100644
+index 000000000000..495602e60b65
+--- /dev/null
++++ b/tools/testing/shared/shared.h
+@@ -0,0 +1,34 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <linux/types.h>
++#include <linux/bug.h>
++#include <linux/kernel.h>
++#include <linux/bitops.h>
++
++#include <linux/gfp.h>
++#include <linux/types.h>
++#include <linux/rcupdate.h>
++
++#ifndef module_init
++#define module_init(x)
++#endif
++
++#ifndef module_exit
++#define module_exit(x)
++#endif
++
++#ifndef MODULE_AUTHOR
++#define MODULE_AUTHOR(x)
++#endif
++
++#ifndef MODULE_LICENSE
++#define MODULE_LICENSE(x)
++#endif
++
++#ifndef MODULE_DESCRIPTION
++#define MODULE_DESCRIPTION(x)
++#endif
++
++#ifndef dump_stack
++#define dump_stack()	assert(0)
++#endif
+diff --git a/tools/testing/shared/shared.mk b/tools/testing/shared/shared.mk
+new file mode 100644
+index 000000000000..69a6a528eaed
+--- /dev/null
++++ b/tools/testing/shared/shared.mk
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: GPL-2.0
++
++CFLAGS += -I../shared -I. -I../../include -I../../../lib -g -Og -Wall \
++	  -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined
++LDFLAGS += -fsanitize=address -fsanitize=undefined
++LDLIBS += -lpthread -lurcu
++SHARED_OFILES = xarray-shared.o radix-tree.o idr.o linux.o find_bit.o bitmap.o \
++	slab.o
++SHARED_DEPS = Makefile ../shared/shared.mk ../shared/*.h generated/map-shift.h \
++	generated/bit-length.h generated/autoconf.h \
++	../../include/linux/*.h \
++	../../include/asm/*.h \
++	../../../include/linux/xarray.h \
++	../../../include/linux/maple_tree.h \
++	../../../include/linux/radix-tree.h \
++	../../../lib/radix-tree.h \
++	../../../include/linux/idr.h
++
++ifndef SHIFT
++	SHIFT=3
++endif
++
++ifeq ($(BUILD), 32)
++	CFLAGS += -m32
++	LDFLAGS += -m32
++LONG_BIT := 32
++endif
++
++ifndef LONG_BIT
++LONG_BIT := $(shell getconf LONG_BIT)
++endif
++
++%.o: ../shared/%.c
++	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
++
++vpath %.c ../../lib
++
++$(SHARED_OFILES): $(SHARED_DEPS)
++
++radix-tree.c: ../../../lib/radix-tree.c
++	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
++
++idr.c: ../../../lib/idr.c
++	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
++
++xarray-shared.o: ../shared/xarray-shared.c ../../../lib/xarray.c \
++	../../../lib/test_xarray.c
++
++maple-shared.o: ../shared/maple-shared.c ../../../lib/maple_tree.c \
++	../../../lib/test_maple_tree.c
++
++generated/autoconf.h:
++	cp ../shared/autoconf.h generated/autoconf.h
++
++generated/map-shift.h:
++	@if ! grep -qws $(SHIFT) generated/map-shift.h; then            \
++		echo "Generating $@";                                   \
++		echo "#define XA_CHUNK_SHIFT $(SHIFT)" >                \
++				generated/map-shift.h;                  \
++	fi
++
++generated/bit-length.h: FORCE
++	@if ! grep -qws CONFIG_$(LONG_BIT)BIT generated/bit-length.h; then   \
++		echo "Generating $@";                                        \
++		echo "#define CONFIG_$(LONG_BIT)BIT 1" > $@;                 \
++	fi
++
++FORCE: ;
+diff --git a/tools/testing/shared/trace/events/maple_tree.h b/tools/testing/shared/trace/events/maple_tree.h
+new file mode 100644
+index 000000000000..97d0e1ddcf08
+--- /dev/null
++++ b/tools/testing/shared/trace/events/maple_tree.h
+@@ -0,0 +1,5 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++
++#define trace_ma_op(a, b) do {} while (0)
++#define trace_ma_read(a, b) do {} while (0)
++#define trace_ma_write(a, b, c, d) do {} while (0)
+diff --git a/tools/testing/shared/xarray-shared.c b/tools/testing/shared/xarray-shared.c
+new file mode 100644
+index 000000000000..e90901958dcd
+--- /dev/null
++++ b/tools/testing/shared/xarray-shared.c
+@@ -0,0 +1,5 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#include "xarray-shared.h"
++
++#include "../../../lib/xarray.c"
+diff --git a/tools/testing/shared/xarray-shared.h b/tools/testing/shared/xarray-shared.h
+new file mode 100644
+index 000000000000..ac2d16ff53ae
+--- /dev/null
++++ b/tools/testing/shared/xarray-shared.h
+@@ -0,0 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++
++#define XA_DEBUG
++#include "shared.h"
 -- 
 2.45.1
 
