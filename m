@@ -1,122 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-22639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C93D91AAFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 17:18:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2A491AB76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 17:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EA1DB29A64
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 15:18:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A998B284DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 15:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED942198A2B;
-	Thu, 27 Jun 2024 15:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3o0wOh+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8381991B9;
+	Thu, 27 Jun 2024 15:28:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEDF195383;
-	Thu, 27 Jun 2024 15:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9008E197A61;
+	Thu, 27 Jun 2024 15:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501526; cv=none; b=pXUSGz9Pu/c5h3VaIHzEhGHxF6xAlUW2EcbMTrEfneobT2ZpL+SqwL4n4jc59jRAoICS2ucCddmu+ID8mH2vTQ0HHhBpvS9BEYZ6Y8hk88OtBTydTCHpK2OXHo7qydOtaINEY/isGTchn/hBn9r8N/eFXfEvITdabAZNVmzSsvw=
+	t=1719502108; cv=none; b=fASkRQSpSoOg+8bqam3X+KxU4JScZjZqBSVKSROAg8DKPXJ8gjp4eqqyhjNjHiXVZo9JqmSfCJrwvJtQwcfCSK4WREJBmgnUzxKZI8VBmmAqAANJONubbuDEUkmEJG1KApG9s9dfvysWcf6znvP5e+stO+26hCcWfim11X2gRQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501526; c=relaxed/simple;
-	bh=hNlvklwWESHsTITC4Xz4ZjyNEZ0W6rbDTEZviL0qPkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xt8FsaRvQxhlXSc7Y2JmFjE6n2Nmmmg/yJm0X48X5/2+F1RdTzM8csTPCUJxBFxVn67NWcGQmhIfLg+6jXxhROnFVzokl7zq9hQ6Y64SjepHOnddMHtsEr7I73ujDwjOBpXg66YYrtlwttTWqm7kYVCvrXPbB/aNubpKaWa6zSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3o0wOh+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9345DC2BBFC;
-	Thu, 27 Jun 2024 15:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719501525;
-	bh=hNlvklwWESHsTITC4Xz4ZjyNEZ0W6rbDTEZviL0qPkg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s3o0wOh+uQMCynJkUwYUjA0WFoGgFGgC09ncK9B7PkfvnNhVCTEt4vJuM4EEEIKvI
-	 PneAPhbCHWqZNgqv3+ImOrtB6B/IuSBt4/r8Zn0NIFc2qoam8ZdcYzq09eWCTftYqo
-	 4OwiOGvsGy17z9Y+YjYFsi9HSl2bziEp07rbb75DU5ali6lj8HQ6kUMoAYx4RGFOmM
-	 gFR1tNo7vh+8190GYToMAmNAEXr7BoOk9+eNXlIIjE33JGpLFOZgN+/p05Anxygn+g
-	 woks7DoYhoAnQXV03dHCVewsMNdrsB193kvvP8dpx+oryMSwuD0lrAzeX/kc+M/a6P
-	 lVZ24ywVVjSUw==
-Date: Thu, 27 Jun 2024 17:18:40 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Baokun Li <libaokun@huaweicloud.com>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, 
-	dhowells@redhat.com, hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com, 
-	zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com, 
-	wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH v2 2/5] cachefiles: flush all requests for the object
- that is being dropped
-Message-ID: <20240627-beizeiten-hecht-0efad69e0e38@brauner>
-References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
- <20240515125136.3714580-3-libaokun@huaweicloud.com>
- <5bb711c4bbc59ea9fff486a86acce13880823e7b.camel@kernel.org>
- <e40b80fc-52b8-4f89-800a-3ffa0034a072@huaweicloud.com>
+	s=arc-20240116; t=1719502108; c=relaxed/simple;
+	bh=HbuetP97OhPn2PucQXYuYhb6lAy9dew5SWP2gwy7epk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ItvZU2VGrFqKt9O013UWsveR9UA0FEHSs06+qPN/ALGUjXrfrs5/gW1otHIqUcDv59sYQ8ZvFuRc8k4rxVXjgtubCO1u42H0+0ZnBM6bJSfKSOLLhW/5aSY3svz6lQEnQTku2UvEPbUo3zqlMTYcxIfJIKCkUKm772+UKncGA2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id C45A62055FA2;
+	Fri, 28 Jun 2024 00:28:16 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 45RFSFAl004936
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 00:28:16 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 45RFSFFO018977
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 00:28:15 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 45RFSEDH018975;
+	Fri, 28 Jun 2024 00:28:14 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gwendal
+ Grignou <gwendal@chromium.org>, dlunev@chromium.org
+Subject: Re: [PATCH v2 2/2] fat: always use dir_emit_dots and ignore . and
+ .. entries
+In-Reply-To: <Zn1gQeWToPNkp9nt@quatroqueijos.cascardo.eti.br> (Thadeu Lima de
+	Souza Cascardo's message of "Thu, 27 Jun 2024 09:51:13 -0300")
+References: <20240625175133.922758-1-cascardo@igalia.com>
+	<20240625175133.922758-3-cascardo@igalia.com>
+	<871q4kae58.fsf@mail.parknet.co.jp>
+	<ZnxwEtmYeZcKopJK@quatroqueijos.cascardo.eti.br>
+	<87a5j7v517.fsf@mail.parknet.co.jp>
+	<Zn1gQeWToPNkp9nt@quatroqueijos.cascardo.eti.br>
+Date: Fri, 28 Jun 2024 00:28:14 +0900
+Message-ID: <87jzial81d.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e40b80fc-52b8-4f89-800a-3ffa0034a072@huaweicloud.com>
+Content-Type: text/plain
 
-On Thu, Jun 27, 2024 at 07:20:16PM GMT, Baokun Li wrote:
-> On 2024/6/27 19:01, Jeff Layton wrote:
-> > On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
-> > > From: Baokun Li <libaokun1@huawei.com>
-> > > 
-> > > Because after an object is dropped, requests for that object are
-> > > useless,
-> > > flush them to avoid causing other problems.
-> > > 
-> > > This prepares for the later addition of cancel_work_sync(). After the
-> > > reopen requests is generated, flush it to avoid cancel_work_sync()
-> > > blocking by waiting for daemon to complete the reopen requests.
-> > > 
-> > > Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> > > ---
-> > >   fs/cachefiles/ondemand.c | 19 +++++++++++++++++++
-> > >   1 file changed, 19 insertions(+)
-> > > 
-> > > diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-> > > index 73da4d4eaa9b..d24bff43499b 100644
-> > > --- a/fs/cachefiles/ondemand.c
-> > > +++ b/fs/cachefiles/ondemand.c
-> > > @@ -564,12 +564,31 @@ int cachefiles_ondemand_init_object(struct
-> > > cachefiles_object *object)
-> > >   void cachefiles_ondemand_clean_object(struct cachefiles_object
-> > > *object)
-> > >   {
-> > > +	unsigned long index;
-> > > +	struct cachefiles_req *req;
-> > > +	struct cachefiles_cache *cache;
-> > > +
-> > >   	if (!object->ondemand)
-> > >   		return;
-> > >   	cachefiles_ondemand_send_req(object, CACHEFILES_OP_CLOSE, 0,
-> > >   			cachefiles_ondemand_init_close_req, NULL);
-> > > +
-> > > +	if (!object->ondemand->ondemand_id)
-> > > +		return;
-> > > +
-> > > +	/* Flush all requests for the object that is being dropped.
-> > > */
-> > I wouldn't call this a "Flush". In the context of writeback, that
-> > usually means that we're writing out pages now in order to do something
-> > else. In this case, it looks like you're more canceling these requests
-> > since you're marking them with an error and declaring them complete.
-> Makes sense, I'll update 'flush' to 'cancel' in the comment and subject.
-> 
-> I am not a native speaker of English, so some of the expressions may
-> not be accurate, thank you for correcting me.
+Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
 
-Can you please resend all patch series that we're supposed to take for
-this cycle, please?
+>> First of all, I'm not thinking this is the fix, I'm thinking this as the
+>> workaround of broken formatter (because the windows's fsck also think it
+>> as broken). So very low priority to support.
+>> 
+>> As said, I also think low chance to break the userspace. However it
+>> changes real offset to pseudo offset. So if userspace saved it to
+>> persistent space, breaks userspace. Unlikely, but I think there is no
+>> value to change the behavior for workaround.
+>
+> So I started doing some investigation and that lead me to the following
+> code from fs/fat/inode.c:
+>
+> static void fat_evict_inode(struct inode *inode)
+> {
+> 	truncate_inode_pages_final(&inode->i_data);
+> 	if (!inode->i_nlink) {
+> 		inode->i_size = 0;
+> 		fat_truncate_blocks(inode, 0);
+> 	} else
+> 		fat_free_eofblocks(inode);
+> [...]
+>
+> That is, since the directory has no links, once it is evicted (which
+> happens right after reading the number of subdirectories and failing
+> verification), it is truncated. That means all clusters are marked as FREE.
+> Then, later, if trying to fsck or mount this filesystem again, the
+> directory entry is removed or further errors show up (as an EOF is
+> expected, not a FREE cluster).
+>
+> And that is caused by attributing a number of 0 links. I looked it up on
+> how other filesystems handle this situation and I found out that exfat adds
+> 2 to the number of subdirectories, just as I am suggesting. When
+> enumerating the directories (at its readdir), it also relies on
+> dir_emit_dots for all cases.
+
+Because exfat doesn't have "."/".." always, IIRC.
+
+> As for programs persisting the offset, the manpage for telldir has on its
+> NOTES section:
+>
+> """
+> Application programs should treat this strictly as an opaque value, making
+> no assumptions about its contents.
+> """
+>
+> I know this doesn't refer to persisting or not that opaque value, but any
+> other changes to the directory would change the offset of its current
+> subdirectories and given those values are opaque, no assumptions should be
+> made. And unless we find such programs in the wild, the same argunent could
+> be made that there may be programs that expect . and .. to be at offset 0
+> and 1, like every filesystem that uses dir_emit_dots does.
+>
+> I understand the cautiousness to prevent regressions, but I did the work
+> here to test and understand the changes that are being proposed. I even
+> looked into another way of preventing the further corruption, but that
+> convinced me even more that the right fix is to assign a minimum number of
+> links to directories and I found precedence to this.
+
+I seriously recommend to change app that make this, or changing the fsck
+to fix this. Because this looks like broken as FAT.
+
+Honestly I'm not accepting willingly though, the way to add the
+workaround for this would be, detect this breakage and warn it, then
+mark the dir inode as broken. And add the workaround codes only for
+broken dir inode, and make it work for all operations (just make
+mountable and readable is not enough, at least write must not corrupt fs
+or panic etc.), without changing the behavior of correct inodes.
+
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
