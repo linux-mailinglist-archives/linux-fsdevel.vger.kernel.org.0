@@ -1,258 +1,248 @@
-Return-Path: <linux-fsdevel+bounces-22664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E09A91AF06
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 20:27:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FBE91AF0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 20:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18EE1C211D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 18:26:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8019B293EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 18:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDE719B5AB;
-	Thu, 27 Jun 2024 18:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEFF19ADB6;
+	Thu, 27 Jun 2024 18:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NsMjqisx";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="KBoAIAEg"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h5q8xp5N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BF619AA5D;
-	Thu, 27 Jun 2024 18:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719512758; cv=fail; b=IHOBBtvThBFRrnaMt7mx7mfutNmSOggyrwPz0xCde7PxHugA2xPtFoQZkSRF/95aGFLS5AnDGJ0KwhYraoaMe/yqsKw5kkn5trM8/Q1uPRRtC/JZHC+ZlwXWtaeptLnAFWzT3E/C+UNbaeCLcHFEVlP8R+VfIdrkJuukv3q9Gt4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719512758; c=relaxed/simple;
-	bh=TJQfgvPlMfHySo3GRausDPl5fAmZYFbgvvFDNiRCOL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dC3y0Jl/6xZ0HINcf7b1OSXMMq9ChmMsqYgKGoqp6YOfqGP/DBe5dLhYk9ZQT2IHtZdvbA5tMv8KXV+g2xvy4KGH/gx8AHkNYN0v6T2zPdvAmIK8O5K2i7EhQh27PVC5u5e+cR9a8NLYDkZTfK9VqDTEUi2HBA1RUFnWm0CQSvY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NsMjqisx; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=KBoAIAEg; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RFtYB3016721;
-	Thu, 27 Jun 2024 18:25:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=Y2NtDR1yu3MgIff
-	cO/hVs1zwFPy+e+Nf1FhFP7u9Fos=; b=NsMjqisxdFv0h6ENUMMjNpBCjcyXi4r
-	czsPvaHJDX5xzM2V6ozuzpeeqiEjTQ3CE9K5xKp4YkfiYA7/0EmokOfvAdh8ReeA
-	BHSgvKdCKCIFNCg9C4xDOXWRrmFqV5EUhPgLyhOv8QZV1RretjMrEEq+p+MrjCiw
-	VDZ/D5hFAHrvHb+37vLkHlBVhHGUltVUvpsaUwyVNRqH7oytjeMmO1WOxMP8WXiW
-	qCkVHWnUfMpD+Z2XyfHAJ7Il4oPLCXODPpUq6HMJy3U2bx8g5aLsWM3U44TCLHtF
-	Acy4RRTnbK3yz1im270ABKa0lAFqyRf3x+LYlwaUjSO1244Y+a2meNw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ywnhb6s4a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Jun 2024 18:25:42 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45RIHGDL001314;
-	Thu, 27 Jun 2024 18:25:42 GMT
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2177.outbound.protection.outlook.com [104.47.73.177])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ywn2bga9a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Jun 2024 18:25:42 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Py6kyTkxO8pa6z/f6MH8xisjU2CEx/b7I66U+5uBwatVwfjKM25TP5dV3dpWnX/H3eSoEmz777lI27FwcC0iDmJbSCQjm14IrhQk78RXuNhCd0DZcYzpv/Epqf+2c28IbPG3DAm02GVjKKaa/+A00Gbpyi5hpAmZzsLUXiy5rFeh/lNCY0EMEtvhSnYdwtYvC+5VLPtuDrZTfHE4qb3w5KvYr0iFhRHQtC8iMLhcK+YiuOv6pdWEOssP+kvxwqL+voGx/zb6fiiQwym0ZMqWzUH3KqKOpvWwddFHGCsAFZVUoXinPTtAa3iSlOfjsShfmVsQWS++qibOvHxkZxxeXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y2NtDR1yu3MgIffcO/hVs1zwFPy+e+Nf1FhFP7u9Fos=;
- b=T+g9Q8M8A4db9NRUyK/C3oe3EVOqnKREGnfmox5P/X3fqELgtfte9h2fro7jWEKnjuOtdZiBDc+6j+3p42/SwuQgLlHa52TmMFrB7q9GpgkyfpTpZjUlFpOTei9dt9BAknBSiVo+w6V0p8w1G2ybBnQ2bg2x+utxMR6xBSZI7ZgaP1/SuhlugsxZkhljHhaNwyH3b+59+z7hq2dnwMCiyskLzxNNVJZLVXROeZtQfdeTwTXv0xnCvVu0SXrKxG2YgBhkrwLxaogOKw2siiJBZj1t7j2xh6uRzC1UPwzQwPhLPWa2kOE1Zb/uPZjFJQjfxxdT4NS/xprPHfORdcMKBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y2NtDR1yu3MgIffcO/hVs1zwFPy+e+Nf1FhFP7u9Fos=;
- b=KBoAIAEgLo+Qo83qDnAdEBjBtAON5ExR7orfffQxVki/gxK2Zp+LJ8JXGWWdpHGqgea67frlQUFve55MTwavwcJics5eczIXiQhnTjmA86StQ8QukwMYqvLxDVl7ilC2QGGL4H+y7fM2NI3xDKTfbRXBidotBk6H56jROaX/ul0=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by SJ0PR10MB4765.namprd10.prod.outlook.com (2603:10b6:a03:2af::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Thu, 27 Jun
- 2024 18:25:39 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%5]) with mapi id 15.20.7698.032; Thu, 27 Jun 2024
- 18:25:39 +0000
-Date: Thu, 27 Jun 2024 14:25:36 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Lorenzo Stoakes <lstoakes@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [RFC PATCH 7/7] tools: add skeleton code for userland testing of
- VMA logic
-Message-ID: <5zuowniex4sxy6l7erbsg5fiirf4d4f5fbpz2upay2igiwa2xk@vuezoh2wbqf4>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Kees Cook <kees@kernel.org>, Lorenzo Stoakes <lstoakes@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>, 
-	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>, 
-	Suren Baghdasaryan <surenb@google.com>
-References: <cover.1719481836.git.lstoakes@gmail.com>
- <22777632a0ed9d2dadbc8d7f0689d65281af0f50.1719481836.git.lstoakes@gmail.com>
- <202406270957.C0E5E8057@keescook>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202406270957.C0E5E8057@keescook>
-User-Agent: NeoMutt/20231103
-X-ClientProxiedBy: YT4PR01CA0135.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:d5::16) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D7119AD61;
+	Thu, 27 Jun 2024 18:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719512867; cv=none; b=h7nyu3WyEQ8Nno487QjcWjInL9SROpm6WULhk52p1CT8JI6O3NJ8z+37mjEUAvli6zWfmwMXNFXi29YH1JzIMdk3nuef+J9rGWp2T/MhDsy4RSo3al3xTru9D9DkyCdrltQluqNaJvhdvmXvXjxvUyFm9tY32dTigiQ84bS+Ll8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719512867; c=relaxed/simple;
+	bh=45Y7n/Cfxoo6JaXfUfM3U4mXDua3ccYMJqfze3SvGB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=cQI6DZm4NpLfD1dozLmwLeVLIoD10rsiW4PAi9Ih7nHom0yNlWvUTblBLCD0uRddOOJ2tLkmZeIYjBHiv/fnO6d4w9PRvfWc9Yks/LgzjUNUySUL/8jYL5OsJaqPq7lIJVCkC2uyjK5EPrKPDd8EHz+fd7i08JWO3b7Mz2Gxny0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h5q8xp5N; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719512866; x=1751048866;
+  h=message-id:date:mime-version:subject:to:references:from:
+   cc:in-reply-to:content-transfer-encoding;
+  bh=45Y7n/Cfxoo6JaXfUfM3U4mXDua3ccYMJqfze3SvGB4=;
+  b=h5q8xp5NHKx5vQrw6uu7MnpLmeXETZAMuzbnFjs87MFehM9CmbauPR9Q
+   Mep6PCl0JwhPnwK8ImqyZXX8eGFzIhUDjb5m4wdSRiJYH5l50M6DtlpxS
+   F32a0OMpPOFB3hdh25eWZhb2yduMx4HMoSQ+xUDYqBt7FhKypxC9MJ66+
+   niFeSTvE5bFvyLQc6SPPr3+D6snUQ0DsjymwTo93Y0Rj7T86Np3b614me
+   dfm7Oh53l5XvdRA0Djo0ilTnRbxcOSnhwiRsls1TeiHZ+LqV08Dj0XZrB
+   AQ+IkZQNW98z3ZvNjQ1urdO1QpKd9acI3f1TNKbSMW6GirUVELpE4zFZ/
+   g==;
+X-CSE-ConnectionGUID: hBt62pfoSp2yXq3rkICnOw==
+X-CSE-MsgGUID: gQrHwWAHRsqDVasTG1QXtQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="12287642"
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="12287642"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 11:27:45 -0700
+X-CSE-ConnectionGUID: 7Oh8RxbeSxKb4XqlvfwwQw==
+X-CSE-MsgGUID: LWfCnHNIRaarm2gqbCwjgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="44365987"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.232.196]) ([10.124.232.196])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 11:27:42 -0700
+Message-ID: <32ac6edc-62b4-405d-974f-afe1e718114d@intel.com>
+Date: Fri, 28 Jun 2024 02:27:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|SJ0PR10MB4765:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d2d7876-9c92-4645-b8b6-08dc96d68c02
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?T4uq48wPsYk83pWEkKU9ve4CMmIndaZfV9FOzEKL/gfMxrZQRAoDizbca/iO?=
- =?us-ascii?Q?xtZV914+tdYvCQyQ1d1c3m/yCbVXohBPBSafBqhsP6ozgDUTNmtNX1EHHCI3?=
- =?us-ascii?Q?p54uxIdJs4kt5ZXkDr4h6XE+3Iltyjjn0URWQaeo1MTwmDPrjDd/1I7OQOz2?=
- =?us-ascii?Q?MLV8ZQJ9yKY3iaLK+vRhY40A260XMq1uiSlIoLm82/DXUZSZCAhZAef7d/CK?=
- =?us-ascii?Q?Ok+bbMTmo8JJ1eux75GKbZDLKjqJcQ8tXas4HOvccRVnCbNGr8BArEoN4Abm?=
- =?us-ascii?Q?wr4haSrymUjwdACMqoh/kbKqkPWsThhaTLwbN+5MKRH8bjCk49QXCTkzdRmL?=
- =?us-ascii?Q?UhawAQpdAr/w6loPyVklJVTPLCKTiMBqAR5gSJRouvWShAuJ5ie891XWvebE?=
- =?us-ascii?Q?EEZpWZFKqWSwQNHIcLtEkuWdxLOYT3RLoZ+H0Dbaov2597/am/w0Drbm2ktd?=
- =?us-ascii?Q?8F+L3A2Hr67XJk+3Wvp0Crp8nZzQXmHsXJbdoEnOz4gGY99zIb/aeNH0WXXC?=
- =?us-ascii?Q?7rjfztzVEyNsjjLaE6TieAlPOpQ1ksGjbm7sCQ4fFO+vFM/IRuOy8baIJUqb?=
- =?us-ascii?Q?97ST9b/oNQ/CqxEz4Te8058bY5y6rJ4TsCkS8QqlAmbfs9qsFu/HHmi/7B6H?=
- =?us-ascii?Q?EmgKicX9CFwxHWf1S4VscVKzfXhfKjWOj45GLkH8rMrsuE9WjrQPIxgpBu7z?=
- =?us-ascii?Q?OwsaeORoKHuJSmoceNe2VJb96jhIaWVFLw+h0344fubKNJg4zSpHav6Yi4He?=
- =?us-ascii?Q?DYkKWBSrB6LEtUXZay73c9wyUrCL5siIqdJdUD793VzQ2f7f0XmLNIv8+y+v?=
- =?us-ascii?Q?ZTCxEebCLb/nxouEsPTVoYSsLazuoLuA/4f73m/ojzNaajguxHvfaC2P3tXA?=
- =?us-ascii?Q?2TFU95HgNYPrUHrPqSqS8P1VTUvB/gHwlyxkzae1oqYcw04x2rjANBpTz794?=
- =?us-ascii?Q?veij2yHzpk8rVy+NvhXk6md8hfw2mvJ1Da3qGnjxNwUDXMQGDTaKwZ8pVkvA?=
- =?us-ascii?Q?niLFCYDpDKInJ6af6VYGl3IBjAkE8mFWrfoq8PKZd/26msNbxKm/V89M53jy?=
- =?us-ascii?Q?U64qgCOEJOPcTHx2e22ZJYnhPTjAEMQZ0+K1LLUwSZXUbGbyNEXvcdT8pxlX?=
- =?us-ascii?Q?sOPYCCG6OWxS7zyWh7V5Y4D2s/vXIXVWyq2jH1s7/knZp+dn9rrM2fvbCecP?=
- =?us-ascii?Q?XaqsVSqzbBLLwZQP0sQ1HwpHk++E0KxKuk0aKBAKg85fwbEECPZwlV7m1mtX?=
- =?us-ascii?Q?ZTjMXTUTtjPvFndGTiplFsuENOGowzZfkoM2YippOXrkNKA3hILH5WJOyWSA?=
- =?us-ascii?Q?qpc9KuLV5gHjsp8BJhnyeXf4cuCO4nz0gJErVRwp959c5A=3D=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?9YoLPx3FNODYSnyxHropSy2g0y0K6Z34jSmqgcTDs3/FMLYzXRI3DoFsIP9r?=
- =?us-ascii?Q?mhm2uwA1cn4q2IfZsMmY9o61NgOygrprtIdpIJVuUzo5B0dd1OYKcWpS3YoA?=
- =?us-ascii?Q?qFbDDpHPuaPgyn/pLsVxHStpuzkXPgDg2T4cm4l7ZCoweX56Mvvr8WGh0lOP?=
- =?us-ascii?Q?UyPdsiVyoEzvdee2/1ffDwPsPmzTXT4cY0YLy13mnP3TmDWR0vF+0DY1UHJt?=
- =?us-ascii?Q?MEoh/AjEQrFlAMHtcKlFhigLsYl5Yg1UKjUyh/OA59rw/8v3BMmXICICp5Q1?=
- =?us-ascii?Q?CCpyCKun77arSxaO213tVV4C0Qj0zRSmCQ+8cJBtHPr9AUkOs3aH5VX5s3gf?=
- =?us-ascii?Q?LSdEGY4Ei9h+hTj457H2H+YiCRYIOFjnCKnR9PfnsyVBWsKAXV1uGxiQ6Oms?=
- =?us-ascii?Q?i5GSu4VO+AFnLccLhzqF+4HaKvhsaPSWsJiYKSUz/Dmnb5v+62RS0QggVZsg?=
- =?us-ascii?Q?fe5G23fpa1LLPypP5ogQ1LdvyzEm40RLJFdIAAdWH5M3JS68nOybmaAwQzRp?=
- =?us-ascii?Q?aWWPTkKITmiJZjwkxhGJEYoNiBzi94kN6FzTVSfbBBYJ3ol4WxNoc59RCWlQ?=
- =?us-ascii?Q?XdNyD77cXvdL7mbrgu2BWMI/OC2VXAKJK0T1xLOVyV+g7jAWGzfZTRFyI34e?=
- =?us-ascii?Q?c9NPLtMXFTLqJD76TKugsVb5DvqxcaAeXQhc7tPvvWavDSwGWCyxqNYl2mch?=
- =?us-ascii?Q?UGNM0jdMt3sUZgBB1B0hL12DsCSG+ej/teFJnIkbkBvAvCIqJO8bCyUp4DKX?=
- =?us-ascii?Q?jSwpUEIfPgph9aZjUw2tC9bMZwX2NMsBiU8UXyg6vz//d+4BIBPwvEo8PXRR?=
- =?us-ascii?Q?Jrgiwk1qoyaLCnTa3bBf+iSmLNFTsj1c08C+AqUrlQZyZyMu77bP03IQGFla?=
- =?us-ascii?Q?CIMFq7J0w7flTqOv+3wKiT5jGcw1cqoy89B8B5ex9n81RQxzULjZ7J3gwiWW?=
- =?us-ascii?Q?Xj81zj6ck0kC6MK6StnzJG99Wg9hhbl8w3q1RG7iHCGHx2dfFuunaU9ckAtH?=
- =?us-ascii?Q?EOxaKSj10378QUSkeCrOCSV/uiFl1WXbKCnPA2eCfrnrwqQGAwb8s7lGmXQk?=
- =?us-ascii?Q?hrVK/No+xQgwVROXFqa5nIKnWEMxg+ct1t+BJC9bfDqxj9bKzNHavifxpbxH?=
- =?us-ascii?Q?Lo7gmH1Bs+mkZ+qFFpXw8zcpKZRxAP65MosgEYEugr2UxfATm9jfwLeiU88l?=
- =?us-ascii?Q?9SMC3pKuaKhQFPoXPgzmvK94jdRAoUQASBLX2xhycYT5pJi21Tgb8kY/zKS1?=
- =?us-ascii?Q?odu/5/fVasmQmHehaPq/zCUDaeA/FV1+aM2X55SpCMuuwu/MbHWoOMWlhX4k?=
- =?us-ascii?Q?O9ZOpGF9I3PDc+UwNfQ+VvH/33XSWxn59fjA11XaODbta2uSOoRDABsHCMl0?=
- =?us-ascii?Q?4fwQNmQmiZri6c7lYjRaXA9gsIyXtBuLd2x+rnrB7AIJ9Tym+pJCpIoO67a+?=
- =?us-ascii?Q?doVdevPFm3IXBbZ3lTmTx5jXLbKf9FYMHOUaATclgSVskCfDTXzY1//kwBzL?=
- =?us-ascii?Q?i/+5YLvnHXV/GrX2xWxA7uLQwHVX4k3RPCHYMVoXhV6aocj33FENtf4rOygA?=
- =?us-ascii?Q?93j7j9LviVMJvwdi05nFl2Kz7CL24s7Zsrhf3H8qRp3LiXunlUidurkwjHcs?=
- =?us-ascii?Q?kg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	G3MN4xOCBPmhCMJ6i5V4RUUs3+0FeZpQwUbJ+WMV0YR00laQQfWHyvyV6Tg8gtNuHq1xXDMSe+07K7RZK6TXHm2Ymz3ivRF2wCq+3QumSvK6bAp6P9ZIXkZvnhBDEmQQbj7GqjAuxiMMwGJLnfGCGSw36flXkegvaF4nukkMtoqIJByjMXX/WpZs50gk/f6oi9ND3Cu3EUChHx9fWjPm7msmXtqagTschhtGEjwTtHa5j16t4pk2bPJDf0fSLJUDZKDIlMzpGoLINlv2d01I5U1VbLYLxVct4k0cDny6vhOXTdKPXgBkDbU48x/b/QzKICkiu/m5najXGcf763/7brccb6ZhqFGbTcOArsuQGGw9B+5jVEQ6jhjn9sqDVR+e+GJkfAvoPOCi6tETmJ7wg4oo++xK9Za9WPfkCgBTs+n7No6LQvA7Xu/h1x0kbpK/aWhoXHDg4i3yVlsApDpt57Fw1cOPsKOO8XHyhy4WHeSDmKFz6YlqnLq/CSORMWCFFAa1L1x1CGXpTWxJw76PfznTJOGKhCjsZTZ2sATyl2nmw4MIWZfxhGyuPkMMcDfFpJEOqRILFamW8ibT2Frrs2WzWiZupzLY/82xx425qcA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d2d7876-9c92-4645-b8b6-08dc96d68c02
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 18:25:39.7073
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UoN536bLzLGbs43D4vAM47G4T7XDRMl4+zrAMJ7F3QgRva47ObUiH5JgyMvmeJoY3B4teiICALv062NtzLKrHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4765
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_14,2024-06-27_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=440
- phishscore=0 suspectscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2406180000 definitions=main-2406270138
-X-Proofpoint-GUID: uMeqxwgUw_lZ5ZkcxxwpuuZSNOIAtXs9
-X-Proofpoint-ORIG-GUID: uMeqxwgUw_lZ5ZkcxxwpuuZSNOIAtXs9
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+To: Christian Brauner <brauner@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-2-yu.ma@intel.com>
+ <20240625115257.piu47hzjyw5qnsa6@quack3>
+ <20240625125309.y2gs4j5jr35kc4z5@quack3>
+ <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
+ <20240626115427.d3x7g3bf6hdemlnq@quack3>
+ <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
+ <20240627-laufschuhe-hergibt-8158b7b6b206@brauner>
+Content-Language: en-US
+From: "Ma, Yu" <yu.ma@intel.com>
+Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, edumazet@google.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+ tim.c.chen@linux.intel.com, yu.ma@intel.com
+In-Reply-To: <20240627-laufschuhe-hergibt-8158b7b6b206@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-* Kees Cook <kees@kernel.org> [240627 12:58]:
-> On Thu, Jun 27, 2024 at 11:39:32AM +0100, Lorenzo Stoakes wrote:
-> > Establish a new userland VMA unit testing implementation under
-> > tools/testing which utilises existing logic providing maple tree support in
-> > userland utilising the now-shared code previously exclusive to radix tree
-> > testing.
-> > 
-> > This provides fundamental VMA operations whose API is defined in mm/vma.h,
-> > while stubbing out superfluous functionality.
-> > 
-> > This exists as a proof-of-concept, with the test implementation functional
-> > and sufficient to allow userland compilation of vma.c, but containing only
-> > cursory tests to demonstrate basic functionality.
-> 
-> Interesting! Why do you want to have this in userspace instead of just
-> wiring up what you have here to KUnit so testing can be performed by
-> existing CI systems that are running all the KUnit tests?
 
-The primary reason we did the maple tree testing in userspace was for
-speed of testing.  We don't need to build the kernel, but a subset of
-APIs.  Debugging problems is also much quicker since we can instrument
-and rebuild, iterate down faster.  Tracing every call to the maple tree
-on boot alone is massive.
+On 6/27/2024 11:33 PM, Christian Brauner wrote:
+> On Wed, Jun 26, 2024 at 09:13:07PM GMT, Mateusz Guzik wrote:
+>> On Wed, Jun 26, 2024 at 1:54 PM Jan Kara <jack@suse.cz> wrote:
+>>> So maybe I'm wrong but I think the biggest benefit of your code compared to
+>>> plain find_next_fd() is exactly in that we don't have to load full_fds_bits
+>>> into cache. So I'm afraid that using full_fds_bits in the condition would
+>>> destroy your performance gains. Thinking about this with a fresh head how
+>>> about putting implementing your optimization like:
+>>>
+>>> --- a/fs/file.c
+>>> +++ b/fs/file.c
+>>> @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
+>>>          unsigned int maxbit = maxfd / BITS_PER_LONG;
+>>>          unsigned int bitbit = start / BITS_PER_LONG;
+>>>
+>>> +       /*
+>>> +        * Optimistically search the first long of the open_fds bitmap. It
+>>> +        * saves us from loading full_fds_bits into cache in the common case
+>>> +        * and because BITS_PER_LONG > start >= files->next_fd, we have quite
+>>> +        * a good chance there's a bit free in there.
+>>> +        */
+>>> +       if (start < BITS_PER_LONG) {
+>>> +               unsigned int bit;
+>>> +
+>>> +               bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
+>>> +               if (bit < BITS_PER_LONG)
+>>> +                       return bit;
+>>> +       }
+>>> +
+>>>          bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
+>>>          if (bitbit >= maxfd)
+>>>                  return maxfd;
+>>>
+>>> Plus your optimizations with likely / unlikely. This way the code flow in
+>>> alloc_fd() stays more readable, we avoid loading the first open_fds long
+>>> into cache if it is full, and we should get all the performance benefits?
+>>>
+>> Huh.
+>>
+>> So when I read the patch previously I assumed this is testing the bit
+>> word for the map containing next_fd (whatever it is), avoiding looking
+>> at the higher level bitmap and inlining the op (instead of calling the
+>> fully fledged func for bit scans).
+>>
+>> I did not mentally register this is in fact only checking for the
+>> beginning of the range of the entire thing. So apologies from my end
+>> as based on my feedback some work was done and I'm going to ask to
+>> further redo it.
+>>
+>> blogbench spawns 100 or so workers, say total fd count hovers just
+>> above 100. say this lines up with about half of more cases in practice
+>> for that benchmark.
+>>
+>> Even so, that's a benchmark-specific optimization. A busy web server
+>> can have literally tens of thousands of fds open (and this is a pretty
+>> mundane case), making the 0-63 range not particularly interesting.
+>>
+>> That aside I think the patchset is in the wrong order -- first patch
+>> tries to not look at the higher level bitmap, while second reduces
+>> stores made there. This makes it quite unclear how much is it worth to
+>> reduce looking there if atomics are conditional.
+>>
+>> So here is what I propose in terms of the patches:
+>> 1. NULL check removal, sprinkling of likely/unlikely and expand_files
+>> call avoidance; no measurements done vs stock kernel for some effort
+>> saving, just denote in the commit message there is less work under the
+>> lock and treat it as baseline
+>> 2. conditional higher level bitmap clear as submitted; benchmarked against 1
+>> 3. open_fds check within the range containing fd, avoiding higher
+>> level bitmap if a free slot is found. this should not result in any
+>> func calls if successful; benchmarked against the above
+>>
+>> Optionally the bitmap routines can grow variants which always inline
+>> and are used here. If so that would probably land between 1 and 2 on
+>> the list.
+>>
+>> You noted you know about blogbench bugs and have them fixed. Would be
+>> good to post a link to a pull request or some other spot for a
+>> reference.
+>>
+>> I'll be best if the vfs folk comment on what they want here.
+> Optimizing only the < BIT_PER_LONG seems less desirable then making it
+> work for arbitrary next_fd. Imho, it'll also be easier to follow if
+> everything follows the same logic.
 
-It is also difficult to verify the vma correctness without exposing APIs
-we don't want exported (or, I guess, parse proc files..).  On my side, I
-have a module for testing the overall interface while I have more tests
-on the userspace side that poke and prod on internal states, and
-userspace rcu testing is possible.  I expect the same issues on the vma
-side.
+Sorry that this message is a bit long. Thanks for your time to review.
 
-Adding tests can also be made very efficient with tracepoints dumping
-something to add to an array, for example.
+Firstly sincerely thanks all for the hot discussion and kind suggestions 
+with your expertise to make the patch set better. At least, we already 
+reached some agreements on removing sanity_check and adding conditional 
+clear (p.s. I'll revise the bug_on to warn_on in fd_install() as 
+aligned). I fully agree with Guzik's suggestion to resort the patches. 
+As the remaining focus of discussion is around fast path, I suggest that 
+we submit patch 1 & 2 (after reorder) for up-streaming firstly (with 
+data remeasured on latest kernel version accordingly), then we focus on 
+discussion for fast path.
 
-Finally, you have ultimate control on what other functions return (or
-do) - so you can fail allocations to test error paths, for example.  Or
-set the external function to fail after N allocations.  This comes in
-handy when a syzbot reports a failed allocation at line X caused a
-crash.
+For this fast path idea, here I summarized some info for further 
+discussion, why I still think it is valuable:
 
-This has worked out phenomenally on the maple tree side.  I've been able
-to record boot failures and import them, syzbot tests, and fuzzer tests.
-The result is a huge list of tests that allowed me to rewrite my node
-replacement algorithm and have it just work, once it passed the
-collected tests.
+1. The original intention for fast path is to reduce func calls and 
+avoid unnecessary load/store on the members sharing the same cacheline 
+(such as file_lock, next_fd and the 3 bitmaps. BTW, we've tried to add 
+__cacheline_aligned_in_smp for next_fd and fd array, no improvement 
+observed), specially, yes, specially, all these operations are inside of 
+critical section of file_lock.
 
-I haven't used kunit as much as I have userspace testing, so I cannot
-say if all of these points are not possible, but I didn't see a way to
-test races like I do with rcu in userspace.
+2. For fast path implementation, the essential and simple point is to 
+directly return an available bit if there is free bit in [0-63]. I'd 
+emphasize that it does not only improve low number of open fds (even it 
+is the majority case on system as Honza agreed), but also improve the 
+cases that lots of fds open/close frequently with short task (as per the 
+algorithm, lower bits will be prioritized to allocate after being 
+recycled). Not only blogbench, a synthetic benchmark, but also the 
+realistic scenario as claimed in f3f86e33dc3d("vfs: Fix pathological 
+performance case for __alloc_fd()"), which literally introduced this 
+2-levels bitmap searching algorithm to vfs as we see now. We may ask 
+Eric for help to see whether it's possible to let us have some data on 
+it. Besides, for those lots of fds are allocated and occupied for 
+not-short time, the lock contention would be much less than the 
+scenarios we're talking about here, then the impact of change would be 
+much less.
 
-Thanks,
-Liam
+3. Now we talk about the extra cost of fast path based on the patch we 
+submitted. To be honest, before fast path, we firstly found that 
+alloc_fd() is only called in two scenarios, as I mentioned in commit: 
+(1) called by __get_unused_fd_flags() to find available fd start from 
+bit 0, which is the most common usage. It means start==0 for alloc_fd(), 
+and with this premise, alloc_fd() logic can be simpler, two branches for 
+comparing to next_fd can be reduced; (2) dup a fd via dup_fd() to find a 
+fd start from old_fd, which means "start" is not zero, but it is only 
+called by fcntl. Then the first impression came into our mind is that 
+why we sacrifice the performance of absolutely majority cases for this 
+specific dup_fd. So we revised __get_unused_fd_flags() to not call 
+alloc_fd() directly, but with the same logic as alloc_fd() by omitted 
+the branches related to "start". Based on this version, we then found 
+fast path would be possibly more efficient than the stock 2-levels 
+bitmap searching based on the considerations stated in item 2 and commit 
+message of this thread. Leaving aside the benefit, the extra cost is an 
+conditional branch, but with 2 branches related to "start" has been 
+reduced, it is still profitable, not even to say the cost can be 
+alleviated by branch predictor. However, with this draft version, the 
+code of __get_unused_fd_flags() duplicates a lot with alloc_fd(), then 
+we change to current version for concise code. What I want to say is 
+that there is space to make it faster with cost less than stock. For 
+whether to use open_fds[0] as conditions for fast path, we think it's OK 
+as all bitmaps are almost on the same cacheline, and we finaly need to 
+write open_fds to allocate bit anyway.
+
+4. Based on patches order as suggested by Guzik, we've re-measured the 
+data on latest kernel 6.10-rc5, removing sanity_check and add 
+likely/unlikely would have 6% gain for read, and 2% for write. Combined 
+with conditional clear, it would have 14% gain for read, and 8% for 
+write. If with fast path, it might have another ~15% gain to read (we do 
+not re-measure this one yet due to time, will make up soon).
+
 
