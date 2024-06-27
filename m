@@ -1,243 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-22630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C861991A860
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 15:54:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B658291A89A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 16:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EBD0285B62
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 13:54:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FD90B248E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 14:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12777194C82;
-	Thu, 27 Jun 2024 13:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365F6195812;
+	Thu, 27 Jun 2024 14:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R7HWngQZ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZqurxRux";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DmxQDbCa";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="opzsBa/D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tSRL2AD3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91D7194AEF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 13:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DFD19580D;
+	Thu, 27 Jun 2024 14:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719496464; cv=none; b=XpHkHhjKO5HnwwIZHKMh48KeJuISi0pFyp4YSSP2zZJTi9X2HKBKOLH5tR5dkaD6zVWuGyeBWTXQaxnk2+VOEH2VwMAkjNQrcgpKWdHEND33P+X9clfA/5VfBeTkhldJV4TLo0MA/AYcyYnyeWJDgJedx6JunmJFDP4YhOXDaeY=
+	t=1719497036; cv=none; b=eKsxi2DXCgb5P0JOflgpTjrzSDcr/nCepXGdxl6+V6pghkKlsDESLtpngNO+Z0s7pT4/rkA550LWaCm6d2iIEi7jRAWSc1Iji3lrCJFd7Xr7VXK7WtQprpsDXOnx1wjt82PNybLOgKOwF1lqb4AtyvDUh8zVEJlONvTlrAz6IAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719496464; c=relaxed/simple;
-	bh=X1nvLNikeUSgIOSiGO75ScQahkne3E90NQ1b9sqzvh0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gLuT1yJYy55YbSxJHc3zjGhBe4tRfHQri1/8oiFOQWV/aIcANRjC0hy1cKAXdxB0CkMvAuB2Iw6bdrHGOdJwjwt98Ym8VdmdWvGwROXxbG+raAk9WfOg8vjFOo18C6kRE6/d4xj/C14U9leKr0cC8TWRo/lWknF9bzhJhYraZeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R7HWngQZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719496461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1719497036; c=relaxed/simple;
+	bh=ev1QAvan/iAGexvqPDni4mBuoPrSQZfWccKavoN6tEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJeG+9EKyDVSvsQMBgeHJQJyaLUVTJ+/HwIUIN3zBCw5z91LINLrKG7u17NSSlJaPBFeo0Z77St7PRNJFZEHAkzy66dXBA2OWMiQDY1RaRELEJ5nihLelADaW84lykmRAlP7uhqzUeqh5Cij3ud7TdQmXPfRtpATwcuQgbRx6pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZqurxRux; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DmxQDbCa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=opzsBa/D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tSRL2AD3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E72A721894;
+	Thu, 27 Jun 2024 14:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719497029; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7FZ5fXMWR7t7gWgo0hMSBgAVgtDH4DNyErrvWiLg15w=;
-	b=R7HWngQZxOWYk63/iW4GNgoI9kycoBjBmuLUQhzlY+zotiUCS8/2NMmfARjmqhZmHDXHnb
-	1pOgcjrnl32phBU5XPlTqeWV1tgPCW68dzdyHKK1KTj/nkMwPFVfpU1/9I7+/VZSgzS2Vr
-	vzqjdxr0ODWCKb+KuElMskftVBeAO4U=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-464-AyaU0ubzPDyIfqpdbtNmDg-1; Thu, 27 Jun 2024 09:54:20 -0400
-X-MC-Unique: AyaU0ubzPDyIfqpdbtNmDg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4218447b900so10250655e9.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 06:54:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719496459; x=1720101259;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7FZ5fXMWR7t7gWgo0hMSBgAVgtDH4DNyErrvWiLg15w=;
-        b=oDYiB69KnSZYzSvLFBLxG4mgYQ7cQ+ltlI86qsjQwCrjRsRMmiHu3DfzqNA16Pqo/I
-         2bLQATmBh+Gnx/5IJo/tYTs8eqhgvIrM2QR7nXvdL+nWdaoCuvxOIR1EuzjrFpInQoCW
-         kyEG1nEnrHAIHYtpp3QOjYUz6QRKRkNf1NtaoGBxY3n8L8VjuJyb+uRpWJEEyr49xw9X
-         ent0amKRkv9BO1pEylZlire4O2pUgQXeBuaf/+3LRvfFZVCifsLfWIg2IkDlD23wo5ks
-         7LEh8XMu/ld3qbORKFYtFSFY3QH64zT3qKrXkXi9f0hcTWLfIZWOQ3sfQaMBewC0Bkyv
-         81WA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeIGjAslOMCVhy6FI5GUcvwSgaWCo/leuPnWgAQTfo1sBcUA+hs03jEcupx+ygW5HAbUcRA7BlZoU8oiqaFJssueybNDhMYiOCwrwAcA==
-X-Gm-Message-State: AOJu0Yx4LiB9Fl4LOU6tZrT232h56RCsGnjaf5FUisKISHU+jvQ2Gnrf
-	jHsh1btBQVCcv+v1ShGpQBQa7I8wHWVTmb+l0HIVMDsc9aO04/k0Cj6NdYlU9QZj180o2KLCCrU
-	k46aAdieN/i1DUZSmrTDhuu5ZG1/1pQWKwJUA3POh1JlgCnwU90mSmZ+vTpn7jQU=
-X-Received: by 2002:a05:600c:3c8b:b0:424:8a34:9890 with SMTP id 5b1f17b1804b1-4256450c71cmr20367065e9.7.1719496459334;
-        Thu, 27 Jun 2024 06:54:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF6ZDKgOsestPJsEme1T/lSWDIbhrr4N0IqHl7IMAoeTdZ/akFCiMzQLQ6EWTdO3nnTz4fRHQ==
-X-Received: by 2002:a05:600c:3c8b:b0:424:8a34:9890 with SMTP id 5b1f17b1804b1-4256450c71cmr20366745e9.7.1719496458882;
-        Thu, 27 Jun 2024 06:54:18 -0700 (PDT)
-Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564b7d1a8sm28419395e9.27.2024.06.27.06.54.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 06:54:18 -0700 (PDT)
-Message-ID: <1fddf73d-577f-4b4c-996a-818dd99eb489@redhat.com>
-Date: Thu, 27 Jun 2024 15:54:17 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=KvbA4PAazLUAg1OnkD1/0xSOzLB917EBmUzxxIZljXU=;
+	b=ZqurxRuxfCKveqBgazMpUmWiJ4uHEo12fPDan0C+/ykFsGXr+N7PtBV0FjoaQBdKI7medJ
+	kRUp8HXViPVolNW5HIi412C2qPf0qYQ0ZY0ssLr+HO+tMsSY/d0MlyAG1Spuk3Z1eAl+KP
+	Y4BJtBhHip2iNTM7iB6i1TVKK5oUI20=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719497029;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KvbA4PAazLUAg1OnkD1/0xSOzLB917EBmUzxxIZljXU=;
+	b=DmxQDbCajnj4nn2O7fCdeGTao8pud1sSQhvfhwZ7oZltR5a5i3utWRI2r5E9fIzou+RGJU
+	F3KWvm6kh8iXdODA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719497028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KvbA4PAazLUAg1OnkD1/0xSOzLB917EBmUzxxIZljXU=;
+	b=opzsBa/DBUBtPf/CH/W/TCAgeZm6x745ReCmSh7I8IBf091NrcC2R8WeRclkOr0pP6Uk2F
+	GIrv2P0DB83bVzLrWclbhAffPDidyU1fBoxWDp+h06qJmo/3DlaMdruAHykpDgF/cIGPpo
+	NJA17DG47+d+nidVeblu2628hQSaaoU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719497028;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KvbA4PAazLUAg1OnkD1/0xSOzLB917EBmUzxxIZljXU=;
+	b=tSRL2AD39SoHSFoEcYhQQVLGCs5flg+fpM63mf+H9aqx/6Om8J4IswmSBWJ0Hk0LpISMgH
+	hcPkTebqkQwhJzDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE9F5137DF;
+	Thu, 27 Jun 2024 14:03:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id x+ZsMkRxfWYgbQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 27 Jun 2024 14:03:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 64CEEA08A2; Thu, 27 Jun 2024 16:03:48 +0200 (CEST)
+Date: Thu, 27 Jun 2024 16:03:48 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, "Ma, Yu" <yu.ma@intel.com>,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, edumazet@google.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+Message-ID: <20240627140348.ju2kynqenxporsns@quack3>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-2-yu.ma@intel.com>
+ <20240625115257.piu47hzjyw5qnsa6@quack3>
+ <20240625125309.y2gs4j5jr35kc4z5@quack3>
+ <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
+ <20240626115427.d3x7g3bf6hdemlnq@quack3>
+ <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable
- compound pages
-To: ran xiaokai <ranxiaokai627@163.com>, akpm@linux-foundation.org,
- willy@infradead.org
-Cc: vbabka@suse.cz, svetly.todorov@memverge.com, ran.xiaokai@zte.com.cn,
- baohua@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-References: <20240626024924.1155558-1-ranxiaokai627@163.com>
- <20240626024924.1155558-3-ranxiaokai627@163.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240626024924.1155558-3-ranxiaokai627@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
 
-On 26.06.24 04:49, ran xiaokai wrote:
-> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+On Wed 26-06-24 21:13:07, Mateusz Guzik wrote:
+> On Wed, Jun 26, 2024 at 1:54 PM Jan Kara <jack@suse.cz> wrote:
+> > So maybe I'm wrong but I think the biggest benefit of your code compared to
+> > plain find_next_fd() is exactly in that we don't have to load full_fds_bits
+> > into cache. So I'm afraid that using full_fds_bits in the condition would
+> > destroy your performance gains. Thinking about this with a fresh head how
+> > about putting implementing your optimization like:
+> >
+> > --- a/fs/file.c
+> > +++ b/fs/file.c
+> > @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
+> >         unsigned int maxbit = maxfd / BITS_PER_LONG;
+> >         unsigned int bitbit = start / BITS_PER_LONG;
+> >
+> > +       /*
+> > +        * Optimistically search the first long of the open_fds bitmap. It
+> > +        * saves us from loading full_fds_bits into cache in the common case
+> > +        * and because BITS_PER_LONG > start >= files->next_fd, we have quite
+> > +        * a good chance there's a bit free in there.
+> > +        */
+> > +       if (start < BITS_PER_LONG) {
+> > +               unsigned int bit;
+> > +
+> > +               bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
+> > +               if (bit < BITS_PER_LONG)
+> > +                       return bit;
+> > +       }
+> > +
+> >         bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
+> >         if (bitbit >= maxfd)
+> >                 return maxfd;
+> >
+> > Plus your optimizations with likely / unlikely. This way the code flow in
+> > alloc_fd() stays more readable, we avoid loading the first open_fds long
+> > into cache if it is full, and we should get all the performance benefits?
+> >
 > 
-> KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
-> pages, which means of any order, but KPF_THP should only be set
-> when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
-
-"should only be set" -- who says that? :)
-
-The documentation only talks about "Contiguous pages which construct 
-transparent hugepages". Sure, when it was added there were only PMD ones.
-
-
-> ("mm: thp: support allocation of anonymous multi-size THP"),
-> multiple orders of folios can be allocated and mapped to userspace,
-> so the folio_test_large() check is not sufficient here,
-> replace it with folio_test_pmd_mappable() to fix this.
+> Huh.
 > 
-
-A couple of points:
-
-1) If I am not daydreaming, ever since we supported non-PMD THP in the
-    pagecache (much longer than anon mTHP), we already indicate KPF_THP
-    for them here. So this is not anon specific? Or am I getting the
-    PG_lru check all wrong?
-
-2) Anon THP are disabled as default. If some custom tool cannot deal
-    with that "extension" we did with smaller THP, it shall be updated if
-    it really has to special-case PMD-mapped THP, before enabled by the
-    admin.
-
-
-I think this interface does exactly what we want, as it is right now. 
-Unless there is *good* reason, we should keep it like that.
-
-So I suggest
-
-a) Extend the documentation to just state "THP of any size and any 
-mapping granularity" or sth like that.
-
-b) Maybe using folio_test_large_rmappable() instead of "(k & (1 <<
-    PG_lru)) || is_anon", so even isolated-from-LRU THPs are indicated
-    properly.
-
-c) Whoever is interested in getting the folio size, use this flag along
-    with a scan for the KPF_COMPOUND_HEAD.
-
-
-I'll note that, scanning documentation, PAGE_IS_HUGE currently only 
-applies to PMD *mapped* THP. It doesn't consider PTE-mapped THP at all 
-(including PMD-ones). Likely, documentation should be updated to state 
-"PMD-mapped THP or any hugetlb page".
-
-> Also kpageflags is not only for userspace memory but for all valid pfn
-> pages,including slab pages or drivers used pages, so the PG_lru and
-> is_anon check are unnecessary here.
-
-I'm completely confused about that statements. We do have KPF_OFFLINE, 
-KPF_PGTABLE, KPF_SLAB, ... I'm missing something important.
-
+> So when I read the patch previously I assumed this is testing the bit
+> word for the map containing next_fd (whatever it is), avoiding looking
+> at the higher level bitmap and inlining the op (instead of calling the
+> fully fledged func for bit scans).
 > 
-> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> ---
->   fs/proc/page.c | 14 ++++----------
->   1 file changed, 4 insertions(+), 10 deletions(-)
+> I did not mentally register this is in fact only checking for the
+> beginning of the range of the entire thing. So apologies from my end
+> as based on my feedback some work was done and I'm going to ask to
+> further redo it.
+
+Well, just confirming the fact that the way the code was written was
+somewhat confusing ;)
+
+> blogbench spawns 100 or so workers, say total fd count hovers just
+> above 100. say this lines up with about half of more cases in practice
+> for that benchmark.
 > 
-> diff --git a/fs/proc/page.c b/fs/proc/page.c
-> index 2fb64bdb64eb..3e7b70449c2f 100644
-> --- a/fs/proc/page.c
-> +++ b/fs/proc/page.c
-> @@ -146,19 +146,13 @@ u64 stable_page_flags(const struct page *page)
->   		u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
->   	else
->   		u |= 1 << KPF_COMPOUND_TAIL;
-> +
->   	if (folio_test_hugetlb(folio))
->   		u |= 1 << KPF_HUGE;
-> -	/*
-> -	 * We need to check PageLRU/PageAnon
-> -	 * to make sure a given page is a thp, not a non-huge compound page.
-> -	 */
-> -	else if (folio_test_large(folio)) {
-> -		if ((k & (1 << PG_lru)) || is_anon)
-> -			u |= 1 << KPF_THP;
-> -		else if (is_huge_zero_folio(folio)) {
-> +	else if (folio_test_pmd_mappable(folio)) {
+> Even so, that's a benchmark-specific optimization. A busy web server
+> can have literally tens of thousands of fds open (and this is a pretty
+> mundane case), making the 0-63 range not particularly interesting.
 
-folio_test_pmd_mappable() would not be future safe. It includes anything 
- >= PMD_ORDER as well.
+I agree this optimization helps only processes with low number of open fds.
+On the other hand that is usually the  majority of the processes on the
+system so the optimization makes sense to me. That being said your idea of
+searching the word with next_fd makes sense as well...
 
+> That aside I think the patchset is in the wrong order -- first patch
+> tries to not look at the higher level bitmap, while second reduces
+> stores made there. This makes it quite unclear how much is it worth to
+> reduce looking there if atomics are conditional.
+> 
+> So here is what I propose in terms of the patches:
+> 1. NULL check removal, sprinkling of likely/unlikely and expand_files
+> call avoidance; no measurements done vs stock kernel for some effort
+> saving, just denote in the commit message there is less work under the
+> lock and treat it as baseline
+> 2. conditional higher level bitmap clear as submitted; benchmarked against 1
+> 3. open_fds check within the range containing fd, avoiding higher
+> level bitmap if a free slot is found. this should not result in any
+> func calls if successful; benchmarked against the above
+
+Yeah, I guess this ordering is the most obvious -> the least obvious so it
+makes sense to me.
+
+								Honza
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
