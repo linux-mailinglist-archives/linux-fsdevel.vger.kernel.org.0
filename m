@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-22581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7960919CA7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 03:02:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B34919CAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 03:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82AFA283B93
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 01:02:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A3631C2220A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Jun 2024 01:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A0B2D047;
-	Thu, 27 Jun 2024 01:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F254242A91;
+	Thu, 27 Jun 2024 01:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2qBsDkL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSM4D+ht"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8B928DCC;
-	Thu, 27 Jun 2024 01:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FB63A8D8;
+	Thu, 27 Jun 2024 01:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719450046; cv=none; b=n3SU3VDZfVInGjqIOHiXRI1BpNSerlctOOvUkABQW9OYWNZvIuRQNX+IWGbyv6ncy6kVrjt+xGpANkl3y6B3yxWSC/K0mXTDqmZGorhfgQkGpnh8Zk7kp2UnseizOWSDjzEHOMqKGCxw5anHYsNEfuXFmjahxztYtldr9j8lr4c=
+	t=1719450048; cv=none; b=spgVm07QkiayhxRx1ED+0jGbiotyfpx4IssBGEedLF+diAzJ/R3sGIzVAk0ZJo5NQH4qHuZzK3JEjxMtKPdz9O97DFt7RQEWaXwC5wnldLoNPTcdoZqWS6PvfPr8Oy7tL2jpFHVL25ngpDxQIsWEn7qbL6RVnuDemScfEgPni84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719450046; c=relaxed/simple;
-	bh=alV5zibd2F0pMNbUX/mWZ+tG97f9Xo1V9J1WqjSbP8A=;
+	s=arc-20240116; t=1719450048; c=relaxed/simple;
+	bh=/g1ddIto05q7VUdUuGmHZRulUXiGWzaifPHAIEfpWmk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Nsd36lxg0yriAYMJc5w77AY39dbynC9k39XLEc6po0GxbRc/Z4XeG1SidKcamcKPDh9FGCIEzSoqicomu54dH4ziDqbzGuYJ8C/iLeQDlPuGPx9b6t+cqZJIMNLNPWWZg+7n4KF7d4eIt/WWj+PBDLIpvBedt57lemwy1mOyqPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2qBsDkL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FBB2C4AF0B;
-	Thu, 27 Jun 2024 01:00:43 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=gc0o6vlWpF/HfzXAxv0MlWq2+sv81Wz32VaMUWtv+1AontqrRu+fQWhNkp3JAM8o5XLfjGDV4ZPTzNnXXidCQFzBCcN87FehGubwhA8jqofagzz89DsLibM/ItetlRicvNJBDrRmf8pwfdWWxTYKjZ7+OkQPQau5Qln8JYht4Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSM4D+ht; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3019C4AF0E;
+	Thu, 27 Jun 2024 01:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719450045;
-	bh=alV5zibd2F0pMNbUX/mWZ+tG97f9Xo1V9J1WqjSbP8A=;
+	s=k20201202; t=1719450047;
+	bh=/g1ddIto05q7VUdUuGmHZRulUXiGWzaifPHAIEfpWmk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=B2qBsDkL0dxLN9WUghKk/yCHEP7gA4zZFWEppqkoSjuXlX1Ly40r0xAI0yucOKYj2
-	 HkDxytNHwn6CwxUDEusjmW+bsaESAP8HANhfrp4Hj6j9T2veupYhwNtdMLFVItDMXy
-	 j2AzGP0bDuO5MEAcmbTEA8R6/zOCUPOj1CJK3xDa2DXG6IVhGxDkzhdSDwRe61LRAX
-	 5Bhrp4Fg9F3xougTOgKp/XrG031v71BPC58JJcUR1kCgeVG73za33yIuZXm6I36dPO
-	 7FIbSwBzm1okS9/gCa3hCBqZ0AcgJiP9QpSZYiFE/bURPowb8jz+OV5NoVTfNtlZKW
-	 aqydfCIOCqxvw==
+	b=KSM4D+htEiLS5wQkJ0zKSjaJMxEwEGG22qWwF5spro00SlDHI78pzriunnpq0F0r0
+	 SEiKrQAn1yP0PiAuxzXGm/wpgfD6W7meGA/ajicCqaKrmAGh0UdMrYy+9VbOvrR4xn
+	 wZVLZQ/sAbDRmk40zheaQiul+emOnfSR5ZIlq8Mmjva2FuMDNaAHR7SwxUqbvNUrn+
+	 dgEHvLNTiA+ojAscpgRun2J2bDaZdpcD8nJqbdH934KxKG/9g0VcIGFwJ1LbbsHKP7
+	 k6VTzDDiPm6BUQBeYGVtOEt7lA76YYCB6lEyFiOLjVl1fO0jBTHHTIJNN6c25FUKkG
+	 VFQjHsF6PG5mQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 26 Jun 2024 21:00:25 -0400
-Subject: [PATCH 05/10] fs: add percpu counters to count fine vs. coarse
- timestamps
+Date: Wed, 26 Jun 2024 21:00:26 -0400
+Subject: [PATCH 06/10] fs: have setattr_copy handle multigrain timestamps
+ appropriately
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-mgtime-v1-5-a189352d0f8f@kernel.org>
+Message-Id: <20240626-mgtime-v1-6-a189352d0f8f@kernel.org>
 References: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
 In-Reply-To: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -72,99 +72,119 @@ Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2307; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=alV5zibd2F0pMNbUX/mWZ+tG97f9Xo1V9J1WqjSbP8A=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmfLmvP3m8cgNO12xHkX/kvGeeOvTHePjzc/p9E
- 73Z0udL2yeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZny5rwAKCRAADmhBGVaC
- FVlYD/4q+QmTQ2BI3Y18pmSgyzhp+KsUaATjRNzT+mnMep2m7m1Gs2NuvWMCE7ogykMMDOjDMsJ
- sNvujib/blGj7gu3gYUWWOvZxnG34l4mhlVhdGs6xANPbLR5FMECfrsa5uQdJMLzuqOPgNnOhzU
- XieSHD6nsA4r4Hmqii/LDHKEwCU2HlAhtEgwdMOjVcQzKHiHoxuH03WR6yZaEzw1da20OJs5I8N
- B+gsf15KKvItUFHdBLu53BeVIVaAklaFg4DWvJm6MaxweD2QSVAjQ9Knf5dYJm4f29NcjElQ/pV
- V+hmOYJPtu3L5Dj9txMdu5fH5b4tOHT8a41rNL/eyU9PUta0GQX2uWHh7HLEZErUSiK7z4f1+tZ
- SMmcj45nVV6QYF+RMcnXcRG0aJGDxT9pNGhkkUhDmxNqdoAFbIwEGw2bbAEfpAx4lkWlHltyOE/
- C3RWGGnPKRRHCBOXnb76vJHiDsT1yG3EyzsQEVCSnKohcNYKBcYMI6a0PnpL4QfyHqq8wZi2+f9
- ZFGXq9RdXZPuIR4UwZt/YZE5SRl5MznqGcYcMVcU86xVjMkFUKKkDglI8O6xhHBbUw7CxN6GRiu
- DNbxDJGy3MTBLASlA+MkUOayWh4rJcPzch7NEoW2ex55o0g2b8Lg/qrEEVnEIGuk9Eo6/H8WmZh
- eav0qapDN1tVzpA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3403; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=/g1ddIto05q7VUdUuGmHZRulUXiGWzaifPHAIEfpWmk=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmfLmvt5FijKuOW1vA/E+4WT59dqYyFM7dMPgmC
+ 4a5LSWoXmeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZny5rwAKCRAADmhBGVaC
+ FXZUD/9B/x8/Zq9asfvRQABKDRs5+rE6zIeYgHTsok96TS49jId7AW+yvJZzcQ60z97OjtIAwTo
+ YkmpaooiGCxQNKKMQAna8eVpiHzmg9VJIeDL9bZiWowREYsAWCOpDXRAMJo1s90ZIiSDa0WrmRh
+ 5b/wgqt63vJ2eAJJxLQXFkbsv3j+brsUJRCCZXZBQq0Ray0Zqczrdc66Lr08hFF00X0OYtkkh+f
+ mguCF4lxXVmuLkVvakLq46OWh7scp0GkjI4CmJflY11gO1qdhzjiiUCtdLok9uUjracDuHQVslb
+ Q8j+odXGCtFdhLXrIWYVn5w3RQIsbGnSa2kNZTYpYKojuj8gRFXsUQksMEfOyegcLoSrWojFfci
+ WoiEmrLy6Z+nOrsixHBXd0N2ePqm8cgf5l1M+ybnnIKsrBHoFN2mioRSQv2rFGIcD940lBwMCL2
+ UOmWHXsj7KU/boDxh5NhAAT7uKUc8wQUrrRqZk2bt1kp3G4EY5wMkZlz+Hv9p6DjLFzMuz7oaqk
+ NY/ITCGlhOXe1tBCHwLKEKYef7RQ4Hp/DiPJSJ/mxYfissEXHANFM9kcATDHFqeLC9asainf8m7
+ 8TUD1m1SxoBCy9x1KRRD/VsvxGq0eU3u6xtnOggG360rkUMuCK43V4F9y8eR45mYIg0XVjj/BTY
+ Y7he/1P2G/b39LA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Keep a pair of percpu counters so we can track what proportion of
-timestamps is fine-grained.
+The setattr codepath is still using coarse-grained timestamps, even on
+multigrain filesystems. To fix this, we need to fetch the timestamp for
+ctime updates later, at the point where the assignment occurs in
+setattr_copy.
+
+On a multigrain inode, ignore the ia_ctime in the attrs, and always
+update the ctime to the current clock value. Update the atime and mtime
+with the same value (if needed) unless they are being set to other
+specific values, a'la utimes().
+
+Note that we don't want to do this universally however, as some
+filesystems (e.g. most networked fs) want to do an explicit update
+elsewhere before updating the local inode.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/inode.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ fs/attr.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 46 insertions(+), 6 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 12790a26102c..18a9d1398773 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -21,6 +21,8 @@
- #include <linux/list_lru.h>
- #include <linux/iversion.h>
- #include <linux/rw_hint.h>
-+#include <linux/seq_file.h>
-+#include <linux/debugfs.h>
- #include <trace/events/writeback.h>
- #define CREATE_TRACE_POINTS
- #include <trace/events/timestamp.h>
-@@ -64,6 +66,11 @@ static __cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_hash_lock);
- 
- /* Don't send out a ctime lower than this (modulo backward clock jumps). */
- static __cacheline_aligned_in_smp ktime_t ctime_floor;
-+
-+/* Keep track of the number of fine vs. coarse timestamp fetches */
-+static struct percpu_counter mg_fine_ts;
-+static struct percpu_counter mg_coarse_ts;
-+
- /*
-  * Empty aops. Can be used for the cases where the user does not
-  * define any of the address_space operations.
-@@ -2636,6 +2643,9 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
- 		trace_ctime_floor_update(inode, floor, now, old);
- 		if (old != floor)
- 			now = old;
-+		percpu_counter_inc(&mg_fine_ts);
-+	} else {
-+		percpu_counter_inc(&mg_coarse_ts);
- 	}
- retry:
- 	/* Try to swap the ctime into place. */
-@@ -2711,3 +2721,32 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
- 	return mode & ~S_ISGID;
+diff --git a/fs/attr.c b/fs/attr.c
+index 825007d5cda4..e03ea6951864 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -271,6 +271,42 @@ int inode_newsize_ok(const struct inode *inode, loff_t offset)
  }
- EXPORT_SYMBOL(mode_strip_sgid);
-+
-+static int mgts_show(struct seq_file *s, void *p)
+ EXPORT_SYMBOL(inode_newsize_ok);
+ 
++/**
++ * setattr_copy_mgtime - update timestamps for mgtime inodes
++ * @inode: inode timestamps to be updated
++ * @attr: attrs for the update
++ *
++ * With multigrain timestamps, we need to take more care to prevent races
++ * when updating the ctime. Always update the ctime to the very latest
++ * using the standard mechanism, and use that to populate the atime and
++ * mtime appropriately (unless we're setting those to specific values).
++ */
++static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
 +{
-+	u64 fine = percpu_counter_sum(&mg_fine_ts);
-+	u64 coarse = percpu_counter_sum(&mg_coarse_ts);
++	unsigned int ia_valid = attr->ia_valid;
++	struct timespec64 now;
 +
-+	seq_printf(s, "%llu %llu\n", fine, coarse);
-+	return 0;
-+}
-+
-+DEFINE_SHOW_ATTRIBUTE(mgts);
-+
-+static int __init mg_debugfs_init(void)
-+{
-+	int ret = percpu_counter_init(&mg_fine_ts, 0, GFP_KERNEL);
-+
-+	if (ret)
-+		return ret;
-+
-+	ret = percpu_counter_init(&mg_coarse_ts, 0, GFP_KERNEL);
-+	if (ret) {
-+		percpu_counter_destroy(&mg_fine_ts);
-+		return ret;
++	/*
++	 * If the ctime isn't being updated then nothing else should be
++	 * either.
++	 */
++	if (!(ia_valid & ATTR_CTIME)) {
++		WARN_ON_ONCE(ia_valid & (ATTR_ATIME|ATTR_MTIME));
++		return;
 +	}
 +
-+	debugfs_create_file("multigrain_timestamps", S_IFREG | S_IRUGO, NULL, NULL, &mgts_fops);
-+	return 0;
++	now = inode_set_ctime_current(inode);
++	if (ia_valid & ATTR_ATIME_SET)
++		inode_set_atime_to_ts(inode, attr->ia_atime);
++	else if (ia_valid & ATTR_ATIME)
++		inode_set_atime_to_ts(inode, now);
++
++	if (ia_valid & ATTR_MTIME_SET)
++		inode_set_mtime_to_ts(inode, attr->ia_mtime);
++	else if (ia_valid & ATTR_MTIME)
++		inode_set_mtime_to_ts(inode, now);
 +}
-+late_initcall(mg_debugfs_init);
++
+ /**
+  * setattr_copy - copy simple metadata updates into the generic inode
+  * @idmap:	idmap of the mount the inode was found from
+@@ -303,12 +339,6 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+ 
+ 	i_uid_update(idmap, attr, inode);
+ 	i_gid_update(idmap, attr, inode);
+-	if (ia_valid & ATTR_ATIME)
+-		inode_set_atime_to_ts(inode, attr->ia_atime);
+-	if (ia_valid & ATTR_MTIME)
+-		inode_set_mtime_to_ts(inode, attr->ia_mtime);
+-	if (ia_valid & ATTR_CTIME)
+-		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+ 		if (!in_group_or_capable(idmap, inode,
+@@ -316,6 +346,16 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
+ 			mode &= ~S_ISGID;
+ 		inode->i_mode = mode;
+ 	}
++
++	if (is_mgtime(inode))
++		return setattr_copy_mgtime(inode, attr);
++
++	if (ia_valid & ATTR_ATIME)
++		inode_set_atime_to_ts(inode, attr->ia_atime);
++	if (ia_valid & ATTR_MTIME)
++		inode_set_mtime_to_ts(inode, attr->ia_mtime);
++	if (ia_valid & ATTR_CTIME)
++		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ }
+ EXPORT_SYMBOL(setattr_copy);
+ 
 
 -- 
 2.45.2
