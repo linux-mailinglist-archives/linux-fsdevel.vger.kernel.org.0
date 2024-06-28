@@ -1,56 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-22765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E35991BE2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 14:07:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A574491BE6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 14:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D75ABB215E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 12:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D65111C234E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 12:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219F41581F3;
-	Fri, 28 Jun 2024 12:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B057158862;
+	Fri, 28 Jun 2024 12:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbU51ils"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1vPWRJV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853461E492
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 12:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB991411EE;
+	Fri, 28 Jun 2024 12:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719576465; cv=none; b=B3DwiUh6StSejAbbiPwu+t+1pBxjeFYY2P32iJ/MonvdhYsjIZW9BYbBzMQqZ0Fns4olg9Dz8TgpdaovYfM7iTnk30ON9CFLmEqkKSpjTrz6a1pF/y6mMNYcV21lJd7olqCV0I++ltciwfG5zMqfpGyX0lkR4F2rkniGAPhABf8=
+	t=1719577422; cv=none; b=OcIE7l4BeVBDxW7dzlemHlozta4h1W+IUfdGm9J+iaF3LZifoueAfFzx4pZO6KhjOEHclrqYm88UL6qGH4FdlUj8tF38yX5bAeDLZ649di5694YXHqROsicWHDtiv/Id758UTjjPyRDMq1iGne0RyIGmCIpPhPOhfn+/IJlThaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719576465; c=relaxed/simple;
-	bh=HSA7KNwuOgFgdBwpj2N89PZHmysGsHODOY8ea91mjJU=;
+	s=arc-20240116; t=1719577422; c=relaxed/simple;
+	bh=tyZqFLkUX46EtxQxpgFqQIPv61XudWLgX6qkok5gyLI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VCJnlVL8H9GP3OY7RHohp5qIUr6AKTaysO6GEY1I6WeI08q6+JsLQr011tYE2dQ0PRHDM4QJSQVbZQA2xxCSPR/heY1Y817YgYMBZaKXrZ1edGf7TMVvkxhVMmBVi94PMXmcjh10U6h64A4BYPVkZkEsoW4ICKvZnA/7XBy3Nig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbU51ils; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 268DAC116B1;
-	Fri, 28 Jun 2024 12:07:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LGps9e+GQmXbLKCw29H/SZGJL5UWxPySGJmpHmUtuybM02efmTimxd6s2WgfWUzXIsbPGYRs3dJYNRi8hOSPb29felsCNL3QGWtM3HzA5/10F5GpgZY7yaeEyQyRTwNghek1+DcPNIIIMEFtkbKgjfEa7oAhrialvgZVcuM7XKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1vPWRJV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F6B7C116B1;
+	Fri, 28 Jun 2024 12:23:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719576465;
-	bh=HSA7KNwuOgFgdBwpj2N89PZHmysGsHODOY8ea91mjJU=;
+	s=k20201202; t=1719577421;
+	bh=tyZqFLkUX46EtxQxpgFqQIPv61XudWLgX6qkok5gyLI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CbU51ilsNvzEGAhXvw/GsmORIf7pbG2OiXnO1q5Y84iNWf84Rt+0z8Otk/H1OsPdA
-	 zI24EnJ24qF+HCCzb9zvCYFAdAk2bcIk+lZ3VdvlwdFpPoaipYxDqih8aJBQ1upML+
-	 FnsS1M4UOv+rOCyJ4AKFDogjPep6gb1iBqxj0bdL7RpqDnQ1IiZRBkFDbsjQKefpi4
-	 nhwEmy8rSp2TmsdPaLVTHJSszrYTp83bU/YhYEmNbXjwCRoOB3/sV5uwiA16Cetz7+
-	 PRtavgRZiXMMr3wsYnraPz/YAGhbudhIlRe1EHujf1YD55UDJ8whG/Z5lL4c/krhMC
-	 VObBN/tGybxTg==
-Date: Fri, 28 Jun 2024 14:07:40 +0200
+	b=I1vPWRJVMasvY4mSgOwL+L4R0Z01LXE3UFK7pYsVqQdVi4imj1q5a28q9BufwvqyD
+	 pCGoelb66a/S5uh8EhKjanRQDQAx6QLWSnS8KqeGrxE2yi5WeWgeThSzaKLvt7h4TN
+	 L5RQ7niVHIME7q0U2JSDXX6gtjGaHVAF7EBxt6NyS5W2e+49h33y7ryT2nRhbJDwIJ
+	 1yggZDk953f2jU5O5oNWJQGkZROQETcf+b2Zql9WKFLFAWoq/Mo37IYBvIhGuR8Ppi
+	 s5qpC69mAlvQCTXJxNgmDvZMM/9uE92gt+RIMJLAUihUgpq6OB0ccf8aSDgFW9OQDl
+	 TSN2daGuoqk3A==
+Date: Fri, 28 Jun 2024 14:23:35 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Miklos Greczi <mgreczi@redhat.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Seth Forshee <sforshee@kernel.org>
-Subject: Re: [PATCH 07/14] fuse: Convert to new uid/gid option parsing helpers
-Message-ID: <20240628-anbrechen-warnschilder-c8607ec1c881@brauner>
+To: Jan Kara <jack@suse.cz>
+Cc: Eric Sandeen <sandeen@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	autofs@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	linux-efi@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>, linux-ext4@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
+	linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Hans Caniullan <hcaniull@redhat.com>
+Subject: Re: [PATCH 01/14] fs_parse: add uid & gid option option parsing
+ helpers
+Message-ID: <20240628-fernfahrt-missverstanden-01543e7492b4@brauner>
 References: <8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com>
- <02670c04-2449-443f-bf44-68c927685a1c@redhat.com>
+ <de859d0a-feb9-473d-a5e2-c195a3d47abb@redhat.com>
+ <20240628094517.ifs4bp73nlggsnxz@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,52 +64,68 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <02670c04-2449-443f-bf44-68c927685a1c@redhat.com>
+In-Reply-To: <20240628094517.ifs4bp73nlggsnxz@quack3>
 
-I think you accidently Cced the wrong Miklos. :)
-
-On Thu, Jun 27, 2024 at 07:33:43PM GMT, Eric Sandeen wrote:
-> Convert to new uid/gid option parsing helpers
+On Fri, Jun 28, 2024 at 11:45:17AM GMT, Jan Kara wrote:
+> On Thu 27-06-24 19:26:24, Eric Sandeen wrote:
+> > Multiple filesystems take uid and gid as options, and the code to
+> > create the ID from an integer and validate it is standard boilerplate
+> > that can be moved into common helper functions, so do that for
+> > consistency and less cut&paste.
+> > 
+> > This also helps avoid the buggy pattern noted by Seth Jenkins at
+> > https://lore.kernel.org/lkml/CALxfFW4BXhEwxR0Q5LSkg-8Vb4r2MONKCcUCVioehXQKr35eHg@mail.gmail.com/
+> > because uid/gid parsing will fail before any assignment in most
+> > filesystems.
+> > 
+> > Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
 > 
-> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-> ---
->  fs/fuse/inode.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+> I like the idea since this seems like a nobrainer but is actually
+> surprisingly subtle...
 > 
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 99e44ea7d875..1ac528bcdb3c 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -740,8 +740,8 @@ static const struct fs_parameter_spec fuse_fs_parameters[] = {
->  	fsparam_string	("source",		OPT_SOURCE),
->  	fsparam_u32	("fd",			OPT_FD),
->  	fsparam_u32oct	("rootmode",		OPT_ROOTMODE),
-> -	fsparam_u32	("user_id",		OPT_USER_ID),
-> -	fsparam_u32	("group_id",		OPT_GROUP_ID),
-> +	fsparam_uid	("user_id",		OPT_USER_ID),
-> +	fsparam_gid	("group_id",		OPT_GROUP_ID),
->  	fsparam_flag	("default_permissions",	OPT_DEFAULT_PERMISSIONS),
->  	fsparam_flag	("allow_other",		OPT_ALLOW_OTHER),
->  	fsparam_u32	("max_read",		OPT_MAX_READ),
-> @@ -799,16 +799,12 @@ static int fuse_parse_param(struct fs_context *fsc, struct fs_parameter *param)
->  		break;
->  
->  	case OPT_USER_ID:
-> -		ctx->user_id = make_kuid(fsc->user_ns, result.uint_32);
-> -		if (!uid_valid(ctx->user_id))
-> -			return invalfc(fsc, "Invalid user_id");
-> +		ctx->user_id = result.uid;
+> > diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> > index a4d6ca0b8971..24727ec34e5a 100644
+> > --- a/fs/fs_parser.c
+> > +++ b/fs/fs_parser.c
+> > @@ -308,6 +308,40 @@ int fs_param_is_fd(struct p_log *log, const struct fs_parameter_spec *p,
+> >  }
+> >  EXPORT_SYMBOL(fs_param_is_fd);
+> >  
+> > +int fs_param_is_uid(struct p_log *log, const struct fs_parameter_spec *p,
+> > +		    struct fs_parameter *param, struct fs_parse_result *result)
+> > +{
+> > +	kuid_t uid;
+> > +
+> > +	if (fs_param_is_u32(log, p, param, result) != 0)
+> > +		return fs_param_bad_value(log, param);
+> > +
+> > +	uid = make_kuid(current_user_ns(), result->uint_32);
+> 
+> But here is the problem: Filesystems mountable in user namespaces need to use
+> fc->user_ns for resolving uids / gids (e.g. like fuse_parse_param()).
+> Having helpers that work for some filesystems and are subtly broken for
+> others is worse than no helpers... Or am I missing something?
+> 
+> And the problem with fc->user_ns is that currently __fs_parse() does not
+> get fs_context as an argument... So that will need some larger work.
 
-So fsc->user_ns will record the namespaces at fsopen() time which can be
-different from the namespace used at fsconfig() time. This was done when
-fuse was ported to the new mount api.
+Not really. If someone does an fsopen() in a namespace but the process
+that actually sets mount options is in another namespace then it's
+completely intransparent what uid/gid this will resolve to if it's
+resovled according to fsopen().
 
-It has the same potential issues that Seth pointed out so I think your
-patch is correct. But I also think we might need the same verification
-that tmpfs is doing to verify that the uid/gid we're using can actually
-be represented in the fsc->user_ns.
+It's also a bit strange if someone ends up handing off a tmpfs fscontext
+that was created in the initial namespace to some random namespace and
+they now can set uid/gid options that aren't mapped according to their
+namespace but instead are 1:1 resolved according to the intial
+namespace. So this would hinder delegation.
 
-So maybe there should be a separate patch that converts fuse to rely on
-make_k*id(current_user_ns()) + k*id_has_mapping() and then these patches
-on top?
+The expectation is that uid/gid options are resolved in the caller's
+namespace and that shouldn't be any different for fscontexts for
+namespace mountable filesystems. The crucial point is to ensure that the
+resulting kuid/kgid can be resolved in the namespace the filesystem is
+mounted in at the end. That's what was lacking in e.g., tmpfs in commit
+0200679fc795 ("tmpfs: verify {g,u}id mount options correctly")
+
+The fuse conversion is the only inconsistency in that regard.
 
