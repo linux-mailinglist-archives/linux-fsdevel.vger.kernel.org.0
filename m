@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-22705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADF591B363
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 02:30:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1D391B365
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 02:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC3B1F22FAE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 00:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90EAA1F230AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 00:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E9F3224;
-	Fri, 28 Jun 2024 00:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5F54687;
+	Fri, 28 Jun 2024 00:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jBoki0ob"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MzpnJNF6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED4417F7
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 00:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD781860
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 00:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719534594; cv=none; b=DyqnsxzoTGU0lPQ8RcMxkh5Qmt66c5uoRZ9UOvIoDYiF7kEmUO3JolTxBG62VNLc2XzgPtQP+w2tHLkVFikwJkaZdlJrvBt87oNTN2Q+VDszOJJ+3WhlP1nskddszNm7OazDK9qFvcqPZ8b1c3mv/f68jUmTH8JM/nZJWiPK8Go=
+	t=1719534662; cv=none; b=l/G6OigvQqe+A32vEC9FRFlOiuA2rqGC+7Wp9ImwCCS0i8jB5eajw190rwH8pMvgkAnFVJZ7rtzsK2S9TfYwrULDDjvp/eGahrSn+RThaw81ZGu7XJHc4LsSN1+edJ+Y4MmzXsbPjS7lSEDOcDa72Px1NKjYGJRscrBqwkR6++8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719534594; c=relaxed/simple;
-	bh=8VoF2X4B0jZD0zDxyfbRc7nZTqlYgEYQgw983ZWV+2E=;
+	s=arc-20240116; t=1719534662; c=relaxed/simple;
+	bh=mGi3br9UC13i+sut16sB/CwEKVX820m4gMw5RVfumsA=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ub7zACoTcxlLJ5aGoY8nLp2KR4FTpIrGR7e/sh93L4E5u3E4r9hZPTegjhElMTdPmJImy/Ngq3ULi7AjHHaEYglbx8hXNAa5ylm1qJZfuIJt5fSyGszQWenoV8nqtzwglFMd0VE/usEa33vYK951zegRGa9E0ATuep3X7005Y8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jBoki0ob; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=f8KwXKbTGrnCU/fBZykRRSUXZNFYU14UWrko9n6C79vfadkselfc18QbtvFr6pOD9A5AHMrHj/r8ntqr6WRgxobSjrbvoRJltA71Id+09/NhXZkiSSYoyuNZ1J1Ba1RWPVhbZlWtmLmHcl3hA0I/JVvWaj9EK1QejsFzNQCivKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MzpnJNF6; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719534591;
+	s=mimecast20190719; t=1719534660;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=eSv7i0qDIEkS+ppeR43TIf3B4nv0jOxW4hW0qfrZQMI=;
-	b=jBoki0obUk0w764dBjc5XaySLzuJTJVAwOzWfyFvseO2g4ErL372RK6TlFhYcm/NR+ptRu
-	arcSe4sTTOpPdrMC+NDjrWxd0TyhAq15It53Oroj3lAHpn5jvt/UjtX7HJQTm9B/UMsRyv
-	j5jCOBv00O+mS0UQZckiQPT9do3ROis=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=UD0TZhFgnFh0fbg8+VW4LR/vmzomGaI+4ExHpGhlqJs=;
+	b=MzpnJNF6LBSsyjnN9/kFhh7EnIb3ScdZhxRe+gMbYFZnHxtw9u6oNCLDCj1WRxU7xXnGN7
+	vG2GtdXTZRv0Px8oj1n/IlpenatL8PVJ3t3/mLDFKOnNrO2hsf/Cvxl+HEmTAT6RB6ma52
+	IxufPsjQN2G1Z8v5TrH+OwYeE+/SSEM=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-202-h68YM_YKNIOhQOlIgdqv1Q-1; Thu, 27 Jun 2024 20:29:48 -0400
-X-MC-Unique: h68YM_YKNIOhQOlIgdqv1Q-1
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-375e4d55457so1278225ab.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 17:29:48 -0700 (PDT)
+ us-mta-607-plSMTt70OrGFh0hBUXMhgQ-1; Thu, 27 Jun 2024 20:30:58 -0400
+X-MC-Unique: plSMTt70OrGFh0hBUXMhgQ-1
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f61da4d7beso3590139f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 17:30:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719534587; x=1720139387;
+        d=1e100.net; s=20230601; t=1719534658; x=1720139458;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eSv7i0qDIEkS+ppeR43TIf3B4nv0jOxW4hW0qfrZQMI=;
-        b=P3dFnM/BHKNfCx9bdhmN1eiD3eE702KEQcbR9agDWxb9A3X0rwFE8bafL2rtdfQR15
-         qUeG48yqA6NEJWWwE32mm7kbIm0rmJdL9RElHQVkAMeT2gFWrU4w3lcvFhkfziPyqel3
-         KvxS48XX8HS2tW0lblwgjF7V9F3w0GMMvMlXkLAxaOtZ7mOvfRKwjOwrtP56OaaQo0mI
-         GgS4IAC1id5ku9US4BlzxCyP1GIAnqcRLNEFBko2O+PxsEj0M7W57t9ceDThevH+3nR7
-         bz1uUERmE7/cowh0ZnNkNCTSu1njwJSIRMd5hMSd+MS4FsxkP3c1DD6ytwCwZ9EzGuRQ
-         4xdQ==
-X-Gm-Message-State: AOJu0Yw3/j83ilCiFuWT3ZYc0IjwaPsmwreDp33Sc5oqNEp6ISfB9CUT
-	rCbLsnCPIAc1c3VGxEZ5RQjaNs/dlhZL0avob6X5j8EwFNc4CpWM8WnC+cpxgaijPRJXpynkzMf
-	RnVHw15xzyD8Lbn/wkOwZPRS7Zg6PySDAr4cM7jnqE3iOtZHR+7FtX3Vz1dz/RVYAswnPzH5ZVX
-	+xmzcAapcklbkJ5zpC9mSswOrc7+PZfNJf/Nl8Yfv6clTvPg==
-X-Received: by 2002:a05:6e02:1d01:b0:375:9e3f:5f6 with SMTP id e9e14a558f8ab-3763f5a3e26mr190746685ab.6.1719534587278;
-        Thu, 27 Jun 2024 17:29:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGyhFrtW+EJajjBfiX272bZcWNrR62s3O/d/YHQ+hO8rjrB/feEFoBk5FjDgW4A4xT01w6rw==
-X-Received: by 2002:a05:6e02:1d01:b0:375:9e3f:5f6 with SMTP id e9e14a558f8ab-3763f5a3e26mr190746555ab.6.1719534586928;
-        Thu, 27 Jun 2024 17:29:46 -0700 (PDT)
+        bh=UD0TZhFgnFh0fbg8+VW4LR/vmzomGaI+4ExHpGhlqJs=;
+        b=dHyUaM0Ho6jXEb6zNQl8rEclJZJF+T4MfqR3+PLxI87rSow7X/xU2zdcg/KTXgBJC/
+         q6KcqTO8Xk0jb+s7WbSb+Pgz9GJCzeZYoLGeaDB8RaibMkfcLcv9V/uYLA1Z+1Xj/kiq
+         DMO7/IUI+Op6G9612t0/BpC1oT+qlkqD65NItCm0z8rMfIHitgkf/ZNyYCc9/YmKgoBP
+         hMjuvlMIHv4+hE6W+TeRwy2afR7d+VxmDs/CtlwoJ24JPWPh39R/q5egurvTIQ/JJz0k
+         kqrcGhNgOaykB0pjmhbWL/2YXbeTBzp2tp02tULKnjTACDTDppqxnBUce/xeM5PsAWeJ
+         mV2A==
+X-Gm-Message-State: AOJu0Yzc7NTn1peX6oTHJQaFqI8qjxlDjuYkffxHNkEy+5LeE22flA9e
+	kl26CyighPw5wzOmoixHFlcNLdYqM8jb907JgCFDuryGEf9lqmxh+kuf/cjNTi2Frl4gdvpoqKA
+	1OBSf5FVZzrhvF+ysLA0qQljdm7xVyZQEyVDaYaZY6rrzsQCQZXj8MRa4vVcUf1KPiFu5G9tfHo
+	OoggM3fm3L5P6gWnIncKcdmI3bwLAtdzVbpVVS3uvSDNOgZA==
+X-Received: by 2002:a05:6602:8d:b0:7f6:1b3a:437b with SMTP id ca18e2360f4ac-7f61b3a44c2mr187735739f.17.1719534658085;
+        Thu, 27 Jun 2024 17:30:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFOsACJkE3UNbEuQpyjaC1nCYuaIr4BQ65r5H24LLaLew3xs2nJd5TV2I9cKqMq7cM4hfew/A==
+X-Received: by 2002:a05:6602:8d:b0:7f6:1b3a:437b with SMTP id ca18e2360f4ac-7f61b3a44c2mr187733639f.17.1719534657514;
+        Thu, 27 Jun 2024 17:30:57 -0700 (PDT)
 Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37ad483bfe1sm1692835ab.80.2024.06.27.17.29.46
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb742b8c81sm221640173.134.2024.06.27.17.30.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 17:29:46 -0700 (PDT)
-Message-ID: <b2f44ee0-3cee-49eb-a416-f26a9306eb56@redhat.com>
-Date: Thu, 27 Jun 2024 19:29:46 -0500
+        Thu, 27 Jun 2024 17:30:57 -0700 (PDT)
+Message-ID: <ff7c415c-43d4-4a1e-a987-246c781f8850@redhat.com>
+Date: Thu, 27 Jun 2024 19:30:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,10 +82,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 03/14] debugfs: Convert to new uid/gid option parsing helpers
+Subject: [PATCH 04/14] efivarfs: Convert to new uid/gid option parsing helpers
 From: Eric Sandeen <sandeen@redhat.com>
 To: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-efi@vger.kernel.org
 References: <8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com>
 Content-Language: en-US
 In-Reply-To: <8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com>
@@ -96,53 +96,41 @@ Convert to new uid/gid option parsing helpers
 
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- fs/debugfs/inode.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ fs/efivarfs/super.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index 8fd928899a59..91521576f500 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -92,9 +92,9 @@ enum {
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index bb14462f6d99..a929f1b613be 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -275,8 +275,8 @@ enum {
  };
  
- static const struct fs_parameter_spec debugfs_param_specs[] = {
--	fsparam_u32	("gid",		Opt_gid),
-+	fsparam_gid	("gid",		Opt_gid),
- 	fsparam_u32oct	("mode",	Opt_mode),
--	fsparam_u32	("uid",		Opt_uid),
-+	fsparam_uid	("uid",		Opt_uid),
- 	{}
+ static const struct fs_parameter_spec efivarfs_parameters[] = {
+-	fsparam_u32("uid", Opt_uid),
+-	fsparam_u32("gid", Opt_gid),
++	fsparam_uid("uid", Opt_uid),
++	fsparam_gid("gid", Opt_gid),
+ 	{},
  };
  
-@@ -102,8 +102,6 @@ static int debugfs_parse_param(struct fs_context *fc, struct fs_parameter *param
- {
- 	struct debugfs_fs_info *opts = fc->s_fs_info;
- 	struct fs_parse_result result;
--	kuid_t uid;
--	kgid_t gid;
- 	int opt;
- 
- 	opt = fs_parse(fc, debugfs_param_specs, param, &result);
-@@ -120,16 +118,10 @@ static int debugfs_parse_param(struct fs_context *fc, struct fs_parameter *param
+@@ -293,14 +293,10 @@ static int efivarfs_parse_param(struct fs_context *fc, struct fs_parameter *para
  
  	switch (opt) {
  	case Opt_uid:
--		uid = make_kuid(current_user_ns(), result.uint_32);
--		if (!uid_valid(uid))
--			return invalf(fc, "Unknown uid");
--		opts->uid = uid;
+-		opts->uid = make_kuid(current_user_ns(), result.uint_32);
+-		if (!uid_valid(opts->uid))
+-			return -EINVAL;
 +		opts->uid = result.uid;
  		break;
  	case Opt_gid:
--		gid = make_kgid(current_user_ns(), result.uint_32);
--		if (!gid_valid(gid))
--			return invalf(fc, "Unknown gid");
--		opts->gid = gid;
+-		opts->gid = make_kgid(current_user_ns(), result.uint_32);
+-		if (!gid_valid(opts->gid))
+-			return -EINVAL;
 +		opts->gid = result.gid;
  		break;
- 	case Opt_mode:
- 		opts->mode = result.uint_32 & S_IALLUGO;
+ 	default:
+ 		return -EINVAL;
 -- 
 2.45.2
 
