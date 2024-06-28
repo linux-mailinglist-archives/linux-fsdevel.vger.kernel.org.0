@@ -1,266 +1,300 @@
-Return-Path: <linux-fsdevel+bounces-22701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1386791B34C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 02:21:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79BB91B340
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 02:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83CB11F22F37
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 00:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE68283341
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 00:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404E24A2F;
-	Fri, 28 Jun 2024 00:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C61D17C2;
+	Fri, 28 Jun 2024 00:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FK/21Njq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iy/EnkFP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2089.outbound.protection.outlook.com [40.107.244.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB61F17F6;
-	Fri, 28 Jun 2024 00:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719534063; cv=fail; b=ZS56ofWpsG9UwKsbgBI1UJjzDfh3cJ7PG0LOjlf41Z3GXm9YtbkbxeRn82NzX385U6RmS9mwNhHzKpg3b6w/+8KuhlAbYu1WYvSLY/MwcZZNQ9V4y00GDrrLq098m4gAjOVmH1SlrAeaj4niCYVz0UeRzVJ5lXoAV8RW+Y9FslQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719534063; c=relaxed/simple;
-	bh=JKhVgXuZnGGTZfqf9V6eGsRzwsPCXaYLts89QehUpQY=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=YFgshZHN0CgAwNoVTwmSzpXCES7791GrdMRn1wA5ya4CFK2E06wO9TU0L2Ea2w4SDc22tpvTJiCYUdMXIRNz4tUmDbTHVtX8IwoYEg2/ZrBbekBqghZFh8na2ef6rB/xmJH+jPqlS2op+IF3uyIK7NLqu0iYiRVO7BX0H2LCIoE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FK/21Njq; arc=fail smtp.client-ip=40.107.244.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=k5k7E0ZYJnMun/7DvdP5HHb8pQfEGOvSAzKN5T9GGNmh3veKvT9VobvTIMl4YZSfdsPGRISxuEzwhWiiIt+mADjTM0BqkIF7jkRsrJTIxdG4wTyn6p7ehF/zIO7gHEeDIoCRJMs/HYkl+pKXm3yD4aRPiUVwKA+ZoZEhSlot1QTolxX1ei0sVuh3H0NwA5hWTbLUkD/6WpK8i/C3X1gQEot7L5FYGkNUCFPeV7vgw6PJbP7iIeUkDzpin3zNgHq+sVxMDAvlFNNRZpp12CPId7qrdXw8XMdHPhioA0TmsmEVqfonsYURcP1/UdQ1BP98ihAMGHHdTBhgi5a1nX6JCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7D8pN258ZLVxKASTLXddLCuitWvqg6KDBo7AcedGpes=;
- b=R9X8E3my3l9avSTDSNdzathKSweqvQHpqF7tfYz+oMTtwjPK0Uqcc53ilvcvIdlWVjEyIbwyI3N4V1rt5Xgce4oLgtQh/xgTG3MM5zN9d0EKYZfb2Oa2eXT16UjaOQxu0fJHDEwdwI3x3emdM8viGmooFEW1gun6iGM+2AODDPCjdWmC8reIo2nvTj+Qr6oBx08kswZsV0ACrbgilsl+WT2p9oXngQ0+ipUZAvhhVD9CsA+tQYS35hyZCt86ecqX+Gs+qNtrx/YTHH9BGilBvDkzGf8HtFoqjgJ7pgz6fBHWBswfd+NWZk03vHkGEdFyX5suef+1CAUvucVR5jrCnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7D8pN258ZLVxKASTLXddLCuitWvqg6KDBo7AcedGpes=;
- b=FK/21Njq0wpB+s5vHF3MkPpvGKcAULPoY4DBsAw/OJ4JxsT8QdAWOlIQhNFCmKRoafiDW7HCf1zanPHXNSCkQKW4fZ3vROteP7ZpwAqRAowBP6sRNr8Im2A4GBNgJEeDZBIglAV63YOAT5amrqN10KuQdbhqFeaT1p6Dxm49JAakyA0X7iM5k8BbtpWqUE7/d9Djh0Jrb7zVITUBs72yZbvFGYyq2ElAKod0d+PyuLYCWTeG7QR/feObHRwakfGb9SoIs+cC3cGMpxvvv37u2Uu1JX5+7MHGWEsg32dueTPKO/u7ggZJ3M+HWUVJuVqlMeT7YFNIfgRZMqKFmv8CsA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- MN0PR12MB5932.namprd12.prod.outlook.com (2603:10b6:208:37f::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.32; Fri, 28 Jun 2024 00:20:58 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%6]) with mapi id 15.20.7698.025; Fri, 28 Jun 2024
- 00:20:58 +0000
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
- <667d0da3572c_5be92947f@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <87a5j67szs.fsf@nvdebian.thelocal>
- <667dca6259bc8_57ac2946e@dwillia2-xfh.jf.intel.com.notmuch>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
- bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
- will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
- dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org,
- djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
- peterx@redhat.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
- jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
-Subject: Re: [PATCH 00/13] fs/dax: Fix FS DAX page reference counts
-Date: Fri, 28 Jun 2024 10:06:42 +1000
-In-reply-to: <667dca6259bc8_57ac2946e@dwillia2-xfh.jf.intel.com.notmuch>
-Message-ID: <87a5j56hp6.fsf@nvdebian.thelocal>
-Content-Type: text/plain
-X-ClientProxiedBy: SYBPR01CA0017.ausprd01.prod.outlook.com (2603:10c6:10::29)
- To DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C78217CD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 00:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719533885; cv=none; b=JEF/SVamrKlO1kkJD5mMMOOT9ND6uNJoolPrjHb/QVhyTuTD10GgC6kpE0SduU9DawRNBDXJZp87vqMjvvexfCqc9GOZZLCEyfo+k7A1zqr9leZQ6Sm3bGPm2mxhEhfM8+J0ROnGz9DZEV+q/485dgGusws1ht92i6qDHZhwKwk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719533885; c=relaxed/simple;
+	bh=Jw0jD/tgRVQyUjNr4d2Zaa7FkY4X45EMV1YkXyaDe2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DL19Q3AeX4ECCqnQ4wfFSNACz73gFUZIrCjN0Fh43BZBshV9vXpk7AQ6h3yRsDt8sPGPmT/YOw5u+h1ztJEuhyHNrXpDhKw+c5scGbTuClh3T+mGhf8qTjYnwmpzyy/pEabAYIbiikI5Ay0INT2e2sfe0hu6ix4dESbAm5YRDPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iy/EnkFP; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-63036fa87dbso572797b3.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 17:18:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719533882; x=1720138682; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FtCVXouK0ecc2oaKjO7it0eUAWhlfIc3Mv7N5bEYISM=;
+        b=Iy/EnkFP6Zo1laVtru5KH6wIyVRSH9XUfORtmMbpj/0CwqdYYcHT0zDO4tA1fyuohf
+         vBeIaa3jz9MJaVpGi5Ww/vrwGiNBoq0QM9/5Uelrp0TAnrVxel3Qnu94eNQWFWiA4Q6l
+         N0rlI/HWcvNkeUp31v/8l/Bj/sayG7aLjqsOxo2JZu/9laKUIo2f6pyXaTHSuLxxET72
+         wPE6OCeO7UQdS3RIbPl/GPPs/bpxIdM8Zdy4CYwe3SQwhwx6L9rGd4LxcupfZj7MqsHv
+         Zat9wzgtRUgZpQ8Cy3+avN0aRNk2UFgrBzFrgX3Zx5jYA7nlh0L71aFODLmJfx1GpYHs
+         gTpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719533882; x=1720138682;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FtCVXouK0ecc2oaKjO7it0eUAWhlfIc3Mv7N5bEYISM=;
+        b=j13Bn+5yzNrYk9llZNsQlzZQomei5rcLvM+ps/JQg14jLHydY0fWk2mrJdIevFg6Sf
+         xNeKxg36wAeTz/MXPDCVc/KpLPedqgiaVu3JjCHhZ1NhdY0x4TzttJbARZaQnIoM++j1
+         va1dpAPtlcQoblYyB9+CAe8c0ULYvLL/m21P9ZVzYwHlW1tQzzNNg6rljR4I5pg69xkL
+         sAJ0mVUQrj9aB64tGXjhGkts5GnvsVPrp5o+3TNrEavbF4Y/7HNisuC1WvgmsKfvksxR
+         gfD4wKWX6Yr70/HLoZPJc6d+MmS3WX67V+qEWw/o8V8E/5eo3mg8v6yIz0poc7vu+wMn
+         KJPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfr9AXcAFH8MigXpm9GhP8sDNJjEW/+KkXCK0BwDbTzlAa8DCS8hom1bzvkWx76FGBZG8VAsLC1GQO0aCPfYKVGketJMpqypWJcFGl9A==
+X-Gm-Message-State: AOJu0YyWEVjIN+zkl1mR5JX8GHqARpYIRSf/fXdp/owC4beM8K4yH3/G
+	D+2ZFiH6V6eXRBxJuegIYQX0CgEwTM82WEyW2KKaWof99qOYG/fd
+X-Google-Smtp-Source: AGHT+IHFFqtXOAcUcLiioJEiY3pjvYNQhKKJVlm+uZ/5zXP66JD10J4+R5W7A/OeAdTUYP3KE3a0JQ==
+X-Received: by 2002:a81:a50c:0:b0:614:74f6:df18 with SMTP id 00721157ae682-64af4f65276mr794737b3.26.1719533882212;
+        Thu, 27 Jun 2024 17:18:02 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-009.fbsv.net. [2a03:2880:25ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9a23c6dcsm1472987b3.55.2024.06.27.17.18.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 17:18:01 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: osandov@osandov.com,
+	josef@toxicpanda.com,
+	laoji.jx@alibaba-inc.com,
+	kernel-team@meta.com
+Subject: [PATCH] fuse: Enable dynamic configuration of FUSE_MAX_MAX_PAGES
+Date: Thu, 27 Jun 2024 17:13:55 -0700
+Message-ID: <20240628001355.243805-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MN0PR12MB5932:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71a55ce1-2d6c-4f94-ebd8-08dc97082ee0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?aQb3YROYeca27SMruaogKEscX4iC7ri3shD2JM6X3VlE7PvaDYEGCddyEDGq?=
- =?us-ascii?Q?iJ/UixCAK2GSbYE9wI7SNeQghf1DdtqjadmEJzu6qnUD3yVNomfFXoeT3yMm?=
- =?us-ascii?Q?LhkRD+9gQn3VD7dA0RRFLyaCKst2QzA2SJ2Dxcd3U0jblZo7K2HxJvuQlbDQ?=
- =?us-ascii?Q?56mIAOR/HugDJMHUEjkFxLzdhJQxPOZYQ+YjGHiPNsFpAVm7Zv4y07bss+d7?=
- =?us-ascii?Q?GsgPyjIDQy/i8EI5QZMGaBVKVlXCsO//6B5u/MbDKEeYNPvcWWPc3ijfxxw/?=
- =?us-ascii?Q?fexelLCjHh5hX9jyC4X7CQS5xzq2ma/L46E5TTjpcDTVHAVi5YYiXjpH+grF?=
- =?us-ascii?Q?sXsWHpObpYoT90shF/HXuJE0qZGkYSAjzF8s6JwD7dpez/Ec4T7Fga1mEVOq?=
- =?us-ascii?Q?H6rh2IExnnU5lLTcGowxFIT9E8YWsYZdXV1L9zczrX/Rywyr7EojNU0+ILPP?=
- =?us-ascii?Q?WagVgI6bY7uk/M+j+z/XHXOZYu33uFNqXf+BqPYAZJOwuwPBD7wzVU19XVpM?=
- =?us-ascii?Q?TLvcVYCaHnBYb2IAiH9ZP7mUx7+SCB94eTmoeW1NL5LY+GjAWl+OI31eYkEo?=
- =?us-ascii?Q?1e3KhZtSNHTvEM5yoLi9m6qQsGHfhPKEpZWTUe+ogUO7+YcopRjy2xVThPof?=
- =?us-ascii?Q?QIbxm7cjJlda9HgxoDitMF4BGNyLNmezs6jDud64zvgpovSeVRkTHv/GbOG0?=
- =?us-ascii?Q?0YaWdIDVw+PxEkLhEoRaRjVc4rAaCxInKHFu+Dvafv7CAe6uCZLcn07F2MeF?=
- =?us-ascii?Q?Q+dwL/z62C8DSZO7nviQnu7P+G8OduUJbOOigGc5FMbl6Z/xOUn1JY1UYjkX?=
- =?us-ascii?Q?0ortLZXHaOQTEtCE4vQUJVw0fF22GKHTIuEspZoQa0KSzuGe/i0pmBaXiqNt?=
- =?us-ascii?Q?fHAPjptPKfPP5593N1y/8cmB58kVrXq0F/qa33LnVt9ZiNygxRzs+ZNcAu2J?=
- =?us-ascii?Q?xkjPagjBnZvFxsDZcdi5BNUrVUPHSUxT4FuXNNvA21ZK0ySuLeAk9F1qUk4q?=
- =?us-ascii?Q?Y88RG1MyjTN2FY5eIZlAg7XiA33fFhW1yQp/eqyCwrmuO8Oozkif9Mhb0+pR?=
- =?us-ascii?Q?Jm/MOwsYew1iWynSCtn+K4PaRZb5+wVPOO/SuPB0AqpB1EohspBUgZEPz/HF?=
- =?us-ascii?Q?Ab4IGOTBf298Emxb43hqUdwc+qZZF+ulpfpueHLJX0CuGFahPlLrAS73TYqD?=
- =?us-ascii?Q?JK9XcOLBUl0tkHaKOqYFuQN09V58Db7ZN9/vmY578v5qIdlU6Il8SwuqBpbV?=
- =?us-ascii?Q?pC7xbbIu91Us1BnU9ngEWSgEbTeXRHaSYvuvT5fV3M+ligVsSTvyiw+oHmP+?=
- =?us-ascii?Q?bV6gGlrilDKfR1pBzmDsTqr60zLAyH46LkN29jwSAowM4A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tlUDzpDl6zXbBYLIwSzA+MaPgcq3TGVBiVyK1S40YqpgrjyrirOa/8ffV1i7?=
- =?us-ascii?Q?RlXvR+5VP7iGPoI6m9i0FkNlEToJvlhIghlHroA2U+eWZt8gPI49VuxdZrFn?=
- =?us-ascii?Q?OjWsL8+IKv70qLPXxjZrG12Hn3qtHKMyZXL+Ra5UQPrEMufXwMs4gsZOLAUT?=
- =?us-ascii?Q?KTWwtzwry5vVGfU2vkcNETfQePmm+tofl6jkICbnc+mWqbOhXIFH+uwGePRt?=
- =?us-ascii?Q?cctGDdjjOT+n6kuhlI3nlCW/RP8+YtPOjTmu08L3FuL0wiSogCT01ljYsBU6?=
- =?us-ascii?Q?4KihXay08VkfwcXlFAOQCQvTJ3eS0n4mDOIKfqC7DFlEobt5yabK9zmJ89W0?=
- =?us-ascii?Q?Mv5xsgY+iiPv/wj+oOCoRKy4QL57wt9zSpTDU4cfP4MavPgpmIW8O/Jp+mSA?=
- =?us-ascii?Q?56VXhsfz1xbhJXD8fwimw7DqAkZw5PHWw5eBpX5XbM18tzJ3y1yn8TwRCMR5?=
- =?us-ascii?Q?kcGbNYD/rgY8LOohMewgdTJ/VilcXWB8MFb2/3nP5tCNAEjp9BiNh9Ab1MAf?=
- =?us-ascii?Q?aaY97YCWsXF6kuT+dv3Qn+QymLo6lcik4nXayl4l4d1/4zY9ouGP61IiWjm9?=
- =?us-ascii?Q?y8980IE+hLAJAOM5FVUqH3a8icN884zKDCwwVcO8LKmuLPbxwpHS85IqlUZK?=
- =?us-ascii?Q?8V8KIb+8ei/1ZkVFXWJzpYh1X7NMm+UjuJsazJfMp2b1Og3JhLci7oPKueLO?=
- =?us-ascii?Q?szu+p/8mD9Stg86zbS/bLX33QDolNXUvs6P2IIgIyywGz1IGh1zngzFcUMng?=
- =?us-ascii?Q?vYtzIbg4pRzMIsggexF+k5NVC7k32x+x+ypYEFEReZGbboU5vjDwdygFzMKR?=
- =?us-ascii?Q?kHESvrE7JuBib8Z34hv8f6dFNmrp591/T1vsBVgGjUxxCq2CCS0Gnkvd75K2?=
- =?us-ascii?Q?ZZmUj+QnHJiloMp6niyGJo44z4XchGpb5xbtdEvrQLUqtDwgySgDZonLg/e3?=
- =?us-ascii?Q?h45a7nC4mcntxayNIX9F1111RY0571GWqM+ethp+aS0WitnLIWj2/Jd6s38d?=
- =?us-ascii?Q?A0U2aYUexTZc//0W/gwE/q15PX0LE8eAw41JxmDBJHyrsWg8xZeuyW6/HsEW?=
- =?us-ascii?Q?wJKXH775dMBHRO/klax5KY63pGhtoQJUL/IzXAk+GXdqTe3odc0Tigv0GZxl?=
- =?us-ascii?Q?6iHrxRe+KzDyvpaIgn5seIGgUGPj/qemnz3XTHI5Xndi7ZBwZbd0ge0MkpSr?=
- =?us-ascii?Q?oqt1rIDHFdFubj4rYid3gmi9NSoVXRbySyNA0MVcDza36dOHwuAaVJFmKRfd?=
- =?us-ascii?Q?Ai9lrN+wm8Sk+vsBuxozdLknzmJCMVTQbdF1fjqFGk1C5kv/jg1jvEIhfo0b?=
- =?us-ascii?Q?iBHSFd+tFrouNAH76kDgIR5BNtT8487nMdBnd3rvRI7xF58gLnLbu3+CtjUq?=
- =?us-ascii?Q?ZO0VMfOcFkiLmguaGHo5GM5gomhrmbYEwC1NQ0dLi4FDDz5UBWWc+JyHm9k/?=
- =?us-ascii?Q?mvyT0ovXNshBlHjGhPTwppRxAtsqkzUQrnXtui5bBHyYaAGoy/Hmlzblq8Nl?=
- =?us-ascii?Q?sQZx1MFqJQFqIpShPjpYa/TSt2JbGqR+CHRc2roZDpGMG7+FYK2IBOl5xsy8?=
- =?us-ascii?Q?2/rEpocDiYOKLd/zMBAZp2lbIDZpjKuKYa4EX1Ns?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71a55ce1-2d6c-4f94-ebd8-08dc97082ee0
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 00:20:58.4534
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I0C/XCDJ4lCGoNMOS9y+QOYQnDdkW7EscDx1XdqOMWurdCQJh3CsyuYTm9K6IYA7G7J3ZxS4RhNpAHRgYuiRYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5932
+Content-Transfer-Encoding: 8bit
 
+Introduce the capability to dynamically configure the FUSE_MAX_MAX_PAGES
+limit through a sysctl. This enhancement allows system administrators to
+adjust the value based on system-specific requirements.
 
-Dan Williams <dan.j.williams@intel.com> writes:
+This removes the previous static limit of 256 max pages, which limits
+the max write size of a request to 1 MiB (on 4096 pagesize systems).
+Having the ability to up the max write size beyond 1 MiB allows for the
+perf improvements detailed in this thread [1].
 
-> Alistair Popple wrote:
->> 
->> Dan Williams <dan.j.williams@intel.com> writes:
->> 
->> > Alistair Popple wrote:
->> >> FS DAX pages have always maintained their own page reference counts
->> >> without following the normal rules for page reference counting. In
->> >> particular pages are considered free when the refcount hits one rather
->> >> than zero and refcounts are not added when mapping the page.
->> >> 
->> >> Tracking this requires special PTE bits (PTE_DEVMAP) and a secondary
->> >> mechanism for allowing GUP to hold references on the page (see
->> >> get_dev_pagemap). However there doesn't seem to be any reason why FS
->> >> DAX pages need their own reference counting scheme.
->> >> 
->> >> By treating the refcounts on these pages the same way as normal pages
->> >> we can remove a lot of special checks. In particular pXd_trans_huge()
->> >> becomes the same as pXd_leaf(), although I haven't made that change
->> >> here. It also frees up a valuable SW define PTE bit on architectures
->> >> that have devmap PTE bits defined.
->> >> 
->> >> It also almost certainly allows further clean-up of the devmap managed
->> >> functions, but I have left that as a future improvment.
->> >> 
->> >> This is an update to the original RFC rebased onto v6.10-rc5. Unlike
->> >> the original RFC it passes the same number of ndctl test suite
->> >> (https://github.com/pmem/ndctl) tests as my current development
->> >> environment does without these patches.
->> >
->> > Are you seeing the 'mmap.sh' test fail even without these patches?
->> 
->> No. But I also don't see it failing with these patches :)
->> 
->> For reference this is what I see on my test machine with or without:
->> 
->> [1/70] Generating version.h with a custom command
->>  1/13 ndctl:dax / daxdev-errors.sh          SKIP             0.06s   exit status 77
->>  2/13 ndctl:dax / multi-dax.sh              SKIP             0.05s   exit status 77
->>  3/13 ndctl:dax / sub-section.sh            SKIP             0.14s   exit status 77
->
-> I really need to get this test built as a service as this shows a
-> pre-req is missing, and it's not quite fair to expect submitters to put
-> it all together.
+$ sysctl -a | grep fuse_max_max_pages
+fs.fuse.fuse_max_max_pages = 256
 
-Ok. I didn't dig into why this was being skipped but I might if I find
-some time. The rest of the tests seemed more relevant anyway and turned
-up enough bugs with my initial implementation to keep me busy which gave
-me some confidence.
+$ sysctl -n fs.fuse.fuse_max_max_pages
+256
 
-If I'm being honest though I found the whole test setup a bit of a
-pain. In particular remembering you have to manually (re)build the
-special test versions of the modules tripped me up a few times until I
-updated my build scripts. But I got there in the end.
+$ echo 1024 | sudo tee /proc/sys/fs/fuse/fuse_max_max_pages
+1024
 
->>  4/13 ndctl:dax / dax-dev                   OK               0.02s
->>  5/13 ndctl:dax / dax-ext4.sh               OK              12.97s
->>  6/13 ndctl:dax / dax-xfs.sh                OK              12.44s
->>  7/13 ndctl:dax / device-dax                OK              13.40s
->>  8/13 ndctl:dax / revoke-devmem             FAIL             0.31s   (exit status 250 or signal 122 SIGinvalid)
->> >>> TEST_PATH=/home/apopple/ndctl/build/test LD_LIBRARY_PATH=/home/apopple/ndctl/build/cxl/lib:/home/apopple/ndctl/build/daxctl/lib:/home/apopple/ndctl/build/ndctl/lib NDCTL=/home/apopple/ndctl/build/ndctl/ndctl MALLOC_PERTURB_=227 DATA_PATH=/home/apopple/ndctl/test DAXCTL=/home/apopple/ndctl/build/daxctl/daxctl /home/apopple/ndctl/build/test/revoke_devmem
->> 
->>  9/13 ndctl:dax / device-dax-fio.sh         OK              32.43s
->> 10/13 ndctl:dax / daxctl-devices.sh         SKIP             0.07s   exit status 77
->> 11/13 ndctl:dax / daxctl-create.sh          SKIP             0.04s   exit status 77
->> 12/13 ndctl:dax / dm.sh                     FAIL             0.08s   exit status 1
->> >>> MALLOC_PERTURB_=209 TEST_PATH=/home/apopple/ndctl/build/test LD_LIBRARY_PATH=/home/apopple/ndctl/build/cxl/lib:/home/apopple/ndctl/build/daxctl/lib:/home/apopple/ndctl/build/ndctl/lib NDCTL=/home/apopple/ndctl/build/ndctl/ndctl DATA_PATH=/home/apopple/ndctl/test DAXCTL=/home/apopple/ndctl/build/daxctl/daxctl /home/apopple/ndctl/test/dm.sh
->> 
->> 13/13 ndctl:dax / mmap.sh                   OK             107.57s
->
-> I need to think through why this one might false succeed, but that can
-> wait until we get this series reviewed. For now my failure is stable
-> which allows it to be bisected.
->
->> 
->> Ok:                 6   
->> Expected Fail:      0   
->> Fail:               2   
->> Unexpected Pass:    0   
->> Skipped:            5   
->> Timeout:            0   
->> 
->> I have been using QEMU for my testing. Maybe I missed some condition in
->> the unmap path though so will take another look.
->
-> I was able to bisect to:
+$ sysctl -n fs.fuse.fuse_max_max_pages
+1024
 
-I could have guessed that one, as it's pretty much the crux of this
-series given it's the one that switches everything away from
-pXX_devmap. That means pXX_leaf/_trans_huge will start returning true
-for DAX pages.
+[1] https://lore.kernel.org/linux-fsdevel/20240124070512.52207-1-jefflexu@linux.alibaba.com/T/#u
 
-Based on your dump I'm guessing I missed some case in the
-zap_pXX_range() path. It could be helpful to narrow down which of the
-pXX paths is crashing but I will take another look there.
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+---
+ Documentation/admin-guide/sysctl/fs.rst | 10 +++++++
+ fs/fuse/Makefile                        |  2 +-
+ fs/fuse/fuse_i.h                        | 14 +++++++---
+ fs/fuse/inode.c                         | 11 +++++++-
+ fs/fuse/ioctl.c                         |  4 ++-
+ fs/fuse/sysctl.c                        | 35 +++++++++++++++++++++++++
+ 6 files changed, 70 insertions(+), 6 deletions(-)
+ create mode 100644 fs/fuse/sysctl.c
 
-> [PATCH 10/13] fs/dax: Properly refcount fs dax pages
->
-> ...I will prioritize that one in my review queue.
+diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
+index 47499a1742bd..3f96e2f47b01 100644
+--- a/Documentation/admin-guide/sysctl/fs.rst
++++ b/Documentation/admin-guide/sysctl/fs.rst
+@@ -332,3 +332,13 @@ Each "watch" costs roughly 90 bytes on a 32-bit kernel, and roughly 160 bytes
+ on a 64-bit one.
+ The current default value for ``max_user_watches`` is 4% of the
+ available low memory, divided by the "watch" cost in bytes.
++
++5. /proc/sys/fs/fuse - Configuration options for FUSE filesystems
++=====================================================================
++
++This directory contains the following configuration options for FUSE
++filesystems:
++
++``/proc/sys/fs/fuse/fuse_max_max_pages`` is a read/write file for
++setting/getting the maximum number of pages that can be used for servicing
++requests in FUSE.
+diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+index 6e0228c6d0cb..cd4ef3e08ebf 100644
+--- a/fs/fuse/Makefile
++++ b/fs/fuse/Makefile
+@@ -7,7 +7,7 @@ obj-$(CONFIG_FUSE_FS) += fuse.o
+ obj-$(CONFIG_CUSE) += cuse.o
+ obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
+ 
+-fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
++fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o sysctl.o
+ fuse-y += iomode.o
+ fuse-$(CONFIG_FUSE_DAX) += dax.o
+ fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index f23919610313..0c9aaf626341 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -35,9 +35,6 @@
+ /** Default max number of pages that can be used in a single read request */
+ #define FUSE_DEFAULT_MAX_PAGES_PER_REQ 32
+ 
+-/** Maximum of max_pages received in init_out */
+-#define FUSE_MAX_MAX_PAGES 256
+-
+ /** Bias for fi->writectr, meaning new writepages must not be sent */
+ #define FUSE_NOWRITE INT_MIN
+ 
+@@ -47,6 +44,9 @@
+ /** Number of dentries for each connection in the control filesystem */
+ #define FUSE_CTL_NUM_DENTRIES 5
+ 
++/** Maximum of max_pages received in init_out */
++extern unsigned int fuse_max_max_pages;
++
+ /** List of active connections */
+ extern struct list_head fuse_conn_list;
+ 
+@@ -1472,4 +1472,12 @@ ssize_t fuse_passthrough_splice_write(struct pipe_inode_info *pipe,
+ 				      size_t len, unsigned int flags);
+ ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma);
+ 
++#ifdef CONFIG_SYSCTL
++extern int fuse_sysctl_register(void);
++extern void fuse_sysctl_unregister(void);
++#else
++#define fuse_sysctl_register()		(0)
++#define fuse_sysctl_unregister()	do { } while (0)
++#endif /* CONFIG_SYSCTL */
++
+ #endif /* _FS_FUSE_I_H */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 99e44ea7d875..5d29a92389e6 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -35,6 +35,8 @@ DEFINE_MUTEX(fuse_mutex);
+ 
+ static int set_global_limit(const char *val, const struct kernel_param *kp);
+ 
++unsigned int fuse_max_max_pages = 256;
++
+ unsigned max_user_bgreq;
+ module_param_call(max_user_bgreq, set_global_limit, param_get_uint,
+ 		  &max_user_bgreq, 0644);
+@@ -932,7 +934,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+ 	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
+ 	fc->user_ns = get_user_ns(user_ns);
+ 	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
+-	fc->max_pages_limit = FUSE_MAX_MAX_PAGES;
++	fc->max_pages_limit = fuse_max_max_pages;
+ 
+ 	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+ 		fuse_backing_files_init(fc);
+@@ -2039,8 +2041,14 @@ static int __init fuse_fs_init(void)
+ 	if (err)
+ 		goto out3;
+ 
++	err = fuse_sysctl_register();
++	if (err)
++		goto out4;
++
+ 	return 0;
+ 
++ out4:
++	unregister_filesystem(&fuse_fs_type);
+  out3:
+ 	unregister_fuseblk();
+  out2:
+@@ -2053,6 +2061,7 @@ static void fuse_fs_cleanup(void)
+ {
+ 	unregister_filesystem(&fuse_fs_type);
+ 	unregister_fuseblk();
++	fuse_sysctl_unregister();
+ 
+ 	/*
+ 	 * Make sure all delayed rcu free inodes are flushed before we
+diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
+index 572ce8a82ceb..a6c8ee551635 100644
+--- a/fs/fuse/ioctl.c
++++ b/fs/fuse/ioctl.c
+@@ -10,6 +10,8 @@
+ #include <linux/fileattr.h>
+ #include <linux/fsverity.h>
+ 
++#define FUSE_VERITY_ENABLE_ARG_MAX_PAGES 256
++
+ static ssize_t fuse_send_ioctl(struct fuse_mount *fm, struct fuse_args *args,
+ 			       struct fuse_ioctl_out *outarg)
+ {
+@@ -140,7 +142,7 @@ static int fuse_setup_enable_verity(unsigned long arg, struct iovec *iov,
+ {
+ 	struct fsverity_enable_arg enable;
+ 	struct fsverity_enable_arg __user *uarg = (void __user *)arg;
+-	const __u32 max_buffer_len = FUSE_MAX_MAX_PAGES * PAGE_SIZE;
++	const __u32 max_buffer_len = FUSE_VERITY_ENABLE_ARG_MAX_PAGES * PAGE_SIZE;
+ 
+ 	if (copy_from_user(&enable, uarg, sizeof(enable)))
+ 		return -EFAULT;
+diff --git a/fs/fuse/sysctl.c b/fs/fuse/sysctl.c
+new file mode 100644
+index 000000000000..0dbcb9688f73
+--- /dev/null
++++ b/fs/fuse/sysctl.c
+@@ -0,0 +1,35 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * linux/fs/fuse/fuse_sysctl.c
++ *
++ * Sysctl interface to fuse parameters
++ */
++#include <linux/sysctl.h>
++
++#include "fuse_i.h"
++
++static struct ctl_table_header *fuse_table_header;
++
++static struct ctl_table fuse_sysctl_table[] = {
++	{
++		.procname	= "fuse_max_max_pages",
++		.data		= &fuse_max_max_pages,
++		.maxlen		= sizeof(fuse_max_max_pages),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec,
++	},
++};
++
++int fuse_sysctl_register(void)
++{
++	fuse_table_header = register_sysctl("fs/fuse", fuse_sysctl_table);
++	if (!fuse_table_header)
++		return -ENOMEM;
++	return 0;
++}
++
++void fuse_sysctl_unregister(void)
++{
++	unregister_sysctl_table(fuse_table_header);
++	fuse_table_header = NULL;
++}
+-- 
+2.43.0
 
-Thanks!
 
