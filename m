@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-22770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D6AD91BFE8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 15:48:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC08591BFDA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 15:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF4FA1C21505
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 13:48:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58C271F23863
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 13:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D751991DF;
-	Fri, 28 Jun 2024 13:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99E41BF304;
+	Fri, 28 Jun 2024 13:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="oqFrqm1u"
+	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="qrx9Vpyh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from sandeen.net (sandeen.net [63.231.237.45])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CF9155CAE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 13:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB66E1E889;
+	Fri, 28 Jun 2024 13:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.231.237.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719582477; cv=none; b=oo/wICR5mM0jWr0dZVGgiCNYokdPM/AkQrZQM4cCT8O04O0zair4mq9uyt1zCCyrBUlO+DxqVytifrOnQrtloCCUcoQPMmQVXhNprYh0/PZvuisJCZ0BOpl6PUS0SHCLr9kHSrZ7l39+77VHhcPUPPFAKftAsfRTub82HtRZs4k=
+	t=1719582301; cv=none; b=Y4bJR6vNqlfeOzTQOBAGNuj8vlE4p8+9FkbFCfYcTQcJqyn581E487DdQmHrqUCgAFvrOTFuZaYD1jmZHdVXXtv6yyosNL4Rzbu/zAyJFUoKgxTn+ZkzhUF7tJBJq/jvXLooeXrsF6J71RCOHxyb2vkgFk+0WcJ4SbmVPasSTdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719582477; c=relaxed/simple;
-	bh=mXZozb5UVuMc1pGGAvpXYhjSbN3nNqKHh/Bw4deQbYQ=;
+	s=arc-20240116; t=1719582301; c=relaxed/simple;
+	bh=77BI7tguWHgEq99xWrc6gnoboZnF1lacf05CuU7G42c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TQG/h0DqFrW5FlFOa5+xBpvZAaiZHcrBZEUK8Vb6bgMNTewjjO6COnNNlEVrJTYoPeMkOQfUPWS9GmiL81QTXntzR78V7QoV8Syz4XI2VGcA1wooS0DUEAB+lGiSuNgKz2pJp//nxoR9gCrT+5o7X6AE1tTKK2Nt5Sjxoh2tk0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=oqFrqm1u; arc=none smtp.client-ip=63.231.237.45
+	 In-Reply-To:Content-Type; b=ragWPTPd+fUr5/cI87r0NX7dtEcNcvqO7C1+FmwJyTDXnULo7vSWLyTCIHleKOBWpDjLKq7k413Tw5FVBV9LujgBE2Tfs9Ut1BBqKhMT0s8N9Ep7JgGIsmBmPYY4a7rVPDr2LoygrnQtarbhv8qBooxQPfALsR4kM8Y5DF5mfls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=qrx9Vpyh; arc=none smtp.client-ip=63.231.237.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
 Received: from [10.0.0.71] (usg [10.0.0.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by sandeen.net (Postfix) with ESMTPSA id CDAE07888;
-	Fri, 28 Jun 2024 08:41:25 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 sandeen.net CDAE07888
+	by sandeen.net (Postfix) with ESMTPSA id B8504479AE7;
+	Fri, 28 Jun 2024 08:44:57 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 sandeen.net B8504479AE7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net;
-	s=default; t=1719582085;
-	bh=FOfCB41VfBiylSyY2RVS+3McNWpuiX70HVSwPiDukmQ=;
+	s=default; t=1719582297;
+	bh=Wm0ob2liKwaqVbn00ikDKfK69kD3HD4g+HnBrpsBtW0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oqFrqm1uDn7rwJVJVXlKoADNg0pZwlCrARdfkrvlfhntHeu53Fhn8jLkUXS4knMch
-	 kda3xP0/AAP7l75D/dtP1ovXTkhm/7RuwxPj2KpyjTfHBFaMMQMpMkkpo6LcrBXSs9
-	 SpjaXIeabrSMHDkQgiCZm8IjCxezCWvayboKI84tOR0dlripc/RH99u5DP6za6jPcS
-	 ykiUAAFgY8SUS54+y6G+16HWcnL8XZtxEytcGfzdnOXFwqjL18bdPKsgt0wPOXlh9H
-	 k2vAncv1gW0+TeTBUqIf4BJWgCC+kkjuZtJiWgJsPaohmGhvRPehnqfRvRwdO9O22x
-	 x1a725zKSghJw==
-Message-ID: <e85866ed-2a70-41ec-9845-9bf01380bbcb@sandeen.net>
-Date: Fri, 28 Jun 2024 08:41:24 -0500
+	b=qrx9Vpyhxcf6Ccxu1nuAmtF93uW/ueFYWzOccKUh54TalNBQ4t63BP5oUyWlboQhC
+	 WX+PUV2Brzf30rbzUiP594AXcjW3QoOLhz3z+XQQQWuRssk79igSO2coEA6/JvL6bf
+	 BTNwcp6VJJqsWJEZ3EbAWEh/xCJlB7Lf/ONSJtCBE97BxFAWjQA9bdLHG1KDnltvdT
+	 0+RFws1BZFMMBR0ickPmjzBuqw4WAT0BG53yvl+IW8OXJCu7NGrVSBWc8pGmx+Y18r
+	 24NKBfo0ZsCxWTtD9jxdMbrx9h+VqakxBVi/gbrwKM/r6xSc6gKvi9JHqtHgszm9vJ
+	 DhHGFwa2Bx1/Q==
+Message-ID: <7c90924d-b023-4fa7-801d-ea0a53a5e5ed@sandeen.net>
+Date: Fri, 28 Jun 2024 08:44:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,77 +54,95 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/14] fuse: Convert to new uid/gid option parsing helpers
-To: Christian Brauner <brauner@kernel.org>, Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
- Bernd Schubert <bschubert@ddn.com>, Amir Goldstein <amir73il@gmail.com>,
- Seth Forshee <sforshee@kernel.org>
+Subject: Re: [PATCH 01/14] fs_parse: add uid & gid option option parsing
+ helpers
+To: Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+ autofs@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
+ linux-efi@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
+ linux-ext4@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+ linux-mm@kvack.org, ntfs3@lists.linux.dev, linux-cifs@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Hans Caniullan <hcaniull@redhat.com>,
+ Alexander Viro <aviro@redhat.com>
 References: <8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com>
- <02670c04-2449-443f-bf44-68c927685a1c@redhat.com>
- <20240628-anbrechen-warnschilder-c8607ec1c881@brauner>
+ <de859d0a-feb9-473d-a5e2-c195a3d47abb@redhat.com>
+ <20240628094517.ifs4bp73nlggsnxz@quack3>
 Content-Language: en-US
 From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <20240628-anbrechen-warnschilder-c8607ec1c881@brauner>
+In-Reply-To: <20240628094517.ifs4bp73nlggsnxz@quack3>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/28/24 7:07 AM, Christian Brauner wrote:
-> I think you accidently Cced the wrong Miklos. :)
+On 6/28/24 4:45 AM, Jan Kara wrote:
+> On Thu 27-06-24 19:26:24, Eric Sandeen wrote:
+>> Multiple filesystems take uid and gid as options, and the code to
+>> create the ID from an integer and validate it is standard boilerplate
+>> that can be moved into common helper functions, so do that for
+>> consistency and less cut&paste.
+>>
+>> This also helps avoid the buggy pattern noted by Seth Jenkins at
+>> https://lore.kernel.org/lkml/CALxfFW4BXhEwxR0Q5LSkg-8Vb4r2MONKCcUCVioehXQKr35eHg@mail.gmail.com/
+>> because uid/gid parsing will fail before any assignment in most
+>> filesystems.
+>>
+>> Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
 > 
-> On Thu, Jun 27, 2024 at 07:33:43PM GMT, Eric Sandeen wrote:
->> Convert to new uid/gid option parsing helpers
->>
->> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
->> ---
->>  fs/fuse/inode.c | 12 ++++--------
->>  1 file changed, 4 insertions(+), 8 deletions(-)
->>
->> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->> index 99e44ea7d875..1ac528bcdb3c 100644
->> --- a/fs/fuse/inode.c
->> +++ b/fs/fuse/inode.c
->> @@ -740,8 +740,8 @@ static const struct fs_parameter_spec fuse_fs_parameters[] = {
->>  	fsparam_string	("source",		OPT_SOURCE),
->>  	fsparam_u32	("fd",			OPT_FD),
->>  	fsparam_u32oct	("rootmode",		OPT_ROOTMODE),
->> -	fsparam_u32	("user_id",		OPT_USER_ID),
->> -	fsparam_u32	("group_id",		OPT_GROUP_ID),
->> +	fsparam_uid	("user_id",		OPT_USER_ID),
->> +	fsparam_gid	("group_id",		OPT_GROUP_ID),
->>  	fsparam_flag	("default_permissions",	OPT_DEFAULT_PERMISSIONS),
->>  	fsparam_flag	("allow_other",		OPT_ALLOW_OTHER),
->>  	fsparam_u32	("max_read",		OPT_MAX_READ),
->> @@ -799,16 +799,12 @@ static int fuse_parse_param(struct fs_context *fsc, struct fs_parameter *param)
->>  		break;
+> I like the idea since this seems like a nobrainer but is actually
+> surprisingly subtle...
+> 
+>> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+>> index a4d6ca0b8971..24727ec34e5a 100644
+>> --- a/fs/fs_parser.c
+>> +++ b/fs/fs_parser.c
+>> @@ -308,6 +308,40 @@ int fs_param_is_fd(struct p_log *log, const struct fs_parameter_spec *p,
+>>  }
+>>  EXPORT_SYMBOL(fs_param_is_fd);
 >>  
->>  	case OPT_USER_ID:
->> -		ctx->user_id = make_kuid(fsc->user_ns, result.uint_32);
->> -		if (!uid_valid(ctx->user_id))
->> -			return invalfc(fsc, "Invalid user_id");
->> +		ctx->user_id = result.uid;
+>> +int fs_param_is_uid(struct p_log *log, const struct fs_parameter_spec *p,
+>> +		    struct fs_parameter *param, struct fs_parse_result *result)
+>> +{
+>> +	kuid_t uid;
+>> +
+>> +	if (fs_param_is_u32(log, p, param, result) != 0)
+>> +		return fs_param_bad_value(log, param);
+>> +
+>> +	uid = make_kuid(current_user_ns(), result->uint_32);
 > 
-> So fsc->user_ns will record the namespaces at fsopen() time which can be
-> different from the namespace used at fsconfig() time. This was done when
-> fuse was ported to the new mount api.
-> 
-> It has the same potential issues that Seth pointed out so I think your
-> patch is correct. But I also think we might need the same verification
-> that tmpfs is doing to verify that the uid/gid we're using can actually
-> be represented in the fsc->user_ns.
+> But here is the problem: Filesystems mountable in user namespaces need to use
+> fc->user_ns for resolving uids / gids (e.g. like fuse_parse_param()).
+> Having helpers that work for some filesystems and are subtly broken for
+> others is worse than no helpers... Or am I missing something?
 
-Hm yeah, so that's a current bug in fuse, right? (it /would/ be really
-nice to be able to spot FS_USERNS_MOUNT in the helper, and do the right
-thing in all cases) 
+Yeah, I should have pointed that out. tmpfs still does that check after the
+initial trivial parsing after this change to use the basic helper:
 
-> So maybe there should be a separate patch that converts fuse to rely on
-> make_k*id(current_user_ns()) + k*id_has_mapping() and then these patches
-> on top?
+        case Opt_uid:
+                kuid = result.uid;
+        
+                /*
+                 * The requested uid must be representable in the
+                 * filesystem's idmapping.
+                 */
+                if (!kuid_has_mapping(fc->user_ns, kuid))
+                        goto bad_value;
+        
+                ctx->uid = kuid;
+                break;
 
-Ok, I guess the idea is that that patch could land more quickly than this
-treewide-ish change (and would be cherry-pickable -stable material), to fix
-the bug, and then make this change later. Seems fair.
+I can see your point about risks of a helper that doesn't cover all cases
+though.
+ 
+> And the problem with fc->user_ns is that currently __fs_parse() does not
+> get fs_context as an argument... So that will need some larger work.
+
+Yup, this was discussed a little when I sent this idea as an RFC, and the
+(brief/small) consensus was that it was worth going this far for now.
+
+Getting fc back into __fs_parse looks rather tricky and Al was not keen
+on the idea, for some reason.
 
 Thanks,
 -Eric
+> 								Honza
 
 
