@@ -1,210 +1,452 @@
-Return-Path: <linux-fsdevel+bounces-22760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6454691BD2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 13:14:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6776691BD48
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 13:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 371381C214F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 11:14:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7A681F23122
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 11:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B330156237;
-	Fri, 28 Jun 2024 11:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC2115698D;
+	Fri, 28 Jun 2024 11:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wiKoSuo7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="shKHQb+W";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wiKoSuo7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="shKHQb+W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYlWM0BJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFC914F9F2;
-	Fri, 28 Jun 2024 11:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094DA1865A;
+	Fri, 28 Jun 2024 11:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719573238; cv=none; b=hJ+5H00PgHji5O55VD1rqMSgtvFua8xen1CEyF6mbMB/iSSBqsqytsJZYyTjxCWKBMncNHnv0mwCxr6NQQqI8wlVtR2hiK4oUxgsi57Qmf8W6Ve6ILqj22DygfFaVIxki7PdHwnXbn1CDip1Vr3yrgGKc8Cw/kaN/VOY2rNUAKY=
+	t=1719573663; cv=none; b=heWJ3dXIrvh8/yYw5z+DEdWeySuXxJvzMBgG0JZrRGX6rq1nEZehXeGmXa3wXckWEOnv0ktxLA8Opmx0nylbmqRhXPxtII77vhNJ/LBnTTeSwRgbfwG+f1b0RE+7pJZv/L2ZGMUE+2Poanfsqn3HhDi2MQYpts5cVKIhBVhXO5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719573238; c=relaxed/simple;
-	bh=MuriAqX618t8StIaVZuupMBbbg4WrxyKt9NA3Tb2N4w=;
+	s=arc-20240116; t=1719573663; c=relaxed/simple;
+	bh=H9LG7tyQUS6l+gAsK00ygS1kZ4M8p3oxPYVZt9C/r+k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTNJCQzlxAPhkBuzqK/iKzAauwY/xf01jEbaxMgLw23zLX8Jz8NKLT1FJ9N1UswnT9hDew763umaGZc1C3p7uYdYAlKEtw/wD8JFNIAreAm28yGL8FKQug9CnysHLwO1za5Pjq2JomGuO/uepcLFOl1VjyXDoDtRGJc1SDaU7t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wiKoSuo7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=shKHQb+W; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wiKoSuo7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=shKHQb+W; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2DB3B1F441;
-	Fri, 28 Jun 2024 11:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719573234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSabMPYZH3IQ9skkdgGwlpc9kmhikVgNIgrANj0iNso=;
-	b=wiKoSuo7uhWB/poWLfuJK+j7kpWmZXaYb8n21lplFeGLcX/eAru1tTO6IqNgzrl3SDNji/
-	1WfTAWfTO+W1pDrv0IKdHnia9axR8tyY3Q+2htUI/dpY6lJboHU0rab0Aflz4kmgL6u1yr
-	gpc0thKIM9+b+ltennYhNpp1Hl1Yh08=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719573234;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSabMPYZH3IQ9skkdgGwlpc9kmhikVgNIgrANj0iNso=;
-	b=shKHQb+WUGwVaCTGkuqrnkWxCXFEoTWaoC8atyu6UscfQ8NWB2SMF05BaLs8ArKoBgpgSv
-	CQVa+1LoWXcCyVDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719573234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSabMPYZH3IQ9skkdgGwlpc9kmhikVgNIgrANj0iNso=;
-	b=wiKoSuo7uhWB/poWLfuJK+j7kpWmZXaYb8n21lplFeGLcX/eAru1tTO6IqNgzrl3SDNji/
-	1WfTAWfTO+W1pDrv0IKdHnia9axR8tyY3Q+2htUI/dpY6lJboHU0rab0Aflz4kmgL6u1yr
-	gpc0thKIM9+b+ltennYhNpp1Hl1Yh08=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719573234;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSabMPYZH3IQ9skkdgGwlpc9kmhikVgNIgrANj0iNso=;
-	b=shKHQb+WUGwVaCTGkuqrnkWxCXFEoTWaoC8atyu6UscfQ8NWB2SMF05BaLs8ArKoBgpgSv
-	CQVa+1LoWXcCyVDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 203D813A9A;
-	Fri, 28 Jun 2024 11:13:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rbraB/KafmbjVAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 28 Jun 2024 11:13:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A4950A088E; Fri, 28 Jun 2024 13:13:45 +0200 (CEST)
-Date: Fri, 28 Jun 2024 13:13:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ian Kent <ikent@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, raven@themaw.net, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Alexander Larsson <alexl@redhat.com>,
-	Eric Chanudet <echanude@redhat.com>
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-Message-ID: <20240628111345.3bbcgie4gar6icyj@quack3>
-References: <20240626201129.272750-2-lkarpins@redhat.com>
- <20240626201129.272750-3-lkarpins@redhat.com>
- <Znx-WGU5Wx6RaJyD@casper.infradead.org>
- <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <cfda4682-34b4-462c-acf6-976b0d79ba06@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCpCOyVgOcANyE9npzvLouZEw52q1OMj6d+B7xLkY8fJs1X57H/5yTVDDsntVTblGpeAtLSv0s2djtn8n2YBzn92DVgLhxnhhWiPL3cVUHtzm8j36DRpE03FMJUzOAtfhl0wzQG2ST6lB6XbK9MXC9wqWJWZuYbXRnp0CHzTbVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYlWM0BJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4FDC32781;
+	Fri, 28 Jun 2024 11:21:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719573662;
+	bh=H9LG7tyQUS6l+gAsK00ygS1kZ4M8p3oxPYVZt9C/r+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AYlWM0BJiJ2OG0s36uS2+uXWaotADKWSKCcfu93E/TbyqsAzvghaWnuJmeXnVTAOD
+	 ZUOkA2cT97saBn6FEZEgHi0F4bMlTl7A5PS6wOBtOmt4JGSVgvT+HGUcOZ+aWrQsDr
+	 LE91/+WvTpqEB0V3m8jBmq4/kS/mHbQwIoFPGnTTkw9xkgfRUsl4DoKPFXS0LGbzS6
+	 NfnsSeqpVfM7oMCPSeffPkuxqGGVHw9rXu9LWfJ9Q7XCXaKTsZmvpHHdJBmvL4/6HU
+	 UN7UtDiDZP4DtHvmBMN9sS56+m/BRGrUC+QgYBSZX48l0zGhUK7PARphiDeTTV/9ZY
+	 k52jbP/NOK2yw==
+Date: Fri, 28 Jun 2024 13:20:59 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
+Subject: Re: [PATCH v3 1/2] statmount.2: New page describing the statmount
+ syscall
+Message-ID: <abzm6cqteoj6etvnwkopridflj34252s3jyabndd2prm3tjars@6jutizrurv2q>
+References: <cover.1719425922.git.josef@toxicpanda.com>
+ <e202b85c695e90547c75e87d89d9bf1a9b999960.1719425922.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d7qedxtdee2wxenh"
 Content-Disposition: inline
-In-Reply-To: <cfda4682-34b4-462c-acf6-976b0d79ba06@redhat.com>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-
-On Fri 28-06-24 10:58:54, Ian Kent wrote:
-> 
-> On 27/6/24 19:54, Jan Kara wrote:
-> > On Thu 27-06-24 09:11:14, Ian Kent wrote:
-> > > On 27/6/24 04:47, Matthew Wilcox wrote:
-> > > > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
-> > > > > +++ b/fs/namespace.c
-> > > > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
-> > > > >    static DECLARE_RWSEM(namespace_sem);
-> > > > >    static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-> > > > >    static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > > > > +static bool lazy_unlock = false; /* protected by namespace_sem */
-> > > > That's a pretty ugly way of doing it.  How about this?
-> > > Ha!
-> > > 
-> > > That was my original thought but I also didn't much like changing all the
-> > > callers.
-> > > 
-> > > I don't really like the proliferation of these small helper functions either
-> > > but if everyone
-> > > 
-> > > is happy to do this I think it's a great idea.
-> > So I know you've suggested removing synchronize_rcu_expedited() call in
-> > your comment to v2. But I wonder why is it safe? I *thought*
-> > synchronize_rcu_expedited() is there to synchronize the dropping of the
-> > last mnt reference (and maybe something else) - see the comment at the
-> > beginning of mntput_no_expire() - and this change would break that?
-> 
-> Interesting, because of the definition of lazy umount I didn't look closely
-> enough at that.
-> 
-> But I wonder, how exactly would that race occur, is holding the rcu read
-> lock sufficient since the rcu'd mount free won't be done until it's
-> released (at least I think that's how rcu works).
-
-I'm concerned about a race like:
-
-[path lookup]				[umount -l]
-...
-path_put()
-  mntput(mnt)
-    mntput_no_expire(m)
-      rcu_read_lock();
-      if (likely(READ_ONCE(mnt->mnt_ns))) {
-					do_umount()
-					  umount_tree()
-					    ...
-					    mnt->mnt_ns = NULL;
-					    ...
-					  namespace_unlock()
-					    mntput(&m->mnt)
-					      mntput_no_expire(mnt)
-				              smp_mb();
-					      mnt_add_count(mnt, -1);
-					      count = mnt_get_count(mnt);
-					      if (count != 0) {
-						...
-						return;
-        mnt_add_count(mnt, -1);
-        rcu_read_unlock();
-        return;
--> KABOOM, mnt->mnt_count dropped to 0 but nobody cleaned up the mount!
-      }
-
-And this scenario is exactly prevented by synchronize_rcu() in
-namespace_unlock().
+In-Reply-To: <e202b85c695e90547c75e87d89d9bf1a9b999960.1719425922.git.josef@toxicpanda.com>
 
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--d7qedxtdee2wxenh
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
+Subject: Re: [PATCH v3 1/2] statmount.2: New page describing the statmount
+ syscall
+References: <cover.1719425922.git.josef@toxicpanda.com>
+ <e202b85c695e90547c75e87d89d9bf1a9b999960.1719425922.git.josef@toxicpanda.com>
+MIME-Version: 1.0
+In-Reply-To: <e202b85c695e90547c75e87d89d9bf1a9b999960.1719425922.git.josef@toxicpanda.com>
+
+On Wed, Jun 26, 2024 at 02:21:39PM GMT, Josef Bacik wrote:
+> Add some documentation on the new statmount syscall.
+>=20
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  man/man2/statmount.2 | 285 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 285 insertions(+)
+>  create mode 100644 man/man2/statmount.2
+>=20
+> diff --git a/man/man2/statmount.2 b/man/man2/statmount.2
+> new file mode 100644
+> index 000000000..2f85bc022
+> --- /dev/null
+> +++ b/man/man2/statmount.2
+> @@ -0,0 +1,285 @@
+> +'\" t
+> +.\" Copyright (c) 2024 Josef Bacik <josef@toxicpanda.com>
+> +.\"
+> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> +.\"
+> +.TH statmount 2 (date) "Linux man-pages (unreleased)"
+> +.SH NAME
+> +statmount \- get a mount status
+> +.SH LIBRARY
+> +Standard C library
+> +.RI ( libc ", " \-lc )
+> +.SH SYNOPSIS
+> +.nf
+> +.BR "#include <linux/mount.h>" "  /* Definition of STATMOUNT_* constants=
+ */"
+> +.B #include <unistd.h>
+> +.P
+> +.BI "int syscall(SYS_statmount, struct mnt_id_req * " req ,
+> +.BI "            struct statmount * " statmountbuf ", size_t " bufsize ,
+
+How about a shorter name?  s/statmountbuf/smbuf/
+
+> +.BI "            unsigned long " flags );
+> +.P
+> +.B #include <linux/mount.h>
+> +.P
+> +.B struct mnt_id_req {
+> +.BR "    __u32 size;" "    /* sizeof(struct mnt_id_req) */"
+> +.BR "    __u64 mnt_id;" "  /* The mnt_id being queried */"
+> +.BR "    __u64 param;" "   /* An ORed combination of the STATMOUNT_ cons=
+tants */"
+> +.B };
+> +.P
+> +.B struct statmount {
+> +.B "    __u32 size;"
+> +.B "    __u64 mask;"
+> +.B "    __u32 sb_dev_major;"
+> +.B "    __u32 sb_dev_minor;"
+> +.B "    __u64 sb_magic;"
+> +.B "    __u32 sb_flags;"
+> +.B "    __u32 fs_type;"
+> +.B "    __u64 mnt_id;"
+> +.B "    __u64 mnt_parent_id;"
+> +.B "    __u32 mnt_id_old;"
+> +.B "    __u32 mnt_parent_id_old;"
+> +.B "    __u64 mnt_attr;"
+> +.B "    __u64 mnt_propagation;"
+> +.B "    __u64 mnt_peer_group;"
+> +.B "    __u64 mnt_master;"
+> +.B "    __u64 propagate_from;"
+> +.B "    __u32 mnt_root;"
+> +.B "    __u32 mnt_point;"
+> +.B "    char  str[];"
+> +.B };
+> +.fi
+> +.P
+> +.IR Note :
+> +glibc provides no wrapper for
+> +.BR statmount (),
+> +necessitating the use of
+> +.BR syscall (2).
+> +.SH DESCRIPTION
+> +To access a mount's status,
+> +you must have CAP_SYS_ADMIN in the user namespace.
+> +.P
+> +This function returns information about a mount,
+> +storing it in the buffer pointed to by
+> +.IR statmountbuf .
+> +The returned buffer is a
+> +.I struct statmount
+> +with the fields filled in as described below.
+> +.P
+> +(Note that reserved space and padding is omitted.)
+> +.SS The mnt_id_req structure
+> +.I req.size
+> +is used by the kernel to determine which struct
+> +.I mnt_id_req
+> +is being passed in,
+> +it should always be set to sizeof(struct mnt_id req).
+
+There's a missing '_'.  BTW, since this is inline code, it should be in
+italics.  See man-pages(7):
+
+     Expressions, if not written on a separate indented line, should be
+     specified in italics.  Again, the use of nonbreaking spaces may be
+     appropriate if the expression is inlined with normal text.
+
+So:
+
+=2EIR sizeof(struct\~mnt_id_req) .
+
+> +.P
+> +.I req.mnt_id
+> +can be obtained from either
+> +.BR statx (2)
+> +using
+> +.B STATX_MNT_ID_UNIQUE
+> +or from
+> +.BR listmount (2)
+> +and is used as the identifier to query the status of the desired mount p=
+oint.
+> +.P
+> +.I req.param
+> +is used to tell the kernel which fields the caller is interested in.
+> +It is an ORed combination of the following constants
+> +.P
+> +.in +4n
+> +.TS
+> +lBl.
+> +STATMOUNT_SB_BASIC	/* Want/got sb_... */
+> +STATMOUNT_MNT_BASIC	/* Want/got mnt_... */
+
+We normally use glob style for these things: sb_* mnt_*
+
+> +STATMOUNT_PROPAGATE_FROM	/* Want/got propagate_from */
+> +STATMOUNT_MNT_ROOT	/* Want/got mnt_root  */
+> +STATMOUNT_MNT_POINT	/* Want/got mnt_point */
+> +STATMOUNT_FS_TYPE	/* Want/got fs_type */
+> +.TE
+> +.in
+> +.P
+> +Note that,
+> +in general,
+> +the kernel does
+> +.I not
+> +reject values in
+> +.I req.param
+> +other than the above.
+> +(For an exception,
+> +see
+> +.B EINVAL
+> +in errors.)
+> +Instead,
+> +it simply informs the caller which values are supported
+> +by this kernel and filesystem via the
+> +.I statmount.mask
+> +field.
+> +Therefore,
+> +.I "do not"
+> +simply set
+> +.I req.param
+> +to
+> +.B UINT_MAX
+> +(all bits set),
+> +as one or more bits may,
+> +in the future,
+> +be used to specify an extension to the buffer.
+> +.SS The returned information
+> +The status information for the target mount is returned in the
+> +.I statmount
+> +structure pointed to by
+> +.IR statmountbuf .
+> +Included in this is
+> +.I size
+> +which indicates the size of the
+> +.I statmountbuf
+> +that was filled in,
+> +including any strings.
+> +.I mask
+> +which indicates what information in the structure has been filled in.
+> +.P
+> +It should be noted that the kernel may return fields that weren't reques=
+ted
+> +and may fail to return fields that were requested,
+> +depending on what the backing file system and kernel supports.
+> +In either case,
+> +.I req.param
+> +will not be equal to
+> +.IR mask .
+> +.P
+> +Apart from
+> +.I mask
+> +(which is described above),
+
+Why not describe .mask like the rest, below?  That would be more
+consistent, no?
+
+> +the fields in the
+> +.I statmount
+> +structure are:
+> +.TP
+> +.I size
+
+Please use smbuf.size, for consistency with the mnt_id_rew subsection,
+which uses req.*
+
+I like that, because it is more explicit (you don't need to check again
+in which subsection you are).
+
+> +The size of the returned
+> +.I statmountbuf
+> +structure.
+> +.TP
+> +.I sb_dev_major
+> +.TQ
+> +.I sb_dev_minor
+> +The device that is mounted at this mount point.
+> +.TP
+> +.I sb_magic
+> +The file system specific super block magic.
+> +.TP
+> +.I sb_flags
+> +The flags that are set on the super block,
+> +an ORed combination of
+> +.BR SB_RDONLY ,
+> +.BR SB_SYNCHRONOUS ,
+> +.BR SB_DIRSYNC ,
+> +.BR SB_LAZYTIME .
+> +.TP
+> +.I fs_type
+> +The offset to the location in the
+> +.I statmount.str
+> +buffer that contains the string representation of the mounted file syste=
+m. It is
+> +a null-terminated string.
+> +.TP
+> +.I mnt_id
+> +The unique mount ID of the mount.
+> +.TP
+> +.I mnt_parent_id
+> +The unique mount ID of the parent mount point of this mount.
+> +If this is the root mount point then
+> +.IR mnt_id\~=3D=3D\~parent_mount_id .
+> +.TP
+> +.I mnt_id_old
+> +This corresponds to the mount ID that is exported by
+> +.IR /proc/ pid /mountinfo .
+> +.TP
+> +.I mnt_parent_id_old
+> +This corresponds to the parent mount ID that is exported by
+> +.IR /proc/ pid /mountinfo .
+> +.TP
+> +.I mnt_attr
+> +The
+> +.B MOUNT_ATTR_
+
+=2EBI MOUNT_ATTR_ *
+
+Have a lovely day!
+Alex
+
+> +flags set on this mount point.
+> +.TP
+> +.I mnt_propagation
+> +The mount propagation flags,
+> +which can be one of
+> +.BR MS_SHARED ,
+> +.BR MS_SLAVE ,
+> +.BR MS_PRIVATE ,
+> +.BR MS_UNBINDABLE .
+> +.TP
+> +.I mnt_peer_group
+> +The ID of the shared peer group.
+> +.TP
+> +.I mnt_master
+> +The mount point receives its propagation from this mount ID.
+> +.TP
+> +.I propagate_from
+> +The ID from the namespace we propagated from.
+> +.TP
+> +.I mnt_root
+> +The offset to the location in the
+> +.I statmount.str
+> +buffer that contains the string representation of the mount relative to =
+the root
+> +of the file system.
+> +It is a NULL terminated string.
+> +.TP
+> +.I mnt_point
+> +The offset to the location in the
+> +.I statmount.str
+> +buffer that contains the string representation of the mount relative to =
+the
+> +current root (ie if you are in a
+> +.BR chroot ).
+> +It is a NULL terminated string.
+> +.SH RETURN VALUE
+> +On success, zero is returned.
+> +On error, \-1 is returned, and
+> +.I errno
+> +is set to indicate the error.
+> +.SH ERRORS
+> +.TP
+> +.B EPERM
+> +Permission is denied for accessing this mount.
+> +.TP
+> +.B EFAULT
+> +.I req
+> +or
+> +.I statmountbuf
+> +is NULL or points to a location outside the process's
+> +accessible address space.
+> +.TP
+> +.B EINVAL
+> +Invalid flag specified in
+> +.IR flags .
+> +.TP
+> +.B EINVAL
+> +.I req
+> +is of insufficient size to be utilized.
+> +.B E2BIG
+> +.I req
+> +is too large,
+> +the limit is the architectures page size.
+> +.TP
+> +.B EOVERFLOW
+> +The size of
+> +.I statmountbuf
+> +is too small to contain either the
+> +.IR statmountbuf.fs_type ,
+> +.IR statmountbuf.mnt_root ,
+> +or
+> +.IR statmountbuf.mnt_point .
+> +Allocate a larger buffer and retry the call.
+> +.TP
+> +.B ENOENT
+> +The specified
+> +.I req.mnt_id
+> +doesn't exist.
+> +.TP
+> +.B ENOMEM
+> +Out of memory (i.e., kernel memory).
+> +.SH STANDARDS
+> +Linux.
+> +.SH SEE ALSO
+> +.BR listmount (2),
+> +.BR statx (2)
+> --=20
+> 2.43.0
+>=20
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--d7qedxtdee2wxenh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZ+nJUACgkQnowa+77/
+2zI92g//RnU+kZ6OL5MPp4M1/YGHyHY7KTfycPtlgnd/EwlV9UloFd4rF1dIZcSe
+9lW9t5JC+4EdV0atr3nunY/PO4vcdgU0f1WPCq3VvlgoUj3ukj7NpjAFs1LSIHMt
+5Z1cbfOcAFCxW6WUJ3/8e90ggSjpLLRvnVRUh2oz+amClY0iJ9RHQgUVvc4Q5diV
+JbJHB/IiDQ8DDCKVnx/sCdgc91NgT/JuokwwSMxm8payQul2TZaYJLqsHzqKTWlA
+5IXpy9c2++gW7Oe6LDvvN05HTDN94KQ6NlRgjgJrXb3HngfidzCsiafG20UWxJNE
+pB0CCTu79S6c+NVwts8vcqqYF/S4Xgl1IW47pWOsEggkLKZzSQ+bpLbHI2Re+CkW
+KFDwe1PYPLWulKcJs3ZAgN+pWDnAz0XGjwQn/QQvb1lxDvM6q2rGZnyl/EFNXdeX
+NRKHnrAz1Rm02Ai7EzhAbG0ql4vTnLmntnlba9rss2JzqVKPJ/8RHrv6ta3D+Mie
+GZtGhVLjMCUjQfYFBlYVbhqHW9Xgl109GQ/B3NZT5MH+Wm7ZWqAerFqnMbBJP50/
+PsA5dkGReOlmFiFcCurD+TPvGkqM5vYgSO7ObssqH6QZ2YViCfmCwdL2kY5LiJYD
+nP69Z7yQgGbtgAVTgE+p2S2CRj2vsh3il8KOsXna94HqWt4lVYw=
+=CrzE
+-----END PGP SIGNATURE-----
+
+--d7qedxtdee2wxenh--
 
