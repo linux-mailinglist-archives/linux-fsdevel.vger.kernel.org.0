@@ -1,80 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-22716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22717-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0272091B437
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 02:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3904591B488
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 03:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3485F1C216FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 00:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A9F11C208E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 01:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231E34687;
-	Fri, 28 Jun 2024 00:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TLaqlKHL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E05C12B72;
+	Fri, 28 Jun 2024 01:09:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E2D3224
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 00:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E06182B9;
+	Fri, 28 Jun 2024 01:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719535351; cv=none; b=uVF0OpApuTK06JklRORx0xirwNe9WYVbkIe1Ol3znvDTelOK7eviRTaT/CMGNwrBpnp58zd+G3+WdX95JS6Khu7XO1mC1dLQq/oWD/VvyRMB3VjEWYk3C4vMCv5Oa3lUxaTw+Umu8Svsm/0gGYmUm3F0xFDqtipXgBOcH7KK7ZI=
+	t=1719536964; cv=none; b=kw0LJWq0cX1/zhB1O50flHNG+RwGY4Jrj0D9je8xGUlIaOIGQVW0icf24OO98s+u06Md+h13ogPjuYWhVUCk1Q8jVg1U+bO9aIfUNAIl+w6ZCqw6yjff5H0TdXW6xt4LBTMfrvvV0A2uvt6vUgNc1kRKF3NmQkuI1aBl433JnXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719535351; c=relaxed/simple;
-	bh=9JlM5wD2SXCrnmtQMestnllMmYEow+klcJ59N8yGv6U=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Exc5SlT2sSS5UIZcZxaRvm/6x0Yf0riJcOor+F4Tl6H9Y27436g4F/rxHj/IDXJweJ4x+VlH/9MdfqWScKEZvYdZ7VwscmEIuj2pcBoiO1X76eb10R5DieX0lhUgz5xFCBGmnHxtraKmI4orKr8s6VVpGj1bZa3dP0SKf2ovrIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TLaqlKHL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719535349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SIA7+ZRXeTWeMHotFYiEOy3m4rzA2+Fpd4H8n272VYw=;
-	b=TLaqlKHLEd9SGCF7L8h+HZaoCvrcOr3Ltwh+f7VQH/diT156WlZYyCangW2zHHgzHuSqj/
-	IQnP62q+upLab7gjm+v85i63BEPS7I4KQJmH6LwA9lobpbNmpijxESf64wp4QxhdDKTYgt
-	0ftkMGEmjLyhfhio7+Q7b/PtizWpe/w=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-160-t9JP0e7MOaGqBCtRXVSjTA-1; Thu, 27 Jun 2024 20:42:27 -0400
-X-MC-Unique: t9JP0e7MOaGqBCtRXVSjTA-1
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f61f4c998bso6118439f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 17:42:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719535346; x=1720140146;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SIA7+ZRXeTWeMHotFYiEOy3m4rzA2+Fpd4H8n272VYw=;
-        b=ibV0CbB9OHlIG+r6MN0s0Om9aTuu0Rs1qNpc6kj4evNOhCRnPX695VbNDopswy+m9C
-         AOkCDBGG5K+jFW7uP3bI8mSTy0CZA896K+fl87iG/FNcESSOtMoUXBlNhfcTzlVgGPa8
-         R8CcIjp3gLsX9cmNpUAACWy9Z6/vnl+aCVrEiAtG+EPZDG7Q6uS7c6AHDx6XC2fTp0Lp
-         Mzgo0e0A0mYvKrQM2+cPvdpwNNUGPBRHf0KGVnnpYJCBcXFFk1m0HzPzidZn1iQMSBvM
-         qFV5lOPgsKwEBJHVyKQeW95CJF9SeCS/zVGiDbnEadrAKEbzg+N3A/GHJjyGZHWGPhto
-         C1AQ==
-X-Gm-Message-State: AOJu0YyVE98qs5fULDfY/Td9TVm/lX7IqpOelvDsfXthRSkAGSF0nT3N
-	EdzRXlR5XScw2Q4FwV2uKX8LcwXbQgPP99eHAttGRFuxho2CP6ExpJe1dBsMIubb+PQFgXHV2lj
-	1qJ4jq3dO0slYO5guK9AXG0eChCIKIGeyeLA1NCEhvLqEO0px1QSbupryidxr7dO7gRIzpqVU4t
-	1o52Jjs10gwf1KjhjFKaByiLbR2IeO7hhXhShJNGN0vT+JwA==
-X-Received: by 2002:a05:6602:1648:b0:7eb:8887:d6c3 with SMTP id ca18e2360f4ac-7f3a4dda0d6mr1937854839f.11.1719535346209;
-        Thu, 27 Jun 2024 17:42:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHMedkXRgCs6D2PWTWIjckfA96S4jfjSC4LMilhDSbNUt6OxDRh8WhB4XXkMDeTvbgzVSVoVw==
-X-Received: by 2002:a05:6602:1648:b0:7eb:8887:d6c3 with SMTP id ca18e2360f4ac-7f3a4dda0d6mr1937853439f.11.1719535345820;
-        Thu, 27 Jun 2024 17:42:25 -0700 (PDT)
-Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7f61ce87f69sm19355839f.1.2024.06.27.17.42.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 17:42:25 -0700 (PDT)
-Message-ID: <58862d35-a026-4866-ab7f-fa09dda8ac1f@redhat.com>
-Date: Thu, 27 Jun 2024 19:42:25 -0500
+	s=arc-20240116; t=1719536964; c=relaxed/simple;
+	bh=FJBS0qNoYdakN29J3gj/ZaHV91m7vyqEgcjmwOvd7w8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WYmDlkeS2T+LkjeutY1sgNEP6V3RG0YXGcOb7qbYVKC3Ee/2gmnykUgBX9ERdXdHhrTAwons/7YKF2lNnmvZG8OYUEFZpj32IPiWIeDT+3oW+yGc7QyI4eeGm4LaqWfTtwMdMvPhEkN5VeyrFWX8a5VXxLVF6mdrZWcQsd+gqL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4W9HQC0lClz4f3jHy;
+	Fri, 28 Jun 2024 09:09:07 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 05BDB1A0568;
+	Fri, 28 Jun 2024 09:09:18 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAnUn45DX5mgaIaAg--.2390S3;
+	Fri, 28 Jun 2024 09:09:17 +0800 (CST)
+Message-ID: <b68920cc-28ab-4e8b-994a-93f4148b4b8b@huaweicloud.com>
+Date: Fri, 28 Jun 2024 09:09:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,70 +47,102 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 14/14] vboxsf: Convert to new uid/gid option parsing helpers
-From: Eric Sandeen <sandeen@redhat.com>
-To: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>
-References: <8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com>
+Subject: Re: [PATCH v2 2/5] cachefiles: flush all requests for the object that
+ is being dropped
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+ dhowells@redhat.com, hsiangkao@linux.alibaba.com,
+ jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Baokun Li <libaokun@huaweicloud.com>
+References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
+ <20240515125136.3714580-3-libaokun@huaweicloud.com>
+ <5bb711c4bbc59ea9fff486a86acce13880823e7b.camel@kernel.org>
+ <e40b80fc-52b8-4f89-800a-3ffa0034a072@huaweicloud.com>
+ <20240627-beizeiten-hecht-0efad69e0e38@brauner>
 Content-Language: en-US
-In-Reply-To: <8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <20240627-beizeiten-hecht-0efad69e0e38@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAnUn45DX5mgaIaAg--.2390S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFy3Gr1rZr18AFy3XFyUAwb_yoW8KFyUpF
+	Waya4akFW8ur17Crn2vF1YvrySy3s3ArnrXr1aqryjyrs0qrna9r1Iqr1DuF1DJrs3Gr4I
+	qr4UWF93GryqyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvt
+	AUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAHBV1jkHrAYQABs0
 
-Convert to new uid/gid option parsing helpers
+On 2024/6/27 23:18, Christian Brauner wrote:
+> On Thu, Jun 27, 2024 at 07:20:16PM GMT, Baokun Li wrote:
+>> On 2024/6/27 19:01, Jeff Layton wrote:
+>>> On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
+>>>> From: Baokun Li <libaokun1@huawei.com>
+>>>>
+>>>> Because after an object is dropped, requests for that object are
+>>>> useless,
+>>>> flush them to avoid causing other problems.
+>>>>
+>>>> This prepares for the later addition of cancel_work_sync(). After the
+>>>> reopen requests is generated, flush it to avoid cancel_work_sync()
+>>>> blocking by waiting for daemon to complete the reopen requests.
+>>>>
+>>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>>>> ---
+>>>>    fs/cachefiles/ondemand.c | 19 +++++++++++++++++++
+>>>>    1 file changed, 19 insertions(+)
+>>>>
+>>>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>>>> index 73da4d4eaa9b..d24bff43499b 100644
+>>>> --- a/fs/cachefiles/ondemand.c
+>>>> +++ b/fs/cachefiles/ondemand.c
+>>>> @@ -564,12 +564,31 @@ int cachefiles_ondemand_init_object(struct
+>>>> cachefiles_object *object)
+>>>>    void cachefiles_ondemand_clean_object(struct cachefiles_object
+>>>> *object)
+>>>>    {
+>>>> +	unsigned long index;
+>>>> +	struct cachefiles_req *req;
+>>>> +	struct cachefiles_cache *cache;
+>>>> +
+>>>>    	if (!object->ondemand)
+>>>>    		return;
+>>>>    	cachefiles_ondemand_send_req(object, CACHEFILES_OP_CLOSE, 0,
+>>>>    			cachefiles_ondemand_init_close_req, NULL);
+>>>> +
+>>>> +	if (!object->ondemand->ondemand_id)
+>>>> +		return;
+>>>> +
+>>>> +	/* Flush all requests for the object that is being dropped.
+>>>> */
+>>> I wouldn't call this a "Flush". In the context of writeback, that
+>>> usually means that we're writing out pages now in order to do something
+>>> else. In this case, it looks like you're more canceling these requests
+>>> since you're marking them with an error and declaring them complete.
+>> Makes sense, I'll update 'flush' to 'cancel' in the comment and subject.
+>>
+>> I am not a native speaker of English, so some of the expressions may
+>> not be accurate, thank you for correcting me.
+> Can you please resend all patch series that we're supposed to take for
+> this cycle, please?
+Sure, I'm organising to combine the two patch series today and
+send it out as v3.
 
-From: Eric Sandeen <sandeen@redhat.com>
-
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
----
- fs/vboxsf/super.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
-
-diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-index ffb1d565da39..e95b8a48d8a0 100644
---- a/fs/vboxsf/super.c
-+++ b/fs/vboxsf/super.c
-@@ -41,8 +41,8 @@ enum  { opt_nls, opt_uid, opt_gid, opt_ttl, opt_dmode, opt_fmode,
- 
- static const struct fs_parameter_spec vboxsf_fs_parameters[] = {
- 	fsparam_string	("nls",		opt_nls),
--	fsparam_u32	("uid",		opt_uid),
--	fsparam_u32	("gid",		opt_gid),
-+	fsparam_uid	("uid",		opt_uid),
-+	fsparam_gid	("gid",		opt_gid),
- 	fsparam_u32	("ttl",		opt_ttl),
- 	fsparam_u32oct	("dmode",	opt_dmode),
- 	fsparam_u32oct	("fmode",	opt_fmode),
-@@ -55,8 +55,6 @@ static int vboxsf_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct vboxsf_fs_context *ctx = fc->fs_private;
- 	struct fs_parse_result result;
--	kuid_t uid;
--	kgid_t gid;
- 	int opt;
- 
- 	opt = fs_parse(fc, vboxsf_fs_parameters, param, &result);
-@@ -73,16 +71,10 @@ static int vboxsf_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		param->string = NULL;
- 		break;
- 	case opt_uid:
--		uid = make_kuid(current_user_ns(), result.uint_32);
--		if (!uid_valid(uid))
--			return -EINVAL;
--		ctx->o.uid = uid;
-+		ctx->o.uid = result.uid;
- 		break;
- 	case opt_gid:
--		gid = make_kgid(current_user_ns(), result.uint_32);
--		if (!gid_valid(gid))
--			return -EINVAL;
--		ctx->o.gid = gid;
-+		ctx->o.gid = result.gid;
- 		break;
- 	case opt_ttl:
- 		ctx->o.ttl = msecs_to_jiffies(result.uint_32);
 -- 
-2.45.2
-
+With Best Regards,
+Baokun Li
 
 
