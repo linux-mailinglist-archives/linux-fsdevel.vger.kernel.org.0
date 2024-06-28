@@ -1,299 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-22791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C71E91C1F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 17:00:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C313791C233
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 17:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3751C23CD8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 15:00:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39EF41F21C21
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 15:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597AA1CCCB9;
-	Fri, 28 Jun 2024 14:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0981C233B;
+	Fri, 28 Jun 2024 15:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qvcPvfRS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TygS0awq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f202.google.com (mail-lj1-f202.google.com [209.85.208.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44371CCCA6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 14:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC841BF336
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 15:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719586693; cv=none; b=rVkFfGexB7ZyNqUyDToeUd9uBNWMWRbkvV+3IItuEW7cFqpN1H5SneOcaobOb9K9Tsci13hPhgzX0jzuGqkohZyPY1DE0b51oIeh43guoFjQDID4Aatx63IJyEAguXHP8ehX5mjgOP4irs5DHRVbZeuwHIPWYZ1bBmOTnzjiBH8=
+	t=1719587611; cv=none; b=dBmwKR7lEUO09lT1r+Q9Fe7l9CZ7eraSjIroBChTYlJglRJA/JQtmOfCTYEM5wN/+/8ujV1OHw91u+o/XLO/8mq4v42MYca2WCorrFqL4qfAn3N/MVqi/zluIKfqIS6PWJ+7zX3Rwd5HMcp2V7gFoGDLgdNG8kKk0QzfR+Padpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719586693; c=relaxed/simple;
-	bh=oKaGHDnrqupViuRXMtll5RU9jzG83pkROJGpqrjmWrM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uPOSNVQW0qpUa1XMsOwMFqbudDUG13rMpprPpFkl2YxM3SoU33s11Gt3tXVY75jCN7RSIoz2KzPp9n9maFjJXp0GWeW1Yh/hUwxP57ImHFMvfq3Fxvz/+pxg0IaAkaVNPkKezoZb1YHPrB7sjCV/JP1xFtn7brZ/lg/4DrT+Phk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qvcPvfRS; arc=none smtp.client-ip=209.85.208.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-lj1-f202.google.com with SMTP id 38308e7fff4ca-2ee4ab40417so11709781fa.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 07:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719586690; x=1720191490; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wv4X5HCz0mHAJhrblLEwF6K15PPfNYph9fKqj4QrWqA=;
-        b=qvcPvfRSMZHMGaVMxxkj69X+yuoqeJWAI+mGkTPa3zjMYnJRvUQiy9Yx0x2i/ZfUp7
-         fmKpQKOLTFkBvDlJhcYqPWyHpaSEvA7vVOb1y31t9m9eghhvzz0neL2jBKIxG1vBouMS
-         iTLZndCRzUUSs5cJtXqaE1myx/Qx+J4sWvcJ+XPiz08TIi7H84PMT1hYy7Y9sv7pPNTE
-         /UYMSdx0gRz7hfydHi8E6UiReNWcIC3sf+0XnG6WCxCdqLYJ9YQX1/E8BI0z+eAEic5X
-         OnBd2lcVETf+M03naRgbHods9uuCUJomUwmhlc33z8p2RUFE7ifEdKXxiJgefQs1rJ7j
-         6wdA==
+	s=arc-20240116; t=1719587611; c=relaxed/simple;
+	bh=/RsLrIy7792uAmwaSU0cpjm4eTNuzbhKlWq/Nw06Kdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pnvtXw+MCmj9ON0ijcmCOD8q72azJNjDBMCvwGkSpo0/tz+lRbfw9eH6Cmk5B3k5alOSNyryUouMUp7PT7Gc+EX+48V8Dy+POisIPt7WcEaA2Nw+zbV0AssVF7KDUB43dR3GdIWinP9MoGfBLnA5DocwkpsDcWezJ6uMo3hRh7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TygS0awq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719587608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SrMxFlkvF5Xx3kyh2gKy3OS40cVo8d/2WmP45b5pzjM=;
+	b=TygS0awqTjIQBGBO5qwP6b69F8RgPhGGC+K+1wGvircz4YBCsWLJsFL2cBINxdLIQZTlMI
+	bZFV8pTDbGA/dlvYdth5OvD7NW4tBJxC2tyj0IAdvEHC5/A6SgcH2b3UCA/SiFPiY8nd+7
+	XJhDhzyEvZdm5PXkaEzmABHksA9QA+0=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-477-4pjVzqnhPSCELFRs4SLV7Q-1; Fri, 28 Jun 2024 11:13:25 -0400
+X-MC-Unique: 4pjVzqnhPSCELFRs4SLV7Q-1
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-375beb12e67so8121805ab.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 08:13:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719586690; x=1720191490;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wv4X5HCz0mHAJhrblLEwF6K15PPfNYph9fKqj4QrWqA=;
-        b=F58ZezXvtGIBdSHJMhx3OstKADCv724ijREPEL//e4/6Lr9jQLc8w6D8qOBaDQ2YgQ
-         OPSY8g4kztPGloPWlY/+jmYta+4+1EgXqdV7VYoyb8RWoqT3i/QeVR3me3asysLNZWOE
-         45WCQGwSl03EARCCKAu2edVlj2aondO6WvzD2cMaGERWN4Gs9CBBTuztj7aFtidLDTcH
-         2mA4HFMRexIQkIXvQHADA49F6J2ZmvFihtMfRaKxGj3dUIfNsetJRNgBz1SRi0ocwhIV
-         /kAl+ulXPMd6v78ZK8QAVfp/SN0X1h2lmoZ/buz8dQzoxQZu7dieRHkfQ13qC0CuWyLX
-         p81A==
-X-Forwarded-Encrypted: i=1; AJvYcCUWWAwIxNCKC4zicg/0yQ+zcf0SP02BpI9UyDj5ikbG7vulastW2CB63UzH7cLxszk3r7e3eTKaFtFflfyl6dbv3a1VSuLlv8hWraDctw==
-X-Gm-Message-State: AOJu0YzTw2IyG45WhvUXlJfB3/tfzRExeSWg1sdyDunItOpXw9f9UwtN
-	Jp1eX+tdsQ3s2dLwZjVOl9KC/EKHyYXBYVC3lAAKXxBy0L2SRb2DDjBvfMG3NoajzDpOYp35jUd
-	jf/1DN9DGDSBoeQ==
-X-Google-Smtp-Source: AGHT+IHrh51dp+IDMj1N+uGSI5q7qASDiH0RqVC1DTBBvwhd4ZRgb9b4M4bqJYgnfjp9iyg4L7GoysM5bKSqcvc=
-X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a05:6512:3b98:b0:52c:c4c0:bb99 with SMTP
- id 2adb3069b0e04-52e7b92f044mr2478e87.3.1719586689755; Fri, 28 Jun 2024
- 07:58:09 -0700 (PDT)
-Date: Fri, 28 Jun 2024 14:57:21 +0000
-In-Reply-To: <20240628-alice-file-v7-0-4d701f6335f3@google.com>
+        d=1e100.net; s=20230601; t=1719587602; x=1720192402;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SrMxFlkvF5Xx3kyh2gKy3OS40cVo8d/2WmP45b5pzjM=;
+        b=AxUcW1w0rS/t6AluH5zVjAOP0LtaAXX787AJKDuuq9DWfMqP7DJRy05tqe71SP8bTs
+         wuDQC7MBBO1HDymDmYuY+ZEpJFdI5tk2LAiGt4hOfYWAQCzctrZs+Xl2tYYg3P0g4lt5
+         1JHcPbup516NLP7KSvcWDxLakb86gbfErRsuBaIvs60oiwq3+7jsV/fsdDv9cwd7wrCH
+         TcUMtTz2vIP/UCbqN8NyNwVnyYOeZzHnPz3pNx7d5q0m+1sAmXT8TNKtz6QKG6bVnxg8
+         VvIYq9102e5mvF6Fvlw/3BZ4a6ik4cmwtuM8/eSz9HerECDCRkqZ2Oar0qbrbg/1FPvy
+         k1DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9+dZPqcmw8505PgUBtLGCYqdEqLA4bxwesjtFMol/9sc9wtOK3W5Ob+sUgesecPaqq0JoYh3nTW/o8BllxF38NRFBYiu3LP3KGeoiDA==
+X-Gm-Message-State: AOJu0YwWVIMtnnm+suhejf3byjag0CexeQYNeWcXEXj9JfMP7Zd3KEM/
+	Z4k+ESM1+MM19jV3yXe0g7Yt13pIJ6/HChZNx/kz4V0bMUoB3Zim2UnH3I46fhEKcJQIy9Xc6V2
+	l0uJrFMhek0Nts61LR305PDkq+cGPA0dwZE7pflqfUPbA5KuuCVrW670+uvQtvyllmvCnlkGDzU
+	IBk7aqU1/aLdiX24qNWq++Oc/fWupAVPEqQyM9lFg9x+WL+Q==
+X-Received: by 2002:a05:6e02:1a84:b0:374:a14e:1485 with SMTP id e9e14a558f8ab-3763f605265mr200274495ab.11.1719587601841;
+        Fri, 28 Jun 2024 08:13:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKmwTuaYeKLPivP+QG5odpKM3D6WTn+vaMZ3Tdn8xSndTcK66bsRPw0+hVD1sOv0XQNOn7pKlz3aoefpWuMLQ=
+X-Received: by 2002:a05:6e02:1a84:b0:374:a14e:1485 with SMTP id
+ e9e14a558f8ab-3763f605265mr200274205ab.11.1719587601450; Fri, 28 Jun 2024
+ 08:13:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240628-alice-file-v7-0-4d701f6335f3@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7243; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=oKaGHDnrqupViuRXMtll5RU9jzG83pkROJGpqrjmWrM=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmfs9nSDHlXxRQ4/wfPEvlXip4lzgzsEBJhWdPu
- I457Q+oqseJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZn7PZwAKCRAEWL7uWMY5
- Rs82EAC6UrQk8yKkBP4loWFJW8n8xcTs0iouXEAwED5SSNuYAZPD0P/xfHYvog8Gw+HFYS/8Ssy
- PKwUZSWLkGTJnkAkrZ7O3VgE/OAJiTBQaq1fMvPuIVv6vg+gV5p1uVI/RqTPcisr+FtLnV9G2hJ
- yin7IJ6dMMzeqFJ56N9fLYCKimvZx1mLyeIhXcc3Gd+sXzWJTOFMWYupGqSt110uG21aMgH7Hn8
- 6iEw+VN8un2ZIjo74zP7P67/2oXQzVd1h+6E2HgSouiwkX6o/M2EKxrjdgwdo/RQdEaXDSHiAtn
- 5VleuVyu2hC/wWVdtMY93gO7u+SY05l6vCstDmYfNZ5IV4wVgcdTz+F0xJv7lv6NCrdBLed3r5i
- hexPfASokTaNw8SeC0Q7SPoOAOr+2Qb6q9KC9M6JSSpn7HzsMLjFtkt/WVk4kzdqmvX8FkJq3z3
- BQWrJ/+tohrkTRpKfsdQzLw9q/JGDtmsFuPPblrDZ9bH9oiUQoRLQviiIEKWfQO5lz8J4iPx9fs
- nZKl/RDpCKd2TwPD6+DwKL0FaXol07Yj4vydFGgJRreW84V2a/TKitOR4cUMBtLKV9pHmm7Tj8y
- x5+aAJgQleouvmKhsPMoFz39T8/Wqrow6PyXJGAz7WY022CT70KrpZIzk66XjAhtDPkc3K9DYrh BxqaLe1CO6m3Xlw==
-X-Mailer: b4 0.13-dev-26615
-Message-ID: <20240628-alice-file-v7-8-4d701f6335f3@google.com>
-Subject: [PATCH v7 8/8] rust: file: add abstraction for `poll_table`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240626201129.272750-2-lkarpins@redhat.com> <20240626201129.272750-3-lkarpins@redhat.com>
+ <Znx-WGU5Wx6RaJyD@casper.infradead.org> <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3> <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+ <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com> <20240628-gelingen-erben-0f6e14049e68@brauner>
+In-Reply-To: <20240628-gelingen-erben-0f6e14049e68@brauner>
+From: Alexander Larsson <alexl@redhat.com>
+Date: Fri, 28 Jun 2024 17:13:10 +0200
+Message-ID: <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ian Kent <ikent@redhat.com>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, raven@themaw.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Chanudet <echanude@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The existing `CondVar` abstraction is a wrapper around
-`wait_queue_head`, but it does not support all use-cases of the C
-`wait_queue_head` type. To be specific, a `CondVar` cannot be registered
-with a `struct poll_table`. This limitation has the advantage that you
-do not need to call `synchronize_rcu` when destroying a `CondVar`.
+On Fri, Jun 28, 2024 at 2:54=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Fri, Jun 28, 2024 at 11:17:43AM GMT, Ian Kent wrote:
+> >
+> > On 27/6/24 23:16, Christian Brauner wrote:
+> > > On Thu, Jun 27, 2024 at 01:54:18PM GMT, Jan Kara wrote:
+> > > > On Thu 27-06-24 09:11:14, Ian Kent wrote:
+> > > > > On 27/6/24 04:47, Matthew Wilcox wrote:
+> > > > > > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote=
+:
+> > > > > > > +++ b/fs/namespace.c
+> > > > > > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_af=
+ter_init;
+> > > > > > >    static DECLARE_RWSEM(namespace_sem);
+> > > > > > >    static HLIST_HEAD(unmounted);    /* protected by namespace=
+_sem */
+> > > > > > >    static LIST_HEAD(ex_mountpoints); /* protected by namespac=
+e_sem */
+> > > > > > > +static bool lazy_unlock =3D false; /* protected by namespace=
+_sem */
+> > > > > > That's a pretty ugly way of doing it.  How about this?
+> > > > > Ha!
+> > > > >
+> > > > > That was my original thought but I also didn't much like changing=
+ all the
+> > > > > callers.
+> > > > >
+> > > > > I don't really like the proliferation of these small helper funct=
+ions either
+> > > > > but if everyone
+> > > > >
+> > > > > is happy to do this I think it's a great idea.
+> > > > So I know you've suggested removing synchronize_rcu_expedited() cal=
+l in
+> > > > your comment to v2. But I wonder why is it safe? I *thought*
+> > > > synchronize_rcu_expedited() is there to synchronize the dropping of=
+ the
+> > > > last mnt reference (and maybe something else) - see the comment at =
+the
+> > > > beginning of mntput_no_expire() - and this change would break that?
+> > > Yes. During umount mnt->mnt_ns will be set to NULL with namespace_sem
+> > > and the mount seqlock held. mntput() doesn't acquire namespace_sem as
+> > > that would get rather problematic during path lookup. It also elides
+> > > lock_mount_hash() by looking at mnt->mnt_ns because that's set to NUL=
+L
+> > > when a mount is actually unmounted.
+> > >
+> > > So iirc synchronize_rcu_expedited() will ensure that it is actually t=
+he
+> > > system call that shuts down all the mounts it put on the umounted lis=
+t
+> > > and not some other task that also called mntput() as that would cause
+> > > pretty blatant EBUSY issues.
+> > >
+> > > So callers that come before mnt->mnt_ns =3D NULL simply return of cou=
+rse
+> > > but callers that come after mnt->mnt_ns =3D NULL will acquire
+> > > lock_mount_hash() _under_ rcu_read_lock(). These callers see an eleva=
+ted
+> > > reference count and thus simply return while namespace_lock()'s
+> > > synchronize_rcu_expedited() prevents the system call from making
+> > > progress.
+> > >
+> > > But I also don't see it working without risk even with MNT_DETACH. It
+> > > still has potential to cause issues in userspace. Any program that
+> > > always passes MNT_DETACH simply to ensure that even in the very rare
+> > > case that a mount might still be busy is unmounted might now end up
+> > > seeing increased EBUSY failures for mounts that didn't actually need =
+to
+> > > be unmounted with MNT_DETACH. In other words, this is only inocuous i=
+f
+> > > userspace only uses MNT_DETACH for stuff they actually know is busy w=
+hen
+> > > they're trying to unmount. And I don't think that's the case.
+> > >
+> > I'm sorry but how does an MNT_DETACH umount system call return EBUSY, I
+> > can't
+> >
+> > see how that can happen?
+>
+> Not the umount() call is the problem. Say you have the following
+> sequence:
+>
+> (1) mount(ext4-device, /mnt)
+>     umount(/mnt, 0)
+>     mount(ext4-device, /mnt)
+>
+> If that ext4 filesystem isn't in use anymore then umount() will succeed.
+> The same task can immediately issue a second mount() call on the same
+> device and it must succeed.
+>
+> Today the behavior for this is the same whether or no the caller uses
+> MNT_DETACH. So:
+>
+> (2) mount(ext4-device, /mnt)
+>     umount(/mnt, MNT_DETACH)
+>     mount(ext4-device, /mnt)
+>
+> All that MNT_DETACH does is to skip the check for busy mounts otherwise
+> it's identical to a regular umount. So (1) and (2) will behave the same
+> as long as the filesystem isn't used anymore.
+>
+> But afaict with your changes this wouldn't be true anymore. If someone
+> uses (2) on a filesystem that isn't busy then they might end up getting
+> EBUSY on the second mount. And if I'm right then that's potentially a
+> rather visible change.
 
-However, we need the ability to register a `poll_table` with a
-`wait_queue_head` in Rust Binder. To enable this, introduce a type
-called `PollCondVar`, which is like `CondVar` except that you can
-register a `poll_table`. We also introduce `PollTable`, which is a safe
-wrapper around `poll_table` that is intended to be used with
-`PollCondVar`.
+This is rather unfortunate, as the synchronize_rcu call is quite
+expensive. In particular on a real-time kernel where there are no
+expedited RCUs. This is causing container startup to be slow, as there
+are several umount(MNT_DETACH) happening during container setup (after
+the pivot_root, etc).
 
-The destructor of `PollCondVar` unconditionally calls `synchronize_rcu`
-to ensure that the removal of epoll waiters has fully completed before
-the `wait_queue_head` is destroyed.
+Maybe we can add a umount flag for users that don't need the current
+behaviour wrt EBUSY? In the container usecase the important part is
+that the old mounts are disconnected from the child namespace and not
+really what the mount busy state is (typically it is still mounted in
+the parent namespace anyway).
 
-That said, `synchronize_rcu` is rather expensive and is not needed in
-all cases: If we have never registered a `poll_table` with the
-`wait_queue_head`, then we don't need to call `synchronize_rcu`. (And
-this is a common case in Binder - not all processes use Binder with
-epoll.) The current implementation does not account for this, but if we
-find that it is necessary to improve this, a future patch could store a
-boolean next to the `wait_queue_head` to keep track of whether a
-`poll_table` has ever been registered.
-
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-Reviewed-by: Trevor Gross <tmgross@umich.edu>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/sync.rs             |   1 +
- rust/kernel/sync/poll.rs        | 119 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 121 insertions(+)
-
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 2a758930fc74..b423d5cb6826 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -16,6 +16,7 @@
- #include <linux/mdio.h>
- #include <linux/phy.h>
- #include <linux/pid_namespace.h>
-+#include <linux/poll.h>
- #include <linux/refcount.h>
- #include <linux/sched.h>
- #include <linux/security.h>
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index 0ab20975a3b5..bae4a5179c72 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -11,6 +11,7 @@
- mod condvar;
- pub mod lock;
- mod locked_by;
-+pub mod poll;
- 
- pub use arc::{Arc, ArcBorrow, UniqueArc};
- pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
-diff --git a/rust/kernel/sync/poll.rs b/rust/kernel/sync/poll.rs
-new file mode 100644
-index 000000000000..586b660df423
---- /dev/null
-+++ b/rust/kernel/sync/poll.rs
-@@ -0,0 +1,119 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Utilities for working with `struct poll_table`.
-+
-+use crate::{
-+    bindings,
-+    file::File,
-+    prelude::*,
-+    sync::{CondVar, LockClassKey},
-+    types::Opaque,
-+};
-+use core::ops::Deref;
-+
-+/// Creates a [`PollCondVar`] initialiser with the given name and a newly-created lock class.
-+#[macro_export]
-+macro_rules! new_poll_condvar {
-+    ($($name:literal)?) => {
-+        $crate::sync::poll::PollCondVar::new(
-+            $crate::optional_name!($($name)?), $crate::static_lock_class!()
-+        )
-+    };
-+}
-+
-+/// Wraps the kernel's `struct poll_table`.
-+///
-+/// # Invariants
-+///
-+/// This struct contains a valid `struct poll_table`.
-+///
-+/// For a `struct poll_table` to be valid, its `_qproc` function must follow the safety
-+/// requirements of `_qproc` functions:
-+///
-+/// * The `_qproc` function is given permission to enqueue a waiter to the provided `poll_table`
-+///   during the call. Once the waiter is removed and an rcu grace period has passed, it must no
-+///   longer access the `wait_queue_head`.
-+#[repr(transparent)]
-+pub struct PollTable(Opaque<bindings::poll_table>);
-+
-+impl PollTable {
-+    /// Creates a reference to a [`PollTable`] from a valid pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must ensure that for the duration of 'a, the pointer will point at a valid poll
-+    /// table (as defined in the type invariants).
-+    ///
-+    /// The caller must also ensure that the `poll_table` is only accessed via the returned
-+    /// reference for the duration of 'a.
-+    pub unsafe fn from_ptr<'a>(ptr: *mut bindings::poll_table) -> &'a mut PollTable {
-+        // SAFETY: The safety requirements guarantee the validity of the dereference, while the
-+        // `PollTable` type being transparent makes the cast ok.
-+        unsafe { &mut *ptr.cast() }
-+    }
-+
-+    fn get_qproc(&self) -> bindings::poll_queue_proc {
-+        let ptr = self.0.get();
-+        // SAFETY: The `ptr` is valid because it originates from a reference, and the `_qproc`
-+        // field is not modified concurrently with this call since we have an immutable reference.
-+        unsafe { (*ptr)._qproc }
-+    }
-+
-+    /// Register this [`PollTable`] with the provided [`PollCondVar`], so that it can be notified
-+    /// using the condition variable.
-+    pub fn register_wait(&mut self, file: &File, cv: &PollCondVar) {
-+        if let Some(qproc) = self.get_qproc() {
-+            // SAFETY: The pointers to `file` and `self` need to be valid for the duration of this
-+            // call to `qproc`, which they are because they are references.
-+            //
-+            // The `cv.wait_queue_head` pointer must be valid until an rcu grace period after the
-+            // waiter is removed. The `PollCondVar` is pinned, so before `cv.wait_queue_head` can
-+            // be destroyed, the destructor must run. That destructor first removes all waiters,
-+            // and then waits for an rcu grace period. Therefore, `cv.wait_queue_head` is valid for
-+            // long enough.
-+            unsafe { qproc(file.as_ptr() as _, cv.wait_queue_head.get(), self.0.get()) };
-+        }
-+    }
-+}
-+
-+/// A wrapper around [`CondVar`] that makes it usable with [`PollTable`].
-+///
-+/// [`CondVar`]: crate::sync::CondVar
-+#[pin_data(PinnedDrop)]
-+pub struct PollCondVar {
-+    #[pin]
-+    inner: CondVar,
-+}
-+
-+impl PollCondVar {
-+    /// Constructs a new condvar initialiser.
-+    pub fn new(name: &'static CStr, key: &'static LockClassKey) -> impl PinInit<Self> {
-+        pin_init!(Self {
-+            inner <- CondVar::new(name, key),
-+        })
-+    }
-+}
-+
-+// Make the `CondVar` methods callable on `PollCondVar`.
-+impl Deref for PollCondVar {
-+    type Target = CondVar;
-+
-+    fn deref(&self) -> &CondVar {
-+        &self.inner
-+    }
-+}
-+
-+#[pinned_drop]
-+impl PinnedDrop for PollCondVar {
-+    fn drop(self: Pin<&mut Self>) {
-+        // Clear anything registered using `register_wait`.
-+        //
-+        // SAFETY: The pointer points at a valid `wait_queue_head`.
-+        unsafe { bindings::__wake_up_pollfree(self.inner.wait_queue_head.get()) };
-+
-+        // Wait for epoll items to be properly removed.
-+        //
-+        // SAFETY: Just an FFI call.
-+        unsafe { bindings::synchronize_rcu() };
-+    }
-+}
-
--- 
-2.45.2.803.g4e1b14247a-goog
+--=20
+=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
+-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D
+ Alexander Larsson                                Red Hat, Inc
+       alexl@redhat.com         alexander.larsson@gmail.com
 
 
