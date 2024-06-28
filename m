@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-22710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C9191B423
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 02:40:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C420491B42E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 02:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9111F21245
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 00:40:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81547281A8F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Jun 2024 00:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516E663C7;
-	Fri, 28 Jun 2024 00:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D878F208A0;
+	Fri, 28 Jun 2024 00:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AQJNWdiD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fQ1OdOsS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDC0D304
-	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 00:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC301BF50
+	for <linux-fsdevel@vger.kernel.org>; Fri, 28 Jun 2024 00:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719534918; cv=none; b=n3sy/QwXjoM45jPqt/5O60ZwX7YAZrOrCE6XIzAK/HMFhQE4k3oPyYVAPi8P2ZrYiWFw5XTJu/ZIe5MOIvUrJbMwfDS0m/2u9A5zK6ltEHkTZUVmc+c+Gh5W2sZGjoijo2y4o8/8bW3TUZTvHDLgBfBl9xIfSWr8WQHf2Ex5Rgc=
+	t=1719535012; cv=none; b=Zq6/xVbS0T5XHe091jZL39lOhaLgWIjfRBb8a2R6ZU4Qvmf7UxX3bh1BnrB9RywBwaOInNbj1n+SOtaETI2Rgsv3Md7QUprc/lHZPFInszLB1jsx9UdC/BZA2bY9q+hKrYnd+byuBE0TX6T3c2W4wmmPWGI+i5H5Hf4qA2oez9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719534918; c=relaxed/simple;
-	bh=FpPiL/t10HZ8MzrR9SxKHIyYJGbHROTOe5kCW+T8G68=;
+	s=arc-20240116; t=1719535012; c=relaxed/simple;
+	bh=sQQl/VZkA4HWR9CyQ6uX05OLO58/QyhZXouv4KpZh38=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ism+C1ZxRhiOCwaEAnE5CF6dlhPIcd120LCXfo/veIHFfxxbvIUGLM1ErvW/DID7XZK50C/KuOxXI3rFucQO4WBqh8/DqN93uaAfnXhlcGvWcir5gFdWOt/modpSlOg65E7udy4tveCxc59cG/IiwCKaMSl+agz2CjqRUyy909U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AQJNWdiD; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=KnErbXCzhSkTMhsn1MPpOjl+PLt5JGGChP7c2oJ1IfCvuwAKjC2T9YvQTn19cPvgj6x09+KgTI7ao/wwTmr9/lLH++QCg/1R8btcT9l95apJS5wpjpmEk9/8KxGvoAARATAXkzsn7MhalSbdTM1hzSJjLMyLHwd/FmAh/NlOi3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fQ1OdOsS; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719534916;
+	s=mimecast20190719; t=1719535009;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/uXKmUT/nwyBhbjHXhbeGwv5exw7uxZHD87X7TVS31A=;
-	b=AQJNWdiDupx+0nEFdDyuzPWc+lJUIQTOoiUYT3ei5blhm5/82EcoDl9xbagD3KU0oLkV7W
-	5n8RBAl4lFZ3MvFm2429mYh5tLhf3Ma7rEaj+4zPwiXfGlJxlLATykwO/0/eDjH2bSgxom
-	/5fDf0DrfztIzQtGc4qSFztzcF18IyQ=
+	bh=/8HMgmWto9s6viH/+SjxOue/JAoKhgQHCg5Kd6Ay2i0=;
+	b=fQ1OdOsScDGr4gDWv5qfdFwD3mm/HuUazVhx7WtMXbeMK+aIBV8iD+QlN0R8jwDaBYxkKz
+	9oBqGBlgK5d7jeAj0Wbq/4AlzLGLWvAqsmwaEtURC/BhiUBFVD2qOO1zbOk2Gzb3gU0h9t
+	aPcylqPLjXLXu6mXH16SNQV8Kn0uStQ=
 Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
  [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-oZUq6DoyO1qX_TKRARXCxA-1; Thu, 27 Jun 2024 20:35:14 -0400
-X-MC-Unique: oZUq6DoyO1qX_TKRARXCxA-1
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e1fe2ba2e1so3620839f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 17:35:14 -0700 (PDT)
+ us-mta-650-cJFWtg6lPSC-rWue3Z8REg-1; Thu, 27 Jun 2024 20:36:16 -0400
+X-MC-Unique: cJFWtg6lPSC-rWue3Z8REg-1
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f61da2de1eso5072439f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Jun 2024 17:36:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719534914; x=1720139714;
+        d=1e100.net; s=20230601; t=1719534975; x=1720139775;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/uXKmUT/nwyBhbjHXhbeGwv5exw7uxZHD87X7TVS31A=;
-        b=hG0ie8TfHwNGse4YQ1IyqJzPM1IBT3d0GxsaNSwuFbP2ZjdXiauv5KqmxXebQpVwkC
-         r6S+eZbOXX5UNA2ypjyzniLFGDLOtmiyrJw5s00JFzCI/gBRFbCAYWCxVKmXnlDOVcZ1
-         /Xqc2KyAupQ4kcPM0VY1psjao7n+p4zMJiIV+aotvmwk/5TGfuu19759FcPOHq3+2MGR
-         xAZNQhtaDR8KredwvMlmZ9+T0xONGaXm0QhcyBEq8WKbKkpix30BhgnjEuGXFELqP6Qu
-         gqkrevMuQI7agWJc995keuk5RZIjGgUZcc2ngsRzsWYUVTeOx6O84/czFpL5WMRyfupD
-         /PIA==
-X-Gm-Message-State: AOJu0YwFwqYT2FL/9EzDHruX1yTCqBEeDcry0Fu6MNQLfsTl7LnZZROj
-	0+Xaxyutt8okHIOAbePltn4e9w6dwbG/CgkTi4VWiQSn5tt5aThPhv3D9ikafT4l3zHxxuPRxcE
-	vVfVjfuo6AhBHB3JJA+vWt2gxwVFx5NENbe/i+SofksHrKwcs95oO54UI0mog7PKaoWat+070Se
-	M09g0MkXM+/qw7j1HVbkOP7sWPZyvPiCUCMed1OItPd/7Zxw==
-X-Received: by 2002:a05:6602:2cd5:b0:7f3:d2d5:f06a with SMTP id ca18e2360f4ac-7f3d2d5f2acmr847380039f.13.1719534913952;
-        Thu, 27 Jun 2024 17:35:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5bkzdQWyhKslA1Bbi7lsK+W3KJetd3xDc9zpQWMVm09ROQZ7lBfg0thxSlPP3X/rVq2ScLQ==
-X-Received: by 2002:a05:6602:2cd5:b0:7f3:d2d5:f06a with SMTP id ca18e2360f4ac-7f3d2d5f2acmr847378239f.13.1719534913643;
-        Thu, 27 Jun 2024 17:35:13 -0700 (PDT)
+        bh=/8HMgmWto9s6viH/+SjxOue/JAoKhgQHCg5Kd6Ay2i0=;
+        b=apXdFt8m+Cwy7gJ45uo9voIji5aYrTNHg48KgVGPeQFYxjoS+p1C4kdSBPiSTGXQnC
+         /SQq1CMEPEdPy0tSPDQZ7NsrM1eiP2oEyPZs5hb14USdDeR5IKcyVPfq6MsKZ7jOLuV2
+         SvzRBrPpFvORQNd99ThSVPW2yLGTt/qYwESFaTuLsyvw7OdA7KCLP4ZCaXWuQTBEkBpL
+         yUXTNWyU6QFeh4xv0E6zlUtbLhcmwqmZfazpTTCFMHl13mxNN6oMO4w+99Y5jTCyE04N
+         OCIrN2vlC9sHpu2u/Pnb7qU8BZAtwICPGpDkxKGtczi1SZhp/+QNSIVer4P6F9pd1H/t
+         vEQA==
+X-Gm-Message-State: AOJu0YwLQ25nE18/LFlJ0oeTnHxA7Vg4cWmEaAZ7qpCfrHEtAOb/Lrmi
+	SJCalbJSpFpbGwJi2Pq8jZCdemxAtuwgAS0iHDhS7+inDY5kWJLmlsFwlpUJD8Q5ZxqlfC6DtOo
+	wSGeMhydO2dqEUeQOfo896fm8YS3fyT5d5PLcPzkLUF1XZrKBj78oJ+Wf5Wa/Kl4ABiHL96Lx7j
+	DKpzQGS9dR5L0ClfsG9r8jBu1U62UOXjNQmrz+5OUVTTbJQA==
+X-Received: by 2002:a6b:6513:0:b0:7f6:1d7e:a9c9 with SMTP id ca18e2360f4ac-7f61d7eac73mr98537539f.6.1719534975467;
+        Thu, 27 Jun 2024 17:36:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHVmrxmGHTN77xyBvsNCRip9PfxH3HGoiT5m4TtdeHqRU1DrdFs66Ypzp6P4cDe7Un7vKV9sA==
+X-Received: by 2002:a6b:6513:0:b0:7f6:1d7e:a9c9 with SMTP id ca18e2360f4ac-7f61d7eac73mr98536339f.6.1719534975027;
+        Thu, 27 Jun 2024 17:36:15 -0700 (PDT)
 Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73dd71easm224905173.62.2024.06.27.17.35.13
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7f61ce9d928sm18531739f.15.2024.06.27.17.36.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 17:35:13 -0700 (PDT)
-Message-ID: <6cb0dcfd-f837-463f-b5ec-0e7d2608b837@redhat.com>
-Date: Thu, 27 Jun 2024 19:35:12 -0500
+        Thu, 27 Jun 2024 17:36:14 -0700 (PDT)
+Message-ID: <3e57caa1-33e0-4456-8e07-60922439e479@redhat.com>
+Date: Thu, 27 Jun 2024 19:36:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,11 +82,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 08/14] hugetlbfs: Convert to new uid/gid option parsing
- helpers
+Subject: [PATCH 09/14] isofs: Convert to new uid/gid option parsing helpers
 From: Eric Sandeen <sandeen@redhat.com>
 To: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Cc: linux-mm@kvack.org
+Cc: Alejandra Bujniewicz <abujniew@redhat.com>
 References: <8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com>
 Content-Language: en-US
 In-Reply-To: <8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com>
@@ -97,46 +96,52 @@ Convert to new uid/gid option parsing helpers
 
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- fs/hugetlbfs/inode.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ fs/isofs/inode.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 412f295acebe..81dab95f67ed 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -73,13 +73,13 @@ enum hugetlb_param {
- };
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index 93b1077a380a..ed548efdd9bb 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -326,8 +326,8 @@ static const struct fs_parameter_spec isofs_param_spec[] = {
+ 	fsparam_u32	("session",		Opt_session),
+ 	fsparam_u32	("sbsector",		Opt_sb),
+ 	fsparam_enum	("check",		Opt_check, isofs_param_check),
+-	fsparam_u32	("uid",			Opt_uid),
+-	fsparam_u32	("gid",			Opt_gid),
++	fsparam_uid	("uid",			Opt_uid),
++	fsparam_gid	("gid",			Opt_gid),
+ 	/* Note: mode/dmode historically accepted %u not strictly %o */
+ 	fsparam_u32	("mode",		Opt_mode),
+ 	fsparam_u32	("dmode",		Opt_dmode),
+@@ -344,8 +344,6 @@ static int isofs_parse_param(struct fs_context *fc,
+ 	struct isofs_options *popt = fc->fs_private;
+ 	struct fs_parse_result result;
+ 	int opt;
+-	kuid_t uid;
+-	kgid_t gid;
+ 	unsigned int n;
  
- static const struct fs_parameter_spec hugetlb_fs_parameters[] = {
--	fsparam_u32   ("gid",		Opt_gid),
-+	fsparam_gid   ("gid",		Opt_gid),
- 	fsparam_string("min_size",	Opt_min_size),
- 	fsparam_u32oct("mode",		Opt_mode),
- 	fsparam_string("nr_inodes",	Opt_nr_inodes),
- 	fsparam_string("pagesize",	Opt_pagesize),
- 	fsparam_string("size",		Opt_size),
--	fsparam_u32   ("uid",		Opt_uid),
-+	fsparam_uid   ("uid",		Opt_uid),
- 	{}
- };
- 
-@@ -1376,15 +1376,11 @@ static int hugetlbfs_parse_param(struct fs_context *fc, struct fs_parameter *par
- 
- 	switch (opt) {
+ 	/* There are no remountable options */
+@@ -409,17 +407,11 @@ static int isofs_parse_param(struct fs_context *fc,
+ 	case Opt_ignore:
+ 		break;
  	case Opt_uid:
--		ctx->uid = make_kuid(current_user_ns(), result.uint_32);
--		if (!uid_valid(ctx->uid))
--			goto bad_val;
-+		ctx->uid = result.uid;
- 		return 0;
- 
+-		uid = make_kuid(current_user_ns(), result.uint_32);
+-		if (!uid_valid(uid))
+-			return -EINVAL;
+-		popt->uid = uid;
++		popt->uid = result.uid;
+ 		popt->uid_set = 1;
+ 		break;
  	case Opt_gid:
--		ctx->gid = make_kgid(current_user_ns(), result.uint_32);
--		if (!gid_valid(ctx->gid))
--			goto bad_val;
-+		ctx->gid = result.gid;
- 		return 0;
- 
+-		gid = make_kgid(current_user_ns(), result.uint_32);
+-		if (!gid_valid(gid))
+-			return -EINVAL;
+-		popt->gid = gid;
++		popt->gid = result.gid;
+ 		popt->gid_set = 1;
+ 		break;
  	case Opt_mode:
 -- 
 2.45.2
