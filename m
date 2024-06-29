@@ -1,154 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-22814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1549691CE41
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2024 19:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B6991CE46
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2024 19:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5A31F21E48
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2024 17:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56DB21F21B7B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2024 17:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A88412D76C;
-	Sat, 29 Jun 2024 17:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E3481AD2;
+	Sat, 29 Jun 2024 17:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="d1fqi5qG"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SMx52y9w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A891E4AF;
-	Sat, 29 Jun 2024 17:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC144D8A9
+	for <linux-fsdevel@vger.kernel.org>; Sat, 29 Jun 2024 17:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719681888; cv=none; b=fPAGr4yvWBZiA7YLrLVYinPt6lgzxAxfvmUX/jE6t538pnyzhhfi69iwdipR+su93zc8WKU7DxzaDYKzZeWIys2ABuu3/uZKV7VUIzGPj+iusLcNv/pW7XEh4E3j8M3fI/VoXWIW4pqki65uecUQxnYGCQPgjVb3bQP18A+Zm2g=
+	t=1719682224; cv=none; b=GC8ypvEBTGS4yih6EjzwIedtenZIGLRet101pXRm3cnv2KpPJxGsfz0iVlN10Znxx0M06F3+C2QYoyOLW7zGUncA1CmGCDSDFqucYu95yHKdvDwZAykFsf/iwYOwib6wEiD/9MjnasrCV9cUIkla1yBAYXYjSZez4R7ICgDUX54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719681888; c=relaxed/simple;
-	bh=B+8Tehx5au6fDdI4mC/c2z++QY07BkxYemXYvLEm0DQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hh1IlKbZur3CI1BR2rfl9FBsv0DxbOc4/WyU9DQpT5t9aYbfiyMMtj9e/QTm74kbuqnyapfZvmM2i9T+O6CEtnISRvbImNJZ1mz3t3hvAqHHG3dNIoz7u6aDgZPZC0CAuLFl0eFXK9QzypYG+gPhSQqoSUGyGhU0wmSBzyqTb5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=d1fqi5qG; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1719681880;
-	bh=B+8Tehx5au6fDdI4mC/c2z++QY07BkxYemXYvLEm0DQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=d1fqi5qGZ5pyKd6RiSCiIUf3nsbBbPCVBSx9WgIsgcYQns+gMjHJY8vKSeJppZMwE
-	 zPo+SelLIPTa/3TETGtugHPiaorXiz7+D6WUb1Dqv4ccz1GQVPuWtPXI+gfQ+K8p7k
-	 QKP/tRmm1acvFUCTjq+/deZcHSLylzp/PTee1eN0=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 29 Jun 2024 19:24:31 +0200
-Subject: [PATCH] sysctl: Convert locking comments to lockdep assertions
+	s=arc-20240116; t=1719682224; c=relaxed/simple;
+	bh=0Hk9hhGTxn9mUzggbFcgDx/2rBK10MtYVCrt8qOwshM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=gUxL6pG1PtUFpJUMLmy80KTxsX2CYoFgveQ9v5eZNHoH8xupLLlpmKzHqKFZrZidlfKDq9tioWTniHLQ+hOWcWpW3G1lbHwSRFpJLckjzKMbWU0jP96sInVYalk29QjQAdT2m79bbQD79lWyTXvsFppHRMrFAxfmMJ7CqWFoV0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SMx52y9w; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719682221;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iF002QLgEO5tZviF+GAv2jgU58wxLE7FABlj3pE0mcw=;
+	b=SMx52y9wAB98hFQPe95RCFc85aoOdiTpmdtwGVFX4VYl0esO815mNsUbf+AXRgQImmbusn
+	PDzZah2Y+AizPokTjAv/ilTJ1TesoxvrlaloBKbb2P84gI7lpclp0GgG74SGDt2iKCuR95
+	D/VUUT67O+Up+l4ZaVSfnD9JDYBSCpk=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-695-4Sr5uzwWOEydpknFUlDPxQ-1; Sat, 29 Jun 2024 13:30:20 -0400
+X-MC-Unique: 4Sr5uzwWOEydpknFUlDPxQ-1
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f3c9711ce9so165786839f.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Jun 2024 10:30:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719682219; x=1720287019;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iF002QLgEO5tZviF+GAv2jgU58wxLE7FABlj3pE0mcw=;
+        b=w+i2qRWnvZcsaBZnfnhmpHxrnNy1jwKOnjwq/gB2oU0eSgokjh8qmMZ7Nz4YMf/NMS
+         dXPirzG1wC0o+qwFcYfIYsS5L0ABiYcdsAAXms+l82ZnKt5XWV/PyJ9Vd+DLaaI8YqYY
+         jpbTI6wYf0ezEODgLIOfusJ9I3RhjMPxyqGJBUAhFRwDfdY2MF6xnR0wjkpD5YRGaXqG
+         vbuHjP3/pmckPWLgjz16202C9tF3yS5vlpUhDGxd8Xdd0igkQMCDza3GZIguHyqi5n1A
+         WjD4arrV/6HwGPLBoJjAA4sNaWDCtVS3s32CEQYSvzKou9Nqj6+rLZ8f5EtM3FK0Jp5/
+         w2mQ==
+X-Gm-Message-State: AOJu0YyO42tLvzPzrBMzU12qWEe3J5+8YVCkAwQCrl8BT8Bca6/fQ8cN
+	AAxYpOADHbcxNi8Yxi3ztAPZx9H3Nf/OSvKw4IeHA9nCilghyxR6wXMw/K2GABHjo15qmhSVaTn
+	RNhAmz6DpohURfUBX7mMOYYWdIPLeFMaHRbrhZkZxXewUM0lsQbxw4OLllE5MWN0FTXXn1trP2f
+	oDjjY7bXyJaaGj4XvfcObJjrq0x0zOc7kO3d3OJeV9qiA5Vg==
+X-Received: by 2002:a05:6602:35a:b0:7f6:1645:d4e with SMTP id ca18e2360f4ac-7f62ee08d34mr169031739f.8.1719682219133;
+        Sat, 29 Jun 2024 10:30:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEB9ol+/yi+/lVH6E3oqZ9GTd1qtkBkgUiTl5kjaZQTcJpJDBKarZM0YKg3vSctjG1v7WQ0cA==
+X-Received: by 2002:a05:6602:35a:b0:7f6:1645:d4e with SMTP id ca18e2360f4ac-7f62ee08d34mr169028739f.8.1719682218697;
+        Sat, 29 Jun 2024 10:30:18 -0700 (PDT)
+Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73f90f64sm1166064173.96.2024.06.29.10.30.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Jun 2024 10:30:18 -0700 (PDT)
+Message-ID: <fe6baab2-a7a0-4fb0-9b94-17c58f73ed62@redhat.com>
+Date: Sat, 29 Jun 2024 12:30:16 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240629-sysctl-lockdep-v1-1-69196ce85225@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAE5DgGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyNL3eLK4uSSHN2c/OTslNQCXSOzZEuDJHPjRHMLMyWgpoKi1LTMCrC
- B0bG1tQBj7A9lYAAAAA==
-To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
- Joel Granados <j.granados@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719681880; l=2577;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=B+8Tehx5au6fDdI4mC/c2z++QY07BkxYemXYvLEm0DQ=;
- b=AzQL/LcMRkovx33ydYLW22BBe5Rz7e1ZT7t8MBVKb640YT5jxD9hCCEKBtBkMIiiw6yFLud1/
- WXibCYMZ9yXC/QmQpTFH3PTX70BgdbafBFnLmE6+hOR/uajD6zkz9G0
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+From: Eric Sandeen <sandeen@redhat.com>
+Subject: [PATCH 0/2] fat: convert to the new mount API
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The assertions work as well as the comment to inform developers about
-locking expectations.
-Additionally they are validated by lockdep at runtime, making sure the
-expectations are met.
+This short series converts the fat/vfat/msdos filesystem to use the
+new mount API.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-Tested against the sysctl selftests and normal desktop usage.
----
- fs/proc/proc_sysctl.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+I've tested it with a hacky shell script found at 
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index b1c2c0b82116..1d9d789fbd3e 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -17,6 +17,7 @@
- #include <linux/bpf-cgroup.h>
- #include <linux/mount.h>
- #include <linux/kmemleak.h>
-+#include <linux/lockdep.h>
- #include "internal.h"
- 
- #define list_for_each_table_entry(entry, header)	\
-@@ -104,7 +105,6 @@ static int namecmp(const char *name1, int len1, const char *name2, int len2)
- 	return cmp;
- }
- 
--/* Called under sysctl_lock */
- static struct ctl_table *find_entry(struct ctl_table_header **phead,
- 	struct ctl_dir *dir, const char *name, int namelen)
- {
-@@ -112,6 +112,8 @@ static struct ctl_table *find_entry(struct ctl_table_header **phead,
- 	struct ctl_table *entry;
- 	struct rb_node *node = dir->root.rb_node;
- 
-+	lockdep_assert_held(&sysctl_lock);
-+
- 	while (node)
- 	{
- 		struct ctl_node *ctl_node;
-@@ -258,18 +260,20 @@ static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
- 	return err;
- }
- 
--/* called under sysctl_lock */
- static int use_table(struct ctl_table_header *p)
- {
-+	lockdep_assert_held(&sysctl_lock);
-+
- 	if (unlikely(p->unregistering))
- 		return 0;
- 	p->used++;
- 	return 1;
- }
- 
--/* called under sysctl_lock */
- static void unuse_table(struct ctl_table_header *p)
- {
-+	lockdep_assert_held(&sysctl_lock);
-+
- 	if (!--p->used)
- 		if (unlikely(p->unregistering))
- 			complete(p->unregistering);
-@@ -280,9 +284,11 @@ static void proc_sys_invalidate_dcache(struct ctl_table_header *head)
- 	proc_invalidate_siblings_dcache(&head->inodes, &sysctl_lock);
- }
- 
--/* called under sysctl_lock, will reacquire if has to wait */
- static void start_unregistering(struct ctl_table_header *p)
- {
-+	/* will reacquire if has to wait */
-+	lockdep_assert_held(&sysctl_lock);
-+
- 	/*
- 	 * if p->used is 0, nobody will ever touch that entry again;
- 	 * we'll eliminate all paths to it before dropping sysctl_lock
+https://gist.github.com/sandeen/3492a39c3f2bf16d1ccdd2cd1c681ccd
 
----
-base-commit: 27b31deb900dfcec60820d8d3e48f6de9ae9a18e
-change-id: 20240629-sysctl-lockdep-26c90b73a786
+which tries every possible option, including some with invalid values,
+on both vfat and msdos mounts. It then tests random combinations of
+2, 3, and 4 options, including possibly invalid options.
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+I captured stdout from two runs with and without these modifications,
+and the results are identical.
+
+As patch 2 notes, I left codepage loading to fill_super(), rather than
+validating codepage options as they are parsed. This is because i.e.
+
+mount -o "iocharset=nope,iocharset=iso8859-1"
+
+passes today, due to the last iocharset option being the only one that is
+loaded. It might be nice to validate such options as they are parsed, but
+doing so would make the above command line fail, so I'm not sure if it's
+a good idea. I do have a patch to validate as we parse, if that's desired.
+
+Lastly, this does not yet use the proposed uid/gid parsing helpers, since
+that is not yet merged.
+
+Thanks,
+-Eric
 
 
