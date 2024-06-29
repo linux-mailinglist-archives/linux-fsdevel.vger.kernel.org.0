@@ -1,148 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-22822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD6B91CF29
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2024 23:06:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A4A91CF31
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2024 23:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB12A2826BE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2024 21:06:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528921C20C15
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Jun 2024 21:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102D9140378;
-	Sat, 29 Jun 2024 21:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741761422DC;
+	Sat, 29 Jun 2024 21:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lGD4HYeM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pttxMWzJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnqFJx5g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wfhigh6-smtp.messagingengine.com (wfhigh6-smtp.messagingengine.com [64.147.123.157])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC48F4B5A6;
-	Sat, 29 Jun 2024 21:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95FE374FA;
+	Sat, 29 Jun 2024 21:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719695167; cv=none; b=FTaDbarRxgMIFMgOypa4J1/OMGLARTJEo1oLjI7fehzglQoL3Y5kATrVomqEQgYwqIUDTju7yMXTGicJRF5l85NR6u91t/lcM8Hl5N+9xE3siY3O1a9b016AIS25qW4cXDTKPi/AKakauJQuLUyT1RnTSxGyD9NBKqryVKY1eSk=
+	t=1719696533; cv=none; b=ZmmPN+DDth5AUs+dVA3Zy1q67VoTFIY6mqLgXd4HHgCf9QwTljhM2adx2t7uPxdkhpYtnUWkdtHxKWWaFrOykx9JocDNXDjfMO6yC+iLsXuFghAbFrIPrwa36gjMkhFPB0PLk1d6FneoxAVHahetaID1BAG+DVaoUWzZv2MbOMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719695167; c=relaxed/simple;
-	bh=Cv2OWvyUZOVP44gprTyINkMjpObatIzOMeMYpMQ74wI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=UCdm5ZPNEX0uMLY0PJiiRLV7YJLgAmXNtvBv23YfXqSCKvHexihn/phHyMqn2WxB7aU3f3wejLYysQSLtuVoGUCWcb+iVYTZ8tNBszBQThOlyjgsQDy3jtox0186b4aTSoVXEidiP8zGUpHNc8BP6u1vdp7Nc/dICgsHq3B6xwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lGD4HYeM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pttxMWzJ; arc=none smtp.client-ip=64.147.123.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 82CAF1800099;
-	Sat, 29 Jun 2024 17:06:01 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Sat, 29 Jun 2024 17:06:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1719695161; x=1719781561; bh=GZ6e31l0eU
-	0HBfpZN9NPc8YVWdePfL7XMhkPKJ3qUo8=; b=lGD4HYeMu3zX2B6rMUxsNDmkx9
-	doj+1na9uH7lXIG/u9ZQAJqYbbXz73dRr4UpodsQfspJDFsUobxr9eGHmlkACxam
-	C9QR5vMZjr+P/Jfunb0+vW6XHwuz6/R/B8rRdEzFAx6V9sfkBVl/X2PJKSaZS7w7
-	QALZ2IVSAzHZ/Rp5pZvOSQ+ReI0qS7+67UnLR1DxTiaIAJRtO8WhfIELir13Wt8s
-	KowmEiOSnNltszVjkhLPRDrvLE2lIcrTNAmIYfgoIsQ82Bzf705R7K98kV5uWPRC
-	rkR6zyzur/prHHn25+4Q4cC7MiumgMVqejTK8vBd9QmbOmq+av4D4j25cgFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719695161; x=1719781561; bh=GZ6e31l0eU0HBfpZN9NPc8YVWdeP
-	fL7XMhkPKJ3qUo8=; b=pttxMWzJvDFMeJBUdzP3EtaS84eFVNzpH1fN/+TngLjx
-	ZvfzebXM9uXNRF6iUrLBsUMkgQ2ZlV2GLzmMteHcQQCyuxAaznLHE1gcCZgc7f1R
-	HJEEIlai6wwfCvlb8qkWaBw9zRn+bYE6873TAUZDCG6Ctby4zTdy8tjbqEOjCAbB
-	x+GkhJ2vfBDFfbUGo3fKLjDwGNfQ5we5hmQ/fOJVhE4rLOdoQ3iFa0ChftPLGZ5K
-	gFC6eRlYvq4fW6VNllWQspF2ioUbPjd2ViMAed0wVEOOqDwH3MbpBJWkVkSJAYKp
-	msCkmhNAwXk8klLnCjTL5AHIqxHBVsjKJjCiCkaevQ==
-X-ME-Sender: <xms:NneAZqgo27T24kaZCuGdcWmHY3T_lXiB2CE7frpx3k62jXmNovK2uQ>
-    <xme:NneAZrBbrVr5saMIB7ghju2LiK0F_uqCccw_VQfZO3TSZHgjDXf8y7jrL3IfN5IPz
-    TY6_qJGsdudJQvM2t8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdelgdduheekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepvefhffeltdegheeffffhtdegvdehjedtgfekueevgfduffettedtkeekueef
-    hedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:NneAZiGC0HnTL2v7O8hJldRxxvy926gchW6ck74sSIX6qimfzzny1A>
-    <xmx:NneAZjR6AAwezTX448A3OWJgbZecfzHh21QspyW5LAQC7Hp-aDKaKQ>
-    <xmx:NneAZnyEMoamDQzK2PrFjvRyOd73uDwFc05XS_xFb-IoSS1S_kxwSA>
-    <xmx:NneAZh5twLHAdNMekV7VhtIMtWXM1C-KwuF8aZ08c7bxOMj92W1SLQ>
-    <xmx:OXeAZg-nhJZW9uSqHFfkndVr8i2R3r4TNMu05gKV0KZ2EnvccAfHILal>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id AB781B6008D; Sat, 29 Jun 2024 17:05:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-538-g1508afaa2-fm-20240616.001-g1508afaa
+	s=arc-20240116; t=1719696533; c=relaxed/simple;
+	bh=HtXt70x632jQVkvZVa5+viDAiEo/vLpbpyG46HWBjMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=moRBVwhoy0/uBa4JVJZd8I9XbLatM31IwIrc27PcHBuyN3hDwIKJRgCQOLAhonAiTxO+IGqEjh9svFvk5m+cm64fLp1Xs971OLHI74lRWhy8YNv3UwfdSqLx1dmTK5eCOH1hkxTUgvb/9cRo0KxeiOhfuAfqHip7Xn5Tss+jTHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnqFJx5g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07CE9C2BBFC;
+	Sat, 29 Jun 2024 21:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719696533;
+	bh=HtXt70x632jQVkvZVa5+viDAiEo/vLpbpyG46HWBjMw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VnqFJx5ghuBk4Ih3CVJjWYCN0/ZeQE4bA9dgueRtqlOBnEj9bpHIblRRQS9pvQOq9
+	 e1eHFjHr5+rNv2dGIMrkk3IAZlqwsKX7p+rD1r1vmjoqPl5r2aEZGCjwsQpiy3/x6B
+	 ysyxPdOQzeo0ZX9VEzv6T9NJsfU8dcWOxpkFNYAWzY/LBU0zuLZ2xf3++9jGcptCb1
+	 Xp8Voz7uHR8O3pq3w/ncYUPGbyyGG5MBfyicJ+oqDiGO1BzaG9nKTI9pT87K9/QPad
+	 WGmS2gB4YANsUc/hqolrWiMuZCznLg98Ov/R1hZ8gbO540njo89EbUIDosTqYlZeua
+	 vy2FDJBTYP9+A==
+Date: Sat, 29 Jun 2024 16:28:51 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+	dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
+Subject: Re: [PATCH 02/13] pci/p2pdma: Don't initialise page refcount to one
+Message-ID: <20240629212851.GA1484889@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <d1408856-1d06-4aae-8b44-06e73ac001f8@app.fastmail.com>
-In-Reply-To: <a913c77e-1abb-409f-86b9-8805c1451988@roeck-us.net>
-References: <20240624163707.299494-1-arnd@kernel.org>
- <20240624163707.299494-7-arnd@kernel.org>
- <a913c77e-1abb-409f-86b9-8805c1451988@roeck-us.net>
-Date: Sat, 29 Jun 2024 23:05:37 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Guenter Roeck" <linux@roeck-us.net>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Rich Felker" <dalias@libc.org>, "Andreas Larsson" <andreas@gaisler.com>,
- linux-mips@vger.kernel.org, guoren <guoren@kernel.org>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "H. Peter Anvin" <hpa@zytor.com>, sparclinux@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-s390@vger.kernel.org,
- "Helge Deller" <deller@gmx.de>, linux-sh@vger.kernel.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- "Heiko Carstens" <hca@linux.ibm.com>,
- "musl@lists.openwall.com" <musl@lists.openwall.com>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Brian Cain" <bcain@quicinc.com>,
- "Christian Brauner" <brauner@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Xi Ruoyao" <libc-alpha@sourceware.org>, linux-parisc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "Adhemerval Zanella Netto" <adhemerval.zanella@linaro.org>,
- linux-hexagon@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v2 06/13] parisc: use generic sys_fanotify_mark implementation
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c66cc5c5142813049ffdf9af75302f5064048241.1719386613.git-series.apopple@nvidia.com>
 
-On Sat, Jun 29, 2024, at 19:46, Guenter Roeck wrote:
+On Thu, Jun 27, 2024 at 10:54:17AM +1000, Alistair Popple wrote:
+> The reference counts for ZONE_DEVICE private pages should be
+> initialised by the driver when the page is actually allocated by the
+> driver allocator, not when they are first created. This is currently
+> the case for MEMORY_DEVICE_PRIVATE and MEMORY_DEVICE_COHERENT pages
+> but not MEMORY_DEVICE_PCI_P2PDMA pages so fix that up.
 
-> Building parisc:allmodconfig ... failed
-> --------------
-> Error log:
-> In file included from fs/notify/fanotify/fanotify_user.c:14:
-> include/linux/syscalls.h:248:25: error: conflicting types for 
-> 'sys_fanotify_mark'; have 'long int(int,  unsigned int,  u32,  u32,  
-> int,  const char *)' {aka 'long int(int,  unsigned int,  unsigned int,  
-> unsigned int,  int,  const char *)'}
->   248 |         asmlinkage long 
-> sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))       \
->       |                         ^~~
-> include/linux/syscalls.h:234:9: note: in expansion of macro 
-> '__SYSCALL_DEFINEx'
->   234 |         __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->       |         ^~~~~~~~~~~~~~~~~
+If you tag the subject line with PCI, please run "git log --oneline
+drivers/pci/p2pdma.c" and make yours look like previous ones
+("PCI/P2PDMA").
 
-Thanks for the report, this has escaped my build testing
-since I had fanotify disabled on the parisc build.
+Also recast it to say something semantically useful about what it
+*does*, not what it *doesn't* do.  Maybe something about initializing
+the refcount where the page is allocated?  Especially since the only
+p2pdma.c change here is to "set_page_count(..., 1)", which looks like
+exactly the opposite of "don't initialize refcount to one".
 
-Sent a fix now and queued it as a fix in the asm-generic
-tree:
-
-https://lore.kernel.org/lkml/20240629210359.94426-1-arnd@kernel.org/T/#u
-
-     Arnd
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> ---
+>  drivers/pci/p2pdma.c | 2 ++
+>  mm/memremap.c        | 8 ++++----
+>  mm/mm_init.c         | 4 +++-
+>  3 files changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index 4f47a13..1e9ea32 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -128,6 +128,8 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
+>  		goto out;
+>  	}
+>  
+> +	set_page_count(virt_to_page(kaddr), 1);
+> +
+>  	/*
+>  	 * vm_insert_page() can sleep, so a reference is taken to mapping
+>  	 * such that rcu_read_unlock() can be done before inserting the
+> diff --git a/mm/memremap.c b/mm/memremap.c
+> index 40d4547..caccbd8 100644
+> --- a/mm/memremap.c
+> +++ b/mm/memremap.c
+> @@ -488,15 +488,15 @@ void free_zone_device_folio(struct folio *folio)
+>  	folio->mapping = NULL;
+>  	folio->page.pgmap->ops->page_free(folio_page(folio, 0));
+>  
+> -	if (folio->page.pgmap->type != MEMORY_DEVICE_PRIVATE &&
+> -	    folio->page.pgmap->type != MEMORY_DEVICE_COHERENT)
+> +	if (folio->page.pgmap->type == MEMORY_DEVICE_PRIVATE ||
+> +	    folio->page.pgmap->type == MEMORY_DEVICE_COHERENT)
+> +		put_dev_pagemap(folio->page.pgmap);
+> +	else if (folio->page.pgmap->type != MEMORY_DEVICE_PCI_P2PDMA)
+>  		/*
+>  		 * Reset the refcount to 1 to prepare for handing out the page
+>  		 * again.
+>  		 */
+>  		folio_set_count(folio, 1);
+> -	else
+> -		put_dev_pagemap(folio->page.pgmap);
+>  }
+>  
+>  void zone_device_page_init(struct page *page)
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index 3ec0493..b7e1599 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -6,6 +6,7 @@
+>   * Author Mel Gorman <mel@csn.ul.ie>
+>   *
+>   */
+> +#include "linux/memremap.h"
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+>  #include <linux/kobject.h>
+> @@ -1014,7 +1015,8 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
+>  	 * which will set the page count to 1 when allocating the page.
+>  	 */
+>  	if (pgmap->type == MEMORY_DEVICE_PRIVATE ||
+> -	    pgmap->type == MEMORY_DEVICE_COHERENT)
+> +	    pgmap->type == MEMORY_DEVICE_COHERENT ||
+> +	    pgmap->type == MEMORY_DEVICE_PCI_P2PDMA)
+>  		set_page_count(page, 0);
+>  }
+>  
+> -- 
+> git-series 0.9.1
 
