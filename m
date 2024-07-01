@@ -1,167 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-22897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B1A91E97D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 22:20:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC2B91E9A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 22:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 897491C22962
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 20:20:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE971F230CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 20:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FE417106E;
-	Mon,  1 Jul 2024 20:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC77171652;
+	Mon,  1 Jul 2024 20:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NR3PzA1G"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="skuZDf80"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C154916F85A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 20:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D22B15821D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 20:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719865224; cv=none; b=pM2cJSkR+38KRlaDY0YQs2xL1KarHceGg5qNY9MzKwTwRLEoqtP7VrO640/kaj42en8mdplgthzjqur+eztwbiFIMb/zwCuAhLrmQif7tEu8hc8ISEAe4MCnKlCIwPVrT+WNtFaqeMM4bKUKws2/hByCY9O3ZoZg89fq9wNZ9kw=
+	t=1719866009; cv=none; b=DGLKclOZdOtyHEHz8l8tYOuUX2IQew5qkAPobEys/QcovObcZBghmOTRs2Z8GfPgNvurU/ypAKn9HBL5dMt1YidyFQtWfNjjWCAwMUkg7j9Xy9EJAFNyb5dhW9OpRmeND0VYNRWvSZphL3HfVX/ekb9Or2hPFEdHwmTaWfLqVAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719865224; c=relaxed/simple;
-	bh=ga4e451jvPKhfVqnj9JAcDaLsXJruiPG23fLvZNyxJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JQwHMIegzuvOTlQY1PCiVASw644IpYUjq5/4OEah321HTppdInLaeUawfNx7OgeJMwCcDMRON/USZm+JEYMExQ89GQJEGwGkiHCbrUidxxHI2IEf1dKaK99sirHB1t0e20p1cvFjRtQtttvBwaCoQsD1RXXvo21QIJ2PWcZviQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NR3PzA1G; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719865221;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x8jZ/LHJFYFMuuhWj5aeUBvonaTg3r82OZP4JFmsMPQ=;
-	b=NR3PzA1GNC6ConWJPngalN4XxteVxEA6fbMWu9YW1zfuq8XD0odGyvQvYeLnHwxe6dHrSz
-	jawJKCUgSTqGFYKPFuSnqJJzvoMASnwZ83xOfD+2+A71oR5kks5+5vALUHoFd1d6VbUUWA
-	jufpqiS3hacQiVa19K8zLlhI70A7BYI=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-614-56S2ZOZ1NN6AjWPOZ-W2lA-1; Mon, 01 Jul 2024 16:20:20 -0400
-X-MC-Unique: 56S2ZOZ1NN6AjWPOZ-W2lA-1
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-375e4d55457so36049635ab.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2024 13:20:20 -0700 (PDT)
+	s=arc-20240116; t=1719866009; c=relaxed/simple;
+	bh=jEinBn73kAQeiKA6biJBVZ0znaclnyoeCW0MFqYT2GY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VPfimHPUvMKo8Ju2tDvAaa3gKgzRCzy52ldMGxNiI4C8MH+0tlTNZBfFQ8gm/xej8yQqPEg4NSXOeEmv+ylJCJCZJtcad1eKU0SBmlfDE42pMrUAdxfluLjKCwTdsdjDaLzvHte97GDUu71EpcKInskahngI9rGGRNclLtQLBxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=skuZDf80; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-79c0b73b109so234149085a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2024 13:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719866006; x=1720470806; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eJWQ2aw4J/WLIAVkZzcuHyyU5owW6RRYm2ZeVPaEzB8=;
+        b=skuZDf80doiLymvCWsYlJ/cKG3vZ2Q9BukFjNM7u/x0SGqbYFJ011iPuV6oDCIO7a6
+         HUAoBzRGXal73sktZYyKb0TwR2e7wEfj1mHmDsGvKSDRTZW3SPFWOegfKl/PvbPs3Y6c
+         3wz454SIm87ualx41QjvPlxfSxP0yTzyv1CpudOk89UYSjfogovtFCroTYXD6qU7M01s
+         qhj3XU41S0ZDH2vWvyMoL9402IdEpdLodXOybK49lcjzyHN5w3aIQNh/uw0nIbNf5CoA
+         Lqz9fLshNXhhPAoOMmyrJJXb3fvP2HZOXILUWXKssSlHSvI9qXlkJvGxwrYSr9Rar0iS
+         GROQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719865219; x=1720470019;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1719866006; x=1720470806;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x8jZ/LHJFYFMuuhWj5aeUBvonaTg3r82OZP4JFmsMPQ=;
-        b=C2cbtkPNaILiUwXJxmqHNU0p1NjuitVD5tK4WRrh9RTN55Gy8NslFK5R8vRhF1R2GA
-         /dt0psHOpJXUX7IZ2AkkIKXbVAL0cbdYfKRe6+BIFWHTuI1GULHnLq4mQ8P+0AgWwN4C
-         BgIN3i+mX4vEIW/WfxQZjnVrcWvDlcJ9MofaS61gN21PH6HHdC5ioOMbVCdut9hb9qv7
-         eFC5ZbI4dCIAXN/bNBQnC+yF1FQK1/B/RClfyZZ5/tyG12HY5rRmJ6QsuZjYD4thUfMn
-         qyDvn60KMFqAvURruLbtSL253ss+DHvH0rWSnl0IYjJ/2tRJd1RmFVlP/igclHTxSFMH
-         mktA==
-X-Gm-Message-State: AOJu0YyOl5zj3J9i4cFvR10z58h4aO3zoMR8X9rq3X/hy2vMVT3nFywd
-	hw8YJ2wI9esrF8zWBTrBjrgkjd3SjfMF+R7iRNLs3/SqGC5pRN0JBR6Z6S6RYyzovIng0GfRi1D
-	u7nvsFKVzV9pB0KyZjqujN69zGFt/4+paZCOrl+PmuUGHhumK7zOqPBd0pdFRYqRfS3gP7O8=
-X-Received: by 2002:a05:6e02:1949:b0:374:9a34:9ee with SMTP id e9e14a558f8ab-37cd31b6a0fmr66268045ab.31.1719865218955;
-        Mon, 01 Jul 2024 13:20:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEF9rPDk70/9YkAFuxnveSOjPqGx+ro57vaUqyD6i0jrH9HHxjMsjghJxxQsHeGeNgV7wDYyg==
-X-Received: by 2002:a05:6e02:1949:b0:374:9a34:9ee with SMTP id e9e14a558f8ab-37cd31b6a0fmr66267915ab.31.1719865218601;
-        Mon, 01 Jul 2024 13:20:18 -0700 (PDT)
-Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37ad2f412d4sm20215295ab.45.2024.07.01.13.20.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 13:20:18 -0700 (PDT)
-Message-ID: <ef8519df-a1f4-4f90-9e42-0c8d91bd982d@redhat.com>
-Date: Mon, 1 Jul 2024 15:20:17 -0500
+        bh=eJWQ2aw4J/WLIAVkZzcuHyyU5owW6RRYm2ZeVPaEzB8=;
+        b=dLJmKMox97a9efabzzbleWr6GW1YeA5WVcpjfuqCKk9T3ZqS8XAYfcLWQHuxAZoPmg
+         UYAIhdK/GN/vbsxIguC5g2BbQS/CmEkIKssNgnlO67IwMDFwmWjvM1KeGhklLdEDJ/eB
+         zn4kxJRAThD8RKc6XAmD6wE4ziu5jQ7wsltNklwrYAnNauCH581XnyPTwCDVV4GhnoUb
+         DECZrkNQBYTEhe6+ZpZCpSiZbyfmiRVNgFO/XtJXeUcaxk6zD03OX67AO8Z/faYv9hdQ
+         7PXLHBBWy88ep1+P8m4tSKxVzf9eAEmnLo3Z9s14zAKwqW+DSeWRMd3H/73WX7P1bnJ7
+         Z+QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYbGu2lZ2gW+cSV4D2XNPMAdi6WrmDmIPiAys8tkZPNgDugTwdFcsGql1I4Z80nftKEiEQV72ATok+++PNNrPbLIlrOh61rtTKhoiFqw==
+X-Gm-Message-State: AOJu0Yx/xplB/92OuNs8BIe6MWc2LPRQslGM2S3qnCYmQI5/bVUf8wlA
+	CTVz/19RibMywWO7kS3+YLg3MAwaTl1WNkvNtqVsUYbQ+BZukbZRuMmgeOrqN8aw7YtkinvxdSO
+	M38g=
+X-Google-Smtp-Source: AGHT+IHquiezZuh7KYAcKV1s9Va0xkaeqQinyvX7/0dTMvr1KCMbQie9WJzy87YdgytxI01W/IdsjQ==
+X-Received: by 2002:a05:620a:2683:b0:79c:f0e:f793 with SMTP id af79cd13be357-79d7b99e142mr1064186885a.14.1719866006069;
+        Mon, 01 Jul 2024 13:33:26 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d692600b6sm384373985a.20.2024.07.01.13.33.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 13:33:25 -0700 (PDT)
+Date: Mon, 1 Jul 2024 16:33:24 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andi Kleen <ak@linux.intel.com>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] btrfs: convert to multigrain timestamps
+Message-ID: <20240701203324.GA510298@perftesting>
+References: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
+ <20240701-mgtime-v2-9-19d412a940d9@kernel.org>
+ <20240701134936.GB504479@perftesting>
+ <ec952d79bbe19d80a7aff495e9784c60a1a1e668.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2 V2] fat: Convert to new mount api
-To: Eric Sandeen <sandeen@sandeen.net>,
- OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-References: <fe6baab2-a7a0-4fb0-9b94-17c58f73ed62@redhat.com>
- <2509d003-7153-4ce3-8a04-bc0e1f00a1d5@redhat.com>
- <72d3f126-ac1c-46d3-b346-6e941f377e1e@redhat.com>
- <87v81p8ahf.fsf@mail.parknet.co.jp>
- <216b2317-cec3-4cfd-9dc2-ed9d29b5c099@sandeen.net>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <216b2317-cec3-4cfd-9dc2-ed9d29b5c099@sandeen.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ec952d79bbe19d80a7aff495e9784c60a1a1e668.camel@kernel.org>
 
-On 7/1/24 12:35 PM, Eric Sandeen wrote:
-> On 7/1/24 9:15 AM, OGAWA Hirofumi wrote:
->> Eric Sandeen <sandeen@redhat.com> writes:
-
-[...]
-
->> [...]
->>
->>> +	/* If user doesn't specify allow_utime, it's initialized from dmask. */
->>> +	if (opts->allow_utime == (unsigned short)-1)
->>> +		opts->allow_utime = ~opts->fs_dmask & (S_IWGRP | S_IWOTH);
->>> +	if (opts->unicode_xlate)
->>> +		opts->utf8 = 0;
->>
->> Probably, this should move to fat_parse_param()?
+On Mon, Jul 01, 2024 at 09:57:43AM -0400, Jeff Layton wrote:
+> On Mon, 2024-07-01 at 09:49 -0400, Josef Bacik wrote:
+> > On Mon, Jul 01, 2024 at 06:26:45AM -0400, Jeff Layton wrote:
+> > > Enable multigrain timestamps, which should ensure that there is an
+> > > apparent change to the timestamp whenever it has been written after
+> > > being actively observed via getattr.
+> > > 
+> > > Beyond enabling the FS_MGTIME flag, this patch eliminates
+> > > update_time_for_write, which goes to great pains to avoid in-memory
+> > > stores. Just have it overwrite the timestamps unconditionally.
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/btrfs/file.c  | 25 ++++---------------------
+> > >  fs/btrfs/super.c |  3 ++-
+> > >  2 files changed, 6 insertions(+), 22 deletions(-)
+> > > 
+> > > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> > > index d90138683a0a..409628c0c3cc 100644
+> > > --- a/fs/btrfs/file.c
+> > > +++ b/fs/btrfs/file.c
+> > > @@ -1120,26 +1120,6 @@ void btrfs_check_nocow_unlock(struct
+> > > btrfs_inode *inode)
+> > >  	btrfs_drew_write_unlock(&inode->root->snapshot_lock);
+> > >  }
+> > >  
+> > > -static void update_time_for_write(struct inode *inode)
+> > > -{
+> > > -	struct timespec64 now, ts;
+> > > -
+> > > -	if (IS_NOCMTIME(inode))
+> > > -		return;
+> > > -
+> > > -	now = current_time(inode);
+> > > -	ts = inode_get_mtime(inode);
+> > > -	if (!timespec64_equal(&ts, &now))
+> > > -		inode_set_mtime_to_ts(inode, now);
+> > > -
+> > > -	ts = inode_get_ctime(inode);
+> > > -	if (!timespec64_equal(&ts, &now))
+> > > -		inode_set_ctime_to_ts(inode, now);
+> > > -
+> > > -	if (IS_I_VERSION(inode))
+> > > -		inode_inc_iversion(inode);
+> > > -}
+> > > -
+> > >  static int btrfs_write_check(struct kiocb *iocb, struct iov_iter
+> > > *from,
+> > >  			     size_t count)
+> > >  {
+> > > @@ -1171,7 +1151,10 @@ static int btrfs_write_check(struct kiocb
+> > > *iocb, struct iov_iter *from,
+> > >  	 * need to start yet another transaction to update the
+> > > inode as we will
+> > >  	 * update the inode when we finish writing whatever data
+> > > we write.
+> > >  	 */
+> > > -	update_time_for_write(inode);
+> > > +	if (!IS_NOCMTIME(inode)) {
+> > > +		inode_set_mtime_to_ts(inode,
+> > > inode_set_ctime_current(inode));
+> > > +		inode_inc_iversion(inode);
+> > 
+> > You've dropped the
+> > 
+> > if (IS_I_VERSION(inode))
+> > 
+> > check here, and it doesn't appear to be in inode_inc_iversion.  Is
+> > there a
+> > reason for this?  Thanks,
+> > 
 > 
-> In my conversions, I have treated parse_param as simply handling one option at
-> a time, and not dealing with combinations, because we don't have the "full view"
-> of all options until we are done (previously we parsed everything, and then could
-> "clean up" at the bottom of the function). So now, I was handling this sort of
-> checking after parsing was complete, and fill_super seemed an OK place to do it.
-> 
-> But sure - I will look at whether doing it in fat_parse_param makes sense.
-> 
+> AFAICT, btrfs always sets SB_I_VERSION. Are there any cases where it
+> isn't? If so, then I can put this check back. I'll make a note about it
+> in the changelog if not.
 
-I don't think that will work.
+Ah ok I'm dumb, ignore me, thanks,
 
-For example, for the allow_utime adjustment...
-
-Before parsing begins, allow_utime is defaulted to -1 (unset) and
-fs_dmask is defaulted to current_umask()
-
-If we put the 
-
-+	if (opts->allow_utime == (unsigned short)-1)
-+		opts->allow_utime = ~opts->fs_dmask & (S_IWGRP | S_IWOTH);
-
-test at the bottom of parse_param, then this sequence of parsing:
-
-("mount -o fs_uid=42,fs_dmask=0XYZ")
-
-fs_uid=42
- --> sets opts->allow_utime to (~opts->fs_dmask & (S_IWGRP | S_IWOTH))
-     where fs_dmask is default / current_umask()
-fs_dmask=0XYZ
- --> changes fs_dmask from default, but does not update allow_utime which
-     was set based on the old fs_dmask
-
-leads to different results than:
-
-("mount -o fs_dmask=0XYZ",fs_uid=42)
-
-fs_dmask=0XYZ
- --> changes fs_dmask from the default
-     updates allow_utime based on this user-specified fs_dmask rather than default
-fs_uid=42
- --> allow_utime is now set, so no further changes are made
-
-IOWS, the final allow_utime value may differ depending on the order of option
-parsing, unless we wait until parsing is complete before we inspect and adjust it.
-
-dhowells did, however, suggest that perhaps these adjustments should generally
-be done in get_tree rather than fill_super, so I'll give that a shot.
-
-Sound ok?
-
--Eric
-
+Josef
 
