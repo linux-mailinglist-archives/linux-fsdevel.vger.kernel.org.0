@@ -1,137 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-22883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7216B91E1FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 16:12:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F93D91E213
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 16:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8621C22E92
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 14:12:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD050B2130B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 14:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA7816131A;
-	Mon,  1 Jul 2024 14:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bx6gl0u0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E9914387C;
+	Mon,  1 Jul 2024 14:15:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F63215E5A6;
-	Mon,  1 Jul 2024 14:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EA68C1D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 14:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719843153; cv=none; b=AWpDw4D2yabVnV19QO82sTjVeSWTTkU+Nvp3AnkAFeKKIhEsYUEc9B3JKGjukhoYj9Dw6c045GUXjy72t8qwWcQOBK9dXbtRycLedAuMajJTfDZqBD3rP5G3UlIIMgD+ht8pqM6YAyjxWm+bkMmpHwpY4Nmrfq9mmeKlfr7upqs=
+	t=1719843320; cv=none; b=Zs7mIVAg1mX5W2RvbLwFI0tfC7OaPWsY2gbECEE1CigatCjRxI/AxQkDyVt15GcJa+34RTpNmbvvWjXiXJzNH9sIf47SISXHiq8VLRZJkIge99/8bMLewnUcApxUDQTZEIpb5LReyQxwLk8ySLHE9boyr7DJiJV6ewra5fL0QTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719843153; c=relaxed/simple;
-	bh=1VVWwQxpbYpxgTGynZjIRizmv2vMmvHZ76g/uhUNoXw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DbQjITkpBzwUGgslzg1pvc3threVNDOtfsKznridTMqOi5Kt4drcQ299g2X6gYM9XgQOvkGwazjCjMXMMTXAaRYvKC1TK6Yqfj+jYI3ZZBQp/Xmsyq+u0fZwQUihGrM/GPOC7i8QQ5Wf5gt1f4Jf6hTo2a6LddUhA7r6fsXIXIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bx6gl0u0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F24C116B1;
-	Mon,  1 Jul 2024 14:12:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719843153;
-	bh=1VVWwQxpbYpxgTGynZjIRizmv2vMmvHZ76g/uhUNoXw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Bx6gl0u0KpVIjrIpzrfYuY6WoBWEJEEFsy7b/cg2a/dYiOrt9fM/DJGDrY4QzS/z2
-	 BtJ2c2Y8K4NKN+etRhqcUQVzjCCN2h5D7xdOOXxL5/4RUam5MFz6a5hFvUmmHrbjSW
-	 GBdgrvmiHCBMiiPg8KwsHfBQSvqTTXGjspMQ8+oIkERaDsrnslkOSLiNDBbJCCVNht
-	 /HKEoG8hniCJoiHW0rvXZ6VGbyPTaEMa8dRiFPRr0P5g4yDZ+n/Rir8GoP0agHiEDr
-	 zbOJgH3sUJKUT1OpmSMSjDXDkXEvDtLAmCs0lSDgEg0QZPn/+DDoPCdTUZUf/Qmq/8
-	 RZQkXLVyvBeww==
-Message-ID: <1c3cee9f7ef81e1da09e0c7b4ee1e47dc9161a75.camel@kernel.org>
-Subject: Re: [PATCH v2 00/11] fs: multigrain timestamp redux
-From: Jeff Layton <jlayton@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Chandan Babu R
- <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, Theodore
- Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Chris
- Mason <clm@fb.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen
- <ak@linux.intel.com>,  kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org,  linux-ext4@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-mm@kvack.org,  linux-nfs@vger.kernel.org
-Date: Mon, 01 Jul 2024 10:12:29 -0400
-In-Reply-To: <20240701135332.GD504479@perftesting>
-References: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
-	 <20240701135332.GD504479@perftesting>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1719843320; c=relaxed/simple;
+	bh=m66dDn7BsICYftZ3beou+Az/7jb+v+63vXv6k/GKHQw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DVxubc2yhH4TdaKdbgD9KsDikxcC4oHHcjw0M7Lv5A/z06DdE0frAds1ZjG0iN8MoO+gVH6hVmKbCpZ+qq7IGmRqleXY6LaMsCp1uT1vGwOoYtHfafpFpxl6tlKZOfXo+nG7iR9NlatOQM/b64U7KLvA2OsDTsNa0CzTzI4JDdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id E9B902055FA5;
+	Mon,  1 Jul 2024 23:15:09 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 461EF8Pm037657
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 1 Jul 2024 23:15:09 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 461EF8PB224360
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 1 Jul 2024 23:15:08 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 461EF8Tn224359;
+	Mon, 1 Jul 2024 23:15:08 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH 2/2 V2] fat: Convert to new mount api
+In-Reply-To: <72d3f126-ac1c-46d3-b346-6e941f377e1e@redhat.com> (Eric Sandeen's
+	message of "Sat, 29 Jun 2024 13:02:48 -0500")
+References: <fe6baab2-a7a0-4fb0-9b94-17c58f73ed62@redhat.com>
+	<2509d003-7153-4ce3-8a04-bc0e1f00a1d5@redhat.com>
+	<72d3f126-ac1c-46d3-b346-6e941f377e1e@redhat.com>
+Date: Mon, 01 Jul 2024 23:15:08 +0900
+Message-ID: <87v81p8ahf.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-On Mon, 2024-07-01 at 09:53 -0400, Josef Bacik wrote:
-> On Mon, Jul 01, 2024 at 06:26:36AM -0400, Jeff Layton wrote:
-> > This set is essentially unchanged from the last one, aside from the
-> > new file in Documentation/. I had a review comment from Andi Kleen
-> > suggesting that the ctime_floor should be per time_namespace, but I
-> > think that's incorrect as the realtime clock is not namespaced.
-> >=20
-> > At LSF/MM this year, we had a discussion about the inode change
-> > attribute. At the time I mentioned that I thought I could salvage the
-> > multigrain timestamp work that had to be reverted last year [1].=C2=A0 =
-That
-> > version had to be reverted because it was possible for a file to get a
-> > coarse grained timestamp that appeared to be earlier than another file
-> > that had recently gotten a fine-grained stamp.
-> >=20
-> > This version corrects the problem by establishing a per-time_namespace
-> > ctime_floor value that should prevent this from occurring. In the above
-> > situation that was problematic before, the two files might end up with
-> > the same timestamp value, but they won't appear to have been modified i=
-n
-> > the wrong order.
-> >=20
-> > That problem was discovered by the test-stat-time gnulib test. Note tha=
-t
-> > that test still fails on multigrain timestamps, but that's because its
-> > method of determining the minimum delay that will show a timestamp
-> > change will no longer work with multigrain timestamps. I have a patch t=
-o
-> > change the testcase to use a different method that I've posted to the
-> > bug-gnulib mailing list.
-> >=20
-> > The big question with this set is whether the performance will be
-> > suitable. The testing I've done seems to show performance parity with
-> > multigrain timestamps enabled, but it's hard to rule this out regressin=
-g
-> > some workload.
-> >=20
-> > This set is based on top of Christian's vfs.misc branch (which has the
-> > earlier change to track inode timestamps as discrete integers). If ther=
-e
-> > are no major objections, I'd like to let this soak in linux-next for a
-> > bit to see if any problems shake out.
-> >=20
-> > [1]: https://lore.kernel.org/linux-fsdevel/20230807-mgctime-v7-0-d1dec1=
-43a704@kernel.org/
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> I have a few nits that need to be addressed, but you can add
->=20
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
->=20
-> to the series once they're addressed.=C2=A0 Thanks,
->=20
+Eric Sandeen <sandeen@redhat.com> writes:
 
-Thanks! Fixed them up in my tree. I left the IS_I_VERSION check out as
-well, and added a note to the changelog on the btrfs patch.
---=20
-Jeff Layton <jlayton@kernel.org>
+[...]
+
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
+>
+> V2: Ignore all options during remount via
+>
+> 	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE)
+> 		return 0;
+
+Thanks, basically looks good. However I tested a bit and found a bug,
+and small comments.
+
+> +extern const struct fs_parameter_spec fat_param_spec[];
+> +extern int fat_init_fs_context(struct fs_context *fc, bool is_vfat);
+> +extern void fat_free_fc(struct fs_context *fc);
+> +
+> +int fat_parse_param(struct fs_context *fc, struct fs_parameter *param,
+> +		    int is_vfat);
+> +extern int fat_reconfigure(struct fs_context *fc);
+
+Let's remove extern from new one.
+
+> +int fat_parse_param(struct fs_context *fc, struct fs_parameter *param,
+> +			   int is_vfat)
+
+Maybe better to use bool (and true/false) instead of int for is_vfat?
+
+> +{
+> +	struct fat_mount_options *opts = fc->fs_private;
+> +	struct fs_parse_result result;
+> +	int opt;
+> +	char buf[50];
+
+[...]	
+
+> +	case Opt_codepage:
+> +		sprintf(buf, "cp%d", result.uint_32);
+
+"buf" is unused.
+
+> +	/* obsolete mount options */
+> +	case Opt_obsolete:
+> +		infof(fc, "\"%s\" option is obsolete, not supported now",
+> +		      param->key);
+> +		break;
+
+I'm not sure though, "Opt_obsolete" should use fs_param_deprecated?
+
+> +	default:
+> +		return -EINVAL;
+
+I'm not sure though, "default:" should not happen anymore?
+
+>  	}
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(fat_parse_param);
+
+[...]
+
+> +	/* If user doesn't specify allow_utime, it's initialized from dmask. */
+> +	if (opts->allow_utime == (unsigned short)-1)
+> +		opts->allow_utime = ~opts->fs_dmask & (S_IWGRP | S_IWOTH);
+> +	if (opts->unicode_xlate)
+> +		opts->utf8 = 0;
+
+Probably, this should move to fat_parse_param()?
+
+> +	/* Apply pparsed options to sbi */
+> +	sbi->options = *opts;
+
+	/* Transfer ownership of iocharset to sbi->options */
+	opts->iocharset = NULL;
+	opts = &sbi->options;
+
+opts->iocharset is freed by both of opts and sbi->options, we should fix
+it like above or such.
+
+> -	sprintf(buf, "cp%d", sbi->options.codepage);
+> +	sprintf(buf, "cp%d", opts->codepage);
+
+[...]
+
+>  	/* FIXME: utf8 is using iocharset for upper/lower conversion */
+>  	if (sbi->options.isvfat) {
+> -		sbi->nls_io = load_nls(sbi->options.iocharset);
+> +		sbi->nls_io = load_nls(opts->iocharset);
+>  		if (!sbi->nls_io) {
+>  			fat_msg(sb, KERN_ERR, "IO charset %s not found",
+> -			       sbi->options.iocharset);
+> +			       opts->iocharset);
+>  			goto out_fail;
+
+Revert above to remove opts usage to not touch after ownership transfer
+if we fix the bug like that way.
+
+> +static int msdos_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> +{
+> +	return fat_parse_param(fc, param, 0);
+
+If we changed int to bool, 0 to false.
+
+> +static int msdos_init_fs_context(struct fs_context *fc)
+> +{
+> +	int err;
+> +
+> +	/* Initialize with isvfat == 0 */
+> +	err = fat_init_fs_context(fc, 0);
+
+If we changed int to bool, 0 to false.
+
+> +static int vfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> +{
+> +	return fat_parse_param(fc, param, 1);
+
+If we changed int to bool, 0 to true.
+
+> +static int vfat_init_fs_context(struct fs_context *fc)
+> +{
+> +	int err;
+> +
+> +	/* Initialize with isvfat == 1 */
+> +	err = fat_init_fs_context(fc, 1);
+
+If we changed int to bool, 0 to true.
+
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
