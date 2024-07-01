@@ -1,94 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-22841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F7991D6F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 06:24:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72DB91D71E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 06:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB080281D16
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 04:24:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 713CA1F22BB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 04:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6BF24A08;
-	Mon,  1 Jul 2024 04:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020CB364BA;
+	Mon,  1 Jul 2024 04:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="xUdX3f89"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ywHTxJXt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC0BDDD8
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 04:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62C02B9BF;
+	Mon,  1 Jul 2024 04:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719807881; cv=none; b=V4TMY+BdbpM22SKRiyu4V7VF7qy9StTWTImgTJgl2G8SxgpoEse/TV0MRB0iOcEfN8f72YU6CVWU7gom6c8mDxdBc2O3wOwmwZ1ynl9FmrH4VN7BUmEA93HSZvNAqE1UUL8sb0mB4i2B4Ju7zx1AQ4/pFtbdv646AiLofwy44Lg=
+	t=1719808710; cv=none; b=sQeRkIyCRL1KER5Rf2UASi7y+XpMFKb+/R6jWfEBLwdYfdrHaNVQDTJ/wCR3j+qByDlbvCDtZlMq/HOEeZ8Ahc1muKVyrdTt/70FkbL95EDyL+MI6vGVsCJ9Rk3RN6+tjmrhRZe8A3JAHPD/O87ymCtfHrdtiw8FP2GsRfTlFDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719807881; c=relaxed/simple;
-	bh=paVAf+8j2Ao8wNZ6d9H4Go6mO+YeHszO+g9YMet+gN4=;
+	s=arc-20240116; t=1719808710; c=relaxed/simple;
+	bh=KlezMwv+XXY4o6pEzJ5jH4hLmE4QrEnT/MKhMfPB+Gg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ts4XqlbGDAhBCKgm3M9TA97xbqd6X1xjQ1K2zR5RvP9kGniFtK9vV+ViAfcDhQ3EQr7r8vyQGZlhmGWvcyNFy/tfymdRBzEWNf5+79gbJk+IRh+FBKUWAghpzDDBInmqnK8JnAdLMm3sJ5tyqpC/cmCxH4QmLw8Lp7jq0Qi3JLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=xUdX3f89; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fa244db0b2so16471495ad.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jun 2024 21:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1719807880; x=1720412680; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q8FaXxeW49XxQjIVoOOnJuKPW6Isofg2ljkc7tdAOtU=;
-        b=xUdX3f897Grs5cWWuQ2CuoY+jfH5lwciBkIJtBCf7XHn5Vy6PLpf3Y0oEYflVH6KRZ
-         cYzqRjL46Mhp7NxfpjavH3SLzSlx/uSa+Ln6e3xWzWkLpvU+SfWd11Q1NUXSphwk/a55
-         6NmKjcHlf15ki8DBVRvoXxG9iAS8BoybM1PwJHIm2FC/Xyljt+0GJqf8Ngywja2J2Ww9
-         D7HdBC8qSbQMyH3T7iDhdnoO18ctAczp+b2l/XZzsQNlAQ1DbgvNmMyhXtCE/zKg1CQ5
-         RXhY8LPV6wTdbxdJutRYXNqMgvPmIWb0wLA295TCggO7vn7bIjBeCllNLk12n3yQw1Ko
-         M1cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719807880; x=1720412680;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q8FaXxeW49XxQjIVoOOnJuKPW6Isofg2ljkc7tdAOtU=;
-        b=M94nG73W0Smsl7IYu5Yp9sab+UyEQPdD3XyrHmRigMXwZ3WTcvjkjn/RIn5p2Fd+YI
-         JmXBImjmTciqmKVHjEodK//SLXbsw0iZXdop1ipYS8SbwvtnQC3Slw0HlWiAhS0/pe9Z
-         c4HnxLRXxIKSZr4qUIHAXLlTCPD2lD9DMD8hdaArleic8LSh0Xu2g4Q88yhQb2dp3d77
-         OaQt01Pbc4DhAs3cAuV0PIxgATGz3oKnlneM8QlKAS8MHNQKsdUkAuQIxh7DuKdpAED6
-         61/aLgJs0Q6U+1p+kfAWk9rDAlpPkIRSORGluX4FIvj+kuRUB5Qc+LeOPzWEjdMJ4kPN
-         NTpg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2eEMNrMuTEJ5CkIVVVM4eXpTv0dZ/id2eB/2r9pNeOdAjtP0K/3gOGkJhHrdCw8yjxZc6sPHNMczdKEp4mpr8eQquA0oTBdd/t4TseQ==
-X-Gm-Message-State: AOJu0YwC654Frf9ud7p66fkc/QMDoiQmKeGLTa8wVnfbms6qT607W3Wj
-	0C/bHkGzjtSZ273DRztT58nQlhSEjlMyLBYVwmkxeuUoNOAHEFpO8c+8SVMB0TQ=
-X-Google-Smtp-Source: AGHT+IFKQ7mlIRHK3qLypxLI+wB6C/xuRboouR5zOv5/KrFwuLBxwDWk/1+R28Hzvt5tq0xC0UW+Zw==
-X-Received: by 2002:a17:902:d2cc:b0:1fa:2d0:f85b with SMTP id d9443c01a7336-1fadbce9d59mr26040185ad.49.1719807879574;
-        Sun, 30 Jun 2024 21:24:39 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1569051sm53926215ad.215.2024.06.30.21.24.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jun 2024 21:24:39 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sO8ai-00HWNB-2Q;
-	Mon, 01 Jul 2024 14:24:36 +1000
-Date: Mon, 1 Jul 2024 14:24:36 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com,
-	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
-	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-	jhubbard@nvidia.com, hch@lst.de
-Subject: Re: [PATCH 00/13] fs/dax: Fix FS DAX page reference counts
-Message-ID: <ZoIvhDvzMCw28VBI@dread.disaster.area>
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sYwh0bW+1HTk7D+9t0qMeGeB9gUCP3Ips0DdTJUWHCByIUnIXG6Qwis/bEK/rDBwuJQgF9+xGfdwT74o8wYJjaRwC4eYSS0jqhFxXRp/itGRxej4nS+6WXn4DgAFzMyPvNXjNmWi0pEfYSL8QW7B4w6J25XUeGCEmls0GCkV/Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ywHTxJXt; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KlezMwv+XXY4o6pEzJ5jH4hLmE4QrEnT/MKhMfPB+Gg=; b=ywHTxJXtpCmMFwwsRi4kvznuAo
+	lsp3EOCiyjRHm1hsfBmvlJclgu5+tKIIm6ZT9wsIfCuGn8KcJGAXr/pnjOKmKUHGrN5kP2p3Z01Cx
+	UzYHQTFpm3epTqB9jIXP9qwtz1IVGCGTr2Ljmsz+6T9LJq4qQbuhR2s6wIVO8vnvXdsEBVnVKCc/b
+	y+rr9ZoOP/Ioq3tYpBgNOKuRIWu1GceuCOvpGawFLOuybcg0qKJ6Muvz3v2GKrkYXnynQL/aSPUfS
+	Xz4fQGEKJ8K3BAxCa89NqLwkTLaxAbT/0Xp0nHKhY4ktDBs2ok0YaBL6B/qb+qsiBEWRQENmB4VAX
+	HhJF0v3w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sO8o5-00000001fGL-1Zly;
+	Mon, 01 Jul 2024 04:38:25 +0000
+Date: Sun, 30 Jun 2024 21:38:25 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, axboe@kernel.dk,
+	torvalds@linux-foundation.org, xry111@xry111.site,
+	loongarch@lists.linux.dev, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 0/2] statx NULL path support
+Message-ID: <ZoIywaObDsx7SVw9@infradead.org>
+References: <20240625110029.606032-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,41 +63,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+In-Reply-To: <20240625110029.606032-1-mjguzik@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Jun 27, 2024 at 10:54:15AM +1000, Alistair Popple wrote:
-> FS DAX pages have always maintained their own page reference counts
-> without following the normal rules for page reference counting. In
-> particular pages are considered free when the refcount hits one rather
-> than zero and refcounts are not added when mapping the page.
-> 
-> Tracking this requires special PTE bits (PTE_DEVMAP) and a secondary
-> mechanism for allowing GUP to hold references on the page (see
-> get_dev_pagemap). However there doesn't seem to be any reason why FS
-> DAX pages need their own reference counting scheme.
-> 
-> By treating the refcounts on these pages the same way as normal pages
-> we can remove a lot of special checks. In particular pXd_trans_huge()
-> becomes the same as pXd_leaf(), although I haven't made that change
-> here. It also frees up a valuable SW define PTE bit on architectures
-> that have devmap PTE bits defined.
-> 
-> It also almost certainly allows further clean-up of the devmap managed
-> functions, but I have left that as a future improvment.
-> 
-> This is an update to the original RFC rebased onto v6.10-rc5. Unlike
-> the original RFC it passes the same number of ndctl test suite
-> (https://github.com/pmem/ndctl) tests as my current development
-> environment does without these patches.
+Maybe it's time and declarate the idea to deprecate stat a failure
+and we just add it back to the new generic ABI syscalls?
 
-I strongly suggest running fstests on pmem devices with '-o
-dax=always' mount options to get much more comprehensive fsdax test
-coverage. That exercises a lot of the weird mmap corner cases that
-cause problems so it would be good to actually test that nothing new
-got broken in FSDAX by this patchset.
+The idea to get rid of layers of backwards compatibility was a good one
+and mostly succeeded, but having to deal with not only remapping
+the structure but also the empty path issues sounds like it is worth
+to just add these pretty trivial system calls back and make everyones
+life easier?
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
 
