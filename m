@@ -1,78 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-22842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72DB91D71E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 06:39:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37AF91D762
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 07:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 713CA1F22BB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 04:39:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F0A9B23461
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 05:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020CB364BA;
-	Mon,  1 Jul 2024 04:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6B6381C4;
+	Mon,  1 Jul 2024 05:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ywHTxJXt"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HYeQbzVa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62C02B9BF;
-	Mon,  1 Jul 2024 04:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39052433D2;
+	Mon,  1 Jul 2024 05:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719808710; cv=none; b=sQeRkIyCRL1KER5Rf2UASi7y+XpMFKb+/R6jWfEBLwdYfdrHaNVQDTJ/wCR3j+qByDlbvCDtZlMq/HOEeZ8Ahc1muKVyrdTt/70FkbL95EDyL+MI6vGVsCJ9Rk3RN6+tjmrhRZe8A3JAHPD/O87ymCtfHrdtiw8FP2GsRfTlFDQ=
+	t=1719811330; cv=none; b=DLIXegA/9Xbtm2BIyelhGigZx1+rsBO868vHtKTmXFvmsOiPNjzNT7RzdiGURBTnqpOgoOLBH9MLqJlXsP1NHqtm233qN5VC78fw2ugRj2ozNbFE5tI00sK0ucUIfBo4HQODa3AM16eF/fzbXRzY3PhpzTAKsy6CCEL5cfWgFfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719808710; c=relaxed/simple;
-	bh=KlezMwv+XXY4o6pEzJ5jH4hLmE4QrEnT/MKhMfPB+Gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sYwh0bW+1HTk7D+9t0qMeGeB9gUCP3Ips0DdTJUWHCByIUnIXG6Qwis/bEK/rDBwuJQgF9+xGfdwT74o8wYJjaRwC4eYSS0jqhFxXRp/itGRxej4nS+6WXn4DgAFzMyPvNXjNmWi0pEfYSL8QW7B4w6J25XUeGCEmls0GCkV/Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ywHTxJXt; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KlezMwv+XXY4o6pEzJ5jH4hLmE4QrEnT/MKhMfPB+Gg=; b=ywHTxJXtpCmMFwwsRi4kvznuAo
-	lsp3EOCiyjRHm1hsfBmvlJclgu5+tKIIm6ZT9wsIfCuGn8KcJGAXr/pnjOKmKUHGrN5kP2p3Z01Cx
-	UzYHQTFpm3epTqB9jIXP9qwtz1IVGCGTr2Ljmsz+6T9LJq4qQbuhR2s6wIVO8vnvXdsEBVnVKCc/b
-	y+rr9ZoOP/Ioq3tYpBgNOKuRIWu1GceuCOvpGawFLOuybcg0qKJ6Muvz3v2GKrkYXnynQL/aSPUfS
-	Xz4fQGEKJ8K3BAxCa89NqLwkTLaxAbT/0Xp0nHKhY4ktDBs2ok0YaBL6B/qb+qsiBEWRQENmB4VAX
-	HhJF0v3w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sO8o5-00000001fGL-1Zly;
-	Mon, 01 Jul 2024 04:38:25 +0000
-Date: Sun, 30 Jun 2024 21:38:25 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, axboe@kernel.dk,
-	torvalds@linux-foundation.org, xry111@xry111.site,
-	loongarch@lists.linux.dev, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 0/2] statx NULL path support
-Message-ID: <ZoIywaObDsx7SVw9@infradead.org>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1719811330; c=relaxed/simple;
+	bh=IMGIXZ6HdrFRPSbcEmA5t2KXTtvIr3dl+wW5RM+jytI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hSDzYhY6WRwgtdQULIQegW2MkmrR1fROJicBO8H4kqM1if2qcTKB+AdV3EzURITv52pA0WxlEyXkt+SXPYo+oa2XmlZr9E3gbJCUhDWH8U3or1KZnq/ZSbwBLUsfOvQncwwoufMhMiClbJOxtnyRUj3uK5+mOZWnx93JKYc2eHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HYeQbzVa; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719811295; x=1720416095; i=markus.elfring@web.de;
+	bh=IMGIXZ6HdrFRPSbcEmA5t2KXTtvIr3dl+wW5RM+jytI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HYeQbzVacYIAEj2A0UPV/THk+x4OLgwhDHkd7U3gRfli1Ib3wX0oAhIyUFL26az0
+	 ZS0fiPQTUCFgYYs4lSHKtjNWXQrRN2Y4zcFZyT9UrtCy+z//xD1NT7he62dkvEh9a
+	 psRHen+/FG/qBeRJ17fsOmXWsdnxBDGSWzLUrNm5gTntVquGuKP84xRbi7jjQMIgy
+	 gCHUGTxyL5vcjHMTaDleOrxeswCiM5sVRVS9E93Y+odF+GXuw0jqg26faJN4UYcZM
+	 7V9JTRGvpxSM2GXGtksGtb4H+0y7Q0kEc43jHgtDCmij37hf9BwaxRktrDYXDNBoM
+	 cuOpWcr9cFcDV9C9GA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdwJO-1rpdfs3oec-00ln7o; Mon, 01
+ Jul 2024 07:21:34 +0200
+Message-ID: <8ced519f-47f2-4a74-be6d-4be5958009ba@web.de>
+Date: Mon, 1 Jul 2024 07:21:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625110029.606032-1-mjguzik@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [v2 2/5] rosebush: Add new data structure
+To: Matthew Wilcox <willy@infradead.org>, kernel-janitors@vger.kernel.org,
+ Boqun Feng <boqun.feng@gmail.com>, Johannes Berg <johannes.berg@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Uladzislau Rezki <urezki@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20240625211803.2750563-3-willy@infradead.org>
+ <52d370b2-d82a-4629-918a-128fc7bf7ff8@web.de>
+ <ZoIHLiTvNm0IE0CD@casper.infradead.org>
+Content-Language: en-GB
+In-Reply-To: <ZoIHLiTvNm0IE0CD@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UX+yfozCovUOm1nP0B4sPqw6v0GncWxcDhx/WTSrO86UU6cPV96
+ wkrtHU+lntN1gR1IY6k2WV9FajaXj/y36jiqB7AxzUBvVlyO7FLxsIXSV85SBvEZOLWRt5b
+ TbUM7ivrT/tiyhmLwKdR3IZBRxeYDBZbBCzf4Uh8Si93d8JyZty4eyWDaUmOjXD6T2HgzOJ
+ sTiU0NvL2ntkXCAunRyoQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rTh91dUTLFs=;RJyIXwVaTwSFBMHklihzmdWsonH
+ L6vlbDQDW2aPB+JXmXF20qa2FpvnEqnxSRbngoZqT/w+V6bEhSzLAq7tjoukGJpDzsWGlaNgZ
+ xAIXE3vWJyikUBB7niMyEzU2vLxpczFfA9RQTOmZZJHZiP9Wfsqm+QSnv5EttT3WUQhs/nL6P
+ H5AicN/YjQokwYT0ThjYI+Gp+G/H8Os66lxZTuYCjHTAlArAks9NEkmbCkZhjREI/Qjc2TQsC
+ YcyBW2iTStwMEdaBfUkZ1DEme2BEMhoZhMR4Z+kes25TipOiBdUq9laPFmimLowdUxoS9xoZV
+ iTesXWViE/HrOUyYVn5gyAx3Xcd9k20i2/KBotYlROt6sjtJbEzwmL3qtie128Xd9DWrb9npy
+ 1I+iQg0oza0z3YFaPWcVF55AIT0RGrnbfbH9PFxc1C0OH4o4WGs3I33UY3p0kJuh1D86bGBQB
+ klRBn1asu9p3hiqZrXcaci72V5zznSBnoTU+vdvaB7E5sDQIPfr3DxZyltTB/EVmqQEiSgRH3
+ zJr1GF2VAKyz8b3pdedbYjRp1X5Cp95sAwzgV2XC25R5Xx5nomOPfY1q+zY5rHeZTGIA8tmG+
+ e/crKXfxY8u1s1hI/fqq45FzpaJOMiICEZ8ZAaRLo00Gv9sydsNMSB4LNZ0pAJZfl4mkvWbG8
+ bc5SEG6IRBSP/OLHgMBnO6rY2Pf0F/+herdmrYmcLJdj9xsXCFt+ypNXY8E191V7Ajd/eKOfO
+ e8OxI0/iJko6EKN0S/wh4IhGbmqG++WXX79zob6wW8WTnaQwKi4UHITcs5LhF3TvdajkcSHOA
+ +ZjJEBCMAHvpBBtX20Hrxy3pjQ7jB6h6uSciJmtVSeHSQ=
 
-Maybe it's time and declarate the idea to deprecate stat a failure
-and we just add it back to the new generic ABI syscalls?
+>> Under which circumstances would you become interested to apply a statem=
+ent
+>> like =E2=80=9Cguard(rcu)();=E2=80=9D?
+>
+> Under no circumstances.
 
-The idea to get rid of layers of backwards compatibility was a good one
-and mostly succeeded, but having to deal with not only remapping
-the structure but also the empty path issues sounds like it is worth
-to just add these pretty trivial system calls back and make everyones
-life easier?
+I imagine that further contributors would like to discuss collateral evolu=
+tion
+also according to the support for applications of scope-based resource man=
+agement.
+https://elixir.bootlin.com/linux/v6.10-rc6/source/include/linux/rcupdate.h=
+#L1093
 
+See also the commit 80cd613a9ae091dbf52e27a409d58da988ffc8f3 ("rcu:
+Mollify sparse with RCU guard") from 2024-04-15.
+
+Regards,
+Markus
 
