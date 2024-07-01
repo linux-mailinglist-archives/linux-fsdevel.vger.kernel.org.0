@@ -1,177 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-22839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9AC291D686
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 05:20:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC52C91D6A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 05:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F7028178D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 03:20:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AE7EB2137B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 03:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB953C2D6;
-	Mon,  1 Jul 2024 03:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s0iE896n"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF1C1362;
+	Mon,  1 Jul 2024 03:37:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385AF1A269
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 03:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E4D219F9
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 03:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719804046; cv=none; b=CNroBeWRaJNIHDqbIlipH8RWQUK0IdmMVvLjHR7L8imFVN9ZSWEiwaCxM1SMfYHsobHuMXQmAMSTeEVjpx7OS2EnbfnmWu2uyVWfGSXD7Gxz3EreSj6YWiWSxqp/N4P4NTtgefZwiAJpi6ZIfuQDr0bpevRZbismSKOjWlGG9SI=
+	t=1719805039; cv=none; b=jEIPrg1zwQxRWUGK27V4X0jq9HWBzwgjl+IxVqZNan/SbYVR5kMQuKgpk5LRxWunRF8pTbtiOcqJrtJ6cnwS0RQcG8KxIzwNLExztbN1x2SpB61xiE3zg9KrRS+yux+2djJCf18XVHbynhd6Sj2HtU7/ZHk+FXHuBdMqk+hzp3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719804046; c=relaxed/simple;
-	bh=hhzcxn3o15FWD44sYfGUZc2UF7od1cqh57GfN5AtSFA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=MRwoCIwC35EOBnLq+F6pg7SZY/ca3GwOQL0yVSpPNWjoDiWCXyyMKC2apOM3wYfTNKAsMnIwzNGnni6dodiTQMUmRQWXfdtGjE0lIWXALy4dfCAkFj/04Q3f+O3pJRjXd8qVdxaj9i2IR/laypMFsEwyI/UfOf7W/gSoGe0VPww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=s0iE896n; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240701032034epoutp04d6d32e309597f07cea8fd6f8fe31348f~d_KhrZpyC0904109041epoutp04C
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 03:20:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240701032034epoutp04d6d32e309597f07cea8fd6f8fe31348f~d_KhrZpyC0904109041epoutp04C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1719804035;
-	bh=Vxi5sHDAhuEww9/KaAgxP+Heg1gv8NQiMaWH3RP8kMw=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=s0iE896nzlaNiUFCTAUYWGmEnSyS6dpEaQxz5PhdZCdRq9LNm3sGpgkWeIVA60bze
-	 2aHCGgDtzSSk/YO5EjU/vLjLYuRD7b0UQmQy+k6L1cUuR0kzQNlo/2lO35+Bo8ZmJh
-	 5erPfjy2YodH/bRmRHzhBf1N87Hqv+XrnFM/R6f4=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20240701032034epcas2p42c86a901d27fb9e440da844f582f6e6e~d_KhXmG790424904249epcas2p41;
-	Mon,  1 Jul 2024 03:20:34 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4WCBBT06yLz4x9Pp; Mon,  1 Jul
-	2024 03:20:33 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8B.BD.09485.08022866; Mon,  1 Jul 2024 12:20:32 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240701025614epcas2p16db7bb7616cf8be284034ae7fb35275d~d91RXTW7k2321823218epcas2p1V;
-	Mon,  1 Jul 2024 02:56:14 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240701025614epsmtrp1e17dcd3db1f9c38daf23cfe27e550a39~d91RWmoBA0897608976epsmtrp1L;
-	Mon,  1 Jul 2024 02:56:14 +0000 (GMT)
-X-AuditID: b6c32a46-f3bff7000000250d-10-6682208046a5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4B.DA.19057.ECA12866; Mon,  1 Jul 2024 11:56:14 +0900 (KST)
-Received: from dpss81-OptiPlex-9020.. (unknown [109.105.118.81]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240701025613epsmtip26de489e87992bded0c23cc01ab4ac7fa~d91Qbqr0P1543115431epsmtip2p;
-	Mon,  1 Jul 2024 02:56:13 +0000 (GMT)
-From: Hui Qi <hui81.qi@samsung.com>
-To: jlayton@kernel.org, chuck.lever@oracle.com, alex.aring@gmail.com
-Cc: linux-fsdevel@vger.kernel.org, bvanassche@acm.org, joshi.k@samsung.com,
-	j.xia@samsung.com, Hui Qi <hui81.qi@samsung.com>
-Subject: [PATCH] Fixes: ec16b147a55bfa14e858 ("fs: Fix rw_hint validation")
-Date: Mon,  1 Jul 2024 11:21:10 +0800
-Message-Id: <20240701032110.3601345-1-hui81.qi@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719805039; c=relaxed/simple;
+	bh=rzU49j48yNAyWBbsw03HInDoN7TGNn7iWKMzizDwxrE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qNbjpytna1mnnYJp3tW2ow+1zpeKLeP9SpgSnD9nwe5ZJ4d6KhlZ3hkNBGzd0aw7bOCt0NopuPUYoX002hegjYqgqBh0kMugQGGSBUseZpAlqtSmRFrKJhiLQd43z3rVdC9hVVTQcDMP5VQU5peI44elN+uE41AStYAMzRh/Qb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f3c8b1fee1so272128839f.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Jun 2024 20:37:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719805037; x=1720409837;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=brpGvYzpcbhh9fUA6/3JW0tDMLR/rtYxc986AuqoxmQ=;
+        b=r4OuLiuLlyKJKoyK3uksHjCVgK1gR+amfaTBBzg6wSnAe+p3Xv+X/GUAeiEQcqwUqv
+         /0ooUOHbSeUX3gFevyHP3kA/u0UhS9PsCAzEMeRdcVNyp8bNlg538MMefvbidVYd9oyi
+         MFti9U7ovGy3IcbeMukA+cudlo4qJ9FgfburUVCCeuYU7muJy9K4KAAxRExdZ4Ey8OwT
+         9RQarUinRzaesmseJD9YbLMBhFZJkeKWRKFo2aaWQrm8qbW4grB6fxhv2Xsdtf7B8hWR
+         Crz0yxU8sYrbBtOZE4j+u/gQwxmT9JdCNQEhE906/xaRfQ7uOxRexnoSJ29L/G6bjq3T
+         d6OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXd5GiWc3b8jSOT4onUsoXmB1mOi3qzCwOEW7YqIJkyqT9QbyPe99UHUcVYquNbdoTiMdh3J/OXqgDyeqyzUexIDUFgQISNebHBj8X+dQ==
+X-Gm-Message-State: AOJu0YyrmxYfrEquIUtBGV/7bZDMcpBCnaQJ2zXRqjID2zLIQCDgA1r8
+	xX/5OwDcCq0nhrUPVcWBOem338xbob3CUQY1AUVXsvec+0+DCExEieYomDzJ1Y6k3lrNvRCJyB5
+	tzQRuFuM6STeLVRaYnKbaowvAnYbCF4mtwPY/3Tdg9yKYqZPP8kkeC0s=
+X-Google-Smtp-Source: AGHT+IHGmbk4v7zliBt7jsW5okx+VA9mQBhi096gfHadXySgkjHtOQVYgpeeQVuRFY2QL4Sg/mvoPHYAs6HSfY90bS9xkJS3V6sa
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmmW6DQlOaweeNlhaHGswtpn34yWzx
-	/+5zJou5ry+xWOxctpbd4uOe1UwWP5etYrc4+v8tm8WevSdZLM5O+MDqwOVx+Yq3x85Zd9k9
-	Nq3qZPP4+PQWi0ffllWMHp83yQWwRWXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpa
-	mCsp5CXmptoqufgE6Lpl5gAdpqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMCnQ
-	K07MLS7NS9fLSy2xMjQwMDIFKkzIzjja/5a9YDVvxbXl3ewNjK+4uhg5OSQETCR2TljA0sXI
-	xSEksINRonl7IzOE84lRovvJHXYI5xujxMZnX1lhWj6+uMkEkdjLKLF793eolq+MEjOvbmYH
-	qWITUJa48WYjM4gtIuAisfPcdMYuRg4OZoE6iQUfWEDCwgLeEpMOn2YDsVkEVCVenJvOBGLz
-	ClhL3N+5lh1imbzE/oNnmSHighInZz4B62UGijdvnQ22V0LgI7vE2onrGCEaXCQO3T0Edamw
-	xKvjW6AGSUm87G+Dsosl2j/8ZgW5R0KgRqL5eglE2Fpi2/p1TBBnakqs36UPEZaVmHpqHRPE
-	Wj6JjsN/oabwSnw+vgPKVpI4vmETM4QtIXHg2x4WiOkeEr8aeEHCQgKxEls2NbNOYJSfheSZ
-	WUiemYWweAEj8ypGsdSC4tz01GKjAiN4nCbn525iBCdNLbcdjFPeftA7xMjEwXiIUYKDWUmE
-	N/BXfZoQb0piZVVqUX58UWlOavEhRlNg8E5klhJNzgem7bySeEMTSwMTMzNjM2NzIzMlcd57
-	rXNThATSE0tSs1NTC1KLYPqYODilGpjEmb/2q/XubZzRk3syIbnCfNXZQFtJqx1TuJzL03Vm
-	vJAr8jqhz8Sk0i32WTPlcp9hfNGm/w/uT/qfekNye//LXx58e2tjj02NvVHgfTPgnGQlz8nZ
-	VUyXM6XM1n146rrSo6ik+ZRf1+epm2YZ9i3/7bDLP+H1k/cv2Rf82vYziN/554m5YhNerpiT
-	I3h7EpPRnA/Pph9uzd/Mcif5rXyzzGblx0p/vgqwFK3hWvi0/Njn1vnBDb6uixW1bI/PfbKW
-	XWK92D/FD/euRawPe9/7adp7+Ro/weaGs0f1bscePL7Icw3fzxftx0PaeKZ9eJG+59H0D535
-	ryO2ng+Tlkv8uXZx4ssLsZI2k50/PmNepsRSnJFoqMVcVJwIAOFqzzgjBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrALMWRmVeSWpSXmKPExsWy7bCSvO45qaY0g62/eC0ONZhbTPvwk9ni
-	/93nTBZzX19isdi5bC27xcc9q5ksfi5bxW5x9P9bNos9e0+yWJyd8IHVgcvj8hVvj52z7rJ7
-	bFrVyebx8ektFo++LasYPT5vkgtgi+KySUnNySxLLdK3S+DKONr/lr1gNW/FteXd7A2Mr7i6
-	GDk5JARMJD6+uMnUxcjFISSwm1Gisx3E4QBKSEh8+hIEUSMscb/lCCuILSTwmVGi/4sZiM0m
-	oCxx481GZhBbRMBD4s7h2cwgc5gFWhgl9r/6ygKSEBbwlph0+DQbiM0ioCrx4tx0JhCbV8Ba
-	4v7OtewQC+Ql9h88ywwRF5Q4OfMJWC8zULx562zmCYx8s5CkZiFJLWBkWsUomVpQnJueW2xY
-	YJSXWq5XnJhbXJqXrpecn7uJERzIWlo7GPes+qB3iJGJg/EQowQHs5IIb+Cv+jQh3pTEyqrU
-	ovz4otKc1OJDjNIcLErivN9e96YICaQnlqRmp6YWpBbBZJk4OKUamLrm7DGNEJy38kzzykWn
-	4iJFmvYd+XTgmeLUjv1n9hvsTVtxTE019vOhuNML09YlTOOc3Wx2/2/WNtfw5yU/mvap3T/Y
-	PMPSf9ZHy5f3Px7qvHOws9lptzp7fDnXpSfFsxk/LUuT4732++L/LlaeVxesv+futkh5tqCG
-	vSByap/rll2Xu8QjxRS+t7HaHNjlfzSU2SNO7cAOl+XCf5kZZmQ7KVwp7Zg7uyf1QGn3/6rl
-	e38rzhesm3Zn9t+6jZMWtMkwtnzWudgsIPLf62GYwKJsoaupLKtjrl8Q3tagrrVi4/U5RcvL
-	g/YUycS7/7u0MHJN9o0fkuItj6JO3an5Zu3y2aIlUv5P2emiyN1G6T+UWIozEg21mIuKEwEx
-	fJ8y0wIAAA==
-X-CMS-MailID: 20240701025614epcas2p16db7bb7616cf8be284034ae7fb35275d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240701025614epcas2p16db7bb7616cf8be284034ae7fb35275d
-References: <CGME20240701025614epcas2p16db7bb7616cf8be284034ae7fb35275d@epcas2p1.samsung.com>
+X-Received: by 2002:a05:6638:1643:b0:4b9:6e79:8155 with SMTP id
+ 8926c6da1cb9f-4bbb6e58a58mr324283173.3.1719805037474; Sun, 30 Jun 2024
+ 20:37:17 -0700 (PDT)
+Date: Sun, 30 Jun 2024 20:37:17 -0700
+In-Reply-To: <000000000000a8bd7b060f8ce57d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000578284061c275062@google.com>
+Subject: Re: [syzbot] [jfs?] general protection fault in diRead (2)
+From: syzbot <syzbot+8f731999dc47797f064f@syzkaller.appspotmail.com>
+To: brauner@kernel.org, eadavis@qq.com, jack@suse.cz, 
+	jfs-discussion@lists.sourceforge.net, jlayton@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	samsun1006219@gmail.com, shaggy@kernel.org, syzkaller-bugs@googlegroups.com, 
+	xrivendell7@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-The high 32 bits is filled with arbitrary value. If hint is set
-WRITE_LIFE_SHORT (2) by fcntl, the value is 0xf6d1374000000002,
-which causes rw_hint_valid always returns false. i_write_hint of inode and
-bi_write_hint of bio are both enum rw_hint. The value would be truncated
-only if the element value exceeds 2^32.
+syzbot has found a reproducer for the following issue on:
 
-Signed-off-by: Hui Qi <hui81.qi@samsung.com>
+HEAD commit:    e0b668b07034 Merge tag 'kbuild-fixes-v6.10-3' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1410f701980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=67463c0717b8d4ca
+dashboard link: https://syzkaller.appspot.com/bug?extid=8f731999dc47797f064f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16746281980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ed13da6c8dba/disk-e0b668b0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9d6deb7033b3/vmlinux-e0b668b0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e11ed9921d74/bzImage-e0b668b0.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/eb462546ac65/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/99f39780fc30/mount_3.gz
+mounted in repro #3: https://storage.googleapis.com/syzbot-assets/04d3c406f9d9/mount_12.gz
+mounted in repro #4: https://storage.googleapis.com/syzbot-assets/7c2f2b18cf02/mount_19.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8f731999dc47797f064f@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000104: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000820-0x0000000000000827]
+CPU: 0 PID: 6386 Comm: syz-executor Not tainted 6.10.0-rc5-syzkaller-00348-ge0b668b07034 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:diIAGRead fs/jfs/jfs_imap.c:2662 [inline]
+RIP: 0010:diRead+0x158/0xae0 fs/jfs/jfs_imap.c:316
+Code: 8d 5d 80 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 e9 56 d8 fe 4c 8b 2b 49 8d 9d 20 08 00 00 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 c9 56 d8 fe 4c 8b 3b 49 8d 5f 28
+RSP: 0018:ffffc90004d17758 EFLAGS: 00010202
+RAX: 0000000000000104 RBX: 0000000000000820 RCX: 0000000000000001
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: 0000000000000001
+RBP: ffff888068d716b0 R08: ffff888068d71357 R09: 1ffff1100d1ae26a
+R10: dffffc0000000000 R11: ffffed100d1ae26b R12: 0000000000000006
+R13: 0000000000000000 R14: ffff888068d71348 R15: dffffc0000000000
+FS:  00005555954e3500(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555595506608 CR3: 000000002bd0e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ jfs_iget+0x8c/0x3b0 fs/jfs/inode.c:35
+ jfs_lookup+0x226/0x410 fs/jfs/namei.c:1469
+ __lookup_slow+0x28c/0x3f0 fs/namei.c:1692
+ lookup_slow+0x53/0x70 fs/namei.c:1709
+ walk_component+0x2e1/0x410 fs/namei.c:2004
+ lookup_last fs/namei.c:2469 [inline]
+ path_lookupat+0x16f/0x450 fs/namei.c:2493
+ filename_lookup+0x256/0x610 fs/namei.c:2522
+ user_path_at_empty+0x42/0x60 fs/namei.c:2929
+ user_path_at include/linux/namei.h:58 [inline]
+ ksys_umount fs/namespace.c:1916 [inline]
+ __do_sys_umount fs/namespace.c:1924 [inline]
+ __se_sys_umount fs/namespace.c:1922 [inline]
+ __x64_sys_umount+0xf4/0x170 fs/namespace.c:1922
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6ce4976ec7
+Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffda0a75a88 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: ffffffffffffffda RBX: 00007f6ce49e364a RCX: 00007f6ce4976ec7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffda0a75b40
+RBP: 00007ffda0a75b40 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffda0a76c30
+R13: 00007f6ce49e364a R14: 0000000000064c17 R15: 00007ffda0a77d20
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:diIAGRead fs/jfs/jfs_imap.c:2662 [inline]
+RIP: 0010:diRead+0x158/0xae0 fs/jfs/jfs_imap.c:316
+Code: 8d 5d 80 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 e9 56 d8 fe 4c 8b 2b 49 8d 9d 20 08 00 00 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 c9 56 d8 fe 4c 8b 3b 49 8d 5f 28
+RSP: 0018:ffffc90004d17758 EFLAGS: 00010202
+RAX: 0000000000000104 RBX: 0000000000000820 RCX: 0000000000000001
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: 0000000000000001
+RBP: ffff888068d716b0 R08: ffff888068d71357 R09: 1ffff1100d1ae26a
+R10: dffffc0000000000 R11: ffffed100d1ae26b R12: 0000000000000006
+R13: 0000000000000000 R14: ffff888068d71348 R15: dffffc0000000000
+FS:  00005555954e3500(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c00272b000 CR3: 000000002bd0e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	8d 5d 80             	lea    -0x80(%rbp),%ebx
+   3:	48 89 d8             	mov    %rbx,%rax
+   6:	48 c1 e8 03          	shr    $0x3,%rax
+   a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
+   f:	74 08                	je     0x19
+  11:	48 89 df             	mov    %rbx,%rdi
+  14:	e8 e9 56 d8 fe       	call   0xfed85702
+  19:	4c 8b 2b             	mov    (%rbx),%r13
+  1c:	49 8d 9d 20 08 00 00 	lea    0x820(%r13),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 c9 56 d8 fe       	call   0xfed85702
+  39:	4c 8b 3b             	mov    (%rbx),%r15
+  3c:	49 8d 5f 28          	lea    0x28(%r15),%rbx
+
+
 ---
- fs/fcntl.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 300e5d9ad913..bab45c5586c6 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -269,7 +269,7 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
- }
- #endif
- 
--static bool rw_hint_valid(u64 hint)
-+static bool rw_hint_valid(enum rw_hint hint)
- {
- 	BUILD_BUG_ON(WRITE_LIFE_NOT_SET != RWH_WRITE_LIFE_NOT_SET);
- 	BUILD_BUG_ON(WRITE_LIFE_NONE != RWH_WRITE_LIFE_NONE);
-@@ -295,8 +295,8 @@ static long fcntl_get_rw_hint(struct file *file, unsigned int cmd,
- 			      unsigned long arg)
- {
- 	struct inode *inode = file_inode(file);
--	u64 __user *argp = (u64 __user *)arg;
--	u64 hint = READ_ONCE(inode->i_write_hint);
-+	enum rw_hint __user *argp = (enum rw_hint __user *)arg;
-+	enum rw_hint hint = READ_ONCE(inode->i_write_hint);
- 
- 	if (copy_to_user(argp, &hint, sizeof(*argp)))
- 		return -EFAULT;
-@@ -307,8 +307,8 @@ static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
- 			      unsigned long arg)
- {
- 	struct inode *inode = file_inode(file);
--	u64 __user *argp = (u64 __user *)arg;
--	u64 hint;
-+	enum rw_hint __user *argp = (enum rw_hint __user *)arg;
-+	enum rw_hint hint;
- 
- 	if (copy_from_user(&hint, argp, sizeof(hint)))
- 		return -EFAULT;
--- 
-2.34.1
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
