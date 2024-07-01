@@ -1,131 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-22854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E989491DC40
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 12:21:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F7991DC73
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 12:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10BD1F21EA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 10:21:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F927B25A40
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 10:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6939A12F365;
-	Mon,  1 Jul 2024 10:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AE9143C4E;
+	Mon,  1 Jul 2024 10:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HnAM7ysf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vf+KOvFJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587618289A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 10:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC5612C486;
+	Mon,  1 Jul 2024 10:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719829165; cv=none; b=Fw9ppxBw5bQJtEZgHpsRNSOdNdkax1P4rGqbH02sg7RysqHmSd4EoTLTS9y5w5R4HRHEwEjImQn/vqPrB/EHe5V9E1x7M4r/IUVtL57n4LtERcLfrJcUajhF1QATqVwl3h/jcWRA0gesnc06luT3Lotj0KRIAkg01RQJXje6464=
+	t=1719829628; cv=none; b=nr907TUxMiIPiDM8qxVmudbKR1475DJ7J+kZ9xzTJWobOJRJYwLNRMw9+qleiHt4r2FTGooGgKYm6rRiE2lD5pzYeBBKKgmosMWQtWj7sVeT/fGUZWBDLmqbqnHEAyE1+QtGejTZOLVr29UyHNuwTTRTnXcBy9Hp5zz9x03hLwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719829165; c=relaxed/simple;
-	bh=stQCQxg3iYHa7ZaMB1TA68tGpQvchZy636OSaRuUH/c=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=snZ+lEiQBALGs5RBwoFXZO0hqdLvrTQSGws0bEoSVyYh9fwHTdS9yrhahb40xCjxAY0PjvtHZrRSgTvUJsxIy9Fudr723J7GlWPI3fGhTH/qu/aW/FIL4mnlGiIjPM5w0s92vWibHCNGRnst+YGvL4R0/DWY4Vqli9pjpbTZ6Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HnAM7ysf; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-48f68565fe0so771849137.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2024 03:19:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719829163; x=1720433963; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=loIUXWsvnq2yo7+EGoHAffb6gdvh8EF6LMqQfzim+RU=;
-        b=HnAM7ysfFE7Dn+x6pm89LicAVB0msRBhtDvh3eKJI1zzw+Qjl4j12xYUJSQ99a9ATI
-         aOaprwc2DxLgAON8jnSCYRUqga82jj9WLs32a9qlKOTeuo1Dt16yZDCLEshDShlvadw/
-         2H27w+akRyOr28PFHJbs3Ifq3UP9kd1na1FIBDlkQyvqENKotmHzG78jtydYI3e6pefg
-         OaazMcftJKk0+8IBSsKR/dSkDW0rhKztNUAWMcQEPQ0mTEmegio3okxNVT3n/UB9jgGp
-         W8YsVLNqEeZ8r5X8QcZLkL+PXi4PSeHy2jSOtKunLF9aC04KvXMfcYEZzv9hwEanVT80
-         R2Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719829163; x=1720433963;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=loIUXWsvnq2yo7+EGoHAffb6gdvh8EF6LMqQfzim+RU=;
-        b=swLnrGA+bEXpFvTIdYgkEr4Dbe2wS94AUZdRN9o+1i8YqLYgNTCrTn7uEJ4jyPS/Vv
-         t6BkIQ3AeJyfjYzzxaNZ/tEaAJecUHsTWLZW+FgwWiygQBXcQ4YuTZcQ+lT56FBxzy1t
-         X/ABBcw6yQAMlt29mM33XKGvI1kFgOZOuq7BLUc+H1QPKU7LVkWT+TVcqASwcHYJwCPT
-         SyGIj+Hrx88pczOaB0r5OX7uXnCsUV9HE5V9W7H9BUwR66TrOEfCxuObhlWnL1C0q1o5
-         wEt2nhBKgW7ibYR8nHYjB07S5ayDC0OHcdmUF16QI2uKN9zxXB8SEBh2q7iSF30rgeal
-         +bGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVrH23lcxUZf8v4cQwocvwtJwOqvGagpmfpFuaKPqnQQywbzTXqHoA8k8BbAmrOtek2QKg5H7U5n9KDZTVKPi0lg7VVS+i5Up6gPqzWg==
-X-Gm-Message-State: AOJu0YyYjHQWR22eYM1GP6uiReoRHFcGFMR9kbHLiUvyEBheehZLMBsy
-	06wHaMlmPzrFpKBWNEogPsQp//h8jrWAF+sQPlR8ZC3l3iyWaCWgIPKLjEfGsqcR/b8so6PEHem
-	Kbcl6CZEuy7ljElOLNnGWAU2PKbmudvbYS8jKkw==
-X-Google-Smtp-Source: AGHT+IHsCQzeHxHwgdBEVzHHr4zQVqrsCo7FWNtGkFgflR7Q+Sy7JIhUtzqPEJeINk1wTXKgxnHKA65it2kLKRVvFfE=
-X-Received: by 2002:a05:6102:3a13:b0:48f:2afe:88f1 with SMTP id
- ada2fe7eead31-48faf0cf479mr7159638137.16.1719829163172; Mon, 01 Jul 2024
- 03:19:23 -0700 (PDT)
+	s=arc-20240116; t=1719829628; c=relaxed/simple;
+	bh=X6JnNaUpmLXm/etsj1wjIh6Yp85tWQSB7sG1ZkO5uUo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aNBvx+6AygEdqOb1vQs/mPAwO0Z8X8LlColdthzknqCVMPHASWprmI1fstOCuJsxNDWK2HAPGyTQylF+r9KjN4f7eOIs7KyGVrtFJADmRwzWEJfzc4fYMFFoDGHvwBv9C/jJvGkulPO3BtiafOGJd/W3i/w54ZIyf8NNd1zwTYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vf+KOvFJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A2DC116B1;
+	Mon,  1 Jul 2024 10:27:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719829628;
+	bh=X6JnNaUpmLXm/etsj1wjIh6Yp85tWQSB7sG1ZkO5uUo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Vf+KOvFJKBw679ZYAgmsH0RLuGYp8IAiSlCCZUhsTO4bKK7aVVnIt6i4tns2GxcVc
+	 arXIZflCj58WmK6HjROQJKCEmt3cQ5z0Hzi3pn3cztxRDFM9AW3TTN05aRVRbzfTIP
+	 nb/Zx0ZvRRprqg1+Pe8fWPIbcD8w30t2kT6oAPo+uHh9tj3fWC6GkC1S99hRvIETG8
+	 521TVFm4Rxsi2Kpi4RFWUdZBsF5bKnOYBn+8q1ndAmtmtM2N3/ewIfHvBZfYQtQ7KW
+	 HZaynh8qe10p4ksacSS8KtMrPUEca2HAktvREYgJJmRJZftrOhVHQ9Oj0ZFkjFs9uC
+	 8nHV+WEk81uqA==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 00/11] fs: multigrain timestamp redux
+Date: Mon, 01 Jul 2024 06:26:36 -0400
+Message-Id: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 1 Jul 2024 15:49:12 +0530
-Message-ID: <CA+G9fYsk85UOsa0ijXcYRvvZLXEMQKe4phWhND+0qSNP36N5Tw@mail.gmail.com>
-Subject: fs/proc/task_mmu.c:598:48: error: cast to pointer from integer of
- different size
-To: open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	lkft-triage@lists.linaro.org
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFyEgmYC/2XMQQ7CIBCF4as0sxYDaBt05T1MF7UMdKKFZmiIp
+ uHuYrcu/5eXb4OETJjg2mzAmClRDDX0oYFxGoJHQbY2aKnPstOdmP1KM4p2tEY+lLFGSajnhdH
+ Re4fufe2J0hr5s7tZ/dY/IishxaDM5dRqK51xtydywNcxsoe+lPIFCXxMlJ0AAAA=
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Chandan Babu R <chandan.babu@oracle.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+ Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Andi Kleen <ak@linux.intel.com>, kernel-team@fb.com, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
+ linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3820; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=X6JnNaUpmLXm/etsj1wjIh6Yp85tWQSB7sG1ZkO5uUo=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmgoRw4WRZGASUb0ntKxZvyqMtYMkx8cPpzxKSo
+ 7jHqLZ2ou6JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZoKEcAAKCRAADmhBGVaC
+ FRklD/0V9mb072IqdAyazN2How8Y2mDXc3TC/CKJ07/XI2o0+GsYhF4MwAHLt4dLmtP0m5lVEYt
+ IXSS117t5QAbroXjMGDO78L/ngFJ6XHQNs8ApzjMPUa8wiawbeiKGEYtqgRm0+QcHsSkXtOKbfN
+ /YpUKYMts3Zt4XXHBcfdJNv2QCNem83SoduUEY5ZGw+Cm3Zi428oPzX4zNx+KGveuc0atwcVkoM
+ bNcs4Ua8HzyOOjnAZPcbSyLDv7nl4Lp8AeF86Pzg9s/TpY1We1cUclLV4H0DBoGVSc6rYrn73IJ
+ F6XwQI5jldA2SxQpsuUq3Q9fRBGLIvU82LiSsJ6TuneSFb/nlLahtrbfTsFZKeBv1T8AtN/Bm3g
+ 7JF8I8BESppicGDpFegi78JzwQvXq9QqPEeQoL7aFSVVBjDjlqz5kGT+3dZn5T6RoKRMPqNiTGY
+ jIBsiFOWOR2qM8jpIb5mwYfHjSJSVf0FYhYrzNiOBhC60Mo5QrsyK73HTwf0ouEznjygtcaOgqs
+ FevfDb09sW8WOF9igWYRK8bqpYkDbxPGVkflRLNElGxBooBGRokJsXnKOj63BWkqpAmZxct3dR6
+ zcO9QewsnTTV5FQuOh/q1SzW+lOoa+eIAOqMTV8bsC+bXen4HUI4jXfhPlhbAOHNxurzh0M7nLT
+ mBgV2UQww4zEPtQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-The i386 build failures are noticed on Linux next-20240627 and next-20240628
-tag. But the clang-18 builds pass.
+This set is essentially unchanged from the last one, aside from the
+new file in Documentation/. I had a review comment from Andi Kleen
+suggesting that the ctime_floor should be per time_namespace, but I
+think that's incorrect as the realtime clock is not namespaced.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+At LSF/MM this year, we had a discussion about the inode change
+attribute. At the time I mentioned that I thought I could salvage the
+multigrain timestamp work that had to be reverted last year [1].  That
+version had to be reverted because it was possible for a file to get a
+coarse grained timestamp that appeared to be earlier than another file
+that had recently gotten a fine-grained stamp.
 
-Regressions found on i386:
+This version corrects the problem by establishing a per-time_namespace
+ctime_floor value that should prevent this from occurring. In the above
+situation that was problematic before, the two files might end up with
+the same timestamp value, but they won't appear to have been modified in
+the wrong order.
 
- - gcc-8-i386_defconfig
- - gcc-13-defconfig
+That problem was discovered by the test-stat-time gnulib test. Note that
+that test still fails on multigrain timestamps, but that's because its
+method of determining the minimum delay that will show a timestamp
+change will no longer work with multigrain timestamps. I have a patch to
+change the testcase to use a different method that I've posted to the
+bug-gnulib mailing list.
 
-Build log:
--------
-fs/proc/task_mmu.c: In function 'do_procmap_query':
-fs/proc/task_mmu.c:598:48: error: cast to pointer from integer of
-different size [-Werror=int-to-pointer-cast]
-  598 |         if (karg.vma_name_size && copy_to_user((void __user
-*)karg.vma_name_addr,
-      |                                                ^
-fs/proc/task_mmu.c:605:48: error: cast to pointer from integer of
-different size [-Werror=int-to-pointer-cast]
-  605 |         if (karg.build_id_size && copy_to_user((void __user
-*)karg.build_id_addr,
-      |                                                ^
-cc1: all warnings being treated as errors
+The big question with this set is whether the performance will be
+suitable. The testing I've done seems to show performance parity with
+multigrain timestamps enabled, but it's hard to rule this out regressing
+some workload.
 
-Steps to reproduce:
--------
-# tuxmake --runtime podman --target-arch i386 --toolchain gcc-13
---kconfig defconfig
+This set is based on top of Christian's vfs.misc branch (which has the
+earlier change to track inode timestamps as discrete integers). If there
+are no major objections, I'd like to let this soak in linux-next for a
+bit to see if any problems shake out.
 
-metadata:
-----
- git_describe: next-20240628
- git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
- git_short_log: 1eb586a9782c ("Add linux-next specific files for 20240628")
- arch: i386
- toolchain: gcc-13
+[1]: https://lore.kernel.org/linux-fsdevel/20230807-mgctime-v7-0-d1dec143a704@kernel.org/
 
-Links:
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2iWYcW0sQJ6j62u46MNgQ3FagUd/
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240628/testrun/24464887/suite/build/test/gcc-13-cell_defconfig/details/
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240628/testrun/24464887/suite/build/test/gcc-13-cell_defconfig/log
+Changes in v2:
+- Added Documentation file
+- Link to v1: https://lore.kernel.org/r/20240626-mgtime-v1-0-a189352d0f8f@kernel.org
 
---
-Linaro LKFT
-https://lkft.linaro.org
+---
+Jeff Layton (11):
+      fs: turn inode ctime fields into a single ktime_t
+      fs: uninline inode_get_ctime and inode_set_ctime_to_ts
+      fs: tracepoints for inode_needs_update_time and inode_set_ctime_to_ts
+      fs: add infrastructure for multigrain timestamps
+      fs: add percpu counters to count fine vs. coarse timestamps
+      fs: have setattr_copy handle multigrain timestamps appropriately
+      xfs: switch to multigrain timestamps
+      ext4: switch to multigrain timestamps
+      btrfs: convert to multigrain timestamps
+      tmpfs: add support for multigrain timestamps
+      Documentation: add a new file documenting multigrain timestamps
+
+ Documentation/filesystems/multigrain-ts.rst | 126 ++++++++++++++++
+ fs/attr.c                                   |  52 ++++++-
+ fs/btrfs/file.c                             |  25 +---
+ fs/btrfs/super.c                            |   3 +-
+ fs/ext4/super.c                             |   2 +-
+ fs/inode.c                                  | 221 +++++++++++++++++++++++++---
+ fs/stat.c                                   |  39 ++++-
+ fs/xfs/libxfs/xfs_trans_inode.c             |   6 +-
+ fs/xfs/xfs_iops.c                           |   6 +-
+ fs/xfs/xfs_super.c                          |   2 +-
+ include/linux/fs.h                          |  61 +++++---
+ include/trace/events/timestamp.h            | 173 ++++++++++++++++++++++
+ mm/shmem.c                                  |   2 +-
+ 13 files changed, 639 insertions(+), 79 deletions(-)
+---
+base-commit: 2e8c78ef85682671dae2ac3a5aa039b07be0fc0b
+change-id: 20240626-mgtime-5cd80b18d810
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
