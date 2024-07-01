@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-22862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D526191DCA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 12:32:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFAE291DCA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 12:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E3F28936D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 10:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7899B1F221CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 10:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02B8158DC1;
-	Mon,  1 Jul 2024 10:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E7D15A489;
+	Mon,  1 Jul 2024 10:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoIm8fOx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OowJhdWf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6A6158D8E;
-	Mon,  1 Jul 2024 10:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22261591EA;
+	Mon,  1 Jul 2024 10:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719829645; cv=none; b=NBBf2Xgyeyl1+whOjHFhtbFlpMvxluH0gx91lV5xJIQZW7+YnnOat71HrmazYDEtNu6T5LhMnvlEQUM+/35wPNOo7hK40gwQEeRaYBgctNFH3lerE1DYQtgDSmRGx32BArm5oR/9QiQfeZnblzTRPgkhkMSqNjApsBJXz60t9E8=
+	t=1719829647; cv=none; b=NqI9fzKHJ0TUcDFr/GC7zqzHRo7qbR8Ksfrx1UQHq3OH5mW+75s5bnMrNcWIStzDHB8XOTUPAFE6HWmFhm+G7gU57zMENXjR4NN0Goga5DUIeyFsIs34lc1n4f5KLYu1qcGWwl80hPVMyH4QdI5cOvmrLQs5BElQdI2woay5GLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719829645; c=relaxed/simple;
-	bh=3rezV2gQwo9fH4xuVx823NKSfsCiMN8Xp4bd4oV0yb0=;
+	s=arc-20240116; t=1719829647; c=relaxed/simple;
+	bh=Rk22CdrDmdQOqV9B263elJ8j6v40sRU7F5SFeqVcw0c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=boLiIued1FRM2p7/PTo0iGfkIeM/DR2erYZH/K1cQ9FFPySVKxXov0XmDwCyj5ZgMlOedtDVvCZ9rQICTbezGZHGfulHsb/sLUD8FiFx+dnny6kbgXHLkHLx83+WsavJ8Q7kcn4taR//Gohj1TtgWRitl2hIU3DXDMPDqAi42Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoIm8fOx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52682C4AF0F;
-	Mon,  1 Jul 2024 10:27:22 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=RChfssgWGgemF2oVQGsmL78iOWExPNbYsVBk4HvTNSB+5dJGjGrHQbsLnJZ7RU1cygQhpVv7oj6X86LUMqNJBUMzmm3AdOxfdziJ6D+zAwgZr2HZwJKOig2sWe8BLL3nKdKRgZUVknwM9DJ3Uc/X6C+B5D0lErKvz8WY/5yBlJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OowJhdWf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE45C116B1;
+	Mon,  1 Jul 2024 10:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719829644;
-	bh=3rezV2gQwo9fH4xuVx823NKSfsCiMN8Xp4bd4oV0yb0=;
+	s=k20201202; t=1719829646;
+	bh=Rk22CdrDmdQOqV9B263elJ8j6v40sRU7F5SFeqVcw0c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hoIm8fOxvgPzmo513dFHVds836zgUfxrxsfezK27z2Kntr3Ccg5rPlRJS/pcuTFaQ
-	 G7nswzIu1YimZVBpLt7tQ5R6wV/HnPx6uLZf2soZ9CDKUEiM1HbqumyTLOAtAhGSRs
-	 dAzFAeU98Qt38QvyoEzTu/NUkjoaSl8SMygT6pZqJFR3L1IXv5HQ2CPufxSzjXBgK4
-	 y+fhw2lAgFR8p1dCadTicB4AiZjS+CB1XRhJmPjezrEVQzpECRnkbNrXvLSLiaWrTA
-	 +NkFzxvPw1OLI07XYsbox0HFVMI4AW4yn/F3tEhNy5CEavJdxRJGiMM+3aQGUlhlSp
-	 6PPMnfpqL+M8Q==
+	b=OowJhdWfVqPKKEzYltDwB3xDFDzgsyHuZVnZFzyVf+NMt7lTQ5Xc0tuog3yyfc7ig
+	 sTzsTHcSwUnEVnS/lAS8fq3DlhpJXutHyVEQhawSqrWfPNa4nSVTJ4duw3FZDlzJmZ
+	 208icB/wfSVQYNHoz3qgs76HcEVXAx47suT211oSvJKgZkF+DhjT/hwRXWQrOcFMIw
+	 /yDzneIZdAfeh+wno6J5k9/ixaEKqGn/02aVR05iSEdWW0ltLmB1hurn9sOluDtEcL
+	 8qMhhXlOYebsXL49jTYC7zgsbjEJj8uiT4Ua+TgTzyOvdBSXN/c5JTqnhMBaP/XZCe
+	 kwwaYTUjo9RZg==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 01 Jul 2024 06:26:43 -0400
-Subject: [PATCH v2 07/11] xfs: switch to multigrain timestamps
+Date: Mon, 01 Jul 2024 06:26:44 -0400
+Subject: [PATCH v2 08/11] ext4: switch to multigrain timestamps
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240701-mgtime-v2-7-19d412a940d9@kernel.org>
+Message-Id: <20240701-mgtime-v2-8-19d412a940d9@kernel.org>
 References: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
 In-Reply-To: <20240701-mgtime-v2-0-19d412a940d9@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -71,20 +71,20 @@ Cc: Andi Kleen <ak@linux.intel.com>, kernel-team@fb.com,
  linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
  linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2415; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=3rezV2gQwo9fH4xuVx823NKSfsCiMN8Xp4bd4oV0yb0=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmgoR5cLVAd2Hpbh4iHcyU1JIMfk9nPcm3mtCez
- brvBsNENdSJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZoKEeQAKCRAADmhBGVaC
- FVuvEACzNm2qzQAUpqWzHATLlmoRJtc4IZ3mD7e7Bpup8hkgbhrDAgwtnQCYG0W5P2FN/cXmVsw
- zLsXXNiPYrqBbATGE2FHsw2iBydcNbvaPxYDojlywTrFteA37WCi+soABdZFVqKaOrVaBOPUnA5
- 0npisxHrgjo9W63WFyx5QLiSpgFeyM17enz9GcvZneZ/HCWhuMXzSYX3PzHd6/FItgPPkKtNR9F
- sfVySvNN7gK0odlL+SqL5MZxRTwuj1YttI5LFVFKHuw2ZBiK3bTEJyjMP02m1+5k1+CbyK0zp0r
- 3RQ23HKGay9iepHvC2vmOw6KQ5RnjOmQbD+GDcMk/MRdqHlaA0alZzkRXWavm3tY9XhiFdYYsHr
- 4h40PaUS88k65gTxfRuFtWa5Jb6EAbqbc8+9K6QqRQSb+NO0NLYId1Ve9d9bJgX90gIGLPgaA6j
- 0xo5VWm1MWykp8P3s5K7wpq7N24n1FSfiQRV9UcuxEJnMUSzYXCUVUV5iV6U0IAUk0guo4ZG6R9
- Zjt5n2+lNT/NTiPXdBt7ur8Vkv/7xEPcvxYMrFzGIWnytjQymhLP8/CEynyegdHuYsHNPmE1GrQ
- 0Cg/YRge7xgE1ii5QZT7ZYm/ReayNUa/gZpM2Sk9TAWeLP+hK8GmiNIVrO7vRiEEbwbZW1sCWqs
- ddQnOafv9nKh8dA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=839; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Rk22CdrDmdQOqV9B263elJ8j6v40sRU7F5SFeqVcw0c=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmgoR5dUKZAApA/E/nRf8PhsAANcOPXvLXNU/zT
+ iYd1qkDzC+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZoKEeQAKCRAADmhBGVaC
+ FSUID/9d0pO7TT9EGNH/i9za9KrWODEB5zSIIaRqI/95Bt/pwLRRr2KYiuSXiRv3RRAWDn1GijG
+ LTSMRD7kVqDNCR6uPWUO5INXMOYvfypXN5mxWWXaPFsp5j6TPDOcsE6Kbf/vCDDGwmIEZZtqAqD
+ CAw8fVNdszgTykJEVngG4sJ7q3c0pIZoDtuiwe8L+krK3SUU4amjj1u8rOGG7z0fDzftIqvknf9
+ Ke5a1qn+cWa/DgnKPmJVhSGoY2EMvu5fELrasSun90ERTY3dS/87GUcUNY1WryIbebedaVKi6s3
+ 9uVrCQUygyJzW5INth1pNMSMSitS7QN2F3rKFxQaImISFY3Pvi0i5MvXsIbwUuEMDEixB/rmLd/
+ axKEm6rFltjfvlmWe/VVV/H4fBXv3hhDIT2ZaT/i5rwIdghM8DaGOmiJYjvb4UgHUB3nScbdyWf
+ vloMf0oOIBm1hrE0kSS2xbHYIBZAPyqlq0utguPUKPpyEn8dCBjVsS6lolhydeU+RyeLXYpLV9y
+ rEvrmE5tDwSsi++UlMtX8LxIQgIq6corJIikLnTLC/wOfqqglaQqKYKu9FtUrh8NvTbe4hNgjTG
+ 3mgzSVxouLdteOhi11js/IIAU4lbcillebCeDLZZlqo0+7lXdoK5oYdXeNAygZ0fjpPrLg2R/Vy
+ 8S5NgQBdXHroK6A==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
@@ -92,69 +92,25 @@ Enable multigrain timestamps, which should ensure that there is an
 apparent change to the timestamp whenever it has been written after
 being actively observed via getattr.
 
-Also, anytime the mtime changes, the ctime must also change, and those
-are now the only two options for xfs_trans_ichgtime. Have that function
-unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
-always set.
+For ext4, we only need to enable the FS_MGTIME flag.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/xfs/libxfs/xfs_trans_inode.c | 6 +++---
- fs/xfs/xfs_iops.c               | 6 ++++--
- fs/xfs/xfs_super.c              | 2 +-
- 3 files changed, 8 insertions(+), 6 deletions(-)
+ fs/ext4/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-index 69fc5b981352..1f3639bbf5f0 100644
---- a/fs/xfs/libxfs/xfs_trans_inode.c
-+++ b/fs/xfs/libxfs/xfs_trans_inode.c
-@@ -62,12 +62,12 @@ xfs_trans_ichgtime(
- 	ASSERT(tp);
- 	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
- 
--	tv = current_time(inode);
-+	/* If the mtime changes, then ctime must also change */
-+	ASSERT(flags & XFS_ICHGTIME_CHG);
- 
-+	tv = inode_set_ctime_current(inode);
- 	if (flags & XFS_ICHGTIME_MOD)
- 		inode_set_mtime_to_ts(inode, tv);
--	if (flags & XFS_ICHGTIME_CHG)
--		inode_set_ctime_to_ts(inode, tv);
- 	if (flags & XFS_ICHGTIME_CREATE)
- 		ip->i_crtime = tv;
- }
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index ff222827e550..ed6e6d9507df 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -590,10 +590,12 @@ xfs_vn_getattr(
- 	stat->gid = vfsgid_into_kgid(vfsgid);
- 	stat->ino = ip->i_ino;
- 	stat->atime = inode_get_atime(inode);
--	stat->mtime = inode_get_mtime(inode);
--	stat->ctime = inode_get_ctime(inode);
-+
-+	fill_mg_cmtime(stat, request_mask, inode);
-+
- 	stat->blocks = XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks);
- 
-+
- 	if (xfs_has_v3inodes(mp)) {
- 		if (request_mask & STATX_BTIME) {
- 			stat->result_mask |= STATX_BTIME;
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 27e9f749c4c7..210481b03fdb 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -2052,7 +2052,7 @@ static struct file_system_type xfs_fs_type = {
- 	.init_fs_context	= xfs_init_fs_context,
- 	.parameters		= xfs_fs_parameters,
- 	.kill_sb		= xfs_kill_sb,
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index c682fb927b64..9ae48763f81f 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -7310,7 +7310,7 @@ static struct file_system_type ext4_fs_type = {
+ 	.init_fs_context	= ext4_init_fs_context,
+ 	.parameters		= ext4_param_specs,
+ 	.kill_sb		= ext4_kill_sb,
 -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
 +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
  };
- MODULE_ALIAS_FS("xfs");
+ MODULE_ALIAS_FS("ext4");
  
 
 -- 
