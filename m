@@ -1,140 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-22870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C4F91DE91
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 14:00:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B8391DEC9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 14:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17377B207A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 12:00:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91B42B2290A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 12:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F58914C5A1;
-	Mon,  1 Jul 2024 11:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0A7149DE8;
+	Mon,  1 Jul 2024 12:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VC66qgtq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pXCT8ZF7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="njc/Yaaq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7992114AD3A;
-	Mon,  1 Jul 2024 11:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABD322066;
+	Mon,  1 Jul 2024 12:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719835176; cv=none; b=I6stQIWbPa8tvQlmaEryUCafs5hIBUDydTLvNzblwt1DASGZAsRFL0swsxiguZxOWoA7zY+5raPkVrDyBO2x+bbvb0T84hh7AbvaAfmfBihK7qQbRSwQ9G/ZZRQ9T4dwkUiyDtsjxDjDXUNZq/KO5cgu8KlmrCgxaXEaeRq00/c=
+	t=1719835906; cv=none; b=coCiytJXzt34GqGSyYl93xPKXR8/ne9s5fLThBmR4blrB+33G9J2/0WDef3vn8hGpM8nBAI4ICgXZ72TCEjLM8E9TZL417rivPdnOXpphc41SQZVHpWyGPdUrXud7Eh/tE+aMLJkBZ7hef90JlBTIXm6DobaM5OO7kt3ZaIXJ2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719835176; c=relaxed/simple;
-	bh=0ku05XJrAjTZTejqmaVQxaIEziireIHvW6LnDpuxlec=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=AY0PW+fHn+wsUAFyJ2XJ7zvHj2BexQSsYSwpsdok/y/MpYZ4EcoZPMQU6JfRYH7SCe2sjGVWgV4KJbQye8RURTItLWwk9vZG1pra98jpZp6c+hnHHd9EXGt7qlWKBGMsRKdjC01tY7jX7cnL4FRYqdfr8ZEr9uzL2l3S16yuPwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VC66qgtq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pXCT8ZF7; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id A13A211401FA;
-	Mon,  1 Jul 2024 07:59:34 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 01 Jul 2024 07:59:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1719835174;
-	 x=1719921574; bh=3pqX5jXkyZwQM2k8YThla4nhvHoVmaxSyoEecqI36uo=; b=
-	VC66qgtqdG7LsO8I8ky+Ow6RnM72z/T/P9hFSisalIKxoC+s7mMlhwIk949lBwzo
-	gjer10Q060g4z6PVOux0cYv65fJW1XbvYkSBTsn6Ahji63YzCsoG89liw6Cmm7S1
-	C8TPzthfzFhJg0YyE9YXZWzREZ8IQai/MpJfMSQ8n70RF8yVpoVBUSaoUCcODAmT
-	nIQw12/Q4SSjN2lIuI5LEpFePPw9KXlQT0/KljFT1YwofwhhcwzpPz8owaF0gnXG
-	wPZGHa78hI12ZMQiOi5LRJJD9IkblQgG9UWURYw+YScpq0RSAh4PysH1UufZeVgX
-	JjcA6HcURbJLp1bqeuAN+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719835174; x=
-	1719921574; bh=3pqX5jXkyZwQM2k8YThla4nhvHoVmaxSyoEecqI36uo=; b=p
-	XCT8ZF7nFeaNlv5oLGXxNzvIrIysC8liKEXqVh/izOHe6r/jyFCbxmP/1Qqdt/MY
-	JCuZQMQLHiPrGVbpTBw0ng73OUZ6m0YJ7mJuKGaqzLqzhvqn2+1ZN6q3hibFpD4w
-	YuucA1kQUfSSk71wSa/+NMRCzd/CF/067pdJ1EoUtBK/aI6YitZAmoGP5WpMHrdU
-	f40jbYLzTe38iSR2brVQT+amt+hPsKpg9tipVR0l9lwGF9Ytcs5YL5mwVJdQwZec
-	EpKTDyje2i+zxvr18Sb6EIXpCsjyynxMXCRuC5vsqc5jIJsOHhNdt2ibstNWE8IA
-	hkhacZeD4fcrt86wQSYQA==
-X-ME-Sender: <xms:JZqCZsxcJE6FkhmOhZHd60Sz4T-1KYZNMPNXoZBrw8VIYTh3jKhKBw>
-    <xme:JZqCZgTn4KyprCTX4Vk75aLRQ2iHLnnAjHnQtAP1KfoN3AxpreIWJKjWkMRD1CBH7
-    uqEQTPiAdOGEbNXdG0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgdegiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
-    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:JZqCZuVMYBIkXDD6oqFUlgu0zfkT6NuqzYHPRTGV-E1jCOquhBiKTg>
-    <xmx:JZqCZqjnFRZ0Lq5R_gmXB84igaHpPBscWooKrLDpOkjRwc1b7kS3cw>
-    <xmx:JZqCZuBWmJCkkLCr9xwq5G2VUaTAAkNNYwQpIUuGY2zDqWpc5iDU9Q>
-    <xmx:JZqCZrLZUEbVnk0OoDZPYzwfP9wuAah9JriHZoGlC0GoqY80MFvePg>
-    <xmx:JpqCZvK8eB-kPZWbt1OPrao0nZt_7tAwaeT78MbUZezNbhdLaLolBCi_>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 9D034B6008D; Mon,  1 Jul 2024 07:59:33 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1719835906; c=relaxed/simple;
+	bh=0sVw9TXBbsnWqjAoMf8n5pIzsQWxqqaRorP6LNzEm1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n+PFYrbOoQsPuxxGnRajGWhaB7K2vU7bDgcCP67SeKLk6tT0t/kb1KbMwpbrYEBCJbOuI6suSPTzPRn/ZskDu6XVKuFHdbJ04oNXEmb6lSHsxj1rvJMSw1sD6jLN0r22lEmXp5F3aJOVdIhgKKHQSAwnj7oK4sW4UfQ9cfK7eic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=njc/Yaaq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EB40C116B1;
+	Mon,  1 Jul 2024 12:11:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719835906;
+	bh=0sVw9TXBbsnWqjAoMf8n5pIzsQWxqqaRorP6LNzEm1I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=njc/YaaqoV7Uigz8Os7rg1IdYC8rE2rqlXclcyl/LMSd3Xntb2NdP5UzLfE+mAAyu
+	 Hkv0/BPRY4AqPp4MmqcczzVy6lkQm3QE0Wfd7BzzAqJT+RAUOI+QT1FONVjrNlj8jl
+	 YlfWSwO/t4nkI2kEkHN2D9EWZkIfOoY+5t87TZUAw/WovjLs7fz/C8u5nHadgGXyNC
+	 gwJuJP9+iexhGLFjN55DdF+MHoBp6YKkxWxCoOhTXJUGwLH2iIpt55hEv+EBrZDpxg
+	 zRQbI2kmSq4O2+Mxedh7vN2AiYzEj3WE9YIGmvr70GJzOIQYrig+z1phAqhrMWpE+v
+	 m6+zwK9EmGWxg==
+Date: Mon, 1 Jul 2024 14:10:31 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Larsson <alexl@redhat.com>
+Cc: Ian Kent <ikent@redhat.com>, Jan Kara <jack@suse.cz>, 
+	Matthew Wilcox <willy@infradead.org>, Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, 
+	raven@themaw.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Chanudet <echanude@redhat.com>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+Message-ID: <20240701-treue-irrtum-e695ee5efe83@brauner>
+References: <Znx-WGU5Wx6RaJyD@casper.infradead.org>
+ <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3>
+ <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+ <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
+ <20240628-gelingen-erben-0f6e14049e68@brauner>
+ <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
+ <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
+ <20240701-zauber-holst-1ad7cadb02f9@brauner>
+ <CAL7ro1FOYPsN3Y18tgHwpg+VB=rU1XB8Xds9P89Mh4T9N98jyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
-In-Reply-To: <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
- <20240625110029.606032-3-mjguzik@gmail.com>
- <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
- <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
- <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
- <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
-Date: Mon, 01 Jul 2024 13:59:12 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Xi Ruoyao" <xry111@xry111.site>, "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Mateusz Guzik" <mjguzik@gmail.com>,
- "Christian Brauner" <brauner@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, "Jens Axboe" <axboe@kernel.dk>,
- "Linus Torvalds" <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL7ro1FOYPsN3Y18tgHwpg+VB=rU1XB8Xds9P89Mh4T9N98jyA@mail.gmail.com>
 
-On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
-> On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
->> >=20
->> > Yes, both Linus and Christian hates introducing a new AT_ flag for
->> > this.
->> >=20
->> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
->> > like
->> > statx(fd, "", AT_EMPTY_PATH, ...) instead.=C2=A0 NULL avoids the
->> > performance
->> > issue and it's also audit-able by seccomp BPF.
->> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
->> even if statx() becomes audit-able, it is still blacklisted now.
->
-> Then patch the sandbox to allow it.
->
-> The sandbox **must** be patched anyway or it'll be broken on all 32-bit
-> systems after 2037.  [Unless they'll unsupport all 32-bit systems befo=
-re
-> 2037.]
+On Mon, Jul 01, 2024 at 10:41:40AM GMT, Alexander Larsson wrote:
+> On Mon, Jul 1, 2024 at 7:50 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > > I always thought the rcu delay was to ensure concurrent path walks "see" the
+> > >
+> > > umount not to ensure correct operation of the following mntput()(s).
+> > >
+> > >
+> > > Isn't the sequence of operations roughly, resolve path, lock, deatch,
+> > > release
+> > >
+> > > lock, rcu wait, mntput() subordinate mounts, put path.
+> >
+> > The crucial bit is really that synchronize_rcu_expedited() ensures that
+> > the final mntput() won't happen until path walk leaves RCU mode.
+> >
+> > This allows caller's like legitimize_mnt() which are called with only
+> > the RCU read-lock during lazy path walk to simple check for
+> > MNT_SYNC_UMOUNT and see that the mnt is about to be killed. If they see
+> > that this mount is MNT_SYNC_UMOUNT then they know that the mount won't
+> > be freed until an RCU grace period is up and so they know that they can
+> > simply put the reference count they took _without having to actually
+> > call mntput()_.
+> >
+> > Because if they did have to call mntput() they might end up shutting the
+> > filesystem down instead of umount() and that will cause said EBUSY
+> > errors I mentioned in my earlier mails.
+> 
+> But such behaviour could be kept even without an expedited RCU sync.
+> Such as in my alternative patch for this:
+> https://www.spinics.net/lists/linux-fsdevel/msg270117.html
+> 
+> I.e. we would still guarantee the final mput is called, but not block
+> the return of the unmount call.
 
-More importantly, the sandbox won't be able to support any 32-bit
-targets that support running after 2037, regardless of how long
-the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
-in order to be sure those don't get called by accident, the
-fallback is immediately broken.
+That's fine but the patch as sent doesn't work is my point. It'll cause
+exactly the issues described earlier, no? So I'm confused why this
+version simply ended up removing synchronize_rcu_expedited() when
+the proposed soluton seems to have been to use queue_rcu_work().
 
-      Arnd
+But anyway, my concern with this is still that this changes the way
+MNT_DETACH behaves when you shut down a non-busy filesystem with
+MNT_DETACH as outlined in my other mail.
+
+If you find a workable version I'm not entirely opposed to try this but
+I wouldn't be surprised if this causes user visible issues for anyone
+that uses MNT_DETACH on a non-used filesystem.
 
