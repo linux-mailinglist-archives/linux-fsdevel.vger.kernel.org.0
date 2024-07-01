@@ -1,119 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-22874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7478291DFF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 14:54:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC7191E0F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 15:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78139B242F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 12:54:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C2851C216C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 13:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C2B158DAC;
-	Mon,  1 Jul 2024 12:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4402815ECE1;
+	Mon,  1 Jul 2024 13:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Hc9VI9Ov"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="vepUUsOS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F67115A85A;
-	Mon,  1 Jul 2024 12:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2359015E5BC
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 13:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719838440; cv=none; b=IViLG9qZNCQnlnPOjhlQI4CBXQKiMbNOiTxEAvoGObKx7gnJu1ej/6PWnI7GpRAWEsG5OD5xksgGWmLIt33uKr2FxsxCJnXtYgTosBnDtAiTe/XIX64EBBZxpZwmc/ez/mzNtLOGsYaHAihxLWP5tzzXrBYAfY82fMrb1pOCrgQ=
+	t=1719841104; cv=none; b=OY9/kIQinyVjOc67mf4NBpwnKIzByfBfbif2lx2Cox851R/2jpUMn6Ktdr01by/R0xX7+k8ZldWtx+leRFeL36tfltDiGb96mbzOpFbL2gWq99Wwmsex2XYMDo99mpImLbFgDREbnJl7zCCrn8DiONFqScrmXDJVbdzhNG5aVJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719838440; c=relaxed/simple;
-	bh=joqZqxfvJhfI6MGsku+7ZiuyZkmDI6a7ruDeHS6gU1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=UipSaXj1wp4C6Igh9xRMrVqZP3+IXmPoAKPL2+HsYHdgFbiIUFQYmgFbsmq76vBx5DZxhLdBgkIoUKXoiQ0lbDX3DrHSB+4BW7CzkRVLmoNuDvxkKyoxlq8UJi8mXUMufEUV/kciEXvEXhiayMFgMZw0v23qLDZmOJD4Y6Pl2xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Hc9VI9Ov; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Cc:From:References:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=t+dVjH56wuvAZMPLxREj1dS4Lb8ihceYjbLapljYOh8=;
-	t=1719838438; x=1720270438; b=Hc9VI9OvKZk9XydVJKeulcENUM/WMLZTPlh9I4LB0vd8F+O
-	JIZ8CpLlIM2wA/EMhYcOvZk8d8NmaI0liLETGL6x0lwYU4/5jXroGpqLdyTHwqhUHY/aVUIZBpeLi
-	TEASf/fXYNM6fdLfGCZUqf6quNiWX6FgkQCHzF/C1HhFH+Qw0qInElZGtOXcmjTh3/wg2sOMATIv9
-	rovKekvSQyfqaTj2DQGYKl+7/5yJ5kK9R7USI7z51iJf6h27Oi3J0pKY+aHbMcNinK3iY/9UEi9nT
-	6XOZMbCdSfO8L23zzLhvLRiRpnzBmA1TPMtCot4yQMjNyyNIL/mG3odNr4qk+IlA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sOGXc-0008Qe-Fb; Mon, 01 Jul 2024 14:53:56 +0200
-Message-ID: <a60fc742-0ad4-498d-b90f-793b9578b843@leemhuis.info>
-Date: Mon, 1 Jul 2024 14:53:55 +0200
+	s=arc-20240116; t=1719841104; c=relaxed/simple;
+	bh=orcW3KV1wue2Wlfs2605HFmKhCkgqvHEBbRYehnsBj8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Py2SwTRrHEIakBdXqx3cey7HC9QkJRtPIRsPV/ssWiQe2SPOj4DobCV4le9poDlE6WANdnGijf6iEl3FwuFpHWCvZZXOj6+u0X/xY5Sl3pVqOQjmuxQ45S0+Wee7Q7WzJelNGIqtzLvq+nSqTEtiQ26k2YAWPl3Y8G/nFXOM27Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=vepUUsOS; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6adc63c2ee0so8374366d6.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Jul 2024 06:38:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1719841101; x=1720445901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4qdIhdrRTGj9K7W9JuO6yWHm/C5DDCvWRrbrdYiRH3M=;
+        b=vepUUsOS9yst1KRDgsZT8r7fGtpYeGVNseAE6QWU+553V91KE9YNxWV+z2/l3uKfnY
+         0xkYzAkxvaHErJJJ9N5oN6DRbj/s79Xu66dMt93fhTObIn5cpvFKgy6RHD+yo3HkJ1qm
+         BOZrAKI50ZtinpLcl++EEqSBpU5G4Zor2EtveL/g9XhNgk62MTaNlotHbPrMysBya94Z
+         ARltVv2YCjQKa5f0bVrz4IVAjvZ41WXCqQlRxP66vWNJVdnVZVr2SSph2gWZMPIRLu2l
+         LsRudRTm6TUZL/6bUP/Uc51SX/5Ri/sKm3ZMc5rDQKN2V7wEUCSXvnJDR1nh0lGuhzJQ
+         Drnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719841101; x=1720445901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4qdIhdrRTGj9K7W9JuO6yWHm/C5DDCvWRrbrdYiRH3M=;
+        b=wbUDJudOVqW6EL1bZajd+HOh7U/ehtZGbWCUh8DEKEOjwfVf7qNPTbqfYgthMwE6zH
+         bWssmLLvLoD8C7yqq49Fw6anCiRdidW6AjdfBCYj17xeqDouvBw+/R1tKOLBaxO42S3X
+         feJN5gBD7BVLHyKNrf/Jwkyvt2qu0/6GiQRSHvW9EuFVQ/cidlXA3nFLoPk6Xv/+AO/4
+         pP6pRAWhFNBD/eXzawOYxmmREzlxC/RvPoxSFYpuMuXxkMsXIVLtpgnkpHNw1P1D4cNT
+         jeS16zzEmQK8phLXZqfjy4rrxLX5PsLNXZD6/mEshj3F79zdYAWluZAMssqJ3UwA1cF7
+         sJnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNskhxYIttyfLCQp08Bq3Hovt/Ny+xHV/I71U7DYcT9oG6lVK6K0kRQEOk5CNRCLkDqQ3Lity8gbr0uqvJHTCP3GaFkNHq9ZOaoS3mNQ==
+X-Gm-Message-State: AOJu0YygV9QSRF/jEe+9UD+9VKUMA8ZsxTLVaZUet8ZoGfvtQKTTSp9o
+	4XtJ3p3foKZG21WDLmweyE+r3bbxqjlq9jh7NC0wrM25ucEpYxbm4E7wuj642pw=
+X-Google-Smtp-Source: AGHT+IH9NWsJCNec1szrhVDTv5U1qMMlsOJkpGMOYvilPLv2Ak7AHFr/z/ZWuIff5kMTdoDa+80l9g==
+X-Received: by 2002:ad4:5aae:0:b0:6b4:fc6f:17ba with SMTP id 6a1803df08f44-6b5b70c725cmr63130786d6.33.1719841100965;
+        Mon, 01 Jul 2024 06:38:20 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e737d61sm33087126d6.136.2024.07.01.06.38.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 06:38:20 -0700 (PDT)
+From: Josef Bacik <josef@toxicpanda.com>
+To: alx@kernel.org,
+	linux-man@vger.kernel.org,
+	brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	mszeredi@redhat.com,
+	kernel-team@fb.com
+Subject: [PATCH v4 0/2] man-pages: add documentation for statmount/listmount
+Date: Mon,  1 Jul 2024 09:37:52 -0400
+Message-ID: <cover.1719840964.git.josef@toxicpanda.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: [PATCH] fs/ntfs3: Fix memory corruption when page_size changes
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-References: <20240614155437.2063380-1-popcornmix@gmail.com>
- <CAEi1pCSQePMo4X_RvMfYmpxYwmuamhd8=1OXgNCU-N2BBdTXPg@mail.gmail.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Cc: popcorn mix <popcornmix@gmail.com>, ntfs3@lists.linux.dev,
- Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-In-Reply-To: <CAEi1pCSQePMo4X_RvMfYmpxYwmuamhd8=1OXgNCU-N2BBdTXPg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1719838438;8fe70a28;
-X-HE-SMSGID: 1sOGXc-0008Qe-Fb
 
-[CCing a few lists]
+V3: https://lore.kernel.org/linux-fsdevel/cover.1719425922.git.josef@toxicpanda.com/
+V2: https://lore.kernel.org/linux-fsdevel/cover.1719417184.git.josef@toxicpanda.com/
+V1: https://lore.kernel.org/linux-fsdevel/cover.1719341580.git.josef@toxicpanda.com/
 
-Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-for once, to make this easily accessible to everyone.
+v3->v4:
+- Addressed review comments.
 
-Konstantin, what's the status of this regression report or the patch Dom
-Cobley propsed to fix the issue? From here it looks like it fall through
-the cracks, but I might be missing something.
+v2->v3:
+- Removed a spurious \t comment in listmount.2 (took me a while to figure out
+  why it was needed in statmount.2 but not listmount.2, it's because it lets you
+  know that there's a TS in the manpage).
+- Fixed some unbalanced " in both pages
+- Removed a EE in the nf section which is apparently not needed
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+v1->v2:
+- Dropped the statx patch as Alejandro already took it (thanks!)
+- Reworked everything to use semantic newlines
+- Addressed all of the comments on the statmount.2 man page
 
-#regzbot poke
+Managed to get more of the build system running so hopefully this is all
+formatted properly now.  Thanks,
 
-On 14.06.24 18:24, popcorn mix wrote:
-> On Fri, Jun 14, 2024 at 4:55 PM Dom Cobley <popcornmix@gmail.com> wrote:
->> The kernel panic can be observed when connecting an
->> ntfs formatted drive that has previously been connected
->> to a Windows machine to a Raspberry Pi 5, which by defauilt
->> uses a 16K kernel pagesize.
-> 
-> Here are links to some bug reports about the issue:
-> https://github.com/raspberrypi/linux/issues/6036
-> https://forum.libreelec.tv/thread/28620-libreelec-12-0-rpi5-and-ntfs-hdd-problem/?postID=192713#post192713
-> https://forums.raspberrypi.com/viewtopic.php?p=2203090#p2203090
-> https://forums.raspberrypi.com/viewtopic.php?t=367545
-> 
-> The common points are it occurs on the (default) 16K pagesize kernel,
-> but switching to 4K pagesize kernel
-> avoids the issue.
-> 
-> Issue wasn't present in previous RPiOS LTS kernel (6.1), but is
-> present in current LTS kernel (6.6).
-> Revering to 6.1 kernel avoids the issue.
-> 
-> I've confirmed that reverting the commit:
-> 865e7a7700d9 ("fs/ntfs3: Reduce stack usage")
-> 
-> avoids the issue.
-> 
-> This patch avoids the issue for me, and I'd like confirmation it is correct.
+Josef
+
+Josef Bacik (2):
+  statmount.2: New page describing the statmount syscall
+  listmount.2: New page describing the listmount syscall
+
+ man/man2/listmount.2 | 111 +++++++++++++++++
+ man/man2/statmount.2 | 288 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 399 insertions(+)
+ create mode 100644 man/man2/listmount.2
+ create mode 100644 man/man2/statmount.2
+
+-- 
+2.43.0
+
 
