@@ -1,216 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-22838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B6A91D67B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 05:06:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9AC291D686
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 05:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 144F31C211D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 03:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F7028178D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Jul 2024 03:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9153B17BBB;
-	Mon,  1 Jul 2024 03:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB953C2D6;
+	Mon,  1 Jul 2024 03:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="ERwIOWab";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CaLft+Wb"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s0iE896n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DDC171C9;
-	Mon,  1 Jul 2024 03:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385AF1A269
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 03:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719803166; cv=none; b=IFSLQ6rQEIy2+A6FpI7UHgIBWfJk/EQE0WT846PMw/3iHPGptJlFj1pc5kq1g2cph2Ff+a2rb+eLmVROG4x5KqfDu4ZLRud3TWzJjiQRuvgHMbqX5zbSoYXVQWnmZ7+mIVHshmRD4m7x6UVe8MWPZtY9MNJq8nMjLR5GbZkeXJI=
+	t=1719804046; cv=none; b=CNroBeWRaJNIHDqbIlipH8RWQUK0IdmMVvLjHR7L8imFVN9ZSWEiwaCxM1SMfYHsobHuMXQmAMSTeEVjpx7OS2EnbfnmWu2uyVWfGSXD7Gxz3EreSj6YWiWSxqp/N4P4NTtgefZwiAJpi6ZIfuQDr0bpevRZbismSKOjWlGG9SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719803166; c=relaxed/simple;
-	bh=WdLI9+KQMowdRE4lt/uDMQf5cs86flgWpmReQzVfpQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uGKthf8SQwuC8yZrlT8Qmbvg1oVgd2dsUM1ogQ4Bm22TDLeW+QRhHsQCTEzQ1zi5jLH6CKecSxNuLUvwRteXFt89gGqmgxye3FttqJY3p/bL6DDNg2BzfMAoey+P/L/wgbIw6hd9zoQYU8cmVRB4NDCfx0lwa2D3Nan4V2GtLsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=none smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=ERwIOWab; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CaLft+Wb; arc=none smtp.client-ip=64.147.123.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=themaw.net
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.west.internal (Postfix) with ESMTP id F36851C00092;
-	Sun, 30 Jun 2024 23:06:02 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Sun, 30 Jun 2024 23:06:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1719803162;
-	 x=1719889562; bh=blAxKVj7q0jwyu+EbjanaoPWlHbeXSCclOdG6j2yjMs=; b=
-	ERwIOWabVaaMR5gTgfZDkN2VHLmxLmGEsHXTPKWiuRfPbj1IHYJ6Ay6zr+rZo2EH
-	6ywTpS05qtJpqoEDXh0UHeacpg4uRmHPDb7zdlq6COJ21qbOfs8VdkL0BOqVGH0j
-	np7ebgww2y8krla7iYJQbduWPXKxqZbYkeTBPtaIEZPp98MmlKCdEktn9mu3EFt0
-	qVKKWqhWhG2nrzwrJ0buTt+XkpNNZJaqwIWZpxQh4Ioa9dg2hRQR7RKp3ddpVQxi
-	zMg0cAPrTxIG8weNhla5e1N8HTAtYKrmwYw20uvMbwciOifhmsSBCBOnzDiWOOrw
-	xCmIQB6vqZSMunrl91Ej4g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719803162; x=
-	1719889562; bh=blAxKVj7q0jwyu+EbjanaoPWlHbeXSCclOdG6j2yjMs=; b=C
-	aLft+WbY3GV1DDLMxyDNSnLqzRwrOdxeiowo7BKPaT8eBbtc2U8wM1hDZnU74YmM
-	yze3ApszyllIyWHs3LgmjNg34PWuSxmxhOKStOGB4PIfYiwkfBluQLyvdZT9jHb+
-	aqG5f8C0IF8UyTCGMmEEtzFalPh316qMPut3/OQI6FAWpb/gzaXtm6j+DdI+lWmK
-	2M8enZtmUiKZcZbJ7OjXvMtD6aiw7im522CrV0wQxPq2i4B7OfPrp64V6lB5+zIs
-	SXQbCqQ9Hrf5pU9TcOSrPXOpPZHH7rlpOxCJM1jpPDVRPtWbBP2s0VfHZPtDoHw6
-	Fl+TKJnZ+3g5FR+YBBHJg==
-X-ME-Sender: <xms:Gh2CZozGUAwP8JX7nsbR2BVTBn0nk7pMd8Y2hOUjNRDz3QSMTN14NQ>
-    <xme:Gh2CZsRtzIkkJQo-r8z-vV5sELO9ufdzAh4YWwsSKZqchEWYlM1NX_3tZb3hb6fR4
-    RYZC280i5Ia>
-X-ME-Received: <xmr:Gh2CZqUsuXZnX-eWehJ8ESE6K92wzNsL6t7XxbO1kjhz3QvjA0IAWrK1kIOmFbGicDkkku-OjgTU3bgaJEgDpQu-oThEu49mirf2_pAo3TerL8AiBR5X-wA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddvgdeihecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    efkefhgeeigeetleffgeelteejkeduvdfhheejhfehueeitdehuefhkeeukeffheenucev
-    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
-    hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:Gh2CZmis822uieLplCdDT13iPQleY6Lz3J_PPlseRUJVqzRNb1pPhQ>
-    <xmx:Gh2CZqCcyRn4DDJPd088BJEb2SKJXrtGcsd3onru_sMrIoFR-Z7iPQ>
-    <xmx:Gh2CZnIM9sEkoED2AueVyhTAVzKABgYRQM7ob5nl5Zj5wxK9FMU49g>
-    <xmx:Gh2CZhBKp2xwh6hdxCd9CZwS2vCNVylRQSyuXJz62Ejde0ERSEuEvg>
-    <xmx:Gh2CZlPOlFLRhuOgtLaSvhhoBDGgZteWrPaB9EKqt3UsXkgMJuRUYtFu>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 30 Jun 2024 23:06:00 -0400 (EDT)
-Message-ID: <da8b776e-f5af-4d61-b030-c5a18e2276cf@themaw.net>
-Date: Mon, 1 Jul 2024 11:05:55 +0800
+	s=arc-20240116; t=1719804046; c=relaxed/simple;
+	bh=hhzcxn3o15FWD44sYfGUZc2UF7od1cqh57GfN5AtSFA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=MRwoCIwC35EOBnLq+F6pg7SZY/ca3GwOQL0yVSpPNWjoDiWCXyyMKC2apOM3wYfTNKAsMnIwzNGnni6dodiTQMUmRQWXfdtGjE0lIWXALy4dfCAkFj/04Q3f+O3pJRjXd8qVdxaj9i2IR/laypMFsEwyI/UfOf7W/gSoGe0VPww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=s0iE896n; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240701032034epoutp04d6d32e309597f07cea8fd6f8fe31348f~d_KhrZpyC0904109041epoutp04C
+	for <linux-fsdevel@vger.kernel.org>; Mon,  1 Jul 2024 03:20:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240701032034epoutp04d6d32e309597f07cea8fd6f8fe31348f~d_KhrZpyC0904109041epoutp04C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1719804035;
+	bh=Vxi5sHDAhuEww9/KaAgxP+Heg1gv8NQiMaWH3RP8kMw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=s0iE896nzlaNiUFCTAUYWGmEnSyS6dpEaQxz5PhdZCdRq9LNm3sGpgkWeIVA60bze
+	 2aHCGgDtzSSk/YO5EjU/vLjLYuRD7b0UQmQy+k6L1cUuR0kzQNlo/2lO35+Bo8ZmJh
+	 5erPfjy2YodH/bRmRHzhBf1N87Hqv+XrnFM/R6f4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20240701032034epcas2p42c86a901d27fb9e440da844f582f6e6e~d_KhXmG790424904249epcas2p41;
+	Mon,  1 Jul 2024 03:20:34 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WCBBT06yLz4x9Pp; Mon,  1 Jul
+	2024 03:20:33 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8B.BD.09485.08022866; Mon,  1 Jul 2024 12:20:32 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240701025614epcas2p16db7bb7616cf8be284034ae7fb35275d~d91RXTW7k2321823218epcas2p1V;
+	Mon,  1 Jul 2024 02:56:14 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240701025614epsmtrp1e17dcd3db1f9c38daf23cfe27e550a39~d91RWmoBA0897608976epsmtrp1L;
+	Mon,  1 Jul 2024 02:56:14 +0000 (GMT)
+X-AuditID: b6c32a46-f3bff7000000250d-10-6682208046a5
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4B.DA.19057.ECA12866; Mon,  1 Jul 2024 11:56:14 +0900 (KST)
+Received: from dpss81-OptiPlex-9020.. (unknown [109.105.118.81]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240701025613epsmtip26de489e87992bded0c23cc01ab4ac7fa~d91Qbqr0P1543115431epsmtip2p;
+	Mon,  1 Jul 2024 02:56:13 +0000 (GMT)
+From: Hui Qi <hui81.qi@samsung.com>
+To: jlayton@kernel.org, chuck.lever@oracle.com, alex.aring@gmail.com
+Cc: linux-fsdevel@vger.kernel.org, bvanassche@acm.org, joshi.k@samsung.com,
+	j.xia@samsung.com, Hui Qi <hui81.qi@samsung.com>
+Subject: [PATCH] Fixes: ec16b147a55bfa14e858 ("fs: Fix rw_hint validation")
+Date: Mon,  1 Jul 2024 11:21:10 +0800
+Message-Id: <20240701032110.3601345-1-hui81.qi@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/14] autofs: Convert to new uid/gid option parsing
- helpers
-To: Eric Sandeen <sandeen@redhat.com>, linux-fsdevel@vger.kernel.org,
- Christian Brauner <brauner@kernel.org>
-Cc: autofs@vger.kernel.org
-References: <8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com>
- <faccdd51-07d6-413f-aa55-41bb0e7660df@redhat.com>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net;
- keydata= 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
-In-Reply-To: <faccdd51-07d6-413f-aa55-41bb0e7660df@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmmW6DQlOaweeNlhaHGswtpn34yWzx
+	/+5zJou5ry+xWOxctpbd4uOe1UwWP5etYrc4+v8tm8WevSdZLM5O+MDqwOVx+Yq3x85Zd9k9
+	Nq3qZPP4+PQWi0ffllWMHp83yQWwRWXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpa
+	mCsp5CXmptoqufgE6Lpl5gAdpqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMCnQ
+	K07MLS7NS9fLSy2xMjQwMDIFKkzIzjja/5a9YDVvxbXl3ewNjK+4uhg5OSQETCR2TljA0sXI
+	xSEksINRonl7IzOE84lRovvJHXYI5xujxMZnX1lhWj6+uMkEkdjLKLF793eolq+MEjOvbmYH
+	qWITUJa48WYjM4gtIuAisfPcdMYuRg4OZoE6iQUfWEDCwgLeEpMOn2YDsVkEVCVenJvOBGLz
+	ClhL3N+5lh1imbzE/oNnmSHighInZz4B62UGijdvnQ22V0LgI7vE2onrGCEaXCQO3T0Edamw
+	xKvjW6AGSUm87G+Dsosl2j/8ZgW5R0KgRqL5eglE2Fpi2/p1TBBnakqs36UPEZaVmHpqHRPE
+	Wj6JjsN/oabwSnw+vgPKVpI4vmETM4QtIXHg2x4WiOkeEr8aeEHCQgKxEls2NbNOYJSfheSZ
+	WUiemYWweAEj8ypGsdSC4tz01GKjAiN4nCbn525iBCdNLbcdjFPeftA7xMjEwXiIUYKDWUmE
+	N/BXfZoQb0piZVVqUX58UWlOavEhRlNg8E5klhJNzgem7bySeEMTSwMTMzNjM2NzIzMlcd57
+	rXNThATSE0tSs1NTC1KLYPqYODilGpjEmb/2q/XubZzRk3syIbnCfNXZQFtJqx1TuJzL03Vm
+	vJAr8jqhz8Sk0i32WTPlcp9hfNGm/w/uT/qfekNye//LXx58e2tjj02NvVHgfTPgnGQlz8nZ
+	VUyXM6XM1n146rrSo6ik+ZRf1+epm2YZ9i3/7bDLP+H1k/cv2Rf82vYziN/554m5YhNerpiT
+	I3h7EpPRnA/Pph9uzd/Mcif5rXyzzGblx0p/vgqwFK3hWvi0/Njn1vnBDb6uixW1bI/PfbKW
+	XWK92D/FD/euRawPe9/7adp7+Ro/weaGs0f1bscePL7Icw3fzxftx0PaeKZ9eJG+59H0D535
+	ryO2ng+Tlkv8uXZx4ssLsZI2k50/PmNepsRSnJFoqMVcVJwIAOFqzzgjBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrALMWRmVeSWpSXmKPExsWy7bCSvO45qaY0g62/eC0ONZhbTPvwk9ni
+	/93nTBZzX19isdi5bC27xcc9q5ksfi5bxW5x9P9bNos9e0+yWJyd8IHVgcvj8hVvj52z7rJ7
+	bFrVyebx8ektFo++LasYPT5vkgtgi+KySUnNySxLLdK3S+DKONr/lr1gNW/FteXd7A2Mr7i6
+	GDk5JARMJD6+uMnUxcjFISSwm1Gisx3E4QBKSEh8+hIEUSMscb/lCCuILSTwmVGi/4sZiM0m
+	oCxx481GZhBbRMBD4s7h2cwgc5gFWhgl9r/6ygKSEBbwlph0+DQbiM0ioCrx4tx0JhCbV8Ba
+	4v7OtewQC+Ql9h88ywwRF5Q4OfMJWC8zULx562zmCYx8s5CkZiFJLWBkWsUomVpQnJueW2xY
+	YJSXWq5XnJhbXJqXrpecn7uJERzIWlo7GPes+qB3iJGJg/EQowQHs5IIb+Cv+jQh3pTEyqrU
+	ovz4otKc1OJDjNIcLErivN9e96YICaQnlqRmp6YWpBbBZJk4OKUamLrm7DGNEJy38kzzykWn
+	4iJFmvYd+XTgmeLUjv1n9hvsTVtxTE019vOhuNML09YlTOOc3Wx2/2/WNtfw5yU/mvap3T/Y
+	PMPSf9ZHy5f3Px7qvHOws9lptzp7fDnXpSfFsxk/LUuT4732++L/LlaeVxesv+futkh5tqCG
+	vSByap/rll2Xu8QjxRS+t7HaHNjlfzSU2SNO7cAOl+XCf5kZZmQ7KVwp7Zg7uyf1QGn3/6rl
+	e38rzhesm3Zn9t+6jZMWtMkwtnzWudgsIPLf62GYwKJsoaupLKtjrl8Q3tagrrVi4/U5RcvL
+	g/YUycS7/7u0MHJN9o0fkuItj6JO3an5Zu3y2aIlUv5P2emiyN1G6T+UWIozEg21mIuKEwEx
+	fJ8y0wIAAA==
+X-CMS-MailID: 20240701025614epcas2p16db7bb7616cf8be284034ae7fb35275d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240701025614epcas2p16db7bb7616cf8be284034ae7fb35275d
+References: <CGME20240701025614epcas2p16db7bb7616cf8be284034ae7fb35275d@epcas2p1.samsung.com>
 
-On 28/6/24 08:27, Eric Sandeen wrote:
-> Convert to new uid/gid option parsing helpers
->
-> Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
-> ---
->   fs/autofs/inode.c | 16 ++++------------
->   1 file changed, 4 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
-> index 1f5db6863663..cf792d4de4f1 100644
-> --- a/fs/autofs/inode.c
-> +++ b/fs/autofs/inode.c
-> @@ -126,7 +126,7 @@ enum {
->   const struct fs_parameter_spec autofs_param_specs[] = {
->   	fsparam_flag	("direct",		Opt_direct),
->   	fsparam_fd	("fd",			Opt_fd),
-> -	fsparam_u32	("gid",			Opt_gid),
-> +	fsparam_gid	("gid",			Opt_gid),
->   	fsparam_flag	("ignore",		Opt_ignore),
->   	fsparam_flag	("indirect",		Opt_indirect),
->   	fsparam_u32	("maxproto",		Opt_maxproto),
-> @@ -134,7 +134,7 @@ const struct fs_parameter_spec autofs_param_specs[] = {
->   	fsparam_flag	("offset",		Opt_offset),
->   	fsparam_u32	("pgrp",		Opt_pgrp),
->   	fsparam_flag	("strictexpire",	Opt_strictexpire),
-> -	fsparam_u32	("uid",			Opt_uid),
-> +	fsparam_uid	("uid",			Opt_uid),
->   	{}
->   };
->   
-> @@ -193,8 +193,6 @@ static int autofs_parse_param(struct fs_context *fc, struct fs_parameter *param)
->   	struct autofs_fs_context *ctx = fc->fs_private;
->   	struct autofs_sb_info *sbi = fc->s_fs_info;
->   	struct fs_parse_result result;
-> -	kuid_t uid;
-> -	kgid_t gid;
->   	int opt;
->   
->   	opt = fs_parse(fc, autofs_param_specs, param, &result);
-> @@ -205,16 +203,10 @@ static int autofs_parse_param(struct fs_context *fc, struct fs_parameter *param)
->   	case Opt_fd:
->   		return autofs_parse_fd(fc, sbi, param, &result);
->   	case Opt_uid:
-> -		uid = make_kuid(current_user_ns(), result.uint_32);
-> -		if (!uid_valid(uid))
-> -			return invalfc(fc, "Invalid uid");
-> -		ctx->uid = uid;
-> +		ctx->uid = result.uid;
->   		break;
->   	case Opt_gid:
-> -		gid = make_kgid(current_user_ns(), result.uint_32);
-> -		if (!gid_valid(gid))
-> -			return invalfc(fc, "Invalid gid");
-> -		ctx->gid = gid;
-> +		ctx->gid = result.gid;
->   		break;
->   	case Opt_pgrp:
->   		ctx->pgrp = result.uint_32;
+The high 32 bits is filled with arbitrary value. If hint is set
+WRITE_LIFE_SHORT (2) by fcntl, the value is 0xf6d1374000000002,
+which causes rw_hint_valid always returns false. i_write_hint of inode and
+bi_write_hint of bio are both enum rw_hint. The value would be truncated
+only if the element value exceeds 2^32.
 
+Signed-off-by: Hui Qi <hui81.qi@samsung.com>
+---
+ fs/fcntl.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-I like the idea and it looks just fine for autofs.
-
-Acked-by: Ian Kent <raven@themaw.net>
-
-
-Ian
-
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 300e5d9ad913..bab45c5586c6 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -269,7 +269,7 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
+ }
+ #endif
+ 
+-static bool rw_hint_valid(u64 hint)
++static bool rw_hint_valid(enum rw_hint hint)
+ {
+ 	BUILD_BUG_ON(WRITE_LIFE_NOT_SET != RWH_WRITE_LIFE_NOT_SET);
+ 	BUILD_BUG_ON(WRITE_LIFE_NONE != RWH_WRITE_LIFE_NONE);
+@@ -295,8 +295,8 @@ static long fcntl_get_rw_hint(struct file *file, unsigned int cmd,
+ 			      unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(file);
+-	u64 __user *argp = (u64 __user *)arg;
+-	u64 hint = READ_ONCE(inode->i_write_hint);
++	enum rw_hint __user *argp = (enum rw_hint __user *)arg;
++	enum rw_hint hint = READ_ONCE(inode->i_write_hint);
+ 
+ 	if (copy_to_user(argp, &hint, sizeof(*argp)))
+ 		return -EFAULT;
+@@ -307,8 +307,8 @@ static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
+ 			      unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(file);
+-	u64 __user *argp = (u64 __user *)arg;
+-	u64 hint;
++	enum rw_hint __user *argp = (enum rw_hint __user *)arg;
++	enum rw_hint hint;
+ 
+ 	if (copy_from_user(&hint, argp, sizeof(hint)))
+ 		return -EFAULT;
+-- 
+2.34.1
 
 
