@@ -1,137 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-22950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC5292407D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 16:21:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA30924145
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 16:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59BCA282629
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 14:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D15287ADF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 14:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA2F1BA067;
-	Tue,  2 Jul 2024 14:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DD51BA865;
+	Tue,  2 Jul 2024 14:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZnYdfBq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5A71DFE3;
-	Tue,  2 Jul 2024 14:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB40D1E48A;
+	Tue,  2 Jul 2024 14:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719930067; cv=none; b=LyFOQakvN+K8R/uuAK7Clv3LHZN6NyxFIJ9n8n91pczfVymEna3NZkqKmwTqZbR83nCh+tOCwjPkbXJASpahQzUuvzruT0Y0jgCoBxdhdBaOW0yW2HTvw5oipafUCnVUcXjSxRiWAckSZhkphY14s1HfbpKD3ZGOPY78xwXr+uU=
+	t=1719931817; cv=none; b=R4TFzthgbbZlxpKWd1v9lcUHjaxuv1lsp8+gOX1FPjYL50Uf8XDdtNwmJntHFQNX1IKENBgYjrnTp7jw5JWGK6WbpjD3FjDaGm4HyE6cGZj7N/53Zu8G+ArA2pHpSrenxPgHOov9q6mWlsSpzNWoi1Prpt3Jocb7aMXxp1o5VsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719930067; c=relaxed/simple;
-	bh=nWKxdV5ujyrGy3s7qRfFotWRCfmuZrI9OL8cics4EZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZXuqLTUY0NkqY9yne71EGn05EcHkV9nvteFSWkdA0cSYtqdidqAa4GyOEy3Q/0BIbBhJGT4ophOSRbgdZUZHrDfUvjLRNlL6GgRHz2P7s0Aej4ZBxOX4GB8xtcyI6T05WQDgfswHvG7qkMTr4yUtQWrkjaTgnJe18yGpJMdhP9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WD4hr5GkHz1T4Fw;
-	Tue,  2 Jul 2024 22:16:28 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id E9C0A1400CD;
-	Tue,  2 Jul 2024 22:21:00 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 2 Jul 2024 22:21:00 +0800
-Message-ID: <5856cee4-1e13-4c67-8fea-f5f938f7452f@huawei.com>
-Date: Tue, 2 Jul 2024 22:21:00 +0800
+	s=arc-20240116; t=1719931817; c=relaxed/simple;
+	bh=HqJSSoNKjIMDM+CJGgP+I5L5NB+rRz1kCBLAO8WJm7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K5xKJdZ9Ad+TiSiHciSW2+xaWF02U5LGs3NqLpniOX1w12ZHGqw615nYigidC0h3IdAlT8RMRJAAGW1In4pTesMRjjL2DOUi0Yf9AXTWFX4WN+95Extv2N7v5YCuPj8SwqILesmhx1sdgz07pMEZS6yrk/LSY9k70JWjnxzrp5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZnYdfBq; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719931815; x=1751467815;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HqJSSoNKjIMDM+CJGgP+I5L5NB+rRz1kCBLAO8WJm7A=;
+  b=ZZnYdfBqjnATfzG3CLFd1+0D861dlCKvpp1joaakoI42itan5bZ2WI/y
+   OUYw1zr+sSHtDnXhPGsla/XroPG68GmiT57tXCHFxNt8PHDHNLO77ufxn
+   yDdHly0Z21YnbGhN0YpilkzB7RBeC/IqW9ZOJO4wPZivWqSdqMQiAUyKE
+   p7OeuMUeEPQy+J6OXvw58jvCrtutgSU9GXYx8Z58TIpVLKT2nlVEJzsAo
+   /Si+DshtcExVY47HObhtsGvXDO9q0EEqaFdnBV8bxblEqyV2QPdh1elWB
+   7uao7CIFTDULG60Lk1Osv70te2INKVI0/QfpDkla08YPnXXcJSQG48yRv
+   Q==;
+X-CSE-ConnectionGUID: V/UneS+cRamYEXHzI021bA==
+X-CSE-MsgGUID: lAwSoQeMQx6akjydSKFlXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="34558299"
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="34558299"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 07:50:00 -0700
+X-CSE-ConnectionGUID: 6Vw0grZvTcSZ8AqT595Amg==
+X-CSE-MsgGUID: JIBGLbcKT1SxXJQ4cNjqIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,178,1716274800"; 
+   d="scan'208";a="51117023"
+Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2024 07:49:59 -0700
+Date: Tue, 2 Jul 2024 07:49:57 -0700
+From: Andi Kleen <ak@linux.intel.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org, viro@zeniv.linux.org.uk,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, gregkh@linuxfoundation.org, linux-mm@kvack.org,
+	liam.howlett@oracle.com, surenb@google.com, rppt@kernel.org,
+	adobriyan@gmail.com
+Subject: Re: [PATCH v6 3/6] fs/procfs: add build ID fetching to PROCMAP_QUERY
+ API
+Message-ID: <ZoQTlSLDwaX3u37r@tassilo>
+References: <20240627170900.1672542-1-andrii@kernel.org>
+ <20240627170900.1672542-4-andrii@kernel.org>
+ <878qyqyorq.fsf@linux.intel.com>
+ <CAEf4BzZHOhruFGinsRoPLtOsCzbEJyf2hSW=-F67hEHhvAsNZQ@mail.gmail.com>
+ <Zn86IUVaFh7rqS2I@tassilo>
+ <CAEf4Bzb3CnCKZi-kZ21F=qM0BHvJnexgajP0mHanRfEOzzES6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] hugetlbfs: use tracepoints in hugetlbfs functions.
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Steven Rostedt
-	<rostedt@goodmis.org>
-CC: <muchun.song@linux.dev>, <mhiramat@kernel.org>, <linux-mm@kvack.org>,
-	<linux-trace-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <20240612011156.2891254-1-lihongbo22@huawei.com>
- <20240612011156.2891254-3-lihongbo22@huawei.com>
- <20240701194906.3a9b6765@gandalf.local.home>
- <1eca1fcd-5479-47b2-b7ba-eb4027135af2@huawei.com>
- <8015a0bf-39e2-406c-8f61-db87a40a71a3@efficios.com>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <8015a0bf-39e2-406c-8f61-db87a40a71a3@efficios.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4Bzb3CnCKZi-kZ21F=qM0BHvJnexgajP0mHanRfEOzzES6A@mail.gmail.com>
 
+> 1) non-executable file-backed VMA still has build ID associated with
+> it. Note, build ID is extracted from the backing file's content, not
+> from VMA itself. The part of ELF file that contains build ID isn't
+> necessarily mmap()'ed at all
 
+That's true, but there should be at least one executable mapping
+for any useful ELF file.
 
-On 2024/7/2 21:30, Mathieu Desnoyers wrote:
-> On 2024-07-02 07:55, Hongbo Li wrote:
->>
->>
->> On 2024/7/2 7:49, Steven Rostedt wrote:
->>> On Wed, 12 Jun 2024 09:11:56 +0800
->>> Hongbo Li <lihongbo22@huawei.com> wrote:
->>>
->>>> @@ -934,6 +943,12 @@ static int hugetlbfs_setattr(struct mnt_idmap 
->>>> *idmap,
->>>>       if (error)
->>>>           return error;
->>>> +    trace_hugetlbfs_setattr(inode, dentry->d_name.len, 
->>>> dentry->d_name.name,
->>>> +            attr->ia_valid, attr->ia_mode,
->>>> +            from_kuid(&init_user_ns, attr->ia_uid),
->>>> +            from_kgid(&init_user_ns, attr->ia_gid),
->>>> +            inode->i_size, attr->ia_size);
->>>> +
->>>
->>> That's a lot of parameters to pass to a tracepoint. Why not just pass 
->>> the
->>> dentry and attr and do the above in the TP_fast_assign() logic? That 
->>> would
->>> put less pressure on the icache for the code part.
->>
->> Thanks for reviewing!
->>
->> Some logic such as kuid_t --> uid_t might be reasonable obtained in 
->> filesystem layer. Passing the dentry and attr will let trace know the 
->> meaning of structure, perhaps tracepoint should not be aware of the
->> members of these structures as much as possible.
-> 
-> As maintainer of the LTTng out-of-tree kernel tracer, I appreciate the
-> effort to decouple instrumentation from the subsystem instrumentation,
-> but as long as the structure sits in public headers and the global
-> variables used within the TP_fast_assign() logic (e.g. init_user_ns)
-> are export-gpl, this is enough to make it easy for tracer integration
-Thank you for your friendly elaboration and suggestion!
-I will update this part based on your suggestion in next version.
+Basically such a check guarantee that you cannot tell anything
+about a non x mapping not related to ELF.
 
-Thanks,
-Hongbo
-> and it keeps the tracepoint caller code footprint to a minimum.
 > 
-> The TRACE_EVENT definitions are specific to the subsystem anyway,
-> so I don't think it matters that the TRACE_EVENT() need to access
-> the dentry and attr structures.
+> 2) What sort of exploitation are we talking about here? it's not
+> enough for backing file to have correct 4 starting bytes (0x7f"ELF"),
+> we still have to find correct PT_NOTE segment, and .note.gnu.build-id
+> section within it, that has correct type (3) and key name "GNU".
+
+There's a timing side channel, you can tell where the checks
+stop. I don't think it's a big problem, but it's still better to avoid
+such leaks in the first place as much as possible.
+
 > 
-> So I agree with Steven's suggestion. However, just as a precision,
-> I suspect it will have mainly an impact on code size, but not
-> necessarily on icache footprint, because it will shrink the code
-> size within the tracepoint unlikely branch (cold instructions).
-> 
-> Thanks,
-> 
-> Mathieu
-> 
->>
->> Thanks,
->> Hongbo
->>
->>>
->>> -- Steve
->>>
-> 
+> I'm trying to understand what we are protecting against here.
+> Especially that opening /proc/<pid>/maps already requires
+> PTRACE_MODE_READ permissions anyways (or pid should be self).
+
+While that's true for the standard security permission model there might
+be non standard ones where the relationship is more complicated.
+
+-Andi
 
