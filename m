@@ -1,110 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-22958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED11F92435D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 18:13:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2C9924371
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 18:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AD4E1C21B90
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 16:13:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651351F2437E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 16:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C701BD037;
-	Tue,  2 Jul 2024 16:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845F31BD4FC;
+	Tue,  2 Jul 2024 16:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="GTze8lmn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWe8+4vr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3977D1BD005;
-	Tue,  2 Jul 2024 16:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CB615B11D;
+	Tue,  2 Jul 2024 16:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719936826; cv=none; b=ZvA8N6YhSuxMZZ18AEwXMoK3Ql7Blf5DC7qDNcSe3MBlzgZm+9MLq6ahNmjtSpcbnqhWgR80vro8EsRvsmMTYPfKhyZvYVKoQHye3zQ5n/I1yoShjxAG5gzx+OcRDk1UtqBSIcVA7I7KPhAK+xBCwsyaIqpNNr8v301rc4c6Hkk=
+	t=1719937146; cv=none; b=cLayFQonFoT0r5aV3qNq25Enrs6c0UqngtzbWhg4qUmnEaNcOorJWP9CgyRRe3gpnNUDNooWGm4myuJs0dRAEeow/foi4gVhDyrYVDXrdz2Npzt2ykxIgiNrYi2NWqUvHs67+wFrlFAml3bCqP5T90kQmt9XIKwYDXg7Ss8Nchc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719936826; c=relaxed/simple;
-	bh=1NPPosvEoa7YEfb3YTpwtuFz3L6/xLc2gKJ9TAc2y6Q=;
+	s=arc-20240116; t=1719937146; c=relaxed/simple;
+	bh=f/Lt6TGAChQhJDo1d9S1C9KYvC+2NSkWdhgXVkkdLDw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8FcZQrUUi+q5eRYTIBrSXD/XB0b8aP7d949jfW45dzEKIQXP2Sb8zYGjAsFpa7HXTkxNACTwF9Z8EYKOGoqREnIR9NGvO3gnBMUc7xxAW4vVnmD9CDsrhhzhqHe21dlb+B+zL/4qs/ND1QfLPvns3ML6XOsUoHCclR++hF7ygU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=GTze8lmn; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WD7Hy1Dr1z9sST;
-	Tue,  2 Jul 2024 18:13:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1719936814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oA2Wr6VOMzgFZ0qUaQebVyDCKpm9ZO191hQv44sz+Fs=;
-	b=GTze8lmnNNlFCHrThB/+rsNsw9R8Twukx9Hl2tJi+qQCgI2mMsh/6+J0lnPan0kqT7d0XQ
-	i6zh7ni3jyRVUt67LghCN9oST2X3rtk+66m9JqtltYVdQ4A9f+kGM85FgdKhBqlVam9dn8
-	5bkKl55oquwI57fbnrw0THmxQDb7sn0ckmNc7jXyGg0uakz9HpUoq+D0kBtY/P/0XStobb
-	v5xK0h+Oy/fTOPu/AzF4QsQjYimxfrFo6Nogyk4PWMk5ugxFCWbht1K3WYl+JQvIAAUsmJ
-	orz3r2CEWAiVfMEHP7Gb5qJ1EH9b59z3ibtoOyBLfzODISoZsBsKbzZh1Snc1A==
-Date: Tue, 2 Jul 2024 16:13:29 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
-	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240702161329.i4w6ipfs7jg5rpwx@quentin>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-7-kernel@pankajraghav.com>
- <20240702074203.GA29410@lst.de>
- <20240702101556.jdi5anyr3v5zngnv@quentin>
- <20240702120250.GA17373@lst.de>
- <20240702140123.emt2gz5kbigth2en@quentin>
- <20240702154216.GA1037@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEljVPxeReaao268QOPZbdgc3ZoiY1hmRDBA6GIKVJhDJq/lMLrmXbZaR7/iFna54t18AQrAsxcRybtuwExHGX+KYeFJXyNnaKsD/3lOnMNuDMAOk5BYKFPN71epdFWpnEXKNV/PbgHhGHvymCdygI6yZ4LW7eTwYTlmPE4A5ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWe8+4vr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47053C116B1;
+	Tue,  2 Jul 2024 16:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719937146;
+	bh=f/Lt6TGAChQhJDo1d9S1C9KYvC+2NSkWdhgXVkkdLDw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oWe8+4vrZ82aLpFmQ/xxCaJvhq1zmz0VUCOjwx+pO4joEWaTNHfWjLRMGZoaPiVDt
+	 budCT+VnEcgyoSf2Ab8MdsbVsBFm77eny8iEcIwJQ8JyEGL4+bTuUEjbENlNcYIpp/
+	 gL3SnCOgO6dZZl8vgmgZ762DzwQodDtcRzBW6kItR6KjM163XwjU2Lgn7iM5pgI6/7
+	 XBsh3uDkaMZxoYbbDoDEcrrpMrlrSldQO/fACxHAu6ntHbLUVC4HHK5mhcmY/NpEBF
+	 XVA4ga3Rk7WIXoZ0aUPw+mEDsMkvhR1DhZmouNn2Tfi29hI2nY5C6cVQ0Pr5Mz7q2M
+	 Il08gNdV6QXbQ==
+Date: Tue, 2 Jul 2024 18:18:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Chandan Babu R <chandan.babu@oracle.com>, 
+	Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
+Message-ID: <20240702-inwiefern-beraten-cc4b5efce8ef@brauner>
+References: <20240701224941.GE612460@frogsfrogsfrogs>
+ <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
+ <ZoOuSxRlvEQ5rOqn@infradead.org>
+ <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
+ <20240702101902.qcx73xgae2sqoso7@quack3>
+ <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
+ <ZoPs0TfTEktPaCHo@infradead.org>
+ <09ad82419eb78a2f81dda5dca9caae10663a2a19.camel@kernel.org>
+ <ZoPvR39vGeluD5T2@infradead.org>
+ <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240702154216.GA1037@lst.de>
-X-Rspamd-Queue-Id: 4WD7Hy1Dr1z9sST
+In-Reply-To: <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
 
-On Tue, Jul 02, 2024 at 05:42:16PM +0200, Christoph Hellwig wrote:
-> On Tue, Jul 02, 2024 at 02:01:23PM +0000, Pankaj Raghav (Samsung) wrote:
-> +static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-> >                 loff_t pos, unsigned len)
-> >  {
-> >         struct inode *inode = file_inode(dio->iocb->ki_filp);
-> >         struct bio *bio;
-> >  
-> > +       if (!len)
-> > +               return 0;
-> >         /*
-> >          * Max block size supported is 64k
-> >          */
-> > -       WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
-> > +       if (len > ZERO_PAGE_64K_SIZE)
-> > +               return -EINVAL;
+On Tue, Jul 02, 2024 at 08:21:42AM GMT, Jeff Layton wrote:
+> On Tue, 2024-07-02 at 05:15 -0700, Christoph Hellwig wrote:
+> > On Tue, Jul 02, 2024 at 08:09:46AM -0400, Jeff Layton wrote:
+> > > > > corrupt timestamps like this?
+> > > > 
+> > > > inode_set_ctime_to_ts should return an error if things are out of
+> > > > range.
+> > > 
+> > > Currently it just returns the timespec64 we're setting it to (which
+> > > makes it easy to do several assignments), so we'd need to change
+> > > its
+> > > prototype to handle this case, and fix up the callers to recognize
+> > > the
+> > > error.
+> > > 
+> > > Alternately it may be easier to just add in a test for when
+> > > __i_ctime == KTIME_MAX in the appropriate callers and have them
+> > > error
+> > > out. I'll have a look and see what makes sense.
+> > 
+> > The seems like a more awkward interface vs one that explicitly
+> > checks.
+> > 
 > 
-> The should probably be both WARN_ON_ONCE in addition to the error
-> return (and ZERO_PAGE_64K_SIZE really needs to go away..)
+> Many of the existing callers of inode_ctime_to_ts are in void return
+> functions. They're just copying data from an internal representation to
+> struct inode and assume it always succeeds. For those we'll probably
+> have to catch bad ctime values earlier.
+> 
+> So, I think I'll probably have to roll bespoke error handling in all of
+> the relevant filesystems if we go this route. There are also
 
-Yes, I will rename it to ZERO_PAGE_SZ_64K as you suggested.
-> 
-> > +                       ret = iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
-> 
-> Overly lone line here.
-> 
-> Otherwise this looks good.
-> 
+Shudder, let's try and avoid that.
 
