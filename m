@@ -1,134 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-22946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AB0923F02
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 15:30:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD1A0923F67
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 15:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BAEF1F227BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 13:30:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E055283EDD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 13:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738D71B4C52;
-	Tue,  2 Jul 2024 13:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FB91B4C55;
+	Tue,  2 Jul 2024 13:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="KZaCKKWd"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3xZmkLP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25588D266;
-	Tue,  2 Jul 2024 13:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F20D38F83;
+	Tue,  2 Jul 2024 13:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719927021; cv=none; b=Z/n0UI2OsUgKHjBNG7aefAUtQ1XwIeyxVQFLswrQf91N6ZgmF2d2nIc7IZUrZVztxx0Gw+qRSNLly1gJKcLQACpzvdQJAGkf8QgXjJjsYdAKfc5cj1x/3X5C5F4CXTFoZjATisEMpQ7Ch937UTeENY680hVg2i7Js8oQdeQUPWw=
+	t=1719928072; cv=none; b=kPTlhllrjlSSYSoRt2UcJQbqUwajfMV/JSdUnRNh7dacEBOSihDx55hVswMglOHVqmYPjltwP7OVA/e0TuOdwrVsiwCuNrtijZVt6GrM4kzfPfTs1os14ezxM/DgBYFSI69pFo1z1qQUGAff94snArQzaZnoaC8YsG33ni+z/Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719927021; c=relaxed/simple;
-	bh=07wJLNcwr+baGCJCP/F1XaeLBINuK7arxryuHcuoQZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hPHrR3eJNU0r+MidayhzPGDNBHHIlS6h+TCBhfbufyHgP6W8wvi8UNgsTVi7wy+Wbet25pcKJxbUwBvWr/4/+XH2ndCEp+mWX7SlL/MkcGrld+t5FosNN8GfpkuTg37+t6cBikOZsUh+pKxwoDvZj0MXAcCDFNQZgufVWhVxakE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=KZaCKKWd; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1719927009;
-	bh=07wJLNcwr+baGCJCP/F1XaeLBINuK7arxryuHcuoQZo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KZaCKKWdch3pNxrVCWDa7yvlE7UQYrYmA7qiMog304SXH+ChN7hdn7Lm4sZFyrMdT
-	 U17gpRn8BFdTpRULsxRe+jB55vrZKQnxkbCUybDvenRF/FLjDSmp38dK5TCy//m486
-	 mmN/tuxAkMOuwBuePXqTsYyqRCPqxJ/KXuNvpKCM8oidbyPaYcqvlZJcTs+ss9uSLX
-	 /AqDhWbUbY92AwOIhPUlFH323mgVa/fgEQz8xb/AngSCHm2/xAsLPEXpTPOmDan3zs
-	 aPRNUnEKPoFAH2QRnX7AOkIR/ykU+9EuPH3xEfTVg+Fhr3mdWBk4XvrRJHmzbP4Q4B
-	 0+dTeqleJuVhw==
-Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WD3gP5sHbz1879;
-	Tue,  2 Jul 2024 09:30:09 -0400 (EDT)
-Message-ID: <8015a0bf-39e2-406c-8f61-db87a40a71a3@efficios.com>
-Date: Tue, 2 Jul 2024 09:30:30 -0400
+	s=arc-20240116; t=1719928072; c=relaxed/simple;
+	bh=wTAGGPz5RZwwOrDI5MiT8Qlab3A7rVI4fdnHkNtqt+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eAjl8ubzpkreyFYe0ulGRENJpNRGXfqZ2pWm+tTrDcc2hSjLeK6Ii+D6uGPwAM19/qH1t/zSEWMfSjd6/oFaQwGurHcQ3gGu4tK3pyDZBs2o/W9f/ECm72x0SqaICU8LVnkrBp6cZlTRYnf8clZBDhYnqJ6dmv/uedrrTrFqEYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3xZmkLP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E538C116B1;
+	Tue,  2 Jul 2024 13:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719928071;
+	bh=wTAGGPz5RZwwOrDI5MiT8Qlab3A7rVI4fdnHkNtqt+k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=X3xZmkLPtLvQZTk7vM6AQznn+4LFam3xDpSzHKw0e1bwGxES2LixXIq2Vn66f4nHF
+	 ck6Ls11PXT3lDzNNU0397TrTzbYmxdfcCsXd9UlRaM79ZerIczGEOmmiIXmR/2GypS
+	 M38afacAV6x27r1gtlPPVMuchzKHTbBX+wLFFLqedGKn/+vpW5S8NnHfOgxhfjdBho
+	 OiD6npM9IMLJZAOdg/Vsoi05NbPodY5krZZNoeyOXKpO8esDwh1rww7RCDBPHclPIT
+	 WA3x6NBxNt726ERYKkVj1DR960Hdazx0n6xEc96RwYSTGA75OZtPUTXnP3iEOvP4f8
+	 xKGCIS2aoP73Q==
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: chandanbabu@kernel.org
+Cc: Christoph Hellwig <hch@lst.de>, 4@web.codeaurora.org,
+	cdlscpmv@gmail.com, dchinner@redhat.com, djwong@kernel.org,
+	haowenchao22@gmail.com, hch@lst.de, hsiangkao@linux.alibaba.com,
+	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, llfamsec@gmail.com
+Subject: [ANNOUNCE] xfs-linux: for-next updated to 3ba3ab1f6719
+Date: Tue, 02 Jul 2024 19:16:47 +0530
+Message-ID: <8734orc3cr.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] hugetlbfs: use tracepoints in hugetlbfs functions.
-To: Hongbo Li <lihongbo22@huawei.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: muchun.song@linux.dev, mhiramat@kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20240612011156.2891254-1-lihongbo22@huawei.com>
- <20240612011156.2891254-3-lihongbo22@huawei.com>
- <20240701194906.3a9b6765@gandalf.local.home>
- <1eca1fcd-5479-47b2-b7ba-eb4027135af2@huawei.com>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <1eca1fcd-5479-47b2-b7ba-eb4027135af2@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 2024-07-02 07:55, Hongbo Li wrote:
-> 
-> 
-> On 2024/7/2 7:49, Steven Rostedt wrote:
->> On Wed, 12 Jun 2024 09:11:56 +0800
->> Hongbo Li <lihongbo22@huawei.com> wrote:
->>
->>> @@ -934,6 +943,12 @@ static int hugetlbfs_setattr(struct mnt_idmap 
->>> *idmap,
->>>       if (error)
->>>           return error;
->>> +    trace_hugetlbfs_setattr(inode, dentry->d_name.len, 
->>> dentry->d_name.name,
->>> +            attr->ia_valid, attr->ia_mode,
->>> +            from_kuid(&init_user_ns, attr->ia_uid),
->>> +            from_kgid(&init_user_ns, attr->ia_gid),
->>> +            inode->i_size, attr->ia_size);
->>> +
->>
->> That's a lot of parameters to pass to a tracepoint. Why not just pass the
->> dentry and attr and do the above in the TP_fast_assign() logic? That 
->> would
->> put less pressure on the icache for the code part.
-> 
-> Thanks for reviewing!
-> 
-> Some logic such as kuid_t --> uid_t might be reasonable obtained in 
-> filesystem layer. Passing the dentry and attr will let trace know the 
-> meaning of structure, perhaps tracepoint should not be aware of the
-> members of these structures as much as possible.
+Hi folks,
 
-As maintainer of the LTTng out-of-tree kernel tracer, I appreciate the
-effort to decouple instrumentation from the subsystem instrumentation,
-but as long as the structure sits in public headers and the global
-variables used within the TP_fast_assign() logic (e.g. init_user_ns)
-are export-gpl, this is enough to make it easy for tracer integration
-and it keeps the tracepoint caller code footprint to a minimum.
+The for-next branch of the xfs-linux repository at:
 
-The TRACE_EVENT definitions are specific to the subsystem anyway,
-so I don't think it matters that the TRACE_EVENT() need to access
-the dentry and attr structures.
+	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-So I agree with Steven's suggestion. However, just as a precision,
-I suspect it will have mainly an impact on code size, but not
-necessarily on icache footprint, because it will shrink the code
-size within the tracepoint unlikely branch (cold instructions).
+has just been updated.
 
-Thanks,
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.
 
-Mathieu
+The new head of the for-next branch is commit:
 
-> 
-> Thanks,
-> Hongbo
-> 
->>
->> -- Steve
->>
+3ba3ab1f6719 xfs: enable FITRIM on the realtime device
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+13 new commits:
 
+Christoph Hellwig (6):
+      [8626b67acfa4] xfs: move the dio write relocking out of xfs_ilock_for_iomap
+      [29bc0dd0a2f6] xfs: cleanup xfs_ilock_iocb_for_write
+      [9092b1de35a4] xfs: simplify xfs_dax_fault
+      [6a39ec1d3944] xfs: refactor __xfs_filemap_fault
+      [4e82fa11fbbc] xfs: always take XFS_MMAPLOCK shared in xfs_dax_read_fault
+      [4818fd60db5f] xfs: fold xfs_ilock_for_write_fault into xfs_write_fault
+
+Darrick J. Wong (1):
+      [3ba3ab1f6719] xfs: enable FITRIM on the realtime device
+
+Gao Xiang (1):
+      [d40c2865bdbb] xfs: avoid redundant AGFL buffer invalidation
+
+John Garry (2):
+      [d3b689d7c711] xfs: Fix xfs_flush_unmap_range() range for RT
+      [f23660f05947] xfs: Fix xfs_prepare_shift() range for RT
+
+Wenchao Hao (1):
+      [a330cae8a714] xfs: Remove header files which are included more than once
+
+lei lu (2):
+      [fb63435b7c7d] xfs: add bounds checking to xlog_recover_process_data
+      [0c7fcdb6d06c] xfs: don't walk off the end of a directory data block
+
+Code Diffstat:
+
+ fs/xfs/libxfs/xfs_alloc.c      |  28 +--------
+ fs/xfs/libxfs/xfs_alloc.h      |   6 +-
+ fs/xfs/libxfs/xfs_dir2_data.c  |  31 ++++++++--
+ fs/xfs/libxfs/xfs_dir2_priv.h  |   7 +++
+ fs/xfs/libxfs/xfs_trans_resv.c |   1 -
+ fs/xfs/scrub/quota_repair.c    |   1 -
+ fs/xfs/xfs_bmap_util.c         |  22 ++++---
+ fs/xfs/xfs_discard.c           | 303 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------
+ fs/xfs/xfs_extfree_item.c      |   4 +-
+ fs/xfs/xfs_file.c              | 141 ++++++++++++++++++++++++--------------------
+ fs/xfs/xfs_handle.c            |   1 -
+ fs/xfs/xfs_iomap.c             |  71 +++++++++++-----------
+ fs/xfs/xfs_log_recover.c       |   5 +-
+ fs/xfs/xfs_qm_bhv.c            |   1 -
+ fs/xfs/xfs_trace.c             |   1 -
+ fs/xfs/xfs_trace.h             |  29 +++++++++
+ 16 files changed, 476 insertions(+), 176 deletions(-)
 
