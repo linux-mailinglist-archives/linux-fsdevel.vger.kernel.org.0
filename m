@@ -1,140 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-22911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4ED91EDFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 06:58:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B4091EE1D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 07:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E41DE281B4B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 04:58:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 043171C22428
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 05:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4777543AC1;
-	Tue,  2 Jul 2024 04:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cip4jZJJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB62A7D405;
+	Tue,  2 Jul 2024 05:04:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD081F;
-	Tue,  2 Jul 2024 04:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FBE78283
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jul 2024 05:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719896292; cv=none; b=fHaioBv5amDzXEfeLEM5oMuONHxo/I46Z5xSJvpa6umqHkr6j6GyxHggm2AfdlfL4LALA3L7fW0tNywfGbK6mVniwuQCIveZJxj6gHR0pEqjU5RgyZPsDiPO7dyQSwRb73FpRewBnvwtP3ShaAYA/0yf40MJBravAElOXCU+o2M=
+	t=1719896676; cv=none; b=WBE/eIGedYh5LCHeuJo2hWQs9xkLdhgM4nzis4io316INdxGknecJFkPxerfY9Nq6+ZGLa3wE6M3LCYdK+SH+KH7iSpo7O5pQzEBL3W4me3yhVSv/dFSIkda4G3YQfstXZk1I0NLfO+M4BkN09TLhIHAcH9LSiYjZSZPhucGBHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719896292; c=relaxed/simple;
-	bh=uO6STUc14T56dIESpMhyWi2neZ9u9dDvyMOL6sjEZds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EWgNfKKlTThVk6SGRNiIlL/u3SGt0bxGRmTO1IZM2CiUS5dDq+wDEWYncBqANhZh1UMuVBia3MlrCgYO4qH2GWY07Sea10jZ3aGYecfazgUqfVLMM7XX3Dh30myYkqRbJXj2yxCcDBW4Q8zklczJUuPLVhUMLUDqb9qEiIW96TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cip4jZJJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5BD0C116B1;
-	Tue,  2 Jul 2024 04:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719896292;
-	bh=uO6STUc14T56dIESpMhyWi2neZ9u9dDvyMOL6sjEZds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cip4jZJJ9p02SzpcGhe7EPhkxUeJGL6pnLoJRRlXPO2cQm+vqB0Iqvq21bMrpwgRD
-	 Ucbkn45OK7CTkhkfmwTqg+ZT48oEOrUcKLE6012ffh7J2l1SY7SFQxa6lv/4EnrQlg
-	 9RF5SqwkXfdSnjxHyfkZH3uI1FkHC1rWBJ3HtLYshtGhFRIPix627DlxTpnzqhTLXL
-	 iaB+FZR9zev/E2+4O6CoT0Wu87W4LwKXyQdqZQlwwox2pHxf9BN/G+ZI3S70BYJSnk
-	 uo48R0Z4IJpNWX2cIN1lhV0ogAc8r038vVX4OPbzyYC521Gbeq2D19p33+oJ5dwqow
-	 rxZTMTAjv0u2Q==
-Date: Tue, 2 Jul 2024 06:58:06 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Ian Kent <ikent@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, raven@themaw.net, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Larsson <alexl@redhat.com>, Eric Chanudet <echanude@redhat.com>
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-Message-ID: <20240702-sauna-tattoo-31b01a5f98f6@brauner>
-References: <20240626201129.272750-2-lkarpins@redhat.com>
- <20240626201129.272750-3-lkarpins@redhat.com>
- <Znx-WGU5Wx6RaJyD@casper.infradead.org>
- <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <cfda4682-34b4-462c-acf6-976b0d79ba06@redhat.com>
- <20240628111345.3bbcgie4gar6icyj@quack3>
+	s=arc-20240116; t=1719896676; c=relaxed/simple;
+	bh=eqUbeInsgJ7Kos8B02CBh2meSk5+kyHZ4Z2mHG+Ax9U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZEjaUJtVaw16oUr3utdd7VNvT+39HQoEgYiBNWILq7b7QgCwe0WvTmao7wAuQyo9lhM3sj4vxpGu6jXNt/0z5I38cZ0M1G2GcZ2HavEMUddat9QeTktjeR+mBNz+DrJTHng9fUXeqLRmut9bk2VXDLmKZpnkqtv5gO061yhxWmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id A32752055FA3;
+	Tue,  2 Jul 2024 14:04:32 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 46254Vak060437
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 14:04:32 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 46254VNZ346533
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 14:04:31 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 46254VK9346532;
+	Tue, 2 Jul 2024 14:04:31 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: Eric Sandeen <sandeen@sandeen.net>, linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH 2/2 V2] fat: Convert to new mount api
+In-Reply-To: <ef8519df-a1f4-4f90-9e42-0c8d91bd982d@redhat.com> (Eric Sandeen's
+	message of "Mon, 1 Jul 2024 15:20:17 -0500")
+References: <fe6baab2-a7a0-4fb0-9b94-17c58f73ed62@redhat.com>
+	<2509d003-7153-4ce3-8a04-bc0e1f00a1d5@redhat.com>
+	<72d3f126-ac1c-46d3-b346-6e941f377e1e@redhat.com>
+	<87v81p8ahf.fsf@mail.parknet.co.jp>
+	<216b2317-cec3-4cfd-9dc2-ed9d29b5c099@sandeen.net>
+	<ef8519df-a1f4-4f90-9e42-0c8d91bd982d@redhat.com>
+Date: Tue, 02 Jul 2024 14:04:31 +0900
+Message-ID: <87r0cc8jvk.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240628111345.3bbcgie4gar6icyj@quack3>
+Content-Type: text/plain
 
-On Fri, Jun 28, 2024 at 01:13:45PM GMT, Jan Kara wrote:
-> On Fri 28-06-24 10:58:54, Ian Kent wrote:
-> > 
-> > On 27/6/24 19:54, Jan Kara wrote:
-> > > On Thu 27-06-24 09:11:14, Ian Kent wrote:
-> > > > On 27/6/24 04:47, Matthew Wilcox wrote:
-> > > > > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
-> > > > > > +++ b/fs/namespace.c
-> > > > > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
-> > > > > >    static DECLARE_RWSEM(namespace_sem);
-> > > > > >    static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-> > > > > >    static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > > > > > +static bool lazy_unlock = false; /* protected by namespace_sem */
-> > > > > That's a pretty ugly way of doing it.  How about this?
-> > > > Ha!
-> > > > 
-> > > > That was my original thought but I also didn't much like changing all the
-> > > > callers.
-> > > > 
-> > > > I don't really like the proliferation of these small helper functions either
-> > > > but if everyone
-> > > > 
-> > > > is happy to do this I think it's a great idea.
-> > > So I know you've suggested removing synchronize_rcu_expedited() call in
-> > > your comment to v2. But I wonder why is it safe? I *thought*
-> > > synchronize_rcu_expedited() is there to synchronize the dropping of the
-> > > last mnt reference (and maybe something else) - see the comment at the
-> > > beginning of mntput_no_expire() - and this change would break that?
-> > 
-> > Interesting, because of the definition of lazy umount I didn't look closely
-> > enough at that.
-> > 
-> > But I wonder, how exactly would that race occur, is holding the rcu read
-> > lock sufficient since the rcu'd mount free won't be done until it's
-> > released (at least I think that's how rcu works).
-> 
-> I'm concerned about a race like:
-> 
-> [path lookup]				[umount -l]
-> ...
-> path_put()
->   mntput(mnt)
->     mntput_no_expire(m)
->       rcu_read_lock();
->       if (likely(READ_ONCE(mnt->mnt_ns))) {
-> 					do_umount()
-> 					  umount_tree()
-> 					    ...
-> 					    mnt->mnt_ns = NULL;
-> 					    ...
-> 					  namespace_unlock()
-> 					    mntput(&m->mnt)
-> 					      mntput_no_expire(mnt)
-> 				              smp_mb();
-> 					      mnt_add_count(mnt, -1);
-> 					      count = mnt_get_count(mnt);
-> 					      if (count != 0) {
-> 						...
-> 						return;
->         mnt_add_count(mnt, -1);
->         rcu_read_unlock();
->         return;
-> -> KABOOM, mnt->mnt_count dropped to 0 but nobody cleaned up the mount!
->       }
+Eric Sandeen <sandeen@redhat.com> writes:
 
-Yeah, I think that's a valid concern. mntput_no_expire() requires that
-the last reference is dropped after an rcu grace period and that can
-only be done by synchronize_rcu_*() (It could be reworked but that would
-be quite ugly.). See also mnt_make_shortterm() caller's for kernel
-initiated unmounts.
+> On 7/1/24 12:35 PM, Eric Sandeen wrote:
+>> On 7/1/24 9:15 AM, OGAWA Hirofumi wrote:
+>>> Eric Sandeen <sandeen@redhat.com> writes:
+> I don't think that will work.
+>
+> For example, for the allow_utime adjustment...
+>
+> Before parsing begins, allow_utime is defaulted to -1 (unset) and
+> fs_dmask is defaulted to current_umask()
+>
+> If we put the 
+>
+> +	if (opts->allow_utime == (unsigned short)-1)
+> +		opts->allow_utime = ~opts->fs_dmask & (S_IWGRP | S_IWOTH);
+>
+> test at the bottom of parse_param, then this sequence of parsing:
+>
+> ("mount -o fs_uid=42,fs_dmask=0XYZ")
+>
+> fs_uid=42
+>  --> sets opts->allow_utime to (~opts->fs_dmask & (S_IWGRP | S_IWOTH))
+>      where fs_dmask is default / current_umask()
+> fs_dmask=0XYZ
+>  --> changes fs_dmask from default, but does not update allow_utime which
+>      was set based on the old fs_dmask
+>
+> leads to different results than:
+>
+> ("mount -o fs_dmask=0XYZ",fs_uid=42)
+>
+> fs_dmask=0XYZ
+>  --> changes fs_dmask from the default
+>      updates allow_utime based on this user-specified fs_dmask rather than default
+> fs_uid=42
+>  --> allow_utime is now set, so no further changes are made
+>
+> IOWS, the final allow_utime value may differ depending on the order of option
+> parsing, unless we wait until parsing is complete before we inspect and adjust it.
+>
+> dhowells did, however, suggest that perhaps these adjustments should generally
+> be done in get_tree rather than fill_super, so I'll give that a shot.
+>
+> Sound ok?
+
+Ah, you are right. I was misread how parser works. And then your
+original may be readable than get_tree.
+
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
