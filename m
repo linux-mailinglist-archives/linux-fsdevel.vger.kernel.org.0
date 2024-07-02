@@ -1,154 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-22964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF1292442E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 19:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C148924433
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 19:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736F91F22008
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 17:07:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5DDA1F21DD4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 17:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D431BE242;
-	Tue,  2 Jul 2024 17:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A181BE23D;
+	Tue,  2 Jul 2024 17:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="CTTpYiNh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YA82QPSJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N7OwGm9I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C444178381;
-	Tue,  2 Jul 2024 17:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E101BE235
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jul 2024 17:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719940038; cv=none; b=Sy7wnvDoHPYHKawLcLRWjPOuLKZBSXCAIEdZyYHJR+nhpBmpKyTlyv1jsmEHnOKkQKnTe+2xWLCEc31JcjiX+YH2MY9ORXGVZvjkxwI2xfQ7DRy/4FExDeoAi6Kl5zQEsr202xkmCHluzcQzOuIJg0RHo+V927S3nNyzGQwb07Q=
+	t=1719940048; cv=none; b=OytYRDEdHnnRs6/wqC99DS/NxGu6RIml69rSMibQXTHQeYiKau121Pfc0xS9b5ypFB+uiRPS7Erh369T3uwnJXDNICS7lb+Zp4fluW6dTpNYJgAR2qQwXQVar1yBDZIdxg+2ECQW8sC+Gt2J0ZC58hw+IfOx038nqJBwh057sac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719940038; c=relaxed/simple;
-	bh=FQwg6a8nMdp1BsXF1goaiUjznOr3KBtRKTTh98UR/lM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=rhZ42ufg2qQLvmWv7/0rHGG0UzXYg9XrQ1JdbWk1jwgzp1VSFWeNKOX/cq+mt0rEp1u8MKNqAoVt6k3S/wfJUkk2+QHV4Q/LsJbm6KlrGUYBJtRCtM5eu5o3Va1IRH/DUoY0T5LUrgtdDrh1xT4NjlAnHTlL1chFVP0+Mz6EpDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=CTTpYiNh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YA82QPSJ; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id B737E1380262;
-	Tue,  2 Jul 2024 13:07:15 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 02 Jul 2024 13:07:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1719940035;
-	 x=1720026435; bh=02lqCeohhDRoeVg0KpfzdqcfaHWT7DV6FXoK/ZsOGDU=; b=
-	CTTpYiNh2+vqYbxoHmNRAOgDMs157QY/20a+zn0hbHZ/0BO5Oc4CkLJssMVI6rMw
-	sXryWlTUzM3ijsSC0piB5nzqbZDy4ZfLM6ssHloiLPLD2lmBsd2+rHiFA8vfwjXF
-	Frn9so4Vwbgl1tQonJEiEsX/Qv/ngCkpwO5MGm9e5stix3WgkME9ZZSnKyGZx0b7
-	cU2Zv2OlrYte8mcc3BuoCwZPiTO8I2luRwHD6i0RjTsu8FzG4lZxOMDtDJrtlgRY
-	WAr31O0JCryI6S32ZiKPvV2pTNF+R84Sf+bbOVmI/qLrtTl8hcLC41zP+d3dv4ch
-	TxPGjf/DpVNTr3gvdINuHA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719940035; x=
-	1720026435; bh=02lqCeohhDRoeVg0KpfzdqcfaHWT7DV6FXoK/ZsOGDU=; b=Y
-	A82QPSJkwu1JEznu+WPK3XsFoDLipQJZwigGRTPV0cuTHEDFKSBheA2T4PxHz1Ql
-	YcUZg7Br33Ehj/sXL6vMen7Sy1T9ei5v8jN9GFs1TM/+or4gEbPyuIwSoeVYYADM
-	J7Nk5KwBjm0QCJmyTrrDDcvMkXo3y5aPts2m1X2ylLH3rLtn3wlbwJ3nu6Ncy4J9
-	vsrQqxUsK9+DGw4Zp2y5c0ip7qdpMRy/4TQQv5V8tL+j0hnbJ6O0i7dKpPDoQ97v
-	GGN7IywolM3Sd7Q9/vLv7cPOmootTvFEGwaAqo5GGFfyYy6H3U0z6H4qnT7nkFvH
-	pRe7UGUg7UU2OY/cYPczw==
-X-ME-Sender: <xms:wjOEZr2uB0qim3zm7640K329vCwA47OaIp2UJyBSNNnAqFqRuwT0rQ>
-    <xme:wjOEZqFQdbAPAzmOOfak2VeBMbb7v_5Tbu1uFCc17293DgbQHQIMTOyaUbb8GvuL9
-    dATNpJOhOP9I6fs_TY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgddutdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:wjOEZr5SMHIz7DCEE-mfkPvOaQqCI3ivt-DpU3uILf0MKkyWuxlvsA>
-    <xmx:wjOEZg1b9ViA-A6rdu85ok19R8zbDdh8PBv1ZJzBeaCtij7NW-dbCw>
-    <xmx:wjOEZuE2hcK4KlR8yu0KqUxL-DLKRbfsNhxd78kCiKY9c4AkwNQdlg>
-    <xmx:wjOEZh8gWbgct-iLqfDifofA3NDZZZC1BeWyO2duTglo-m0EEl2EoQ>
-    <xmx:wzOEZp94g-39Q7Dr71ulB24ZRP8O483QGADs4er7MnppTCiMYDzRE31a>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id B8572B60092; Tue,  2 Jul 2024 13:07:14 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	s=arc-20240116; t=1719940048; c=relaxed/simple;
+	bh=N4gDA5S7lJAbOfeUMimoJ9SkSKSwizRZZeNxzmNAWmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JLfxAkd2M5BgvcpujL09BV+loffAgWzYcxmFu1XfnZwhqOLu684p5DHB9GnSQbpASWsshTmN8fnGvZCfe+9qdvDHvFW/Rd4amszM8s24em5cNxc7Ewu0ue/9f47pmuqpwH32/0zl8chGI6i5zisI14cFdfj/XU7SOa2NkikbMqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N7OwGm9I; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719940045;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=W2w6d6BZT5CE4wYHUMrSEJ6v69CXoZLQTv1iZaggPa0=;
+	b=N7OwGm9IU68xVs+aIizPrTONhZKLGgP9dvAewILaGd2PIoVHX3XqaLyq8qpaDcS/2Ypbje
+	zLoWddnT0vxEqY34pYus5gJ/dBakS25+dBaNHxDc9yRFz22DrFDxJ8FDIlAeIEPyyoaToS
+	xZXjV0VNkhsRhlJKEjlW1bUJ/pHG62s=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-272-583Dd_QzOzioYo83tSd_Pg-1; Tue,
+ 02 Jul 2024 13:07:22 -0400
+X-MC-Unique: 583Dd_QzOzioYo83tSd_Pg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2AFA71955DA1
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jul 2024 17:07:21 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.16.117])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 695A819560AA;
+	Tue,  2 Jul 2024 17:07:20 +0000 (UTC)
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Ian Kent <ikent@redhat.com>
+Subject: [PATCH] vfs: don't mod negative dentry count when on shrinker list
+Date: Tue,  2 Jul 2024 13:07:57 -0400
+Message-ID: <20240702170757.232130-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
- <20240625110029.606032-3-mjguzik@gmail.com>
- <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
- <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
- <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
- <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
- <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
- <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
-Date: Tue, 02 Jul 2024 19:06:53 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Xi Ruoyao" <xry111@xry111.site>, "Mateusz Guzik" <mjguzik@gmail.com>,
- "Christian Brauner" <brauner@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, "Jens Axboe" <axboe@kernel.dk>,
- "Linus Torvalds" <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Jul 2, 2024, at 17:36, Huacai Chen wrote:
-> On Mon, Jul 1, 2024 at 7:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> w=
-rote:
->> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
->> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
->> >> >
->> >> > Yes, both Linus and Christian hates introducing a new AT_ flag f=
-or
->> >> > this.
->> >> >
->> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
->> >> > like
->> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
->> >> > performance
->> >> > issue and it's also audit-able by seccomp BPF.
->> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
->> >> even if statx() becomes audit-able, it is still blacklisted now.
->> >
->> > Then patch the sandbox to allow it.
->> >
->> > The sandbox **must** be patched anyway or it'll be broken on all 32=
--bit
->> > systems after 2037.  [Unless they'll unsupport all 32-bit systems b=
-efore
->> > 2037.]
->>
->> More importantly, the sandbox won't be able to support any 32-bit
->> targets that support running after 2037, regardless of how long
->> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
->> in order to be sure those don't get called by accident, the
->> fallback is immediately broken.
-> Would you mind if I restore newstat for LoongArch64 even if this patch=
- exist?
+The nr_dentry_negative counter is intended to only account negative
+dentries that are present on the superblock LRU. Therefore, the LRU
+add, remove and isolate helpers modify the counter based on whether
+the dentry is negative, but the shrinker list related helpers do not
+modify the counter, and the paths that change a dentry between
+positive and negative only do so if DCACHE_LRU_LIST is set.
 
-I still prefer not add newstat back: it's easier to
-get applications to correctly implement the statx() code
-path if there are more architectures that only have that.
+The problem with this is that a dentry on a shrinker list still has
+DCACHE_LRU_LIST set to indicate ->d_lru is in use. The additional
+DCACHE_SHRINK_LIST flag denotes whether the dentry is on LRU or a
+shrink related list. Therefore if a relevant operation (i.e. unlink)
+occurs while a dentry is present on a shrinker list, and the
+associated codepath only checks for DCACHE_LRU_LIST, then it is
+technically possible to modify the negative dentry count for a
+dentry that is off the LRU. Since the shrinker list related helpers
+do not modify the negative dentry count (because non-LRU dentries
+should not be included in the count) when the dentry is ultimately
+removed from the shrinker list, this can cause the negative dentry
+count to become permanently inaccurate.
 
-       Arnd
+This problem can be reproduced via a heavy file create/unlink vs.
+drop_caches workload. On an 80xcpu system, I start 80 tasks each
+running a 1k file create/delete loop, and one task spinning on
+drop_caches. After 10 minutes or so of runtime, the idle/clean cache
+negative dentry count increases from somewhere in the range of 5-10
+entries to several hundred (and increasingly grows beyond
+nr_dentry_unused).
+
+Tweak the logic in the paths that turn a dentry negative or positive
+to filter out the case where the dentry is present on a shrink
+related list. This allows the above workload to maintain an accurate
+negative dentry count.
+
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+---
+ fs/dcache.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 407095188f83..5305b95b3030 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -355,7 +355,7 @@ static inline void __d_clear_type_and_inode(struct dentry *dentry)
+ 	flags &= ~DCACHE_ENTRY_TYPE;
+ 	WRITE_ONCE(dentry->d_flags, flags);
+ 	dentry->d_inode = NULL;
+-	if (flags & DCACHE_LRU_LIST)
++	if ((flags & (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
+ 		this_cpu_inc(nr_dentry_negative);
+ }
+ 
+@@ -1846,7 +1846,8 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
+ 	/*
+ 	 * Decrement negative dentry count if it was in the LRU list.
+ 	 */
+-	if (dentry->d_flags & DCACHE_LRU_LIST)
++	if ((dentry->d_flags &
++	     (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
+ 		this_cpu_dec(nr_dentry_negative);
+ 	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
+ 	raw_write_seqcount_begin(&dentry->d_seq);
+-- 
+2.45.0
+
 
