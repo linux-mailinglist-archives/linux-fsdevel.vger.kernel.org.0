@@ -1,93 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-22954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612CF924258
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 17:28:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD45924286
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 17:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172881F25E00
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 15:28:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC9831C216C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 15:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22C21BC072;
-	Tue,  2 Jul 2024 15:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD881BC07A;
+	Tue,  2 Jul 2024 15:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dv89PDwc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsAWtP/5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F06B1BBBD3
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jul 2024 15:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A8D1BBBF7;
+	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719934104; cv=none; b=DGyhLaM0YsdjQ8LCE9GhWfzP5TIszKFZbt72SAueg4zqQbEeB643fbXl5850NAw37IJSq5Sy1UHXRv0zg9UzKJyLy/aSEUPxxh2FWEfgF+2hXHP9xCBigF4ouMnOM7lQWIEMxuSSfLBsW1QeqkajFWpgD/hNGADS0Adwe/WchQY=
+	t=1719934624; cv=none; b=eUBPLUmIvqa//154zDuBlHHv3QyANVdjZAiI0MDkDY+OLRPcWuUCyCDsm2iIINnlqRumNEiDG1m3CnjXNQrUfujZzRkBxcKHr2fAtMbWipIAn4gTfvWjp0/9I/sBnRuAiljpHCvqwNXF4wLcY//mpb4sVtAuwtqMpo83O4qfxrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719934104; c=relaxed/simple;
-	bh=GBExoAyi14FWumTv2b2BvBpSUJKfb1TjRsX8SUbwMmg=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=VeA7PTGWBzPEJQn2wRSa6BOIIO7Fa9RkSOR7RlQt9Wp2uDLr1MBERCGD92OK6TPV+7vak5t86Y8UeFC8cmMZX6MsxysIpj5GmNARIX5IWMd67vqLj1YVdsBr0phIdoHJzuDbpvahzXdcRxq2WYCqaMAACjZ3TBeEMvwwrlmznOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dv89PDwc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719934101;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EuKA2CrmVYsEvBv4xr49dZlBQrADeiuoiS4+oOF5a44=;
-	b=dv89PDwcpthsdv98GnFy7HDMykZrLPB3ClDbAnSGPNmv/I79zJ38rNU4CzcwdyzGT9cq+t
-	6xIv+sQlkCxP6zBvlttGspWnU/JaXrxzCLQ0KyUx2Xv6Xn6cEOUyEL78Bvnbp1jQwl1h5D
-	qiocgo6BcAh2xsx/c2eHhiDTnUMck6o=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-569-TECHW8MOMFmgITuaFfCrgQ-1; Tue,
- 02 Jul 2024 11:28:18 -0400
-X-MC-Unique: TECHW8MOMFmgITuaFfCrgQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5055419373FE;
-	Tue,  2 Jul 2024 15:28:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.111])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 163DC19560A3;
-	Tue,  2 Jul 2024 15:28:13 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240702024055.1411407-1-nichen@iscas.ac.cn>
-References: <20240702024055.1411407-1-nichen@iscas.ac.cn>
-To: Christian Brauner <brauner@kernel.org>, Chen Ni <nichen@iscas.ac.cn>
-Cc: dhowells@redhat.com, marc.dionne@auristor.com,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs: Convert comma to semicolon
+	s=arc-20240116; t=1719934624; c=relaxed/simple;
+	bh=WTGvOz3HRhLyyqq4Zh1ZbWhG2m2SzbOevLYrkdYK0Ac=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AEGpQwFeFge0kf/r6gcobrxHVsc7991C2sonuDYo/Y2L0CmqpNyStzgAhmKX/ca7Qntp3qV7Le317wz3sa6qufvA66yrgl1PEkMiem5kZHE5RXhLtAMYFrc2irQ9OTaHmXb35SfggXFm1HUkDRrQUlPgC9n0Ufw6dqNB1REbH1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsAWtP/5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30631C4AF07;
+	Tue,  2 Jul 2024 15:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719934624;
+	bh=WTGvOz3HRhLyyqq4Zh1ZbWhG2m2SzbOevLYrkdYK0Ac=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IsAWtP/5sywxnJ3K4GhdvT0CoKl6Wx7LlTBWBtriyGsqNoyMg7IhVmk61VqdXFky0
+	 T1tgw6GnFa/6AW67rk6Zv5of+0v/ZWvtFtybMOJo5nr9OjNIvvWiphf6h6o1wCpwW3
+	 fDnjF7GyUgnYd+W69xW1jKWfQ6lbEv/iYecBfpwh0q2GEG0xqRMlfmxaXx6EBVFOky
+	 KLswnROVOBB+nkybbNu8+0OjcDlue3n+kDKRk4zehl49xBfWElFENxsVl2reH2kWvQ
+	 ghJ7NPLIAls8pIe2zFxf/JYmZFhJ2pwBw5gp4rJ+xfb3RkpRumMpOS1c1QFHGYSaBW
+	 vlP8gw1m8b9MA==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a754746f3easo84863466b.0;
+        Tue, 02 Jul 2024 08:37:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWHrx04RCxaQCulqu03/KMyZg+ucrhs7rGOWL48R4HmxZDhBXqhYx35ATCBSJQvP87dC1OO0HXxfui/7sAp1p1IwGLuqsU6JjmFn3fyB7ZWN+2YVV9/K6XghzPXmQOIYNM3NeTL1Z0jv/fcpS+x9wa8a6TW6jSHJesmP9Adwb5kOmFx4N/H
+X-Gm-Message-State: AOJu0Yy+WUbNJoRVJbJvOMaqFwS9d/W8XINWd6jBOtDjUky4LuOptxww
+	qFYin6g2OoAq2+7hkFtPLKCOvZW69NoR4Tv2y3//QwH8NdhaEOHKJGW4LUCodTmY4gtBZGP6RyY
+	P7nQhP2D2OXk3+MPMNYyvNkJAvW4=
+X-Google-Smtp-Source: AGHT+IHbRwTQFTOsGOu8dsXrAJCptQY1MXaOy1rNd3Y3lFjz+6X1PC/qmnx2H22UI1+PZJ+qeXsVVq8MLpI02IBHqk0=
+X-Received: by 2002:a17:907:86a0:b0:a5c:eafb:5288 with SMTP id
+ a640c23a62f3a-a751448a596mr822072466b.31.1719934622768; Tue, 02 Jul 2024
+ 08:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3043963.1719934093.1@warthog.procyon.org.uk>
-Date: Tue, 02 Jul 2024 16:28:13 +0100
-Message-ID: <3043964.1719934093@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site> <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+In-Reply-To: <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 2 Jul 2024 23:36:50 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+Message-ID: <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Xi Ruoyao <xry111@xry111.site>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Chen Ni <nichen@iscas.ac.cn> wrote:
+Hi, Arnd,
 
-> Replace a comma between expression statements by a semicolon.
-> 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+On Mon, Jul 1, 2024 at 7:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
+> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
+> >> >
+> >> > Yes, both Linus and Christian hates introducing a new AT_ flag for
+> >> > this.
+> >> >
+> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
+> >> > like
+> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
+> >> > performance
+> >> > issue and it's also audit-able by seccomp BPF.
+> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
+> >> even if statx() becomes audit-able, it is still blacklisted now.
+> >
+> > Then patch the sandbox to allow it.
+> >
+> > The sandbox **must** be patched anyway or it'll be broken on all 32-bit
+> > systems after 2037.  [Unless they'll unsupport all 32-bit systems befor=
+e
+> > 2037.]
+>
+> More importantly, the sandbox won't be able to support any 32-bit
+> targets that support running after 2037, regardless of how long
+> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
+> in order to be sure those don't get called by accident, the
+> fallback is immediately broken.
+Would you mind if I restore newstat for LoongArch64 even if this patch exis=
+t?
 
-Acked-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/20240702024055.1411407-1-nichen@iscas.ac.cn/
+Huacai
 
-Christian: Can you add this to the VFS tree?
-
+>
+>       Arnd
 
