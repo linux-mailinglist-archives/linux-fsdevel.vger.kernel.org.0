@@ -1,153 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-22949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591DB923FCD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 16:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC5292407D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 16:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1393928993C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 14:01:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59BCA282629
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 14:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5831B5818;
-	Tue,  2 Jul 2024 14:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="dkYKV11w"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA2F1BA067;
+	Tue,  2 Jul 2024 14:21:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A0A25601;
-	Tue,  2 Jul 2024 14:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5A71DFE3;
+	Tue,  2 Jul 2024 14:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719928898; cv=none; b=is0nVpGMNIpbApyLvuY4TjVSylPbUqjyTJb2e5x7W+rLCdAOTAlmaSScv3fJB+h7sZO6QH/gOCt/2meDenBvXlwBkBhrQTPmTcvFPIPikR1lmnnjJ1u0X2eSZUfZVwhL9SESBQvxgD+TaNodMJVFUTTCbRxq2fVlmEIAahrFLsY=
+	t=1719930067; cv=none; b=LyFOQakvN+K8R/uuAK7Clv3LHZN6NyxFIJ9n8n91pczfVymEna3NZkqKmwTqZbR83nCh+tOCwjPkbXJASpahQzUuvzruT0Y0jgCoBxdhdBaOW0yW2HTvw5oipafUCnVUcXjSxRiWAckSZhkphY14s1HfbpKD3ZGOPY78xwXr+uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719928898; c=relaxed/simple;
-	bh=7MaRnJNNbK0yFj8reqUPokn1/QUzs447GBRZjWZumRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3fxK0IYuSWou+gZNyi0doQuDjivdmSXTKtcOH+JWdaJu72s0wYTpcDDn167bn97HK/nc0ZbIHJOJ0JZFfCayp3vootXRqFxpGLNH8Hr3Lw3QeEEpHvmEh1G1r9YrV34anZx/0NfUZBxB57zLbdlOhssNdxSArkrd77yMPhnH6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=dkYKV11w; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WD4MX5qJlz9scM;
-	Tue,  2 Jul 2024 16:01:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1719928888;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J6W5uuHM9ZW/rEky4ztQshWxBTdgHKyHpuUWE6Z27TI=;
-	b=dkYKV11weiLwFZR7c/DrT5d2a6fAJRM81tYaaNbCabxi3EXwnG32NzShMiXaGpk8PFHZ7j
-	1A+r2PDhFZKos+HXcuniuhlfbSi74LCBKFvW6a96siJGjAhy5jBd3D6XvqD7Tv0C8itl2c
-	gD2P6mYzM7UoL5AhZ0uaMf0Itvldd/aFsUPi74ytaOuyzTfakrF6S6EYeKK7FH3o5Xlh9n
-	7SginUHFUNydqIR79xCnQr69PFDY38TKf42c+XaAv+MWyf3YTOPmY13kH13mvBChvBWBVX
-	L4f5JbCaoF5xoYAjmpTuXhlsMtZptSkOOYHN28ZAJgZTwE4Jk81+EsFj1jx4bw==
-Date: Tue, 2 Jul 2024 14:01:23 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
-	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240702140123.emt2gz5kbigth2en@quentin>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-7-kernel@pankajraghav.com>
- <20240702074203.GA29410@lst.de>
- <20240702101556.jdi5anyr3v5zngnv@quentin>
- <20240702120250.GA17373@lst.de>
+	s=arc-20240116; t=1719930067; c=relaxed/simple;
+	bh=nWKxdV5ujyrGy3s7qRfFotWRCfmuZrI9OL8cics4EZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZXuqLTUY0NkqY9yne71EGn05EcHkV9nvteFSWkdA0cSYtqdidqAa4GyOEy3Q/0BIbBhJGT4ophOSRbgdZUZHrDfUvjLRNlL6GgRHz2P7s0Aej4ZBxOX4GB8xtcyI6T05WQDgfswHvG7qkMTr4yUtQWrkjaTgnJe18yGpJMdhP9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WD4hr5GkHz1T4Fw;
+	Tue,  2 Jul 2024 22:16:28 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id E9C0A1400CD;
+	Tue,  2 Jul 2024 22:21:00 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 2 Jul 2024 22:21:00 +0800
+Message-ID: <5856cee4-1e13-4c67-8fea-f5f938f7452f@huawei.com>
+Date: Tue, 2 Jul 2024 22:21:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240702120250.GA17373@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] hugetlbfs: use tracepoints in hugetlbfs functions.
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Steven Rostedt
+	<rostedt@goodmis.org>
+CC: <muchun.song@linux.dev>, <mhiramat@kernel.org>, <linux-mm@kvack.org>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+References: <20240612011156.2891254-1-lihongbo22@huawei.com>
+ <20240612011156.2891254-3-lihongbo22@huawei.com>
+ <20240701194906.3a9b6765@gandalf.local.home>
+ <1eca1fcd-5479-47b2-b7ba-eb4027135af2@huawei.com>
+ <8015a0bf-39e2-406c-8f61-db87a40a71a3@efficios.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <8015a0bf-39e2-406c-8f61-db87a40a71a3@efficios.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-> > > A WARN_ON without actually erroring out here is highly dangerous. 
-> > 
-> > I agree but I think we decided that we are safe with 64k for now as fs 
-> > that uses iomap will not have a block size > 64k. 
-> > 
-> > But this function needs some changes when we decide to go beyond 64k
-> > by returning error instead of not returning anything. 
-> > Until then WARN_ON_ONCE would be a good stop gap for people developing
-> > the feature to go beyond 64k block size[1]. 
+
+
+On 2024/7/2 21:30, Mathieu Desnoyers wrote:
+> On 2024-07-02 07:55, Hongbo Li wrote:
+>>
+>>
+>> On 2024/7/2 7:49, Steven Rostedt wrote:
+>>> On Wed, 12 Jun 2024 09:11:56 +0800
+>>> Hongbo Li <lihongbo22@huawei.com> wrote:
+>>>
+>>>> @@ -934,6 +943,12 @@ static int hugetlbfs_setattr(struct mnt_idmap 
+>>>> *idmap,
+>>>>       if (error)
+>>>>           return error;
+>>>> +    trace_hugetlbfs_setattr(inode, dentry->d_name.len, 
+>>>> dentry->d_name.name,
+>>>> +            attr->ia_valid, attr->ia_mode,
+>>>> +            from_kuid(&init_user_ns, attr->ia_uid),
+>>>> +            from_kgid(&init_user_ns, attr->ia_gid),
+>>>> +            inode->i_size, attr->ia_size);
+>>>> +
+>>>
+>>> That's a lot of parameters to pass to a tracepoint. Why not just pass 
+>>> the
+>>> dentry and attr and do the above in the TP_fast_assign() logic? That 
+>>> would
+>>> put less pressure on the icache for the code part.
+>>
+>> Thanks for reviewing!
+>>
+>> Some logic such as kuid_t --> uid_t might be reasonable obtained in 
+>> filesystem layer. Passing the dentry and attr will let trace know the 
+>> meaning of structure, perhaps tracepoint should not be aware of the
+>> members of these structures as much as possible.
 > 
-> Sure, but please make it return an error and return that instead of
-> just warning and going beyond the allocated page.
+> As maintainer of the LTTng out-of-tree kernel tracer, I appreciate the
+> effort to decouple instrumentation from the subsystem instrumentation,
+> but as long as the structure sits in public headers and the global
+> variables used within the TP_fast_assign() logic (e.g. init_user_ns)
+> are export-gpl, this is enough to make it easy for tracer integration
+Thank you for your friendly elaboration and suggestion!
+I will update this part based on your suggestion in next version.
 
-Does this make sense?
-
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 61d09d2364f7..14be34703588 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -240,16 +240,19 @@ void iomap_dio_bio_end_io(struct bio *bio)
- }
- EXPORT_SYMBOL_GPL(iomap_dio_bio_end_io);
- 
--static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-+static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-                loff_t pos, unsigned len)
- {
-        struct inode *inode = file_inode(dio->iocb->ki_filp);
-        struct bio *bio;
- 
-+       if (!len)
-+               return 0;
-        /*
-         * Max block size supported is 64k
-         */
--       WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
-+       if (len > ZERO_PAGE_64K_SIZE)
-+               return -EINVAL;
- 
-        bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
-        fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
-@@ -260,6 +263,7 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
- 
-        __bio_add_page(bio, zero_page_64k, len, 0);
-        iomap_dio_submit_bio(iter, dio, bio, pos);
-+       return 0;
- }
- 
- /*
-@@ -368,8 +372,10 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-        if (need_zeroout) {
-                /* zero out from the start of the block to the write offset */
-                pad = pos & (fs_block_size - 1);
--               if (pad)
--                       iomap_dio_zero(iter, dio, pos - pad, pad);
-+
-+               ret = iomap_dio_zero(iter, dio, pos - pad, pad);
-+               if (ret)
-+                       goto out;
-        }
- 
-        /*
-@@ -443,7 +449,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-                /* zero out from the end of the write to the end of the block */
-                pad = pos & (fs_block_size - 1);
-                if (pad)
--                       iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
-+                       ret = iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
-        }
- out:
-        /* Undo iter limitation to current extent */
-
---
-Pankaj
+Thanks,
+Hongbo
+> and it keeps the tracepoint caller code footprint to a minimum.
+> 
+> The TRACE_EVENT definitions are specific to the subsystem anyway,
+> so I don't think it matters that the TRACE_EVENT() need to access
+> the dentry and attr structures.
+> 
+> So I agree with Steven's suggestion. However, just as a precision,
+> I suspect it will have mainly an impact on code size, but not
+> necessarily on icache footprint, because it will shrink the code
+> size within the tracepoint unlikely branch (cold instructions).
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+>>
+>> Thanks,
+>> Hongbo
+>>
+>>>
+>>> -- Steve
+>>>
+> 
 
