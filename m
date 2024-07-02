@@ -1,139 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-22940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDC1923D85
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 14:22:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD8F923DAB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 14:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BDA8288352
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 12:22:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B028E1C220BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 12:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAE516B75D;
-	Tue,  2 Jul 2024 12:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKLHYwhq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D645A16C6BD;
+	Tue,  2 Jul 2024 12:25:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6BE157488;
-	Tue,  2 Jul 2024 12:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE7B167D8C;
+	Tue,  2 Jul 2024 12:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719922906; cv=none; b=OBX06o6KkTfLZgrMVZbXqtai9E64eD29xCd8DtoodEWOLrGESoIUFFCvmOfUshrbA8WgH+fP+WfSSLzwzPAp3eesFR2jJO/+dKOZcD4kmJ67xqvZobndjOu53zmjAAAPJbznGHSm+Cg/341MA6m7vmxsehPah5X+ofN/HJdYIOE=
+	t=1719923117; cv=none; b=SYyxc+EViFmQuKpmkkyOwwlHfoA/W/05aTCicXdmX3Ew7FEQtI6nRg8P5jc1cDlOokUyKAiI0Hf9E++g4h2oFqo+7eDBGDurUxcshGtIjtXt79zCgNFxkm9ppVIxG4D1rPPxsfQsU13/MzlTJ+gP5OLhz812XZnjfayrQLIezu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719922906; c=relaxed/simple;
-	bh=dlV/fAhfUmr253nJj9tCh33V0pYp49DfCChR4aJuxtc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h1kRPVtFkx6+R0iBKpisOxIod6OlPuBgISYS9rSfksW+rIp3sayncBZATpLYWY5owbqvNqY/HmZ8F5JDxUTIB/sDJbvw259vWe3GSaj8Zs01e29HUTn+iOsAoqGyiZ30h3rDKRrUbGmk4NVO8p0zkn+tgJ7E2knRH++rugQLDqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKLHYwhq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCA9DC116B1;
-	Tue,  2 Jul 2024 12:21:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719922905;
-	bh=dlV/fAhfUmr253nJj9tCh33V0pYp49DfCChR4aJuxtc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=MKLHYwhqixRE7NHHs+pKxnm2xM07FMEaKMpowL4BHrzYKeiJGQ7PFBYCjClgpBiI/
-	 we8VYRV0kw10lMI7sISoJjvqh7TSpE0w5fQwI65uVz+DpmLUJKtU+bGfGyO8HoB8eu
-	 Q8xb14PfG29iDlbp7LbI8xzwGi7+RKZCngmMkIGhB/AXczJwUSFqC12fOCN19uDNgk
-	 2/FfGop4RJTAY50Ssa2AsKoITX+awTNKshF8e1eRiatSXT2u9Jpebr5sWW5NWWeb0p
-	 RrA1mYttC4C2Ko6NBkhrN8WxRoQ5hUBL0djKrLRVIJ6rvTVQgB0mT2vP/X91Mj1fZv
-	 GzC10zOs4nEpg==
-Message-ID: <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
-Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
-From: Jeff Layton <jlayton@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Chandan Babu R <chandan.babu@oracle.com>,
- Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
- <dsterba@suse.com>,  Hugh Dickins <hughd@google.com>, Andrew Morton
- <akpm@linux-foundation.org>, kernel-team@fb.com, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-mm@kvack.org,  linux-nfs@vger.kernel.org
-Date: Tue, 02 Jul 2024 08:21:42 -0400
-In-Reply-To: <ZoPvR39vGeluD5T2@infradead.org>
-References: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
-	 <20240626-mgtime-v1-1-a189352d0f8f@kernel.org>
-	 <20240701224941.GE612460@frogsfrogsfrogs>
-	 <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
-	 <ZoOuSxRlvEQ5rOqn@infradead.org>
-	 <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
-	 <20240702101902.qcx73xgae2sqoso7@quack3>
-	 <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
-	 <ZoPs0TfTEktPaCHo@infradead.org>
-	 <09ad82419eb78a2f81dda5dca9caae10663a2a19.camel@kernel.org>
-	 <ZoPvR39vGeluD5T2@infradead.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1719923117; c=relaxed/simple;
+	bh=ktCITwpxHpI1W1hj/sUArc8rIdogsyyInYcXkBWuLH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W+kehe7JDYqZ7awSj9wIKc9kwNProwtT3pm0rAe8CxbfN+wZ3rMRDUqV0wm/oxmOgbBZB8Zb91TFjntkrYMWPRWTr8C+6YS9WEZGbhYv/EmUBUrtUXwfdfE2s2lfJxZBkZlHZBgqqmJj8RBnsKYCEA9ah4lTWyf1KqNegzPHdBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WD2DK2qWwz4f3jtx;
+	Tue,  2 Jul 2024 20:25:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id B2B4A1A016E;
+	Tue,  2 Jul 2024 20:25:12 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgBXgHyi8YNm6TG7Aw--.61077S3;
+	Tue, 02 Jul 2024 20:25:10 +0800 (CST)
+Message-ID: <5e3ffecd-4def-44b4-b141-e24429d13929@huaweicloud.com>
+Date: Tue, 2 Jul 2024 20:25:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/9] cachefiles: random bugfixes
+To: netfs@lists.linux.dev, dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
+ zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
+ wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Baokun Li <libaokun@huaweicloud.com>
+References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <20240628062930.2467993-1-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBXgHyi8YNm6TG7Aw--.61077S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF13tr18Wr1kZw45uFy8Zrb_yoWrCw17pF
+	WakanxArykWryxCws3Zw4xtFyFy3yxX3Z2gr1xXw15A3s8XF1FvrWIkr15ZFy5Crs7GrW2
+	vr1q9Fn3Gw1qv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvt
+	AUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAMBV1jkHxNzQAAsZ
 
-On Tue, 2024-07-02 at 05:15 -0700, Christoph Hellwig wrote:
-> On Tue, Jul 02, 2024 at 08:09:46AM -0400, Jeff Layton wrote:
-> > > > corrupt timestamps like this?
-> > >=20
-> > > inode_set_ctime_to_ts should return an error if things are out of
-> > > range.
-> >=20
-> > Currently it just returns the timespec64 we're setting it to (which
-> > makes it easy to do several assignments), so we'd need to change
-> > its
-> > prototype to handle this case, and fix up the callers to recognize
-> > the
-> > error.
-> >=20
-> > Alternately it may be easier to just add in a test for when
-> > __i_ctime =3D=3D KTIME_MAX in the appropriate callers and have them
-> > error
-> > out. I'll have a look and see what makes sense.
->=20
-> The seems like a more awkward interface vs one that explicitly
-> checks.
->=20
+Friendly ping...
 
-Many of the existing callers of inode_ctime_to_ts are in void return
-functions. They're just copying data from an internal representation to
-struct inode and assume it always succeeds. For those we'll probably
-have to catch bad ctime values earlier.
+On 2024/6/28 14:29, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+>
+> Hi all!
+>
+> This is the third version of this patch series, in which another patch set
+> is subsumed into this one to avoid confusing the two patch sets.
+> (https://patchwork.kernel.org/project/linux-fsdevel/list/?series=854914)
+>
+> Thank you, Jia Zhu, Gao Xiang, Jeff Layton, for the feedback in the
+> previous version.
+>
+> We've been testing ondemand mode for cachefiles since January, and we're
+> almost done. We hit a lot of issues during the testing period, and this
+> patch series fixes some of the issues. The patches have passed internal
+> testing without regression.
+>
+> The following is a brief overview of the patches, see the patches for
+> more details.
+>
+> Patch 1-2: Add fscache_try_get_volume() helper function to avoid
+> fscache_volume use-after-free on cache withdrawal.
+>
+> Patch 3: Fix cachefiles_lookup_cookie() and cachefiles_withdraw_cache()
+> concurrency causing cachefiles_volume use-after-free.
+>
+> Patch 4: Propagate error codes returned by vfs_getxattr() to avoid
+> endless loops.
+>
+> Patch 5-7: A read request waiting for reopen could be closed maliciously
+> before the reopen worker is executing or waiting to be scheduled. So
+> ondemand_object_worker() may be called after the info and object and even
+> the cache have been freed and trigger use-after-free. So use
+> cancel_work_sync() in cachefiles_ondemand_clean_object() to cancel the
+> reopen worker or wait for it to finish. Since it makes no sense to wait
+> for the daemon to complete the reopen request, to avoid this pointless
+> operation blocking cancel_work_sync(), Patch 1 avoids request generation
+> by the DROPPING state when the request has not been sent, and Patch 2
+> flushes the requests of the current object before cancel_work_sync().
+>
+> Patch 8: Cyclic allocation of msg_id to avoid msg_id reuse misleading
+> the daemon to cause hung.
+>
+> Patch 9: Hold xas_lock during polling to avoid dereferencing reqs causing
+> use-after-free. This issue was triggered frequently in our tests, and we
+> found that anolis 5.10 had fixed it. So to avoid failing the test, this
+> patch is pushed upstream as well.
+>
+> Comments and questions are, as always, welcome.
+> Please let me know what you think.
+>
+> Thanks,
+> Baokun
+>
+> Changes since v2:
+>    * Collect Acked-by from Jeff Layton.(Thanks for your ack!)
+>    * Collect RVB from Gao Xiang.(Thanks for your review!)
+>    * Patch 1-4 from another patch set.
+>    * Pathch 4,6,7: Optimise commit messages and subjects.
+>
+> Changes since v1:
+>    * Collect RVB from Jia Zhu and Gao Xiang.(Thanks for your review!)
+>    * Pathch 1,2：Add more commit messages.
+>    * Pathch 3：Add Fixes tag as suggested by Jia Zhu.
+>    * Pathch 4：No longer changing "do...while" to "retry" to focus changes
+>      and optimise commit messages.
+>    * Pathch 5: Drop the internal RVB tag.
+>
+> v1: https://lore.kernel.org/all/20240424033409.2735257-1-libaokun@huaweicloud.com
+> v2: https://lore.kernel.org/all/20240515125136.3714580-1-libaokun@huaweicloud.com
+>
+> Baokun Li (7):
+>    netfs, fscache: export fscache_put_volume() and add
+>      fscache_try_get_volume()
+>    cachefiles: fix slab-use-after-free in fscache_withdraw_volume()
+>    cachefiles: fix slab-use-after-free in cachefiles_withdraw_cookie()
+>    cachefiles: propagate errors from vfs_getxattr() to avoid infinite
+>      loop
+>    cachefiles: stop sending new request when dropping object
+>    cachefiles: cancel all requests for the object that is being dropped
+>    cachefiles: cyclic allocation of msg_id to avoid reuse
+>
+> Hou Tao (1):
+>    cachefiles: wait for ondemand_object_worker to finish when dropping
+>      object
+>
+> Jingbo Xu (1):
+>    cachefiles: add missing lock protection when polling
+>
+>   fs/cachefiles/cache.c          | 45 ++++++++++++++++++++++++++++-
+>   fs/cachefiles/daemon.c         |  4 +--
+>   fs/cachefiles/internal.h       |  3 ++
+>   fs/cachefiles/ondemand.c       | 52 ++++++++++++++++++++++++++++++----
+>   fs/cachefiles/volume.c         |  1 -
+>   fs/cachefiles/xattr.c          |  5 +++-
+>   fs/netfs/fscache_volume.c      | 14 +++++++++
+>   fs/netfs/internal.h            |  2 --
+>   include/linux/fscache-cache.h  |  6 ++++
+>   include/trace/events/fscache.h |  4 +++
+>   10 files changed, 123 insertions(+), 13 deletions(-)
+>
 
-So, I think I'll probably have to roll bespoke error handling in all of
-the relevant filesystems if we go this route. There are also
-differences between filesystems -- does it make sense to refuse to load
-an inode with a bogus ctime on NFS or AFS? Probably not.
+-- 
+With Best Regards,
+Baokun Li
 
-Hell, it may be simpler to just ditch this patch and reimplement
-mgtimes using the nanosecond fields like the earlier versions did.
-
-I'll need to study this a bit and figure out what's best.
-
-> >=20
-> > > How do we currently catch this when it comes from userland?
-> > >=20
-> >=20
-> > Not sure I understand this question. ctime values should never come
-> > from userland. They should only ever come from the system clock.
->=20
-> Ah, yes, utimes only changes mtime.
-
-Yep. That's the main reason I see the ctime as very different from the
-atime or mtime.
---=20
-Jeff Layton <jlayton@kernel.org>
 
