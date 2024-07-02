@@ -1,162 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-22952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABB0924149
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 16:50:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A744E924202
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 17:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1B51C24018
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 14:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DBB41F24917
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 15:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC7F1BA09D;
-	Tue,  2 Jul 2024 14:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EC61BBBCE;
+	Tue,  2 Jul 2024 15:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AxIZPVXG"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dCljCzJR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A288B1E48A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jul 2024 14:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED231DFFC;
+	Tue,  2 Jul 2024 15:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719931823; cv=none; b=GGIRIQXDondGuPKQoHYuAW9MzujZCT+TDHep/1E5h8NTAvnf3NdDmiYsFSXRg45Elwr5QI1lexdaaubOpxkVF/fI2EyYQjaYU247ixSVIUumIbCpvRFCHm9Pa6QfBfPidwlvKYGJgZplCC035hdGK0+CPUbEAQbghF9QaUYKUPc=
+	t=1719933163; cv=none; b=Rq2t65owanOnDswCs4Mtc23lq5z/T371ks43KUHghXiUNwn9ooe/iXElS6eCjXW5K4Xblhy40GXegYpUxbfPq6UvldqrVby5m0Wwrjn4Jc4yJ32xwUNGU1S4CLhtok1GaRO0kzjVESvqa6mFLcTT3u8XBiSMCLpb3Rs3OqgBtM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719931823; c=relaxed/simple;
-	bh=j04qJCMTRC27SFYKj5QHjaBXylUAzvskB/hwKauQY1s=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=fpqEO241JV/o43QaBO1oR0fPiSdx6c7FK+1D5VKHkRbGNpicFQaXJ9OuNOw8qUXimN2iSkUnkBbi53/pmPyMGUOTQ2VLuYsoxHtOIeRqGemt01hBed4byOTnbJsL4w750ox35v/VfDH+m8U2FjMt7N/9FvOSHa6AgC2KCJxg7U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AxIZPVXG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719931819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uWZifttcEAbyBfObjSbGpm26/PI7fGmjt0k2HweKiRc=;
-	b=AxIZPVXGsZZkX45h2qovVvfj0yOwcsL9dV+W82+5wPcXhgWc8BzeSdA9Hg9vsN4a4q2gAm
-	Q41Hpho8RwxYrvtoApNDrKJbapN0A2aM+It7d9Ro+BbpDoYNE8XyjmkT7CEDxnK5BLnRSl
-	ZE/WsSSAa3CV2ATrMtNloEznOGHVcx4=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-544-7te1MDSUOmGrLCL5FkfiOg-1; Tue,
- 02 Jul 2024 10:50:16 -0400
-X-MC-Unique: 7te1MDSUOmGrLCL5FkfiOg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0252219560B8;
-	Tue,  2 Jul 2024 14:50:14 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.111])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 640C93000221;
-	Tue,  2 Jul 2024 14:50:10 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>
-cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Christian Brauner <christian@brauner.io>,
-    Matthew Wilcox <willy@infradead.org>, linux-cifs@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Fix read-performance regression by dropping readahead expansion
+	s=arc-20240116; t=1719933163; c=relaxed/simple;
+	bh=ABYatGOHDvGjohsk6pDUWhV3e0zacUzLxB8sgh2L0Kk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dS03hnGJVjnp0+l26vMKQRu/W2PM/qVCp9D19ue3JZYQrhk3JP1b/ZzhL1YGX4ydCLkj5rVJn4efI/YoicjLYigOmT7NyVvbj1zRV0O5tBqSqNvrhPCrszRAou2VUyYcpUGrIOSUwGlS9K8e7G67P9uDCp6X41lz1DL8XzMkE6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dCljCzJR; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8aouOiHZz/CtkLH8RlphiC+CuL1fGX3TYjmQQVPOhZE=; b=dCljCzJRSfznNuYHX5KeHFLuWV
+	1bGB2/E0ElcUGou1naiVTb8GjiRYIwBvBWILQ6RLqqRbBdOIErpJ+SWkBWdjlw0iN1lSHfonwrj0h
+	wVdYu0AnkD5wOr6zpmOvc/VRJ7EyUE9eLSu3jJDW06TfZ4HwOGaTRkiCfriacF5Wo6FBnITHbgOe2
+	cUWZdK2jsEKUktlwltOfhcgJvoqG4q8eukNIK7KWBynHYywL5TPP8gs5jg82+w2Xyc2gd4deZhrue
+	H21CvG2clgGVczz798MUMmJhoWGmR3TMIxyr1HailAgCTaIgccNe/f1h4oVzV2bhQzXPmu4J40qQX
+	V4LqdFhA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sOfBK-000000079no-1zHc;
+	Tue, 02 Jul 2024 15:12:34 +0000
+Date: Tue, 2 Jul 2024 08:12:34 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 01/10] fs: turn inode ctime fields into a single ktime_t
+Message-ID: <ZoQY4jdTc5dHPGGG@infradead.org>
+References: <20240701224941.GE612460@frogsfrogsfrogs>
+ <3042db2f803fbc711575ec4f1c4a273912a50904.camel@kernel.org>
+ <ZoOuSxRlvEQ5rOqn@infradead.org>
+ <d91a29f0e600793917b73ac23175e02dafd56beb.camel@kernel.org>
+ <20240702101902.qcx73xgae2sqoso7@quack3>
+ <958080f6de517cf9d0a1994e3ca500f23599ca33.camel@kernel.org>
+ <ZoPs0TfTEktPaCHo@infradead.org>
+ <09ad82419eb78a2f81dda5dca9caae10663a2a19.camel@kernel.org>
+ <ZoPvR39vGeluD5T2@infradead.org>
+ <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3042270.1719931809.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 02 Jul 2024 15:50:09 +0100
-Message-ID: <3042271.1719931809@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a11d84a3085c6a6920d086bf8fae1625ceff5764.camel@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-cifs_expand_read() is causing a performance regression of around 30% by
-causing extra pagecache to be allocated for an inode in the readahead path
-before we begin actually dispatching RPC requests, thereby delaying the
-actual I/O.  The expansion is sized according to the rsize parameter, whic=
-h
-seems to be 4MiB on my test system; this is a big step up from the first
-requests made by the fio test program.
+On Tue, Jul 02, 2024 at 08:21:42AM -0400, Jeff Layton wrote:
+> Many of the existing callers of inode_ctime_to_ts are in void return
+> functions. They're just copying data from an internal representation to
+> struct inode and assume it always succeeds. For those we'll probably
+> have to catch bad ctime values earlier.
+> 
+> So, I think I'll probably have to roll bespoke error handling in all of
+> the relevant filesystems if we go this route. There are also
+> differences between filesystems -- does it make sense to refuse to load
+> an inode with a bogus ctime on NFS or AFS? Probably not.
+> 
+> Hell, it may be simpler to just ditch this patch and reimplement
+> mgtimes using the nanosecond fields like the earlier versions did.
 
-Fix this by removing cifs_expand_readahead().  Readahead expansion is
-mostly useful for when we're using the local cache if the local cache has =
-a
-block size greater than PAGE_SIZE, so we can dispense with it when not
-caching.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
----
- fs/smb/client/file.c |   30 ------------------------------
- 1 file changed, 30 deletions(-)
-
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index f1f2573bb18d..1374635e89fa 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -245,35 +245,6 @@ static int cifs_init_request(struct netfs_io_request =
-*rreq, struct file *file)
- 	return 0;
- }
- =
-
--/*
-- * Expand the size of a readahead to the size of the rsize, if at least a=
-s
-- * large as a page, allowing for the possibility that rsize is not pow-2
-- * aligned.
-- */
--static void cifs_expand_readahead(struct netfs_io_request *rreq)
--{
--	unsigned int rsize =3D rreq->rsize;
--	loff_t misalignment, i_size =3D i_size_read(rreq->inode);
--
--	if (rsize < PAGE_SIZE)
--		return;
--
--	if (rsize < INT_MAX)
--		rsize =3D roundup_pow_of_two(rsize);
--	else
--		rsize =3D ((unsigned int)INT_MAX + 1) / 2;
--
--	misalignment =3D rreq->start & (rsize - 1);
--	if (misalignment) {
--		rreq->start -=3D misalignment;
--		rreq->len +=3D misalignment;
--	}
--
--	rreq->len =3D round_up(rreq->len, rsize);
--	if (rreq->start < i_size && rreq->len > i_size - rreq->start)
--		rreq->len =3D i_size - rreq->start;
--}
--
- /*
-  * Completion of a request operation.
-  */
-@@ -329,7 +300,6 @@ const struct netfs_request_ops cifs_req_ops =3D {
- 	.init_request		=3D cifs_init_request,
- 	.free_request		=3D cifs_free_request,
- 	.free_subrequest	=3D cifs_free_subrequest,
--	.expand_readahead	=3D cifs_expand_readahead,
- 	.clamp_length		=3D cifs_clamp_length,
- 	.issue_read		=3D cifs_req_issue_read,
- 	.done			=3D cifs_rreq_done,
+Thatdoes for sure sound simpler.  What is the big advantage of the
+ktime_t?  Smaller size?
 
 
