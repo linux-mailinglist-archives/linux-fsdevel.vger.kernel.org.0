@@ -1,126 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-22983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426DD924BB1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 00:45:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CEF924BD6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 00:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 491A9B24313
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 22:45:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1187CB215F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 22:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21928155A30;
-	Tue,  2 Jul 2024 22:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB3755C08;
+	Tue,  2 Jul 2024 22:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHxIllVL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L9Dx+ILB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC9112FF8F;
-	Tue,  2 Jul 2024 22:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755171DA30D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jul 2024 22:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719960300; cv=none; b=myFom1WLPg/h1ioFCICZp43hT1RCQf6raskBDf7NEvNf0e9vX52538sl56Cv/QM+f1Iney162Gu3QYixMhu8iPV1tESZi1sn3gBBDOatLQRF59xDXIGpJVelgK9lr3iksSZW2U3oRlTdn5dRY7lCnQ5yny1hBp+vYi7y2ToWS6c=
+	t=1719960364; cv=none; b=bAkQfoZtQFhyy8JJz7n/ZferY+fF7j0jyoxyeWTA6KCwWHlqDyNtpS+U2aKYumnrbDg3SHe03i6T2+AP5WvcgiUHE+QkK/z5S29lZJdXEBIDbGP4B4eK4Xl+W5VKluEyTq/6n/skrkuOsYk1Vg0DXBaNU+UxMW8dF1Q+rBiSSIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719960300; c=relaxed/simple;
-	bh=N9gkNN597b9sR0qa3FEqcM+w+j2TQMy5ad+/Ia1JOuA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nWegRaC3OsWnFhsJUEBmMZppWyCVw8d4cDJJqCdQgbWyoQg10IrHYXsGZuB3rgONBXXiaF1kSl5kLyc0dzeqwRO2s86n0iIhsbi56L3OMjs+ZkX9ltsJMyEzobTYMAs5tzWuesNqgK/m9bHtGX40FJX4Mffk1/DBM9LPWEjCl7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHxIllVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A56C116B1;
-	Tue,  2 Jul 2024 22:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719960300;
-	bh=N9gkNN597b9sR0qa3FEqcM+w+j2TQMy5ad+/Ia1JOuA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=fHxIllVLyhXeUzrrqgBSxZaqdLY4X/Ny3uM6gnugxlqFmhRRW+L6yAtk4aSb/jusO
-	 sUEOi3jp4fSqxFEm/7DSadrIGxOva0mgShM2tGwFNIjqs1rN519+FSx/TAuOAD6hCh
-	 +MO9xXKwOOm3+meX6HGfNkTkmRHty+Ya9yu5hbkStr1kUL3EmjE70fgOUd26hoyZOw
-	 Oq6KnwDL4N3etWPQ9Uyf6y3ngGQ6yMybAvJgjiHMRlw2KE+zUEwped5FXWqNy0i37r
-	 YSt8feEeKdibzUVJNEIFRHgCgvoYHIaywre0ZO/J57PdPF77eCWPXAnOaF2LKVwTAo
-	 qbPR3xWaR6QTQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 02 Jul 2024 18:44:48 -0400
-Subject: [PATCH] filelock: fix potential use-after-free in posix_lock_inode
+	s=arc-20240116; t=1719960364; c=relaxed/simple;
+	bh=8wglXVnsBVQ4uaXIaXUPCDoirlWh+hcbqLfgU59gQpU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NN6ZfFEuwvPOZIr6BkMOdBiWtAtCY2iCK6R09iMU3lky+X1zkE+cSnIDj/ZJYyyZl3hXdTZwoKkN0d82RZm30SHLq8onKeNu3yet8s68no/7+A5MLQsdB1+lZyxleytMekJMPaK4JGIpsLQDP6Yv6J3pCuiAoRTZCaxK0YGyrv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L9Dx+ILB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719960361;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PWUeUaokR/SB0OVoD4hdeHfCZgt9QY3pVE0yqvD3yNA=;
+	b=L9Dx+ILBRUvr5dMx2cntpT+/8/9vYeXXH7bkT9i8AEqyydqqz9Y5bYaKh/25SIIEkuNnHR
+	dmjP/b58LB4A6bHLYZtb4IO/EBawym4WHscexgm6iIuQ9z33DHGJmvTxGWe7cWEHqowVpg
+	m42uZuUQXXpueZMCbwH5A1ax20AlvuU=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-456-MzOIGQEtP5q6HSEcK-bE7Q-1; Tue, 02 Jul 2024 18:46:00 -0400
+X-MC-Unique: MzOIGQEtP5q6HSEcK-bE7Q-1
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f3c8b1fee1so494092939f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jul 2024 15:46:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719960359; x=1720565159;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PWUeUaokR/SB0OVoD4hdeHfCZgt9QY3pVE0yqvD3yNA=;
+        b=w4KMjPQUhnKTPWlbQuT95VZRQKcwz/nEgh9pq1PiSt/aPREhm6Dmm3nx/3OnZNHfC7
+         xfJMdlKCs2l8ktFup56crKMDyQdKK98d5AI+kB8teaArBLF87wJ9xYIizlVFbdrAnD4P
+         jjo6+DcJiLf5Ct7gmPfROHnv2AaKH1dMFeqlrf4bRRNIbo144bu9+Z2OkyZ6mPqqS/iJ
+         KsQ74cCQA27wshNbobuKB4e1077DynCv4DEYRflJlLoy1qccWqHuUkQZkZph/ISUyMsu
+         KPtnntLGLtLujc3ts5y4YYNEHHy4uXXW+KQlpuxWEFA2jfN0Z3fc8UZa1p71VE7dCcJf
+         b4yQ==
+X-Gm-Message-State: AOJu0YySMWk3Ihv0/ASlHTs80za8ElhcLyf3UDaYSyYD1osEY7YR+Gj9
+	gYGAa1rgFveg3px9o3beWdRsNMNFlxKqQgE+gnCOrys0g97auZC2rP9y0wNKz9c6Oji9RdRpKa5
+	mY6UtvrByH2UlkQkpPyCqk3+DJvnp8+8XXSs4eTDXvTPKLn/jiZL7qvZ/opV08b8xTdN5pQtU3S
+	CZTCcoisc9dZ28POdpJLd9NThJVJZcmKdW49owjc3N3WR7Hg==
+X-Received: by 2002:a6b:4f09:0:b0:7f3:c811:3369 with SMTP id ca18e2360f4ac-7f62ee3d7bbmr1044352039f.2.1719960359171;
+        Tue, 02 Jul 2024 15:45:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFIBAKGWJfAMkhoZLCZKVSWV+SOVWEdoWN8yCgPWZ/9PS2CHAok8SSRcvF967pLB5ul+febXw==
+X-Received: by 2002:a6b:4f09:0:b0:7f3:c811:3369 with SMTP id ca18e2360f4ac-7f62ee3d7bbmr1044350239f.2.1719960358758;
+        Tue, 02 Jul 2024 15:45:58 -0700 (PDT)
+Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb73f90ed8sm3017811173.99.2024.07.02.15.45.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jul 2024 15:45:58 -0700 (PDT)
+Message-ID: <1a67d2a8-0aae-42a2-9c0f-21cd4cd87d13@redhat.com>
+Date: Tue, 2 Jul 2024 17:45:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240702-filelock-6-10-v1-1-96e766aadc98@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAN+ChGYC/x3MQQqAIBBA0avIrBuY1Aq6SrQQG2soKhQiEO+et
- HyL/zMkjsIJRpUh8iNJrrOibRT4zZ0royzVoElbGkhjkIOPy+/YY0togiPyzgbuDNTmjhzk/X/
- TXMoH6WIooV8AAAA=
-To: Chuck Lever <chuck.lever@oracle.com>, 
- Alexander Aring <alex.aring@gmail.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- =?utf-8?q?Light_Hsieh_=28=E8=AC=9D=E6=98=8E=E7=87=88=29?= <Light.Hsieh@mediatek.com>, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1398; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=N9gkNN597b9sR0qa3FEqcM+w+j2TQMy5ad+/Ia1JOuA=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmhILqZlQ+jSGuftugdfRgVXDYEoT/mrJY9prPk
- nxSHoES/ICJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZoSC6gAKCRAADmhBGVaC
- FU1sEACqh3qt+ZjTufAOay8j1Wmhc3HGHy7QZd/s81V9UE/vLuINRtRe3ZthoaMhHZP0VGkkqf8
- 7G0hyIjvJTRedRVBSSMdMRKzNq1QvsIlNWWP/KSRUAfF3jlUSlql5PzS3nC2FIpaP3KT9h+KWG6
- a65s+/AL1gWte8ADd6CBhU9lo6gOFh51KP3nwJa1+axZHtO4uTzMLBzY/1HUV8W/l3oxZmzKU5J
- hqwaNIGlv64CDr/pY7XGqDYjFN0e16D6q9lNeBI6UdKk1zj9HLtRKKeFXyFXnmfiBCd/iwrudeJ
- PLtHACyGDG5oohrdXFut5zDhJBiYb0oNITnpBkcf/lj+7zwdxQG7zXEDb/7fIOYHs/CFXFENI0o
- QvXQ3CYbSaEjXICClQ26OFW4M4KTD31DlMosoLUz/e9JAlwFkBGJuKt4UbUbLIBu9htT4SOU3Mh
- tmCeDN9cAW8BMxvI9L5JJ/nTx6m0GyAG5qUexbAdpWvCke4rD8oc+0ToE5zi2DpoFmAB7U0fff6
- Ek4/rqJCyoLfDoC0/ArjRuErm3mVJtDS4pDixLbkjtY+NJLno3hbCHGuya2OiQfQnsMMm4Fxca6
- FdHNRQlYxkQqefOPO/ZhKUcStv/BcDBm2aCKAOuE3bSiW1w1e3VrGAezwgHvPXgMdDdzgFpE5hf
- pffpExgn/VgI2ng==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH V2 3/3] fat: Convert to new uid/gid option parsing helpers
+From: Eric Sandeen <sandeen@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+References: <ec599fc8-b32e-48cf-ac6c-09ded36468d5@redhat.com>
+Content-Language: en-US
+In-Reply-To: <ec599fc8-b32e-48cf-ac6c-09ded36468d5@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Light Hsieh reported a KASAN UAF warning in trace_posix_lock_inode().
-The request pointer had been changed earlier to point to a lock entry
-that was added to the inode's list. However, before the tracepoint could
-fire, another task raced in and freed that lock.
+Convert to new uid/gid option parsing helpers
 
-Fix this by moving the tracepoint inside the spinlock, which should
-ensure that this doesn't happen.
-
-Fixes: 74f6f5912693 ("locks: fix KASAN: use-after-free in trace_event_raw_event_filelock_lock")
-Link: https://lore.kernel.org/linux-fsdevel/724ffb0a2962e912ea62bb0515deadf39c325112.camel@kernel.org/
-Reported-by: Light Hsieh (謝明燈) <Light.Hsieh@mediatek.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- fs/locks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fat/inode.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index c360d1992d21..bdd94c32256f 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1367,9 +1367,9 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
- 		locks_wake_up_blocks(&left->c);
- 	}
-  out:
-+	trace_posix_lock_inode(inode, request, error);
- 	spin_unlock(&ctx->flc_lock);
- 	percpu_up_read(&file_rwsem);
--	trace_posix_lock_inode(inode, request, error);
- 	/*
- 	 * Free any unused locks.
- 	 */
-
----
-base-commit: e9d22f7a6655941fc8b2b942ed354ec780936b3e
-change-id: 20240702-filelock-6-10-3fa00ca4fe53
-
-Best regards,
+diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+index b83b39f2f69b..8fbf5edb7aa2 100644
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -1091,8 +1091,8 @@ static const struct constant_table fat_param_conv[] = {
+ /* Core options. See below for vfat and msdos extras */
+ const struct fs_parameter_spec fat_param_spec[] = {
+ 	fsparam_enum	("check",	Opt_check, fat_param_check),
+-	fsparam_u32	("uid",		Opt_uid),
+-	fsparam_u32	("gid",		Opt_gid),
++	fsparam_uid	("uid",		Opt_uid),
++	fsparam_gid	("gid",		Opt_gid),
+ 	fsparam_u32oct	("umask",	Opt_umask),
+ 	fsparam_u32oct	("dmask",	Opt_dmask),
+ 	fsparam_u32oct	("fmask",	Opt_fmask),
+@@ -1161,8 +1161,6 @@ int fat_parse_param(struct fs_context *fc, struct fs_parameter *param,
+ 	struct fat_mount_options *opts = fc->fs_private;
+ 	struct fs_parse_result result;
+ 	int opt;
+-	kuid_t uid;
+-	kgid_t gid;
+ 
+ 	/* remount options have traditionally been ignored */
+ 	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE)
+@@ -1209,16 +1207,10 @@ int fat_parse_param(struct fs_context *fc, struct fs_parameter *param,
+ 		opts->sys_immutable = 1;
+ 		break;
+ 	case Opt_uid:
+-		uid = make_kuid(current_user_ns(), result.uint_32);
+-		if (!uid_valid(uid))
+-			return -EINVAL;
+-		opts->fs_uid = uid;
++		opts->fs_uid = result.uid;
+ 		break;
+ 	case Opt_gid:
+-		gid = make_kgid(current_user_ns(), result.uint_32);
+-		if (!gid_valid(gid))
+-			return -EINVAL;
+-		opts->fs_gid = gid;
++		opts->fs_gid = result.gid;
+ 		break;
+ 	case Opt_umask:
+ 		opts->fs_fmask = opts->fs_dmask = result.uint_32;
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.45.2
+
 
 
