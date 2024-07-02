@@ -1,123 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-22968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29B692451F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 19:19:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF1292442E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 19:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62255282279
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 17:19:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736F91F22008
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 17:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DECE1C6891;
-	Tue,  2 Jul 2024 17:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D431BE242;
+	Tue,  2 Jul 2024 17:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AVfK0B4/"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="CTTpYiNh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YA82QPSJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD841C0057;
-	Tue,  2 Jul 2024 17:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C444178381;
+	Tue,  2 Jul 2024 17:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719940685; cv=none; b=knZVki69h1x+DYFDTCQC0+RrAfmwUKtrnw5Ua5q3Egjw1gPL7kIQATsqkfaXsKVEG3fEff5xeONDHIaM6hf0ZHXxNh9Fmo05gW774jyQvMxvZ3cmWDggaa8x3gwxX5jgf17dAJA6Fhaes3j8/GjLBQe1pmNuhWBmbPJfktvID7E=
+	t=1719940038; cv=none; b=Sy7wnvDoHPYHKawLcLRWjPOuLKZBSXCAIEdZyYHJR+nhpBmpKyTlyv1jsmEHnOKkQKnTe+2xWLCEc31JcjiX+YH2MY9ORXGVZvjkxwI2xfQ7DRy/4FExDeoAi6Kl5zQEsr202xkmCHluzcQzOuIJg0RHo+V927S3nNyzGQwb07Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719940685; c=relaxed/simple;
-	bh=EON+gqEufkTPjkcJvb2LKu94Uj13qfooeC/bdqwFgY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oTIAPStTPctjJR/kKNJVp0eEeRqujLzoyYcXlsySxi/0eHkp1saDgylVXfFhQwn3PFv8LNOec/RVhvGa8qA/4WfoMBCQmQFFicvuPxImTHC+ocItcCtcSkC3Wv+b2egEGGGtLlUNPficYlRJYPWj61fmn6fmuHTzVC2QGo9NGLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AVfK0B4/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F146AC116B1;
-	Tue,  2 Jul 2024 17:18:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719940685;
-	bh=EON+gqEufkTPjkcJvb2LKu94Uj13qfooeC/bdqwFgY0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AVfK0B4/VLfszVK2GVrRYavPxtQL8FYWFuozactC36JVOt9Ah+d36yWpl99QIPfCd
-	 cx0SWA0+iF2gSb8/PM4U5fg/ElEWxYF1uhcc/bi4iXMnnkeal8a6L1ZR4l7iZ79zFc
-	 IfapPgM1qdYDbI7XXJoCGNY0+KEFCNj8umtgaqo0=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	David Howells <dhowells@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	netfs@lists.linux.dev,
-	v9fs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.9 222/222] netfs: Fix netfs_page_mkwrite() to flush conflicting data, not wait
-Date: Tue,  2 Jul 2024 19:04:20 +0200
-Message-ID: <20240702170252.473065522@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240702170243.963426416@linuxfoundation.org>
-References: <20240702170243.963426416@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1719940038; c=relaxed/simple;
+	bh=FQwg6a8nMdp1BsXF1goaiUjznOr3KBtRKTTh98UR/lM=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=rhZ42ufg2qQLvmWv7/0rHGG0UzXYg9XrQ1JdbWk1jwgzp1VSFWeNKOX/cq+mt0rEp1u8MKNqAoVt6k3S/wfJUkk2+QHV4Q/LsJbm6KlrGUYBJtRCtM5eu5o3Va1IRH/DUoY0T5LUrgtdDrh1xT4NjlAnHTlL1chFVP0+Mz6EpDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=CTTpYiNh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YA82QPSJ; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id B737E1380262;
+	Tue,  2 Jul 2024 13:07:15 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 02 Jul 2024 13:07:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1719940035;
+	 x=1720026435; bh=02lqCeohhDRoeVg0KpfzdqcfaHWT7DV6FXoK/ZsOGDU=; b=
+	CTTpYiNh2+vqYbxoHmNRAOgDMs157QY/20a+zn0hbHZ/0BO5Oc4CkLJssMVI6rMw
+	sXryWlTUzM3ijsSC0piB5nzqbZDy4ZfLM6ssHloiLPLD2lmBsd2+rHiFA8vfwjXF
+	Frn9so4Vwbgl1tQonJEiEsX/Qv/ngCkpwO5MGm9e5stix3WgkME9ZZSnKyGZx0b7
+	cU2Zv2OlrYte8mcc3BuoCwZPiTO8I2luRwHD6i0RjTsu8FzG4lZxOMDtDJrtlgRY
+	WAr31O0JCryI6S32ZiKPvV2pTNF+R84Sf+bbOVmI/qLrtTl8hcLC41zP+d3dv4ch
+	TxPGjf/DpVNTr3gvdINuHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719940035; x=
+	1720026435; bh=02lqCeohhDRoeVg0KpfzdqcfaHWT7DV6FXoK/ZsOGDU=; b=Y
+	A82QPSJkwu1JEznu+WPK3XsFoDLipQJZwigGRTPV0cuTHEDFKSBheA2T4PxHz1Ql
+	YcUZg7Br33Ehj/sXL6vMen7Sy1T9ei5v8jN9GFs1TM/+or4gEbPyuIwSoeVYYADM
+	J7Nk5KwBjm0QCJmyTrrDDcvMkXo3y5aPts2m1X2ylLH3rLtn3wlbwJ3nu6Ncy4J9
+	vsrQqxUsK9+DGw4Zp2y5c0ip7qdpMRy/4TQQv5V8tL+j0hnbJ6O0i7dKpPDoQ97v
+	GGN7IywolM3Sd7Q9/vLv7cPOmootTvFEGwaAqo5GGFfyYy6H3U0z6H4qnT7nkFvH
+	pRe7UGUg7UU2OY/cYPczw==
+X-ME-Sender: <xms:wjOEZr2uB0qim3zm7640K329vCwA47OaIp2UJyBSNNnAqFqRuwT0rQ>
+    <xme:wjOEZqFQdbAPAzmOOfak2VeBMbb7v_5Tbu1uFCc17293DgbQHQIMTOyaUbb8GvuL9
+    dATNpJOhOP9I6fs_TY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudehgddutdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:wjOEZr5SMHIz7DCEE-mfkPvOaQqCI3ivt-DpU3uILf0MKkyWuxlvsA>
+    <xmx:wjOEZg1b9ViA-A6rdu85ok19R8zbDdh8PBv1ZJzBeaCtij7NW-dbCw>
+    <xmx:wjOEZuE2hcK4KlR8yu0KqUxL-DLKRbfsNhxd78kCiKY9c4AkwNQdlg>
+    <xmx:wjOEZh8gWbgct-iLqfDifofA3NDZZZC1BeWyO2duTglo-m0EEl2EoQ>
+    <xmx:wzOEZp94g-39Q7Dr71ulB24ZRP8O483QGADs4er7MnppTCiMYDzRE31a>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id B8572B60092; Tue,  2 Jul 2024 13:07:14 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
+In-Reply-To: 
+ <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+References: <20240625110029.606032-1-mjguzik@gmail.com>
+ <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+ <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
+ <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+Date: Tue, 02 Jul 2024 19:06:53 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Huacai Chen" <chenhuacai@kernel.org>
+Cc: "Xi Ruoyao" <xry111@xry111.site>, "Mateusz Guzik" <mjguzik@gmail.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, "Jens Axboe" <axboe@kernel.dk>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-6.9-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Jul 2, 2024, at 17:36, Huacai Chen wrote:
+> On Mon, Jul 1, 2024 at 7:59=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> w=
+rote:
+>> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
+>> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
+>> >> >
+>> >> > Yes, both Linus and Christian hates introducing a new AT_ flag f=
+or
+>> >> > this.
+>> >> >
+>> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
+>> >> > like
+>> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
+>> >> > performance
+>> >> > issue and it's also audit-able by seccomp BPF.
+>> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
+>> >> even if statx() becomes audit-able, it is still blacklisted now.
+>> >
+>> > Then patch the sandbox to allow it.
+>> >
+>> > The sandbox **must** be patched anyway or it'll be broken on all 32=
+-bit
+>> > systems after 2037.  [Unless they'll unsupport all 32-bit systems b=
+efore
+>> > 2037.]
+>>
+>> More importantly, the sandbox won't be able to support any 32-bit
+>> targets that support running after 2037, regardless of how long
+>> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
+>> in order to be sure those don't get called by accident, the
+>> fallback is immediately broken.
+> Would you mind if I restore newstat for LoongArch64 even if this patch=
+ exist?
 
-------------------
+I still prefer not add newstat back: it's easier to
+get applications to correctly implement the statx() code
+path if there are more architectures that only have that.
 
-From: David Howells <dhowells@redhat.com>
-
-[ Upstream commit 9d66154f73b7c7007c3be1113dfb50b99b791f8f ]
-
-Fix netfs_page_mkwrite() to use filemap_fdatawrite_range(), not
-filemap_fdatawait_range() to flush conflicting data.
-
-Fixes: 102a7e2c598c ("netfs: Allow buffered shared-writeable mmap through netfs_page_mkwrite()")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Link: https://lore.kernel.org/r/614300.1719228243@warthog.procyon.org.uk
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-mm@kvack.org
-cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/netfs/buffered_write.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index 72e4fa233c526..d2ce0849bb53d 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -535,9 +535,9 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_gr
- 
- 	if (netfs_folio_group(folio) != netfs_group) {
- 		folio_unlock(folio);
--		err = filemap_fdatawait_range(mapping,
--					      folio_pos(folio),
--					      folio_pos(folio) + folio_size(folio));
-+		err = filemap_fdatawrite_range(mapping,
-+					       folio_pos(folio),
-+					       folio_pos(folio) + folio_size(folio));
- 		switch (err) {
- 		case 0:
- 			ret = VM_FAULT_RETRY;
--- 
-2.43.0
-
-
-
+       Arnd
 
