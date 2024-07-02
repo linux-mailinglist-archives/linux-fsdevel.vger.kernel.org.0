@@ -1,137 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-22965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-22966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C148924433
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 19:07:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEAB92446E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 19:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5DDA1F21DD4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 17:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2024E1C21B83
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jul 2024 17:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A181BE23D;
-	Tue,  2 Jul 2024 17:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249D71BE241;
+	Tue,  2 Jul 2024 17:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N7OwGm9I"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="eayMpLs3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E101BE235
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jul 2024 17:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2661B15218A;
+	Tue,  2 Jul 2024 17:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719940048; cv=none; b=OytYRDEdHnnRs6/wqC99DS/NxGu6RIml69rSMibQXTHQeYiKau121Pfc0xS9b5ypFB+uiRPS7Erh369T3uwnJXDNICS7lb+Zp4fluW6dTpNYJgAR2qQwXQVar1yBDZIdxg+2ECQW8sC+Gt2J0ZC58hw+IfOx038nqJBwh057sac=
+	t=1719940227; cv=none; b=IY7rBRGssnEHH1zdV1X0a1hvEfw2LjaYNaVGq5lCh0pr2RUAocQ3rzv3DE0G6x4VoKKxaX+FPJmbeWs518nO98EODHBy0mrPmGriOR9DTf1h4D6Rv7wFUz0AQ3yo6MRBGOgNJtd8zHs777Q9TG+em098RiR+sR+Ckpzq6TQxdLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719940048; c=relaxed/simple;
-	bh=N4gDA5S7lJAbOfeUMimoJ9SkSKSwizRZZeNxzmNAWmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JLfxAkd2M5BgvcpujL09BV+loffAgWzYcxmFu1XfnZwhqOLu684p5DHB9GnSQbpASWsshTmN8fnGvZCfe+9qdvDHvFW/Rd4amszM8s24em5cNxc7Ewu0ue/9f47pmuqpwH32/0zl8chGI6i5zisI14cFdfj/XU7SOa2NkikbMqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N7OwGm9I; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719940045;
+	s=arc-20240116; t=1719940227; c=relaxed/simple;
+	bh=8RGz1J85NAvvoYDxp27n3BmZiz19OrcrON1hQUubgrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kkOldYzHh+41mFdXRO980I6I1M0d54XvTmPCyKVavu+d7XN7I500ZJy+Xu1BLe+VqrfkEAqBYB+Kv+Ee6JJx94MeSnTR4+JZkGKjBD5BE6zn2GceXTYxEZlS9MBqhOCBGRPqXykZy5YlNOOVSHACIH7e6G5xNipYLsV2kQFT6AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=eayMpLs3; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WD8YT4Cmhz9sTd;
+	Tue,  2 Jul 2024 19:10:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1719940221;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=W2w6d6BZT5CE4wYHUMrSEJ6v69CXoZLQTv1iZaggPa0=;
-	b=N7OwGm9IU68xVs+aIizPrTONhZKLGgP9dvAewILaGd2PIoVHX3XqaLyq8qpaDcS/2Ypbje
-	zLoWddnT0vxEqY34pYus5gJ/dBakS25+dBaNHxDc9yRFz22DrFDxJ8FDIlAeIEPyyoaToS
-	xZXjV0VNkhsRhlJKEjlW1bUJ/pHG62s=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-272-583Dd_QzOzioYo83tSd_Pg-1; Tue,
- 02 Jul 2024 13:07:22 -0400
-X-MC-Unique: 583Dd_QzOzioYo83tSd_Pg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2AFA71955DA1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jul 2024 17:07:21 +0000 (UTC)
-Received: from bfoster.redhat.com (unknown [10.22.16.117])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 695A819560AA;
-	Tue,  2 Jul 2024 17:07:20 +0000 (UTC)
-From: Brian Foster <bfoster@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Ian Kent <ikent@redhat.com>
-Subject: [PATCH] vfs: don't mod negative dentry count when on shrinker list
-Date: Tue,  2 Jul 2024 13:07:57 -0400
-Message-ID: <20240702170757.232130-1-bfoster@redhat.com>
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7S8VUQYyvA/hYjxf+VcnjpFycomG4Q9npc7KT3Na+A=;
+	b=eayMpLs3XwLuC/DdNErQ6ZCv5mfKT5+W0WH+14922V/+zVlk7DAIc5Qhilq6qnJhn3vzpV
+	Per+4UR5bylBDnITjTpBuZxRtlYpRhw5AQeljJpeHHodVSalpAu52j5syGpjBz5zOBZ9yx
+	zkdq15e9ib2r3erwIovYKrQ5nOP4WpcDHMU8cRaMtLfcHbTZRhNuO/X86KVi2sftEEjYfU
+	MuUTYP7dwCIyN6raWrXNI5Q3IT+Ma0hzhttMFteYHQwXEC7z9Q8EXfgB/JuB8Nwhx1EawL
+	mCOf4CtVW/gYrv6XnjrKRCMiGDStEaadznZMZn8bI5LrLVV5WDBlfGj9c2fj+Q==
+Date: Tue, 2 Jul 2024 17:10:14 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>, david@fromorbit.com,
+	chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, linux-mm@kvack.org,
+	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 06/10] iomap: fix iomap_dio_zero() for fs bs > system
+ page size
+Message-ID: <20240702171014.reknnw3smasylbtc@quentin>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-7-kernel@pankajraghav.com>
+ <20240702074203.GA29410@lst.de>
+ <20240702101556.jdi5anyr3v5zngnv@quentin>
+ <20240702120250.GA17373@lst.de>
+ <20240702140123.emt2gz5kbigth2en@quentin>
+ <20240702154216.GA1037@lst.de>
+ <20240702161329.i4w6ipfs7jg5rpwx@quentin>
+ <ZoQwKlYkI5oik32m@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZoQwKlYkI5oik32m@casper.infradead.org>
+X-Rspamd-Queue-Id: 4WD8YT4Cmhz9sTd
 
-The nr_dentry_negative counter is intended to only account negative
-dentries that are present on the superblock LRU. Therefore, the LRU
-add, remove and isolate helpers modify the counter based on whether
-the dentry is negative, but the shrinker list related helpers do not
-modify the counter, and the paths that change a dentry between
-positive and negative only do so if DCACHE_LRU_LIST is set.
+On Tue, Jul 02, 2024 at 05:51:54PM +0100, Matthew Wilcox wrote:
+> On Tue, Jul 02, 2024 at 04:13:29PM +0000, Pankaj Raghav (Samsung) wrote:
+> > On Tue, Jul 02, 2024 at 05:42:16PM +0200, Christoph Hellwig wrote:
+> > > On Tue, Jul 02, 2024 at 02:01:23PM +0000, Pankaj Raghav (Samsung) wrote:
+> > > +static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+> > > >                 loff_t pos, unsigned len)
+> > > >  {
+> > > >         struct inode *inode = file_inode(dio->iocb->ki_filp);
+> > > >         struct bio *bio;
+> > > >  
+> > > > +       if (!len)
+> > > > +               return 0;
+> > > >         /*
+> > > >          * Max block size supported is 64k
+> > > >          */
+> > > > -       WARN_ON_ONCE(len > ZERO_PAGE_64K_SIZE);
+> > > > +       if (len > ZERO_PAGE_64K_SIZE)
+> > > > +               return -EINVAL;
+> > > 
+> > > The should probably be both WARN_ON_ONCE in addition to the error
+> > > return (and ZERO_PAGE_64K_SIZE really needs to go away..)
+> > 
+> > Yes, I will rename it to ZERO_PAGE_SZ_64K as you suggested.
+> 
+> No.  It needs a symbolic name that doesn't include the actual size.
+> Maybe ZERO_PAGE_IO_MAX.  Christoph suggested using SZ_64K to define
+> it, not to include it in the name.
 
-The problem with this is that a dentry on a shrinker list still has
-DCACHE_LRU_LIST set to indicate ->d_lru is in use. The additional
-DCACHE_SHRINK_LIST flag denotes whether the dentry is on LRU or a
-shrink related list. Therefore if a relevant operation (i.e. unlink)
-occurs while a dentry is present on a shrinker list, and the
-associated codepath only checks for DCACHE_LRU_LIST, then it is
-technically possible to modify the negative dentry count for a
-dentry that is off the LRU. Since the shrinker list related helpers
-do not modify the negative dentry count (because non-LRU dentries
-should not be included in the count) when the dentry is ultimately
-removed from the shrinker list, this can cause the negative dentry
-count to become permanently inaccurate.
-
-This problem can be reproduced via a heavy file create/unlink vs.
-drop_caches workload. On an 80xcpu system, I start 80 tasks each
-running a 1k file create/delete loop, and one task spinning on
-drop_caches. After 10 minutes or so of runtime, the idle/clean cache
-negative dentry count increases from somewhere in the range of 5-10
-entries to several hundred (and increasingly grows beyond
-nr_dentry_unused).
-
-Tweak the logic in the paths that turn a dentry negative or positive
-to filter out the case where the dentry is present on a shrink
-related list. This allows the above workload to maintain an accurate
-negative dentry count.
-
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
- fs/dcache.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 407095188f83..5305b95b3030 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -355,7 +355,7 @@ static inline void __d_clear_type_and_inode(struct dentry *dentry)
- 	flags &= ~DCACHE_ENTRY_TYPE;
- 	WRITE_ONCE(dentry->d_flags, flags);
- 	dentry->d_inode = NULL;
--	if (flags & DCACHE_LRU_LIST)
-+	if ((flags & (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
- 		this_cpu_inc(nr_dentry_negative);
- }
- 
-@@ -1846,7 +1846,8 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
- 	/*
- 	 * Decrement negative dentry count if it was in the LRU list.
- 	 */
--	if (dentry->d_flags & DCACHE_LRU_LIST)
-+	if ((dentry->d_flags &
-+	     (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
- 		this_cpu_dec(nr_dentry_negative);
- 	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
- 	raw_write_seqcount_begin(&dentry->d_seq);
--- 
-2.45.0
-
+Initially I kept the name as ZERO_FSB_PAGE as it is used to do sub-block
+zeroing. But I know John from Oracle is already working on using it for
+rt extent zeroing. So I will just go with ZERO_PAGE_IO_MAX for now.
+Understood about the SZ_64K part. Thanks for the clarification.
 
