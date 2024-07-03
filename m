@@ -1,105 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-23043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB349263C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 16:48:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0760F9263C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 16:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EFAEB29949
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 14:46:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDC9B2A6DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 14:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0700B172BCE;
-	Wed,  3 Jul 2024 14:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B890917DA15;
+	Wed,  3 Jul 2024 14:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="GYAEIEy1"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kKMeDFqh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE1D5256
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jul 2024 14:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16505173328;
+	Wed,  3 Jul 2024 14:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720017982; cv=none; b=Dq83yFBda5q/luxh31YUBLZlH7U+jv1cn1wiJZClOl0Imscu4jO7g486fgBAIh0ceYeu7ImZ8CcO8F54e/GgMJ67aFXWFyPpoEt5Wv01G/ALX4kKjFM7x2r3qtdEktOa77kwMp48JPaFV4TCOi7QaIKl9lgbMw+DDkHtNQRH4gU=
+	t=1720018006; cv=none; b=lBg17YisEW0yycDp7qzZkYOM6+cG3xKIMyXARzzm7PFK17n6JXYod3q7Z12PYr+Hpib10L69RJvNNbz+4yD9efhrf5WeTkqk2nG6Ysj1y86tAwFMuoIo/x2ecLXZK1v0DUQBaZMvztOvSMsLblBXA3Uj/1L5L9UAoCm77lLH3HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720017982; c=relaxed/simple;
-	bh=Kgi4c/lnViYPjHbo3SH2USHnyYKood9urc96NWejx+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMcJYz5gEu69lPb7j9WUjBXZVOtkrNx0j3JwRpJ1Szkb5C5PblI3A9pmnckhK/9qAr9FMHLFXSNPr0QZQukKvl0+JgulSrVMZag+Y2rgftkG4KO6W2ILoeM0iGLc7O6Pgy9TxqYU/XWBEHHd+2IVdft/PcfURiu9VmZlqXY2D8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=GYAEIEy1; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-79c0e7ec66dso444262385a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2024 07:46:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1720017979; x=1720622779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jYOC1HUrylk74aUXXXeF+pAMxvmAfrUIur11BWJR7AM=;
-        b=GYAEIEy1O85JShcrOuaMuxcH9i1uTiyiaUnr7r+VmQw3gqj337ViZ65scNbbNoG7EZ
-         o+4Z9odou+DguC7UpZKPJTQfbyDsGn98tsEqlekNpHQdbIo7THSP4PSO2dNOPvGX+TF/
-         XgewF4fTMsl1D+YCdWAIuHcEkReKDuO7b1G9CdX+pIQAeX8rAn/8rli2mwziu0pPF1kf
-         LUMrj9jDYhxafJElPdsEU21Iit3TZZdv11PDQ3aT0hiZUxRk/7b0bi8WoWL1aajE02A9
-         EnTYlAi9WyuvIDGNccgt9wcIW1+MlSoq6b97QEJ81t31C6w2mCSSHPPFCjha884PBsG6
-         tMag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720017979; x=1720622779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jYOC1HUrylk74aUXXXeF+pAMxvmAfrUIur11BWJR7AM=;
-        b=G4idp7wBgkgrT8nF0Jd7GcdkT2oiMpKl2tEKb3tP7HyiwVuvM5fWRqegPBstELTZp3
-         0imAZgiUdCeZhK7UulJwXQeyfmq6pXdTuAID51UwTVt8oWiqnt68l1aVucOlJrrposPC
-         0fetq4r6a6fqIVnQ8FcAoNBTP0JOFBx6QSGhz2J15biK50xJ0ePjzIE+mM3FfhtEByjD
-         FEcvPsSv9fnJ7RZmdrjl2antcn6z4GAkMLc4Fra6XOHSfQ77JfUPHj0qaE8n2M5fcDKi
-         2mejVtYNlo9o4QutEB/bLPXPJ8jf8vy6ArBppeZkASaKCKnU/Fsk63mkmhfpa6cPkbD3
-         q5pA==
-X-Gm-Message-State: AOJu0Ywr3uy1qolezLlYYkeL0cf15QWet7LLE7dWTYW6fLpnfN4EiyuI
-	v9xzkQ+4ydzaSSLwIUV9n4DZ6nbcn5IDhzM7wez7PNdIMknOO61CTVXOKrP5AtE=
-X-Google-Smtp-Source: AGHT+IGmezmt33Oxu1Qj02F8afkXj7gx1QKPfR34B+CSSiGnMDjzIDA9nZ7YLeQs3FwggsJ+1E3RLg==
-X-Received: by 2002:a05:620a:ecf:b0:79d:769b:a7ef with SMTP id af79cd13be357-79d7bad14b6mr1327418685a.68.1720017979230;
-        Wed, 03 Jul 2024 07:46:19 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d69299e4esm572354585a.67.2024.07.03.07.46.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 07:46:18 -0700 (PDT)
-Date: Wed, 3 Jul 2024 10:46:18 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH 0/2] fuse: fix up uid/gid mount option handling
-Message-ID: <20240703144618.GB734942@perftesting>
-References: <89e18d62-3b2d-45db-94f3-41edc4232955@redhat.com>
+	s=arc-20240116; t=1720018006; c=relaxed/simple;
+	bh=CH5oOKlw9c3vTvHIEHykaqkv2UUYIeenW68f8BPCnms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k8LCM/Im65ks+Ux/RuRxnTsdRgVvA5eAGzYBcSTVR7Jvsamodu2MMNJ5IO8i/SWdXM0ehVSZO1BYqG8xzsFG8jb+aJlm+BND7Q/Xnn3RxS+yTkaXgCEbTPxTgCpSgx/QV2pEuQ0lx00G6BoBSSXxBPKYW4jHp6rS6pQRLJwT7jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kKMeDFqh; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720018004; x=1751554004;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CH5oOKlw9c3vTvHIEHykaqkv2UUYIeenW68f8BPCnms=;
+  b=kKMeDFqhZa+5BqjsTm44iqY7uRYJaSMRWh6mKZiX9jogBYnj6bZZjHiA
+   oHqBto9rQ58RairDWruA2lVjIkNN64Q/LqqkbvMJOH8oWnZCiJPAP7xse
+   b+54+tCzoRE/Y914PUSd4ZzlnB+axvIjcyiA2frDbtGS8oWaFfNLyfTUU
+   kbnKWP8XO7H2MDaWWiAe1JBPjCeLXYYEeWDOkDQfRWV3Dr+bQY8dyU+dZ
+   DbQ9yilf/6CX63FSXRKULJY4U3RIMN48KSBZGZGAz8+lyWzsqmy9MIh3V
+   GT34cIIYl4P2+TMqUjc3nwiqq8SC5Z7DWNJ/PBlPrd+0ZGC7Szb2KIjcF
+   g==;
+X-CSE-ConnectionGUID: F3fmfeTWQnKj/bgwVEK/5Q==
+X-CSE-MsgGUID: PDvDYinATRmGYufzhwwmkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="21062825"
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="21062825"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 07:46:44 -0700
+X-CSE-ConnectionGUID: s+pa840NR8+fyklk+rc93w==
+X-CSE-MsgGUID: xDtuv+aTTbulHa1hrxNDzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="47034391"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.232.196]) ([10.124.232.196])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 07:46:41 -0700
+Message-ID: <5ece40f0-0d28-4d7f-b028-91825cb05ed7@intel.com>
+Date: Wed, 3 Jul 2024 22:46:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <89e18d62-3b2d-45db-94f3-41edc4232955@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] fs/file.c: remove sanity_check and add
+ likely/unlikely in alloc_fd()
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, mjguzik@gmail.com,
+ edumazet@google.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
+ tim.c.chen@intel.com, tim.c.chen@linux.intel.com, yu.ma@intel.com
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240703143311.2184454-1-yu.ma@intel.com>
+ <20240703143311.2184454-2-yu.ma@intel.com>
+ <20240703-ketchup-aufteilen-3e4c648b20c8@brauner>
+From: "Ma, Yu" <yu.ma@intel.com>
+Content-Language: en-US
+In-Reply-To: <20240703-ketchup-aufteilen-3e4c648b20c8@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 02, 2024 at 05:12:18PM -0500, Eric Sandeen wrote:
-> This short series fixes up fuse uid/gid mount option handling.
-> 
-> First, as was done for tmpfs in 
-> 0200679fc795 ("tmpfs: verify {g,u}id mount options correctly")
-> it validates that the requested uid and/or gid is representable in
-> the filesystem's idmapping. I've shamelessly copied commit description
-> and code from that commit.
-> 
-> Second, it is switched to use the uid/gid mount helpers proposed at
-> https://lore.kernel.org/linux-fsdevel/8dca3c11-99f4-446d-a291-35c50ed2dc14@redhat.com/T/#t
-> 
-> Both of these are compile-tested only.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+On 7/3/2024 10:34 PM, Christian Brauner wrote:
+> On Wed, Jul 03, 2024 at 10:33:09AM GMT, Yu Ma wrote:
+>> alloc_fd() has a sanity check inside to make sure the struct file mapping to the
+>> allocated fd is NULL. Remove this sanity check since it can be assured by
+>> exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
+>> likely/unlikely and expand_file() call avoidance to reduce the work under
+>> file_lock.
+>>
+>> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+>> Signed-off-by: Yu Ma <yu.ma@intel.com>
+>> ---
+>>   fs/file.c | 38 ++++++++++++++++----------------------
+>>   1 file changed, 16 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/fs/file.c b/fs/file.c
+>> index a3b72aa64f11..5178b246e54b 100644
+>> --- a/fs/file.c
+>> +++ b/fs/file.c
+>> @@ -515,28 +515,29 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>>   	if (fd < files->next_fd)
+>>   		fd = files->next_fd;
+>>   
+>> -	if (fd < fdt->max_fds)
+>> +	if (likely(fd < fdt->max_fds))
+>>   		fd = find_next_fd(fdt, fd);
+>>   
+>> +	error = -EMFILE;
+>> +	if (unlikely(fd >= fdt->max_fds)) {
+>> +		error = expand_files(files, fd);
+>> +		if (error < 0)
+>> +			goto out;
+>> +		/*
+>> +		 * If we needed to expand the fs array we
+>> +		 * might have blocked - try again.
+>> +		 */
+>> +		if (error)
+>> +			goto repeat;
+>> +	}
+> So this ends up removing the expand_files() above the fd >= end check
+> which means that you can end up expanding the files_struct even though
+> the request fd is past the provided end. That seems odd. What's the
+> reason for that reordering?
 
-Thanks,
+Yes, you are right, thanks Christian. This incorrect reordering here is 
+due to historical versions with fast path inside. I'll update the order 
+back.
 
-Josef
+>> +
+>>   	/*
+>>   	 * N.B. For clone tasks sharing a files structure, this test
+>>   	 * will limit the total number of files that can be opened.
+>>   	 */
+>> -	error = -EMFILE;
+>> -	if (fd >= end)
+>> -		goto out;
+>> -
+>> -	error = expand_files(files, fd);
+>> -	if (error < 0)
+>> +	if (unlikely(fd >= end))
+>>   		goto out;
+>>   
+>> -	/*
+>> -	 * If we needed to expand the fs array we
+>> -	 * might have blocked - try again.
+>> -	 */
+>> -	if (error)
+>> -		goto repeat;
+>> -
+>>   	if (start <= files->next_fd)
+>>   		files->next_fd = fd + 1;
+>>   
+>> @@ -546,13 +547,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>>   	else
+>>   		__clear_close_on_exec(fd, fdt);
+>>   	error = fd;
+>> -#if 1
+>> -	/* Sanity check */
+>> -	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
+>> -		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
+>> -		rcu_assign_pointer(fdt->fd[fd], NULL);
+>> -	}
+>> -#endif
+>>   
+>>   out:
+>>   	spin_unlock(&files->file_lock);
+>> @@ -618,7 +612,7 @@ void fd_install(unsigned int fd, struct file *file)
+>>   		rcu_read_unlock_sched();
+>>   		spin_lock(&files->file_lock);
+>>   		fdt = files_fdtable(files);
+>> -		BUG_ON(fdt->fd[fd] != NULL);
+>> +		WARN_ON(fdt->fd[fd] != NULL);
+>>   		rcu_assign_pointer(fdt->fd[fd], file);
+>>   		spin_unlock(&files->file_lock);
+>>   		return;
+>> -- 
+>> 2.43.0
+>>
 
