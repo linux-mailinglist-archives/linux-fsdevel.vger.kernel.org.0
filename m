@@ -1,185 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-23044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0760F9263C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 16:49:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4328926422
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 16:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDC9B2A6DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 14:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080CB1C24A61
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 14:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B890917DA15;
-	Wed,  3 Jul 2024 14:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F59181309;
+	Wed,  3 Jul 2024 14:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kKMeDFqh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WpeFWcyp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16505173328;
-	Wed,  3 Jul 2024 14:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A3C180A8A
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jul 2024 14:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720018006; cv=none; b=lBg17YisEW0yycDp7qzZkYOM6+cG3xKIMyXARzzm7PFK17n6JXYod3q7Z12PYr+Hpib10L69RJvNNbz+4yD9efhrf5WeTkqk2nG6Ysj1y86tAwFMuoIo/x2ecLXZK1v0DUQBaZMvztOvSMsLblBXA3Uj/1L5L9UAoCm77lLH3HM=
+	t=1720018703; cv=none; b=PoYO3zi+iIRa3dyn+r7+5pvIuSLI7/BZWF4zLOzZqGoYddKxTvVEoSoZskAP9meRF0wumaPWsRW3VfMaz4v9QKuk2fDqC6xuJMbGFKgQ8WRIYsGPOYgUz43zTNLUIUdWBJk6D4mvVaXJxacYpYrWwMY6zC2mp06JTvm3rH8fuOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720018006; c=relaxed/simple;
-	bh=CH5oOKlw9c3vTvHIEHykaqkv2UUYIeenW68f8BPCnms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k8LCM/Im65ks+Ux/RuRxnTsdRgVvA5eAGzYBcSTVR7Jvsamodu2MMNJ5IO8i/SWdXM0ehVSZO1BYqG8xzsFG8jb+aJlm+BND7Q/Xnn3RxS+yTkaXgCEbTPxTgCpSgx/QV2pEuQ0lx00G6BoBSSXxBPKYW4jHp6rS6pQRLJwT7jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kKMeDFqh; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720018004; x=1751554004;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CH5oOKlw9c3vTvHIEHykaqkv2UUYIeenW68f8BPCnms=;
-  b=kKMeDFqhZa+5BqjsTm44iqY7uRYJaSMRWh6mKZiX9jogBYnj6bZZjHiA
-   oHqBto9rQ58RairDWruA2lVjIkNN64Q/LqqkbvMJOH8oWnZCiJPAP7xse
-   b+54+tCzoRE/Y914PUSd4ZzlnB+axvIjcyiA2frDbtGS8oWaFfNLyfTUU
-   kbnKWP8XO7H2MDaWWiAe1JBPjCeLXYYEeWDOkDQfRWV3Dr+bQY8dyU+dZ
-   DbQ9yilf/6CX63FSXRKULJY4U3RIMN48KSBZGZGAz8+lyWzsqmy9MIh3V
-   GT34cIIYl4P2+TMqUjc3nwiqq8SC5Z7DWNJ/PBlPrd+0ZGC7Szb2KIjcF
-   g==;
-X-CSE-ConnectionGUID: F3fmfeTWQnKj/bgwVEK/5Q==
-X-CSE-MsgGUID: PDvDYinATRmGYufzhwwmkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11121"; a="21062825"
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="21062825"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 07:46:44 -0700
-X-CSE-ConnectionGUID: s+pa840NR8+fyklk+rc93w==
-X-CSE-MsgGUID: xDtuv+aTTbulHa1hrxNDzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="47034391"
-Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.232.196]) ([10.124.232.196])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2024 07:46:41 -0700
-Message-ID: <5ece40f0-0d28-4d7f-b028-91825cb05ed7@intel.com>
-Date: Wed, 3 Jul 2024 22:46:36 +0800
+	s=arc-20240116; t=1720018703; c=relaxed/simple;
+	bh=weShJow+P1MD1wPU+yOKBgKl46WuzKU63TTHcvgMvbc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M49S3R5kg9kQc64ozhqmkSyncEI4jdkfKYhAB5ITJCvqDYIrcGv6Oxi73vrY0NK4UlluwTGA0qfrLzN8znEMrLucWaKxtcXaLm2QkdVXPPvMAFnuIkykPMmR3M0k2JOKutrbwX+LyCgugw02rQX5K46X4tern7p5hSfV/AF4xIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WpeFWcyp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EFBCC2BD10;
+	Wed,  3 Jul 2024 14:58:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720018703;
+	bh=weShJow+P1MD1wPU+yOKBgKl46WuzKU63TTHcvgMvbc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WpeFWcypO37oAcpphcUIxMH1is5d1fE2wUkQkNcyUEhzgiwCcxVgqIdpTOvPxugJp
+	 9y+xXg7/USPPdc6cBLFfSlNCy+cqlB9WOM+pTViQMp0GlFga4tGYpXrAqadXQ+QfRC
+	 XGC1Tx4aHerC4RvwNE/RMZKcov+AprKc9ThvkUQtQP0tW6AHCca3sp8n+vjNdTZKXu
+	 u0ifwMkggayX5NiBo787u0HblTtwEXNfvpXHqvaDc+85WruSCX5UwYtWJZkkO0EqxC
+	 jemzKkdp/GbO//jPXelVkyxL7QUO2pEjhJYDOwOV2OKsvz/NcXUGB0U+kvBse6Vgk/
+	 zLHjurmpELHCg==
+From: Christian Brauner <brauner@kernel.org>
+To: Eric Sandeen <sandeen@redhat.com>,
+	Miklos Szeredi <miklos@szeredi.hu>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2] fuse: fix up uid/gid mount option handling
+Date: Wed,  3 Jul 2024 16:58:16 +0200
+Message-ID: <20240703-rudel-weltumsegelung-81f899715679@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <89e18d62-3b2d-45db-94f3-41edc4232955@redhat.com>
+References: <89e18d62-3b2d-45db-94f3-41edc4232955@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] fs/file.c: remove sanity_check and add
- likely/unlikely in alloc_fd()
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, mjguzik@gmail.com,
- edumazet@google.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
- tim.c.chen@intel.com, tim.c.chen@linux.intel.com, yu.ma@intel.com
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-2-yu.ma@intel.com>
- <20240703-ketchup-aufteilen-3e4c648b20c8@brauner>
-From: "Ma, Yu" <yu.ma@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240703-ketchup-aufteilen-3e4c648b20c8@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1496; i=brauner@kernel.org; h=from:subject:message-id; bh=weShJow+P1MD1wPU+yOKBgKl46WuzKU63TTHcvgMvbc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS1pnNGTz+zfrHFsvtvOX+w9kXsfM/Rs9RG6umZYzPZ8 iYbiTFd6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIrEyG/9FH64Om6gl+auf0 EpdZfas04klwUJLG6X1PXDP+n/BpvcHIsF98+rUez0NHLDo2pHTtTumWXHZR7F2a5TqzVY8mVTI 3MwMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Tue, 02 Jul 2024 17:12:18 -0500, Eric Sandeen wrote:
+> This short series fixes up fuse uid/gid mount option handling.
+> 
+> First, as was done for tmpfs in
+> 0200679fc795 ("tmpfs: verify {g,u}id mount options correctly")
+> it validates that the requested uid and/or gid is representable in
+> the filesystem's idmapping. I've shamelessly copied commit description
+> and code from that commit.
+> 
+> [...]
 
-On 7/3/2024 10:34 PM, Christian Brauner wrote:
-> On Wed, Jul 03, 2024 at 10:33:09AM GMT, Yu Ma wrote:
->> alloc_fd() has a sanity check inside to make sure the struct file mapping to the
->> allocated fd is NULL. Remove this sanity check since it can be assured by
->> exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
->> likely/unlikely and expand_file() call avoidance to reduce the work under
->> file_lock.
->>
->> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
->> Signed-off-by: Yu Ma <yu.ma@intel.com>
->> ---
->>   fs/file.c | 38 ++++++++++++++++----------------------
->>   1 file changed, 16 insertions(+), 22 deletions(-)
->>
->> diff --git a/fs/file.c b/fs/file.c
->> index a3b72aa64f11..5178b246e54b 100644
->> --- a/fs/file.c
->> +++ b/fs/file.c
->> @@ -515,28 +515,29 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->>   	if (fd < files->next_fd)
->>   		fd = files->next_fd;
->>   
->> -	if (fd < fdt->max_fds)
->> +	if (likely(fd < fdt->max_fds))
->>   		fd = find_next_fd(fdt, fd);
->>   
->> +	error = -EMFILE;
->> +	if (unlikely(fd >= fdt->max_fds)) {
->> +		error = expand_files(files, fd);
->> +		if (error < 0)
->> +			goto out;
->> +		/*
->> +		 * If we needed to expand the fs array we
->> +		 * might have blocked - try again.
->> +		 */
->> +		if (error)
->> +			goto repeat;
->> +	}
-> So this ends up removing the expand_files() above the fd >= end check
-> which means that you can end up expanding the files_struct even though
-> the request fd is past the provided end. That seems odd. What's the
-> reason for that reordering?
+Miklos, I've taken this because I have the required helper in vfs.mount.api.
+But if you want to take it just tell me then I can give you a stable branch so
+that you can pull the helper.
 
-Yes, you are right, thanks Christian. This incorrect reordering here is 
-due to historical versions with fast path inside. I'll update the order 
-back.
+---
 
->> +
->>   	/*
->>   	 * N.B. For clone tasks sharing a files structure, this test
->>   	 * will limit the total number of files that can be opened.
->>   	 */
->> -	error = -EMFILE;
->> -	if (fd >= end)
->> -		goto out;
->> -
->> -	error = expand_files(files, fd);
->> -	if (error < 0)
->> +	if (unlikely(fd >= end))
->>   		goto out;
->>   
->> -	/*
->> -	 * If we needed to expand the fs array we
->> -	 * might have blocked - try again.
->> -	 */
->> -	if (error)
->> -		goto repeat;
->> -
->>   	if (start <= files->next_fd)
->>   		files->next_fd = fd + 1;
->>   
->> @@ -546,13 +547,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->>   	else
->>   		__clear_close_on_exec(fd, fdt);
->>   	error = fd;
->> -#if 1
->> -	/* Sanity check */
->> -	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
->> -		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
->> -		rcu_assign_pointer(fdt->fd[fd], NULL);
->> -	}
->> -#endif
->>   
->>   out:
->>   	spin_unlock(&files->file_lock);
->> @@ -618,7 +612,7 @@ void fd_install(unsigned int fd, struct file *file)
->>   		rcu_read_unlock_sched();
->>   		spin_lock(&files->file_lock);
->>   		fdt = files_fdtable(files);
->> -		BUG_ON(fdt->fd[fd] != NULL);
->> +		WARN_ON(fdt->fd[fd] != NULL);
->>   		rcu_assign_pointer(fdt->fd[fd], file);
->>   		spin_unlock(&files->file_lock);
->>   		return;
->> -- 
->> 2.43.0
->>
+Applied to the vfs.mount.api branch of the vfs/vfs.git tree.
+Patches in the vfs.mount.api branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.mount.api
+
+[1/2] fuse: verify {g,u}id mount options correctly
+      https://git.kernel.org/vfs/vfs/c/525bd65aa759
+[2/2] fuse: Convert to new uid/gid option parsing helpers
+      https://git.kernel.org/vfs/vfs/c/eea6a8322efd
 
