@@ -1,83 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-23018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4850925F5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 13:58:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894FF925F67
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 13:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A67286284
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 11:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F9128EF07
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 11:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC27517334E;
-	Wed,  3 Jul 2024 11:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9AA17623B;
+	Wed,  3 Jul 2024 11:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="J7nZmoD3";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="P6ZTGnGB"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dN9Iehes";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="BWTYIwvf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F2317279B;
-	Wed,  3 Jul 2024 11:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A6617332B;
+	Wed,  3 Jul 2024 11:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720007890; cv=fail; b=JG8Zj0VaKHDnGYlICRC22HKGWmeBc6rixRz/iYtUik22AZ2xegUgwxfarUb8qdV9tOYi2DY4HskziacF7BC/8nbQSTYZUEuHrB6ffybAwO5sd6NYvT2aDeqMOMCFj/KrKcHZhni0OFIgi1QwvMs6HicTpXKcDgFBSC/8uaegvUM=
+	t=1720007898; cv=fail; b=ReBW9yeRHWSrXZj4JzKEOQKiCoQZFqYs4TiWdEtRl+1qObv6Y9WC3zGA1kJvHZOX63yPZiIOqwT1Uw+b3xmYtXfQNAdY50BTXTXymm0PnuORM+VIZiS1+8K5JksU/laq4/eGeOblzQ/a3hEZ1iTaVq2mc90FKl1qlKcXZg0tiI4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720007890; c=relaxed/simple;
-	bh=joovCA6tTf/WC/LyaZ4ASW+6cdUfuERHk/jN617EfcQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=kakd3WBR+W21okxk8s3pjxobZq99lEOuPtd1xkA03HW/wc9H5NRJS7PuxiS2gslR58JmLHcvIsOHclHe2dqXtCGEuJgNiu78aO437hj5aJ/pP/svd8U3fi3//7w8JaUP3M9YE3ukqy3DXQYgYTHCVPRV0xJxP1dTljGBme+ZRJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=J7nZmoD3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=P6ZTGnGB; arc=fail smtp.client-ip=205.220.165.32
+	s=arc-20240116; t=1720007898; c=relaxed/simple;
+	bh=XcfzE41GYLv7CnyyfANW1Q+qNQzAM2XvU8b8MGAggMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oEXAlUB3gAZWuF16WWaMmZF/TyyNkt7eTnquQUB6tl1tIgzN9f5zrS00CANTbo1h8tBGbaA07QIp1khiyLbIQQuFzEVxqnDFjP8J0ToS87tg5YDTPef6iNzfIXjq/+yaKFyDn6370NkM/4lS/ePbmsGYldlIkTpFf7Qec7mlmAw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dN9Iehes; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=BWTYIwvf; arc=fail smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4638ObPv009722;
-	Wed, 3 Jul 2024 11:57:53 GMT
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4638OEA3015994;
+	Wed, 3 Jul 2024 11:58:03 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:content-transfer-encoding
-	:content-type:mime-version; s=corp-2023-11-20; bh=dPhy+DmQ+ZERY/
-	aul5Y8xk7n5JKx9bKAeWSWEH5zfAY=; b=J7nZmoD3lOGdzd4eHIHJMHdgdg1rHH
-	X1fnYDghfC9oTPIc/pRYpbUFhJAiY4al0LlJoTvMiT9wD5GLkeCNLNoxMQyzlUsj
-	ucM73fXxIRniHsyeEwzlVFYC2J3TnB5YYmEqQZKM1CS9DUzIRihF54XUr72qxa7h
-	4uOXFhdF2rsiLmNWJQyKwd9bNsYSJqo7XoRKwdWZb5+EPYt4XTnL1tdWgn/+o77X
-	JuYd67yPDQn9g9MSCBbs+no/SWeHwKhmH4FZlWI3NPHjtG8F4uNLi2eI8hI18c8F
-	ffkO1WBno1d1TsIU1UiFtGTg2vMXAP5Q4/wvsWj6HKs+mnpB3UYK6f9A==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4028v0r1ts-1
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:content-transfer-encoding:content-type:mime-version; s=
+	corp-2023-11-20; bh=7yUoHz+y4bBA4WnYst+c6VR5ABPk6RgWVBzoDEOoRHM=; b=
+	dN9Iehesf3sF/JZx9cSYvNCSJ3S6RKUkjzR4SHe/Q5oTtuz26EcFovg/tDET0ONo
+	45VoX1i5TsNFkh+sBqcKKo1NjQspUn2+Zhqw/ioExth+5kmVln++ViELVDtSLIqT
+	kNARuqYMEWHKHKiVVkv4mPiSSeF9x4FWzlRnP5hQuTKiJxbyWh4mEHtj0iV87DmQ
+	/yFjRes+zhn9dHQeo3j9Kh8BhTfHihmKV3oSeGELdMnagAYhh2huBGeuXd8nG9v/
+	J76jYzvD6sSZjprG8Hpa5CkRUCzm8MI0xi5Jfinkk3WOGCAbGV1tem1nwoSSc4Jz
+	ny5cV+yld9tVMz613S8Wlw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 402a597t25-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 03 Jul 2024 11:57:52 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 463BJVaq023511;
-	Wed, 3 Jul 2024 11:57:51 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 404n101e98-1
+	Wed, 03 Jul 2024 11:58:03 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 463BN5Cb011150;
+	Wed, 3 Jul 2024 11:58:03 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4028q94qwb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 03 Jul 2024 11:57:51 +0000
+	Wed, 03 Jul 2024 11:58:02 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jrjalrJK332FyHXlFWzOOs2H56dXsqOy5LaRackN9No2EKcRhjsQeEbg+pZ0hGvb73gDX21SqDBnSWgJFt1o1AD8XAyBimtyEY7+vmQ+lcJjVRlxNARXOAV8wi6GZFfXtJRAnIX1fKT9JIwDVeDlyLJ/7LGA3NJ2y7/B2FpAQEhuSLCJF1ZpxmYVrhgqLZTOyEbVX/yf5VZ80sBVPbSsf9UtTOhR8QCHvqHELfut4nfLtyzlSm6Ma08Aw7nFMBNf/tV0MnpMNWMAOU3dovU/ZukZpkBL3eZV+zIpYolcaapu9SQKtU0Ly2iiCvLWa4W/nTXKqdSm/a8BnGIOIshyTg==
+ b=aDkT+6ELJfItLUro7PYC0ITfXxMpGuToxNo5QXMzIfwn8tAuiiLITTDW+jNOe/FNgB7Fg+pRkUU0dS3v/nJi6EbcS8EGzTK/c2qKi6UxL5imnekcoK5K6sl5yGojZalspUSYfzdG5g3burwranEOtNHxdganjxvNfr5Fwy0pKsIMDEL5/mRr6GhbXLYjPlDeA2FMcRebVjSarh4afNXPsc0nbTrdfkXyBloYVKuvxNB6AcAB1/hcAwpMHRJkEn7OUmq4LcqbhJkgt4zzo9A2a78JoB7yBVuC6kCaPwZ3IYY7T9B8LNaFT84s6UwUXG5vwAtbUULKAsaAzxdRUnmO8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dPhy+DmQ+ZERY/aul5Y8xk7n5JKx9bKAeWSWEH5zfAY=;
- b=QinOHFPmj53H+TaEy1n67rl7hmuGA8ygdpfMLxGt6bT0UGIwQGUtymcuu+jY8gho6PZJRUHClfv8oBFbEsjPq2tzLnQI4CwDhWHDGu81jcz2nywgamY20kuC5Vte1duyuXDUrw+x7IdxZQCyr+ggz3MEMkVLCDGN0n9u5DDApKYKQ12FuZ3fAMS0R7ecQ2jwofP+UzFfomDA7B8Yw0Vn9RWGD5dJ+lsRn7rzXtkc5PNskdPUApAoQ56lb144xVDvN4i0ln+uchqB+upvruvbKWOHHKAUppc/ZBKKfBX7/mpTf+FkiUao3yxBSaB7Unyu7SZd9sfRr8nOo1gRddboAA==
+ bh=7yUoHz+y4bBA4WnYst+c6VR5ABPk6RgWVBzoDEOoRHM=;
+ b=El79l+rZxvsF5XCzve44uDZnD+RkXbM0nhoH7ebDLFYhk3wG7ceLxHEmFuZWklYJMm4xrutvU1MV+RkH/eY5Mps9hNPUu6KMgHLUMF73rE4vl6zaXKoSJu9SHtx/et6Q1fG1vfPphSVU0pNLCF0sei8Y33mfhu/sU12YIBn/EJZfw37SOcnUDW3i0HeRzKKRJXZTi9DKySHNEf1fNnYio2pW6yaxCoW3LKosrsskdfZSXtrG4XTIoBsIvJjERHA/Ek3lgfpIKhFMbewawThrwj8e2jznb5nnuEtTwPpaYi0UG2oR7YS+7pjJEFBMxsM6F3ekcPEYZhyYm7YvRBFnCw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dPhy+DmQ+ZERY/aul5Y8xk7n5JKx9bKAeWSWEH5zfAY=;
- b=P6ZTGnGB5wcljpzN0lTY2bBj6rspVN7726Skvnmo3YAEw0uMRazwKYI6YlvjOoSWSS454VR3l9vbL16l6TJf7iooA5iDFC2BIlfzz/cpt3w/VtIW06L+JCXSafCObHeVpk4Qtksn7VXhaqxkRMxd1pauD6enfTCT5Jfv3LEh4go=
+ bh=7yUoHz+y4bBA4WnYst+c6VR5ABPk6RgWVBzoDEOoRHM=;
+ b=BWTYIwvf6w4SA7G7s7PIryiulNMV4k4eTkUbvF/WiM1r5fo+/MONxbP3E61Ykt7JAsaHe8p4Hq6axISzrC6lKQB134n9mikaiEoy8Yn1WN8Fq3LyZRCXFv/WU9KbddMnyMCYO8mJ5PKm9ClKPDQHZFweOxGkIma2dPZIv+7/Luk=
 Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
  by SA1PR10MB7832.namprd10.prod.outlook.com (2603:10b6:806:3a9::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Wed, 3 Jul
- 2024 11:57:46 +0000
+ 2024 11:57:57 +0000
 Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
  ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
  ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7741.025; Wed, 3 Jul 2024
- 11:57:46 +0000
+ 11:57:57 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -87,14 +89,16 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
         Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH 0/7] Make core VMA operations internal and testable
-Date: Wed,  3 Jul 2024 12:57:31 +0100
-Message-ID: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH 2/7] mm: move vma_modify() and helpers to internal header
+Date: Wed,  3 Jul 2024 12:57:33 +0100
+Message-ID: <2f6f2495f8c821d30a29939a2a2c0869ed6205db.1720006125.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
+References: <cover.1720006125.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0038.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ac::6) To SJ0PR10MB5613.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0616.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:314::16) To SJ0PR10MB5613.namprd10.prod.outlook.com
  (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -104,256 +108,242 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SA1PR10MB7832:EE_
-X-MS-Office365-Filtering-Correlation-Id: 03bbe9fa-aa82-4d0f-0b39-08dc9b575a67
+X-MS-Office365-Filtering-Correlation-Id: a8a3de96-a0f2-4e4f-12ef-08dc9b57610d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?SvYNSScwCRd90JlxoaBhVjoA4U/3/bWHhX3Ak4ULNJVx4T+s7UFF+NJxcdNl?=
- =?us-ascii?Q?dLcNiykkTtG13tlJq+6GzkY0X274BW3yH0kSzZIndio4rlGlMJaJYZv4PY39?=
- =?us-ascii?Q?jsR77u6e/6hnvcHcawOpzOP60EivIcrg56l0oZi9Y1VqkyEuod7MTckZRVOq?=
- =?us-ascii?Q?sJKbAjmqkXhMoGDUzPnGBNL9WmcQNmgzJOw9Mw6CYE4+XZgQppWJxD6P0j6k?=
- =?us-ascii?Q?ud3jupHvXQtYPzNRD7Iqak7M39k1GSXqp40TVFt/KcLUj/WKeTJInuq73WQP?=
- =?us-ascii?Q?J88zbIR97g+XyIaaP2+yBdcMPDXqV5FuVjIQcoEfBGC4FdK1f4CeNg6lhhyr?=
- =?us-ascii?Q?sYyyQI5d1O/SaJ3HVCIcu7z0MySFQMzVNgpDWR/rtca3jLCP4MeFUFLkyJZC?=
- =?us-ascii?Q?qStzNJJxDXLQYM/JR4PEb+ITY9LGE0mLBBOAGAlhc2XT8wmsEvj8tN0LYa/H?=
- =?us-ascii?Q?MKo6WIrj3vz22qoaxAw0QVpkbigFzqj0bmJJWvRGZaGAIi3rVzo6XnF8ANuu?=
- =?us-ascii?Q?VCPKFhheS+g+OjhtxNcgoMk6XPtCkKMnRlr6025V6w9uPIvUi47sEE2YcXJ0?=
- =?us-ascii?Q?eZlMkX4rGEICgmJPVMzYybJlAfnvU9JnZlEW4BsSfuJCwWIdFzkyvTQRiEQG?=
- =?us-ascii?Q?EaL4pcVVPBT3dWwVtRGY2VGsPiib0LYkxyHgR1Z5/+qbVTCBQyPSpXg/boSA?=
- =?us-ascii?Q?zVzuQuxYY9M70dVXHdXPHMJ6PcMYaj8R0jsVZETCB8GzNNRA5lAIw+RVXh6z?=
- =?us-ascii?Q?2h/5/hZsAenKVacWdzgIO8WpL0nZrA7PcPhPK0tBPZi8/zivj9m33EUFNuUL?=
- =?us-ascii?Q?tjXIzAgVhGhgXVXgoccNg7ylnWY4LOO1fKGAIPHrjeJ8Tg9Ubc5MoonNxRzU?=
- =?us-ascii?Q?0MjT8fSJF2clvTLabUa74N/VrxDdGwQvGh+8uPsL3tNTfw76zG5O3BS7x6+N?=
- =?us-ascii?Q?02zXQJWGP/U2EG/Od4DCP2eF7UED8RpvhtnVIEduSlmuWNilaAGDc4qRR0HQ?=
- =?us-ascii?Q?qLkgg7uBnsHr+MWitR3P0CS/0PFc6pdIz0PxvCW9yK8sxlIgmqcsRTcuex1i?=
- =?us-ascii?Q?MyiN7suraLRQsRLlha5KmrwFha7Xg69wCeVGgrwqQt7WjpY1RbViE4xXNJXe?=
- =?us-ascii?Q?4m2+R5Vyf5WMTfQ1ezaP0lCG8HBguP/dl5QPJZoYtNnytAXyTARgHFN61yuH?=
- =?us-ascii?Q?+qADvAGj9v+el4SFKChqmUFSB9hhangrVwUg6VMOIBkJ4cqf9QLr3Gx87uSQ?=
- =?us-ascii?Q?v5A3fZMepjUE/vsBYvdrhsHwZb9T9qJofCRVmUFFzLnyN8Iz1b5MWZ7d9ejJ?=
- =?us-ascii?Q?XwME4hXcKSfwB4PHeSo4Gd8H?=
+	=?us-ascii?Q?vJ9KXN67Uot/M3pvScGJblU6CQlSHjNoP3UOC+SdNShvMtugvbWyDqD/mesR?=
+ =?us-ascii?Q?XEkH1zG92F77l7PqXIQUPgJEcAWxR5KxTJdie5HOBJwKNLe31WFEMwPX/CES?=
+ =?us-ascii?Q?h4I0Ke/GL8cTbTioXZjVCnr2d0ZKrdjbWZIX1hN1ryKIvSFonLp6oD/Rgi7w?=
+ =?us-ascii?Q?ffst/di43iCtTnk8T+9l02xeT7GVfUe+zm6KPEuTawni3u9/XopHOXa6YaM3?=
+ =?us-ascii?Q?Ebj9VM9qXj3IRWtUdvbX1Ce0PaW3ZA6idm2Td7Npv3SZJWO1wz/si1AepgIr?=
+ =?us-ascii?Q?sb+EdnMYBWPJsb8c8oNkTU91yOTUobFY2nkCQZ4FwynE9BAizXOcLpjAVBR5?=
+ =?us-ascii?Q?BjpSBxQxLrQW581P4uxhfuxcznYGkuQ82+faPGXoXu5DDDABKCQwc7bpUy72?=
+ =?us-ascii?Q?b36KkrsUN8d/Zvbptae1DJJ2cAeqE9/EZv5jyk76nD1/u9J2iuIeDp8544AB?=
+ =?us-ascii?Q?WVc2yrRAvKSi0MfHXtvCqbQ2SL+jhca9rAgZ1k0EzCFecVlaKGEKGJLf86IP?=
+ =?us-ascii?Q?RMGBUyRAcPV7W0Uxr2ZBJuAsbSPFNcmj+FEuS68Mcvc1/K5WxrRMsvocjzew?=
+ =?us-ascii?Q?MJIkrZe9Wpz2wlXGm5EUg1RLvEjGdPxeDf3VHWnY6Va7Xxi3pcX1gKtx+khM?=
+ =?us-ascii?Q?FnNckBGCeljuv6o5ufOMotIFTr+hIrp1d8MG+AFYrbAwtdkx12uLM3CvyQ/I?=
+ =?us-ascii?Q?99xd5JVPUraa+rZrjnm97f2M37Emjuqwad24iTgwD8J2mEHgzXYVd5M3QuBM?=
+ =?us-ascii?Q?fWKKlHuuDR+1xF15yb49X45GcoI+RUEbHOMLFGSxIkV6IYnUB7vOwkv0sZdI?=
+ =?us-ascii?Q?3FbyiR0XSizlKG0a066rCukcTBlKzQuq6/3uBqI63NxfJpxcCJolVOpwBqqq?=
+ =?us-ascii?Q?BjBbD+I3tNplqiNYUZ6/0WjU+gy3JpthLilwY5UScv+lUyL9QF/c1geb5LMj?=
+ =?us-ascii?Q?WhaUVbK/4WIQwbRDdxO1EL0cvRN2BoRt9jwjRu3OL6h1zUceHQM5iVmKzJ/V?=
+ =?us-ascii?Q?cZs+P+E+lsV906p0NGI4UHagSMWx0ZSaIvz/WUFJq40GLfF4zv3mYIR+Vf0W?=
+ =?us-ascii?Q?q9uoYdtJzKn1ldThMLUAwVGcIXJDudZbVkzoAVfOAuXqj8iyzY9r0Ds0u25Q?=
+ =?us-ascii?Q?mt48TMEKaHIJmeHoxXxvMxpNCqhtgw0ys6IKiMdCtuFJvxFxQO/K9tA+g9wj?=
+ =?us-ascii?Q?/qd5tQMu3pXfr4lSIEBPUdsgzOMdxLory0N0j9YbGoMy87xyGqGKLPx9M+z4?=
+ =?us-ascii?Q?Xb7PlHzSc3OcEEM0dZeAi6XKDznp2ntCFaIa4uw1nj9SSnDe8vM+Fxy/clAI?=
+ =?us-ascii?Q?LBKSJ0HXzLjvJ52tAxKpVWSEU+GQWVJ33UhpnL94wbGNvw=3D=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?k9o4vHc0MG7Nk18pyRqMU4G8OMy/jpf3bn9M/WRi8SmDdzTaia7hDyNAVTEX?=
- =?us-ascii?Q?qOpuT30nuie684Da3PNLOb6FeH0WhGFZP4IN/SwbH6rpoHk/F3f1d/ddBHjK?=
- =?us-ascii?Q?DlQDH8rl+oW6m/eGx0D6T2iLEEGGTarFlvqVWCmJ1FBfWwDKzbWGIqt5Lsv7?=
- =?us-ascii?Q?pxBch1iqXRx5Lf+PdrseKMvKOCOYgVrfM4sMVFYrKIoMeNlmwjNcXw7yI/j1?=
- =?us-ascii?Q?eMk6yjMY19BJ9d2LVNhTwdstJIZpzK3wD8F2L77yo4cBUI7Yp1tkCrO5Grqw?=
- =?us-ascii?Q?cFUZe1jq+MCDOSMtKFiMldhrecSz8ZN1So46vYPgKrApAB9nQO/O3PHFY6HP?=
- =?us-ascii?Q?0ulZMfvEQNd6vN7d2qTKTNSLqDAn5ILC20V2OJwE7lWdM2yvtDJBwW+e53Mj?=
- =?us-ascii?Q?/X2Yy4VuHSFzOyDhOlC/IOgeJJbGOaERLsTzWuoSNeM36vvb9RRafYKo4AZX?=
- =?us-ascii?Q?Wi2uovXubO3rJh9r7bYagetCBNIan19CDuDyr1m6pjde2WwyGl92YseY3sDA?=
- =?us-ascii?Q?NKnXn54Pc5u7T8L11K8jZv3+GBGsR1/P0Y6/H5XIYA9jO3YWBI4+rW3MUdt7?=
- =?us-ascii?Q?mVeS83j3Mmq2Rli2jCqvfF64o8P9xvi8prh5QhSGbMz+30O+J1AEUhF6Q0Nf?=
- =?us-ascii?Q?oALFiJ66l0Q7ToMm1rbbZsbb1JZniQSJh9ldH72mHz9MNbxt0L3CyA3Rch+a?=
- =?us-ascii?Q?R/+fjdVlzNkHd7QQRDoE+D2ItxfvxQsnqJDZzKwVTzep+DrI4+A8sxmmad7u?=
- =?us-ascii?Q?Tw4WCy5C6FUsbKLdKR0gxm4mBNQlMOF3pr1dxFJf3ET6cRUwjBpjX09+PNFc?=
- =?us-ascii?Q?LZubffQJB2dGDNGayVzMW+LWucspB4PhtHku22VnnHniWxuFsQ8ZDwJztVi/?=
- =?us-ascii?Q?aK+PjhA+G5uNwLF9LSKGTq73+A4dqr5AYtNR0nXcTWs9DU6OsfIVKvVFbHc+?=
- =?us-ascii?Q?VwFZyvcDlLMzZh8q4mR1Z0ADqLQoaeaA35UJYys2oLlB09wzdxrDPoENckSx?=
- =?us-ascii?Q?WyOYgqRYE8Hq5v1akQ6GukIE3VGRiIdL6yHpQebQ3q+6MV4WD5KjCj+iRzi6?=
- =?us-ascii?Q?nmem42TpNwe8lHMr6wknQKQiIq1bRBLaceUlF3Z8EMRoadVAW4t6M+iuxUc7?=
- =?us-ascii?Q?bVrZy/OVbPz8H5myQnKvw4DFkkuad/HZYqWQbKdPN2nFdOiJP7pkGxbgGGUb?=
- =?us-ascii?Q?Pw1VhQu31CNbGpYv8bn7jex9LoK0VJojr3uC2OLG3PKJEAG1QGMha367R5pC?=
- =?us-ascii?Q?ogWuZl9TWQo4dCitKdv67xIVAveLqQA4HWMX+9no6syEOlzmhELusFrYrJDN?=
- =?us-ascii?Q?c57eXXASWflLkEzwOV1UHlIlhG9RdayyLMi3xwfqLhN/LAXwFSWbwiCj8S4e?=
- =?us-ascii?Q?MYyPCOcChyoybOpPb9MQpDqYaNNPzWFSsyHt/01X5KjH0dhUBNIX4wjuumi7?=
- =?us-ascii?Q?m8lkMivS3LJMoiGSRfsVUhs4xDX4ZoCk4rTCvzVm+LBPxfJEIeCw6SFvPCFw?=
- =?us-ascii?Q?t9MUn4f8vJtJN3LHyJw32LatCAJ1UappcaeEghpoqvXnyE5rNzWWmMwRt/Re?=
- =?us-ascii?Q?7qSZvwWBLM2xhEOaEjdzCjNV9qOMXXecbIWXv+KKx2NrRc2ykMXRMwg+wiea?=
- =?us-ascii?Q?Tg=3D=3D?=
+	=?us-ascii?Q?RHkaAHpyNH2XKEwo/6KBR5SPyUB3TmbyNcnVfC1Ytonnrq+RM+Uoxf/eswdA?=
+ =?us-ascii?Q?7zyhHDeu5CST9CyJ2+xLT2Y+b5YpUcoC41D8dPvjlq5CoSZIdNKXlByi0vJ8?=
+ =?us-ascii?Q?+qm73oy/cc91sq58w1aL8Ox6oDyP+6wl1o834d4tDhJWcEFWcbqjKdocF1qs?=
+ =?us-ascii?Q?ciTUtEYwFuujc1l/gQfxmuVR3tcky5MEV0JNP5OR1mhbxtw7HtHGBnMjr+0f?=
+ =?us-ascii?Q?N49oSUHqrRJGWCDA/MO2i6cUYKU7ZhtTNJvm+yoXULIPI40DAnDYsvyi9DHE?=
+ =?us-ascii?Q?MMM2av0Flsdh0e4ksOTqMNSoELA8jmnz3TkF6uoweHWCVnoPS5oxYWT6A8G6?=
+ =?us-ascii?Q?j50vojihJwBe08zuq1aXTdYM3SBUs+g9PwaQ9GgGYP2WUgsAVVJ54MmWWNaY?=
+ =?us-ascii?Q?cfNbvFQlmY/kN4I+ZtDjbl6GuWXa4mu+EIfWGZ2lLL8nuhPM9s5IHIEam37n?=
+ =?us-ascii?Q?QsOERbOHBtYk30POyfnxOm4trQWRTb6UhzkLAMmoGHQVi0ezQOTkcXbdB6fQ?=
+ =?us-ascii?Q?K5kA4QwxsWgdYf8P1uH6G8nlQys13spm7UvmZDGX+RCw0KS7j9Z1r8R8ckJv?=
+ =?us-ascii?Q?YpATO/kiy2yXhaID9Uh66B4djSMvJM5u1HjO7nDShQH/bfNZ30Hadv03GmNy?=
+ =?us-ascii?Q?g45qpk0NEIg1zPha1JxeibJUsbdAnaqS71f7nl0/oae+MQQ/+ZkTIs6+KWNX?=
+ =?us-ascii?Q?T9ckV9mOK/ym04bOxRF358Ac9+T/C3Km8IPgAD0z2KgqMVj1e3pRB3M8/ZFW?=
+ =?us-ascii?Q?/Opeq4FNqp3ovKRUMXuAVinOHrKjR418MTD0gZejh9656DeMDxr+99j8o3qz?=
+ =?us-ascii?Q?1CWR+7bTqoVjAmt5sM/SsyDGS81s2gt2zVXx/8kh3mbofeKbZ800Xm03B5cl?=
+ =?us-ascii?Q?8wmosahGJeAIOXT60tmnuQzKYbOYKs/7LsZEBYEjBeZAcqPnfFIh88ppK8Ke?=
+ =?us-ascii?Q?W4lqTClgoPgIlDmjlMOEnNACJeT0hSlIGI8JWR3t/JTYDpSoq7agYtdMOC67?=
+ =?us-ascii?Q?NxaQQnH6L+R8IAOgV+RRRlaWeeMgSm8Ymo+xnU7+X/OLnl7aInXY1V0KoeZF?=
+ =?us-ascii?Q?WUE7F8hzKTPddyX/rsCAexY8/rQTMClYjBKhNQWbyJdcn2Qh+EC1yWnTrGko?=
+ =?us-ascii?Q?ztXW9eYBOrE9QtkRMg/DnZitZSBabxVBOgaY82YZXvhWesD6rudA464wtY3Y?=
+ =?us-ascii?Q?vpuYhMQB3I9Ovs430XryiHwwPuM3oLZYyMSiCTBcjgCQLcQzYP5+aWstJWZN?=
+ =?us-ascii?Q?RygsZbSFo8TX85c/WdDFix5O6qIJiyXhCZCSp3a3bmVEEygrqXJlFKbvrhZG?=
+ =?us-ascii?Q?w469M4Bh7ziYOj8DUJYe+wznLm4BiAp1GrUprii2TsJjDKdSSY0uLMomI8UA?=
+ =?us-ascii?Q?XH56TeYRLrW0z+5DrNrC7TlnNEU7hI0FPZ5PxcAnWm6nXFeUOnwPqfqgtHpk?=
+ =?us-ascii?Q?ALJYzljIId7GpowliIWu6p6CZJ5u4RSbhww8ABZXugpgjfrRLaNQPLLOaaez?=
+ =?us-ascii?Q?qmlKENK6lwwR1hI2dcmHUtxpgvXvmHtU1fRzqz6FG+5qiiBZz+Y8bBmpjSZ2?=
+ =?us-ascii?Q?82KJhAF4z4EhrhqX41X2uaLdMDj5GtAiA4vsMX5EfmQCqsXUVLowi3FFGnjJ?=
+ =?us-ascii?Q?4Q=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	6Ll+aiNJLjMp2+QXDfcZR4ie9zkmwmU6srcrT3fhuKjX5VEvLotqFHpx5KD9bNRp8FeUaXfr8zBn/5SozRJk1ZvH1IAa7Zb9oBH8SPlSsD+eFl3eLfGMm2lkR2qYxNXeTer9VBM9QLuXoSZaGkhrSeCeQydfQhcEbN3Di0TLMomnPf5pFs21gmh1mH32VqshHo5TbnEJ4YHa9A7I59rA6fFThilozAyeEeF9U/tEchZqr1AsBIZ5nnTAY8jpZluKOB1iQOR49ud4eU4mcBzz7V11Z6J72+D+AhDi74Wt9K3bhQ4C49hobVr56mttmE9nbclHnFNXGWzCZqZyfkUqCkBA4Zs6Wu9WRBYHDbQLzN2oRqfycBA8OT8ILlsExFG8zf8yskqyGyTVZbqq7YvcCK1upJsGO1CATG378V7xQ8UFDyssj048RkqIbGVUVxkvxRzNU3TWouVu41stKxRFS6Bi1weMFvaV5aHqE3uLe2roaYG+c9HxSZPgrOPp9ZBVcQupGjPCatCks91nIAQ7l/QHkqn7tPOJuOW0hsKUjkt06547AxVcKOQcdtBKuTcT9j4jR1DlImH71c0c7NWk8YozfoQ4WiTeGJRp//Xj8h4=
+	pShGckQX04/NBsn0kARmkX1nQsE5Lh9hMeNuUuVdpANvQZAGN7/RN6MbEjpx8WFCaXTmzIxSJJcdc4tFHgMQYkbPmEMzyHRxMDsi5qnrczuc3LbfntW4TDfPw8z/EiJ8Z2JanDnmWsQVB5NIv9cXZH5lM/zbvb1SK39GSeFdG/RoT21Bm0Y5iKUfYJIU7IM3ipfOhj9xkPXCHeupovsvCsB0hqSglNli6icRgE9pUYUy50bWt+Y/NoxTisQsz4dHJLC+wXmYKbyoCOgu/p5bo1wsK6gBiZilD0p+V0KxbAFK2LW0l1BuTv/mp389r+j21B8cUsRwrQzLiYBhGwMhE4+KmGBybPYHPSZ/Z/jExoVLAAUg0z9HVt5XtM6iqLLw1pQYnK6mIdbqotLmUxQLSDdkvUGauGCVYtiYcauljWD4Y5dF2thO4ZWfDAuHjTvx6qB9TZmP4j5L7IZQBHo+aOYG/wuFHNNiQO5avEK12JvrrCyB6kjYOXIcRa1ETZyzX/gwJsdC+jmFbNF7K23NvLBXpTa/bKdDaAsKK39Ke0TZroybIIstTSOqBQqsupq/1r10Px3s5jiOOe/1RQoPma59k8b5l1zIBUwzOGlfGxM=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03bbe9fa-aa82-4d0f-0b39-08dc9b575a67
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8a3de96-a0f2-4e4f-12ef-08dc9b57610d
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 11:57:46.3188
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2024 11:57:57.4588
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UZSwpXb2a/FXN/nq8IE7iPcI9hB1Luv3E6UPR5SzQKdt9u8QimmrQNx4JXhqD3uKGvx85qSf/CQnCmvGS7DdAO7Ieo4BwyM2RtSEBNqJ+WI=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2vJZa3xwMrTn6w3nADsg6FUESyC6Z0/4KebzIkfR1sHbGG6g3EKa0HbeZ65Vj2UuYP/ciskILOjvdHN0wz5aQbqeZzePncjXBUhSAXizZpo=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB7832
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-03_07,2024-07-03_01,2024-05-17_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 spamscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ spamscore=0 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2406180000 definitions=main-2407030087
-X-Proofpoint-ORIG-GUID: d5RRhL8xSGopcWELNi7TF76TZEShdpnw
-X-Proofpoint-GUID: d5RRhL8xSGopcWELNi7TF76TZEShdpnw
+X-Proofpoint-GUID: vl632y-O6NRTEeUT8MezFWmNChGiz6qE
+X-Proofpoint-ORIG-GUID: vl632y-O6NRTEeUT8MezFWmNChGiz6qE
 
-There are a number of "core" VMA manipulation functions implemented in
-mm/mmap.c, notably those concerning VMA merging, splitting, modifying,
-expanding and shrinking, which logically don't belong there.
+These are core VMA manipulation functions which invoke VMA splitting and
+merging and should not be directly accessed from outside of mm/.
 
-More importantly this functionality represents an internal implementation
-detail of memory management and should not be exposed outside of mm/
-itself.
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ include/linux/mm.h | 60 ---------------------------------------------
+ mm/internal.h      | 61 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 61 insertions(+), 60 deletions(-)
 
-This patch series isolates core VMA manipulation functionality into its own
-file, mm/vma.c, and provides an API to the rest of the mm code in mm/vma.h.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 5f1075d19600..4d2b5538925b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3285,66 +3285,6 @@ extern struct vm_area_struct *copy_vma(struct vm_area_struct **,
+ 	unsigned long addr, unsigned long len, pgoff_t pgoff,
+ 	bool *need_rmap_locks);
+ extern void exit_mmap(struct mm_struct *);
+-struct vm_area_struct *vma_modify(struct vma_iterator *vmi,
+-				  struct vm_area_struct *prev,
+-				  struct vm_area_struct *vma,
+-				  unsigned long start, unsigned long end,
+-				  unsigned long vm_flags,
+-				  struct mempolicy *policy,
+-				  struct vm_userfaultfd_ctx uffd_ctx,
+-				  struct anon_vma_name *anon_name);
+-
+-/* We are about to modify the VMA's flags. */
+-static inline struct vm_area_struct
+-*vma_modify_flags(struct vma_iterator *vmi,
+-		  struct vm_area_struct *prev,
+-		  struct vm_area_struct *vma,
+-		  unsigned long start, unsigned long end,
+-		  unsigned long new_flags)
+-{
+-	return vma_modify(vmi, prev, vma, start, end, new_flags,
+-			  vma_policy(vma), vma->vm_userfaultfd_ctx,
+-			  anon_vma_name(vma));
+-}
+-
+-/* We are about to modify the VMA's flags and/or anon_name. */
+-static inline struct vm_area_struct
+-*vma_modify_flags_name(struct vma_iterator *vmi,
+-		       struct vm_area_struct *prev,
+-		       struct vm_area_struct *vma,
+-		       unsigned long start,
+-		       unsigned long end,
+-		       unsigned long new_flags,
+-		       struct anon_vma_name *new_name)
+-{
+-	return vma_modify(vmi, prev, vma, start, end, new_flags,
+-			  vma_policy(vma), vma->vm_userfaultfd_ctx, new_name);
+-}
+-
+-/* We are about to modify the VMA's memory policy. */
+-static inline struct vm_area_struct
+-*vma_modify_policy(struct vma_iterator *vmi,
+-		   struct vm_area_struct *prev,
+-		   struct vm_area_struct *vma,
+-		   unsigned long start, unsigned long end,
+-		   struct mempolicy *new_pol)
+-{
+-	return vma_modify(vmi, prev, vma, start, end, vma->vm_flags,
+-			  new_pol, vma->vm_userfaultfd_ctx, anon_vma_name(vma));
+-}
+-
+-/* We are about to modify the VMA's flags and/or uffd context. */
+-static inline struct vm_area_struct
+-*vma_modify_flags_uffd(struct vma_iterator *vmi,
+-		       struct vm_area_struct *prev,
+-		       struct vm_area_struct *vma,
+-		       unsigned long start, unsigned long end,
+-		       unsigned long new_flags,
+-		       struct vm_userfaultfd_ctx new_ctx)
+-{
+-	return vma_modify(vmi, prev, vma, start, end, new_flags,
+-			  vma_policy(vma), new_ctx, anon_vma_name(vma));
+-}
 
-Importantly, it also carefully implements mm/vma_internal.h, which
-specifies which headers need to be imported by vma.c, leading to the very
-useful property that vma.c depends only on mm/vma.h and mm/vma_internal.h.
+ static inline int check_data_rlimit(unsigned long rlim,
+ 				    unsigned long new,
+diff --git a/mm/internal.h b/mm/internal.h
+index b4d86436565b..81564ce0f9e2 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1244,6 +1244,67 @@ struct vm_area_struct *vma_merge_extend(struct vma_iterator *vmi,
+ 					struct vm_area_struct *vma,
+ 					unsigned long delta);
 
-This means we can then re-implement vma_internal.h in userland, adding
-shims for kernel mechanisms as required, allowing us to unit test internal
-VMA functionality.
-
-This testing is useful as opposed to an e.g. kunit implementation as this
-way we can avoid all external kernel side-effects while testing, run tests
-VERY quickly, and iterate on and debug problems quickly.
-
-Excitingly this opens the door to, in the future, recreating precise
-problems observed in production in userland and very quickly debugging
-problems that might otherwise be very difficult to reproduce.
-
-This patch series takes advantage of existing shim logic and full userland
-maple tree support contained in tools/testing/radix-tree/ and
-tools/include/linux/, separating out shared components of the radix tree
-implementation to provide this testing.
-
-Kernel functionality is stubbed and shimmed as needed in tools/testing/vma/
-which contains a fully functional userland vma_internal.h file and which
-imports mm/vma.c and mm/vma.h to be directly tested from userland.
-
-A simple, skeleton testing implementation is provided in
-tools/testing/vma/vma.c as a proof-of-concept, asserting that simple VMA
-merge, modify (testing split), expand and shrink functionality work
-correctly.
-
-v1:
-* Fix test_simple_modify() to specify correct prev.
-* Improve vma test Makefile so it picks up dependency changes correctly.
-* Rename relocate_vma() to relocate_vma_down().
-* Remove shift_arg_pages() and invoked relocate_vma_down() directly from
-  setup_arg_pages().
-* MAINTAINERS fixups.
-
-RFC v2:
-* Reword commit messages.
-* Replace vma_expand() / vma_shrink() wrappers with relocate_vma().
-* Make move_page_tables() internal too.
-* Have internal.h import vma.h.
-* Use header guards to more cleanly implement userland testing code.
-* Rename main.c to vma.c.
-* Update mm/vma_internal.h to have fewer superfluous comments.
-* Rework testing logic so we count test failures, and output test results.
-* Correct some SPDX license prefixes.
-* Make VM_xxx_ON() debug asserts forward to xxx_ON() macros.
-* Update VMA tests to correctly free memory, and re-enable ASAN leak
-  detection.
-https://lore.kernel.org/all/cover.1719584707.git.lstoakes@gmail.com/
-
-RFC v1:
-https://lore.kernel.org/all/cover.1719481836.git.lstoakes@gmail.com/
-
-
-Lorenzo Stoakes (7):
-  userfaultfd: move core VMA manipulation logic to mm/userfaultfd.c
-  mm: move vma_modify() and helpers to internal header
-  mm: move vma_shrink(), vma_expand() to internal header
-  mm: move internal core VMA manipulation functions to own file
-  MAINTAINERS: Add entry for new VMA files
-  tools: separate out shared radix-tree components
-  tools: add skeleton code for userland testing of VMA logic
-
- MAINTAINERS                                   |   14 +
- fs/exec.c                                     |   81 +-
- fs/userfaultfd.c                              |  160 +-
- include/linux/atomic.h                        |    2 +-
- include/linux/mm.h                            |  112 +-
- include/linux/mmzone.h                        |    3 +-
- include/linux/userfaultfd_k.h                 |   19 +
- mm/Makefile                                   |    2 +-
- mm/internal.h                                 |  167 +-
- mm/mmap.c                                     | 2069 ++---------------
- mm/mmu_notifier.c                             |    2 +
- mm/userfaultfd.c                              |  168 ++
- mm/vma.c                                      | 1766 ++++++++++++++
- mm/vma.h                                      |  362 +++
- mm/vma_internal.h                             |   52 +
- tools/testing/radix-tree/Makefile             |   68 +-
- tools/testing/radix-tree/maple.c              |   14 +-
- tools/testing/radix-tree/xarray.c             |    9 +-
- tools/testing/shared/autoconf.h               |    2 +
- tools/testing/{radix-tree => shared}/bitmap.c |    0
- tools/testing/{radix-tree => shared}/linux.c  |    0
- .../{radix-tree => shared}/linux/bug.h        |    0
- .../{radix-tree => shared}/linux/cpu.h        |    0
- .../{radix-tree => shared}/linux/idr.h        |    0
- .../{radix-tree => shared}/linux/init.h       |    0
- .../{radix-tree => shared}/linux/kconfig.h    |    0
- .../{radix-tree => shared}/linux/kernel.h     |    0
- .../{radix-tree => shared}/linux/kmemleak.h   |    0
- .../{radix-tree => shared}/linux/local_lock.h |    0
- .../{radix-tree => shared}/linux/lockdep.h    |    0
- .../{radix-tree => shared}/linux/maple_tree.h |    0
- .../{radix-tree => shared}/linux/percpu.h     |    0
- .../{radix-tree => shared}/linux/preempt.h    |    0
- .../{radix-tree => shared}/linux/radix-tree.h |    0
- .../{radix-tree => shared}/linux/rcupdate.h   |    0
- .../{radix-tree => shared}/linux/xarray.h     |    0
- tools/testing/shared/maple-shared.h           |    9 +
- tools/testing/shared/maple-shim.c             |    7 +
- tools/testing/shared/shared.h                 |   34 +
- tools/testing/shared/shared.mk                |   68 +
- .../testing/shared/trace/events/maple_tree.h  |    5 +
- tools/testing/shared/xarray-shared.c          |    5 +
- tools/testing/shared/xarray-shared.h          |    4 +
- tools/testing/vma/.gitignore                  |    6 +
- tools/testing/vma/Makefile                    |   16 +
- tools/testing/vma/errors.txt                  |    0
- tools/testing/vma/generated/autoconf.h        |    2 +
- tools/testing/vma/linux/atomic.h              |   12 +
- tools/testing/vma/linux/mmzone.h              |   38 +
- tools/testing/vma/vma.c                       |  207 ++
- tools/testing/vma/vma_internal.h              |  882 +++++++
- 51 files changed, 3914 insertions(+), 2453 deletions(-)
- create mode 100644 mm/vma.c
- create mode 100644 mm/vma.h
- create mode 100644 mm/vma_internal.h
- create mode 100644 tools/testing/shared/autoconf.h
- rename tools/testing/{radix-tree => shared}/bitmap.c (100%)
- rename tools/testing/{radix-tree => shared}/linux.c (100%)
- rename tools/testing/{radix-tree => shared}/linux/bug.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/cpu.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/idr.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/init.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/kconfig.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/kernel.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/kmemleak.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/local_lock.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/lockdep.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/maple_tree.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/percpu.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/preempt.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/radix-tree.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/rcupdate.h (100%)
- rename tools/testing/{radix-tree => shared}/linux/xarray.h (100%)
- create mode 100644 tools/testing/shared/maple-shared.h
- create mode 100644 tools/testing/shared/maple-shim.c
- create mode 100644 tools/testing/shared/shared.h
- create mode 100644 tools/testing/shared/shared.mk
- create mode 100644 tools/testing/shared/trace/events/maple_tree.h
- create mode 100644 tools/testing/shared/xarray-shared.c
- create mode 100644 tools/testing/shared/xarray-shared.h
- create mode 100644 tools/testing/vma/.gitignore
- create mode 100644 tools/testing/vma/Makefile
- create mode 100644 tools/testing/vma/errors.txt
- create mode 100644 tools/testing/vma/generated/autoconf.h
- create mode 100644 tools/testing/vma/linux/atomic.h
- create mode 100644 tools/testing/vma/linux/mmzone.h
- create mode 100644 tools/testing/vma/vma.c
- create mode 100644 tools/testing/vma/vma_internal.h
-
++struct vm_area_struct *vma_modify(struct vma_iterator *vmi,
++				  struct vm_area_struct *prev,
++				  struct vm_area_struct *vma,
++				  unsigned long start, unsigned long end,
++				  unsigned long vm_flags,
++				  struct mempolicy *policy,
++				  struct vm_userfaultfd_ctx uffd_ctx,
++				  struct anon_vma_name *anon_name);
++
++/* We are about to modify the VMA's flags. */
++static inline struct vm_area_struct
++*vma_modify_flags(struct vma_iterator *vmi,
++		  struct vm_area_struct *prev,
++		  struct vm_area_struct *vma,
++		  unsigned long start, unsigned long end,
++		  unsigned long new_flags)
++{
++	return vma_modify(vmi, prev, vma, start, end, new_flags,
++			  vma_policy(vma), vma->vm_userfaultfd_ctx,
++			  anon_vma_name(vma));
++}
++
++/* We are about to modify the VMA's flags and/or anon_name. */
++static inline struct vm_area_struct
++*vma_modify_flags_name(struct vma_iterator *vmi,
++		       struct vm_area_struct *prev,
++		       struct vm_area_struct *vma,
++		       unsigned long start,
++		       unsigned long end,
++		       unsigned long new_flags,
++		       struct anon_vma_name *new_name)
++{
++	return vma_modify(vmi, prev, vma, start, end, new_flags,
++			  vma_policy(vma), vma->vm_userfaultfd_ctx, new_name);
++}
++
++/* We are about to modify the VMA's memory policy. */
++static inline struct vm_area_struct
++*vma_modify_policy(struct vma_iterator *vmi,
++		   struct vm_area_struct *prev,
++		   struct vm_area_struct *vma,
++		   unsigned long start, unsigned long end,
++		   struct mempolicy *new_pol)
++{
++	return vma_modify(vmi, prev, vma, start, end, vma->vm_flags,
++			  new_pol, vma->vm_userfaultfd_ctx, anon_vma_name(vma));
++}
++
++/* We are about to modify the VMA's flags and/or uffd context. */
++static inline struct vm_area_struct
++*vma_modify_flags_uffd(struct vma_iterator *vmi,
++		       struct vm_area_struct *prev,
++		       struct vm_area_struct *vma,
++		       unsigned long start, unsigned long end,
++		       unsigned long new_flags,
++		       struct vm_userfaultfd_ctx new_ctx)
++{
++	return vma_modify(vmi, prev, vma, start, end, new_flags,
++			  vma_policy(vma), new_ctx, anon_vma_name(vma));
++}
++
+ enum {
+ 	/* mark page accessed */
+ 	FOLL_TOUCH = 1 << 16,
 --
 2.45.2
 
