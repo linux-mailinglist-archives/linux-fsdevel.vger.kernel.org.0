@@ -1,136 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-23001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9626F925544
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 10:22:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 572DF925545
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 10:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815481C2254B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 08:22:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B214B283D51
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 08:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201E2136994;
-	Wed,  3 Jul 2024 08:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EEC136994;
+	Wed,  3 Jul 2024 08:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnjD/CPJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGPXMEDZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8081A5B1E8
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jul 2024 08:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414215B1E8
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jul 2024 08:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719994929; cv=none; b=apmWGVROiVOUKzm1YfbwCFZkpoHe+oainr5oTRtTwsatanJXS4H/YkynTXoae2PEMwIaPFnH0CzJoEEQtLvFX7aIiK3vBhc0a0mOVr8+WzRmI+D/RKxMCbDDAuO0drohLxq5Khl9lQiB4N5oLsF3E+euqJpmDhK3UmFrrMuSFts=
+	t=1719994943; cv=none; b=J1bM9pyh9M6x2AySiOx+n30x+Y05XkTH+kOPBi4WZiPnky/Bi4/fV6dzWnv4wL39idhQOVKE8rrj28T2ggJTb8qEBfhvCFXQRarSrjILdO8IdCydihOzlhJ7cTzvXQVPUs2aJt4ISf9j61GksSXX0GMhuvoAIt9+eoKHFFdm2z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719994929; c=relaxed/simple;
-	bh=xeUz7ry2mp+PELnvscEhoB/AfMqbNYO5vGl/q7vHJrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDMvcc6cVkKFXzUvj4i/Flby7m1fcSOWatXBVFU2GXasMQXoVK5XrxMFiny4BSrDrkNHMJ5LXba82f0VoeLi1p1gkM42OuJ6Zi2VGyBsQDmg5qYKU9/sE5k7HDPGaMQ6CZX6btHsKEh5uyUPNKPT4gTcRBJTMes9fST5qwcjXco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnjD/CPJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC31C2BD10;
-	Wed,  3 Jul 2024 08:22:08 +0000 (UTC)
+	s=arc-20240116; t=1719994943; c=relaxed/simple;
+	bh=2zUH6uFsxSTonbxAWvu/O5yCO2NITJUBHr3/kEyTnYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MM6nrq+rGY3jscB45aJ00cAAJMDG8J7saTchvZhB62VtrM+LM34bxJH/sJX2/xYohY4l+0Vf4L679OYqOo3H75pPjPcwbL6rw9uER0q0HS8EG3pZFL+F5aLnAZbt3TAisJ4r58WsSJY6C1keBSLAx3LjrH2u8A1Tu3EJFPI2liY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fGPXMEDZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 567F9C4AF0A;
+	Wed,  3 Jul 2024 08:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719994929;
-	bh=xeUz7ry2mp+PELnvscEhoB/AfMqbNYO5vGl/q7vHJrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jnjD/CPJN3R5Mr2k2sP/mDhYJ7hZ3CB1Zfb2BDhTYh1jkSNl+pdFsSy+nQYUIAcDf
-	 1zB37apqSCY9QvsFV+zmWOgehGFX4Vym2i88OBOFmo5NOgU6vO9WUkSVEwAaKOg7jK
-	 yx029dIsMgJG1HABSjAIKqQHxsQadpPujhPweyePQulupoe323KPoUwFI2Ug3rRK2I
-	 vx89p6wKS1XpXh2zmOdRZnrFrrbTTRCcRaCAoD1/QhI3MeLrcFPk/bMsX+cbN+APJm
-	 kolzRbtTORuyA1xX+paeSVjB9iz+G7Yv6NztvS/ioFfwdPktp2O/zn7dWmqzLnogm8
-	 HqpoVNmDxaNEw==
-Date: Wed, 3 Jul 2024 10:22:05 +0200
+	s=k20201202; t=1719994942;
+	bh=2zUH6uFsxSTonbxAWvu/O5yCO2NITJUBHr3/kEyTnYM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fGPXMEDZCQo6giUT1pfHyBaacupxIuYwkg9lrPT+ifJ31jAoGoH8Ylq6AvpKqN8xY
+	 BFoFZMYs8WyAhc+qvh8ATbUIYiai0jRsv51aL0utzzjcLJHNEwLQMqpV8tSo9/sLLS
+	 ZsNEmu+MUn9A/JJ53/tWUEqWL06Vfee+Kq6LNIiEBr6o1ZEdrO7CBimAGqmLAi74Uq
+	 YyREuh4DQ5rAToUBadSfHboDpcHsYrG6mOkWmnXoiH8Vls3cjQN9rjCcldiOXYJSsz
+	 3NnBHk3QqWQpEnSb+Tclnp2WxX/BjWc2j1baqGO1RZZ/gednt5B4+lsHg1u1nGIWQd
+	 uYWzZ72lxvQfw==
 From: Christian Brauner <brauner@kernel.org>
-To: Ian Kent <ikent@redhat.com>
-Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: don't mod negative dentry count when on shrinker
- list
-Message-ID: <20240703-nachwachsen-funkt-23b2e942dd87@brauner>
+To: Brian Foster <bfoster@redhat.com>,
+	Ian Kent <ikent@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: don't mod negative dentry count when on shrinker list
+Date: Wed,  3 Jul 2024 10:22:14 +0200
+Message-ID: <20240703-dastehen-sachlage-1df2294b820e@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240702170757.232130-1-bfoster@redhat.com>
 References: <20240702170757.232130-1-bfoster@redhat.com>
- <e2a34e4d-b529-4ee6-b921-f54c3935f253@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e2a34e4d-b529-4ee6-b921-f54c3935f253@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1257; i=brauner@kernel.org; h=from:subject:message-id; bh=2zUH6uFsxSTonbxAWvu/O5yCO2NITJUBHr3/kEyTnYM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS1cpkz+U+76qiX+lnL9cZeRS0LllNNE7oOSkoLHTy7g /OticuEjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlofmX4K6K/QOz9qqA6rzt3 r0dW/PEXO26Z/qPQ4tb9Q+lPqj2m/WRkuHi4tMApTPviP3eH+xOevTxjZ3S1hy12+aoqnejdrrJ MzAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 03, 2024 at 09:48:52AM GMT, Ian Kent wrote:
-> On 3/7/24 01:07, Brian Foster wrote:
-> > The nr_dentry_negative counter is intended to only account negative
-> > dentries that are present on the superblock LRU. Therefore, the LRU
-> > add, remove and isolate helpers modify the counter based on whether
-> > the dentry is negative, but the shrinker list related helpers do not
-> > modify the counter, and the paths that change a dentry between
-> > positive and negative only do so if DCACHE_LRU_LIST is set.
-> > 
-> > The problem with this is that a dentry on a shrinker list still has
-> > DCACHE_LRU_LIST set to indicate ->d_lru is in use. The additional
-> > DCACHE_SHRINK_LIST flag denotes whether the dentry is on LRU or a
-> > shrink related list. Therefore if a relevant operation (i.e. unlink)
-> > occurs while a dentry is present on a shrinker list, and the
-> > associated codepath only checks for DCACHE_LRU_LIST, then it is
-> > technically possible to modify the negative dentry count for a
-> > dentry that is off the LRU. Since the shrinker list related helpers
-> > do not modify the negative dentry count (because non-LRU dentries
-> > should not be included in the count) when the dentry is ultimately
-> > removed from the shrinker list, this can cause the negative dentry
-> > count to become permanently inaccurate.
-> > 
-> > This problem can be reproduced via a heavy file create/unlink vs.
-> > drop_caches workload. On an 80xcpu system, I start 80 tasks each
-> > running a 1k file create/delete loop, and one task spinning on
-> > drop_caches. After 10 minutes or so of runtime, the idle/clean cache
-> > negative dentry count increases from somewhere in the range of 5-10
-> > entries to several hundred (and increasingly grows beyond
-> > nr_dentry_unused).
-> > 
-> > Tweak the logic in the paths that turn a dentry negative or positive
-> > to filter out the case where the dentry is present on a shrink
-> > related list. This allows the above workload to maintain an accurate
-> > negative dentry count.
-> > 
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> >   fs/dcache.c | 5 +++--
-> >   1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/dcache.c b/fs/dcache.c
-> > index 407095188f83..5305b95b3030 100644
-> > --- a/fs/dcache.c
-> > +++ b/fs/dcache.c
-> > @@ -355,7 +355,7 @@ static inline void __d_clear_type_and_inode(struct dentry *dentry)
-> >   	flags &= ~DCACHE_ENTRY_TYPE;
-> >   	WRITE_ONCE(dentry->d_flags, flags);
-> >   	dentry->d_inode = NULL;
-> > -	if (flags & DCACHE_LRU_LIST)
-> > +	if ((flags & (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
-> >   		this_cpu_inc(nr_dentry_negative);
-> >   }
-> > @@ -1846,7 +1846,8 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
-> >   	/*
-> >   	 * Decrement negative dentry count if it was in the LRU list.
-> >   	 */
-> > -	if (dentry->d_flags & DCACHE_LRU_LIST)
-> > +	if ((dentry->d_flags &
-> > +	     (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
-> >   		this_cpu_dec(nr_dentry_negative);
-> >   	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
-> >   	raw_write_seqcount_begin(&dentry->d_seq);
+On Tue, 02 Jul 2024 13:07:57 -0400, Brian Foster wrote:
+> The nr_dentry_negative counter is intended to only account negative
+> dentries that are present on the superblock LRU. Therefore, the LRU
+> add, remove and isolate helpers modify the counter based on whether
+> the dentry is negative, but the shrinker list related helpers do not
+> modify the counter, and the paths that change a dentry between
+> positive and negative only do so if DCACHE_LRU_LIST is set.
 > 
-> 
-> Acked-by: Ian Kent <ikent@redhat.com>
-> 
-> 
-> Christian, just thought I'd call your attention to this since it's a bit
-> urgent for us to get reviews
-> 
-> and hopefully merged into the VFS tree.
+> [...]
 
-I'm about to pick it up.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] vfs: don't mod negative dentry count when on shrinker list
+      https://git.kernel.org/vfs/vfs/c/e161afd05b24
 
