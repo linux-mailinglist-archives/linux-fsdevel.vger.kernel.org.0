@@ -1,116 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-23006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011CA9255BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 10:46:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 903289255D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 10:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FA191F243F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 08:46:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C214F1C257D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 08:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C9713C3D3;
-	Wed,  3 Jul 2024 08:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B0613B2A8;
+	Wed,  3 Jul 2024 08:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kE8GJLEk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcwSn1aC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6324113B5B6;
-	Wed,  3 Jul 2024 08:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50C4136986
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jul 2024 08:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719996366; cv=none; b=LcUF0Vmto2h0rtB/E2HfYtbRhGMdMIr8+7UYGs7G7nUwwfkg50e9p9EJg9aTPdPX1m5gwjK8uJKTMDkP9/f6wNIxtazuV/N9WmefSy6r2QJyV7/zYQ4ti1Zie6RHoRPnPsO5CHHwXuclsvlnLKGRAQ4W6PIKgXTDD9lmpIsv1KU=
+	t=1719996564; cv=none; b=UfDmHeYbA3Mt+E/v7dXn5/wJwU8Sfvu4ns/acWMVn1U0MsEK7fiHzESKn5oJsSPxy5Ja1U/dbaR3Y5h5mzmMFBEscEDeEpbvcmCHlpB6CJTSyWljfNVfR/1It6Zpbn4TTOkbSuwYOI9+ar6RnFdYDO5tOsOnOcy7XOJ0UYQqQ7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719996366; c=relaxed/simple;
-	bh=8tTWBbIfp4RYs5ggHus8UpXXenBA9tpsSLsvXgNGsZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDZab4N8U4S2dPIlys643h6hvQ87nXQTElAr9w7cdTuwVbk2VwALwgujvX1TLaeXDl8AvNgcq76VFiV42xjvC8OMFSevC/X2J+vaT3v01YbdjojS2L0E3E0BIR4rqgdDMBkOPLqt2HDC2rstcEBCiDuTVbTwNIFP4IRzVHUs9ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kE8GJLEk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B96C32781;
-	Wed,  3 Jul 2024 08:46:00 +0000 (UTC)
+	s=arc-20240116; t=1719996564; c=relaxed/simple;
+	bh=KINQoNuWD8wAcdRxftxeERAO1Ap8DiVIryPYNCjLppQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a7fO7qbsAkQ2QiUQGLNOj900rLA9cC3FsLV0pDXJJg7fLGTlK1ldWH4Z+rNEOEZGXpjoSl7plJnAsQ/OXLNvCvmb58Gq/AEz7zo8vIByAUynJ3zxOjOeZtGPpeiR5U+t2XU3rSc98OmHoBmCnxfkFrYVXXQWgYPRgeJLF9/JK/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcwSn1aC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B31BC32781;
+	Wed,  3 Jul 2024 08:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719996366;
-	bh=8tTWBbIfp4RYs5ggHus8UpXXenBA9tpsSLsvXgNGsZQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kE8GJLEkwyiU5152Sq7Jpo1DYYerGfjeXJWRpgzMb4/alcXywnbLHoRK5OgfNpXvi
-	 G1xd8DjWipYSfC+3LxEwSUc1cCUzxfB19fZ3FU81vf6Er1duJ1jVyH17rj1jnfILpg
-	 K9AAQMcJK8FC0I+iU7VodNwBvzCmvo3ircRgo9nmU3c6UlDocCEJJkF7Sjxu8ck6pn
-	 e8M2XE6lcSogOTBmKiIbfHPlxrUbZdhQz48DyLvUmgSxnvyeZ6jS18za2WiRyPVXKj
-	 NX2md3uunssvvPgsUMnm/SyXSTnr/AN0bVLlUsjWVtRZ6ga12XfLXH7QGgNq2FTLw8
-	 PL3o3v+43P/6Q==
-Date: Wed, 3 Jul 2024 10:45:57 +0200
+	s=k20201202; t=1719996563;
+	bh=KINQoNuWD8wAcdRxftxeERAO1Ap8DiVIryPYNCjLppQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WcwSn1aCgJXnYYJlRwLm2GEntDqQ034BJi25/0T6K3H3pDSNJEc/3nTisvNrmv9DA
+	 5jiQiegi0gOc/68XP+xiaD5P3m6cv1eUyxXrNJ1gu5ujgAN8w5oG9Qil1ilM+3jZWq
+	 SDHFQp7MsBxujZulkwGFT+3iZTEpfT2HRVbmbxiCMwlc2z9AQnKMVibpmVPT/SIW4D
+	 R+FU3DZaB9JVRc3vzLHr+dzf50oFaLOllgn8d2WpwL+plJA/AWTcPlvgp7JHAQDAff
+	 1GRSSq5bBbkteseeyOTjvEOqv9LzVVYfc0MOwiJsSIfRu4xEVtCGIRzibXwmbPwnCu
+	 q/7SSdMBnAgfg==
 From: Christian Brauner <brauner@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Xi Ruoyao <xry111@xry111.site>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, loongarch@lists.linux.dev
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-Message-ID: <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
- <20240625110029.606032-3-mjguzik@gmail.com>
- <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
- <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
- <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
- <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
- <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com>
- <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
- <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
+To: linux-fsdevel@vger.kernel.org,
+	Eric Sandeen <sandeen@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: [PATCH V2 0/3] fat: convert to the new mount API
+Date: Wed,  3 Jul 2024 10:49:13 +0200
+Message-ID: <20240703-strotzen-verkohlen-f64947a57d8a@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ec599fc8-b32e-48cf-ac6c-09ded36468d5@redhat.com>
+References: <ec599fc8-b32e-48cf-ac6c-09ded36468d5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1295; i=brauner@kernel.org; h=from:subject:message-id; bh=KINQoNuWD8wAcdRxftxeERAO1Ap8DiVIryPYNCjLppQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS1CvTOVs2yYGfVDrzJ8kmr9QJPz2xh58T3WXcOzYtQO 1r3lel4RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQCIhj+x5Rxe1V8nPdoMe+y ml737pRWBd9bnwoXulnGbnn2xY9xDcP/CM8Xr5kNNN6o866z4fEV1OHYu3Rr7rukyyYh/PNdpwp xAgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com>
 
-On Tue, Jul 02, 2024 at 07:06:53PM GMT, Arnd Bergmann wrote:
-> On Tue, Jul 2, 2024, at 17:36, Huacai Chen wrote:
-> > On Mon, Jul 1, 2024 at 7:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> >> On Sun, Jun 30, 2024, at 04:39, Xi Ruoyao wrote:
-> >> > On Sun, 2024-06-30 at 09:40 +0800, Huacai Chen wrote:
-> >> >> >
-> >> >> > Yes, both Linus and Christian hates introducing a new AT_ flag for
-> >> >> > this.
-> >> >> >
-> >> >> > This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave
-> >> >> > like
-> >> >> > statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the
-> >> >> > performance
-> >> >> > issue and it's also audit-able by seccomp BPF.
-> >> >> To be honest, I still want to restore __ARCH_WANT_NEW_STAT. Because
-> >> >> even if statx() becomes audit-able, it is still blacklisted now.
-> >> >
-> >> > Then patch the sandbox to allow it.
-> >> >
-> >> > The sandbox **must** be patched anyway or it'll be broken on all 32-bit
-> >> > systems after 2037.  [Unless they'll unsupport all 32-bit systems before
-> >> > 2037.]
-> >>
-> >> More importantly, the sandbox won't be able to support any 32-bit
-> >> targets that support running after 2037, regardless of how long
-> >> the sandbox supports them: if you turn off COMPAT_32BIT_TIME today
-> >> in order to be sure those don't get called by accident, the
-> >> fallback is immediately broken.
-> > Would you mind if I restore newstat for LoongArch64 even if this patch exist?
+On Tue, 02 Jul 2024 17:39:25 -0500, Eric Sandeen wrote:
+> This short series converts the fat/vfat/msdos filesystem to use the
+> new mount API.
 > 
-> I still prefer not add newstat back: it's easier to
-> get applications to correctly implement the statx() code
-> path if there are more architectures that only have that.
+> V2 addresses the issues raised with the 2nd patch in the first series,
+> details are in patch this time.
+> 
+> I've tested it with a hacky shell script found at
+> 
+> [...]
 
-I agree.
+Applied to the vfs.mount.api branch of the vfs/vfs.git tree.
+Patches in the vfs.mount.api branch should appear in linux-next soon.
 
-We've now added AT_EMPTY_PATH support with NULL names because we want to
-allow that generically. But I clearly remember that this was requested
-to make statx() work with these sandboxes. So the kernel has done its
-part. Now it's for the sandbox to allow statx() with NULL paths and
-AT_EMPTY_PATH but certainly not for the kernel to start reenabling old
-system calls.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.mount.api
+
+[1/3] fat: move debug into fat_mount_options
+      https://git.kernel.org/vfs/vfs/c/206d3d8e006c
+[2/3] fat: Convert to new mount api
+      https://git.kernel.org/vfs/vfs/c/634440b69c7f
+[3/3] fat: Convert to new uid/gid option parsing helpers
+      https://git.kernel.org/vfs/vfs/c/d02f0bb332d5
 
