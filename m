@@ -1,175 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-23059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A89092676F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 19:49:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D42E92677E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 19:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2491C22AE6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 17:49:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B6D28339A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 17:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3230B185088;
-	Wed,  3 Jul 2024 17:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12BC185E53;
+	Wed,  3 Jul 2024 17:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmQ2yvYJ"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dRFkz+PV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5461C68D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jul 2024 17:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D171C68D
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jul 2024 17:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720028984; cv=none; b=D0WaV//lRYn0TdqFbD9gDJ/I1uKGSuPJp6wwNSQwmfff45yE8MEX2g2QRcjTr9Ge6SwXkJ/wN/JANxynEmb03U2L52TDYFxezXTigIyiSHav9yir/dZIfMbMazq04Nzgt3nCExQ0RxYXWGa0hwqyoNYi6zSwE/aZKcT3T4yji54=
+	t=1720029314; cv=none; b=MohZQ+l2ahMn0LtA+q2RW2a2n9P9ZJHF4O2Ox9qJ4rRm9UDXVdkvpy6fAAH+G9YduOsH9MsYg2GshXPc97V+T5I71DkpKHzx08Ai1KEf1QUMIPc7onYhOCbK+iAWvqE97hbE2BkeetgvErNDND7mo34ckphI9+ToD1s3JV+zVp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720028984; c=relaxed/simple;
-	bh=ChpfPyrkoSjg4URxapSgdXkSVpUgBeDoPJekAD4BHc8=;
+	s=arc-20240116; t=1720029314; c=relaxed/simple;
+	bh=7f1Jw4HvKMPAz77zJdFLUyAdloZi7jiFu3rAdtPOMZE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QLwvzWbhxjwson7xalCJjOC62nF2SUV0us02T37OODoJ1DkuYUXVjtiH2+TsnR1X3LBiv9UxVVqlXnGBMznL3S9pL/cCD7zjHdVzwE6WiqKy/l3/pQS6sT5luOtDYda3lribp6YhhI2BgyJIoyKSOWbZfn90N+EX0eGbhEpbHTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dmQ2yvYJ; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4463682e944so35115391cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2024 10:49:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=YI73nuvzLaY1H1pxiDiS+6lBSllyn1hv7G/Gl+Lm/OzsLBPmRdpQ5bOKkyCGm+YG0RXyGAM8m6e96yoYpLtGase3N4atc9NnePfdB1aWn3XslvjdLTLPo0gpp5qodgRzCHuuEbv8CcHjbp2nvGFgXhoaLQchj1rvaHx1qxyHqKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dRFkz+PV; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a72988749f0so846669666b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2024 10:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720028982; x=1720633782; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=koYlFFsPjbxhLWytdSmiIClHFBZC7zJJBYQtCKHUpRg=;
-        b=dmQ2yvYJgtWsRfR6sQooAAT5Cj0zw1ZjlRJyVqYhr8vBM6Grgw3YfChpqRRwlcTrQV
-         p2zPuZQMc/WSI/B0/r9LyRP2Q88QHDMPn6iDVnXz4t0yb+TSjI+dqeEpdN6eIv1s/YNk
-         6BKeZuW9ul2E9CQ1cE4v+/J7mbqDFDxL1AuR4oQ8JF6ghwYfzCiWSOvnWOrWyH4J8jjd
-         ISuQvnU4VqeV3AyNZVQxT7O7RE0ZdS0Pm/JN0ONcCURYWt/imIuJZ6HxT1G+sBtMubLK
-         M4vZ5vxpoy+Ue/s7xGg6lRkHjPJesF3KFmhTqrATpMMS9BVfQ0J8mGetxAUCYrAcFFkb
-         n63w==
+        d=linux-foundation.org; s=google; t=1720029311; x=1720634111; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jBLAgZolniuYLkImL+HV9eymQn/u6hu6ZNMnsLo1ncg=;
+        b=dRFkz+PVNNxOiWhMAVJ9mtzjL02jXuLf9B2nWBsrLdLnZS+tEw0kK665dewopzR5B/
+         CbeUi8LtlcnnEDWRBX2MO9N3yHMgWmj8EsoL7rYgtbRbblaaxK0urKfy7rJi6v4BtSxV
+         2WO/uKUjq2flvMTlh7q9iZXJ4QWCd5SG56DTM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720028982; x=1720633782;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=koYlFFsPjbxhLWytdSmiIClHFBZC7zJJBYQtCKHUpRg=;
-        b=AWBwQU8YQX6til243MPqGtHCAhyqxeZbt6R6QpERhUYffUO0PofALWgjkxbQqDNNA8
-         ouFq36JvrzCJzkWGICEDpDbESSo15VqpC5dDmq86yCWUafmzsNIitWdWEtAz+PLlMqxP
-         uO51lGirty/rqxQtXcgvApXfQbvFYm8vQanvdQj47Ki3SR7Z7dmImRduHsaImRYS4Tzt
-         w1q+MHssPkhlP9s2VnbaHxn5hTYczl2NxWjQhNDoEOiHK7V1aiRq/3zfWR/7lX6ySZDZ
-         Obn+ofR9wFkkbdvYRYLnbkvf+K2atUt2950Ue3wI4NhUfNTDz37rCKoRnIFHH4CQP0Sk
-         9qrg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2q9WcwrLx+VJstZ8X6HOpTcIF3q0s7FntCiqkUeCjxgQ9pSt9AlmNybm7LvIswWPQaGAZ4JxqKQTl7Y/CWGqhWbdQjRlfgfZxQpeomw==
-X-Gm-Message-State: AOJu0Yz20MST5Ro/o7d+R6wmxr0WB2GLlEgftk1S22LJEZrTLVLGFVy5
-	2iFo65vDLg095hoyR/FsZMvhaoC0Fmt6B+yv3EvOjn6uhTY+aV8fE9Ovnem7LzfKUuaRFAD4mmT
-	5cba7wyEvOh59K2oXK7plkkIp09/iuKuY
-X-Google-Smtp-Source: AGHT+IGma0MbUpz4jR+o4WYXXkUGwpazyP51JvOOYoXgGueqYn8qfWJhxWN4DQ3kfWyiKB0PE3h1X2egdrctY7OXC1w=
-X-Received: by 2002:a05:622a:11c9:b0:446:54e8:5260 with SMTP id
- d75a77b69052e-44662e4d547mr142267051cf.40.1720028982019; Wed, 03 Jul 2024
- 10:49:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720029311; x=1720634111;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jBLAgZolniuYLkImL+HV9eymQn/u6hu6ZNMnsLo1ncg=;
+        b=ZyGG4AYPnnZYW9/CdwwcT9A8X7vDDEzEgjL/0HmZtFspWFGH7vcHi5O8PZu+tolEVa
+         //Eu1yWs8irCxHxagHqieLIxCwjRbdyyk0wVmhOgbxPOscR9vLwzi2PMasM2/UFcVSCz
+         IV7ryMnEBprm1oDCPkkZK6GyqpY+5ZYciiQSBmNyYJVzJm/88bVaDR+aDXtr5bJ6LbTy
+         UaTTxxhDCxqTISToyQPYlK5hn9EiZXzcTVijnpMATjgYWFFMqvnAqyEubmxxW6RAAOMP
+         0saVfUC/yvqjrQRFLidNY6PODq43B8Ht4XU0AQpiFfaa51VCxDDe1SUlJ+Xns/YxD59k
+         vdIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGltQScCldy0sbDpcBZU+Xa9e6of8XUcorHJasNkmj8oP1zifsZ+fyuPytq3vMLO0PZlTuz9+/h9cLN3YurWsz6s1NeEgf5RG73K78zQ==
+X-Gm-Message-State: AOJu0YyyMzPV9o+XXP3t/OgFIbId3YUskP38aA5jCj5GRgNPNk2m3Hpi
+	mjdhaJvGO7JUVDYarO8plEfr0KkZGJ9C/pKZjv/1RqT3EQU9n20dz3fQQ4GzXrGHQ0i0zxFTzh5
+	q2voIHA==
+X-Google-Smtp-Source: AGHT+IGRwJebAO11rdjT7aUDAD75l/I5SQ9kna8zES8GkDDYEbAY+3KySQ6LxurOWggNEPelmH2VEg==
+X-Received: by 2002:a17:907:2d25:b0:a6c:6fac:f1ff with SMTP id a640c23a62f3a-a751446289fmr1001583866b.12.1720029310726;
+        Wed, 03 Jul 2024 10:55:10 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0657b1sm525769166b.133.2024.07.03.10.55.09
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 10:55:10 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a72988749f0so846666266b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2024 10:55:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVeYaGItmfcw1k1ajyJ4yatXg2Yngu2duIBOLT6P5Fds9kPqaYFTzDoML3yy/SXoJozJeIgVZgcl82s0rbjLWhjD7ubEMijoosSyO3H7g==
+X-Received: by 2002:a17:906:7d2:b0:a72:4b31:13b5 with SMTP id
+ a640c23a62f3a-a75144f61a2mr779219566b.54.1720029309600; Wed, 03 Jul 2024
+ 10:55:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702163108.616342-1-bschubert@ddn.com> <20240703151549.GC734942@perftesting>
- <e6a58319-e6b1-40dc-81b8-11bd3641a9ca@fastmail.fm> <20240703173017.GB736953@perftesting>
-In-Reply-To: <20240703173017.GB736953@perftesting>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 3 Jul 2024 10:49:31 -0700
-Message-ID: <CAJnrk1bYf85ipt2Hf1id-OBOzaASOeegOxnn3vGtUxYHNp3xHg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Allow to align reads/writes
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Bernd Schubert <bschubert@ddn.com>, miklos@szeredi.hu, 
-	linux-fsdevel@vger.kernel.org
+References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+ <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com> <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+ <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com> <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+ <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com>
+ <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+ <CAHk-=wif5KJEdvZZfTVX=WjOOK7OqoPwYng6n-uu=VeYUpZysQ@mail.gmail.com>
+ <b60a61b8c9171a6106d50346ecd7fba1cfc4dcb0.camel@xry111.site> <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjH3F1jTVfADgo0tAnYStuaUZLvz+1NkmtM-TqiuubWcw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Jul 2024 10:54:53 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com>
+Message-ID: <CAHk-=wii3qyMW+Ni=S6=cV=ddoWTX+qEkO6Ooxe0Ef2_rvo+kg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christian Brauner <brauner@kernel.org>, libc-alpha@sourceware.org, 
+	"Andreas K. Huettel" <dilfridge@gentoo.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Huacai Chen <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, loongarch@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 3, 2024 at 10:30=E2=80=AFAM Josef Bacik <josef@toxicpanda.com> =
-wrote:
+On Wed, 3 Jul 2024 at 10:40, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> On Wed, Jul 03, 2024 at 05:58:20PM +0200, Bernd Schubert wrote:
-> >
-> >
-> > On 7/3/24 17:15, Josef Bacik wrote:
-> > > On Tue, Jul 02, 2024 at 06:31:08PM +0200, Bernd Schubert wrote:
-> > >> Read/writes IOs should be page aligned as fuse server
-> > >> might need to copy data to another buffer otherwise in
-> > >> order to fulfill network or device storage requirements.
-> > >>
-> > >> Simple reproducer is with libfuse, example/passthrough*
-> > >> and opening a file with O_DIRECT - without this change
-> > >> writing to that file failed with -EINVAL if the underlying
-> > >> file system was using ext4 (for passthrough_hp the
-> > >> 'passthrough' feature has to be disabled).
-> > >>
-> > >> Given this needs server side changes as new feature flag is
-> > >> introduced.
-> > >>
-> > >> Disadvantage of aligned writes is that server side needs
-> > >> needs another splice syscall (when splice is used) to seek
-> > >> over the unaligned area - i.e. syscall and memory copy overhead.
-> > >>
-> > >> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
-> > >>
-> > >> ---
-> > >> From implementation point of view 'struct fuse_in_arg' /
-> > >> 'struct fuse_arg' gets another parameter 'align_size', which has to
-> > >> be set by fuse_write_args_fill. For all other fuse operations this
-> > >> parameter has to be 0, which is guranteed by the existing
-> > >> initialization via FUSE_ARGS and C99 style
-> > >> initialization { .size =3D 0, .value =3D NULL }, i.e. other members =
-are
-> > >> zero.
-> > >> Another choice would have been to extend fuse_write_in to
-> > >> PAGE_SIZE - sizeof(fuse_in_header), but then would be an
-> > >> arch/PAGE_SIZE depending struct size and would also require
-> > >> lots of stack usage.
-> > >
-> > > Can I see the libfuse side of this?  I'm confused why we need the ali=
-gn_size at
-> > > all?  Is it enough to just say that this connection is aligned, negot=
-iate what
-> > > the alignment is up front, and then avoid sending it along on every w=
-rite?
-> >
-> > Sure, I had forgotten to post it
-> > https://github.com/bsbernd/libfuse/commit/89049d066efade047a72bcd1af8ad=
-68061b11e7c
-> >
-> > We could also just act on fc->align_writes / FUSE_ALIGN_WRITES and alwa=
-ys use
-> > sizeof(struct fuse_in_header) + sizeof(struct fuse_write_in) in libfuse=
- and would
-> > avoid to send it inside of fuse_write_in. We still need to add it to st=
-ruct fuse_in_arg,
-> > unless you want to check the request type within fuse_copy_args().
->
-> I think I like this approach better, at the very least it allows us to us=
-e the
-> padding for other silly things in the future.
->
+> Oh wow. Shows just *how* long ago that was - and how long ago I looked
+> at 32-bit code. Because clearly, I was wrong.
 
-This approach seems cleaner to me as well.
-I also like the idea of having callers pass in whether alignment
-should be done or not to fuse_copy_args() instead of adding
-"align_writes" to struct fuse_in_arg.
+Ok, so clearly any *new* 32-bit architecture should use 'struct statx'
+as 'struct stat', and at least avoid the conversion pain.
 
-Thanks,
-Joanne
+Of course, if using <asm-generic/stat.h> like loongarch does, that is
+very much not what happens. You get those old models with just 'long'.
 
-> >
-> > The part I don't like in general about current fuse header handling (be=
-sides alignment)
-> > is that any header size changes will break fuse server and therefore ne=
-ed to be very
-> > carefully handled. See for example libfuse commit 681a0c1178fa.
-> >
->
-> Agreed, if we could have the length of the control struct in the header t=
-hen
-> then things would be a lot simpler to extend later on, but here we are.  =
-Thanks,
->
-> Josef
->
+So any architecture that didn't do that 'stat == statx' and has
+binaries with old stat models should just continue to have them.
+
+It's not like we can get rid of the kernel side code for that all _anyway_.
+
+             Linus
 
