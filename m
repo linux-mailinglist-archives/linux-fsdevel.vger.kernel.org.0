@@ -1,160 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-23008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A506592568B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 11:21:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17D492569F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 11:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1222889BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 09:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66CCF1F23730
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jul 2024 09:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A87E13D2B5;
-	Wed,  3 Jul 2024 09:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0398113D2B5;
+	Wed,  3 Jul 2024 09:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hiJmdn5/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQyQgr6v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9C113C8EE;
-	Wed,  3 Jul 2024 09:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F62442A80;
+	Wed,  3 Jul 2024 09:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719998490; cv=none; b=qAWlS6NbMak+iKcJ1lXlQu8vMCfez10vexgz9gzE3FvmKN2/41w8JByWMH65GrCS7n66vjx2snA0X2oDdrHYePXp5uWnuhkv0uTqHKGginD1AYTpbaTxr/L79Ijce116Rhcf0FXNtomATZqG7d13zZ3bAo8JFWczZV4X0sAjZp0=
+	t=1719998569; cv=none; b=tsZOY4u8cNycf+x91st0pqKb2MnGBruWLRRAirLTaa47PaxB8XwQYu0Z0V76/49Kt8kV9GIJvPjJX0MtXTvPHvbOAEeLX3q9aoEz5UJginxkrZ9U4Twk6bykBsNab6Ydjm2ico7SxdsofjGNX7af3WBc7fsOvtVD1fMmg07T610=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719998490; c=relaxed/simple;
-	bh=LuBxYBzCQ3t5eskA78KO4HNCqbdC06CI70/S0+JsLj4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fcxiYRFDkbql+kB1QWnJvjATyxD+ddqA5uLQ3lOic46YMBNeFZ7vuizRLt0auvQAIuzZ3e+V8lLVIF2Qmsduuetsu/9s3ee0sqTH7s7motweSdgHFBiFDWewjzNS1uSqmlvK9ogcjKYOfCeIpklmvqnsWvKp3BaUGOjM4A6UiL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hiJmdn5/; arc=none smtp.client-ip=45.254.50.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=BTnss
-	Ax2cxCnOWayOPuWiQqj81ayGW11i7bWdYf4BJo=; b=hiJmdn5/r1tETI0cFNGMu
-	KP4M134fRLE3XF8DtHruRuzVy/vGGHGU9+fl/hNk9lCGVZc+0cb7s2kmVfYxOD5C
-	e93prtr44x+v7DiHu7iO1yBtl8dMg6t6007MYg9ffXBDU8QHfCH4yHMSczAL7kXf
-	9gf2Zm1KBJdOCAUvdDiBqo=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g0-0 (Coremail) with SMTP id _____wD3P3TXF4Vmr+vYBQ--.20081S4;
-	Wed, 03 Jul 2024 17:20:25 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: david@redhat.com
-Cc: akpm@linux-foundation.org,
-	baohua@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	peterx@redhat.com,
-	ran.xiaokai@zte.com.cn,
-	ranxiaokai627@163.com,
-	ryan.roberts@arm.com,
-	svetly.todorov@memverge.com,
-	vbabka@suse.cz,
-	willy@infradead.org,
-	ziy@nvidia.com
-Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
-Date: Wed,  3 Jul 2024 09:20:23 +0000
-Message-Id: <20240703092023.76749-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <1fddf73d-577f-4b4c-996a-818dd99eb489@redhat.com>
-References: <1fddf73d-577f-4b4c-996a-818dd99eb489@redhat.com>
+	s=arc-20240116; t=1719998569; c=relaxed/simple;
+	bh=VcMNyqxa/OyWVttyD2gJnZf2GezIMVfmTMgIXg2wyBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9n6aNiWIhZVOgaukacnkvns6h2qoD0rknnWq1CVOI9hkLm8JmInrMYR3Wp5CGnaeLsGE35habqRlTIkUWUBmVywF4JJgVR3/g9Wt3YFQK3I8hINSW3sxsXA+frDPvFgBOQ4LzOMa74aRi4D8Gwg1WciF6U781U1VBkG9X50V9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQyQgr6v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BEEFC32781;
+	Wed,  3 Jul 2024 09:22:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719998569;
+	bh=VcMNyqxa/OyWVttyD2gJnZf2GezIMVfmTMgIXg2wyBg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vQyQgr6vGRZYJ5CilNJD/htgWr0SkybCXRRAQkAxdx3pJaCx9l6tqy0zdS9W/lp5q
+	 9h7qIrqIVHw4Tv82ptMGpb3ehq8vlb/Jc/9iKUxC+lAiK66z1P7CsB9h71UaWdEAYq
+	 c0jnCb3SHrSA3783TJs4rLLIZtewYR9kDw+9nwGluD+knloOc4jLLQK5U+h4qQQgLm
+	 eVzwEXzba7/SKtqtfKqf+k8OHAhd/fnPYmEM7d52YAXDS6/mN8oJ6B9FvvIKQ1zows
+	 niZ1oenDlYM8Ghr88JTX42sfSXtJnSg3y+4HBA4DKrZ6YX6gOtppsl+ApDBgJvxp1d
+	 8I//4FZMA1q0Q==
+Date: Wed, 3 Jul 2024 11:22:43 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Larsson <alexl@redhat.com>, Ian Kent <ikent@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, raven@themaw.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Chanudet <echanude@redhat.com>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+Message-ID: <20240703-mahnung-bauland-ffcacea4101e@brauner>
+References: <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3>
+ <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+ <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
+ <20240628-gelingen-erben-0f6e14049e68@brauner>
+ <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
+ <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
+ <20240701-zauber-holst-1ad7cadb02f9@brauner>
+ <CAL7ro1FOYPsN3Y18tgHwpg+VB=rU1XB8Xds9P89Mh4T9N98jyA@mail.gmail.com>
+ <20240701-treue-irrtum-e695ee5efe83@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3P3TXF4Vmr+vYBQ--.20081S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFyfAw17Xr15ZrWrXF48tFb_yoW5Cw15pF
-	WYkFyqyr4DG3sYyr1Ivw1qyry8Gr98ZayUta43Cr17uF9xJF92qrW0y3s8A3W3Ar4rZ3ZF
-	vFWUWF4qv3W5ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUN189UUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqRIMTGVOBJWk7QABsJ
+In-Reply-To: <20240701-treue-irrtum-e695ee5efe83@brauner>
 
->On 26.06.24 04:49, ran xiaokai wrote:
->> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->> 
->> KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
->> pages, which means of any order, but KPF_THP should only be set
->> when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
->
->"should only be set" -- who says that? :)
->
->The documentation only talks about "Contiguous pages which construct 
->transparent hugepages". Sure, when it was added there were only PMD ones.
->
->
->> ("mm: thp: support allocation of anonymous multi-size THP"),
->> multiple orders of folios can be allocated and mapped to userspace,
->> so the folio_test_large() check is not sufficient here,
->> replace it with folio_test_pmd_mappable() to fix this.
->> 
->
->A couple of points:
->
->1) If I am not daydreaming, ever since we supported non-PMD THP in the
->    pagecache (much longer than anon mTHP), we already indicate KPF_THP
->    for them here. So this is not anon specific? Or am I getting the
->    PG_lru check all wrong?
->
->2) Anon THP are disabled as default. If some custom tool cannot deal
->    with that "extension" we did with smaller THP, it shall be updated if
->    it really has to special-case PMD-mapped THP, before enabled by the
->    admin.
->
->
->I think this interface does exactly what we want, as it is right now. 
->Unless there is *good* reason, we should keep it like that.
->
->So I suggest
->
->a) Extend the documentation to just state "THP of any size and any 
->mapping granularity" or sth like that.
->
->b) Maybe using folio_test_large_rmappable() instead of "(k & (1 <<
->    PG_lru)) || is_anon", so even isolated-from-LRU THPs are indicated
->    properly.
+On Mon, Jul 01, 2024 at 02:10:31PM GMT, Christian Brauner wrote:
+> On Mon, Jul 01, 2024 at 10:41:40AM GMT, Alexander Larsson wrote:
+> > On Mon, Jul 1, 2024 at 7:50 AM Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > > I always thought the rcu delay was to ensure concurrent path walks "see" the
+> > > >
+> > > > umount not to ensure correct operation of the following mntput()(s).
+> > > >
+> > > >
+> > > > Isn't the sequence of operations roughly, resolve path, lock, deatch,
+> > > > release
+> > > >
+> > > > lock, rcu wait, mntput() subordinate mounts, put path.
+> > >
+> > > The crucial bit is really that synchronize_rcu_expedited() ensures that
+> > > the final mntput() won't happen until path walk leaves RCU mode.
+> > >
+> > > This allows caller's like legitimize_mnt() which are called with only
+> > > the RCU read-lock during lazy path walk to simple check for
+> > > MNT_SYNC_UMOUNT and see that the mnt is about to be killed. If they see
+> > > that this mount is MNT_SYNC_UMOUNT then they know that the mount won't
+> > > be freed until an RCU grace period is up and so they know that they can
+> > > simply put the reference count they took _without having to actually
+> > > call mntput()_.
+> > >
+> > > Because if they did have to call mntput() they might end up shutting the
+> > > filesystem down instead of umount() and that will cause said EBUSY
+> > > errors I mentioned in my earlier mails.
+> > 
+> > But such behaviour could be kept even without an expedited RCU sync.
+> > Such as in my alternative patch for this:
+> > https://www.spinics.net/lists/linux-fsdevel/msg270117.html
+> > 
+> > I.e. we would still guarantee the final mput is called, but not block
+> > the return of the unmount call.
+> 
+> That's fine but the patch as sent doesn't work is my point. It'll cause
+> exactly the issues described earlier, no? So I'm confused why this
+> version simply ended up removing synchronize_rcu_expedited() when
+> the proposed soluton seems to have been to use queue_rcu_work().
+> 
+> But anyway, my concern with this is still that this changes the way
+> MNT_DETACH behaves when you shut down a non-busy filesystem with
+> MNT_DETACH as outlined in my other mail.
+> 
+> If you find a workable version I'm not entirely opposed to try this but
+> I wouldn't be surprised if this causes user visible issues for anyone
+> that uses MNT_DETACH on a non-used filesystem.
 
-Hi, David,
+Correction: I misremembered that umount_tree() is called with
+UMOUNT_SYNC only in the case that umount() isn't called with MNT_DETACH.
+I mentioned this yesterday in the thread but just in case you missed it
+I want to spell it out in detail as well.
 
-The "is_anon" check was introduced to also include page vector cache
-pages, but now large folios are added to lru list directly, bypassed
-the pagevec cache. So the is_anon check seems unnecessary here.
-As now pagecache also supports large folios, the is_anon check seems
-unsufficient here.
+This is relevant because UMOUNT_SYNC will raise MNT_SYNC_UMOUNT on all
+mounts it unmounts. And that ends up being checked in legitimize_mnt()
+to ensure that legitimize_mnt() doesn't call mntput() during path lookup
+and risking EBUSY for a umount(..., 0) + mount() sequence for the same
+filesystem.
 
-Can i say that for userspace memory,
-folio_test_large_rmappable() == folio_test_large()?
-if that is true, except the "if ((k & (1 << PG_lru)) || is_anon)"
-check, we can also remove the folio_test_large() check,
-like this:
+But for umount(.., MNT_DETACH) UMOUNT_SYNC isn't passed and so
+MNT_SYNC_UMOUNT isn't raised on the mount and so legitimize_mnt() may
+end up doing the last mntput() and cleaning up the filesystem.
 
-else if (folio_test_large_rmappable(folio)) {
-        u |= 1 << KPF_THP;
-    else if (is_huge_zero_folio(folio)) {
-        u |= 1 << KPF_ZERO_PAGE;
-        u |= 1 << KPF_THP;
-    }
-} else if (is_zero_pfn(page_to_pfn(page)))
+In other words, a umount(..., MNT_DETACH) caller needs to be prepared to
+deal with EBUSY for a umount(..., MNT_DETACH) + mount() sequence.
 
-This will also include the isolated folios.
+So I think we can certainly try this as long as we make it via
+queue_rcu_work() to handle the other mntput_no_expire() grace period
+dependency we discussed upthread.
 
->c) Whoever is interested in getting the folio size, use this flag along
->    with a scan for the KPF_COMPOUND_HEAD.
->
->
->I'll note that, scanning documentation, PAGE_IS_HUGE currently only 
->applies to PMD *mapped* THP. It doesn't consider PTE-mapped THP at all 
->(including PMD-ones). Likely, documentation should be updated to state 
->"PMD-mapped THP or any hugetlb page".
->
->> Also kpageflags is not only for userspace memory but for all valid pfn
->> pages,including slab pages or drivers used pages, so the PG_lru and
->> is_anon check are unnecessary here.
->
->I'm completely confused about that statements. We do have KPF_OFFLINE, 
->KPF_PGTABLE, KPF_SLAB, ... I'm missing something important.
-
+Thanks for making take a closer look.
 
