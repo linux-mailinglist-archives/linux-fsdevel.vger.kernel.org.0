@@ -1,169 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-23171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53478927EF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 00:13:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5E6927F24
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 01:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D391F23ACB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 22:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C47284FCA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 23:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2105F143C6F;
-	Thu,  4 Jul 2024 22:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C461714431F;
+	Thu,  4 Jul 2024 23:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="UwrLnUIL"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="DrwVqXOp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD3649651
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 22:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B529F143867
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 23:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720131215; cv=none; b=O8QdYbqImBNqP1n0SPr8tiOMBuyk8YAsx5q4ZunDOl48QZr69qs4pVGmgdx3gcv7/+aLlxEZl8rtEDP1EA5EUkXGR3p71joiqwp7jhjtD0tzn7r9tGAeTbTzD+VdM3EYzhbs2RnUCNKpGN2gqljmiX2d2m5DOqk8eiC5LMlWNRA=
+	t=1720135562; cv=none; b=pYK7M2jrXluuCN0rM3ZLDLWbNZj4DVgh1P3KJGw7XdS3by7Me1eIdbfJHaMKxRPO0dhcKzg6wGk6dJ+sBTjGKs68acGRYpNKZK8aumzhdhb40Uzr5d7oUalHQPkX123TidckWTtU+164jaE3Oa9T23GN9ifow9DNpGnQMfaM20g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720131215; c=relaxed/simple;
-	bh=kDaqPnBFIvUQeR2+H9HpTQwmPMC9L+ing0oAJYJfI4Q=;
+	s=arc-20240116; t=1720135562; c=relaxed/simple;
+	bh=sc+sfFgFnak6XBFb/1P4xCvzW/aJEMSFoZYu0lXlmYI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=skMsA3kV/jznUf0WvgHLqaXLTlF/ZTaCB7fDcr63KyDrRuJAKJOj4C9JlJ+WjLQj4QEUpVooQ7HURY5fpvbFY5aXpAtU0jfH08RFEfAQG3Y9bxvuqzeFhlLDaoaP6zflztr5coQZ6VyI+D/W5lKF21DkdpzgORVlgpPpdzv2t14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=UwrLnUIL; arc=none smtp.client-ip=209.85.216.52
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKPp9edl/gx3iLFDFEEL/uPNY8mcrFFgkPmlqRo1HhY/aHlJHR3IY1fXcYcoMpGGZN+/SmuAv8IFLNK1Zqn7VOvCg2qdc2VNJHedVHLciZ0eClm7Dy9Uqb/K7tYjskqGwVp/Ehbq/0C4ZQ4Z51e/NrgtKvmCi+zpuNjabZLOLeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=DrwVqXOp; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c980b55741so733259a91.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jul 2024 15:13:33 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70af22a9c19so763078b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jul 2024 16:26:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1720131213; x=1720736013; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nt1pnpCk1KfQaN+YgEj1HaWaKfx+85yAEH2SJic0Se0=;
-        b=UwrLnUILWTManJmFRIKAt5HaKxruH9Zo4trDinb5SwCuo6LoprkghwqeMhb/n7wKxz
-         IyoPBeM2i3+oF74fSeItorHYKxpXgLNRrGH3u0UwJQfXKWB7gd1LSQ41qcOZQsm1ARng
-         bdu0dxgQK2NMvmDXvyV+rQEhFvc4WQktO/Yqlr8xpG8FeCdT12DJS4mJaiqkMC+XElR4
-         xizdzXf3zFisMQwRKFsqDzaekcCopvbHXjav1+UU9fNWEeznqHenMgUjsNj4nxwkH0tW
-         FdUmNTAoIQakMBGVTjryI++Xw/P5J3wsCTduwA30tWom+D44bMWyN5oEmTiaw0pdWIee
-         5PQw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1720135560; x=1720740360; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YQuUbXTeCATfOJq+6G5otAsd//IBi6KlQnyDYRgmZHM=;
+        b=DrwVqXOpOsXoqp9WWe/R4hGUMiwkQu2sQHtAlaZMZDntUqkqsxCmrWwIr4lqeuoEum
+         eX1sErAq2Pd6m7BHBiPy+oV7BG2TvjiP903ETDJRvhRpctGrYOTItg78axfYDISpAIUB
+         sEZS+Es68a3bD4IrISM4icwPDczDaL4rXHf3AnCYdMPY9O9ODVq53PtTgjODBH1v49tE
+         cyqhR73s7SMJ1sClRbo3MHrVE+bUE/6xtWrlje0fHsCNUzeAO1xaFnI8f0K4c+DDn2QR
+         QzwvD1AR0XZ8fj5AxaHAVpoi627yIzDqLJRuSu+yCrBhr6VwvAoIEzFIOTI2jkJZPRQ0
+         nx3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720131213; x=1720736013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nt1pnpCk1KfQaN+YgEj1HaWaKfx+85yAEH2SJic0Se0=;
-        b=eWuGOM18X5qDa6fD8y4wi3B3cb3VevZ+p1P8UlIgme8BzeAmBa/3oQFp42RUzhOoZ4
-         VkLH68U9VVjbVfOxEeG/d5DDbKrpHG1QaMuSFxWlG6PX194eTfc6qea6Mk7wAvobHEO0
-         sRKvasLVBFugr6CQNZyM2eQbJN/UW5wrNvGT0NIRMV5CM90gXWZUDOxgixBtzh32b2Ip
-         ISOWZGXFqFFqkaOCCK78AjUQVN5WEXuNCnI3pTmpR/pLlllszuqfbiRHrJkpbzx24dbP
-         rbwpsatIBwzVHaMiu+8i/RSt+Yr69OFmhzN77eUCdhfWdnP7iUbKc+t3IbGtxl7+mUqr
-         vRGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGXuQulW0zOfUXZvsnO2X6ea6jtarQXGhjzu5Fjp9t7dC7pL8fuubN+3X7cPfAYPyCyfzFedL8hNV45E9IoGKrc2S4eT3xp9AIrKW6Jw==
-X-Gm-Message-State: AOJu0Yy/BX0phyYkJwGRprHbQbQM9Ug/5oSWRcCkszHkMm3WzzG0qY+x
-	YxT4V8x1ZEaazhNHkGl0PDKGCI2uHlUlupz9ON+QXwUKe+c1eEGUG1Jt6buXDO4=
-X-Google-Smtp-Source: AGHT+IGqzAnayF06dHh/ly76CeJIvdvLTHzY9adBh22u0N8/+/Xrrmia4PfBDw7CTW+ANd7wUSoKiw==
-X-Received: by 2002:a17:90a:348b:b0:2c8:a8f:c97 with SMTP id 98e67ed59e1d1-2c99c80b2aemr2034402a91.37.1720131213291;
-        Thu, 04 Jul 2024 15:13:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720135560; x=1720740360;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YQuUbXTeCATfOJq+6G5otAsd//IBi6KlQnyDYRgmZHM=;
+        b=n8KMClhDdkYOd5A0nJQmslpm+HpxjgzpkKrZHElI8gaAztBWn6qIxDwlXMbnjpR1Ia
+         dYpwnt/2IHpoqdiekMRVz4/9xUJUJlWh8VNs45g7cMXHuRdg9xdO8cMQDJoaTT+DZSGk
+         KPHxnMnxvI9FpGNACwLC/ssHpUPnjRSL+e9rouGXpvLUcnjRm8X6t6ul8iqWC1dpK2LZ
+         LTCFApjPfmEh/Q15olm63ILM0/v/ltwrhWrvUgxtS1boQfqWo3rURkBqcrX2btsRC7JX
+         BYKmu4UMTd5wjqtSuW5kYLHAnd9peBlFiLGN9TA6khbhQrhu63/aZWjncBT4pD+WAgIZ
+         I4FA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuueYxEjSpebGce45pNtsSlrWX6qNMyYYpfC3o3xWw+JWSJEBTAOqdqX8Sv2/dhOHSx3+vQTLQZLVEjzTE7QtxX9GI+xGMF+aPgirD4g==
+X-Gm-Message-State: AOJu0YxtWxzke1XcJ+ikjJLtem9hdpGOftx6ubjsyBifblhDGFdmMFtO
+	dQlr4CXLcwcMvTe397rczhGiZ1cWduJoMmfeP1pudrghLGptJ+qtBKs2z++A/Xk=
+X-Google-Smtp-Source: AGHT+IF9r/vf73P7S27Y6SGExS0fKX8f/udf+l46eEqaZc1p7k6ezMi050Ad+JapfLIDxV7oC1fgrg==
+X-Received: by 2002:a05:6a00:2e2a:b0:704:2696:d08e with SMTP id d2e1a72fcca58-70b0094e317mr3283522b3a.13.1720135559882;
+        Thu, 04 Jul 2024 16:25:59 -0700 (PDT)
 Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a95624dsm2040861a91.20.2024.07.04.15.13.32
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080256c9dcsm12742444b3a.74.2024.07.04.16.25.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jul 2024 15:13:32 -0700 (PDT)
+        Thu, 04 Jul 2024 16:25:59 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1sPUhm-004JHs-1V;
-	Fri, 05 Jul 2024 08:13:30 +1000
-Date: Fri, 5 Jul 2024 08:13:30 +1000
+	id 1sPVps-004N19-2J;
+	Fri, 05 Jul 2024 09:25:56 +1000
+Date: Fri, 5 Jul 2024 09:25:56 +1000
 From: Dave Chinner <david@fromorbit.com>
-To: Hannes Reinecke <hare@suse.de>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v9 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <ZoceivBuLIcylaxk@dread.disaster.area>
-References: <20240704112320.82104-1-kernel@pankajraghav.com>
- <20240704112320.82104-7-kernel@pankajraghav.com>
- <2c09ebbd-1704-46e3-a453-b4cd07940325@suse.de>
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Neil Brown <neilb@suse.de>, Mike Snitzer <snitzer@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>, Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Security issue in NFS localio
+Message-ID: <ZocvhIoQfzzhp+mh@dread.disaster.area>
+References: <172004548435.16071.5145237815071160040@noble.neil.brown.name>
+ <23DE2D13-1E1D-4EFE-9348-5B9055B30009@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2c09ebbd-1704-46e3-a453-b4cd07940325@suse.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <23DE2D13-1E1D-4EFE-9348-5B9055B30009@oracle.com>
 
-On Thu, Jul 04, 2024 at 05:37:32PM +0200, Hannes Reinecke wrote:
-> On 7/4/24 13:23, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> > 
-> > iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
-> > < fs block size. iomap_dio_zero() has an implicit assumption that fs block
-> > size < page_size. This is true for most filesystems at the moment.
-> > 
-> > If the block size > page size, this will send the contents of the page
-> > next to zero page(as len > PAGE_SIZE) to the underlying block device,
-> > causing FS corruption.
-> > 
-> > iomap is a generic infrastructure and it should not make any assumptions
-> > about the fs block size and the page size of the system.
-> > 
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> > ---
-> >   fs/iomap/buffered-io.c |  4 ++--
-> >   fs/iomap/direct-io.c   | 45 ++++++++++++++++++++++++++++++++++++------
-> >   2 files changed, 41 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index f420c53d86acc..d745f718bcde8 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -2007,10 +2007,10 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
-> >   }
-> >   EXPORT_SYMBOL_GPL(iomap_writepages);
-> > -static int __init iomap_init(void)
-> > +static int __init iomap_buffered_init(void)
-> >   {
-> >   	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
-> >   			   offsetof(struct iomap_ioend, io_bio),
-> >   			   BIOSET_NEED_BVECS);
-> >   }
-> > -fs_initcall(iomap_init);
-> > +fs_initcall(iomap_buffered_init);
-> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > index f3b43d223a46e..c02b266bba525 100644
-> > --- a/fs/iomap/direct-io.c
-> > +++ b/fs/iomap/direct-io.c
-> > @@ -11,6 +11,7 @@
-> >   #include <linux/iomap.h>
-> >   #include <linux/backing-dev.h>
-> >   #include <linux/uio.h>
-> > +#include <linux/set_memory.h>
-> >   #include <linux/task_io_accounting_ops.h>
-> >   #include "trace.h"
-> > @@ -27,6 +28,13 @@
-> >   #define IOMAP_DIO_WRITE		(1U << 30)
-> >   #define IOMAP_DIO_DIRTY		(1U << 31)
-> > +/*
-> > + * Used for sub block zeroing in iomap_dio_zero()
-> > + */
-> > +#define IOMAP_ZERO_PAGE_SIZE (SZ_64K)
-> > +#define IOMAP_ZERO_PAGE_ORDER (get_order(IOMAP_ZERO_PAGE_SIZE))
-> > +static struct page *zero_page;
-> > +
+On Thu, Jul 04, 2024 at 07:00:23PM +0000, Chuck Lever III wrote:
 > 
-> There are other users of ZERO_PAGE, most notably in fs/direct-io.c and
-> block/blk-lib.c. Any chance to make this available to them?
+> 
+> > On Jul 3, 2024, at 6:24 PM, NeilBrown <neilb@suse.de> wrote:
+> > 
+> > 
+> > I've been pondering security questions with localio - particularly
+> > wondering what questions I need to ask.  I've found three focal points
+> > which overlap but help me organise my thoughts:
+> > 1- the LOCALIO RPC protocol
+> > 2- the 'auth_domain' that nfsd uses to authorise access
+> > 3- the credential that is used to access the file
+> > 
+> > 1/ It occurs to me that I could find out the UUID reported by a given
+> > local server (just ask it over the RPC connection), find out the
+> > filehandle for some file that I don't have write access to (not too
+> > hard), and create a private NFS server (hacking nfs-ganasha?) which
+> > reports the same uuid and reports that I have access to a file with
+> > that filehandle.  If I then mount from that server inside a private
+> > container on the same host that is running the local server, I would get
+> > localio access to the target file.
 
-Please, no.
+This seems amazingly complex for something that is actually really
+simple.  Keep in mind that I am speaking from having direct
+experience with developing and maintaining NFS client IO bypass
+infrastructure from when I worked at SGI as an NFS engineer.
 
-We need to stop feature creeping this patchset and bring it to a
-close. If changing code entirely unrelated to this patchset is
-desired, please do it as a separate independent set of patches.
+So, let's look at the Irix NFS client/server and the "Bulk Data
+Service" protocol extensions that SGI wrote for NFSv3 back in the
+mid 1990s.  Here's an overview from the 1996 product documentation
+"Getting Started with BDSpro":
+
+https://irix7.com/techpubs/007-3274-001.pdf
+
+At least read chapter 1 so you grok the fundamentals of how the IO
+bypass worked. It should look familiar, because it isn't very
+different to how NFS over RDMA or client side IO for pNFS works.
+
+Essentially, The NFS client transparently sent all the data IO (read
+and write) over a separate communications channel for any IO that
+met the size and alignment constraints. This was effectively a
+"remote-IO" bypass that streamed data rather than packetised it
+(NFS_READ/NFS_WRITE is packetised data with RTT latency issues).
+By getting rid of the round trip latency penalty, data could be
+sent/recieved at full network throughput rates.
+
+[ As an aside, the BDS side channel was also the mechanism that used
+by SGI for NFS over RDMA with custom full stack network offload
+hardware back in the mid 1990s. NFS w/ BDS ran at about 800MB/s on
+those networks on machines with 200MHz CPUs (think MIPS r10k). ]
+
+The client side userspace has no idea this low level protocol
+hijacking occurs, and it doesn't need to because all it changes
+is the read/write IO speed. The NFS protocol is still used for all
+authorisation, access checks, metadata operations, etc, and all that
+changes is how NFS_READ and NFS_WRITE operations are performed.
+
+The local-io stuff is no different - we're just using a different
+client side IO path in kernel. We don't need a new protocol, nor do
+we need userspace to be involved *at all*.  The kernel NFS client
+can easily discover that it is on the same host as the server. The
+server already does this "client is on the same host", so both will
+then know they can *transparently* enable the localio bypass without
+involving userspace at all.
+
+The NFS protocol still provides all the auth, creds, etc to allow
+the NFS client read and write access to the file. The NFS server
+provides the client with a filehandle build by the underlying
+filesystem for the file the NFS client has been permission to
+access.
+
+The local filesystem will accept that filehandle from any kernel
+side context via the export ops for that filesystem. This provides
+a mechanism for the NFS client to convert that to a dentry
+and so open the file directly from the file handle. This is what the
+server already does, so it should be able to share the filehandle
+decode and open code from the server, maybe even just reach into the
+server export table directly....
+
+IOWs, we don't need to care about whether the mount is visible to
+the NFS client - the filesystem *export* is visible to the *kernel*
+and the export ops allow unfettered filehandle decoding. Containers
+are irrelevant - the server has granted access to the file, and so
+the NFS client has effective permissions to resolve the filehandle
+directly..
+
+Fundamentally, this is the same permission and access model that
+pNFS is built on. Hence I don't understand why this local-io bypass
+needs something completely new and seemingly very complex...
 
 -Dave.
 -- 
