@@ -1,297 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-23132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A6792783D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 16:24:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4016F927855
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 16:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 176ADB20C91
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 14:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA76B2822F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 14:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51611B0103;
-	Thu,  4 Jul 2024 14:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A07E1B0119;
+	Thu,  4 Jul 2024 14:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kB9G3SW4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A81D2F5;
-	Thu,  4 Jul 2024 14:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0FD1AE0AB
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 14:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720103058; cv=none; b=ltz4T/5lWxajo9h9NF3sNUcGZ5BE9bLmrsii5lPz0M5/5gQf1evfe85E9ZtzFDJm4eqwuhY4gAZ7+zgtQAO4lNO+VXjIuUaXIZYz4Rk+YGiBE5gh41lkz2L7uvqQD27b2lTvZ+wfDhL2N7tCK4VbH5oQNEkvT5OAhUo3GDSkGOU=
+	t=1720103304; cv=none; b=uOatC0ePnwqm0gv2VfmlU/fWKt5EpmYzHV5kJxNzZC6j6PuW7CCZ3Ssfw+XvSJK/F8KrKOa0tP/w6WFGCDtWuc47qvKH3Dw+G6Xteq0k7Tn890fwU8Zo7gMYFKCYaRaoyj3pgttp6phWpr922b1bEzEHQwgAqkcFFKlY/D5qE34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720103058; c=relaxed/simple;
-	bh=OEHQ7C893Gjev4bvMfn1iM0WMS4Q5I2bihnm8aIUGr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T5JlOAuBfI1KRKcDe8eGjRhilymQ8xGdbUKAuOYblKh9GtzgnkiIkv3rOYUoEjxcD+GCK8lTNBpYrYaeTVpm+7ZOuMCPI5AuWxqfjGVVJXToX+Hs3XHsdvcDjXM0YTV+jd4ORRcAvud7XqlOZwyCO+IeFTtC0gmT6puDyW5P/F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35EA8367;
-	Thu,  4 Jul 2024 07:24:40 -0700 (PDT)
-Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 29AE33F766;
-	Thu,  4 Jul 2024 07:24:12 -0700 (PDT)
-Message-ID: <98790338-0f86-4658-8dec-95e94b6d5c18@arm.com>
-Date: Thu, 4 Jul 2024 15:24:10 +0100
+	s=arc-20240116; t=1720103304; c=relaxed/simple;
+	bh=klcv0iJPfnyqJC0zdGFDfeZ90nx+1IkMvIljASpIwyU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=idyYqcOGiHgO1nKvo/8tyRJz2O8kupq2p7d0HO+w3flH1D8lHE05Kzop7DQjl5mJLL33+rqPURC2soj+7FSy1jFYTQZcLrIwwF/CmhPZ36HsO07O089b0TSBn+hXQpUKIMV6u4pqNdpH2xB4QfdgfM38zFko2xczYln/dUV9SHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kB9G3SW4; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4255f915611so84555e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jul 2024 07:28:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720103301; x=1720708101; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=e6FziicbfvJ4ZiuSQIpadzUmzwr4pmtmpZSgG/HGKc4=;
+        b=kB9G3SW4R8cRTUKGZfygga5lK9RR6/nWRFzsdttV3URFNHBcGBKNRklz45wBvjjQDM
+         nP1XVAdcwYXLIhbC4crV5UbDlflIMFWpi9XZvgU3eTyEBp3Xh/NBLtWA6TgAuvZoUDRn
+         xZ4bhnEhkSlnG2lxkNOJUg/xSBeikAPRYax7Jk7NyqHKLd0E+x1hXGy6QzEoij2fjwN2
+         opxb/lJtulq+XUeItOX6G0UqHO2ftPX/taKQ2m5+rOuZYaQ0zuX7so2ba3v2OybCu74O
+         86JgkIX5XI5mr0VIB+b5q04q22fwwuvPjQ6mY7yW9LugIhRRlqa6BabQvMvinvof6Fev
+         MD3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720103301; x=1720708101;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e6FziicbfvJ4ZiuSQIpadzUmzwr4pmtmpZSgG/HGKc4=;
+        b=c1uZRLhzY0aR7E0Urkw+CUQPdVjm1H6/uCB3QRANCEIPWRc7bRKZv9B0JxoDqdyQuA
+         /L9E1dEX4qiPions9jnHY3uN7lx/ZNbHoiNdv+9N733+alh7IsUsR8Ms26T6S9xUl2PX
+         rWKxRZerkdKxgbv/XF+ECQrKt5tzOyNH1TNIG/0YjP+qj+ENzYhDf4rHqR3NJpvCx2ch
+         zOQg8l8tZ5kQMhly/Sy/AwwgjhHfqdG/UVTsPwjV6xknOOKM4GwZJz7ui+l2RV9QWhRY
+         U2TPeny6J1awLAGiwZoBteQu7a/Wo93zK6DJyheLpYTIi96s/TurMqY8v+QoMCOLPuPp
+         jXyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsF+fXkYhWVj3RqOhNlcKeB1fXxLCj4jfvPgNHeMmce01+eEvY0W/i/W+Zu5C2lf6S8l27bbQP+OcLwVqH5+LHUOfLZrSK9qfAnpy9mg==
+X-Gm-Message-State: AOJu0YyxbEPMkZp92yof36nhjcjjrOhYzv1l47egmkdZQyldS1mmwDbY
+	Uazd6ap+mYUJ22A/1wOnkTTbeFFJ/j1vgWBcO3N7MdoP7dIXO8t5q9b9nZwWfWAJ+m+mQ3MlGs2
+	LZPaINFW4Cn1pns4lc0tAubNxESyfkCm7mKJi
+X-Google-Smtp-Source: AGHT+IEfl1aTNgldqQxnijvcOwkJppBlrG7YkJA8kh0cuuzciQ+XLp2g2dqZh/j8mGS6AwNYwSOFEMsKkWf/7pue8Ko=
+X-Received: by 2002:a05:600c:350a:b0:41a:444b:e1d9 with SMTP id
+ 5b1f17b1804b1-42648529fcbmr1884895e9.4.1720103300890; Thu, 04 Jul 2024
+ 07:28:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 03/10] readahead: allocate folios with
- mapping_min_order in readahead
-Content-Language: en-GB
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, david@fromorbit.com,
- willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
- brauner@kernel.org, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
- linux-mm@kvack.org, john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
- hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org, gost.dev@samsung.com,
- cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
- Zi Yan <zi.yan@sent.com>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-4-kernel@pankajraghav.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240625114420.719014-4-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <000000000000dc5b12061c6cac00@google.com>
+In-Reply-To: <000000000000dc5b12061c6cac00@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 4 Jul 2024 16:28:09 +0200
+Message-ID: <CACT4Y+Zk0ohwwwHSD63U2-PQ=UuamXczr1mKBD6xtj2dyYKBvA@mail.gmail.com>
+Subject: Re: [syzbot] [fs?] KCSAN: data-race in __fsnotify_parent /
+ __fsnotify_recalc_mask (5)
+To: syzbot <syzbot+701037856c25b143f1ad@syzkaller.appspotmail.com>
+Cc: amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 25/06/2024 12:44, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> page_cache_ra_unbounded() was allocating single pages (0 order folios)
-> if there was no folio found in an index. Allocate mapping_min_order folios
-> as we need to guarantee the minimum order if it is set.
-> While we are at it, rework the loop in page_cache_ra_unbounded() to
-> advance with the number of pages in a folio instead of just one page at
-> a time.
-> 
-> page_cache_ra_order() tries to allocate folio to the page cache with a
-> higher order if the index aligns with that order. Modify it so that the
-> order does not go below the mapping_min_order requirement of the page
-> cache. This function will do the right thing even if the new_order passed
-> is less than the mapping_min_order.
-> When adding new folios to the page cache we must also ensure the index
-> used is aligned to the mapping_min_order as the page cache requires the
-> index to be aligned to the order of the folio.
-> 
-> readahead_expand() is called from readahead aops to extend the range of
-> the readahead so this function can assume ractl->_index to be aligned with
-> min_order.
-> 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Co-developed-by: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Hannes Reinecke <hare@suse.de>
-> ---
->  mm/readahead.c | 81 +++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 63 insertions(+), 18 deletions(-)
-> 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 66058ae02f2e..2acfd6447d7b 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -206,9 +206,10 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  		unsigned long nr_to_read, unsigned long lookahead_size)
->  {
->  	struct address_space *mapping = ractl->mapping;
-> -	unsigned long index = readahead_index(ractl);
-> +	unsigned long ra_folio_index, index = readahead_index(ractl);
->  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
-> -	unsigned long i;
-> +	unsigned long mark, i = 0;
-> +	unsigned int min_nrpages = mapping_min_folio_nrpages(mapping);
->  
->  	/*
->  	 * Partway through the readahead operation, we will have added
-> @@ -223,10 +224,26 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  	unsigned int nofs = memalloc_nofs_save();
->  
->  	filemap_invalidate_lock_shared(mapping);
-> +	index = mapping_align_index(mapping, index);
-> +
-> +	/*
-> +	 * As iterator `i` is aligned to min_nrpages, round_up the
-> +	 * difference between nr_to_read and lookahead_size to mark the
-> +	 * index that only has lookahead or "async_region" to set the
-> +	 * readahead flag.
-> +	 */
-> +	ra_folio_index = round_up(readahead_index(ractl) + nr_to_read - lookahead_size,
-> +				  min_nrpages);
-> +	mark = ra_folio_index - index;
-> +	if (index != readahead_index(ractl)) {
-> +		nr_to_read += readahead_index(ractl) - index;
-> +		ractl->_index = index;
-> +	}
-> +
->  	/*
->  	 * Preallocate as many pages as we will need.
->  	 */
-> -	for (i = 0; i < nr_to_read; i++) {
-> +	while (i < nr_to_read) {
->  		struct folio *folio = xa_load(&mapping->i_pages, index + i);
->  		int ret;
->  
-> @@ -240,12 +257,13 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			 * not worth getting one just for that.
->  			 */
-
-For the case that the folio is already in the xarray, perhaps its worth
-asserting that the folio is at least min_nrpages?
+On Thu, 4 Jul 2024 at 16:22, syzbot
+<syzbot+701037856c25b143f1ad@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    795c58e4c7fc Merge tag 'trace-v6.10-rc6' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16a6b6b9980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5b9537cd00be479e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=701037856c25b143f1ad
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/3d1d205c1fdf/disk-795c58e4.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/641c78d42b7a/vmlinux-795c58e4.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/45ecf25d8ba3/bzImage-795c58e4.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+701037856c25b143f1ad@syzkaller.appspotmail.com
+>
+> EXT4-fs (loop3): unmounting filesystem 00000000-0000-0000-0000-000000000000.
+> ==================================================================
+> BUG: KCSAN: data-race in __fsnotify_parent / __fsnotify_recalc_mask
+>
+> write to 0xffff8881001c9d44 of 4 bytes by task 6671 on cpu 1:
+>  __fsnotify_recalc_mask+0x216/0x320 fs/notify/mark.c:248
+>  fsnotify_recalc_mask fs/notify/mark.c:265 [inline]
+>  fsnotify_add_mark_locked+0x703/0x870 fs/notify/mark.c:781
+>  fsnotify_add_inode_mark_locked include/linux/fsnotify_backend.h:812 [inline]
+>  inotify_new_watch fs/notify/inotify/inotify_user.c:620 [inline]
+>  inotify_update_watch fs/notify/inotify/inotify_user.c:647 [inline]
+>  __do_sys_inotify_add_watch fs/notify/inotify/inotify_user.c:786 [inline]
+>  __se_sys_inotify_add_watch+0x66f/0x810 fs/notify/inotify/inotify_user.c:729
+>  __x64_sys_inotify_add_watch+0x43/0x50 fs/notify/inotify/inotify_user.c:729
+>  x64_sys_call+0x2af1/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:255
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> read to 0xffff8881001c9d44 of 4 bytes by task 10004 on cpu 0:
+>  fsnotify_object_watched fs/notify/fsnotify.c:187 [inline]
+>  __fsnotify_parent+0xd4/0x370 fs/notify/fsnotify.c:217
+>  fsnotify_parent include/linux/fsnotify.h:96 [inline]
+>  fsnotify_file include/linux/fsnotify.h:131 [inline]
+>  fsnotify_open include/linux/fsnotify.h:401 [inline]
+>  vfs_open+0x1be/0x1f0 fs/open.c:1093
+>  do_open fs/namei.c:3654 [inline]
+>  path_openat+0x1ad9/0x1fa0 fs/namei.c:3813
+>  do_filp_open+0xf7/0x200 fs/namei.c:3840
+>  do_sys_openat2+0xab/0x120 fs/open.c:1413
+>  do_sys_open fs/open.c:1428 [inline]
+>  __do_sys_openat fs/open.c:1444 [inline]
+>  __se_sys_openat fs/open.c:1439 [inline]
+>  __x64_sys_openat+0xf3/0x120 fs/open.c:1439
+>  x64_sys_call+0x1057/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:258
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> value changed: 0x00000000 -> 0x00002008
+>
+> Reported by Kernel Concurrency Sanitizer on:
+> CPU: 0 PID: 10004 Comm: syz-executor Not tainted 6.10.0-rc6-syzkaller-00069-g795c58e4c7fc #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> ==================================================================
 
 
->  			read_pages(ractl);
-> -			ractl->_index++;
-> -			i = ractl->_index + ractl->_nr_pages - index - 1;
-> +			ractl->_index += min_nrpages;
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask,
-> +					    mapping_min_folio_order(mapping));
->  		if (!folio)
->  			break;
->  
-> @@ -255,14 +273,15 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  			if (ret == -ENOMEM)
->  				break;
->  			read_pages(ractl);
-> -			ractl->_index++;
-> -			i = ractl->_index + ractl->_nr_pages - index - 1;
-> +			ractl->_index += min_nrpages;
-> +			i = ractl->_index + ractl->_nr_pages - index;
->  			continue;
->  		}
-> -		if (i == nr_to_read - lookahead_size)
-> +		if (i == mark)
->  			folio_set_readahead(folio);
->  		ractl->_workingset |= folio_test_workingset(folio);
-> -		ractl->_nr_pages++;
-> +		ractl->_nr_pages += min_nrpages;
-> +		i += min_nrpages;
->  	}
->  
->  	/*
-> @@ -492,13 +511,19 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  {
->  	struct address_space *mapping = ractl->mapping;
->  	pgoff_t index = readahead_index(ractl);
-> +	unsigned int min_order = mapping_min_folio_order(mapping);
->  	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
->  	pgoff_t mark = index + ra->size - ra->async_size;
->  	unsigned int nofs;
->  	int err = 0;
->  	gfp_t gfp = readahead_gfp_mask(mapping);
-> +	unsigned int min_ra_size = max(4, mapping_min_folio_nrpages(mapping));
->  
-> -	if (!mapping_large_folio_support(mapping) || ra->size < 4)
-> +	/*
-> +	 * Fallback when size < min_nrpages as each folio should be
-> +	 * at least min_nrpages anyway.
-> +	 */
-> +	if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size)
->  		goto fallback;
->  
->  	limit = min(limit, index + ra->size - 1);
-> @@ -507,11 +532,20 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  		new_order += 2;
->  		new_order = min(mapping_max_folio_order(mapping), new_order);
->  		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
-> +		new_order = max(new_order, min_order);
->  	}
->  
->  	/* See comment in page_cache_ra_unbounded() */
->  	nofs = memalloc_nofs_save();
->  	filemap_invalidate_lock_shared(mapping);
-> +	/*
-> +	 * If the new_order is greater than min_order and index is
-> +	 * already aligned to new_order, then this will be noop as index
-> +	 * aligned to new_order should also be aligned to min_order.
-> +	 */
-> +	ractl->_index = mapping_align_index(mapping, index);
-> +	index = readahead_index(ractl);
-> +
->  	while (index <= limit) {
->  		unsigned int order = new_order;
->  
-> @@ -519,7 +553,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  		if (index & ((1UL << order) - 1))
->  			order = __ffs(index);
->  		/* Don't allocate pages past EOF */
-> -		while (index + (1UL << order) - 1 > limit)
-> +		while (order > min_order && index + (1UL << order) - 1 > limit)
->  			order--;
->  		err = ra_alloc_folio(ractl, index, mark, order, gfp);
->  		if (err)
-> @@ -783,8 +817,15 @@ void readahead_expand(struct readahead_control *ractl,
->  	struct file_ra_state *ra = ractl->ra;
->  	pgoff_t new_index, new_nr_pages;
->  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
-> +	unsigned long min_nrpages = mapping_min_folio_nrpages(mapping);
-> +	unsigned int min_order = mapping_min_folio_order(mapping);
->  
->  	new_index = new_start / PAGE_SIZE;
-> +	/*
-> +	 * Readahead code should have aligned the ractl->_index to
-> +	 * min_nrpages before calling readahead aops.
-> +	 */
-> +	VM_BUG_ON(!IS_ALIGNED(ractl->_index, min_nrpages));
->  
->  	/* Expand the leading edge downwards */
->  	while (ractl->_index > new_index) {
-> @@ -794,9 +835,11 @@ void readahead_expand(struct readahead_control *ractl,
->  		if (folio && !xa_is_value(folio))
->  			return; /* Folio apparently present */
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask, min_order);
->  		if (!folio)
->  			return;
-> +
-> +		index = mapping_align_index(mapping, index);
->  		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
->  			folio_put(folio);
->  			return;
-> @@ -806,7 +849,7 @@ void readahead_expand(struct readahead_control *ractl,
->  			ractl->_workingset = true;
->  			psi_memstall_enter(&ractl->_pflags);
->  		}
-> -		ractl->_nr_pages++;
-> +		ractl->_nr_pages += min_nrpages;
->  		ractl->_index = folio->index;
->  	}
->  
-> @@ -821,9 +864,11 @@ void readahead_expand(struct readahead_control *ractl,
->  		if (folio && !xa_is_value(folio))
->  			return; /* Folio apparently present */
->  
-> -		folio = filemap_alloc_folio(gfp_mask, 0);
-> +		folio = filemap_alloc_folio(gfp_mask, min_order);
->  		if (!folio)
->  			return;
-> +
-> +		index = mapping_align_index(mapping, index);
->  		if (filemap_add_folio(mapping, folio, index, gfp_mask) < 0) {
->  			folio_put(folio);
->  			return;
-> @@ -833,10 +878,10 @@ void readahead_expand(struct readahead_control *ractl,
->  			ractl->_workingset = true;
->  			psi_memstall_enter(&ractl->_pflags);
->  		}
-> -		ractl->_nr_pages++;
-> +		ractl->_nr_pages += min_nrpages;
->  		if (ra) {
-> -			ra->size++;
-> -			ra->async_size++;
-> +			ra->size += min_nrpages;
-> +			ra->async_size += min_nrpages;
->  		}
->  	}
->  }
+I think __fsnotify_recalc_mask() can be compiled along the lines of:
 
+*fsnotify_conn_mask_p(conn) = 0;
+hlist_for_each_entry(mark, &conn->list, obj_list) {
+   ...
+   *fsnotify_conn_mask_p(conn) |= fsnotify_calc_mask(mark);
+   ...
+}
+
+And then fsnotify_object_watched() may falsely return that it's not
+watched (if it observes 0, or any other incomplete value).
 
