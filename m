@@ -1,93 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-23129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F009277C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 16:06:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 408499277EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 16:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8921F274AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 14:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712381C21BE8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 14:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC3A1AEFF9;
-	Thu,  4 Jul 2024 14:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VxSYCyp+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E881AEFED;
+	Thu,  4 Jul 2024 14:13:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E239F1AE850
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 14:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5988B1ABC25;
+	Thu,  4 Jul 2024 14:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720101927; cv=none; b=LCSYO8qv9iHfTw9VDSgNhPu1Rf25NQl9724h1onR52Wst0MbfOr+VlSAf4qya9s8IXTHMCJ+mQjmHHxXDptToUCaj2S9txpj0I6djlSZ+4gFoB7ix75oUT4GvNI+qJQ446NvrlUehG9Bb6UnfK+xSZNJ17xtRcVqbvvKkcSRK90=
+	t=1720102406; cv=none; b=lw7J6DOEKwzF5rZPW4KMVKA+zOX4rHOZ26T4p2l+Ik68AOQ1KEKjoT0T1hgxZHhlG5ZsWEUaUd1CUioUpyL8urv58AIM++JSQ2JzxjCFcKZz8AKE+BkkZoQ+7zw3zANY2SD6YhYOyaBIt7QruELPv6NRJiiSj9qvNNdkjm7j0l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720101927; c=relaxed/simple;
-	bh=nT+rTBnl+HSl4DwG+DFLS3z8vwGzIsSiEg7GOm/JOpw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gTFcb2kmJyCeoG5iDb3tFCGW05KR4muG5KkP63/A80//eA86A2CKIKHYyw+Syz/SVqZqR+yS+hILeJ7Nd0pnGJbkxSH9c8femvQAn6Y7UBO1+lOelE2H/JHPnlLrgbqkhqHX7XQEp1S8EaPE8qrhQvjHJyFTjmJQSi86QVH1/SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VxSYCyp+; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-645eb1025b5so12351767b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jul 2024 07:05:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720101925; x=1720706725; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nT+rTBnl+HSl4DwG+DFLS3z8vwGzIsSiEg7GOm/JOpw=;
-        b=VxSYCyp+5aPScQeE8OnbJvYcUvekY/PO0Ss9nqYUklx8bs7+M77E3qAlwVuBc3RVUl
-         BNyQjQ9+VdeZaBJPQsjvHvPs633hZw1cxdzXFtAaifXcHo+wRPh/oE3WYIM4foVY9HVH
-         Am74hlPlASnY3sJ6O4I/lW0E5K3LJh9J2SB3qCclKI3bs8o3zCmgsQzMd8EDK7ZKNByG
-         hqviJwUIzJ5mbzWDPazDBXUrilQ2jyDIHsBc44bmRSYEyYjpLKCRAThenVv3NKva0jLU
-         yTGqQlFg87amBG+fOIHvCN07LJwfzKXTvxMK6ECYB3y+F6moWVrbvYj/2g0ZdsV9qsj6
-         w01A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720101925; x=1720706725;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nT+rTBnl+HSl4DwG+DFLS3z8vwGzIsSiEg7GOm/JOpw=;
-        b=J7arZo2PC0qJCFuBkxjh1ProNqhgAmpCEPBm++QaSrZ4T2hHmLOQ4EESebg8qXV52R
-         syVRdqaHiGKYmWTMYsnxa6xcCgEbxQ2Jz/wJBHW/OPQbtAvGBkyXZeUkr4jhJH5p05FN
-         quRjzauTYWAQJeDWQ93htqiDmsHrrWKxV5++OKsCKOc2WEjbvFUXxNW+hwEyS7tU/Zza
-         TUhw43/YpLaZfGh/XaGU/AQr7tUbBkQ6zCkyEdc3allujURhmjpaKKwRWPQbu3GfhsLd
-         tnj7RMdm7zOY5zgZbUuBM9budIE70xUdqM37FLmK6D7o50HEKr22QW3DIWQ+L0MUa4+W
-         X6vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWApxx9NsAkg3fYzrAUpU7C/4WkmP+IF9QuiykdsYeJbrKg/+2sdRbEOAvaK0asvMFm0kXiVyjLBCgWFNSvjmOPL7txkWM3LTOKR59lpQ==
-X-Gm-Message-State: AOJu0YwTQkpS3aQ/mg87HtnALm8oQJevHiaaUjoYdy+6HR6wDcMMzvGi
-	3ZQ86zmF7xPFcA9gRK6PCPzGzRpFEQg7xC3v1uRwb7AGqwA3TtfyOHpCYcQCkoULnxFMy7soZfk
-	eOCctHg==
-X-Google-Smtp-Source: AGHT+IEUTx9gA7idJniZJ43DFyy9iaha2T2C5xdXkzxMT+Hu+WTsx0gWO2mYAGlalubEcYYltx3s+A5MabGu
-X-Received: from dvyukov-desk.muc.corp.google.com ([2a00:79e0:9c:201:ef38:74e6:67b5:dcc0])
- (user=dvyukov job=sendgmr) by 2002:a05:6902:100b:b0:dff:396c:c457 with SMTP
- id 3f1490d57ef6-e03c195ece8mr3031276.3.1720101924876; Thu, 04 Jul 2024
- 07:05:24 -0700 (PDT)
-Date: Thu,  4 Jul 2024 16:05:20 +0200
-In-Reply-To: <20230926102454.992535-2-twuufnxlz@gmail.com>
+	s=arc-20240116; t=1720102406; c=relaxed/simple;
+	bh=Kxp53RpKhzP/mT97Uo4HoDiVi6oQPPrL2VvGUnRSWXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f8sqLl/jYtiYnLfQqYri2VCp3iiH/+ZTiEfqOkTd6c/Z9aVTFs5tWRdqPUf3XwkYLvNyTCxb0eoOS6d17SmkMiXGoSVF86wOAi7OYWh7qWaeTsE5OyKAEAgJEIwLcT+k2YkBZpZh1QxVBDLrZFWJeZumdN2L7JyZxQ4ylXbyYbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5346C3277B;
+	Thu,  4 Jul 2024 14:13:24 +0000 (UTC)
+Date: Thu, 4 Jul 2024 10:13:22 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Hongbo Li <lihongbo22@huawei.com>,
+ muchun.song@linux.dev, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] hugetlbfs: support tracepoint
+Message-ID: <20240704101322.2743ec24@rorschach.local.home>
+In-Reply-To: <Zoab/VXoPkUna7L2@dread.disaster.area>
+References: <20240704030704.2289667-1-lihongbo22@huawei.com>
+	<20240704030704.2289667-2-lihongbo22@huawei.com>
+	<ZoYY-sfj5jvs8UpQ@casper.infradead.org>
+	<Zoab/VXoPkUna7L2@dread.disaster.area>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20230926102454.992535-2-twuufnxlz@gmail.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240704140520.1178714-1-dvyukov@google.com>
-Subject: Re: [PATCH] fs/hfsplus: expand s_vhdr_buf size to avoid slab oob
-From: Dmitry Vyukov <dvyukov@google.com>
-To: twuufnxlz@gmail.com
-Cc: akpm@linux-foundation.org, hughd@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzbot+4a2376bc62e59406c414@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Edward,
+On Thu, 4 Jul 2024 22:56:29 +1000
+Dave Chinner <david@fromorbit.com> wrote:
 
-Was this patch lost? I don't see it merged anywhere.
-This bug is still present in most kernels out there.
+> Having to do this is additional work when writing use-once scripts
+> that get thrown away when the tracepoint output analysis is done
+> is painful, and it's completely unnecessary if the tracepoint output
+> is completely space separated from the start.
+
+If you are using scripts to parse the output, then you could just
+enable the "fields" options, which will just ignore the TP_printk() and
+print the fields in both their hex and decimal values:
+
+ # trace-cmd start -e filemap -O fields
+
+// the above fields change can also be done with:
+//  echo 1 > /sys/kernel/tracing/options/fields
+
+ # trace-cmd show
+# tracer: nop
+#
+# entries-in-buffer/entries-written: 8/8   #P:8
+#
+#                                _-----=> irqs-off/BH-disabled
+#                               / _----=> need-resched
+#                              | / _---=> hardirq/softirq
+#                              || / _--=> preempt-depth
+#                              ||| / _-=> migrate-disable
+#                              |||| /     delay
+#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+#              | |         |   |||||     |         |
+            less-2527    [004] ..... 61949.896458: mm_filemap_add_to_page_cache: pfn=0x144625 (1328677) i_ino=0x335c6 (210374) index=0x0 (0) s_dev=0xfe00003 (266338307) order=(0)
+            less-2527    [004] d..2. 61949.896926: mm_filemap_delete_from_page_cache: pfn=0x152b07 (1387271) i_ino=0x2d73a (186170) index=0x0 (0) s_dev=0xfe00003 (266338307) order=(0)
+     jbd2/vda3-8-268     [005] ..... 61954.461964: mm_filemap_add_to_page_cache: pfn=0x152b70 (1387376) i_ino=0xfe00003 (266338307) index=0x30bd33 (3194163) s_dev=0x3 (3) order=(0)
+     jbd2/vda3-8-268     [005] ..... 61954.462669: mm_filemap_add_to_page_cache: pfn=0x15335b (1389403) i_ino=0xfe00003 (266338307) index=0x30bd40 (3194176) s_dev=0x3 (3) order=(0)
+     jbd2/vda3-8-268     [005] ..... 62001.565391: mm_filemap_add_to_page_cache: pfn=0x13a996 (1288598) i_ino=0xfe00003 (266338307) index=0x30bd41 (3194177) s_dev=0x3 (3) order=(0)
+     jbd2/vda3-8-268     [005] ..... 62001.566081: mm_filemap_add_to_page_cache: pfn=0x1446b5 (1328821) i_ino=0xfe00003 (266338307) index=0x30bd43 (3194179) s_dev=0x3 (3) order=(0)
+            less-2530    [004] ..... 62033.182309: mm_filemap_add_to_page_cache: pfn=0x13d755 (1300309) i_ino=0x2d73a (186170) index=0x0 (0) s_dev=0xfe00003 (266338307) order=(0)
+            less-2530    [004] d..2. 62033.182801: mm_filemap_delete_from_page_cache: pfn=0x144625 (1328677) i_ino=0x335c6 (210374) index=0x0 (0) s_dev=0xfe00003 (266338307) order=(0)
 
 
+Just an FYI,
+
+-- Steve
 
