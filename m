@@ -1,219 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-23081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70A1926CC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 02:31:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1052926CE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 03:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3E4E1C21C22
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 00:31:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C016A1C2153D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 01:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5024C8E;
-	Thu,  4 Jul 2024 00:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFB18462;
+	Thu,  4 Jul 2024 01:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckBodjt9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OuSVAJQu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A1638C;
-	Thu,  4 Jul 2024 00:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA594A31
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 01:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720053068; cv=none; b=I/g3anqGfWjohD8VNUPi6eKnpSkn/ydLl2zL3Z8IDoWIPVh9dgrFHPpA6eauMvWpLqpv05LthwlRKOMLTMHShW096XaSNyAO+b4zmyDoL8yrLqRSDL6KPC2dYGwZyjGmIWxywzEguKDCYpwxL0wZ82ImhOrsQVQCG3npUdRw/u0=
+	t=1720055052; cv=none; b=twGTmbfIQFIPrqWjTXHYSHkPlMoB7gRgysh5FC8WaAknkCoGOjatNU4RTA1+gxfndATMiw4DltHGjZh8J6PBA2f62q+E5/RAwybFfzCADQdJ9cxbybT+wm03PedEgPGrfV6rhJfDqDiLPpELey4bDGeRqACNV00dvWfsvFjrxPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720053068; c=relaxed/simple;
-	bh=OCSlpA0xUjy0FM75x+w+MK0yXeQZ1m/eWOyDdcH3YfQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f+l+GOb3mTWohufpQoQYZrIfYduywBRD/GX8lWM/9foFYuX4RS8ZEDhw6BuddqlN6vS5ix5qYqSlpeL3brpaf+V+wUjL4BtUD/5vAM9tmBDV+dZ16//T2hz9UeFIp+5Cma1THuFfyNxCBy+KN46mlJFZeWFupEtjGnggVF3dKcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ckBodjt9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A058C2BD10;
-	Thu,  4 Jul 2024 00:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720053068;
-	bh=OCSlpA0xUjy0FM75x+w+MK0yXeQZ1m/eWOyDdcH3YfQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ckBodjt9BYfV2CpKs4tR1O6u4JF8kP4JstM6hr4KHGtNkLcxGq/8N0dT7c/SwAtzk
-	 /Qh+XCLbGeWS7sRp4K1VX0jcIbsoIFIMPuzdO7+J6vx8/wPpZEaASjjxxEs3tSei8+
-	 Fw0fxa1AmLVojKPXhYCEoZ3xwdk9XB7JvbD+mXcc88BGTAgv116n14dMmjImxRo9Bo
-	 qsBVuKThbx0ukwzVlg34tIcyltBQ8FPzRnCon1ApHw/dv90/QyDqi2cNJvIfQHA5Zy
-	 mEljk0ZVuhz4/Nnle6mAwAgVjg9BB/AqqQ+54jxfWepa1ggvR+EXaZqFmsHCLa+WGG
-	 HzsN7hC5e+3BQ==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>
-Subject: Re: [PATCH 0/7] Make core VMA operations internal and testable
-Date: Wed,  3 Jul 2024 17:31:03 -0700
-Message-Id: <20240704003104.90855-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <1edfc11c-ab99-4e9d-bf5d-b10f34b3f1da@lucifer.local>
-References: 
+	s=arc-20240116; t=1720055052; c=relaxed/simple;
+	bh=OwHkXu8Tdg+QcH0k7SdpkI90l//y2X83WtGBeUeLnss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qh9m2Ix8u7eCq5uE2f+BUYJ/j9TaDmJpYKJEEEshy4yjc+K4txqL17MXvSYZR0uEpPaC5GP8zhx8PAtXcNXyKxdrGyDa/7wIWuFIaimDXcKTZFEHrvlYmov/PZtJ2nXQWAVayVbFQkJ1tQJ1cVQPGij+JwLIkSRb1uxyQaA44OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OuSVAJQu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720055049;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/1UoAoUE38XfmtGte/DbdgJX2un8zCdfajv3hxrPb+Q=;
+	b=OuSVAJQuRFJg7gVd6Ork0PxjfY4Z4vxssctt5j4cv/cGGaUvUz6pgjYvYKBXEmPsHmnXfP
+	Te0an3O8qgmP0zLfUvC0B1Hvzr/k4HoklCqs+mfH+rINfxNw8IbWOdv069wufhfTipXzjL
+	u5gyUcajhVCSJ91SrAr7TnsuU0IA22Q=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-498-CJdcrUDsNmic4G9pn18bFQ-1; Wed, 03 Jul 2024 21:04:08 -0400
+X-MC-Unique: CJdcrUDsNmic4G9pn18bFQ-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-70af5f8def2so149091b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2024 18:04:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720055046; x=1720659846;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/1UoAoUE38XfmtGte/DbdgJX2un8zCdfajv3hxrPb+Q=;
+        b=GD/hKqu3MsKHMg3OhJA+H9sZHBTgs6VrIfTqV8nZLr/KRsa0qUpiz9H8altZ+UaakV
+         A/pdazzaHUV/vfh67zX2XlKBhPzpkpGHv44ts1VsUui3cVACwi1tpmDpbj89ljkbjyzR
+         DwkdK5nqtPWi+VroQPACptbQyDyG/x234uPSutZPbZR+/lEja5sUZse6t4BHFhDBHypV
+         xNnFSSUrbIKqGQnHfwOiBaXUwUvPbQYwxJvOt6Vl/xxTfqQubKc2mDU3ybVxAySr4CV6
+         Dg705W0Go5f+wf6eIB6+FHAoVgf7jKuBwE4nfvqedjZ9+jV+oRurks4vOvNwQ0HrYvO1
+         lxqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWzgZehTOGohO5rwnYcw0PYTWEQA+FN0LD1cdqVsHfVZU+bjzAMzjwy4BDSxvlZm5Q7RlcteFLz5swvuKy7Ri8DzoM09rdJmW+dwiaBg==
+X-Gm-Message-State: AOJu0Yx6zyruy1bo/GulrzA45Kcn716KcDgbgENyQLr+eIcYJiKV2NOv
+	ec46R9JxcQ2CZzkMJi+dzqJXwqvF/R8SPaQBycAIzqg4xS2vMHY7IIEiDPuCkHGg2cDZNCwa91R
+	fVX1IHaNeuVDdhwch0qUqfY+Hq8P4XEupXsT1a3sZ5hEMjwRdRCAXpVIlLVmBlraGdCdFcDo=
+X-Received: by 2002:a05:6a00:1146:b0:705:9ddb:db6b with SMTP id d2e1a72fcca58-70b0094b3abmr180113b3a.13.1720055046136;
+        Wed, 03 Jul 2024 18:04:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEfIJ/5XnqU2+b+txtAVcJ5itbgOcH5WsQHwDhGMl3SRQ1HIB+g6wofHASN71XW74raXe0ekQ==
+X-Received: by 2002:a05:6a00:1146:b0:705:9ddb:db6b with SMTP id d2e1a72fcca58-70b0094b3abmr180090b3a.13.1720055045668;
+        Wed, 03 Jul 2024 18:04:05 -0700 (PDT)
+Received: from [192.168.1.229] (159-196-82-144.9fc452.per.static.aussiebb.net. [159.196.82.144])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801e53ae0sm11080447b3a.23.2024.07.03.18.04.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jul 2024 18:04:05 -0700 (PDT)
+Message-ID: <9f455425-2a82-4a8f-aeaa-71ebe6a7acc6@redhat.com>
+Date: Thu, 4 Jul 2024 09:04:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] vfs: don't mod negative dentry count when on shrinker
+ list
+To: Christian Brauner <brauner@kernel.org>
+Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org
+References: <20240702170757.232130-1-bfoster@redhat.com>
+ <e2a34e4d-b529-4ee6-b921-f54c3935f253@redhat.com>
+ <20240703-nachwachsen-funkt-23b2e942dd87@brauner>
+Content-Language: en-US
+From: Ian Kent <ikent@redhat.com>
+Autocrypt: addr=ikent@redhat.com; keydata=
+ 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
+In-Reply-To: <20240703-nachwachsen-funkt-23b2e942dd87@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 4 Jul 2024 00:24:15 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On 3/7/24 16:22, Christian Brauner wrote:
+> On Wed, Jul 03, 2024 at 09:48:52AM GMT, Ian Kent wrote:
+>> On 3/7/24 01:07, Brian Foster wrote:
+>>> The nr_dentry_negative counter is intended to only account negative
+>>> dentries that are present on the superblock LRU. Therefore, the LRU
+>>> add, remove and isolate helpers modify the counter based on whether
+>>> the dentry is negative, but the shrinker list related helpers do not
+>>> modify the counter, and the paths that change a dentry between
+>>> positive and negative only do so if DCACHE_LRU_LIST is set.
+>>>
+>>> The problem with this is that a dentry on a shrinker list still has
+>>> DCACHE_LRU_LIST set to indicate ->d_lru is in use. The additional
+>>> DCACHE_SHRINK_LIST flag denotes whether the dentry is on LRU or a
+>>> shrink related list. Therefore if a relevant operation (i.e. unlink)
+>>> occurs while a dentry is present on a shrinker list, and the
+>>> associated codepath only checks for DCACHE_LRU_LIST, then it is
+>>> technically possible to modify the negative dentry count for a
+>>> dentry that is off the LRU. Since the shrinker list related helpers
+>>> do not modify the negative dentry count (because non-LRU dentries
+>>> should not be included in the count) when the dentry is ultimately
+>>> removed from the shrinker list, this can cause the negative dentry
+>>> count to become permanently inaccurate.
+>>>
+>>> This problem can be reproduced via a heavy file create/unlink vs.
+>>> drop_caches workload. On an 80xcpu system, I start 80 tasks each
+>>> running a 1k file create/delete loop, and one task spinning on
+>>> drop_caches. After 10 minutes or so of runtime, the idle/clean cache
+>>> negative dentry count increases from somewhere in the range of 5-10
+>>> entries to several hundred (and increasingly grows beyond
+>>> nr_dentry_unused).
+>>>
+>>> Tweak the logic in the paths that turn a dentry negative or positive
+>>> to filter out the case where the dentry is present on a shrink
+>>> related list. This allows the above workload to maintain an accurate
+>>> negative dentry count.
+>>>
+>>> Signed-off-by: Brian Foster <bfoster@redhat.com>
+>>> ---
+>>>    fs/dcache.c | 5 +++--
+>>>    1 file changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/dcache.c b/fs/dcache.c
+>>> index 407095188f83..5305b95b3030 100644
+>>> --- a/fs/dcache.c
+>>> +++ b/fs/dcache.c
+>>> @@ -355,7 +355,7 @@ static inline void __d_clear_type_and_inode(struct dentry *dentry)
+>>>    	flags &= ~DCACHE_ENTRY_TYPE;
+>>>    	WRITE_ONCE(dentry->d_flags, flags);
+>>>    	dentry->d_inode = NULL;
+>>> -	if (flags & DCACHE_LRU_LIST)
+>>> +	if ((flags & (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
+>>>    		this_cpu_inc(nr_dentry_negative);
+>>>    }
+>>> @@ -1846,7 +1846,8 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
+>>>    	/*
+>>>    	 * Decrement negative dentry count if it was in the LRU list.
+>>>    	 */
+>>> -	if (dentry->d_flags & DCACHE_LRU_LIST)
+>>> +	if ((dentry->d_flags &
+>>> +	     (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
+>>>    		this_cpu_dec(nr_dentry_negative);
+>>>    	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
+>>>    	raw_write_seqcount_begin(&dentry->d_seq);
+>>
+>> Acked-by: Ian Kent <ikent@redhat.com>
+>>
+>>
+>> Christian, just thought I'd call your attention to this since it's a bit
+>> urgent for us to get reviews
+>>
+>> and hopefully merged into the VFS tree.
+> I'm about to pick it up.
 
-> On Wed, Jul 03, 2024 at 03:56:36PM GMT, SeongJae Park wrote:
-> > On Wed, 3 Jul 2024 21:33:00 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> >
-> > > On Wed, Jul 03, 2024 at 01:26:53PM GMT, Andrew Morton wrote:
-> > > > On Wed,  3 Jul 2024 12:57:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> > > >
-> > > > > Kernel functionality is stubbed and shimmed as needed in tools/testing/vma/
-> > > > > which contains a fully functional userland vma_internal.h file and which
-> > > > > imports mm/vma.c and mm/vma.h to be directly tested from userland.
-> > > >
-> > > > Cool stuff.
-> > >
-> > > Thanks :)
-> > >
-> > > >
-> > > > Now we need to make sure that anyone who messes with vma code has run
-> > > > the tests.  And has added more testcases, if appropriate.
-> > > >
-> > > > Does it make sense to execute this test under selftests/ in some
-> > > > fashion?  Quite a few people appear to be running the selftest code
-> > > > regularly and it would be good to make them run this as well.
-> > >
-> > > I think it will be useful to do that, yes, but as the tests are currently a
-> > > skeleton to both provide the stubbing out and to provide essentially an
-> > > example of how you might test (though enough that it'd now be easy to add a
-> > > _ton_ of tests), it's not quite ready to be run just yet.
-> >
-> > If we will eventually move the files under selftests/, why dont' we place the
-> > files there from the beginning?  Is there a strict rule saying files that not
-> > really involved with running tests or not ready cannot be added there?  If so,
-> > could adding the files after the tests are ready to be run be an option?
-> > Cc-ing Shuah since I think she might have a comment.
-[...]
-> My point to Andrew was that we could potentially automatically run these
-> tests as part of a self-test run as they are so quick, at least in the
-> future, if that made sense.
-
-Ok, I think I was misunderstanding your point on the reply to Andrew.  I was
-thinking you will eventually move the tests to selftests, but not for now, only
-because it is not ready to run.  I understand your points now.
-
-> 
-> >
-> > Also, I haven't had enough time to read the patches in detail but just the
-> > cover letter a little bit.  My humble impression from that is that this might
-> > better to eventually be kunit tests.  I know there was a discussion with Kees
-> > on RFC v1 [1] which you kindly explained why you decide to implement this in
-> > user space.  To my understanding, at least some of the problems are not real
-> > problems.  For two things as examples,
-> 
-> They are real problems. And I totally disagree that these should be kunit
-> tests. I'm surprised you didn't find my and Liam's arguments compelling?
-> 
-> I suggest you try actually running tools/testing/vma/vma and putting a
-> break point in gdb in vma_merge(), able to observe all state in great
-> detail with no interrupts and see for yourself.
-> 
-> >
-> > 1. I understand that you concern the test speed [2].  I think Kunit could be
-> > slower than the dedicated user space tests, but to my experience, it's not that
-> > bad when using the default UML-based execution.
-> 
-> I'm sorry but running VMA code in the smallest possible form in userland is
-> very clearly faster and you are missing the key point that we can _isolate_
-> anything we _don't need_.
-> 
-> There's no setup/teardown whatsoever, no clever tricks needed, we get to
-> keep entirely internal interfaces internal and clean. It's compelling.
-> 
-> You are running the code as fast as you possibly can and that allows for
-> lots of interesting things like being able to fuzz at scale, being able to
-> run thousands of cases with basically zero setup/teardown or limits,
-> etc. etc.
-
-I read this from the previous thread, and this is really cool.  I was thinking
-it would be really nice if more kernel subsystems and features be able to do
-this kind of great testing with minimum duplicated efforts.  That was one of
-the motivations of my previous reply.
-
-> 
-> Also, it's basically impossible to explicitly _unit_ test vma merge and vma
-> split and friends without invoking kernel stuff like TLB handling, MMU
-> notifier, huge page handling, process setup/teardown, mm setup/teardown,
-> rlimits, anon vma name handling, uprobes, memory policy handling, interval
-> tree handling, lock contention, THP behaviour, etc. etc. etc.
-> 
-> With this test we can purely _unit_ test these fundamental operations, AND
-> have the ability to for example in future - dump maple tree state from a
-> buggy kernel situation that would result in a panic for instance - and
-> recreate it immediately for debug.
-> 
-> We also then have the ability to have strong guarantees about the behaviour
-> of these operations at a fundamental level.
-> 
-> If we want _system_ tests that bring in other kernel components then it
-> makes more sense to use kunit/selftests. But this offers something else.
-
-As I also previously mentioned, I was assuming you made the decision to not use
-KUnit based on real limitations of KUnit you found.  Thank you so much for this
-detailed explanations with nice examples.
-
-[...]
-> > To recap, I have no strong opinions about this patch, but I think knowing how
-> > Selftests and KUnit developers think could be helpful.
-> 
-> With respect it strikes me that you have rather strong feelings on
-> this. But again I make the plea that we don't hold this up on the basis of
-> a debate about this vs. other options re: testing.
-
-No worry, I'm not willing to delay this work with unnecessary discussions.
-That's why I'm saying I have no strong opinion.  I'm rather regret that I don't
-have enough time to get a credit on this great work by reading the details and
-provide my Reviewed-by:.
-
-What I want to say is that it would be nice to ensure the developers of
-Kselftest and Kunit, who obviously have experiences on testing, get a chance to
-be involved in this discussion.  I believe that would be nice since they might
-find something we're misunderstanding about Kselftest and/or Kunit.  Also they
-might find some unknown limitations of Kselftest and/or Kunit that you found.
-I personally hope it is the latter case and it helps evolving KUnit, so that
-not only vma but also other kernel subsystems and features be able to enhance
-their test setups with minimum efforts.
-
-Again, I don't think such discussions and possible future works sould be
-blockers of this work.
-
-> 
-> Kees was agreeable with this approach so I don't think we should really see
-> too much objection to this.
-
-You're right.  Nonetheless, I found the mail is not Cc-ing KUnit developers,
-and then I thought giving KUnit developers more chances to be involved would be
-nice.
+Thanks much, sounds like there's a v2 on the way (which could have done 
+by now).
 
 
-Thanks,
-SJ
+Ian
 
-[...]
 
