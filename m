@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-23154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AED927D86
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 21:03:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B81927D85
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 21:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 635FD1F22419
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 19:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03DA31C232B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 19:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD380142640;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B013813B7BC;
 	Thu,  4 Jul 2024 19:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ThRs7c9X"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sz775JKN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AB213A416
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 19:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F411131E2D;
+	Thu,  4 Jul 2024 19:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720119738; cv=none; b=gyuP0/x8DsnP+cgNuk94kJUWt7kZwUHzbsqZg6zb2KZuVpgHo2h7O6pDqtiY/Rabrjn42xPXRDS58rvhn+GSD8pKLSyD3GQ2SxTNP8CZa6/zAMdbnnpYun4ndn/qLCDZQ7B10JRny8XY8so7e4dq1ERav3TDbrFo/Kpy3MGNbBE=
+	t=1720119738; cv=none; b=nQE8SkKg8p8R3sLOwVMN0AkvU74rMgQaof943rb5nqObJnRH0mgT+bhL2hOv+qsYk3+BQwOvpujS/1l9DNEZ4jpRaNTiJ09D3kNWuGg3x4Auvi06x1kTa1s0H5IAxwMJhBr4mO4Rn5VwkFk+vUOrbaww4F+A6tsjBMcjHbbmpwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720119738; c=relaxed/simple;
-	bh=9kEvfh40DrzVZsKjxTdNWubNxHzlStfeHN1CIvOxWb4=;
+	bh=oF6rZ0nuBxG6YDixlM9cat48r0Oum2JdP1zOs4FQ5/c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mhItlXD5wP6hPlYRzPe3Y2Y3iEK1neFZuS/Ql6k/mKidyN6PtHK0b3zb6f+YpSbdFq1L5V0728ABqgG4F2gkYK8JCRR9GONo6WgS0czWs1Yz1Rdh4QUTOevvnTVyggSKqHetHhinnIG8xlvewxUZSqylqTsTuqQQq8QMdAewPjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ThRs7c9X; arc=none smtp.client-ip=185.125.25.12
+	 MIME-Version:Content-Type; b=q0POiA2RqZ2HfXYwIq5SGQxkI06ubZi9nVtXXw6MQcKSUICtvmUCbJ0CXXnjvvE+8TLuTcUFgPEskrs2WqrdlqP8YCclEQwM76hNTuy22+AR58gXscDezPbeY3jwBxL8BSWJxS2Ihon4VZwTytRpJ8lklhJXR0U7fafWbkhVrs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sz775JKN; arc=none smtp.client-ip=84.16.66.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WFQxc2r9Kz12Vn;
-	Thu,  4 Jul 2024 21:02:12 +0200 (CEST)
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WFQxd4WXSz114p;
+	Thu,  4 Jul 2024 21:02:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720119732;
-	bh=daNi8bj+uI1GV3NFPcnb4qSetCZapGCSAhuBCp9VMuo=;
+	s=20191114; t=1720119733;
+	bh=v0fxaXOdLtc/Ju12bV32vY14OcdVSThIgNKjl9+i++A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ThRs7c9XxrJXhsxBCBf1BgkjK/BWahL0xO9HmmtyK9bdLiJ4fpswPBizU28ADiD+8
-	 aOIDrvtiPJgENur37wuN+viYCGh0J5TAJo4Qi4GciV6Mt82ZKsC1Dvp1sweWWvL/Na
-	 FkxyZLz0b+yHt23kspra1Bb7GYYXewOJOH2LhNuo=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WFQxb45Fpz2mC;
-	Thu,  4 Jul 2024 21:02:11 +0200 (CEST)
+	b=sz775JKNODOr34yQ+Cv6KYcDvi+5ptHtkytGJ4G92ILUZoxk4zmBBIN1RY/1M1tms
+	 ZO3bjuRTATAsvIlizxMEmtFYYYIpG6mKsV5ckhQqA6RKyNXIXh9DUoYxtxxVrb/Yc1
+	 MGjtdlShlQavT56SM7tKhkep7CajraMh20U4V77E=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WFQxc5zxzzTK7;
+	Thu,  4 Jul 2024 21:02:12 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -94,11 +94,10 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-fsdevel@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Subject: [RFC PATCH v19 4/5] selftests/landlock: Add tests for execveat + AT_CHECK
-Date: Thu,  4 Jul 2024 21:01:36 +0200
-Message-ID: <20240704190137.696169-5-mic@digikod.net>
+	linux-security-module@vger.kernel.org
+Subject: [RFC PATCH v19 5/5] samples/should-exec: Add set-should-exec
+Date: Thu,  4 Jul 2024 21:01:37 +0200
+Message-ID: <20240704190137.696169-6-mic@digikod.net>
 In-Reply-To: <20240704190137.696169-1-mic@digikod.net>
 References: <20240704190137.696169-1-mic@digikod.net>
 Precedence: bulk
@@ -111,84 +110,178 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Extend layout1.execute with the new AT_CHECK flag.  The semantic with
-AT_CHECK is the same as with a simple execve(2),
-LANDLOCK_ACCESS_FS_EXECUTE is enforced the same way.
+Add a simple tool to set SECBIT_SHOULD_EXEC_CHECK,
+SECBIT_SHOULD_EXEC_RESTRICT, and their lock counterparts before
+executing a command.  This should be useful to easily test against
+script interpreters.
 
-Cc: Günther Noack <gnoack@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20240704190137.696169-5-mic@digikod.net
+Link: https://lore.kernel.org/r/20240704190137.696169-6-mic@digikod.net
 ---
- tools/testing/selftests/landlock/fs_test.c | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ samples/Kconfig                       |  7 +++
+ samples/Makefile                      |  1 +
+ samples/should-exec/.gitignore        |  1 +
+ samples/should-exec/Makefile          | 13 ++++
+ samples/should-exec/set-should-exec.c | 88 +++++++++++++++++++++++++++
+ 5 files changed, 110 insertions(+)
+ create mode 100644 samples/should-exec/.gitignore
+ create mode 100644 samples/should-exec/Makefile
+ create mode 100644 samples/should-exec/set-should-exec.c
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 7d063c652be1..85ef36b09a37 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -37,6 +37,10 @@
- #include <linux/fs.h>
- #include <linux/mount.h>
+diff --git a/samples/Kconfig b/samples/Kconfig
+index b288d9991d27..d8f2639bc830 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -180,6 +180,13 @@ config SAMPLE_SECCOMP
+ 	  Build samples of seccomp filters using various methods of
+ 	  BPF filter construction.
  
-+/* Defines AT_CHECK without type conflicts. */
-+#define _ASM_GENERIC_FCNTL_H
-+#include <linux/fcntl.h>
++config SAMPLE_SHOULD_EXEC
++	bool "Should-exec secure bits examples"
++	depends on CC_CAN_LINK && HEADERS_INSTALL
++	help
++	  Build a tool to easily configure SECBIT_SHOULD_EXEC_CHECK,
++	  SECBIT_SHOULD_EXEC_RESTRICT and their lock counterparts.
 +
- #include "common.h"
- 
- #ifndef renameat2
-@@ -2009,6 +2013,21 @@ static void test_execute(struct __test_metadata *const _metadata, const int err,
- 	};
- }
- 
-+static void test_check_exec(struct __test_metadata *const _metadata,
-+			    const int err, const char *const path)
+ config SAMPLE_TIMER
+ 	bool "Timer sample"
+ 	depends on CC_CAN_LINK && HEADERS_INSTALL
+diff --git a/samples/Makefile b/samples/Makefile
+index b85fa64390c5..0e7a97fb222d 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -19,6 +19,7 @@ subdir-$(CONFIG_SAMPLE_PIDFD)		+= pidfd
+ obj-$(CONFIG_SAMPLE_QMI_CLIENT)		+= qmi/
+ obj-$(CONFIG_SAMPLE_RPMSG_CLIENT)	+= rpmsg/
+ subdir-$(CONFIG_SAMPLE_SECCOMP)		+= seccomp
++subdir-$(CONFIG_SAMPLE_SHOULD_EXEC)	+= should-exec
+ subdir-$(CONFIG_SAMPLE_TIMER)		+= timers
+ obj-$(CONFIG_SAMPLE_TRACE_EVENTS)	+= trace_events/
+ obj-$(CONFIG_SAMPLE_TRACE_CUSTOM_EVENTS) += trace_events/
+diff --git a/samples/should-exec/.gitignore b/samples/should-exec/.gitignore
+new file mode 100644
+index 000000000000..ac46c614ec80
+--- /dev/null
++++ b/samples/should-exec/.gitignore
+@@ -0,0 +1 @@
++/set-should-exec
+diff --git a/samples/should-exec/Makefile b/samples/should-exec/Makefile
+new file mode 100644
+index 000000000000..c4294278dd07
+--- /dev/null
++++ b/samples/should-exec/Makefile
+@@ -0,0 +1,13 @@
++# SPDX-License-Identifier: BSD-3-Clause
++
++userprogs-always-y := set-should-exec
++
++userccflags += -I usr/include
++
++.PHONY: all clean
++
++all:
++	$(MAKE) -C ../.. samples/should-exec/
++
++clean:
++	$(MAKE) -C ../.. M=samples/should-exec/ clean
+diff --git a/samples/should-exec/set-should-exec.c b/samples/should-exec/set-should-exec.c
+new file mode 100644
+index 000000000000..b3c31106d916
+--- /dev/null
++++ b/samples/should-exec/set-should-exec.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: BSD-3-Clause
++/*
++ * Simple tool to set SECBIT_SHOULD_EXEC_CHECK,  SECBIT_SHOULD_EXEC_RESTRICT,
++ * and their lock counterparts before executing a command.
++ *
++ * Copyright © 2024 Microsoft Corporation
++ */
++
++#define _GNU_SOURCE
++#define __SANE_USERSPACE_TYPES__
++#include <errno.h>
++#include <linux/prctl.h>
++#include <linux/securebits.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/prctl.h>
++#include <unistd.h>
++
++static void print_usage(const char *argv0)
 +{
-+	int ret;
-+	char *const argv[] = { (char *)path, NULL };
-+
-+	ret = execveat(AT_FDCWD, path, argv, NULL, AT_EMPTY_PATH | AT_CHECK);
-+	if (err) {
-+		EXPECT_EQ(-1, ret);
-+		EXPECT_EQ(errno, err);
-+	} else {
-+		EXPECT_EQ(0, ret);
-+	}
++	fprintf(stderr, "usage: %s -c|-r [-l] -- <cmd> [args]...\n\n", argv0);
++	fprintf(stderr, "Execute a command with\n");
++	fprintf(stderr, "- SECBIT_SHOULD_EXEC_CHECK set: -c\n");
++	fprintf(stderr, "- SECBIT_SHOULD_EXEC_RESTRICT set: -r\n");
++	fprintf(stderr, "- SECBIT_SHOULD_EXEC_*_LOCKED set: -l\n");
 +}
 +
- TEST_F_FORK(layout1, execute)
- {
- 	const struct rule rules[] = {
-@@ -2026,20 +2045,27 @@ TEST_F_FORK(layout1, execute)
- 	copy_binary(_metadata, file1_s1d2);
- 	copy_binary(_metadata, file1_s1d3);
- 
-+	/* Checks before file1_s1d1 being denied. */
-+	test_execute(_metadata, 0, file1_s1d1);
-+	test_check_exec(_metadata, 0, file1_s1d1);
++int main(const int argc, char *const argv[], char *const *const envp)
++{
++	const char *cmd_path;
++	char *const *cmd_argv;
++	int opt, secbits, err;
++	bool has_policy = false;
 +
- 	enforce_ruleset(_metadata, ruleset_fd);
- 	ASSERT_EQ(0, close(ruleset_fd));
- 
- 	ASSERT_EQ(0, test_open(dir_s1d1, O_RDONLY));
- 	ASSERT_EQ(0, test_open(file1_s1d1, O_RDONLY));
- 	test_execute(_metadata, EACCES, file1_s1d1);
-+	test_check_exec(_metadata, EACCES, file1_s1d1);
- 
- 	ASSERT_EQ(0, test_open(dir_s1d2, O_RDONLY));
- 	ASSERT_EQ(0, test_open(file1_s1d2, O_RDONLY));
- 	test_execute(_metadata, 0, file1_s1d2);
-+	test_check_exec(_metadata, 0, file1_s1d2);
- 
- 	ASSERT_EQ(0, test_open(dir_s1d3, O_RDONLY));
- 	ASSERT_EQ(0, test_open(file1_s1d3, O_RDONLY));
- 	test_execute(_metadata, 0, file1_s1d3);
-+	test_check_exec(_metadata, 0, file1_s1d3);
- }
- 
- TEST_F_FORK(layout1, link)
++	secbits = prctl(PR_GET_SECUREBITS);
++
++	while ((opt = getopt(argc, argv, "crl")) != -1) {
++		switch (opt) {
++		case 'c':
++			secbits |= SECBIT_SHOULD_EXEC_CHECK;
++			has_policy = true;
++			break;
++		case 'r':
++			secbits |= SECBIT_SHOULD_EXEC_RESTRICT;
++			has_policy = true;
++			break;
++		case 'l':
++			secbits |= SECBIT_SHOULD_EXEC_CHECK_LOCKED;
++			secbits |= SECBIT_SHOULD_EXEC_RESTRICT_LOCKED;
++			break;
++		default:
++			print_usage(argv[0]);
++			return 1;
++		}
++	}
++
++	if (!argv[optind] || !has_policy) {
++		print_usage(argv[0]);
++		return 1;
++	}
++
++	err = prctl(PR_SET_SECUREBITS, secbits);
++	if (err) {
++		perror("Failed to set secure bit(s).");
++		fprintf(stderr,
++			"Hint: The running kernel may not support this feature.\n");
++		return 1;
++	}
++
++	fprintf(stderr, "SECBIT_SHOULD_EXEC_CHECK: %d\n",
++		!!(secbits & SECBIT_SHOULD_EXEC_CHECK));
++	fprintf(stderr, "SECBIT_SHOULD_EXEC_CHECK_LOCKED: %d\n",
++		!!(secbits & SECBIT_SHOULD_EXEC_CHECK_LOCKED));
++	fprintf(stderr, "SECBIT_SHOULD_EXEC_RESTRICT: %d\n",
++		!!(secbits & SECBIT_SHOULD_EXEC_RESTRICT));
++	fprintf(stderr, "SECBIT_SHOULD_EXEC_RESTRICT_LOCKED: %d\n",
++		!!(secbits & SECBIT_SHOULD_EXEC_RESTRICT_LOCKED));
++
++	cmd_path = argv[optind];
++	cmd_argv = argv + optind;
++	fprintf(stderr, "Executing command...\n");
++	execvpe(cmd_path, cmd_argv, envp);
++	fprintf(stderr, "Failed to execute \"%s\": %s\n", cmd_path,
++		strerror(errno));
++	return 1;
++}
 -- 
 2.45.2
 
