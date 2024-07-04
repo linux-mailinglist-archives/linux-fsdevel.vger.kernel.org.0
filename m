@@ -1,109 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-23106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19FD9273E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 12:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA533927466
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 12:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CCDD1F2238A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 10:20:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B631F26910
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 10:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394E51AC231;
-	Thu,  4 Jul 2024 10:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1A11ABCDA;
+	Thu,  4 Jul 2024 10:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QZLPAWKJ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="So0fJanI"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="c9SZ5m7K";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="UMR0oWUX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9231AC226;
-	Thu,  4 Jul 2024 10:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D131A08DE;
+	Thu,  4 Jul 2024 10:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720088372; cv=fail; b=tc2VSH8tXFguZgbrAjqESa0fSkzM73PH3HsGCLFScnuCxG5YVDdDzc/1ovZxSscUEoQ/BbdFkzKP9DkqUkV4LrpRqOUB0NOpAo5D2evPTtqzFWVQezzov25W3ktpwao1j5Ro2Sbls7XXvKGJ2jvaMWUScMESyMWrM8sVQf0LwHQ=
+	t=1720090324; cv=fail; b=kGMYsLrhqC4Yr5thYD3BOsOoEnX1G4i4UhlPmKP8Z1RoYyJ6quPZ5YvU3YIJjDrHg84wEMdxgviXriWJzcIWkqjBF9kEtiTJBWvZHQBLjP9ls+kfBL7rN9AS2XAveIaCqlhchDNq8SXgGA1Yhhj+StxzGEOA7t7UHkYXx9+AatU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720088372; c=relaxed/simple;
-	bh=vqLZYyhdxtEidRqdaQD+/KpOAJYS4MkdoCDF0I8q4RI=;
+	s=arc-20240116; t=1720090324; c=relaxed/simple;
+	bh=zqRYGdvVK8Rd6hyVRi5kDoaUOWzmsaNi024yVdWIpFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=od7rM1cdTWJPuwSXGPDZSdgd55AapnY5EY9LOigs7d8RSRTDyqSQSgluTVxqT+dyhonuVZ9GicNwGtpgjtIFby6MK4qvaym98gGPe2FP/ojmm8Nl8u4g5KjUUAZJkD5GS67EpZXMp+yVyjO/OaX+K75xRU61Xv4ymxhziQoMtbU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QZLPAWKJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=So0fJanI; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RbU9yJjkuvVKfK3GYFV9XtXSuvPTt2evNYZiXTwxIom2Ba7H0h2E0kjVUGIGvP/O1JnBMGkTeEv7oPFS4fBzaJOvgyIEmeHSX/OS8faGi0tswPDnp7cMSV38NmNNEjZCeGbdmxundJG+105iFWJ3TEsDYGlxBhfdAI9FQImguiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=c9SZ5m7K; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=UMR0oWUX; arc=fail smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4642MTrA031058;
-	Thu, 4 Jul 2024 10:19:00 GMT
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4642MRvI012524;
+	Thu, 4 Jul 2024 10:51:43 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
 	date:from:to:cc:subject:message-id:references:content-type
-	:content-transfer-encoding:in-reply-to:mime-version; s=
-	corp-2023-11-20; bh=JwgrXVZXfeHtLvwfI6JbFibHeWCW2nCvz8+uLCZ2ImQ=; b=
-	QZLPAWKJRzOdTiuh0fZSY4gmiQth/uNRfrXt/YnXPBnm2C089y/lWbR0I5nVh7cG
-	icUhCB9jz1O6I6D7Bngz09KFfiUHRFb/BrNdWVCPdS+CzeUkxhe4FrNIgJWJclKE
-	H74W+12Jfww3SHlxYV6olbcs/ki7jEvm2A38+pj7qwZOkIdqgKsSTZPUtscO5w9/
-	i+D9yBN6q+6n01PM0Ug2ScaX27f57lJ0mzmV9KowkrG9r5Y23feiEHHQcHdUQ9gm
-	3K4xkxhZ6U/nEBkKNTMex6qyv9d6RBtTu8Re3Z/tddi9DV8yzcP8AYHz4vDy90cG
-	3UJYjRJAYymYrR6vN6bKbQ==
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=pIzN5832tSj0NMF
+	Uhb3PcFG6alHzUg3X1lMdLBtrx4I=; b=c9SZ5m7Kv5yqy35+bThu78J/7/6bbqz
+	U2/yOcei55MKho53wzHDsCDYFupSaGY+c60si0OxYvYoPZgKPGVUvdnS75/6GuXn
+	FFGrSKVBLWYrOvGUvpri5OnzA68+BIe+xXb1mxA1JrtA8nIQactTz4g1FnTeDV3/
+	GLn1HWvaYBCCoRmZMI+69itYIbJMKC8tOQp+cfeBb1pibY3SJvXqGAohhESiNu5k
+	vWdqeNKZJHIwz/3V9gnSUnKF0AWJdU59wWgyb26TpF1NciQxRmIrRs/GuR9z4JH1
+	P/JwGdxYDzzjpNPDBCaqRRdtWe67bLJzYvD4e6wSA0PWJu4Zj5yJBbA==
 Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 402aacj4g3-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40292322h7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 04 Jul 2024 10:19:00 +0000 (GMT)
+	Thu, 04 Jul 2024 10:51:43 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4648IK5C024927;
-	Thu, 4 Jul 2024 10:18:59 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2047.outbound.protection.outlook.com [104.47.70.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 404n117jfx-1
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4648anUK023531;
+	Thu, 4 Jul 2024 10:51:42 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2049.outbound.protection.outlook.com [104.47.51.49])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 404n118eve-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 04 Jul 2024 10:18:59 +0000
+	Thu, 04 Jul 2024 10:51:42 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZxFP5cyEiy9lFmMWiYL+lUV7LBUVGpVL7vKfmDLq0m+E49tsT+JsY6KT0bd7kpcYyHTkQNJrwEVh0foKheklliosvacMcUfwgn/5Ngyn+mfb/cTdT0+9n2k/eP/2ZGesGb1nNsW9VgDVdTzbXBtSnkrrDcUex2/4XC7roeOPhe42EolUwowvtaoSRRHpszO9wWyyPlL0PjfFYw23NSdIgng89a62X2+Gnqz5HXLCyrwngo9VEd8TfkoIlM8Sz9NpZqLGdtKrdFxZ8cOKt8b28S5MSWnzZEsUuTVUa0SnZgvf9B7bagSgONjBK4IDP4WrnkJ4QamU9VlShDJrZiqqLw==
+ b=fyUoP28TQchf8E06be3Dqr5jnBecwavMH8k8mQ1Cw7ZgqMFJtSDb1+EWhyZi/dVLMaPxH8aupayh7I3w/+qVve5tRzJ57Lv4my0r48tZv/WsC24xiuEaU3xVPfaH9WB2zp0l2eFQC73b5p51o82ks0Q4a8t3kIuEXd90tt8hVJZGs1zGlH3lClOOv3v61fK/j5ENgwHj1DR4MP+3kgZZn8s2gz4jP9DZSxAX3tw9ykjp7Urowg7JT9rtWB2URkSqKE8yeKtD4s/ZtHg+lIzfphwea+56rpPkqL1ogy3CELGann9W/F1JoUsX8KCm+6LGEGMEMIonWfGTuTcvuELc2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JwgrXVZXfeHtLvwfI6JbFibHeWCW2nCvz8+uLCZ2ImQ=;
- b=BFyNyFjxFa0igkX6kavtG7ASFVqt+igojX9Z326n6WE6IZiaR16lPqW7JTjiTg0/b9b9/JM/NZd+3WPbO8DAxp9zC+D0xtV7zTEhNbGuqTsybaqRqJLTYEe/uojs0l15bguwh2SoUio7ZFf9nWB2CLa9cOU5YJI2hXvxRDXGSN2z+vVGrDfkLGGIWXv18gQdwmHhh1Y/fBWcBwdCjsyqEnQpiwlhVc8TFClWb+ivlr6toQhTh94SiwmR4LWFuTVFwVZCjCclwttWzlby+n6WuhGXaYhF8hrh21pfnf7F7oUsjepL8j0b6ggSVaPWuTzSGJG9SBKKESwI/ni9XHGyKw==
+ bh=pIzN5832tSj0NMFUhb3PcFG6alHzUg3X1lMdLBtrx4I=;
+ b=WuFRNdGlR5XmjVTQqdTnRb/VN1NToTWjJxa1zcdHpk7NEgq5nu/Hn1s6871w8JQ6GE3rumoXi5OvVj0vvgPC5xekdh0h3B8f3PL38Ry9BqxS1fO22YTkrajKfgF5Lf3iuYfxYfZmuAAovO90JWVx8SVGi8E2iS9OkVXajKvHi5auqp0KVjLH/zfl8LT4UszTEv3zBgQPvBLr1ztONzH+Ee7x09CFZVAtuOe/21U16rBQsOAOQUJVLMNiXYYz8zNMkqKwGQErK2rng07usktIp0IIqABQmaEo44p6VojEu3d5Rer0oahiTaJqxZrxaF95MlLRmFWK7UOk8aRaHONiPA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JwgrXVZXfeHtLvwfI6JbFibHeWCW2nCvz8+uLCZ2ImQ=;
- b=So0fJanIIJhM0P5vJyFV2U0Rzy0Hb9V/zGJsyZhuFOxFGmQcJbrQIaTS8CQPMKKT9yuTX9/5kvjlGCflflm6HmGYL3KbBM/V+mGi+fN7Zab1V4s02D3arzoBfx3+O7NAs61meNAqKVQAySYLxxuPf3QHEh6irNQ6k3gEasjwgxE=
+ bh=pIzN5832tSj0NMFUhb3PcFG6alHzUg3X1lMdLBtrx4I=;
+ b=UMR0oWUXja7i9Jmvk5qVcHQG+unp6X4OLa6eC3t9wWm4BL5e3B7g+EXvpOjHvi6Z6h24IFcGl3kz4dsZWXotdr4MBQMx2yhIeUkGaQ5WVEdD0AcVj9z8CA0t+H43BY+ykwxnRzfaoLrT6QtzpmoJPJwj0Hp5Qde+JUKY2l17nec=
 Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by CO1PR10MB4612.namprd10.prod.outlook.com (2603:10b6:303:9b::22) with
+ by PH0PR10MB4438.namprd10.prod.outlook.com (2603:10b6:510:36::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.28; Thu, 4 Jul
- 2024 10:18:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.29; Thu, 4 Jul
+ 2024 10:51:40 +0000
 Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
  ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
  ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7741.025; Thu, 4 Jul 2024
- 10:18:55 +0000
-Date: Thu, 4 Jul 2024 11:18:50 +0100
+ 10:51:40 +0000
+Date: Thu, 4 Jul 2024 11:51:36 +0100
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Gow <davidgow@google.com>
-Cc: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
         Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
         Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Shuah Khan <shuah@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Rae Moar <rmoar@google.com>
-Subject: Re: [PATCH 0/7] Make core VMA operations internal and testable
-Message-ID: <76f6ffc6-2750-4578-b845-67b4e7920830@lucifer.local>
-References: <1a41caa5-561e-415f-85f3-01b52b233506@lucifer.local>
- <20240703225636.90190-1-sj@kernel.org>
- <CABVgOSk9XTM2kHbTF-Su8fXxCcNzu=8vF4iUbC=2x-+O_MNUWg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH 7/7] tools: add skeleton code for userland testing of VMA
+ logic
+Message-ID: <d46e8356-da6d-4629-8473-a8fc6172e596@lucifer.local>
+References: <3303ff9b038710401f079f6eb3ee910876657082.1720006125.git.lorenzo.stoakes@oracle.com>
+ <20240704055956.96925-1-sj@kernel.org>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABVgOSk9XTM2kHbTF-Su8fXxCcNzu=8vF4iUbC=2x-+O_MNUWg@mail.gmail.com>
-X-ClientProxiedBy: LO4P265CA0312.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:391::20) To SJ0PR10MB5613.namprd10.prod.outlook.com
+In-Reply-To: <20240704055956.96925-1-sj@kernel.org>
+X-ClientProxiedBy: LO2P265CA0221.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:b::17) To SJ0PR10MB5613.namprd10.prod.outlook.com
  (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -112,245 +108,609 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CO1PR10MB4612:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83086569-4585-4007-d94c-08dc9c12b572
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|PH0PR10MB4438:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ee64065-cd9b-42aa-6829-08dc9c17489c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?RGQyeTliNnVnUlpET0RUOVpEdGkzS3ZqRklwTVNJUExhMlZ6dGczTTRlWmdr?=
- =?utf-8?B?OFpmWVF3WnR5a253WGk5eHVTWUFDRU9pem1tUkZLaFdJT3VETDF2SWd2eWlv?=
- =?utf-8?B?RUd3bDQxZEFJYkMyVTJnZHlZdUFxQUZFUTRCYXVFUFNFUTVScGJPb2pSSm9F?=
- =?utf-8?B?Qjh3aWlUWkJseXI0dGhqcC83WXdRNk05NGw0bDdTVHVxL0dEUk5mckJQbG9j?=
- =?utf-8?B?TjZ0amsrSTh3RVhydHI2RzFCNlJZU21yZDRhN2pON2p6NWlnc0k0ZnVKZ0xY?=
- =?utf-8?B?cnQxY09mTE1yNGI2ancvSVlXREtyY0xhK0dtbytiMCtNcHRSeHZ5SDM1THJz?=
- =?utf-8?B?RkhiQWY2UFdQcUgvM3FCMFdiV0JvYkdmWmI5ZzlMekVrb0JjNTBWTW5aZ0Z5?=
- =?utf-8?B?SUVwZTcwbng5cFNrMDVKVi9kRWNjMnVtaTMyS1Q2RHdMeFVidUF2bWpmMlhj?=
- =?utf-8?B?S1FRK3lzNjZDUE5kZEMxVFNFRWEydW91aVBxOTdNSCtUNGt6eThlOGxkcFpM?=
- =?utf-8?B?TWdIdDB4cUFCV3BUeVVDcklhUTM1VzVxUW5uMFlFaXo4YnNyZjlKbXNnbXpJ?=
- =?utf-8?B?SmFNV3oxN3pCWGx2bEJsQWx2dS9vTEM3aXVoK1J5bTFmOTM4YlJJWDF6RFpI?=
- =?utf-8?B?QUdreThlWDhGbTgzdGIwdW9XRUIzZlZJVGQ1dVNrZ3orQmEzazFZODEyNVh3?=
- =?utf-8?B?bGVNNHNHT0FmYTQvSE1obGE3T2ZHL3J0RzUzdDNObjdHcE1DRkloS0pYOFZs?=
- =?utf-8?B?WlZESTJIUmFzcDdSYW5zMlNtVTI5N25DRUs0VndYMHQxWGZwdjdjTlhERzVC?=
- =?utf-8?B?aWY0OVd0R3Y2a1VncmpkQ1V5RjFTaXplNmc3dWowbDBlV2RiOE5naGtkYU9B?=
- =?utf-8?B?V2VHRG5iSUJWNWNmY3JDUzhxUEtKRjRrU0NjMUp6WWRRR0ZKSmE5SXpJVlFN?=
- =?utf-8?B?YXZsSGhTMk5Uak5GV2MxU3FlQ0EvRCtYanNqK1c1TGx5WWJMdnZvSitCMFR0?=
- =?utf-8?B?L0ZVcU5ZWVROTlhFMkF4OTN1S1M0U0RJQzFUR0lWa2FEZ1FZZnBGYnVrcjFG?=
- =?utf-8?B?NFB5RVlBTGxZMmpRNHRudlNtb2RDOUZaMyswY25Va2lVY2ZZTTA3MndzWDhM?=
- =?utf-8?B?M3NweDRJZXRIUC9rdEVMTm5RSGJ0dXVSSk9IK25tRlcxSDduYTJPTnNEaXJW?=
- =?utf-8?B?eFYwYWhZR0FuNUhrL1d2TmZwdnZEMTZkZWEzWGpEU0NkUVRnRWIyL0hSZXF1?=
- =?utf-8?B?ZWdCYVRkVlBCRktKMFp2VTlodFZnSURZQitmcDNicW5Xam4rTW1GT0dyV2Fj?=
- =?utf-8?B?NlRZazJYLzZhK0RlRENESWh1cVBMMnBHOE9JOWRwWTBzRGYrdzNWQnBEOWdJ?=
- =?utf-8?B?cUFlMEczbjlOSEdmd0tWaWkrdjUrVXYrQWJ4YXI4SmNyVjU1NjdqWUcvQkc3?=
- =?utf-8?B?OE0wNGRETHl0a2loNytrZkIrUkd5V0dMWm1hUzN1ZXNGUkV4VkdIb296TmpN?=
- =?utf-8?B?RkFCS0ZZSFc2cVJjeWdNYSttOFZQOGlGNTZSMjhQQmltRG42SWkwYk5haWV1?=
- =?utf-8?B?eVBYQ3hrWlN2TXRIaUZ5V0FKZGhNYWlXSUIvdkUxUS9nVDlWTitjT2xsQmdu?=
- =?utf-8?B?QmZrVmNGcUNxNW9wa1ZzS2svZWpUUHBtaDV0YXZRdmJ4QVd6SFFlVk1hQkFQ?=
- =?utf-8?B?RkNFNllsVTNCTGJDeFJwNjBUbVdqZHBTSENWUEkyNnFkeFhYYjA3b2xMYkU0?=
- =?utf-8?Q?DUmGmsy1FCudhSET1k=3D?=
+	=?us-ascii?Q?DZacfTVQtKx52CKEYWpRU+0Cd15v7WwZDk5K3lbojKcd4iS1kbIFno7o0oq7?=
+ =?us-ascii?Q?ULYNwuSY+v5FlZ19j8TCp5hwFYwNZvSbvckm7G2Dm4nB/OCYwtQS25AC4e1p?=
+ =?us-ascii?Q?SSvtJ+l6XI/7g1vwQXvkiu9Nok/avq+yQNnscDr7vF2Swi5BrM5CNbJHR3LW?=
+ =?us-ascii?Q?+ERnLwzzd+xF8Xw5v6LMOP+70sxqv5uhrM7TZWg/KNjPqAKg4ZBvbljqqD+5?=
+ =?us-ascii?Q?WbSmlJyEwH/d/X6iv0dAbhSKInRiFr1PJaE4Du5N9WoaFzH5K5d+Q9hskJsw?=
+ =?us-ascii?Q?9/LjoQ9O/CWi09RfXPe0C2dENkvp6YCOlYmeuD+NCPpcYd+O6gIq+7o8ukhm?=
+ =?us-ascii?Q?B+bnDfXMW7ZMmDcWAp35jWXShwqmJVYOpc0LXDW+5mY8vd7tte8t4QfxZccU?=
+ =?us-ascii?Q?4Lj8uh+RfVKXv8GYUHkcHaNyPErWqs82+KZtwHBWpy3LiuCkdNnIXUPLqAN7?=
+ =?us-ascii?Q?KE76WZczKgbLRF1/Vu9obSL3xohvfwMmHsT3GQuAtmHf61pt4UPXcwseVhLO?=
+ =?us-ascii?Q?0YLaY8aCGfnj3HIkboL8msI8k+yjlfc1cpR+z9bcxnKTJ+pEoFNa+HENenvZ?=
+ =?us-ascii?Q?1LKHIOufakj+3uyfjN3PWS60lEo4YkxJJBtbPPKYm8v1Rb5iHkpLUIp2OmoS?=
+ =?us-ascii?Q?xnwRebQE9PStElrf3138zTKhSiV5SXGKrElo0WcgwzS1DIHgZ2/p1qZxb+Am?=
+ =?us-ascii?Q?oFKxjiubSAwfk0zyEungdeyT/sRYE1mNBAcnn9b8vKJP89mKB8ZTxdeJBWHi?=
+ =?us-ascii?Q?lnHZ+2SNJqFz7Yme6RpeQqGiFodBiLXzflXX4lZGQzBbUn3lZeZ2IZlEfCep?=
+ =?us-ascii?Q?L0Id1DrNQRdSwvDW0K78QTWwlLY+OmoibP1J6/452yDPnCriAVj45QBjNOna?=
+ =?us-ascii?Q?UMy1QsNxyBddnBF3F1PeFZLLxDTym4b0cjK5lE2SQFpEfBAesiDdwds+wEAV?=
+ =?us-ascii?Q?hw+EWr1LUbioua5nZjoqg8htAriFSu5NgcbH/FEpyYuWlzR7jJqc2HjL0oav?=
+ =?us-ascii?Q?eZymrtDDY3VLaibr1Fu8TgBUUJzQG37SrKma2xGi/ur8CwV7hIkFBYpeqb7R?=
+ =?us-ascii?Q?xc2mTzuSVDfYTYB+ZDCr9VKsCMSQgvzHipongfiEL5XHVAI3yyfa7LqZzobI?=
+ =?us-ascii?Q?OOpwB9bLpc4MSKvtv1DKaER6LJ4TvlqmMcC44CLOTRiOlxpkB+iU6qxT/h4/?=
+ =?us-ascii?Q?1eHlWxAE2sXRTBZb5f5myoAa2a811ug1F/yRypL2ES++WLl3oidxTDvS4oTn?=
+ =?us-ascii?Q?eYaJCXjcAUeptWxYy4hH8l3kq2i8FfSKHId2Tm2W+kktA0aZABWIYrj2zTGc?=
+ =?us-ascii?Q?a7tAQR1rDJCDX9LKPIicZqynTJhGxP10EzvBKJxWXKzJWA=3D=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WEtVclFjNXdOZmVPSDFMSkx5RHpwcGQ2SVQzYlplVVBkbVNIdy9DZWVtZmJB?=
- =?utf-8?B?SjlJUXUwa29jMDFlZ1RZc25hcE1Ya0FEMzQ4RW84eW15aDk1NUJlSVp3b09S?=
- =?utf-8?B?OUV6VHNUaDlEYWJEZmwzNUpCSDZqU2pqSjFmVHFDaTNyaWs1UXFkVEhTNk8z?=
- =?utf-8?B?bVdoUnNvQXAvUEltQUt0UFY4Vy9lb2Y3eXh6OVRQSWF3YjRSa2RKdGhFWTVa?=
- =?utf-8?B?U3JhVEVJL3Y1REdmVzVSVlFMM1h6eGtGZTlNeThhcnZIUVJEaU54Vk42UzBH?=
- =?utf-8?B?S1VHVDA1WUlEOEY4K2R5bVkwN20zZkRyUEVSRkFmQU02MEs5VzJpMXp6bk4y?=
- =?utf-8?B?MkZGSUgrQ3cwNmtPamtFdzhUak1YbEYxaDI5K1ZoZ1g0RElqUlhNbDYzNURv?=
- =?utf-8?B?RDY5QVBtRDNqR2JtWG1FUDA3Z1J4UkhiWHhhczBGNC9hZVNPVjIwK1NTdzJ3?=
- =?utf-8?B?ekJmMEJXNTNzUlpzMUV0Tm80YkFaR2Y4eFg3bDRQTm9pV3NNRTBIc0Y0L3Ez?=
- =?utf-8?B?b2RiYXhHejlsTmtNQkZvQi9XTUxMTzNiVU9xd2J3QzNud0Z0MTVZM0JhVVMv?=
- =?utf-8?B?ampFVk5MdEVvSHdqTjVNeTREeTZLejYycUk4YUFjNzhITmYzOHljcThVMXps?=
- =?utf-8?B?YkU2bExyZU1lQThxdjlhTU1pdFFtRkZHRTFOVHllZzB1eGNRUlE5K2FORmtn?=
- =?utf-8?B?QUVNYkltNmVOSnFCN1VyVXNJOWxuTk15N0poWTl5Wko1SWVZZG9yN3Y5eVpK?=
- =?utf-8?B?RUxFY3ZzdGhKaUxiVms5TzNoWDJ3bkYxand2MVJnRGNiS3l1WkFjTWtldE0y?=
- =?utf-8?B?ajZPYUhXem9wOG5QR3ZPNzQwTG5laWluSTdtaEMrRTVLV2pyNjdZT0JlL1JD?=
- =?utf-8?B?YkE4N1pKUlVhRFdLOG9nY2l6cklJMTArWTFGaU56TUkrbmEvNGpac3N3a2Vs?=
- =?utf-8?B?NzhLcG4zWTNQaHZza3RkUktHUHhvSDlzY0tRTXh1TlVnaWRlcHZxV3VIU3Ny?=
- =?utf-8?B?Zzh1OHA4bU5NSDlyUzJPQVVWZlY2WUVTcVVYWWw3ZWNEcDhmWU5JRExucE5P?=
- =?utf-8?B?MGVnMkFUemFzODEvN2dXcXRRbU9yU1NHVDNOS1l6cUZoekk4eGd3bFdSZzRx?=
- =?utf-8?B?QXpwMXFoSFF4NVFISzFvVEdNS01jemFIZldTYURFQ3gwSFJjU205U3A5Y25Q?=
- =?utf-8?B?OGt4c3crbjF6K3M0czBKek1BSkIvcVIrZ0lOS0hRODAzRGgva1VudnNJVG1P?=
- =?utf-8?B?Y2hFbHphbFhVeWI5SmJRZWhaYXZhV1BCdG4xY2M1dy9BOVozY2JuOFIvblBE?=
- =?utf-8?B?dmtXZzBOV2FnMWZGb2Frem9ncU9vR3JTaHhqM0VMa3JwSTNWLzBhTE9zWXdD?=
- =?utf-8?B?TklxcS9jZXc2TzRNNWNQQ3poUVFsYzNEblhpVEY5ZGhpTlpNNmJkWFBtS0tB?=
- =?utf-8?B?bkVxUCtSQTdhVGdyWm9IL1hZaFd0emxxUHRKajN2RHU5Y0Rmd0pneEdlb1FJ?=
- =?utf-8?B?UElNblE2d2xKSkJrTWl3bFlSbzZmZEtPN0FnbXF3Y3ZUNG9PUFNFbkhXd2J3?=
- =?utf-8?B?UzFVWTlXMSs4ZlFsMWxjQ0gzaE5yaGN2MWZvMEhkTTNHNlcrWHBrcXN1VXlZ?=
- =?utf-8?B?cmgvWUdWSGxHV3doWGlKdzJ6YnB3WkhlMk8zdnJjZ3hvTkFPa2ZQdHBtdThQ?=
- =?utf-8?B?NVN2M3ZOSmVJMUNZVWpKdnZldEVON2Y4MERHcGxLUUNycTJRWDI4QVJFRFZW?=
- =?utf-8?B?Q0JVbXRYVHd5d09aUjIwd01FZGo4dlIwRDlINFB5OTRzZ3kyVHJ2cjdWWUl6?=
- =?utf-8?B?VTNPOWlULzFhUy9hdXJuUkIvbHZxTVBMS0RENFI4QzIvWVNPMDhPNEZVYzEw?=
- =?utf-8?B?STZwQmdJcTc2UVRLSWpXbFEvTjFPcU8yNFJpcTJhUGdYVENMN3E0VEtNd1RU?=
- =?utf-8?B?UnQ2bmc0UXIvemhJY2kxQTBWRmRWNHBEZTFWU1h5MUN4U1RBblJKUFh0ekc4?=
- =?utf-8?B?eGVoamF0TEtYSFhXQThSVVdKTW1VYnQvcjNNejZUNGh5S2I1cEFZMWJqZWZD?=
- =?utf-8?B?MXRXeDJYYkhQa0x3V01IVkdWOE9MRDJLTHhxTVNzVkhIZUtxTzlVY3hqOVE1?=
- =?utf-8?B?UlMwbHE2MFdBZWowQVhiRjVjbGVSNUN2eFhUSmpPUm5DZ0FYdEJjU2ZWc0Rw?=
- =?utf-8?B?aHc9PQ==?=
+	=?us-ascii?Q?8DX9qj18+O7KTsJ1yHFI17N2fPTa2/z14mpQxPnqXT8KVd29Dp54OyuZQALu?=
+ =?us-ascii?Q?p8G2lm6yx1p/VhKhSYNqnoeyoFe40hn46FO0ZmXexYLUAyej1UdMkjwejmWE?=
+ =?us-ascii?Q?se0WnQYbFZRXXZyXdsLBkZK4kto2iNGweA9Tm3y2d42hA7awan3xrJtCQD/q?=
+ =?us-ascii?Q?72QZErnHnrsKUAd4n1TiCCnhvKNz3cBMXqjZ+HByMxyuitFTK3Dmvbx1RR8a?=
+ =?us-ascii?Q?CNWfEor0tUrMtY2FFKz+cQg3cvB3SLeIC+GqdhsR4I3IQXwoVQcWZVp1UhNY?=
+ =?us-ascii?Q?MMqWVoy2lmRBjAezEmyVoY8j70J+cDUfd3eC3jti2SeLcdsefIV84yiYQOeo?=
+ =?us-ascii?Q?pmwQtvxySO8+4YLf867PHhw3c02gT1KZP+cfufC3vYFeBRZOqe4T0+RHsuO0?=
+ =?us-ascii?Q?SiuNqXIUnxO4kD+WQPMfJ7FPsjn7ZWGqIVnCCVgP/htwNbo3vWtPNkKbxlWj?=
+ =?us-ascii?Q?U65XziuDWoxYLGrpJuJZPUZpDDKwtsAR5zWKt/vrdSWImbKhqAmk9pkmOtdP?=
+ =?us-ascii?Q?gQqtmMqAGS442ON6HibkxDyYjkEHw5JfZ+fG4fAecC+Q8gAJ67ODOj7IHu4K?=
+ =?us-ascii?Q?UZQKAVMXO28hBSBq53sKX3T+05YD5DzU71D9Lft52AtAVoE2hpYr82s0e5RB?=
+ =?us-ascii?Q?NIHkNSHDbJrzGaxUQU3vpKG1n/oQSZ0hcV1YB+Nkl69b6RKMQ6YeK5yNR4C5?=
+ =?us-ascii?Q?U64YoGO4MHhneLIeD7irGYPtHYm+vDeTF8U6yTda3/O6lYlUSE2zpyfJ2sYb?=
+ =?us-ascii?Q?OMmj65uJrVzc255SmrOlcAWtJjEdr586rn5nWoCJnk7IS4AYoz7xoRmpRx2Y?=
+ =?us-ascii?Q?Et5A5LwA1Bgilq8sE9SVFFtqPhVnO1Fk68cPZ0yMXI/Iqi0MKVMgXNY1Z35A?=
+ =?us-ascii?Q?Zgz1U+84XRPuP0PFxp4+Ug1Ob8UppOpK2KoCWYPRC+9AWd8i6Fy3dG975RrX?=
+ =?us-ascii?Q?d5rUkH9o5zMXQqoqeziSwiQev3T+qHJUuLOA7w4LVWq4U7rTpAXKuZ/bejKj?=
+ =?us-ascii?Q?XnmR3K9717wfSWS7a33d2mWOg1fOWOlRHjveObg9GbjnC2efbTzQGSnGfugY?=
+ =?us-ascii?Q?2NsogSaiTYjv0eB0tbrBDUE60TzOCDxKh1WNAqsBQ21W2hTl/omWi+8vBt3U?=
+ =?us-ascii?Q?D/Fcad00qemrazHY431jh2f98EEyicaCpLkoY7/BcYeR58vv754ZWHniYP6f?=
+ =?us-ascii?Q?aTgK9flC1c8PggI5jkZzGhKskO4BthV5IlN7ESpKHR8e89vNIrWlqZBI2gGH?=
+ =?us-ascii?Q?wZyyxPEFNuOZwMVDrM0H/xo/iITNy7EfU0Xohat4RRnNNfktmumNOYmJLn27?=
+ =?us-ascii?Q?fpmwNfZwFwSLG3NhcgKLHYWUoXHC8gZVvVYjwzYdIK0HtHmbOPmrFtvyeqOs?=
+ =?us-ascii?Q?itR/P1YaCuPEsyCDccRdKldVoYysiHCsjPpjbkTuUpDWPfLwnNIcR7tfMaP/?=
+ =?us-ascii?Q?LyxjT4F6o3ffMC4lCfrJ/xFhHK6V/ac5AQz05T6YoSdqMFiqu8SnGvJ3Z+QF?=
+ =?us-ascii?Q?lhhHDe12Pg/PWcGmihLoDrB2hb+9yi6wN3JxRQ8+QRc0ieuRavJMnkqSevaM?=
+ =?us-ascii?Q?wD1n+8pNCL3l/QmrtAkRwlh1lqn848Z2Tojwk7icmYbNAhRqcuTus5YS9jjX?=
+ =?us-ascii?Q?vQ=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	XmI5LBP3ldrHqFcByVx05PwHKCfKsnMGYbczbS7gyjSKIRZOVrP1blOVNpFHlDwG4X+sY01lPgucs+KQMfpodRvQSnjpiKmvIqac2FgaoMJqpdu5pDkgvcbcQsOJhJ/DL8JTsXPDrk2ZSTg5D6T+sNEiY4NaxkBMW2kEpBSveQeg+O7ShtSHZxy3KtGSOM5Eo2XQ7wwC/hM2xgdwoT6U3rVWYA2wQ4Lg72CpRORq8FQpVEJHhlxo128BUSgdZRLUl/boPWICN96y2HrU1CFzbzEtQxceJ5SpQjRFQV6lBPqYB3l1oOVePA7fisyl5ML66W7R4sGAybKp5LDK9EL4ytv6WWewiSPyV7i8X+QBqPDS2Z6IxaYxtYrYeRkaK4z691Nvi7WOoQm6mP8WVEHj+3tLzewvuu4xsG63rACvkuNGBKRS6FsxdbMhpzx640c1xMVy55+8lI9prtu6+JYiT8RferF6Tzl2tye7xhl11wP128CBHLq2Kyi/ZWSqvI2xIzNut3h++r/TpAfptYlI4mz/zA1UjHE8DtDvY2XpFDhseflM7ACKtrE121lOKhx11xWBnRAEzi8xrFgnPSuKoHLCRTJ+n/p0Ba5zRndksJU=
+	0AwRHRrR/Wjl7XssgLx2TKNZQijOFDeJxyPkcIJxAxtm08LLYX5ms1ELvqv/q/UQHuDhkpYBePhhnQ4FrUToADjqyaHHY3FVNCytJ75dGAgNe7kP1FasAHXgjUvcLyqZTZMB5c29yq68HawYQhqJvyMBBqxsGM3FzRgWOGavZpve89fsrAGAlbn0c7VyZYdk0sYUAYlcWO3RWNn8m+EKaJaAq2yT5dNs6DTCvk1AUDtrBq8D/JnjfoFs4sTEnQXTTo8pv9hv1meNEyW2/kJO6C6fXzZtvOHsJ6V3E5NgI4iR3iVefIFvzL6S9ZVmLiQNTv+UWQIxM3gVE8XVCouinxc7w6VIXzG+ij7rXgL+KI1daqcJKB5OYxacMCD4jVeaEqbcuDK8KiB5gESh/WSUzB4eIe8EVl59ids87RLDOOdzFuC7ttG5yRfQa2OSFtI3uiXFIM08EUC0VIfX2OyGtZ6BuziNTMlf2e1K/yczN9VAL0V+BqRyzim3rQDLmkyhdaq6gFwtFk9HFzTag/OgyPLIx9uLnLrhd9jzQMRvY5sVtJqVLlcd5SVSmyO9zbm0TdRMsFgGdZ2Mrbat7/j+s7DJBKn4TkHuD+F7KPcySac=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83086569-4585-4007-d94c-08dc9c12b572
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ee64065-cd9b-42aa-6829-08dc9c17489c
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 10:18:54.9614
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 10:51:39.8547
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QZKgN1BJivmuofOqV7NTlqt3Rp3k9j5hWr4nm3VQ4GMibV4tsn8niYI2RwDiQOX2b6YE7yfRu24Sc4X/b4hWcOZbWMeJU+gcz/H9S+hXpdQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4612
+X-MS-Exchange-CrossTenant-UserPrincipalName: c7CixIuupvEVEzmAmFhtHFtdtEGLM5APBtlTFqpQwVFIq8/1ZTGIbdAP7z9+QqhvaTO1IeLO/Q+XX6cKnt0GqyPFQNAhOvIJJ5cjXa5Z7wA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4438
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-04_06,2024-07-03_01,2024-05-17_01
+ definitions=2024-07-04_07,2024-07-03_01,2024-05-17_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
  bulkscore=0 adultscore=0 malwarescore=0 spamscore=0 suspectscore=0
  mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2406180000 definitions=main-2407040072
-X-Proofpoint-GUID: 2Q-SM52_cz8NwS7yxCMARxxjvLtl_9wu
-X-Proofpoint-ORIG-GUID: 2Q-SM52_cz8NwS7yxCMARxxjvLtl_9wu
+ engine=8.12.0-2406180000 definitions=main-2407040076
+X-Proofpoint-GUID: T6sJv7sZqiRcUBcT5aKUqMvOZPHYXUSP
+X-Proofpoint-ORIG-GUID: T6sJv7sZqiRcUBcT5aKUqMvOZPHYXUSP
 
-On Thu, Jul 04, 2024 at 03:10:16PM GMT, David Gow wrote:
-> Thanks, SJ.
+On Wed, Jul 03, 2024 at 10:59:56PM GMT, SeongJae Park wrote:
+> Hi Lorenzo,
 >
-> While I'd love to have the VMA tests be KUnit tests (and there are
-> several advantages, particularly for tooling and automation), I do
-> think the more self-contained userspace tests are great in
-> circumstances like this where the code is self-contained enough to
-> make it possible. Ideally, we'd have some standards and helpers to
-> make these consistent — kselftest and KUnit are both not quite perfect
-> for this case — but I don't think we should hold up a useful set of
-> changes so we can write a whole new framework.
-
-Thanks David!
-
+> On Wed,  3 Jul 2024 12:57:38 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 >
-> (Personally, I think a userspace implementation of a subset of KUnit
-> or a KUnit-like API would be useful, see below.)
-
-Indeed, yes.
-
->
-> On Thu, 4 Jul 2024 at 06:56, SeongJae Park <sj@kernel.org> wrote:
+> > Establish a new userland VMA unit testing implementation under
+> > tools/testing which utilises existing logic providing maple tree support in
+> > userland utilising the now-shared code previously exclusive to radix tree
+> > testing.
 > >
-> > On Wed, 3 Jul 2024 21:33:00 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> > This provides fundamental VMA operations whose API is defined in mm/vma.h,
+> > while stubbing out superfluous functionality.
 > >
-> > > On Wed, Jul 03, 2024 at 01:26:53PM GMT, Andrew Morton wrote:
-> > > > On Wed,  3 Jul 2024 12:57:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> > > >
+> > This exists as a proof-of-concept, with the test implementation functional
+> > and sufficient to allow userland compilation of vma.c, but containing only
+> > cursory tests to demonstrate basic functionality.
 >
-> [... snip ...]
->
-> > Also, I haven't had enough time to read the patches in detail but just the
-> > cover letter a little bit.  My humble impression from that is that this might
-> > better to eventually be kunit tests.  I know there was a discussion with Kees
-> > on RFC v1 [1] which you kindly explained why you decide to implement this in
-> > user space.  To my understanding, at least some of the problems are not real
-> > problems.  For two things as examples,
-> >
-> > 1. I understand that you concern the test speed [2].  I think Kunit could be
-> > slower than the dedicated user space tests, but to my experience, it's not that
-> > bad when using the default UML-based execution.
->
-> KUnit/UML can be quite fast, but I do agree that a totally isolated
-> test will be faster.
+> Overall, looks good to me.  Appreciate this work.  Nonetheless, I have some
+> trivial questions and comments below.
 
-Sure absolutely, the key point here is the essentially zero setup/tear down
-and zero code is always faster than _some_ code so as we stub/mock
-components naturally we get speed as well as not having to be concerned
-about how we might set up fundamental objects like task/mm/vma.
-
->
->
-> > 2. My next humble undrestanding is that you want to test functions that you
-> > don't want to export [2,3] to kernel modules.  To my understanding it's not
-> > limited on Kunit.  I'm testing such DAMON functions using KUnit by including
-> > test code in the c file but protecting it via a config.  For an example, please
-> > refer to DAMON_KUNIT_TEST.
-> >
-> > I understand above are only small parts of the reason for your decision, and
-> > some of those would really unsupported by Kunit.  In the case, I think adding
-> > this user space tests as is is good.  Nonetheless, I think it would be good to
-> > hear some comments from Kunit developers.  IMHO, letting them know the
-> > limitations will hopefully help setting their future TODO items.  Cc-ing
-> > Brendan, David and Rae for that.
->
-> There are a few different ways of working around this, including the
-> '#include the source' method, and conditionally exporting symbols to a
-> separate namespace (e.g., using VISIBLE_IF_KUNIT and
-> EXPORT_SYMBOL_IF_KUNIT()).
->
-> Obviously, it's always going to be slightly nasty, but I don't think
-> KUnit will fundamentally be uglier than any other similar hack.
-
-Indeed, I mean this patch set makes use of the 'include the source' method
-in userland.
-
-To me, the more you think about it and how you might implement testing of
-fundamnetals like this the more you end up with a mocked out design as in
-this series, unavoidably.
-
-And sadly I think no matter how you do it you have to put the ugly
-somewhere, in this instance it's in the stubbed-out vma_internal.h.
+Thanks, appreciate the review!
 
 >
 > >
-> > To recap, I have no strong opinions about this patch, but I think knowing how
-> > Selftests and KUnit developers think could be helpful.
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > ---
+> >  MAINTAINERS                            |   1 +
+> >  include/linux/atomic.h                 |   2 +-
+> >  include/linux/mmzone.h                 |   3 +-
+>
+> I doubt if changes to above two files are intentional.  Please read below
+> comments.
+>
+> >  tools/testing/vma/.gitignore           |   6 +
+> >  tools/testing/vma/Makefile             |  16 +
+> >  tools/testing/vma/errors.txt           |   0
+> >  tools/testing/vma/generated/autoconf.h |   2 +
+>
+> I'm also unsure if above two files are intentionally added.  Please read below
+> comments.
+>
+> >  tools/testing/vma/linux/atomic.h       |  12 +
+> >  tools/testing/vma/linux/mmzone.h       |  38 ++
+> >  tools/testing/vma/vma.c                | 207 ++++++
+> >  tools/testing/vma/vma_internal.h       | 882 +++++++++++++++++++++++++
+> >  11 files changed, 1167 insertions(+), 2 deletions(-)
+> >  create mode 100644 tools/testing/vma/.gitignore
+> >  create mode 100644 tools/testing/vma/Makefile
+> >  create mode 100644 tools/testing/vma/errors.txt
+> >  create mode 100644 tools/testing/vma/generated/autoconf.h
+> >  create mode 100644 tools/testing/vma/linux/atomic.h
+> >  create mode 100644 tools/testing/vma/linux/mmzone.h
+> >  create mode 100644 tools/testing/vma/vma.c
+> >  create mode 100644 tools/testing/vma/vma_internal.h
 > >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index ff3e113ed081..c21099d0a123 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -23983,6 +23983,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> >  F:	mm/vma.c
+> >  F:	mm/vma.h
+> >  F:	mm/vma_internal.h
+> > +F:	tools/testing/vma/
+>
+> Thank you for addressing my comment on the previous version :)
+>
+> Btw, what do you think about moving the previous MAINTAINERS touching patch to
+> the end of this patch series and making this change together at once?
+
+Yeah I was thinking about separating that out actually, not hugely critical I
+don't think, but if I end up respinning I can do that.
+
+>
+> >
+> >  VMALLOC
+> >  M:	Andrew Morton <akpm@linux-foundation.org>
+> > diff --git a/include/linux/atomic.h b/include/linux/atomic.h
+> > index 8dd57c3a99e9..badfba2fd10f 100644
+> > --- a/include/linux/atomic.h
+> > +++ b/include/linux/atomic.h
+> > @@ -81,4 +81,4 @@
+> >  #include <linux/atomic/atomic-long.h>
+> >  #include <linux/atomic/atomic-instrumented.h>
+> >
+> > -#endif /* _LINUX_ATOMIC_H */
+> > +#endif	/* _LINUX_ATOMIC_H */
+>
+> Maybe unintended change?
+
+Ugh, sorry my bad. Again, I don't think this is so big as to need a respin
+in itself, but if larger stuff comes up I will fix if you don't think this
+is too big a deal?
+
+>
+> > diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> > index 41458892bc8a..30a22e57fa50 100644
+> > --- a/include/linux/mmzone.h
+> > +++ b/include/linux/mmzone.h
+> > @@ -1,4 +1,5 @@
+> > -/* SPDX-License-Identifier: GPL-2.0 */
+> > +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> > +
+> >  #ifndef _LINUX_MMZONE_H
+> >  #define _LINUX_MMZONE_H
 > >
 >
-> More generally, we've seen quite a few cases where we want to compile
-> a small chunk of kernel code and some tests as a userspace binary, for
-> a few different reasons, including:
-> - Improved speed/debuggability from being a "normal" userspace binary
-> - The desire to test userspace code which lives in the kernel tree
-> (e.g., the perf tool)
-> - Smaller reproducable test cases to give to other parties (e.g.,
-> compiler developers)
+> To my understanding, the test adds tools/testing/vma/linux/mmzone.h and uses it
+> instead of this file.  If I'm not missing something here, above license change
+> may not really needed?
 >
-> So I think there's definitely a case for having these sorts of tests,
-> it'd just be nice to be as consistent as we can. There are a few
-> existing patches out there (most recently [1]) which implement a
-> subset of the KUnit API in userspace, which has the twin advantages of
-> making test code more consistent overall, and allowing some tests to
-> be available both as KUnit tests and separate userspace tests (so we
-> get the best of both worlds). Having a standard 'userspace kunit'
-> implementation is definitely something I've thought about before, so
-> I'll probably play around with that when I get some time.
+> > diff --git a/tools/testing/vma/.gitignore b/tools/testing/vma/.gitignore
+> > new file mode 100644
+> > index 000000000000..d915f7d7fb1a
+> > --- /dev/null
+> > +++ b/tools/testing/vma/.gitignore
+> > @@ -0,0 +1,6 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +generated/bit-length.h
+> > +generated/map-shift.h
 >
+> I guess we should also have 'generated/autoconf.h' here?  Please read below
+> comment for the file, too.
+>
+> > +idr.c
+> > +radix-tree.c
+> > +vma
+> > diff --git a/tools/testing/vma/Makefile b/tools/testing/vma/Makefile
+> > new file mode 100644
+> > index 000000000000..70e728f2eee3
+> > --- /dev/null
+> > +++ b/tools/testing/vma/Makefile
+> > @@ -0,0 +1,16 @@
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> > +
+> > +.PHONY: default
+> > +
+> > +default: vma
+> > +
+> > +include ../shared/shared.mk
+> > +
+> > +OFILES = $(SHARED_OFILES) vma.o maple-shim.o
+> > +TARGETS = vma
+> > +
+> > +vma:	$(OFILES) vma_internal.h ../../../mm/vma.c ../../../mm/vma.h
+> > +	$(CC) $(CFLAGS) -o $@ $(OFILES) $(LDLIBS)
+> > +
+> > +clean:
+> > +	$(RM) $(TARGETS) *.o radix-tree.c idr.c generated/map-shift.h generated/bit-length.h
+>
+> If my assumption about generated/autoconf.h file is not wrong, I think we
+> should also remove the file here, too.  'git' wouldn't care, but I think
+> removing generated/ directory with files under it would be clearer for
+> working space management.
+>
+> > diff --git a/tools/testing/vma/errors.txt b/tools/testing/vma/errors.txt
+> > new file mode 100644
+> > index 000000000000..e69de29bb2d1
+>
+> I'm not seeing who is really using this empty file.  Is this file intentionally
+> added?
 
-Well indeed, [1] is what this patch series uses, heavily, to be viable :)
+Ughhhh no, this was a pure accident! I guess we can ask Andrew to drop this
+part of the patch if no further respin is needed? May do a fix-patch actually.
 
-I do absolutely agree going forward that some means of standardisation
-would be very useful.
+Obviously will remove on next respin otherwise.
 
-> Otherwise, if Shuah's okay with it, having these userspace tests be
-> selftests seems at the very least an appropriate stopgap measure,
-> which gets us some tooling and CI. I've always thought of selftests as
-> "testing the running kernel", rather than the tree under test, but as
-> long as it's clear that this is happening, there's no technical reason
-> to avoid it,.
-
-Yeah, this implementation is explicitly intended to be a skeleton to be
-built on, providing a minimum implementation with the most important
-component provided, i.e. the stubbed out code - in order to demonstrate why
-the refactoring bits of the patch sets were done (i.e. to answer 'why so
-much churn?') AND to provide the basis to easily move ahead and write
-serious tests.
-
-I think it is still viable to add further tests to this as-is (I'd rather
-not add too much friction to this hugely valuable exercise - we are
-seriously lacking for fundamental VMA unit/regression tests), but moving
-forward I think it should also be very easy to adapt this code to use a
-consistent userland kunit implementation.
+Thanks for that, great spot!
 
 >
-> Cheers,
-> -- David
+> > diff --git a/tools/testing/vma/generated/autoconf.h b/tools/testing/vma/generated/autoconf.h
+> > new file mode 100644
+> > index 000000000000..92dc474c349b
+> > --- /dev/null
+> > +++ b/tools/testing/vma/generated/autoconf.h
+> > @@ -0,0 +1,2 @@
+> > +#include "bit-length.h"
+> > +#define CONFIG_XARRAY_MULTI 1
 >
-> [1]: https://lore.kernel.org/all/20240625211803.2750563-5-willy@infradead.org/
+> Seems this file is automatically generated by ../shared/shared.mk.  If I'm not
+> wrong, I think removing this and adding changes I suggested to .gitignore and
+> Makefile would be needed?
+
+Can do the same with this :) good spot.
+
+>
+> Since share.mk just copies the file while setting -I flag so that
+> tools/testing/vma/vma.c can include files from share/ directory, maybe another
+> option is simply including the file from the share/ directory without copying
+> it here.
+>
+> Also, the previous patch (tools: separate out shared radix-tree components)
+> that adds this file at tools/testing/shared/ would need to add SPDX License
+> identifier?
+
+This file already existed in the radix tree code, I just moved it.
+
+>
+> > diff --git a/tools/testing/vma/linux/atomic.h b/tools/testing/vma/linux/atomic.h
+> > new file mode 100644
+> > index 000000000000..e01f66f98982
+> > --- /dev/null
+> > +++ b/tools/testing/vma/linux/atomic.h
+> > @@ -0,0 +1,12 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> > +
+> > +#ifndef _LINUX_ATOMIC_H
+> > +#define _LINUX_ATOMIC_H
+> > +
+> > +#define atomic_t int32_t
+> > +#define atomic_inc(x) uatomic_inc(x)
+> > +#define atomic_read(x) uatomic_read(x)
+> > +#define atomic_set(x, y) do {} while (0)
+> > +#define U8_MAX UCHAR_MAX
+> > +
+> > +#endif	/* _LINUX_ATOMIC_H */
+> > diff --git a/tools/testing/vma/linux/mmzone.h b/tools/testing/vma/linux/mmzone.h
+> > new file mode 100644
+> > index 000000000000..e6a96c686610
+> > --- /dev/null
+> > +++ b/tools/testing/vma/linux/mmzone.h
+> > @@ -0,0 +1,38 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+>
+> I'm not very familiar with the license stuffs, but based on the changes to
+> other files including that to include/linux/mmazone.h above, I was thinking
+> this file would also need to update the license to GP-2.0-or-later.  Should
+> this be updated so?
+
+This was copied from tools/testing/memblock/linux/mmzone.h directly
+as-is. I didn't think it was worth reworking memblock testing to share this
+(again, this is meant to be a skeleton rather than a complete rework of how
+testing is done :) but we needed the header.
+
+Whenever you bounce code around there's always a risk of somebody noticing
+something previously broken which would not really make sense for you to
+address as part of your change, I think this is one of those circumstances.
+
+If considered critical for licensing of course I can change, but that does
+make me wonder whether that'd be better as a whole-repo change for all such
+instances?
+
+>
+> [...]
+> > diff --git a/tools/testing/vma/vma.c b/tools/testing/vma/vma.c
+> > new file mode 100644
+> > index 000000000000..1f32bc4d60c2
+> > --- /dev/null
+> > +++ b/tools/testing/vma/vma.c
+> > @@ -0,0 +1,207 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +
+> > +#include <stdbool.h>
+> > +#include <stdio.h>
+> > +#include <stdlib.h>
+> > +
+> > +#include "maple-shared.h"
+> > +#include "vma_internal.h"
+> > +
+> > +/*
+> > + * Directly import the VMA implementation here. Our vma_internal.h wrapper
+> > + * provides userland-equivalent functionality for everything vma.c uses.
+> > + */
+> > +#include "../../../mm/vma.c"
+> > +
+> > +const struct vm_operations_struct vma_dummy_vm_ops;
+> > +
+> > +#define ASSERT_TRUE(_expr)						\
+> > +	do {								\
+> > +		if (!(_expr)) {						\
+> > +			fprintf(stderr,					\
+> > +				"Assert FAILED at %s:%d:%s(): %s is FALSE.\n", \
+> > +				__FILE__, __LINE__, __FUNCTION__, #_expr); \
+> > +			return false;					\
+> > +		}							\
+> > +	} while (0)
+> > +#define ASSERT_FALSE(_expr) ASSERT_TRUE(!(_expr))
+> > +#define ASSERT_EQ(_val1, _val2) ASSERT_TRUE((_val1) == (_val2))
+> > +#define ASSERT_NE(_val1, _val2) ASSERT_TRUE((_val1) != (_val2))
+> > +
+> > +static struct vm_area_struct *alloc_vma(struct mm_struct *mm,
+> > +					unsigned long start,
+> > +					unsigned long end,
+> > +					pgoff_t pgoff,
+> > +					vm_flags_t flags)
+> > +{
+> > +	struct vm_area_struct *ret = vm_area_alloc(mm);
+> > +
+> > +	if (ret == NULL)
+> > +		return NULL;
+> > +
+> > +	ret->vm_start = start;
+> > +	ret->vm_end = end;
+> > +	ret->vm_pgoff = pgoff;
+> > +	ret->__vm_flags = flags;
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static bool test_simple_merge(void)
+> > +{
+> > +	struct vm_area_struct *vma;
+> > +	unsigned long flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
+> > +	struct mm_struct mm = {};
+> > +	struct vm_area_struct *vma_left = alloc_vma(&mm, 0, 0x1000, 0, flags);
+> > +	struct vm_area_struct *vma_middle = alloc_vma(&mm, 0x1000, 0x2000, 1, flags);
+> > +	struct vm_area_struct *vma_right = alloc_vma(&mm, 0x2000, 0x3000, 2, flags);
+> > +	VMA_ITERATOR(vmi, &mm, 0x1000);
+> > +
+> > +	ASSERT_FALSE(vma_link(&mm, vma_left));
+> > +	ASSERT_FALSE(vma_link(&mm, vma_middle));
+> > +	ASSERT_FALSE(vma_link(&mm, vma_right));
+>
+> So, vma_link() returns the error if failed, or zero, and therefore above
+> assertions check if the function calls success as expected?  It maybe too
+> straighforward to people who familiar with the code, but I think adding some
+> comment explaining the intent of the test would be nice for new comers.
+>
+> IMHO, 'ASSERT_EQ(vma_link(...), 0)' may be easier to read.
+
+Yeah I did weigh this up, but the standard kernel pattern for this would be:
+
+if (vma_link(...)) {
+	/* ... error handing ... */
+}
+
+So to me this is consistent. I do take your point though, it's debatable,
+but I think it's ok as-is unless you feel strongly about it?
+
+>
+> Also, in case of assertion failures, the assertion prints the error and return
+> false, to indicate the failure of the test, right?  Then, would the memory
+> allocated before, e.g., that for vma_{left,middle,right} above be leaked?  I
+> know this is just a test program in the user-space, but...  If this is
+> intentional, I think clarifying it somewhere would be nice.
+
+Unwinding memory would make this code really horrible to implement, I don't
+think it's a big deal to leak userland memory in failed tests (the point of
+which is to, of course, to not encounter thousands and thousands of assert
+fails :).
+
+I'm not sure it's really important to point this out too, it's obvious, and
+it's distracting to do so. And again, it's really just a wrapper
+implementation. As discussed elsewhere moving forward it'd make sense to
+implement some 'userland kunit' style shared libraries that take care of
+all of this for us.
+
+>
+> > +
+> > +	vma = vma_merge_new_vma(&vmi, vma_left, vma_middle, 0x1000,
+> > +				0x2000, 1);
+> > +	ASSERT_NE(vma, NULL);
+> > +
+> > +	ASSERT_EQ(vma->vm_start, 0);
+> > +	ASSERT_EQ(vma->vm_end, 0x3000);
+> > +	ASSERT_EQ(vma->vm_pgoff, 0);
+> > +	ASSERT_EQ(vma->vm_flags, flags);
+> > +
+> > +	vm_area_free(vma);
+> > +	mtree_destroy(&mm.mm_mt);
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static bool test_simple_modify(void)
+> > +{
+> > +	struct vm_area_struct *vma;
+> > +	unsigned long flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
+> > +	struct mm_struct mm = {};
+> > +	struct vm_area_struct *init_vma = alloc_vma(&mm, 0, 0x3000, 0, flags);
+> > +	VMA_ITERATOR(vmi, &mm, 0x1000);
+> > +
+> > +	ASSERT_FALSE(vma_link(&mm, init_vma));
+> > +
+> > +	/*
+> > +	 * The flags will not be changed, the vma_modify_flags() function
+> > +	 * performs the merge/split only.
+> > +	 */
+> > +	vma = vma_modify_flags(&vmi, init_vma, init_vma,
+> > +			       0x1000, 0x2000, VM_READ | VM_MAYREAD);
+> > +	ASSERT_NE(vma, NULL);
+> > +	/* We modify the provided VMA, and on split allocate new VMAs. */
+> > +	ASSERT_EQ(vma, init_vma);
+> > +
+> > +	ASSERT_EQ(vma->vm_start, 0x1000);
+> > +	ASSERT_EQ(vma->vm_end, 0x2000);
+> > +	ASSERT_EQ(vma->vm_pgoff, 1);
+> > +
+> > +	/*
+> > +	 * Now walk through the three split VMAs and make sure they are as
+> > +	 * expected.
+> > +	 */
+>
+> I like these kind comments :)
+
+Thanks :) I try to maintain a nice balance between not adding _too many_
+explanatory comments but not having globs of code that are hard to follow
+without giving an idea what's going on.
+
+>
+> > +
+> > +	vma_iter_set(&vmi, 0);
+> > +	vma = vma_iter_load(&vmi);
+> > +
+> > +	ASSERT_EQ(vma->vm_start, 0);
+> > +	ASSERT_EQ(vma->vm_end, 0x1000);
+> > +	ASSERT_EQ(vma->vm_pgoff, 0);
+> > +
+> > +	vm_area_free(vma);
+> > +	vma_iter_clear(&vmi);
+> > +
+> > +	vma = vma_next(&vmi);
+> > +
+> > +	ASSERT_EQ(vma->vm_start, 0x1000);
+> > +	ASSERT_EQ(vma->vm_end, 0x2000);
+> > +	ASSERT_EQ(vma->vm_pgoff, 1);
+> > +
+> > +	vm_area_free(vma);
+> > +	vma_iter_clear(&vmi);
+> > +
+> > +	vma = vma_next(&vmi);
+> > +
+> > +	ASSERT_EQ(vma->vm_start, 0x2000);
+> > +	ASSERT_EQ(vma->vm_end, 0x3000);
+> > +	ASSERT_EQ(vma->vm_pgoff, 2);
+> > +
+> > +	vm_area_free(vma);
+> > +	mtree_destroy(&mm.mm_mt);
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static bool test_simple_expand(void)
+> > +{
+> > +	unsigned long flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
+> > +	struct mm_struct mm = {};
+> > +	struct vm_area_struct *vma = alloc_vma(&mm, 0, 0x1000, 0, flags);
+> > +	VMA_ITERATOR(vmi, &mm, 0);
+> > +
+> > +	ASSERT_FALSE(vma_link(&mm, vma));
+> > +
+> > +	ASSERT_FALSE(vma_expand(&vmi, vma, 0, 0x3000, 0, NULL));
+> > +
+> > +	ASSERT_EQ(vma->vm_start, 0);
+> > +	ASSERT_EQ(vma->vm_end, 0x3000);
+> > +	ASSERT_EQ(vma->vm_pgoff, 0);
+> > +
+> > +	vm_area_free(vma);
+> > +	mtree_destroy(&mm.mm_mt);
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static bool test_simple_shrink(void)
+> > +{
+> > +	unsigned long flags = VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE;
+> > +	struct mm_struct mm = {};
+> > +	struct vm_area_struct *vma = alloc_vma(&mm, 0, 0x3000, 0, flags);
+> > +	VMA_ITERATOR(vmi, &mm, 0);
+> > +
+> > +	ASSERT_FALSE(vma_link(&mm, vma));
+> > +
+> > +	ASSERT_FALSE(vma_shrink(&vmi, vma, 0, 0x1000, 0));
+> > +
+> > +	ASSERT_EQ(vma->vm_start, 0);
+> > +	ASSERT_EQ(vma->vm_end, 0x1000);
+> > +	ASSERT_EQ(vma->vm_pgoff, 0);
+> > +
+> > +	vm_area_free(vma);
+> > +	mtree_destroy(&mm.mm_mt);
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +int main(void)
+> > +{
+> > +	int num_tests = 0, num_fail = 0;
+> > +
+> > +	maple_tree_init();
+> > +
+> > +#define TEST(name)							\
+> > +	do {								\
+> > +		num_tests++;						\
+> > +		if (!test_##name()) {					\
+> > +			num_fail++;					\
+> > +			fprintf(stderr, "Test " #name " FAILED\n");	\
+> > +		}							\
+> > +	} while (0)
+> > +
+> > +	TEST(simple_merge);
+> > +	TEST(simple_modify);
+> > +	TEST(simple_expand);
+> > +	TEST(simple_shrink);
+> > +
+> > +#undef TEST
+> > +
+> > +	printf("%d tests run, %d passed, %d failed.\n",
+> > +	       num_tests, num_tests - num_fail, num_fail);
+> > +
+> > +	return EXIT_SUCCESS;
+>
+> What do you think about making the return value indicates if the overall test
+> has pass or failed, for easy integration with other test frameworks or scripts
+> in future?
+
+Yeah this is a good idea, will change on next respin.
+
+>
+> [...]
+>
+> I didn't read all of this patch series in detail yet (I'm not sure if I'll have
+> time to do that, so please don't wait for me), but looks nice work overall to
+> me.  Thank you for your efforts on this.
+
+Thanks!
+
+>
+>
+> Thanks,
+> SJ
 
