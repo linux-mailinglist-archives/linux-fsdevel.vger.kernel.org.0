@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-23113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667729274F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 13:25:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3836E9274F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 13:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA6A4B226B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 11:25:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69B3B1C219BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 11:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4D21AC44B;
-	Thu,  4 Jul 2024 11:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8501AD9F5;
+	Thu,  4 Jul 2024 11:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="niHhGXXL"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Y9I71uW1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F7B1AC439;
-	Thu,  4 Jul 2024 11:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782481AD9CA;
+	Thu,  4 Jul 2024 11:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720092234; cv=none; b=qx9hys1U8BowypMsi/SqDbo9HR+vWNvwoZ6kbQlyJceQNNG9Lsg4oQ0GV7QnWAnSxpc5+FYLbBGECaipSL3y776MTE5XIGnuFpb0s6TT74ghR6eK35rtx5OrhpZxUGZbnw+5JtHM5we1owXiCGnhHrcJ6xBnscygZOBEwkxTihM=
+	t=1720092238; cv=none; b=eVbIHm28FK1B1v9Tokvs+oZAoTJ4ZNlPGD3oZb8qiS9XxNhw+7Zu706GDY1oRvWg2fpggglztSM2xbCV8WE4lChWEGs+OFrwe+aGT+BvU0C3BuaVUeEEYvSKmRl8W7JLn8wwvY1Hug4aGhL2U9TRuWBRAzvIjEhv2Tfrbmorl9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720092234; c=relaxed/simple;
-	bh=ykuHeCgdfskMcua/wKSJla1pOIn+bCHPrMH2YpuF4XU=;
+	s=arc-20240116; t=1720092238; c=relaxed/simple;
+	bh=Y6wnkr9YicCwKOn6q4dbs0j5MDwg7izxrtZViWy+w08=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DR6TV9dAvea5KNxSSqZiDxDuLQJbOKPevsqTg1GhuyyAtUt7e1bq+K3WWnv6JgOVbqJ7XOiIuLC4qsmdusnY3NWqKteye1sCDz2QziYfyM83lTZT0JcVl6R0RI6H4+74hqQiniC1Brbr6d2LkNX05YrjbaIcFaBpvFSkSRuEaYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=niHhGXXL; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=FukPhH9/n4NNUFLOLgaK6XPKaqx/FDvfCeNXizdboqPAV418lZBtaYlYU7DTWuFvAVqOJgYKmTq4kG8nxF+JpklojuNOXAZSR5yVwsEvWVPULxJx3mAeGG4GXwKCflsqvShgdJbyrIAMgnFk7uK9LNi4DdZsQdg4tpCJnXV7ZW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Y9I71uW1; arc=none smtp.client-ip=80.241.56.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WFDmb3QZCz9tVW;
-	Thu,  4 Jul 2024 13:23:43 +0200 (CEST)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WFDmg3MR7z9tVf;
+	Thu,  4 Jul 2024 13:23:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1720092223;
+	s=MBO0001; t=1720092227;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/8WfUkcPSa7GHZg7/Pn66GCljLM5KeUQHmwEzlJNP7Q=;
-	b=niHhGXXLlGfBFEJjR7uSrNiVvSPbFHkCpsbWC7Q43zY0FGd9RzTzh0H9SncE1I//MU/tM8
-	lZUFPg1YI2YDmp2QSUggek1zSomko9Z9Rx9j15dDPqJ+nYQRytcbL5pffF6zoyfyE9+x5y
-	V/kEZW5KC9gJJy7fBzJ4zaoW8xKsJGB6E5+JVx23Uy9gJKV1KYySvp2kP/5DVS6frkfHSo
-	+7uD3pxnLlSluHwxygKmybygOmxpTqlBP9iKKWtPf2KhdThATzmJnXKvEM5c17VQVGXPZq
-	AVdpjRWG2HM+18T8ruhyhr1v9DseqUimBzIa+yfipmogY1CwvXDG5/RQgRGZVw==
+	bh=xbld/pizLMEJfrPYBqwQ81gjcSKIsZj5n7TDu8kDUY0=;
+	b=Y9I71uW1qPx88w5xzTVV6UMtblN7zGG5xvC8xb6Mz8YbcDkhM23RoZtzGBKmOssWQWqr5e
+	N6p5+KEKnZsKkXHz3za1P9qz7JBW77U+ZFe7QzIJO+J0nJ+V0mnEaDOs3CFqZYzpgmtYcm
+	E+MIyO1Go3GbYRC2VFtt+CyVFvNEE0u/TW7ll43usBLUFNcNXfQeiPY25ndN7uRo0g4jAD
+	G1//e2FtVmsyQLz0x6pcNksViZ1gK9tFOppFcYZ7sFI5rjPhYBDhK9UkBn0jay5rTelnLO
+	smWW/vns2NyOtHQs56Cts2K2VIKIPMjrJsOQ+gug2XmGzfm/7PoYv2Dv9l+DOA==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: david@fromorbit.com,
 	willy@infradead.org,
@@ -70,9 +70,9 @@ Cc: yang@os.amperecomputing.com,
 	kernel@pankajraghav.com,
 	hch@lst.de,
 	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v9 04/10] mm: split a folio in minimum folio order chunks
-Date: Thu,  4 Jul 2024 11:23:14 +0000
-Message-ID: <20240704112320.82104-5-kernel@pankajraghav.com>
+Subject: [PATCH v9 05/10] filemap: cap PTE range to be created to allowed zero fill in folio_map_range()
+Date: Thu,  4 Jul 2024 11:23:15 +0000
+Message-ID: <20240704112320.82104-6-kernel@pankajraghav.com>
 In-Reply-To: <20240704112320.82104-1-kernel@pankajraghav.com>
 References: <20240704112320.82104-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -82,220 +82,67 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4WFDmb3QZCz9tVW
+X-Rspamd-Queue-Id: 4WFDmg3MR7z9tVf
 
-From: Luis Chamberlain <mcgrof@kernel.org>
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-split_folio() and split_folio_to_list() assume order 0, to support
-minorder for non-anonymous folios, we must expand these to check the
-folio mapping order and use that.
+Usually the page cache does not extend beyond the size of the inode,
+therefore, no PTEs are created for folios that extend beyond the size.
 
-Set new_order to be at least minimum folio order if it is set in
-split_huge_page_to_list() so that we can maintain minimum folio order
-requirement in the page cache.
+But with LBS support, we might extend page cache beyond the size of the
+inode as we need to guarantee folios of minimum order. While doing a
+read, do_fault_around() can create PTEs for pages that lie beyond the
+EOF leading to incorrect error return when accessing a page beyond the
+mapped file.
 
-Update the debugfs write files used for testing to ensure the order
-is respected as well. We simply enforce the min order when a file
-mapping is used.
+Cap the PTE range to be created for the page cache up to the end of
+file(EOF) in filemap_map_pages() so that return error codes are consistent
+with POSIX[1] for LBS configurations.
+
+generic/749(currently in xfstest-dev patches-in-queue branch [0]) has
+been created to trigger this edge case. This also fixes generic/749 for
+tmpfs with huge=always on systems with 4k base page size.
+
+[0] https://lore.kernel.org/all/20240615002935.1033031-3-mcgrof@kernel.org/
+[1](from mmap(2))  SIGBUS
+    Attempted access to a page of the buffer that lies beyond the end
+    of the mapped file.  For an explanation of the treatment  of  the
+    bytes  in  the  page that corresponds to the end of a mapped file
+    that is not a multiple of the page size, see NOTES.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 ---
- include/linux/huge_mm.h | 14 ++++++++---
- mm/huge_memory.c        | 55 ++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 61 insertions(+), 8 deletions(-)
+ mm/filemap.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 4d155c7a47922..b320a246293ec 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -90,6 +90,8 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
- #define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
- 	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d27e9ac54309d..d322109274532 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3608,7 +3608,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct file *file = vma->vm_file;
+ 	struct address_space *mapping = file->f_mapping;
+-	pgoff_t last_pgoff = start_pgoff;
++	pgoff_t file_end, last_pgoff = start_pgoff;
+ 	unsigned long addr;
+ 	XA_STATE(xas, &mapping->i_pages, start_pgoff);
+ 	struct folio *folio;
+@@ -3634,6 +3634,10 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 		goto out;
+ 	}
  
-+#define split_folio(f) split_folio_to_list(f, NULL)
++	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
++	if (end_pgoff > file_end)
++		end_pgoff = file_end;
 +
- #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
- #define HPAGE_PMD_SHIFT PMD_SHIFT
- #define HPAGE_PUD_SHIFT PUD_SHIFT
-@@ -327,9 +329,10 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
- bool can_split_folio(struct folio *folio, int *pextra_pins);
- int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		unsigned int new_order);
-+int split_folio_to_list(struct folio *folio, struct list_head *list);
- static inline int split_huge_page(struct page *page)
- {
--	return split_huge_page_to_list_to_order(page, NULL, 0);
-+	return split_folio(page_folio(page));
- }
- void deferred_split_folio(struct folio *folio);
- 
-@@ -501,6 +504,12 @@ static inline int split_huge_page(struct page *page)
- {
- 	return 0;
- }
-+
-+static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
-+{
-+	return 0;
-+}
-+
- static inline void deferred_split_folio(struct folio *folio) {}
- #define split_huge_pmd(__vma, __pmd, __address)	\
- 	do { } while (0)
-@@ -615,7 +624,4 @@ static inline int split_folio_to_order(struct folio *folio, int new_order)
- 	return split_folio_to_list_to_order(folio, NULL, new_order);
- }
- 
--#define split_folio_to_list(f, l) split_folio_to_list_to_order(f, l, 0)
--#define split_folio(f) split_folio_to_order(f, 0)
--
- #endif /* _LINUX_HUGE_MM_H */
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index a633206375af1..2fd45d8730bab 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3062,6 +3062,9 @@ bool can_split_folio(struct folio *folio, int *pextra_pins)
-  * released, or if some unexpected race happened (e.g., anon VMA disappeared,
-  * truncation).
-  *
-+ * Callers should ensure that the order respects the address space mapping
-+ * min-order if one is set for non-anonymous folios.
-+ *
-  * Returns -EINVAL when trying to split to an order that is incompatible
-  * with the folio. Splitting to order 0 is compatible with all folios.
-  */
-@@ -3143,6 +3146,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		mapping = NULL;
- 		anon_vma_lock_write(anon_vma);
- 	} else {
-+		unsigned int min_order;
- 		gfp_t gfp;
- 
- 		mapping = folio->mapping;
-@@ -3153,6 +3157,14 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 			goto out;
- 		}
- 
-+		min_order = mapping_min_folio_order(folio->mapping);
-+		if (new_order < min_order) {
-+			VM_WARN_ONCE(1, "Cannot split mapped folio below min-order: %u",
-+				     min_order);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
- 		gfp = current_gfp_context(mapping_gfp_mask(mapping) &
- 							GFP_RECLAIM_MASK);
- 
-@@ -3265,6 +3277,21 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 	return ret;
- }
- 
-+int split_folio_to_list(struct folio *folio, struct list_head *list)
-+{
-+	unsigned int min_order = 0;
-+
-+	if (!folio_test_anon(folio)) {
-+		if (!folio->mapping && folio_test_pmd_mappable(folio)) {
-+			count_vm_event(THP_SPLIT_PAGE_FAILED);
-+			return -EBUSY;
-+		}
-+		min_order = mapping_min_folio_order(folio->mapping);
-+	}
-+
-+	return split_huge_page_to_list_to_order(&folio->page, list, min_order);
-+}
-+
- void __folio_undo_large_rmappable(struct folio *folio)
- {
- 	struct deferred_split *ds_queue;
-@@ -3496,6 +3523,8 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
- 		struct vm_area_struct *vma = vma_lookup(mm, addr);
- 		struct page *page;
- 		struct folio *folio;
-+		struct address_space *mapping;
-+		unsigned int target_order = new_order;
- 
- 		if (!vma)
- 			break;
-@@ -3516,7 +3545,13 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
- 		if (!is_transparent_hugepage(folio))
- 			goto next;
- 
--		if (new_order >= folio_order(folio))
-+		if (!folio_test_anon(folio)) {
-+			mapping = folio->mapping;
-+			target_order = max(new_order,
-+					   mapping_min_folio_order(mapping));
-+		}
-+
-+		if (target_order >= folio_order(folio))
- 			goto next;
- 
- 		total++;
-@@ -3532,9 +3567,13 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
- 		if (!folio_trylock(folio))
- 			goto next;
- 
--		if (!split_folio_to_order(folio, new_order))
-+		if (!folio_test_anon(folio) && folio->mapping != mapping)
-+			goto unlock;
-+
-+		if (!split_folio_to_order(folio, target_order))
- 			split++;
- 
-+unlock:
- 		folio_unlock(folio);
- next:
- 		folio_put(folio);
-@@ -3559,6 +3598,7 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
- 	pgoff_t index;
- 	int nr_pages = 1;
- 	unsigned long total = 0, split = 0;
-+	unsigned int min_order;
- 
- 	file = getname_kernel(file_path);
- 	if (IS_ERR(file))
-@@ -3572,9 +3612,11 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
- 		 file_path, off_start, off_end);
- 
- 	mapping = candidate->f_mapping;
-+	min_order = mapping_min_folio_order(mapping);
- 
- 	for (index = off_start; index < off_end; index += nr_pages) {
- 		struct folio *folio = filemap_get_folio(mapping, index);
-+		unsigned int target_order = new_order;
- 
- 		nr_pages = 1;
- 		if (IS_ERR(folio))
-@@ -3583,18 +3625,23 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
- 		if (!folio_test_large(folio))
- 			goto next;
- 
-+		target_order = max(new_order, min_order);
- 		total++;
- 		nr_pages = folio_nr_pages(folio);
- 
--		if (new_order >= folio_order(folio))
-+		if (target_order >= folio_order(folio))
- 			goto next;
- 
- 		if (!folio_trylock(folio))
- 			goto next;
- 
--		if (!split_folio_to_order(folio, new_order))
-+		if (folio->mapping != mapping)
-+			goto unlock;
-+
-+		if (!split_folio_to_order(folio, target_order))
- 			split++;
- 
-+unlock:
- 		folio_unlock(folio);
- next:
- 		folio_put(folio);
+ 	folio_type = mm_counter_file(folio);
+ 	do {
+ 		unsigned long end;
 -- 
 2.44.1
 
