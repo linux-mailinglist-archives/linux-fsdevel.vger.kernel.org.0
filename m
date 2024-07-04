@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-23082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1052926CE4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 03:04:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89D0926D13
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 03:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C016A1C2153D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 01:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CACC1F21E23
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 01:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFB18462;
-	Thu,  4 Jul 2024 01:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732F7DF51;
+	Thu,  4 Jul 2024 01:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OuSVAJQu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sz98+7TI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA594A31
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 01:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409CAC8CE
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 01:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720055052; cv=none; b=twGTmbfIQFIPrqWjTXHYSHkPlMoB7gRgysh5FC8WaAknkCoGOjatNU4RTA1+gxfndATMiw4DltHGjZh8J6PBA2f62q+E5/RAwybFfzCADQdJ9cxbybT+wm03PedEgPGrfV6rhJfDqDiLPpELey4bDGeRqACNV00dvWfsvFjrxPU=
+	t=1720056214; cv=none; b=oJULT1iLQLkIPDN44jUuC30JBFREZCaBdDw9OCUbIOlbqWQFZzXzQnfO7BNjNtpMRZoRFWzxounmbDUAwzqY0awoKTGfIM3ULqDsbM6wMKfD0xieL6iJJywTK/3BOoCUeS2RnFEW2FoBaRPYR5C7p18UBND53K1ED3X571dC+5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720055052; c=relaxed/simple;
-	bh=OwHkXu8Tdg+QcH0k7SdpkI90l//y2X83WtGBeUeLnss=;
+	s=arc-20240116; t=1720056214; c=relaxed/simple;
+	bh=BJuD4oAjNQoCbhV7ixlJNa0Tqo9H+rGhCNfLXI3JiFE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qh9m2Ix8u7eCq5uE2f+BUYJ/j9TaDmJpYKJEEEshy4yjc+K4txqL17MXvSYZR0uEpPaC5GP8zhx8PAtXcNXyKxdrGyDa/7wIWuFIaimDXcKTZFEHrvlYmov/PZtJ2nXQWAVayVbFQkJ1tQJ1cVQPGij+JwLIkSRb1uxyQaA44OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OuSVAJQu; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=D0lgQDokZuNWbYWincuztzUKbnaB+/TV18oZDin7gigtXSK6HJsp7X144nDcKGY1KALU/S55zmnf1zvuSn+iwfy8E5K+zHslQ+WPai8co0YGJWNdHpo4YyP3rk+KrzwV2GYu5YIgZNddeC8NLhqph7t5Mw7oiwRZj85QdqlhvoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sz98+7TI; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720055049;
+	s=mimecast20190719; t=1720056212;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/1UoAoUE38XfmtGte/DbdgJX2un8zCdfajv3hxrPb+Q=;
-	b=OuSVAJQuRFJg7gVd6Ork0PxjfY4Z4vxssctt5j4cv/cGGaUvUz6pgjYvYKBXEmPsHmnXfP
-	Te0an3O8qgmP0zLfUvC0B1Hvzr/k4HoklCqs+mfH+rINfxNw8IbWOdv069wufhfTipXzjL
-	u5gyUcajhVCSJ91SrAr7TnsuU0IA22Q=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=FRVKU5kn7p5hiRZbKq//TD3FV740MSwrSEc3Yw2owhc=;
+	b=Sz98+7TIWa/puJo60HehjZ51xzLUJBf5r2mlXHSF6GBoBQRbg2fWnLVi/BjJk1gb4cK/sC
+	4GNLwHK9YQ4+yzX5BzKwjjLEIO0x4Rl/ZI0TGYv6POR47P7p4wvLSuyE4Z6jq5bbU9QLWx
+	hkffI/X6vOONWfGtqjKsZJMb3hQb3SA=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-498-CJdcrUDsNmic4G9pn18bFQ-1; Wed, 03 Jul 2024 21:04:08 -0400
-X-MC-Unique: CJdcrUDsNmic4G9pn18bFQ-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-70af5f8def2so149091b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2024 18:04:07 -0700 (PDT)
+ us-mta-329-OI4rxpPIMM-622_3k8pt3A-1; Wed, 03 Jul 2024 21:23:30 -0400
+X-MC-Unique: OI4rxpPIMM-622_3k8pt3A-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1fb2e1dadedso723235ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jul 2024 18:23:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720055046; x=1720659846;
+        d=1e100.net; s=20230601; t=1720056209; x=1720661009;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/1UoAoUE38XfmtGte/DbdgJX2un8zCdfajv3hxrPb+Q=;
-        b=GD/hKqu3MsKHMg3OhJA+H9sZHBTgs6VrIfTqV8nZLr/KRsa0qUpiz9H8altZ+UaakV
-         A/pdazzaHUV/vfh67zX2XlKBhPzpkpGHv44ts1VsUui3cVACwi1tpmDpbj89ljkbjyzR
-         DwkdK5nqtPWi+VroQPACptbQyDyG/x234uPSutZPbZR+/lEja5sUZse6t4BHFhDBHypV
-         xNnFSSUrbIKqGQnHfwOiBaXUwUvPbQYwxJvOt6Vl/xxTfqQubKc2mDU3ybVxAySr4CV6
-         Dg705W0Go5f+wf6eIB6+FHAoVgf7jKuBwE4nfvqedjZ9+jV+oRurks4vOvNwQ0HrYvO1
-         lxqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWzgZehTOGohO5rwnYcw0PYTWEQA+FN0LD1cdqVsHfVZU+bjzAMzjwy4BDSxvlZm5Q7RlcteFLz5swvuKy7Ri8DzoM09rdJmW+dwiaBg==
-X-Gm-Message-State: AOJu0Yx6zyruy1bo/GulrzA45Kcn716KcDgbgENyQLr+eIcYJiKV2NOv
-	ec46R9JxcQ2CZzkMJi+dzqJXwqvF/R8SPaQBycAIzqg4xS2vMHY7IIEiDPuCkHGg2cDZNCwa91R
-	fVX1IHaNeuVDdhwch0qUqfY+Hq8P4XEupXsT1a3sZ5hEMjwRdRCAXpVIlLVmBlraGdCdFcDo=
-X-Received: by 2002:a05:6a00:1146:b0:705:9ddb:db6b with SMTP id d2e1a72fcca58-70b0094b3abmr180113b3a.13.1720055046136;
-        Wed, 03 Jul 2024 18:04:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEfIJ/5XnqU2+b+txtAVcJ5itbgOcH5WsQHwDhGMl3SRQ1HIB+g6wofHASN71XW74raXe0ekQ==
-X-Received: by 2002:a05:6a00:1146:b0:705:9ddb:db6b with SMTP id d2e1a72fcca58-70b0094b3abmr180090b3a.13.1720055045668;
-        Wed, 03 Jul 2024 18:04:05 -0700 (PDT)
+        bh=FRVKU5kn7p5hiRZbKq//TD3FV740MSwrSEc3Yw2owhc=;
+        b=DLC1LWjNsmh19F8d4YMhXWYLNU/lRTR1qHpFTaQTFSkM31YAG1TDTYuwY3I6co0LO0
+         RmWKE/3BNTpT6E8iPtOt/AVfihc+e6qUqSSVFdu56S91ncKmHGWkKmqwYJSIvegm/ulo
+         q1jYT9LO9BGdkaRuPyOxRB3JF3hxkv+/8Jo1kOMKi09Ne4XmZ1JJv5wOrpUgyDe+P8IP
+         YeOUfsk5ywBDZ/ez5c2cdJpqONWTS4p0dY5T3/5qnLUUxuSkfG3lARYfc7ZBdsBLnme3
+         d5YZla/eyH2N7xh3f1HvIVV+0B5k+dHS507sb9IvrB65IDOx041ZdxgniDdLFKTp1CJZ
+         c2Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHkcu8OmDCo2oj7UJT5ohPQD9Pmtzu6dgutUZc6zlGvjTa5HOKkl8JA9TwJdSGP+41vnJSvgu3SA50/0/EMFrDEEJsdqlZhhNBhQ6uZQ==
+X-Gm-Message-State: AOJu0YzWXwqok8LAFoSi+L19lTQMvJmZAsDXiP7gEDDg7OXug3OCdgsn
+	Ncx8LCpbJkwlHduFS+np7yu2Vpi/yTS6mYTyrqtuQd10BVHdTParvrO8PIGXSSeVGK6jgadAv0F
+	PsuGUwXgzXmBUgzUqG7uaw54aEj9oJKd2dj3hMvEO0AL6+HghT2rWS8tAZReSJb4=
+X-Received: by 2002:a17:903:249:b0:1fb:3107:ec4b with SMTP id d9443c01a7336-1fb33e1834fmr2829385ad.17.1720056209142;
+        Wed, 03 Jul 2024 18:23:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFszBYXZNwZtza786wpYXfORflgdeux+IguQTTUJ9knX2GD8dRgjr1QGJ/LO6MayT4S1BpZig==
+X-Received: by 2002:a17:903:249:b0:1fb:3107:ec4b with SMTP id d9443c01a7336-1fb33e1834fmr2829205ad.17.1720056208654;
+        Wed, 03 Jul 2024 18:23:28 -0700 (PDT)
 Received: from [192.168.1.229] (159-196-82-144.9fc452.per.static.aussiebb.net. [159.196.82.144])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801e53ae0sm11080447b3a.23.2024.07.03.18.04.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fafc656e96sm38854365ad.65.2024.07.03.18.23.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 18:04:05 -0700 (PDT)
-Message-ID: <9f455425-2a82-4a8f-aeaa-71ebe6a7acc6@redhat.com>
-Date: Thu, 4 Jul 2024 09:04:00 +0800
+        Wed, 03 Jul 2024 18:23:27 -0700 (PDT)
+Message-ID: <9781c2a8-7ee5-44f4-8218-dcd59e4a172d@redhat.com>
+Date: Thu, 4 Jul 2024 09:23:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,13 +83,24 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vfs: don't mod negative dentry count when on shrinker
- list
-To: Christian Brauner <brauner@kernel.org>
-Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org
-References: <20240702170757.232130-1-bfoster@redhat.com>
- <e2a34e4d-b529-4ee6-b921-f54c3935f253@redhat.com>
- <20240703-nachwachsen-funkt-23b2e942dd87@brauner>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>,
+ Alexander Larsson <alexl@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+ Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
+ raven@themaw.net, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Eric Chanudet <echanude@redhat.com>
+References: <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3>
+ <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+ <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
+ <20240628-gelingen-erben-0f6e14049e68@brauner>
+ <CAL7ro1HtzvcuQbRpdtYAG1eK+0tekKYaTh-L_8FqHv_JrSFcZg@mail.gmail.com>
+ <97cf3ef4-d2b4-4cb0-9e72-82ca42361b13@redhat.com>
+ <20240701-zauber-holst-1ad7cadb02f9@brauner>
+ <CAL7ro1FOYPsN3Y18tgHwpg+VB=rU1XB8Xds9P89Mh4T9N98jyA@mail.gmail.com>
+ <20240701-treue-irrtum-e695ee5efe83@brauner>
+ <20240703-mahnung-bauland-ffcacea4101e@brauner>
 Content-Language: en-US
 From: Ian Kent <ikent@redhat.com>
 Autocrypt: addr=ikent@redhat.com; keydata=
@@ -134,87 +145,102 @@ Autocrypt: addr=ikent@redhat.com; keydata=
  SBkOU1xMiW5Td7QwkNmtXKHyEF6dxCAMK1KHIqxrBaZO27PEDSHaIPHePi7y4KKq9C9U8k5V
  5dFA0mqH/st9Sw6tFbqPkqjvvMLETDPVxOzinpU2VBGhce4wufSIoVLOjQnbIo1FIqWgDx24
  eHv235mnNuGHrG+EapIh7g/67K0uAzwp17eyUYlE5BMcwRlaHMuKTil6
-In-Reply-To: <20240703-nachwachsen-funkt-23b2e942dd87@brauner>
+In-Reply-To: <20240703-mahnung-bauland-ffcacea4101e@brauner>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/7/24 16:22, Christian Brauner wrote:
-> On Wed, Jul 03, 2024 at 09:48:52AM GMT, Ian Kent wrote:
->> On 3/7/24 01:07, Brian Foster wrote:
->>> The nr_dentry_negative counter is intended to only account negative
->>> dentries that are present on the superblock LRU. Therefore, the LRU
->>> add, remove and isolate helpers modify the counter based on whether
->>> the dentry is negative, but the shrinker list related helpers do not
->>> modify the counter, and the paths that change a dentry between
->>> positive and negative only do so if DCACHE_LRU_LIST is set.
->>>
->>> The problem with this is that a dentry on a shrinker list still has
->>> DCACHE_LRU_LIST set to indicate ->d_lru is in use. The additional
->>> DCACHE_SHRINK_LIST flag denotes whether the dentry is on LRU or a
->>> shrink related list. Therefore if a relevant operation (i.e. unlink)
->>> occurs while a dentry is present on a shrinker list, and the
->>> associated codepath only checks for DCACHE_LRU_LIST, then it is
->>> technically possible to modify the negative dentry count for a
->>> dentry that is off the LRU. Since the shrinker list related helpers
->>> do not modify the negative dentry count (because non-LRU dentries
->>> should not be included in the count) when the dentry is ultimately
->>> removed from the shrinker list, this can cause the negative dentry
->>> count to become permanently inaccurate.
->>>
->>> This problem can be reproduced via a heavy file create/unlink vs.
->>> drop_caches workload. On an 80xcpu system, I start 80 tasks each
->>> running a 1k file create/delete loop, and one task spinning on
->>> drop_caches. After 10 minutes or so of runtime, the idle/clean cache
->>> negative dentry count increases from somewhere in the range of 5-10
->>> entries to several hundred (and increasingly grows beyond
->>> nr_dentry_unused).
->>>
->>> Tweak the logic in the paths that turn a dentry negative or positive
->>> to filter out the case where the dentry is present on a shrink
->>> related list. This allows the above workload to maintain an accurate
->>> negative dentry count.
->>>
->>> Signed-off-by: Brian Foster <bfoster@redhat.com>
->>> ---
->>>    fs/dcache.c | 5 +++--
->>>    1 file changed, 3 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/dcache.c b/fs/dcache.c
->>> index 407095188f83..5305b95b3030 100644
->>> --- a/fs/dcache.c
->>> +++ b/fs/dcache.c
->>> @@ -355,7 +355,7 @@ static inline void __d_clear_type_and_inode(struct dentry *dentry)
->>>    	flags &= ~DCACHE_ENTRY_TYPE;
->>>    	WRITE_ONCE(dentry->d_flags, flags);
->>>    	dentry->d_inode = NULL;
->>> -	if (flags & DCACHE_LRU_LIST)
->>> +	if ((flags & (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
->>>    		this_cpu_inc(nr_dentry_negative);
->>>    }
->>> @@ -1846,7 +1846,8 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
->>>    	/*
->>>    	 * Decrement negative dentry count if it was in the LRU list.
->>>    	 */
->>> -	if (dentry->d_flags & DCACHE_LRU_LIST)
->>> +	if ((dentry->d_flags &
->>> +	     (DCACHE_LRU_LIST|DCACHE_SHRINK_LIST)) == DCACHE_LRU_LIST)
->>>    		this_cpu_dec(nr_dentry_negative);
->>>    	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
->>>    	raw_write_seqcount_begin(&dentry->d_seq);
->>
->> Acked-by: Ian Kent <ikent@redhat.com>
->>
->>
->> Christian, just thought I'd call your attention to this since it's a bit
->> urgent for us to get reviews
->>
->> and hopefully merged into the VFS tree.
-> I'm about to pick it up.
 
-Thanks much, sounds like there's a v2 on the way (which could have done 
-by now).
+On 3/7/24 17:22, Christian Brauner wrote:
+> On Mon, Jul 01, 2024 at 02:10:31PM GMT, Christian Brauner wrote:
+>> On Mon, Jul 01, 2024 at 10:41:40AM GMT, Alexander Larsson wrote:
+>>> On Mon, Jul 1, 2024 at 7:50 AM Christian Brauner <brauner@kernel.org> wrote:
+>>>>> I always thought the rcu delay was to ensure concurrent path walks "see" the
+>>>>>
+>>>>> umount not to ensure correct operation of the following mntput()(s).
+>>>>>
+>>>>>
+>>>>> Isn't the sequence of operations roughly, resolve path, lock, deatch,
+>>>>> release
+>>>>>
+>>>>> lock, rcu wait, mntput() subordinate mounts, put path.
+>>>> The crucial bit is really that synchronize_rcu_expedited() ensures that
+>>>> the final mntput() won't happen until path walk leaves RCU mode.
+>>>>
+>>>> This allows caller's like legitimize_mnt() which are called with only
+>>>> the RCU read-lock during lazy path walk to simple check for
+>>>> MNT_SYNC_UMOUNT and see that the mnt is about to be killed. If they see
+>>>> that this mount is MNT_SYNC_UMOUNT then they know that the mount won't
+>>>> be freed until an RCU grace period is up and so they know that they can
+>>>> simply put the reference count they took _without having to actually
+>>>> call mntput()_.
+>>>>
+>>>> Because if they did have to call mntput() they might end up shutting the
+>>>> filesystem down instead of umount() and that will cause said EBUSY
+>>>> errors I mentioned in my earlier mails.
+>>> But such behaviour could be kept even without an expedited RCU sync.
+>>> Such as in my alternative patch for this:
+>>> https://www.spinics.net/lists/linux-fsdevel/msg270117.html
+>>>
+>>> I.e. we would still guarantee the final mput is called, but not block
+>>> the return of the unmount call.
+>> That's fine but the patch as sent doesn't work is my point. It'll cause
+>> exactly the issues described earlier, no? So I'm confused why this
+>> version simply ended up removing synchronize_rcu_expedited() when
+>> the proposed soluton seems to have been to use queue_rcu_work().
+>>
+>> But anyway, my concern with this is still that this changes the way
+>> MNT_DETACH behaves when you shut down a non-busy filesystem with
+>> MNT_DETACH as outlined in my other mail.
+>>
+>> If you find a workable version I'm not entirely opposed to try this but
+>> I wouldn't be surprised if this causes user visible issues for anyone
+>> that uses MNT_DETACH on a non-used filesystem.
+> Correction: I misremembered that umount_tree() is called with
+> UMOUNT_SYNC only in the case that umount() isn't called with MNT_DETACH.
+> I mentioned this yesterday in the thread but just in case you missed it
+> I want to spell it out in detail as well.
+
+Thanks Christian, I did see that, yep.
+
+There's also the seqlock in there to alert the legitimize that it needs
+
+to restart using ref-walk.
+
+
+>
+> This is relevant because UMOUNT_SYNC will raise MNT_SYNC_UMOUNT on all
+> mounts it unmounts. And that ends up being checked in legitimize_mnt()
+> to ensure that legitimize_mnt() doesn't call mntput() during path lookup
+> and risking EBUSY for a umount(..., 0) + mount() sequence for the same
+> filesystem.
+>
+> But for umount(.., MNT_DETACH) UMOUNT_SYNC isn't passed and so
+> MNT_SYNC_UMOUNT isn't raised on the mount and so legitimize_mnt() may
+> end up doing the last mntput() and cleaning up the filesystem.
+>
+> In other words, a umount(..., MNT_DETACH) caller needs to be prepared to
+> deal with EBUSY for a umount(..., MNT_DETACH) + mount() sequence.
+>
+> So I think we can certainly try this as long as we make it via
+> queue_rcu_work() to handle the other mntput_no_expire() grace period
+> dependency we discussed upthread.
+>
+> Thanks for making take a closer look.
+
+I'm still not sure I fully understand the subtleties of how this works, I
+
+think I'll need to do a deep dive into the rcu code and then revisit the
+
+umount code. At least I won't be idle, ;(
+
+
+Nevertheless I have to thank both you and Honza for your efforts and 
+tolerance.
 
 
 Ian
+
+Ian
+
 
 
