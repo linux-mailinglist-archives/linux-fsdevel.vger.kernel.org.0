@@ -1,285 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-23121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F4A9275DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 14:23:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92824927610
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 14:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0B91C22D5B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 12:23:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9348B218DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 12:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9E61AE849;
-	Thu,  4 Jul 2024 12:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73EE1AE847;
+	Thu,  4 Jul 2024 12:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHFCjWiu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0586C1DFF8;
-	Thu,  4 Jul 2024 12:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8C11822FB;
+	Thu,  4 Jul 2024 12:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720095809; cv=none; b=FQryqjM+1d6sNXP9J8fImcWSHigomRGKFCUt5c2hAEWg3OPELTxdR+xWvMLXySM+xJ86lm09HqnjL4anLZoT0wfHxsInEcsZtW5xgRcN6NERqDpO1lcPYEm1deGsHmYUMYNaqbR8x9iEssvJlAwxhgzJFp6nh3Yyb0VnvA7OMOk=
+	t=1720096283; cv=none; b=UhIQeRMCFvNUXBWG1v0ZJb+FwmfxJ3nkpWmvqI7HifVnvpItWJXXO91nYNJN17/RpOQiWj4o7xMLpdsTuSkBTJc/xv8H+1rZVW1WZVM7TnFN7+1ko5Fcj4sGi7YgapfHyyo6eWQZBJXYEm+pC6XB7EUcOnN2PwmhFnnHv8+Eu8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720095809; c=relaxed/simple;
-	bh=Y5QjDjXX0VA+8pkrBV75lbIfi099/i/j1WUgt1fHJGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RL0KFQfz5/iWJnBapDi/0gQAi3hfWLvcUFZCnWph/UEUEzfwgDPamV2sCzZZca2O/q9QocB6IZ/mp7FOzmwAksVMTkNwyoME5WbYpuEA2khabLfyaP1orTgD+jKW53g2icQ40XeNV797Rfb9tiONzanY/qyPnDVJ1Ryx240W9rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40A14367;
-	Thu,  4 Jul 2024 05:23:50 -0700 (PDT)
-Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D8933F762;
-	Thu,  4 Jul 2024 05:23:22 -0700 (PDT)
-Message-ID: <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
-Date: Thu, 4 Jul 2024 13:23:20 +0100
+	s=arc-20240116; t=1720096283; c=relaxed/simple;
+	bh=NrMOdvTHRfD6/EsYygG6xW5j1RcLbOwnQz82914Hkto=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tH3Mk3T6g8W4aLEzeoJaCQl8O/P1lkVrqiWvsT3GCqp5nK3WY5NvrOHrdJnNFRzuExMR6Lj14NTsjQmVbvJZE2lon621IaSof53rJiRdrl5qX+1EPCNJfYQJZ0RoXLObu5+gIZo4sZdF3rYfGQCkGCDs/wrHP8Rm/Hrk/7uHLhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHFCjWiu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8336EC4AF10;
+	Thu,  4 Jul 2024 12:31:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720096282;
+	bh=NrMOdvTHRfD6/EsYygG6xW5j1RcLbOwnQz82914Hkto=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EHFCjWiuLWsNEZEzppNdUTY4pbRY24icGXWiW+La46jmCSQuOWEiKrLLQmNGx/7tm
+	 n8vozMQ91ujB44hYlDZ65PguTZ9a8zrtwZvlsMrfrT65mVqPfhWpEmTfFQd/GbWbbR
+	 xVr4P33izq0nzf7wPvuRJdAkTAYn/0c5SVkQ4V06nmK2+4NL++SCdoL/KETAGda9uf
+	 /tj40T4Riv+yQaLGwLuo5xLPnhu6X0uyAEdx+FZzgEkwmvvHtohpbe7Wyxmjk7agUv
+	 x0OXP73bCElTl3O7Z4L9MOiTUa+G8XLS5Dzp77RbDeofrSa15TiKDSgdvL2T6r4YNd
+	 q9lEeqDSAKJlQ==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25cb5ee9d2dso100855fac.1;
+        Thu, 04 Jul 2024 05:31:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBY7YkKj9g/7vB5bPxX/9oFGuIU17OIwJZfr5BZIzulPB50yBFolAnp1wr96LjmKkA6s+EFvcgVi470V3VgjJzKeGpXvLHkRXjf7Xp287W3KbgnGL9r+b3XPk0V2F5YM59LIj3ZGyDOOzKfJj1fRyWmwtC8jeEdQk5oDYecb9lyLbPsZrY
+X-Gm-Message-State: AOJu0YxPAnQh6XG9OS9LlP0oYrZdFpp8ffY/tW6cZZ8g/Jf4m3YUiyZF
+	Iq3DLgZfAxptA/j/rX5CELpi2cdVoWJB6RYjAbX3e0aGf+u70DvbPbvlVMcNcO6k3xbqZiZDNOW
+	12GyqvNSyDs2ovDNl5D5XQj97PUw=
+X-Google-Smtp-Source: AGHT+IGvQjd8yj5g2VnXn6ZjT/Wc4/TD5l5l8Rj/Lpm695mm8KbI+B1Rfuqz3a2+DNIfcwRnKsG29Drd7eA2IMD48J8=
+X-Received: by 2002:a4a:9219:0:b0:5c2:20aa:db25 with SMTP id
+ 006d021491bc7-5c646ec7d4bmr1689927eaf.1.1720096281712; Thu, 04 Jul 2024
+ 05:31:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
-Content-Language: en-GB
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, david@fromorbit.com,
- willy@infradead.org, chandan.babu@oracle.com, djwong@kernel.org,
- brauner@kernel.org, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
- linux-mm@kvack.org, john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
- hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org, gost.dev@samsung.com,
- cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
- Zi Yan <zi.yan@sent.com>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240625114420.719014-2-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240703214315.454407-1-isaacmanjarres@google.com>
+In-Reply-To: <20240703214315.454407-1-isaacmanjarres@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 4 Jul 2024 14:31:10 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j6xSD4FJGe1=hb=A4UsCqOqBczQ5QNN_0VJAd-7ePZWQ@mail.gmail.com>
+Message-ID: <CAJZ5v0j6xSD4FJGe1=hb=A4UsCqOqBczQ5QNN_0VJAd-7ePZWQ@mail.gmail.com>
+Subject: Re: [PATCH v6] fs: Improve eventpoll logging to stop indicting timerfd
+To: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+Cc: tglx@linutronix.de, jstultz@google.com, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, saravanak@google.com, 
+	mjguzik@gmail.com, Manish Varma <varmam@google.com>, Kelly Rossmoyer <krossmo@google.com>, 
+	kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-Here are some drive-by review comments as I'm evaluating whether these patches
-can help me with what I'm trying to do at
-https://lore.kernel.org/linux-mm/20240215154059.2863126-1-ryan.roberts@arm.com/...
-
-
-On 25/06/2024 12:44, Pankaj Raghav (Samsung) wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> We need filesystems to be able to communicate acceptable folio sizes
-> to the pagecache for a variety of uses (e.g. large block sizes).
-> Support a range of folio sizes between order-0 and order-31.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Co-developed-by: Pankaj Raghav <p.raghav@samsung.com>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+On Wed, Jul 3, 2024 at 11:43=E2=80=AFPM Isaac J. Manjarres
+<isaacmanjarres@google.com> wrote:
+>
+> From: Manish Varma <varmam@google.com>
+>
+> We'll often see aborted suspend operations that look like:
+>
+>  PM: suspend entry 2024-07-03 15:55:15.372419634 UTC
+>  PM: PM: Pending Wakeup Sources: [timerfd]
+>  Abort: Pending Wakeup Sources: [timerfd]
+>  PM: suspend exit 2024-07-03 15:55:15.445281857 UTC
+>
+> From this, it seems a timerfd caused the abort, but that can be
+> confusing, as timerfds don't create wakeup sources. However,
+> eventpoll can, and when it does, it names them after the underlying
+> file descriptor. Unfortunately, all the file descriptors are called
+> "[timerfd]", and a system may have many timerfds, so this isn't very
+> useful to debug what's going on to cause the suspend to abort.
+>
+> To improve this, change the way eventpoll wakeup sources are named:
+>
+> 1) The top-level per-process eventpoll wakeup source is now named
+> "epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
+> and P is the PID of the creating process.
+>
+> 2) Individual eventpoll item wakeup sources are now named
+> "epollitemN:P.F", where N is a unique ID token, P is PID of the creating
+> process, and F is the name of the underlying file descriptor.
+>
+> Now, when the scenario described earlier is encountered, the following
+> kernel logs are emitted:
+>
+>  PM: suspend entry 2024-07-03 15:39:24.945791824 UTC
+>  PM: PM: Pending Wakeup Sources: epollitem30:6375.[timerfd]
+>  Abort: Pending Wakeup Sources: epollitem30:6375.[timerfd]
+>  PM: suspend exit 2024-07-03 15:39:25.017775019 UTC
+>
+> There are various benefits to this new naming convention:
+>
+> 1) It is clear that the wakeup source is linked to an eventpoll
+> item.
+>
+> 2) Now that the PID of the process associated with that timerfd
+> instance is known, it is easy to map the PID of the process to the
+> name of the process. With this information, it is easy to start
+> debugging which process is causing this issue to occur.
+>
+> 3) Even if process 6375 creates multiple timerfd instances, the
+> ID token is useful in identifying which timerfd instance associated
+> with the process is causing suspend to abort, as it is monotonically
+> increasing. So if the order in which the timerfd instances for the
+> process is known, then one can pinpoint which timerfd instance is
+> causing this issue.
+>
+> Co-developed-by: Kelly Rossmoyer <krossmo@google.com>
+> Signed-off-by: Kelly Rossmoyer <krossmo@google.com>
+> Signed-off-by: Manish Varma <varmam@google.com>
+> Co-developed-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+> Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
 > ---
->  include/linux/pagemap.h | 86 ++++++++++++++++++++++++++++++++++-------
->  mm/filemap.c            |  6 +--
->  mm/readahead.c          |  4 +-
->  3 files changed, 77 insertions(+), 19 deletions(-)
-> 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 4b71d581091f..0c51154cdb57 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -204,14 +204,21 @@ enum mapping_flags {
->  	AS_EXITING	= 4, 	/* final truncate in progress */
->  	/* writeback related tags are not used */
->  	AS_NO_WRITEBACK_TAGS = 5,
-> -	AS_LARGE_FOLIO_SUPPORT = 6,
+>  drivers/base/power/wakeup.c | 12 +++++++++---
 
-nit: this removed enum is still referenced in a comment further down the file.
+For the changes in wakeup.c
 
-> -	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
-> -	AS_STABLE_WRITES,	/* must wait for writeback before modifying
-> +	AS_RELEASE_ALWAYS = 6,	/* Call ->release_folio(), even if no private data */
-> +	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
->  				   folio contents */
-> -	AS_UNMOVABLE,		/* The mapping cannot be moved, ever */
-> -	AS_INACCESSIBLE,	/* Do not attempt direct R/W access to the mapping */
-> +	AS_UNMOVABLE = 8,	/* The mapping cannot be moved, ever */
-> +	AS_INACCESSIBLE = 9,	/* Do not attempt direct R/W access to the mapping */
-> +	/* Bits 16-25 are used for FOLIO_ORDER */
-> +	AS_FOLIO_ORDER_BITS = 5,
-> +	AS_FOLIO_ORDER_MIN = 16,
-> +	AS_FOLIO_ORDER_MAX = AS_FOLIO_ORDER_MIN + AS_FOLIO_ORDER_BITS,
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
-nit: These 3 new enums seem a bit odd. It might be clearer if you just reserve
-the bits for the fields here? AS_FOLIO_ORDER_BITS isn't actually a flags bit and
-the MAX value is currently the start of the max field, not the end.
-
-#define AS_FOLIO_ORDER_BITS 5
-
-enum mapping_flags {
-	...
-	AS_FOLIO_ORDERS_FIRST = 16,
-	AS_FOLIO_ORDERS_LAST = AS_FOLIO_ORDERS_FIRST+(2*AS_FOLIO_ORDER_BITS)-1,
-	...
-};
-
-#define AS_FOLIO_ORDER_MIN_MASK \
-	GENMASK(AS_FOLIO_ORDERS_FIRST + AS_FOLIO_ORDER_BITS - 1, \
-		AS_FOLIO_ORDERS_FIRST)
-#define AS_FOLIO_ORDER_MAX_MASK \
-	GENMASK(AS_FOLIO_ORDERS_LAST, \
-		AS_FOLIO_ORDERS_LAST - AS_FOLIO_ORDER_BITS + 1)
-
->  };
->  
-> +#define AS_FOLIO_ORDER_MASK     ((1u << AS_FOLIO_ORDER_BITS) - 1)
-> +#define AS_FOLIO_ORDER_MIN_MASK (AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MIN)
-> +#define AS_FOLIO_ORDER_MAX_MASK (AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MAX)
-> +
+>  fs/eventpoll.c              | 11 +++++++++--
+>  include/linux/pm_wakeup.h   |  8 ++++----
+>  3 files changed, 22 insertions(+), 9 deletions(-)
+>
+>  v1 -> v2:
+>  - Renamed instance count to wakesource_create_id to better describe
+>    its purpose.
+>  - Changed the wakeup source naming convention for wakeup sources
+>    created by eventpoll to avoid changing the timerfd names.
+>  - Used the PID of the process instead of the process name for the
+>    sake of uniqueness when creating wakeup sources.
+>
+> v2 -> v3:
+>  - Changed wakeup_source_register() to take in a format string
+>    and arguments to avoid duplicating code to construct wakeup
+>    source names.
+>  - Moved the definition of wakesource_create_id so that it is
+>    always defined to fix an compilation error.
+>
+> v3 -> v4:
+>  - Changed the naming convention for the top-level epoll wakeup
+>    sources to include an ID for uniqueness. This is needed in
+>    cases where a process is using two epoll fds.
+>  - Edited commit log to reflect new changes and add new tags.
+>
+> v4 -> v5:
+>  - Added the format attribute to the wakeup_source_register()
+>    function to address a warning from the kernel test robot:
+>    https://lore.kernel.org/all/202406050504.UvdlPAQ0-lkp@intel.com/
+>
+> v5 -> v6:
+>  - Reworded the commit text to clarify the scenarios in which this
+>    patch is helpful, as per feedback from
+>    John Stultz <jstultz@google.com>
+>
+> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+> index 752b417e8129..04a808607b62 100644
+> --- a/drivers/base/power/wakeup.c
+> +++ b/drivers/base/power/wakeup.c
+> @@ -209,13 +209,19 @@ EXPORT_SYMBOL_GPL(wakeup_source_remove);
 >  /**
->   * mapping_set_error - record a writeback error in the address_space
->   * @mapping: the mapping in which an error should be set
-> @@ -360,9 +367,49 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
->  #define MAX_PAGECACHE_ORDER	8
->  #endif
->  
-> +/*
-> + * mapping_set_folio_order_range() - Set the orders supported by a file.
-> + * @mapping: The address space of the file.
-> + * @min: Minimum folio order (between 0-MAX_PAGECACHE_ORDER inclusive).
-> + * @max: Maximum folio order (between @min-MAX_PAGECACHE_ORDER inclusive).
-> + *
-> + * The filesystem should call this function in its inode constructor to
-> + * indicate which base size (min) and maximum size (max) of folio the VFS
-> + * can use to cache the contents of the file.  This should only be used
-> + * if the filesystem needs special handling of folio sizes (ie there is
-> + * something the core cannot know).
-> + * Do not tune it based on, eg, i_size.
-> + *
-> + * Context: This should not be called while the inode is active as it
-> + * is non-atomic.
-> + */
-> +static inline void mapping_set_folio_order_range(struct address_space *mapping,
-> +						 unsigned int min,
-> +						 unsigned int max)
-> +{
-> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +		return;
-> +
-> +	if (min > MAX_PAGECACHE_ORDER)
-> +		min = MAX_PAGECACHE_ORDER;
-> +	if (max > MAX_PAGECACHE_ORDER)
-> +		max = MAX_PAGECACHE_ORDER;
-> +	if (max < min)
-> +		max = min;
-
-It seems strange to silently clamp these? Presumably for the bs>ps usecase,
-whatever values are passed in are a hard requirement? So wouldn't want them to
-be silently reduced. (Especially given the recent change to reduce the size of
-MAX_PAGECACHE_ORDER to less then PMD size in some cases).
-
-> +
-> +	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
-> +		(min << AS_FOLIO_ORDER_MIN) | (max << AS_FOLIO_ORDER_MAX);
-> +}
-> +
-> +static inline void mapping_set_folio_min_order(struct address_space *mapping,
-> +					       unsigned int min)
-> +{
-> +	mapping_set_folio_order_range(mapping, min, MAX_PAGECACHE_ORDER);
-> +}
-> +
->  /**
->   * mapping_set_large_folios() - Indicate the file supports large folios.
-> - * @mapping: The file.
-> + * @mapping: The address space of the file.
->   *
->   * The filesystem should call this function in its inode constructor to
->   * indicate that the VFS can use large folios to cache the contents of
-> @@ -373,7 +420,23 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+>   * wakeup_source_register - Create wakeup source and add it to the list.
+>   * @dev: Device this wakeup source is associated with (or NULL if virtua=
+l).
+> - * @name: Name of the wakeup source to register.
+> + * @fmt: format string for the wakeup source name
 >   */
->  static inline void mapping_set_large_folios(struct address_space *mapping)
+> -struct wakeup_source *wakeup_source_register(struct device *dev,
+> -                                            const char *name)
+> +__printf(2, 3) struct wakeup_source *wakeup_source_register(struct devic=
+e *dev,
+> +                                                           const char *f=
+mt, ...)
 >  {
-> -	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-> +	mapping_set_folio_order_range(mapping, 0, MAX_PAGECACHE_ORDER);
-> +}
+>         struct wakeup_source *ws;
+>         int ret;
+> +       char name[128];
+> +       va_list args;
 > +
-> +static inline
-> +unsigned int mapping_max_folio_order(const struct address_space *mapping)
-> +{
-> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +		return 0;
-> +	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
-> +}
-> +
-> +static inline
-> +unsigned int mapping_min_folio_order(const struct address_space *mapping)
-> +{
-> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +		return 0;
-> +	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
->  }
->  
->  /*
-> @@ -386,16 +449,13 @@ static inline bool mapping_large_folio_support(struct address_space *mapping)
->  	VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
->  			"Anonymous mapping always supports large folio");
->  
-> -	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
-> -		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-> +	return mapping_max_folio_order(mapping) > 0;
->  }
->  
->  /* Return the maximum folio size for this pagecache mapping, in bytes. */
-> -static inline size_t mapping_max_folio_size(struct address_space *mapping)
-> +static inline size_t mapping_max_folio_size(const struct address_space *mapping)
+> +       va_start(args, fmt);
+> +       vsnprintf(name, sizeof(name), fmt, args);
+> +       va_end(args);
+>
+>         ws =3D wakeup_source_create(name);
+>         if (ws) {
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index f53ca4f7fced..941df15208a4 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -338,6 +338,7 @@ static void __init epoll_sysctls_init(void)
+>  #define epoll_sysctls_init() do { } while (0)
+>  #endif /* CONFIG_SYSCTL */
+>
+> +static atomic_t wakesource_create_id  =3D ATOMIC_INIT(0);
+>  static const struct file_operations eventpoll_fops;
+>
+>  static inline int is_file_epoll(struct file *f)
+> @@ -1545,15 +1546,21 @@ static int ep_create_wakeup_source(struct epitem =
+*epi)
 >  {
-> -	if (mapping_large_folio_support(mapping))
-> -		return PAGE_SIZE << MAX_PAGECACHE_ORDER;
-> -	return PAGE_SIZE;
-> +	return PAGE_SIZE << mapping_max_folio_order(mapping);
+>         struct name_snapshot n;
+>         struct wakeup_source *ws;
+> +       pid_t task_pid;
+> +       int id;
+> +
+> +       task_pid =3D task_pid_nr(current);
+>
+>         if (!epi->ep->ws) {
+> -               epi->ep->ws =3D wakeup_source_register(NULL, "eventpoll")=
+;
+> +               id =3D atomic_inc_return(&wakesource_create_id);
+> +               epi->ep->ws =3D wakeup_source_register(NULL, "epoll:%d:%d=
+", id, task_pid);
+>                 if (!epi->ep->ws)
+>                         return -ENOMEM;
+>         }
+>
+> +       id =3D atomic_inc_return(&wakesource_create_id);
+>         take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
+> -       ws =3D wakeup_source_register(NULL, n.name.name);
+> +       ws =3D wakeup_source_register(NULL, "epollitem%d:%d.%s", id, task=
+_pid, n.name.name);
+>         release_dentry_name_snapshot(&n);
+>
+>         if (!ws)
+> diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+> index 76cd1f9f1365..1fb6dca981c2 100644
+> --- a/include/linux/pm_wakeup.h
+> +++ b/include/linux/pm_wakeup.h
+> @@ -99,8 +99,8 @@ extern struct wakeup_source *wakeup_source_create(const=
+ char *name);
+>  extern void wakeup_source_destroy(struct wakeup_source *ws);
+>  extern void wakeup_source_add(struct wakeup_source *ws);
+>  extern void wakeup_source_remove(struct wakeup_source *ws);
+> -extern struct wakeup_source *wakeup_source_register(struct device *dev,
+> -                                                   const char *name);
+> +extern __printf(2, 3) struct wakeup_source *wakeup_source_register(struc=
+t device *dev,
+> +                                                                  const =
+char *fmt, ...);
+>  extern void wakeup_source_unregister(struct wakeup_source *ws);
+>  extern int wakeup_sources_read_lock(void);
+>  extern void wakeup_sources_read_unlock(int idx);
+> @@ -140,8 +140,8 @@ static inline void wakeup_source_add(struct wakeup_so=
+urce *ws) {}
+>
+>  static inline void wakeup_source_remove(struct wakeup_source *ws) {}
+>
+> -static inline struct wakeup_source *wakeup_source_register(struct device=
+ *dev,
+> -                                                          const char *na=
+me)
+> +static inline __printf(2, 3) struct wakeup_source *wakeup_source_registe=
+r(struct device *dev,
+> +                                                                        =
+ const char *fmt, ...)
+>  {
+>         return NULL;
 >  }
->  
->  static inline int filemap_nr_thps(struct address_space *mapping)
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 0b8c732bb643..d617c9afca51 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1933,10 +1933,8 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  		if (WARN_ON_ONCE(!(fgp_flags & (FGP_LOCK | FGP_FOR_MMAP))))
->  			fgp_flags |= FGP_LOCK;
->  
-> -		if (!mapping_large_folio_support(mapping))
-> -			order = 0;
-> -		if (order > MAX_PAGECACHE_ORDER)
-> -			order = MAX_PAGECACHE_ORDER;
-> +		if (order > mapping_max_folio_order(mapping))
-> +			order = mapping_max_folio_order(mapping);
->  		/* If we're not aligned, allocate a smaller folio */
->  		if (index & ((1UL << order) - 1))
->  			order = __ffs(index);
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index c1b23989d9ca..66058ae02f2e 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -503,9 +503,9 @@ void page_cache_ra_order(struct readahead_control *ractl,
->  
->  	limit = min(limit, index + ra->size - 1);
->  
-> -	if (new_order < MAX_PAGECACHE_ORDER) {
-> +	if (new_order < mapping_max_folio_order(mapping)) {
->  		new_order += 2;
-> -		new_order = min_t(unsigned int, MAX_PAGECACHE_ORDER, new_order);
-> +		new_order = min(mapping_max_folio_order(mapping), new_order);
->  		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
-
-I wonder if its possible that ra->size could ever be less than
-mapping_min_folio_order()? Do you need to handle that?
-
-Thanks,
-Ryan
-
->  	}
->  
-
+> --
+> 2.45.2.803.g4e1b14247a-goog
+>
 
