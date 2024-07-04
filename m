@@ -1,227 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-23143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6AF927A57
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 17:41:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D8F927A74
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 17:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FD9A1F22F93
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 15:41:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16CD7B24E4B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 15:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DC61B141D;
-	Thu,  4 Jul 2024 15:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACEF1B012A;
+	Thu,  4 Jul 2024 15:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="21EusLaB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="59XJatkO";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="21EusLaB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="59XJatkO"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="HRIVMEEc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y6aymbh9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880AF1AE866;
-	Thu,  4 Jul 2024 15:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723DE1BC23
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 15:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720107703; cv=none; b=VH9Dvu70qmcBC7cbNNoHoRgMlQg5Q6pnIie5de0SmexxEaWK8OphJhZ2y0kGx2WnOtJvWFhHYWgabhMch+kZPKZuPVpny8T7T81M5BCisU7XEB/sG/mRfkU4TOX0defHYiQvlWZDTjvteh/9CdAYjIglv95vB+nbNN2lmaANEgs=
+	t=1720108182; cv=none; b=qZm+StJG/4F6yuy283EfUfMb78rOagnOW040Mf+Tvd3YFjmTGNlUOxYhCVdc10ljrvhNwzDXMJghLRhLqkhFdvXoSGyvYdkTbBlroKCjHrwcKnnFCX4xcEpdB6DUvmhLyefcbFR4trIiSxbObXwnCSctb3iAeJ7U3e4vH5x1Ra8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720107703; c=relaxed/simple;
-	bh=WUldS21YVYxGXxGgQ8nbRAlBPVCfKgitOYlYMZMGTvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0UHlsT8qPhAr6sO0At8BFlMCd0DS9W9JThQOYWdK/S/zJrnFRBpaEXexDI72g1ou/X4/gVrEnAerT9iMXqSwWHW2EIdBc5reFxFg3kJKbwF9750UReFzQ/LW3AgkmUpZJcAOC/7tSVNRzwm6WfTB8dsejqawlt+EojNnBHqroc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=21EusLaB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=59XJatkO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=21EusLaB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=59XJatkO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 501F81F7E0;
-	Thu,  4 Jul 2024 15:41:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720107699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vyfrBGmFs+Lzd0UfVXg7zkoXk9VyUL0moaO9mNxlEqY=;
-	b=21EusLaB/VKHNIIETFWfSThXUSA7ONptKRzm6etuxA7ceieHCGLuE268wZ/EYJXteDpsdQ
-	U3ZhZXExTe7YvZVb8AZ3wRC2mT6KgCDqTFFRcdtEN4e3ti3McxMBVDNdNlpAUM4H9gDWxj
-	SBGyFguwmcIyfzElIA9NSc19vVewLlI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720107699;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vyfrBGmFs+Lzd0UfVXg7zkoXk9VyUL0moaO9mNxlEqY=;
-	b=59XJatkOy8pg0zGYJ8+TBrAnvjAvXDJkgQTAC9JsIPjVeI95nHncUlOuESbmdCCgot8Ouw
-	mRSQ2IevVjdD1ODw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=21EusLaB;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=59XJatkO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720107699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vyfrBGmFs+Lzd0UfVXg7zkoXk9VyUL0moaO9mNxlEqY=;
-	b=21EusLaB/VKHNIIETFWfSThXUSA7ONptKRzm6etuxA7ceieHCGLuE268wZ/EYJXteDpsdQ
-	U3ZhZXExTe7YvZVb8AZ3wRC2mT6KgCDqTFFRcdtEN4e3ti3McxMBVDNdNlpAUM4H9gDWxj
-	SBGyFguwmcIyfzElIA9NSc19vVewLlI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720107699;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vyfrBGmFs+Lzd0UfVXg7zkoXk9VyUL0moaO9mNxlEqY=;
-	b=59XJatkOy8pg0zGYJ8+TBrAnvjAvXDJkgQTAC9JsIPjVeI95nHncUlOuESbmdCCgot8Ouw
-	mRSQ2IevVjdD1ODw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4000C1369F;
-	Thu,  4 Jul 2024 15:41:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id K5BOD7PChmZ4RgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 04 Jul 2024 15:41:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E02B7A08A5; Thu,  4 Jul 2024 17:41:38 +0200 (CEST)
-Date: Thu, 4 Jul 2024 17:41:38 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Ma, Yu" <yu.ma@intel.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk, mjguzik@gmail.com, edumazet@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v3 1/3] fs/file.c: remove sanity_check and add
- likely/unlikely in alloc_fd()
-Message-ID: <20240704154138.2mzaglillgtvmacz@quack3>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-2-yu.ma@intel.com>
- <20240703-ketchup-aufteilen-3e4c648b20c8@brauner>
- <20240704101104.btkwwnhwf3mnfsvj@quack3>
- <8fd90ebb-5d47-4630-a972-386a9caed976@intel.com>
+	s=arc-20240116; t=1720108182; c=relaxed/simple;
+	bh=4vH+xEGII3O6B3xkPhpQr49+18hcWiT3D8tgwBcrThU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q4MyPP854zT/QX7yQxMkRUxTWn6pCVkDqh3XQQyiTF8PpGb3vyHeeiRHhay1RFFHYEfI2ZbYGnbFLLnrBFGZxYXSGkfCkJF75+3auuPY+Al6OMzMoY/6N3YnzxjdZbSpr5s5mC95Nhrta+XhpfmDL/dqx8F6Jx8HV2B6IJ7lY+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=HRIVMEEc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y6aymbh9; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 8D5F11380292;
+	Thu,  4 Jul 2024 11:49:39 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 04 Jul 2024 11:49:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1720108179;
+	 x=1720194579; bh=6x9Wa88xtgBi1HIek1vtrocK/3lOv/Tq4sSviJFVrZI=; b=
+	HRIVMEEc1Tf46MIYiNN4t7/rTQa8pDlx2kpU5RP8rntH62Iia0pqhJ9iJMMVPVx8
+	3Uu0HwOO6YOhiIqEFC5kux1q91k3wa0rBY6ijT1E5BLZJdlSHad1JwVPTnlvmz60
+	Ek+Qz9wSbFrf8yH7+QuHnGCZmbp2LIZWyTUdkATn13vJ800TEuGPNowZfL9RU2av
+	VyRKPw5hbLtZiUbJnpizOQo64FEjYPOoghmkOKY2YT1FhjDf9bHMDiFVxM0eJe3d
+	BXltdGO3tTBRg9OP+ejZvg+TKJd0T4jfvLAPuIgmE0LGrarGPaPbJDct1XlqrmT+
+	4knC0aSEEgQBFQGKnjxTzw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720108179; x=
+	1720194579; bh=6x9Wa88xtgBi1HIek1vtrocK/3lOv/Tq4sSviJFVrZI=; b=Y
+	6aymbh9t1D8JSwzHz5bOzjptyqo7ZrGwZDzerVNdZMvgXoTz4dOKXfAQyyo8gJcS
+	2x9+0J3uZHq1XPrFM5wvdfCyIbtvgILRlNYGePGXE7U+jODidOx9lgs4jycbAYy3
+	+ipI+dkZtxkOEg0it6aQgg+By/wLxHPDx6JJupAXTuKf+kHMIgIM8sfuv7eT81wj
+	CGRoIR49j6TMhfTjUE7c/+LFQyg2y9Ev3o0RZJNgBQs+J56JwnEzVRRk5L/QfVhI
+	f4CrBayFTMUf9GRPvBaxM4SNJBW+JFWIR2RpbkYOIDQsjtwnXrU5DZkxgMfXX6Ku
+	e+if4PZTlOIPS7gSkLQRA==
+X-ME-Sender: <xms:k8SGZpr7Dsg87_X_7NRMLbSnlGdgHolRa_BT_yoDn6DchhXgHu2KLg>
+    <xme:k8SGZrqYW2qU351jorwQAUZYme8Zoo9Yu9W0CVmDa0PGto6ogNh8mvekj2wATBtpZ
+    VxtOjwY2Xn3wJuM>
+X-ME-Received: <xmr:k8SGZmN7D6MgRYWjvb_LP_gMxt80twDidc83DJ1Ghy9GBW0FBVb87f61566_zb9fNw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudelgdeludcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhn
+    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
+    drfhhmqeenucggtffrrghtthgvrhhnpeeutdekieelgeehudekgffhtdduvddugfehleej
+    jeegleeuffeukeehfeehffevleenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdr
+    shgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
+X-ME-Proxy: <xmx:k8SGZk7nmTR5dfBdb0OwuPNBlRL2kYl-1CphzC4L_xOdHMijCZ0sGA>
+    <xmx:k8SGZo5Ug8egGcinHEwNfFkCoNWofLCPT1VuKFB68c8L2iCvEMe59Q>
+    <xmx:k8SGZsgwsYhgWB3P1huAnoT7ybICnuh3dah6DkGzt9K_w4gay02zZw>
+    <xmx:k8SGZq4GQ0A_-N8lC2_7swe4Cu1jX8bxwjiO5HuxIdVRqPshK2FtDQ>
+    <xmx:k8SGZiQXDMDtQdVUHRyGXw0Uy7ImAqxYsOa7rxuv6npunpiZUSoUdloV>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 4 Jul 2024 11:49:38 -0400 (EDT)
+Message-ID: <d28e579f-fdb8-4de6-b615-f4f80faa72d1@fastmail.fm>
+Date: Thu, 4 Jul 2024 17:49:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8fd90ebb-5d47-4630-a972-386a9caed976@intel.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,kernel.org,zeniv.linux.org.uk,gmail.com,google.com,vger.kernel.org,intel.com,linux.intel.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 501F81F7E0
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: Allow to align reads/writes
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert
+ <bschubert@ddn.com>, "miklos@szeredi.hu" <miklos@szeredi.hu>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20240702163108.616342-1-bschubert@ddn.com>
+ <20240703151549.GC734942@perftesting>
+ <e6a58319-e6b1-40dc-81b8-11bd3641a9ca@fastmail.fm>
+ <20240703173017.GB736953@perftesting>
+ <CAJnrk1bYf85ipt2Hf1id-OBOzaASOeegOxnn3vGtUxYHNp3xHg@mail.gmail.com>
+ <03aba951-1cab-4a40-a980-6ac3d52b2c91@ddn.com>
+ <CAJnrk1a2_qDkEYSCCSOf-jpumLZv5neAgSwW6XGA__eTjBfBCw@mail.gmail.com>
+ <65af4ae5-b8c8-4145-af2d-f722e50d68de@fastmail.fm>
+ <20240704151047.GB865828@perftesting>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US
+In-Reply-To: <20240704151047.GB865828@perftesting>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu 04-07-24 22:45:32, Ma, Yu wrote:
+
+
+On 7/4/24 17:10, Josef Bacik wrote:
+> On Wed, Jul 03, 2024 at 10:44:28PM +0200, Bernd Schubert wrote:
+>>
+>>
+>> On 7/3/24 22:28, Joanne Koong wrote:
+>>> On Wed, Jul 3, 2024 at 11:08 AM Bernd Schubert <bschubert@ddn.com> wrote:
+>>>>
+>>>> On 7/3/24 19:49, Joanne Koong wrote:
+>>>>> On Wed, Jul 3, 2024 at 10:30 AM Josef Bacik <josef@toxicpanda.com> wrote:
+>>>>>>
+>>>>>> On Wed, Jul 03, 2024 at 05:58:20PM +0200, Bernd Schubert wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 7/3/24 17:15, Josef Bacik wrote:
+>>>>>>>> On Tue, Jul 02, 2024 at 06:31:08PM +0200, Bernd Schubert wrote:
+>>>>>>>>> Read/writes IOs should be page aligned as fuse server
+>>>>>>>>> might need to copy data to another buffer otherwise in
+>>>>>>>>> order to fulfill network or device storage requirements.
+>>>>>>>>>
+>>>>>>>>> Simple reproducer is with libfuse, example/passthrough*
+>>>>>>>>> and opening a file with O_DIRECT - without this change
+>>>>>>>>> writing to that file failed with -EINVAL if the underlying
+>>>>>>>>> file system was using ext4 (for passthrough_hp the
+>>>>>>>>> 'passthrough' feature has to be disabled).
+>>>>>>>>>
+>>>>>>>>> Given this needs server side changes as new feature flag is
+>>>>>>>>> introduced.
+>>>>>>>>>
+>>>>>>>>> Disadvantage of aligned writes is that server side needs
+>>>>>>>>> needs another splice syscall (when splice is used) to seek
+>>>>>>>>> over the unaligned area - i.e. syscall and memory copy overhead.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+>>>>>>>>>
+>>>>>>>>> ---
+>>>>>>>>>  From implementation point of view 'struct fuse_in_arg' /
+>>>>>>>>> 'struct fuse_arg' gets another parameter 'align_size', which has to
+>>>>>>>>> be set by fuse_write_args_fill. For all other fuse operations this
+>>>>>>>>> parameter has to be 0, which is guranteed by the existing
+>>>>>>>>> initialization via FUSE_ARGS and C99 style
+>>>>>>>>> initialization { .size = 0, .value = NULL }, i.e. other members are
+>>>>>>>>> zero.
+>>>>>>>>> Another choice would have been to extend fuse_write_in to
+>>>>>>>>> PAGE_SIZE - sizeof(fuse_in_header), but then would be an
+>>>>>>>>> arch/PAGE_SIZE depending struct size and would also require
+>>>>>>>>> lots of stack usage.
+>>>>>>>>
+>>>>>>>> Can I see the libfuse side of this?  I'm confused why we need the align_size at
+>>>>>>>> all?  Is it enough to just say that this connection is aligned, negotiate what
+>>>>>>>> the alignment is up front, and then avoid sending it along on every write?
+>>>>>>>
+>>>>>>> Sure, I had forgotten to post it
+>>>>>>> https://github.com/bsbernd/libfuse/commit/89049d066efade047a72bcd1af8ad68061b11e7c
+>>>>>>>
+>>>>>>> We could also just act on fc->align_writes / FUSE_ALIGN_WRITES and always use
+>>>>>>> sizeof(struct fuse_in_header) + sizeof(struct fuse_write_in) in libfuse and would
+>>>>>>> avoid to send it inside of fuse_write_in. We still need to add it to struct fuse_in_arg,
+>>>>>>> unless you want to check the request type within fuse_copy_args().
+>>>>>>
+>>>>>> I think I like this approach better, at the very least it allows us to use the
+>>>>>> padding for other silly things in the future.
+>>>>>>
+>>>>>
+>>>>> This approach seems cleaner to me as well.
+>>>>> I also like the idea of having callers pass in whether alignment
+>>>>> should be done or not to fuse_copy_args() instead of adding
+>>>>> "align_writes" to struct fuse_in_arg.
+>>>>
+>>>> There is no caller for FUSE_WRITE for fuse_copy_args(), but it is called
+>>>> from fuse_dev_do_read for all request types. I'm going to add in request
+>>>> parsing within fuse_copy_args, I can't decide myself which of both
+>>>> versions I like less.
+>>>
+>>> Sorry I should have clarified better :) By callers, I meant callers to
+>>> fuse_copy_args(). I'm still getting up to speed with the fuse code but
+>>> it looks like it gets called by both fuse_dev_do_read and
+>>> fuse_dev_do_write (through copy_out_args() -> fuse_copy_args()). The
+>>> cleanest solution to me seems like to pass in from those callers
+>>> whether the request should be page-aligned after the headers or not,
+>>> instead of doing the request parsing within fuse_copy_args() itself. I
+>>> think if we do the request parsing within fuse_copy_args() then we
+>>> would also need to have some way to differentiate between FUSE_WRITE
+>>> requests from the dev_do_read vs dev_do_write side (since, as I
+>>> understand it, writes only needs to be aligned for dev_do_read write
+>>> requests).
+>>
+>> fuse_dev_do_write() is used to submit results from fuse server
+>> (userspace), i.e. not interesting here. If we don't parse in
+>> fuse_copy_args(), we would have to do that in fuse_dev_do_read() - it
+>> doesn't have knowledge about the request it handles either - it just
+>> takes from lists what is there. So if we don't want to have it encoded
+>> in fuse_in_arg, there has to request type checking. Given the existing
+>> number of conditions in fuse_dev_do_read, I would like to avoid adding
+>> in even more there.
+>>
 > 
-> On 7/4/2024 6:11 PM, Jan Kara wrote:
-> > On Wed 03-07-24 16:34:49, Christian Brauner wrote:
-> > > On Wed, Jul 03, 2024 at 10:33:09AM GMT, Yu Ma wrote:
-> > > > alloc_fd() has a sanity check inside to make sure the struct file mapping to the
-> > > > allocated fd is NULL. Remove this sanity check since it can be assured by
-> > > > exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
-> > > > likely/unlikely and expand_file() call avoidance to reduce the work under
-> > > > file_lock.
-> > > > 
-> > > > Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > > > Signed-off-by: Yu Ma <yu.ma@intel.com>
-> > > > ---
-> > > >   fs/file.c | 38 ++++++++++++++++----------------------
-> > > >   1 file changed, 16 insertions(+), 22 deletions(-)
-> > > > 
-> > > > diff --git a/fs/file.c b/fs/file.c
-> > > > index a3b72aa64f11..5178b246e54b 100644
-> > > > --- a/fs/file.c
-> > > > +++ b/fs/file.c
-> > > > @@ -515,28 +515,29 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
-> > > >   	if (fd < files->next_fd)
-> > > >   		fd = files->next_fd;
-> > > > -	if (fd < fdt->max_fds)
-> > > > +	if (likely(fd < fdt->max_fds))
-> > > >   		fd = find_next_fd(fdt, fd);
-> > > > +	error = -EMFILE;
-> > > > +	if (unlikely(fd >= fdt->max_fds)) {
-> > > > +		error = expand_files(files, fd);
-> > > > +		if (error < 0)
-> > > > +			goto out;
-> > > > +		/*
-> > > > +		 * If we needed to expand the fs array we
-> > > > +		 * might have blocked - try again.
-> > > > +		 */
-> > > > +		if (error)
-> > > > +			goto repeat;
-> > > > +	}
-> > > So this ends up removing the expand_files() above the fd >= end check
-> > > which means that you can end up expanding the files_struct even though
-> > > the request fd is past the provided end. That seems odd. What's the
-> > > reason for that reordering?
-> > Yeah, not only that but also:
-> > 
-> > > >   	/*
-> > > >   	 * N.B. For clone tasks sharing a files structure, this test
-> > > >   	 * will limit the total number of files that can be opened.
-> > > >   	 */
-> > > > -	error = -EMFILE;
-> > > > -	if (fd >= end)
-> > > > -		goto out;
-> > > > -
-> > > > -	error = expand_files(files, fd);
-> > > > -	if (error < 0)
-> > > > +	if (unlikely(fd >= end))
-> > > >   		goto out;
-> > We could then exit here with error set to 0 instead of -EMFILE. So this
-> > needs a bit of work. But otherwise the patch looks good to me.
-> > 
-> > 								Honza
-> 
-> Do you mean that we return 0 here is fd >=end, I'm afraid that might broke
-> the original design of this function. And all the callers of it are using
-> ret < 0 for error handling, if ret=0, that should mean the fd allocated is 0
-> ...
+> Your original alternative I think is better, leave it in fuse_in_arg and take it
+> out of the write arg.  Thanks,
 
-What I meant is that after your changes alloc_fd() could return 0 in fd >=
-end case. It could happen if we went through expand_files() which then
-returned 0. Anyway, please just fix the ordering of checks and we should be
-fine.
+Thank you! I'm going to send out a new version in one or two days. 
+Currently I believe we don't need the actual alignment size at all and 
+can just use:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+fuse_copy_align()
+cs->offset += cs->len;
+cs->len = 0;
+
+Because offset and len are for for the current page.
+
+I need to ponder about it a bit, checking if there is any exception...
+
+
+Thanks,
+Bernd
+
 
