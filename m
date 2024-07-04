@@ -1,135 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-23148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596A8927BD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 19:20:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87865927C76
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 19:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABE71F228EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 17:20:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE2AEB24D38
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 17:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A18932C85;
-	Thu,  4 Jul 2024 17:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86E64D112;
+	Thu,  4 Jul 2024 17:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="re7+uJgv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tHdFMi0t"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1Uf2aDr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F39E23746
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 17:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1334962A;
+	Thu,  4 Jul 2024 17:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720113621; cv=none; b=eOqM8O9HsRbEJT+2SAWSPSBg83/gDEsxUPGhxRAUDcTdCtaFwHtqQJ+UaxDD4GwZz/mulU8qbtKwcyVlTiMO+/0BNtYboAY06zgWffvUxv1p8e63eoc9SoKcfL8ujy1ZAII1keA0qNJRQLEWtapmKbxEYyewyiL15Nxdi/ENo5s=
+	t=1720115067; cv=none; b=iXFEQ44KXHHIah2m92LKlxyQAl7IdOUe1fPoNhDNf6BdRQ64+LcXeI0ufOG/vkGsIBAOzPVU21S7ANieubAW0F6O15yJQXisn5Nch+MLHYEj8tmqYSM9EIYsZMPR7gV0N4SfvNxZS8yKOq5OPmMaQ60sSEnVrQFnx1KKBmaWCKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720113621; c=relaxed/simple;
-	bh=QgHC9lZzkLcGjLblk8kG4iJfDzNiSi0MHAG/42IQ7L8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LrbgNxPC/DxuFhJyuQDb40gk8v1zHkqrHfXcoVrC57b4nEUvDlQttRxv9QwSUwEgzmdJeJGKyBnfI1rRAIzLI/N507Gek7OLZyg1BX4qB50qRwL8UR5QUKlT+6gpTqavUwAGdixlT11kPhIgNN6gWhEoel9qoKDvVhBtcinpprE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=re7+uJgv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tHdFMi0t; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6DFB51140222;
-	Thu,  4 Jul 2024 13:20:18 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Thu, 04 Jul 2024 13:20:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1720113618;
-	 x=1720200018; bh=ucCFHC203Wvbo7KdD/a7pVPwOUsZ8fD+RI2OkLTolNQ=; b=
-	re7+uJgvqLm8umlVm0f30JlV2bispZ1Wa7f4Ti9A/FUhGrV335mh/5MvZMtl7l5D
-	94DAPGcGB+G8T819fAJPtkXViCOyg/QyhEiTD9gDoISDwA5/2R4YKYzjbYJBcF5A
-	fsohelfYsDk4KREA92JmnrfmJoIVaiyalnCEoUh1ydjO0lfaBx+Cvwyox2qRjLbp
-	w93arIRX/CIwul9hNCz5WZj842TrfzuJf/jI7gHnqWtOseM65Z8Aj3e+fHYUl+B9
-	Zm+yTYDFqi+gFWdYCJe2t3o+RVv7zWZxqEK6y5mwAwiJRQWS8hBMXFehj4aGvPn4
-	71LVEVuXmxyK0y5qAz8ADQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720113618; x=
-	1720200018; bh=ucCFHC203Wvbo7KdD/a7pVPwOUsZ8fD+RI2OkLTolNQ=; b=t
-	HdFMi0tQvuRLHvmSDhBgvasdUT2N2K1X/lx8RNWn+R1DoWoMuUdh5h13eu3nYUxB
-	dz9BvsDymztyPTMtpZEeUC2bkI7VqmkGLEs4StxEY7iu6zm8JBIU3s70+xrt0kg+
-	gPDl6354jhUU1OzqI1ArvNHWXlPyVF88IHnly6/zSzCsogVBvtGug6gmBdOjfQTk
-	nHG3XAxn2kq2fqY+ZzSoAH33zwnhseCiGgvTUugq4BUhf23AXdhZM7yAGS6C0PJd
-	7zLxlYTIByaS5zM9ZmeVnRQ7dzTYBBgctJJQuHy//97nB21qB+5cLtTi8kTdNE23
-	cVFBQwsw6i5DkYBuiqfVg==
-X-ME-Sender: <xms:0dmGZip6KIZWPKVqIcrCoCFcCsG8ZO2s4XK7nfsPzy9UiSWOXfYNVA>
-    <xme:0dmGZgrcq8_cVPlOQtd5EQag0jceNQjpvhWofDk8CHKLGa9htgluCQ91f7dVJRVu5
-    DzX9cyi8YBs3-MS>
-X-ME-Received: <xmr:0dmGZnMEdlDLT9SSwON5-h9Tftbo_8BXSOg5uA-QWnSj1bB6tXgptg2y8SAUPj4QwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudelgdduuddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpeekffevgfdttddukeeiffelheelfeehhfduleei
-    udehhfejhfeghedvfeekteefteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhf
-    mh
-X-ME-Proxy: <xmx:0dmGZh6jJmPOT8g5YqXuWZu5Dc6Hm41bhpPVInEuXyXxojK0DKfWIA>
-    <xmx:0dmGZh4s7I3iRfsnUxsXBSsDztq9CCn07HZQUrTfv_eNUG7Ge5d-nw>
-    <xmx:0dmGZhhZwM05dq5y1XC0UQt_pi8yA8REnaROyUKtex2IPeTxxX3nxg>
-    <xmx:0dmGZr4Qr8-tj5Yk5fouh7nf3KOO8XBe2nWwlB4pdNsuaNWrpCGHeA>
-    <xmx:0tmGZrnJQatoPy-xrM4Hq6tCVLulGAYTP6i46yylvfPQalP6e9-4D2AE>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 4 Jul 2024 13:20:17 -0400 (EDT)
-Message-ID: <21a2cfee-0067-43d1-b605-68a99abd9f53@fastmail.fm>
-Date: Thu, 4 Jul 2024 19:20:16 +0200
+	s=arc-20240116; t=1720115067; c=relaxed/simple;
+	bh=9OEohVoOHp7ONwqat1DbjfbKll05SHnUm4vHkbNilOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uDpdOUGay2T8gkqOr2+DdYkhDrqUUj4uZgCYJUc/lUw5mWRHKNr5px0AsACSBCqWnbrvUqGKq+nI8FoXR/BWrVbuWIvBZnYjM3RFfO+jLLuMWIlIuALgXfoagv6YhwPuN9kia4jR4/x2MB5f9T2ODQ770p23IVIl07OJnPKfCQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H1Uf2aDr; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-58b447c5112so1061980a12.3;
+        Thu, 04 Jul 2024 10:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720115064; x=1720719864; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p/ICCxXD8DFSBJSvnIefNzr4Mlp1WXZIIEXOl9gBP5Q=;
+        b=H1Uf2aDr/h+TCokntzQJQGt/3TgUnHe56M2RLn38MOiwUE4IWH5vbn+2cJNJVItK+s
+         1a54Fiy29UOiKGNs7z53Vxd2nXl5zryh6BFOzYHBjfhHMmB9frBEsHrsqIQOxjIA23s8
+         dC/lQnnlFtZJmRlzUX1c8EBeGCykQk7Wy8YgzS1aA7fPY3ecjWWNRtWwLFj1Lo64C7xf
+         PJpVH+waXlNKkkGbJISka2qNEJuE4P+k2PO8E1jjCaSyxS5yi7NQrSpMnY6qMVDm5+s3
+         RgOK7aPTgRRk6y6kBtS/t5y6hGiYlBh3lXDRStu7qmmQW6gbVsee5kcD5cjaEgz4FTiH
+         RHHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720115064; x=1720719864;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p/ICCxXD8DFSBJSvnIefNzr4Mlp1WXZIIEXOl9gBP5Q=;
+        b=LuUdszaDKj4aZu7apYtRhQMbUeO2quE2bNMHCDWNNVyHC0l2dMySSRuR+Z3SUWSn1F
+         Wb4N3olvrmbVJkPpWwlHt5ZAkWiYxVWiOKiiVzgZHKgbm0i2Zu9tGia0Gu7q4dRoHwvU
+         avRZ9xGotsQdcJHmIueqEs1hYz1+1c8OaYG8d1rNCGs1L0kH+X+Zfn/TqEmN91dCZZvR
+         9cVGqjw6nFN/kfxP8AiCkhZgKlMrohyoTHvvFOt1PHzKLmtRqozJ6Lqc3WiVHOyem4iQ
+         RjAXXwwWCqTBLHpR2iZtX175yWMAIDmxzxVceSeE+u9gVT5WJ7omuTXzv7hdvZgIQlA6
+         2Njw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhfIlrsKbKLCwLjXmxtHhHRp0IKaVSShRAba/dCWmt1M5LKlklCeDvtwuGWJh9IkInabcn5QhPWZISD5QD405uGm8ll9aKJKGzqOqkNw1fPlCfq+0gBsE7/6By7DXpzskOiaeq4WLY1PB2xA==
+X-Gm-Message-State: AOJu0Yz9+NBtp2C+psSpunTcX3JPfqkLv+S6fFHwXx+h+KkrIrR8+sgl
+	2yR/dJ602pomt3l5fd7x7CY+xZ9nfHfAbRGN0asQ4MdcsbHchMHaON0HZhtDHA7rt720taSFHok
+	W7lSeBDnwVAn7LeIL5btIX1YYSPaTMXQELik=
+X-Google-Smtp-Source: AGHT+IFVorgdyabSVYQdv+WoEM+LSfcE2ygWrtpA1sx7rpmpEZto/8sJYdffCwq4xoaYmYhuE62OetDh63Qm/FMKct4=
+X-Received: by 2002:a05:6402:2108:b0:57c:fda3:b669 with SMTP id
+ 4fb4d7f45d1cf-58e5abdd399mr1523307a12.17.1720115063714; Thu, 04 Jul 2024
+ 10:44:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][RESEND] fuse: add simple request tracepoints
-To: Josef Bacik <josef@toxicpanda.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org
-References: <fc6559455ed29437cd414c0fc838ef4749670ff2.1720017492.git.josef@toxicpanda.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US
-In-Reply-To: <fc6559455ed29437cd414c0fc838ef4749670ff2.1720017492.git.josef@toxicpanda.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240614163416.728752-1-yu.ma@intel.com> <20240703143311.2184454-1-yu.ma@intel.com>
+ <20240703143311.2184454-4-yu.ma@intel.com>
+In-Reply-To: <20240703143311.2184454-4-yu.ma@intel.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 4 Jul 2024 19:44:10 +0200
+Message-ID: <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
+To: Yu Ma <yu.ma@intel.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	edumazet@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, 
+	tim.c.chen@intel.com, tim.c.chen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 7/3/24 16:38, Josef Bacik wrote:
-> I've been timing various fuse operations and it's quite annoying to do
-> with kprobes.  Add two tracepoints for sending and ending fuse requests
-> to make it easier to debug and time various operations.
-
-Thanks, this is super helpful.
-
-[...]
-> 
-> +	EM( FUSE_STATX,			"FUSE_STATX")		\
-> +	EMe(CUSE_INIT,			"CUSE_INIT")
+On Wed, Jul 3, 2024 at 4:07=E2=80=AFPM Yu Ma <yu.ma@intel.com> wrote:
+>
+> There is available fd in the lower 64 bits of open_fds bitmap for most ca=
+ses
+> when we look for an available fd slot. Skip 2-levels searching via
+> find_next_zero_bit() for this common fast path.
+>
+> Look directly for an open bit in the lower 64 bits of open_fds bitmap whe=
+n a
+> free slot is available there, as:
+> (1) The fd allocation algorithm would always allocate fd from small to la=
+rge.
+> Lower bits in open_fds bitmap would be used much more frequently than hig=
+her
+> bits.
+> (2) After fdt is expanded (the bitmap size doubled for each time of expan=
+sion),
+> it would never be shrunk. The search size increases but there are few ope=
+n fds
+> available here.
+> (3) There is fast path inside of find_next_zero_bit() when size<=3D64 to =
+speed up
+> searching.
+>
+> As suggested by Mateusz Guzik <mjguzik gmail.com> and Jan Kara <jack@suse=
+.cz>,
+> update the fast path from alloc_fd() to find_next_fd(). With which, on to=
+p of
+> patch 1 and 2, pts/blogbench-1.1.0 read is improved by 13% and write by 7=
+% on
+> Intel ICX 160 cores configuration with v6.10-rc6.
+>
+> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Yu Ma <yu.ma@intel.com>
+> ---
+>  fs/file.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/fs/file.c b/fs/file.c
+> index a15317db3119..f25eca311f51 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -488,6 +488,11 @@ struct files_struct init_files =3D {
+>
+>  static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start=
+)
+>  {
+> +       unsigned int bit;
+> +       bit =3D find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
+> +       if (bit < BITS_PER_LONG)
+> +               return bit;
 > +
-> +/*
-> + * This will turn the above table into TRACE_DEFINE_ENUM() for each of the
-> + * entries.
-> + */
-> +#undef EM
-> +#undef EMe
-> +#define EM(a, b)	TRACE_DEFINE_ENUM(a);
-> +#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
+>         unsigned int maxfd =3D fdt->max_fds; /* always multiple of BITS_P=
+ER_LONG */
+>         unsigned int maxbit =3D maxfd / BITS_PER_LONG;
+>         unsigned int bitbit =3D start / BITS_PER_LONG;
+> --
+> 2.43.0
+>
 
+I had something like this in mind:
+diff --git a/fs/file.c b/fs/file.c
+index a3b72aa64f11..4d3307e39db7 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
+*fdt, unsigned int start)
+        unsigned int maxfd =3D fdt->max_fds; /* always multiple of
+BITS_PER_LONG */
+        unsigned int maxbit =3D maxfd / BITS_PER_LONG;
+        unsigned int bitbit =3D start / BITS_PER_LONG;
++       unsigned int bit;
++
++       /*
++        * Try to avoid looking at the second level map.
++        */
++       bit =3D find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
++                               start & (BITS_PER_LONG - 1));
++       if (bit < BITS_PER_LONG) {
++               return bit + bitbit * BITS_PER_LONG;
++       }
 
-I'm not super familiar with tracepoints and I'm a bit list why "EMe" is 
-needed
-in addition to EM? CUSE_INIT is just another number?
+        bitbit =3D find_next_zero_bit(fdt->full_fds_bits, maxbit,
+bitbit) * BITS_PER_LONG;
+        if (bitbit >=3D maxfd)
 
+can you please test it out. I expect it to provide a tiny improvement
+over your patch.
 
-Thanks,
-Bernd
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
