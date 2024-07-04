@@ -1,40 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-23147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F04927B10
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 18:24:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596A8927BD2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 19:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6CBEB2219E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 16:24:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABE71F228EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 17:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E501B29B4;
-	Thu,  4 Jul 2024 16:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A18932C85;
+	Thu,  4 Jul 2024 17:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="re7+uJgv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tHdFMi0t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF441B29AC;
-	Thu,  4 Jul 2024 16:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F39E23746
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 17:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720110238; cv=none; b=enG2GjIEerl2oF9Q5RAaBAK61o9cMeMNVMzCBAAiO31yGg21XkQuou342C91Dz1GxEFNKYOglRI/ayXpwHBKCaGvHU1nlzHUYv2P1dPjyJLvkwylDf/4wS/GSSxVP6Lk/u19OWwZsqgdCZE8mpMGwjC9dwLlNbOXn03OAkAtlL8=
+	t=1720113621; cv=none; b=eOqM8O9HsRbEJT+2SAWSPSBg83/gDEsxUPGhxRAUDcTdCtaFwHtqQJ+UaxDD4GwZz/mulU8qbtKwcyVlTiMO+/0BNtYboAY06zgWffvUxv1p8e63eoc9SoKcfL8ujy1ZAII1keA0qNJRQLEWtapmKbxEYyewyiL15Nxdi/ENo5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720110238; c=relaxed/simple;
-	bh=UtL1heITcTwWfe8XxOhwZmht8CQevgoJ0LRWrx5WrWw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZMcyYob/KeQas7nCDtn8dAYgqS6kiAQaO1+wAnbJ54tGy0Z+F8x0KI7CtA4uSXFwTfFA649zXUOlK0oNJoX3MU+3nFHfQvPbQwjeWOKYitkMtbXRvL2TxzatkgVy0vxHaTx6aXbJ/zpcevo2WrPQIdv7nWiGITkDQ0wJN7eAiAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2431A367;
-	Thu,  4 Jul 2024 09:24:20 -0700 (PDT)
-Received: from [10.1.29.168] (XHFQ2J9959.cambridge.arm.com [10.1.29.168])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27F073F762;
-	Thu,  4 Jul 2024 09:23:53 -0700 (PDT)
-Message-ID: <bdde4008-60db-4717-a6b5-53d77ab76bdb@arm.com>
-Date: Thu, 4 Jul 2024 17:23:51 +0100
+	s=arc-20240116; t=1720113621; c=relaxed/simple;
+	bh=QgHC9lZzkLcGjLblk8kG4iJfDzNiSi0MHAG/42IQ7L8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LrbgNxPC/DxuFhJyuQDb40gk8v1zHkqrHfXcoVrC57b4nEUvDlQttRxv9QwSUwEgzmdJeJGKyBnfI1rRAIzLI/N507Gek7OLZyg1BX4qB50qRwL8UR5QUKlT+6gpTqavUwAGdixlT11kPhIgNN6gWhEoel9qoKDvVhBtcinpprE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=re7+uJgv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tHdFMi0t; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6DFB51140222;
+	Thu,  4 Jul 2024 13:20:18 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Thu, 04 Jul 2024 13:20:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1720113618;
+	 x=1720200018; bh=ucCFHC203Wvbo7KdD/a7pVPwOUsZ8fD+RI2OkLTolNQ=; b=
+	re7+uJgvqLm8umlVm0f30JlV2bispZ1Wa7f4Ti9A/FUhGrV335mh/5MvZMtl7l5D
+	94DAPGcGB+G8T819fAJPtkXViCOyg/QyhEiTD9gDoISDwA5/2R4YKYzjbYJBcF5A
+	fsohelfYsDk4KREA92JmnrfmJoIVaiyalnCEoUh1ydjO0lfaBx+Cvwyox2qRjLbp
+	w93arIRX/CIwul9hNCz5WZj842TrfzuJf/jI7gHnqWtOseM65Z8Aj3e+fHYUl+B9
+	Zm+yTYDFqi+gFWdYCJe2t3o+RVv7zWZxqEK6y5mwAwiJRQWS8hBMXFehj4aGvPn4
+	71LVEVuXmxyK0y5qAz8ADQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720113618; x=
+	1720200018; bh=ucCFHC203Wvbo7KdD/a7pVPwOUsZ8fD+RI2OkLTolNQ=; b=t
+	HdFMi0tQvuRLHvmSDhBgvasdUT2N2K1X/lx8RNWn+R1DoWoMuUdh5h13eu3nYUxB
+	dz9BvsDymztyPTMtpZEeUC2bkI7VqmkGLEs4StxEY7iu6zm8JBIU3s70+xrt0kg+
+	gPDl6354jhUU1OzqI1ArvNHWXlPyVF88IHnly6/zSzCsogVBvtGug6gmBdOjfQTk
+	nHG3XAxn2kq2fqY+ZzSoAH33zwnhseCiGgvTUugq4BUhf23AXdhZM7yAGS6C0PJd
+	7zLxlYTIByaS5zM9ZmeVnRQ7dzTYBBgctJJQuHy//97nB21qB+5cLtTi8kTdNE23
+	cVFBQwsw6i5DkYBuiqfVg==
+X-ME-Sender: <xms:0dmGZip6KIZWPKVqIcrCoCFcCsG8ZO2s4XK7nfsPzy9UiSWOXfYNVA>
+    <xme:0dmGZgrcq8_cVPlOQtd5EQag0jceNQjpvhWofDk8CHKLGa9htgluCQ91f7dVJRVu5
+    DzX9cyi8YBs3-MS>
+X-ME-Received: <xmr:0dmGZnMEdlDLT9SSwON5-h9Tftbo_8BXSOg5uA-QWnSj1bB6tXgptg2y8SAUPj4QwA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudelgdduuddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhn
+    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
+    drfhhmqeenucggtffrrghtthgvrhhnpeekffevgfdttddukeeiffelheelfeehhfduleei
+    udehhfejhfeghedvfeekteefteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhf
+    mh
+X-ME-Proxy: <xmx:0dmGZh6jJmPOT8g5YqXuWZu5Dc6Hm41bhpPVInEuXyXxojK0DKfWIA>
+    <xmx:0dmGZh4s7I3iRfsnUxsXBSsDztq9CCn07HZQUrTfv_eNUG7Ge5d-nw>
+    <xmx:0dmGZhhZwM05dq5y1XC0UQt_pi8yA8REnaROyUKtex2IPeTxxX3nxg>
+    <xmx:0dmGZr4Qr8-tj5Yk5fouh7nf3KOO8XBe2nWwlB4pdNsuaNWrpCGHeA>
+    <xmx:0tmGZrnJQatoPy-xrM4Hq6tCVLulGAYTP6i46yylvfPQalP6e9-4D2AE>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 4 Jul 2024 13:20:17 -0400 (EDT)
+Message-ID: <21a2cfee-0067-43d1-b605-68a99abd9f53@fastmail.fm>
+Date: Thu, 4 Jul 2024 19:20:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -42,157 +91,45 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/filemap: Allow arch to request folio size for exec
- memory
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <21cnbao@gmail.com>,
- John Hubbard <jhubbard@nvidia.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20240215154059.2863126-1-ryan.roberts@arm.com>
- <Zc6mcDlcnOZIjqGm@dread.disaster.area>
- <58a67051-6d61-4d16-b073-266522907e05@arm.com>
-In-Reply-To: <58a67051-6d61-4d16-b073-266522907e05@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH][RESEND] fuse: add simple request tracepoints
+To: Josef Bacik <josef@toxicpanda.com>, miklos@szeredi.hu,
+ linux-fsdevel@vger.kernel.org
+References: <fc6559455ed29437cd414c0fc838ef4749670ff2.1720017492.git.josef@toxicpanda.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US
+In-Reply-To: <fc6559455ed29437cd414c0fc838ef4749670ff2.1720017492.git.josef@toxicpanda.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Dave,
-
-I'm reviving this thread, hoping to make some progress on this. I'd appreciate
-your thoughts...
 
 
-On 16/02/2024 11:18, Ryan Roberts wrote:
-> Hi Dave,
+On 7/3/24 16:38, Josef Bacik wrote:
+> I've been timing various fuse operations and it's quite annoying to do
+> with kprobes.  Add two tracepoints for sending and ending fuse requests
+> to make it easier to debug and time various operations.
+
+Thanks, this is super helpful.
+
+[...]
 > 
-> Thanks for taking a look at this! Some comments below...
-> 
-> On 16/02/2024 00:04, Dave Chinner wrote:
->> On Thu, Feb 15, 2024 at 03:40:59PM +0000, Ryan Roberts wrote:
->>> Change the readahead config so that if it is being requested for an
->>> executable mapping, do a synchronous read of an arch-specified size in a
->>> naturally aligned manner.
->>>
->>> On arm64 if memory is physically contiguous and naturally aligned to the
->>> "contpte" size, we can use contpte mappings, which improves utilization
->>> of the TLB. When paired with the "multi-size THP" changes, this works
->>> well to reduce dTLB pressure. However iTLB pressure is still high due to
->>> executable mappings having a low liklihood of being in the required
->>> folio size and mapping alignment, even when the filesystem supports
->>> readahead into large folios (e.g. XFS).
->>>
->>> The reason for the low liklihood is that the current readahead algorithm
->>> starts with an order-2 folio and increases the folio order by 2 every
->>> time the readahead mark is hit. But most executable memory is faulted in
->>> fairly randomly and so the readahead mark is rarely hit and most
->>> executable folios remain order-2.
->>
->> Yup, this is a bug in the readahead code, and really has nothing to
->> do with executable files, mmap or the architecture.  We don't want
->> some magic new VM_EXEC min folio size per architecture thingy to be
->> set - we just want readahead to do the right thing.
-> 
-> It sounds like we agree that there is a bug but we don't agree on what the bug
-> is? My view is that executable segments are accessed in a ~random manner and
-> therefore readahead (as currently configured) is not very useful. But data may
-> well be accessed more sequentially and therefore readahead is useful. Given both
-> data and text can come from the same file, I don't think this can just be a
-> mapping setting? (my understanding is that there is one "mapping" for the whole
-> file?) So we need to look to VM_EXEC for that decision.
+> +	EM( FUSE_STATX,			"FUSE_STATX")		\
+> +	EMe(CUSE_INIT,			"CUSE_INIT")
+> +
+> +/*
+> + * This will turn the above table into TRACE_DEFINE_ENUM() for each of the
+> + * entries.
+> + */
+> +#undef EM
+> +#undef EMe
+> +#define EM(a, b)	TRACE_DEFINE_ENUM(a);
+> +#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
 
-Additionally, what is "the right thing" in your view?
 
-> 
->>
->> Indeed, we are already adding a mapping minimum folio order
->> directive to the address space to allow for filesystem block sizes
->> greater than PAGE_SIZE. That's the generic mechanism that this
->> functionality requires. See here:
->>
->> https://lore.kernel.org/linux-xfs/20240213093713.1753368-5-kernel@pankajraghav.com/
-> 
-> Great, I'm vaguely aware of this work, but haven't looked in detail. I'll go
-> read it. But from your brief description, IIUC, this applies to the whole file,
-> and is a constraint put in place by the filesystem? Applying to the whole file
-> may make sense - that means more opportunity for contpte mappings for data pages
-> too, although I guess this adds more scope for write amplificaiton because data
-> tends to be writable, and text isn't. But for my use case, its not a hard
-> constraint, its just a preference which can improve performance. And the
-> filesystem is the wrong place to make the decision; its the arch that knows
-> about the performacne opportunities with different block mapping sizes.
+I'm not super familiar with tracepoints and I'm a bit list why "EMe" is 
+needed
+in addition to EM? CUSE_INIT is just another number?
 
-Having finally taken a proper look at this, I still have the same opinion. I
-don't think this (hard) minimum folio order work is the right fit for what I'm
-trying to achieve. I need a soft minimum that can still fall back to order-0 (or
-the min mapping order), and ideally I want a different soft minimum to be
-applied to different parts of the file (exec vs other).
-
-I'm currently thinking about abandoning the arch hook and replacing with sysfs
-ABI akin to the mTHP interface. The idea would be that for each size, you could
-specify 'never', 'always', 'exec' or 'always+exec'. A maximum one size would be
-allowed be marked as 'exec' at a time. The set of sizes marked 'always' would be
-the ones considered in page_cache_ra_order(), with fallback to order-0 (or min
-mapping order) still allowed. If a size is marked 'exec' then we would take
-VM_EXEC path added by this patch and do sync read into folio of that size.
-
-This obviously expands the scope somewhat, but I suspect having the ability to
-control the folio orders that get allocated by the pagecache will also help
-reduce large folio allocation failure due to fragmentation; if only a couple
-folios sizes are in operation in a given system, you are more likely to be able
-to reclaim the size that you need.
-
-All just a thought experiment at the moment, and I'll obviously do some
-prototyping and large folio allocation success rate measurements. I appreciate
-that we don't want to add sysfs controls without good justification. But I
-wonder if this could be a more pallatable solution to people, at least in principle?
 
 Thanks,
-Ryan
-
-> 
-> As a side note, concerns have been expressed about the possibility of physical
-> memory fragmentation becoming problematic, meaning we degrade back to small
-> folios over time with my mTHP work. The intuituon is that if the whole system is
-> using a few folio sizes in ~equal quantities then we might be ok, but I don't
-> have any data yet. Do you have any data on fragmentation? I guess this could be
-> more concerning for your use case?
-> 
->>
->> (Probably worth reading some of the other readahead mods in that
->> series and the discussion because readahead needs to ensure that it
->> fill entire high order folios in a single IO to avoid partial folio
->> up-to-date states from partial reads.)
->>
->> IOWs, it seems to me that we could use this proposed generic mapping
->> min order functionality when mmap() is run and VM_EXEC is set to set
->> the min order to, say, 64kB. Then the readahead code would simply do
->> the right thing, as would all other reads and writes to that
->> mapping.
-> 
-> Ahh yes, hooking into your new logic to set a min order based on VM_EXEC sounds
-> perfect...
-> 
->>
->> We could trigger this in the ->mmap() method of the filesystem so
->> that filesysetms that can use large folios can turn it on, whilst
->> other filesystems remain blissfully unaware of the functionality.
->> Filesystems could also do smarter things here, too. eg. enable PMD
->> alignment for large mapped files....
-> 
-> ...but I don't think the filesystem is the right place. The size preference
-> should be driven by arch IMHO.
-> 
-> Thanks,
-> Ryan
-> 
->>
->> -Dave.
-> 
-
+Bernd
 
