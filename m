@@ -1,207 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-23108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8ED927487
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 13:04:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2896E9274DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 13:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9ACE284860
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 11:04:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2901C21D38
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 11:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B82B157A43;
-	Thu,  4 Jul 2024 11:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5695F1AC43F;
+	Thu,  4 Jul 2024 11:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="XBiq1xE1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45FA1A2C31
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 11:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946171AB50A;
+	Thu,  4 Jul 2024 11:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720091058; cv=none; b=AH8poIb3OLPoiRa2JQ4C783MvuehXyHspsFs4TSlwGnwEsaysntghgZNFQoxHiFKJeLHmokyad5zfWUQNkfr5fC279HqOuKawIuPcLdach9aVD/hrtL+ap87yxnpT+/Rg+Qr2ag4Etjq3XhV8pxLkqxdEX20YsaLVn8W/gte2c4=
+	t=1720092216; cv=none; b=TWIZMURpbOgDhXrL66L6j8HSp/A1X+Vm4vASymLgUjZJAIFI06uR5T8n5VVSI6/Guek22dwzx5qfbT2jUa5aojwOeQJilvhMa7YBKNLxm0dqH+NDXyW4IxLkokL6T/KdS1V1t9ezjBkOPADgyGWizupZ7fR7DAhBl77d9pwI9fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720091058; c=relaxed/simple;
-	bh=gYS2whrZY86Kq5/Ysa/GGAOdZHOWk5qsRXJF/IiNlY0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=V/LJpjdf6wl+TjEbAdhEzp2Kdn/S+sP28ygx4J2QKQnWSUOQZXMpxAyNO1+GsM0ICf38e33AQHWLKeYgLeDR0N2Dgu2xsCvGpcYJDpTqwkenzLdlwSW4wxxouWFPx3orVkbq6DZtk1ZocaTQxh2dOVyp/yHvhfwcAokTUJl2EcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f59855336cso73750539f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jul 2024 04:04:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720091056; x=1720695856;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BIc8y7SfIQseVVtb2caKhWpDcc0rvRRo+xzgagIpOBQ=;
-        b=RjyoLf9GeCOlu7NBugOhSbPA9yOf19QKP1RMmRUn1E/sL7S8etzDDPywP3TDqSlWBE
-         TdlNGBokcuf3xb3fSbVeZTFLuET7yME07fOKfRiLzaDudRlTj/noIDyFqt8xzeGnNiY0
-         NtBq0FmuaO1PGNNXFnjJYtdQuWjkLwkjAeEK2hd7gAJhnWygv1VMS/rwla0BnHn2mxtS
-         lno3KoSaB3ekLwYrrV228O/IIbPfJY+TjcasYDEpVpLQ0MNWpxelp8K77nZYcfTrKmVZ
-         FGxahSXY3Biouh3RZAfns3mMFkpai76PKZbIQ1du/sVmfy569dulYLKI2QO4nq7WxrL5
-         J3qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPeHPk1DtyIaPvFa5g/j+K0MrZ+YLuWb8uDOE/JmBVeOT73yWUQL/hWcblhH02HFT+Zo+p7/gSyinmcPI3ua9tZTaEAUD+tpCtqY18Qg==
-X-Gm-Message-State: AOJu0YxWgmznTOfo9BvHaXBCMwmvwFckClUSPvOI8FFaTM/3KLVX5Zaj
-	O7i4CTyLGpWoprEfJaR1UFU1SIEbdHNnX1KxFoNw70lbWUgwTuefEurDo2uT0pFdXE7YmYg12fj
-	tJ/j/xcTME90LeUo68tnNjDyRH93U419IDchizuJh/b81WXy0Qi7nYCk=
-X-Google-Smtp-Source: AGHT+IFeaPd5H1fJzhRGyCJpOUmF0sfxC90youmbetsLBodBTMQDNfXlWodcq3yNZuDvPmc4Y7wFs56GFlgR4MdgtAx1Y4qkgmBr
+	s=arc-20240116; t=1720092216; c=relaxed/simple;
+	bh=hNSG/+5K1J5saVZJ7BglnnF5ZNhsyHDkYQsiG/KzOQA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=J86oz0vRqO0YM0udUEsG92GgdH3S96gv5Df6jiAqF0Re0BNFirjTuAN8l4KXCMU65lSek3O2wnFQRRGClh1eNgJyTeLm+TBDFPZV2RgalKf1A6oJ/7UorDrQwIEE+i3bxPfC/vYxWxG0ZVfSddCM1IjeYszv5WdEm2OjVw+O/kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=XBiq1xE1; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4WFDmF3QGbz9sTk;
+	Thu,  4 Jul 2024 13:23:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1720092205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3dxNOGhfNGAjYVHU9ar+wjZtc9amrH6gr9ZRGCzp9lc=;
+	b=XBiq1xE15euorUKdE9CA20Ht7ksK1twWwZnkS0R8/xLLIAAI1HeUz3Il4HHy0MnqZ/egg8
+	O/SvONo4HhSB7ruEy0eJMp8eY3uAMSBhP7v3EjNG4fx7lRrwgjeB95f6UmJ9Cy+H5nIbZe
+	fveqfentOgLqxbofudhh2qFBbYaHj/iBvVydTNImsWM901vhyOMebXNZfp7PCdduSyztOz
+	j1LVm0+XyshLrFwEIUvbgfjqYrIJUce0Aue4Z522W9kvcEM4HThzdwKxx/Ro4SqmMkv9lX
+	0uNSSA/yMUJ5jVVNAco9Xm0lJ1Rn0Af1pghyYB+UP4Rpjs7eyxBqU68EhckTQw==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: david@fromorbit.com,
+	willy@infradead.org,
+	chandan.babu@oracle.com,
+	djwong@kernel.org,
+	brauner@kernel.org,
+	akpm@linux-foundation.org
+Cc: yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org,
+	hare@suse.de,
+	p.raghav@samsung.com,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org,
+	kernel@pankajraghav.com,
+	hch@lst.de,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH v9 00/10] enable bs > ps in XFS
+Date: Thu,  4 Jul 2024 11:23:10 +0000
+Message-ID: <20240704112320.82104-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6086:b0:7f3:a80e:8cec with SMTP id
- ca18e2360f4ac-7f66db5e21amr6845439f.0.1720091055821; Thu, 04 Jul 2024
- 04:04:15 -0700 (PDT)
-Date: Thu, 04 Jul 2024 04:04:15 -0700
-In-Reply-To: <0000000000000538640617a80980@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005d2c82061c69e8ca@google.com>
-Subject: Re: [syzbot] [gfs2?] KASAN: stack-out-of-bounds Read in gfs2_dump_glock
-From: syzbot <syzbot+7efd59a5a532c57037e6@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-HEAD commit:    795c58e4c7fc Merge tag 'trace-v6.10-rc6' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16418635980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1ace69f521989b1f
-dashboard link: https://syzkaller.appspot.com/bug?extid=7efd59a5a532c57037e6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15e82849980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b55181980000
+This is the ninth version of the series that enables block size > page size
+(Large Block Size) in XFS.
+The context and motivation can be seen in cover letter of the RFC v1 [0].
+We also recorded a talk about this effort at LPC [1], if someone would
+like more context on this effort.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/947727e7be17/disk-795c58e4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8898920020bb/vmlinux-795c58e4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9aed6052df98/bzImage-795c58e4.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7bee2c9df91a/mount_0.gz
+A lot of emphasis has been put on testing using kdevops, starting with an XFS
+baseline [3]. The testing has been split into regression and progression.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7efd59a5a532c57037e6@syzkaller.appspotmail.com
+Regression testing:
+In regression testing, we ran the whole test suite to check for regressions on
+existing profiles due to the page cache changes.
 
-gfs2: fsid=syz:syz.0:  H: s:SH f:H e:0 p:5123 [syz-executor201] iterate_dir+0x57a/0x810 fs/readdir.c:110
-==================================================================
-BUG: KASAN: stack-out-of-bounds in gfs2_dump_glock+0x15b1/0x1bb0
-Read of size 8 at addr ffffc900034a7ca0 by task syz-executor201/5125
+I also ran split_huge_page_test selftest on XFS filesystem to check for
+huge page splits in min order chunks is done correctly.
 
-CPU: 0 PID: 5125 Comm: syz-executor201 Not tainted 6.10.0-rc6-syzkaller-00069-g795c58e4c7fc #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- gfs2_dump_glock+0x15b1/0x1bb0
- gfs2_consist_inode_i+0xf5/0x110 fs/gfs2/util.c:457
- gfs2_dirent_scan+0x52b/0x670
- gfs2_dirent_search+0x30e/0x8c0 fs/gfs2/dir.c:853
- gfs2_dir_search+0xb2/0x2f0 fs/gfs2/dir.c:1653
- gfs2_lookupi+0x461/0x5e0 fs/gfs2/inode.c:340
- __gfs2_lookup+0xa4/0x280 fs/gfs2/inode.c:896
- __lookup_slow+0x28c/0x3f0 fs/namei.c:1692
- lookup_slow+0x53/0x70 fs/namei.c:1709
- walk_component fs/namei.c:2004 [inline]
- link_path_walk+0x9ea/0xea0 fs/namei.c:2331
- path_parentat fs/namei.c:2540 [inline]
- __filename_parentat+0x263/0x6f0 fs/namei.c:2564
- filename_parentat fs/namei.c:2582 [inline]
- filename_create+0xf6/0x540 fs/namei.c:3887
- do_mknodat+0x18b/0x5b0 fs/namei.c:4052
- __do_sys_mknod fs/namei.c:4098 [inline]
- __se_sys_mknod fs/namei.c:4096 [inline]
- __x64_sys_mknod+0x8e/0xa0 fs/namei.c:4096
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc9a7de9779
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 1f 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc9a7d75168 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
-RAX: ffffffffffffffda RBX: 00007fc9a7e7d6d8 RCX: 00007fc9a7de9779
-RDX: 0000000000000701 RSI: 0000000000000000 RDI: 0000000020000680
-RBP: 00007fc9a7e7d6d0 R08: 00007ffc076d7ae7 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc9a7e7d6dc
-R13: 000000000000006e R14: 00007ffc076d7a00 R15: 00007ffc076d7ae8
- </TASK>
+No regressions were found with these patches added on top.
 
-The buggy address belongs to the virtual mapping at
- [ffffc900034a0000, ffffc900034a9000) created by:
- copy_process+0x5d1/0x3dc0 kernel/fork.c:2220
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+compare it with existing support, an ARM VM with 64k base page system (without
+our patches) was used as a reference to check for actual failures due to LBS
+support in a 4k base page size system.
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88802c96fd80 pfn:0x2c96f
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: ffff88802c96fd80 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN|__GFP_ZERO), pid 5106, tgid 5106 (syz-executor201), ts 62007196465, free_ts 61954421151
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1473
- prep_new_page mm/page_alloc.c:1481 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3425
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4683
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- vm_area_alloc_pages mm/vmalloc.c:3575 [inline]
- __vmalloc_area_node mm/vmalloc.c:3651 [inline]
- __vmalloc_node_range_noprof+0x971/0x1460 mm/vmalloc.c:3832
- alloc_thread_stack_node kernel/fork.c:309 [inline]
- dup_task_struct+0x444/0x8c0 kernel/fork.c:1115
- copy_process+0x5d1/0x3dc0 kernel/fork.c:2220
- kernel_clone+0x223/0x870 kernel/fork.c:2797
- __do_sys_clone3 kernel/fork.c:3098 [inline]
- __se_sys_clone3+0x2cb/0x350 kernel/fork.c:3082
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5074 tgid 5074 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1093 [inline]
- free_unref_page+0xd19/0xea0 mm/page_alloc.c:2588
- discard_slab mm/slub.c:2527 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:2995
- put_cpu_partial+0x17c/0x250 mm/slub.c:3070
- __slab_free+0x2ea/0x3d0 mm/slub.c:4308
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3940 [inline]
- slab_alloc_node mm/slub.c:4002 [inline]
- kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4045
- __alloc_skb+0x1c3/0x440 net/core/skbuff.c:656
- netlink_sendmsg+0x631/0xcb0 net/netlink/af_netlink.c:1880
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
- ___sys_sendmsg net/socket.c:2639 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+There are some tests that assumes block size < page size that needs to be fixed.
+We have a tree with fixes for xfstests [4], most of the changes have been posted
+already, and only a few minor changes need to be posted. Already part of these
+changes has been upstreamed to fstests, and new tests have also been written and
+are out for review, namely for mmap zeroing-around corner cases, compaction
+and fsstress races on mm, and stress testing folio truncation on file mapped
+folios.
 
-Memory state around the buggy address:
- ffffc900034a7b80: 00 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc900034a7c00: 00 00 00 00 f1 f1 f1 f1 00 00 00 00 00 00 00 00
->ffffc900034a7c80: 00 f3 f3 f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00
-                               ^
- ffffc900034a7d00: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
- ffffc900034a7d80: 04 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
+No new failures were found with the LBS support.
+
+We've done some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+patches applied, and detected no regressions.
+
+We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
+
+For those who want this in a git tree we have this up on a kdevops
+large-block-minorder-for-next-v9 tag [6].
+
+[0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+[3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+[5] https://github.com/iovisor/bcc/pull/4813
+[6] https://github.com/linux-kdevops/linux/
+[7] https://lore.kernel.org/linux-kernel/Zl20pc-YlIWCSy6Z@casper.infradead.org/#t
+
+Changes since v8:
+- make iomap_dio_zero return error code and some variable name changes.
+- Call THP_SPLIT_PAGE_FAILED only if folio_is_pmd_mappable()
+- Collected RVB from willy, Darrick and Dave.
+
+Dave Chinner (1):
+  xfs: use kvmalloc for xattr buffers
+
+Luis Chamberlain (1):
+  mm: split a folio in minimum folio order chunks
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (7):
+  filemap: allocate mapping_min_order folios in the page cache
+  readahead: allocate folios with mapping_min_order in readahead
+  filemap: cap PTE range to be created to allowed zero fill in
+    folio_map_range()
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/iomap/buffered-io.c        |   4 +-
+ fs/iomap/direct-io.c          |  45 ++++++++++++--
+ fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+ fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+ fs/xfs/libxfs/xfs_shared.h    |   3 +
+ fs/xfs/xfs_icache.c           |   6 +-
+ fs/xfs/xfs_iops.c             |   2 +-
+ fs/xfs/xfs_mount.c            |   8 ++-
+ fs/xfs/xfs_super.c            |  18 +++---
+ include/linux/huge_mm.h       |  14 +++--
+ include/linux/pagemap.h       | 107 +++++++++++++++++++++++++++++-----
+ mm/filemap.c                  |  36 +++++++-----
+ mm/huge_memory.c              |  55 +++++++++++++++--
+ mm/readahead.c                |  83 +++++++++++++++++++-------
+ 14 files changed, 317 insertions(+), 84 deletions(-)
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+base-commit: 74564adfd3521d9e322cfc345fdc132df80f3c79
+-- 
+2.44.1
+
 
