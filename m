@@ -1,89 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-23084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EB0926D18
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 03:26:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C01C926D87
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 04:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7672A1C21820
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 01:26:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4F51F22D17
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 02:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A62C8FE;
-	Thu,  4 Jul 2024 01:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1BC17543;
+	Thu,  4 Jul 2024 02:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VtbfgnNd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MsVC5OeC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58922581;
-	Thu,  4 Jul 2024 01:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30711FC02;
+	Thu,  4 Jul 2024 02:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720056397; cv=none; b=HY7uBcdM1Cx5EKQJFbLwga7dFWx862oc+hdC81vb2Je4gEufL8CgkmGKFKFfU+7Gc9mPg9/85ndENievp3uqvFLFVGOP8PqSRSLGIM3rPfdQsB+FjWodtjMe+PZs4y0AHUieQz/ZbYjJIuz9dTSm4ikAzhn0TTzAM9qOnJgpq+o=
+	t=1720060708; cv=none; b=BXKDhgji4YKVWvZdnnyBIDE+AqigGR8p1U1r7zVHjGdfJiW3L6bLmRYfUR55SiaiShP7yzb5AuXAhK3ODcBs/rqpzaaQ4Go3XRupj0vNa5yBygH1WhcMM2elTzl5HMQ9/jraSSXfjnkEbDkvIgyYl/VJwnpk00TlO2Ibk+POIvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720056397; c=relaxed/simple;
-	bh=GkVtuwbf8p9cXqHz8uwyctRlpGOGEOw/zHNi1c8dusk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=keHeLCiSgwE72jQe8+qyydmezzv8UdCWODp1GH4laPOfq1tsXDJ2NGuVRGZ0w8fL25XBZcKXEsK+xxFEb2AViYYA/b5iPVrg6V7fk5hPnFeXDJY8a/pjtB3ygbNqckBgrRGmP3s3RiUMWWm2455lEumoahlCtBo4w139uShYGIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VtbfgnNd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98FC7C2BD10;
-	Thu,  4 Jul 2024 01:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720056397;
-	bh=GkVtuwbf8p9cXqHz8uwyctRlpGOGEOw/zHNi1c8dusk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VtbfgnNdZDSCB5aHAmA8l+IM6HQpjrVzZPWmlGsvPIqfnIBX+jX5FbKrW1ueHrsOc
-	 Jvc1sP3exmZH54HGbaJ3ZfunTTrhL4f8I+CatAa/LBYuzvVfaBnm9dOdVsaQbzK6ux
-	 kNwNd6PKtn/jinxGLUgeUKw2BXkzl6KmJNx9DOtU=
-Date: Wed, 3 Jul 2024 18:26:36 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox
- <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Eric Biederman
- <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, Suren Baghdasaryan
- <surenb@google.com>, Shuah Khan <shuah@kernel.org>, Brendan Higgins
- <brendanhiggins@google.com>, David Gow <davidgow@google.com>, Rae Moar
- <rmoar@google.com>
-Subject: Re: [PATCH 0/7] Make core VMA operations internal and testable
-Message-Id: <20240703182636.a04510e21e53b5afe82e60d9@linux-foundation.org>
-In-Reply-To: <1edfc11c-ab99-4e9d-bf5d-b10f34b3f1da@lucifer.local>
-References: <1a41caa5-561e-415f-85f3-01b52b233506@lucifer.local>
-	<20240703225636.90190-1-sj@kernel.org>
-	<1edfc11c-ab99-4e9d-bf5d-b10f34b3f1da@lucifer.local>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720060708; c=relaxed/simple;
+	bh=dqD8gcxvzGAC30RhBldzEPyXDbdO9cKPtLVlOJU46Vg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mDr2JERoVp1lqeo+SM3MGzNgc14edJpUIfw/jL1h9YaRYRX0EG5ViM/frB1SMXQvK+I7fos2dj+G0ih2kO4ChdReGFhg386hAi7vDYtTTc+EV0iI/S/Qg5dBDHBMdHXiEoYfBm3Rgpwf6QAUk6qNW2sC1+g6xsyVfbWMx4TDZdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MsVC5OeC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C37C4AF0D;
+	Thu,  4 Jul 2024 02:38:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720060707;
+	bh=dqD8gcxvzGAC30RhBldzEPyXDbdO9cKPtLVlOJU46Vg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MsVC5OeCkciPZE06MDGtBxxfhTBeMPlokruBgDHjXYI/zvlZjdnwVhvfoaOu0G8iC
+	 Xz6XEEXBAlINrSGvNDkPIMT/r/YQXvxuaI/612dpeooZuCFyMpPhCAAa1TKz0Wwonl
+	 mlCQiFJrDQy9+ybI2kT0niGErXo1xbFPO9nSa5xOk0UnxwCvPJeokqrMCa1ueykOiz
+	 SQTdhafFXx1irEHPZSqOVMnGbb8Hv8e/dg/6ovKNmihP1CbPjDR+CKHM3iJlMtfYSW
+	 xxlOFkkwQCJNsmaGBqQtQ8wGNos8mYtSpgV1prAp9eInwqLpX2iR3jIa5xSKM81LsM
+	 0KXoCs/vn/giA==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdf2c7454so193449e87.1;
+        Wed, 03 Jul 2024 19:38:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUfWKJ9IMAAhirT1IzjMBrO1So4dPObIgQNqXBq/YN3EpDxz7kENfjkWk2I2FyCHSpbAKPxbU329yoWY3KclRR7Y+wM4YEcgFhnvRPOb9/COYng9FIz60+yI+WyU3CpeNPPPHScuqAcUzxvWRXIaYw5oOrrfYgBuyHTj+lFfWX42B5zrH65
+X-Gm-Message-State: AOJu0YwhyE1iziIOy4LT5Rnq2meaMLdzkAy7J09amBlTVqmLQqNoeqws
+	Q8ueM4oTcId/NmmmHOeiohxEJf3+z/FC1MXQLwAKBLooG4WcMy4d9+If6NezcNUFzkRu3/tvKL3
+	C3GAE8F5mY5N2AViTRAUOj+OHA+s=
+X-Google-Smtp-Source: AGHT+IGlWtVHzFafltc3+cXuNlzQZe6zYCmHq/oFgcUmqE6OhhxMZJ20wr13jLfRpSRTZFkQ3UL98v488HRHqNzmt+4=
+X-Received: by 2002:a05:6512:1595:b0:52b:c33a:aa7c with SMTP id
+ 2adb3069b0e04-52ea06c95edmr194626e87.65.1720060705933; Wed, 03 Jul 2024
+ 19:38:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
+ <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
+ <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
+ <CAAhV-H7iKyQBvV+J9T1ekxh9OF8h=F9zp_QMyuhFBrFXGHHmTg@mail.gmail.com>
+ <30907b42d5eee6d71f40b9fc3d32ae31406fe899.camel@xry111.site>
+ <1b5d0840-766b-4c3b-8579-3c2c892c4d74@app.fastmail.com> <CAAhV-H4Z_BCWRJoCOh4Cei3eFCn_wvFWxA7AzWfNxYtNqUwBPA@mail.gmail.com>
+ <8f2d356d-9cd6-4b06-8e20-941e187cab43@app.fastmail.com> <20240703-bergwacht-sitzung-ef4f2e63cd70@brauner>
+ <CAHk-=wi0ejJ=PCZfCmMKvsFmzvVzAYYt1K9vtwke4=arfHiAdg@mail.gmail.com> <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+In-Reply-To: <8b6d59ffc9baa57fee0f9fa97e72121fd88cf0e4.camel@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 4 Jul 2024 10:38:12 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7vJ69GD5RWOAtVVMAriGX8eVfqSTp_XadV9PTZJuoSAQ@mail.gmail.com>
+Message-ID: <CAAhV-H7vJ69GD5RWOAtVVMAriGX8eVfqSTp_XadV9PTZJuoSAQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	libc-alpha@sourceware.org, "Andreas K. Huettel" <dilfridge@gentoo.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 4 Jul 2024 00:24:15 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Thu, Jul 4, 2024 at 12:54=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> On Wed, 2024-07-03 at 09:31 -0700, Linus Torvalds wrote:
+> > On Wed, 3 Jul 2024 at 01:46, Christian Brauner <brauner@kernel.org>
+> > wrote:
+> > >
+> > > We've now added AT_EMPTY_PATH support with NULL names because we
+> > > want to
+> > > allow that generically. But I clearly remember that this was
+> > > requested
+> > > to make statx() work with these sandboxes. So the kernel has done
+> > > its
+> > > part. Now it's for the sandbox to allow statx() with NULL paths and
+> > > AT_EMPTY_PATH but certainly not for the kernel to start reenabling
+> > > old
+> > > system calls.
+> >
+> > Those old system calls are still used.
+> >
+> > Just enable them.
+> >
+> > statx isn't the promised land. Existing applications matter. And there
+> > is absolutely nothing wrong with plain old 'stat' (well, we call it
+> > "newstat" in the kernel for historical reasons) on 64-bit
+> > architectures.
+> >
+> > Honestly, 'statx' is disgusting. I don't understand why anybody pushes
+> > that thing that nobody actually uses or cares about.
+>
+> Hmm why it was added in the first place then?  Why not just NAK it?  If
+> someone tries to add a "seccomp sandbox" into my project I'll
+> immediately NAK it anyway :).
+>
+> And should we add stat_time64, fstat_time64, and fstatat_time64 to stop
+> using statx on 32-bit platforms too as it's disgusting?
+>
+> Also some bad news: Glibc has this:
+>
+> #if (__WORDSIZE =3D=3D 32 \
+>      && (!defined __SYSCALL_WORDSIZE || __SYSCALL_WORDSIZE =3D=3D 32)) \
+>     || defined STAT_HAS_TIME32 \
+>     || (!defined __NR_newfstatat && !defined __NR_fstatat64)
+> # define FSTATAT_USE_STATX 1
+> #else
+> # define FSTATAT_USE_STATX 0
+> #endif
+>
+> So if a LoongArch Glibc is built with Linux kernel headers >=3D 6.11,
+> it'll use fstatat **even configured --with-kernel=3D5.19** and fail to ru=
+n
+> on Linux kernel <=3D 6.10.  This will immediately blow up building Linux
+> From Scratch on a host distro with an "old" kernel.
+The patch which adds newstat back will CC the stable list and be
+backported to old kernels.
 
-> The self tests differ from this and other tests using the userland-stubbed
-> kernel approach in that they test system call invocation and assert
-> expectations.
-> 
-> My point to Andrew was that we could potentially automatically run these
-> tests as part of a self-test run as they are so quick, at least in the
-> future, if that made sense.
+Huacai
 
-Yes, I was thinking we'd just add a selftest which does (simplified,
-of course)
-
-	cd ../../vma
-	make
-	./whatever
-
-simply to cause this new code to be invoked when someone runs the
-selftest suite.
-
+>
+> <sarcasm>Alright, some Google project matters but Glibc does not matter
+> because it uses a disgusting syscall in the first place.</sarcasm>
+>
+> We have to add some __ASSUME_blah_blah here now.
+>
+> To make things worse Glibc 2.40 is being frozen today :(.  Copying to
+> libc-alpha and the RM.
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
 
