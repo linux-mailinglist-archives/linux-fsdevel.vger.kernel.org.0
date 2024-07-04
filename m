@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-23099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAB8927286
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 11:01:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 981D8927287
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 11:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A870228D7A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 09:01:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17000B22C1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 09:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6191ACE7F;
-	Thu,  4 Jul 2024 08:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001EE1ACE87;
+	Thu,  4 Jul 2024 08:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cus41wZb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ai2oXlLH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8FD1ACE79
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 08:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642B71AC45C
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 08:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720083527; cv=none; b=QRdkCKFQ+gHxx8jOaWx/wvtRXv1OAlTHBwI/0Wlv5+zpwFpW2jGTZyvXySnFlBwz7SNcuQgYkl4UuaGt4VL5Se6y1Dr+uggPJzPIeMErB/bky8v1bCGujaAYtDVWT5RSL5FgFbM0C5mEr6sB0t69rJSEIZuRNTcIrCXLcZTuFqs=
+	t=1720083529; cv=none; b=QCgnc2xFu0s+q9t5tV/LtJftLNjELV9U4g6UglZJYKmptkoD/sc6UvXv6fIDWGE+IY3f1Z0IApx4SP2wiEXDaNYObjK8f5SREutmGianUyc7sKrjceoKA/Z4i/GlrOaLUjAAouAfBZpupRa5ZRz4n0tJiXomxzC/JmeoMeTLinI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720083527; c=relaxed/simple;
-	bh=UJG1wOqcCiDuQkY/WXPl68e+MxRoorI7DelKNreEbU8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AZJtL2JTJKR8BKJyeh+FUF+Ha/QlUH6sUNu0F4TW4pU+4AUdMNEyJYdRFGcGVwuSGwPVt4wFRkvXDGE74q7pykaQ0QEw77r0ubEmvp4hcgYYyIH5+nkS/q3HPdI5CHNOPD95ecBc1kQCEd35bngzQIvXkgV1S++eXY6ZsOyCJM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cus41wZb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86EC0C4AF0B;
-	Thu,  4 Jul 2024 08:58:45 +0000 (UTC)
+	s=arc-20240116; t=1720083529; c=relaxed/simple;
+	bh=Kr2gsl0KWq16HAoswiQtFybIe5Ye2xCYwxaBRZGtR1E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=lQWMF8L9ADCklrVBBKe9f33foKor0zqHVVZ93CogG4KkyJyWL83eBNfPqqP2hHNVmavupyg4OT26HWHMdnRNfbw4Xf2XcUMNx9Fa//wbtxZOxfI26WndMLVzsrA3eaMAHlE12WKk3iTX+fBd/pAYDsaXJI2QoCnEwzjWTAeygH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ai2oXlLH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800B5C32786;
+	Thu,  4 Jul 2024 08:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720083527;
-	bh=UJG1wOqcCiDuQkY/WXPl68e+MxRoorI7DelKNreEbU8=;
-	h=From:Subject:Date:To:Cc:From;
-	b=cus41wZbAgS3WO5yd/0uSUH3FxhT+LKCH2xD1ma7t/9TNIojzfxZPRVuYdul6e+h3
-	 XC618VXJrbTWZLVQHKk28/eopmLh46BR8UgN/UafT2SIFR1LTOYBOgsFgO90Cab+ty
-	 3842FabFS1FvEEAlTOIraaACaB00RJEoEk1j69h2CzY1rRBz1kOVOo0RAFMTnW62RH
-	 jeKOC3U0q1Knehes67LddjYaoxVH3ukZ7YC1YDDJsVahicj0CbMQ31730JZlImEg/0
-	 8IENCopsgVkkLlgk1tiVaI74jom3KEsgq8kw9y4spcf8tAIp7lLTFF0zlzVFOYBktV
-	 Bzw0aeVBT7PMA==
+	s=k20201202; t=1720083529;
+	bh=Kr2gsl0KWq16HAoswiQtFybIe5Ye2xCYwxaBRZGtR1E=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=ai2oXlLHqOLJv4sSiw1yKhgbgW6bfHxpa6M8zDnfNOI2qLAeUjzGK1WG3FNapxWhE
+	 FZEM/ja9MgEFLEtuIdTKxiqZfD9XHSgdBidMtvpAu8IliRyCDz4fUH+91t7gn/J73R
+	 h0XAsvRuRV0mFfLECQG6J6/8QHy4tCzAZK/FaQff1ZQfEl6yTdE4ChSpXBS+9p8/VF
+	 B6R0l5+VL+jaaYmTfZlIByOfDnCwZ/SPDi4cOnlPjhM+RXYb4SmIZVKJ7qZJPbaIvz
+	 K40qQ/nhlrN7/zS8G9drzfmGGqkzqD3GtEJsa06//+WbeVf75SwPrryBlwDglrTWE+
+	 WRngTt5RXXIxg==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 0/2] Reject invalid mount id values early
-Date: Thu, 04 Jul 2024 10:58:33 +0200
-Message-Id: <20240704-work-mount-fixes-v1-0-d007c990de5f@kernel.org>
+Date: Thu, 04 Jul 2024 10:58:34 +0200
+Subject: [PATCH 1/2] fs: refuse mnt id requests with invalid ids early
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,33 +52,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADlkhmYC/x2M0QrCMAwAf2Xk2Wg3ChN/RXxou3QLzlQSncLYv
- 1v3eBx3Kxgpk8GlWUFpYeMiFdpDA2kKMhLyUBk613nXO4+fond8lLe8MPOXDFP0Q3/2oc3RQc2
- eSruo1fVWOQYjjBokTf9RUR5ZMMzzacl23E+wbT8oPtbriQAAAA==
+Message-Id: <20240704-work-mount-fixes-v1-1-d007c990de5f@kernel.org>
+References: <20240704-work-mount-fixes-v1-0-d007c990de5f@kernel.org>
+In-Reply-To: <20240704-work-mount-fixes-v1-0-d007c990de5f@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>, 
  Jeff Layton <jlayton@kernel.org>, Karel Zak <kzak@redhat.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-13183
-X-Developer-Signature: v=1; a=openpgp-sha256; l=329; i=brauner@kernel.org;
- h=from:subject:message-id; bh=UJG1wOqcCiDuQkY/WXPl68e+MxRoorI7DelKNreEbU8=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS1pbhct/A95vO5XUOsq7Pi8W6vKoeYq3dcdkeKT9lU2
- /NsD5dARykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQkVjMyLOLcKPKr7KybQXJo
- Ydly16mfY092KzuqcIRdvLD+U5PoXkaGq82JKV+OtW/7+U48VPf628nB6eLHV1T+yWBYqlmyk6+
- dEwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1177; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=Kr2gsl0KWq16HAoswiQtFybIe5Ye2xCYwxaBRZGtR1E=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS1pbjmhsayuyfJC7lIt97uTOx/vZlj1eyDPr5PNpSaL
+ jDjnj6ro5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCK9XYwMjeV+GsWH1zL1NOzO
+ cGNb15O06dqKe5w57ppsc5InrneexMhwvuqRF8MCXxnhzOAjNhdPOMdc+TAlveGAK5/qWQ+TqVr
+ sAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Two small fixes to avoid doing unnecessary work if userspace provided
-invalid mount id values to either statmount() or listmount().
-
-Thanks!
-Christian
+Unique mount ids start past the last valid old mount id value to not
+confuse the two so reject invalid values early in copy_mnt_id_req().
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
----
-base-commit: 682d12148c264484562f130f0c8584839ebc36fc
-change-id: 20240704-work-mount-fixes-cb4d784a1fb0
+ fs/namespace.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index c53a0ee748c6..a0266a8389d0 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -70,7 +70,8 @@ static DEFINE_IDA(mnt_id_ida);
+ static DEFINE_IDA(mnt_group_ida);
+ 
+ /* Don't allow confusion with old 32bit mount ID */
+-static atomic64_t mnt_id_ctr = ATOMIC64_INIT(1ULL << 32);
++#define MNT_UNIQUE_ID_OFFSET (1ULL << 32)
++static atomic64_t mnt_id_ctr = ATOMIC64_INIT(MNT_UNIQUE_ID_OFFSET);
+ 
+ static struct hlist_head *mount_hashtable __ro_after_init;
+ static struct hlist_head *mountpoint_hashtable __ro_after_init;
+@@ -5235,6 +5236,9 @@ static int copy_mnt_id_req(const struct mnt_id_req __user *req,
+ 		return ret;
+ 	if (kreq->spare != 0)
+ 		return -EINVAL;
++	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
++	if (kreq->mnt_id <= MNT_UNIQUE_ID_OFFSET)
++		return -EINVAL;
+ 	return 0;
+ }
+ 
+
+-- 
+2.43.0
 
 
