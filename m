@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-23100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981D8927287
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 11:01:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584A8927288
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 11:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17000B22C1C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 09:01:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC5D28D836
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jul 2024 09:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001EE1ACE87;
-	Thu,  4 Jul 2024 08:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBC91ACE84;
+	Thu,  4 Jul 2024 08:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ai2oXlLH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5OSN1cs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642B71AC45C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 08:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D47C1AAE33
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jul 2024 08:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720083529; cv=none; b=QCgnc2xFu0s+q9t5tV/LtJftLNjELV9U4g6UglZJYKmptkoD/sc6UvXv6fIDWGE+IY3f1Z0IApx4SP2wiEXDaNYObjK8f5SREutmGianUyc7sKrjceoKA/Z4i/GlrOaLUjAAouAfBZpupRa5ZRz4n0tJiXomxzC/JmeoMeTLinI=
+	t=1720083531; cv=none; b=njExvldEVm/FXjHsqvYDyaQO/Hp5GSLKLCDrS5yagm7DM8ptPCTN9FC525lThuNU9locwhoZZA9lnNsnsLIQeHBwJBCX6U5QZnFQUgajAQIvw0hC7NAQHhHm6QUURiv7xUyF85lYYAnwwK0pXmrIugTIKBuQ3f+7P1R0Do9JcpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720083529; c=relaxed/simple;
-	bh=Kr2gsl0KWq16HAoswiQtFybIe5Ye2xCYwxaBRZGtR1E=;
+	s=arc-20240116; t=1720083531; c=relaxed/simple;
+	bh=url1KUdmMYN0advTwPvcHDOuuwv8P8fvS+v/nIBoq5Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lQWMF8L9ADCklrVBBKe9f33foKor0zqHVVZ93CogG4KkyJyWL83eBNfPqqP2hHNVmavupyg4OT26HWHMdnRNfbw4Xf2XcUMNx9Fa//wbtxZOxfI26WndMLVzsrA3eaMAHlE12WKk3iTX+fBd/pAYDsaXJI2QoCnEwzjWTAeygH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ai2oXlLH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800B5C32786;
-	Thu,  4 Jul 2024 08:58:47 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=dQaRIsHWGPakWKyT1vU/3rhzsk7UC2nQEmCD0hT6bbeKo1CM7lPU2tl7uHlM5ZbQwt7jk/vmjEiddvwdMjq6uIgA5lT3Z1NibHVF7ehpmWxnhOq1+o8u6ci88iLuxsWJXCNEP7BDIsrpWk4qDeJoUoxm+5B+vWoYlnjouiSqMEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5OSN1cs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BABBC4AF0A;
+	Thu,  4 Jul 2024 08:58:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720083529;
-	bh=Kr2gsl0KWq16HAoswiQtFybIe5Ye2xCYwxaBRZGtR1E=;
+	s=k20201202; t=1720083530;
+	bh=url1KUdmMYN0advTwPvcHDOuuwv8P8fvS+v/nIBoq5Q=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ai2oXlLHqOLJv4sSiw1yKhgbgW6bfHxpa6M8zDnfNOI2qLAeUjzGK1WG3FNapxWhE
-	 FZEM/ja9MgEFLEtuIdTKxiqZfD9XHSgdBidMtvpAu8IliRyCDz4fUH+91t7gn/J73R
-	 h0XAsvRuRV0mFfLECQG6J6/8QHy4tCzAZK/FaQff1ZQfEl6yTdE4ChSpXBS+9p8/VF
-	 B6R0l5+VL+jaaYmTfZlIByOfDnCwZ/SPDi4cOnlPjhM+RXYb4SmIZVKJ7qZJPbaIvz
-	 K40qQ/nhlrN7/zS8G9drzfmGGqkzqD3GtEJsa06//+WbeVf75SwPrryBlwDglrTWE+
-	 WRngTt5RXXIxg==
+	b=L5OSN1csQXT6vhu6lzLkZGoEyNJxquDPLLrzNX5buO3RPs3O9sK9nw3D4y/V/pJJy
+	 CHsxg1iqEUJDdqvTMo5NIYjn8qeKXuU8UggShURq0NUd7waoDCpPrNrULoH0Ejswfq
+	 yeKFuAhE/2sQoGx1zmt/ZmxzdG4eDFmw8pTVEBXZImAZXfo49utfYVXsqnwGfSIxQD
+	 22KuRN0DhhfqtaOFUXmjp4DaPcPLxZtcytpwzHl0uOxr99jjbSaaRhoxZlRKoN9uIW
+	 lqcj8yVgbnwKBehnGbXnEYeobd8YTqYyrCWylf9rEucPXNOFzlOICz/jm6t9WqGuFK
+	 CnX/if7eqMTSg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 04 Jul 2024 10:58:34 +0200
-Subject: [PATCH 1/2] fs: refuse mnt id requests with invalid ids early
+Date: Thu, 04 Jul 2024 10:58:35 +0200
+Subject: [PATCH 2/2] fs: reject invalid last mount id early
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240704-work-mount-fixes-v1-1-d007c990de5f@kernel.org>
+Message-Id: <20240704-work-mount-fixes-v1-2-d007c990de5f@kernel.org>
 References: <20240704-work-mount-fixes-v1-0-d007c990de5f@kernel.org>
 In-Reply-To: <20240704-work-mount-fixes-v1-0-d007c990de5f@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -60,47 +60,57 @@ Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>,
  Jeff Layton <jlayton@kernel.org>, Karel Zak <kzak@redhat.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-13183
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1177; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Kr2gsl0KWq16HAoswiQtFybIe5Ye2xCYwxaBRZGtR1E=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS1pbjmhsayuyfJC7lIt97uTOx/vZlj1eyDPr5PNpSaL
- jDjnj6ro5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCK9XYwMjeV+GsWH1zL1NOzO
- cGNb15O06dqKe5w57ppsc5InrneexMhwvuqRF8MCXxnhzOAjNhdPOMdc+TAlveGAK5/qWQ+TqVr
- sAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1548; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=url1KUdmMYN0advTwPvcHDOuuwv8P8fvS+v/nIBoq5Q=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS1pbgazmpM3acgk6zqKsjdI3B2m+9Jo80x70/cOL+Zt
+ yVgY+eLjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInU2jEynDyqO/ejquJeprnf
+ J+5n3b/kxeqNonmrxe5WvfE12lv+6zLDH84rdxe/XP7rc6gU766GLs9f0x6fOKR92jL2lI1b0vq
+ oHQwA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Unique mount ids start past the last valid old mount id value to not
-confuse the two so reject invalid values early in copy_mnt_id_req().
+confuse the two. If a last mount id has been specified, reject any
+invalid values early.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/namespace.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/namespace.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index c53a0ee748c6..a0266a8389d0 100644
+index a0266a8389d0..e474a2292337 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -70,7 +70,8 @@ static DEFINE_IDA(mnt_id_ida);
- static DEFINE_IDA(mnt_group_ida);
+@@ -5369,6 +5369,7 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
+ 	const size_t maxcount = 1000000;
+ 	struct mnt_namespace *ns __free(mnt_ns_release) = NULL;
+ 	struct mnt_id_req kreq;
++	u64 last_mnt_id;
+ 	ssize_t ret;
  
- /* Don't allow confusion with old 32bit mount ID */
--static atomic64_t mnt_id_ctr = ATOMIC64_INIT(1ULL << 32);
-+#define MNT_UNIQUE_ID_OFFSET (1ULL << 32)
-+static atomic64_t mnt_id_ctr = ATOMIC64_INIT(MNT_UNIQUE_ID_OFFSET);
- 
- static struct hlist_head *mount_hashtable __ro_after_init;
- static struct hlist_head *mountpoint_hashtable __ro_after_init;
-@@ -5235,6 +5236,9 @@ static int copy_mnt_id_req(const struct mnt_id_req __user *req,
+ 	if (flags & ~LISTMOUNT_REVERSE)
+@@ -5389,6 +5390,11 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
+ 	if (ret)
  		return ret;
- 	if (kreq->spare != 0)
- 		return -EINVAL;
-+	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
-+	if (kreq->mnt_id <= MNT_UNIQUE_ID_OFFSET)
-+		return -EINVAL;
- 	return 0;
- }
  
++	last_mnt_id = kreq.param;
++	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
++	if (last_mnt_id != 0 && last_mnt_id <= MNT_UNIQUE_ID_OFFSET)
++		return -EINVAL;
++
+ 	kmnt_ids = kvmalloc_array(nr_mnt_ids, sizeof(*kmnt_ids),
+ 				  GFP_KERNEL_ACCOUNT);
+ 	if (!kmnt_ids)
+@@ -5403,7 +5409,7 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
+ 		return -ENOENT;
+ 
+ 	scoped_guard(rwsem_read, &namespace_sem)
+-		ret = do_listmount(ns, kreq.mnt_id, kreq.param, kmnt_ids,
++		ret = do_listmount(ns, kreq.mnt_id, last_mnt_id, kmnt_ids,
+ 				   nr_mnt_ids, (flags & LISTMOUNT_REVERSE));
+ 
+ 	if (copy_to_user(mnt_ids, kmnt_ids, ret * sizeof(*mnt_ids)))
 
 -- 
 2.43.0
