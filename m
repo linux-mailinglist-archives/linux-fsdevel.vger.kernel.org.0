@@ -1,115 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-23244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91997928D83
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 20:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D89B5928DCE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 21:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CABAB23ED9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 18:28:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 746DFB24AF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 19:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043E516DC22;
-	Fri,  5 Jul 2024 18:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D226017166B;
+	Fri,  5 Jul 2024 19:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6h4ROaN"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="N2Q5mEWX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6271314B075;
-	Fri,  5 Jul 2024 18:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1FE170843
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jul 2024 19:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720204086; cv=none; b=GfEKeJfgJrDNK0k271jmTTbFC251yQTvL3WbTSIZuoTGpd10UkS3z22rZk19AqGh7rkL9BpbG0/u8UcInWvQKYh/EhtGOP3Qh6NUG/EP2c1jqOYGSmHbf2sXplsfY1jPVo8MASodX8444fQEoOYH8me3RwGPWDSaV0qjGM/drmw=
+	t=1720208073; cv=none; b=JagemWdoc1lvKy7yPLV536/iYCIo88W16ZIeEKP5o9KQ+jU10vfq0Q+IjkF9AaDUwm4TN6OnlYrpBuckHjv/OOxRX+dPtd0VnGq6/4VbVZdvtzHKPZ95wMxkpu7Iz3Q38JD5lyKUae7GAz/9S2Ju4/VZU5C0FQEgsAh8kj3CzN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720204086; c=relaxed/simple;
-	bh=KmcElzmESUIp0MlELsh9o4w4XilOqKmLaFJjxt90rE8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aTorCeu8RXg/WDZ4K+ApRqtbiKklMw3/VKPE2qygPfWdwfJRAFsiqPPqAx7ThPcE+MvFCoVC7FeTfKsfRRJsNF56t9XARO4Gxkgkya/sDf6HqKtRwSQERsnxeWlR72cT6NjTvEiOZR6rMjYXnFAdYlsfc7J7Ie9K4FfQGLK08j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6h4ROaN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 791DAC4AF07;
-	Fri,  5 Jul 2024 18:28:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720204085;
-	bh=KmcElzmESUIp0MlELsh9o4w4XilOqKmLaFJjxt90rE8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=R6h4ROaNUpRDGTTQQZoqX6QawFmfSQAYU/GSM4Vh9/Yw8h9o1n6/w6lUspzJRe1nk
-	 Y3pU/C9z76LYIfANKBvu6N0FkbBZC3+adqjD6p8/a+ZvbyFJTeReIYmGWCZLbb0uVI
-	 NBNhdhz8AgCM6kP9tmMLXvQ6W3jayrYBL1a5AND4/tCjcsEg+AP6xUzJoFB7LhUYxB
-	 qEVZIjAxqVe0MQ+gRe/yBn64BbOEhXiRqTZnQJcym0fKkH5UtkbzdymaGlT0c4vN6Y
-	 EjXWrwgah6nJfBUx6SZFzlY6PwM4lFzIZArq7mijYP+kI83NFOmeY55TQ1PfvhJWeH
-	 Zu9ElDZb7ROvg==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>
-Subject: Re: [PATCH v2 7/7] tools: add skeleton code for userland testing of VMA logic
-Date: Fri,  5 Jul 2024 11:28:01 -0700
-Message-Id: <20240705182801.95577-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <7989012e4f17074d3b94803dcebb8c3d1365ca1d.1720121068.git.lorenzo.stoakes@oracle.com>
-References: 
+	s=arc-20240116; t=1720208073; c=relaxed/simple;
+	bh=oq2dwNVnjkHa+0a/z+uAGC4hLutL54benZugmgRmxGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rX7uOlIIgseFlOQx37DuWpKm5eGtfEOIbIA1fbCIxAymXz31KYJ79DazzJIPnlyagawQmJPtQw2zlKR5wzvQOzy96qftU8KKUMVHqKnT1qzPJN9ptrsUKmjv1jQulRTaXQI2PCzFR/a/qsCWCXYhTwsPyefmYVAPU/DZ5Tgs51I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=N2Q5mEWX; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7f3d395dcf9so10750939f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jul 2024 12:34:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1720208071; x=1720812871; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uMwcWC3o3HrUVeD8fd8AU+OfLGD14mr9eYqviZBaZNs=;
+        b=N2Q5mEWXRa45mIAZMrGntA+jgYi7m83HN56Qb4HfcRRcQB1JqF4Gce4kq+d1rKHwWh
+         UiOv+/UTy0bBp4KXSYjV/uN/4ibPVjwdbKgxX9P59Y3BzMd5mn251uLZf2sHfbyFhXEc
+         +aBnshDAm+QGjs1tAY3WM8Vs1jme7arNK/2G8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720208071; x=1720812871;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uMwcWC3o3HrUVeD8fd8AU+OfLGD14mr9eYqviZBaZNs=;
+        b=QXbg2ayJru3KRnvqQjiRzxsYgtmlvt8rISMkl52m2HUcD+WM3vwVQCQojzWDmOWmWP
+         qhEuv5oVDdkGEEmeG7xNVGZiiy8bhEojDj+HPywBB6gGOPVbv3k5Chid13EGJqoQOL06
+         jKPp3TdUwmw9Ki64z5z9gl3WQ0KPgjxbvjQa41HXynWsZxorH3ZGIr25gGD3zeOyz7su
+         mVpAFdL6Ekw3QZDsqn1pubVLeocIEZ9II7XGuFeUgPxKP0xLABMn9l0E6zQWDELjdzgG
+         zExTE/zFYUTQfwLGjIvhsXIAHrHGBD7jJ+pO4QyWcqfSW3zhX73HxBp8Jru+xCepKcJr
+         uCUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB/S0upfEiR6g9GRykTYGU+raVtl6N5YB10V9pg5YfvbGHxn+HXMRcoTRq28yC0ZfdCZ2gYnx1Q5QWfaVqlixytXeHGNVSKmRGubpjJw==
+X-Gm-Message-State: AOJu0Yx3vJLrJ4Red7DW1lVNiBzXrygB2lKqUU8fIYAJA711c+bYx6P+
+	9VXvUuT8MPgXf8MLz426sDzQvWmMCQjjNlCm0vOgXvH90/YV/BofNCWLZxlNguQ=
+X-Google-Smtp-Source: AGHT+IFVfC3ipyP6qVo1x6Bb2rPetYjbe/+5LIMBYOIKkl+pUyXkyZoVtgaToDJ3zLia3VmYin/naA==
+X-Received: by 2002:a05:6602:6304:b0:7eb:69ec:43f2 with SMTP id ca18e2360f4ac-7f66dedecb6mr645266439f.1.1720208070940;
+        Fri, 05 Jul 2024 12:34:30 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c085dd5c7dsm225863173.77.2024.07.05.12.34.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 12:34:30 -0700 (PDT)
+Message-ID: <cd1d4033-b4ec-408d-aff7-94330615a69a@linuxfoundation.org>
+Date: Fri, 5 Jul 2024 13:34:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 28/29] kselftest/arm64: Add test case for POR_EL0
+ signal frame records
+To: Mark Brown <broonie@kernel.org>, Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+ aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+ catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
+ dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, maz@kernel.org,
+ mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com,
+ npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org,
+ szabolcs.nagy@arm.com, tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+ kvmarm@lists.linux.dev, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-29-joey.gouly@arm.com>
+ <58fb8a27-6c40-4b13-a231-b0db1c16916c@sirena.org.uk>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <58fb8a27-6c40-4b13-a231-b0db1c16916c@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Lorenzo,
-
-On Thu,  4 Jul 2024 20:28:02 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-
-> Establish a new userland VMA unit testing implementation under
-> tools/testing which utilises existing logic providing maple tree support in
-> userland utilising the now-shared code previously exclusive to radix tree
-> testing.
+On 5/29/24 09:51, Mark Brown wrote:
+> On Fri, May 03, 2024 at 02:01:46PM +0100, Joey Gouly wrote:
+>> Ensure that we get signal context for POR_EL0 if and only if POE is present
+>> on the system.
 > 
-> This provides fundamental VMA operations whose API is defined in mm/vma.h,
-> while stubbing out superfluous functionality.
-> 
-> This exists as a proof-of-concept, with the test implementation functional
-> and sufficient to allow userland compilation of vma.c, but containing only
-> cursory tests to demonstrate basic functionality.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
 
-I haven't had a time to review this, and I don't think I will get the time soon
-(don't wait for me).  But, I was able to build and run it as below, thanks to
-the fast runtime of the test ;)
+For kselftest:
 
-    $ cd tools/testing/vma
-    $ make
-    [...]
-    $ ./vma
-    4 tests run, 4 passed, 0 failed.
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
-So, FWIW,
-
-Tested-by: SeongJae Park <sj@kernel.org>
-
-
-Thanks,
-SJ
-
-[...]
+thanks,
+-- Shuah
 
