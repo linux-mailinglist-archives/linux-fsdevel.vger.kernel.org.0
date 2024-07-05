@@ -1,81 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-23240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F50928D3E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 20:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B15928D45
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 20:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2765E285105
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 18:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E020285378
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 18:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B366E14B075;
-	Fri,  5 Jul 2024 18:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D6316DEA4;
+	Fri,  5 Jul 2024 18:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Uz05dbe7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cwUFp/VL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A0B1F94C
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jul 2024 18:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAE414A62F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jul 2024 18:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720202558; cv=none; b=Oukuvyu1XJd/M0TbV771GQ8N1qIDBP1tvj7CyeqhkG7E+NebDLx2v0oEa0dr7LLRbIIn9ETY/f+pMVlxrWoPW+vbiJ6c/EvQPt1WgAjG1TilWro4OWM5xq6ViXzaunUAjNxi0RZvsdjT54x3/hklsr4g0N+Xp5Y1yL3L7vTM00w=
+	t=1720202635; cv=none; b=dUYyI0RyVeXHe2yAMYPjRSSM7rdly/VrFmJU3LD0AgWh9R0itJ/+RxPPZ9SsaDRGff5c6EOwxF2onHO6KQ/bnE1Pl7Uwa/ToAyaNbtXrY1Ctex/89TIZ00+itfEzS8Tv6VEJ1iLNkgkv6lPdDvLWqZmXQFcOtdGGME34IiiiWVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720202558; c=relaxed/simple;
-	bh=CDELy0u12/apheW6IeTbXBNZRgy3vhqtkFH51+o5e8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KxkrZQoUM/BQ4BqEEVyD8S3inP48YdysK/WfWgX+oxlDrVqtIMsV3TsfL0yjEIf2bUjPLcBE/DBNXrLLZgvXCMs5pX/tINaX6WLXWI3OfucMZcrMo6ERs0CTjg+P0n82kSAziB750HdfiLo7mr/CQFkV/ROFsHoemHi7nONqOx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Uz05dbe7; arc=none smtp.client-ip=84.16.66.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WG1Nt0T13zRyL;
-	Fri,  5 Jul 2024 19:54:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720202061;
-	bh=6nsQl2eLVsfJqAkYOl2Q8wRXDEXx0pOL2pfLfb7tTMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uz05dbe7Ob59tAGgoZ5Yjo6Tz5LISGDzXwJzQQmXaIWdnEEvfxibNtD4yptwf9qtz
-	 X9SeQWL6U73YIqYx3mjObKAoBQuXFpzZjr3gTfhRYFoNFE5KMnq/nLAcU71rq1XGkq
-	 ZFDlzrBMjaVD+zLeDHPNyvdSB5mHYY5rp1r7ybT0=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WG1Nq1HBXzkwK;
-	Fri,  5 Jul 2024 19:54:19 +0200 (CEST)
-Date: Fri, 5 Jul 2024 19:54:16 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-Message-ID: <20240705.IeTheequ7Ooj@digikod.net>
+	s=arc-20240116; t=1720202635; c=relaxed/simple;
+	bh=IU4DznuS8O10S9wSXs8ik1clXTs+rnbTjUN+0QtdGXA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UlGaxuPoKDfxPojK7duIo027MzvBsKf9w2Kc/wHNll3GOvDqDBhD3KtLxTRsGkFdRu1rt64hbKKDbMP735NJLvlbeawQRYADckatGWBuse9bXKnSXklN7a+tJbiHk/q/GrHkKJdtI2OxDA0067IdIAvj6OqspF5fi0I1qnTXVk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cwUFp/VL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720202633;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zSfj4hB72oKzYazsXTJG2nso9UJZp4flz44DNiaCEyM=;
+	b=cwUFp/VLO3Cyfc12H9AwX48fMXLuXx3Q2SPAODF857AtoGIAg6puuT2fiTPg/8olUc4ThD
+	5e4kfknR+hBGM02FaRplORoTKCLlYxQ7osq3zkYN+ZYSkvbMhbNHfG4t4E1i+yHc0RyACI
+	cYf01m2G9lVZeo33q7YN4OSgkV/2F9s=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-283-FWma5yPMP_mRE7JBJbAOnQ-1; Fri,
+ 05 Jul 2024 14:03:45 -0400
+X-MC-Unique: FWma5yPMP_mRE7JBJbAOnQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B1DC195609F;
+	Fri,  5 Jul 2024 18:03:37 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.6])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 20F721955F65;
+	Fri,  5 Jul 2024 18:03:17 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Kees Cook <keescook@chromium.org>,  Linus Torvalds
+ <torvalds@linux-foundation.org>,  Paul Moore <paul@paul-moore.com>,
+  Theodore Ts'o <tytso@mit.edu>,  Alejandro Colomar
+ <alx.manpages@gmail.com>,  Aleksa Sarai <cyphar@cyphar.com>,  Andrew
+ Morton <akpm@linux-foundation.org>,  Andy Lutomirski <luto@kernel.org>,
+  Arnd Bergmann <arnd@arndb.de>,  Casey Schaufler <casey@schaufler-ca.com>,
+  Christian Heimes <christian@python.org>,  Dmitry Vyukov
+ <dvyukov@google.com>,  Eric Biggers <ebiggers@kernel.org>,  Eric Chiang
+ <ericchiang@google.com>,  Fan Wu <wufan@linux.microsoft.com>,  Geert
+ Uytterhoeven <geert@linux-m68k.org>,  James Morris
+ <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,  Jann Horn
+ <jannh@google.com>,  Jeff Xu <jeffxu@google.com>,  Jonathan Corbet
+ <corbet@lwn.net>,  Jordan R Abrahams <ajordanr@google.com>,  Lakshmi
+ Ramasubramanian <nramas@linux.microsoft.com>,  Luca Boccassi
+ <bluca@debian.org>,  Luis Chamberlain <mcgrof@kernel.org>,  "Madhavan T .
+ Venkataraman" <madvenka@linux.microsoft.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
+  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
+ <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
+ Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
+ <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
+ <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
+ Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
+ <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
+ <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
+ Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+In-Reply-To: <20240704190137.696169-2-mic@digikod.net> (=?utf-8?Q?=22Micka?=
+ =?utf-8?Q?=C3=ABl_Sala=C3=BCn=22's?=
+	message of "Thu, 4 Jul 2024 21:01:33 +0200")
 References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-3-mic@digikod.net>
- <202407041711.B7CD16B2@keescook>
+	<20240704190137.696169-2-mic@digikod.net>
+Date: Fri, 05 Jul 2024 20:03:14 +0200
+Message-ID: <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,67 +104,30 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202407041711.B7CD16B2@keescook>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Jul 04, 2024 at 05:18:04PM -0700, Kees Cook wrote:
-> On Thu, Jul 04, 2024 at 09:01:34PM +0200, Mickaël Salaün wrote:
-> > Such a secure environment can be achieved with an appropriate access
-> > control policy (e.g. mount's noexec option, file access rights, LSM
-> > configuration) and an enlighten ld.so checking that libraries are
-> > allowed for execution e.g., to protect against illegitimate use of
-> > LD_PRELOAD.
-> > 
-> > Scripts may need some changes to deal with untrusted data (e.g. stdin,
-> > environment variables), but that is outside the scope of the kernel.
-> 
-> If the threat model includes an attacker sitting at a shell prompt, we
-> need to be very careful about how process perform enforcement. E.g. even
-> on a locked down system, if an attacker has access to LD_PRELOAD or a
+* Micka=C3=ABl Sala=C3=BCn:
 
-LD_PRELOAD should be OK once ld.so will be patched to check the
-libraries.  We can still imagine a debug library used to bypass security
-checks, but in this case the issue would be that this library is
-executable in the first place.
+> Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> allowed for execution.  The main use case is for script interpreters and
+> dynamic linkers to check execution permission according to the kernel's
+> security policy. Another use case is to add context to access logs e.g.,
+> which script (instead of interpreter) accessed a file.  As any
+> executable code, scripts could also use this check [1].
 
-> seccomp wrapper (which you both mention here), it would be possible to
-> run commands where the resulting process is tricked into thinking it
-> doesn't have the bits set.
+Some distributions no longer set executable bits on most shared objects,
+which I assume would interfere with AT_CHECK probing for shared objects.
+Removing the executable bit is attractive because of a combination of
+two bugs: a binutils wart which until recently always set the entry
+point address in the ELF header to zero, and the kernel not checking for
+a zero entry point (maybe in combination with an absent program
+interpreter) and failing the execve with ELIBEXEC, instead of doing the
+execve and then faulting at virtual address zero.  Removing the
+executable bit is currently the only way to avoid these confusing
+crashes, so I understand the temptation.
 
-As explained in the UAPI comments, all parent processes need to be
-trusted.  This meeans that their code is trusted, their seccomp filters
-are trusted, and that they are patched, if needed, to check file
-executability.
+Thanks,
+Florian
 
-> 
-> But this would be exactly true for calling execveat(): LD_PRELOAD or
-> seccomp policy could have it just return 0.
-
-If an attacker is allowed/able to load an arbitrary seccomp filter on a
-process, we cannot trust this process.
-
-> 
-> While I like AT_CHECK, I do wonder if it's better to do the checks via
-> open(), as was originally designed with O_MAYEXEC. Because then
-> enforcement is gated by the kernel -- the process does not get a file
-> descriptor _at all_, no matter what LD_PRELOAD or seccomp tricks it into
-> doing.
-
-Being able to check a path name or a file descriptor (with the same
-syscall) is more flexible and cover more use cases.  The execveat(2)
-interface, including current and future flags, is dedicated to file
-execution.  I then think that using execveat(2) for this kind of check
-makes more sense, and will easily evolve with this syscall.
-
-> 
-> And this thinking also applies to faccessat() too: if a process can be
-> tricked into thinking the access check passed, it'll happily interpret
-> whatever. :( But not being able to open the fd _at all_ when O_MAYEXEC
-> is being checked seems substantially safer to me...
-
-If attackers can filter execveat(2), they can also filter open(2) and
-any other syscalls.  In all cases, that would mean an issue in the
-security policy.
 
