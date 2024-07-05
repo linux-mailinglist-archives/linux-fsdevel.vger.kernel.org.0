@@ -1,164 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-23193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555CF9286D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 12:34:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834E7928703
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 12:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1051B2879B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 10:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA15283976
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 10:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6B9148312;
-	Fri,  5 Jul 2024 10:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C50D1487EF;
+	Fri,  5 Jul 2024 10:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fiyLFGln"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TqmhA/5d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C21022313;
-	Fri,  5 Jul 2024 10:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A9F13C8F9;
+	Fri,  5 Jul 2024 10:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720175673; cv=none; b=BGDPKKqi9JlPufjQcHttAiR3Tn+z+YRfEPWkDHbHdG83piVtK69Vtbtbein3CL0+ODzJqY4ESbEBL84/KMu8yGRst0SiDHVz9457qb2fD1nu4Mq9x1HwKuql6Jmqt4emuKnJwhGZvJ+akbs1QFFG3mJApgzCCt6Wkoc0+5Ahelg=
+	t=1720176282; cv=none; b=mN8W1Layj3gdhIQkEBsQOHqphccMXz0/K9yEACtSnLoW3hhHkX3f9MjAaamq9e6YX1YqH00wKZ2aGa9VU+LNMsZRFM/QNv4qxZwhrMgXArfxdJ0sRQ3YMSs1aJkN3jEaoc9QrO+kDyzf5JLdcgdVooPSk7CPQsbbeCEa/TQ3L7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720175673; c=relaxed/simple;
-	bh=827NIGqjInlrNmGkkDX+qJ3x6YUzBmilo3yLszCV9qY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UzPckcxFqhryyecACVQa4XO5SzYNGJ1L4NK3jNUloeXi6RWrtjhkX8zQDFyf4P/9i6EHQnFuhlzOAtT3PYD7mNHPlgmpH/nvavoXa3WFC6g9uLloXlAm45RHRW1lh3Q8skDTZVg4PeSNQKhNrpjiYYYkPJiMIYIHdm1oBhr7sHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fiyLFGln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E31C116B1;
-	Fri,  5 Jul 2024 10:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720175672;
-	bh=827NIGqjInlrNmGkkDX+qJ3x6YUzBmilo3yLszCV9qY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fiyLFGlnhMiDxNWsoyJE7LBSxSGeMvijWc5csASMOk2v5pw3v1T17xpWStrYpjs3b
-	 R9ZNhaOH5X+vjo1Au5y97YSB1I9Q1Kr8XnJp7ffCUDXm6wVHZi2/bg3BJtXyWJttUj
-	 wzh3q0UUk5DUFBvBXImzw98MGja6B5toPysDxnU9YkCNPEVpngdh13NRH2WKvlf480
-	 rKFWNjEccQjniLw4oeMRMrRvRPIYEvz5lYjQSG4jlcKOcf1jqeQBK9+6NTjcbxcxda
-	 2PVDFl2bTKDaTI+M16qgPa39awA5LNoVtVshk6ecOWaCGKnZJzSv1lJGfKDYWbzY1L
-	 H13yw7urrZCZg==
-Date: Fri, 5 Jul 2024 12:34:27 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+3195ed1f3a2ab8bea49a@syzkaller.appspotmail.com>, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] KCSAN: data-race in __ep_remove / __fput (4)
-Message-ID: <20240705-krumm-glatt-a6fb08b0b089@brauner>
-References: <000000000000fbb100061c6ce567@google.com>
- <CACT4Y+Z34Mc_Vv8-dDvD+HE57tMez0Rd17zr_s-3Gn23tOVG3A@mail.gmail.com>
+	s=arc-20240116; t=1720176282; c=relaxed/simple;
+	bh=ZpjXXPZ8qVUIBIolYv7O+9WBJ4v+A/hx7t2YGbTwshU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D9FSM+hmqoOi4s4aD8WiVLwoJDH2h5wUeL2kl80XrcQ3tB75e46AKB7fanu2YgUO+IM0XKhDIh5Gm1jGmRz/DRT8ouUrS/L609cExATfBFMkNIMsJ+phxo7OfCkDzm3ARtk2zNGtiwC928RauMeeAHd9ZmdSC+2cjvCNl1IeRY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TqmhA/5d; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=RUOJ1
+	0eaGUze/yBhI0ONWdyqGscp0Lrf+4xt2Q4q/u8=; b=TqmhA/5dpL7RyrhdvkPTI
+	WkYOuTI/JQ2w8b5snfjSFS0KJjsHKqEFIMZpU3RWsypFGrOo8gsSBDs7VydZNyGO
+	AOGtK3550w6N2oFFa2VFEr+bCcjWB7GOXmBXwlGyDW6y85SQXpPkenikP+/XfDtZ
+	+yEgOgcJ7axoIIbZKi2SGc=
+Received: from localhost.localdomain (unknown [193.203.214.57])
+	by gzga-smtp-mta-g2-5 (Coremail) with SMTP id _____wD3v2hjzodm7nZVAQ--.39915S4;
+	Fri, 05 Jul 2024 18:43:49 +0800 (CST)
+From: ran xiaokai <ranxiaokai627@163.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	corbet@lwn.net,
+	usama.anjum@collabora.com,
+	avagin@google.com
+Cc: linux-mm@kvack.org,
+	vbabka@suse.cz,
+	svetly.todorov@memverge.com,
+	ran.xiaokai@zte.com.cn,
+	ryan.roberts@arm.com,
+	ziy@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] kpageflags: detect isolated KPF_THP folios
+Date: Fri,  5 Jul 2024 10:43:43 +0000
+Message-Id: <20240705104343.112680-1-ranxiaokai627@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+Z34Mc_Vv8-dDvD+HE57tMez0Rd17zr_s-3Gn23tOVG3A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3v2hjzodm7nZVAQ--.39915S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAw18KFW5GrW8Kr4xXw4fXwb_yoW5Ary5pa
+	98Ga42vr4kJ3ZxJry8JrnFyr1YkrZxWFWjka4akw1SvFnxZryvgF1xK34Fka4aqFyxAay0
+	vFWqgF1fua4jyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6q2_UUUUU=
+X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiMwYTTGXAmSSQlQAAs3
 
-On Thu, Jul 04, 2024 at 04:40:40PM GMT, Dmitry Vyukov wrote:
-> On Thu, 4 Jul 2024 at 16:38, syzbot
-> <syzbot+3195ed1f3a2ab8bea49a@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    22a40d14b572 Linux 6.10-rc6
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=10f94dae980000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=5b9537cd00be479e
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3195ed1f3a2ab8bea49a
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/ebe2f3933faf/disk-22a40d14.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/7227032da0fe/vmlinux-22a40d14.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/a330dc1e107b/bzImage-22a40d14.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+3195ed1f3a2ab8bea49a@syzkaller.appspotmail.com
-> 
-> 
-> Double-checked locking in eventpoll_release_file() should prevent NULL
-> derefs in eventpoll_release_file(), right? If so, it's probably
-> benign-ish.
+From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 
-Yes, see the comment to eventpoll_release(). I assume a READ_ONCE()
-would be ok to add there so that race is annotated.
+When folio is isolated, the PG_lru bit is cleared. So the PG_lru
+check in stable_page_flags() will miss this kind of isolated folios.
+Use folio_test_large_rmappable() instead to also include isolated folios.
 
-> 
-> 
-> > ==================================================================
-> > BUG: KCSAN: data-race in __ep_remove / __fput
-> >
-> > write to 0xffff88810f2358d0 of 8 bytes by task 6036 on cpu 1:
-> >  __ep_remove+0x3c9/0x450 fs/eventpoll.c:826
-> >  ep_remove_safe fs/eventpoll.c:864 [inline]
-> >  ep_clear_and_put+0x158/0x260 fs/eventpoll.c:900
-> >  ep_eventpoll_release+0x32/0x50 fs/eventpoll.c:937
-> >  __fput+0x2c2/0x660 fs/file_table.c:422
-> >  ____fput+0x15/0x20 fs/file_table.c:450
-> >  task_work_run+0x13a/0x1a0 kernel/task_work.c:180
-> >  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-> >  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-> >  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-> >  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-> >  syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
-> >  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > read to 0xffff88810f2358d0 of 8 bytes by task 6037 on cpu 0:
-> >  eventpoll_release include/linux/eventpoll.h:45 [inline]
-> >  __fput+0x234/0x660 fs/file_table.c:413
-> >  ____fput+0x15/0x20 fs/file_table.c:450
-> >  task_work_run+0x13a/0x1a0 kernel/task_work.c:180
-> >  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-> >  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-> >  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-> >  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-> >  syscall_exit_to_user_mode+0xbe/0x130 kernel/entry/common.c:218
-> >  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > value changed: 0xffff888102f1e010 -> 0x0000000000000000
-> >
-> > Reported by Kernel Concurrency Sanitizer on:
-> > CPU: 0 PID: 6037 Comm: syz.0.1032 Not tainted 6.10.0-rc6-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-> > ==================================================================
-> >
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >
-> > If the report is already addressed, let syzbot know by replying with:
-> > #syz fix: exact-commit-title
-> >
-> > If you want to overwrite report's subsystems, reply with:
-> > #syz set subsystems: new-subsystem
-> > (See the list of subsystem names on the web dashboard)
-> >
-> > If the report is a duplicate of another one, reply with:
-> > #syz dup: exact-subject-of-another-report
-> >
-> > If you want to undo deduplication, reply with:
-> > #syz undup
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000fbb100061c6ce567%40google.com.
+Since pagecache supports large folios and the introduction of mTHP,
+the semantics of KPF_THP have been expanded, now it indicates
+not only PMD-sized THP. Update related documentation to clearly state
+that KPF_THP indicates multiple order THPs.
+
+v1:
+  https://lore.kernel.org/lkml/20240626024924.1155558-3-ranxiaokai627@163.com/
+Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+---
+ Documentation/admin-guide/mm/pagemap.rst |  4 ++--
+ fs/proc/page.c                           | 21 +++++++++------------
+ 2 files changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+index f5f065c67615..0a8a4decdb72 100644
+--- a/Documentation/admin-guide/mm/pagemap.rst
++++ b/Documentation/admin-guide/mm/pagemap.rst
+@@ -118,7 +118,7 @@ Short descriptions to the page flags
+ 21 - KSM
+     Identical memory pages dynamically shared between one or more processes.
+ 22 - THP
+-    Contiguous pages which construct transparent hugepages.
++    Contiguous pages which construct THP of any size and mapped by any granularity.
+ 23 - OFFLINE
+     The page is logically offline.
+ 24 - ZERO_PAGE
+@@ -252,7 +252,7 @@ Following flags about pages are currently supported:
+ - ``PAGE_IS_PRESENT`` - Page is present in the memory
+ - ``PAGE_IS_SWAPPED`` - Page is in swapped
+ - ``PAGE_IS_PFNZERO`` - Page has zero PFN
+-- ``PAGE_IS_HUGE`` - Page is THP or Hugetlb backed
++- ``PAGE_IS_HUGE`` - Page is PMD-mapped THP or Hugetlb backed
+ - ``PAGE_IS_SOFT_DIRTY`` - Page is soft-dirty
+ 
+ The ``struct pm_scan_arg`` is used as the argument of the IOCTL.
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index 2fb64bdb64eb..76f2a412aa93 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -148,19 +148,16 @@ u64 stable_page_flags(const struct page *page)
+ 		u |= 1 << KPF_COMPOUND_TAIL;
+ 	if (folio_test_hugetlb(folio))
+ 		u |= 1 << KPF_HUGE;
+-	/*
+-	 * We need to check PageLRU/PageAnon
+-	 * to make sure a given page is a thp, not a non-huge compound page.
+-	 */
+-	else if (folio_test_large(folio)) {
+-		if ((k & (1 << PG_lru)) || is_anon)
+-			u |= 1 << KPF_THP;
+-		else if (is_huge_zero_folio(folio)) {
+-			u |= 1 << KPF_ZERO_PAGE;
+-			u |= 1 << KPF_THP;
+-		}
+-	} else if (is_zero_pfn(page_to_pfn(page)))
++	else if (folio_test_large(folio) &&
++	         folio_test_large_rmappable(folio)) {
++		/* Note: we indicate any THPs here, not just PMD-sized ones */
++		u |= 1 << KPF_THP;
++	} else if (is_huge_zero_folio(folio)) {
+ 		u |= 1 << KPF_ZERO_PAGE;
++		u |= 1 << KPF_THP;
++	} else if (is_zero_pfn(page_to_pfn(page))) {
++		u |= 1 << KPF_ZERO_PAGE;
++	}
+ 
+ 	/*
+ 	 * Caveats on high order pages: PG_buddy and PG_slab will only be set
+-- 
+2.15.2
+
+
 
