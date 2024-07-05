@@ -1,104 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-23207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9B6928A97
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 16:20:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E37928AA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 16:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1853E287E35
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 14:20:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5768B228D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 14:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5464B16A94A;
-	Fri,  5 Jul 2024 14:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE43516B389;
+	Fri,  5 Jul 2024 14:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="DLXx8XjT"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GomyGT6q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14B214B07E;
-	Fri,  5 Jul 2024 14:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE25D1581E3
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jul 2024 14:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720189166; cv=none; b=R0dL7KpxLxZ0eoEaivO7t+nlaIMRiIRx/e3myY45Z/IiN5SBqmRIc3g32AmFFWXflk4+mpI43n5YC+pkTenj4vbPgtwyBgX3MhUwMJ4HLuk6vIZngMl027B6k6Yu4kauVjjbFzt6o3byt8HHY/hKr3QvD4VbU/x0t/cOdBUI8bg=
+	t=1720189463; cv=none; b=eNa9KVMJtVT1rNVwZygABx1IXOUEyCqxXUlrJVAaTSEWOXIqguOnuqajkQ6JiF9Wy73gAnAVWTDnxOnTYvkNftZ7OMGCacyB+YVK3EcsnEhVM6uj3VjeQ9aVd0lnO9mHFsjZGLd6aqHMKHtyIAWbxHO0Hz+QIvLquKdaJ1XvbLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720189166; c=relaxed/simple;
-	bh=9i3bwHgIdlTydSApcbRnBQwAcvIYW5YuftO1PTzhyRw=;
+	s=arc-20240116; t=1720189463; c=relaxed/simple;
+	bh=ezE9cMK85xGULq2NDfyultVM78ZkLbyifJxcFeIVVd4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BL266L3YQ0rTc2xO03cVQE/MYqsuBrRn7EkQOqnOMTF98doN8GDiEVFGnhMLVrVY4W/4FCWJDFT5/iBA047mAg7MmTlCWpv+7DpkoFCa1Gt01uCF8GZWtgUZIV5BblkPVB/vL81+Uy9nDWYXj/evD0T4+6ZTj3pBGMnAsfyjSLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=DLXx8XjT; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WFwcg1fX1z9tGB;
-	Fri,  5 Jul 2024 16:19:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1720189155;
+	 Content-Type:Content-Disposition:In-Reply-To; b=b3F+3VH9qcVanS+kFO9YCpDmCKXmGa4O9LWVf+NMurIrX6pWCUL4AHUbvX+vGs0O9CgekBnkKatm6JQ8rn5uyiG04fZ7bE1QM/rQiiufe9aIF6K0Bk3xQWtuhI61gx5H4Yv3RWAhrMAbtqvP2iPONstcG94h88Oqj4AAsG4fgl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GomyGT6q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720189460;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ebu8sK6BukO3lLURMplNxavYrXjjHfqDLjXeOhdJfo8=;
-	b=DLXx8XjT6eR5GyEh/sIiJ/bGQZYBG9JVM2U9YTBDT4qkrAeR3bSKl960dXQoBGuK0b4HAq
-	Ax6NkOZqbR9n3HLTsvul3xLXvyfTAW3JhHXRRF6UuJyeGVWW8MAfZa4Van79qm95jZTDBf
-	XZIoc+kium4ipfHa5pdnpz0fuJwIwbJ4rWD9v4jctPoRRnP13RkrAaaCRnAEzF/UBybdU6
-	nNPMpF7ZsPGD4xc+2NdB9CugFZq44SN8rJzKco0FA8v9SoV5PkJesC3eg1Dy+D5rinO4gb
-	zFfXe0CZcBblAfS7hXp9s0nvOzgzqnaIiuEUf0u1zj6QbADBDXgwgAMEUFRaNQ==
-Date: Fri, 5 Jul 2024 14:19:11 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Dave Chinner <david@fromorbit.com>, willy@infradead.org,
-	chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
-	akpm@linux-foundation.org, yang@os.amperecomputing.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
-	p.raghav@samsung.com, mcgrof@kernel.org, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v9 06/10] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240705141911.zamclkk7iajcvwik@quentin>
-References: <20240704112320.82104-1-kernel@pankajraghav.com>
- <20240704112320.82104-7-kernel@pankajraghav.com>
- <2c09ebbd-1704-46e3-a453-b4cd07940325@suse.de>
- <ZoceivBuLIcylaxk@dread.disaster.area>
- <da1d2eea-b7b1-467c-84e0-623d4ec3af55@suse.de>
+	bh=IqBTg61cVL77faXIzfdAxULAIPGMk1ZHXjVPHmfrZtE=;
+	b=GomyGT6q4Dkoew0pCRUYAoml9aFCdZYOXIEQEjz64CtThBXoFF7Mra3soyxFZs7BYZGnr4
+	vzGyfb+mUwBbgyhfR+bveNOh3TOMIFBnkRrYodstWMD/mhDtfkrnQteBVO2+kFcUWqNqxi
+	S8ghGxK+13S2T1g7QDuve6Z+12fHe3M=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-645-CzpId4q_PS6iU4Urq0kzCg-1; Fri, 05 Jul 2024 10:24:19 -0400
+X-MC-Unique: CzpId4q_PS6iU4Urq0kzCg-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-44671e02749so3653361cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jul 2024 07:24:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720189459; x=1720794259;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IqBTg61cVL77faXIzfdAxULAIPGMk1ZHXjVPHmfrZtE=;
+        b=Qfx+mvjs8pjdKsu9f9Y/qqmbPnY7V2ohvQIYCYQ0duIqiW31YrHGJhptbsastaKK1s
+         xFpBhQFJ7orXqrONbqqcDXEn/bwYamid0l/2TvKZhd6EUxTAVJ03u8bTc8AujC972ION
+         8F7R/L/5YP70qrFIoEsWNBZbNPLnYQKB4GoV01ED2CcXTrlOCr2TohfWEI9N8ADRozaj
+         uOt5kS0f/x4OnO74OuifWjGIvocTZ+kKAsqYj7GjhNojp8Z3FSItjYNuYb7aclQkDvId
+         br3lMAID/jGsUs1jH1Q993w9qrBVdq+Bpquo9l+Atwhs7BBfSpopUbdVOqdJPWYQkIip
+         Tz4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWfb7e4toqgls4z2Ta29pYZrS/Z+4JbPgyZAD0xvb2ZnkMbzKwkfasDcy1gR6k+4RQti9ne6uqwA6Gms2WZjzk1VIiz5fdl/+yLuF0XBQ==
+X-Gm-Message-State: AOJu0Yx0sN/lFMP1DnlcqCFR2YKISpyrskId7jQXswobuCQWo33kjRHH
+	kjOyUCuQ+xwAGoqeksC0mNd1XgUKKwchh6mdi2iLFD8bSVMzchbzhU7Q4NyfqLSy/YHk/FjaNu4
+	AYk+xhHMAxbhS6jDxVy3OQlLZBKFjHlwH1v8aFfoJkMCN2E1kvAtUV7RMqbBlTLw=
+X-Received: by 2002:ac8:7c4b:0:b0:446:395a:37c9 with SMTP id d75a77b69052e-447cc1cd760mr50256751cf.4.1720189458362;
+        Fri, 05 Jul 2024 07:24:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKP4/uPX8iCeoUcNLMV3z8vBAByHvLymsXhgYIxVOYKgo8tVByPTMSYbiLBJ2KPlAF3hMSkQ==
+X-Received: by 2002:ac8:7c4b:0:b0:446:395a:37c9 with SMTP id d75a77b69052e-447cc1cd760mr50256521cf.4.1720189457935;
+        Fri, 05 Jul 2024 07:24:17 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4465149b579sm69523231cf.75.2024.07.05.07.24.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jul 2024 07:24:17 -0700 (PDT)
+Date: Fri, 5 Jul 2024 10:24:14 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+	dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+	linmiaohe@huawei.com, david@redhat.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+	david@fromorbit.com, Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
+Message-ID: <ZogCDpfSyCcjVXWH@x1n>
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+ <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <da1d2eea-b7b1-467c-84e0-623d4ec3af55@suse.de>
+In-Reply-To: <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
 
-> > > 
-> > > There are other users of ZERO_PAGE, most notably in fs/direct-io.c and
-> > > block/blk-lib.c. Any chance to make this available to them?
-> > 
-> > Please, no.
-> > 
-> > We need to stop feature creeping this patchset and bring it to a
-> > close. If changing code entirely unrelated to this patchset is
-> > desired, please do it as a separate independent set of patches.
-> > 
-> Agree; it was a suggestion only.
+Hi, Alistair,
 
-I was going to say the same thing that Dave said as well as we are 
-almost there with this series :)
-
-But I will add your suggestion in my TODO. It would be good to have some
-common infra to avoid allocating larger zero pages all over the place.
-
+On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
+> Now that DAX is managing page reference counts the same as normal
+> pages there are no callers for vmf_insert_pXd functions so remove
+> them.
 > 
-> Pankaj, you can add my:
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> ---
+>  include/linux/huge_mm.h |   2 +-
+>  mm/huge_memory.c        | 165 +-----------------------------------------
+>  2 files changed, 167 deletions(-)
 > 
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 9207d8e..0fb6bff 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
+>  		    unsigned long cp_flags);
+>  
+> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+>  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+>  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
 
-Thanks Hannes.
+There's a plan to support huge pfnmaps in VFIO, which may still make good
+use of these functions.  I think it's fine to remove them but it may mean
+we'll need to add them back when supporting pfnmaps with no memmap.
+
+Is it still possible to make the old API generic to both service the new
+dax refcount plan, but at the meantime working for pfn injections when
+there's no page struct?
+
+Thanks,
+
+-- 
+Peter Xu
+
 
