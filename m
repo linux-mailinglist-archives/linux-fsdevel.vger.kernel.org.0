@@ -1,125 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-23182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75159281FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 08:24:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BF7928203
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 08:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B681285928
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 06:24:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D8D1F248D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 06:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374C813BAC4;
-	Fri,  5 Jul 2024 06:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6157B1448F2;
+	Fri,  5 Jul 2024 06:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SH43FUj8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C902C1E494;
-	Fri,  5 Jul 2024 06:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93C8143C75;
+	Fri,  5 Jul 2024 06:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720160676; cv=none; b=dFCl/o5GMl7E+TG/zE2ySBHFznDvKGQv/Cbw+1NvfuGJ8aBTRxyg2JThVIQf0kyEnNjNkmFshsFarJbdSFKyw2LlXo7UdRMhKK4fWI2QnUYsorNVJe23WUUUmVN/dq733lzlo+/rbzlrz8ImPeOwfD7ZO7AVlRvndtqFYD3I/9o=
+	t=1720160815; cv=none; b=fMRAxx8P55hz0tYT7Vde3h1BcWEcYjM/v+DFI5vniOTaw5AqPI7kN4C2ZoVUjC0YXmwadSxxRyjzU/NE38pCsrlXCHDrwubew/9AGX6O40UpWSzVuUOzib5FA2ZRAYEN1jSt/ss7E947ccIQSTtmyxGknesfZZiAcIGaf4P3gu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720160676; c=relaxed/simple;
-	bh=wWLJqDfALFxXxpYQhQJ07mIjsuZYN1jZpqtAbk29Fvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sbrNs48YxMykPfW723JZHfqtJ4ZS3dGCJXsogGMVb128xGmjEz7dBmrr+0CA9Un6vOyNinrv5js6ECmHDqOndexKYp6A3YGTQiDBfTssJwVrjq6HHqufCYwJ5epYI+kcJCE/4QLCmvNxtFmy79purqXKV80IP8lHRLnBPBiXgyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WFk0Q47LlzQkMZ;
-	Fri,  5 Jul 2024 14:20:38 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id AFB4618009B;
-	Fri,  5 Jul 2024 14:24:28 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 5 Jul 2024 14:24:28 +0800
-Message-ID: <f23470ee-52cf-497c-b8c8-b44b09bee7eb@huawei.com>
-Date: Fri, 5 Jul 2024 14:24:27 +0800
+	s=arc-20240116; t=1720160815; c=relaxed/simple;
+	bh=EMdvsRtHPHQyGahTe0wLT9ajkOMWh7BnJ8WxOakQ/54=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hJvDCfFq0h4ODkYjpav/QadAVbTmJOk8o/qlpkENWDBsIm6R/sg0TzumIuXS6rEylTN+X778zzQ5YBYUqfyXM1+ahOs8yjIKEPuflq890BB+QXnvMUHNssoKA1BF9IajRTbnhvfxMUUIUTnNM2n5DQA/uVN4/+8I75cLWJykLnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SH43FUj8; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720160812;
+	bh=EMdvsRtHPHQyGahTe0wLT9ajkOMWh7BnJ8WxOakQ/54=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SH43FUj8/X+MQs5YQH/C5zbdIlujSz6/TZrnNxvKvr6qz8T9yqWSN0SyicD18qN/j
+	 7dMWfFpQoP93RhHzB5TRqMK2XaLArMul5DnXEFZatm1wgNvaW8NgxL13rQzTxfmQ96
+	 mXOGEVNrZdbQxJzL/PoYsBzJ4g5V3SGMHwREDMDM3K5FLCHg47UN+8BohXLCh7LMha
+	 vnC1eIpCavROJ4+or9a5w2Fqn66O8ZRb21kVmNLZugUNC2bPsFJ5IvsIbX3d65Ft1L
+	 LSTq1/EzdhK8Swizc33kQEP7onT7LujmPuXuFtyZikL8r3im2LI2ujkRp92XJklv1u
+	 adzlgnr0nSIrg==
+Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ehristev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5F14437820FE;
+	Fri,  5 Jul 2024 06:26:51 +0000 (UTC)
+From: Eugen Hristev <eugen.hristev@collabora.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Cc: jack@suse.cz,
+	adilger.kernel@dilger.ca,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	krisman@suse.de,
+	kernel@collabora.com,
+	shreeya.patel@collabora.com,
+	Eugen Hristev <eugen.hristev@collabora.com>
+Subject: [PATCH 0/2] fs/dcache: fix cache inconsistency on case-insensitive lookups
+Date: Fri,  5 Jul 2024 09:26:19 +0300
+Message-Id: <20240705062621.630604-1-eugen.hristev@collabora.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] hugetlbfs: support tracepoint
-To: Dave Chinner <david@fromorbit.com>, Steven Rostedt <rostedt@goodmis.org>
-CC: Matthew Wilcox <willy@infradead.org>, <muchun.song@linux.dev>,
-	<mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
-	<linux-mm@kvack.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>
-References: <20240704030704.2289667-1-lihongbo22@huawei.com>
- <20240704030704.2289667-2-lihongbo22@huawei.com>
- <ZoYY-sfj5jvs8UpQ@casper.infradead.org>
- <Zoab/VXoPkUna7L2@dread.disaster.area>
- <20240704101322.2743ec24@rorschach.local.home>
- <ZocxiSIQdm0tyaVG@dread.disaster.area>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <ZocxiSIQdm0tyaVG@dread.disaster.area>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Transfer-Encoding: 8bit
+
+Hello,
+
+This is an attempt to go back to this old patch series here :
+
+https://lore.kernel.org/lkml/cover.1632909358.git.shreeya.patel@collabora.com/
+
+First patch fixes a possible hang when d_add_ci is called from a filesystem's
+lookup function (like xfs is doing)
+d_alloc_parallel -> lookup -> d_add_ci -> d_alloc_parallel
+
+Second patch solves the issue of having the dcache saving the entry with
+the same case as it's being looked up instead of saving the real file name
+from the storage.
+Please check above thread for motivation on why this should be changed.
+
+Some further old discussions here as well:
+https://patchwork.ozlabs.org/project/linux-ext4/patch/20180924215655.3676-20-krisman@collabora.co.uk/
+
+I am not sure whether this is the right way to fix this, but I think
+I have considered all cases discussed in previous threads.
+
+Thank you for your review and consideration,
+Eugen
 
 
+Eugen Hristev (2):
+  fs/dcache: introduce d_alloc_parallel_check_existing
+  ext4: in lookup call d_add_ci if there is a case mismatch
 
-On 2024/7/5 7:34, Dave Chinner wrote:
-> On Thu, Jul 04, 2024 at 10:13:22AM -0400, Steven Rostedt wrote:
->> On Thu, 4 Jul 2024 22:56:29 +1000
->> Dave Chinner <david@fromorbit.com> wrote:
->>
->>> Having to do this is additional work when writing use-once scripts
->>> that get thrown away when the tracepoint output analysis is done
->>> is painful, and it's completely unnecessary if the tracepoint output
->>> is completely space separated from the start.
->>
->> If you are using scripts to parse the output, then you could just
->> enable the "fields" options, which will just ignore the TP_printk() and
->> print the fields in both their hex and decimal values:
->>
->>   # trace-cmd start -e filemap -O fields
->>
->> // the above fields change can also be done with:
->> //  echo 1 > /sys/kernel/tracing/options/fields
->>
->>   # trace-cmd show
->> # tracer: nop
->> #
->> # entries-in-buffer/entries-written: 8/8   #P:8
->> #
->> #                                _-----=> irqs-off/BH-disabled
->> #                               / _----=> need-resched
->> #                              | / _---=> hardirq/softirq
->> #                              || / _--=> preempt-depth
->> #                              ||| / _-=> migrate-disable
->> #                              |||| /     delay
->> #           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
->> #              | |         |   |||||     |         |
->>              less-2527    [004] ..... 61949.896458: mm_filemap_add_to_page_cache: pfn=0x144625 (1328677) i_ino=0x335c6 (210374) index=0x0 (0) s_dev=0xfe00003 (266338307) order=(0)
->>              less-2527    [004] d..2. 61949.896926: mm_filemap_delete_from_page_cache: pfn=0x152b07 (1387271) i_ino=0x2d73a (186170) index=0x0 (0) s_dev=0xfe00003 (266338307) order=(0)
->>       jbd2/vda3-8-268     [005] ..... 61954.461964: mm_filemap_add_to_page_cache: pfn=0x152b70 (1387376) i_ino=0xfe00003 (266338307) index=0x30bd33 (3194163) s_dev=0x3 (3) order=(0)
->>       jbd2/vda3-8-268     [005] ..... 61954.462669: mm_filemap_add_to_page_cache: pfn=0x15335b (1389403) i_ino=0xfe00003 (266338307) index=0x30bd40 (3194176) s_dev=0x3 (3) order=(0)
->>       jbd2/vda3-8-268     [005] ..... 62001.565391: mm_filemap_add_to_page_cache: pfn=0x13a996 (1288598) i_ino=0xfe00003 (266338307) index=0x30bd41 (3194177) s_dev=0x3 (3) order=(0)
->>       jbd2/vda3-8-268     [005] ..... 62001.566081: mm_filemap_add_to_page_cache: pfn=0x1446b5 (1328821) i_ino=0xfe00003 (266338307) index=0x30bd43 (3194179) s_dev=0x3 (3) order=(0)
->>              less-2530    [004] ..... 62033.182309: mm_filemap_add_to_page_cache: pfn=0x13d755 (1300309) i_ino=0x2d73a (186170) index=0x0 (0) s_dev=0xfe00003 (266338307) order=(0)
->>              less-2530    [004] d..2. 62033.182801: mm_filemap_delete_from_page_cache: pfn=0x144625 (1328677) i_ino=0x335c6 (210374) index=0x0 (0) s_dev=0xfe00003 (266338307) order=(0)
-> 
-> Yes, I know about that. But this just makes things harder, because
-> now there are *3* different formats that have to be handled (i.e.
-> now we also have to strip "()" around numbers).
-Perhaps if users want to filter the format, they could enable the 
-"fields" option in a unified manner. As for TP_printk(), it depends on 
-how to better display the data used for debugging.
+ fs/dcache.c            | 29 +++++++++++++++++++++++------
+ fs/ext4/namei.c        | 13 +++++++++++++
+ include/linux/dcache.h |  4 ++++
+ 3 files changed, 40 insertions(+), 6 deletions(-)
 
-Thanks,
-Hongbo
-> 
-> -Dave.
+-- 
+2.34.1
+
 
