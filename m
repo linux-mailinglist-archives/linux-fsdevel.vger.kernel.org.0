@@ -1,177 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-23186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B322928345
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 09:57:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B6A928380
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 10:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC731F24F87
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 07:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1481281A57
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 08:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B5F14532A;
-	Fri,  5 Jul 2024 07:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JMxsYB3s"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D70145B0F;
+	Fri,  5 Jul 2024 08:16:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9AB1C6A0;
-	Fri,  5 Jul 2024 07:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2E414533A;
+	Fri,  5 Jul 2024 08:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720166219; cv=none; b=cNuPZ3MxC3JUk+FELZ1Lp6hdZDA1zJiKPr5ZLA+YuOrnq5ufu9NGyxjMSBxIUlWLNqpGEwbvh0kPiUmrxdFB5+SAo+9a1Mmo7Y17WG/F5MD2HE6xdEhgQ8+LA1nWMazW/C1yNjibo5yDgpkZddOK0O2NvRh8d7u7SxgwU8spH40=
+	t=1720167371; cv=none; b=O7m78Y52EMyaOoF/cqbY89nP/mEU5lrCSavcQYg0LsV/jo1urq+HPfJdpFMvvhvFfRsns1eXeWaBBBRYYDJslz9AuKb6VhVopNG5oQtv+vc1CnTzx6BBMN2BERSIeECHohHTlEgWIAcbq3MVU6pDv7sY4nQpQFCDAPG75VGOS3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720166219; c=relaxed/simple;
-	bh=hCvfg0zvvZqrmaaLkvO3aWMBzPwR0Yr7Ge+MkJRbztk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K5+2x/4mNcW8Tti0UZroRJFFGaie6hiP2XCkpnj7ypxj+tReah5jHUkklg0APTQGR1XCZF8V/QuWQowojSusjB6Mzjjlsz5ZBwGX1ZV/GpbMwAAJqi/6v+zTytDlxNB/qeXiSmclc31Tyk3TNyl/47/TexRMDZQOmeBAs1U5Tlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JMxsYB3s; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720166217; x=1751702217;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hCvfg0zvvZqrmaaLkvO3aWMBzPwR0Yr7Ge+MkJRbztk=;
-  b=JMxsYB3sBzem8k9GpyKFwjhCGpRO+cMSv4MYbpC1xeN2VmjDHZlZdXhC
-   RijIBWJXrwkhkTRWKy7lqWYOlCiuIWwcaQQfpePJCkLAEnpCkvmR+279U
-   sRuudD1hAj+rmvBsDuw4zAhAohiTmsAvgCIE/cciOr7NOgbddSwa9Gms9
-   otQhK7zdkc2PvlRU6tSfF6wDeZGGNMEwQPxowBUu0DCWtJf7xRU6GFaYA
-   XNJZG3CmSkPcHDinp6o1DDf96HO/zgszmv21Aj+DLISkuJLxw4D0+hm4/
-   3lbBmDQRo7FakUQ7rEgl+dpzKTIPAXZxbQrOkXyhd1dYeaRYGzxtT1e9B
-   A==;
-X-CSE-ConnectionGUID: G6//7+K5TWaZrnUmy7R4AQ==
-X-CSE-MsgGUID: ogo6IoEHQFe1TWVOyiiing==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="34893143"
-X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
-   d="scan'208";a="34893143"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 00:56:57 -0700
-X-CSE-ConnectionGUID: 6BUlqzXfQTWVg7bBz2ZclA==
-X-CSE-MsgGUID: XrOYx2nvQeytygsZxIGmiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,184,1716274800"; 
-   d="scan'208";a="46705592"
-Received: from unknown (HELO [10.238.4.224]) ([10.238.4.224])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 00:56:54 -0700
-Message-ID: <3c7a0cd7-1dd2-4762-a2dd-67e6b6a82df7@intel.com>
-Date: Fri, 5 Jul 2024 15:56:52 +0800
+	s=arc-20240116; t=1720167371; c=relaxed/simple;
+	bh=uPcQJaet8uo7JXwMefSOrhwff2O9EQUpwFCRhUEMN6M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HosuVaj4zFi899VtbUqk/OvEqiRfSTT5L38v6TP0L8igEIJ3WcmmVGqOeutcPnXn4uNtGlGMZjacbV2IYXfOUQfpbZ5+bFDDZa+jYBDLXrn0t07jjcO5WMgFq4xiXscFTw7TwF0vUe1yFbE6cCn4OgSLESGcC289eM7/rryx3Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 4658FKPJ089846;
+	Fri, 5 Jul 2024 16:15:20 +0800 (+08)
+	(envelope-from Dongliang.Cui@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WFmR03dk1z2KGTdQ;
+	Fri,  5 Jul 2024 16:10:20 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 5 Jul 2024 16:15:18 +0800
+From: Dongliang Cui <dongliang.cui@unisoc.com>
+To: <linkinjeon@kernel.org>, <sj1557.seo@samsung.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <niuzhiguo84@gmail.com>, <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>,
+        <dongliang.cui@unisoc.com>, Zhiguo Niu <zhiguo.niu@unisoc.com>
+Subject: [PATCH] exfat: check disk status during buffer write
+Date: Fri, 5 Jul 2024 16:15:14 +0800
+Message-ID: <20240705081514.1901580-1-dongliang.cui@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
-To: Jan Kara <jack@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, edumazet@google.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
- tim.c.chen@linux.intel.com, yu.ma@intel.com
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-4-yu.ma@intel.com>
- <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
- <20240704215507.mr6st2d423lvkepu@quack3>
-From: "Ma, Yu" <yu.ma@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240704215507.mr6st2d423lvkepu@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 4658FKPJ089846
 
+We found that when writing a large file through buffer write,
+if the disk is inaccessible, exFAT does not return an error
+normally, which leads to the writing process not stopping properly.
 
-On 7/5/2024 5:55 AM, Jan Kara wrote:
-> On Thu 04-07-24 19:44:10, Mateusz Guzik wrote:
->> On Wed, Jul 3, 2024 at 4:07 PM Yu Ma <yu.ma@intel.com> wrote:
->>> There is available fd in the lower 64 bits of open_fds bitmap for most cases
->>> when we look for an available fd slot. Skip 2-levels searching via
->>> find_next_zero_bit() for this common fast path.
->>>
->>> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
->>> free slot is available there, as:
->>> (1) The fd allocation algorithm would always allocate fd from small to large.
->>> Lower bits in open_fds bitmap would be used much more frequently than higher
->>> bits.
->>> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
->>> it would never be shrunk. The search size increases but there are few open fds
->>> available here.
->>> (3) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
->>> searching.
->>>
->>> As suggested by Mateusz Guzik <mjguzik gmail.com> and Jan Kara <jack@suse.cz>,
->>> update the fast path from alloc_fd() to find_next_fd(). With which, on top of
->>> patch 1 and 2, pts/blogbench-1.1.0 read is improved by 13% and write by 7% on
->>> Intel ICX 160 cores configuration with v6.10-rc6.
->>>
->>> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
->>> Signed-off-by: Yu Ma <yu.ma@intel.com>
->>> ---
->>>   fs/file.c | 5 +++++
->>>   1 file changed, 5 insertions(+)
->>>
->>> diff --git a/fs/file.c b/fs/file.c
->>> index a15317db3119..f25eca311f51 100644
->>> --- a/fs/file.c
->>> +++ b/fs/file.c
->>> @@ -488,6 +488,11 @@ struct files_struct init_files = {
->>>
->>>   static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
->>>   {
->>> +       unsigned int bit;
->>> +       bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
->>> +       if (bit < BITS_PER_LONG)
->>> +               return bit;
->>> +
->>>          unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
->>>          unsigned int maxbit = maxfd / BITS_PER_LONG;
->>>          unsigned int bitbit = start / BITS_PER_LONG;
->>> --
->>> 2.43.0
->>>
->> I had something like this in mind:
->> diff --git a/fs/file.c b/fs/file.c
->> index a3b72aa64f11..4d3307e39db7 100644
->> --- a/fs/file.c
->> +++ b/fs/file.c
->> @@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
->> *fdt, unsigned int start)
->>          unsigned int maxfd = fdt->max_fds; /* always multiple of
->> BITS_PER_LONG */
->>          unsigned int maxbit = maxfd / BITS_PER_LONG;
->>          unsigned int bitbit = start / BITS_PER_LONG;
->> +       unsigned int bit;
->> +
->> +       /*
->> +        * Try to avoid looking at the second level map.
->> +        */
->> +       bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
->> +                               start & (BITS_PER_LONG - 1));
->> +       if (bit < BITS_PER_LONG) {
->> +               return bit + bitbit * BITS_PER_LONG;
->> +       }
-> Drat, you're right. I missed that Ma did not add the proper offset to
-> open_fds. *This* is what I meant :)
->
-> 								Honza
+To easily reproduce this issue, you can follow the steps below:
 
-Just tried this on v6.10-rc6, the improvement on top of patch 1 and 
-patch 2 is 7% for read and 3% for write, less than just check first word.
+1. format a device to exFAT and then mount (with a full disk erase)
+2. dd if=/dev/zero of=/exfat_mount/test.img bs=1M count=8192
+3. eject the device
 
-Per my understanding, its performance would be better if we can find 
-free bit in the same word of next_fd with high possibility, but next_fd 
-just represents the lowest possible free bit. If fds are open/close 
-frequently and randomly, that might not always be the case, next_fd may 
-be distributed randomly, for example, 0-65 are occupied, fd=3 is 
-returned, next_fd will be set to 3, next time when 3 is allocated, 
-next_fd will be set to 4, while the actual first free bit is 66 , when 
-66 is allocated, and fd=5 is returned, then the above process would be 
-went through again.
+You may find that the dd process does not stop immediately and may
+continue for a long time.
 
-Yu
+We compared it with the FAT, where FAT would prompt an EIO error and
+immediately stop the dd operation.
+
+The root cause of this issue is that when the exfat_inode contains the
+ALLOC_NO_FAT_CHAIN flag, exFAT does not need to access the disk to
+look up directory entries or the FAT table (whereas FAT would do)
+every time data is written. Instead, exFAT simply marks the buffer as
+dirty and returns, delegating the writeback operation to the writeback
+process.
+
+If the disk cannot be accessed at this time, the error will only be
+returned to the writeback process, and the original process will not
+receive the error, so it cannot be returned to the user side.
+
+Therefore, we think that when writing files with ALLOC_NO_FAT_CHAIN,
+it is necessary to continuously check the status of the disk.
+
+When the disk cannot be accessed normally, an error should be returned
+to stop the writing process.
+
+Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+ fs/exfat/exfat_fs.h | 5 +++++
+ fs/exfat/inode.c    | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index ecc5db952deb..c5f5a7a8b672 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -411,6 +411,11 @@ static inline unsigned int exfat_sector_to_cluster(struct exfat_sb_info *sbi,
+ 		EXFAT_RESERVED_CLUSTERS;
+ }
+ 
++static inline bool exfat_check_disk_error(struct block_device *bdev)
++{
++	return blk_queue_dying(bdev_get_queue(bdev));
++}
++
+ static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
+ 		unsigned int clus)
+ {
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index dd894e558c91..efd02c1c83a6 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -147,6 +147,11 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+ 	*clu = last_clu = ei->start_clu;
+ 
+ 	if (ei->flags == ALLOC_NO_FAT_CHAIN) {
++		if (exfat_check_disk_error(sb->s_bdev)) {
++			exfat_fs_error(sb, "device inaccessiable!\n");
++			return -EIO;
++		}
++
+ 		if (clu_offset > 0 && *clu != EXFAT_EOF_CLUSTER) {
+ 			last_clu += clu_offset - 1;
+ 
+-- 
+2.25.1
 
 
