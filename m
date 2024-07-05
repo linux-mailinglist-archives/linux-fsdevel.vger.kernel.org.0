@@ -1,203 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-23248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89BE4928EEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 23:44:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CD2928EF7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 23:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90CD41C22B91
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 21:44:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8B51F23760
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 21:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D3E146A73;
-	Fri,  5 Jul 2024 21:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD86169AD0;
+	Fri,  5 Jul 2024 21:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmA/MqpH"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uECZ4stH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="b8qnRk3N";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uwT9WVFk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FkaB+8hU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6AA13A26F;
-	Fri,  5 Jul 2024 21:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE7A145B03;
+	Fri,  5 Jul 2024 21:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720215845; cv=none; b=eQCFpxFd2n5N1apNiJtD+Zh7g87N1mcFrYBPhfn7Tewuk7DZnNywXHE9lHKymLWFalW/ZQ6cfUu3nNTjj0mkocUsTO/cKbiNe0Wp+MeZ+TAYIV9b8Bx409GGwRDCKb9epu88AGPWw4j4Kc2+Cdrh1ttR++8Mb/HqxqJNp1MJwaM=
+	t=1720216275; cv=none; b=WbS/fY4kiBKoL88ffTWd2FBLyzRV/tI+vV/aS8oKAuY8PYBwsyIR3JO8pO1pBKGhRVz5RlfSSfQPNZsBwO125R/+nqWTG6NNFxLiAEESWjN9o/EgRkZRpzhMqzPQ3sgsuMJRQMy+Ok6u/k8sSto4Y1wfQ54ZKGlnnJB/DhJVQpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720215845; c=relaxed/simple;
-	bh=C8dzzeBxki3NVPz5SLBDhzLlRbF8DdRlaoB+upRLStw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HTxdwk/sRf5kGVbWBqii6pElGRbi243a0NM+YURMSudguBOInN6jS4UO7YKzzq9kvlPS8c3I/eUoHZxMF/BsqtOm23lL/peQGfU+OhNV6YVMS1d9kSi2YGxS213CZxaHdRYZf8Ba3gZ36HXO3rbf6TfFAFOdo2a+4Swmo5XVCyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmA/MqpH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84822C116B1;
-	Fri,  5 Jul 2024 21:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720215844;
-	bh=C8dzzeBxki3NVPz5SLBDhzLlRbF8DdRlaoB+upRLStw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YmA/MqpHvxbBzpbTc6a2FOvrfPb4OIVnkRcyMZqvqh9C/IaHKhfDEwkLDMfqBAZKE
-	 lLtV3XmpRZnW5tCPDKPkoKOTWVowP8K7NRpKAJ9LHi4T1ILYDGiF7MIuMLER2u6091
-	 FVOyYCqnGEDEIZPcXEnF0Se3zIMDxqtuouIkG8VyS/ktA3M28+mc/apOcH+XZsMcbb
-	 /v9pBelPJJAnQaPCu1em+kb7npPHZmTbUi3yhMXToh60NEfdZeAMBSBzCpoUp7hgI7
-	 Wu7FElBENaUT6HJ8lrykCAzO484DugOXOBEuhZNCIKND8xqN1dc1p1TW7fbg9L0Wyz
-	 Hc+0YX7HazBiA==
-Date: Fri, 5 Jul 2024 14:44:03 -0700
-From: Kees Cook <kees@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,
-	Alejandro Colomar <alx@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Heimes <christian@python.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Eric Chiang <ericchiang@google.com>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Jordan R Abrahams <ajordanr@google.com>,
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-	Luca Boccassi <bluca@debian.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Steve Dower <steve.dower@python.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-	Xiaoming Ni <nixiaoming@huawei.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-Message-ID: <202407051425.32AF9D2@keescook>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-3-mic@digikod.net>
- <202407041711.B7CD16B2@keescook>
- <20240705.IeTheequ7Ooj@digikod.net>
+	s=arc-20240116; t=1720216275; c=relaxed/simple;
+	bh=QRaqDzYEQUq9tiXQ/0s2hH/xBqwEhkM5klZH525/JWk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=K0poWYcWjhmO52w+SfchPM5mm4tbKAp/wtujqwQwMyo65+BhHg51sM9x337nWaaVfw5S+xl/H33Bbprw/ogZN5khIw3c4x2BnT8+Qsh12C+3BHEOv97xUpQfBx4s+bwR4JcMDFd4hwT+poziBA/gYRWQjydGloTHtzwjMENQD/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uECZ4stH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=b8qnRk3N; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uwT9WVFk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FkaB+8hU; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D559021AAE;
+	Fri,  5 Jul 2024 21:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720216272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oyCosjYZowLgthiefSmgKAH8gA0MkEzux0epotkjl/o=;
+	b=uECZ4stHhq50PoFSoEHvCmtvjhJTA36He2iZpXFAIp+QoF9mBGAMRIcPIXS14ikkUurS2K
+	iG56DEGk2Mu8nSaFHlpmn071BrusF1ArgY7glkwkp+fcYzt2PMM035JIHDaZwz+ZS9NySf
+	7IZqHRXe5AOhDwNpF3qhh13RCbEJpFI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720216272;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oyCosjYZowLgthiefSmgKAH8gA0MkEzux0epotkjl/o=;
+	b=b8qnRk3NibkpxUlTf76WjynwzilpJ+wgg9JlNX84B6GEZGLecTmHqHS50XM4p0osKf2bS9
+	RGjELBCYYB3YEBBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=uwT9WVFk;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=FkaB+8hU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720216270; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oyCosjYZowLgthiefSmgKAH8gA0MkEzux0epotkjl/o=;
+	b=uwT9WVFk6QPE3+AW4Ffzcb13w62PoqsGzUojxEBbAjwyhycjXqehJ6tYoXBaH+fqnOPy/g
+	m6spL7DbIbqkgTRdbhfYX/ez6JxcLkAGNbd7KgT9+ZCxeRFXEs8GmJ1OUaiCR0jG4IpNsH
+	lsc3TO/woTUc7hnlqM4vIuyUxh1uaoE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720216270;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oyCosjYZowLgthiefSmgKAH8gA0MkEzux0epotkjl/o=;
+	b=FkaB+8hUqkq5ZtlLvg8K7+RLDLmJnEYk/1h1TLP0JYqhOYyhyE32NPyx/bwyxTSL2Inanf
+	2TK3lS9PSJzJEUBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2AC2313889;
+	Fri,  5 Jul 2024 21:51:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ann2L8pqiGaSDQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Fri, 05 Jul 2024 21:51:06 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240705.IeTheequ7Ooj@digikod.net>
+From: "NeilBrown" <neilb@suse.de>
+To: "Dave Chinner" <david@fromorbit.com>
+Cc: "Chuck Lever III" <chuck.lever@oracle.com>,
+ "Mike Snitzer" <snitzer@kernel.org>, "Jeff Layton" <jlayton@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>,
+ "Trond Myklebust" <trondmy@hammerspace.com>,
+ "Christoph Hellwig" <hch@infradead.org>,
+ "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
+ "Linux FS Devel" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Security issue in NFS localio
+In-reply-to: <ZocvhIoQfzzhp+mh@dread.disaster.area>
+References: <>, <ZocvhIoQfzzhp+mh@dread.disaster.area>
+Date: Sat, 06 Jul 2024 07:51:03 +1000
+Message-id: <172021626347.11489.9592570650036340361@noble.neil.brown.name>
+X-Rspamd-Queue-Id: D559021AAE
+X-Spam-Score: -5.51
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,irix7.com:url,suse.de:email,suse.de:dkim];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On Fri, Jul 05, 2024 at 07:54:16PM +0200, Mickaël Salaün wrote:
-> On Thu, Jul 04, 2024 at 05:18:04PM -0700, Kees Cook wrote:
-> > On Thu, Jul 04, 2024 at 09:01:34PM +0200, Mickaël Salaün wrote:
-> > > Such a secure environment can be achieved with an appropriate access
-> > > control policy (e.g. mount's noexec option, file access rights, LSM
-> > > configuration) and an enlighten ld.so checking that libraries are
-> > > allowed for execution e.g., to protect against illegitimate use of
-> > > LD_PRELOAD.
+On Fri, 05 Jul 2024, Dave Chinner wrote:
+> On Thu, Jul 04, 2024 at 07:00:23PM +0000, Chuck Lever III wrote:
+> > 
+> > 
+> > > On Jul 3, 2024, at 6:24â€¯PM, NeilBrown <neilb@suse.de> wrote:
 > > > 
-> > > Scripts may need some changes to deal with untrusted data (e.g. stdin,
-> > > environment variables), but that is outside the scope of the kernel.
-> > 
-> > If the threat model includes an attacker sitting at a shell prompt, we
-> > need to be very careful about how process perform enforcement. E.g. even
-> > on a locked down system, if an attacker has access to LD_PRELOAD or a
+> > > 
+> > > I've been pondering security questions with localio - particularly
+> > > wondering what questions I need to ask.  I've found three focal points
+> > > which overlap but help me organise my thoughts:
+> > > 1- the LOCALIO RPC protocol
+> > > 2- the 'auth_domain' that nfsd uses to authorise access
+> > > 3- the credential that is used to access the file
+> > > 
+> > > 1/ It occurs to me that I could find out the UUID reported by a given
+> > > local server (just ask it over the RPC connection), find out the
+> > > filehandle for some file that I don't have write access to (not too
+> > > hard), and create a private NFS server (hacking nfs-ganasha?) which
+> > > reports the same uuid and reports that I have access to a file with
+> > > that filehandle.  If I then mount from that server inside a private
+> > > container on the same host that is running the local server, I would get
+> > > localio access to the target file.
 > 
-> LD_PRELOAD should be OK once ld.so will be patched to check the
-> libraries.  We can still imagine a debug library used to bypass security
-> checks, but in this case the issue would be that this library is
-> executable in the first place.
-
-Ah yes, that's fair: the shell would discover the malicious library
-while using AT_CHECK during resolution of the LD_PRELOAD.
-
-> > seccomp wrapper (which you both mention here), it would be possible to
-> > run commands where the resulting process is tricked into thinking it
-> > doesn't have the bits set.
+> This seems amazingly complex for something that is actually really
+> simple.  Keep in mind that I am speaking from having direct
+> experience with developing and maintaining NFS client IO bypass
+> infrastructure from when I worked at SGI as an NFS engineer.
 > 
-> As explained in the UAPI comments, all parent processes need to be
-> trusted.  This meeans that their code is trusted, their seccomp filters
-> are trusted, and that they are patched, if needed, to check file
-> executability.
-
-But we have launchers that apply arbitrary seccomp policy, e.g. minijail
-on Chrome OS, or even systemd on regular distros. In theory, this should
-be handled via other ACLs.
-
-> > But this would be exactly true for calling execveat(): LD_PRELOAD or
-> > seccomp policy could have it just return 0.
+> So, let's look at the Irix NFS client/server and the "Bulk Data
+> Service" protocol extensions that SGI wrote for NFSv3 back in the
+> mid 1990s.  Here's an overview from the 1996 product documentation
+> "Getting Started with BDSpro":
 > 
-> If an attacker is allowed/able to load an arbitrary seccomp filter on a
-> process, we cannot trust this process.
-> 
-> > 
-> > While I like AT_CHECK, I do wonder if it's better to do the checks via
-> > open(), as was originally designed with O_MAYEXEC. Because then
-> > enforcement is gated by the kernel -- the process does not get a file
-> > descriptor _at all_, no matter what LD_PRELOAD or seccomp tricks it into
-> > doing.
-> 
-> Being able to check a path name or a file descriptor (with the same
-> syscall) is more flexible and cover more use cases.
+> https://irix7.com/techpubs/007-3274-001.pdf
 
-If flexibility costs us reliability, I think that flexibility is not
-a benefit.
+Interesting work.  Thanks for the pointer.
 
-> The execveat(2)
-> interface, including current and future flags, is dedicated to file
-> execution.  I then think that using execveat(2) for this kind of check
-> makes more sense, and will easily evolve with this syscall.
+It appear to me that BDS uses a separate network protocol - possibly
+over a separate TCP connection or even a separate fabric - to connect
+client to server, and this protocol is tuned for high throughput data
+transfer and nothing else.  Makes perfect sense.
 
-Yeah, I do recognize that is feels much more natural, but I remain
-unhappy about how difficult it will become to audit a system for safety
-when the check is strictly per-process opt-in, and not enforced by the
-kernel for a given process tree. But, I think this may have always been
-a fiction in my mind. :)
+It would seem to still use the IP address (or similar NFS-style
+mechanism) to authenticate each party to the other and to establish a
+path for the data to flow over.  This is the question facing localio in
+the text of mine that you quote above.  We don't want a network data
+flow.  We want to hand over a file descriptor (or 'struct file').  There
+is no standard way to achieve this over an IP-connected channel.  So we
+are creating one.
 
-> > And this thinking also applies to faccessat() too: if a process can be
-> > tricked into thinking the access check passed, it'll happily interpret
-> > whatever. :( But not being able to open the fd _at all_ when O_MAYEXEC
-> > is being checked seems substantially safer to me...
-> 
-> If attackers can filter execveat(2), they can also filter open(2) and
-> any other syscalls.  In all cases, that would mean an issue in the
-> security policy.
+The proposed protocol is to send a unique number over the IP-connected
+channel, and use that to achieve rendezvous between the in-kernel client
+and the in-kernel server.  The interesting questions are around how
+unique this number should be, which direction it should travel, and
+whether anything else other than the file descriptor should be passed
+through when the kernel sides rendezvous.
 
-Hm, as in, make a separate call to open(2) without O_MAYEXEC, and pass
-that fd back to the filtered open(2) that did have O_MAYEXEC. Yes, true.
+I don't think the documentation on BDS sheds any particular light on
+this question.
 
-I guess it does become morally equivalent.
-
-Okay. Well, let me ask about usability. Right now, a process will need
-to do:
-
-- should I use AT_CHECK? (check secbit)
-- if yes: perform execveat(AT_CHECK)
-
-Why not leave the secbit test up to the kernel, and then the program can
-just unconditionally call execveat(AT_CHECK)?
-
-Though perhaps the issue here is that an execveat() EINVAL doesn't
-tell the program if AT_CHECK is unimplemented or if something else
-went wrong, and the secbit prctl() will give the correct signal about
-AT_CHECK availability?
-
--- 
-Kees Cook
+Thanks,
+NeilBrown
 
