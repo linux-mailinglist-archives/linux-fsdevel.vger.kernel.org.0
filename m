@@ -1,144 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-23208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E37928AA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 16:24:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E55928AE3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 16:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5768B228D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 14:24:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830C71F2437D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 14:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE43516B389;
-	Fri,  5 Jul 2024 14:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73903168490;
+	Fri,  5 Jul 2024 14:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GomyGT6q"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="sVN/8k52"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE25D1581E3
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jul 2024 14:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F341BC43
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jul 2024 14:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720189463; cv=none; b=eNa9KVMJtVT1rNVwZygABx1IXOUEyCqxXUlrJVAaTSEWOXIqguOnuqajkQ6JiF9Wy73gAnAVWTDnxOnTYvkNftZ7OMGCacyB+YVK3EcsnEhVM6uj3VjeQ9aVd0lnO9mHFsjZGLd6aqHMKHtyIAWbxHO0Hz+QIvLquKdaJ1XvbLE=
+	t=1720191150; cv=none; b=VsFuV+epg2YLPAM5OXzrkZwu+s9DJZoeZ48l4LuSH9blB+tanWporzOTviKTGvF76LuiEoAGtX0g8nvO2g/zWADjv3/eK6FyVnrCXoWmcP4tQqSeP8T8fnpAALJpat9XM5UmBSieqEQ3PUhGnfPAeovKukl6GGgAcKr9Y5wKjh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720189463; c=relaxed/simple;
-	bh=ezE9cMK85xGULq2NDfyultVM78ZkLbyifJxcFeIVVd4=;
+	s=arc-20240116; t=1720191150; c=relaxed/simple;
+	bh=Cl714NzMIa+kX2c6zt+5FrrMaV95GBw+5lyJhZCRXsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b3F+3VH9qcVanS+kFO9YCpDmCKXmGa4O9LWVf+NMurIrX6pWCUL4AHUbvX+vGs0O9CgekBnkKatm6JQ8rn5uyiG04fZ7bE1QM/rQiiufe9aIF6K0Bk3xQWtuhI61gx5H4Yv3RWAhrMAbtqvP2iPONstcG94h88Oqj4AAsG4fgl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GomyGT6q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720189460;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IqBTg61cVL77faXIzfdAxULAIPGMk1ZHXjVPHmfrZtE=;
-	b=GomyGT6q4Dkoew0pCRUYAoml9aFCdZYOXIEQEjz64CtThBXoFF7Mra3soyxFZs7BYZGnr4
-	vzGyfb+mUwBbgyhfR+bveNOh3TOMIFBnkRrYodstWMD/mhDtfkrnQteBVO2+kFcUWqNqxi
-	S8ghGxK+13S2T1g7QDuve6Z+12fHe3M=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-CzpId4q_PS6iU4Urq0kzCg-1; Fri, 05 Jul 2024 10:24:19 -0400
-X-MC-Unique: CzpId4q_PS6iU4Urq0kzCg-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-44671e02749so3653361cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jul 2024 07:24:19 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tqkzcpfP48MvdQpTtBrZXgiZRVFfnQNoB7qQlApYbhkJelDz7TX+TPLPukeBiggxAqti8K3Btig5PkQ2fEVC0vI4aCHkKURmIkliNFSkDeDdecW05KOyijZkFqZpdhaDTPgHlKYEjqdbUjGDQgwQbwgqSP+b7mhPRUfSI08e2EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=sVN/8k52; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b5f90373d4so4953366d6.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jul 2024 07:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1720191147; x=1720795947; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OEbb0pkWNXxPYbDy9xDK4A6PxBSjxFiyLraknK9GPMo=;
+        b=sVN/8k52DW5qdDyPvXo//ahj+goOFOSZVhq+MD9+jA2GWfu2dyKYJldewgJIv9CS9b
+         yb/4W5A8nAXg6Qyatsje61ojhzRgr/eswhdWe5LP94Upjjx1+fspEqfNOjEKKZCFBFVh
+         ZV89QX2rTO90QAVNxiUqJCkMmtJkKBWtl/rdyi0UOnDDj4WDRHuYUxA845fQlc7U6EVp
+         cgK6Yr3uEyjyECQsQNR8mMnMUu7FuK635iIYFXsvX8svi3iEwzHTLwV5yI+ZfAuY0j7/
+         NkICvmaXKHAHCxbDPzmt9vwSpTXvC7XbEUgddblcEmaTLWjei8Mh3/0v2G3/coVMmaHD
+         yiDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720189459; x=1720794259;
+        d=1e100.net; s=20230601; t=1720191147; x=1720795947;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IqBTg61cVL77faXIzfdAxULAIPGMk1ZHXjVPHmfrZtE=;
-        b=Qfx+mvjs8pjdKsu9f9Y/qqmbPnY7V2ohvQIYCYQ0duIqiW31YrHGJhptbsastaKK1s
-         xFpBhQFJ7orXqrONbqqcDXEn/bwYamid0l/2TvKZhd6EUxTAVJ03u8bTc8AujC972ION
-         8F7R/L/5YP70qrFIoEsWNBZbNPLnYQKB4GoV01ED2CcXTrlOCr2TohfWEI9N8ADRozaj
-         uOt5kS0f/x4OnO74OuifWjGIvocTZ+kKAsqYj7GjhNojp8Z3FSItjYNuYb7aclQkDvId
-         br3lMAID/jGsUs1jH1Q993w9qrBVdq+Bpquo9l+Atwhs7BBfSpopUbdVOqdJPWYQkIip
-         Tz4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWfb7e4toqgls4z2Ta29pYZrS/Z+4JbPgyZAD0xvb2ZnkMbzKwkfasDcy1gR6k+4RQti9ne6uqwA6Gms2WZjzk1VIiz5fdl/+yLuF0XBQ==
-X-Gm-Message-State: AOJu0Yx0sN/lFMP1DnlcqCFR2YKISpyrskId7jQXswobuCQWo33kjRHH
-	kjOyUCuQ+xwAGoqeksC0mNd1XgUKKwchh6mdi2iLFD8bSVMzchbzhU7Q4NyfqLSy/YHk/FjaNu4
-	AYk+xhHMAxbhS6jDxVy3OQlLZBKFjHlwH1v8aFfoJkMCN2E1kvAtUV7RMqbBlTLw=
-X-Received: by 2002:ac8:7c4b:0:b0:446:395a:37c9 with SMTP id d75a77b69052e-447cc1cd760mr50256751cf.4.1720189458362;
-        Fri, 05 Jul 2024 07:24:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKP4/uPX8iCeoUcNLMV3z8vBAByHvLymsXhgYIxVOYKgo8tVByPTMSYbiLBJ2KPlAF3hMSkQ==
-X-Received: by 2002:ac8:7c4b:0:b0:446:395a:37c9 with SMTP id d75a77b69052e-447cc1cd760mr50256521cf.4.1720189457935;
-        Fri, 05 Jul 2024 07:24:17 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4465149b579sm69523231cf.75.2024.07.05.07.24.15
+        bh=OEbb0pkWNXxPYbDy9xDK4A6PxBSjxFiyLraknK9GPMo=;
+        b=XTz9h2uk+/H+BcmXnLHLnsNr+k8RGa14U8wOZCEdQ7gwj7NTZRP//rEdsVOfllwIDQ
+         pTYihgefs0R3aNQ7Cu1qteWJcOD63LM7GW8EpKyyyfPHu1RLYjQnFFWw/MoagDORKIyd
+         jDRxfm8D6leLlckqUhvdzeAhbKMWEwOWVbnZLyhObxP11g3oqQ4CFyrbNQ8p2FPafSI5
+         eZWzMCntqu8ouCII2Y5P0USGfxYtLvutTZQ0EhBBt2Rl6GguhzHGkIb+Vcfa//qASMn9
+         orKb5t53BSnttR0Z82sHltcwc0mW8LXeez/HzIbx66Ha+hXaQcHrNqU76IFlEgMWLCiw
+         dC1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVdMQK+DlSV8rAltoEP8EcnghSaR6qQDMeGX7RK27I95Tw4VRdhD1uo4Q1QPg+Ex72afwl7AsXxCmIQRY9JvcuV2qo2q1oPAb3HwgvZEQ==
+X-Gm-Message-State: AOJu0YyK5VmIscwTq2oBsbgRbSrV4KUdFAMUmBup46mQmasIMEewnuMD
+	qdX5ZHfLTPzPDFVg+GyACY2BRzjU0eL5sD7pe1hl9/UA7P9qlS6zkxcbxBGX7hE=
+X-Google-Smtp-Source: AGHT+IEIWWwR9IYxgW4ZDzZkAuJanj+INhoy1mHpphrCLtiujAt/1MiEuhXKw5rrlxXpAMh9oDFKAw==
+X-Received: by 2002:a05:6214:4006:b0:6b0:6e81:9ec7 with SMTP id 6a1803df08f44-6b5ee6db67bmr47924576d6.31.1720191147648;
+        Fri, 05 Jul 2024 07:52:27 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e369dcfsm73486486d6.27.2024.07.05.07.52.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 07:24:17 -0700 (PDT)
-Date: Fri, 5 Jul 2024 10:24:14 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com,
-	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
-	linmiaohe@huawei.com, david@redhat.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
-	david@fromorbit.com, Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
-Message-ID: <ZogCDpfSyCcjVXWH@x1n>
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
- <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
+        Fri, 05 Jul 2024 07:52:27 -0700 (PDT)
+Date: Fri, 5 Jul 2024 10:52:26 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH][RESEND] fuse: add simple request tracepoints
+Message-ID: <20240705145226.GA879955@perftesting>
+References: <fc6559455ed29437cd414c0fc838ef4749670ff2.1720017492.git.josef@toxicpanda.com>
+ <21a2cfee-0067-43d1-b605-68a99abd9f53@fastmail.fm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
+In-Reply-To: <21a2cfee-0067-43d1-b605-68a99abd9f53@fastmail.fm>
 
-Hi, Alistair,
-
-On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
-> Now that DAX is managing page reference counts the same as normal
-> pages there are no callers for vmf_insert_pXd functions so remove
-> them.
+On Thu, Jul 04, 2024 at 07:20:16PM +0200, Bernd Schubert wrote:
 > 
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> ---
->  include/linux/huge_mm.h |   2 +-
->  mm/huge_memory.c        | 165 +-----------------------------------------
->  2 files changed, 167 deletions(-)
 > 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 9207d8e..0fb6bff 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
->  		    unsigned long cp_flags);
->  
-> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
-> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
->  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
->  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+> On 7/3/24 16:38, Josef Bacik wrote:
+> > I've been timing various fuse operations and it's quite annoying to do
+> > with kprobes.  Add two tracepoints for sending and ending fuse requests
+> > to make it easier to debug and time various operations.
+> 
+> Thanks, this is super helpful.
+> 
+> [...]
+> > 
+> > +	EM( FUSE_STATX,			"FUSE_STATX")		\
+> > +	EMe(CUSE_INIT,			"CUSE_INIT")
+> > +
+> > +/*
+> > + * This will turn the above table into TRACE_DEFINE_ENUM() for each of the
+> > + * entries.
+> > + */
+> > +#undef EM
+> > +#undef EMe
+> > +#define EM(a, b)	TRACE_DEFINE_ENUM(a);
+> > +#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
+> 
+> 
+> I'm not super familiar with tracepoints and I'm a bit list why "EMe" is
+> needed
+> in addition to EM? CUSE_INIT is just another number?
 
-There's a plan to support huge pfnmaps in VFIO, which may still make good
-use of these functions.  I think it's fine to remove them but it may mean
-we'll need to add them back when supporting pfnmaps with no memmap.
+This is just obnoxious preprocessor abuse, so you're right this first iteration
+of EMe() is the same as EM(), but if you look right below that you have
 
-Is it still possible to make the old API generic to both service the new
-dax refcount plan, but at the meantime working for pfn injections when
-there's no page struct?
+/* Now we redfine it with the table that __print_symbolic needs. */
+#undef EM
+#undef EMe
+#define EM(a, b)        {a, b},
+#define EMe(a, b)       {a, b}
 
-Thanks,
+so later when we do
 
--- 
-Peter Xu
+__print_symbolic(__entry->opcode, OPCODES)
 
+OPCODES gets turned intoo
+
+__print_symbolic(__entry->opcode,
+		{FUSE_LOOKUP, "FUSE_LOOKUP"},{...},{CUSE_INIT, "CUSE_INIT"})
+
+it's subtle and annoying, but the cleanest way to have these big opcode tables
+that are easy to add/remove stuff from for clean output.  Thanks,
+
+Josef
 
