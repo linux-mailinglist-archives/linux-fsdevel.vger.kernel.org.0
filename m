@@ -1,137 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-23187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B6A928380
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 10:16:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF6E928387
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 10:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1481281A57
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 08:16:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D9312822C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jul 2024 08:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D70145B0F;
-	Fri,  5 Jul 2024 08:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E37145B11;
+	Fri,  5 Jul 2024 08:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pDeUOnfX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2E414533A;
-	Fri,  5 Jul 2024 08:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C54F2BD18;
+	Fri,  5 Jul 2024 08:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720167371; cv=none; b=O7m78Y52EMyaOoF/cqbY89nP/mEU5lrCSavcQYg0LsV/jo1urq+HPfJdpFMvvhvFfRsns1eXeWaBBBRYYDJslz9AuKb6VhVopNG5oQtv+vc1CnTzx6BBMN2BERSIeECHohHTlEgWIAcbq3MVU6pDv7sY4nQpQFCDAPG75VGOS3k=
+	t=1720167463; cv=none; b=AGWhhPCEDr5dP99ZtJ7W49Zlri0sP3tpIlb8tNVXHC8kLfzMxoWt4blYHzLc9HDmtYpCsZKQKSUX96DKqcUx+dPykq7Mx0nKoxY6mXLVB93N28IrDyytPnzEtJjmgjd5SgmLFW6h5U+rZ88Bb9JIdQWTRyXhEqWZM+oQJVC0DDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720167371; c=relaxed/simple;
-	bh=uPcQJaet8uo7JXwMefSOrhwff2O9EQUpwFCRhUEMN6M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HosuVaj4zFi899VtbUqk/OvEqiRfSTT5L38v6TP0L8igEIJ3WcmmVGqOeutcPnXn4uNtGlGMZjacbV2IYXfOUQfpbZ5+bFDDZa+jYBDLXrn0t07jjcO5WMgFq4xiXscFTw7TwF0vUe1yFbE6cCn4OgSLESGcC289eM7/rryx3Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 4658FKPJ089846;
-	Fri, 5 Jul 2024 16:15:20 +0800 (+08)
-	(envelope-from Dongliang.Cui@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WFmR03dk1z2KGTdQ;
-	Fri,  5 Jul 2024 16:10:20 +0800 (CST)
-Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Fri, 5 Jul 2024 16:15:18 +0800
-From: Dongliang Cui <dongliang.cui@unisoc.com>
-To: <linkinjeon@kernel.org>, <sj1557.seo@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <niuzhiguo84@gmail.com>, <hao_hao.wang@unisoc.com>, <ke.wang@unisoc.com>,
-        <dongliang.cui@unisoc.com>, Zhiguo Niu <zhiguo.niu@unisoc.com>
-Subject: [PATCH] exfat: check disk status during buffer write
-Date: Fri, 5 Jul 2024 16:15:14 +0800
-Message-ID: <20240705081514.1901580-1-dongliang.cui@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720167463; c=relaxed/simple;
+	bh=Z+8whFJ3grQJ83XKO0yH93uOiE2mwA7zhToEaEIWdKU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U6VMzcCB3yK/Fz6ZBJzrSrpaTXcyefRQBbp/zjGyojrjgMXPqdw+e1VAiOg51ZINpZiB0FytOZWI2wdIqi0tFfj+Nmm9vBpJjU4DTKPvnl6zK0AXcx1ydiHL7DHiygYROv8CyW3htW08zro1ZX0UlQFWs3eQH6OyFlR+GwCgoF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pDeUOnfX; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 095570ae3aa711ef8b8f29950b90a568-20240705
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=gHtQXoO3gkfXq9fecupWc54bImQ5r1jPbo1pnWk/lX0=;
+	b=pDeUOnfX4wQ0qI9P5tV2NfM/sRga4RJT+vx3MZIeMxT63woIuRHs3Ftylr1EojqWc3PQq2yxKvqxgjDCGSvmVoXEAzUWRtFJp1c83n57IK/IVAsA5eLKR6ofTkvSo13ixtpghYgYrPB7fY98+uqnJMa1hj4Ol11vOOYF6lUts6k=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:0c23b54f-8060-46ac-9fd2-a6cd5cfbb233,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:ce6a20d1-436f-4604-ad9d-558fa44a3bbe,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 095570ae3aa711ef8b8f29950b90a568-20240705
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <ed.tsai@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 106142935; Fri, 05 Jul 2024 16:17:36 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 5 Jul 2024 01:17:34 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 5 Jul 2024 16:17:34 +0800
+From: <ed.tsai@mediatek.com>
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+	<brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <wsd_upstream@mediatek.com>, <chun-hung.wu@mediatek.com>,
+	<casper.li@mediatek.com>, Ed Tsai <ed.tsai@mediatek.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-unionfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+Subject: [PATCH 1/1] backing-file: covert to using fops->splice_write
+Date: Fri, 5 Jul 2024 16:16:39 +0800
+Message-ID: <20240705081642.12032-1-ed.tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 4658FKPJ089846
+X-MTK: N
 
-We found that when writing a large file through buffer write,
-if the disk is inaccessible, exFAT does not return an error
-normally, which leads to the writing process not stopping properly.
+From: Ed Tsai <ed.tsai@mediatek.com>
 
-To easily reproduce this issue, you can follow the steps below:
+Filesystems may define their own splice write. Therefore, use file
+fops instead of invoking iter_file_splice_write() directly.
 
-1. format a device to exFAT and then mount (with a full disk erase)
-2. dd if=/dev/zero of=/exfat_mount/test.img bs=1M count=8192
-3. eject the device
-
-You may find that the dd process does not stop immediately and may
-continue for a long time.
-
-We compared it with the FAT, where FAT would prompt an EIO error and
-immediately stop the dd operation.
-
-The root cause of this issue is that when the exfat_inode contains the
-ALLOC_NO_FAT_CHAIN flag, exFAT does not need to access the disk to
-look up directory entries or the FAT table (whereas FAT would do)
-every time data is written. Instead, exFAT simply marks the buffer as
-dirty and returns, delegating the writeback operation to the writeback
-process.
-
-If the disk cannot be accessed at this time, the error will only be
-returned to the writeback process, and the original process will not
-receive the error, so it cannot be returned to the user side.
-
-Therefore, we think that when writing files with ALLOC_NO_FAT_CHAIN,
-it is necessary to continuously check the status of the disk.
-
-When the disk cannot be accessed normally, an error should be returned
-to stop the writing process.
-
-Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Ed Tsai <ed.tsai@mediatek.com>
 ---
- fs/exfat/exfat_fs.h | 5 +++++
- fs/exfat/inode.c    | 5 +++++
- 2 files changed, 10 insertions(+)
+ fs/backing-file.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index ecc5db952deb..c5f5a7a8b672 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -411,6 +411,11 @@ static inline unsigned int exfat_sector_to_cluster(struct exfat_sb_info *sbi,
- 		EXFAT_RESERVED_CLUSTERS;
- }
+diff --git a/fs/backing-file.c b/fs/backing-file.c
+index 740185198db3..687a7fae7d25 100644
+--- a/fs/backing-file.c
++++ b/fs/backing-file.c
+@@ -280,13 +280,16 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
+ 	if (WARN_ON_ONCE(!(out->f_mode & FMODE_BACKING)))
+ 		return -EIO;
  
-+static inline bool exfat_check_disk_error(struct block_device *bdev)
-+{
-+	return blk_queue_dying(bdev_get_queue(bdev));
-+}
++	if (out->f_op->splice_write)
++		return -EINVAL;
 +
- static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
- 		unsigned int clus)
- {
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index dd894e558c91..efd02c1c83a6 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -147,6 +147,11 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
- 	*clu = last_clu = ei->start_clu;
+ 	ret = file_remove_privs(ctx->user_file);
+ 	if (ret)
+ 		return ret;
  
- 	if (ei->flags == ALLOC_NO_FAT_CHAIN) {
-+		if (exfat_check_disk_error(sb->s_bdev)) {
-+			exfat_fs_error(sb, "device inaccessiable!\n");
-+			return -EIO;
-+		}
-+
- 		if (clu_offset > 0 && *clu != EXFAT_EOF_CLUSTER) {
- 			last_clu += clu_offset - 1;
+ 	old_cred = override_creds(ctx->cred);
+ 	file_start_write(out);
+-	ret = iter_file_splice_write(pipe, out, ppos, len, flags);
++	ret = out->f_op->splice_write(pipe, out, ppos, len, flags);
+ 	file_end_write(out);
+ 	revert_creds(old_cred);
  
 -- 
-2.25.1
+2.18.0
 
 
