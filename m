@@ -1,79 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-23258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFA7929442
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jul 2024 16:56:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9BA929448
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jul 2024 16:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0FE282DBC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jul 2024 14:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E1201C2176F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  6 Jul 2024 14:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6328213B285;
-	Sat,  6 Jul 2024 14:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CC226AC2;
+	Sat,  6 Jul 2024 14:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="QN2P3eSF"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YKOVshTZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FF413AA2E
-	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Jul 2024 14:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E4813AD29
+	for <linux-fsdevel@vger.kernel.org>; Sat,  6 Jul 2024 14:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720277775; cv=none; b=e0GvbpdUlNTTcB+9m93/6Ld06mDuV5XC5Y1fFzYvfRCRzL8rOQsa14ChYza7/m63TrkB0Wi3qB+eYeR4fEeiv60tTVRORWCuaeGUzxKYNY5xXuiDs8bqRFbr/Btqyh5GAdGc6YWXlKRlqTORJJKZw2hWPSMxnVFB8KoeyuZO5XU=
+	t=1720277800; cv=none; b=XxqtbMTNIbDe+r70Q3vdiYpcbWCB5bPBeuxeFL1pm4NIw9871RrttJMgbI1W/4AUfCXor3dq8bcngzeUCMHPx2xMVBKy+XesPCVLtcQuFVxqiVHvfZTy8jtXZVUnz9oSSBTlU+Cm8aEcUaBXWJaM1VrpN3JOZ9a3/BZwspgKlQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720277775; c=relaxed/simple;
-	bh=xubLJoupr6a+LYfRAWqyUHezcWyAzUdQWTgVMGMPIGo=;
+	s=arc-20240116; t=1720277800; c=relaxed/simple;
+	bh=fwwnxTZ8/AGQkiz+m+KgoQy4U38JUzP/TIPdm0GgUIE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ec65JMPCrbsWpT5cJ8tgv8V/KMgTthWaRl7vOTqewxfiYOn3Mm4tIiVNT7CpisUpy58JMf166HBaYY9MJSLG2pyBTolHazv/KBMHPm9DvqOu2D8eF3LXEssQckGGzwdbMWFB8kwk67cHQZKMsmzFeOTyp2mkPK/DtWv2cCY65Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=QN2P3eSF; arc=none smtp.client-ip=84.16.66.168
+	 Content-Type:Content-Disposition:In-Reply-To; b=IUO/ytUn9pYBAU943ZKcHSJXVqDR1CsVsNSikBXRvuh0J9871CzxmezxMfeq1d9kMhifwc3vciYhOXexcMuIqfebAA3aU5ony1s60ZqMfyLFql/uxH0+RHu0gvVAIA1x9orQ+6bFc9/B4B9P87hhIcwk4GBHT5teKEq/LomLv2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YKOVshTZ; arc=none smtp.client-ip=84.16.66.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WGYNj27fKzJ1r;
-	Sat,  6 Jul 2024 16:56:05 +0200 (CEST)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WGYP933qFzS13;
+	Sat,  6 Jul 2024 16:56:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720277765;
-	bh=7uWel5mzu899dpbLYtvnqYOBClMoL9Rnhzi5iAwDfJs=;
+	s=20191114; t=1720277789;
+	bh=24STr2g/j5Djl1SvG5+sQYaxvIxITgFv5QTOQQuweRo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QN2P3eSF26sxX6l10plfQdh/LRI9/mntYv1qM+y05JO01Svn8fGnnZErGxSw1jYJS
-	 u1K5IsaBLeNDRTrWQZgcHBJ58aMz+fl7eUe7XAy8wMlEo1Ja25QhZxFi/f8/SPLfII
-	 aZnbhuwhUvYGOuJ7PoYSH766Ssxj6PxeBeuNajRc=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WGYNY53zczLym;
-	Sat,  6 Jul 2024 16:55:57 +0200 (CEST)
-Date: Sat, 6 Jul 2024 16:55:51 +0200
+	b=YKOVshTZfZcff5ti/H22JpK2MMyhndrjhEmvB6zgBU4BmeDE7I2op6lyfEY2knBVw
+	 EOsySsLOj893zxKlUaD7tlw8NLDrQ010OQwhYnj2+4wY2tX6Rr0g0oCS29tgD+dZAm
+	 kUizQG9ESklrcAKbBD74/H7T/UQ622p7+2G05Dzw=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WGYP82J3VzLTy;
+	Sat,  6 Jul 2024 16:56:28 +0200 (CEST)
+Date: Sat, 6 Jul 2024 16:56:25 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Florian Weimer <fweimer@redhat.com>
+To: Kees Cook <kees@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Christian Brauner <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
 	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
 	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
 	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
 	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
 	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240706.poo9ahd3La9b@digikod.net>
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+Message-ID: <20240706.eng1ieSh0wa5@digikod.net>
 References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+ <20240704190137.696169-3-mic@digikod.net>
+ <202407041711.B7CD16B2@keescook>
+ <20240705.IeTheequ7Ooj@digikod.net>
+ <202407051425.32AF9D2@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,46 +87,138 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+In-Reply-To: <202407051425.32AF9D2@keescook>
 X-Infomaniak-Routing: alpha
 
-On Fri, Jul 05, 2024 at 08:03:14PM +0200, Florian Weimer wrote:
-> * Mickaël Salaün:
+On Fri, Jul 05, 2024 at 02:44:03PM -0700, Kees Cook wrote:
+> On Fri, Jul 05, 2024 at 07:54:16PM +0200, Mickaël Salaün wrote:
+> > On Thu, Jul 04, 2024 at 05:18:04PM -0700, Kees Cook wrote:
+> > > On Thu, Jul 04, 2024 at 09:01:34PM +0200, Mickaël Salaün wrote:
+> > > > Such a secure environment can be achieved with an appropriate access
+> > > > control policy (e.g. mount's noexec option, file access rights, LSM
+> > > > configuration) and an enlighten ld.so checking that libraries are
+> > > > allowed for execution e.g., to protect against illegitimate use of
+> > > > LD_PRELOAD.
+> > > > 
+> > > > Scripts may need some changes to deal with untrusted data (e.g. stdin,
+> > > > environment variables), but that is outside the scope of the kernel.
+> > > 
+> > > If the threat model includes an attacker sitting at a shell prompt, we
+> > > need to be very careful about how process perform enforcement. E.g. even
+> > > on a locked down system, if an attacker has access to LD_PRELOAD or a
+> > 
+> > LD_PRELOAD should be OK once ld.so will be patched to check the
+> > libraries.  We can still imagine a debug library used to bypass security
+> > checks, but in this case the issue would be that this library is
+> > executable in the first place.
 > 
-> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > allowed for execution.  The main use case is for script interpreters and
-> > dynamic linkers to check execution permission according to the kernel's
-> > security policy. Another use case is to add context to access logs e.g.,
-> > which script (instead of interpreter) accessed a file.  As any
-> > executable code, scripts could also use this check [1].
+> Ah yes, that's fair: the shell would discover the malicious library
+> while using AT_CHECK during resolution of the LD_PRELOAD.
+
+That's the idea, but it would be checked by ld.so, not the shell.
+
 > 
-> Some distributions no longer set executable bits on most shared objects,
-> which I assume would interfere with AT_CHECK probing for shared objects.
+> > > seccomp wrapper (which you both mention here), it would be possible to
+> > > run commands where the resulting process is tricked into thinking it
+> > > doesn't have the bits set.
+> > 
+> > As explained in the UAPI comments, all parent processes need to be
+> > trusted.  This meeans that their code is trusted, their seccomp filters
+> > are trusted, and that they are patched, if needed, to check file
+> > executability.
+> 
+> But we have launchers that apply arbitrary seccomp policy, e.g. minijail
+> on Chrome OS, or even systemd on regular distros. In theory, this should
+> be handled via other ACLs.
 
-A file without the execute permission is not considered as executable by
-the kernel.  The AT_CHECK flag doesn't change this semantic.  Please
-note that this is just a check, not a restriction.  See the next patch
-for the optional policy enforcement.
+Processes running with untrusted seccomp filter should be considered
+untrusted.  It would then make sense for these seccomp filters/programs
+to be considered executable code, and then for minijail and systemd to
+check them with AT_CHECK (according to the securebits policy).
 
-Anyway, we need to define the policy, and for Linux this is done with
-the file permission bits.  So for systems willing to have a consistent
-execution policy, we need to rely on the same bits.
+> 
+> > > But this would be exactly true for calling execveat(): LD_PRELOAD or
+> > > seccomp policy could have it just return 0.
+> > 
+> > If an attacker is allowed/able to load an arbitrary seccomp filter on a
+> > process, we cannot trust this process.
+> > 
+> > > 
+> > > While I like AT_CHECK, I do wonder if it's better to do the checks via
+> > > open(), as was originally designed with O_MAYEXEC. Because then
+> > > enforcement is gated by the kernel -- the process does not get a file
+> > > descriptor _at all_, no matter what LD_PRELOAD or seccomp tricks it into
+> > > doing.
+> > 
+> > Being able to check a path name or a file descriptor (with the same
+> > syscall) is more flexible and cover more use cases.
+> 
+> If flexibility costs us reliability, I think that flexibility is not
+> a benefit.
 
-> Removing the executable bit is attractive because of a combination of
-> two bugs: a binutils wart which until recently always set the entry
-> point address in the ELF header to zero, and the kernel not checking for
-> a zero entry point (maybe in combination with an absent program
-> interpreter) and failing the execve with ELIBEXEC, instead of doing the
-> execve and then faulting at virtual address zero.  Removing the
-> executable bit is currently the only way to avoid these confusing
-> crashes, so I understand the temptation.
+Well, it's a matter of letting user space do what they think is best,
+and I think there are legitimate and safe uses of path names, even if I
+agree that this should not be used in most use cases.  Would we want
+faccessat2(2) to only take file descriptor as argument and not file
+path? I don't think so but I'd defer to the VFS maintainers.
 
-Interesting.  Can you please point to the bug report and the fix?  I
-don't see any ELIBEXEC in the kernel.
+Christian, Al, Linus?
 
-FYI, AT_CHECK doesn't check the content of the file (unlike a full
-execve call).
+Steve, could you share a use case with file paths?
 
-Anyway, I think we should not design a new kernel interface to work
-around a current user space bug.
+> 
+> > The execveat(2)
+> > interface, including current and future flags, is dedicated to file
+> > execution.  I then think that using execveat(2) for this kind of check
+> > makes more sense, and will easily evolve with this syscall.
+> 
+> Yeah, I do recognize that is feels much more natural, but I remain
+> unhappy about how difficult it will become to audit a system for safety
+> when the check is strictly per-process opt-in, and not enforced by the
+> kernel for a given process tree. But, I think this may have always been
+> a fiction in my mind. :)
+
+Hmm, I'm not sure to follow. Securebits are inherited, so process tree.
+And we need the parent processes to be trusted anyway.
+
+> 
+> > > And this thinking also applies to faccessat() too: if a process can be
+> > > tricked into thinking the access check passed, it'll happily interpret
+> > > whatever. :( But not being able to open the fd _at all_ when O_MAYEXEC
+> > > is being checked seems substantially safer to me...
+> > 
+> > If attackers can filter execveat(2), they can also filter open(2) and
+> > any other syscalls.  In all cases, that would mean an issue in the
+> > security policy.
+> 
+> Hm, as in, make a separate call to open(2) without O_MAYEXEC, and pass
+> that fd back to the filtered open(2) that did have O_MAYEXEC. Yes, true.
+> 
+> I guess it does become morally equivalent.
+> 
+> Okay. Well, let me ask about usability. Right now, a process will need
+> to do:
+> 
+> - should I use AT_CHECK? (check secbit)
+> - if yes: perform execveat(AT_CHECK)
+> 
+> Why not leave the secbit test up to the kernel, and then the program can
+> just unconditionally call execveat(AT_CHECK)?
+
+That was kind of the approach of the previous patch series and Linus
+wanted the new interface to follow the kernel semantic.  Enforcing this
+kind of restriction will always be the duty of user space anyway, so I
+think it's simpler (i.e. no mix of policy definition, access check, and
+policy enforcement, but a standalone execveat feature), more flexible,
+and it fully delegates the policy enforcement to user space instead of
+trying to enforce some part in the kernel which would only give the
+illusion of security/policy enforcement.
+
+> 
+> Though perhaps the issue here is that an execveat() EINVAL doesn't
+> tell the program if AT_CHECK is unimplemented or if something else
+> went wrong, and the secbit prctl() will give the correct signal about
+> AT_CHECK availability?
+
+This kind of check could indeed help to identify the issue.
 
