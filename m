@@ -1,232 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-23263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5061A9296CB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jul 2024 08:02:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84CAF929738
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jul 2024 11:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2A062827E2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jul 2024 06:02:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A9D1C20A80
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jul 2024 09:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7140BF4EB;
-	Sun,  7 Jul 2024 06:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F190117997;
+	Sun,  7 Jul 2024 09:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ffe4sbzt"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="bIkt82a7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C797ECA62;
-	Sun,  7 Jul 2024 06:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C7810A03;
+	Sun,  7 Jul 2024 09:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720332140; cv=none; b=aFrL736Y3rITuOdhwHQHN8mdCGgQZhxBFJxbidZNlPXyLftkQKLFVvRxNix73dPZXmGwqACNQRdf5Ns0MAEt6ob1GzIvMaeFIDJHvibDdk04QnPyGB2DjiX2+54sHF0g8obaV7sXh+0fCZ6EbMCWJsJ0qq8S3RFJ4oBljJ8/zLo=
+	t=1720342915; cv=none; b=Hy3pqckf49XYMOMBy+Z/6iCG40p5JzVoSDS2cKXn1gDrOp7IsD87w+FeUUuRV1iX20eUu804DeBtyKxzUuH4FdjDIKHs8v1i6nSqdNGAYlAIHGHfAGN5E+t86MlzK1C27+wlwQBX4Bk45BG8Z1gOz2STysyRg9SsCbOWOeVw+wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720332140; c=relaxed/simple;
-	bh=WZ9GVpGlCOrjQ8YeGvvjL98AKtIQaDRrWb13zCFW+q0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=odIij8+YO5y7LulVJIjCzCB+cEG6BcPRDASjoFElAgmSkOfRZwNz6S/3rw34EQX67zR6KEdhQlOQOF1K7TOqEBHsv1CKJ92th2eZ4RLswaT1oWQyerQukHKTTCVEKpbdrbpP6ZV1VikFmXmCd5eJORJkFOA5GA1H2M812v7Ecpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ffe4sbzt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D169FC3277B;
-	Sun,  7 Jul 2024 06:02:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720332140;
-	bh=WZ9GVpGlCOrjQ8YeGvvjL98AKtIQaDRrWb13zCFW+q0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ffe4sbztCzvv8Rg4lYToWBKp/hhgMyF3i4D+Of7tit77/rF2ci4nrwPazFTrZVykF
-	 P8VYf0YqurHM8Ew6t8QSMFWdf0N98cXDuygyDo70o2K1tw0LvlVSgLTQO8pvk2vEJN
-	 1mczRRoYD4jm0IO/nutEV5hHW9xfOpqip7HeXJ7FdhCM4LAcKeoCEeOaQLHHfgcUzj
-	 1n9RJlLGvwHDbfFvmNbuhP0dzlr9ovmbMpb9PKciyid43+VK4W5W4en9CcOaJri8wZ
-	 re5kqYhEXQ9Bce15E/DS3ifG0j6z5gb+EJjIg/7H1m7xAgHTXqBPxoutGnB8ejuz0X
-	 f00Dy76NH+O5A==
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: chandanbabu@kernel.org
-Cc: dchinner@redhat.com,djwong@kernel.org,hch@lst.de,leo.lilong@huawei.com,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org,wozizhi@huawei.com
-Subject: [ANNOUNCE] xfs-linux: for-next updated to 49cdc4e834e4
-Date: Sun, 07 Jul 2024 11:31:30 +0530
-Message-ID: <87a5it7n9y.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=arc-20240116; t=1720342915; c=relaxed/simple;
+	bh=8vDD3Vs0nX7RWoUIPW9UfV0zdvhLtFiF3W2BsPp7AJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FPtK30meeZeZltmNvi8luXEgQTbsCY54weTAxcuACkHQQeJnE9MxIPRe1e5QEUhI81o9gAhGWdq+0tZ7GvYa4quYnbzehL5TZ2mWv0W15/JIW4/SE4yX1z0TW1wmvCvus8qNA8VrTna9BV1HkEjK8wYLC7fPn3CzA+IBmLwZG/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=bIkt82a7; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WH1TM21N8zf5n;
+	Sun,  7 Jul 2024 11:01:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720342903;
+	bh=ccGFCfJj+0USx7pg3qPSDeXuTuHIjg7grW1wNNxHys8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bIkt82a7I8VPRqv3rTQdA+pgpoxitwyozvqGeJ4KUWValN2cRICPwmkUdzbgGzxDa
+	 IUWbccgD9cibggSsBHFiciIxPs5pAFPXpwu5dk9dvBHycOPrRLo9DcjvGweGvSvlz3
+	 hjjD6U5FN41zUmMGThnwwb0k4cncBRpi7n+Dw6bw=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WH1TH2v0lzFns;
+	Sun,  7 Jul 2024 11:01:39 +0200 (CEST)
+Date: Sun, 7 Jul 2024 11:01:36 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240706.fiquaeCodoo8@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Hi folks,
+On Sat, Jul 06, 2024 at 04:52:42PM +0800, Andy Lutomirski wrote:
+> On Fri, Jul 5, 2024 at 3:03 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > allowed for execution.  The main use case is for script interpreters and
+> > dynamic linkers to check execution permission according to the kernel's
+> > security policy. Another use case is to add context to access logs e.g.,
+> > which script (instead of interpreter) accessed a file.  As any
+> > executable code, scripts could also use this check [1].
+> >
+> 
+> Can you give a worked-out example of how this is useful?
 
-The for-next branch of the xfs-linux repository at:
+Which part?  Please take a look at CLIP OS, chromeOS, and PEP 578 use
+cases and related code (see cover letter).
 
-	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+> 
+> I assume the idea is that a program could open a file, then pass the
+> fd to execveat() to get the kernel's idea of whether it's permissible
+> to execute it.  And then the program would interpret the file, which
+> is morally like executing it.  And there would be a big warning in the
+> manpage that passing a *path* is subject to a TOCTOU race.
 
-has just been updated.
+yes
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
+> 
+> This type of usage will do the wrong thing if LSM policy intends to
+> lock down the task if the task were to actually exec the file.  I
 
-The new head of the for-next branch is commit:
+Why? LSMs should currently only change the bprm's credentials not the
+current's credentials.  If needed, we can extend the current patch
+series with LSM specific patches for them to check bprm->is_check.
 
-49cdc4e834e4 xfs: get rid of xfs_ag_resv_rmapbt_alloc
+> personally think this is a mis-design (let the program doing the
+> exec-ing lock itself down, possibly by querying a policy, but having
+> magic happen on exec seems likely to do the wrong thing more often
+> that it does the wright thing), but that ship sailed a long time ago.
 
-70 new commits:
+The execveat+AT_CHECK is only a check that doesn't impact the caller.
+Maybe you're talking about process transition with future LSM changes?
+In this case, we could add another flag, but I'm convinced it would be
+confusing for users.  Anyway, let LSMs experiment with that and we'll
+come up with a new flag if needed.  The current approach is a good and
+useful piece to fill a gap in Linux access control systems.
 
-Chandan Babu R (4):
-      [2f6ebd4cf5bc] Merge tag 'inode-refactor-6.11_2024-07-02' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.11-mergeB
-      [06e4e940c57e] Merge tag 'extfree-intent-cleanups-6.11_2024-07-02' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.11-mergeB
-      [584aa150d5b7] Merge tag 'rmap-intent-cleanups-6.11_2024-07-02' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.11-mergeB
-      [4cdbfe457a32] Merge tag 'refcount-intent-cleanups-6.11_2024-07-02' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.11-mergeB
+> 
+> So maybe what's actually needed is a rather different API: a way to
+> check *and perform* the security transition for an exec without
+> actually execing.  This would need to be done NO_NEW_PRIVS style for
+> reasons that are hopefully obvious, but it would permit:
 
-Christoph Hellwig (11):
-      [62d597a197e3] xfs: pass the fsbno to xfs_perag_intent_get
-      [649c0c2b86ee] xfs: add a xefi_entry helper
-      [61665fae4e43] xfs: reuse xfs_extent_free_cancel_item
-      [81927e6ec621] xfs: factor out a xfs_efd_add_extent helper
-      [851a6781895a] xfs: remove duplicate asserts in xfs_defer_extent_free
-      [7272f77c67c0] xfs: remove xfs_defer_agfl_block
-      [f93963779b43] xfs: add a ri_entry helper
-      [37f9d1db03ba] xfs: reuse xfs_rmap_update_cancel_item
-      [8363b4361997] xfs: don't bother calling xfs_rmap_finish_one_cleanup in xfs_rmap_finish_one
-      [905af72610d9] xfs: simplify usage of the rcur local variable in xfs_rmap_finish_one
-      [9ff4490e2ab3] xfs: fix the contact address for the sysfs ABI documentation
+NO_NEW_PRIVS is not that obvious in this case because the restrictions
+are enforced by user space, not the kernel.  NO_NEW_PRIVS makes sense to
+avoid kernel restrictions be requested by a malicious/unprivileged
+process to change the behavior of a (child) privileged/trusted process.
+We are not in this configuration here.  The only change would be for
+ptrace, which is a good thing either way and should not harm SUID
+processes but avoid confused deputy attack for them too.
 
-Darrick J. Wong (43):
-      [150bb10a28b9] xfs: verify buffer, inode, and dquot items every tx commit
-      [24a4e1cb322e] xfs: use consistent uid/gid when grabbing dquots for inodes
-      [d76e137057ae] xfs: move inode copy-on-write predicates to xfs_inode.[ch]
-      [acdddbe16804] xfs: hoist extent size helpers to libxfs
-      [b7c477be3969] xfs: hoist inode flag conversion functions to libxfs
-      [fcea5b35f362] xfs: hoist project id get/set functions to libxfs
-      [ba4b39fe4c01] xfs: pack icreate initialization parameters into a separate structure
-      [3d1dfb6df9b7] xfs: implement atime updates in xfs_trans_ichgtime
-      [a7b12718cb90] xfs: use xfs_trans_ichgtime to set times when allocating inode
-      [38fd3d6a956f] xfs: split new inode creation into two pieces
-      [e9d2b35bb9d3] xfs: hoist new inode initialization functions to libxfs
-      [dfaf884233ba] xfs: push xfs_icreate_args creation out of xfs_create*
-      [c0223b8d66d2] xfs: wrap inode creation dqalloc calls
-      [b8a6107921ca] xfs: hoist xfs_iunlink to libxfs
-      [a9e583d34fac] xfs: hoist xfs_{bump,drop}link to libxfs
-      [b11b11e3b7a7] xfs: separate the icreate logic around INIT_XATTRS
-      [1fa2e81957cf] xfs: create libxfs helper to link a new inode into a directory
-      [c1f0bad4232f] xfs: create libxfs helper to link an existing inode into a directory
-      [1964435d19d9] xfs: hoist inode free function to libxfs
-      [90636e4531a8] xfs: create libxfs helper to remove an existing inode/name from a directory
-      [a55712b35c06] xfs: create libxfs helper to exchange two directory entries
-      [28d0d8134446] xfs: create libxfs helper to rename two directory entries
-      [62bbf50bea21] xfs: move dirent update hooks to xfs_dir2.c
-      [47d4d5961fb9] xfs: get rid of trivial rename helpers
-      [ac3a0275165b] xfs: don't use the incore struct xfs_sb for offsets into struct xfs_dsb
-      [4e0e2c0fe35b] xfs: clean up extent free log intent item tracepoint callsites
-      [980faece91a6] xfs: convert "skip_discard" to a proper flags bitset
-      [71f5a17e5267] xfs: give rmap btree cursor error tracepoints their own class
-      [47492ed12421] xfs: pass btree cursors to rmap btree tracepoints
-      [fbe8c7e167a6] xfs: clean up rmap log intent item tracepoint callsites
-      [84a3c1576c5a] xfs: move xfs_extent_free_defer_add to xfs_extfree_item.c
-      [c9099a28c264] xfs: remove xfs_trans_set_rmap_flags
-      [7cf2663ff1cf] xfs: give refcount btree cursor error tracepoints their own class
-      [bb0efb0d0a28] xfs: create specialized classes for refcount tracepoints
-      [8fbac2f1a094] xfs: pass btree cursors to refcount btree tracepoints
-      [ea7b0820d960] xfs: move xfs_rmap_update_defer_add to xfs_rmap_item.c
-      [886f11c79772] xfs: clean up refcount log intent item tracepoint callsites
-      [e69682e5a12d] xfs: remove xfs_trans_set_refcount_flags
-      [0e9254861f98] xfs: add a ci_entry helper
-      [8aef79928b3d] xfs: reuse xfs_refcount_update_cancel_item
-      [bac3f7849252] xfs: don't bother calling xfs_refcount_finish_one_cleanup in xfs_refcount_finish_one
-      [e51987a12cb5] xfs: simplify usage of the rcur local variable in xfs_refcount_finish_one
-      [783e8a7c9cab] xfs: move xfs_refcount_update_defer_add to xfs_refcount_item.c
+If this is about an LSM changing the caller's credentials, then yes it
+might want to set additional flags, but that would be specific to their
+implementation, not part of this patch.
 
-Dave Chinner (10):
-      [613e2fdbbc7b] xfs: move and rename xfs_trans_committed_bulk
-      [9adf40249e6c] xfs: AIL doesn't need manual pushing
-      [b50b4c49d8d7] xfs: background AIL push should target physical space
-      [a07776ab814d] xfs: ensure log tail is always up to date
-      [0dcd5a10d987] xfs: l_last_sync_lsn is really AIL state
-      [be5abd323bf4] xfs: collapse xlog_state_set_callback in caller
-      [551bf13ba8b2] xfs: track log space pinned by the AIL
-      [de302cea1e3b] xfs: pass the full grant head to accounting functions
-      [c1220522ef40] xfs: grant heads track byte counts, not LSNs
-      [f3f7ae68a4ea] xfs: skip flushing log items during push
+> 
+> fd = open(some script);
+> if (do_exec_transition_without_exec(fd) != 0)
+>   return;  // don't actually do it
+> 
+> // OK, we may have just lost privileges.  But that's okay, because we
+> meant to do that.
+> // Make sure we've munmapped anything sensitive and erased any secrets
+> from memory,
+> // and then interpret the script!
+> 
+> I think this would actually be straightforward to implement in the
+> kernel -- one would need to make sure that all the relevant
+> no_new_privs checks are looking in the right place (as the task might
+> not actually have no_new_privs set, but LSM_UNSAFE_NO_NEW_PRIVS would
+> still be set), but I don't see any reason this would be
+> insurmountable, nor do I expect there would be any fundamental
+> problems.
 
-Long Li (1):
-      [49cdc4e834e4] xfs: get rid of xfs_ag_resv_rmapbt_alloc
+OK, that's what is described below with security_bprm_creds_for_exec().
+Each LSM can implement this change with the current patch series, but
+that should be part of a dedicated patch series per LSM, for those
+willing to leverage this new feature.
 
-Zizhi Wo (1):
-      [94a0333b9212] xfs: Avoid races with cnt_btree lastrec updates
+> 
+> 
+> > This is different than faccessat(2) which only checks file access
+> > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > real execution, user space gets the same error codes.
+> >
+> > With the information that a script interpreter is about to interpret a
+> > script, an LSM security policy can adjust caller's access rights or log
+> > execution request as for native script execution (e.g. role transition).
+> > This is possible thanks to the call to security_bprm_creds_for_exec().
+> >
+> > Because LSMs may only change bprm's credentials, use of AT_CHECK with
+> > current kernel code should not be a security issue (e.g. unexpected role
+> > transition).  LSMs willing to update the caller's credential could now
+> > do so when bprm->is_check is set.  Of course, such policy change should
+> > be in line with the new user space code.
+> >
+> > Because AT_CHECK is dedicated to user space interpreters, it doesn't
+> > make sense for the kernel to parse the checked files, look for
+> > interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
+> > if the format is unknown.  Because of that, security_bprm_check() is
+> > never called when AT_CHECK is used.
+> >
+> > It should be noted that script interpreters cannot directly use
+> > execveat(2) (without this new AT_CHECK flag) because this could lead to
+> > unexpected behaviors e.g., `python script.sh` could lead to Bash being
+> > executed to interpret the script.  Unlike the kernel, script
+> > interpreters may just interpret the shebang as a simple comment, which
+> > should not change for backward compatibility reasons.
+> >
+> > Because scripts or libraries files might not currently have the
+> > executable permission set, or because we might want specific users to be
+> > allowed to run arbitrary scripts, the following patch provides a dynamic
+> > configuration mechanism with the SECBIT_SHOULD_EXEC_CHECK and
+> > SECBIT_SHOULD_EXEC_RESTRICT securebits.
+> 
+> Can you explain what those bits do?  And why they're useful?
 
-Code Diffstat:
+I didn't want to duplicate the comments above their definition
+explaining their usage.  Please let me know if it's not enough.
 
- Documentation/ABI/testing/sysfs-fs-xfs |   26 +-
- fs/xfs/Kconfig                         |   12 +
- fs/xfs/Makefile                        |    1 +
- fs/xfs/libxfs/xfs_ag.c                 |    2 +-
- fs/xfs/libxfs/xfs_ag_resv.h            |   19 --
- fs/xfs/libxfs/xfs_alloc.c              |  207 ++++++++----
- fs/xfs/libxfs/xfs_alloc.h              |   12 +-
- fs/xfs/libxfs/xfs_alloc_btree.c        |   64 ----
- fs/xfs/libxfs/xfs_bmap.c               |   55 +++-
- fs/xfs/libxfs/xfs_bmap.h               |    3 +
- fs/xfs/libxfs/xfs_bmap_btree.c         |    2 +-
- fs/xfs/libxfs/xfs_btree.c              |   51 ---
- fs/xfs/libxfs/xfs_btree.h              |   16 +-
- fs/xfs/libxfs/xfs_defer.c              |    4 +-
- fs/xfs/libxfs/xfs_dir2.c               |  661 +++++++++++++++++++++++++++++++++++++-
- fs/xfs/libxfs/xfs_dir2.h               |   49 ++-
- fs/xfs/libxfs/xfs_format.h             |    9 +-
- fs/xfs/libxfs/xfs_ialloc.c             |   20 +-
- fs/xfs/libxfs/xfs_ialloc_btree.c       |    2 +-
- fs/xfs/libxfs/xfs_inode_util.c         |  749 +++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/libxfs/xfs_inode_util.h         |   62 ++++
- fs/xfs/libxfs/xfs_ondisk.h             |    1 +
- fs/xfs/libxfs/xfs_refcount.c           |  156 +++------
- fs/xfs/libxfs/xfs_refcount.h           |   11 +-
- fs/xfs/libxfs/xfs_refcount_btree.c     |    2 +-
- fs/xfs/libxfs/xfs_rmap.c               |  268 ++++++----------
- fs/xfs/libxfs/xfs_rmap.h               |   15 +-
- fs/xfs/libxfs/xfs_rmap_btree.c         |    7 +-
- fs/xfs/libxfs/xfs_shared.h             |    7 -
- fs/xfs/libxfs/xfs_trans_inode.c        |    2 +
- fs/xfs/scrub/common.c                  |    1 +
- fs/xfs/scrub/newbt.c                   |    5 +-
- fs/xfs/scrub/reap.c                    |    7 +-
- fs/xfs/scrub/tempfile.c                |   21 +-
- fs/xfs/xfs.h                           |    4 +
- fs/xfs/xfs_bmap_item.c                 |    6 +-
- fs/xfs/xfs_buf_item.c                  |   32 ++
- fs/xfs/xfs_dquot_item.c                |   31 ++
- fs/xfs/xfs_drain.c                     |    8 +-
- fs/xfs/xfs_drain.h                     |    5 +-
- fs/xfs/xfs_extfree_item.c              |  115 ++++---
- fs/xfs/xfs_extfree_item.h              |    6 +
- fs/xfs/xfs_inode.c                     | 1484 ++++++++++---------------------------------------------------------------------------
- fs/xfs/xfs_inode.h                     |   70 ++--
- fs/xfs/xfs_inode_item.c                |   38 ++-
- fs/xfs/xfs_ioctl.c                     |   60 ----
- fs/xfs/xfs_iops.c                      |   51 +--
- fs/xfs/xfs_linux.h                     |    2 -
- fs/xfs/xfs_log.c                       |  511 +++++++----------------------
- fs/xfs/xfs_log.h                       |    1 -
- fs/xfs/xfs_log_cil.c                   |  177 ++++++++++-
- fs/xfs/xfs_log_priv.h                  |   61 ++--
- fs/xfs/xfs_log_recover.c               |   23 +-
- fs/xfs/xfs_qm.c                        |    7 +-
- fs/xfs/xfs_refcount_item.c             |  110 +++----
- fs/xfs/xfs_refcount_item.h             |    5 +
- fs/xfs/xfs_reflink.c                   |    2 +-
- fs/xfs/xfs_reflink.h                   |   10 -
- fs/xfs/xfs_rmap_item.c                 |  161 +++++-----
- fs/xfs/xfs_rmap_item.h                 |    4 +
- fs/xfs/xfs_symlink.c                   |   70 ++--
- fs/xfs/xfs_sysfs.c                     |   29 +-
- fs/xfs/xfs_trace.c                     |    3 +
- fs/xfs/xfs_trace.h                     |  502 ++++++++++++++++-------------
- fs/xfs/xfs_trans.c                     |  129 --------
- fs/xfs/xfs_trans.h                     |    5 +-
- fs/xfs/xfs_trans_ail.c                 |  244 +++++++-------
- fs/xfs/xfs_trans_priv.h                |   44 ++-
- 68 files changed, 3306 insertions(+), 3233 deletions(-)
- create mode 100644 fs/xfs/libxfs/xfs_inode_util.c
- create mode 100644 fs/xfs/libxfs/xfs_inode_util.h
+> 
+> >
+> > This is a redesign of the CLIP OS 4's O_MAYEXEC:
+> > https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+> > This patch has been used for more than a decade with customized script
+> > interpreters.  Some examples can be found here:
+> > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+> 
+> This one at least returns an fd, so it looks less likely to get
+> misused in a way that adds a TOCTOU race.
+
+We can use both an FD or a path name with execveat(2).  See discussion
+with Kees and comment from Linus.
 
