@@ -1,176 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-23314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D8592A88D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 20:00:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C2B92A8C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 20:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9F7B1C2162F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 18:00:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DDFCB2196F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 18:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1756149C64;
-	Mon,  8 Jul 2024 18:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ejsgE+8O"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A36A149DF7;
+	Mon,  8 Jul 2024 18:11:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5B114372B
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jul 2024 18:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148A71474A8
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jul 2024 18:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720461624; cv=none; b=BTAhZOUSHJRkhfZrkqO5Atjv8bL7iYWZtI6dPWvDAAhLqNHlma0Uk9dAw+8bv5tAy8nGLzaO4rMGsq1luEabXoggfafg/vEiKq4WoyTLM66dptm0nU34sRdoGBJih/svhcRCjOdawN0Lu89YPZd7k+1MpS72/wghn1Y7lyXhsnk=
+	t=1720462291; cv=none; b=Rgn0ciS2rWFtmYHqopBdjFgZ0cItPZY2kIxkxLpZesNqdP4VatHs+LbRievmkrXY4KlJ6LHN4xQD9yiCZw7scfOKWqck4yIyRAc399bprtOBvajwC7MNcDNhFGvUcrCfJ2WQ4grqZ3eLBUJRrvBmG8Vzz84nG93T52rnk/sLu/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720461624; c=relaxed/simple;
-	bh=G2eT1PidgYA5S25gC19Hg0ZQz21aenhcmJENyToU1tw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=P7UJlXHTdrE9Xcx0zMf4lsky57h1F6hWgKz/Z1Y/57DHWx7MzdNtGl0eIq2WqKiZ0AcMx4pr8pHQM3tPmQwRrLvEHMh27V6K+6gIeiOKNe7+4dPB2hd/4ynnLN0HSSwlVJ+d5hKktQ4xu6/nWq9BtooFnGdgba96a1G0TxIGQmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ejsgE+8O; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720461621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ur8aidqR86eMlg5hVh3kQFIlHZgeTOY5AvM2A0WS6wI=;
-	b=ejsgE+8OMHemnj+1hgQUswLn8SPzWIPj8P1r3/VUq14JN7jBMmLIVFYtUDsomlXx0LrVG0
-	HIGQlA0ks3Nuj9+XLBqX5PW8MXegb9MoLUNPJUfDGZlG8ZtRrgtf8XRsn1nRye9uPqpoKn
-	owCpk4S1ElxN6KG6E+cep+Yayrd4uX8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-BLTMqZN-MRiC1hCbXOT78Q-1; Mon,
- 08 Jul 2024 14:00:17 -0400
-X-MC-Unique: BLTMqZN-MRiC1hCbXOT78Q-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB5361956048;
-	Mon,  8 Jul 2024 18:00:07 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.113])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A030B1955F40;
-	Mon,  8 Jul 2024 17:59:48 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,  Al Viro
- <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Kees Cook
- <keescook@chromium.org>,  Linus Torvalds <torvalds@linux-foundation.org>,
-  Paul Moore <paul@paul-moore.com>,  Theodore Ts'o <tytso@mit.edu>,
-  Alejandro Colomar <alx@kernel.org>,  Aleksa Sarai <cyphar@cyphar.com>,
-  Andrew Morton <akpm@linux-foundation.org>,  Andy Lutomirski
- <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Casey Schaufler
- <casey@schaufler-ca.com>,  Christian Heimes <christian@python.org>,
-  Dmitry Vyukov <dvyukov@google.com>,  Eric Biggers <ebiggers@kernel.org>,
-  Eric Chiang <ericchiang@google.com>,  Fan Wu <wufan@linux.microsoft.com>,
-  Geert Uytterhoeven <geert@linux-m68k.org>,  James Morris
- <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,  Jann Horn
- <jannh@google.com>,  Jeff Xu <jeffxu@google.com>,  Jonathan Corbet
- <corbet@lwn.net>,  Jordan R Abrahams <ajordanr@google.com>,  Lakshmi
- Ramasubramanian <nramas@linux.microsoft.com>,  Luca Boccassi
- <bluca@debian.org>,  Luis Chamberlain <mcgrof@kernel.org>,  "Madhavan T .
- Venkataraman" <madvenka@linux.microsoft.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
-  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
- <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
- Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
- <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
- <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
- Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
- <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
- Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-security-module@vger.kernel.org,  linux-mm@kvack.org
-Subject: Re: [PATCH] binfmt_elf: Fail execution of shared objects with ELIBEXEC
-In-Reply-To: <87cynn3hzv.fsf@email.froward.int.ebiederm.org> (Eric
-	W. Biederman's message of "Mon, 08 Jul 2024 12:34:28 -0500")
-References: <20240704190137.696169-1-mic@digikod.net>
-	<20240704190137.696169-2-mic@digikod.net>
-	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
-	<20240706.poo9ahd3La9b@digikod.net>
-	<871q46bkoz.fsf@oldenburg.str.redhat.com>
-	<20240708.zooj9Miaties@digikod.net>
-	<878qybet6t.fsf_-_@oldenburg.str.redhat.com>
-	<87cynn3hzv.fsf@email.froward.int.ebiederm.org>
-Date: Mon, 08 Jul 2024 19:59:45 +0200
-Message-ID: <87msmrdasu.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1720462291; c=relaxed/simple;
+	bh=LJomNTSistcKp7VN5HYkDgLTvIRz3gNT1AyHASJZtWw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eGoPfJDEmYR+8r2kl1rBlfCboqk7XYyEkKcDyr0ANbNw5bdKDcKIUdnEQsuUdb4CYocFTyWBMeYftIETspq9ryedJ1FvfYIGw4equnpoVUnq8hCp8Z/zsPpX1p+1yGU8J4b/1vSsvpupGRokRRlcdtRsmGsoKCC9s85w9/2x1nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f92912a614so248566939f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jul 2024 11:11:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720462289; x=1721067089;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JZjqrcf9AbTsaVREKnVzsQvDlomXNppK92wZr0lymw8=;
+        b=ExvWk2S+as3SS0r71MoX7KsZCnrJUJqGyBm5ure8uiBO3+M5n5J2RqhaxODN5nybaB
+         FRjK3mvTjrNVuAAkRWg5hUcAb5XuETw65o2Grwu5tkXBGc5ZRjA4FU6X0LpiQc3XlT/9
+         FIe5T9CcBYbgUtvLe+qMZHwd2P1DdUMPs6ApKPalwnyTbWbbImDAw7EaP3xCa9JduWGt
+         1aNisJs5JhX1NHJGphVdv0NX4kGEbiEKSMN4H9p2nLKoMKeqLuM+uXZYZ8HbzqtTS4Hl
+         0CiGdPKKjnCaLK1OSLLxPrKUgiCEbvJyeeok5QXWZ3azSngf0JeQxlNXbPvVTUPaiGAr
+         BFYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxcPDP764IPrtHZVqWuzMRmJ7aDQEoCgzYTGzD6Ovd8/tfPKj3KUs4rlEAsNlyhNYhWUK1WB0HlbrGatEg1Fs4dnlfaVWW4TnLzfz1fg==
+X-Gm-Message-State: AOJu0YxS9qGZdq1E9+543WPPy6yedJSA4cjbPhDhJa2lf68/BWg+0HPL
+	U4iAhcYnMdeirM1SzWPC9ewzZy4NdMN0a7oDw8WojlTas8XQVg+7lXFYhizoImkvlYdj89p84oI
+	9C0jC2PKLlaLBrOWyN+lJUo9uPPpSJHTgrbaQxiMWGrl7ApT0TUgNb1w=
+X-Google-Smtp-Source: AGHT+IF9gP/A7Gpq0tZ2CN6cST1gNYaYvyemHDCiWX0t6cpr4b1Iz37KKa8IeGYpvT1mTsXMTVen++1hUxLo+fLx98vcKqLx1WiM
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Received: by 2002:a05:6638:831e:b0:4c0:73d0:3d77 with SMTP id
+ 8926c6da1cb9f-4c0b2b6b9damr11805173.5.1720462289292; Mon, 08 Jul 2024
+ 11:11:29 -0700 (PDT)
+Date: Mon, 08 Jul 2024 11:11:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009a62c9061cc05733@google.com>
+Subject: [syzbot] [fs?] [mm?] INFO: task hung in remove_inode_hugepages
+From: syzbot <syzbot+f1d7fb4f94764243d23e@syzkaller.appspotmail.com>
+To: airlied@redhat.com, akpm@linux-foundation.org, kraxel@redhat.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, muchun.song@linux.dev, syzkaller-bugs@googlegroups.com, 
+	vivek.kasireddy@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-* Eric W. Biederman:
+Hello,
 
-> As written I find the logic of the patch confusing, and slightly wrong.
->
-> The program header value e_entry is a virtual address, possibly adjusted
-> by load_bias.  Which makes testing it against the file offset of a
-> PT_LOAD segment wrong.  It needs to test against elf_ppnt->p_vaddr.
+syzbot found the following issue on:
 
-I think we need to test both against zero, or maybe invert the logic: if
-something is mapped at virtual address zero that doesn't come from a
-zero file offset, we disable the ELIBEXEC check.
+HEAD commit:    0b58e108042b Add linux-next specific files for 20240703
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=150453b9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ed034204f2e40e53
+dashboard link: https://syzkaller.appspot.com/bug?extid=f1d7fb4f94764243d23e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130e0685980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16030e6e980000
 
-> I think performing an early sanity check to avoid very confusing crashes
-> seems sensible (as long as it is inexpensive).  This appears inexpensive
-> enough that we don't care.  This code is also before begin_new_exec
-> so it is early enough to be meaningful.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1d079762feae/disk-0b58e108.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e53996c8d8c2/vmlinux-0b58e108.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a0bf21cdd844/bzImage-0b58e108.xz
 
-Yeah, it was quite confusing when it was after begin_new_exec because
-the ELIBEXEC error is visible under strace, and then the SIGSEGV comes =E2=
-=80=A6
+The issue was bisected to:
 
-> I think the check should simply test if e_entry is mapped.  So a range
-> check please to see if e_entry falls in a PT_LOAD segment.
+commit cbe81a753050f5d43ae62da77ff68dcf1d44f9b3
+Author: Vivek Kasireddy <vivek.kasireddy@intel.com>
+Date:   Mon Jun 24 06:36:16 2024 +0000
 
-It's usually mapped even with e_entry =3D=3D0 because the ELF header is
-loaded at virtual address zero for ET_DYN using the default linker flags
-(and this is the case we care about).  With -z noseparate-code, it is
-even mapped executable.
+    udmabuf: pin the pages using memfd_pin_folios() API
 
-> Having code start at virtual address 0 is a perfectly fine semantically
-> and might happen in embedded scenarios.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13fd687e980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1003687e980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17fd687e980000
 
-To keep supporting this case, we need to check that the ELF header is at
-address zero, because we make a leap of faith and assume it's not really
-executable even if it is mapped as such because due to its role in the
-file format, it does not contain executable instructions.  That's why
-the patch is focused on the ELF header.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f1d7fb4f94764243d23e@syzkaller.appspotmail.com
+Fixes: cbe81a753050 ("udmabuf: pin the pages using memfd_pin_folios() API")
 
-I could remove all these checks and just return ELIBEXEC for a zero
-entry point.  I think this is valid based on the ELF specification, but
-it may have a backwards compatibility impact.
+INFO: task syz-executor263:5102 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc6-next-20240703-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor263 state:D stack:25984 pid:5102  tgid:5102  ppid:5101   flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5248 [inline]
+ __schedule+0x1800/0x4a60 kernel/sched/core.c:6600
+ __schedule_loop kernel/sched/core.c:6677 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6692
+ io_schedule+0x8d/0x110 kernel/sched/core.c:7477
+ folio_wait_bit_common+0x882/0x12b0 mm/filemap.c:1307
+ folio_lock include/linux/pagemap.h:1050 [inline]
+ remove_inode_single_folio fs/hugetlbfs/inode.c:603 [inline]
+ remove_inode_hugepages+0x508/0x1520 fs/hugetlbfs/inode.c:669
+ hugetlbfs_evict_inode+0x23/0x70 fs/hugetlbfs/inode.c:689
+ evict+0x2a8/0x630 fs/inode.c:669
+ __dentry_kill+0x20d/0x630 fs/dcache.c:603
+ dput+0x19f/0x2b0 fs/dcache.c:845
+ __fput+0x5f8/0x8a0 fs/file_table.c:430
+ task_work_run+0x24f/0x310 kernel/task_work.c:204
+ exit_task_work include/linux/task_work.h:39 [inline]
+ do_exit+0xa2f/0x27f0 kernel/exit.c:882
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1031
+ __do_sys_exit_group kernel/exit.c:1042 [inline]
+ __se_sys_exit_group kernel/exit.c:1040 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
+ x64_sys_call+0x26e0/0x26e0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f816cea6c09
+RSP: 002b:00007fffc0047be8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f816cea6c09
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 00007f816cf212b0 R08: ffffffffffffffb8 R09: 0000000000000006
+R10: 0000000000000006 R11: 0000000000000246 R12: 00007f816cf212b0
+R13: 0000000000000000 R14: 00007f816cf21d00 R15: 00007f816ce77e40
+ </TASK>
 
-> The program header is not required to be mapped or be first, (AKA
-> p_offset and p_vaddr can have a somewhat arbitrary relationship) so any
-> mention of the program header in your logic seems confusing to me.
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e335860 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:333 [inline]
+ #0: ffffffff8e335860 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:845 [inline]
+ #0: ffffffff8e335860 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6704
+2 locks held by getty/4858:
+ #0: ffff88802abbc0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2211
+1 lock held by syz-executor263/5102:
+ #0: ffff88801b2e22a8 (&hugetlb_fault_mutex_table[i]){+.+.}-{3:3}, at: remove_inode_hugepages+0x38e/0x1520 fs/hugetlbfs/inode.c:664
 
-It's the ELF header.
+=============================================
 
-> I think your basic structure will work.  Just the first check needs to
-> check if e_entry is lands inside the virtual address of a PT_LOAD
-> segment.  The second check should just be checking a variable to see if
-> e_entry was inside any PT_LOAD segment, and there is no interpreter.
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.10.0-rc6-next-20240703-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xfee/0x1030 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 953 Comm: kworker/u8:5 Not tainted 6.10.0-rc6-next-20240703-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: events_unbound toggle_allocation_gate
+RIP: 0010:check_kcov_mode kernel/kcov.c:184 [inline]
+RIP: 0010:write_comp_data kernel/kcov.c:236 [inline]
+RIP: 0010:__sanitizer_cov_trace_const_cmp1+0x35/0x90 kernel/kcov.c:290
+Code: 14 25 40 d7 03 00 65 8b 05 50 50 70 7e a9 00 01 ff 00 74 10 a9 00 01 00 00 74 5b 83 ba 1c 16 00 00 00 74 52 8b 82 f8 15 00 00 <83> f8 03 75 47 48 8b 8a 00 16 00 00 44 8b 8a fc 15 00 00 49 c1 e1
+RSP: 0018:ffffc90003f677a8 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: dffffc0000000000
+RDX: ffff888021200000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003f6794c R08: ffffffff8b8dde5e R09: ffffffff8b8db076
+R10: 0000000000000002 R11: ffff888021200000 R12: 1ffff920007ecf29
+R13: ffffc90003f67920 R14: 1ffff920007ecf2a R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056483a92b600 CR3: 000000000e132000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ insn_get_sib arch/x86/lib/insn.c:447 [inline]
+ insn_get_displacement+0x2de/0x9a0 arch/x86/lib/insn.c:484
+ insn_get_immediate+0x62/0x11f0 arch/x86/lib/insn.c:650
+ insn_get_length arch/x86/lib/insn.c:723 [inline]
+ insn_decode+0x2d6/0x4c0 arch/x86/lib/insn.c:762
+ arch_jump_entry_size arch/x86/kernel/jump_label.c:24 [inline]
+ __jump_label_patch+0xe8/0x490 arch/x86/kernel/jump_label.c:45
+ arch_jump_label_transform_queue+0x68/0x100 arch/x86/kernel/jump_label.c:137
+ __jump_label_update+0x177/0x3a0 kernel/jump_label.c:493
+ static_key_disable_cpuslocked+0xce/0x1c0 kernel/jump_label.c:240
+ static_key_disable+0x1a/0x20 kernel/jump_label.c:248
+ toggle_allocation_gate+0x1b8/0x250 mm/kfence/core.c:838
+ process_one_work kernel/workqueue.c:3224 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3305
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3383
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.578 msecs
 
-I think the range check doesn't help here.  Just checking p_vaddr for
-zero in addition to p_offset should be sufficient.  If you agree, can
-test and send an updated patch.
 
-Thanks,
-Florian
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
