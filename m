@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-23322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32A992A949
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 20:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFD892A975
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 21:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D39282505
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 18:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AB41281B94
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 19:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071F014BF9B;
-	Mon,  8 Jul 2024 18:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D151C14D2A3;
+	Mon,  8 Jul 2024 19:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgMyPV62"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hj80xRBb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C30145FEF;
-	Mon,  8 Jul 2024 18:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF6B4963A;
+	Mon,  8 Jul 2024 19:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720464671; cv=none; b=WV0tipAXEaACHt9CFL4rUsFSdFXj7qikIhNx6tV/X7Lh+eKOI5ejHW9rF9b9xYVqB44W6oifyf+SC/T9OvE2PWi/H32LqZNYSzksMEmgs4CdW4/XOLQEo4EqDwMVIm2r/oS0u1GQmJa8t9fUcO+34vfQ8R2oR2UyhhbAAcfjbzk=
+	t=1720465240; cv=none; b=dQukETaHUwdu7YNOpIAmQs1ueSHyIBYS9BMHepAoM2IrAljqC7Uvh9DQxPzPJ0RFU3KdMkfvHHe/27OjfwwCDPb4wkEs2vXhCeF4Kd1EblcRDdXY19vyod8gv6hmLrH3JxwOo7mtBloaWFwarSnIzisuGqK/ZgMZN/IS6kbXVh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720464671; c=relaxed/simple;
-	bh=KU0ONR14FZg7YqNwiT/nnAjgOgpCPsC50QI45eSVIBI=;
+	s=arc-20240116; t=1720465240; c=relaxed/simple;
+	bh=/KJSuRj9+leevqGL33u7xwNFS5JRZBNfnt+9fLhdWYA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YMUjiWjFGi0qc5+GFyd8xlvy4BMHH9L/Hf13G21+WwT+biFJuxAE6Wxh0eHy7//vO9ZPqfdwA+A1mvLBV6wDr+xJhoCzt3evs0NNLtPujhvp2NYaltNiGlC3/RAechWkqg2U13j2q5zwUhfUdGwRl1uD1HCdo2StL2NrgOmYBbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgMyPV62; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF01C116B1;
-	Mon,  8 Jul 2024 18:51:08 +0000 (UTC)
+	 Content-Type:MIME-Version; b=mTJw2M+6z+4vU2DzhwzUvK9nd2W40w4YqJyTjIwoYmehKnsxo9cw/3n3I2GED7OjnHLH2Zs6X2GGM08Dip1irB/TYpvezQ5auOG5I7H0CQMagCe6x220XA6yGMCqznyiHAceuLRAAS6SVMsRxsAFt4zvxnwtHBwPJ6i1XXQK+xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hj80xRBb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A4BDC116B1;
+	Mon,  8 Jul 2024 19:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720464670;
-	bh=KU0ONR14FZg7YqNwiT/nnAjgOgpCPsC50QI45eSVIBI=;
+	s=k20201202; t=1720465239;
+	bh=/KJSuRj9+leevqGL33u7xwNFS5JRZBNfnt+9fLhdWYA=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=UgMyPV62NqxmPxxH38VCcyXIZFujjCNgvfVNztPbyTVBYzi7pqGHNbvs/SLFaosnE
-	 t6OmbYLgOiYtlQJ7bxH35PxHoKds2Jzo4eVDA6ZyGQcoEPi/s039vpWFncVhS24Fsa
-	 hAwMeAXrPkj8IiAA/MaVX2HQyCOHUfAID9ZU5xS5uhRMnjAH0/DbBiTvL430dY05wk
-	 jyW6I107HTYi+pGlW8TAaQNJwIDB4oDeAfHI99icmgGCDQ0r6yO7l2BQFXLX64hRsc
-	 WaOI9qEV4rrLb+bAa1gG9hcJqP8qqcZSnxFs9rhfp/h1Mj4AwvcZ22HjzA9plhgkKE
-	 XAQAfR7/IwKqQ==
-Message-ID: <28e7a6c193674f2aa41ab1eec9bb8747ddba1a4c.camel@kernel.org>
+	b=hj80xRBbmLhzA8qcAJmBP/185o0WBmfsVtkHngJWOBRa2U2Ku68jRjMWefZa9+ySB
+	 wjkiked2916GS2b5GtxyakCniHd2VrjnVDavBrm7exuKFt7h/VpBO8UxwWishJl6aM
+	 RTo0tLfG85HSt8TeYHzvjprZ2SiOZ3OyLZPka2HarhwMb4OnpLEjOSTDRxYxsjOTKY
+	 rekkZ7nIOGIFtWN2gS1UEZfrYinVb05byhi26qA3hOmkxCxLYBNnr6CWBe5Kwas42d
+	 3mcKENB1pWoDrUBBnLz1R1StqMJf42E5JdV0cpGXXEuyS1AC6xzLjfbSQ0LZy6Wu5L
+	 //PODtHLOeQ4w==
+Message-ID: <0cedef23cf87d598b2c03e850262ac55bca9e792.camel@kernel.org>
 Subject: Re: [PATCH v4 6/9] xfs: switch to multigrain timestamps
 From: Jeff Layton <jlayton@kernel.org>
 To: "Darrick J. Wong" <djwong@kernel.org>
@@ -61,11 +61,12 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
  linux-xfs@vger.kernel.org,  linux-ext4@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
  linux-nfs@vger.kernel.org, linux-doc@vger.kernel.org
-Date: Mon, 08 Jul 2024 14:51:07 -0400
-In-Reply-To: <20240708184739.GP612460@frogsfrogsfrogs>
+Date: Mon, 08 Jul 2024 15:00:36 -0400
+In-Reply-To: <28e7a6c193674f2aa41ab1eec9bb8747ddba1a4c.camel@kernel.org>
 References: <20240708-mgtime-v4-0-a0f3c6fb57f3@kernel.org>
 	 <20240708-mgtime-v4-6-a0f3c6fb57f3@kernel.org>
 	 <20240708184739.GP612460@frogsfrogsfrogs>
+	 <28e7a6c193674f2aa41ab1eec9bb8747ddba1a4c.camel@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -150,125 +151,143 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Mon, 2024-07-08 at 11:47 -0700, Darrick J. Wong wrote:
-> On Mon, Jul 08, 2024 at 11:53:39AM -0400, Jeff Layton wrote:
-> > Enable multigrain timestamps, which should ensure that there is an
-> > apparent change to the timestamp whenever it has been written after
-> > being actively observed via getattr.
+On Mon, 2024-07-08 at 14:51 -0400, Jeff Layton wrote:
+> On Mon, 2024-07-08 at 11:47 -0700, Darrick J. Wong wrote:
+> > On Mon, Jul 08, 2024 at 11:53:39AM -0400, Jeff Layton wrote:
+> > > Enable multigrain timestamps, which should ensure that there is an
+> > > apparent change to the timestamp whenever it has been written after
+> > > being actively observed via getattr.
+> > >=20
+> > > Also, anytime the mtime changes, the ctime must also change, and thos=
+e
+> > > are now the only two options for xfs_trans_ichgtime. Have that functi=
+on
+> > > unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
+> > > always set.
+> > >=20
+> > > Finally, stop setting STATX_CHANGE_COOKIE in getattr, since the ctime
+> > > should give us better semantics now.
+> > >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/xfs/libxfs/xfs_trans_inode.c |  6 +++---
+> > >  fs/xfs/xfs_iops.c               | 10 +++-------
+> > >  fs/xfs/xfs_super.c              |  2 +-
+> > >  3 files changed, 7 insertions(+), 11 deletions(-)
+> > >=20
+> > > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_tran=
+s_inode.c
+> > > index 69fc5b981352..1f3639bbf5f0 100644
+> > > --- a/fs/xfs/libxfs/xfs_trans_inode.c
+> > > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
+> > > @@ -62,12 +62,12 @@ xfs_trans_ichgtime(
+> > >  	ASSERT(tp);
+> > >  	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
+> > > =20
+> > > -	tv =3D current_time(inode);
+> > > +	/* If the mtime changes, then ctime must also change */
+> > > +	ASSERT(flags & XFS_ICHGTIME_CHG);
+> > > =20
+> > > +	tv =3D inode_set_ctime_current(inode);
+> > >  	if (flags & XFS_ICHGTIME_MOD)
+> > >  		inode_set_mtime_to_ts(inode, tv);
+> > > -	if (flags & XFS_ICHGTIME_CHG)
+> > > -		inode_set_ctime_to_ts(inode, tv);
+> > >  	if (flags & XFS_ICHGTIME_CREATE)
+> > >  		ip->i_crtime =3D tv;
+> > >  }
+> > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > > index a00dcbc77e12..d25872f818fa 100644
+> > > --- a/fs/xfs/xfs_iops.c
+> > > +++ b/fs/xfs/xfs_iops.c
+> > > @@ -592,8 +592,9 @@ xfs_vn_getattr(
+> > >  	stat->gid =3D vfsgid_into_kgid(vfsgid);
+> > >  	stat->ino =3D ip->i_ino;
+> > >  	stat->atime =3D inode_get_atime(inode);
+> > > -	stat->mtime =3D inode_get_mtime(inode);
+> > > -	stat->ctime =3D inode_get_ctime(inode);
+> > > +
+> > > +	fill_mg_cmtime(stat, request_mask, inode);
 > >=20
-> > Also, anytime the mtime changes, the ctime must also change, and those
-> > are now the only two options for xfs_trans_ichgtime. Have that function
-> > unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
-> > always set.
+> > Sooo... for setting up a commit-range operation[1], XFS_IOC_START_COMMI=
+T
+> > could populate its freshness data by calling:
 > >=20
-> > Finally, stop setting STATX_CHANGE_COOKIE in getattr, since the ctime
-> > should give us better semantics now.
+> > 	struct kstat dummy;
 > >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/xfs/libxfs/xfs_trans_inode.c |  6 +++---
-> >  fs/xfs/xfs_iops.c               | 10 +++-------
-> >  fs/xfs/xfs_super.c              |  2 +-
-> >  3 files changed, 7 insertions(+), 11 deletions(-)
+> > 	fill_mg_ctime(&dummy, STATX_CTIME | STATX_MTIME, inode);
 > >=20
-> > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_=
-inode.c
-> > index 69fc5b981352..1f3639bbf5f0 100644
-> > --- a/fs/xfs/libxfs/xfs_trans_inode.c
-> > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
-> > @@ -62,12 +62,12 @@ xfs_trans_ichgtime(
-> >  	ASSERT(tp);
-> >  	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
-> > =20
-> > -	tv =3D current_time(inode);
-> > +	/* If the mtime changes, then ctime must also change */
-> > +	ASSERT(flags & XFS_ICHGTIME_CHG);
-> > =20
-> > +	tv =3D inode_set_ctime_current(inode);
-> >  	if (flags & XFS_ICHGTIME_MOD)
-> >  		inode_set_mtime_to_ts(inode, tv);
-> > -	if (flags & XFS_ICHGTIME_CHG)
-> > -		inode_set_ctime_to_ts(inode, tv);
-> >  	if (flags & XFS_ICHGTIME_CREATE)
-> >  		ip->i_crtime =3D tv;
-> >  }
-> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > index a00dcbc77e12..d25872f818fa 100644
-> > --- a/fs/xfs/xfs_iops.c
-> > +++ b/fs/xfs/xfs_iops.c
-> > @@ -592,8 +592,9 @@ xfs_vn_getattr(
-> >  	stat->gid =3D vfsgid_into_kgid(vfsgid);
-> >  	stat->ino =3D ip->i_ino;
-> >  	stat->atime =3D inode_get_atime(inode);
-> > -	stat->mtime =3D inode_get_mtime(inode);
-> > -	stat->ctime =3D inode_get_ctime(inode);
-> > +
-> > +	fill_mg_cmtime(stat, request_mask, inode);
+> > and then using dummy.[cm]time to populate the freshness data that it
+> > gives to userspace, right?  Having set QUERIED, a write to the file
+> > immediately afterwards will cause a (tiny) increase in ctime_nsec which
+> > will cause the XFS_IOC_COMMIT_RANGE to reject the commit[2].  Right?
+> >=20
 >=20
-> Sooo... for setting up a commit-range operation[1], XFS_IOC_START_COMMIT
-> could populate its freshness data by calling:
+> Yes. Once you call fill_mg_ctime, the first write after that point
+> should cause the kernel to ensure that there is a distinct change in
+> the ctime.
 >=20
-> 	struct kstat dummy;
+> IOW, I think this should alleviate the concerns I had before with using
+> timestamps with the XFS_IOC_COMMIT_RANGE interface.
 >=20
-> 	fill_mg_ctime(&dummy, STATX_CTIME | STATX_MTIME, inode);
->=20
-> and then using dummy.[cm]time to populate the freshness data that it
-> gives to userspace, right?  Having set QUERIED, a write to the file
-> immediately afterwards will cause a (tiny) increase in ctime_nsec which
-> will cause the XFS_IOC_COMMIT_RANGE to reject the commit[2].  Right?
 >=20
 
-Yes. Once you call fill_mg_ctime, the first write after that point
-should cause the kernel to ensure that there is a distinct change in
-the ctime.
+Oh, and to be clear, if you're _only_ worried about changes to the
+contents of the file (and not the metadata), you should be able to do
+this instead:
 
-IOW, I think this should alleviate the concerns I had before with using
-timestamps with the XFS_IOC_COMMIT_RANGE interface.
+    fill_mg_ctime(&dummy, STATX_MTIME, inode);
 
+...and that should avoid false positives from metadata-only changes.
 
-> --D
+Querying only the mtime still causes the QUERIED flag to be set, and
+the kernel to give you distinct timestamps.
+
+> > --D
+> >=20
+> > [1] https://lore.kernel.org/linux-xfs/20240227174649.GL6184@frogsfrogsf=
+rogs/
+> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.gi=
+t/commit/?h=3Datomic-file-commits&id=3D0520d89c2698874c1f56ddf52ec4b8a3595b=
+aa14
+> >=20
+> > > +
+> > >  	stat->blocks =3D XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_bl=
+ks);
+> > > =20
+> > >  	if (xfs_has_v3inodes(mp)) {
+> > > @@ -603,11 +604,6 @@ xfs_vn_getattr(
+> > >  		}
+> > >  	}
+> > > =20
+> > > -	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
+> > > -		stat->change_cookie =3D inode_query_iversion(inode);
+> > > -		stat->result_mask |=3D STATX_CHANGE_COOKIE;
+> > > -	}
+> > > -
+> > >  	/*
+> > >  	 * Note: If you add another clause to set an attribute flag, please
+> > >  	 * update attributes_mask below.
+> > > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> > > index 27e9f749c4c7..210481b03fdb 100644
+> > > --- a/fs/xfs/xfs_super.c
+> > > +++ b/fs/xfs/xfs_super.c
+> > > @@ -2052,7 +2052,7 @@ static struct file_system_type xfs_fs_type =3D =
+{
+> > >  	.init_fs_context	=3D xfs_init_fs_context,
+> > >  	.parameters		=3D xfs_fs_parameters,
+> > >  	.kill_sb		=3D xfs_kill_sb,
+> > > -	.fs_flags		=3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> > > +	.fs_flags		=3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
+> > >  };
+> > >  MODULE_ALIAS_FS("xfs");
+> > > =20
+> > >=20
+> > > --=20
+> > > 2.45.2
+> > >=20
+> > >=20
 >=20
-> [1] https://lore.kernel.org/linux-xfs/20240227174649.GL6184@frogsfrogsfro=
-gs/
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/=
-commit/?h=3Datomic-file-commits&id=3D0520d89c2698874c1f56ddf52ec4b8a3595baa=
-14
->=20
-> > +
-> >  	stat->blocks =3D XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks=
-);
-> > =20
-> >  	if (xfs_has_v3inodes(mp)) {
-> > @@ -603,11 +604,6 @@ xfs_vn_getattr(
-> >  		}
-> >  	}
-> > =20
-> > -	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
-> > -		stat->change_cookie =3D inode_query_iversion(inode);
-> > -		stat->result_mask |=3D STATX_CHANGE_COOKIE;
-> > -	}
-> > -
-> >  	/*
-> >  	 * Note: If you add another clause to set an attribute flag, please
-> >  	 * update attributes_mask below.
-> > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> > index 27e9f749c4c7..210481b03fdb 100644
-> > --- a/fs/xfs/xfs_super.c
-> > +++ b/fs/xfs/xfs_super.c
-> > @@ -2052,7 +2052,7 @@ static struct file_system_type xfs_fs_type =3D {
-> >  	.init_fs_context	=3D xfs_init_fs_context,
-> >  	.parameters		=3D xfs_fs_parameters,
-> >  	.kill_sb		=3D xfs_kill_sb,
-> > -	.fs_flags		=3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-> > +	.fs_flags		=3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
-> >  };
-> >  MODULE_ALIAS_FS("xfs");
-> > =20
-> >=20
-> > --=20
-> > 2.45.2
-> >=20
-> >=20
 
 --=20
 Jeff Layton <jlayton@kernel.org>
