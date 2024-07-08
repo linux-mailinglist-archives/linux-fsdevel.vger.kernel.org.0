@@ -1,269 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-23275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D6F5929FF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 12:13:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C8A92A0C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 13:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5175B1C214DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 10:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179011F2211E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 11:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91874770ED;
-	Mon,  8 Jul 2024 10:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D54E8062A;
+	Mon,  8 Jul 2024 11:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OGCiPkoe"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="SREvpOmE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465577581A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jul 2024 10:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E9B80034
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jul 2024 11:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720433597; cv=none; b=UJwPGMIDAJQlJwcVrqPf8710vXPulUG4V91EW7O+2WWuU0Pqyu5M4lPz+HUCY+4GfDibH0CSH4+7v6cLuDtKUshmoWNu4VSPVFsArO9FBQuRAcj8c6HEMX+tFwphLZRXZnDntMgED6+e60XamhDG69+R8Laouli+jVgLA2vxxW4=
+	t=1720437165; cv=none; b=qRAR6yaOOt8oAc10dlCbeTfRv2cw42ZaUU0j873uMaWGFYQPDc08A1XdIRcwhdUZLHBc6Vy9rjydLzGn9nrA8AheOh27rDGxOBWScepb+xVk5Bmi4IlyTA+GORezhdO+1LsLF/V/cWE/4jfbYmMGkeuUDvDnFXcmya1X0q+KvkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720433597; c=relaxed/simple;
-	bh=HEeGDhbwnZOacLYf46vwc5wEABZGEKWDdQ4rW5ANr88=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=saJRigLh2+UsX0gQp5Mq2Myz70GCR243hnmfKTLCovu/ka4CA5U2e7bLzII4ZvZKFnHaqESKCDfa6Ul+luhFMMMaZriCdTrSOEGIdi0Ld74diSrgYU930/YS5ALdpoSf0LdCfLNkobmSCmfLMegELMHukJ9+DOHBNGpfUxiot9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OGCiPkoe; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d932b342bfso396916b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jul 2024 03:13:14 -0700 (PDT)
+	s=arc-20240116; t=1720437165; c=relaxed/simple;
+	bh=A2Amlxz9Q+VLZ+ZbVuZyhOzaRtPRJ07PVprnUekDnmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NOYR5aTE47MuisP4jZ+hV0dL6ELQ2BteuZDDJPtoY5Y2YutPH2d/Tdr9mFzmEYaAOvkeK1W70HYBKnMcGVWgpZ0hBwMCfBaUQXJ5f8v43Fsu1S/RAUzea8yEdoNlN8jXedwoKGuwr4le4AZQqq4wtIvWHxtjYSHgsXSkJhm9iUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=SREvpOmE; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-707040e3018so2437609a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jul 2024 04:12:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1720433593; x=1721038393; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8XXKAYmfVFyA7thhyLqvFeZE7qEz3+PJWR4pQ61AWUw=;
-        b=OGCiPkoekjCd5ni1KJe+51ayTspB3tGnDgEsabGMQmiRgCJcGxB0C2blxPJewhs8sh
-         vCzRNk/C/YagZOrOxlni+44QsU05LbV/vknTFV/5Lm/2yFqidrWCc0RFKRrzUveFDzM4
-         mXSLYqYUX1GipBnAgtu+9EJp+LM3Il6jV6N6aQJ8afT6P5lKsPTc0sYLwFF5krjW1Nwh
-         ydwBUaBH3QkiDnKtA3UcojpDDxrDrdjZhxFrl+y1PKzK873upQA7FrXyZ0YP98b5t4CP
-         jUiulY0KdC+gWxwumbcEf5ls2W/gD5A9/GJNNlGSca4m4wVEFBgatC6Z7T/oiExIevB8
-         oFSg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1720437163; x=1721041963; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mSy3YtVRLz8Qqrmq3FDZ7/bd/sxHOLhAnKAcU2qf1+s=;
+        b=SREvpOmElyUxuPMoPV5gDO6lQycyumWwEg3q8ANSZf0dyj3h6Qv7zO71CZwm6JUSLG
+         ANINJb9l1Kq0dUPvu99KnCYMX2wpGX+CxOiwCaBvkFtQc/aqeGWKfTUdg2ao+FPlIwDs
+         lc4E+0Tsr6He4knX6DqPqngTxevPxq9qeF/mG9qnHInR95zcMyR3Wd+3IuKDqPePlwCe
+         5ESXAbHFZ46NshUX82oaCdDBGy+U7IUe6qPb7WbiVmKGNnAbpdq3CqJo/xjDQNaOMKwG
+         CZ305KFvgEA/I6RI2EhnfnN45lAVLtRRucq6RxmP12qlt5RtoaK2jEmP5gQtsq8fbwep
+         R88g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720433593; x=1721038393;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8XXKAYmfVFyA7thhyLqvFeZE7qEz3+PJWR4pQ61AWUw=;
-        b=a/xLl5WL2QcQlyosOkh+ZZxx973mcX0/fHm3J4gr+j0ROayDpJK1tVfVexUCLJcWVO
-         CCLeAXx357rvw7wP+W8f2EXQyIp1DieN+9f8Acr/1lRXBq1VRiYt/j1su4G3CjWELMH4
-         cHigc3g4kzzWbImCj+k/cUwlc0zR7q+TFzr76eB/FQn7hd01a4JjoSqyLS188NcrtQn1
-         a3gZIbgHKoWSEmwTtbaryLkwj5bM7OU00m/P8NKBWhzgshS23FrnOjqbkxyriGCbpd/A
-         M4ZzRbklZFz+u4dwrbXfXTJxfOWHK5vAkDiN6/xz4UsANfHI7O8/1NFQeFzOlHImZIKf
-         Vj3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXma699stdqxo1QBSRH56opx2gvO47RFbVm0LC6vbDpVK1jrFqFCxQQbWUsZcBGhYfEq7yPS/D7AkkRPEJ1Oy4HvGDx5kSK4nIZf9xZIg==
-X-Gm-Message-State: AOJu0Yw34NbxiejDvuvD+n3UTN4f2L9MtsHexA3KGqMh7fgrN6/pGhdt
-	cB668rto/7Buv+wq8TKnm6EpgEWi3SPYmSdL3Ft9HonHzL+fNJowGvOi1YrReQ==
-X-Google-Smtp-Source: AGHT+IE7xxHxLr5inoKXU+i7LdrQmrl5bVJRW4SAjjiIiQkXir4NQfGD8V6du1EKKer2WLBHscQzBg==
-X-Received: by 2002:a05:6808:1984:b0:3d2:1b1b:ec1 with SMTP id 5614622812f47-3d914da9b46mr17267596b6e.45.1720433592875;
-        Mon, 08 Jul 2024 03:13:12 -0700 (PDT)
-Received: from lizhigang-HP-Elite-Tower-880-G9-Desktop-PC.bytedance.net ([61.213.176.6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6a8df0e3sm14902961a12.36.2024.07.08.03.13.10
+        d=1e100.net; s=20230601; t=1720437163; x=1721041963;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mSy3YtVRLz8Qqrmq3FDZ7/bd/sxHOLhAnKAcU2qf1+s=;
+        b=XuL+WLmzNBuae3wfaFk1CwEQPn081ZqDqHYxSfNEqqn3o2z8tG+bhlN4w/Q42FRGip
+         Zny5GVNpgL828q2jiTOzU9AWrny8oL9t6iVezPnYzvTcDHY6bkgb0wTKalIp60aquJbN
+         NfLp8rYUkAwlnyna0kCZWnIFGa9t0kSu2EzC0TidNqX+eXVFSd0a4JYsVI/zo3WLgbZa
+         1PEBSUx15/KGg1sIKMrvcI92pB5kbZbQRU3JkrnF89RAzxlUfs4qVxfUg8HUFT+00FMb
+         DPrXeXNfANFwMPi4hCeiRVP2pRC3svOg/KAPfhy5lGUENOeQDVjaTaZGSQ5T1KOhKG33
+         0RAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWxVkm1MjbZot0jV9Oqp7eBJIFw1XZOJOYk6qVyL/msWwHvolLkjPkJWouM1Izq4nFrn7SSxeI5YlqNHcv338pO2tnqTyqv/w4dzN+xA==
+X-Gm-Message-State: AOJu0YxFgSTaISRmUYU5RS8WxoyKojagilr2OtehifN+y5divBG62TAB
+	Mi4s9IE3jO1B2EuswKtpfkdOo+vbCu8WTjld2p9zYMoOdk5suieyKJ7nQlPirEk=
+X-Google-Smtp-Source: AGHT+IHfNuRXWdkd9A3TuADFoTsa8jBjnmvwH6ZaWhwnmXrfHwV8g/iNZoGZuUc1/0V1do1JY2onFw==
+X-Received: by 2002:a05:6a20:7349:b0:1c2:74b4:a05d with SMTP id adf61e73a8af0-1c274b4a983mr2918085637.23.1720437163092;
+        Mon, 08 Jul 2024 04:12:43 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fb48b1bb5bsm58699265ad.1.2024.07.08.04.12.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 03:13:12 -0700 (PDT)
-From: lizhigang <lizhigang.1220@bytedance.com>
-To: jack@suse.cz
-Cc: amir73il@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lizhigang <lizhigang.1220@bytedance.com>
-Subject: [PATCH] inotify: Added pid and uid information in inotify event.
-Date: Mon,  8 Jul 2024 18:12:57 +0800
-Message-Id: <20240708101257.3367614-1-lizhigang.1220@bytedance.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 08 Jul 2024 04:12:42 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sQmIS-008S5V-1F;
+	Mon, 08 Jul 2024 21:12:40 +1000
+Date: Mon, 8 Jul 2024 21:12:40 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, djwong@kernel.org,
+	chandan.babu@oracle.com, dchinner@redhat.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v2 08/13] xfs: Do not free EOF blocks for forcealign
+Message-ID: <ZovJqNFyHYRWRVbA@dread.disaster.area>
+References: <20240705162450.3481169-1-john.g.garry@oracle.com>
+ <20240705162450.3481169-9-john.g.garry@oracle.com>
+ <20240706075609.GB15212@lst.de>
+ <ZotEmyoivd1CEAIS@dread.disaster.area>
+ <6427a661-2e92-49a0-8329-7f67e8dd5c35@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6427a661-2e92-49a0-8329-7f67e8dd5c35@oracle.com>
 
-The inotify event only contains file name information. Sometimes we
-also want to know user or process information,such as who created
-or deleted a file. This patch adds information such as COMM, PID
-and UID to the end of filename, which allowing us to implement
-this function without modifying the current Inotify mechanism.
+On Mon, Jul 08, 2024 at 08:36:52AM +0100, John Garry wrote:
+> On 08/07/2024 02:44, Dave Chinner wrote:
+> > On Sat, Jul 06, 2024 at 09:56:09AM +0200, Christoph Hellwig wrote:
+> > > On Fri, Jul 05, 2024 at 04:24:45PM +0000, John Garry wrote:
+> > > > -	if (xfs_inode_has_bigrtalloc(ip))
+> > > > +
+> > > > +	/* Only try to free beyond the allocation unit that crosses EOF */
+> > > > +	if (xfs_inode_has_forcealign(ip))
+> > > > +		end_fsb = roundup_64(end_fsb, ip->i_extsize);
+> > > > +	else if (xfs_inode_has_bigrtalloc(ip))
+> > > >   		end_fsb = xfs_rtb_roundup_rtx(mp, end_fsb);
+> > > 
+> > > Shouldn't we have a common helper to align things the right way?
+> > 
+> > Yes, that's what I keep saying.
+> 
+> Such a change was introduced in
+> https://lore.kernel.org/linux-xfs/20240501235310.GP360919@frogsfrogsfrogs/
+> 
+> and, as you can see, Darrick was less than happy with it. That is why I kept
+> this method which removed recently added RT code.
 
-This function is not enabled by default and is enabled through an IOCTL
+I know.
 
-When enable this function, inotify_event->name will contain comm,
-pid and uid information, with the following specific format:
+However, "This is pointless busywork!" is not a technical argument
+against the observation that rtbigalloc and forcealign are exactly
+the same thing from the BMBT management POV and so should be
+combined.
 
-filename____XXX,pid:YYY__uid:ZZZ
+Arguing that "but doing the right thing makes more work for me"
+doesn't hold any weight. It never has. Shouting and ranting
+irrationally is a great way to shut down any further conversation,
+though.
 
-Pseudo code to enable this function:
-int rc, bytes_to_read, inotify_fd;
+Our normal process is to factor the code and add the extra condition
+for the new feature. That's all I'm asking to be done. It's not
+technically difficult. It makes the code better. it makes the code
+easier to test, too, because there are now two entries in the test
+matrix taht exercise that code path. It's simpler to understand
+months down the track, makes new alignment features easier to add in
+future, etc.
 
-inotify_fd = inotify_init();
-...
-// enable padding uid,pid information
-rc = ioctl( inotify_fd, TIOCLINUX, &bytes_to_read);
+Put simply: if we just do what we have always done, then we end up
+with better code.  Hence I just don't see why people are trying to
+make a mountain out of this...
 
-Log example with this function:
-CREATE,ISDIR /home/peter/testdir____mkdir,pid:3626__uid:1000
-CREATE /home/peter/test.txt____bash,pid:3582__uid:1000
-OPEN /home/peter/test.txt____bash,pid:3582__uid:1000
-MODIFY /home/peter/test.txt____bash,pid:3582__uid:1000
-CLOSE_WRITE,CLOSE /home/peter/test.txt____bash,pid:3582__uid:1000
-OPEN,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
-ACCESS,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
-ACCESS,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
-CLOSE_NOWRITE,CLOSE,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
-DELETE,ISDIR /home/peter/testdir____rm,pid:3640__uid:1000
+> Darrick, can we find a better method to factor this code out, like below?
+> 
+> > The common way to do this is:
+> > 
+> > 	align = xfs_inode_alloc_unitsize(ip);
+> > 	if (align > mp->m_blocksize)
+> > 		end_fsb = roundup_64(end_fsb, align);
+> > 
+> > Wrapping that into a helper might be appropriate, though we'd need
+> > wrappers for aligning both the start (down) and end (up).
+> > 
+> > To make this work, the xfs_inode_alloc_unitsize() code needs to grow
+> > a forcealign check. That overrides the RT rextsize value (force
+> > align on RT should work the same as it does on data devs) and needs
+> > to look like this:
+> > 
+> > 	unsigned int		blocks = 1;
+> > 
+> > +	if (xfs_inode_has_forcealign(ip)
+> > +		blocks = ip->i_extsize;
+> > -	if (XFS_IS_REALTIME_INODE(ip))
+> > +	else if (XFS_IS_REALTIME_INODE(ip))
+> >                  blocks = ip->i_mount->m_sb.sb_rextsize;
+> 
+> That's in 09/13
 
-Signed-off-by: lizhigang <lizhigang.1220@bytedance.com>
----
- fs/notify/inotify/Kconfig            | 24 +++++++++++++++++++++++
- fs/notify/inotify/inotify_fsnotify.c | 29 +++++++++++++++++++++++++++-
- fs/notify/inotify/inotify_user.c     | 11 ++++++++++-
- include/linux/fsnotify_backend.h     |  5 ++++-
- 4 files changed, 66 insertions(+), 3 deletions(-)
+Thanks, I thought it was somewhere in this patch series, I just
+wanted to point out (once again) that rtbigalloc and forcealign are
+basically the same thing.
 
-diff --git a/fs/notify/inotify/Kconfig b/fs/notify/inotify/Kconfig
-index 1cc8be25df7e..1b2d6aef5dda 100644
---- a/fs/notify/inotify/Kconfig
-+++ b/fs/notify/inotify/Kconfig
-@@ -15,3 +15,27 @@ config INOTIFY_USER
- 	  For more information, see <file:Documentation/filesystems/inotify.rst>
- 
- 	  If unsure, say Y.
-+
-+config INOTIFY_NAME_UID
-+	bool "Inotify filename with uid information"
-+	default n
-+	help
-+	  Say Y here to enable inotify file name with uid, pid and comm information.
-+	  Added the current context information with file name.
-+	  The inotify event only contains file name information. Sometimes we
-+	  also want to know user or process information,such as who created
-+	  or deleted a file. This patch adds information such as COMM, PID
-+	  and UID to the end of filename, which allowing us to implement
-+	  this function without modifying the current Inotify mechanism.
-+	  This function is not enabled by default and is enabled through an IOCTL
-+	  When enable this function, inotify_event->name will contain comm,
-+	  pid and uid information, with the following specific format:
-+	  filename____XXX,pid:YYY__uid:ZZZ
-+	  Pseudo code to enable this function:
-+	  int rc, bytes_to_read, inotify_fd;
-+	  inotify_fd = inotify_init();
-+	  ...
-+	  // enable padding uid,pid information
-+	  rc = ioctl( inotify_fd, TIOCLINUX, &bytes_to_read);
-+
-+	  If unsure, say n.
-diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-index 993375f0db67..d6d2d11f1e8c 100644
---- a/fs/notify/inotify/inotify_fsnotify.c
-+++ b/fs/notify/inotify/inotify_fsnotify.c
-@@ -23,9 +23,16 @@
- #include <linux/sched.h>
- #include <linux/sched/user.h>
- #include <linux/sched/mm.h>
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+#include <linux/cred.h>
-+#endif
- 
- #include "inotify.h"
- 
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+#define UID_INFO_MAX_SIZE   64
-+#endif
-+
- /*
-  * Check if 2 events contain the same information.
-  */
-@@ -68,9 +75,21 @@ int inotify_handle_inode_event(struct fsnotify_mark *inode_mark, u32 mask,
- 	int len = 0, wd;
- 	int alloc_len = sizeof(struct inotify_event_info);
- 	struct mem_cgroup *old_memcg;
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	char uid_info[UID_INFO_MAX_SIZE];
-+	struct user_struct *user_info;
-+#endif
- 
- 	if (name) {
- 		len = name->len;
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+		if (group->user_flag & USER_FLAG_TASK_INFO) {
-+			user_info = current_user();
-+			sprintf(uid_info, "____%s,pid:%d__uid:%d",
-+				current->comm, current->pid, user_info->uid.val);
-+			len += strlen(uid_info);
-+		}
-+#endif
- 		alloc_len += len + 1;
- 	}
- 
-@@ -120,9 +139,17 @@ int inotify_handle_inode_event(struct fsnotify_mark *inode_mark, u32 mask,
- 	event->wd = wd;
- 	event->sync_cookie = cookie;
- 	event->name_len = len;
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	if (len) {
-+		if (group->user_flag & USER_FLAG_TASK_INFO)
-+			sprintf(event->name, "%s%s", name->name, uid_info);
-+		else
-+			strcpy(event->name, name->name);
-+	}
-+#else
- 	if (len)
- 		strcpy(event->name, name->name);
--
-+#endif
- 	ret = fsnotify_add_event(group, fsn_event, inotify_merge);
- 	if (ret) {
- 		/* Our event wasn't used in the end. Free it. */
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 4ffc30606e0b..f1538cafdc1d 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -349,6 +349,13 @@ static long inotify_ioctl(struct file *file, unsigned int cmd,
- 		}
- 		break;
- #endif /* CONFIG_CHECKPOINT_RESTORE */
-+
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	case TIOCLINUX:
-+		group->user_flag |=  USER_FLAG_TASK_INFO;
-+		ret = 0;
-+		break;
-+#endif /* CONFIG_INOTIFY_NAME_UID */
- 	}
- 
- 	return ret;
-@@ -674,7 +681,9 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
- 
- 	group->max_events = max_events;
- 	group->memcg = get_mem_cgroup_from_mm(current->mm);
--
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	group->user_flag = 0;
-+#endif
- 	spin_lock_init(&group->inotify_data.idr_lock);
- 	idr_init(&group->inotify_data.idr);
- 	group->inotify_data.ucounts = inc_ucount(current_user_ns(),
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index 4dd6143db271..d4f57b16f1d3 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -234,7 +234,10 @@ struct fsnotify_group {
- 						 * full */
- 
- 	struct mem_cgroup *memcg;	/* memcg to charge allocations */
--
-+#ifdef CONFIG_INOTIFY_NAME_UID
-+	#define USER_FLAG_TASK_INFO     1   /* output task infor with filename */
-+	unsigned int user_flag;             /* user added control flag */
-+#endif
- 	/* groups can define private fields here or use the void *private */
- 	union {
- 		void *private;
+And, in case it isn't obvious to everyone, setting forcealign on a
+rt inode is basically the equivalent of turning on "rtbigalloc" for
+just that inode....
+
+> >          return XFS_FSB_TO_B(ip->i_mount, blocks);
+> > 
+> > > But more importantly shouldn't this also cover hole punching if we
+> > > really want force aligned boundaries?
+> 
+> so doesn't the xfs_file_fallocate(PUNCH_HOLES) -> xfs_flush_unmap_range() ->
+> rounding with xfs_inode_alloc_unitsize() do the required job?
+
+No, xfs_flush_unmap_range() should be flushing to *outwards*
+block/page size boundaries because it is cleaning and invalidating
+the page cache over the punch range, not manipulating the physical
+extents underlying the data.
+
+It's only once we go to punch out the extents in
+xfs_free_file_space() that we need to use xfs_inode_alloc_unitsize()
+to determine the *inwards* rounding for the extent punch vs writing
+physical zeroes....
+
+-Dave.
 -- 
-2.25.1
-
+Dave Chinner
+david@fromorbit.com
 
