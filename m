@@ -1,114 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-23269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C95E929C87
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 08:53:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A54929C8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 08:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2261C214DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 06:53:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7360CB210FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jul 2024 06:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4A51C69C;
-	Mon,  8 Jul 2024 06:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84FFE17C66;
+	Mon,  8 Jul 2024 06:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PXVuP5iC"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cqYXGThg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EA919470
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jul 2024 06:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8341B28A
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jul 2024 06:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720421576; cv=none; b=iQhtpFO1333J+DdoQfmWGjB/zcFN/R7BM78weAhFkW9DzmIfAVSsiSH3ncZ9T8TMNq5euHHbgRS4zOP+KVioDXjH9M4DJZLubbgeB10wlX1Q3wmDtNsNKXMHQrXV/ehbu5eFYgjFF/cm23Vn86cNnS0U2d+zCmHlcDnaaoFoJmI=
+	t=1720421713; cv=none; b=OJKqlWBVfpVyCo8i+e73k8gljsXueJRey0HWz+0AEuOwV1tnJ03t6YmJPNTwRLM+EPRdqGZf7O+oHIJUNEy/OZpUBZ3JGSONc6+O7dmBe/OWkeGUm15HaIZv1RioX9/jI+AHWdmpNi00GtxznkWXn1+KKopNYFIEEga6SgzCyUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720421576; c=relaxed/simple;
-	bh=AEvwklKkahMqU5NTDzmQKtCMtYWlnzq3g2SsYFh0OP0=;
+	s=arc-20240116; t=1720421713; c=relaxed/simple;
+	bh=gMa1AnG73phwoi1O9zSXqiYTQMB/Zb8kbkt5rz+/6DE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LJtD0B1C3d1yDX8L0BBGxAG9MCpWJXpuM+IDlve222QsKYozsn2CUfSXsH9A78TEzDgaNvLMMLi9nP34Ss8xeO+TawMXnZqwz9jnslAfL9IiyZ9HGvArzhB5c5uOrxTaQFCyWZXorOOOQRX5iaBu29Yot4IfzPdGJl+2dLYKgB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PXVuP5iC; arc=none smtp.client-ip=209.85.208.46
+	 To:Cc:Content-Type; b=aVNEp9VPCHJF3eSEdm6C++fdPuv21gDQqwjfmyQvNvXsoCnexr//pwyNKRhXZtdTbeBt1MdD8gxuNqkAa1Z3g5MKe6DWISaDS3Qii8KQO7SghfAR5U1BDgYwBfb75rudoCj/TciQKyoIgp+4PLhvgVhS7R1x8lVWTvHlWJI+Dj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cqYXGThg; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso33323a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Jul 2024 23:52:54 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42666b89057so27245e9.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Jul 2024 23:55:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720421573; x=1721026373; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720421710; x=1721026510; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9whkwrmVJ5LTYmQjDX1Dcp6xV4ICCXH4l+UXuqVSVG8=;
-        b=PXVuP5iCT9zjIADZSIEaZQSfq0gMpRTiur0fUk5yhBqZIIfGwh4HoTN517r58sm1Y8
-         N4A5eIbabSge6Ntc1p1l3B74qtZhOgBLHHVrQW/necgudNwJtj4XqQU+LQLTREd6/p+i
-         xjoYPnF0hYAGeT6/jmSQwANSOcDDT+PsKzHdQn+O0H6Nmn2nz0vxb+3rRTq5iNBfv4OU
-         EuUvNyHH0iTSobcQpH7aQanszSxCyPWR9voPYoKtL2mGJWeigvtK9sPPytoVPqx+4GUs
-         Wjd+U5hgYmKT1voWkxsofVzZNJy7g9UbenVrUTlL91LurGzWspAx3It2XznLRn6IRN8/
-         xmnw==
+        bh=9dKihFJHBQH2LQzDK9e9Ag8pP7Kbhb37n4OfA5zMJnE=;
+        b=cqYXGThgNyFRHid0Q0nRrOrXxHLHUUPwdgAuq3ElwqgnpOCRWG98dKtsjOtGMdykzW
+         nnL3NgCMF8Fy5THOmJGQbw7GTGlr/JbTdHmo6H8KyAo9MoDxLJlg67qLdbkuUbBUoOgL
+         2cbAn9Z4H4MnzROLqHAf7PUD6K8Y5U9OBP9VWxN4xBBaiiuURD2AyDzp9kUdESC2R1eh
+         EtVeXjLGzgnA610SsxdzCwwgQL830jNFwdupwSX8+YySmom2Y/x1p3bj3CJbPb3p+ayQ
+         GLdpk4PZ48pIaHg4DHKeB+8TcVff/spKvFugGi8OhklPMdOBJYMj84B9crMyWyvH1XfE
+         Erhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720421573; x=1721026373;
+        d=1e100.net; s=20230601; t=1720421710; x=1721026510;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9whkwrmVJ5LTYmQjDX1Dcp6xV4ICCXH4l+UXuqVSVG8=;
-        b=wQsMdxalyaeRhqj5y7zozq+Jda6kn3vA7tLNHxgXIRTTFR+Y2b83k88vMmgee7bMvB
-         /ETpgLdjiNKU1bFs4KPvYVuRfafrf/5vcS4VWN0L6EIDLuXxkjkbQcWcoUun6+09Eisr
-         7wJTKNiSpeLw+Y1BM2P7P0FfcURqRwyFLktx0o2eEV45OXtaRiq3Jc6NeiF7jt+M4cvn
-         06vBgEa1cOaSvmBWThqbD0oQxl3sAhpOfFiTKwYU8apFua3A1RmzNmuzb2MsJpMsFFWR
-         T5x/OUBnO9wVdrWP2JvZZR86XALccvoU8oECLMpECFN+y6Ue3xjhfA6lwWNkGAuQ9RqU
-         hBtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWg/zUlAy/ccmZatOR9w3uqiU5EjAIQd7iyYyZQ9nPwWQwq08l6+5hW9bRQ23Ua2vAZTH8JcgaXcEZ4tPV3CL7rcoru7qI8/rftVLgZAg==
-X-Gm-Message-State: AOJu0Yzi6VI7Nbd9NUBUJZ+/CZGNWLWsnrPYXhRqkJKbSGDsQqjV4CfT
-	STPI2zk4aCi2Qum+/n8CjiU/VFJ8mjIIBY4FgxqB7M0Pfgangv/C0EZx11AwGH38eK4ZlwvrMqV
-	k7PyzcQ7SA4+cIAAcxUinih8HcGI5GzTbmIiV
-X-Google-Smtp-Source: AGHT+IFN5kJ6GOce4aE1Yj+jUNSNYIaA8MJOELU5iBuuDRasF2YS08Shp8PeHvRwpV6zyoqz/feShY8ANBbLonjV3cc=
-X-Received: by 2002:a50:8d1a:0:b0:58b:b1a0:4a2d with SMTP id
- 4fb4d7f45d1cf-58e28e6929fmr420362a12.1.1720421572714; Sun, 07 Jul 2024
- 23:52:52 -0700 (PDT)
+        bh=9dKihFJHBQH2LQzDK9e9Ag8pP7Kbhb37n4OfA5zMJnE=;
+        b=gX3uQEUbFfNkVOs6sHJ/NHNRux4NwiSo8yh3faxz/p8H2rugSoCjb505gDiFYnIt3t
+         RWgzFH/pMEnwb5nKuQ/3zxVDzMhQPfSpzXIIMQWQ/ABgf+uvMXOBqGrhFDbgyxNWH9/C
+         uzFK6+cDbIcLvqk8u+b+toaCSGj1oPhlBD0mJnQqK4X54QddPX3V6wn9QLGkqybguN75
+         xTV+j79EIk8Rp/Snil52/+co4FT1f7gzENg9GcVlHkPpiUgZ2ZXhWU3mwfkRCRbbe7gX
+         yEWJx+LJFyHzUDXllOpLf/l8KnhYT862ShgqUbaszNM8vSTz8Ajf66iyGEPkPBU7Z96A
+         VaNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpOPfmEAxOMW/krUjZeN/bCZUThBqbFbu6G9eQrbt9Jc8yktToB3xROsyYg8UlD9ZPAYVS4tj0nCngcOWxNaa4ECurhp2LaWJnEkZrlw==
+X-Gm-Message-State: AOJu0YzhqRfuaTC7Lr1aw7uhYePuiCL+6xOLerzfgUCuATxP1+J8K3rL
+	fNl9UVbcy9/vmn+LWZS4Aqp2wn9JGg5zZOnEpC1p1KoFsKhWpuRihbTCxvz6IIPFOWFsl6wklRc
+	wLwxXAV8vzGRZuXw5LEYEj0ZzrPrDeUF/ehfR
+X-Google-Smtp-Source: AGHT+IFzE0MPudZsChYf45D5gI2oMz4/GllXHmTshHhW8Z3byNHJpVQJhhEw9gGlaRpCEoWZQolwNdVRB2+kKaoORCs=
+X-Received: by 2002:a05:600c:4687:b0:426:5d89:896d with SMTP id
+ 5b1f17b1804b1-4265d898b4amr2397475e9.1.1720421709782; Sun, 07 Jul 2024
+ 23:55:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000037162f0618b6fefb@google.com> <tencent_8BBB6433BC9E1C1B7B4BDF1BF52574BA8808@qq.com>
- <172021445223.2844396.7059951310501602233.b4-ty@kernel.org> <20240706-wucher-gegossen-ed347171f1f0@brauner>
-In-Reply-To: <20240706-wucher-gegossen-ed347171f1f0@brauner>
+References: <CACT4Y+ZWjUE6-q1YF=ZaPjKgGZBw4JLD1v2DphSgCAVf1RzE8g@mail.gmail.com>
+ <20240705135250.3587041-1-lizhi.xu@windriver.com>
+In-Reply-To: <20240705135250.3587041-1-lizhi.xu@windriver.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 8 Jul 2024 08:52:41 +0200
-Message-ID: <CACT4Y+aZ=pBg7sOMmMojM6-gOsxk-e7Z91VaqS9cyjN40ZFirA@mail.gmail.com>
-Subject: Re: [PATCH] hfsplus: fix uninit-value in copy_name
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, syzbot+efde959319469ff8d4d7@syzkaller.appspotmail.com, 
-	Edward Adam Davis <eadavis@qq.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Date: Mon, 8 Jul 2024 08:54:57 +0200
+Message-ID: <CACT4Y+YrjD=3Tn6o4FJFefDYsOCbUFWahPUp87PXXcHQsr0xXg@mail.gmail.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com, Kees Cook <keescook@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 6 Jul 2024 at 09:20, Christian Brauner <brauner@kernel.org> wrote:
+On Fri, 5 Jul 2024 at 15:52, Lizhi Xu <lizhi.xu@windriver.com> wrote:
 >
-> On Fri, Jul 05, 2024 at 02:20:54PM GMT, Kees Cook wrote:
-> > On Tue, 21 May 2024 13:21:46 +0800, Edward Adam Davis wrote:
-> > > [syzbot reported]
-> > > BUG: KMSAN: uninit-value in sized_strscpy+0xc4/0x160
-> > >  sized_strscpy+0xc4/0x160
-> > >  copy_name+0x2af/0x320 fs/hfsplus/xattr.c:411
-> > >  hfsplus_listxattr+0x11e9/0x1a50 fs/hfsplus/xattr.c:750
-> > >  vfs_listxattr fs/xattr.c:493 [inline]
-> > >  listxattr+0x1f3/0x6b0 fs/xattr.c:840
-> > >  path_listxattr fs/xattr.c:864 [inline]
-> > >  __do_sys_listxattr fs/xattr.c:876 [inline]
-> > >  __se_sys_listxattr fs/xattr.c:873 [inline]
-> > >  __x64_sys_listxattr+0x16b/0x2f0 fs/xattr.c:873
-> > >  x64_sys_call+0x2ba0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:195
-> > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> On Thu, 4 Jul 2024 15:44:02 +0200, Dmitry Vyukov wrote:
+> > > index 53629b1f65e9..a435df98c2b1 100644
+> > > --- a/fs/ntfs3/record.c
+> > > +++ b/fs/ntfs3/record.c
+> > > @@ -243,14 +243,14 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
+> > >                 off += asize;
+> > >         }
 > > >
-> > > [...]
+> > > -       asize = le32_to_cpu(attr->size);
+> > > -
+> > >         /* Can we use the first field (attr->type). */
+> > >         if (off + 8 > used) {
+> > >                 static_assert(ALIGN(sizeof(enum ATTR_TYPE), 8) == 8);
+> > >                 return NULL;
+> > >         }
+> > >
+> > > +       asize = le32_to_cpu(attr->size);
+> > > +
+> > >         if (attr->type == ATTR_END) {
+> > >                 /* End of enumeration. */
+> > >                 return NULL;
 > >
-> > I've taken some security-related hfsplus stuff before, so:
->
-> It's in #vfs.fixes to go out with the next vfs fixes pr.
+> > Hi Lizhi,
+> >
+> > I don't see this fix mailed as a patch. Do you plan to submit it officially?
+> Hi Dmitry Vyukov,
+> Here: https://lore.kernel.org/all/20240202033334.1784409-1-lizhi.xu@windriver.com
 
-Oops, sorry for creating a mess.
-It's just really hard to understand a random patch status.
+I don't see this patch merged upstream.  Was it lost? Perhaps it needs
+to be resent.
 
