@@ -1,139 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-23414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21FB92C0D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 18:45:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03C492C183
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 19:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F363F1C238C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 16:45:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A09E1F237F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7DE185637;
-	Tue,  9 Jul 2024 16:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8CC1ACE77;
+	Tue,  9 Jul 2024 16:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ArsdhXo7"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ywLRd9ti"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D21185602
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 16:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F791AC42B;
+	Tue,  9 Jul 2024 16:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542290; cv=none; b=GTUWSyIOw+qGHTAr5JozLzIxwAihAHNNtu11FXQDu8ZV/VwEPxzFEwejWMUdqWw54GnnaYuuO+5JgcHYic+AJZHAXbwS4jCuDvL0v9dkY27MKJ7jyyTPCPaR5+7ovXn4dGhQejbpNhQxDjMqObmHJIwqE3XMiS54dK52re7A51k=
+	t=1720542560; cv=none; b=rcfI/bmrRJzfKxh3ydGZ5KzS6ExklqJpErc9uU2pbWDmPKhk7dBU34IzOBydzMFDxNF/zGQp5vZ1DIz9dDLudTox+YABX7PA5e8u4o0MsZOlZ1wVvFE6ojse24Gbfow7ySiSFYECSYRAdpytprzeuHwjoNElhv51zoGQeip4u7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542290; c=relaxed/simple;
-	bh=GQWEaiUiwKONAlIFbIU4AqVczL/Fs+cS33mEhUh4nww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WlNb5BJCm6/bjKCg+1RCqSDynmxzMjR4efw4qE6qzSzmb5KDerJGnPXrN/tRaaszPOP7eM8p8vMN0LFvQjwd5Hnqz2biZ0j/RVSr7iE5YK2h2XXG47ZcNbNzMMvv+W4DEYQge+m0888mpa72vvyJzgGDUHYnwjcyzbRI74lZbyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ArsdhXo7; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77c9d3e593so472975166b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 09:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1720542285; x=1721147085; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8dI++N7oMKnriEvMop9NM+PwKTIvjTbwj0rulahrYm0=;
-        b=ArsdhXo7B/MMDfzSd3XmJo9nuwURQSylhqXUdQrc8uIwVk4PyOIN6cNIDFbWLAn0aL
-         bdKFFexIWjQVIWNueN0y7WPVEL3LR1/RiMko67vmXjYgloFTil2uXmvKuXlAsb9d62Av
-         P2Cs+12Qa9tZ/kX8F6TqIjbKQeCP8B+MZ4jTA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720542285; x=1721147085;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8dI++N7oMKnriEvMop9NM+PwKTIvjTbwj0rulahrYm0=;
-        b=Njj+qlKlHF/hxvkVRTI7D088HfZWF4pYf5wvtZCT04BisaJ8SxICMWeOFAg7IQIToj
-         16ffULthBbt6v6DOhrD40l1J350c2UKg1czQ4nJ89PukSgYEiqB4v31RskoZtw+qzDn6
-         /s28VtwMO+6HhdFSeyhElrLHKJ2PAS+2RiJpTrH66ov97kGMPlJqt7SUviz8mVhYaZok
-         1UBdBGo6TUh9rxpvCctpkrEF1V68IQd+o+YNvAne3myLmrrwDSbEC3BD9dYKpe1IAt1b
-         hzuaer+IbEr4j92vYRtxVCL1ZfrSmNtvnjKy0ltyc7z2HWERGpohXW+ZB2n2nubZWxqo
-         Ygkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDWD8w+4Yc4M6dpEwrYZH/EiIyMMkkdyOGNBdpMJRinGo7GGHwwwsiakwePqJ3IAkyntDX4cCnYTJr+7rSh8EmAi23Us9cTRewsZu4Lw==
-X-Gm-Message-State: AOJu0YyYAVCgwGnuyDmkWt3iKGd+wxBPT2uFhvWhy6kbCQ5MmHXr8o9b
-	rKBPWmlPtvmkyucwYpjSV8sUAggpXUxud32qsEY9zUSu9dEPCFabAUs43Gfgb3T+bujwleqaEHq
-	hsGc=
-X-Google-Smtp-Source: AGHT+IF2/7AJ2O3smb/dfL+PehsD5ZCc4J+INa4nOfkDl0q2iJIvpxgbT7UGZlSYWc/SGEByA+a4XQ==
-X-Received: by 2002:a17:906:278b:b0:a77:d52c:c431 with SMTP id a640c23a62f3a-a780b6b1789mr191523566b.22.1720542285165;
-        Tue, 09 Jul 2024 09:24:45 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a853a62sm87627166b.157.2024.07.09.09.24.44
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 09:24:44 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-58b966b41fbso6781783a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 09:24:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVnEj12hSvQm7qEl9JM2Pp/FePlL76brvWCKKSzg07KRzbAM8eJhI6qKhDkoOI5J22iljS9+RP194DZaNWkUi6S/wY65dKmg/rua+7PPg==
-X-Received: by 2002:a50:ee12:0:b0:57c:4875:10a9 with SMTP id
- 4fb4d7f45d1cf-594bb674a54mr1638342a12.24.1720542284159; Tue, 09 Jul 2024
- 09:24:44 -0700 (PDT)
+	s=arc-20240116; t=1720542560; c=relaxed/simple;
+	bh=ao5OgCKTmWGOeQIyqG5Xq2Q5h8oVpW7lbNX6sg3ahiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oDtbfLgTVJbss6LpjXnvrYhGEiLhZqWAJQjL+Z8R1y6RzpB8Lfk6DV/8rPOZXW5LnUJJJMghrhb2jPq9i6uGAXpeHvkpyNVNN34dX6T956r8Zcij1xvhe+2ous1EXO+I2ui9ACmIkoD6wl4EBaos6YNEqlkuRcpQpHoFNAUnGWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ywLRd9ti; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4WJRJm2fVFz9sZq;
+	Tue,  9 Jul 2024 18:29:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1720542552;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hMN5EYeTIpPEIty7JnyHmAV09HNDOPhhuiUc4fcA8Kg=;
+	b=ywLRd9tisZo5XSSl4UArOgl3V9/+GSA2V7Qm1iabardoueztN4qHS1RNkBAHDtSTCijfWz
+	HNOXXh/PSOqAJ/GyZHhf1VtCjsd3KSyV71nNJQv/k1NX980gReU+YRx+X+gXWBQsRugO2x
+	fGK1q1NAMxWolVCYJlY9BmkO0C9T4x+fcr2DrkFhkei8a8nsy2h92ICViJbGrWdcy34+eL
+	P/LjWTzvBOsBwSwGFx+LfeyU/Ls3CzY9dfyNEdbJY7Zu5AInhjON7kL9rduwrfEnZaxggV
+	4mKliB31DWgpZwPzUhdvaHlzfX24RMs0Tb8Kg7Dz+IXo/AYPSsZ82l3GfKaZ4A==
+Date: Tue, 9 Jul 2024 16:29:07 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: david@fromorbit.com, willy@infradead.org, ryan.roberts@arm.com,
+	djwong@kernel.org
+Cc: linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>,
+	akpm@linux-foundation.org, chandan.babu@oracle.com
+Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
+Message-ID: <20240709162907.gsd5nf33teoss5ir@quentin>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-2-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
- <Zo0LECcBUElkHPGs@J2N7QTR9R3> <CAHk-=wgAKfXySpKFcJUdv97Rqz7RxPF-uc6xsue6Oiy=tP65oA@mail.gmail.com>
-In-Reply-To: <CAHk-=wgAKfXySpKFcJUdv97Rqz7RxPF-uc6xsue6Oiy=tP65oA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 9 Jul 2024 09:24:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiKCppvYcjHRivLbw2uPELEuEdythi_bkK9P7oF0wJ4Yw@mail.gmail.com>
-Message-ID: <CAHk-=wiKCppvYcjHRivLbw2uPELEuEdythi_bkK9P7oF0wJ4Yw@mail.gmail.com>
-Subject: Re: FYI: path walking optimizations pending for 6.11
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625114420.719014-2-kernel@pankajraghav.com>
+X-Rspamd-Queue-Id: 4WJRJm2fVFz9sZq
 
-On Tue, 9 Jul 2024 at 07:28, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> > For the sake of review, would you be happy to post the uaccess and
-> > runtime-constants patches to the list again? I think there might be some
-> > remaining issues with (real) PAN and we might need to do a bit more
-> > preparatory work there.
->
-> Sure. I'll fix that silly left-over store, and post again.
+For now, this is the only patch that is blocking for the next version.
 
-I only posted the (unchanged) arm64-uaccess series and the (fixed,as
-per your comment today) runtime-constants one. And I only posted it to
-the linux-arm-kernel list, not wanting to bother everybody.
+Based on the discussion, is the following logical @ryan, @dave and
+@willy?
 
-I have two other branches in my git tree if people care:
-link_path_walk and word-at-a-time. The word-at-a-time one does touch
-arm64 files too, but it's pretty trivial:
+- We give explicit VM_WARN_ONCE if we try to set folio order range if
+  the THP is disabled, min and max is greater than MAX_PAGECACHE_ORDER.
 
- arch/arm64/include/asm/word-at-a-time.h | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 14e1415f7dcf4..313c9fad61859 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -394,13 +394,24 @@ static inline void mapping_set_folio_order_range(struct address_space *mapping,
+                                                 unsigned int min,
+                                                 unsigned int max)
+ {
+-       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
++       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
++               VM_WARN_ONCE(1, 
++       "THP needs to be enabled to support mapping folio order range");
+                return;
++       }
+ 
+-       if (min > MAX_PAGECACHE_ORDER)
++       if (min > MAX_PAGECACHE_ORDER) {
++               VM_WARN_ONCE(1, 
++       "min order > MAX_PAGECACHE_ORDER. Setting min_order to MAX_PAGECACHE_ORDER");
+                min = MAX_PAGECACHE_ORDER;
+-       if (max > MAX_PAGECACHE_ORDER)
++       }
++
++       if (max > MAX_PAGECACHE_ORDER) {
++               VM_WARN_ONCE(1, 
++       "max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
+                max = MAX_PAGECACHE_ORDER;
++       }
++
+        if (max < min)
+                max = min;
 
-and really only involves a better instruction choice. It really only
-matters if you end up looking at the generated code of link_path_walk
-and strncpy_from_user().
+- We make THP an explicit dependency for XFS:
 
-The commit message at the top of that branch is a lot more verbose
-than the actual change, because I ended up just explaining the
-different phases of the zero detection more than the actual trivial
-change to it.
+diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
+index d41edd30388b7..be2c1c0e9fe8b 100644
+--- a/fs/xfs/Kconfig
++++ b/fs/xfs/Kconfig
+@@ -5,6 +5,7 @@ config XFS_FS
+        select EXPORTFS
+        select LIBCRC32C
+        select FS_IOMAP
++       select TRANSPARENT_HUGEPAGE
+        help
+          XFS is a high performance journaling filesystem which originated
+          on the SGI IRIX platform.  It is completely multi-threaded, can
 
-All four branches are available in my regular tree at
+OR
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+We create a helper in page cache that FSs can use to check if a specific
+order can be supported at mount time:
 
-as 'arm64-uaccess', 'link_path_walk', 'runtime-constants', and 'word-at-a-time'.
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 14e1415f7dcf..9be775ef11a5 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -374,6 +374,14 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+ #define MAX_XAS_ORDER          (XA_CHUNK_SHIFT * 2 - 1)
+ #define MAX_PAGECACHE_ORDER    min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
+ 
++
++static inline unsigned int mapping_max_folio_order_supported()
++{
++    if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
++      return 0;
++    return MAX_PAGECACHE_ORDER;
++}
++
 
-But unlike my normal mainline branch, I still rebase these based on
-feedback, so consider them unstable.
 
-IOW, don't pull them into any tree to be used: just use "git fetch" to
-look at the branches in your local tree instead, or use it for some
-ephemeral testing branch.
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index b8a93a8f35cac..e2be8743c2c20 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1647,6 +1647,15 @@ xfs_fs_fill_super(
+                        goto out_free_sb;
+                }
+ 
++               if (mp->m_sb.sb_blocklog - PAGE_SHIFT >
++                   mapping_max_folio_order_supported()) {
++                       xfs_warn(mp,
++"Block Size (%d bytes) is not supported. Check MAX_PAGECACHE_ORDER",
++                       mp->m_sb.sb_blocksize);
++                       error = -ENOSYS;
++                       goto out_free_sb;
++               }
++
+                xfs_warn(mp,
+ "EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
+                        mp->m_sb.sb_blocksize);
 
-                 Linus
+
+--
+Pankaj
 
