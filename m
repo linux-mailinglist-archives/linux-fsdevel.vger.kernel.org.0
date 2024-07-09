@@ -1,209 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-23418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D778892C1F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 19:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D9392C1F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 19:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0622C1C23D2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:12:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1009E292FF0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D924B18004B;
-	Tue,  9 Jul 2024 16:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D75E182A6B;
+	Tue,  9 Jul 2024 16:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MokDFKEU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdwmCL5K"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D92180040;
-	Tue,  9 Jul 2024 16:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC5A17B057;
+	Tue,  9 Jul 2024 16:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720543687; cv=none; b=u9Khb0H2/TqLPqForsBguUMOZQhagtpc3g52tN3rRSTdJVx5qMXMXrkT4AB1LzpdAXUhZrOO+Vy2KFTusAjZk1aTjTILIggK2YWvoP3g+U47ShSbtTEVp+xKE30u+tdpNPONGUBy3iMaxaTki4f5K5T9iA/QTes48lgn+nqEX6s=
+	t=1720543848; cv=none; b=RatDSyr6c/PTatnuXjh3y2ohaEmdZrwKVflwlF/IwjuGDMG5la7XJld82SxTZBVHZTY1Lp3ut4uAOPToRhz7Eb9R9uhFRm1iGG/FGDOKLnew+VjUMyjvSsZgwGIWJdJQfffLovus4j7Sj2Uv7fiHWQvs7/qFL6UzMdGdVFru+3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720543687; c=relaxed/simple;
-	bh=A7Jcx5oRumAX8eZV98UsjPpCTrSH8Zw/GPltiVSDWeI=;
+	s=arc-20240116; t=1720543848; c=relaxed/simple;
+	bh=znRxZ45h1cDZyCtgvwF+R25ShiH7+CYAc+wYck4CujA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mbevyMC5O5rU+2z2bTg3r8yDCIZF5vwqrRs2/Q0s77DKMbeBDT6tSpoWB9LHPOXEFRHDWkZ+o6RbsXPOcC+cMrLZsdf4lDNTMENlCNrwsnOI9bWxZllouuh5jClI48ujqy8pMoxPt6sadSFsA7ljqbJ0XOXHh27ywh3vTdXuWFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MokDFKEU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17EE7C32786;
-	Tue,  9 Jul 2024 16:48:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBBdWpM/RERuBXuMSEUSygGWTwKpJ3E8jL28rMqtuTlC8N6eSv0CtzsQRVEwDL+TzRF8ca7m0yv+4v0DtGmpWcOonMelRWMI995gYg73IwczTCHMdQ8kykRpW4Iwza4yJdymipry8/o59NS5A5FSrel05NS/n60VVZ23ekpYYkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdwmCL5K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F1AC3277B;
+	Tue,  9 Jul 2024 16:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720543686;
-	bh=A7Jcx5oRumAX8eZV98UsjPpCTrSH8Zw/GPltiVSDWeI=;
+	s=k20201202; t=1720543848;
+	bh=znRxZ45h1cDZyCtgvwF+R25ShiH7+CYAc+wYck4CujA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MokDFKEUT0N64kawOOEvAnloU2l0oQSTxwH3k+mScz1TqtRRJAT7OtCnU/oV20Ilr
-	 H7evqetKqbm3SNQxLpskR19q0SUnMHhTWs2pWJNK4+3r9hTj3dWH9MagemEygOjWjo
-	 Xf7J+pt/deh/J8Jrw8cU/GMmYvd7tJ0Hdz2ipLqW088lDvPZ2wScErTqSK2G5jiSBl
-	 ftZ5Dq96R2yfgj9QsfPLGl311jOkgNefiUfYkxN01i/wPQpCLhT7fz1WC8A3eT6DBw
-	 ELmw4+DCrv/t1xvyFJTA78gpios4E0/m2SJlLHD5urwBIJo89MUfo8bqu4ukorYDfo
-	 hD9O6i3lKgN5g==
-Date: Tue, 9 Jul 2024 18:48:03 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	axboe@kernel.dk, hch@lst.de, djwong@kernel.org, dchinner@redhat.com, 
-	martin.petersen@oracle.com, Himanshu Madhani <himanshu.madhani@oracle.com>
-Subject: Re: [PATCH v3 1/3] statx.2: Document STATX_WRITE_ATOMIC
-Message-ID: <udwezmj36we4bkvlnbxpuvrrikh5yejaf6yetxd2ig3ssgksrw@fi5hsutb7mmu>
-References: <20240708114227.211195-1-john.g.garry@oracle.com>
- <20240708114227.211195-2-john.g.garry@oracle.com>
+	b=pdwmCL5K4Pp+fpYhosmD6dCZS6cTj0UW0wCYxOUgaJOKuTEx5NQ3BbI3gccWvk8A+
+	 hvDSBeFKAuCrwN5DF+iCq2TfuzBO5G9x78rT8hf6jBDCg+6fuMCdsWy380z56wO5xw
+	 kdYNYnA7Fk370m00h8QmUlwcsh39TvCsR7uuutRX6Ld4kS3kiz3QgKZDUztLn6ma7E
+	 iXC5i5PzVV33Kp2W7XJ0TIe3iYC0TTm7kuAwCYI7k86chLjj1vWxb9O72SMrghAyX3
+	 5XG8RC+D8may4rwCSt1K6DiubW1tjggdkU/hrR4SWnANYCSwQ5MpdfNdXaqT7PVNVJ
+	 tKv0Zmn2sLDKQ==
+Date: Tue, 9 Jul 2024 09:50:47 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: david@fromorbit.com, willy@infradead.org, ryan.roberts@arm.com,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>,
+	akpm@linux-foundation.org, chandan.babu@oracle.com
+Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
+Message-ID: <20240709165047.GS1998502@frogsfrogsfrogs>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-2-kernel@pankajraghav.com>
+ <20240709162907.gsd5nf33teoss5ir@quentin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xhjnv3mrbrzanzf5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240708114227.211195-2-john.g.garry@oracle.com>
+In-Reply-To: <20240709162907.gsd5nf33teoss5ir@quentin>
 
+On Tue, Jul 09, 2024 at 04:29:07PM +0000, Pankaj Raghav (Samsung) wrote:
+> For now, this is the only patch that is blocking for the next version.
+> 
+> Based on the discussion, is the following logical @ryan, @dave and
+> @willy?
+> 
+> - We give explicit VM_WARN_ONCE if we try to set folio order range if
+>   the THP is disabled, min and max is greater than MAX_PAGECACHE_ORDER.
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 14e1415f7dcf4..313c9fad61859 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -394,13 +394,24 @@ static inline void mapping_set_folio_order_range(struct address_space *mapping,
+>                                                  unsigned int min,
+>                                                  unsigned int max)
+>  {
+> -       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> +       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
+> +               VM_WARN_ONCE(1, 
+> +       "THP needs to be enabled to support mapping folio order range");
+>                 return;
+> +       }
+>  
+> -       if (min > MAX_PAGECACHE_ORDER)
+> +       if (min > MAX_PAGECACHE_ORDER) {
+> +               VM_WARN_ONCE(1, 
+> +       "min order > MAX_PAGECACHE_ORDER. Setting min_order to MAX_PAGECACHE_ORDER");
+>                 min = MAX_PAGECACHE_ORDER;
+> -       if (max > MAX_PAGECACHE_ORDER)
+> +       }
+> +
+> +       if (max > MAX_PAGECACHE_ORDER) {
+> +               VM_WARN_ONCE(1, 
+> +       "max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
+>                 max = MAX_PAGECACHE_ORDER;
+> +       }
+> +
+>         if (max < min)
+>                 max = min;
+> 
+> - We make THP an explicit dependency for XFS:
+> 
+> diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
+> index d41edd30388b7..be2c1c0e9fe8b 100644
+> --- a/fs/xfs/Kconfig
+> +++ b/fs/xfs/Kconfig
+> @@ -5,6 +5,7 @@ config XFS_FS
+>         select EXPORTFS
+>         select LIBCRC32C
+>         select FS_IOMAP
+> +       select TRANSPARENT_HUGEPAGE
+>         help
+>           XFS is a high performance journaling filesystem which originated
+>           on the SGI IRIX platform.  It is completely multi-threaded, can
+> 
+> OR
+> 
+> We create a helper in page cache that FSs can use to check if a specific
+> order can be supported at mount time:
 
---xhjnv3mrbrzanzf5
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	axboe@kernel.dk, hch@lst.de, djwong@kernel.org, dchinner@redhat.com, 
-	martin.petersen@oracle.com, Himanshu Madhani <himanshu.madhani@oracle.com>
-Subject: Re: [PATCH v3 1/3] statx.2: Document STATX_WRITE_ATOMIC
-References: <20240708114227.211195-1-john.g.garry@oracle.com>
- <20240708114227.211195-2-john.g.garry@oracle.com>
-MIME-Version: 1.0
-In-Reply-To: <20240708114227.211195-2-john.g.garry@oracle.com>
+I like this solution better; if XFS is going to drop support for o[ld]d
+architectures I think we need /some/ sort of notice period.  Or at least
+a better story than "we want to support 64k fsblocks on x64 so we're
+withdrawing support even for 4k fsblocks and smallish filesystems on
+m68k".
 
-On Mon, Jul 08, 2024 at 11:42:25AM GMT, John Garry wrote:
-> From: Himanshu Madhani <himanshu.madhani@oracle.com>
->=20
-> Add the text to the statx man page.
->=20
-> Signed-off-by: Himanshu Madhani <himanshu.madhani@oracle.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  man/man2/statx.2 | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->=20
-> diff --git a/man/man2/statx.2 b/man/man2/statx.2
-> index 3d47319c6..36ecc8360 100644
-> --- a/man/man2/statx.2
-> +++ b/man/man2/statx.2
-> @@ -70,6 +70,11 @@ struct statx {
->      __u32 stx_dio_offset_align;
->  \&
->      __u64 stx_subvol;      /* Subvolume identifier */
-> +\&
-> +    /* Direct I/O atomic write limits */
-> +    __u32 stx_atomic_write_unit_min;
-> +    __u32 stx_atomic_write_unit_max;
-> +    __u32 stx_atomic_write_segments_max;
->  };
->  .EE
->  .in
-> @@ -259,6 +264,9 @@ STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_off=
-set_align
->  STATX_MNT_ID_UNIQUE	Want unique stx_mnt_id (since Linux 6.8)
->  STATX_SUBVOL	Want stx_subvol
->  	(since Linux 6.10; support varies by filesystem)
-> +STATX_WRITE_ATOMIC	Want stx_atomic_write_unit_min, stx_atomic_write_unit=
-_max,
-> +	and stx_atomic_write_segments_max.
-> +	(since Linux 6.11; support varies by filesystem)
->  .TE
->  .in
->  .P
-> @@ -463,6 +471,24 @@ Subvolumes are fancy directories,
->  i.e. they form a tree structure that may be walked recursively.
->  Support varies by filesystem;
->  it is supported by bcachefs and btrfs since Linux 6.10.
+You probably don't want bs>ps support to block on some arcane discussion
+about 32-bit, right? ;)
 
-=2ETP
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 14e1415f7dcf..9be775ef11a5 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -374,6 +374,14 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+>  #define MAX_XAS_ORDER          (XA_CHUNK_SHIFT * 2 - 1)
+>  #define MAX_PAGECACHE_ORDER    min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
+>  
+> +
+> +static inline unsigned int mapping_max_folio_order_supported()
+> +{
+> +    if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> +      return 0;
 
-> +.I stx_atomic_write_unit_min
-> +The minimum size (in bytes) supported for direct I/O
-> +.RB ( O_DIRECT )
-> +on the file to be written with torn-write protection. This value is guar=
-anteed
+Shouldn't this line be indented by two tabs, not six spaces?
 
-Please use semantic newlines.  See man-pages(7):
+> +    return MAX_PAGECACHE_ORDER;
+> +}
 
-$ MANWIDTH=3D72 man man-pages | sed -n '/Use semantic newlines/,/^$/p';
-   Use semantic newlines
-     In the source of a manual page, new sentences should be started on
-     new lines, long sentences should be split  into  lines  at  clause
-     breaks  (commas,  semicolons, colons, and so on), and long clauses
-     should be split at phrase boundaries.  This convention,  sometimes
-     known as "semantic newlines", makes it easier to see the effect of
-     patches, which often operate at the level of individual sentences,
-     clauses, or phrases.
+Alternately, should this return the max folio size in bytes?
 
-> +to be a power-of-2.
-> +.TP
-> +.I stx_atomic_write_unit_max
+static inline size_t mapping_max_folio_size(void)
+{
+	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+		return 1U << (PAGE_SHIFT + MAX_PAGECACHE_ORDER);
+	return PAGE_SIZE;
+}
 
-You should probably merge both fields with a single paragraph.  See for
-example 'stx_dev_major' and 'stx_dev_minor'.
+Then the validation looks like:
 
-Have a lovely day!
-Alex
+	const size_t	max_folio_size = mapping_max_folio_size();
 
-> +The maximum size (in bytes) supported for direct I/O
-> +.RB ( O_DIRECT )
-> +on the file to be written with torn-write protection. This value is guar=
-anteed
-> +to be a power-of-2.
-> +.TP
-> +.I stx_atomic_write_segments_max
-> +The maximum number of elements in an array of vectors for a write with
-> +torn-write protection enabled. See
-> +.BR RWF_ATOMIC
-> +flag for
-> +.BR pwritev2 (2).
->  .P
->  For further information on the above fields, see
->  .BR inode (7).
-> @@ -516,6 +542,9 @@ It cannot be written to, and all reads from it will b=
-e verified
->  against a cryptographic hash that covers the
->  entire file (e.g., via a Merkle tree).
->  .TP
-> +.BR STATX_ATTR_WRITE_ATOMIC " (since Linux 6.11)"
-> +The file supports torn-write protection.
-> +.TP
->  .BR STATX_ATTR_DAX " (since Linux 5.8)"
->  The file is in the DAX (cpu direct access) state.
->  DAX state attempts to
-> --=20
-> 2.31.1
+	if (mp->m_sb.sb_blocksize > max_folio_size) {
+		xfs_warn(mp,
+ "block size (%u bytes) not supported; maximum folio size is %u.",
+				mp->m_sb.sb_blocksize, max_folio_size);
+		error = -ENOSYS;
+		goto out_free_sb;
+	}
 
+(Don't mind me bikeshedding here.)
 
---=20
-<https://www.alejandro-colomar.es/>
+> +
+> 
+> 
+> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> index b8a93a8f35cac..e2be8743c2c20 100644
+> --- a/fs/xfs/xfs_super.c
+> +++ b/fs/xfs/xfs_super.c
+> @@ -1647,6 +1647,15 @@ xfs_fs_fill_super(
+>                         goto out_free_sb;
+>                 }
+>  
+> +               if (mp->m_sb.sb_blocklog - PAGE_SHIFT >
+> +                   mapping_max_folio_order_supported()) {
+> +                       xfs_warn(mp,
+> +"Block Size (%d bytes) is not supported. Check MAX_PAGECACHE_ORDER",
+> +                       mp->m_sb.sb_blocksize);
 
---xhjnv3mrbrzanzf5
-Content-Type: application/pgp-signature; name="signature.asc"
+You might as well print MAX_PAGECACHE_ORDER here to make analysis
+easier on less-familiar architectures:
 
------BEGIN PGP SIGNATURE-----
+			xfs_warn(mp,
+ "block size (%d bytes) is not supported; max folio size is %u.",
+					mp->m_sb.sb_blocksize,
+					1U << mapping_max_folio_order_supported());
 
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmaNacIACgkQnowa+77/
-2zI+8Q/8C9a6vSqTEiP12bJsHRVgpJaUrnL/vFnCwX9P0+UVtm9pGqL7EWw7lAnd
-uYwzCU54GrHyB0b9t8IxSKjznmDQkDfWS8flnwXsq/G/Pkf3vAlYX31eE3i8k+Wk
-FZRIhNWzpufRWlXZ8g8uRO3h2vhdFNLj+gId/P33iFJCe0pkD6vT8Ff3gx8dvULe
-VJX8zVx5yh/6i8EyaHpr2mya7luT51WQgYBVMNZJOJLwTMahQVyTz3aJjfgo7eRc
-/7K4ZyATxzZqvwoYVS4q0e3Cm+6aaUq5WgACSrF96OQYvqw159t0WVpZlpdedSKw
-kZp11tBnBjEjq286ICYtOvvlVK+fLYvrqzPJvRob+4YTk/XzCUcLBVZeRKSbuiR7
-Obylx+hAR2eEwIzcN2rMmZim9tQ2XYy9xaD6whxfxbFKR3HixiXqJjFRE+4UwA3v
-8v08e8KguVAbhr1ePWGehiWAkQys9aFxmQLVr2KJGZ4dwONSCnDkno9z1QTO22dl
-rWreCtW1yxynFrxX1H9+Oqv1IoK+feniqMdvGZLZxZVEt2Ks2HU8wJJYH5N6mfHg
-qiuQbVRIN1KNpcva0UZJUSSCv4uJboJZUulOJO9vGIuxS1KlL7GEO1twrnX8f+LZ
-U2lAV0LQ9bNPrWxuPcgm3mKt4Ap7/GhvofJWcEui+tzyACJ1jJ8=
-=QBM9
------END PGP SIGNATURE-----
+(I wrote this comment first.)
 
---xhjnv3mrbrzanzf5--
+--D
+
+> +                       error = -ENOSYS;
+> +                       goto out_free_sb;
+> +               }
+> +
+>                 xfs_warn(mp,
+>  "EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
+>                         mp->m_sb.sb_blocksize);
+> 
+> 
+> --
+> Pankaj
 
