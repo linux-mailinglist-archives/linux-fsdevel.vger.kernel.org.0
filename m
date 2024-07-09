@@ -1,89 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-23416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBE492C1BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 19:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC7C92C1EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 19:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4051F2317B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:07:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848782927C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFFA1BF308;
-	Tue,  9 Jul 2024 16:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30081A2C01;
+	Tue,  9 Jul 2024 16:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WpytXus4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMX8E9xN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F289119FA9C;
-	Tue,  9 Jul 2024 16:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFC51A2562;
+	Tue,  9 Jul 2024 16:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720543103; cv=none; b=XBEh8ExeCFgC3Et3/9kiJGh2DBc1vSIo9tl60qISrSsx4icrwCYHsgd0MtNKPOOrfG77c+z3QHrXxj52ZysZhSa0lD8B3qordk1xEyOb1KCw6v0SxqeCuWM5DDSaxttp53kx5bqTsKfsXNToYU+ssmUfJFk+CQ79NIKMNkWVBPo=
+	t=1720543407; cv=none; b=U3mAcZaAjeY2oBrZjsqdjXlQOE1hYExd0zT27174DQKA/gvVqG5XDCfgnHaf4cUny1ZqW0xQzKFf/5cqLY/V+7mN0Cm9gpkui+M+bL9v2TcR60df4VBVQR8KG1sYUBtGC5cEV5v/Qxz2WfwiUO4L1UjpjJRENY+wD4JYrL+Z8pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720543103; c=relaxed/simple;
-	bh=akLVWA7pf4SRs2gLWJwI/mYO+UhiI591Xoaqs/UbXro=;
+	s=arc-20240116; t=1720543407; c=relaxed/simple;
+	bh=UPtTRsdr9bCOPoAKJTaeMJRe5VAvhSreMttWVKjS6q8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gaoxd27SlDsKAce9ou2bgxhSIyRILnTDB59tWSrI0GZVVwRU0ELDSILrwrKh/EAjK524pf+zQfQXWH8BuPrMyboUZFdHfjeFLnGY3yVYMtuI1PQ4qZcb7JkvWQnu/EwbuE+hIZ6qa2XD7vJKivEbUzjTnF0ulwvi2GJS6KAHwPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WpytXus4; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=u4kPF+jVZYaqYv+3DJpB7H4K1qcZD5HFQiZJHlOGeGY=; b=WpytXus4/67LYHQxKyVq8IgmMj
-	vwWPyhQhfVWQl5R2oXGMEWzXoGz7UdJZIxulJAGqCcXKPw1r/YJCy+y36vi8dKPYs7oDljCZ3ZfSc
-	UvWnO8qpOKMhEO3WAlesMn1ai2HgM8hQCQ+zBGjIAwPm08pwsXsP8HI4vcDylx3MFCwsmBMVFA0b0
-	q9el4xa9mBvtiTt0+g9qUPaNyP66OD09LVC+5bSOVufROy/PCMVzRNHYH4CpYWY+uXLxKc3yfQmFb
-	uKJAIJ1NMAxISmUhq1IbkZMfagOzmD7KFAH7Og7GP1fnizOKJilzcIQA4J+D/qF7M2r0izlNS2UzP
-	hBKtDr+A==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRDr6-000000084d9-3wYB;
-	Tue, 09 Jul 2024 16:38:16 +0000
-Date: Tue, 9 Jul 2024 17:38:16 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, ryan.roberts@arm.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>,
-	akpm@linux-foundation.org, chandan.babu@oracle.com
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
-Message-ID: <Zo1neJYABzuMEvTO@casper.infradead.org>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
- <20240709162907.gsd5nf33teoss5ir@quentin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJhLQdZg5OFSGOnIIe6bPsYHJZ6h1mz6ofZ6hy8jYd70xNPjZ0jLeURvZ/8/nhJMuLgN+K+i2lygvQbOSa408WBdxrvlhY7696oOyxxmNh0By+JSVxnJFNHjo0wEMx3aB6/UFsRNjQglwqo7dDawucWuMn8c2W37X3SQlmLghhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMX8E9xN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C580C3277B;
+	Tue,  9 Jul 2024 16:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720543406;
+	bh=UPtTRsdr9bCOPoAKJTaeMJRe5VAvhSreMttWVKjS6q8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RMX8E9xNR2qDOpCFby4JB3SyKhvJs+nBZ5BmtuyjZm7Nm9H0AfmdaUdTXKzHOd6X0
+	 EgBkyLG/TsOMXsKy1/xUepNSiucbgIqM6hrgv1zq3BtIAwKcFYATRrn45KZ4HPKQrJ
+	 shomeosR1BFyA3VP5PuNGmvqhtcT9xLbyiP9lf/k1SLWFBHWlj1re/M3zbeGlzcRio
+	 7bF9j2LN2c2SUPl4mzypQskj1RSGUXz1ayHDYW3bi2/TK4hADcEnZbFjYJPxDDj3u8
+	 O/uYFpRFxYBER1UqdaaIdjac4S/nd7ShpBr8Lcndt7CJ45Na60mIw8qaTjgIXiIdIn
+	 LmMqAvctASu9g==
+Date: Tue, 9 Jul 2024 18:43:23 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	axboe@kernel.dk, hch@lst.de, djwong@kernel.org, dchinner@redhat.com, 
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v3 0/3] man2: Document RWF_ATOMIC
+Message-ID: <omql3s5mauqxjod5zknewdxjfdsihzv3fi2ypbrzrtkgtcm4yx@peqqpks36isb>
+References: <20240708114227.211195-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yz2a6qik2qpefojd"
 Content-Disposition: inline
-In-Reply-To: <20240709162907.gsd5nf33teoss5ir@quentin>
+In-Reply-To: <20240708114227.211195-1-john.g.garry@oracle.com>
 
-On Tue, Jul 09, 2024 at 04:29:07PM +0000, Pankaj Raghav (Samsung) wrote:
-> +++ b/include/linux/pagemap.h
-> @@ -394,13 +394,24 @@ static inline void mapping_set_folio_order_range(struct address_space *mapping,
->                                                  unsigned int min,
->                                                  unsigned int max)
->  {
-> -       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
-> +               VM_WARN_ONCE(1, 
-> +       "THP needs to be enabled to support mapping folio order range");
->                 return;
-> +       }
 
-No.  Filesystems call mapping_set_folio_order_range() without it being
-conditional on CONFIG_TRANSPARENT_HUGEPAGE.  Usually that takes the
-form of an unconditional call to mapping_set_large_folios().
+--yz2a6qik2qpefojd
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	axboe@kernel.dk, hch@lst.de, djwong@kernel.org, dchinner@redhat.com, 
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v3 0/3] man2: Document RWF_ATOMIC
+References: <20240708114227.211195-1-john.g.garry@oracle.com>
+MIME-Version: 1.0
+In-Reply-To: <20240708114227.211195-1-john.g.garry@oracle.com>
 
+Hi John,
+
+On Mon, Jul 08, 2024 at 11:42:24AM GMT, John Garry wrote:
+> Document RWF_ATOMIC flag for pwritev2().
+>=20
+> RWF_ATOMIC atomic is used for enabling torn-write protection.
+>=20
+> We use RWF_ATOMIC as this is legacy name for similar feature proposed in
+> the past.
+>=20
+> Kernel support has now been queued in
+> https://lore.kernel.org/linux-block/20240620125359.2684798-1-john.g.garry=
+@oracle.com/
+>=20
+> Differences to v2:
+> - rebase
+>=20
+> Differences to v1:
+> - Add statx max segments param
+> - Expand readv.2 description
+> - Document EINVAL
+
+I don't remember having seen v1 or v2.  This is the first iteration sent
+to linux-man@, right?  (No problem with that; just to confirm.)
+
+Cheers,
+Alex
+
+>=20
+> Himanshu Madhani (2):
+>   statx.2: Document STATX_WRITE_ATOMIC
+>   readv.2: Document RWF_ATOMIC flag
+>=20
+> John Garry (1):
+>   io_submit.2: Document RWF_ATOMIC
+>=20
+>  man/man2/io_submit.2 | 17 +++++++++++
+>  man/man2/readv.2     | 73 +++++++++++++++++++++++++++++++++++++++++++-
+>  man/man2/statx.2     | 29 ++++++++++++++++++
+>  3 files changed, 118 insertions(+), 1 deletion(-)
+>=20
+> --=20
+> 2.31.1
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--yz2a6qik2qpefojd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmaNaKoACgkQnowa+77/
+2zLkgw//Qr2Pf6/EYWQnGijRgwRwUsIrBPxYCL3T8b9MoX9losjUc4VtIokLTZhj
+LKU2VcsH9sLiFcpAXZzDkhGKzd2VJsLRl6ev0H0CMUfQk7uf2GhVIn26zK4kIavK
+PKsaJnXPoAgbBmLW+PA1I7Ir9njt507GF4il71MkXSN9xyiNB9axXTnkB1R6WI83
+wVD33mDFTPzoHeCARVp9LHAdZHoBdez7asHl8dvuFLA/v48ivtcQij6JEqwHeG/7
+cIeQ5SnC1HZw5mMpMlNo9/wI5tEv1awCaOgSV/7GYxb6xOEnENB5u/XKsx/4WhaM
+V9yoEf9ngD6n/nGYmIVLF8s1rn/BtSx9j99N90PMXz3ZGN7ARvJwde6YG6Qb3r6C
+ZiPwyubE9kun40zyY+s+TajuJ+GU+n+ZsZfeyw3/m/CrcNtZ6vxOzDey+JDtY6FP
+wvb/5DSMm3cbyxu8iix5gn6txf5Qs9XfvamT5DHOX0CeN0Qefbu+v/GvLRPjlCar
+mZvlX/Ff2sD/MEwjkQjqU4D0EF54GD9i+6tpT6l7SVaQ5kb5Rrbyh4xapyoBt2Gf
+ueAwFm36327cOoHA2uBv2uTsioDxCcx6rbtE1oXj2S4bclGCsiu6hnqfvuoy24Ak
+hTf5UZVBrJeCQC2sDEtJUTwVKvnjqdWiYCaL9LswvUNwxMZdr4U=
+=YmvW
+-----END PGP SIGNATURE-----
+
+--yz2a6qik2qpefojd--
 
