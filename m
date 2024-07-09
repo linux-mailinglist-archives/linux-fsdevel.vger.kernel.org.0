@@ -1,40 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-23361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD1392B1CF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 10:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D144D92B22F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 10:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FDA21F22433
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 08:12:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 005F21C22202
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 08:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5E615251B;
-	Tue,  9 Jul 2024 08:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFC6152E0F;
+	Tue,  9 Jul 2024 08:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lXDguvEA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A42150989;
-	Tue,  9 Jul 2024 08:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5B914290;
+	Tue,  9 Jul 2024 08:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720512719; cv=none; b=SKGY3DwF4f0ZrDBauU0c9+Fv3DuilFFsWzVXSAuCm2TcIfvUu13ohioQzjVWtRpXJGGri+t7y8lMWUC/BqM41Ts8b5QC0kvzHFSjtYI7/xp4ZDhf/9JoIXYYYZQeeSBjz5ky0TK56vX6AU6JPjILAXLMxfYyZg5uimT7au0JJXM=
+	t=1720513930; cv=none; b=L7IsHOKSZIsJdRU5jd/Md5k4pmo+8EiOTFRGFobBjmp5VF1nS0pcuDJiMOquK5qpWISM0Yiy+Fl7ERfauoRoYzzFHsTsb0wNSm/6ggN8bOslqCYYaTdQ8RgbafNt7dfdSRM8+gUpsjL68oYeeSNBu8H2Kd79qfnRVvaG2OT/yhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720512719; c=relaxed/simple;
-	bh=9mkaxcF5z3MsbBIatfvSZnnhBaUAl4BQaJa1bAPXQKQ=;
+	s=arc-20240116; t=1720513930; c=relaxed/simple;
+	bh=EJdp+wJBv45BvCTyu+j+WgqZztpkq0r6Q35LEWnQ+/Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m5+4Mi2hU1r+jutGjl4OaY2lrQ0Gmxc/vQS++s/+zddzlVbuk68Qn+aWWP7ihulZH+mnoi7FgTSQI7mwUE85RNhM31i5pFtiyiTJ8QQg9Y2zDy+UG5mU2tmHUddELT46NmIQm5xHI3nVlt2M3PrvHyA7Kt6P7vtJ5H6SGse4NRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBAE81042;
-	Tue,  9 Jul 2024 01:12:21 -0700 (PDT)
-Received: from [10.57.76.194] (unknown [10.57.76.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2AA763F762;
-	Tue,  9 Jul 2024 01:11:53 -0700 (PDT)
-Message-ID: <5875f5ea-4d83-4691-914c-15834338410e@arm.com>
-Date: Tue, 9 Jul 2024 09:11:51 +0100
+	 In-Reply-To:Content-Type; b=vEdZ2nQGWXP+8U178HcXSPa7vQ63NX10zTiPP9GhOySHuvS5PlB3MxWts3m8mfTacgASaHnXBdHI3dE7m3DDwcczTq9++3xwi1brTY/rKVCeDLEWEoFsTFAIXE2WM4MBVNPPRxz01pcIF2mai1H5KWdoTOC2w2VauusJnFcEf3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lXDguvEA; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720513928; x=1752049928;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EJdp+wJBv45BvCTyu+j+WgqZztpkq0r6Q35LEWnQ+/Y=;
+  b=lXDguvEAYrugz1Xq18QRiCJURws3WjIKUgZM9++LKflBHAEB1au1KxAi
+   N+I7jdC1a91VAXgsg+zwXWK2BGeDr5LlnMyqAZrkBDEi1qpvqOCqDGte7
+   QevVv/WXTRM/IWo8dyDxVdKZ4lG5HlB7xj3QPzg2oCYyc7tqQG8CqAvgu
+   IVAXuyXslDyOfNx4CYzhAwC6A5WPm7iiR6qRC6I9zHsgGOk9ZMI7fN8gq
+   LVToRH0j6rRtdwSUpddvDPKX04+Px4J9RkCqxayEsjgj/wN0oZjWOy451
+   HKdqKXqsE/4vXlpTn8LVhVi4+EXLS5brg6/ilYeP73yyhPAEwdVG5SvXs
+   w==;
+X-CSE-ConnectionGUID: sGdDw2jQR4KBoCLRFr6orA==
+X-CSE-MsgGUID: TrcWsZM6Ttmsa2uKLAwtEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17885174"
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="17885174"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 01:32:08 -0700
+X-CSE-ConnectionGUID: BY32i6+ySUWWKjgq2aq9/g==
+X-CSE-MsgGUID: eYpp1U4HSWCON/8IkLQWvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="47760888"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.248.81]) ([10.124.248.81])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 01:32:03 -0700
+Message-ID: <1296ef8d-dade-46e5-8571-e7dba158f405@intel.com>
+Date: Tue, 9 Jul 2024 16:32:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -42,120 +67,75 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
-Content-Language: en-GB
-To: Dave Chinner <david@fromorbit.com>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Matthew Wilcox <willy@infradead.org>, chandan.babu@oracle.com,
- djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
- linux-mm@kvack.org, john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
- hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org, gost.dev@samsung.com,
- cl@os.amperecomputing.com, linux-xfs@vger.kernel.org, hch@lst.de,
- Zi Yan <zi.yan@sent.com>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
- <cb644a36-67a7-4692-b002-413e70ac864a@arm.com>
- <Zoa9rQbEUam467-q@casper.infradead.org>
- <Zocc+6nIQzfUTPpd@dread.disaster.area>
- <Zoc2rCPC5thSIuoR@casper.infradead.org>
- <Zod3ZQizBL7MyWEA@dread.disaster.area>
- <20240705132418.gk7oeucdisat3sq5@quentin>
- <1e0e89ea-3130-42b0-810d-f52da2affe51@arm.com>
- <ZoxvzXA1wcGDlQS2@dread.disaster.area>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <ZoxvzXA1wcGDlQS2@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
+To: Jan Kara <jack@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, edumazet@google.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+ tim.c.chen@linux.intel.com, yu.ma@intel.com
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240703143311.2184454-1-yu.ma@intel.com>
+ <20240703143311.2184454-4-yu.ma@intel.com>
+ <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
+ <20240704215507.mr6st2d423lvkepu@quack3>
+ <3c7a0cd7-1dd2-4762-a2dd-67e6b6a82df7@intel.com>
+From: "Ma, Yu" <yu.ma@intel.com>
+Content-Language: en-US
+In-Reply-To: <3c7a0cd7-1dd2-4762-a2dd-67e6b6a82df7@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 09/07/2024 00:01, Dave Chinner wrote:
-> On Fri, Jul 05, 2024 at 02:31:08PM +0100, Ryan Roberts wrote:
->> On 05/07/2024 14:24, Pankaj Raghav (Samsung) wrote:
->>>>> I suggest you handle it better than this.  If the device is asking for a
->>>>> blocksize > PMD_SIZE, you should fail to mount it.
->>>>
->>>> That's my point: we already do that.
->>>>
->>>> The largest block size we support is 64kB and that's way smaller
->>>> than PMD_SIZE on all platforms and we always check for bs > ps 
->>>> support at mount time when the filesystem bs > ps.
->>>>
->>>> Hence we're never going to set the min value to anything unsupported
->>>> unless someone makes a massive programming mistake. At which point,
->>>> we want a *hard, immediate fail* so the developer notices their
->>>> mistake immediately. All filesystems and block devices need to
->>>> behave this way so the limits should be encoded as asserts in the
->>>> function to trigger such behaviour.
->>>
->>> I agree, this kind of bug will be encountered only during developement 
->>> and not during actual production due to the limit we have fs block size
->>> in XFS.
->>>
->>>>
->>>>> If the device is
->>>>> asking for a blocksize > PAGE_SIZE and CONFIG_TRANSPARENT_HUGEPAGE is
->>>>> not set, you should also decline to mount the filesystem.
->>>>
->>>> What does CONFIG_TRANSPARENT_HUGEPAGE have to do with filesystems
->>>> being able to use large folios?
->>>>
->>>> If that's an actual dependency of using large folios, then we're at
->>>> the point where the mm side of large folios needs to be divorced
->>>> from CONFIG_TRANSPARENT_HUGEPAGE and always supported.
->>>> Alternatively, CONFIG_TRANSPARENT_HUGEPAGE needs to selected by the
->>>> block layer and also every filesystem that wants to support
->>>> sector/blocks sizes larger than PAGE_SIZE.  IOWs, large folio
->>>> support needs to *always* be enabled on systems that say
->>>> CONFIG_BLOCK=y.
->>>
->>> Why CONFIG_BLOCK? I think it is enough if it comes from the FS side
->>> right? And for now, the only FS that needs that sort of bs > ps 
->>> guarantee is XFS with this series. Other filesystems such as bcachefs 
->>> that call mapping_set_large_folios() only enable it as an optimization
->>> and it is not needed for the filesystem to function.
->>>
->>> So this is my conclusion from the conversation:
->>> - Add a dependency in Kconfig on THP for XFS until we fix the dependency
->>>   of large folios on THP
+
+On 7/5/2024 3:56 PM, Ma, Yu wrote:
+> I had something like this in mind:
+>>> diff --git a/fs/file.c b/fs/file.c
+>>> index a3b72aa64f11..4d3307e39db7 100644
+>>> --- a/fs/file.c
+>>> +++ b/fs/file.c
+>>> @@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
+>>> *fdt, unsigned int start)
+>>>          unsigned int maxfd = fdt->max_fds; /* always multiple of
+>>> BITS_PER_LONG */
+>>>          unsigned int maxbit = maxfd / BITS_PER_LONG;
+>>>          unsigned int bitbit = start / BITS_PER_LONG;
+>>> +       unsigned int bit;
+>>> +
+>>> +       /*
+>>> +        * Try to avoid looking at the second level map.
+>>> +        */
+>>> +       bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
+>>> +                               start & (BITS_PER_LONG - 1));
+>>> +       if (bit < BITS_PER_LONG) {
+>>> +               return bit + bitbit * BITS_PER_LONG;
+>>> +       }
+>> Drat, you're right. I missed that Ma did not add the proper offset to
+>> open_fds. *This* is what I meant :)
 >>
->> THP isn't supported on some arches, so isn't this effectively saying XFS can no
->> longer be used with those arches, even if the bs <= ps?
-> 
-> I'm good with that - we're already long past the point where we try
-> to support XFS on every linux platform. Indeed, we've recent been
-> musing about making XFS depend on 64 bit only - 32 bit systems don't
-> have the memory capacity to run the full xfs tool chain (e.g.
-> xfs_repair) on filesystems over about a TB in size, and they are
-> greatly limited in kernel memory and vmap areas, both of which XFS
-> makes heavy use of. Basically, friends don't let friends use XFS on
-> 32 bit systems, and that's been true for about 20 years now.
-> 
-> Our problem is the test matrix - if we now have to explicitly test
-> XFS both with and without large folios enabled to support these
-> platforms, we've just doubled our test matrix. The test matrix is
-> already far too large to robustly cover, so anything that requires
-> doubling the number of kernel configs we have to test is, IMO, a
-> non-starter.
-> 
-> That's why we really don't support XFS on 32 bit systems anymore and
-> why we're talking about making that official with a config option.
-> If we're at the point where XFS will now depend on large folios (i.e
-> THP), then we need to seriously consider reducing the supported
-> arches to just those that support both 64 bit and THP. If niche
-> arches want to support THP, or enable large folios without the need
-> for THP, then they can do that work and then they get XFS for
-> free.
-> 
-> Just because an arch might run a Linux kernel, it doesn't mean we
-> have to support XFS on it....
+>>                                 Honza
+>
+> Just tried this on v6.10-rc6, the improvement on top of patch 1 and 
+> patch 2 is 7% for read and 3% for write, less than just check first word.
+>
+> Per my understanding, its performance would be better if we can find 
+> free bit in the same word of next_fd with high possibility, but 
+> next_fd just represents the lowest possible free bit. If fds are 
+> open/close frequently and randomly, that might not always be the case, 
+> next_fd may be distributed randomly, for example, 0-65 are occupied, 
+> fd=3 is returned, next_fd will be set to 3, next time when 3 is 
+> allocated, next_fd will be set to 4, while the actual first free bit 
+> is 66 , when 66 is allocated, and fd=5 is returned, then the above 
+> process would be went through again.
+>
+> Yu
+>
+Hi Guzik, Honza,
 
-OK. I was just pointing out the impact of adding this Kconfig dependency. If
-that impact is explicitly considered and desired, then great. I'll leave you to it.
+Do we have any more comment or idea regarding to the fast path? Thanks 
+for your time and any feedback :)
 
-Thanks,
-Ryan
 
-> 
-> -Dave.
+Regards
+
+Yu
 
 
