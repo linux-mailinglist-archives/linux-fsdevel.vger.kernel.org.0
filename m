@@ -1,150 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-23400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F52B92BCAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 16:17:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E8E92BCC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 16:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F031F21392
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 14:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883421F22006
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 14:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0002F18E76F;
-	Tue,  9 Jul 2024 14:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AAE1922D8;
+	Tue,  9 Jul 2024 14:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="c0diSghb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jaHTw5Cm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2ry0i/l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BDA14B092;
-	Tue,  9 Jul 2024 14:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E81E1591F1;
+	Tue,  9 Jul 2024 14:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720534622; cv=none; b=AMs7mxtb/GIn5Pusymjy8qknqC2aQrzdzYyUuOX6XkNuQnNOUqFG8+vdpxefkrIb8QHaYJEvzCs9PyD4IZ/lheHC5mu8TmYtiNy39weYJN3GnUvePeomYAAXcztYi3qGe7xAo3XQq5t9pSygK4mOGLE0GmAkLL03cr+SpJK7lzI=
+	t=1720535003; cv=none; b=JX3ei341pqwIroGpdYkNpQg4AFzzwBRVjtgwTiacR3CD8XMLhMPH51Wi99Mk3h+048Elpd+aLU4HOympMDeDJjVWHJ0sQS56LeYw/G33QIQgmsn3T+DVXO16DWGYu9qYgPWPBiiSFiDNHTd2tu5xoR0leoJ9XivqUjOyus+MH90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720534622; c=relaxed/simple;
-	bh=a1//xVVk/p+X87Fx+350qQgEPBj2+So1siWWSQlf/qI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=KP43DBo5ps06hEu47MWOgqCqUYJUfAkvQCe84yVoZX4li1iUOl8j5rcG5BnV3EnEp4sUG2gJ/BDPFYvTHZhNnVMYz1OuPlFPL3jqVWtEc1Y13HV5BVAqhaxFGEx20IFWCQfWZq12Cz6HVqpnzu58iXDO47vMnix8LKVFsmGq10U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=c0diSghb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jaHTw5Cm; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id D70F3114157F;
-	Tue,  9 Jul 2024 10:16:59 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 09 Jul 2024 10:16:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1720534619;
-	 x=1720621019; bh=ke9rb34FJJV4rF+MkKIiP0p8Y0EQuq37lQsJeEBjSeQ=; b=
-	c0diSghbFlSVyS0R4qPlm97JqWt/eHeSU07qcmYe8WabLBgr2UcwFI5WmVZi80Fk
-	Nd0/hAgAhIyZnC0YANT+DDi8be9vvjOJ72rGEWiPoqzrnU4JTQFWWFGxCGZZV753
-	ahiMnpdP5xcEyrFKnTH+Z7+SevcYwSsXLRURT6FU8FqcH82f9ckTT+VaEpOBnPUQ
-	bTeBV/Ei/6qfjLddTPeIUVY5Nyk0GyUhMRgyRuvpJmwX++28bK79bHSDREEg2cTv
-	8a/esi4WwveO7GBZg9KH6ntT1ufyJgkM5hYU/7dQWz6cDYbnUGyZfNiIdZr/Mu8z
-	PW0A/VzbaaraVWMN1z+Ahw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720534619; x=
-	1720621019; bh=ke9rb34FJJV4rF+MkKIiP0p8Y0EQuq37lQsJeEBjSeQ=; b=j
-	aHTw5CmK8/5xqJqz5b8lxqcYMBOBD30p1lvSj7U3qpHd6mKe8JVbN7TEeZ/0MrF5
-	Th2DccGXcWN5w95/F7M2f6FIipYAVmPjmX6hrqEDJ5Y4dYKPJvHhBs3kMvhSl/1n
-	acGzv55+wLrtD7c1HGEEfLqrGupiZOPUrCr1nIah6pRS06CRiJ7eTAEfBzqE7bCS
-	1rOfxw/paDP6FJB+DNqGyqY3tfaRwREqpF4mBi5kF1E+Yrl+E8aZf0gpW2T5zbxx
-	tcgb/aV4VWOKEXO8XtxHqVQYVrDMMOBZUMz800qwLa1o2woWZawtrDfD00KOmq36
-	t36VB65PatlpizNx4AhOA==
-X-ME-Sender: <xms:WkaNZlZr-ZQkULrvzFP9m46jgGqOi0l4aO3hLjKEy_IUPiJHKAE8wQ>
-    <xme:WkaNZsYT4FNYbgTKtJzD6NZ1jVl5QulGwfi-FZDr7nyOes8Lvubswp7Bl_t1uDIbc
-    8-7wtE6BK6fRn0yhW4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdejgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffeigedtuddtkeevuedvueeuhefhhedvueekvdekkeekuefhtedthfetveej
-    feetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
-    rghrnhgusgdruggv
-X-ME-Proxy: <xmx:WkaNZn-nFO6hRIfj_HoTc-3dyjdmtQ5tuxU2mKEvJvoZbGMVIQtnAA>
-    <xmx:WkaNZjrXPr1tt6kFy17V90KPTKev9nlf3AYVcyeAlfLsGz6LuQUF9Q>
-    <xmx:WkaNZgqE2_orJFt-Yci95RJXAVGSDdn1UKTNeQzPpoZQUf_xl8Y8Dw>
-    <xmx:WkaNZpTQNu5fSzN72wbHXC3dreOmpolit72_XiXZQJ9acBJpMMEvWg>
-    <xmx:W0aNZpmu1Z0-eiLc8-dbr28l-81QR--OKBsmeif5mOq1ivdfPej592bO>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 67875B6008F; Tue,  9 Jul 2024 10:16:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720535003; c=relaxed/simple;
+	bh=eXgJ4wYdqysY/qkd6HNpgdu1snkkrsiOyckPHx7KNYo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WjHn9aVUg+FUyetGJsJaV6Z564SZmBSItGNlDv38nFK3r0S7/wrX2AbctuyNPt4d0Rq8ALlc84F4u1cU61nuxMt4qOg3tzRIW0m17trJGbp+336OPJKjqnNqkOeE0l2HCGFp8zPQyq0mxTYs0/QML7l60lLY+EdvfWreT0Pe7NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2ry0i/l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AACDC4AF0A;
+	Tue,  9 Jul 2024 14:23:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720535002;
+	bh=eXgJ4wYdqysY/qkd6HNpgdu1snkkrsiOyckPHx7KNYo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=d2ry0i/l8a/eH2+9Te6S1AqQwFentP4VCejtrS86kNwcFtlXGjO7nxQpUEMDW3j/F
+	 2cdgFoPxLj59UVDNJwoE+hYz3QDQoIQCpOGYhHosnP3j9EZLFoOg1En1TSPHR8q+5G
+	 UjHYPC7P/cT24GfMJhJKyC8xPzwXRBwRCgCTyQUCY5+EzJIUu66Bob60NIRhsZMG8i
+	 tiBIgYlkQt2+JzFgoKrgadgclkTS2wN2gg98NPdmKqoo3qxhvZ+nI3DP6gfR3TUc9f
+	 9VnaDFXirCQOnF/U8mHzL+cBKXJu27MiPWwn4TH51v4a+r1C3zYFbxrd3S0MIC1wID
+	 umt4z5W2gVRzw==
+Message-ID: <6ab599393503a50b4b708767f320a46388aa95f2.camel@kernel.org>
+Subject: Re: [jlayton:mgtime 5/13] inode.c:undefined reference to
+ `__invalid_cmpxchg_size'
+From: Jeff Layton <jlayton@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Date: Tue, 09 Jul 2024 10:23:21 -0400
+In-Reply-To: <c4df5f73-2687-4160-801c-5011193c9046@app.fastmail.com>
+References: <202407091931.mztaeJHw-lkp@intel.com>
+	 <c1d4fcee3098a58625bb03c8461b92af02d93d15.camel@kernel.org>
+	 <CAMuHMdVsDSBdz2axqTqrV4XP8UVTsN5pPS4ny9QXMUoxrTOU3w@mail.gmail.com>
+	 <c4df5f73-2687-4160-801c-5011193c9046@app.fastmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <c4df5f73-2687-4160-801c-5011193c9046@app.fastmail.com>
-In-Reply-To: 
- <CAMuHMdVsDSBdz2axqTqrV4XP8UVTsN5pPS4ny9QXMUoxrTOU3w@mail.gmail.com>
-References: <202407091931.mztaeJHw-lkp@intel.com>
- <c1d4fcee3098a58625bb03c8461b92af02d93d15.camel@kernel.org>
- <CAMuHMdVsDSBdz2axqTqrV4XP8UVTsN5pPS4ny9QXMUoxrTOU3w@mail.gmail.com>
-Date: Tue, 09 Jul 2024 16:16:37 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Jeff Layton" <jlayton@kernel.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [jlayton:mgtime 5/13] inode.c:undefined reference to
- `__invalid_cmpxchg_size'
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 9, 2024, at 15:45, Geert Uytterhoeven wrote:
-> On Tue, Jul 9, 2024 at 1:58=E2=80=AFPM Jeff Layton <jlayton@kernel.org=
-> wrote:
->> I've been getting some of these warning emails from the KTR. I think
->> this is in reference to this patch, which adds a 64-bit try_cmpxchg in
->> the timestamp handling code:
->>
->>     https://lore.kernel.org/linux-fsdevel/20240708-mgtime-v4-0-a0f3c6=
-fb57f3@kernel.org/
->>
->> On m68k, there is a prototype for __invalid_cmpxchg_size, but no actu=
-al
->> function, AFAICT. Should that be defined somewhere, or is this a
->> deliberate way to force a build break in this case?
->
-> It's a deliberate way to break the build.
->
->> More to the point though: do I need to do anything special for m86k
->> here (or for other arches that can't do a native 64-bit cmpxchg)?
->
-> 64-bit cmpxchg() is only guaranteed to exist on 64-bit platforms.
-> See also
-> https://elixir.bootlin.com/linux/latest/source/include/asm-generic/cmp=
-xchg.h#L62
->
-> I think you can use arch_cmpxchg64(), though.
+On Tue, 2024-07-09 at 16:16 +0200, Arnd Bergmann wrote:
+> On Tue, Jul 9, 2024, at 15:45, Geert Uytterhoeven wrote:
+> > On Tue, Jul 9, 2024 at 1:58=E2=80=AFPM Jeff Layton <jlayton@kernel.org>
+> > wrote:
+> > > I've been getting some of these warning emails from the KTR. I
+> > > think
+> > > this is in reference to this patch, which adds a 64-bit
+> > > try_cmpxchg in
+> > > the timestamp handling code:
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0
+> > > https://lore.kernel.org/linux-fsdevel/20240708-mgtime-v4-0-a0f3c6fb57=
+f3@kernel.org/
+> > >=20
+> > > On m68k, there is a prototype for __invalid_cmpxchg_size, but no
+> > > actual
+> > > function, AFAICT. Should that be defined somewhere, or is this a
+> > > deliberate way to force a build break in this case?
+> >=20
+> > It's a deliberate way to break the build.
+> >=20
+> > > More to the point though: do I need to do anything special for
+> > > m86k
+> > > here (or for other arches that can't do a native 64-bit cmpxchg)?
+> >=20
+> > 64-bit cmpxchg() is only guaranteed to exist on 64-bit platforms.
+> > See also
+> > https://elixir.bootlin.com/linux/latest/source/include/asm-generic/cmpx=
+chg.h#L62
+> >=20
+> > I think you can use arch_cmpxchg64(), though.
+>=20
+> arch_cmpxchg64() is an internal helper provided by some
+> architectures. Driver code should use cmpxchg64() for
+> the explicitly 64-bit sized atomic operation.
+>=20
+> I'm fairly sure we still don't provide this across all
+> 32-bit architectures though: on architectures that have
+> 64-bit atomics (i686, armv6k, ...) these can be provided
+> architecture specific code, and on non-SMP kernels they
+> can use the generic fallback through
+> generic_cmpxchg64_local(), but on SMP architectures without
+> native atomics you need a Kconfig dependency to turn off
+> the particular code.
+>=20
 
-arch_cmpxchg64() is an internal helper provided by some
-architectures. Driver code should use cmpxchg64() for
-the explicitly 64-bit sized atomic operation.
+I think the simplest solution is to make the floor value I'm tracking
+be an atomic64_t. That looks like it should smooth over the differences
+between arches. I'm testing a patch to do that now.
 
-I'm fairly sure we still don't provide this across all
-32-bit architectures though: on architectures that have
-64-bit atomics (i686, armv6k, ...) these can be provided
-architecture specific code, and on non-SMP kernels they
-can use the generic fallback through
-generic_cmpxchg64_local(), but on SMP architectures without
-native atomics you need a Kconfig dependency to turn off
-the particular code.
-
-     Arnd
+Thanks!
+--=20
+Jeff Layton <jlayton@kernel.org>
 
