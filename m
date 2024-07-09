@@ -1,165 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-23422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7C492C1FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 19:13:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC0D92C211
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 19:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A67512938EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:13:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2181D1F255C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D6D185636;
-	Tue,  9 Jul 2024 16:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A42518C161;
+	Tue,  9 Jul 2024 17:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nemjk8lQ"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dg3hD66Q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YsMw5RrY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369F218784F;
-	Tue,  9 Jul 2024 16:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25791B86CC;
+	Tue,  9 Jul 2024 17:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720544027; cv=none; b=A2l8cC15pz/KFh8ZFBr9Pw3dQuai+2+xsXMhS+6C26N2a/vLk5K9k3xr5OhY7EClRhOfhtcZg+SKSmmGY16CWL1lz3//OLpKAhPxMHkwrGrZFKeY9Hhx9822fXlOwhOiGBVw3q3n2nke1jYVew/fGwpLIDup+BMLOqhRLxwHiRc=
+	t=1720544809; cv=none; b=kbvUcwDZTW2OgJO5Kas7DtIzkBoHTsCV3r1kNXAM8aA6bdrDMS5YD/nn6Cf8WzlIGbEwKxMddEo71KbCZ6vMRneDKDVfemaAv5NqSbM9et8LHQgBuDV/ZAY0w3WALjZvtRgAKouJgRshhcfQgGOhNApznzGorBQQJ1ZM1CDZ2Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720544027; c=relaxed/simple;
-	bh=wCt2eVwPycseHZNsJj3m1b7qQmWG0ZjcLaXsCpaRkg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LT0wdQAB25u4pSWPJ09IGWxiP0LokSe9rAY66wEK2BbVwSNb8ClBIKqoCq6jHaawd1quCeBoR7LnY108qDBB+bC6pZvgjhZvN++ea6QC6ShWLPSGAcPpOKKKzEIurEbhK49dxbbYpVu7majLmIA5WC7XBbIWG48mzkDRj40swRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nemjk8lQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DAA8C3277B;
-	Tue,  9 Jul 2024 16:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720544026;
-	bh=wCt2eVwPycseHZNsJj3m1b7qQmWG0ZjcLaXsCpaRkg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nemjk8lQNUoUZcrW8krv9XOTNcTO2GhzCB+jR6WfdAaJgF0coKZ88e9oCvUkIor73
-	 Ndkx7AKwxkG3W9oQmWUu3OBCplYCKOdighW96VfCM1RX6WbcAItdDXCc9DIJHU+rQE
-	 SiGa6myxbDgeDeskYTOQd84ZmoaqZGPsSvfmpeIypUjdsCjC6gO14+SmIWRXqLb82A
-	 3NCOq8Ivix0vQ4Amh89VxeHXK6WJTYZHJZxdQ9BLlBSqQ63btMh9Z98pBLoGXE8xkT
-	 Z9+c6Y1UX1T7I3zun2LYcHNQeO745WEEqzLN6qs6vuH67Zs7cnaJORDbFxtIncjZNi
-	 DrM1ilO9OdSsw==
-Date: Tue, 9 Jul 2024 18:53:43 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	axboe@kernel.dk, hch@lst.de, djwong@kernel.org, dchinner@redhat.com, 
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v3 3/3] io_submit.2: Document RWF_ATOMIC
-Message-ID: <zonwu3dsyz6fk5unic2rgxqpvrceqrtj4k5epb6hdj44fbzxkm@vbfqorsyw7te>
-References: <20240708114227.211195-1-john.g.garry@oracle.com>
- <20240708114227.211195-4-john.g.garry@oracle.com>
- <yyqi4f6pphnpjhhlwnbvsdyaxsronpfumg4bjp4eig6rh2d4ka@uyy5y37waxbd>
+	s=arc-20240116; t=1720544809; c=relaxed/simple;
+	bh=ZqJG0wg/C3aFDJJmfPLpDLDKejbIR04eebcxTMSTEJ8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=i69zxcJ0F4CR0qMMYPMFBiuNTAujGjZkzPDv6bZOIFRMRVgTc1AIKxA7V5X1OFE1X+wdQoCsH43r3PJqGoyujCUGzCHuSNW9PF1E1344nuxfBl9k5mARpvxhcXGrVdcmCsAs+Eo/4gVn3R+7mt4CAtLFw6znHQYQgxQuOdL0ofQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dg3hD66Q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YsMw5RrY; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id BED451140459;
+	Tue,  9 Jul 2024 13:06:46 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 09 Jul 2024 13:06:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720544806; x=1720631206; bh=thlpn3IW/x
+	SugcCxmZ9N0SJbK2pVR7lvBRzalO9m2Oc=; b=dg3hD66QLQP0LzfeBhlwFJU80d
+	43NNkYdOslU6fMRItB2X8Ik1dTAQV0y0ENysaQ3mU2yJPWG7PHcVWJTGAozQy3Br
+	jB5+3xcUVLmoLHsVo2MQumcBffGBVfuJa7tGK1TlfJ43I0UsF7g7lVhNsI5Bl6/0
+	BuyzJpJk+rO/9I3cuoNo7OclvkhYzIVyAJasartHulfOWBtWRoO3+J7ZC0cI007u
+	cj+fa5vh03XQUcI9VMyAg6oCKwwIKiGSNPw2KqFXh3m1tRAYRksAPd5DyzbBTOha
+	+R4SGALc6VROGss/i40m+2O0U/E8oh1JbHD1vpzcGt4kZWRJsWf7NW8/z5HQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720544806; x=1720631206; bh=thlpn3IW/xSugcCxmZ9N0SJbK2pV
+	R7lvBRzalO9m2Oc=; b=YsMw5RrYDZOqnokpGflUSQhmb5kuZaIT276tP0MxWkVY
+	N5ky8vArJYUuuVr+hBZr2ZYfSUOIxAR0gBgmn98tryfTTKYEd99haGVHV0wYKwSG
+	T4XtpQ2HcPIJAHzNsG+obzTTVf4UtOTjm7CCGBiBB25zea/VPAU44JqMuffelLiD
+	oEFOMrgHPAMkY10b/2WLt0yoGSf6MF6l+jR3RKjq0xh601I1bl1gQa4XEX5gSj/q
+	kf2brlSxAnYgVEWeduFCSq1TUC2RIiO6GE0wrHS9EEa8L89ZIkWaoVEsI81QUgv9
+	CedmA84j8tW+Q8vXCWhzWIr+1azA4SHmzP2DsQDEBA==
+X-ME-Sender: <xms:Jm6NZtmw6I3T-sjNn7eLDsZAt2E9C0vEL6tCYu7Ak9zONeSNSwImvQ>
+    <xme:Jm6NZo1e-PiZEskkbxMbMHswgdZ9omXqnEY7y-1pCidTLvljjZ6wuZdplqUIvfuPR
+    3g3WLa-uB5eeKjmrCA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgddutdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:Jm6NZjpID45NV_0o1jUw848YR4l1TMgvUgkjHKg2NL8kXP0bNvpPSg>
+    <xmx:Jm6NZtlIwV1jYkBOcgtpjEuk0qqWk8KIS0I5d4Lew0XpRK0aqodWtQ>
+    <xmx:Jm6NZr2-DiXzzCjaqgd_oXe2TNPxXj5QTBGHc5AKShkixxx1Yk7w9Q>
+    <xmx:Jm6NZsugx0MKCFOSsqryX-cJiBRd-dBR-dmf-r_o_z3t-tqKMD-6Tg>
+    <xmx:Jm6NZmRiTvC7gfiZrtHbZCzgORhsLFEx-61Rua3uKeX753NWmA2N66ZZ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 260ADB6008D; Tue,  9 Jul 2024 13:06:46 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7hziuibpn4rmxahs"
-Content-Disposition: inline
-In-Reply-To: <yyqi4f6pphnpjhhlwnbvsdyaxsronpfumg4bjp4eig6rh2d4ka@uyy5y37waxbd>
+Message-Id: <c8e44728-6c09-4fbe-9583-1f8298c3ea39@app.fastmail.com>
+In-Reply-To: <edd2d831320fb14333e605e77d4b284b1123eb86.camel@kernel.org>
+References: <202407091931.mztaeJHw-lkp@intel.com>
+ <c1d4fcee3098a58625bb03c8461b92af02d93d15.camel@kernel.org>
+ <CAMuHMdVsDSBdz2axqTqrV4XP8UVTsN5pPS4ny9QXMUoxrTOU3w@mail.gmail.com>
+ <c4df5f73-2687-4160-801c-5011193c9046@app.fastmail.com>
+ <6ab599393503a50b4b708767f320a46388aa95f2.camel@kernel.org>
+ <92726965-19a0-433b-9b49-69af84b25081@app.fastmail.com>
+ <edd2d831320fb14333e605e77d4b284b1123eb86.camel@kernel.org>
+Date: Tue, 09 Jul 2024 19:06:25 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jeff Layton" <jlayton@kernel.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [jlayton:mgtime 5/13] inode.c:undefined reference to
+ `__invalid_cmpxchg_size'
+Content-Type: text/plain
 
+On Tue, Jul 9, 2024, at 17:27, Jeff Layton wrote:
+> On Tue, 2024-07-09 at 17:07 +0200, Arnd Bergmann wrote:
+>> On Tue, Jul 9, 2024, at 16:23, Jeff Layton wrote:
+>
+> The context for this is generally a write or other change to an inode,
+> so I too am hoping the overhead won't be too bad. It does take great
+> pains to avoid changing the ctime_floor value whenever possible.
 
---7hziuibpn4rmxahs
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	axboe@kernel.dk, hch@lst.de, djwong@kernel.org, dchinner@redhat.com, 
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v3 3/3] io_submit.2: Document RWF_ATOMIC
-References: <20240708114227.211195-1-john.g.garry@oracle.com>
- <20240708114227.211195-4-john.g.garry@oracle.com>
- <yyqi4f6pphnpjhhlwnbvsdyaxsronpfumg4bjp4eig6rh2d4ka@uyy5y37waxbd>
-MIME-Version: 1.0
-In-Reply-To: <yyqi4f6pphnpjhhlwnbvsdyaxsronpfumg4bjp4eig6rh2d4ka@uyy5y37waxbd>
+Ok, I see. Have you considered hooking directly into the code
+in kernel/time/timekeeping.c then? 
 
-On Tue, Jul 09, 2024 at 06:53:03PM GMT, Alejandro Colomar wrote:
-> On Mon, Jul 08, 2024 at 11:42:27AM GMT, John Garry wrote:
-> > Document RWF_ATOMIC for asynchronous I/O.
-> >=20
-> > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > ---
-> >  man/man2/io_submit.2 | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> >=20
-> > diff --git a/man/man2/io_submit.2 b/man/man2/io_submit.2
-> > index c53ae9aaf..ef6414d24 100644
-> > --- a/man/man2/io_submit.2
-> > +++ b/man/man2/io_submit.2
-> > @@ -140,6 +140,23 @@ as well the description of
-> >  .B O_SYNC
-> >  in
-> >  .BR open (2).
-> > +.TP
-> > +.BR RWF_ATOMIC " (since Linux 6.11)"
-> > +Write a block of data such that a write will never be
-> > +torn from power fail or similar. See the description
-> > +of the flag of the same name in
->=20
-> Maybe?:
->=20
-> of this same flag in
+Since the coarse time is backed by the timekeeper that itself
+is a cache of the current time, this would potentially avoid
+some duplication:
 
-Or just to be less ambiguous:
+- whenever the tk_core code gets updated, you can update
+  the ctime_floor along with it, or integrate ctime_floor
+  itself into the timekeeper
 
-See the description of
-=2EB RWF_ATOMIC
-in
+- you can use the same sequence count logic, either with the
+  same &tk_core.seq or using a separate counter for the
+  ctime updates
 
->=20
-> > +.BR pwritev2 (2).
-> > +For usage with
-> > +.BR IOCB_CMD_PWRITEV,
-> > +the upper vector limit is in
-> > +.I stx_atomic_write_segments_max.
-> > +See
-> > +.B STATX_WRITE_ATOMIC
-> > +and
-> > +.I stx_atomic_write_segments_max
-> > +description
-> > +in
-> > +.BR statx (2).
-> >  .RE
-> >  .TP
-> >  .I aio_lio_opcode
-> > --=20
-> > 2.31.1
-> >=20
->=20
-> --=20
-> <https://www.alejandro-colomar.es/>
-
-
-
---=20
-<https://www.alejandro-colomar.es/>
-
---7hziuibpn4rmxahs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmaNaxYACgkQnowa+77/
-2zK5Rg//UQFQV+OIHAFO0JjJae9DMb1zgWo2PtUv8TaKGQJHOXyBYboMII32h5ir
-yVM2nkIYTAEu+mKR9AqN6Hsg2QrTpmSMMURYXt+QMG1uaktmkbjPWnwpA/RjANiQ
-aAw5uIRr4n8e4p7V9p9PcUIoeeumF3k5WDEF/Vk8IPjr/iY4Y7DbWvqhYvOZpxSi
-2gDlJuvHQ8+9xQ7ZRqEWysSVGJlkFbb0VtuldUTKwbGAJdLXL6bQRTj2IrApXuOZ
-vlHwQtJj0Etfsfp8w04EPdazI5jG5tx+hFa6Zm8qTeuOOZMB+kdhNxTcoATGdY31
-5+mNDUW6EbvR1GMFLsIVJFDOZ+HNPe7kCRjzrzjk0r1Iyp072maqv8ygrjG+cbgr
-taYGxOyq8PSXfl5AiGId/gR/+XHapgbIqp95jG1qVSNVndGAhqkf7qon1YOG48dY
-/6MHU81vn0nPzxU0g20bsebti9upQe/ZhfNxw7XlRM5/Yo3+5Ic9vwmSyZKoqe6B
-evWteINnhrNdVaCB/rantzYCx2QwfuaB5f5iThYyB7k9BL4vE7euG0eKcf9AgDR7
-SAocXJ8Oe8iqAEskswh9w1pW56j8ZyiaK0s05DZGL2ci2bA7CAxuppunSePbzs2x
-jJ5HsyFKOi0j9DVg8WK4idsOwNLFjtUgZxtI93yepCRkixIV6HQ=
-=Ncu7
------END PGP SIGNATURE-----
-
---7hziuibpn4rmxahs--
+      Arnd
 
