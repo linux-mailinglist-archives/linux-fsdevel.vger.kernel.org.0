@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-23350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DA192AEC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 05:31:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B415892AEBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 05:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B533AB21D80
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 03:31:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 350D21F220B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 03:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E453F8F7;
-	Tue,  9 Jul 2024 03:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F2712C481;
+	Tue,  9 Jul 2024 03:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i+Wa7Eat"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I7Yh/07Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606EA38F91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60659A21
 	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 03:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720495837; cv=none; b=Sk9KhIsbam6HSrtwvFAol03p4cXrkzwHnMiCnh8sWKBnv3l6ZeYoD/f/OT9qdGihzj/bh09vVSl/fZcFLwuZpBA1v6XCU2wPIpIzhDpNky6Y0WG5BMlgOFgVt6NL006A2uK+Ylu3WgXB+ZHiEw45nU/5qCuqRXtHFE2DXhyOA/o=
+	t=1720495835; cv=none; b=DFFCpXRKfNly708zje0R4zPFDM8QpqZdYEqiCdkof51sgVrEdV/INV+NNsForavRuD2M7fcoaKgk86xzwe6JFWSOpMI8b2A1Puso9uHMUAqHB05R7ntST8utFQ+WB8aRuEXf46FwOPWItXK3fpKqhHCHVg0INaaHQSyrkoAfLYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720495837; c=relaxed/simple;
-	bh=6bXTYSNU9a9xY1F8Ofw/bhzGActM9dRbRzvxjMyJdrQ=;
+	s=arc-20240116; t=1720495835; c=relaxed/simple;
+	bh=wSgAdKCZVERH9++pxvVYTnzVoL7awE6dEBYb1MVz5+Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YhYDj/DQxF14fesmp2jopp2eD2q98yNkQSxBUxxv5RzVluj6sA2Z/TPburOuOYzvKdwOKRVVZQMxA4PPq6A78KzMHMGaE8SBcLRaC5dVKLTlXJHDDdyDYwOshqk5/BGxKHusCS/smcFByT1oSToL6yY2Sc27SNGk4ngGnZkgdOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i+Wa7Eat; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=X6foZJN3b9QfD1x59aiRULUcWyZKy53q3F4Xmais4hKqpfrlzgjRbYu8sgwHx8eF+arX51/Gv5dzppeJcIxhcWiKbO7gO3kSDakwwoqRGS+g1z6RfcjCtzHeVLe+PvD7NGTl0qUkBz3TE+3e7CV3TXW7sVS0m9L3UY6kmF+2lEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=I7Yh/07Y; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=Z1IDe8LZftlaTrVrHQC0emAEo4+quFPohWu0JQ9EECQ=; b=i+Wa7EatLnGPfrzzh1PB1cfJV6
-	f00A1RLRD1Yk2QzH85Dyesiq9oRf52u1xH1ZUhIYVBuCM5FNVKKkhmdKeTj9t95FjUDdJMpWiudHI
-	lWrn1yiw88+n+uOtLlMdC2mUSV1+7PR31oS3Jep+r+JNIuVnuPrNlstzEK/Zm31KrIecSxz9PElLG
-	2KGX51VhzgJaj9SJ/LWDFqEa0rHyIX2JuLdRGmWd4a7UIHnOMSafb0nkQYSq/bii6t9RNtKoYe1CI
-	WY9j+aTk1iQ6Clp2XlsQYimsMnmIu/xK1NByR0CAbbxssAfaDzH7MX9y7rOOuBXXBNGHdKbo6K9EW
-	fUdd6R7A==;
+	bh=F9Hhwuu9VH/xpU90hmF/lviEiO2kLB3Vqv+u/0gFbpk=; b=I7Yh/07YebnBUBuos5KuZwlAPY
+	3mLCHJCYu9TGDPD90Gax45UGDqIV2+5hXqgSW4yWA5Pyaadcvp1/J3WUJyF/OMJwppdkKzZRPCmFu
+	LosozNoB8X2DQV0lRzP+TkphMroXIn2B8872LI/kZLx1zAaCpAiemqacNZSAznU0jbG7CS0YCZd0G
+	HPMt/BOjWykfqmRO8Flv5uK7d8dDr+5qzbN/4qIxTIfJlJVBKpAzz42KP35GUoJVBbBR98Kujwi/D
+	DI/QYmT0c/A5AxyzqCZ6Cds6J+AEfBem1m3rd9RxqQn0SWnkr5BPOR4BD/tFS3eVT5Kgrn3hjsm1H
+	ogrGQ+pw==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sR1Yl-00000007QSb-1luG;
+	id 1sR1Yl-00000007QSk-2KSu;
 	Tue, 09 Jul 2024 03:30:31 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 03/10] ufs: Convert ufs_check_page() to ufs_check_folio()
-Date: Tue,  9 Jul 2024 04:30:20 +0100
-Message-ID: <20240709033029.1769992-4-willy@infradead.org>
+Subject: [PATCH 04/10] ufs: Convert ufs_find_entry() to take a folio
+Date: Tue,  9 Jul 2024 04:30:21 +0100
+Message-ID: <20240709033029.1769992-5-willy@infradead.org>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240709033029.1769992-1-willy@infradead.org>
 References: <20240709033029.1769992-1-willy@infradead.org>
@@ -63,91 +63,199 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Includes large folio support in case we decide to support block size >
-PAGE_SIZE (as with ext2, this support will be limited to machines
-without HIGHMEM).
+This matches ext2 and pushes the use of folios out by one layer.
+
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ufs/dir.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+ fs/ufs/dir.c   | 17 ++++++-----------
+ fs/ufs/namei.c | 22 +++++++++++-----------
+ fs/ufs/ufs.h   | 20 +++++++++++---------
+ 3 files changed, 28 insertions(+), 31 deletions(-)
 
 diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
-index 6c3235f426ed..287cab597cc1 100644
+index 287cab597cc1..fb56a00b622c 100644
 --- a/fs/ufs/dir.c
 +++ b/fs/ufs/dir.c
-@@ -112,20 +112,18 @@ void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
- 	ufs_handle_dirsync(dir);
- }
- 
--
--static bool ufs_check_page(struct page *page)
-+static bool ufs_check_folio(struct folio *folio, char *kaddr)
+@@ -76,12 +76,12 @@ ino_t ufs_inode_by_name(struct inode *dir, const struct qstr *qstr)
  {
--	struct inode *dir = page->mapping->host;
-+	struct inode *dir = folio->mapping->host;
- 	struct super_block *sb = dir->i_sb;
--	char *kaddr = page_address(page);
- 	unsigned offs, rec_len;
--	unsigned limit = PAGE_SIZE;
-+	unsigned limit = folio_size(folio);
- 	const unsigned chunk_mask = UFS_SB(sb)->s_uspi->s_dirblksize - 1;
- 	struct ufs_dir_entry *p;
- 	char *error;
- 
--	if ((dir->i_size >> PAGE_SHIFT) == page->index) {
--		limit = dir->i_size & ~PAGE_MASK;
-+	if (dir->i_size < folio_pos(folio) + limit) {
-+		limit = offset_in_folio(folio, dir->i_size);
- 		if (limit & chunk_mask)
- 			goto Ebadsize;
- 		if (!limit)
-@@ -150,13 +148,13 @@ static bool ufs_check_page(struct page *page)
- 	if (offs != limit)
- 		goto Eend;
- out:
--	SetPageChecked(page);
-+	folio_set_checked(folio);
- 	return true;
- 
- 	/* Too bad, we had an error */
- 
- Ebadsize:
--	ufs_error(sb, "ufs_check_page",
-+	ufs_error(sb, __func__,
- 		  "size of directory #%lu is not a multiple of chunk size",
- 		  dir->i_ino
- 	);
-@@ -176,17 +174,17 @@ static bool ufs_check_page(struct page *page)
- Einumber:
- 	error = "inode out of bounds";
- bad_entry:
--	ufs_error (sb, "ufs_check_page", "bad entry in directory #%lu: %s - "
--		   "offset=%lu, rec_len=%d, name_len=%d",
--		   dir->i_ino, error, (page->index<<PAGE_SHIFT)+offs,
-+	ufs_error(sb, __func__, "bad entry in directory #%lu: %s - "
-+		   "offset=%llu, rec_len=%d, name_len=%d",
-+		   dir->i_ino, error, folio_pos(folio) + offs,
- 		   rec_len, ufs_get_de_namlen(sb, p));
- 	goto fail;
- Eend:
- 	p = (struct ufs_dir_entry *)(kaddr + offs);
- 	ufs_error(sb, __func__,
- 		   "entry in directory #%lu spans the page boundary"
--		   "offset=%lu",
--		   dir->i_ino, (page->index<<PAGE_SHIFT)+offs);
-+		   "offset=%llu",
-+		   dir->i_ino, folio_pos(folio) + offs);
- fail:
- 	return false;
- }
-@@ -202,7 +200,7 @@ static void *ufs_get_folio(struct inode *dir, unsigned long n,
- 		return ERR_CAST(folio);
- 	kaddr = kmap(&folio->page);
- 	if (unlikely(!folio_test_checked(folio))) {
--		if (!ufs_check_page(&folio->page))
-+		if (!ufs_check_folio(folio, kaddr))
- 			goto fail;
+ 	ino_t res = 0;
+ 	struct ufs_dir_entry *de;
+-	struct page *page;
++	struct folio *folio;
+ 	
+-	de = ufs_find_entry(dir, qstr, &page);
++	de = ufs_find_entry(dir, qstr, &folio);
+ 	if (de) {
+ 		res = fs32_to_cpu(dir->i_sb, de->d_ino);
+-		ufs_put_page(page);
++		ufs_put_page(&folio->page);
  	}
- 	*foliop = folio;
+ 	return res;
+ }
+@@ -255,7 +255,7 @@ struct ufs_dir_entry *ufs_dotdot(struct inode *dir, struct page **p)
+  * Entry is guaranteed to be valid.
+  */
+ struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
+-				     struct page **res_page)
++				     struct folio **foliop)
+ {
+ 	struct super_block *sb = dir->i_sb;
+ 	const unsigned char *name = qstr->name;
+@@ -263,7 +263,6 @@ struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
+ 	unsigned reclen = UFS_DIR_REC_LEN(namelen);
+ 	unsigned long start, n;
+ 	unsigned long npages = dir_pages(dir);
+-	struct folio *folio;
+ 	struct ufs_inode_info *ui = UFS_I(dir);
+ 	struct ufs_dir_entry *de;
+ 
+@@ -272,16 +271,13 @@ struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
+ 	if (npages == 0 || namelen > UFS_MAXNAMLEN)
+ 		goto out;
+ 
+-	/* OFFSET_CACHE */
+-	*res_page = NULL;
+-
+ 	start = ui->i_dir_start_lookup;
+ 
+ 	if (start >= npages)
+ 		start = 0;
+ 	n = start;
+ 	do {
+-		char *kaddr = ufs_get_folio(dir, n, &folio);
++		char *kaddr = ufs_get_folio(dir, n, foliop);
+ 
+ 		if (!IS_ERR(kaddr)) {
+ 			de = (struct ufs_dir_entry *)kaddr;
+@@ -291,7 +287,7 @@ struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
+ 					goto found;
+ 				de = ufs_next_entry(sb, de);
+ 			}
+-			ufs_put_page(&folio->page);
++			ufs_put_page(&(*foliop)->page);
+ 		}
+ 		if (++n >= npages)
+ 			n = 0;
+@@ -300,7 +296,6 @@ struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
+ 	return NULL;
+ 
+ found:
+-	*res_page = &folio->page;
+ 	ui->i_dir_start_lookup = n;
+ 	return de;
+ }
+diff --git a/fs/ufs/namei.c b/fs/ufs/namei.c
+index 9cad29463791..53e9bfad54df 100644
+--- a/fs/ufs/namei.c
++++ b/fs/ufs/namei.c
+@@ -209,14 +209,14 @@ static int ufs_unlink(struct inode *dir, struct dentry *dentry)
+ {
+ 	struct inode * inode = d_inode(dentry);
+ 	struct ufs_dir_entry *de;
+-	struct page *page;
++	struct folio *folio;
+ 	int err = -ENOENT;
+ 
+-	de = ufs_find_entry(dir, &dentry->d_name, &page);
++	de = ufs_find_entry(dir, &dentry->d_name, &folio);
+ 	if (!de)
+ 		goto out;
+ 
+-	err = ufs_delete_entry(dir, de, page);
++	err = ufs_delete_entry(dir, de, &folio->page);
+ 	if (err)
+ 		goto out;
+ 
+@@ -251,14 +251,14 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 	struct inode *new_inode = d_inode(new_dentry);
+ 	struct page *dir_page = NULL;
+ 	struct ufs_dir_entry * dir_de = NULL;
+-	struct page *old_page;
++	struct folio *old_folio;
+ 	struct ufs_dir_entry *old_de;
+ 	int err = -ENOENT;
+ 
+ 	if (flags & ~RENAME_NOREPLACE)
+ 		return -EINVAL;
+ 
+-	old_de = ufs_find_entry(old_dir, &old_dentry->d_name, &old_page);
++	old_de = ufs_find_entry(old_dir, &old_dentry->d_name, &old_folio);
+ 	if (!old_de)
+ 		goto out;
+ 
+@@ -270,7 +270,7 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 	}
+ 
+ 	if (new_inode) {
+-		struct page *new_page;
++		struct folio *new_folio;
+ 		struct ufs_dir_entry *new_de;
+ 
+ 		err = -ENOTEMPTY;
+@@ -278,10 +278,10 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 			goto out_dir;
+ 
+ 		err = -ENOENT;
+-		new_de = ufs_find_entry(new_dir, &new_dentry->d_name, &new_page);
++		new_de = ufs_find_entry(new_dir, &new_dentry->d_name, &new_folio);
+ 		if (!new_de)
+ 			goto out_dir;
+-		ufs_set_link(new_dir, new_de, new_page, old_inode, 1);
++		ufs_set_link(new_dir, new_de, &new_folio->page, old_inode, 1);
+ 		inode_set_ctime_current(new_inode);
+ 		if (dir_de)
+ 			drop_nlink(new_inode);
+@@ -300,7 +300,7 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 	 */
+ 	inode_set_ctime_current(old_inode);
+ 
+-	ufs_delete_entry(old_dir, old_de, old_page);
++	ufs_delete_entry(old_dir, old_de, &old_folio->page);
+ 	mark_inode_dirty(old_inode);
+ 
+ 	if (dir_de) {
+@@ -321,8 +321,8 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 		put_page(dir_page);
+ 	}
+ out_old:
+-	kunmap(old_page);
+-	put_page(old_page);
++	kunmap(&old_folio->page);
++	folio_put(old_folio);
+ out:
+ 	return err;
+ }
+diff --git a/fs/ufs/ufs.h b/fs/ufs/ufs.h
+index 6b499180643b..161fe0bb6fd1 100644
+--- a/fs/ufs/ufs.h
++++ b/fs/ufs/ufs.h
+@@ -99,15 +99,17 @@ extern void ufs_put_cylinder (struct super_block *, unsigned);
+ 
+ /* dir.c */
+ extern const struct inode_operations ufs_dir_inode_operations;
+-extern int ufs_add_link (struct dentry *, struct inode *);
+-extern ino_t ufs_inode_by_name(struct inode *, const struct qstr *);
+-extern int ufs_make_empty(struct inode *, struct inode *);
+-extern struct ufs_dir_entry *ufs_find_entry(struct inode *, const struct qstr *, struct page **);
+-extern int ufs_delete_entry(struct inode *, struct ufs_dir_entry *, struct page *);
+-extern int ufs_empty_dir (struct inode *);
+-extern struct ufs_dir_entry *ufs_dotdot(struct inode *, struct page **);
+-extern void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
+-			 struct page *page, struct inode *inode, bool update_times);
++
++int ufs_add_link(struct dentry *, struct inode *);
++ino_t ufs_inode_by_name(struct inode *, const struct qstr *);
++int ufs_make_empty(struct inode *, struct inode *);
++struct ufs_dir_entry *ufs_find_entry(struct inode *, const struct qstr *,
++		struct folio **);
++int ufs_delete_entry(struct inode *, struct ufs_dir_entry *, struct page *);
++int ufs_empty_dir(struct inode *);
++struct ufs_dir_entry *ufs_dotdot(struct inode *, struct page **);
++void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
++		struct page *page, struct inode *inode, bool update_times);
+ 
+ /* file.c */
+ extern const struct inode_operations ufs_file_inode_operations;
 -- 
 2.43.0
 
