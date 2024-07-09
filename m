@@ -1,130 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-23364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BE992B29D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 10:52:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3232292B389
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 11:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5579280CF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 08:52:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B50D5B21008
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 09:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4841534E7;
-	Tue,  9 Jul 2024 08:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A52B154458;
+	Tue,  9 Jul 2024 09:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DpExboip"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZTiHpEnf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CED113DB9B
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 08:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9738D15443C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 09:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515156; cv=none; b=iWETWT0cWx72A8JXePte9lCKiW3zKXaDjeWm/VmIq6tmP3pyLaJ8d3E7jyfKe3BnfKYkjbMez1oU6rpQZvwmY5Ckmv1fJyLL4XsM6HInqg8plq1fQNKoEHafIHmI0Vs5yDL177+btBGoAhyywd0LwGVdJGGFmRoUxmNRfT9T/3E=
+	t=1720516703; cv=none; b=iQI/FnFAofQnnnNq2XI4dO3wvyUakDjW/fGbEEevNGZmp4fna16rHojWeZ5c9H6TKOm6G/uCPAel9ysC3H6ZoWUH64Lpwz24GEEep2G5jo1aJ5E8JYn5dFTe1PxjxVK61X2XkAaJ09m8HdYrWHdTPs252zcRkhi+uC/OTX6BqWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515156; c=relaxed/simple;
-	bh=aKrbvYatQQa9iqD/RLLmut5wz3BIvGbGeZI4a400mkw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OAr9zmu/ghAVofZ21QC9TgQAN6ONKa2WmfvJE/utH25lmkRxmQhCDbcluDXwY8RZCaQrVCQmhau7sLkNfDDpU3rmrcVhgAIPX0lt5plWEfxKX/ifpv6lPcTjYphf7Oh68ljPqZ/ssBT60XasYpRZEj8qO5kLV8EUez65Qnlf8UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DpExboip; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720515154;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aKrbvYatQQa9iqD/RLLmut5wz3BIvGbGeZI4a400mkw=;
-	b=DpExboipbpZsb5hA8MZS+pnWqFRlcoGaoyQYP0EmXqb92Oqh1bthLAT1i4B+GL46lOt2dc
-	18RfoepX6gPzhPmTzkClnv8kcxz+ZIDA6ErWrqjlg1Syawdx9VkHXgJIE7M3Umns2pJ2pG
-	teS5C8LlwjlEiJI/c/WB2A4GMdS9LHs=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-494-95z-6JRaPpWfMZk9MN0rrw-1; Tue,
- 09 Jul 2024 04:52:30 -0400
-X-MC-Unique: 95z-6JRaPpWfMZk9MN0rrw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A13F31958B3D;
-	Tue,  9 Jul 2024 08:52:25 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.64])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DDBC43000181;
-	Tue,  9 Jul 2024 08:52:15 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Szabolcs Nagy <szabolcs.nagy@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,  Joey Gouly
- <joey.gouly@arm.com>,  dave.hansen@linux.intel.com,
-  linux-arm-kernel@lists.infradead.org,  akpm@linux-foundation.org,
-  aneesh.kumar@kernel.org,  aneesh.kumar@linux.ibm.com,  bp@alien8.de,
-  broonie@kernel.org,  christophe.leroy@csgroup.eu,  hpa@zytor.com,
-  linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
-  linuxppc-dev@lists.ozlabs.org,  maz@kernel.org,  mingo@redhat.com,
-  mpe@ellerman.id.au,  naveen.n.rao@linux.ibm.com,  npiggin@gmail.com,
-  oliver.upton@linux.dev,  shuah@kernel.org,  tglx@linutronix.de,
-  will@kernel.org,  x86@kernel.org,  kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 17/29] arm64: implement PKEYS support
-In-Reply-To: <Zoz1lbjrp+y3HXff@arm.com> (Szabolcs Nagy's message of "Tue, 9
-	Jul 2024 09:32:21 +0100")
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
-	<20240503130147.1154804-18-joey.gouly@arm.com>
-	<ZlnlQ/avUAuSum5R@arm.com>
-	<20240531152138.GA1805682@e124191.cambridge.arm.com>
-	<Zln6ckvyktar8r0n@arm.com> <87a5jj4rhw.fsf@oldenburg.str.redhat.com>
-	<ZnBNd51hVlaPTvn8@arm.com> <ZownjvHbPI1anfpM@arm.com>
-	<Zoz1lbjrp+y3HXff@arm.com>
-Date: Tue, 09 Jul 2024 10:52:12 +0200
-Message-ID: <87ikxf0wxv.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1720516703; c=relaxed/simple;
+	bh=eVK1yU/K1gUCeypMeHvP2ycH4mth7QtdS8bCm7eN+/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lnqzvPm8BG/tHqVUDk8lfT2jbV68b8U98+piqM9vl5Jidr7K/zEAvHPG1nApi74zKZVEpG+PGK2K9Ixf1IiVp9mWyNWLxFI+tkNBomr0o+kzwjzXGBMNDN6UiAVL9fgu+J+la7/hgiK5r9TBmYX23kNLVJT4UWjY9b5sRLe2qWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZTiHpEnf; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJFlW6pv4z5T6;
+	Tue,  9 Jul 2024 11:18:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720516695;
+	bh=v/JFEHCX3gZ0MVpHje3ikJ9/D0FTAcZwjQbECtZLdZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZTiHpEnfNR3mlatCxWux7y7Eu0qGDnEqSh+8W8s09JC/3VLLlbrWZwmN1jeWX5Vho
+	 ndmFxLkDKg4N0dPsk7JixdJH7Olf3q4BBy/rLZ/oO3L8jaUA2xpIdzwOIgKnGlTAP3
+	 N7+HAeqyif99g6G9CBVvsU6dg8SkNZKc9yNMrgvw=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJFlH1ZZFzVjC;
+	Tue,  9 Jul 2024 11:18:03 +0200 (CEST)
+Date: Tue, 9 Jul 2024 11:18:00 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Florian Weimer <fweimer@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240709.gae4cu4Aiv6s@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+ <CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
+ <87ed83etpk.fsf@oldenburg.str.redhat.com>
+ <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+ <87r0c3dc1c.fsf@oldenburg.str.redhat.com>
+ <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-* Szabolcs Nagy:
+On Mon, Jul 08, 2024 at 10:52:36AM -0700, Jeff Xu wrote:
+> On Mon, Jul 8, 2024 at 10:33 AM Florian Weimer <fweimer@redhat.com> wrote:
+> >
+> > * Jeff Xu:
+> >
+> > > On Mon, Jul 8, 2024 at 9:26 AM Florian Weimer <fweimer@redhat.com> wrote:
+> > >>
+> > >> * Jeff Xu:
+> > >>
+> > >> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
+> > >> > libraries too ?  or just the main executable itself.
+> > >>
+> > >> I expect that dynamic linkers will have to do this for everything they
+> > >> map.
+> > > Then all the objects (.so, .sh, etc.) will go through  the check from
+> > > execveat's main  to security_bprm_creds_for_exec(), some of them might
+> > > be specific for the main executable ?
 
->> However, does it matter much? That's only for the initial setup, the
->> user can then change the permissions directly via the sysreg. So maybe
->> we don't need all those combinations upfront. A PKEY_DISABLE_EXECUTE
->> together with the full PKEY_DISABLE_ACCESS would probably suffice.
->
-> this is ok.
->
-> a bit awkward in userspace when the register is directly
-> set to e.g write-only and pkey_get has to return something,
-> but we can handle settings outside of valid PKEY_* macros
-> as unspec, users who want that would use their own register
-> set/get code.
->
-> i would have designed the permission to use either existing
-> PROT_* flags or say that it is architectural and written to
-> the register directly and let the libc wrapper deal with
-> portable api, i guess it's too late now.
+Yes, we should check every executable code (including seccomp filters)
+to get a consistent policy.
 
-We can still define a portable API if we get a few more PKEY_* bits.
-The last attempt stalled because the kernel does not really need them,
-it would be for userspace benefit only.
+What do you mean by "specific for the main executable"?
 
-For performance-critical code, pkey_get/pkey_set are already too slow,
-so adding a bit more bit twiddling to it wouldn't be a proble, I think.
-Applications that want to change protection key bits around a very short
-code sequence will have to write the architecture-specific register.
+> >
+> > If we want to avoid that, we could have an agreed-upon error code which
+> > the LSM can signal that it'll never fail AT_CHECK checks, so we only
+> > have to perform the extra system call once.
 
-> (the signal handling behaviour should have a control and it
-> is possible to fix e.g. via pkey_alloc flags, but that may
-> not be the best solution and this can be done later.)
+I'm not sure to follow.  Either we check executable code or we don't,
+but it doesn't make sense to only check some parts (except for migration
+of user space code in a system, which is one purpose of the securebits
+added with the next patch).
 
-For glibc, the POWER behavior is much more useful.
+The idea with AT_CHECK is to unconditionnaly check executable right the
+same way it is checked when a file is executed.  User space can decide
+to check that or not according to its policy (i.e. securebits).
 
-Thanks,
-Florian
+> >
+> Right, something like that.
+> I would prefer not having AT_CHECK specific code in LSM code as an
+> initial goal, if that works, great.
 
+LSMs should not need to change anything, but they are free to implement
+new access right according to AT_CHECK.
+
+> 
+> -Jeff
+> 
+> > Thanks,
+> > Florian
+> >
 
