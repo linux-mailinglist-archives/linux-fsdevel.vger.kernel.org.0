@@ -1,132 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-23436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B941C92C375
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 20:45:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA1192C38F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 20:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D25371C22A1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 18:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8FF1F23143
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 18:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD5C17B049;
-	Tue,  9 Jul 2024 18:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA0B182A53;
+	Tue,  9 Jul 2024 18:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmPeKdgQ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sa5BsQzN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7013C1B86C2;
-	Tue,  9 Jul 2024 18:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1947180059
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 18:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720550741; cv=none; b=UH11jUptjvH4GT2B/w3f3dmaitXG9qxJpkAd3qC7CC+hATc3npQQZmTpFcqPhdbRaKRnUhVVkVk9pg4jynvZZUvN81Jtlh0ASbAGIhaRbrWVq8tmeXJOSNlgJ3fLedv1J1QyZCT92X3C548fTzVEiyHNW/yXNPBBUX5wsTElWUk=
+	t=1720551488; cv=none; b=TX97CdW8NAMtnd/dknwcEmnKZEFE9xlytuI/SRhf2ereytacIvsfkOMhsWhZuPihsV2yjGFZhVsTInTX0CdC3yZyfM6H0IQNb3EPd/ZVPlteesg2bwSBkLnOSs/pi8+y+66XFwQUAXDz8HRE4bHfrje2tKjU+woPJCnc4B4Qoao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720550741; c=relaxed/simple;
-	bh=EKO2IicO2ycBhWc0qjpq15RR+yI0SxcIPuFZqRFJT04=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaal6bJrxpS01WDZv5qtCdrcGbic/Rt6NPzs+ERVtayHGXGlWb0FJ3YzZ9tm4RbLVZpVqofmCnirPSVvFsWradjRO9ZQY+TbXcEpX0DNKOvnIUitCopwjyrgdlSXHl3w4u26vmMbnXEDWpQUxkAMo7lZhKK4zYOf9aooA8WA/WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmPeKdgQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A087BC3277B;
-	Tue,  9 Jul 2024 18:45:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720550740;
-	bh=EKO2IicO2ycBhWc0qjpq15RR+yI0SxcIPuFZqRFJT04=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WmPeKdgQafpQHgEiGxkH4lwxZDPNJ4ADLXZQ9PpvI0p+RsjnjJoXoFKXAI2/3pnS9
-	 tMqT/nSyOYY0Y1FWhzp8fQv8Bj7LazThDAZqThSLDdFrM0amljYfwAQ3XpUMgHsQRk
-	 FbC2B4MCVquGNMvH6KYc+wTt5yytNZFesrgX1uOPyV5HU2MX8er4PC4RiWlY60qisw
-	 LeVNgZkHgVxzVi0kEC70tYVVQZciRyXFg3eljC7RS/x2b3TCOydMwN2BCdZbqKrel1
-	 8Xw409dYXNrq0U0vdy96a52CduCpJNcogdjGCkU2iTcX36BvzIIPX8Hpmo/KB1qMvT
-	 19GrxWDjGPjqQ==
-Date: Tue, 9 Jul 2024 20:45:37 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
-Subject: Re: [PATCH v5 1/2] statmount.2: New page describing the statmount
- syscall
-Message-ID: <x2banrgmwnvbyvyybdgpuslvkzdj2sno5q325abtji7ct2c3zq@vbec5kh5eln4>
-References: <cover.1720545710.git.josef@toxicpanda.com>
- <009928cf579a38577f8d6cc644c115556f9a3576.1720545710.git.josef@toxicpanda.com>
- <fx5grrvxxxjx3cu5dej5uit6qsaownahwc644ku52vxcuzhhn3@dqjkofvlsopn>
- <20240709183724.GB1045536@perftesting>
+	s=arc-20240116; t=1720551488; c=relaxed/simple;
+	bh=vgV3NNlzFKCiU3pBnrqOOxg16OSb3pUQ2G39Zbsbj1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HFhEgNQwgJhNx8bJl5QMomKvBxjJSiNMYvipVgQLisb+nDInPgHILIo19EUGwMfjFQiqTBffLFNEIWL1tnHjvCRuju4cTH3LM/dxLV5nhdg4BmxW/Qm29OKb4dK61V4zpPvJyj1p9ynvlH7NDWHCDG9m1cq7LKMttmDdf4SGXUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sa5BsQzN; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso2307a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 11:58:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720551485; x=1721156285; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zAoQUSx9bhpcdjQTt+qmhPqP+zZAnIGtZqlOI0lzq4w=;
+        b=sa5BsQzNzOOcSPF9OfoPAP207D5WndvlKepdTyJgMU8ybS4vX3ZOPl+9Hv9bzFYd/O
+         XhaQdi6jl9KabAjFmVJT8ItjVBtHJhFYGNkFIJZAQTWcyc5lxNQ7lzhHoEgbuK4Le8Kn
+         LSnYsZf0vlgpQjnhSd+7pwu3h0XC9zqEL3yh91FGpwDnsCCrlx/5AyS9jPRaavA2mdr7
+         Bs5ySs7DjRQh+5GI+qbRdsHbr9bLvoDiG04oRQtVA+5Jj+WPw2rOBgoDQfdT4C+vJvP2
+         dHDu3dewG3VaQZ06i/8DQUpQSAJOPqWpMXqneQjVwK8KmQJdt8sOpr1BKZYaJafXcPQ8
+         HSJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720551485; x=1721156285;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zAoQUSx9bhpcdjQTt+qmhPqP+zZAnIGtZqlOI0lzq4w=;
+        b=JPdJ1CVGPMW30wXXN6+dymAJogC7jeTsnL2+T9gpUHWslfUxd2nmSLDyTNs86uVEy5
+         tamw+irMmP3A5WrcuUfWKuPdtdCInP7RCuCmVd3xvaljvufn0Raw9Z273/v6XuAPqS00
+         5/K5FeAwPXJGDOu5vtSOAqvzoSuCNogRo7SxBRy/f9Rsh8V5BFQAXPFGy5FzTZF0wLRC
+         YwQMuPd8zWCWG+X0bVyWGGY2lxUMGlpagTPmMUqmz+fi39/i/hI41JcMXU7CWfSxqDIj
+         kkybEdSUKFr3W0nQclOZ1+lRhViB+k0OjcGmrITUm9HhIba1oUoe5ivgYpR7DKXXwlkG
+         abXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFBsiTA9VvArSgmHiESwyup7gd+sY6R0bNfgz1TR4ll0/Ry7i5Ceeih36sF+4J3V+Cjf5LN5Y+3THt+FN9yTsk0EMkLNSMMTQl/ZoRtg==
+X-Gm-Message-State: AOJu0YzUN8GHvzOsf/dx8U7gAtlHZgiN4g2q0Hu9j4rsdOr1XhFUzcKi
+	mutBHWGFQ8aLc245OQsXFxRA1xrEaL8nF8q7QL+wYYEAeQdQRbPWQwrHzyigyRXeVCUBsgkT7lV
+	G+DOMpeRVoXgtZvgPbvaAzARZgSGt9HzAYihz
+X-Google-Smtp-Source: AGHT+IECwTUCWfNd/m0r/4U5ddqq9szdLi7Tw8glyBT6PX7+eYxwo4Ic0ZuXywbnuTJaGnFDZBWSOOJzFKOrzR9sUWE=
+X-Received: by 2002:a50:9f84:0:b0:58b:dfaa:a5ca with SMTP id
+ 4fb4d7f45d1cf-596d4daf533mr28844a12.6.1720551484754; Tue, 09 Jul 2024
+ 11:58:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gu2yr3nnb2wadcno"
-Content-Disposition: inline
-In-Reply-To: <20240709183724.GB1045536@perftesting>
-
-
---gu2yr3nnb2wadcno
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
+ <87bk3bvhr1.fsf@oldenburg.str.redhat.com> <CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
+ <87ed83etpk.fsf@oldenburg.str.redhat.com> <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+ <87r0c3dc1c.fsf@oldenburg.str.redhat.com> <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
+ <20240709.gae4cu4Aiv6s@digikod.net>
+In-Reply-To: <20240709.gae4cu4Aiv6s@digikod.net>
+From: Jeff Xu <jeffxu@google.com>
+Date: Tue, 9 Jul 2024 11:57:27 -0700
+Message-ID: <CALmYWFsvKq+yN4qHhBamxyjtcy9myg8_t3Nc=5KErG=DDaDAEA@mail.gmail.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Florian Weimer <fweimer@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, 
+	"Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-man@vger.kernel.org, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, kernel-team@fb.com
-Subject: Re: [PATCH v5 1/2] statmount.2: New page describing the statmount
- syscall
-References: <cover.1720545710.git.josef@toxicpanda.com>
- <009928cf579a38577f8d6cc644c115556f9a3576.1720545710.git.josef@toxicpanda.com>
- <fx5grrvxxxjx3cu5dej5uit6qsaownahwc644ku52vxcuzhhn3@dqjkofvlsopn>
- <20240709183724.GB1045536@perftesting>
-MIME-Version: 1.0
-In-Reply-To: <20240709183724.GB1045536@perftesting>
 
-On Tue, Jul 09, 2024 at 02:37:24PM GMT, Josef Bacik wrote:
-> > s/NULL terminated/null-terminated/
-> >=20
-> > NULL is the null pointer constant.
-> > NUL is the ASCII name for the null byte.
-> > We say null-terminated, because someone (probably Michael Kerrisk)
-> > thought NULL and NUL were confusing.  :)
-> >=20
->=20
-> This is probably worth adding to 'make check' to save you time from telli=
-ng me
-> to do that when I screw it up again in the future.  Thanks,
+On Tue, Jul 9, 2024 at 2:18=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+>
+> On Mon, Jul 08, 2024 at 10:52:36AM -0700, Jeff Xu wrote:
+> > On Mon, Jul 8, 2024 at 10:33=E2=80=AFAM Florian Weimer <fweimer@redhat.=
+com> wrote:
+> > >
+> > > * Jeff Xu:
+> > >
+> > > > On Mon, Jul 8, 2024 at 9:26=E2=80=AFAM Florian Weimer <fweimer@redh=
+at.com> wrote:
+> > > >>
+> > > >> * Jeff Xu:
+> > > >>
+> > > >> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
+> > > >> > libraries too ?  or just the main executable itself.
+> > > >>
+> > > >> I expect that dynamic linkers will have to do this for everything =
+they
+> > > >> map.
+> > > > Then all the objects (.so, .sh, etc.) will go through  the check fr=
+om
+> > > > execveat's main  to security_bprm_creds_for_exec(), some of them mi=
+ght
+> > > > be specific for the main executable ?
+>
+> Yes, we should check every executable code (including seccomp filters)
+> to get a consistent policy.
+>
+> What do you mean by "specific for the main executable"?
+>
+I meant:
 
-Hmmmm, interesting.  Maybe I can come up with some rules for common
-mistakes.
+The check is for the exe itself, not .so, etc.
 
-Cheers,
-Alex
+For example:  /usr/bin/touch is checked.
+not the shared objects:
+ldd /usr/bin/touch
+linux-vdso.so.1 (0x00007ffdc988f000)
+libc.so.6 =3D> /lib/x86_64-linux-gnu/libc.so.6 (0x00007f59b6757000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f59b6986000)
 
->=20
-> Josef
->=20
+Basically, I asked if the check can be extended to shared-objects,
+seccomp filters, etc, without modifying existing LSMs.
+you pointed out "LSM should not need to be updated with this patch
+series.", which already answered my question.
 
---=20
-<https://www.alejandro-colomar.es/>
+Thanks.
+-Jeff
 
---gu2yr3nnb2wadcno
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmaNhVEACgkQnowa+77/
-2zJglQ//f4RLZHzcxpt8GGhMl4d2EoYFCA1VxVR4yhIkr26RzmURHIhL1HZBMnUc
-Y1likdVTytZhAMVRzImTGt9REXb55NyYfpyBv0HIGJVvKI8DbNW5cS8NiMymbhHo
-v0IaeZA8JOQWg42euVnrxmQMLPo8GeufgYRCZHYtx9U0qY6TCXCx8SoyRnC6pNnk
-EDvAQmfAAEqcwL8HNX2akET9Qo73wTzV4FeFpjiesWRsvFXRBeVqmaZxen7ItT+g
-poSF3PAxdf4FagcN6yuAQM7asqv6ID3ppF9UJnhJgEBtCZowGgrtEdO4X7D7nUhm
-N3Oy9ijlrV1IlaQnI319xtp2rtYW6w49YfnKVcK6PQK+0If5KCdH0VnY6ENbe0kN
-nbseVGTYVTfwrMuIqCqVnsVbuJJl70J6bPsbGgVvVgDL7lBHS8AWk/zwH/SskEYk
-KhFSpdq+S++hwtz/P0roHB31rFd18TCQIHOZ3AnKP1OpNLYkgokgLzsxZviQP4kq
-Gip/8M2cXeAmJSMYK9JWcjRrBN8ZTezWsHrkFbdiuOpCLRyeekYUI41PajiKTjaW
-sj+hNQ112QAS89ZKHzaf4/JaB8soO7lheMxK2jetFqN7PsclQOVLfwhB7YB3FuKO
-9cYDHC/ExhoBgh48EctfPavMIHB+OVGzuZD+EJJn7d/uwuosAfs=
-=q0br
------END PGP SIGNATURE-----
-
---gu2yr3nnb2wadcno--
+-Jeff
 
