@@ -1,111 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-23402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A2F92BCE9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 16:28:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED9992BDB6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B431D2826D3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 14:28:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 233841F26485
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 15:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0231922D8;
-	Tue,  9 Jul 2024 14:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C5319D060;
+	Tue,  9 Jul 2024 15:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N7nFqwjU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CS6lryfd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC63D28E3
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 14:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE1218FDBD
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 15:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535320; cv=none; b=l+RTnCPfM93ETDOILF6wWC3WJAYX8PFDITF9C7nDahClxXSGLvchCc6APQvS8BTHelO1zzPN7Hu3NmEJDj3K3Y9cEKdEgvrs2UxkP0fgZMw4a0dEGj6UfBx2t20SGk0vRMnU/05eFFYKnt7VU7EXpeft3AZHIwQgN4ifJWv9SZA=
+	t=1720537399; cv=none; b=g+C726KxQsb+pUY4S20T1H/MfHq25ONtZGeOnUXgIlWvZhrF2qmdERQ/Lyp6I+HzbStaLOAS8zShRAAN8rn3DXPnReUWaSn+nckiXT8/gzz0DdGWJkmenOBEzd/RpLHmKNKQybzLrvPEt92CfYm9Z6zNF7AjKmul5m6IX8IHPEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535320; c=relaxed/simple;
-	bh=N51YY50iZM2xd0G1g1J7sL7mFACPG6CXFw/kqmSAsFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kiAZn/pCC2BRw3mL5o0DRU4ll9LbJ0XLh4xn1KSh1GONq5D4iHR4gsdLxG7LzXGJdcfPN7kf7FE8/PqgiijcgBNvFK2sE/140Tpcl2sd5kpIgT+Jsw6fuoT8teSBsv5cbxZOiPBqddhAlN0f/gqAuvff4eiNxp2T9FTUnuT5hNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=N7nFqwjU; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-58b966b41fbso6598404a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 07:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1720535317; x=1721140117; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wU8bklL5Sk+P9jtPWt71PuRxvvqxwIqd0UA8CuZijlc=;
-        b=N7nFqwjUwnzzlxroDNzxU3lx806q59P0H3rKjeKXO1zVjnSDACoDDskpWce9E3f1XI
-         dxeFnnNk4ZDlqLTdo5KNZm4+OxwdNPsYF5ECY+BcqG0E2+eqaZkI774JLXhveQ9oD1Q8
-         aDMYojZXDCx6iZRtqhiEn/27KPBXa/Pu9dQP4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720535317; x=1721140117;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wU8bklL5Sk+P9jtPWt71PuRxvvqxwIqd0UA8CuZijlc=;
-        b=aj8pMmcU1OUhs276MXHZMHZTPpSIF1H6t+GzDs5wTtWE9oNVrKYUUPtB52RxiFcARH
-         UcuU9CAtF3DoLD2oG4QVbWGnontPUGhY70FD+Wz7T4rtaKwJv+WU5WXBoxMkr3YgMlXw
-         lxoWSnnpj/+omVtp6ssy1H/17wNVWfjfGeDzeWpEH3XS64scwVloOb1mmO2RXfKl6+vs
-         xOwVbOd3dBg/UOJJiOu76vp/CDIFj2h+RA6hW/MDZL/Gqd27xHpDTHEn1/FXk5UegIz2
-         EcYn3juY5BzVW4lgMrE8axLWTVTlnumbWQZkagc8KCe7PCAq0BuVx1mbVEotio2Ikv/X
-         xsAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtYWIC8moQYwj1axazGGXZXYUvtmvl9+jfAHLiVA1gYom+Hisvo8i0FRNqp5gDL6pcG89iKqMcWGtOcQmxt90WH2ucY/YRGNkYyN8tTA==
-X-Gm-Message-State: AOJu0Yyqi2rQKYl9dXjGmLFwsBF02h1wl0xcprvkrwUEXWn09W40DkV7
-	qH1PRV+N5vygenWJJsOMAcQcbUSL39zEQitbIk52GAZQcnit7ZXq1W6sQ7SUwK2q+13QzM/9t+3
-	MiOE=
-X-Google-Smtp-Source: AGHT+IEUDHy8lPKYzRC8fdaJItWQwN4lPREA6fPpbLsyn6pxXhkznNGfD97XdbKLEGBqF8EBgsW9mQ==
-X-Received: by 2002:a17:906:6857:b0:a75:21d3:60a1 with SMTP id a640c23a62f3a-a780b89ab19mr168447966b.75.1720535316877;
-        Tue, 09 Jul 2024 07:28:36 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a854368sm81181366b.155.2024.07.09.07.28.36
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 07:28:36 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-58b447c51bfso6469590a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 07:28:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWvlUQP8oKmJW67Fz4ZBXUzrtFgfTN+ZJEqO1PJ2lnSBGgMQX/RKPIkLt+0lSC5eeftt8fvS8CxLTyBzzD9kBbwgZUP0+8LyKMe2gOVVQ==
-X-Received: by 2002:a05:6402:26c6:b0:595:7640:ee79 with SMTP id
- 4fb4d7f45d1cf-5957640f148mr1296551a12.17.1720535315869; Tue, 09 Jul 2024
- 07:28:35 -0700 (PDT)
+	s=arc-20240116; t=1720537399; c=relaxed/simple;
+	bh=EHFO4COxVI/ItaBgjkAazCvGv2dOd647NACB3GTx0sA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mESj3sL4J1glr4t1fpkCFWeNO+tq7gBxmeRZ9ZNs0FPBMfPjz/N56a2pimpf3ttP8OxUzJpKSdEKpNaYpR8qkERMer6iUvy8wew346Mqp+URURDPIsXyH5My1IyQAXE4047q6r2SvsnO2n6RDsSFnw3DHd+pAThzjyQfaB5Z2BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CS6lryfd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=r5U8ow87LniB6MbykTphy9Sv/XESyJIsi3mqF5DOjXY=; b=CS6lryfdVP/jxt0ZCV0rFAVEzp
+	kblr57CEEugMug1L9U+97rR7/All7v0gGZVFF04QEWmrwi7Y7LeGA2ApDI2jW3FdFOc0lLOLH33lf
+	m8H8g8NdH70nHHHk3KNccZ8RySTL0xFZkVyKyeuULqpYOqJo0okR1c0GY7QHVKYpGmfH2M4HMgD/x
+	Ixy6nj1n9rh+mBRnqdQLKBbvFgX/sYol/0rWAMCyK2Dd0bw+mVrQQFXbS7oB1Erhy+AGuWvoNIj8J
+	Cowa6WF2sICpIZbsOGKRgcB2Hu7iCfy6Yu7sH9Cha3FGYCFhARrvXqwUiC8LAdy5XtigOEm5fQi/B
+	We4OCJ8g==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRCN9-00000007zrq-19Gr;
+	Tue, 09 Jul 2024 15:03:15 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 0/7] Convert sysv directory handling to folios
+Date: Tue,  9 Jul 2024 16:03:05 +0100
+Message-ID: <20240709150314.1906109-1-willy@infradead.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
- <Zo0LECcBUElkHPGs@J2N7QTR9R3>
-In-Reply-To: <Zo0LECcBUElkHPGs@J2N7QTR9R3>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 9 Jul 2024 07:28:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgAKfXySpKFcJUdv97Rqz7RxPF-uc6xsue6Oiy=tP65oA@mail.gmail.com>
-Message-ID: <CAHk-=wgAKfXySpKFcJUdv97Rqz7RxPF-uc6xsue6Oiy=tP65oA@mail.gmail.com>
-Subject: Re: FYI: path walking optimizations pending for 6.11
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 9 Jul 2024 at 03:04, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> Looking at the arm64 runtime constants patch, I see there's a redundant
-> store in __runtime_fixup_16(), which I think is just a leftover from
-> applying the last roudn or feedback:
+This patch series mirrors the changes to ext2 directory handling.
+It's a bit simpler than the UFS one from yesterday as sysv was already
+converted to kmap_local.  Again, compile tested only.
 
-Duh, yes.
+Matthew Wilcox (Oracle) (7):
+  sysv: Convert dir_get_page() to dir_get_folio()
+  sysv: Convert sysv_find_entry() to take a folio
+  sysv: Convert sysv_set_link() and sysv_dotdot() to take a folio
+  sysv: Convert sysv_delete_entry() to work on a folio
+  sysv: Convert sysv_make_empty() to use a folio
+  sysv: Convert sysv_prepare_chunk() to take a folio
+  sysv: Convert dir_commit_chunk() to take a folio
 
-> For the sake of review, would you be happy to post the uaccess and
-> runtime-constants patches to the list again? I think there might be some
-> remaining issues with (real) PAN and we might need to do a bit more
-> preparatory work there.
+ fs/sysv/dir.c   | 158 +++++++++++++++++++++++-------------------------
+ fs/sysv/itree.c |   4 +-
+ fs/sysv/namei.c |  32 +++++-----
+ fs/sysv/sysv.h  |  20 +++---
+ 4 files changed, 105 insertions(+), 109 deletions(-)
 
-Sure. I'll fix that silly left-over store, and post again.
+-- 
+2.43.0
 
-           Linus
 
