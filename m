@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-23348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC71B92AEC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 05:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D0592AEBF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 05:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2B111C20CA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 03:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D50A0B21B64
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 03:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A7712CD96;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8891612C484;
 	Tue,  9 Jul 2024 03:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KB54zUT4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gu1CHuK1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73AB42067
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 03:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722464502B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 03:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720495836; cv=none; b=d9H3d15nKJmHHpwwYmMskxBj2RE2buz16EHPfx4+MnbXQQLKgKH2lWFWwlX20MI3NAFss1xp/AY/Uf9YgYm6R3iu6tUDX+fCc29CmX57EUuFd1WLQ8QrJL0PBSJ6REWHGrVJ4DlAK2QpdzCYLlEgEtyDGsjCMpGY3+km/v39RII=
+	t=1720495836; cv=none; b=IacpXGKOvzEZqvLCKxSMvVvuuPMcfBqlBgCjlwln/2+NNxQpF9iubuN+6bVD5snaB4tKp+zIyJ98O3HhIl0rsOQfqPRDHnFq/Riq1AyXg1ZBTfzTPbcFIDc//O3k0bS1kh75iU13E00gEauDFpgBej7+1i6m4nVIMmAfSDfkw9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720495836; c=relaxed/simple;
-	bh=YsBuYwNxyCtU1ndknAGW867NljFfrltww4qmsIB/LJ8=;
+	bh=B93pKBCMwrta/cZfJ08CRHvHvzJunHpVHvZUnMVLT34=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cu7Xqn7phHlO0ru4RxQham7StHctyYgf/MF8FtfNDOWgUKZ0zFwHxsknJTp6fpv+qIkk6bBmRLq+PZImh1IXIIwOLm9nU4JF4/DjM4nI1ghGlhggc11T4vBdXYLG9yL0URZ5oGCPPh2qEkbc6iItVZ0XXwKNgflmmP0EKa4awFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KB54zUT4; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=DvlPnffBDV8bO28Td1eQnuWeKYgNbRUd9GkFGZspPff0jziZQBXe+pmXYtSEaslIn6IbwchYD6gSqrkA+Te2ZUyEUmcb3fRsEZeZ0HfhVM230A7/AUoMyZRDNsTrRBn/7rW+cMH5Wn79s0fyUeWZa7r/LNj4qjK3p+CsznMQ5kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Gu1CHuK1; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=GQY9LoA8hNCAWXgQD5p24hGXMklnNxC7e+IGOlnepnU=; b=KB54zUT4pn/6itZOFfUbtNKg9n
-	kAlauTauiRimnCzq4b0LhaDSs9bVnKuO2hkUZBrJtg3n3+bSQ6yHdvMGoqx+Sj45jbI4RkWP9RRVP
-	DDji/smsFCMZq529lH/joHnZUttN8Eu/FwdeQwoESMkmu1yauAuf4dUoLcfWsIy+Mz8DnpG9q2Lmb
-	gERpZws6eJAvZKeqew+fi6rDGPm7OX0SeQsPPt+fy3J+oxj+9sYA0J6tOZNaWcVvlM0QOy0lC3riq
-	IhV9WUJ507uMy8cmLqjAgcD5HGXL4GRzjvuSzUgAhKCdud+4Q5RWbclk07zwpBscs+Msgjv65ub0e
-	DAKz6pIA==;
+	bh=/Y+PqX7MwRu1AeQN2mFg5ga0TpDmNlJByyAfOKwi7ck=; b=Gu1CHuK1hgQ8CSMqGAF9t4SNCT
+	UaRnR8GZvv+JUYRlyE2bdB63Ew/oayfJSqsEGygpfIwmvZOB2Wtyjtk0LUi8OQYWBhk4vkE1jA3ml
+	I6qu7dIaNovia4ToqUSX2h91rH2ewwzHk656dDIqA+6M8U0KgXYRUBoPKOamNHx1Lr/Ljr3uA/zU4
+	sjl0I9vrrhd6lT0ZX7iD+kRM1zg7HRcMn72ZQGpmtQJY1SggNwWo81T2r2NbAYWKyDsZIzhQa5uq5
+	Xjp/onyUVDBi1RcELPxEuV9hnchskkzZbfssI+Vd6VvfJHyvCEPLwJbzRIjTV75lmvTtdk/UK/TN+
+	Oqyn/KGA==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sR1Ym-00000007QTJ-0t0T;
+	id 1sR1Ym-00000007QTQ-1S4t;
 	Tue, 09 Jul 2024 03:30:32 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 09/10] ufs; Convert ufs_commit_chunk() to take a folio
-Date: Tue,  9 Jul 2024 04:30:26 +0100
-Message-ID: <20240709033029.1769992-10-willy@infradead.org>
+Subject: [PATCH 10/10] ufs: Convert directory handling to kmap_local
+Date: Tue,  9 Jul 2024 04:30:27 +0100
+Message-ID: <20240709033029.1769992-11-willy@infradead.org>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240709033029.1769992-1-willy@infradead.org>
 References: <20240709033029.1769992-1-willy@infradead.org>
@@ -63,77 +63,167 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All callers now have a folio, so pass it in.  Saves a call to
-compound_head().
+Remove kmap use and use folio_release_kmap() instead of ufs_put_page().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ufs/dir.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/ufs/dir.c   | 30 ++++++++++++------------------
+ fs/ufs/namei.c | 15 +++++----------
+ 2 files changed, 17 insertions(+), 28 deletions(-)
 
 diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
-index a20f66351c66..71685491d5f6 100644
+index 71685491d5f6..3b3cd84f1f7f 100644
 --- a/fs/ufs/dir.c
 +++ b/fs/ufs/dir.c
-@@ -42,18 +42,18 @@ static inline int ufs_match(struct super_block *sb, int len,
- 	return !memcmp(name, de->d_name, len);
+@@ -66,12 +66,6 @@ static int ufs_handle_dirsync(struct inode *dir)
+ 	return err;
  }
  
--static void ufs_commit_chunk(struct page *page, loff_t pos, unsigned len)
-+static void ufs_commit_chunk(struct folio *folio, loff_t pos, unsigned len)
+-static inline void ufs_put_page(struct page *page)
+-{
+-	kunmap(page);
+-	put_page(page);
+-}
+-
+ ino_t ufs_inode_by_name(struct inode *dir, const struct qstr *qstr)
  {
--	struct address_space *mapping = page->mapping;
-+	struct address_space *mapping = folio->mapping;
- 	struct inode *dir = mapping->host;
- 
- 	inode_inc_iversion(dir);
--	block_write_end(NULL, mapping, pos, len, len, page, NULL);
-+	block_write_end(NULL, mapping, pos, len, len, &folio->page, NULL);
- 	if (pos+len > dir->i_size) {
- 		i_size_write(dir, pos+len);
- 		mark_inode_dirty(dir);
+ 	ino_t res = 0;
+@@ -81,7 +75,7 @@ ino_t ufs_inode_by_name(struct inode *dir, const struct qstr *qstr)
+ 	de = ufs_find_entry(dir, qstr, &folio);
+ 	if (de) {
+ 		res = fs32_to_cpu(dir->i_sb, de->d_ino);
+-		ufs_put_page(&folio->page);
++		folio_release_kmap(folio, de);
  	}
--	unlock_page(page);
-+	folio_unlock(folio);
+ 	return res;
  }
- 
- static int ufs_handle_dirsync(struct inode *dir)
-@@ -103,7 +103,7 @@ void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
- 	de->d_ino = cpu_to_fs32(dir->i_sb, inode->i_ino);
+@@ -104,7 +98,7 @@ void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
  	ufs_set_de_type(dir->i_sb, de, inode->i_mode);
  
--	ufs_commit_chunk(&folio->page, pos, len);
-+	ufs_commit_chunk(folio, pos, len);
- 	ufs_put_page(&folio->page);
+ 	ufs_commit_chunk(folio, pos, len);
+-	ufs_put_page(&folio->page);
++	folio_release_kmap(folio, de);
  	if (update_times)
  		inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
-@@ -383,7 +383,7 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
- 	de->d_ino = cpu_to_fs32(sb, inode->i_ino);
- 	ufs_set_de_type(sb, de, inode->i_mode);
- 
--	ufs_commit_chunk(&folio->page, pos, rec_len);
-+	ufs_commit_chunk(folio, pos, rec_len);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 
  	mark_inode_dirty(dir);
-@@ -526,7 +526,7 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
- 	if (pde)
- 		pde->d_reclen = cpu_to_fs16(sb, to - from);
- 	dir->d_ino = 0;
--	ufs_commit_chunk(&folio->page, pos, to - from);
-+	ufs_commit_chunk(folio, pos, to - from);
- 	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+@@ -197,7 +191,7 @@ static void *ufs_get_folio(struct inode *dir, unsigned long n,
+ 
+ 	if (IS_ERR(folio))
+ 		return ERR_CAST(folio);
+-	kaddr = kmap(&folio->page);
++	kaddr = kmap_local_folio(folio, 0);
+ 	if (unlikely(!folio_test_checked(folio))) {
+ 		if (!ufs_check_folio(folio, kaddr))
+ 			goto fail;
+@@ -206,7 +200,7 @@ static void *ufs_get_folio(struct inode *dir, unsigned long n,
+ 	return kaddr;
+ 
+ fail:
+-	ufs_put_page(&folio->page);
++	folio_release_kmap(folio, kaddr);
+ 	return ERR_PTR(-EIO);
+ }
+ 
+@@ -283,7 +277,7 @@ struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
+ 					goto found;
+ 				de = ufs_next_entry(sb, de);
+ 			}
+-			ufs_put_page(&(*foliop)->page);
++			folio_release_kmap(*foliop, kaddr);
+ 		}
+ 		if (++n >= npages)
+ 			n = 0;
+@@ -359,7 +353,7 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
+ 			de = (struct ufs_dir_entry *) ((char *) de + rec_len);
+ 		}
+ 		folio_unlock(folio);
+-		ufs_put_page(&folio->page);
++		folio_release_kmap(folio, kaddr);
+ 	}
+ 	BUG();
+ 	return -EINVAL;
+@@ -390,7 +384,7 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
+ 	err = ufs_handle_dirsync(dir);
+ 	/* OFFSET_CACHE */
+ out_put:
+-	ufs_put_page(&folio->page);
++	folio_release_kmap(folio, de);
+ 	return err;
+ out_unlock:
+ 	folio_unlock(folio);
+@@ -468,13 +462,13 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
+ 					       ufs_get_de_namlen(sb, de),
+ 					       fs32_to_cpu(sb, de->d_ino),
+ 					       d_type)) {
+-					ufs_put_page(&folio->page);
++					folio_release_kmap(folio, de);
+ 					return 0;
+ 				}
+ 			}
+ 			ctx->pos += fs16_to_cpu(sb, de->d_reclen);
+ 		}
+-		ufs_put_page(&folio->page);
++		folio_release_kmap(folio, kaddr);
+ 	}
+ 	return 0;
+ }
+@@ -531,7 +525,7 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
  	mark_inode_dirty(inode);
  	err = ufs_handle_dirsync(inode);
-@@ -574,7 +574,7 @@ int ufs_make_empty(struct inode * inode, struct inode *dir)
- 	strcpy (de->d_name, "..");
- 	kunmap_local(kaddr);
+ out:
+-	ufs_put_page(&folio->page);
++	folio_release_kmap(folio, kaddr);
+ 	UFSD("EXIT\n");
+ 	return err;
+ }
+@@ -624,12 +618,12 @@ int ufs_empty_dir(struct inode * inode)
+ 			}
+ 			de = ufs_next_entry(sb, de);
+ 		}
+-		ufs_put_page(&folio->page);
++		folio_release_kmap(folio, kaddr);
+ 	}
+ 	return 1;
  
--	ufs_commit_chunk(&folio->page, 0, chunk_size);
-+	ufs_commit_chunk(folio, 0, chunk_size);
- 	err = ufs_handle_dirsync(inode);
- fail:
- 	folio_put(folio);
+ not_empty:
+-	ufs_put_page(&folio->page);
++	folio_release_kmap(folio, kaddr);
+ 	return 0;
+ }
+ 
+diff --git a/fs/ufs/namei.c b/fs/ufs/namei.c
+index a9b0c15de067..24bd12186647 100644
+--- a/fs/ufs/namei.c
++++ b/fs/ufs/namei.c
+@@ -306,23 +306,18 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 	if (dir_de) {
+ 		if (old_dir != new_dir)
+ 			ufs_set_link(old_inode, dir_de, dir_folio, new_dir, 0);
+-		else {
+-			kunmap(&dir_folio->page);
+-			folio_put(dir_folio);
+-		}
++		else
++			folio_release_kmap(dir_folio, new_dir);
+ 		inode_dec_link_count(old_dir);
+ 	}
+ 	return 0;
+ 
+ 
+ out_dir:
+-	if (dir_de) {
+-		kunmap(&dir_folio->page);
+-		folio_put(dir_folio);
+-	}
++	if (dir_de)
++		folio_release_kmap(dir_folio, dir_de);
+ out_old:
+-	kunmap(&old_folio->page);
+-	folio_put(old_folio);
++	folio_release_kmap(old_folio, old_de);
+ out:
+ 	return err;
+ }
 -- 
 2.43.0
 
