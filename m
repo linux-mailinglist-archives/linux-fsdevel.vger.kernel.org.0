@@ -1,139 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-23406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D03192BDB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:03:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A3392BDD4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3845285B6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 15:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B013E1F22813
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 15:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C795F19D079;
-	Tue,  9 Jul 2024 15:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306A219CD0C;
+	Tue,  9 Jul 2024 15:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WaQPiZof"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="iLpfnOag";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oFnAoLNN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DBF19CCF4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 15:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C89C364AB;
+	Tue,  9 Jul 2024 15:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720537399; cv=none; b=Huielhq5i7zDx46VywPMLLDY6M6x3/qunPmp2slzhzvwYy31EX1tIKXnWNQpDOKzg9Wbynn+sMQvMcquEa/v8swg7gy9jP2v4A3Vwv9hjiRUvO5MkW07LV1bj6fWcdIf/xLCvWAab4UmJ0qwRhnsIO+d12GK5fzseM9ENZUTEWw=
+	t=1720537702; cv=none; b=EY0VCzV/Iu0xFge2fC2AfPBKcJEFXN5I7i9WH9yk+hfTt7HG4POQR+jrfrG97wmizyhYZb1hgdaf1qZVYKagsYmIbncK4CfNDLFkac6Crf3+UXacS0dwN3msRYfnsbbIEfTEdidIySf+E5c/UY+vlkU6Mr9AASpmBYgJllbS6xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720537399; c=relaxed/simple;
-	bh=OyBH+sUzL68gX3EQvBjAjSq97byxdrgny3BAk/2KBE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JBPDQw1vKceom1xHUwHj98wLACzDiJZR9ZGJGt2111eE1gbN9ATw3D3F1O7y8GYR5eXOTi63/kbgd1cw21sT0Dk3l7eE3RCG/CjaHkBlVOkCtEXciZD7qsQj2/Urx+nXnMe2Ctr2yX/FZyfb6iDn2i2HrMfGtQkww4/5YN3UEtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WaQPiZof; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=Y9NIrT9bGXXaj8ypo8Ee686FddLu/HsImPyUZW8oGMs=; b=WaQPiZoft9dJ14/aFdcvZWBEPO
-	PvRGFRhTDbr9B6p0ueusWCNrejSr1M3E6gsQkpyzs6PU3WSrDcwmD+L8CvAE+0yh7AMtCEmZANiWf
-	oOE3KFCfWSYPILZ+cPwjN1Hwv7UXbobGksL7lNKcUlMirssxvb5hW6tngPORLNIvvjKn0sj5nTm0m
-	1D2/kRU2YgX6y8+0HNUQOswef7TIrVJTa55WRbKtvftMOhBzV/69rOTIxOhlArUm3LsuDBzpC9L/7
-	xL6wxhn/BCpg2HoXtvpAl6Dx4S0VDkwdjExJET5yVM5khF37b4aNYcJPJL3/HUeJayPn0tdGJN0jH
-	cOLpX8uQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRCNA-00000007zsU-1AbC;
-	Tue, 09 Jul 2024 15:03:16 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 7/7] sysv: Convert dir_commit_chunk() to take a folio
-Date: Tue,  9 Jul 2024 16:03:12 +0100
-Message-ID: <20240709150314.1906109-8-willy@infradead.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240709150314.1906109-1-willy@infradead.org>
-References: <20240709150314.1906109-1-willy@infradead.org>
+	s=arc-20240116; t=1720537702; c=relaxed/simple;
+	bh=fXbDru/y5W+0JkwcQ1yBuNSWXsbd+IcKjgtGIm71ni4=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=f4uIEzoK4OvKw9l1thDnl0Bv/GlOOMNgRHU/tx0BZD1gvWp/rmdWd+dSj9L7K675SEznKZcKaxPv7TS/2UqDsixdJUcXhjWy3CvxIIdJnR4XH6nbr8i2O5mGplqwMDoNTri1PQcTjosJZISRPsoJ6dTEHBBSayEyzmSyv9iIah4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=iLpfnOag; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oFnAoLNN; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 253841380AB9;
+	Tue,  9 Jul 2024 11:08:20 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 09 Jul 2024 11:08:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720537700; x=1720624100; bh=YjpIAB6VJt
+	vWW8uBMTlGJyRpx0vtfYCfo/jXt2pillU=; b=iLpfnOagzPr2Dua+U0ooLlHBdS
+	th5AtQBXJzgZDRZBLaWiH/P4KxKJRI2z57hknrK0idjAzvxn9nXsjInQmaphiG7F
+	foZF/TF3SNUiX2fpxNu29iNKnzi35Pz+keTR6cl/qW06M8h6ZCJSAcZMTiXV7rpD
+	CkJ05DRdx/yeKr+eRUWD9ccr0LJzaF6YDhYbH84C7Kln8BaQFB6dI3xDeJMWM3Z0
+	4EWhheJJ0REKc6nKkSM+T9DpcCU7BgPX1EhjatN7WkhzOFNrM/Xsif7sHN28a5GE
+	YsxPIp+58bWi3tMIMTyDEvPZNkgfXzztdwOyJMXqMZ5TNkXRVk88262/TcGw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720537700; x=1720624100; bh=YjpIAB6VJtvWW8uBMTlGJyRpx0vt
+	fYCfo/jXt2pillU=; b=oFnAoLNN4oY1qxSbUi3JC4rnLtSi1UhjU9sjzZN52jah
+	7gs+/cqZhrupcoS9UA5AzssN2Rt7O+cjoMfkAmBnFjsvR5HyIlh15albjuqjrFlh
+	YuwZ7ZR7ZYxEI9SwaYteuci10eKxK/lmlOnSsULzvn9HPGqhomrjO53Dwa+dN8Ad
+	B5Zu2LuSSa10k8exLcaInN8/Ie9w1TH+FV6uyf+aJ0jsKMr31Dy6deph0t0G5aC5
+	8FfbIFpUweIVd7Y3FEdvnx7jDVbyHKvXIPNmD8tdXtpQ/WG3nNrETvoVhl+E7s1y
+	Z2F3ko9ajJz/hzXThm3ttO798L3u1h4rV3/9Y8jHhA==
+X-ME-Sender: <xms:YlKNZpUkzhbTFq9YFbXbA5Hax3ZdK7swz798ECa_uTJzX2DrnGaSjg>
+    <xme:YlKNZpmN9SHFiyrOIhx7cNHEX7dCZKF6SbgC5R9SH__LiCDdbJE_MD4IvTaF7HIe0
+    cdivCbuDoaoqM2yo0k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdekgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:YlKNZlYYMUFRcHB-45hUdzEqPn8ha4yHDNf2u4JQfuhjopsqYvi5WQ>
+    <xmx:YlKNZsUM8CV98fuioFIhb-xOBSf5JmGWSttzJ302oc8e92-BOkrF0Q>
+    <xmx:YlKNZjkyjqp5shhdF_-KYL9a2r_U2QHUlaPTdhaIz1nTwbtCOZMcjg>
+    <xmx:YlKNZpc0HZssxCYMTZSHCMQ6AF6ejTYkIhUEiiSm1gMRoCg7aRNhUQ>
+    <xmx:ZFKNZsD3_VjqDy_CMPnB88AtMDTG5Escgl8QuUyvfaBzWhdMPyjhyJI5>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id BDFF1B6008D; Tue,  9 Jul 2024 11:08:18 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <92726965-19a0-433b-9b49-69af84b25081@app.fastmail.com>
+In-Reply-To: <6ab599393503a50b4b708767f320a46388aa95f2.camel@kernel.org>
+References: <202407091931.mztaeJHw-lkp@intel.com>
+ <c1d4fcee3098a58625bb03c8461b92af02d93d15.camel@kernel.org>
+ <CAMuHMdVsDSBdz2axqTqrV4XP8UVTsN5pPS4ny9QXMUoxrTOU3w@mail.gmail.com>
+ <c4df5f73-2687-4160-801c-5011193c9046@app.fastmail.com>
+ <6ab599393503a50b4b708767f320a46388aa95f2.camel@kernel.org>
+Date: Tue, 09 Jul 2024 17:07:58 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jeff Layton" <jlayton@kernel.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [jlayton:mgtime 5/13] inode.c:undefined reference to
+ `__invalid_cmpxchg_size'
+Content-Type: text/plain
 
-All callers now have a folio, so pass it in.  Saves a call to
-compound_head().
+On Tue, Jul 9, 2024, at 16:23, Jeff Layton wrote:
+> On Tue, 2024-07-09 at 16:16 +0200, Arnd Bergmann wrote:
+>> On Tue, Jul 9, 2024, at 15:45, Geert Uytterhoeven wrote:
+>
+> I think the simplest solution is to make the floor value I'm tracking
+> be an atomic64_t. That looks like it should smooth over the differences
+> between arches. I'm testing a patch to do that now.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/sysv/dir.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Yes, atomic64_t should work, but be careful about using this
+in a fast path since it can turn into a global spinlock
+in lib/atomic64.c on architectures that don't support it
+natively.
 
-diff --git a/fs/sysv/dir.c b/fs/sysv/dir.c
-index 43615b803fee..27eaa5273ba7 100644
---- a/fs/sysv/dir.c
-+++ b/fs/sysv/dir.c
-@@ -28,17 +28,17 @@ const struct file_operations sysv_dir_operations = {
- 	.fsync		= generic_file_fsync,
- };
- 
--static void dir_commit_chunk(struct page *page, loff_t pos, unsigned len)
-+static void dir_commit_chunk(struct folio *folio, loff_t pos, unsigned len)
- {
--	struct address_space *mapping = page->mapping;
-+	struct address_space *mapping = folio->mapping;
- 	struct inode *dir = mapping->host;
- 
--	block_write_end(NULL, mapping, pos, len, len, page, NULL);
-+	block_write_end(NULL, mapping, pos, len, len, &folio->page, NULL);
- 	if (pos+len > dir->i_size) {
- 		i_size_write(dir, pos+len);
- 		mark_inode_dirty(dir);
- 	}
--	unlock_page(page);
-+	folio_unlock(folio);
- }
- 
- static int sysv_handle_dirsync(struct inode *dir)
-@@ -219,7 +219,7 @@ int sysv_add_link(struct dentry *dentry, struct inode *inode)
- 	memcpy (de->name, name, namelen);
- 	memset (de->name + namelen, 0, SYSV_DIRSIZE - namelen - 2);
- 	de->inode = cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
--	dir_commit_chunk(&folio->page, pos, SYSV_DIRSIZE);
-+	dir_commit_chunk(folio, pos, SYSV_DIRSIZE);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	mark_inode_dirty(dir);
- 	err = sysv_handle_dirsync(dir);
-@@ -244,7 +244,7 @@ int sysv_delete_entry(struct sysv_dir_entry *de, struct folio *folio)
- 		return err;
- 	}
- 	de->inode = 0;
--	dir_commit_chunk(&folio->page, pos, SYSV_DIRSIZE);
-+	dir_commit_chunk(folio, pos, SYSV_DIRSIZE);
- 	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
- 	mark_inode_dirty(inode);
- 	return sysv_handle_dirsync(inode);
-@@ -275,7 +275,7 @@ int sysv_make_empty(struct inode *inode, struct inode *dir)
- 	strcpy(de->name,"..");
- 
- 	kunmap_local(kaddr);
--	dir_commit_chunk(&folio->page, 0, 2 * SYSV_DIRSIZE);
-+	dir_commit_chunk(folio, 0, 2 * SYSV_DIRSIZE);
- 	err = sysv_handle_dirsync(inode);
- fail:
- 	folio_put(folio);
-@@ -341,7 +341,7 @@ int sysv_set_link(struct sysv_dir_entry *de, struct folio *folio,
- 		return err;
- 	}
- 	de->inode = cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
--	dir_commit_chunk(&folio->page, pos, SYSV_DIRSIZE);
-+	dir_commit_chunk(folio, pos, SYSV_DIRSIZE);
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	mark_inode_dirty(dir);
- 	return sysv_handle_dirsync(inode);
--- 
-2.43.0
+I'm still reading through the rest of your series, but
+it appears that you pass the time value into 
+ktime_to_timespec64() directly afterwards, so I guess
+that is already a fairly large overhead on 32-bit
+architectures and an extra spinlock doesn't hurt too
+much.
 
+Two more things I noticed in your patch:
+
+- smp_load_acquire() on a 64-bit variable seems problematic
+  as well, maybe this needs a spinlock on 32-bit
+  architectures?
+
+- for the coarse_ctime function, I think you should be
+  able to avoid the conversion to timespec by just calling
+  ktime_get_coarse_real_ts64() again instead of converting
+  monotonic to real and then to timespec.
+
+- inode_set_ctime_current() seems to now store a fine-grained
+  timespec in the inode even for the !is_mgtime case, skipping
+  the timestamp_truncate() step. This appears to potentially
+  leak a non-truncated value to userspace, which would be
+  inconsistent with the value read back from disk.
+
+      Arnd
 
