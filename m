@@ -1,202 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-23413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C379E92BEEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 17:56:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21FB92C0D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 18:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454E11F23454
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 15:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F363F1C238C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 16:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1EC19D8AB;
-	Tue,  9 Jul 2024 15:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7DE185637;
+	Tue,  9 Jul 2024 16:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WhAxepTV"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ArsdhXo7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33F915C9
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 15:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D21185602
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 16:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720540595; cv=none; b=BdwIxUfif4mEBpLh0WYWbjjc7MZi2z2pCeD5r6SV/f6XB0KIs9a4t9ctrcMelr9DExbcpfgUUyvQQ8pbC7V/xi2EpegnuxFm7Tnwy4otwSRqcZLEinRURnOsHvpGllW2A102nhJbt5vdFCh6hjiVwRMG63OAVgsvN6VGKfQKyHc=
+	t=1720542290; cv=none; b=GTUWSyIOw+qGHTAr5JozLzIxwAihAHNNtu11FXQDu8ZV/VwEPxzFEwejWMUdqWw54GnnaYuuO+5JgcHYic+AJZHAXbwS4jCuDvL0v9dkY27MKJ7jyyTPCPaR5+7ovXn4dGhQejbpNhQxDjMqObmHJIwqE3XMiS54dK52re7A51k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720540595; c=relaxed/simple;
-	bh=YsGddLcuzluGh1Z2I/0xBj1FmM9qYjQTWUTyhEnA6/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CqXSOdk5yDT+MeLN9hI7OGulyowBUMN1w6IchodPXVjSpAZnbf31QzC4MRSc9S6x8X8Ih5YAD+Pd1aZf/MeFN9Vv53IkAm9x0I5mdbWWrKflE0W1e3/i4NwqljUAcSvmVYvAwLTAyk4Qa/9iAKbQ9G8Z1bsthWUkgIU77BrxhYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WhAxepTV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720540592;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xk2zHQ/YE20jgxtFEdO755E5YwPG0ZQdb2j69TcOV+0=;
-	b=WhAxepTVjSu2GiMejjfqoRtbeI5bS2ZoT7U9578ALVaY1atRgue4MB2aIQQACOv6W9kuAh
-	MubNNPpCe2S0Zpc3v/h7Vrjsk+ClPXrBNQC5c1qpnSX/4fLhclAZLtVEnsUPzHZZi/wadp
-	A6ElXRJ4F4Q0m8taml5pwz92hqJ+cfE=
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
- [209.85.167.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-502-NEXm9gmkNmKkzBpcLV1ufQ-1; Tue, 09 Jul 2024 11:56:31 -0400
-X-MC-Unique: NEXm9gmkNmKkzBpcLV1ufQ-1
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3d91995a3c6so119308b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 08:56:31 -0700 (PDT)
+	s=arc-20240116; t=1720542290; c=relaxed/simple;
+	bh=GQWEaiUiwKONAlIFbIU4AqVczL/Fs+cS33mEhUh4nww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WlNb5BJCm6/bjKCg+1RCqSDynmxzMjR4efw4qE6qzSzmb5KDerJGnPXrN/tRaaszPOP7eM8p8vMN0LFvQjwd5Hnqz2biZ0j/RVSr7iE5YK2h2XXG47ZcNbNzMMvv+W4DEYQge+m0888mpa72vvyJzgGDUHYnwjcyzbRI74lZbyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ArsdhXo7; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77c9d3e593so472975166b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 09:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1720542285; x=1721147085; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8dI++N7oMKnriEvMop9NM+PwKTIvjTbwj0rulahrYm0=;
+        b=ArsdhXo7B/MMDfzSd3XmJo9nuwURQSylhqXUdQrc8uIwVk4PyOIN6cNIDFbWLAn0aL
+         bdKFFexIWjQVIWNueN0y7WPVEL3LR1/RiMko67vmXjYgloFTil2uXmvKuXlAsb9d62Av
+         P2Cs+12Qa9tZ/kX8F6TqIjbKQeCP8B+MZ4jTA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720540591; x=1721145391;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xk2zHQ/YE20jgxtFEdO755E5YwPG0ZQdb2j69TcOV+0=;
-        b=MkkkjhT9WiJqZiOe/iGkcJKtjp7MTvsi2JKSOKI+kkATsuhXnsNtai3GD4z/PSONdg
-         1uTKZxi8oHa4yRWTrefaHFjm6hWJo+ejcDB5G7baXsct5jLGMFhx/LT2/q8hf+TPPl0o
-         SQtB4IkM6EvMZxWneKJzkbsv3m16AEim4YOYdq+k5H+t1JmVU9m/NX78NjZ+HSpT6I4E
-         18aeR9mXqUG2vhMBoz3DLhtZLXLkOp0N80l2wgR/7ZKiva3FsmNYEPsvSj/QZ1MEb61X
-         tk14zSovh585eXEJ3P3J2FjND7ZqUdFP1C/oQyCYE0OhOgqObbFQnXuQzx+p+UdtRRsy
-         07eA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEarbV9JHraNTrFP3lQXrmnEEkOPL6X2N0xTUJYn6nMZG72omQrnYMsfB0eUbLKmjKqoY/EYit0KlRH+0cajjLYcK59+CxZu5R1+oGQQ==
-X-Gm-Message-State: AOJu0YxNvq93lt5dYlR2ILqRbtT67w1dMaJMeX3YoWdO+ruplC9Z6FSQ
-	QD5K3GMz68bd7rwxqxhYUAsUg52xGx69Iy/TB+88Be+wNRWY3c67NGaJFpQxC6YIBSZa8aBUnJY
-	++sg7kODyyyB+CsAR33gE72BMnpKKY47G3raOU3EvSNxcZOKXVjh9NwQrBGT597Y=
-X-Received: by 2002:a05:6808:148b:b0:3d9:2e1d:2543 with SMTP id 5614622812f47-3d93c0fe45amr2848536b6e.5.1720540590681;
-        Tue, 09 Jul 2024 08:56:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE1Ma1rQrmj4Xg5pyldsO8p97ImEEKrUWOUqeogODHc73Oz0DxK2TC+nXJTsvBMv1FTSng1jg==
-X-Received: by 2002:a05:6808:148b:b0:3d9:2e1d:2543 with SMTP id 5614622812f47-3d93c0fe45amr2848435b6e.5.1720540589482;
-        Tue, 09 Jul 2024 08:56:29 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b26f7bsm11708091cf.6.2024.07.09.08.56.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 08:56:29 -0700 (PDT)
-Date: Tue, 9 Jul 2024 11:56:25 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com,
-	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
-	linmiaohe@huawei.com, david@redhat.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
-	david@fromorbit.com, Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
-Message-ID: <Zo1dqTPLn_gosrSO@x1n>
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
- <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
- <ZogCDpfSyCcjVXWH@x1n>
- <87zfqrw69i.fsf@nvdebian.thelocal>
+        d=1e100.net; s=20230601; t=1720542285; x=1721147085;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8dI++N7oMKnriEvMop9NM+PwKTIvjTbwj0rulahrYm0=;
+        b=Njj+qlKlHF/hxvkVRTI7D088HfZWF4pYf5wvtZCT04BisaJ8SxICMWeOFAg7IQIToj
+         16ffULthBbt6v6DOhrD40l1J350c2UKg1czQ4nJ89PukSgYEiqB4v31RskoZtw+qzDn6
+         /s28VtwMO+6HhdFSeyhElrLHKJ2PAS+2RiJpTrH66ov97kGMPlJqt7SUviz8mVhYaZok
+         1UBdBGo6TUh9rxpvCctpkrEF1V68IQd+o+YNvAne3myLmrrwDSbEC3BD9dYKpe1IAt1b
+         hzuaer+IbEr4j92vYRtxVCL1ZfrSmNtvnjKy0ltyc7z2HWERGpohXW+ZB2n2nubZWxqo
+         Ygkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDWD8w+4Yc4M6dpEwrYZH/EiIyMMkkdyOGNBdpMJRinGo7GGHwwwsiakwePqJ3IAkyntDX4cCnYTJr+7rSh8EmAi23Us9cTRewsZu4Lw==
+X-Gm-Message-State: AOJu0YyYAVCgwGnuyDmkWt3iKGd+wxBPT2uFhvWhy6kbCQ5MmHXr8o9b
+	rKBPWmlPtvmkyucwYpjSV8sUAggpXUxud32qsEY9zUSu9dEPCFabAUs43Gfgb3T+bujwleqaEHq
+	hsGc=
+X-Google-Smtp-Source: AGHT+IF2/7AJ2O3smb/dfL+PehsD5ZCc4J+INa4nOfkDl0q2iJIvpxgbT7UGZlSYWc/SGEByA+a4XQ==
+X-Received: by 2002:a17:906:278b:b0:a77:d52c:c431 with SMTP id a640c23a62f3a-a780b6b1789mr191523566b.22.1720542285165;
+        Tue, 09 Jul 2024 09:24:45 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a853a62sm87627166b.157.2024.07.09.09.24.44
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 09:24:44 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-58b966b41fbso6781783a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 09:24:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVnEj12hSvQm7qEl9JM2Pp/FePlL76brvWCKKSzg07KRzbAM8eJhI6qKhDkoOI5J22iljS9+RP194DZaNWkUi6S/wY65dKmg/rua+7PPg==
+X-Received: by 2002:a50:ee12:0:b0:57c:4875:10a9 with SMTP id
+ 4fb4d7f45d1cf-594bb674a54mr1638342a12.24.1720542284159; Tue, 09 Jul 2024
+ 09:24:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87zfqrw69i.fsf@nvdebian.thelocal>
+References: <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
+ <Zo0LECcBUElkHPGs@J2N7QTR9R3> <CAHk-=wgAKfXySpKFcJUdv97Rqz7RxPF-uc6xsue6Oiy=tP65oA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgAKfXySpKFcJUdv97Rqz7RxPF-uc6xsue6Oiy=tP65oA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 9 Jul 2024 09:24:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiKCppvYcjHRivLbw2uPELEuEdythi_bkK9P7oF0wJ4Yw@mail.gmail.com>
+Message-ID: <CAHk-=wiKCppvYcjHRivLbw2uPELEuEdythi_bkK9P7oF0wJ4Yw@mail.gmail.com>
+Subject: Re: FYI: path walking optimizations pending for 6.11
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 09, 2024 at 02:07:31PM +1000, Alistair Popple wrote:
-> 
-> Peter Xu <peterx@redhat.com> writes:
-> 
-> > Hi, Alistair,
-> >
-> > On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
-> >> Now that DAX is managing page reference counts the same as normal
-> >> pages there are no callers for vmf_insert_pXd functions so remove
-> >> them.
-> >> 
-> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> >> ---
-> >>  include/linux/huge_mm.h |   2 +-
-> >>  mm/huge_memory.c        | 165 +-----------------------------------------
-> >>  2 files changed, 167 deletions(-)
-> >> 
-> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> >> index 9207d8e..0fb6bff 100644
-> >> --- a/include/linux/huge_mm.h
-> >> +++ b/include/linux/huge_mm.h
-> >> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
-> >>  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
-> >>  		    unsigned long cp_flags);
-> >>  
-> >> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
-> >> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
-> >>  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
-> >>  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
-> >
-> > There's a plan to support huge pfnmaps in VFIO, which may still make good
-> > use of these functions.  I think it's fine to remove them but it may mean
-> > we'll need to add them back when supporting pfnmaps with no memmap.
-> 
-> I'm ok with that. If we need them back in future it shouldn't be too
-> hard to add them back again. I just couldn't find any callers of them
-> once DAX stopped using them and the usual policy is to remove unused
-> functions.
+On Tue, 9 Jul 2024 at 07:28, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> > For the sake of review, would you be happy to post the uaccess and
+> > runtime-constants patches to the list again? I think there might be some
+> > remaining issues with (real) PAN and we might need to do a bit more
+> > preparatory work there.
+>
+> Sure. I'll fix that silly left-over store, and post again.
 
-True.  Currently the pmd/pud helpers are only used in dax.
+I only posted the (unchanged) arm64-uaccess series and the (fixed,as
+per your comment today) runtime-constants one. And I only posted it to
+the linux-arm-kernel list, not wanting to bother everybody.
 
-> 
-> > Is it still possible to make the old API generic to both service the new
-> > dax refcount plan, but at the meantime working for pfn injections when
-> > there's no page struct?
-> 
-> I don't think so - this new dax refcount plan relies on having a struct
-> page to take references on so I don't think it makes much sense to
-> combine it with something that doesn't have a struct page. It sounds
-> like the situation is the analogue of vm_insert_page()
-> vs. vmf_insert_pfn() - it's possible for both to exist but there's not
-> really anything that can be shared between the two APIs as one has a
-> page and the other is just a raw PFN.
+I have two other branches in my git tree if people care:
+link_path_walk and word-at-a-time. The word-at-a-time one does touch
+arm64 files too, but it's pretty trivial:
 
-I still think most of the codes should be shared on e.g. most of sanity
-checks, pgtable injections, pgtable deposits (for pmd) and so on.
+ arch/arm64/include/asm/word-at-a-time.h | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-To be explicit, I wonder whether something like below diff would be
-applicable on top of the patch "huge_memory: Allow mappings of PMD sized
-pages" in this series, which introduced dax_insert_pfn_pmd() for dax:
+and really only involves a better instruction choice. It really only
+matters if you end up looking at the generated code of link_path_walk
+and strncpy_from_user().
 
-$ diff origin new
-1c1
-< vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
----
-> vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
-55,58c55,60
-<       folio = page_folio(page);
-<       folio_get(folio);
-<       folio_add_file_rmap_pmd(folio, page, vma);
-<       add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
----
->         if (page) {
->                 folio = page_folio(page);
->                 folio_get(folio);
->                 folio_add_file_rmap_pmd(folio, page, vma);
->                 add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
->         }
+The commit message at the top of that branch is a lot more verbose
+than the actual change, because I ended up just explaining the
+different phases of the zero detection more than the actual trivial
+change to it.
 
-As most of the rest look very similar to what pfn injections would need..
-and in the PoC of ours we're using vmf_insert_pfn_pmd/pud().
+All four branches are available in my regular tree at
 
-That also reminds me on whether it'll be easier to implement the new dax
-support for page struct on top of vmf_insert_pfn_pmd/pud, rather than
-removing the 1st then adding the new one.  Maybe it'll reduce code churns,
-and would that also make reviews easier?
+   git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-It's also possible I missed something important so the old function must be
-removed.
+as 'arm64-uaccess', 'link_path_walk', 'runtime-constants', and 'word-at-a-time'.
 
-Thanks,
+But unlike my normal mainline branch, I still rebase these based on
+feedback, so consider them unstable.
 
--- 
-Peter Xu
+IOW, don't pull them into any tree to be used: just use "git fetch" to
+look at the branches in your local tree instead, or use it for some
+ephemeral testing branch.
 
+                 Linus
 
