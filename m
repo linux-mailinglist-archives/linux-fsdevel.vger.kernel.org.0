@@ -1,124 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-23401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E8E92BCC5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 16:23:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A2F92BCE9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 16:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883421F22006
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 14:23:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B431D2826D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jul 2024 14:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AAE1922D8;
-	Tue,  9 Jul 2024 14:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0231922D8;
+	Tue,  9 Jul 2024 14:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2ry0i/l"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N7nFqwjU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E81E1591F1;
-	Tue,  9 Jul 2024 14:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC63D28E3
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jul 2024 14:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535003; cv=none; b=JX3ei341pqwIroGpdYkNpQg4AFzzwBRVjtgwTiacR3CD8XMLhMPH51Wi99Mk3h+048Elpd+aLU4HOympMDeDJjVWHJ0sQS56LeYw/G33QIQgmsn3T+DVXO16DWGYu9qYgPWPBiiSFiDNHTd2tu5xoR0leoJ9XivqUjOyus+MH90=
+	t=1720535320; cv=none; b=l+RTnCPfM93ETDOILF6wWC3WJAYX8PFDITF9C7nDahClxXSGLvchCc6APQvS8BTHelO1zzPN7Hu3NmEJDj3K3Y9cEKdEgvrs2UxkP0fgZMw4a0dEGj6UfBx2t20SGk0vRMnU/05eFFYKnt7VU7EXpeft3AZHIwQgN4ifJWv9SZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535003; c=relaxed/simple;
-	bh=eXgJ4wYdqysY/qkd6HNpgdu1snkkrsiOyckPHx7KNYo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WjHn9aVUg+FUyetGJsJaV6Z564SZmBSItGNlDv38nFK3r0S7/wrX2AbctuyNPt4d0Rq8ALlc84F4u1cU61nuxMt4qOg3tzRIW0m17trJGbp+336OPJKjqnNqkOeE0l2HCGFp8zPQyq0mxTYs0/QML7l60lLY+EdvfWreT0Pe7NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2ry0i/l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AACDC4AF0A;
-	Tue,  9 Jul 2024 14:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720535002;
-	bh=eXgJ4wYdqysY/qkd6HNpgdu1snkkrsiOyckPHx7KNYo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=d2ry0i/l8a/eH2+9Te6S1AqQwFentP4VCejtrS86kNwcFtlXGjO7nxQpUEMDW3j/F
-	 2cdgFoPxLj59UVDNJwoE+hYz3QDQoIQCpOGYhHosnP3j9EZLFoOg1En1TSPHR8q+5G
-	 UjHYPC7P/cT24GfMJhJKyC8xPzwXRBwRCgCTyQUCY5+EzJIUu66Bob60NIRhsZMG8i
-	 tiBIgYlkQt2+JzFgoKrgadgclkTS2wN2gg98NPdmKqoo3qxhvZ+nI3DP6gfR3TUc9f
-	 9VnaDFXirCQOnF/U8mHzL+cBKXJu27MiPWwn4TH51v4a+r1C3zYFbxrd3S0MIC1wID
-	 umt4z5W2gVRzw==
-Message-ID: <6ab599393503a50b4b708767f320a46388aa95f2.camel@kernel.org>
-Subject: Re: [jlayton:mgtime 5/13] inode.c:undefined reference to
- `__invalid_cmpxchg_size'
-From: Jeff Layton <jlayton@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Date: Tue, 09 Jul 2024 10:23:21 -0400
-In-Reply-To: <c4df5f73-2687-4160-801c-5011193c9046@app.fastmail.com>
-References: <202407091931.mztaeJHw-lkp@intel.com>
-	 <c1d4fcee3098a58625bb03c8461b92af02d93d15.camel@kernel.org>
-	 <CAMuHMdVsDSBdz2axqTqrV4XP8UVTsN5pPS4ny9QXMUoxrTOU3w@mail.gmail.com>
-	 <c4df5f73-2687-4160-801c-5011193c9046@app.fastmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1720535320; c=relaxed/simple;
+	bh=N51YY50iZM2xd0G1g1J7sL7mFACPG6CXFw/kqmSAsFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kiAZn/pCC2BRw3mL5o0DRU4ll9LbJ0XLh4xn1KSh1GONq5D4iHR4gsdLxG7LzXGJdcfPN7kf7FE8/PqgiijcgBNvFK2sE/140Tpcl2sd5kpIgT+Jsw6fuoT8teSBsv5cbxZOiPBqddhAlN0f/gqAuvff4eiNxp2T9FTUnuT5hNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=N7nFqwjU; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-58b966b41fbso6598404a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 07:28:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1720535317; x=1721140117; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wU8bklL5Sk+P9jtPWt71PuRxvvqxwIqd0UA8CuZijlc=;
+        b=N7nFqwjUwnzzlxroDNzxU3lx806q59P0H3rKjeKXO1zVjnSDACoDDskpWce9E3f1XI
+         dxeFnnNk4ZDlqLTdo5KNZm4+OxwdNPsYF5ECY+BcqG0E2+eqaZkI774JLXhveQ9oD1Q8
+         aDMYojZXDCx6iZRtqhiEn/27KPBXa/Pu9dQP4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720535317; x=1721140117;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wU8bklL5Sk+P9jtPWt71PuRxvvqxwIqd0UA8CuZijlc=;
+        b=aj8pMmcU1OUhs276MXHZMHZTPpSIF1H6t+GzDs5wTtWE9oNVrKYUUPtB52RxiFcARH
+         UcuU9CAtF3DoLD2oG4QVbWGnontPUGhY70FD+Wz7T4rtaKwJv+WU5WXBoxMkr3YgMlXw
+         lxoWSnnpj/+omVtp6ssy1H/17wNVWfjfGeDzeWpEH3XS64scwVloOb1mmO2RXfKl6+vs
+         xOwVbOd3dBg/UOJJiOu76vp/CDIFj2h+RA6hW/MDZL/Gqd27xHpDTHEn1/FXk5UegIz2
+         EcYn3juY5BzVW4lgMrE8axLWTVTlnumbWQZkagc8KCe7PCAq0BuVx1mbVEotio2Ikv/X
+         xsAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtYWIC8moQYwj1axazGGXZXYUvtmvl9+jfAHLiVA1gYom+Hisvo8i0FRNqp5gDL6pcG89iKqMcWGtOcQmxt90WH2ucY/YRGNkYyN8tTA==
+X-Gm-Message-State: AOJu0Yyqi2rQKYl9dXjGmLFwsBF02h1wl0xcprvkrwUEXWn09W40DkV7
+	qH1PRV+N5vygenWJJsOMAcQcbUSL39zEQitbIk52GAZQcnit7ZXq1W6sQ7SUwK2q+13QzM/9t+3
+	MiOE=
+X-Google-Smtp-Source: AGHT+IEUDHy8lPKYzRC8fdaJItWQwN4lPREA6fPpbLsyn6pxXhkznNGfD97XdbKLEGBqF8EBgsW9mQ==
+X-Received: by 2002:a17:906:6857:b0:a75:21d3:60a1 with SMTP id a640c23a62f3a-a780b89ab19mr168447966b.75.1720535316877;
+        Tue, 09 Jul 2024 07:28:36 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a854368sm81181366b.155.2024.07.09.07.28.36
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 07:28:36 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-58b447c51bfso6469590a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jul 2024 07:28:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWvlUQP8oKmJW67Fz4ZBXUzrtFgfTN+ZJEqO1PJ2lnSBGgMQX/RKPIkLt+0lSC5eeftt8fvS8CxLTyBzzD9kBbwgZUP0+8LyKMe2gOVVQ==
+X-Received: by 2002:a05:6402:26c6:b0:595:7640:ee79 with SMTP id
+ 4fb4d7f45d1cf-5957640f148mr1296551a12.17.1720535315869; Tue, 09 Jul 2024
+ 07:28:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
+ <Zo0LECcBUElkHPGs@J2N7QTR9R3>
+In-Reply-To: <Zo0LECcBUElkHPGs@J2N7QTR9R3>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 9 Jul 2024 07:28:19 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgAKfXySpKFcJUdv97Rqz7RxPF-uc6xsue6Oiy=tP65oA@mail.gmail.com>
+Message-ID: <CAHk-=wgAKfXySpKFcJUdv97Rqz7RxPF-uc6xsue6Oiy=tP65oA@mail.gmail.com>
+Subject: Re: FYI: path walking optimizations pending for 6.11
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2024-07-09 at 16:16 +0200, Arnd Bergmann wrote:
-> On Tue, Jul 9, 2024, at 15:45, Geert Uytterhoeven wrote:
-> > On Tue, Jul 9, 2024 at 1:58=E2=80=AFPM Jeff Layton <jlayton@kernel.org>
-> > wrote:
-> > > I've been getting some of these warning emails from the KTR. I
-> > > think
-> > > this is in reference to this patch, which adds a 64-bit
-> > > try_cmpxchg in
-> > > the timestamp handling code:
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0
-> > > https://lore.kernel.org/linux-fsdevel/20240708-mgtime-v4-0-a0f3c6fb57=
-f3@kernel.org/
-> > >=20
-> > > On m68k, there is a prototype for __invalid_cmpxchg_size, but no
-> > > actual
-> > > function, AFAICT. Should that be defined somewhere, or is this a
-> > > deliberate way to force a build break in this case?
-> >=20
-> > It's a deliberate way to break the build.
-> >=20
-> > > More to the point though: do I need to do anything special for
-> > > m86k
-> > > here (or for other arches that can't do a native 64-bit cmpxchg)?
-> >=20
-> > 64-bit cmpxchg() is only guaranteed to exist on 64-bit platforms.
-> > See also
-> > https://elixir.bootlin.com/linux/latest/source/include/asm-generic/cmpx=
-chg.h#L62
-> >=20
-> > I think you can use arch_cmpxchg64(), though.
->=20
-> arch_cmpxchg64() is an internal helper provided by some
-> architectures. Driver code should use cmpxchg64() for
-> the explicitly 64-bit sized atomic operation.
->=20
-> I'm fairly sure we still don't provide this across all
-> 32-bit architectures though: on architectures that have
-> 64-bit atomics (i686, armv6k, ...) these can be provided
-> architecture specific code, and on non-SMP kernels they
-> can use the generic fallback through
-> generic_cmpxchg64_local(), but on SMP architectures without
-> native atomics you need a Kconfig dependency to turn off
-> the particular code.
->=20
+On Tue, 9 Jul 2024 at 03:04, Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> Looking at the arm64 runtime constants patch, I see there's a redundant
+> store in __runtime_fixup_16(), which I think is just a leftover from
+> applying the last roudn or feedback:
 
-I think the simplest solution is to make the floor value I'm tracking
-be an atomic64_t. That looks like it should smooth over the differences
-between arches. I'm testing a patch to do that now.
+Duh, yes.
 
-Thanks!
---=20
-Jeff Layton <jlayton@kernel.org>
+> For the sake of review, would you be happy to post the uaccess and
+> runtime-constants patches to the list again? I think there might be some
+> remaining issues with (real) PAN and we might need to do a bit more
+> preparatory work there.
+
+Sure. I'll fix that silly left-over store, and post again.
+
+           Linus
 
