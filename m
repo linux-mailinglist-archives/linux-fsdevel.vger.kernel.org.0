@@ -1,286 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-23477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB9D92D140
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 14:04:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBC392D17F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 14:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8691C2387A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 12:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74E2E283FE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 12:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B243818FDBB;
-	Wed, 10 Jul 2024 12:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2299719149C;
+	Wed, 10 Jul 2024 12:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MtUGYhyg"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zhzCAGF5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2081.outbound.protection.outlook.com [40.107.236.81])
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB1517B05F;
-	Wed, 10 Jul 2024 12:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720613044; cv=fail; b=QDaJIvqu9CSi8btj6ClwIuDtWxZ9Z1GShh+0LLOUWNKeNw6FnJTVT4unkBxvpyzisJS7s2VmuD3YkdyJuFcr/eRa6GYDDuLd6k3Hvdq40yEnPJ6spG8GYUZh6H/pZTCNb6giBTLorFcmC3BeQ5o9FU5xbAbk1pGdu7FP+6AGI8k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720613044; c=relaxed/simple;
-	bh=cbLiSXQfdz+eC3z6VyjJ5m8el1GT+3CYkdmDI9UssEc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UbtEQcpZNtehZwTA8z2ozkcy/QXf8KuarqlpxtvFqrAGEo52impZO0omsxKJtHWKBIsYm/21UjkLZfXmtb5JrXVb4tXW5Xn8FxTUlIvvR1yHV0ucd1Ci3hrlSGJny4SdcoXorXvhT0A3PnD7McKlTUu3NqdnKB9nO6Xj1SaCvTw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MtUGYhyg; arc=fail smtp.client-ip=40.107.236.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y2nI/RsqQy7pjPFZFvW61+Gb6hvKZx0pYYvDUmLDukoJ8xdB1ONd5RDNQTKi4PnxOFFYZKXmte8HgJDhuh8fMt4Q9J3Z/nwDw+BqIFuKSWZaYxdoZ7tMTKmUjPaFCMtuKo64cGeHYv2fuWzssAQMnTeNKSOcqXm/INzbpUcRFELx+9czN2B+BCNrD42S7bDLZqFooQ/FZHFozW1qu0Vq0VMFjhdjURpbZtkOUscnaQDK2jN+Ff0+Ygl/VoCoIN+sFVIstuy4IR8eLEUAt/7yheXtRubYBGDJ8ASewkLjh0ehbZANVYI6dZCyKN+brsf4UK373bZbQY2Y8cqQjjppDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NI0OAN9qpw5kvL46/YxSKPqdM4s4XeT2CCebjitDP6o=;
- b=hNt+aSj0/km+qBROmUhCbXG0WQ714I1X0VMAyGgf+gP3FMQiAJ04HvcxGb+gFU3c0jtdeHy49iKJDJaYYhPqudz+XOOo2csxHbKqGji5FJ2Z3Inoitn8ApoNgq6qD47c62HEtvb79WvbZCMx/YeOoH6/uUOerOnCS9idMDIXcOzy86I17V3HQa33pGF4V0CvsFToPf7EFqpDf5tWcxb3wZd1EkBcKjDCQj0tZwkidJdx+rQ0cVv0xpd2bM3+IkQXm4TtjCCOf3SGmYnIFb/YIgpCkrimMFD0MJ9aXlOVYzt3XA2wL0ysC+dT8Rocz7842G5SptQew9fmvn9bN78BgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NI0OAN9qpw5kvL46/YxSKPqdM4s4XeT2CCebjitDP6o=;
- b=MtUGYhygXM+sj4xbujiwGuhQ7DRWb75JoZbQGCaB9nEFcUEjHuXfhS6UzGl45IfRKKEYchBbkTlpO4UbYwChxU27w5vWnlpwHIi5YYRHWBnLToA9l1nsNV0KCYjScOrjw2kEXp9v3IILkifswfTPCeCFTXsrbXYqcE+0j3DV4Rs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com (2603:10b6:208:3ae::10)
- by BL1PR12MB5825.namprd12.prod.outlook.com (2603:10b6:208:394::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Wed, 10 Jul
- 2024 12:03:59 +0000
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134]) by IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134%3]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
- 12:03:59 +0000
-Message-ID: <4307e984-a593-4495-b4cc-8ef509ddda03@amd.com>
-Date: Wed, 10 Jul 2024 17:33:47 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
-To: Yu Zhao <yuzhao@google.com>, mjguzik@gmail.com, david@fromorbit.com,
- kent.overstreet@linux.dev
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, nikunj@amd.com,
- "Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, willy@infradead.org, vbabka@suse.cz,
- kinseyho@google.com, Mel Gorman <mgorman@suse.de>,
- linux-fsdevel@vger.kernel.org
-References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com>
- <CAOUHufawNerxqLm7L9Yywp3HJFiYVrYO26ePUb1jH-qxNGWzyA@mail.gmail.com>
-Content-Language: en-US
-From: Bharata B Rao <bharata@amd.com>
-In-Reply-To: <CAOUHufawNerxqLm7L9Yywp3HJFiYVrYO26ePUb1jH-qxNGWzyA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA1PR01CA0166.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:71::36) To IA1PR12MB6434.namprd12.prod.outlook.com
- (2603:10b6:208:3ae::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0BE19006D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jul 2024 12:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720614212; cv=none; b=ENcuOOZceZRmDCah5lT5uIiEn+zTJTM7HCh8KCcECscnVcfp98B+scUDKc4PDsVjWIZ1dIHIMcYAiFIGQdUH4Vhrb2+ly5TMrneKkj8M8QMKUH2bwxy+HwYCnaRHfBK7k9uQh8L570HjmhsX6GDVqwcivbKS/hUZ61jA/6ThjXk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720614212; c=relaxed/simple;
+	bh=vSt8ATyc0QW2ELjNwenXd0lqCgeHqfN85jWMuOX2ZOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTt6Kr+gSm1sigVlAmhcKd4DPhY8Vh0Qfh1b6V3ZBQdN60tQoljVHMNi7Upqh0lpO2j7I+IDR1URRPZkfXqiZYOWcnff21JuIn2uP4FZ1yR4/2aZyGF4/5dRI1w67T7/pFUcySO4shuZNSFOm5ZuqO2TKx1a//Ewt85Q8dh+WaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zhzCAGF5; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJxpk1YQpzsmx;
+	Wed, 10 Jul 2024 14:23:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720614206;
+	bh=qkUVf6tdsMSSUWcWV6e8p4MA3pLxRix77tQItoe1jNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zhzCAGF5s9ET2l9+tmW3qbMoPxije6wbrhoSbv+Se0LFOECSpA7VvvPNjRBpxuU32
+	 9tY8U51d4GEqg35DR0ZEa+Qw3sr5w9wK7WnuWLpjusJTLeKmyCJdBJSKhCjcbsBXyc
+	 eUs9FQUceaBhR1TfSs7iFRkhAw0a78u4CtEmatrk=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJxph4lRRz18YT;
+	Wed, 10 Jul 2024 14:23:24 +0200 (CEST)
+Date: Wed, 10 Jul 2024 14:23:21 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Kees Cook <keescook@chromium.org>, syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, 
+	jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <20240710.Hai0Uj3Phaij@digikod.net>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
+ <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net>
+ <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6434:EE_|BL1PR12MB5825:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83c0c832-e241-48f4-fa52-08dca0d86153
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OTlxclJEMFVxT1pZTC9oZDRnSTZwYjdxRmtGeDc4SGljYUNoNTc2b3VvZzRT?=
- =?utf-8?B?TysyM3ZoOFJyblRtQmpGSXExbkVZc1lQUVJCc3FTeE4zUVYvaW1aTjNlWTJF?=
- =?utf-8?B?aHJMMllPYmQzSXMwRWJBVXI5UnpobWtSQnZaNDVCVDR3ZW5ldUtrUnY5akZD?=
- =?utf-8?B?MGNUL3ZhenpwamQ1eGNqZC9qS3ZGTnRhYnBlVmJpdG5HdXFsQ3A1UzNiYU1R?=
- =?utf-8?B?YmxWZGJtTlFJcmcyRXUrSFdmc1cwc3J6OFJnOXJDNVJ3KzJHbmNoUXVjRlFJ?=
- =?utf-8?B?L0RTcFlRNnFhaVNTeURoU1pQSEtQNjd2VFh5dmtEek1MU0xNcVArTFA3ZmI0?=
- =?utf-8?B?eEQ4UjNnM2RTbkJvR3RKaThmTjlJYkViQTVvMjBpUTU5VGt0aFBFRU5kV3Z0?=
- =?utf-8?B?MkUxMTJMWTltbDhFakZJcFo0MDAwSVYyejV6aldJbHlzbFhXd1pleElRREpC?=
- =?utf-8?B?dTg1UE1kbktkZW5mWGZkQ2FGaVg5MmxwUkhtK1RFYWE5OXlycmV2NjdzU09S?=
- =?utf-8?B?OVQySXl3SG1iSUtwV3JFdG5HdjA2RVZwUmNaUFNzZ2VHU2VjRlpmZS9XYTJn?=
- =?utf-8?B?Ym5qK095bkhWOHR1d2Mwc0JqTTR5Vi9NOXF0OVpCMElaSEtxOStheFE3Q0tq?=
- =?utf-8?B?M2pYV0JiUGRoRTNOUjdsOEh4dXZRREEzOE53UEw3aVRHeTdkK2lrZ3l6OHM4?=
- =?utf-8?B?OS9xVXZhdFlQTFJ2REdmZUxOZW41Q1lXdmppanV5ZUVvVFNoajQzbEFkMk9R?=
- =?utf-8?B?ZEsrV2d6QkdqbTB5azZwZDM2NVVVZitEQ1NyMVdsRkJhb2Y0WWJKNXdKTkx3?=
- =?utf-8?B?TDZSblZmOFo5MHM2VDFFN0RSL0RmKzZpNmZPRGZPTzBaNVBSNXVlc2NVR094?=
- =?utf-8?B?c2VzTFNVQ0NtZENyT2JvRyt3K2lQSzFDbUgzbEVOd2ltYjBueXBJR0RrNnJH?=
- =?utf-8?B?TmdMOVFwSFkwcWpCN0FUV28yRDFaNnpCMjl2Y0hjR3dONVpuSzB3MEljcTNT?=
- =?utf-8?B?TExSVWJHVjIvM25rQ1p2N2o4ZzFRc04ydG1NM1NpbDR6RTJLZEtKdVlmc3Nt?=
- =?utf-8?B?ekNWM0ZUN3dicngxaHlvb21GRGl2MXdJS1JIRXEyZFdVb3E2L1d6Q0lXVWR6?=
- =?utf-8?B?M1hwZXcxcDIwY01xaGY1M1o1czlUVHFJU2pZR1I2SFYrUnQxRzNqUjlGNnZD?=
- =?utf-8?B?UHRWeXF4N3pCOTF1ditjbC9rLzZiK05rZ0FVUUl6RUgyb3dZaHJZQ0RkY0s5?=
- =?utf-8?B?cWtTdUFORy9XZDRKRWpWcHRycjkvYW1tS1JRNnY1TXVFRmZaSHhVTFY3NWJh?=
- =?utf-8?B?R3o2VmlraTBhQmFhdHdFbjJZUW9oQjNmZExCNlBVeVJWbFhlR1VSeTZxbExC?=
- =?utf-8?B?aHJRSitlWmRjVXB6UEU5a1BhOWVDUUUvRWpERWwvb1M1RXp6eUUwbXZVMFlj?=
- =?utf-8?B?aWhiSXJ1UktpcEp3N0xDT3JaUDBkUElQQjU5ekc1NnczeVRvRy9rYUpReTdU?=
- =?utf-8?B?ODB0V1JWZ01QYzY2MTloZVdyTnQyN2FQaGpVUzBQNGNtaXNsU2k4Nm1pdjda?=
- =?utf-8?B?cjhYMEc2eDZ4czFYNWhwZUpDQzJXTm1xZnRlOFpuRG5rSGFXOFhGUTNEdHBD?=
- =?utf-8?B?SmRSNGs3K1M4RmExZXZxMEFCL3greEhtWklhVCsxblRDZTlObUkwdjZNcVpU?=
- =?utf-8?B?L0dBUmhaSHNDM0trVW1PbUd4eGpFYlc5RFZtVUtmVzQ1QmJIK2lkdDN1cU1U?=
- =?utf-8?Q?v7yCjGeSwP3YLdQrmk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6434.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UmVXb1lhNE9sMXBaQjdCN0ZKWTQ4YU8yRUYwU0NYdngxUkIwR0Z1MFdNNTVE?=
- =?utf-8?B?NmxTTm41dDJZZkRsK2poRW4yb3VIQmk0dUQrc2dOVlgzTm1ieHlmRkxITjFw?=
- =?utf-8?B?SFgvMytUKzhpRzZtZXZITTJ2c1dxdFpsaHdjRUNmMkFaemhZV1had25VYUs4?=
- =?utf-8?B?SjJ2dGQvUGgwTG5rVStQRTNtV2Z6UXpCTjlsTTlBNnBwWGh5RmlzTFVUaTFD?=
- =?utf-8?B?S3oyNCtNMzhQVFBNRXFXYUpwVGhwK2o3L0hzRWRTMWI5eGJrVDhVdTVYZFgr?=
- =?utf-8?B?Q2lpU1FnQ256d1BpZkc1WEZzNGpLYldBSnBYMm9nMStvZkJoVnB4Qy9jMStv?=
- =?utf-8?B?Ymg4Y1dUTmJSTnl1WUhLOTdydm8vYllrMzEweE5VNGpmdjVGZ0dpbGgraHpo?=
- =?utf-8?B?VWwwSkNmaDhBQWY1ckFJTGN6WE5HUEg2T2VpQXEzdmJEYnZ6bll6NE9LUU5n?=
- =?utf-8?B?eXZEVUNLenZlS3BBQndBMWVnYjBpRmpnTkI0cktTTzQ3UVRZV3d5K2JmM1U3?=
- =?utf-8?B?a0h2Vk1sejNEcGkyYjFDcmdPKzZQaDRGSHcyMkMvKzd2QmROZS9Zd0pPWXR0?=
- =?utf-8?B?bGtMN281QlZKTlB3TXJ3TEU0WUxvVHQ4THRaQVZOTENhRklUNExZV1dQTjJr?=
- =?utf-8?B?ZGNMVEROMUgvV3VKcytZbUNkRjNvVWhLOCtMUElJcnpVQ3N6ZlkxMFJoUXBQ?=
- =?utf-8?B?TExpeWo4U1pGSzYrN01yd1pqLysrS04rV09ibmVZQTVhSDZDSml6NE5ndTFl?=
- =?utf-8?B?bUo2Q2R3RUJSL0xOVG1SUDRrVjRSK0JCQmluSWJ0emJZZ0wrNkFVV2hkMmU5?=
- =?utf-8?B?K3JVUHh0R3N6eHZKQXJnano0a1BtVjlrNXB1VnF3Tm1HVTF1SW51UVBCeGNH?=
- =?utf-8?B?SHowQWlaYTJaMjZGbUFyQjNWQlBYdzMwL001NlNPUTY3dWVacEdvdGxER0hV?=
- =?utf-8?B?ek9LL2t6ZURGR2ZvYzk1dlo5Tms2cDRvc2haQ05pa2N2MXhrWHlKbGdtVTVi?=
- =?utf-8?B?cW9pbnhOZHJ2NW1FeDMzTUdqUkZGQlV0TU5pN2NMTTlQTkMwQnRZUzRucE5w?=
- =?utf-8?B?U0JIN1hhZTZOQ285UTdMZWFaQTMzcG1XckJkaU54WDc2Z1Jld29ydlBtSWRI?=
- =?utf-8?B?bkJoa3BGM1R0NC8xM0NHZHYxYTFaRGphd1dLNENsU0lNT1AydVZTby83QUti?=
- =?utf-8?B?NSt6bTFFMDFzWWpnVTdqSTFYYU5sMUVZQ2pEQmZFWUhjdTFQS3YvS2RqWFVr?=
- =?utf-8?B?b2tZZUMzcVQzcFF1M3VocFVoVk1YK2czOWt0cFdEa2lJZTNVQ3lJd21neEZs?=
- =?utf-8?B?dmVmQVVmVDlaTkt1Ym9IcVQzZXBQOHR3bFRPZG9UbWNXcmd1RWpOdEF1ejdJ?=
- =?utf-8?B?YWVxMjltc1VuLy9UNWRZY0ZFVGJhMmEyZlhxU0dJUGd6RG9mRUh0eHhJek5V?=
- =?utf-8?B?VUNaR1gza3JvRlNPejBmNGZwTXZYUkVDS0xvK2xBSVJkeUZVK3RUQlhUTHQ5?=
- =?utf-8?B?M1N6bElHbHhaZTF1N1BWcVNJa1JqRHBDeUZsTk5QYnRFYy85MmtYWnQ5SWV0?=
- =?utf-8?B?eDF0dVVWbEtzMjNMK01NY0xBUml6YWFyN3VCVTloMDErQ1Zkdmo3ZW9zeU9X?=
- =?utf-8?B?ZnVrb1NXdFY4ck1rZXlIVE5BZW1CUjdWdXMrTDRqbGIxMURVc0daRTB6Sms1?=
- =?utf-8?B?eGhVQjZWNUlrdVdteC9YN3NucEJpTDNZK1c2Ymowbno3ZW1SOEdNR3VERHNs?=
- =?utf-8?B?SlBDNWg0VVdaTVdDYkxkUnB0Zys3Q3dIbVRUYjF6NHpldTJjbUdPSjUvOU9p?=
- =?utf-8?B?THlXcUlaczF6N0d2WEJPZmk3OHpaTjZDRlI4c1BPN21aL0h6WGxHWEdCK1Zt?=
- =?utf-8?B?NXBocC9LcTY2Yy9wUjRDR29zS1FGaXRkUkcxUDF1U04rdXhrRUwvSDc1MDRr?=
- =?utf-8?B?MnkvU1dkbzZQR0lYUnZUSWtIZTQybnZrcHpFSWx5S0Nra1J1UGY2K3RiMEFw?=
- =?utf-8?B?aU42em5HQzFodFNRU2dDVldMcEVsTytoMTZ6cEZaTDZobUVCTUlETVNMRmxB?=
- =?utf-8?B?b2pkRGoxSmh5aVp4UWdMaGtsb0RkUjl3U3pCVzFYQjhrTnpQcU9IeVBHNXhr?=
- =?utf-8?Q?GoS/TQKwvIIS7Tt4dTtdMD8Gv?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83c0c832-e241-48f4-fa52-08dca0d86153
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6434.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 12:03:58.9634
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: r4NKPsr105lVIb49jTD8MSijKTVTLY+LscW5sI+IvRKqvg23tLDN8KJFeYbHztuSzsNVNlUHSS3zRarPXOGtxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5825
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 07-Jul-24 4:12 AM, Yu Zhao wrote:
->> Some experiments tried
->> ======================
->> 1) When MGLRU was enabled many soft lockups were observed, no hard
->> lockups were seen for 48 hours run. Below is once such soft lockup.
-<snip>
->> Below preemptirqsoff trace points to preemption being disabled for more
->> than 10s and the lock in picture is lruvec spinlock.
+On Thu, Jun 27, 2024 at 02:28:03PM -0400, Paul Moore wrote:
+> On Thu, Jun 27, 2024 at 9:34 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > I didn't find specific issues with Landlock's code except the extra
+> > check in hook_inode_free_security().  It looks like inode->i_security is
+> > a dangling pointer, leading to UAF.
+> >
+> > Reading security_inode_free() comments, two things looks weird to me:
+> >
+> > > /**
+> > >  * security_inode_free() - Free an inode's LSM blob
+> > >  * @inode: the inode
+> > >  *
+> > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
+> >
+> > I don't see where i_security is set to NULL.
 > 
-> Also if you could try the other patch (mglru.patch) please. It should
-> help reduce unnecessary rotations from deactivate_file_folio(), which
-> in turn should reduce the contention on the LRU lock for MGLRU.
-
-Thanks. With mglru.patch on a MGLRU-enabled system, the below latency 
-trace record is no longer seen for a 30hr workload run.
-
+> The function header comments are known to be a bit suspect, a side
+> effect of being detached from the functions for many years, this may
+> be one of those cases.  I tried to fix up the really awful ones when I
+> moved the comments back, back I didn't have time to go through each
+> one in detail.  Patches to correct the function header comments are
+> welcome and encouraged! :)
 > 
->>       # tracer: preemptirqsoff
->>       #
->>       # preemptirqsoff latency trace v1.1.5 on 6.10.0-rc3-mglru-irqstrc
->>       # --------------------------------------------------------------------
->>       # latency: 10382682 us, #4/4, CPU#128 | (M:desktop VP:0, KP:0, SP:0
->> HP:0 #P:512)
->>       #    -----------------
->>       #    | task: fio-2701523 (uid:0 nice:0 policy:0 rt_prio:0)
->>       #    -----------------
->>       #  => started at: deactivate_file_folio
->>       #  => ended at:   deactivate_file_folio
->>       #
->>       #
->>       #                    _------=> CPU#
->>       #                   / _-----=> irqs-off/BH-disabled
->>       #                  | / _----=> need-resched
->>       #                  || / _---=> hardirq/softirq
->>       #                  ||| / _--=> preempt-depth
->>       #                  |||| / _-=> migrate-disable
->>       #                  ||||| /     delay
->>       #  cmd     pid     |||||| time  |   caller
->>       #     \   /        ||||||  \    |    /
->>            fio-2701523 128...1.    0us$: deactivate_file_folio
->> <-deactivate_file_folio
->>            fio-2701523 128.N.1. 10382681us : deactivate_file_folio
->> <-deactivate_file_folio
->>            fio-2701523 128.N.1. 10382683us : tracer_preempt_on
->> <-deactivate_file_folio
->>            fio-2701523 128.N.1. 10382691us : <stack trace>
->>        => deactivate_file_folio
->>        => mapping_try_invalidate
->>        => invalidate_mapping_pages
->>        => invalidate_bdev
->>        => blkdev_common_ioctl
->>        => blkdev_ioctl
->>        => __x64_sys_ioctl
->>        => x64_sys_call
->>        => do_syscall_64
->>        => entry_SYSCALL_64_after_hwframe
+> > >  */
+> > > void security_inode_free(struct inode *inode)
+> > > {
+> >
+> > Shouldn't we add this check here?
+> > if (!inode->i_security)
+> >         return;
+> 
+> Unless I'm remembering something wrong, I believe we *should* always
+> have a valid i_security pointer each time we are called, if not
+> something has gone wrong, e.g. the security_inode_free() hook is no
+> longer being called from the right place.  If we add a NULL check, we
+> should probably have a WARN_ON(), pr_err(), or something similar to
+> put some spew on the console/logs.
+> 
+> All that said, it would be good to hear some confirmation from the VFS
+> folks that the security_inode_free() hook is located in a spot such
+> that once it exits it's current RCU critical section it is safe to
+> release the associated LSM state.
+> 
+> It's also worth mentioning that while we always allocate i_security in
+> security_inode_alloc() right now, I can see a world where we allocate
+> the i_security field based on need using the lsm_blob_size info (maybe
+> that works today?  not sure how kmem_cache handled 0 length blobs?).
+> The result is that there might be a legitimate case where i_security
+> is NULL, yet we still want to call into the LSM using the
+> inode_free_security() implementation hook.
 
-However the contention now has shifted to inode_hash_lock. Around 55 
-softlockups in ilookup() were observed:
+Looking at existing LSM implementations, even if some helpers (e.g.
+selinux_inode) return NULL if inode->i_security is NULL, this may not be
+handled by the callers.  For instance, SELinux always dereferences the
+blob pointer in the security_inode_permission() hook.  EVM seems to be
+the only one properly handling this case.
 
-# tracer: preemptirqsoff
-#
-# preemptirqsoff latency trace v1.1.5 on 6.10.0-rc3-trnmglru
-# --------------------------------------------------------------------
-# latency: 10620430 us, #4/4, CPU#260 | (M:desktop VP:0, KP:0, SP:0 HP:0 
-#P:512)
-#    -----------------
-#    | task: fio-3244715 (uid:0 nice:0 policy:0 rt_prio:0)
-#    -----------------
-#  => started at: ilookup
-#  => ended at:   ilookup
-#
-#
-#                    _------=> CPU#
-#                   / _-----=> irqs-off/BH-disabled
-#                  | / _----=> need-resched
-#                  || / _---=> hardirq/softirq
-#                  ||| / _--=> preempt-depth
-#                  |||| / _-=> migrate-disable
-#                  ||||| /     delay
-#  cmd     pid     |||||| time  |   caller
-#     \   /        ||||||  \    |    /
-      fio-3244715 260...1.    0us$: _raw_spin_lock <-ilookup
-      fio-3244715 260.N.1. 10620429us : _raw_spin_unlock <-ilookup
-      fio-3244715 260.N.1. 10620430us : tracer_preempt_on <-ilookup
-      fio-3244715 260.N.1. 10620440us : <stack trace>
-=> _raw_spin_unlock
-=> ilookup
-=> blkdev_get_no_open
-=> blkdev_open
-=> do_dentry_open
-=> vfs_open
-=> path_openat
-=> do_filp_open
-=> do_sys_openat2
-=> __x64_sys_openat
-=> x64_sys_call
-=> do_syscall_64
-=> entry_SYSCALL_64_after_hwframe
-
-It appears that scalability issues with inode_hash_lock has been brought 
-up multiple times in the past and there were patches to address the same.
-
-https://lore.kernel.org/all/20231206060629.2827226-9-david@fromorbit.com/
-https://lore.kernel.org/lkml/20240611173824.535995-2-mjguzik@gmail.com/
-
-CC'ing FS folks/list for awareness/comments.
-
-Regards,
-Bharata.
+Shouldn't we remove all inode->i_security checks and assume it is always
+set?  This is currently the case anyway, but it would be clearer this
+way and avoid false sense of security (with useless checks).
 
