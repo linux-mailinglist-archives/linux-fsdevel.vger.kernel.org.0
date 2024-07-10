@@ -1,265 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-23480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC2092D236
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 15:05:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6935F92D37C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 15:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B0E21F24C93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 13:05:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B08B1C21474
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 13:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D5919247D;
-	Wed, 10 Jul 2024 13:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CE819308C;
+	Wed, 10 Jul 2024 13:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffpC0Ptx"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="V3xs9yDp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17DA191497;
-	Wed, 10 Jul 2024 13:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FF3193074
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jul 2024 13:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616702; cv=none; b=CvIOaBo4jWyLxnMy3KFohcLn6ZmU7UbCO0TuF3rG/PuSB6MZsVYX4O7Ek7pnmanlMwXc41kJN02vBmFC5yPO6qDdVCviKjNIiZH1Mo+fG4LGYcdCFGZTA2p5jmFum0T2xbplqq62iUl4pRUlCAlXjNRbnQVppDUV5eW0GCM1X9E=
+	t=1720619608; cv=none; b=oFfyZJunhgbu/PStvBlVhZb8sU3tyMZqSNXHRWJPeI3mKExBUcUuU5EMrCcy7P+bFR3Pd+FQbemvKdRfO2lbM38q1l9UTW5O9hTe7CpAr14uIAQ/Xo1QpYer2GmkHlIMIZMTt83FftpaxTCNN3cWCxV6SpMVAPmS16aEy51O/Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616702; c=relaxed/simple;
-	bh=SyVxla2et2wQdF7Ur4jp45UAsd15s5o3dZy1WA18ZDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bHwa39V4U1v0xFEijaXP+FKPeGv2/Msa0VyLMTkXcRhqwYNqJ4/Ng6Hwy50MzHSwRef8QPGAvgAiELSzr+V+YPqHw5pWb8PmhNI65OXg7vWyNi5M0rmdNTj7UTewyv6EGdGqjNo8OFlsaKqASBYIZdKYp+fzUk2RPAXZt7Z3b5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffpC0Ptx; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6fd513f18bso667422166b.3;
-        Wed, 10 Jul 2024 06:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720616699; x=1721221499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wO7cOo1kh0P6Txqc4PJ38t7/AZC3sWDggaziBs/A6L4=;
-        b=ffpC0Ptx7Paa7NIuXWvTVGfCsTATf535PBhZQ4STb3ErLpW2TeqoMUQMCa+0FvlGyZ
-         WCPJVsHO4W82+VDo9CWOR0t2HzNt9ujnfnnWhteaTv5WgMQ3mwAtImCGnbjhaYvwOX5E
-         xuPj9BkKQaY0FZqJLiNvjRbJ098tCXUB+ZCGwEY617oS0xxCSHAr2T2yLmWQcmErAOby
-         HhOtZK6six7+D/Fq+XlzZBRRICXDhNYpfkiRqJa7+bEYpXSe0mBeGUqI3Z+o7ehu/27k
-         WLLDX48U2A7GquCPoZB/SA1QzQzfpRxMby9p4UX/x99hoYpQft1ubFSIKnB8wpm5RNH8
-         hC7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720616699; x=1721221499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wO7cOo1kh0P6Txqc4PJ38t7/AZC3sWDggaziBs/A6L4=;
-        b=gR4TMmde8rBqo/JTTJvafMweqnpiXcOmAFlIwomCbuQd1OFuLF7lDJxSC6Nkg1jf/O
-         dilGio5lEacvAa5Ou+gIpBCxjCGSJoh6/sTwllBLqJ8NCBBbOd339MZYa7URqFL+Psvh
-         zUpqrDqUf1liihdW7x51W9n3kjuZrJEOYYb2LBTKCYFAFF5vRZclo1crrEWKar1DUbUj
-         IBRfIEG6TNVooq+nJVzYHXI+0U4EYFwmzf4ro0I80Q6Cj9QPagbsUmJtBrbB88WJuBER
-         CfkLJugck7bUnzehu8NJ1V+FLzHfCD2AzL1opXTQbK6OOcZmVlxRrPBazjW7+jVChcdk
-         VhGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1BmHTmyxDuj3DzAZp3Sobfjq/K7Ws91ErWp4qfeqpmEyCt8dzZ+dMIQgdMwYilxslrDw/N5Hm8RS6tpITPsrKZTXxw1Z19A65KcM+yjnRs9YcwLrxr8d0SsCLMK9Mig+n3E8pcNhUD1dS8g==
-X-Gm-Message-State: AOJu0Yyb6IkJyTaw3rOSsphJgv7oGSLAi7EqAQx2ohqq8wQEL2LbICP/
-	6exBWUu1m8Jl5gbXNxP1z/y1tlreMYqq8rC1V3i/Sd+l/K/T3wAdt6aK+2nLwT7it13ZigWKd3w
-	3OXivOS2Qo1HWU5MlWaOE83AMz/4=
-X-Google-Smtp-Source: AGHT+IGCFxVCXdmp75r1wbdIFzjDoi24n+M4oPOXt5hliNLw6PRGoAOxUk2qC0wxwjz9YrQ49yXsGWc7xU/JD1IB1Ig=
-X-Received: by 2002:a17:906:794a:b0:a77:abe5:5f47 with SMTP id
- a640c23a62f3a-a780b89e7c3mr512946366b.63.1720616698896; Wed, 10 Jul 2024
- 06:04:58 -0700 (PDT)
+	s=arc-20240116; t=1720619608; c=relaxed/simple;
+	bh=5Q6phVlqBjRBZPPTioIgE049kVnw2FiAlwyhm369ZKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ATiZ06HSdA6inKtR7EfWoN9tYUo6VVlgzEXOoixBCkI6mOkifFYpFB87YAYPsftxkszHABbmsES9dg3xXXzRFVPbTg12bmO0OIntj2M59KyfuXzxeAXdFrBDUZDo+sGBB8V4ukfaRQj/3ZZ5jXzLTkUdgMMjhFfuvajQOLV7lX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=V3xs9yDp; arc=none smtp.client-ip=83.166.143.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJzpV0VXGzbm7;
+	Wed, 10 Jul 2024 15:53:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720619601;
+	bh=ifwDgxqKwDaPE0SIqSz4qw8wsXTHuLeU/PsJiOUMJI4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V3xs9yDpY344VxfBbhOk7n7ClxvATSRgjyBrefapCSdQxKBHlKp20p5Lrl/j3Z13r
+	 WbZFJfaNKdkJ7KSL8DRU4B+u1d/PRHfH1eo0sCOG5wg7TQl8/iWmQHW9S6pzudpa0k
+	 eOiBmJJZMHEQ5mHKk0yGuuXqJL8ojGjx35ZlRq7A=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJzpS0lVGzcvq;
+	Wed, 10 Jul 2024 15:53:20 +0200 (CEST)
+Date: Wed, 10 Jul 2024 15:53:16 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Kees Cook <keescook@chromium.org>, syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, 
+	jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <20240710.Aephuhain8lu@digikod.net>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
+ <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net>
+ <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+ <20240710.Hai0Uj3Phaij@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com> <CAOUHufawNerxqLm7L9Yywp3HJFiYVrYO26ePUb1jH-qxNGWzyA@mail.gmail.com>
- <4307e984-a593-4495-b4cc-8ef509ddda03@amd.com> <CAGudoHH4N0eEQCpJqFioRCJx75WAO5n+kCA0XcRZ-914xFR0gw@mail.gmail.com>
-In-Reply-To: <CAGudoHH4N0eEQCpJqFioRCJx75WAO5n+kCA0XcRZ-914xFR0gw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 10 Jul 2024 15:04:46 +0200
-Message-ID: <CAGudoHEsg95BHX+nmK-N7Ps5dsw4ffg6YPimXMFvS+AhGSJeGw@mail.gmail.com>
-Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
-To: Bharata B Rao <bharata@amd.com>
-Cc: Yu Zhao <yuzhao@google.com>, david@fromorbit.com, kent.overstreet@linux.dev, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, nikunj@amd.com, 
-	"Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, willy@infradead.org, vbabka@suse.cz, kinseyho@google.com, 
-	Mel Gorman <mgorman@suse.de>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240710.Hai0Uj3Phaij@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Wed, Jul 10, 2024 at 2:24=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Wed, Jul 10, 2024 at 2:04=E2=80=AFPM Bharata B Rao <bharata@amd.com> w=
-rote:
-> >
-> > On 07-Jul-24 4:12 AM, Yu Zhao wrote:
-> > >> Some experiments tried
-> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >> 1) When MGLRU was enabled many soft lockups were observed, no hard
-> > >> lockups were seen for 48 hours run. Below is once such soft lockup.
-> > <snip>
-> > >> Below preemptirqsoff trace points to preemption being disabled for m=
-ore
-> > >> than 10s and the lock in picture is lruvec spinlock.
+On Wed, Jul 10, 2024 at 02:23:23PM +0200, Mickaël Salaün wrote:
+> On Thu, Jun 27, 2024 at 02:28:03PM -0400, Paul Moore wrote:
+> > On Thu, Jun 27, 2024 at 9:34 AM Mickaël Salaün <mic@digikod.net> wrote:
 > > >
-> > > Also if you could try the other patch (mglru.patch) please. It should
-> > > help reduce unnecessary rotations from deactivate_file_folio(), which
-> > > in turn should reduce the contention on the LRU lock for MGLRU.
-> >
-> > Thanks. With mglru.patch on a MGLRU-enabled system, the below latency
-> > trace record is no longer seen for a 30hr workload run.
-> >
+> > > I didn't find specific issues with Landlock's code except the extra
+> > > check in hook_inode_free_security().  It looks like inode->i_security is
+> > > a dangling pointer, leading to UAF.
 > > >
-> > >>       # tracer: preemptirqsoff
-> > >>       #
-> > >>       # preemptirqsoff latency trace v1.1.5 on 6.10.0-rc3-mglru-irqs=
-trc
-> > >>       # ------------------------------------------------------------=
---------
-> > >>       # latency: 10382682 us, #4/4, CPU#128 | (M:desktop VP:0, KP:0,=
- SP:0
-> > >> HP:0 #P:512)
-> > >>       #    -----------------
-> > >>       #    | task: fio-2701523 (uid:0 nice:0 policy:0 rt_prio:0)
-> > >>       #    -----------------
-> > >>       #  =3D> started at: deactivate_file_folio
-> > >>       #  =3D> ended at:   deactivate_file_folio
-> > >>       #
-> > >>       #
-> > >>       #                    _------=3D> CPU#
-> > >>       #                   / _-----=3D> irqs-off/BH-disabled
-> > >>       #                  | / _----=3D> need-resched
-> > >>       #                  || / _---=3D> hardirq/softirq
-> > >>       #                  ||| / _--=3D> preempt-depth
-> > >>       #                  |||| / _-=3D> migrate-disable
-> > >>       #                  ||||| /     delay
-> > >>       #  cmd     pid     |||||| time  |   caller
-> > >>       #     \   /        ||||||  \    |    /
-> > >>            fio-2701523 128...1.    0us$: deactivate_file_folio
-> > >> <-deactivate_file_folio
-> > >>            fio-2701523 128.N.1. 10382681us : deactivate_file_folio
-> > >> <-deactivate_file_folio
-> > >>            fio-2701523 128.N.1. 10382683us : tracer_preempt_on
-> > >> <-deactivate_file_folio
-> > >>            fio-2701523 128.N.1. 10382691us : <stack trace>
-> > >>        =3D> deactivate_file_folio
-> > >>        =3D> mapping_try_invalidate
-> > >>        =3D> invalidate_mapping_pages
-> > >>        =3D> invalidate_bdev
-> > >>        =3D> blkdev_common_ioctl
-> > >>        =3D> blkdev_ioctl
-> > >>        =3D> __x64_sys_ioctl
-> > >>        =3D> x64_sys_call
-> > >>        =3D> do_syscall_64
-> > >>        =3D> entry_SYSCALL_64_after_hwframe
-> >
-> > However the contention now has shifted to inode_hash_lock. Around 55
-> > softlockups in ilookup() were observed:
-> >
-> > # tracer: preemptirqsoff
-> > #
-> > # preemptirqsoff latency trace v1.1.5 on 6.10.0-rc3-trnmglru
-> > # --------------------------------------------------------------------
-> > # latency: 10620430 us, #4/4, CPU#260 | (M:desktop VP:0, KP:0, SP:0 HP:=
-0
-> > #P:512)
-> > #    -----------------
-> > #    | task: fio-3244715 (uid:0 nice:0 policy:0 rt_prio:0)
-> > #    -----------------
-> > #  =3D> started at: ilookup
-> > #  =3D> ended at:   ilookup
-> > #
-> > #
-> > #                    _------=3D> CPU#
-> > #                   / _-----=3D> irqs-off/BH-disabled
-> > #                  | / _----=3D> need-resched
-> > #                  || / _---=3D> hardirq/softirq
-> > #                  ||| / _--=3D> preempt-depth
-> > #                  |||| / _-=3D> migrate-disable
-> > #                  ||||| /     delay
-> > #  cmd     pid     |||||| time  |   caller
-> > #     \   /        ||||||  \    |    /
-> >       fio-3244715 260...1.    0us$: _raw_spin_lock <-ilookup
-> >       fio-3244715 260.N.1. 10620429us : _raw_spin_unlock <-ilookup
-> >       fio-3244715 260.N.1. 10620430us : tracer_preempt_on <-ilookup
-> >       fio-3244715 260.N.1. 10620440us : <stack trace>
-> > =3D> _raw_spin_unlock
-> > =3D> ilookup
-> > =3D> blkdev_get_no_open
-> > =3D> blkdev_open
-> > =3D> do_dentry_open
-> > =3D> vfs_open
-> > =3D> path_openat
-> > =3D> do_filp_open
-> > =3D> do_sys_openat2
-> > =3D> __x64_sys_openat
-> > =3D> x64_sys_call
-> > =3D> do_syscall_64
-> > =3D> entry_SYSCALL_64_after_hwframe
-> >
-> > It appears that scalability issues with inode_hash_lock has been brough=
-t
-> > up multiple times in the past and there were patches to address the sam=
-e.
-> >
-> > https://lore.kernel.org/all/20231206060629.2827226-9-david@fromorbit.co=
-m/
-> > https://lore.kernel.org/lkml/20240611173824.535995-2-mjguzik@gmail.com/
-> >
-> > CC'ing FS folks/list for awareness/comments.
->
-> Note my patch does not enable RCU usage in ilookup, but this can be
-> trivially added.
->
-> I can't even compile-test at the moment, but the diff below should do
-> it. Also note the patches are present here
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3Dvfs.=
-inode.rcu
-> , not yet integrated anywhere.
->
-> That said, if fio you are operating on the same target inode every
-> time then this is merely going to shift contention to the inode
-> spinlock usage in find_inode_fast.
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index ad7844ca92f9..70b0e6383341 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1524,10 +1524,14 @@ struct inode *ilookup(struct super_block *sb,
-> unsigned long ino)
->  {
->         struct hlist_head *head =3D inode_hashtable + hash(sb, ino);
->         struct inode *inode;
-> +
->  again:
-> -       spin_lock(&inode_hash_lock);
-> -       inode =3D find_inode_fast(sb, head, ino, true);
-> -       spin_unlock(&inode_hash_lock);
-> +       inode =3D find_inode_fast(sb, head, ino, false);
-> +       if (IS_ERR_OR_NULL_PTR(inode)) {
-> +               spin_lock(&inode_hash_lock);
-> +               inode =3D find_inode_fast(sb, head, ino, true);
-> +               spin_unlock(&inode_hash_lock);
-> +       }
->
->         if (inode) {
->                 if (IS_ERR(inode))
->
+> > > Reading security_inode_free() comments, two things looks weird to me:
+> > >
+> > > > /**
+> > > >  * security_inode_free() - Free an inode's LSM blob
+> > > >  * @inode: the inode
+> > > >  *
+> > > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
+> > >
+> > > I don't see where i_security is set to NULL.
+> > 
+> > The function header comments are known to be a bit suspect, a side
+> > effect of being detached from the functions for many years, this may
+> > be one of those cases.  I tried to fix up the really awful ones when I
+> > moved the comments back, back I didn't have time to go through each
+> > one in detail.  Patches to correct the function header comments are
+> > welcome and encouraged! :)
+> > 
+> > > >  */
+> > > > void security_inode_free(struct inode *inode)
+> > > > {
+> > >
+> > > Shouldn't we add this check here?
+> > > if (!inode->i_security)
+> > >         return;
+> > 
+> > Unless I'm remembering something wrong, I believe we *should* always
+> > have a valid i_security pointer each time we are called, if not
+> > something has gone wrong, e.g. the security_inode_free() hook is no
+> > longer being called from the right place.  If we add a NULL check, we
+> > should probably have a WARN_ON(), pr_err(), or something similar to
+> > put some spew on the console/logs.
+> > 
+> > All that said, it would be good to hear some confirmation from the VFS
+> > folks that the security_inode_free() hook is located in a spot such
+> > that once it exits it's current RCU critical section it is safe to
+> > release the associated LSM state.
+> > 
+> > It's also worth mentioning that while we always allocate i_security in
+> > security_inode_alloc() right now, I can see a world where we allocate
+> > the i_security field based on need using the lsm_blob_size info (maybe
+> > that works today?  not sure how kmem_cache handled 0 length blobs?).
+> > The result is that there might be a legitimate case where i_security
+> > is NULL, yet we still want to call into the LSM using the
+> > inode_free_security() implementation hook.
+> 
+> Looking at existing LSM implementations, even if some helpers (e.g.
+> selinux_inode) return NULL if inode->i_security is NULL, this may not be
+> handled by the callers.  For instance, SELinux always dereferences the
+> blob pointer in the security_inode_permission() hook.  EVM seems to be
+> the only one properly handling this case.
+> 
+> Shouldn't we remove all inode->i_security checks and assume it is always
+> set?  This is currently the case anyway, but it would be clearer this
+> way and avoid false sense of security (with useless checks).
 
-I think I expressed myself poorly, so here is take two:
-1. inode hash soft lookup should get resolved if you apply
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dvfs=
-.inode.rcu&id=3D7180f8d91fcbf252de572d9ffacc945effed0060
-and the above pasted fix (not compile tested tho, but it should be
-obvious what the intended fix looks like)
-2. find_inode_hash spinlocks the target inode. if your bench only
-operates on one, then contention is going to shift there and you may
-still be getting soft lockups. not taking the spinlock in this
-codepath is hackable, but I don't want to do it without a good
-justification.
+A patch was sent to do this kind of check:
+https://lore.kernel.org/r/20140109101932.0508dec7@gandalf.local.home
+but the applied commit 3dc91d4338d6 ("SELinux: Fix possible NULL pointer
+dereference in selinux_inode_permission()") didn't include the
+i_security check.
 
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Since this commit, the security_inode_free()'s header comment is no
+longer correct because i_security is no longer set to NULL.
 
