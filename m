@@ -1,96 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-23521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86D292DB20
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 23:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF22892DB58
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 23:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62FC228513B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 21:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7197E281F3B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 21:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A633D1420A8;
-	Wed, 10 Jul 2024 21:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pmRu7gZQ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F84F12CD88;
+	Wed, 10 Jul 2024 21:57:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D69132113;
-	Wed, 10 Jul 2024 21:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E483E3D556;
+	Wed, 10 Jul 2024 21:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720647626; cv=none; b=aGKFI8mFAT+UGgaEKEW78EFW1qzY/Ru+P05ox8d7H8m0SRN2APvT9OBzz5oN+lDYbDs+/oOh1JahfM534l2yHls4xzThTVpA1hjcuS8LeiVQBnGMobFgM7VLekMlCw+rAfslooFdm4mrzElZYi/fYtGdhOGf0H8dVXXB6xuHzPQ=
+	t=1720648647; cv=none; b=mdmPRycde4b9KoZ/RHAgm1JcSwCaUbVTTtIQDeHmRvMnBcHmSnKqOTne94UKU4w7zsjayRrJwhj+NaLROGxYMU5BqFcmpcSqT+u7U3on5LlqxFfKKw69eizfgYA+Ecm6CfzS4XDhQgVzZkeNw5zmNYs92YOxVNP25hHauex0beo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720647626; c=relaxed/simple;
-	bh=dtNZaFXzPMRLfnec74raV485fSKqF/FDLb+FsiS4fTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mpp68QRutTJJXcB/qXtjPmsWJwwlpFlPIMOf+oiPE5TmbfB3LIAAdVj0Ph4wUX+dxhdSB9FgFePFm1gz/0Yj0wg1zJHNfM2RqZLkzxFr7YSksO6Bf34gap+9vgozKIiomC4n02Wqrr3jQT0FW5baJyp+aBje+M2U4zkT8A3KWro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pmRu7gZQ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=t4jvbJ7n8PAGp09Txkl3fReWKpqoTyQAeWAGk4qQm/o=; b=pmRu7gZQLcNyFlN272TC6n+Pfl
-	0uX+C6vTTtndMxjKm5byN5vFdxVg0GwLIoEoJwWuns0WUGdROO2+1dhzZdKWoWp4/6I0qHZXSvO3V
-	b0UHmFkud2zX/YFmg+nENEt+OXUQh5LT3Gs3nhF3EeiCDkKHe/K+S9GYaq7eqiSfXHn3+tBGM4ynd
-	Cz0mbigeg0DtzD6U0hCaJxnixGOU0TmvkUubdRu7YLQRCTiu9O4jyMHOPEFlpG6QftsSvbxvtqzgA
-	6gbAiIzwS/WK4J1HlwxETq0/JNEPhHZQ5GzpkGWBbWs+I7RVC0kZ8QkO9qyzUyXG5PUpgQPdCglft
-	j8Hxw89g==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRf2x-00000009uiC-3NoI;
-	Wed, 10 Jul 2024 21:40:19 +0000
-Date: Wed, 10 Jul 2024 22:40:19 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	linux-nilfs@vger.kernel.org, reiserfs-devel@vger.kernel.org
-Subject: [6.12] Conversion of aops->write_end to use a folio
-Message-ID: <Zo7_w-BjbbbrxadX@casper.infradead.org>
+	s=arc-20240116; t=1720648647; c=relaxed/simple;
+	bh=sjBWqb0bVT2gDJ1EQqCo79D2OjzIHkiqtKnG9vgSq90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QXTqIPP8s36OUcRGqYlbwpuoyEhOrkH7PY3LG2DHHbIleuhKORzfM7Nd1Q3lfk2hOzPziIjM7X0wnFZHo8lcjFVTZwgvmqOTHbRULe0ObokU4TYqYgmMBk5DAhJTsZ4F75tXsFRjla7bKxyTwOrl3pDRhtOtUtXwLFRiygCyQgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=basealt.ru; spf=pass smtp.mailfrom=basealt.ru; arc=none smtp.client-ip=194.107.17.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=basealt.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=basealt.ru
+Received: by air.basealt.ru (Postfix, from userid 490)
+	id AD6D82F20249; Wed, 10 Jul 2024 21:57:19 +0000 (UTC)
+X-Spam-Level: 
+Received: from [192.168.0.102] (unknown [178.76.204.78])
+	by air.basealt.ru (Postfix) with ESMTPSA id A925C2F2023F;
+	Wed, 10 Jul 2024 21:57:18 +0000 (UTC)
+Message-ID: <cd942b65-b6d7-0e0f-be4d-c3b950ee008f@basealt.ru>
+Date: Thu, 11 Jul 2024 00:57:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH fs/bfs 1/2] bfs: fix null-ptr-deref in bfs_move_block
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ "Tigran A. Aivazian" <aivazian.tigran@gmail.com>, dutyrok@altlinux.org,
+ linux-fsdevel@vger.kernel.org, lvc-patches@linuxtesting.org
+References: <20240710191118.40431-2-kovalev@altlinux.org>
+ <8fd93c4e-3324-49b6-a77c-ea9986bc3033@web.de>
+Content-Language: en-US
+From: =?UTF-8?B?0JLQsNGB0LjQu9C40Lkg0JrQvtCy0LDQu9C10LI=?=
+ <kovalevvv@basealt.ru>
+In-Reply-To: <8fd93c4e-3324-49b6-a77c-ea9986bc3033@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-For the 6.12 merge window, I intend to submit a patch series loosely
-similar to the one you can find at
+10.07.2024 23:09, Markus Elfring wrote:
+>> Add a check to ensure 'sb_getblk' did not return NULL before copying data.
+> 
+> Wording suggestion:
+>                          that a sb_getblk() call
+> 
+> 
+> How do you think about to use a summary phrase like
+> “Prevent null pointer dereference in bfs_move_block()”?
 
-http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/write-end
+Ok, I'll change it in the next version:
 
-(aka git://git.infradead.org/users/willy/pagecache.git write-end)
+bfs: prevent null pointer dereference in bfs_move_block()
 
-This is split into a few pieces:
+Add a check to ensure that a sb_getblk() call did not return NULL before 
+copying data.
 
- - Directory handling conversion for ufs, sysv, minix & qnx6, all posted
-   recently.
- - Various prep patches in reiserfs, jffs2, block fops, nilfs2, ntfs3,
-   ecryptfs, f2fs, fuse, orangefs and vboxsf
- - The big bang conversion that is now appropriately trivial in each
-   affected filesystem.
+> 
+> …
+>> +++ b/fs/bfs/file.c
+>> @@ -35,16 +35,22 @@ static int bfs_move_block(unsigned long from, unsigned long to,
+>>   					struct super_block *sb)
+>>   {
+>>   	struct buffer_head *bh, *new;
+>> +	int err;
+> 
+> Can a statement (like the following) become more appropriate for such
+> a function implementation?
+> 
+> 	int ret = 0;
 
-It would be nice to get sign-offs from the various fs maintainers on
-the prep patches.  I'll send those out in the next 24 hours.  If you
-want to take them through your tree, I ask that you do that for 6.11 so
-we're not juggling git trees trying to resolve conflicts in 6.12.
+Yes, thank you.
 
-I don't think we need signoffs from the various fs maintainers for the
-big bang patch as the individual changes are so trivial.  But if you
-want to give it a look-over, the more eyes the better.
+> 
+> Regards,
+> Markus
+-- 
+Regards,
+Vasiliy Kovalev
 
