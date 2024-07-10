@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-23525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFF492DC26
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 00:57:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C637F92DC28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 00:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EF261F25124
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 22:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88F112813DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 22:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106BD14C586;
-	Wed, 10 Jul 2024 22:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C558614C587;
+	Wed, 10 Jul 2024 22:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4cERl79"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8gKaQ4m"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BDD1411ED;
-	Wed, 10 Jul 2024 22:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEDC1411ED;
+	Wed, 10 Jul 2024 22:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720652247; cv=none; b=Hj5J2aBpDlUdPe8sXJ9Rcvu1LN5oWpKMn9EczbFlRPxuYlW05KJJlnwwv18MHYH8Ron/4QyLiktOPB3npj2rCzAFERPHRATnDNg9DIGxRNYa+tGlBsBMRGyJOd0nBB4h+KZEO/kbPSLeqqHVDAn+9KAHDt48elIGBRT8k/a4wqo=
+	t=1720652256; cv=none; b=b3e1uJeYI0eH/nxkACE0MhmP09sG7obxEjHyNWPc2yD6mJnLiZq4xsaJZOz/iFF0yPXBTJwqNFVfSLMT+3KFF/yqyku3tK35lrwgQeAoZpIr81CZlM4H8S7HiBYcIaZexkdl6gOHnCkgKuiNrouyKDapiKl9qOK11+6fQTECoC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720652247; c=relaxed/simple;
-	bh=lgkwuMhYjgJdCgtmrNEJX1o/Bkha+B9ImM8K81AzqKU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=atMJtNl/gOBUL3yyhzqaTmmDBOyDxYNy9zyonAj2NPzL1jWcQg282Z0t+wDV/je64qOYuk/8iGoJLVkYLYC6UrWnZab7qQWgFgK9nN8LKFg4zsaqpzs8XVWuw34Sz0pdr/XbS4ZJknJWmvsIuE1OJeiKp6nErumaZPKrLfda1QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4cERl79; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47982C4AF07;
-	Wed, 10 Jul 2024 22:57:27 +0000 (UTC)
+	s=arc-20240116; t=1720652256; c=relaxed/simple;
+	bh=xHfQpE3xnJF7fWEh0n0J1QrO+PZas6vV4ZW3I9ZtpZI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hQOCFdMvOqySSXo40XnFonnA9g63XdBlNWPR4qcNwbUG/py9IaxLG67QvxjzZ557zsCg+pHVOjqwwYin17q6hPPZ6g2YxDM2Ji53r4cfhFifsHgze/gKPczdoMW6sJVwD5bOhM7n+1F7vplFTOT9laGn/49A5Oo7ozMBLFL2ys4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8gKaQ4m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C36AC32781;
+	Wed, 10 Jul 2024 22:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720652247;
-	bh=lgkwuMhYjgJdCgtmrNEJX1o/Bkha+B9ImM8K81AzqKU=;
+	s=k20201202; t=1720652256;
+	bh=xHfQpE3xnJF7fWEh0n0J1QrO+PZas6vV4ZW3I9ZtpZI=;
 	h=From:To:Cc:Subject:Date:From;
-	b=H4cERl79oVFHINy2xMbmjFiiCIVsemisWvR+v+NA+wH3tbeU0nio8vpNw71TBF32O
-	 ZbDUZzBpMOBAIaQt2Q7YhayGrHtU0S7zOHX3rJqomQcutOyCYrv74CJ2EqaCFJe5/M
-	 pQptBBcP2OO1lGcNPKALS7r8I1sMVLV0NxKfS/a2Vc+AJSUgYAMy5Lyk/2XjDV55Co
-	 T041thcUjpNzl5domoEeZWlHHo90rwsFey75SMUutO4N2pfTXwrzmvkhPfhZ4J5O/y
-	 BLnDKK2UTlenXX8HL13z2s10KgfMWVEcvmgzT6+oI+39QYKCCfSp48IafDHu0hA0a5
-	 ar0pDR1se7owQ==
+	b=Z8gKaQ4mTKgEhNCOJKOba/oe1stgdcATlXWJX2XHnfRn7gt9HtKcefChc+F6GuMiS
+	 MI91x6J43ntE6Kob9FZ0cdGtFi8vo31137jai2GGsfkjO3J2fiaLkqvI8gfbcrZofI
+	 ww4Ahlaxkw6TFgb3AnRUJZHlZAf4d3R4XOIXn3GuLaEmVQcmE/5sJs2qQayNibxGAn
+	 Wuwr8hGn2LizhfoYG97zWEFKkafr3wfxRVWNnbd/Q5AiLA0Ms0VBPPqXjvOIn1Y/yC
+	 GoDK3PfCnOsmn1WdHEephrAf9DXlkdA76PmDmRd4+/af4/USZT/Rb5MP2yG6Da2NAb
+	 LFtecA1KPqFxw==
 From: Kees Cook <kees@kernel.org>
 To: David Sterba <dsterba@suse.com>
 Cc: Kees Cook <kees@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH] fs/affs: struct affs_data_head: Replace 1-element array with flexible array
-Date: Wed, 10 Jul 2024 15:57:25 -0700
-Message-Id: <20240710225725.work.409-kees@kernel.org>
+Subject: [PATCH] fs/affs: struct slink_front: Replace 1-element array with flexible array
+Date: Wed, 10 Jul 2024 15:57:34 -0700
+Message-Id: <20240710225734.work.823-kees@kernel.org>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -56,13 +56,13 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=797; i=kees@kernel.org; h=from:subject:message-id; bh=lgkwuMhYjgJdCgtmrNEJX1o/Bkha+B9ImM8K81AzqKU=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmjxHVDuolJI1SOCuvqG78mp7to8j9ToRsJxZUF kMkyR0aqKCJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZo8R1QAKCRCJcvTf3G3A JrXID/9Fv+AK42CH8krWSvnBxkUKUZQ2RUOncRj1NGjDNJCrXc5LFQ9z8pyaG96UVfqjMqaWyVQ eLoNzRImzqRNm9oWM2cKVkw2G/EzZGtS4xIUkpjtbahSEaq2DtytKbDkkg38cjHChR8wA7oU0HG mozEqjJmLNwMY3vfk+C/BHIG93Oepew7wvadneuCeilgDgDk2gcwXkOhzStShr5E0IVXIa9WaOe 2Fwbt5yWg3GHtynGz8CNn8G6y/bdRaLsb7lPHSdQ70N0AywDGcvnWJZAyPwXa45YFRJ033Pigr0 EN40Jqib37334PvEBJUGitgNIkjWZVgF87rMfEYi1UskCxQa+XkXx+Blbp/wjaysAJ8GlPcH32v j+rM3urbVlUiiOZv597dTxdU9rMVRCs687OyTn6vOuBPOV1e4dxcGYE5XVnHlpjvRiQCW2IL9qM aqZM4Sr7JL487lKk3rTYyexMk5hAHpOkTU0QTnAJV7E5ykSXlwgIXUV6U7HG+SE+RFa1ljDtFJ/ I2uUt/HFYT9aMcmMKRj3PXLRBf/GWyDo+wgeacQhrcnatuGwNTIfIVLJmkkjSZk3qpDl9kqOvmx quO3fbLxchbf5MnQWSgqCb+VtuKB39lxfoLF+TEvYbwfzdj72unoxsIeyxpv5jL8oufwyNXlDi/ PLwgGcFvaWwLmU
- Q==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=801; i=kees@kernel.org; h=from:subject:message-id; bh=xHfQpE3xnJF7fWEh0n0J1QrO+PZas6vV4ZW3I9ZtpZI=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmjxHeHmcuQywgqLp8HMdNBeLul7wqgYoZ1uj89 wp1bnIf+VuJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZo8R3gAKCRCJcvTf3G3A Jg6ED/9c9uqVWx9EySx9CD+/gkUqazxEwzIeT7Xy8xGSHekpK1WaxjU0Bcj3rJhYspgaWNDnWtb Hrd9ScHA1k/K2CNvwf4GKaKoc5LErlQoNt6QrY6HWKXNY3po/VaPoQnlqYW+287aK+Qh8rU9fG4 /XWYLPqNbNj/Oan4FyiaUJjZ8bDRNMpsMWvQzDsZNFA5+HcME9mD4RqS8kmbPY4oGV2xVwHqMZ4 lFqso/phiW5zJvkJdFLvdHbDqQ9IegLtHAraM+tFhnP/zdVu+HLCsCZRn974Ig0rYYBZdYlHVMo UxUvU6WMRoLWJ2ajyNdV7qMheAvW/KQ44Bi/7UV32KMC+LnEjbo+cpirmrX4OazlZlc4AGGLA1a S81ZQ+bbQ3npTklsLe1OsEllyL6ZJFp03Y9RMo9ySe0rkgslOS1De7te8VDTP6acY1xBdk7XS1/ aWfgSQQhtyTzDlKguxnaiAaODBX/JuzVIEwdlrLRQnXXRfsxGbhJqFSBMVHeJQMbISTnXU+WND/ Fx9kvluC8OZsTZZqwvk5dGa56Rk1yphj5asmIfgsEE5yOg6KYTpRmA/KJXQbeTmTI+O5LEDjh7V R9c/2k/eDUSxmF96d92hKpFINDkxjBs3+TeWgVgksax3j5O9CaVht55JnTm1+Zekpkxky/pUdx8 YHvZ0RTWpOI7iD
+ A==
 X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
 Replace the deprecated[1] use of a 1-element array in
-struct affs_data_head with a modern flexible array.
+struct slink_front with a modern flexible array.
 
 No binary differences are present after this conversion.
 
@@ -76,18 +76,18 @@ Cc: linux-fsdevel@vger.kernel.org
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
-index 09dc23a644df..1b973a669d23 100644
+index 81fb396d4dfa..5509fbc98bc0 100644
 --- a/fs/affs/amigaffs.h
 +++ b/fs/affs/amigaffs.h
-@@ -119,7 +119,7 @@ struct affs_data_head
- 	__be32 size;
- 	__be32 next;
+@@ -108,7 +108,7 @@ struct slink_front
+ 	__be32 key;
+ 	__be32 spare1[3];
  	__be32 checksum;
--	u8 data[1];	/* depends on block size */
-+	u8 data[];	/* depends on block size */
+-	u8 symname[1];	/* depends on block size */
++	u8 symname[];	/* depends on block size */
  };
  
- /* Permission bits */
+ struct affs_data_head
 -- 
 2.34.1
 
