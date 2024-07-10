@@ -1,212 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-23523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8CF892DB87
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 00:05:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268C992DC24
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 00:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02C7CB20BD0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 22:05:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7BAA1C20CB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jul 2024 22:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6FD14535A;
-	Wed, 10 Jul 2024 22:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7751F14BF8F;
+	Wed, 10 Jul 2024 22:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OkQtx0Ys"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/z9Zref"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4F213D2A2;
-	Wed, 10 Jul 2024 22:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC121411ED;
+	Wed, 10 Jul 2024 22:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720649132; cv=none; b=iBsJF3xiKk2wcpdKjFO8/u3h8tDeK4q5PJQx5U4bHhgHHwd0453Wcbzf2w0BfrT1uQk180kyrQqGYPEh7YiUTSKckb1KOWEF9q4WdLwK2MXuohvorwTmZ5OyE7crZmaer0reY0jVBf6sz7rvTUWn84plF6rjXHWxS0EfsC7LIik=
+	t=1720652231; cv=none; b=WzotpX10NGds/AwoIT79sAsRu+2K5sZ9VnU3xYM0muIsJ7pfjYzcwlYK+nPjcjhTBPWjtI9GOCJi7LJSVQJuxLcMp4hxXlTVCrIUY1rcMhd5t/RvzBfavehjKze07FRZRycd6GVL4QTcF4VouJueyNXDs4F7aHvRWwq/AmSbHIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720649132; c=relaxed/simple;
-	bh=Eu93rMUzk399cQ8hiVO2KE52oaiSsroTl8ghLIzLkfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDX1XLXLKIvthlc2OdDkw93yO9oRhjaSJSW1i7gcYkCzPQwT+x6baLem3xjmMf8QsNAapOiZuusWROPbHJFNBUCPngxCc0RFj6pp4E2tRbiHkcpo4O4fP5hAbun3T3+pdzbJZc+3FP01Sla4MI5TCTEVYYgyPOC7CWP++hA8UZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OkQtx0Ys; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46743C32781;
-	Wed, 10 Jul 2024 22:05:31 +0000 (UTC)
+	s=arc-20240116; t=1720652231; c=relaxed/simple;
+	bh=VeZ0jAlaOsuBLB4942xy+6Tdi45diUS3vYZtSDLxNj4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pSbam9BPbGIaegrl26H+drZNLiRCsvfxDJ2Q2wsTqR9ArGv63x3f8N7GQpMvkawMpzK961AhjfWSz1tyngBW8ES7QNjj6SJENL5SvmYAdvl8S4tgqVP6tUYX+SBYbCYh5tUroIV8mk9aHFTGoAVLsBSvEEan4U7JCmU7Dhxkyyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/z9Zref; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 638E2C32781;
+	Wed, 10 Jul 2024 22:57:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720649131;
-	bh=Eu93rMUzk399cQ8hiVO2KE52oaiSsroTl8ghLIzLkfA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OkQtx0YsVpapXk8nKor0mFxxgG/Sel10dpQi8Mi+udNtmWFH8kMBqVYpOwh4Hd57o
-	 Fn1cjYbf21Au8EwCTMMoXlhwsSTLYn9lzqr1pgKMQ4gaNcRJRXZZQMHBu8LiVGWHGI
-	 8nKQyBhir7wgr8l2dDteEUogPPp+0XXyFf9mRBsSGqCQ6BPAyGy9zpjKLrN23CPLjz
-	 mrGlihLofkSTNkc0FSEniv9n+1JYFQuL2/0tzx7Hqx4md9CGzF26Kf5jWSEY7Ty7MQ
-	 ZvhnAixRihlPWHfw+rBcJOiDFE38cp3xk6DMExk6qWoBPLPQdf09GcyH4+EeLUbq2+
-	 2gzPUqbO088Tw==
-Date: Wed, 10 Jul 2024 23:05:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v9 13/39] KVM: arm64: Manage GCS registers for guests
-Message-ID: <Zo8FqFKQkuTv1r2M@finisterre.sirena.org.uk>
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
- <20240625-arm64-gcs-v9-13-0f634469b8f0@kernel.org>
- <86v81d2s5t.wl-maz@kernel.org>
- <Zo7B_sRyUyxv7xmO@finisterre.sirena.org.uk>
- <86ttgx2jba.wl-maz@kernel.org>
+	s=k20201202; t=1720652231;
+	bh=VeZ0jAlaOsuBLB4942xy+6Tdi45diUS3vYZtSDLxNj4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=I/z9ZrefHG6DopScp1g3VYpy8Ybu/7Z8w9LDsvHKRnQ0XX3+gzpvwTJTSrzzBwsHN
+	 26ZWRDvFGaKjjOkzqQfML6uwBgd6g4SH9elf0VpMiyQI94Ij8szfTiDY1arbG/t5q2
+	 rLbKeMN+YAOg6jv+83g50lUKD73E8VVJOHqCCG40hxHCG/uHwqYciBJAEIiFgGnz1D
+	 zcX3GCXZQF/Rb2nLi7d7Iwml8qV0YrkYdK2Fg5cKtW/dFP3Q0D+9HcYUvi2ulkOCol
+	 JtC9IzU7LZTVeImnIalb0iFAUch5VTFevAh+gzDbbmBlyeauO8sH3EkXlIHPfIE5ZN
+	 P/rbWZmKti2vg==
+From: Kees Cook <kees@kernel.org>
+To: David Sterba <dsterba@suse.com>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] fs/affs: struct affs_head: Replace 1-element array with flexible array
+Date: Wed, 10 Jul 2024 15:57:09 -0700
+Message-Id: <20240710225709.work.175-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="O0du0pkUMxnEy6Qh"
-Content-Disposition: inline
-In-Reply-To: <86ttgx2jba.wl-maz@kernel.org>
-X-Cookie: Your love life will be... interesting.
+X-Developer-Signature: v=1; a=openpgp-sha256; l=834; i=kees@kernel.org; h=from:subject:message-id; bh=VeZ0jAlaOsuBLB4942xy+6Tdi45diUS3vYZtSDLxNj4=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmjxHF5Ez54HZBFkF2f/07ZPqU5USXhLL8SAxk/ 0rxhGyYZD+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZo8RxQAKCRCJcvTf3G3A Jtf8D/43Y6ayx7bY9+1DmlCjUHDtsXceewBTMcCCXX36yi3ToaLh5FtBCQbCC3lSbhbH8U1Pi7d rVkYmNNoryQutUY0wXwHICfZYs+DrDC8ovpJpE/rMJqCxdMNvNo76YXELXh0nZVSOU+Yko0SGfm vuCLHskl9Yut2kfqXRO6jSTflXdQL+6YUURFzfrcjca2FPv64X/+MvpDkuLcES4HGW3ynUE5LYs i5ABgAJ03L9s6grl1mS/8EK85IAZOgKsPAN9NEOHj6f4EY8hS9GEHFZJoxuPz+CC44BiW1wZl/d DJysOkVdk1l4ZGTYF1WvjWlfJq7wmsJIvpBwxa77T7H+FYEjAPeoHMMvSRr2Iba7ZZbiPdrHd5d 6lg7PqLTu1T2rNnL5CfesfN8SmizMCo/2EHtXh/GXPTmpSNYLzkyWZgR66OeB6/i2/gpi6H7l/L lNaJ11tEGkNN+GDXRh65y6/eKJZD8F5aVP3iNp28pWgQiDBcMgXtpTGml9rzabxo1JsB0QouxwT pGGwB73bZVkrSYdxT/r9Qi94u0FDQrZ6J1Zm/rdwvRfAUKDWcna1fu/ZBNGj1D+rwZ/0K8I0LD0 yuFOUbIV5xwQrP3GthdDiP6KG8SlSsqHznC4u2JqKTj48J5y6l4JnPw/8tCivN1Mh/JK9u3uidr tg2xhxFWWI7ydn
+ Q==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+AFFS uses struct affs_head's "table" array as a flexible array. Switch
+this to a proper flexible array[1]. There are no sizeof() uses; struct
+affs_head is only ever uses via direct casts. No binary output
+differences were found after this change.
 
---O0du0pkUMxnEy6Qh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Link: https://github.com/KSPP/linux/issues/79 [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: David Sterba <dsterba@suse.com>
+Cc: linux-fsdevel@vger.kernel.org
+---
+ fs/affs/amigaffs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Wed, Jul 10, 2024 at 07:28:09PM +0100, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
-> > On Wed, Jul 10, 2024 at 04:17:02PM +0100, Marc Zyngier wrote:
+diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
+index 5509fbc98bc0..09dc23a644df 100644
+--- a/fs/affs/amigaffs.h
++++ b/fs/affs/amigaffs.h
+@@ -80,7 +80,7 @@ struct affs_head {
+ 	__be32 spare1;
+ 	__be32 first_data;
+ 	__be32 checksum;
+-	__be32 table[1];
++	__be32 table[];
+ };
+ 
+ struct affs_tail {
+-- 
+2.34.1
 
-> > > > +	if (ctxt_has_gcs(ctxt)) {
-
-> > > Since this is conditioned on S1PIE, it should be only be evaluated
-> > > when PIE is enabled in the guest.
-
-> > So make ctxt_has_gcs() embed a check of ctxt_has_s1pie()?
-
-> No. I mean nest the whole thing *under* the check for S1PIE.
-
-OK, increasing the level of nesting.  Got it.  Does that just apply for
-the EL1 registers given that there's no _user S1PIE registers so no
-existing check there?
-
-Should we also be doing a similar thing for features that depend on TCR2
-- currently that's just PIE but it'll grow?  Probably only when we get
-more features rather than now since we don't currently check if the
-guest has TCR2, just the system.
-
-> > GCSCRE0_EL1 is for EL0 though, it ended up here mainly because it's an
-> > _EL1 register and we are already context switching PIRE0_EL1 in the EL1
-> > functions so it seemed consistent to follow the same approach for GCS.
-> > The _el1 and _user save/restore functions are called from the same place
-> > for both VHE and nVHE so the practical impact of the placement should be
-> > minimal AFAICT.  Unlike PIRE0_EL1 GCSCRE0_EL1 only has an impact for
-> > code runnning at EL0 so I can move it to the _user functions.
-
-> Exactly. That's where it belongs, because we never execute EL0 while a
-> vcpu is loaded. On the contrary, we can make use of a uaccess helper
-> while a vcpu is loaded, and that makes a hell of a difference.
-
-OK, to be clear here "it" is GCSCRE0_EL1, not GCSPR_EL1 and GCSCR_EL1
-which are for EL1?
-
-> And it makes a difference because it would allow the loading of
-> EL0-specific context differently. We had this at some point, and it
-> was a reasonable optimisation that we lost. I'm keen on bringing it
-> back.
-
-Ah, that'd be good - not only for the optimistation but also since at
-the minute it's a bit unclear why there are separate EL0/1 functions.
-
-> > > you want to make this register writable, here's the shopping list:
-
-> > > https://lore.kernel.org/all/87ikxsi0v9.wl-maz@kernel.org/
-
-> > In the linked mail you say you want to see all fields explicitly
-> > handled, could you be more direct about what such explicit handling
-
-> This emails enumerate, point after point, everything that needs to be
-> done. I really cannot be clearer or more direct. This email is the
-> clearer I can be, short of writing the code myself. And I have decided
-> not to do it for once, unless I really need to. And as it turns out, I
-> don't.
-
-See below, to be clear the only bit I was querying here was:
-
-| - you *must* handle *all* the fields described in that register. There
-|   are 15 valid fields there, and I want to see all 15 fields being
-|   explicitly dealt with.
-
-TBH it'd probably good to have that whole list in the kernel somewhere.
-
-> > would look like?  I see a number of examples in the existing code like:
-
-> > 	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
-
-> This is clear: Everything is writable, and there are no bits here that
-> are otherwise conditional or unsupported.
-
-Ah, I think I see.  I would not have interpreted this as making
-everything explicit, to me this makes all the writeable fields writeable
-implicitly through them just not being mentioned.  For everything to be
-explicit I would expect to see a direct, visible reference in the code
-to every single field rather than something like we have here where some
-of the fields are not mentioned directly.  The end result is an explicit
-value but that's true for any use of ID_WRITABLE().
-
-If my understanding is correct then were I writing the bit I quoted
-above I'd probably just drop the "explicitly" from that bullet point due
-to the handling of simple writable fields with ID_WRITABLE(), the key
-point being that every field needs to be handled with the other points
-enumerating the specific options for how each field might be handled.
-Does my understanding sound correct?
-
-> > which look to my eye very similar to the above, they do not visibliy
-> > explictly enumerate every field in the registers and given that there's
-> > a single mask specified it's not clear how that would look.  If
-> > ID_WRITABLE() took separate read/write masks and combined them it'd be
-> > more obvious but it's just not written that way.
-
-> I don't really see what it would buy us, but never mind.
-
-That was me trying to reconcile my understanding of you asking to make
-everything explicit with the code as it is.  I suppose the advantage
-would be documentation.
-
---O0du0pkUMxnEy6Qh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaPBaQACgkQJNaLcl1U
-h9CfDgf9Hj4ORu0MQYC7C/o1bJG7/23dWcLbsWEReQjsF9FESFNxn/VmnbesRcD1
-BShn5gjVprcOQokU/+w2py8ce3cKIl9K/238nc9ny+GvVPxoL3/F8o9GyrDGyXso
-IeRw+jjwiYEIoc3ZF8b5foSxZkw+6043h5ELnTLLv78IlSM1E+E7lv8QysM8JjOX
-zJc/G4s7mHk4Ohf9gjL7E13ni2Gy5Fhs7/Afkrz4IReeDNYeEhP4iiI0Ljg2E9XF
-kr8rC5XenFN80dsZ5e5uhqg8SBzzHXk1kR69UpZnBM7jjhskJfy9xtzQbTkEjhL3
-gA4J5POSV8LP8kFeG1MQkVwNU+a1Vg==
-=mJl2
------END PGP SIGNATURE-----
-
---O0du0pkUMxnEy6Qh--
 
