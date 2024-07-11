@@ -1,85 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-23553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E51E92E21E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 10:26:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B32892E28B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 10:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2530E1F21663
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 08:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A44261C20A3C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 08:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE2815217F;
-	Thu, 11 Jul 2024 08:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A2D15821D;
+	Thu, 11 Jul 2024 08:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PQaTuRoA"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="gAGyHnh1";
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="KtBs9Wnt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93583BE6F;
-	Thu, 11 Jul 2024 08:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00001581F0;
+	Thu, 11 Jul 2024 08:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720686393; cv=none; b=tdcMcWygcGkQd6MWG9fuVKZkuN+nMfrbFWVVH1xaPMab9hj+rfi4ysJ6/Upj3MB+EFbp+LTXeKCgPd0bXvMWgklrE6XNRtSx+07+mdb8Jd7hp8AbhQsZlJ2lzwyENIMmxXIFSFWusei8E8cHW6xCGs/s4xoYdtbEQa4rcvcgYYo=
+	t=1720686999; cv=none; b=Z0NvOAsBb1pPYcyYp65eoH52bMoTM0SRyU+6QndpUAkFoyBorkXtADE5Pnt9NIrB3iENuVPdfHGqQl5uFTQhzfbpdursGrF6DFJWl5pW3T+vdBtaGft4FYL9RBZI5XWcSl4bgBZ19WuNwXAhWj6L/nsCkRYNf8ZVCLEp7+lG+FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720686393; c=relaxed/simple;
-	bh=PXqQ+xvRcwFYqjNiQ2YRemoNo2jA6llAw+agI//5xaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WlIAEkeE9CKR+kGeKFbn0rBpX/HKcovjtN5lcGjB6y8iOlkdSpCnkmEOITC7hRuRv/rGQEmHEfzezQ8FO3IfPNHAT1T1+l3zeKXZ+JFxxHGg/xL2g1qZ4qKkVv1CjBAGfycJJjjFuZ5v+eDjPBfpTBNO9GrirgpzzvMzC2HTB4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PQaTuRoA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IoLwNlzL5pVMes7pL0SN66rptxB5HrdHgJG/HnPw4go=; b=PQaTuRoAFO4mYSXAy4lP5USzkH
-	J4gUlSWhlzUH/NiDp2KgLiNQyEPTdMu168GNAB9Xrv/R/ZrGvfNdcgkIvvJIWj09Vgk9a8ggoHSFy
-	2KdfrQSuu3vW2ButEYbttpqj5waDZW3iB310fOAvvWUrQ0P6VtNMOZZhB4EdwxlfRxhXlznlQ+YqR
-	F/JweXuda1clgoNwnhjEhvu83qwhnqHcOpvSIE+DVIhIpDdijDtzz2i/7LW7MTKT26TVRbl8P1zD3
-	0Ng39ttpebR98ql+1a2w6xoV1vfdIooxibBfDUpFPdCoZXuIPevrR572JixXR9My07LBNLwmXvfyR
-	XMs3+RKw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRp8E-0000000DAT4-2xks;
-	Thu, 11 Jul 2024 08:26:26 +0000
-Date: Thu, 11 Jul 2024 01:26:26 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, tytso@mit.edu,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-	linux-modules@vger.kernel.org
-Subject: Re: [PATCH 0/3] Add {init, exit}_sequence_fs() helper function
-Message-ID: <Zo-XMrK6luarjfqZ@infradead.org>
-References: <20240711074859.366088-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1720686999; c=relaxed/simple;
+	bh=1bwqFinbtDkxAjW+8WZSgeF63cbN78DWBNtyGL2nQlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lxIiIfX3E4lw6MuDnPVqQIwJqqZdN1HlsZxaE7+WQRyizQqiC6dY1w4mkW29Gp8Xyxd49n/o7j6rk2CBw+3u7e61hYxFpOEosHTnfVSGzZp/ce4exIBeOIp54V4pm2oLtkaNBslZvI2vFSrsQotOp6g9ygCj+NmFMWgmBwa69wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=gAGyHnh1; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=KtBs9Wnt; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 96F1F1D43;
+	Thu, 11 Jul 2024 08:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1720685961;
+	bh=2lEB1CwnPIAdMdowq8U5BKOPAzNq4douQboeJQ9Bho0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=gAGyHnh1h1+4+vr9qI1qCl99UqNtF0br+qa85Zr50J/O7EBPbyG5jNgqK16M5ygXQ
+	 R2dRxUbK1HiWAEF4Nwrb9ry21sfVmMWfjRRKMHWA4/NYx9Lug4fMgiCC96Vx9nO07/
+	 AB97AY7Tt+z84+I3yQ+IW5h8Y+61MmO3osicS+UY=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 0EB6621C8;
+	Thu, 11 Jul 2024 08:27:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1720686452;
+	bh=2lEB1CwnPIAdMdowq8U5BKOPAzNq4douQboeJQ9Bho0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=KtBs9Wntn8bYdopHYHiA5ajMgyd/L1KY+9R+rk6AyT8pnNGYcl/lCzSW+/DgWkcj+
+	 lmkEe+gQ+xfI+Zd24CxKqHbm0+Y4tqc40bm8OhOL5y++qP9HIjNkE4/NWRD/QB3fbC
+	 Ay99ORjmdIhoL7Rp8djm7rgbBqP4rjricDMm0Wcs=
+Received: from [192.168.211.91] (192.168.211.91) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Thu, 11 Jul 2024 11:27:31 +0300
+Message-ID: <216de662-023a-4a94-8b07-d2affb72aeb5@paragon-software.com>
+Date: Thu, 11 Jul 2024 11:27:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711074859.366088-1-youling.tang@linux.dev>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
+To: Dmitry Vyukov <dvyukov@google.com>, Lizhi Xu <lizhi.xu@windriver.com>
+CC: <linux-kernel@vger.kernel.org>, <ntfs3@lists.linux.dev>,
+	<linux-fsdevel@vger.kernel.org>,
+	<syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>, Kees Cook <keescook@google.com>
+References: <CACT4Y+ZWjUE6-q1YF=ZaPjKgGZBw4JLD1v2DphSgCAVf1RzE8g@mail.gmail.com>
+ <20240705135250.3587041-1-lizhi.xu@windriver.com>
+ <CACT4Y+YrjD=3Tn6o4FJFefDYsOCbUFWahPUp87PXXcHQsr0xXg@mail.gmail.com>
+Content-Language: en-US
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <CACT4Y+YrjD=3Tn6o4FJFefDYsOCbUFWahPUp87PXXcHQsr0xXg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-Can we please stop this boilerplate code an instead our __init/__exit
-sections to supper multiple entires per module.  This should be mostly
-trivial, except that we'd probably want a single macro that has the
-init and exit calls so that the order in the section is the same and
-the unroll on failure can walk back form the given offset. e.g.
-something like:
-
-module_subinit(foo_bar_init, foo_bar_exit);
-module_subinit(foo_bar2_init, foo_bar2_exit);
-
-
+On 08.07.2024 09:54, Dmitry Vyukov wrote:
+> On Fri, 5 Jul 2024 at 15:52, Lizhi Xu <lizhi.xu@windriver.com> wrote:
+>> On Thu, 4 Jul 2024 15:44:02 +0200, Dmitry Vyukov wrote:
+>>>> index 53629b1f65e9..a435df98c2b1 100644
+>>>> --- a/fs/ntfs3/record.c
+>>>> +++ b/fs/ntfs3/record.c
+>>>> @@ -243,14 +243,14 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
+>>>>                  off += asize;
+>>>>          }
+>>>>
+>>>> -       asize = le32_to_cpu(attr->size);
+>>>> -
+>>>>          /* Can we use the first field (attr->type). */
+>>>>          if (off + 8 > used) {
+>>>>                  static_assert(ALIGN(sizeof(enum ATTR_TYPE), 8) == 8);
+>>>>                  return NULL;
+>>>>          }
+>>>>
+>>>> +       asize = le32_to_cpu(attr->size);
+>>>> +
+>>>>          if (attr->type == ATTR_END) {
+>>>>                  /* End of enumeration. */
+>>>>                  return NULL;
+>>> Hi Lizhi,
+>>>
+>>> I don't see this fix mailed as a patch. Do you plan to submit it officially?
+>> Hi Dmitry Vyukov,
+>> Here: https://lore.kernel.org/all/20240202033334.1784409-1-lizhi.xu@windriver.com
+> I don't see this patch merged upstream.  Was it lost? Perhaps it needs
+> to be resent.
+Hi, Lizhi, Dmitry, This patch is indeed not present in either the 
+upstream or our repository. I will retest it and figure out why I didn't 
+add it. Around the same time, I was making changes to mi_enum_attr, so I 
+might have mixed something up. Thanks for your attention! Regards,
+Konstantin
 
