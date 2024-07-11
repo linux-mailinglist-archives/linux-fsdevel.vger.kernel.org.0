@@ -1,174 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-23557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78EE92E2D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 10:58:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D8E92E36E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 11:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBED51C2223A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 08:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46E2F1C21BD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 09:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9CE1552E7;
-	Thu, 11 Jul 2024 08:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF88155C95;
+	Thu, 11 Jul 2024 09:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HZzzUjw8"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xloc13dx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F6878283;
-	Thu, 11 Jul 2024 08:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517F714039D;
+	Thu, 11 Jul 2024 09:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720688279; cv=none; b=J8GgSPSJxInvmmx+op6va6n51R6k32hikaYa8QcRqx3M4hBZ/2Ia5v49fv7a6ar0+kL9m+l/R9f4Zy6Y5brVaymbcSm/1L0rsED66glR3ZctVkcdhFc1xw3YHyJrdi2JkdCOb88UkHpGsKp1V4gT1s3yD2QE/ucVICZN8eB9lBM=
+	t=1720690163; cv=none; b=g566OY8TFStyAnu+kRD8+5akEtEO5ppDZdBbTMFHwI5VJbLxr2A1JHivnIjIWwSJq/WyrpEeNXNsTZFgnPC2GnbPKhRY3TVCXuZPiO2+sieG9FMlGdBAjLXJr00cJ0ZHd9VnNPXxeAn7TrpzRe+ApuovZHyfwI73O0e1/fRhNNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720688279; c=relaxed/simple;
-	bh=5qdlkIUXePdQbQ6tcGsIR0SkqQQqqPEPCuRj3ix32Ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J4Wnmg667GD7d5+X65T5S/I8zr56YBSuPoWFeqERwZ5j5WJw7WQfDhf3DkMuw8B6T65k+aH2KSIUc/iVTMHtm5YpdGcvTr8NYp9u1dP3DVCy0NinK66jAZTFWkl6wuF1VHt0UOA4RI1MJhGD83ykIxngZFhyZmaHGp+A7ag/6No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HZzzUjw8; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WKTC13dJNz4lx;
-	Thu, 11 Jul 2024 10:57:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720688269;
-	bh=GfpDJTHUlFGNz4hRlFHHf6Z/4olbS9aXzyMulHHeow8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HZzzUjw849M7NY6xsNUpYqhsGbFchucvpMppMz14wLhpotEOHN5Qqv4iy+qxGAg3g
-	 O23dQCHUItTr3LNn+Yj323dDXmEdwne3XNbPckHNQKSLuhw9ARFg5zTLN81sZB5ef1
-	 NLyZffTATZvsTENeZcx45tOhK/1XbJIMmD/k1x70=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WKTBx4H8FzV1N;
-	Thu, 11 Jul 2024 10:57:45 +0200 (CEST)
-Date: Thu, 11 Jul 2024 10:57:42 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Jeff Xu <jeffxu@google.com>, Steve Dower <steve.dower@python.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-Message-ID: <20240711.sequuGhee0th@digikod.net>
-References: <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
- <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
- <20240708.quoe8aeSaeRi@digikod.net>
- <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
- <ef3281ad-48a5-4316-b433-af285806540d@python.org>
- <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
- <20240709.aech3geeMoh0@digikod.net>
- <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
- <20240710.eiKohpa4Phai@digikod.net>
- <202407100921.687BE1A6@keescook>
+	s=arc-20240116; t=1720690163; c=relaxed/simple;
+	bh=Ez45eI0vWZmvYDv9iC2voRpQwzU9akAGjvrbYSvICJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=R0eJCZLfbhoCb0jtJYLsuNDF/Do4s1T2HN75RWczu0rEtLypsgwmAVtI6aVtqahT6uZouHVNnkFi0HFA2r2+c97mg4yLl8tYXjzdy+G7qi1zmX+pyRQNrMWmXwUCGDJW1JvpZi+hc+E8ZNhuNi1Ed+zt3a9OItk7Vj2TtcJ7Y3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xloc13dx; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720690162; x=1752226162;
+  h=message-id:date:mime-version:subject:references:from:to:
+   cc:in-reply-to:content-transfer-encoding;
+  bh=Ez45eI0vWZmvYDv9iC2voRpQwzU9akAGjvrbYSvICJ8=;
+  b=Xloc13dxLBB1+dcn4LwCxFuctjADzNY2rui35z1rpN8UOAtN9qHSE48f
+   et53Aocl7V4/pikNSFQX3GcMIvXoq500HXmmNRWMCxZcsYoQeNWUjqe/B
+   FSHopbtBIFXBUaHr00DENjswUOHR9rE/yd8xClh/vkfQKCFVgNVc7D+zI
+   l0H/5EFvLxszkvaj0dCJ3wounWVtQKaYbZ9iyzYXKQd5uyPQCCaprdeYD
+   5XZhMv90xz9psKXXxRCFtwFMvymVJcScCRaomG1ywESPMyo7SVNFxhlr8
+   VBu+NjrFQMxEETbXU6Oqeoe4dPNlzJ2IUbsek/C7wZsDCBmE3ZKGujNOP
+   Q==;
+X-CSE-ConnectionGUID: /+hLMd5jRvOvTNmkhwqJiA==
+X-CSE-MsgGUID: 20OVsiXAQ56h53cp0UaGLg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="28651643"
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="28651643"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 02:29:21 -0700
+X-CSE-ConnectionGUID: 83SxTHjcTcOl5ltQZdRcwg==
+X-CSE-MsgGUID: 0ikLMkX/Q1+3583xpKwHng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="48397425"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.229.108]) ([10.124.229.108])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 02:29:17 -0700
+Message-ID: <eb2808fe-6f11-4bc2-8931-fcd8bd89600a@intel.com>
+Date: Thu, 11 Jul 2024 17:27:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240703143311.2184454-1-yu.ma@intel.com>
+ <20240703143311.2184454-4-yu.ma@intel.com>
+ <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
+ <20240704215507.mr6st2d423lvkepu@quack3>
+ <3c7a0cd7-1dd2-4762-a2dd-67e6b6a82df7@intel.com>
+ <1296ef8d-dade-46e5-8571-e7dba158f405@intel.com>
+ <CAGudoHGJrRi_UZ2wv2dG9U9VGasHW203O4nQHkE9KkaWJJ61WQ@mail.gmail.com>
+ <0b928778df827f7ea948931c3358616c8e7f26f7.camel@linux.intel.com>
+From: "Ma, Yu" <yu.ma@intel.com>
+Content-Language: en-US
+To: Tim Chen <tim.c.chen@linux.intel.com>, Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ edumazet@google.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
+ tim.c.chen@intel.com, yu.ma@intel.com
+In-Reply-To: <0b928778df827f7ea948931c3358616c8e7f26f7.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <202407100921.687BE1A6@keescook>
-X-Infomaniak-Routing: alpha
 
-On Wed, Jul 10, 2024 at 09:26:14AM -0700, Kees Cook wrote:
-> On Wed, Jul 10, 2024 at 11:58:25AM +0200, Mickaël Salaün wrote:
-> > Here is another proposal:
-> > 
-> > We can change a bit the semantic by making it the norm to always check
-> > file executability with AT_CHECK, and using the securebits to restrict
-> > file interpretation and/or command injection (e.g. user supplied shell
-> > commands).  Non-executable checked files can be reported/logged at the
-> > kernel level, with audit, configured by sysadmins.
-> > 
-> > New securebits (feel free to propose better names):
-> > 
-> > - SECBIT_EXEC_RESTRICT_FILE: requires AT_CHECK to pass.
-> 
-> Would you want the enforcement of this bit done by userspace or the
-> kernel?
-> 
-> IIUC, userspace would always perform AT_CHECK regardless of
-> SECBIT_EXEC_RESTRICT_FILE, and then which would happen?
-> 
-> 1) userspace would ignore errors from AT_CHECK when
->    SECBIT_EXEC_RESTRICT_FILE is unset
 
-Yes, that's the idea.
+On 7/11/2024 7:40 AM, Tim Chen wrote:
+> On Tue, 2024-07-09 at 12:17 +0200, Mateusz Guzik wrote:
+>> Right, forgot to respond.
+>>
+>> I suspect the different result is either because of mere variance
+>> between reboots or blogbench using significantly less than 100 fds at
+>> any given time -- I don't have an easy way to test at your scale at
+>> the moment. You could probably test that by benching both approaches
+>> while switching them at runtime with a static_branch. However, I don't
+>> know if that effort is warranted atm.
+>>
+>> So happens I'm busy with other stuff and it is not my call to either
+>> block or let this in, so I'm buggering off.
+>>
+>> On Tue, Jul 9, 2024 at 10:32 AM Ma, Yu <yu.ma@intel.com> wrote:
+>>>
+>>> On 7/5/2024 3:56 PM, Ma, Yu wrote:
+>>>> I had something like this in mind:
+>>>>>> diff --git a/fs/file.c b/fs/file.c
+>>>>>> index a3b72aa64f11..4d3307e39db7 100644
+>>>>>> --- a/fs/file.c
+>>>>>> +++ b/fs/file.c
+>>>>>> @@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
+>>>>>> *fdt, unsigned int start)
+>>>>>>           unsigned int maxfd = fdt->max_fds; /* always multiple of
+>>>>>> BITS_PER_LONG */
+>>>>>>           unsigned int maxbit = maxfd / BITS_PER_LONG;
+>>>>>>           unsigned int bitbit = start / BITS_PER_LONG;
+>>>>>> +       unsigned int bit;
+>>>>>> +
+>>>>>> +       /*
+>>>>>> +        * Try to avoid looking at the second level map.
+>>>>>> +        */
+>>>>>> +       bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
+>>>>>> +                               start & (BITS_PER_LONG - 1));
+>>>>>> +       if (bit < BITS_PER_LONG) {
+>>>>>> +               return bit + bitbit * BITS_PER_LONG;
+>>>>>> +       }
+> I think this approach based on next_fd quick check is more generic and scalable.
+>
+> It just happen for blogbench, just checking the first 64 bit allow a quicker
+> skip to the two level search where this approach, next_fd may be left
+> in a 64 word that actually has no open bits and we are doing useless search
+> in find_next_zero_bit(). Perhaps we should check full_fds_bits to make sure
+> there are empty slots before we do
+> find_next_zero_bit() fast path.  Something like
+>
+> 	if (!test_bit(bitbit, fdt->full_fds_bits)) {
+> 		bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
+> 					start & (BITS_PER_LONG - 1));
+> 		if (bit < BITS_PER_LONG)
+> 			return bit + bitbit * BITS_PER_LONG;
+> 	}
+> Tim
 
-> 
-> or
-> 
-> 2) kernel would allow all AT_CHECK when SECBIT_EXEC_RESTRICT_FILE is
->    unset
-> 
-> I suspect 1 is best and what you intend, given that
-> SECBIT_EXEC_DENY_INTERACTIVE can only be enforced by userspace.
+Yes, agree that it scales better, I'll update v4 with fast path for the 
+word contains next_fd and send out for review soon
 
-Indeed. We don't want AT_CHECK's behavior to change according to
-securebits.
-
-> 
-> > - SECBIT_EXEC_DENY_INTERACTIVE: deny any command injection via
-> >   command line arguments, environment variables, or configuration files.
-> >   This should be ignored by dynamic linkers.  We could also have an
-> >   allow-list of shells for which this bit is not set, managed by an
-> >   LSM's policy, if the native securebits scoping approach is not enough.
-> > 
-> > Different modes for script interpreters:
-> > 
-> > 1. RESTRICT_FILE=0 DENY_INTERACTIVE=0 (default)
-> >    Always interpret scripts, and allow arbitrary user commands.
-> >    => No threat, everyone and everything is trusted, but we can get
-> >    ahead of potential issues with logs to prepare for a migration to a
-> >    restrictive mode.
-> > 
-> > 2. RESTRICT_FILE=1 DENY_INTERACTIVE=0
-> >    Deny script interpretation if they are not executable, and allow
-> >    arbitrary user commands.
-> >    => Threat: (potential) malicious scripts run by trusted (and not
-> >       fooled) users.  That could protect against unintended script
-> >       executions (e.g. sh /tmp/*.sh).
-> >    ==> Makes sense for (semi-restricted) user sessions.
-> > 
-> > 3. RESTRICT_FILE=1 DENY_INTERACTIVE=1
-> >    Deny script interpretation if they are not executable, and also deny
-> >    any arbitrary user commands.
-> >    => Threat: malicious scripts run by untrusted users.
-> >    ==> Makes sense for system services executing scripts.
-> > 
-> > 4. RESTRICT_FILE=0 DENY_INTERACTIVE=1
-> >    Always interpret scripts, but deny arbitrary user commands.
-> >    => Goal: monitor/measure/assess script content (e.g. with IMA/EVM) in
-> >       a system where the access rights are not (yet) ready.  Arbitrary
-> >       user commands would be much more difficult to monitor.
-> >    ==> First step of restricting system services that should not
-> >        directly pass arbitrary commands to shells.
-> 
-> I like these bits!
-
-Good! Jeff, Steve, Florian, Matt, others, what do you think?
+>>>>> Drat, you're right. I missed that Ma did not add the proper offset to
+>>>>> open_fds. *This* is what I meant :)
+>>>>>
+>>>>>                                  Honza
+>>>> Just tried this on v6.10-rc6, the improvement on top of patch 1 and
+>>>> patch 2 is 7% for read and 3% for write, less than just check first word.
+>>>>
+>>>> Per my understanding, its performance would be better if we can find
+>>>> free bit in the same word of next_fd with high possibility, but
+>>>> next_fd just represents the lowest possible free bit. If fds are
+>>>> open/close frequently and randomly, that might not always be the case,
+>>>> next_fd may be distributed randomly, for example, 0-65 are occupied,
+>>>> fd=3 is returned, next_fd will be set to 3, next time when 3 is
+>>>> allocated, next_fd will be set to 4, while the actual first free bit
+>>>> is 66 , when 66 is allocated, and fd=5 is returned, then the above
+>>>> process would be went through again.
+>>>>
+>>>> Yu
+>>>>
+>>> Hi Guzik, Honza,
+>>>
+>>> Do we have any more comment or idea regarding to the fast path? Thanks
+>>> for your time and any feedback :)
+>>>
+>>>
+>>> Regards
+>>>
+>>> Yu
+>>>
+>>
 
