@@ -1,180 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-23558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D8E92E36E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 11:29:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6278B92E3BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 11:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46E2F1C21BD0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 09:29:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C25AAB213EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 09:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF88155C95;
-	Thu, 11 Jul 2024 09:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xloc13dx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1207B152E13;
+	Thu, 11 Jul 2024 09:50:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517F714039D;
-	Thu, 11 Jul 2024 09:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175967EEE7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2024 09:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720690163; cv=none; b=g566OY8TFStyAnu+kRD8+5akEtEO5ppDZdBbTMFHwI5VJbLxr2A1JHivnIjIWwSJq/WyrpEeNXNsTZFgnPC2GnbPKhRY3TVCXuZPiO2+sieG9FMlGdBAjLXJr00cJ0ZHd9VnNPXxeAn7TrpzRe+ApuovZHyfwI73O0e1/fRhNNY=
+	t=1720691411; cv=none; b=eIiaUfH8SAR8KMDrxgC4Nz1cjucX7MSnnP8V9Iqti0aimcm+dhCC9FMKBIX7V0/oMqVy6L9+iQ/Ed9J3xg+upJj9H4Ec2n+/XlKZSDrIzKZhWOoq69FujXzjgaM/iM6md9W+ple/8LIot1snJ88OcXZf6CY5Oj5O4VMeKsd5sCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720690163; c=relaxed/simple;
-	bh=Ez45eI0vWZmvYDv9iC2voRpQwzU9akAGjvrbYSvICJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=R0eJCZLfbhoCb0jtJYLsuNDF/Do4s1T2HN75RWczu0rEtLypsgwmAVtI6aVtqahT6uZouHVNnkFi0HFA2r2+c97mg4yLl8tYXjzdy+G7qi1zmX+pyRQNrMWmXwUCGDJW1JvpZi+hc+E8ZNhuNi1Ed+zt3a9OItk7Vj2TtcJ7Y3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xloc13dx; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720690162; x=1752226162;
-  h=message-id:date:mime-version:subject:references:from:to:
-   cc:in-reply-to:content-transfer-encoding;
-  bh=Ez45eI0vWZmvYDv9iC2voRpQwzU9akAGjvrbYSvICJ8=;
-  b=Xloc13dxLBB1+dcn4LwCxFuctjADzNY2rui35z1rpN8UOAtN9qHSE48f
-   et53Aocl7V4/pikNSFQX3GcMIvXoq500HXmmNRWMCxZcsYoQeNWUjqe/B
-   FSHopbtBIFXBUaHr00DENjswUOHR9rE/yd8xClh/vkfQKCFVgNVc7D+zI
-   l0H/5EFvLxszkvaj0dCJ3wounWVtQKaYbZ9iyzYXKQd5uyPQCCaprdeYD
-   5XZhMv90xz9psKXXxRCFtwFMvymVJcScCRaomG1ywESPMyo7SVNFxhlr8
-   VBu+NjrFQMxEETbXU6Oqeoe4dPNlzJ2IUbsek/C7wZsDCBmE3ZKGujNOP
-   Q==;
-X-CSE-ConnectionGUID: /+hLMd5jRvOvTNmkhwqJiA==
-X-CSE-MsgGUID: 20OVsiXAQ56h53cp0UaGLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="28651643"
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="28651643"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 02:29:21 -0700
-X-CSE-ConnectionGUID: 83SxTHjcTcOl5ltQZdRcwg==
-X-CSE-MsgGUID: 0ikLMkX/Q1+3583xpKwHng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="48397425"
-Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.229.108]) ([10.124.229.108])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 02:29:17 -0700
-Message-ID: <eb2808fe-6f11-4bc2-8931-fcd8bd89600a@intel.com>
-Date: Thu, 11 Jul 2024 17:27:42 +0800
+	s=arc-20240116; t=1720691411; c=relaxed/simple;
+	bh=r1qpYydr0BGPkQefncp3es6El+dIrgCQVX+Px2Hl380=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c6Gp/a0cEB26hzXW1MTEt8cpdmDfkmZCbe712RGywE9qgvm5pQaMQehS180x13pugjrmivEsGXNJwIqXqeiYkFsTQIDm3ljimtpxdiPne6EB9nSgMDn0iOKqOqLP9x/XPQrCRsUdETZRPojaPiSltjsW+i8Z2zAMWl+gt5qVlS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4621C1007;
+	Thu, 11 Jul 2024 02:50:33 -0700 (PDT)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B87B3F766;
+	Thu, 11 Jul 2024 02:50:05 -0700 (PDT)
+Date: Thu, 11 Jul 2024 10:50:00 +0100
+From: Joey Gouly <joey.gouly@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Szabolcs Nagy <szabolcs.nagy@arm.com>,
+	Florian Weimer <fweimer@redhat.com>, dave.hansen@linux.intel.com,
+	linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	broonie@kernel.org, christophe.leroy@csgroup.eu, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, tglx@linutronix.de,
+	will@kernel.org, x86@kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 17/29] arm64: implement PKEYS support
+Message-ID: <20240711095000.GA488602@e124191.cambridge.arm.com>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-18-joey.gouly@arm.com>
+ <ZlnlQ/avUAuSum5R@arm.com>
+ <20240531152138.GA1805682@e124191.cambridge.arm.com>
+ <Zln6ckvyktar8r0n@arm.com>
+ <87a5jj4rhw.fsf@oldenburg.str.redhat.com>
+ <ZnBNd51hVlaPTvn8@arm.com>
+ <ZownjvHbPI1anfpM@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-4-yu.ma@intel.com>
- <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
- <20240704215507.mr6st2d423lvkepu@quack3>
- <3c7a0cd7-1dd2-4762-a2dd-67e6b6a82df7@intel.com>
- <1296ef8d-dade-46e5-8571-e7dba158f405@intel.com>
- <CAGudoHGJrRi_UZ2wv2dG9U9VGasHW203O4nQHkE9KkaWJJ61WQ@mail.gmail.com>
- <0b928778df827f7ea948931c3358616c8e7f26f7.camel@linux.intel.com>
-From: "Ma, Yu" <yu.ma@intel.com>
-Content-Language: en-US
-To: Tim Chen <tim.c.chen@linux.intel.com>, Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org,
- edumazet@google.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
- tim.c.chen@intel.com, yu.ma@intel.com
-In-Reply-To: <0b928778df827f7ea948931c3358616c8e7f26f7.camel@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZownjvHbPI1anfpM@arm.com>
+
+On Mon, Jul 08, 2024 at 06:53:18PM +0100, Catalin Marinas wrote:
+> Hi Szabolcs,
+> 
+> On Mon, Jun 17, 2024 at 03:51:35PM +0100, Szabolcs Nagy wrote:
+> > The 06/17/2024 15:40, Florian Weimer wrote:
+> > > >> A user can still set it by interacting with the register directly, but I guess
+> > > >> we want something for the glibc interface..
+> > > >> 
+> > > >> Dave, any thoughts here?
+> > > >
+> > > > adding Florian too, since i found an old thread of his that tried
+> > > > to add separate PKEY_DISABLE_READ and PKEY_DISABLE_EXECUTE, but
+> > > > it did not seem to end up upstream. (this makes more sense to me
+> > > > as libc api than the weird disable access semantics)
+> > > 
+> > > I still think it makes sense to have a full complenent of PKEY_* flags
+> > > complementing the PROT_* flags, in a somewhat abstract fashion for
+> > > pkey_alloc only.  The internal protection mask register encoding will
+> > > differ from architecture to architecture, but the abstract glibc
+> > > functions pkey_set and pkey_get could use them (if we are a bit
+> > > careful).
+> > 
+> > to me it makes sense to have abstract
+> > 
+> > PKEY_DISABLE_READ
+> > PKEY_DISABLE_WRITE
+> > PKEY_DISABLE_EXECUTE
+> > PKEY_DISABLE_ACCESS
+> > 
+> > where access is handled like
+> > 
+> > if (flags&PKEY_DISABLE_ACCESS)
+> > 	flags |= PKEY_DISABLE_READ|PKEY_DISABLE_WRITE;
+> > disable_read = flags&PKEY_DISABLE_READ;
+> > disable_write = flags&PKEY_DISABLE_WRITE;
+> > disable_exec = flags&PKEY_DISABLE_EXECUTE;
+> > 
+> > if there are unsupported combinations like
+> > disable_read&&!disable_write then those are rejected
+> > by pkey_alloc and pkey_set.
+> > 
+> > this allows portable use of pkey apis.
+> > (the flags could be target specific, but don't have to be)
+> 
+> On powerpc, PKEY_DISABLE_ACCESS also disables execution. AFAICT, the
+> kernel doesn't define a PKEY_DISABLE_READ, only PKEY_DISABLE_ACCESS so
+> for powerpc there's no way to to set an execute-only permission via this
+> interface. I wouldn't like to diverge from powerpc.
+
+I think this is wrong, look at this code from powerpc:
+
+arch/powerpc/mm/book3s64/pkeys.c: __arch_set_user_pkey_access
+
+        if (init_val & PKEY_DISABLE_EXECUTE) {
+                if (!pkey_execute_disable_supported)
+                        return -EINVAL;
+                new_iamr_bits |= IAMR_EX_BIT;
+        }
+        init_iamr(pkey, new_iamr_bits);
+
+        /* Set the bits we need in AMR: */
+        if (init_val & PKEY_DISABLE_ACCESS)
+                new_amr_bits |= AMR_RD_BIT | AMR_WR_BIT;
+        else if (init_val & PKEY_DISABLE_WRITE)
+                new_amr_bits |= AMR_WR_BIT;
+
+        init_amr(pkey, new_amr_bits);
+
+Seems to me that PKEY_DISABLE_ACCESS leaves exec permissions as-is.
+
+Here is the patch I am planning to include in the next version of the series.
+This should support all PKEY_DISABLE_* combinations. Any comments? 
+
+commit ba51371a544f6b0a4a0f03df62ad894d53f5039b
+Author: Joey Gouly <joey.gouly@arm.com>
+Date:   Thu Jul 4 11:29:20 2024 +0100
+
+    arm64: add PKEY_DISABLE_READ and PKEY_DISABLE_EXEC
+    
+    TODO
+    
+    Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+
+diff --git arch/arm64/include/uapi/asm/mman.h arch/arm64/include/uapi/asm/mman.h
+index 1e6482a838e1..e7e0c8216243 100644
+--- arch/arm64/include/uapi/asm/mman.h
++++ arch/arm64/include/uapi/asm/mman.h
+@@ -7,4 +7,13 @@
+ #define PROT_BTI       0x10            /* BTI guarded page */
+ #define PROT_MTE       0x20            /* Normal Tagged mapping */
+ 
++/* Override any generic PKEY permission defines */
++#define PKEY_DISABLE_EXECUTE   0x4
++#define PKEY_DISABLE_READ      0x8
++#undef PKEY_ACCESS_MASK
++#define PKEY_ACCESS_MASK       (PKEY_DISABLE_ACCESS |\
++                               PKEY_DISABLE_WRITE  |\
++                               PKEY_DISABLE_READ   |\
++                               PKEY_DISABLE_EXECUTE)
++
+ #endif /* ! _UAPI__ASM_MMAN_H */
+diff --git arch/arm64/mm/mmu.c arch/arm64/mm/mmu.c
+index 68afe5fc3071..ce4cc6bdee4e 100644
+--- arch/arm64/mm/mmu.c
++++ arch/arm64/mm/mmu.c
+@@ -1570,10 +1570,15 @@ int arch_set_user_pkey_access(struct task_struct *tsk, int pkey, unsigned long i
+                return -EINVAL;
+ 
+        /* Set the bits we need in POR:  */
++       new_por = POE_RXW;
++       if (init_val & PKEY_DISABLE_WRITE)
++               new_por &= ~POE_W;
+        if (init_val & PKEY_DISABLE_ACCESS)
+-               new_por = POE_X;
+-       else if (init_val & PKEY_DISABLE_WRITE)
+-               new_por = POE_RX;
++               new_por &= ~POE_RW;
++       if (init_val & PKEY_DISABLE_READ)
++               new_por &= ~POE_R;
++       if (init_val & PKEY_DISABLE_EXECUTE)
++               new_por &= ~POE_X;
+ 
+        /* Shift the bits in to the correct place in POR for pkey: */
+        pkey_shift = pkey * POR_BITS_PER_PKEY;
 
 
-On 7/11/2024 7:40 AM, Tim Chen wrote:
-> On Tue, 2024-07-09 at 12:17 +0200, Mateusz Guzik wrote:
->> Right, forgot to respond.
->>
->> I suspect the different result is either because of mere variance
->> between reboots or blogbench using significantly less than 100 fds at
->> any given time -- I don't have an easy way to test at your scale at
->> the moment. You could probably test that by benching both approaches
->> while switching them at runtime with a static_branch. However, I don't
->> know if that effort is warranted atm.
->>
->> So happens I'm busy with other stuff and it is not my call to either
->> block or let this in, so I'm buggering off.
->>
->> On Tue, Jul 9, 2024 at 10:32 AM Ma, Yu <yu.ma@intel.com> wrote:
->>>
->>> On 7/5/2024 3:56 PM, Ma, Yu wrote:
->>>> I had something like this in mind:
->>>>>> diff --git a/fs/file.c b/fs/file.c
->>>>>> index a3b72aa64f11..4d3307e39db7 100644
->>>>>> --- a/fs/file.c
->>>>>> +++ b/fs/file.c
->>>>>> @@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
->>>>>> *fdt, unsigned int start)
->>>>>>           unsigned int maxfd = fdt->max_fds; /* always multiple of
->>>>>> BITS_PER_LONG */
->>>>>>           unsigned int maxbit = maxfd / BITS_PER_LONG;
->>>>>>           unsigned int bitbit = start / BITS_PER_LONG;
->>>>>> +       unsigned int bit;
->>>>>> +
->>>>>> +       /*
->>>>>> +        * Try to avoid looking at the second level map.
->>>>>> +        */
->>>>>> +       bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
->>>>>> +                               start & (BITS_PER_LONG - 1));
->>>>>> +       if (bit < BITS_PER_LONG) {
->>>>>> +               return bit + bitbit * BITS_PER_LONG;
->>>>>> +       }
-> I think this approach based on next_fd quick check is more generic and scalable.
->
-> It just happen for blogbench, just checking the first 64 bit allow a quicker
-> skip to the two level search where this approach, next_fd may be left
-> in a 64 word that actually has no open bits and we are doing useless search
-> in find_next_zero_bit(). Perhaps we should check full_fds_bits to make sure
-> there are empty slots before we do
-> find_next_zero_bit() fast path.  Something like
->
-> 	if (!test_bit(bitbit, fdt->full_fds_bits)) {
-> 		bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
-> 					start & (BITS_PER_LONG - 1));
-> 		if (bit < BITS_PER_LONG)
-> 			return bit + bitbit * BITS_PER_LONG;
-> 	}
-> Tim
 
-Yes, agree that it scales better, I'll update v4 with fast path for the 
-word contains next_fd and send out for review soon
-
->>>>> Drat, you're right. I missed that Ma did not add the proper offset to
->>>>> open_fds. *This* is what I meant :)
->>>>>
->>>>>                                  Honza
->>>> Just tried this on v6.10-rc6, the improvement on top of patch 1 and
->>>> patch 2 is 7% for read and 3% for write, less than just check first word.
->>>>
->>>> Per my understanding, its performance would be better if we can find
->>>> free bit in the same word of next_fd with high possibility, but
->>>> next_fd just represents the lowest possible free bit. If fds are
->>>> open/close frequently and randomly, that might not always be the case,
->>>> next_fd may be distributed randomly, for example, 0-65 are occupied,
->>>> fd=3 is returned, next_fd will be set to 3, next time when 3 is
->>>> allocated, next_fd will be set to 4, while the actual first free bit
->>>> is 66 , when 66 is allocated, and fd=5 is returned, then the above
->>>> process would be went through again.
->>>>
->>>> Yu
->>>>
->>> Hi Guzik, Honza,
->>>
->>> Do we have any more comment or idea regarding to the fast path? Thanks
->>> for your time and any feedback :)
->>>
->>>
->>> Regards
->>>
->>> Yu
->>>
->>
+Thanks,
+Joey
 
