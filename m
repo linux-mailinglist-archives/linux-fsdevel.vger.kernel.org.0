@@ -1,49 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-23594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948A592EFB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 21:35:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A50992EFE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 21:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C86D2821D6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 19:35:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E66D7281E0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 19:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D8516F0EF;
-	Thu, 11 Jul 2024 19:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E669C188CA3;
+	Thu, 11 Jul 2024 19:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SqB1bZzx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/05WNiO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C19A16D4D0;
-	Thu, 11 Jul 2024 19:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D51157469;
+	Thu, 11 Jul 2024 19:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720726485; cv=none; b=GAvy8+fegPvOhO5jkx/W43DkxKGaDTkUqogTotO5QkG/XuZZyaSiXHldTQCMHVueb3Vg4U9vBncUYNG2XtngpCkSDhycU0OiSPwB9cDy/E+z1+mM0UNbhsM7gkzxVPOyCxtW3jP67i63/PMxL0PxtgMbMEtVFCZStmGY/05Vgo4=
+	t=1720726854; cv=none; b=vDuY164iP7JT1a4TLGWm+1OvMq+zgRx4fBnk5qkfBYCXS85JL+Feyii0iOyonIxnb4+dZNFUzLd3cxsVVsZCcyAD/56L9K5JBSaoh088HVXmb0l/WJCUUprrHxGL07eisthbJGIK5gRTajlDTIin3fniL1SxCIllzRNq/j58MTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720726485; c=relaxed/simple;
-	bh=kJJFqsRUTpnZUvC9gjbodY1mFdLFbYJ1T6UYMtoz1eA=;
+	s=arc-20240116; t=1720726854; c=relaxed/simple;
+	bh=EVnGtV8AHFqpOc+alVUBVW5Ol8gc7DzmHy1wr9gczMY=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=q6RpbbWHNfuUGs7as3s2A7ktBS8xY8OGq6+8KpiIfTEyryyBzs6AVTjfjlgBAhJtcJemMuyYwnbsetnTdgpALOSAefiDw8lGlDEthZWBRCKTa5hpwc4c4cyg1afNloVBoztlRh1FF4n0AWqN9tylx/0qynt2gtM/QJV0R/AVzvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SqB1bZzx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BCB5C116B1;
-	Thu, 11 Jul 2024 19:34:42 +0000 (UTC)
+	 Content-Type:MIME-Version; b=TfxNvHkV74A5ogYbdg+sVH8I1S8UZAD3z+tIkRKMSIU1yeiX8K98WaO81EgEHkei25d+6V2dBk8p5gQgYiJxXlCao7bLijbjU2t9AiU7Ou6BOiurG/psw0yTfBeZLKxeEN8WHyLnEMbKSqni4hMZI9JlBeqlNqUmMSn0Emh3xaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/05WNiO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8294C116B1;
+	Thu, 11 Jul 2024 19:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720726485;
-	bh=kJJFqsRUTpnZUvC9gjbodY1mFdLFbYJ1T6UYMtoz1eA=;
+	s=k20201202; t=1720726853;
+	bh=EVnGtV8AHFqpOc+alVUBVW5Ol8gc7DzmHy1wr9gczMY=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SqB1bZzxJJ5PZX+U0lymEysobu5cDXWfx0aq/RA8c3/32Bts24KnMvdVkrpAdk6mA
-	 f7nqh5nFp4FjTdj17xLN8iNLYSAEpkRKqScRg8mXaAZNnB8gY7J72e0gz9w563T7UB
-	 Eh9GEJ2ELOySG2sxdlBf+FeA/IhrIQsgG8HSJdX9vjwsJf6mPAW3YBQdUyeaEtKOlz
-	 d9ciA7RBMXcSX6OTtNp3Ez23CfBd7v9tBcifguTkV/l5+aM7LMdowBf9SXfLKCXdh0
-	 U8S5hOQGcBPAH8bxE8Mk4Ls1ZaATpmaWJbw6T7IquK2KgSui9DjtckP9H3sICQvNMk
-	 4ozh7o0DT2j1Q==
-Message-ID: <6ee462004f5dae76233242de948bcb3c54ca5d85.camel@kernel.org>
-Subject: Re: [PATCH v5 5/9] Documentation: add a new file documenting
- multigrain timestamps
+	b=f/05WNiOm5/jRoAIKleOwYtEiZWO8GkFKlbH+a/sBGr8vHmHTP533Qi/sK++dNV6I
+	 pa5Owcvqp/re04OS8MQ2FqY13bZCilE6WR7P7qjCLek5YwhvGFhM8tm+cAc3aCvgg5
+	 sP9HM55SsitKekzxqZUAlwdYYdEpGHMIKtB1mfJnWOcICE95Kj8Z3kxcc8OzWONZEe
+	 i2QBMw15CsD7G/3e9fEX93vgN7Ia64hbvG+yvRC7gupeCDONU+hs2lvJw8fWY9fIH1
+	 mUvQrcoKR1jkb1V3GxnpCYeGZFDMm2yleW1emv9PK5Yoo9oIAe+iZfTSMuJay4LO/X
+	 t08oNBRNZNkqw==
+Message-ID: <2a1db34612bc5ba6fe7722d2e031e216270dd4c2.camel@kernel.org>
+Subject: Re: [PATCH v5 6/9] xfs: switch to multigrain timestamps
 From: Jeff Layton <jlayton@kernel.org>
 To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
@@ -63,11 +62,13 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
  linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
  linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
   linux-doc@vger.kernel.org
-Date: Thu, 11 Jul 2024 15:34:41 -0400
-In-Reply-To: <20240711191239.GR612460@frogsfrogsfrogs>
+Date: Thu, 11 Jul 2024 15:40:49 -0400
+In-Reply-To: <20240711191435.GV1998502@frogsfrogsfrogs>
 References: <20240711-mgtime-v5-0-37bb5b465feb@kernel.org>
-	 <20240711-mgtime-v5-5-37bb5b465feb@kernel.org>
-	 <20240711191239.GR612460@frogsfrogsfrogs>
+	 <20240711-mgtime-v5-6-37bb5b465feb@kernel.org>
+	 <20240711150920.GU1998502@frogsfrogsfrogs>
+	 <95a135dcec10423b9bcb9f53a1420d80b4afdba7.camel@kernel.org>
+	 <20240711191435.GV1998502@frogsfrogsfrogs>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -152,278 +153,283 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Thu, 2024-07-11 at 12:12 -0700, Darrick J. Wong wrote:
-> On Thu, Jul 11, 2024 at 07:08:09AM -0400, Jeff Layton wrote:
-> > Add a high-level document that describes how multigrain timestamps work=
-,
-> > rationale for them, and some info about implementation and tradeoffs.
+On Thu, 2024-07-11 at 12:14 -0700, Darrick J. Wong wrote:
+> On Thu, Jul 11, 2024 at 11:58:59AM -0400, Jeff Layton wrote:
+> > On Thu, 2024-07-11 at 08:09 -0700, Darrick J. Wong wrote:
+> > > On Thu, Jul 11, 2024 at 07:08:10AM -0400, Jeff Layton wrote:
+> > > > Enable multigrain timestamps, which should ensure that there is an
+> > > > apparent change to the timestamp whenever it has been written after
+> > > > being actively observed via getattr.
+> > > >=20
+> > > > Also, anytime the mtime changes, the ctime must also change, and th=
+ose
+> > > > are now the only two options for xfs_trans_ichgtime. Have that func=
+tion
+> > > > unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
+> > > > always set.
+> > > >=20
+> > > > Finally, stop setting STATX_CHANGE_COOKIE in getattr, since the cti=
+me
+> > > > should give us better semantics now.
+> > >=20
+> > > Following up on "As long as the fs isn't touching i_ctime_nsec direct=
+ly,
+> > > you shouldn't need to worry about this" from:
+> > > https://lore.kernel.org/linux-xfs/cae5c28f172ac57b7eaaa98a00b23f342f0=
+1ba64.camel@kernel.org/
+> > >=20
+> > > xfs /does/ touch i_ctime_nsec directly when it's writing inodes to di=
+sk.
+> > > From xfs_inode_to_disk, see:
+> > >=20
+> > > 	to->di_ctime =3D xfs_inode_to_disk_ts(ip, inode_get_ctime(inode));
+> > >=20
+> > > AFAICT, inode_get_ctime itself remains unchanged, and still returns
+> > > inode->__i_ctime, right?=C2=A0 In which case it's returning a raw tim=
+espec64,
+> > > which can include the QUERIED flag in tv_nsec, right?
+> > >=20
 > >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  Documentation/filesystems/multigrain-ts.rst | 120 ++++++++++++++++++++=
-++++++++
-> >  1 file changed, 120 insertions(+)
+> > No, in the first patch in the series, inode_get_ctime becomes this:
 > >=20
-> > diff --git a/Documentation/filesystems/multigrain-ts.rst b/Documentatio=
-n/filesystems/multigrain-ts.rst
-> > new file mode 100644
-> > index 000000000000..5cefc204ecec
-> > --- /dev/null
-> > +++ b/Documentation/filesystems/multigrain-ts.rst
-> > @@ -0,0 +1,120 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Multigrain Timestamps
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Introduction
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Historically, the kernel has always used coarse time values to stamp
-> > +inodes. This value is updated on every jiffy, so any change that happe=
-ns
-> > +within that jiffy will end up with the same timestamp.
-> > +
-> > +When the kernel goes to stamp an inode (due to a read or write), it fi=
-rst gets
-> > +the current time and then compares it to the existing timestamp(s) to =
-see
-> > +whether anything will change. If nothing changed, then it can avoid up=
-dating
-> > +the inode's metadata.
-> > +
-> > +Coarse timestamps are therefore good from a performance standpoint, si=
-nce they
-> > +reduce the need for metadata updates, but bad from the standpoint of
-> > +determining whether anything has changed, since a lot of things can ha=
-ppen in a
-> > +jiffy.
-> > +
-> > +They are particularly troublesome with NFSv3, where unchanging timesta=
-mps can
-> > +make it difficult to tell whether to invalidate caches. NFSv4 provides=
- a
-> > +dedicated change attribute that should always show a visible change, b=
-ut not
-> > +all filesystems implement this properly, causing the NFS server to sub=
-stitute
-> > +the ctime in many cases.
-> > +
-> > +Multigrain timestamps aim to remedy this by selectively using fine-gra=
-ined
-> > +timestamps when a file has had its timestamps queried recently, and th=
-e current
-> > +coarse-grained time does not cause a change.
-> > +
-> > +Inode Timestamps
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +There are currently 3 timestamps in the inode that are updated to the =
-current
-> > +wallclock time on different activity:
-> > +
-> > +ctime:
-> > +  The inode change time. This is stamped with the current time wheneve=
-r
-> > +  the inode's metadata is changed. Note that this value is not settabl=
+> > #define I_CTIME_QUERIED         ((u32)BIT(31))
+> >=20
+> > static inline time64_t inode_get_ctime_sec(const struct inode *inode)
+> > {
+> >         return inode->i_ctime_sec;
+> > }
+> >=20
+> > static inline long inode_get_ctime_nsec(const struct inode *inode)
+> > {
+> >         return inode->i_ctime_nsec & ~I_CTIME_QUERIED;
+> > }
+> >=20
+> > static inline struct timespec64 inode_get_ctime(const struct inode *ino=
+de)
+> > {
+> >         struct timespec64 ts =3D { .tv_sec  =3D inode_get_ctime_sec(ino=
+de),
+> >                                  .tv_nsec =3D inode_get_ctime_nsec(inod=
+e) };
+> >=20
+> >         return ts;
+> > }
+>=20
+> Doh!  I forgot that this has already been soaking in the vfs tree:
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commi=
+t/include/linux/fs.h?h=3Dnext-20240711&id=3D3aa63a569c64e708df547a8913c84e6=
+4a06e7853
+>=20
+> > ...which should ensure that you never store the QUERIED bit.
+>=20
+> So yep, we're fine here.  Sorry about the noise; this was the very
+> subtle clue in the diff that the change had already been applied:
+>=20
+>  static inline struct timespec64 inode_get_ctime(const struct inode *inod=
+e)
+> @@ -1626,13 +1637,7 @@ static inline struct timespec64 inode_get_ctime(co=
+nst struct inode *inode)
+>  	return ts;
+>  }
+>=20
+> (Doh doh doh doh doh...)
+>=20
+> > > Now let's look at the consumer:
+> > >=20
+> > > static inline xfs_timestamp_t
+> > > xfs_inode_to_disk_ts(
+> > > 	struct xfs_inode		*ip,
+> > > 	const struct timespec64		tv)
+> > > {
+> > > 	struct xfs_legacy_timestamp	*lts;
+> > > 	xfs_timestamp_t			ts;
+> > >=20
+> > > 	if (xfs_inode_has_bigtime(ip))
+> > > 		return cpu_to_be64(xfs_inode_encode_bigtime(tv));
+> > >=20
+> > > 	lts =3D (struct xfs_legacy_timestamp *)&ts;
+> > > 	lts->t_sec =3D cpu_to_be32(tv.tv_sec);
+> > > 	lts->t_nsec =3D cpu_to_be32(tv.tv_nsec);
+> > >=20
+> > > 	return ts;
+> > > }
+> > >=20
+> > > For the !bigtime case (aka before we added y2038 support) the queried
+> > > flag gets encoded into the tv_nsec field since xfs doesn't filter the
+> > > queried flag.
+> > >=20
+> > > For the bigtime case, the timespec is turned into an absolute nsec co=
+unt
+> > > since the xfs epoch (which is the minimum timestamp possible under th=
 e
-> > +  from userland.
-> > +
-> > +mtime:
-> > +  The inode modification time. This is stamped with the current time
-> > +  any time a file's contents change.
-> > +
-> > +atime:
-> > +  The inode access time. This is stamped whenever an inode's contents =
-are
-> > +  read. Widely considered to be a terrible mistake. Usually avoided wi=
-th
-> > +  options like noatime or relatime.
+> > > old encoding scheme):
+> > >=20
+> > > static inline uint64_t xfs_inode_encode_bigtime(struct timespec64 tv)
+> > > {
+> > > 	return xfs_unix_to_bigtime(tv.tv_sec) * NSEC_PER_SEC + tv.tv_nsec;
+> > > }
+> > >=20
+> > > Here we'd also be mixing in the QUERIED flag, only now we've encoded =
+a
+> > > time that's a second in the future.=C2=A0 I think the solution is to =
+add a:
+> > >=20
+> > > static inline struct timespec64
+> > > inode_peek_ctime(const struct inode *inode)
+> > > {
+> > > 	return (struct timespec64){
+> > > 		.tv_sec =3D inode->__i_ctime.tv_sec,
+> > > 		.tv_nsec =3D inode->__i_ctime.tv_nsec & ~I_CTIME_QUERIED,
+> > > 	};
+> > > }
+> > >=20
+> > > similar to what inode_peek_iversion does for iversion; and then
+> > > xfs_inode_to_disk can do:
+> > >=20
+> > > 	to->di_ctime =3D xfs_inode_to_disk_ts(ip, inode_peek_ctime(inode));
+> > >=20
+> > > which would prevent I_CTIME_QUERIED from going out to disk.
+> > >=20
+> > > At load time, xfs_inode_from_disk uses inode_set_ctime_to_ts so I thi=
+nk
+> > > xfs won't accidentally introduce QUERIED when it's loading an inode f=
+rom
+> > > disk.
+> > >=20
+> > >=20
+> >=20
+> > Also already done in this patchset:
+> >=20
+> > struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct tim=
+espec64 ts)
+> > {
+> >         inode->i_ctime_sec =3D ts.tv_sec;
+> >         inode->i_ctime_nsec =3D ts.tv_nsec & ~I_CTIME_QUERIED;
+> >         trace_inode_set_ctime_to_ts(inode, &ts);
+> >         return ts;
+> > }
+> > EXPORT_SYMBOL(inode_set_ctime_to_ts);
+> >=20
+> > Basically, we never want to store or fetch the QUERIED flag from disk,
+> > and since it's in an unused bit, we can just universally mask it off
+> > when dealing with "external" users of it.
+> >=20
+> > One caveat -- I am using the sign bit for the QUERIED flag, so I'm
+> > assuming that no one should ever pass inode_set_ctime_to_ts a negative
+> > tv_nsec value.
+> >=20
+> > Maybe I should add a WARN_ON_ONCE here to check for that? It seems
+> > nonsensical, but you never know...
 >=20
-> And for btime/crtime (aka creation time) a filesystem can take the
-> coarse timestamp, right?  It's not settable by userspace, and I think
-> statx is the only way those are ever exposed.  QUERIED is never set when
-> the file is being created.
+> Well in theory filesystems should validate incoming timestamps and
+> reject tv_nsec with the high bit set, but I'd bet there's a filesystem
+> out there that allows negative nanoseconds, even if the kernel will
+> never pass it such a thing. ;)
 >=20
 
-Yep. I'd just copy the ctime to the btime after it's set on creation so
-that everything lines up nicely.
+Hmm, in that case, we probably should normalize the timestamp in this
+function before setting the ctime to it. That way we can ensure that
+the bit will be meaningless when we use it. I think the kernel has a
+way to do that. I'll take a look tomorrow.
 
-> > +Updating the mtime always implies a change to the ctime, but updating =
-the
-> > +atime due to a read request does not.
-> > +
-> > +Multigrain timestamps are only tracked for the ctime and the mtime. at=
-imes are
-> > +not affected and always use the coarse-grained value (subject to the f=
-loor).
->=20
-> Is it ok if an atime update uses the same timespec as was used for a
-> ctime update?  There's a pending update for 6.11 that changes
-> xfs_trans_ichgtime to do:
->
-> 	tv =3D current_time(inode);
->=20
-> 	if (flags & XFS_ICHGTIME_MOD)
-> 		inode_set_mtime_to_ts(inode, tv);
-> 	if (flags & XFS_ICHGTIME_CHG)
-> 		inode_set_ctime_to_ts(inode, tv);
-> 	if (flags & XFS_ICHGTIME_ACCESS)
-> 		inode_set_atime_to_ts(inode, tv);
-> 	if (flags & XFS_ICHGTIME_CREATE)
-> 		ip->i_crtime =3D tv;
->=20
+Thanks!
 
-Yeah, that should be fine. If you were doing some (hypothetical)
-operation that needs to set both the ctime and the atime, then the
-natural thing to do is to just let the atime's value "flow" from the
-updated ctime.
-
-> So I guess xfs could do something like this to set @tv:
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > > > =C2=A0fs/xfs/libxfs/xfs_trans_inode.c |=C2=A0 6 +++---
+> > > > =C2=A0fs/xfs/xfs_iops.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 +++-------
+> > > > =C2=A0fs/xfs/xfs_super.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> > > > =C2=A03 files changed, 7 insertions(+), 11 deletions(-)
+> > > >=20
+> > > > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_tr=
+ans_inode.c
+> > > > index 69fc5b981352..1f3639bbf5f0 100644
+> > > > --- a/fs/xfs/libxfs/xfs_trans_inode.c
+> > > > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
+> > > > @@ -62,12 +62,12 @@ xfs_trans_ichgtime(
+> > > > =C2=A0	ASSERT(tp);
+> > > > =C2=A0	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
+> > > > =C2=A0
+> > > > -	tv =3D current_time(inode);
+> > > > +	/* If the mtime changes, then ctime must also change */
+> > > > +	ASSERT(flags & XFS_ICHGTIME_CHG);
+> > > > =C2=A0
+> > > > +	tv =3D inode_set_ctime_current(inode);
+> > > > =C2=A0	if (flags & XFS_ICHGTIME_MOD)
+> > > > =C2=A0		inode_set_mtime_to_ts(inode, tv);
+> > > > -	if (flags & XFS_ICHGTIME_CHG)
+> > > > -		inode_set_ctime_to_ts(inode, tv);
+> > > > =C2=A0	if (flags & XFS_ICHGTIME_CREATE)
+> > > > =C2=A0		ip->i_crtime =3D tv;
+>=20
+> And as I mentioned elsewhere in this thread, 6.11 contains a change to
+> make it so that xfs_trans_ichgtime can set the access time.  That breaks
+> the old assertion that XFS_ICHGTIME_CHG is always set, but I think we
+> can work around that easily.
 >=20
 > 	if (flags & XFS_ICHGTIME_CHG)
 > 		tv =3D inode_set_ctime_current(inode);
 > 	else
-> 		tv =3D current_time();
-> ...
-> 	if (flags & XFS_ICHGTIME_ACCESS)
-> 		inode_set_atime_to_ts(inode, tv);
->
-> Thoughts?
+> 		tv =3D current_time(inode);
 >=20
-
-Yes, that should be fine. It's pretty similar to what we do in
-inode_update_timestamps():
-
-	if (flags & (S_MTIME|S_CTIME|S_VERSION)) {
-		...
-                now =3D inode_set_ctime_current(inode);
-		...
-        } else {
-                now =3D current_time(inode);
-	}
-
-
-In practice, a mtime or version change implies a ctime change, whereas
-an atime change generally doesn't. Still, I set up the infrastructure
-to handle it properly if the ctime and atime are ever updated together.
-
-> > +Inode Timestamp Ordering
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> > +
-> > +In addition to just providing info about changes to individual files, =
-file
-> > +timestamps also serve an important purpose in applications like "make"=
-. These
-> > +programs measure timestamps in order to determine whether source files=
- might be
-> > +newer than cached objects.
-> > +
-> > +Userland applications like make can only determine ordering based on
-> > +operational boundaries. For a syscall those are the syscall entry and =
-exit
-> > +points. For io_uring or nfsd operations, that's the request submission=
- and
-> > +response. In the case of concurrent operations, userland can make no
-> > +determination about the order in which things will occur.
-> > +
-> > +For instance, if a single thread modifies one file, and then another f=
-ile in
-> > +sequence, the second file must show an equal or later mtime than the f=
-irst. The
-> > +same is true if two threads are issuing similar operations that do not=
- overlap
-> > +in time.
-> > +
-> > +If however, two threads have racing syscalls that overlap in time, the=
-n there
-> > +is no such guarantee, and the second file may appear to have been modi=
-fied
-> > +before, after or at the same time as the first, regardless of which on=
-e was
-> > +submitted first.
-> > +
-> > +Multigrain Timestamps
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Multigrain timestamps are aimed at ensuring that changes to a single f=
-ile are
-> > +always recognizable, without violating the ordering guarantees when mu=
-ltiple
-> > +different files are modified. This affects the mtime and the ctime, bu=
-t the
-> > +atime will always use coarse-grained timestamps.
-> > +
-> > +It uses an unused bit in the i_ctime_nsec field to indicate whether th=
-e mtime
-> > +or ctime has been queried. If either or both have, then the kernel tak=
-es
-> > +special care to ensure the next timestamp update will display a visibl=
-e change.
-> > +This ensures tight cache coherency for use-cases like NFS, without sac=
-rificing
-> > +the benefits of reduced metadata updates when files aren't being watch=
-ed.
-> > +
-> > +The Ctime Floor Value
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +It's not sufficient to simply use fine or coarse-grained timestamps ba=
-sed on
-> > +whether the mtime or ctime has been queried. A file could get a fine g=
-rained
-> > +timestamp, and then a second file modified later could get a coarse-gr=
-ained one
-> > +that appears earlier than the first, which would break the kernel's ti=
-mestamp
-> > +ordering guarantees.
-> > +
-> > +To mitigate this problem, we maintain a global floor value that ensure=
-s that
-> > +this can't happen. The two files in the above example may appear to ha=
-ve been
-> > +modified at the same time in such a case, but they will never show the=
- reverse
-> > +order. To avoid problems with realtime clock jumps, the floor is manag=
-ed as a
-> > +monotonic ktime_t, and the values are converted to realtime clock valu=
-es as
-> > +needed.
->=20
-> monotonic atomic64_t?
->=20
-
-It is an atomic64_t, but the values come from the ktime_get_*
-functions, so we use the value as a ktime_t. Both are typedefs of s64
-though, so casting between them is seamless.
-
-I'll see if I can make that clearer in the doc.
-
 > --D
 >=20
-> > +
-> > +Implementation Notes
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Multigrain timestamps are intended for use by local filesystems that g=
-et
-> > +ctime values from the local clock. This is in contrast to network file=
-systems
-> > +and the like that just mirror timestamp values from a server.
-> > +
-> > +For most filesystems, it's sufficient to just set the FS_MGTIME flag i=
-n the
-> > +fstype->fs_flags in order to opt-in, providing the ctime is only ever =
-set via
-> > +inode_set_ctime_current(). If the filesystem has a ->getattr routine t=
-hat
-> > +doesn't call generic_fillattr, then you should have it call fill_mg_cm=
-time to
-> > +fill those values.
+> > > > =C2=A0}
+> > > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > > > index a00dcbc77e12..d25872f818fa 100644
+> > > > --- a/fs/xfs/xfs_iops.c
+> > > > +++ b/fs/xfs/xfs_iops.c
+> > > > @@ -592,8 +592,9 @@ xfs_vn_getattr(
+> > > > =C2=A0	stat->gid =3D vfsgid_into_kgid(vfsgid);
+> > > > =C2=A0	stat->ino =3D ip->i_ino;
+> > > > =C2=A0	stat->atime =3D inode_get_atime(inode);
+> > > > -	stat->mtime =3D inode_get_mtime(inode);
+> > > > -	stat->ctime =3D inode_get_ctime(inode);
+> > > > +
+> > > > +	fill_mg_cmtime(stat, request_mask, inode);
+> > > > +
+> > > > =C2=A0	stat->blocks =3D XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_del=
+ayed_blks);
+> > > > =C2=A0
+> > > > =C2=A0	if (xfs_has_v3inodes(mp)) {
+> > > > @@ -603,11 +604,6 @@ xfs_vn_getattr(
+> > > > =C2=A0		}
+> > > > =C2=A0	}
+> > > > =C2=A0
+> > > > -	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) =
+{
+> > > > -		stat->change_cookie =3D inode_query_iversion(inode);
+> > > > -		stat->result_mask |=3D STATX_CHANGE_COOKIE;
+> > > > -	}
+> > > > -
+> > > > =C2=A0	/*
+> > > > =C2=A0	 * Note: If you add another clause to set an attribute flag,=
+ please
+> > > > =C2=A0	 * update attributes_mask below.
+> > > > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> > > > index 27e9f749c4c7..210481b03fdb 100644
+> > > > --- a/fs/xfs/xfs_super.c
+> > > > +++ b/fs/xfs/xfs_super.c
+> > > > @@ -2052,7 +2052,7 @@ static struct file_system_type xfs_fs_type =
+=3D {
+> > > > =C2=A0	.init_fs_context	=3D xfs_init_fs_context,
+> > > > =C2=A0	.parameters		=3D xfs_fs_parameters,
+> > > > =C2=A0	.kill_sb		=3D xfs_kill_sb,
+> > > > -	.fs_flags		=3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> > > > +	.fs_flags		=3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
+> > > > =C2=A0};
+> > > > =C2=A0MODULE_ALIAS_FS("xfs");
+> > > > =C2=A0
+> > > >=20
+> > > > --=20
+> > > > 2.45.2
+> > > >=20
 > >=20
 > > --=20
-> > 2.45.2
-> >=20
-> >=20
+> > Jeff Layton <jlayton@kernel.org>
 
-Thanks!
 --=20
 Jeff Layton <jlayton@kernel.org>
 
