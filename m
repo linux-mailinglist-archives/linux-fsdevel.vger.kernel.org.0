@@ -1,105 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-23546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F278592E127
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 09:47:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE7992E12D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 09:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92201B221D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 07:47:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149041F22765
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 07:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE3014AD3A;
-	Thu, 11 Jul 2024 07:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8658D14B943;
+	Thu, 11 Jul 2024 07:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="n/6oZnRx"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vSphCIq/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BC917BDA;
-	Thu, 11 Jul 2024 07:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A3513B59F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2024 07:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720684034; cv=none; b=a22BbKL27VqqjGN4XoHWA5E3c2HZkw3F5jZwEpC8hJKuKj3tiS+IXHg+uK9f/ZWDpCAUVYHJekCf7ailHVH38MJ46KBCW3UXBtPt0HU/ge4SpJlsp/UlETLuH2FU3KtQykOw0X1yzinG46F7J9aLGjlzMna7XOp9cjNnQuoP0zQ=
+	t=1720684154; cv=none; b=EMqnpav7W6vFy2xPk8IwTPg0e+vL1i9We9hwKTCThwunxnptte6q4vXDGw7IcOMfG8S3mBh25mpyUrSfU8CRHNB/eLknhio9uQ715X7U8DSM56C96M7Ece/5e1jIyoTfu+5O1P69XkkadVPy5obkzGInPhg2uaiEg01GBlYxkxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720684034; c=relaxed/simple;
-	bh=XnzfW3DG9X0+QdL29CqM/11d0IXE6lzFBGaQGdpUkds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qxp+ZgQplVaMD3jw6HjeZRApLnPYj0+RdFjT3pUL4+viqqzQZQamSKShvQPelSCj1fP1Gzj7vyF4Bu9U/mhhXLN6HOb+8ne/PosXSCaHC0UbPsNGi/OGOtRUvCRo7arC8EyHNtwR2AySvQCQjjG3/lU2o6+NuyNQjwt1JBXvKwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=n/6oZnRx; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720684022; x=1721288822; i=markus.elfring@web.de;
-	bh=XnzfW3DG9X0+QdL29CqM/11d0IXE6lzFBGaQGdpUkds=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=n/6oZnRxuJpdMunuLCl5bxESJ6u1QLCAadI/dvmrZ9wKCx8tMNFyBYFOyIgCX6up
-	 13u/mZg/xCAYrXWIMHhTMc/v0nYcCe+qbcYz7r7+wsZjWXcTENgFqJxmjKFoQsls5
-	 RUvK5zcPgfXKpCCUxLmPr1EujJRdKf0aJPBRS/JGcy0y5HK9wZqYsU69g4oTPR51T
-	 Vlg4OV1EPxXF2KWjIhUx98H/vMa/117LIFij6UsGuJcqeW6zFkiWoykFIUsuGJSN9
-	 ZN82847CUsVHCr5CUWqoodzoJKz4iapvZCpOgxwbLdNOg+mNIN74VGeYvgl3ckBo9
-	 0FDj6a8dwhvLUaqNrA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZSFY-1sv4zo2Qfm-00X1Pz; Thu, 11
- Jul 2024 09:47:02 +0200
-Message-ID: <5c191e5d-b64c-4e3c-9f70-9cd3371a3142@web.de>
-Date: Thu, 11 Jul 2024 09:47:01 +0200
+	s=arc-20240116; t=1720684154; c=relaxed/simple;
+	bh=i3OvvcoQfCXZeAS6mCZesuzZdOM67uhMGi7v4mm4HfU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ptuGy89nRip+m5sXzsQ3miPBYiQRf8cTk9Hos9ERgpsptDKDfvapE0JTkJFZG5h/fCgXKcJ1wCSWvLuEx9bwM3iE/KcGrhm6KcpjHphYm6U16PdXG3d5LsnrSPmsIL9m8p5AFcjrTcgFf5CQNIG3X2qd0ik2TI4H/wgUC2w/9qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vSphCIq/; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: viro@zeniv.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720684151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oGIWSDUMzn+gpjSzQ+REy8Wj9tSDNlALob7dYQowUWA=;
+	b=vSphCIq/5+7V++7Ee47RhuofdTFRsIbDZDd2em7d5TRe2CvFZJWqrhgPIJnhINB0iwm7MY
+	hbL1EbMfHMZD6z7I8T9/QqGUubBWBkRgUrmMyNGshTiYsu4Sc6cjSheMAIS8MFs/yrZBwf
+	j66VOCYvq3rC6bSOzbng20tB6Gb7fa0=
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: clm@fb.com
+X-Envelope-To: josef@toxicpanda.com
+X-Envelope-To: dsterba@suse.com
+X-Envelope-To: tytso@mit.edu
+X-Envelope-To: adilger.kernel@dilger.ca
+X-Envelope-To: jaegeuk@kernel.org
+X-Envelope-To: chao@kernel.org
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-btrfs@vger.kernel.org
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: youling.tang@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	tytso@mit.edu,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	youling.tang@linux.dev
+Subject: [PATCH 0/3] Add {init, exit}_sequence_fs() helper function
+Date: Thu, 11 Jul 2024 15:48:56 +0800
+Message-Id: <20240711074859.366088-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 fs/bfs 0/2] bfs: fix null-ptr-deref and possible
- warning in bfs_move_block() func
-To: Vasiliy Kovalev <kovalev@altlinux.org>, linux-fsdevel@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- lvc-patches@linuxtesting.org, "Tigran A. Aivazian"
- <aivazian.tigran@gmail.com>, dutyrok@altlinux.org
-References: <20240711073238.44399-1-kovalev@altlinux.org>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240711073238.44399-1-kovalev@altlinux.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:j1JiinJ3+yc+LmeMIId0sYC4JYeGKm2xPQk5bWf/CF+whoVJXXD
- t9votmnCuvSxqD83n7ztYsfHSgZN43AbGeJ/M4k8lVuDJHWiUGenqsRCwkJPGRBu6mk2SeX
- D+jAatzFsKW+hV4BhYqX2oRfToRZJau5kp7V3f7ePt47TURtFI1+jyNT06LCkiu/+2olj4q
- b4UiFnprEj55xqJNSrlBQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:CTO1ztm/gPg=;gGeVZZwNzH4SOqdjktemmEnHUXE
- BHaEhVS1plRVFHcHV/ud0lBUaWeTmZKjihuEPpd1ZAQdMyllIX2Q42RwlmwSUqvwKceLQ6a5D
- JM+ZavHWVvQN6z4f36DBHkfXzarBkFPAoPc0ObfiI9CqzZZ2TbC2kro6AYuWTZe/T0gQwited
- mvLUy8Rb0SFfogP3BikpEI8DpPw5aoPwjT7ciipAtMbf1TyZNmp9grzjM2UinL0jjIz80iBBF
- Tz+qm8f/L0X3xf+jXyLqguaGuHi4LH+AUEsGux/sqPdeAHIOFjx3f8rTrPr46fqTaqY8bW561
- ddvNVezX6JKzA5rUSj0O0haTV5L9kdrnm9Q8t3RJNHqV+CcQZ+7QRtg7u7qqcSzsNTwliVqJp
- rB707EkyGbBTSBqBw0iT8LiivuRUCE+eYugTiI4KJD1XiZoempPyR7bUmfOA177rBABF/9O4d
- KkuuJR0KB0CDbqcoUtD3hlH0Nuf9nUFr6vAiZLCTm41PNqFzlSM1zsxktV0ZdkFhXhvn1Kkry
- cmeShP5Cz5AQQ3xqMxPLtxp8VGSqMHtBM4KSEx+iQbNKr+VUxwAYnyoeoz8yzTkT67I+VxMmI
- Hz38nd9iCo29zAZEePb7hptl3njYjlxdE4u3zDPaaZ72lMSRZYl1JDocl9Iz9LzlAZ2SwHNFK
- PkJUI1hhGyT4PSLjmDjOmHca/Z3Mmj3NKpdDX13dYPgQN3VzzEmo/rWyyfFOrQunXZpiSnZTN
- 16G9pYOq8fmzmlfmDOAhp4stk8wFg0dwD8eRagRYQipBbcy+rupViMdB9J9VEp+kPbegXfPer
- 1rKKDFYzbBtCi+ZmmfKeUeeQ==
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-=E2=80=A6
-> [PATCHv2 fs/bfs 1/2] bfs: prevent null pointer dereference in bfs_move_b=
-lock()
-=E2=80=A6
+This series provides the {init, exit}_sequence_fs() helper functions and
+applies to f2fs and ext4, similar to btrfs.
 
-I find it usually helpful to separate the version identifier from the prev=
-ious key word.
+Youling Tang (3):
+  f2fs: make module init/exit match their sequence
+  ext4: make module init/exit match their sequence
+  fs: Add {init, exit}_sequence_fs() helper function
 
-How do you think about to improve the outline another bit (also for the co=
-ver letter)?
+ fs/btrfs/super.c   |  36 +--------
+ fs/ext4/super.c    | 142 +++++++++++++++---------------------
+ fs/f2fs/debug.c    |   3 +-
+ fs/f2fs/f2fs.h     |   4 +-
+ fs/f2fs/super.c    | 178 ++++++++++++++++++---------------------------
+ include/linux/fs.h |  38 ++++++++++
+ 6 files changed, 173 insertions(+), 228 deletions(-)
 
-Regards,
-Markus
+-- 
+2.34.1
+
 
