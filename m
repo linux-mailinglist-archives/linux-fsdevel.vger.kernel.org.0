@@ -1,63 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-23555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B32892E28B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 10:38:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC5892E272
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 10:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A44261C20A3C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 08:38:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CC23B25175
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 08:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A2D15821D;
-	Thu, 11 Jul 2024 08:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B994158D8F;
+	Thu, 11 Jul 2024 08:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="gAGyHnh1";
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="KtBs9Wnt"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IxKOdkJu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00001581F0;
-	Thu, 11 Jul 2024 08:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D0A156971
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2024 08:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720686999; cv=none; b=Z0NvOAsBb1pPYcyYp65eoH52bMoTM0SRyU+6QndpUAkFoyBorkXtADE5Pnt9NIrB3iENuVPdfHGqQl5uFTQhzfbpdursGrF6DFJWl5pW3T+vdBtaGft4FYL9RBZI5XWcSl4bgBZ19WuNwXAhWj6L/nsCkRYNf8ZVCLEp7+lG+FM=
+	t=1720686699; cv=none; b=i05Nnqkzm4Rf/4hic7S2z6RLGFL9Emc+8aMOrcEjK1ez6ONEiop49Y7chM88BAJQtDdBz/MO/Bsi2kXMJfHXfaJhEQqSYY4Tc9HUv6WurXR2azB3yCuR9wY9bpFwfpHeD8bAdKyLfmxc4KhyRLLprjrHi11UGOmnAdCN6U4rXqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720686999; c=relaxed/simple;
-	bh=1bwqFinbtDkxAjW+8WZSgeF63cbN78DWBNtyGL2nQlw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lxIiIfX3E4lw6MuDnPVqQIwJqqZdN1HlsZxaE7+WQRyizQqiC6dY1w4mkW29Gp8Xyxd49n/o7j6rk2CBw+3u7e61hYxFpOEosHTnfVSGzZp/ce4exIBeOIp54V4pm2oLtkaNBslZvI2vFSrsQotOp6g9ygCj+NmFMWgmBwa69wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=gAGyHnh1; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=KtBs9Wnt; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 96F1F1D43;
-	Thu, 11 Jul 2024 08:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1720685961;
-	bh=2lEB1CwnPIAdMdowq8U5BKOPAzNq4douQboeJQ9Bho0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=gAGyHnh1h1+4+vr9qI1qCl99UqNtF0br+qa85Zr50J/O7EBPbyG5jNgqK16M5ygXQ
-	 R2dRxUbK1HiWAEF4Nwrb9ry21sfVmMWfjRRKMHWA4/NYx9Lug4fMgiCC96Vx9nO07/
-	 AB97AY7Tt+z84+I3yQ+IW5h8Y+61MmO3osicS+UY=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 0EB6621C8;
-	Thu, 11 Jul 2024 08:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1720686452;
-	bh=2lEB1CwnPIAdMdowq8U5BKOPAzNq4douQboeJQ9Bho0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=KtBs9Wntn8bYdopHYHiA5ajMgyd/L1KY+9R+rk6AyT8pnNGYcl/lCzSW+/DgWkcj+
-	 lmkEe+gQ+xfI+Zd24CxKqHbm0+Y4tqc40bm8OhOL5y++qP9HIjNkE4/NWRD/QB3fbC
-	 Ay99ORjmdIhoL7Rp8djm7rgbBqP4rjricDMm0Wcs=
-Received: from [192.168.211.91] (192.168.211.91) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Thu, 11 Jul 2024 11:27:31 +0300
-Message-ID: <216de662-023a-4a94-8b07-d2affb72aeb5@paragon-software.com>
-Date: Thu, 11 Jul 2024 11:27:30 +0300
+	s=arc-20240116; t=1720686699; c=relaxed/simple;
+	bh=J309idn94l6LfM69hofwVk6z9S7VT1vK5PVzSR4ifFE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RRFuSjWZDSHBDof7pLuIAUdsQZCx6RE90HUERJupDpRSNmkFl1fWMN6aULZ+IFECoBNHbbbhdcyeIrb7xeELau3f5Qyx8sXd/MBpRqp2W0cnNUppMo/8wIxXlMFxpsrsKJEuE9EHCyjPs5s4J438Vk8A8MJvE9ydVAj7a7546Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IxKOdkJu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720686696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xsavuo7VjN4IgYGRQOpxjo6n2SWYiH9JroTE1iXSFAY=;
+	b=IxKOdkJuuRUvFke+nipPaPBht/9CuajOQiN0BoLQXmy1hlWpQaHDVNZXoNohzCeq6Q7Oi3
+	DivqyyEUZME3313TD39bPHyfuQJhIbE8wPCRaIS7b6ULrWtd7edIjzcS8i377k+twBz/UK
+	mPFfzVrUwMFuyUG0ImcbT4X+GrXO7rQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-584-AUewrzlsPme2V4KfUCk6Mg-1; Thu, 11 Jul 2024 04:31:34 -0400
+X-MC-Unique: AUewrzlsPme2V4KfUCk6Mg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4279837c024so4486625e9.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2024 01:31:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720686693; x=1721291493;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xsavuo7VjN4IgYGRQOpxjo6n2SWYiH9JroTE1iXSFAY=;
+        b=RdH19IE3QQtfTtI3IhzqevTOuv3qpObDqm5S/8YVFBnjQd04o1EfZ4bJGbo1s4FVSD
+         wwBjXEHQ9XWusGehlllHWV0gEU1aJGfqQyHJ4u4C08K/T3Tw20VlnyMOF9udfFYwGPf2
+         KP14hgGQZWCTU1byEFD8R2pPzWo/FLGoWuDzAPrzQ53YwZD+UDstvKlhrXVbd+1GD7Jf
+         oIgDd8EMGEqHD03W4IXI6A3GTKtthbkGNBO0CbFjbLzk8H79B8NFo5wgeK3OOXjPE7LR
+         XSG5kkgpkDFcnUkOxcWupaE3XVutVevWYBuaUcTgkhG1CR9Oqlse5LGtsflp0w+1IVth
+         nq1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2t5BrJPrNdx4eDtTe384X0kDMZcemgUHZjKDO70b08jGj2+WMCHbgaELP3NZp+RJPg9URnSKfFFtRxfwkN51/hS1PyKjGqQKpO12FKw==
+X-Gm-Message-State: AOJu0Yz2t32jP665cL/YEBBBAFAyE64YekVWFQLJyktW0OcA140ayfPh
+	hRLY5ZllvOXpiHIdiHi0XK7dK1nq1ToYK3TgyFp5w/UNekuHaqNJo1qCZNh3Nu8Lz7CW5/aBJRG
+	SbRnULxaA1dS8Crh61dzpV8dSxWZRFrubgDG8lBEgBBq1OlUvSx8RDraTPOBsymU=
+X-Received: by 2002:a05:600c:41d1:b0:426:5d37:67f0 with SMTP id 5b1f17b1804b1-426707cbd7amr47937305e9.13.1720686693632;
+        Thu, 11 Jul 2024 01:31:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHEsGmNWWpKzLdjjvHa8Oly0TKggOk/fmTsEbwHHsuebuNMp1P87hEdumnvEl9dAnc+GlyWXw==
+X-Received: by 2002:a05:600c:41d1:b0:426:5d37:67f0 with SMTP id 5b1f17b1804b1-426707cbd7amr47937135e9.13.1720686693017;
+        Thu, 11 Jul 2024 01:31:33 -0700 (PDT)
+Received: from ?IPV6:2003:cf:d74b:1cd5:1c4c:c09:d73b:c07d? (p200300cfd74b1cd51c4c0c09d73bc07d.dip0.t-ipconnect.de. [2003:cf:d74b:1cd5:1c4c:c09:d73b:c07d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa0613sm7165414f8f.88.2024.07.11.01.31.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 01:31:32 -0700 (PDT)
+Message-ID: <8268c602-7852-4d5b-86de-54b0a38cf244@redhat.com>
+Date: Thu, 11 Jul 2024 10:31:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,56 +82,76 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
-To: Dmitry Vyukov <dvyukov@google.com>, Lizhi Xu <lizhi.xu@windriver.com>
-CC: <linux-kernel@vger.kernel.org>, <ntfs3@lists.linux.dev>,
-	<linux-fsdevel@vger.kernel.org>,
-	<syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>, Kees Cook <keescook@google.com>
-References: <CACT4Y+ZWjUE6-q1YF=ZaPjKgGZBw4JLD1v2DphSgCAVf1RzE8g@mail.gmail.com>
- <20240705135250.3587041-1-lizhi.xu@windriver.com>
- <CACT4Y+YrjD=3Tn6o4FJFefDYsOCbUFWahPUp87PXXcHQsr0xXg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
+ Miklos Szeredi <mszeredi@redhat.com>, German Maglione
+ <gmaglione@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Vivek Goyal <vgoyal@redhat.com>
+References: <20240709111918.31233-1-hreitz@redhat.com>
+ <20240710172828.GB542210@dynamic-pd01.res.v6.highway.a1.net>
 Content-Language: en-US
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <CACT4Y+YrjD=3Tn6o4FJFefDYsOCbUFWahPUp87PXXcHQsr0xXg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+From: Hanna Czenczek <hreitz@redhat.com>
+In-Reply-To: <20240710172828.GB542210@dynamic-pd01.res.v6.highway.a1.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 08.07.2024 09:54, Dmitry Vyukov wrote:
-> On Fri, 5 Jul 2024 at 15:52, Lizhi Xu <lizhi.xu@windriver.com> wrote:
->> On Thu, 4 Jul 2024 15:44:02 +0200, Dmitry Vyukov wrote:
->>>> index 53629b1f65e9..a435df98c2b1 100644
->>>> --- a/fs/ntfs3/record.c
->>>> +++ b/fs/ntfs3/record.c
->>>> @@ -243,14 +243,14 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
->>>>                  off += asize;
->>>>          }
->>>>
->>>> -       asize = le32_to_cpu(attr->size);
->>>> -
->>>>          /* Can we use the first field (attr->type). */
->>>>          if (off + 8 > used) {
->>>>                  static_assert(ALIGN(sizeof(enum ATTR_TYPE), 8) == 8);
->>>>                  return NULL;
->>>>          }
->>>>
->>>> +       asize = le32_to_cpu(attr->size);
->>>> +
->>>>          if (attr->type == ATTR_END) {
->>>>                  /* End of enumeration. */
->>>>                  return NULL;
->>> Hi Lizhi,
->>>
->>> I don't see this fix mailed as a patch. Do you plan to submit it officially?
->> Hi Dmitry Vyukov,
->> Here: https://lore.kernel.org/all/20240202033334.1784409-1-lizhi.xu@windriver.com
-> I don't see this patch merged upstream.  Was it lost? Perhaps it needs
-> to be resent.
-Hi, Lizhi, Dmitry, This patch is indeed not present in either the 
-upstream or our repository. I will retest it and figure out why I didn't 
-add it. Around the same time, I was making changes to mi_enum_attr, so I 
-might have mixed something up. Thanks for your attention! Regards,
-Konstantin
+On 10.07.24 19:28, Stefan Hajnoczi wrote:
+> On Tue, Jul 09, 2024 at 01:19:16PM +0200, Hanna Czenczek wrote:
+>> Hi,
+>>
+>> We want to be able to mount filesystems that just consist of one regular
+>> file via virtio-fs, i.e. no root directory, just a file as the root
+>> node.
+>>
+>> While that is possible via FUSE itself (through the 'rootmode' mount
+>> option, which is automatically set by the fusermount help program to
+>> match the mount point's inode mode), there is no virtio-fs option yet
+>> that would allow changing the rootmode from S_IFDIR to S_IFREG.
+>>
+>> To do that, this series introduces a new 'file' mount option that does
+>> precisely that.  Alternatively, we could provide the same 'rootmode'
+>> option that FUSE has, but as laid out in patch 1's commit description,
+>> that option is a bit cumbersome for virtio-fs (in a way that it is not
+>> for FUSE), and its usefulness as a more general option is limited.
+>>
+>>
+>> Hanna Czenczek (2):
+>>    virtio-fs: Add 'file' mount option
+>>    virtio-fs: Document 'file' mount option
+>>
+>>   fs/fuse/virtio_fs.c                    | 9 ++++++++-
+>>   Documentation/filesystems/virtiofs.rst | 5 ++++-
+>>   2 files changed, 12 insertions(+), 2 deletions(-)
+>>
+>> -- 
+>> 2.45.1
+>>
+> Looks good to me. Maybe add the 'file' option to FUSE as well to keep
+> them in sync (eventually rootmode could be exposed to virtiofs too, if
+> necessary)?
+
+I don’t think this option makes much sense for FUSE, like Josef has 
+said; it would just duplicate a subset of 'rootmode', and because FUSE 
+filesystems are rarely mounted by hand, I don’t think anyone would ever 
+use it.
+
+If it were important to keep them in sync, I’d rather have virtio-fs 
+provide 'rootmode' instead.  Personally, I don’t think it’s that 
+important, and I’d rather have a simple '-o file' instead of '-o 
+rootmode=0100000' (hope I counted the 0s right) for a filesystem that is 
+actually not rarely mounted by hand.
+
+If we ever do find out that we want to support other root modes than 
+S_IFREG and S_IFDIR, we will probably want 'rootmode' for virtio-fs, 
+too, yes.  But I can’t see that right now.
+
+> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+Thanks!
+
+Hanna
+
 
