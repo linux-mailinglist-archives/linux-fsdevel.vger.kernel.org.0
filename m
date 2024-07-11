@@ -1,167 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-23577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF33C92EAFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 16:44:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16AE792EB3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 17:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A94A284381
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 14:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C078E1F226BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jul 2024 15:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C189D16B396;
-	Thu, 11 Jul 2024 14:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D5E168C26;
+	Thu, 11 Jul 2024 15:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="q1PXf1Gy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fR+68BF9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6D616A934
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2024 14:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3081E531
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2024 15:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720709078; cv=none; b=WRpYxliD28JR4BjgLSFqBtokaH7TBcoZBfD8pjbEpWh2wzPjEDrCO1JqaIbTPp0rZ80oKRjx90uKjddXbc+jVhNfaY11cx+6jmNZSOwBXVV4x7ITrSYhFfOP6ZDv5WJuLnRdB7huF/g+99xALI5p2TBfWfp74zvEvrn+VJ59nRM=
+	t=1720710267; cv=none; b=ZGH1YSeMrPwAcpTzkT760I2khV3HKuRmoFaN8VxaotHbIN3ytzRa8vd60GxucOjWeYPhsRIMpYgoojhux+HR8OEEK9y1vsImofZC0xYwODSh29zC7qufcjDernBeTXSeoI1plStTTlJuxZHcVN1stJh19dTN4y9LDLijcnZgvtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720709078; c=relaxed/simple;
-	bh=MMu6kiGgrdyVeIGgo0o2g5ISXoiklOJgpiyd0c6Mhcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCWxO5ltvvmUYd1cKIezGcfprAjH8VCK1MsRQPLA2TMNGHSSLPTaXNABOERnZGbaq/UVZ3PAw2UEq7pm2hqk2PSoEhPjti2neDbIA7NlxFMuPwP0TbB1VPpg/Xp9qN7nRr+TMrmtT613MP0IvwuvoXvVdnSwEueH/BPjx+t442M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=q1PXf1Gy; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-65465878c1fso11659727b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2024 07:44:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1720709075; x=1721313875; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p6PLNSJZMY2HBtPFlfBgNDPZWDEOAS/uY6eb53FVzXU=;
-        b=q1PXf1GybYh1aDXkOQriXh3etXHQaQvAEvEHvmjzflwesjMtmTkIcKjsvkM3cvyMew
-         1ADOSrKUCZeN1Bc6ndt1rYxk0DDfHkzu9xezqPuUzubgvhJWQPvuMkrPn/0U5ZZxfo9i
-         fctEzUyU1X+gwXWNkJGT6Qb6Rul3J21Wfk7CiQmTfo+8/rA+YGP6qKw6dLORH3DeagL/
-         y8faZ8jpGGnpY3BUumaQJl7BBvPzevdG9+6FJ6dQodNUGNJSp/gYUNCG5drWdvmjx5Mn
-         cv8yTWT0bLgjhtN0Oa3FCF0hNCixvqUBhriTBD67tVMd36sVAEQFtLzVdeP7ReM7JUpg
-         nXbw==
+	s=arc-20240116; t=1720710267; c=relaxed/simple;
+	bh=RIhfOzVcXIy7+AwNsdNPGSuaq68Hqj9Gr8kJENzAlEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jYf3+PwWam04lmeggb9sM0J9XazIoL9AgYvdqhgMy58rWudO2LY3Bjj//1TLtoKbjoCKQb1mA33ybqGFz9Gm2C9UJZ9VIKD9gxluGkVBnWNiUCa+HmVQtn+R/0couS8N5KdIDg+dVhronr/qRRPgXSVk7OgpUy2zBmV0J/WIU9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fR+68BF9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720710263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rbObYPlRhGPWJEjqZQKRQutm+8Td90FVq4wxYtGGsgM=;
+	b=fR+68BF9lQFoI3B5xvNR0vhw7HtJIqjPAldkwHBfScQV/xyW05t8Aa19Lfth8+02fnd6lb
+	yKSM/y3R+H04vY8sy5jF4Zn9B/ls18WNVJYsEVNd2d8pwKSjc/x1/w7qo/Pa1RqIsEkbyv
+	QXpUDLj4X81dBJFWyHYf5eCFus5UhdM=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-674-iBG6SNcJPtKmacHX00wDJw-1; Thu, 11 Jul 2024 11:04:18 -0400
+X-MC-Unique: iBG6SNcJPtKmacHX00wDJw-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52e994d8e26so1002329e87.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2024 08:04:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720709075; x=1721313875;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p6PLNSJZMY2HBtPFlfBgNDPZWDEOAS/uY6eb53FVzXU=;
-        b=YA+v1rmbr5x+tDUnie19NX+WijO+VxZSLW/ZvgTVmQY+GP9FmmdEsM2Ed8QHFV5tKO
-         gMqCoJt2+nMtOl19KzlcZ3WNEPrTY9v63gpKtr7ANZOLfgiNIQLTx3t20h1Oj6ZNMKUW
-         yBO4OJrPYn8OHuOjW8xm7TLQ4kXZbT4jYtQHY0B+32zWxD5DWlD1v4tBBtUb6SYOjYNr
-         M2jD3emUDfdKq0ug3qVK/Uultew/DlnZErX5PkFUhkPhkIBuA2VptDly1hq4i8YLxxsi
-         GNq4+q8svrBW6ZCFZy8a6YnIoeIVGk0GaYaraPBFSdWpCzAMhwZ+07gVEJ3x5EPpZyru
-         rXoA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4Yi44ag2NnlPuREEkzFD/8uBvabvRUzs3G+4uua3hQxCr0ejINzqCE9JqFp8XI+KGbGHXXLrPd8y8HU0Q3QCCwmwgJ08juHZ39OEIkw==
-X-Gm-Message-State: AOJu0Yxa3nqomwJ7HsKPCVB3kRIA+KKTv/DRNDXpjVwZWDoiQlJ6PLDT
-	ifXCBo+EHhezLiYn8Nv5Bw6By2RDn+S8Jv5JPkWwwUbaqRU7xCsU+ET+SMmbBM4=
-X-Google-Smtp-Source: AGHT+IFAnEDVnsGx1tZ1AxBo1QTn+tOSC2MfALvNb6Q+MllvTQBzHLMq8T3kjDK5yp3+1lqcT3GiRg==
-X-Received: by 2002:a05:690c:3385:b0:62f:2553:d3b3 with SMTP id 00721157ae682-658ef3414eemr120805467b3.29.1720709075414;
-        Thu, 11 Jul 2024 07:44:35 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4936079sm11198567b3.15.2024.07.11.07.44.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 07:44:34 -0700 (PDT)
-Date: Thu, 11 Jul 2024 10:44:34 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-nfs@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 0/9] fs: multigrain timestamp redux
-Message-ID: <20240711144434.GB1235314@perftesting>
-References: <20240711-mgtime-v5-0-37bb5b465feb@kernel.org>
+        d=1e100.net; s=20230601; t=1720710257; x=1721315057;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rbObYPlRhGPWJEjqZQKRQutm+8Td90FVq4wxYtGGsgM=;
+        b=NM/916BeA4fxVfjRH59hXK9iE+0dk0jZ3OTkaTFdt7lGOfOd6LoSzq2epQo2cR7oAq
+         ZZ+2XfSO+aNvQDjW5m+VF+elK9DTusB1MgnPhVHysLlEjv8EON2fbprkE/fU4f5EzgvM
+         3DAl7q4MOIIlNWZ8sslccH7TY7wWJWUXF+EPVPwPPsB6rvbPnMCpAtNOlzm1LQlsxZ3Q
+         OsxSmSA9A65AwyhHD+qdBRC3vQGLXe4mQGNQpFECSjGb1nVO8UlDzvaf8CzdpeOjvGwM
+         9+yxsx3AS2V5PmUH38YxeQ0M/YUmU42RtzoMgf+NlZTmTLfejW/usZ4Kafidfr8lrps5
+         T+HA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7BHClSa/6SiX/fafmVYgHkgUs3WNWEC75XDyeY7kMJ4nA25jpx/110KgU5lMje4nxgEzuQu1MaioZD/4zIc0NgvDPD1KG3XZxlGieeA==
+X-Gm-Message-State: AOJu0Ywv9k7K7yLo/GF1Pb1S4KDBd+cCe9F7LXou+Ar5zsL14FLLn0/+
+	0HO0yM2tPgX3+PUhAvFnXMrLS/+xLyjNf4Xw+jbCkg/yAnTApmeiwvZss1glGPP5Kz2pvGXx4c4
+	2Xz1aPSliTIdoxWxHcF3wm8DEa6vlmjRD0+Rki65We+vkkoQKgabX1UvLvV73iCc=
+X-Received: by 2002:a19:915e:0:b0:52e:7f16:96be with SMTP id 2adb3069b0e04-52eb99d4ec8mr4550992e87.65.1720710256762;
+        Thu, 11 Jul 2024 08:04:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZslfRADh61h2K4U2I0v8TWlsmuDejSX07DbIntDk5o01Hp5GIPBHFAcNOq0qN0Q3YbDMbqA==
+X-Received: by 2002:a19:915e:0:b0:52e:7f16:96be with SMTP id 2adb3069b0e04-52eb99d4ec8mr4550931e87.65.1720710255957;
+        Thu, 11 Jul 2024 08:04:15 -0700 (PDT)
+Received: from ?IPV6:2003:cf:d74b:1cd5:1c4c:c09:d73b:c07d? (p200300cfd74b1cd51c4c0c09d73bc07d.dip0.t-ipconnect.de. [2003:cf:d74b:1cd5:1c4c:c09:d73b:c07d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f74462esm118919565e9.48.2024.07.11.08.04.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 08:04:15 -0700 (PDT)
+Message-ID: <90f0cdd6-379f-49a0-9bb2-ba86c3e8ccce@redhat.com>
+Date: Thu, 11 Jul 2024 17:04:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711-mgtime-v5-0-37bb5b465feb@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
+ Miklos Szeredi <mszeredi@redhat.com>, German Maglione
+ <gmaglione@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>
+References: <20240709111918.31233-1-hreitz@redhat.com>
+ <20240709175652.GB1040492@perftesting>
+ <8ebfc48f-9a93-45ed-ba88-a4e4447d997a@redhat.com>
+ <20240710184222.GA1167307@perftesting>
+ <453a5eb6-204f-403a-b41d-faefdbcb8f50@redhat.com>
+ <20240711143425.GA1235314@perftesting>
+Content-Language: en-US
+From: Hanna Czenczek <hreitz@redhat.com>
+In-Reply-To: <20240711143425.GA1235314@perftesting>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 07:08:04AM -0400, Jeff Layton wrote:
-> tl;dr for those who have been following along:
-> 
-> There are several changes in this version. The conversion of ctime to
-> be a ktime_t value has been dropped, and we now use an unused bit in
-> the nsec field as the QUERIED flag (like the earlier patchset did).
-> 
-> The floor value is now tracked as a monotonic clock value, and is
-> converted to a realtime value on an as-needed basis. This eliminates the
-> problem of trying to detect when the realtime clock jumps backward.
-> 
-> Longer patch description for those just joining in:
-> 
-> At LSF/MM this year, we had a discussion about the inode change
-> attribute. At the time I mentioned that I thought I could salvage the
-> multigrain timestamp work that had to be reverted last year [1].
-> 
-> That version had to be reverted because it was possible for a file to
-> get a coarse grained timestamp that appeared to be earlier than another
-> file that had recently gotten a fine-grained stamp.
-> 
-> This version corrects the problem by establishing a per-time_namespace
-> ctime_floor value that should prevent this from occurring. In the above
-> situation, the two files might end up with the same timestamp value, but
-> they won't appear to have been modified in the wrong order.
-> 
-> That problem was discovered by the test-stat-time gnulib test. Note that
-> that test still fails on multigrain timestamps, but that's because its
-> method of determining the minimum delay that will show a timestamp
-> change will no longer work with multigrain timestamps. I have a patch to
-> change the testcase to use a different method that is in the process of
-> being merged.
-> 
-> The testing I've done seems to show performance parity with multigrain
-> timestamps enabled vs. disabled, but it's hard to rule this out
-> regressing some workload.
-> 
-> This set is based on top of Christian's vfs.misc branch (which has the
-> earlier change to track inode timestamps as discrete integers). If there
-> are no major objections, I'd like to have this considered for v6.12,
-> after a nice long full-cycle soak in linux-next.
-> 
-> PS: I took a stab at a conversion for bcachefs too, but it's not
-> trivial. bcachefs handles timestamps backward from the way most
-> block-based filesystems do. Instead of updating them in struct inode and
-> eventually copying them to a disk-based representation, it does the
-> reverse and updates the timestamps in its in-core image of the on-disk
-> inode, and then copies that into struct inode. Either that will need to
-> be changed, or we'll need to come up with a different way to do this for
-> bcachefs.
-> 
-> [1]: https://lore.kernel.org/linux-fsdevel/20230807-mgctime-v7-0-d1dec143a704@kernel.org/
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On 11.07.24 16:34, Josef Bacik wrote:
+> On Thu, Jul 11, 2024 at 10:21:35AM +0200, Hanna Czenczek wrote:
+>> On 10.07.24 20:42, Josef Bacik wrote:
+>>> On Wed, Jul 10, 2024 at 09:28:08AM +0200, Hanna Czenczek wrote:
+>>>> On 09.07.24 19:56, Josef Bacik wrote:
+>>>>> On Tue, Jul 09, 2024 at 01:19:16PM +0200, Hanna Czenczek wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> We want to be able to mount filesystems that just consist of one regular
+>>>>>> file via virtio-fs, i.e. no root directory, just a file as the root
+>>>>>> node.
+>>>>>>
+>>>>>> While that is possible via FUSE itself (through the 'rootmode' mount
+>>>>>> option, which is automatically set by the fusermount help program to
+>>>>>> match the mount point's inode mode), there is no virtio-fs option yet
+>>>>>> that would allow changing the rootmode from S_IFDIR to S_IFREG.
+>>>>>>
+>>>>>> To do that, this series introduces a new 'file' mount option that does
+>>>>>> precisely that.  Alternatively, we could provide the same 'rootmode'
+>>>>>> option that FUSE has, but as laid out in patch 1's commit description,
+>>>>>> that option is a bit cumbersome for virtio-fs (in a way that it is not
+>>>>>> for FUSE), and its usefulness as a more general option is limited.
+>>>>>>
+>>>>> All this does is make file an alias for something a little easier for users to
+>>>>> read, which can easily be done in libfuse.  Add the code to lib/mount.c to alias
+>>>>> 'file' to turn it into rootmode=S_IFREG when it sends it to the kernel, it's not
+>>>>> necessary to do this in the kernel.  Thanks,
+>>>> This series is not about normal FUSE filesystems (file_system_type
+>>>> fuse_fs_type, “fuse”), but about virtio-fs (file_system_type virtio_fs_type,
+>>>> “virtiofs”), i.e. a case where libfuse and fusermount are not involved at
+>>>> all.  As far as I’m aware, mounting a virtio-fs filesystem with a
+>>>> non-directory root inode is currently not possible at all.
+>>> Ok so I think I had it backwards in my head, my apologies.
+>>>
+>>> That being said I still don't understand why this requires a change to virtiofs
+>>> at all.
+>>>
+>>> I have a virtiofs thing attached to my VM.  Inside the vm I do
+>>>
+>>> mount -t virtiofs <name of thing I've attached to the vm> /directory
+>>>
+>>> and then on the host machine, virtiofsd is a "normal" FUSE driver, except it's
+>>> talking over the socket you setup between the guest and the host.  I assume this
+>>> is all correct?
+>>>
+>>> So then the question is, why does it matter what virtiofsd is exposing?  I guess
+>>> that's the better question.  The guest shouldn't have to care if it's a
+>>> directory or a file right?  The mountpoint is going to be a directory, whatever
+>>> is backing it shouldn't matter.  Could you describe the exact thing you're
+>>> trying to accomplish?  Thanks,
+>> The mount point needs to be of the same mode as the root node of the mounted
+>> filesystem, or it’ll be inaccessible after mounting[1].  In this case, I
+>> want to export a regular file as the root node, so the root node must be a
+>> regular file, too:
+>>
+>> host$ echo foo > /tmp/bar
+>>
+>> host$ virtiofsd --shared-dir /tmp/bar --socket-path /tmp/viofsd.sock
+>> --sandbox none
+>>
+>>
+>> guest# mkdir /tmp/mnt-dir
+>>
+>> guest# mount -t virtiofs virtiofs-tag /tmp/mnt-dir
+>>
+>> guest# stat /tmp/mnt-dir
+>> stat: cannot statx '/tmp/mnt-dir': Input/output error
+>>
+>> guest# cat /tmp/mnt-dir
+>> cat: /tmp/mnt-dir: Input/output error
+>>
+>> guest# ls /tmp/mnt-dir
+>> ls: cannot access '/tmp/mnt-dir': Input/output error
+>>
+>> guest# umount /tmp/mnt-dir
+>>
+>> (following with this series applied)
+>>
+>> guest# touch /tmp/mnt-file
+>>
+>> guest# mount -t virtiofs virtiofs-tag /tmp/mnt-file -o file
+>>
+>> guest# stat /tmp/mnt-file
+>>    File: /tmp/mnt-file
+>>    Size: 4               Blocks: 8          IO Block: 4096   regular file
+>> [...]
+>>
+>> guest# cat /tmp/mnt-file
+>> foo
+>>
+>> guest# ls --file-type /tmp/mnt-file
+>> /tmp/mnt-file
+>>
+>> guest# ls --file-type /tmp
+>> mnt-dir/
+>> mnt-file
+>> [...]
+>>
+> Got it, this makes sense, thanks for explaining it to me.  You can add
+>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Thanks!
 
-Thanks,
+Hanna
 
-Josef
 
