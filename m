@@ -1,102 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-23602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59AE792F47B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 05:49:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2833292F4CC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 06:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93D141C22423
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 03:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D20A51F22103
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 04:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FA217548;
-	Fri, 12 Jul 2024 03:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E7C179A7;
+	Fri, 12 Jul 2024 04:59:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F411C101DE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jul 2024 03:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A9510F7;
+	Fri, 12 Jul 2024 04:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720756155; cv=none; b=j3gY+vqcm4Hl7JiaKFQXi3AeMxBothtQBLWd4ZObmWDoELENjkkLrYUocrw9az9ytqflSsBagkA79aikaxQleRFGgn9+d22YDDeWczFfPiUfVb8gIHYig4imXVvj6Twd73+NsNlOa6lu+kBydwntHHlxKSM958Zf/uTpkl1kbLM=
+	t=1720760383; cv=none; b=OwqIaUdHstfeGYpokvHVNYBSRiNYfGeqpkYi6ssX9r1zw1pNquw/wl/C+6lBUhjF7OBHZqZRY4NI2i1EDNga1tZpowwhDpaTQ1CYhG5SGAN8lmD+4d6toH+ygL1Pzwum73nKSZJcfhzydCb5yeigblo3ynyq3WBiEdCzTGHU2ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720756155; c=relaxed/simple;
-	bh=4rfaUAidddvblASjtkMKjWyJL/CQTzUgNAb30NvOGhU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Jdq7eKNJP/fg4tDWMusNEulkSrGgX+n6aUQvSSEnGDjYRbFmVFXj9AxUukCAKcZtBQIX8ed3lOP/1YSzDQBV0DYkweMzo6w8f4hphVUB38ed1w0VVH/07vWkfTGAdOWy5lEply28JMrvlGT3SEL2mP0DNwjUJ1ZVrkciBzFjzD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-383643cac9cso15574085ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jul 2024 20:49:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720756153; x=1721360953;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rfaUAidddvblASjtkMKjWyJL/CQTzUgNAb30NvOGhU=;
-        b=k/D6TnLLAjH2Kw0QqUiNToUY9LOGpsdGN7FeB010c007WzuIqZ3LUjRQJdo2pmzKj9
-         8QN5gB91fOiy598bwo2/FfZcO/B0rs6nIu1wMjUTa1Oy4JMQg4K1UOO6XR9VmC7H0MNs
-         JPJpT4X8sXhAJNZmfhnOBcdYb4IhYBE16DwtG+qH3I9UsDKy8nXwvT4xUSNYsdRaboHw
-         Rwmul3L9zPUYFvhQU/DZj1KZQcTAtnFhiuWDI8NqF00Lf0MNdIgS0vQnAb3ssYy8Smjk
-         U3vx1yvcCSDVa5T7QE75XcV6I7kYG3i2dz5RqpPTzdxnz98ik6qkvblWwAB2WU+5mSZv
-         P1Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiTj1twWJYpT7EGHzFuPn6KUMNb9TXyoKqrrjj9fTKFMLDXHz06oWOnPlsRSdzwSSPx6QAYxs5s7xY9/4/89K/61p/OWvoo6QDG+Hbaw==
-X-Gm-Message-State: AOJu0Yw7Ufrq53qpDLr2P8qTKCNsyjVCbAH5Xje0zNqvL73yP1F3AeGn
-	ivSM6+APrgRVpq6wZQFxPtXl84j3ksIX6uvCYoQECgFNWW3anF8JOpcDkFURVzldE1DmanpJS+u
-	hKvlVhpc0i70gPKI9Hxd6oEmyeiig8nsm/IUNrXbv286Ezs1ch5sm8yU=
-X-Google-Smtp-Source: AGHT+IGO1C3eimY+4kIjVYqb90gWSiSxmLVY7QCe5wkotAoBk1JzawhvczBY+BJ5rlCzBB8bpnwnqt4PrdEYmYSUKM6HECZBL4ud
+	s=arc-20240116; t=1720760383; c=relaxed/simple;
+	bh=238pF0xvpe44pucH/X7LCeolZ+r002xEb3ctIqbVwss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IXnL+f5m9D3bQS7hEi0vin2jj7dN4AYzEZj+ZIRHunVDbKcLQKIt9o+IQnI1ek66Hu/6TNkTz73l/MdF52u5w4xnPGm0/3vAIJ/gtAnlvxA6O1KcOQXYB3KQwX8v6+n32l/4+eTejUhDVhWd5E0SRoaG3gs2CQpUtNt1Vv2/MLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-32-6690b4a9ed96
+Date: Fri, 12 Jul 2024 13:44:20 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	max.byungchul.park@sk.com,
+	Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+	kernel_team@skhynix.com
+Subject: Re: Possible circular dependency between i_data_sem and folio lock
+ in ext4 filesystem
+Message-ID: <20240712044420.GA62198@system.software.com>
+References: <CAB=+i9SmrqEEqQp+AQvv+O=toO9x0mPam+b1KuNT+CgK0J1JDQ@mail.gmail.com>
+ <20240711153846.GG10452@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d581:0:b0:376:44f6:a998 with SMTP id
- e9e14a558f8ab-38a5b9aec76mr2280375ab.5.1720756153127; Thu, 11 Jul 2024
- 20:49:13 -0700 (PDT)
-Date: Thu, 11 Jul 2024 20:49:13 -0700
-In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000040a981061d04c3bb@google.com>
-Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
-From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711153846.GG10452@mit.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsXC9ZZnke7KLRPSDGbOU7KY2GNgcfH1HyaL
+	mfPusFns2XuSxeLemv+sFq09P9kd2Dx2zrrL7rF4z0smj02fJrF7NJ05yuzxeZNcAGsUl01K
+	ak5mWWqRvl0CV0bvvG62gqmSFQ8+/2RqYDwr3MXIySEhYCKx8s9bVhh7/upnYDaLgKrErVWf
+	2EFsNgF1iRs3fjKD2CICihK3Wr4A2VwczAINTBI9n7cxgiSEBRIkXsw8DWbzClhIbDr4AaxZ
+	SKBY4tP3VcwQcUGJkzOfsIDYzAJaEjf+vWTqYuQAsqUllv/jAAlzCuhKHDvdD1YuKqAscWDb
+	cSaQXRICG9gkzhyezwJxqKTEwRU3WCYwCsxCMnYWkrGzEMYuYGRexSiUmVeWm5iZY6KXUZmX
+	WaGXnJ+7iREY0Mtq/0TvYPx0IfgQowAHoxIPb8D1/jQh1sSy4srcQ4wSHMxKIryeZ4FCvCmJ
+	lVWpRfnxRaU5qcWHGKU5WJTEeY2+lacICaQnlqRmp6YWpBbBZJk4OKUaGKNuthtOzPbmFJ3s
+	PVUo99HDHcfv6k+06zhwOv3ZW9NJsw458JceebEj5v2JZS+nKiu7/Ws83P5RmPGW0Y1yQe77
+	nWyHNh9Ujzydsvcy+0HBIz+OFDB0LfjbNVFZ69sF8wfyF47ttqr28N+VtSTW9i0nw2WL3X9N
+	1fSe1lxZ+XB3+wM9a9Efv1SVWIozEg21mIuKEwErOwYXZAIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrALMWRmVeSWpSXmKPExsXC5WfdrLtyy4Q0g3O7xSwm9hhYXHz9h8ni
+	8NyTrBYz591hs9iz9ySLxb01/1ktZrTlWbT2/GR34PDYOesuu8fiPS+ZPDZ9msTu0XTmKLPH
+	t9seHotffGDy+LxJLoA9issmJTUnsyy1SN8ugSujd143W8FUyYoHn38yNTCeFe5i5OSQEDCR
+	mL/6GSuIzSKgKnFr1Sd2EJtNQF3ixo2fzCC2iICixK2WL0A2FwezQAOTRM/nbYwgCWGBBIkX
+	M0+D2bwCFhKbDn4AaxYSKJb49H0VM0RcUOLkzCcsIDazgJbEjX8vmboYOYBsaYnl/zhAwpwC
+	uhLHTveDlYsKKEsc2HacaQIj7ywk3bOQdM9C6F7AyLyKUSQzryw3MTPHVK84O6MyL7NCLzk/
+	dxMjMFyX1f6ZuIPxy2X3Q4wCHIxKPLwB1/vThFgTy4orcw8xSnAwK4nwep4FCvGmJFZWpRbl
+	xxeV5qQWH2KU5mBREuf1Ck9NEBJITyxJzU5NLUgtgskycXBKNTDulfI6FJlyo+X/0Y2tRod1
+	hY7xnpf3iK45VRuX89QtQawpRtVBPrpC+C6n7VK9+MXmmZs+6JwWc3TdtPdMyfqDKS/LdFTO
+	i4v6maat+PEo7lSY/1XBH38KbtkULnZw1nFttSv0WDZH5Nnm5arsB8T+iNt6bA4yuCvxv+72
+	FAbPJ8ttUg79iFViKc5INNRiLipOBAC+MjDuUwIAAA==
+X-CFilter-Loop: Reflected
 
-This bug is marked as fixed by commit:
-ext4: fix race condition between buffer write and page_mkwrite
+On Thu, Jul 11, 2024 at 11:38:46AM -0400, Theodore Ts'o wrote:
+> On Thu, Jul 11, 2024 at 09:07:53PM +0900, Hyeonggon Yoo wrote:
+> > Hi folks,
+> > 
+> > Byungchul, Gwan-gyeong and I are investigating possible circular
+> > dependency reported by a dependency tracker named DEPT [1], which is
+> > able to report possible circular dependencies involving folio locks
+> > and other forms of dependencies that are not locks (i.e., wait for
+> > completion).
+> > 
+> > Below are two similar reports from DEPT where one context takes
+> > i_data_sem and then folio lock in ext4_map_blocks(), while the other
+> > context takes folio lock and then i_data_sem during processing of
+> > pwrite64() system calls. We're reaching out due to a lack of
+> > understanding of ext4 and file system internals.
+> > 
+> > The points in question are:
+> > 
+> > - Can the two contexts actually create a dependency between each other
+> > in ext4? In other words, do their uses of folio lock make them belong
+> > to the same lock classes?
+> 
+> No.
+> 
+> > - Are there any locking rules in ext4 that ensure these two contexts
+> > will never be considered as the same lock class?
+> 
+> It's inherent is the code path.  In one of the stack traces, we are
+> using the page cache for the bitmap allocation block (in other words, a metadata
+> block).  In the other stack trace, the page cache belongs to a regular
+> file (in other words, a data block).
+> 
+> So this is a false positive with DEPT, which has always been one of
+> the reasons why I've been dubious about the value of DEPT in terms of
+> potential for make-work for mantainer once automated systems like
+> syzbot try to blindly use and it results in huge numbers of false
+> positive reports that we then have to work through as an unfunded
+> mandate.
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+What a funny guy...  He did neither 1) insisting it's a bug in your code
+nor 3) insisting DEPT is a great tool, but just asking if there's any
+locking rules based on the *different acqusition order* between folio
+lock and i_data_sem that he observed anyway.
 
-#syz fix: exact-commit-title
+I don't think you are a guy who introduces bugs, but the thing is it's
+hard to find a *document* describing locking rules.  Anyone could get
+fairly curious about the different acquisition order.  It's an open
+source project.  You are responsible for appropriate document as well.
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
+I don't understand why you act to DEPT like that by the way.  You don't
+have to becasue:
 
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
+   1. I added the *EXPERIMENTAL* tag in Kconfig as you suggested, which
+      will prevent autotesting until it's considered stable.  However,
+      the report from DEPT can be a good hint to someone.
 
----
-[1] I expect the commit to be present in:
+   2. DEPT can locate code where needs to be documented even if it's not
+      a real bug.  It could even help better documentation.
 
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+DEPT hurts neither code nor performance unless enabling it.
 
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+> If you want to add lock annotations into the struct page or even
+> struct folio, I cordially invite you to try running that by the mm
+> developers, who will probably tell you why that is a terrible idea
+> since it bloats a critical data structure.
 
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+I already said several times.  Doesn't consume struct page.
 
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+	Byungchul
 
-The full list of 10 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+> Cheers,
+> 
+> 					- Ted
 
