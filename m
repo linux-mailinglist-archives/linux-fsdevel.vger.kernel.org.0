@@ -1,121 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-23624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EC993018C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 23:23:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406D59301BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 23:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179BC1F22A65
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 21:23:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D74F9B216EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 21:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FAB4965E;
-	Fri, 12 Jul 2024 21:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A323351C21;
+	Fri, 12 Jul 2024 21:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEHnYT68"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VmAgXu1r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A41224EA;
-	Fri, 12 Jul 2024 21:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F46BA2E;
+	Fri, 12 Jul 2024 21:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720819421; cv=none; b=EEjedPCW0gZvpeNmr6pbRF1GKXJKX3KKWk5V9yhog/r0zJHoDRwe3tBAAuJ6oxqVQVPxl15tZ9gUE6MgMLv9RKHjoOR2LkOpqhtJ0e4xC5CKSrrg9TzII7kL25jIPdmJIppULBHMngKWg7JXR2CfrLXqe6h71KZcNjMjGktp6o0=
+	t=1720821157; cv=none; b=gZdbPLUciU3ky2Fa/Coo6zcFM2KaAssrPcYUALOi5Uoog8Nz4MsQ2lE54/rm9aDK9cYK7Bl63TWZzq1esSiDBM9nqQsZIrtiDiIZzzwDKhGTrL7Ez2HH0L3cv6M0hmaXZ0Sfe7ZPTTvtFD0sUi9k430YS21o8lhxLdCTOGMsmG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720819421; c=relaxed/simple;
-	bh=H1Gy57KzCc3eyUgQrW961qMwxBDKdGrxcrwV7mZ3ATc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kPgYeLsvQVwY0djbRmD+t9CfuxfafafnD22hXvgLReV+oMtWxOVL3rjzSNwjP6QEBt2KAVsxzgwTrPt6VFJ42lDBNsSwXerPrpWItzMw+wfETrZkrS4+JvH+s2uJfQJm2ju7ZKSLTG77u18QtRE17rmELDnhEVQbTNpPdTCkWVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEHnYT68; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 518C1C32782;
-	Fri, 12 Jul 2024 21:23:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720819421;
-	bh=H1Gy57KzCc3eyUgQrW961qMwxBDKdGrxcrwV7mZ3ATc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OEHnYT687xB2lLXSA8JO080M++w9JlX4rQJROadXzckPsmY879R67LOENSXyoP5yR
-	 fdYI+OLtpyx+6mllVilQK8Liqb4+X1WiXHHSbzrZiTfcgMwvUJgNEVWwMKOLdnHALm
-	 4Yl1Uwxot0lxLXBvGvVMaw9KG2Vsut6sHGuly2wEv/kEOOzR5ilyRkStEhx9uzbFzz
-	 FTY5V6BaJfJnbXTXsy3SNG1WRp0etG9jC0ydE58saotaeTRiVRFjC3N/T68lgj6xro
-	 JAJ6HuJTkVT0tFhsbnOY+ipDusxLH7q/e49DuUkTiSz9EBPhkuJhIdc8Wp/MqDfhtV
-	 NVmRSCR8XZPJQ==
-Message-ID: <e71f73d5-4dbc-4194-9409-6daf807cb27e@kernel.org>
-Date: Fri, 12 Jul 2024 23:23:36 +0200
+	s=arc-20240116; t=1720821157; c=relaxed/simple;
+	bh=5U0cBbanT80LXMxVb9Ookx7PdC/5es8wJ8tF2S12pwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y6SE8U9g9ggZ98lpxkqKI0XNU14tmkuedJa7CPfBdm++pZxX6pNvrzKinDNQUPDBMVB42ndY3SxZYvFTLFs5xxvX0W7b/v2+NLQaAHPaGLHRdYpYW1lOENyyDvRR0UDihi3qAP9osnbdfcPlTGXIevWIf0IAdm7aqhLANsq3ne4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VmAgXu1r; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from xps-8930.corp.microsoft.com (unknown [131.107.160.48])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2591020B7165;
+	Fri, 12 Jul 2024 14:52:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2591020B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1720821155;
+	bh=eHr8WwKDOcEjp7b6WIE3GryqDegtAKq8kVAnn5nr2xo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VmAgXu1r2HrEzEnyN+4oOnb/poIF7I78+1DqtfH3by3DmZZ9JgTQJcuEBRtOS7uFv
+	 Fm37C5q0pzge5bu2mhtDrExv3TROQ6c58RFMNKezAfZy3LRXHCA8tpuBQPXrVBSlry
+	 WjU01Qt0PRjkZf2N6vMUBnEhgK7UZi3ORmRXHqSc=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: akpm@linux-foundation.org,
+	apais@linux.microsoft.com,
+	ardb@kernel.org,
+	bigeasy@linutronix.de,
+	brauner@kernel.org,
+	ebiederm@xmission.com,
+	jack@suse.cz,
+	keescook@chromium.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	nagvijay@microsoft.com,
+	oleg@redhat.com,
+	tandersen@netflix.com,
+	vincent.whitchurch@axis.com,
+	viro@zeniv.linux.org.uk
+Cc: apais@microsoft.com,
+	benhill@microsoft.com,
+	ssengar@microsoft.com,
+	sunilmut@microsoft.com,
+	vdso@hexbites.dev
+Subject: [PATCH v2 0/1] binfmt_elf, coredump: Log the reason of the failed core dumps
+Date: Fri, 12 Jul 2024 14:50:55 -0700
+Message-ID: <20240712215223.605363-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Possible circular dependency between i_data_sem and folio lock in
- ext4 filesystem
-Content-Language: en-US
-To: Byungchul Park <byungchul@sk.com>, Theodore Ts'o <tytso@mit.edu>
-Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Linux Memory Management List <linux-mm@kvack.org>,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- max.byungchul.park@sk.com, Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
- kernel_team@skhynix.com
-References: <CAB=+i9SmrqEEqQp+AQvv+O=toO9x0mPam+b1KuNT+CgK0J1JDQ@mail.gmail.com>
- <20240711153846.GG10452@mit.edu> <20240712044420.GA62198@system.software.com>
- <20240712053150.GA68384@system.software.com>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-In-Reply-To: <20240712053150.GA68384@system.software.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/12/24 7:31 AM, Byungchul Park wrote:
-> On Fri, Jul 12, 2024 at 01:44:20PM +0900, Byungchul Park wrote:
->> 
->> What a funny guy...  He did neither 1) insisting it's a bug in your code
->> nor 3) insisting DEPT is a great tool, but just asking if there's any
->> locking rules based on the *different acqusition order* between folio
->> lock and i_data_sem that he observed anyway.
->> 
->> I don't think you are a guy who introduces bugs, but the thing is it's
->> hard to find a *document* describing locking rules.  Anyone could get
->> fairly curious about the different acquisition order.  It's an open
->> source project.  You are responsible for appropriate document as well.
->> 
->> I don't understand why you act to DEPT like that by the way.  You don't
->> have to becasue:
->> 
->>    1. I added the *EXPERIMENTAL* tag in Kconfig as you suggested, which
->>       will prevent autotesting until it's considered stable.  However,
->>       the report from DEPT can be a good hint to someone.
->> 
->>    2. DEPT can locate code where needs to be documented even if it's not
->>       a real bug.  It could even help better documentation.
->> 
->> DEPT hurts neither code nor performance unless enabling it.
+A powerful way to diagnose crashes is to analyze the core dump produced upon
+the failure. Missing or malformed core dump files hinder these investigations.
+I'd like to propose changes that add logging as to why the kernel would not
+finish writing out the core dump file.
 
-enabling means building with CONFIG_DEPT right?
+To help in diagnosing the user mode helper not writing out the entire coredump
+contents, the changes also log short statistics on the dump collection. I'd
+advocate for keeping this at the info level on these grounds.
 
->> > If you want to add lock annotations into the struct page or even
->> > struct folio, I cordially invite you to try running that by the mm
->> > developers, who will probably tell you why that is a terrible idea
->> > since it bloats a critical data structure.
+For validation, I built the kernel and a simple user space to exercize the new
+code.
 
-I doubt anyone will object making struct page larger for a non-production
-debugging config option, which AFAIU DEPT is, i.e. in the same area as
-LOCKDEP or KASAN etc... I can see at least KMSAN already adds some fields to
-struct page already.
+[V2]
+  - Used _ratelimited to avoid spamming the system log
+  - Added comm and PID to the log messages
+  - Added logging to the failure paths in dump_interrupted, dump_skip, and dump_emit
+  - Fixed compiler warnings produced when CONFIG_COREDUMP is disabled
 
->> I already said several times.  Doesn't consume struct page.
-> 
-> Sorry for that.  I've changed the code so the current version consumes
-> it by about two words if enabled.  I can place it to page_ext as before
-> if needed.
+[V1]
+  https://lore.kernel.org/all/20240617234133.1167523-1-romank@linux.microsoft.com/
 
-page_ext is useful if you have a debugging feature that can be compiled in
-but adds no overhead (memory, nor cpu thanks to static keys) unless enabled
-on boot time, i.e. page_owner... so for DEPT it seems it would be an
-unnecessary complication.
+Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
 
-> 	Byungchul
-> 
+Roman Kisel (1):
+  binfmt_elf, coredump: Log the reason of the failed core dumps
+
+ fs/binfmt_elf.c          |  60 ++++++++++++++++-----
+ fs/coredump.c            | 109 ++++++++++++++++++++++++++++++++-------
+ include/linux/coredump.h |   8 ++-
+ kernel/signal.c          |  22 +++++++-
+ 4 files changed, 165 insertions(+), 34 deletions(-)
+
+
+base-commit: 831bcbcead6668ebf20b64fdb27518f1362ace3a
+-- 
+2.45.2
 
 
