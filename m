@@ -1,197 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-23632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A2DB9303C6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2024 07:30:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3245C9304BE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2024 11:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D54283C92
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2024 05:30:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563991C212A7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2024 09:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B5C1B969;
-	Sat, 13 Jul 2024 05:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EnslRWrf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E85D4CB4E;
+	Sat, 13 Jul 2024 09:33:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD01BE46;
-	Sat, 13 Jul 2024 05:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC51E14006;
+	Sat, 13 Jul 2024 09:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720848612; cv=none; b=BTCTQ8mJd8CpBZIliS4yQJEbQdY0EJydFC3fkPqVUQrWftX1QaGHlX6H07ab1u58ugWlgdClV7QywUcBv/tYsPND8cVP+FinfktAQPFXOTxlVhYDVOO8OOeE7QZKaojBkj8BV85LsNQbqfycZyrR27DlDHeF8onWNmZmyP2zHQA=
+	t=1720863232; cv=none; b=k36fOj9du/nGFTDmnh9JjGgyKHUFOJ824XYvODiA7YbRtHikj70r1lscCGp5DSVOyAf40//umRdtm+XR+IymZP7B0VlcmBc7InIcd5QLANqMSxQ5HfKXvax6C79Kun7oOfnNGNsK/DOjbaxc8fyDcXu1D4iOFpUJpjfxM3ChswU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720848612; c=relaxed/simple;
-	bh=jmwJ71WEXluaTqG3XovhPZ2kzJJLnXc/RYX99R4FzDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mOiPnZ9hG6/G+QB3+PdvpXW7398B9yWP+yHPB7zZJ2b9nom82bZ5ibsGpX6LCw3DfIjf/P1fY4OE3rry/5soWWFN+VTew7INaFQPclw9lOChgirbGLb+A/dnyLmzeuGBzvJeYuIftq7Nd6kv95O9+kMIbrBbTeexuyHg0zVN7DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EnslRWrf; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720848611; x=1752384611;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jmwJ71WEXluaTqG3XovhPZ2kzJJLnXc/RYX99R4FzDw=;
-  b=EnslRWrfn5YhCHYI6uYwJDzaSkJntFLdl1wt5Je7iKOLDmzKG7AHicXr
-   ZHVWlNICh1RppmA3Dvk7plXpVmGnD7c7ml+mh/vZn7sMS9wGFcfV3E5N7
-   6uXUM+jOSzkmFlYVuWkqXqF4xr2c0BCLHvM7h5XUK+/ky/IP66nTsncIw
-   4XXoI9Q8sEfoA+nN9alLrsiUpLOEZQO2JWeYmQ5p/EvhuJksb8kSXpimt
-   RjGtG9U2ntu1PFtO1t6CgcLjwPMcQCLcTWpa7NXqV3NkueSjcNCDuiyM6
-   jYaG5XQ7RlrW/PSmqUxKDGN1XX1SnR6I42Oz2Qzfn53MbZvMDNeyJxbnG
-   A==;
-X-CSE-ConnectionGUID: l5FO5h2rQkmSOAvDkrxnqA==
-X-CSE-MsgGUID: br9Kg1riTX+SP6Js5qlqKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="28894537"
-X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="28894537"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 22:30:10 -0700
-X-CSE-ConnectionGUID: UePz+lSnTgGDV7cxYxkupQ==
-X-CSE-MsgGUID: m0al2iJcRAGaAvPo10n2CA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="48846570"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 12 Jul 2024 22:30:05 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sSVKc-000bjX-1U;
-	Sat, 13 Jul 2024 05:30:02 +0000
-Date: Sat, 13 Jul 2024 13:29:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Roman Kisel <romank@linux.microsoft.com>, akpm@linux-foundation.org,
-	apais@linux.microsoft.com, ardb@kernel.org, bigeasy@linutronix.de,
-	brauner@kernel.org, ebiederm@xmission.com, jack@suse.cz,
-	keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	nagvijay@microsoft.com, oleg@redhat.com, tandersen@netflix.com,
-	vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	apais@microsoft.com, benhill@microsoft.com, ssengar@microsoft.com,
-	sunilmut@microsoft.com, vdso@hexbites.dev
-Subject: Re: [PATCH v2 1/1] binfmt_elf, coredump: Log the reason of the
- failed core dumps
-Message-ID: <202407131345.6cPoXZGa-lkp@intel.com>
-References: <20240712215223.605363-2-romank@linux.microsoft.com>
+	s=arc-20240116; t=1720863232; c=relaxed/simple;
+	bh=qP+ZWRJw9XdA41KriPewH6eyrYWfvyN3N5xFr5B/tRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMNmjc2Vhvz4aD6P8WwukqcItSyZT5VuuhNyh9KhabmkRFwy6xLFhFWo0tdxJZE2NeoLYVBX5I4W+WjpSCBBJe4vkXWGN7A0/BiDfI53Iiu7zYqzIvgDmUvnCRZNXlF0PhlDoxmCqFJtYvqBwGqg+Ec3c/9MYby0ka76IrkGH5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WLjvL2M1hz4f3jcr;
+	Sat, 13 Jul 2024 17:33:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1E1731A0181;
+	Sat, 13 Jul 2024 17:33:46 +0800 (CST)
+Received: from [10.174.179.155] (unknown [10.174.179.155])
+	by APP4 (Coremail) with SMTP id gCh0CgCHazn3SZJmNY0DAA--.2101S3;
+	Sat, 13 Jul 2024 17:33:45 +0800 (CST)
+Message-ID: <afa05166-6def-d3ac-dd22-8b605f5e37d7@huaweicloud.com>
+Date: Sat, 13 Jul 2024 17:33:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712215223.605363-2-romank@linux.microsoft.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101
+ Thunderbird/104.0
+Subject: Re: [PATCH RFC 2/2] NFSv4: set sb_flags to second superblock
+To: dhowells@redhat.com, marc.dionne@auristor.com, raven@themaw.net,
+ gregkh@linuxfoundation.org, rafael@kernel.org, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, jack@suse.cz, miklos@szeredi.hu,
+ trond.myklebust@hammerspace.com, anna@kernel.org, sfrench@samba.org,
+ pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com,
+ tom@talpey.com, bharathsm@microsoft.com, djwong@kernel.org
+Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+ autofs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ zhangxiaoxu5@huawei.com, lilingfeng3@huawei.com
+References: <20240604112636.236517-1-lilingfeng@huaweicloud.com>
+ <20240604112636.236517-3-lilingfeng@huaweicloud.com>
+ <ca71d3c4-0b87-8a1e-a442-236d91674a87@huaweicloud.com>
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+In-Reply-To: <ca71d3c4-0b87-8a1e-a442-236d91674a87@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHazn3SZJmNY0DAA--.2101S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw1xuFW5JF15Cr1fKr4kWFg_yoW5KF13pF
+	WxAFyjkrWkJF18Wa10yFZ5Xa4Sv348Za1UJFn3Zas7ZrWUXrn2q3W2grWYgFy8Zr4xur1U
+	XF48tF13uF13AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9vb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6x
+	kF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
+	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
+	CFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0S
+	jxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s
+	026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_
+	JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14
+	v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xva
+	j40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JV
+	W8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU04xRDUUUUU==
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-Hi Roman,
+Friendly ping ...
 
-kernel test robot noticed the following build warnings:
+Thanks
 
-[auto build test WARNING on 831bcbcead6668ebf20b64fdb27518f1362ace3a]
+在 2024/6/14 11:14, Li Lingfeng 写道:
+> I think this may be a problem, but I'm unable to come up with a 
+> suitable solution. Would you mind providing some suggestions?
+>
+> 在 2024/6/4 19:26, Li Lingfeng 写道:
+>> From: Li Lingfeng <lilingfeng3@huawei.com>
+>>
+>> During the process of mounting an NFSv4 client, two superblocks will be
+>> created in sequence. The first superblock corresponds to the root
+>> directory exported by the server, and the second superblock 
+>> corresponds to
+>> the directory that will be actually mounted. The first superblock will
+>> eventually be destroyed.
+>> The flag passed from user mode will only be passed to the first
+>> superblock, resulting in the actual used superblock not carrying the 
+>> flag
+>> passed from user mode(fs_context_for_submount() will set sb_flags as 0).
+>>
+>> If the 'ro' parameter is used in two consecutive mount commands, only 
+>> the
+>> first execution will create a new vfsmount, and the kernel will return
+>> EBUSY on the second execution. However, if a remount command with the 
+>> 'ro'
+>> parameter is executed between the two mount commands, both mount 
+>> commands
+>> will create new vfsmounts.
+>>
+>> The superblock generated after the first mount command does not have the
+>> 'ro' flag, and the read-only status of the file system is implemented by
+>> checking the read-only flag of the vfsmount. After executing the remount
+>> command, the 'ro' flag will be added to the superblock. When the second
+>> mount command is executed, the comparison result between the superblock
+>> with the 'ro' flag and the fs_context without the flag in the
+>> nfs_compare_mount_options() function will be different, resulting in the
+>> creation of a new vfsmount.
+>>
+>> This problem can be reproduced by performing the following operations:
+>> mount -t nfs -o ro,vers=4.0 192.168.240.250:/sdb /mnt/sdb
+>> mount -t nfs -o remount,ro,vers=4.0 192.168.240.250:/sdb /mnt/sdb
+>> mount -t nfs -o ro,vers=4.0 192.168.240.250:/sdb /mnt/sdb
+>> Two vfsmounts are generated:
+>> [root@localhost ~]# mount | grep nfs
+>> 192.168.240.250:/sdb on /mnt/sdb type nfs4 (ro,relatime,vers=4.0,
+>> rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2, 
+>>
+>> sec=sys,clientaddr=192.168.240.251,local_lock=none,addr=192.168.240.250)
+>> 192.168.240.250:/sdb on /mnt/sdb type nfs4 (ro,relatime,vers=4.0,
+>> rsize=1048576,wsize=1048576,namlen=255,hard,proto=tcp,timeo=600,retrans=2, 
+>>
+>> sec=sys,clientaddr=192.168.240.251,local_lock=none,addr=192.168.240.250)
+>>
+>> Fix this by setting sb_flags to second superblock.
+>>
+>> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+>> ---
+>>   fs/nfs/namespace.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
+>> index 887aeacedebd..8b3d75af60d4 100644
+>> --- a/fs/nfs/namespace.c
+>> +++ b/fs/nfs/namespace.c
+>> @@ -158,7 +158,7 @@ struct vfsmount *nfs_d_automount(struct path 
+>> *path, unsigned int sb_flags)
+>>       /* Open a new filesystem context, transferring parameters from the
+>>        * parent superblock, including the network namespace.
+>>        */
+>> -    fc = fs_context_for_submount(path->mnt->mnt_sb->s_type, 
+>> path->dentry, 0);
+>> +    fc = fs_context_for_submount(path->mnt->mnt_sb->s_type, 
+>> path->dentry, sb_flags);
+>>       if (IS_ERR(fc))
+>>           return ERR_CAST(fc);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Roman-Kisel/binfmt_elf-coredump-Log-the-reason-of-the-failed-core-dumps/20240713-055749
-base:   831bcbcead6668ebf20b64fdb27518f1362ace3a
-patch link:    https://lore.kernel.org/r/20240712215223.605363-2-romank%40linux.microsoft.com
-patch subject: [PATCH v2 1/1] binfmt_elf, coredump: Log the reason of the failed core dumps
-config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20240713/202407131345.6cPoXZGa-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240713/202407131345.6cPoXZGa-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407131345.6cPoXZGa-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from fs/coredump.c:6:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> fs/coredump.c:875:34: warning: format specifies type 'long' but the argument has type 'ssize_t' (aka 'int') [-Wformat]
-     874 |                         pr_err_ratelimited("Core dump of %s(PID %d) failed when writing out, error %ld\n",
-         |                                                                                                    ~~~
-         |                                                                                                    %zd
-     875 |                                 current->comm, current->pid, n);
-         |                                                              ^
-   include/linux/printk.h:672:45: note: expanded from macro 'pr_err_ratelimited'
-     672 |         printk_ratelimited(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                            ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:658:17: note: expanded from macro 'printk_ratelimited'
-     658 |                 printk(fmt, ##__VA_ARGS__);                             \
-         |                        ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:464:60: note: expanded from macro 'printk'
-     464 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:436:19: note: expanded from macro 'printk_index_wrap'
-     436 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   fs/coredump.c:878:34: warning: format specifies type 'long' but the argument has type 'ssize_t' (aka 'int') [-Wformat]
-     877 |                         pr_err_ratelimited("Core dump of %s(PID %d) partially written out, only %ld(of %d) bytes written\n",
-         |                                                                                                 ~~~
-         |                                                                                                 %zd
-     878 |                                 current->comm, current->pid, n, nr);
-         |                                                              ^
-   include/linux/printk.h:672:45: note: expanded from macro 'pr_err_ratelimited'
-     672 |         printk_ratelimited(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                            ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:658:17: note: expanded from macro 'printk_ratelimited'
-     658 |                 printk(fmt, ##__VA_ARGS__);                             \
-         |                        ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:464:60: note: expanded from macro 'printk'
-     464 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:436:19: note: expanded from macro 'printk_index_wrap'
-     436 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   3 warnings generated.
-
-
-vim +875 fs/coredump.c
-
-   854	
-   855	/*
-   856	 * Core dumping helper functions.  These are the only things you should
-   857	 * do on a core-file: use only these functions to write out all the
-   858	 * necessary info.
-   859	 */
-   860	static int __dump_emit(struct coredump_params *cprm, const void *addr, int nr)
-   861	{
-   862		struct file *file = cprm->file;
-   863		loff_t pos = file->f_pos;
-   864		ssize_t n;
-   865		if (cprm->written + nr > cprm->limit)
-   866			return 0;
-   867	
-   868	
-   869		if (dump_interrupted())
-   870			return 0;
-   871		n = __kernel_write(file, addr, nr, &pos);
-   872		if (n != nr) {
-   873			if (n < 0)
-   874				pr_err_ratelimited("Core dump of %s(PID %d) failed when writing out, error %ld\n",
- > 875					current->comm, current->pid, n);
-   876			else
-   877				pr_err_ratelimited("Core dump of %s(PID %d) partially written out, only %ld(of %d) bytes written\n",
-   878					current->comm, current->pid, n, nr);
-   879	
-   880			return 0;
-   881		}
-   882		file->f_pos = pos;
-   883		cprm->written += n;
-   884		cprm->pos += n;
-   885	
-   886		return 1;
-   887	}
-   888	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
