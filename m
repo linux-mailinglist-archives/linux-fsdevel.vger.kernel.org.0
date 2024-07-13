@@ -1,552 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-23626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8ED9301C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 23:52:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF93930359
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2024 04:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A62C1F23930
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jul 2024 21:52:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A00AA1C2140F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jul 2024 02:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5794161FF2;
-	Fri, 12 Jul 2024 21:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="X1XyMhnd"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD0117C98;
+	Sat, 13 Jul 2024 02:30:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0896F482E9;
-	Fri, 12 Jul 2024 21:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225F012B82;
+	Sat, 13 Jul 2024 02:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720821157; cv=none; b=lPW6DtEw/0mOMe3QP6miODXIRdOdG2fxG0UO3FXaKUzoOzHyPJw13VmTfwBUVNlk5ectbIBDMZbXQNd7bWcOQRqx3PnD2FUePwvXINktNklCjL8T7O8PfU2WXpweSSEuTszA9TMDV5ert4sWH+sWAcRphOTGxsHaLKQX1rF9oZg=
+	t=1720837811; cv=none; b=H+LYXor3FBuys9jyhN8j8S8Vm5v9+7JFzi/vp1caA2SUySM4QN7MastjOfWiFlrNEH6mS8mORPq/PVeLD+o2x6Hi6gOsm2mPpObekXdvc+uCmU6beOuzOy4bnd3Aj2kC2ZJpfW7uuifetvKgmXB6u9jXy9VWwbZ6jnMYKSexhEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720821157; c=relaxed/simple;
-	bh=Bb1goPqZtkE0BL/XCKTkJwE2pbkX9MOKCFBeGpXPQuY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ibI8+ZpmEcKmR2rpTT36Iuq5wPjJV3vRnWWSyW5tk6O8kJSrSgTnVm5XSuR4zcScsEK09PZkZ6oEP1iN2ZaBf96JTblAIxhgWxlYjLlxCYnhBT8TxdI2j6lboQxQUYeAb8s68AwigpXe91YPzNLHaCfP63OUwh/gX8FRE5MwfkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=X1XyMhnd; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from xps-8930.corp.microsoft.com (unknown [131.107.160.48])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 68BF120B7177;
-	Fri, 12 Jul 2024 14:52:35 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 68BF120B7177
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1720821155;
-	bh=vlM/9AYMe+bZ/CjTBx+0VChGrsIZg2Kgvum/VpWD09Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X1XyMhndS0kgyqLVT93yc3wVq3pLg1eeY2+xeRSHgmnlMOabTX7VCwka1P7RvTgJz
-	 5cCNJVTHET7y1PJ6EQI7Fj8r1t6Q6v2fhfOvlE73tysLshqHoCMvpf0Oxz0NuXP6Zf
-	 FIxnJcVbFYsfb2mShJpT5ASwfscQ3Xi8wYiQJ0Zc=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: akpm@linux-foundation.org,
-	apais@linux.microsoft.com,
-	ardb@kernel.org,
-	bigeasy@linutronix.de,
-	brauner@kernel.org,
-	ebiederm@xmission.com,
-	jack@suse.cz,
-	keescook@chromium.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	nagvijay@microsoft.com,
-	oleg@redhat.com,
-	tandersen@netflix.com,
-	vincent.whitchurch@axis.com,
-	viro@zeniv.linux.org.uk
-Cc: apais@microsoft.com,
-	benhill@microsoft.com,
-	ssengar@microsoft.com,
-	sunilmut@microsoft.com,
-	vdso@hexbites.dev
-Subject: [PATCH v2 1/1] binfmt_elf, coredump: Log the reason of the failed core dumps
-Date: Fri, 12 Jul 2024 14:50:56 -0700
-Message-ID: <20240712215223.605363-2-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240712215223.605363-1-romank@linux.microsoft.com>
-References: <20240712215223.605363-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1720837811; c=relaxed/simple;
+	bh=4SEn5gOJYqHujwPybOnm3QwtxxQfOvIoDLWQOkqT3wA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=SpBf6KZQC97AIU/S5FL5pQpmZfUMmnLd8+C6yBgBwsmkhA+MW3T3UA8mjySOHS0FJSgoQI72Hk7C1PWNwHSqNJvhrgkDcELrJw/Vi8qtW39+QYbrYZNnV/27Ohz3vW9XZKfsBCqh1p+e5VrT8JrXuXsYhVNTFSVdbesmjgTfLoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WLXVL0fSvz4f3kvR;
+	Sat, 13 Jul 2024 10:29:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 15FEF1A0185;
+	Sat, 13 Jul 2024 10:29:59 +0800 (CST)
+Received: from [10.174.178.46] (unknown [10.174.178.46])
+	by APP2 (Coremail) with SMTP id Syh0CgBn0Yaj5pFmb6LPBw--.58645S3;
+	Sat, 13 Jul 2024 10:29:57 +0800 (CST)
+Subject: Re: [BUG REPORT] potential deadlock in inode evicting under the inode
+ lru traversing context on ext4 and ubifs
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+ linux-mtd <linux-mtd@lists.infradead.org>,
+ Richard Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>,
+ yangerkun <yangerkun@huawei.com>, "wangzhaolong (A)"
+ <wangzhaolong1@huawei.com>
+References: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
+ <20240712143708.GA151742@mit.edu>
+From: Zhihao Cheng <chengzhihao@huaweicloud.com>
+Message-ID: <346993f2-87f6-e20f-8f5a-d19f84c1604c@huaweicloud.com>
+Date: Sat, 13 Jul 2024 10:29:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240712143708.GA151742@mit.edu>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBn0Yaj5pFmb6LPBw--.58645S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7urWxZF1ktr1UAw47KFyxuFg_yoW5JFy5pa
+	9rXa4Syrn5JFyYk34ktr4v9w10ka1rCr4UJrykWr1xA3WkXrySvF1xtr45JFWUur4kuw1v
+	qa1UCrn8urn0y3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: xfkh0wx2klxt3r6k3tpzhluzxrxghudrp/
 
-Missing, failed, or corrupted core dumps might impede crash
-investigations. To improve reliability of that process and consequently
-the programs themselves, one needs to trace the path from producing
-a core dumpfile to analyzing it. That path starts from the core dump file
-written to the disk by the kernel or to the standard input of a user
-mode helper program to which the kernel streams the coredump contents.
-There are cases where the kernel will interrupt writing the core out or
-produce a truncated/not-well-formed core dump without leaving a note.
 
-Add logging for the core dump collection failure paths to be able to reason
-what has gone wrong when the core dump is malformed or missing.
 
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
----
- fs/binfmt_elf.c          |  60 ++++++++++++++++-----
- fs/coredump.c            | 109 ++++++++++++++++++++++++++++++++-------
- include/linux/coredump.h |   8 ++-
- kernel/signal.c          |  22 +++++++-
- 4 files changed, 165 insertions(+), 34 deletions(-)
+ÔÚ 2024/7/12 22:37, Theodore Ts'o Ð´µÀ:
+>> Problem description
+>> ===================
+>>
+>> The inode reclaiming process(See function prune_icache_sb) collects all
+>> reclaimable inodes and mark them with I_FREEING flag at first, at that
+>> time, other processes will be stuck if they try getting these inodes(See
+>> function find_inode_fast), then the reclaiming process destroy the
+>> inodes by function dispose_list().
+>> Some filesystems(eg. ext4 with ea_inode feature, ubifs with xattr) may
+>> do inode lookup in the inode evicting callback function, if the inode
+>> lookup is operated under the inode lru traversing context, deadlock
+>> problems may happen.
+>>
+>> Case 1: In function ext4_evict_inode(), the ea inode lookup could happen
+>> if ea_inode feature is enabled, the lookup process will be stuck under
+>> the evicting context like this:
+>>
+>>   1. File A has inode i_reg and an ea inode i_ea
+>>   2. getfattr(A, xattr_buf) // i_ea is added into lru // lru->i_ea
+>>   3. Then, following three processes running like this:
+>>
+>>      PA                              PB
+>>   echo 2 > /proc/sys/vm/drop_caches
+>>    shrink_slab
+>>     prune_dcache_sb
+>>     // i_reg is added into lru, lru->i_ea->i_reg
+>>     prune_icache_sb
+>>      list_lru_walk_one
+>>       inode_lru_isolate
+>>        i_ea->i_state |= I_FREEING // set inode state
+>>        i_ea->i_state |= I_FREEING // set inode state
+> Um, I don't see how this can happen.  If the ea_inode is in use,
+> i_count will be greater than zero, and hence the inode will never be
+> go down the rest of the path in inode_lru_inode():
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index a43897b03ce9..cfe84b9436af 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1994,8 +1994,11 @@ static int elf_core_dump(struct coredump_params *cprm)
- 	 * Collect all the non-memory information about the process for the
- 	 * notes.  This also sets up the file header.
- 	 */
--	if (!fill_note_info(&elf, e_phnum, &info, cprm))
-+	if (!fill_note_info(&elf, e_phnum, &info, cprm)) {
-+		pr_err_ratelimited("Error collecting note info, core dump of %s(PID %d) failed\n",
-+			current->comm, current->pid);
- 		goto end_coredump;
-+	}
- 
- 	has_dumped = 1;
- 
-@@ -2010,8 +2013,11 @@ static int elf_core_dump(struct coredump_params *cprm)
- 		sz += elf_coredump_extra_notes_size();
- 
- 		phdr4note = kmalloc(sizeof(*phdr4note), GFP_KERNEL);
--		if (!phdr4note)
-+		if (!phdr4note) {
-+			pr_err_ratelimited("Error allocating program headers note entry, core dump of %s(PID %d) failed\n",
-+				current->comm, current->pid);
- 			goto end_coredump;
-+		}
- 
- 		fill_elf_note_phdr(phdr4note, sz, offset);
- 		offset += sz;
-@@ -2025,18 +2031,27 @@ static int elf_core_dump(struct coredump_params *cprm)
- 
- 	if (e_phnum == PN_XNUM) {
- 		shdr4extnum = kmalloc(sizeof(*shdr4extnum), GFP_KERNEL);
--		if (!shdr4extnum)
-+		if (!shdr4extnum) {
-+			pr_err_ratelimited("Error allocating extra program headers, core dump of %s(PID %d) failed\n",
-+				current->comm, current->pid);
- 			goto end_coredump;
-+		}
- 		fill_extnum_info(&elf, shdr4extnum, e_shoff, segs);
- 	}
- 
- 	offset = dataoff;
- 
--	if (!dump_emit(cprm, &elf, sizeof(elf)))
-+	if (!dump_emit(cprm, &elf, sizeof(elf))) {
-+		pr_err_ratelimited("Error emitting the ELF header, core dump of %s(PID %d) failed\n",
-+			current->comm, current->pid);
- 		goto end_coredump;
-+	}
- 
--	if (!dump_emit(cprm, phdr4note, sizeof(*phdr4note)))
-+	if (!dump_emit(cprm, phdr4note, sizeof(*phdr4note))) {
-+		pr_err_ratelimited("Error emitting the program header for notes, core dump of %s(PID %d) failed\n",
-+			current->comm, current->pid);
- 		goto end_coredump;
-+	}
- 
- 	/* Write program headers for segments dump */
- 	for (i = 0; i < cprm->vma_count; i++) {
-@@ -2059,20 +2074,32 @@ static int elf_core_dump(struct coredump_params *cprm)
- 			phdr.p_flags |= PF_X;
- 		phdr.p_align = ELF_EXEC_PAGESIZE;
- 
--		if (!dump_emit(cprm, &phdr, sizeof(phdr)))
-+		if (!dump_emit(cprm, &phdr, sizeof(phdr))) {
-+			pr_err_ratelimited("Error emitting program headers, core dump of %s(PID %d) failed\n",
-+				current->comm, current->pid);
- 			goto end_coredump;
-+		}
- 	}
- 
--	if (!elf_core_write_extra_phdrs(cprm, offset))
-+	if (!elf_core_write_extra_phdrs(cprm, offset)) {
-+		pr_err_ratelimited("Error writing out extra program headers, core dump of %s(PID %d) failed\n",
-+			current->comm, current->pid);
- 		goto end_coredump;
-+	}
- 
- 	/* write out the notes section */
--	if (!write_note_info(&info, cprm))
-+	if (!write_note_info(&info, cprm)) {
-+		pr_err_ratelimited("Error writing out notes, core dump of %s(PID %d) failed\n",
-+			current->comm, current->pid);
- 		goto end_coredump;
-+	}
- 
- 	/* For cell spufs */
--	if (elf_coredump_extra_notes_write(cprm))
-+	if (elf_coredump_extra_notes_write(cprm)) {
-+		pr_err_ratelimited("Error writing out extra notes, core dump of %s(PID %d) failed\n",
-+			current->comm, current->pid);
- 		goto end_coredump;
-+	}
- 
- 	/* Align to page */
- 	dump_skip_to(cprm, dataoff);
-@@ -2080,16 +2107,25 @@ static int elf_core_dump(struct coredump_params *cprm)
- 	for (i = 0; i < cprm->vma_count; i++) {
- 		struct core_vma_metadata *meta = cprm->vma_meta + i;
- 
--		if (!dump_user_range(cprm, meta->start, meta->dump_size))
-+		if (!dump_user_range(cprm, meta->start, meta->dump_size)) {
-+			pr_err_ratelimited("Error writing out the process memory, core dump of %s(PID %d) failed\n",
-+				current->comm, current->pid);
- 			goto end_coredump;
-+		}
- 	}
- 
--	if (!elf_core_write_extra_data(cprm))
-+	if (!elf_core_write_extra_data(cprm)) {
-+		pr_err_ratelimited("Error writing out extra data, core dump of %s(PID %d) failed\n",
-+			current->comm, current->pid);
- 		goto end_coredump;
-+	}
- 
- 	if (e_phnum == PN_XNUM) {
--		if (!dump_emit(cprm, shdr4extnum, sizeof(*shdr4extnum)))
-+		if (!dump_emit(cprm, shdr4extnum, sizeof(*shdr4extnum))) {
-+			pr_err_ratelimited("Error emitting extra program headers, core dump of %s(PID %d) failed\n",
-+				current->comm, current->pid);
- 			goto end_coredump;
-+		}
- 	}
- 
- end_coredump:
-diff --git a/fs/coredump.c b/fs/coredump.c
-index a57a06b80f57..c6d6ee6040de 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -464,7 +464,19 @@ static bool dump_interrupted(void)
- 	 * but then we need to teach dump_write() to restart and clear
- 	 * TIF_SIGPENDING.
- 	 */
--	return fatal_signal_pending(current) || freezing(current);
-+	if (fatal_signal_pending(current)) {
-+		pr_err_ratelimited("Core dump of %s(PID %d) interrupted: fatal signal pending\n",
-+			current->comm, current->pid);
-+		return true;
-+	}
-+
-+	if (freezing(current)) {
-+		pr_err_ratelimited("Core dump of %s(PID %d) interrupted: freezing\n",
-+			current->comm, current->pid);
-+		return true;
-+	}
-+
-+	return false;
- }
- 
- static void wait_for_dump_helpers(struct file *file)
-@@ -519,7 +531,7 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
- 	return err;
- }
- 
--void do_coredump(const kernel_siginfo_t *siginfo)
-+int do_coredump(const kernel_siginfo_t *siginfo)
- {
- 	struct core_state core_state;
- 	struct core_name cn;
-@@ -527,7 +539,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	struct linux_binfmt * binfmt;
- 	const struct cred *old_cred;
- 	struct cred *cred;
--	int retval = 0;
-+	int retval;
- 	int ispipe;
- 	size_t *argv = NULL;
- 	int argc = 0;
-@@ -551,14 +563,20 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	audit_core_dumps(siginfo->si_signo);
- 
- 	binfmt = mm->binfmt;
--	if (!binfmt || !binfmt->core_dump)
-+	if (!binfmt || !binfmt->core_dump) {
-+		retval = -ENOEXEC;
- 		goto fail;
--	if (!__get_dumpable(cprm.mm_flags))
-+	}
-+	if (!__get_dumpable(cprm.mm_flags)) {
-+		retval = -EACCES;
- 		goto fail;
-+	}
- 
- 	cred = prepare_creds();
--	if (!cred)
-+	if (!cred) {
-+		retval = -EPERM;
- 		goto fail;
-+	}
- 	/*
- 	 * We cannot trust fsuid as being the "true" uid of the process
- 	 * nor do we know its entire history. We only know it was tainted
-@@ -588,6 +606,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		if (ispipe < 0) {
- 			printk(KERN_WARNING "format_corename failed\n");
- 			printk(KERN_WARNING "Aborting core\n");
-+			retval = ispipe;
- 			goto fail_unlock;
- 		}
- 
-@@ -611,6 +630,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 				"Process %d(%s) has RLIMIT_CORE set to 1\n",
- 				task_tgid_vnr(current), current->comm);
- 			printk(KERN_WARNING "Aborting core\n");
-+			retval = -EPERM;
- 			goto fail_unlock;
- 		}
- 		cprm.limit = RLIM_INFINITY;
-@@ -620,6 +640,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 			printk(KERN_WARNING "Pid %d(%s) over core_pipe_limit\n",
- 			       task_tgid_vnr(current), current->comm);
- 			printk(KERN_WARNING "Skipping core dump\n");
-+			retval = -E2BIG;
- 			goto fail_dropcount;
- 		}
- 
-@@ -628,6 +649,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		if (!helper_argv) {
- 			printk(KERN_WARNING "%s failed to allocate memory\n",
- 			       __func__);
-+			retval = -ENOMEM;
- 			goto fail_dropcount;
- 		}
- 		for (argi = 0; argi < argc; argi++)
-@@ -654,14 +676,17 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		int open_flags = O_CREAT | O_WRONLY | O_NOFOLLOW |
- 				 O_LARGEFILE | O_EXCL;
- 
--		if (cprm.limit < binfmt->min_coredump)
-+		if (cprm.limit < binfmt->min_coredump) {
-+			retval = -E2BIG;
- 			goto fail_unlock;
-+		}
- 
- 		if (need_suid_safe && cn.corename[0] != '/') {
- 			printk(KERN_WARNING "Pid %d(%s) can only dump core "\
- 				"to fully qualified path!\n",
- 				task_tgid_vnr(current), current->comm);
- 			printk(KERN_WARNING "Skipping core dump\n");
-+			retval = -EPERM;
- 			goto fail_unlock;
- 		}
- 
-@@ -707,20 +732,28 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		} else {
- 			cprm.file = filp_open(cn.corename, open_flags, 0600);
- 		}
--		if (IS_ERR(cprm.file))
-+		if (IS_ERR(cprm.file)) {
-+			retval = PTR_ERR(cprm.file);
- 			goto fail_unlock;
-+		}
- 
- 		inode = file_inode(cprm.file);
--		if (inode->i_nlink > 1)
-+		if (inode->i_nlink > 1) {
-+			retval = -EMLINK;
- 			goto close_fail;
--		if (d_unhashed(cprm.file->f_path.dentry))
-+		}
-+		if (d_unhashed(cprm.file->f_path.dentry)) {
-+			retval = -EEXIST;
- 			goto close_fail;
-+		}
- 		/*
- 		 * AK: actually i see no reason to not allow this for named
- 		 * pipes etc, but keep the previous behaviour for now.
- 		 */
--		if (!S_ISREG(inode->i_mode))
-+		if (!S_ISREG(inode->i_mode)) {
-+			retval = -EISDIR;
- 			goto close_fail;
-+		}
- 		/*
- 		 * Don't dump core if the filesystem changed owner or mode
- 		 * of the file during file creation. This is an issue when
-@@ -732,17 +765,22 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 				    current_fsuid())) {
- 			pr_info_ratelimited("Core dump to %s aborted: cannot preserve file owner\n",
- 					    cn.corename);
-+			retval = -EPERM;
- 			goto close_fail;
- 		}
- 		if ((inode->i_mode & 0677) != 0600) {
- 			pr_info_ratelimited("Core dump to %s aborted: cannot preserve file permissions\n",
- 					    cn.corename);
-+			retval = -EPERM;
- 			goto close_fail;
- 		}
--		if (!(cprm.file->f_mode & FMODE_CAN_WRITE))
-+		if (!(cprm.file->f_mode & FMODE_CAN_WRITE)) {
-+			retval = -EACCES;
- 			goto close_fail;
--		if (do_truncate(idmap, cprm.file->f_path.dentry,
--				0, 0, cprm.file))
-+		}
-+		retval = do_truncate(idmap, cprm.file->f_path.dentry,
-+				0, 0, cprm.file);
-+		if (retval)
- 			goto close_fail;
- 	}
- 
-@@ -758,10 +796,15 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		 */
- 		if (!cprm.file) {
- 			pr_info("Core dump to |%s disabled\n", cn.corename);
-+			retval = -EPERM;
- 			goto close_fail;
- 		}
--		if (!dump_vma_snapshot(&cprm))
-+		if (!dump_vma_snapshot(&cprm)) {
-+			pr_err_ratelimited("Can't get VMA snapshot for core dump |%s, %s(PID %d)\n",
-+				cn.corename, current->comm, current->pid);
-+			retval = -EACCES;
- 			goto close_fail;
-+		}
- 
- 		file_start_write(cprm.file);
- 		core_dumped = binfmt->core_dump(&cprm);
-@@ -777,9 +820,21 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		}
- 		file_end_write(cprm.file);
- 		free_vma_snapshot(&cprm);
-+	} else {
-+		pr_err_ratelimited("Core dump to %s%s has been interrupted, %s(PID %d)\n",
-+			ispipe ? "|" : "", cn.corename, current->comm, current->pid);
-+		retval = -EAGAIN;
-+		goto fail;
- 	}
-+	pr_info_ratelimited(
-+		"Core dump of %s(PID %d) to %s%s: VMAs: %d, size %zu; core: %lld bytes, pos %lld\n",
-+		current->comm, current->pid, ispipe ? "|" : "", cn.corename,
-+		cprm.vma_count, cprm.vma_data_size, cprm.written, cprm.pos);
- 	if (ispipe && core_pipe_limit)
- 		wait_for_dump_helpers(cprm.file);
-+
-+	retval = 0;
-+
- close_fail:
- 	if (cprm.file)
- 		filp_close(cprm.file, NULL);
-@@ -794,7 +849,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- fail_creds:
- 	put_cred(cred);
- fail:
--	return;
-+	return retval;
- }
- 
- /*
-@@ -814,8 +869,16 @@ static int __dump_emit(struct coredump_params *cprm, const void *addr, int nr)
- 	if (dump_interrupted())
- 		return 0;
- 	n = __kernel_write(file, addr, nr, &pos);
--	if (n != nr)
-+	if (n != nr) {
-+		if (n < 0)
-+			pr_err_ratelimited("Core dump of %s(PID %d) failed when writing out, error %ld\n",
-+				current->comm, current->pid, n);
-+		else
-+			pr_err_ratelimited("Core dump of %s(PID %d) partially written out, only %ld(of %d) bytes written\n",
-+				current->comm, current->pid, n, nr);
-+
- 		return 0;
-+	}
- 	file->f_pos = pos;
- 	cprm->written += n;
- 	cprm->pos += n;
-@@ -828,9 +891,17 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
- 	static char zeroes[PAGE_SIZE];
- 	struct file *file = cprm->file;
- 	if (file->f_mode & FMODE_LSEEK) {
--		if (dump_interrupted() ||
--		    vfs_llseek(file, nr, SEEK_CUR) < 0)
-+		int ret;
-+
-+		if (dump_interrupted())
- 			return 0;
-+
-+		ret = vfs_llseek(file, nr, SEEK_CUR);
-+		if (ret < 0) {
-+			pr_err_ratelimited("Core dump of %s(PID %d) failed when seeking, error %d\n",
-+				current->comm, current->pid, ret);
-+			return 0;
-+		}
- 		cprm->pos += nr;
- 		return 1;
- 	} else {
-diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-index 0904ba010341..e97c027ce2c9 100644
---- a/include/linux/coredump.h
-+++ b/include/linux/coredump.h
-@@ -42,9 +42,13 @@ extern int dump_emit(struct coredump_params *cprm, const void *addr, int nr);
- extern int dump_align(struct coredump_params *cprm, int align);
- int dump_user_range(struct coredump_params *cprm, unsigned long start,
- 		    unsigned long len);
--extern void do_coredump(const kernel_siginfo_t *siginfo);
-+extern int do_coredump(const kernel_siginfo_t *siginfo);
- #else
--static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
-+static inline int do_coredump(const kernel_siginfo_t *siginfo)
-+{
-+	/* Coredump support is not available, can't fail. */
-+	return 0;
-+}
- #endif
- 
- #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 1f9dd41c04be..3af77048c305 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2880,6 +2880,8 @@ bool get_signal(struct ksignal *ksig)
- 		current->flags |= PF_SIGNALED;
- 
- 		if (sig_kernel_coredump(signr)) {
-+			int ret;
-+
- 			if (print_fatal_signals)
- 				print_fatal_signal(signr);
- 			proc_coredump_connector(current);
-@@ -2891,7 +2893,25 @@ bool get_signal(struct ksignal *ksig)
- 			 * first and our do_group_exit call below will use
- 			 * that value and ignore the one we pass it.
- 			 */
--			do_coredump(&ksig->info);
-+			ret = do_coredump(&ksig->info);
-+			if (ret)
-+				pr_err("coredump has not been created for %s(PID %d), error %d\n",
-+					current->comm, current->pid, ret);
-+			else if (!IS_ENABLED(CONFIG_COREDUMP)) {
-+				/*
-+				 * Coredumps are not available, can't fail collecting
-+				 * the coredump.
-+				 *
-+				 * Leave a note though that the coredump is going to be
-+				 * not created. This is not an error or a warning as disabling
-+				 * support for coredumps isn't commonplace, and the user
-+				 * must've built the kernel with the custom config so they know
-+				 * that is the case. Let them know all works as prescribed.
-+				 */
-+				pr_info_ratelimited("No coredump collected for %s(PID %d); "
-+					"no coredump support available in the kernel configuration\n",
-+					current->comm, current->pid);
-+			}
- 		}
- 
- 		/*
--- 
-2.45.2
+The counter of ea_inode could become zero before the file inode, 
+according to the following process:
+path_getxattr
+  user_path_at(&path) // get file dentry and file inode
+  getxattr
+   ext4_xattr_get
+    ext4_xattr_ibody_get
+     ext4_xattr_inode_get
+      ext4_xattr_inode_iget(&ea_inode)  // ea_inode->i_count = 1
+      iput(ea_inode) // ea_inode->i_count = 0, put it into lru
+  path_put(&path); // put file dentry and file inode
+
+> 
+> 	if (atomic_read(&inode->i_count) ||
+> 	    ...) {
+> 		list_lru_isolate(lru, &inode->i_lru);
+> 		spin_unlock(&inode->i_lock);
+> 		this_cpu_dec(nr_unused);
+> 		return LRU_REMOVED;
+> 	}
+> 
+> Do you have an actual reproduer which triggers this?  Or would this
+> happen be any chance something that was dreamed up with DEPT?
+
+The reproducer is in the second half of the ariticle, along with some of 
+the solutions we tried.
+
+Reproducer:
+===========
+
+https://bugzilla.kernel.org/show_bug.cgi?id=219022
+
+About solutions
+===============
+
+[...]
 
 
