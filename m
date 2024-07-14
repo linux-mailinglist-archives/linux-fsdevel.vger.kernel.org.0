@@ -1,181 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-23647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481D1930B69
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2024 21:51:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E5DC930C2F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 01:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8E5EB20977
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2024 19:51:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18FE02814B7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2024 23:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF43C13CFBB;
-	Sun, 14 Jul 2024 19:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661CE14036F;
+	Sun, 14 Jul 2024 23:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YwR9iHLm"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Nhnwb4Ty"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1529213AD16
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Jul 2024 19:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D6713B5B7
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Jul 2024 23:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720986687; cv=none; b=ucH8rTY/ZTUxXzcxe1pKvTWyYlUFKutTAftUpNF+0Fh8afUum1TLd9LcmBD6rCqen2h5FqSWYmSQIWKQYMQvJTBDkV2N/WBxLWk6x0BrTH4RJwxBOAZVdgI+WFNsiS0S62i/oEqAsKZfh3ugqyZWBWrITAWBfY8bZ/cxjUu/93U=
+	t=1721000127; cv=none; b=fxIHyr7B4mddCRpYJl2vY6J+FLfrQugdkLN36Ori3GLiPVIEOLxZhkhQqR8KVEz575z0bHf07paxxSkDZlFmr33UqMRgOFy3f1r1tzJ2E5vmAi1P/MDs0MGNJM4guBLTkXiAegYGMbeIfb4syNmywiPCk4thq4af3r8hmpBvwZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720986687; c=relaxed/simple;
-	bh=qwpVMIGILSjH+S1u8ChqE32H7tIdNnojFSNgHK2/z3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPpMLXSrOWKEAPoxONWlheRpPcmECbbvHa0vUvjX5FO/jg+Nr+nPP4FcnYtOCLtFbBkvXQ9yhqhcw3O8gv1yhvsCBuprLEuJjUMjpygQS3yK6NcSC9q3NIMlTBLDToECttRbgHUO+U7V0s7JF/AQ2his3wnZ/1MXdHHKz97oQQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YwR9iHLm; arc=none smtp.client-ip=95.215.58.185
+	s=arc-20240116; t=1721000127; c=relaxed/simple;
+	bh=A8ExdULMTTEa/hIL0jxZHs1/eGFW6CgkIL183rgw7SU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=q61DpwBbOCnnccft8qBzZ1kJXwLITeXeq48YXQSskIRn5W9Nd7aP1AdLKecPdiZuH0LVDLk3cGOPhCOelUHJgSoe+oyNWGS7KBpsNfdWpUYHYMvBnhr9A8o8tkUx0uXNx5OxpGiiKSgsKSIURQYULlB0nR9pimvy0Qahy9xBYhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Nhnwb4Ty; arc=none smtp.client-ip=95.215.58.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: mic@digikod.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720986681;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2EDnpxVq2n3pmq5E38ZuOeZNSxkw5vwWED2AUGlzvN8=;
-	b=YwR9iHLmEsJ78v5XGzF5O9i+YAqQMx44BGNYQyXxDBPUu164JSClm1VzVEn3fy//mH/2ti
-	dMm1tqiWg10lYsz6Ob1z7edqJzXb1bf+I9cNYmf4aDwNfinh/1feXYbS/Tppue0TcTUOAE
-	vFttLdiIdKptM6YdIJWv07qxYQTtPNI=
-X-Envelope-To: paul@paul-moore.com
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
-X-Envelope-To: gnoack@google.com
-X-Envelope-To: jmorris@namei.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-security-module@vger.kernel.org
-X-Envelope-To: serge@hallyn.com
-X-Envelope-To: syzkaller-bugs@googlegroups.com
 X-Envelope-To: linux-fsdevel@vger.kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721000122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=/deZcosMIiR4fSksbjwDZ5A1olvy8pXsietjMa6AtJs=;
+	b=Nhnwb4TyIcK6QZOf+zCWrH3gLbo1WcXLbr5I7NU7DBuAajSBH3ZMxHNB/oFOtEEgSnFvMA
+	LZ8/0rmdrDNGtUsl97MMYHD3UYcrdddc2lvt9bNQ86nFKn4lJY0RDjLZKZJzl7Gmb/ZBNL
+	Ph9sn9P7MmPLlMdyiOKCWHxWUSKMgRw=
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: fstests@vger.kernel.org
+X-Envelope-To: linux-btrfs@vger.kernel.org
 X-Envelope-To: linux-xfs@vger.kernel.org
-Date: Sun, 14 Jul 2024 15:51:17 -0400
+X-Envelope-To: linux-ext4@vger.kernel.org
+Date: Sun, 14 Jul 2024 19:35:18 -0400
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Kent Overstreet <kent.overstreet@linux.dev>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>, Brian Foster <bfoster@redhat.com>, 
-	linux-bcachefs@vger.kernel.org, syzbot <syzbot+34b68f850391452207df@syzkaller.appspotmail.com>, 
-	gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [syzbot] [lsm?] WARNING in current_check_refer_path - bcachefs
- bug
-Message-ID: <4hohnthh54adx35lnxzedop3oxpntpmtygxso4iraiexfdlt4d@6m7ssepvjyar>
-References: <000000000000a65b35061cffca61@google.com>
- <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
- <20240714.iaDuNgieR9Qu@digikod.net>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	fstests@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org
+Subject: Shared test cluster for filesystem testing
+Message-ID: <o55vku65ruvtvst7ch4jalpiq4f5lbn3glmrlh7bwif6xh6hla@eajwg43srxoj>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240714.iaDuNgieR9Qu@digikod.net>
 X-Migadu-Flow: FLOW_OUT
 
-cc'ing linux-xfs, since I'm sure this has come up there and bcachefs and
-xfs verify and fsck are structured similararly at a very high level -
-I'd like to get their input.
+Those who know me have oft heard me complain about the state of testing
+automation and infrastructure, in filesystem land and the wider kernel.
+In short - it sucks.
 
-On Sun, Jul 14, 2024 at 09:34:01PM GMT, Mickaël Salaün wrote:
-> On Fri, Jul 12, 2024 at 10:55:11AM -0400, Paul Moore wrote:
-> > On Thu, Jul 11, 2024 at 5:53 PM syzbot
-> > <syzbot+34b68f850391452207df@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    8a03d70c27fc Merge remote-tracking branch 'tglx/devmsi-arm..
-> > > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=174b0e6e980000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=15349546db652fd3
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > > userspace arch: arm64
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cd1b69980000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12667fd1980000
-> > >
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/efb354033e75/disk-8a03d70c.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/c747c205d094/vmlinux-8a03d70c.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/5641f4fb7265/Image-8a03d70c.gz.xz
-> > > mounted in repro: https://storage.googleapis.com/syzbot-assets/4e4d1faacdef/mount_0.gz
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
-> > >
-> > > bcachefs (loop0): resume_logged_ops... done
-> > > bcachefs (loop0): delete_dead_inodes... done
-> > > bcachefs (loop0): done starting filesystem
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 0 PID: 6284 at security/landlock/fs.c:971 current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
-> > 
-> > I'll let Mickaël answer this for certain, but based on a quick look it
-> > appears that the fs object being moved has a umode_t that Landlock is
-> > not setup to handle?
-> 
-> syzbot found an issue with bcachefs: in some cases umode_t is invalid (i.e.
-> a weird file).
-> 
-> Kend, Brian, you'll find the incorrect filesystem with syzbot's report.
-> Could you please investigate the issue?
-> 
-> Here is the content of the file system:
-> # losetup --find --show mount_0
-> /dev/loop0
-> # mount /dev/loop0 /mnt/
-> # ls -la /mnt/
-> ls: cannot access '/mnt/file2': No such file or directory
-> ls: cannot access '/mnt/file3': No such file or directory
-> total 24
-> drwxr-xr-x 4 root root   0 May  2 20:21 .
-> drwxr-xr-x 1 root root 130 Oct 31  2023 ..
-> drwxr-xr-x 2 root root   0 May  2 20:21 file0
-> ?rwxr-xr-x 1 root root  10 May  2 20:21 file1
-> -????????? ? ?    ?      ?            ? file2
-> -????????? ? ?    ?      ?            ? file3
-> -rwxr-xr-x 1 root root 100 May  2 20:21 file.cold
-> drwx------ 2 root root   0 May  2 20:21 lost+found
-> # stat /mnt/file1
->   File: /mnt/file1
->   Size: 10              Blocks: 8          IO Block: 4096   weird file
-> Device: 7,0     Inode: 1073741824  Links: 1
-> Access: (0755/?rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
-> Access: 2024-05-02 20:21:07.747039697 +0000
-> Modify: 2024-05-02 20:21:07.747039697 +0000
-> Change: 2024-05-02 20:21:07.747039697 +0000
->  Birth: 2024-05-02 20:21:07.747039697 +0000
+For some years I've been working, off and on, on my own system off and
+on, and I think I've got it to the point where I can start making it
+available to the wider filesystem community, and I hope it will be of
+some use to people.
 
-Ok, this is an interesting one.
+Here's my philosophy and requirements:
 
-So we don't seem to be checking for invwalid i_mode at all - that's a bug.
+- Tests should be done with results up in a dashboard _as quickly as
+  possible_
 
-But if we don't want to be exposing invalid i_modes at all, that's
-tricky, since we (currently) can only repair when running fsck. "This is
-invalid and we never want to expose this" checks are done in bkey
-.invalid methods, and those can only cause the key to be deleted - we
-can't run complex repair in e.g. btree node read, and that's what would
-be required here (e.g. checking the extents and dirents btrees to guess
-if this should be a regular file or a directory).
+Nothing's worse than having to wait hours, overnight, or days for test
+results - by which time you've context switched onto something else. I
+want full test results in 10 minutes.
 
-Long term I plan on running our existing fsck checks (including repair)
-in our normal runtime paths - whenever we're looking at one or more keys
-and there's a fsck check we can run, just run it.
+- Every commit gets tested, and the results are available in a git log
+  view.
 
-I wasn't planning on doing that for awhile, because I'm waiting on
-getting comprehensive filesystem error injection merged so we can make
-sure those repair paths are all well tested before running them
-automatically like that, but if this is a security issue perhaps as a
-special case we should do that now.
+Manual bisection is a timesuck, and every commit should be tested
+anyways. I want to be able able to churn out code in nice clean simple
+commits, push it all out to the CI, and when one of them is broken, be
+able to see at a glance which one it is.
 
-Thoughts?
+- Simple and extensible, and able to do any kernel testing that can be
+  done in a VM.
+
+kdevops is right out - all the stateful ansible crap is not what I'm
+after. Simple and declarative tests that specify how the kernel, qemu
+etc. should be configured.
+
+- Available to all developers and maintainers
+
+Maintainers shouldn't be looking at patches that haven't been tested.
+Everyone doing filesystem development needs access to this
+system, on whatever branches they're working on.
+
+IOW: big cluster of machines watching git branches and uploading results
+to a dashboard, with sharding at subtest granularity so we can get
+results back _quick_.
+
+I've got 8 80 core arm machines for this so far. We _will_ need more
+machines than this, and I'll need funding to pay for those machines, but
+this is enough to get started.
+
+A shared cluster of dedicated machines with full sharding means that us
+individual developers can get results back _quick_. The CI tests each
+branch, newest to oldest, and since we're not all going to be pushing at
+the same time, or need the lockdep/kasan variants right away (those run
+at a lower priority) - we can all get the results we need (most recent
+commit, basic tests) pretty much immediately.
+
+I've got fstests tests wrappers for bcachefs, btrfs, ext2, ext4, f2fs,
+jfs, nfs, nilfs2 and xfs so far, with lockdep, kasan and ubsan variants
+for all of those.
+
+The tests the CI runs are easy to run locally, for reproducability -
+ktest was first written for local, interactive use. I suggest you try
+it, it's slick [0]:
+
+Send me an email with your ssh pubkey and the username you want, and
+I'll give you an account - this is how you'll configure your config file
+that specifies which tests to run and which branches to test.
+
+And please send me patches to ktest adding tests for more filesystems
+and subsystems. This isn't intended to be filesystem specific - the goal
+here is one single _quick_ dashboard for anything that can be tested in
+a VM.
+
+Results dashboard:
+https://evilpiepirate.org/~testdashboard/ci
+
+Results for Linus's tree:
+https://evilpiepirate.org/~testdashboard/ci?branch=master
+
+[0] Ktest: https://evilpiepirate.org/git/ktest.git/
 
