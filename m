@@ -1,161 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-23645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAA1930A63
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2024 16:34:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CAF9930B5A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2024 21:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F144F281B16
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2024 14:34:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC5F6B212AC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jul 2024 19:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EB41386DA;
-	Sun, 14 Jul 2024 14:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E252213C9C0;
+	Sun, 14 Jul 2024 19:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UOxJtaa3"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="dT3qRkeK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BE426296;
-	Sun, 14 Jul 2024 14:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89B213BAE2
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Jul 2024 19:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720967640; cv=none; b=uI09LmuitEJgqjaWlMNc8spXgjs/kGXslOUWenEneNxlfRvlpQhmr76LYByhCauh3Cg3xQSSMEK0kUDO/EceVJmg5/qcuGOaawCl8uIfDtq4VmNDi0f2Lx/rque7SF4u0e8tJRAuGinERelHeWcPrdEPIvI+KVB9Mzbml/ywguc=
+	t=1720985667; cv=none; b=YRbM43zJ99JTnK3jy79+82S7lAyAvTYqY8hejbZVWaxnsiUJ3RSMJ4q/A+v1FGXih0GCD8yr/LtDbjfHtBBMNEo20hzwW8+G21//kpYzdzsDnORk3Szg9Oc0tnepCv+kEEpVcCO1RD8/vflLOIWxWS5hIhfLlqbr8xPg3zjjZd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720967640; c=relaxed/simple;
-	bh=Q0ggrqd6JrWRP4LMNYR10Qj0ncy8JE9oFaflcnlr4K8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qt1JeLTty8ycfvIosZxFnPZYqPrPBxj14cekYh46FqoyUTxDCX9+A/7kjgAu1j3te84sNAjey9LYGsiasuFz7u18dtxmreWGm8G5uyMG3p87bXQiavUG7ePFAqCqJJt45h0Lwkx74WpiBjcyf/Iy6lrwOruVNWRuiUWpGI3FpmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UOxJtaa3; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7D4E520B7165;
-	Sun, 14 Jul 2024 07:33:52 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D4E520B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1720967632;
-	bh=583exBE87er5wi2OkjlShNrw0hTE/HfFZ3UGUoxDu4Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UOxJtaa3GSi5Wqs/8u7Ilei583xycFz8UEAppGArByVT9+2HpOtDEfh15LJpx1nUs
-	 sPjk1HaYUY8zOlHrIIa/YQJskxjgJ3tK1s7qZW7NW3wTaZAztDehV0rp4AKClN2F72
-	 bpgVv8QpuCdmUag7UlxGHNwS+fS6Hrg/vezm2WXw=
-Message-ID: <d85b210a-6388-41a3-9c97-35eee0603c99@linux.microsoft.com>
-Date: Sun, 14 Jul 2024 07:33:53 -0700
+	s=arc-20240116; t=1720985667; c=relaxed/simple;
+	bh=M87rrktCHY7ghhsSswI4T1DoWNIiUEx81cbb38bY5aA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGXTjMrUPKKizVbYgks80Ly9SvxyTi4fMjb3/scdNUqniCD/XN9vgYdpRoHvCyd3IqJAfgYIBeV5PNV2j5msPv10FJHMBpcyxjloxuZRrH2ZezdDtC4Upd/yeNpcZhG5H9hBtLuE4CIpM7b91nSa3UFlniUnG++9ZrIPcglt0hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=dT3qRkeK; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WMb9w4V8NzDD7;
+	Sun, 14 Jul 2024 21:34:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720985652;
+	bh=K31st2qlqWJi+cy7FgRVcUlfoX1RhYvk1QYxVEuqOUM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dT3qRkeKGq56bt9kV3Qstlrq22PAo5PeK2fYHLXD/IRoR9V0R2eAfUGJZOA3lPoLy
+	 iIYTgtY16vjW+FXeO0NRwEjAhXkUxPeIGhop+M0XpWhOeusW5XKYKlLSG/hb51hJ6O
+	 fTcQJ4HoEwQqXvY6SeqxgjHwMmXuuWFq++s4cBTY=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WMb9v1hMczv4r;
+	Sun, 14 Jul 2024 21:34:11 +0200 (CEST)
+Date: Sun, 14 Jul 2024 21:34:01 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Brian Foster <bfoster@redhat.com>, 
+	linux-bcachefs@vger.kernel.org
+Cc: syzbot <syzbot+34b68f850391452207df@syzkaller.appspotmail.com>, 
+	gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [syzbot] [lsm?] WARNING in current_check_refer_path - bcachefs
+ bug
+Message-ID: <20240714.iaDuNgieR9Qu@digikod.net>
+References: <000000000000a65b35061cffca61@google.com>
+ <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] binfmt_elf, coredump: Log the reason of the failed
- core dumps
-To: Kees Cook <kees@kernel.org>
-Cc: akpm@linux-foundation.org, apais@linux.microsoft.com, ardb@kernel.org,
- bigeasy@linutronix.de, brauner@kernel.org, ebiederm@xmission.com,
- jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, nagvijay@microsoft.com, oleg@redhat.com,
- tandersen@netflix.com, vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk,
- apais@microsoft.com, benhill@microsoft.com, ssengar@microsoft.com,
- sunilmut@microsoft.com, vdso@hexbites.dev
-References: <20240712215223.605363-1-romank@linux.microsoft.com>
- <20240712215223.605363-2-romank@linux.microsoft.com>
- <202407130840.67879B31@keescook>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <202407130840.67879B31@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
+On Fri, Jul 12, 2024 at 10:55:11AM -0400, Paul Moore wrote:
+> On Thu, Jul 11, 2024 at 5:53 PM syzbot
+> <syzbot+34b68f850391452207df@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    8a03d70c27fc Merge remote-tracking branch 'tglx/devmsi-arm..
+> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=174b0e6e980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=15349546db652fd3
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > userspace arch: arm64
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cd1b69980000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12667fd1980000
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/efb354033e75/disk-8a03d70c.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/c747c205d094/vmlinux-8a03d70c.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/5641f4fb7265/Image-8a03d70c.gz.xz
+> > mounted in repro: https://storage.googleapis.com/syzbot-assets/4e4d1faacdef/mount_0.gz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
+> >
+> > bcachefs (loop0): resume_logged_ops... done
+> > bcachefs (loop0): delete_dead_inodes... done
+> > bcachefs (loop0): done starting filesystem
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 6284 at security/landlock/fs.c:971 current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+> 
+> I'll let Mickaël answer this for certain, but based on a quick look it
+> appears that the fs object being moved has a umode_t that Landlock is
+> not setup to handle?
 
+syzbot found an issue with bcachefs: in some cases umode_t is invalid (i.e.
+a weird file).
 
-On 7/13/2024 9:31 AM, Kees Cook wrote:
-> On Fri, Jul 12, 2024 at 02:50:56PM -0700, Roman Kisel wrote:
->> Missing, failed, or corrupted core dumps might impede crash
->> investigations. To improve reliability of that process and consequently
->> the programs themselves, one needs to trace the path from producing
->> a core dumpfile to analyzing it. That path starts from the core dump file
->> written to the disk by the kernel or to the standard input of a user
->> mode helper program to which the kernel streams the coredump contents.
->> There are cases where the kernel will interrupt writing the core out or
->> produce a truncated/not-well-formed core dump without leaving a note.
->>
->> Add logging for the core dump collection failure paths to be able to reason
->> what has gone wrong when the core dump is malformed or missing.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   fs/binfmt_elf.c          |  60 ++++++++++++++++-----
->>   fs/coredump.c            | 109 ++++++++++++++++++++++++++++++++-------
->>   include/linux/coredump.h |   8 ++-
->>   kernel/signal.c          |  22 +++++++-
->>   4 files changed, 165 insertions(+), 34 deletions(-)
->>
->> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
->> index a43897b03ce9..cfe84b9436af 100644
->> --- a/fs/binfmt_elf.c
->> +++ b/fs/binfmt_elf.c
->> @@ -1994,8 +1994,11 @@ static int elf_core_dump(struct coredump_params *cprm)
->>   	 * Collect all the non-memory information about the process for the
->>   	 * notes.  This also sets up the file header.
->>   	 */
->> -	if (!fill_note_info(&elf, e_phnum, &info, cprm))
->> +	if (!fill_note_info(&elf, e_phnum, &info, cprm)) {
->> +		pr_err_ratelimited("Error collecting note info, core dump of %s(PID %d) failed\n",
->> +			current->comm, current->pid);
-> 
-> A couple things come to mind for me as I scanned through this:
-> 
-> - Do we want to report pid or tgid?
-> - Do we want to report the global value or the current pid namespace
->    mapping?
-> 
-> Because I notice that the existing code:
-> 
->>   			printk(KERN_WARNING "Pid %d(%s) over core_pipe_limit\n",
->>   			       task_tgid_vnr(current), current->comm);
-> 
-> Is reporting tgid for current's pid namespace. We should be consistent.
-> 
-Thanks, will update the code to be consistent with the existing logging.
+Kend, Brian, you'll find the incorrect filesystem with syzbot's report.
+Could you please investigate the issue?
 
-> I think all of this might need cleaning up first before adding new
-> reports. We should consolidate the reporting into a single function so
-> this is easier to extend in the future. Right now the proposed patch is
-> hand-building the report, and putting pid/comm in different places (at
-> the end, at the beginning, with/without "of", etc), which is really just
-> boilerplate repetition.
-100% agreed.
+Here is the content of the file system:
+# losetup --find --show mount_0
+/dev/loop0
+# mount /dev/loop0 /mnt/
+# ls -la /mnt/
+ls: cannot access '/mnt/file2': No such file or directory
+ls: cannot access '/mnt/file3': No such file or directory
+total 24
+drwxr-xr-x 4 root root   0 May  2 20:21 .
+drwxr-xr-x 1 root root 130 Oct 31  2023 ..
+drwxr-xr-x 2 root root   0 May  2 20:21 file0
+?rwxr-xr-x 1 root root  10 May  2 20:21 file1
+-????????? ? ?    ?      ?            ? file2
+-????????? ? ?    ?      ?            ? file3
+-rwxr-xr-x 1 root root 100 May  2 20:21 file.cold
+drwx------ 2 root root   0 May  2 20:21 lost+found
+# stat /mnt/file1
+  File: /mnt/file1
+  Size: 10              Blocks: 8          IO Block: 4096   weird file
+Device: 7,0     Inode: 1073741824  Links: 1
+Access: (0755/?rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2024-05-02 20:21:07.747039697 +0000
+Modify: 2024-05-02 20:21:07.747039697 +0000
+Change: 2024-05-02 20:21:07.747039697 +0000
+ Birth: 2024-05-02 20:21:07.747039697 +0000
 
-> 
-> How about creating:
-> 
-> static void coredump_report_failure(const char *msg)
-> {
-> 	char comm[TASK_COMM_LEN];
-> 
-> 	task_get_comm(current, comm);
-> 
-> 	pr_warn_ratelimited("coredump: %d(%*pE): %s\n",
-> 			    task_tgid_vnr(current), strlen(comm), comm, msg);
-> }
-> 
-> Then in a new first patch, convert all the existing stuff:
-> 
-> 	printk(KERN_WARNING ...)
-> 	pr_info(...)
-> 	etc
-> 
-> Since even the existing warnings are inconsistent and don't escape
-> newlines, etc. :)
-> 
-> Then in patch 2 use this to add the new warnings?
-Absolutely love that! Couldn't possibly appreciate your help more :)
+dmesg:
+bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=compression=lz4,nojournal_transaction_names
+bcachefs (loop0): recovering from clean shutdown, journal seq 7
+bcachefs (loop0): alloc_read... done
+bcachefs (loop0): stripes_read... done
+bcachefs (loop0): snapshots_read... done
+bcachefs (loop0): going read-write
+bcachefs (loop0): journal_replay... done
+bcachefs (loop0): resume_logged_ops... done
+bcachefs (loop0): delete_dead_inodes... done
+bcachefs (loop0): dirent to missing inode:
+  u64s 7 type dirent 4096:5067489913167654073:U32_MAX len 0 ver 0: file2 -> 4098 type reg
+bcachefs (loop0): inconsistency detected - emergency read only at journal seq 11
+bcachefs (loop0): dirent to missing inode:
+  u64s 7 type dirent 4096:5868742249271439647:U32_MAX len 0 ver 0:
 
 > 
-
--- 
-Thank you,
-Roman
+> > Modules linked in:
+> > CPU: 0 PID: 6284 Comm: syz-executor169 Not tainted 6.10.0-rc6-syzkaller-g8a03d70c27fc #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > pc : current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+> > lr : get_mode_access security/landlock/fs.c:953 [inline]
+> > lr : current_check_refer_path+0x4dc/0xaa8 security/landlock/fs.c:1132
+> > sp : ffff80009bb47840
+> > x29: ffff80009bb47980 x28: ffff80009bb478e0 x27: 0000000000000001
+> > x26: 1fffe0001b7a831f x25: ffff0000d713ef00 x24: ffff700013768f14
+> > x23: 000000000000f1ed x22: dfff800000000000 x21: ffff0000dbd418f8
+> > x20: 0000000000000000 x19: 0000000000001fff x18: ffff80009bb46be0
+> > x17: ffff800080b8363c x16: ffff80008afaca80 x15: 0000000000000004
+> > x14: 1ffff00013768f24 x13: 0000000000000000 x12: 0000000000000000
+> > x11: ffff700013768f28 x10: 0000000000ff0100 x9 : 0000000000000000
+> > x8 : ffff0000d6845ac0 x7 : 0000000000000000 x6 : 0000000000000000
+> > x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000020
+> > x2 : 0000000000000000 x1 : 000000000000f1ed x0 : 000000000000d000
+> > Call trace:
+> >  current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+> >  hook_path_rename+0x4c/0x60 security/landlock/fs.c:1416
+> >  security_path_rename+0x154/0x1f0 security/security.c:1918
+> >  do_renameat2+0x724/0xe40 fs/namei.c:5031
+> >  __do_sys_renameat2 fs/namei.c:5078 [inline]
+> >  __se_sys_renameat2 fs/namei.c:5075 [inline]
+> >  __arm64_sys_renameat2+0xe0/0xfc fs/namei.c:5075
+> >  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+> >  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+> >  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+> >  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+> >  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+> >  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+> >  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> > irq event stamp: 67226
+> > hardirqs last  enabled at (67225): [<ffff80008b1683b4>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+> > hardirqs last  enabled at (67225): [<ffff80008b1683b4>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+> > hardirqs last disabled at (67226): [<ffff80008b06e498>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
+> > softirqs last  enabled at (66914): [<ffff8000800307e0>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+> > softirqs last disabled at (66912): [<ffff8000800307ac>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+> > ---[ end trace 0000000000000000 ]---
+> 
+> -- 
+> paul-moore.com
+> 
 
