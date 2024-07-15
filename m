@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-23696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C159314E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 14:53:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5F49314ED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 14:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CF0C1F22FA2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 12:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5C21F23691
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 12:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3371922EA;
-	Mon, 15 Jul 2024 12:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B771940A1;
+	Mon, 15 Jul 2024 12:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZtyYbWAd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Op5sWagJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AAC191F93;
-	Mon, 15 Jul 2024 12:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEE9192B87;
+	Mon, 15 Jul 2024 12:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721047774; cv=none; b=GBW4JkL1t4xCQuwGW1f6r5X2FS769J3BAHTuj0aTJMUtouN9JHy195eer0yIqdg3Rku6kM9LGqKapV/Nn8a6A6y29sA2/ui1/Uin3kTS7px22JcJiIPVv6HlRm3DZPg9qZYqaVwvV15Gs6SyL7B88TMkPDUUeSNFWW53+E+3bJ0=
+	t=1721047777; cv=none; b=uwpygMcF2vmKoIlHhwHwUCQU50tCA/3zigK+GT8slZfDFidEYhdMaK6ZcOeItGiCGjUbKmLdq+Itrsn/IS+3+o4Qcv1GY1PKmpH7exxNxS/uM+S+NZgneFDA9aM+ZYKx5xCgwUgyp6fvwKpXsn3Nkx4aXkaEUXByoPhW40m2nC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721047774; c=relaxed/simple;
-	bh=n/GBFDubJ9Ek68qv1catP2lBxJ/9I9EY6EzBmvQbZCE=;
+	s=arc-20240116; t=1721047777; c=relaxed/simple;
+	bh=EGo15KA9RzWejobFOdJXVIKVsZGyPzCyG1uwa3tZn1I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aS7uqzR/0NGr4/+yC6AmallkOlwN8I55vUE7AVtFJjitol0EP4INOc2Hqd6V9PnZLEchbSNDj/831cXrOZq+0spUPgfgVGz6/s2m+nivHdIY1eGbCNYOjjF6uEyxJvyGqtuDuEqY7SstjVvf7jWUWlOpfR7ThJEdVet3hM2mPBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZtyYbWAd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA12C4AF0C;
-	Mon, 15 Jul 2024 12:49:31 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=s9B6lq+lVLKPmuKibwIjee5i3KhVAieXkmRkfe+vx8SY/1p/cGZvEeeWRiH8QKdSeqWoS+5YckKgYFhLPiVvhg+jnUgcFJ5Q4Pj6PzjH74e/sHZy8ouz5pKhhhsesRBKi3O+P+Df0xbuvmPjsADFW9GcoiFoNgejhsONpPILqpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Op5sWagJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 312FFC4AF0A;
+	Mon, 15 Jul 2024 12:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721047773;
-	bh=n/GBFDubJ9Ek68qv1catP2lBxJ/9I9EY6EzBmvQbZCE=;
+	s=k20201202; t=1721047776;
+	bh=EGo15KA9RzWejobFOdJXVIKVsZGyPzCyG1uwa3tZn1I=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZtyYbWAdVGt+M9geIi9nq1XjNNQKoMnt4VvhJB4ByJb93S22H8PaeX8D+elBcZmA8
-	 impfQEW14muDzQ8mqnKoESrz8Gr10uGPLm63I+ch9I+zWCDY92DOYLcnHznRSfIEz5
-	 x/nUQ7EWPdrA/coYjsXKG0S6bIk4DgwnzLIkDZiZlfyt+lexFtIlTZE+/erPHt6QaK
-	 0eM3Pnc3hhcq91YNFO/cFAiRBaYJpg5tpZc+04sECOGNuL3RAY9OYACGN8vPxWKGbZ
-	 poCwkG8HsUOnrBLgRdLZtcnNdU667lJj9uPt/n3SS3h0OKujpuh9GXE/MRP4ajdBjV
-	 sXgXQH2/rqp0g==
+	b=Op5sWagJjl+DaoEpT6U6Roz5G+OZlHnYlPX1GVRhRCs1ph5A4POU7AelkpSydaFE1
+	 0S/6XZ5jrsy1l+pU8jT0i8xNz7C46rPcqZFpDt+RZwciCR30kKbKz24evOTitf1+Vr
+	 FzJPtBPOU5iclZk+mYyMWcBFe2aGVnk/Rn4MMAL/btOLEN7TC8VvQMsoRlssdnUhcZ
+	 RS8B6yYf90rMB3TbhzRrgFQYyqfAqu/Tv/l74Z/8C5XrCGsIXk7l2nSGlPXuk9Pf3/
+	 YnBJu+MnFdqez9L3jJ10joq8GI/5b45+aubtvZlH8RUDpFYLgxThEgXVu7Ys1oCnQc
+	 YomcYnBGoWouQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 15 Jul 2024 08:48:59 -0400
-Subject: [PATCH v6 8/9] btrfs: convert to multigrain timestamps
+Date: Mon, 15 Jul 2024 08:49:00 -0400
+Subject: [PATCH v6 9/9] tmpfs: add support for multigrain timestamps
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240715-mgtime-v6-8-48e5d34bd2ba@kernel.org>
+Message-Id: <20240715-mgtime-v6-9-48e5d34bd2ba@kernel.org>
 References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
 In-Reply-To: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -75,20 +75,20 @@ Cc: Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
  linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
  linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2632; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=n/GBFDubJ9Ek68qv1catP2lBxJ/9I9EY6EzBmvQbZCE=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmlRrD197rYggBbmtQ+Pjfq0t5urOGWrOjhcCqL
- H+PDb1PlFKJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZpUawwAKCRAADmhBGVaC
- FWPPD/98OrTQhimjzIjdpNE2OeuExL1hLuo1FcAxjnPSODQMEGaEHQrTD1UnX5t+mb6vf7Fkhu5
- 4/Z4EkWwtnFXTrw7dWpDzmqHAMT7jYXa89Ga0TYbI2wx1q8tAuYvBzEQQ6z1E/pcmNQ1dJqOh/l
- ZDznTDp1mPTy9iE2jum19TBePEDngLxLqGiyqRE95/lJOwuaddhd4MvHdFWjSVPpdjYKE9KYope
- zyr90O9njRTaqFQlbSPHrd5XdE0NrF35opH85Yocwm/eGFHcN+SrKAMsbApMomPEaKSiFbC1RlN
- kLd4iYUx7PNDV+XvVGdTGXYbqSgsV7CL2bOxpOK+CYqU6RSKX15uZSqAnMv4Owpee3gZgAllHYU
- OHiyNZllPfZEOo72mqw3OgahIaEUKKrcWAFzvoyKbCazaMaqFP3d9XUFqOdYWn/iALgO3ZdUq8o
- VO3MyzVxCOZDjdISoPM5/cgfWc7wBJNLnudOnaQp2X6gH7vIuy3V78Q6SF7P2rezMSTgMepE/8s
- 7GkW31uEiZYJcpiE+aF0V33DllQqUoca2q+Eg9he4tHp4Nm05N/SXsadR2wgzOZ63OB15CgDJBn
- ip0syOwO653BxgR8VkjvdOHXxF+Zra0Ky9CCbWqDZWf49I1BJeeYTWCNNOyFrxFjKrVYOBlYtq3
- Eh1fhvKxogJPFdw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=824; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=EGo15KA9RzWejobFOdJXVIKVsZGyPzCyG1uwa3tZn1I=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmlRrD4m6AcCbQEbB3V0ipLp+HPBka/5rUVsmDG
+ +UI6LP4LSyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZpUawwAKCRAADmhBGVaC
+ FehwEACB/2bL0lHsL7x+6a2mF1cA08ExumwGUUpjqhfW/iUJDZW8NksCANkEjZy3jkVO2UFom9k
+ MsZ5dg106pC96JwTEgOw+Wz+KchU1EDu+k20LB4uv5tnPDvb/ET5ncKyvxJ5+wX90wtxidCfK4h
+ TWJwKVyQsBqdLsZ9w4OXei8HGv99hsDxrY/rhQ1KaOY6CEdzPcQOpCJbSKZ0n3rRR4X3KCEm0A4
+ vJv7X1XCzEgq0XUFHxamtkbmLAiGeaDng0kVnJQntBpaoFWUvbE8nUnCKwO42rKF9RgKHFMFhr9
+ Hr5D7G1iySVSJQ2BR5sJDVgMk5HGd1iyI2pVyeFVC6McOAbLpkl2Q5lHCE8kJkxFjd8KLcIwiVW
+ o50Xzk8xJyxBuopmF8fzBrgaXB7Vsova2nDppB4/gexJo9H/PagYElk6p9zsOndkBubvDxLfP3h
+ EJ+mL8K/MHCwpTOt1Ef72Y4QbrbvjsKee5N/8O7YTpBbai8Df1rRFhQrunoWqFh94wkmlSaFm7q
+ bvYRMax6wvvOUL4sKAulaMdnh/m92gAeta1TxcYbI7XC5LI0f/7NQjMaSTQW+lXe6+Um8SHiZvY
+ H5DVd1+vLNraR6/Ry+rSfK0uCHPXRyQadKt9ly2ZbezoPAN3Fslo6ewd+azr8Y3pyp9SvkpysRm
+ d24+EIjmNvSAjGw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
@@ -96,77 +96,27 @@ Enable multigrain timestamps, which should ensure that there is an
 apparent change to the timestamp whenever it has been written after
 being actively observed via getattr.
 
-Beyond enabling the FS_MGTIME flag, this patch eliminates
-update_time_for_write, which goes to great pains to avoid in-memory
-stores. Just have it overwrite the timestamps unconditionally.
-
-Note that this also drops the IS_I_VERSION check and unconditionally
-bumps the change attribute, since SB_I_VERSION is always set on btrfs.
+tmpfs only requires the FS_MGTIME flag.
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/btrfs/file.c  | 25 ++++---------------------
- fs/btrfs/super.c |  3 ++-
- 2 files changed, 6 insertions(+), 22 deletions(-)
+ mm/shmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index d90138683a0a..409628c0c3cc 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1120,26 +1120,6 @@ void btrfs_check_nocow_unlock(struct btrfs_inode *inode)
- 	btrfs_drew_write_unlock(&inode->root->snapshot_lock);
- }
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 7f2b609945a5..75a9a73a769f 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4660,7 +4660,7 @@ static struct file_system_type shmem_fs_type = {
+ 	.parameters	= shmem_fs_parameters,
+ #endif
+ 	.kill_sb	= kill_litter_super,
+-	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
++	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MGTIME,
+ };
  
--static void update_time_for_write(struct inode *inode)
--{
--	struct timespec64 now, ts;
--
--	if (IS_NOCMTIME(inode))
--		return;
--
--	now = current_time(inode);
--	ts = inode_get_mtime(inode);
--	if (!timespec64_equal(&ts, &now))
--		inode_set_mtime_to_ts(inode, now);
--
--	ts = inode_get_ctime(inode);
--	if (!timespec64_equal(&ts, &now))
--		inode_set_ctime_to_ts(inode, now);
--
--	if (IS_I_VERSION(inode))
--		inode_inc_iversion(inode);
--}
--
- static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
- 			     size_t count)
- {
-@@ -1171,7 +1151,10 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
- 	 * need to start yet another transaction to update the inode as we will
- 	 * update the inode when we finish writing whatever data we write.
- 	 */
--	update_time_for_write(inode);
-+	if (!IS_NOCMTIME(inode)) {
-+		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
-+		inode_inc_iversion(inode);
-+	}
- 
- 	start_pos = round_down(pos, fs_info->sectorsize);
- 	oldsize = i_size_read(inode);
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index f05cce7c8b8d..1cd50293b98d 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2173,7 +2173,8 @@ static struct file_system_type btrfs_fs_type = {
- 	.init_fs_context	= btrfs_init_fs_context,
- 	.parameters		= btrfs_fs_parameters,
- 	.kill_sb		= btrfs_kill_super,
--	.fs_flags		= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_ALLOW_IDMAP,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA |
-+				  FS_ALLOW_IDMAP | FS_MGTIME,
-  };
- 
- MODULE_ALIAS_FS("btrfs");
+ void __init shmem_init(void)
 
 -- 
 2.45.2
