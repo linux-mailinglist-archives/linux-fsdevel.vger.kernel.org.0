@@ -1,82 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-23686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033AB931465
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 14:36:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092EC931468
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 14:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC65B1F21EA8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 12:36:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7CD1F22531
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 12:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5469818C356;
-	Mon, 15 Jul 2024 12:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F9918C324;
+	Mon, 15 Jul 2024 12:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bdz5R4gx"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V/9XYsVM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XnfCTF2d";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BZO0pfxs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7+l42eZB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B343D188CDE;
-	Mon, 15 Jul 2024 12:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D9D4C66
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2024 12:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721046943; cv=none; b=ZGRiY4tTdltebefmaOj7/MoQt3WmrQXal8T6Uhc+sETmkwy7zcpHqD7F3XMyfKi0x5jrrbBqn+Juxq0PEEybqXdTdlSWyIULVCF/uI6GoxbAYIQGB2HL9hnzLjn4FuMZBa/5DqOro9AY6auL8BqXGe9nQqBNtoSFB7Cw60whlvk=
+	t=1721046983; cv=none; b=ZC63CjSTxV3A/Q7M4soMzsS4WVPoNV+DpihgYTT18GeFxJZdc+OHzK7U81+PsRVPzWDptynXETTETcvV/V9pZcXBnMC1Ce1TOM0NWVvKAZ2uEUR7qmX6ZUjl34Eo/M7Pu/b4MAM7XcX7RecD8yMXEEMDWa89z37Cn9nJL6l+C50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721046943; c=relaxed/simple;
-	bh=Am2JlZy50pvx4FuYaYro9SMRfrvDmOtYcr/luTobwjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qHdeKgawSgZD9fVoJI4tsLHtV4G44pRt4qNsz98rOLYLNBGrNETsTOEmwWXj/aphM216Dbo9h4isNoQhUjiacQ/xfmQVZmIwG97FpnlLTkG4XedoSn7oP5/X3F7v/dEL2LFpfBdSW5icvppeHBKpMRyAx5v0yzpAqK+fuDzo+rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bdz5R4gx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384D5C4AF0B;
-	Mon, 15 Jul 2024 12:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721046943;
-	bh=Am2JlZy50pvx4FuYaYro9SMRfrvDmOtYcr/luTobwjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bdz5R4gxJ6Ql8J56U35nW3YJFoCxycQ3kqm/w93AMzJBgOYYgAskgX3gPKobqBgaW
-	 InVTSK9IwUIDsyF7+2dIofE/S5K3eMrZYhEtRi/iUuyRnHxq41nErZ0quiloXbumOT
-	 A2o3t2Hfyv3s7gNESOzpEHSOxPrKWfOu454PL5baht1XXtIJWzSCfrltGPBy1D6WHG
-	 HMBOgdAMgaeKZFg2UkNBQffvbtt0tkttLQ2lrb6TN511Zw2BiAr4PZqcvC75ODb0XP
-	 XcuIxMH/E0TtKJ2AVmYwlgWsLO0lh4hdKY3147sfGPaFc2XeHELvyGr4xTjtuqZiZA
-	 FminSopmobn3w==
-Date: Mon, 15 Jul 2024 14:35:39 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Prakash Sangappa <prakash.sangappa@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dhowells@redhat.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] vfs: ensure mount source is set to "none" if empty
- string specified
-Message-ID: <20240715-abgibt-akkreditieren-7ac23ec2413c@brauner>
-References: <1720729462-30935-1-git-send-email-prakash.sangappa@oracle.com>
+	s=arc-20240116; t=1721046983; c=relaxed/simple;
+	bh=oIQwMRbNfKiI16jCc2Me9N+tnuA7CPjqLxiHdMykQZo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IyrDRmoFunT7LutNQY0iV4+ztMoxjWUze3cnVgnYTy7GVVzYVXdMVNiaX+foiDnLgS0qVOZyw2xYJC8uuULVImgC2pNmljHpcnkepTRWmOjboCOZIuLF9lnufMgkTdejZeZYSaQDf6VU6gLWRAOqmhjgxqACY7FwB8GZdiBTgBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V/9XYsVM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XnfCTF2d; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BZO0pfxs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7+l42eZB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 92A9C1F818;
+	Mon, 15 Jul 2024 12:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721046979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=plJbnYraLLYoceF+V7OIpaXNQeQdrFylzJZu7ZMbDmI=;
+	b=V/9XYsVMLNvWqbioWw6pRDzgE2q4C576mYaB464rGqHLLkgkgksIvgxF92X1mWtataFB5C
+	ok6qCQvCCTpLaEoetgW8SjtvRvbFKcGksTJFnBmcXrYHmOtalPe+e2OdbPWOcRn3oGqwj0
+	GDoVyeYLysl5OGAzSFz6gQ8XRuRFTmo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721046979;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=plJbnYraLLYoceF+V7OIpaXNQeQdrFylzJZu7ZMbDmI=;
+	b=XnfCTF2d8tetkNUH8q7zsxdr+yOuumiqXxLxbT7L14A/o3oaPik86yREr2op1Ke/a9K+8s
+	h7QQalB1JJSpvJBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721046978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=plJbnYraLLYoceF+V7OIpaXNQeQdrFylzJZu7ZMbDmI=;
+	b=BZO0pfxsWZKW4WHl0QtE1+DLU1kNnslk/K1z//3vUyrve4ibmYILVOa5dV/+0NRfwu3A58
+	uAENUbBV/57fm4wjYJeiTIHq8FsAKG+WegSYhv98hcs5T2pUSkzpPqinpqydqAxuBkKOPF
+	YqXwi6a15zPGmL+kKnwAbQ99SWtl1Q4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721046978;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=plJbnYraLLYoceF+V7OIpaXNQeQdrFylzJZu7ZMbDmI=;
+	b=7+l42eZBWGfKLBmg6AYrID4e0GVq+QDyQEk6KigPJPsYkj0jnNbMSAgrnZoI0jI5xfR8rW
+	yHYU72h3YndwCIAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 882D7137EB;
+	Mon, 15 Jul 2024 12:36:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cEI4IcIXlWb7RQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Jul 2024 12:36:18 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3DCABA0987; Mon, 15 Jul 2024 14:36:14 +0200 (CEST)
+From: Jan Kara <jack@suse.cz>
+To: <linux-fsdevel@vger.kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Jan Kara <jack@suse.cz>,
+	syzbot+701037856c25b143f1ad@syzkaller.appspotmail.com
+Subject: [PATCH] fsnotify: Avoid data race between fsnotify_recalc_mask() and fsnotify_object_watched()
+Date: Mon, 15 Jul 2024 14:36:10 +0200
+Message-Id: <20240715123610.27095-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1720729462-30935-1-git-send-email-prakash.sangappa@oracle.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1430; i=jack@suse.cz; h=from:subject; bh=oIQwMRbNfKiI16jCc2Me9N+tnuA7CPjqLxiHdMykQZo=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBmlRemyvg+9zfc0Lvo9veFNqJS7T547AYXOax2+veF mc4Qdt6JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZpUXpgAKCRCcnaoHP2RA2R6sB/ 4py9H8IAECtwKrtEZfEH6/LWKhsRN6MFG6BQyZr2E2A7s3sGfs9uFWySRN8UGKNWLZbHgfuv1e2EjL uGCgEvhPDu+kXcrkjkvlopJQifbtDq2iV6eA5TCchB6zmrpZRwPzfL7F9/iCD3fRMwSa/fb1fWEzf3 sKtYnWn1aBKVo0udVHexjYp/MkSlVAblJ2B/wSsYm8KSWOFqBdS4fx6BbHqSN/LKEHy7PsTjUnwxwm d3+sjGN7UjmzIyNAD6GFKd1sT+Hb3s3NX4Jo4yibA9tNf2hQd8Tfi3xeLShMKxvZ+Or5/37UL7w7Er wKoT/n6ZsSeAI343ytpIipv+5PPcDp
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: 2.70
+X-Spamd-Result: default: False [2.70 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[701037856c25b143f1ad];
+	FREEMAIL_CC(0.00)[gmail.com,google.com,suse.cz,syzkaller.appspotmail.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Level: **
 
-> The issue can be easily reproduced.
->  #mount -t tmpfs "" /tmp/tdir
->  #grep "/tmp/tdir" /proc/$$/mountinfo
+When __fsnotify_recalc_mask() recomputes the mask on the watched object,
+the compiler can "optimize" the code to perform partial updates to the
+mask (including zeroing it at the beginning). Thus places checking
+the object mask without conn->lock such as fsnotify_object_watched()
+could see invalid states of the mask. Make sure the mask update is
+performed by one memory store using WRITE_ONCE().
 
-The kernel has accepted "" before the new mount api was introduced. So
-the regression was showing "none" when userspace requested "" which got
-fixed. The patch proposed right here would reintroduce the regression:
+Reported-by: syzbot+701037856c25b143f1ad@syzkaller.appspotmail.com
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Link: https://lore.kernel.org/all/CACT4Y+Zk0ohwwwHSD63U2-PQ=UuamXczr1mKBD6xtj2dyYKBvA@mail.gmail.com
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/notify/mark.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-(1) 4.15
-    root@b1:~# cat /proc/self/mountinfo | grep mnt
-    386 28 0:52 / /mnt rw,relatime shared:223 - tmpfs  rw
+I plan to merge this fix through my tree.
 
-(2) 5.4
-    root@f1:~# cat /proc/self/mountinfo | grep mnt
-    584 31 0:55 / /mnt rw,relatime shared:336 - tmpfs none rw
+diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+index c3eefa70633c..74a8a8ed42ff 100644
+--- a/fs/notify/mark.c
++++ b/fs/notify/mark.c
+@@ -245,7 +245,11 @@ static void *__fsnotify_recalc_mask(struct fsnotify_mark_connector *conn)
+ 		    !(mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF))
+ 			want_iref = true;
+ 	}
+-	*fsnotify_conn_mask_p(conn) = new_mask;
++	/*
++	 * We use WRITE_ONCE() to prevent silly compiler optimizations from
++	 * confusing readers not holding conn->lock with partial updates.
++	 */
++	WRITE_ONCE(*fsnotify_conn_mask_p(conn), new_mask);
+ 
+ 	return fsnotify_update_iref(conn, want_iref);
+ }
+-- 
+2.35.3
 
-(3) 6.10-rc6
-    root@localhost:~# cat /proc/self/mountinfo | grep mnt
-    62 130 0:60 / /mnt rw,relatime shared:135 - tmpfs  rw,inode64
 
