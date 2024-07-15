@@ -1,176 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-23710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBBD931A7F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 20:48:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA38931A98
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 20:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681E6283037
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 18:47:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D83BB2264B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 18:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7F28174E;
-	Mon, 15 Jul 2024 18:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWHmYEFh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E3C12B17C;
+	Mon, 15 Jul 2024 18:58:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC0D22EF0;
-	Mon, 15 Jul 2024 18:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DDF762D7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2024 18:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721069264; cv=none; b=ZMpbYXITsIt125NZMpvyj9rQ7FzXiLOWKuHBKXwQaov74FIROb9P23SDwDSaS3dyHAKLDEuvobeB/sYrSbVrfaBX9vbLZIXgh2/UcI8g5ux2c0aU0nio+BoehaKeZHzUdFfHMANHqPDwEXBw3fSCnK92WefnXWH/GhRd+gIxC44=
+	t=1721069909; cv=none; b=aUsW3ZDW+z7ITKC5AfusBy4wWOkDeaqgAOR2ZHgrGv8+1QFQheDdhJ8h59zvCLnxATnfS+mnT64Zb7zyZqlAVDqp+6yRMJA+vsdyQxdKScpJGjKQEbns42okYQaYmcklGAwxct/0RrFSVl1aIIgM1bNSgoFRMCXrrBWJlPNghUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721069264; c=relaxed/simple;
-	bh=gHBpMyl77vyIqwD/HbHQNCcjFMsWAzPACHCRguL7WCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HeGNmfGtcUYGoFE71IXpOw8MLdJkTdQ+CVyVbua8P0SOkvg6Nf+YJXQtU1KzDjxTiwRLt6J8qQIP3wvrXL0EYqsZFTeRtn5u2jjyV3cr6nYr2qYUVF+yQEvq5qyFkKbhRyEMpThyjXGoIA8ikfbBW5CTfy9iXewsiu11w14+QII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWHmYEFh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDC25C32782;
-	Mon, 15 Jul 2024 18:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721069264;
-	bh=gHBpMyl77vyIqwD/HbHQNCcjFMsWAzPACHCRguL7WCc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MWHmYEFhGc1J9fZ7fmffBU84nHYBBkr4R4bpUVUzsH5Kd8Uez7QLFOzCUWPLxWayA
-	 II+N5FcGFiEAjW8sbYOr4aWAHAF9fdO7+uiX7kyETqs/nEFxeGclcDudiFXKb4D1YF
-	 WvkDApHTWIotWb4dB6JxCOdCS7RHgjkFbVG2WnCLBOnSNiWkM+/ZpRALMQX0uWNzwj
-	 9HIR4Z50P15P8bfIHSwGp/zfjffwQcFTfOvlYFhmZ6Qla6BeiwOmivLGKWiBYsASQr
-	 BRqjHzO7lbSrE9Kr/W3OcmSjPjbxv9i+ODjwXzApnAcj1l2S1jX4WPjXmYL6LE0QEK
-	 WIuXhYFM/oKkQ==
-Date: Mon, 15 Jul 2024 11:47:43 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 6/9] xfs: switch to multigrain timestamps
-Message-ID: <20240715184743.GF103014@frogsfrogsfrogs>
-References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
- <20240715-mgtime-v6-6-48e5d34bd2ba@kernel.org>
+	s=arc-20240116; t=1721069909; c=relaxed/simple;
+	bh=CY6PWv8H3KhC110hyOjmpJmbBBZx4l8RXYjoZZsvS84=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DH7BfjGMlNKo3eDaVp3rDgmAYpXr8ZdurTP5LzPZHy+VjKFgnoTPFJqRT2+Nxm5BQ9W72VgId0mTlO4Kjg3eTirOuNmJDKnWzov5TJvbkP7fwhflAfoFEfS2SpPF4mVMd2rUWAfh1S+UxIVi7ByE4oDIs+WnM0ufcgz6Oj8QrVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3810df375d0so48518675ab.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2024 11:58:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721069907; x=1721674707;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AvJYbgXXuIoKcXDaxUCAc8E+cIgjRwR+GgSHpz32uFg=;
+        b=UEiPEE8GTS7OWuiSr0gkqOxxUHMt5C9QdcFc1fCUKgjK3p37oFd1GhSYAMaNmUXs3M
+         R90QzQjHIDqldZTFk/Sq/XPmLSwyDCIo1ctTDxy+woF6s95Mrqk4OW5jo2q7dgH9PVry
+         KWDxzU7EiQGm72KIPnbj2r9fwFUqUvnASG9Z/De9iiQSOUIIjjssiseiaDoi5LdCoWx/
+         BHnyyZPf+aciOdJexs8gZciTqljf40eoHwcbSAjcbtu/io1EkMVTM7T9lRnOiOPZYNx/
+         yOnhDS8j9X9pMGaxB49KShPkjQZs9mEugtLBZMRgSZtKsqDn9Qr8dQLUAB0GL1n5dUNm
+         6n5A==
+X-Gm-Message-State: AOJu0YwDm6u6T+KUNj4mJFSChOVTPEu1dbZXQrfNbM/XE4UFF8ARnDrI
+	SYyMnKUaFZpzN9YnJXMMXfyP9ebd5k0sMzYUdVl90EUqyYnZMA0wy6p3xGehlOGuOAiPkzKw0CL
+	broWmHm3f6/D0OxvRVcBoEEIKz97rRLdPJcr8BYaF5BgNfHcGHwPbavM=
+X-Google-Smtp-Source: AGHT+IEAntkkKJQwYWJoP0APVlCWkx+EV5ZRAWX+U3l9yHH9TtkcZf52L1iVeKLmb6+BaKGHeKrmXQs3nNRewIIbedZcMFDmzJQr
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715-mgtime-v6-6-48e5d34bd2ba@kernel.org>
+X-Received: by 2002:a05:6e02:13af:b0:381:37d6:e590 with SMTP id
+ e9e14a558f8ab-39394c98e44mr500685ab.2.1721069907486; Mon, 15 Jul 2024
+ 11:58:27 -0700 (PDT)
+Date: Mon, 15 Jul 2024 11:58:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000783846061d4dd043@google.com>
+Subject: [syzbot] Monthly hfs report (Jul 2024)
+From: syzbot <syzbot+list3ec8045314d28d24d911@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 15, 2024 at 08:48:57AM -0400, Jeff Layton wrote:
-> Enable multigrain timestamps, which should ensure that there is an
-> apparent change to the timestamp whenever it has been written after
-> being actively observed via getattr.
-> 
-> Also, anytime the mtime changes, the ctime must also change, and those
-> are now the only two options for xfs_trans_ichgtime. Have that function
-> unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
-> always set.
-> 
-> Finally, stop setting STATX_CHANGE_COOKIE in getattr, since the ctime
-> should give us better semantics now.
-> 
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Hello hfs maintainers/developers,
 
-Looks good,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+This is a 31-day syzbot report for the hfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/hfs
 
---D
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 42 issues are still open and 18 have been fixed so far.
 
-> ---
->  fs/xfs/libxfs/xfs_trans_inode.c |  6 +++---
->  fs/xfs/xfs_iops.c               | 10 +++-------
->  fs/xfs/xfs_super.c              |  2 +-
->  3 files changed, 7 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-> index 69fc5b981352..1f3639bbf5f0 100644
-> --- a/fs/xfs/libxfs/xfs_trans_inode.c
-> +++ b/fs/xfs/libxfs/xfs_trans_inode.c
-> @@ -62,12 +62,12 @@ xfs_trans_ichgtime(
->  	ASSERT(tp);
->  	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
->  
-> -	tv = current_time(inode);
-> +	/* If the mtime changes, then ctime must also change */
-> +	ASSERT(flags & XFS_ICHGTIME_CHG);
->  
-> +	tv = inode_set_ctime_current(inode);
->  	if (flags & XFS_ICHGTIME_MOD)
->  		inode_set_mtime_to_ts(inode, tv);
-> -	if (flags & XFS_ICHGTIME_CHG)
-> -		inode_set_ctime_to_ts(inode, tv);
->  	if (flags & XFS_ICHGTIME_CREATE)
->  		ip->i_crtime = tv;
->  }
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index a00dcbc77e12..d25872f818fa 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -592,8 +592,9 @@ xfs_vn_getattr(
->  	stat->gid = vfsgid_into_kgid(vfsgid);
->  	stat->ino = ip->i_ino;
->  	stat->atime = inode_get_atime(inode);
-> -	stat->mtime = inode_get_mtime(inode);
-> -	stat->ctime = inode_get_ctime(inode);
-> +
-> +	fill_mg_cmtime(stat, request_mask, inode);
-> +
->  	stat->blocks = XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed_blks);
->  
->  	if (xfs_has_v3inodes(mp)) {
-> @@ -603,11 +604,6 @@ xfs_vn_getattr(
->  		}
->  	}
->  
-> -	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
-> -		stat->change_cookie = inode_query_iversion(inode);
-> -		stat->result_mask |= STATX_CHANGE_COOKIE;
-> -	}
-> -
->  	/*
->  	 * Note: If you add another clause to set an attribute flag, please
->  	 * update attributes_mask below.
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 27e9f749c4c7..210481b03fdb 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -2052,7 +2052,7 @@ static struct file_system_type xfs_fs_type = {
->  	.init_fs_context	= xfs_init_fs_context,
->  	.parameters		= xfs_fs_parameters,
->  	.kill_sb		= xfs_kill_sb,
-> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
->  };
->  MODULE_ALIAS_FS("xfs");
->  
-> 
-> -- 
-> 2.45.2
-> 
-> 
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  31308   Yes   possible deadlock in hfsplus_file_extend
+                   https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
+<2>  10825   Yes   possible deadlock in hfsplus_get_block
+                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
+<3>  10057   Yes   kernel BUG in hfs_write_inode
+                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
+<4>  6645    Yes   kernel BUG in __hfsplus_setxattr
+                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
+<5>  2388    Yes   WARNING in drop_nlink (2)
+                   https://syzkaller.appspot.com/bug?extid=651ca866e5e2b4b5095b
+<6>  1446    Yes   WARNING in hfs_bnode_create
+                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
+<7>  1180    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
+                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
+<8>  810     Yes   possible deadlock in hfs_find_init (2)
+                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
+<9>  767     Yes   general protection fault in hfs_find_init
+                   https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
+<10> 472     Yes   possible deadlock in hfsplus_find_init
+                   https://syzkaller.appspot.com/bug?extid=f8ce6c197125ab9d72ce
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
