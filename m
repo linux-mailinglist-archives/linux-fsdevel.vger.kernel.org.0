@@ -1,62 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-23705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7809318B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 18:46:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819CF931A3C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 20:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3A01C218F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 16:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B9A1F21C32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 18:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154FF1CFB9;
-	Mon, 15 Jul 2024 16:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2F071B3A;
+	Mon, 15 Jul 2024 18:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdLW+j6Y"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FBJ7mGZN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6951F17BB5;
-	Mon, 15 Jul 2024 16:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5F26D1A8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2024 18:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721061993; cv=none; b=tsTBFVuOstY3VbNQA0TY6V8HbS6Wtlkag7I5kE+SrghAyUfLrs9cpla7HEjFEDmmxjcYOXwCJW00988HAj3bqpt0xLnB1kw0QoCY38MIwBO2bNLOo0laayRkF59hxvo1UBABPsFP5Gnafjlb8+8zDkGsinvuc7OAAGcsPWu2p20=
+	t=1721067809; cv=none; b=PRpAl4DJnIn4Sv5DEdWfpMI0Tr6EKLO34Zlf81EN7OlDuHy7qNoxO78QgJ9D3AaCHvudAP7lceki4GeiK+pG+uD+jRx2Ds62kZQycD5at50iJHe7ackbXsTOx+fKvk3mc3yPq/RCJHRVvQ17K3G9z+3+Eqj7EE7/1GyLsjr4Eb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721061993; c=relaxed/simple;
-	bh=CKsM6X/ILuteI/53RzhvTkmwmrJCL208UsIV57Va2XI=;
+	s=arc-20240116; t=1721067809; c=relaxed/simple;
+	bh=kzPBfh2hBlb1oUZ/kANeTr8h5BNCDJsbGSNUutFnJAw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SNuuVTdbnrUp02jBOSdpNOhioNj9EPEi6NcZFsY0Moy0M7DKxiSCSlsxbFP3dDvUOE8LWVRVIqHoPo/JXF+xwV/K51LHlsVXhVUK1yco4ge5zdbOqdmHZOpS+L/X3eGTLf6QC67X9M9zdtIfnLoLbs4bi2w3IVCYmCkFv70HG68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdLW+j6Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2C15C32782;
-	Mon, 15 Jul 2024 16:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721061993;
-	bh=CKsM6X/ILuteI/53RzhvTkmwmrJCL208UsIV57Va2XI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fdLW+j6Y+Ki7ty31Vru/uvWcM/bxoTE4hvdOxHnGU07Kdd2OSMBKVf9ECGreERRqs
-	 Zi9Ek+1I4cz2tW2Vx//6jjeOgwNXNwUQ0EFxlvKz0bTEKwZvHpdp9M6X1YhDg3XWOB
-	 RKiY4IJADKm3BBoqvlFqU0/xk9ZKv5e9/lAEeGf3Se5PZ7lbaGCPHZUdGi9fSABPG8
-	 BwBKcbHj0IE6e/xujl5RVkZj4wxa6lUjkgWRxDLityGAWyPpsY2d4gMBbILfX6arRW
-	 wx/iUL/JppWzfd7b8kmn2WjqbtFaWhc/X2nyXlhBBT7PqoyESqdN7GsUgqKkpHn3Xz
-	 USjUiKDmoaENg==
-Date: Mon, 15 Jul 2024 09:46:32 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, ryan.roberts@arm.com, hch@lst.de,
-	Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v10 10/10] xfs: enable block size larger than page size
- support
-Message-ID: <20240715164632.GV612460@frogsfrogsfrogs>
-References: <20240715094457.452836-1-kernel@pankajraghav.com>
- <20240715094457.452836-11-kernel@pankajraghav.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X2AZ1iZMw5TX4Sex0UDqJQ7CmVh5owgMIUev/rSfCTRMPp8wuqh3Vwhh0Cmuokh1knxKj9inUfwkWbruBJmg+Og1r5Gg3poGpbL6WhomAtvSPob5XGd66gWU6FxFXV7+xALiCjqO9enVwttEuOQXcjXLQBNerNMmm5E0/Z7k71s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FBJ7mGZN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NLLDlHbEZTqyQqqt6u36QiPPg82KlWI5nqB3BQ0AiHI=; b=FBJ7mGZNj86rES7kzmNjnq8EMU
+	fC3pivrKtQeHTKmFR2G6/EYaM5L4T59YXqaI1l/jLKdmNCD6Vo24v65YoBy8fFpGWu5SJc/kgty0a
+	EtX8SrYxCA5kDNneK/GX6O3C2bjonmhQ9w+Z5HDc8RT8QsSUY1mhQrMaHWEjEEm2FSjLgLrCfIVfr
+	9PlfteCGX7EVcmB9SmATwViSSoW30RIjh0bR6QroMXaKgOFWplY7nDW1VXlSCkuUahsy4odmBarzJ
+	YHvelAKJ/CiKheWmJjf2CsDTcgyGZ7xC5SDDkygvR+jHSFb4Rxh91rNJmQtqh6tUiV1fwIzMheXWu
+	ZAc3ZgKg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sTQM9-0000000G7Z2-147S;
+	Mon, 15 Jul 2024 18:23:25 +0000
+Date: Mon, 15 Jul 2024 19:23:25 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: Uses of ->write_begin/write_end
+Message-ID: <ZpVpHYsqgPs3hz8o@casper.infradead.org>
+References: <ZpVHaILAacPNlfyp@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,154 +59,87 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240715094457.452836-11-kernel@pankajraghav.com>
+In-Reply-To: <ZpVHaILAacPNlfyp@casper.infradead.org>
 
-On Mon, Jul 15, 2024 at 11:44:57AM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On Mon, Jul 15, 2024 at 04:59:36PM +0100, Matthew Wilcox wrote:
+> I'm looking at ->write_begin() / ->write_end() again.  Here are our
+> current callers:
 > 
-> Page cache now has the ability to have a minimum order when allocating
-> a folio which is a prerequisite to add support for block size > page
-> size.
+> drivers/gpu/drm/i915/gem/i915_gem_shmem.c:
+> [1]	shmem_pwrite()
+> [2]	i915_gem_object_create_shmem_from_data()
+> fs/affs/file.c:
+> [3]	affs_truncate()
+> fs/buffer.c:
+> [4]	generic_cont_expand_simple()
+> [5]	cont_expand_zero()
+> [6]	cont_expand_zero()
+> fs/exfat/file.c:
+> [7]	exfat_file_zeroed_range()
+> fs/ext4/verity.c:
+> [8]	pagecache_write()
+> fs/f2fs/super.c:
+> [9]	f2fs_quota_write()
+> fs/f2fs/verity.c:
+> [A]	pagecache_write()
+> fs/namei.c:
+> [B]	page_symlink()
+> mm/filemap.c:
+> [C]	generic_perform_write()
+
+I found a few variants of the same pattern:
+
+fs/hfs/extent.c:
+[D]	hfs_file_truncate()
+fs/hfsplus/extents.c:
+[E]	hfsplus_file_truncate()
+fs/ntfs3/file.c:
+[F]	ntfs_extend_initialized_size()
+
+> There are essentially four things that happen between ->write_begin()
+> and ->write_end() in these 12 callers:
 > 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
->  fs/xfs/libxfs/xfs_shared.h |  3 +++
->  fs/xfs/xfs_icache.c        |  6 ++++--
->  fs/xfs/xfs_mount.c         |  1 -
->  fs/xfs/xfs_super.c         | 30 ++++++++++++++++++++++--------
->  5 files changed, 34 insertions(+), 11 deletions(-)
+>  - copy_from_user [1]
+>  - memcpy [289AB]
+>  - zero [567]
+
+ - zero [567F]
+
+>  - nothing [34]
+
+ - nothing [34DE]
+
+>  - copy_from_iter [C]
 > 
-> diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-> index 14c81f227c5bb..1e76431d75a4b 100644
-> --- a/fs/xfs/libxfs/xfs_ialloc.c
-> +++ b/fs/xfs/libxfs/xfs_ialloc.c
-> @@ -3019,6 +3019,11 @@ xfs_ialloc_setup_geometry(
->  		igeo->ialloc_align = mp->m_dalign;
->  	else
->  		igeo->ialloc_align = 0;
-> +
-> +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-> +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-> +	else
-> +		igeo->min_folio_order = 0;
->  }
->  
->  /* Compute the location of the root directory inode that is laid out by mkfs. */
-> diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
-> index 34f104ed372c0..e67a1c7cc0b02 100644
-> --- a/fs/xfs/libxfs/xfs_shared.h
-> +++ b/fs/xfs/libxfs/xfs_shared.h
-> @@ -231,6 +231,9 @@ struct xfs_ino_geometry {
->  	/* precomputed value for di_flags2 */
->  	uint64_t	new_diflags2;
->  
-> +	/* minimum folio order of a page cache allocation */
-> +	unsigned int	min_folio_order;
-> +
->  };
->  
->  #endif /* __XFS_SHARED_H__ */
-> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> index cf629302d48e7..0fcf235e50235 100644
-> --- a/fs/xfs/xfs_icache.c
-> +++ b/fs/xfs/xfs_icache.c
-> @@ -88,7 +88,8 @@ xfs_inode_alloc(
->  
->  	/* VFS doesn't initialise i_mode! */
->  	VFS_I(ip)->i_mode = 0;
-> -	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-> +	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
-> +				    M_IGEO(mp)->min_folio_order);
->  
->  	XFS_STATS_INC(mp, vn_active);
->  	ASSERT(atomic_read(&ip->i_pincount) == 0);
-> @@ -325,7 +326,8 @@ xfs_reinit_inode(
->  	inode->i_uid = uid;
->  	inode->i_gid = gid;
->  	inode->i_state = state;
-> -	mapping_set_large_folios(inode->i_mapping);
-> +	mapping_set_folio_min_order(inode->i_mapping,
-> +				    M_IGEO(mp)->min_folio_order);
->  	return error;
->  }
->  
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index 3949f720b5354..c6933440f8066 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -134,7 +134,6 @@ xfs_sb_validate_fsb_count(
->  {
->  	uint64_t		max_bytes;
->  
-> -	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
->  	ASSERT(sbp->sb_blocklog >= BBSHIFT);
->  
->  	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 27e9f749c4c7f..3c455ef588d48 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1638,16 +1638,30 @@ xfs_fs_fill_super(
->  		goto out_free_sb;
->  	}
->  
-> -	/*
-> -	 * Until this is fixed only page-sized or smaller data blocks work.
-> -	 */
->  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
-> -		xfs_warn(mp,
-> -		"File system with blocksize %d bytes. "
-> -		"Only pagesize (%ld) or less will currently work.",
-> +		size_t max_folio_size = mapping_max_folio_size_supported();
-> +
-> +		if (!xfs_has_crc(mp)) {
-> +			xfs_warn(mp,
-> +"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
->  				mp->m_sb.sb_blocksize, PAGE_SIZE);
-> -		error = -ENOSYS;
-> -		goto out_free_sb;
-> +			error = -ENOSYS;
-> +			goto out_free_sb;
-> +		}
-> +
-> +		if (mp->m_sb.sb_blocksize > max_folio_size) {
-> +			xfs_warn(mp,
-> +"block size (%u bytes) not supported; maximum folio size supported in "\
-> +"the page cache is (%ld bytes). Check MAX_PAGECACHE_ORDER (%d)",
-> +			mp->m_sb.sb_blocksize, max_folio_size,
-> +			MAX_PAGECACHE_ORDER);
-> +			error = -ENOSYS;
-> +			goto out_free_sb;
-
-Nit: Continuation lines should be indented, not lined up with the next
-statement:
-
-			xfs_warn(mp,
-"block size (%u bytes) not supported; maximum folio size supported in "\
-"the page cache is (%ld bytes). Check MAX_PAGECACHE_ORDER (%d)",
-					mp->m_sb.sb_blocksize,
-					max_folio_size,
-					MAX_PAGECACHE_ORDER);
-			error = -ENOSYS;
-			goto out_free_sb;
-
-With that fixed,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> +		}
-> +
-> +		xfs_warn(mp,
-> +"EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
-> +			mp->m_sb.sb_blocksize);
->  	}
->  
->  	/* Ensure this filesystem fits in the page cache limits */
-> -- 
-> 2.44.1
+> I suspect that exfat_file_zeroed_range() should be calling
+> cont_expand_zero(), which means it would need to be exported, but
+> that seems like an improvement over calling write_begin/write_end
+> itself.
+> 
+> The copy_from_user() / memcpy() users feel like they should all end
+> up calling ->write_iter().  One way they could do this is by calling
+> kernel_write() / __kernel_write(), but I'm not sure whether they
+> should have the various accounting things (add_wchar(), inc_syscw())
+> that happen inside __kernel_write_iter().
+> 
+> So should we add:
+> 
+> ssize_t filemap_write_iter(struct file *file, struct iov_iter *from)
+> { ... }
+> 
+> which contains the guts of __kernel_write_iter?
+> ext4's verity code needs a minor refactor to pass down the file
+> (but note comment about how it's a RO file descriptor)
+> f2fs_quota_write doesn't have a struct file and looks generally awkward.
+> page_symlink() is also awkward.
+> 
+> I think that means we need something that _doesn't work_ for iomap-based
+> filesystems.  All of these callers know the filesystem they're working
+> on doesn't use iomap, so perhaps filemap_write_iter() just takes a
+> struct address_space and assumes the existance of
+> ->write_begin/->write_end.
+> 
+> Thoughts?
 > 
 > 
 
