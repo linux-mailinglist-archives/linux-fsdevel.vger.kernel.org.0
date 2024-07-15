@@ -1,112 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-23711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA38931A98
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 20:58:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F170D931ABE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 21:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D83BB2264B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 18:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794E11F21B9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 19:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E3C12B17C;
-	Mon, 15 Jul 2024 18:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4665F12DDA2;
+	Mon, 15 Jul 2024 19:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BZpg8Bln"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DDF762D7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2024 18:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4FEFBE8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2024 19:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721069909; cv=none; b=aUsW3ZDW+z7ITKC5AfusBy4wWOkDeaqgAOR2ZHgrGv8+1QFQheDdhJ8h59zvCLnxATnfS+mnT64Zb7zyZqlAVDqp+6yRMJA+vsdyQxdKScpJGjKQEbns42okYQaYmcklGAwxct/0RrFSVl1aIIgM1bNSgoFRMCXrrBWJlPNghUg=
+	t=1721071258; cv=none; b=STrOO9Y9If7HDtqpmsiYm5as8hxGsW6aWkrmDgppnPxQGhLUimQc7MGlC4DEPc8Bu9BmoXhFM04lF/xmMz07rIUJutFD8vpv5l/K/X5ETHNzmfwbE/hwm3UX+szo0P56VxKLUPzRhMNV6suEprNW4zq2gRycBcsC2D/QyRogq0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721069909; c=relaxed/simple;
-	bh=CY6PWv8H3KhC110hyOjmpJmbBBZx4l8RXYjoZZsvS84=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DH7BfjGMlNKo3eDaVp3rDgmAYpXr8ZdurTP5LzPZHy+VjKFgnoTPFJqRT2+Nxm5BQ9W72VgId0mTlO4Kjg3eTirOuNmJDKnWzov5TJvbkP7fwhflAfoFEfS2SpPF4mVMd2rUWAfh1S+UxIVi7ByE4oDIs+WnM0ufcgz6Oj8QrVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3810df375d0so48518675ab.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2024 11:58:28 -0700 (PDT)
+	s=arc-20240116; t=1721071258; c=relaxed/simple;
+	bh=5T+mAL2CEJGy9l4QE+/1oYzq1KiIG3eYZWzE0hbHous=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WF27kXTlkS0DbV6sROYIwOlbNSHLLNCFwnbd+SuKZVc70c5whRXc/iF/HqOEXAvX3hEDFjpQN12iUE8Ap+M7F5fco/LBzF2EGAB5GLRZT5LSyZuQ4jlEFye3nNnygDgUVDopzyADKPqFl8wSveZsXcpX0zBDcfRbo5Yr4001JIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BZpg8Bln; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77baa87743so524056066b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2024 12:20:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1721071255; x=1721676055; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kZSj+N1deCV/lRMl+PDJPmtWfHIJ1IZbqZ6+B38RC/M=;
+        b=BZpg8Blnnf7c0j2Qwst8sJaRYM/npDGFMuwAdl/XRuu8YI1BLGm5re8jS6GKjAEGqY
+         eBpwoGPAGiFLWYk2MICY00jh35fg7sxT7PttND9UnF2pXq3wAIocNi49Vgcf7NM+/Dwi
+         zeUdefFgsZDLqt7azHNzBhA/akrgMDa766uVs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721069907; x=1721674707;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AvJYbgXXuIoKcXDaxUCAc8E+cIgjRwR+GgSHpz32uFg=;
-        b=UEiPEE8GTS7OWuiSr0gkqOxxUHMt5C9QdcFc1fCUKgjK3p37oFd1GhSYAMaNmUXs3M
-         R90QzQjHIDqldZTFk/Sq/XPmLSwyDCIo1ctTDxy+woF6s95Mrqk4OW5jo2q7dgH9PVry
-         KWDxzU7EiQGm72KIPnbj2r9fwFUqUvnASG9Z/De9iiQSOUIIjjssiseiaDoi5LdCoWx/
-         BHnyyZPf+aciOdJexs8gZciTqljf40eoHwcbSAjcbtu/io1EkMVTM7T9lRnOiOPZYNx/
-         yOnhDS8j9X9pMGaxB49KShPkjQZs9mEugtLBZMRgSZtKsqDn9Qr8dQLUAB0GL1n5dUNm
-         6n5A==
-X-Gm-Message-State: AOJu0YwDm6u6T+KUNj4mJFSChOVTPEu1dbZXQrfNbM/XE4UFF8ARnDrI
-	SYyMnKUaFZpzN9YnJXMMXfyP9ebd5k0sMzYUdVl90EUqyYnZMA0wy6p3xGehlOGuOAiPkzKw0CL
-	broWmHm3f6/D0OxvRVcBoEEIKz97rRLdPJcr8BYaF5BgNfHcGHwPbavM=
-X-Google-Smtp-Source: AGHT+IEAntkkKJQwYWJoP0APVlCWkx+EV5ZRAWX+U3l9yHH9TtkcZf52L1iVeKLmb6+BaKGHeKrmXQs3nNRewIIbedZcMFDmzJQr
+        d=1e100.net; s=20230601; t=1721071255; x=1721676055;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kZSj+N1deCV/lRMl+PDJPmtWfHIJ1IZbqZ6+B38RC/M=;
+        b=SBmxD9+RxSYJbZcfDav+TLYWHuQ1xTve1bOmsgk3XpQjrtVEbh2UVenWf7IlkJ0Mbl
+         yMnkPfXBout0WGuwo2XYUqHbJ/Zj14T/9UDX1vXxgyCN57eP5W9ETUpTWlle3IEsc9Qs
+         yyKRrzR7592ACULs9cO7OpeRUgs5D+TtobwqxE0jur4VU4e1VDZ1JUTVXq0BHJagCmnH
+         rzyUqgJEeh0wrRtyW3DFh8T/JDYmuP5cxCxzwiUlqTDXUv621RYpkgt+kC0h6bw/yTPe
+         5Dq3VUxu9ceCETP6Lf3NShtPzDe23digcR0y0vt49OJv4nK63OfCg7AcIFO73o7esfiT
+         hVLA==
+X-Gm-Message-State: AOJu0Yy7DKm86Xk2hcoDzFuVyGHCQ7FdRp8R6GnR8lNgjHZp98FKiFKL
+	/i52loD0FnzfchhgfxYimkGHaRnnIpbT3KLms5GycJR2GhyuOq9bio2J3FUf/Zc/Brs+iw82/kd
+	s9de61g==
+X-Google-Smtp-Source: AGHT+IFG04o8ukiBTF8LiXPCLaSly5F0xXrGvXC9aB1aWrkeqS8Sr6A9edZvo0sOX6PsDGnpZU7Njw==
+X-Received: by 2002:a17:906:1292:b0:a72:a206:ddc2 with SMTP id a640c23a62f3a-a79e6a5a00dmr50688266b.36.1721071254838;
+        Mon, 15 Jul 2024 12:20:54 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ffffbsm238426166b.173.2024.07.15.12.20.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Jul 2024 12:20:54 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38027so4937644a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jul 2024 12:20:54 -0700 (PDT)
+X-Received: by 2002:a05:6402:2786:b0:58b:2d93:ad83 with SMTP id
+ 4fb4d7f45d1cf-59e978120a7mr595277a12.21.1721071253731; Mon, 15 Jul 2024
+ 12:20:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13af:b0:381:37d6:e590 with SMTP id
- e9e14a558f8ab-39394c98e44mr500685ab.2.1721069907486; Mon, 15 Jul 2024
- 11:58:27 -0700 (PDT)
-Date: Mon, 15 Jul 2024 11:58:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000783846061d4dd043@google.com>
-Subject: [syzbot] Monthly hfs report (Jul 2024)
-From: syzbot <syzbot+list3ec8045314d28d24d911@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240712-vfs-procfs-ce7e6c7cf26b@brauner>
+In-Reply-To: <20240712-vfs-procfs-ce7e6c7cf26b@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 15 Jul 2024 12:20:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com>
+Message-ID: <CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com>
+Subject: Re: [GIT PULL for v6.11] vfs procfs
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello hfs maintainers/developers,
+On Fri, 12 Jul 2024 at 06:59, Christian Brauner <brauner@kernel.org> wrote:
+>
+> The level of fine-grained management isn't my favorite as it requires
+> distributions to have some level of knowledge around the implications of
+> FOLL_FORCE and /proc/<pid>/mem access in general.
 
-This is a 31-day syzbot report for the hfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/hfs
+Ugh.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 42 issues are still open and 18 have been fixed so far.
+I pulled this, and looked at it, and then I decided I can't live with
+something this ugly.
 
-Some of the still happening issues:
+First off, there is ABSOLUTELY no reason for any of this to be using
+static keys, which makes an already ugly patch even uglier. None of
+this is magically so performance-critical that we'd need static keys
+for this kind of thing
 
-Ref  Crashes Repro Title
-<1>  31308   Yes   possible deadlock in hfsplus_file_extend
-                   https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
-<2>  10825   Yes   possible deadlock in hfsplus_get_block
-                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
-<3>  10057   Yes   kernel BUG in hfs_write_inode
-                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-<4>  6645    Yes   kernel BUG in __hfsplus_setxattr
-                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-<5>  2388    Yes   WARNING in drop_nlink (2)
-                   https://syzkaller.appspot.com/bug?extid=651ca866e5e2b4b5095b
-<6>  1446    Yes   WARNING in hfs_bnode_create
-                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
-<7>  1180    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
-                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
-<8>  810     Yes   possible deadlock in hfs_find_init (2)
-                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
-<9>  767     Yes   general protection fault in hfs_find_init
-                   https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
-<10> 472     Yes   possible deadlock in hfsplus_find_init
-                   https://syzkaller.appspot.com/bug?extid=f8ce6c197125ab9d72ce
+Secondly, this is absolutely the wrong kind of nairy rat's nest of
+strange conditionals made worse by pointlessly adding kernel command
+line options for it.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Now, the FOLL_FORCE is unquestionably problematic. But this horror
+isn't making it better - it's just obfuscating a bad situation and
+making it worse.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+By all means just add one single kernel config option to say "no
+FOLL_FORCE in /proc/pid/mem". Or require it to *actually* be traced,
+or something like that.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+But not this horror.
 
-You may send multiple commands in a single email message.
+             Linus
 
