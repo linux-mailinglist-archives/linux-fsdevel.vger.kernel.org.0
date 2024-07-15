@@ -1,217 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-23679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98C8931244
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 12:28:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0A993124C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 12:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C451C217CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 10:28:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDE251C21A92
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 10:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650F018786F;
-	Mon, 15 Jul 2024 10:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CtAVxPk6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7170188CA4;
+	Mon, 15 Jul 2024 10:32:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E272187561;
-	Mon, 15 Jul 2024 10:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1E613B5BD;
+	Mon, 15 Jul 2024 10:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721039306; cv=none; b=L8TTdbhm8u/j6lgiBwyeX2tdAd1SMHrZAnQ0Fih4OZ6gnTfXqZpY0QaCnV+c9//JltLM0Ew7OeByf5AGV9NXUy3pqiWD4cvOxWx3GCTBegv/maWk05ZYKZR9m2FBNBaBElXwpkPC8r0gfKtlo3YF8i2aMBiVPDVXiRyEu8Awxpc=
+	t=1721039545; cv=none; b=MKQs5wmcmzUwjyMSR6a2Rfq1AIgDDOzHGef7PnWBBrizDnGWX/KXaDiGKPuRUm+oJcCP7EAVCdqxaaDtoOAEJ4KwNj6rHlDEpSQ1II1wPtlK7C3KdlaskB+ZKvjtHT5OTwkraVts56EyWXLPUFxc0CMjG3FX5vkLzHHlZkoFUhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721039306; c=relaxed/simple;
-	bh=jWh8aolPcQUN6HW+bG6AksgWYGkRR+D9kYp2ZWxSneU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nnb/l/jTvjAbWlcPpJooxeulANr/+4v/R7AFTQvURJDjQXc/Ee8aIPPXsoJUtGKTLCP64GMHwkzpDat302X2S+Gc0hDi8hKweaFR7UHPocO4At9R1PFdvKW0303r1HbhnBsXhHsxfvxLvGFuaCOBDCPW9ydHiVsG5yKHcPPi8Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CtAVxPk6; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-79f02fe11aeso331918685a.2;
-        Mon, 15 Jul 2024 03:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721039304; x=1721644104; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BgeWbA5looYm6PBW/8zreqXM2SHIapgVNeyP/UhRN1M=;
-        b=CtAVxPk6HZS846Yge90cg/DSpQY/+B1YNFAINURYRH/LJcaOIoUMRQPXtF1+P1IDUx
-         JJNNzrC9Lp7ehkqZ3dGjE0IHmrfM1pBh//yQ9xa5deoC4EQvbjmcyBYBdrM6UsISK6nT
-         6qrQwAMS+ezGor1BoA7jWmAmiZhXK68mMSbLBQkMqnSq0Ql/medDt8DPucnLfMelpv+f
-         93ddTQ7m/oorOtrFrUxIVj8p3Coafba8NRmtLkSLTecf1ER4X1h/A3dM6CBUPUqtDlI0
-         OhzhtSrO8Gr6I4H4WhBDdPsGTFJ1bwfCelWUP0wmeHfjo6iOSb4wrorty8UVOUy7dxtC
-         6Dww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721039304; x=1721644104;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BgeWbA5looYm6PBW/8zreqXM2SHIapgVNeyP/UhRN1M=;
-        b=gRuwHjFLuT9JMuERk1Mswp8bcUtlASGGthsjbPwJify3ASpj4to13Wi8NgP9lBBx+t
-         xmci1D3ixr3gddYvq2dUH/wWlu6yJnbem2liN1Q0nO4u3g6wNX+0EeXwvACnkCDEzNr8
-         PpKM4ECY14pkTzOPb/Ke41B/vu41s0ocrjnk40vMGIbmEUwu/aA8YtPgCHcev9MfyCYu
-         GpKFf3CTEmFNxXGOAdY/oyyjY8udnWnvUBytq9S7Gqm8Lpic2UOaPeMJg0qw0q67J9bW
-         4a1KmpsSfupIPpbbYbZnNWfX+zMRl6FarqPCjuyi1iWCXWZhBc7C1VrxGMTxSoWQ3RvM
-         wdAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFXCaqGU3FhzU3XWbGpEEv+U/dGb5GKO4yEh14yOvbPrVnnvn5ruQG+S7mfsxl713GSYVz8ZQtEMKbzqnqQ5UJaI7qxsTOitxS5B/4bYx2gViLZmJmuPMCOg9jAKBM5TQ9XMAsbbwLqbORDg==
-X-Gm-Message-State: AOJu0YzyGHppweXVEawHcm62i25AAsVkyI2SLINLBaPW0kx5vOY55VAB
-	k21A90d1IctLIJ+Z/35+a5g8ehuT+gNObQwaB8CJI2uSR+T/MF2XfZUVTMNhbh5fbhJqWd6/gM6
-	rWKKbP8NclIJugMlNFx8W9GxLGL4=
-X-Google-Smtp-Source: AGHT+IH+Ob3ztKnB7vGZrA9GPa/jmeiGeW82xmDmr8Ep49G3B4JE9b2DD410tMKFmw8OiyIwTuaZpM60fih5vPdVArA=
-X-Received: by 2002:a05:620a:12c8:b0:79d:67f3:636d with SMTP id
- af79cd13be357-79f19a6f782mr1942285285a.19.1721039304145; Mon, 15 Jul 2024
- 03:28:24 -0700 (PDT)
+	s=arc-20240116; t=1721039545; c=relaxed/simple;
+	bh=1vvbywj5eeKaY/5Q3zxYZaJ25/BZeER05pTRkQz95R4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rwyMaee5bpXO7t+45o/SqQb1k0/EWZR7FCLviken/mBjMXitsZrUnv2prfaPSpwv5DiSgQW6FET5DvU5E1H5DSyNLljRThIbausMN0Fm4c+RxKWZbkcfF0YkVWAz90X+6VeiuuUpofy0gj9zfVv9UKa/ZKlpSZGKGuofTTd8em0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-27-6694faaa4f59
+Date: Mon, 15 Jul 2024 19:32:05 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	max.byungchul.park@sk.com,
+	Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+	kernel_team@skhynix.com
+Subject: Re: Possible circular dependency between i_data_sem and folio lock
+ in ext4 filesystem
+Message-ID: <20240715103205.GA38263@system.software.com>
+References: <CAB=+i9SmrqEEqQp+AQvv+O=toO9x0mPam+b1KuNT+CgK0J1JDQ@mail.gmail.com>
+ <20240711153846.GG10452@mit.edu>
+ <20240712044420.GA62198@system.software.com>
+ <20240712053150.GA68384@system.software.com>
+ <e71f73d5-4dbc-4194-9409-6daf807cb27e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240705081528epcas1p32c38cfb39dae65109bbfbd405a9852b2@epcas1p3.samsung.com>
- <20240705081514.1901580-1-dongliang.cui@unisoc.com> <459601dad36f$c913a770$5b3af650$@samsung.com>
- <da2c0cd06c4a4dfa86f0ea2dbc3e1435@BJMBX02.spreadtrum.com>
-In-Reply-To: <da2c0cd06c4a4dfa86f0ea2dbc3e1435@BJMBX02.spreadtrum.com>
-From: dongliang cui <cuidongliang390@gmail.com>
-Date: Mon, 15 Jul 2024 18:28:13 +0800
-Message-ID: <CAPqOJe3gTwxr63k7MYofmcR_BOuq0yhcxL-DA5pkViFshQ9b0A@mail.gmail.com>
-Subject: Re: [PATCH] exfat: check disk status during buffer write
-To: =?UTF-8?B?5bSU5Lic5LquIChEb25nbGlhbmcgQ3VpKQ==?= <Dongliang.Cui@unisoc.com>
-Cc: Sungjong Seo <sj1557.seo@samsung.com>, "linkinjeon@kernel.org" <linkinjeon@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"niuzhiguo84@gmail.com" <niuzhiguo84@gmail.com>, =?UTF-8?B?546L55qTIChIYW9faGFvIFdhbmcp?= <Hao_hao.Wang@unisoc.com>, 
-	=?UTF-8?B?54mb5b+X5Zu9IChaaGlndW8gTml1KQ==?= <Zhiguo.Niu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e71f73d5-4dbc-4194-9409-6daf807cb27e@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJLMWRmVeSWpSXmKPExsXC9ZZnoe6qX1PSDH6fUbeY2GNgcfH1HyaL
+	mfPusFns2XuSxeLemv+sFq09P9ktOl7eZ3Fg99g56y67x+I9L5k8Nq3qZPPY9GkSu0fTmaPM
+	Hp83yQWwRXHZpKTmZJalFunbJXBlfPlwjq1ghkjFpvZtbA2MJ/m7GDk5JARMJH5NfcrWxcgB
+	Zp9ZUAwSZhFQlbi6YCcjiM0moC5x48ZPZhBbRMBAYvfm86xdjFwczALzmST6jy1iAUkICyRI
+	vJh5GqyBV8BC4uKzOywgRUICrUwSzS0XmCASghInZz4Ba2AW0JK48e8lE8hiZgFpieX/OEBM
+	TgE7id8TpUAqRAWUJQ5sO84EceYRNokLCwQhbEmJgytusExgFJiFZOgsJENnIQxdwMi8ilEo
+	M68sNzEzx0QvozIvs0IvOT93EyMwwJfV/onewfjpQvAhRgEORiUe3gN7J6cJsSaWFVfmHmKU
+	4GBWEuH1/jklTYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv0bfyFCGB9MSS1OzU1ILUIpgsEwen
+	VANjqZbJl0f6/RfsL/yR7c7RYzicxnRIMHpO8u3yFG6u2FqtlnLDn58/By9NNT9kuK7T/mzd
+	gyIpmZ1R0n90z3K2SccV36la1ZqetP2Ky0zxV/WTZj5x0I//avPwkOCbXbGz87bOkjE75KK/
+	v/lwbvfJBDdp3ufah951nhAxXmTUPX2NTHfz74lKLMUZiYZazEXFiQDIhurvbAIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsXC5WfdrLvq15Q0g+nrZS0m9hhYXHz9h8ni
+	8NyTrBYz591hs9iz9ySLxb01/1ktZrTlWbT2/GS36Hh5n8WB02PnrLvsHov3vGTy2LSqk81j
+	06dJ7B5NZ44ye3y77eGx+MUHJo/Pm+QCOKK4bFJSczLLUov07RK4Mr58OMdWMEOkYlP7NrYG
+	xpP8XYwcHBICJhJnFhR3MXJysAioSlxdsJMRxGYTUJe4ceMnM4gtImAgsXvzedYuRi4OZoH5
+	TBL9xxaxgCSEBRIkXsw8DdbAK2AhcfHZHRaQIiGBViaJ5pYLTBAJQYmTM5+ANTALaEnc+PeS
+	CWQxs4C0xPJ/HCAmp4CdxO+JUiAVogLKEge2HWeawMg7C0nzLCTNsxCaFzAyr2IUycwry03M
+	zDHVK87OqMzLrNBLzs/dxAgM4GW1fybuYPxy2f0QowAHoxIP74G9k9OEWBPLiitzDzFKcDAr
+	ifB6/5ySJsSbklhZlVqUH19UmpNafIhRmoNFSZzXKzw1QUggPbEkNTs1tSC1CCbLxMEp1cC4
+	JJmjhmvCh9feVo+3lMR39+Tv8lJTKt//Ro1D8PDcRa+WL/R2mlX/u3zn6+2P0t5Yqnx7y93m
+	8PrVq9nFWQu53uilHvQzSMowdf27lYVJU6vzq8c1I4tE5je22wqbxE99c37/aKHFrHfL6u9n
+	Gfv6ctUx/W3T+CBfdkSIL3Hh+nm/buixLZJXYinOSDTUYi4qTgQAKIayOlwCAAA=
+X-CFilter-Loop: Reflected
 
-On Mon, Jul 15, 2024 at 4:51=E2=80=AFPM =E5=B4=94=E4=B8=9C=E4=BA=AE (Dongli=
-ang Cui)
-<Dongliang.Cui@unisoc.com> wrote:
->
-> > We found that when writing a large file through buffer write, if the
-> > disk is inaccessible, exFAT does not return an error normally, which
-> > leads to the writing process not stopping properly.
-> >
-> > To easily reproduce this issue, you can follow the steps below:
-> >
-> > 1. format a device to exFAT and then mount (with a full disk erase) 2.
-> > dd if=3D/dev/zero of=3D/exfat_mount/test.img bs=3D1M count=3D8192 3. ej=
-ect the
-> > device
-> >
-> > You may find that the dd process does not stop immediately and may
-> > continue for a long time.
-> >
-> > We compared it with the FAT, where FAT would prompt an EIO error and
-> > immediately stop the dd operation.
-> >
-> > The root cause of this issue is that when the exfat_inode contains the
-> > ALLOC_NO_FAT_CHAIN flag, exFAT does not need to access the disk to
-> > look up directory entries or the FAT table (whereas FAT would do)
-> > every time data is written. Instead, exFAT simply marks the buffer as
-> > dirty and returns, delegating the writeback operation to the writeback
-> > process.
-> >
-> > If the disk cannot be accessed at this time, the error will only be
-> > returned to the writeback process, and the original process will not
-> > receive the error, so it cannot be returned to the user side.
-> >
-> > Therefore, we think that when writing files with ALLOC_NO_FAT_CHAIN,
-> > it is necessary to continuously check the status of the disk.
-> >
-> > When the disk cannot be accessed normally, an error should be returned
-> > to stop the writing process.
-> >
-> > Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
-> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> > ---
-> >  fs/exfat/exfat_fs.h | 5 +++++
-> >  fs/exfat/inode.c    | 5 +++++
-> >  2 files changed, 10 insertions(+)
-> >
-> > diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h index
-> > ecc5db952deb..c5f5a7a8b672 100644
-> > --- a/fs/exfat/exfat_fs.h
-> > +++ b/fs/exfat/exfat_fs.h
-> > @@ -411,6 +411,11 @@ static inline unsigned int
-> > exfat_sector_to_cluster(struct exfat_sb_info *sbi,
-> >               EXFAT_RESERVED_CLUSTERS;  }
-> >
-> > +static inline bool exfat_check_disk_error(struct block_device *bdev)
-> > +{
-> > +     return blk_queue_dying(bdev_get_queue(bdev));
-> Why don't you check it like ext4?
->
-> static int block_device_ejected(struct super_block *sb) {
->        struct inode *bd_inode =3D sb->s_bdev->bd_inode;
->        struct backing_dev_info *bdi =3D inode_to_bdi(bd_inode);
->
->        return bdi->dev =3D=3D NULL;
-> }
->
-> The block_device->bd_inode has been removed in the latest code.
-> We might be able to use super_block->s_bdi->dev for the judgment,
-> or perhaps use blk_queue_dying?
+On Fri, Jul 12, 2024 at 11:23:36PM +0200, Vlastimil Babka (SUSE) wrote:
+> On 7/12/24 7:31 AM, Byungchul Park wrote:
+> > On Fri, Jul 12, 2024 at 01:44:20PM +0900, Byungchul Park wrote:
+> >> 
+> >> What a funny guy...  He did neither 1) insisting it's a bug in your code
+> >> nor 3) insisting DEPT is a great tool, but just asking if there's any
+> >> locking rules based on the *different acqusition order* between folio
+> >> lock and i_data_sem that he observed anyway.
+> >> 
+> >> I don't think you are a guy who introduces bugs, but the thing is it's
+> >> hard to find a *document* describing locking rules.  Anyone could get
+> >> fairly curious about the different acquisition order.  It's an open
+> >> source project.  You are responsible for appropriate document as well.
+> >> 
+> >> I don't understand why you act to DEPT like that by the way.  You don't
+> >> have to becasue:
+> >> 
+> >>    1. I added the *EXPERIMENTAL* tag in Kconfig as you suggested, which
+> >>       will prevent autotesting until it's considered stable.  However,
+> >>       the report from DEPT can be a good hint to someone.
+> >> 
+> >>    2. DEPT can locate code where needs to be documented even if it's not
+> >>       a real bug.  It could even help better documentation.
+> >> 
+> >> DEPT hurts neither code nor performance unless enabling it.
+> 
+> enabling means building with CONFIG_DEPT right?
 
-Hi,
-To provide more information,
+Yes.
 
-Related commits for the removal of bd_inode,
-203c1ce0bb06 RIP ->bd_inode
+> >> > If you want to add lock annotations into the struct page or even
+> >> > struct folio, I cordially invite you to try running that by the mm
+> >> > developers, who will probably tell you why that is a terrible idea
+> >> > since it bloats a critical data structure.
+> 
+> I doubt anyone will object making struct page larger for a non-production
+> debugging config option, which AFAIU DEPT is, i.e. in the same area as
+> LOCKDEP or KASAN etc... I can see at least KMSAN already adds some fields to
+> struct page already.
 
-Since bd_inode has been removed, referencing the method of ext4 might
-not be feasible. Can we consider using one of the following two methods
-instead?
+I think so.
 
-For example,
-struct int exfat_block_device_ejected(struct super_block *sb)
-{
-        struct backing_dev_info *bdi =3D sb->s_bdi;
-        return bdi->dev =3D=3D NULL;
-}
-Or,
-static inline bool exfat_check_disk_error(struct block_device *bdev)
-{
-       return blk_queue_dying(bdev_get_queue(bdev));
-}
+> >> I already said several times.  Doesn't consume struct page.
+> > 
+> > Sorry for that.  I've changed the code so the current version consumes
+> > it by about two words if enabled.  I can place it to page_ext as before
+> > if needed.
+> 
+> page_ext is useful if you have a debugging feature that can be compiled in
+> but adds no overhead (memory, nor cpu thanks to static keys) unless enabled
+> on boot time, i.e. page_owner... so for DEPT it seems it would be an
+> unnecessary complication.
 
-Are there any other suggestions?
+Yeah, I will think it more.  However, maybe, as you said, it could
+introduce a complication.  Thanks.
 
-> >  static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
-> >               unsigned int clus)
-> >  {
-> > diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c index
-> > dd894e558c91..efd02c1c83a6 100644
-> > --- a/fs/exfat/inode.c
-> > +++ b/fs/exfat/inode.c
-> > @@ -147,6 +147,11 @@ static int exfat_map_cluster(struct inode *inode,
-> > unsigned int clu_offset,
-> >       *clu =3D last_clu =3D ei->start_clu;
-> >
-> >       if (ei->flags =3D=3D ALLOC_NO_FAT_CHAIN) {
-> > +             if (exfat_check_disk_error(sb->s_bdev)) {
-> > +                     exfat_fs_error(sb, "device inaccessiable!\n");
-> > +                     return -EIO;
-> This patch looks useful when using removable storage devices.
-> BTW, in case of "ei->flags !=3D ALLOC_NO_FAT_CHAIN", There could be the s=
-ame problem if it can be found from lru_cache. So, it would be nice to chec=
-k disk_error regardless ei->flags. Also, Calling exfat_fs_error() seems unn=
-ecessary. Instead, let's return -ENODEV instead of -EIO.
-> I believe that these errors will be handled on exfat_get_block()
->
->
-> Thanks.
-> > +             }
-> > +
-> >               if (clu_offset > 0 && *clu !=3D EXFAT_EOF_CLUSTER) {
-> >                       last_clu +=3D clu_offset - 1;
-> >
-> > --
-> > 2.25.1
->
->
+	Byungchul
 
