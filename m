@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-23671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8AC931194
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 11:46:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F12931198
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 11:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1CE0B22907
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 09:46:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA4E1C221CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 09:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BBF18756F;
-	Mon, 15 Jul 2024 09:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97521188CB2;
+	Mon, 15 Jul 2024 09:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="DziKE2LF"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="rGrj22+Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09F0187543;
-	Mon, 15 Jul 2024 09:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0EE187877;
+	Mon, 15 Jul 2024 09:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721036738; cv=none; b=EcZLk3UFKoQxqG9iOJp51FC11KTsx8XrGabsslryuAwJMqQQ6rvjqcsqBWkgDF7RKBXzlPDFI5Ki7hu2gCmeMVfLZhk0/oIS2EbBolIUp8u0tN7EKDNXytXEDgU4kJQs2ycY7sNq8QuyGpIQH8AcBbZNUOIW20H2j6t59h6vSp0=
+	t=1721036742; cv=none; b=ntTUJ2q4aqTUaq7WKgFS2YykwuAiaPiergWH66Ge3EHAZKAi3lSPHVU94oZCgybE2gtEi69uZKptZXlTJnOQsJWkElXmXRD4yr9986Zpap6yY3q511/7mRKJxP/1gEB0vO3HYuhTDtMjq7CljJyrRBZc8GfQUB/vxv9//rTXMn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721036738; c=relaxed/simple;
-	bh=Y6wnkr9YicCwKOn6q4dbs0j5MDwg7izxrtZViWy+w08=;
+	s=arc-20240116; t=1721036742; c=relaxed/simple;
+	bh=wMW80ui6itXUIfuxu/w/BUL0KSHPMmQcEGz9AF7yD5I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gWMF3bmDAUrkZBOSck4w+drjBdIJqVwTzQC/IOxyEdl+O+TkhJo9ViW7JOrIfSc+liNNQloP4kJ1ywFKINaMxzYknghWsIzCgqj23gDYQ2AUk+h3PLKpSeih1HtmkfHvW6mpwh0DwlN+shg0ZE+7gqA1e6L8YJWeO8of8+PEzKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=DziKE2LF; arc=none smtp.client-ip=80.241.56.152
+	 MIME-Version; b=eg6Df5uo9wi4jagMhuaXcwzCK4JwvGbw3QkU3pZ6cPgPIExw2LxlkBhEi/yzpvNoCz7H1v1HS2zL2ZcVTtlpEBKyhwmCccEymt7Cp3PxajNtuhvswYnA8WYkq4wkY/Nib7khFy62UBIAiSYlqKhhrARwW3bKcsoPK7g29rtnEUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=rGrj22+Z; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WMy4D6rpSz9slc;
-	Mon, 15 Jul 2024 11:45:32 +0200 (CEST)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WMy4K0G2Sz9sb6;
+	Mon, 15 Jul 2024 11:45:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1721036733;
+	s=MBO0001; t=1721036737;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xbld/pizLMEJfrPYBqwQ81gjcSKIsZj5n7TDu8kDUY0=;
-	b=DziKE2LFE+foxOGJVWPx7ePlNX35aSAPc4JT7wXBeonEpWgqtmj1s/uCtAHsolEfoAlwQY
-	SFHmwH8TKmqeUWfMSvGVo1Z0aXhDPf8+DmViEFIO2v1b9HHxDDPPY3c8/PwyYU2RUGwKAH
-	mkom7J2oa+9jxrEdMn5SXSewYicuV2NroLCHc+Pa2V3xv8RSElNGN2MOEZDnAJ4oIqYlRI
-	mgWoCRcbeSUvnl3qbdNHoBCr/Ddebi04C9Qw4g/wOP3gXzvHsoP1IDR/qwFlJBa1/S71IX
-	TJHSleYyo8MxFnpbaphpSvEblAhElowOxU8DcvzyXza3tjwqH9XWxmnUJioUwQ==
+	bh=92ifPOSk+9xMdQXjuWHjR+cARiQXMVhXQNki2unPXuQ=;
+	b=rGrj22+ZbxWopDnVHtQ4n9SYXpTi+VrSPG6duV70k1Xw2paVhATH4a7VmK4dscc7zY2/O8
+	5Q6+F+TWSQLltJzk/L+FGzXTWshUUN/d9QbtsLNtI6cGDPpWtIgmAZ9Xpzn6bScg+/6uyq
+	XBXN+0gRAgYZWIRK8XAea5BBejOKEW70Zv7AOmMxoumemPvAQ/xsg1ZBLJZ46UW0T0Wobu
+	gE3zexFXWrJvj7mxOaBV7uW4nNkLR6Wn7VH6tPr0CVQwn5rpQtQzioTJoAacDBJ9eKIgir
+	j32814slkkg3dakyF4d8QIYZgV/Ib2z08IT6D3c2xbqUxPqr2qaAHHI2ewlHBQ==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: david@fromorbit.com,
 	willy@infradead.org,
@@ -70,10 +70,11 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel@pankajraghav.com,
 	ryan.roberts@arm.com,
 	hch@lst.de,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v10 05/10] filemap: cap PTE range to be created to allowed zero fill in folio_map_range()
-Date: Mon, 15 Jul 2024 11:44:52 +0200
-Message-ID: <20240715094457.452836-6-kernel@pankajraghav.com>
+	Zi Yan <ziy@nvidia.com>,
+	Dave Chinner <dchinner@redhat.com>
+Subject: [PATCH v10 06/10] iomap: fix iomap_dio_zero() for fs bs > system page size
+Date: Mon, 15 Jul 2024 11:44:53 +0200
+Message-ID: <20240715094457.452836-7-kernel@pankajraghav.com>
 In-Reply-To: <20240715094457.452836-1-kernel@pankajraghav.com>
 References: <20240715094457.452836-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -83,67 +84,148 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4WMy4D6rpSz9slc
+X-Rspamd-Queue-Id: 4WMy4K0G2Sz9sb6
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-Usually the page cache does not extend beyond the size of the inode,
-therefore, no PTEs are created for folios that extend beyond the size.
+iomap_dio_zero() will pad a fs block with zeroes if the direct IO size
+< fs block size. iomap_dio_zero() has an implicit assumption that fs block
+size < page_size. This is true for most filesystems at the moment.
 
-But with LBS support, we might extend page cache beyond the size of the
-inode as we need to guarantee folios of minimum order. While doing a
-read, do_fault_around() can create PTEs for pages that lie beyond the
-EOF leading to incorrect error return when accessing a page beyond the
-mapped file.
+If the block size > page size, this will send the contents of the page
+next to zero page(as len > PAGE_SIZE) to the underlying block device,
+causing FS corruption.
 
-Cap the PTE range to be created for the page cache up to the end of
-file(EOF) in filemap_map_pages() so that return error codes are consistent
-with POSIX[1] for LBS configurations.
+iomap is a generic infrastructure and it should not make any assumptions
+about the fs block size and the page size of the system.
 
-generic/749(currently in xfstest-dev patches-in-queue branch [0]) has
-been created to trigger this edge case. This also fixes generic/749 for
-tmpfs with huge=always on systems with 4k base page size.
-
-[0] https://lore.kernel.org/all/20240615002935.1033031-3-mcgrof@kernel.org/
-[1](from mmap(2))  SIGBUS
-    Attempted access to a page of the buffer that lies beyond the end
-    of the mapped file.  For an explanation of the treatment  of  the
-    bytes  in  the  page that corresponds to the end of a mapped file
-    that is not a multiple of the page size, see NOTES.
-
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
 ---
- mm/filemap.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/iomap/buffered-io.c |  4 ++--
+ fs/iomap/direct-io.c   | 45 ++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 41 insertions(+), 8 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d27e9ac54309d..d322109274532 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3608,7 +3608,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct file *file = vma->vm_file;
- 	struct address_space *mapping = file->f_mapping;
--	pgoff_t last_pgoff = start_pgoff;
-+	pgoff_t file_end, last_pgoff = start_pgoff;
- 	unsigned long addr;
- 	XA_STATE(xas, &mapping->i_pages, start_pgoff);
- 	struct folio *folio;
-@@ -3634,6 +3634,10 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
- 		goto out;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index f420c53d86acc..d745f718bcde8 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -2007,10 +2007,10 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
+ }
+ EXPORT_SYMBOL_GPL(iomap_writepages);
+ 
+-static int __init iomap_init(void)
++static int __init iomap_buffered_init(void)
+ {
+ 	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
+ 			   offsetof(struct iomap_ioend, io_bio),
+ 			   BIOSET_NEED_BVECS);
+ }
+-fs_initcall(iomap_init);
++fs_initcall(iomap_buffered_init);
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index f3b43d223a46e..c02b266bba525 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -11,6 +11,7 @@
+ #include <linux/iomap.h>
+ #include <linux/backing-dev.h>
+ #include <linux/uio.h>
++#include <linux/set_memory.h>
+ #include <linux/task_io_accounting_ops.h>
+ #include "trace.h"
+ 
+@@ -27,6 +28,13 @@
+ #define IOMAP_DIO_WRITE		(1U << 30)
+ #define IOMAP_DIO_DIRTY		(1U << 31)
+ 
++/*
++ * Used for sub block zeroing in iomap_dio_zero()
++ */
++#define IOMAP_ZERO_PAGE_SIZE (SZ_64K)
++#define IOMAP_ZERO_PAGE_ORDER (get_order(IOMAP_ZERO_PAGE_SIZE))
++static struct page *zero_page;
++
+ struct iomap_dio {
+ 	struct kiocb		*iocb;
+ 	const struct iomap_dio_ops *dops;
+@@ -232,13 +240,20 @@ void iomap_dio_bio_end_io(struct bio *bio)
+ }
+ EXPORT_SYMBOL_GPL(iomap_dio_bio_end_io);
+ 
+-static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
++static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+ 		loff_t pos, unsigned len)
+ {
+ 	struct inode *inode = file_inode(dio->iocb->ki_filp);
+-	struct page *page = ZERO_PAGE(0);
+ 	struct bio *bio;
+ 
++	if (!len)
++		return 0;
++	/*
++	 * Max block size supported is 64k
++	 */
++	if (WARN_ON_ONCE(len > IOMAP_ZERO_PAGE_SIZE))
++		return -EINVAL;
++
+ 	bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
+ 	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+ 				  GFP_KERNEL);
+@@ -246,8 +261,9 @@ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+ 	bio->bi_private = dio;
+ 	bio->bi_end_io = iomap_dio_bio_end_io;
+ 
+-	__bio_add_page(bio, page, len, 0);
++	__bio_add_page(bio, zero_page, len, 0);
+ 	iomap_dio_submit_bio(iter, dio, bio, pos);
++	return 0;
+ }
+ 
+ /*
+@@ -356,8 +372,10 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+ 	if (need_zeroout) {
+ 		/* zero out from the start of the block to the write offset */
+ 		pad = pos & (fs_block_size - 1);
+-		if (pad)
+-			iomap_dio_zero(iter, dio, pos - pad, pad);
++
++		ret = iomap_dio_zero(iter, dio, pos - pad, pad);
++		if (ret)
++			goto out;
  	}
  
-+	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
-+	if (end_pgoff > file_end)
-+		end_pgoff = file_end;
+ 	/*
+@@ -431,7 +449,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+ 		/* zero out from the end of the write to the end of the block */
+ 		pad = pos & (fs_block_size - 1);
+ 		if (pad)
+-			iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
++			ret = iomap_dio_zero(iter, dio, pos,
++					     fs_block_size - pad);
+ 	}
+ out:
+ 	/* Undo iter limitation to current extent */
+@@ -753,3 +772,17 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	return iomap_dio_complete(dio);
+ }
+ EXPORT_SYMBOL_GPL(iomap_dio_rw);
 +
- 	folio_type = mm_counter_file(folio);
- 	do {
- 		unsigned long end;
++static int __init iomap_dio_init(void)
++{
++	zero_page = alloc_pages(GFP_KERNEL | __GFP_ZERO,
++				IOMAP_ZERO_PAGE_ORDER);
++
++	if (!zero_page)
++		return -ENOMEM;
++
++	set_memory_ro((unsigned long)page_address(zero_page),
++		      1U << IOMAP_ZERO_PAGE_ORDER);
++	return 0;
++}
++fs_initcall(iomap_dio_init);
 -- 
 2.44.1
 
