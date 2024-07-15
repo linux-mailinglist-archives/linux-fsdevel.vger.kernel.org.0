@@ -1,110 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-23715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E681931BA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 22:16:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059E0931BB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 22:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00891C21B68
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 20:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37A0A1C21A9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jul 2024 20:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5B813AD2B;
-	Mon, 15 Jul 2024 20:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F808528F;
+	Mon, 15 Jul 2024 20:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="DA6RQIEo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuGYsfLc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7931758F;
-	Mon, 15 Jul 2024 20:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511A42AF1E;
+	Mon, 15 Jul 2024 20:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721074605; cv=none; b=kByoMNdAeSmwDyQ3bIkwWpEGgiGKH+2Kos0B1TrqUfmAP/ngt0UETDnCprdL96/SQQiF1ql02S+FuWb9BWu1onVJlagSwo7oVnSWsFr045UhEBQDcN/bDa7iUqltfbbCvz0yfwiy2+wuHpM46RrY5yycE6h1tD5q1HcEA0tCVQA=
+	t=1721074665; cv=none; b=UAv0XorOHeu0/uVHZmC0iYHeVgv4afkbHi6QNmpLSAMafhzY3BuoKAL79ElJRZOVTcOxndnp3mkf3jb524BpcwA8O4uGq8b3/u+gD7Oz1I9GWb/W+t6da7INbO8da8fkeo7rtGfja9aYspC3h4CzP0zkMqxGyWBF7f81x2IBUEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721074605; c=relaxed/simple;
-	bh=qCiGfPB1gQ4jS9TNROTwe/253cFlMSCfdlMQaOpPpXM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dZG3j1ZGEOhODPYVz7LTQTFURdxw3/7tUYRqXXQTBdN22iGmAToRQ7v+x3HGlNTWY5zOHzRnLTGXcKLlmBfvzbErAqk5Z59RemCEt8FZs/mADtZ9MddcQbwHniZlYbvAiv/JYk9vHoCpYsL9O7qfllU0XsKwo8lvl0pCPiAbh1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=DA6RQIEo; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9853A418A2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1721074602; bh=qCiGfPB1gQ4jS9TNROTwe/253cFlMSCfdlMQaOpPpXM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DA6RQIEoFFqTWCYbIUWlOKjxmMchd8JstjU1istskyz4wucCTn63QQ1d7WEP9c3N9
-	 +uEJiE6NiSQkuIb7A3ybtn/rknSK6559U6x13uhxdkKJ1B40Q7W34CmCjLRNunemQo
-	 a2Q6Ij+XN8nAooXYLvFjGy9eLfwOoNCiDakxWij2+n71YbXXa6SEFoI4G5d3kPVxRw
-	 LoZgUcOz/BMK7U8TipaVGz7RLHFUB9TAruatbX18ydU7GbsFbC9yGzABG+Dm3+4wPf
-	 zWNcR5eToI69Wtncggp6gkWWPGltQFDkucVVEExkDb4c6zJcyWD4zzxMWI/XXgxXBM
-	 xtHjVPv2/osKQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 9853A418A2;
-	Mon, 15 Jul 2024 20:16:42 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, Al Viro
- <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore
- <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, Alejandro
- Colomar
- <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton
- <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>,
- Christian Heimes <christian@python.org>, Dmitry Vyukov
- <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, Eric Chiang
- <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, Florian
- Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
- James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann
- Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jordan R Abrahams
- <ajordanr@google.com>, Lakshmi Ramasubramanian
- <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, Luis
- Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman"
- <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>,
- Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox
- <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar
- <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
- Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower
- <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, Thibaut
- Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, Yin
- Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com,
- linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
-In-Reply-To: <20240704190137.696169-1-mic@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
-Date: Mon, 15 Jul 2024 14:16:41 -0600
-Message-ID: <8734oawguu.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1721074665; c=relaxed/simple;
+	bh=nV0pV7geh3E0Gng/hveSYWznkIUJ2IUGHcX8dzFXWOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2nhhdy+XIhsICo6mxHxDLpzefesJKDcVWc59dFfR7w9KcGxdaeJ0rKOZZMeAAXkLnneDYqGbaSBO+oZ1Q1GadLxIeZ1HNvkTT68pSNO3zg2UOaq3k6Yxf9CA82FmKhEjqX3DR5CxGcEiJ1PSLLU1G7AMpg2+wSD5QVF7SZwa98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuGYsfLc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10193C32782;
+	Mon, 15 Jul 2024 20:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721074664;
+	bh=nV0pV7geh3E0Gng/hveSYWznkIUJ2IUGHcX8dzFXWOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TuGYsfLcx4GspKL86Eh/mosMZut+5IR33yPnktkxhHSsLtJLwoG7R+PTdsfJaGNGv
+	 EEsBgrMTB/d9+P3pG00k5CpvXUlXXAUp06SkyRUyXzXG5Gg1QfUVaAwFJnEDA81Eve
+	 XCiLvlIQNT3XrJ79nV1CWO/lkeMB4onsXrzbIfzKukWEVI5fcH5gd1lG8G0Sa67wNg
+	 SgOOQzlTIfTSa1WWFAGegf9V1reI0i3t/93fD1W8pVcDHtiv3ZHiQoI5/uSe4cmJY9
+	 NbZlWOo3IIm1W58H9bQP5k72fSzsTKG5TnnyM/uiLPOVNFWGsyHwa2tFqGd8P45cDq
+	 ZBFIDVDbN9n2w==
+Date: Mon, 15 Jul 2024 21:16:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
+	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 10/29] arm64: enable the Permission Overlay Extension
+ for EL0
+Message-ID: <a867d629-270f-4f34-90a6-4bc346e5c018@sirena.org.uk>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-11-joey.gouly@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q58zRk7wvnj6jGJn"
+Content-Disposition: inline
+In-Reply-To: <20240503130147.1154804-11-joey.gouly@arm.com>
+X-Cookie: You'll be sorry...
 
-Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> writes:
 
-FYI:
+--Q58zRk7wvnj6jGJn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> User space patches can be found here:
-> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=3DO_MA=
-YEXEC
+On Fri, May 03, 2024 at 02:01:28PM +0100, Joey Gouly wrote:
 
-That link appears to be broken.
+> This takes the last bit of HWCAP2, is this fine? What can we do about
+> more features in the future?
 
-Thanks,
+HWCAP3 has already been allocated so we could just start using that.
 
-jon
+--Q58zRk7wvnj6jGJn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaVg6sACgkQJNaLcl1U
+h9AW9Af+JYOKBw8IlU3TJ8USeMzNKhlTsIR9EXmjyh8mC+eUbN+xIrb5A7B4dG6m
+dk6iLPP5/E8GCiVOKSmrN2D8WF4fcCTkl1cwLojd2EkthrMhOX1qgJTkzNosR76D
+aVo2JL7YvyiEpKMaZv74UnaxL9zipPWHMwX8tyakt+3F75Jho3fjo/pkNleV8jxl
+bALzynA7fKtt7p2R57PbLXPhTLG4IxG/8gH2ODuDwMj6o46ng4BmOfZXlgaqOgsT
+RxnODCG0OpXODiw+QlMS/JBrbg21d3Rc3CHVUsz4INNeI0WRL1yv35HFKWdfhuIQ
+v1DA+hOMClSlNNEQ+qWr3JYq7W6eqw==
+=sIpQ
+-----END PGP SIGNATURE-----
+
+--Q58zRk7wvnj6jGJn--
 
