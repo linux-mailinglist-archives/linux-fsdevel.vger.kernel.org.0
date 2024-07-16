@@ -1,94 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-23736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11AEB932132
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 09:29:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F42893214F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 09:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17C92821DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 07:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705421C2199A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 07:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438262B9DE;
-	Tue, 16 Jul 2024 07:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22023CF51;
+	Tue, 16 Jul 2024 07:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptlHl7ka"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEQi10vB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6374C7B;
-	Tue, 16 Jul 2024 07:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE07224D4;
+	Tue, 16 Jul 2024 07:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114933; cv=none; b=e8IgO0uPtWfZKxNUlhLUbrjLm1PRYd3h+G5ilhpnTbbRhID4cMFRT8LuqfZwo+ZK27AaUMxvCXNaI7cByWZzCT0sw8sjBEAt5hEEfWbFmMp/r+5wqKc22/WOdOD0JhCSggfkbHMEDLgV5M7zBfmmPkYFfftl39IurqHsDhAC4JE=
+	t=1721115450; cv=none; b=srNkX6lVZ/yW529soNU/zFzEqv5qYKdgPtq29a0Er4c5qC1ars/UG9GjFUqLMSkyDEb0i0ydD2oaape2meXcW/wJ2trgw4WJ+HYG03Zg6hOwt8QswhvBqSlGIknuTH713xkxxdukT7NZscBpcp0pQ29nLFt2joIhAxbGox6Jws4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114933; c=relaxed/simple;
-	bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c30bxyP/HNMs7nik4yHpEXxjOgmEmIcsyDrFGhaVs8AHAfsYUaE4RZ6iRgPuP+ABwiGPR+lI7LRHTXpPIWn8TCZnRiT9Bx7Zp+eQaw868N66ZXato5HXpIxyBv+7FjcYoxY0GO+52mISx13XoY3nD6F8+w1KnCZhKJi+jlO26V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptlHl7ka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B56D2C116B1;
-	Tue, 16 Jul 2024 07:28:50 +0000 (UTC)
+	s=arc-20240116; t=1721115450; c=relaxed/simple;
+	bh=JO3qgQV4sy0U2AaNeNeVdHcFGwZZ9gH4KsehfrW9qEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QEBaMWA/vPoyv7KCkJHlyFPvPGOQmGJvGvnPfWyQVAQycOoLResNc7ALAxc6USkTVrULmQQfHY/Kb7tc3OYJ8IKCPOew6zWylwMzEWAeZId1X4n0/2bW72i8ydMsHpKxAS6Ai38fugkxeIKrA6C2DCt4t1OY5P2dRRvRTKs05KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEQi10vB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58AD8C116B1;
+	Tue, 16 Jul 2024 07:37:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721114933;
-	bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ptlHl7kahu5keqDU2790FlrXYD0BOTtQ7TbQTwB0PxrNCH3e2rtOeGoRJBfMM4CBg
-	 519c/LdG6Y2E/JHLYPO4PP1BgQldPJnldNp3DJjw0h368UjKIJza7R28viaFjP1tGB
-	 Pm0G4S7vNmVJ0lkHhe6XIzDFK19ox93KqGN6bsx6kT3RqZqKLzQGnfCGz7xG+/fGux
-	 zs6yVLKWiOmm+LEC58Fog6f1pZ+yd2kxjIu3kbcG1juqQBXlvgCMo0RL6jAKcmdIKc
-	 VS3Ie4LqQWhHei/TDurhIHawgSnmt9P3tc6mwBIgsr0MOeVEmdr9V14I0HfOGakzHq
-	 J2Wo5UgRs7swg==
+	s=k20201202; t=1721115449;
+	bh=JO3qgQV4sy0U2AaNeNeVdHcFGwZZ9gH4KsehfrW9qEQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EEQi10vBr2zTt+8+q5Ijrg1zn14enr23N3t5Mf+Q3ATK9FrfwUmwEv56VRw9Kckim
+	 n4y41pPCHpgM4PnaReJbhjOJEVf0LJb9qQVWL92truLKYQ3hcDUaEpqxZyHqhO9sWd
+	 eZmbvlpev0t+zz5ob76vCO5il2QAEvnnGlYgA4SwL+RCuIgz86JRtUJCijofa8Ul6T
+	 Wxx8XUEI3j2AY72qRNZ3dB05A3G0RZ4eoIf61KtN/LENtNSG7mjzbfddZBZhMJ1Qf3
+	 kZt4tlF88NMZbRNhCeDzOk1CHtFNZw9xVR6pUTaOUpJ57izYQ3KxxofTtLXAsLfnEn
+	 oLRLkdByOqrGQ==
+Date: Tue, 16 Jul 2024 09:37:19 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: syzkaller-bugs@googlegroups.com,
-	syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com,
-	Christian Brauner <brauner@kernel.org>
-Cc: akpm@linux-foundation.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	viro@zeniv.linux.org.uk,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: Re: [PATCH] nsfs: use cleanup guard
-Date: Tue, 16 Jul 2024 09:28:44 +0200
-Message-ID: <20240716-unsterblich-ausnutzen-7c57cce852e4@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240716-elixier-fliesen-1ab342151a61@brauner>
-References: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>, <00000000000069b4ee061d5334e4@google.com> <20240716-elixier-fliesen-1ab342151a61@brauner>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Chandan Babu R <chandan.babu@oracle.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>, 
+	Christoph Hellwig <hch@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Arnd Bergmann <arnd@arndb.de>, 
+	Randy Dunlap <rdunlap@infradead.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 0/9] fs: multigrain timestamp redux
+Message-ID: <20240716-zerlegen-haudegen-ba86a22f4322@brauner>
+References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=867; i=brauner@kernel.org; h=from:subject:message-id; bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNU9Qr87DwVuex/m/sv6drj4VD82MpYbee/Atyp4q6U xNVbRM6SlkYxLgYZMUUWRzaTcLllvNUbDbK1ICZw8oEMoSBi1MAJqJ4iOF/4eHZ/kHvWE63JHA1 fvjyJmplCMfZ81f8D1vNi+Sz2XRPnZFh75zS+VXNi9vy8i5bnWx226wltCVqxYbPQj0fcnIT7P3 4AA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
 
-On Tue, 16 Jul 2024 09:19:11 +0200, Christian Brauner wrote:
-> Ensure that rcu read lock is given up before returning.
+On Mon, Jul 15, 2024 at 08:48:51AM GMT, Jeff Layton wrote:
+> I think this is pretty much ready for linux-next now. Since the latest
+> changes are pretty minimal, I've left the Reviewed-by's intact. It would
+> be nice to have acks or reviews from maintainers for ext4 and tmpfs too.
 > 
+> I did try to plumb this into bcachefs too, but the way it handles
+> timestamps makes that pretty difficult. It keeps the active copies in an
+> internal representation of the on-disk inode and periodically copies
+> them to struct inode. This is backward from the way most blockdev
+> filesystems do this.
 > 
+> Christian, would you be willing to pick these up  with an eye toward
+> v6.12 after the merge window settles?
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] nsfs: use cleanup guard
-      https://git.kernel.org/vfs/vfs/c/0052b241e3e5
+Yup. About to queue it up. I'll try to find some time to go through it
+so I might have some replies later but that shouldn't hold up linux-next
+at all.
 
