@@ -1,40 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-23752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF4F9325DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 13:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5579326B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 14:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69194282FD5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 11:41:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322401F23AE5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 12:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A0315491;
-	Tue, 16 Jul 2024 11:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1D219AA5F;
+	Tue, 16 Jul 2024 12:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F3PDmArl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E6D22309
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2024 11:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D997317C233;
+	Tue, 16 Jul 2024 12:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721130068; cv=none; b=QkCkTXM3vIBtC5Xn1RwtCrsiF4/F4aNwSFwPHlJjmKN2iGh1BKZf7RJXjkTtwQuMbWSk5I9SdhVTgQ5rRRJjZ+zRQLHlOEJdYFGpIVSrrdS38t+El0HLXSzjEdXQdyv5LRN1Ls9iaSjlW6BoCKDf+fMwrLxUJlMrT/vmEqfnsZc=
+	t=1721133432; cv=none; b=oEgz0oOFJcRkXQtsMW4v275QSaQRlVlxvTof8nD2PRY3TmKiX2GsCx6BqFOFZ08JC/GrOVuRLZAo6lH9zPDWmHhR+8xR7F71hpIiNTOpsQkoWfbGscBzLzPvkBE3ckkFC+Hz2KGBi2L/1qid2lcoUT3EXsq/698B4FF+rsaIs90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721130068; c=relaxed/simple;
-	bh=cPqUIIzgMa1VyzU8Q0SG76h08e/UGrYGch/lA75gQqc=;
+	s=arc-20240116; t=1721133432; c=relaxed/simple;
+	bh=a3qAbusKgntIluHRD33W5ItQ8YsM9fy8EGzR2BhtmUs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NyGywW3vDTM3cArenp2Jn/Ey25ZNgc/na8jUomu5n+SpbOISRIKgbelshujnjUbfhTobezE/of6zQGXI1SDojWiZ0PvWAL7h5h/1lVLgmqXQB+VHGOUAKdTUSl0GkCYxZOQRG8EtwJQtUIsQ+d+18NT5oThJeMiwjwfmfPq9HWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B19091063;
-	Tue, 16 Jul 2024 04:41:30 -0700 (PDT)
-Received: from [10.163.52.225] (unknown [10.163.52.225])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB35A3F766;
-	Tue, 16 Jul 2024 04:40:54 -0700 (PDT)
-Message-ID: <c6812a96-4a29-40de-8ed7-e98b193121a0@arm.com>
-Date: Tue, 16 Jul 2024 17:10:50 +0530
+	 In-Reply-To:Content-Type; b=VZsm6Pu+ehEzbqzYBVh/T1kuyVEwZXAIoKm+oLfIEhDDidHht/Lw28yRWaUeSH4LS7zY6C/22uXFF74e4JSRs8NYj/nxW/3dkQCiy5Yx2RBqLzUli/GVXAEVjejdBtTVmrUqrIwM0ymp6ojxZO+A9YE4h9noDi9eLZCLDZN3aWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F3PDmArl; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721133431; x=1752669431;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=a3qAbusKgntIluHRD33W5ItQ8YsM9fy8EGzR2BhtmUs=;
+  b=F3PDmArlKpamiRBBxKsO4JqUCDHxwmLhXXgnYqxI7f5hx78KVFxOsCDg
+   rrO0cIabFdqn+oeD3fdly++4H40dEjQgYlhlyrIUomKYAbH2TlSHJHwxn
+   dm3zYfe4Oc5MPkaik1CuMvDKiwAB368gHz1cTD9MeO49WQVQwCHQkxhRi
+   VVmrciu7Ed5xTehvy3K6RVRzYbGGA8OAh1S6uu8hNu8hLdmSSCCQH0KG6
+   fc32Auow5CaVDijGQ8VMb9uF8pj2Bj6g15a/qwYrPTX7EZIai5pKVbtKz
+   4HH7I3exCCdVQoJVr3MFex++2lZX2eRzsPlm9zUoEMz95AMgnAp/m+8zv
+   w==;
+X-CSE-ConnectionGUID: qfJpnIbYQx+NvqAS7Iwkng==
+X-CSE-MsgGUID: dCefI/n4TdK5jQwdodt+UA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="18682244"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="18682244"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 05:37:10 -0700
+X-CSE-ConnectionGUID: ycBl0GIkTbiJtOLvCIgjPA==
+X-CSE-MsgGUID: P86ezPSVRwORv/wlLjufhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="54896455"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.248.81]) ([10.124.248.81])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 05:37:07 -0700
+Message-ID: <398cd906-c31a-465b-9400-d8d81a3cf049@intel.com>
+Date: Tue, 16 Jul 2024 20:37:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -42,53 +67,85 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 17/29] arm64: implement PKEYS support
-To: Kevin Brodsky <kevin.brodsky@arm.com>, Joey Gouly <joey.gouly@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: akpm@linux-foundation.org, aneesh.kumar@kernel.org,
- aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org,
- catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
- dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, maz@kernel.org,
- mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com,
- npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org,
- szabolcs.nagy@arm.com, tglx@linutronix.de, will@kernel.org, x86@kernel.org,
- kvmarm@lists.linux.dev
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-18-joey.gouly@arm.com>
- <18aee949-7e07-45e1-85c8-c990f017f305@arm.com>
+Subject: Re: [PATCH v4 3/3] fs/file.c: add fast path in find_next_fd()
+To: Jan Kara <jack@suse.cz>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, mjguzik@gmail.com,
+ edumazet@google.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
+ tim.c.chen@intel.com, tim.c.chen@linux.intel.com, yu.ma@intel.com
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240713023917.3967269-1-yu.ma@intel.com>
+ <20240713023917.3967269-4-yu.ma@intel.com>
+ <20240716111908.tocqtq435d6bc3q3@quack3>
+From: "Ma, Yu" <yu.ma@intel.com>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <18aee949-7e07-45e1-85c8-c990f017f305@arm.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20240716111908.tocqtq435d6bc3q3@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
+On 7/16/2024 7:19 PM, Jan Kara wrote:
+> On Fri 12-07-24 22:39:17, Yu Ma wrote:
+>> Skip 2-levels searching via find_next_zero_bit() when there is free slot in the
+>> word contains next_fd, as:
+>> (1) next_fd indicates the lower bound for the first free fd.
+>> (2) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
+>> searching.
+>> (3) After fdt is expanded (the bitmap size doubled for each time of expansion),
+>> it would never be shrunk. The search size increases but there are few open fds
+>> available here.
+>>
+>> This fast path is proposed by Mateusz Guzik <mjguzik@gmail.com>, and agreed by
+>> Jan Kara <jack@suse.cz>, which is more generic and scalable than previous
+>> versions. And on top of patch 1 and 2, it improves pts/blogbench-1.1.0 read by
+>> 8% and write by 4% on Intel ICX 160 cores configuration with v6.10-rc7.
+>>
+>> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+>> Signed-off-by: Yu Ma <yu.ma@intel.com>
+> Looks good. Just some code style nits below.
 
-On 7/9/24 18:37, Kevin Brodsky wrote:
-> On 03/05/2024 15:01, Joey Gouly wrote:
->> @@ -267,6 +294,28 @@ static inline unsigned long mm_untag_mask(struct mm_struct *mm)
->>  	return -1UL >> 8;
->>  }
->>  
->> +/*
->> + * We only want to enforce protection keys on the current process
->> + * because we effectively have no access to POR_EL0 for other
->> + * processes or any way to tell *which * POR_EL0 in a threaded
->> + * process we could use.
-> 
-> I see that this comment is essentially copied from x86, but to me it
-> misses the main point. Even with only one thread in the target process
-> and a way to obtain its POR_EL0, it still wouldn't make sense to check
-> that value. If we take the case of a debugger accessing an inferior via
-> ptrace(), for instance, the kernel is asked to access some memory in
-> another mm. However, the debugger's POR_EL0 is tied to its own address
-> space, and the target's POR_EL0 is relevant to its own execution flow
-> only. In such situations, there is essentially no user context for the
-> access, so It fundamentally does not make sense to make checks based on
-> pkey/POE or similar restrictions to memory accesses (e.g. MTE).
+Copy that, thanks Honza, I'll revise and send out updated version soon.
 
-Indeed this makes more sense. There is no memory context even if there is
-access to another POR_EL0. The comment above could be improved describing
-this limitation.
+
+>
+>> diff --git a/fs/file.c b/fs/file.c
+>> index 1be2a5bcc7c4..a3ce6ba30c8c 100644
+>> --- a/fs/file.c
+>> +++ b/fs/file.c
+>> @@ -488,9 +488,20 @@ struct files_struct init_files = {
+>>   
+>>   static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
+>>   {
+>> +	unsigned int bitbit = start / BITS_PER_LONG;
+>> +	unsigned int bit;
+>> +
+>> +	/*
+>> +	 * Try to avoid looking at the second level bitmap
+>> +	 */
+>> +	bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
+>> +				 start & (BITS_PER_LONG -1));
+> 							^^ Either
+> (BITS_PER_LONG-1) or (BITS_PER_LONG - 1) please. Your combination looks
+> particularly weird :)
+>
+>> +	if (bit < BITS_PER_LONG) {
+>> +		return bit + bitbit * BITS_PER_LONG;
+>> +	}
+> No need for braces around the above block.
+>
+>>   	unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
+>>   	unsigned int maxbit = maxfd / BITS_PER_LONG;
+> We keep declarations at the beginning of the block. Usually it keeps the
+> code more readable and the compiler should be clever enough to perform the
+> loads & arithmetics only when needed.
+>
+> After fixing these style nits feel free to add:
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+>
+> 								Honza
+
+Yes, I'll polish this part of code accordingly, thanks for all the 
+comments here :)
+
 
