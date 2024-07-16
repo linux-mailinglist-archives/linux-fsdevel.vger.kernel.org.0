@@ -1,105 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-23734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E064932108
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 09:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C452C932115
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 09:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2E2285CE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 07:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806E7282122
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 07:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E8E22F11;
-	Tue, 16 Jul 2024 07:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84197376E0;
+	Tue, 16 Jul 2024 07:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kT1s73ju"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnoohVBL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7450F3771C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2024 07:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD0B33987;
+	Tue, 16 Jul 2024 07:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114039; cv=none; b=UNMmugT2FsZir/UTiTekPz3rDowfmctuM4+X9U9Di8FrjDDpGv0Z4QOsRYxqPcbs+8wzUX5fAP6LeF94Qhq347B8awlve6s/BKl1QIfBWz6G7M8UQUcAyvB4r7x5AJ7dEai7xPcklWrH0CNkehgK4fi+rj3ghX80zc+6xger75I=
+	t=1721114362; cv=none; b=lzebHgL+P6wQSdp9sZ1HMDe2/NKD2GNhcJS0Soixlgfh+hbgttLfOFWuLJKQgKo7B92E15HBBsE79AheZZHgJs9pNL8n7+xiWC/aRgFF2Xt9j9b3J2E4E7PkuOZ7AcPFqgIszmPM/U/sVGJ7gpMt2M+OdRAxG4/u12JMtUMqpJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114039; c=relaxed/simple;
-	bh=om5UofC4ryHM94Wlsk4/cAWNj8IrCD8xKsDi+0pvYEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGo4BVwiKMc/mF6Vum6416HYWp+LRyq3bXwkuHT71NcffPmJ9exByLrnP6cGQu5JBJLxjCOaz7wyZqaxnqtkAbnsKYDhwfCD/rlg6yRb8jyR3lLLg4Xv5r3r7dD0N8jpUj/wHW1DmL4EmQZvgCnVBrJLzznPG3VHMEAJ736Ysvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kT1s73ju; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNVfn1WqqzlGb;
-	Tue, 16 Jul 2024 09:13:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721114033;
-	bh=Pgvv7MQ5tPNIpIpwnO7JzPSqhpV+bSm8Xa4gUvwKzv8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kT1s73ju4LMuNR9iv/HUc1o8CwZJ5xCxOz/+egyw3P7sbZeW2jRv16p+ElhwyUtEA
-	 zvYnMjKHWvc/qG6EqgzzBjF8lkQqacaFr+P3FuSQ58elSfbJjsGYZnsmUg1ZWS8FKD
-	 1oJ6pWXDMHcM7ab84mB83LrO7VC6Cvd3MjkJ0lkk=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNVff3KMVzQHl;
-	Tue, 16 Jul 2024 09:13:46 +0200 (CEST)
-Date: Tue, 16 Jul 2024 09:13:44 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
-Message-ID: <20240716.bebeeX1aequi@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <8734oawguu.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1721114362; c=relaxed/simple;
+	bh=IHbOlthUDde/1Qg4ACzZafpb7XBZ2FC+wr18+zf+5gg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MS5NnWSbGR/mnork0O2X/uI5/veT/NczbaOt/n8lLpORQilw95hsO0/z5BEDPTwCxIS06CnGdLEs7IEz/hW09Cf9oloWojaBCyEu0IcTn0ROQFHRnb4xJ7OiIVD9J0Kp1EgEciGPGMSTcvINUNpUVMmVs9nYunXqmPxqUTZZL80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnoohVBL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA893C116B1;
+	Tue, 16 Jul 2024 07:19:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721114361;
+	bh=IHbOlthUDde/1Qg4ACzZafpb7XBZ2FC+wr18+zf+5gg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dnoohVBLpFeCsb16MupJzO5EHjMN/W0DrnUEFPB1KoJtFlLxu0A35XgLJvABwCESV
+	 hw1R6Na5QXfQEMjMGbO1bcnhe/B1ivt1yigZlCG0S0+GBvgd8BWFkEkkFLalUshOcK
+	 MF6+OeFGb7cnt+xTuuoRag/A09+Ldu1+YZRtkksLSsolEJBo9e9ViG1/Z/A7gd4J9k
+	 73aGty2Nr3PRg8hwlM92B0sR/FSzzzKy0TiKQi6LcdcNVH3a++rgEWntTpUDMqIekC
+	 IB0M8lpxjy1fh6ZrxkQmMaJhqyUQ4yuDiOvEbaoQkRzot0TfkmncWb33GUa2trh+/e
+	 e4vLjeH7Qg2Fw==
+From: Christian Brauner <brauner@kernel.org>
+To: syzkaller-bugs@googlegroups.com,
+	syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com
+Cc: Christian Brauner <brauner@kernel.org>,
+	akpm@linux-foundation.org,
+	aleksandr.mikhalitsyn@canonical.com,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH] nsfs: use cleanup guard
+Date: Tue, 16 Jul 2024 09:19:11 +0200
+Message-ID: <20240716-elixier-fliesen-1ab342151a61@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>
+References: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>, <00000000000069b4ee061d5334e4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1198; i=brauner@kernel.org; h=from:subject:message-id; bh=IHbOlthUDde/1Qg4ACzZafpb7XBZ2FC+wr18+zf+5gg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNk/tw7aG63qxQT29G+UTT4iCjfYfXP2xYwLdzU5ZGZ vjkRXb1HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP5+ozhf+j9i/IzBeT43KcE n4/K9j7yN/+ceTb//m9peifzdt5/WMDwv3j9vRmtWe7hGpx888XiowyTM3n0zPafPxh8cLvgnZ0 NTAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8734oawguu.fsf@trenco.lwn.net>
-X-Infomaniak-Routing: alpha
 
-On Mon, Jul 15, 2024 at 02:16:41PM -0600, Jonathan Corbet wrote:
-> Mickaël Salaün <mic@digikod.net> writes:
-> 
-> FYI:
-> 
-> > User space patches can be found here:
-> > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
-> 
-> That link appears to be broken.
+Ensure that rcu read lock is given up before returning.
 
-Unfortunately, GitHub's code search links only work with an account.
-git grep prints a similar output though.
+Reported-by: syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com
+Fixes: ca567df74a28 ("nsfs: add pid translation ioctls")
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+I have a few fixes pending I plan to send out asap.
+---
+ fs/nsfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> 
-> Thanks,
-> 
-> jon
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index a4a925dce331..97c37a9631e5 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -174,14 +174,14 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+ 		fallthrough;
+ 	case NS_GET_PID_IN_PIDNS:
+ 		fallthrough;
+-	case NS_GET_TGID_IN_PIDNS:
++	case NS_GET_TGID_IN_PIDNS: {
+ 		if (ns->ops->type != CLONE_NEWPID)
+ 			return -EINVAL;
+ 
+ 		ret = -ESRCH;
+ 		pid_ns = container_of(ns, struct pid_namespace, ns);
+ 
+-		rcu_read_lock();
++		guard(rcu)();
+ 
+ 		if (ioctl == NS_GET_PID_IN_PIDNS ||
+ 		    ioctl == NS_GET_TGID_IN_PIDNS)
+@@ -208,11 +208,11 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+ 			ret = 0;
+ 			break;
+ 		}
+-		rcu_read_unlock();
+ 
+ 		if (!ret)
+ 			ret = -ESRCH;
+ 		break;
++	}
+ 	default:
+ 		ret = -ENOTTY;
+ 	}
+-- 
+2.43.0
+
 
