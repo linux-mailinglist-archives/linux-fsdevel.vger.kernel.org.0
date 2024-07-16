@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-23763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5A4932929
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 16:39:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340E3932940
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 16:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539761F230A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 14:39:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A527B224E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 14:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ECD1AC451;
-	Tue, 16 Jul 2024 14:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DBA1AD9CC;
+	Tue, 16 Jul 2024 14:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4QyU72G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQs5JO8e"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184C41AC442;
-	Tue, 16 Jul 2024 14:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA93E1A2C12;
+	Tue, 16 Jul 2024 14:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721140183; cv=none; b=UqSkFudeo/e1sSeAzO9S2bVZcjRav8l7AEAj8n2Av0NR2mSF2MTrmddYfUJhMZZSfGr8uSpdLnx1fXYAiLU8ZW5NHdu/766ybLdC4DdLqPTks368J0/qY92m4HFf/GT8y3ToRRjSD5TiuFpLsKzuC6boTyp21wYu8F6JWdRL+XQ=
+	t=1721140215; cv=none; b=tEvqUzBA+zE3yVSTA7t1GcjzwBjchhbfnV7GX0bWInohxczKVGM6yMw/jJTLXAVdlZv3alDn+HNs1AHwnqp2puWP+gI31ZIBT7bN+yvV4OukM4ZaR4IqrqYolgU9IbwoUnqHfsNF9J8IUlPRKU+nCH/pcfgVpkQ/lfZkWhN/xbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721140183; c=relaxed/simple;
-	bh=3FXE5Ok1csVYIeTMkjs77bGKjWGS+bJQTjJSpmx8bgA=;
+	s=arc-20240116; t=1721140215; c=relaxed/simple;
+	bh=6yXjER20qZ2cVxsEGMvxHRNT5+nIS1xUWtyl3BM3zUk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E1Ox+blofczc7BIgfoRoUP+zeUEJGVwot9RRMhCmvRlzvYnAh7RZCoHSqvy5HSfdFgZKNdLKTaayDQQajvzbmw66nFErreETkEAUt89MFQrKFC0qikPLig1ldqd2TvHP/B32heZvmW2NTljLE7mGoQtxbrjclPVzvFh6wI30gqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4QyU72G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCDEEC116B1;
-	Tue, 16 Jul 2024 14:29:41 +0000 (UTC)
+	 MIME-Version; b=Mi66WEmCSCCpaxQUYB3fBci9NKJNkXRrvhbJkZRvb9p/sj+Oilu7wm7LsmqsjQyG9Zr75e3N1dHlojt/vNoIiL/Qma+2L3YDMlp7w7kWwYROcAKi1uBPX1RBOAf212gL/OVO5nZz0dfmkguocv1pKgwlIb6kOlsUr+H1s6BonJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQs5JO8e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F58C4AF0D;
+	Tue, 16 Jul 2024 14:30:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721140183;
-	bh=3FXE5Ok1csVYIeTMkjs77bGKjWGS+bJQTjJSpmx8bgA=;
+	s=k20201202; t=1721140214;
+	bh=6yXjER20qZ2cVxsEGMvxHRNT5+nIS1xUWtyl3BM3zUk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F4QyU72GSBIfQnqa9imkzXE9M2cy4EP+M6NkkUPNpWKSbAz8BWR5bqjXMIgXmQg+5
-	 F1lmu/SZpaZ6Q4V3e0detd0NlKOPN2jtMWc3TvWPpKkiqy6f+JCONa+qDPT5KCi7Gx
-	 MHlOXHj5aoxB+pZrCjEVHrxKQD0iqrf3zUMjgWuOslC/ok26RNEDGYj9ZiJr28Rupr
-	 oQYwmdaEs7r2cnsuYkq6mA/0sE4sScmQrTUjgntERW3/6kO+JunZndj/c2qg8C/lb1
-	 R0gSNld5V9Thtb6salLcChFXGpLOPEpRkL1oy+8XTtZIBcD1Na3SU36gtEjj7QunWG
-	 HXbDTDa07bDOQ==
+	b=YQs5JO8eaxNuZf9NbzzJjrKuCpzgfKnX0SxlwIi7AnDHkaVMmSnce+OiKxwLNkR0B
+	 5jZ3LNr8zn9t4WZoH54G6yD8JHzcpvDPzvsJfR/gHIh368kT2Kf1uCWltL0wm4eZG9
+	 w31xf9Zql9+FvunrsHt8vAs15ffVUGfvpIP8/SIKii1K+HK+JOVV+qiBHxZpE6d6xw
+	 q2wSISQ/EcxgAzW6Qwhcyb/5mI8mzzIo6XFPLXuycC+z38gDNRilz4r/Re+ayMv+h0
+	 ZOWBYd7+eH1KyC1o1kflW5ZZQ5rLvrCcNJKh5+5ibRlRRRhEXoBIxhatjXuDLadO6+
+	 31QuhX6/2W34A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -50,12 +50,12 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 8/9] fs: better handle deep ancestor chains in is_subdir()
-Date: Tue, 16 Jul 2024 10:29:10 -0400
-Message-ID: <20240716142920.2713829-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 7/7] fs: better handle deep ancestor chains in is_subdir()
+Date: Tue, 16 Jul 2024 10:29:47 -0400
+Message-ID: <20240716142953.2714154-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240716142920.2713829-1-sashal@kernel.org>
-References: <20240716142920.2713829-1-sashal@kernel.org>
+In-Reply-To: <20240716142953.2714154-1-sashal@kernel.org>
+References: <20240716142953.2714154-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.162
+X-stable-base: Linux 5.10.221
 Content-Transfer-Encoding: 8bit
 
 From: Christian Brauner <brauner@kernel.org>
@@ -93,10 +93,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 14 insertions(+), 17 deletions(-)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index 422c440b492a5..72ac6a03d7bea 100644
+index 976c7474d62a9..db81d0f5bdc00 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -3121,28 +3121,25 @@ EXPORT_SYMBOL(d_splice_alias);
+@@ -3086,28 +3086,25 @@ EXPORT_SYMBOL(d_splice_alias);
    
  bool is_subdir(struct dentry *new_dentry, struct dentry *old_dentry)
  {
