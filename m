@@ -1,99 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-23733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C3E931FB3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 06:26:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E064932108
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 09:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141C5282590
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 04:26:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2E2285CE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 07:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233C815E9B;
-	Tue, 16 Jul 2024 04:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E8E22F11;
+	Tue, 16 Jul 2024 07:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kT1s73ju"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771C812E55
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2024 04:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7450F3771C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2024 07:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721103966; cv=none; b=bbOX0AZRZvb2sva97LOsT59xkriGiqNiBahEuqDubUtaAA86YAVaeeOrw4j4MpOh/K3qs54v3388kXv5tuPUPlSUd2bd+Rt7JwQDYZGeYjjz43IkaaMRv5GQPMWMsCfDEur0MIkiu54Gw/20P6qXFeLzRwXjEOxm/H8t/0nBbXs=
+	t=1721114039; cv=none; b=UNMmugT2FsZir/UTiTekPz3rDowfmctuM4+X9U9Di8FrjDDpGv0Z4QOsRYxqPcbs+8wzUX5fAP6LeF94Qhq347B8awlve6s/BKl1QIfBWz6G7M8UQUcAyvB4r7x5AJ7dEai7xPcklWrH0CNkehgK4fi+rj3ghX80zc+6xger75I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721103966; c=relaxed/simple;
-	bh=DvsjvpDXNOth0D//VpZfrWl4jfCnK0FhmBf/7P0hAuc=;
+	s=arc-20240116; t=1721114039; c=relaxed/simple;
+	bh=om5UofC4ryHM94Wlsk4/cAWNj8IrCD8xKsDi+0pvYEI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUw6OO5QVsEuog6M/JJXyWIDi3LJ20mtxpELiLwoHmYE+r7wcAdNYYrn4f1ThFx5t7jSlZBZI58iJQ0zGZSfZA+8NIRiy3O0UY4Vy4jYxue0VK+Z6vbaDCi7iqgnWMxAehN4KMotF5YcnMbTANRBqFGN+VZHeZ0WsY+JgJfNvgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 52E0D227A87; Tue, 16 Jul 2024 06:25:59 +0200 (CEST)
-Date: Tue, 16 Jul 2024 06:25:59 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: Uses of ->write_begin/write_end
-Message-ID: <20240716042559.GA25209@lst.de>
-References: <ZpVHaILAacPNlfyp@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGo4BVwiKMc/mF6Vum6416HYWp+LRyq3bXwkuHT71NcffPmJ9exByLrnP6cGQu5JBJLxjCOaz7wyZqaxnqtkAbnsKYDhwfCD/rlg6yRb8jyR3lLLg4Xv5r3r7dD0N8jpUj/wHW1DmL4EmQZvgCnVBrJLzznPG3VHMEAJ736Ysvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kT1s73ju; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WNVfn1WqqzlGb;
+	Tue, 16 Jul 2024 09:13:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721114033;
+	bh=Pgvv7MQ5tPNIpIpwnO7JzPSqhpV+bSm8Xa4gUvwKzv8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kT1s73ju4LMuNR9iv/HUc1o8CwZJ5xCxOz/+egyw3P7sbZeW2jRv16p+ElhwyUtEA
+	 zvYnMjKHWvc/qG6EqgzzBjF8lkQqacaFr+P3FuSQ58elSfbJjsGYZnsmUg1ZWS8FKD
+	 1oJ6pWXDMHcM7ab84mB83LrO7VC6Cvd3MjkJ0lkk=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WNVff3KMVzQHl;
+	Tue, 16 Jul 2024 09:13:46 +0200 (CEST)
+Date: Tue, 16 Jul 2024 09:13:44 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 0/5] Script execution control (was O_MAYEXEC)
+Message-ID: <20240716.bebeeX1aequi@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <8734oawguu.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZpVHaILAacPNlfyp@casper.infradead.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8734oawguu.fsf@trenco.lwn.net>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jul 15, 2024 at 04:59:36PM +0100, Matthew Wilcox wrote:
-> I'm looking at ->write_begin() / ->write_end() again.  Here are our
-> current callers:
+On Mon, Jul 15, 2024 at 02:16:41PM -0600, Jonathan Corbet wrote:
+> Mickaël Salaün <mic@digikod.net> writes:
 > 
-> drivers/gpu/drm/i915/gem/i915_gem_shmem.c:
-> [1]	shmem_pwrite()
-> [2]	i915_gem_object_create_shmem_from_data()
-
-These really need to use actual shmem exported APIs, probably
-shmem_get_folio, instead of abusing the aops.  With that we can
-then easily kill ->write_begin() / ->write_end() for shmem.
-
-> fs/affs/file.c:
-
-Most of these fs-specific ones should really hardcode the calls to the
-usually once or sometimes few potential instances that could be called
-so that we can devirtualize the alls.
-
-> fs/buffer.c:
-> [4]	generic_cont_expand_simple()
-> [5]	cont_expand_zero()
-> [6]	cont_expand_zero()
-
-> fs/namei.c:
-> [B]	page_symlink()
-
-> The copy_from_user() / memcpy() users feel like they should all end
-> up calling ->write_iter().
-
-> One way they could do this is by calling
-> kernel_write() / __kernel_write(), but I'm not sure whether they
-> should have the various accounting things (add_wchar(), inc_syscw())
-> that happen inside __kernel_write_iter().
+> FYI:
 > 
+> > User space patches can be found here:
+> > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+> 
+> That link appears to be broken.
 
-They often sit much lower in the stack and/or are used for files that
-don't have a ->write_iter.  e.g. page_symlink is obviously used for
-symlinks that don't have ->write_iter.
+Unfortunately, GitHub's code search links only work with an account.
+git grep prints a similar output though.
 
-For generic_cont_expand_simple goins through write_iter might be an
-option, but instead of going through file ops the better idea might be
-to just pass a write_iter-prototyped callback directly to it.
-
-cont_expand_zero is a helper for cont_write_begin, which is used to
-implement ->write_begin, so this actually already is a recursion, adding
-another indirect to it is probably not helpful.
-
+> 
+> Thanks,
+> 
+> jon
 
