@@ -1,119 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-23735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C452C932115
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 09:19:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11AEB932132
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 09:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806E7282122
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 07:19:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17C92821DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 07:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84197376E0;
-	Tue, 16 Jul 2024 07:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438262B9DE;
+	Tue, 16 Jul 2024 07:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnoohVBL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptlHl7ka"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD0B33987;
-	Tue, 16 Jul 2024 07:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6374C7B;
+	Tue, 16 Jul 2024 07:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721114362; cv=none; b=lzebHgL+P6wQSdp9sZ1HMDe2/NKD2GNhcJS0Soixlgfh+hbgttLfOFWuLJKQgKo7B92E15HBBsE79AheZZHgJs9pNL8n7+xiWC/aRgFF2Xt9j9b3J2E4E7PkuOZ7AcPFqgIszmPM/U/sVGJ7gpMt2M+OdRAxG4/u12JMtUMqpJU=
+	t=1721114933; cv=none; b=e8IgO0uPtWfZKxNUlhLUbrjLm1PRYd3h+G5ilhpnTbbRhID4cMFRT8LuqfZwo+ZK27AaUMxvCXNaI7cByWZzCT0sw8sjBEAt5hEEfWbFmMp/r+5wqKc22/WOdOD0JhCSggfkbHMEDLgV5M7zBfmmPkYFfftl39IurqHsDhAC4JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721114362; c=relaxed/simple;
-	bh=IHbOlthUDde/1Qg4ACzZafpb7XBZ2FC+wr18+zf+5gg=;
+	s=arc-20240116; t=1721114933; c=relaxed/simple;
+	bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MS5NnWSbGR/mnork0O2X/uI5/veT/NczbaOt/n8lLpORQilw95hsO0/z5BEDPTwCxIS06CnGdLEs7IEz/hW09Cf9oloWojaBCyEu0IcTn0ROQFHRnb4xJ7OiIVD9J0Kp1EgEciGPGMSTcvINUNpUVMmVs9nYunXqmPxqUTZZL80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnoohVBL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA893C116B1;
-	Tue, 16 Jul 2024 07:19:18 +0000 (UTC)
+	 MIME-Version:Content-Type; b=c30bxyP/HNMs7nik4yHpEXxjOgmEmIcsyDrFGhaVs8AHAfsYUaE4RZ6iRgPuP+ABwiGPR+lI7LRHTXpPIWn8TCZnRiT9Bx7Zp+eQaw868N66ZXato5HXpIxyBv+7FjcYoxY0GO+52mISx13XoY3nD6F8+w1KnCZhKJi+jlO26V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptlHl7ka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B56D2C116B1;
+	Tue, 16 Jul 2024 07:28:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721114361;
-	bh=IHbOlthUDde/1Qg4ACzZafpb7XBZ2FC+wr18+zf+5gg=;
+	s=k20201202; t=1721114933;
+	bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dnoohVBLpFeCsb16MupJzO5EHjMN/W0DrnUEFPB1KoJtFlLxu0A35XgLJvABwCESV
-	 hw1R6Na5QXfQEMjMGbO1bcnhe/B1ivt1yigZlCG0S0+GBvgd8BWFkEkkFLalUshOcK
-	 MF6+OeFGb7cnt+xTuuoRag/A09+Ldu1+YZRtkksLSsolEJBo9e9ViG1/Z/A7gd4J9k
-	 73aGty2Nr3PRg8hwlM92B0sR/FSzzzKy0TiKQi6LcdcNVH3a++rgEWntTpUDMqIekC
-	 IB0M8lpxjy1fh6ZrxkQmMaJhqyUQ4yuDiOvEbaoQkRzot0TfkmncWb33GUa2trh+/e
-	 e4vLjeH7Qg2Fw==
+	b=ptlHl7kahu5keqDU2790FlrXYD0BOTtQ7TbQTwB0PxrNCH3e2rtOeGoRJBfMM4CBg
+	 519c/LdG6Y2E/JHLYPO4PP1BgQldPJnldNp3DJjw0h368UjKIJza7R28viaFjP1tGB
+	 Pm0G4S7vNmVJ0lkHhe6XIzDFK19ox93KqGN6bsx6kT3RqZqKLzQGnfCGz7xG+/fGux
+	 zs6yVLKWiOmm+LEC58Fog6f1pZ+yd2kxjIu3kbcG1juqQBXlvgCMo0RL6jAKcmdIKc
+	 VS3Ie4LqQWhHei/TDurhIHawgSnmt9P3tc6mwBIgsr0MOeVEmdr9V14I0HfOGakzHq
+	 J2Wo5UgRs7swg==
 From: Christian Brauner <brauner@kernel.org>
 To: syzkaller-bugs@googlegroups.com,
-	syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com
-Cc: Christian Brauner <brauner@kernel.org>,
-	akpm@linux-foundation.org,
-	aleksandr.mikhalitsyn@canonical.com,
+	syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com,
+	Christian Brauner <brauner@kernel.org>
+Cc: akpm@linux-foundation.org,
 	jack@suse.cz,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
-	viro@zeniv.linux.org.uk
-Subject: [PATCH] nsfs: use cleanup guard
-Date: Tue, 16 Jul 2024 09:19:11 +0200
-Message-ID: <20240716-elixier-fliesen-1ab342151a61@brauner>
+	viro@zeniv.linux.org.uk,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH] nsfs: use cleanup guard
+Date: Tue, 16 Jul 2024 09:28:44 +0200
+Message-ID: <20240716-unsterblich-ausnutzen-7c57cce852e4@brauner>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>
-References: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>, <00000000000069b4ee061d5334e4@google.com>
+In-Reply-To: <20240716-elixier-fliesen-1ab342151a61@brauner>
+References: <20240715205140.c260410215836e753a44b5e9@linux-foundation.org>, <00000000000069b4ee061d5334e4@google.com> <20240716-elixier-fliesen-1ab342151a61@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1198; i=brauner@kernel.org; h=from:subject:message-id; bh=IHbOlthUDde/1Qg4ACzZafpb7XBZ2FC+wr18+zf+5gg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNk/tw7aG63qxQT29G+UTT4iCjfYfXP2xYwLdzU5ZGZ vjkRXb1HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP5+ozhf+j9i/IzBeT43KcE n4/K9j7yN/+ceTb//m9peifzdt5/WMDwv3j9vRmtWe7hGpx888XiowyTM3n0zPafPxh8cLvgnZ0 NTAA=
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=867; i=brauner@kernel.org; h=from:subject:message-id; bh=UAzx36SH0wPhjQ7qhoNQCI+0LWVSDG33NTmQZeA18Vk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNU9Qr87DwVuex/m/sv6drj4VD82MpYbee/Atyp4q6U xNVbRM6SlkYxLgYZMUUWRzaTcLllvNUbDbK1ICZw8oEMoSBi1MAJqJ4iOF/4eHZ/kHvWE63JHA1 fvjyJmplCMfZ81f8D1vNi+Sz2XRPnZFh75zS+VXNi9vy8i5bnWx226wltCVqxYbPQj0fcnIT7P3 4AA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Ensure that rcu read lock is given up before returning.
+On Tue, 16 Jul 2024 09:19:11 +0200, Christian Brauner wrote:
+> Ensure that rcu read lock is given up before returning.
+> 
+> 
 
-Reported-by: syzbot+a3e82ae343b26b4d2335@syzkaller.appspotmail.com
-Fixes: ca567df74a28 ("nsfs: add pid translation ioctls")
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
-I have a few fixes pending I plan to send out asap.
----
- fs/nsfs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index a4a925dce331..97c37a9631e5 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -174,14 +174,14 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
- 		fallthrough;
- 	case NS_GET_PID_IN_PIDNS:
- 		fallthrough;
--	case NS_GET_TGID_IN_PIDNS:
-+	case NS_GET_TGID_IN_PIDNS: {
- 		if (ns->ops->type != CLONE_NEWPID)
- 			return -EINVAL;
- 
- 		ret = -ESRCH;
- 		pid_ns = container_of(ns, struct pid_namespace, ns);
- 
--		rcu_read_lock();
-+		guard(rcu)();
- 
- 		if (ioctl == NS_GET_PID_IN_PIDNS ||
- 		    ioctl == NS_GET_TGID_IN_PIDNS)
-@@ -208,11 +208,11 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
- 			ret = 0;
- 			break;
- 		}
--		rcu_read_unlock();
- 
- 		if (!ret)
- 			ret = -ESRCH;
- 		break;
-+	}
- 	default:
- 		ret = -ENOTTY;
- 	}
--- 
-2.43.0
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] nsfs: use cleanup guard
+      https://git.kernel.org/vfs/vfs/c/0052b241e3e5
 
