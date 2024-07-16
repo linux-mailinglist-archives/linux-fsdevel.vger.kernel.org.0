@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-23784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60F2933050
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 20:39:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F91F93305C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 20:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02F991C2237B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 18:39:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADF3282F02
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 18:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F401A98EA;
-	Tue, 16 Jul 2024 18:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985EE1AA374;
+	Tue, 16 Jul 2024 18:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LN/7XnAl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HvpM27t7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539461A909D;
-	Tue, 16 Jul 2024 18:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C5C1AA367;
+	Tue, 16 Jul 2024 18:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721154862; cv=none; b=YUzllpKcYv/R0XTUjWSYRFdfOQYp43Ny7qb/tIVd99NBT1zj7BMKdnaqRxKWHchDBssFyUNehdiY3SfV9uOzlIki2IVvx2WSgRflyS93BnFT71hxw01upJ8Jcxa4W7c8LSO7ZHQmO1Wj6driaKgP9942+uTdn+6VmZTDtFyHPfc=
+	t=1721154878; cv=none; b=gTXRjKvUDfkXQP78zGp4k9Tf8+WbnZk0CqDsK5KqiZyD1nxLQnh7ADcyvjecE7ljNvC4bl4AhHU7O31UHwc3LSweohH5HTi5wEw6JbdOotFSkgZeZlN+mnVSAXpmIqi4ER8oBbiet0zdWRVGylUsB4G52LZ5cNLCBul+vCFZdAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721154862; c=relaxed/simple;
-	bh=UNqwYjlm8ilvI7QSjMxE3SYtRhmvd2tBeL4EwQ7bx8s=;
+	s=arc-20240116; t=1721154878; c=relaxed/simple;
+	bh=c0wuoiUPNl7pNi76X8Emz1/0ePq+ydQZVfR83/zmsKs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bOaxOK3WqCF0tz9lvD9vTKdWlsQCyBTRreQ+hksQoFR7AOpQt5HdU7HvvU4gk//EO3fX2nMpcM/civ4ZitT9KeMr8oCzfgOohdMAyotE0FtTYgGXqiQPg8VK32N7fItMd3rDaeOaO83gFhZRq1Js0FvXf+5qRxC/EBFI+B4AC0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LN/7XnAl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F32C116B1;
-	Tue, 16 Jul 2024 18:34:20 +0000 (UTC)
+	 MIME-Version; b=cH53j17pXMF9OWQre6Z0DaBcIUe2vG4OscEXjKKrZ//eNVfneTt4Li5xvectFsp/P6+DTMHJ1xaqxSYmrdmPwL/5rgNVMNc4vc717t0OkJwUIa8IUp/RXhdfP6cNBl/a8TyFYEXQ6SgRKAQkFxY2DXABV2uUietHJDaDivQS3D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HvpM27t7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B342C4AF0B;
+	Tue, 16 Jul 2024 18:34:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721154861;
-	bh=UNqwYjlm8ilvI7QSjMxE3SYtRhmvd2tBeL4EwQ7bx8s=;
+	s=k20201202; t=1721154877;
+	bh=c0wuoiUPNl7pNi76X8Emz1/0ePq+ydQZVfR83/zmsKs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LN/7XnAluXRDtlCqhwOnRQARiF+2bOK6o5WCF0Kg8HeBRc2hxIrOKnRBFZzEPVn6A
-	 t0M2Eae5PTC1OrtDt7F3QmoptbKDwZYAaEbHdQZxM0+wQXyopTkzz/gj987BFkcgMF
-	 4cMpC/pel3qiL31ECBJwk/pU4hVxF2ndvvl7PtH+LkZW4qewiWrJVuc+kMOQjxK++D
-	 42RjmvqwwLPqulOV62ScgIdNiVBj3543Xf4b4154iqKCkGmXR77sFqV80/91C4Il8O
-	 72QdQA7UqSRDoX6tcpXCcfF5mBmiQJ32eKtVP7lqn6uvk2fxo+zxHwAS3tVigk/5vp
-	 Qu6HwPQ2wELrQ==
+	b=HvpM27t7dRy15+LfpKRCrJeGC5WDhYaUG5OwH21amY9irPLkG4yhddA4fVMStqfWw
+	 UHwWKaxhX5yDrP5j314mFFtl41U5f7WukctVp1TprPLRS/MZAanZuecESqRaKMqEHA
+	 EKRVYXCDcr8Ube1VcAH31/42iR6gkAm/nRLVO5nJzx25mp8PgQ3ZHgNeoUHwGmUyJb
+	 EyVufkv9sOkpa1sJkELqGRXvOwD+jHXy7392NM3A/EamBQcnQvaJU6ERTlWkmHlWMX
+	 jgqdzx2OHQ+OJ4ct93AzEzIfpe7sEHO69LNegm7fzn+Ipx7QFrZRRVG2XNhM0QYWPQ
+	 5yURI+vPcbcFw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -51,12 +51,12 @@ Cc: Edward Adam Davis <eadavis@qq.com>,
 	Sasha Levin <sashal@kernel.org>,
 	walmeida@microsoft.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 4/5] hfsplus: fix uninit-value in copy_name
-Date: Tue, 16 Jul 2024 14:34:01 -0400
-Message-ID: <20240716183409.2814531-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 3/4] hfsplus: fix uninit-value in copy_name
+Date: Tue, 16 Jul 2024 14:34:22 -0400
+Message-ID: <20240716183427.2814662-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240716183409.2814531-1-sashal@kernel.org>
-References: <20240716183409.2814531-1-sashal@kernel.org>
+In-Reply-To: <20240716183427.2814662-1-sashal@kernel.org>
+References: <20240716183427.2814662-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.99
+X-stable-base: Linux 5.15.162
 Content-Transfer-Encoding: 8bit
 
 From: Edward Adam Davis <eadavis@qq.com>
@@ -118,7 +118,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-index 49891b12c4156..2b0e0ba58139b 100644
+index e2855ceefd394..71fb2f8e91170 100644
 --- a/fs/hfsplus/xattr.c
 +++ b/fs/hfsplus/xattr.c
 @@ -699,7 +699,7 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
