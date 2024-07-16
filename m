@@ -1,91 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-23737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F42893214F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 09:37:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258CC9321AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 10:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705421C2199A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 07:37:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC441F2242F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jul 2024 08:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22023CF51;
-	Tue, 16 Jul 2024 07:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AEE51C4A;
+	Tue, 16 Jul 2024 08:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEQi10vB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndV5wXMr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE07224D4;
-	Tue, 16 Jul 2024 07:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020C82EAEA
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jul 2024 08:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721115450; cv=none; b=srNkX6lVZ/yW529soNU/zFzEqv5qYKdgPtq29a0Er4c5qC1ars/UG9GjFUqLMSkyDEb0i0ydD2oaape2meXcW/wJ2trgw4WJ+HYG03Zg6hOwt8QswhvBqSlGIknuTH713xkxxdukT7NZscBpcp0pQ29nLFt2joIhAxbGox6Jws4=
+	t=1721117556; cv=none; b=pd02R9iSMTO98ddde3xRY+Nt1l2R799OJLZZsdslTJCX6rp0slUIRF6+zj/O1damU5jx+vgV8QTVA9WWt97xmsb0A2RjzCZRhmjna5MTDSnYTQvqPtHKCKiLLe32uGCVqNgsvWyWn7mYBRiqTdxvUZ8U/yq2w56ZHLUwbePkRIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721115450; c=relaxed/simple;
-	bh=JO3qgQV4sy0U2AaNeNeVdHcFGwZZ9gH4KsehfrW9qEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEBaMWA/vPoyv7KCkJHlyFPvPGOQmGJvGvnPfWyQVAQycOoLResNc7ALAxc6USkTVrULmQQfHY/Kb7tc3OYJ8IKCPOew6zWylwMzEWAeZId1X4n0/2bW72i8ydMsHpKxAS6Ai38fugkxeIKrA6C2DCt4t1OY5P2dRRvRTKs05KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEQi10vB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58AD8C116B1;
-	Tue, 16 Jul 2024 07:37:22 +0000 (UTC)
+	s=arc-20240116; t=1721117556; c=relaxed/simple;
+	bh=4coTuAzv12+W2AdCW/Dic4pQY1/XWFmTox8pYiOvR6w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Js/LSSMSJkuSgUBuik9SSMe/bmcCBMsxnTv5ZRwp4Pzqvdtlt7PfIzBgCe+U8L/1LnZxqkYguwNrvxzRdBYG8m4Be3rhJnyMpaFt/XIvMEPCTR9SyUQOMMV1PF8ccrdt822+pJrvjBp++n37iVaeVfyfro52XkFNPhMgAfGJG9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndV5wXMr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DF3C4AF0B;
+	Tue, 16 Jul 2024 08:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721115449;
-	bh=JO3qgQV4sy0U2AaNeNeVdHcFGwZZ9gH4KsehfrW9qEQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EEQi10vBr2zTt+8+q5Ijrg1zn14enr23N3t5Mf+Q3ATK9FrfwUmwEv56VRw9Kckim
-	 n4y41pPCHpgM4PnaReJbhjOJEVf0LJb9qQVWL92truLKYQ3hcDUaEpqxZyHqhO9sWd
-	 eZmbvlpev0t+zz5ob76vCO5il2QAEvnnGlYgA4SwL+RCuIgz86JRtUJCijofa8Ul6T
-	 Wxx8XUEI3j2AY72qRNZ3dB05A3G0RZ4eoIf61KtN/LENtNSG7mjzbfddZBZhMJ1Qf3
-	 kZt4tlF88NMZbRNhCeDzOk1CHtFNZw9xVR6pUTaOUpJ57izYQ3KxxofTtLXAsLfnEn
-	 oLRLkdByOqrGQ==
-Date: Tue, 16 Jul 2024 09:37:19 +0200
+	s=k20201202; t=1721117555;
+	bh=4coTuAzv12+W2AdCW/Dic4pQY1/XWFmTox8pYiOvR6w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ndV5wXMrW3NILCdjULeBd35eB34x/+jsmkBW0F+9PeACOtfxxXrtJkG1Aa8okH0d7
+	 O/plL4y+/k/gf25Ixz+JaNULYJpTCFMdYVkkpuRtw4i3MycBOitTCfY7phMqNPiXUz
+	 OLa0UsFRvP850vycPuNdSyWLPqcqxQ6a8/Ub1ua4J5tX1g8uGIx8C1QBrhDWGJbp8g
+	 lzFXeD6KutrEYi2XUVJTgZ9Sb8BJUor9uqZwr1pRpfTjsfRzZTEdC1L7eHFNA1nAxK
+	 jnedCrwlqdh1ZMotatR2GlF6912xumuoeNiyk/R3bGwo7cA/frBQ0n01GYeDJn1VBt
+	 uHLINXI7SDyng==
 From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Chandan Babu R <chandan.babu@oracle.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
-	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>, 
-	Christoph Hellwig <hch@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Arnd Bergmann <arnd@arndb.de>, 
-	Randy Dunlap <rdunlap@infradead.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 0/9] fs: multigrain timestamp redux
-Message-ID: <20240716-zerlegen-haudegen-ba86a22f4322@brauner>
-References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 0/6] Convert qnx6 directory handling to folios
+Date: Tue, 16 Jul 2024 10:12:24 +0200
+Message-ID: <20240716-fauna-hubschrauber-5aabe455493b@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240710155946.2257293-1-willy@infradead.org>
+References: <20240710155946.2257293-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1821; i=brauner@kernel.org; h=from:subject:message-id; bh=4coTuAzv12+W2AdCW/Dic4pQY1/XWFmTox8pYiOvR6w=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRN0879dqPn6IpDvLzf4j/Km6W+8FWQvSOyfvkf5pBJX L7yVt/dO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYirMfI8GSL+ZUPjDPvauQw sKoEv1Uq4DE0YN+su985M7jt4/0bJYwMj3JWnc0Wm5jduIufP9iY68C8MuZEBuZ7fVmBgp0Znde ZAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 15, 2024 at 08:48:51AM GMT, Jeff Layton wrote:
-> I think this is pretty much ready for linux-next now. Since the latest
-> changes are pretty minimal, I've left the Reviewed-by's intact. It would
-> be nice to have acks or reviews from maintainers for ext4 and tmpfs too.
+On Wed, 10 Jul 2024 16:59:38 +0100, Matthew Wilcox (Oracle) wrote:
+> This patch series mirrors the changes to ext2 directory handling.
+> COmpile tested only.
 > 
-> I did try to plumb this into bcachefs too, but the way it handles
-> timestamps makes that pretty difficult. It keeps the active copies in an
-> internal representation of the on-disk inode and periodically copies
-> them to struct inode. This is backward from the way most blockdev
-> filesystems do this.
+> Matthew Wilcox (Oracle) (6):
+>   qnx6: Convert qnx6_get_page() to qnx6_get_folio()
+>   qnx6: Convert qnx6_find_entry() to qnx6_find_ino()
+>   qnx6: Convert qnx6_longname() to take a folio
+>   qnx6: Convert qnx6_checkroot() to use a folio
+>   qnx6: Convert qnx6_iget() to use a folio
+>   qnx6: Convert directory handling to use kmap_local
 > 
-> Christian, would you be willing to pick these up  with an eye toward
-> v6.12 after the merge window settles?
+> [...]
 
-Yup. About to queue it up. I'll try to find some time to go through it
-so I might have some replies later but that shouldn't hold up linux-next
-at all.
+Applied to the vfs.qnx6 branch of the vfs/vfs.git tree.
+Patches in the vfs.qnx6 branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.qnx6
+
+[1/6] qnx6: Convert qnx6_get_page() to qnx6_get_folio()
+      https://git.kernel.org/vfs/vfs/c/bedab6ec809d
+[2/6] qnx6: Convert qnx6_find_entry() to qnx6_find_ino()
+      https://git.kernel.org/vfs/vfs/c/31d48d668d7e
+[3/6] qnx6: Convert qnx6_longname() to take a folio
+      https://git.kernel.org/vfs/vfs/c/a5a63c87df3e
+[4/6] qnx6: Convert qnx6_checkroot() to use a folio
+      https://git.kernel.org/vfs/vfs/c/711ae9703e0b
+[5/6] qnx6: Convert qnx6_iget() to use a folio
+      https://git.kernel.org/vfs/vfs/c/5a1610488ce5
+[6/6] qnx6: Convert directory handling to use kmap_local
+      https://git.kernel.org/vfs/vfs/c/82282037419a
 
