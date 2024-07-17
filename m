@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-23846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5EB933FEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:47:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6B4933FF8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5233B24293
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:47:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 471781F259D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEF01822E9;
-	Wed, 17 Jul 2024 15:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E96B183078;
+	Wed, 17 Jul 2024 15:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CI8B/IWE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gEC/YNT6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F7F1E536
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C864918130F
 	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 15:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721231244; cv=none; b=iqaZiYaqcFFpk2puK068EAtYNGiuyjIYAUMroch3gieZVa4RoQJhOr7fwZE6um5RQsNvvaWx4X3VmsIp3tXFAX9Lk2bSd9gcad3QjZfyS88d7dFBiE/jxk02CE+fFimJaJzZK2TwpfTJca3WAJtZKjH0qa1I9X2mC90e3Sb99Rs=
+	t=1721231245; cv=none; b=PC4L5GCsHxXGY4ALn5poWkJPmYNR5fbg0RhlVBgC1Y5rP3+6+RbmsEWON/NVYRZWCV0CZwlZNnUOUAvTQc6WzrdDKBfg40BwelKcnL5plKDk73E8mVJwoyDg3B6tL1vnVk35nZSuf/EPhgDcx1XsrQM/cjBC53rqzxcJowal5mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721231244; c=relaxed/simple;
-	bh=Vpt6Z4oG2Abz4IICMVi86YbZTOkPJ++JGqR4ZnRoCA0=;
+	s=arc-20240116; t=1721231245; c=relaxed/simple;
+	bh=61GmWkPNRObgCEJRGCUptigNT1ArqsY+iiTTaov8waM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=At6+jdAW9jtkpJZ2ZkQLyUElN9MeTt9dOR3IFLws1szHV3J377wjtBbBn/KrmT6lU2+COqUalgHxekhyaVKOLzuu0KvS+WjcjTU58aT+Y4EeKqk296rawFkhwHBy6gM2/lVC+mKNT+h+pHH950Sq9ykegj1vI9JSy7UJ8qEldGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CI8B/IWE; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=TnrgbwrsrHf7u3htF8S9xkV69W3xEf2j1Fg4ITH/+r2O9DIVxED3UXrBZAimG02n0Tokv20VoW1uy6xXOU2uwRG73fR8RE932sgrKDtnOi+9IdDqQqU+XoD03VKkllWZWHZhVWRVf0xarnPmlxIL2em/J7PliK/4tNpeayTcQPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gEC/YNT6; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=q6B77ZRLMKvnkwBauykffECVktknHyQSEextu/En5Lo=; b=CI8B/IWE2GN39o1C7OJCYkUB8K
-	skEfGrix4y7B1NLFkU5gNI1oI12GVZj2iAc3xMM60ovKO6hIU0LiA/ZuVZ+Py2iiw8h2+cBXNutjh
-	VDewIaxyLYU45Ok/XVjOSHF1jxrff0VfMryvhhwpVhxgZmhAQpGx+xyR7MNYByhQGTmVBS6NQ8bTN
-	y3NMUD0v5svMGgIDIY41X/8LWm08PhnKve3IZo0z8OcwQE41MypQY93KRPYnQZdVLEXKvFBu2+CQU
-	8fBQ2Tkr5LGuuJaNgj0yacyAds+Rbe8N8WQPUW1Fhi+G1xJkdAEvZc3kxYE3G+3C4CrYWbR9LJ9T3
-	PuCiXadg==;
+	bh=os2R35SM0Bbh6DKtdqifgsKjeLQQ8Ojotg5tPeyWj8o=; b=gEC/YNT6EzWX/3FTozV/jIsVJI
+	3OEcI3bePGjfPgfx7JtseEaA2XvV5HibkjV4+JdQnDiNgclUnMeq+fO0Eu6K+Q3BH5MK7+5pMKwVB
+	6rUt4yb7pY0y2VAnKtRd9fC0Jge3vbqnRBF4l5VoGxmwwCWpILXEcnq9tg7VSBV1fX9i8rQvRDMxn
+	QPEzIla4pqKDzcejxk3GVxvPbxH2NGCXGesjP+rtNqBvN/1V/ZH57DNA132JPc5znVVI7+h5zAY95
+	eNYZYHbVVk1lnZbuY8E1F2vUPf7ZXC+JcB02SU0PZ1Zv9tby6g/bhr+bQ8lZkxbjXuCXgKghxiPa2
+	Ht+NAfgA==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sU6sC-00000000zud-3tWd;
-	Wed, 17 Jul 2024 15:47:20 +0000
+	id 1sU6sD-00000000zui-10WW;
+	Wed, 17 Jul 2024 15:47:21 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 09/23] ecryptfs: Use a folio in ecryptfs_write_begin()
-Date: Wed, 17 Jul 2024 16:46:59 +0100
-Message-ID: <20240717154716.237943-10-willy@infradead.org>
+Subject: [PATCH 10/23] f2fs: Convert f2fs_write_end() to use a folio
+Date: Wed, 17 Jul 2024 16:47:00 +0100
+Message-ID: <20240717154716.237943-11-willy@infradead.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240717154716.237943-1-willy@infradead.org>
 References: <20240717154716.237943-1-willy@infradead.org>
@@ -61,142 +61,68 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use __filemap_get_folio() instead of grab_cache_page_write_begin()
-and use the folio throughout.  No attempt is made here to support
-large folios, simply converting this function to use folio APIs is
-the goal.  Saves many hidden calls to compound_head().
+Convert the passed page to a folio and operate on that.
+Replaces five calls to compound_head() with one.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ecryptfs/mmap.c | 53 +++++++++++++++++++++++-----------------------
- 1 file changed, 27 insertions(+), 26 deletions(-)
+ fs/f2fs/data.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/ecryptfs/mmap.c b/fs/ecryptfs/mmap.c
-index 9b86fad2b9d1..75ce28d757b7 100644
---- a/fs/ecryptfs/mmap.c
-+++ b/fs/ecryptfs/mmap.c
-@@ -268,35 +268,36 @@ static int ecryptfs_write_begin(struct file *file,
- 			struct page **pagep, void **fsdata)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6457e5bca9c9..58ac23e124a5 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3687,7 +3687,8 @@ static int f2fs_write_end(struct file *file,
+ 			loff_t pos, unsigned len, unsigned copied,
+ 			struct page *page, void *fsdata)
  {
- 	pgoff_t index = pos >> PAGE_SHIFT;
--	struct page *page;
-+	struct folio *folio;
- 	loff_t prev_page_end_size;
- 	int rc = 0;
+-	struct inode *inode = page->mapping->host;
++	struct folio *folio = page_folio(page);
++	struct inode *inode = folio->mapping->host;
  
--	page = grab_cache_page_write_begin(mapping, index);
--	if (!page)
--		return -ENOMEM;
--	*pagep = page;
-+	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
-+			mapping_gfp_mask(mapping));
-+	if (IS_ERR(folio))
-+		return PTR_ERR(folio);
-+	*pagep = &folio->page;
+ 	trace_f2fs_write_end(inode, pos, len, copied);
  
- 	prev_page_end_size = ((loff_t)index << PAGE_SHIFT);
+@@ -3696,17 +3697,17 @@ static int f2fs_write_end(struct file *file,
+ 	 * should be PAGE_SIZE. Otherwise, we treat it with zero copied and
+ 	 * let generic_perform_write() try to copy data again through copied=0.
+ 	 */
 -	if (!PageUptodate(page)) {
 +	if (!folio_test_uptodate(folio)) {
- 		struct ecryptfs_crypt_stat *crypt_stat =
- 			&ecryptfs_inode_to_private(mapping->host)->crypt_stat;
+ 		if (unlikely(copied != len))
+ 			copied = 0;
+ 		else
+-			SetPageUptodate(page);
++			folio_mark_uptodate(folio);
+ 	}
  
- 		if (!(crypt_stat->flags & ECRYPTFS_ENCRYPTED)) {
- 			rc = ecryptfs_read_lower_page_segment(
--				page, index, 0, PAGE_SIZE, mapping->host);
-+				&folio->page, index, 0, PAGE_SIZE, mapping->host);
- 			if (rc) {
- 				printk(KERN_ERR "%s: Error attempting to read "
- 				       "lower page segment; rc = [%d]\n",
- 				       __func__, rc);
--				ClearPageUptodate(page);
-+				folio_clear_uptodate(folio);
- 				goto out;
- 			} else
--				SetPageUptodate(page);
-+				folio_mark_uptodate(folio);
- 		} else if (crypt_stat->flags & ECRYPTFS_VIEW_AS_ENCRYPTED) {
- 			if (crypt_stat->flags & ECRYPTFS_METADATA_IN_XATTR) {
- 				rc = ecryptfs_copy_up_encrypted_with_header(
--					page, crypt_stat);
-+					&folio->page, crypt_stat);
- 				if (rc) {
- 					printk(KERN_ERR "%s: Error attempting "
- 					       "to copy the encrypted content "
-@@ -304,46 +305,46 @@ static int ecryptfs_write_begin(struct file *file,
- 					       "inserting the metadata from "
- 					       "the xattr into the header; rc "
- 					       "= [%d]\n", __func__, rc);
--					ClearPageUptodate(page);
-+					folio_clear_uptodate(folio);
- 					goto out;
- 				}
--				SetPageUptodate(page);
-+				folio_mark_uptodate(folio);
- 			} else {
- 				rc = ecryptfs_read_lower_page_segment(
--					page, index, 0, PAGE_SIZE,
-+					&folio->page, index, 0, PAGE_SIZE,
- 					mapping->host);
- 				if (rc) {
- 					printk(KERN_ERR "%s: Error reading "
- 					       "page; rc = [%d]\n",
- 					       __func__, rc);
--					ClearPageUptodate(page);
-+					folio_clear_uptodate(folio);
- 					goto out;
- 				}
--				SetPageUptodate(page);
-+				folio_mark_uptodate(folio);
- 			}
- 		} else {
- 			if (prev_page_end_size
--			    >= i_size_read(page->mapping->host)) {
--				zero_user(page, 0, PAGE_SIZE);
--				SetPageUptodate(page);
-+			    >= i_size_read(mapping->host)) {
-+				folio_zero_range(folio, 0, PAGE_SIZE);
-+				folio_mark_uptodate(folio);
- 			} else if (len < PAGE_SIZE) {
--				rc = ecryptfs_decrypt_page(page);
-+				rc = ecryptfs_decrypt_page(&folio->page);
- 				if (rc) {
- 					printk(KERN_ERR "%s: Error decrypting "
- 					       "page at index [%ld]; "
- 					       "rc = [%d]\n",
--					       __func__, page->index, rc);
--					ClearPageUptodate(page);
-+					       __func__, folio->index, rc);
-+					folio_clear_uptodate(folio);
- 					goto out;
- 				}
--				SetPageUptodate(page);
-+				folio_mark_uptodate(folio);
- 			}
- 		}
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	/* overwrite compressed file */
+ 	if (f2fs_compressed_file(inode) && fsdata) {
+-		f2fs_compress_write_end(inode, fsdata, page->index, copied);
++		f2fs_compress_write_end(inode, fsdata, folio->index, copied);
+ 		f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+ 
+ 		if (pos + copied > i_size_read(inode) &&
+@@ -3719,7 +3720,7 @@ static int f2fs_write_end(struct file *file,
+ 	if (!copied)
+ 		goto unlock_out;
+ 
+-	set_page_dirty(page);
++	folio_mark_dirty(folio);
+ 
+ 	if (pos + copied > i_size_read(inode) &&
+ 	    !f2fs_verity_in_progress(inode)) {
+@@ -3729,7 +3730,8 @@ static int f2fs_write_end(struct file *file,
+ 					pos + copied);
  	}
- 	/* If creating a page or more of holes, zero them out via truncate.
- 	 * Note, this will increase i_size. */
- 	if (index != 0) {
--		if (prev_page_end_size > i_size_read(page->mapping->host)) {
-+		if (prev_page_end_size > i_size_read(mapping->host)) {
- 			rc = ecryptfs_truncate(file->f_path.dentry,
- 					       prev_page_end_size);
- 			if (rc) {
-@@ -359,11 +360,11 @@ static int ecryptfs_write_begin(struct file *file,
- 	 * of page?  Zero it out. */
- 	if ((i_size_read(mapping->host) == prev_page_end_size)
- 	    && (pos != 0))
--		zero_user(page, 0, PAGE_SIZE);
-+		folio_zero_range(folio, 0, PAGE_SIZE);
- out:
- 	if (unlikely(rc)) {
--		unlock_page(page);
--		put_page(page);
-+		folio_unlock(folio);
-+		folio_put(folio);
- 		*pagep = NULL;
- 	}
- 	return rc;
+ unlock_out:
+-	f2fs_put_page(page, 1);
++	folio_unlock(folio);
++	folio_put(folio);
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+ 	return copied;
+ }
 -- 
 2.43.0
 
