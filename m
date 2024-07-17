@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-23860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3608A933FFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EE0933FFF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8990C1F25D5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:48:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D5E1F25E20
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9500D1836D3;
-	Wed, 17 Jul 2024 15:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15A7184106;
+	Wed, 17 Jul 2024 15:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VHZD9VUc"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G91BZvLA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7E4181D11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62599181325
 	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 15:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721231247; cv=none; b=if5LrJSe1HegFl0AKyhhepjcXzHi9DkZVZWIg0wRfnxnoEvTLeL6wH+MC/T5Ifh5PODh7AA5sP7oXM5oyFS7B7sgAE7sVcJvnLJCn/FLt/PmefAkbwPioTDCqf2wFWOM91mEhiNnCXEMYPu6OvDOHNt1czPkKRKk5O4xdBRobks=
+	t=1721231248; cv=none; b=c2Rxji7/jWA64WEUwGaBJ0/tuuTrSa9l8ov20XfUzuO47CzdfvHc1+91EtL9jfH0ZFoc7lW3RFQ+9lBr6WGrmMfTsi7SKNIupFLj/QM3RPQFgBesODKOrRfYfzkb4os80D7b/vdkLi/rVSJpgmnA1lLeVQf4qjsDg1Ecs7XqxtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721231247; c=relaxed/simple;
-	bh=K6iJHw2aPIU0uw1okJ7gz1VCClWv1D4Scv2NRRKT5eg=;
+	s=arc-20240116; t=1721231248; c=relaxed/simple;
+	bh=onJM9ij9zPSvGc+LGsZODf9s38Tq8JsJaTJb4H0CSnw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hN3PSTsX6KVYHxvUwHCNJY6AAGux2DVFfvLoRARstnQ4Tr4LbkasRor9cPgmO5q1F7K4Lt5kbDI5++mn9HJK8MP175cEJn6VSskD2x/p4vu9tH3vOgbh4Jlcwif//qMJEonk+3CZtBXovRPjx2AG/L+tsVOOFsPlIhLD+xSTrWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VHZD9VUc; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=A43q55C2DA2UN4Cp/Lxb/bExg4UjkcRoXDB5c5sa9mG0H2QR8ta8JdISPplDpRF5fGJe+qJL6prh55GAVBKK2iiBNFBpgw3I++3Ud1gIEn8k5/vpXh5m+ZLawXDvTSSaaLkkZr4A6KjlUw/hsAW9HW6MH9Vc7aUfEm9bAoTJHP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=G91BZvLA; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=nozS2z8zYOKYe3QvN3WmLDVHjujgWUa98vMuX5DsAno=; b=VHZD9VUchHgs//KAB8LmqzPSWB
-	CF9WZrPFNQj8ObI8r2aCeg536crw/hiwsHm+3GLQqgj/sm70pTZthWQrgKFcXe0OJ2NJPTOG66V+h
-	1+Mut+EYFT4QIoGjHYro5PyuYG9bgfDpFhNNByhN9XpXDRL7AC+8A2J4P3peieOHOESFkN83BAHwZ
-	3pT/f7L9iR3Ia4qoo3JM3aDzGCMh0tGe7ajd5+2pe2e2jvhNSYJS0emqLLfDoWNwQRVbRwJUPqcUB
-	PuLOsc5X+U57/6o5tVACIr0yG0f8rI9UluQaa6IKyK60HVdWYWucq7E6vOAwoCEyZUG4ZgMzTa55T
-	oseUFzUA==;
+	bh=T2oz96jt089hEM1ev80+AjIyr1d2gM8mChb992i2nsU=; b=G91BZvLAhyVWUqguVjnYL32CZe
+	Gp+NuKEOHwoszMo20CagJyHeIzCu9Jr8r8x576Di5fg6ZEgbpk+PBavLepyQSxPpo19un6GJlsPsI
+	w+EDqyoCI8xEt9BojgYbpPg19f2gfqhpP9a2aWTT7Ab/qOOgMepGExy6oovhZuDR9I5ga3yp8qdAD
+	vZS46CdCMCe+JrRFDtB5dQ3ZpHEhkfdSt3WL80BgPH5kirABXGNeNy6iblGR+C/RPaGEId+/1uL2E
+	YEG/xHbQE9USppLRIdclK/ElBOSp1L4BU71cD93aExCDNIVlnXfHG7Nn61UUnQKpK2dnuGrY2QwEH
+	E6ABaGAQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sU6sE-00000000zvp-29lv;
+	id 1sU6sE-00000000zvu-2lnx;
 	Wed, 17 Jul 2024 15:47:22 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 20/23] fs: Convert aops->write_end to take a folio
-Date: Wed, 17 Jul 2024 16:47:10 +0100
-Message-ID: <20240717154716.237943-21-willy@infradead.org>
+Subject: [PATCH 21/23] fs: Convert aops->write_begin to take a folio
+Date: Wed, 17 Jul 2024 16:47:11 +0100
+Message-ID: <20240717154716.237943-22-willy@infradead.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240717154716.237943-1-willy@infradead.org>
 References: <20240717154716.237943-1-willy@infradead.org>
@@ -61,919 +61,1723 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Most callers have a folio, and most implementations operate on a folio,
-so remove the conversion from folio->page->folio to fit through this
-interface.
+Convert all callers from working on a page to working on one page
+of a folio (support for working on an entire folio can come later).
+Removes a lot of folio->page->folio conversions.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- Documentation/filesystems/locking.rst     |  2 +-
- Documentation/filesystems/vfs.rst         |  6 +++---
- block/fops.c                              |  3 +--
- drivers/gpu/drm/i915/gem/i915_gem_shmem.c |  4 ++--
- fs/affs/file.c                            |  9 ++++-----
- fs/bcachefs/fs-io-buffered.c              |  3 +--
- fs/bcachefs/fs-io-buffered.h              |  2 +-
- fs/buffer.c                               |  9 ++++-----
- fs/ceph/addr.c                            |  3 +--
- fs/ecryptfs/mmap.c                        |  5 ++---
- fs/exfat/file.c                           |  2 +-
- fs/exfat/inode.c                          |  4 ++--
- fs/ext2/inode.c                           |  4 ++--
- fs/ext4/inode.c                           | 11 ++++-------
- fs/ext4/verity.c                          |  2 +-
- fs/f2fs/data.c                            |  3 +--
- fs/f2fs/super.c                           |  2 +-
- fs/f2fs/verity.c                          |  2 +-
- fs/fat/inode.c                            |  4 ++--
- fs/fuse/file.c                            |  3 +--
- fs/hfs/extent.c                           |  2 +-
- fs/hfsplus/extents.c                      |  2 +-
- fs/hostfs/hostfs_kern.c                   |  3 +--
- fs/hpfs/file.c                            |  4 ++--
+ Documentation/filesystems/locking.rst     |  4 +-
+ Documentation/filesystems/vfs.rst         |  6 +--
+ block/fops.c                              |  4 +-
+ drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 47 +++++++++++------------
+ fs/adfs/inode.c                           |  5 +--
+ fs/affs/file.c                            | 15 ++++----
+ fs/bcachefs/fs-io-buffered.c              |  5 +--
+ fs/bcachefs/fs-io-buffered.h              |  4 +-
+ fs/bfs/file.c                             |  4 +-
+ fs/buffer.c                               | 28 +++++++-------
+ fs/ceph/addr.c                            | 10 ++---
+ fs/ecryptfs/mmap.c                        |  7 ++--
+ fs/exfat/file.c                           |  8 ++--
+ fs/exfat/inode.c                          |  5 +--
+ fs/ext2/inode.c                           |  4 +-
+ fs/ext4/ext4.h                            |  4 +-
+ fs/ext4/inline.c                          |  8 ++--
+ fs/ext4/inode.c                           | 14 +++----
+ fs/ext4/verity.c                          |  8 ++--
+ fs/f2fs/data.c                            |  8 ++--
+ fs/f2fs/super.c                           |  8 ++--
+ fs/f2fs/verity.c                          |  8 ++--
+ fs/fat/inode.c                            |  5 +--
+ fs/fuse/file.c                            |  4 +-
+ fs/hfs/extent.c                           |  6 +--
+ fs/hfs/hfs_fs.h                           |  2 +-
+ fs/hfs/inode.c                            |  5 +--
+ fs/hfsplus/extents.c                      |  6 +--
+ fs/hfsplus/hfsplus_fs.h                   |  2 +-
+ fs/hfsplus/inode.c                        |  5 +--
+ fs/hostfs/hostfs_kern.c                   |  7 ++--
+ fs/hpfs/file.c                            |  5 +--
  fs/hugetlbfs/inode.c                      |  2 +-
- fs/jffs2/file.c                           |  5 ++---
- fs/jfs/inode.c                            |  4 ++--
- fs/libfs.c                                |  9 ++++-----
- fs/namei.c                                |  2 +-
- fs/nfs/file.c                             |  3 +--
- fs/nilfs2/inode.c                         |  6 +++---
- fs/ntfs3/file.c                           |  2 +-
- fs/ntfs3/inode.c                          |  5 ++---
+ fs/jffs2/file.c                           |  6 +--
+ fs/jfs/inode.c                            |  4 +-
+ fs/libfs.c                                |  4 +-
+ fs/minix/inode.c                          |  4 +-
+ fs/namei.c                                | 10 ++---
+ fs/nfs/file.c                             |  4 +-
+ fs/nilfs2/inode.c                         |  4 +-
+ fs/nilfs2/recovery.c                      |  6 +--
+ fs/ntfs3/file.c                           |  9 ++---
+ fs/ntfs3/inode.c                          |  7 ++--
  fs/ntfs3/ntfs_fs.h                        |  2 +-
- fs/ocfs2/aops.c                           |  2 +-
- fs/orangefs/inode.c                       |  4 ++--
- fs/reiserfs/inode.c                       | 11 +++++------
- fs/ubifs/file.c                           |  3 +--
- fs/udf/inode.c                            |  6 ++----
- fs/ufs/inode.c                            |  4 ++--
- fs/vboxsf/file.c                          |  7 +++----
- include/linux/buffer_head.h               |  4 ++--
- include/linux/fs.h                        |  2 +-
- mm/filemap.c                              |  2 +-
- mm/shmem.c                                |  3 +--
- 45 files changed, 80 insertions(+), 102 deletions(-)
+ fs/ocfs2/aops.c                           | 10 ++---
+ fs/ocfs2/aops.h                           |  2 +-
+ fs/ocfs2/mmap.c                           |  6 +--
+ fs/omfs/file.c                            |  4 +-
+ fs/orangefs/inode.c                       |  4 +-
+ fs/reiserfs/inode.c                       |  4 +-
+ fs/sysv/itree.c                           |  4 +-
+ fs/ubifs/file.c                           | 10 ++---
+ fs/udf/inode.c                            |  6 +--
+ fs/ufs/inode.c                            |  4 +-
+ include/linux/buffer_head.h               |  4 +-
+ include/linux/fs.h                        |  4 +-
+ mm/filemap.c                              |  4 +-
+ mm/shmem.c                                |  7 ++--
+ 58 files changed, 189 insertions(+), 207 deletions(-)
 
 diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index e664061ed55d..827fb5a073b7 100644
+index 827fb5a073b7..f5e3676db954 100644
 --- a/Documentation/filesystems/locking.rst
 +++ b/Documentation/filesystems/locking.rst
-@@ -254,7 +254,7 @@ prototypes::
- 				struct page **pagep, void **fsdata);
+@@ -251,7 +251,7 @@ prototypes::
+ 	void (*readahead)(struct readahead_control *);
+ 	int (*write_begin)(struct file *, struct address_space *mapping,
+ 				loff_t pos, unsigned len,
+-				struct page **pagep, void **fsdata);
++				struct folio **foliop, void **fsdata);
  	int (*write_end)(struct file *, struct address_space *mapping,
  				loff_t pos, unsigned len, unsigned copied,
--				struct page *page, void *fsdata);
-+				struct folio *folio, void *fsdata);
- 	sector_t (*bmap)(struct address_space *, sector_t);
- 	void (*invalidate_folio) (struct folio *, size_t start, size_t len);
- 	bool (*release_folio)(struct folio *, gfp_t);
+ 				struct folio *folio, void *fsdata);
+@@ -280,7 +280,7 @@ read_folio:		yes, unlocks				shared
+ writepages:
+ dirty_folio:		maybe
+ readahead:		yes, unlocks				shared
+-write_begin:		locks the page		 exclusive
++write_begin:		locks the folio		 exclusive
+ write_end:		yes, unlocks		 exclusive
+ bmap:
+ invalidate_folio:	yes					exclusive
 diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 6e903a903f8f..0e24f770c568 100644
+index 0e24f770c568..4f67b5ea0568 100644
 --- a/Documentation/filesystems/vfs.rst
 +++ b/Documentation/filesystems/vfs.rst
-@@ -810,7 +810,7 @@ cache in your filesystem.  The following members are defined:
- 				struct page **pagep, void **fsdata);
- 		int (*write_end)(struct file *, struct address_space *mapping,
- 				 loff_t pos, unsigned len, unsigned copied,
--				 struct page *page, void *fsdata);
-+				 struct folio *folio, void *fsdata);
- 		sector_t (*bmap)(struct address_space *, sector_t);
- 		void (*invalidate_folio) (struct folio *, size_t start, size_t len);
- 		bool (*release_folio)(struct folio *, gfp_t);
-@@ -944,8 +944,8 @@ cache in your filesystem.  The following members are defined:
- 	called.  len is the original len passed to write_begin, and
- 	copied is the amount that was able to be copied.
+@@ -926,12 +926,12 @@ cache in your filesystem.  The following members are defined:
+ 	(if they haven't been read already) so that the updated blocks
+ 	can be written out properly.
  
--	The filesystem must take care of unlocking the page and
--	releasing it refcount, and updating i_size.
-+	The filesystem must take care of unlocking the folio,
-+	decrementing its refcount, and updating i_size.
+-	The filesystem must return the locked pagecache page for the
+-	specified offset, in ``*pagep``, for the caller to write into.
++	The filesystem must return the locked pagecache folio for the
++	specified offset, in ``*foliop``, for the caller to write into.
  
- 	Returns < 0 on failure, otherwise the number of bytes (<=
- 	'copied') that were able to be copied into pagecache.
+ 	It must be able to cope with short writes (where the length
+ 	passed to write_begin is greater than the number of bytes copied
+-	into the page).
++	into the folio).
+ 
+ 	A void * may be returned in fsdata, which then gets passed into
+ 	write_end.
 diff --git a/block/fops.c b/block/fops.c
-index df0e762cf397..cd96a6f17119 100644
+index cd96a6f17119..dacbd61fda29 100644
 --- a/block/fops.c
 +++ b/block/fops.c
-@@ -457,10 +457,9 @@ static int blkdev_write_begin(struct file *file, struct address_space *mapping,
+@@ -451,9 +451,9 @@ static void blkdev_readahead(struct readahead_control *rac)
+ }
+ 
+ static int blkdev_write_begin(struct file *file, struct address_space *mapping,
+-		loff_t pos, unsigned len, struct page **pagep, void **fsdata)
++		loff_t pos, unsigned len, struct folio **foliop, void **fsdata)
+ {
+-	return block_write_begin(mapping, pos, len, pagep, blkdev_get_block);
++	return block_write_begin(mapping, pos, len, foliop, blkdev_get_block);
  }
  
  static int blkdev_write_end(struct file *file, struct address_space *mapping,
--		loff_t pos, unsigned len, unsigned copied, struct page *page,
-+		loff_t pos, unsigned len, unsigned copied, struct folio *folio,
- 		void *fsdata)
- {
--	struct folio *folio = page_folio(page);
- 	int ret;
- 	ret = block_write_end(file, mapping, pos, len, copied, folio, fsdata);
- 
 diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-index c5e1c718a6d2..3513165a2964 100644
+index 3513165a2964..fe69f2c8527d 100644
 --- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
 +++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-@@ -494,7 +494,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
- 		kunmap_local(vaddr);
+@@ -424,7 +424,8 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
+ 	struct address_space *mapping = obj->base.filp->f_mapping;
+ 	const struct address_space_operations *aops = mapping->a_ops;
+ 	char __user *user_data = u64_to_user_ptr(arg->data_ptr);
+-	u64 remain, offset;
++	u64 remain;
++	loff_t pos;
+ 	unsigned int pg;
  
- 		err = aops->write_end(obj->base.filp, mapping, offset, len,
--				      len - unwritten, page, data);
-+				      len - unwritten, page_folio(page), data);
+ 	/* Caller already validated user args */
+@@ -457,12 +458,12 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
+ 	 */
+ 
+ 	remain = arg->size;
+-	offset = arg->offset;
+-	pg = offset_in_page(offset);
++	pos = arg->offset;
++	pg = offset_in_page(pos);
+ 
+ 	do {
+ 		unsigned int len, unwritten;
+-		struct page *page;
++		struct folio *folio;
+ 		void *data, *vaddr;
+ 		int err;
+ 		char __maybe_unused c;
+@@ -480,21 +481,19 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
+ 		if (err)
+ 			return err;
+ 
+-		err = aops->write_begin(obj->base.filp, mapping, offset, len,
+-					&page, &data);
++		err = aops->write_begin(obj->base.filp, mapping, pos, len,
++					&folio, &data);
  		if (err < 0)
  			return err;
  
-@@ -688,7 +688,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
- 		kunmap(page);
+-		vaddr = kmap_local_page(page);
++		vaddr = kmap_local_folio(folio, offset_in_folio(folio, pos));
+ 		pagefault_disable();
+-		unwritten = __copy_from_user_inatomic(vaddr + pg,
+-						      user_data,
+-						      len);
++		unwritten = __copy_from_user_inatomic(vaddr, user_data, len);
+ 		pagefault_enable();
+ 		kunmap_local(vaddr);
  
- 		err = aops->write_end(file, file->f_mapping, offset, len, len,
--				      page, pgdata);
-+				      page_folio(page), pgdata);
+-		err = aops->write_end(obj->base.filp, mapping, offset, len,
+-				      len - unwritten, page_folio(page), data);
++		err = aops->write_end(obj->base.filp, mapping, pos, len,
++				      len - unwritten, folio, data);
+ 		if (err < 0)
+ 			return err;
+ 
+@@ -504,7 +503,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
+ 
+ 		remain -= len;
+ 		user_data += len;
+-		offset += len;
++		pos += len;
+ 		pg = 0;
+ 	} while (remain);
+ 
+@@ -660,7 +659,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
+ 	struct drm_i915_gem_object *obj;
+ 	struct file *file;
+ 	const struct address_space_operations *aops;
+-	resource_size_t offset;
++	loff_t pos;
+ 	int err;
+ 
+ 	GEM_WARN_ON(IS_DGFX(i915));
+@@ -672,29 +671,27 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
+ 
+ 	file = obj->base.filp;
+ 	aops = file->f_mapping->a_ops;
+-	offset = 0;
++	pos = 0;
+ 	do {
+ 		unsigned int len = min_t(typeof(size), size, PAGE_SIZE);
+-		struct page *page;
+-		void *pgdata, *vaddr;
++		struct folio *folio;
++		void *fsdata;
+ 
+-		err = aops->write_begin(file, file->f_mapping, offset, len,
+-					&page, &pgdata);
++		err = aops->write_begin(file, file->f_mapping, pos, len,
++					&folio, &fsdata);
  		if (err < 0)
  			goto fail;
  
-diff --git a/fs/affs/file.c b/fs/affs/file.c
-index 04c018e19602..6a6c5bc41b8f 100644
---- a/fs/affs/file.c
-+++ b/fs/affs/file.c
-@@ -433,12 +433,12 @@ static int affs_write_begin(struct file *file, struct address_space *mapping,
+-		vaddr = kmap(page);
+-		memcpy(vaddr, data, len);
+-		kunmap(page);
++		memcpy_to_folio(folio, offset_in_folio(folio, pos), data, len);
  
- static int affs_write_end(struct file *file, struct address_space *mapping,
- 			  loff_t pos, unsigned int len, unsigned int copied,
--			  struct page *page, void *fsdata)
-+			  struct folio *folio, void *fsdata)
+-		err = aops->write_end(file, file->f_mapping, offset, len, len,
+-				      page_folio(page), pgdata);
++		err = aops->write_end(file, file->f_mapping, pos, len, len,
++				      folio, fsdata);
+ 		if (err < 0)
+ 			goto fail;
+ 
+ 		size -= len;
+ 		data += len;
+-		offset += len;
++		pos += len;
+ 	} while (size);
+ 
+ 	return obj;
+diff --git a/fs/adfs/inode.c b/fs/adfs/inode.c
+index a183e213a4a5..21527189e430 100644
+--- a/fs/adfs/inode.c
++++ b/fs/adfs/inode.c
+@@ -55,12 +55,11 @@ static void adfs_write_failed(struct address_space *mapping, loff_t to)
+ 
+ static int adfs_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
  {
- 	struct inode *inode = mapping->host;
  	int ret;
  
--	ret = generic_write_end(file, mapping, pos, len, copied, page, fsdata);
-+	ret = generic_write_end(file, mapping, pos, len, copied, folio, fsdata);
+-	*pagep = NULL;
+-	ret = cont_write_begin(file, mapping, pos, len, pagep, fsdata,
++	ret = cont_write_begin(file, mapping, pos, len, foliop, fsdata,
+ 				adfs_get_block,
+ 				&ADFS_I(mapping->host)->mmu_private);
+ 	if (unlikely(ret))
+diff --git a/fs/affs/file.c b/fs/affs/file.c
+index 6a6c5bc41b8f..a5a861dd5223 100644
+--- a/fs/affs/file.c
++++ b/fs/affs/file.c
+@@ -417,12 +417,11 @@ affs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
  
- 	/* Clear Archived bit on file writes, as AmigaOS would do */
- 	if (AFFS_I(inode)->i_protect & FIBF_ARCHIVED) {
-@@ -687,9 +687,8 @@ static int affs_write_begin_ofs(struct file *file, struct address_space *mapping
- 
- static int affs_write_end_ofs(struct file *file, struct address_space *mapping,
- 				loff_t pos, unsigned len, unsigned copied,
--				struct page *page, void *fsdata)
-+				struct folio *folio, void *fsdata)
+ static int affs_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
  {
--	struct folio *folio = page_folio(page);
- 	struct inode *inode = mapping->host;
- 	struct super_block *sb = inode->i_sb;
- 	struct buffer_head *bh, *prev_bh;
-@@ -889,7 +888,7 @@ affs_truncate(struct inode *inode)
+ 	int ret;
  
- 		res = mapping->a_ops->write_begin(NULL, mapping, isize, 0, &page, &fsdata);
+-	*pagep = NULL;
+-	ret = cont_write_begin(file, mapping, pos, len, pagep, fsdata,
++	ret = cont_write_begin(file, mapping, pos, len, foliop, fsdata,
+ 				affs_get_block,
+ 				&AFFS_I(mapping->host)->mmu_private);
+ 	if (unlikely(ret))
+@@ -648,7 +647,7 @@ static int affs_read_folio_ofs(struct file *file, struct folio *folio)
+ 
+ static int affs_write_begin_ofs(struct file *file, struct address_space *mapping,
+ 				loff_t pos, unsigned len,
+-				struct page **pagep, void **fsdata)
++				struct folio **foliop, void **fsdata)
+ {
+ 	struct inode *inode = mapping->host;
+ 	struct folio *folio;
+@@ -671,7 +670,7 @@ static int affs_write_begin_ofs(struct file *file, struct address_space *mapping
+ 			mapping_gfp_mask(mapping));
+ 	if (IS_ERR(folio))
+ 		return PTR_ERR(folio);
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 
+ 	if (folio_test_uptodate(folio))
+ 		return 0;
+@@ -881,14 +880,14 @@ affs_truncate(struct inode *inode)
+ 
+ 	if (inode->i_size > AFFS_I(inode)->mmu_private) {
+ 		struct address_space *mapping = inode->i_mapping;
+-		struct page *page;
++		struct folio *folio;
+ 		void *fsdata = NULL;
+ 		loff_t isize = inode->i_size;
+ 		int res;
+ 
+-		res = mapping->a_ops->write_begin(NULL, mapping, isize, 0, &page, &fsdata);
++		res = mapping->a_ops->write_begin(NULL, mapping, isize, 0, &folio, &fsdata);
  		if (!res)
--			res = mapping->a_ops->write_end(NULL, mapping, isize, 0, 0, page, fsdata);
-+			res = mapping->a_ops->write_end(NULL, mapping, isize, 0, 0, page_folio(page), fsdata);
+-			res = mapping->a_ops->write_end(NULL, mapping, isize, 0, 0, page_folio(page), fsdata);
++			res = mapping->a_ops->write_end(NULL, mapping, isize, 0, 0, folio, fsdata);
  		else
  			inode->i_size = AFFS_I(inode)->mmu_private;
  		mark_inode_dirty(inode);
 diff --git a/fs/bcachefs/fs-io-buffered.c b/fs/bcachefs/fs-io-buffered.c
-index cc33d763f722..46ae9ef3589a 100644
+index 46ae9ef3589a..3d410d801825 100644
 --- a/fs/bcachefs/fs-io-buffered.c
 +++ b/fs/bcachefs/fs-io-buffered.c
-@@ -743,12 +743,11 @@ int bch2_write_begin(struct file *file, struct address_space *mapping,
+@@ -659,7 +659,7 @@ int bch2_writepages(struct address_space *mapping, struct writeback_control *wbc
  
- int bch2_write_end(struct file *file, struct address_space *mapping,
- 		   loff_t pos, unsigned len, unsigned copied,
--		   struct page *page, void *fsdata)
-+		   struct folio *folio, void *fsdata)
+ int bch2_write_begin(struct file *file, struct address_space *mapping,
+ 		     loff_t pos, unsigned len,
+-		     struct page **pagep, void **fsdata)
++		     struct folio **foliop, void **fsdata)
  {
  	struct bch_inode_info *inode = to_bch_ei(mapping->host);
  	struct bch_fs *c = inode->v.i_sb->s_fs_info;
- 	struct bch2_folio_reservation *res = fsdata;
--	struct folio *folio = page_folio(page);
- 	unsigned offset = pos - folio_pos(folio);
+@@ -728,12 +728,11 @@ int bch2_write_begin(struct file *file, struct address_space *mapping,
+ 		goto err;
+ 	}
  
- 	lockdep_assert_held(&inode->v.i_rwsem);
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	return 0;
+ err:
+ 	folio_unlock(folio);
+ 	folio_put(folio);
+-	*pagep = NULL;
+ err_unlock:
+ 	bch2_pagecache_add_put(inode);
+ 	kfree(res);
 diff --git a/fs/bcachefs/fs-io-buffered.h b/fs/bcachefs/fs-io-buffered.h
-index a6126ff790e6..16569b9874e0 100644
+index 16569b9874e0..3207ebbb4ab4 100644
 --- a/fs/bcachefs/fs-io-buffered.h
 +++ b/fs/bcachefs/fs-io-buffered.h
-@@ -13,7 +13,7 @@ void bch2_readahead(struct readahead_control *);
- int bch2_write_begin(struct file *, struct address_space *, loff_t,
- 		     unsigned, struct page **, void **);
- int bch2_write_end(struct file *, struct address_space *, loff_t,
--		   unsigned, unsigned, struct page *, void *);
-+		   unsigned len, unsigned copied, struct folio *, void *);
+@@ -10,8 +10,8 @@ int bch2_read_folio(struct file *, struct folio *);
+ int bch2_writepages(struct address_space *, struct writeback_control *);
+ void bch2_readahead(struct readahead_control *);
  
- ssize_t bch2_write_iter(struct kiocb *, struct iov_iter *);
+-int bch2_write_begin(struct file *, struct address_space *, loff_t,
+-		     unsigned, struct page **, void **);
++int bch2_write_begin(struct file *, struct address_space *, loff_t pos,
++		     unsigned len, struct folio **, void **);
+ int bch2_write_end(struct file *, struct address_space *, loff_t,
+ 		   unsigned len, unsigned copied, struct folio *, void *);
+ 
+diff --git a/fs/bfs/file.c b/fs/bfs/file.c
+index a778411574a9..fa66a09e496a 100644
+--- a/fs/bfs/file.c
++++ b/fs/bfs/file.c
+@@ -172,11 +172,11 @@ static void bfs_write_failed(struct address_space *mapping, loff_t to)
+ 
+ static int bfs_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, pagep, bfs_get_block);
++	ret = block_write_begin(mapping, pos, len, foliop, bfs_get_block);
+ 	if (unlikely(ret))
+ 		bfs_write_failed(mapping, pos + len);
  
 diff --git a/fs/buffer.c b/fs/buffer.c
-index acba3dfe55d8..1a0f2f65e890 100644
+index 1a0f2f65e890..d52a740f7fca 100644
 --- a/fs/buffer.c
 +++ b/fs/buffer.c
-@@ -2280,9 +2280,8 @@ EXPORT_SYMBOL(block_write_end);
- 
- int generic_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *page, void *fsdata)
-+			struct folio *folio, void *fsdata)
+@@ -2222,7 +2222,7 @@ static void __block_commit_write(struct folio *folio, size_t from, size_t to)
+  * The filesystem needs to handle block truncation upon failure.
+  */
+ int block_write_begin(struct address_space *mapping, loff_t pos, unsigned len,
+-		struct page **pagep, get_block_t *get_block)
++		struct folio **foliop, get_block_t *get_block)
  {
--	struct folio *folio = page_folio(page);
- 	struct inode *inode = mapping->host;
- 	loff_t old_size = inode->i_size;
- 	bool i_size_changed = false;
-@@ -2480,7 +2479,7 @@ int generic_cont_expand_simple(struct inode *inode, loff_t size)
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 	struct folio *folio;
+@@ -2240,7 +2240,7 @@ int block_write_begin(struct address_space *mapping, loff_t pos, unsigned len,
+ 		folio = NULL;
+ 	}
+ 
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	return status;
+ }
+ EXPORT_SYMBOL(block_write_begin);
+@@ -2467,7 +2467,7 @@ int generic_cont_expand_simple(struct inode *inode, loff_t size)
+ {
+ 	struct address_space *mapping = inode->i_mapping;
+ 	const struct address_space_operations *aops = mapping->a_ops;
+-	struct page *page;
++	struct folio *folio;
+ 	void *fsdata = NULL;
+ 	int err;
+ 
+@@ -2475,11 +2475,11 @@ int generic_cont_expand_simple(struct inode *inode, loff_t size)
  	if (err)
  		goto out;
  
--	err = aops->write_end(NULL, mapping, size, 0, 0, page, fsdata);
-+	err = aops->write_end(NULL, mapping, size, 0, 0, page_folio(page), fsdata);
+-	err = aops->write_begin(NULL, mapping, size, 0, &page, &fsdata);
++	err = aops->write_begin(NULL, mapping, size, 0, &folio, &fsdata);
+ 	if (err)
+ 		goto out;
+ 
+-	err = aops->write_end(NULL, mapping, size, 0, 0, page_folio(page), fsdata);
++	err = aops->write_end(NULL, mapping, size, 0, 0, folio, fsdata);
  	BUG_ON(err > 0);
  
  out:
-@@ -2518,7 +2517,7 @@ static int cont_expand_zero(struct file *file, struct address_space *mapping,
+@@ -2493,7 +2493,7 @@ static int cont_expand_zero(struct file *file, struct address_space *mapping,
+ 	struct inode *inode = mapping->host;
+ 	const struct address_space_operations *aops = mapping->a_ops;
+ 	unsigned int blocksize = i_blocksize(inode);
+-	struct page *page;
++	struct folio *folio;
+ 	void *fsdata = NULL;
+ 	pgoff_t index, curidx;
+ 	loff_t curpos;
+@@ -2512,12 +2512,12 @@ static int cont_expand_zero(struct file *file, struct address_space *mapping,
+ 		len = PAGE_SIZE - zerofrom;
+ 
+ 		err = aops->write_begin(file, mapping, curpos, len,
+-					    &page, &fsdata);
++					    &folio, &fsdata);
+ 		if (err)
  			goto out;
- 		zero_user(page, zerofrom, len);
+-		zero_user(page, zerofrom, len);
++		folio_zero_range(folio, offset_in_folio(folio, curpos), len);
  		err = aops->write_end(file, mapping, curpos, len, len,
--						page, fsdata);
-+						page_folio(page), fsdata);
+-						page_folio(page), fsdata);
++						folio, fsdata);
  		if (err < 0)
  			goto out;
  		BUG_ON(err != len);
-@@ -2551,7 +2550,7 @@ static int cont_expand_zero(struct file *file, struct address_space *mapping,
+@@ -2545,12 +2545,12 @@ static int cont_expand_zero(struct file *file, struct address_space *mapping,
+ 		len = offset - zerofrom;
+ 
+ 		err = aops->write_begin(file, mapping, curpos, len,
+-					    &page, &fsdata);
++					    &folio, &fsdata);
+ 		if (err)
  			goto out;
- 		zero_user(page, zerofrom, len);
+-		zero_user(page, zerofrom, len);
++		folio_zero_range(folio, offset_in_folio(folio, curpos), len);
  		err = aops->write_end(file, mapping, curpos, len, len,
--						page, fsdata);
-+						page_folio(page), fsdata);
+-						page_folio(page), fsdata);
++						folio, fsdata);
  		if (err < 0)
  			goto out;
  		BUG_ON(err != len);
+@@ -2566,7 +2566,7 @@ static int cont_expand_zero(struct file *file, struct address_space *mapping,
+  */
+ int cont_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata,
++			struct folio **foliop, void **fsdata,
+ 			get_block_t *get_block, loff_t *bytes)
+ {
+ 	struct inode *inode = mapping->host;
+@@ -2584,7 +2584,7 @@ int cont_write_begin(struct file *file, struct address_space *mapping,
+ 		(*bytes)++;
+ 	}
+ 
+-	return block_write_begin(mapping, pos, len, pagep, get_block);
++	return block_write_begin(mapping, pos, len, foliop, get_block);
+ }
+ EXPORT_SYMBOL(cont_write_begin);
+ 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 8c16bc5250ef..87369e2659c7 100644
+index 87369e2659c7..4402cddf82b5 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -1509,9 +1509,8 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
+@@ -1486,20 +1486,18 @@ static int ceph_netfs_check_write_begin(struct file *file, loff_t pos, unsigned
   */
- static int ceph_write_end(struct file *file, struct address_space *mapping,
- 			  loff_t pos, unsigned len, unsigned copied,
--			  struct page *subpage, void *fsdata)
-+			  struct folio *folio, void *fsdata)
+ static int ceph_write_begin(struct file *file, struct address_space *mapping,
+ 			    loff_t pos, unsigned len,
+-			    struct page **pagep, void **fsdata)
++			    struct folio **foliop, void **fsdata)
  {
--	struct folio *folio = page_folio(subpage);
  	struct inode *inode = file_inode(file);
- 	struct ceph_client *cl = ceph_inode_to_client(inode);
- 	bool check_cap = false;
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+-	struct folio *folio = NULL;
+ 	int r;
+ 
+-	r = netfs_write_begin(&ci->netfs, file, inode->i_mapping, pos, len, &folio, NULL);
++	r = netfs_write_begin(&ci->netfs, file, inode->i_mapping, pos, len, foliop, NULL);
+ 	if (r < 0)
+ 		return r;
+ 
+-	folio_wait_private_2(folio); /* [DEPRECATED] */
+-	WARN_ON_ONCE(!folio_test_locked(folio));
+-	*pagep = &folio->page;
++	folio_wait_private_2(*foliop); /* [DEPRECATED] */
++	WARN_ON_ONCE(!folio_test_locked(*foliop));
+ 	return 0;
+ }
+ 
 diff --git a/fs/ecryptfs/mmap.c b/fs/ecryptfs/mmap.c
-index 75ce28d757b7..f43e42ede75e 100644
+index f43e42ede75e..287e5d407f08 100644
 --- a/fs/ecryptfs/mmap.c
 +++ b/fs/ecryptfs/mmap.c
-@@ -458,15 +458,14 @@ int ecryptfs_write_inode_size_to_metadata(struct inode *ecryptfs_inode)
-  * @pos: The file position
-  * @len: The length of the data (unused)
-  * @copied: The amount of data copied
-- * @page: The eCryptfs page
-+ * @folio: The eCryptfs folio
-  * @fsdata: The fsdata (unused)
-  */
- static int ecryptfs_write_end(struct file *file,
+@@ -255,7 +255,7 @@ static int fill_zeros_to_end_of_page(struct folio *folio, unsigned int to)
+  * @mapping: The eCryptfs object
+  * @pos: The file offset at which to start writing
+  * @len: Length of the write
+- * @pagep: Pointer to return the page
++ * @foliop: Pointer to return the folio
+  * @fsdata: Pointer to return fs data (unused)
+  *
+  * This function must zero any hole we create
+@@ -265,7 +265,7 @@ static int fill_zeros_to_end_of_page(struct folio *folio, unsigned int to)
+ static int ecryptfs_write_begin(struct file *file,
  			struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *page, void *fsdata)
-+			struct folio *folio, void *fsdata)
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
  {
--	struct folio *folio = page_folio(page);
  	pgoff_t index = pos >> PAGE_SHIFT;
- 	unsigned from = pos & (PAGE_SIZE - 1);
- 	unsigned to = from + copied;
+ 	struct folio *folio;
+@@ -276,7 +276,7 @@ static int ecryptfs_write_begin(struct file *file,
+ 			mapping_gfp_mask(mapping));
+ 	if (IS_ERR(folio))
+ 		return PTR_ERR(folio);
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 
+ 	prev_page_end_size = ((loff_t)index << PAGE_SHIFT);
+ 	if (!folio_test_uptodate(folio)) {
+@@ -365,7 +365,6 @@ static int ecryptfs_write_begin(struct file *file,
+ 	if (unlikely(rc)) {
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+-		*pagep = NULL;
+ 	}
+ 	return rc;
+ }
 diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 64c31867bc76..7144472d092e 100644
+index 7144472d092e..e19469e88000 100644
 --- a/fs/exfat/file.c
 +++ b/fs/exfat/file.c
-@@ -548,7 +548,7 @@ static int exfat_file_zeroed_range(struct file *file, loff_t start, loff_t end)
+@@ -535,20 +535,20 @@ static int exfat_file_zeroed_range(struct file *file, loff_t start, loff_t end)
  
- 		zero_user_segment(page, zerofrom, zerofrom + len);
+ 	while (start < end) {
+ 		u32 zerofrom, len;
+-		struct page *page = NULL;
++		struct folio *folio;
  
--		err = ops->write_end(file, mapping, start, len, len, page, NULL);
-+		err = ops->write_end(file, mapping, start, len, len, page_folio(page), NULL);
+ 		zerofrom = start & (PAGE_SIZE - 1);
+ 		len = PAGE_SIZE - zerofrom;
+ 		if (start + len > end)
+ 			len = end - start;
+ 
+-		err = ops->write_begin(file, mapping, start, len, &page, NULL);
++		err = ops->write_begin(file, mapping, start, len, &folio, NULL);
+ 		if (err)
+ 			goto out;
+ 
+-		zero_user_segment(page, zerofrom, zerofrom + len);
++		folio_zero_range(folio, offset_in_folio(folio, start), len);
+ 
+-		err = ops->write_end(file, mapping, start, len, len, page_folio(page), NULL);
++		err = ops->write_end(file, mapping, start, len, len, folio, NULL);
  		if (err < 0)
  			goto out;
  		start += len;
 diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index dd894e558c91..871e9e3e407e 100644
+index 871e9e3e407e..05f0e07b01d0 100644
 --- a/fs/exfat/inode.c
 +++ b/fs/exfat/inode.c
-@@ -463,13 +463,13 @@ static int exfat_write_begin(struct file *file, struct address_space *mapping,
+@@ -448,12 +448,11 @@ static void exfat_write_failed(struct address_space *mapping, loff_t to)
  
- static int exfat_write_end(struct file *file, struct address_space *mapping,
- 		loff_t pos, unsigned int len, unsigned int copied,
--		struct page *pagep, void *fsdata)
-+		struct folio *folio, void *fsdata)
- {
- 	struct inode *inode = mapping->host;
- 	struct exfat_inode_info *ei = EXFAT_I(inode);
- 	int err;
- 
--	err = generic_write_end(file, mapping, pos, len, copied, pagep, fsdata);
-+	err = generic_write_end(file, mapping, pos, len, copied, folio, fsdata);
- 
- 	if (ei->i_size_aligned < i_size_read(inode)) {
- 		exfat_fs_error(inode->i_sb,
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 0caa1650cee8..aba41f6150e5 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -928,11 +928,11 @@ ext2_write_begin(struct file *file, struct address_space *mapping,
- 
- static int ext2_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *page, void *fsdata)
-+			struct folio *folio, void *fsdata)
+ static int exfat_write_begin(struct file *file, struct address_space *mapping,
+ 		loff_t pos, unsigned int len,
+-		struct page **pagep, void **fsdata)
++		struct folio **foliop, void **fsdata)
  {
  	int ret;
  
--	ret = generic_write_end(file, mapping, pos, len, copied, page, fsdata);
-+	ret = generic_write_end(file, mapping, pos, len, copied, folio, fsdata);
- 	if (ret < len)
+-	*pagep = NULL;
+-	ret = block_write_begin(mapping, pos, len, pagep, exfat_get_block);
++	ret = block_write_begin(mapping, pos, len, foliop, exfat_get_block);
+ 
+ 	if (ret < 0)
+ 		exfat_write_failed(mapping, pos+len);
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index aba41f6150e5..30f8201c155f 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -916,11 +916,11 @@ static void ext2_readahead(struct readahead_control *rac)
+ 
+ static int
+ ext2_write_begin(struct file *file, struct address_space *mapping,
+-		loff_t pos, unsigned len, struct page **pagep, void **fsdata)
++		loff_t pos, unsigned len, struct folio **foliop, void **fsdata)
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, pagep, ext2_get_block);
++	ret = block_write_begin(mapping, pos, len, foliop, ext2_get_block);
+ 	if (ret < 0)
  		ext2_write_failed(mapping, pos + len);
  	return ret;
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 08acd152261e..c3429b664b8d 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3563,13 +3563,13 @@ int ext4_readpage_inline(struct inode *inode, struct folio *folio);
+ extern int ext4_try_to_write_inline_data(struct address_space *mapping,
+ 					 struct inode *inode,
+ 					 loff_t pos, unsigned len,
+-					 struct page **pagep);
++					 struct folio **foliop);
+ int ext4_write_inline_data_end(struct inode *inode, loff_t pos, unsigned len,
+ 			       unsigned copied, struct folio *folio);
+ extern int ext4_da_write_inline_data_begin(struct address_space *mapping,
+ 					   struct inode *inode,
+ 					   loff_t pos, unsigned len,
+-					   struct page **pagep,
++					   struct folio **foliop,
+ 					   void **fsdata);
+ extern int ext4_try_add_inline_entry(handle_t *handle,
+ 				     struct ext4_filename *fname,
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index e7a09a99837b..b7ea9cb4c398 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -660,7 +660,7 @@ static int ext4_convert_inline_data_to_extent(struct address_space *mapping,
+ int ext4_try_to_write_inline_data(struct address_space *mapping,
+ 				  struct inode *inode,
+ 				  loff_t pos, unsigned len,
+-				  struct page **pagep)
++				  struct folio **foliop)
+ {
+ 	int ret;
+ 	handle_t *handle;
+@@ -708,7 +708,7 @@ int ext4_try_to_write_inline_data(struct address_space *mapping,
+ 		goto out;
+ 	}
+ 
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	down_read(&EXT4_I(inode)->xattr_sem);
+ 	if (!ext4_has_inline_data(inode)) {
+ 		ret = 0;
+@@ -891,7 +891,7 @@ static int ext4_da_convert_inline_data_to_extent(struct address_space *mapping,
+ int ext4_da_write_inline_data_begin(struct address_space *mapping,
+ 				    struct inode *inode,
+ 				    loff_t pos, unsigned len,
+-				    struct page **pagep,
++				    struct folio **foliop,
+ 				    void **fsdata)
+ {
+ 	int ret;
+@@ -954,7 +954,7 @@ int ext4_da_write_inline_data_begin(struct address_space *mapping,
+ 		goto out_release_page;
+ 
+ 	up_read(&EXT4_I(inode)->xattr_sem);
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	brelse(iloc.bh);
+ 	return 1;
+ out_release_page:
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 1e4831d83adc..e19ac0a82bdc 100644
+index e19ac0a82bdc..90ef8ec5c59b 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -1298,9 +1298,8 @@ static int write_end_fn(handle_t *handle, struct inode *inode,
- static int ext4_write_end(struct file *file,
- 			  struct address_space *mapping,
- 			  loff_t pos, unsigned len, unsigned copied,
--			  struct page *page, void *fsdata)
-+			  struct folio *folio, void *fsdata)
- {
--	struct folio *folio = page_folio(page);
- 	handle_t *handle = ext4_journal_current_handle();
- 	struct inode *inode = mapping->host;
- 	loff_t old_size = inode->i_size;
-@@ -1402,9 +1401,8 @@ static void ext4_journalled_zero_new_buffers(handle_t *handle,
- static int ext4_journalled_write_end(struct file *file,
- 				     struct address_space *mapping,
- 				     loff_t pos, unsigned len, unsigned copied,
--				     struct page *page, void *fsdata)
-+				     struct folio *folio, void *fsdata)
- {
--	struct folio *folio = page_folio(page);
- 	handle_t *handle = ext4_journal_current_handle();
- 	struct inode *inode = mapping->host;
- 	loff_t old_size = inode->i_size;
-@@ -3080,15 +3078,14 @@ static int ext4_da_do_write_end(struct address_space *mapping,
- static int ext4_da_write_end(struct file *file,
- 			     struct address_space *mapping,
- 			     loff_t pos, unsigned len, unsigned copied,
--			     struct page *page, void *fsdata)
-+			     struct folio *folio, void *fsdata)
+@@ -1145,7 +1145,7 @@ static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
+  */
+ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+ 			    loff_t pos, unsigned len,
+-			    struct page **pagep, void **fsdata)
++			    struct folio **foliop, void **fsdata)
  {
  	struct inode *inode = mapping->host;
- 	int write_mode = (int)(unsigned long)fsdata;
--	struct folio *folio = page_folio(page);
+ 	int ret, needed_blocks;
+@@ -1170,7 +1170,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
  
- 	if (write_mode == FALL_BACK_TO_NONDELALLOC)
- 		return ext4_write_end(file, mapping, pos,
--				      len, copied, &folio->page, fsdata);
-+				      len, copied, folio, fsdata);
+ 	if (ext4_test_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA)) {
+ 		ret = ext4_try_to_write_inline_data(mapping, inode, pos, len,
+-						    pagep);
++						    foliop);
+ 		if (ret < 0)
+ 			return ret;
+ 		if (ret == 1)
+@@ -1270,7 +1270,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
+ 		folio_put(folio);
+ 		return ret;
+ 	}
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	return ret;
+ }
  
- 	trace_ext4_da_write_end(inode, pos, len, copied);
+@@ -2924,7 +2924,7 @@ static int ext4_nonda_switch(struct super_block *sb)
+ 
+ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+ 			       loff_t pos, unsigned len,
+-			       struct page **pagep, void **fsdata)
++			       struct folio **foliop, void **fsdata)
+ {
+ 	int ret, retries = 0;
+ 	struct folio *folio;
+@@ -2939,14 +2939,14 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+ 	if (ext4_nonda_switch(inode->i_sb) || ext4_verity_in_progress(inode)) {
+ 		*fsdata = (void *)FALL_BACK_TO_NONDELALLOC;
+ 		return ext4_write_begin(file, mapping, pos,
+-					len, pagep, fsdata);
++					len, foliop, fsdata);
+ 	}
+ 	*fsdata = (void *)0;
+ 	trace_ext4_da_write_begin(inode, pos, len);
+ 
+ 	if (ext4_test_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA)) {
+ 		ret = ext4_da_write_inline_data_begin(mapping, inode, pos, len,
+-						      pagep, fsdata);
++						      foliop, fsdata);
+ 		if (ret < 0)
+ 			return ret;
+ 		if (ret == 1)
+@@ -2981,7 +2981,7 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+ 		return ret;
+ 	}
+ 
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	return ret;
+ }
  
 diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index 2f37e1ea3955..86ef272296ab 100644
+index 86ef272296ab..d9203228ce97 100644
 --- a/fs/ext4/verity.c
 +++ b/fs/ext4/verity.c
-@@ -86,7 +86,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+@@ -76,17 +76,17 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+ 	while (count) {
+ 		size_t n = min_t(size_t, count,
+ 				 PAGE_SIZE - offset_in_page(pos));
+-		struct page *page;
++		struct folio *folio;
+ 		void *fsdata = NULL;
+ 		int res;
  
- 		memcpy_to_page(page, offset_in_page(pos), buf, n);
+-		res = aops->write_begin(NULL, mapping, pos, n, &page, &fsdata);
++		res = aops->write_begin(NULL, mapping, pos, n, &folio, &fsdata);
+ 		if (res)
+ 			return res;
  
--		res = aops->write_end(NULL, mapping, pos, n, n, page, fsdata);
-+		res = aops->write_end(NULL, mapping, pos, n, n, page_folio(page), fsdata);
+-		memcpy_to_page(page, offset_in_page(pos), buf, n);
++		memcpy_to_folio(folio, offset_in_folio(folio, pos), buf, n);
+ 
+-		res = aops->write_end(NULL, mapping, pos, n, n, page_folio(page), fsdata);
++		res = aops->write_end(NULL, mapping, pos, n, n, folio, fsdata);
  		if (res < 0)
  			return res;
  		if (res != n)
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9a45f9fb8a64..4c32e2cfc403 100644
+index 4c32e2cfc403..5dfa0207ad8f 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -3689,9 +3689,8 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- static int f2fs_write_end(struct file *file,
- 			struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *page, void *fsdata)
-+			struct folio *folio, void *fsdata)
- {
--	struct folio *folio = page_folio(page);
- 	struct inode *inode = folio->mapping->host;
+@@ -3552,7 +3552,7 @@ static int prepare_atomic_write_begin(struct f2fs_sb_info *sbi,
+ }
  
- 	trace_f2fs_write_end(inode, pos, len, copied);
+ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+-		loff_t pos, unsigned len, struct page **pagep, void **fsdata)
++		loff_t pos, unsigned len, struct folio **foliop, void **fsdata)
+ {
+ 	struct inode *inode = mapping->host;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+@@ -3584,18 +3584,20 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	if (f2fs_compressed_file(inode)) {
+ 		int ret;
++		struct page *page;
+ 
+ 		*fsdata = NULL;
+ 
+ 		if (len == PAGE_SIZE && !(f2fs_is_atomic_file(inode)))
+ 			goto repeat;
+ 
+-		ret = f2fs_prepare_compress_overwrite(inode, pagep,
++		ret = f2fs_prepare_compress_overwrite(inode, &page,
+ 							index, fsdata);
+ 		if (ret < 0) {
+ 			err = ret;
+ 			goto fail;
+ 		} else if (ret) {
++			*foliop = page_folio(page);
+ 			return 0;
+ 		}
+ 	}
+@@ -3615,7 +3617,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 
+ 	/* TODO: cluster can be compressed due to race with .writepage */
+ 
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 
+ 	if (f2fs_is_atomic_file(inode))
+ 		err = prepare_atomic_write_begin(sbi, &folio->page, pos, len,
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3959fd137cc9..cfd38cd4f82c 100644
+index cfd38cd4f82c..176b5177c89d 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -2700,7 +2700,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
- 		memcpy_to_page(page, offset, data, tocopy);
+@@ -2677,7 +2677,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+ 	const struct address_space_operations *a_ops = mapping->a_ops;
+ 	int offset = off & (sb->s_blocksize - 1);
+ 	size_t towrite = len;
+-	struct page *page;
++	struct folio *folio;
+ 	void *fsdata = NULL;
+ 	int err = 0;
+ 	int tocopy;
+@@ -2687,7 +2687,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+ 								towrite);
+ retry:
+ 		err = a_ops->write_begin(NULL, mapping, off, tocopy,
+-							&page, &fsdata);
++							&folio, &fsdata);
+ 		if (unlikely(err)) {
+ 			if (err == -ENOMEM) {
+ 				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+@@ -2697,10 +2697,10 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+ 			break;
+ 		}
+ 
+-		memcpy_to_page(page, offset, data, tocopy);
++		memcpy_to_folio(folio, offset_in_folio(folio, off), data, tocopy);
  
  		a_ops->write_end(NULL, mapping, off, tocopy, tocopy,
--						page, fsdata);
-+						page_folio(page), fsdata);
+-						page_folio(page), fsdata);
++						folio, fsdata);
  		offset = 0;
  		towrite -= tocopy;
  		off += tocopy;
 diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-index f7bb0c54502c..486512144bf1 100644
+index 486512144bf1..84a33fe49bed 100644
 --- a/fs/f2fs/verity.c
 +++ b/fs/f2fs/verity.c
-@@ -90,7 +90,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+@@ -80,17 +80,17 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+ 	while (count) {
+ 		size_t n = min_t(size_t, count,
+ 				 PAGE_SIZE - offset_in_page(pos));
+-		struct page *page;
++		struct folio *folio;
+ 		void *fsdata = NULL;
+ 		int res;
  
- 		memcpy_to_page(page, offset_in_page(pos), buf, n);
+-		res = aops->write_begin(NULL, mapping, pos, n, &page, &fsdata);
++		res = aops->write_begin(NULL, mapping, pos, n, &folio, &fsdata);
+ 		if (res)
+ 			return res;
  
--		res = aops->write_end(NULL, mapping, pos, n, n, page, fsdata);
-+		res = aops->write_end(NULL, mapping, pos, n, n, page_folio(page), fsdata);
+-		memcpy_to_page(page, offset_in_page(pos), buf, n);
++		memcpy_to_folio(folio, offset_in_folio(folio, pos), buf, n);
+ 
+-		res = aops->write_end(NULL, mapping, pos, n, n, page_folio(page), fsdata);
++		res = aops->write_end(NULL, mapping, pos, n, n, folio, fsdata);
  		if (res < 0)
  			return res;
  		if (res != n)
 diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index 19115fd2d2a4..8ed02b17d591 100644
+index 8ed02b17d591..75722bbd6b5f 100644
 --- a/fs/fat/inode.c
 +++ b/fs/fat/inode.c
-@@ -236,11 +236,11 @@ static int fat_write_begin(struct file *file, struct address_space *mapping,
+@@ -221,13 +221,12 @@ static void fat_write_failed(struct address_space *mapping, loff_t to)
  
- static int fat_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *pagep, void *fsdata)
-+			struct folio *folio, void *fsdata)
+ static int fat_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
  {
- 	struct inode *inode = mapping->host;
  	int err;
--	err = generic_write_end(file, mapping, pos, len, copied, pagep, fsdata);
-+	err = generic_write_end(file, mapping, pos, len, copied, folio, fsdata);
- 	if (err < len)
+ 
+-	*pagep = NULL;
+ 	err = cont_write_begin(file, mapping, pos, len,
+-				pagep, fsdata, fat_get_block,
++				foliop, fsdata, fat_get_block,
+ 				&MSDOS_I(mapping->host)->mmu_private);
+ 	if (err < 0)
  		fat_write_failed(mapping, pos + len);
- 	if (!(err < 0) && !(MSDOS_I(inode)->i_attrs & ATTR_ARCH)) {
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 137485999d3d..a5cd6e4f9b2b 100644
+index a5cd6e4f9b2b..bc49b2eeadf3 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -2433,9 +2433,8 @@ static int fuse_write_begin(struct file *file, struct address_space *mapping,
- 
- static int fuse_write_end(struct file *file, struct address_space *mapping,
- 		loff_t pos, unsigned len, unsigned copied,
--		struct page *page, void *fsdata)
-+		struct folio *folio, void *fsdata)
+@@ -2387,7 +2387,7 @@ static int fuse_writepages(struct address_space *mapping,
+  * but how to implement it without killing performance need more thinking.
+  */
+ static int fuse_write_begin(struct file *file, struct address_space *mapping,
+-		loff_t pos, unsigned len, struct page **pagep, void **fsdata)
++		loff_t pos, unsigned len, struct folio **foliop, void **fsdata)
  {
--	struct folio *folio = page_folio(page);
- 	struct inode *inode = folio->mapping->host;
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 	struct fuse_conn *fc = get_fuse_conn(file_inode(file));
+@@ -2421,7 +2421,7 @@ static int fuse_write_begin(struct file *file, struct address_space *mapping,
+ 	if (err)
+ 		goto cleanup;
+ success:
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	return 0;
  
- 	/* Haven't copied anything?  Skip zeroing, size extending, dirtying. */
+ cleanup:
 diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
-index 6d1878b99b30..30512dbb79f0 100644
+index 30512dbb79f0..4a0ce131e233 100644
 --- a/fs/hfs/extent.c
 +++ b/fs/hfs/extent.c
-@@ -495,7 +495,7 @@ void hfs_file_truncate(struct inode *inode)
+@@ -487,15 +487,15 @@ void hfs_file_truncate(struct inode *inode)
+ 	if (inode->i_size > HFS_I(inode)->phys_size) {
+ 		struct address_space *mapping = inode->i_mapping;
+ 		void *fsdata = NULL;
+-		struct page *page;
++		struct folio *folio;
+ 
+ 		/* XXX: Can use generic_cont_expand? */
+ 		size = inode->i_size - 1;
+-		res = hfs_write_begin(NULL, mapping, size + 1, 0, &page,
++		res = hfs_write_begin(NULL, mapping, size + 1, 0, &folio,
  				&fsdata);
  		if (!res) {
  			res = generic_write_end(NULL, mapping, size + 1, 0, 0,
--					page, fsdata);
-+					page_folio(page), fsdata);
+-					page_folio(page), fsdata);
++					folio, fsdata);
  		}
  		if (res)
  			inode->i_size = HFS_I(inode)->phys_size;
-diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
-index 9c51867dddc5..776c0ea722cb 100644
---- a/fs/hfsplus/extents.c
-+++ b/fs/hfsplus/extents.c
-@@ -563,7 +563,7 @@ void hfsplus_file_truncate(struct inode *inode)
- 		if (res)
- 			return;
- 		res = generic_write_end(NULL, mapping, size, 0, 0,
--					page, fsdata);
-+					page_folio(page), fsdata);
- 		if (res < 0)
- 			return;
- 		mark_inode_dirty(inode);
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index 42b70780282d..6452431231ab 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -476,9 +476,8 @@ static int hostfs_write_begin(struct file *file, struct address_space *mapping,
+diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
+index b5a6ad5df357..a0c7cb0f79fc 100644
+--- a/fs/hfs/hfs_fs.h
++++ b/fs/hfs/hfs_fs.h
+@@ -202,7 +202,7 @@ extern const struct address_space_operations hfs_aops;
+ extern const struct address_space_operations hfs_btree_aops;
  
- static int hostfs_write_end(struct file *file, struct address_space *mapping,
- 			    loff_t pos, unsigned len, unsigned copied,
--			    struct page *page, void *fsdata)
-+			    struct folio *folio, void *fsdata)
- {
--	struct folio *folio = page_folio(page);
- 	struct inode *inode = mapping->host;
- 	void *buffer;
- 	size_t from = offset_in_folio(folio, pos);
-diff --git a/fs/hpfs/file.c b/fs/hpfs/file.c
-index 1bb8d97cd9ae..11e2d9e612ac 100644
---- a/fs/hpfs/file.c
-+++ b/fs/hpfs/file.c
-@@ -206,11 +206,11 @@ static int hpfs_write_begin(struct file *file, struct address_space *mapping,
- 
- static int hpfs_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *pagep, void *fsdata)
-+			struct folio *folio, void *fsdata)
- {
- 	struct inode *inode = mapping->host;
- 	int err;
--	err = generic_write_end(file, mapping, pos, len, copied, pagep, fsdata);
-+	err = generic_write_end(file, mapping, pos, len, copied, folio, fsdata);
- 	if (err < len)
- 		hpfs_write_failed(mapping, pos + len);
- 	if (!(err < 0)) {
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 9f6cff356796..b7a30055e6f4 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -395,7 +395,7 @@ static int hugetlbfs_write_begin(struct file *file,
- 
- static int hugetlbfs_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *page, void *fsdata)
-+			struct folio *folio, void *fsdata)
- {
- 	BUG();
- 	return -EINVAL;
-diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
-index ee8f7f029b45..b6fe1f1e8ea9 100644
---- a/fs/jffs2/file.c
-+++ b/fs/jffs2/file.c
-@@ -23,7 +23,7 @@
- 
- static int jffs2_write_end(struct file *filp, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *pg, void *fsdata);
-+			struct folio *folio, void *fsdata);
- static int jffs2_write_begin(struct file *filp, struct address_space *mapping,
- 			loff_t pos, unsigned len,
- 			struct page **pagep, void **fsdata);
-@@ -239,9 +239,8 @@ static int jffs2_write_begin(struct file *filp, struct address_space *mapping,
- 
- static int jffs2_write_end(struct file *filp, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *pg, void *fsdata)
-+			struct folio *folio, void *fsdata)
- {
--	struct folio *folio = page_folio(pg);
- 	/* Actually commit the write from the page cache page we're looking at.
- 	 * For now, we write the full page out each time. It sucks, but it's simple
- 	 */
-diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
-index 1a6b5921d17a..d63494182548 100644
---- a/fs/jfs/inode.c
-+++ b/fs/jfs/inode.c
-@@ -304,12 +304,12 @@ static int jfs_write_begin(struct file *file, struct address_space *mapping,
+ int hfs_write_begin(struct file *file, struct address_space *mapping,
+-		loff_t pos, unsigned len, struct page **pagep, void **fsdata);
++		loff_t pos, unsigned len, struct folio **foliop, void **fsdata);
+ extern struct inode *hfs_new_inode(struct inode *, const struct qstr *, umode_t);
+ extern void hfs_inode_write_fork(struct inode *, struct hfs_extent *, __be32 *, __be32 *);
+ extern int hfs_write_inode(struct inode *, struct writeback_control *);
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index 744e10b46904..a81ce7a740b9 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -45,12 +45,11 @@ static void hfs_write_failed(struct address_space *mapping, loff_t to)
  }
  
- static int jfs_write_end(struct file *file, struct address_space *mapping,
--		loff_t pos, unsigned len, unsigned copied, struct page *page,
-+		loff_t pos, unsigned len, unsigned copied, struct folio *folio,
- 		void *fsdata)
+ int hfs_write_begin(struct file *file, struct address_space *mapping,
+-		loff_t pos, unsigned len, struct page **pagep, void **fsdata)
++		loff_t pos, unsigned len, struct folio **foliop, void **fsdata)
  {
  	int ret;
  
--	ret = generic_write_end(file, mapping, pos, len, copied, page, fsdata);
-+	ret = generic_write_end(file, mapping, pos, len, copied, folio, fsdata);
- 	if (ret < len)
+-	*pagep = NULL;
+-	ret = cont_write_begin(file, mapping, pos, len, pagep, fsdata,
++	ret = cont_write_begin(file, mapping, pos, len, foliop, fsdata,
+ 				hfs_get_block,
+ 				&HFS_I(mapping->host)->phys_size);
+ 	if (unlikely(ret))
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index 776c0ea722cb..a6d61685ae79 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -554,16 +554,16 @@ void hfsplus_file_truncate(struct inode *inode)
+ 
+ 	if (inode->i_size > hip->phys_size) {
+ 		struct address_space *mapping = inode->i_mapping;
+-		struct page *page;
++		struct folio *folio;
+ 		void *fsdata = NULL;
+ 		loff_t size = inode->i_size;
+ 
+ 		res = hfsplus_write_begin(NULL, mapping, size, 0,
+-					  &page, &fsdata);
++					  &folio, &fsdata);
+ 		if (res)
+ 			return;
+ 		res = generic_write_end(NULL, mapping, size, 0, 0,
+-					page_folio(page), fsdata);
++					folio, fsdata);
+ 		if (res < 0)
+ 			return;
+ 		mark_inode_dirty(inode);
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 9e78f181c24f..59ce81dca73f 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -472,7 +472,7 @@ extern const struct address_space_operations hfsplus_btree_aops;
+ extern const struct dentry_operations hfsplus_dentry_operations;
+ 
+ int hfsplus_write_begin(struct file *file, struct address_space *mapping,
+-		loff_t pos, unsigned len, struct page **pagep, void **fsdata);
++		loff_t pos, unsigned len, struct folio **foliop, void **fsdata);
+ struct inode *hfsplus_new_inode(struct super_block *sb, struct inode *dir,
+ 				umode_t mode);
+ void hfsplus_delete_inode(struct inode *inode);
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index 3d326926c195..f331e9574217 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -39,12 +39,11 @@ static void hfsplus_write_failed(struct address_space *mapping, loff_t to)
+ }
+ 
+ int hfsplus_write_begin(struct file *file, struct address_space *mapping,
+-		loff_t pos, unsigned len, struct page **pagep, void **fsdata)
++		loff_t pos, unsigned len, struct folio **foliop, void **fsdata)
+ {
+ 	int ret;
+ 
+-	*pagep = NULL;
+-	ret = cont_write_begin(file, mapping, pos, len, pagep, fsdata,
++	ret = cont_write_begin(file, mapping, pos, len, foliop, fsdata,
+ 				hfsplus_get_block,
+ 				&HFSPLUS_I(mapping->host)->phys_size);
+ 	if (unlikely(ret))
+diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+index 6452431231ab..5acedbaa9296 100644
+--- a/fs/hostfs/hostfs_kern.c
++++ b/fs/hostfs/hostfs_kern.c
+@@ -464,12 +464,13 @@ static int hostfs_read_folio(struct file *file, struct folio *folio)
+ 
+ static int hostfs_write_begin(struct file *file, struct address_space *mapping,
+ 			      loff_t pos, unsigned len,
+-			      struct page **pagep, void **fsdata)
++			      struct folio **foliop, void **fsdata)
+ {
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 
+-	*pagep = grab_cache_page_write_begin(mapping, index);
+-	if (!*pagep)
++	*foliop = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
++			mapping_gfp_mask(mapping));
++	if (!*foliop)
+ 		return -ENOMEM;
+ 	return 0;
+ }
+diff --git a/fs/hpfs/file.c b/fs/hpfs/file.c
+index 11e2d9e612ac..449a3fc1b8d9 100644
+--- a/fs/hpfs/file.c
++++ b/fs/hpfs/file.c
+@@ -190,12 +190,11 @@ static void hpfs_write_failed(struct address_space *mapping, loff_t to)
+ 
+ static int hpfs_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
+ {
+ 	int ret;
+ 
+-	*pagep = NULL;
+-	ret = cont_write_begin(file, mapping, pos, len, pagep, fsdata,
++	ret = cont_write_begin(file, mapping, pos, len, foliop, fsdata,
+ 				hpfs_get_block,
+ 				&hpfs_i(mapping->host)->mmu_private);
+ 	if (unlikely(ret))
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index b7a30055e6f4..5cf327337e22 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -388,7 +388,7 @@ static ssize_t hugetlbfs_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ static int hugetlbfs_write_begin(struct file *file,
+ 			struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
+ {
+ 	return -EINVAL;
+ }
+diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
+index b6fe1f1e8ea9..ada572c466f8 100644
+--- a/fs/jffs2/file.c
++++ b/fs/jffs2/file.c
+@@ -26,7 +26,7 @@ static int jffs2_write_end(struct file *filp, struct address_space *mapping,
+ 			struct folio *folio, void *fsdata);
+ static int jffs2_write_begin(struct file *filp, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata);
++			struct folio **foliop, void **fsdata);
+ static int jffs2_read_folio(struct file *filp, struct folio *folio);
+ 
+ int jffs2_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+@@ -125,7 +125,7 @@ static int jffs2_read_folio(struct file *file, struct folio *folio)
+ 
+ static int jffs2_write_begin(struct file *filp, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
+ {
+ 	struct folio *folio;
+ 	struct inode *inode = mapping->host;
+@@ -212,7 +212,7 @@ static int jffs2_write_begin(struct file *filp, struct address_space *mapping,
+ 		ret = PTR_ERR(folio);
+ 		goto release_sem;
+ 	}
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 
+ 	/*
+ 	 * Read in the folio if it wasn't already present. Cannot optimize away
+diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
+index d63494182548..07cfdc440596 100644
+--- a/fs/jfs/inode.c
++++ b/fs/jfs/inode.c
+@@ -292,11 +292,11 @@ static void jfs_write_failed(struct address_space *mapping, loff_t to)
+ 
+ static int jfs_write_begin(struct file *file, struct address_space *mapping,
+ 				loff_t pos, unsigned len,
+-				struct page **pagep, void **fsdata)
++				struct folio **foliop, void **fsdata)
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, pagep, jfs_get_block);
++	ret = block_write_begin(mapping, pos, len, foliop, jfs_get_block);
+ 	if (unlikely(ret))
  		jfs_write_failed(mapping, pos + len);
- 	return ret;
+ 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index 8aa34870449f..4581be1d5b32 100644
+index 4581be1d5b32..1a776edb39de 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -929,11 +929,11 @@ EXPORT_SYMBOL(simple_write_begin);
-  * @pos: 		"
-  * @len: 		"
-  * @copied: 		"
-- * @page: 		"
-+ * @folio: 		"
-  * @fsdata: 		"
-  *
-- * simple_write_end does the minimum needed for updating a page after writing is
-- * done. It has the same API signature as the .write_end of
-+ * simple_write_end does the minimum needed for updating a folio after
-+ * writing is done. It has the same API signature as the .write_end of
-  * address_space_operations vector. So it can just be set onto .write_end for
-  * FSes that don't need any other processing. i_mutex is assumed to be held.
-  * Block based filesystems should use generic_write_end().
-@@ -946,9 +946,8 @@ EXPORT_SYMBOL(simple_write_begin);
-  */
- static int simple_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *page, void *fsdata)
-+			struct folio *folio, void *fsdata)
+@@ -901,7 +901,7 @@ static int simple_read_folio(struct file *file, struct folio *folio)
+ 
+ int simple_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
  {
--	struct folio *folio = page_folio(page);
- 	struct inode *inode = folio->mapping->host;
- 	loff_t last_pos = pos + copied;
+ 	struct folio *folio;
+ 
+@@ -910,7 +910,7 @@ int simple_write_begin(struct file *file, struct address_space *mapping,
+ 	if (IS_ERR(folio))
+ 		return PTR_ERR(folio);
+ 
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 
+ 	if (!folio_test_uptodate(folio) && (len != folio_size(folio))) {
+ 		size_t from = offset_in_folio(folio, pos);
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index 0002337977e0..abb190c46c04 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -444,11 +444,11 @@ static void minix_write_failed(struct address_space *mapping, loff_t to)
+ 
+ static int minix_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, pagep, minix_get_block);
++	ret = block_write_begin(mapping, pos, len, foliop, minix_get_block);
+ 	if (unlikely(ret))
+ 		minix_write_failed(mapping, pos + len);
  
 diff --git a/fs/namei.c b/fs/namei.c
-index 80e48a440c1f..c65c03bc3703 100644
+index c65c03bc3703..d813b8672317 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -5325,7 +5325,7 @@ int page_symlink(struct inode *inode, const char *symname, int len)
- 	memcpy(page_address(page), symname, len-1);
+@@ -5308,7 +5308,7 @@ int page_symlink(struct inode *inode, const char *symname, int len)
+ 	struct address_space *mapping = inode->i_mapping;
+ 	const struct address_space_operations *aops = mapping->a_ops;
+ 	bool nofs = !mapping_gfp_constraint(mapping, __GFP_FS);
+-	struct page *page;
++	struct folio *folio;
+ 	void *fsdata = NULL;
+ 	int err;
+ 	unsigned int flags;
+@@ -5316,16 +5316,16 @@ int page_symlink(struct inode *inode, const char *symname, int len)
+ retry:
+ 	if (nofs)
+ 		flags = memalloc_nofs_save();
+-	err = aops->write_begin(NULL, mapping, 0, len-1, &page, &fsdata);
++	err = aops->write_begin(NULL, mapping, 0, len-1, &folio, &fsdata);
+ 	if (nofs)
+ 		memalloc_nofs_restore(flags);
+ 	if (err)
+ 		goto fail;
  
- 	err = aops->write_end(NULL, mapping, 0, len-1, len-1,
--							page, fsdata);
-+						page_folio(page), fsdata);
+-	memcpy(page_address(page), symname, len-1);
++	memcpy(folio_address(folio), symname, len - 1);
+ 
+-	err = aops->write_end(NULL, mapping, 0, len-1, len-1,
+-						page_folio(page), fsdata);
++	err = aops->write_end(NULL, mapping, 0, len - 1, len - 1,
++						folio, fsdata);
  	if (err < 0)
  		goto fail;
  	if (err < len-1)
 diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index 61a8cdb9f1e1..fe583dbebe54 100644
+index fe583dbebe54..6800ee92d742 100644
 --- a/fs/nfs/file.c
 +++ b/fs/nfs/file.c
-@@ -372,10 +372,9 @@ static int nfs_write_begin(struct file *file, struct address_space *mapping,
- 
- static int nfs_write_end(struct file *file, struct address_space *mapping,
- 			 loff_t pos, unsigned len, unsigned copied,
--			 struct page *page, void *fsdata)
-+			 struct folio *folio, void *fsdata)
+@@ -336,7 +336,7 @@ static bool nfs_want_read_modify_write(struct file *file, struct folio *folio,
+  * increment the page use counts until he is done with the page.
+  */
+ static int nfs_write_begin(struct file *file, struct address_space *mapping,
+-			   loff_t pos, unsigned len, struct page **pagep,
++			   loff_t pos, unsigned len, struct folio **foliop,
+ 			   void **fsdata)
  {
- 	struct nfs_open_context *ctx = nfs_file_open_context(file);
--	struct folio *folio = page_folio(page);
- 	unsigned offset = offset_in_folio(folio, pos);
- 	int status;
+ 	fgf_t fgp = FGP_WRITEBEGIN;
+@@ -353,7 +353,7 @@ static int nfs_write_begin(struct file *file, struct address_space *mapping,
+ 				    mapping_gfp_mask(mapping));
+ 	if (IS_ERR(folio))
+ 		return PTR_ERR(folio);
+-	*pagep = &folio->page;
++	*foliop = folio;
  
+ 	ret = nfs_flush_incompatible(file, folio);
+ 	if (ret) {
 diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index 7340a01d80e1..25841b75415a 100644
+index 25841b75415a..8661f452dba6 100644
 --- a/fs/nilfs2/inode.c
 +++ b/fs/nilfs2/inode.c
-@@ -269,16 +269,16 @@ static int nilfs_write_begin(struct file *file, struct address_space *mapping,
+@@ -250,7 +250,7 @@ void nilfs_write_failed(struct address_space *mapping, loff_t to)
  
- static int nilfs_write_end(struct file *file, struct address_space *mapping,
- 			   loff_t pos, unsigned len, unsigned copied,
--			   struct page *page, void *fsdata)
-+			   struct folio *folio, void *fsdata)
+ static int nilfs_write_begin(struct file *file, struct address_space *mapping,
+ 			     loff_t pos, unsigned len,
+-			     struct page **pagep, void **fsdata)
++			     struct folio **foliop, void **fsdata)
+ 
  {
  	struct inode *inode = mapping->host;
- 	unsigned int start = pos & (PAGE_SIZE - 1);
- 	unsigned int nr_dirty;
- 	int err;
+@@ -259,7 +259,7 @@ static int nilfs_write_begin(struct file *file, struct address_space *mapping,
+ 	if (unlikely(err))
+ 		return err;
  
--	nr_dirty = nilfs_page_count_clean_buffers(page, start,
-+	nr_dirty = nilfs_page_count_clean_buffers(&folio->page, start,
- 						  start + copied);
--	copied = generic_write_end(file, mapping, pos, len, copied, page,
-+	copied = generic_write_end(file, mapping, pos, len, copied, folio,
- 				   fsdata);
- 	nilfs_set_file_dirty(inode, nr_dirty);
- 	err = nilfs_transaction_commit(inode->i_sb);
+-	err = block_write_begin(mapping, pos, len, pagep, nilfs_get_block);
++	err = block_write_begin(mapping, pos, len, foliop, nilfs_get_block);
+ 	if (unlikely(err)) {
+ 		nilfs_write_failed(mapping, pos + len);
+ 		nilfs_transaction_abort(inode->i_sb);
+diff --git a/fs/nilfs2/recovery.c b/fs/nilfs2/recovery.c
+index 40c5dfbc9d41..c2e60a6bd060 100644
+--- a/fs/nilfs2/recovery.c
++++ b/fs/nilfs2/recovery.c
+@@ -498,7 +498,6 @@ static int nilfs_recover_dsync_blocks(struct the_nilfs *nilfs,
+ 	struct inode *inode;
+ 	struct nilfs_recovery_block *rb, *n;
+ 	unsigned int blocksize = nilfs->ns_blocksize;
+-	struct page *page;
+ 	struct folio *folio;
+ 	loff_t pos;
+ 	int err = 0, err2 = 0;
+@@ -513,7 +512,7 @@ static int nilfs_recover_dsync_blocks(struct the_nilfs *nilfs,
+ 
+ 		pos = rb->blkoff << inode->i_blkbits;
+ 		err = block_write_begin(inode->i_mapping, pos, blocksize,
+-					&page, nilfs_get_block);
++					&folio, nilfs_get_block);
+ 		if (unlikely(err)) {
+ 			loff_t isize = inode->i_size;
+ 
+@@ -523,8 +522,7 @@ static int nilfs_recover_dsync_blocks(struct the_nilfs *nilfs,
+ 			goto failed_inode;
+ 		}
+ 
+-		folio = page_folio(page);
+-		err = nilfs_recovery_copy_block(nilfs, rb, pos, page);
++		err = nilfs_recovery_copy_block(nilfs, rb, pos, &folio->page);
+ 		if (unlikely(err))
+ 			goto failed_page;
+ 
 diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index ca1ddc46bd86..88a7d81cf2ba 100644
+index 88a7d81cf2ba..6202895a4542 100644
 --- a/fs/ntfs3/file.c
 +++ b/fs/ntfs3/file.c
-@@ -215,7 +215,7 @@ static int ntfs_extend_initialized_size(struct file *file,
- 		zero_user_segment(page, zerofrom, PAGE_SIZE);
+@@ -182,7 +182,7 @@ static int ntfs_extend_initialized_size(struct file *file,
  
- 		/* This function in any case puts page. */
--		err = ntfs_write_end(file, mapping, pos, len, len, page, NULL);
-+		err = ntfs_write_end(file, mapping, pos, len, len, page_folio(page), NULL);
+ 	for (;;) {
+ 		u32 zerofrom, len;
+-		struct page *page;
++		struct folio *folio;
+ 		u8 bits;
+ 		CLST vcn, lcn, clen;
+ 
+@@ -208,14 +208,13 @@ static int ntfs_extend_initialized_size(struct file *file,
+ 		if (pos + len > new_valid)
+ 			len = new_valid - pos;
+ 
+-		err = ntfs_write_begin(file, mapping, pos, len, &page, NULL);
++		err = ntfs_write_begin(file, mapping, pos, len, &folio, NULL);
+ 		if (err)
+ 			goto out;
+ 
+-		zero_user_segment(page, zerofrom, PAGE_SIZE);
++		folio_zero_range(folio, zerofrom, folio_size(folio));
+ 
+-		/* This function in any case puts page. */
+-		err = ntfs_write_end(file, mapping, pos, len, len, page_folio(page), NULL);
++		err = ntfs_write_end(file, mapping, pos, len, len, folio, NULL);
  		if (err < 0)
  			goto out;
  		pos += len;
 diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 8eaaf9e465d4..9efd3f7c59d6 100644
+index 9efd3f7c59d6..f672072e6bd4 100644
 --- a/fs/ntfs3/inode.c
 +++ b/fs/ntfs3/inode.c
-@@ -947,9 +947,8 @@ int ntfs_write_begin(struct file *file, struct address_space *mapping,
-  * ntfs_write_end - Address_space_operations::write_end.
-  */
- int ntfs_write_end(struct file *file, struct address_space *mapping, loff_t pos,
--		   u32 len, u32 copied, struct page *page, void *fsdata)
-+		   u32 len, u32 copied, struct folio *folio, void *fsdata)
- {
--	struct folio *folio = page_folio(page);
- 	struct inode *inode = mapping->host;
- 	struct ntfs_inode *ni = ntfs_i(inode);
- 	u64 valid = ni->i_valid;
-@@ -979,7 +978,7 @@ int ntfs_write_end(struct file *file, struct address_space *mapping, loff_t pos,
- 		folio_unlock(folio);
- 		folio_put(folio);
- 	} else {
--		err = generic_write_end(file, mapping, pos, len, copied, page,
-+		err = generic_write_end(file, mapping, pos, len, copied, folio,
- 					fsdata);
- 	}
- 
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index 4e363b8342d6..53517281f26b 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -713,7 +713,7 @@ int ntfs_get_block(struct inode *inode, sector_t vbn,
- int ntfs_write_begin(struct file *file, struct address_space *mapping,
- 		     loff_t pos, u32 len, struct page **pagep, void **fsdata);
- int ntfs_write_end(struct file *file, struct address_space *mapping, loff_t pos,
--		   u32 len, u32 copied, struct page *page, void *fsdata);
-+		   u32 len, u32 copied, struct folio *folio, void *fsdata);
- int ntfs3_write_inode(struct inode *inode, struct writeback_control *wbc);
- int ntfs_sync_inode(struct inode *inode);
- int ntfs_flush_inodes(struct super_block *sb, struct inode *i1,
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index 6be175a1ab3c..9d8aa417e8da 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -2076,7 +2076,7 @@ int ocfs2_write_end_nolock(struct address_space *mapping,
- 
- static int ocfs2_write_end(struct file *file, struct address_space *mapping,
- 			   loff_t pos, unsigned len, unsigned copied,
--			   struct page *page, void *fsdata)
-+			   struct folio *folio, void *fsdata)
- {
- 	int ret;
- 	struct inode *inode = mapping->host;
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index e8440fa7d73c..69b507a611f8 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -361,9 +361,9 @@ static int orangefs_write_begin(struct file *file,
+@@ -901,7 +901,7 @@ static int ntfs_get_block_write_begin(struct inode *inode, sector_t vbn,
  }
  
- static int orangefs_write_end(struct file *file, struct address_space *mapping,
--    loff_t pos, unsigned len, unsigned copied, struct page *page, void *fsdata)
-+		loff_t pos, unsigned len, unsigned copied, struct folio *folio,
-+		void *fsdata)
+ int ntfs_write_begin(struct file *file, struct address_space *mapping,
+-		     loff_t pos, u32 len, struct page **pagep, void **fsdata)
++		     loff_t pos, u32 len, struct folio **foliop, void **fsdata)
  {
--	struct folio *folio = page_folio(page);
- 	struct inode *inode = folio->mapping->host;
- 	loff_t last_pos = pos + copied;
- 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 33da519c9767..f4b9db4b4df2 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2862,10 +2862,9 @@ static sector_t reiserfs_aop_bmap(struct address_space *as, sector_t block)
- 
- static int reiserfs_write_end(struct file *file, struct address_space *mapping,
- 			      loff_t pos, unsigned len, unsigned copied,
--			      struct page *page, void *fsdata)
-+			      struct folio *folio, void *fsdata)
- {
--	struct folio *folio = page_folio(page);
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = folio->mapping->host;
- 	int ret = 0;
- 	int update_sd = 0;
- 	struct reiserfs_transaction_handle *th;
-@@ -2887,7 +2886,7 @@ static int reiserfs_write_end(struct file *file, struct address_space *mapping,
- 	}
- 	flush_dcache_folio(folio);
- 
--	reiserfs_commit_page(inode, page, start, start + copied);
-+	reiserfs_commit_page(inode, &folio->page, start, start + copied);
- 
- 	/*
- 	 * generic_commit_write does this for us, but does not update the
-@@ -2942,8 +2941,8 @@ static int reiserfs_write_end(struct file *file, struct address_space *mapping,
- out:
- 	if (locked)
- 		reiserfs_write_unlock(inode->i_sb);
--	unlock_page(page);
--	put_page(page);
-+	folio_unlock(folio);
-+	folio_put(folio);
- 
- 	if (pos + len > inode->i_size)
- 		reiserfs_truncate_failed_write(inode);
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index 68e104423a48..baa3eecc32fe 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -524,9 +524,8 @@ static void cancel_budget(struct ubifs_info *c, struct folio *folio,
- 
- static int ubifs_write_end(struct file *file, struct address_space *mapping,
- 			   loff_t pos, unsigned len, unsigned copied,
--			   struct page *page, void *fsdata)
-+			   struct folio *folio, void *fsdata)
- {
--	struct folio *folio = page_folio(page);
+ 	int err;
  	struct inode *inode = mapping->host;
- 	struct ubifs_inode *ui = ubifs_inode(inode);
- 	struct ubifs_info *c = inode->i_sb->s_fs_info;
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 4726a4d014b6..fdf024e0b772 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -273,16 +273,14 @@ static int udf_write_begin(struct file *file, struct address_space *mapping,
+@@ -910,7 +910,6 @@ int ntfs_write_begin(struct file *file, struct address_space *mapping,
+ 	if (unlikely(ntfs3_forced_shutdown(inode->i_sb)))
+ 		return -EIO;
  
- static int udf_write_end(struct file *file, struct address_space *mapping,
- 			 loff_t pos, unsigned len, unsigned copied,
--			 struct page *page, void *fsdata)
-+			 struct folio *folio, void *fsdata)
+-	*pagep = NULL;
+ 	if (is_resident(ni)) {
+ 		struct folio *folio = __filemap_get_folio(
+ 			mapping, pos >> PAGE_SHIFT, FGP_WRITEBEGIN,
+@@ -926,7 +925,7 @@ int ntfs_write_begin(struct file *file, struct address_space *mapping,
+ 		ni_unlock(ni);
+ 
+ 		if (!err) {
+-			*pagep = &folio->page;
++			*foliop = folio;
+ 			goto out;
+ 		}
+ 		folio_unlock(folio);
+@@ -936,7 +935,7 @@ int ntfs_write_begin(struct file *file, struct address_space *mapping,
+ 			goto out;
+ 	}
+ 
+-	err = block_write_begin(mapping, pos, len, pagep,
++	err = block_write_begin(mapping, pos, len, foliop,
+ 				ntfs_get_block_write_begin);
+ 
+ out:
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 53517281f26b..584f814715f4 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -711,7 +711,7 @@ int ntfs_set_size(struct inode *inode, u64 new_size);
+ int ntfs_get_block(struct inode *inode, sector_t vbn,
+ 		   struct buffer_head *bh_result, int create);
+ int ntfs_write_begin(struct file *file, struct address_space *mapping,
+-		     loff_t pos, u32 len, struct page **pagep, void **fsdata);
++		     loff_t pos, u32 len, struct folio **foliop, void **fsdata);
+ int ntfs_write_end(struct file *file, struct address_space *mapping, loff_t pos,
+ 		   u32 len, u32 copied, struct folio *folio, void *fsdata);
+ int ntfs3_write_inode(struct inode *inode, struct writeback_control *wbc);
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index 9d8aa417e8da..d6c985cc6353 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -1643,7 +1643,7 @@ static int ocfs2_zero_tail(struct inode *inode, struct buffer_head *di_bh,
+ 
+ int ocfs2_write_begin_nolock(struct address_space *mapping,
+ 			     loff_t pos, unsigned len, ocfs2_write_type_t type,
+-			     struct page **pagep, void **fsdata,
++			     struct folio **foliop, void **fsdata,
+ 			     struct buffer_head *di_bh, struct page *mmap_page)
  {
- 	struct inode *inode = file_inode(file);
--	struct folio *folio;
- 	loff_t last_pos;
+ 	int ret, cluster_of_pages, credits = OCFS2_INODE_UPDATE_CREDITS;
+@@ -1826,8 +1826,8 @@ int ocfs2_write_begin_nolock(struct address_space *mapping,
+ 		ocfs2_free_alloc_context(meta_ac);
  
- 	if (UDF_I(inode)->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB)
--		return generic_write_end(file, mapping, pos, len, copied, page,
-+		return generic_write_end(file, mapping, pos, len, copied, folio,
- 					 fsdata);
--	folio = page_folio(page);
- 	last_pos = pos + copied;
- 	if (last_pos > inode->i_size)
- 		i_size_write(inode, last_pos);
-diff --git a/fs/ufs/inode.c b/fs/ufs/inode.c
-index 0e608fc0d0fd..69adb198c634 100644
---- a/fs/ufs/inode.c
-+++ b/fs/ufs/inode.c
-@@ -511,11 +511,11 @@ static int ufs_write_begin(struct file *file, struct address_space *mapping,
+ success:
+-	if (pagep)
+-		*pagep = wc->w_target_page;
++	if (foliop)
++		*foliop = page_folio(wc->w_target_page);
+ 	*fsdata = wc;
+ 	return 0;
+ out_quota:
+@@ -1879,7 +1879,7 @@ int ocfs2_write_begin_nolock(struct address_space *mapping,
  
- static int ufs_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *page, void *fsdata)
-+			struct folio *folio, void *fsdata)
+ static int ocfs2_write_begin(struct file *file, struct address_space *mapping,
+ 			     loff_t pos, unsigned len,
+-			     struct page **pagep, void **fsdata)
++			     struct folio **foliop, void **fsdata)
+ {
+ 	int ret;
+ 	struct buffer_head *di_bh = NULL;
+@@ -1901,7 +1901,7 @@ static int ocfs2_write_begin(struct file *file, struct address_space *mapping,
+ 	down_write(&OCFS2_I(inode)->ip_alloc_sem);
+ 
+ 	ret = ocfs2_write_begin_nolock(mapping, pos, len, OCFS2_WRITE_BUFFER,
+-				       pagep, fsdata, di_bh, NULL);
++				       foliop, fsdata, di_bh, NULL);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out_fail;
+diff --git a/fs/ocfs2/aops.h b/fs/ocfs2/aops.h
+index 3a520117fa59..45db1781ea73 100644
+--- a/fs/ocfs2/aops.h
++++ b/fs/ocfs2/aops.h
+@@ -38,7 +38,7 @@ typedef enum {
+ 
+ int ocfs2_write_begin_nolock(struct address_space *mapping,
+ 			     loff_t pos, unsigned len, ocfs2_write_type_t type,
+-			     struct page **pagep, void **fsdata,
++			     struct folio **foliop, void **fsdata,
+ 			     struct buffer_head *di_bh, struct page *mmap_page);
+ 
+ int ocfs2_read_inline_data(struct inode *inode, struct page *page,
+diff --git a/fs/ocfs2/mmap.c b/fs/ocfs2/mmap.c
+index 1834f26522ed..6ef4cb045ccd 100644
+--- a/fs/ocfs2/mmap.c
++++ b/fs/ocfs2/mmap.c
+@@ -53,7 +53,7 @@ static vm_fault_t __ocfs2_page_mkwrite(struct file *file,
+ 	loff_t pos = page_offset(page);
+ 	unsigned int len = PAGE_SIZE;
+ 	pgoff_t last_index;
+-	struct page *locked_page = NULL;
++	struct folio *locked_folio = NULL;
+ 	void *fsdata;
+ 	loff_t size = i_size_read(inode);
+ 
+@@ -91,7 +91,7 @@ static vm_fault_t __ocfs2_page_mkwrite(struct file *file,
+ 		len = ((size - 1) & ~PAGE_MASK) + 1;
+ 
+ 	err = ocfs2_write_begin_nolock(mapping, pos, len, OCFS2_WRITE_MMAP,
+-				       &locked_page, &fsdata, di_bh, page);
++				       &locked_folio, &fsdata, di_bh, page);
+ 	if (err) {
+ 		if (err != -ENOSPC)
+ 			mlog_errno(err);
+@@ -99,7 +99,7 @@ static vm_fault_t __ocfs2_page_mkwrite(struct file *file,
+ 		goto out;
+ 	}
+ 
+-	if (!locked_page) {
++	if (!locked_folio) {
+ 		ret = VM_FAULT_NOPAGE;
+ 		goto out;
+ 	}
+diff --git a/fs/omfs/file.c b/fs/omfs/file.c
+index 6b580b9da8e3..98358d405b6a 100644
+--- a/fs/omfs/file.c
++++ b/fs/omfs/file.c
+@@ -312,11 +312,11 @@ static void omfs_write_failed(struct address_space *mapping, loff_t to)
+ 
+ static int omfs_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
  {
  	int ret;
  
--	ret = generic_write_end(file, mapping, pos, len, copied, page, fsdata);
-+	ret = generic_write_end(file, mapping, pos, len, copied, folio, fsdata);
- 	if (ret < len)
- 		ufs_write_failed(mapping, pos + len);
- 	return ret;
-diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
-index 029f106d56d9..b780deb81b02 100644
---- a/fs/vboxsf/file.c
-+++ b/fs/vboxsf/file.c
-@@ -300,9 +300,8 @@ static int vboxsf_writepage(struct page *page, struct writeback_control *wbc)
+-	ret = block_write_begin(mapping, pos, len, pagep, omfs_get_block);
++	ret = block_write_begin(mapping, pos, len, foliop, omfs_get_block);
+ 	if (unlikely(ret))
+ 		omfs_write_failed(mapping, pos + len);
  
- static int vboxsf_write_end(struct file *file, struct address_space *mapping,
- 			    loff_t pos, unsigned int len, unsigned int copied,
--			    struct page *page, void *fsdata)
-+			    struct folio *folio, void *fsdata)
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index 69b507a611f8..aae6d2b8767d 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -309,7 +309,7 @@ static int orangefs_read_folio(struct file *file, struct folio *folio)
+ 
+ static int orangefs_write_begin(struct file *file,
+ 		struct address_space *mapping, loff_t pos, unsigned len,
+-		struct page **pagep, void **fsdata)
++		struct folio **foliop, void **fsdata)
  {
--	struct folio *folio = page_folio(page);
+ 	struct orangefs_write_range *wr;
+ 	struct folio *folio;
+@@ -320,7 +320,7 @@ static int orangefs_write_begin(struct file *file,
+ 	if (IS_ERR(folio))
+ 		return PTR_ERR(folio);
+ 
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 
+ 	if (folio_test_dirty(folio) && !folio_test_private(folio)) {
+ 		/*
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index f4b9db4b4df2..ea23872ba24f 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -2735,7 +2735,7 @@ static void reiserfs_truncate_failed_write(struct inode *inode)
+ static int reiserfs_write_begin(struct file *file,
+ 				struct address_space *mapping,
+ 				loff_t pos, unsigned len,
+-				struct page **pagep, void **fsdata)
++				struct folio **foliop, void **fsdata)
+ {
+ 	struct inode *inode;
+ 	struct folio *folio;
+@@ -2749,7 +2749,7 @@ static int reiserfs_write_begin(struct file *file,
+ 			mapping_gfp_mask(mapping));
+ 	if (IS_ERR(folio))
+ 		return PTR_ERR(folio);
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 
+ 	reiserfs_wait_on_write_block(inode->i_sb);
+ 	fix_tail_page_for_writing(&folio->page);
+diff --git a/fs/sysv/itree.c b/fs/sysv/itree.c
+index c8511e286673..8864438817a6 100644
+--- a/fs/sysv/itree.c
++++ b/fs/sysv/itree.c
+@@ -483,11 +483,11 @@ static void sysv_write_failed(struct address_space *mapping, loff_t to)
+ 
+ static int sysv_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, pagep, get_block);
++	ret = block_write_begin(mapping, pos, len, foliop, get_block);
+ 	if (unlikely(ret))
+ 		sysv_write_failed(mapping, pos + len);
+ 
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index baa3eecc32fe..5130123005e4 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -211,7 +211,7 @@ static void release_existing_page_budget(struct ubifs_info *c)
+ }
+ 
+ static int write_begin_slow(struct address_space *mapping,
+-			    loff_t pos, unsigned len, struct page **pagep)
++			    loff_t pos, unsigned len, struct folio **foliop)
+ {
  	struct inode *inode = mapping->host;
- 	struct vboxsf_handle *sf_handle = file->private_data;
- 	size_t from = offset_in_folio(folio, pos);
-@@ -314,10 +313,10 @@ static int vboxsf_write_end(struct file *file, struct address_space *mapping,
- 	if (!folio_test_uptodate(folio) && copied < len)
- 		folio_zero_range(folio, from + copied, len - copied);
+ 	struct ubifs_info *c = inode->i_sb->s_fs_info;
+@@ -298,7 +298,7 @@ static int write_begin_slow(struct address_space *mapping,
+ 			ubifs_release_dirty_inode_budget(c, ui);
+ 	}
  
--	buf = kmap(page);
-+	buf = kmap(&folio->page);
- 	err = vboxsf_write(sf_handle->root, sf_handle->handle,
- 			   pos, &nwritten, buf + from);
--	kunmap(page);
-+	kunmap(&folio->page);
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	return 0;
+ }
  
- 	if (err) {
- 		nwritten = 0;
+@@ -414,7 +414,7 @@ static int allocate_budget(struct ubifs_info *c, struct folio *folio,
+  */
+ static int ubifs_write_begin(struct file *file, struct address_space *mapping,
+ 			     loff_t pos, unsigned len,
+-			     struct page **pagep, void **fsdata)
++			     struct folio **foliop, void **fsdata)
+ {
+ 	struct inode *inode = mapping->host;
+ 	struct ubifs_info *c = inode->i_sb->s_fs_info;
+@@ -483,7 +483,7 @@ static int ubifs_write_begin(struct file *file, struct address_space *mapping,
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+ 
+-		return write_begin_slow(mapping, pos, len, pagep);
++		return write_begin_slow(mapping, pos, len, foliop);
+ 	}
+ 
+ 	/*
+@@ -492,7 +492,7 @@ static int ubifs_write_begin(struct file *file, struct address_space *mapping,
+ 	 * with @ui->ui_mutex locked if we are appending pages, and unlocked
+ 	 * otherwise. This is an optimization (slightly hacky though).
+ 	 */
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	return 0;
+ }
+ 
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index fdf024e0b772..eaee57b91c6c 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -246,14 +246,14 @@ static void udf_readahead(struct readahead_control *rac)
+ 
+ static int udf_write_begin(struct file *file, struct address_space *mapping,
+ 			   loff_t pos, unsigned len,
+-			   struct page **pagep, void **fsdata)
++			   struct folio **foliop, void **fsdata)
+ {
+ 	struct udf_inode_info *iinfo = UDF_I(file_inode(file));
+ 	struct folio *folio;
+ 	int ret;
+ 
+ 	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
+-		ret = block_write_begin(mapping, pos, len, pagep,
++		ret = block_write_begin(mapping, pos, len, foliop,
+ 					udf_get_block);
+ 		if (unlikely(ret))
+ 			udf_write_failed(mapping, pos + len);
+@@ -265,7 +265,7 @@ static int udf_write_begin(struct file *file, struct address_space *mapping,
+ 			mapping_gfp_mask(mapping));
+ 	if (IS_ERR(folio))
+ 		return PTR_ERR(folio);
+-	*pagep = &folio->page;
++	*foliop = folio;
+ 	if (!folio_test_uptodate(folio))
+ 		udf_adinicb_read_folio(folio);
+ 	return 0;
+diff --git a/fs/ufs/inode.c b/fs/ufs/inode.c
+index 69adb198c634..f43461652d9f 100644
+--- a/fs/ufs/inode.c
++++ b/fs/ufs/inode.c
+@@ -498,11 +498,11 @@ static void ufs_write_failed(struct address_space *mapping, loff_t to)
+ 
+ static int ufs_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, pagep, ufs_getfrag_block);
++	ret = block_write_begin(mapping, pos, len, foliop, ufs_getfrag_block);
+ 	if (unlikely(ret))
+ 		ufs_write_failed(mapping, pos + len);
+ 
 diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 3a3fec154536..165e859664a5 100644
+index 165e859664a5..254563a2a9de 100644
 --- a/include/linux/buffer_head.h
 +++ b/include/linux/buffer_head.h
-@@ -265,8 +265,8 @@ int block_write_end(struct file *, struct address_space *,
- 				loff_t, unsigned len, unsigned copied,
+@@ -258,7 +258,7 @@ int __block_write_full_folio(struct inode *inode, struct folio *folio,
+ int block_read_full_folio(struct folio *, get_block_t *);
+ bool block_is_partially_uptodate(struct folio *, size_t from, size_t count);
+ int block_write_begin(struct address_space *mapping, loff_t pos, unsigned len,
+-		struct page **pagep, get_block_t *get_block);
++		struct folio **foliop, get_block_t *get_block);
+ int __block_write_begin(struct page *page, loff_t pos, unsigned len,
+ 		get_block_t *get_block);
+ int block_write_end(struct file *, struct address_space *,
+@@ -269,7 +269,7 @@ int generic_write_end(struct file *, struct address_space *,
  				struct folio *, void *);
- int generic_write_end(struct file *, struct address_space *,
--				loff_t, unsigned, unsigned,
--				struct page *, void *);
-+				loff_t, unsigned len, unsigned copied,
-+				struct folio *, void *);
  void folio_zero_new_buffers(struct folio *folio, size_t from, size_t to);
  int cont_write_begin(struct file *, struct address_space *, loff_t,
- 			unsigned, struct page **, void **,
+-			unsigned, struct page **, void **,
++			unsigned, struct folio **, void **,
+ 			get_block_t *, loff_t *);
+ int generic_cont_expand_simple(struct inode *inode, loff_t size);
+ void block_commit_write(struct page *page, unsigned int from, unsigned int to);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ea3df718c53e..6ff85d72067b 100644
+index 6ff85d72067b..34059e58aa92 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -411,7 +411,7 @@ struct address_space_operations {
- 				struct page **pagep, void **fsdata);
+@@ -408,7 +408,7 @@ struct address_space_operations {
+ 
+ 	int (*write_begin)(struct file *, struct address_space *mapping,
+ 				loff_t pos, unsigned len,
+-				struct page **pagep, void **fsdata);
++				struct folio **foliop, void **fsdata);
  	int (*write_end)(struct file *, struct address_space *mapping,
  				loff_t pos, unsigned len, unsigned copied,
--				struct page *page, void *fsdata);
-+				struct folio *folio, void *fsdata);
- 
- 	/* Unfortunately this kludge is needed for FIBMAP. Don't use it */
- 	sector_t (*bmap)(struct address_space *, sector_t);
+ 				struct folio *folio, void *fsdata);
+@@ -3331,7 +3331,7 @@ extern ssize_t noop_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
+ extern int simple_empty(struct dentry *);
+ extern int simple_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata);
++			struct folio **foliop, void **fsdata);
+ extern const struct address_space_operations ram_aops;
+ extern int always_delete_dentry(const struct dentry *);
+ extern struct inode *alloc_anon_inode(struct super_block *);
 diff --git a/mm/filemap.c b/mm/filemap.c
-index d62150418b91..fab6b0c3044e 100644
+index fab6b0c3044e..29fec1fccd0a 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -4033,7 +4033,7 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
- 		flush_dcache_folio(folio);
+@@ -3987,7 +3987,6 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+ 	ssize_t written = 0;
  
- 		status = a_ops->write_end(file, mapping, pos, bytes, copied,
--						page, fsdata);
-+						folio, fsdata);
- 		if (unlikely(status != copied)) {
- 			iov_iter_revert(i, copied - max(status, 0L));
- 			if (unlikely(status < 0))
+ 	do {
+-		struct page *page;
+ 		struct folio *folio;
+ 		size_t offset;		/* Offset into folio */
+ 		size_t bytes;		/* Bytes to write to folio */
+@@ -4017,11 +4016,10 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+ 		}
+ 
+ 		status = a_ops->write_begin(file, mapping, pos, bytes,
+-						&page, &fsdata);
++						&folio, &fsdata);
+ 		if (unlikely(status < 0))
+ 			break;
+ 
+-		folio = page_folio(page);
+ 		offset = offset_in_folio(folio, pos);
+ 		if (bytes > folio_size(folio) - offset)
+ 			bytes = folio_size(folio) - offset;
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 2faa9daaf54b..1116f147d788 100644
+index 1116f147d788..a8618eeed77a 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -2917,9 +2917,8 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+@@ -2882,7 +2882,7 @@ static const struct inode_operations shmem_short_symlink_operations;
  static int
- shmem_write_end(struct file *file, struct address_space *mapping,
- 			loff_t pos, unsigned len, unsigned copied,
--			struct page *page, void *fsdata)
-+			struct folio *folio, void *fsdata)
+ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len,
+-			struct page **pagep, void **fsdata)
++			struct folio **foliop, void **fsdata)
  {
--	struct folio *folio = page_folio(page);
  	struct inode *inode = mapping->host;
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+@@ -2903,14 +2903,13 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 	if (ret)
+ 		return ret;
  
- 	if (pos + copied > inode->i_size)
+-	*pagep = folio_file_page(folio, index);
+-	if (PageHWPoison(*pagep)) {
++	if (folio_test_has_hwpoisoned(folio)) {
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+-		*pagep = NULL;
+ 		return -EIO;
+ 	}
+ 
++	*foliop = folio;
+ 	return 0;
+ }
+ 
 -- 
 2.43.0
 
