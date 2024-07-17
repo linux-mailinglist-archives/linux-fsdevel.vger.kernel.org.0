@@ -1,168 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-23838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D7C933FAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:29:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA20933FF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 564861C2326E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:29:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 319C9B246EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFD21CF8A;
-	Wed, 17 Jul 2024 15:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB75182A6A;
+	Wed, 17 Jul 2024 15:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3PIF9no"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m+3VEIpn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B118181B94;
-	Wed, 17 Jul 2024 15:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCB217F393
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 15:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721230118; cv=none; b=oSvfXw8wB+WQnOAftL6hCXJ8jyaerTToKepygi0uHvGGNBO0p+dVDkSs/caBHxRs/pZRwhFHM0oCEaAkdHjlk27C9po8E0crn2GbBp1JlqWS68J7xyWCRco0Tfqnhv9ml9+LDY9Q1k1XXrbpJk5xxfSBKKGWaWDe1+Yx9F5RwFs=
+	t=1721231245; cv=none; b=XOcEWDpxMOO4OHaZear9+N17FXJOwdqgEaFql8TkxS6Yua3IzVgCac2xNvrLpVe4EkpXMdOF1aDWblnx/bq/DU0CphlobI6R8orR3pHCOdmsnbN0woCsdDK7nCYVo6d0ArGr18Jg07FDm8puhObjq5foopK7br0XKhcEpDYFFZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721230118; c=relaxed/simple;
-	bh=ukWBWdiCV90bf+K1lUELQn/UyLGZdA/ugOA19ZyBXHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ncRTl/Qfhwmn3A42ei07mIxT1f7ftEZgKruI3oeookSwN+ZcX27hd1j5563GXtRJCR+OFyZLhXP2wbcpbtiFI0AAXLzg+9C6bOBRQ1d79udRfbGPKyPu5Vuj4oGEbWPNxT8GxeKR3XQo3gtT+i4VoNF1v2C0hkVEGkMSNocPiaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3PIF9no; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4EEC4AF11;
-	Wed, 17 Jul 2024 15:28:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721230117;
-	bh=ukWBWdiCV90bf+K1lUELQn/UyLGZdA/ugOA19ZyBXHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r3PIF9noxw/EmK0iQ64CIvMRoQtkUSZm+1XevS7zxoStKg5JQPXHJlg8IU5RJZpcr
-	 kkF2HbTJe+ClHj3+rZQDKaKK2Cy4VcJvwK2A40VhLza++TNBmeFKpxsYozVv1V+RJd
-	 BeHJUyzEuN47tHZ6V6NszSlSMSW94Va2/HjvLsAeMB6t5uPrWosA0FKDJ+PlgEaZog
-	 3KzdUg9k+Nx1gMZjK7jl1xM1jAOpM3bo5Qp47w2Q9KaDwUpZns+jwrGfVa+4n+Wi50
-	 DUlk9Lud/2N6I51hkdkPMdV+XmlL1vfq4/oVWxBdhChNqFtoGDJReknBht7B/a4Tbe
-	 Y1QWQ/qq+FoyA==
-Date: Wed, 17 Jul 2024 16:28:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "fweimer@redhat.com" <fweimer@redhat.com>,
-	"sroettger@google.com" <sroettger@google.com>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"ross.burton@arm.com" <ross.burton@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"Schimpe, Christina" <christina.schimpe@intel.com>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"arnd@arndb.de" <arnd@arndb.de>, "maz@kernel.org" <maz@kernel.org>,
-	"oleg@redhat.com" <oleg@redhat.com>,
-	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
-	"Pandey, Sunil K" <sunil.k.pandey@intel.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v9 05/39] arm64/gcs: Document the ABI for Guarded Control
- Stacks
-Message-ID: <dbc210a3-7653-444a-9dcc-b8d4ea92bd9b@sirena.org.uk>
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
- <20240625-arm64-gcs-v9-5-0f634469b8f0@kernel.org>
- <87a5iph6u2.fsf@oldenburg.str.redhat.com>
- <Zo7SdDT_cBp6uXgT@finisterre.sirena.org.uk>
- <2fb80876e286b4db8f9ef36bcce04bbf02af0de2.camel@intel.com>
+	s=arc-20240116; t=1721231245; c=relaxed/simple;
+	bh=mxS6q3nFQfGpvHpzBvJzQZPAAaGvW7jut6fLh45RE6E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QswwbHOkd4mo5m7ZM8ZpLfhpAKJQ5u61AnOHc2RuKCMpxpZMKF1p9ZW0C0cHlONrEhOKTdILnMDVjFxzvskLmIN/mfJLHBC3ZTTp1KbEyLnYEo1RxPYApzbagX1ihcQgaioOdJzaE9zWLRndlELDaJM/Hg74YkQ3uYnJ3pOyen8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m+3VEIpn; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=Bpldg8UDtYHNa8J0prcKSZ8wKCRjZqF3V/Lai06lO20=; b=m+3VEIpn+OU3Zcwy6K47AZF1zv
+	2y+3miy8RCBZVoY00C5pkYM17n4TCSHrdvZG0ESt2Okc5ZgMMghgQOIX3iLjKoc0bjFRhk9133uwJ
+	Vo0ykDetmy1fkoSCCrvgVL2Dag+2gxPRUryllHjvkiThoAUg69Mcv5VmAZJblABhqxUBeZu2u/q5O
+	PHVqhuO0EaYzqI5rIau5ezKP0PNUkw4d/f0Hqwx62ZeUzk82GWDnxFjqfJVEKv58zUeNoNJhghhaN
+	T04euYHhVkcWmGgJyDCm7Gsbzin4ZizxiCmbgFfBPsqBxCzjyp1wrR3E+AtQWGuBO6nXscsKBTUBM
+	W5n6ZiJA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sU6sB-00000000ztx-3915;
+	Wed, 17 Jul 2024 15:47:19 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 00/23] Convert write_begin / write_end to take a folio
+Date: Wed, 17 Jul 2024 16:46:50 +0100
+Message-ID: <20240717154716.237943-1-willy@infradead.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h9KvXQkczWY3GIVF"
-Content-Disposition: inline
-In-Reply-To: <2fb80876e286b4db8f9ef36bcce04bbf02af0de2.camel@intel.com>
-X-Cookie: You should go home.
+Content-Transfer-Encoding: 8bit
 
+You can find the full branch at
+http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/write-end
+aka
+git://git.infradead.org/users/willy/pagecache.git write-end
 
---h9KvXQkczWY3GIVF
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On top of the ufs, minix, sysv and qnx6 directory handling patches, this
+patch series converts us to using folios for write_begin and write_end.
+That's the last mention of 'struct page' in several filesystems.
 
-On Tue, Jul 16, 2024 at 06:50:12PM +0000, Edgecombe, Rick P wrote:
-> On Wed, 2024-07-10 at 19:27 +0100, Mark Brown wrote:
-> > On Wed, Jul 10, 2024 at 12:36:21PM +0200, Florian Weimer wrote:
+I'd like to get some version of these patches into the 6.12 merge
+window.
 
-> > > We also have a gap on x86-64 for backtrace generation because the
-> > > interrupted instruction address does not end up on the shadow stack.
-> > > This address is potentially quite interesting for backtrace generatio=
-n.
-> > > I assume it's currently missing because the kernel does not resume
-> > > execution using a regular return instruction.=A0 It would be really u=
-seful
-> > > if it could be pushed to the shadow stack, or recoverable from the
-> > > shadow stack in some other way (e.g., the address of the signal conte=
-xt
-> > > could be pushed instead).=A0 That would need some form of marker as w=
-ell.
+Matthew Wilcox (Oracle) (23):
+  reiserfs: Convert grab_tail_page() to use a folio
+  reiserfs: Convert reiserfs_write_begin() to use a folio
+  block: Use a folio in blkdev_write_end()
+  buffer: Use a folio in generic_write_end()
+  nilfs2: Use a folio in nilfs_recover_dsync_blocks()
+  ntfs3: Remove reset_log_file()
+  buffer: Convert block_write_end() to take a folio
+  ecryptfs: Convert ecryptfs_write_end() to use a folio
+  ecryptfs: Use a folio in ecryptfs_write_begin()
+  f2fs: Convert f2fs_write_end() to use a folio
+  f2fs: Convert f2fs_write_begin() to use a folio
+  fuse: Convert fuse_write_end() to use a folio
+  fuse: Convert fuse_write_begin() to use a folio
+  hostfs: Convert hostfs_write_end() to use a folio
+  jffs2: Convert jffs2_write_end() to use a folio
+  jffs2: Convert jffs2_write_begin() to use a folio
+  orangefs: Convert orangefs_write_end() to use a folio
+  orangefs: Convert orangefs_write_begin() to use a folio
+  vboxsf: Use a folio in vboxsf_write_end()
+  fs: Convert aops->write_end to take a folio
+  fs: Convert aops->write_begin to take a folio
+  ocfs2: Convert ocfs2_write_zero_page to use a folio
+  buffer: Convert __block_write_begin() to take a folio
 
-> > Right, we'd have to manually consume any extra address we put on the
-> > GCS.=A0 I'm not seeing any gagetisation issues with writing an extra va=
-lue
-> > there that isn't a valid stack cap at the minute but I'll need to think
-> > it through properly - don't know if anyone else has thoughts here?
+ Documentation/filesystems/locking.rst     |  6 +-
+ Documentation/filesystems/vfs.rst         | 12 ++--
+ block/fops.c                              | 12 ++--
+ drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 47 ++++++------
+ fs/adfs/inode.c                           |  5 +-
+ fs/affs/file.c                            | 22 +++---
+ fs/bcachefs/fs-io-buffered.c              |  8 +--
+ fs/bcachefs/fs-io-buffered.h              |  6 +-
+ fs/bfs/file.c                             |  4 +-
+ fs/buffer.c                               | 46 ++++++------
+ fs/ceph/addr.c                            | 13 ++--
+ fs/ecryptfs/mmap.c                        | 86 +++++++++++-----------
+ fs/exfat/file.c                           |  8 +--
+ fs/exfat/inode.c                          |  9 ++-
+ fs/ext2/dir.c                             |  4 +-
+ fs/ext2/inode.c                           |  8 +--
+ fs/ext4/ext4.h                            |  4 +-
+ fs/ext4/inline.c                          | 14 ++--
+ fs/ext4/inode.c                           | 37 +++++-----
+ fs/ext4/verity.c                          |  8 +--
+ fs/f2fs/data.c                            | 87 ++++++++++++-----------
+ fs/f2fs/super.c                           |  8 +--
+ fs/f2fs/verity.c                          |  8 +--
+ fs/fat/inode.c                            |  9 ++-
+ fs/fuse/file.c                            | 47 ++++++------
+ fs/hfs/extent.c                           |  6 +-
+ fs/hfs/hfs_fs.h                           |  2 +-
+ fs/hfs/inode.c                            |  5 +-
+ fs/hfsplus/extents.c                      |  6 +-
+ fs/hfsplus/hfsplus_fs.h                   |  2 +-
+ fs/hfsplus/inode.c                        |  5 +-
+ fs/hostfs/hostfs_kern.c                   | 23 +++---
+ fs/hpfs/file.c                            |  9 ++-
+ fs/hugetlbfs/inode.c                      |  4 +-
+ fs/iomap/buffered-io.c                    |  2 +-
+ fs/jffs2/file.c                           | 66 +++++++++--------
+ fs/jfs/inode.c                            |  8 +--
+ fs/libfs.c                                | 13 ++--
+ fs/minix/dir.c                            |  2 +-
+ fs/minix/inode.c                          |  6 +-
+ fs/namei.c                                | 10 +--
+ fs/nfs/file.c                             |  7 +-
+ fs/nilfs2/dir.c                           |  4 +-
+ fs/nilfs2/inode.c                         | 10 +--
+ fs/nilfs2/recovery.c                      | 16 ++---
+ fs/ntfs3/file.c                           |  9 ++-
+ fs/ntfs3/inode.c                          | 51 ++-----------
+ fs/ntfs3/ntfs_fs.h                        |  5 +-
+ fs/ocfs2/aops.c                           | 12 ++--
+ fs/ocfs2/aops.h                           |  2 +-
+ fs/ocfs2/file.c                           | 17 ++---
+ fs/ocfs2/mmap.c                           |  6 +-
+ fs/omfs/file.c                            |  4 +-
+ fs/orangefs/inode.c                       | 39 +++++-----
+ fs/reiserfs/inode.c                       | 57 ++++++++-------
+ fs/sysv/dir.c                             |  2 +-
+ fs/sysv/itree.c                           |  6 +-
+ fs/ubifs/file.c                           | 13 ++--
+ fs/udf/file.c                             |  2 +-
+ fs/udf/inode.c                            | 12 ++--
+ fs/ufs/dir.c                              |  2 +-
+ fs/ufs/inode.c                            | 10 +--
+ fs/vboxsf/file.c                          | 24 +++----
+ include/linux/buffer_head.h               | 14 ++--
+ include/linux/fs.h                        |  6 +-
+ mm/filemap.c                              |  6 +-
+ mm/shmem.c                                | 10 ++-
+ 67 files changed, 482 insertions(+), 551 deletions(-)
 
-> Shadow stack has one main usage (security) and another less proven, but
-> interesting usage for backtracing.=A0I'm wary of adding things to the sha=
-dow stack
-> as they come up in an ad-hoc fashion, especially for the fuzzier usage.=
-=A0Do you
-> have a handle on everything the tracing usage would need?
+-- 
+2.43.0
 
-Yeah, the current instruction pointer seems fairly straightforward to
-idiomatically fit in there but going beyond that gets tricker.
-
-> But besides that I've wondered if there could be a security benefit to ad=
-ding
-> some fields of the sigframe (RIP being the prime one) to the shadow stack=
-, or a
-> cryptographic hash of the sigframe.
-
-One trick with trying to actually validate anything extra we put in
-there from the sigframe would be that one of the things a signal handler
-can do is modify the signal context - for the specific case of RIP
-that'd be an issue for rseq for example.
-
---h9KvXQkczWY3GIVF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaX4xoACgkQJNaLcl1U
-h9Cgxwf9EtoH1wDADGEHB812knHuhpaXQ+HApRHTVo5CjSDf2jXeTXGAeof7B8TM
-MLHNoO3uezt5r1bpHpC7gAruLzfAEs+G+rahhQswSuEDDGQLhcZga0SHFL2cmZpM
-SZ2Lk3725bJaoUzexEHk/8ZjpXnrzWXi+U/YoTi9PfcX6bUfVufG0hPr/xR8836n
-kKF9q2R93WTz8gIiIHpuUqgQ7jRjrDW5UIi0KhRobcLRKBhL5aYVQ1T9GVgwjA4v
-7R3dDdrlAWQLJcjwjciJ3Ti6xSB2evfDt2FjmDE23My2AkO7dJebKhz7fABWCRbZ
-f2X9PmkSZlUHX26EuZIME4o9ENxnWg==
-=HySw
------END PGP SIGNATURE-----
-
---h9KvXQkczWY3GIVF--
 
