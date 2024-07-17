@@ -1,74 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-23802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD6793382B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 09:42:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2498A9338F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 10:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7358F1F22881
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 07:42:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7A11C232A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 08:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E501CD2F;
-	Wed, 17 Jul 2024 07:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358BB374F6;
+	Wed, 17 Jul 2024 08:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bKNhDQ1y"
+	dkim=pass (1024-bit key) header.d=python.org header.i=@python.org header.b="hYt2Bvmb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail.python.org (mail.python.org [188.166.95.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE131BF37
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 07:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB437249F9;
+	Wed, 17 Jul 2024 08:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.166.95.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721202155; cv=none; b=M9m9TiyJMF/rNo9mtvnmd5wmMpiFBJE7hlHxHjYXladQScOscWEUi9NK8Mtnsk0wDviF2/Eqnwmjtdwl/7CvfAsph8zN44TkcPPRF0CII7T3cWM1ZloCtcipklrS6uW9JvIBW0wdVhMFwUw2B+pStekySCuRusq00bbKfMWuLrs=
+	t=1721204787; cv=none; b=syky23DVHluf2R3U2X7ZaCbeYu8Ahr/6Hw4vs9DY6yeYkn12ZiGjacgMCTR9PQf6uShiHRXo4hpMb1WkJR9nxI7w3b2Gs2bZFraM9A+zlA9CaOkabrGICJnpaQ41YzTOmqCKRQHC+cZXeETUp6cLNP9/hzUKVJ6LBfvSRS6/O3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721202155; c=relaxed/simple;
-	bh=lSLC07cWgDtQxlP0/I5aHy3V2kujSc6et2iDzwJlqi4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=MHE5RI8Z1wFwU+1yn+2In5pZQfEchn9hn4OhUT4FCVPwagBQjIkSjrr1GeWu4O58ff2Twtk1/kwrtKxpLApAeHAEuEldxrC0YYKDCbRgGrfIGJcZfS9ig6CZ/KfjKsHWxoZh4ilX1XSE2POjjpn9onDfBjeblZfvqPyXuDhWZAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bKNhDQ1y; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e9c55febcso8428512e87.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 00:42:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721202150; x=1721806950; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ovwn3DW6TedKlvHEbgoQx/5Vd4igDUlWIvl8s9WQmRU=;
-        b=bKNhDQ1yjRmmYLayq3yw4+qDpdln2jjKus4BLXWvtS+ss4tLTy8zLkxeKw6V/XEn+b
-         dyBWm24daUS5fUMTr28YHowcS1ckqvR2cBVpDbnAmaHHZNC+4VGv9tJeKciiiXunOp5j
-         I1bfXRumxYshX+QHBnBijCVBMbMbxOZns09Rwa3ePsCE/ivo/dhEY9t2iS0lg0+/xHZL
-         krkDuH6VUkcYPjyC0nCPa2XGmb37AhAHgDUnmUvrHVxFE+1eeSh57KxL68aYrYlU3Yzg
-         vPyLFcANOjHxoXsHgWg8Ggtngm9LEuwAMIVYFHBTYBclh5I5N6w8vZU9RK4ZOOlqPlH4
-         Eqxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721202150; x=1721806950;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ovwn3DW6TedKlvHEbgoQx/5Vd4igDUlWIvl8s9WQmRU=;
-        b=EQsfIMqRaww/nNE7YKzNWE7zF0AXODTr9MN8+8yxjFwnc7dv3s6xX818490Zs7s9No
-         /fpCsRTs3of87aN1VhWaJne7v+aPRv1wFI94PPJ1CwgFOQGQ71CNujKpCUMrVRxJ4DwF
-         Snfy+5VpMRfg3uA04NRkuIq7XyauEAP6kGHT8f3Pd60scK5y4vNJEp8153tADNSzChen
-         W59BDwlwylzQ+UiZSBrtCl7xQ88Rgze7RQYQ9KvfsT6a0XD5W5KJq5YjH/VutybOpftU
-         9gotNRVx25r1BrlJ7CLA/SI/2PAFw8jYdoL+VB7sGXqO6iOEESgXvYhD9dqhec7oZOt/
-         /oYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/vAGlhCYAJ5DgMEGdJAgojIlQFtREoXgpQUX0N2Cpv55FDoR944TkoGN1mwAn6mlsc4rtK8KE0IxFWWAeWFy0g5QMsDNEcxXLkgTHRw==
-X-Gm-Message-State: AOJu0Yw6kunvfWqjHMPhLFROQfCGdcIq7jRj9DK37iKCzFcCnjegXJ+W
-	Fv787ZDsOChQhXgigP0XWTOA1y3EH4zc9aZcmpx0co7x7bbRZmphpxa0h7KGISA=
-X-Google-Smtp-Source: AGHT+IEbmvUx2Tku1m7n3VYmkCoOi72VBlj6R2Ay0fT/hCS949+rAMA+wRCub2dH2lx/PEDFiZ28Nw==
-X-Received: by 2002:a05:651c:14d:b0:2eb:f472:e7d3 with SMTP id 38308e7fff4ca-2eefd04fa1emr6949041fa.6.1721202150087;
-        Wed, 17 Jul 2024 00:42:30 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc38a81sm69966755ad.220.2024.07.17.00.42.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 00:42:28 -0700 (PDT)
-Message-ID: <ebdafb52-e538-49c2-89d1-5894dd5382a9@suse.com>
-Date: Wed, 17 Jul 2024 17:12:23 +0930
+	s=arc-20240116; t=1721204787; c=relaxed/simple;
+	bh=fTteDRfXe9Vlvc3/MVkCR1QexOCfXk5wsr0WUqhKjwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VUJPLEsAIhPFCLOh1r+3m+J1NjAxgMuyyAPcMjdojjMi3TZOKN+/5IciTHi/25KyXL/iD1E7TyWf+pgnaUO+TEYL/2MNqKLaK0vsgcOR7e2EXsPKLaYmKl3Ctfn/Jt3u4C/x4Rnod6g7E2Ttlm/ZAJ5qcNxeUPfZdbwOhCgqdWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=python.org; spf=pass smtp.mailfrom=python.org; dkim=pass (1024-bit key) header.d=python.org header.i=@python.org header.b=hYt2Bvmb; arc=none smtp.client-ip=188.166.95.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=python.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=python.org
+Received: from [192.168.1.83] (unknown [2.29.184.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.python.org (Postfix) with ESMTPSA id 4WP8Cx4j8HznWFN;
+	Wed, 17 Jul 2024 04:26:21 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=python.org; s=200901;
+	t=1721204783; bh=fTteDRfXe9Vlvc3/MVkCR1QexOCfXk5wsr0WUqhKjwI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hYt2BvmbQYJcbMIPmDyPk0v5DDLpQwvR7wOKYjhJ3uw3TuQItzbBjTZiqlNAJKVbP
+	 7sccz+rS3ckrUp0F+K65M4OQN+VxdVTR8jl+PZ319XHPjr0ZHkx3SGkX0fwY3O6JrT
+	 Bb0ws6UinibHmFcuTiPzn/7nhblRN247FK4zx72Y=
+Message-ID: <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
+Date: Wed, 17 Jul 2024 09:26:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,80 +52,72 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] mm: skip memcg for certain address space
-From: Qu Wenruo <wqu@suse.com>
-To: linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-References: <cover.1720572937.git.wqu@suse.com>
-Content-Language: en-US
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
- Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
- p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
- ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
- dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
- RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
- rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
- 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
- bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
- AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
- ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
-In-Reply-To: <cover.1720572937.git.wqu@suse.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Content-Language: en-GB
+To: Jeff Xu <jeffxu@google.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,
+ Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai
+ <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>,
+ Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>,
+ Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,
+ Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Jordan R Abrahams <ajordanr@google.com>,
+ Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+ Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+ Matt Bobrowski <mattbobrowski@google.com>,
+ Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>,
+ Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+ Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>,
+ Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+ Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+ Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>,
+ kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+From: Steve Dower <steve.dower@python.org>
+In-Reply-To: <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Ping?
+On 17/07/2024 07:33, Jeff Xu wrote:
+> Consider those cases: I think:
+> a> relying purely on userspace for enforcement does't seem to be
+> effective,  e.g. it is trivial  to call open(), then mmap() it into
+> executable memory.
 
-Any feedback?
+If there's a way to do this without running executable code that had to 
+pass a previous execveat() check, then yeah, it's not effective (e.g. a 
+Python interpreter that *doesn't* enforce execveat() is a trivial way to 
+do it).
 
-I guess in this case btrfs is really the only one can benefit from this 
-feature?
+Once arbitrary code is running, all bets are off. So long as all 
+arbitrary code is being checked itself, it's allowed to do things that 
+would bypass later checks (and it's up to whoever audited it in the 
+first place to prevent this by not giving it the special mark that 
+allows it to pass the check).
 
-Thanks,
-Qu
-
-在 2024/7/10 10:37, Qu Wenruo 写道:
-> Recently I'm hitting soft lockup if adding an order 2 folio to a
-> filemap using GFP_NOFS | __GFP_NOFAIL. The softlockup happens at memcg
-> charge code, and I guess that's exactly what __GFP_NOFAIL is expected to
-> do, wait indefinitely until the request can be met.
+> b> if both user space and kernel need to call AT_CHECK, the faccessat
+> seems to be a better place for AT_CHECK, e.g. kernel can call
+> do_faccessat(AT_CHECK) and userspace can call faccessat(). This will
+> avoid complicating the execveat() code path.
 > 
-> On the other hand, if we do not use __GFP_NOFAIL, we can be limited by
-> memcg at a lot of critical location, and lead to unnecessary transaction
-> abort just due to memcg limit.
+> What do you think ?
 > 
-> However for that specific btrfs call site, there is really no need charge
-> the memcg, as that address space belongs to btree inode, which is not
-> accessible to any end user, and that btree inode is a shared pool for
-> all metadata of a btrfs.
-> 
-> So this patchset introduces a new address space flag, AS_NO_MEMCG, so
-> that folios added to that address space will not trigger any memcg
-> charge.
-> 
-> This would be the basis for future btrfs changes, like removing
-> __GFP_NOFAIL completely and larger metadata folios.
-> 
-> Qu Wenruo (2):
->    mm: make lru_gen_eviction() to handle folios without memcg info
->    mm: allow certain address space to be not accounted by memcg
-> 
->   fs/btrfs/disk-io.c      |  1 +
->   include/linux/pagemap.h |  1 +
->   mm/filemap.c            | 12 +++++++++---
->   mm/workingset.c         |  2 +-
->   4 files changed, 12 insertions(+), 4 deletions(-)
-> 
+> Thanks
+> -Jeff
 
