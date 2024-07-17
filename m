@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-23845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C845A933FEE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:47:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C45933FEA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A861F253FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:47:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2AB1C2152D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F83143898;
-	Wed, 17 Jul 2024 15:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0071822CD;
+	Wed, 17 Jul 2024 15:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q5lSOmBF"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sjfmet6+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F64E1802A3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713621802A5
 	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 15:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721231244; cv=none; b=YB/IT8wCDQCxwApCeiKO8hbmU6F4e6awOSJPtN1sPJ78LCyvU9Myz41+wrrtPghr69kdod0zAHdvOGsopiA8udGYxO6+kE6jOf/uX+mOh8cNpvm/kRYGRU6ZpdVoL8QcYBXokWVI/RMgidfAKSY+PFkwi+kEKrpJOZd/FWhne1c=
+	t=1721231244; cv=none; b=utX5PBbhb/0OlUPbqfeTOhXBcmduAyGovOOF36FmHRsG32mqX/iNXNCvDJm073ettSBoCetGBMDcq3BPb3dZvnzu/8q1bdngxqBhSP/FV/pOOdFU0QY41M+bGC69afOaOSIZyndE8bGUbn0UJA++ubpT/Civ819ldsYpfGJVNVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721231244; c=relaxed/simple;
-	bh=XsLa3wjPwY4tvC3JlDDsaQReAiwZgHVqUI2My++KozM=;
+	bh=j1b520dmMsgNz5hcysIYQaJJpapCAurli98cc9dm0xE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SenJQep0thw2+PwpnCbz1N97sqtxwM3wxcFs8/vDJzLdiophNeQvZXqMlUDIqDtPAXfKVmG4yKi2AMDYc+mQXYR1Ohr0R9TZf+nEhVy86p58NWu9aV1aWx/2Xdn0bQK8i2SBPieukiTaYdA3C4mPqoaM2JoLdqVJobgu5C70yA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q5lSOmBF; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=n3y6APhK7rnIuRo48CjPp/lDN946FAfK1AuIMuk6Hr6ELkmO2CTU480SWwOrlvQiBkAba1XnkguoNaKhmAIbVWp3gB6K0wchllAwnjiMyyRZbKGdHZjd6NwJPQRVlKnrI/5j0p9I8w82NippvAdi0Q436LF3O10PUfuVikQua8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sjfmet6+; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=M1qncU5r5DL7sEbkUTF9LvxrOOhkwhsEagnCN69UexQ=; b=q5lSOmBFsEylKnoWtKey9f8BU7
-	JHcBXtbK6eQm15ylJMZ4kdkRj6NOYXFAos8t1r+NOXf4uIhPNDYOK/nOMdUMWZXLdydKYV+jt+prq
-	/tYZEGtYnTGPiRDpTXiPwVgorv8+5ATurtn9nC2A8aWAfaMU2YhYfSLfegIG7Nudcvea6TX4BoWFM
-	xj+PE970GL+fcYUjwKay9D81dKLKAyBC3Xe0dfnKG4mIlGfX1zrtLSsDk1ZUBiRal2JZrb/ehbNF2
-	yznmlxwmL2L/zQX5XOMOkfiyqrDKZGMLTcN67n3LztuFLsV1HALqyCDOPZCDL+YJ4yixThE85CExf
-	Tk9GOrjw==;
+	bh=udJ4DmeQbt/C3gqDy9NEYBbYFMRAS7/Q0zPk9HF4q8k=; b=sjfmet6+2cxCsOwpsd0HkRlXJu
+	lQPyT9l3kNE1HuFDiVnjmixrYjwCLD+7n7ssvGlZ5DZ+C7ibC9XVrwUyiM7nMsxRg+otmER507jxF
+	+f1XsOwh2NZQKH7GyJM8j489U5lpvWr1h0drgmiZPKuv7Nnr3ZEDNztijv3KdhmlNQRweB3rcq1TW
+	BI2q4/vDAZjg9OWD5EsYzjQmQH+MQGBAag/11P/8L5BhqF+bf8KCJGstDEarEMiugC5/ICK6wI4p6
+	KLRzT+wxNY6Kep2ecIqKHAbYC1qjXvNkbBE6yed7N0AhIuUan6c5fbPk3zWwKJE2QE2zZBjE3lJdt
+	UBHVo1cw==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sU6sC-00000000zuT-2m3R;
+	id 1sU6sC-00000000zuY-3Kps;
 	Wed, 17 Jul 2024 15:47:20 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 07/23] buffer: Convert block_write_end() to take a folio
-Date: Wed, 17 Jul 2024 16:46:57 +0100
-Message-ID: <20240717154716.237943-8-willy@infradead.org>
+Subject: [PATCH 08/23] ecryptfs: Convert ecryptfs_write_end() to use a folio
+Date: Wed, 17 Jul 2024 16:46:58 +0100
+Message-ID: <20240717154716.237943-9-willy@infradead.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240717154716.237943-1-willy@infradead.org>
 References: <20240717154716.237943-1-willy@infradead.org>
@@ -61,190 +61,96 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All callers now have a folio, so pass it in instead of converting
-from a folio to a page and back to a folio again.  Saves a call
-to compound_head().
+Convert the passed page to a folio and operate on that.
+Replaces four calls to compound_head() with one.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- block/fops.c                | 2 +-
- fs/buffer.c                 | 5 ++---
- fs/ext2/dir.c               | 2 +-
- fs/ext4/inode.c             | 4 ++--
- fs/iomap/buffered-io.c      | 2 +-
- fs/minix/dir.c              | 2 +-
- fs/nilfs2/dir.c             | 2 +-
- fs/nilfs2/recovery.c        | 2 +-
- fs/sysv/dir.c               | 2 +-
- fs/ufs/dir.c                | 2 +-
- include/linux/buffer_head.h | 4 ++--
- 11 files changed, 14 insertions(+), 15 deletions(-)
+ fs/ecryptfs/mmap.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index da44fedb23e5..df0e762cf397 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -462,7 +462,7 @@ static int blkdev_write_end(struct file *file, struct address_space *mapping,
+diff --git a/fs/ecryptfs/mmap.c b/fs/ecryptfs/mmap.c
+index e2483acc4366..9b86fad2b9d1 100644
+--- a/fs/ecryptfs/mmap.c
++++ b/fs/ecryptfs/mmap.c
+@@ -234,17 +234,17 @@ static int ecryptfs_read_folio(struct file *file, struct folio *folio)
+ /*
+  * Called with lower inode mutex held.
+  */
+-static int fill_zeros_to_end_of_page(struct page *page, unsigned int to)
++static int fill_zeros_to_end_of_page(struct folio *folio, unsigned int to)
  {
- 	struct folio *folio = page_folio(page);
- 	int ret;
--	ret = block_write_end(file, mapping, pos, len, copied, page, fsdata);
-+	ret = block_write_end(file, mapping, pos, len, copied, folio, fsdata);
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = folio->mapping->host;
+ 	int end_byte_in_page;
  
- 	folio_unlock(folio);
- 	folio_put(folio);
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 448338810802..acba3dfe55d8 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2247,9 +2247,8 @@ EXPORT_SYMBOL(block_write_begin);
- 
- int block_write_end(struct file *file, struct address_space *mapping,
+-	if ((i_size_read(inode) / PAGE_SIZE) != page->index)
++	if ((i_size_read(inode) / PAGE_SIZE) != folio->index)
+ 		goto out;
+ 	end_byte_in_page = i_size_read(inode) % PAGE_SIZE;
+ 	if (to > end_byte_in_page)
+ 		end_byte_in_page = to;
+-	zero_user_segment(page, end_byte_in_page, PAGE_SIZE);
++	folio_zero_segment(folio, end_byte_in_page, PAGE_SIZE);
+ out:
+ 	return 0;
+ }
+@@ -465,6 +465,7 @@ static int ecryptfs_write_end(struct file *file,
  			loff_t pos, unsigned len, unsigned copied,
--			struct page *page, void *fsdata)
-+			struct folio *folio, void *fsdata)
+ 			struct page *page, void *fsdata)
  {
--	struct folio *folio = page_folio(page);
- 	size_t start = pos - folio_pos(folio);
- 
- 	if (unlikely(copied < len)) {
-@@ -2288,7 +2287,7 @@ int generic_write_end(struct file *file, struct address_space *mapping,
- 	loff_t old_size = inode->i_size;
- 	bool i_size_changed = false;
- 
--	copied = block_write_end(file, mapping, pos, len, copied, page, fsdata);
-+	copied = block_write_end(file, mapping, pos, len, copied, folio, fsdata);
- 
- 	/*
- 	 * No need to use i_size_read() here, the i_size cannot change under us
-diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
-index 087457061c6e..60605fbdd0eb 100644
---- a/fs/ext2/dir.c
-+++ b/fs/ext2/dir.c
-@@ -87,7 +87,7 @@ static void ext2_commit_chunk(struct folio *folio, loff_t pos, unsigned len)
- 	struct inode *dir = mapping->host;
- 
- 	inode_inc_iversion(dir);
--	block_write_end(NULL, mapping, pos, len, len, &folio->page, NULL);
-+	block_write_end(NULL, mapping, pos, len, len, folio, NULL);
- 
- 	if (pos+len > dir->i_size) {
- 		i_size_write(dir, pos+len);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 941c1c0d5c6e..1e4831d83adc 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1315,7 +1315,7 @@ static int ext4_write_end(struct file *file,
- 		return ext4_write_inline_data_end(inode, pos, len, copied,
- 						  folio);
- 
--	copied = block_write_end(file, mapping, pos, len, copied, page, fsdata);
-+	copied = block_write_end(file, mapping, pos, len, copied, folio, fsdata);
- 	/*
- 	 * it's important to update i_size while still holding folio lock:
- 	 * page writeout could otherwise come in and zero beyond i_size.
-@@ -3029,7 +3029,7 @@ static int ext4_da_do_write_end(struct address_space *mapping,
- 	 * flag, which all that's needed to trigger page writeback.
- 	 */
- 	copied = block_write_end(NULL, mapping, pos, len, copied,
--			&folio->page, NULL);
-+			folio, NULL);
- 	new_i_size = pos + copied;
- 
- 	/*
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index f420c53d86ac..9b4ca3811a24 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -900,7 +900,7 @@ static bool iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- 		size_t bh_written;
- 
- 		bh_written = block_write_end(NULL, iter->inode->i_mapping, pos,
--					len, copied, &folio->page, NULL);
-+					len, copied, folio, NULL);
- 		WARN_ON_ONCE(bh_written != copied && bh_written != 0);
- 		return bh_written == copied;
++	struct folio *folio = page_folio(page);
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 	unsigned from = pos & (PAGE_SIZE - 1);
+ 	unsigned to = from + copied;
+@@ -476,8 +477,8 @@ static int ecryptfs_write_end(struct file *file,
+ 	ecryptfs_printk(KERN_DEBUG, "Calling fill_zeros_to_end_of_page"
+ 			"(page w/ index = [0x%.16lx], to = [%d])\n", index, to);
+ 	if (!(crypt_stat->flags & ECRYPTFS_ENCRYPTED)) {
+-		rc = ecryptfs_write_lower_page_segment(ecryptfs_inode, page, 0,
+-						       to);
++		rc = ecryptfs_write_lower_page_segment(ecryptfs_inode,
++				&folio->page, 0, to);
+ 		if (!rc) {
+ 			rc = copied;
+ 			fsstack_copy_inode_size(ecryptfs_inode,
+@@ -485,21 +486,21 @@ static int ecryptfs_write_end(struct file *file,
+ 		}
+ 		goto out;
  	}
-diff --git a/fs/minix/dir.c b/fs/minix/dir.c
-index 5f9e2fc91003..dd2a425b41f0 100644
---- a/fs/minix/dir.c
-+++ b/fs/minix/dir.c
-@@ -45,7 +45,7 @@ static void dir_commit_chunk(struct folio *folio, loff_t pos, unsigned len)
- 	struct address_space *mapping = folio->mapping;
- 	struct inode *dir = mapping->host;
+-	if (!PageUptodate(page)) {
++	if (!folio_test_uptodate(folio)) {
+ 		if (copied < PAGE_SIZE) {
+ 			rc = 0;
+ 			goto out;
+ 		}
+-		SetPageUptodate(page);
++		folio_mark_uptodate(folio);
+ 	}
+ 	/* Fills in zeros if 'to' goes beyond inode size */
+-	rc = fill_zeros_to_end_of_page(page, to);
++	rc = fill_zeros_to_end_of_page(folio, to);
+ 	if (rc) {
+ 		ecryptfs_printk(KERN_WARNING, "Error attempting to fill "
+ 			"zeros in page with index = [0x%.16lx]\n", index);
+ 		goto out;
+ 	}
+-	rc = ecryptfs_encrypt_page(page);
++	rc = ecryptfs_encrypt_page(&folio->page);
+ 	if (rc) {
+ 		ecryptfs_printk(KERN_WARNING, "Error encrypting page (upper "
+ 				"index [0x%.16lx])\n", index);
+@@ -518,8 +519,8 @@ static int ecryptfs_write_end(struct file *file,
+ 	else
+ 		rc = copied;
+ out:
+-	unlock_page(page);
+-	put_page(page);
++	folio_unlock(folio);
++	folio_put(folio);
+ 	return rc;
+ }
  
--	block_write_end(NULL, mapping, pos, len, len, &folio->page, NULL);
-+	block_write_end(NULL, mapping, pos, len, len, folio, NULL);
- 
- 	if (pos+len > dir->i_size) {
- 		i_size_write(dir, pos+len);
-diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-index 4a29b0138d75..66af42f88ca7 100644
---- a/fs/nilfs2/dir.c
-+++ b/fs/nilfs2/dir.c
-@@ -96,7 +96,7 @@ static void nilfs_commit_chunk(struct folio *folio,
- 	int err;
- 
- 	nr_dirty = nilfs_page_count_clean_buffers(&folio->page, from, to);
--	copied = block_write_end(NULL, mapping, pos, len, len, &folio->page, NULL);
-+	copied = block_write_end(NULL, mapping, pos, len, len, folio, NULL);
- 	if (pos + copied > dir->i_size)
- 		i_size_write(dir, pos + copied);
- 	if (IS_DIRSYNC(dir))
-diff --git a/fs/nilfs2/recovery.c b/fs/nilfs2/recovery.c
-index 15653701b1c8..40c5dfbc9d41 100644
---- a/fs/nilfs2/recovery.c
-+++ b/fs/nilfs2/recovery.c
-@@ -533,7 +533,7 @@ static int nilfs_recover_dsync_blocks(struct the_nilfs *nilfs,
- 			goto failed_page;
- 
- 		block_write_end(NULL, inode->i_mapping, pos, blocksize,
--				blocksize, page, NULL);
-+				blocksize, folio, NULL);
- 
- 		folio_unlock(folio);
- 		folio_put(folio);
-diff --git a/fs/sysv/dir.c b/fs/sysv/dir.c
-index 27eaa5273ba7..639307e2ff8c 100644
---- a/fs/sysv/dir.c
-+++ b/fs/sysv/dir.c
-@@ -33,7 +33,7 @@ static void dir_commit_chunk(struct folio *folio, loff_t pos, unsigned len)
- 	struct address_space *mapping = folio->mapping;
- 	struct inode *dir = mapping->host;
- 
--	block_write_end(NULL, mapping, pos, len, len, &folio->page, NULL);
-+	block_write_end(NULL, mapping, pos, len, len, folio, NULL);
- 	if (pos+len > dir->i_size) {
- 		i_size_write(dir, pos+len);
- 		mark_inode_dirty(dir);
-diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
-index 3b3cd84f1f7f..1579561118f5 100644
---- a/fs/ufs/dir.c
-+++ b/fs/ufs/dir.c
-@@ -48,7 +48,7 @@ static void ufs_commit_chunk(struct folio *folio, loff_t pos, unsigned len)
- 	struct inode *dir = mapping->host;
- 
- 	inode_inc_iversion(dir);
--	block_write_end(NULL, mapping, pos, len, len, &folio->page, NULL);
-+	block_write_end(NULL, mapping, pos, len, len, folio, NULL);
- 	if (pos+len > dir->i_size) {
- 		i_size_write(dir, pos+len);
- 		mark_inode_dirty(dir);
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 14acf1bbe0ce..3a3fec154536 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -262,8 +262,8 @@ int block_write_begin(struct address_space *mapping, loff_t pos, unsigned len,
- int __block_write_begin(struct page *page, loff_t pos, unsigned len,
- 		get_block_t *get_block);
- int block_write_end(struct file *, struct address_space *,
--				loff_t, unsigned, unsigned,
--				struct page *, void *);
-+				loff_t, unsigned len, unsigned copied,
-+				struct folio *, void *);
- int generic_write_end(struct file *, struct address_space *,
- 				loff_t, unsigned, unsigned,
- 				struct page *, void *);
 -- 
 2.43.0
 
