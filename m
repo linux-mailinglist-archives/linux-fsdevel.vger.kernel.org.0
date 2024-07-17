@@ -1,142 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-23837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBB8933F95
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:26:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D7C933FAB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7E81F212E1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:26:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 564861C2326E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAE7181BA8;
-	Wed, 17 Jul 2024 15:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFD21CF8A;
+	Wed, 17 Jul 2024 15:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3PIF9no"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABEA381DE;
-	Wed, 17 Jul 2024 15:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B118181B94;
+	Wed, 17 Jul 2024 15:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721229983; cv=none; b=btc9P/ihob0zOPeV33gLiF0Kjx35GbsmukDIzfIyIZRqY5M+7rNiWIuwXPe7v6fFzDrbpPkmyRrJHJIARGWKG3dBs8G1LqITOa4/Y4ZL7FYbyIRg9aR15V/dg4pl5AAC8lh5AbgtnJi0bCkx9szkI7tJFvFBhuTYMTYkZ9wrG6A=
+	t=1721230118; cv=none; b=oSvfXw8wB+WQnOAftL6hCXJ8jyaerTToKepygi0uHvGGNBO0p+dVDkSs/caBHxRs/pZRwhFHM0oCEaAkdHjlk27C9po8E0crn2GbBp1JlqWS68J7xyWCRco0Tfqnhv9ml9+LDY9Q1k1XXrbpJk5xxfSBKKGWaWDe1+Yx9F5RwFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721229983; c=relaxed/simple;
-	bh=IOcRkh89Ks8cunm4tMzKBSVeuDt4oSZNweCxq2oSKBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZoNHfbSYeeAuR7sbLCOcY9vGwgHlT1enUxQ38qzYHjZcTRORzFnHCqZlzgDg3Po4JYiyVdxIB0Ed2lEMyMZI6KiUfDqJ8qpkjcvTlUd5tKMIvGsPljDu16IgnNlY0XPjzRGq6jAyqSBjL39YH3CUt0NUNjUMNub5V9CfYZii2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA402106F;
-	Wed, 17 Jul 2024 08:26:44 -0700 (PDT)
-Received: from [10.57.77.222] (unknown [10.57.77.222])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9ABCE3F766;
-	Wed, 17 Jul 2024 08:26:16 -0700 (PDT)
-Message-ID: <bf9ffac5-11ff-4a1a-b31a-b9940558fe2c@arm.com>
-Date: Wed, 17 Jul 2024 16:26:15 +0100
+	s=arc-20240116; t=1721230118; c=relaxed/simple;
+	bh=ukWBWdiCV90bf+K1lUELQn/UyLGZdA/ugOA19ZyBXHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ncRTl/Qfhwmn3A42ei07mIxT1f7ftEZgKruI3oeookSwN+ZcX27hd1j5563GXtRJCR+OFyZLhXP2wbcpbtiFI0AAXLzg+9C6bOBRQ1d79udRfbGPKyPu5Vuj4oGEbWPNxT8GxeKR3XQo3gtT+i4VoNF1v2C0hkVEGkMSNocPiaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3PIF9no; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4EEC4AF11;
+	Wed, 17 Jul 2024 15:28:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721230117;
+	bh=ukWBWdiCV90bf+K1lUELQn/UyLGZdA/ugOA19ZyBXHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r3PIF9noxw/EmK0iQ64CIvMRoQtkUSZm+1XevS7zxoStKg5JQPXHJlg8IU5RJZpcr
+	 kkF2HbTJe+ClHj3+rZQDKaKK2Cy4VcJvwK2A40VhLza++TNBmeFKpxsYozVv1V+RJd
+	 BeHJUyzEuN47tHZ6V6NszSlSMSW94Va2/HjvLsAeMB6t5uPrWosA0FKDJ+PlgEaZog
+	 3KzdUg9k+Nx1gMZjK7jl1xM1jAOpM3bo5Qp47w2Q9KaDwUpZns+jwrGfVa+4n+Wi50
+	 DUlk9Lud/2N6I51hkdkPMdV+XmlL1vfq4/oVWxBdhChNqFtoGDJReknBht7B/a4Tbe
+	 Y1QWQ/qq+FoyA==
+Date: Wed, 17 Jul 2024 16:28:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "fweimer@redhat.com" <fweimer@redhat.com>,
+	"sroettger@google.com" <sroettger@google.com>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"ross.burton@arm.com" <ross.burton@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"Schimpe, Christina" <christina.schimpe@intel.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"arnd@arndb.de" <arnd@arndb.de>, "maz@kernel.org" <maz@kernel.org>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
+	"Pandey, Sunil K" <sunil.k.pandey@intel.com>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"will@kernel.org" <will@kernel.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v9 05/39] arm64/gcs: Document the ABI for Guarded Control
+ Stacks
+Message-ID: <dbc210a3-7653-444a-9dcc-b8d4ea92bd9b@sirena.org.uk>
+References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
+ <20240625-arm64-gcs-v9-5-0f634469b8f0@kernel.org>
+ <87a5iph6u2.fsf@oldenburg.str.redhat.com>
+ <Zo7SdDT_cBp6uXgT@finisterre.sirena.org.uk>
+ <2fb80876e286b4db8f9ef36bcce04bbf02af0de2.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 01/10] fs: Allow fine-grained control of folio sizes
-Content-Language: en-GB
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Matthew Wilcox <willy@infradead.org>, david@fromorbit.com,
- chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
- akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- yang@os.amperecomputing.com, linux-mm@kvack.org, john.g.garry@oracle.com,
- linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
- mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
- linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <ziy@nvidia.com>
-References: <20240715094457.452836-1-kernel@pankajraghav.com>
- <20240715094457.452836-2-kernel@pankajraghav.com>
- <ZpaRElX0HyikQ1ER@casper.infradead.org>
- <20240717094621.fdobfk7coyirg5e5@quentin>
- <61806152-3450-4a4f-b81f-acc6c6aeed29@arm.com>
- <20240717151251.x7vkwajb57pefs6m@quentin>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240717151251.x7vkwajb57pefs6m@quentin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h9KvXQkczWY3GIVF"
+Content-Disposition: inline
+In-Reply-To: <2fb80876e286b4db8f9ef36bcce04bbf02af0de2.camel@intel.com>
+X-Cookie: You should go home.
 
-On 17/07/2024 16:12, Pankaj Raghav (Samsung) wrote:
->>>>
->>>> This is really too much.  It's something that will never happen.  Just
->>>> delete the message.
->>>>
->>>>> +	if (max > MAX_PAGECACHE_ORDER) {
->>>>> +		VM_WARN_ONCE(1,
->>>>> +	"max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
->>>>> +		max = MAX_PAGECACHE_ORDER;
->>>>
->>>> Absolutely not.  If the filesystem declares it can support a block size
->>>> of 4TB, then good for it.  We just silently clamp it.
->>>
->>> Hmm, but you raised the point about clamping in the previous patches[1]
->>> after Ryan pointed out that we should not silently clamp the order.
->>>
->>> ```
->>>> It seems strange to silently clamp these? Presumably for the bs>ps usecase,
->>>> whatever values are passed in are a hard requirement? So wouldn't want them to
->>>> be silently reduced. (Especially given the recent change to reduce the size of
->>>> MAX_PAGECACHE_ORDER to less then PMD size in some cases).
->>>
->>> Hm, yes.  We should probably make this return an errno.  Including
->>> returning an errno for !IS_ENABLED() and min > 0.
->>> ```
->>>
->>> It was not clear from the conversation in the previous patches that we
->>> decided to just clamp the order (like it was done before).
->>>
->>> So let's just stick with how it was done before where we clamp the
->>> values if min and max > MAX_PAGECACHE_ORDER?
->>>
->>> [1] https://lore.kernel.org/linux-fsdevel/Zoa9rQbEUam467-q@casper.infradead.org/
->>
->> The way I see it, there are 2 approaches we could take:
->>
->> 1. Implement mapping_max_folio_size_supported(), write a headerdoc for
->> mapping_set_folio_order_range() that says min must be lte max, max must be lte
->> mapping_max_folio_size_supported(). Then emit VM_WARN() in
->> mapping_set_folio_order_range() if the constraints are violated, and clamp to
->> make it safe (from page cache's perspective). The VM_WARN()s can just be inline
-> 
-> Inlining with the `if` is not possible since:
-> 91241681c62a ("include/linux/mmdebug.h: make VM_WARN* non-rvals")
 
-Ahh my bad. Could use WARN_ON()?
+--h9KvXQkczWY3GIVF
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->> in the if statements to keep them clean. The FS is responsible for checking
->> mapping_max_folio_size_supported() and ensuring min and max meet requirements.
-> 
-> This is sort of what is done here but IIUC willy's reply to the patch,
-> he prefers silent clamping over having WARNINGS. I think because we check
-> the constraints during the mount time, so it should be safe to call
-> this I guess?
+On Tue, Jul 16, 2024 at 06:50:12PM +0000, Edgecombe, Rick P wrote:
+> On Wed, 2024-07-10 at 19:27 +0100, Mark Brown wrote:
+> > On Wed, Jul 10, 2024 at 12:36:21PM +0200, Florian Weimer wrote:
 
-I don't want to put words in his mouth, but I thought he was complaining about
-the verbosity of the warnings, not their presence.
+> > > We also have a gap on x86-64 for backtrace generation because the
+> > > interrupted instruction address does not end up on the shadow stack.
+> > > This address is potentially quite interesting for backtrace generatio=
+n.
+> > > I assume it's currently missing because the kernel does not resume
+> > > execution using a regular return instruction.=A0 It would be really u=
+seful
+> > > if it could be pushed to the shadow stack, or recoverable from the
+> > > shadow stack in some other way (e.g., the address of the signal conte=
+xt
+> > > could be pushed instead).=A0 That would need some form of marker as w=
+ell.
 
-> 
->>
->> 2. Return an error from mapping_set_folio_order_range() (and the other functions
->> that set min/max). No need for warning. No state changed if error is returned.
->> FS can emit warning on error if it wants.
-> 
-> I think Chinner was not happy with this approach because this is done
-> per inode and basically we would just shutdown the filesystem in the
-> first inode allocation instead of refusing the mount as we know about
-> the MAX_PAGECACHE_ORDER even during the mount phase anyway.
+> > Right, we'd have to manually consume any extra address we put on the
+> > GCS.=A0 I'm not seeing any gagetisation issues with writing an extra va=
+lue
+> > there that isn't a valid stack cap at the minute but I'll need to think
+> > it through properly - don't know if anyone else has thoughts here?
 
-Ahh that makes sense. Understood.
+> Shadow stack has one main usage (security) and another less proven, but
+> interesting usage for backtracing.=A0I'm wary of adding things to the sha=
+dow stack
+> as they come up in an ad-hoc fashion, especially for the fuzzier usage.=
+=A0Do you
+> have a handle on everything the tracing usage would need?
 
-> 
-> --
-> Pankaj
+Yeah, the current instruction pointer seems fairly straightforward to
+idiomatically fit in there but going beyond that gets tricker.
 
+> But besides that I've wondered if there could be a security benefit to ad=
+ding
+> some fields of the sigframe (RIP being the prime one) to the shadow stack=
+, or a
+> cryptographic hash of the sigframe.
+
+One trick with trying to actually validate anything extra we put in
+there from the sigframe would be that one of the things a signal handler
+can do is modify the signal context - for the specific case of RIP
+that'd be an issue for rseq for example.
+
+--h9KvXQkczWY3GIVF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaX4xoACgkQJNaLcl1U
+h9Cgxwf9EtoH1wDADGEHB812knHuhpaXQ+HApRHTVo5CjSDf2jXeTXGAeof7B8TM
+MLHNoO3uezt5r1bpHpC7gAruLzfAEs+G+rahhQswSuEDDGQLhcZga0SHFL2cmZpM
+SZ2Lk3725bJaoUzexEHk/8ZjpXnrzWXi+U/YoTi9PfcX6bUfVufG0hPr/xR8836n
+kKF9q2R93WTz8gIiIHpuUqgQ7jRjrDW5UIi0KhRobcLRKBhL5aYVQ1T9GVgwjA4v
+7R3dDdrlAWQLJcjwjciJ3Ti6xSB2evfDt2FjmDE23My2AkO7dJebKhz7fABWCRbZ
+f2X9PmkSZlUHX26EuZIME4o9ENxnWg==
+=HySw
+-----END PGP SIGNATURE-----
+
+--h9KvXQkczWY3GIVF--
 
