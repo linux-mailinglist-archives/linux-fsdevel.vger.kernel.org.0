@@ -1,111 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-23883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F7B93441E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 23:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0421934486
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 00:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AD561C21230
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 21:45:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B971C20FE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 22:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9239E18C330;
-	Wed, 17 Jul 2024 21:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27236F2FD;
+	Wed, 17 Jul 2024 22:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjeofoUR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LllAD/pV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4A718A954;
-	Wed, 17 Jul 2024 21:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DBA6F30E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 22:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721252686; cv=none; b=rPT6SQCpb+Uvv7SWB3+NXT6RisB1YTx/Xb0ETRnZbstqeYDVozq9DjeWRTXoMZlR2pqkWPqlMzaRP8BD/U860lSgeqLHEz04P79Gf+H1zdiNneXFDMUE6guS7pIpix1g6OCZE4T2Z8pN5yRckmw6XFaKUGPYnk6ViCKRnGIlvD0=
+	t=1721253776; cv=none; b=GcYjyIQJQyv7nxnoogoRyRUeC/5VXIzp2hqNu3GHXoEX7n/uwSX6607aoAXgtbx4FtGNKnOzzQ6YTDvZ0vejXMBRi3LqJTkIMf+MhIX7bfqarUE1EbsJErfRmDm8yXLAmsApJBmxc0Uf0RTWQbztDMg9aWZ3anSMI1UzP7CYwRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721252686; c=relaxed/simple;
-	bh=FEBudQVNl95vpCGTkugDg4r7nGZAj+Q+cg7cpwrx8yc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMl9G33BDzDuRVYunnGHWjxZFakKpY4y94AQmcvqauj7pueMCzdktIffhBFyNDvIncQH9pUmtTqM36zAcxzOSXsLsv+Aj7DLcd3ytj04dXsHykhpgmsdNInoj5fhZHyO4dVV8YlbpdbsfUOnOLQ103FxcWe9nroio5r8pU38XQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjeofoUR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7938FC2BD10;
-	Wed, 17 Jul 2024 21:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721252685;
-	bh=FEBudQVNl95vpCGTkugDg4r7nGZAj+Q+cg7cpwrx8yc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fjeofoURralzxPLYBf0NZAgT3liJ7CWyiMMHtTcnA1vE9Kb8FuYtT54EoiUswG6PA
-	 knH2tr9mVujWL0Ctch9lpfl2tLYhx3UQBBuH9s9AMOJAzdIX5gECjHKTnF3uCxl4EU
-	 lGIooPCdPMvKV37BnI7Nrw0pRF0hDNpv/QdOEVH0gDDNY7MowFg48nmNdGtisYlYSR
-	 962vMr1K+z/aSGdxK014dMvB0a79eUTgcVnj38YO8sqjdypdxgBs23Cylr1kM1CWr2
-	 s9TM3FUrApfUoLJYK7RfWRCgkY+U0AVqOKxcJOKu6W8SIRBDeW/prlRbtk4EVUnWds
-	 WDJDKQ7tsDtag==
-Date: Wed, 17 Jul 2024 14:44:44 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: alx@kernel.org, linux-man@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-	dchinner@redhat.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v4 3/3] io_submit.2: Document RWF_ATOMIC
-Message-ID: <20240717214444.GJ1998502@frogsfrogsfrogs>
-References: <20240717093619.3148729-1-john.g.garry@oracle.com>
- <20240717093619.3148729-4-john.g.garry@oracle.com>
+	s=arc-20240116; t=1721253776; c=relaxed/simple;
+	bh=gz92oaozKiwEqyalYHMDbf3an/qPSDxNgp13WyCuoA4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PO5FmXubNwQrlqk/w7kEvabOQLZFDsOy3jBcYlanAbSb8sWeQYsTtncsRMBAyeWFCg+sqI48CPiEeLddJ2CtdzUYFpyy3kVuh+P7eC4OwUDaoWC+eOg7Oo16mhPATg98XTsKmwPlr2z9pSP76X2ZyBMkYWjAp2hXjrbGSWfZTGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LllAD/pV; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-79ef7635818so6635485a.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 15:02:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721253770; x=1721858570; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gz92oaozKiwEqyalYHMDbf3an/qPSDxNgp13WyCuoA4=;
+        b=LllAD/pVFKHw9Wm2jEX8UfmtRuAAWrd05M5G8afQXNR1CgRVVADqKfKE5MCFgwK/7c
+         RMoKyYkvTvV7YicWjx8+Q77TkV1zMVr2TLKcX5/BOC8U/xQX+BDVpDQA7u3wowxCtA09
+         ysWl2LlMU3Rn3t5jRRlJFnAR7xsi1dF/l5mtLWcEdUJLCQSOPy0pOCfI3X/0XKXu8+zB
+         6iFvZ+tLQtUEh3QR/I8oiFmaIxe2vCTATUDWppHzLreF6v5NvlNeJpksGZbA7uOClNIk
+         nG5dsRd8SPU/DLAgPD4kPpBVfpUWN0An5Q7WkPGjI3VMk9cNaGKqd5gsg5xYBmADH2jG
+         ar1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721253770; x=1721858570;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gz92oaozKiwEqyalYHMDbf3an/qPSDxNgp13WyCuoA4=;
+        b=UmDBiaVLWVC4xrT7s48uc4ezUwUZl03nw8SYTlQKNJNRTENAGawA6V9l1unAIr2FWT
+         i4TctCbuoPj6aMHt8MIOOqn80d5/v04abGjK0Yfc818W4QZMbmeipwkLIY66qCP8FOD+
+         Z+DlFi7YBELY3GSgU/ZqaVOnqR0h8NpRTn9bsRcduslapJk/hAp0w8lwbqJwNGlOk+2q
+         5JSynBDuDzQjTyzs+DK3F59VJksS0wu/DV+xG8MB6FNR92ilKVmaVn+WjYXEw4bmPSFw
+         6g+korY17pNTvnojI/J1O9pPrrpxyHzom4l+0ezcr5rX7byV3JCSbUtoh8lBvdCb2GQZ
+         tiEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlWy7VCTChNRvxjZq01SYQGU4TdeDqvCitusaSpCJlGCEKR4Dua2RDY7RPFCpisSVomk/EbBxCbFxgksmJHmFFYw6w+NVOu/VAgbxvzQ==
+X-Gm-Message-State: AOJu0YzZKxfhIgqE5zZI7p9XdEFbxi01eet1+4IcbNzqZi9I4BAu9UNz
+	rUftP5NoyoHC2u3GxuFUvbBToIz5EJPIpQ0Vu+qg5uPK2apt/Gz/rMEwBXzRgYFEtAzqTtkrMH4
+	7GPAL3CTXeDh6g2elGM28PhSkEpYyQT/7
+X-Google-Smtp-Source: AGHT+IGuc66TIDXt82PEmXs9oll9aFQdzFtTswcuHimw97zhBkHL8i9J2lJ4fGWrimIROKnry13qYq7kSIkTyZ0LFAs=
+X-Received: by 2002:a05:620a:318b:b0:795:5b60:a1ff with SMTP id
+ af79cd13be357-7a18749d1bbmr345224185a.40.1721253769788; Wed, 17 Jul 2024
+ 15:02:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240717093619.3148729-4-john.g.garry@oracle.com>
+References: <20240717213458.1613347-1-joannelkoong@gmail.com>
+In-Reply-To: <20240717213458.1613347-1-joannelkoong@gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 17 Jul 2024 15:02:39 -0700
+Message-ID: <CAJnrk1ZccdrmzOCEsecc=6e8++toyzbredCMxsq-fCkKR2SaQw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add optional kernel-enforced timeout for fuse requests
+To: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com, osandov@osandov.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 17, 2024 at 09:36:19AM +0000, John Garry wrote:
-> Document RWF_ATOMIC for asynchronous I/O.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  man/man2/io_submit.2 | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/man/man2/io_submit.2 b/man/man2/io_submit.2
-> index c53ae9aaf..12b4a72d7 100644
-> --- a/man/man2/io_submit.2
-> +++ b/man/man2/io_submit.2
-> @@ -140,6 +140,25 @@ as well the description of
->  .B O_SYNC
->  in
->  .BR open (2).
-> +.TP
-> +.BR RWF_ATOMIC " (since Linux 6.11)"
-> +Write a block of data such that a write will never be torn from power fail or
-> +similar.
-> +See the description of
-> +.B RWF_ATOMIC
-> +in
-> +.BR pwritev2 (2).
-> +For usage with
-> +.BR IOCB_CMD_PWRITEV,
-> +the upper vector limit is in
-> +.I stx_atomic_write_segments_max.
-> +See
-> +.B STATX_WRITE_ATOMIC
-> +and
-> +.I stx_atomic_write_segments_max
-> +description
-> +in
-> +.BR statx (2).
+On Wed, Jul 17, 2024 at 2:35=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> There are situations where fuse servers can become unresponsive or take
+> too long to reply to a request. Currently there is no upper bound on
+> how long a request may take, which may be frustrating to users who get
+> stuck waiting for a request to complete.
+>
+> This commit adds a daemon timeout option (in seconds) for fuse requests.
+> If the timeout elapses before the request is replied to, the request will
+> fail with -ETIME.
 
-Sounds good to me!
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+For reference, this is the userspace program I've been using to test
+the timeout paths:
+https://github.com/libfuse/libfuse/pull/994/commits/bb523c2db3417adfd939bae=
+f2345a485ad3f8c52
+To locally simulate some of the racier conditions (eg request handler
+handles the request and timeout handler re-adds the request to the
+waitqueue), I manually added in sleeps in the kernel handlers to hit
+those paths
 
---D
-
->  .RE
->  .TP
->  .I aio_lio_opcode
-> -- 
-> 2.31.1
-> 
+> --
+> 2.43.0
+>
 
