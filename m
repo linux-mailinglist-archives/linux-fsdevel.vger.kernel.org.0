@@ -1,94 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-23832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E660C933F3D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:06:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDAF933F55
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 17:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A7932846B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:06:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 757811F242B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 15:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AF4181B89;
-	Wed, 17 Jul 2024 15:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87D4181BA0;
+	Wed, 17 Jul 2024 15:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v3z3X5zX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y6jm8PT9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v3z3X5zX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y6jm8PT9"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="PIbi01yD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D3817FABC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 15:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E423220B0F;
+	Wed, 17 Jul 2024 15:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721228799; cv=none; b=rfmVz5Y1jfu4ExPbe2RF8R0SmvoY+Jw5JVH7W+nbAIMQcpGvgDsjzDp0QkgMNitiwp6fepXe38grTfr9hV4A6QxzJnb7h5C5oJKBTaK//a2lm4diCrsTi3eFTGTneF3BBE5yI169Nd6FHY9A49E7R/GhDs+BTo66nihDQp7hVlA=
+	t=1721229183; cv=none; b=KOo8eTNcMpv1xbwjm4qUWTFmcYeAMRXhYL2yy1SkMH0RApt6oa2+Ph5umNvOpHy5xTmwtYvvzynDxmcbrTHjVc/1gaUVR4v2IXocUfmXq3whNbYwEAZuWi11mhDZYbCUABvfJXJHq2iRjOAXTRWNVjN7yZnXDnOFdPNXZBjX8iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721228799; c=relaxed/simple;
-	bh=9bhEBF47crWbzcwB/xC+YB0sTTgLSOb4CF/AhNHyQLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=T6ORaTEt1s2hAkKvF6aKS+v+IYd2x7NZnoa6a7evmR2ubAx05z/7MkJmdYoKdaerqUGH66yGbG1KPiSijwpioLoPnpff0G4/4ZMemMluL42qpsIZknOgR/mmCGfEg1Bh5R3gDxM6XqOGr+7dwBePJJACHpKjLIxPy3d8Yq0ccBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v3z3X5zX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y6jm8PT9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v3z3X5zX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y6jm8PT9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1721229183; c=relaxed/simple;
+	bh=QsFQR9ykG4piFKvmVNGE7MsWS/73G/aUMfN4Y1G2Qyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sA2o546M2WoW62daBNDvVkJTXPH40ZCgSMlbgi1ecptp8yZzlVY25T8Cwm84I5buH2Yubn14r0Q3jtHut4My26c31BpcekBlrMIpTNtSCvM+BrnDxmuuj6xso4SnT2UqiTeU/WLPb+KTrScXC/AT5RjYTO2A4q5pneFxyrwXnn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=PIbi01yD; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8119721A75;
-	Wed, 17 Jul 2024 15:06:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721228796; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=puouZ3lClwqYZ246KPUoqhsQLT1S1Em1Yv/TCPpNSns=;
-	b=v3z3X5zXsUExoMkLzWTgZsEb4J+SAGpKXHnzULFZlmdg7J17wwAS+a/ql7gYQ23fSsyWHX
-	WYIiIXBuZuVmJ6vtsCUWRXnkhZ5qIzSzd7Ts76fVdkAu+GuoW+v2HvvteVhQh/MY04LRmX
-	FsVn7H4RLbFEnCH2Gq7v2JKS1Wr3xMs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721228796;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=puouZ3lClwqYZ246KPUoqhsQLT1S1Em1Yv/TCPpNSns=;
-	b=Y6jm8PT92bg0ymx61+RO8extL5uc3C+U0mnNRGhyd47SqkN0JcqfX8lU7x7GNYOJuYK3cU
-	RN0bx4N+RRhp8aCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=v3z3X5zX;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Y6jm8PT9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721228796; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=puouZ3lClwqYZ246KPUoqhsQLT1S1Em1Yv/TCPpNSns=;
-	b=v3z3X5zXsUExoMkLzWTgZsEb4J+SAGpKXHnzULFZlmdg7J17wwAS+a/ql7gYQ23fSsyWHX
-	WYIiIXBuZuVmJ6vtsCUWRXnkhZ5qIzSzd7Ts76fVdkAu+GuoW+v2HvvteVhQh/MY04LRmX
-	FsVn7H4RLbFEnCH2Gq7v2JKS1Wr3xMs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721228796;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=puouZ3lClwqYZ246KPUoqhsQLT1S1Em1Yv/TCPpNSns=;
-	b=Y6jm8PT92bg0ymx61+RO8extL5uc3C+U0mnNRGhyd47SqkN0JcqfX8lU7x7GNYOJuYK3cU
-	RN0bx4N+RRhp8aCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 77275136E5;
-	Wed, 17 Jul 2024 15:06:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FxYPHfzdl2adFAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Jul 2024 15:06:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 24C83A0987; Wed, 17 Jul 2024 17:06:36 +0200 (CEST)
-Date: Wed, 17 Jul 2024 17:06:36 +0200
-From: Jan Kara <jack@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] Fsnotify fix for 6.11-rc1
-Message-ID: <20240717150636.salwxlk5v64tffzk@quack3>
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WPKF46PK9z9scN;
+	Wed, 17 Jul 2024 17:12:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1721229176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wkGlIL/8yYyHEDYOvtGp85rUzFdd0lvsLxhOub/l8Dw=;
+	b=PIbi01yDD/lqKD8I/KAF7g90eBYXWrXENMgSb3CBHFRS0GSbqzabZPo2jnKsAclomkqi/E
+	PnViURvG9P0HFHP3M85oB3QocxVJ5j+nSgdDhBPlaVgVrqtz5uwEZnfWd2D+0WBGmsGkYF
+	L8mOjI28meM12Hq9K06VmfgpVohIKttL5euBe7gsK3UFejQWpvrqxkfxoR62kkmHdG2v11
+	UBf2LXozSlh9JKw2BlwsZah7XUXWRSpZYcRMC5n7RlBiMVE0D/WmuagEK9KEjbh3BEQc9W
+	rfveAKVXMSNn/FpxJFUc+RUw8GSfwe3ltnqLmvrbfkFegAWYeB0ps9YIPD9UPA==
+Date: Wed, 17 Jul 2024 15:12:51 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Matthew Wilcox <willy@infradead.org>, david@fromorbit.com,
+	chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, linux-mm@kvack.org,
+	john.g.garry@oracle.com, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, p.raghav@samsung.com, mcgrof@kernel.org,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v10 01/10] fs: Allow fine-grained control of folio sizes
+Message-ID: <20240717151251.x7vkwajb57pefs6m@quentin>
+References: <20240715094457.452836-1-kernel@pankajraghav.com>
+ <20240715094457.452836-2-kernel@pankajraghav.com>
+ <ZpaRElX0HyikQ1ER@casper.infradead.org>
+ <20240717094621.fdobfk7coyirg5e5@quentin>
+ <61806152-3450-4a4f-b81f-acc6c6aeed29@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,65 +74,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Rspamd-Queue-Id: 8119721A75
-X-Spam-Flag: NO
-X-Spam-Score: -0.01
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.01 / 50.00];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Spamd-Bar: /
+In-Reply-To: <61806152-3450-4a4f-b81f-acc6c6aeed29@arm.com>
+X-Rspamd-Queue-Id: 4WPKF46PK9z9scN
 
-  Hello Linus,
+> >>
+> >> This is really too much.  It's something that will never happen.  Just
+> >> delete the message.
+> >>
+> >>> +	if (max > MAX_PAGECACHE_ORDER) {
+> >>> +		VM_WARN_ONCE(1,
+> >>> +	"max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
+> >>> +		max = MAX_PAGECACHE_ORDER;
+> >>
+> >> Absolutely not.  If the filesystem declares it can support a block size
+> >> of 4TB, then good for it.  We just silently clamp it.
+> > 
+> > Hmm, but you raised the point about clamping in the previous patches[1]
+> > after Ryan pointed out that we should not silently clamp the order.
+> > 
+> > ```
+> >> It seems strange to silently clamp these? Presumably for the bs>ps usecase,
+> >> whatever values are passed in are a hard requirement? So wouldn't want them to
+> >> be silently reduced. (Especially given the recent change to reduce the size of
+> >> MAX_PAGECACHE_ORDER to less then PMD size in some cases).
+> > 
+> > Hm, yes.  We should probably make this return an errno.  Including
+> > returning an errno for !IS_ENABLED() and min > 0.
+> > ```
+> > 
+> > It was not clear from the conversation in the previous patches that we
+> > decided to just clamp the order (like it was done before).
+> > 
+> > So let's just stick with how it was done before where we clamp the
+> > values if min and max > MAX_PAGECACHE_ORDER?
+> > 
+> > [1] https://lore.kernel.org/linux-fsdevel/Zoa9rQbEUam467-q@casper.infradead.org/
+> 
+> The way I see it, there are 2 approaches we could take:
+> 
+> 1. Implement mapping_max_folio_size_supported(), write a headerdoc for
+> mapping_set_folio_order_range() that says min must be lte max, max must be lte
+> mapping_max_folio_size_supported(). Then emit VM_WARN() in
+> mapping_set_folio_order_range() if the constraints are violated, and clamp to
+> make it safe (from page cache's perspective). The VM_WARN()s can just be inline
 
-  could you please pull from
+Inlining with the `if` is not possible since:
+91241681c62a ("include/linux/mmdebug.h: make VM_WARN* non-rvals")
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.11-rc1
+> in the if statements to keep them clean. The FS is responsible for checking
+> mapping_max_folio_size_supported() and ensuring min and max meet requirements.
 
-to get a fix of possible softlockups on directories with many dentries in
-fsnotify code.
+This is sort of what is done here but IIUC willy's reply to the patch,
+he prefers silent clamping over having WARNINGS. I think because we check
+the constraints during the mount time, so it should be safe to call
+this I guess?
 
-Top of the tree is 172e422ffea2. The full shortlog is:
+> 
+> 2. Return an error from mapping_set_folio_order_range() (and the other functions
+> that set min/max). No need for warning. No state changed if error is returned.
+> FS can emit warning on error if it wants.
 
-Amir Goldstein (1):
-      fsnotify: clear PARENT_WATCHED flags lazily
+I think Chinner was not happy with this approach because this is done
+per inode and basically we would just shutdown the filesystem in the
+first inode allocation instead of refusing the mount as we know about
+the MAX_PAGECACHE_ORDER even during the mount phase anyway.
 
-The diffstat is
-
- fs/notify/fsnotify.c             | 31 +++++++++++++++++++++----------
- fs/notify/fsnotify.h             |  2 +-
- fs/notify/mark.c                 | 32 +++++++++++++++++++++++++++++---
- include/linux/fsnotify_backend.h |  8 +++++---
- 4 files changed, 56 insertions(+), 17 deletions(-)
-
-							Thanks
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--
+Pankaj
 
