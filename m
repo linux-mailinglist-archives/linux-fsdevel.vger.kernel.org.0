@@ -1,151 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-23810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5BD0933A85
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 11:59:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA3E933A9B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 12:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E0ADB21F6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 09:59:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16761C2303F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 10:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458C417E906;
-	Wed, 17 Jul 2024 09:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1196A15820F;
+	Wed, 17 Jul 2024 10:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CQORCJnW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF2719A;
-	Wed, 17 Jul 2024 09:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BC317E906;
+	Wed, 17 Jul 2024 10:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721210376; cv=none; b=GvP1hGsF/uz87FCm4Suu+4Q0bm4R+aYwwpHgXwzZUI3OufRT/DKWUVq+NcxtJtJ8i2Kll1Bo4CEtDNrDP8uN7tI7LaGpKD7JJk01t+FxPjCQbVHuu50HdUd7VHSqe2+cT23jTnRXt7k8vbIHznexPY+XeOKfsyVqfrifoj24RSA=
+	t=1721210476; cv=none; b=EYLR4VyLD2Ma1KxR2V9uUnmq3N012/IXxCvYCZCNtUdEBsPHeiC8pjyKVNOUPqcJ9uiQwsX37e+51NMMDjdfUncEcC1bOMJP5Hgv+ayzTXnx0j9kjJ2txMAmuRrh4KS9HywDH3+bgyhCjcvP4WINN1rX3g/M78i2xhIX21Zlw+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721210376; c=relaxed/simple;
-	bh=OMc0681OodzRyuBATwyzchVTnV9Bh1GaBTsOg5XlF1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mTxvFFnFgM77dScHbmukQvkouIk56kPDJW9GbbF2iMkQ9WROlFqWJ+IOfyvxHx0OC60XPncqkMCuSfnVrvvEWKI6ZbabsiS3uSFV8g+fFg5Am+unb8SdMIutsa4oFKG6df7nDcNdPp0RJFVFxvCzfL8LnPjOSxOfSMRzX/pdV3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4301C1063;
-	Wed, 17 Jul 2024 02:59:59 -0700 (PDT)
-Received: from [10.57.77.222] (unknown [10.57.77.222])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D19213F73F;
-	Wed, 17 Jul 2024 02:59:29 -0700 (PDT)
-Message-ID: <61806152-3450-4a4f-b81f-acc6c6aeed29@arm.com>
-Date: Wed, 17 Jul 2024 10:59:27 +0100
+	s=arc-20240116; t=1721210476; c=relaxed/simple;
+	bh=BUgvKjy/bDgc1rPb0S+QGNTxH79dHOZQL5vWrkXMlZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kGL1QIZOCRQZtJ+fQKKQDhBhoIVFtLuVioBX06odXK5kX5fR0SVRK1g5VgbTP1MtZUyjBaCKa+BZmxwh1um35/qIOq3At7KZhiRLF8x+CkbmSRxsryPGWIsju1QRmiWkr4rFra7lkf9x4nak306i15+72sp7Cnhv7nquj+SgkQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CQORCJnW; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WPBK51MCSz12fy;
+	Wed, 17 Jul 2024 12:00:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721210457;
+	bh=at7t7jmIJKXHqGUzpxK1Wf9lPPVRXO39/lqkd8lIEAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CQORCJnW9yxbTKj6mpI9aiBiMIEPVkQXXIIrp+otWT6xL5ADv7F3xuWrpM86OT8mj
+	 hxlEfQUIBU/baLZgKf0q2vx1f1bXbKAEwuiDwGfKxEwyKsnS9Qmdbrtw5MgdJ14FOt
+	 uuNl6eAnPl03pzjKcgwZGEmBQDmghsV46Q7k+5KU=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WPBK0119bzLGN;
+	Wed, 17 Jul 2024 12:00:52 +0200 (CEST)
+Date: Wed, 17 Jul 2024 12:00:49 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Steve Dower <steve.dower@python.org>
+Cc: Jeff Xu <jeffxu@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240717.AGh2shahc9ee@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 01/10] fs: Allow fine-grained control of folio sizes
-Content-Language: en-GB
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
- brauner@kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- yang@os.amperecomputing.com, linux-mm@kvack.org, john.g.garry@oracle.com,
- linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
- mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
- linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <ziy@nvidia.com>
-References: <20240715094457.452836-1-kernel@pankajraghav.com>
- <20240715094457.452836-2-kernel@pankajraghav.com>
- <ZpaRElX0HyikQ1ER@casper.infradead.org>
- <20240717094621.fdobfk7coyirg5e5@quentin>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240717094621.fdobfk7coyirg5e5@quentin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
+X-Infomaniak-Routing: alpha
 
-On 17/07/2024 10:46, Pankaj Raghav (Samsung) wrote:
-> On Tue, Jul 16, 2024 at 04:26:10PM +0100, Matthew Wilcox wrote:
->> On Mon, Jul 15, 2024 at 11:44:48AM +0200, Pankaj Raghav (Samsung) wrote:
->>> +/*
->>> + * mapping_max_folio_size_supported() - Check the max folio size supported
->>> + *
->>> + * The filesystem should call this function at mount time if there is a
->>> + * requirement on the folio mapping size in the page cache.
->>> + */
->>> +static inline size_t mapping_max_folio_size_supported(void)
->>> +{
->>> +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
->>> +		return 1U << (PAGE_SHIFT + MAX_PAGECACHE_ORDER);
->>> +	return PAGE_SIZE;
->>> +}
->>
->> There's no need for this to be part of this patch.  I've removed stuff
->> from this patch before that's not needed, please stop adding unnecessary
->> functions.  This would logically be part of patch 10.
+On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
+> On 17/07/2024 07:33, Jeff Xu wrote:
+> > Consider those cases: I think:
+> > a> relying purely on userspace for enforcement does't seem to be
+> > effective,  e.g. it is trivial  to call open(), then mmap() it into
+> > executable memory.
 > 
-> That makes sense. I will move it to the last patch.
+> If there's a way to do this without running executable code that had to pass
+> a previous execveat() check, then yeah, it's not effective (e.g. a Python
+> interpreter that *doesn't* enforce execveat() is a trivial way to do it).
 > 
->>
->>> +static inline void mapping_set_folio_order_range(struct address_space *mapping,
->>> +						 unsigned int min,
->>> +						 unsigned int max)
->>> +{
->>> +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
->>> +		return;
->>> +
->>> +	if (min > MAX_PAGECACHE_ORDER) {
->>> +		VM_WARN_ONCE(1,
->>> +	"min order > MAX_PAGECACHE_ORDER. Setting min_order to MAX_PAGECACHE_ORDER");
->>> +		min = MAX_PAGECACHE_ORDER;
->>> +	}
->>
->> This is really too much.  It's something that will never happen.  Just
->> delete the message.
->>
->>> +	if (max > MAX_PAGECACHE_ORDER) {
->>> +		VM_WARN_ONCE(1,
->>> +	"max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
->>> +		max = MAX_PAGECACHE_ORDER;
->>
->> Absolutely not.  If the filesystem declares it can support a block size
->> of 4TB, then good for it.  We just silently clamp it.
-> 
-> Hmm, but you raised the point about clamping in the previous patches[1]
-> after Ryan pointed out that we should not silently clamp the order.
-> 
-> ```
->> It seems strange to silently clamp these? Presumably for the bs>ps usecase,
->> whatever values are passed in are a hard requirement? So wouldn't want them to
->> be silently reduced. (Especially given the recent change to reduce the size of
->> MAX_PAGECACHE_ORDER to less then PMD size in some cases).
-> 
-> Hm, yes.  We should probably make this return an errno.  Including
-> returning an errno for !IS_ENABLED() and min > 0.
-> ```
-> 
-> It was not clear from the conversation in the previous patches that we
-> decided to just clamp the order (like it was done before).
-> 
-> So let's just stick with how it was done before where we clamp the
-> values if min and max > MAX_PAGECACHE_ORDER?
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/Zoa9rQbEUam467-q@casper.infradead.org/
+> Once arbitrary code is running, all bets are off. So long as all arbitrary
+> code is being checked itself, it's allowed to do things that would bypass
+> later checks (and it's up to whoever audited it in the first place to
+> prevent this by not giving it the special mark that allows it to pass the
+> check).
 
-The way I see it, there are 2 approaches we could take:
-
-1. Implement mapping_max_folio_size_supported(), write a headerdoc for
-mapping_set_folio_order_range() that says min must be lte max, max must be lte
-mapping_max_folio_size_supported(). Then emit VM_WARN() in
-mapping_set_folio_order_range() if the constraints are violated, and clamp to
-make it safe (from page cache's perspective). The VM_WARN()s can just be inline
-in the if statements to keep them clean. The FS is responsible for checking
-mapping_max_folio_size_supported() and ensuring min and max meet requirements.
-
-2. Return an error from mapping_set_folio_order_range() (and the other functions
-that set min/max). No need for warning. No state changed if error is returned.
-FS can emit warning on error if it wants.
-
-Personally I prefer option 2, but 1 is definitely less churn.
-
-Thanks,
-Ryan
-
+Exactly.  As explained in the patches, one crucial prerequisite is that
+the executable code is trusted, and the system must provide integrity
+guarantees.  We cannot do anything without that.  This patches series is
+a building block to fix a blind spot on Linux systems to be able to
+fully control executability.
 
