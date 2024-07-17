@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-23828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A638933E55
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 16:24:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91973933E59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 16:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B8821C21130
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 14:24:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3F3B22EBA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jul 2024 14:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D221181B89;
-	Wed, 17 Jul 2024 14:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187C9181BAD;
+	Wed, 17 Jul 2024 14:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lcwyX8yH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fy6SN/er"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD17181321;
-	Wed, 17 Jul 2024 14:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08223181B9D;
+	Wed, 17 Jul 2024 14:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721226263; cv=none; b=GPbxUC/2bAHBc+jeZtYAuVAXtE9s9KzqYdKUNlgbk52fMb0NN7RF5ETpEVP9ZVvetnuzFqn3QL4QA3bL5y39vjyynG4SxyTPFbrIZxeCnEptX8Tv+9YbplmiQCKWIZ0/ff5NYXbIdhzHD4ZeeWeh6sLnKXgLIA8uaUXidIfwjx0=
+	t=1721226267; cv=none; b=oRmeDFzCuN9D8kIS6qZloCP1nre5GuM4wWvcXjQmrWMyGWoqYS29AdZHpZRtODMJLHniNVzUIyF5HgmqQ33nimCBAHYgp2zY801p4a+N3Cfykk+2cTPwTxgEfJI9r6oSNhoedqzKWtoCXsxxhneWzdRMF+C+EYpEmSHe02ZK08w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721226263; c=relaxed/simple;
-	bh=pmAaCzlr4Dp3556CZXW+f9AsCzhySHEDTX55XwcA8WA=;
+	s=arc-20240116; t=1721226267; c=relaxed/simple;
+	bh=Kh4pfuxGLBxgdiaqyNTwfQleD37uUT2ITDpzkzR/xrE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G5SxG6Y8wHQmEEmDCGGdhMRvRS9n9m58AleMTU0qqVSNLhvN84hsscR3mOPIus0xs1ao1oAA40xOCe+sCQvWMUVwtyvPtpexgsONmQJxjJkPUzpGIPkCG5xN2G59ABcm69mo+zRtHNVr93wDBjpjn1GN6zQK2D6KzVD8CEZoHjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lcwyX8yH; arc=none smtp.client-ip=198.175.65.11
+	 MIME-Version; b=G1dMhZsS6sBlltJkyjAR9SOrZQuRGat1sHtehykpHHG0l3JDhfL1c4wEkyKYjuZHYNxnHJjBJq8hQM4oBvxb6/0n1IFO/9qNeT1nnwWm/tNaXLLmB2GHx5ribVIZmCjfHgzfS54IT7VV6VFfg+DzNdV8WkcvxaDBiZr8JpQYgTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fy6SN/er; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721226263; x=1752762263;
+  t=1721226266; x=1752762266;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=pmAaCzlr4Dp3556CZXW+f9AsCzhySHEDTX55XwcA8WA=;
-  b=lcwyX8yHYyBHza+Wf7pd7zsGbnEO/xgM3QHem1UZdVsVb8yYKdrBlEbZ
-   au8ib8R7quuDcx8dYqOy0RPbVXXUGLPTVW7n2wfyEASaxo8c14O/+9x+O
-   wBXbGjUl9m3/9Gl5uOJhmhfSnqPqjPj2MDWTlZCvhPMoAsx4ctkGb48FW
-   sDB24D+575RpdsHY2zaeGQevv5kHgxjswFNchQXGqxUJaiaR6CHTCPGWf
-   5x9BJukec19MYf1OYuHEZmA9czgNdHQIaoYEm4vd0rvpkajKiNq44X/RQ
-   ty0isSAZzl5m7ID/g3RikQISC92F/IFxQNa/7EdChV02p1vLzjF3Kmf/3
-   A==;
-X-CSE-ConnectionGUID: qhgaxGdVTwSSuPlkKaap4A==
-X-CSE-MsgGUID: ebyScBP1TtylTpOpZK1pcQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="29313604"
+  bh=Kh4pfuxGLBxgdiaqyNTwfQleD37uUT2ITDpzkzR/xrE=;
+  b=fy6SN/erViQY/T9aZP5o/Tz+BPx1AUlPTzS//1Zc6fl/RJvEgLX5dR47
+   VVomtFxbR59tfGEFukvP7yrSL+VI/PuCuCYzQNIg71aNxc9HTDBKSS3+o
+   rMRkeiHy+XUYWpWZoHgwSaT88QgHB/7LTRgAdbhZG+EWVd8C76PVqqAz7
+   ZTEf8I55hH9d1W48iuCMTXZVpa7wjXfjgNe2C9AIehzyciZs3/j1R6f6Y
+   aKfR+yKTcFBjmzdAcgn4M4Q7TF6iXQeYkdVN1tkZD2fSKqW9pX7u9Psu5
+   CeOAWeBmtXu8rscaeWyOrdLR4IDZa38beqZbxaLB3xUoKItvK/RCwBuUa
+   Q==;
+X-CSE-ConnectionGUID: lngoh8SWQFqXmqJO7wZTIQ==
+X-CSE-MsgGUID: QBMAo62mSaiOLNipgAt4vw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11136"; a="29313612"
 X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="29313604"
+   d="scan'208";a="29313612"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 07:24:23 -0700
-X-CSE-ConnectionGUID: T/G66mvKSTKEnbd8vTSiPA==
-X-CSE-MsgGUID: YDigqb2cSfOzAtRdYCQMSg==
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2024 07:24:26 -0700
+X-CSE-ConnectionGUID: CEkVs3P5Tbq1F6EAmHUYJA==
+X-CSE-MsgGUID: goXXb7AdRq+15HZ9J1hM0A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,214,1716274800"; 
-   d="scan'208";a="54596624"
+   d="scan'208";a="54596632"
 Received: from linux-pnp-server-16.sh.intel.com ([10.239.177.152])
-  by fmviesa003.fm.intel.com with ESMTP; 17 Jul 2024 07:24:20 -0700
+  by fmviesa003.fm.intel.com with ESMTP; 17 Jul 2024 07:24:24 -0700
 From: Yu Ma <yu.ma@intel.com>
 To: brauner@kernel.org,
 	jack@suse.cz,
@@ -71,9 +71,9 @@ Cc: yu.ma@intel.com,
 	tim.c.chen@intel.com,
 	tim.c.chen@linux.intel.com,
 	viro@zeniv.linux.org.uk
-Subject: [PATCH v5 1/3] fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()
-Date: Wed, 17 Jul 2024 10:50:16 -0400
-Message-ID: <20240717145018.3972922-2-yu.ma@intel.com>
+Subject: [PATCH v5 2/3] fs/file.c: conditionally clear full_fds
+Date: Wed, 17 Jul 2024 10:50:17 -0400
+Message-ID: <20240717145018.3972922-3-yu.ma@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240717145018.3972922-1-yu.ma@intel.com>
 References: <20240614163416.728752-1-yu.ma@intel.com>
@@ -86,87 +86,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-alloc_fd() has a sanity check inside to make sure the struct file mapping to the
-allocated fd is NULL. Remove this sanity check since it can be assured by
-exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
-likely/unlikely and expand_file() call avoidance to reduce the work under
-file_lock.
+64 bits in open_fds are mapped to a common bit in full_fds_bits. It is very
+likely that a bit in full_fds_bits has been cleared before in
+__clear_open_fds()'s operation. Check the clear bit in full_fds_bits before
+clearing to avoid unnecessary write and cache bouncing. See commit fc90888d07b8
+("vfs: conditionally clear close-on-exec flag") for a similar optimization.
+take stock kernel with patch 1 as baseline, it improves pts/blogbench-1.1.0
+read for 13%, and write for 5% on Intel ICX 160 cores configuration with
+v6.10-rc7.
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Yu Ma <yu.ma@intel.com>
 ---
- fs/file.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+ fs/file.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/fs/file.c b/fs/file.c
-index a3b72aa64f11..e1b9d6df7941 100644
+index e1b9d6df7941..1be2a5bcc7c4 100644
 --- a/fs/file.c
 +++ b/fs/file.c
-@@ -515,7 +515,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
- 	if (fd < files->next_fd)
- 		fd = files->next_fd;
+@@ -268,7 +268,9 @@ static inline void __set_open_fd(unsigned int fd, struct fdtable *fdt)
+ static inline void __clear_open_fd(unsigned int fd, struct fdtable *fdt)
+ {
+ 	__clear_bit(fd, fdt->open_fds);
+-	__clear_bit(fd / BITS_PER_LONG, fdt->full_fds_bits);
++	fd /= BITS_PER_LONG;
++	if (test_bit(fd, fdt->full_fds_bits))
++		__clear_bit(fd, fdt->full_fds_bits);
+ }
  
--	if (fd < fdt->max_fds)
-+	if (likely(fd < fdt->max_fds))
- 		fd = find_next_fd(fdt, fd);
- 
- 	/*
-@@ -523,19 +523,21 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
- 	 * will limit the total number of files that can be opened.
- 	 */
- 	error = -EMFILE;
--	if (fd >= end)
-+	if (unlikely(fd >= end))
- 		goto out;
- 
--	error = expand_files(files, fd);
--	if (error < 0)
--		goto out;
-+	if (unlikely(fd >= fdt->max_fds)) {
-+		error = expand_files(files, fd);
-+		if (error < 0)
-+			goto out;
- 
--	/*
--	 * If we needed to expand the fs array we
--	 * might have blocked - try again.
--	 */
--	if (error)
--		goto repeat;
-+		/*
-+		 * If we needed to expand the fs array we
-+		 * might have blocked - try again.
-+		 */
-+		if (error)
-+			goto repeat;
-+	}
- 
- 	if (start <= files->next_fd)
- 		files->next_fd = fd + 1;
-@@ -546,13 +548,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
- 	else
- 		__clear_close_on_exec(fd, fdt);
- 	error = fd;
--#if 1
--	/* Sanity check */
--	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
--		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
--		rcu_assign_pointer(fdt->fd[fd], NULL);
--	}
--#endif
- 
- out:
- 	spin_unlock(&files->file_lock);
-@@ -618,7 +613,7 @@ void fd_install(unsigned int fd, struct file *file)
- 		rcu_read_unlock_sched();
- 		spin_lock(&files->file_lock);
- 		fdt = files_fdtable(files);
--		BUG_ON(fdt->fd[fd] != NULL);
-+		WARN_ON(fdt->fd[fd] != NULL);
- 		rcu_assign_pointer(fdt->fd[fd], file);
- 		spin_unlock(&files->file_lock);
- 		return;
+ static inline bool fd_is_open(unsigned int fd, const struct fdtable *fdt)
 -- 
 2.43.0
 
