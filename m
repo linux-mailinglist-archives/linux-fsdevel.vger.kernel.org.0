@@ -1,112 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-23902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C14F934975
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 09:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352E3934996
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 10:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 017FDB2251A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 07:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA001F23650
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 08:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B013B78C75;
-	Thu, 18 Jul 2024 07:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953C979B99;
+	Thu, 18 Jul 2024 08:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TzWi95UD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EBA768EE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 07:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4091BDD0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 08:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721289565; cv=none; b=C+Pe/GxKnEFb0r4MSNyuctkfcYu7p9qDpeFz7W85IR2nsXADsIIRVQSolp1xvsBUZFV94fMJHPDXYhnd4ha+owjWYbBZBxr4RzqFjw8aKdewiB7ceJ5ynAPJ3P8+gpV7Q6txmDtS/rppVlyDBaImf79YZzx77FSjx5dryBNZFZ0=
+	t=1721290175; cv=none; b=KKZuwz7ldKMhllf6Apsl0SgMEcnWazbndSfCG2wcbyByRFnYaX5KfaMuDchEq1gYPM/GDbyKcBT4GQhtEWyWgLrnTiMqMUsZvCK24UB+go1HCTtSUSF5Hgdw3e1qUsxeU9T48gJZy52h0ksg+k2we1WCa0sJo1eSnoFRjp5FQQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721289565; c=relaxed/simple;
-	bh=iHJvg5p6ljjkOIDgZWQcmFfi0Y1NKHZvbW7p0qF04Qk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EkHnwyhVpRd37zlySL0KGXpPWOoK1HzRRWXSkoaYlajqYyWYfpSBMkna90Shp5eow4mPbIRXgd5uHIrdTIHK0WKMahaR6/B/tRDnhjB/RRIfE1AVWrpFVGjFoTgqY/MZSyrXPM6UMLkVCEcZj/n+pJ/EH62VocAvFctuFDvKLiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8048edd8993so83182739f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 00:59:23 -0700 (PDT)
+	s=arc-20240116; t=1721290175; c=relaxed/simple;
+	bh=TDYm5PZVfZHPLUELKTZw/I1/ewmmqaWyG3B3esIwX0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIigiqJguXgBzr2ochEF7F/zZljQLJkS96wmtXFkSprOlpD9MukOxDZdJQXT8F0rSDn4HfFA3w5XDZx4SCr4/ZAmTgy37nOyCHJUjtQqvhqNILQMWBiob6gKKmLIAiZeXPykXVdVFdobJ93Jlix3zwxY2mZxUbxYu1OT85NjfZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TzWi95UD; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ed741fe46so63475e87.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 01:09:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721290171; x=1721894971; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tXMh51KVDkJmQr+NxLPzI9t9Kwi4FwG+tK/QlWBahKs=;
+        b=TzWi95UDhOtfJrxTJ5O+Dqqgm7t96Pc5jM2LjfuDMEw5ZIp8ZH7WwMEf53WZX+v4jw
+         18dE6qLgUDCwxrpLVrXFT5w6EZoWaAZSQIbz8SIUKLom0chLcEZ1q5xfV4auELrX/OlS
+         gtWyu9mYI2+S4y0mGlPfCjScFxZlkq8rCzN/GH4pMR9RVEHvcijtDpfU8SAmAlumSNxv
+         pjQANwSnQk9d8Yje15uzxtkzfISwceeIBI/mmrwUIFhgfXbTcsoYCnAkGioFvRcgxXvF
+         q7SfeVyH7ZQaYzE50UxQDYBxOkWlWTC0kCpgFDhucYnBObJKUcYKGFThSZTGXeKZyp56
+         Ml2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721289563; x=1721894363;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SHV4zKfzs5x96MeKzOONV81pwLBbmFsAPIuyFbuSkKc=;
-        b=g4y9Vm+0uBKOiw6Or3JGFaGBIO2DFaUWm/7keH6z7Cq37SiXGZ+ip62UFYkNURoXPH
-         02Dr/h7MGpZg2WQCVKWuIqERXwWU16sHHBjbrMAiclUVOZOGJX+t06hd63OfX0IScu8Z
-         N+q+8FlQ/TvuVUAF5fzzNnQWxi84pOg9kuXOJ1Xfyer3nhQP1Jjy2nGg7b/F8uIeES2g
-         rd+hTygiOVCL2PEFFVgaJ7AL4QpPlt5iGDplznZcNClNWN7bXEK6NQLO8vMs2yrlpqvE
-         RCQSuLhXT6UxLeDw8amGUFn6Q42auaoRDj0kAEJ5bqK9/yzv4GAs6he+mUWd/tZdG5OX
-         i06g==
-X-Gm-Message-State: AOJu0Yx53Bca0YZfV/WA3bPuHB1O3gcmF1MoULnNHkucpgyfF9GZv+vW
-	k5ixsgkFrTZIQGoeI4AZIW0ThCYQiMSs0wh/2tDEclWuI59d9JfwC+pDXkOkaozYISjVikxxbUX
-	rNC2h+Ys4xTGF1SpQ25+9iW7vHPpBLtlDHY9qpxNWRxVEPGQf1LlxaX8=
-X-Google-Smtp-Source: AGHT+IGFvLmyMLdMmeI+i8Xzqf7GwFhBg9/Q7LokY8RMP+e23aQRukE1B0UdVqIn74NMtdfxMgVjRFcbqnzNaMYm26Jq5arsXEvJ
+        d=1e100.net; s=20230601; t=1721290171; x=1721894971;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tXMh51KVDkJmQr+NxLPzI9t9Kwi4FwG+tK/QlWBahKs=;
+        b=eu1W0A2cw2qhWVoTOltDx9ATjhRapK2FD5axpcijjJHTxNnxm/s0IEUFsNoyJNj7C0
+         LF0Bi0jk88Bt02yI746JEyMZKsT7av7GOIy/7+eyc3S6x/xrz6+2+7GE1F96FojS0EJd
+         Hr43IvJnbx91G0auUVGMxaGgJfidUKR3UjH2XQ4SSd88HkPJW3U6Co0ivKKOrKF62a7z
+         PjCGxRfHUhD4Y9PuoE1Amt3QZgo2xQ4HV3vEEybVP57Rgihky2bQD3nzCjG5wFxrOrfn
+         k3D3Uoh310zSvoZ98SJ9+BDQnHEDVAO+Tg0YP/5F4MokhrgK4f2NSwZS4SP+c6nPl1D0
+         lGSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFr0ZbvzAriiDqRl4OzkW3g4v0+ax0lIeyMjzCNloaMDDbwnRGPv0/B7bAogiRvqYpp/z0pjhUuBGJOTAtLaiV+2NECJ164dTf/qE2dw==
+X-Gm-Message-State: AOJu0YzYmRvojdchU1uCG3lg06uVZxpiH0C8nl9Fi/EApq4Lw+eUD/uD
+	H6yId9KYH0mAp4yIs9zuhbbi/BqEJ4jDmOlCMv9sSHXBAhgDYLDM+vZczYcKsBIWgvRlLi0ABgs
+	l
+X-Google-Smtp-Source: AGHT+IGegX6hhcdBy2hHYfDBsDRJkiHBdAAF1OXnxmmpbPiUGv7h+8z8jYIwpVOTdMuMRgTCMfHFxQ==
+X-Received: by 2002:a05:6512:3c93:b0:52e:7f6b:5786 with SMTP id 2adb3069b0e04-52ee543f25emr2769637e87.61.1721290170831;
+        Thu, 18 Jul 2024 01:09:30 -0700 (PDT)
+Received: from localhost (109-81-94-157.rct.o2.cz. [109.81.94.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff9fbsm531461866b.154.2024.07.18.01.09.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 01:09:30 -0700 (PDT)
+Date: Thu, 18 Jul 2024 10:09:29 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Qu Wenruo <wqu@suse.com>
+Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
+	Qu Wenruo <quwenruo.btrfs@gmx.com>, linux-btrfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Cgroups <cgroups@vger.kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 0/2] mm: skip memcg for certain address space
+Message-ID: <ZpjNuWpzH9NC5ni6@tiehlicka>
+References: <cover.1720572937.git.wqu@suse.com>
+ <8faa191c-a216-4da0-a92c-2456521dcf08@kernel.org>
+ <Zpft2A_gzfAYBFfZ@tiehlicka>
+ <9c0d7ce7-b17d-4d41-b98a-c50fd0c2c562@gmx.com>
+ <9572fc2b-12b0-41a3-82dc-bb273bfdd51d@kernel.org>
+ <ZpjDeSrZ40El5ALW@tiehlicka>
+ <304fdaa9-81d8-40ae-adde-d1e91b47b4c0@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1605:b0:381:c5f0:20ef with SMTP id
- e9e14a558f8ab-395526d992emr2867015ab.0.1721289563027; Thu, 18 Jul 2024
- 00:59:23 -0700 (PDT)
-Date: Thu, 18 Jul 2024 00:59:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f5cb0b061d80f4e1@google.com>
-Subject: [syzbot] Monthly fs report (Jul 2024)
-From: syzbot <syzbot+list44baf210a6a389320a95@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <304fdaa9-81d8-40ae-adde-d1e91b47b4c0@suse.com>
 
-Hello fs maintainers/developers,
+On Thu 18-07-24 17:27:05, Qu Wenruo wrote:
+> 
+> 
+> 在 2024/7/18 16:55, Michal Hocko 写道:
+> > On Thu 18-07-24 09:17:42, Vlastimil Babka (SUSE) wrote:
+> > > On 7/18/24 12:38 AM, Qu Wenruo wrote:
+> > [...]
+> > > > Does the folio order has anything related to the problem or just a
+> > > > higher order makes it more possible?
+> > > 
+> > > I didn't spot anything in the memcg charge path that would depend on the
+> > > order directly, hm. Also what kernel version was showing these soft lockups?
+> > 
+> > Correct. Order just defines the number of charges to be reclaimed.
+> > Unlike the page allocator path we do not have any specific requirements
+> > on the memory to be released.
+> 
+> So I guess the higher folio order just brings more pressure to trigger the
+> problem?
 
-This is a 31-day syzbot report for the fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/fs
+It increases the reclaim target (in number of pages to reclaim). That
+might contribute but we are cond_resched-ing in shrink_node_memcgs and
+also down the path in shrink_lruvec etc. So higher target shouldn't
+cause soft lockups unless we have a bug there - e.g. not triggering any
+of those paths with empty LRUs and looping somewhere. Not sure about
+MGLRU state of things TBH.
+ 
+> > > > And finally, even without the hang problem, does it make any sense to
+> > > > skip all the possible memcg charge completely, either to reduce latency
+> > > > or just to reduce GFP_NOFAIL usage, for those user inaccessible inodes?
+> > 
+> > Let me just add to the pile of questions. Who does own this memory?
+> 
+> A special inode inside btrfs, we call it btree_inode, which is not
+> accessible out of the btrfs module, and its lifespan is the same as the
+> mounted btrfs filesystem.
 
-During the period, 4 new issues were detected and 0 were fixed.
-In total, 40 issues are still open and 349 have been fixed so far.
+But the memory charge is attributed to the caller unless you tell
+otherwise. So if this is really an internal use and you use a shared
+infrastructure which expects the current task to be owner of the charged
+memory then you need to wrap the initialization into set_active_memcg
+scope.
 
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  4025    Yes   possible deadlock in input_event (2)
-                   https://syzkaller.appspot.com/bug?extid=d4c06e848a1c1f9f726f
-<2>  2605    No    INFO: task hung in path_openat (7)
-                   https://syzkaller.appspot.com/bug?extid=950a0cdaa2fdd14f5bdc
-<3>  1138    Yes   WARNING in inc_nlink (3)
-                   https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
-<4>  1094    Yes   INFO: task hung in filename_create (4)
-                   https://syzkaller.appspot.com/bug?extid=72c5cf124089bc318016
-<5>  825     Yes   INFO: task hung in d_alloc_parallel (2)
-                   https://syzkaller.appspot.com/bug?extid=55f124a35eac76b52fb7
-<6>  575     Yes   general protection fault in iter_file_splice_write
-                   https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
-<7>  445     Yes   INFO: task hung in synchronize_rcu (4)
-                   https://syzkaller.appspot.com/bug?extid=222aa26d0a5dbc2e84fe
-<8>  349     Yes   INFO: task hung in user_get_super (2)
-                   https://syzkaller.appspot.com/bug?extid=ba09f4a317431df6cddf
-<9>  320     Yes   WARNING: proc registration bug in bcm_connect
-                   https://syzkaller.appspot.com/bug?extid=df49d48077305d17519a
-<10> 295     Yes   KASAN: use-after-free Read in sysv_new_inode (2)
-                   https://syzkaller.appspot.com/bug?extid=8d075c0e52baab2345e2
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+-- 
+Michal Hocko
+SUSE Labs
 
