@@ -1,222 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-23942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0266935078
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 18:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AA193507F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 18:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67156283C7F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 16:14:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB28284003
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 16:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050D2144D29;
-	Thu, 18 Jul 2024 16:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F71144D34;
+	Thu, 18 Jul 2024 16:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q/KWhdqI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLlYu6gW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAC2144306
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 16:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B2B7D3EF;
+	Thu, 18 Jul 2024 16:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721319287; cv=none; b=KD/unRQhLgqz82U32rsYZ/evQc7n8of3dBlu2iRdasPAo1sDYSSmbfsrsIqWdng2ID0R9ayky3hEWZrBJr9TSsv2ecRw25fvoCOe6wkJvgBEDB+vyKCfdNcxoPmIRPz2D8ZcOXCz7a6Z1w+9FF8Gc7xK1eSqy4rSagwUdSmcmJk=
+	t=1721319409; cv=none; b=JAqNzo7/1U8sdMF3sGE7XX1bS2aum1ul4YXPemq6gTjp/G3Gwg1aeMHEar3f09EOcRGPBtlAhVtw3RFqSAGfaMKjiRRrWRO2mcjM62R33QsAAA+5Pdge4D5WQm1M36DxouYPL3o2q5F4HBDP7ojsn7Hcn5GrZMoYnKFm7RJzWwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721319287; c=relaxed/simple;
-	bh=Igl5C4XQG84DDkmNlndYaVvzyi1zpEMAcWa5IkHXl5o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RdYQ951M5iIgudPKW72tBPUtiZBFZyprAerncBxwxcvzzUPjA55v3WK80NFBMOP6i1TavKSVTSrajuXR9QvApZKDGGNgegdh1N+hBcDmlAGGZLFDNG6/Sia4jvCA4Tb8VLHiP2jkuCFW5krqxg6B7UQW5/I15YEemrF5tzyvgsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q/KWhdqI; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-816d9285ebdso37854139f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 09:14:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721319285; x=1721924085; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cKUm2Sno0VCM0sKj4rcn5Z8Kw9gJMdGTQrF0ZDE8JgQ=;
-        b=Q/KWhdqIFnlSgLjI2xheYfdMDCSr5u6Jh0wKMbHKIxUVhJus2n2rFKsvmCtwywFhx0
-         5Mci6a7wyEpztpBs4Y2kcv1q1wTd/AYRzHrGsAvJdlGaPLzZMfG4cSb0kcz4gnnscQOC
-         xkaaDHPll9vg+nrLJAygboZrCK/6QGSMgPykS8fWLnu8o5mXq9PK35q7Vcp/0+MF1Cjc
-         5mTVCM9i2WSMQbOazvriW195THEhdkkAAUwn6C6sujIAwJmcWRyhVQl9AYZC52em9fpa
-         +fz+u6wUqDW43KxhZbhMU3cQkiGdutGVFYzhuEq2SVlEOXMkmdO3EtZuANMSSd/KwBxS
-         bnPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721319285; x=1721924085;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cKUm2Sno0VCM0sKj4rcn5Z8Kw9gJMdGTQrF0ZDE8JgQ=;
-        b=Bm5TawGYqQxVhl2dX5rUmFtlcFtxPQ+qHlHyZHvADN3Ln5N//R2XCkx7os2CfmkUTa
-         u/+PnT/u5GOUVgcU4CCfQql17GEqUABxg9NI7o7csQ/csvPiQ8vS/kwlpzkYzqaPDPL5
-         9SZwur8bbolDXi1BUt7qKL/FkzqKpb0e2CfBU0gnG+rimCX5SMRBbwCzR0ixuQI/Tf5F
-         V/6fcA5MkSXoeUF2/THin4tIXYXm86LMILjwq5C4ptv+A7+X/GlnL7mppVTsEuzi1imI
-         GjnEd9+XxRazXcTlyb8w5KxpkS5JduPAb65PxRxhfh1UHC+EtbLLQjI8GNMixAR6kUV5
-         uISA==
-X-Forwarded-Encrypted: i=1; AJvYcCXz5+pBingPDz4z/inWTebfnLNiKLdjVnhlh39WG9PZp6bvK4o6ey2HG7HDYLYd/CX6YSQTUJ9xiI5fJtiCWWmSLvWr3LOQYEWu/ePPSw==
-X-Gm-Message-State: AOJu0YwwVKoo07pjXro+5FlenrrHFHtzjbWWFNDRhQ8Y8ncaqNwZJJS2
-	iO6OVAtVTuAp4QLO0+flWlgraavLy8wEb0Ns0Ld5KKYhxqZ32oeKlBMEdRB0VVw=
-X-Google-Smtp-Source: AGHT+IGBl5SUOSetZ7hpvAsBcsY+3Cb2iftUEXypwidAC9j+tfeb4FVk4PWmNhC4HY+kt6K5hLBh4A==
-X-Received: by 2002:a05:6602:3fcc:b0:804:657d:92fc with SMTP id ca18e2360f4ac-817123e1bb4mr642950839f.18.1721319284795;
-        Thu, 18 Jul 2024 09:14:44 -0700 (PDT)
-Received: from localhost ([2804:14d:7e39:8470:49aa:ec5c:43c8:2afb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-78e34d2c7e2sm7993415a12.54.2024.07.18.09.14.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 09:14:44 -0700 (PDT)
-From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
- <will@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Andrew Morton
- <akpm@linux-foundation.org>,  Marc Zyngier <maz@kernel.org>,  Oliver Upton
- <oliver.upton@linux.dev>,  James Morse <james.morse@arm.com>,  Suzuki K
- Poulose <suzuki.poulose@arm.com>,  Arnd Bergmann <arnd@arndb.de>,  Oleg
- Nesterov <oleg@redhat.com>,  Eric Biederman <ebiederm@xmission.com>,
-  Shuah Khan <shuah@kernel.org>,  "Rick P. Edgecombe"
- <rick.p.edgecombe@intel.com>,  Deepak Gupta <debug@rivosinc.com>,  Ard
- Biesheuvel <ardb@kernel.org>,  Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-  Kees Cook <kees@kernel.org>,  "H.J. Lu" <hjl.tools@gmail.com>,  Paul
- Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,
-  Albert Ou <aou@eecs.berkeley.edu>,  Florian Weimer <fweimer@redhat.com>,
-  Christian Brauner <brauner@kernel.org>,  Ross Burton
- <ross.burton@arm.com>,  linux-arm-kernel@lists.infradead.org,
-  linux-doc@vger.kernel.org,  kvmarm@lists.linux.dev,
-  linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
-  linux-mm@kvack.org,  linux-kselftest@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org
+	s=arc-20240116; t=1721319409; c=relaxed/simple;
+	bh=gKUCbuXhzgw1JXGUEH5JtAqhnI1xtcOjVYOUIZ4L7WU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEstMmC6/U3LwNcsSp2//MhG81Uum2CM2eY5ZZHjkC9YtMT7qZUDxaBdN5Yh/RXwbbp8kaf5AWqOjyOXGQORy756UPHJ3l/kmbd8GKsM8rUQ4EY2a5sytcSIbUuCJ0QCS5QQOr6Pk4yylUQLUid9L4h2P6cvBhddMkIdeu3eGUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLlYu6gW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46843C116B1;
+	Thu, 18 Jul 2024 16:16:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721319408;
+	bh=gKUCbuXhzgw1JXGUEH5JtAqhnI1xtcOjVYOUIZ4L7WU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rLlYu6gWOogx7mLKzNfrMoEn5IliXebJuEhDM/YqrOAs0xiiQi6bBzH51WVhr0QJY
+	 Zmz8pj28Y+tUuZFCcQ+CeaKHFWqQNypCAdrLOte91CySDjbvX/rzhyyR3se0bq2LpP
+	 g6RJw1flOPNxSa3KhVH6/l82V95VuqoX1PB6yBPMkusoTfwHjtJOhkTDhpZqR17bH7
+	 f6Um9jZ/myfqy9kdeb1SYQci7ZstuknJvs14kGvO4JNq1TXB+SqRUsXdc42IdtRGlO
+	 15WGVzA8vf4KSb71viIsgiMbNYYY2atS0TtJSRYErrbyAqLJXfywco361yELivTB6A
+	 OHz65cHYteddQ==
+Date: Thu, 18 Jul 2024 17:16:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
 Subject: Re: [PATCH v9 35/39] kselftest/arm64: Add a GCS test program built
  with the system libc
-In-Reply-To: <20240625-arm64-gcs-v9-35-0f634469b8f0@kernel.org> (Mark Brown's
-	message of "Tue, 25 Jun 2024 15:58:03 +0100")
+Message-ID: <a1ee93ab-2168-4228-a4e8-eab02c046bd3@sirena.org.uk>
 References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
-	<20240625-arm64-gcs-v9-35-0f634469b8f0@kernel.org>
-Date: Thu, 18 Jul 2024 13:14:41 -0300
-Message-ID: <87plray8we.fsf@linaro.org>
+ <20240625-arm64-gcs-v9-35-0f634469b8f0@kernel.org>
+ <87plray8we.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4iOkZ0TI53vzajDb"
+Content-Disposition: inline
+In-Reply-To: <87plray8we.fsf@linaro.org>
+X-Cookie: For off-road use only.
 
-Mark Brown <broonie@kernel.org> writes:
 
-> There are things like threads which nolibc struggles with which we want
-> to add coverage for, and the ABI allows us to test most of these even if
-> libc itself does not understand GCS so add a test application built
-> using the system libc.
->
-> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  tools/testing/selftests/arm64/gcs/.gitignore |   1 +
->  tools/testing/selftests/arm64/gcs/Makefile   |   4 +-
->  tools/testing/selftests/arm64/gcs/gcs-util.h |  10 +
->  tools/testing/selftests/arm64/gcs/libc-gcs.c | 736 +++++++++++++++++++++++++++
->  4 files changed, 750 insertions(+), 1 deletion(-)
+--4iOkZ0TI53vzajDb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In my FVP VM, this test gets a GCS SIGSEGV before running the first test:
+On Thu, Jul 18, 2024 at 01:14:41PM -0300, Thiago Jung Bauermann wrote:
 
-$ sudo ./run_kselftest.sh -t arm64:libc-gcs
-[sudo] password for bauermann:
-TAP version 13
-1..1
-# timeout set to 45
-# selftests: arm64: libc-gcs
-# TAP version 13
-# 1..118
-# # Starting 118 tests from 32 test cases.
-# #  RUN           global.can_call_function ...
-# Segmentation fault
-not ok 1 selftests: arm64: libc-gcs # exit=139
-$ 
+> In my FVP VM, this test gets a GCS SIGSEGV before running the first test:
 
-It happens when returning from the syscall() glibc function that does
-the clone3 syscall in kselftest_harness.h:
+Do you have THP enabled?  That still doesn't work (I'm expecting it to
+be fixed with -rc1).
 
-$ /var/tmp/gdb-gcs/bin/gdb -q arm64/libc-gcs
-Reading symbols from arm64/libc-gcs...
-(gdb) r
-Starting program: /var/tmp/selftests-v9/arm64/libc-gcs
-[Thread debugging using libthread_db enabled]
-Using host libthread_db library "/lib/aarch64-linux-gnu/libthread_db.so.1".
-TAP version 13
-1..118
-# Starting 118 tests from 32 test cases.
-#  RUN           global.can_call_function ...
-[Detaching after vfork from child process 823]
+--4iOkZ0TI53vzajDb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Program received signal SIGSEGV, Segmentation fault
-Guarded Control Stack error.
-syscall () at ../sysdeps/unix/sysv/linux/aarch64/syscall.S:41 [GCS error]
-warning: 41     ../sysdeps/unix/sysv/linux/aarch64/syscall.S: No such file or directory
-(gdb) p $_siginfo.si_signo
-$1 = 11
-(gdb) p $_siginfo.si_code
-$2 = 10
-(gdb) p $_siginfo._sifields._sigfault.si_addr
-$3 = (void *) 0xfffff7ed96b0 <syscall+48>
-(gdb) disassemble
-Dump of assembler code for function syscall:
-   0x0000fffff7ed9680 <+0>:     nop
-   0x0000fffff7ed9684 <+4>:     mov     w8, w0
-   0x0000fffff7ed9688 <+8>:     mov     x0, x1
-   0x0000fffff7ed968c <+12>:    mov     x1, x2
-   0x0000fffff7ed9690 <+16>:    mov     x2, x3
-   0x0000fffff7ed9694 <+20>:    mov     x3, x4
-   0x0000fffff7ed9698 <+24>:    mov     x4, x5
-   0x0000fffff7ed969c <+28>:    mov     x5, x6
-   0x0000fffff7ed96a0 <+32>:    mov     x6, x7
-   0x0000fffff7ed96a4 <+36>:    svc     #0x0
-   0x0000fffff7ed96a8 <+40>:    cmn     x0, #0xfff
-   0x0000fffff7ed96ac <+44>:    b.cs    0xfffff7ed96b4 <syscall+52>  // b.hs, b.nlast
-=> 0x0000fffff7ed96b0 <+48>:    ret
-   0x0000fffff7ed96b4 <+52>:    b       0xfffff7e18660 <__GI___syscall_error>
-   0x0000fffff7ed96b8 <+56>:    b       0xfffff7e18660 <__GI___syscall_error>
-End of assembler dump.
-(gdb) bt
-#0  syscall () at ../sysdeps/unix/sysv/linux/aarch64/syscall.S:41 [GCS error]
-#1  0x0000aaaaaaaa4acc in clone3_vfork ()
-    at /home/bauermann/src/linux/tools/testing/selftests/kselftest_harness.h:93
-#2  __run_test (f=f@entry=0xaaaaaaac0b88 <_fixture_global>, variant=variant@entry=0xffffffffee00,
-    t=t@entry=0xaaaaaaac0018 <_can_call_function_object>)
-    at /home/bauermann/src/linux/tools/testing/selftests/kselftest_harness.h:1239 [GCS error]
-#3  0x0000aaaaaaaa2c40 in test_harness_run (argv=0xfffffffff008, argc=1)
-    at /home/bauermann/src/linux/tools/testing/selftests/kselftest_harness.h:1314
-#4  main (argc=1, argv=0xfffffffff008) at libc-gcs.c:735 [GCS error]
-(gdb) 
+-----BEGIN PGP SIGNATURE-----
 
-And indeed, the svc call in the disassemble above corrupts the GCS.
-This is the GCS and lr values right before the svc call:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaZP+YACgkQJNaLcl1U
+h9BR6Qf9GiojqUKYh+SyKawuW3opLEJKR/7zCB196w+/g9gnE5g1RbTQ8JPI1tlR
+c3GGKFe6YZzDvo2XPzwWRcb5+xqPig7ZFkM5EdMMUcaFklfX2xTqhSAOMjkvaMFx
+bj1ELRnstQmWoibVbFHPk3iI3g4INItNqTua4YSyW1efyShyruDItI6rMORwMoAX
+JYEYM5K6aNhh56OcSwX9ZKjF8KIA3UPTWCi/Dt9KcX45bEmxR/tc8qi/YIvhIPG1
+swvurAIyaqJ8PLR6B7dO9nYj2WReVR1yjql8sZHw1i0lHeSB4bd7hXP0R+XgYU2T
+MjO/IPnJGt/92ViI0r5HvZeqZf7KKg==
+=OYr2
+-----END PGP SIGNATURE-----
 
-(gdb) x/i $pc
-=> 0xfffff7ed96a4 <syscall+36>: svc     #0x0
-(gdb) p/x $lr
-$3 = 0xaaaaaaaa4acc
-(gdb) p/x $gcspr
-$4 = 0xfffff7bfffe8
-(gdb) x/g $gcspr
-0xfffff7bfffe8: 0x0000aaaaaaaa4acc
-
-So far so good, the tip of the GCS matches $lr. But then:
-
-(gdb) stepi
-[Detaching after vfork from child process 2491]
-39      in ../sysdeps/unix/sysv/linux/aarch64/syscall.S
-(gdb) x/i $pc
-=> 0xfffff7ed96a8 <syscall+40>: cmn     x0, #0xfff
-(gdb) p/x $gcspr
-$5 = 0xfffff7bfffe8
-(gdb) x/g $gcspr
-0xfffff7bfffe8: 0x0000aaaaaaaa4c04
-(gdb) p/x $lr
-$6 = 0xaaaaaaaa4acc
-
-So, right after svc returns, the tip of the GCS is corrupted and will
-cause the GCS error.
-
--- 
-Thiago
+--4iOkZ0TI53vzajDb--
 
