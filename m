@@ -1,108 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-23968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071B49370A1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 00:30:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 565F59370B8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 00:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1BA71F22762
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 22:30:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 006FB1F21607
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 22:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE959146019;
-	Thu, 18 Jul 2024 22:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B99D80C07;
+	Thu, 18 Jul 2024 22:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="INY0UkJX"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tHOogS6Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B470F12C7F9;
-	Thu, 18 Jul 2024 22:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B78146595;
+	Thu, 18 Jul 2024 22:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721341813; cv=none; b=eqU1/UmwpeUPnuvTNwR9bm4yV140TfTHOGqYIIKGlDKomLyzk90xzGyRXqMyJYmr7mrBowtFTDuYaURblGd348Cn0Sjd0a4fgGF7z2Xtwdn2vdNXe63c8p4ZyVLiLTmizJAy3HGSZ1TrH3pTnaBnvcIl0rtK1rwSVZ01rTQzfGU=
+	t=1721342124; cv=none; b=OFAkIAhknMjqNwYuokShe/i+QFuB5wgLwVR5muBJKcLb/h9uHkXQ6JEgfAL3Xy/YbuLrQvZLNDYz5Hy0le9QLDSmP3/wvYtMn0r2cY/achA5IXEeyYh8H/cduxOiQxSJQZlscrbvaKOL3EoMTGE1Btn+zdn1OZbjZVMvYrbVJIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721341813; c=relaxed/simple;
-	bh=SCb1EseGsn+5pBi2dIrMkxVwkS+8MSH1I9q1XdPH1UI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pUSqmSGEQh78GwY1cLjZCdRkXdzeGgnoCljXzBtVxK/T1w6baL9KlMdXHuA8GdF4d2nW/XqQ2vdixEA4DKZA647XCOFp+AqmkP4ry4GvS5ZQUHJEh9UL1QVUIC8o3lex1CCbhPW5vf8BKeZVT4s+ovj+rv/YmCU7wBF/aI2ZmtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=INY0UkJX; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1721342124; c=relaxed/simple;
+	bh=Q77l9sJemK2FS1NwrQtLXO+wErvSKs6sLOGw2QWCUeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPdutMlpVFDpNRGzH8XGBxOGdsSUHBBhTYp+w9RAIrLDzxwVU0z9O4/+VN6nPbBpz6wREBluI3iMc9bGCgrzy9Evqdm3WIvDdeMw//6bibPw9Omx8lnaNlAAAGrTK89S6aGyFcedrnhYayulQXhsV5NAPXSjzH2SnzYvMgpfMj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tHOogS6Z; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=NKLp7cFT6stArnXInmDhzYdpMNjqgCzvn8nHi4aXK7E=; b=INY0UkJXSStgnuwdwD/l53f+2e
-	Gk75AwO5jeXk1mNbepCXj3ET8s3IQgAUYdTIplQjbr4VLwnTIv43LPJFiYto0LQILxY+v5hss4iXp
-	2pYt6urNDgN9BRtkRE8WaJcFjqkL7StVIYlUMnDhCtd8nVM3NiCCQME26x0UwQd2PwP1mq4SatZLE
-	9RQPtzODUQvT5u1O+oZ2t9fr3+JUkNga3t0D9xCaTVAIA3gjyzVBJappPOt2ClidLsDsZ05Mu01Kd
-	xwZ5+EUEu5SYP+IHXH0/ol9eI3B/uUZ212k8fMzsxioRSYZb5ZonvkTol7KT5/iJaw2qxzx6zppC5
-	ZZYykMRg==;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8EeDOIWMZon6WTAwsmmAoyg2vi80dO8qZGMtoPq7F+E=; b=tHOogS6Zot9g8mA5X2wa8ho1xh
+	cJtBfw9ihmKKR3nG/4Xa9I6ZZcKWIn6vjwPb+Fk4C2EClJ+YSGtx3uKdftj/ZsnAet+hOuoSlMsz0
+	+eRS9XgQN7JHQE/NjJe0cpXBmdWI6c8JqmMdmpXRxnw/uaCi2lJb8f4fxxGKqjGgYfJ+GQud4+vM+
+	bT7XMoZo0TvCyCnhlLWO/aEGwOYhaKsADSFF67gcuGe64n/GloNtpILvGUPsmDotbR8I30TOBCQz8
+	1sTAe/2Igmfud9BCj4g3O3IuehyG+2LMCbZBDIy+W1BKkQs+ETGHZilUSno2ZuQNEYtY8fsiG0VC0
+	9IBpaohg==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sUZdX-00000002O0S-0hRq;
-	Thu, 18 Jul 2024 22:30:07 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Hannes Reinecke <hare@suse.com>
-Subject: [PATCH v2 4/4] ext4: Tidy the BH loop in mext_page_mkuptodate()
-Date: Thu, 18 Jul 2024 23:30:02 +0100
-Message-ID: <20240718223005.568869-4-willy@infradead.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240718223005.568869-1-willy@infradead.org>
-References: <20240718223005.568869-1-willy@infradead.org>
+	id 1sUZiZ-00000002OEF-411Q;
+	Thu, 18 Jul 2024 22:35:19 +0000
+Date: Thu, 18 Jul 2024 23:35:19 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Hannes Reinecke <hare@suse.com>
+Subject: Re: [PATCH 2/2] ext4: Remove array of buffer_heads from
+ mext_page_mkuptodate()
+Message-ID: <ZpmYp-ci47MZ6c9T@casper.infradead.org>
+References: <20240516181651.2879778-1-willy@infradead.org>
+ <20240516181651.2879778-2-willy@infradead.org>
+ <20240627202022.GC419129@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627202022.GC419129@mit.edu>
 
-This for loop is somewhat hard to read; turn it into a normal BH
-do-while loop.
+On Thu, Jun 27, 2024 at 04:20:22PM -0400, Theodore Ts'o wrote:
+> This patch is causing ext4/020 (which tests the EXT4_IOC_MOVE_EXT
+> ioctl used by e4defrag).  This can be easily reproduced via:
+> "kvm-xfstests -c ext4/4k ext4/020".  From
+> /results/ext4/results-4k/ext4/020.out.bad:
+> 
+>    QA output created by 020
+>    wrote 1048576/1048576 bytes at offset 0
+>    XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
+>    wrote 1023/1023 bytes at offset 0
+>    XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
+>    md5sum: WARNING: 1 computed checksum did NOT match
+>    SCRATCH_MNT/020.orig: FAILED
+> 
+> I'm going to drop both this patch and the preceeding patch in this
+> series ("ext4: reduce stack usage in ext4_mpage_readpages()") pending
+> further investigation.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/ext4/move_extent.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index 660bf34a5c4b..516897b0218e 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -187,9 +187,11 @@ static int mext_page_mkuptodate(struct folio *folio, size_t from, size_t to)
- 	if (!head)
- 		head = create_empty_buffers(folio, blocksize, 0);
- 
--	block = (sector_t)folio->index << (PAGE_SHIFT - inode->i_blkbits);
--	for (bh = head, block_start = 0; bh != head || !block_start;
--	     block++, block_start = block_end, bh = bh->b_this_page) {
-+	block = folio_pos(folio) >> inode->i_blkbits;
-+	block_end = 0;
-+	bh = head;
-+	do {
-+		block_start = block_end;
- 		block_end = block_start + blocksize;
- 		if (block_end <= from || block_start >= to) {
- 			if (!buffer_uptodate(bh))
-@@ -215,7 +217,8 @@ static int mext_page_mkuptodate(struct folio *folio, size_t from, size_t to)
- 		}
- 		ext4_read_bh_nowait(bh, 0, NULL);
- 		nr++;
--	}
-+	} while (block++, (bh = bh->b_this_page) != head);
-+
- 	/* No io required */
- 	if (!nr)
- 		goto out;
--- 
-2.43.0
-
+Thanks.  I couldn't get kvm-xfstests to work, but I was able to run
+ext4/020 using Kent's testsuite.  I found two bugs and fixed them.
+I split this second patch into three patches for v2.
 
