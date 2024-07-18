@@ -1,179 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-23896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B939347CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 08:04:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE039348A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 09:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 718151C215FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 06:04:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46FBDB21684
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 07:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0276B5339D;
-	Thu, 18 Jul 2024 06:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD587580D;
+	Thu, 18 Jul 2024 07:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vg2BP8zB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nES1GApa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AEA3C6A6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 06:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9E819E;
+	Thu, 18 Jul 2024 07:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721282670; cv=none; b=e3A6j1KxUv4SvuKySP/IjPNIpMEXIkNvG2C8u8QmMaTOl0ipsbNKFe8OVHqHAjNHBldmHkVZF/DkCtNw8su4GSLNlj/1yfE/FnkL8XmAxQF1PvqzeycnZt2Ks9l+Ufg+dT569x29Qbv5zYF8i77IFCqkV9ApKQq/c1SqAFUkuZw=
+	t=1721287068; cv=none; b=F8F2TS31ho7OqQclFQ+PxEuB+RLVRNi+fjWkvma2jnETOX+FZ81jn4cPvvBP+V7+0jk0vjOWjFlIiH0/0lgt8PxJrcXYotRvi1vFtM+mj+t0tpb1kZsdSdEFleYwFm8JL/aTEUGjhPo71iXFjmcd7adKI9c5y4EGN+hTr40rqAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721282670; c=relaxed/simple;
-	bh=QfTgL/I/TgLu6XUSR3k5WsBkx8SZ5zYCe55lbljcCCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EnedGX3+89WV/VgWzl7Yq+neJsL/AZX0iEJquMlZJbm/PzZu4kFSlJ0RTH9bWKf2KaCusRRSTJew704CjTitogT3EP6VQI8as+jaIf6sCjbBrlu91JQQ12V426LNrnEZuMdI/dwoQ96WD5Zqk0QXDqpEomKeheZqZmEBCAilQEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vg2BP8zB; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44a8b140a1bso201551cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jul 2024 23:04:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721282668; x=1721887468; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=E8scQbL3ojunFA2vu6Mm/M82C9xFWuPlbVxUojeYRbc=;
-        b=Vg2BP8zByNYsIcilvDNp3aJ4K2xIlWBe6F7zS+/iXd+NSylIaYHadt7LYTSUAKxPx8
-         nvczGR4d5p4pH/9Ft4+gE4RLYugTr0WZkaYF1mgWnWUqt8pC9vQS0nEiWUbE2G3aztW0
-         dTdwX4Eun8LU5hmrHNi8kv6YqGA+osM6oYayb8xasHpmKHjWo+C+0tq4uRhzB4jL6jMx
-         wfkWbr2sUTM+Vb/7TJqtMARAo8EdXKynsoSxEQHwdGAuCdxkCauOL+mHNFTh7xKQNQu9
-         Y+x2Erf3XG6Ft6zQQHdj2yAzeAPaIfiImJ4EZfFPSxLxpODSafsEVjoyH+KxzCJcMnvq
-         t1Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721282668; x=1721887468;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E8scQbL3ojunFA2vu6Mm/M82C9xFWuPlbVxUojeYRbc=;
-        b=nfkOgOX4qROt3thlqg5rz21hPslm45QbDGHgfL4xx2muP1qbWSeKnG/p37q+S+Qy77
-         vuDtbwspVHQYGxlV/m/Wg18irhaFltWTThgeYWTV4rZoEaRYcr4YmpOqwOOsrT/4Jm55
-         SvTzDI25zLR8G6mniBS4DFV55K/YHHnfQusRh6Uk9/FE+fufHarQFPTnKg7yGSBRg1/T
-         okbtbliP0A1Xb/+VbJdMaYkHp1vqu0GrOKbQdz1FHjQT5r66iVlZa3CmTLQfo/w3SChW
-         j0i3JbYglPuVkA5xffxwAB0sly1ldSDpq6atpuXBOGZiESg0TCsDQpG4dcg72xuQ/XNG
-         wPHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNkOKpaZqR7OxyQT05ApkTV9T1TyNeb8glWdGGYTBJo9Yx1tiuhhqMLXnhZwSz+hWIw1iEcTHkmAdI8E63jlLuTpCGfJ5ZVCceqs+RpQ==
-X-Gm-Message-State: AOJu0Yy0BotC0rhj7V8eFXG7lP12pbI/gFGSlSBlpFw6dfdLtqL7IPP1
-	NxWKw2MBWSLS1H/+WvnRPpQvEyu7vQlhZx/iOH9zO4iSbNS8BzxMMh0HSxdRNQm04VNZbyK50E5
-	oYTxbdajt2rOVL26dzAEdVP7qyM+Coo4fO96w
-X-Google-Smtp-Source: AGHT+IFWiSFqWtqZYfC0jy++zn1iek0Vig5wz8pSEdHMvDV8US/DapjvjgpSBDodO3pWivnkdS9LQpK1eVFmUnjjxIc=
-X-Received: by 2002:a05:622a:4297:b0:447:d78d:773b with SMTP id
- d75a77b69052e-44f919d5b5emr1331311cf.6.1721282667643; Wed, 17 Jul 2024
- 23:04:27 -0700 (PDT)
+	s=arc-20240116; t=1721287068; c=relaxed/simple;
+	bh=6geIF7vYh23EULIWqeZnsJ4uWp50DaQE9puxPgPkEPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=igRabNQbF7hV+gH6wCu5MVczMLivKHduaUlasNradXdSPC6v7+6+ydx+et+Vt7dx3tb9vLjdAH99Wy7+Ed08k1eamH4pQpCn1hpLtRDPCpHcRlJFOPdiVo/XbzndWtHKsSL1p4kRJClGPaX+hj7WhnRnAK4JC6FZ0k5TNMcpzYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nES1GApa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1211CC116B1;
+	Thu, 18 Jul 2024 07:17:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721287067;
+	bh=6geIF7vYh23EULIWqeZnsJ4uWp50DaQE9puxPgPkEPU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nES1GApabH95lkwjPEerwfUV3d3HaWGeswuGNZvyXJaxVH+NDrSiEbHzElzDI/4/d
+	 OZV2a4VOE6KG0p/LyojZ8XoIMwDqTRwSdQluY6axPMDs97aN9c37U97HFJiiuJvyR3
+	 /GVKsoI1iJwjwO2xMOUBtF6AWodp4iyX6k6QSE66GTDKzg+crb9kt58cknByoeKkrn
+	 LMFa0ZuKrUZIGOXNef3kt07LKZCwlg8MebpXNGkDS9HP/w2s0Ym6Ng3675jBPWSOvm
+	 Wsy5kvel9o6w0HtxAyZoRE7Bo9dbtw3vEykC09U4DY95haJ6MbyKtUfSfFBdVrCm2A
+	 WGYhicI76sgxQ==
+Message-ID: <9572fc2b-12b0-41a3-82dc-bb273bfdd51d@kernel.org>
+Date: Thu, 18 Jul 2024 09:17:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717212230.work.346-kees@kernel.org>
-In-Reply-To: <20240717212230.work.346-kees@kernel.org>
-From: David Gow <davidgow@google.com>
-Date: Thu, 18 Jul 2024 14:04:14 +0800
-Message-ID: <CABVgOSmKwPq7JEpHfS6sbOwsR0B-DBDk_JP-ZD9s9ZizvpUjbQ@mail.gmail.com>
-Subject: Re: [PATCH] execve: Move KUnit tests to tests/ subdirectory
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Eric Biederman <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] mm: skip memcg for certain address space
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>, Michal Hocko <mhocko@suse.com>
+Cc: Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Cgroups <cgroups@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>
+References: <cover.1720572937.git.wqu@suse.com>
+ <8faa191c-a216-4da0-a92c-2456521dcf08@kernel.org>
+ <Zpft2A_gzfAYBFfZ@tiehlicka> <9c0d7ce7-b17d-4d41-b98a-c50fd0c2c562@gmx.com>
+Content-Language: en-US
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+In-Reply-To: <9c0d7ce7-b17d-4d41-b98a-c50fd0c2c562@gmx.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Jul 2024 at 05:22, Kees Cook <kees@kernel.org> wrote:
->
-> Move the exec KUnit tests into a separate directory to avoid polluting
-> the local directory namespace. Additionally update MAINTAINERS for the
-> new files and mark myself as Maintainer.
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> I'll toss this into -next and send it to Linus before -rc1 closes.
-> ---
+On 7/18/24 12:38 AM, Qu Wenruo wrote:
+> 在 2024/7/18 01:44, Michal Hocko 写道:
+>> On Wed 17-07-24 17:55:23, Vlastimil Babka (SUSE) wrote:
+>>> Hi,
+>>>
+>>> you should have Ccd people according to get_maintainers script to get a
+>>> reply faster. Let me Cc the MEMCG section.
+>>>
+>>> On 7/10/24 3:07 AM, Qu Wenruo wrote:
+>>>> Recently I'm hitting soft lockup if adding an order 2 folio to a
+>>>> filemap using GFP_NOFS | __GFP_NOFAIL. The softlockup happens at memcg
+>>>> charge code, and I guess that's exactly what __GFP_NOFAIL is expected to
+>>>> do, wait indefinitely until the request can be met.
+>>>
+>>> Seems like a bug to me, as the charging of __GFP_NOFAIL in
+>>> try_charge_memcg() should proceed to the force: part AFAICS and just go over
+>>> the limit.
+>>>
+>>> I was suspecting mem_cgroup_oom() a bit earlier return true, causing the
+>>> retry loop, due to GFP_NOFS. But it seems out_of_memory() should be
+>>> specifically proceeding for GFP_NOFS if it's memcg oom. But I might be
+>>> missing something else. Anyway we should know what exactly is going first.
+>>
+>> Correct. memcg oom code will invoke the memcg OOM killer for NOFS
+>> requests. See out_of_memory
+>>
+>>          /*
+>>           * The OOM killer does not compensate for IO-less reclaim.
+>>           * But mem_cgroup_oom() has to invoke the OOM killer even
+>>           * if it is a GFP_NOFS allocation.
+>>           */
+>>          if (!(oc->gfp_mask & __GFP_FS) && !is_memcg_oom(oc))
+>>                  return true;
+>>
+>> That means that there will be a victim killed, charges reclaimed and
+>> forward progress made. If there is no victim then the charging path will
+>> bail out and overcharge.
+>>
+>> Also the reclaim should have cond_rescheds in the reclaim path. If that
+>> is not sufficient it should be fixed rather than workaround.
+> 
+> Another question is, I only see this hang with larger folio (order 2 vs
+> the old order 0) when adding to the same address space.
+> 
+> Does the folio order has anything related to the problem or just a
+> higher order makes it more possible?
 
-With s/_test/_kunit (once the docs changes are sorted), this looks good.
+I didn't spot anything in the memcg charge path that would depend on the
+order directly, hm. Also what kernel version was showing these soft lockups?
 
-Reviewed-by: David Gow <davidgow@google.com>
+> And finally, even without the hang problem, does it make any sense to
+> skip all the possible memcg charge completely, either to reduce latency
+> or just to reduce GFP_NOFAIL usage, for those user inaccessible inodes?
 
-Cheers,
--- David
+Is it common to even use the filemap code for such metadata that can't be
+really mapped to userspace? How does it even interact with reclaim, do they
+become part of the page cache and are scanned by reclaim together with data
+that is mapped? How are the lru decisions handled if there are no references
+for PTE access bits. Or can they be even reclaimed, or because there may
+e.g. other open inodes pinning this metadata, the reclaim is impossible?
 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: David Gow <davidgow@google.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> ---
->  MAINTAINERS                      | 5 +++--
->  fs/binfmt_elf.c                  | 2 +-
->  fs/exec.c                        | 2 +-
->  fs/{ => tests}/binfmt_elf_test.c | 0
->  fs/{ => tests}/exec_test.c       | 0
->  5 files changed, 5 insertions(+), 4 deletions(-)
->  rename fs/{ => tests}/binfmt_elf_test.c (100%)
->  rename fs/{ => tests}/exec_test.c (100%)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8dfbe998f175..35474718c05b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8211,8 +8211,8 @@ S:        Maintained
->  F:     rust/kernel/net/phy.rs
->
->  EXEC & BINFMT API, ELF
-> +M:     Kees Cook <keescook@chromium.org>
->  R:     Eric Biederman <ebiederm@xmission.com>
-> -R:     Kees Cook <keescook@chromium.org>
->  L:     linux-mm@kvack.org
->  S:     Supported
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
-> @@ -8220,7 +8220,8 @@ F:        Documentation/userspace-api/ELF.rst
->  F:     fs/*binfmt_*.c
->  F:     fs/Kconfig.binfmt
->  F:     fs/exec.c
-> -F:     fs/exec_test.c
-> +F:     fs/tests/binfmt_*_test.c
-> +F:     fs/tests/exec_test.c
->  F:     include/linux/binfmts.h
->  F:     include/linux/elf.h
->  F:     include/uapi/linux/binfmts.h
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 40111451aa95..1a032811b304 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -2152,5 +2152,5 @@ core_initcall(init_elf_binfmt);
->  module_exit(exit_elf_binfmt);
->
->  #ifdef CONFIG_BINFMT_ELF_KUNIT_TEST
-> -#include "binfmt_elf_test.c"
-> +#include "tests/binfmt_elf_test.c"
->  #endif
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 5b580ff8d955..5a59063c50b1 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -2244,5 +2244,5 @@ fs_initcall(init_fs_exec_sysctls);
->  #endif /* CONFIG_SYSCTL */
->
->  #ifdef CONFIG_EXEC_KUNIT_TEST
-> -#include "exec_test.c"
-> +#include "tests/exec_test.c"
->  #endif
-> diff --git a/fs/binfmt_elf_test.c b/fs/tests/binfmt_elf_test.c
-> similarity index 100%
-> rename from fs/binfmt_elf_test.c
-> rename to fs/tests/binfmt_elf_test.c
-> diff --git a/fs/exec_test.c b/fs/tests/exec_test.c
-> similarity index 100%
-> rename from fs/exec_test.c
-> rename to fs/tests/exec_test.c
-> --
-> 2.34.1
->
+(sorry if the questions seem noob, I'm not that much familiar with the page
+cache side of mm)
+
+> Thanks,
+> Qu
+
 
