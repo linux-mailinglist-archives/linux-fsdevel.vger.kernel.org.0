@@ -1,153 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-23949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39209935124
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 19:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B2C935154
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 19:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFF3A1F22878
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 17:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C3C1F2243B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 17:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D899714533D;
-	Thu, 18 Jul 2024 17:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AED414535D;
+	Thu, 18 Jul 2024 17:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaiaxQFS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nj3znlN3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A56E144D10
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 17:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF79063A;
+	Thu, 18 Jul 2024 17:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721322863; cv=none; b=OvHPIhvKawa2B44Mv3KUROXRAX22Y7cELTJ2i+RMFHAJkHO0TNk0eYh/8KwOQkNTfpLGbgsddnp2lrZnJe5WzyGfekwFI/wBEPz0OAEjZURfBTFX47tIc7Qf4HSDKdueJ4FvKjvBSupC5ev/gyFmBIbLtg4dcuNjPbFtQFX+kjY=
+	t=1721324769; cv=none; b=cfZ6t0EcBdwlxFbbT0Qm7ptAmvro7Fkc+6n7ZaaoeWWI0QPJiXbR/Xfhg/VfPicTYjbdoDu4jhczprnZRONjCWPz5RSzW4VZHTNsH641aZAidwV3sFAHGZJ2UWY4F9vUpewCODCUEvVgJ2cdPiFfOpCv6FUeIp+z7thpU6d+0zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721322863; c=relaxed/simple;
-	bh=YKhP/xX+9ov930w1am1v6T07A1GWxB3Rfd+zdPCwd7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pBj2VptIIlnkOPCBidmVdsrWZ7U1qD43UMGWEwLjSLsUHijQC3vyJhoLhsNErQub6vRWiWcA/7P3klQ7JobO2Dk3OPu4NedN7v+ZUTFtJfSu/acuIWmgsjrHb7KAX0B4KtKev5UyEvBUpINr6u4oIqAYn/KcaIGcd6ahtxNDvM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gaiaxQFS; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eeb1ba040aso16080731fa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 10:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721322860; x=1721927660; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yfNpQDRrtdR4dXwaL8kqT+LoC/XknaKv70zK13zN35U=;
-        b=gaiaxQFSjSWk3gY0ECV4eeQlap9z7wc5w24ahQxfLFOMBCGhCAQAVjtZ4X8T+shNw3
-         4PDRPui3f8qJDl3j0tHJDh3xDVfP3DDBMcq3IFLu0erF2U1FfcEzf9R7QEVBxuWv1O8/
-         7Kb+PqiyusjLUPm8e+PJUeBbsWgrmNK00NO8dWa89Vz36949LQ0pOBQPZ82kMX7W/FeS
-         EJ2R6cdOgXytAlIpAMkwhbFxNA7XEEAhdXQwNHcZJ/wCo+mWvetFBtJ3jKGk45lTZKP7
-         GSHyzqh8RAOdQ0mXWbY5oQbGeQl/zPNY/WCvckskXpu6qaE4LDWkrLG9Sfpx/xXjskoY
-         6WGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721322860; x=1721927660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yfNpQDRrtdR4dXwaL8kqT+LoC/XknaKv70zK13zN35U=;
-        b=oCK+NoyMj8iM5/nccwZ73FTp86KY/OcZ8YZsuGpN367FrhRUP7u04y9tCXu2Dom+le
-         4e8LWAXG3Z5Az9hsN266UMnitf9aWa5QKxOjicXbQkedsP59kyfThuC85QTO7cWl19Rm
-         F7LwCXAuKDS049cZTJrmwbXa5+ehn1Bb9FeG9WHxKm+rhZJP2tE+bf4/v+VyvIg/CDGo
-         OBQs3ChqMwg7mzNr6CjWajZ9I6v8xu4+/BOe9mKG1irOI6gk/rFwyaVE/DKHuGG5Ygir
-         AtdCFKwnwYOuU/uxwfh4BumWGRWgLlahhZHx8+0a4FPhw/vnQ8j3rtesKR4fXNK2MyKj
-         HtXg==
-X-Gm-Message-State: AOJu0YxJr6E0hgRIcXr4k4jo+ZBXU5HBIMyB83uLB5Fdv5Z+gLgu19KZ
-	BBQn4MnrFe6qhJyPsYzlrZoXjWvt2wvxu6KMF/HFANF1ZJFrvfvb6jCeZIp9Rke6MQi2PXdHbus
-	KkwZQOcaw8rq7hj8h/qEJbVZmb8LVChKO
-X-Google-Smtp-Source: AGHT+IGFh+OFTuOD6F/KxHTkXXoqcFVeoA02k36qmHUY8QHgIxyHpNHYG3wkUFjbb5k0NU9qrqPZ+aIx4TyOFs8lAs8=
-X-Received: by 2002:a05:651c:1052:b0:2ee:4f93:ae25 with SMTP id
- 38308e7fff4ca-2ef05ca1e53mr21433201fa.29.1721322859404; Thu, 18 Jul 2024
- 10:14:19 -0700 (PDT)
+	s=arc-20240116; t=1721324769; c=relaxed/simple;
+	bh=FZDUnmMzTHtLAXj0DJWdawnws+McoB3ISL8JL9ZoqBk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qM27iiwuFL6eOh4Ppp77dx9kThvTtHW7cOPhb1CoWsT77V8PcNbzYLaITDTwZC9sVpTfN6OMkByUGZQECfsyWSRlnby0j8WVl9HLPPQaO9cJ7aOHmA+GecW7s1UCpXTBLNYIujv0W7R/9wWWeyC8Xtbn5hYYJWq4EpQzKc5A9YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nj3znlN3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE0DC116B1;
+	Thu, 18 Jul 2024 17:46:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721324768;
+	bh=FZDUnmMzTHtLAXj0DJWdawnws+McoB3ISL8JL9ZoqBk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Nj3znlN3AMkMwF5rQdgZV+lF2XeAWxMV018XmeSJrCra/irgx1ml+Ts4wL5XHFGDn
+	 IZh75axRhZ4XO6r2EZ01HBw3E/RtbbPg//PY+ffUvFRO+9k5nNT9qxsslUst13h7TL
+	 GmP8K8LH1nvt6u/Lu9zly1GlcC3zTczZ5TGX1mzqjStBvM8EsD1CUjLXM2EkIu0WSp
+	 p24PS0vIPCjL9cUeyWvwiBYToHOD/Tp/XnKFpLuSHvSrFvsEK8jnTYwToZlJ956nlx
+	 ZvDOSyDkG6jG4nE9B+pAPwZMm4Oluk9q8a7KadRnGtFIBm5IltlobcQxQTOf3jtr4T
+	 LGX0zyysQAIqg==
+From: SeongJae Park <sj@kernel.org>
+To: David Gow <davidgow@google.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] execve: Move KUnit tests to tests/ subdirectory
+Date: Thu, 18 Jul 2024 10:46:01 -0700
+Message-Id: <20240718174601.64851-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <CABVgOSmKwPq7JEpHfS6sbOwsR0B-DBDk_JP-ZD9s9ZizvpUjbQ@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717154716.237943-1-willy@infradead.org> <20240717154716.237943-6-willy@infradead.org>
-In-Reply-To: <20240717154716.237943-6-willy@infradead.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Fri, 19 Jul 2024 02:14:02 +0900
-Message-ID: <CAKFNMons45kMv80MEM554Jmn8Ep-2b=RFFKZ=1HzyU07tTOAqw@mail.gmail.com>
-Subject: Re: [PATCH 05/23] nilfs2: Use a folio in nilfs_recover_dsync_blocks()
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 18, 2024 at 12:54=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
->
-> Replaces four hidden calls to compound_head() with one.
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/nilfs2/recovery.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
+On Thu, 18 Jul 2024 14:04:14 +0800 David Gow <davidgow@google.com> wrote:
 
-I've checked this patch (and the big-bang patches as well, mainly for
-the nilfs2 related parts).
-The conversion was straightforward and I didn't find any issues.
+> On Thu, 18 Jul 2024 at 05:22, Kees Cook <kees@kernel.org> wrote:
+> >
+> > Move the exec KUnit tests into a separate directory to avoid polluting
+> > the local directory namespace. Additionally update MAINTAINERS for the
+> > new files and mark myself as Maintainer.
+> >
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> > I'll toss this into -next and send it to Linus before -rc1 closes.
+> > ---
+> 
+> With s/_test/_kunit (once the docs changes are sorted), this looks good.
 
-Feel free to add
+I have no strong opinion, but I agree to David's rationale [1] on preferrence
+of _kunit overall, and would prefer having a consistent and simple rule.
 
-Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+[1] https://lore.kernel.org/CABVgOS=B29PcKyhVXtTk47k_BhjSaoxL8eF15fVhzty_0syeSQ@mail.gmail.com
 
-to this.  Thanks.
+> 
+> Reviewed-by: David Gow <davidgow@google.com>
 
-Ryusuke Konishi
+Reviewed-by: SeongJae Park <sj@kernel.org>
 
-> diff --git a/fs/nilfs2/recovery.c b/fs/nilfs2/recovery.c
-> index b638dc06df2f..15653701b1c8 100644
-> --- a/fs/nilfs2/recovery.c
-> +++ b/fs/nilfs2/recovery.c
-> @@ -499,6 +499,7 @@ static int nilfs_recover_dsync_blocks(struct the_nilf=
-s *nilfs,
->         struct nilfs_recovery_block *rb, *n;
->         unsigned int blocksize =3D nilfs->ns_blocksize;
->         struct page *page;
-> +       struct folio *folio;
->         loff_t pos;
->         int err =3D 0, err2 =3D 0;
->
-> @@ -522,6 +523,7 @@ static int nilfs_recover_dsync_blocks(struct the_nilf=
-s *nilfs,
->                         goto failed_inode;
->                 }
->
-> +               folio =3D page_folio(page);
->                 err =3D nilfs_recovery_copy_block(nilfs, rb, pos, page);
->                 if (unlikely(err))
->                         goto failed_page;
-> @@ -533,15 +535,15 @@ static int nilfs_recover_dsync_blocks(struct the_ni=
-lfs *nilfs,
->                 block_write_end(NULL, inode->i_mapping, pos, blocksize,
->                                 blocksize, page, NULL);
->
-> -               unlock_page(page);
-> -               put_page(page);
-> +               folio_unlock(folio);
-> +               folio_put(folio);
->
->                 (*nr_salvaged_blocks)++;
->                 goto next;
->
->   failed_page:
-> -               unlock_page(page);
-> -               put_page(page);
-> +               folio_unlock(folio);
-> +               folio_put(folio);
->
->   failed_inode:
->                 nilfs_warn(sb,
-> --
-> 2.43.0
->
->
+
+Thanks,
+SJ
+
+[...]
 
