@@ -1,132 +1,238 @@
-Return-Path: <linux-fsdevel+bounces-23956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36EB093525B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 22:10:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5037A93527A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 22:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65F0F1C212BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 20:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64D52820E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 20:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E1D145B16;
-	Thu, 18 Jul 2024 20:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A352D145B1B;
+	Thu, 18 Jul 2024 20:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qkeue+D2"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CwQXc5aC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3TFas+F3";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D+ZeWRmY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SZjz36ZN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499021448C9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 20:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E97143C54;
+	Thu, 18 Jul 2024 20:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721333417; cv=none; b=Dgh1Wab80OGrxq+Cll7EJMowsZlW6Celd9Ovuzniax0bjHt0Jpn0+R5RGoP/gy3BS5n/DiCE7onErt7yvUnb/2So8zd7un4f6oSLs2ph3OXwOYzCX+O0iZT36qT1FYgNe9Hi1PwwrUJRV3uiHNVcvL0bhcmiAMIUxyUH+9BW15s=
+	t=1721335218; cv=none; b=nSUf6qOUU3XXBl10vMFARiCX+pgcs3rKc9IK8a6BzAw9ieFC7WE123yFcKFllGzg4CW5gKjo3y0pUhgh3Le8R6V2JSTUbkZOkkswearH7IV5hJQHmJeSe1r97R1XdidKdnfD0ikuxiahzknjHWvUwqVz41QXw8L4iUsQV4zobMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721333417; c=relaxed/simple;
-	bh=ugaWR8JGHdj3yGFXvMOXzTdia9uN1CQ7x8IvBCYoT6A=;
-	h=From:In-Reply-To:References:To:cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=XxLxQiRMaJ5tTys0c/QAZO/YB6EM7J+loI0dcenBSAbCs0z164uSX8fk6J74VlhTMchd+uLm+Thsvz7xzcQvrmHDSu47KxpdMh4i5C6J5y6/eXCLAwVCvC1sbkadLh2BvpFA3yrnEIvg/sghrlHeldIDFUTOR8tsDEFPLT9thJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qkeue+D2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721333415;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MhNrypD9tKCB76J+bi+54vbqRuUJuHcgPMKesV6Oa6c=;
-	b=Qkeue+D27tShVskSw0L0sk7aEhZP+lelKQsPfRa5n7eXafX40NteRyhs6Wf/97fWG96Yrq
-	2NSdqwfbvL26j5d2VAyBua3+Nea4RYKsAAHAjFydC8AKc99WSCpnljTd8cG6A788esH6DJ
-	0WPfy6VxJzM5fnrKtP993B4iEBnOhfE=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-107-l6JER5hFOUaXuakXyqR36A-1; Thu,
- 18 Jul 2024 16:10:10 -0400
-X-MC-Unique: l6JER5hFOUaXuakXyqR36A-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	s=arc-20240116; t=1721335218; c=relaxed/simple;
+	bh=QivVf0yOJ4j9FWAgm7rYE+HpDApzpZa/B0WyGW+kKVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uadJofNR12Ax0UtQpwbICwFMxJeJp61KRuBI+b5NN2cAiFhMXeAj3S0Sm2MAnXi7CfSiF707KV2KU1N4tFHds+ozAFefJq8hvKHY4MnzUrdoOJC5rtqjKRrqbLVYrDbmFuYLiHe3OnAsMYBVRihnhCnWiZ/c8wRe4XIVSXNSua4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CwQXc5aC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3TFas+F3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D+ZeWRmY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SZjz36ZN; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 97A42195420D;
-	Thu, 18 Jul 2024 20:10:09 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7E4971955F40;
-	Thu, 18 Jul 2024 20:10:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1410685.1721333252@warthog.procyon.org.uk>
-References: <1410685.1721333252@warthog.procyon.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com,
-    Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] netfs: Rename CONFIG_FSCACHE_DEBUG to CONFIG_NETFS_DEBUG
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1CBF721C30;
+	Thu, 18 Jul 2024 20:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721335214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=82lPptaZbhKCSi1vGqHZHbBmsVDaEQXXJeWHUMbZyII=;
+	b=CwQXc5aCeoEaYQ9XiULmidgV2142YcqVZ9csbDWRUutHH7tD3OAUGQyh+jhIQgzDOUBEoF
+	lxGCvZFEX85wpFr3/efKpQI1Cw4DisSsp6daMWlyY0ZYPSg1aAruRa8F2WEytwvOOkkKC7
+	EytZwa3TUPmMT10DgR3LNJneCjQ5lj4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721335214;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=82lPptaZbhKCSi1vGqHZHbBmsVDaEQXXJeWHUMbZyII=;
+	b=3TFas+F39BetoT5zCbnbLDWnqBIbRPJrvIgleTBKnuJ8AZvYY+/f2W5HRhL1cwiP9CFtCn
+	D+D04Wp34SXawuDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721335213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=82lPptaZbhKCSi1vGqHZHbBmsVDaEQXXJeWHUMbZyII=;
+	b=D+ZeWRmY6Nvf5CYCPoS5o8+ViBZUaYym0unMu6LBP00Pmh3VKqDnWHrItVDHzFeCpitu3p
+	OPYr5hj1Evns5FDXH48v0E784RbEj114RVJmi9lbG8Xu/rX5seec8567B04f0u/i0QYcNY
+	KKeQysFGXYDRtaJsz8u7XSrF9zdyrlI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721335213;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=82lPptaZbhKCSi1vGqHZHbBmsVDaEQXXJeWHUMbZyII=;
+	b=SZjz36ZNJV4zkutOwS5CEa1Ko8dUwk6/eeFMjePho18EQq0Z+2ZR/fxdETFLeixqWwXVen
+	oHv25rZDX9DI9sAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 10684136F7;
+	Thu, 18 Jul 2024 20:40:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id G1r3A619mWbAfwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 18 Jul 2024 20:40:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A61ABA0987; Thu, 18 Jul 2024 22:40:12 +0200 (CEST)
+Date: Thu, 18 Jul 2024 22:40:12 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Jakub Kicinski <kuba@kernel.org>, v9fs@lists.linux.dev
+Subject: Re: [PATCH] vfs: handle __wait_on_freeing_inode() and evict() race
+Message-ID: <20240718204012.x4ysnjmvjh5v2zf3@quack3>
+References: <20240718151838.611807-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 18 Jul 2024 21:10:06 +0100
-Message-ID: <1410796.1721333406@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718151838.611807-1-mjguzik@gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email,codewreck.org:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
+On Thu 18-07-24 17:18:37, Mateusz Guzik wrote:
+> Lockless hash lookup can find and lock the inode after it gets the
+> I_FREEING flag set, at which point it blocks waiting for teardown in
+> evict() to finish.
+> 
+> However, the flag is still set even after evict() wakes up all waiters.
+> 
+> This results in a race where if the inode lock is taken late enough, it
+> can happen after both hash removal and wakeups, meaning there is nobody
+> to wake the racing thread up.
+> 
+> This worked prior to RCU-based lookup because the entire ordeal was
+> synchronized with the inode hash lock.
+> 
+> Since unhashing requires the inode lock, we can safely check whether it
+> happened after acquiring it.
+> 
+> Link: https://lore.kernel.org/v9fs/20240717102458.649b60be@kernel.org/
+> Reported-by: Dominique Martinet <asmadeus@codewreck.org>
+> Fixes: 7180f8d91fcb ("vfs: add rcu-based find_inode variants for iget ops")
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-CONFIG_FSCACHE_DEBUG should have been renamed to CONFIG_NETFS_DEBUG, so do
-that now.
+Looks good. Feel free to add:
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
-cc: Christian Brauner <brauner@kernel.org>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/Kconfig |   18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/fs/netfs/Kconfig b/fs/netfs/Kconfig
-index bec805e0c44c..1b78e8b65ebc 100644
---- a/fs/netfs/Kconfig
-+++ b/fs/netfs/Kconfig
-@@ -22,6 +22,14 @@ config NETFS_STATS
- 	  between CPUs.  On the other hand, the stats are very useful for
- 	  debugging purposes.  Saying 'Y' here is recommended.
-=20
-+config NETFS_DEBUG
-+	bool "Enable dynamic debugging netfslib and FS-Cache"
-+	depends on NETFS
-+	help
-+	  This permits debugging to be dynamically enabled in the local caching
-+	  management module.  If this is set, the debugging output may be
-+	  enabled by setting bits in /sys/module/netfs/parameters/debug.
-+
- config FSCACHE
- 	bool "General filesystem local caching manager"
- 	depends on NETFS_SUPPORT
-@@ -50,13 +58,3 @@ config FSCACHE_STATS
- 	  debugging purposes.  Saying 'Y' here is recommended.
-=20
- 	  See Documentation/filesystems/caching/fscache.rst for more information.
--
--config FSCACHE_DEBUG
--	bool "Debug FS-Cache"
--	depends on FSCACHE
--	help
--	  This permits debugging to be dynamically enabled in the local caching
--	  management module.  If this is set, the debugging output may be
--	  enabled by setting bits in /sys/modules/fscache/parameter/debug.
--
--	  See Documentation/filesystems/caching/fscache.rst for more information.
+								Honza
 
+> ---
+> 
+> The 'fixes' tag is contingent on testing by someone else. :>
+> 
+> I have 0 experience with 9pfs and the docs failed me vs getting it
+> running on libvirt+qemu, so I gave up on trying to test it myself.
+> 
+> Dominique, you offered to narrow things down here, assuming the offer
+> stands I would appreciate if you got this sorted out :)
+> 
+> Even if the patch in the current form does not go in, it should be
+> sufficient to confirm the problem diagnosis is correct.
+> 
+> A debug printk can be added to validate the problematic condition was
+> encountered, for example:
+> 
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 54e0be80be14..8f61fad0bc69 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -2308,6 +2308,7 @@ static void __wait_on_freeing_inode(struct inode *inode, bool locked)
+> >         if (unlikely(inode_unhashed(inode))) {
+> >                 BUG_ON(locked);
+> >                 spin_unlock(&inode->i_lock);
+> > +               printk(KERN_EMERG "%s: got unhashed inode %p\n", __func__, inode);
+> >                 return;
+> >         }
+> 
+> 
+>  fs/inode.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index f356fe2ec2b6..54e0be80be14 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -676,6 +676,16 @@ static void evict(struct inode *inode)
+>  
+>  	remove_inode_hash(inode);
+>  
+> +	/*
+> +	 * Wake up waiters in __wait_on_freeing_inode().
+> +	 *
+> +	 * Lockless hash lookup may end up finding the inode before we removed
+> +	 * it above, but only lock it *after* we are done with the wakeup below.
+> +	 * In this case the potential waiter cannot safely block.
+> +	 *
+> +	 * The inode being unhashed after the call to remove_inode_hash() is
+> +	 * used as an indicator whether blocking on it is safe.
+> +	 */
+>  	spin_lock(&inode->i_lock);
+>  	wake_up_bit(&inode->i_state, __I_NEW);
+>  	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
+> @@ -2291,6 +2301,16 @@ static void __wait_on_freeing_inode(struct inode *inode, bool locked)
+>  {
+>  	wait_queue_head_t *wq;
+>  	DEFINE_WAIT_BIT(wait, &inode->i_state, __I_NEW);
+> +
+> +	/*
+> +	 * Handle racing against evict(), see that routine for more details.
+> +	 */
+> +	if (unlikely(inode_unhashed(inode))) {
+> +		BUG_ON(locked);
+> +		spin_unlock(&inode->i_lock);
+> +		return;
+> +	}
+> +
+>  	wq = bit_waitqueue(&inode->i_state, __I_NEW);
+>  	prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
+>  	spin_unlock(&inode->i_lock);
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
