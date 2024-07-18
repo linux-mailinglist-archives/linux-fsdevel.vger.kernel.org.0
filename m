@@ -1,65 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-23950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B2C935154
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 19:46:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FD7935189
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 20:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C3C1F2243B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 17:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C268728327C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 18:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AED414535D;
-	Thu, 18 Jul 2024 17:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BBB61459E8;
+	Thu, 18 Jul 2024 18:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nj3znlN3"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GmwrRovv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF79063A;
-	Thu, 18 Jul 2024 17:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CB6433BB;
+	Thu, 18 Jul 2024 18:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721324769; cv=none; b=cfZ6t0EcBdwlxFbbT0Qm7ptAmvro7Fkc+6n7ZaaoeWWI0QPJiXbR/Xfhg/VfPicTYjbdoDu4jhczprnZRONjCWPz5RSzW4VZHTNsH641aZAidwV3sFAHGZJ2UWY4F9vUpewCODCUEvVgJ2cdPiFfOpCv6FUeIp+z7thpU6d+0zg=
+	t=1721327281; cv=none; b=JzbkXYYew2FHK6UglNxV5/0W7Y+56rjr+3ibixu++sX1NwwslxEjGQFcjucht3N01QDMBEYR8CZRRaTC0onIWGY24tBwlNianlXUq5DmbgF8NJ4yfiddQxFI555DSiFqZ9sY7SEEvaKXb0uV/WikENsaH+ZBb2R6KlOl8rL2Jm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721324769; c=relaxed/simple;
-	bh=FZDUnmMzTHtLAXj0DJWdawnws+McoB3ISL8JL9ZoqBk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qM27iiwuFL6eOh4Ppp77dx9kThvTtHW7cOPhb1CoWsT77V8PcNbzYLaITDTwZC9sVpTfN6OMkByUGZQECfsyWSRlnby0j8WVl9HLPPQaO9cJ7aOHmA+GecW7s1UCpXTBLNYIujv0W7R/9wWWeyC8Xtbn5hYYJWq4EpQzKc5A9YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nj3znlN3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE0DC116B1;
-	Thu, 18 Jul 2024 17:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721324768;
-	bh=FZDUnmMzTHtLAXj0DJWdawnws+McoB3ISL8JL9ZoqBk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Nj3znlN3AMkMwF5rQdgZV+lF2XeAWxMV018XmeSJrCra/irgx1ml+Ts4wL5XHFGDn
-	 IZh75axRhZ4XO6r2EZ01HBw3E/RtbbPg//PY+ffUvFRO+9k5nNT9qxsslUst13h7TL
-	 GmP8K8LH1nvt6u/Lu9zly1GlcC3zTczZ5TGX1mzqjStBvM8EsD1CUjLXM2EkIu0WSp
-	 p24PS0vIPCjL9cUeyWvwiBYToHOD/Tp/XnKFpLuSHvSrFvsEK8jnTYwToZlJ956nlx
-	 ZvDOSyDkG6jG4nE9B+pAPwZMm4Oluk9q8a7KadRnGtFIBm5IltlobcQxQTOf3jtr4T
-	 LGX0zyysQAIqg==
-From: SeongJae Park <sj@kernel.org>
-To: David Gow <davidgow@google.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	s=arc-20240116; t=1721327281; c=relaxed/simple;
+	bh=hZyF2n4zvDbkE8xmXmYsyVlC6BuY3EzE/k2+UQxUxSE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lv1UmjuHMACNaO8lQbtPRXPkvJRpOD047kut4S5N7oG/3QDs2PZPclPOqHlb5qxv/xr/JmwtFij7dzTTakv32ZRmfkOCzPUEqjb7bL3Qj1+YPmqCCmkGQbyTHOh+XU5//7i1HznabL2J51vsQn5h1M1L8BxChkjB36ZytvQU7OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GmwrRovv; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from xps-8930.corp.microsoft.com (unknown [131.107.160.48])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8D90920B7165;
+	Thu, 18 Jul 2024 11:27:53 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8D90920B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1721327273;
+	bh=tWFTp6/TaiSj5baOvog3g4oCKccEeVRvAgRU79qP/5M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GmwrRovv9Ub2VtlQ6cT3eB7EocZLsWfF5u0DytxzSG0N5d4wVIjA+z3VhnjrNgoOl
+	 CW3DPk1VsVokqT8nua+nXyNlcOeuZdeHu4GeEIxlgjKuPgXl3DfUw9uOInyOKUEj77
+	 nZqcPck2AAxC70h9ZPh9aMUCrM1z3R78nHnzRmq4=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: akpm@linux-foundation.org,
+	apais@linux.microsoft.com,
+	ardb@kernel.org,
+	bigeasy@linutronix.de,
+	brauner@kernel.org,
+	ebiederm@xmission.com,
+	jack@suse.cz,
+	keescook@chromium.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] execve: Move KUnit tests to tests/ subdirectory
-Date: Thu, 18 Jul 2024 10:46:01 -0700
-Message-Id: <20240718174601.64851-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <CABVgOSmKwPq7JEpHfS6sbOwsR0B-DBDk_JP-ZD9s9ZizvpUjbQ@mail.gmail.com>
-References: 
+	linux-mm@kvack.org,
+	nagvijay@microsoft.com,
+	oleg@redhat.com,
+	tandersen@netflix.com,
+	vincent.whitchurch@axis.com,
+	viro@zeniv.linux.org.uk
+Cc: apais@microsoft.com,
+	benhill@microsoft.com,
+	ssengar@microsoft.com,
+	sunilmut@microsoft.com,
+	vdso@hexbites.dev
+Subject: [PATCH v3 0/2] binfmt_elf, coredump: Log the reason of the failed core dumps
+Date: Thu, 18 Jul 2024 11:27:23 -0700
+Message-ID: <20240718182743.1959160-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,34 +73,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Jul 2024 14:04:14 +0800 David Gow <davidgow@google.com> wrote:
+A powerful way to diagnose crashes is to analyze the core dump produced upon
+the failure. Missing or malformed core dump files hinder these investigations.
+I'd like to propose changes that add logging as to why the kernel would not
+finish writing out the core dump file.
 
-> On Thu, 18 Jul 2024 at 05:22, Kees Cook <kees@kernel.org> wrote:
-> >
-> > Move the exec KUnit tests into a separate directory to avoid polluting
-> > the local directory namespace. Additionally update MAINTAINERS for the
-> > new files and mark myself as Maintainer.
-> >
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > I'll toss this into -next and send it to Linus before -rc1 closes.
-> > ---
-> 
-> With s/_test/_kunit (once the docs changes are sorted), this looks good.
+To help in diagnosing the user mode helper not writing out the entire coredump
+contents, the changes also log short statistics on the dump collection. I'd
+advocate for keeping this at the info level on these grounds.
 
-I have no strong opinion, but I agree to David's rationale [1] on preferrence
-of _kunit overall, and would prefer having a consistent and simple rule.
+For validation, I built the kernel and a simple user space to exercize the new
+code.
 
-[1] https://lore.kernel.org/CABVgOS=B29PcKyhVXtTk47k_BhjSaoxL8eF15fVhzty_0syeSQ@mail.gmail.com
+[V3]
+  - Standartized the existing logging to report TGID and comm consistently
+  - Fixed compiler warnings for the 32-bit systems (used %zd in the format strings)
 
-> 
-> Reviewed-by: David Gow <davidgow@google.com>
+[V2]
+  https://lore.kernel.org/all/20240712215223.605363-1-romank@linux.microsoft.com/
+  - Used _ratelimited to avoid spamming the system log
+  - Added comm and PID to the log messages
+  - Added logging to the failure paths in dump_interrupted, dump_skip, and dump_emit
+  - Fixed compiler warnings produced when CONFIG_COREDUMP is disabled
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+[V1]
+  https://lore.kernel.org/all/20240617234133.1167523-1-romank@linux.microsoft.com/
+
+Roman Kisel (2):
+  coredump: Standartize and fix logging
+  binfmt_elf, coredump: Log the reason of the failed core dumps
+
+ fs/binfmt_elf.c          |  48 +++++++++----
+ fs/coredump.c            | 150 +++++++++++++++++++++++++++------------
+ include/linux/coredump.h |  30 +++++++-
+ kernel/signal.c          |  21 +++++-
+ 4 files changed, 188 insertions(+), 61 deletions(-)
 
 
-Thanks,
-SJ
+base-commit: 831bcbcead6668ebf20b64fdb27518f1362ace3a
+-- 
+2.45.2
 
-[...]
 
