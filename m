@@ -1,194 +1,471 @@
-Return-Path: <linux-fsdevel+bounces-23946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FECB9350C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 18:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6245935100
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 18:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87DE91F22012
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 16:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572571F225BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 16:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B236144D3E;
-	Thu, 18 Jul 2024 16:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52931145332;
+	Thu, 18 Jul 2024 16:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bUm0sJBM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqPzbuZJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1003144D09
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 16:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FCE144D13
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 16:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721320789; cv=none; b=H03PyBAFKCQRZcN/4q+SxtoCITLG0TFYM15/trVCg/eLX2wZ2sPCWUx6t6Nf5x6Us+7YpfoTg6oinYsbXuPmUVgGzspyQ7QqfG8uZoxiiyp3HDmpDPjJ7CAL+EvsoiRrHnj4p8EMfnoEUOn7/qbRTX2rbVptx/pHbd8W026uetU=
+	t=1721321942; cv=none; b=Lu7BlcjBRNqmfWmg6vgCsW+l0rVWAp0ZiVs6+YgFBGhbMviSkXgF31Ryd1Q0VdrmApfrfeV7VH/rgxjWMa/IUAibQMIb1R+jR7nYJkHWVxrqrLpfAAQ8G8RCfIIDg7x0lGYqrDzzhF5/vcmyEOc0pSrmpA11FUEY4JCTn4F+Jfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721320789; c=relaxed/simple;
-	bh=EX6DHg0HYzT6jM5lxBj4cnz+dPlc+x116RSdrsqJwvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mIG20J/pkrGY3yWnIMwRV85+kZR+rYGxUVzcVBfWlj+1/LI3MwVwgoq18dHaQtYwttzIjaXsCWFfRbhG5EBPmx4nPvuVCBlw0ASSAFcNEMIlSva1d8W/4BADVqICvXY02xxGLVU5kV9wsAs1ULO6pgId3jYMAJ4W7lXfA/gvu9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bUm0sJBM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721320786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mro/2ws3n8wrTIO9avQDlSTjl3ysAKkxCf8Y1r35j9Y=;
-	b=bUm0sJBMtoHXu1yi8r30T7uNRTifTfR1YTyHm60CgMndMAmECzZ+2t1IXvenP5ACBTlvU2
-	FnYYnSTh0RY4vK/jE00SOPLLXCtDG/d4bYQiSr3/etXMOU61e2v9MKyKzzJtX+Kv42JHll
-	liBfj4JAq4Sv6olqbbkqS+HQturmj9U=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-48-8ghOjeQWOHyfXsWUkYnmhA-1; Thu,
- 18 Jul 2024 12:39:41 -0400
-X-MC-Unique: 8ghOjeQWOHyfXsWUkYnmhA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0BF2E1955D58;
-	Thu, 18 Jul 2024 16:39:40 +0000 (UTC)
-Received: from bfoster (unknown [10.22.16.39])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B0C2A3000189;
-	Thu, 18 Jul 2024 16:39:38 +0000 (UTC)
-Date: Thu, 18 Jul 2024 12:40:20 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH RFC 0/4] iomap: zero dirty folios over unwritten mappings
- on zero range
-Message-ID: <ZplFdASEm1LPtVD-@bfoster>
-References: <20240718130212.23905-1-bfoster@redhat.com>
- <20240718153613.GC2099026@perftesting>
- <20240718160202.GL612460@frogsfrogsfrogs>
+	s=arc-20240116; t=1721321942; c=relaxed/simple;
+	bh=PdMSDXoPBpsSuX1k8mSgAGCqQe1QKjqLHe2ZIgc5ixM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nfd+4Gs6mvEAFulhWxe+mwRWRRv/sCBYW2EjvIJH4aiPSjkKWufeKs2F8P1oKewNvm0tXDgacwxoEk9GxlKj+bEBudY/05DHzwcdYoCUIpC/LOv9YA0uiVljAAbHsB/zaBb8DWhQpZLUqOABWMowDzSwNlr7MW3y+IzNYBjvSBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YqPzbuZJ; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44aa1464dc1so2691691cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 09:59:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721321940; x=1721926740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3ZcwSIp370dxOuW1fXePm+f1ZJ6S1wtSTZAvg6qwDAM=;
+        b=YqPzbuZJ8YQWeswkEBry9WhLK5Gput5LeXdFU8v3dHOOT6OxCIBfjW6sv5aUJFkMHU
+         SKypZz1V9xoM1TtBjngjfr1afZ5qWMtTiUk3Zu6nTQJesuCTCyqR1ia/8TN0R0JkC/E1
+         5gnRGjW+8iCC9X1WTmtd32BDszyBUohmX23gESWfP4PjEyDK6U68ZbQAOBPpBQeg9dAW
+         Y+MQIJxRMPzE5zHue2IhqWVIvOK1CD6ziOKc6p4Q3dJvohcVqJXd5dtH5HNKTTv/QpmQ
+         Tu/JOqGoRNHNsh5SXpBiwhLL2oPtB6n2kcNJgfAa1OmFg4/dhCYyyCdivCdYnnDcgVoe
+         i52Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721321940; x=1721926740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3ZcwSIp370dxOuW1fXePm+f1ZJ6S1wtSTZAvg6qwDAM=;
+        b=blVMly/xNyeT/9PUouqRx3R85BvVm+6JEJLqihvRK9yc0gKMI1S3jd+V6n1GReWNfq
+         jZOt0cOGiqaK6g34+iaOml+rxBN1jC1nv3s0ALOTt/KGQ1PVyssnTvMmBC3M4SXTFU6Y
+         0P254d8gyhqGpn+hiY/On6XS3cMucZzc+cF7bUx9/niXrE3ZbDW0AHTSu0x/5nkL7elm
+         wC3bVtK+4M8hXQXwmmKESpk/D9G9vmZv0QPoBUnFF8Y9lgqGUYh9b7DXrShk9phNzLbj
+         wPDpJx3DCNyXaBAbujZ+115dbLJuYQZd9AtHC4eDmLHjDcJquffgHnkg9E2SzFgaiId1
+         yppQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxepmMWzlheo/WErxELIdvTeCla0N2jtMN2mNcn6f1fC+aKRXPIvMEGzHJ17pPWynaOSreRemuK4pC//IaYmQDZMyZYhP1mA86fCpZaw==
+X-Gm-Message-State: AOJu0Yw3ypCFabpZEXNYZnBezK6FW7dw51HjO+3qLDk6nXb5InambJNB
+	YTd31+pdo76z08sinBgKC9Hxg0CNddcMlIgScx+NLz9JbrRJsYdQ4n+bM6a/7sbrhQws6kC9E82
+	NDnoHtfPPjbdzMce0K28v4CfDXic=
+X-Google-Smtp-Source: AGHT+IHi+HWnGfLHtgzIXqWDRyCqN01dAQU6imKVgDC7kKw1kCKFRcOMRbMmjR7RZUUuvzGQuDbV1HQqtrbS9dtJtnA=
+X-Received: by 2002:ac8:5ac7:0:b0:447:e393:f301 with SMTP id
+ d75a77b69052e-44f969b32b9mr18309161cf.32.1721321939608; Thu, 18 Jul 2024
+ 09:58:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240718160202.GL612460@frogsfrogsfrogs>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20240717213458.1613347-1-joannelkoong@gmail.com> <20240718144430.GA2099026@perftesting>
+In-Reply-To: <20240718144430.GA2099026@perftesting>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 18 Jul 2024 09:58:48 -0700
+Message-ID: <CAJnrk1YgUkkA2Pnb22WvCJrEpotkE3ioQr0F+b5gXrSzs7LUfg@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add optional kernel-enforced timeout for fuse requests
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, osandov@osandov.com, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 09:02:02AM -0700, Darrick J. Wong wrote:
-> On Thu, Jul 18, 2024 at 11:36:13AM -0400, Josef Bacik wrote:
-> > On Thu, Jul 18, 2024 at 09:02:08AM -0400, Brian Foster wrote:
-> > > Hi all,
-> > > 
-> > > This is a stab at fixing the iomap zero range problem where it doesn't
-> > > correctly handle the case of an unwritten mapping with dirty pagecache.
-> > > The gist is that we scan the mapping for dirty cache, zero any
-> > > already-dirty folios via buffered writes as normal, but then otherwise
-> > > skip clean ranges once we have a chance to validate those ranges against
-> > > races with writeback or reclaim.
-> > > 
-> > > This is somewhat simplistic in terms of how it scans, but that is
-> > > intentional based on the existing use cases for zero range. From poking
-> > > around a bit, my current sense is that there isn't any user of zero
-> > > range that would ever expect to see more than a single dirty folio. Most
-> > > callers either straddle the EOF folio or flush in higher level code for
-> > > presumably (fs) context specific reasons. If somebody has an example to
-> > > the contrary, please let me know because I'd love to be able to use it
-> > > for testing.
-> > > 
-> > > The caveat to this approach is that it only works for filesystems that
-> > > implement folio_ops->iomap_valid(), which is currently just XFS. GFS2
-> > > doesn't use ->iomap_valid() and does call zero range, but AFAICT it
-> > > doesn't actually export unwritten mappings so I suspect this is not a
-> > > problem. My understanding is that ext4 iomap support is in progress, but
-> > > I've not yet dug into what that looks like (though I suspect similar to
-> > > XFS). The concern is mainly that this leaves a landmine for fs that
-> > > might grow support for unwritten mappings && zero range but not
-> > > ->iomap_valid(). We'd likely never know zero range was broken for such
-> > > fs until stale data exposure problems start to materialize.
-> > > 
-> > > I considered adding a fallback to just add a flush at the top of
-> > > iomap_zero_range() so at least all future users would be correct, but I
-> > > wanted to gate that on the absence of ->iomap_valid() and folio_ops
-> > > isn't provided until iomap_begin() time. I suppose another way around
-> > > that could be to add a flags param to iomap_zero_range() where the
-> > > caller could explicitly opt out of a flush, but that's still kind of
-> > > ugly. I dunno, maybe better than nothing..?
-> 
-> Or move ->iomap_valid to the iomap ops structure.  It's a mapping
-> predicate, and has nothing to do with folios.
-> 
+On Thu, Jul 18, 2024 at 7:44=E2=80=AFAM Josef Bacik <josef@toxicpanda.com> =
+wrote:
+>
+> On Wed, Jul 17, 2024 at 02:34:58PM -0700, Joanne Koong wrote:
+...
+> > ---
+> >  fs/fuse/dev.c    | 177 ++++++++++++++++++++++++++++++++++++++++++++---
+> >  fs/fuse/fuse_i.h |  12 ++++
+> >  fs/fuse/inode.c  |   7 ++
+> >  3 files changed, 188 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index 9eb191b5c4de..7dd7b244951b 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> > @@ -331,6 +331,69 @@ void fuse_request_end(struct fuse_req *req)
+> >  }
+> >  EXPORT_SYMBOL_GPL(fuse_request_end);
+> >
+> > +/* fuse_request_end for requests that timeout */
+> > +static void fuse_request_timeout(struct fuse_req *req)
+> > +{
+> > +     struct fuse_conn *fc =3D req->fm->fc;
+> > +     struct fuse_iqueue *fiq =3D &fc->iq;
+> > +     struct fuse_pqueue *fpq;
+> > +
+> > +     spin_lock(&fiq->lock);
+> > +     if (!fiq->connected) {
+> > +             spin_unlock(&fiq->lock);
+> > +             /*
+> > +              * Connection is being aborted. The abort will release
+> > +              * the refcount on the request
+> > +              */
+> > +             req->out.h.error =3D -ECONNABORTED;
+> > +             return;
+> > +     }
+> > +     if (test_bit(FR_PENDING, &req->flags)) {
+> > +             /* Request is not yet in userspace, bail out */
+> > +             list_del(&req->list);
+> > +             spin_unlock(&fiq->lock);
+> > +             req->out.h.error =3D -ETIME;
+> > +             __fuse_put_request(req);
+>
+> Why is this safe?  We could be the last holder of the reference on this r=
+equest
+> correct?  The only places using __fuse_put_request() would be where we ar=
+e in a
+> path where the caller already holds a reference on the request.  Since th=
+is is
+> async it may not be the case right?
+>
+> If it is safe then it's just confusing and warrants a comment.
+>
 
-Good idea. That might be an option.
+There is always a refcount still held on the request by
+fuse_simple_request() when this is called. I'll add a comment about
+this.
+I also just noticed that I use fuse_put_request()  at the end of this
+function, I'll change that to __fuse_put_request() as well.
 
-> > > So IMO, this raises the question of whether this is just unnecessarily
-> > > overcomplicated. The KISS principle implies that it would also be
-> > > perfectly fine to do a conditional "flush and stale" in zero range
-> > > whenever we see the combination of an unwritten mapping and dirty
-> > > pagecache (the latter checked before or during ->iomap_begin()). That's
-> > > simple to implement and AFAICT would work/perform adequately and
-> > > generically for all filesystems. I have one or two prototypes of this
-> > > sort of thing if folks want to see it as an alternative.
-> 
-> I wouldn't mind seeing such a prototype.  Start by hoisting the
-> filemap_write_and_wait_range call to iomap, then adjust it only to do
-> that if there's dirty pagecache + unwritten mappings?  Then get more
-> complicated from there, and we can decide if we want the increasing
-> levels of trickiness.
-> 
+> > +             return;
+> > +     }
+> > +     if (test_bit(FR_INTERRUPTED, &req->flags))
+> > +             list_del_init(&req->intr_entry);
+> > +
+> > +     fpq =3D req->fpq;
+> > +     spin_unlock(&fiq->lock);
+> > +
+> > +     if (fpq) {
+> > +             spin_lock(&fpq->lock);
+> > +             if (!fpq->connected && (!test_bit(FR_PRIVATE, &req->flags=
+))) {
+>                                        ^^
+>
+> You don't need the extra () there.
+>
+> > +                     spin_unlock(&fpq->lock);
+> > +                     /*
+> > +                      * Connection is being aborted. The abort will re=
+lease
+> > +                      * the refcount on the request
+> > +                      */
+> > +                     req->out.h.error =3D -ECONNABORTED;
+> > +                     return;
+> > +             }
+> > +             if (req->out.h.error =3D=3D -ESTALE) {
+> > +                     /*
+> > +                      * Device is being released. The fuse_dev_release=
+ call
+> > +                      * will drop the refcount on the request
+> > +                      */
+> > +                     spin_unlock(&fpq->lock);
+> > +                     return;
+> > +             }
+> > +             if (!test_bit(FR_PRIVATE, &req->flags))
+> > +                     list_del_init(&req->list);
+> > +             spin_unlock(&fpq->lock);
+> > +     }
+> > +
+> > +     req->out.h.error =3D -ETIME;
+> > +
+> > +     if (test_bit(FR_ASYNC, &req->flags))
+> > +             req->args->end(req->fm, req->args, req->out.h.error);
+> > +
+> > +     fuse_put_request(req);
+> > +}
+>
+> Just a general styling thing, we have two different states for requests h=
+ere,
+> PENDING and !PENDING correct?  I think it may be better to do something l=
+ike
+>
+> if (test_bit(FR_PENDING, &req->flags))
+>         timeout_pending_req();
+> else
+>         timeout_inflight_req();
+>
+> and then in timeout_pending_req() you do
+>
+> spin_lock(&fiq->lock);
+> if (!test_bit(FR_PENDING, &req->flags)) {
+>         spin_unlock(&fiq_lock);
+>         timeout_inflight_req();
+>         return;
+> }
+>
+> This will keep the two different state cleanup functions separate and a l=
+ittle
+> cleaner to grok.
+>
+Thanks for the suggestion, I will make this change for v2.
+> > +
+> >  static int queue_interrupt(struct fuse_req *req)
+> >  {
+> >       struct fuse_iqueue *fiq =3D &req->fm->fc->iq;
+> > @@ -361,6 +424,62 @@ static int queue_interrupt(struct fuse_req *req)
+> >       return 0;
+> >  }
+> >
+> > +enum wait_type {
+> > +     WAIT_TYPE_INTERRUPTIBLE,
+> > +     WAIT_TYPE_KILLABLE,
+> > +     WAIT_TYPE_NONINTERRUPTIBLE,
+> > +};
+> > +
+> > +static int fuse_wait_event_interruptible_timeout(struct fuse_req *req)
+> > +{
+> > +     struct fuse_conn *fc =3D req->fm->fc;
+> > +
+> > +     return wait_event_interruptible_timeout(req->waitq,
+> > +                                             test_bit(FR_FINISHED,
+> > +                                                      &req->flags),
+> > +                                             fc->daemon_timeout);
+> > +}
+> > +ALLOW_ERROR_INJECTION(fuse_wait_event_interruptible_timeout, ERRNO);
+> > +
+> > +static int wait_answer_timeout(struct fuse_req *req, enum wait_type ty=
+pe)
+> > +{
+> > +     struct fuse_conn *fc =3D req->fm->fc;
+> > +     int err;
+> > +
+> > +wait_answer_start:
+> > +     if (type =3D=3D WAIT_TYPE_INTERRUPTIBLE)
+> > +             err =3D fuse_wait_event_interruptible_timeout(req);
+> > +     else if (type =3D=3D WAIT_TYPE_KILLABLE)
+> > +             err =3D wait_event_killable_timeout(req->waitq,
+> > +                                               test_bit(FR_FINISHED, &=
+req->flags),
+> > +                                               fc->daemon_timeout);
+> > +
+> > +     else if (type =3D=3D WAIT_TYPE_NONINTERRUPTIBLE)
+> > +             err =3D wait_event_timeout(req->waitq, test_bit(FR_FINISH=
+ED, &req->flags),
+> > +                                      fc->daemon_timeout);
+> > +     else
+> > +             WARN_ON(1);
+>
+> This will leak some random value for err, so initialize err to something =
+that
+> will be dealt with, like -EINVAL;
+>
+> > +
+> > +     /* request was answered */
+> > +     if (err > 0)
+> > +             return 0;
+> > +
+> > +     /* request was not answered in time */
+> > +     if (err =3D=3D 0) {
+> > +             if (test_and_set_bit(FR_PROCESSING, &req->flags))
+> > +                     /* request reply is being processed by kernel rig=
+ht now.
+> > +                      * we should wait for the answer.
+> > +                      */
+>
+> Format for multiline comments is
+>
+> /*
+>  * blah
+>  * blah
+>  */
+>
+> and since this is a 1 line if statement put it above the if statement.
+>
+> > +                     goto wait_answer_start;
+> > +
+> > +             fuse_request_timeout(req);
+> > +             return 0;
+> > +     }
+> > +
+> > +     /* else request was interrupted */
+> > +     return err;
+> > +}
+> > +
+> >  static void request_wait_answer(struct fuse_req *req)
+> >  {
+> >       struct fuse_conn *fc =3D req->fm->fc;
+> > @@ -369,8 +488,11 @@ static void request_wait_answer(struct fuse_req *r=
+eq)
+> >
+> >       if (!fc->no_interrupt) {
+> >               /* Any signal may interrupt this */
+> > -             err =3D wait_event_interruptible(req->waitq,
+> > -                                     test_bit(FR_FINISHED, &req->flags=
+));
+> > +             if (fc->daemon_timeout)
+> > +                     err =3D wait_answer_timeout(req, WAIT_TYPE_INTERR=
+UPTIBLE);
+> > +             else
+> > +                     err =3D wait_event_interruptible(req->waitq,
+> > +                                                    test_bit(FR_FINISH=
+ED, &req->flags));
+> >               if (!err)
+> >                       return;
+> >
+> > @@ -383,8 +505,11 @@ static void request_wait_answer(struct fuse_req *r=
+eq)
+> >
+> >       if (!test_bit(FR_FORCE, &req->flags)) {
+> >               /* Only fatal signals may interrupt this */
+> > -             err =3D wait_event_killable(req->waitq,
+> > -                                     test_bit(FR_FINISHED, &req->flags=
+));
+> > +             if (fc->daemon_timeout)
+> > +                     err =3D wait_answer_timeout(req, WAIT_TYPE_KILLAB=
+LE);
+> > +             else
+> > +                     err =3D wait_event_killable(req->waitq,
+> > +                                               test_bit(FR_FINISHED, &=
+req->flags));
+> >               if (!err)
+> >                       return;
+> >
+> > @@ -404,7 +529,10 @@ static void request_wait_answer(struct fuse_req *r=
+eq)
+> >        * Either request is already in userspace, or it was forced.
+> >        * Wait it out.
+> >        */
+> > -     wait_event(req->waitq, test_bit(FR_FINISHED, &req->flags));
+> > +     if (fc->daemon_timeout)
+> > +             wait_answer_timeout(req, WAIT_TYPE_NONINTERRUPTIBLE);
+> > +     else
+> > +             wait_event(req->waitq, test_bit(FR_FINISHED, &req->flags)=
+);
+> >  }
+> >
+> >  static void __fuse_request_send(struct fuse_req *req)
+> > @@ -1268,6 +1396,9 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *=
+fud, struct file *file,
+> >       req =3D list_entry(fiq->pending.next, struct fuse_req, list);
+> >       clear_bit(FR_PENDING, &req->flags);
+> >       list_del_init(&req->list);
+> > +     /* Acquire a reference since fuse_request_timeout may also be exe=
+cuting  */
+> > +     __fuse_get_request(req);
+> > +     req->fpq =3D fpq;
+> >       spin_unlock(&fiq->lock);
+> >
+>
+> There's a race here with completion.  If we timeout a request right here,=
+ we can
+> end up sending that same request below.
 
-Yeah, exactly. Start with an unconditional flush at the top of
-iomap_zero_range() (which perhaps also serves as a -stable fix), then
-replace it with an unconditional dirty cache check and a conditional
-flush/stale down in zero_iter() (for the dirty+unwritten case). With
-that false positives from the cache check are less of an issue because
-the only consequence is basically just a spurious flush. From there, the
-revalidation approach could be an optional further optimization to avoid
-the flush entirely, but we'll have to see if it's worth the complexity.
+I don't think there's any way around this unless we take the fpq lock
+while we do the fuse_copy stuff, because even if we check the
+FR_PROCESSING bit, the timeout handler could start running after the
+fpq lock is released when we do the fuse_copy calls.
 
-I have various experimental patches around that pretty much do the
-conditional flush thing. I just have to form it into a presentable
-series.
+In my point of view, I don't think this race matters. We could have
+this situation happen on a regular timed-out request. For example, we
+send out a request to userspace and if the server takes too long to
+reply, the request is cancelled/invalidated in the kernel but the
+server will still see the request anyways.
 
-> > I think this is the better approach, otherwise there's another behavior that's
-> > gated behind having a callback that other filesystems may not know about and
-> > thus have a gap.
-> 
-> <nod> I think filesystems currently only need to supply an ->iomap_valid
-> function for pagecache operations because those are the only ones where
-> we have to maintain consistency between something that isn't locked when
-> we get the mapping, and the mapping not being locked when we lock that
-> first thing.  I suspect they also only need to supply it if they support
-> unwritten extents.
-> 
-> From what I can tell, the rest (e.g. directio/FIEMAP) don't care because
-> callers get to manage concurrency.
-> 
-> *But* in general it makes sense to me that any iomap operation ought to
-> be able to revalidate a mapping at any time.
-> 
-> > Additionally do you have a test for this stale data exposure?  I think no matter
-> > what the solution it would be good to have a test for this so that we can make
-> > sure we're all doing the correct thing with zero range.  Thanks,
-> 
-> I was also curious about this.   IIRC we have some tests for the
-> validiting checking itself, but I don't recall if there's a specific
-> regression test for the eofblock clearing.
-> 
+WDYT?
 
-Err.. yeah. I have some random test sequences around that reproduce some
-of these issues. I'll form them into an fstest to go along with this.
+>
+> You are going to need to check
+>
+> test_bit(FR_PROCESSING)
+>
+> after you take the fpq->lock just below here to make sure you didn't race=
+ with
+> the timeout handler and time the request out already.
+>
+> >       args =3D req->args;
+> > @@ -1280,6 +1411,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *=
+fud, struct file *file,
+> >               if (args->opcode =3D=3D FUSE_SETXATTR)
+> >                       req->out.h.error =3D -E2BIG;
+> >               fuse_request_end(req);
+> > +             fuse_put_request(req);
+> >               goto restart;
+> >       }
+> >       spin_lock(&fpq->lock);
+> > @@ -1316,13 +1448,23 @@ static ssize_t fuse_dev_do_read(struct fuse_dev=
+ *fud, struct file *file,
+> >       }
+> >       hash =3D fuse_req_hash(req->in.h.unique);
+> >       list_move_tail(&req->list, &fpq->processing[hash]);
+> > -     __fuse_get_request(req);
+> >       set_bit(FR_SENT, &req->flags);
+> >       spin_unlock(&fpq->lock);
+> >       /* matches barrier in request_wait_answer() */
+> >       smp_mb__after_atomic();
+> >       if (test_bit(FR_INTERRUPTED, &req->flags))
+> >               queue_interrupt(req);
+> > +
+> > +     /* Check if request timed out */
+> > +     if (test_bit(FR_PROCESSING, &req->flags)) {
+> > +             spin_lock(&fpq->lock);
+> > +             if (!test_bit(FR_PRIVATE, &req->flags))
+> > +                     list_del_init(&req->list);
+> > +             spin_unlock(&fpq->lock);
+> > +             fuse_put_request(req);
+> > +             return -ETIME;
+> > +     }
+>
+> This isn't quite right, we could have FR_PROCESSING set because we comple=
+ted the
+> request before we got here.  If you put a schedule_timeout(HZ); right abo=
+ve this
+> you could easily see where a request gets completed by userspace, but now=
+ you've
+> fimed it out.
 
-Thank you both for the feedback.
+Oh I see, you're talking about the race where a request is replied to
+immediately after the fuse_copy calls and before this gets called.
+Then when we get here, we can't differentiate between whether
+FR_PROCESSING was set by the timeout handler or the reply handler.
 
-Brian
+I think the simplest way around this is to check if the FR_SENT flag
+was cleared (the reply handler clears it while holding the fpq lock
+where FR_PROCESSING gets set and the timeout handler doesn't clear
+it), then return -ETIME if it wasn't and 0 if it was.
 
-> --D
-> 
-> > Josef
-> > 
-> 
+I'll add this into v2.
 
+>
+> Additionally if we have FR_PROCESSING set from the timeout, shouldn't thi=
+s
+> cleanup have been done already?  I don't understand why we need to handle=
+ this
+> here, we should just return and whoever is waiting on the request will ge=
+t the
+> error.
+
+In most cases yes, but there is a race where the timeout handler may
+finish executing before the logic in dev_do_read that adds the request
+to the fpq lists. If this happens, the freed request will remain on
+the list.
+
+i think this race currently exists  prior to these changes as well -
+in the case you mentioned above where the request may have been
+completed right after the fuse_copy calls in dev_do_read  and before
+dev_do_read moves the request to the fpq lists. We would get into the
+same situation with a freed request still on the list.
+
+
+Thanks,
+Joanne
+>
+> Thanks,
+>
+> Josef
 
