@@ -1,280 +1,459 @@
-Return-Path: <linux-fsdevel+bounces-23926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F50934F30
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 16:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01219934F4B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 16:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C228284335
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 14:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B045B28432B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 14:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AEB1422D1;
-	Thu, 18 Jul 2024 14:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4961B1422CA;
+	Thu, 18 Jul 2024 14:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="ZhOVqh3k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438986F312;
-	Thu, 18 Jul 2024 14:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5156A12F5A1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 14:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721313433; cv=none; b=NffpU84/cm7HhHjpn7ubbCTGem4VclLYFG3WiCbXBOtzQBy4BeRgE4QfEIcBzLMTWhyJy2Wy8ImTJgLVfmlOuGLrzuZ13OO41stCaJ93G6CrvfLxivpf763tIkgQjtgX4E9Tcr6DHD4Q+Ojuchofknt5bKTvI7PCyzMY5G4SzDQ=
+	t=1721313875; cv=none; b=jPTvMDNYQMcROfvHwJa4K/WZjGufWGOKi8Z6RPTjMk7979D9KSRL6fl9oQ8WVJczEOCtMsvqCq11biWVgO1HVIPZDq6TIEYDdNglriMIn/cy8e/jessmLu0AVimB0TPpvOgwFJBbhxDnkKXDKg4LlLSlD2ieyhdrKuxJny1oOUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721313433; c=relaxed/simple;
-	bh=KG+r9+pdBxGhUyc5bKGSm19ff+3ISaJmIXIzLEDRzxg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VFx0NvDLz/M0qhLp2+u0gJlGuBqOa6BRd6OgQR6zYotMOgqYmUUgm9rleXkOVcQbyBw4c59pGbp3b5JtOZRqb6/zugYT/NzVnRDjgSIH9mTq6Lh36PKL9pJKe1qVEf2HbKGda9tEJ0hbKI4Z3UlZjXUcvuLJBpEsch/7asMD1Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4WPvYC0VmNz9v7Hk;
-	Thu, 18 Jul 2024 21:58:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 1531314061D;
-	Thu, 18 Jul 2024 22:17:15 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAnJC7RI5lm88lbAA--.56617S2;
-	Thu, 18 Jul 2024 15:17:14 +0100 (CET)
-Message-ID: <ae769bbfe51a2c1c270739a91defc0dfbd5b8b5a.camel@huaweicloud.com>
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, Kees Cook
-	 <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>,  Linus Torvalds <torvalds@linux-foundation.org>, Paul
- Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,  Alejandro
- Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton
- <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>,
- Christian Heimes <christian@python.org>, Dmitry Vyukov
- <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, Eric Chiang
- <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, Florian Weimer
- <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, James
- Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,  Jann Horn
- <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet
- <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, Lakshmi
- Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi
- <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T .
- Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski
- <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, Matthew
- Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, Mimi
- Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet
- <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, Shuah
- Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Steve
- Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, Thibaut
- Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>, Yin
- Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
- linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
- linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Date: Thu, 18 Jul 2024 16:16:45 +0200
-In-Reply-To: <20240706.eng1ieSh0wa5@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
-	 <20240704190137.696169-3-mic@digikod.net> <202407041711.B7CD16B2@keescook>
-	 <20240705.IeTheequ7Ooj@digikod.net> <202407051425.32AF9D2@keescook>
-	 <20240706.eng1ieSh0wa5@digikod.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1721313875; c=relaxed/simple;
+	bh=DGvXyYV3ua+SqArf5bR3exBTqFl4attv9HXBDfclRQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUjsKdKMAMUrr+ynOnLR/A//CejujIi3iNOFKNyexcdkRjNxJawvcu8NermWZuwbEzhttFxlZBJgyIGTPAtNNogclOP6hYf7m6lY3Mt5rEqXxa9jdboRO5oZcHDVBFGpmSTd0ummpQgCGrAYOZgUngMOFE7nCqpiB1OlRE+iNUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=ZhOVqh3k; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-65f8626780aso8199127b3.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 07:44:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1721313872; x=1721918672; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MKhFNPjJUpLjnLuRbSgJY4qyi1z8LEzoBAkugdLbcKw=;
+        b=ZhOVqh3klttsfvnC2opSOXBxkzN489dwvsjo0o2pKbqZthcjeGWsRaWRSqp7kCppOZ
+         jRiJEoksfDSNsd3mEQWCPhPYYV/hABv8whw0wc2KKNqb2QMbN45E+iY4vxrP0XuMnKR8
+         5q6jLcRmdkRENRvzzazLbevjZOJhVo11H3nS8vaMz+upZNryc+IfB+dpAWUi9LRsvFtC
+         SqKTFq8OOGvyhxbysmN0BIVjS8J5BNtnBnV8L66w2SyL+lbpPcpxsMSS/N3W1Zdzkc+E
+         xNt3Nf4TAYNrn/wk974Kk46d6OfL1+/tE8COImsgDUuojtfq2fvcboIszWjji/AoeNmj
+         fZUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721313872; x=1721918672;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MKhFNPjJUpLjnLuRbSgJY4qyi1z8LEzoBAkugdLbcKw=;
+        b=OSrYx1MGCgtq9iuKdmRdmu6VDIBvc0g3k49ZyWEv4jlq4d6UxwYdT32f1kYevsaVVi
+         6lC13woCHrT2BQscNeIrVwcoOr//wDf8s5oUKRRrqbbLwLY+y6yj5XA7ZREZcDFnqxu4
+         v8+Eyp/QDbGge4yP1zKM7hJbp//wxRYQFOno7eZjL+CIMSWNdn1QjCPlRo+v0D7lppjv
+         zyoBP/duPzNQcbU65rvVu+rkaEIKKIi0apGrdr8TIqsp37fCbejxNhmNRSApUSzz3S5P
+         oy26P9x47tnZ+wLCF0gZ5Pu5YwWR8RvKslTQ44+Lcm8h2sBC99owRKbZ8f6knMW6ej0p
+         C1+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUCiHCpAHCmuX9wH/RQSJnoH1fQ6qRVO9yRXFUgNS4Tl0QMTs/bRtdd8+kdxZofpkPXOcmk3iU4UVz05cTR4Mn/tTsG5obQGKeEXi1SqQ==
+X-Gm-Message-State: AOJu0YyUNUEx+hWX1Cgb4cF4AtMqqwRyJ3DE30DsYAeog/ITsS/tF+X+
+	r7Wla8GcRLQgoKlOewI5IKAxxjI6x2hcJvCgmfPH+1hb1NfA4gbIUQx+Ze2hpy0=
+X-Google-Smtp-Source: AGHT+IHKmwQjv2YanE2T9boGh0Yh605UeDRW731VbpfrcsHrn3pq/Ma/XFTr4SW2Njd2fIBK2u7YBw==
+X-Received: by 2002:a05:690c:3203:b0:646:7b75:5c2c with SMTP id 00721157ae682-66601cce447mr32485437b3.16.1721313872074;
+        Thu, 18 Jul 2024 07:44:32 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-66601ad9f79sm3502717b3.27.2024.07.18.07.44.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 07:44:31 -0700 (PDT)
+Date: Thu, 18 Jul 2024 10:44:30 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, osandov@osandov.com,
+	kernel-team@meta.com
+Subject: Re: [PATCH] fuse: add optional kernel-enforced timeout for fuse
+ requests
+Message-ID: <20240718144430.GA2099026@perftesting>
+References: <20240717213458.1613347-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAnJC7RI5lm88lbAA--.56617S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFyUAw4rKrWDKF4UtF15twb_yoWxWw1fpa
-	yrAayUKF4DGF10y3Z2k3W8Xa4SkrWxJF1UWr9Iqryruwn09F1IgrW3tr4Y9FykursY93W2
-	vrW2v343Wa4DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
-	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUVZ2-UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBGaYenQJ5wAAsQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717213458.1613347-1-joannelkoong@gmail.com>
 
-On Sat, 2024-07-06 at 16:56 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, Jul 05, 2024 at 02:44:03PM -0700, Kees Cook wrote:
-> > On Fri, Jul 05, 2024 at 07:54:16PM +0200, Micka=C3=ABl Sala=C3=BCn wrot=
-e:
-> > > On Thu, Jul 04, 2024 at 05:18:04PM -0700, Kees Cook wrote:
-> > > > On Thu, Jul 04, 2024 at 09:01:34PM +0200, Micka=C3=ABl Sala=C3=BCn =
-wrote:
-> > > > > Such a secure environment can be achieved with an appropriate acc=
-ess
-> > > > > control policy (e.g. mount's noexec option, file access rights, L=
-SM
-> > > > > configuration) and an enlighten ld.so checking that libraries are
-> > > > > allowed for execution e.g., to protect against illegitimate use o=
-f
-> > > > > LD_PRELOAD.
-> > > > >=20
-> > > > > Scripts may need some changes to deal with untrusted data (e.g. s=
-tdin,
-> > > > > environment variables), but that is outside the scope of the kern=
-el.
-> > > >=20
-> > > > If the threat model includes an attacker sitting at a shell prompt,=
- we
-> > > > need to be very careful about how process perform enforcement. E.g.=
- even
-> > > > on a locked down system, if an attacker has access to LD_PRELOAD or=
- a
-> > >=20
-> > > LD_PRELOAD should be OK once ld.so will be patched to check the
-> > > libraries.  We can still imagine a debug library used to bypass secur=
-ity
-> > > checks, but in this case the issue would be that this library is
-> > > executable in the first place.
-> >=20
-> > Ah yes, that's fair: the shell would discover the malicious library
-> > while using AT_CHECK during resolution of the LD_PRELOAD.
->=20
-> That's the idea, but it would be checked by ld.so, not the shell.
->=20
-> >=20
-> > > > seccomp wrapper (which you both mention here), it would be possible=
- to
-> > > > run commands where the resulting process is tricked into thinking i=
-t
-> > > > doesn't have the bits set.
-> > >=20
-> > > As explained in the UAPI comments, all parent processes need to be
-> > > trusted.  This meeans that their code is trusted, their seccomp filte=
-rs
-> > > are trusted, and that they are patched, if needed, to check file
-> > > executability.
-> >=20
-> > But we have launchers that apply arbitrary seccomp policy, e.g. minijai=
-l
-> > on Chrome OS, or even systemd on regular distros. In theory, this shoul=
-d
-> > be handled via other ACLs.
->=20
-> Processes running with untrusted seccomp filter should be considered
-> untrusted.  It would then make sense for these seccomp filters/programs
-> to be considered executable code, and then for minijail and systemd to
-> check them with AT_CHECK (according to the securebits policy).
->=20
-> >=20
-> > > > But this would be exactly true for calling execveat(): LD_PRELOAD o=
-r
-> > > > seccomp policy could have it just return 0.
-> > >=20
-> > > If an attacker is allowed/able to load an arbitrary seccomp filter on=
- a
-> > > process, we cannot trust this process.
-> > >=20
-> > > >=20
-> > > > While I like AT_CHECK, I do wonder if it's better to do the checks =
-via
-> > > > open(), as was originally designed with O_MAYEXEC. Because then
-> > > > enforcement is gated by the kernel -- the process does not get a fi=
-le
-> > > > descriptor _at all_, no matter what LD_PRELOAD or seccomp tricks it=
- into
-> > > > doing.
-> > >=20
-> > > Being able to check a path name or a file descriptor (with the same
-> > > syscall) is more flexible and cover more use cases.
-> >=20
-> > If flexibility costs us reliability, I think that flexibility is not
-> > a benefit.
->=20
-> Well, it's a matter of letting user space do what they think is best,
-> and I think there are legitimate and safe uses of path names, even if I
-> agree that this should not be used in most use cases.  Would we want
-> faccessat2(2) to only take file descriptor as argument and not file
-> path? I don't think so but I'd defer to the VFS maintainers.
->=20
-> Christian, Al, Linus?
->=20
-> Steve, could you share a use case with file paths?
->=20
-> >=20
-> > > The execveat(2)
-> > > interface, including current and future flags, is dedicated to file
-> > > execution.  I then think that using execveat(2) for this kind of chec=
-k
-> > > makes more sense, and will easily evolve with this syscall.
-> >=20
-> > Yeah, I do recognize that is feels much more natural, but I remain
-> > unhappy about how difficult it will become to audit a system for safety
-> > when the check is strictly per-process opt-in, and not enforced by the
-> > kernel for a given process tree. But, I think this may have always been
-> > a fiction in my mind. :)
->=20
-> Hmm, I'm not sure to follow. Securebits are inherited, so process tree.
-> And we need the parent processes to be trusted anyway.
->=20
-> >=20
-> > > > And this thinking also applies to faccessat() too: if a process can=
- be
-> > > > tricked into thinking the access check passed, it'll happily interp=
-ret
-> > > > whatever. :( But not being able to open the fd _at all_ when O_MAYE=
-XEC
-> > > > is being checked seems substantially safer to me...
-> > >=20
-> > > If attackers can filter execveat(2), they can also filter open(2) and
-> > > any other syscalls.  In all cases, that would mean an issue in the
-> > > security policy.
-> >=20
-> > Hm, as in, make a separate call to open(2) without O_MAYEXEC, and pass
-> > that fd back to the filtered open(2) that did have O_MAYEXEC. Yes, true=
-.
-> >=20
-> > I guess it does become morally equivalent.
-> >=20
-> > Okay. Well, let me ask about usability. Right now, a process will need
-> > to do:
-> >=20
-> > - should I use AT_CHECK? (check secbit)
-> > - if yes: perform execveat(AT_CHECK)
-> >=20
-> > Why not leave the secbit test up to the kernel, and then the program ca=
-n
-> > just unconditionally call execveat(AT_CHECK)?
->=20
-> That was kind of the approach of the previous patch series and Linus
-> wanted the new interface to follow the kernel semantic.  Enforcing this
-> kind of restriction will always be the duty of user space anyway, so I
-> think it's simpler (i.e. no mix of policy definition, access check, and
-> policy enforcement, but a standalone execveat feature), more flexible,
-> and it fully delegates the policy enforcement to user space instead of
-> trying to enforce some part in the kernel which would only give the
-> illusion of security/policy enforcement.
+On Wed, Jul 17, 2024 at 02:34:58PM -0700, Joanne Koong wrote:
+> There are situations where fuse servers can become unresponsive or take
+> too long to reply to a request. Currently there is no upper bound on
+> how long a request may take, which may be frustrating to users who get
+> stuck waiting for a request to complete.
+> 
+> This commit adds a daemon timeout option (in seconds) for fuse requests.
+> If the timeout elapses before the request is replied to, the request will
+> fail with -ETIME.
+> 
+> There are 3 possibilities for a request that times out:
+> a) The request times out before the request has been sent to userspace
+> b) The request times out after the request has been sent to userspace
+> and before it receives a reply from the server
+> c) The request times out after the request has been sent to userspace
+> and the server replies while the kernel is timing out the request
+> 
+> Proper synchronization must be added to ensure that the request is
+> handled correctly in all of these cases. To this effect, there is a new
+> FR_PROCESSING bit added to the request flags, which is set atomically by
+> either the timeout handler (see fuse_request_timeout()) which is invoked
+> after the request timeout elapses or set by the request reply handler
+> (see dev_do_write()), whichever gets there first.
+> 
+> If the reply handler and the timeout handler are executing simultaneously
+> and the reply handler sets FR_PROCESSING before the timeout handler, then
+> the request is re-queued onto the waitqueue and the kernel will process the
+> reply as though the timeout did not elapse. If the timeout handler sets
+> FR_PROCESSING before the reply handler, then the request will fail with
+> -ETIME and the request will be cleaned up.
+> 
+> Proper acquires on the request reference must be added to ensure that the
+> timeout handler does not drop the last refcount on the request while the
+> reply handler (dev_do_write()) or forwarder handler (dev_do_read()) is
+> still accessing the request. (By "forwarder handler", this is the handler
+> that forwards the request to userspace).
+> 
+> Currently, this is the lifecycle of the request refcount:
+> 
+> Request is created:
+> fuse_simple_request -> allocates request, sets refcount to 1
+>   __fuse_request_send -> acquires refcount
+>     queues request and waits for reply...
+> fuse_simple_request -> drops refcount
+> 
+> Request is freed:
+> fuse_dev_do_write
+>   fuse_request_end -> drops refcount on request
+> 
+> The timeout handler drops the refcount on the request so that the
+> request is properly cleaned up if a reply is never received. Because of
+> this, both the forwarder handler and the reply handler must acquire a refcount
+> on the request while it accesses the request, and the refcount must be
+> acquired while the lock of the list the request is on is held.
+> 
+> There is a potential race if the request is being forwarded to
+> userspace while the timeout handler is executing (eg FR_PENDING has
+> already been cleared but dev_do_read() hasn't finished executing). This
+> is a problem because this would free the request but the request has not
+> been removed from the fpq list it's on. To prevent this, dev_do_read()
+> must check FR_PROCESSING at the end of its logic and remove the request
+> from the fpq list if the timeout occurred.
+> 
+> There is also the case where the connection may be aborted or the
+> device may be released while the timeout handler is running. To protect
+> against an extra refcount drop on the request, the timeout handler
+> checks the connected state of the list and lets the abort handler drop the
+> last reference if the abort is running simultaneously. Similarly, the
+> timeout handler also needs to check if the req->out.h.error is set to
+> -ESTALE, which indicates that the device release is cleaning up the
+> request. In both these cases, the timeout handler will return without
+> dropping the refcount.
+> 
+> Please also note that background requests are not applicable for timeouts
+> since they are asynchronous.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  fs/fuse/dev.c    | 177 ++++++++++++++++++++++++++++++++++++++++++++---
+>  fs/fuse/fuse_i.h |  12 ++++
+>  fs/fuse/inode.c  |   7 ++
+>  3 files changed, 188 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 9eb191b5c4de..7dd7b244951b 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -331,6 +331,69 @@ void fuse_request_end(struct fuse_req *req)
+>  }
+>  EXPORT_SYMBOL_GPL(fuse_request_end);
+>  
+> +/* fuse_request_end for requests that timeout */
+> +static void fuse_request_timeout(struct fuse_req *req)
+> +{
+> +	struct fuse_conn *fc = req->fm->fc;
+> +	struct fuse_iqueue *fiq = &fc->iq;
+> +	struct fuse_pqueue *fpq;
+> +
+> +	spin_lock(&fiq->lock);
+> +	if (!fiq->connected) {
+> +		spin_unlock(&fiq->lock);
+> +		/*
+> +		 * Connection is being aborted. The abort will release
+> +		 * the refcount on the request
+> +		 */
+> +		req->out.h.error = -ECONNABORTED;
+> +		return;
+> +	}
+> +	if (test_bit(FR_PENDING, &req->flags)) {
+> +		/* Request is not yet in userspace, bail out */
+> +		list_del(&req->list);
+> +		spin_unlock(&fiq->lock);
+> +		req->out.h.error = -ETIME;
+> +		__fuse_put_request(req);
 
-A problem could be that from IMA perspective there is no indication on
-whether the interpreter executed or not execveat(). Sure, we can detect
-that the binary supports it, but if the enforcement was
-enabled/disabled that it is not recorded.
+Why is this safe?  We could be the last holder of the reference on this request
+correct?  The only places using __fuse_put_request() would be where we are in a
+path where the caller already holds a reference on the request.  Since this is
+async it may not be the case right?
 
-Maybe, setting the process flags should be influenced by the kernel,
-for example not allowing changes and enforcing when there is an IMA
-policy loaded requiring to measure/appraise scripts.
+If it is safe then it's just confusing and warrants a comment.
 
-Roberto
+> +		return;
+> +	}
+> +	if (test_bit(FR_INTERRUPTED, &req->flags))
+> +		list_del_init(&req->intr_entry);
+> +
+> +	fpq = req->fpq;
+> +	spin_unlock(&fiq->lock);
+> +
+> +	if (fpq) {
+> +		spin_lock(&fpq->lock);
+> +		if (!fpq->connected && (!test_bit(FR_PRIVATE, &req->flags))) {
+                                       ^^
 
-> >=20
-> > Though perhaps the issue here is that an execveat() EINVAL doesn't
-> > tell the program if AT_CHECK is unimplemented or if something else
-> > went wrong, and the secbit prctl() will give the correct signal about
-> > AT_CHECK availability?
->=20
-> This kind of check could indeed help to identify the issue.
+You don't need the extra () there.
 
+> +			spin_unlock(&fpq->lock);
+> +			/*
+> +			 * Connection is being aborted. The abort will release
+> +			 * the refcount on the request
+> +			 */
+> +			req->out.h.error = -ECONNABORTED;
+> +			return;
+> +		}
+> +		if (req->out.h.error == -ESTALE) {
+> +			/*
+> +			 * Device is being released. The fuse_dev_release call
+> +			 * will drop the refcount on the request
+> +			 */
+> +			spin_unlock(&fpq->lock);
+> +			return;
+> +		}
+> +		if (!test_bit(FR_PRIVATE, &req->flags))
+> +			list_del_init(&req->list);
+> +		spin_unlock(&fpq->lock);
+> +	}
+> +
+> +	req->out.h.error = -ETIME;
+> +
+> +	if (test_bit(FR_ASYNC, &req->flags))
+> +		req->args->end(req->fm, req->args, req->out.h.error);
+> +
+> +	fuse_put_request(req);
+> +}
+
+Just a general styling thing, we have two different states for requests here,
+PENDING and !PENDING correct?  I think it may be better to do something like
+
+if (test_bit(FR_PENDING, &req->flags))
+	timeout_pending_req();
+else
+	timeout_inflight_req();
+
+and then in timeout_pending_req() you do
+
+spin_lock(&fiq->lock);
+if (!test_bit(FR_PENDING, &req->flags)) {
+	spin_unlock(&fiq_lock);
+	timeout_inflight_req();
+	return;
+}
+
+This will keep the two different state cleanup functions separate and a little
+cleaner to grok.
+
+> +
+>  static int queue_interrupt(struct fuse_req *req)
+>  {
+>  	struct fuse_iqueue *fiq = &req->fm->fc->iq;
+> @@ -361,6 +424,62 @@ static int queue_interrupt(struct fuse_req *req)
+>  	return 0;
+>  }
+>  
+> +enum wait_type {
+> +	WAIT_TYPE_INTERRUPTIBLE,
+> +	WAIT_TYPE_KILLABLE,
+> +	WAIT_TYPE_NONINTERRUPTIBLE,
+> +};
+> +
+> +static int fuse_wait_event_interruptible_timeout(struct fuse_req *req)
+> +{
+> +	struct fuse_conn *fc = req->fm->fc;
+> +
+> +	return wait_event_interruptible_timeout(req->waitq,
+> +						test_bit(FR_FINISHED,
+> +							 &req->flags),
+> +						fc->daemon_timeout);
+> +}
+> +ALLOW_ERROR_INJECTION(fuse_wait_event_interruptible_timeout, ERRNO);
+> +
+> +static int wait_answer_timeout(struct fuse_req *req, enum wait_type type)
+> +{
+> +	struct fuse_conn *fc = req->fm->fc;
+> +	int err;
+> +
+> +wait_answer_start:
+> +	if (type == WAIT_TYPE_INTERRUPTIBLE)
+> +		err = fuse_wait_event_interruptible_timeout(req);
+> +	else if (type == WAIT_TYPE_KILLABLE)
+> +		err = wait_event_killable_timeout(req->waitq,
+> +						  test_bit(FR_FINISHED, &req->flags),
+> +						  fc->daemon_timeout);
+> +
+> +	else if (type == WAIT_TYPE_NONINTERRUPTIBLE)
+> +		err = wait_event_timeout(req->waitq, test_bit(FR_FINISHED, &req->flags),
+> +					 fc->daemon_timeout);
+> +	else
+> +		WARN_ON(1);
+
+This will leak some random value for err, so initialize err to something that
+will be dealt with, like -EINVAL;
+
+> +
+> +	/* request was answered */
+> +	if (err > 0)
+> +		return 0;
+> +
+> +	/* request was not answered in time */
+> +	if (err == 0) {
+> +		if (test_and_set_bit(FR_PROCESSING, &req->flags))
+> +			/* request reply is being processed by kernel right now.
+> +			 * we should wait for the answer.
+> +			 */
+
+Format for multiline comments is
+
+/*
+ * blah
+ * blah
+ */
+
+and since this is a 1 line if statement put it above the if statement.
+
+> +			goto wait_answer_start;
+> +
+> +		fuse_request_timeout(req);
+> +		return 0;
+> +	}
+> +
+> +	/* else request was interrupted */
+> +	return err;
+> +}
+> +
+>  static void request_wait_answer(struct fuse_req *req)
+>  {
+>  	struct fuse_conn *fc = req->fm->fc;
+> @@ -369,8 +488,11 @@ static void request_wait_answer(struct fuse_req *req)
+>  
+>  	if (!fc->no_interrupt) {
+>  		/* Any signal may interrupt this */
+> -		err = wait_event_interruptible(req->waitq,
+> -					test_bit(FR_FINISHED, &req->flags));
+> +		if (fc->daemon_timeout)
+> +			err = wait_answer_timeout(req, WAIT_TYPE_INTERRUPTIBLE);
+> +		else
+> +			err = wait_event_interruptible(req->waitq,
+> +						       test_bit(FR_FINISHED, &req->flags));
+>  		if (!err)
+>  			return;
+>  
+> @@ -383,8 +505,11 @@ static void request_wait_answer(struct fuse_req *req)
+>  
+>  	if (!test_bit(FR_FORCE, &req->flags)) {
+>  		/* Only fatal signals may interrupt this */
+> -		err = wait_event_killable(req->waitq,
+> -					test_bit(FR_FINISHED, &req->flags));
+> +		if (fc->daemon_timeout)
+> +			err = wait_answer_timeout(req, WAIT_TYPE_KILLABLE);
+> +		else
+> +			err = wait_event_killable(req->waitq,
+> +						  test_bit(FR_FINISHED, &req->flags));
+>  		if (!err)
+>  			return;
+>  
+> @@ -404,7 +529,10 @@ static void request_wait_answer(struct fuse_req *req)
+>  	 * Either request is already in userspace, or it was forced.
+>  	 * Wait it out.
+>  	 */
+> -	wait_event(req->waitq, test_bit(FR_FINISHED, &req->flags));
+> +	if (fc->daemon_timeout)
+> +		wait_answer_timeout(req, WAIT_TYPE_NONINTERRUPTIBLE);
+> +	else
+> +		wait_event(req->waitq, test_bit(FR_FINISHED, &req->flags));
+>  }
+>  
+>  static void __fuse_request_send(struct fuse_req *req)
+> @@ -1268,6 +1396,9 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+>  	req = list_entry(fiq->pending.next, struct fuse_req, list);
+>  	clear_bit(FR_PENDING, &req->flags);
+>  	list_del_init(&req->list);
+> +	/* Acquire a reference since fuse_request_timeout may also be executing  */
+> +	__fuse_get_request(req);
+> +	req->fpq = fpq;
+>  	spin_unlock(&fiq->lock);
+>  
+
+There's a race here with completion.  If we timeout a request right here, we can
+end up sending that same request below.
+
+You are going to need to check
+
+test_bit(FR_PROCESSING)
+
+after you take the fpq->lock just below here to make sure you didn't race with
+the timeout handler and time the request out already.
+
+>  	args = req->args;
+> @@ -1280,6 +1411,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+>  		if (args->opcode == FUSE_SETXATTR)
+>  			req->out.h.error = -E2BIG;
+>  		fuse_request_end(req);
+> +		fuse_put_request(req);
+>  		goto restart;
+>  	}
+>  	spin_lock(&fpq->lock);
+> @@ -1316,13 +1448,23 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+>  	}
+>  	hash = fuse_req_hash(req->in.h.unique);
+>  	list_move_tail(&req->list, &fpq->processing[hash]);
+> -	__fuse_get_request(req);
+>  	set_bit(FR_SENT, &req->flags);
+>  	spin_unlock(&fpq->lock);
+>  	/* matches barrier in request_wait_answer() */
+>  	smp_mb__after_atomic();
+>  	if (test_bit(FR_INTERRUPTED, &req->flags))
+>  		queue_interrupt(req);
+> +
+> +	/* Check if request timed out */
+> +	if (test_bit(FR_PROCESSING, &req->flags)) {
+> +		spin_lock(&fpq->lock);
+> +		if (!test_bit(FR_PRIVATE, &req->flags))
+> +			list_del_init(&req->list);
+> +		spin_unlock(&fpq->lock);
+> +		fuse_put_request(req);
+> +		return -ETIME;
+> +	}
+
+This isn't quite right, we could have FR_PROCESSING set because we completed the
+request before we got here.  If you put a schedule_timeout(HZ); right above this
+you could easily see where a request gets completed by userspace, but now you've
+fimed it out.
+
+Additionally if we have FR_PROCESSING set from the timeout, shouldn't this
+cleanup have been done already?  I don't understand why we need to handle this
+here, we should just return and whoever is waiting on the request will get the
+error.
+
+Thanks,
+
+Josef
 
