@@ -1,102 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-23938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FF5935053
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 17:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5B593505D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 18:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 278E81C21056
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 15:59:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D1E1C20F38
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 16:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499431459FE;
-	Thu, 18 Jul 2024 15:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F0D143C59;
+	Thu, 18 Jul 2024 16:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iI0Cu8PP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5364C14532B;
-	Thu, 18 Jul 2024 15:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F04E13C3E6;
+	Thu, 18 Jul 2024 16:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721318294; cv=none; b=B90cZLtNPL2qZVtE8jPEdKuK6QvDorETqJSOqKrMRy6rhsSD3HNX7rpwor4Mi6kidnkleUcPITxnT6C8/bnf2qD+d4rFULsp+uRXq1b8KDbUwxXwVNevuFj8fzESp9NGUhKscN05XDjRkjazSaW55jJDG+yZP5Ws0JPwT3qwa0k=
+	t=1721318524; cv=none; b=ubZmf98AmTBliezwLSZtPpPlwyoMVwJpmQ4HuSFSlYQPVcMtpHtpS8enApWfF32whGlV3hPg1E3JsHJfGJK6/FnNifdNGUnovwxFS7X//DS0yaC4Df9qp8pP3tdAsamnAnUaFFUVsBOtGKNlvcLLJyw4eUrZHhsZDnisKbzEOEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721318294; c=relaxed/simple;
-	bh=e+Mfphj55ScHIRjhyc2GqmrZc3aIc1iAzpaFZ2zbjC0=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=ZY/uUlOp49ctG6Lf3GfUY89JkgscTlcHEapOxYViGsIE2oDvDAgIGHUeMNmvjbYp5DEu76OgWdpxr1RWsd/N6zxuLxYWYniyibesf+HgdJ9+SP98MLc1SSBbDWn8QK5ElcHiUePDRcnrVPIxV529GOqnU8Ed2J+AstP90upyWlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 6483137811CD;
-	Thu, 18 Jul 2024 15:58:10 +0000 (UTC)
-From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
-In-Reply-To: <CAHk-=wi9qsy-bX65ev8jgDzGM+uTk=Vbix32F8SLfUWegajT+w@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240717111358.415712-1-adrian.ratiu@collabora.com>
- <202407171017.A0930117@keescook> <CAHk-=wi3m98GCv-kXJqRvsjOa+DCFqQux7pcmJW9WR8_n=QPqg@mail.gmail.com>
- <202407171520.FD49AE35@keescook> <CAHk-=wi9qsy-bX65ev8jgDzGM+uTk=Vbix32F8SLfUWegajT+w@mail.gmail.com>
-Date: Thu, 18 Jul 2024 16:58:10 +0100
-Cc: "Kees Cook" <kees@kernel.org>, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, kernel@collabora.com, gbiv@google.com, inglorion@google.com, ajordanr@google.com, "Doug Anderson" <dianders@chromium.org>, "Jeff Xu" <jeffxu@google.com>, "Jann Horn" <jannh@google.com>, "Christian Brauner" <brauner@kernel.org>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
+	s=arc-20240116; t=1721318524; c=relaxed/simple;
+	bh=chaMx9s0OPNI5Z83DMujo8XKQemJrFuGl7D3JBJIH/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HuQeVhJ0s2h8s1mX411hUPbG116r7eHJBeGO3UpIgCzlb2mw4xYQXc3zD+4qhQvV3PCWv0ktVPQf6PTBK9KD9R3doOOdTF0GLpnh+fNoOExCavjXFX/3JBr0gwACI7IW7CZ84zMBp5uKXIj+H+XV+3ehw1ktXKf7x8xXYo+r3FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iI0Cu8PP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0050C116B1;
+	Thu, 18 Jul 2024 16:02:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721318523;
+	bh=chaMx9s0OPNI5Z83DMujo8XKQemJrFuGl7D3JBJIH/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iI0Cu8PPtEXbTYKZQp8/M7xkyPuUFZoXYWEk5RZil8xgg3YSv1wLP6shLL7c52bAP
+	 oygIa4yxoGc3jYydhbfvDcZWqQTLg87J2nfdHBf0nWue9vwvwdZ0YRkD0eJw8jLEMO
+	 ypNOKyxRyfhkiduJVs3KKd8qVDeHgq8Jif8YuV+eNZbpcx8wB8TisWdwAyE3mFasm2
+	 lF+V2gvDjg0PjBE0K2UpkGW7MW9xa6Ea38F1iM1Gsf5TKdPKmZ+Dwd6L4++7S3dukK
+	 amwfHiexgKzRYQe4CKZGaXx6LuscSa7cpxAVKok2E5tcfXY0KHR3kCv5Au4rsok5jk
+	 2sDi+Ly+E1QYA==
+Date: Thu, 18 Jul 2024 09:02:02 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH RFC 0/4] iomap: zero dirty folios over unwritten mappings
+ on zero range
+Message-ID: <20240718160202.GL612460@frogsfrogsfrogs>
+References: <20240718130212.23905-1-bfoster@redhat.com>
+ <20240718153613.GC2099026@perftesting>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <11987f-66993b80-1-116be8e0@64320549>
-Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?proc=3A?= add config to block 
- =?utf-8?q?FOLL=5FFORCE?= in mem writes
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718153613.GC2099026@perftesting>
 
-On Thursday, July 18, 2024 03:04 EEST, Linus Torvalds <torvalds@linux-f=
-oundation.org> wrote:
+On Thu, Jul 18, 2024 at 11:36:13AM -0400, Josef Bacik wrote:
+> On Thu, Jul 18, 2024 at 09:02:08AM -0400, Brian Foster wrote:
+> > Hi all,
+> > 
+> > This is a stab at fixing the iomap zero range problem where it doesn't
+> > correctly handle the case of an unwritten mapping with dirty pagecache.
+> > The gist is that we scan the mapping for dirty cache, zero any
+> > already-dirty folios via buffered writes as normal, but then otherwise
+> > skip clean ranges once we have a chance to validate those ranges against
+> > races with writeback or reclaim.
+> > 
+> > This is somewhat simplistic in terms of how it scans, but that is
+> > intentional based on the existing use cases for zero range. From poking
+> > around a bit, my current sense is that there isn't any user of zero
+> > range that would ever expect to see more than a single dirty folio. Most
+> > callers either straddle the EOF folio or flush in higher level code for
+> > presumably (fs) context specific reasons. If somebody has an example to
+> > the contrary, please let me know because I'd love to be able to use it
+> > for testing.
+> > 
+> > The caveat to this approach is that it only works for filesystems that
+> > implement folio_ops->iomap_valid(), which is currently just XFS. GFS2
+> > doesn't use ->iomap_valid() and does call zero range, but AFAICT it
+> > doesn't actually export unwritten mappings so I suspect this is not a
+> > problem. My understanding is that ext4 iomap support is in progress, but
+> > I've not yet dug into what that looks like (though I suspect similar to
+> > XFS). The concern is mainly that this leaves a landmine for fs that
+> > might grow support for unwritten mappings && zero range but not
+> > ->iomap_valid(). We'd likely never know zero range was broken for such
+> > fs until stale data exposure problems start to materialize.
+> > 
+> > I considered adding a fallback to just add a flush at the top of
+> > iomap_zero_range() so at least all future users would be correct, but I
+> > wanted to gate that on the absence of ->iomap_valid() and folio_ops
+> > isn't provided until iomap_begin() time. I suppose another way around
+> > that could be to add a flags param to iomap_zero_range() where the
+> > caller could explicitly opt out of a flush, but that's still kind of
+> > ugly. I dunno, maybe better than nothing..?
 
-> On Wed, 17 Jul 2024 at 15:24, Kees Cook <kees@kernel.org> wrote:
-> >
-> > > In particular, this patch would make it easy to make that
-> > > SECURITY=5FPROC=5FMEM=5FRESTRICT=5FFOLL=5FFORCE config option be =
-a "choice"
-> > > where you pick "never, ptrace, always" by just changing the rules=
- in
-> > > proc=5Fis=5Fptracing().
-> >
-> > So the original patch could be reduced to just the single tristate =
-option
-> > instead of 3 tristates? I think that would be a decent middle groun=
-d,
-> > and IIUC, will still provide the coverage Chrome OS is looking for[=
-1].
->=20
-> So here's what I kind of think might be ok.
->=20
-> ENTIRELY UNTESTED! This is more of a "look, something like this,
-> perhaps" patch than a real one.
->=20
-> If somebody tests this, and it is ok for Chrome OS, you can consider
-> this signed-off-on, but only with actual testing. I might have gotten
-> something hroribly wrong.
+Or move ->iomap_valid to the iomap ops structure.  It's a mapping
+predicate, and has nothing to do with folios.
 
-Thanks for the patch!
+> > So IMO, this raises the question of whether this is just unnecessarily
+> > overcomplicated. The KISS principle implies that it would also be
+> > perfectly fine to do a conditional "flush and stale" in zero range
+> > whenever we see the combination of an unwritten mapping and dirty
+> > pagecache (the latter checked before or during ->iomap_begin()). That's
+> > simple to implement and AFAICT would work/perform adequately and
+> > generically for all filesystems. I have one or two prototypes of this
+> > sort of thing if folks want to see it as an alternative.
 
-I tested it on ChromeOS and it does what it intends, just with two
-minor fixes applied:
+I wouldn't mind seeing such a prototype.  Start by hoisting the
+filemap_write_and_wait_range call to iomap, then adjust it only to do
+that if there's dirty pagecache + unwritten mappings?  Then get more
+complicated from there, and we can decide if we want the increasing
+levels of trickiness.
 
---- a/security/Kconfig
-+++ b/security/Kconfig
--config CONFIG=5FPROC=5FMEM=5FFORCE=5FPTRACE
-+config PROC=5FMEM=5FFORCE=5FPTRACE
-.....
- -config CONFIG=5FPROC=5FMEM=5FNO=5FFORCE
-+config PROC=5FMEM=5FNO=5FFORCE
+> I think this is the better approach, otherwise there's another behavior that's
+> gated behind having a callback that other filesystems may not know about and
+> thus have a gap.
 
-As Kees suggested, I'll add a bootparam with a simple =5F=5Fro=5Fafter=5F=
-init
-variable to select this and then send a v2 for review.
+<nod> I think filesystems currently only need to supply an ->iomap_valid
+function for pagecache operations because those are the only ones where
+we have to maintain consistency between something that isn't locked when
+we get the mapping, and the mapping not being locked when we lock that
+first thing.  I suspect they also only need to supply it if they support
+unwritten extents.
 
+From what I can tell, the rest (e.g. directio/FIEMAP) don't care because
+callers get to manage concurrency.
+
+*But* in general it makes sense to me that any iomap operation ought to
+be able to revalidate a mapping at any time.
+
+> Additionally do you have a test for this stale data exposure?  I think no matter
+> what the solution it would be good to have a test for this so that we can make
+> sure we're all doing the correct thing with zero range.  Thanks,
+
+I was also curious about this.   IIRC we have some tests for the
+validiting checking itself, but I don't recall if there's a specific
+regression test for the eofblock clearing.
+
+--D
+
+> Josef
+> 
 
