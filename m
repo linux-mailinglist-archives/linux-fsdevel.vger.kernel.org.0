@@ -1,459 +1,338 @@
-Return-Path: <linux-fsdevel+bounces-23927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01219934F4B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 16:44:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0320D934F4D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 16:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B045B28432B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 14:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5D0284526
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 14:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4961B1422CA;
-	Thu, 18 Jul 2024 14:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1011411EE;
+	Thu, 18 Jul 2024 14:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="ZhOVqh3k"
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="sApcrNAB";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="sApcrNAB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2054.outbound.protection.outlook.com [40.107.22.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5156A12F5A1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 14:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721313875; cv=none; b=jPTvMDNYQMcROfvHwJa4K/WZjGufWGOKi8Z6RPTjMk7979D9KSRL6fl9oQ8WVJczEOCtMsvqCq11biWVgO1HVIPZDq6TIEYDdNglriMIn/cy8e/jessmLu0AVimB0TPpvOgwFJBbhxDnkKXDKg4LlLSlD2ieyhdrKuxJny1oOUU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721313875; c=relaxed/simple;
-	bh=DGvXyYV3ua+SqArf5bR3exBTqFl4attv9HXBDfclRQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PUjsKdKMAMUrr+ynOnLR/A//CejujIi3iNOFKNyexcdkRjNxJawvcu8NermWZuwbEzhttFxlZBJgyIGTPAtNNogclOP6hYf7m6lY3Mt5rEqXxa9jdboRO5oZcHDVBFGpmSTd0ummpQgCGrAYOZgUngMOFE7nCqpiB1OlRE+iNUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=ZhOVqh3k; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-65f8626780aso8199127b3.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 07:44:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1721313872; x=1721918672; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MKhFNPjJUpLjnLuRbSgJY4qyi1z8LEzoBAkugdLbcKw=;
-        b=ZhOVqh3klttsfvnC2opSOXBxkzN489dwvsjo0o2pKbqZthcjeGWsRaWRSqp7kCppOZ
-         jRiJEoksfDSNsd3mEQWCPhPYYV/hABv8whw0wc2KKNqb2QMbN45E+iY4vxrP0XuMnKR8
-         5q6jLcRmdkRENRvzzazLbevjZOJhVo11H3nS8vaMz+upZNryc+IfB+dpAWUi9LRsvFtC
-         SqKTFq8OOGvyhxbysmN0BIVjS8J5BNtnBnV8L66w2SyL+lbpPcpxsMSS/N3W1Zdzkc+E
-         xNt3Nf4TAYNrn/wk974Kk46d6OfL1+/tE8COImsgDUuojtfq2fvcboIszWjji/AoeNmj
-         fZUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721313872; x=1721918672;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MKhFNPjJUpLjnLuRbSgJY4qyi1z8LEzoBAkugdLbcKw=;
-        b=OSrYx1MGCgtq9iuKdmRdmu6VDIBvc0g3k49ZyWEv4jlq4d6UxwYdT32f1kYevsaVVi
-         6lC13woCHrT2BQscNeIrVwcoOr//wDf8s5oUKRRrqbbLwLY+y6yj5XA7ZREZcDFnqxu4
-         v8+Eyp/QDbGge4yP1zKM7hJbp//wxRYQFOno7eZjL+CIMSWNdn1QjCPlRo+v0D7lppjv
-         zyoBP/duPzNQcbU65rvVu+rkaEIKKIi0apGrdr8TIqsp37fCbejxNhmNRSApUSzz3S5P
-         oy26P9x47tnZ+wLCF0gZ5Pu5YwWR8RvKslTQ44+Lcm8h2sBC99owRKbZ8f6knMW6ej0p
-         C1+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUCiHCpAHCmuX9wH/RQSJnoH1fQ6qRVO9yRXFUgNS4Tl0QMTs/bRtdd8+kdxZofpkPXOcmk3iU4UVz05cTR4Mn/tTsG5obQGKeEXi1SqQ==
-X-Gm-Message-State: AOJu0YyUNUEx+hWX1Cgb4cF4AtMqqwRyJ3DE30DsYAeog/ITsS/tF+X+
-	r7Wla8GcRLQgoKlOewI5IKAxxjI6x2hcJvCgmfPH+1hb1NfA4gbIUQx+Ze2hpy0=
-X-Google-Smtp-Source: AGHT+IHKmwQjv2YanE2T9boGh0Yh605UeDRW731VbpfrcsHrn3pq/Ma/XFTr4SW2Njd2fIBK2u7YBw==
-X-Received: by 2002:a05:690c:3203:b0:646:7b75:5c2c with SMTP id 00721157ae682-66601cce447mr32485437b3.16.1721313872074;
-        Thu, 18 Jul 2024 07:44:32 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-66601ad9f79sm3502717b3.27.2024.07.18.07.44.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 07:44:31 -0700 (PDT)
-Date: Thu, 18 Jul 2024 10:44:30 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, osandov@osandov.com,
-	kernel-team@meta.com
-Subject: Re: [PATCH] fuse: add optional kernel-enforced timeout for fuse
- requests
-Message-ID: <20240718144430.GA2099026@perftesting>
-References: <20240717213458.1613347-1-joannelkoong@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165322AF18
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 14:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.54
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721313941; cv=fail; b=SI/8un4++sqmCbDaOyrID5MFmCUImMEx1y5MNo94EMcTRfSdjsUV58L4STREXBmk7uWyCpigIPmAGZMdpHnfveVmadz1OgQvrGORvH7PqtLM+2rUEqF4m0pOJYagYWoMcXqN10JC7i5i1QsTkES1gkW7zVl2sNMLvRIfH6jwA7Q=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721313941; c=relaxed/simple;
+	bh=fUZkKLPHa+8tZxu9mC0LqCxXAF5IRF5v3XwYO3pkK4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EKVMaFisaLhZVcB6kzPZH3xoZxYeqsoaQujLij7ZC0O6deS5Y1dmtRNjX/+0ckrkFPVxRrQ065iEy/8OjD9J9kqHd2Lg3cx68Zegjm9bBl5Xe9j9JGs+3SeamKL3gRuGYm2/gZ7NSJGhB7kuuo+k1Kj+0pNjp1qKd6r2WKnCDJM=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=sApcrNAB; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=sApcrNAB; arc=fail smtp.client-ip=40.107.22.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=F5uf47llBcnHcFTwj7m9WXFSeX1tOmnKFRyv9FnCL8rg6D/rboVxBG4r9NGLq4ixlMN8N0Tdd/oBnfv0R3W+bdb6gIAprtN2LAB9UPY2d/pao0qHoOU/wH3KFv07csePJQK7zPTgmwoyNSHJER9az1via74kBJi8VQyEd3Dp4UppRvh3L2jhA7ZKFBL1PgqhA3h9olfQiqtl9wM4bpwfzudkKNkV6KxQZh8RNQhTm7hZsB76XwgnPWrJWXdqWwSjmLaNDjuFpwg0IwmOtv4AqzM+9I/iF2w5x0trRktiesg/NfnVQz0A0115fpqGjuaO80fWNowkPS3gQsSfbSmUUw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L4EicoIga3irNfep9vd/yS9f61b9izPttbB5R3om0HY=;
+ b=IXjtGAaCSV2WKb6YyyKk4RTxoqQnHZp8q65x8wHTmHQ06hGrKQjRd7JkBVJOkQZ2hFUvX2WZWoEbirgx29rS/+jx6QKRC1JE5Q0KI72ISaoo+dbC2hrAn+QEgTowln/83TEqleVI0yqhXM9NmefNAHCWlkwUbSor3DPgdSvPYqJghIvX7543qwdjVZYOdZxpWMj/aLcpfPITvDcDiJ3k31RvpsHvdfBpXjc1Ny+j3O3tApHek/scbDsbx/vn7VX7sc16Qwn8YohqJWZL857LeH+iG+fnzz412m/xTOd95C4VRtyV4h+XwArQ36Vyt0+jGK1c98QN93HJnaxvXwtlsQ==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L4EicoIga3irNfep9vd/yS9f61b9izPttbB5R3om0HY=;
+ b=sApcrNAB9BE/WAfUq8zR6qnODd3pmMY6n+eJCS5B00scn2hKlHhyZl0IK5YEGndEt4vgfGxCjy+nDg3lHj3Pi3dinXSw8f+pMV5FELgrt+DRIuqzlZBk+fCHD4xbu7WDbjeQRO0HeFyxM2mGxVX5KZS5/gKu/wqZ04XQx2tZ0xI=
+Received: from AS4P189CA0048.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:659::12)
+ by AS8PR08MB7885.eurprd08.prod.outlook.com (2603:10a6:20b:508::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Thu, 18 Jul
+ 2024 14:45:34 +0000
+Received: from AM4PEPF00025F99.EURPRD83.prod.outlook.com
+ (2603:10a6:20b:659:cafe::ae) by AS4P189CA0048.outlook.office365.com
+ (2603:10a6:20b:659::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.19 via Frontend
+ Transport; Thu, 18 Jul 2024 14:45:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ AM4PEPF00025F99.mail.protection.outlook.com (10.167.16.8) with Microsoft SMTP
+ Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7784.5 via
+ Frontend Transport; Thu, 18 Jul 2024 14:45:33 +0000
+Received: ("Tessian outbound 0808e8e76ea3:v365"); Thu, 18 Jul 2024 14:45:32 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 353639cb5c53a94f
+X-CR-MTA-TID: 64aa7808
+Received: from Le5933fce3642.2
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id AF32D5CA-27E6-415C-AAE1-B7587D42A90A.1;
+	Thu, 18 Jul 2024 14:45:22 +0000
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id Le5933fce3642.2
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Thu, 18 Jul 2024 14:45:22 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pPBVG+5adpoDeOHQonqzv6CMdIcdxgNOyKV5p5nFy/TMTIF066/wY/XtLV7u6blIQ3X2x8q6+MFM/ctetJSxZ5niaKcSOmCkP1egIjcNuoWnhD5cvciL5/Tzr16COvS04ybs8MhnYWWNwZesh+ZbSrqgMBXab7y0WyrN/hDvy3Zfmup23py4TobJRuxd/QwaYj2EHkN1XKwJ7PAo/xqOZ1bUSS2RBga/M1cOCzMxz37/Wr2JY6j1wz52deo9z3g7lnn3Phtg632Vh4pnPeV1jGjL3hg+HEDI9ON3pt9uF1MVGFJJ5D3zjUbyB9DhiOmw5vSbXNrwKgeBtAi915d9QQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L4EicoIga3irNfep9vd/yS9f61b9izPttbB5R3om0HY=;
+ b=usjoHcF7H5QRL9+59sMp6xHdkJoRfcg3y/eWQOujhRSntQdH8Z2YOSGkAXvdNaKSXdr9oeiHH3x9TQIio3fCYAcil8uJBAUjeMNBfjAwvAFh8yMqFjfFv1pII1tncBy1JmXOuPw6gvM/DZz/BuKjpAe2Jeuexj3lX6bbQTGiGH8rcsbfjdZccAGKdKsSEfvP36q0GRxtq6r3leqjPKv4xdo16UMlIrUGpEhLHbRA3xtUmUT+0DE87Znz+s2/soDVlUnI33pg1DgPe6YR1OjiBawybU1pfhyU8+kDYDD22vSjC5ApnPd+fpA9M5mgJnzPQL+G3cgLcGs95qpgPpkxhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L4EicoIga3irNfep9vd/yS9f61b9izPttbB5R3om0HY=;
+ b=sApcrNAB9BE/WAfUq8zR6qnODd3pmMY6n+eJCS5B00scn2hKlHhyZl0IK5YEGndEt4vgfGxCjy+nDg3lHj3Pi3dinXSw8f+pMV5FELgrt+DRIuqzlZBk+fCHD4xbu7WDbjeQRO0HeFyxM2mGxVX5KZS5/gKu/wqZ04XQx2tZ0xI=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from DB9PR08MB7179.eurprd08.prod.outlook.com (2603:10a6:10:2cc::19)
+ by GVXPR08MB7822.eurprd08.prod.outlook.com (2603:10a6:150:3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Thu, 18 Jul
+ 2024 14:45:18 +0000
+Received: from DB9PR08MB7179.eurprd08.prod.outlook.com
+ ([fe80::7d7e:3788:b094:b809]) by DB9PR08MB7179.eurprd08.prod.outlook.com
+ ([fe80::7d7e:3788:b094:b809%6]) with mapi id 15.20.7762.020; Thu, 18 Jul 2024
+ 14:45:18 +0000
+Date: Thu, 18 Jul 2024 15:45:04 +0100
+From: Szabolcs Nagy <szabolcs.nagy@arm.com>
+To: Joey Gouly <joey.gouly@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Cc: Florian Weimer <fweimer@redhat.com>, dave.hansen@linux.intel.com,
+	linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	broonie@kernel.org, christophe.leroy@csgroup.eu, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, tglx@linutronix.de,
+	will@kernel.org, x86@kernel.org, kvmarm@lists.linux.dev,
+	yury.khrustalev@arm.com
+Subject: Re: [PATCH v4 17/29] arm64: implement PKEYS support
+Message-ID: <ZpkqcGwdkK78KBZY@arm.com>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-18-joey.gouly@arm.com>
+ <ZlnlQ/avUAuSum5R@arm.com>
+ <20240531152138.GA1805682@e124191.cambridge.arm.com>
+ <Zln6ckvyktar8r0n@arm.com>
+ <87a5jj4rhw.fsf@oldenburg.str.redhat.com>
+ <ZnBNd51hVlaPTvn8@arm.com>
+ <ZownjvHbPI1anfpM@arm.com>
+ <20240711095000.GA488602@e124191.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240711095000.GA488602@e124191.cambridge.arm.com>
+X-ClientProxiedBy: LO4P123CA0317.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:197::16) To DB9PR08MB7179.eurprd08.prod.outlook.com
+ (2603:10a6:10:2cc::19)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240717213458.1613347-1-joannelkoong@gmail.com>
+X-MS-TrafficTypeDiagnostic:
+	DB9PR08MB7179:EE_|GVXPR08MB7822:EE_|AM4PEPF00025F99:EE_|AS8PR08MB7885:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3fd64409-aac2-49da-ba7c-08dca7384780
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?bHduTFVjNlR0MHlWeTYxbjN5OWhuSjczLzQ1MHJzMVZQOFg0QXlJVG4vY0h4?=
+ =?utf-8?B?OFZ4dXJ1RFluVGdMVCsyanU2L0gyY3l2bGhNK29ma1lyMXE4ckpVNHl4L1BF?=
+ =?utf-8?B?Z2QwdFRnNmo4aVRsZzZsVVJ2NHBIRHpPTzNvd0RycUtRSG13aUNqVnVBM1M1?=
+ =?utf-8?B?aDAvZTN3ajNSck9JSVRlenVnUVlPOWZFZkorenRHMXlvbmUvK2pEcllIRmFX?=
+ =?utf-8?B?WHdrbjhySGs3WDhVeEprZTJFdXVKTm9oc01yeWUxVnR6VDhiZ3FTckhUekxU?=
+ =?utf-8?B?ZUJ5K0pIYis1UkxZdlc5UmtoWHp0Q2FTeC91N0kvbVVXVTNFVWNOM3piY3dG?=
+ =?utf-8?B?QytRdXYyRmFrOW5HcUlldWRMQ3M4L3h0M1dSK2Y0NE0rMHBZQThyakEyQS96?=
+ =?utf-8?B?RHRuSDRQMUVIOWZrUDdqdFZDN1NmbFNuZ0RzNmcvWWdKZGJFUEpESDZMdHYr?=
+ =?utf-8?B?WXdSNUJPQmxEZDJsQ2VYSVFiSGpPa2NHOHYyNkROc1FxMDhrTGh1K0FTSWs4?=
+ =?utf-8?B?bnJISGtIRlJzVFQ4bFVIM1pZUlJPKzdQcnJIWVBNNENiclJpaE8wNXJlbVJ2?=
+ =?utf-8?B?aVJDeUNwVVNTMEVFbEFtSUZIK3FJdmpUUHhGc2ZpZVhnWkh1cmROcnRXWjRI?=
+ =?utf-8?B?ZEdDbkQxWVlJSFlJZklhSWdtYk9kQWV2RUxPTjhXZ3RYQXBmeWpqR0VySTY3?=
+ =?utf-8?B?UXJLNmdNT21YcmtXbTJmK2ErbklMeFFmTEdpaTlEZzB5U1FnTzg0V3FwcGdI?=
+ =?utf-8?B?aTRXamxNQXYrTlhrT0FGYis5TDBXQ1hHZUtIZmtSdWh1WU1ibVFnN08zZEVP?=
+ =?utf-8?B?YWlVaTBZL2tCZE1ZaWY0SjBQQ2tJejkxNWQ5dndtQ0N5TGppQWNXYmltOTdt?=
+ =?utf-8?B?N2kxemhyMmJUMUhDRURWN0tXS2lWTWxKZVN4ZlNEejFuWVhaSVBVU2hrQTFQ?=
+ =?utf-8?B?YmJyRTJHelY4bEw5RU41STdUT2xXK0VIQ1pLZmNyS1c1TGx6SVpBOEt2MDgw?=
+ =?utf-8?B?Y2c5WTk0dE1zNkNIVGV6ZEdBdUMxWjNiSmpLYjFUb2FOZHdvVThsS1JnbEpo?=
+ =?utf-8?B?YldWYk1nQ0NvcDRvVEJuQnVwUTJnSGlndzNGLzJNdGRSOVlINWhMS2I0UXd2?=
+ =?utf-8?B?bXZNTkthTTQ0V1E1UzRNdytxM3pmTlh3WlJTQ2xHdkRweEhmRVZ5bGxNRFJS?=
+ =?utf-8?B?RnhYZEtnWmRaK1VTNmRaR1l2d1JmUVpVVStkN2hEUTB3Mm1qUVlQNTVBOXps?=
+ =?utf-8?B?OXA0bi9DaUp1RlhJd3NiVnVRWUJGVWZEK090d0o3WkNwTzVkV1ZxUW1VRCsr?=
+ =?utf-8?B?M3gwU1BDbGlCTnZmd0lGUkJ1eUd4bmJOckhGaGQyamZrSHNzLy9nTDdDRU5N?=
+ =?utf-8?B?NlJBN1pSTFlaMWxXMGUySVR2U0I1MDBGR25PT05zMHdiRVpzS0o0YTFsWEE2?=
+ =?utf-8?B?bGVMdGQ0RHpWdmFOeko4SnVtV01lNjlpV2xYY3dZaDYvWFVGVm5qcUl0Z21H?=
+ =?utf-8?B?SG16ZjVZQ2VXaE9ZN0VJQ2xkMXZ1Rnd0cm5GMkNncEF3R1FhbXp2SGZDMkdr?=
+ =?utf-8?B?dFR0UWZra0pndmI3UldsejdQYmVOVzJVNm9ueUhSR0Z0WERaZXJXYy91N0Yz?=
+ =?utf-8?B?RzNPekxFR1Q2Z1BQK0FNaGZ4VGFYNkllRlNCVThwdG5rT3ZMTmtmTjBrUEt6?=
+ =?utf-8?B?bFhTZnVERGFwTWhUR1lMV01Fdi85Wk1DRElHd2U0YTVwTEhwNUdqZ1BmMW8x?=
+ =?utf-8?B?MVZYNndvcUlEVlBuQ1dEcWJWbFM4amM1V3BVUjhMNGNTRjg4SXNXbnlDR2Jl?=
+ =?utf-8?B?YXZiTFhGM3VGOG5OQTA3Zz09?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR08MB7179.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR08MB7822
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-SkipListedInternetSender:
+ ip=[2603:10a6:10:2cc::19];domain=DB9PR08MB7179.eurprd08.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM4PEPF00025F99.EURPRD83.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	7fffc864-169c-438b-8f34-08dca7383e3d
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|34070700014|82310400026|1800799024|35042699022|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WmFhQzZ3YWQvRDN0L0h3bElvZS9paCtlWld2MjBtY0g4TlBIZUd3dWNOcGdr?=
+ =?utf-8?B?QmI3K014N0Fjd2pwN3lxNFh6RWpZMVJCRmh1OGd5MTNhT3J4WFVXajYxQVpW?=
+ =?utf-8?B?cDVFd2FpYUpIamoyc2g0TkQrNURhNWhmQjMvUm9FQnhVRWxtWDFnWlEwVSsx?=
+ =?utf-8?B?KzY3bm9Da3hPTDdjYVowdTBsZS9aeHdyZE91QXZ4eEZQVVhFclVWUFk5cS80?=
+ =?utf-8?B?aWhvS0F4M3FsSEVkK2tHUFBYNmRRWWtXckt3am5iZTJobkZrdm42WHZyd2FK?=
+ =?utf-8?B?UEhDZkx2c0c4OWZhWlRId050WWNpSCtLcXVIZ0c0MkVMZlpRVDBWb3dTWFN3?=
+ =?utf-8?B?NlVLLzhMV2lSaWFiNHBxdkdDNytRdzVBSW9SeGdWVDU4OE14MWgzb2FLOFUy?=
+ =?utf-8?B?cVhCbXhUNStGdVJJQzJLMkJDTG1zNlpZVGsxbjQxbGxsRlQxdVhYN1NSaUJQ?=
+ =?utf-8?B?QllWQlQycW1yblZTRGk2SnorRkp2ZXE5dUJoYVFaeDRlZGUweGt2eGRIR1Vn?=
+ =?utf-8?B?RmdZbURzSFduQlUrTlpEdnJTNUJER0cxaHF4L0d5ZEFMYWcraHI2aDU1STJG?=
+ =?utf-8?B?Slh1R1N1MVpIaVZBMkFhZWxNdDZVK0JLUjd5aTV3UXVqdUZOcU02Yklob3Vr?=
+ =?utf-8?B?ckEycWFqTXZqWXhhTlFsSzlLdXp4V0NyS1JTcGg5T2ZSS3UwRkduMUNhNHly?=
+ =?utf-8?B?a0lvREVhQ2NFMEJqWGsxVytaeUpNekR1MjQ5UUdxeENUakM5NnlNc3BscFJt?=
+ =?utf-8?B?N1A0Wm9mc3UzeFhvWnlrc2hudmpkWmFtRUpBWE96SndOVEZyVjZDZ0NtVkhB?=
+ =?utf-8?B?NWVkdkJIUEdhL0dlVko5bUFWMkZ1UG9iaHovOHlwQ1RZTTJwZVZyQmZYZnAr?=
+ =?utf-8?B?NnJub2gxaksvR2drSjRnaS9VdzZqNkxYblBQaDNJQ0ZuclFBV2JhTzZBNld5?=
+ =?utf-8?B?NDFlNjVrM055SGJsamJscm55bXcxaGRwSVJrWnhhanZON2dNMkllYU1zd21k?=
+ =?utf-8?B?eVhERHhoS29ZaitQQ0RJbWpxdGlOeGpZNUdiZDJtMjdvbHp1K2ZBV1FkclB3?=
+ =?utf-8?B?OVB3ckpjSlJibk5OeHJKOEZvT3Fna29xOVRzS1BlSmF5NWJFdExlU3ZFUDQ0?=
+ =?utf-8?B?ZmxKMGpaY25kZ3NKaUNnU3FrdncrUVBSYXVPaVlGQlZCeTdCV200b2Y0VG1S?=
+ =?utf-8?B?c1VBOU5hTE01UTZrZDdEOWFEczhxaTk1WWgyYU5aQVd2TjFXK29JaUszQWg0?=
+ =?utf-8?B?cXdya1RHbktwazJyb0xqSlh1ZWl1dTlSOEl2VzFTMC9FeWYvdURHQ2dzU3JP?=
+ =?utf-8?B?V0pFdTgrYXFpVVNRRUd6U3RnZWlYZE1GSSsrWkJFZjN0QmdvbGtDQlBZRjg2?=
+ =?utf-8?B?cGl5ai9nVHVXS2NRYlR2ZEo4T0VZN1VmQStPYjY2NHNxZ1FOaXFiVjBSckZt?=
+ =?utf-8?B?L0YyVTRNK1lDcEZjWDV6Q0VDRmdLUXhRU2tmVDcyQm8zT3NXcmQyZGJ4MTRY?=
+ =?utf-8?B?cWcyUGs0OSt0ZktTckcvWjQxS1FUZllrbTBUeUswQmRUL1dQN0VvYmptclNS?=
+ =?utf-8?B?WG84cGdTTUdGc084V1U4YzMyRjdPNHFQM25iSVZkN3BLWHE0ZWpEQmdZTHU4?=
+ =?utf-8?B?Nm1BdDIxN0g5cHVCVmpOTVgya2hhY1RITEdJQlVPODY5YU5ObjlZcktsSzFD?=
+ =?utf-8?B?azBEWU42L0FiRTJlM2xxSHg0RTNBMWx1clcrMlY5VHQ2ZWJaQ1VvR2RDMWJv?=
+ =?utf-8?B?bEZleVg0dFlwdHNCeVNobVBhd3RzM3BiYjYxb3NnZ3pab1lrU21lK2xpV29s?=
+ =?utf-8?B?TUl4akVIUHlmOEhYbE9VR0FGY3VDaCtVYXBTcFVuUGVmZDl3WDhxdjBUOGpW?=
+ =?utf-8?B?MWZqL1dwN2JKRzRsa2VtVWlNRWttb1VBNDBZaUJOY29VcXQ5cFZIZzZYb1BO?=
+ =?utf-8?Q?sIjPjkYwudByQdSeVwVSgwMqDD6IwSfT?=
+X-Forefront-Antispam-Report:
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(36860700013)(34070700014)(82310400026)(1800799024)(35042699022)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 14:45:33.8768
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fd64409-aac2-49da-ba7c-08dca7384780
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00025F99.EURPRD83.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB7885
 
-On Wed, Jul 17, 2024 at 02:34:58PM -0700, Joanne Koong wrote:
-> There are situations where fuse servers can become unresponsive or take
-> too long to reply to a request. Currently there is no upper bound on
-> how long a request may take, which may be frustrating to users who get
-> stuck waiting for a request to complete.
+The 07/11/2024 10:50, Joey Gouly wrote:
+> On Mon, Jul 08, 2024 at 06:53:18PM +0100, Catalin Marinas wrote:
+> > On Mon, Jun 17, 2024 at 03:51:35PM +0100, Szabolcs Nagy wrote:
+> > > to me it makes sense to have abstract
+> > > 
+> > > PKEY_DISABLE_READ
+> > > PKEY_DISABLE_WRITE
+> > > PKEY_DISABLE_EXECUTE
+> > > PKEY_DISABLE_ACCESS
+> > > 
+> > > where access is handled like
+> > > 
+> > > if (flags&PKEY_DISABLE_ACCESS)
+> > > 	flags |= PKEY_DISABLE_READ|PKEY_DISABLE_WRITE;
+> > > disable_read = flags&PKEY_DISABLE_READ;
+> > > disable_write = flags&PKEY_DISABLE_WRITE;
+> > > disable_exec = flags&PKEY_DISABLE_EXECUTE;
+...
+> > On powerpc, PKEY_DISABLE_ACCESS also disables execution. AFAICT, the
+...
+> Seems to me that PKEY_DISABLE_ACCESS leaves exec permissions as-is.
+
+assuming this is right the patch below looks
+reasonable to me. thanks.
+
+> Here is the patch I am planning to include in the next version of the series.
+> This should support all PKEY_DISABLE_* combinations. Any comments? 
 > 
-> This commit adds a daemon timeout option (in seconds) for fuse requests.
-> If the timeout elapses before the request is replied to, the request will
-> fail with -ETIME.
+> commit ba51371a544f6b0a4a0f03df62ad894d53f5039b
+> Author: Joey Gouly <joey.gouly@arm.com>
+> Date:   Thu Jul 4 11:29:20 2024 +0100
 > 
-> There are 3 possibilities for a request that times out:
-> a) The request times out before the request has been sent to userspace
-> b) The request times out after the request has been sent to userspace
-> and before it receives a reply from the server
-> c) The request times out after the request has been sent to userspace
-> and the server replies while the kernel is timing out the request
+>     arm64: add PKEY_DISABLE_READ and PKEY_DISABLE_EXEC
+
+it's PKEY_DISABLE_EXECUTE (fwiw i like the shorter
+exec better but ppc seems to use execute)
+
+>     
+>     TODO
+>     
+>     Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 > 
-> Proper synchronization must be added to ensure that the request is
-> handled correctly in all of these cases. To this effect, there is a new
-> FR_PROCESSING bit added to the request flags, which is set atomically by
-> either the timeout handler (see fuse_request_timeout()) which is invoked
-> after the request timeout elapses or set by the request reply handler
-> (see dev_do_write()), whichever gets there first.
-> 
-> If the reply handler and the timeout handler are executing simultaneously
-> and the reply handler sets FR_PROCESSING before the timeout handler, then
-> the request is re-queued onto the waitqueue and the kernel will process the
-> reply as though the timeout did not elapse. If the timeout handler sets
-> FR_PROCESSING before the reply handler, then the request will fail with
-> -ETIME and the request will be cleaned up.
-> 
-> Proper acquires on the request reference must be added to ensure that the
-> timeout handler does not drop the last refcount on the request while the
-> reply handler (dev_do_write()) or forwarder handler (dev_do_read()) is
-> still accessing the request. (By "forwarder handler", this is the handler
-> that forwards the request to userspace).
-> 
-> Currently, this is the lifecycle of the request refcount:
-> 
-> Request is created:
-> fuse_simple_request -> allocates request, sets refcount to 1
->   __fuse_request_send -> acquires refcount
->     queues request and waits for reply...
-> fuse_simple_request -> drops refcount
-> 
-> Request is freed:
-> fuse_dev_do_write
->   fuse_request_end -> drops refcount on request
-> 
-> The timeout handler drops the refcount on the request so that the
-> request is properly cleaned up if a reply is never received. Because of
-> this, both the forwarder handler and the reply handler must acquire a refcount
-> on the request while it accesses the request, and the refcount must be
-> acquired while the lock of the list the request is on is held.
-> 
-> There is a potential race if the request is being forwarded to
-> userspace while the timeout handler is executing (eg FR_PENDING has
-> already been cleared but dev_do_read() hasn't finished executing). This
-> is a problem because this would free the request but the request has not
-> been removed from the fpq list it's on. To prevent this, dev_do_read()
-> must check FR_PROCESSING at the end of its logic and remove the request
-> from the fpq list if the timeout occurred.
-> 
-> There is also the case where the connection may be aborted or the
-> device may be released while the timeout handler is running. To protect
-> against an extra refcount drop on the request, the timeout handler
-> checks the connected state of the list and lets the abort handler drop the
-> last reference if the abort is running simultaneously. Similarly, the
-> timeout handler also needs to check if the req->out.h.error is set to
-> -ESTALE, which indicates that the device release is cleaning up the
-> request. In both these cases, the timeout handler will return without
-> dropping the refcount.
-> 
-> Please also note that background requests are not applicable for timeouts
-> since they are asynchronous.
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  fs/fuse/dev.c    | 177 ++++++++++++++++++++++++++++++++++++++++++++---
->  fs/fuse/fuse_i.h |  12 ++++
->  fs/fuse/inode.c  |   7 ++
->  3 files changed, 188 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 9eb191b5c4de..7dd7b244951b 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -331,6 +331,69 @@ void fuse_request_end(struct fuse_req *req)
->  }
->  EXPORT_SYMBOL_GPL(fuse_request_end);
+> diff --git arch/arm64/include/uapi/asm/mman.h arch/arm64/include/uapi/asm/mman.h
+> index 1e6482a838e1..e7e0c8216243 100644
+> --- arch/arm64/include/uapi/asm/mman.h
+> +++ arch/arm64/include/uapi/asm/mman.h
+> @@ -7,4 +7,13 @@
+>  #define PROT_BTI       0x10            /* BTI guarded page */
+>  #define PROT_MTE       0x20            /* Normal Tagged mapping */
 >  
-> +/* fuse_request_end for requests that timeout */
-> +static void fuse_request_timeout(struct fuse_req *req)
-> +{
-> +	struct fuse_conn *fc = req->fm->fc;
-> +	struct fuse_iqueue *fiq = &fc->iq;
-> +	struct fuse_pqueue *fpq;
+> +/* Override any generic PKEY permission defines */
+> +#define PKEY_DISABLE_EXECUTE   0x4
+> +#define PKEY_DISABLE_READ      0x8
+> +#undef PKEY_ACCESS_MASK
+> +#define PKEY_ACCESS_MASK       (PKEY_DISABLE_ACCESS |\
+> +                               PKEY_DISABLE_WRITE  |\
+> +                               PKEY_DISABLE_READ   |\
+> +                               PKEY_DISABLE_EXECUTE)
 > +
-> +	spin_lock(&fiq->lock);
-> +	if (!fiq->connected) {
-> +		spin_unlock(&fiq->lock);
-> +		/*
-> +		 * Connection is being aborted. The abort will release
-> +		 * the refcount on the request
-> +		 */
-> +		req->out.h.error = -ECONNABORTED;
-> +		return;
-> +	}
-> +	if (test_bit(FR_PENDING, &req->flags)) {
-> +		/* Request is not yet in userspace, bail out */
-> +		list_del(&req->list);
-> +		spin_unlock(&fiq->lock);
-> +		req->out.h.error = -ETIME;
-> +		__fuse_put_request(req);
-
-Why is this safe?  We could be the last holder of the reference on this request
-correct?  The only places using __fuse_put_request() would be where we are in a
-path where the caller already holds a reference on the request.  Since this is
-async it may not be the case right?
-
-If it is safe then it's just confusing and warrants a comment.
-
-> +		return;
-> +	}
-> +	if (test_bit(FR_INTERRUPTED, &req->flags))
-> +		list_del_init(&req->intr_entry);
-> +
-> +	fpq = req->fpq;
-> +	spin_unlock(&fiq->lock);
-> +
-> +	if (fpq) {
-> +		spin_lock(&fpq->lock);
-> +		if (!fpq->connected && (!test_bit(FR_PRIVATE, &req->flags))) {
-                                       ^^
-
-You don't need the extra () there.
-
-> +			spin_unlock(&fpq->lock);
-> +			/*
-> +			 * Connection is being aborted. The abort will release
-> +			 * the refcount on the request
-> +			 */
-> +			req->out.h.error = -ECONNABORTED;
-> +			return;
-> +		}
-> +		if (req->out.h.error == -ESTALE) {
-> +			/*
-> +			 * Device is being released. The fuse_dev_release call
-> +			 * will drop the refcount on the request
-> +			 */
-> +			spin_unlock(&fpq->lock);
-> +			return;
-> +		}
-> +		if (!test_bit(FR_PRIVATE, &req->flags))
-> +			list_del_init(&req->list);
-> +		spin_unlock(&fpq->lock);
-> +	}
-> +
-> +	req->out.h.error = -ETIME;
-> +
-> +	if (test_bit(FR_ASYNC, &req->flags))
-> +		req->args->end(req->fm, req->args, req->out.h.error);
-> +
-> +	fuse_put_request(req);
-> +}
-
-Just a general styling thing, we have two different states for requests here,
-PENDING and !PENDING correct?  I think it may be better to do something like
-
-if (test_bit(FR_PENDING, &req->flags))
-	timeout_pending_req();
-else
-	timeout_inflight_req();
-
-and then in timeout_pending_req() you do
-
-spin_lock(&fiq->lock);
-if (!test_bit(FR_PENDING, &req->flags)) {
-	spin_unlock(&fiq_lock);
-	timeout_inflight_req();
-	return;
-}
-
-This will keep the two different state cleanup functions separate and a little
-cleaner to grok.
-
-> +
->  static int queue_interrupt(struct fuse_req *req)
->  {
->  	struct fuse_iqueue *fiq = &req->fm->fc->iq;
-> @@ -361,6 +424,62 @@ static int queue_interrupt(struct fuse_req *req)
->  	return 0;
->  }
+>  #endif /* ! _UAPI__ASM_MMAN_H */
+> diff --git arch/arm64/mm/mmu.c arch/arm64/mm/mmu.c
+> index 68afe5fc3071..ce4cc6bdee4e 100644
+> --- arch/arm64/mm/mmu.c
+> +++ arch/arm64/mm/mmu.c
+> @@ -1570,10 +1570,15 @@ int arch_set_user_pkey_access(struct task_struct *tsk, int pkey, unsigned long i
+>                 return -EINVAL;
 >  
-> +enum wait_type {
-> +	WAIT_TYPE_INTERRUPTIBLE,
-> +	WAIT_TYPE_KILLABLE,
-> +	WAIT_TYPE_NONINTERRUPTIBLE,
-> +};
-> +
-> +static int fuse_wait_event_interruptible_timeout(struct fuse_req *req)
-> +{
-> +	struct fuse_conn *fc = req->fm->fc;
-> +
-> +	return wait_event_interruptible_timeout(req->waitq,
-> +						test_bit(FR_FINISHED,
-> +							 &req->flags),
-> +						fc->daemon_timeout);
-> +}
-> +ALLOW_ERROR_INJECTION(fuse_wait_event_interruptible_timeout, ERRNO);
-> +
-> +static int wait_answer_timeout(struct fuse_req *req, enum wait_type type)
-> +{
-> +	struct fuse_conn *fc = req->fm->fc;
-> +	int err;
-> +
-> +wait_answer_start:
-> +	if (type == WAIT_TYPE_INTERRUPTIBLE)
-> +		err = fuse_wait_event_interruptible_timeout(req);
-> +	else if (type == WAIT_TYPE_KILLABLE)
-> +		err = wait_event_killable_timeout(req->waitq,
-> +						  test_bit(FR_FINISHED, &req->flags),
-> +						  fc->daemon_timeout);
-> +
-> +	else if (type == WAIT_TYPE_NONINTERRUPTIBLE)
-> +		err = wait_event_timeout(req->waitq, test_bit(FR_FINISHED, &req->flags),
-> +					 fc->daemon_timeout);
-> +	else
-> +		WARN_ON(1);
-
-This will leak some random value for err, so initialize err to something that
-will be dealt with, like -EINVAL;
-
-> +
-> +	/* request was answered */
-> +	if (err > 0)
-> +		return 0;
-> +
-> +	/* request was not answered in time */
-> +	if (err == 0) {
-> +		if (test_and_set_bit(FR_PROCESSING, &req->flags))
-> +			/* request reply is being processed by kernel right now.
-> +			 * we should wait for the answer.
-> +			 */
-
-Format for multiline comments is
-
-/*
- * blah
- * blah
- */
-
-and since this is a 1 line if statement put it above the if statement.
-
-> +			goto wait_answer_start;
-> +
-> +		fuse_request_timeout(req);
-> +		return 0;
-> +	}
-> +
-> +	/* else request was interrupted */
-> +	return err;
-> +}
-> +
->  static void request_wait_answer(struct fuse_req *req)
->  {
->  	struct fuse_conn *fc = req->fm->fc;
-> @@ -369,8 +488,11 @@ static void request_wait_answer(struct fuse_req *req)
+>         /* Set the bits we need in POR:  */
+> +       new_por = POE_RXW;
+> +       if (init_val & PKEY_DISABLE_WRITE)
+> +               new_por &= ~POE_W;
+>         if (init_val & PKEY_DISABLE_ACCESS)
+> -               new_por = POE_X;
+> -       else if (init_val & PKEY_DISABLE_WRITE)
+> -               new_por = POE_RX;
+> +               new_por &= ~POE_RW;
+> +       if (init_val & PKEY_DISABLE_READ)
+> +               new_por &= ~POE_R;
+> +       if (init_val & PKEY_DISABLE_EXECUTE)
+> +               new_por &= ~POE_X;
 >  
->  	if (!fc->no_interrupt) {
->  		/* Any signal may interrupt this */
-> -		err = wait_event_interruptible(req->waitq,
-> -					test_bit(FR_FINISHED, &req->flags));
-> +		if (fc->daemon_timeout)
-> +			err = wait_answer_timeout(req, WAIT_TYPE_INTERRUPTIBLE);
-> +		else
-> +			err = wait_event_interruptible(req->waitq,
-> +						       test_bit(FR_FINISHED, &req->flags));
->  		if (!err)
->  			return;
->  
-> @@ -383,8 +505,11 @@ static void request_wait_answer(struct fuse_req *req)
->  
->  	if (!test_bit(FR_FORCE, &req->flags)) {
->  		/* Only fatal signals may interrupt this */
-> -		err = wait_event_killable(req->waitq,
-> -					test_bit(FR_FINISHED, &req->flags));
-> +		if (fc->daemon_timeout)
-> +			err = wait_answer_timeout(req, WAIT_TYPE_KILLABLE);
-> +		else
-> +			err = wait_event_killable(req->waitq,
-> +						  test_bit(FR_FINISHED, &req->flags));
->  		if (!err)
->  			return;
->  
-> @@ -404,7 +529,10 @@ static void request_wait_answer(struct fuse_req *req)
->  	 * Either request is already in userspace, or it was forced.
->  	 * Wait it out.
->  	 */
-> -	wait_event(req->waitq, test_bit(FR_FINISHED, &req->flags));
-> +	if (fc->daemon_timeout)
-> +		wait_answer_timeout(req, WAIT_TYPE_NONINTERRUPTIBLE);
-> +	else
-> +		wait_event(req->waitq, test_bit(FR_FINISHED, &req->flags));
->  }
->  
->  static void __fuse_request_send(struct fuse_req *req)
-> @@ -1268,6 +1396,9 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
->  	req = list_entry(fiq->pending.next, struct fuse_req, list);
->  	clear_bit(FR_PENDING, &req->flags);
->  	list_del_init(&req->list);
-> +	/* Acquire a reference since fuse_request_timeout may also be executing  */
-> +	__fuse_get_request(req);
-> +	req->fpq = fpq;
->  	spin_unlock(&fiq->lock);
->  
-
-There's a race here with completion.  If we timeout a request right here, we can
-end up sending that same request below.
-
-You are going to need to check
-
-test_bit(FR_PROCESSING)
-
-after you take the fpq->lock just below here to make sure you didn't race with
-the timeout handler and time the request out already.
-
->  	args = req->args;
-> @@ -1280,6 +1411,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
->  		if (args->opcode == FUSE_SETXATTR)
->  			req->out.h.error = -E2BIG;
->  		fuse_request_end(req);
-> +		fuse_put_request(req);
->  		goto restart;
->  	}
->  	spin_lock(&fpq->lock);
-> @@ -1316,13 +1448,23 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
->  	}
->  	hash = fuse_req_hash(req->in.h.unique);
->  	list_move_tail(&req->list, &fpq->processing[hash]);
-> -	__fuse_get_request(req);
->  	set_bit(FR_SENT, &req->flags);
->  	spin_unlock(&fpq->lock);
->  	/* matches barrier in request_wait_answer() */
->  	smp_mb__after_atomic();
->  	if (test_bit(FR_INTERRUPTED, &req->flags))
->  		queue_interrupt(req);
-> +
-> +	/* Check if request timed out */
-> +	if (test_bit(FR_PROCESSING, &req->flags)) {
-> +		spin_lock(&fpq->lock);
-> +		if (!test_bit(FR_PRIVATE, &req->flags))
-> +			list_del_init(&req->list);
-> +		spin_unlock(&fpq->lock);
-> +		fuse_put_request(req);
-> +		return -ETIME;
-> +	}
-
-This isn't quite right, we could have FR_PROCESSING set because we completed the
-request before we got here.  If you put a schedule_timeout(HZ); right above this
-you could easily see where a request gets completed by userspace, but now you've
-fimed it out.
-
-Additionally if we have FR_PROCESSING set from the timeout, shouldn't this
-cleanup have been done already?  I don't understand why we need to handle this
-here, we should just return and whoever is waiting on the request will get the
-error.
-
-Thanks,
-
-Josef
+>         /* Shift the bits in to the correct place in POR for pkey: */
+>         pkey_shift = pkey * POR_BITS_PER_PKEY;
+> 
+> 
+> 
+> Thanks,
+> Joey
 
