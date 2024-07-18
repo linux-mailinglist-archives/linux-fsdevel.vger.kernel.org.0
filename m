@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-23913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06631934D19
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 14:23:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AEF934D21
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 14:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5E08283465
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 12:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092D11F2143F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 12:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9417513C3C2;
-	Thu, 18 Jul 2024 12:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B5913CFA3;
+	Thu, 18 Jul 2024 12:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Q+/V9E/e"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gy83JArL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089D113A869
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 12:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4590713C67D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 12:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721305389; cv=none; b=mIyRbaWfr5cGNDebvq1e9Ak/waQXyFpDn1bFroYJ6j+BUqgONLjAWnSBZ/K7u9YjwQEDSHHNDGx+4ZXM5ZfmmRvq8V9bwhy/Wq8wE7wl9YYXEKXmf0ENXP3BnNg3ywK1nshNjvtarf7QRCnMhQ2We62q6Cq0r+ilKwB2fvnCDuE=
+	t=1721305416; cv=none; b=leoEquWTaX19ve0iWVxPQaEnPvPL/ZXptWpq0ZLaJ2IBXFTD+oIBihiFe0ew70GVnHJ8EMFvcn6vcQGmMJHSeadXB97/jvBsxfLuO8nEd6wZ6++fdsQ2atTZqP5nqohTsEntYOm3JX7hyW2h4DbXPrdLes+3U1GiLGZF/a3tEOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721305389; c=relaxed/simple;
-	bh=9vVfAGDjEYaGuzWwBLV44oZB2+MwfbkqxnsqL98UXuc=;
+	s=arc-20240116; t=1721305416; c=relaxed/simple;
+	bh=tCO23iD0368Et/1o4qT6WL+wA0X9IKDVICq61hs8H5w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iag8Av1TDU/IGDmp/fWkG38VYZJbFp3K2AeE5P+bFkKnKx3RyB2ncJAzMDrznVy5DzbCfmWQLYacX2Vh9S3bVslqtd+IUtp+nNPw8vZ34/JjDEnzvHuoHMGgOAVu0AFs305AwQa8smNsGpWr1CQ560zomPa+PSLP9XcNWTXZfco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Q+/V9E/e; arc=none smtp.client-ip=84.16.66.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7VbLWkfaDS8oNnP95Pqa7RzR2dn8CLRHqvlSf7a+FsJxSHiSL3zSgrD3STkP6Mm1brlXMa8UJjsMEVOduTA5jxt87sjTSW6V6fP5Hh/YecCsDv4LW+zZ/WbTIdIL4JjUmS9rL5Upt5HCCjQb3iE62yoqwFS3qXQg53KoqjhaKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=gy83JArL; arc=none smtp.client-ip=185.125.25.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WPsQS427YznDC;
-	Thu, 18 Jul 2024 14:22:56 +0200 (CEST)
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WPsQy5jNMzQ3K;
+	Thu, 18 Jul 2024 14:23:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721305376;
-	bh=UuxN7bN/Fuu2OQEszjkAFQVZQifPWKBjgSrPir4Ebkw=;
+	s=20191114; t=1721305402;
+	bh=2miiI/5j4wTJs9zVbOsNd+rOxv6jp8fs/L7lmo5Xt3s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q+/V9E/enLZnrkKrttf8y9hOgi20C0C4HhYlV1nFcKgT0ABn2mTbB01bIrXEdykV+
-	 3k6/zk6VwUdg4v8pkHW46XXJ82C//bDuJflvichEl0FOm0Pfi+x1UId3Kn6shCj6Nc
-	 20PvlnlYXxM0iXovWqaAI5pmmzDtbEaTo4i6+oa4=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WPsQN2nrHzncc;
-	Thu, 18 Jul 2024 14:22:52 +0200 (CEST)
-Date: Thu, 18 Jul 2024 14:22:49 +0200
+	b=gy83JArLMq864jKTREMY1Kn2Kfo3QT5j03SQkLmXwJryYVvObFoTAR0tvHMpGFGPN
+	 URCOIjHWu2cVo1uWWxNDPbO0VqEVGtxcbbezzRaNyXizzRIpp/q6ln8nyKGU/scq+u
+	 fBbAw+t6lcv38UVvqf0UWNtLJfRnqBjQr2qzl5lM=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WPsQx5DMZzp3w;
+	Thu, 18 Jul 2024 14:23:21 +0200 (CEST)
+Date: Thu, 18 Jul 2024 14:23:19 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Steve Dower <steve.dower@python.org>, Jeff Xu <jeffxu@google.com>, 
+To: Jeff Xu <jeffxu@google.com>
+Cc: Steve Dower <steve.dower@python.org>, 
 	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
 	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
 	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
@@ -71,13 +71,13 @@ Cc: Steve Dower <steve.dower@python.org>, Jeff Xu <jeffxu@google.com>,
 	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
 Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240718.Niexoo0ahch0@digikod.net>
+Message-ID: <20240718.ahph4che5Shi@digikod.net>
 References: <20240704190137.696169-1-mic@digikod.net>
  <20240704190137.696169-2-mic@digikod.net>
  <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
  <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
  <20240717.AGh2shahc9ee@digikod.net>
- <CALCETrUcr3p_APNazMro7Y9FX1zLAiQESvKZ5BDgd8X3PoCdFw@mail.gmail.com>
+ <CALmYWFvxJSyi=BT5BKDiKCNanmbhLuZ6=iAMvv1ibnP24SC7fA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,70 +87,65 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrUcr3p_APNazMro7Y9FX1zLAiQESvKZ5BDgd8X3PoCdFw@mail.gmail.com>
+In-Reply-To: <CALmYWFvxJSyi=BT5BKDiKCNanmbhLuZ6=iAMvv1ibnP24SC7fA@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Thu, Jul 18, 2024 at 09:02:56AM +0800, Andy Lutomirski wrote:
-> > On Jul 17, 2024, at 6:01 PM, Mickaël Salaün <mic@digikod.net> wrote:
+On Wed, Jul 17, 2024 at 06:51:11PM -0700, Jeff Xu wrote:
+> On Wed, Jul 17, 2024 at 3:00 AM Mickaël Salaün <mic@digikod.net> wrote:
 > >
 > > On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
-> >>> On 17/07/2024 07:33, Jeff Xu wrote:
-> >>> Consider those cases: I think:
-> >>> a> relying purely on userspace for enforcement does't seem to be
-> >>> effective,  e.g. it is trivial  to call open(), then mmap() it into
-> >>> executable memory.
-> >>
-> >> If there's a way to do this without running executable code that had to pass
-> >> a previous execveat() check, then yeah, it's not effective (e.g. a Python
-> >> interpreter that *doesn't* enforce execveat() is a trivial way to do it).
-> >>
-> >> Once arbitrary code is running, all bets are off. So long as all arbitrary
-> >> code is being checked itself, it's allowed to do things that would bypass
-> >> later checks (and it's up to whoever audited it in the first place to
-> >> prevent this by not giving it the special mark that allows it to pass the
-> >> check).
+> > > On 17/07/2024 07:33, Jeff Xu wrote:
+> > > > Consider those cases: I think:
+> > > > a> relying purely on userspace for enforcement does't seem to be
+> > > > effective,  e.g. it is trivial  to call open(), then mmap() it into
+> > > > executable memory.
+> > >
+> > > If there's a way to do this without running executable code that had to pass
+> > > a previous execveat() check, then yeah, it's not effective (e.g. a Python
+> > > interpreter that *doesn't* enforce execveat() is a trivial way to do it).
+> > >
+> > > Once arbitrary code is running, all bets are off. So long as all arbitrary
+> > > code is being checked itself, it's allowed to do things that would bypass
+> > > later checks (and it's up to whoever audited it in the first place to
+> > > prevent this by not giving it the special mark that allows it to pass the
+> > > check).
 > >
+> We will want to define what is considered as "arbitrary code is running"
+> 
+> Using an example of ROP, attackers change the return address in stack,
+> e.g. direct the execution flow to a gauge to call "ld.so /tmp/a.out",
+> do you consider "arbitrary code is running" when stack is overwritten
+> ? or after execve() is called.
+
+Yes, ROP is arbitrary code execution (which can be mitigated with CFI).
+ROP could be enough to interpret custom commands and create a small
+interpreter/VM.
+
+> If it is later, this patch can prevent "ld.so /tmp/a.out".
+> 
 > > Exactly.  As explained in the patches, one crucial prerequisite is that
 > > the executable code is trusted, and the system must provide integrity
 > > guarantees.  We cannot do anything without that.  This patches series is
 > > a building block to fix a blind spot on Linux systems to be able to
 > > fully control executability.
 > 
-> Circling back to my previous comment (did that ever get noticed?), I
+> Even trusted executable can have a bug.
 
-Yes, I replied to your comments.  Did I miss something?
-
-> don’t think this is quite right:
-> 
-> https://lore.kernel.org/all/CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com/
-> 
-> On a basic system configuration, a given path either may or may not be
-> executed. And maybe that path has some integrity check (dm-verity,
-> etc).  So the kernel should tell the interpreter/loader whether the
-> target may be executed. All fine.
-> 
->  But I think the more complex cases are more interesting, and the
-> “execute a program” process IS NOT BINARY.  An attempt to execute can
-> be rejected outright, or it can be allowed *with a change to creds or
-> security context*.  It would be entirely reasonable to have a policy
-> that allows execution of non-integrity-checked files but in a very
-> locked down context only.
-
-I guess you mean to transition to a sandbox when executing an untrusted
-file.  This is a good idea.  I talked about role transition in the
-patch's description:
-
-With the information that a script interpreter is about to interpret a
-script, an LSM security policy can adjust caller's access rights or log
-execution request as for native script execution (e.g. role transition).
-This is possible thanks to the call to security_bprm_creds_for_exec().
+Definitely, but this patch series is dedicated to script execution
+control.
 
 > 
-> So… shouldn’t a patch series to this effect actually support this?
+> I'm thinking in the context of ChromeOS, where all its system services
+> are from trusted partitions, and legit code won't load .so from a
+> non-exec mount.  But we want to sandbox those services, so even under
+> some kind of ROP attack, the service still won't be able to load .so
+> from /tmp. Of course, if an attacker can already write arbitrary
+> length of data into the stack, it is probably already a game over.
 > 
 
-This patch series brings the minimal building blocks to have a
-consistent execution environment.  Role transitions for script execution
-are left to LSMs.  For instance, we could extend Landlock to
-automatically sandbox untrusted scripts.
+OK, you want to tie executable file permission to mmap.  That makes
+sense if you have a consistent execution model.  This can be enforced by
+LSMs.  Contrary to script interpretation which is a full user space
+implementation (and then controlled by user space), mmap restrictions
+should indeed be enforced by the kernel.
 
