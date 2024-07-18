@@ -1,105 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-23959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D15937014
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 23:28:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB5093702D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 23:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38AE11C21AA7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 21:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F971F227E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 21:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D14145B0F;
-	Thu, 18 Jul 2024 21:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE6B145A09;
+	Thu, 18 Jul 2024 21:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NUvhwkVr"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="U8DYPjfB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CBF77107;
-	Thu, 18 Jul 2024 21:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D0F81751;
+	Thu, 18 Jul 2024 21:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721338044; cv=none; b=lYkcxlQiie0sMxgUbL0PJpIix4X4ol5SpzUhZNyUMPZzw87TzoZiMBlSttwe591swnmOoUqwW9MzvAbYwGrdQ79dGYpbRTNf+AeOdLNGUUSqCHY8CaKp9JdlHW5vp4oFXaZol3P4gIwKpzVj87PZWRsDBKsAsofntMGwklpnFtc=
+	t=1721338976; cv=none; b=iEylJA0OQpQBey+KxZryfMCOGjBYkEZzDA1bv8/29gc1q1GagfiBys6tcXXN1W3vy9m/acwHApyH2XCGZWRN0HATkhSCqyP5PdJczXmXXZYBlU6GUt+hviU1nu/trXgvWyU/pAcC9twfPl1E0BZ89VcTo9x0F3rEne/M4xU6SLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721338044; c=relaxed/simple;
-	bh=ljF7qPahvmPN+jQ666ak5bdqgC1Rb1vkJsw5r2RDcq8=;
+	s=arc-20240116; t=1721338976; c=relaxed/simple;
+	bh=rwBrBSOWEvecCpPOsN8DxHsjyJveE8a6kM3AAAAnytE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOpmGlqU7pZVqEatGD1VGhgOQUrOXJXDgWpwklpT2Uu4Jw5niNKXH+52mKdzC9awTwUlI3HatJ2a3Gv99UfAnAG2m1INRh3cf/6NS+Ywgj+tCO+ofvbnreGmI011pzqrVDq+PcdUo/4NvFzIRCr9pmixJdPf0xgeOINeYcdipGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NUvhwkVr; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4CYbVCprgYBXSc+P4gFK127u7ObHmJCwV+eBXVuumXk=; b=NUvhwkVryN6eFXcYXlKfjExdqu
-	eZAd84/hMuYwLFQRu6i8uGy/x7UIokIUx9eFsE04J7qq8dCz0nG1nyp8iQLqYUUJ0J8PppMSQ4lwX
-	qtzXXuRYrSdaFEij4Xr6M7fdKWXoSsEMDjHp51zaSGv2WTXlxnpQTWhHHSbIfSaTZJ68Wk007b28H
-	0o+MGdMdDn4VjcAMvxAOGgp/nQLWqnvOg7BFbIWwPNPTtpSU5Yisn3iN/niErZL1zpVx3/PifYTBc
-	HIWi1msm6lS39u4/0Rq+ZZCEea/ys31ScNuuUt/3YKARmTYjmBpFTj0/YZGiVRwt69fene16hofK+
-	hwfmSWKg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sUYek-00000002LaN-38XU;
-	Thu, 18 Jul 2024 21:27:18 +0000
-Date: Thu, 18 Jul 2024 22:27:18 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Waiman Long <longman@redhat.com>, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.11
-Message-ID: <ZpmItplPA5_zmAmC@casper.infradead.org>
-References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
- <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
- <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bCW5RO02TzW+yM4ZO2CPCNCxIAZWApqHn06foUOr+r1lY3Fbiu9jRcQ5dnSZw+y0JrR1ucDG39BISNZI161m1i1q/nur0WqKLv1FOdhRbToVjerIblBCbDfp712ekjWffHp5gpaKbHkDy3oMEycTmIOrX/uhxChYmVMYIR5OfT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=U8DYPjfB; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id AACCE14C2DD;
+	Thu, 18 Jul 2024 23:42:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1721338971;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U/bUkXzKitNH6YGqYdzXljxkIPFqMZav005MXLILfYg=;
+	b=U8DYPjfBivQPvUxmsnle9Iu4s6VEg3rqZbt8V2nYogOSm1ufX5X9yfzr6U2s8pH2jHsodQ
+	cCeRoMdTz4DO58ZIv4qrSIBWULt0kVJ1d+QyNIXOFKARamBVEWVW1Rz4CEXxogu7JU+dPY
+	qDapbQGi7omx4MLeM09z/oEoo/u3vPVc220ZzM3L+/G994eBmoz5Tb3T92WACbd5QZjWf4
+	0wcYaPgjHyqZb4msgY4R1K3GD7h7n0BeslfPIbJui3C8i7GKwxMLM+PxTqk9S1XjWxKdps
+	AltuOXRY3jPIdytIbx+Du9Roca8i0zDsVuRyNg5MfStRU575pQIgdmpoATy3+w==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 3e6bcb59;
+	Thu, 18 Jul 2024 21:42:46 +0000 (UTC)
+Date: Fri, 19 Jul 2024 06:42:31 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>, v9fs@lists.linux.dev
+Subject: Re: [PATCH] vfs: handle __wait_on_freeing_inode() and evict() race
+Message-ID: <ZpmMRzyE-mVrK74M@codewreck.org>
+References: <20240718151838.611807-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
+In-Reply-To: <20240718151838.611807-1-mjguzik@gmail.com>
 
-On Thu, Jul 18, 2024 at 05:20:54PM -0400, Kent Overstreet wrote:
-> From: Kent Overstreet <kent.overstreet@linux.dev>
-> Date: Thu, 18 Jul 2024 17:17:10 -0400
-> Subject: [PATCH] lockdep: Add comments for lockdep_set_no{validate,track}_class()
+Mateusz Guzik wrote on Thu, Jul 18, 2024 at 05:18:37PM +0200:
+> Lockless hash lookup can find and lock the inode after it gets the
+> I_FREEING flag set, at which point it blocks waiting for teardown in
+> evict() to finish.
 > 
-> Cc: Waiman Long <longman@redhat.com>
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> However, the flag is still set even after evict() wakes up all waiters.
 > 
-> diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-> index b76f1bcd2f7f..bdfbdb210fd7 100644
-> --- a/include/linux/lockdep.h
-> +++ b/include/linux/lockdep.h
-> @@ -178,9 +178,22 @@ static inline void lockdep_init_map(struct lockdep_map *lock, const char *name,
->  			      (lock)->dep_map.wait_type_outer,		\
->  			      (lock)->dep_map.lock_type)
->  
-> +/**
-> + * lockdep_set_novalidate_class: disable checking of lock ordering on a given
-> + * lock
-> + *
-> + * Lockdep will still record that this lock has been taken, and print held
-> + * instances when dumping locks
-> + */
+> This results in a race where if the inode lock is taken late enough, it
+> can happen after both hash removal and wakeups, meaning there is nobody
+> to wake the racing thread up.
+> 
+> This worked prior to RCU-based lookup because the entire ordeal was
+> synchronized with the inode hash lock.
+> 
+> Since unhashing requires the inode lock, we can safely check whether it
+> happened after acquiring it.
+> 
+> Link: https://lore.kernel.org/v9fs/20240717102458.649b60be@kernel.org/
+> Reported-by: Dominique Martinet <asmadeus@codewreck.org>
+> Fixes: 7180f8d91fcb ("vfs: add rcu-based find_inode variants for iget ops")
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> The 'fixes' tag is contingent on testing by someone else. :>
 
-Might want to run this through kernel-doc.  I'm pretty sure it wants
-macro comments to be formatted like function comments.  ie:
+Thanks for the quick fix!
 
-/**
- * lockdep_set_novalidate_class - Disable lock order checks on this lock.
- * @lock: The lock to disable order checks for.
- *
- * Lockdep will still record that this lock has been taken, and print held
- * instances when dumping locks.
- */
+> I have 0 experience with 9pfs and the docs failed me vs getting it
+> running on libvirt+qemu, so I gave up on trying to test it myself.
 
->  #define lockdep_set_novalidate_class(lock) \
->  	lockdep_set_class_and_name(lock, &__lockdep_no_validate__, #lock)
+I hadn't used it until yesterday either, but virtme-ng[1] should be easy
+enough to get running without much effort: just cloning this and running
+/path/to/virtme-ng/vng from a built linux tree will start a vm with /
+mounted as 9p read-only (--rwdir /foo for writing)
+[1] https://github.com/arighi/virtme-ng 
+
+> Dominique, you offered to narrow things down here, assuming the offer
+> stands I would appreciate if you got this sorted out :)
+
+Unfortunately I haven't been able to reproduce this :/
+I'm not running the exact same workload but 9p should be instanciating
+inodes from just a find in a large tree; I tried running finds in
+parallel etc to no avail.
+
+You mentioned adding some sleep to make this easier to hit, should
+something like this help or did I get this wrong?
+----
+diff --git a/fs/inode.c b/fs/inode.c
+index 54e0be80be14..c2991142a462 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -21,6 +21,7 @@
+ #include <linux/list_lru.h>
+ #include <linux/iversion.h>
+ #include <linux/rw_hint.h>
++#include <linux/delay.h>
+ #include <trace/events/writeback.h>
+ #include "internal.h"
+ 
+@@ -962,6 +963,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
+                        continue;
+                if (inode->i_sb != sb)
+                        continue;
++               usleep_range(10,100);
+                spin_lock(&inode->i_lock);
+                if (inode->i_state & (I_FREEING|I_WILL_FREE)) {
+                        __wait_on_freeing_inode(inode, locked);
+----
+unfortunately I've checked with a printk there too and I never get there
+in the first place, so it probably needs to hit another race first where
+we're getting an inode that's about or has just been dropped or
+something, but none of my "9p stress" workloads seem to be hitting it
+either...
+Could be some scheduling difference or just that my workloads aren't
+appropriate; I need to try running networking tests but ran out of time
+for today.
+
+> Even if the patch in the current form does not go in, it should be
+> sufficient to confirm the problem diagnosis is correct.
+> 
+> A debug printk can be added to validate the problematic condition was
+> encountered, for example:
+
+That was helpful, thanks.
+
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 54e0be80be14..8f61fad0bc69 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -2308,6 +2308,7 @@ static void __wait_on_freeing_inode(struct inode *inode, bool locked)
+> >         if (unlikely(inode_unhashed(inode))) {
+> >                 BUG_ON(locked);
+> >                 spin_unlock(&inode->i_lock);
+> > +               printk(KERN_EMERG "%s: got unhashed inode %p\n", __func__, inode);
+> >                 return;
+> >         }
+
+-- 
+Dominique Martinet | Asmadeus
 
