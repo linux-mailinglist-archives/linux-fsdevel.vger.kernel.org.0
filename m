@@ -1,183 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-23932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852D0934FC9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 17:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E2C934FDE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 17:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06CDE1F21705
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 15:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E299E1F215CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 15:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EFD1442F0;
-	Thu, 18 Jul 2024 15:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5077E1442F0;
+	Thu, 18 Jul 2024 15:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dA2h+VwU"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="EuNzPYco"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B430D143C72;
-	Thu, 18 Jul 2024 15:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B0B14386E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 15:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721315937; cv=none; b=R2sKukXSTuqsjXfcqMYNH3pxfwbCrq/58B3i1qBJSG8VyYUl1SKNeW5uE407ES/mZvJF7GagbrbLOkjAWv55PWk8omO5rFBT9QMt7GPq5TL07Tvm5fvPqGAUozDl2f+S8IHurkleDLW8dK0Iq82yh16QrDU2EymAwy6hm242VC8=
+	t=1721316261; cv=none; b=b4hY4ydQWV0DuAKVWdAE7jSPNqrWUsYaTUK3emLW//wO9N80ujDMeTnDOSIJio5F50Yy45EkOK/QNcwc6EzVysh7ZYY5yiqZNj6qQXfbhIbhK8eQqvclfA4wIHi3JwdWsHfvrGd59q75Whz6C/5bPMNh0tKWZ3SF1u97CbxQNMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721315937; c=relaxed/simple;
-	bh=TfJwI1DxA0iQKpb1qdrSRO0yvas7Lmr0kvx/NkBIRtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X4bJaeLwzsmN9rSfjlsgziIN0L4MVYSrGTkG2YKKCdZQPRw5F1WnCaE34xciPpIweLcoRgh1Mjvt5LL4z/W37HlGh8l5TuPrIFq9BPL/99EDmidaMR8alTsvTz3opeoyY6jKgrqk/qQIXt3isnFcqNCl2o/bVJoRK2T9WgvhU3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dA2h+VwU; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so1564052a12.1;
-        Thu, 18 Jul 2024 08:18:55 -0700 (PDT)
+	s=arc-20240116; t=1721316261; c=relaxed/simple;
+	bh=R4sVJBIk5/OEw5l+h23axEodYkhZhN3yRAaIqw/cXbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vfq3chyW8G4po5xGaLeeRmTkO0NBmd413ntsdKn6OLd8JjUW5FaVYAsZU2m8CZi6n7Q1qgIXqZ4/fCSBNnB8W1UTQaqS3vECf1MXkxjf469WjENz3wu9hklnI5FPgvlTM1bYxonjP0ltnEL9NFn95Fk0q4gvPEufn91XXo4+ZqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=EuNzPYco; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e0857a11862so420492276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jul 2024 08:24:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721315934; x=1721920734; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=66tOt3U7e+mliJJ0zIhh+HtH8ytlVxjCTIQsAfp/IiY=;
-        b=dA2h+VwUbjugxOpnxDcLveuKRHa7MtzAs+j+WJi/dj+ohdi0PN+bEVm6YPRvo4+q7Q
-         qeKazMnTB4TS611F9fyrUENNHhungIDXdJiDPRXpGh2yIllxE2uoCorKWrlFkSstjXMR
-         ekwZn+tDBUVW64sgDBI9vnUrOd5zXR3oTSyCZnxeL4ChgI0PCE9oiSwMpB2AxggJMHWA
-         TgvTYyLSWjqdCeLq636Eq+/lCW8piQj632fdNNVaW0pIJVRaeV1C6wbytvj11tZCRXwQ
-         5aMa8hJV5EYfXkYA0kQoCOmVqyFNOHlrtdC18kXXqTsSx0/djX8TADoQVfwHY/j08MIz
-         38Kw==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1721316259; x=1721921059; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z7dYGw8oqfQqjURLf6tbzMbsz8HNDTpgsoT30qX1hdc=;
+        b=EuNzPYcoQ/A9EqEkUB/m5js4Qdfyxh6UhaNUN69yZuK7ZsNwOQ93BWViaH6X9tND+Z
+         /R/tgo/Nke48BNDAdNQA2spvv9Uv5HIast94zloBkhX2Yn9HxQUcw88/qaaCy2ekQf9j
+         o8k/blaKzu2hAqSPml8KDT2hgcgVFrClCfe5RuvxEoQ1KF0HVToWCt6VuF/uSVbIirav
+         ejLUFDuTXMfCP2qbWNgIINZpOiVeoogewU+NTSn/7ECyF+aFc0n+6InWSg4RjwbvHQPu
+         yUuIWMK6KZ34sVZg0ETee/lHllNlWtkH7KsmEf7c0AxmCuUVVZI2LNAlqE/9c2EPyl9F
+         l01Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721315934; x=1721920734;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=66tOt3U7e+mliJJ0zIhh+HtH8ytlVxjCTIQsAfp/IiY=;
-        b=vBx29fK4VQCLygSwsiy78ca2f+mPyFulEmipnz6u3gFOOS3+UZq8EEhwwaa0GlcWeT
-         g7oWrH9Mn2GdEVLtso1WL7LVVW59uaYCKW6flBdrSG/jjAvvxDnH0eSu2hvdLycw5YCf
-         Z0L2aHixjDKJLRLK7APSHNZGD6oQusqq2E8e0/p0KnI5eQUnJSiSRsxWjjQQf4xIck51
-         khxy1W2c1DtUMFo3tSeiVkbhgSXjoKpqvmYAFR86VMfxIVOyENZFSZh/5GvOaKu0vVH7
-         oOlXHPz+wWxI8uwxpsYiDXP93wM7uUfB2J1Ck16sp5eHNwdSdI9JjWhCQkOcWqtPb4hg
-         Tlng==
-X-Forwarded-Encrypted: i=1; AJvYcCUbKFroH+fz2GcpBkqqe7tAh6jJTSAw2pKljlQUwqUAUh83fHnbYskFwBQQfpq5lgV43B6Xf1V/0DjeNIc7rkAYPBL1PN6xrJ6lSQjN9w+DfOL7NWsjYQVGCRUF3rro6Ml1njIotE5CfkL3ZA==
-X-Gm-Message-State: AOJu0Yzq4JsN/L4t9J0RqifgDmVOcNiMhJz8R/tYh62AGEqqtVfp49hG
-	SkxuRSrHvg4qnqT+TDWBcpcn4WEb4TVu83FLL1IBiWN4veRalxpf0jpqtVl0
-X-Google-Smtp-Source: AGHT+IE5uwWjaNe+xWyJsYA3Q9W9tES3ir/K/R4AB7aMUxALfpcM+4hBfX86Yv6StyXC7bfdgiipqw==
-X-Received: by 2002:a05:6402:2110:b0:57d:3e48:165d with SMTP id 4fb4d7f45d1cf-5a1557cd01fmr4004540a12.4.1721315933804;
-        Thu, 18 Jul 2024 08:18:53 -0700 (PDT)
-Received: from f.. (cst-prg-77-238.cust.vodafone.cz. [46.135.77.238])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59f7464d40asm4218581a12.68.2024.07.18.08.18.50
+        d=1e100.net; s=20230601; t=1721316259; x=1721921059;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z7dYGw8oqfQqjURLf6tbzMbsz8HNDTpgsoT30qX1hdc=;
+        b=TMBQR1juaOkYGuEZIMwUaUX+h6LJKLEYZ/9YMRCgYWGSPbvNXJ+XADyFmBkIlvveRn
+         EhAFaXvuBkq5Yxf6RRVct1UAmzzXvXr5aMy+VpyQjm/Hjl6+ywtoC7VhjOJ2IxAryQ7U
+         MqGJy2p2bhX+cXCFe83ydk3Jiqc9QNJS5BGj2n5KR3ozOF6NWaXGzm56j3XDhmrbUjC/
+         wkYpXAcXeVoDvk9/m2VmxqPF0m2uNZ/xJaZrO56B+rWig1ZJoSVSmJS2fmT4Gd1gDahl
+         uSAwpFmfySQxGtImWuScgTUx1dcXyyU0jc8nk+/pCMAq3sfNtclw2eDi+L1daXEW0TVx
+         ahXQ==
+X-Gm-Message-State: AOJu0YzFrXh9iM7GdfhgtE3AJcVHIPTzZnH0HGAVCOL9SLP7qWatBAdU
+	Qr79Q4J6hDyqdVrvG/1HlkRBXWBiF3FGfBP3sDTzW658ursay/tXJpMYByHS58l41+LWeCQ3HMW
+	8
+X-Google-Smtp-Source: AGHT+IHcFnw3hyCKnARicEPpjSubWL8Noot7+/8sN0R5RewAwpnJC7xqfqlGtD4KUjdEHb1HrGZ4lQ==
+X-Received: by 2002:a05:6902:18d5:b0:dff:1dfd:c2e1 with SMTP id 3f1490d57ef6-e05ed6b68c3mr6661226276.11.1721316258700;
+        Thu, 18 Jul 2024 08:24:18 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e05fea2687esm364316276.23.2024.07.18.08.24.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 08:18:53 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	v9fs@lists.linux.dev,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] vfs: handle __wait_on_freeing_inode() and evict() race
-Date: Thu, 18 Jul 2024 17:18:37 +0200
-Message-ID: <20240718151838.611807-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 18 Jul 2024 08:24:18 -0700 (PDT)
+Date: Thu, 18 Jul 2024 11:24:17 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 00/23] Convert write_begin / write_end to take a folio
+Message-ID: <20240718152417.GB2099026@perftesting>
+References: <20240717154716.237943-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717154716.237943-1-willy@infradead.org>
 
-Lockless hash lookup can find and lock the inode after it gets the
-I_FREEING flag set, at which point it blocks waiting for teardown in
-evict() to finish.
+On Wed, Jul 17, 2024 at 04:46:50PM +0100, Matthew Wilcox (Oracle) wrote:
+> You can find the full branch at
+> http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/write-end
+> aka
+> git://git.infradead.org/users/willy/pagecache.git write-end
+> 
+> On top of the ufs, minix, sysv and qnx6 directory handling patches, this
+> patch series converts us to using folios for write_begin and write_end.
+> That's the last mention of 'struct page' in several filesystems.
+> 
+> I'd like to get some version of these patches into the 6.12 merge
+> window.
+> 
+> Matthew Wilcox (Oracle) (23):
+>   reiserfs: Convert grab_tail_page() to use a folio
+>   reiserfs: Convert reiserfs_write_begin() to use a folio
+>   block: Use a folio in blkdev_write_end()
+>   buffer: Use a folio in generic_write_end()
+>   nilfs2: Use a folio in nilfs_recover_dsync_blocks()
+>   ntfs3: Remove reset_log_file()
+>   buffer: Convert block_write_end() to take a folio
+>   ecryptfs: Convert ecryptfs_write_end() to use a folio
+>   ecryptfs: Use a folio in ecryptfs_write_begin()
+>   f2fs: Convert f2fs_write_end() to use a folio
+>   f2fs: Convert f2fs_write_begin() to use a folio
+>   fuse: Convert fuse_write_end() to use a folio
+>   fuse: Convert fuse_write_begin() to use a folio
+>   hostfs: Convert hostfs_write_end() to use a folio
+>   jffs2: Convert jffs2_write_end() to use a folio
+>   jffs2: Convert jffs2_write_begin() to use a folio
+>   orangefs: Convert orangefs_write_end() to use a folio
+>   orangefs: Convert orangefs_write_begin() to use a folio
+>   vboxsf: Use a folio in vboxsf_write_end()
+>   fs: Convert aops->write_end to take a folio
+>   fs: Convert aops->write_begin to take a folio
+>   ocfs2: Convert ocfs2_write_zero_page to use a folio
+>   buffer: Convert __block_write_begin() to take a folio
 
-However, the flag is still set even after evict() wakes up all waiters.
+I applied and reviewed this, the per-fs stuff obviously I'm less familiar with,
+I mostly just validated it was 1:1 conversion and that the behavior matched the
+previous behavior.  You can add
 
-This results in a race where if the inode lock is taken late enough, it
-can happen after both hash removal and wakeups, meaning there is nobody
-to wake the racing thread up.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-This worked prior to RCU-based lookup because the entire ordeal was
-synchronized with the inode hash lock.
+to the series.  Thanks,
 
-Since unhashing requires the inode lock, we can safely check whether it
-happened after acquiring it.
-
-Link: https://lore.kernel.org/v9fs/20240717102458.649b60be@kernel.org/
-Reported-by: Dominique Martinet <asmadeus@codewreck.org>
-Fixes: 7180f8d91fcb ("vfs: add rcu-based find_inode variants for iget ops")
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-The 'fixes' tag is contingent on testing by someone else. :>
-
-I have 0 experience with 9pfs and the docs failed me vs getting it
-running on libvirt+qemu, so I gave up on trying to test it myself.
-
-Dominique, you offered to narrow things down here, assuming the offer
-stands I would appreciate if you got this sorted out :)
-
-Even if the patch in the current form does not go in, it should be
-sufficient to confirm the problem diagnosis is correct.
-
-A debug printk can be added to validate the problematic condition was
-encountered, for example:
-
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 54e0be80be14..8f61fad0bc69 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2308,6 +2308,7 @@ static void __wait_on_freeing_inode(struct inode *inode, bool locked)
->         if (unlikely(inode_unhashed(inode))) {
->                 BUG_ON(locked);
->                 spin_unlock(&inode->i_lock);
-> +               printk(KERN_EMERG "%s: got unhashed inode %p\n", __func__, inode);
->                 return;
->         }
-
-
- fs/inode.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index f356fe2ec2b6..54e0be80be14 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -676,6 +676,16 @@ static void evict(struct inode *inode)
- 
- 	remove_inode_hash(inode);
- 
-+	/*
-+	 * Wake up waiters in __wait_on_freeing_inode().
-+	 *
-+	 * Lockless hash lookup may end up finding the inode before we removed
-+	 * it above, but only lock it *after* we are done with the wakeup below.
-+	 * In this case the potential waiter cannot safely block.
-+	 *
-+	 * The inode being unhashed after the call to remove_inode_hash() is
-+	 * used as an indicator whether blocking on it is safe.
-+	 */
- 	spin_lock(&inode->i_lock);
- 	wake_up_bit(&inode->i_state, __I_NEW);
- 	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
-@@ -2291,6 +2301,16 @@ static void __wait_on_freeing_inode(struct inode *inode, bool locked)
- {
- 	wait_queue_head_t *wq;
- 	DEFINE_WAIT_BIT(wait, &inode->i_state, __I_NEW);
-+
-+	/*
-+	 * Handle racing against evict(), see that routine for more details.
-+	 */
-+	if (unlikely(inode_unhashed(inode))) {
-+		BUG_ON(locked);
-+		spin_unlock(&inode->i_lock);
-+		return;
-+	}
-+
- 	wq = bit_waitqueue(&inode->i_state, __I_NEW);
- 	prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
- 	spin_unlock(&inode->i_lock);
--- 
-2.43.0
-
+Josef
 
