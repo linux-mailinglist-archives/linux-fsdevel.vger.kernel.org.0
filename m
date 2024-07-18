@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-23930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6788A934FA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 17:05:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E411934FA8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 17:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE31E1F210F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 15:05:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D792863CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jul 2024 15:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4B01411EE;
-	Thu, 18 Jul 2024 15:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C77143C4D;
+	Thu, 18 Jul 2024 15:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtp/TrJs"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mGW7teYQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DEC142E88;
-	Thu, 18 Jul 2024 15:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2DE84DF5;
+	Thu, 18 Jul 2024 15:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721315118; cv=none; b=ZCZZnSXl1CVlFYzfhzWNSVotrdh3hU9TqUUwR1h59GP61OP/tLIALBXE8XC+7Sg4LU7SnbRPPM1m+lw8EKBSe4r93oJosuz/EXrkEFMbUOntKQHiuHbYjxeqklo7+exfEJ1E4Y8XUx0fFsKYdjq4ZmpH0YQOXTk8/MCgWDNrzUo=
+	t=1721315351; cv=none; b=plighJAUg/QOLTMfjJYL0kbRNUa36xEeUevpfCwFEv11y+3gJhI8E6a3NuAaUX766/SWAvWq0Ia9Q1gxXiiulm7w1+wrkgIl2mAwACn5++m21fFZokATsdYYMBTqIbDwoNAqqBGQnNkLbebnmrgnhQaKpVIOsTTxzgvDWAt+t7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721315118; c=relaxed/simple;
-	bh=7/dfhgLh/M3NKMwjO5kGc5wSi3Df+4MsQUYRMqvLVUo=;
+	s=arc-20240116; t=1721315351; c=relaxed/simple;
+	bh=3sx6x7fX7gd9fjLp+cNqsgagpMUg1R9aeMNvU+8nLJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0n1Si5RQ6qBnsAnPoHWJdSa0wzaPGX8fd+7s1jO/ZFY1vsCfKnr67fofUZQ/u4ihVfgzJvrf0APGwHQzCTzR92O5B/1l79wm0B+xMSVMCHz8GCMrF03IhCy/YUC4aS/TpY4C0MIsX/hbIA9r1f7uAyKbs/kclpZt/vlIgGCY7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtp/TrJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C674C116B1;
-	Thu, 18 Jul 2024 15:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721315117;
-	bh=7/dfhgLh/M3NKMwjO5kGc5wSi3Df+4MsQUYRMqvLVUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qtp/TrJsnCwIENfDF2o0vDWlQFd020eKOCXxnky/TdQlhv9D/C5/3frR5wSUKe8U8
-	 3lXb3E0fe/PbZe14sMfSR9iTvfvTqvkBvMgrrkhQyXDGoQjgUMcJ+2AfJN4kvfXwMN
-	 XcovuqeGqBj7EJzWOg8Ve1zJ5WGEPpXci2Vo0+QIxlsPWST4iHjsNTDkYyRK3vHXTB
-	 0C2MdEJkv4UEH936ZAuOvZF6XPRuL19Q/JazWXCDBmbnYjGxG/QKhUbr8n2vzKAw61
-	 zD1TtaY2GLZCKXWEhWumfG67t5Lcscf+PEq5gpWFai1ms+4QXVstqN7t60dVc7dgTc
-	 z6KwyKmE0lsZw==
-Date: Thu, 18 Jul 2024 08:05:16 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: alx@kernel.org, linux-man@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-	dchinner@redhat.com, martin.petersen@oracle.com,
-	Himanshu Madhani <himanshu.madhani@oracle.com>
-Subject: Re: [PATCH v4 2/3] readv.2: Document RWF_ATOMIC flag
-Message-ID: <20240718150516.GH103014@frogsfrogsfrogs>
-References: <20240717093619.3148729-1-john.g.garry@oracle.com>
- <20240717093619.3148729-3-john.g.garry@oracle.com>
- <20240717214423.GI1998502@frogsfrogsfrogs>
- <2eb8c7b7-7758-49a3-b837-2e2a622c0ed9@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqmsGor70WXJORaWA9nG0sL27CdVo6mhTSX3OR9r4iZvCpoFz2xK4f9bEF4Uy/VGl+bi1GGUvAtBYv4vIHtYwOZyq67OAO5lIN4EqhgGvdDMLoClB0mbZPETRtMXG0f1PrjiT0wq4ouELzOQdqviBa9L+8n6+S3/KKUMS/PdAUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mGW7teYQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nSlyvMPyg3jS+qwE9Mjq/Dc54Aa0BLrkXgP6ILW+ByM=; b=mGW7teYQ5oX6LPFeDfscRuL1qc
+	jE1e1ujecHyB5YGiuO16UxqFWldJYqtwi9vBRoQ9fqv5hw8z3rPChRn2A8Pk1eShBN4N+a5SFAh3H
+	czpL6l+6TxbSNaoOdpUX4Niz1vCK2Ts1t+ny1tpvLXcrkgudxLj+NQzc6lm2ear5LBsQ8H/eQ/kI1
+	YAtJ2ppXKC6OCJUN+RqxYlkCyY04ua6Fd2dWizVCEGbHUhOXGagJL5kNQZ4t1+1mtLP1E6w03Clu4
+	BXXjIiHM15/miX0FtSZoIZD881u8OTVFlSSb8+CJnMCRbFRz+BsI/gh0JxwXjJbwbnuopYLP6tdyA
+	iIkR/QiQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sUSkh-000000025ro-2kZC;
+	Thu, 18 Jul 2024 15:09:03 +0000
+Date: Thu, 18 Jul 2024 16:09:03 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/4] filemap: return pos of first dirty folio from
+ range_has_writeback
+Message-ID: <ZpkwD2-q9_XRfX5P@casper.infradead.org>
+References: <20240718130212.23905-1-bfoster@redhat.com>
+ <20240718130212.23905-2-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,198 +62,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2eb8c7b7-7758-49a3-b837-2e2a622c0ed9@oracle.com>
+In-Reply-To: <20240718130212.23905-2-bfoster@redhat.com>
 
-On Thu, Jul 18, 2024 at 03:07:59PM +0100, John Garry wrote:
-> On 17/07/2024 22:44, Darrick J. Wong wrote:
-> > On Wed, Jul 17, 2024 at 09:36:18AM +0000, John Garry wrote:
-> > > From: Himanshu Madhani <himanshu.madhani@oracle.com>
-> > > 
-> > > Add RWF_ATOMIC flag description for pwritev2().
-> > > 
-> > > Signed-off-by: Himanshu Madhani <himanshu.madhani@oracle.com>
-> > > [jpg: complete rewrite]
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   man/man2/readv.2 | 76 ++++++++++++++++++++++++++++++++++++++++++++++++
-> > >   1 file changed, 76 insertions(+)
-> > > 
-> > > diff --git a/man/man2/readv.2 b/man/man2/readv.2
-> > > index eecde06dc..9c8a11324 100644
-> > > --- a/man/man2/readv.2
-> > > +++ b/man/man2/readv.2
-> > > @@ -193,6 +193,66 @@ which provides lower latency, but may use additional resources.
-> > >   .B O_DIRECT
-> > >   flag.)
-> > >   .TP
-> > > +.BR RWF_ATOMIC " (since Linux 6.11)"
-> > > +Requires that writes to regular files in block-based filesystems be issued with
-> > > +torn-write protection.
-> > > +Torn-write protection means that for a power or any other hardware failure,
-> > > +all or none of the data from the write will be stored,
-> > > +but never a mix of old and new data.
-> > > +This flag is meaningful only for
-> > > +.BR pwritev2 (),
-> > > +and its effect applies only to the data range written by the system call.
-> > > +The total write length must be power-of-2 and must be sized in the range
-> > > +.RI [ stx_atomic_write_unit_min ,
-> > > +.IR stx_atomic_write_unit_max ].
-> > > +The write must be at a naturally-aligned offset within the file with respect to
-> > > +the total write length -
-> > > +for example,
-> > 
-> > Nit: these could be two sentences
-> > 
-> > "The write must be at a naturally-aligned offset within the file with
-> > respect to the total write length.  For example, ..."
-> 
-> ok, sure
-> 
-> > 
-> > > +a write of length 32KB at a file offset of 32KB is permitted,
-> > > +however a write of length 32KB at a file offset of 48KB is not permitted.
-> > 
-> > Pickier nit: KiB, not KB.
-> 
-> ok
-> 
-> > 
-> > > +The upper limit of
-> > > +.I iovcnt
-> > > +for
-> > > +.BR pwritev2 ()
-> > > +is in
-> > 
-> > "is given by" ?
-> 
-> ok, fine, I don't mind
-> 
-> > 
-> > > +.I stx_atomic_write_segments_max.
-> > > +Torn-write protection only works with
-> > > +.B O_DIRECT
-> > > +flag, i.e. buffered writes are not supported.
-> > > +To guarantee consistency from the write between a file's in-core state with the
-> > > +storage device,
-> > > +.BR fdatasync (2),
-> > > +or
-> > > +.BR fsync (2),
-> > > +or
-> > > +.BR open (2)
-> > > +and either
-> > > +.B O_SYNC
-> > > +or
-> > > +.B O_DSYNC,
-> > > +or
-> > > +.B pwritev2 ()
-> > > +and either
-> > > +.B RWF_SYNC
-> > > +or
-> > > +.B RWF_DSYNC
-> > > +is required. Flags
-> > 
-> > This sentence   ^^ should start on a new line.
-> 
-> yes
-> 
-> > 
-> > > +.B O_SYNC
-> > > +or
-> > > +.B RWF_SYNC
-> > > +provide the strongest guarantees for
-> > > +.BR RWF_ATOMIC,
-> > > +in that all data and also file metadata updates will be persisted for a
-> > > +successfully completed write.
-> > > +Just using either flags
-> > > +.B O_DSYNC
-> > > +or
-> > > +.B RWF_DSYNC
-> > > +means that all data and any file updates will be persisted for a successfully
-> > > +completed write.
-> > 
-> 
-> ughh, this is hard to word both concisely and accurately...
-> 
-> > "any file updates" ?  I /think/ the difference between O_SYNC and
-> > O_DSYNC is that O_DSYNC persists all data and file metadata updates for
-> > the file range that was written, whereas O_SYNC persists all data and
-> > file metadata updates for the entire file.
-> 
-> I think that https://man7.org/linux/man-pages/man2/open.2.html#NOTES
-> describes it best.
-> 
-> > 
-> > Perhaps everything between "Flags O_SYNC or RWF_SYNC..." and "...for a
-> > successfully completed write." should instead refer readers to the notes
-> > about synchronized I/O flags in the openat manpage?
-> 
-> Maybe that would be better, but we just need to make it clear that
-> RWF_ATOMIC provides the guarantee that the data is atomically updated only
-> in addition to whatever guarantee we have for metadata updates from
-> O_SYNC/O_DSYNC.
-> 
-> 
-> So maybe:
-> RWF_ATOMIC provides the guarantee that any data is written with torn-write
-> protection, and additional flags O_SYNC or O_DSYNC provide
-> same Synchronized I/O guarantees as documented in <openat manpage reference>
+On Thu, Jul 18, 2024 at 09:02:09AM -0400, Brian Foster wrote:
+> @@ -655,6 +655,8 @@ bool filemap_range_has_writeback(struct address_space *mapping,
+>  				folio_test_writeback(folio))
+>  			break;
+>  	}
+> +	if (folio)
+> +		*start_byte = folio_pos(folio);
+>  	rcu_read_unlock();
+>  	return folio != NULL;
+>  }
 
-  ^ the same
+Distressingly, this is unsafe.
 
-> 
-> OK?
+We have no reference on the folio at this point (not one that matters,
+anyway).  We have the rcu read lock, yes, but that doesn't protect enough
+to make folio_pos() safe.
 
-Yes.
-
-> > > +Not using any sync flags means that there is no guarantee that data or
-> > > +filesystem updates are persisted.
-> > > +.TP
-> > >   .BR RWF_SYNC " (since Linux 4.7)"
-> > >   .\" commit e864f39569f4092c2b2bc72c773b6e486c7e3bd9
-> > >   Provide a per-write equivalent of the
-> > > @@ -279,10 +339,26 @@ values overflows an
-> > >   .I ssize_t
-> > >   value.
-> > >   .TP
-> > > +.B EINVAL
-> > > + For
-> > > +.BR RWF_ATOMIC
-> > > +set,
-> > 
-> > "If RWF_ATOMIC is specified..." ?
-> > 
-> > (to be a bit more consistent with the language around the AT_* flags in
-> > openat)
-> 
-> ok, fine
-> 
-> > 
-> > > +the combination of the sum of the
-> > > +.I iov_len
-> > > +values and the
-> > > +.I offset
-> > > +value does not comply with the length and offset torn-write protection rules.
-> > > +.TP
-> > >   .B EINVAL
-> > >   The vector count,
-> > >   .IR iovcnt ,
-> > >   is less than zero or greater than the permitted maximum.
-> > > +For
-> > > +.BR RWF_ATOMIC
-> > > +set, this maximum is in
-> > 
-> > (same)
-> > 
-> > --D
-> > 
-> 
-> Thanks for checking,
-
-NP. :)
-
---D
-
-> John
-> 
-> 
+Since we do't have folio_get() here, the folio can be freed, sent back to
+the page allocator, and then reallocated to literally any purpose.  As I'm
+reviewing patch 1/4, I have no idea if this is just a hint and you can
+survive it being completely wrong, or if this is going to cause problems.
 
