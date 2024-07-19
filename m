@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-24003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50EE9378EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 16:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BF99378F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 16:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EE582818A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 14:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48C541F22A2B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 14:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D1514535E;
-	Fri, 19 Jul 2024 14:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20F0144D35;
+	Fri, 19 Jul 2024 14:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DzZ55XEy"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HlABtjMF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FEC282FB
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2024 14:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D311213AA31
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2024 14:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721398166; cv=none; b=Uw2t9O4Plrl1r1hZPFa22eT3rQ1fn4lf6QojjPbCtxbjr4UEW00iyC/LFoCohH5RZZJx/G5uRXT+/py30JyI13Xv/PNFtcS30u4YTfy1pZlkUhrRm/HwuYNRkw287RrSR/lUZBMbBGurK52Wzn78nqTHMWUj+SZlG5av2c4TpxA=
+	t=1721398172; cv=none; b=nLEhnTPWOHN8pF38ExHyOr2rFo5/r7GUAdDg5KRYoiv29ner1xZR6jukS/eweRVqDYNFoxoy7axWZ/BHqY2iKsjCkQ3CzYwisNcxqxL774SmeqD9dlA0IWy6U+W2ZbO91HA5pGLlD/eK9qy5bemumIiTPwGJ7yoOlGnfBkuA1l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721398166; c=relaxed/simple;
-	bh=fre4/NqB1QX3kYFrVwwxZtWqZ8RN0m4oK0mMVAsB7Ok=;
+	s=arc-20240116; t=1721398172; c=relaxed/simple;
+	bh=3bHFVVT0z9X5E5gWU4+elN0GsZs75sxue8LXJL23IlY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RUXasK6QTyi1LER6VqwciWTHn/RnMti+5dBxmPLJYBvcg/UnNLJCTbNfmDD0WLq7H2GErq9gypb5w1/XD3sVMPiCQPINpTvVuAT4n4inK3qbAwOIXpcs33GL7Z/4OixIP1iZ+gCGfJVYY8FjSDGr6Wj3eMNyf6fXWj783xJr26I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DzZ55XEy; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=RAUavfAc9LOB+9g9+lzdApwNDtZVkw83y0EdEO4eYjSeOD23O9jjnxjeHW17b5w8e+/lgpl0BTDT6QXTGoJjYehrCVHgCNQ21BMX2pdcL0FZfWQmajOkyMAVcRCmNvfe6NK/ByZ/JQcSi/vKmPTRmJVn918hWUV/8qBEaKbrDso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HlABtjMF; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721398163;
+	s=mimecast20190719; t=1721398169;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OHBrQxJhHKq/0+I6r91RjUd+G1W1o7qj5MHAExhQKcI=;
-	b=DzZ55XEyEo3a+LXD0oarpykBu88xPHvmkSBpSj81N8hFUSphpujnOwEG8F9TsYPbnmV/ht
-	4HQvunNra7OhIqdKjATjLNfPs+vaGpgIXAPtFUlA9FgkhRAedidgrXLoSR/ztChFvVCr2s
-	4DyXtF1nv/4PbLVOqv107V/k18fcU8I=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	bh=7P/rCTVhwCXDkuvtD8nEjpoSCXpKNmz+wnvcy57As00=;
+	b=HlABtjMFg2ZsajxBFSdtAU92ifFG0ZVonBF/UqtBl1NPbUjHDRLckE/wt/spSueb74hmYS
+	GA8iHhAXOVWUXccWThsDW+neqx4y78pSbqxVrLTFFxUkxzyPNtkE+939L+q0q1AxcykLij
+	ywopIvlMTilAgQicx1xiuIni9BV2sek=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-549-XHKxl2mIPn-W94e6oZHLDQ-1; Fri,
- 19 Jul 2024 10:09:19 -0400
-X-MC-Unique: XHKxl2mIPn-W94e6oZHLDQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-612-X7YxDAcsP_6ywm0VL5Yahg-1; Fri,
+ 19 Jul 2024 10:09:23 -0400
+X-MC-Unique: X7YxDAcsP_6ywm0VL5Yahg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A92B91944B30;
-	Fri, 19 Jul 2024 14:09:17 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E82F11955D58;
+	Fri, 19 Jul 2024 14:09:21 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.216])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B99981955F40;
-	Fri, 19 Jul 2024 14:09:14 +0000 (UTC)
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1B1EC1955D4D;
+	Fri, 19 Jul 2024 14:09:18 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Steve French <sfrench@samba.org>
 Cc: David Howells <dhowells@redhat.com>,
@@ -65,11 +65,11 @@ Cc: David Howells <dhowells@redhat.com>,
 	Jeff Layton <jlayton@kernel.org>,
 	linux-cifs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Aurelien Aptel <aaptel@suse.com>,
+	Steve French <stfrench@microsoft.com>,
 	netfs@lists.linux.dev
-Subject: [PATCH 1/4] cifs: Fix server re-repick on subrequest retry
-Date: Fri, 19 Jul 2024 15:09:01 +0100
-Message-ID: <20240719140907.1598372-2-dhowells@redhat.com>
+Subject: [PATCH 2/4] cifs: Fix missing error code set
+Date: Fri, 19 Jul 2024 15:09:02 +0100
+Message-ID: <20240719140907.1598372-3-dhowells@redhat.com>
 In-Reply-To: <20240719140907.1598372-1-dhowells@redhat.com>
 References: <20240719140907.1598372-1-dhowells@redhat.com>
 Precedence: bulk
@@ -79,64 +79,45 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-When a subrequest is marked for needing retry, netfs will call
-cifs_prepare_write() which will make cifs repick the server for the op
-before renegotiating credits; it then calls cifs_issue_write() which
-invokes smb2_async_writev() - which re-repicks the server.
+In cifs_strict_readv(), the default rc (-EACCES) is accidentally cleared by
+a successful return from netfs_start_io_direct(), such that if
+cifs_find_lock_conflict() fails, we don't return an error.
 
-If a different server is then selected, this causes the increment of
-server->in_flight to happen against one record and the decrement to happen
-against another, leading to misaccounting.
+Fix this by resetting the default error code.
 
-Fix this by just removing the repick code in smb2_async_writev().  As this
-is only called from netfslib-driven code, cifs_prepare_write() should
-always have been called first, and so server should never be NULL and the
-preparatory step is repeated in the event that we do a retry.
-
-The problem manifests as a warning looking something like:
-
- WARNING: CPU: 4 PID: 72896 at fs/smb/client/smb2ops.c:97 smb2_add_credits+0x3f0/0x9e0 [cifs]
- ...
- RIP: 0010:smb2_add_credits+0x3f0/0x9e0 [cifs]
- ...
-  smb2_writev_callback+0x334/0x560 [cifs]
-  cifs_demultiplex_thread+0x77a/0x11b0 [cifs]
-  kthread+0x187/0x1d0
-  ret_from_fork+0x34/0x60
-  ret_from_fork_asm+0x1a/0x30
-
-Which may be triggered by a number of different xfstests running against an
-Azure server in multichannel mode.  generic/249 seems the most repeatable,
-but generic/215, generic/249 and generic/308 may also show it.
-
-Fixes: 3ee1a1fc3981 ("cifs: Cut over to using netfslib")
-Reported-by: Steve French <sfrench@samba.org>
+Fixes: 14b1cd25346b ("cifs: Fix locking in cifs_strict_readv()")
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+cc: Steve French <stfrench@microsoft.com>
 cc: Jeff Layton <jlayton@kernel.org>
-cc: Aurelien Aptel <aaptel@suse.com>
 cc: linux-cifs@vger.kernel.org
 cc: netfs@lists.linux.dev
 cc: linux-fsdevel@vger.kernel.org
 ---
- fs/smb/client/smb2pdu.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/smb/client/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 2ae2dbb6202b..bb84a89e5905 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -4859,9 +4859,6 @@ smb2_async_writev(struct cifs_io_subrequest *wdata)
- 	struct cifs_io_parms *io_parms = NULL;
- 	int credit_request;
- 
--	if (!wdata->server || test_bit(NETFS_SREQ_RETRYING, &wdata->subreq.flags))
--		server = wdata->server = cifs_pick_channel(tcon->ses);
--
- 	/*
- 	 * in future we may get cifs_io_parms passed in from the caller,
- 	 * but for now we construct it here...
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index 1374635e89fa..6178c6d8097d 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -2877,6 +2877,7 @@ cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to)
+ 		rc = netfs_start_io_direct(inode);
+ 		if (rc < 0)
+ 			goto out;
++		rc = -EACCES;
+ 		down_read(&cinode->lock_sem);
+ 		if (!cifs_find_lock_conflict(
+ 			    cfile, iocb->ki_pos, iov_iter_count(to),
+@@ -2889,6 +2890,7 @@ cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to)
+ 		rc = netfs_start_io_read(inode);
+ 		if (rc < 0)
+ 			goto out;
++		rc = -EACCES;
+ 		down_read(&cinode->lock_sem);
+ 		if (!cifs_find_lock_conflict(
+ 			    cfile, iocb->ki_pos, iov_iter_count(to),
 
 
