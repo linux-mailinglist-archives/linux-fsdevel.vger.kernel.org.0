@@ -1,66 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-24013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3F8937932
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 16:30:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CFB793795F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 16:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12571F2313C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 14:30:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBEEC2830FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 14:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A703DB660;
-	Fri, 19 Jul 2024 14:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F5913A87A;
+	Fri, 19 Jul 2024 14:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="JZZnt0Tb"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="rQapTK0B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565498C06
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2024 14:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409BF142E79
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2024 14:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721399425; cv=none; b=ARQWGs82kb20Qyh47906zE4rInJfmLAjzS7qjbgSTsdND3jlkt7cDTnX1ZXKdfYcHDKf8p8MmoYctDiA9tpU5t7nYxpmikFG2NaSPoD6c9jyT1jEKh25qD666ep+sDKU6HZXBVp9JKuu/ZBpqgIcIElJGvLBDpizA90WafuyeCk=
+	t=1721400840; cv=none; b=salwD2z3RPwEYA+MJc2SWuaTjPJTWpNC+yLO7HFD9WrNdMTWRCL+ckW7irQe/nh0sCePgv3cG5fn1Wy9N0Q1k9qS38F+ojr2zZCfLjEFyAfl932yLxxpGqnF9n8GQgDWaRfJcoc4TOVyaAhl5rcmzuJ4Rz1WKKbuLGHfYfm73Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721399425; c=relaxed/simple;
-	bh=EV8YF/xZeTMqPh4i7Ghl7fvFLDOerg3p+GeutAZ97hY=;
+	s=arc-20240116; t=1721400840; c=relaxed/simple;
+	bh=qqx67RQaAKOzjdqwogiMENHn0SKZj4GBvtvNTJMMZvw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pz4WFT//Qpf+Hwgvh4clGz8cmaEKZtdMjwyBrHH/aG4lI/B3fjFD+rNzg1S93tpG8MyLvU7auC1m/nXg3TZPZDFy3OEa8AmxM2M5Vrym274BoBQkgZZBVaIdfcUlYZjmsHDSy1R9gpMj8A3kqppwlx5JGJAMwx8St8+c7nQRFy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=JZZnt0Tb; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-115-17.bstnma.fios.verizon.net [173.48.115.17])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46JEU1dj024673
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Jul 2024 10:30:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1721399403; bh=Wb+H9ac9NfOTm/D/TkgZKLQniLuU6Iek81X6nbJI7o8=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=JZZnt0TbI8sGXvbmWAVm+ekAM73TouWTuItn7jrR/LWHb+UedBHC32A5XupjKVm13
-	 ogIm9Xnc9bA2i0SneLpHYr6BQrXH62O2s/8JKMV9/DUy1iTWyx67iHPoBxL2snBy/g
-	 FNfaSisLwRXGDHGhNyA/wIn+zPwHdweZeHExqWqNUsH9b1cNvD4Tq2mN8OoXJxJroA
-	 kTyMv7L7is8GDKWQB+u9AbtAxdRIF0zDcnl/Xg3bo6kjtrQbQIpY/+kmNOcIOCM4x7
-	 g5Urp2AZLYKOWwetaORsAgY771tViuD662DeocfmZEUaDHf96KA9lozDaU0BHV9Xvf
-	 +33U4OQng/jNw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 2A1E715C029B; Fri, 19 Jul 2024 10:30:01 -0400 (EDT)
-Date: Fri, 19 Jul 2024 10:30:01 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>, linux-bcachefs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.11
-Message-ID: <20240719143001.GA2333818@mit.edu>
-References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
- <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
- <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
- <CAHk-=wgzMxdCRi9Fqhq2Si+HzyKgWEvMupq=Q-QRQ1xgD_7n=Q@mail.gmail.com>
- <4l32ehljkxjavy3d2lwegx3adec25apko3v355tnlnxhrs43r4@efhplbikcoqs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JwCRz6WAQlfoWloFO7p4x07TgT5cs/KZBM3tEptFeW/EXM+uOMoU7N7wbiKus7zPGQgtsnzHtYZBiwNQivppzkemceEsz3Z3XI1NAe5AWW7U9lyEN9MEDoTpaUf6ivsa64IjPYb9aAfSF8NJs8M2/uLUbWOijUXKSqJQ744zo60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=rQapTK0B; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-708adad61f8so1034342a34.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2024 07:53:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1721400838; x=1722005638; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jw6Rg+dO9brjW1rPqY+ybsuqp7Pkeu5EfE2ah6q8chE=;
+        b=rQapTK0BAGaLpsTAa6jXmy3NvjkHZ956//mcl0ijTPaejGvjWLKA4fNcxY3d1ZbSq2
+         8rYnSvPeD3/uo7SX6LsFAvkMtnjM9Vv210GMQn77OXhbrTZ/ejdvtQ0tVcVQkuNUCexG
+         RD6wHPNB5NDYXpIYtRDSOeO4P2ASFB4KFl5Ucn/21HJ+3VdjhbEPCPnInX1LAiZFLoiu
+         AilRJWOc7DrLj1XqJqlMrCIGWRPP8RLkIK999Vv2DlwGmECuXAd8VUThWtaW5v4HP+Rk
+         b2dJcSROuAIZQxfiQqCYsaJQIrePvKVeqitxchKjy2hLCI9E26lU2czBq19OohgON/Hj
+         jn7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721400838; x=1722005638;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jw6Rg+dO9brjW1rPqY+ybsuqp7Pkeu5EfE2ah6q8chE=;
+        b=Npigo1Di7yBB0tKz32X4SD7qiMK9a3rJlG4n9E4hwUtvsRV24lA+6QDk9N06QFQVWl
+         nwMQH2YEUAai7HbHZ89IUYO5DxDeazIxXnBBpejHb088xO+XH28avfhjv7wMttzf84aP
+         srW/BUtnzXqvL/Rc5mpp1W/tW0x4z6h8ZJjYIEhICGSI7zPLeie0CEaeEUPp0LwVTQNf
+         VxFVgHrvcIIk9X1nQVq7USvt5CeZGneRvauqRck3Fvzzj7lu/2TVu2mhN6Itw1+ZDP5B
+         3X0CCxkKB6Y+dXJ6JMhvvJN7jgReJ2o33d/EjcNefCBDd9bZXcbu3mDZufRjmvvs+Qs3
+         hf4w==
+X-Gm-Message-State: AOJu0YwBrA1364ysAbs2Et+ctGdAFjTJNiYatxAPKDhi1bj+id04dtWJ
+	9KEcAWZ5295LSgsg+nvmhMHZ+0CKgbYbs2bQml3BIPUz10NAAOh725BSMmPXxeme2TEROhXe5zU
+	M
+X-Google-Smtp-Source: AGHT+IHMvrQSyQiob1ZDyd4CherJN3neIrj5vHB+KaO3RZONN79P8xVZXLET27RgqTNYUzNUlVwOWw==
+X-Received: by 2002:a05:6830:448a:b0:703:6c79:4d65 with SMTP id 46e09a7af769-708e7830134mr7938428a34.9.1721400838178;
+        Fri, 19 Jul 2024 07:53:58 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a199074501sm88973685a.113.2024.07.19.07.53.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 07:53:57 -0700 (PDT)
+Date: Fri, 19 Jul 2024 10:53:56 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Karel Zak <kzak@redhat.com>,
+	Stephane Graber <stgraber@stgraber.org>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH RFC 0/5] nsfs: iterate through mount namespaces
+Message-ID: <20240719145356.GA2303061@perftesting>
+References: <20240719-work-mount-namespace-v1-0-834113cab0d2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,38 +84,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4l32ehljkxjavy3d2lwegx3adec25apko3v355tnlnxhrs43r4@efhplbikcoqs>
+In-Reply-To: <20240719-work-mount-namespace-v1-0-834113cab0d2@kernel.org>
 
-On Thu, Jul 18, 2024 at 06:24:08PM -0400, Kent Overstreet wrote:
+On Fri, Jul 19, 2024 at 01:41:47PM +0200, Christian Brauner wrote:
+> Hey,
 > 
-> I've gotten essentially zero in the way of test feedback from
-> for-next (except from Stephen Rothwell directly, the odd build
-> warning or merge issue, but 0day mostly catches the build stuff
-> before it hits next).
+> Recently, we added the ability to list mounts in other mount namespaces
+> and the ability to retrieve namespace file descriptors without having to
+> go through procfs by deriving them from pidfds.
+> 
+> This extends nsfs in two ways:
+> 
+> (1) Add the ability to retrieve information about a mount namespace via
+>     NS_MNT_GET_INFO. This will return the mount namespace id and the
+>     number of mounts currently in the mount namespace. The number of
+>     mounts can be used to size the buffer that needs to be used for
+>     listmount() and is in general useful without having to actually
+>     iterate through all the mounts.
+> 
+>     The structure is extensible.
+> 
+> (2) Add the ability to iterate through all mount namespaces over which
+>     the caller holds privilege returning the file descriptor for the
+>     next or previous mount namespace.
+> 
+>     To retrieve a mount namespace the caller must be privileged wrt to
+>     it's owning user namespace. This means that PID 1 on the host can
+>     list all mounts in all mount namespaces or that a container can list
+>     all mounts of its nested containers.
+> 
+>     Optionally pass a structure for NS_MNT_GET_INFO with
+>     NS_MNT_GET_{PREV,NEXT} to retrieve information about the mount
+>     namespace in one go.
+> 
+> (1) and (2) can be implemented for other namespace types easily.
+> 
 
-I am currently running regular testing on the new linux-next's fs-next
-branch.  Things which are still blocking me from announcing it are:
+Love this, I think the only thing is a comment in include/uapi/linux/mount.h to
+indicate what spare is used for with the new stuff.  I'll update the man page
+when this stuff lands but it would be good to document it somewhere.  Other than
+that you can add
 
-*) Negotiating with Konstantin about the new lists.linux.dev mailing
-   list.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-*) A few minor bug fixes / robustification improves in the
-   "gce-xfstests watch" --- for example, right now if git fetch fails
-   due to load throttling / anti-DOS protections on git.kernel.org
-   trip the git watcher dies.  Obviously, I need to teach it to do
-   exponential backoff retries, because I'm not going to leave my
-   kernel.org credentials on a VM running in the cloud to bypass the
-   kernel.org DOS protections.  :-)
+Thanks,
 
-As far as bcachefs is concerned, my xfstests-bld infrastructure isn't
-set up to build rust userspace, and Debian has a very ancient bcachefs
-packages --- the latest version in Debian stable and unstable dates
-from November 2022.  So I haven't enabled bcachefs support in
-gce-xfstests and kvm-xfstests yet.  Patches gratefully accepted.  :-)
-
-In any case, I'm hoping to have some publically accessible regular
-test results of fs-next.  I've just been crazy busy lately....
-
-	     	 				   - Ted
-						   
+Josef
 
