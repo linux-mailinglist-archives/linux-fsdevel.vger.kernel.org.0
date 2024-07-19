@@ -1,131 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-24021-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F2B9379E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 17:31:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB119379EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 17:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29ED1281E29
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 15:31:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28874B2182B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 15:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EB3145346;
-	Fri, 19 Jul 2024 15:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF52C145346;
+	Fri, 19 Jul 2024 15:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="OsXR4VIB"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="lB77K14i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B8F1E4AD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2024 15:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0654145B01
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2024 15:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721403076; cv=none; b=ZZob/NVqehoskCBc46xGA65y312gV3LjP8eQDkpyzgayUYIj+KFXqnz2k5UQOew4nZQoczSCMWnuAkaCEh3/to43Wo6vcCo1UMG6BKF1Yhu/LIFH7riA7iZKjQB/ieW9kh7fweElW2n+aFGlyi0ASIdttm3HG9ZgdsIp41bHbds=
+	t=1721403083; cv=none; b=TNxwipI1Z3RD85AL+rabrScfCtOn5IaYGjTaNqTZixwzmcShIAHz9lysavdyFkDbBfGcZHBaJZuBS5goPfvkxpG8B5H3a5z/XAZfY4K7wFDSHdoy1Jz6WZ/25inG5QRNJuFn3NGHaJ0tJzzqTXekiYMoNcG5TEFB302fDueeq7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721403076; c=relaxed/simple;
-	bh=pphRo5cAIY6sXyWotHh3OYUODOC3SG0MiMZJ8lGUQvU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=kiCK1hj3wC11/7sYkxaxv8SbYVSdcR3Z6zbFSQGwJ9AAoU0Yx9um0Fstzd9xqne9dxfUCftHVoyvPVDyAS/AVAq6pWDTbRbs1Bk5YklazB5yFK0GUuHb2lHwsDrz/d0pJzEYBngdkMyBTOiIBT1Bhcdmp77NNIyJPuka3GJk9TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=OsXR4VIB; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6687f2f0986so19180187b3.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2024 08:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1721403073; x=1722007873; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DV/bmBiugHCOGdiwdB7fAnf5wKaKZzTHXbldMI40hCY=;
-        b=OsXR4VIB21ZIodPT/6Kn+CHAyf7wX8O3/2lihEK5UUdGhGgJ8XZMudtWdbZTzXv96f
-         tEUQXT4cQSoBxXHnVrSvg/RCW48n21PtU0TtFnHackzBrzxeDWCm/BB3MKzqK9aV8Y5X
-         P14LPvkLinpwYoTBhR3qA45l6OXthF/6Q7PtnDPBUrqvDe/FUpptGr39sdZYX8+USwxW
-         bz1aI0YBMpd3zNxczOxtjLewfIg4OH8zTu8/BKLqImzSVdhVvzrmXkub6Jmtds4AZGHw
-         KAixulpn/EB9emdlVr7iTgd+1tOK4263jd2Kio2/6FBTtfyOVTYtrf72Ct9ftkFvn4x6
-         hD9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721403073; x=1722007873;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DV/bmBiugHCOGdiwdB7fAnf5wKaKZzTHXbldMI40hCY=;
-        b=fjV35WaRVDxkhyTIinz7c/gL7os9IQmyut9S1FXLH1NqyPtRdg0WpVJRXFc+07daVq
-         FnQqMeNcjZsY8s3oS/zs8EninZ8OeiAmQETdNVnJuH7G8cbLdgoF2nOrrdTMbhNJFmhi
-         szjSJbUPu4Elr7+zwi6FGFnGq66NVT9Ia9ouSNxUfA/ACWkN+5NzTXxH8bxPROP67g1e
-         M8IB22+c5we9PHrRrcFRv0l8ulUA0BvTHxfeL0b/i9ThKKVAqwD+mMyYQYeI27i9fc2h
-         JlNUKyWfjhn2h/0jK1JiVGBo96wW5xky4g1GgWvbq2Kob5zkSK8Sh5EGoXn2xR/2XlVd
-         D0iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8GfXifNbzkFckzQg2YjwS+nE2rB5IrjmazzBmAu7TiaTNnhPEyYYf8jQUPMrHmRNDFGLBxAqj8qe1G3I5RLgvLkLbCLtA9xqfQnNjZQ==
-X-Gm-Message-State: AOJu0YwWVP3JVc1w2XqjrOxIoulyUZLeLZDUaa+hDnzkhykCR9ZOpG1u
-	I+irv+8Hs7u28PCM67hysn74NyWmolh3m6QEnA2lTkC7sDZboB0npTrooJJc1toJVbeXkhlrMTP
-	h
-X-Google-Smtp-Source: AGHT+IGhUJiykEUB4QmHpTZdwE/HZzkuQYUkKPp9R/NXo9PtPGW/2D7OwtLdGtt5Lq08zPZzOAreZw==
-X-Received: by 2002:a05:690c:c03:b0:664:f825:93ca with SMTP id 00721157ae682-666023932d4mr75001117b3.25.1721403073229;
-        Fri, 19 Jul 2024 08:31:13 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7ac7f15c6sm8467606d6.68.2024.07.19.08.31.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 08:31:12 -0700 (PDT)
-From: Josef Bacik <josef@toxicpanda.com>
-To: jack@suse.cz,
-	amir73il@gmail.com,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fanotify: don't skip extra event info if no info_mode is set
-Date: Fri, 19 Jul 2024 11:30:48 -0400
-Message-ID: <adfd31f369528c9958922d901fbe8eba48dfe496.1721403041.git.josef@toxicpanda.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1721403083; c=relaxed/simple;
+	bh=wd5RLE2IVNe8j0OkYgGaQ/CCPH8OsAp0/QhvVtCAKD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e65WjeFQcp50U5STpeQLDT/uQa/EDPRscBvMvNtMdPKmkyeAcI8tiAnMgf48hyvIlHBd8x3sbuDR5abGCKdwWEYv1Q1fhAxOFIHLeqCYpokebdSlo1sI+8C4qeAw99tbxX6YewA5uZ+h+nkOHTSGgZ2mSmjmjMAQ17FaXhwTuqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=lB77K14i; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQYYD6S51zbQg;
+	Fri, 19 Jul 2024 17:31:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721403072;
+	bh=Un40jjD+8GvfPwjqSPOKrq30Me1og5PadVGfj4QH6kY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lB77K14iswxUkMLiWMQR/OqP1CUhz8X8GwZqB9CtcDBo75tvJfB77127QpOpNwBaP
+	 7EoqwUR1lneJ3TlU7kjlL8eN4IRNJJmky2RERsSojlBt2Rhz1QmHm2yKFb3pIU++Wf
+	 ukEouG+wAac+WvB8gW+E6zX5Jmw8sqmzYta1rvX4=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQYY72PSTz667;
+	Fri, 19 Jul 2024 17:31:07 +0200 (CEST)
+Date: Fri, 19 Jul 2024 17:31:04 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240719.Ooxeithah8Sh@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <20240717.neaB5Aiy2zah@digikod.net>
+ <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net>
+ <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALmYWFupWw2_BKu1FF=ooXFpA=GtJr1ehZSK3p+1+1WH34eX=w@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Previously we would only include optional information if you requested
-it via an FAN_ flag at fanotify_init time (FAN_REPORT_FID for example).
-However this isn't necessary as the event length is encoded in the
-metadata, and if the user doesn't want to consume the information they
-don't have to.  With the PRE_ACCESS events we will always generate range
-information, so drop this check in order to allow this extra
-information to be exported without needing to have another flag.
+On Fri, Jul 19, 2024 at 08:12:37AM -0700, Jeff Xu wrote:
+> On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > >
+> > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > >
+> > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > > > > > allowed for execution.  The main use case is for script interpreters and
+> > > > > > dynamic linkers to check execution permission according to the kernel's
+> > > > > > security policy. Another use case is to add context to access logs e.g.,
+> > > > > > which script (instead of interpreter) accessed a file.  As any
+> > > > > > executable code, scripts could also use this check [1].
+> > > > > >
+> > > > > > This is different than faccessat(2) which only checks file access
+> > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > > > > > real execution, user space gets the same error codes.
+> > > > > >
+> > > > > So we concluded that execveat(AT_CHECK) will be used to check the
+> > > > > exec, shared object, script and config file (such as seccomp config),
+> > > >
+> > > > "config file" that contains executable code.
+> > > >
+> > > Is seccomp config  considered as "contains executable code", seccomp
+> > > config is translated into bpf, so maybe yes ? but bpf is running in
+> > > the kernel.
+> >
+> > Because seccomp filters alter syscalls, they are similar to code
+> > injection.
+> >
+> > >
+> > > > > I'm still thinking  execveat(AT_CHECK) vs faccessat(AT_CHECK) in
+> > > > > different use cases:
+> > > > >
+> > > > > execveat clearly has less code change, but that also means: we can't
+> > > > > add logic specific to exec (i.e. logic that can't be applied to
+> > > > > config) for this part (from do_execveat_common to
+> > > > > security_bprm_creds_for_exec) in future.  This would require some
+> > > > > agreement/sign-off, I'm not sure from whom.
+> > > >
+> > > > I'm not sure to follow. We could still add new flags, but for now I
+> > > > don't see use cases.  This patch series is not meant to handle all
+> > > > possible "trust checks", only executable code, which makes sense for the
+> > > > kernel.
+> > > >
+> > > I guess the "configfile" discussion is where I get confused, at one
+> > > point, I think this would become a generic "trust checks" api for
+> > > everything related to "generating executable code", e.g. javascript,
+> > > java code, and more.
+> > > We will want to clearly define the scope of execveat(AT_CHECK)
+> >
+> > The line between data and code is blurry.  For instance, a configuration
+> > file can impact the execution flow of a program.  So, where to draw the
+> > line?
+> >
+> > It might makes sense to follow the kernel and interpreter semantic: if a
+> > file can be executed by the kernel (e.g. ELF binary, file containing a
+> > shebang, or just configured with binfmt_misc), then this should be
+> > considered as executable code.  This applies to Bash, Python,
+> > Javascript, NodeJS, PE, PHP...  However, we can also make a picture
+> > executable with binfmt_misc.  So, again, where to draw the line?
+> >
+> > I'd recommend to think about interaction with the outside, through
+> > function calls, IPCs, syscalls...  For instance, "running" an image
+> > should not lead to reading or writing to arbitrary files, or accessing
+> > the network, but in practice it is legitimate for some file formats...
+> > PostScript is a programming language, but mostly used to draw pictures.
+> > So, again, where to draw the line?
+> >
+> The javascript is run by browser and java code by java runtime, do
+> they meet the criteria? they do not interact with the kernel directly,
+> however they might have the same "executable" characteristics and the
+> app might not want them to be put into non-exec mount.
+> 
+> If the answer is yes, they can also use execveat(AT_CHECK),  the next
+> question is: does it make sense for javacript/java code to go through
+> execveat() code path, allocate bprm, etc ? (I don't have answer, maybe
+> it is)
 
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
----
- fs/notify/fanotify/fanotify_user.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+Java and NodeJS can do arbitrary syscalls (through their runtime) and
+they can access arbitrary files, so according to my below comment, yes
+they should be managed as potentially dangerous executable code.
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 9ec313e9f6e1..2e2fba8a9d20 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -160,9 +160,6 @@ static size_t fanotify_event_len(unsigned int info_mode,
- 	int fh_len;
- 	int dot_len = 0;
- 
--	if (!info_mode)
--		return event_len;
--
- 	if (fanotify_is_error_event(event->mask))
- 		event_len += FANOTIFY_ERROR_INFO_LEN;
- 
-@@ -740,12 +737,10 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	if (fanotify_is_perm_event(event->mask))
- 		FANOTIFY_PERM(event)->fd = fd;
- 
--	if (info_mode) {
--		ret = copy_info_records_to_user(event, info, info_mode, pidfd,
--						buf, count);
--		if (ret < 0)
--			goto out_close_fd;
--	}
-+	ret = copy_info_records_to_user(event, info, info_mode, pidfd,
-+					buf, count);
-+	if (ret < 0)
-+		goto out_close_fd;
- 
- 	if (f)
- 		fd_install(fd, f);
--- 
-2.43.0
+The question should be: is this code trusted? Most of the time it is
+not, hence the security model of web browser and their heavy use of
+sandboxing.  So no, I don't think it would make sense to check this kind
+of code more than what the browser already do.
 
+I'll talk about this use case in the next patch series.
+
+> 
+> > We should follow the principle of least astonishment.  What most users
+> > would expect?  This should follow the *common usage* of executable
+> > files.  At the end, the script interpreters will be patched by security
+> > folks for security reasons.  I think the right question to ask should
+> > be: could this file format be (ab)used to leak or modify arbitrary
+> > files, or to perform arbitrary syscalls?  If the answer is yes, then it
+> > should be checked for executability.  Of course, this excludes bugs
+> > exploited in the file format parser.
+> >
+> > I'll extend the next patch series with this rationale.
+> >
+> 
 
