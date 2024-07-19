@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-24029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26368937BD8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 19:51:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60E7937BD7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 19:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60CBC1C21737
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 17:51:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A2FFB21E35
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 17:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BB11474B7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02927146D6E;
 	Fri, 19 Jul 2024 17:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HfEhza6T"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s8eOJHiA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64331459F9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6479145FFB;
 	Fri, 19 Jul 2024 17:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721411475; cv=none; b=D0daZSbcm0+UU1+Y8CyMC3Hdh/aKENuyguWJGBA61VyKVZKR1S8sHXxjGh3gLdQRqDIgEIl9MrlMH156RuIN68DaK8HAEv0BD3bZvN3fpFQTsv6qEvBUFyjOGqfy3rVAJ1gA4wzTgugC7dIP10brNb9weO4SUSFnNbxZPVn1fV0=
+	t=1721411474; cv=none; b=SdNEWfd0ocdKaMVtXTWwZNbRN42JonKhsipGaRKazl+F8+gNTRwHEs69G2NwoGuLPBToHafLjeAvmtOJcdiOuqkihShRE1XDmMnKiehtDPAVokkBFAr4WVv2Rd9M+qglCqlwGf/XB86XF5RrRuM3uxjXI5QVt0lbwQS14Te//kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721411475; c=relaxed/simple;
-	bh=Ih+1+iflwjA7GfUljQdgp4V0PyNkSIflg45bE0RmWTo=;
+	s=arc-20240116; t=1721411474; c=relaxed/simple;
+	bh=f3AnAbCdhP7uDxCrhcq1jIjBuYqKEB7kWnOPuV8bV6c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iXTD6BYUt1wybUphhf87Jsr3mu7ZSvEWYDBiRPM4bx06WH+nmuOrTadgffQ6bxn5Ndu6QlvZTcgd18lciusEYrW/GaezCE3HEHzr/cIvE6Ww3zgtMtGtpWRzNRkDOzUYv2b3jZYynCRcl3POExtd35snXgf1iqYncsbEu3QUpVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HfEhza6T; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=olq7lPf7EHhStAKqOKBqpi4ZzwAk/VRmM4nBa8xA6umsocAN4E6GiVPgYtoXDZr3IpEakPm0FM1tlUU1jPuiSSVLdg/ZI2G/XcPE77vI7AxBG8hPv3IxEAmkyQU3BuMJHvC/3VfMdZ0YrFwGKkj23mGKdVrNBOEZoYEUQFwQec8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s8eOJHiA; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=TE2NR9PMMrrBqeqk/eXxMF6Rk4Xi7d2zHBTKL+xGqrQ=; b=HfEhza6TXVr4TtPQEM7USr4VYZ
-	ySgTekkjh8OoRiKnx2IxZzNjn4lpVgOJGFazidaP2ZBmcUHSsSDpl39iJB2Ua4KMCaTGgklkOlkgw
-	mpX2jvDq8ElVsXTCFqNzEsOSZF8li3/tP0tZGsuzFGBgnRkoGHD+OWcxoMw4UIJ3mfIsWvU+27H80
-	5oRnmyuFz6Q+7kgnOslmj8EqxRm5/ISpaaRykUqIY3Xc1oWvWPCkMuU7iX7sypKNUKjTW+JsXCw7H
-	UP4nykktfC+gjZgq9UWS+3idL0bPo93huch+B2KEkb5xYRb54ur4Xh0is4FxpZFwHvav8TgIldfkn
-	cHxv00Kw==;
+	bh=3BH0lKK785jAOhDmb6rSgSz+2L3arHyij79aSxbGT/I=; b=s8eOJHiAQvWL5itGf9Uo3HN1NV
+	z/eWdaY899sh5cDQVjhS4FTTn6ZmxcoFl0C2ieXvnpP3kLOwhVHrOfyJF5cQKIsGeefVgtO2/h8TI
+	a91e1EjMat8b151G9lp8Uc6iWZA/+Erwa+wAUVhyqK6JfYgicO+5COwynA52OJCPvihOV/R7HMlPn
+	pfm6+EshcQogeFgSRj7DMfCt7RtMmEzadlDw3kJkDpzPfxEPQSW6IHGVpfOV1zK7xcbXX66RcJepy
+	iKE7qDGAUWZrhE+pnHVVPNg5tqrgCiuovh/FrN8lXRQCF8qVxw+IBB5/+gBEmtCj/Ae0YtgoauAq2
+	Xb8JieIg==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sUrl9-00000003J4b-11Fo;
+	id 1sUrl9-00000003J4g-1LrF;
 	Fri, 19 Jul 2024 17:51:11 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Andreas Gruenbacher <agruenba@redhat.com>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	gfs2@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/4] gfs2: Add gfs2_aspace_writepages()
-Date: Fri, 19 Jul 2024 18:51:01 +0100
-Message-ID: <20240719175105.788253-2-willy@infradead.org>
+Subject: [PATCH 2/4] gfs2: Remove __gfs2_writepage()
+Date: Fri, 19 Jul 2024 18:51:02 +0100
+Message-ID: <20240719175105.788253-3-willy@infradead.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240719175105.788253-1-willy@infradead.org>
 References: <20240719175105.788253-1-willy@infradead.org>
@@ -63,82 +63,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This saves one indirect function call per folio and gets us closer to
-removing aops->writepage.
+Call aops->writepages() instead of using write_cache_pages() to call
+aops->writepage.  Change the handling of -ENODATA to not set the
+persistent error on the block device.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/gfs2/meta_io.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+ fs/gfs2/log.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
-index 2b26e8d529aa..cfb204c9396c 100644
---- a/fs/gfs2/meta_io.c
-+++ b/fs/gfs2/meta_io.c
-@@ -30,9 +30,9 @@
- #include "util.h"
- #include "trace_gfs2.h"
- 
--static int gfs2_aspace_writepage(struct page *page, struct writeback_control *wbc)
-+static void gfs2_aspace_write_folio(struct folio *folio,
-+		struct writeback_control *wbc)
- {
--	struct folio *folio = page_folio(page);
- 	struct buffer_head *bh, *head;
- 	int nr_underway = 0;
- 	blk_opf_t write_flags = REQ_META | REQ_PRIO | wbc_to_write_flags(wbc);
-@@ -66,8 +66,8 @@ static int gfs2_aspace_writepage(struct page *page, struct writeback_control *wb
- 	} while ((bh = bh->b_this_page) != head);
- 
- 	/*
--	 * The page and its buffers are protected by PageWriteback(), so we can
--	 * drop the bh refcounts early.
-+	 * The folio and its buffers are protected from truncation by
-+	 * the writeback flag, so we can drop the bh refcounts early.
- 	 */
- 	BUG_ON(folio_test_writeback(folio));
- 	folio_start_writeback(folio);
-@@ -84,14 +84,31 @@ static int gfs2_aspace_writepage(struct page *page, struct writeback_control *wb
- 
- 	if (nr_underway == 0)
- 		folio_end_writeback(folio);
-+}
-+
-+static int gfs2_aspace_writepage(struct page *page, struct writeback_control *wbc)
-+{
-+	gfs2_aspace_write_folio(page_folio(page), wbc);
- 
- 	return 0;
+diff --git a/fs/gfs2/log.c b/fs/gfs2/log.c
+index 6ee6013fb825..f9c5089783d2 100644
+--- a/fs/gfs2/log.c
++++ b/fs/gfs2/log.c
+@@ -80,15 +80,6 @@ void gfs2_remove_from_ail(struct gfs2_bufdata *bd)
+ 	brelse(bd->bd_bh);
  }
  
-+static int gfs2_aspace_writepages(struct address_space *mapping,
-+		struct writeback_control *wbc)
-+{
-+	struct folio *folio = NULL;
-+	int error;
-+
-+	while ((folio = writeback_iter(mapping, wbc, folio, &error)))
-+		gfs2_aspace_write_folio(folio, wbc);
-+
-+	return error;
-+}
-+
- const struct address_space_operations gfs2_meta_aops = {
- 	.dirty_folio	= block_dirty_folio,
- 	.invalidate_folio = block_invalidate_folio,
--	.writepage = gfs2_aspace_writepage,
-+	.writepages = gfs2_aspace_writepages,
- 	.release_folio = gfs2_release_folio,
- };
- 
-@@ -99,6 +116,7 @@ const struct address_space_operations gfs2_rgrp_aops = {
- 	.dirty_folio	= block_dirty_folio,
- 	.invalidate_folio = block_invalidate_folio,
- 	.writepage = gfs2_aspace_writepage,
-+	.writepages = gfs2_aspace_writepages,
- 	.release_folio = gfs2_release_folio,
- };
- 
+-static int __gfs2_writepage(struct folio *folio, struct writeback_control *wbc,
+-		       void *data)
+-{
+-	struct address_space *mapping = data;
+-	int ret = mapping->a_ops->writepage(&folio->page, wbc);
+-	mapping_set_error(mapping, ret);
+-	return ret;
+-}
+-
+ /**
+  * gfs2_ail1_start_one - Start I/O on a transaction
+  * @sdp: The superblock
+@@ -140,7 +131,7 @@ __acquires(&sdp->sd_ail_lock)
+ 		if (!mapping)
+ 			continue;
+ 		spin_unlock(&sdp->sd_ail_lock);
+-		ret = write_cache_pages(mapping, wbc, __gfs2_writepage, mapping);
++		ret = mapping->a_ops->writepages(mapping, wbc);
+ 		if (need_resched()) {
+ 			blk_finish_plug(plug);
+ 			cond_resched();
+@@ -149,6 +140,7 @@ __acquires(&sdp->sd_ail_lock)
+ 		spin_lock(&sdp->sd_ail_lock);
+ 		if (ret == -ENODATA) /* if a jdata write into a new hole */
+ 			ret = 0; /* ignore it */
++		mapping_set_error(mapping, ret);
+ 		if (ret || wbc->nr_to_write <= 0)
+ 			break;
+ 		return -EBUSY;
 -- 
 2.43.0
 
