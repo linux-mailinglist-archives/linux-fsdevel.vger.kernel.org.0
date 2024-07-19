@@ -1,259 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-23987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-23988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8BE9372B4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 05:22:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E2B93753C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 10:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D15451C20F75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 03:22:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5A731C21082
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jul 2024 08:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690781863E;
-	Fri, 19 Jul 2024 03:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D207E0F0;
+	Fri, 19 Jul 2024 08:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="EHXhfzo2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15D72566;
-	Fri, 19 Jul 2024 03:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A41678C76
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jul 2024 08:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721359332; cv=none; b=qMyxi8MRr1f+IPZTK7QDHtEN1dIKiO+nCGtXg/e9u++gppsDiqNVqzBux7jMRFjiYS3Efvh4SXTyzcR89HnAsYsK0ubO8JP7vbBfWDO+H8xonj375WN9MosY3gR7IKLMU93TQvu/lGJI+q4BynFr5NlGNawrZiXON5BPIGYkPrs=
+	t=1721378713; cv=none; b=LaaYz5jgzYkx+Pkm/j/nmxP4z1z6eUeMHuZohxTzRGRzz9S34eVzeJNO5wq0eN/x3jTOGdZ59mu1lm1hD6YGR2SpCtp6+ehG5Lv9xXbK0s/4pCM28p8oIM8TRedncG0wAlpaSPm6t88S5gFc11xxTsKOeBe2p8zPE2gZLS6QyH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721359332; c=relaxed/simple;
-	bh=/l0yJGO5EBjL933kX1ZtOmzUj71Ck6fbHD/HyU7QBtw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gCCLPzRAShKHJGmtqDCTrHsPYlhmv/GSOirrA4DZXL6vmTHegHFzMVz78B3+/l3PdhCgMGTuXhodBsFEf/fOMio5hUMKFqDTRNRB+puDyodRjztjt8kPpuoiZHBGazm3iWtYWJMP8pC19wsJEGA7awBbCgIpt/r2M6sk/9rYWMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WQFMg0tRxz4f3lVc;
-	Fri, 19 Jul 2024 11:21:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 683F71A08D7;
-	Fri, 19 Jul 2024 11:22:04 +0800 (CST)
-Received: from [10.174.178.46] (unknown [10.174.178.46])
-	by APP4 (Coremail) with SMTP id gCh0CgCHaTfa25lmVg0nAg--.34469S3;
-	Fri, 19 Jul 2024 11:22:04 +0800 (CST)
-Subject: Re: [BUG REPORT] potential deadlock in inode evicting under the inode
- lru traversing context on ext4 and ubifs
-To: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Christoph Hellwig <hch@infradead.org>,
- linux-mtd <linux-mtd@lists.infradead.org>,
- Richard Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>,
- yangerkun <yangerkun@huawei.com>, "wangzhaolong (A)"
- <wangzhaolong1@huawei.com>
-References: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
- <20240712143708.GA151742@mit.edu> <20240718134031.sxnwwzzj54jxl3e5@quack3>
-From: Zhihao Cheng <chengzhihao@huaweicloud.com>
-Message-ID: <0b0a7b95-f6d0-a56e-5492-b48882d9a35d@huaweicloud.com>
-Date: Fri, 19 Jul 2024 11:21:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1721378713; c=relaxed/simple;
+	bh=9TVMUdV79yx08Oir54aiTDR0gVmSjoHl2tYGjglb9VU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHq3fw5s2xaj85hZPq5iXX9TNp58R0RR5LKe3fXzNVWHiWE+sxcEpUKzkqYucC0ACkd5jBbUH16zlxS/+TeVo0BZpupVIoB31oEG16+f+PA1Epfoxjg/W5rUJ02zQsz6Tja5I4uC5vpEJCklaBSrHrx/EmNI+9rmmECpLRhPxOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=EHXhfzo2; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WQNXf6yX6z3ZM;
+	Fri, 19 Jul 2024 10:45:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721378706;
+	bh=D77b+j+Z1jLOY8IPK59eCXt1xDHUtrJGP6+Y0dvzShE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EHXhfzo2I2JDYI5qE9CxmPPNE6gpt2J8KhR+cCzMHYjjH2fwMmVM+PHEN/DbNnqM9
+	 mtqkTTjUwJMsBcZQuV+UjKMG0w4K31OBZzi+rBj3+YBsumqOzkhcwAX7nu2z7Qrtfd
+	 XK9+OPyVWbcYEkJ/Igx9U3zHvqUfzlRRESQQyIi4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WQNXX1tprzMyn;
+	Fri, 19 Jul 2024 10:45:00 +0200 (CEST)
+Date: Fri, 19 Jul 2024 10:44:58 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240719.shaeK6PaiSie@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <20240717.neaB5Aiy2zah@digikod.net>
+ <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net>
+ <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240718134031.sxnwwzzj54jxl3e5@quack3>
-Content-Type: text/plain; charset=gbk; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHaTfa25lmVg0nAg--.34469S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3JrWktr43Xw1DZr18GF4kZwb_yoWxGr4kpF
-	Z2qFyfKr4kJFy0k3s7trs0vrn2kayDtr4UJ348Kw4kZ3Z5JryftF1xGr4ayF98Ar4kCrWj
-	qr4UCrnxCFsIy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: xfkh0wx2klxt3r6k3tpzhluzxrxghudrp/
+In-Reply-To: <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Hi, Jan
+On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
+> On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > >
+> > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > >
+> > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > > > > > allowed for execution.  The main use case is for script interpreters and
+> > > > > > dynamic linkers to check execution permission according to the kernel's
+> > > > > > security policy. Another use case is to add context to access logs e.g.,
+> > > > > > which script (instead of interpreter) accessed a file.  As any
+> > > > > > executable code, scripts could also use this check [1].
+> > > > > >
+> > > > > > This is different than faccessat(2) which only checks file access
+> > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > > > > > real execution, user space gets the same error codes.
+> > > > > >
+> > > > > So we concluded that execveat(AT_CHECK) will be used to check the
+> > > > > exec, shared object, script and config file (such as seccomp config),
 
-�� 2024/7/18 21:40, Jan Kara д��:
-> On Fri 12-07-24 10:37:08, Theodore Ts'o wrote:
->> On Fri, Jul 12, 2024 at 02:27:20PM +0800, Zhihao Cheng wrote:
->>> Problem description
->>> ===================
->>>
->>> The inode reclaiming process(See function prune_icache_sb) collects all
->>> reclaimable inodes and mark them with I_FREEING flag at first, at that
->>> time, other processes will be stuck if they try getting these inodes(See
->>> function find_inode_fast), then the reclaiming process destroy the
->>> inodes by function dispose_list().
->>> Some filesystems(eg. ext4 with ea_inode feature, ubifs with xattr) may
->>> do inode lookup in the inode evicting callback function, if the inode
->>> lookup is operated under the inode lru traversing context, deadlock
->>> problems may happen.
->>>
->>> Case 1: In function ext4_evict_inode(), the ea inode lookup could happen
->>> if ea_inode feature is enabled, the lookup process will be stuck under
->>> the evicting context like this:
->>>
->>>   1. File A has inode i_reg and an ea inode i_ea
->>>   2. getfattr(A, xattr_buf) // i_ea is added into lru // lru->i_ea
->>>   3. Then, following three processes running like this:
->>>
->>>      PA                              PB
->>>   echo 2 > /proc/sys/vm/drop_caches
->>>    shrink_slab
->>>     prune_dcache_sb
->>>     // i_reg is added into lru, lru->i_ea->i_reg
->>>     prune_icache_sb
->>>      list_lru_walk_one
->>>       inode_lru_isolate
->>>        i_ea->i_state |= I_FREEING // set inode state
->>>        i_ea->i_state |= I_FREEING // set inode state
->>
->> Um, I don't see how this can happen.  If the ea_inode is in use,
->> i_count will be greater than zero, and hence the inode will never be
->> go down the rest of the path in inode_lru_inode():
->>
->> 	if (atomic_read(&inode->i_count) ||
->> 	    ...) {
->> 		list_lru_isolate(lru, &inode->i_lru);
->> 		spin_unlock(&inode->i_lock);
->> 		this_cpu_dec(nr_unused);
->> 		return LRU_REMOVED;
->> 	}
->>
->> Do you have an actual reproduer which triggers this?  Or would this
->> happen be any chance something that was dreamed up with DEPT?
+> > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
+> > > > > sure it passes AT_CHECK, before loading it into memory.
+> > > >
+> > > > All ELF dependencies are opened and checked with open_exec(), which
+> > > > perform the main executability checks (with the __FMODE_EXEC flag).
+> > > > Did I miss something?
+> > > >
+> > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
+> > > The app can choose its own dynamic linker path during build, (maybe
+> > > even statically link one ?)  This is another reason that relying on a
+> > > userspace only is not enough.
+> >
+> > The kernel calls open_exec() on all dependencies, including
+> > ld-linux-x86-64.so.2, so these files are checked for executability too.
+> >
+> This might not be entirely true. iiuc, kernel  calls open_exec for
+> open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
+
+Correct, the dynamic linker is in charge of that, which is why it must
+be enlighten with execveat+AT_CHECK and securebits checks.
+
+> load_elf_binary() {
+>    interpreter = open_exec(elf_interpreter);
+> }
 > 
-> No, it looks like a real problem and I agree with the analysis. We don't
-> hold ea_inode reference (i.e., ea_inode->i_count) from a normal inode. The
-> normal inode just owns that that special on-disk xattr reference. Standard
-> inode references are acquired and dropped as needed.
+> libc.so.6 is opened and mapped by dynamic linker.
+> so the call sequence is:
+>  execve(a.out)
+>   - open exec(a.out)
+>   - security_bprm_creds(a.out)
+>   - open the exec(ld.so)
+>   - call open_exec() for interruptor (ld.so)
+>   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
+> the same check and code path as libc.so below ?
+
+open_exec() checks are enough.  LSMs can use this information (open +
+__FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
+request.
+
+>   - transfer the control to ld.so)
+>   - ld.so open (libc.so)
+>   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
+> require dynamic linker change.
+>   - ld.so mmap(libc.so,rx)
+
+Explaining these steps is useful. I'll include that in the next patch
+series.
+
+> > > A detailed user case will help demonstrate the use case for dynamic
+> > > linker, e.g. what kind of app will benefit from
+> > > SECBIT_EXEC_RESTRICT_FILE = 1, what kind of threat model are we
+> > > dealing with , what kind of attack chain we blocked as a result.
+> >
+> > I explained that in the patches and in the description of these new
+> > securebits.  Please point which part is not clear.  The full threat
+> > model is simple: the TCB includes the kernel and system's files, which
+> > are integrity-protected, but we don't trust arbitrary data/scripts that
+> > can be written to user-owned files or directly provided to script
+> > interpreters.  As for the ptrace restrictions, the dynamic linker
+> > restrictions helps to avoid trivial bypasses (e.g. with LD_PRELOAD)
+> > with consistent executability checks.
+> >
+> On elf loading case, I'm clear after your last email. However, I'm not
+> sure if everyone else follows,  I will try to summarize here:
+> - Problem:  ld.so /tmp/a.out will happily pass, even /tmp/a.out is
+> mounted as non-exec.
+>   Solution: ld.so call execveat(AT_CHECK) for a.out before mmap a.out
+> into memory.
 > 
-> And this is exactly the problem: ext4_xattr_inode_dec_ref_all() called from
-> evict() needs to lookup the ea_inode and iget() it. So if we are processing
-> a list of inodes to dispose, all inodes have I_FREEING bit already set and
-> if ea_inode and its parent normal inode are both in the list, then the
-> evict()->ext4_xattr_inode_dec_ref_all()->iget() will deadlock.
-
-Yes, absolutely right.
+> - Problem: a poorly built application (a.out) can have a dependency on
+> /tmp/a.o, when /tmp/a.o is on non-exec mount,
+>   Solution: ld.so call execveat(AT_CHECK) for a.o, before mmap a.o into memory.
 > 
-> Normally we don't hit this path because LRU list walk is not handling
-> inodes with 0 link count. But a race with unlink can make that happen with
-> iput() from inode_lru_isolate().
+> - Problem: application can call mmap (/tmp/a.out, rx), where /tmp is
+> on non-exec mount
 
-Another reason is that mapping_empty(&inode->i_data) is consistent with 
-mapping_shrinkable(&inode->i_data) in most cases(CONFIG_HIGHMEM is 
-disabled in default on 64bit platforms, so mapping_shrinkable() hardly 
-returns true if file inode's mapping has pagecahes), the problem path 
-expects that mapping_shrinkable() returns true and mapping_empty() 
-returns false.
+I'd say "malicious or non-enlightened processes" can call mmap without
+execveat+AT_CHECK...
 
-Do we have any other methods to replace following if-branch without 
-invoking __iget()?
+>   This is out of scope, i.e. will require enforcement on mmap(), maybe
+> through LSM
 
-         /* 
-
-          * On highmem systems, mapping_shrinkable() permits dropping 
-
-          * page cache in order to free up struct inodes: lowmem might 
-
-          * be under pressure before the cache inside the highmem zone. 
-
-          */ 
-
-         if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) 
-{
-                 __iget(inode);
-                 ...
-                 iput(inode); 
-
-                 spin_lock(lru_lock); 
-
-                 return LRU_RETRY; 
-
-         }
-> 
-> I'm pondering about the best way to fix this. Maybe we could handle the
-> need for inode pinning in inode_lru_isolate() in a similar way as in
-> writeback code so that last iput() cannot happen from inode_lru_isolate().
-> In writeback we use I_SYNC flag to pin the inode and evict() waits for this
-> flag to clear. I'll probably sleep to it and if I won't find it too
-> disgusting to live tomorrow, I can code it.
-> 
-
-I guess that you may modify like this:
-diff --git a/fs/inode.c b/fs/inode.c
-index f356fe2ec2b6..5b1a9b23f53f 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -457,7 +457,7 @@ EXPORT_SYMBOL(ihold);
-
-  static void __inode_add_lru(struct inode *inode, bool rotate)
-  {
--       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING | 
-I_WILL_FREE))
-+       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING | 
-I_WILL_FREE | I_PINING))
-                 return;
-         if (atomic_read(&inode->i_count))
-                 return;
-@@ -845,7 +845,7 @@ static enum lru_status inode_lru_isolate(struct 
-list_head *item,
-          * be under pressure before the cache inside the highmem zone.
-          */
-         if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
--               __iget(inode);
-+               inode->i_state |= I_PINING;
-                 spin_unlock(&inode->i_lock);
-                 spin_unlock(lru_lock);
-                 if (remove_inode_buffers(inode)) {
-@@ -857,7 +857,10 @@ static enum lru_status inode_lru_isolate(struct 
-list_head *item,
-                                 __count_vm_events(PGINODESTEAL, reap);
-                         mm_account_reclaimed_pages(reap);
-                 }
--               iput(inode);
-+               spin_lock(&inode->i_lock);
-+               inode->i_state &= ~I_PINING;
-+               wake_up_bit(&inode->i_state, __I_PINING);
-+               spin_unlock(&inode->i_lock);
-                 spin_lock(lru_lock);
-                 return LRU_RETRY;
-         }
-@@ -1772,6 +1775,7 @@ static void iput_final(struct inode *inode)
-                 return;
-         }
-
-+       inode_wait_for_pining(inode);
-         state = inode->i_state;
-         if (!drop) {
-                 WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd34b5755c0b..daf094fff5fe 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2415,6 +2415,8 @@ static inline void kiocb_clone(struct kiocb 
-*kiocb, struct kiocb *kiocb_src,
-  #define I_DONTCACHE            (1 << 16)
-  #define I_SYNC_QUEUED          (1 << 17)
-  #define I_PINNING_NETFS_WB     (1 << 18)
-+#define __I_PINING             19
-+#define I_PINING               (1 << __I_PINING)
-
-  #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
-  #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
-
-, which means that we will import a new inode state to solve the problem.
-
+Cool, I'll include that as well. Thanks.
 
