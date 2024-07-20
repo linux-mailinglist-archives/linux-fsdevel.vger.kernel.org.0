@@ -1,190 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-24040-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC269381A9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 16:22:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DA59381DC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 17:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA0FA2812FF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 14:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B60E1C21551
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 15:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C23012F581;
-	Sat, 20 Jul 2024 14:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766371474AE;
+	Sat, 20 Jul 2024 15:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcI5PRq7"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lE0FooT/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF511803D;
-	Sat, 20 Jul 2024 14:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EC8145A1A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jul 2024 15:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721485363; cv=none; b=exdVqj3Dr4C6Eb1uWtDTxdDmA1ErL5NUk2e8YDfTT3VQiD0bQ5nayfwcQIAWCD2K04YVIR96SvIhdfVAZUsPScBlaRsrL8LddfkAxkvIhZjCu+KOk13v4NOOOaksxspUSYtYteBYeoGiHkHtUg8or6PwpdYKMgvSVOrvTMNoanI=
+	t=1721490497; cv=none; b=OMvYhYMGh0fM34CnnhJL59r3Fl8w4Hkp3KZGyQB5d4S+v1GV1ofX5vD7AwZR0LOW+z86yDcGAk82DBaeC2ALXJC+nOu51w3Bqhog+yHaXgkQRsnew5A9E9V6upLabVCvPri1trcIl9nsszCyWV30PBP6uPMRBAlLJBiB8PBovAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721485363; c=relaxed/simple;
-	bh=GEuFJYrJmfemuiN66s3JBd2h6xdt9JYlsMWU8bKymxs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E4sDrygUOZLDU+bwiw9M/iI2j2B6X1Z+2iFQD4tesm8MB2o37M6Otr9/25Hj11Z7zHlp9jnrJzSaQ4Xd08EpjLH11hIfNSn4BVIntPVM4E8H4bPjlVgh6fMGp5NZqXXXpxfitRRTqCqPoW2MB4AfH+QlJ76obGOl5wfCgH1egDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcI5PRq7; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso1243732f8f.1;
-        Sat, 20 Jul 2024 07:22:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721485360; x=1722090160; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mlwhLGoXMRrfdZQAkxdZajfwEHhGebnvpcGXSKSVCSM=;
-        b=bcI5PRq7ao7JGyX7CJNe8hjJqA3Iof3nQIsDlxSRkKXGcY7h2KFFgVBRbL4kDv4aEZ
-         M5asmgnU/I7oO6aG6VBCQruSE9qSrD68R21izmjtBqUDJlGZ9bG7qS93UpQ+ReEH1i2b
-         Kn28K0dPZ/dXzdVJ6NVB10qXChjTakpTduL+ZRaZDMeVl+SeBVIRWz349eqPLWWO4m2H
-         m8ufJgnXbcsL/7JvwpS2GPyUL85c/6xqfuNgGILXqYYr9rIafyX/XPxoy9vhXRbR+GsI
-         sZBaCkZsGJ0ZmAq+UEf2eRL0AngvvMiC8FyjP/RjUnn1OqHVPI9vf71IRsUEQ7I7Y7po
-         FT2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721485360; x=1722090160;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mlwhLGoXMRrfdZQAkxdZajfwEHhGebnvpcGXSKSVCSM=;
-        b=mfg2v3qV/YdQQGZdokj8q0CX4DQkGof8Tv/3cHKs1M2w6S0XR5lVO6wyddkqI/KCOE
-         izJB+1rrIs9SrZUoaigQ1RLit0oKRWAXt8Zv9vtx55rgbMiIyjgOudz1N9uBQ1VIp+Qz
-         acrR0KbX5sRbOOgWoWSMdd5m2GXoh3uZqoVhXt7Jk7c8EG+mhas5uXfYdkEluDCji2rP
-         QLqZUSekKt2fU/EWX770eaqbavoDXA7GjOMKVMRr7Gvtzin8itTtdVhAqJexWQ9DKzI3
-         iafxAYcY3b6FVsUMpLma4GxvjJVN/hW310wiSlFpXur+PbUvnUYufxg//Hh3gU2piq6V
-         yG6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVa/e3BCTlmzdaWaUf/TJqaktFyTq2oXG+3awzWXZHdMp8WPB6MUPp3FN/+64pStF/GJj7NMIzJja82wyPSQ/VaM4iIp0lOJsF50969b5au8tEGtixu2HwItJL7TkjM3l2njnURTNIUO+dbGQ==
-X-Gm-Message-State: AOJu0YxYLKjR/fekXV6m0BB2euMTSHM+G6O05egsgoJeuIL7ACbrDVwN
-	giuOVpgG8fbvnDSllyUuuWMnWJQEpltO16pKhvgUb9j6Aa0XgRfpPACqRha4mqVtNiRQ0kKtUCf
-	0d4ZU2KSGawpZoZL2ZTKehjqReJg=
-X-Google-Smtp-Source: AGHT+IH+aA7myg45AHgdzlVEabeSdItEvQYf5tM9D3qjznL5cMhs+vwvd1ZfMUd/pZ7QhyxRAiDsTSwuI6Ji++UmJSU=
-X-Received: by 2002:adf:ed0a:0:b0:368:5a8c:580b with SMTP id
- ffacd0b85a97d-369bbbbdcd5mr816352f8f.19.1721485359917; Sat, 20 Jul 2024
- 07:22:39 -0700 (PDT)
+	s=arc-20240116; t=1721490497; c=relaxed/simple;
+	bh=hgEXpisTb2le0MriL6RtT7PRkbN6vTef/d/5WpYhM9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eH+TRT1UTHDzCWt13DC5kk3SK0Lz9ZZ8HEeBQvl6acfYJMwXNxHVNJBpO9AjSdpiJ7PEVu+j3j7Qcb0paqYq0w0r4HYE9tBnmfyikjqCkgcETYG7nI1Xl8uJwQ3+X9x7/I6xvvClkGTSKw2daMLdmHxWqBcsp/kIGDOI6yuuq9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lE0FooT/; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: tytso@mit.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721490492;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JNyq8DwjmN5WEK/I4PVTxJQ71hpCMep458KtZi3slTY=;
+	b=lE0FooT/fu2LaRQfZJA9XisTp9jN2XsVktg2NWMI4qPgm7ehnhZ8EwGH9LRCs8K2C8tgdR
+	WOkTzD6XD1nnvhs0CEQVL62+8vImVQjoWzDEEv/XRQ7ahJCNI65+1dIvgN4jCAiZ44Kapc
+	U/Enm/Kwk2ETYQoNG9o2+Rx1mk0BOSc=
+X-Envelope-To: torvalds@linux-foundation.org
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: snitzer@kernel.org
+X-Envelope-To: mpatocka@redhat.com
+X-Envelope-To: dm-devel@lists.linux.dev
+Date: Sat, 20 Jul 2024 11:48:09 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev
+Subject: mounts failing with -EBUSY on device mapper (was: Re: [GIT PULL]
+ bcachefs changes for 6.11)
+Message-ID: <xp5nl7zi3k6ddkby4phm4swv2wi43slwtvw5fmve5g3jxtdw7w@ygiltwihp2hv>
+References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
+ <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
+ <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
+ <CAHk-=wgzMxdCRi9Fqhq2Si+HzyKgWEvMupq=Q-QRQ1xgD_7n=Q@mail.gmail.com>
+ <4l32ehljkxjavy3d2lwegx3adec25apko3v355tnlnxhrs43r4@efhplbikcoqs>
+ <20240719143001.GA2333818@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614163416.728752-1-yu.ma@intel.com> <20240717145018.3972922-1-yu.ma@intel.com>
- <20240717145018.3972922-4-yu.ma@intel.com> <CAGudoHHQSjbeuSevyL=W=fhjOOo=bCjq4ixHfEMN_XdRLLdPbQ@mail.gmail.com>
- <2365dcaf-95d4-462b-9614-83ee9f7c12f6@intel.com>
-In-Reply-To: <2365dcaf-95d4-462b-9614-83ee9f7c12f6@intel.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sat, 20 Jul 2024 16:22:27 +0200
-Message-ID: <CAGudoHGCZZwQ9EC3aW5bS4Vur7-UHgubLvTQuZa8ct=+m8-fTg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] fs/file.c: add fast path in find_next_fd()
-To: "Ma, Yu" <yu.ma@intel.com>
-Cc: brauner@kernel.org, jack@suse.cz, edumazet@google.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
-	tim.c.chen@linux.intel.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719143001.GA2333818@mit.edu>
+X-Migadu-Flow: FLOW_OUT
 
-I think this is getting too much fluff traffic at this point, which is
-partially my fault.
+On Fri, Jul 19, 2024 at 10:30:01AM GMT, Theodore Ts'o wrote:
+> On Thu, Jul 18, 2024 at 06:24:08PM -0400, Kent Overstreet wrote:
+> > 
+> > I've gotten essentially zero in the way of test feedback from
+> > for-next (except from Stephen Rothwell directly, the odd build
+> > warning or merge issue, but 0day mostly catches the build stuff
+> > before it hits next).
+> 
+> I am currently running regular testing on the new linux-next's fs-next
+> branch.  Things which are still blocking me from announcing it are:
+> 
+> *) Negotiating with Konstantin about the new lists.linux.dev mailing
+>    list.
+> 
+> *) A few minor bug fixes / robustification improves in the
+>    "gce-xfstests watch" --- for example, right now if git fetch fails
+>    due to load throttling / anti-DOS protections on git.kernel.org
+>    trip the git watcher dies.  Obviously, I need to teach it to do
+>    exponential backoff retries, because I'm not going to leave my
+>    kernel.org credentials on a VM running in the cloud to bypass the
+>    kernel.org DOS protections.  :-)
+> 
+> As far as bcachefs is concerned, my xfstests-bld infrastructure isn't
+> set up to build rust userspace, and Debian has a very ancient bcachefs
+> packages --- the latest version in Debian stable and unstable dates
+> from November 2022.  So I haven't enabled bcachefs support in
+> gce-xfstests and kvm-xfstests yet.  Patches gratefully accepted.  :-)
 
-I'm buggering off.
+I can apt install 1.9.1?
 
-Overall the patchset looks good, I don't see any technical reasons to
-avoid merging it.
+But I just discovered, because I had to switch my own testing to the
+debian package, that the mount helper wasn't being run previously
+(doesn't check /usr/local/sbin); and mounts with the mount helper are
+failing with -EBUSY.
 
-On Sat, Jul 20, 2024 at 2:57=E2=80=AFPM Ma, Yu <yu.ma@intel.com> wrote:
->
->
-> On 7/20/2024 1:53 AM, Mateusz Guzik wrote:
-> > On Wed, Jul 17, 2024 at 4:24=E2=80=AFPM Yu Ma <yu.ma@intel.com> wrote:
-> >> Skip 2-levels searching via find_next_zero_bit() when there is free sl=
-ot in the
-> >> word contains next_fd, as:
-> >> (1) next_fd indicates the lower bound for the first free fd.
-> >> (2) There is fast path inside of find_next_zero_bit() when size<=3D64 =
-to speed up
-> >> searching.
-> > this is stale -- now the fast path searches up to 64 fds in the lower b=
-itmap
->
-> Nope, this is still valid, as the searching size of the fast path inside
-> of find_next_fd() is always 64, it will execute the fast path inside of
-> find_next_zero_bit().
->
->
-> >
-> >> (3) After fdt is expanded (the bitmap size doubled for each time of ex=
-pansion),
-> >> it would never be shrunk. The search size increases but there are few =
-open fds
-> >> available here.
-> >>
-> >> This fast path is proposed by Mateusz Guzik <mjguzik@gmail.com>, and a=
-greed by
-> >> Jan Kara <jack@suse.cz>, which is more generic and scalable than previ=
-ous
-> >> versions.
-> > I think this paragraph is droppable. You already got an ack from Jan
-> > below, so stating he agrees with the patch is redundant. As for me I
-> > don't think this warrants mentioning. Just remove it, perhaps
-> > Christian will be willing to massage it by himself to avoid another
-> > series posting.
->
-> The idea of fast path for the word contains next_fd is from you,
-> although this patch is small, I think it is reasonable to record here
-> out of my respect. Appreciate for your guide and comments on this patch,
-> I've learned a lot on the way of resolving problems :)
->
->
-> Regards
->
-> Yu
->
-> >> And on top of patch 1 and 2, it improves pts/blogbench-1.1.0 read by
-> >> 8% and write by 4% on Intel ICX 160 cores configuration with v6.10-rc7=
-.
-> >>
-> >> Reviewed-by: Jan Kara <jack@suse.cz>
-> >> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> >> Signed-off-by: Yu Ma <yu.ma@intel.com>
-> >> ---
-> >>   fs/file.c | 9 +++++++++
-> >>   1 file changed, 9 insertions(+)
-> >>
-> >> diff --git a/fs/file.c b/fs/file.c
-> >> index 1be2a5bcc7c4..729c07a4fc28 100644
-> >> --- a/fs/file.c
-> >> +++ b/fs/file.c
-> >> @@ -491,6 +491,15 @@ static unsigned int find_next_fd(struct fdtable *=
-fdt, unsigned int start)
-> >>          unsigned int maxfd =3D fdt->max_fds; /* always multiple of BI=
-TS_PER_LONG */
-> >>          unsigned int maxbit =3D maxfd / BITS_PER_LONG;
-> >>          unsigned int bitbit =3D start / BITS_PER_LONG;
-> >> +       unsigned int bit;
-> >> +
-> >> +       /*
-> >> +        * Try to avoid looking at the second level bitmap
-> >> +        */
-> >> +       bit =3D find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LO=
-NG,
-> >> +                                start & (BITS_PER_LONG - 1));
-> >> +       if (bit < BITS_PER_LONG)
-> >> +               return bit + bitbit * BITS_PER_LONG;
-> >>
-> >>          bitbit =3D find_next_zero_bit(fdt->full_fds_bits, maxbit, bit=
-bit) * BITS_PER_LONG;
-> >>          if (bitbit >=3D maxfd)
-> >> --
-> >> 2.43.0
-> >>
-> >
+Presumably there's a race, since before calling the mount syscall, our
+mount helper has to open and close the block device (we have to read the
+superblock to check if it's encrypted, we may need to ask for a
+passphrase). The delayed_fput stuff that was causing issues with
+io_uring - I suspect something similar.
 
-
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+But the plot thickens - all the failing tests are ones that use device
+mapper...
 
