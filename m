@@ -1,188 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-24042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6032938221
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 18:36:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF3D938237
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 19:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37900281BCA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 16:36:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11CB9B212A1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 17:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F12F14389C;
-	Sat, 20 Jul 2024 16:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C546A147C82;
+	Sat, 20 Jul 2024 17:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5Dg2ad4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD03CC147
-	for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jul 2024 16:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2890E372;
+	Sat, 20 Jul 2024 17:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721493389; cv=none; b=jZnH8Fy82qsweF6k9Gao7yvPqxM7pTv3iT+LJ1UyCdw1TmLg0nhnD0FaagG7MBIek3gh+mzkDZ9DtZnOnbueU7nWYpCrygI4/ISfODj3iIngOj2Hofua/BDFxpOCOXM3s8lIjjLKq1s2by1mn5UxM5H+efB1MhSVR79pUBLKCMU=
+	t=1721495002; cv=none; b=brdUtvHVX+4bpMF5P7IgLN+Bx66XjwqpUKSUvwwdCeAk21oHKwGGGvNJZZ/I/wAIfA1ill+P3Qi43xV4WIis5uKqhIIM0iYLGOkWnsJ9i3bjgcDZ7GMderXzSPTFqWwuhfGMxXJHdXrBj5ySrrUqEd65MFmj0cqeBjQk2XfPj6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721493389; c=relaxed/simple;
-	bh=x5nZpoUxWlYkOK2CPdfk4iiMxOM1shVSNdgSQUw+92M=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EPe3/Z0A8AhfAKULz1MUPyufpzSBLrRkX65xszee/+RgrN7/ZhM6hi9RpT/MKO3J2DbbJw+biHOUpD7o3o+gB9klEF+YVmR6gxEL/Lqrkn7Dn6ogj32JnV1Z+BaodLF3O22kKzh5CaQHXqmq+7K+GNsaV5v/7LVrZOm8gjNAWYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8036e96f0caso437859039f.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jul 2024 09:36:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721493387; x=1722098187;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LRGN3kJB9SgmQiPPP6CQ92MgXVNbAynRSv+V3pl0fvk=;
-        b=jhmW6olPPSOvLJn5EHBuioab3cyovIDm88a1PQq8lr02ggVPVbtNue9W8U1S3xCmx/
-         ZoEXYI9Gre5psEhUI/8L/3GlPSCpDFtBAJJfaTYJbb7+LSeIc0vbmns1RfMwZaY0NxCL
-         SX/ALOLytbz9T75wn9m0jx2c6cRaqLy36xDwXXnS5+c0hT+cngWfuCkOsqBP2pIbZ9bi
-         BuL+LCquH3BKGqc8SLPLkbQ85oHWZeH1iwOsJkSINReFlZiHvMxxAgaD6Ug7q1nBnlEk
-         vCof4nfsNWP2F347gFpa/d6IBdSRKMS+CRyZ9CSFDCM38UPuBQ/fLb8UiPMQL/Bwa1G2
-         RgYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAYHfbVtnCLJVhw+IyqrbASIohZAii+UFyUGvn88Amgg/f/RbYEyc4eMBh0oVAkhb+f1acvAz29TXO8I5F/mETyCCMeKztK9hw0vImNg==
-X-Gm-Message-State: AOJu0YwGmENIkdSvfu1EftBJpwuzDitXHBZYsIu3FS7BurgAPbP8Q+7K
-	o4NIpWfVLEPH5J0Uoe4rzfj9x6pQvdQuvSKlKzvcxbGlpMsIfZeMkzKkOor3dAjfbkU1tIAyTtQ
-	a0Jq4J+dEsSLi2mQIxrBF+HVWkyr4nTww3RFa4cfo0yvoBCgz58fD6es=
-X-Google-Smtp-Source: AGHT+IGjvJKcM7jZdVlU2SWo8vovQgsGjivjSO7/frs+yHbtpnd2MrQj+FTU17qAB6FQCb7onaps9sBN+J630X+jlIc8JpnFRusm
+	s=arc-20240116; t=1721495002; c=relaxed/simple;
+	bh=qEBnWjm61+wRL7eX7/aXBBow1IWLbMAFODhMXVKb66I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JvhHtMxLq4YnuEQkIH4VVkASrYiQOFgnVRJmb6Ok3qSV85RqJ0ZZzOaNFT8b5loV5mhNGfUJCfuvU6fBIOYf3Nmmp5oKHQZfNybxYNqUwfhiKVjeBHOKiXDy0mKxKoS+5B1YIMZcFi5IQ4okMYNEu1qLo2D3RNgAxGePbaFdjdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5Dg2ad4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 906AAC2BD10;
+	Sat, 20 Jul 2024 17:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721495001;
+	bh=qEBnWjm61+wRL7eX7/aXBBow1IWLbMAFODhMXVKb66I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=B5Dg2ad45KT0c+aLELUY73/HAtGV0LUyYyyCQIQ3V5vKWqEBuJRiSwzZPKphZ8kDf
+	 LUTypv8n6DiTx3KaCR5g2IJTlWyZL6pnooxye/0914n+njnCfySNckMHTGQzhH0Ykc
+	 lcLSzJs/UNhb/c0y01zlLq7scJY6Lw7mOlkFOwxa3P3qpF3uvpaZl+7Io1UtJ9r7m/
+	 1c2CuB1dFir4cbRnNR4/Ak76nHilJIBzzFVATVlphDB5P+ipa2B33tLaq2NTQ1NuxZ
+	 Ph8ZKkPWLHWL5EKhIf2KbDRLs+3KK5igy+9nqo6ojGudBfmeOTRYII4bMuINJBtBaU
+	 qYiU9oEYJ7H6g==
+From: Kees Cook <kees@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>,
+	David Gow <davidgow@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	SeongJae Park <sj@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] execve: Move KUnit tests to tests/ subdirectory
+Date: Sat, 20 Jul 2024 10:03:14 -0700
+Message-Id: <20240720170310.it.942-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1607:b0:4b9:e776:675 with SMTP id
- 8926c6da1cb9f-4c23fb24492mr193099173.0.1721493386915; Sat, 20 Jul 2024
- 09:36:26 -0700 (PDT)
-Date: Sat, 20 Jul 2024 09:36:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cf8462061db0699c@google.com>
-Subject: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer dereference
- in path_from_stashed
-From: syzbot <syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3013; i=kees@kernel.org; h=from:subject:message-id; bh=qEBnWjm61+wRL7eX7/aXBBow1IWLbMAFODhMXVKb66I=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmm+3S2HZ6G04SOgBaf9X+62wdW1PD/xOdySwpS zQvUQDcMn+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZpvt0gAKCRCJcvTf3G3A Jk8QD/9EfZpLg6iOLyQ4Dg0xACvfCEXKq8zLBTn5Sh9/QL/0sd8qANQ55YcNuTTD3do7gY4l/5o Lgn+SdVj8xHwDsXIK98k6PoACOa/7dZ7Rq4cvx1233JcgD3eDpLtzwPNFDJcimcJuRpKs/pW70H mVtZrQ1Cp6W2ZgJ4+eZVcdgPzpMxXO5ZjjW6GKLBmPiWjRV3aNb4Cn38AgsPqYas1TZE1yJWUUm pX0lOBLLN18y58UYvdy6A4jY/skZkawIYztFytr0fga81BmBsXR11I9nvliTk9RhulTAC2jTnP3 maMlJyJ0p5GYOBSgbZV05eTSDLP6xyP6bbx6325savLbu8W6vxSPVJckOczUvxpriqgJFsm/UyO eWWhPztdKnIKoxk/3uBp7wYVuW6jVSwf/fsflkwrb4OKILlvjAcSTNGR5v/6FFksKdezaNLgEaT pS6CNIGNR22/jw0bQrqhZW9Plu/86CKiMIR7191iWXyjXW/VMae3BaZmxm4kzilxGx7vtKP4pQx OUF7/8PbLayR8SqOxLnrKuxAX8PPPTC74Owm58xFDolw/EWCaawCqHgTtW6NOjI0CZQyaB1GcHE /b//nIoqUUnghDoQmFjGt8Ezcgru1hFOD8N7N+YMWLtRiaIXwoq9MqXGruulHNnE6YKdsGDvZCc kOW46yLGjK8GP
+ kg==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Move the exec KUnit tests into a separate directory to avoid polluting
+the local directory namespace. Additionally update MAINTAINERS for the
+new files and mark myself as Maintainer.
 
-syzbot found the following issue on:
-
-HEAD commit:    51835949dda3 Merge tag 'net-next-6.11' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1325e60d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c1c1b0a8065e216
-dashboard link: https://syzkaller.appspot.com/bug?extid=34a0ee986f61f15da35d
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11bd9a5e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15726e95980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/8ead8862021c/non_bootable_disk-51835949.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a129ae4ab997/vmlinux-51835949.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9339fe082652/zImage-51835949.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com
-
-8<--- cut here ---
-Unable to handle kernel NULL pointer dereference at virtual address 00000008 when read
-[00000008] *pgd=844c0003, *pmd=fe12e003
-Internal error: Oops: 205 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 0 PID: 3011 Comm: syz-executor103 Not tainted 6.10.0-syzkaller #0
-Hardware name: ARM-Versatile Express
-PC is at path_from_stashed+0x1c/0x308 fs/libfs.c:2204
-LR is at open_namespace+0x44/0xbc fs/nsfs.c:102
-pc : [<8053af54>]    lr : [<8054d6f8>]    psr: 80000013
-sp : df959e80  ip : 84183000  fp : df959ec4
-r10: 84183000  r9 : 00000003  r8 : 843f3300
-r7 : 82caa250  r6 : 84183000  r5 : 00000000  r4 : 82625878
-r3 : df959ecc  r2 : 00000008  r1 : 82c95800  r0 : 00000008
-Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-Control: 30c5387d  Table: 843f1a00  DAC: fffffffd
-Register r0 information: non-paged memory
-Register r1 information: slab kmalloc-1k start 82c95800 pointer offset 0 size 1024
-Register r2 information: non-paged memory
-Register r3 information: 2-page vmalloc region starting at 0xdf958000 allocated at kernel_clone+0xac/0x3e4 kernel/fork.c:2780
-Register r4 information: non-slab/vmalloc memory
-Register r5 information: NULL pointer
-Register r6 information: slab task_struct start 84183000 pointer offset 0 size 3072
-Register r7 information: slab mnt_cache start 82caa240 pointer offset 16 size 184
-Register r8 information: slab filp start 843f3300 pointer offset 0 size 160
-Register r9 information: non-paged memory
-Register r10 information: slab task_struct start 84183000 pointer offset 0 size 3072
-Register r11 information: 2-page vmalloc region starting at 0xdf958000 allocated at kernel_clone+0xac/0x3e4 kernel/fork.c:2780
-Register r12 information: slab task_struct start 84183000 pointer offset 0 size 3072
-Process syz-executor103 (pid: 3011, stack limit = 0xdf958000)
-Stack: (0xdf959e80 to 0xdf95a000)
-9e80: 841b2400 00000008 df959eb4 df959e98 806e6544 804065ac 00000009 82625878
-9ea0: 00000000 84183000 841b2c80 843f3300 00000003 84183000 df959ef4 df959ec8
-9ec0: 8054d6f8 8053af44 df959ef4 00000000 00000000 f9244696 82625878 82625878
-9ee0: 841b2400 00000008 df959f14 df959ef8 8055271c 8054d6c0 0000ff07 00000000
-9f00: 843f3300 00000000 df959fa4 df959f18 8051a7f0 805525a4 000001b2 8020029c
-9f20: 84183000 000001b2 df959fac df959f38 8020ba70 8042c724 83f01500 df959f80
-9f40: 00000000 843f3300 00000003 82cb0800 df959f7c df959f60 805283b8 8027aebc
-9f60: 83f01500 00000003 83f01500 00000003 df959fa4 f9244696 8026b8b0 00000000
-9f80: 00000000 0008e058 00000036 8020029c 84183000 00000036 00000000 df959fa8
-9fa0: 80200060 8051a6c8 00000000 00000000 00000003 0000ff07 00000000 00000000
-9fc0: 00000000 00000000 0008e058 00000036 7ee54e0c 00000000 00000001 00000000
-9fe0: 7ee54c70 7ee54c60 0001064c 0002e7a0 00000010 00000003 00000000 00000000
-Call trace: 
-[<8053af38>] (path_from_stashed) from [<8054d6f8>] (open_namespace+0x44/0xbc fs/nsfs.c:102)
- r10:84183000 r9:00000003 r8:843f3300 r7:841b2c80 r6:84183000 r5:00000000
- r4:82625878
-[<8054d6b4>] (open_namespace) from [<8055271c>] (pidfd_ioctl+0x184/0x4c4 fs/pidfs.c:196)
- r6:00000008 r5:841b2400 r4:82625878
-[<80552598>] (pidfd_ioctl) from [<8051a7f0>] (vfs_ioctl fs/ioctl.c:51 [inline])
-[<80552598>] (pidfd_ioctl) from [<8051a7f0>] (do_vfs_ioctl fs/ioctl.c:861 [inline])
-[<80552598>] (pidfd_ioctl) from [<8051a7f0>] (__do_sys_ioctl fs/ioctl.c:905 [inline])
-[<80552598>] (pidfd_ioctl) from [<8051a7f0>] (sys_ioctl+0x134/0xda4 fs/ioctl.c:893)
- r7:00000000 r6:843f3300 r5:00000000 r4:0000ff07
-[<8051a6bc>] (sys_ioctl) from [<80200060>] (ret_fast_syscall+0x0/0x1c arch/arm/mm/proc-v7.S:67)
-Exception stack(0xdf959fa8 to 0xdf959ff0)
-9fa0:                   00000000 00000000 00000003 0000ff07 00000000 00000000
-9fc0: 00000000 00000000 0008e058 00000036 7ee54e0c 00000000 00000001 00000000
-9fe0: 7ee54c70 7ee54c60 0001064c 0002e7a0
- r10:00000036 r9:84183000 r8:8020029c r7:00000036 r6:0008e058 r5:00000000
- r4:00000000
-Code: e24dd01c e1a07001 e5911004 ee1dcf70 (e5905000) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	e24dd01c 	sub	sp, sp, #28
-   4:	e1a07001 	mov	r7, r1
-   8:	e5911004 	ldr	r1, [r1, #4]
-   c:	ee1dcf70 	mrc	15, 0, ip, cr13, cr0, {3}
-* 10:	e5905000 	ldr	r5, [r0] <-- trapping instruction
-
-
+Reviewed-by: David Gow <davidgow@google.com>
+Reviewed-by: SeongJae Park <sj@kernel.org>
+Signed-off-by: Kees Cook <kees@kernel.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ v1: https://lore.kernel.org/lkml/20240717212230.work.346-kees@kernel.org/
+ v2: file suffix changed to _kunit instead of _test
+I'll toss this into -next and send it to Linus before -rc1 closes.
+---
+Cc: David Gow <davidgow@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+---
+ MAINTAINERS                                        | 5 +++--
+ fs/binfmt_elf.c                                    | 2 +-
+ fs/exec.c                                          | 2 +-
+ fs/{binfmt_elf_test.c => tests/binfmt_elf_kunit.c} | 0
+ fs/{exec_test.c => tests/exec_kunit.c}             | 0
+ 5 files changed, 5 insertions(+), 4 deletions(-)
+ rename fs/{binfmt_elf_test.c => tests/binfmt_elf_kunit.c} (100%)
+ rename fs/{exec_test.c => tests/exec_kunit.c} (100%)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8dfbe998f175..396bd1f1e4b9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8211,8 +8211,8 @@ S:	Maintained
+ F:	rust/kernel/net/phy.rs
+ 
+ EXEC & BINFMT API, ELF
++M:	Kees Cook <keescook@chromium.org>
+ R:	Eric Biederman <ebiederm@xmission.com>
+-R:	Kees Cook <keescook@chromium.org>
+ L:	linux-mm@kvack.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
+@@ -8220,7 +8220,8 @@ F:	Documentation/userspace-api/ELF.rst
+ F:	fs/*binfmt_*.c
+ F:	fs/Kconfig.binfmt
+ F:	fs/exec.c
+-F:	fs/exec_test.c
++F:	fs/tests/binfmt_*_kunit.c
++F:	fs/tests/exec_kunit.c
+ F:	include/linux/binfmts.h
+ F:	include/linux/elf.h
+ F:	include/uapi/linux/binfmts.h
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 40111451aa95..04e748c5955f 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -2152,5 +2152,5 @@ core_initcall(init_elf_binfmt);
+ module_exit(exit_elf_binfmt);
+ 
+ #ifdef CONFIG_BINFMT_ELF_KUNIT_TEST
+-#include "binfmt_elf_test.c"
++#include "tests/binfmt_elf_kunit.c"
+ #endif
+diff --git a/fs/exec.c b/fs/exec.c
+index 5b580ff8d955..32d6537ece07 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -2244,5 +2244,5 @@ fs_initcall(init_fs_exec_sysctls);
+ #endif /* CONFIG_SYSCTL */
+ 
+ #ifdef CONFIG_EXEC_KUNIT_TEST
+-#include "exec_test.c"
++#include "tests/exec_kunit.c"
+ #endif
+diff --git a/fs/binfmt_elf_test.c b/fs/tests/binfmt_elf_kunit.c
+similarity index 100%
+rename from fs/binfmt_elf_test.c
+rename to fs/tests/binfmt_elf_kunit.c
+diff --git a/fs/exec_test.c b/fs/tests/exec_kunit.c
+similarity index 100%
+rename from fs/exec_test.c
+rename to fs/tests/exec_kunit.c
+-- 
+2.34.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
