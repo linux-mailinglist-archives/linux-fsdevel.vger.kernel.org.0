@@ -1,149 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-24036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265E2937FC1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 09:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 627D19380C4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 12:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 584561C2155D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 07:44:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9349E1C2124A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 20 Jul 2024 10:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A491A291;
-	Sat, 20 Jul 2024 07:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AF284047;
+	Sat, 20 Jul 2024 10:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N+f6AmQQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxaPVatu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555165821A
-	for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jul 2024 07:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208D022F17;
+	Sat, 20 Jul 2024 10:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721461456; cv=none; b=FRL6o5yEYLVYz/UIPCIdHcDZnHFrqiOg5vPaot1e0I3wWtI7qScwWZtKx77fWz11gYprUEANPTC6MJ4VFuLOL8BNhfhPmXvdOXGSfnmVu3aSSX3CtRDKg9FCjho07zsjzgzECllpzC4MWUqvupqBOYwx9yLWG12ySJXRWwfKpr4=
+	t=1721472151; cv=none; b=UylJqe2WknU/HmI7+eTdUkaD+AfZ+qL5meeiLTso28T1Tofkm75LlKbceq4Uvy0wRyaAORRzgY87wLkicHG8TAA5gIXCZR2w8H9F99cdpSMYK/P618nG0tDQ8DcXD0iA6I89K4Aof2fm9ANpTO/wcRuvcMJla8WXr2vGBA4zK1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721461456; c=relaxed/simple;
-	bh=JOEIobkIZAzDt4BNOx32SJplqQOWURyezuGAmtfpRTA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LEKUPpbuj7b6myVAbr0l7UOHMP089ePznR/XPC4ZX5CWuicURw32D/1ieJ1+pPmE+UR66qiatOP/QTHaQML3ukwmhC5lLty7IpXvyylSyCie/0zZqpnbgj5rj0Q75lnmdjn4B3rMHFMwvtS0l2sO1frA3a7M67U0f4hdGg9GOAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N+f6AmQQ; arc=none smtp.client-ip=209.85.217.41
+	s=arc-20240116; t=1721472151; c=relaxed/simple;
+	bh=SjXz8Q7cYNANPWdAIE+1LcHU+Sy/cBqo18xnb4k5Ups=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CGBLnjnxcCzYT9Z/kImAlPmme/5S/s5VVq7QJQlybDy/xTVZD1xtc8Eg+tjl3CUW9WsteON0NCHRKngOgVch/Wod0sXO4vv0x+msed7fWwMLzaVmrRJMY9SC50kAhEpmgn5nApLu6A0gGPnWBv55ph0rZEKpVxm2gvfC/RRg3dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxaPVatu; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-48fe76c0180so852555137.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 20 Jul 2024 00:44:15 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so19507965e9.1;
+        Sat, 20 Jul 2024 03:42:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721461454; x=1722066254; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pZd2vTZteakA+pgUqZUhXPjL+6tljKBJDA37c0FPp50=;
-        b=N+f6AmQQO68mzBy2JFmkoLpTw2PJuYfvg0w60byp+qbBWNb5HyfVfitEzambMly1Co
-         fOe43NosRZDVxxYeXvKWJvWStQz5tceXqtw5TWcTMeBvXjM+f0+sRDpeUBfysj8HaqP0
-         M3OHzLk66VWcz67KttT0I6Bq2Zh1pkheQ/dhomLMmS1I3AtfhahYmjJ8Pyczlncb8aVU
-         RDnkqtzQY1ToEgoPX3rcOOrMbanqxfiCq0Fj0Z25A9NHFSc1kvJaId9ua/xp8XM+eDR9
-         /4bV+E678DrXyUGOwuRWMLNx8enRIj2rmfq9fWGH2Rb9NyiFtif2yDlb56O/1GmxyTOT
-         l53g==
+        d=gmail.com; s=20230601; t=1721472148; x=1722076948; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yvVRqveKCbnKGjsii996Z+A1wxik6ho1ZN1Ar+GN1jU=;
+        b=JxaPVatu/aUIga+cJ11HurZUoA2ZL4R1jB8Vs7z65uRRzhSoXXZQf49B8eNjHgXUMx
+         dHJSaZcETi/qgRktynQdOf7iBJj7nC6nbA6Ku8U9KL/+3n7WoXzxMFndfx13tnEnEhgs
+         fWJx8h1FwOGj8jTGi6l1vQfT1bpJz9w8iNBmpO2n1L/4st1qf2LodpFvmP2NEfDEvRf+
+         ZNj50wqwrLoeN/qDIt+MSfvEc/4DsBcESsbw5gc7P0JuyuQwtrfuKfxT5J//V5g4Pa/T
+         7CChXqCCwV6r8YmT74pe6Ys7ScVF/bLbmoFkzybBndxrPPNqrURdvf1ZV+PtTkMoVdxx
+         tfiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721461454; x=1722066254;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pZd2vTZteakA+pgUqZUhXPjL+6tljKBJDA37c0FPp50=;
-        b=KM7N2qo4Ex/SOxBUNwJT4qn083/o4wRuAlA3jBmKVIB+GzEgwzOmmlE517QH5yaF5R
-         l5KI5j/qarAVRDARA6Klin1Zu6G1yKR1mPPdHItFZw2JZUaIcuVSEPh7Kn9i9G4veleq
-         sRT9nU0qAEFfZBR/RVI8/JN/MgI1R7KUl0vZMMezqXsozU+L/I8fdOJzevu77Aap9wC3
-         eEnUaQs7P6PMHwk5hL7g+FI/GhgUKA2PS2Tn5xRhzM4A3exvW9jnW09enspUYtQSBGub
-         /HbqQihJCOd5ZdNi8ZvneFNV6QGw6KuzSTdJX3vEmBxVqdNDvo95nSuRSt1rkOGRCyCj
-         hE6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVU6HnBDrXLcDciScCcC7roLri8E3thBYBrsnvhuNXxstLBlNjh5lIe4tBoBkXXBIK4Hbht4C8ydb7VTQUln7BMS/rafn2NQ+ToYjIayA==
-X-Gm-Message-State: AOJu0YzkhXdwrc6lYGOByJAM/8mkqSu/YkKthZeA9nOLmIootyrLHOzc
-	JoNnvkVZ8X5zZH1f3wD9W6foGXBLvrz35kNtkwLrQfapDZGxllVPs+3O7drAzOR6sZk8Pb6MQTr
-	50P4w4M7IjjyR/eDYbfqJs35sLmUpFLoSxgI=
-X-Google-Smtp-Source: AGHT+IFcL+G9NFEImNYHQQzhV39PrJhV0c8O5fzT17tfadK4+8BQQer/Ek56f4+mVFa8tTe0pTOk2x4+mNPM4ikooZk=
-X-Received: by 2002:a05:6102:6a88:b0:48f:eabd:d72a with SMTP id
- ada2fe7eead31-4928b9ad17amr576690137.17.1721461453402; Sat, 20 Jul 2024
- 00:44:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721472148; x=1722076948;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yvVRqveKCbnKGjsii996Z+A1wxik6ho1ZN1Ar+GN1jU=;
+        b=aAEm3wtbFOBMLF9W+O5+7lGT8jBy6maXsYIrZ0ZJeidf6RVHVJWfthOKGvgcTElG0K
+         DA6vg3Cr90s8lcGsvsvMJx7p/lDWIp11oyXNgGjEbRR5Y0JRt9ZltWX3O9Wr8ZJ9sr6Q
+         uuSntErdSw8219RAH5JRk00SMN7ZsknDG+RP54ktd8GqBe6hXEV/em8DD3PMBCKj/ZwI
+         FTQq/OhhbmvwUC6tGlWjlS/bFV0sUveeYKuRpqDGCEwnUcNZwcIKbzGShS7f340TLMzO
+         83T6N+QF8zxjtMwvcM4yWC/RLcazI1detQRO+v3mPryuFEB6ik3R5JHLlDnU7lKi1Vez
+         SOLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVN0sR/fJD3xfKwJFs7FrprIHlJ6BS1s5LHchdMbcoO7eiDaVv0JFocmGONy68ZS5GUxCNoCM+7IO99QMdWS+ecgyhm/9l54elYXZ+qIoYu1QQmEqBBJi23uDJoEbvr1ROWIMQBgq1KIFBHlIWfwxmuAo/D1grvF3yqMcb5iSRO+a2z48Or9FE=
+X-Gm-Message-State: AOJu0Yws9UEfXuTxc01a/jXKZ2+GidKcBOk8+6Jp4TCp5Lmd3ss8Lm6q
+	4xKbLqaGn5PW4S6iz32xBokkxq9ln4ZJzun2U2knNyh+HYLej2Uf
+X-Google-Smtp-Source: AGHT+IFtjw6W19sDZIGkdGb3I2QzTdMrxKBtLKtuA6pZllYy+sAObBJu8M1Kqk6cGFm7GvJaZE7/IQ==
+X-Received: by 2002:a05:600c:4ec7:b0:426:6f15:2e4d with SMTP id 5b1f17b1804b1-427dc51cecbmr7415135e9.9.1721472148099;
+        Sat, 20 Jul 2024 03:42:28 -0700 (PDT)
+Received: from f (cst-prg-77-238.cust.vodafone.cz. [46.135.77.238])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6906c77sm52947855e9.23.2024.07.20.03.42.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Jul 2024 03:42:27 -0700 (PDT)
+Date: Sat, 20 Jul 2024 12:42:15 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Zhihao Cheng <chengzhihao@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	Christoph Hellwig <hch@infradead.org>, linux-mtd <linux-mtd@lists.infradead.org>, 
+	Richard Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>, 
+	yangerkun <yangerkun@huawei.com>, "wangzhaolong (A)" <wangzhaolong1@huawei.com>
+Subject: Re: [BUG REPORT] potential deadlock in inode evicting under the
+ inode lru traversing context on ext4 and ubifs
+Message-ID: <yakewaqynmapatlh3s45huq6dutkkkcdj26tqpfx6yllsjmyie@rh6xthl5pwkb>
+References: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
+ <20240712143708.GA151742@mit.edu>
+ <20240718134031.sxnwwzzj54jxl3e5@quack3>
+ <0b0a7b95-f6d0-a56e-5492-b48882d9a35d@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <adfd31f369528c9958922d901fbe8eba48dfe496.1721403041.git.josef@toxicpanda.com>
-In-Reply-To: <adfd31f369528c9958922d901fbe8eba48dfe496.1721403041.git.josef@toxicpanda.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 20 Jul 2024 10:44:02 +0300
-Message-ID: <CAOQ4uxhq9rWBXAxsvF3vm=fc2rPo=hpkiX9TZO8y5BgYDJNbJA@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: don't skip extra event info if no info_mode is set
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0b0a7b95-f6d0-a56e-5492-b48882d9a35d@huaweicloud.com>
 
-On Fri, Jul 19, 2024 at 6:31=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
-wrote:
->
-> Previously we would only include optional information if you requested
-> it via an FAN_ flag at fanotify_init time (FAN_REPORT_FID for example).
-> However this isn't necessary as the event length is encoded in the
-> metadata, and if the user doesn't want to consume the information they
-> don't have to.  With the PRE_ACCESS events we will always generate range
-> information, so drop this check in order to allow this extra
-> information to be exported without needing to have another flag.
->
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+On Fri, Jul 19, 2024 at 11:21:51AM +0800, Zhihao Cheng wrote:
+> 在 2024/7/18 21:40, Jan Kara 写道:
+> > I'm pondering about the best way to fix this. Maybe we could handle the
+> > need for inode pinning in inode_lru_isolate() in a similar way as in
+> > writeback code so that last iput() cannot happen from inode_lru_isolate().
+> > In writeback we use I_SYNC flag to pin the inode and evict() waits for this
+> > flag to clear. I'll probably sleep to it and if I won't find it too
+> > disgusting to live tomorrow, I can code it.
+> > 
+> 
+> I guess that you may modify like this:
+> diff --git a/fs/inode.c b/fs/inode.c
+> index f356fe2ec2b6..5b1a9b23f53f 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -457,7 +457,7 @@ EXPORT_SYMBOL(ihold);
+> 
+>  static void __inode_add_lru(struct inode *inode, bool rotate)
+>  {
+> -       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING |
+> I_WILL_FREE))
+> +       if (inode->i_state & (I_DIRTY_ALL | I_SYNC | I_FREEING | I_WILL_FREE
+> | I_PINING))
+>                 return;
+>         if (atomic_read(&inode->i_count))
+>                 return;
+> @@ -845,7 +845,7 @@ static enum lru_status inode_lru_isolate(struct
+> list_head *item,
+>          * be under pressure before the cache inside the highmem zone.
+>          */
+>         if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
+> -               __iget(inode);
+> +               inode->i_state |= I_PINING;
+>                 spin_unlock(&inode->i_lock);
+>                 spin_unlock(lru_lock);
+>                 if (remove_inode_buffers(inode)) {
+> @@ -857,7 +857,10 @@ static enum lru_status inode_lru_isolate(struct
+> list_head *item,
+>                                 __count_vm_events(PGINODESTEAL, reap);
+>                         mm_account_reclaimed_pages(reap);
+>                 }
+> -               iput(inode);
+> +               spin_lock(&inode->i_lock);
+> +               inode->i_state &= ~I_PINING;
+> +               wake_up_bit(&inode->i_state, __I_PINING);
+> +               spin_unlock(&inode->i_lock);
+>                 spin_lock(lru_lock);
+>                 return LRU_RETRY;
+>         }
+> @@ -1772,6 +1775,7 @@ static void iput_final(struct inode *inode)
+>                 return;
+>         }
+> 
+> +       inode_wait_for_pining(inode);
+>         state = inode->i_state;
+>         if (!drop) {
+>                 WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index fd34b5755c0b..daf094fff5fe 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2415,6 +2415,8 @@ static inline void kiocb_clone(struct kiocb *kiocb,
+> struct kiocb *kiocb_src,
+>  #define I_DONTCACHE            (1 << 16)
+>  #define I_SYNC_QUEUED          (1 << 17)
+>  #define I_PINNING_NETFS_WB     (1 << 18)
+> +#define __I_PINING             19
+> +#define I_PINING               (1 << __I_PINING)
+> 
+>  #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+>  #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+> 
+> , which means that we will import a new inode state to solve the problem.
+> 
 
-Looks sane, you may add:
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+My non-maintainer $0,03 is as follows:
 
-I think it would be best to re-post this one along with the pre-content
-events series for better context.
+1. I_PINING is too generic of a name. I_LRU_PINNED or something else
+indicating what this is for would be prudent
+2. while not specific to this patch, the handling of i_state is too
+accidental-breakage friendly. a full blown solution is way out of the
+scope here, but something can be done to future-proof this work anyway.
 
-Thanks,
-Amir.
+To that end I would suggest:
+1. inode_lru_pin() which appart from setting the flag includes:
+	BUG_ON(inode->i_state & (I_LRU_PINNED | I_FREEING | I_WILL_FREE)
+2. inode_lru_unpin() which apart from unsetting the flag + wakeup includes:
+	BUG_ON(!(inode->i_state & I_LRU_PINNED))
+3. inode_lru_wait_for_pinned() 
 
-> ---
->  fs/notify/fanotify/fanotify_user.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
-tify_user.c
-> index 9ec313e9f6e1..2e2fba8a9d20 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -160,9 +160,6 @@ static size_t fanotify_event_len(unsigned int info_mo=
-de,
->         int fh_len;
->         int dot_len =3D 0;
->
-> -       if (!info_mode)
-> -               return event_len;
-> -
->         if (fanotify_is_error_event(event->mask))
->                 event_len +=3D FANOTIFY_ERROR_INFO_LEN;
->
-> @@ -740,12 +737,10 @@ static ssize_t copy_event_to_user(struct fsnotify_g=
-roup *group,
->         if (fanotify_is_perm_event(event->mask))
->                 FANOTIFY_PERM(event)->fd =3D fd;
->
-> -       if (info_mode) {
-> -               ret =3D copy_info_records_to_user(event, info, info_mode,=
- pidfd,
-> -                                               buf, count);
-> -               if (ret < 0)
-> -                       goto out_close_fd;
-> -       }
-> +       ret =3D copy_info_records_to_user(event, info, info_mode, pidfd,
-> +                                       buf, count);
-> +       if (ret < 0)
-> +               goto out_close_fd;
->
->         if (f)
->                 fd_install(fd, f);
-> --
-> 2.43.0
->
+However, a non-cosmetic remark is that at the spot inode_wait_for_pining
+gets invoked none of the of the pinning-blocking flags may be set (to my
+reading anyway). This is not the end of the world, but it does mean the
+waiting routine will have to check stuff in a loop.
+
+Names are not that important, the key is to keep the logic and
+dependencies close by code-wise.
 
