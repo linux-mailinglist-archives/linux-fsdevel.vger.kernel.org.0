@@ -1,134 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-24049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E76938B85
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 10:53:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8C1938BA1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 10:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 869371F210C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 08:53:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D474FB214B6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 08:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD67167DA8;
-	Mon, 22 Jul 2024 08:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301BC1684B0;
+	Mon, 22 Jul 2024 08:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQq9SBxf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHxO8XN+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835608F66;
-	Mon, 22 Jul 2024 08:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76416182BD;
+	Mon, 22 Jul 2024 08:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721638386; cv=none; b=ogmE7nITZSaptBA6mc4C6uJYv849sgcoATUzOoXQ+/6yeIVk60B1nFqn5hRCI1Ev2sh4ZAwcsfC2sS2joqEbsO8gGKtolU5cH2Ua2nMzDMpDshD2SOfBDRToPur7Iu9fiev+qykyOA8EvnCiZNcuabJ7X0qU19APDFEoqLozaxA=
+	t=1721638660; cv=none; b=G4ABlBFKlvLeybnPxS+7WQ3aliTqMj+7FYJkOJEzKxMTCnz7glKXbelCkKguztqQyeB6g5uGnmC9x2/Ww0B5azgCfisENOYm0/9NRBB/u/+oKa6p4yhBn1+XbVNI2+DKfFUPZ0BaF8B1zWjw2Fs18Hjf/WOfeD0AySPoMm42Cwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721638386; c=relaxed/simple;
-	bh=9DDOShtjPdOTEUiU4gaefYy78nZkFm4knEUdX7dutwg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=rFE6OCJluZhMlNzPov6NeeWcxJjEF46+ZVn+4RUI6DL+E9oLZb1OtTddGImxlQpFa8Ujt9f7K7Nbucq7Ks8tnsDH28rUe37xpL3oX+OIuqie2zAsTu76F5Zyl/NPps1j+zeukBEruSvcCT46V7MwTiSt1bguN7ytAEf59xixu7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQq9SBxf; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d94293f12fso2437442b6e.3;
-        Mon, 22 Jul 2024 01:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721638384; x=1722243184; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tgyUp37D+oZuQgyHubUu/VMC/vhsx9B1nh6d2LUzw0E=;
-        b=LQq9SBxfyTy8wjqYGsgcBjpu/di4MVuWDZ9ZChWNN2DHbFfOVjdB3fhDv/Dqhgb564
-         pGBPTxaxUJaBadzbIL/FgyAUsoaqd/F5aYW3IpLgkJPlSqghXOSUHeJv0lQ6OwSfDcvq
-         dR04dWV3ttYTz8K2ZXrOSDOyAqQ8zS5B7h/KLpROc6fppHhtF2kXq15AFY12VrSruET2
-         IHDoW4BO7mJCAUFTp+zw5TBH1R0w3/JYoPYxBBD9n0gwHv3jSNiS7CBW/vuCULJLz6UM
-         CZe3fN+T9yueq7lxfOQyjY4m4miMU2j0msc8cHEXYaaWLhJ4NcZyZBLDk7o+AmxeasxK
-         eO2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721638384; x=1722243184;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tgyUp37D+oZuQgyHubUu/VMC/vhsx9B1nh6d2LUzw0E=;
-        b=aRLKJkMicclmOhhrT+fC+1wk3o0d8lr9TCt5NpiA6c3Y/HZMvphhY70IwrnIvJEWph
-         fq3dB9HSrm1IF6J0FwCY3cpiu47r9EpfU9ELnJ2w9+3nHbgLKogFvSbuY2nnrdQToMGs
-         cfxyg77jROmgbtw/eWJk7umIA/MQmW9EQzyei2c7CfCgc8CUVUzaFG+TfwssPTvmXslD
-         WlsU3itxvmcts5EOVQkOqJ9BGkoHi0WvOZWiR7/IN7WIkqOKVjQHRcq8bFuGSz96swKw
-         waoA8feG9mBkgR7aIYxozoSIY6bTCLP9yFaDD4nQbWKg/hmiwz92wVCH0Igr6Y6mtG+d
-         kVWA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Rb32W3dqS3VZ47k4N5N/2pIPXrKHOwX6aGL53k+7Gf/iPYVUaJDYrl70Alm9qOwN4S/nFCFBIcuVmZFFE2eKIisAKmX9MtSb/JvjrRsgZRiLSRNOyaHsyeagm+ryVuPEHGp/Rw7MQhM9qQ==
-X-Gm-Message-State: AOJu0YzjQPEsCGF7QXXu7q6v1Ph2oOPWpFbbg72muczP6QaCuNNUdBT6
-	6Y9xe/Rh7PkIPclylDcuvZpAGMxB1M+AKkeOjVtEKdbHczzRmL1A
-X-Google-Smtp-Source: AGHT+IHXAtrevfwh01sQw7QcQYj/+dwxUfSdpRtHETu3548X1HQiRuuQOSGOHqrRlxrrB6+bay9bAw==
-X-Received: by 2002:a05:6808:148c:b0:3d9:385d:8754 with SMTP id 5614622812f47-3dae6008f56mr9155561b6e.47.1721638384362;
-        Mon, 22 Jul 2024 01:53:04 -0700 (PDT)
-Received: from MSCND1355B05.fareast.nevint.com ([117.128.58.94])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d183fe85dsm2607600b3a.133.2024.07.22.01.52.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 01:53:03 -0700 (PDT)
-From: Zqiang <qiang.zhang1211@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	paulmck@kernel.org
-Cc: qiang.zhang1211@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] nsfs: Fix the missed rcu_read_unlock() invoking in ns_ioctl()
-Date: Mon, 22 Jul 2024 16:51:49 +0800
-Message-Id: <20240722085149.32479-1-qiang.zhang1211@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1721638660; c=relaxed/simple;
+	bh=5pdsAMvxf33KPLFdJQj2/+6yZV6fAT2tSKEZ5x9YW2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XlzOlaMFCVBOV9621swfsBUvDQbpSIK5OMW8ttv9ehO9eNuc+HksMvTTK5jROIXxeEkZx7OMR/iBo8BPFCuq2yrVfDyt5pYkfAEU7xl4Yyv8OAQk5te18bDDvd/OPR1tVFSO1E1+U8/7aiuNHgDU1sSnirlfsCeApflme7kFK1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHxO8XN+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0CFDC116B1;
+	Mon, 22 Jul 2024 08:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721638660;
+	bh=5pdsAMvxf33KPLFdJQj2/+6yZV6fAT2tSKEZ5x9YW2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZHxO8XN+foJShMt2aKArXK1IdXRzJuQU27YCTJfFZwoQ7H7WCy+u8B9jpMyN4Efv1
+	 0yLHsB6MMrCBmpo0ZPenUlRjMWqnJh1Y9wc2R2tD0Rva4o+1LslX8kXPiTv+MVae33
+	 /8JuTUH2tJO4E1OweFMqLlLI3WblfWfg3JI2icKOLinTi0v7T9QoBdk0QchjJLeqwE
+	 dxBRpwjbGqPp+bb+NIRUsCl5S6uDGSt5Km5nUfoWpkzN8mXi2qjxgrLJU7L6CfTXfb
+	 JiyDmcT8gUs1CNjlwNzwaCMtGg8tmeq28UIbtrSDs0nIjnNel0R194B4XgVpFJKSUp
+	 SfzKjLHHdmA3g==
+Date: Mon, 22 Jul 2024 09:57:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v9 35/39] kselftest/arm64: Add a GCS test program built
+ with the system libc
+Message-ID: <875ccce5-69ab-4a43-b49c-977036df4173@sirena.org.uk>
+References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
+ <20240625-arm64-gcs-v9-35-0f634469b8f0@kernel.org>
+ <87plray8we.fsf@linaro.org>
+ <a1ee93ab-2168-4228-a4e8-eab02c046bd3@sirena.org.uk>
+ <87ed7qxrlb.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mfQxvhGMKqgo3PYf"
+Content-Disposition: inline
+In-Reply-To: <87ed7qxrlb.fsf@linaro.org>
+X-Cookie: Everything you know is wrong!
 
-Currently, the syzbot report follow wanings:
 
-Voluntary context switch within RCU read-side critical section!
-WARNING: CPU: 0 PID: 3460 at kernel/rcu/tree_plugin.h:330 rcu_note_context_switch+0x354/0x49c
-Call trace:
-rcu_note_context_switch+0x354/0x49c kernel/rcu/tree_plugin.h:330
-__schedule+0xb0/0x850 kernel/sched/core.c:6417
-__schedule_loop kernel/sched/core.c:6606 [inline]
-schedule+0x34/0x104 kernel/sched/core.c:6621
-do_notify_resume+0xe4/0x164 arch/arm64/kernel/entry-common.c:136
-exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
-exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
-el0_interrupt+0xc4/0xc8 arch/arm64/kernel/entry-common.c:797
-__el0_irq_handler_common+0x18/0x24 arch/arm64/kernel/entry-common.c:802
-el0t_64_irq_handler+0x10/0x1c arch/arm64/kernel/entry-common.c:807
-el0t_64_irq+0x19c/0x1a0 arch/arm64/kernel/entry.S:599
+--mfQxvhGMKqgo3PYf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This happens when the tsk pointer is null and a call to rcu_read_unlock()
-is missed in ns_ioctl(), this commit therefore invoke rcu_read_lock()
-when tsk pointer is null.
+On Thu, Jul 18, 2024 at 07:28:32PM -0300, Thiago Jung Bauermann wrote:
+> Mark Brown <broonie@kernel.org> writes:
 
-Reported-by: syzbot+784d0a1246a539975f05@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=784d0a1246a539975f05
-Fixes: ca567df74a28 ("nsfs: add pid translation ioctls")
-Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
----
- fs/nsfs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> > Do you have THP enabled?  That still doesn't work (I'm expecting it to
+> > be fixed with -rc1).
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index a4a925dce331..e228d06f0949 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -188,8 +188,10 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
- 			tsk = find_task_by_vpid(arg);
- 		else
- 			tsk = find_task_by_pid_ns(arg, pid_ns);
--		if (!tsk)
-+		if (!tsk) {
-+			rcu_read_unlock();
- 			break;
-+		}
- 
- 		switch (ioctl) {
- 		case NS_GET_PID_FROM_PIDNS:
--- 
-2.17.1
+> I did have it enabled. After turning it off in the kernel config, the
+> test does pass. But I see 30 lines of "INVALID GCS" in dmesg while
+> running it. Is it expected?
 
+Oops, that's a debug print left in by mistake but does indicate
+everything's running well.
+
+--mfQxvhGMKqgo3PYf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaeHvoACgkQJNaLcl1U
+h9AI+wf/RBDATTODyaTvKOScU1coj20M1RS7G89cHABna4bQRQtFNmjI7sd2fLpl
+JqGje1yPm1EVEweCnIKuP7DURmfjm7EYn+WqebEBO80n/p+2Md7qAy61du1uJEuV
+MlqV44RmEi/pKozAa0EFjN5rS14u0w86Up9k0SJEBX+0SjpZrUWhpkUQyj+B90B7
+WHY8XiMIv3UDvcI9oPowQAJuvIfM7hl8JD7njibxQX+fqex+DY0C1p0MOG8BQ0TM
+9Y+eI9rkpz8eDXTN1Tcm5HnTlBn5UJhFsuWnyZSkJ2jVXSvvYSieik4QRH9U4rqj
+tAPxlFXuzQeJGORQnqNCvINjO9Cc5w==
+=RXC2
+-----END PGP SIGNATURE-----
+
+--mfQxvhGMKqgo3PYf--
 
