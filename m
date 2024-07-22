@@ -1,126 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-24050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8C1938BA1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 10:57:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AC1938BD7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 11:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D474FB214B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 08:57:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A44DA1C209E7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 09:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301BC1684B0;
-	Mon, 22 Jul 2024 08:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHxO8XN+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8356C168C20;
+	Mon, 22 Jul 2024 09:16:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76416182BD;
-	Mon, 22 Jul 2024 08:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EADE25763
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2024 09:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721638660; cv=none; b=G4ABlBFKlvLeybnPxS+7WQ3aliTqMj+7FYJkOJEzKxMTCnz7glKXbelCkKguztqQyeB6g5uGnmC9x2/Ww0B5azgCfisENOYm0/9NRBB/u/+oKa6p4yhBn1+XbVNI2+DKfFUPZ0BaF8B1zWjw2Fs18Hjf/WOfeD0AySPoMm42Cwg=
+	t=1721639783; cv=none; b=PYueauVzoCp7itVkNeW8IXfNUYpe6xdy0jYdVQJTVC/lseVz8WmGAgoUr1rQTYJ49ytSANokSHpq/nuYyjWZTF5BTR9CpQT5NrtOwRF3RMOJ56kPTq6YWc8qNj/KtreCnpAKmy0Ja1Af1XlieDAPJviLdjk6Jcf/T8OphS2hN9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721638660; c=relaxed/simple;
-	bh=5pdsAMvxf33KPLFdJQj2/+6yZV6fAT2tSKEZ5x9YW2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XlzOlaMFCVBOV9621swfsBUvDQbpSIK5OMW8ttv9ehO9eNuc+HksMvTTK5jROIXxeEkZx7OMR/iBo8BPFCuq2yrVfDyt5pYkfAEU7xl4Yyv8OAQk5te18bDDvd/OPR1tVFSO1E1+U8/7aiuNHgDU1sSnirlfsCeApflme7kFK1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHxO8XN+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0CFDC116B1;
-	Mon, 22 Jul 2024 08:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721638660;
-	bh=5pdsAMvxf33KPLFdJQj2/+6yZV6fAT2tSKEZ5x9YW2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZHxO8XN+foJShMt2aKArXK1IdXRzJuQU27YCTJfFZwoQ7H7WCy+u8B9jpMyN4Efv1
-	 0yLHsB6MMrCBmpo0ZPenUlRjMWqnJh1Y9wc2R2tD0Rva4o+1LslX8kXPiTv+MVae33
-	 /8JuTUH2tJO4E1OweFMqLlLI3WblfWfg3JI2icKOLinTi0v7T9QoBdk0QchjJLeqwE
-	 dxBRpwjbGqPp+bb+NIRUsCl5S6uDGSt5Km5nUfoWpkzN8mXi2qjxgrLJU7L6CfTXfb
-	 JiyDmcT8gUs1CNjlwNzwaCMtGg8tmeq28UIbtrSDs0nIjnNel0R194B4XgVpFJKSUp
-	 SfzKjLHHdmA3g==
-Date: Mon, 22 Jul 2024 09:57:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v9 35/39] kselftest/arm64: Add a GCS test program built
- with the system libc
-Message-ID: <875ccce5-69ab-4a43-b49c-977036df4173@sirena.org.uk>
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
- <20240625-arm64-gcs-v9-35-0f634469b8f0@kernel.org>
- <87plray8we.fsf@linaro.org>
- <a1ee93ab-2168-4228-a4e8-eab02c046bd3@sirena.org.uk>
- <87ed7qxrlb.fsf@linaro.org>
+	s=arc-20240116; t=1721639783; c=relaxed/simple;
+	bh=7C/drCaoNFVEaUE441qDvzta0bNUQ/yAp+86vRAao00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FDqiqlyYZPZYOlkErEwcDaUf9VmbPQ7T/aPnj/3W+8ynu7Y64gke9MWiHobbGz/xX0jMmRr6BgrkkzLVGfSbXWlUK+ZRY1NIl2y2putewOc2/AFDwJEzJxN+DNSqK0fyBJQseoCkgvee4UNCP89kpWsvBdYmu4FPPpO+GWC+pGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF5ADFEC;
+	Mon, 22 Jul 2024 02:16:45 -0700 (PDT)
+Received: from [10.162.41.8] (a077893.blr.arm.com [10.162.41.8])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71F823F766;
+	Mon, 22 Jul 2024 02:16:12 -0700 (PDT)
+Message-ID: <3c385faa-bfe9-4731-8fdc-fa786f2160df@arm.com>
+Date: Mon, 22 Jul 2024 14:46:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mfQxvhGMKqgo3PYf"
-Content-Disposition: inline
-In-Reply-To: <87ed7qxrlb.fsf@linaro.org>
-X-Cookie: Everything you know is wrong!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 18/29] arm64: add POE signal support
+To: Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org
+Cc: akpm@linux-foundation.org, aneesh.kumar@kernel.org,
+ aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org,
+ catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
+ dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, maz@kernel.org,
+ mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com,
+ npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org,
+ szabolcs.nagy@arm.com, tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+ kvmarm@lists.linux.dev
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-19-joey.gouly@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240503130147.1154804-19-joey.gouly@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---mfQxvhGMKqgo3PYf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Jul 18, 2024 at 07:28:32PM -0300, Thiago Jung Bauermann wrote:
-> Mark Brown <broonie@kernel.org> writes:
+On 5/3/24 18:31, Joey Gouly wrote:
+> Add PKEY support to signals, by saving and restoring POR_EL0 from the stackframe.
+> 
+> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Szabolcs Nagy <szabolcs.nagy@arm.com>
 
-> > Do you have THP enabled?  That still doesn't work (I'm expecting it to
-> > be fixed with -rc1).
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-> I did have it enabled. After turning it off in the kernel config, the
-> test does pass. But I see 30 lines of "INVALID GCS" in dmesg while
-> running it. Is it expected?
-
-Oops, that's a debug print left in by mistake but does indicate
-everything's running well.
-
---mfQxvhGMKqgo3PYf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaeHvoACgkQJNaLcl1U
-h9AI+wf/RBDATTODyaTvKOScU1coj20M1RS7G89cHABna4bQRQtFNmjI7sd2fLpl
-JqGje1yPm1EVEweCnIKuP7DURmfjm7EYn+WqebEBO80n/p+2Md7qAy61du1uJEuV
-MlqV44RmEi/pKozAa0EFjN5rS14u0w86Up9k0SJEBX+0SjpZrUWhpkUQyj+B90B7
-WHY8XiMIv3UDvcI9oPowQAJuvIfM7hl8JD7njibxQX+fqex+DY0C1p0MOG8BQ0TM
-9Y+eI9rkpz8eDXTN1Tcm5HnTlBn5UJhFsuWnyZSkJ2jVXSvvYSieik4QRH9U4rqj
-tAPxlFXuzQeJGORQnqNCvINjO9Cc5w==
-=RXC2
------END PGP SIGNATURE-----
-
---mfQxvhGMKqgo3PYf--
+> ---
+>  arch/arm64/include/uapi/asm/sigcontext.h |  7 ++++
+>  arch/arm64/kernel/signal.c               | 52 ++++++++++++++++++++++++
+>  2 files changed, 59 insertions(+)
+> 
+> diff --git a/arch/arm64/include/uapi/asm/sigcontext.h b/arch/arm64/include/uapi/asm/sigcontext.h
+> index 8a45b7a411e0..e4cba8a6c9a2 100644
+> --- a/arch/arm64/include/uapi/asm/sigcontext.h
+> +++ b/arch/arm64/include/uapi/asm/sigcontext.h
+> @@ -98,6 +98,13 @@ struct esr_context {
+>  	__u64 esr;
+>  };
+>  
+> +#define POE_MAGIC	0x504f4530
+> +
+> +struct poe_context {
+> +	struct _aarch64_ctx head;
+> +	__u64 por_el0;
+> +};
+> +
+>  /*
+>   * extra_context: describes extra space in the signal frame for
+>   * additional structures that don't fit in sigcontext.__reserved[].
+> diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
+> index 4a77f4976e11..077436a8bc10 100644
+> --- a/arch/arm64/kernel/signal.c
+> +++ b/arch/arm64/kernel/signal.c
+> @@ -63,6 +63,7 @@ struct rt_sigframe_user_layout {
+>  	unsigned long fpmr_offset;
+>  	unsigned long extra_offset;
+>  	unsigned long end_offset;
+> +	unsigned long poe_offset;
+>  };
+>  
+>  #define BASE_SIGFRAME_SIZE round_up(sizeof(struct rt_sigframe), 16)
+> @@ -185,6 +186,8 @@ struct user_ctxs {
+>  	u32 zt_size;
+>  	struct fpmr_context __user *fpmr;
+>  	u32 fpmr_size;
+> +	struct poe_context __user *poe;
+> +	u32 poe_size;
+>  };
+>  
+>  static int preserve_fpsimd_context(struct fpsimd_context __user *ctx)
+> @@ -258,6 +261,21 @@ static int restore_fpmr_context(struct user_ctxs *user)
+>  	return err;
+>  }
+>  
+> +static int restore_poe_context(struct user_ctxs *user)
+> +{
+> +	u64 por_el0;
+> +	int err = 0;
+> +
+> +	if (user->poe_size != sizeof(*user->poe))
+> +		return -EINVAL;
+> +
+> +	__get_user_error(por_el0, &(user->poe->por_el0), err);
+> +	if (!err)
+> +		write_sysreg_s(por_el0, SYS_POR_EL0);
+> +
+> +	return err;
+> +}
+> +
+>  #ifdef CONFIG_ARM64_SVE
+>  
+>  static int preserve_sve_context(struct sve_context __user *ctx)
+> @@ -621,6 +639,7 @@ static int parse_user_sigframe(struct user_ctxs *user,
+>  	user->za = NULL;
+>  	user->zt = NULL;
+>  	user->fpmr = NULL;
+> +	user->poe = NULL;
+>  
+>  	if (!IS_ALIGNED((unsigned long)base, 16))
+>  		goto invalid;
+> @@ -671,6 +690,17 @@ static int parse_user_sigframe(struct user_ctxs *user,
+>  			/* ignore */
+>  			break;
+>  
+> +		case POE_MAGIC:
+> +			if (!system_supports_poe())
+> +				goto invalid;
+> +
+> +			if (user->poe)
+> +				goto invalid;
+> +
+> +			user->poe = (struct poe_context __user *)head;
+> +			user->poe_size = size;
+> +			break;
+> +
+>  		case SVE_MAGIC:
+>  			if (!system_supports_sve() && !system_supports_sme())
+>  				goto invalid;
+> @@ -857,6 +887,9 @@ static int restore_sigframe(struct pt_regs *regs,
+>  	if (err == 0 && system_supports_sme2() && user.zt)
+>  		err = restore_zt_context(&user);
+>  
+> +	if (err == 0 && system_supports_poe() && user.poe)
+> +		err = restore_poe_context(&user);
+> +
+>  	return err;
+>  }
+>  
+> @@ -980,6 +1013,13 @@ static int setup_sigframe_layout(struct rt_sigframe_user_layout *user,
+>  			return err;
+>  	}
+>  
+> +	if (system_supports_poe()) {
+> +		err = sigframe_alloc(user, &user->poe_offset,
+> +				     sizeof(struct poe_context));
+> +		if (err)
+> +			return err;
+> +	}
+> +
+>  	return sigframe_alloc_end(user);
+>  }
+>  
+> @@ -1020,6 +1060,15 @@ static int setup_sigframe(struct rt_sigframe_user_layout *user,
+>  		__put_user_error(current->thread.fault_code, &esr_ctx->esr, err);
+>  	}
+>  
+> +	if (system_supports_poe() && err == 0 && user->poe_offset) {
+> +		struct poe_context __user *poe_ctx =
+> +			apply_user_offset(user, user->poe_offset);
+> +
+> +		__put_user_error(POE_MAGIC, &poe_ctx->head.magic, err);
+> +		__put_user_error(sizeof(*poe_ctx), &poe_ctx->head.size, err);
+> +		__put_user_error(read_sysreg_s(SYS_POR_EL0), &poe_ctx->por_el0, err);
+> +	}
+> +
+>  	/* Scalable Vector Extension state (including streaming), if present */
+>  	if ((system_supports_sve() || system_supports_sme()) &&
+>  	    err == 0 && user->sve_offset) {
+> @@ -1178,6 +1227,9 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
+>  		sme_smstop();
+>  	}
+>  
+> +	if (system_supports_poe())
+> +		write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
+> +
+>  	if (ka->sa.sa_flags & SA_RESTORER)
+>  		sigtramp = ka->sa.sa_restorer;
+>  	else
 
