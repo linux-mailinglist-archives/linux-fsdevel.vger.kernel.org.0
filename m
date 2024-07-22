@@ -1,81 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-24073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5D3939008
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 15:40:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C7F93900D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 15:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0282C1C20E3F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 13:40:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 501A1B2122E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 13:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1308C16D4E5;
-	Mon, 22 Jul 2024 13:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7525016D9AE;
+	Mon, 22 Jul 2024 13:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mua6d5e4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3A316CD33
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2024 13:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFD31D696;
+	Mon, 22 Jul 2024 13:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721655640; cv=none; b=uqDP9fh8aPXGOAdfO4EzlHgy9LNtxwv9S+0J1vbMlG43N8CYp3qN55JXPu4Gojzp4/8HNUidCuckuhgyv/jL3TTkP+5M8nrZZqCc0xbo2XaiiyGJ+4M9NgbyBPZPHnsTxZTngK4qGolHN330llxEBwTMVRDcy5UpZnUcKJWI+6o=
+	t=1721655724; cv=none; b=PCHKrOHSqcrbFirI0SzAsv9TjhRIycSA36lLV/gq6e3YnLsWTJPFezTXtGVyY1+EK19DN95fpus3K6qs1zgjkWk91KEp/81ySNS4furgsjue3VANdZd9gu+x6T3ol0jBttfIQA1iBU1lY9iX+Rp+sEnQNJg7cnummcaE0PU8Qs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721655640; c=relaxed/simple;
-	bh=axriSwjh1W5G1c4850mcMvg5Q8/pBlPOM0L1puihvI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UDnvi9jGBHI9fCyYcvty/zGI0AFXZ96+a+zDfzzI/TLVSBO8HDuCB3qPKw+w1nMUMGEq8kI4g3a/dNn0zt1rmoWDnExxNBFn3PFMPyLsD5sV0i/8uwP/P/MjDNPwkDsWU5dCgz7K0ohgnwI4eS9srX10HShvayhTAQlvdAH47+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40DD31007;
-	Mon, 22 Jul 2024 06:41:04 -0700 (PDT)
-Received: from [10.44.160.75] (e126510-lin.lund.arm.com [10.44.160.75])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E32943F766;
-	Mon, 22 Jul 2024 06:40:33 -0700 (PDT)
-Message-ID: <57220128-e8b0-4b78-b0f9-8c8dc195f1fb@arm.com>
-Date: Mon, 22 Jul 2024 15:40:32 +0200
+	s=arc-20240116; t=1721655724; c=relaxed/simple;
+	bh=99EO1k0o8YDQtkUpSIzsfA64IvvnUDYcndvdN/LqiyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PI6PpkBsT25uvsIC0Vhhz1NSL5NhYV8Jrb93wyTJoxT8s8rDiS4k+UKyiBA6rHy78TuXf4fgHe4Yf9wC6qRJDU//hNCrFSUjN5UlRfPny4PKfq/WMRUt6EB8pI7UW6Ap6ZjTergtQeguFUzemLEarNw5oTyRx/orJnR3JgJ/zi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mua6d5e4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34A4C116B1;
+	Mon, 22 Jul 2024 13:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721655724;
+	bh=99EO1k0o8YDQtkUpSIzsfA64IvvnUDYcndvdN/LqiyQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Mua6d5e44UFy8/iraVKBwQ22OYIM8zIq91MYOuYmVgjr1Mr1uemJOG2qmh9ARlGfQ
+	 a4HQuOJYD3dK7HG9Vlxc0bxaWajk5/Tgp/DMPBjnIer4pfEVCKkAGuyoNpTwvDlL27
+	 priRtBVxYItcuzoh+tRsL8gxcBKtcrpKcC+J68Qjt/8jFm4ixJPdV+YfUcc6qvcGe7
+	 qdVm0ho1jQNc8aInoFMQexNGcBce8zySh3IcgabRNzlP1ukaJU1amkhUkPbnc+JiUx
+	 E33ih5bJrQPYJhe14auf0iIGS1pfbRJy0vGYdsqASVtCwsdrzYxbokJbIqtq21dJ2e
+	 B+VBxdN+QgsgQ==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix writeback that needs to go to both server and cache
+Date: Mon, 22 Jul 2024 15:41:57 +0200
+Message-ID: <20240722-umringt-kurgast-1fbd329ad5cc@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <1599053.1721398818@warthog.procyon.org.uk>
+References: <1599053.1721398818@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/29] arm64: context switch POR_EL0 register
-To: Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: akpm@linux-foundation.org, aneesh.kumar@kernel.org,
- aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org,
- catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
- dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, maz@kernel.org,
- mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com,
- npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org,
- szabolcs.nagy@arm.com, tglx@linutronix.de, will@kernel.org, x86@kernel.org,
- kvmarm@lists.linux.dev
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-7-joey.gouly@arm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <20240503130147.1154804-7-joey.gouly@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1390; i=brauner@kernel.org; h=from:subject:message-id; bh=99EO1k0o8YDQtkUpSIzsfA64IvvnUDYcndvdN/LqiyQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTNS1zGY/rrg46N9sY6lrOXS9ceKJinUtS4pPhcUqnhg uKMl7pzO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyhJvhf83jq2LNFque625n dnfaxyVhxPrB5tkqPcEz0u2nFaxmbWb4X1amEc5wOOX0FOP6C0Gyat3cZxUbowSeHQ1hZnu/7cR TLgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 03/05/2024 15:01, Joey Gouly wrote:
-> @@ -371,6 +382,9 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
->  		if (system_supports_tpidr2())
->  			p->thread.tpidr2_el0 = read_sysreg_s(SYS_TPIDR2_EL0);
->  
-> +		if (system_supports_poe())
-> +			p->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
+On Fri, 19 Jul 2024 15:20:18 +0100, David Howells wrote:
+> When netfslib is performing writeback (ie. ->writepages), it maintains two
+> parallel streams of writes, one to the server and one to the cache, but it
+> doesn't mark either stream of writes as active until it gets some data that
+> needs to be written to that stream.
+> 
+> This is done because some folios will only be written to the cache
+> (e.g. copying to the cache on read is done by marking the folios and
+> letting writeback do the actual work) and sometimes we'll only be writing
+> to the server (e.g. if there's no cache).
+> 
+> [...]
 
-This is most likely needed for kernel threads as well, because they may
-be affected by POR_EL0 too (see my reply on patch 17).
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Kevin
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> +
->  		if (stack_start) {
->  			if (is_compat_thread(task_thread_info(p)))
->  				childregs->compat_sp = stack_start;
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] netfs: Fix writeback that needs to go to both server and cache
+      https://git.kernel.org/vfs/vfs/c/55e81a4aa9ae
 
