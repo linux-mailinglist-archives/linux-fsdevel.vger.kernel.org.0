@@ -1,267 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-24094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C73F93944D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 21:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2605493946E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 21:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 874EE1F2232E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 19:34:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4973E1C208BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 19:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C26F171085;
-	Mon, 22 Jul 2024 19:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D9817108A;
+	Mon, 22 Jul 2024 19:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N62yEBdW"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Z3xKcnac"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429B316FF4E;
-	Mon, 22 Jul 2024 19:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCDC16D9D7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2024 19:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721676885; cv=none; b=ja0uhkFpfUmfCpsZ7tiN7T97etZfLX6KHBIssyb3ond7RxIBi4fB2tjG/LHDo2TeNK7lKG9n6xBq/oOr0fftpZtuE1LFn/5kTigZ31bTIz/moa7UlxIAxjfNC72Yu+CbuB8SerhOMJMu6kXVdOcPOuPhq24Agxea/xGeX4Ta698=
+	t=1721677611; cv=none; b=eMbc8KF4claPUDFs8HiTbeSX8qPeC5zoww7jMZQAF+JZXCpaMO2DG/kxOrLMUnC6qxNNF1JqC8suSKMVAiv3xk/UiXgmLrQsPHONa8lnn1I1B4yvy7477hLx+8n6IYv05G2LP5O/bqZSahtjZ381aFcDu1bYf4GrRd0zftTo3No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721676885; c=relaxed/simple;
-	bh=RPxFfg3uTiX9+mevAadqkOMWa0BWobrzKEKan0TjrNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HaGgRYkt0AS4tVy+ybdiw+G1A2KtzRX4hCPKQMCXpvi8VtYsrJyeDJ0Te8qBSH+baCl1jGczkDgqiPrcoRd0J250y4oPkRvf33RP8lb43g0SRVlVe+sLf2JFeM9LZPng9MDothjMMsQdgvmrEfS0gC8/0mb1y5no/VpL/hj8fJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=N62yEBdW; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C341620B7165;
-	Mon, 22 Jul 2024 12:34:43 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C341620B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1721676884;
-	bh=FQmh/EYQknSmmbveLSRuVujcbnn6z8lPRt8o/jsxY58=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N62yEBdW7/cLTjulRYqDD6iK3BoFHzexx4tC0R8sXdK08GwIa76rFsXh+kGP6AlYt
-	 9eqDXlJjXi2JQ9VNHTS/Sam7QwRwFhuKO/amhyelpJaqaIObRg7Ui93xtpaAQHmfGi
-	 yKlfLfloCM/qwgptOZ1tKqpUFsUicZ1fmavl7RZw=
-Message-ID: <f43d094c-ff06-4821-90c6-6602afb443bc@linux.microsoft.com>
-Date: Mon, 22 Jul 2024 12:34:44 -0700
+	s=arc-20240116; t=1721677611; c=relaxed/simple;
+	bh=rvq+CWJ7KyybcI/TZ7Cso/tA/xiqNuIasYSqFhXRoLQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YaPq+CbHw50E8sMTMV4qJRpV4YJ8lbST0jaywBm4rkzu4FpnGXHWt2CNI72C1foiPhIjXI1MZiQm8tkypV2LSkAQbsyzWU30gqsi6cXfo5l9tc7M5Q/TdM8BJ5BYAwF7KFH8vihF2ZM7Gk/xciFV0SmSe2ipaTr5Sl0qpeLve/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Z3xKcnac; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e026a2238d8so4433738276.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2024 12:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1721677607; x=1722282407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IlsyLoJ7kHoM0a0Ziou/1J4ZDEbSzOtiEJ45NJYR1HE=;
+        b=Z3xKcnacnNYEnUivQss7OoF1tXOKKEk3IK8WPgDhOkqUN0ovgfnUes5Le80Czsmu02
+         d51qiqb9WvOannd/N2Zo//Z80GV77GvabkjJp4y0Oo2+csI8wpy4jpTnyNfiDNcZPBET
+         8Jfg0ViUl9Kgi9xMcg7+b7ox9KQGYTkXszLqtakw+/mnC6MgnHPAcvnpSB7PkNVOlZ2w
+         I+ZeWpp98GBFVjbRLI99AqJqmQILyCM4EaFBvNNXn83Oxa+NbM80j12rxaaIu9Vlm1V1
+         pwWABf5pfQNdYjEw502Sg8wsGEnsCUSoi7vp1EWmm/v5VIzgZ21slF8sU4hVBF2DX+Zl
+         cW2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721677607; x=1722282407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IlsyLoJ7kHoM0a0Ziou/1J4ZDEbSzOtiEJ45NJYR1HE=;
+        b=BTOo+TVuUhMBNswSpaH5PbqeiwPtVCkI23DHzKZNFI32UZtZh6Wn20kXQdRZQFaIHj
+         o9y2JJWjYcFtKclnSS/Q8Xw1PlSm6mR9n4PDg1KTT0TlhejOLteKUIQNCaqrRmb+t6vt
+         dE4DhYAZ+tXDcjTUcyr93MYoy1XfCS9DNfK26LKX3hHznvI2m72cmxo96QOM4P/P3d+s
+         c+JanJ0svN62ApW1ryF9V5syXivHHMP6480kX/d9ZOt3x8Q8glHQWm6n0c93m2X+HmSd
+         Webqd/is+D/SE2bdaPmwxk3rIwNx8o5uGtOvu+f9lGNCKigJgjkUrGQijQai7jsEv8Jy
+         rrjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEaojEWZA2S7V7QFeFvZ/JGPUwyqwKAZ1GoW71005RM6uOjC9QLFBZLshXAF7tLcyUz6DDFaxUJK9sbkqZWkLDauc4E0k15FqocUk6JA==
+X-Gm-Message-State: AOJu0Yz743o+F9xcLCdPHfCY6Twv7ilqp3XNuySpx853zWlMhEp0oMt0
+	ZhW/YrmENOUY+cTcmf9D4Wx67iFW5zYlA57fZcfgDcGjmfygSczf3H1Xlmg1JmaOve/g7vqX/DC
+	TIV63meFYbLlDaFm9irV+98xuk/YEYGS9oQAE
+X-Google-Smtp-Source: AGHT+IEOsMZxw0Xw68qGvDBWu3kZ+3yQnbvGHXg/Ez4wSvfzxgZSKczbqq9vqe5RMMTqlPlW8aYSoANyjDSjpwD5OvM=
+X-Received: by 2002:a05:6902:150a:b0:e05:fdbe:bbec with SMTP id
+ 3f1490d57ef6-e086fe55573mr10735481276.9.1721677607589; Mon, 22 Jul 2024
+ 12:46:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] coredump: Standartize and fix logging
-To: Allen Pais <apais@linux.microsoft.com>
-Cc: akpm@linux-foundation.org, ardb@kernel.org, bigeasy@linutronix.de,
- brauner@kernel.org, ebiederm@xmission.com, jack@suse.cz,
- Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-mm@kvack.org, nagvijay@microsoft.com, oleg@redhat.com,
- tandersen@netflix.com, vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk,
- Allen Pais <apais@microsoft.com>, benhill@microsoft.com,
- ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
-References: <20240718182743.1959160-1-romank@linux.microsoft.com>
- <20240718182743.1959160-2-romank@linux.microsoft.com>
- <1AEC6E18-313E-495F-AEE7-9C6C9DB3BAEA@linux.microsoft.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <1AEC6E18-313E-495F-AEE7-9C6C9DB3BAEA@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240710024029.669314-2-paul@paul-moore.com> <20240710.peiDu2aiD1su@digikod.net>
+ <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
+In-Reply-To: <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 22 Jul 2024 15:46:36 -0400
+Message-ID: <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+To: Matus Jokay <matus.jokay@stuba.sk>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 22, 2024 at 8:30=E2=80=AFAM Matus Jokay <matus.jokay@stuba.sk> =
+wrote:
+> On 10. 7. 2024 12:40, Micka=C3=ABl Sala=C3=BCn wrote:
+> > On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
+> >> The LSM framework has an existing inode_free_security() hook which
+> >> is used by LSMs that manage state associated with an inode, but
+> >> due to the use of RCU to protect the inode, special care must be
+> >> taken to ensure that the LSMs do not fully release the inode state
+> >> until it is safe from a RCU perspective.
+> >>
+> >> This patch implements a new inode_free_security_rcu() implementation
+> >> hook which is called when it is safe to free the LSM's internal inode
+> >> state.  Unfortunately, this new hook does not have access to the inode
+> >> itself as it may already be released, so the existing
+> >> inode_free_security() hook is retained for those LSMs which require
+> >> access to the inode.
+> >>
+> >> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> >
+> > I like this new hook.  It is definitely safer than the current approach=
+.
+> >
+> > To make it more consistent, I think we should also rename
+> > security_inode_free() to security_inode_put() to highlight the fact tha=
+t
+> > LSM implementations should not free potential pointers in this blob
+> > because they could still be dereferenced in a path walk.
+> >
+> >> ---
+> >>  include/linux/lsm_hook_defs.h     |  1 +
+> >>  security/integrity/ima/ima.h      |  2 +-
+> >>  security/integrity/ima/ima_iint.c | 20 ++++++++------------
+> >>  security/integrity/ima/ima_main.c |  2 +-
+> >>  security/landlock/fs.c            |  9 ++++++---
+> >>  security/security.c               | 26 +++++++++++++-------------
+> >>  6 files changed, 30 insertions(+), 30 deletions(-)
 
+...
 
-On 7/19/2024 10:33 AM, Allen Pais wrote:
-> 
-> 
->> On Jul 18, 2024, at 11:27 AM, Roman Kisel <romank@linux.microsoft.com> 
->> wrote:
->>
->> The coredump code does not log the process ID and the comm
->> consistently, logs unescaped comm when it does log it, and
->> does not always use the ratelimited logging. That makes it
->> harder to analyze logs and puts the system at the risk of
->> spamming the system log incase something crashes many times
->> over and over again.
->>
->> Fix that by logging TGID and comm (escaped) consistently and
->> using the ratelimited logging always.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> 
-> LGTM.
-> 
-> Tested-by: Allen Pais <apais@linux.microsoft.com 
-> <mailto:apais@linux.microsoft.com>>
-Allen, thank you for your help!
+> Sorry for the questions, but for several weeks I can't find answers to tw=
+o things related to this RFC:
+>
+> 1) How does this patch close [1]?
+>    As Micka=C3=ABl pointed in [2], "It looks like security_inode_free() i=
+s called two times on the same inode."
+>    Indeed, it does not seem from the backtrace that it is a case of race =
+between destroy_inode and inode_permission,
+>    i.e. referencing the inode in a VFS path walk while destroying it...
+>    Please, can anyone tell me how this situation could have happened? May=
+be folks from VFS... I added them to the copy.
 
-> 
-> Thanks.
-> 
-> 
->> ---
->> fs/coredump.c            | 43 +++++++++++++++-------------------------
->> include/linux/coredump.h | 22 ++++++++++++++++++++
->> 2 files changed, 38 insertions(+), 27 deletions(-)
->>
->> diff --git a/fs/coredump.c b/fs/coredump.c
->> index a57a06b80f57..19d3343b93c6 100644
->> --- a/fs/coredump.c
->> +++ b/fs/coredump.c
->> @@ -586,8 +586,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> struct subprocess_info *sub_info;
->>
->> if (ispipe < 0) {
->> -printk(KERN_WARNING "format_corename failed\n");
->> -printk(KERN_WARNING "Aborting core\n");
->> +coredump_report_failure("format_corename failed, aborting core");
->> goto fail_unlock;
->> }
->>
->> @@ -607,27 +606,21 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> * right pid if a thread in a multi-threaded
->> * core_pattern process dies.
->> */
->> -printk(KERN_WARNING
->> -"Process %d(%s) has RLIMIT_CORE set to 1\n",
->> -task_tgid_vnr(current), current->comm);
->> -printk(KERN_WARNING "Aborting core\n");
->> +coredump_report_failure("RLIMIT_CORE is set to 1, aborting core");
->> goto fail_unlock;
->> }
->> cprm.limit = RLIM_INFINITY;
->>
->> dump_count = atomic_inc_return(&core_dump_count);
->> if (core_pipe_limit && (core_pipe_limit < dump_count)) {
->> -printk(KERN_WARNING "Pid %d(%s) over core_pipe_limit\n",
->> -      task_tgid_vnr(current), current->comm);
->> -printk(KERN_WARNING "Skipping core dump\n");
->> +coredump_report_failure("over core_pipe_limit, skipping core dump");
->> goto fail_dropcount;
->> }
->>
->> helper_argv = kmalloc_array(argc + 1, sizeof(*helper_argv),
->>    GFP_KERNEL);
->> if (!helper_argv) {
->> -printk(KERN_WARNING "%s failed to allocate memory\n",
->> -      __func__);
->> +coredump_report_failure("%s failed to allocate memory", __func__);
->> goto fail_dropcount;
->> }
->> for (argi = 0; argi < argc; argi++)
->> @@ -644,8 +637,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->>
->> kfree(helper_argv);
->> if (retval) {
->> -printk(KERN_INFO "Core dump to |%s pipe failed\n",
->> -      cn.corename);
->> +coredump_report_failure("|%s pipe failed", cn.corename);
->> goto close_fail;
->> }
->> } else {
->> @@ -658,10 +650,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> goto fail_unlock;
->>
->> if (need_suid_safe && cn.corename[0] != '/') {
->> -printk(KERN_WARNING "Pid %d(%s) can only dump core "\
->> -"to fully qualified path!\n",
->> -task_tgid_vnr(current), current->comm);
->> -printk(KERN_WARNING "Skipping core dump\n");
->> +coredump_report_failure(
->> +"this process can only dump core to a fully qualified path, skipping 
->> core dump");
->> goto fail_unlock;
->> }
->>
->> @@ -730,13 +720,13 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> idmap = file_mnt_idmap(cprm.file);
->> if (!vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode),
->>    current_fsuid())) {
->> -pr_info_ratelimited("Core dump to %s aborted: cannot preserve file 
->> owner\n",
->> -   cn.corename);
->> +coredump_report_failure("Core dump to %s aborted: "
->> +"cannot preserve file owner", cn.corename);
->> goto close_fail;
->> }
->> if ((inode->i_mode & 0677) != 0600) {
->> -pr_info_ratelimited("Core dump to %s aborted: cannot preserve file 
->> permissions\n",
->> -   cn.corename);
->> +coredump_report_failure("Core dump to %s aborted: "
->> +"cannot preserve file permissions", cn.corename);
->> goto close_fail;
->> }
->> if (!(cprm.file->f_mode & FMODE_CAN_WRITE))
->> @@ -757,7 +747,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> * have this set to NULL.
->> */
->> if (!cprm.file) {
->> -pr_info("Core dump to |%s disabled\n", cn.corename);
->> +coredump_report_failure("Core dump to |%s disabled", cn.corename);
->> goto close_fail;
->> }
->> if (!dump_vma_snapshot(&cprm))
->> @@ -983,11 +973,10 @@ void validate_coredump_safety(void)
->> {
->> if (suid_dumpable == SUID_DUMP_ROOT &&
->>    core_pattern[0] != '/' && core_pattern[0] != '|') {
->> -pr_warn(
->> -"Unsafe core_pattern used with fs.suid_dumpable=2.\n"
->> -"Pipe handler or fully qualified core dump path required.\n"
->> -"Set kernel.core_pattern before fs.suid_dumpable.\n"
->> -);
->> +
->> +coredump_report_failure("Unsafe core_pattern used with 
->> fs.suid_dumpable=2: "
->> +"pipe handler or fully qualified core dump path required. "
->> +"Set kernel.core_pattern before fs.suid_dumpable.");
->> }
->> }
->>
->> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
->> index 0904ba010341..45e598fe3476 100644
->> --- a/include/linux/coredump.h
->> +++ b/include/linux/coredump.h
->> @@ -43,8 +43,30 @@ extern int dump_align(struct coredump_params *cprm, 
->> int align);
->> int dump_user_range(struct coredump_params *cprm, unsigned long start,
->>    unsigned long len);
->> extern void do_coredump(const kernel_siginfo_t *siginfo);
->> +
->> +/*
->> + * Logging for the coredump code, ratelimited.
->> + * The TGID and comm fields are added to the message.
->> + */
->> +
->> +#define __COREDUMP_PRINTK(Level, Format, ...) \
->> +do {\
->> +char comm[TASK_COMM_LEN];\
->> +\
->> +get_task_comm(comm, current);\
->> +printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",\
->> +task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);\
->> +} while (0)\
->> +
->> +#define coredump_report(fmt, ...) __COREDUMP_PRINTK(KERN_INFO, fmt, 
->> ##__VA_ARGS__)
->> +#define coredump_report_failure(fmt, ...) 
->> __COREDUMP_PRINTK(KERN_WARNING, fmt, ##__VA_ARGS__)
->> +
->> #else
->> static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
->> +
->> +#define coredump_report(...)
->> +#define coredump_report_failure(...)
->> +
->> #endif
->>
->> #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
->> -- 
->> 2.45.2
-> 
+The VFS folks can likely provide a better, or perhaps a more correct
+answer, but my understanding is that during the path walk the inode is
+protected by a RCU lock which allows for multiple threads to access
+the inode simultaneously; this could result in some cases where one
+thread is destroying the inode while another is accessing it.
+Changing this would require changes to the VFS code, and I'm not sure
+why you would want to change it anyway, the performance win of using
+RCU here is likely significant.
 
--- 
-Thank you,
-Roman
+> 2) Is there a guarantee that inode_free_by_rcu and i_callback will be cal=
+led within the same RCU grace period?
 
+I'm not an RCU expert, but I don't believe there are any guarantees
+that the inode_free_by_rcu() and the inode's own free routines are
+going to be called within the same RCU grace period (not really
+applicable as inode_free_by_rcu() isn't called *during* a grace
+period, but *after* the grace period of the associated
+security_inode_free() call).  However, this patch does not rely on
+synchronization between the inode and inode LSM free routine in
+inode_free_by_rcu(); the inode_free_by_rcu() function and the new
+inode_free_security_rcu() LSM callback does not have a pointer to the
+inode, only the inode's LSM blob.  I agree that it is a bit odd, but
+freeing the inode and inode's LSM blob independently of each other
+should not cause a problem so long as the inode is no longer in use
+(hence the RCU callbacks).
+
+>    If not, can the security context be released earlier than the inode it=
+self?
+
+Possibly, but it should only happen after the inode is no longer in
+use (the call_rcu () callback should ensure that we are past all of
+the currently executing RCU critical sections).
+
+> If yes, can be executed
+>    inode_permission concurrently, leading to UAF of inode security contex=
+t in security_inode_permission?
+
+I do not believe so, see the discussion above, but I welcome any correction=
+s.
+
+>    Can fsnotify affect this (leading to different RCU grace periods)? (Ag=
+ain probably a question for VFS people.)
+
+If fsnotify is affecting this negatively then I suspect that is a
+reason for much larger concern as I believe that would indicate a
+problem with fsnotify and the inode locking scheme.
+
+--=20
+paul-moore.com
 
