@@ -1,122 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-24059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DED5938D45
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 12:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F610938E37
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 13:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7929287F42
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 10:10:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE65E1F21DC4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 11:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2755A16C871;
-	Mon, 22 Jul 2024 10:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99D816C873;
+	Mon, 22 Jul 2024 11:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNcTvEEN"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Ilm6RCdf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E5216C6BA;
-	Mon, 22 Jul 2024 10:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11E81640B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2024 11:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721642936; cv=none; b=FPTo9/1KexsFYXc+TrSQOJlwXGfjP+DXJ8lg/MirdFuH2KYz137PTTgw/9SxvdZimaf5OUstFUituCK5JBHBq77EUxTuTMUu4ieH30FnuW4yFQZnipPtae5c3EgjRZI1ogVwyP+5UJ8m5dP6nnEapTtnHhTGjfFvCDhJzpT8Dfo=
+	t=1721648742; cv=none; b=BzL53hdgQNLqYjAr3jC/Q20Oz30aFYfimZYsetStjwn4S5ce9mgFVfOuiUZixQvEuZZKKRbut5nvxqCHO4GunCC2kznBEW6KWHoS0AgW3XlZAD5/ITHO7djegSMdd/Tx5cd6xNYmXLesDfbPwxpkwIVEV2FLUA2wOFvZpRLndRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721642936; c=relaxed/simple;
-	bh=7h5Kr+YpdYtQ4+7prp0Efe9cyc7VuT34aSYyd6+RWOc=;
+	s=arc-20240116; t=1721648742; c=relaxed/simple;
+	bh=8F6Yx5uGHUiSVGdyffU911J9L+V8oHUHpXfo1JiltGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6vwXO+f8gQ7NSk+gLWCQ3o2/dqtA/1lLHeXbTv2u0Jv3kPGmzlMHmGirrEL1723weDjPVDTu/srCzpaTV540l/5pShx7tRjwZq/HOHMG20votxa9fGLgkHpmv8PgeUs5afxWeDe1wMMh8GnBoL4Dr9wvb/qU1xzH5EFlc251YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNcTvEEN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 921B0C116B1;
-	Mon, 22 Jul 2024 10:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721642935;
-	bh=7h5Kr+YpdYtQ4+7prp0Efe9cyc7VuT34aSYyd6+RWOc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fNcTvEENz+fFubHxaCVUTSqYq1ITDfo0ptFNNyhZiJtkY03TadBS1i+ZhqHLfVGJh
-	 wejLfRGO7/MXoIRjPmgVOznu/m8as04rC7MuUcV6ZUI86ATnFB/wd9trpSHBjpMIJe
-	 1zP6D6J4UnP/C2ivTwawSleVhDsGeYcY8f3s+xp8ATTVohoch6BbiYzMzCYthbAZSo
-	 Ju4lBHrZm7WycGEE++o52rHSPjU2WPyxwG9PV6SYXLz5E6v92bSrMIBCRBl79m4ZZz
-	 UbOhxWSEIT/Q1c55byiM2Jo3LnSq0IoSgxoIde6Xxp0OyfH8W75BVC3lhxcNX8Kqeg
-	 0Slz4wCmQVXnA==
-Date: Mon, 22 Jul 2024 11:08:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v9 38/39] kselftest/arm64: Add a GCS stress test
-Message-ID: <53c98e88-b12a-40e4-8b01-d7a4394c2471@sirena.org.uk>
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
- <20240625-arm64-gcs-v9-38-0f634469b8f0@kernel.org>
- <875xt2xojp.fsf@linaro.org>
- <871q3qxnx6.fsf@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SdOGHB9v3CPT4SurMIxJFgqj01fWSdHiet4dP8w3LDs9UZVMCF6BTgURUaJMcVj/9/WXkNDNiE9IE1oJpkvRtIedqmfOYFtcPtV+N9Yp4G6drEOjYU5skyhCTVKqq0rmCGGG5cb/y2816+zSKnxmDFlkXqeBqz7pBf82c4aHVAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Ilm6RCdf; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-115-17.bstnma.fios.verizon.net [173.48.115.17])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46MBj4sV025431
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 07:45:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1721648706; bh=tbBSjUa3aVRf1LpHb2pNF8m25+nI+R5jh6E4MKLm1ek=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Ilm6RCdfK36zM9yfQVhQPqVkxvGX+kaXMKOPZglOnPxOF9y2F1z0xFSLQUxS8OpBf
+	 Ok69i7cBwTAesYN9VK3y6W0Ux1unZ1w3GVH9ZV67Q6DJLkBsE5P6PU5LXOlTY1NyQh
+	 kAZVOxDu57NTX30F3xXUm1eF0BUNly3GwP6cNyiZDKqylrhFEykfRQ6hRO6DiFXtLe
+	 soH2x3HIWQt+nc8Cd9mROwrOGQP6lVNZWCBDinYJO8PTCOFYez3kUkkumeKTxhkF7l
+	 ACpfXj7xfdHAgaWD4hLR0UpMMaF0xmbhbFC08+gzpyX2ZNcVqFG+zbrUgcYk2I2I9W
+	 aIQZEeRk93sUw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 1ED9815C029B; Mon, 22 Jul 2024 07:45:04 -0400 (EDT)
+Date: Mon, 22 Jul 2024 07:45:04 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev
+Subject: Re: mounts failing with -EBUSY on device mapper (was: Re: [GIT PULL]
+ bcachefs changes for 6.11)
+Message-ID: <20240722114504.GA2309824@mit.edu>
+References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
+ <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
+ <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
+ <CAHk-=wgzMxdCRi9Fqhq2Si+HzyKgWEvMupq=Q-QRQ1xgD_7n=Q@mail.gmail.com>
+ <4l32ehljkxjavy3d2lwegx3adec25apko3v355tnlnxhrs43r4@efhplbikcoqs>
+ <20240719143001.GA2333818@mit.edu>
+ <xp5nl7zi3k6ddkby4phm4swv2wi43slwtvw5fmve5g3jxtdw7w@ygiltwihp2hv>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d44XRLGyLTUTZna7"
-Content-Disposition: inline
-In-Reply-To: <871q3qxnx6.fsf@linaro.org>
-X-Cookie: Everything you know is wrong!
-
-
---d44XRLGyLTUTZna7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <xp5nl7zi3k6ddkby4phm4swv2wi43slwtvw5fmve5g3jxtdw7w@ygiltwihp2hv>
 
-On Thu, Jul 18, 2024 at 08:47:49PM -0300, Thiago Jung Bauermann wrote:
-> Thiago Jung Bauermann <thiago.bauermann@linaro.org> writes:
+On Sat, Jul 20, 2024 at 11:48:09AM -0400, Kent Overstreet wrote:
+> > As far as bcachefs is concerned, my xfstests-bld infrastructure isn't
+> > set up to build rust userspace, and Debian has a very ancient bcachefs
+> > packages --- the latest version in Debian stable and unstable dates
+> > from November 2022.  So I haven't enabled bcachefs support in
+> > gce-xfstests and kvm-xfstests yet.  Patches gratefully accepted.  :-)
+> 
+> I can apt install 1.9.1?
 
-> > # # Totals: pass:0 fail:9 xfail:0 xpass:0 skip:0 error:0
-> > ok 1 selftests: arm64: gcs-stress
+Ah, I see.  bcachefs-tools is currently in Debian unstable, but not in
+Debian testing[1]; it's currently hung up due to the auto-libsodium
+transition[2].  Once that clears I can look at backporting it to
+debian-backports (since my test appliance runs on Debian stable,
+for better repeatable test appliance creation.  :-)
 
-> Also, Shouldn't the test report "not ok" at the end considering that
-> there were fails?
+[1] https://tracker.debian.org/pkg/bcachefs-tools
+[2] https://release.debian.org/transitions/html/auto-libsodium.html
 
-It doesn't really matter either way, the per test results are captured.
-
---d44XRLGyLTUTZna7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaeL64ACgkQJNaLcl1U
-h9DdSwf+OKUfn8laXp+yxRv2lSbOzqFMeeL5M5MmJtaH4D5q5G9SwlMCVx3e+7BW
-utABRB30/1ASkvtYLdYwvPw6y+Jn9P2xtdttvx7+U/aggTBaWWW0fa6cB9YTKO+a
-aRyNaxotBkWFmPUl7qa4kpMWb5FDtxX3iLlCw0GicotYaWJKGHEUQ6AFxGjmQaM5
-O1eXLhARUQ8l2+k8A6a0WXVZvZJdhyLouFkswNGmAKdnfd6mYvY9DIBejxtsBJlH
-M7xvo9iPSz/18Y/x4HdPAjjwGHYNRkuhYT8QMhZG5TzTpNMXwEXpKbkkKETAklkz
-289HaQ9+gTL4ZnRsy1VMxkkxoqQ83g==
-=SALv
------END PGP SIGNATURE-----
-
---d44XRLGyLTUTZna7--
+						- Ted
 
