@@ -1,205 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-24162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8C693A9F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 01:38:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0DE93A9F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 01:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22CF1B228F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 23:38:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86306B22CB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 23:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5356D149C57;
-	Tue, 23 Jul 2024 23:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3B5149C4E;
+	Tue, 23 Jul 2024 23:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Xwc8Nwao"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tcNFVcAA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kTSVUIQn";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tcNFVcAA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kTSVUIQn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494401494D1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 23:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0A813BAD5;
+	Tue, 23 Jul 2024 23:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721777903; cv=none; b=dFvhaiL/AJrfg8CGA/qd5qpWuE6j1f0/ZglHd621DO+iKhFJg3wbGaSU5ulKucgFFl1lvRAh1MEM7RPgVhHrGQpT9HCmWNFY0wiRd7PO/4exRKZyUzcl8cHOF3ve1kFamPT3TovmtoFEMGTM0eVn+bIUYhpIXWVmkllCcqCZrwU=
+	t=1721778026; cv=none; b=ghZSZ55BMfOWCGlNhOpy9CZKU2zQQenxilDXmfX6BEL+nE8csObx4dHm07yiIW4z25IxqFTsaaIhX2itKhKBZYXtCCXZRe7pO/lLb9QoZ+42elvOtLNCNVXxKAoRIPyVwCKIa3gFgoXZcgBDQCYGNk9JEK+5TLoN2mDKpsaElsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721777903; c=relaxed/simple;
-	bh=YZlqiXgB2/KpXOy/Xy7gba+mp9c/soUc7YYd2tZttKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ug8wixWopBuIl0Z+9kOMmXb74c74c/pOCePKk4Crm/zRpD0mILTpn6F0Iq0++mS3aGprhgz+QNGeLVg004t9sT+/cRyUjGP+IsCy1WB9KP5U/uqfEnd2snmUUAS15etGhTEVcw5b4iULDZJ+DacEeC23dJLYHMZuu5NO+OsE+MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Xwc8Nwao; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc6ee64512so3953625ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 16:38:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1721777901; x=1722382701; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ke4GyxolaIMwY7FBQeuGRUN+roRlg42otU6rOoFkee0=;
-        b=Xwc8NwaoE7yH/1CO0za3phVW9C50oRHGXs/G0RS2av49/KbCImBsc6ZN95ERY1ddKA
-         fk8qhRwOvWkmDheejOQblzsFRrj4A7n5EP34CPoh0C6aGliilyKppGrDixqCcxhYxBya
-         48uJ7YRjeDtHJvYFOannetAA5gWpggPqXMM4f74uxbCco9UWynFfbnNB73b3+8SPDP7w
-         ECmZ8cZpYeBBds+oByzgmWj1K1cEGO+UTNh5nfnpwO6pKiYCeTGFY/nQbtE/AYtb5s+F
-         EVFFIzMMeRmGmoDDpQ+fwF7u08DbL5+5TqOE88v9Ed2d1JhphY0KdIoGhk9gcyLo/YFL
-         icZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721777901; x=1722382701;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ke4GyxolaIMwY7FBQeuGRUN+roRlg42otU6rOoFkee0=;
-        b=e7Gc5zIT2qpgEzB8Gtb6kh7q8rIj606a+nKcairozn/5RM/dLlYtmrdJrePlClPtAW
-         0DRuX9Pq9fMk5ChtO+bXKpg5gC1qZlr/r9scTMxbbqgE650qXmOkkthT4UxIEK9/QSQu
-         HzVkENV9QlcRn9SbN5m0/Fl1IDpePevIUjSO3BR8UVzbFnKn63T9mhOQJc5u/1SP8Tv0
-         oGvEo5ieoysGS30KUVI6HML1eJ1tVATHI7XjxjLitctediEfmP1ppCsV77y10GQAp8uF
-         rtx5xp00pK/6HFFFxJOoXorypkb3xmrG2FsEdE/R+hX7l78CEAuuOXVswhYFDCOJXu4c
-         QEcw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/pjUROs9s0KDbUoXEeWEC9PV7a3KAhZ8x87OpgYU1hO1n7rLEg2uURW+/wlriWaos+FxXxc3QT7kNMfEEJI3okLvTlGPJFONDhF+XRw==
-X-Gm-Message-State: AOJu0Yx5fNb+TMCGM7MKYO78rjM7MIk9p9PgmtFarHkrLGScOwoy1gXz
-	brypiGMixRMGtxOQiI7E4J1k7zuWGlldFRJ8zVj6PFC8ZDUGaRO8sSYvKpg1/98=
-X-Google-Smtp-Source: AGHT+IHyILHL082CDZfLkAoHVX9H6GXLryDB+lHEgkbpls5+M0N8NGa2bQ3fWUJQo0rsFwrsUCcaig==
-X-Received: by 2002:a17:902:ce8c:b0:1f9:c508:acd5 with SMTP id d9443c01a7336-1fd7457344fmr91518925ad.5.1721777901427;
-        Tue, 23 Jul 2024 16:38:21 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f49a218sm81121255ad.298.2024.07.23.16.38.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 16:38:20 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sWP5G-0092l1-1Y;
-	Wed, 24 Jul 2024 09:38:18 +1000
-Date: Wed, 24 Jul 2024 09:38:18 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, chandan.babu@oracle.com,
-	dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	catherine.hoang@oracle.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v2 07/13] xfs: Introduce FORCEALIGN inode flag
-Message-ID: <ZqA+6o/fRufaeQHG@dread.disaster.area>
-References: <20240705162450.3481169-1-john.g.garry@oracle.com>
- <20240705162450.3481169-8-john.g.garry@oracle.com>
- <20240711025958.GJ612460@frogsfrogsfrogs>
- <ZpBouoiUpMgZtqMk@dread.disaster.area>
- <0c502dd9-7108-4d5f-9337-16b3c0952c04@oracle.com>
+	s=arc-20240116; t=1721778026; c=relaxed/simple;
+	bh=aiL1tdNlbxb2FPdKtq4ALnrnQksh3SDTEgIbOSuG7Y0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g2cjWiEnALfsN0Y2uFjtoAsI0dqFTo7wHtWadjfhKRbRFs8W9B8wPIwRIMnIkN0Ki9KGG82v7vUI9suVCB//WBWz3EeI5mdJZ1pr5DBF5LCQbOeRpMNihAyZjtw6ecwEJX/U/peS9hNEt8npFlQlZxD5UGbqXNeq8O4hCIiknfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tcNFVcAA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kTSVUIQn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tcNFVcAA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kTSVUIQn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6B02B1F454;
+	Tue, 23 Jul 2024 23:40:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721778022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=ArXyy6Y1aI8VUmUq1KNgxA/8y4ypMHJfB8d6uWbO8bU=;
+	b=tcNFVcAAu9gzDEenTyWh77FxxVUoS73I/Crihx8REfg2h+pqPK77YXY3PP6V4PfWgolbEG
+	caNaHkPIOeyh3Ydu1Pcxeq6NPXvJG9PI75U5FJ3dhnqktWUFY+heIQWlTB1VeTz1GIPLsh
+	6Ygaygc8DwrDABBIRaKhMA37zayojL4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721778022;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=ArXyy6Y1aI8VUmUq1KNgxA/8y4ypMHJfB8d6uWbO8bU=;
+	b=kTSVUIQnugnqtxR/CaIhLxGpF7qP1dDQvQ1Fqdj2fSUeZgMwzwTsL5tcbvUbGe+Cm6cJCW
+	AeiIOxVkbyxz1fCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=tcNFVcAA;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kTSVUIQn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721778022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=ArXyy6Y1aI8VUmUq1KNgxA/8y4ypMHJfB8d6uWbO8bU=;
+	b=tcNFVcAAu9gzDEenTyWh77FxxVUoS73I/Crihx8REfg2h+pqPK77YXY3PP6V4PfWgolbEG
+	caNaHkPIOeyh3Ydu1Pcxeq6NPXvJG9PI75U5FJ3dhnqktWUFY+heIQWlTB1VeTz1GIPLsh
+	6Ygaygc8DwrDABBIRaKhMA37zayojL4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721778022;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=ArXyy6Y1aI8VUmUq1KNgxA/8y4ypMHJfB8d6uWbO8bU=;
+	b=kTSVUIQnugnqtxR/CaIhLxGpF7qP1dDQvQ1Fqdj2fSUeZgMwzwTsL5tcbvUbGe+Cm6cJCW
+	AeiIOxVkbyxz1fCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F3351377F;
+	Tue, 23 Jul 2024 23:40:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id X+TsBGY/oGYVVwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 23 Jul 2024 23:40:22 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Jeff Johnson
+ <quic_jjohnson@quicinc.com>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] trivial unicode patches for 6.11
+Date: Tue, 23 Jul 2024 19:40:12 -0400
+Message-ID: <87bk2nsmn7.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c502dd9-7108-4d5f-9337-16b3c0952c04@oracle.com>
+Content-Type: text/plain
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 6B02B1F454
+X-Spam-Score: -4.31
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.31 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
 
-On Thu, Jul 18, 2024 at 09:53:14AM +0100, John Garry wrote:
-> On 12/07/2024 00:20, Dave Chinner wrote:
-> > > > /* Reflink'ed disallowed */
-> > > > +	if (flags2 & XFS_DIFLAG2_REFLINK)
-> > > > +		return __this_address;
-> > > Hmm.  If we don't support reflink + forcealign ATM, then shouldn't the
-> > > superblock verifier or xfs_fs_fill_super fail the mount so that old
-> > > kernels won't abruptly emit EFSCORRUPTED errors if a future kernel adds
-> > > support for forcealign'd cow and starts writing out files with both
-> > > iflags set?
-> > I don't think we should error out the mount because reflink and
-> > forcealign are enabled - that's going to be the common configuration
-> > for every user of forcealign, right? I also don't think we should
-> > throw a corruption error if both flags are set, either.
-> > 
-> > We're making an initial*implementation choice*  not to implement the
-> > two features on the same inode at the same time. We are not making a
-> > an on-disk format design decision that says "these two on-disk flags
-> > are incompatible".
-> > 
-> > IOWs, if both are set on a current kernel, it's not corruption but a
-> > more recent kernel that supports both flags has modified this inode.
-> > Put simply, we have detected a ro-compat situation for this specific
-> > inode.
-> > 
-> > Looking at it as a ro-compat situation rather then corruption,
-> > what I would suggest we do is this:
-> > 
-> > 1. Warn at mount that reflink+force align inodes will be treated
-> > as ro-compat inodes. i.e. read-only.
-> > 
-> > 2. prevent forcealign from being set if the shared extent flag is
-> > set on the inode.
-> > 
-> > 3. prevent shared extents from being created if the force align flag
-> > is set (i.e. ->remap_file_range() and anything else that relies on
-> > shared extents will fail on forcealign inodes).
-> > 
-> > 4. if we read an inode with both set, we emit a warning and force
-> > the inode to be read only so we don't screw up the force alignment
-> > of the file (i.e. that inode operates in ro-compat mode.)
-> > 
-> > #1 is the mount time warning of potential ro-compat behaviour.
-> > 
-> > #2 and #3 prevent both from getting set on existing kernels.
-> > 
-> > #4 is the ro-compat behaviour that would occur from taking a
-> > filesystem that ran on a newer kernel that supports force-align+COW.
-> > This avoids corruption shutdowns and modifications that would screw
-> > up the alignment of the shared and COW'd extents.
-> > 
-> 
-> This seems fine for dealing with forcealign and reflink.
-> 
-> So what about forcealign and RT?
-> 
-> We want to support this config in future, but the current implementation
-> will not support it.
 
-What's the problem with supporting it right from the start? We
-already support forcealign for RT, just it's a global config 
-under the "big rt alloc" moniker rather than a per-inode flag.
+The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
 
-Like all on-disk format change based features,
-forcealign should add the EXPERIMENTAL flag to the filesystem for a
-couple of releases after merge, so there will be plenty of time to
-test both data and rt dev functionality before removing the
-EXPERIMENTAL flag from it.
+  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
 
-So why not just enable the per-inode flag with RT right from the
-start given that this functionality is supposed to work and be
-globally supported by the rtdev right now? It seems like a whole lot
-less work to just enable it for RT now than it is to disable it...
+are available in the Git repository at:
 
-> In this v2 series, I just disallow a mount for forcealign and RT, similar to
-> reflink and RT together.
-> 
-> Furthermore, I am also saying here that still forcealign and RT bits set is
-> a valid inode on-disk format and we just have to enforce a sb_rextsize to
-> extsize relationship:
-> 
-> xfs_inode_validate_forcealign(
-> 	struct xfs_mount	*mp,
-> 	uint32_t		extsize,
-> 	uint32_t		cowextsize,
-> 	uint16_t		mode,
-> 	uint16_t		flags,
-> 	uint64_t		flags2)
-> {
-> 	bool			rt =  flags & XFS_DIFLAG_REALTIME;
-> ...
-> 
-> 
-> 	/* extsize must be a multiple of sb_rextsize for RT */
-> 	if (rt && mp->m_sb.sb_rextsize && extsize % mp->m_sb.sb_rextsize)
-> 		return __this_address;
-> 
-> 	return NULL;
-> }
+  https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git tags/unicode-next-6.11
 
-I suspect the logic needs tweaking, but why not just do this right
-from the start?
+for you to fetch changes up to 68318904a7758e11f16fa9d202a6df60f896e71a:
 
--Dave.
+  unicode: add MODULE_DESCRIPTION() macros (2024-06-20 19:30:02 -0400)
+
+----------------------------------------------------------------
+Two small fixes to silent the compiler and static analyzers tools from
+Ben Dooks and Jeff Johnson.
+
+----------------------------------------------------------------
+Ben Dooks (1):
+      unicode: make utf8 test count static
+
+Jeff Johnson (1):
+      unicode: add MODULE_DESCRIPTION() macros
+
+ fs/unicode/mkutf8data.c       | 1 +
+ fs/unicode/utf8-selftest.c    | 5 +++--
+ fs/unicode/utf8data.c_shipped | 1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Gabriel Krisman Bertazi
 
