@@ -1,162 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-24163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0DE93A9F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 01:40:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07A793AA0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 01:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86306B22CB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 23:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653D31F22C03
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 23:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3B5149C4E;
-	Tue, 23 Jul 2024 23:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tcNFVcAA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kTSVUIQn";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tcNFVcAA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kTSVUIQn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FF3149C78;
+	Tue, 23 Jul 2024 23:58:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0A813BAD5;
-	Tue, 23 Jul 2024 23:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804CA149C61
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 23:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721778026; cv=none; b=ghZSZ55BMfOWCGlNhOpy9CZKU2zQQenxilDXmfX6BEL+nE8csObx4dHm07yiIW4z25IxqFTsaaIhX2itKhKBZYXtCCXZRe7pO/lLb9QoZ+42elvOtLNCNVXxKAoRIPyVwCKIa3gFgoXZcgBDQCYGNk9JEK+5TLoN2mDKpsaElsM=
+	t=1721779085; cv=none; b=lbkpviZv6sZSl97zFGbRqmzhwkYpGF3sndIajAXfz4xaPBVsRcobQft45livb7RCScJVGhDpxRmBQArikJjnOWmJ+NZ+PFmfso/26p+uipmNSTC4NRSpTW9WOW/+5eFmTn8OBitrve/G5RF6/8/0GMdTPH4YUNICXf7BjejK3D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721778026; c=relaxed/simple;
-	bh=aiL1tdNlbxb2FPdKtq4ALnrnQksh3SDTEgIbOSuG7Y0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g2cjWiEnALfsN0Y2uFjtoAsI0dqFTo7wHtWadjfhKRbRFs8W9B8wPIwRIMnIkN0Ki9KGG82v7vUI9suVCB//WBWz3EeI5mdJZ1pr5DBF5LCQbOeRpMNihAyZjtw6ecwEJX/U/peS9hNEt8npFlQlZxD5UGbqXNeq8O4hCIiknfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tcNFVcAA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kTSVUIQn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tcNFVcAA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kTSVUIQn; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6B02B1F454;
-	Tue, 23 Jul 2024 23:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721778022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ArXyy6Y1aI8VUmUq1KNgxA/8y4ypMHJfB8d6uWbO8bU=;
-	b=tcNFVcAAu9gzDEenTyWh77FxxVUoS73I/Crihx8REfg2h+pqPK77YXY3PP6V4PfWgolbEG
-	caNaHkPIOeyh3Ydu1Pcxeq6NPXvJG9PI75U5FJ3dhnqktWUFY+heIQWlTB1VeTz1GIPLsh
-	6Ygaygc8DwrDABBIRaKhMA37zayojL4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721778022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ArXyy6Y1aI8VUmUq1KNgxA/8y4ypMHJfB8d6uWbO8bU=;
-	b=kTSVUIQnugnqtxR/CaIhLxGpF7qP1dDQvQ1Fqdj2fSUeZgMwzwTsL5tcbvUbGe+Cm6cJCW
-	AeiIOxVkbyxz1fCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=tcNFVcAA;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kTSVUIQn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721778022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ArXyy6Y1aI8VUmUq1KNgxA/8y4ypMHJfB8d6uWbO8bU=;
-	b=tcNFVcAAu9gzDEenTyWh77FxxVUoS73I/Crihx8REfg2h+pqPK77YXY3PP6V4PfWgolbEG
-	caNaHkPIOeyh3Ydu1Pcxeq6NPXvJG9PI75U5FJ3dhnqktWUFY+heIQWlTB1VeTz1GIPLsh
-	6Ygaygc8DwrDABBIRaKhMA37zayojL4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721778022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=ArXyy6Y1aI8VUmUq1KNgxA/8y4ypMHJfB8d6uWbO8bU=;
-	b=kTSVUIQnugnqtxR/CaIhLxGpF7qP1dDQvQ1Fqdj2fSUeZgMwzwTsL5tcbvUbGe+Cm6cJCW
-	AeiIOxVkbyxz1fCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F3351377F;
-	Tue, 23 Jul 2024 23:40:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id X+TsBGY/oGYVVwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 23 Jul 2024 23:40:22 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Jeff Johnson
- <quic_jjohnson@quicinc.com>, linux-fsdevel
- <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] trivial unicode patches for 6.11
-Date: Tue, 23 Jul 2024 19:40:12 -0400
-Message-ID: <87bk2nsmn7.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1721779085; c=relaxed/simple;
+	bh=hjOYStjjoYX2np0BHeHR/g/Tp+auHJmuVRMt2T6GoEc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Qq79yR6jvQsIa5jixPjbDa1FrroOGOh02Ji0LJK8Ty7pRGgmoQJK0f9aF3Eva4BEzd+ByVgpN1jg8VY78e4P8xQByIuupysL7GBrD4/NUYjhuxnWnBTHHuDUi7uzskDqhZobC6W2EKrFRRWjNzu82PozmIY6yuksoAbKinQ4hQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39a143db6c4so12854485ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 16:58:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721779083; x=1722383883;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EgOyZUlzEMZOpU/YW1FXvWk4x0U9V9/l/E3qzG/wK8Q=;
+        b=uOhEXWBHLCmDJDBh4K9UN+bAbZF3ja+h2ITW0Zjtfgu78HC0TAN4aoewQEPqBQ3QDt
+         0htkGpwez5x2Xwvu/xf5Ref3b+WtA3Bnf8W5Xj/ar7DG1xMJK+AKElaEVwsqiAR0a+vg
+         accyqwzXIWcTmFXMUrDqDbwZUV8QHO+GK0qQ4PaH78OBy+R+puN9ZKL5wc4FkGi7UOsz
+         ATdoKcgGd3R1xUuX3752AByWFVKofUqFTvPCbGsf8y55xnar+RlPnLLbBkbe/tONpV0F
+         /Gwb0BOPue2yiU6iPg2w0BBHyNsXzYUVVkXMakCu3HoqhHPMF9sPf5s/N65LKxSzMzi4
+         PBgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQau2TZH0WxyPH+P9s/smkFtcS67O2CJOA5Z+vWM8U+k5J4MYqzUY05DtqtfGaP9wELCNqwgNRsKlzZGFbi6vD2OFTORxZeRYWXISgeQ==
+X-Gm-Message-State: AOJu0Yy9KTJu7aE/yyyzl5yuqvgKcV9hzW4s7yWpNirAFNT3GmiuztJL
+	9M6Drrk4IrSL9h3zrlVkLMxIKxUii/QkXT0NvpN0jZZGiwqeovKa+dJPznbvLqQ9129MMxGl1qI
+	ZYuDugVTZSJczi2limmiVVopUtAxDKNy47P6n6c0dTDKNe0562uJy0FM=
+X-Google-Smtp-Source: AGHT+IEzZornDDZMpWDzFdkE+q/FriUsjqZ+4sHmZEu/bJAB9hWGgnKawl2seZVupWtON8ikupSSpqqlgz3tPuyYT3PdwKwJZ6Lc
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 6B02B1F454
-X-Spam-Score: -4.31
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.31 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
+X-Received: by 2002:a05:6e02:20c6:b0:374:9a34:a16 with SMTP id
+ e9e14a558f8ab-398e7de7b70mr8748705ab.5.1721779083711; Tue, 23 Jul 2024
+ 16:58:03 -0700 (PDT)
+Date: Tue, 23 Jul 2024 16:58:03 -0700
+In-Reply-To: <0000000000007cfb2405febf9023@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aaa8dc061df2eef7@google.com>
+Subject: Re: [syzbot] [ntfs3?] BUG: unable to handle kernel paging request in attr_data_read_resident
+From: syzbot <syzbot+33a67f9990381cc8951c@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, axboe@kernel.dk, 
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot suspects this issue was fixed by commit:
 
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+    fs: Block writes to mounted block devices
 
-are available in the Git repository at:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d4adc3980000
+start commit:   b57b17e88bf5 Merge tag 'parisc-for-6.7-rc1-2' of git://git..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=88e7ba51eecd9cd6
+dashboard link: https://syzkaller.appspot.com/bug?extid=33a67f9990381cc8951c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12493e98e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1334b4a8e80000
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git tags/unicode-next-6.11
+If the result looks correct, please mark the issue as fixed by replying with:
 
-for you to fetch changes up to 68318904a7758e11f16fa9d202a6df60f896e71a:
+#syz fix: fs: Block writes to mounted block devices
 
-  unicode: add MODULE_DESCRIPTION() macros (2024-06-20 19:30:02 -0400)
-
-----------------------------------------------------------------
-Two small fixes to silent the compiler and static analyzers tools from
-Ben Dooks and Jeff Johnson.
-
-----------------------------------------------------------------
-Ben Dooks (1):
-      unicode: make utf8 test count static
-
-Jeff Johnson (1):
-      unicode: add MODULE_DESCRIPTION() macros
-
- fs/unicode/mkutf8data.c       | 1 +
- fs/unicode/utf8-selftest.c    | 5 +++--
- fs/unicode/utf8data.c_shipped | 1 +
- 3 files changed, 5 insertions(+), 2 deletions(-)
-
-
--- 
-Gabriel Krisman Bertazi
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
