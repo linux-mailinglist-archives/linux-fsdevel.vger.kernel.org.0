@@ -1,56 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-24111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE63939BE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 09:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AFC939BED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 09:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912FC282DF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 07:47:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A220C282D94
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 07:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D719C14B07A;
-	Tue, 23 Jul 2024 07:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7ED614B08A;
+	Tue, 23 Jul 2024 07:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4ELEGbg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQZTu6nA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D22414AD3E;
-	Tue, 23 Jul 2024 07:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3504436130
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 07:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721720840; cv=none; b=kjvaVYN6xpCiJvxfzt84vJ04dU1qgxgHYX+OS5zEFtcIOJdAbu3BtpZDssW5B1wjec+4VidSEpACeMSCr0mwSqPLfdLOgDoRJIYKlaozuR1vZGOO3BOxIHSmr8gccrGEgQjj+HfT1ZWjT7/U6i/kwY/o/DhkhZRCr95miGggArs=
+	t=1721720954; cv=none; b=OPqHzwfIqeSMnx6h3s6EXNTLZlQWdiaWoovPnLm2m4Zxtk13LCIzx1npR37aSOFlDLi8NiQpa8Dk/EJZkA6FwB/AlM05USJ2V/MFPytP3Dk0RtkmevTQLxTSaL5WvgfEF9qIe8AKywldhqobgZYl3nRgBAhcoWZ63+uB0UUhtL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721720840; c=relaxed/simple;
-	bh=ohwuZOHbx1pyGTACmYGT8LdVk7iJcXF5WRCpTQ8WDq4=;
+	s=arc-20240116; t=1721720954; c=relaxed/simple;
+	bh=pQZW2V7gDdoYA5UxkDSPkRkCjEeYnY1//muppFU/VOM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=om6Zm3mdpaDr4/364dqF6ZEN5cssYSzJpH67e3caCprjaJBS+xUTK+X8Ln6P3VZGioygvRzVZE5ndFJqx77CSKwtoMoEYtdrspkEtt5I7DjUGJ38aneza4l/dxb/468xOXGjpzhX8RSMT16wVBWHzGJXwafl3jw2gSQmJ7IGxzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4ELEGbg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6652CC4AF09;
-	Tue, 23 Jul 2024 07:47:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GsA662EEyQCS9uEYWFe7ZFFEhdIouxpuen+gmeD3o9ZjTJufGfvDCP6VJ0s8crHOYjSw6Ef6i2t5zEZ71JFAc5itNj6JORwAqrhq+pj9BfgcTS4X3r20naS5nmW6+wifWCmldQRKSzpn0kOsE7r/JWV2rW2FLgHPr7QmanGymSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQZTu6nA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C218C4AF09;
+	Tue, 23 Jul 2024 07:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721720839;
-	bh=ohwuZOHbx1pyGTACmYGT8LdVk7iJcXF5WRCpTQ8WDq4=;
+	s=k20201202; t=1721720954;
+	bh=pQZW2V7gDdoYA5UxkDSPkRkCjEeYnY1//muppFU/VOM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I4ELEGbgUGgChPAotuYv0sgAIY2tNQ2RY13dtVxSeYz//rt00CgxX3TXcSiRa6JLU
-	 uYynEFC/+/tp+ApWv9YQ4UFTGn5zi0pQCBOoTLDYfQTau1fRyvKpSOLyeCcGMJBJrL
-	 uFoREXr8KCvir0zA+1OVXPBi3eM+vcJX7FDRq2kNPP+PAJe13ATFGwCNKmzMhNjzEa
-	 /DEr1w+NwLkz7pbfWaxHVIPm0EECxjOOLIX2DlNnPtphFwqWy0r/Lcw+MBubdlqhbQ
-	 gdspDcA774rM/5GHq9ksPhhR0uqNSz4cdpr6r/MSk4zus2bRPMZKpkp3uRhFPVs1fd
-	 W9BGl8ih7kHQQ==
-Date: Tue, 23 Jul 2024 09:47:15 +0200
+	b=ZQZTu6nAvQZ+x4zs++wOXwTMGCwceliX7pVZMyGwJyNwd9O4jsJjie+hkBHi/6xKE
+	 KhM4RW2S6wP8uVosZ9CaAmiN22g6dQvmGS24J+2QJVvpJS9MIRp98xytgbdCN7CLvD
+	 Tt9iFjGvO7P+I+n/CjoCPEX8ZWinX3O0JrqVxyoy4sZRVZ19bse9/AEaXybB8WdPWU
+	 thcB2ka6k6TPPUjmA5DZYB4JU0mA2JoGeP5L0ke/wz7cX9/V7+8L31B+16CLaZY3F1
+	 8Dz1fhG851q2I3plg+mAiVu8J3A//m/dCTmfGRVrgLHcIvcpjiTGsXAyzG0/MR/6qS
+	 gAvcM3BxW3aSQ==
+Date: Tue, 23 Jul 2024 09:49:10 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: 47 Mohit Pawar <mohitpawar@mitaoe.ac.in>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] Fixed: fs: file_table_c: Missing blank line warnings
-Message-ID: <20240723-kredit-bohrloch-2942d7c53f78@brauner>
-References: <20240713180612.126523-1-mohitpawar@mitaoe.ac.in>
- <CAO-FDEOhDSxOw8jyxtdqhJP8-wz8QP+Veo0yGehXTM9F=4bsnA@mail.gmail.com>
- <20240722163741.us3r3v5pe2d76azk@quack3>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 00/23] Convert write_begin / write_end to take a folio
+Message-ID: <20240723-einfuhr-benachbarten-f1abb87dd181@brauner>
+References: <20240717154716.237943-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,55 +56,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240722163741.us3r3v5pe2d76azk@quack3>
+In-Reply-To: <20240717154716.237943-1-willy@infradead.org>
 
-On Mon, Jul 22, 2024 at 06:37:41PM GMT, Jan Kara wrote:
-> On Mon 15-07-24 09:26:29, 47 Mohit Pawar wrote:
-> > From: Mohit0404 <mohitpawar@mitaoe.ac.in>
-> > 
-> > Fixed-
-> >         WARNING: Missing a blank line after declarations
-> >         WARNING: Missing a blank line after declarations
+On Wed, Jul 17, 2024 at 04:46:50PM GMT, Matthew Wilcox wrote:
+> You can find the full branch at
+> http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/write-end
+> aka
+> git://git.infradead.org/users/willy/pagecache.git write-end
 > 
-> The patch is missing your Signed-off-by tag. Please add it. Also I'm not
-> sure how Christian sees these pure whitespace cleanups but in this case it
-
-I'm personally pro such cleanups.
-
-> is probably at least a readability win so feel free to add:
+> On top of the ufs, minix, sysv and qnx6 directory handling patches, this
+> patch series converts us to using folios for write_begin and write_end.
+> That's the last mention of 'struct page' in several filesystems.
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> 								Honza
-> 
-> > ---
-> >  fs/file_table.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/file_table.c b/fs/file_table.c
-> > index 4f03beed4737..9950293535e4 100644
-> > --- a/fs/file_table.c
-> > +++ b/fs/file_table.c
-> > @@ -136,6 +136,7 @@ static int __init init_fs_stat_sysctls(void)
-> >         register_sysctl_init("fs", fs_stat_sysctls);
-> >         if (IS_ENABLED(CONFIG_BINFMT_MISC)) {
-> >                 struct ctl_table_header *hdr;
-> > +
-> >                 hdr = register_sysctl_mount_point("fs/binfmt_misc");
-> >                 kmemleak_not_leak(hdr);
-> >         }
-> > @@ -384,6 +385,7 @@ struct file *alloc_file_clone(struct file *base, int
-> > flags,
-> >                                 const struct file_operations *fops)
-> >  {
-> >         struct file *f = alloc_file(&base->f_path, flags, fops);
-> > +
-> >         if (!IS_ERR(f)) {
+> I'd like to get some version of these patches into the 6.12 merge
+> window.
 
-I would then change that to:
-
-struct file *f;
-
-f = alloc_file(&base->f_path, flags, fops);
-if (!IS_ERR(f)) {
+Is it stable enough that I can already pull it from you?
+I'd like this to be based on v6.11-rc1.
 
