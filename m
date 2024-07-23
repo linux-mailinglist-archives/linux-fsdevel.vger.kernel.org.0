@@ -1,206 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-24129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EDD93A08C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 14:38:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E4193A103
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 15:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F5D0B21D99
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 12:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0D4283AE5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 13:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6B815219E;
-	Tue, 23 Jul 2024 12:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F6E152E13;
+	Tue, 23 Jul 2024 13:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geely.onmicrosoft.com header.i=@geely.onmicrosoft.com header.b="S6SNXgdr"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HjieBgpR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2060.outbound.protection.outlook.com [40.107.255.60])
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D18381B1;
-	Tue, 23 Jul 2024 12:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721738323; cv=fail; b=Efm2By2FhjKiN8kPs8Z8hztFmh0G5L20pb7uYJnQK4nE3mxaFqSo3+d8ShG7PzNlMW/hDodXxD23vmFf029W16cSa3edLfaS3ZHmZf3+bjks2zG6jjiX7AU5Hv0kQI31a+SS/T2BfLsl+Mhqb+nrDlIgV0vCdy3Wfk7e3kdZXdk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721738323; c=relaxed/simple;
-	bh=NhHahtEv3pp035OaoFSJsf5+joFXpd63x8AvVgNI1aQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L+KpxcbNCq0DN7u/t1qrfGrgQArEZclipeR6MtPuu4rgwutizRKYDpxsSQoO5MF5uqcK+qrxuc5s6pqDMZC/BD+8hMUj8IdlEu5jfGkGy+TRiwHK99zMEr50ZiRiArmMHm5GAJ4JmBgFQp82q50/0wseWflZM4ohV4W66NuM6d8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zeekrlife.com; spf=pass smtp.mailfrom=zeekrlife.com; dkim=pass (2048-bit key) header.d=geely.onmicrosoft.com header.i=@geely.onmicrosoft.com header.b=S6SNXgdr; arc=fail smtp.client-ip=40.107.255.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zeekrlife.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zeekrlife.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Bnp4kf6iivZWm6vLK/opl+qJg3K4J5BusuIXtR3izQ9ap8zvXsIfFYMC4vzGK0XBivLyfV0mTnH100Jbi4vVRy4ESAGBrvJwoz+Z5nWkNi/RIiWmxRiu8SAsut0XEP6+d307TVLfsv/sJrO9pvikLOX8C18/LfJl1kC4zFH29175RHsF32kzrTRBnf5IpgtCOzoHOOd6GPwtIH4tkJUTVlUMh8uqgSbN8+THARovqZvO/7bQxa+yXSYT4BXCvREu3qhKUuN3zouso9O2J8dNtTqad6LqASLbKR/KJb5ezBROkIwKdF/UZG6cG8ux7GZG+K72AL60ONZ77+cJEytjSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HCl0TKMNnGqR1v0r190hBsZKDF6884tz3YwbaUkZIPA=;
- b=zCVAldmxJ+MYrery2YfC3Y6nu3o7pxznazp+dhB7IuZ2rB8tp/zfH3lyYc9XVWNkmkSq46AOUFXny+AIploUW7UrddFdLVCoc32WDVXFp93DnrypgAQTq1FQ50sAtWte2iu5xUD7DjMKOFHiy8iLfv17Uz14WAMppAR6E1piK4MfWpz80lalPCHofwPJcndBkkNOx7GOsXxw7vYZ1kVEnX/G12+VkpP4EKuh1Xfko9z2eRQ9Kk6ff/tsbp3s5lYjPIpF35EiW0ndijRgMhYoI8QSwVlo0U/J0qZh2PGJ7NTdGLMIYnG81je+yK+qHF709d+uLPwGpcHHYMzrpHTmOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 20.52.185.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=zeekrlife.com;
- dmarc=bestguesspass action=none header.from=zeekrlife.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geely.onmicrosoft.com;
- s=selector1-geely-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HCl0TKMNnGqR1v0r190hBsZKDF6884tz3YwbaUkZIPA=;
- b=S6SNXgdr2iKyT4dckGNjuoUNw3cTWZ5Or9+HQR6Fe4CCt19cJbvhp7kudbMo7KFj5TTG09u7Xy0KKUNyzkgJYpFz0rQIcM6Epr713QGRHc21DGKq/5KUZjWzsghQpWDouhRRU4TyFgToukTIxrrVn6z7ANTgX3LYcRarAngJc/d6urNI/86Udfk1/IjkpADkOg9Uv4P2j4V48a3qKrerpiZzi7Z6D0N2cNbf7jlKSB0BLrjUfHIw60HG6Mi9rh0HLe1xKtaAvPcWKGKv79Wp//bIuqUYA8Teab+FlMsugM9ypGyJ3CjScgRyMP3dn9XoGUZfcdNjmrCZku5r/4h5HA==
-Received: from PS2PR02CA0093.apcprd02.prod.outlook.com (2603:1096:300:5c::33)
- by TYSPR02MB6448.apcprd02.prod.outlook.com (2603:1096:400:42d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Tue, 23 Jul
- 2024 12:38:37 +0000
-Received: from HK2PEPF00006FB4.apcprd02.prod.outlook.com
- (2603:1096:300:5c:cafe::a) by PS2PR02CA0093.outlook.office365.com
- (2603:1096:300:5c::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20 via Frontend
- Transport; Tue, 23 Jul 2024 12:38:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.52.185.129)
- smtp.mailfrom=zeekrlife.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=zeekrlife.com;
-Received-SPF: Pass (protection.outlook.com: domain of zeekrlife.com designates
- 20.52.185.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=20.52.185.129; helo=CN-BJI-EXP64.Geely.Auto; pr=C
-Received: from CN-BJI-EXP64.Geely.Auto (20.52.185.129) by
- HK2PEPF00006FB4.mail.protection.outlook.com (10.167.8.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Tue, 23 Jul 2024 12:38:35 +0000
-Received: from localhost.localdomain (10.186.26.39) by CN-BJI-EXP64.Geely.Auto
- (10.186.65.77) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 23 Jul
- 2024 20:38:32 +0800
-From: Yuwei Guan <Yuwei.Guan@zeekrlife.com>
-To: <jlayton@kernel.org>, <chuck.lever@oracle.com>, <alex.aring@gmail.com>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<ssawgyw@gmail.com>, <Dashi.Luban@zeekrlife.com>, Yuwei Guan
-	<Yuwei.Guan@zeekrlife.com>
-Subject: [PATCH] filelock: add file path in lock_get_status() to show more debug info
-Date: Tue, 23 Jul 2024 20:38:16 +0800
-Message-ID: <20240723123816.3676322-1-Yuwei.Guan@zeekrlife.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E68114E2D0;
+	Tue, 23 Jul 2024 13:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721740537; cv=none; b=E8B6VM1LEkGaLnGsKWE9LHEC5nS595vc2wdGS6LWa1rujmm+BhinhON9K2e0BBvWil0BrfRGXRdbF0y71KLvpXUcITh3RdtYD7HyjB6Nf1etUfpbCDQrKYYT7b5ZHlQMKnkPTp2YC/dosuJFaWoaHC8e4vnNgdY+Hhq2OctdjKU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721740537; c=relaxed/simple;
+	bh=GQMYqRZLirdBdnV9m05p3q7iUsQxl7Es+Hr/8ahrDeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nWehbobEz8SWlVBmQA/y5KmQ6EuyG6gWbJcqkCJsF1F06cmyu2UwOQLrNz419e0GVdz76pLVzxq+AXfF3z0n4e2jGXK6sl+svxptJHIeUZrdxRIfGqrkJ40p0Uh059hnr8A8S4Ink5M4JJLyikzsuk0bVN2tq1i5vN05tVOyuLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HjieBgpR; arc=none smtp.client-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WSyLj0XJ6zvdg;
+	Tue, 23 Jul 2024 15:15:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721740524;
+	bh=Qj8Xgm8rcMJSt8La6LY/BFSnfayKGlNJ2hnbPdsP+c4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HjieBgpROL8YzXywnxRaVs/lBhQC8sCG72MSmA1PAGizlICvD8PSvtDlMWicL9X1d
+	 V6xSMy1NB4+7ISBIZb5R4Qb0Q/5r6uVtc04r+yNAtiVVgbQ5PNuDUeO/uAa8G6Yad2
+	 AwO0Y79iGqgbZUsXUVSXoOuwFz3cBPmXaXbe6uxk=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WSyLb1YXwzpH5;
+	Tue, 23 Jul 2024 15:15:19 +0200 (CEST)
+Date: Tue, 23 Jul 2024 15:15:16 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+Message-ID: <20240723.Uquiangopie6@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-3-mic@digikod.net>
+ <CALCETrWpk5Es9GPoAdDD=m_vgSePm=cA16zCor_aJV0EPXBw1A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CN-BJI-EXP16.Geely.Auto (10.86.210.80) To
- CN-BJI-EXP64.Geely.Auto (10.186.65.77)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB4:EE_|TYSPR02MB6448:EE_
-X-MS-Office365-Filtering-Correlation-Id: cafa1068-6613-492c-27db-08dcab145f25
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZnJKR1RqUUE0TVdlTjdKNHd2VkgvYThnajNyTkZsUm5HOXoySnFnKzZaMHdy?=
- =?utf-8?B?WnN0RFhtZ1BDbFZGSHN0elZYRmhMdzVpUjFRVVRIMmVNbTkzZ21JbitldzBI?=
- =?utf-8?B?TjdYMytLWjhmdm1WL1JZWmhIK2Q5bHZqYXk4UnpKYWJET0FFbHpaN1hyYjNO?=
- =?utf-8?B?TkpZdlFpaDNsdUxpL0JNR1RsRzRuRXl3WUpXTE9mcE92cGVDTkE4TEVSUmQv?=
- =?utf-8?B?a0tSOG16ZGdiVE02cSsrRVN1RE45WDE2Z0RjWFlFWUVnTGtuemMrOUk3dnpZ?=
- =?utf-8?B?bzBEelRwYXQxYXBlWXc2SEUwZ2NTVjJrNDI5Qll5bFpwNGRLOEFPd2JkR1FZ?=
- =?utf-8?B?YUxUaDluNkViNER6ejIvVWlRMEp5VnJPbnZuZlpTVDVOZWpmWmxQVmhZTUhP?=
- =?utf-8?B?RDZLaGhCbnVaYWhtVTQ3VWh2bUE1dFZCdkFCQlpqZlBEaytZRTR4VTVjTzZK?=
- =?utf-8?B?OUFySTVEUXNjYkdicldtSzlZY2pmeWl3OUY3dVYrUlBpaGF2TERDcWtTdzls?=
- =?utf-8?B?Tkx6MGt5Smk3RWRYSXBXVWtrMkR4UExJOHRoUlJwa2s4K1dOaDljbVJybDFq?=
- =?utf-8?B?Z1EwUVVHazRKZUtwMjU2OUVielZ3dGpkclZZMW9FTHp6ejdDOTNpVnVFYnZ2?=
- =?utf-8?B?VHo0NUYvaGFQVGhuajVKL1M0d2did21Wd2MzZXUxaWVmTzdzdm0zbFZrTGQx?=
- =?utf-8?B?R21tY2tRYU5qZ0RydUxBa0cwL2lOVlc2YTNQTytYNC9nb09UK285N2dLTko5?=
- =?utf-8?B?STlTb3JTNG04djZkeERoTkJDcnYzZjVIL2FlZ1dNb05VbE0wUzJ0WjAwNG9S?=
- =?utf-8?B?QmpNbDk0anNNM2pEWFlWSUlCSnF0STEwTFNxOGhzRHZFbjl0dkFUcEczU0Nn?=
- =?utf-8?B?T252amw0cDJVeFZsRlorRGk3TmkyZzhDU0E2RHd6R1ZHb1paNVpGdjFTRE1O?=
- =?utf-8?B?NTIxME5RSi8xWVBGZHY5QldYWjhoQVBycEVWU0h0THFKZXF0c21xYjdkMVlL?=
- =?utf-8?B?RXZVRS9aaVJEclpGUDRyMTRtWXBrVXlsRU9lbk15alhXb0RGUEhzRXhJOGYr?=
- =?utf-8?B?MHhOcm5EcWZhZ053L0VyN09kZGd5SGNxZzlRZlArRENzSDdKVk1hbEFLbngx?=
- =?utf-8?B?NVE3RzhmY01IVUhnOVdHdjNyUjJhbkN4d2pKZEV2dTRwbzNIYm5VVDRMWkJO?=
- =?utf-8?B?a0hndmREd3BjQXdJQ1Fza2hVZTlMZEFvVi9sdVR1aUtYQVh2WEk5Q1NhWnhS?=
- =?utf-8?B?aDc3c2lzUlYxOXJ3NXdPQkFQb2piZXRuVXJnWUxJR2R3UGJYVDU1QlIveWRX?=
- =?utf-8?B?VzMyaXIwdWQvUHdscVRuYitWSEt6OU9JbkdDR0tPOFkyS1RkQnU4NHkzajZ2?=
- =?utf-8?B?TXNQTUVZaG5HM0hIbm1LLzAyYkhBZ290U0h2cEltZXNiSUN2aFhDakhNUTZH?=
- =?utf-8?B?RHd3OTFyOG5qRkEwTnNpVHVlRERYaGRIUStybGFlK3NMNDNicllja201dS9s?=
- =?utf-8?B?UkxrV2g4VHRldGtMOTFuaGJuTWZXaVkyOGFmazFtVDRvczRPb1VYVlVNRkZt?=
- =?utf-8?B?SHdDSGw0R0dqNlk0REJOb0w4VmZlVnEzVk5TZ0ZreTR2cW80bWVORW15ZEJy?=
- =?utf-8?B?MFF0Vzc0eGE0dGlYMTlnTlI0b1A0Y2c5WTY2SlhTZitXa1BKYnVSMVRhTkw5?=
- =?utf-8?B?cGhXbTM0SDJwZUhybzdRWHJkTVArNDEzam5Ramx5NTV1cEx1WFphNEU5aXVD?=
- =?utf-8?B?WXJNQ2k2R1VPRTJESXNxVk1oWlpsRjRiWUtEZmxwdkM2QXdMclh0eGdDTlRl?=
- =?utf-8?B?S3hibmlzYnhpcnB4QXd5RjhtNEZMcFBoSUx6NXl5QkFKNHVCRVVDQlRhSFNR?=
- =?utf-8?B?M2pTaW5naDF5L0J3TGJodG1JVXREWWw1Z1BlcVk2N3pQMEUxNE9iNW5ROTdE?=
- =?utf-8?Q?+k0m3Hg9+fs7gv63CXrl7x8RZejC2GVr?=
-X-Forefront-Antispam-Report:
-	CIP:20.52.185.129;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CN-BJI-EXP64.Geely.Auto;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Zeekrlife.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 12:38:35.8733
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cafa1068-6613-492c-27db-08dcab145f25
-X-MS-Exchange-CrossTenant-Id: 6af81d03-dafe-4d76-a257-3cc43cb0454f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=6af81d03-dafe-4d76-a257-3cc43cb0454f;Ip=[20.52.185.129];Helo=[CN-BJI-EXP64.Geely.Auto]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK2PEPF00006FB4.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR02MB6448
+In-Reply-To: <CALCETrWpk5Es9GPoAdDD=m_vgSePm=cA16zCor_aJV0EPXBw1A@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-The current lock_get_status() function shows ino, but it’s not
-intuitive enough for debugging. This patch will add the file’s
-path information, making it easier to debug which specific file
-is holding the lock.
+On Sat, Jul 20, 2024 at 10:06:28AM +0800, Andy Lutomirski wrote:
+> On Fri, Jul 5, 2024 at 3:02 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > These new SECBIT_SHOULD_EXEC_CHECK, SECBIT_SHOULD_EXEC_RESTRICT, and
+> > their *_LOCKED counterparts are designed to be set by processes setting
+> > up an execution environment, such as a user session, a container, or a
+> > security sandbox.  Like seccomp filters or Landlock domains, the
+> > securebits are inherited across proceses.
+> >
+> > When SECBIT_SHOULD_EXEC_CHECK is set, programs interpreting code should
+> > check executable resources with execveat(2) + AT_CHECK (see previous
+> > patch).
+> >
+> > When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
+> > execution of approved resources, if any (see SECBIT_SHOULD_EXEC_CHECK).
+> 
+> I read this twice, slept on it, read them again, and I *still* can't
+> understand it.  See below...
 
-Signed-off-by: Yuwei Guan <Yuwei.Guan@zeekrlife.com>
----
- fs/locks.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+There is a new proposal:
+https://lore.kernel.org/all/20240710.eiKohpa4Phai@digikod.net/
+The new securebits will be SECBIT_EXEC_RESTRICT_FILE and
+SECBIT_EXEC_DENY_INTERACTIVE.  I'll send a new patch series with that.
 
-diff --git a/fs/locks.c b/fs/locks.c
-index bdd94c32256f..feb0a4427a5b 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2764,6 +2764,8 @@ static void lock_get_status(struct seq_file *f, struct file_lock_core *flc,
- 	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
- 	int type = flc->flc_type;
- 	struct file_lock *fl = file_lock(flc);
-+	struct dentry *dentry = NULL;
-+	char *path, *pathbuf;
- 
- 	pid = locks_translate_pid(flc, proc_pidns);
- 
-@@ -2819,8 +2821,29 @@ static void lock_get_status(struct seq_file *f, struct file_lock_core *flc,
- 		seq_printf(f, "%d %02x:%02x:%lu ", pid,
- 				MAJOR(inode->i_sb->s_dev),
- 				MINOR(inode->i_sb->s_dev), inode->i_ino);
-+
-+		pathbuf = __getname();
-+		if (!pathbuf)
-+			seq_printf(f, "%s ", "UNKNOWN");
-+		else {
-+			ihold(inode);
-+			dentry = d_obtain_alias(inode);
-+			if (!IS_ERR(dentry)) {
-+				path = dentry_path_raw(dentry, pathbuf, PATH_MAX);
-+				if (IS_ERR(path)) {
-+					strscpy(pathbuf, "UNKNOWN", PATH_MAX);
-+					path = pathbuf;
-+				}
-+				dput(dentry);
-+			} else {
-+				strscpy(pathbuf, "UNKNOWN", PATH_MAX);
-+				path = pathbuf;
-+			}
-+			seq_printf(f, "%s ", path);
-+			__putname(pathbuf);
-+		}
- 	} else {
--		seq_printf(f, "%d <none>:0 ", pid);
-+		seq_printf(f, "%d <none>:0:<none> UNKNOWN ", pid);
- 	}
- 	if (flc->flc_flags & FL_POSIX) {
- 		if (fl->fl_end == OFFSET_MAX)
--- 
-2.17.1
+> 
+> > The only restriction enforced by the kernel is the right to ptrace
+> > another process.  Processes are denied to ptrace less restricted ones,
+> > unless the tracer has CAP_SYS_PTRACE.  This is mainly a safeguard to
+> > avoid trivial privilege escalations e.g., by a debugging process being
+> > abused with a confused deputy attack.
+> 
+> What's the actual issue?  And why can't I, as root, do, in a carefully
+> checked, CHECK'd and RESTRICT'd environment, # gdb -p <pid>?  Adding
+> weird restrictions to ptrace can substantially *weaken* security
+> because it forces people to do utterly daft things to work around the
+> restrictions.
 
+Restricting ptrace was a cautious approach, but I get you point and I
+agree.  I'll remove the ptrace restrictions in the next patch series.
+
+> 
+> ...
+> 
+> > +/*
+> > + * When SECBIT_SHOULD_EXEC_CHECK is set, a process should check all executable
+> > + * files with execveat(2) + AT_CHECK.  However, such check should only be
+> > + * performed if all to-be-executed code only comes from regular files.  For
+> > + * instance, if a script interpreter is called with both a script snipped as
+> 
+> s/snipped/snippet/
+> 
+> > + * argument and a regular file, the interpreter should not check any file.
+> > + * Doing otherwise would mislead the kernel to think that only the script file
+> > + * is being executed, which could for instance lead to unexpected permission
+> > + * change and break current use cases.
+> 
+> This is IMO not nearly clear enough to result in multiple user
+> implementations and a kernel implementation and multiple LSM
+> implementations and LSM policy authors actually agreeing as to what
+> this means.
+
+Right, no kernel parts (e.g. LSMs) should try to infer anything other
+than an executability check.  We should handle things such as role
+transitions with something else (e.g. a complementary dedicated flag),
+and that should be decorrelated from this patch series.
+
+> 
+> I also think it's wrong to give user code instructions about what
+> kernel checks it should do.  Have the user code call the kernel and
+> have the kernel implement the policy.
+
+Call the kernel for what?  Script interpreter is a user space thing, and
+restrictions enforced on interpreters need to be a user space thing.
+The kernel cannot restrict user space according to a semantic only
+defined by user space, such as Python interpretation, CLI arguments,
+content of environment variables...  If a process wants to interpret
+some data and turn than into code, there is no way for the kernel to
+know about that.
+
+> 
+> > +/*
+> > + * When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
+> > + * execution of approved files, if any (see SECBIT_SHOULD_EXEC_CHECK).  For
+> > + * instance, script interpreters called with a script snippet as argument
+> > + * should always deny such execution if SECBIT_SHOULD_EXEC_RESTRICT is set.
+> > + * However, if a script interpreter is called with both
+> > + * SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT, they should
+> > + * interpret the provided script files if no unchecked code is also provided
+> > + * (e.g. directly as argument).
+> 
+> I think you're trying to say that this is like (the inverse of)
+> Content-Security-Policy: unsafe-inline.  In other words, you're saying
+> that, if RESTRICT is set, then programs should not execute code-like
+> text that didn't come from a file.  Is that right?
+
+That is the definition of the new SECBIT_EXEC_DENY_INTERACTIVE, which
+should be clearer.
+
+> 
+> I feel like it would be worth looking at the state of the art of
+> Content-Security-Policy and all the lessons people have learned from
+> it.  Whatever the result is should be at least as comprehensible and
+> at least as carefully engineered as Content-Security-Policy.
+
+That's a good idea, but I guess Content-Security-Policy cannot be
+directly applied here.  My understanding is that CSP enables web servers
+to request restrictions on code they provide.  In the
+AT_CHECK+securebits case, the policy is defined and enforced by the
+interpreter, not necessarily the script provider. One big difference is
+that web servers (should) know the scripts they provide, and can then
+request the browser to ensure that they do what they should do, while
+the script interpreter trusts the kernel to check security properties of
+a script.  In other words, something like CSP could be implemented with
+AT_CHECK+securebits and a LSM policy (e.g. according to file's xattr).
+
+> 
+> --Andy
 
