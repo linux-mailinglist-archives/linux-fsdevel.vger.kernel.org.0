@@ -1,218 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-24134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8358193A118
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 15:17:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0EB993A114
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 15:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32041C22032
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 13:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25EE283D72
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 13:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7052315351B;
-	Tue, 23 Jul 2024 13:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0B0153517;
+	Tue, 23 Jul 2024 13:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FCjlvbAS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZhAOtM4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6748B1514DA;
-	Tue, 23 Jul 2024 13:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4065152E1D;
+	Tue, 23 Jul 2024 13:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721740574; cv=none; b=Zcyp4A9tl2Eg7ADDdzOXEgPom6GXLDbR/cOe1yt5DG+uGw/R+IUwlt4BF4ypFqV+wKUHnCT2PV6iSpbbcrhxoOSmCdIj0rCBH3MV0ddcMW4SshudVZFi7OxXVbS0mhe2zFS68Gy9oY/5tiLjMfbWvunR5SpSu+kTXRxuW2s4m/k=
+	t=1721740573; cv=none; b=ZEWOsw1meQRUGioDvaqJ6nAj3mP61Qe8/xzjNmCkW/eX5W/u6RQTY9pH4E8rilredKjbKUWcAL+asQ6CEiVBXDhIQ90Pyofcx1WX1nSsYHBgmgnIDkPwVOhCH+YVU4CrdFPWYkpzsydekyXDmvIc7EODChXPdsayEQrrrmPyf/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721740574; c=relaxed/simple;
-	bh=QMbBvsDvncNdYCUjercLgXYGwm9cw4B8dwwqcwc43qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pf6tCCQJ8dawAer6Rv5vDWlnf05ewfiqrpdq9H+M0tmIzf5Yh+f2v2imzyXggsm9ovDROZEH4SK5lCUXDyJj5qPlhEAzCxKC0ESmMIlZJRGqMknB2UlS4rmp3YdEc2L/59CM5w+23R66sRpZ5Ns+EdrL2NsjE4dDTwn0SVayWd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FCjlvbAS; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WSyMZ5WFDzn6f;
-	Tue, 23 Jul 2024 15:16:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721740570;
-	bh=Pf0FM4WG3BfxDSQVA4M55cgkTKksMUjPRdTroutu9Oo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FCjlvbASQWVZs6wFIJ7CYIUNPpU08+8kx5R20nitTBK4l5K87AnNQWkpcsKFDR6hE
-	 gpfmB2MQMrvo6MuyqTIdChlBaae0KIfoHcQhAYfJsRpmK6nhKm8he4/DzOFtKd2oCY
-	 ysaH1iREu4CkMpBMxGNNvN4WwTUJScRShOwLzris=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WSyMY60KPz8Q2;
-	Tue, 23 Jul 2024 15:16:09 +0200 (CEST)
-Date: Tue, 23 Jul 2024 15:16:07 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Steve Dower <steve.dower@python.org>, Jeff Xu <jeffxu@google.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240723.Tae5oovie2ah@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <a0da7702-dabe-49e4-87f4-5d6111f023a8@python.org>
- <20240717.AGh2shahc9ee@digikod.net>
- <CALCETrUcr3p_APNazMro7Y9FX1zLAiQESvKZ5BDgd8X3PoCdFw@mail.gmail.com>
- <20240718.Niexoo0ahch0@digikod.net>
- <CALCETrVVq4DJZ2q9V9TMuvZ1nb+-Qf4Eu8LVBgUy3XiTa=jFCQ@mail.gmail.com>
+	s=arc-20240116; t=1721740573; c=relaxed/simple;
+	bh=KWifQZqQ8T0lPyWaVa/Z6CVrrNBq2dz1vtCZNDGJaF4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oPFU5Tei7ayW1Ebfu+vqKZCItg+KtpPgeXNrczEgR4IMOkiU6BwohndKG0MExvQCaI1QuZT0XeCxqRTJOlvMC2IFV2KRmNlLBGoYx1UTiIYerDoyBnFsGR7SUfUV8rKvdAGjNp4Oe7lpj3IZDm2Z0bAIlBSvIC64VK2jkMmB9sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZhAOtM4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DBEEC4AF0A;
+	Tue, 23 Jul 2024 13:16:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721740573;
+	bh=KWifQZqQ8T0lPyWaVa/Z6CVrrNBq2dz1vtCZNDGJaF4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=AZhAOtM4TNL2zitLuFmXduh3EIZQqqDE2vZvgYKx7bzSV/1F43u+MiabUx13sLV/w
+	 ituKOro2E8t0h4EgjbeFIwOSWDVVfn5C2p1vhZmy0Xpmgddie2AAa0fKFmdmxnF26a
+	 9wxHCU4HXuaP/dxrBz/apKDRKLXoxYwFXQmBvKAtSqayXL4yoyz+Ki77k21PzXCRoL
+	 NWNCy4gTvpFj/ucdrPREkRGjSysnBEaJp2VwInoORvzYt2ZaGvafh16N/5qTefRWRc
+	 UV3aqmkYpK3Gl8aN5MacpadAHndXHIyWsl21o5TB/mmUB1YGDueCvietEYdXzWUaxY
+	 c29V7FN7RVDjw==
+Message-ID: <7ce8cadfc432368924134ae96f8d9710282a15d6.camel@kernel.org>
+Subject: Re: [PATCH] filelock: add file path in lock_get_status() to show
+ more debug info
+From: Jeff Layton <jlayton@kernel.org>
+To: Yuwei Guan <Yuwei.Guan@zeekrlife.com>, chuck.lever@oracle.com, 
+ alex.aring@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ssawgyw@gmail.com, Dashi.Luban@zeekrlife.com
+Date: Tue, 23 Jul 2024 09:16:10 -0400
+In-Reply-To: <20240723123816.3676322-1-Yuwei.Guan@zeekrlife.com>
+References: <20240723123816.3676322-1-Yuwei.Guan@zeekrlife.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrVVq4DJZ2q9V9TMuvZ1nb+-Qf4Eu8LVBgUy3XiTa=jFCQ@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Sat, Jul 20, 2024 at 09:59:33AM +0800, Andy Lutomirski wrote:
-> > On Jul 18, 2024, at 8:22 PM, Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > ﻿On Thu, Jul 18, 2024 at 09:02:56AM +0800, Andy Lutomirski wrote:
-> >>>> On Jul 17, 2024, at 6:01 PM, Mickaël Salaün <mic@digikod.net> wrote:
-> >>>
-> >>> On Wed, Jul 17, 2024 at 09:26:22AM +0100, Steve Dower wrote:
-> >>>>> On 17/07/2024 07:33, Jeff Xu wrote:
-> >>>>> Consider those cases: I think:
-> >>>>> a> relying purely on userspace for enforcement does't seem to be
-> >>>>> effective,  e.g. it is trivial  to call open(), then mmap() it into
-> >>>>> executable memory.
-> >>>>
-> >>>> If there's a way to do this without running executable code that had to pass
-> >>>> a previous execveat() check, then yeah, it's not effective (e.g. a Python
-> >>>> interpreter that *doesn't* enforce execveat() is a trivial way to do it).
-> >>>>
-> >>>> Once arbitrary code is running, all bets are off. So long as all arbitrary
-> >>>> code is being checked itself, it's allowed to do things that would bypass
-> >>>> later checks (and it's up to whoever audited it in the first place to
-> >>>> prevent this by not giving it the special mark that allows it to pass the
-> >>>> check).
-> >>>
-> >>> Exactly.  As explained in the patches, one crucial prerequisite is that
-> >>> the executable code is trusted, and the system must provide integrity
-> >>> guarantees.  We cannot do anything without that.  This patches series is
-> >>> a building block to fix a blind spot on Linux systems to be able to
-> >>> fully control executability.
-> >>
-> >> Circling back to my previous comment (did that ever get noticed?), I
-> >
-> > Yes, I replied to your comments.  Did I miss something?
-> 
-> I missed that email in the pile, sorry. I’ll reply separately.
-> 
-> >
-> >> don’t think this is quite right:
-> >>
-> >> https://lore.kernel.org/all/CALCETrWYu=PYJSgyJ-vaa+3BGAry8Jo8xErZLiGR3U5h6+U0tA@mail.gmail.com/
-> >>
-> >> On a basic system configuration, a given path either may or may not be
-> >> executed. And maybe that path has some integrity check (dm-verity,
-> >> etc).  So the kernel should tell the interpreter/loader whether the
-> >> target may be executed. All fine.
-> >>
-> >> But I think the more complex cases are more interesting, and the
-> >> “execute a program” process IS NOT BINARY.  An attempt to execute can
-> >> be rejected outright, or it can be allowed *with a change to creds or
-> >> security context*.  It would be entirely reasonable to have a policy
-> >> that allows execution of non-integrity-checked files but in a very
-> >> locked down context only.
-> >
-> > I guess you mean to transition to a sandbox when executing an untrusted
-> > file.  This is a good idea.  I talked about role transition in the
-> > patch's description:
-> >
-> > With the information that a script interpreter is about to interpret a
-> > script, an LSM security policy can adjust caller's access rights or log
-> > execution request as for native script execution (e.g. role transition).
-> > This is possible thanks to the call to security_bprm_creds_for_exec().
-> 
-> …
-> 
-> > This patch series brings the minimal building blocks to have a
-> > consistent execution environment.  Role transitions for script execution
-> > are left to LSMs.  For instance, we could extend Landlock to
-> > automatically sandbox untrusted scripts.
-> 
-> I’m not really convinced.  There’s more to building an API that
-> enables LSM hooks than merely sticking the hook somewhere in kernel
-> code. It needs to be a defined API. If you call an operation “check”,
-> then people will expect it to check, not to change the caller’s
-> credentials.  And people will mess it up in both directions (e.g.
-> callers will call it and then open try to load some library that they
-> should have loaded first, or callers will call it and forget to close
-> fds first.
-> 
-> And there should probably be some interaction with dumpable as well.
-> If I “check” a file for executability, that should not suddenly allow
-> someone to ptrace me?
-> 
-> And callers need to know to exit on failure, not carry on.
-> 
-> 
-> More concretely, a runtime that fully opts in to this may well "check"
-> multiple things.  For example, if I do:
-> 
-> $ ld.so ~/.local/bin/some_program   (i.e. I literally execve ld.so)
-> 
-> then ld.so will load several things:
-> 
-> ~/.local/bin/some_program
-> libc.so
-> other random DSOs, some of which may well be in my home directory
-> 
-> And for all ld.so knows, some_program is actually an interpreter and
-> will "check" something else.  And the LSMs have absolutely no clue
-> what's what.  So I think for this to work right, the APIs need to be a
-> lot more expressive and explicit:
-> 
-> check_library(fd to libc.so);  <-- does not transition or otherwise drop privs
-> check_transition_main_program(fd to ~/.local/bin/some_program);  <--
-> may drop privs
-> 
-> and if some_program is really an interpreter, then it will do:
-> 
-> check_library(fd to some thing imported by the script);
-> check_transition_main_program(fd to the actual script);
-> 
-> And maybe that takes a parameter that gets run eval-style:
-> 
-> check_unsafe_user_script("actual contents of snippet");
-> 
-> The actual spelling of all this doesn't matter so much.  But the user
-> code and the kernel code need to be on the same page as to what the
-> user program is doing and what it's asking the kernel program to do.
+On Tue, 2024-07-23 at 20:38 +0800, Yuwei Guan wrote:
+> The current lock_get_status() function shows ino, but it=E2=80=99s not
+> intuitive enough for debugging. This patch will add the file=E2=80=99s
+> path information, making it easier to debug which specific file
+> is holding the lock.
+>=20
+> Signed-off-by: Yuwei Guan <Yuwei.Guan@zeekrlife.com>
+> ---
+> =C2=A0fs/locks.c | 25 ++++++++++++++++++++++++-
+> =C2=A01 file changed, 24 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/locks.c b/fs/locks.c
+> index bdd94c32256f..feb0a4427a5b 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -2764,6 +2764,8 @@ static void lock_get_status(struct seq_file *f,
+> struct file_lock_core *flc,
+> =C2=A0	struct pid_namespace *proc_pidns =3D proc_pid_ns(file_inode(f-
+> >file)->i_sb);
+> =C2=A0	int type =3D flc->flc_type;
+> =C2=A0	struct file_lock *fl =3D file_lock(flc);
+> +	struct dentry *dentry =3D NULL;
+> +	char *path, *pathbuf;
+> =C2=A0
+> =C2=A0	pid =3D locks_translate_pid(flc, proc_pidns);
+> =C2=A0
+> @@ -2819,8 +2821,29 @@ static void lock_get_status(struct seq_file
+> *f, struct file_lock_core *flc,
+> =C2=A0		seq_printf(f, "%d %02x:%02x:%lu ", pid,
+> =C2=A0				MAJOR(inode->i_sb->s_dev),
+> =C2=A0				MINOR(inode->i_sb->s_dev), inode-
+> >i_ino);
+> +
+> +		pathbuf =3D __getname();
 
-I agree.  I'll remove any references to "role transition".  This kind of
-feature should come with something like getpeercon/setexeccon(3).
+This won't work. locks_show is called under the blocked_lock_lock
+spinlock, and __getname does a GFP_KERNEL allocation.
 
-> 
-> --Andy
-> 
+The second problem is that the procfiles that this alters (/proc/locks
+and /proc/<pid>/fdinfo/*) are considered part of the kernel's ABI, so
+we can't just go change the format of them.
+
+If you're interested in getting pathnames, I suggest using the lslocks
+program which resolves these pathnames in userland.
+
+> +		if (!pathbuf)
+> +			seq_printf(f, "%s ", "UNKNOWN");
+> +		else {
+> +			ihold(inode);
+> +			dentry =3D d_obtain_alias(inode);
+> +			if (!IS_ERR(dentry)) {
+> +				path =3D dentry_path_raw(dentry,
+> pathbuf, PATH_MAX);
+> +				if (IS_ERR(path)) {
+> +					strscpy(pathbuf, "UNKNOWN",
+> PATH_MAX);
+> +					path =3D pathbuf;
+> +				}
+> +				dput(dentry);
+> +			} else {
+> +				strscpy(pathbuf, "UNKNOWN",
+> PATH_MAX);
+> +				path =3D pathbuf;
+> +			}
+> +			seq_printf(f, "%s ", path);
+> +			__putname(pathbuf);
+> +		}
+> =C2=A0	} else {
+> -		seq_printf(f, "%d <none>:0 ", pid);
+> +		seq_printf(f, "%d <none>:0:<none> UNKNOWN ", pid);
+> =C2=A0	}
+> =C2=A0	if (flc->flc_flags & FL_POSIX) {
+> =C2=A0		if (fl->fl_end =3D=3D OFFSET_MAX)
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
