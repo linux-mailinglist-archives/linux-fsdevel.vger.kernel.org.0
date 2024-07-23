@@ -1,108 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-24152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AFD93A64E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 20:34:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8D293A75F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 20:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AEC2B232AC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 18:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A5A12846EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 18:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB79B158A37;
-	Tue, 23 Jul 2024 18:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4749913DDD8;
+	Tue, 23 Jul 2024 18:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BWoVOlkh"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="opUwadBX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C889158858
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 18:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600BA2E83F;
+	Tue, 23 Jul 2024 18:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721759635; cv=none; b=tHE3UmxKS40fmFVCPtn0wvjhpQ3A6U5/+q1SDYyRODYccQVGIFjw56xabbYN0RFA6hdVs7vl550nNMxY/jhM7CmGflNq2Hy3cRJYXsPjhwUIMdKrd1Cid2243MyaQ5S5CdhpETuJlxqTMC5Uq3FbrKeZP7bT/w+7HTgYo9Jrlkc=
+	t=1721760327; cv=none; b=tzMNKOX+cz9TTlqo6Amd6UDKCyXJMGkXZ95gR4tgJREkL5MMGywPtonsf2fsTpotT15/WZB4VSCob9eeHrKzMNv0eVJEEnaSA0+qVUcc5amaROP44rKbgDgPLlUqwn7YNXrdqyZ7V+QygW4eF13pDfzjn84l9hlYEtWZvsEK7II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721759635; c=relaxed/simple;
-	bh=NFq/ekDOEm1BCUiEQxAbPVsS7vv5PxDQqveu1WlBUdQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uc/kUYyguLALdUn21xR+kYVEkOzhq5xG0It0ljQUIxHM9O3BiM/WZwt0mw4mvy8qW2TqUBS3X5RLCwlHJ66aEpC/hgVk9+bkC8267tfI2CPQQD3YYVI+F0ALuLfwHFafFauFzWVnchMnYmmrv4E2quyDCWCyG9niC3LgFXT9ElU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BWoVOlkh; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a2a90243c9so4768758a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 11:33:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721759632; x=1722364432; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jVlnyN0btPbYCcHbH0TkKobCqtHm6zMls3/CNbNfk/I=;
-        b=BWoVOlkhhWtTHUF4nKcFnVEDmWEvMIIXT6uWr6WvJC2qcVhoYqcbkuTxV17PNZMuss
-         EeBEyGYv+kp7YDQB9vqG2Zsi/lOz3tbPFvhTt5cC9ZkMiuljwqHJ+T8HncDwcgNkMV9o
-         0GzdAoD1N2Z69DtYI0erbcGA1WelF6MmHcrUg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721759632; x=1722364432;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jVlnyN0btPbYCcHbH0TkKobCqtHm6zMls3/CNbNfk/I=;
-        b=OBYZLgWtJ4ZZHweAFuzhGl5RQdGx9K8/aaFB3vR50nm7u/Y4uKDcdrl5tof3ekR2vb
-         j+lcdYbvMfAVSjrtRANuFLD1EeK/Wa4luie0UR6TzqZIa4i04dxMDAZGGABQYq9B66Vf
-         8PO46lZxn1yJFTYoKRyU5jk8xmY4qffFCGVpcudJyIOzZA4awy40w69GU5U1RO8QGkO9
-         yuyc9VDyqUmSNRbxRAvaa1POvszRD4MR+i+pdI5/OxY1FRp58pbrePfksId1tYHaE131
-         Z0hDSkkhnHI6iw065YiieJPx0SllIYCp33HOE3IwCIE94A3VaBu3AhxRygfKqs+jPQRG
-         HLNw==
-X-Gm-Message-State: AOJu0YxLM9BGJPY7jvHoPJgI/gpsc2M1C7EIFlad/5Y9vx1cQtjNL8Sk
-	ncK+yeQymC91bXzADaUsSUuYZbyIzHSN8j8Ums7HLqfcKGtfEKeksoGeH6cfNkcjGVp3hpayHrj
-	/+LzjMA==
-X-Google-Smtp-Source: AGHT+IGxJO3ScnABrtjChZXFuZtEsDHSg+sAuj/bn2StWBtIxzffiwNImgVFx8UoaRV8NPyquxmTeg==
-X-Received: by 2002:a50:9fa8:0:b0:5a2:6e1c:91ed with SMTP id 4fb4d7f45d1cf-5a47a61f401mr7094416a12.27.1721759631869;
-        Tue, 23 Jul 2024 11:33:51 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30af8384fsm7941288a12.44.2024.07.23.11.33.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 11:33:51 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc3447fso5172941a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 11:33:51 -0700 (PDT)
-X-Received: by 2002:a05:6402:26c2:b0:5a3:f5c6:7cd9 with SMTP id
- 4fb4d7f45d1cf-5a47a61f330mr9178333a12.26.1721759630852; Tue, 23 Jul 2024
- 11:33:50 -0700 (PDT)
+	s=arc-20240116; t=1721760327; c=relaxed/simple;
+	bh=UrxWRPlMqpoWKZ2bExnCYyL4Z0PybRF7zzgPePLINCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=scpWfT9XD1DqOniWyBAB+lYqDohmU+ynSr8Lq92WIJvYD0ktSHP+awaBbpAhqaePHT5l6haQzIJ3WTGi6BgweCAXMp43iHDLOV2q2kL9y89LtqSZ0xRusn6X+r8dWTcgJ2zrgrGPfYjsXOSKKIgudkv4J1lFD4bM0eVzH8CBT74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=opUwadBX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NAUdeW019032;
+	Tue, 23 Jul 2024 18:45:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gCCB1G6hlRvOVWfsLO+bg+iIDXZd0MGxhchi6Ypv1wY=; b=opUwadBXeU5mB+H3
+	LReIUOQtAog8dM2aE3Kviqtgh4NsLUcgPDH7HYG8ACYH8BGL/+5H940r7dgu2Ksr
+	yAnrVC5Ue9wTaWVVyelIWIyBegfl9KAVq/hoOBw+XoIxzxU0v7rtI6V2pY4TlSBG
+	bPcr3H8/ok8GtRlcOt/CAM6XjdlcXWdpxqn76Gcd0cXNqGD3Od8cVhDUk759EQuM
+	k1SzBA/DZr/YAUNrC2wazbA4DO6z6cXwYtEzbAfIOroKL35y+YoWiqVNOhO/cNWC
+	mwzemEtNlR1dtwaVWHts3Hlm8yu3G3PR8nbVre3CuqikYYBh3N8zlRIm3+dnACXz
+	2p668g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g60jyr3r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 18:45:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NIjMOM012077
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 18:45:22 GMT
+Received: from [10.111.176.36] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
+ 2024 11:45:22 -0700
+Message-ID: <d9e59c2d-bd31-4536-9a7b-64b2c071f50d@quicinc.com>
+Date: Tue, 23 Jul 2024 11:45:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723171753.739971-1-adrian.ratiu@collabora.com> <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
-In-Reply-To: <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 23 Jul 2024 11:33:34 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiU8igSGkycZ1e8+6-NF9obbbt1aZXYwd0ONzXnHsBgHA@mail.gmail.com>
-Message-ID: <CAHk-=wiU8igSGkycZ1e8+6-NF9obbbt1aZXYwd0ONzXnHsBgHA@mail.gmail.com>
-Subject: Re: [PATCH] proc: add config & param to block forcing mem writes
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	kernel@collabora.com, gbiv@google.com, inglorion@google.com, 
-	ajordanr@google.com, Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, 
-	Jann Horn <jannh@google.com>, Kees Cook <kees@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] unicode: add MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com>
+ <87y17vng34.fsf@mailhost.krisman.be> <87v823npvl.fsf@mailhost.krisman.be>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <87v823npvl.fsf@mailhost.krisman.be>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zz9er9Q2DBXDwk5k9hdK20aM6trT2ry8
+X-Proofpoint-GUID: zz9er9Q2DBXDwk5k9hdK20aM6trT2ry8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-23_09,2024-07-23_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 suspectscore=0 phishscore=0 clxscore=1011 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407230130
 
-On Tue, 23 Jul 2024 at 11:30, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> but while that looks a bit prettier, the whole "fs_parser.h" thing is
-> admittedly odd.
+On 6/20/2024 4:41 PM, Gabriel Krisman Bertazi wrote:
+> 
+>> Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+>>
+>>> Currently 'make W=1' reports:
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
+>>>
+>>> Add a MODULE_DESCRIPTION() to utf8-selftest.c and utf8data.c_shipped,
+>>> and update mkutf8data.c to add a MODULE_DESCRIPTION() to any future
+>>> generated utf8data file.
+>>>
+>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>>> ---
+>>> Note that I verified that REGENERATE_UTF8DATA creates a file with
+>>> the correct MODULE_DESCRIPTION(), but that file has significantly
+>>> different contents than utf8data.c_shipped using the current:
+>>> https://www.unicode.org/Public/UNIDATA/UCD.zip
+>>
+>> Thanks for reporting this.  I'll investigate and definitely regenerate
+>> the file.
+> 
+> Now that I investigated it, I realized there is perhaps a
+> misunderstanding and not an issue. I just tried regenerating utf8data.c
+> and the file is byte-per-byte equal utf8data_shipped.c, so all is
+> good.
+> 
+> Considering the link you posted, I suspect you used the latest
+> unicode version and not version 12.1, which we support.  So there is no
+> surprise the files won't match.
+> 
+>> The patch is good, I'll apply it to the unicode code tree
+>> following the fix to the above issue.
+> 
+> Applied!
+> 
+> ty,
+> 
 
-.. don't get me wrong - /proc obviously *is* a filesystem, but in this
-context it's a boot command line parameter, not a mount option.
+Hi,
+I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
+Will you be able to have this pulled during the merge window?
+I'm trying to eradicate all of these warnings before 6.11 rc-final.
 
-The "constant_table" thing obviously does work outside of mount
-options too, it's just that it's documented and used in the context of
-the mount API.
-
-                  Linus
+Thanks!
+/jeff
 
