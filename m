@@ -1,190 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-24108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38D8939894
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 05:12:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33249398A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 05:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CC261C2196B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 03:12:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19855282264
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 03:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398B313BC2F;
-	Tue, 23 Jul 2024 03:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7244A13B2A8;
+	Tue, 23 Jul 2024 03:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M70k9AFd"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="G3XEZH8B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E516C42AB3;
-	Tue, 23 Jul 2024 03:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D279134407
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 03:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721704334; cv=none; b=f6F5vyhKFTyMsz6lrjViqSLoWsvwWClc0M4olQ6BiO8ZcT3dVoWkn4P6tpRlxZ4bFZblmhWrcTliYNiRwZ6rl7JeI9zf+u0td4QZ98kfBjfV/9RCxjR88KUCFGRegeq/pnzwrZbXTRBQmf6JPrcXsRepmiP9LNxjfp6R2BJbyv0=
+	t=1721705689; cv=none; b=utmS8cMBWR3rc/+MXTPJ0Rd4hnkAip8CxVAfLJ/W9qcOcQOzuDyZd38TTjhDeHnEAl0XM6IrIBYwrbL+NG+Zm9Gbsjd14PNJH47lCRb1GmoImjYvTui2bs+jhgCb39/0s3+Hkb2wUW7103RggeYpzUjbi/AOw5r4jsyp3+K1698=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721704334; c=relaxed/simple;
-	bh=BVFBNVJEopweMgkwS0yCRpITnW9Vb72UW6UVguAMnCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cgeLYRpFay1ejmbLPwYOvhCp8aVKQIQ9uct6kpnmH4ovBOf0g6v9Bl3gm7/93SpbLQ0t2JCWRRMD99NjqfDY5esvmA3iviRt5e6+30l530DC4MI+67IowaNboeZViNnk61ATM37iz8Raw3M07Oy5y01svkx8m1xlpHa4VR6n8tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M70k9AFd; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=9+ZzNfLKx1x+E/jrJLAE81V36izhpkebUp8gJEUE2eA=; b=M70k9AFdXAIjqyFoFZ8dKa4CER
-	0Tu4Fjf82g0j6gzR6KhFTK3dLjXvbth5y6OGCMjndHbd+3iNTqX+CNw3v8PINiYX6FZs7lsQB9zH6
-	mgwatODQFBAB7glBxd6Ytj1MtieNXCYECGFn3L1peItYuDxEwS64zXr8D/Gv6qhWuJmijuoTSs3uf
-	UdvBkB2gsFxenVGZNUq+fSSmiU7CpzYiKEnhJznCtegk4Ps+TqwlvpsVX2/Wrw9a97O+g5rfpbiGB
-	3iqDGx6gdJnah8LqEn6yi+K3RUu0ZJrC+eCZNPSdQESSYqGcU4nhATCei0Q/XA7BP5Vc/iolfFjEg
-	JPfey3Ow==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sW5wX-00000006Sue-3Xpv;
-	Tue, 23 Jul 2024 03:12:01 +0000
-Date: Tue, 23 Jul 2024 04:12:01 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc: linux-btrfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: State of removing page->index
-Message-ID: <Zp8fgUSIBGQ1TN0D@casper.infradead.org>
+	s=arc-20240116; t=1721705689; c=relaxed/simple;
+	bh=Wy//HDKOsBE6f76+BhG2quuvrGFpTxUnea6ZwsKdAuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPqiSiO+wCWGVwT4HrvCBCz0UO2MoXw1q7BCK3KdrYpiHmlOjmV3OSz4gbosHrwSF136US6YBOxVp+i0SLxCMF/Y8vvSsG2F4IaNHlwonjmcFN1v/TfAl+cFLGjtxcj4Yy9jM6X83p+qnQ+CBmrcrJp1MoiLoxPC7jfIj47VJLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=G3XEZH8B; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-24c0dbd2866so2489137fac.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jul 2024 20:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1721705687; x=1722310487; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=odhMre96IuepQxSDaxhNjNarvTL+5+GbuLCBFloWAss=;
+        b=G3XEZH8BlPZ2xJer8MIhfSjFKknlbYrmw8Z8qk2i+WgmeJP76EGGkDarJUvB06cacy
+         PvPi06MSpsSl4jvJzO/ss9f6VZUzgirNdxVWwKHIH4SoGDTqVP+6DJ0lcuenZ6cxnTvj
+         SJ2qqIUvZM6xMzkXdnf6HsCPKer8BDOpTYXp85pK49j/GLwqSEvkpWkCjWV34WxZgIWv
+         57Fxh5TZBSqFxQHqHnlDUXH1tIEb2jo5HNWfiY22Txvi1QHeKzMqm75pvorUB+CEizdR
+         tS9BFs7sbKNGgm5EuoPv4sIOnkN7YTTnHMgSvtxCWOcRy5rGVh4ZkpCoeMH98Gjo7e1e
+         A6wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721705687; x=1722310487;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=odhMre96IuepQxSDaxhNjNarvTL+5+GbuLCBFloWAss=;
+        b=Jz0YegzUS4S4Wz3JMwvwIzsnEac2s2FkGq33bpXEyMpf4du2Kbqji1W9Uqmzip0AgX
+         KKhS2i+UJCaM0nYZ5yDGsV5xoaPlwZloFlKxsvdqbrPmNWM849eo6VkqFiVY1NY4EmQv
+         rBw2nkxvqf393a0w0PtRV6hwGLubSg/fpttzVLRNI4FXdX6pNQTpHrJt+kQ8Hu48VPg/
+         nA7uFGhVnu1vfwnJxkk2w+YYANnQtIQ6rBzaTlxmIgoNnYsdKOKhWimI9WFq/TSOodPb
+         era8HeY/nGj6mITzqdncpa8Db0hS8ao8KTErUt4uskldvlWs8ES3aOZwMEDMmzTE3tZt
+         d/Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsBhd+oOIqdHBZrf7vVkt0RnoSqgi45acOA9Fs99ImKmel3TwLvokvYcb2I3cyuWv6/C6f3ayw7nXa5eqxkP/JqkBDGfP5OyO7GHElTg==
+X-Gm-Message-State: AOJu0Ywx/aF7ZNT1XSkDdWIXCyGiSyHuJIMMtOjFVJh4AXHo5DRHeSEQ
+	q38Sz4JLDLBKwdJgIaTLYsa0QoSqTjst77Z0Wrnwt36Vxa/JfVbBP05h2dtBmxo=
+X-Google-Smtp-Source: AGHT+IFuizr6yBlxfFzr/VooOJme/aR+1mm8qjWN3Qfscmq972ay9+yrA60/QR8RQS6hkaK1UBulzw==
+X-Received: by 2002:a05:6871:7896:b0:25e:1711:90e3 with SMTP id 586e51a60fabf-2612130d34bmr9655696fac.2.1721705687247;
+        Mon, 22 Jul 2024 20:34:47 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d270cab28sm2656949b3a.115.2024.07.22.20.34.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 20:34:46 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sW6IW-0083su-0e;
+	Tue, 23 Jul 2024 13:34:44 +1000
+Date: Tue, 23 Jul 2024 13:34:44 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Matus Jokay <matus.jokay@stuba.sk>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+Message-ID: <Zp8k1H/qeaVZOXF5@dread.disaster.area>
+References: <20240710024029.669314-2-paul@paul-moore.com>
+ <20240710.peiDu2aiD1su@digikod.net>
+ <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
+ <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
 
-My project for the next few weeks is removing page->index.
+On Mon, Jul 22, 2024 at 03:46:36PM -0400, Paul Moore wrote:
+> On Mon, Jul 22, 2024 at 8:30 AM Matus Jokay <matus.jokay@stuba.sk> wrote:
+> > On 10. 7. 2024 12:40, Mickaël Salaün wrote:
+> > > On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
+> > >> The LSM framework has an existing inode_free_security() hook which
+> > >> is used by LSMs that manage state associated with an inode, but
+> > >> due to the use of RCU to protect the inode, special care must be
+> > >> taken to ensure that the LSMs do not fully release the inode state
+> > >> until it is safe from a RCU perspective.
+> > >>
+> > >> This patch implements a new inode_free_security_rcu() implementation
+> > >> hook which is called when it is safe to free the LSM's internal inode
+> > >> state.  Unfortunately, this new hook does not have access to the inode
+> > >> itself as it may already be released, so the existing
+> > >> inode_free_security() hook is retained for those LSMs which require
+> > >> access to the inode.
+> > >>
+> > >> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > >
+> > > I like this new hook.  It is definitely safer than the current approach.
+> > >
+> > > To make it more consistent, I think we should also rename
+> > > security_inode_free() to security_inode_put() to highlight the fact that
+> > > LSM implementations should not free potential pointers in this blob
+> > > because they could still be dereferenced in a path walk.
+> > >
+> > >> ---
+> > >>  include/linux/lsm_hook_defs.h     |  1 +
+> > >>  security/integrity/ima/ima.h      |  2 +-
+> > >>  security/integrity/ima/ima_iint.c | 20 ++++++++------------
+> > >>  security/integrity/ima/ima_main.c |  2 +-
+> > >>  security/landlock/fs.c            |  9 ++++++---
+> > >>  security/security.c               | 26 +++++++++++++-------------
+> > >>  6 files changed, 30 insertions(+), 30 deletions(-)
+> 
+> ...
+> 
+> > Sorry for the questions, but for several weeks I can't find answers to two things related to this RFC:
+> >
+> > 1) How does this patch close [1]?
+> >    As Mickaël pointed in [2], "It looks like security_inode_free() is called two times on the same inode."
+> >    Indeed, it does not seem from the backtrace that it is a case of race between destroy_inode and inode_permission,
+> >    i.e. referencing the inode in a VFS path walk while destroying it...
+> >    Please, can anyone tell me how this situation could have happened? Maybe folks from VFS... I added them to the copy.
+> 
+> The VFS folks can likely provide a better, or perhaps a more correct
+> answer, but my understanding is that during the path walk the inode is
+> protected by a RCU lock which allows for multiple threads to access
+> the inode simultaneously; this could result in some cases where one
+> thread is destroying the inode while another is accessing it.
 
-The last patch in the series is mostly:
+Shouldn't may_lookup() be checking the inode for (I_NEW |
+I_WILLFREE | I_FREE) so that it doesn't access an inode either not
+completely initialised or being evicted during the RCU path walk?
+All accesses to the VFS inode that don't have explicit reference
+counts have to do these checks...
 
-+++ b/include/linux/mm_types.h
-@@ -103,7 +103,7 @@ struct page {
-                        /* See page-flags.h for PAGE_MAPPING_FLAGS */
-                        struct address_space *mapping;
-                        union {
--                               pgoff_t index;          /* Our offset within map
-ping. */
-+                               pgoff_t __folio_index;          /* Our offset wi
-thin mapping. */
-                                unsigned long share;    /* share count for fsdax */
-                        };
-                        /**
+IIUC, at the may_lookup() point, the RCU pathwalk doesn't have a
+fully validate reference count to the dentry or the inode at this
+point, so it seems accessing random objects attached to an inode
+that can be anywhere in the setup or teardown process isn't at all
+safe...
 
-This is a stepping stone to shrinking struct page by half (64 bytes down
-to 32 bytes) [1] and allocating struct folio separately from struct page.
-It's currently 15 patches:
-
-      bootmem: Stop using page->index
-      mm: Constify page_address_in_vma()
-      mm: Convert page_to_pgoff() to page_pgoff()
-      mm: Mass constification of folio/page pointers
-      fs: Turn page_offset() into a wrapper around folio_pos()
-      fs: Remove page_mkwrite_check_truncate()
-      mm: Remove references to page->index in huge_memory.c
-      mm: Use page->private instead of page->index in percpu
-      perf: Remove setting of page->index and ->mapping
-      dax: Remove access to page->index
-      null_blk: Remove accesses to page->index
-      watch_queue: Use page->private instead of page->index
-      isofs: Partially convert zisofs_read_folio to use a folio
-      dax: Use folios more widely within DAX
-      mm: Rename page->index to page->__folio_index
-
-I haven't pushed the git tree because the build bots will choke on
-the following files which still use page->index:
-
-drivers/hwtracing/intel_th/msu.c
-drivers/net/ethernet/sun/niu.c
-drivers/staging/fbtft/fbtft-core.c
-drivers/video/fbdev/core/fb_defio.c
-fs/btrfs/compression.c
-fs/btrfs/extent_io.c
-fs/btrfs/file.c
-fs/btrfs/super.c
-fs/ceph/addr.c
-fs/ceph/dir.c
-fs/ceph/inode.c
-fs/crypto/crypto.c
-fs/ecryptfs/crypto.c
-fs/ecryptfs/mmap.c
-fs/ecryptfs/read_write.c
-fs/erofs/data.c
-fs/f2fs/checkpoint.c
-fs/f2fs/compress.c
-fs/f2fs/data.c
-fs/f2fs/dir.c
-fs/f2fs/file.c
-fs/f2fs/inline.c
-fs/f2fs/inode.c
-fs/f2fs/node.c
-fs/f2fs/segment.c
-fs/f2fs/super.c
-fs/fuse/file.c
-fs/jffs2/file.c
-fs/jfs/jfs_metapage.c
-fs/ntfs3/frecord.c
-fs/ocfs2/alloc.c
-fs/ocfs2/aops.c
-fs/ocfs2/mmap.c
-fs/reiserfs/file.c
-fs/reiserfs/inode.c
-fs/smb/client/smb2ops.c
-fs/squashfs/file.c
-fs/squashfs/page_actor.c
-fs/ufs/dir.c
-mm/zsmalloc.c
-
-Some of these will be fixed with scheduled pull requests (jfs), or are
-improved (and maybe solved) by other pending series (ufs, ecryptfs,
-jffs2, zsmalloc).
-
-Expect to see a few patches from me over the next few weeks that seem
-random; there is a destination in mind, and if everything lines up,
-we might be able to get to it by the next merge window.  Probably
-something will miss landing in v6.12 and it'll be the v6.13 release
-before page->index goes away entirely.
-
-I believe I have someone lined up to help with ocfs2.  If anyone wants to
-help with the remaining filesystems (btrfs & f2fs in particular!), let
-me know.  I'm honestly tempted to mark reiserfs BROKEN at this point.
-
-The diffstat of what I currently have looks like this:
-
- arch/x86/mm/init_64.c         |  9 +++----
- drivers/block/null_blk/main.c |  8 +++---
- drivers/dax/device.c          |  9 +++----
- fs/ceph/addr.c                | 11 ++++----
- fs/dax.c                      | 53 ++++++++++++++++++++-------------------
- fs/isofs/compress.c           | 13 +++++-----
- include/linux/bootmem_info.h  | 25 +++++++++++++------
- include/linux/ksm.h           |  7 +++---
- include/linux/mm_types.h      |  6 ++---
- include/linux/pagemap.h       | 58 ++++++-------------------------------------
- include/linux/rmap.h          | 12 ++++-----
- kernel/events/core.c          |  2 --
- kernel/watch_queue.c          |  4 +--
- mm/bootmem_info.c             | 11 ++++----
- mm/huge_memory.c              | 18 +++++++-------
- mm/internal.h                 | 13 +++++++---
- mm/ksm.c                      |  5 ++--
- mm/memory-failure.c           | 28 +++++++++++----------
- mm/page_vma_mapped.c          |  5 ++--
- mm/percpu.c                   |  4 +--
- mm/rmap.c                     | 18 ++++++++------
- mm/sparse.c                   |  8 +++---
- mm/util.c                     |  2 +-
- 23 files changed, 153 insertions(+), 176 deletions(-)
-
-... mostly it's a 1:1 replacement of page with folio, or ->index with
-->private, but we get to delete some stuff along the way.
-
-[1] https://kernelnewbies.org/MatthewWilcox/Memdescs/Path
-Yes, page->mapping is next on the list in case you're touching
-a page->index and notice a page->mapping next door to it.
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
