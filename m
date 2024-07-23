@@ -1,127 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-24104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5B5939676
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 00:21:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5023939886
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 05:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1876B2173B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jul 2024 22:21:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD351F2157E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 03:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3DD4502F;
-	Mon, 22 Jul 2024 22:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9631D13B7B3;
+	Tue, 23 Jul 2024 03:03:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A0C1B960;
-	Mon, 22 Jul 2024 22:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E46CEC2;
+	Tue, 23 Jul 2024 03:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721686868; cv=none; b=GujsmdKG2nKfzKgwMrt4DFjAPSVZVsnykgx6IS2iOa1/YUvwLQQ5AwNS7XAsxtXtX9pU83466F9eyIR/Pet9rn8mCB9p5FDGxqrmW3Elca/X6Cggpk1ppQU6umU5Uu1uNql0kcWpkGjDWnWgJEZwJrOb0q9TE37dtYlW8/2PMJE=
+	t=1721703811; cv=none; b=m7eX7N9o18dldgnsUns8sapl272EFU2Xa4gUBQZtnKiKjU8sOwLC0VuSBug74X13qTvQNAZbExD+NtgzA1PnbvF31NT6rDC2vfa9eq1H29Jagn6hCGWE0pVMVT0hpOePveQ3iCciBU0YLY2szzQ6peN7xOQBKlxI4Bg8t8bb3PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721686868; c=relaxed/simple;
-	bh=u34oHSBolYvHu5PbyqOxoctMYJ2hf/tMOZnEAdGNFnc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ve6O1Jm4ecJOVNEPOGjeiO7u/7uTxxX9hwnRPZrLpQtSKRNvVLQDuH4Ug8BTFn0WNkhRwrOVlGU5Ntqv5a0zLPyHSDzsrWY1qyyLgI7OYVaUII1zx00M5hefUk140cAsfuAaP0qEVnYEksWZj+9IUk7X/Vpp8+ZsiqiMr3BCNAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46MMKYWb045436;
-	Tue, 23 Jul 2024 07:20:34 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
- Tue, 23 Jul 2024 07:20:34 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46MMKY1t045429
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 23 Jul 2024 07:20:34 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <e6e7cb33-f359-43bd-959e-039e82c6915a@I-love.SAKURA.ne.jp>
-Date: Tue, 23 Jul 2024 07:20:34 +0900
+	s=arc-20240116; t=1721703811; c=relaxed/simple;
+	bh=vz8NZV0J24MqlKQ6GuY6C74injV8xf7mS6Cf59vuhqw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U7ko0TTZSjbpP8EQzWX5cada0HoROTOexT37XPm1MAmd3hkSHXZEjXVf/p+TnW0Qy/54xPS86oZUQsivOveM7sSWCDrK+JA7yfZAM+f9Pn1WYRgPLJJiiulYC8VHkCtVeTL0YeIf9SPtrDFSjv7Ed+ZOrEkRjYI8Olw2UsE8x54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WShfp57dLz1JDb8;
+	Tue, 23 Jul 2024 10:58:26 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id F25AF14037E;
+	Tue, 23 Jul 2024 11:03:25 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
+ (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 23 Jul
+ 2024 11:03:25 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <muchun.song@linux.dev>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<david@fromorbit.com>
+CC: <mathieu.desnoyers@efficios.com>, <linux-mm@kvack.org>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<lihongbo22@huawei.com>
+Subject: [PATCH v3 0/2] Introduce tracepoint for hugetlbfs
+Date: Tue, 23 Jul 2024 11:08:32 +0800
+Message-ID: <20240723030834.213012-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tty: tty_io: fix race between tty_fops and
- hung_up_tty_fops
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-serial <linux-serial@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <a11e31ab-6ffc-453f-ba6a-b7f6e512c55e@I-love.SAKURA.ne.jp>
- <20240722-gehminuten-fichtenwald-9dd5a7e45bc5@brauner>
- <20240722161041.t6vizbeuxy5kj4kz@quack3>
- <2024072238-reversing-despise-b555@gregkh>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <2024072238-reversing-despise-b555@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On 2024/07/23 1:24, Greg Kroah-Hartman wrote:
-> On Mon, Jul 22, 2024 at 06:10:41PM +0200, Jan Kara wrote:
->> On Mon 22-07-24 16:41:22, Christian Brauner wrote:
->>> On Fri, Jul 19, 2024 at 10:37:47PM GMT, Tetsuo Handa wrote:
->>>> syzbot is reporting data race between __tty_hangup() and __fput(), and
->>>> Dmitry Vyukov mentioned that this race has possibility of NULL pointer
->>>> dereference, for tty_fops implements e.g. splice_read callback whereas
->>>> hung_up_tty_fops does not.
->>>>
->>>>   CPU0                                  CPU1
->>>>   ----                                  ----
->>>>   do_splice_read() {
->>>>                                         __tty_hangup() {
->>>>     // f_op->splice_read was copy_splice_read
->>>>     if (unlikely(!in->f_op->splice_read))
->>>>       return warn_unsupported(in, "read");
->>>>                                           filp->f_op = &hung_up_tty_fops;
->>>>     // f_op->splice_read is now NULL
->>>>     return in->f_op->splice_read(in, ppos, pipe, len, flags);
->>>>                                         }
->>>>   }
->>>>
->>>> Fix possibility of NULL pointer dereference by implementing missing
->>>> callbacks, and suppress KCSAN messages by adding __data_racy qualifier
->>>> to "struct file"->f_op .
->>>
->>> This f_op replacing without synchronization seems really iffy imho.
->>
->> Yeah, when I saw this I was also going "ouch". I was just waiting whether a
->> tty maintainer will comment ;)
-> 
-> I really didn't want to :)
-> 
->> Anyway this replacement of ops in file /
->> inode has proven problematic in almost every single case where it was used
->> leading to subtle issues.
-> 
-> Yeah, let's not do this.
+Here we add some basic tracepoints for debugging hugetlbfs: {alloc, free,
+evict}_inode, setattr and fallocate.
 
-https://lkml.kernel.org/r/18a58415-4aa9-4cba-97d2-b70384407313@I-love.SAKURA.ne.jp was a patch
-that does not replace f_op, and
-https://lkml.kernel.org/r/CAHk-=wgSOa_g+bxjNi+HQpC=6sHK2yKeoW-xOhb0-FVGMTDWjg@mail.gmail.com
-was a comment from Linus.
+v2 can be found at:
+https://lore.kernel.org/all/ZoYY-sfj5jvs8UpQ@casper.infradead.org/T/
 
-> 
-> Let me dig after -rc1 is out and see if there's a better way to handle
-> this contrived race condition...
-> 
-> thanks,
-> 
-> greg k-h
+Changes since v2:
+  - Simplify the tracepoint output for setattr.
+  - Make every token be space separated.
+
+
+v1 can be found at:
+https://lore.kernel.org/linux-mm/20240701194906.3a9b6765@gandalf.local.home/T/
+
+Changes since v1:
+  - Decrease the parameters for setattr tracer suggested by Steve and Mathieu.
+  - Replace current_user_ns() with init_user_ns when translate uid/gid.
+
+Hongbo Li (2):
+  hugetlbfs: support tracepoint
+  hugetlbfs: use tracepoints in hugetlbfs functions.
+
+ MAINTAINERS                      |   1 +
+ fs/hugetlbfs/inode.c             |  17 +++-
+ include/trace/events/hugetlbfs.h | 156 +++++++++++++++++++++++++++++++
+ 3 files changed, 172 insertions(+), 2 deletions(-)
+ create mode 100644 include/trace/events/hugetlbfs.h
+
+-- 
+2.34.1
 
 
