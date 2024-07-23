@@ -1,141 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-24142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD1E93A375
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 17:04:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2A993A3AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 17:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B8028420F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 15:04:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 786C6B22B22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 15:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955CC155740;
-	Tue, 23 Jul 2024 15:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674A6156F55;
+	Tue, 23 Jul 2024 15:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GFC6Uxh5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUyJmG7w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E02154BE3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 15:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B164A3D55D;
+	Tue, 23 Jul 2024 15:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721747069; cv=none; b=AIBYLH/YytfhZXOu8LNJuybpxnQGGps2ZRw1DOwsDyGLAZr+b4Y7sW/0qPKNqb6UPivixAGWhC0auPkQij2BnXjsk3TBygM6g722oO2dL3G3hZ0thApIiN/FEbnpfu62etv8Ti9RpeXoxy34bQorNCwZzIaCH9Sqp7kd6EgpQ3E=
+	t=1721747986; cv=none; b=VpDd7x5WhrX3Ae74LSZcC6qdGZuko3jL4B16hTcrFqieB7C/HtZDJz83M8tl4EkgETAZQ9h2DmcCV2Vn4AsQdm2HFN4xvXrQRCo3bHxGObsjag6R0sKEMpkGmipc/97cTuGF06J+F3ePwjcsRohc1Jz7AO90rH6lEgiaM7lhpts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721747069; c=relaxed/simple;
-	bh=zjPGRyyEZDMLmGkK31czDaTVI5gnoHj+/QGaesuptL8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qta9XZYJBAWTu4KC+fur5pHgms+lyMySwuQz0s6MOtZ0hQN+O1E287GbhJusn/Kb5+FbJTFxikPJoE6EZf4mUPKvIIUT/FN2WQ4l6flxTcPAt9xmdJjP8ektpuXtCF8cXAvzJ98WdauplUyjXRLjA5IdmG/gwc8NUQRZqotUIw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GFC6Uxh5; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266edcc54cso50585e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 08:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721747066; x=1722351866; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5EI7OMT8wzZUrRDcneWMkHrOQy15Kz2ZG+1nK4iJU6s=;
-        b=GFC6Uxh5VhU8TXAr1zBrcS1Hcb3bRtzTnwpZIvi37J+cG/DHmzay7UAT77QNubV7ub
-         TrKVdCybXMqtl6Z356c3+rHC8CceT1mJI/yrp4zf7ImfYHyVZqUcZC+1ySFToFB63QFu
-         4mBIKbr16+HyCPz5BtNeU2IlaWFMe+gJgHS/kh54N62wRBc+FKbOX9oUoQ1cSlLXXXaS
-         z62wxLVBps6bQ99yrkr2zyZB53Jdgr9Tb5FUeCk6rggE5zXmuGFRdEFm5zk/Vs3pdNn8
-         3DWFx/4EKNwDmwQqdtxR4aIjAr2eR1ewbCLlHimldRh4UrJzmXfO3l/BmqDzFe/BvkRr
-         m3Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721747066; x=1722351866;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5EI7OMT8wzZUrRDcneWMkHrOQy15Kz2ZG+1nK4iJU6s=;
-        b=geYSbC+e27oxqDnCkvxBVa61y2Pu84WNYX7Q4chZ0TX4EH5v3eGwe6QZiNyhe2pcoC
-         171UmVTXyUVY2olrX9THNBLVDpNHP0+Dp+LRWFzB/xlDH2mHJfMGgSBQGCF0WMTCZLWV
-         kCX3bOkk/EEMDR0rkd1a8TFm4WAeBc7EEQjhi6NKcREo+oi9aVSDGtYZeK4yxO7YHGMx
-         KbDMd5/HPg4xvjJsvzyA6iulftHbznNXqp65+AV/DELfaGMdm1Ldgd850R/2aHE4XLBR
-         HWiaEsvht90KBDRYH3iGNKZ/jhfBXU2qxemFrx7Ocfg80wa2+7R5+qT4T68Ev5K5XMlh
-         mIBw==
-X-Gm-Message-State: AOJu0Yx6O4PUorOPZpvxfFGUX5UIifGnrzKSHQTitlmdvBYZ0uh+i0aT
-	HzsnwwHyxT8V5XoZWNxXJHomkwNV0aZTaBUY66dNwuSRGcq+uwObnRiSW0ilqw==
-X-Google-Smtp-Source: AGHT+IHjOntlahZUsysgrc3jB0agxSGVzop23IM0mpMgl6qJ4UpWatZ4rTprcN6Lfh9mBaw3J/nNcg==
-X-Received: by 2002:a05:600c:1c98:b0:426:66a0:6df6 with SMTP id 5b1f17b1804b1-427dba6e575mr4890835e9.0.1721747065281;
-        Tue, 23 Jul 2024 08:04:25 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:59b4:7aff:4689:5b42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868423bsm11798247f8f.14.2024.07.23.08.04.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 08:04:24 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Tue, 23 Jul 2024 17:03:56 +0200
-Subject: [PATCH] filelock: Fix fcntl/close race recovery compat path
+	s=arc-20240116; t=1721747986; c=relaxed/simple;
+	bh=FwPpgS4qRjlEJADupC/3U3E6AgMhwSAnIXwqKsSfzK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ii+dcZJnIp7mW9iKOiqhJW2PeTPeUXSONDgm2EoMnNmWuxcOc1KmPhrYCSCTEoTw8Fd0n85Lh5iBfWpX7mZg1kbp/YnGvNiEZtUjIP/wegB2qa5aUn74eIaJ3hg+/PrG6dVz9dkWkprR6rc728D4jEU5Z3M4++626pCtEJAvuQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUyJmG7w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1C9C4AF09;
+	Tue, 23 Jul 2024 15:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721747986;
+	bh=FwPpgS4qRjlEJADupC/3U3E6AgMhwSAnIXwqKsSfzK4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MUyJmG7wwbd1xfqy1LCcUUztVhYv1mjmyLFSESrHiudgz/0+RB0kyJbPuWmOHDS6h
+	 H5hnH3CDR9fHV73GYHyn4+UWJ6bzfK2IO0lueVqppT+0XRSEBT03HfRCjNUSjpjNIE
+	 h6rrL/hDl5sQT0zZ6nn7Q5wmNp88YLeI3o4bOvMBDdRtGzMcJ5TnxohfBnZJIfJ7xf
+	 V8j/HXq/TOkhzg2ymsLEfjJLUyiSz+JnhQMYOX4wBfNbEY/uu+TjTC/qm74q+Wp3Ti
+	 hktBrUpZWIZg3Nj9ckj/Z4OL3WCxrZuNFtt+HEy2Ndfv5G7uzn9lOHCdmgA9WBNq7v
+	 RGhC+8KWPco5g==
+Date: Tue, 23 Jul 2024 17:19:40 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Paul Moore <paul@paul-moore.com>, Matus Jokay <matus.jokay@stuba.sk>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH] lsm: add the inode_free_security_rcu() LSM
+ implementation hook
+Message-ID: <20240723-winkelmesser-wegschauen-4a8b00031504@brauner>
+References: <20240710024029.669314-2-paul@paul-moore.com>
+ <20240710.peiDu2aiD1su@digikod.net>
+ <ad6c7b2a-219e-4518-ab2d-bd798c720943@stuba.sk>
+ <CAHC9VhRsZBjs2MWXUUotmX_vWTUbboyLT6sR4WbzmqndKEVe8Q@mail.gmail.com>
+ <Zp8k1H/qeaVZOXF5@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240723-fs-lock-recover-compatfix-v1-1-148096719529@google.com>
-X-B4-Tracking: v=1; b=H4sIAFvGn2YC/x2MSQqAMAwAvyI5G9BWEPyKeKgx1eBSSaUI4t8tH
- mdg5oHIKhyhKx5QThIlHBnqsgBa3DEzypQZTGWaqjUWfcQt0IrKFBIrUthPd3m5kbyh0Y22sVM
- NuT+Vs/7f/fC+H7r8AGprAAAA
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
- Alexander Aring <alex.aring@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@kernel.org, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zp8k1H/qeaVZOXF5@dread.disaster.area>
 
-When I wrote commit 3cad1bc01041 ("filelock: Remove locks reliably when
-fcntl/close race is detected"), I missed that there are two copies of the
-code I was patching: The normal version, and the version for 64-bit offsets
-on 32-bit kernels.
-Thanks to Greg KH for stumbling over this while doing the stable
-backport...
+On Tue, Jul 23, 2024 at 01:34:44PM GMT, Dave Chinner wrote:
+> On Mon, Jul 22, 2024 at 03:46:36PM -0400, Paul Moore wrote:
+> > On Mon, Jul 22, 2024 at 8:30 AM Matus Jokay <matus.jokay@stuba.sk> wrote:
+> > > On 10. 7. 2024 12:40, Mickaël Salaün wrote:
+> > > > On Tue, Jul 09, 2024 at 10:40:30PM -0400, Paul Moore wrote:
+> > > >> The LSM framework has an existing inode_free_security() hook which
+> > > >> is used by LSMs that manage state associated with an inode, but
+> > > >> due to the use of RCU to protect the inode, special care must be
+> > > >> taken to ensure that the LSMs do not fully release the inode state
+> > > >> until it is safe from a RCU perspective.
+> > > >>
+> > > >> This patch implements a new inode_free_security_rcu() implementation
+> > > >> hook which is called when it is safe to free the LSM's internal inode
+> > > >> state.  Unfortunately, this new hook does not have access to the inode
+> > > >> itself as it may already be released, so the existing
+> > > >> inode_free_security() hook is retained for those LSMs which require
+> > > >> access to the inode.
+> > > >>
+> > > >> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > > >
+> > > > I like this new hook.  It is definitely safer than the current approach.
+> > > >
+> > > > To make it more consistent, I think we should also rename
+> > > > security_inode_free() to security_inode_put() to highlight the fact that
+> > > > LSM implementations should not free potential pointers in this blob
+> > > > because they could still be dereferenced in a path walk.
+> > > >
+> > > >> ---
+> > > >>  include/linux/lsm_hook_defs.h     |  1 +
+> > > >>  security/integrity/ima/ima.h      |  2 +-
+> > > >>  security/integrity/ima/ima_iint.c | 20 ++++++++------------
+> > > >>  security/integrity/ima/ima_main.c |  2 +-
+> > > >>  security/landlock/fs.c            |  9 ++++++---
+> > > >>  security/security.c               | 26 +++++++++++++-------------
+> > > >>  6 files changed, 30 insertions(+), 30 deletions(-)
+> > 
+> > ...
+> > 
+> > > Sorry for the questions, but for several weeks I can't find answers to two things related to this RFC:
+> > >
+> > > 1) How does this patch close [1]?
+> > >    As Mickaël pointed in [2], "It looks like security_inode_free() is called two times on the same inode."
+> > >    Indeed, it does not seem from the backtrace that it is a case of race between destroy_inode and inode_permission,
+> > >    i.e. referencing the inode in a VFS path walk while destroying it...
+> > >    Please, can anyone tell me how this situation could have happened? Maybe folks from VFS... I added them to the copy.
+> > 
+> > The VFS folks can likely provide a better, or perhaps a more correct
+> > answer, but my understanding is that during the path walk the inode is
+> > protected by a RCU lock which allows for multiple threads to access
+> > the inode simultaneously; this could result in some cases where one
+> > thread is destroying the inode while another is accessing it.
+> 
+> Shouldn't may_lookup() be checking the inode for (I_NEW |
+> I_WILLFREE | I_FREE) so that it doesn't access an inode either not
+> completely initialised or being evicted during the RCU path walk?
 
-Apply exactly the same fix to the compat path for 32-bit kernels.
+Going from memory since I don't have time to go really into the weeds.
 
-Fixes: c293621bbf67 ("[PATCH] stale POSIX lock handling")
-Cc: stable@kernel.org
-Link: https://bugs.chromium.org/p/project-zero/issues/detail?id=2563
-Signed-off-by: Jann Horn <jannh@google.com>
----
- fs/locks.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+A non-completely initalised inode shouldn't appear in path lookup.
+Before the inode is attached to a dentry I_NEW would have been removed
+otherwise this is a bug. That can either happen via unlock_new_inode()
+and d_splice_alias() or in some cases directly via d_instantiate_new().
+Concurrent inode lookup calls on the same inode (e.g., iget_locked() and
+friends) will sleep until I_NEW is cleared.
 
-diff --git a/fs/locks.c b/fs/locks.c
-index bdd94c32256f..9afb16e0683f 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2570,8 +2570,9 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
- 	error = do_lock_file_wait(filp, cmd, file_lock);
- 
- 	/*
--	 * Attempt to detect a close/fcntl race and recover by releasing the
--	 * lock that was just acquired. There is no need to do that when we're
-+	 * Detect close/fcntl races and recover by zapping all POSIX locks
-+	 * associated with this file and our files_struct, just like on
-+	 * filp_flush(). There is no need to do that when we're
- 	 * unlocking though, or for OFD locks.
- 	 */
- 	if (!error && file_lock->c.flc_type != F_UNLCK &&
-@@ -2586,9 +2587,7 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
- 		f = files_lookup_fd_locked(files, fd);
- 		spin_unlock(&files->file_lock);
- 		if (f != filp) {
--			file_lock->c.flc_type = F_UNLCK;
--			error = do_lock_file_wait(filp, cmd, file_lock);
--			WARN_ON_ONCE(error);
-+			locks_remove_posix(filp, files);
- 			error = -EBADF;
- 		}
- 	}
+> All accesses to the VFS inode that don't have explicit reference
+> counts have to do these checks...
+> 
+> IIUC, at the may_lookup() point, the RCU pathwalk doesn't have a
+> fully validate reference count to the dentry or the inode at this
+> point, so it seems accessing random objects attached to an inode
+> that can be anywhere in the setup or teardown process isn't at all
+> safe...
 
----
-base-commit: 66ebbdfdeb093e097399b1883390079cd4c3022b
-change-id: 20240723-fs-lock-recover-compatfix-cf2cbab343d1
--- 
-Jann Horn <jannh@google.com>
+may_lookup() cannot encounter inodes in random states. It will start
+from a well-known struct path and sample sequence counters for rename,
+mount, and dentry changes. Each component will be subject to checks
+after may_lookup() via these sequence counters to ensure that no change
+occurred that would invalidate the lookup just done. To be precise to
+ensure that no state could be reached via rcu that couldn't have been
+reached via ref walk.
 
+So may_lookup() may be called on something that's about to be freed
+(concurrent unlink on a directory that's empty that we're trying to
+create or lookup something nonexistent under) while we're looking at it
+but all the machinery is in place so that it will be detected and force
+a drop out of rcu and into reference walking mode.
+
+When may_lookup() calls inode_permission() it only calls into the
+filesystem itself if the filesystem has a custom i_op->permission()
+handler. And if it has to call into the filesystem it passes
+MAY_NOT_BLOCK to inform the filesystem about this. And in those cases
+the filesystem must ensure any additional data structures can safely be
+accessed under rcu_read_lock() (documented in path_lookup.rst).
+
+If the filesystem detects that it cannot safely handle this or detects
+that something is invalid it can return -ECHILD causing the VFS to drop
+out of rcu and into ref walking mode to redo the lookup. That may happen
+directly in may_lookup() it unconditionally happens in walk_component()
+when it's verified that the parent had no changes while we were looking
+at it.
+
+The same logic extends to security modules. Both selinux and smack
+handle MAY_NOT_BLOCK calls from security_inode_permission() with e.g.,
+selinux returning -ECHILD in case the inode security context isn't
+properly initialized causing the VFS to drop into ref walking mode and
+allowing selinux to redo the initialization.
+
+Checking inode state flags isn't needed because the VFS already handles
+all of this via other means as e.g., sequence counters in various core
+structs. It also likely wouldn't help because we'd have to take locks to
+access i_state or sample i_state before calling into inode_permission()
+and then it could still change behind our back. It's also the wrong
+layer as we're dealing almost exclusively with dentries as the main data
+structure during lookup.
+
+Fwiw, a bunch of this is documented in path_lookup.rst, vfs.rst, and
+porting.rst.
+
+(I'm running out of time with other stuff so I want to point out that I
+can't really spend a lot more time on this thread tbh.)
 
