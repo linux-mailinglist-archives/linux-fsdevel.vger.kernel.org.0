@@ -1,127 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-24146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A157493A401
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 17:50:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C847C93A49D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 18:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2CA1F245D6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 15:50:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 372E8B22E88
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 16:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A0F15748E;
-	Tue, 23 Jul 2024 15:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF891581E9;
+	Tue, 23 Jul 2024 16:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTwjMndw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PizVxo1o"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBB01534FB;
-	Tue, 23 Jul 2024 15:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62B5137748;
+	Tue, 23 Jul 2024 16:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721749841; cv=none; b=fwsDoMzwuKyjgNEEBD6Z3wqKKy9JyK8qdUllAtXV2XgWxqF8RCosgDt7ywCZG9n8G4FrH50OFntEOvi292lOBsVaqh5Okj4qtL8c0o5y+EGNsowsFpaH2yoKP41WT3LbofjxpUFnOGcLkI1lnFnXRkEAneF6ayJdB1XlC5/Uyrk=
+	t=1721753909; cv=none; b=K73k6FCP2+F+NUysTJ3SCPtzdQMhlX1ahEuTy/2Nj0+GwFlfcQe4PWQ42/Vf3x8juOzVAe+38FHauv9ekZJ1159csPiPY0l0vH/a99WV/RTbUgLTLB/mDWjgMM28q1HcUo8xSLPUCgXIbqZBqoRBpFWcGqTDDwWOya44HdfzsHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721749841; c=relaxed/simple;
-	bh=TnGMsrJ4pto9VumueOBg6ah9e5LJdE4tr9oJecz4Ptg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JwkDoDK2u9vDojfpn2oE1da4RChHmTCakOQoKXpt/m0VJUgAwPMnFLAPx9+WcXouCkMkxO6DojyoyADTwOWt+K4GjRDQN0sdOtGqb7L2UQXjQEm4+RsZdIqko5E93vsvh8REuxf0cBSbm6hu/y16DC0EGF2wfgLXVozdlWP4YJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTwjMndw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C7EAC4AF0E;
-	Tue, 23 Jul 2024 15:50:40 +0000 (UTC)
+	s=arc-20240116; t=1721753909; c=relaxed/simple;
+	bh=Sqs/0quIp3Pa11UvNTzT7w+Q8ZTby6g4NE3CHsEZAl4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aSigzfgDlX5GsTviFbeu8yUqXTbQ6UfC8h2og7xrYZBjxsr90+8WqNLlPwlzYhu8BpGZE4z7ioD47fuYTvpi0Mmxwkow9Ri988CosOfET16JlVBSXFcOtCrrfw+WcNdZv+vAe+Lv4zmai1z8VgAoFYdZXGyXogsZBrWftNvufDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PizVxo1o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B48C4AF09;
+	Tue, 23 Jul 2024 16:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721749841;
-	bh=TnGMsrJ4pto9VumueOBg6ah9e5LJdE4tr9oJecz4Ptg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=oTwjMndwy4XRxPmDNLdjyU0pGmn1DtwsL+TZCskHHCJ6XDLRUVhrBn+HLAA5GXf7M
-	 f/SW0AsP9rxp0Fsm2jBgQIG3jmoxx2D1oEFadCmMSououeezWNYb0nwIWFINKteTgc
-	 1FnKFuPCvEzAeFF38xLB6AqXBZzIdjCcfqY6UxA5AAb+oXjHFMKbkfWUOi1SMfQbV6
-	 i+01PC2rwajbj8osUZey5bkN4j7uU9XXUFNPt+hFWPYBlWYoYfAB/R+ANhQyRGp175
-	 UGnyxA11PcBezhTv6GNdCPmG8JrF5f6b6ythiGmUOxkZK7YGXWYjoDca+P7ago3q4G
-	 ggYZls6eAK2wg==
-Message-ID: <0616b6be151e2063627fb7f22100b9d3407aceb3.camel@kernel.org>
-Subject: Re: [PATCH] filelock: Fix fcntl/close race recovery compat path
-From: Jeff Layton <jlayton@kernel.org>
-To: Jann Horn <jannh@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner
-	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever
-	 <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@kernel.org
-Date: Tue, 23 Jul 2024 11:50:37 -0400
-In-Reply-To: <20240723-fs-lock-recover-compatfix-v1-1-148096719529@google.com>
+	s=k20201202; t=1721753909;
+	bh=Sqs/0quIp3Pa11UvNTzT7w+Q8ZTby6g4NE3CHsEZAl4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PizVxo1oR2M8aKRGi2wOJgA4mAsf5CbqST3vugX2h0rqCuMeiaaCSx8xC1fpV9HEe
+	 DGbtr2BY9p77OoiW+VImy8DX/QF2Hgru7aRZa5IhJG2OECUM7HdF+kYbRrGh2s6FZH
+	 reEVHGWTRZLtmxEb1/amXltuFsKc8nIsXle1TwlNUx/jO6qgT7ahee2WTMX4x5idcz
+	 ZBsh4mT54/hU0zLqr8y7IooaOv+cq1bWaw5tDLZJH8f2tXJFj8ni2GPxmDmiTWP4V2
+	 N8XOoLmriui7NjecJDPiyWXWyz80XTtNpqKX2X3uiUtLqncMwex6dASfnZu/CpENta
+	 5rJyhTfBf3doA==
+From: SeongJae Park <sj@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>
+Subject: Re: [PATCH v3 4/7] mm: move internal core VMA manipulation functions to own file
+Date: Tue, 23 Jul 2024 09:58:25 -0700
+Message-Id: <20240723165825.196416-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <36667fcc4fcf9e6341239a4eb0e15f6143cdc5c2.1721648367.git.lorenzo.stoakes@oracle.com>
 References: 
-	<20240723-fs-lock-recover-compatfix-v1-1-148096719529@google.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-07-23 at 17:03 +0200, Jann Horn wrote:
-> When I wrote commit 3cad1bc01041 ("filelock: Remove locks reliably when
-> fcntl/close race is detected"), I missed that there are two copies of the
-> code I was patching: The normal version, and the version for 64-bit offse=
-ts
-> on 32-bit kernels.
-> Thanks to Greg KH for stumbling over this while doing the stable
-> backport...
->=20
-> Apply exactly the same fix to the compat path for 32-bit kernels.
->=20
-> Fixes: c293621bbf67 ("[PATCH] stale POSIX lock handling")
-> Cc: stable@kernel.org
-> Link: https://bugs.chromium.org/p/project-zero/issues/detail?id=3D2563
-> Signed-off-by: Jann Horn <jannh@google.com>
+Hi Lorenzo,
+
+On Mon, 22 Jul 2024 12:50:22 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+
+> This patch introduces vma.c and moves internal core VMA manipulation
+> functions to this file from mmap.c.
+> 
+> This allows us to isolate VMA functionality in a single place such that we
+> can create userspace testing code that invokes this functionality in an
+> environment where we can implement simple unit tests of core functionality.
+> 
+> This patch ensures that core VMA functionality is explicitly marked as such
+> by its presence in mm/vma.h.
+> 
+> It also places the header includes required by vma.c in vma_internal.h,
+> which is simply imported by vma.c. This makes the VMA functionality
+> testable, as userland testing code can simply stub out functionality
+> as required.
+> 
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
-> =C2=A0fs/locks.c | 9 ++++-----
-> =C2=A01 file changed, 4 insertions(+), 5 deletions(-)
->=20
-> diff --git a/fs/locks.c b/fs/locks.c
-> index bdd94c32256f..9afb16e0683f 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2570,8 +2570,9 @@ int fcntl_setlk64(unsigned int fd, struct file *fil=
-p, unsigned int cmd,
-> =C2=A0	error =3D do_lock_file_wait(filp, cmd, file_lock);
-> =C2=A0
-> =C2=A0	/*
-> -	 * Attempt to detect a close/fcntl race and recover by releasing the
-> -	 * lock that was just acquired. There is no need to do that when we're
-> +	 * Detect close/fcntl races and recover by zapping all POSIX locks
-> +	 * associated with this file and our files_struct, just like on
-> +	 * filp_flush(). There is no need to do that when we're
-> =C2=A0	 * unlocking though, or for OFD locks.
-> =C2=A0	 */
-> =C2=A0	if (!error && file_lock->c.flc_type !=3D F_UNLCK &&
-> @@ -2586,9 +2587,7 @@ int fcntl_setlk64(unsigned int fd, struct file *fil=
-p, unsigned int cmd,
-> =C2=A0		f =3D files_lookup_fd_locked(files, fd);
-> =C2=A0		spin_unlock(&files->file_lock);
-> =C2=A0		if (f !=3D filp) {
-> -			file_lock->c.flc_type =3D F_UNLCK;
-> -			error =3D do_lock_file_wait(filp, cmd, file_lock);
-> -			WARN_ON_ONCE(error);
-> +			locks_remove_posix(filp, files);
-> =C2=A0			error =3D -EBADF;
-> =C2=A0		}
-> =C2=A0	}
->=20
-> ---
-> base-commit: 66ebbdfdeb093e097399b1883390079cd4c3022b
-> change-id: 20240723-fs-lock-recover-compatfix-cf2cbab343d1
+>  include/linux/mm.h |   35 -
+>  mm/Makefile        |    2 +-
+>  mm/internal.h      |  236 +-----
+>  mm/mmap.c          | 1980 +++-----------------------------------------
+>  mm/mmu_notifier.c  |    2 +
+>  mm/vma.c           | 1766 +++++++++++++++++++++++++++++++++++++++
+>  mm/vma.h           |  364 ++++++++
+>  mm/vma_internal.h  |   52 ++
+>  8 files changed, 2294 insertions(+), 2143 deletions(-)
+>  create mode 100644 mm/vma.c
+>  create mode 100644 mm/vma.h
+>  create mode 100644 mm/vma_internal.h
+> 
+[...]
+> diff --git a/mm/vma_internal.h b/mm/vma_internal.h
+> new file mode 100644
+> index 000000000000..e13e5950df78
+> --- /dev/null
+> +++ b/mm/vma_internal.h
+> @@ -0,0 +1,52 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * vma_internal.h
+> + *
+> + * Headers required by vma.c, which can be substituted accordingly when testing
+> + * VMA functionality.
+> + */
+> +
+> +#ifndef __MM_VMA_INTERNAL_H
+> +#define __MM_VMA_INTERNAL_H
+> +
+[...]
+> +#include <asm/current.h>
+> +#include <asm/page_types.h>
+> +#include <asm/pgtable_types.h>
 
-Doh! Good catch.
+I found the latest mm-unstable fails build for arm64 and kunit (tenically
+speaking, UM) with errors including below.  And 'git bisect' points this patch.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+From arm64 build:
+      CC      mm/vma.o
+    In file included from /mm/vma.c:7:
+    /mm/vma_internal.h:46:10: fatal error: asm/page_types.h: No such file or directory
+       46 | #include <asm/page_types.h>
+          |          ^~~~~~~~~~~~~~~~~~
+    compilation terminated.
+
+From kunit build:
+
+    $ ./tools/testing/kunit/kunit.py build
+    [...]
+    $ make ARCH=um O=.kunit --jobs=36
+    ERROR:root:../lib/iomap.c:156:5: warning: no previous prototype for ‘ioread64_lo_hi’ [-Wmissing-prototypes]
+      156 | u64 ioread64_lo_hi(const void __iomem *addr)
+          |     ^~~~~~~~~~~~~~
+    ../lib/iomap.c:163:5: warning: no previous prototype for ‘ioread64_hi_lo’ [-Wmissing-prototypes]
+      163 | u64 ioread64_hi_lo(const void __iomem *addr)
+          |     ^~~~~~~~~~~~~~
+    ../lib/iomap.c:170:5: warning: no previous prototype for ‘ioread64be_lo_hi’ [-Wmissing-prototypes]
+      170 | u64 ioread64be_lo_hi(const void __iomem *addr)
+          |     ^~~~~~~~~~~~~~~~
+    ../lib/iomap.c:178:5: warning: no previous prototype for ‘ioread64be_hi_lo’ [-Wmissing-prototypes]
+      178 | u64 ioread64be_hi_lo(const void __iomem *addr)
+          |     ^~~~~~~~~~~~~~~~
+    ../lib/iomap.c:264:6: warning: no previous prototype for ‘iowrite64_lo_hi’ [-Wmissing-prototypes]
+      264 | void iowrite64_lo_hi(u64 val, void __iomem *addr)
+          |      ^~~~~~~~~~~~~~~
+    ../lib/iomap.c:272:6: warning: no previous prototype for ‘iowrite64_hi_lo’ [-Wmissing-prototypes]
+      272 | void iowrite64_hi_lo(u64 val, void __iomem *addr)
+          |      ^~~~~~~~~~~~~~~
+    ../lib/iomap.c:280:6: warning: no previous prototype for ‘iowrite64be_lo_hi’ [-Wmissing-prototypes]
+      280 | void iowrite64be_lo_hi(u64 val, void __iomem *addr)
+          |      ^~~~~~~~~~~~~~~~~
+    ../lib/iomap.c:288:6: warning: no previous prototype for ‘iowrite64be_hi_lo’ [-Wmissing-prototypes]
+      288 | void iowrite64be_hi_lo(u64 val, void __iomem *addr)
+          |      ^~~~~~~~~~~~~~~~~
+    In file included from ../mm/vma_internal.h:46,
+                     from ../mm/vma.c:7:
+
+Maybe the above two #include need to be removed or protected for some configs?
+I confirmed simply removing the two lines as below makes at least kunit, arm64,
+and my x86_64 builds happy, but would like to hear your thoughts.
+
+"""
+diff --git a/mm/vma_internal.h b/mm/vma_internal.h
+index e13e5950df78..14c24d5cb582 100644
+--- a/mm/vma_internal.h
++++ b/mm/vma_internal.h
+@@ -43,8 +43,6 @@
+ #include <linux/userfaultfd_k.h>
+
+ #include <asm/current.h>
+-#include <asm/page_types.h>
+-#include <asm/pgtable_types.h>
+ #include <asm/tlb.h>
+
+ #include "internal.h"
+"""
+
+
+Thanks,
+SJ
+
+[...]
 
