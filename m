@@ -1,81 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-24130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E4193A103
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 15:15:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81DB293A109
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 15:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0D4283AE5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 13:15:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3932D283C29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 13:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F6E152E13;
-	Tue, 23 Jul 2024 13:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EDA15351A;
+	Tue, 23 Jul 2024 13:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HjieBgpR"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="iu5aRGVF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E68114E2D0;
-	Tue, 23 Jul 2024 13:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA211534FC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 13:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721740537; cv=none; b=E8B6VM1LEkGaLnGsKWE9LHEC5nS595vc2wdGS6LWa1rujmm+BhinhON9K2e0BBvWil0BrfRGXRdbF0y71KLvpXUcITh3RdtYD7HyjB6Nf1etUfpbCDQrKYYT7b5ZHlQMKnkPTp2YC/dosuJFaWoaHC8e4vnNgdY+Hhq2OctdjKU=
+	t=1721740552; cv=none; b=cs3unA3tlHFrt/+EMHmM1y38ZwxVUDMiFPGgji5NBTURQrpURhdgBzNIOUICGGV6x9Axzn9jy1Kw/LlErfgZ4JLn2jF0vCav2SdybLsCV5XpCtqgiCE2UXp/sHruZ5lfGe6UK7F3gE704YQVBv11p3wS1EJz5BOtMigOCew6rjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721740537; c=relaxed/simple;
-	bh=GQMYqRZLirdBdnV9m05p3q7iUsQxl7Es+Hr/8ahrDeQ=;
+	s=arc-20240116; t=1721740552; c=relaxed/simple;
+	bh=4t/c9B/kIoP+Ate7ojlvKUMM9iVTLD9O0V5zMyRqH/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nWehbobEz8SWlVBmQA/y5KmQ6EuyG6gWbJcqkCJsF1F06cmyu2UwOQLrNz419e0GVdz76pLVzxq+AXfF3z0n4e2jGXK6sl+svxptJHIeUZrdxRIfGqrkJ40p0Uh059hnr8A8S4Ink5M4JJLyikzsuk0bVN2tq1i5vN05tVOyuLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HjieBgpR; arc=none smtp.client-ip=84.16.66.168
+	 Content-Type:Content-Disposition:In-Reply-To; b=KiFeoeqlN8Fq0t4lUH3QSIZydryVQ/goiBt0r1b5QjIr/6ex4z68VAC4zDgHpfZKMAwYo4oBHnPOmb9BIaX2yndTiZC36FkadKMWR13gL09mdbfz3cP283//USNQVVqKrc2NJcjgGWPFc6hJbaTsTZEvba1m3OYn2IjRuteQ9WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=iu5aRGVF; arc=none smtp.client-ip=45.157.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WSyLj0XJ6zvdg;
-	Tue, 23 Jul 2024 15:15:25 +0200 (CEST)
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WSyM22vGzztm3;
+	Tue, 23 Jul 2024 15:15:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721740524;
-	bh=Qj8Xgm8rcMJSt8La6LY/BFSnfayKGlNJ2hnbPdsP+c4=;
+	s=20191114; t=1721740542;
+	bh=4lI4oazmkOZyVO/+hKYfpMj2Cu7Ya1lQsK8QvumCDJo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HjieBgpROL8YzXywnxRaVs/lBhQC8sCG72MSmA1PAGizlICvD8PSvtDlMWicL9X1d
-	 V6xSMy1NB4+7ISBIZb5R4Qb0Q/5r6uVtc04r+yNAtiVVgbQ5PNuDUeO/uAa8G6Yad2
-	 AwO0Y79iGqgbZUsXUVSXoOuwFz3cBPmXaXbe6uxk=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WSyLb1YXwzpH5;
-	Tue, 23 Jul 2024 15:15:19 +0200 (CEST)
-Date: Tue, 23 Jul 2024 15:15:16 +0200
+	b=iu5aRGVFiaz2EvXdhm0W92QucmsighTPOyKQ4FzdFc/TOsdnkel8EKdaRpqzc/2ku
+	 JBfDlUhRFyffOrc38SsjnUdhtefvVfso2+Gqqg/DSIgSU0uxvpEXds2Ikf458ZRYi+
+	 uz8YoHUftVi8pVezUeXWt2AMSfwFwTDQjhh2Z7No=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WSyM127Vdz9Ll;
+	Tue, 23 Jul 2024 15:15:41 +0200 (CEST)
+Date: Tue, 23 Jul 2024 15:15:38 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Andy Lutomirski <luto@kernel.org>
+To: Jeff Xu <jeffxu@google.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, 
 	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
 	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx.manpages@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
 	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
 	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
 	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
 	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
 	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-Message-ID: <20240723.Uquiangopie6@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-3-mic@digikod.net>
- <CALCETrWpk5Es9GPoAdDD=m_vgSePm=cA16zCor_aJV0EPXBw1A@mail.gmail.com>
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240723.beiTu0qui2ei@digikod.net>
+References: <20240704190137.696169-2-mic@digikod.net>
+ <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
+ <20240717.neaB5Aiy2zah@digikod.net>
+ <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
+ <20240718.kaePhei9Ahm9@digikod.net>
+ <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
+ <20240719.shaeK6PaiSie@digikod.net>
+ <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
+ <20240719.sah7oeY9pha4@digikod.net>
+ <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,124 +90,141 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrWpk5Es9GPoAdDD=m_vgSePm=cA16zCor_aJV0EPXBw1A@mail.gmail.com>
+In-Reply-To: <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Sat, Jul 20, 2024 at 10:06:28AM +0800, Andy Lutomirski wrote:
-> On Fri, Jul 5, 2024 at 3:02 AM Mickaël Salaün <mic@digikod.net> wrote:
+On Fri, Jul 19, 2024 at 08:27:18AM -0700, Jeff Xu wrote:
+> On Fri, Jul 19, 2024 at 8:04 AM Mickaël Salaün <mic@digikod.net> wrote:
 > >
-> > These new SECBIT_SHOULD_EXEC_CHECK, SECBIT_SHOULD_EXEC_RESTRICT, and
-> > their *_LOCKED counterparts are designed to be set by processes setting
-> > up an execution environment, such as a user session, a container, or a
-> > security sandbox.  Like seccomp filters or Landlock domains, the
-> > securebits are inherited across proceses.
+> > On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
+> > > On Fri, Jul 19, 2024 at 1:45 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > >
+> > > > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
+> > > > > On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > >
+> > > > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
+> > > > > > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > >
+> > > > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
+> > > > > > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > > > >
+> > > > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > > > > > > > > > allowed for execution.  The main use case is for script interpreters and
+> > > > > > > > > > dynamic linkers to check execution permission according to the kernel's
+> > > > > > > > > > security policy. Another use case is to add context to access logs e.g.,
+> > > > > > > > > > which script (instead of interpreter) accessed a file.  As any
+> > > > > > > > > > executable code, scripts could also use this check [1].
+> > > > > > > > > >
+> > > > > > > > > > This is different than faccessat(2) which only checks file access
+> > > > > > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
+> > > > > > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
+> > > > > > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
+> > > > > > > > > > real execution, user space gets the same error codes.
+> > > > > > > > > >
+> > > > > > > > > So we concluded that execveat(AT_CHECK) will be used to check the
+> > > > > > > > > exec, shared object, script and config file (such as seccomp config),
+> > > >
+> > > > > > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
+> > > > > > > > > sure it passes AT_CHECK, before loading it into memory.
+> > > > > > > >
+> > > > > > > > All ELF dependencies are opened and checked with open_exec(), which
+> > > > > > > > perform the main executability checks (with the __FMODE_EXEC flag).
+> > > > > > > > Did I miss something?
+> > > > > > > >
+> > > > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
+> > > > > > > The app can choose its own dynamic linker path during build, (maybe
+> > > > > > > even statically link one ?)  This is another reason that relying on a
+> > > > > > > userspace only is not enough.
+> > > > > >
+> > > > > > The kernel calls open_exec() on all dependencies, including
+> > > > > > ld-linux-x86-64.so.2, so these files are checked for executability too.
+> > > > > >
+> > > > > This might not be entirely true. iiuc, kernel  calls open_exec for
+> > > > > open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
+> > > >
+> > > > Correct, the dynamic linker is in charge of that, which is why it must
+> > > > be enlighten with execveat+AT_CHECK and securebits checks.
+> > > >
+> > > > > load_elf_binary() {
+> > > > >    interpreter = open_exec(elf_interpreter);
+> > > > > }
+> > > > >
+> > > > > libc.so.6 is opened and mapped by dynamic linker.
+> > > > > so the call sequence is:
+> > > > >  execve(a.out)
+> > > > >   - open exec(a.out)
+> > > > >   - security_bprm_creds(a.out)
+> > > > >   - open the exec(ld.so)
+> > > > >   - call open_exec() for interruptor (ld.so)
+> > > > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
+> > > > > the same check and code path as libc.so below ?
+> > > >
+> > > > open_exec() checks are enough.  LSMs can use this information (open +
+> > > > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
+> > > > request.
+> > > >
+> > > Then the ld.so doesn't go through the same security_bprm_creds() check
+> > > as other .so.
 > >
-> > When SECBIT_SHOULD_EXEC_CHECK is set, programs interpreting code should
-> > check executable resources with execveat(2) + AT_CHECK (see previous
-> > patch).
+> > Indeed, but...
 > >
-> > When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
-> > execution of approved resources, if any (see SECBIT_SHOULD_EXEC_CHECK).
-> 
-> I read this twice, slept on it, read them again, and I *still* can't
-> understand it.  See below...
+> My point is: we will want all the .so going through the same code
+> path, so  security_ functions are called consistently across all the
+> objects, And in the future, if we want to develop additional LSM
+> functionality based on AT_CHECK, it will be applied to all objects.
 
-There is a new proposal:
-https://lore.kernel.org/all/20240710.eiKohpa4Phai@digikod.net/
-The new securebits will be SECBIT_EXEC_RESTRICT_FILE and
-SECBIT_EXEC_DENY_INTERACTIVE.  I'll send a new patch series with that.
-
-> 
-> > The only restriction enforced by the kernel is the right to ptrace
-> > another process.  Processes are denied to ptrace less restricted ones,
-> > unless the tracer has CAP_SYS_PTRACE.  This is mainly a safeguard to
-> > avoid trivial privilege escalations e.g., by a debugging process being
-> > abused with a confused deputy attack.
-> 
-> What's the actual issue?  And why can't I, as root, do, in a carefully
-> checked, CHECK'd and RESTRICT'd environment, # gdb -p <pid>?  Adding
-> weird restrictions to ptrace can substantially *weaken* security
-> because it forces people to do utterly daft things to work around the
-> restrictions.
-
-Restricting ptrace was a cautious approach, but I get you point and I
-agree.  I'll remove the ptrace restrictions in the next patch series.
+I'll extend the doc to encourage LSMs to check for __FMODE_EXEC, which
+already is the common security check for all executable dependencies.
+As extra information, they can get explicit requests by looking at
+execveat+AT_CHECK call.
 
 > 
-> ...
-> 
-> > +/*
-> > + * When SECBIT_SHOULD_EXEC_CHECK is set, a process should check all executable
-> > + * files with execveat(2) + AT_CHECK.  However, such check should only be
-> > + * performed if all to-be-executed code only comes from regular files.  For
-> > + * instance, if a script interpreter is called with both a script snipped as
-> 
-> s/snipped/snippet/
-> 
-> > + * argument and a regular file, the interpreter should not check any file.
-> > + * Doing otherwise would mislead the kernel to think that only the script file
-> > + * is being executed, which could for instance lead to unexpected permission
-> > + * change and break current use cases.
-> 
-> This is IMO not nearly clear enough to result in multiple user
-> implementations and a kernel implementation and multiple LSM
-> implementations and LSM policy authors actually agreeing as to what
-> this means.
+> Another thing to consider is:  we are asking userspace to make
+> additional syscall before  loading the file into memory/get executed,
+> there is a possibility for future expansion of the mechanism, without
+> asking user space to add another syscall again.
 
-Right, no kernel parts (e.g. LSMs) should try to infer anything other
-than an executability check.  We should handle things such as role
-transitions with something else (e.g. a complementary dedicated flag),
-and that should be decorrelated from this patch series.
+AT_CHECK is defined with a specific semantic.  Other mechanisms (e.g.
+LSM policies) could enforce other restrictions following the same
+semantic.  We need to keep in mind backward compatibility.
 
 > 
-> I also think it's wrong to give user code instructions about what
-> kernel checks it should do.  Have the user code call the kernel and
-> have the kernel implement the policy.
+> I m still not convinced yet that execveat(AT_CHECK) fits more than
+> faccessat(AT_CHECK)
 
-Call the kernel for what?  Script interpreter is a user space thing, and
-restrictions enforced on interpreters need to be a user space thing.
-The kernel cannot restrict user space according to a semantic only
-defined by user space, such as Python interpretation, CLI arguments,
-content of environment variables...  If a process wants to interpret
-some data and turn than into code, there is no way for the kernel to
-know about that.
+faccessat2(2) is dedicated to file permission/attribute check.
+execveat(2) is dedicated to execution, which is a superset of file
+permission for executability, plus other checks (e.g. noexec).
 
 > 
-> > +/*
-> > + * When SECBIT_SHOULD_EXEC_RESTRICT is set, a process should only allow
-> > + * execution of approved files, if any (see SECBIT_SHOULD_EXEC_CHECK).  For
-> > + * instance, script interpreters called with a script snippet as argument
-> > + * should always deny such execution if SECBIT_SHOULD_EXEC_RESTRICT is set.
-> > + * However, if a script interpreter is called with both
-> > + * SECBIT_SHOULD_EXEC_CHECK and SECBIT_SHOULD_EXEC_RESTRICT, they should
-> > + * interpret the provided script files if no unchecked code is also provided
-> > + * (e.g. directly as argument).
 > 
-> I think you're trying to say that this is like (the inverse of)
-> Content-Security-Policy: unsafe-inline.  In other words, you're saying
-> that, if RESTRICT is set, then programs should not execute code-like
-> text that didn't come from a file.  Is that right?
-
-That is the definition of the new SECBIT_EXEC_DENY_INTERACTIVE, which
-should be clearer.
-
+> > >
+> > > As my previous email, the ChromeOS LSM restricts executable mfd
+> > > through security_bprm_creds(), the end result is that ld.so can still
+> > > be executable memfd, but not other .so.
+> >
+> > The chromeOS LSM can check that with the security_file_open() hook and
+> > the __FMODE_EXEC flag, see Landlock's implementation.  I think this
+> > should be the only hook implementation that chromeOS LSM needs to add.
+> >
+> > >
+> > > One way to address this is to refactor the necessary code from
+> > > execveat() code patch, and make it available to call from both kernel
+> > > and execveat() code paths., but if we do that, we might as well use
+> > > faccessat2(AT_CHECK)
+> >
+> > That's why I think it makes sense to rely on the existing __FMODE_EXEC
+> > information.
+> >
+> > >
+> > >
+> > > > >   - transfer the control to ld.so)
+> > > > >   - ld.so open (libc.so)
+> > > > >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
+> > > > > require dynamic linker change.
+> > > > >   - ld.so mmap(libc.so,rx)
+> > > >
+> > > > Explaining these steps is useful. I'll include that in the next patch
+> > > > series.
 > 
-> I feel like it would be worth looking at the state of the art of
-> Content-Security-Policy and all the lessons people have learned from
-> it.  Whatever the result is should be at least as comprehensible and
-> at least as carefully engineered as Content-Security-Policy.
-
-That's a good idea, but I guess Content-Security-Policy cannot be
-directly applied here.  My understanding is that CSP enables web servers
-to request restrictions on code they provide.  In the
-AT_CHECK+securebits case, the policy is defined and enforced by the
-interpreter, not necessarily the script provider. One big difference is
-that web servers (should) know the scripts they provide, and can then
-request the browser to ensure that they do what they should do, while
-the script interpreter trusts the kernel to check security properties of
-a script.  In other words, something like CSP could be implemented with
-AT_CHECK+securebits and a LSM policy (e.g. according to file's xattr).
-
-> 
-> --Andy
 
