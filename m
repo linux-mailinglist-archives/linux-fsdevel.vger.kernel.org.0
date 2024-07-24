@@ -1,252 +1,489 @@
-Return-Path: <linux-fsdevel+bounces-24210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B956593B705
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 20:50:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF97C93B830
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 22:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CCBFB23646
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 18:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721BB28427E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 20:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581B716B399;
-	Wed, 24 Jul 2024 18:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1503713A240;
+	Wed, 24 Jul 2024 20:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R4Ri7Xk3";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="X4ulv2au"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kkRn4+Pk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C1F15B13C;
-	Wed, 24 Jul 2024 18:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721847038; cv=fail; b=hno9UHTohN5fauYORXn36Io2laVFteBzbwfHvwLzGTJYBlwb1oyy8jnHPk2tiaMQZihFZGfdzr72jMnc3QbzUbuFulDYjNdhrvMLRON7sr/jv6tMX8feu+zdmT3xlfIKCtgT5hvSFDPrP/C9W3P2DxW/oKoevWwduoobJSPzxpM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721847038; c=relaxed/simple;
-	bh=tnOBP0IsLTptpSZdnUGtRO1LRp1jUY/cJs70z/1fBJc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aoBv6Rwkee0MNeftR3SyGGU09WBz7VQYFQjqhqf19G5kJNqV91tjTmqxBZ51QPdVm8afQdO3Nmg9iU6bu8Bvua5N4BgiicBsMhcoAuG4PUCn2TA7U807iv73bK6FLJqZM2fGUJbig4AVsBOlKPEIsLl0LL0u5ys3i2x0KsF/rNg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=R4Ri7Xk3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=X4ulv2au; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OFXrdM016724;
-	Wed, 24 Jul 2024 18:50:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=ld2IgluGDZlaGvkDNIE6lDQNG+HAAF83h2TBBgxMsYM=; b=
-	R4Ri7Xk3sfTevtISKwrE/n6iVGP7j+8OS3cbGuYXb4QUlJyVX9e8uvqB+wtq3Kk1
-	0C3os4oUSWoV+s2HShqfilQ1Z+TMl/4xM137Qn2Ta/WxnB3v9CBR/dYvJK0C9zDu
-	+TnYBEp1MFVaF6Z4gejnSOd7lHWyYC8kLK7Os15RWy1Jb1ETmjq6IaaHJ4hAS8jf
-	tO76o6B+2yeTriBpelrecdRPhMyTK0HhrCglWB9fgHjUho5EJ+Ff3qwJ/c9m0Ey4
-	W7wu5ZUFxbUPn2gpeigsiVTURs689A5qhXoMuA/qi/zQncICSEE/Rr9p3XzsdgaG
-	WqNwkf6esqATyez+UOItCw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40hgcrhrsn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Jul 2024 18:50:23 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46OIRK0O011001;
-	Wed, 24 Jul 2024 18:50:21 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2040.outbound.protection.outlook.com [104.47.73.40])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40h29t2013-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Jul 2024 18:50:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l/1VpbHoNz+cZicIg69Lt1Fv6HOPoipmswyPC3tMwAs5Dz30l4L3t3PAFlrGyZh5hkWCGoA0VpTjHdWDNtGEoLEk+tl3+F5q36CreziuesbJtyCBFHuNWMv9BaaGInjZVohT6ZNpzIE21HFKFNJGGSxffrCTdFyyGRa/EZltzRv7ISRMfO2JWtN3Ar5rqBViRpnlQmLk197K2hJF6RRP2PIQSm5tmcBMKyQ0jABjyJt5OOnXDfsLm7CGNNZtVjfkBcIDG+Wm2p+s1uJVmAkjTnZV4phQEm7OEBLvjmM4qp2FLM8bYvLatc7HUNxQAwV/uQxXEyBVcO6Km5rMQPrPEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ld2IgluGDZlaGvkDNIE6lDQNG+HAAF83h2TBBgxMsYM=;
- b=Qni1Qi2NbYeab4VUIYUC7Vsn+4BVi/wxSOmOHL9KeoLCJV+1AZq7/OxJzJuYB3kEUp8jPnUBgYz8aotanE6gOk1b/juhK8g6c3MXSqgcEnH48HG7W4MadlZSWau6/nXngdIEfppCSPGq35hUE0YrQvTBy471f2hP+RWToKt3S3j79yiD1pFaKrUmU0HckuM4FpXssDDb5+CEh63iF6ytgYHgOp8deqwLhlo2g4cEhstB2f750MzL1jwGZzQa6K8yshTkg13F4ez0E30D/y2ddKuhfEgadJYkvG95sJHiqNYnTqg/FE6z9Xj4Mi0gITyT3DHx+8362JIYkDuamfGjkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D2A136658
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 20:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721853864; cv=none; b=KO5XgKn6f2KcTSlWW5A+ZloDULPgWySL4ATR6kJyBFsGhD9ARG/chfpepMC2ezOc1UAjJHMzv/hSW0kC/WoBOb1ctLWXFzbUTrdK9HuYnABmWQacyo2jo9SJETs4LSKq6gqDTqGqboTy4XmOO5L4zoAwzybBjj0ptZ7BKAgw4Tc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721853864; c=relaxed/simple;
+	bh=JHZ+23lbSSw81nDuEBI9Pc+b5LZD+eaIwVc8T3+tyF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cpBLHjbdXDcCh11NK9BE/eaFTAMj2pN7V+7CL3ED6QxpGkGfurekSmbzidGdlq8srzbwlSJfTKkRX22yXh3Dmco9oxQ9gOvCjrb5xhYBnurH1uynqByxAE0U91GrzDDkj71HrizjVU64IbQ/+P+knbbbZTcz1X8umsvofnvlP2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kkRn4+Pk; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44c2c4ccb7aso11739741cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 13:44:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ld2IgluGDZlaGvkDNIE6lDQNG+HAAF83h2TBBgxMsYM=;
- b=X4ulv2auae52YzSjX0H9xg4Tnu7tcmzMBPrcC/CHBx01qTIcCbZsBJNjBTuNHX/jfci1Bjf2aZL4cgyYE7wu6SRW/EMB3/s7OpIA2w/S+VfWWUu63rsbhzd+W2vWT9WUdyf9CglhCEhf57svLuD+nBBYKKwLftT9S5uh/o1uTQQ=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by SJ0PR10MB4798.namprd10.prod.outlook.com (2603:10b6:a03:2df::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Wed, 24 Jul
- 2024 18:50:19 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%7]) with mapi id 15.20.7784.017; Wed, 24 Jul 2024
- 18:50:19 +0000
-Message-ID: <3f402a11-7dd2-4da8-9e1c-ea8a4e3ab33d@oracle.com>
-Date: Wed, 24 Jul 2024 19:50:11 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/13] xfs: Introduce FORCEALIGN inode flag
-To: "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-        martin.petersen@oracle.com
-References: <20240705162450.3481169-1-john.g.garry@oracle.com>
- <20240705162450.3481169-8-john.g.garry@oracle.com>
- <20240711025958.GJ612460@frogsfrogsfrogs>
- <ZpBouoiUpMgZtqMk@dread.disaster.area>
- <0c502dd9-7108-4d5f-9337-16b3c0952c04@oracle.com>
- <ZqA+6o/fRufaeQHG@dread.disaster.area>
- <20240724000411.GV612460@frogsfrogsfrogs>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20240724000411.GV612460@frogsfrogsfrogs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM4PR05CA0027.eurprd05.prod.outlook.com (2603:10a6:205::40)
- To DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+        d=gmail.com; s=20230601; t=1721853861; x=1722458661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W4afP4IjqqMAFaL6Ln45Y1LA47H0y2mC7Wn7mbREdUg=;
+        b=kkRn4+Pkzrtjrt3W7c6XIcJeOJMMGYWiRY8kVqGc3TVtOrVf2QRaKOFH1cfmNdJIxi
+         xf98kpgKW+1QFG81fXWKJH2XFgXxqT89p0xATOMPHiAxoLF3jHAfgo/ZJb4eGXn5/srS
+         md9GH33K6FCn6raL3lQopAsKKzLn+J0vb77Oc6VRqsRyM9DATIDpj6uNCtMy5L7PNKup
+         nIVzbdwZJ5/7YY/GIE09cPkKdD/9o/M3/OFynSYmVlvn+WJTL1XqKLTRwy0X2QmBFEhk
+         bVqMfcw6hAxmaxc6D2rgh0AF4X1nV38743KSx8tazKhcBU7gBQJZuj8EyJCbKUlNE7b5
+         Ufrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721853861; x=1722458661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W4afP4IjqqMAFaL6Ln45Y1LA47H0y2mC7Wn7mbREdUg=;
+        b=m+wz3k35ZYvpDz9+5Nz0cctpEuFeCE4umuww0KxJGKTSmwUfhJxDeAAfZZkMrtw3aA
+         1FcJQdlY7Xy3TWRliBPHAlx/lbS+7/nWy5ytCHRvxi48fWjcPuiHH7DpvaT0ZWO1tFsz
+         EKHwfIJDm+DIB56iIgi2lP3s8nm/sUhW8ZFftCx0A7nPLTSdI1rMi74Ii9FpzWDz3pdU
+         KIn92des2THrq/1kPEKFmoVIwtXCZ37h9KGhi+vOtwoOf9SuaJcCcpahAFJ4pthhT6Fg
+         hRGlxIRmbEQ+EdpaVtt19GoAxUqqnXjYh/2AyP0AgLLCWOiODoAscgE7mFPqT9Qux8zc
+         jtqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRFyYTsnexRkZnZGFZBMw8qwDPNt/znKNaBc9UsD7tVDKsNTMQV5sO0S6rfYLLwmBN0ogIkxhTQX1HSF6yAZnvPup16tHUBlGsZbCiIA==
+X-Gm-Message-State: AOJu0YziPzZ7KRawCwpmqKujXWbAH+CKiE1m7sQgZR1Cwem8AfYm2vyK
+	RMJqO5uSxzblFsOnuirZ7R9AzcythICSLJgbt6v06rPK4cEZ7F/jyQTbKxqOq+byPIoHvsCGB+Z
+	1PapyC07lhOMF9Ko0553JDr+p14HRm8HL
+X-Google-Smtp-Source: AGHT+IFRX2wt4vXUSjuBI5M9qLd6TxSTXWS7liGlQHgcqskIAKTj1c+Zn7TR4ydcBi1yp9zAHNeQdHx6HpNJxCQ2NH0=
+X-Received: by 2002:a05:622a:199e:b0:447:f6c7:65ee with SMTP id
+ d75a77b69052e-44fd7af6604mr47776401cf.10.1721853861284; Wed, 24 Jul 2024
+ 13:44:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SJ0PR10MB4798:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83064623-eda9-4579-3cc2-08dcac1176fa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VlFCakhHVWJXcnIvVWRBTXl6MktWRlJ4ZWxqQU5XRHRmdkNmaUhMNnV0UU9S?=
- =?utf-8?B?KzlkVmJMRjYwWXRDRDVmOU9YaXJmQ2lnS0pKNklLMzhBMnlwaTBYU25oOERQ?=
- =?utf-8?B?TmNPT2Z2NHZUb29qWm9iemo3bklOaVJPMnNDMHhTYmZtUVNXTHJnK0dJaTFO?=
- =?utf-8?B?S0xKSnIxMmRNblJXc3pOYWtHNEg3TURhbXNuaklyV2ZQb1g4L2NVNzhEa00v?=
- =?utf-8?B?a0NjQVU2SjZadnpzMSt1SDFpTTNwTkc2MWVuWDhOc0lVb0ZQb3lON1V4RG1Z?=
- =?utf-8?B?NXgwd2pwdG5Ed01Rc1BLMEZ0aXRLajVWWG5XRHJNaURjTVJhL1RaY29OZ3Iz?=
- =?utf-8?B?YU5Xb2tUZW1EQW5iQ3VsS2R1T01EZGgxcFNWa2hVa0w0R2pwVTJrbC9Sc2N1?=
- =?utf-8?B?RU1tVnhkTTNkWUVpOW54U1NPWkRxd3pvc05PZDkzVWN4MHVQRGg3RlV3L2h6?=
- =?utf-8?B?MTI5TXRhVWZjdFZBQi84NFdoVjcxTTNnRWY1UHF0aXJNbTlEbUV6NFRzcFdB?=
- =?utf-8?B?WUVUemJrcVlkdzZ4WTg4YTJ4L0Ric0EzY2lLQWo0bDV1LythYm1vRFVYYkxV?=
- =?utf-8?B?emZjQTRiTHNwWVBLOWlIRnFxNWFDRFJKV2RkYjVpZC9jaXpISktOZDJEQ3ZM?=
- =?utf-8?B?VG5mOXpqWDhWS09SaE9BN1ZBMjBQayswVm9iMExDOEpRTzBGNVNhU1FVOWpT?=
- =?utf-8?B?d3Vyb2lIUml0NUxpa2lCZjVaUEZ5TldYMThhL0JqcTUydStnY3lVSTV5UWpY?=
- =?utf-8?B?Z1hta01EWWVhTm1GdUtXcURldWVNS1Vpc0pidTEwcXNLWjI5c2R2UjRSY3Fj?=
- =?utf-8?B?azBxekNZSHVTam9TVFl3bmRKaVhUQ1d0R2JkOVR4RG1jdUZxVEJXSE9ZclEr?=
- =?utf-8?B?K1VwaXZiandjeG8wMEo2cUZObUQ0RE50enFXd1pvS2JtZmhrNWxJTGlnNW5W?=
- =?utf-8?B?TmF4YmpTcHBzZW1pOFE1dk9IcnlhaU9QNHMrVjQ0ZGVzWmpYekZJbzVVaEVa?=
- =?utf-8?B?cldXUlgxb3kwRmhqU2dxSm5mYkJDTUVOdys2TmZEVytoUGhjVks5N0FTeG5V?=
- =?utf-8?B?RWFZbVBMWmJVdzFJMmxlSUNERkw2dlplQnlBU3U0Z1F3QklIMy9jR2h2cmwz?=
- =?utf-8?B?d3R2amhXVDJ6enkyeldiRkdwaTZnZzhDZWZBQVNpSTFoaHoyTWpqdGdNUEZo?=
- =?utf-8?B?V1dxRVlJRnRnanJlUFNycmRpVnAzejd2RjRxYkpjLzVkeXNSdytGZWR3YzhM?=
- =?utf-8?B?cGtic0pWdVFMNVlsTjJnUm1HdC9MQ3FUaU1kWWVwbHJFT202L2xZcDlpcVRN?=
- =?utf-8?B?SVZlamZ5QXQxdVlpK2Fad1QrT1NhS0EyZ0xoR2pjNWVJZVgwMFV4SGZ4VWZM?=
- =?utf-8?B?ZTBVUkl6ZG1CdVFxOSszK081ZzhsaDNzMjlDb2VJM01NSWpTMG5OalN3cWxa?=
- =?utf-8?B?bjFlSnQzNUtBVlloNFFaZENML051WFp1K1NUSDFrNkwzWFVRTmkxUGwwdGl2?=
- =?utf-8?B?SFoxNy82bWgweGNDNHFiekVJN1V4MWVTVHQrN1dvbHcxRlc1U3RZY2dlbjdr?=
- =?utf-8?B?SVBpbUVHV0lRWXVnbi9YQ0NLV2p4eE1WZ2ZmTjZLZU1Fd05nbzQxMmJmQXRp?=
- =?utf-8?B?V3dqaTZCdkcwWFRHY3hNWWFZQ08vK1lYenN3UmdBYlhWRlJISjJVMlFXYmgx?=
- =?utf-8?B?bFhLbDc5SjRPSFdPQUVldVZaeHBWRlRpNUZaZ01QbDU2T1hUN3ZWcS9OdHdT?=
- =?utf-8?B?TitSeG51dEZFOHRZTS9rMmg0UDZPelNFaTV1VWZOclNyL085UFljakViZ0lD?=
- =?utf-8?B?Y0RodDYrSnhJQ2V1UlQ0QT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y1pRbHZUU3hrUC9HMnkzdmV4RVdDTXprTFRscGdHV2RreVNJdUVTK2gveUVO?=
- =?utf-8?B?ZVBHWVpXRlpaZENteDBlWWdsOURmbXJ2NkxDMGx1a0RIeVIzckZidnRJY0Mx?=
- =?utf-8?B?WEhKT3B5NU5nTWU1WldQSEhGTkZzY1lhVEdHS3JhMFFZNHRwVXpYRUVZOGdv?=
- =?utf-8?B?ZzZtbXBnQ25helNNL0htcUM5RW9KOGRBMXRlVUxQRjlXMTc2cGpHRDl3M0dq?=
- =?utf-8?B?VzRjYWVFU3g2U3VwZ24vc1RKV0psaVAyeHZ0TVJVbFplL0V2OStpRlhrTDdq?=
- =?utf-8?B?N0N6U2ZrUEFkdXl4T01pMjQxaS9SYU00aC9xZ0ZTdlFHMTRGSlEyTW5rT0hI?=
- =?utf-8?B?eDIyTXhjaURYclB1dTNSMHpnNUhNSWV6cnBTencySng5N0ZVZklVYlo5Riti?=
- =?utf-8?B?WFJuazV0ZEI5UHZtd0QxUlQ2QTh2TjE3amdGTlhYWVI4S0tid0FpMm13TzNC?=
- =?utf-8?B?M2tBZ3AvNFl2YUljZXQxNGhZVTBUaVVsa0xiK0xGR1l5SXgyQmYrNEhXSWdu?=
- =?utf-8?B?N0ZMSDJkQlBJQ1RPREUrQ25sRE9UWTI0THptblViUERrTWJudjA3QmNEdlZM?=
- =?utf-8?B?aFlUdTVwMHN6eGk3eXJBRmNqNFk2VmtFdEpQSzg1WTNHVUIyL1gyQnYvVHUx?=
- =?utf-8?B?TWlQTFNyOWtYRXQwM3c4NXkvMGlZTGNLQVgrdWYxcU0rUmhCbnNhUzA0enJ1?=
- =?utf-8?B?SGp5dUZvcmV5MFM2bzRmaXhLbllzOTNiVzlGekZNTnJoVzByazRVdTUvWjFL?=
- =?utf-8?B?UUJIelNoVmZPSHB5MHN5cFFzMzBCM0lxYXlDN2NZSjE5eHIwUXc4ZWpOOW1I?=
- =?utf-8?B?azdaWVFBOWs0YlZHWWpOUFJLcjZ5Sit0L3NaQzFvUTBRNjRJYmJTZjhNbVBs?=
- =?utf-8?B?cTdhODRBRzE3VS9Fb2VjM2N6WlhIc1BzanBEZmYrb2xjTXhHS3V4YnE0dHFT?=
- =?utf-8?B?RzV4UHovV2tWRE1tYjhwQ3p5dmdRWElEemZyb281U21JTlZHbWhtcGNYRGUy?=
- =?utf-8?B?UUJNenZsOVFjakRqa2tUa1ordk0wNTBoYzJHVEV3N2M5bzVQaVBWRHFIUnNU?=
- =?utf-8?B?YWRnTUF1aGxFNHBVK2NYZUJTeCtVMTdIeE44OU05VUpKa2FtaWpyOUxTUWhP?=
- =?utf-8?B?ckczbVFjdU00OWtYZU9RTWdCNHRybnluOTd0eXBDY0hUM2pzNVZHM1hMczhO?=
- =?utf-8?B?OVdEZll2TWVmaENhdUlrOXk5NDRWKzZZTDA3VVBXK2VVSVl5NjlGYlZvMVBw?=
- =?utf-8?B?dk5INUxVQXVFV1B3YVcrUzJ3YnJ5M25YL2E2VFR4c0pUNHFCM2FmZVJUN0Ix?=
- =?utf-8?B?Z2swTjZiUGVPaUs5RW9KRFNoZVdWMDU5djJ6Vis5MkZKRmhGTGhQTUd5UXQ5?=
- =?utf-8?B?a0lrTFpSRXdvTEFKL05lN1EvYmVMV2JsaW1EMkRONXpaRml5ZHBzbTZ6dzRH?=
- =?utf-8?B?bXF3TmRjcGJqNzdKRGFwcTE0R2RiZnVESm5PSjZ1djRYTXpQMWIzNmIxZlNo?=
- =?utf-8?B?NjNNM0crM05ROFFtRVZvT0hVSWl6QU0yVUtGalRRZzRVTVdJMklhSUlsZVJ1?=
- =?utf-8?B?ZnVMRi9iREhlTHp0dFFIYWZMVDdkQzlCR3BDdUhGalF2dU92VFFaRXczaStu?=
- =?utf-8?B?cWxoUkR2OW5jcEJIYXhabmhSQk53S1lwdWJ3eTZGWGNDRXhKREtFREFva0o5?=
- =?utf-8?B?cjlkdWs0L3lsWE10TmFYOWI5dUd0ek50QUFSN2lySXliTE0ydmtpNDFZZ0dC?=
- =?utf-8?B?Qmt1aEJIb3MzbS9CZlVZM1lmZW5xb1RWbjl3Z0oyQmdtekgzdzI5Zld4a1pG?=
- =?utf-8?B?aTdaajNFaFBIM1ZnamRRVkQ5d1lZYjFXSTBBN1p6YUl1SXl1T3FqM21QdEt6?=
- =?utf-8?B?Nms1TDFCWUtGTXJ4NzUrTDFvUTViOEFNZjhlZlluQ1RFQ21oZHBBYnBzQ2px?=
- =?utf-8?B?VWdBOFdoRHA4Q0h0bGx1ck5kT2VKSmY5RnozNDRxa0kzUWE4UjhaMG5lQktq?=
- =?utf-8?B?ZzZrU2tlUG9TbDAreHpWZ0FXdUY0QTdGanJFYWdFL25DMmpzQWR2U1Vad043?=
- =?utf-8?B?TkdLaW5xUWYwRkduZU1SRjVhTmN1MFp0TVhyTzBzMW94VWRIYnJhRGt4bXhj?=
- =?utf-8?Q?HJArfh9/pBWZ0wZaAKDlt9IsO?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	bpyo2/ut6rUWR9Mu9vERP4a8xj9tGm/NV/zkRPMwuKnriRZYVvC8Wl0UkLsIJz5ZICWsAL762Dlml5SuED2SPUVHxDMdlPB+wKj+UHGuQpHNliLkk8Is9IsjLLy96vGLuu8xKC+rA+4mY8eWsvTSo7tBYW1aD7aTgdsaodc/hK9la+3k94EdYCMXY10Vldod1GjFgnahRkUiiQJGCkLpCCwAZlc/8rGjIlPVkazMQZ3Q5cauhXDprURFxt/hHtSHG+EMall+CFIIqohRC3d6cecJ7bRzKDK/lBuh6Dpf9r+0A+/KC8bYr2c2MVnaTKe3957KGzSpYq1RS8Q6cHuVXvl1LzuHInxYxdxlMMPukRtj7RivTWsXJ2gLhH7B/742nWDo5dBH4a+yyb4muvTMcIKrl3+YzBe/yW79EMwB44iSf9VPy4dfxutV3gzkXNdskU9IGSt2S6nfuETqj5adMzJCKaQqs8NevDbkcOAyFZqSinQigpU7pWDnonZeYZA0vWvbvJTyhVVQrftIKKcfrNV064LlUXjOrHMo79SxYdt2iyvvH+CA5JaoLeEk9YzllJErIhe+JY6eKBzH7+IV7wjfbm8VOx+SeuwnRG6dKsc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83064623-eda9-4579-3cc2-08dcac1176fa
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 18:50:19.2707
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AhEIoGjpltclen5NRVvUNzWH+TgwC19zSvwxzesAOeroOo09uzCUgjA8BELqCD5/WAA+dBtpbSZC081Xr0YH3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4798
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-24_21,2024-07-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 adultscore=0
- suspectscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2407240136
-X-Proofpoint-GUID: lSzfCygFIlCJlRyuBA8Fn69EQR223XQS
-X-Proofpoint-ORIG-GUID: lSzfCygFIlCJlRyuBA8Fn69EQR223XQS
+References: <20240717213458.1613347-1-joannelkoong@gmail.com>
+ <20240718144430.GA2099026@perftesting> <CAJnrk1YgUkkA2Pnb22WvCJrEpotkE3ioQr0F+b5gXrSzs7LUfg@mail.gmail.com>
+In-Reply-To: <CAJnrk1YgUkkA2Pnb22WvCJrEpotkE3ioQr0F+b5gXrSzs7LUfg@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 24 Jul 2024 13:44:10 -0700
+Message-ID: <CAJnrk1bHA=gT87pknd8JVcM96THy4JPFPb=-Ue8wSGCH_Lwh-g@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add optional kernel-enforced timeout for fuse requests
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, osandov@osandov.com, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24/07/2024 01:04, Darrick J. Wong wrote:
->> So why not just enable the per-inode flag with RT right from the
->> start given that this functionality is supposed to work and be
->> globally supported by the rtdev right now? It seems like a whole lot
->> less work to just enable it for RT now than it is to disable it...
-> What needs to be done to the rt allocator, anyway?
-> 
-> I think it's mostly turning off the fallback to unaligned allocation,
-> just like what was done for the data device allocator, right?  And
-> possibly tweaking whatever this does:
-> 
-> 	/*
-> 	 * Only bother calculating a real prod factor if offset & length are
-> 	 * perfectly aligned, otherwise it will just get us in trouble.
-> 	 */
-> 	div_u64_rem(ap->offset, align, &mod);
-> 	if (mod || ap->length % align) {
-> 		prod = 1;
-> 	} else {
-> 		prod = xfs_extlen_to_rtxlen(mp, align);
-> 		if (prod > 1)
-> 			xfs_rtalloc_align_minmax(&raminlen, &ralen, &prod);
-> 	}
-> 
-> 
+On Thu, Jul 18, 2024 at 9:58=E2=80=AFAM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> On Thu, Jul 18, 2024 at 7:44=E2=80=AFAM Josef Bacik <josef@toxicpanda.com=
+> wrote:
+> >
+> > On Wed, Jul 17, 2024 at 02:34:58PM -0700, Joanne Koong wrote:
+> ...
+> > > ---
+> > >  fs/fuse/dev.c    | 177 ++++++++++++++++++++++++++++++++++++++++++++-=
+--
+> > >  fs/fuse/fuse_i.h |  12 ++++
+> > >  fs/fuse/inode.c  |   7 ++
+> > >  3 files changed, 188 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > > index 9eb191b5c4de..7dd7b244951b 100644
+> > > --- a/fs/fuse/dev.c
+> > > +++ b/fs/fuse/dev.c
+> > > @@ -331,6 +331,69 @@ void fuse_request_end(struct fuse_req *req)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(fuse_request_end);
+> > >
+> > > +/* fuse_request_end for requests that timeout */
+> > > +static void fuse_request_timeout(struct fuse_req *req)
+> > > +{
+> > > +     struct fuse_conn *fc =3D req->fm->fc;
+> > > +     struct fuse_iqueue *fiq =3D &fc->iq;
+> > > +     struct fuse_pqueue *fpq;
+> > > +
+> > > +     spin_lock(&fiq->lock);
+> > > +     if (!fiq->connected) {
+> > > +             spin_unlock(&fiq->lock);
+> > > +             /*
+> > > +              * Connection is being aborted. The abort will release
+> > > +              * the refcount on the request
+> > > +              */
+> > > +             req->out.h.error =3D -ECONNABORTED;
+> > > +             return;
+> > > +     }
+> > > +     if (test_bit(FR_PENDING, &req->flags)) {
+> > > +             /* Request is not yet in userspace, bail out */
+> > > +             list_del(&req->list);
+> > > +             spin_unlock(&fiq->lock);
+> > > +             req->out.h.error =3D -ETIME;
+> > > +             __fuse_put_request(req);
+> >
+> > Why is this safe?  We could be the last holder of the reference on this=
+ request
+> > correct?  The only places using __fuse_put_request() would be where we =
+are in a
+> > path where the caller already holds a reference on the request.  Since =
+this is
+> > async it may not be the case right?
+> >
+> > If it is safe then it's just confusing and warrants a comment.
+> >
+>
+> There is always a refcount still held on the request by
+> fuse_simple_request() when this is called. I'll add a comment about
+> this.
+> I also just noticed that I use fuse_put_request()  at the end of this
+> function, I'll change that to __fuse_put_request() as well.
+>
+> > > +             return;
+> > > +     }
+> > > +     if (test_bit(FR_INTERRUPTED, &req->flags))
+> > > +             list_del_init(&req->intr_entry);
+> > > +
+> > > +     fpq =3D req->fpq;
+> > > +     spin_unlock(&fiq->lock);
+> > > +
+> > > +     if (fpq) {
+> > > +             spin_lock(&fpq->lock);
+> > > +             if (!fpq->connected && (!test_bit(FR_PRIVATE, &req->fla=
+gs))) {
+> >                                        ^^
+> >
+> > You don't need the extra () there.
+> >
+> > > +                     spin_unlock(&fpq->lock);
+> > > +                     /*
+> > > +                      * Connection is being aborted. The abort will =
+release
+> > > +                      * the refcount on the request
+> > > +                      */
+> > > +                     req->out.h.error =3D -ECONNABORTED;
+> > > +                     return;
+> > > +             }
+> > > +             if (req->out.h.error =3D=3D -ESTALE) {
+> > > +                     /*
+> > > +                      * Device is being released. The fuse_dev_relea=
+se call
+> > > +                      * will drop the refcount on the request
+> > > +                      */
+> > > +                     spin_unlock(&fpq->lock);
+> > > +                     return;
+> > > +             }
+> > > +             if (!test_bit(FR_PRIVATE, &req->flags))
+> > > +                     list_del_init(&req->list);
+> > > +             spin_unlock(&fpq->lock);
+> > > +     }
+> > > +
+> > > +     req->out.h.error =3D -ETIME;
+> > > +
+> > > +     if (test_bit(FR_ASYNC, &req->flags))
+> > > +             req->args->end(req->fm, req->args, req->out.h.error);
+> > > +
+> > > +     fuse_put_request(req);
+> > > +}
+> >
+> > Just a general styling thing, we have two different states for requests=
+ here,
+> > PENDING and !PENDING correct?  I think it may be better to do something=
+ like
+> >
+> > if (test_bit(FR_PENDING, &req->flags))
+> >         timeout_pending_req();
+> > else
+> >         timeout_inflight_req();
+> >
+> > and then in timeout_pending_req() you do
+> >
+> > spin_lock(&fiq->lock);
+> > if (!test_bit(FR_PENDING, &req->flags)) {
+> >         spin_unlock(&fiq_lock);
+> >         timeout_inflight_req();
+> >         return;
+> > }
+> >
+> > This will keep the two different state cleanup functions separate and a=
+ little
+> > cleaner to grok.
+> >
+> Thanks for the suggestion, I will make this change for v2.
+> > > +
+> > >  static int queue_interrupt(struct fuse_req *req)
+> > >  {
+> > >       struct fuse_iqueue *fiq =3D &req->fm->fc->iq;
+> > > @@ -361,6 +424,62 @@ static int queue_interrupt(struct fuse_req *req)
+> > >       return 0;
+> > >  }
+> > >
+> > > +enum wait_type {
+> > > +     WAIT_TYPE_INTERRUPTIBLE,
+> > > +     WAIT_TYPE_KILLABLE,
+> > > +     WAIT_TYPE_NONINTERRUPTIBLE,
+> > > +};
+> > > +
+> > > +static int fuse_wait_event_interruptible_timeout(struct fuse_req *re=
+q)
+> > > +{
+> > > +     struct fuse_conn *fc =3D req->fm->fc;
+> > > +
+> > > +     return wait_event_interruptible_timeout(req->waitq,
+> > > +                                             test_bit(FR_FINISHED,
+> > > +                                                      &req->flags),
+> > > +                                             fc->daemon_timeout);
+> > > +}
+> > > +ALLOW_ERROR_INJECTION(fuse_wait_event_interruptible_timeout, ERRNO);
+> > > +
+> > > +static int wait_answer_timeout(struct fuse_req *req, enum wait_type =
+type)
+> > > +{
+> > > +     struct fuse_conn *fc =3D req->fm->fc;
+> > > +     int err;
+> > > +
+> > > +wait_answer_start:
+> > > +     if (type =3D=3D WAIT_TYPE_INTERRUPTIBLE)
+> > > +             err =3D fuse_wait_event_interruptible_timeout(req);
+> > > +     else if (type =3D=3D WAIT_TYPE_KILLABLE)
+> > > +             err =3D wait_event_killable_timeout(req->waitq,
+> > > +                                               test_bit(FR_FINISHED,=
+ &req->flags),
+> > > +                                               fc->daemon_timeout);
+> > > +
+> > > +     else if (type =3D=3D WAIT_TYPE_NONINTERRUPTIBLE)
+> > > +             err =3D wait_event_timeout(req->waitq, test_bit(FR_FINI=
+SHED, &req->flags),
+> > > +                                      fc->daemon_timeout);
+> > > +     else
+> > > +             WARN_ON(1);
+> >
+> > This will leak some random value for err, so initialize err to somethin=
+g that
+> > will be dealt with, like -EINVAL;
+> >
+> > > +
+> > > +     /* request was answered */
+> > > +     if (err > 0)
+> > > +             return 0;
+> > > +
+> > > +     /* request was not answered in time */
+> > > +     if (err =3D=3D 0) {
+> > > +             if (test_and_set_bit(FR_PROCESSING, &req->flags))
+> > > +                     /* request reply is being processed by kernel r=
+ight now.
+> > > +                      * we should wait for the answer.
+> > > +                      */
+> >
+> > Format for multiline comments is
+> >
+> > /*
+> >  * blah
+> >  * blah
+> >  */
+> >
+> > and since this is a 1 line if statement put it above the if statement.
+> >
+> > > +                     goto wait_answer_start;
+> > > +
+> > > +             fuse_request_timeout(req);
+> > > +             return 0;
+> > > +     }
+> > > +
+> > > +     /* else request was interrupted */
+> > > +     return err;
+> > > +}
+> > > +
+> > >  static void request_wait_answer(struct fuse_req *req)
+> > >  {
+> > >       struct fuse_conn *fc =3D req->fm->fc;
+> > > @@ -369,8 +488,11 @@ static void request_wait_answer(struct fuse_req =
+*req)
+> > >
+> > >       if (!fc->no_interrupt) {
+> > >               /* Any signal may interrupt this */
+> > > -             err =3D wait_event_interruptible(req->waitq,
+> > > -                                     test_bit(FR_FINISHED, &req->fla=
+gs));
+> > > +             if (fc->daemon_timeout)
+> > > +                     err =3D wait_answer_timeout(req, WAIT_TYPE_INTE=
+RRUPTIBLE);
+> > > +             else
+> > > +                     err =3D wait_event_interruptible(req->waitq,
+> > > +                                                    test_bit(FR_FINI=
+SHED, &req->flags));
+> > >               if (!err)
+> > >                       return;
+> > >
+> > > @@ -383,8 +505,11 @@ static void request_wait_answer(struct fuse_req =
+*req)
+> > >
+> > >       if (!test_bit(FR_FORCE, &req->flags)) {
+> > >               /* Only fatal signals may interrupt this */
+> > > -             err =3D wait_event_killable(req->waitq,
+> > > -                                     test_bit(FR_FINISHED, &req->fla=
+gs));
+> > > +             if (fc->daemon_timeout)
+> > > +                     err =3D wait_answer_timeout(req, WAIT_TYPE_KILL=
+ABLE);
+> > > +             else
+> > > +                     err =3D wait_event_killable(req->waitq,
+> > > +                                               test_bit(FR_FINISHED,=
+ &req->flags));
+> > >               if (!err)
+> > >                       return;
+> > >
+> > > @@ -404,7 +529,10 @@ static void request_wait_answer(struct fuse_req =
+*req)
+> > >        * Either request is already in userspace, or it was forced.
+> > >        * Wait it out.
+> > >        */
+> > > -     wait_event(req->waitq, test_bit(FR_FINISHED, &req->flags));
+> > > +     if (fc->daemon_timeout)
+> > > +             wait_answer_timeout(req, WAIT_TYPE_NONINTERRUPTIBLE);
+> > > +     else
+> > > +             wait_event(req->waitq, test_bit(FR_FINISHED, &req->flag=
+s));
+> > >  }
+> > >
+> > >  static void __fuse_request_send(struct fuse_req *req)
+> > > @@ -1268,6 +1396,9 @@ static ssize_t fuse_dev_do_read(struct fuse_dev=
+ *fud, struct file *file,
+> > >       req =3D list_entry(fiq->pending.next, struct fuse_req, list);
+> > >       clear_bit(FR_PENDING, &req->flags);
+> > >       list_del_init(&req->list);
+> > > +     /* Acquire a reference since fuse_request_timeout may also be e=
+xecuting  */
+> > > +     __fuse_get_request(req);
+> > > +     req->fpq =3D fpq;
+> > >       spin_unlock(&fiq->lock);
+> > >
+> >
+> > There's a race here with completion.  If we timeout a request right her=
+e, we can
+> > end up sending that same request below.
+>
+> I don't think there's any way around this unless we take the fpq lock
+> while we do the fuse_copy stuff, because even if we check the
+> FR_PROCESSING bit, the timeout handler could start running after the
+> fpq lock is released when we do the fuse_copy calls.
+>
+> In my point of view, I don't think this race matters. We could have
+> this situation happen on a regular timed-out request. For example, we
+> send out a request to userspace and if the server takes too long to
+> reply, the request is cancelled/invalidated in the kernel but the
+> server will still see the request anyways.
+>
+> WDYT?
+>
+> >
+> > You are going to need to check
+> >
+> > test_bit(FR_PROCESSING)
+> >
+> > after you take the fpq->lock just below here to make sure you didn't ra=
+ce with
+> > the timeout handler and time the request out already.
+> >
+> > >       args =3D req->args;
+> > > @@ -1280,6 +1411,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev=
+ *fud, struct file *file,
+> > >               if (args->opcode =3D=3D FUSE_SETXATTR)
+> > >                       req->out.h.error =3D -E2BIG;
+> > >               fuse_request_end(req);
+> > > +             fuse_put_request(req);
+> > >               goto restart;
+> > >       }
+> > >       spin_lock(&fpq->lock);
+> > > @@ -1316,13 +1448,23 @@ static ssize_t fuse_dev_do_read(struct fuse_d=
+ev *fud, struct file *file,
+> > >       }
+> > >       hash =3D fuse_req_hash(req->in.h.unique);
+> > >       list_move_tail(&req->list, &fpq->processing[hash]);
+> > > -     __fuse_get_request(req);
+> > >       set_bit(FR_SENT, &req->flags);
+> > >       spin_unlock(&fpq->lock);
+> > >       /* matches barrier in request_wait_answer() */
+> > >       smp_mb__after_atomic();
+> > >       if (test_bit(FR_INTERRUPTED, &req->flags))
+> > >               queue_interrupt(req);
+> > > +
+> > > +     /* Check if request timed out */
+> > > +     if (test_bit(FR_PROCESSING, &req->flags)) {
+> > > +             spin_lock(&fpq->lock);
+> > > +             if (!test_bit(FR_PRIVATE, &req->flags))
+> > > +                     list_del_init(&req->list);
+> > > +             spin_unlock(&fpq->lock);
+> > > +             fuse_put_request(req);
+> > > +             return -ETIME;
+> > > +     }
+> >
+> > This isn't quite right, we could have FR_PROCESSING set because we comp=
+leted the
+> > request before we got here.  If you put a schedule_timeout(HZ); right a=
+bove this
+> > you could easily see where a request gets completed by userspace, but n=
+ow you've
+> > fimed it out.
+>
+> Oh I see, you're talking about the race where a request is replied to
+> immediately after the fuse_copy calls and before this gets called.
+> Then when we get here, we can't differentiate between whether
+> FR_PROCESSING was set by the timeout handler or the reply handler.
+>
+> I think the simplest way around this is to check if the FR_SENT flag
+> was cleared (the reply handler clears it while holding the fpq lock
+> where FR_PROCESSING gets set and the timeout handler doesn't clear
+> it), then return -ETIME if it wasn't and 0 if it was.
+>
+> I'll add this into v2.
+>
+> >
+> > Additionally if we have FR_PROCESSING set from the timeout, shouldn't t=
+his
+> > cleanup have been done already?  I don't understand why we need to hand=
+le this
+> > here, we should just return and whoever is waiting on the request will =
+get the
+> > error.
+>
+> In most cases yes, but there is a race where the timeout handler may
+> finish executing before the logic in dev_do_read that adds the request
+> to the fpq lists. If this happens, the freed request will remain on
+> the list.
+>
+> i think this race currently exists  prior to these changes as well -
 
-My initial impression is that calling xfs_bmap_rtalloc() -> 
-xfs_rtpick_extent() for XFS_ALLOC_INITIAL_USER_DATA won't always give an 
-aligned extent. However the rest of the allocator paths are giving 
-extents aligned as requested - that is from limited testing.
+amendment: this statement is not accurate. In the existing code, there
+is no race between the reply handler and dev_do_read, because the
+reply handler can only handle the request once the request is on the
+fpq->processing list.
+(We do need to account for this race with the timeout handler though
+since the timeout handler can get triggered at any time).
 
-And we would need to not take the xfs_bmap_rtalloc() retry fallback for 
--ENOSPC when align > rtextsize, but I have not hit that yet - maybe 
-because xfs_trans_reserve() stops us getting to this point due to lack 
-of free rtextents.
+Also, while working on v2 I noticed we also need to handle races
+between the timeout handler and requests being re-sent
+(fuse_resend()). This will get addressed in v2.
 
+> in the case you mentioned above where the request may have been
+> completed right after the fuse_copy calls in dev_do_read  and before
+> dev_do_read moves the request to the fpq lists. We would get into the
+> same situation with a freed request still on the list.
+>
+>
+> Thanks,
+> Joanne
+> >
+> > Thanks,
+> >
+> > Josef
 
