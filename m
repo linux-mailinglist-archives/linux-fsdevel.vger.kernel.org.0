@@ -1,192 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-24166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE1D93AA9E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 03:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE57593AB21
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 04:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C571C22DF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 01:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DACE2841E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 02:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11047171BB;
-	Wed, 24 Jul 2024 01:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257613B295;
+	Wed, 24 Jul 2024 02:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="qgF0Ed4+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nulDWwYH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E654C11CAB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 01:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6046A1C693;
+	Wed, 24 Jul 2024 02:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721784902; cv=none; b=g/J5R5TVLc/1RO29sHdabp8w8j/cCPyz2l304tljiRsdTqrro17i75dD4L3w1bS5PiQeRKI5ZLQ7vk2E1iBdUa9bXfSFvlBOiKXbYen9+GRD0/yzxTRZpp0T93ZNPji4yAcp9Uvq4ZlQc7mXVxqVPjwRS6k1lNrkG7qXH4+g6U4=
+	t=1721787407; cv=none; b=bEjI9BrbnnGqzMu/z3rWGctQ70vrQ2WIHdmKSVqNLlUgKNSqPvFCw0NgsCB2ig3lT8aM5b761zBFiGRU69PmHwyC7tYfk9GXYxuxNCJZDjNQ+8UmZbowc9SnA/x20V6VgAB6UUVUtlS8/ex1w4+PXfbq3RY16mf8ljGwsJJzlZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721784902; c=relaxed/simple;
-	bh=Oyyg+ReOchMwd+NZy24LdIINkgJ0x8GX4pTvKgw82Sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQBewmX+7/mesMzgMiZ8drNF8Aj0XVgSTSa0btIZIdqzqFfeHLEGVeV1w8gsIk38sqMGpJro3Gl+ztoGyJ7OaLh8uf89MbZ9SUielSUJXfYcwfIW5EKBoH405UYAUKUlAo8hjDw8m0vtbkxrWf2hWToAi7AXxMyqKHgw29s9SvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=qgF0Ed4+; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-70365f905b6so4087847a34.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 18:35:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1721784900; x=1722389700; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TgLCl6dX6lWPw/0VkbIOMrO8TcbOiQmYCM+eTQ4uubs=;
-        b=qgF0Ed4+5YLk/fL/Wh3k3TYa9EdEeBxqmGD7SQ27gR26YTl98l2lBE3ZkulwY8Nv4x
-         hLzFL+2ND7pOhPVyl0KgI1BnLvLMXkSv+yd/mkwV7OfH6tO8/JVmh/pYmYeDsTStzl2o
-         kPKl1d0vQxsMYiVX1G1bEzqUgQg+Dh03ygDoqVjHqGjBl+5hoTeVkcn3Wj/OkY1oGURx
-         O42mLtLYA76/3enj0/dPCflhCkmsPzmO6+sEL+c0xaP0wxE3YCUGqHSbYtwiv8YvtRnB
-         eJCCgMITJxaGxRnvM9iMDtlYEYql/GD/GYiZkQCBuYWC236TMT7mqlwY7P/XdZeTKIQf
-         9pdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721784900; x=1722389700;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TgLCl6dX6lWPw/0VkbIOMrO8TcbOiQmYCM+eTQ4uubs=;
-        b=UO0nBGRAEgYMxKP4ImkWPBcIX5sZumaGOMkqeh5nlT2OVfveKl8g/GL08C9sIEki66
-         EdmFyxbZMh9JpqB+HHhKw1oV9aYQjsdDEfIReE+UUoYzCsjWFOk0+zJu0KLh26t4kFEX
-         d490U6cFabVmEGwzTor/P6pQroweyx/skBUReNDlIHXaomkMqSyEYcBdsUlXJdAVVJzh
-         ND0iSKAXcufPJN5MZiS4/OpOZSjNGB92uwWjRkkJgYPnbO7RB5UJIOKMHzOVZv0BzhzJ
-         NKbLGorr/rBp6raAmYhXsfR6ltwM9/HaFgsUZvCqPeHgQc/vTVlPcb3DKa1YgMMpZFl+
-         08FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfmWf8CUiKrRpusU7qJ0F8TfalG/ers20KKFvD42uWXH6IwmsoRJWYuIqdo2onVeKyc1iZ1Q1nQcO/8HIarpeJI8Fs8J1995olqkJ7vg==
-X-Gm-Message-State: AOJu0Yxg+RMcMjiflBzw9zc9VLr9q61DKTuqTcQy+dxLe79NbHe9eDgh
-	QgtvpSup8R4QrYDxrnfHvN5V+UpEouaFsEq1mw178rDBBu2BWjnXEwsBCoZTy8A=
-X-Google-Smtp-Source: AGHT+IGrgiMmxeNAbEwss35kPfOGl5/tmfkncr/e5mJYcy66/Rdj0joepPVI5re+d+ypl9k1ZUALDg==
-X-Received: by 2002:a05:6830:7316:b0:703:6434:aba8 with SMTP id 46e09a7af769-7092518c2f7mr731676a34.0.1721784899996;
-        Tue, 23 Jul 2024 18:34:59 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d2a535f88sm4001440b3a.19.2024.07.23.18.34.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 18:34:59 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sWQu9-0098ej-0k;
-	Wed, 24 Jul 2024 11:34:57 +1000
-Date: Wed, 24 Jul 2024 11:34:57 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Jan Kara <jack@suse.cz>
-Cc: David Howells <dhowells@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: Fix potential circular locking through setxattr()
- and removexattr()
-Message-ID: <ZqBaQS7IUTsU3ePs@dread.disaster.area>
-References: <2136178.1721725194@warthog.procyon.org.uk>
- <20240723104533.mznf3svde36w6izp@quack3>
+	s=arc-20240116; t=1721787407; c=relaxed/simple;
+	bh=uOhx3iyOqZfaap9huG8iloFal4jT6CiWr3f80xG7QOU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Rm7ajWN6qSDs22la+V68Q6E/54jT/PkzJxWYXEM39qmMx8C3+OqPEGK+d6aY3tOree3D1wBDc8pAWJjiVZKZCMb5OoAh75WwWuQG9mFN5wLwco3ac6BeIQudnoVy2g+jfnlAF2kvPICgeI1wRSAouJmZ+jUE+cNGSv6rdpr726M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nulDWwYH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C5B70C4AF18;
+	Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721787406;
+	bh=uOhx3iyOqZfaap9huG8iloFal4jT6CiWr3f80xG7QOU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=nulDWwYH8l0hWWUETLAk7bpiheKu7MESq9AbkM0cZFEpiJcsuolnCatCt6Rra2A1D
+	 RHMwlVgK2bYwUwE3Sl50Xtnc9mqmaAWs1a9OSxLiYSHg4tjt2qNXA/YXqL4BHzj+uB
+	 WgHhupyvP8VJYUPdFiKuKpuZmjAY6HYeRIsnlTu8vClXoTmjC2PEvoe0KY3/8/tQRQ
+	 Vi5P15h1rm4ki+b+rztHNgxOMoOqLrZl4GQv4wsI14/Bj4i5Ijksd7FGX16XS2BKDm
+	 yaReHS6UlSV24T7IpahVZ3w1rA2x0o6SthmQ3JMcCZcCeihP76AiKRPrjNvGKPHn43
+	 itjEaaQpvr61A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B5F6FC8E8DD;
+	Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723104533.mznf3svde36w6izp@quack3>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [RESEND PATCH v9 0/3] Introduce case-insensitive string
+ comparison helper
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <172178740674.17759.3977282531593034304.git-patchwork-notify@kernel.org>
+Date: Wed, 24 Jul 2024 02:16:46 +0000
+References: <20240208064334.268216-1-eugen.hristev@collabora.com>
+In-Reply-To: <20240208064334.268216-1-eugen.hristev@collabora.com>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+ chao@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, kernel@collabora.com, jack@suse.cz,
+ linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2024 at 12:45:33PM +0200, Jan Kara wrote:
-> On Tue 23-07-24 09:59:54, David Howells wrote:
-> >  ======================================================
-> >  WARNING: possible circular locking dependency detected
-> >  6.10.0-build2+ #956 Not tainted
-> >  ------------------------------------------------------
-> >  fsstress/6050 is trying to acquire lock:
-> >  ffff888138fd82f0 (mapping.invalidate_lock#3){++++}-{3:3}, at: filemap_fault+0x26e/0x8b0
-> > 
-> >  but task is already holding lock:
-> >  ffff888113f26d18 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x165/0x250
-> > 
-> >  which lock already depends on the new lock.
-> > 
-> >  the existing dependency chain (in reverse order) is:
-> > 
-> >  -> #4 (&vma->vm_lock->lock){++++}-{3:3}:
-> >         __lock_acquire+0xaf0/0xd80
-> >         lock_acquire.part.0+0x103/0x280
-> >         down_write+0x3b/0x50
-> >         vma_start_write+0x6b/0xa0
-> >         vma_link+0xcc/0x140
-> >         insert_vm_struct+0xb7/0xf0
-> >         alloc_bprm+0x2c1/0x390
-> >         kernel_execve+0x65/0x1a0
-> >         call_usermodehelper_exec_async+0x14d/0x190
-> >         ret_from_fork+0x24/0x40
-> >         ret_from_fork_asm+0x1a/0x30
-> > 
-> >  -> #3 (&mm->mmap_lock){++++}-{3:3}:
-> >         __lock_acquire+0xaf0/0xd80
-> >         lock_acquire.part.0+0x103/0x280
-> >         __might_fault+0x7c/0xb0
-> >         strncpy_from_user+0x25/0x160
-> >         removexattr+0x7f/0x100
-> >         __do_sys_fremovexattr+0x7e/0xb0
-> >         do_syscall_64+0x9f/0x100
-> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > 
-> >  -> #2 (sb_writers#14){.+.+}-{0:0}:
-> >         __lock_acquire+0xaf0/0xd80
-> >         lock_acquire.part.0+0x103/0x280
-> >         percpu_down_read+0x3c/0x90
-> >         vfs_iocb_iter_write+0xe9/0x1d0
-> >         __cachefiles_write+0x367/0x430
-> >         cachefiles_issue_write+0x299/0x2f0
-> >         netfs_advance_write+0x117/0x140
-> >         netfs_write_folio.isra.0+0x5ca/0x6e0
-> >         netfs_writepages+0x230/0x2f0
-> >         afs_writepages+0x4d/0x70
-> >         do_writepages+0x1e8/0x3e0
-> >         filemap_fdatawrite_wbc+0x84/0xa0
-> >         __filemap_fdatawrite_range+0xa8/0xf0
-> >         file_write_and_wait_range+0x59/0x90
-> >         afs_release+0x10f/0x270
-> >         __fput+0x25f/0x3d0
-> >         __do_sys_close+0x43/0x70
-> >         do_syscall_64+0x9f/0x100
-> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Hello:
+
+This series was applied to jaegeuk/f2fs.git (dev)
+by Christian Brauner <brauner@kernel.org>:
+
+On Thu,  8 Feb 2024 08:43:31 +0200 you wrote:
+> Hello,
 > 
-> This is the problematic step - from quite deep in the locking chain holding
-> invalidate_lock and having PG_Writeback set you suddently jump to very outer
-> locking context grabbing sb_writers. Now AFAICT this is not a real deadlock
-> problem because the locks are actually on different filesystems, just
-> lockdep isn't able to see this. So I don't think you will get rid of these
-> lockdep splats unless you somehow manage to convey to lockdep that there's
-> the "upper" fs (AFS in this case) and the "lower" fs (the one behind
-> cachefiles) and their locks are different.
+> I am trying to respin the series here :
+> https://www.spinics.net/lists/linux-ext4/msg85081.html
+> 
+> To make it easier to apply I split it into smaller chunks which address
+> one single thing.
+> This series is based on top of the first series here:
+> https://marc.info/?l=linux-ext4&m=170728813912935&w=2
+> 
+> [...]
 
-Actually, that can deadlock. We've just been over this with the NFS
-localio proposal.  Network filesystem writeback that can recurse
-into a local filesystem needs to be using (PF_LOCAL_THROTTLE |
-PF_MEMALLOC_NOFS) for the writeback context.
+Here is the summary with links:
+  - [f2fs-dev,RESEND,v9,1/3] libfs: Introduce case-insensitive string comparison helper
+    (no matching commit)
+  - [f2fs-dev,RESEND,v9,2/3] ext4: Reuse generic_ci_match for ci comparisons
+    (no matching commit)
+  - [f2fs-dev,RESEND,v9,3/3] f2fs: Reuse generic_ci_match for ci comparisons
+    https://git.kernel.org/jaegeuk/f2fs/c/d66858eb0c72
 
-This is to prevent the deadlocks on upper->lower->upper and
-lower->upper->lower filesystem recursion via GFP_KERNEL memory
-allocation and reclaim recursing between the two filesystems. This
-is especially relevant for filesystems with ->writepage methods that
-can be called from direct reclaim. Hence allocations in this path
-need to be at least NOFS to prevent recursion back into the upper
-filesystem from writeback into the lower filesystem.
-
-Further, anywhere that dirty page writeback recurses into the front
-end write path of a filesystem can deadlock in
-balance_dirty_pages(). The upper filesystem can consume all the
-dirty threshold and then the lower filesystem blocks trying to clean
-dirty upper filesystem pages. Hence PF_LOCAL_THROTTLE is needed for
-the lower filesystem IO to prevent it from being throttled when the
-upper filesystem is throttled.
-
--Dave.
+You are awesome, thank you!
 -- 
-Dave Chinner
-david@fromorbit.com
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
