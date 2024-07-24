@@ -1,93 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-24164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07A793AA0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 01:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF5F93AA17
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 02:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653D31F22C03
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jul 2024 23:58:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B18C283A76
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 00:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FF3149C78;
-	Tue, 23 Jul 2024 23:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4CF2595;
+	Wed, 24 Jul 2024 00:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2VMoEu+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804CA149C61
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 23:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95478EC0;
+	Wed, 24 Jul 2024 00:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721779085; cv=none; b=lbkpviZv6sZSl97zFGbRqmzhwkYpGF3sndIajAXfz4xaPBVsRcobQft45livb7RCScJVGhDpxRmBQArikJjnOWmJ+NZ+PFmfso/26p+uipmNSTC4NRSpTW9WOW/+5eFmTn8OBitrve/G5RF6/8/0GMdTPH4YUNICXf7BjejK3D4=
+	t=1721779452; cv=none; b=Sxzx7NroahLHwxeqpwd9RbPvaoIy3sGpHqhyclfFufvWZlt3g3uL3Ms8GGojyNHo1l7Tzo9Rw2mizAJa1bAhdvdMQ8Y165ryP2ITKCPVhhkX+qcYHfXTGuibt4TU5ni0Nb6kRUGLmBwh+vbFEE+6Ddj0UYGLxzQkLUS8lW5a9Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721779085; c=relaxed/simple;
-	bh=hjOYStjjoYX2np0BHeHR/g/Tp+auHJmuVRMt2T6GoEc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Qq79yR6jvQsIa5jixPjbDa1FrroOGOh02Ji0LJK8Ty7pRGgmoQJK0f9aF3Eva4BEzd+ByVgpN1jg8VY78e4P8xQByIuupysL7GBrD4/NUYjhuxnWnBTHHuDUi7uzskDqhZobC6W2EKrFRRWjNzu82PozmIY6yuksoAbKinQ4hQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39a143db6c4so12854485ab.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 16:58:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721779083; x=1722383883;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EgOyZUlzEMZOpU/YW1FXvWk4x0U9V9/l/E3qzG/wK8Q=;
-        b=uOhEXWBHLCmDJDBh4K9UN+bAbZF3ja+h2ITW0Zjtfgu78HC0TAN4aoewQEPqBQ3QDt
-         0htkGpwez5x2Xwvu/xf5Ref3b+WtA3Bnf8W5Xj/ar7DG1xMJK+AKElaEVwsqiAR0a+vg
-         accyqwzXIWcTmFXMUrDqDbwZUV8QHO+GK0qQ4PaH78OBy+R+puN9ZKL5wc4FkGi7UOsz
-         ATdoKcgGd3R1xUuX3752AByWFVKofUqFTvPCbGsf8y55xnar+RlPnLLbBkbe/tONpV0F
-         /Gwb0BOPue2yiU6iPg2w0BBHyNsXzYUVVkXMakCu3HoqhHPMF9sPf5s/N65LKxSzMzi4
-         PBgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQau2TZH0WxyPH+P9s/smkFtcS67O2CJOA5Z+vWM8U+k5J4MYqzUY05DtqtfGaP9wELCNqwgNRsKlzZGFbi6vD2OFTORxZeRYWXISgeQ==
-X-Gm-Message-State: AOJu0Yy9KTJu7aE/yyyzl5yuqvgKcV9hzW4s7yWpNirAFNT3GmiuztJL
-	9M6Drrk4IrSL9h3zrlVkLMxIKxUii/QkXT0NvpN0jZZGiwqeovKa+dJPznbvLqQ9129MMxGl1qI
-	ZYuDugVTZSJczi2limmiVVopUtAxDKNy47P6n6c0dTDKNe0562uJy0FM=
-X-Google-Smtp-Source: AGHT+IEzZornDDZMpWDzFdkE+q/FriUsjqZ+4sHmZEu/bJAB9hWGgnKawl2seZVupWtON8ikupSSpqqlgz3tPuyYT3PdwKwJZ6Lc
+	s=arc-20240116; t=1721779452; c=relaxed/simple;
+	bh=VPV36HaGUqkbfGoYAsYx5S52gzWNBj88rNBBg/x3J1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9IwxV2LpFa3Egf9wocVQXJ/HexYc+qbkuoswctj8/dEre1Qw4ar6ayc89KvktOm8YhCv//DnLejvla4/houc0zAZxD+83fDlz7fVQ1OGOSyx1giMYquRA+WTa7s4Kd8HTwwuAfuapUCOzMu1VYeefbI6co80hBhy4ODpJ2ssSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2VMoEu+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DE9BC4AF09;
+	Wed, 24 Jul 2024 00:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721779452;
+	bh=VPV36HaGUqkbfGoYAsYx5S52gzWNBj88rNBBg/x3J1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o2VMoEu+yIw3BqE4OKhx38JpxBJE9Ca1r6V54m5NJKlxk57mbNM81lnFKln+BRchE
+	 4v7WYiWVKIF09ZEyQ4xYkFtQm1ry25xu/hY2A7T6XnrOxH5EVcE+nAloJ61p0Kr/Dz
+	 525j9iwtZAZoGkKB5Pg+ofyGdaSNNHZtZE1/sZvKbl4HFtXeAmdCBlgDMoUrK7NpxN
+	 wQv+1H5ET4WSnT0s8ucL1sqkR2aVRbDSVWWnVFk09yiX9xMllVTksYR9Tl7kqBnydh
+	 0QhZg2SM0WQJKvdFS6+cCleUoZ4QbCBnvF2h56MqCxN6uaKVD9hwwYW1/D98gm2E0j
+	 CYKqINaNMp4lQ==
+Date: Tue, 23 Jul 2024 17:04:11 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
+	dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	catherine.hoang@oracle.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v2 07/13] xfs: Introduce FORCEALIGN inode flag
+Message-ID: <20240724000411.GV612460@frogsfrogsfrogs>
+References: <20240705162450.3481169-1-john.g.garry@oracle.com>
+ <20240705162450.3481169-8-john.g.garry@oracle.com>
+ <20240711025958.GJ612460@frogsfrogsfrogs>
+ <ZpBouoiUpMgZtqMk@dread.disaster.area>
+ <0c502dd9-7108-4d5f-9337-16b3c0952c04@oracle.com>
+ <ZqA+6o/fRufaeQHG@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c6:b0:374:9a34:a16 with SMTP id
- e9e14a558f8ab-398e7de7b70mr8748705ab.5.1721779083711; Tue, 23 Jul 2024
- 16:58:03 -0700 (PDT)
-Date: Tue, 23 Jul 2024 16:58:03 -0700
-In-Reply-To: <0000000000007cfb2405febf9023@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000aaa8dc061df2eef7@google.com>
-Subject: Re: [syzbot] [ntfs3?] BUG: unable to handle kernel paging request in attr_data_read_resident
-From: syzbot <syzbot+33a67f9990381cc8951c@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, axboe@kernel.dk, 
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqA+6o/fRufaeQHG@dread.disaster.area>
 
-syzbot suspects this issue was fixed by commit:
+On Wed, Jul 24, 2024 at 09:38:18AM +1000, Dave Chinner wrote:
+> On Thu, Jul 18, 2024 at 09:53:14AM +0100, John Garry wrote:
+> > On 12/07/2024 00:20, Dave Chinner wrote:
+> > > > > /* Reflink'ed disallowed */
+> > > > > +	if (flags2 & XFS_DIFLAG2_REFLINK)
+> > > > > +		return __this_address;
+> > > > Hmm.  If we don't support reflink + forcealign ATM, then shouldn't the
+> > > > superblock verifier or xfs_fs_fill_super fail the mount so that old
+> > > > kernels won't abruptly emit EFSCORRUPTED errors if a future kernel adds
+> > > > support for forcealign'd cow and starts writing out files with both
+> > > > iflags set?
+> > > I don't think we should error out the mount because reflink and
+> > > forcealign are enabled - that's going to be the common configuration
+> > > for every user of forcealign, right? I also don't think we should
+> > > throw a corruption error if both flags are set, either.
+> > > 
+> > > We're making an initial*implementation choice*  not to implement the
+> > > two features on the same inode at the same time. We are not making a
+> > > an on-disk format design decision that says "these two on-disk flags
+> > > are incompatible".
+> > > 
+> > > IOWs, if both are set on a current kernel, it's not corruption but a
+> > > more recent kernel that supports both flags has modified this inode.
+> > > Put simply, we have detected a ro-compat situation for this specific
+> > > inode.
+> > > 
+> > > Looking at it as a ro-compat situation rather then corruption,
+> > > what I would suggest we do is this:
+> > > 
+> > > 1. Warn at mount that reflink+force align inodes will be treated
+> > > as ro-compat inodes. i.e. read-only.
+> > > 
+> > > 2. prevent forcealign from being set if the shared extent flag is
+> > > set on the inode.
+> > > 
+> > > 3. prevent shared extents from being created if the force align flag
+> > > is set (i.e. ->remap_file_range() and anything else that relies on
+> > > shared extents will fail on forcealign inodes).
+> > > 
+> > > 4. if we read an inode with both set, we emit a warning and force
+> > > the inode to be read only so we don't screw up the force alignment
+> > > of the file (i.e. that inode operates in ro-compat mode.)
+> > > 
+> > > #1 is the mount time warning of potential ro-compat behaviour.
+> > > 
+> > > #2 and #3 prevent both from getting set on existing kernels.
+> > > 
+> > > #4 is the ro-compat behaviour that would occur from taking a
+> > > filesystem that ran on a newer kernel that supports force-align+COW.
+> > > This avoids corruption shutdowns and modifications that would screw
+> > > up the alignment of the shared and COW'd extents.
+> > > 
+> > 
+> > This seems fine for dealing with forcealign and reflink.
+> > 
+> > So what about forcealign and RT?
+> > 
+> > We want to support this config in future, but the current implementation
+> > will not support it.
+> 
+> What's the problem with supporting it right from the start? We
+> already support forcealign for RT, just it's a global config 
+> under the "big rt alloc" moniker rather than a per-inode flag.
+> 
+> Like all on-disk format change based features,
+> forcealign should add the EXPERIMENTAL flag to the filesystem for a
+> couple of releases after merge, so there will be plenty of time to
+> test both data and rt dev functionality before removing the
+> EXPERIMENTAL flag from it.
+> 
+> So why not just enable the per-inode flag with RT right from the
+> start given that this functionality is supposed to work and be
+> globally supported by the rtdev right now? It seems like a whole lot
+> less work to just enable it for RT now than it is to disable it...
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+What needs to be done to the rt allocator, anyway?
 
-    fs: Block writes to mounted block devices
+I think it's mostly turning off the fallback to unaligned allocation,
+just like what was done for the data device allocator, right?  And
+possibly tweaking whatever this does:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d4adc3980000
-start commit:   b57b17e88bf5 Merge tag 'parisc-for-6.7-rc1-2' of git://git..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=88e7ba51eecd9cd6
-dashboard link: https://syzkaller.appspot.com/bug?extid=33a67f9990381cc8951c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12493e98e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1334b4a8e80000
+	/*
+	 * Only bother calculating a real prod factor if offset & length are
+	 * perfectly aligned, otherwise it will just get us in trouble.
+	 */
+	div_u64_rem(ap->offset, align, &mod);
+	if (mod || ap->length % align) {
+		prod = 1;
+	} else {
+		prod = xfs_extlen_to_rtxlen(mp, align);
+		if (prod > 1)
+			xfs_rtalloc_align_minmax(&raminlen, &ralen, &prod);
+	}
 
-If the result looks correct, please mark the issue as fixed by replying with:
 
-#syz fix: fs: Block writes to mounted block devices
+> > In this v2 series, I just disallow a mount for forcealign and RT, similar to
+> > reflink and RT together.
+> > 
+> > Furthermore, I am also saying here that still forcealign and RT bits set is
+> > a valid inode on-disk format and we just have to enforce a sb_rextsize to
+> > extsize relationship:
+> > 
+> > xfs_inode_validate_forcealign(
+> > 	struct xfs_mount	*mp,
+> > 	uint32_t		extsize,
+> > 	uint32_t		cowextsize,
+> > 	uint16_t		mode,
+> > 	uint16_t		flags,
+> > 	uint64_t		flags2)
+> > {
+> > 	bool			rt =  flags & XFS_DIFLAG_REALTIME;
+> > ...
+> > 
+> > 
+> > 	/* extsize must be a multiple of sb_rextsize for RT */
+> > 	if (rt && mp->m_sb.sb_rextsize && extsize % mp->m_sb.sb_rextsize)
+> > 		return __this_address;
+> > 
+> > 	return NULL;
+> > }
+> 
+> I suspect the logic needs tweaking, but why not just do this right
+> from the start?
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Do we even allow (i_extsize % mp->m_sb.sb_rextsize) != 0 for realtime
+files?  I didn't think we did.
+
+--D
+
+> 
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
