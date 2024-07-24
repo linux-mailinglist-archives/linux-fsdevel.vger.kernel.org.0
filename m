@@ -1,62 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-24165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF5F93AA17
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 02:04:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE1D93AA9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 03:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B18C283A76
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 00:04:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C571C22DF5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 01:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4CF2595;
-	Wed, 24 Jul 2024 00:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11047171BB;
+	Wed, 24 Jul 2024 01:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2VMoEu+"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="qgF0Ed4+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95478EC0;
-	Wed, 24 Jul 2024 00:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E654C11CAB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 01:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721779452; cv=none; b=Sxzx7NroahLHwxeqpwd9RbPvaoIy3sGpHqhyclfFufvWZlt3g3uL3Ms8GGojyNHo1l7Tzo9Rw2mizAJa1bAhdvdMQ8Y165ryP2ITKCPVhhkX+qcYHfXTGuibt4TU5ni0Nb6kRUGLmBwh+vbFEE+6Ddj0UYGLxzQkLUS8lW5a9Rw=
+	t=1721784902; cv=none; b=g/J5R5TVLc/1RO29sHdabp8w8j/cCPyz2l304tljiRsdTqrro17i75dD4L3w1bS5PiQeRKI5ZLQ7vk2E1iBdUa9bXfSFvlBOiKXbYen9+GRD0/yzxTRZpp0T93ZNPji4yAcp9Uvq4ZlQc7mXVxqVPjwRS6k1lNrkG7qXH4+g6U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721779452; c=relaxed/simple;
-	bh=VPV36HaGUqkbfGoYAsYx5S52gzWNBj88rNBBg/x3J1w=;
+	s=arc-20240116; t=1721784902; c=relaxed/simple;
+	bh=Oyyg+ReOchMwd+NZy24LdIINkgJ0x8GX4pTvKgw82Sw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U9IwxV2LpFa3Egf9wocVQXJ/HexYc+qbkuoswctj8/dEre1Qw4ar6ayc89KvktOm8YhCv//DnLejvla4/houc0zAZxD+83fDlz7fVQ1OGOSyx1giMYquRA+WTa7s4Kd8HTwwuAfuapUCOzMu1VYeefbI6co80hBhy4ODpJ2ssSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2VMoEu+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DE9BC4AF09;
-	Wed, 24 Jul 2024 00:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721779452;
-	bh=VPV36HaGUqkbfGoYAsYx5S52gzWNBj88rNBBg/x3J1w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o2VMoEu+yIw3BqE4OKhx38JpxBJE9Ca1r6V54m5NJKlxk57mbNM81lnFKln+BRchE
-	 4v7WYiWVKIF09ZEyQ4xYkFtQm1ry25xu/hY2A7T6XnrOxH5EVcE+nAloJ61p0Kr/Dz
-	 525j9iwtZAZoGkKB5Pg+ofyGdaSNNHZtZE1/sZvKbl4HFtXeAmdCBlgDMoUrK7NpxN
-	 wQv+1H5ET4WSnT0s8ucL1sqkR2aVRbDSVWWnVFk09yiX9xMllVTksYR9Tl7kqBnydh
-	 0QhZg2SM0WQJKvdFS6+cCleUoZ4QbCBnvF2h56MqCxN6uaKVD9hwwYW1/D98gm2E0j
-	 CYKqINaNMp4lQ==
-Date: Tue, 23 Jul 2024 17:04:11 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
-	dchinner@redhat.com, hch@lst.de, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	catherine.hoang@oracle.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v2 07/13] xfs: Introduce FORCEALIGN inode flag
-Message-ID: <20240724000411.GV612460@frogsfrogsfrogs>
-References: <20240705162450.3481169-1-john.g.garry@oracle.com>
- <20240705162450.3481169-8-john.g.garry@oracle.com>
- <20240711025958.GJ612460@frogsfrogsfrogs>
- <ZpBouoiUpMgZtqMk@dread.disaster.area>
- <0c502dd9-7108-4d5f-9337-16b3c0952c04@oracle.com>
- <ZqA+6o/fRufaeQHG@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQBewmX+7/mesMzgMiZ8drNF8Aj0XVgSTSa0btIZIdqzqFfeHLEGVeV1w8gsIk38sqMGpJro3Gl+ztoGyJ7OaLh8uf89MbZ9SUielSUJXfYcwfIW5EKBoH405UYAUKUlAo8hjDw8m0vtbkxrWf2hWToAi7AXxMyqKHgw29s9SvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=qgF0Ed4+; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-70365f905b6so4087847a34.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jul 2024 18:35:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1721784900; x=1722389700; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TgLCl6dX6lWPw/0VkbIOMrO8TcbOiQmYCM+eTQ4uubs=;
+        b=qgF0Ed4+5YLk/fL/Wh3k3TYa9EdEeBxqmGD7SQ27gR26YTl98l2lBE3ZkulwY8Nv4x
+         hLzFL+2ND7pOhPVyl0KgI1BnLvLMXkSv+yd/mkwV7OfH6tO8/JVmh/pYmYeDsTStzl2o
+         kPKl1d0vQxsMYiVX1G1bEzqUgQg+Dh03ygDoqVjHqGjBl+5hoTeVkcn3Wj/OkY1oGURx
+         O42mLtLYA76/3enj0/dPCflhCkmsPzmO6+sEL+c0xaP0wxE3YCUGqHSbYtwiv8YvtRnB
+         eJCCgMITJxaGxRnvM9iMDtlYEYql/GD/GYiZkQCBuYWC236TMT7mqlwY7P/XdZeTKIQf
+         9pdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721784900; x=1722389700;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TgLCl6dX6lWPw/0VkbIOMrO8TcbOiQmYCM+eTQ4uubs=;
+        b=UO0nBGRAEgYMxKP4ImkWPBcIX5sZumaGOMkqeh5nlT2OVfveKl8g/GL08C9sIEki66
+         EdmFyxbZMh9JpqB+HHhKw1oV9aYQjsdDEfIReE+UUoYzCsjWFOk0+zJu0KLh26t4kFEX
+         d490U6cFabVmEGwzTor/P6pQroweyx/skBUReNDlIHXaomkMqSyEYcBdsUlXJdAVVJzh
+         ND0iSKAXcufPJN5MZiS4/OpOZSjNGB92uwWjRkkJgYPnbO7RB5UJIOKMHzOVZv0BzhzJ
+         NKbLGorr/rBp6raAmYhXsfR6ltwM9/HaFgsUZvCqPeHgQc/vTVlPcb3DKa1YgMMpZFl+
+         08FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfmWf8CUiKrRpusU7qJ0F8TfalG/ers20KKFvD42uWXH6IwmsoRJWYuIqdo2onVeKyc1iZ1Q1nQcO/8HIarpeJI8Fs8J1995olqkJ7vg==
+X-Gm-Message-State: AOJu0Yxg+RMcMjiflBzw9zc9VLr9q61DKTuqTcQy+dxLe79NbHe9eDgh
+	QgtvpSup8R4QrYDxrnfHvN5V+UpEouaFsEq1mw178rDBBu2BWjnXEwsBCoZTy8A=
+X-Google-Smtp-Source: AGHT+IGrgiMmxeNAbEwss35kPfOGl5/tmfkncr/e5mJYcy66/Rdj0joepPVI5re+d+ypl9k1ZUALDg==
+X-Received: by 2002:a05:6830:7316:b0:703:6434:aba8 with SMTP id 46e09a7af769-7092518c2f7mr731676a34.0.1721784899996;
+        Tue, 23 Jul 2024 18:34:59 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d2a535f88sm4001440b3a.19.2024.07.23.18.34.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 18:34:59 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sWQu9-0098ej-0k;
+	Wed, 24 Jul 2024 11:34:57 +1000
+Date: Wed, 24 Jul 2024 11:34:57 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: David Howells <dhowells@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: Fix potential circular locking through setxattr()
+ and removexattr()
+Message-ID: <ZqBaQS7IUTsU3ePs@dread.disaster.area>
+References: <2136178.1721725194@warthog.procyon.org.uk>
+ <20240723104533.mznf3svde36w6izp@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,141 +93,100 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZqA+6o/fRufaeQHG@dread.disaster.area>
+In-Reply-To: <20240723104533.mznf3svde36w6izp@quack3>
 
-On Wed, Jul 24, 2024 at 09:38:18AM +1000, Dave Chinner wrote:
-> On Thu, Jul 18, 2024 at 09:53:14AM +0100, John Garry wrote:
-> > On 12/07/2024 00:20, Dave Chinner wrote:
-> > > > > /* Reflink'ed disallowed */
-> > > > > +	if (flags2 & XFS_DIFLAG2_REFLINK)
-> > > > > +		return __this_address;
-> > > > Hmm.  If we don't support reflink + forcealign ATM, then shouldn't the
-> > > > superblock verifier or xfs_fs_fill_super fail the mount so that old
-> > > > kernels won't abruptly emit EFSCORRUPTED errors if a future kernel adds
-> > > > support for forcealign'd cow and starts writing out files with both
-> > > > iflags set?
-> > > I don't think we should error out the mount because reflink and
-> > > forcealign are enabled - that's going to be the common configuration
-> > > for every user of forcealign, right? I also don't think we should
-> > > throw a corruption error if both flags are set, either.
-> > > 
-> > > We're making an initial*implementation choice*  not to implement the
-> > > two features on the same inode at the same time. We are not making a
-> > > an on-disk format design decision that says "these two on-disk flags
-> > > are incompatible".
-> > > 
-> > > IOWs, if both are set on a current kernel, it's not corruption but a
-> > > more recent kernel that supports both flags has modified this inode.
-> > > Put simply, we have detected a ro-compat situation for this specific
-> > > inode.
-> > > 
-> > > Looking at it as a ro-compat situation rather then corruption,
-> > > what I would suggest we do is this:
-> > > 
-> > > 1. Warn at mount that reflink+force align inodes will be treated
-> > > as ro-compat inodes. i.e. read-only.
-> > > 
-> > > 2. prevent forcealign from being set if the shared extent flag is
-> > > set on the inode.
-> > > 
-> > > 3. prevent shared extents from being created if the force align flag
-> > > is set (i.e. ->remap_file_range() and anything else that relies on
-> > > shared extents will fail on forcealign inodes).
-> > > 
-> > > 4. if we read an inode with both set, we emit a warning and force
-> > > the inode to be read only so we don't screw up the force alignment
-> > > of the file (i.e. that inode operates in ro-compat mode.)
-> > > 
-> > > #1 is the mount time warning of potential ro-compat behaviour.
-> > > 
-> > > #2 and #3 prevent both from getting set on existing kernels.
-> > > 
-> > > #4 is the ro-compat behaviour that would occur from taking a
-> > > filesystem that ran on a newer kernel that supports force-align+COW.
-> > > This avoids corruption shutdowns and modifications that would screw
-> > > up the alignment of the shared and COW'd extents.
-> > > 
+On Tue, Jul 23, 2024 at 12:45:33PM +0200, Jan Kara wrote:
+> On Tue 23-07-24 09:59:54, David Howells wrote:
+> >  ======================================================
+> >  WARNING: possible circular locking dependency detected
+> >  6.10.0-build2+ #956 Not tainted
+> >  ------------------------------------------------------
+> >  fsstress/6050 is trying to acquire lock:
+> >  ffff888138fd82f0 (mapping.invalidate_lock#3){++++}-{3:3}, at: filemap_fault+0x26e/0x8b0
 > > 
-> > This seems fine for dealing with forcealign and reflink.
+> >  but task is already holding lock:
+> >  ffff888113f26d18 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x165/0x250
 > > 
-> > So what about forcealign and RT?
+> >  which lock already depends on the new lock.
 > > 
-> > We want to support this config in future, but the current implementation
-> > will not support it.
+> >  the existing dependency chain (in reverse order) is:
+> > 
+> >  -> #4 (&vma->vm_lock->lock){++++}-{3:3}:
+> >         __lock_acquire+0xaf0/0xd80
+> >         lock_acquire.part.0+0x103/0x280
+> >         down_write+0x3b/0x50
+> >         vma_start_write+0x6b/0xa0
+> >         vma_link+0xcc/0x140
+> >         insert_vm_struct+0xb7/0xf0
+> >         alloc_bprm+0x2c1/0x390
+> >         kernel_execve+0x65/0x1a0
+> >         call_usermodehelper_exec_async+0x14d/0x190
+> >         ret_from_fork+0x24/0x40
+> >         ret_from_fork_asm+0x1a/0x30
+> > 
+> >  -> #3 (&mm->mmap_lock){++++}-{3:3}:
+> >         __lock_acquire+0xaf0/0xd80
+> >         lock_acquire.part.0+0x103/0x280
+> >         __might_fault+0x7c/0xb0
+> >         strncpy_from_user+0x25/0x160
+> >         removexattr+0x7f/0x100
+> >         __do_sys_fremovexattr+0x7e/0xb0
+> >         do_syscall_64+0x9f/0x100
+> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > 
+> >  -> #2 (sb_writers#14){.+.+}-{0:0}:
+> >         __lock_acquire+0xaf0/0xd80
+> >         lock_acquire.part.0+0x103/0x280
+> >         percpu_down_read+0x3c/0x90
+> >         vfs_iocb_iter_write+0xe9/0x1d0
+> >         __cachefiles_write+0x367/0x430
+> >         cachefiles_issue_write+0x299/0x2f0
+> >         netfs_advance_write+0x117/0x140
+> >         netfs_write_folio.isra.0+0x5ca/0x6e0
+> >         netfs_writepages+0x230/0x2f0
+> >         afs_writepages+0x4d/0x70
+> >         do_writepages+0x1e8/0x3e0
+> >         filemap_fdatawrite_wbc+0x84/0xa0
+> >         __filemap_fdatawrite_range+0xa8/0xf0
+> >         file_write_and_wait_range+0x59/0x90
+> >         afs_release+0x10f/0x270
+> >         __fput+0x25f/0x3d0
+> >         __do_sys_close+0x43/0x70
+> >         do_syscall_64+0x9f/0x100
+> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
 > 
-> What's the problem with supporting it right from the start? We
-> already support forcealign for RT, just it's a global config 
-> under the "big rt alloc" moniker rather than a per-inode flag.
-> 
-> Like all on-disk format change based features,
-> forcealign should add the EXPERIMENTAL flag to the filesystem for a
-> couple of releases after merge, so there will be plenty of time to
-> test both data and rt dev functionality before removing the
-> EXPERIMENTAL flag from it.
-> 
-> So why not just enable the per-inode flag with RT right from the
-> start given that this functionality is supposed to work and be
-> globally supported by the rtdev right now? It seems like a whole lot
-> less work to just enable it for RT now than it is to disable it...
+> This is the problematic step - from quite deep in the locking chain holding
+> invalidate_lock and having PG_Writeback set you suddently jump to very outer
+> locking context grabbing sb_writers. Now AFAICT this is not a real deadlock
+> problem because the locks are actually on different filesystems, just
+> lockdep isn't able to see this. So I don't think you will get rid of these
+> lockdep splats unless you somehow manage to convey to lockdep that there's
+> the "upper" fs (AFS in this case) and the "lower" fs (the one behind
+> cachefiles) and their locks are different.
 
-What needs to be done to the rt allocator, anyway?
+Actually, that can deadlock. We've just been over this with the NFS
+localio proposal.  Network filesystem writeback that can recurse
+into a local filesystem needs to be using (PF_LOCAL_THROTTLE |
+PF_MEMALLOC_NOFS) for the writeback context.
 
-I think it's mostly turning off the fallback to unaligned allocation,
-just like what was done for the data device allocator, right?  And
-possibly tweaking whatever this does:
+This is to prevent the deadlocks on upper->lower->upper and
+lower->upper->lower filesystem recursion via GFP_KERNEL memory
+allocation and reclaim recursing between the two filesystems. This
+is especially relevant for filesystems with ->writepage methods that
+can be called from direct reclaim. Hence allocations in this path
+need to be at least NOFS to prevent recursion back into the upper
+filesystem from writeback into the lower filesystem.
 
-	/*
-	 * Only bother calculating a real prod factor if offset & length are
-	 * perfectly aligned, otherwise it will just get us in trouble.
-	 */
-	div_u64_rem(ap->offset, align, &mod);
-	if (mod || ap->length % align) {
-		prod = 1;
-	} else {
-		prod = xfs_extlen_to_rtxlen(mp, align);
-		if (prod > 1)
-			xfs_rtalloc_align_minmax(&raminlen, &ralen, &prod);
-	}
+Further, anywhere that dirty page writeback recurses into the front
+end write path of a filesystem can deadlock in
+balance_dirty_pages(). The upper filesystem can consume all the
+dirty threshold and then the lower filesystem blocks trying to clean
+dirty upper filesystem pages. Hence PF_LOCAL_THROTTLE is needed for
+the lower filesystem IO to prevent it from being throttled when the
+upper filesystem is throttled.
 
-
-> > In this v2 series, I just disallow a mount for forcealign and RT, similar to
-> > reflink and RT together.
-> > 
-> > Furthermore, I am also saying here that still forcealign and RT bits set is
-> > a valid inode on-disk format and we just have to enforce a sb_rextsize to
-> > extsize relationship:
-> > 
-> > xfs_inode_validate_forcealign(
-> > 	struct xfs_mount	*mp,
-> > 	uint32_t		extsize,
-> > 	uint32_t		cowextsize,
-> > 	uint16_t		mode,
-> > 	uint16_t		flags,
-> > 	uint64_t		flags2)
-> > {
-> > 	bool			rt =  flags & XFS_DIFLAG_REALTIME;
-> > ...
-> > 
-> > 
-> > 	/* extsize must be a multiple of sb_rextsize for RT */
-> > 	if (rt && mp->m_sb.sb_rextsize && extsize % mp->m_sb.sb_rextsize)
-> > 		return __this_address;
-> > 
-> > 	return NULL;
-> > }
-> 
-> I suspect the logic needs tweaking, but why not just do this right
-> from the start?
-
-Do we even allow (i_extsize % mp->m_sb.sb_rextsize) != 0 for realtime
-files?  I didn't think we did.
-
---D
-
-> 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
