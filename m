@@ -1,84 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-24206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5513093B4DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 18:22:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55EA293B514
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 18:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F039A1F25111
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 16:22:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117ED283070
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 16:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D16315ECF3;
-	Wed, 24 Jul 2024 16:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DF715ECE0;
+	Wed, 24 Jul 2024 16:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="pg3VmUUc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aa+AFWiJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1B515ECC0
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 16:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49547156967;
+	Wed, 24 Jul 2024 16:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721838109; cv=none; b=VQrYa6b1kAcNv03ezZFmN4E5gwOE9Dm8lFLHfpYENRdsKXYYKJ8+cUrVLh+h8letJ4mWnBQ4ssfNqc51RxvkvqxdUb1swk8ql6yypVwwL7izwyFNR9bOUdqKpmTovyA2rvsOD8iHaftz+bW83cmxpG7a1LExZA6QuWHPIkAF6G0=
+	t=1721838737; cv=none; b=EzmssbSs6gc4O0BvLV2dkBDKAAmzjll1Tw5FGC25FmuHzvAnRRDR8HTyfEhXsS3UReZU3sOuhsVNgRpy4Ou4m1xJCCfCrLOZMR3ZPQXs/RL7tJvF/v/8lC0CmmDJsJx0HS9FUP/SFKQ2WgSQaHHYeuA9/LRpUf0sL2QISRQdkug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721838109; c=relaxed/simple;
-	bh=vB9Yae19v7LUa5zWDxNrPhM5ExpUn167kiKlRJHhN/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JoTbaXR58LjJ1bj0veA9NaL8pSi9/BkaseMSxsW1W1evNVv7I61LUEHyzOTcZ4UHIitZOm/WRX8bTiAj3q6jMx3j24abVsPiv1FlFFpRQKFHgIRI2rbT/CKjXZsOK3qbrrRA4CQ+7e5Bcd9xAmLDPdJ2bC5CwIdwAwgSLo+79iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=pg3VmUUc; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-198.bstnma.fios.verizon.net [173.48.113.198])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46OGLWub017898
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 12:21:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1721838094; bh=ofF7hcycKI1A3je2myhR7t0W6v1DJnMOehPToQdbRyQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=pg3VmUUcM3zAFe/Nj5tA9Qy1lDlgmYnGrjVRjh/xX7yHcndBx7fqWjHenoKbfywT8
-	 lUZbx54qpnqRnxYGF3A6F65zmF6zluUocXbvh2NXFYGBfcakvK5Pb5qEobO1aX7Vkj
-	 xQjjcoWwWcze4wdM/rfoWfQ8AMSbWUVntpuae4JjaNiCwHtXZslF2p8DRChV76BMJJ
-	 LVCR+/uffm6anG/f5HYtqRzCqdB/2pj9higN/B7uRUFWwyIAEHBqS+3UML7z8zhbpl
-	 Bt+eLjzJi+gfQj6S9j+VMLL/easDK+EoR5l2rmOrPtgbpOdpq1Du5z1JrajZ+nZikO
-	 ojwkAweMguM6A==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id CF2F915C0251; Wed, 24 Jul 2024 12:21:32 -0400 (EDT)
-Date: Wed, 24 Jul 2024 12:21:32 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Yuvaraj Ranganathan <yrangana@qti.qualcomm.com>
-Cc: "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Software encryption at fscrypt causing the filesystem access
- unresponsive
-Message-ID: <20240724162132.GB131596@mit.edu>
-References: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1721838737; c=relaxed/simple;
+	bh=scyzFQ92jy9OOzPGhgrPhHsJnyLA/b/uhWSzMgGAsDM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCafBucQyc9ltUVe8lE0lFZBPKnjK4TzjdIe6jIIRGjsSg9ZrLyVvViNqDn/i6MHQ/GNi+vzKjs43w8gYbRZLPbOCxMX3pL8YhtRpilNYOrPQhHCpNKCtfPu1ssnNotaJ8YirRdN+v8emOy3jD5pzwsSy9AhfrQ7VM2QXCDaF54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aa+AFWiJ; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52fc14d6689so3548721e87.1;
+        Wed, 24 Jul 2024 09:32:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721838734; x=1722443534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qw1HP4C9dFApYaEVgjqdNU8mvTzz9RLC1l5RF4g7wuU=;
+        b=aa+AFWiJu1tzNOoOq6WiJsc9em9LVvd90Yj86gmRTc/PMaR9XDuTZLm0vUO3Qbi1uz
+         o5qk1SIQSd3jqfN5DnH6VKHfgk0SIziIGJoPLT/05zPAvCqTy5Qu+XzaK/k+v7sk3g8+
+         9/14ZQeotQwopXD6UKgkiYyi5abU5GSRnLThOiDkcsuD5lSnBpXD1bOvY8IGug/ygNOz
+         h2ivaFrJzX0Ie6ZDJbU6NKxU5Z0yzmkollAy/0B+2PSlgoZxeyooDQTWL1XBa+9lA8kY
+         JYxdoLkAD8oXR4/RIxyq8s/1AhpKGk7Ev14GXXNmSSbuxkiJcmVibgjDk0YON6u7UUm9
+         gnNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721838734; x=1722443534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qw1HP4C9dFApYaEVgjqdNU8mvTzz9RLC1l5RF4g7wuU=;
+        b=qNJaVh7/isAYNyMofbghzdCqUkUWtu0c/noamhOxONNEUdzZwLaGaI3kaL1abW9nn6
+         MXNsE/3/Oqwi7UMOH9uz9xJJw/3vuHyP4Igw3qpC1XTVZfiL2h86uwUrvxAF/rV4Yiwy
+         vmrijULAp5IsrzcamekNtF/gYM0oacH/gPh9mUsyPnV9sRzhQcwJnK0zHfNBGermLTI4
+         xcOpPW7dLTOvvsfyQxZ/sf8z/xS3pIDPFEhC9NvVYCUxHA98CJQ1blDjB3Hys/oWTcrx
+         nN4m1NMyXm2aiD74utKB+tLzmQPIW8UBUrOtZXpzllFUaGBE14K6UwVqjHDgngSpV3lp
+         JZOA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+xJW/2L+zpBMxIgz5FMV+eP12BhWISTFbPN9PWgii3mcFgHCSlSgZ9d1Vd/SwQJg3o283hGzkc759YKa0gP4N2xW/FogO/ojZQ96iRJ0nf83Hx9CPe1BM7+Ay+138cp5h6/JRqfftaNJulfwkVb+O/gQVA258d2T8ateorsv4yQ==
+X-Gm-Message-State: AOJu0YwCMzGfkBTzdOpifyNbewDUftRFTP5yhaPxp8jEMB8kK58oy5sJ
+	CMzPubNqZkqL5AV3HuTCoYeWk2XxlEnD+PgBEbMQhEG0xOhp490=
+X-Google-Smtp-Source: AGHT+IEhmTiBYmoL/pJkI6U2Syqy2qiGc3ZHd8ofLdrOUucG6INU+NQlqegOxUZ8URDVXh2epQW8RA==
+X-Received: by 2002:a05:6512:1249:b0:52f:cf8a:ae15 with SMTP id 2adb3069b0e04-52fd3eeba16mr250839e87.2.1721838734050;
+        Wed, 24 Jul 2024 09:32:14 -0700 (PDT)
+Received: from p183 ([46.53.249.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a8eaa7f4bsm210845966b.166.2024.07.24.09.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 09:32:13 -0700 (PDT)
+Date: Wed, 24 Jul 2024 19:32:11 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org, viro@zeniv.linux.org.uk,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, gregkh@linuxfoundation.org, linux-mm@kvack.org,
+	surenb@google.com, rppt@kernel.org
+Subject: Re: [PATCH v6 0/6] ioctl()-based API to query VMAs from
+ /proc/<pid>/maps
+Message-ID: <8fca63ef-4618-4e3e-a754-c0118f84e920@p183>
+References: <20240627170900.1672542-1-andrii@kernel.org>
+ <yv6k4j4ptmyhheorcu6ybdcyemxez6wy6ygn64l4v75zwbghb4@wewfmb3nmzku>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
+In-Reply-To: <yv6k4j4ptmyhheorcu6ybdcyemxez6wy6ygn64l4v75zwbghb4@wewfmb3nmzku>
 
-On Wed, Jul 24, 2024 at 02:21:26PM +0000, Yuvaraj Ranganathan wrote:
-> Hello developers,
+On Thu, Jul 11, 2024 at 02:07:18PM -0400, Liam R. Howlett wrote:
+> * Andrii Nakryiko <andrii@kernel.org> [240627 13:09]:
+> > Implement binary ioctl()-based interface to /proc/<pid>/maps file to allow
+> > applications to query VMA information more efficiently than reading *all* VMAs
+> > nonselectively through text-based interface of /proc/<pid>/maps file.
+> > 
 > 
-> We are trying to validate a Software file based encryption with
-> standard key by disabling Inline encryption and we are observing the
-> adb session is hung.  We are not able to access the same filesystem
-> at that moment.
+> Thanks for doing this Andrii.  It looks to be a step forward for a lot
+> of use cases.
 
-The stack trace seems to indicate that the fast_commit feature is
-enabled.  That's a relatively new feature; can you replicate the hang
-without fast_commit being enabled?
-
-						- Ted
+Yes, looks like ioctl on text files are the way to go. :-)
 
