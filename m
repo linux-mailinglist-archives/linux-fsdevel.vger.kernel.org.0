@@ -1,91 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-24186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1C993AE49
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 11:06:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0146F93AE65
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 11:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85DB2B23602
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 09:06:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A75411F24A33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 09:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B201514DA;
-	Wed, 24 Jul 2024 09:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="BMmLNSgW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C909C15251B;
+	Wed, 24 Jul 2024 09:16:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE33B14B095;
-	Wed, 24 Jul 2024 09:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35AE136982;
+	Wed, 24 Jul 2024 09:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721811999; cv=none; b=a+8h3u+twFmmpD0YfHfI997oWITJwslP3GbcUvOu7o5x0Rwf9iuOk4xEx8R+9zuJU3uGCwhO4KkKvkh34Tn3fwP4HERb3F5F63/ZOnh1+FEGov7fec93626xYsUpGw8Ze5pZZAD9g2DUzFmRpSSNTa0wg4GO/0Wi/ktKQDjioqw=
+	t=1721812590; cv=none; b=JhacaJAkGHEVjBL+vgqqkEyotAkreF63lPwi2jSRavVfdPGA6q/f4LD7ggiTxoble38i4JUISvuvhCIJjk6mXLp2e7sV9wlBH2NnTDecZfRywdXrBvt1CsBg2WkmZWu4jDxPQ3srobEZ6ES0LVYB561kIT3QmxL3765IFKPsUWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721811999; c=relaxed/simple;
-	bh=QrFxDcN4n10oTiBQIOKDoz81+N9yJcI+JrDQSMc3bAM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nV4P/GIdePYC4yuFPPYizLVZzkXcFNHFGS0snjOAdPA0DDWUBrZOGQV5bZQbryO/dYo68dgFmLlK3BGQf5z8L1+eBUcl/GQ+n7aO13Jf8Ev2gnouPMzFP2T5X6B+zOQsH15oQjPpODdT+uNZbyDytrX/dngJZ/uPluoBpO+5vIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=BMmLNSgW; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=QrFxDcN4n10oTiBQIOKDoz81+N9yJcI+JrDQSMc3bAM=;
-	t=1721811997; x=1723021597; b=BMmLNSgWERq2pGvna94KZn8L9anOvRlRJCqcTE0pO2m3pc/
-	Dp6sE6aWlfPFWrnSkAMrvRLxAJh5h2300EtSG/U3US2KvX5vYK5aVdc2PzUuF6A6BKI9esYvYZDYq
-	FB3mTL1K9OmAxBTYlhw66UISnOjXC3J/uUjX9/5acydULb3EQ5Bta3j0UO7qM51I4IrW0RzLZ8B5v
-	VWlBkjp6D1HisQmi/IH8dLzKNrSLpwFAW0aeC4FoC6U1Lbv5xCOIllUGfTSHr5wDMg4q7WojnaQmu
-	XwnO2uLlSYFc3PTTfuVB/D2IzI6QyG+ICckkOWS16/15PMwVkeY00pzfN/BEfo3w==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sWXxC-0000000DL4k-0XoI;
-	Wed, 24 Jul 2024 11:06:34 +0200
-Message-ID: <fcfc079f251657f9017f86b626e0595897cb8163.camel@sipsolutions.net>
-Subject: Re: [PATCH] scripts: add macro_checker script to check unused
- parameters in macros
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Andrew Morton <akpm@linux-foundation.org>, Julian Sun
-	 <sunjunchao2870@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
- viro@zeniv.linux.org.uk, masahiroy@kernel.org, n.schier@avm.de,
- ojeda@kernel.org,  djwong@kernel.org, kvalo@kernel.org
-Date: Wed, 24 Jul 2024 11:06:33 +0200
-In-Reply-To: <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
-References: <20240723091154.52458-1-sunjunchao2870@gmail.com>
-	 <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1721812590; c=relaxed/simple;
+	bh=B+/JsHJlzC4TmerN6ugwJQ7CYgG+ju/HUQuae7jz+f8=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=kKElY2X5yDyF1MdhErt4b6kb2fqVGl4LGo372CX5lyZQA4HFsllSxNUC/vKNVZxCv78Ovla/I6se8RD15+wHZhHNl/rml1OkyVXN8jWcD5NtDbQsY8YcIV1QSOOk6VQmL409+b/AnaKLKGI/WO+Je5mZGkjX+9MSLkHbRCVDPZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 02CBF3780BC2;
+	Wed, 24 Jul 2024 09:16:25 +0000 (UTC)
+From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
+In-Reply-To: <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240723171753.739971-1-adrian.ratiu@collabora.com> <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
+Date: Wed, 24 Jul 2024 10:16:25 +0100
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, kernel@collabora.com, gbiv@google.com, inglorion@google.com, ajordanr@google.com, "Doug Anderson" <dianders@chromium.org>, "Jeff Xu" <jeffxu@google.com>, "Jann Horn" <jannh@google.com>, "Kees Cook" <kees@kernel.org>, "Christian Brauner" <brauner@kernel.org>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Message-ID: <27ea5-66a0c680-3-322bfd00@171174474>
+Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?proc=3A?= add config & param to block 
+ forcing mem writes
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
+On Tuesday, July 23, 2024 21:30 EEST, Linus Torvalds <torvalds@linux-fo=
+undation.org> wrote:
+
+> On Tue, 23 Jul 2024 at 10:18, Adrian Ratiu <adrian.ratiu@collabora.co=
+m> wrote:
+> >
+> > This adds a Kconfig option and boot param to allow removing
+> > the FOLL=5FFORCE flag from /proc/pid/mem write calls because
+> > it can be abused.
 >=20
-> Makes me wonder who will run this, and why.
+> Ack, this looks much simpler.
+>=20
+> That said, I think this can be prettied up some more:
+>=20
+> > +enum proc=5Fmem=5Fforce=5Fstate {
+> > +       PROC=5FMEM=5FFORCE=5FALWAYS,
+> > +       PROC=5FMEM=5FFORCE=5FPTRACE,
+> > +       PROC=5FMEM=5FFORCE=5FNEVER
+> > +};
+> > +
+> > +#if defined(CONFIG=5FPROC=5FMEM=5FALWAYS=5FFORCE)
+> > +static enum proc=5Fmem=5Fforce=5Fstate proc=5Fmem=5Fforce=5Foverri=
+de =5F=5Fro=5Fafter=5Finit =3D PROC=5FMEM=5FFORCE=5FALWAYS;
+> > +#elif defined(CONFIG=5FPROC=5FMEM=5FFORCE=5FPTRACE)
+> > +static enum proc=5Fmem=5Fforce=5Fstate proc=5Fmem=5Fforce=5Foverri=
+de =5F=5Fro=5Fafter=5Finit =3D PROC=5FMEM=5FFORCE=5FPTRACE;
+> > +#else
+> > +static enum proc=5Fmem=5Fforce=5Fstate proc=5Fmem=5Fforce=5Foverri=
+de =5F=5Fro=5Fafter=5Finit =3D PROC=5FMEM=5FFORCE=5FNEVER;
+> > +#endif
+>=20
+> I think instead of that forest of #if defined(), we can just do
+>=20
+>   enum proc=5Fmem=5Fforce {
+>         PROC=5FMEM=5FFORCE=5FALWAYS,
+>         PROC=5FMEM=5FFORCE=5FPTRACE,
+>         PROC=5FMEM=5FFORCE=5FNEVER
+>   };
+>=20
+>   static enum proc=5Fmem=5Fforce proc=5Fmem=5Fforce=5Foverride =5F=5F=
+ro=5Fafter=5Finit =3D
+>       IS=5FENABLED(CONFIG=5FPROC=5FMEM=5FALWAYS=5FFORCE) ? PROC=5FMEM=
+=5FFORCE=5FALWAYS :
+>       IS=5FENABLED(CONFIG=5FPROC=5FMEM=5FFORCE=5FPTRACE) ? PROC=5FMEM=
+=5FFORCE=5FPTRACE :
+>       PROC=5FMEM=5FFORCE=5FNEVER;
+>=20
+> I also really thought we had some parser helper for this pattern:
+>=20
+> > +static int =5F=5Finit early=5Fproc=5Fmem=5Fforce=5Foverride(char *=
+buf)
+> > +{
+> > +       if (!buf)
+> > +               return -EINVAL;
+> > +
+> > +       if (strcmp(buf, "always") =3D=3D 0) {
+> > +               proc=5Fmem=5Fforce=5Foverride =3D PROC=5FMEM=5FFORC=
+E=5FALWAYS;
+>  ....
+>=20
+> but it turns out we only really "officially" have it for filesystem
+> superblock parsing.
+>=20
+> Oh well. We could do
+>=20
+>   #include <linux/fs=5Fparser.h>
+>  ...
+>   struct constant=5Ftable proc=5Fmem=5Fforce=5Ftable[] {
+>         { "ptrace", PROC=5FMEM=5FFORCE=5FPTRACE },
+>         { "never", PROC=5FMEM=5FFORCE=5FNEVER },
+>         { }
+>   };
+>   ...
+>   proc=5Fmem=5Fforce=5Foverride =3D lookup=5Fconstant(
+>         proc=5Fmem=5Fforce=5Ftable, buf, PROC=5FMEM=5FFORCE=5FNEVER);
+>=20
+> but while that looks a bit prettier, the whole "fs=5Fparser.h" thing =
+is
+> admittedly odd.
+>=20
+> Anyway, I think the patch is ok, although I also happen to think it
+> could be a bit prettier.
 
-I suspect once it's there we could convince folks like the 0-day robot
-maintainers or Jakub for nipa [1] to run it and at least flag newly
-reported issues.
+Thanks again, I am perfectly fine with using fs=5Fparser.h.
 
-[1] https://github.com/linux-netdev/nipa
+I'll wait a few days to give others a chance to review/respond,
+then apply your changes and send a v3.
 
-
-Or maybe run it with W=3D1 like we run kernel-doc then (cmd_checkdoc and
-"$(call cmd,checkdoc)")?
-
-johannes
-
-
+(this was actually v2, however git format-patch removed my
+"Changes in v2" blurb and v2 title; will add them next time)
 
 
