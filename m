@@ -1,144 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-24225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8878493BD00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 09:21:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221EA93BD61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 09:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385EF283308
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 07:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D637F283F2F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 07:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5210D16F8E8;
-	Thu, 25 Jul 2024 07:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E8E172763;
+	Thu, 25 Jul 2024 07:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IMp2mdPr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4IrGD6o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092204428;
-	Thu, 25 Jul 2024 07:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34272746C;
+	Thu, 25 Jul 2024 07:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721892102; cv=none; b=mLIWuDsRs4IHZaOA2bXvS94AfQsJ1502G8MZnU4ceNdt2tFtqpijC8hA8WkgF8mQpOvwlnom93RcWZt6ujMRmps+lkot8K7UNbjNL9G2xitwNx0KbubBHZ1PHR96CL1JMMh4kMHLUnRoLhOgRlwYt3vL8N9uO7jnK4Ry4o9/cDQ=
+	t=1721893916; cv=none; b=gjIbR7hYYtL9rtt/tLL+4orPKnb0LB3qrXoMZq47qVzMpqzJGqaAI4eXsotT5xo7L1L0eWHo5BhT5wQaHWO7gx2SQVgqMPEfoiIKrBD1/zSw93GK8fpmUdQS8FVb1qYqH4Rdfi/MsMFDE7royq8waJucP3qeL+A3I7UIjb0J0UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721892102; c=relaxed/simple;
-	bh=ydbfuohjatUcdiCDESO0TMpmlY+ErfumtWftHn6xhc8=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ik4LCSlTMrbmpykAY4mzWbQ4Lea5u8/h2j7bWVM9hql7MkfmF2CaQgxgkQYrncBcZtVa2EgHBdSRTbhunZfkTwiz4Y+epVsafwzU126vdn4Z088r5I69JWbPmaqHx67jOxJXtnjITIzpD3T4wj2xJn/LFJKkV9zb9wp4BVuXeM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IMp2mdPr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OJlCC5007911;
-	Thu, 25 Jul 2024 07:21:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ig7qJ9Vxpn3l4dcvLm0+s7oO6xAzUdgvzcwziFSjE6M=; b=IMp2mdPrVEuEhnJ3
-	7VlREr044iOOChgwcf6s/n9GsciRvpy/pavDwnwy4gnAw8y09Tu4Vf4VMHbXun39
-	jNkKU7unhH1g1eX8bzrn2EUFqjNaxdbhRRpf3GH97HYUNgKxo6RkTMV41YqdiY7k
-	zmdd2Yl66ZnAGmfiTLNe6HO6Ataewt+RQ1nBQ7nD7wLyUIGcTnKjtpXixbegm5Ju
-	kYOIK8AI8BytSzUUNoH5S2M/nfjMD2+1cM//qpEuxP3mT42tY0QaVgl5qGvtqhaR
-	4a+ublY6hODYQmrAFbmoeR50QA9JH+VNKmvWUtUQ33EVWeQHKHyR4VhBoebrE8CY
-	ZPAWQQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g4jh473x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 07:21:38 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46P7LbND025094
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jul 2024 07:21:37 GMT
-Received: from nalasex01b.na.qualcomm.com (10.47.209.197) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 25 Jul 2024 00:21:37 -0700
-Received: from nalasex01b.na.qualcomm.com ([fe80::f0fe:41be:6309:e65b]) by
- nalasex01b.na.qualcomm.com ([fe80::f0fe:41be:6309:e65b%12]) with mapi id
- 15.02.1544.009; Thu, 25 Jul 2024 00:21:37 -0700
-From: "Yuvaraj Ranganathan (QUIC)" <quic_yrangana@quicinc.com>
-To: Theodore Ts'o <tytso@mit.edu>,
-        "linux-fscrypt@vger.kernel.org"
-	<linux-fscrypt@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: Software encryption at fscrypt causing the filesystem access
+	s=arc-20240116; t=1721893916; c=relaxed/simple;
+	bh=wPMGUC0y/HMlSqSLaesKVHMHhjLlTuGqdZbSFVzzcIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LB1KOJBwONpk2xasXqP1ktAZHTdnWMJk53Uc8OVo5WiyNEqGObXWDg/w5qRuSn5I2M94qDjHrrZS78CuieWt8RaD++AEKVuSogcVW/UFIoDZWkiYjHpwEMx2LALU5GdL2zX6a/xmvMHy373eIK/5cnSnR3l32rptYF2k7vW+w+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4IrGD6o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AFA2C32786;
+	Thu, 25 Jul 2024 07:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721893915;
+	bh=wPMGUC0y/HMlSqSLaesKVHMHhjLlTuGqdZbSFVzzcIY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F4IrGD6ohbM8uQhHzUQWEng1h7ZBBptlUkAmSgw6NY/5GLfhUytkMitrN94kNnEgZ
+	 hx3IfZe7TlbyPNf/9XhpO1CNfceLtIJcY5574Oopzw9muV/r6mdAgMTpIfWzxJdwIK
+	 K1N5oePLg0VMer1FdktDdgbwUAg6pOrngr7gawdHOUuHKNUQXIX7VMr7PSM/cKak39
+	 ox5lDiVvZHPg8WSKFeeqQENJnW2nzc6INaij/GF+d5Pl2ji8DN3ScPRQXuO3u8e/vz
+	 q/1WWSn8cb4lSL7fYJ7u8I4X+aB1+VIbShrLDw0KqIr9JFTaN51YHjhey5CdVGta63
+	 KL5AV/gi95qpg==
+Date: Thu, 25 Jul 2024 00:51:53 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Yuvaraj Ranganathan <yrangana@qti.qualcomm.com>
+Cc: "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Software encryption at fscrypt causing the filesystem access
  unresponsive
-Thread-Topic: Software encryption at fscrypt causing the filesystem access
- unresponsive
-Thread-Index: Adrd1KUCQ0a7ysxrSBSnpsfNUNxokAAEOaUAAB9SRWA=
-Date: Thu, 25 Jul 2024 07:21:36 +0000
-Message-ID: <08079d01e25748108aedb95a3c30e5e7@quicinc.com>
+Message-ID: <20240725075153.GA160096@sol.localdomain>
 References: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
- <20240724162132.GB131596@mit.edu>
-In-Reply-To: <20240724162132.GB131596@mit.edu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bOWsMKe9dU10-9fOwDgQYEc4txTg_vWD
-X-Proofpoint-GUID: bOWsMKe9dU10-9fOwDgQYEc4txTg_vWD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-25_07,2024-07-25_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407250046
-
-Hello Ted,
-
-I don't see fast_commit feature is enabled for this filesystem.
-
-Here are the filesystem features enabled for that disk partition,
-
-Filesystem features:=20
-has_journal ext_attr resize_inode dir_index stable_inodes filetype needs_re=
-covery extent 64bit flex_bg encrypt sparse_super large_file huge_file dir_n=
-link extra_isize metadata_csum
-
-Thanks,
-Yuvaraj.
-
------Original Message-----
-From: Theodore Ts'o <tytso@mit.edu>=20
-Sent: Wednesday, July 24, 2024 9:52 PM
-To: Yuvaraj Ranganathan <yrangana@qti.qualcomm.com>
-Cc: linux-fscrypt@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-ker=
-nel@vger.kernel.org
-Subject: Re: Software encryption at fscrypt causing the filesystem access u=
-nresponsive
-
-WARNING: This email originated from outside of Qualcomm. Please be wary of =
-any links or attachments, and do not enable macros.
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
 
 On Wed, Jul 24, 2024 at 02:21:26PM +0000, Yuvaraj Ranganathan wrote:
-> Hello developers,
->
-> We are trying to validate a Software file based encryption with=20
-> standard key by disabling Inline encryption and we are observing the=20
-> adb session is hung.  We are not able to access the same filesystem at=20
-> that moment.
+> [ 1694.987674] INFO: task kworker/u16:3:2154 blocked for more than 120 seconds.
+> [ 1694.995628]       Tainted: G        W  O       6.6.33-debug #1
+> [ 1695.002335] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [ 1695.011094] task:kworker/u16:3   state:D stack:0     pid:2154  ppid:2      flags:0x00000208
+> [ 1695.011097] Workqueue: writeback wb_workfn (flush-8:0)
+> [ 1695.011101] Call trace:
+> [ 1695.011102]  __switch_to+0xf0/0x16c
+> [ 1695.011104]  __schedule+0x334/0x980
+> [ 1695.011105]  schedule+0x5c/0xf8
+> [ 1695.011107]  schedule_timeout+0x19c/0x1c0
+> [ 1695.011110]  wait_for_completion+0x78/0x188
+> [ 1695.011111]  fscrypt_crypt_block+0x218/0x25c
+> [ 1695.011114]  fscrypt_encrypt_pagecache_blocks+0x104/0x1b4
+> [ 1695.011117]  ext4_bio_write_folio+0x534/0x7a8
+> [ 1695.011119]  mpage_submit_folio+0x70/0x98
+> [ 1695.011120]  mpage_map_and_submit_buffers+0x158/0x2c8
+> [ 1695.011122]  ext4_do_writepages+0x788/0xbfc
+> [ 1695.011124]  ext4_writepages+0x7c/0xfc
 
-The stack trace seems to indicate that the fast_commit feature is enabled. =
- That's a relatively new feature; can you replicate the hang without fast_c=
-ommit being enabled?
+I think this is the important part.  It's showing that the call into the crypto
+API to actually encrypt the data is hanging.
 
-                                                - Ted
+What I suspect is that you are *not* actually using software encryption, but
+rather a buggy driver for an off-CPU crypto accelerator.  This would happen if
+your driver registers itself with the crypto API with a higher priority than the
+software algorithm you intended to use.
+
+To check what driver is being used, you can either check for a kernel log
+message that looks like 'fscrypt: AES-256-XTS using implementation
+"xts-aes-ce"', or check /proc/crypto for which xts(aes) algorithm has the
+highest priority.
+
+Which driver are you using, and is it upstream?
+
+- Eric
 
