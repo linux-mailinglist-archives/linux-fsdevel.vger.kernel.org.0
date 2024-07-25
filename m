@@ -1,184 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-24224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE8193BCB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 08:46:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8878493BD00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 09:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C211E1F22B3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 06:46:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385EF283308
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 07:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C4F4206B;
-	Thu, 25 Jul 2024 06:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5210D16F8E8;
+	Thu, 25 Jul 2024 07:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IMp2mdPr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7691C6BE
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 06:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092204428;
+	Thu, 25 Jul 2024 07:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721889980; cv=none; b=ootE2ZHZUAzFk0RlHzGDpm6B0KZWY+qFV3jmNXUG3Zs1E+wFSG+rlP2Clhtf5zzAPxpapvodiVp7nHO+9u075NT2Wj1N9mtcBs0ZNPo7Sx1ma+Gz/xAbqvHVZafQT6QDGnDe49vP15EmF88LN5VPkYJ3YKf05/vNDPAROf14kUU=
+	t=1721892102; cv=none; b=mLIWuDsRs4IHZaOA2bXvS94AfQsJ1502G8MZnU4ceNdt2tFtqpijC8hA8WkgF8mQpOvwlnom93RcWZt6ujMRmps+lkot8K7UNbjNL9G2xitwNx0KbubBHZ1PHR96CL1JMMh4kMHLUnRoLhOgRlwYt3vL8N9uO7jnK4Ry4o9/cDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721889980; c=relaxed/simple;
-	bh=2Rc5/VJ8Iym8vkuB9T5Yor9hF8Qc+zAg9WvEj76YILw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Bs61GmZFBu20kf2UPbZ8maxoZ20GTZdjpVvZxbYDMhc+ihaza4BScgoNpUJ+ekaWWiNWkgOxOUytA4g1ePrI60LVtMSxVdHppinZxA7Fbq0WjCw16yctuUEWRA76QKDJ5OD/wmYAhDGT2pDsulMbA96EwRYy8MUJDWcBw7tInQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WV1Wc1ML9z2ClPV;
-	Thu, 25 Jul 2024 14:41:48 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id CE06E14044F;
-	Thu, 25 Jul 2024 14:46:13 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
- (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 25 Jul
- 2024 14:46:13 +0800
-From: Hongbo Li <lihongbo22@huawei.com>
-To: <richard@nod.at>, <anton.ivanov@cambridgegreys.com>,
-	<johannes@sipsolutions.net>, <brauner@kernel.org>
-CC: <viro@zeniv.linux.org.uk>, <maze@google.com>,
-	<linux-um@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
-	<lihongbo22@huawei.com>
-Subject: [PATCH] hostfs: fix the host directory parse when mounting.
-Date: Thu, 25 Jul 2024 14:51:30 +0800
-Message-ID: <20240725065130.1821964-1-lihongbo22@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721892102; c=relaxed/simple;
+	bh=ydbfuohjatUcdiCDESO0TMpmlY+ErfumtWftHn6xhc8=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ik4LCSlTMrbmpykAY4mzWbQ4Lea5u8/h2j7bWVM9hql7MkfmF2CaQgxgkQYrncBcZtVa2EgHBdSRTbhunZfkTwiz4Y+epVsafwzU126vdn4Z088r5I69JWbPmaqHx67jOxJXtnjITIzpD3T4wj2xJn/LFJKkV9zb9wp4BVuXeM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IMp2mdPr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OJlCC5007911;
+	Thu, 25 Jul 2024 07:21:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Ig7qJ9Vxpn3l4dcvLm0+s7oO6xAzUdgvzcwziFSjE6M=; b=IMp2mdPrVEuEhnJ3
+	7VlREr044iOOChgwcf6s/n9GsciRvpy/pavDwnwy4gnAw8y09Tu4Vf4VMHbXun39
+	jNkKU7unhH1g1eX8bzrn2EUFqjNaxdbhRRpf3GH97HYUNgKxo6RkTMV41YqdiY7k
+	zmdd2Yl66ZnAGmfiTLNe6HO6Ataewt+RQ1nBQ7nD7wLyUIGcTnKjtpXixbegm5Ju
+	kYOIK8AI8BytSzUUNoH5S2M/nfjMD2+1cM//qpEuxP3mT42tY0QaVgl5qGvtqhaR
+	4a+ublY6hODYQmrAFbmoeR50QA9JH+VNKmvWUtUQ33EVWeQHKHyR4VhBoebrE8CY
+	ZPAWQQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g4jh473x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jul 2024 07:21:38 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46P7LbND025094
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jul 2024 07:21:37 GMT
+Received: from nalasex01b.na.qualcomm.com (10.47.209.197) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 25 Jul 2024 00:21:37 -0700
+Received: from nalasex01b.na.qualcomm.com ([fe80::f0fe:41be:6309:e65b]) by
+ nalasex01b.na.qualcomm.com ([fe80::f0fe:41be:6309:e65b%12]) with mapi id
+ 15.02.1544.009; Thu, 25 Jul 2024 00:21:37 -0700
+From: "Yuvaraj Ranganathan (QUIC)" <quic_yrangana@quicinc.com>
+To: Theodore Ts'o <tytso@mit.edu>,
+        "linux-fscrypt@vger.kernel.org"
+	<linux-fscrypt@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: Software encryption at fscrypt causing the filesystem access
+ unresponsive
+Thread-Topic: Software encryption at fscrypt causing the filesystem access
+ unresponsive
+Thread-Index: Adrd1KUCQ0a7ysxrSBSnpsfNUNxokAAEOaUAAB9SRWA=
+Date: Thu, 25 Jul 2024 07:21:36 +0000
+Message-ID: <08079d01e25748108aedb95a3c30e5e7@quicinc.com>
+References: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
+ <20240724162132.GB131596@mit.edu>
+In-Reply-To: <20240724162132.GB131596@mit.edu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bOWsMKe9dU10-9fOwDgQYEc4txTg_vWD
+X-Proofpoint-GUID: bOWsMKe9dU10-9fOwDgQYEc4txTg_vWD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-25_07,2024-07-25_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407250046
 
-hostfs not keep the host directory when mounting. When the host
-directory is none (default), fc->source is used as the host root
-directory, and this is wrong. Here we use `parse_monolithic` to
-handle the old mount path for parsing the root directory. For new
-mount path, The `parse_param` is used for the host directory parse.
+Hello Ted,
 
-Reported-and-tested-by: Maciej Żenczykowski <maze@google.com>
-Fixes: cd140ce9f611 ("hostfs: convert hostfs to use the new mount API")
-Link: https://lore.kernel.org/all/CANP3RGceNzwdb7w=vPf5=7BCid5HVQDmz1K5kC9JG42+HVAh_g@mail.gmail.com/
-Cc: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
----
- fs/hostfs/hostfs_kern.c | 65 ++++++++++++++++++++++++++++++++++-------
- 1 file changed, 55 insertions(+), 10 deletions(-)
+I don't see fast_commit feature is enabled for this filesystem.
 
-diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
-index 2b532670a561..48d2a21c3380 100644
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -17,6 +17,7 @@
- #include <linux/writeback.h>
- #include <linux/mount.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_parser.h>
- #include <linux/namei.h>
- #include "hostfs.h"
- #include <init.h>
-@@ -927,7 +928,6 @@ static const struct inode_operations hostfs_link_iops = {
- static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	struct hostfs_fs_info *fsi = sb->s_fs_info;
--	const char *host_root = fc->source;
- 	struct inode *root_inode;
- 	int err;
- 
-@@ -941,15 +941,6 @@ static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	if (err)
- 		return err;
- 
--	/* NULL is printed as '(null)' by printf(): avoid that. */
--	if (fc->source == NULL)
--		host_root = "";
--
--	fsi->host_root_path =
--		kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
--	if (fsi->host_root_path == NULL)
--		return -ENOMEM;
--
- 	root_inode = hostfs_iget(sb, fsi->host_root_path);
- 	if (IS_ERR(root_inode))
- 		return PTR_ERR(root_inode);
-@@ -975,6 +966,58 @@ static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	return 0;
- }
- 
-+enum hostfs_parma {
-+	Opt_hostfs,
-+};
-+
-+static const struct fs_parameter_spec hostfs_param_specs[] = {
-+	fsparam_string_empty("hostfs",		Opt_hostfs),
-+	{}
-+};
-+
-+static int hostfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+{
-+	struct hostfs_fs_info *fsi = fc->s_fs_info;
-+	struct fs_parse_result result;
-+	char *host_root;
-+	int opt;
-+
-+	opt = fs_parse(fc, hostfs_param_specs, param, &result);
-+	if (opt < 0)
-+		return opt;
-+
-+	switch (opt) {
-+	case Opt_hostfs:
-+		host_root = param->string;
-+		if (!host_root)
-+			host_root = "";
-+		fsi->host_root_path =
-+			kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
-+		if (fsi->host_root_path == NULL)
-+			return -ENOMEM;
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int hostfs_parse_monolithic(struct fs_context *fc, void *data)
-+{
-+	struct hostfs_fs_info *fsi = fc->s_fs_info;
-+	char *host_root = (char *)data;
-+
-+	/* NULL is printed as '(null)' by printf(): avoid that. */
-+	if (host_root == NULL)
-+		host_root = "";
-+
-+	fsi->host_root_path =
-+		kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
-+	if (fsi->host_root_path == NULL)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
- static int hostfs_fc_get_tree(struct fs_context *fc)
- {
- 	return get_tree_nodev(fc, hostfs_fill_super);
-@@ -992,6 +1035,8 @@ static void hostfs_fc_free(struct fs_context *fc)
- }
- 
- static const struct fs_context_operations hostfs_context_ops = {
-+	.parse_monolithic = hostfs_parse_monolithic,
-+	.parse_param	= hostfs_parse_param,
- 	.get_tree	= hostfs_fc_get_tree,
- 	.free		= hostfs_fc_free,
- };
--- 
-2.34.1
+Here are the filesystem features enabled for that disk partition,
 
+Filesystem features:=20
+has_journal ext_attr resize_inode dir_index stable_inodes filetype needs_re=
+covery extent 64bit flex_bg encrypt sparse_super large_file huge_file dir_n=
+link extra_isize metadata_csum
+
+Thanks,
+Yuvaraj.
+
+-----Original Message-----
+From: Theodore Ts'o <tytso@mit.edu>=20
+Sent: Wednesday, July 24, 2024 9:52 PM
+To: Yuvaraj Ranganathan <yrangana@qti.qualcomm.com>
+Cc: linux-fscrypt@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-ker=
+nel@vger.kernel.org
+Subject: Re: Software encryption at fscrypt causing the filesystem access u=
+nresponsive
+
+WARNING: This email originated from outside of Qualcomm. Please be wary of =
+any links or attachments, and do not enable macros.
+
+On Wed, Jul 24, 2024 at 02:21:26PM +0000, Yuvaraj Ranganathan wrote:
+> Hello developers,
+>
+> We are trying to validate a Software file based encryption with=20
+> standard key by disabling Inline encryption and we are observing the=20
+> adb session is hung.  We are not able to access the same filesystem at=20
+> that moment.
+
+The stack trace seems to indicate that the fast_commit feature is enabled. =
+ That's a relatively new feature; can you replicate the hang without fast_c=
+ommit being enabled?
+
+                                                - Ted
 
