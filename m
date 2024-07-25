@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-24254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4478B93C6B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 17:44:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E2393C6BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 17:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF8B22810DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 15:44:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 322651C22113
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 15:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B31719D8AE;
-	Thu, 25 Jul 2024 15:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7236919D07A;
+	Thu, 25 Jul 2024 15:46:50 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0695419AD8B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 15:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1DC18028
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 15:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721922264; cv=none; b=BxKm7hsgHpf8nUzOkn5nb67cw1Z2+MuN+7KPjkkbfyw5Bc1CWcWRagjLXr4EbMWZ/qZZPBTT1rT7YSLHsxcGi9jMOU2opOlceHbzl2da/ek1kscWzcrtwFMNnmpAchGZC2F5G0gHiWaiusXulJqD2mDMfbdu3gSOIB8yLfMbxMw=
+	t=1721922410; cv=none; b=FB17qU5/Zai1EqL4g9am3tC/3W17UTVhv9pzyjda1t0e/JsQbzb3wi8JNDtrOLMozmcJVlJqN30CDnRoCAqtaFxuG077lNgLsh930qM+T5Yjn2IthNo5OHxmv4NHviC6Jnisg7K74SHeIl7pjVPnqeNrBhyU3oWbuOmEXigbnGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721922264; c=relaxed/simple;
-	bh=QSxiIlyLcph/pKL/kx8GogyXDhKxtTHelYu+FuiLDoY=;
+	s=arc-20240116; t=1721922410; c=relaxed/simple;
+	bh=QySE1k+j48N1zcKz4Su6fuR31Gl9vRm0LjtVqvlNuxs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pA6SmTScelk9FaEoq2ybdu0S1gRKBeMC4vyQxo/b8AlvmbXtUfc39+tGpGQ0F9FR2KDXADh+splW62QYZHpLpukIj2fvzi1e06VEq5qusN9rsR3WQuUkPfh+xDllZNUChOxEPVg7TxUUAsu6PCj12j5VdpkJLBp22KO2H08pOFQ=
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/XRx4oczcW02Q2XMUP7TR5mVmCzK6Prxm1lzqS5RF+S3QFltTc7s9l8bHON1SfGwmPNJ4mqAe3jHETuRCIv23CA0VZZ92v2yY9JuoL+9N2v8/JQpskSSFxjj97vaWWHJH+kulghB9NMsGDG5ConPTk3bxIKguC5IfkXhR/BsjA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A92B61007;
-	Thu, 25 Jul 2024 08:44:47 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 587921476;
+	Thu, 25 Jul 2024 08:47:12 -0700 (PDT)
 Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 312CB3F766;
-	Thu, 25 Jul 2024 08:44:19 -0700 (PDT)
-Date: Thu, 25 Jul 2024 16:44:13 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F4C63F766;
+	Thu, 25 Jul 2024 08:46:43 -0700 (PDT)
+Date: Thu, 25 Jul 2024 16:46:40 +0100
 From: Dave Martin <Dave.Martin@arm.com>
 To: Joey Gouly <joey.gouly@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
@@ -46,10 +46,10 @@ Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
 	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
 	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
 	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 04/29] arm64: disable trapping of POR_EL0 to EL2
-Message-ID: <ZqJyzZB8Y8GLzYIA@e133380.arm.com>
+Subject: Re: [PATCH v4 06/29] arm64: context switch POR_EL0 register
+Message-ID: <ZqJzYGyqd82EgQ17@e133380.arm.com>
 References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-5-joey.gouly@arm.com>
+ <20240503130147.1154804-7-joey.gouly@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,57 +58,106 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240503130147.1154804-5-joey.gouly@arm.com>
+In-Reply-To: <20240503130147.1154804-7-joey.gouly@arm.com>
 
-Hi,
-
-On Fri, May 03, 2024 at 02:01:22PM +0100, Joey Gouly wrote:
-> Allow EL0 or EL1 to access POR_EL0 without being trapped to EL2.
+On Fri, May 03, 2024 at 02:01:24PM +0100, Joey Gouly wrote:
+> POR_EL0 is a register that can be modified by userspace directly,
+> so it must be context switched.
 > 
 > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 > Cc: Catalin Marinas <catalin.marinas@arm.com>
 > Cc: Will Deacon <will@kernel.org>
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 > ---
->  arch/arm64/include/asm/el2_setup.h | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-> index b7afaa026842..df5614be4b70 100644
-> --- a/arch/arm64/include/asm/el2_setup.h
-> +++ b/arch/arm64/include/asm/el2_setup.h
-> @@ -184,12 +184,20 @@
->  .Lset_pie_fgt_\@:
->  	mrs_s	x1, SYS_ID_AA64MMFR3_EL1
->  	ubfx	x1, x1, #ID_AA64MMFR3_EL1_S1PIE_SHIFT, #4
-> -	cbz	x1, .Lset_fgt_\@
-> +	cbz	x1, .Lset_poe_fgt_\@
+>  arch/arm64/include/asm/cpufeature.h |  6 ++++++
+>  arch/arm64/include/asm/processor.h  |  1 +
+>  arch/arm64/include/asm/sysreg.h     |  3 +++
+>  arch/arm64/kernel/process.c         | 28 ++++++++++++++++++++++++++++
+>  4 files changed, 38 insertions(+)
+
+[...]
+
+> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> index 4ae31b7af6c3..0ffaca98bed6 100644
+> --- a/arch/arm64/kernel/process.c
+> +++ b/arch/arm64/kernel/process.c
+> @@ -271,12 +271,23 @@ static void flush_tagged_addr_state(void)
+>  		clear_thread_flag(TIF_TAGGED_ADDR);
+>  }
 >  
->  	/* Disable trapping of PIR_EL1 / PIRE0_EL1 */
->  	orr	x0, x0, #HFGxTR_EL2_nPIR_EL1
->  	orr	x0, x0, #HFGxTR_EL2_nPIRE0_EL1
->  
-> +.Lset_poe_fgt_\@:
-> +	mrs_s	x1, SYS_ID_AA64MMFR3_EL1
-> +	ubfx	x1, x1, #ID_AA64MMFR3_EL1_S1POE_SHIFT, #4
-> +	cbz	x1, .Lset_fgt_\@
+> +static void flush_poe(void)
+> +{
+> +	if (!system_supports_poe())
+> +		return;
 > +
-> +	/* Disable trapping of POR_EL0 */
-> +	orr	x0, x0, #HFGxTR_EL2_nPOR_EL0
+> +	write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
+> +	/* ISB required for kernel uaccess routines when chaning POR_EL0 */
+> +	isb();
 
-Do I understand correctly that this is just to allow the host to access
-its own POR_EL0, before (or unless) KVM starts up?
+See my comment on permission_overlay_switch(), below.  However, exec is
+slower path code, so including the ISB may be better here than leaving
+it for the caller to worry about.
 
-KVM always overrides all the EL2 trap controls while running a guest,
-right?  We don't want this bit still set when running in a guest just
-because KVM doesn't know about POE yet.
+> +}
+> +
+>  void flush_thread(void)
+>  {
+>  	fpsimd_flush_thread();
+>  	tls_thread_flush();
+>  	flush_ptrace_hw_breakpoint(current);
+>  	flush_tagged_addr_state();
+> +	flush_poe();
+>  }
+>  
+>  void arch_release_task_struct(struct task_struct *tsk)
+> @@ -371,6 +382,9 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+>  		if (system_supports_tpidr2())
+>  			p->thread.tpidr2_el0 = read_sysreg_s(SYS_TPIDR2_EL0);
+>  
+> +		if (system_supports_poe())
+> +			p->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
+> +
 
-(Hopefully this follows naturally from the way the KVM code works, but
-my KVM-fu is a bit rusty.)
+Was POR_EL0 ever reset to something sensible at all?  Does it matter?
 
-Also, what about POR_EL1?  Do we have to reset that to something sane
-(and so untrap it here), or it is sufficient if we never turn on POE
-support in the host, via TCR2_EL1.POE?
+(I couldn't find this, but may have missed it.)
+
+>  		if (stack_start) {
+>  			if (is_compat_thread(task_thread_info(p)))
+>  				childregs->compat_sp = stack_start;
+> @@ -495,6 +509,19 @@ static void erratum_1418040_new_exec(void)
+>  	preempt_enable();
+>  }
+>  
+> +static void permission_overlay_switch(struct task_struct *next)
+> +{
+> +	if (!system_supports_poe())
+> +		return;
+> +
+> +	current->thread.por_el0 = read_sysreg_s(SYS_POR_EL0);
+> +	if (current->thread.por_el0 != next->thread.por_el0) {
+> +		write_sysreg_s(next->thread.por_el0, SYS_POR_EL0);
+> +		/* ISB required for kernel uaccess routines when chaning POR_EL0 */
+> +		isb();
+
+Do we really need an extra ISB slap in the middle of context switch?
+
+(i.e., should any uaccess ever happen until context switch is completed,
+and so can we coalesce this ISB with a later one?)
+
+> +	}
+> +}
+> +
+>  /*
+>   * __switch_to() checks current->thread.sctlr_user as an optimisation. Therefore
+>   * this function must be called with preemption disabled and the update to
+> @@ -530,6 +557,7 @@ struct task_struct *__switch_to(struct task_struct *prev,
+>  	ssbs_thread_switch(next);
+>  	erratum_1418040_thread_switch(next);
+>  	ptrauth_thread_switch_user(next);
+> +	permission_overlay_switch(next);
+>  
+>  	/*
+>  	 * Complete any pending TLB or cache maintenance on this CPU in case
 
 [...]
 
