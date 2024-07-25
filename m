@@ -1,131 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-24214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F6193BA81
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 04:07:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BE793BA88
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 04:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D702BB22E37
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 02:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312601F25318
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 02:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C8179E0;
-	Thu, 25 Jul 2024 02:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A67C8F3;
+	Thu, 25 Jul 2024 02:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SP0ah8ja"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6uATj5B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082C54687
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 02:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF111876;
+	Thu, 25 Jul 2024 02:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721873233; cv=none; b=R/sQaWAYdvpUDcQFU0k2aw6EApAOj5s9zWWY8oVkoApHMUNT9zKia6g/5RMYNWlCYQUSiTFFxHg5+byG5pMX5xYoJcrNF0WX7rhdi2OLxxMyIYQLevUHAUKRdM+k3rDRrjFZkS+T04hAcQfOdMkRTYWIj6p/JPgU0QlQwBSMmvw=
+	t=1721873398; cv=none; b=st3d36SPEM6ZRn8PNLDsgH4ayHkU4okhIln8KCBRk2NNFRd3qZMeh7lr+NtoQ4hEk5aXIE8R7Ut72rbIbKRZBihiM4A93riMhqgFqasRgqU/nke888SPOv7XD0OO9Xxod+YfLibFO5gEcjJp1KzQYKpnM76SSc6rLavWDCqdmVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721873233; c=relaxed/simple;
-	bh=WuhZcclKTJjGOqq8kTC0RNwMZwEP3Pd3/weUXTsrZsM=;
+	s=arc-20240116; t=1721873398; c=relaxed/simple;
+	bh=5mzlHBEZJrXOFSiAtn8W89Tn+T0WordHs/S0NOgvODE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=crY0Qmon0KmnNgGHytU1xhCrgnTDM869anhZT+FpqLFaAZEGNrfvlvFfULcTObw9LheqapFdLGPPVFU1axL2636wjRYCBqaFTCkj8SxVwgRkVQFqNLKDJOuPmRxehgAIv+8FKzyGPwhadsCzp9RM9DNDyT8JECJ6FHMyA9x/VO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SP0ah8ja; arc=none smtp.client-ip=209.85.219.48
+	 To:Cc:Content-Type; b=lwpi6MZlzv/RJ5DtgJCjMEPcsUB0j/vt/PZb5kYQxOk2N6PRQahq1lZLdl/xTPOpemMg+uO8pf4YgoLuxCy0p9igVkFzeNL6C2oksYgQjBCS15Y/TQJHL+5W4cCktu9yaZ1RvlvF2dd9c14oJc4JQfVwSG7IP03n5HTls4Q3fz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c6uATj5B; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b798e07246so3181666d6.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 19:07:11 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so440912a12.3;
+        Wed, 24 Jul 2024 19:09:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721873231; x=1722478031; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721873395; x=1722478195; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WuhZcclKTJjGOqq8kTC0RNwMZwEP3Pd3/weUXTsrZsM=;
-        b=SP0ah8jaA0YEKH+BM0qeOXUhRH2YyC/Ne0dP5dAvKaLGR+v2SN2O7PbhJhJZSFMuAQ
-         pmwUTfh8QFh9LsGahLN94K8Ee1zncecdsLunGX6edKIyTyBwdGwd2xJZf9ipfpoOAXsg
-         sn20g7pXTNjmJf6tVbDxm9U6VqzD36jHOW3m64rmX6QA1qQqozm1ih8QOyUlsuuHBLcT
-         P2QdM/8dLyd0mGi6IgYVOIxYTJlnRTirgN3notCZV9p6r+s8PL3Ukqb6i2cDCHEIflAS
-         FbU11e2osDN2neO/0TP23+6I67aZ0RPD8lzfc4gQogn1tPmwV88RVvkMgj9x7r2IwDwI
-         1fdA==
+        bh=qcQxUErjDPne227PdokUHN1umguq6JRSbMCob0CuJeg=;
+        b=c6uATj5BsuejkeVx+KIVL47a5zns4kJtO5EXABQm5f3/ZNe7U+AQHCqmYZIm1xQ70L
+         9wBfYrQ/udgt+c4zSbPX/s0BJEgTZJHvMAAaklRruaIiRm/5Tk3rU4TeYUoyvplhMoZs
+         8H88Acli0P4bFAYbzl6UfcifCU1XuBZsFJ+/yWRed0QTP8tgsJ47KHEXBIMcC/iKIVK4
+         78HMcBeZZmisYzoziSX8rYceJ01mu9kiBylQD0LNDp982knsbc+2Q2By5gtbTbXCvGh+
+         Mr28evfZ27JTNmvzToIulxY4PeC0Toa1YdklnXTL20zVOoC7VZiyBf7LFYo3bt2K2zFk
+         p1Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721873231; x=1722478031;
+        d=1e100.net; s=20230601; t=1721873395; x=1722478195;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WuhZcclKTJjGOqq8kTC0RNwMZwEP3Pd3/weUXTsrZsM=;
-        b=w22zlmG3nvVKlhuqOz5VnVuVSTIsrCvqUpSdTuSnFiXbdO1uxkFXqW4Aj5V/m/0Z41
-         YV/OpOyr5ex7OOMT/MudU1bOsZPJJ0yEX/Y4ECdGZ3Y+4wSZjJvUXpM52FUxcEQO7udr
-         Dp7lV8ADlq69rRFWjy8o0y2Or2dKOCJdmhPUctsOTSr5IukEs7h7t4rRAwbu8bs5NgDW
-         VStrqqOrbaTRsH5u1WWO9o2wlBa+mBRpcbQEwT4n8i5wTxyBwPrGZo6jMY9vbW/6GJf3
-         TRvNMaPUBl50ZDG5HCcqDi9EiMW/2TEUwz63oCSS2zgP4nG5Cb+atz/SJ+XI71tfOQDf
-         uOVA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3k/x4pOwkhOk1cjO3ELpdMgFNM+GdhrgxZZrIQDK3LDsmgBw8mVCgoa5Bn0n7q8x4vxR8hdfXDvgjcAo6puQCbvEEecjJxF+oaPpbWA==
-X-Gm-Message-State: AOJu0YzEYvRyv365zYbdIDLa88H8PVsZUBlnn4KXqkiAM/cKxHHqT645
-	n5AZfH1Rsbna4ASXKSSRmGwZQ2S/YfdnQtocVY+59IyQsqvQJUecMQ19HIKhv+fq0Abl8VNFUI0
-	YH1jDjR4O18LAsZcarhptOUpotyU=
-X-Google-Smtp-Source: AGHT+IFtBgr4MVVBpE8ju5jilfeHgiIhiw76yNTBpkX/sn47fY7/5/Dh6Jv073UjBH3mAIsC2a3OTRqa1lCodS+GbCc=
-X-Received: by 2002:ad4:4ee3:0:b0:6b5:4a87:4034 with SMTP id
- 6a1803df08f44-6bb40878ceamr5286606d6.49.1721873230828; Wed, 24 Jul 2024
- 19:07:10 -0700 (PDT)
+        bh=qcQxUErjDPne227PdokUHN1umguq6JRSbMCob0CuJeg=;
+        b=VhDpZDGq2efU2ouH/7knvYv1el5VgdAGPLeVYSk/yZVurXg7MWhPmKqQSWEs2y474j
+         TAKjsAGI7zzCIOCN1/eHdr1irgTgKnAlAyKvWKEqlf0yFLvBDb5aqLzMbqI8rtPl/yhz
+         BEe5qwK4Gv7Z3y5Hn7dGLd9f+D7GFJDX+xL6mnmCdZ34aJh1A73sUiegEo+5ppWx+2d9
+         3/sr9OX8qCV6wiu/Z3FRc2MySt+WV6Yp/upP86l8a0YNGpMtScEBI56DybiW/8j5ycKU
+         2BYY9WRLRfdyNXANYrvGiEaQpBSHtqfyJRnioJWZPiQtodOh5Pj7BcbkuKiAkh/U/6e8
+         mzmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVK0uLWLu0mIsTffXVzyhBLti9McmZVTuTqzIuG2PlGNcz2ASEcPKBHHi/+o7HEcDNrxf8LY6XJ+2RCFJn8SuJQ9tFKxsX/gqiXNSkL0dqK12YD/15xJYVDY5XzMfx0tk7noLXAQL8Fsd/TFw==
+X-Gm-Message-State: AOJu0YxyBnNZ2goYOiGf+s0+eSDrLoQ/5NCXxL/5IT1BCThfP2aA1xZy
+	GO3d5wfLgdeJ1yLB1ysO6UDrQe9y30mGnEQ+QkEL3/JEbK9KLMZXLHN9Jzdz1M4Qu1ibSJTmY1y
+	pQCJTge+r7/93LzJH/xM3yPFrQKUPsSRGbsMGGg==
+X-Google-Smtp-Source: AGHT+IGjiEQPgWvzUhVGqlmg9jofNlbeQr7JMG5CW4VhldmoqsO1+1wxpTwX1/+ZcuW4M7uEAyylUHruDUh/efgHm7o=
+X-Received: by 2002:a50:9f6d:0:b0:5aa:2a06:d325 with SMTP id
+ 4fb4d7f45d1cf-5ac6203a67fmr336236a12.7.1721873395155; Wed, 24 Jul 2024
+ 19:09:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724071156.97188-1-laoar.shao@gmail.com> <20240724071156.97188-3-laoar.shao@gmail.com>
- <CAJnrk1a7pb3XoDWCAXV5131gbf_EzULtCaXKn-4-jnGaCrKxKQ@mail.gmail.com>
-In-Reply-To: <CAJnrk1a7pb3XoDWCAXV5131gbf_EzULtCaXKn-4-jnGaCrKxKQ@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 25 Jul 2024 10:06:34 +0800
-Message-ID: <CALOAHbCt1Hcu+9O0xB-+jeTT2kDRPdvWD1sE86nDDo-pV9Qqzw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] fuse: Enhance each fuse connection with timeout support
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+References: <20240723091154.52458-1-sunjunchao2870@gmail.com> <7a1be8c1f49fc6356a0a79591af3c3de8d4675ec.camel@perches.com>
+In-Reply-To: <7a1be8c1f49fc6356a0a79591af3c3de8d4675ec.camel@perches.com>
+From: Julian Sun <sunjunchao2870@gmail.com>
+Date: Wed, 24 Jul 2024 22:09:41 -0400
+Message-ID: <CAHB1NaijJ16haCsH3uHy_zVZFXJ7_-qFOk8mFx7QSeqD+X6Z3g@mail.gmail.com>
+Subject: Re: [PATCH] scripts: add macro_checker script to check unused
+ parameters in macros
+To: Joe Perches <joe@perches.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	n.schier@avm.de, ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 1:09=E2=80=AFAM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
+Joe Perches <joe@perches.com> =E4=BA=8E2024=E5=B9=B47=E6=9C=8824=E6=97=A5=
+=E5=91=A8=E4=B8=89 09:30=E5=86=99=E9=81=93=EF=BC=9A
 >
-> On Wed, Jul 24, 2024 at 12:12=E2=80=AFAM Yafang Shao <laoar.shao@gmail.co=
-m> wrote:
+> On Tue, 2024-07-23 at 05:11 -0400, Julian Sun wrote:
+> > Hi,
 > >
-> > In our experience with fuse.hdfs, we encountered a challenge where, if =
-the
-> > HDFS server encounters an issue, the fuse.hdfs daemon=E2=80=94responsib=
-le for
-> > sending requests to the HDFS server=E2=80=94can get stuck indefinitely.
-> > Consequently, access to the fuse.hdfs directory becomes unresponsive.
-> > The current workaround involves manually aborting the fuse connection,
-> > which is unreliable in automatically addressing the abnormal connection
-> > issue. To alleviate this pain point, we have implemented a timeout
-> > mechanism that automatically handles such abnormal cases, thereby
-> > streamlining the process and enhancing reliability.
+> > Recently, I saw a patch[1] on the ext4 mailing list regarding
+> > the correction of a macro definition error. Jan mentioned
+> > that "The bug in the macro is a really nasty trap...".
+> > Because existing compilers are unable to detect
+> > unused parameters in macro definitions. This inspired me
+> > to write a script to check for unused parameters in
+> > macro definitions and to run it.
 > >
-> > The timeout value is configurable by the user, allowing them to tailor =
-it
-> > according to their specific workload requirements.
-> >
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 >
-> Hi Yafang,
+> checkpatch has a similar test:
 >
-> There was a similar thread/conversation about timeouts started in this
-> link from last week
-> https://lore.kernel.org/linux-fsdevel/20240717213458.1613347-1-joannelkoo=
-ng@gmail.com/#t
+> https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail.com
+>
+> $ git log --format=3Demail -1 b1be5844c1a0124a49a30a20a189d0a53aa10578
+> From b1be5844c1a0124a49a30a20a189d0a53aa10578 Mon Sep 17 00:00:00 2001
+> From: Xining Xu <mac.xxn@outlook.com>
+> Date: Tue, 7 May 2024 15:27:57 +1200
+> Subject: [PATCH] scripts: checkpatch: check unused parameters for
+>  function-like macro
+>
+> If function-like macros do not utilize a parameter, it might result in a
+> build warning.  In our coding style guidelines, we advocate for utilizing
+> static inline functions to replace such macros.  This patch verifies
+> compliance with the new rule.
+>
+> For a macro such as the one below,
+>
+>  #define test(a) do { } while (0)
+>
+> The test result is as follows.
+>
+>  WARNING: Argument 'a' is not used in function-like macro
+>  #21: FILE: mm/init-mm.c:20:
+>  +#define test(a) do { } while (0)
+>
+>  total: 0 errors, 1 warnings, 8 lines checked
+>
+>
+> > Link: https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail.c=
+om
+Yeah, I noticted the test. The difference between checkpatch and
+macro_checker is that checkpatch only checks the patch files, instead
+of the entire source files, which results in the inability to check
+all macros in source files.
 >
 
-I am not currently subscribed to linux-fsdevel, so I missed your patch.
-Thanks for your information. I will test your patch.
-
-> The core idea is the same but also handles cleanup for requests that
-> time out, to avoid memory leaks in cases where the server never
-> replies to the request. For v2, I am going to add timeouts for
-> background requests as well.
-
-Please CC me if you send new versions.
-
+Thanks,
 --=20
-Regards
-Yafang
+Julian Sun <sunjunchao2870@gmail.com>
 
