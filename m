@@ -1,128 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-24217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C4793BAD0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 04:31:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6230493BAE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 04:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0367CB22667
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 02:31:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1268A1F221F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 02:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B7811CA9;
-	Thu, 25 Jul 2024 02:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27D011711;
+	Thu, 25 Jul 2024 02:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0jwu6Xu"
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="Ucj5nsdj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F221103;
-	Thu, 25 Jul 2024 02:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36C963D0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 02:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721874669; cv=none; b=Q9gO8V9ZYAwpvXg6wZiCA9o7HrpkCLMTR3gi9ghBMx1WukGXR2orBjpFZ/UZVR7MGPwAZe9+Oi/losGf0jzMRGODWS+j+dbj6L8sksdrou2Rdjt5jpXd1wafoJqWMPz+hYAyjTPRVcX3qMZ7tz3aZq92L1FyKachWOvyGr7jSJA=
+	t=1721875234; cv=none; b=mgLxThnel86oTwBZTyDRcZfuWmjEFEIKR+f8DyUVeLI41KZF8eVt6JcPpUHJ/svOQqNDbx4JUelqugSvaU8VjUqnmeU/6vofQ/ve79r7adfPkuYkzjbMBBO4+srx7czrcfndBc2dykGZWm2Tcq7YDjdB6udTNhsjVJdN7TVA4XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721874669; c=relaxed/simple;
-	bh=rHYP/JZ0qZvQC5t0SD4oF84A3HWmyGiBcpwoL0QLn5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pBtb/Ryec2kpF3oZJFKjkjovc4Ztmm7jVAIoJcPkqNPV1fiGC+Pg6IsBa9JNtnLbypXTQv8z9rYERH7VVw4xgvXCI5fzR6LEWHVngSJWHrv1zSAtMEVcCebBDCK3f+Qe03Qbn/NKYebZrtEqnUTCn4DJxN4t2QNI8BIZLCOuY7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0jwu6Xu; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a22f09d976so2667967a12.1;
-        Wed, 24 Jul 2024 19:31:04 -0700 (PDT)
+	s=arc-20240116; t=1721875234; c=relaxed/simple;
+	bh=+Q3gEmDizWp+wVM9J7repNjFwCf88tvXmIhUEt02z3U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tnOZqANivFST6MQZdlHqlAH1gdPh2RIAiIwYaU3aoZ0HIZt1YNe650Yw5ahs69qCJS06s2g56xDSOuA5Bnjqz12WK+LEuX/fNFqP7Xqc/blJ3VRkRwA1OoB9mBh1Ah387GA0gmMuKfvNj02MQuEEr3I9ANbjHZZ68v0zisJbaDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=Ucj5nsdj; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc65329979so3423305ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 19:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721874663; x=1722479463; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d8h8nTzUAl1WcARF1hup8Fyq1znnGzBKQRxAU25hgOQ=;
-        b=g0jwu6Xuz5/dt2G82sRNt0XLY7gFsh1nMZ8Xr1rFA35ccPexUdpZmilMuZvXtLHWni
-         z9lJVH9exZZj8tMFF2sGtOMKd97r6MQCaI4PtVz80Es6bZWHoezwW611ImtP3zX7Uoh8
-         +U2cFyjTRuCq+5dOL2f7p8xC6jNlHmheinEkIs8WdL9lDAiF4F7jzBcBDc93ARSNZVGo
-         ycJsRxgb4DOvW7TOIuOiA553EeKzHBj02iFOGD03xFMo+ntEF+xCfsfF5ugjUPnVeH1o
-         FcYBgFPifuQfluB7lEPXHf8lY02nqoJ6lXmBatAkd7ivxCdwMqTZ6t+UyBJaJdbTUjlS
-         b1BA==
+        d=shopee.com; s=shopee.com; t=1721875232; x=1722480032; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q6qGDo/UGEvSr10Mbjrm7JlnAMdeNemkg4xjMy1whgo=;
+        b=Ucj5nsdj/Uhls5WQA73mxy2+GNsBls5GF2CiLS++Ort4R/m9Tzf44U/O2FRP0WAiHc
+         KYWof9/jy4cG0TSySHCgoPvKpFp7F48COnV60NOSrFcqBeLZQLQztZ6zg1XgukOa0OVm
+         wGnl8A3+lVDEfxoIA6aTlNDXNf8AF54ZfO327tMKvEF0tnoKt74lgXbKTRAPY+oOCzpe
+         QC/mH0sBPqFUZlk0IGgdIE3xt0kWUtwqQ4KTIlC+Foqt5FkHOTXTEhBtFkjXmmFFB+AI
+         PK6tlbwtu2mfs56MoqwmWm13d43mNU5A5GFty8nILu4MpbAyBAdHcNwZOJkgMSaeE+RJ
+         XPgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721874663; x=1722479463;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d8h8nTzUAl1WcARF1hup8Fyq1znnGzBKQRxAU25hgOQ=;
-        b=d8Z2FziZzV1csjKIC1MrkpVNA8koox3Nh20a/U0mtIeA4RbvnEh6Oru/pt8YQZaP9/
-         Ug2A3Zlof6O1ZTtn0niXTe+4BmmseJVCWwfx3StxRIGXP3eKtJITw1C0AjDsnOw3sa6v
-         m/Afpc+JWbjluCvGUntMPAH2n0e4jp0uF8S1b0vGzNaOOj9/bgZy9Ruk/m+LVEVDg+RC
-         FFz9fu51Kw4iPRTboFMToMtKeB+gJGgyp3+2yMm5p7AUR3SAFtunoIoclmEUxSBCalJF
-         +w2JRNhLM4+L4lL5DoYgQdZYpOZzUKwtoSHcqci32ujNB8ZcsNWaiiATaYd0PxfuXtw5
-         42NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgD51lhsauLQvpQk3ozlRcedcQB6uiqOViZnOVWSWXq1hKRSq71tONdoyEqan5b3n6ZAMQ2OsnVHESf6UDoMejS2cKyXttHY+4pGmESsCVDoAvQNjJMkF5XgcUSZJa+9qRbzZ5LAZNxl0X8w==
-X-Gm-Message-State: AOJu0YyaHv/yiHZndPjMkAyTwoBFmSCVEF4XfIEHc1frSnER66znf6i3
-	f4il+p4QOuGgb+qNLIQCZljusVVor6W3aO40tr4L6fNb2gnyF6t8YIp7z9dImR8gW+e7ZXTZeGx
-	s+VkL1HbJgwCXtbBpAs/8vKi6otw=
-X-Google-Smtp-Source: AGHT+IGdGx4ySUzJGl9EnTZK8v8wPNb/wvPcHHbBXF7mKGm9VIRFhtNhDoDoxxMpcTzBRbKe6/wPyWylfhzTadLKR+4=
-X-Received: by 2002:a05:6402:50cf:b0:58c:b2b8:31b2 with SMTP id
- 4fb4d7f45d1cf-5ac148aa56dmr1404524a12.17.1721874662401; Wed, 24 Jul 2024
- 19:31:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721875232; x=1722480032;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q6qGDo/UGEvSr10Mbjrm7JlnAMdeNemkg4xjMy1whgo=;
+        b=XUo9YJZrXS4NLccFeVZ7Idwz6vxOKbCNd5cIpd/2WkZgGrXhiqVxL4F/YMwbAeOIJf
+         QCHcW6Ot1DN9XXTAH3r4NVTUZ18Y9CdM/7WM+ycyw3szKqSMkFbDzwkYBYW1HcRnLMHT
+         pKvJWm0iq1kkGdBjkwD6l28jKZ1dHBIxQNQS76nZ7o6jDJnCBo4l48RaAMCfzOQMyMG+
+         Bx57eM3+/TekSuIxZyhOYm4o7drofE/ugSl/Xt2Dwhw83fjNlQj5nbfGcW2HsvcKipyh
+         FJ54VltmA7lTUA7b9YE2u39F1SpUICDChygJ/Em2dZR10pybdIRl5UgOBJxdd5B5uWZA
+         Pp+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVSc9Zn3yYEw5DjYjWNnBu6q9CTVCe/5VMg86QNxr0N/sbf7GSD+8xgK5449wN1c2dVngQwyOA7I3D09rz1adROSLKkvvLbWyjFL/GMzw==
+X-Gm-Message-State: AOJu0YwH9M5UXP2oq4qhxCsGOWaTUt9PB/HRffZxb6y/X4wFLbPvxJiL
+	J9twq++CfRUvT9NkgceEC+q/dcg8j/z/BiMw+HnaDmARiTlVtVDt5n584vGGbLI=
+X-Google-Smtp-Source: AGHT+IFptWv1W0aKCBfAlsb4iJ8o/+2ZgqQljyVLnF95YGVYKfrsg+wXBhNV7DYReRptmCteiaPr5w==
+X-Received: by 2002:a17:902:fb0e:b0:1f7:1b08:dda9 with SMTP id d9443c01a7336-1fed924ff52mr4939955ad.8.1721875231899;
+        Wed, 24 Jul 2024 19:40:31 -0700 (PDT)
+Received: from localhost.localdomain ([143.92.64.18])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c8c6f4sm2814165ad.24.2024.07.24.19.40.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 19:40:31 -0700 (PDT)
+From: Haifeng Xu <haifeng.xu@shopee.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	tj@kernel.org
+Cc: axboe@kernel.dk,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haifeng Xu <haifeng.xu@shopee.com>
+Subject: [PATCH] fs: don't flush in-flight wb switches for superblocks without cgroup writeback
+Date: Thu, 25 Jul 2024 10:39:58 +0800
+Message-Id: <20240725023958.370787-1-haifeng.xu@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723091154.52458-1-sunjunchao2870@gmail.com> <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
-In-Reply-To: <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
-From: Julian Sun <sunjunchao2870@gmail.com>
-Date: Wed, 24 Jul 2024 22:30:49 -0400
-Message-ID: <CAHB1NagAwSpPzLOa6s9PMPPdJL5dpLUuq=W3t4CWkfLyzgGJxA@mail.gmail.com>
-Subject: Re: [PATCH] scripts: add macro_checker script to check unused
- parameters in macros
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, masahiroy@kernel.org, n.schier@avm.de, 
-	ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+When deactivating any type of superblock, it had to wait for the in-flight
+wb switches to be completed. wb switches are executed in inode_switch_wbs_work_fn()
+which needs to acquire the wb_switch_rwsem and races against sync_inodes_sb().
+If there are too much dirty data in the superblock, the waiting time may increase
+significantly.
 
-I noticed that you have already merged this patch into the
-mm-nonmm-unstable branch. If I want to continue refining this script,
-should I send a new v2 version or make modifications based on the
-current version?
+For superblocks without cgroup writeback such as tmpfs, they have nothing to
+do with the wb swithes, so the flushing can be avoided.
 
-Andrew Morton <akpm@linux-foundation.org> =E4=BA=8E2024=E5=B9=B47=E6=9C=882=
-3=E6=97=A5=E5=91=A8=E4=BA=8C 18:09=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Tue, 23 Jul 2024 05:11:54 -0400 Julian Sun <sunjunchao2870@gmail.com> =
-wrote:
->
-> > Hi,
-> >
-> > Recently, I saw a patch[1] on the ext4 mailing list regarding
-> > the correction of a macro definition error. Jan mentioned
-> > that "The bug in the macro is a really nasty trap...".
-> > Because existing compilers are unable to detect
-> > unused parameters in macro definitions. This inspired me
-> > to write a script to check for unused parameters in
-> > macro definitions and to run it.
->
-> Seems a useful contribution thanks.  And a nice changelog!
->
-> >  scripts/macro_checker.py | 101 +++++++++++++++++++++++++++++++++++++++
->
-> Makes me wonder who will run this, and why.  Perhaps a few people will
-> run ls and wonder "hey, what's that".  But many people who might have
-> been interested in running this simply won't know about it.
->
-> "make help | grep check" shows we have a few ad-hoc integrations but I
-> wonder if we would benefit from a top-level `make static-checks'
-> target?
+Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+---
+ fs/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/fs/super.c b/fs/super.c
+index 095ba793e10c..f846f853e957 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -621,7 +621,8 @@ void generic_shutdown_super(struct super_block *sb)
+ 		sync_filesystem(sb);
+ 		sb->s_flags &= ~SB_ACTIVE;
+ 
+-		cgroup_writeback_umount();
++		if (sb->s_bdi != &noop_backing_dev_info)
++			cgroup_writeback_umount();
+ 
+ 		/* Evict all inodes with zero refcount. */
+ 		evict_inodes(sb);
+-- 
+2.25.1
 
-Thanks,
---=20
-Julian Sun <sunjunchao2870@gmail.com>
 
