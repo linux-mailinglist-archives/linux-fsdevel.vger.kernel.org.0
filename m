@@ -1,101 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-24232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A8093BE19
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 10:43:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B31893BE35
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 10:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00F93B22C90
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 08:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF2B71C20A43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 08:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB39187349;
-	Thu, 25 Jul 2024 08:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD066196D9A;
+	Thu, 25 Jul 2024 08:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jaQ2Lf+K";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jQTzTKCS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jaQ2Lf+K";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jQTzTKCS"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfGZTkxN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BOSzqu0U";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfGZTkxN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BOSzqu0U"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A737185623;
-	Thu, 25 Jul 2024 08:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0E41741E1;
+	Thu, 25 Jul 2024 08:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721896972; cv=none; b=OwwI1jUPPoeZN5q2fUN6xxIvNpP2avNFMA2eK6oHn0m0hqiHFN9DPuQSADC1ffSf3laoR09+AxfckZMfEB/fwpADplCll6CEl3szsU9UACw0DH43q/y4V8mfBtMRJkM4BZ5X3ILNSv+pzb0BDmaGY2XTySq4zEgTEb5g0DRmrf0=
+	t=1721897536; cv=none; b=FBvKbzkEAAubBdGjzDLbUmXDgDkBZx+grQywF1wcZGPFTnnLt0UKyRCvpP5BAIXlH+i3FDJd67MRdF1MWx3fvQE2AhvQ2zuthFVdoD6uOAQEqKT8lLoP7WT2PdGG175v4FH6QWRl7yz+5S4+b1i1RC+w7DksCyJFNMeYtdExSG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721896972; c=relaxed/simple;
-	bh=+xNMIiOutEftQ14fECFJ1Dyu58qcr3nWpFQVY+PuaLQ=;
+	s=arc-20240116; t=1721897536; c=relaxed/simple;
+	bh=U5ZDTXxkRIk/3JvEIigcQBdT7eXHTE8XK4nJqoJsIaM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u56AMgph+3+JSSk1mPmluo0PNyMzuD62FUcLERFW/5FiMQQ6zEENcHJqvd0cM59iWhtC4jv/ug1CVVd7fqK2gafZtsFZupYVi0Cu5XTkBKkRCKlk1cmkJbSInXVauK6//TZP8q+n3UkNKDsiUeTccI73LGijhl3PmB2Mo1VkYXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jaQ2Lf+K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jQTzTKCS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jaQ2Lf+K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jQTzTKCS; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=ox3RdYu8M00ro6mw7qurIM2IBpRG448dmXs/q29Nhp88kooKmSmeEe7E7WUhAorfE5CDRAgTX5C9r4Jay/Rc3KqmzBxU7EWZn/w2kQl8Hiq0Qtk/tPa3Q3CdNECoeXCsltxJ4+1kH10EAM9eXnGmfsJalfcYWjrCEIGkFy1U4Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfGZTkxN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BOSzqu0U; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfGZTkxN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BOSzqu0U; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6EDBD1FC81;
-	Thu, 25 Jul 2024 08:42:48 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 370061F7F4;
+	Thu, 25 Jul 2024 08:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721896968; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1721897532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fs6bJDWIeskekddsnMj7aBO6yI65RH0EnnArQ8nuep8=;
-	b=jaQ2Lf+KXTsMY8adapYh4nv2Y9m9rEBL0hsX4WFPPmJEJhu80yEvdsdSKMBfREc7RCx41W
-	Nphc41Vuyy29Og3GA0PtzKJ5s9a11FJlZY2SZnR8FtvQFlwLfR0AKbcaWfX9Ip2f3Kaq8i
-	PjtArjfABpGfKfd9fnQFbj9TyvdpXNI=
+	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
+	b=GfGZTkxNcBivGaF3zRgTUF7QcgcYTA83aYDuXbALtiLv7RW9xy0RE/voPkpON8cdd34BME
+	grcEZOTFCCCn2JPOMfgzVqeNzzwakOAtAvGxtiAUsk7g0udkMw+ADwtTTH/ZfPMgTPryD1
+	q529o/b911SaIl3D0SSP8Wn7fmRlBmI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721896968;
+	s=susede2_ed25519; t=1721897532;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fs6bJDWIeskekddsnMj7aBO6yI65RH0EnnArQ8nuep8=;
-	b=jQTzTKCS4KGcqdItqRdp6AzABDPLTcygUrWr6ggcNEDmZrr+9ltGPAt/1OAQGl1ybrGP5D
-	nlzNHnA39GD+wfDw==
+	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
+	b=BOSzqu0UvIOTSm1+eTUzlPRjUjFYTzyAqoWp6YhaEXaNz3FmcMMWfEMAaAln2GZTL52Quy
+	yEfbug76xpuQM+Dg==
 Authentication-Results: smtp-out2.suse.de;
-	none
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GfGZTkxN;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=BOSzqu0U
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721896968; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1721897532; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fs6bJDWIeskekddsnMj7aBO6yI65RH0EnnArQ8nuep8=;
-	b=jaQ2Lf+KXTsMY8adapYh4nv2Y9m9rEBL0hsX4WFPPmJEJhu80yEvdsdSKMBfREc7RCx41W
-	Nphc41Vuyy29Og3GA0PtzKJ5s9a11FJlZY2SZnR8FtvQFlwLfR0AKbcaWfX9Ip2f3Kaq8i
-	PjtArjfABpGfKfd9fnQFbj9TyvdpXNI=
+	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
+	b=GfGZTkxNcBivGaF3zRgTUF7QcgcYTA83aYDuXbALtiLv7RW9xy0RE/voPkpON8cdd34BME
+	grcEZOTFCCCn2JPOMfgzVqeNzzwakOAtAvGxtiAUsk7g0udkMw+ADwtTTH/ZfPMgTPryD1
+	q529o/b911SaIl3D0SSP8Wn7fmRlBmI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721896968;
+	s=susede2_ed25519; t=1721897532;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fs6bJDWIeskekddsnMj7aBO6yI65RH0EnnArQ8nuep8=;
-	b=jQTzTKCS4KGcqdItqRdp6AzABDPLTcygUrWr6ggcNEDmZrr+9ltGPAt/1OAQGl1ybrGP5D
-	nlzNHnA39GD+wfDw==
+	bh=8SdDBGL0PW1vSYsbzX8BUuhklGP+FwaGFOQ2ZOZ0yRg=;
+	b=BOSzqu0UvIOTSm1+eTUzlPRjUjFYTzyAqoWp6YhaEXaNz3FmcMMWfEMAaAln2GZTL52Quy
+	yEfbug76xpuQM+Dg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5525713874;
-	Thu, 25 Jul 2024 08:42:48 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1C34513874;
+	Thu, 25 Jul 2024 08:52:12 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PeN+FAgQomajKgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 08:42:48 +0000
+	id je6YBjwSomZxLQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 25 Jul 2024 08:52:12 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F18CEA08F2; Thu, 25 Jul 2024 10:42:32 +0200 (CEST)
-Date: Thu, 25 Jul 2024 10:42:32 +0200
+	id BAD3FA08F2; Thu, 25 Jul 2024 10:51:56 +0200 (CEST)
+Date: Thu, 25 Jul 2024 10:51:56 +0200
 From: Jan Kara <jack@suse.cz>
-To: Haifeng Xu <haifeng.xu@shopee.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	tj@kernel.org, axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: don't flush in-flight wb switches for superblocks
- without cgroup writeback
-Message-ID: <20240725084232.bj7apjqqowae575c@quack3>
-References: <20240725023958.370787-1-haifeng.xu@shopee.com>
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	masahiroy@kernel.org, akpm@linux-foundation.org, n.schier@avm.de,
+	ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
+Subject: Re: [PATCH] scripts: reduce false positives in the macro_checker
+ script.
+Message-ID: <20240725085156.dezpnf44cilt46su@quack3>
+References: <20240725075830.63585-1-sunjunchao2870@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,67 +107,102 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240725023958.370787-1-haifeng.xu@shopee.com>
+In-Reply-To: <20240725075830.63585-1-sunjunchao2870@gmail.com>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 370061F7F4
+X-Spam-Score: -3.81
 X-Spam-Level: 
-X-Spamd-Result: default: False [-0.60 / 50.00];
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.81 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
+	MX_GOOD(-0.01)[];
 	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -0.60
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
 
-On Thu 25-07-24 10:39:58, Haifeng Xu wrote:
-> When deactivating any type of superblock, it had to wait for the in-flight
-> wb switches to be completed. wb switches are executed in inode_switch_wbs_work_fn()
-> which needs to acquire the wb_switch_rwsem and races against sync_inodes_sb().
-> If there are too much dirty data in the superblock, the waiting time may increase
-> significantly.
+On Thu 25-07-24 03:58:30, Julian Sun wrote:
+> Reduce false positives in the macro_checker
+> in the following scenarios:
+>   1. Conditional compilation
+>   2. Macro definitions with only a single character
+>   3. Macro definitions as (0) and (1)
 > 
-> For superblocks without cgroup writeback such as tmpfs, they have nothing to
-> do with the wb swithes, so the flushing can be avoided.
+> Before this patch:
+> 	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+> 	99
 > 
-> Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
-> ---
->  fs/super.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> After this patch:
+> 	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+> 	11
 > 
-> diff --git a/fs/super.c b/fs/super.c
-> index 095ba793e10c..f846f853e957 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -621,7 +621,8 @@ void generic_shutdown_super(struct super_block *sb)
->  		sync_filesystem(sb);
->  		sb->s_flags &= ~SB_ACTIVE;
+> Most of the current warnings are valid now.
+> 
+> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+...
+>  def file_check_macro(file_path, report):
+> +    # number of conditional compiling
+> +    cond_compile = 0
+>      # only check .c and .h file
+>      if not file_path.endswith(".c") and not file_path.endswith(".h"):
+>          return
+> @@ -57,7 +72,14 @@ def file_check_macro(file_path, report):
+>          while True:
+>              line = f.readline()
+>              if not line:
+> -                return
+> +                break
+> +            line = line.strip()
+> +            if line.startswith(cond_compile_mark):
+> +                cond_compile += 1
+> +                continue
+> +            if line.startswith(cond_compile_end):
+> +                cond_compile -= 1
+> +                continue
 >  
-> -		cgroup_writeback_umount();
-> +		if (sb->s_bdi != &noop_backing_dev_info)
-> +			cgroup_writeback_umount();
+>              macro = re.match(macro_pattern, line)
+>              if macro:
+> @@ -67,6 +89,11 @@ def file_check_macro(file_path, report):
+>                      macro = macro.strip()
+>                      macro += f.readline()
+>                      macro = macro_strip(macro)
+> +                if file_path.endswith(".c")  and cond_compile != 0:
+> +                    continue
+> +                # 1 is for #ifdef xxx at the beginning of the header file
+> +                if file_path.endswith(".h") and cond_compile != 1:
+> +                    continue
+>                  check_macro(macro, report)
+>  
+>  def get_correct_macros(path):
 
-So a more obvious check would be:
-
-		if (sb->s_bdi->capabilities & BDI_CAP_WRITEBACK)
-
-even better would be if we'd pass 'sb' into cgroup_writeback_umount() and
-that function would do this check inside so that callers don't have to
-bother... I know there is only one caller so this is not a huge deal but
-still I'd find it cleaner that way.
+So I don't think this is right. As far as I understand this skips any macros
+that are conditionally defined? Why? There is a lot of them and checking
+them is beneficial... The patterns you have added should be dealing with
+most of the conditional defines anyway.
 
 								Honza
-
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
