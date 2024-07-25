@@ -1,142 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-24265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC36793C7DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 19:57:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0383093C829
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 20:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 739DFB20F2D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 17:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38CC1F22885
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 18:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4AF19DF70;
-	Thu, 25 Jul 2024 17:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191A519DF7C;
+	Thu, 25 Jul 2024 18:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B895Yo0L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8MLbVSU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD8B19D8AB
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 17:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AC9DF6C;
+	Thu, 25 Jul 2024 18:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721930215; cv=none; b=KSCDP5/G1VCSXgVP0ooLfEIY977q7vaY9Dm6DSpZ9VJv+MogWSqCj4lAN2bLxY5Z/SXcLXUcjuZgae3N5DFN0wwgzrtebTGEOh34auEbhrBqkt+FYfmB7x5MrUquS0Faq0Q+ppa5VBI/6JOtgCjMofSjjwvAHJ9qbbTnYUJVC/E=
+	t=1721931110; cv=none; b=GxU2yI9U5+88XkxsHnsbSJTBRIcpto5uvQmqTfBjNpiFdnanSTRsA/NAUcwZAq7SAkHZPWfDkVywWfoTA8KqsSxcgLbh9eahEXLgXBgaO8y8etJQ558qTM+p3mWr49XXQVo2zzihwueMVJ1D3okg9eU6fH/erBhNl9969lu0J0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721930215; c=relaxed/simple;
-	bh=ENxVREbF97xLFXxmSCZZNz+Q8CxPPW3SYyY1WoYyWsI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XmMKP/JInPtDXYfBfUxqtQzxJF6A8Zt2k3xlCNtMqLJo2qYFyPgU1aBVKJqJo8Q2zvvPuMYhvC9CYgQqknyvz4F/ouKDmh9QkxXIIFivGW+vDEAgJhpykiL4KtsAdt8R1umT4T+SLvPhHeFGiw/oOveJLrxF4m++VnkSdGBce5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B895Yo0L; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44d5f487556so5541781cf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 10:56:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721930213; x=1722535013; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ENxVREbF97xLFXxmSCZZNz+Q8CxPPW3SYyY1WoYyWsI=;
-        b=B895Yo0L02s7fjV8xSdIf9+rfJ20wiACILwLrQ48F2TMrX7ozpDYyv7TGzyDnaMRTe
-         CR+DModZcCmamf0nh+DMZQsauTZJKMpLHCvln8jjI5BzKlfbd+1ulHz3uTey6OYxC6PK
-         gyR39hH62tt1KXBWOgb/u+Ch+cRxhhz3n6R5kZUdsaeMA4WR5pH+RinyBuwWsQdh37RG
-         iZ5JpQUX7XwRYjVNkaK2ZzPqfOoQXWazAgeZIcZcvbOv+4xqYaMn3lRYkmhXJ0N5XqrR
-         aAWErGqP9f4irnELiiWItt/Rtw8hEhaqvCMkN76zC4Em0Q9455JtbrD6XXvTd6yglmwL
-         BwOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721930213; x=1722535013;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ENxVREbF97xLFXxmSCZZNz+Q8CxPPW3SYyY1WoYyWsI=;
-        b=lUdobkqvMDGnADVLYsfME3csX9LE/XHxuqi1KfLOLsapqKaSwJdDpMF79OS6nJXAqs
-         2wexv0jN2v9hsh0D/23q6NErk/XJY6FlrU5Uoe7Huu3jWBcMKVEnwJ9GWyG56skP4vNT
-         Vs/Vxp84vCGM/LD8LhesvV6ewC8BMaCfpg1Le4FYlpEmS8XzpgNqCQz/yZeJTpAaV2o7
-         8Fi2S5+9ihmDb5j1N9YlSHu91rzDdP4em6WoGdmtvA7WhMI2DIdr9BfLbF6iGTGM/+Lr
-         TbSnJHlLaekz8qgH/LUu5zsOWDX4Y4BoLt6Oj9uDkwJ8hqF0s8vkbek8v7rL7QX/WZA1
-         jOzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWyVLMF+Xms9/nMWOgRBDQBdbxCA+JyPIo2shNe+j7kjjGAquWi3fU2AtHitf0FX/OwRh/A3QLam1Nmpeb4yzbj5OfmQJUrWretGmF9Q==
-X-Gm-Message-State: AOJu0YwkFgaQqsInY224F+e1JIOfEAafU4Km4jMJQEsb1iEbDoYVKAI7
-	Dnu0qVMzORILRKaUTQUpJMQlvxrN0NxKNkK/V7MaRmJh695oV9JNeG35tpzmj4YCCdVoQwHDv4w
-	/40+rI+hPtU5eIp0m5x+9ChakoDE=
-X-Google-Smtp-Source: AGHT+IFWt6ZVoC0ar8eCL1hkoe1dOgFlehJYtiEAtKW9M6Wk4klLbkQhTHPqZPHNOrPjs75FxWouVSl5wnLkhEpbuPU=
-X-Received: by 2002:a05:622a:1b8e:b0:447:f361:e2d7 with SMTP id
- d75a77b69052e-44fe923f3f4mr32481241cf.47.1721930212823; Thu, 25 Jul 2024
- 10:56:52 -0700 (PDT)
+	s=arc-20240116; t=1721931110; c=relaxed/simple;
+	bh=qMPNAiU4QG51WPd2++7tk9Ir3s3Q0Q2T/8v0cyCK9EM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LDB7xfVoX3afXJ1H1h5CTSyiCusz5BDtzUqwD37YudZGwzFVGrMVDKfudmLtRb0w6gGS7uPMoJK0UuY65YnrgGYi7HweZWGAV5r0nMUI1u322v2o9uKN+aUAdkq1aRubgToiEuXl1yMsI4r3I9qcOxQr3X/n+91HvSGlrM12ny4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8MLbVSU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9308C116B1;
+	Thu, 25 Jul 2024 18:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721931110;
+	bh=qMPNAiU4QG51WPd2++7tk9Ir3s3Q0Q2T/8v0cyCK9EM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i8MLbVSUZNyx2oKUzGxGulXalYXs/A3uuRF0gXaAp/dV3ROUF08DFt2kY/IMp5Xcm
+	 vlXuoNeyAMEqYxrVUEI1dQlobQI79RrraPupjRZYMkILK/7R65RxA8Oko9h7UBRf1I
+	 Njg0GtY8b1A4UiJ6N1oPGBmghESZCD4ochXvxojhpHw4NrPw5RTJoqGGUv1WMWuO2v
+	 GmLBdZVjEf2L9xTtJi59xk15gvfikBTs1nGQwnW3F7760FeZ6Ow9iI/7TOkF2iLETQ
+	 BfgrrX0qUOsSl2IKa5ozSDfzDbrGZSGqna2afVmNcVJYv1zNPS480l0tCDd/lH0Fxc
+	 GHxSJJD0mx8jg==
+Date: Thu, 25 Jul 2024 19:11:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Amit Daniel Kachhap <amitdaniel.kachhap@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
+	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 18/29] arm64: add POE signal support
+Message-ID: <a13c3d5e-6517-4632-b20d-49ce9f0d8e58@sirena.org.uk>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-19-joey.gouly@arm.com>
+ <229bd367-466e-4bf9-9627-24d2d0821ff4@arm.com>
+ <7789da64-34e2-49db-b203-84b80e5831d5@sirena.org.uk>
+ <cf7de572-420a-4d59-a8dd-effaff002e12@arm.com>
+ <ZqJ2I3f2qdiD2DfP@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724071156.97188-1-laoar.shao@gmail.com> <20240724071156.97188-3-laoar.shao@gmail.com>
- <CAJnrk1a7pb3XoDWCAXV5131gbf_EzULtCaXKn-4-jnGaCrKxKQ@mail.gmail.com> <CALOAHbCt1Hcu+9O0xB-+jeTT2kDRPdvWD1sE86nDDo-pV9Qqzw@mail.gmail.com>
-In-Reply-To: <CALOAHbCt1Hcu+9O0xB-+jeTT2kDRPdvWD1sE86nDDo-pV9Qqzw@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 25 Jul 2024 10:56:42 -0700
-Message-ID: <CAJnrk1YNu=FiYpFLJxM7VS+gkzSfOCzNcUCEoLi2qTuiv_YXeg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] fuse: Enhance each fuse connection with timeout support
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zuHkNnSXmHBvO0dc"
+Content-Disposition: inline
+In-Reply-To: <ZqJ2I3f2qdiD2DfP@e133380.arm.com>
+X-Cookie: Zeus gave Leda the bird.
 
-On Wed, Jul 24, 2024 at 7:07=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com> =
-wrote:
->
-> On Thu, Jul 25, 2024 at 1:09=E2=80=AFAM Joanne Koong <joannelkoong@gmail.=
-com> wrote:
-> >
-> > On Wed, Jul 24, 2024 at 12:12=E2=80=AFAM Yafang Shao <laoar.shao@gmail.=
-com> wrote:
-> > >
-> > > In our experience with fuse.hdfs, we encountered a challenge where, i=
-f the
-> > > HDFS server encounters an issue, the fuse.hdfs daemon=E2=80=94respons=
-ible for
-> > > sending requests to the HDFS server=E2=80=94can get stuck indefinitel=
-y.
-> > > Consequently, access to the fuse.hdfs directory becomes unresponsive.
-> > > The current workaround involves manually aborting the fuse connection=
-,
-> > > which is unreliable in automatically addressing the abnormal connecti=
-on
-> > > issue. To alleviate this pain point, we have implemented a timeout
-> > > mechanism that automatically handles such abnormal cases, thereby
-> > > streamlining the process and enhancing reliability.
-> > >
-> > > The timeout value is configurable by the user, allowing them to tailo=
-r it
-> > > according to their specific workload requirements.
-> > >
-> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> >
-> > Hi Yafang,
-> >
-> > There was a similar thread/conversation about timeouts started in this
-> > link from last week
-> > https://lore.kernel.org/linux-fsdevel/20240717213458.1613347-1-joannelk=
-oong@gmail.com/#t
-> >
->
-> I am not currently subscribed to linux-fsdevel, so I missed your patch.
-> Thanks for your information. I will test your patch.
->
-> > The core idea is the same but also handles cleanup for requests that
-> > time out, to avoid memory leaks in cases where the server never
-> > replies to the request. For v2, I am going to add timeouts for
-> > background requests as well.
->
-> Please CC me if you send new versions.
 
-Will do. I'll make sure you are cc-ed.
+--zuHkNnSXmHBvO0dc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Joanne
->
-> --
-> Regards
-> Yafang
+On Thu, Jul 25, 2024 at 04:58:27PM +0100, Dave Martin wrote:
+
+> I'll post a draft patch separately, since I think the update could
+> benefit from separate discussion, but my back-of-the-envelope
+> calculation suggests that (before this patch) we are down to 0x90
+> bytes of free space (i.e., over 96% full).
+
+> I wonder whether it is time to start pushing back on adding a new
+> _foo_context for every individual register, though?
+
+> Maybe we could add some kind of _misc_context for miscellaneous 64-bit
+> regs.
+
+That'd have to be a variably sized structure with pairs of sysreg
+ID/value items in it I think which would be a bit of a pain to implement
+but doable.  The per-record header is 64 bits, we'd get maximal saving
+by allocating a byte for the IDs.
+
+It would be very unfortunate timing to start gating things on such a
+change though (I'm particularly worried about GCS here, at this point
+the kernel changes are blocking the entire ecosystem).
+
+--zuHkNnSXmHBvO0dc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmailV0ACgkQJNaLcl1U
+h9CJNAf/T4L+WiIsdTTGLKLrGIifWcIZMFDKVEGwW4FdSIpGyr1zBwSxsMMMpYMn
+Y2vOp2+u+NUD72aKzhi9w2oDqf/zxrRMRtTac9G5p5yxDJ8A5TnZmLeUCeRDfeaD
+KbGzJ+pmP6VAhz6dx1LVHo2/BlPFEBYic7aByH/VtQK5orNc9Ss1pjPj9M1kcMtS
+ZpQDRVd9H8sTthXnA2au8VRVeCZIvHB7c6CHXWu8+gv4DVW9fcWaVmq7sKvrt3vA
+KH+DHAft/yAobtjLtcPlj5ImoCIbRjmIa4qy3NsHji/xAHl4695sncCMJB7yi0fU
+5WfF3lyw+U6HxGVPCH7jlQcjPB7XOw==
+=PpFd
+-----END PGP SIGNATURE-----
+
+--zuHkNnSXmHBvO0dc--
 
