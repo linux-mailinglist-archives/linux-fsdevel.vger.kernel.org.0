@@ -1,124 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-24253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F65E93C67C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 17:33:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4478B93C6B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 17:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B58F1F22AEE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 15:33:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF8B22810DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 15:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B9319DF4C;
-	Thu, 25 Jul 2024 15:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yB9IBZG/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B31719D8AE;
+	Thu, 25 Jul 2024 15:44:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57C519CD05
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 15:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0695419AD8B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 15:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721921584; cv=none; b=FpuKYlOdbcP8JQYEapwX1EVwW8i4OF/rwQFRHB1J7lfekL91KdCGWwL7WemC9PAutA2x6rdEqNnv67SND7lBElnmj08P/w3bP1K6Jthx+01R2lvIvTknDsHNV56URnjJNGW1JwhpZeKSvm28L3JPWbMxtERNYHJtyOXMAMj51Xc=
+	t=1721922264; cv=none; b=BxKm7hsgHpf8nUzOkn5nb67cw1Z2+MuN+7KPjkkbfyw5Bc1CWcWRagjLXr4EbMWZ/qZZPBTT1rT7YSLHsxcGi9jMOU2opOlceHbzl2da/ek1kscWzcrtwFMNnmpAchGZC2F5G0gHiWaiusXulJqD2mDMfbdu3gSOIB8yLfMbxMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721921584; c=relaxed/simple;
-	bh=rAzZ8OR8HA2lv9tq0qWRFMaSclYocHJ11ucneTGkgnU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qLID4BxyZbJfMld/igfsd8juy7M2D+d/OzS2xh32oKFcFh0EvMkiJ1cw8GcZSa797bgoDpEbBp1aXGLTjUBHWt1gx1ipddIxpme7aaAncdfdJ2qExdOE+BbC9gVY3yrKshvmRoV6A5boxnLGq+dawNr6nQsQ+ItcH4qrHs86k00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yB9IBZG/; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-36844375001so604957f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 08:33:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721921581; x=1722526381; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rAzZ8OR8HA2lv9tq0qWRFMaSclYocHJ11ucneTGkgnU=;
-        b=yB9IBZG/tzxDgBQvTqy8VnPyjKt2JG9W/T8X1/HKAAN+uQ5tqFGC/pmn8AWJpIrMtq
-         UY9YsPLDvSImgyg4+isA7t3XNj384JtGaPaBwXeQb2m/ynlSb3nwDmvvtafjXt+grCu2
-         tO10WGmzSNOUnejs4EWJpXQWgKN2cZGM0NJKLMowyUuHM+3+cIOMOssUg+lwODTlImyy
-         HjIHcllarVJl1fohJ0gXXOeqq+viEwahUN/PCC1/I5J5YjJ/JZ159u9XkNXRaBJjsAQ+
-         iVOSSWb8uj9PR64h5wKGEzB4Qkh+xi/VNAbHgw4sE0PU0oz2gwnzDQR5pU9g/HICbEhf
-         xTiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721921581; x=1722526381;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rAzZ8OR8HA2lv9tq0qWRFMaSclYocHJ11ucneTGkgnU=;
-        b=vGvzFgebJxJ+xjOsqwL9TQ+dpX4HU/DxYJf29AW4Gkze50aZJBD5MR/QjGXfQEEhyO
-         kIX1fn386GSqvpT7TQwFDMp7yfPMezCR1KiideNGQuaVopOHzz9SplOnGbjWvLaxS/5i
-         25iM75hrhVB1blS6cYG2OptH1nd57eeG3yMphbzJwWimRzhujKIGFNcZMtXKP1B72D+o
-         FY2hz/C+d4o1l6XVfyhhC+9TeoJx3KsLbaCtgEUw85UEHsEsYQ59uJxa3ffjh8e48cN8
-         hOMjrpT+eX7wbqIbitZOzaC5Xu0EDS6e7U/tB5tZ1iEuAKLudG6Nchetp0DvAekL+cX2
-         BC0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWHtY6r6qCmhYhdmuJdFiQ65G74ntTWs3WnSEirdf0G7d2raUaAIlEzmIYhS8Wxf+/YLunzzMMC2LmdpxrMs526pUuH4g9H2/uDaIW7Qg==
-X-Gm-Message-State: AOJu0Yy8ZGcYWKzzaBo8wGVlqcAvVQnbBc6jSbVr2x8tZ3AF+XD1F2qA
-	fnB67SskQBx8NMrXNjdAZ0deau0BezTFH1EX4pGEio1715ZeQXroZV/lTiFz0HSucsT0iAosSrS
-	hanKfluKk/BEHuJPT52hgQwI5Qehpb/wFPMTL
-X-Google-Smtp-Source: AGHT+IE+oKJLSV+SwpZjYkljCExA3SWvBAz+6jpHUme+koEV4fzTA5M1Wr3wMQqJLlJYDGASK4bmI8bYnHGBN+KnPrc=
-X-Received: by 2002:a05:6000:c82:b0:367:f054:7aba with SMTP id
- ffacd0b85a97d-36b31a41d5bmr2143574f8f.41.1721921580840; Thu, 25 Jul 2024
- 08:33:00 -0700 (PDT)
+	s=arc-20240116; t=1721922264; c=relaxed/simple;
+	bh=QSxiIlyLcph/pKL/kx8GogyXDhKxtTHelYu+FuiLDoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pA6SmTScelk9FaEoq2ybdu0S1gRKBeMC4vyQxo/b8AlvmbXtUfc39+tGpGQ0F9FR2KDXADh+splW62QYZHpLpukIj2fvzi1e06VEq5qusN9rsR3WQuUkPfh+xDllZNUChOxEPVg7TxUUAsu6PCj12j5VdpkJLBp22KO2H08pOFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A92B61007;
+	Thu, 25 Jul 2024 08:44:47 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 312CB3F766;
+	Thu, 25 Jul 2024 08:44:19 -0700 (PDT)
+Date: Thu, 25 Jul 2024 16:44:13 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	broonie@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
+	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
+	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 04/29] arm64: disable trapping of POR_EL0 to EL2
+Message-ID: <ZqJyzZB8Y8GLzYIA@e133380.arm.com>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-5-joey.gouly@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
- <20240725-alice-file-v8-1-55a2e80deaa8@google.com> <20240725143714.GI13387@noisy.programming.kicks-ass.net>
- <CAH5fLggOo-TErSktC6qmyZpMGVu-M8rFXgvfi3N0Z_u63C3EyA@mail.gmail.com> <20240725153008.GK13387@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240725153008.GK13387@noisy.programming.kicks-ass.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 25 Jul 2024 17:32:48 +0200
-Message-ID: <CAH5fLghpXuv3sgGnO4dBydnn8Agqpm0ZDESQcwrbWEu58AyGxQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/8] rust: types: add `NotThreadSafe`
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503130147.1154804-5-joey.gouly@arm.com>
 
-On Thu, Jul 25, 2024 at 5:30=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Thu, Jul 25, 2024 at 05:09:14PM +0200, Alice Ryhl wrote:
->
-> > > As per always for not being able to read rust; how does this extend t=
-o
-> > > get_task_struct()? Once you've taken a reference on current, you shou=
-ld
-> > > be free to pass it along to whomever.
-> >
-> > Once you take a reference on current, it becomes thread-safe. This is
-> > because taking a reference creates a value of type ARef<Task> rather
-> > than TaskRef, and ARef<Task> is considered thread-safe.
->
-> Ignoring comments, there isn't a single mention of ARef there. Where
-> does it come from?
+Hi,
 
-That's because the conversion to ARef<Task> is a two-step process. The
-TaskRef type just provides a conversion from &TaskRef to &Task via the
-`impl Deref` block. There is a conversion from &Task to ARef<Task>
-elsewhere, and this conversion is where the call to get_task_struct()
-happens.
+On Fri, May 03, 2024 at 02:01:22PM +0100, Joey Gouly wrote:
+> Allow EL0 or EL1 to access POR_EL0 without being trapped to EL2.
+> 
+> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> ---
+>  arch/arm64/include/asm/el2_setup.h | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
+> index b7afaa026842..df5614be4b70 100644
+> --- a/arch/arm64/include/asm/el2_setup.h
+> +++ b/arch/arm64/include/asm/el2_setup.h
+> @@ -184,12 +184,20 @@
+>  .Lset_pie_fgt_\@:
+>  	mrs_s	x1, SYS_ID_AA64MMFR3_EL1
+>  	ubfx	x1, x1, #ID_AA64MMFR3_EL1_S1PIE_SHIFT, #4
+> -	cbz	x1, .Lset_fgt_\@
+> +	cbz	x1, .Lset_poe_fgt_\@
+>  
+>  	/* Disable trapping of PIR_EL1 / PIRE0_EL1 */
+>  	orr	x0, x0, #HFGxTR_EL2_nPIR_EL1
+>  	orr	x0, x0, #HFGxTR_EL2_nPIRE0_EL1
+>  
+> +.Lset_poe_fgt_\@:
+> +	mrs_s	x1, SYS_ID_AA64MMFR3_EL1
+> +	ubfx	x1, x1, #ID_AA64MMFR3_EL1_S1POE_SHIFT, #4
+> +	cbz	x1, .Lset_fgt_\@
+> +
+> +	/* Disable trapping of POR_EL0 */
+> +	orr	x0, x0, #HFGxTR_EL2_nPOR_EL0
 
-Alice
+Do I understand correctly that this is just to allow the host to access
+its own POR_EL0, before (or unless) KVM starts up?
+
+KVM always overrides all the EL2 trap controls while running a guest,
+right?  We don't want this bit still set when running in a guest just
+because KVM doesn't know about POE yet.
+
+(Hopefully this follows naturally from the way the KVM code works, but
+my KVM-fu is a bit rusty.)
+
+Also, what about POR_EL1?  Do we have to reset that to something sane
+(and so untrap it here), or it is sufficient if we never turn on POE
+support in the host, via TCR2_EL1.POE?
+
+[...]
+
+Cheers
+---Dave
 
