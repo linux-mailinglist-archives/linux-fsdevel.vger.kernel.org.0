@@ -1,88 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-24229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712BD93BDAA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 10:05:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E053793BDDA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 10:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB262B21D95
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 08:05:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 689DAB20F75
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 08:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D19172BC9;
-	Thu, 25 Jul 2024 08:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05B0173351;
+	Thu, 25 Jul 2024 08:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmhssq1n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BBF16D4E7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 08:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CBB1CD11;
+	Thu, 25 Jul 2024 08:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721894744; cv=none; b=S5Pi8f1wRQjJmmwj6zMYvuTCKADbOMXJqgRHbnOQR2cyve6Rx1OLAScIdqjBFLJyRnWNWRLH+BfGjN+proXiRPbi2JCBah/mddD0I0ShWMqbP+7WHtqTdU7QPCgfFL4Q4ZkI+kmPlrAXYboNiLyyN/2hp4sOFvaeA/261wfctbA=
+	t=1721895611; cv=none; b=qVAk8q7nC/PKE6ip87tMlNoEDEENYZbsd835NUUCLBlPRxMzGM6ofpaW+bSdrdnL7gTvZpfxkyGAiqCBJGIIFtvGLkiwvuwtxgjcVoU68gYjptMmRD1Q9NpB2bM2/fn5ajRvmn5U9tBANz4kduesqprSJ4TAOTtwoWUhH6FI0EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721894744; c=relaxed/simple;
-	bh=juiRPFb3ysJvYNyEc/viUX0sORvuirQqenTgO4aqjLA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gOuExQOnB+X4CXGZNYzchnEgr3zfwUOUE+glkTzZQVjF4OUXMVOhLodFfeOMxSCWl0txAAKSIRtXWzFKqIhSsk9CCYBuWD8y6poYaw4Efb5ZJK3n0JugJa0QSOr0+/SkXX9JK0ou+usGuVySIm2SGm9Ck5qGSt3rx1FnLbIl/7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:9697:b0ae:59fa:9dc8])
-	by andre.telenet-ops.be with bizsmtp
-	id rk5b2C00730uYn301k5bjA; Thu, 25 Jul 2024 10:05:35 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sWtTO-003PCh-6H;
-	Thu, 25 Jul 2024 10:05:35 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sWtTj-008liP-5u;
-	Thu, 25 Jul 2024 10:05:35 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: netfs@lists.linux.dev,
+	s=arc-20240116; t=1721895611; c=relaxed/simple;
+	bh=lIzu2GmQN/9W0mBQGLcX8S4gHdxpAdRdEae2a7l92xI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rAhHOHMrP39COOz+2nTgC3p0PJlpxbhX/k/rU+C+78Z/MdH0dBmUswZVED//4BSXNFhlTnRqMT3lUMGaudCGtQNoDMh9z76pYjgYdj3B+vBma4gUeOSfDEzRA43GOJ9fzsAGESyIIvotnAXnV2gmvxJxUKvgbY/Iec9wlEU7s7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmhssq1n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67DFFC116B1;
+	Thu, 25 Jul 2024 08:20:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721895610;
+	bh=lIzu2GmQN/9W0mBQGLcX8S4gHdxpAdRdEae2a7l92xI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gmhssq1ng0p/k2kDL5Xs8d8qWZjDeT9SNCSHxtMgn+IyVJZ8CfewYi/Nhlw6jLkr3
+	 2d1p0rVkp5GxA0nc+wKzqJdHt6vhYSkFwS8RCst2FyYQpKfz3z2adLg9s9ijyQqTYH
+	 YHbAYqsjrSH/niPZlI/7wFMphFNv7GxW/rAn5Op1KF/EATtu6QyfFcmVFekOF4QMHn
+	 ZU/4V2FQkoJkkLYSxT8jntvcO2dv0ow9GqjmDpNN6zDha0+Am3SI7YzLegMWsMftR9
+	 /E0dDWAptO8gBfZJbd9Nwdyabw2BLJ1V3n298FWOWshtdfxxhpL6JLEsUVww9Y6vLw
+	 cgD7TBmXkR7UQ==
+From: Christian Brauner <brauner@kernel.org>
+To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] netfs: Fix dependency of NETFS_DEBUG
-Date: Thu, 25 Jul 2024 10:05:30 +0200
-Message-Id: <20240725080530.2089573-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: don't allow non-init s_user_ns for filesystems without FS_USERNS_MOUNT
+Date: Thu, 25 Jul 2024 10:19:50 +0200
+Message-ID: <20240725-milieu-jungautor-1e7bf7cf98fe@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240724-s_user_ns-fix-v1-1-895d07c94701@kernel.org>
+References: <20240724-s_user_ns-fix-v1-1-895d07c94701@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1395; i=brauner@kernel.org; h=from:subject:message-id; bh=lIzu2GmQN/9W0mBQGLcX8S4gHdxpAdRdEae2a7l92xI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQt4loefOhF+rYJXk5bDL9v46y+tOJ6jbKx2JdVTKt0D IyXe/n1dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyEYQfD/wzxhRPmfJkh+Ybz b9KCi7mpn7YfiyteNllHp9sq22B2SiIjw0E/v00KJuuCr6xSfuz8ZFnx6hqX4HU1SQEvbLOWd9j oMQEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-The configuration symbol "NETFS" does not exist.
-Its proper name is "NETFS_SUPPORT".
+On Wed, 24 Jul 2024 09:53:59 -0500, Seth Forshee (DigitalOcean) wrote:
+> Christian noticed that it is possible for a privileged user to mount
+> most filesystems with a non-initial user namespace in sb->s_user_ns.
+> When fsopen() is called in a non-init namespace the caller's namespace
+> is recorded in fs_context->user_ns. If the returned file descriptor is
+> then passed to a process priviliged in init_user_ns, that process can
+> call fsconfig(fd_fs, FSCONFIG_CMD_CREATE), creating a new superblock
+> with sb->s_user_ns set to the namespace of the process which called
+> fsopen().
+> 
+> [...]
 
-Fixes: fcad93360df4d04b ("netfs: Rename CONFIG_FSCACHE_DEBUG to CONFIG_NETFS_DEBUG")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- fs/netfs/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-diff --git a/fs/netfs/Kconfig b/fs/netfs/Kconfig
-index 1b78e8b65ebc142d..7701c037c3283f27 100644
---- a/fs/netfs/Kconfig
-+++ b/fs/netfs/Kconfig
-@@ -24,7 +24,7 @@ config NETFS_STATS
- 
- config NETFS_DEBUG
- 	bool "Enable dynamic debugging netfslib and FS-Cache"
--	depends on NETFS
-+	depends on NETFS_SUPPORT
- 	help
- 	  This permits debugging to be dynamically enabled in the local caching
- 	  management module.  If this is set, the debugging output may be
--- 
-2.34.1
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs: don't allow non-init s_user_ns for filesystems without FS_USERNS_MOUNT
+      https://git.kernel.org/vfs/vfs/c/f7c589ccd630
 
