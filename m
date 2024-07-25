@@ -1,100 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-24226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221EA93BD61
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 09:52:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D7493BD83
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 09:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D637F283F2F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 07:52:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B003D1F21474
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 07:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E8E172763;
-	Thu, 25 Jul 2024 07:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C288172BB2;
+	Thu, 25 Jul 2024 07:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4IrGD6o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AvFm88Fh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34272746C;
-	Thu, 25 Jul 2024 07:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179E7172796;
+	Thu, 25 Jul 2024 07:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721893916; cv=none; b=gjIbR7hYYtL9rtt/tLL+4orPKnb0LB3qrXoMZq47qVzMpqzJGqaAI4eXsotT5xo7L1L0eWHo5BhT5wQaHWO7gx2SQVgqMPEfoiIKrBD1/zSw93GK8fpmUdQS8FVb1qYqH4Rdfi/MsMFDE7royq8waJucP3qeL+A3I7UIjb0J0UQ=
+	t=1721894319; cv=none; b=LW1LjBY2vh+Uo/oiz1cCAYvadIVXszCWs8VhdC/Ad/CR9Wo7F3dZ9U+btqPRDv7kGKdOdDe/ZCKqZZ31WryU1mjyQhsnwQla+s06V20fcers9uxYTVMg7h607HnBxS9Ipl/cjsC5l9b1dZee4h4C2Ypay4mNSEMfMDWODVaG1QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721893916; c=relaxed/simple;
-	bh=wPMGUC0y/HMlSqSLaesKVHMHhjLlTuGqdZbSFVzzcIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LB1KOJBwONpk2xasXqP1ktAZHTdnWMJk53Uc8OVo5WiyNEqGObXWDg/w5qRuSn5I2M94qDjHrrZS78CuieWt8RaD++AEKVuSogcVW/UFIoDZWkiYjHpwEMx2LALU5GdL2zX6a/xmvMHy373eIK/5cnSnR3l32rptYF2k7vW+w+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4IrGD6o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AFA2C32786;
-	Thu, 25 Jul 2024 07:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721893915;
-	bh=wPMGUC0y/HMlSqSLaesKVHMHhjLlTuGqdZbSFVzzcIY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F4IrGD6ohbM8uQhHzUQWEng1h7ZBBptlUkAmSgw6NY/5GLfhUytkMitrN94kNnEgZ
-	 hx3IfZe7TlbyPNf/9XhpO1CNfceLtIJcY5574Oopzw9muV/r6mdAgMTpIfWzxJdwIK
-	 K1N5oePLg0VMer1FdktDdgbwUAg6pOrngr7gawdHOUuHKNUQXIX7VMr7PSM/cKak39
-	 ox5lDiVvZHPg8WSKFeeqQENJnW2nzc6INaij/GF+d5Pl2ji8DN3ScPRQXuO3u8e/vz
-	 q/1WWSn8cb4lSL7fYJ7u8I4X+aB1+VIbShrLDw0KqIr9JFTaN51YHjhey5CdVGta63
-	 KL5AV/gi95qpg==
-Date: Thu, 25 Jul 2024 00:51:53 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Yuvaraj Ranganathan <yrangana@qti.qualcomm.com>
-Cc: "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Software encryption at fscrypt causing the filesystem access
- unresponsive
-Message-ID: <20240725075153.GA160096@sol.localdomain>
-References: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1721894319; c=relaxed/simple;
+	bh=Q8zxkt2xK/cM957zT5MhFTAW4qRe/Wss5isDY7EWDhg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ghwK9Pqszq2W/qO8pFxA8qtoj+RN3UlEPo1eHbBkbSn7xG4BuJ96Mrm477TSUduDrmKTL0PHzanCLV4G2Blw7QwZ/3LNsYgnNkNrSg6rrcFflQza2tnTghIfy/Bil5n6uu+ueVM6DQ000lkE50nk4Sy6ho2XHoum6lHR+0a40AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AvFm88Fh; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d2ae44790so484957b3a.2;
+        Thu, 25 Jul 2024 00:58:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721894316; x=1722499116; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sTwMxNHq1BLBlwRxe0MIFu6JMR5H/T1gtINZWNBZrbI=;
+        b=AvFm88Fhb0QddwCxcxMxjIdTIQQhjT2Ul762r0VcolVqYoQ/HATlF2+MAqxbr9Vo5G
+         RDXVjmZ3A7ak3QGN8magF//spRfDN9wdNaX1gVoirjlzgZ/G8Xg545BO8UTcdWseCJ0W
+         CDo952p6nTrO7mdFW0JmdhHO6MO/R06mAn3KYGZdeEc8QGSwPNNGMGYU2v19uNpc1ru2
+         E1iTG3nzJEUGKzqcHL/xpp1Wm1Clq1BFo3WL3fNhQRlL56gBT0vKunsQL/avTt5yfK4h
+         WrcoezqTIN/zLlgOio3Rn3uG/AeECPitM5a1/3ZZeDXISVvX0kuBXKvxoFfxVYmoKhfk
+         5jdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721894316; x=1722499116;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sTwMxNHq1BLBlwRxe0MIFu6JMR5H/T1gtINZWNBZrbI=;
+        b=HIJf/boGiR7HheLiJWa9aN89DwO5TjaBW3myMeK7RytOc/LnDuZP5MAMZGyWF4dCPs
+         Vl7FDacdw1oHHCb1JoD2CZWyV2sH8UGbnwAIbamBdZ/fgI2n2g/VkH/uyDlxOivNbzlj
+         jbmqLNE9FTs9m+hl9WYgsQTK1sdyiyXzAh1AE/tPT4rxYk1S8heCcinH2D7Ky8oDLxOD
+         E6AQws3bhM3ZHltAS7TxHlDKEB4E8Xs260ufrfh7SmJ9YtrDoK24BZmA5DHhTrpcwhmd
+         +BT5aMKO14HawFnCExDJOjI5lMiezl9EGb039XIJYKCdxFo46pYBg0hH8pNlz27cI8R8
+         Ikiw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Re0pmsIKcUP+iBNc+Lc1Ti7PssBdzMtPe7yyx1JNFlpblGHO5869kgk7nXxS1vIwRqxlAIYOdqZl1qikULMMRxVLorYMJUP+l/P2JPUa/8nFAVNprQA+ZSNBcgYU14VCuz4GRNBpR+TFMiHiglVOd5qzXY/SkkCB4l43PBoNxBumvNsgSjyetA==
+X-Gm-Message-State: AOJu0YzVfi8pQq/5MVeYfngXcZKi2d2lJ+KX6f6xghUUYmfx66oxLvUb
+	/Qt7/bNa8AWGszWFzM2PnO6tnOPlJMA8ut11DXKdXg5oy/FEE1xqy7oMeKjK
+X-Google-Smtp-Source: AGHT+IG7NmN/XF+oH/8aI+ShSVuP5dqS6kIopTBQolUMjWB0IhVK3t6jYIF8rUrw98Mr8WCViL6m6g==
+X-Received: by 2002:a05:6a00:94a3:b0:70d:3354:a190 with SMTP id d2e1a72fcca58-70eae9a10fcmr1141182b3a.27.1721894316171;
+        Thu, 25 Jul 2024 00:58:36 -0700 (PDT)
+Received: from localhost ([114.242.33.243])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8a2bf6sm640710b3a.197.2024.07.25.00.58.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 00:58:35 -0700 (PDT)
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Cc: jack@suse.cz,
+	brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	masahiroy@kernel.org,
+	akpm@linux-foundation.org,
+	n.schier@avm.de,
+	ojeda@kernel.org,
+	djwong@kernel.org,
+	kvalo@kernel.org,
+	Julian Sun <sunjunchao2870@gmail.com>
+Subject: [PATCH] scripts: reduce false positives in the macro_checker script.
+Date: Thu, 25 Jul 2024 03:58:30 -0400
+Message-Id: <20240725075830.63585-1-sunjunchao2870@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 24, 2024 at 02:21:26PM +0000, Yuvaraj Ranganathan wrote:
-> [ 1694.987674] INFO: task kworker/u16:3:2154 blocked for more than 120 seconds.
-> [ 1694.995628]       Tainted: G        W  O       6.6.33-debug #1
-> [ 1695.002335] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [ 1695.011094] task:kworker/u16:3   state:D stack:0     pid:2154  ppid:2      flags:0x00000208
-> [ 1695.011097] Workqueue: writeback wb_workfn (flush-8:0)
-> [ 1695.011101] Call trace:
-> [ 1695.011102]  __switch_to+0xf0/0x16c
-> [ 1695.011104]  __schedule+0x334/0x980
-> [ 1695.011105]  schedule+0x5c/0xf8
-> [ 1695.011107]  schedule_timeout+0x19c/0x1c0
-> [ 1695.011110]  wait_for_completion+0x78/0x188
-> [ 1695.011111]  fscrypt_crypt_block+0x218/0x25c
-> [ 1695.011114]  fscrypt_encrypt_pagecache_blocks+0x104/0x1b4
-> [ 1695.011117]  ext4_bio_write_folio+0x534/0x7a8
-> [ 1695.011119]  mpage_submit_folio+0x70/0x98
-> [ 1695.011120]  mpage_map_and_submit_buffers+0x158/0x2c8
-> [ 1695.011122]  ext4_do_writepages+0x788/0xbfc
-> [ 1695.011124]  ext4_writepages+0x7c/0xfc
+Reduce false positives in the macro_checker
+in the following scenarios:
+  1. Conditional compilation
+  2. Macro definitions with only a single character
+  3. Macro definitions as (0) and (1)
 
-I think this is the important part.  It's showing that the call into the crypto
-API to actually encrypt the data is hanging.
+Before this patch:
+	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+	99
 
-What I suspect is that you are *not* actually using software encryption, but
-rather a buggy driver for an off-CPU crypto accelerator.  This would happen if
-your driver registers itself with the crypto API with a higher priority than the
-software algorithm you intended to use.
+After this patch:
+	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+	11
 
-To check what driver is being used, you can either check for a kernel log
-message that looks like 'fscrypt: AES-256-XTS using implementation
-"xts-aes-ce"', or check /proc/crypto for which xts(aes) algorithm has the
-highest priority.
+Most of the current warnings are valid now.
 
-Which driver are you using, and is it upstream?
+Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+---
+ scripts/macro_checker.py | 37 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 32 insertions(+), 5 deletions(-)
 
-- Eric
+diff --git a/scripts/macro_checker.py b/scripts/macro_checker.py
+index cd10c9c10d31..8195339ea5b5 100755
+--- a/scripts/macro_checker.py
++++ b/scripts/macro_checker.py
+@@ -9,9 +9,12 @@ import os
+ import re
+ 
+ macro_pattern = r"#define\s+(\w+)\(([^)]*)\)"
+-# below two vars were used to reduce false positives
+-do_while0_pattern = r"\s*do\s*\{\s*\}\s*while\s*\(\s*0\s*\)"
++# below vars were used to reduce false positives
++fp_patterns = [r"\s*do\s*\{\s*\}\s*while\s*\(\s*0\s*\)",
++               r"\(?0\)?", r"\(?1\)?"]
+ correct_macros = []
++cond_compile_mark = "#if"
++cond_compile_end = "#endif"
+ 
+ def check_macro(macro_line, report):
+     match = re.match(macro_pattern, macro_line)
+@@ -21,15 +24,25 @@ def check_macro(macro_line, report):
+         content = match.group(2)
+         arguments = [item.strip() for item in content.split(',') if item.strip()]
+ 
+-        if (re.match(do_while0_pattern, macro_def)):
++        macro_def = macro_def.strip()
++        if not macro_def:
+             return
++        # used to reduce false positives, like #define endfor_nexthops(rt) }
++        if len(macro_def) == 1:
++            return
++
++        for fp_pattern in fp_patterns:
++            if (re.match(fp_pattern, macro_def)):
++                return
+ 
+         for arg in arguments:
+             # used to reduce false positives
+             if "..." in arg:
+-                continue
++                return
++        for arg in arguments:
+             if not arg in macro_def and report == False:
+                 return
++            # if there is a correct macro with the same name, do not report it.
+             if not arg in macro_def and identifier not in correct_macros:
+                 print(f"Argument {arg} is not used in function-line macro {identifier}")
+                 return
+@@ -49,6 +62,8 @@ def macro_strip(macro):
+     return macro
+ 
+ def file_check_macro(file_path, report):
++    # number of conditional compiling
++    cond_compile = 0
+     # only check .c and .h file
+     if not file_path.endswith(".c") and not file_path.endswith(".h"):
+         return
+@@ -57,7 +72,14 @@ def file_check_macro(file_path, report):
+         while True:
+             line = f.readline()
+             if not line:
+-                return
++                break
++            line = line.strip()
++            if line.startswith(cond_compile_mark):
++                cond_compile += 1
++                continue
++            if line.startswith(cond_compile_end):
++                cond_compile -= 1
++                continue
+ 
+             macro = re.match(macro_pattern, line)
+             if macro:
+@@ -67,6 +89,11 @@ def file_check_macro(file_path, report):
+                     macro = macro.strip()
+                     macro += f.readline()
+                     macro = macro_strip(macro)
++                if file_path.endswith(".c")  and cond_compile != 0:
++                    continue
++                # 1 is for #ifdef xxx at the beginning of the header file
++                if file_path.endswith(".h") and cond_compile != 1:
++                    continue
+                 check_macro(macro, report)
+ 
+ def get_correct_macros(path):
+-- 
+2.39.2
+
 
