@@ -1,181 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-24213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B254B93B8A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 23:37:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F6193BA81
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 04:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CCE4B24A1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jul 2024 21:37:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D702BB22E37
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 02:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178F413C820;
-	Wed, 24 Jul 2024 21:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C8179E0;
+	Thu, 25 Jul 2024 02:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="i5QU6qYf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SP0ah8ja"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C497213BC3D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 21:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082C54687
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 02:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721857047; cv=none; b=LQZN1/1wwCs9KaDZYAl9xVS70H89v8XcbpnqQH6DWLRZSlCNUrfxIYB4oHBbbVOdrbw8Odl6qo95cRsYSgb/Iowko/iIapQA5IRqGqE1m9aaM3sn4ZauwjDVXM1+HLj8AHx46Ry+IP79jCqxHJfUc8OF2dRnZhSziT13RjKPjGg=
+	t=1721873233; cv=none; b=R/sQaWAYdvpUDcQFU0k2aw6EApAOj5s9zWWY8oVkoApHMUNT9zKia6g/5RMYNWlCYQUSiTFFxHg5+byG5pMX5xYoJcrNF0WX7rhdi2OLxxMyIYQLevUHAUKRdM+k3rDRrjFZkS+T04hAcQfOdMkRTYWIj6p/JPgU0QlQwBSMmvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721857047; c=relaxed/simple;
-	bh=aQmaQ03WOOZXRXnBNNNLr6veCCZrh9NaZND3VbjLMME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oGzTqsk8G0ORP1IHzv4NZhx+Ggzu4YHRl04kUlwHrTunVWesUtcGkBndpqfxDFjrjdWYivAM3y9ivuVMTUo8yZk1zhBxI7AnX8epmrAAxPxY/iYCpQK9hNrQh3FywDa02DM+16KpCulbsH2vs2TMMOqr6H6yk4OBDqfWa8JWBSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=i5QU6qYf; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4266f535e82so1851245e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 14:37:25 -0700 (PDT)
+	s=arc-20240116; t=1721873233; c=relaxed/simple;
+	bh=WuhZcclKTJjGOqq8kTC0RNwMZwEP3Pd3/weUXTsrZsM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=crY0Qmon0KmnNgGHytU1xhCrgnTDM869anhZT+FpqLFaAZEGNrfvlvFfULcTObw9LheqapFdLGPPVFU1axL2636wjRYCBqaFTCkj8SxVwgRkVQFqNLKDJOuPmRxehgAIv+8FKzyGPwhadsCzp9RM9DNDyT8JECJ6FHMyA9x/VO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SP0ah8ja; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b798e07246so3181666d6.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jul 2024 19:07:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1721857044; x=1722461844; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lSSTgQ5w2hw67L9Mcy84Ur9n6hJfVLNLfjLoLub8gmE=;
-        b=i5QU6qYfzQgX7XDa4gwXfyiRLtI1V2Hhh6yUr8mI7ZeNY32GXMUf0TxXD6QrHWwY0x
-         nRFnakl3thJVD09eWur/uRlwVDIwC7+ux94W9uRF6U3LhdnfoY6GIMIWKqGqkyvEuos5
-         24W+/kFJy1lpMOanJ5y7JbyiDZoxQ7WBlUmc00Uf5VpYKryYQyoTCHjWIQe36VrD/pzO
-         SqfSUFlWbjPX0Hp9LSQ3kZeZp+wACknzYl7eN8EAQwSGCNZGSQO73K/PtlYzw3ELVkhh
-         ZfDSXht8SqcJ7aRfWfCbjuEf1682nZhHaUhcQLIWgkQxBU+hHTzE/UZTgs7qKoFDgGAZ
-         +caw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721857044; x=1722461844;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721873231; x=1722478031; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lSSTgQ5w2hw67L9Mcy84Ur9n6hJfVLNLfjLoLub8gmE=;
-        b=nRUnlxK6WQNvMZbb5m+VeUuIaVooGV1eo7T0S9qTJWk2VEvoCOl0XXaTEu9ZuXMG0N
-         fV+tzLgYxNpJC37JzZBBuHR78bWfA8isX94LSAclXmIwRBRicGE8RaikWtCU2QDPJ72f
-         XegWIAI0Gji5ZTYYceFwVv1D7m4OswxFIdRkgI5NZ92gvXpFA4sV8Csd1RHqv49WnXu3
-         qUH5E6CqbwgOST3bKj9sFxxtNhEm9ljdVW3rgIZ8Zhq/0vTt8SFmm7BO0BGVVZo+UOFP
-         qtoptF284E1KYhPrMJxRj5t5yhM12jNxqTGzUwXF1VYrSjgoeFkW7Sm8Y63WFlNAJbz4
-         KUrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn0hpmuSG83Jxc+M91hQH86Tn4FX5kBHrqQGZ6Kr6C3HAcqzm+b2OqQdpj8GXEB7LglnF2ujqZjZsS4oXjEiKDbzeGmUbY8WIbF4O1wQ==
-X-Gm-Message-State: AOJu0YwWq9g+oGUJO3mvRaTX65OKmJA6pjdkJ+Mj17aKWWdQgAHyhfTi
-	d9bNzc8IFV1wvTV/M02cOSFj2a6Dwwg1HX4n8sAABm5JP54yKFt5RjB2+OmlC48=
-X-Google-Smtp-Source: AGHT+IHxyEu6XDaUe6E5/O/ti2ZJ+Zq2UF8NgvQ7RAEgPsm6Nw77tpqzyjgNHrWmlsbprqB15BLpBA==
-X-Received: by 2002:adf:f40e:0:b0:368:4ed7:2acc with SMTP id ffacd0b85a97d-36b3638148cmr6859f8f.5.1721857044110;
-        Wed, 24 Jul 2024 14:37:24 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787ced28sm15366726f8f.88.2024.07.24.14.37.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 14:37:23 -0700 (PDT)
-Date: Wed, 24 Jul 2024 22:37:22 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Metin Kaya <metin.kaya@arm.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 0/3] Clean up usage of rt_task()
-Message-ID: <20240724213722.4fcmambn4ry23qhw@airbuntu>
-References: <20240610192018.1567075-1-qyousef@layalina.io>
+        bh=WuhZcclKTJjGOqq8kTC0RNwMZwEP3Pd3/weUXTsrZsM=;
+        b=SP0ah8jaA0YEKH+BM0qeOXUhRH2YyC/Ne0dP5dAvKaLGR+v2SN2O7PbhJhJZSFMuAQ
+         pmwUTfh8QFh9LsGahLN94K8Ee1zncecdsLunGX6edKIyTyBwdGwd2xJZf9ipfpoOAXsg
+         sn20g7pXTNjmJf6tVbDxm9U6VqzD36jHOW3m64rmX6QA1qQqozm1ih8QOyUlsuuHBLcT
+         P2QdM/8dLyd0mGi6IgYVOIxYTJlnRTirgN3notCZV9p6r+s8PL3Ukqb6i2cDCHEIflAS
+         FbU11e2osDN2neO/0TP23+6I67aZ0RPD8lzfc4gQogn1tPmwV88RVvkMgj9x7r2IwDwI
+         1fdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721873231; x=1722478031;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WuhZcclKTJjGOqq8kTC0RNwMZwEP3Pd3/weUXTsrZsM=;
+        b=w22zlmG3nvVKlhuqOz5VnVuVSTIsrCvqUpSdTuSnFiXbdO1uxkFXqW4Aj5V/m/0Z41
+         YV/OpOyr5ex7OOMT/MudU1bOsZPJJ0yEX/Y4ECdGZ3Y+4wSZjJvUXpM52FUxcEQO7udr
+         Dp7lV8ADlq69rRFWjy8o0y2Or2dKOCJdmhPUctsOTSr5IukEs7h7t4rRAwbu8bs5NgDW
+         VStrqqOrbaTRsH5u1WWO9o2wlBa+mBRpcbQEwT4n8i5wTxyBwPrGZo6jMY9vbW/6GJf3
+         TRvNMaPUBl50ZDG5HCcqDi9EiMW/2TEUwz63oCSS2zgP4nG5Cb+atz/SJ+XI71tfOQDf
+         uOVA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3k/x4pOwkhOk1cjO3ELpdMgFNM+GdhrgxZZrIQDK3LDsmgBw8mVCgoa5Bn0n7q8x4vxR8hdfXDvgjcAo6puQCbvEEecjJxF+oaPpbWA==
+X-Gm-Message-State: AOJu0YzEYvRyv365zYbdIDLa88H8PVsZUBlnn4KXqkiAM/cKxHHqT645
+	n5AZfH1Rsbna4ASXKSSRmGwZQ2S/YfdnQtocVY+59IyQsqvQJUecMQ19HIKhv+fq0Abl8VNFUI0
+	YH1jDjR4O18LAsZcarhptOUpotyU=
+X-Google-Smtp-Source: AGHT+IFtBgr4MVVBpE8ju5jilfeHgiIhiw76yNTBpkX/sn47fY7/5/Dh6Jv073UjBH3mAIsC2a3OTRqa1lCodS+GbCc=
+X-Received: by 2002:ad4:4ee3:0:b0:6b5:4a87:4034 with SMTP id
+ 6a1803df08f44-6bb40878ceamr5286606d6.49.1721873230828; Wed, 24 Jul 2024
+ 19:07:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240610192018.1567075-1-qyousef@layalina.io>
+References: <20240724071156.97188-1-laoar.shao@gmail.com> <20240724071156.97188-3-laoar.shao@gmail.com>
+ <CAJnrk1a7pb3XoDWCAXV5131gbf_EzULtCaXKn-4-jnGaCrKxKQ@mail.gmail.com>
+In-Reply-To: <CAJnrk1a7pb3XoDWCAXV5131gbf_EzULtCaXKn-4-jnGaCrKxKQ@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Thu, 25 Jul 2024 10:06:34 +0800
+Message-ID: <CALOAHbCt1Hcu+9O0xB-+jeTT2kDRPdvWD1sE86nDDo-pV9Qqzw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] fuse: Enhance each fuse connection with timeout support
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/10/24 20:20, Qais Yousef wrote:
-> Make rt_task() return true only for RT class and add new realtime_task() to
-> return true for RT and DL classes to avoid some confusion the old API can
-> cause.
+On Thu, Jul 25, 2024 at 1:09=E2=80=AFAM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> On Wed, Jul 24, 2024 at 12:12=E2=80=AFAM Yafang Shao <laoar.shao@gmail.co=
+m> wrote:
+> >
+> > In our experience with fuse.hdfs, we encountered a challenge where, if =
+the
+> > HDFS server encounters an issue, the fuse.hdfs daemon=E2=80=94responsib=
+le for
+> > sending requests to the HDFS server=E2=80=94can get stuck indefinitely.
+> > Consequently, access to the fuse.hdfs directory becomes unresponsive.
+> > The current workaround involves manually aborting the fuse connection,
+> > which is unreliable in automatically addressing the abnormal connection
+> > issue. To alleviate this pain point, we have implemented a timeout
+> > mechanism that automatically handles such abnormal cases, thereby
+> > streamlining the process and enhancing reliability.
+> >
+> > The timeout value is configurable by the user, allowing them to tailor =
+it
+> > according to their specific workload requirements.
+> >
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+>
+> Hi Yafang,
+>
+> There was a similar thread/conversation about timeouts started in this
+> link from last week
+> https://lore.kernel.org/linux-fsdevel/20240717213458.1613347-1-joannelkoo=
+ng@gmail.com/#t
+>
 
-I am not aware of any pending review comments for this series. Is it ready to
-be picked up?
+I am not currently subscribed to linux-fsdevel, so I missed your patch.
+Thanks for your information. I will test your patch.
 
+> The core idea is the same but also handles cleanup for requests that
+> time out, to avoid memory leaks in cases where the server never
+> replies to the request. For v2, I am going to add timeouts for
+> background requests as well.
 
-Thanks!
+Please CC me if you send new versions.
 
---
-Qais Yousef
-
-> 
-> No functional changes intended in patch 1. Patch 2 cleans up the return type as
-> suggested by Steve. Patch 3 uses rt_or_dl() instead of 'realtime' as suggested
-> by Daniel. As the name was debatable, I'll leave up to the maintainers to pick
-> their preference.
-> 
-> Changes since v5:
-> 
-> 	* Added a new patch to s/realtime/rt_or_dl/ as suggested by Daniel.
-> 	* Added Reviewed-bys.
-> 
-> Changes since v4:
-> 
-> 	* Simplify return of rt/realtime_prio() as the explicit true/false was
-> 	  not necessary.
-> 
-> Changes since v3:
-> 
-> 	* Make sure the 'new' bool functions return true/false instead of 1/0.
-> 	* Drop patch 2 about hrtimer usage of realtime_task() as ongoing
-> 	  discussion on v1 indicates its scope outside of this simple cleanup.
-> 
-> Changes since v2:
-> 
-> 	* Fix one user that should use realtime_task() but remained using
-> 	  rt_task() (Sebastian)
-> 	* New patch to convert all hrtimer users to use realtime_task_policy()
-> 	  (Sebastian)
-> 	* Add a new patch to convert return type to bool (Steve)
-> 	* Rebase on tip/sched/core and handle a conflict with code shuffle to
-> 	  syscalls.c
-> 	* Add Reviewed-by Steve
-> 
-> Changes since v1:
-> 
-> 	* Use realtime_task_policy() instead task_has_realtime_policy() (Peter)
-> 	* Improve commit message readability about replace some rt_task()
-> 	  users.
-> 
-> v1 discussion: https://lore.kernel.org/lkml/20240514234112.792989-1-qyousef@layalina.io/
-> v2 discussion: https://lore.kernel.org/lkml/20240515220536.823145-1-qyousef@layalina.io/
-> v3 discussion: https://lore.kernel.org/lkml/20240527234508.1062360-1-qyousef@layalina.io/
-> v4 discussion: https://lore.kernel.org/lkml/20240601213309.1262206-1-qyousef@layalina.io/
-> v5 discussion: https://lore.kernel.org/lkml/20240604144228.1356121-1-qyousef@layalina.io/
-> 
-> Qais Yousef (3):
->   sched/rt: Clean up usage of rt_task()
->   sched/rt, dl: Convert functions to return bool
->   sched/rt: Rename realtime_{prio, task}() to rt_or_dl_{prio, task}()
-> 
->  fs/bcachefs/six.c                 |  2 +-
->  fs/select.c                       |  2 +-
->  include/linux/ioprio.h            |  2 +-
->  include/linux/sched/deadline.h    | 14 ++++++-------
->  include/linux/sched/prio.h        |  1 +
->  include/linux/sched/rt.h          | 33 +++++++++++++++++++++++++------
->  kernel/locking/rtmutex.c          |  4 ++--
->  kernel/locking/rwsem.c            |  4 ++--
->  kernel/locking/ww_mutex.h         |  2 +-
->  kernel/sched/core.c               |  4 ++--
->  kernel/sched/syscalls.c           |  2 +-
->  kernel/time/hrtimer.c             |  6 +++---
->  kernel/trace/trace_sched_wakeup.c |  2 +-
->  mm/page-writeback.c               |  4 ++--
->  mm/page_alloc.c                   |  2 +-
->  15 files changed, 53 insertions(+), 31 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+--=20
+Regards
+Yafang
 
