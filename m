@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-24244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4BF93C422
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 16:29:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2451693C425
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 16:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B63285822
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 14:29:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981641F2333F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 14:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFAF19DFB6;
-	Thu, 25 Jul 2024 14:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E3019E7E4;
+	Thu, 25 Jul 2024 14:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J24szGg9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bNNGFK+C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f202.google.com (mail-lj1-f202.google.com [209.85.208.202])
+Received: from mail-lj1-f201.google.com (mail-lj1-f201.google.com [209.85.208.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB61419DF75
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 14:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D722319DF9C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 14:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721917676; cv=none; b=YAcnsUpyOxYx2J8mO+WBLUyWJBFUZrWssRFgXWAX6RWYkhFj3+8xtbbeBeKDTLObS2jVy+9JrV0TxzKOf6cK1nqviSCTB8/m+tI5EeT9HxQ148uRZSDbTaRFsPhAXlCy56RFAlBc++NwEaOTh1VT1S2T9aooZATz3ZQEp5YWAdU=
+	t=1721917677; cv=none; b=oH8zH3XJsd6Riw6Yxt6hzmJt3jrtfsLhCGHFbKaHstUD0fdF7UpIZmCU7lHsRrDDowM85E6qUy2BQ+WXmujEVHdQHpcsc0wyb8Z7h3GRuHpTmstIbD+3iOYLbaGITNKDIj+diNIz9i5IrcQFN9J4pA0uokq1BXff2G9BGxVrb1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721917676; c=relaxed/simple;
-	bh=tZmP/exOJqVMU3pbXZPV0jYvSiyzlcGQQjEC7T9Sw+4=;
+	s=arc-20240116; t=1721917677; c=relaxed/simple;
+	bh=RXfaT/DBCQsWj/QAf6Xvjcb3hoSnauK9QOWBOYATpsw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fkxp8b90x15NUUHGEhHaqG9iYuPpcQ+/fhtgOtFzEAFN0wiV6XWSWMu3QfBbuVMt/eUexH8uN2AqcUCXFjLSL4X1WUObytGr5RQTv8Qw6TewAgcBkBqCPHvzD8FMcaxOpky1FKE7C28bsUtitsFKkx9YK7cxl2a51N6rS+prNr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J24szGg9; arc=none smtp.client-ip=209.85.208.202
+	 To:Cc:Content-Type; b=NZTbb0NogAnNQeHlz2yECdx3qUpGh/0U+Ryjpc+f8dPR/DYDGtBdAPt9ASIl77rnHge4aFv/fDBOmlfuoHMXgEeLOHCO4DYZzpl8H0/SmictEr0ryXNXtvbttm9vs+KoxNvEGXTtARvkXOt2NrNUGGpmVxA29Z/5MvYxez/Bue8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bNNGFK+C; arc=none smtp.client-ip=209.85.208.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-lj1-f202.google.com with SMTP id 38308e7fff4ca-2ef315c6990so1592441fa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 07:27:52 -0700 (PDT)
+Received: by mail-lj1-f201.google.com with SMTP id 38308e7fff4ca-2ef286cf0e8so2521901fa.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 07:27:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721917671; x=1722522471; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721917674; x=1722522474; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+PtKhdfCpcsJ3ZgZBrn1gqMPcNc/frbhz/ZePW+P05s=;
-        b=J24szGg9YvYMqZzctw8BZOyO1QrGjghHD4QXdNuB5JTXsFJxnZ74TwZIR4mZ+GZPdh
-         CfXGJfebLlpdgywDVTbJ0M8ph8EmakRKzV1Bf++CEYApdiYb0dI2AMdNvID+lErEdUIM
-         RQUPydoIWbKhotLzZkWDyZQD0SCiAZ+5T42AbmCszPBhmqRhWXJJ5rlGeRb6q8yId9Hw
-         7yeu4HuGuQ9LXvNJSIIPG3VxL0YOuEEVitjUDtdJxgzvcVkCAOiy+RBsz8KNduPcGop5
-         pQpKBZq1rppKPnb51kZpyHy866UmawDCHo9IPpzWgLXcgW4y2fQLP3X3Pd/dSREZR3XK
-         EGaQ==
+        bh=OiCmBwg2/y546/4rMjJfsysS+CelPZa1uCxDdubqWiE=;
+        b=bNNGFK+ChHShPCggqe/e5P8vPmHpGOkPWAPxLRQT/CmkNDuvKKqtVK0QCAsuAK9nKq
+         HwUz6BFhb/zVWB3yq+a3wJIqgDu2RSF2oPKTPK9aJaT8Fl0l92kR0zi62n7PrWAxH4OJ
+         RjfCZECHXPPZuOqZOZMQ3QRzViK5nKGKZMPfbXqGNKElSzXKaXfiuHLzpivMaju3EouT
+         rClpYGZ1Zb5j5Ke2q/RmI6BJBShy9p7xp9TOZgBqio3i+ldGt/JZViAdCanfenjo9bdb
+         bRjxjLluGzjHGVn0246/gjceBkc7lBqbN464Y/IsZD2YBf3LzQtnfB2T5omdb8oAlvRe
+         TpmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721917671; x=1722522471;
+        d=1e100.net; s=20230601; t=1721917674; x=1722522474;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+PtKhdfCpcsJ3ZgZBrn1gqMPcNc/frbhz/ZePW+P05s=;
-        b=LEI9qawniCKPDrYVPhxsevNtFQd1M8x578WDSQ8Eni5ITDHU3AjSdKJqr6EeLUAjaM
-         X6shnxnVxyh9UvU1Nj9xL/ktaekIQ3DqSRD8vhTwynDpMD3cAUbHFQp0fLl2Q9qh/yxg
-         hd68/442xjlJwh71VApLzFe3aangiiTIrxZFE9ffFJT6I6fgkDFdyegVHhyuwFDaDPie
-         HwoePcUINT+O1MC/r2IlqKsQV8KhpKwGYKZ5qalQt09frM+gT3B/rF/+AOqrE6JsDyvI
-         ztG1QWhx6nLOhcBAvHXkuO1tdmDMmybl9Cjc4AAKmsq+kvpw4rmM5izpEDbtuqB+8lnI
-         Q+qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjBQlD73Pw8xKjLKPZ9TL97wyaQkSnNdgpRV7u/uKFrPvGMMMckINIPIDpuv/KSQItBEfD/CydDGTp6uLstudaWavcBGWKI32SLPEzmw==
-X-Gm-Message-State: AOJu0YyE+kkvcci1UlL5Fm9Sw71cygOHiYpIniQ4I02xqc9liGV5My3Q
-	UDqkYKH3AYHtVM/CDbWjekA0pEuQGinQzzkCXRakM+MU2i5OW7lmYXvBIXEPA3c/nD/mc5kUHhT
-	ZzxHxnCNfFkCBsg==
-X-Google-Smtp-Source: AGHT+IGhT+ddWmjsOetwaChqygUw9x0ZlLJk0+533sVWyFxzVDHmQgvQg5WpdkgxP6YMakF/7X6W0GNaGMtPW/Y=
+        bh=OiCmBwg2/y546/4rMjJfsysS+CelPZa1uCxDdubqWiE=;
+        b=vbxBAB5QBXNSD5UJly3+mCriGgqW5YuA0vi4fEO4TBkIPUEqBglQ3AYdUJ/W7O/nqX
+         Dt7r5Zup9Py/4rRCzTDn1TguOI3piO2SuCZqyTkA65hn3Fpb7tFQ2ftj5dero/SW9QZL
+         mrK7e4oGEYL5ugr6AFkUDW9vl1nFeo9wk7zMJt/FxbzWOVgt0kCHQxcsoiqD0T7mFRZm
+         wvFPiCUIe8q5wmeBR50qidbu83PWJXnh+Ez3yaA03W/DRNzKZ5VKWvDlq2Z9dHvpOwyp
+         bYWpxcwKpOvCInmReqXqXEd/rS4Ria18ztPM+OgMrh8mskeBdX9gqopwB4bo3x4IvDhu
+         /g6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWUKePZoUnQskHKFHKEuvKorzyVPJuj8pfR1P4M1HGtiNUg/v8QIKTNFl4kBCkK4PKdtH4xhvZNnx1hRroKIYYC1dF1QajQGXReSHWWcA==
+X-Gm-Message-State: AOJu0YwSier0K/Qjzkv/65RchnMAFP4+P4pw3CRXlAlyTLcpdrUIvpGG
+	uLGMtH9Zzv/rvN7LBA4Nyd3jfKk0GZXDc3dKk33FqYPsKEo7cSjcvDQeFh1q9TbxcgNwShB7If/
+	zBgoU9CR3eiGEiQ==
+X-Google-Smtp-Source: AGHT+IEsxwGIyCMRt8S3kpoTLeGHaoR+N+Zq9q7sZejFEWj8cm4nkIYcecRhbfp4fTAHMgfUv1T4/+xh2KIwHVw=
 X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a2e:3318:0:b0:2ef:1c03:73ec with SMTP id
- 38308e7fff4ca-2f03a3fa37fmr43881fa.0.1721917671216; Thu, 25 Jul 2024 07:27:51
+ (user=aliceryhl job=sendgmr) by 2002:a2e:7d15:0:b0:2ef:1c03:73e7 with SMTP id
+ 38308e7fff4ca-2f03dbe1817mr25471fa.7.1721917673884; Thu, 25 Jul 2024 07:27:53
  -0700 (PDT)
-Date: Thu, 25 Jul 2024 14:27:36 +0000
+Date: Thu, 25 Jul 2024 14:27:37 +0000
 In-Reply-To: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,22 +74,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=22113; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=wtEVBL3hhHW8DgSuHsZi6E0p/49A2G8Ru/LhkgmYw0U=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmomDYvL/mRgqVHHGN2b4y1BxYsrJLirrVUSX9g
- /fUf9N+RwWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZqJg2AAKCRAEWL7uWMY5
- RnqZD/98SbRs6khkB2NUmHwn17mx5ONXCpBpXbpEiswDgpJkTPTJuYuFB0mY7nKu/Xh+tKY2VQk
- whpmPMOKXUOu0oG73UjnvrTpTjtxdWxcKY3iOY0Do99CTz/30yzFWxTWuh7Zl8e8+2MLoBPIQJy
- KP8UjdIq2791nVuF0lgoDbxSGunmjsiXxI+NUuNPiVFk0cyPFdBhYzbe6NgjWpyxrvp+mUwVBjv
- HG+oU51lWGLMRRAIyWUMwD+j0XWMPE2N3rD6nGLDZFtMVO/N/AvVp5tfG1EnZHAqS6BG75QVu4a
- 7OnYeCO08aFmxbvMzolyMHZfku+eG2slSCQSK9qCnAJ23gvzXGxxUp7DbNPXVg5lio001gjoyFe
- E1K22BbowaD4QhR9v82lQJLbfuYDXkOvgnnEVxD0KRLqHyRLdyKeIWQ39RMlz4+6L+3CYPDvPwt
- jmrongn6FQ7OJLzbT9mGMKf4y8JY+EHZdr5w/n7HbJhJzTCoYe1heyy3wPoUt+H/yfy/Ii8z5no
- WNFfpXMEE2nKmW+KJ7Ggv+sn3kZm5UgF/kgPF7jLhbV69Kd0oTNBEvmh943QN2QXo5i4BG787ow
- xA4KoFwoDgHYK2wBesd7sr63PwzPmx6+gr9cOcGs/z2JBIJIiZiklLwGi2QN8Q/VVSvXAF0jdJY nKL6XWJW1DHtT7g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7149; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=NIY5e2gNiq/wYldTRcMtyFezUNO6yObaGdnkQ//UV7A=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmomDYIR9taxDiZOFpXkHw3q9vFtwkHgafSI2Nc
+ DDub73/NhyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZqJg2AAKCRAEWL7uWMY5
+ RtxsD/4jHCh1BSJwTSRAr6sLQW7s2DSG9vj+kS5q1TBhSyIa7huvROeUgZ5Wr2yYtrfbHxjH8I1
+ 0rF4a6Mf1Hs/L2NG0jrwueVYg2OfqPY7XLYCkD5gLDmtMFb9XtkqdDhPmuQB7+RHj1DrGhCWWQc
+ wvVGvj2PtdvnxvitJOXAmjeL/8f0sUt542sEqc1uPtXFFjlRvGRuwxr1oxEM7A0N2svk1LroQZr
+ rvaYhtRDEDYSj4PyN51uCZT8D6uawAbaaiWZ3CSGfZrNYZSIxgDJtxjOlqkouVN9kCudjyOVkL1
+ f3SMq7VuPfIJJBXA9A44vJ6MTD07rYAEsOb78k7zUEcz9ziCNjU+6s3PYMGqpdunp/ARq37XV+2
+ g5Cgn1XPkgzoyrMh4vsJWWWivNEi/nEeXTmfvpy87HexdM8k7S/53qcgKClS/cXrE3G4zeHPcFk
+ NbR9YrOmD6N4QIlV7jSrA07z4TeH5EqLCWpnjR5ZaWDkSunYD5s4u137POu+3jYi3aT8Wlp2PiZ
+ 8qHeFxFmXCioe1fXY9pM4/R1I5GbiybeuEJ9VtPJ4oshZjuIDwsnWA5JN7lu+AlPSr5wKo5/alh
+ cqj5taZ3eQL2P1su6nVHyjQ+QUq0GbF02U7M9A6etaUi4vLMBpDMBjCKFLxNf+kJn8vCEm4onsh A415/TH2NIDszqA==
 X-Mailer: b4 0.13-dev-26615
-Message-ID: <20240725-alice-file-v8-3-55a2e80deaa8@google.com>
-Subject: [PATCH v8 3/8] rust: file: add Rust abstraction for `struct file`
+Message-ID: <20240725-alice-file-v8-4-55a2e80deaa8@google.com>
+Subject: [PATCH v8 4/8] rust: cred: add Rust abstraction for `struct cred`
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -109,538 +109,197 @@ Content-Type: text/plain; charset="utf-8"
 
 From: Wedson Almeida Filho <wedsonaf@gmail.com>
 
-This abstraction makes it possible to manipulate the open files for a
-process. The new `File` struct wraps the C `struct file`. When accessing
-it using the smart pointer `ARef<File>`, the pointer will own a
-reference count to the file. When accessing it as `&File`, then the
-reference does not own a refcount, but the borrow checker will ensure
-that the reference count does not hit zero while the `&File` is live.
+Add a wrapper around `struct cred` called `Credential`, and provide
+functionality to get the `Credential` associated with a `File`.
 
-Since this is intended to manipulate the open files of a process, we
-introduce an `fget` constructor that corresponds to the C `fget`
-method. In future patches, it will become possible to create a new fd in
-a process and bind it to a `File`. Rust Binder will use these to send
-fds from one process to another.
-
-We also provide a method for accessing the file's flags. Rust Binder
-will use this to access the flags of the Binder fd to check whether the
-non-blocking flag is set, which affects what the Binder ioctl does.
-
-This introduces a struct for the EBADF error type, rather than just
-using the Error type directly. This has two advantages:
-* `File::fget` returns a `Result<ARef<File>, BadFdError>`, which the
-  compiler will represent as a single pointer, with null being an error.
-  This is possible because the compiler understands that `BadFdError`
-  has only one possible value, and it also understands that the
-  `ARef<File>` smart pointer is guaranteed non-null.
-* Additionally, we promise to users of the method that the method can
-  only fail with EBADF, which means that they can rely on this promise
-  without having to inspect its implementation.
-That said, there are also two disadvantages:
-* Defining additional error types involves boilerplate.
-* The question mark operator will only utilize the `From` trait once,
-  which prevents you from using the question mark operator on
-  `BadFdError` in methods that return some third error type that the
-  kernel `Error` is convertible into. (However, it works fine in methods
-  that return `Error`.)
+Rust Binder must check the credentials of processes when they attempt to
+perform various operations, and these checks usually take a
+`&Credential` as parameter. The security_binder_set_context_mgr function
+would be one example. This patch is necessary to access these security_*
+methods from Rust.
 
 Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-Co-developed-by: Daniel Xu <dxu@dxuuu.xyz>
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
 Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- fs/file.c                       |   7 +
- rust/bindings/bindings_helper.h |   2 +
- rust/helpers.c                  |   7 +
- rust/kernel/fs.rs               |   8 +
- rust/kernel/fs/file.rs          | 375 ++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs              |   1 +
- rust/kernel/types.rs            |   8 +
- 7 files changed, 408 insertions(+)
+ rust/bindings/bindings_helper.h |  1 +
+ rust/helpers.c                  | 13 +++++++
+ rust/kernel/cred.rs             | 76 +++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/fs/file.rs          | 13 +++++++
+ rust/kernel/lib.rs              |  1 +
+ 5 files changed, 104 insertions(+)
 
-diff --git a/fs/file.c b/fs/file.c
-index a3b72aa64f11..1d910f96ec2e 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1127,6 +1127,13 @@ EXPORT_SYMBOL(task_lookup_next_fdget_rcu);
-  *
-  * The fput_needed flag returned by fget_light should be passed to the
-  * corresponding fput_light.
-+ *
-+ * (As an exception to rule 2, you can call filp_close between fget_light and
-+ * fput_light provided that you capture a real refcount with get_file before
-+ * the call to filp_close, and ensure that this real refcount is fput *after*
-+ * the fput_light call.)
-+ *
-+ * See also the documentation in rust/kernel/file.rs.
-  */
- static unsigned long __fget_light(unsigned int fd, fmode_t mask)
- {
 diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index f2bafb10f181..e2d22f151ec9 100644
+index e2d22f151ec9..22e62b3b34b0 100644
 --- a/rust/bindings/bindings_helper.h
 +++ b/rust/bindings/bindings_helper.h
-@@ -9,6 +9,8 @@
+@@ -7,6 +7,7 @@
+  */
+ 
  #include <kunit/test.h>
++#include <linux/cred.h>
  #include <linux/errname.h>
  #include <linux/ethtool.h>
-+#include <linux/file.h>
-+#include <linux/fs.h>
- #include <linux/jiffies.h>
- #include <linux/mdio.h>
- #include <linux/phy.h>
+ #include <linux/file.h>
 diff --git a/rust/helpers.c b/rust/helpers.c
-index 305f0577fae9..5ba1f6de0251 100644
+index 5ba1f6de0251..4831abb5a438 100644
 --- a/rust/helpers.c
 +++ b/rust/helpers.c
-@@ -25,6 +25,7 @@
+@@ -23,6 +23,7 @@
+ #include <kunit/test-bug.h>
+ #include <linux/bug.h>
  #include <linux/build_bug.h>
++#include <linux/cred.h>
  #include <linux/err.h>
  #include <linux/errname.h>
-+#include <linux/fs.h>
- #include <linux/gfp.h>
- #include <linux/highmem.h>
- #include <linux/mutex.h>
-@@ -199,6 +200,12 @@ rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
+ #include <linux/fs.h>
+@@ -206,6 +207,18 @@ struct file *rust_helper_get_file(struct file *f)
  }
- EXPORT_SYMBOL_GPL(rust_helper_krealloc);
+ EXPORT_SYMBOL_GPL(rust_helper_get_file);
  
-+struct file *rust_helper_get_file(struct file *f)
++const struct cred *rust_helper_get_cred(const struct cred *cred)
 +{
-+	return get_file(f);
++	return get_cred(cred);
 +}
-+EXPORT_SYMBOL_GPL(rust_helper_get_file);
++EXPORT_SYMBOL_GPL(rust_helper_get_cred);
++
++void rust_helper_put_cred(const struct cred *cred)
++{
++	put_cred(cred);
++}
++EXPORT_SYMBOL_GPL(rust_helper_put_cred);
 +
  /*
   * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
   * use it in contexts where Rust expects a `usize` like slice (array) indices.
-diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
+diff --git a/rust/kernel/cred.rs b/rust/kernel/cred.rs
 new file mode 100644
-index 000000000000..0121b38c59e6
+index 000000000000..acee04768927
 --- /dev/null
-+++ b/rust/kernel/fs.rs
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Kernel file systems.
-+//!
-+//! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h)
-+
-+pub mod file;
-+pub use self::file::{File, LocalFile};
-diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-new file mode 100644
-index 000000000000..f1a52814b2da
---- /dev/null
-+++ b/rust/kernel/fs/file.rs
-@@ -0,0 +1,375 @@
++++ b/rust/kernel/cred.rs
+@@ -0,0 +1,76 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +// Copyright (C) 2024 Google LLC.
 +
-+//! Files and file descriptors.
++//! Credentials management.
 +//!
-+//! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h) and
-+//! [`include/linux/file.h`](srctree/include/linux/file.h)
++//! C header: [`include/linux/cred.h`](srctree/include/linux/cred.h).
++//!
++//! Reference: <https://www.kernel.org/doc/html/latest/security/credentials.html>
 +
 +use crate::{
 +    bindings,
-+    error::{code::*, Error, Result},
-+    types::{ARef, AlwaysRefCounted, Opaque},
++    types::{AlwaysRefCounted, Opaque},
 +};
-+use core::ptr;
 +
-+/// Flags associated with a [`File`].
-+pub mod flags {
-+    /// File is opened in append mode.
-+    pub const O_APPEND: u32 = bindings::O_APPEND;
-+
-+    /// Signal-driven I/O is enabled.
-+    pub const O_ASYNC: u32 = bindings::FASYNC;
-+
-+    /// Close-on-exec flag is set.
-+    pub const O_CLOEXEC: u32 = bindings::O_CLOEXEC;
-+
-+    /// File was created if it didn't already exist.
-+    pub const O_CREAT: u32 = bindings::O_CREAT;
-+
-+    /// Direct I/O is enabled for this file.
-+    pub const O_DIRECT: u32 = bindings::O_DIRECT;
-+
-+    /// File must be a directory.
-+    pub const O_DIRECTORY: u32 = bindings::O_DIRECTORY;
-+
-+    /// Like [`O_SYNC`] except metadata is not synced.
-+    pub const O_DSYNC: u32 = bindings::O_DSYNC;
-+
-+    /// Ensure that this file is created with the `open(2)` call.
-+    pub const O_EXCL: u32 = bindings::O_EXCL;
-+
-+    /// Large file size enabled (`off64_t` over `off_t`).
-+    pub const O_LARGEFILE: u32 = bindings::O_LARGEFILE;
-+
-+    /// Do not update the file last access time.
-+    pub const O_NOATIME: u32 = bindings::O_NOATIME;
-+
-+    /// File should not be used as process's controlling terminal.
-+    pub const O_NOCTTY: u32 = bindings::O_NOCTTY;
-+
-+    /// If basename of path is a symbolic link, fail open.
-+    pub const O_NOFOLLOW: u32 = bindings::O_NOFOLLOW;
-+
-+    /// File is using nonblocking I/O.
-+    pub const O_NONBLOCK: u32 = bindings::O_NONBLOCK;
-+
-+    /// File is using nonblocking I/O.
-+    ///
-+    /// This is effectively the same flag as [`O_NONBLOCK`] on all architectures
-+    /// except SPARC64.
-+    pub const O_NDELAY: u32 = bindings::O_NDELAY;
-+
-+    /// Used to obtain a path file descriptor.
-+    pub const O_PATH: u32 = bindings::O_PATH;
-+
-+    /// Write operations on this file will flush data and metadata.
-+    pub const O_SYNC: u32 = bindings::O_SYNC;
-+
-+    /// This file is an unnamed temporary regular file.
-+    pub const O_TMPFILE: u32 = bindings::O_TMPFILE;
-+
-+    /// File should be truncated to length 0.
-+    pub const O_TRUNC: u32 = bindings::O_TRUNC;
-+
-+    /// Bitmask for access mode flags.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::fs::file;
-+    /// # fn do_something() {}
-+    /// # let flags = 0;
-+    /// if (flags & file::flags::O_ACCMODE) == file::flags::O_RDONLY {
-+    ///     do_something();
-+    /// }
-+    /// ```
-+    pub const O_ACCMODE: u32 = bindings::O_ACCMODE;
-+
-+    /// File is read only.
-+    pub const O_RDONLY: u32 = bindings::O_RDONLY;
-+
-+    /// File is write only.
-+    pub const O_WRONLY: u32 = bindings::O_WRONLY;
-+
-+    /// File can be both read and written.
-+    pub const O_RDWR: u32 = bindings::O_RDWR;
-+}
-+
-+/// Wraps the kernel's `struct file`. Thread safe.
++/// Wraps the kernel's `struct cred`.
 +///
-+/// This represents an open file rather than a file on a filesystem. Processes generally reference
-+/// open files using file descriptors. However, file descriptors are not the same as files. A file
-+/// descriptor is just an integer that corresponds to a file, and a single file may be referenced
-+/// by multiple file descriptors.
++/// Credentials are used for various security checks in the kernel.
 +///
-+/// # Refcounting
-+///
-+/// Instances of this type are reference-counted. The reference count is incremented by the
-+/// `fget`/`get_file` functions and decremented by `fput`. The Rust type `ARef<File>` represents a
-+/// pointer that owns a reference count on the file.
-+///
-+/// Whenever a process opens a file descriptor (fd), it stores a pointer to the file in its fd
-+/// table (`struct files_struct`). This pointer owns a reference count to the file, ensuring the
-+/// file isn't prematurely deleted while the file descriptor is open. In Rust terminology, the
-+/// pointers in `struct files_struct` are `ARef<File>` pointers.
-+///
-+/// ## Light refcounts
-+///
-+/// Whenever a process has an fd to a file, it may use something called a "light refcount" as a
-+/// performance optimization. Light refcounts are acquired by calling `fdget` and released with
-+/// `fdput`. The idea behind light refcounts is that if the fd is not closed between the calls to
-+/// `fdget` and `fdput`, then the refcount cannot hit zero during that time, as the `struct
-+/// files_struct` holds a reference until the fd is closed. This means that it's safe to access the
-+/// file even if `fdget` does not increment the refcount.
-+///
-+/// The requirement that the fd is not closed during a light refcount applies globally across all
-+/// threads - not just on the thread using the light refcount. For this reason, light refcounts are
-+/// only used when the `struct files_struct` is not shared with other threads, since this ensures
-+/// that other unrelated threads cannot suddenly start using the fd and close it. Therefore,
-+/// calling `fdget` on a shared `struct files_struct` creates a normal refcount instead of a light
-+/// refcount.
-+///
-+/// Light reference counts must be released with `fdput` before the system call returns to
-+/// userspace. This means that if you wait until the current system call returns to userspace, then
-+/// all light refcounts that existed at the time have gone away.
-+///
-+/// ### The file position
-+///
-+/// Each `struct file` has a position integer, which is protected by the `f_pos_lock` mutex.
-+/// However, if the `struct file` is not shared, then the kernel may avoid taking the lock as a
-+/// performance optimization.
-+///
-+/// The condition for avoiding the `f_pos_lock` mutex is different from the condition for using
-+/// `fdget`. With `fdget`, you may avoid incrementing the refcount as long as the current fd table
-+/// is not shared; it is okay if there are other fd tables that also reference the same `struct
-+/// file`. However, `fdget_pos` can only avoid taking the `f_pos_lock` if the entire `struct file`
-+/// is not shared, as different processes with an fd to the same `struct file` share the same
-+/// position.
-+///
-+/// To represent files that are not thread safe due to this optimization, the [`LocalFile`] type is
-+/// used.
-+///
-+/// ## Rust references
-+///
-+/// The reference type `&File` is similar to light refcounts:
-+///
-+/// * `&File` references don't own a reference count. They can only exist as long as the reference
-+///   count stays positive, and can only be created when there is some mechanism in place to ensure
-+///   this.
-+///
-+/// * The Rust borrow-checker normally ensures this by enforcing that the `ARef<File>` from which
-+///   a `&File` is created outlives the `&File`.
-+///
-+/// * Using the unsafe [`File::from_raw_file`] means that it is up to the caller to ensure that the
-+///   `&File` only exists while the reference count is positive.
-+///
-+/// * You can think of `fdget` as using an fd to look up an `ARef<File>` in the `struct
-+///   files_struct` and create an `&File` from it. The "fd cannot be closed" rule is like the Rust
-+///   rule "the `ARef<File>` must outlive the `&File`".
++/// Most fields of credentials are immutable. When things have their credentials changed, that
++/// happens by replacing the credential instead of changing an existing credential. See the [kernel
++/// documentation][ref] for more info on this.
 +///
 +/// # Invariants
 +///
-+/// * All instances of this type are refcounted using the `f_count` field.
-+/// * There must not be any active calls to `fdget_pos` on this file that did not take the
-+///   `f_pos_lock` mutex.
++/// Instances of this type are always ref-counted, that is, a call to `get_cred` ensures that the
++/// allocation remains valid at least until the matching call to `put_cred`.
++///
++/// [ref]: https://www.kernel.org/doc/html/latest/security/credentials.html
 +#[repr(transparent)]
-+pub struct File {
-+    inner: Opaque<bindings::file>,
-+}
++pub struct Credential(Opaque<bindings::cred>);
 +
-+/// Wraps the kernel's `struct file`. Not thread safe.
-+///
-+/// This type represents a file that is not known to be safe to transfer across thread boundaries.
-+/// To obtain a thread-safe [`File`], use the [`assume_no_fdget_pos`] conversion.
-+///
-+/// See the documentation for [`File`] for more information.
-+///
-+/// # Invariants
-+///
-+/// * All instances of this type are refcounted using the `f_count` field.
-+/// * If there is an active call to `fdget_pos` that did not take the `f_pos_lock` mutex, then it
-+///   must be on the same thread as this `File`.
-+///
-+/// [`assume_no_fdget_pos`]: LocalFile::assume_no_fdget_pos
-+pub struct LocalFile {
-+    inner: Opaque<bindings::file>,
-+}
++// SAFETY:
++// - `Credential::dec_ref` can be called from any thread.
++// - It is okay to send ownership of `Credential` across thread boundaries.
++unsafe impl Send for Credential {}
 +
-+// SAFETY: This file is known to not have any active `fdget_pos` calls that did not take the
-+// `f_pos_lock` mutex, so it is safe to transfer it between threads.
-+unsafe impl Send for File {}
++// SAFETY: It's OK to access `Credential` through shared references from other threads because
++// we're either accessing properties that don't change or that are properly synchronised by C code.
++unsafe impl Sync for Credential {}
 +
-+// SAFETY: This file is known to not have any active `fdget_pos` calls that did not take the
-+// `f_pos_lock` mutex, so it is safe to access its methods from several threads in parallel.
-+unsafe impl Sync for File {}
-+
-+impl LocalFile {
-+    /// Constructs a new `struct file` wrapper from a file descriptor.
-+    ///
-+    /// The file descriptor belongs to the current process, and there might be active local calls
-+    /// to `fdget_pos` on the same file.
-+    ///
-+    /// To obtain an `ARef<File>`, use the [`assume_no_fdget_pos`] function to convert.
-+    ///
-+    /// [`assume_no_fdget_pos`]: LocalFile::assume_no_fdget_pos
-+    #[inline]
-+    pub fn fget(fd: u32) -> Result<ARef<LocalFile>, BadFdError> {
-+        // SAFETY: FFI call, there are no requirements on `fd`.
-+        let ptr = ptr::NonNull::new(unsafe { bindings::fget(fd) }).ok_or(BadFdError)?;
-+
-+        // SAFETY: `bindings::fget` created a refcount, and we pass ownership of it to the `ARef`.
-+        //
-+        // INVARIANT: This file is in the fd table on this thread, so either all `fdget_pos` calls
-+        // are on this thread, or the file is shared, in which case `fdget_pos` calls took the
-+        // `f_pos_lock` mutex.
-+        Ok(unsafe { ARef::from_raw(ptr.cast()) })
-+    }
-+
-+    /// Creates a reference to a [`LocalFile`] from a valid pointer.
++impl Credential {
++    /// Creates a reference to a [`Credential`] from a valid pointer.
 +    ///
 +    /// # Safety
 +    ///
-+    /// * The caller must ensure that `ptr` points at a valid file and that the file's refcount is
-+    ///   positive for the duration of 'a.
-+    /// * The caller must ensure that if there is an active call to `fdget_pos` that did not take
-+    ///   the `f_pos_lock` mutex, then that call is on the current thread.
-+    #[inline]
-+    pub unsafe fn from_raw_file<'a>(ptr: *const bindings::file) -> &'a LocalFile {
-+        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
-+        // duration of 'a. The cast is okay because `File` is `repr(transparent)`.
-+        //
-+        // INVARIANT: The caller guarantees that there are no problematic `fdget_pos` calls.
++    /// The caller must ensure that `ptr` is valid and remains valid for the lifetime of the
++    /// returned [`Credential`] reference.
++    pub unsafe fn from_ptr<'a>(ptr: *const bindings::cred) -> &'a Credential {
++        // SAFETY: The safety requirements guarantee the validity of the dereference, while the
++        // `Credential` type being transparent makes the cast ok.
 +        unsafe { &*ptr.cast() }
 +    }
 +
-+    /// Assume that there are no active `fdget_pos` calls that prevent us from sharing this file.
-+    ///
-+    /// This makes it safe to transfer this file to other threads. No checks are performed, and
-+    /// using it incorrectly may lead to a data race on the file position if the file is shared
-+    /// with another thread.
-+    ///
-+    /// This method is intended to be used together with [`LocalFile::fget`] when the caller knows
-+    /// statically that there are no `fdget_pos` calls on the current thread. For example, you
-+    /// might use it when calling `fget` from an ioctl, since ioctls usually do not touch the file
-+    /// position.
-+    ///
-+    /// # Safety
-+    ///
-+    /// There must not be any active `fdget_pos` calls on the current thread.
-+    #[inline]
-+    pub unsafe fn assume_no_fdget_pos(me: ARef<LocalFile>) -> ARef<File> {
-+        // INVARIANT: There are no `fdget_pos` calls on the current thread, and by the type
-+        // invariants, if there is a `fdget_pos` call on another thread, then it took the
-+        // `f_pos_lock` mutex.
-+        //
-+        // SAFETY: `LocalFile` and `File` have the same layout.
-+        unsafe { ARef::from_raw(ARef::into_raw(me).cast()) }
-+    }
-+
-+    /// Returns a raw pointer to the inner C struct.
-+    #[inline]
-+    pub fn as_ptr(&self) -> *mut bindings::file {
-+        self.inner.get()
-+    }
-+
-+    /// Returns the flags associated with the file.
-+    ///
-+    /// The flags are a combination of the constants in [`flags`].
-+    #[inline]
-+    pub fn flags(&self) -> u32 {
-+        // This `read_volatile` is intended to correspond to a READ_ONCE call.
-+        //
-+        // SAFETY: The file is valid because the shared reference guarantees a nonzero refcount.
-+        //
-+        // FIXME(read_once): Replace with `read_once` when available on the Rust side.
-+        unsafe { core::ptr::addr_of!((*self.as_ptr()).f_flags).read_volatile() }
++    /// Returns the effective UID of the given credential.
++    pub fn euid(&self) -> bindings::kuid_t {
++        // SAFETY: By the type invariant, we know that `self.0` is valid. Furthermore, the `euid`
++        // field of a credential is never changed after initialization, so there is no potential
++        // for data races.
++        unsafe { (*self.0.get()).euid }
 +    }
 +}
 +
-+impl File {
-+    /// Creates a reference to a [`File`] from a valid pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// * The caller must ensure that `ptr` points at a valid file and that the file's refcount is
-+    ///   positive for the duration of 'a.
-+    /// * The caller must ensure that if there are active `fdget_pos` calls on this file, then they
-+    ///   took the `f_pos_lock` mutex.
-+    #[inline]
-+    pub unsafe fn from_raw_file<'a>(ptr: *const bindings::file) -> &'a File {
-+        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
-+        // duration of 'a. The cast is okay because `File` is `repr(transparent)`.
-+        //
-+        // INVARIANT: The caller guarantees that there are no problematic `fdget_pos` calls.
-+        unsafe { &*ptr.cast() }
-+    }
-+}
-+
-+// Make LocalFile methods available on File.
-+impl core::ops::Deref for File {
-+    type Target = LocalFile;
-+    #[inline]
-+    fn deref(&self) -> &LocalFile {
-+        // SAFETY: The caller provides a `&File`, and since it is a reference, it must point at a
-+        // valid file for the desired duration.
-+        //
-+        // By the type invariants, there are no `fdget_pos` calls that did not take the
-+        // `f_pos_lock` mutex.
-+        unsafe { LocalFile::from_raw_file(self as *const File as *const bindings::file) }
-+    }
-+}
-+
-+// SAFETY: The type invariants guarantee that `LocalFile` is always ref-counted. This implementation
-+// makes `ARef<File>` own a normal refcount.
-+unsafe impl AlwaysRefCounted for LocalFile {
-+    #[inline]
++// SAFETY: The type invariants guarantee that `Credential` is always ref-counted.
++unsafe impl AlwaysRefCounted for Credential {
 +    fn inc_ref(&self) {
 +        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-+        unsafe { bindings::get_file(self.as_ptr()) };
++        unsafe { bindings::get_cred(self.0.get()) };
 +    }
 +
-+    #[inline]
-+    unsafe fn dec_ref(obj: ptr::NonNull<LocalFile>) {
-+        // SAFETY: To call this method, the caller passes us ownership of a normal refcount, so we
-+        // may drop it. The cast is okay since `File` has the same representation as `struct file`.
-+        unsafe { bindings::fput(obj.cast().as_ptr()) }
-+    }
-+}
-+
-+// SAFETY: The type invariants guarantee that `File` is always ref-counted. This implementation
-+// makes `ARef<File>` own a normal refcount.
-+unsafe impl AlwaysRefCounted for File {
-+    #[inline]
-+    fn inc_ref(&self) {
-+        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-+        unsafe { bindings::get_file(self.as_ptr()) };
-+    }
-+
-+    #[inline]
-+    unsafe fn dec_ref(obj: ptr::NonNull<File>) {
-+        // SAFETY: To call this method, the caller passes us ownership of a normal refcount, so we
-+        // may drop it. The cast is okay since `File` has the same representation as `struct file`.
-+        unsafe { bindings::fput(obj.cast().as_ptr()) }
++    unsafe fn dec_ref(obj: core::ptr::NonNull<Credential>) {
++        // SAFETY: The safety requirements guarantee that the refcount is nonzero. The cast is okay
++        // because `Credential` has the same representation as `struct cred`.
++        unsafe { bindings::put_cred(obj.cast().as_ptr()) };
 +    }
 +}
+diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+index f1a52814b2da..8bed7bebcc43 100644
+--- a/rust/kernel/fs/file.rs
++++ b/rust/kernel/fs/file.rs
+@@ -9,6 +9,7 @@
+ 
+ use crate::{
+     bindings,
++    cred::Credential,
+     error::{code::*, Error, Result},
+     types::{ARef, AlwaysRefCounted, Opaque},
+ };
+@@ -274,6 +275,18 @@ pub fn as_ptr(&self) -> *mut bindings::file {
+         self.inner.get()
+     }
+ 
++    /// Returns the credentials of the task that originally opened the file.
++    pub fn cred(&self) -> &Credential {
++        // SAFETY: It's okay to read the `f_cred` field without synchronization because `f_cred` is
++        // never changed after initialization of the file.
++        let ptr = unsafe { (*self.as_ptr()).f_cred };
 +
-+/// Represents the `EBADF` error code.
-+///
-+/// Used for methods that can only fail with `EBADF`.
-+#[derive(Copy, Clone, Eq, PartialEq)]
-+pub struct BadFdError;
-+
-+impl From<BadFdError> for Error {
-+    #[inline]
-+    fn from(_: BadFdError) -> Error {
-+        EBADF
++        // SAFETY: The signature of this function ensures that the caller will only access the
++        // returned credential while the file is still valid, and the C side ensures that the
++        // credential stays valid at least as long as the file.
++        unsafe { Credential::from_ptr(ptr) }
 +    }
-+}
 +
-+impl core::fmt::Debug for BadFdError {
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        f.pad("EBADF")
-+    }
-+}
+     /// Returns the flags associated with the file.
+     ///
+     /// The flags are a combination of the constants in [`flags`].
 diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 5d310e79485f..c364893e13a2 100644
+index c364893e13a2..8fb57ec20867 100644
 --- a/rust/kernel/lib.rs
 +++ b/rust/kernel/lib.rs
-@@ -29,6 +29,7 @@
+@@ -28,6 +28,7 @@
+ 
  pub mod alloc;
  mod build_assert;
++pub mod cred;
  pub mod error;
-+pub mod fs;
+ pub mod fs;
  pub mod init;
- pub mod ioctl;
- #[cfg(CONFIG_KUNIT)]
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index bb115d730ebb..cb3e178b2000 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -366,6 +366,14 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
-             _p: PhantomData,
-         }
-     }
-+
-+    /// Convert this [`ARef`] into a raw pointer.
-+    ///
-+    /// The caller retains ownership of the refcount that this `ARef` used to own.
-+    pub fn into_raw(me: Self) -> NonNull<T> {
-+        let me = core::mem::ManuallyDrop::new(me);
-+        me.ptr
-+    }
- }
- 
- impl<T: AlwaysRefCounted> Clone for ARef<T> {
 
 -- 
 2.45.2.1089.g2a221341d9-goog
