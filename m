@@ -1,122 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-24266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0383093C829
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 20:11:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6D893C83E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 20:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38CC1F22885
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 18:11:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0BA1F21ED4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 18:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191A519DF7C;
-	Thu, 25 Jul 2024 18:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EAE24B2A;
+	Thu, 25 Jul 2024 18:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8MLbVSU"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="AddOukWJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AC9DF6C;
-	Thu, 25 Jul 2024 18:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8962B1F959
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 18:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721931110; cv=none; b=GxU2yI9U5+88XkxsHnsbSJTBRIcpto5uvQmqTfBjNpiFdnanSTRsA/NAUcwZAq7SAkHZPWfDkVywWfoTA8KqsSxcgLbh9eahEXLgXBgaO8y8etJQ558qTM+p3mWr49XXQVo2zzihwueMVJ1D3okg9eU6fH/erBhNl9969lu0J0Q=
+	t=1721931608; cv=none; b=n+fYv9GNXRIPPhUdk7EgG9FZMBEgh/t6qf/lGp0Dg/aFqAxyZdY29GEeUWyHcWVu2VKrVhFpSZXFPIwsuhO4fCZ4swpY/5MNZ/xM8CNo89zy/D7MzD2+Hg6WVKOSI27OStEHca8cYLwWeWOfaJSPwhLSeLv24yx3MD82DyoGVSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721931110; c=relaxed/simple;
-	bh=qMPNAiU4QG51WPd2++7tk9Ir3s3Q0Q2T/8v0cyCK9EM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LDB7xfVoX3afXJ1H1h5CTSyiCusz5BDtzUqwD37YudZGwzFVGrMVDKfudmLtRb0w6gGS7uPMoJK0UuY65YnrgGYi7HweZWGAV5r0nMUI1u322v2o9uKN+aUAdkq1aRubgToiEuXl1yMsI4r3I9qcOxQr3X/n+91HvSGlrM12ny4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8MLbVSU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9308C116B1;
-	Thu, 25 Jul 2024 18:11:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721931110;
-	bh=qMPNAiU4QG51WPd2++7tk9Ir3s3Q0Q2T/8v0cyCK9EM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i8MLbVSUZNyx2oKUzGxGulXalYXs/A3uuRF0gXaAp/dV3ROUF08DFt2kY/IMp5Xcm
-	 vlXuoNeyAMEqYxrVUEI1dQlobQI79RrraPupjRZYMkILK/7R65RxA8Oko9h7UBRf1I
-	 Njg0GtY8b1A4UiJ6N1oPGBmghESZCD4ochXvxojhpHw4NrPw5RTJoqGGUv1WMWuO2v
-	 GmLBdZVjEf2L9xTtJi59xk15gvfikBTs1nGQwnW3F7760FeZ6Ow9iI/7TOkF2iLETQ
-	 BfgrrX0qUOsSl2IKa5ozSDfzDbrGZSGqna2afVmNcVJYv1zNPS480l0tCDd/lH0Fxc
-	 GHxSJJD0mx8jg==
-Date: Thu, 25 Jul 2024 19:11:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Amit Daniel Kachhap <amitdaniel.kachhap@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
-	catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
-	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 18/29] arm64: add POE signal support
-Message-ID: <a13c3d5e-6517-4632-b20d-49ce9f0d8e58@sirena.org.uk>
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-19-joey.gouly@arm.com>
- <229bd367-466e-4bf9-9627-24d2d0821ff4@arm.com>
- <7789da64-34e2-49db-b203-84b80e5831d5@sirena.org.uk>
- <cf7de572-420a-4d59-a8dd-effaff002e12@arm.com>
- <ZqJ2I3f2qdiD2DfP@e133380.arm.com>
+	s=arc-20240116; t=1721931608; c=relaxed/simple;
+	bh=NjQmy1bwbiClBPDz43WadrqFRQx3SBd86x5mEZy490U=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=V6inHT7yqPOa/ZuwsDERdFXqGeUZhgCfqjk95iOavS2532LMINLrOdWmJTtHcAzsPR9hodHdW3oxjKcrJXs7dkG/W0Ia+a6e8GgHYJjpPtztVjWinNo2hNXARGoFWONVPHKNuS9mPUARHXfTxcGYtSDEpMKV2GjBT77d05SKp/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=AddOukWJ; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b7a0ef0dfcso6569216d6.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 11:20:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1721931605; x=1722536405; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gtG9jyJTqAnVyMaXZTe/CHTxwyIGBl2L52MBmnPvjho=;
+        b=AddOukWJReAsvqE9vlfxdMz9noVjjG+aKUlqM1oGq5ztqrvcvx9T+CcPmHKOZ0Sarg
+         vyVD8UQkQBDS+g8J/TvmTB3txM5kpr/gA1tGxnTHmtViSsIfuUw+8cYZEEJxmui92zkU
+         cFGW0vru1wCTnO6EoBCnNfg+gIw2YLrsGFNWKC3pp+emQBT40SiouvDL67gx1O3E1wrj
+         8jGV93cGVskBL2LgFjG9cMDZg16B/vkSBjTtJITCnK7Ibrr4ek/Ng0BhhhQwysazCDff
+         HXEW/tS+ObEZhNp+vED6RXUt70q4Yc4AOXImNMgtKCiR+Pb7wRApv3pXOtiJd3Nlbq0k
+         ZFGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721931605; x=1722536405;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gtG9jyJTqAnVyMaXZTe/CHTxwyIGBl2L52MBmnPvjho=;
+        b=gIE7pVPuI2z4EUKPdgtZ1SzH7RuBDPCGSuOOvZgxWHst0skGfMhCAfbZ9o9hj2MM5k
+         c5X4MRB5theq/taexhFpwdCbiqXWXJX72n9qPZN2tvPqMEbv38g4KXkj1iY/CbCakgxL
+         t7fKZrvocQAHtY55RtT4/gKa2Wp61z5/Dxjj8N7rkrCC86C+Fq7dai86X1a4wWHmYaSO
+         ayoVmLF2teHKx8S6KeVRh9ZyRh5PEbx3AY7SMzeqaOEOBFinGsILsmj9SrLIrc0uAP99
+         +6Te1mn+AZETOuj5iayZL+nyiBIlXueY9Cga2be4svhvG4LTNvlNIiprHkF6W5LrzMtU
+         FeCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKtySUB523gA7CozB1sHl+FdfIgRGkeFo6oxTCyDOc6CUedKkRny0NA9+LGVQnv+srBZMeoEW25QnZAqfZco5sjt314oZHYw7kgYY1nA==
+X-Gm-Message-State: AOJu0Yx+KZCCyTVgcLnd+wZI+6Wo12dEzQLHsDETaAgHMfvWTIgdWEJa
+	w/joLU0lNghAoc3RM0nib5kWsKADNVbiOrerJ0UrHHBuL2w5Cz0V6H5ZNgWcKXI=
+X-Google-Smtp-Source: AGHT+IHHuA6aY+9tnwAuMt/CHte6b2v9GA3AXrVu5XwpsKo8s09j8oOIo8skP/JFQm2KyhA1SQgomg==
+X-Received: by 2002:a05:6214:250a:b0:6b7:9b14:626e with SMTP id 6a1803df08f44-6bb3cb24574mr48470436d6.57.1721931605196;
+        Thu, 25 Jul 2024 11:20:05 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f8fb938sm9612376d6.47.2024.07.25.11.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 11:20:04 -0700 (PDT)
+From: Josef Bacik <josef@toxicpanda.com>
+To: kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org,
+	jack@suse.cz,
+	amir73il@gmail.com,
+	brauner@kernel.org
+Subject: [PATCH 00/10] fanotify: add pre-content hooks
+Date: Thu, 25 Jul 2024 14:19:37 -0400
+Message-ID: <cover.1721931241.git.josef@toxicpanda.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zuHkNnSXmHBvO0dc"
-Content-Disposition: inline
-In-Reply-To: <ZqJ2I3f2qdiD2DfP@e133380.arm.com>
-X-Cookie: Zeus gave Leda the bird.
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
---zuHkNnSXmHBvO0dc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+These are the patches for the bare bones pre-content fanotify support.  The
+majority of this work is Amir's, my contribution to this has solely been around
+adding the page fault hooks, testing and validating everything.  I'm sending it
+because Amir is traveling a bunch, and I touched it last so I'm going to take
+all the hate and he can take all the credit.
 
-On Thu, Jul 25, 2024 at 04:58:27PM +0100, Dave Martin wrote:
+There is a PoC that I've been using to validate this work, you can find the git
+repo here
 
-> I'll post a draft patch separately, since I think the update could
-> benefit from separate discussion, but my back-of-the-envelope
-> calculation suggests that (before this patch) we are down to 0x90
-> bytes of free space (i.e., over 96% full).
+https://github.com/josefbacik/remote-fetch
 
-> I wonder whether it is time to start pushing back on adding a new
-> _foo_context for every individual register, though?
+This consists of 3 different tools.
 
-> Maybe we could add some kind of _misc_context for miscellaneous 64-bit
-> regs.
+1. populate.  This just creates all the stub files in the directory from the
+   source directory.  Just run ./populate ~/linux ~/hsm-linux and it'll
+   recursively create all of the stub files and directories.
+2. remote-fetch.  This is the actual PoC, you just point it at the source and
+   destination directory and then you can do whatever.  ./remote-fetch ~/linux
+   ~/hsm-linux.
+3. mmap-validate.  This was to validate the pagefault thing, this is likely what
+   will be turned into the selftest with remote-fetch.  It creates a file and
+   then you can validate the file matches the right pattern with both normal
+   reads and mmap.  Normally I do something like
 
-That'd have to be a variably sized structure with pairs of sysreg
-ID/value items in it I think which would be a bit of a pain to implement
-but doable.  The per-record header is 64 bits, we'd get maximal saving
-by allocating a byte for the IDs.
+   ./mmap-validate create ~/src/foo
+   ./populate ~/src ~/dst
+   ./rmeote-fetch ~/src ~/dst
+   ./mmap-validate validate ~/dst/foo
 
-It would be very unfortunate timing to start gating things on such a
-change though (I'm particularly worried about GCS here, at this point
-the kernel changes are blocking the entire ecosystem).
+I did a bunch of testing, I also got some performance numbers.  I copied a
+kernel tree, and then did remote-fetch, and then make -j4
 
---zuHkNnSXmHBvO0dc
-Content-Type: application/pgp-signature; name="signature.asc"
+Normal
+real    9m49.709s
+user    28m11.372s
+sys     4m57.304s
 
------BEGIN PGP SIGNATURE-----
+HSM
+real    10m6.454s
+user    29m10.517s
+sys     5m2.617s
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmailV0ACgkQJNaLcl1U
-h9CJNAf/T4L+WiIsdTTGLKLrGIifWcIZMFDKVEGwW4FdSIpGyr1zBwSxsMMMpYMn
-Y2vOp2+u+NUD72aKzhi9w2oDqf/zxrRMRtTac9G5p5yxDJ8A5TnZmLeUCeRDfeaD
-KbGzJ+pmP6VAhz6dx1LVHo2/BlPFEBYic7aByH/VtQK5orNc9Ss1pjPj9M1kcMtS
-ZpQDRVd9H8sTthXnA2au8VRVeCZIvHB7c6CHXWu8+gv4DVW9fcWaVmq7sKvrt3vA
-KH+DHAft/yAobtjLtcPlj5ImoCIbRjmIa4qy3NsHji/xAHl4695sncCMJB7yi0fU
-5WfF3lyw+U6HxGVPCH7jlQcjPB7XOw==
-=PpFd
------END PGP SIGNATURE-----
+So ~17 seconds more to build with HSM.  I then did a make mrproper on both trees
+to see the size
 
---zuHkNnSXmHBvO0dc--
+[root@fedora ~]# du -hs /src/linux
+1.6G    /src/linux
+[root@fedora ~]# du -hs dst
+125M    dst
+
+This mirrors the sort of savings we've seen in production.
+
+Meta has had these patches (minus the page fault patch) deployed in production
+for almost a year with our own utility for doing on-demand package fetching.
+The savings from this has been pretty significant.
+
+The page-fault hooks are necessary for the last thing we need, which is
+on-demand range fetching of executables.  Some of our binaries are several gigs
+large, having the ability to remote fetch them on demand is a huge win for us
+not only with space savings, but with startup time of containers.
+
+There will be tests for this going into LTP once we're satisfied with the
+patches and they're on their way upstream.  Thanks,
+
+Josef
+
+Amir Goldstein (8):
+  fsnotify: introduce pre-content permission event
+  fsnotify: generate pre-content permission event on open
+  fanotify: introduce FAN_PRE_ACCESS permission event
+  fanotify: introduce FAN_PRE_MODIFY permission event
+  fanotify: pass optional file access range in pre-content event
+  fanotify: rename a misnamed constant
+  fanotify: report file range info with pre-content events
+  fanotify: allow to set errno in FAN_DENY permission response
+
+Josef Bacik (2):
+  fanotify: don't skip extra event info if no info_mode is set
+  fsnotify: generate pre-content permission event on page fault
+
+ fs/namei.c                         |   9 +++
+ fs/notify/fanotify/fanotify.c      |  29 ++++++--
+ fs/notify/fanotify/fanotify.h      |  10 +++
+ fs/notify/fanotify/fanotify_user.c | 111 +++++++++++++++++++++++------
+ fs/notify/fsnotify.c               |  15 +++-
+ include/linux/fanotify.h           |  24 +++++--
+ include/linux/fsnotify.h           |  54 ++++++++++++--
+ include/linux/fsnotify_backend.h   |  59 ++++++++++++++-
+ include/uapi/linux/fanotify.h      |  17 +++++
+ mm/filemap.c                       |  50 +++++++++++--
+ security/selinux/hooks.c           |   3 +-
+ 11 files changed, 335 insertions(+), 46 deletions(-)
+
+-- 
+2.43.0
+
 
