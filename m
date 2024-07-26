@@ -1,94 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-24331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB57093D5FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 17:23:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D1393D63E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 17:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43488B236C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 15:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD49282394
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 15:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8288E17BB03;
-	Fri, 26 Jul 2024 15:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD22C17A939;
+	Fri, 26 Jul 2024 15:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="CyS4mZsU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1161EB31
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 15:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC3F10A1C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 15:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722007384; cv=none; b=EKRu+meX7+nvb3ml1e1FOhsrMIdNgHH+8MXVdA2og7PaynTM/a73kE/OjqPT7fpTGr2n+aec46e57c2JtHf3NHYVxlgI1juYOWTQYCNc9gtu0u5xvyftEiT2cXgCdWe8lCvZpXon0O0RlyU0fwBK2FZ1/LqmUKwi6icyt2unn7k=
+	t=1722008352; cv=none; b=qKgQ9m7Qnyw326f1GaExT9YcpPFvZzWMKO5eUMVe+zM3o4uN1pYD6FIxDPTTFB2i/B4dtNs5nkkrjusp7vxZryDYVFr08Z9kqiB2v53PcCVUUUZru7uK798HizEPLC4TLA9xeorDoU/GmLFEPsqAcPIHPcid8GEAxerHPFGo+LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722007384; c=relaxed/simple;
-	bh=qlp7+7AcQXwJaqTb943IHxf/RFYYalN4M2URRp77+tE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=exqRZDSCPhJtoK60qCWItglmhZH7/ttLydyqOk5IIYlDo6Oy8IMvv7AXiCVmzjqKpqxwrRUzyXjHF2qp/AJsG7S780TAt58IgfGPU14hNiivQpK5Z6JBf7Ws9K259dnHVY6kX/oH8PGLBJf7EuvpjG1sdnqQOA11VB3mulOX6kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9053ac4dso68206439f.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 08:23:02 -0700 (PDT)
+	s=arc-20240116; t=1722008352; c=relaxed/simple;
+	bh=sAxssKMAFh3wj5z5ValFCN6FM/9YkEQtjr/NLO/YYSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iHRoUs+eiU6qrJS9vBIdOpwXyreNOz9Weyz/ZyMh83uly6FQFqXTVADnI+jP1010KwLUQ/fP3PxZBZhRshEQZDv0b+LUvQ27AKYqQQtGzGppTmhg9tfW+9T/p5MrgNBzJPVjFOnuttw4bW/Edzlb8jswR3fTJckO6a3HtT1H37Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=CyS4mZsU; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e05eccfcdb3so1963246276.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 08:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1722008350; x=1722613150; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nTlYN7qwNIA929u7v0Vi1ftjGFAFw9cUGVs6Wz432jw=;
+        b=CyS4mZsUSsAwsdUHGH8xFvPPUav6Fwkud9F66gIwpri9iJU9rKyp7Qi4E57bq+IWt0
+         kozKLraGGHwePKoYj2+uTMblV9NpD3GmPo8SHXnSJSE+AETSvyWZnBs6L0HW2a0WqLpt
+         QtwmwEujFycIaK2fedOIoIO3d1GMuotGmgYrrfoj8b5RfLjuhZAsVz+yTZmbA91Ef2sl
+         0TwveTdU/S8IK4RdLxPwaBbwP/9PERHyQzbdPDDGXCXwqBQaMZjOSZN6DEHaXxi+GUwh
+         W6f88tcbsvDAkvVpSmi4IyTzBvVO8VqRcZvr4JjcSzQQCT4PcYh0rinmcz/8QRNx+AzP
+         UV2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722007382; x=1722612182;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wrSzqyiMZx4ozjypR+uiSnGPSDS1DfBLU8iYnkXnm8o=;
-        b=ELmC3ymkLDGrSEy7ZYnEBO+ofg5R84SXTQLphRFzjzlTl9XXP2tXqOF1j9meabKzBB
-         WtfYdGi4cPxwVuBoviAIHtip5sMi5XKHj+cOo5VEHpW4gqq6uGKW836l9vq2MnqFvgri
-         4r5RPvE/epgf5/jxCYL5Uwk9+2Oy5Cehaid/NuPUJim0kob3rlClrm1YegvvKFpCUjZ3
-         9gsVCCkiq3elKlQ3tLjGEd0OTLLXerZJsaQvr7vP2nbrfKMVp5zaU7vSUxilkvUB3i0W
-         BVqVyIWTTofN0mfKCVJfEbzkE9oYJleYw89KG0R6kB0MiHRazfsLSLqX8nWX68+IeUdV
-         4i1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVc38W2LH2CiRe1csQjhpuIPYoSCT9/n+eBrzBrYE1LmK4fydbudhlIS4TZgnWr5wdFtHO9NGcuEDoMu91+7XGD3sgqQtvuWuNpalpDCQ==
-X-Gm-Message-State: AOJu0YwfjttyDb8hXcAnQBIbD5OrU6TtBFSNCFx9IRk1gxhxaY3VJsEf
-	3va/lJ0oQjOPeP7Rw2rJMsal9za8m3rwHU7hCcImLzpTchduhHKJVbGIUJ1uv2Z+EX75HF//XyP
-	yuleIDXT13RrbswD6xzvJpOj1f9od77rFEcE5szt7GlRZc+OgMo2JpdY=
-X-Google-Smtp-Source: AGHT+IEitdjrvQfgUSlHI9A5b/o7wbVGbHXJfvr5OeY9BfiBEWaDu7+L2Zu4oFY+y+iyX8y9suRRcOHcvVDTWq93/LtY+DN37WYn
+        d=1e100.net; s=20230601; t=1722008350; x=1722613150;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nTlYN7qwNIA929u7v0Vi1ftjGFAFw9cUGVs6Wz432jw=;
+        b=aqEsUsv5BVKZvAPZhkcFAgDtSqArog3Gy+/CZE0Djf4VwZiUntkshtXMhoyYL9vUl8
+         0v2HyFQ1JoLKPYgz7iKBI9chb1r5MLy25dd8AWbFOSJ3ch72af9zasBIk1poDGNVAI1Q
+         QJsE2t2XQHi6NerGC/w0aXffQXC+Etb0ZmD1X9qJXbhVmAKyh6mp6nv/bY0LINbjrT90
+         ogU6rGs80jLo6HDb24PZJvoNHYdV2cIPgI1jjOex5PZNU3Fh6aWi8S++ZFAWnuk5LCMD
+         AY+myGxC26WGSvg4z8vBRGcNCI028ky5Dq49aFQhes8qlCbTy2otDkYiUp6D/cYRArpX
+         WS8A==
+X-Forwarded-Encrypted: i=1; AJvYcCW3ukBslI8KscQLfvwlPnnq0sSbg2vaRRUvvm5iKKPihWBt+xevVlml6p6P6X0+rMuu8BMjrAET22DUHBZE0rKJxQ2NRZFz2AZgmeNtzA==
+X-Gm-Message-State: AOJu0YzAnFXg2CE4uNJ1haHM5VCK1VzE8n7hWV7Lx9FGqUbyHZWlKSNc
+	fGvefuqsAL7//RqJSbP9BX372eo+TVOKWkcnuvoaAOwNXLlOPKPuX5vWXqyJ1yg=
+X-Google-Smtp-Source: AGHT+IE1ay+RcFkuxSAz/JO5WDaqi3NilkGfwMA1C1SFVbQCUE+iQOkQRIuXWxsp7iwhJQggkvZn/w==
+X-Received: by 2002:a05:6902:1501:b0:e0b:286b:1399 with SMTP id 3f1490d57ef6-e0b544b6080mr149742276.29.1722008349708;
+        Fri, 26 Jul 2024 08:39:09 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b2960b4f6sm787385276.0.2024.07.26.08.39.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jul 2024 08:39:09 -0700 (PDT)
+Date: Fri, 26 Jul 2024 11:39:08 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: yangyun <yangyun50@huawei.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] fuse: replace fuse_queue_forget with
+ fuse_force_forget if error
+Message-ID: <20240726153908.GD3432726@perftesting>
+References: <20240726083752.302301-1-yangyun50@huawei.com>
+ <20240726083752.302301-2-yangyun50@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4120:b0:4c0:9a3e:c24d with SMTP id
- 8926c6da1cb9f-4c29b6da7acmr341864173.0.1722007382122; Fri, 26 Jul 2024
- 08:23:02 -0700 (PDT)
-Date: Fri, 26 Jul 2024 08:23:02 -0700
-In-Reply-To: <000000000000b90a8e061e21d12f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004ff2dc061e281637@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
-From: syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>
-To: brauner@kernel.org, chao@kernel.org, frank.li@vivo.com, jack@suse.cz, 
-	jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726083752.302301-2-yangyun50@huawei.com>
 
-syzbot has bisected this issue to:
+On Fri, Jul 26, 2024 at 04:37:51PM +0800, yangyun wrote:
+> Most usecases for 'fuse_queue_forget' in the code are about reverting
+> the lookup count when error happens, except 'fuse_evict_inode' and
+> 'fuse_cleanup_submount_lookup'. Even if there are no errors, it
+> still needs alloc 'struct fuse_forget_link'. It is useless, which
+> contributes to performance degradation and code mess to some extent.
+> 
+> 'fuse_force_forget' does not need allocate 'struct fuse_forget_link'in
+> advance, and is only used by readdirplus before this patch for the reason
+> that we do not know how many 'fuse_forget_link' structures will be
+> allocated when error happens.
+> 
+> Signed-off-by: yangyun <yangyun50@huawei.com>
 
-commit b62e71be2110d8b52bf5faf3c3ed7ca1a0c113a5
-Author: Chao Yu <chao@kernel.org>
-Date:   Sun Apr 23 15:49:15 2023 +0000
+Forcing file systems to have their forget suddenly be synchronous in a lot of
+cases is going to be a perf regression for them.
 
-    f2fs: support errors=remount-ro|continue|panic mountoption
+In some of these cases a synchronous forget is probably ok, as you say a lot of
+them are error cases.  However d_revalidate() isn't.  That's us trying to figure
+out if what we have in cache matches the file systems view of the inode, and if
+it doesn't we're going to do a re-lookup, so we don't necessarily care for a
+synchronous forget in this case.  Think of an NFS fuse client where the file got
+renamed on the backend and now we're telling the kernel this is the inode we
+have.  Forcing us to do a synchronous response now is going to be much more
+performance impacting than it was pre-this patch.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119745f1980000
-start commit:   1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=139745f1980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=159745f1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
-dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1237a1f1980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115edac9980000
+A better approach would be to make the allocation optional based on the
+->no_forget flag.  Thanks,
 
-Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
-Fixes: b62e71be2110 ("f2fs: support errors=remount-ro|continue|panic mountoption")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Josef
 
