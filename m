@@ -1,205 +1,266 @@
-Return-Path: <linux-fsdevel+bounces-24304-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B0093CFFD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 10:56:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCF593D034
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 11:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C551C1F254B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 08:56:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C088B225DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 09:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333D417837E;
-	Fri, 26 Jul 2024 08:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBCA178365;
+	Fri, 26 Jul 2024 09:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hnRxFj6M"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D0yDXv5R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2190178372
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 08:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88886116;
+	Fri, 26 Jul 2024 09:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721984180; cv=none; b=G0hfxReNQ2zZwNp2A3yAkr+4d2OzqRNLTKVFJG1cKdprxAhAAHqihsqqFLC6w48Hur2aiDiE2gUpXihVVxtRYveeZJU94tiQo1GCFptJwf7vYWT17Vn+U99oSZIuQ533KoO8TOvm+sbK7bsC/liA7XgYTjhOWurS10VHJddQxO4=
+	t=1721985069; cv=none; b=hgBvWL1jAobg4CmM3As9ZMH/pWbo3OidvsDo34cQc5JhRfzxJ1fr5aRbOV0UZXuZs3RKKJUApZoZvVMgiHc3ekUmZ/rvrZ+sQPLqkmnliOqRRrvrWVcUazHe6RrdHNqCX8tEzlGlEvxRhZl8DALRWn0ROt1IZi0Lvm0fRhHF0Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721984180; c=relaxed/simple;
-	bh=RVNBSjBqgj/6y6lyrajxl/PVAJAWndjeKfyDpCSBkrk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HDlHwqpR7ZRj4mmt+toGJ8WMC8XQSJW17Mx1VlhxeZtZlo4PRtrpMtJ2DXKKia9ADJxRqsiUpwFdVrVuvR8PNtW/vepfGK/q7SqRRylEWq/qy4IFYo7/Ngy0Oyrv6jWfhAdwviD0O/dILb7PhxnIx9pWQkm5WraM0lk1EvOSSgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattbobrowski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hnRxFj6M; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattbobrowski.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a7ab4817f34so117810766b.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 01:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721984177; x=1722588977; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jq0OZln+RUILnwIv9j4pYi6OZYhyhT/7v/9YG1LoiO8=;
-        b=hnRxFj6My/DXT+4GsAq3gK+TNKdReXX3ubhjEz1RdoyTv7ByOgblsI2DHXBu3HGnwg
-         mzuiTUY4SoiigrkSX7aFFiGU8iAg6ufP2quITkFtPNz2/FIfPdGzh/AmaOgA2q9P4f4F
-         ptz9PVHvnakRWxtLhkTwFyjj0zXd1ZJmmNQTcj3H67a3lnE8BBA83eQFrb+e4fGMC3ye
-         kbw/mqdeHQx1IBXiI6WRW3MoiocpgZkf+zmwt3MMOJ3XEx8JYbOVrcNLwVd110ANOAQY
-         c6Re/1PtAI4Lt9BlSU0xZWpFnThr2bkhs+Ka39JUZNYGdTV48xgUFUsJHh57q+wKUoLw
-         vLtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721984177; x=1722588977;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jq0OZln+RUILnwIv9j4pYi6OZYhyhT/7v/9YG1LoiO8=;
-        b=uVWifEKenzRdIFxYDcluizQRTk2OBa+AF1DlPXQmGwEChdvTVtkMOgx7b7shTnwg7S
-         MVv4BGD4AxmWmsAH5jI3tMvH694BG0DB3ty5ULWthb67VpMBVAp5KHlLRx9z/U564Zdb
-         6YjTHNCI8yKH8m4zLG1X/z/rhUxFtYof4a2p32jYKJsN0JNQFOq6GmKkI2oTQwQc6+4v
-         uJazpDTCjKVNSfiF1eQLooWlUrnlG6LfBtA0l1yx0KlDhHwWI3vsXz9K2awOUbspo8Lx
-         008x6agJIbxW9fg36hMMYl+2Mn9RUnXmxLWGUWktp5TALPxc099Apmbatd3cdbmyrRp/
-         rphw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv0eMmxDZ+Vz8727ox7eNCEkz8UpEgTv6xka3uNpxsAIxshaD2pQQvxrYQJH1N2cxfGkzALNxB791WRMRhGnypx1gB+yBZb1jhrVfKqw==
-X-Gm-Message-State: AOJu0YwMJsWhYL9h004nkZU+Zg+ZVHiAdOyqzpaDhLNMSaScsQgaz78i
-	pR35Dprw6XSZC9RwUnQUTBwPofr03u/11P5Kzh3dq2WL804ZOcMMM/PNtnFIj3NG6ZsUHD1a2Ea
-	fYXVIyd0S7Ik6NPwYXxcXAIL/0YGC3g==
-X-Google-Smtp-Source: AGHT+IHAPnfPb4bZn0X4tZTpS1hqhadVq0TkVqX4dUZ4IJNrsF6esqiID4ehBuzvYaUqjmC6OwhuMKTDj7nC6SF2K4pu
-X-Received: from mattbobrowski.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:c5c])
- (user=mattbobrowski job=sendgmr) by 2002:a17:906:3c55:b0:a7a:8d9b:14e6 with
- SMTP id a640c23a62f3a-a7ac527d38emr328966b.9.1721984177226; Fri, 26 Jul 2024
- 01:56:17 -0700 (PDT)
-Date: Fri, 26 Jul 2024 08:56:04 +0000
-In-Reply-To: <20240726085604.2369469-1-mattbobrowski@google.com>
+	s=arc-20240116; t=1721985069; c=relaxed/simple;
+	bh=bq3iCME2nAnit/kbDFA2bmrEht0puPIAaBbXD4f/7G4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jj10fTTeaKdKKEKexZsicRzscZWxJvJiQ/xWlLVuV38cl7eujim2NMZ4+EWvAr7ORl2vC9RLDhoq4A4VSLIV0rVGiUaIKdE0kUARYzwiJiwZx9/gzNb1utcT8zeJv4QJB9/tFCIWMPjr2HJBxgLfrxQXlQY/2VplYZixcRBkYMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D0yDXv5R; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721985064;
+	bh=bq3iCME2nAnit/kbDFA2bmrEht0puPIAaBbXD4f/7G4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D0yDXv5RURjaGL6RYrw4S2mI3km2BF/m6xn8fN5qbKb+ap76+jhz8fHxRbyNz4WOQ
+	 4y3gCsHZlDMvWCYnBs91Zn/WObe2LBiqE7Ta6SvhhfwjWjsFgYrFEFpyf8Jm7JlFnR
+	 ecsC1P2p2pY3IaGI8yO7J5dFPfUPtRV9vMGeiWR2Gb2DZ5km237GoVVZ5/2dFYXRbZ
+	 E1zGh43l9sk2Ek1Md6zS353hAiGi1L6Ot0agw5mlb/0ws47MmeNZXuO5KSzf4dcRpm
+	 TkDU5wRa4MRz1y34jMuOeaopuf3D4t1PoKfgYjda0brFn0YQiAJ4u+o3yBGtXiM3uw
+	 QDlwj3kq/wu9Q==
+Received: from gentoo.ratioveremundo.com (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aratiu)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4F04137804D4;
+	Fri, 26 Jul 2024 09:11:03 +0000 (UTC)
+From: Adrian Ratiu <adrian.ratiu@collabora.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	kernel@collabora.com,
+	gbiv@google.com,
+	inglorion@google.com,
+	ajordanr@google.com,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Doug Anderson <dianders@chromium.org>,
+	Jeff Xu <jeffxu@google.com>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v3] proc: add config & param to block forcing mem writes
+Date: Fri, 26 Jul 2024 12:08:58 +0300
+Message-ID: <20240726090858.71541-1-adrian.ratiu@collabora.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240726085604.2369469-1-mattbobrowski@google.com>
-X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
-Message-ID: <20240726085604.2369469-4-mattbobrowski@google.com>
-Subject: [PATCH v3 bpf-next 3/3] selftests/bpf: add positive tests for new VFS
- based BPF kfuncs
-From: Matt Bobrowski <mattbobrowski@google.com>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org, kpsingh@kernel.org, andrii@kernel.org, jannh@google.com, 
-	brauner@kernel.org, linux-fsdevel@vger.kernel.org, jolsa@kernel.org, 
-	daniel@iogearbox.net, memxor@gmail.com, 
-	Matt Bobrowski <mattbobrowski@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Add a bunch of positive selftests which extensively cover the various
-contexts and parameters in which the new VFS based BPF kfuncs may be
-used from.
+This adds a Kconfig option and boot param to allow removing
+the FOLL_FORCE flag from /proc/pid/mem write calls because
+it can be abused.
 
-Again, the following VFS based BPF kfuncs are thoroughly tested within
-this new selftest:
-* struct file *bpf_get_task_exe_file(struct task_struct *);
-* void bpf_put_file(struct file *);
-* int bpf_path_d_path(struct path *, char *, size_t);
+The traditional forcing behavior is kept as default because
+it can break GDB and some other use cases.
 
-Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
+Previously we tried a more sophisticated approach allowing
+distributions to fine-tune /proc/pid/mem behavior, however
+that got NAK-ed by Linus [1], who prefers this simpler
+approach with semantics also easier to understand for users.
+
+Link: https://lore.kernel.org/lkml/CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Jeff Xu <jeffxu@google.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
 ---
- .../selftests/bpf/prog_tests/verifier.c       |  2 +
- .../selftests/bpf/progs/verifier_vfs_accept.c | 71 +++++++++++++++++++
- 2 files changed, 73 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/verifier_vfs_accept.c
+Changes in v3:
+* Simplified code to use shorthand ifs and a
+  lookup_constant() table.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/verifier.c b/tools/testing/selftests/bpf/prog_tests/verifier.c
-index 14d74ba2188e..f8f546eba488 100644
---- a/tools/testing/selftests/bpf/prog_tests/verifier.c
-+++ b/tools/testing/selftests/bpf/prog_tests/verifier.c
+Changes in v2:
+* Added bootparam on top of Linus' patch.
+* Slightly reworded commit msg.
+---
+ .../admin-guide/kernel-parameters.txt         | 10 ++++
+ fs/proc/base.c                                | 54 ++++++++++++++++++-
+ security/Kconfig                              | 32 +++++++++++
+ 3 files changed, 95 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index c1134ad5f06d..793301f360ec 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4791,6 +4791,16 @@
+ 	printk.time=	Show timing data prefixed to each printk message line
+ 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
+ 
++	proc_mem.force_override= [KNL]
++			Format: {always | ptrace | never}
++			Traditionally /proc/pid/mem allows users to override memory
++			permissions. This allows people to limit that.
++			Can be one of:
++			- 'always' traditional behavior always allows mem overrides.
++			- 'ptrace' only allow for active ptracers.
++			- 'never'  never allow mem permission overrides.
++			If not specified, default is always.
++
+ 	processor.max_cstate=	[HW,ACPI]
+ 			Limit processor to maximum C-state
+ 			max_cstate=9 overrides any DMI blacklist limit.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 72a1acd03675..0ca3fc3d9e0e 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
 @@ -85,6 +85,7 @@
- #include "verifier_value_or_null.skel.h"
- #include "verifier_value_ptr_arith.skel.h"
- #include "verifier_var_off.skel.h"
-+#include "verifier_vfs_accept.skel.h"
- #include "verifier_vfs_reject.skel.h"
- #include "verifier_xadd.skel.h"
- #include "verifier_xdp.skel.h"
-@@ -206,6 +207,7 @@ void test_verifier_value(void)                { RUN(verifier_value); }
- void test_verifier_value_illegal_alu(void)    { RUN(verifier_value_illegal_alu); }
- void test_verifier_value_or_null(void)        { RUN(verifier_value_or_null); }
- void test_verifier_var_off(void)              { RUN(verifier_var_off); }
-+void test_verifier_vfs_accept(void)	      { RUN(verifier_vfs_accept); }
- void test_verifier_vfs_reject(void)	      { RUN(verifier_vfs_reject); }
- void test_verifier_xadd(void)                 { RUN(verifier_xadd); }
- void test_verifier_xdp(void)                  { RUN(verifier_xdp); }
-diff --git a/tools/testing/selftests/bpf/progs/verifier_vfs_accept.c b/tools/testing/selftests/bpf/progs/verifier_vfs_accept.c
-new file mode 100644
-index 000000000000..55deb96a4421
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/verifier_vfs_accept.c
-@@ -0,0 +1,71 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google LLC. */
+ #include <linux/elf.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/user_namespace.h>
++#include <linux/fs_parser.h>
+ #include <linux/fs_struct.h>
+ #include <linux/slab.h>
+ #include <linux/sched/autogroup.h>
+@@ -117,6 +118,35 @@
+ static u8 nlink_tid __ro_after_init;
+ static u8 nlink_tgid __ro_after_init;
+ 
++enum proc_mem_force {
++	PROC_MEM_FORCE_ALWAYS,
++	PROC_MEM_FORCE_PTRACE,
++	PROC_MEM_FORCE_NEVER
++};
 +
-+#include <vmlinux.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
++static enum proc_mem_force proc_mem_force_override __ro_after_init =
++	IS_ENABLED(CONFIG_PROC_MEM_ALWAYS_FORCE) ? PROC_MEM_FORCE_ALWAYS :
++	IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE :
++	PROC_MEM_FORCE_NEVER;
 +
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
++struct constant_table proc_mem_force_table[] = {
++	{ "always", PROC_MEM_FORCE_ALWAYS },
++	{ "ptrace", PROC_MEM_FORCE_PTRACE },
++	{ }
++};
 +
-+static char buf[64];
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(get_task_exe_file_and_put_kfunc_from_current)
++static int __init early_proc_mem_force_override(char *buf)
 +{
-+	struct file *acquired;
++	if (!buf)
++		return -EINVAL;
 +
-+	acquired = bpf_get_task_exe_file(bpf_get_current_task_btf());
-+	if (!acquired)
-+		return 0;
++	proc_mem_force_override = lookup_constant(proc_mem_force_table,
++						  buf, PROC_MEM_FORCE_NEVER);
 +
-+	bpf_put_file(acquired);
 +	return 0;
 +}
++early_param("proc_mem.force_override", early_proc_mem_force_override);
 +
-+SEC("lsm.s/task_alloc")
-+__success
-+int BPF_PROG(get_task_exe_file_and_put_kfunc_from_argument,
-+	     struct task_struct *task)
+ struct pid_entry {
+ 	const char *name;
+ 	unsigned int len;
+@@ -835,6 +865,26 @@ static int mem_open(struct inode *inode, struct file *file)
+ 	return ret;
+ }
+ 
++static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
 +{
-+	struct file *acquired;
++	switch (proc_mem_force_override) {
++	case PROC_MEM_FORCE_NEVER:
++		return false;
++	case PROC_MEM_FORCE_PTRACE: {
++		bool ptrace_active = false;
++		struct task_struct *task = get_proc_task(file_inode(file));
 +
-+	acquired = bpf_get_task_exe_file(task);
-+	if (!acquired)
-+		return 0;
-+
-+	bpf_put_file(acquired);
-+	return 0;
++		if (task) {
++			ptrace_active = task->ptrace && task->mm == mm && task->parent == current;
++			put_task_struct(task);
++		}
++		return ptrace_active;
++	}
++	default:
++		return true;
++	}
 +}
 +
-+SEC("lsm.s/inode_getattr")
-+__success
-+int BPF_PROG(path_d_path_from_path_argument, struct path *path)
-+{
-+	int ret;
+ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 			size_t count, loff_t *ppos, int write)
+ {
+@@ -855,7 +905,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 	if (!mmget_not_zero(mm))
+ 		goto free;
+ 
+-	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
++	flags = write ? FOLL_WRITE : 0;
++	if (proc_mem_foll_force(file, mm))
++		flags |= FOLL_FORCE;
+ 
+ 	while (count > 0) {
+ 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
+diff --git a/security/Kconfig b/security/Kconfig
+index 412e76f1575d..a93c1a9b7c28 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
++choice
++	prompt "Allow /proc/pid/mem access override"
++	default PROC_MEM_ALWAYS_FORCE
++	help
++	  Traditionally /proc/pid/mem allows users to override memory
++	  permissions for users like ptrace, assuming they have ptrace
++	  capability.
 +
-+	ret = bpf_path_d_path(path, buf, sizeof(buf));
-+	__sink(ret);
-+	return 0;
-+}
++	  This allows people to limit that - either never override, or
++	  require actual active ptrace attachment.
 +
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(path_d_path_from_file_argument, struct file *file)
-+{
-+	int ret;
-+	struct path *path;
++	  Defaults to the traditional behavior (for now)
 +
-+	/* The f_path member is a path which is embedded directly within a
-+	 * file. Therefore, a pointer to such embedded members are still
-+	 * recognized by the BPF verifier as being PTR_TRUSTED as it's
-+	 * essentially PTR_TRUSTED w/ a non-zero fixed offset.
-+	 */
-+	path = &file->f_path;
-+	ret = bpf_path_d_path(path, buf, sizeof(buf));
-+	__sink(ret);
-+	return 0;
-+}
++config PROC_MEM_ALWAYS_FORCE
++	bool "Traditional /proc/pid/mem behavior"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions if you have ptrace access rights.
 +
-+char _license[] SEC("license") = "GPL";
++config PROC_MEM_FORCE_PTRACE
++	bool "Require active ptrace() use for access override"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions for active ptracers like gdb.
++
++config PROC_MEM_NO_FORCE
++	bool "Never"
++	help
++	  Never override memory mapping permissions
++
++endchoice
++
+ config SECURITY
+ 	bool "Enable different security models"
+ 	depends on SYSFS
 -- 
-2.46.0.rc1.232.g9752f9e123-goog
+2.44.2
 
 
