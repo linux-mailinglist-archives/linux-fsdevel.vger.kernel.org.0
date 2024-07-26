@@ -1,274 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-24320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C8A93D2C6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 14:07:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD15393D408
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 15:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F9C1F220AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 12:07:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F04551C23760
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 13:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C2F17B432;
-	Fri, 26 Jul 2024 12:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507BE17BB24;
+	Fri, 26 Jul 2024 13:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="0i2cHUhO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpYcwupb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52273178399;
-	Fri, 26 Jul 2024 12:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5F726AC1;
+	Fri, 26 Jul 2024 13:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721995633; cv=none; b=D5615szeoKHCu9UtI0PJ45hZJE34dbf9YGlJRRzzeAnVuDnfYoQ077pDOUk7DKR8Eso1Ccsp7e4PQNRo/Cu2TBd/zRXmGZHaqkrgoXmiL2SpZ3ZXtm6if6Gix2SUNCWlAHOorvsWyMzu0pbjw4t3kmyPJoIX72ay+6FDQAIF7iQ=
+	t=1721999911; cv=none; b=ZPRaLWaOmOoJC7vqd2v6ZJkqPKP9voZZTsmcPIyMe0PKV1GWD3+HSk2YRq6g5DTV48J0dxNhOilgD6y2yqmC2Y3CmCkU3hYQcGbiZkj8ON5wJMZxfD7P8xnOkL1hbpAO7B7u/+Crk4CNxk6FD+phBiWSHCdpg/O4noRDhZV2k+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721995633; c=relaxed/simple;
-	bh=9hKcuPgUtp1l10q5OrfdCjYCZz6c/yIkLl5hd7iydEs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jn9LNOLSpgUALoCuj7serhc8xgKKG4vm+PaqJXaqH+AZvKdgWv2ieX+66Ud6ry5bpkM2ptKknHcIAmqYsC6U0iibsbCP0BpdpY98eg3aI96LGsgxLrJtkCzX5U0kHN82n9uCSpz1HGesPhn73gmEVu/37mMwCqWCH2xXGmgg4dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=0i2cHUhO; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WVmXV0jJcz9sSs;
-	Fri, 26 Jul 2024 14:00:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1721995210;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ufb0UjugC6W3KB84Hi3fjqZ2+tzYpkkK1QUCP+GQMoc=;
-	b=0i2cHUhOqzjAf+wAofaj0KbVZVTptuFYIhU2MgraqWTKOu/C19Vaumn/RcnCHMmonK/vxF
-	HzNy6imtVzivN9Mar+7UkeAPAigHMU/30CMMS24/Dz3LbnRQSvFMwyakkcMcdOG7hrz6wz
-	o2jwIpZQNcLBfFaq/frp5Yt8kAVX0NXlSDx58sWiPd5NH6frRr58Q0tBdpyD3eo/R4ArI6
-	TFI2KoBd4gzouAeUU0gXPq2C41tIedKQ9wwgvFsHkLxJUpkSRkuW3K3fhppK7Ms8vHa+3o
-	eCP9/RA2lB6N2NrFa61FeeKHgpflSkjYNnA604Fv4zB/WTo1jmeP5chWLkYO+g==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: david@fromorbit.com,
-	willy@infradead.org,
-	chandan.babu@oracle.com,
-	djwong@kernel.org,
-	brauner@kernel.org,
-	akpm@linux-foundation.org
-Cc: yang@os.amperecomputing.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org,
-	hare@suse.de,
-	p.raghav@samsung.com,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org,
-	kernel@pankajraghav.com,
-	ryan.roberts@arm.com,
-	hch@lst.de,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v11 01/10] fs: Allow fine-grained control of folio sizes
-Date: Fri, 26 Jul 2024 13:59:47 +0200
-Message-ID: <20240726115956.643538-2-kernel@pankajraghav.com>
-In-Reply-To: <20240726115956.643538-1-kernel@pankajraghav.com>
-References: <20240726115956.643538-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1721999911; c=relaxed/simple;
+	bh=CH33DTiu3ITeY6LPHWvX6+rTn3eLZ9yqooBX7JQ1xQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RrZv7XhToR3O4zx9lBWrQR66vObOswmB0mb4lrlba/+cs58uV2ioubK3G20yPp6VctX3jnL/VBFsmItyxRFzg3YfOwMoGeEZ5T1x+HDz03O4Nbb3XAV+psIQRQc5lVCHfvvbSPAilOL3XXWLwvHfSDNs6GT2/8EDgeqlSnDK2HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpYcwupb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D97C32782;
+	Fri, 26 Jul 2024 13:18:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721999911;
+	bh=CH33DTiu3ITeY6LPHWvX6+rTn3eLZ9yqooBX7JQ1xQw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YpYcwupbtWJRXZI65YH+CGoih/jwZXcKrCI/iZPt028IwS7mNrAEhmfQW0avyoqGR
+	 XpsLlB3TeZwxJNCGI8JLFHMrmmmPDcydHmf+6Ty6xmXkhkcZTHo69M1JKFSwG+Ivbp
+	 8eBdOB8ehCIke4nr3DduH697jH8wFMKciZGB1yI8mWRCBIueq4zoH0qs52cvrzk6NX
+	 Clu80S8Fxt/twsDBzbrZ0SDZt9mGGI+M41idJkHwN6j5sxbOlNqkQe62ybdx9KlmFt
+	 uesuGMvT1bDGdA2vCatD+zc5U9R/usq53NaI9oyxueouv9rKRiEBrSL3pmnqKSt7N+
+	 5SqTZy+RRygTg==
+Date: Fri, 26 Jul 2024 15:18:25 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Matt Bobrowski <mattbobrowski@google.com>
+Cc: bpf@vger.kernel.org, ast@kernel.org, kpsingh@kernel.org, 
+	andrii@kernel.org, jannh@google.com, linux-fsdevel@vger.kernel.org, 
+	jolsa@kernel.org, daniel@iogearbox.net, memxor@gmail.com
+Subject: Re: [PATCH v3 bpf-next 1/3] bpf: introduce new VFS based BPF kfuncs
+Message-ID: <20240726-klippe-umklammern-fe099b09e075@brauner>
+References: <20240726085604.2369469-1-mattbobrowski@google.com>
+ <20240726085604.2369469-2-mattbobrowski@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240726085604.2369469-2-mattbobrowski@google.com>
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Fri, Jul 26, 2024 at 08:56:02AM GMT, Matt Bobrowski wrote:
+> Add a new variant of bpf_d_path() named bpf_path_d_path() which takes
+> the form of a BPF kfunc and enforces KF_TRUSTED_ARGS semantics onto
+> its arguments.
+> 
+> This new d_path() based BPF kfunc variant is intended to address the
+> legacy bpf_d_path() BPF helper's susceptibility to memory corruption
+> issues [0, 1, 2] by ensuring to only operate on supplied arguments
+> which are deemed trusted by the BPF verifier. Typically, this means
+> that only pointers to a struct path which have been referenced counted
+> may be supplied.
+> 
+> In addition to the new bpf_path_d_path() BPF kfunc, we also add a
+> KF_ACQUIRE based BPF kfunc bpf_get_task_exe_file() and KF_RELEASE
+> counterpart BPF kfunc bpf_put_file(). This is so that the new
+> bpf_path_d_path() BPF kfunc can be used more flexibility from within
+> the context of a BPF LSM program. It's rather common to ascertain the
+> backing executable file for the calling process by performing the
+> following walk current->mm->exe_file while instrumenting a given
+> operation from the context of the BPF LSM program. However, walking
+> current->mm->exe_file directly is never deemed to be OK, and doing so
+> from both inside and outside of BPF LSM program context should be
+> considered as a bug. Using bpf_get_task_exe_file() and in turn
+> bpf_put_file() will allow BPF LSM programs to reliably get and put
+> references to current->mm->exe_file.
+> 
+> As of now, all the newly introduced BPF kfuncs within this patch are
+> limited to sleepable BPF LSM program types. Therefore, they may only
+> be called when a BPF LSM program is attached to one of the listed
+> attachment points defined within the sleepable_lsm_hooks BTF ID set.
+> 
+> [0] https://lore.kernel.org/bpf/CAG48ez0ppjcT=QxU-jtCUfb5xQb3mLr=5FcwddF_VKfEBPs_Dg@mail.gmail.com/
+> [1] https://lore.kernel.org/bpf/20230606181714.532998-1-jolsa@kernel.org/
+> [2] https://lore.kernel.org/bpf/20220219113744.1852259-1-memxor@gmail.com/
+> 
+> Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
+> ---
+>  fs/Makefile        |   1 +
+>  fs/bpf_fs_kfuncs.c | 133 +++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 134 insertions(+)
+>  create mode 100644 fs/bpf_fs_kfuncs.c
+> 
+> diff --git a/fs/Makefile b/fs/Makefile
+> index 6ecc9b0a53f2..61679fd587b7 100644
+> --- a/fs/Makefile
+> +++ b/fs/Makefile
+> @@ -129,3 +129,4 @@ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
+>  obj-$(CONFIG_EROFS_FS)		+= erofs/
+>  obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
+>  obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
+> +obj-$(CONFIG_BPF_LSM)		+= bpf_fs_kfuncs.o
+> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> new file mode 100644
+> index 000000000000..3813e2a83313
+> --- /dev/null
+> +++ b/fs/bpf_fs_kfuncs.c
+> @@ -0,0 +1,133 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2024 Google LLC. */
+> +
+> +#include <linux/bpf.h>
+> +#include <linux/btf.h>
+> +#include <linux/btf_ids.h>
+> +#include <linux/dcache.h>
+> +#include <linux/err.h>
+> +#include <linux/fs.h>
+> +#include <linux/file.h>
+> +#include <linux/init.h>
+> +#include <linux/mm.h>
+> +#include <linux/path.h>
+> +#include <linux/sched.h>
+> +
+> +__bpf_kfunc_start_defs();
+> +/**
+> + * bpf_get_task_exe_file - get a reference on the exe_file struct file member of
+> + *                         the mm_struct that is nested within the supplied
+> + *                         task_struct
+> + * @task: task_struct of which the nested mm_struct exe_file member to get a
+> + * reference on
+> + *
+> + * Get a reference on the exe_file struct file member field of the mm_struct
+> + * nested within the supplied *task*. The referenced file pointer acquired by
+> + * this BPF kfunc must be released using bpf_put_file(). Failing to call
+> + * bpf_put_file() on the returned referenced struct file pointer that has been
+> + * acquired by this BPF kfunc will result in the BPF program being rejected by
+> + * the BPF verifier.
+> + *
+> + * This BPF kfunc may only be called from sleepable BPF LSM programs.
+> + *
+> + * Internally, this BPF kfunc leans on get_task_exe_file(), such that calling
+> + * bpf_get_task_exe_file() would be analogous to calling get_task_exe_file()
+> + * directly in kernel context.
+> + *
+> + * Return: A referenced struct file pointer to the exe_file member of the
+> + * mm_struct that is nested within the supplied *task*. On error, NULL is
+> + * returned.
+> + */
+> +__bpf_kfunc struct file *bpf_get_task_exe_file(struct task_struct *task)
+> +{
+> +	return get_task_exe_file(task);
+> +}
+> +
+> +/**
+> + * bpf_put_file - put a reference on the supplied file
+> + * @file: file to put a reference on
+> + *
+> + * Put a reference on the supplied *file*. Only referenced file pointers may be
+> + * passed to this BPF kfunc. Attempting to pass an unreferenced file pointer, or
+> + * any other arbitrary pointer for that matter, will result in the BPF program
+> + * being rejected by the BPF verifier.
+> + *
+> + * This BPF kfunc may only be called from sleepable BPF LSM programs. Though
+> + * fput() can be called from IRQ context, we're enforcing sleepability here.
+> + */
+> +__bpf_kfunc void bpf_put_file(struct file *file)
+> +{
+> +	fput(file);
+> +}
+> +
+> +/**
+> + * bpf_path_d_path - resolve the pathname for the supplied path
+> + * @path: path to resolve the pathname for
+> + * @buf: buffer to return the resolved pathname in
+> + * @buf__sz: length of the supplied buffer
+> + *
+> + * Resolve the pathname for the supplied *path* and store it in *buf*. This BPF
+> + * kfunc is the safer variant of the legacy bpf_d_path() helper and should be
+> + * used in place of bpf_d_path() whenever possible. It enforces KF_TRUSTED_ARGS
+> + * semantics, meaning that the supplied *path* must itself hold a valid
+> + * reference, or else the BPF program will be outright rejected by the BPF
+> + * verifier.
+> + *
+> + * This BPF kfunc may only be called from sleepable BPF LSM programs.
+> + *
+> + * Return: A positive integer corresponding to the length of the resolved
+> + * pathname in *buf*, including the NUL termination character. On error, a
+> + * negative integer is returned.
+> + */
+> +__bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
+> +{
+> +	int len;
+> +	char *ret;
+> +
+> +	if (buf__sz <= 0)
+> +		return -EINVAL;
 
-We need filesystems to be able to communicate acceptable folio sizes
-to the pagecache for a variety of uses (e.g. large block sizes).
-Support a range of folio sizes between order-0 and order-31.
-
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Co-developed-by: Pankaj Raghav <p.raghav@samsung.com>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
----
- include/linux/pagemap.h | 89 ++++++++++++++++++++++++++++++++++-------
- mm/filemap.c            |  6 +--
- mm/readahead.c          |  4 +-
- 3 files changed, 79 insertions(+), 20 deletions(-)
-
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index d9c7edb6422bd..75bbe88b89904 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -204,14 +204,20 @@ enum mapping_flags {
- 	AS_EXITING	= 4, 	/* final truncate in progress */
- 	/* writeback related tags are not used */
- 	AS_NO_WRITEBACK_TAGS = 5,
--	AS_LARGE_FOLIO_SUPPORT = 6,
--	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
--	AS_STABLE_WRITES,	/* must wait for writeback before modifying
-+	AS_RELEASE_ALWAYS = 6,	/* Call ->release_folio(), even if no private data */
-+	AS_STABLE_WRITES = 7,	/* must wait for writeback before modifying
- 				   folio contents */
--	AS_INACCESSIBLE,	/* Do not attempt direct R/W access to the mapping,
--				   including to move the mapping */
-+	AS_INACCESSIBLE = 8,	/* Do not attempt direct R/W access to the mapping */
-+	/* Bits 16-25 are used for FOLIO_ORDER */
-+	AS_FOLIO_ORDER_BITS = 5,
-+	AS_FOLIO_ORDER_MIN = 16,
-+	AS_FOLIO_ORDER_MAX = AS_FOLIO_ORDER_MIN + AS_FOLIO_ORDER_BITS,
- };
- 
-+#define AS_FOLIO_ORDER_MASK     ((1u << AS_FOLIO_ORDER_BITS) - 1)
-+#define AS_FOLIO_ORDER_MIN_MASK (AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MIN)
-+#define AS_FOLIO_ORDER_MAX_MASK (AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MAX)
-+
- /**
-  * mapping_set_error - record a writeback error in the address_space
-  * @mapping: the mapping in which an error should be set
-@@ -367,9 +373,51 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
- #define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
- #define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
- 
-+/*
-+ * mapping_set_folio_order_range() - Set the orders supported by a file.
-+ * @mapping: The address space of the file.
-+ * @min: Minimum folio order (between 0-MAX_PAGECACHE_ORDER inclusive).
-+ * @max: Maximum folio order (between @min-MAX_PAGECACHE_ORDER inclusive).
-+ *
-+ * The filesystem should call this function in its inode constructor to
-+ * indicate which base size (min) and maximum size (max) of folio the VFS
-+ * can use to cache the contents of the file.  This should only be used
-+ * if the filesystem needs special handling of folio sizes (ie there is
-+ * something the core cannot know).
-+ * Do not tune it based on, eg, i_size.
-+ *
-+ * Context: This should not be called while the inode is active as it
-+ * is non-atomic.
-+ */
-+static inline void mapping_set_folio_order_range(struct address_space *mapping,
-+						 unsigned int min,
-+						 unsigned int max)
-+{
-+	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-+		return;
-+
-+	if (min > MAX_PAGECACHE_ORDER)
-+		min = MAX_PAGECACHE_ORDER;
-+
-+	if (max > MAX_PAGECACHE_ORDER)
-+		max = MAX_PAGECACHE_ORDER;
-+
-+	if (max < min)
-+		max = min;
-+
-+	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
-+		(min << AS_FOLIO_ORDER_MIN) | (max << AS_FOLIO_ORDER_MAX);
-+}
-+
-+static inline void mapping_set_folio_min_order(struct address_space *mapping,
-+					       unsigned int min)
-+{
-+	mapping_set_folio_order_range(mapping, min, MAX_PAGECACHE_ORDER);
-+}
-+
- /**
-  * mapping_set_large_folios() - Indicate the file supports large folios.
-- * @mapping: The file.
-+ * @mapping: The address space of the file.
-  *
-  * The filesystem should call this function in its inode constructor to
-  * indicate that the VFS can use large folios to cache the contents of
-@@ -380,7 +428,23 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
-  */
- static inline void mapping_set_large_folios(struct address_space *mapping)
- {
--	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-+	mapping_set_folio_order_range(mapping, 0, MAX_PAGECACHE_ORDER);
-+}
-+
-+static inline unsigned int
-+mapping_max_folio_order(const struct address_space *mapping)
-+{
-+	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-+		return 0;
-+	return (mapping->flags & AS_FOLIO_ORDER_MAX_MASK) >> AS_FOLIO_ORDER_MAX;
-+}
-+
-+static inline unsigned int
-+mapping_min_folio_order(const struct address_space *mapping)
-+{
-+	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-+		return 0;
-+	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
- }
- 
- /*
-@@ -389,20 +453,17 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
-  */
- static inline bool mapping_large_folio_support(struct address_space *mapping)
- {
--	/* AS_LARGE_FOLIO_SUPPORT is only reasonable for pagecache folios */
-+	/* AS_FOLIO_ORDER is only reasonable for pagecache folios */
- 	VM_WARN_ONCE((unsigned long)mapping & PAGE_MAPPING_ANON,
- 			"Anonymous mapping always supports large folio");
- 
--	return IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
--		test_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-+	return mapping_max_folio_order(mapping) > 0;
- }
- 
- /* Return the maximum folio size for this pagecache mapping, in bytes. */
--static inline size_t mapping_max_folio_size(struct address_space *mapping)
-+static inline size_t mapping_max_folio_size(const struct address_space *mapping)
- {
--	if (mapping_large_folio_support(mapping))
--		return PAGE_SIZE << MAX_PAGECACHE_ORDER;
--	return PAGE_SIZE;
-+	return PAGE_SIZE << mapping_max_folio_order(mapping);
- }
- 
- static inline int filemap_nr_thps(struct address_space *mapping)
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d62150418b910..ad5e4a848070e 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1933,10 +1933,8 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 		if (WARN_ON_ONCE(!(fgp_flags & (FGP_LOCK | FGP_FOR_MMAP))))
- 			fgp_flags |= FGP_LOCK;
- 
--		if (!mapping_large_folio_support(mapping))
--			order = 0;
--		if (order > MAX_PAGECACHE_ORDER)
--			order = MAX_PAGECACHE_ORDER;
-+		if (order > mapping_max_folio_order(mapping))
-+			order = mapping_max_folio_order(mapping);
- 		/* If we're not aligned, allocate a smaller folio */
- 		if (index & ((1UL << order) - 1))
- 			order = __ffs(index);
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 517c0be7ce665..3e5239e9e1777 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -449,10 +449,10 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 
- 	limit = min(limit, index + ra->size - 1);
- 
--	if (new_order < MAX_PAGECACHE_ORDER)
-+	if (new_order < mapping_max_folio_order(mapping))
- 		new_order += 2;
- 
--	new_order = min_t(unsigned int, MAX_PAGECACHE_ORDER, new_order);
-+	new_order = min(mapping_max_folio_order(mapping), new_order);
- 	new_order = min_t(unsigned int, new_order, ilog2(ra->size));
- 
- 	/* See comment in page_cache_ra_unbounded() */
--- 
-2.44.1
-
+size_t is unsigned so this should just be !buf__sz I can fix that
+though. The __sz thing has meaning to the verifier afaict so I guess
+that's fine as name then.
 
