@@ -1,81 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-24332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D1393D63E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 17:39:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6FC93D648
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 17:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD49282394
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 15:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E20284E88
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 15:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD22C17A939;
-	Fri, 26 Jul 2024 15:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDD817A939;
+	Fri, 26 Jul 2024 15:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="CyS4mZsU"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="AH4kgKxo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC3F10A1C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 15:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0407510A1C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 15:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722008352; cv=none; b=qKgQ9m7Qnyw326f1GaExT9YcpPFvZzWMKO5eUMVe+zM3o4uN1pYD6FIxDPTTFB2i/B4dtNs5nkkrjusp7vxZryDYVFr08Z9kqiB2v53PcCVUUUZru7uK798HizEPLC4TLA9xeorDoU/GmLFEPsqAcPIHPcid8GEAxerHPFGo+LI=
+	t=1722008421; cv=none; b=EuTtN9lzsnOEfr0NsEP9X/ygcdt8XV9Ywq5ikCd1tnOax93qhbM13RAZuN1holuRVr8QtU7LIY3rsAXiVZzGTknAS5zXognyjHoMwZEGdYtxyJF2xfWICVNKd02P/vfTcXaUZjOWr8qRlRgemcuh9w4A1bW1+ma8v3x/2H3MHPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722008352; c=relaxed/simple;
-	bh=sAxssKMAFh3wj5z5ValFCN6FM/9YkEQtjr/NLO/YYSs=;
+	s=arc-20240116; t=1722008421; c=relaxed/simple;
+	bh=3WZ1GCu2PQ11mGFhbE6KLXgJDLNhnI59Ju+26cSOLII=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iHRoUs+eiU6qrJS9vBIdOpwXyreNOz9Weyz/ZyMh83uly6FQFqXTVADnI+jP1010KwLUQ/fP3PxZBZhRshEQZDv0b+LUvQ27AKYqQQtGzGppTmhg9tfW+9T/p5MrgNBzJPVjFOnuttw4bW/Edzlb8jswR3fTJckO6a3HtT1H37Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=CyS4mZsU; arc=none smtp.client-ip=209.85.219.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=bnQjtZ78coHghZyNhawaMvlTfHxhMu4kjen7dHbi6e3DGi0/9emvyj+1ielDvKX4S6tqgXo3xmfuTRUDb9OllM2S49/rElWdxf5XIcNXK6oKTDRMTzV8jHeBl0uwTJXCoy7SPd3r6F10xISthjH9QpjD85fMxEk3AqvxMrrrN/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=AH4kgKxo; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e05eccfcdb3so1963246276.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 08:39:10 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-66498fd4f91so20711647b3.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 08:40:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1722008350; x=1722613150; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1722008419; x=1722613219; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nTlYN7qwNIA929u7v0Vi1ftjGFAFw9cUGVs6Wz432jw=;
-        b=CyS4mZsUSsAwsdUHGH8xFvPPUav6Fwkud9F66gIwpri9iJU9rKyp7Qi4E57bq+IWt0
-         kozKLraGGHwePKoYj2+uTMblV9NpD3GmPo8SHXnSJSE+AETSvyWZnBs6L0HW2a0WqLpt
-         QtwmwEujFycIaK2fedOIoIO3d1GMuotGmgYrrfoj8b5RfLjuhZAsVz+yTZmbA91Ef2sl
-         0TwveTdU/S8IK4RdLxPwaBbwP/9PERHyQzbdPDDGXCXwqBQaMZjOSZN6DEHaXxi+GUwh
-         W6f88tcbsvDAkvVpSmi4IyTzBvVO8VqRcZvr4JjcSzQQCT4PcYh0rinmcz/8QRNx+AzP
-         UV2g==
+        bh=2HAzgWJlJpCD2Vol+/+Es1U+1ag5fps+FrtZGtWYn50=;
+        b=AH4kgKxotnqQCZci80b6Zxmvw9VKcHOYynIv+sjAr96wdnkzhd1TZC8/OFJJwNddD7
+         jzhMfIhKD8RyDB5xys56+124/I6RtnaExEbQA1EaA/sNi+QRkJYiML4w1YhmpAl2mT31
+         IfpZkVprTfQlRisteVIziQmU+58jdHwSWL98Ldm5X4qX2urH6d46PyxHrZ9BtgDKAdyT
+         81a2Pag9ofQF0Bf8f1C9BarCFmu9UEubVNePfQ/MvD8tAOLEqQ03jIkeYOQ/FTDjKjdb
+         8SCBeeyBKl2MT6ft5VKxg1RbqzyQv7x1Zvp+8to9H5AvqxV/48n7d4D/JmAdYBUrVBQW
+         BVOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722008350; x=1722613150;
+        d=1e100.net; s=20230601; t=1722008419; x=1722613219;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nTlYN7qwNIA929u7v0Vi1ftjGFAFw9cUGVs6Wz432jw=;
-        b=aqEsUsv5BVKZvAPZhkcFAgDtSqArog3Gy+/CZE0Djf4VwZiUntkshtXMhoyYL9vUl8
-         0v2HyFQ1JoLKPYgz7iKBI9chb1r5MLy25dd8AWbFOSJ3ch72af9zasBIk1poDGNVAI1Q
-         QJsE2t2XQHi6NerGC/w0aXffQXC+Etb0ZmD1X9qJXbhVmAKyh6mp6nv/bY0LINbjrT90
-         ogU6rGs80jLo6HDb24PZJvoNHYdV2cIPgI1jjOex5PZNU3Fh6aWi8S++ZFAWnuk5LCMD
-         AY+myGxC26WGSvg4z8vBRGcNCI028ky5Dq49aFQhes8qlCbTy2otDkYiUp6D/cYRArpX
-         WS8A==
-X-Forwarded-Encrypted: i=1; AJvYcCW3ukBslI8KscQLfvwlPnnq0sSbg2vaRRUvvm5iKKPihWBt+xevVlml6p6P6X0+rMuu8BMjrAET22DUHBZE0rKJxQ2NRZFz2AZgmeNtzA==
-X-Gm-Message-State: AOJu0YzAnFXg2CE4uNJ1haHM5VCK1VzE8n7hWV7Lx9FGqUbyHZWlKSNc
-	fGvefuqsAL7//RqJSbP9BX372eo+TVOKWkcnuvoaAOwNXLlOPKPuX5vWXqyJ1yg=
-X-Google-Smtp-Source: AGHT+IE1ay+RcFkuxSAz/JO5WDaqi3NilkGfwMA1C1SFVbQCUE+iQOkQRIuXWxsp7iwhJQggkvZn/w==
-X-Received: by 2002:a05:6902:1501:b0:e0b:286b:1399 with SMTP id 3f1490d57ef6-e0b544b6080mr149742276.29.1722008349708;
-        Fri, 26 Jul 2024 08:39:09 -0700 (PDT)
+        bh=2HAzgWJlJpCD2Vol+/+Es1U+1ag5fps+FrtZGtWYn50=;
+        b=s0VE3n4tHvLbZGX2WjE8OiR7D522ITL63laLuKP5yntks7WTjcBXBTKYnDvzQ1GKTL
+         qA8sXxZVf3S6YnxYS2x6SDouvVDEFrKdWM3U3iIP2kuBD2mjUQP/9XSOXbaNC9U1eaHG
+         5pjdgjO9XKSd/Yiyd6lwc29YKZKkyyH7bfAPhw6N3zposI1t30OYGmXPJ0UEUbbey1g5
+         OpFdCumKUQSIWNcnlneZzNmZRlnpeIGLBiXbfG+MXZmssrQAb+twAJOW0wUIKAv7uIe9
+         8gl1hmRBv+bZJUs5uPCeBOuj20+Jq8SqiCEm3VbUBt2PVbgbNiCHO14eNjNl6VhWSWyK
+         AFBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmZPLX9LcSoubgHLqm/OEZ9URoH8ydHv69M/yvz7d4bcpZEEmNhQBQy+NsJhpDbKTfiWqInsU0+fqMK4+FtXxN9ktP7Mac2nTQ/igiBQ==
+X-Gm-Message-State: AOJu0YxDl0f99PHHFfMf82GAbY3KiIxd0L9GI3gIodKkY0lOLZysaWi7
+	D7QRWSSHrz3zJhkQ0Y5ln+OS4lKOjhzgnnQzakcpYBFn29WrbhaYSdxNRDhbFOI=
+X-Google-Smtp-Source: AGHT+IG3lKJ9bPYbwM2Mj6I4DQJOWOog7UGB2uv/wdSJihFYDGPOyX8h2dkvldSMgO5w0eDfOWUaKA==
+X-Received: by 2002:a0d:ef43:0:b0:65f:aaf1:9dd3 with SMTP id 00721157ae682-67a051e8450mr2097137b3.2.1722008418975;
+        Fri, 26 Jul 2024 08:40:18 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b2960b4f6sm787385276.0.2024.07.26.08.39.09
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756bc9ec37sm9127747b3.106.2024.07.26.08.40.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 08:39:09 -0700 (PDT)
-Date: Fri, 26 Jul 2024 11:39:08 -0400
+        Fri, 26 Jul 2024 08:40:18 -0700 (PDT)
+Date: Fri, 26 Jul 2024 11:40:17 -0400
 From: Josef Bacik <josef@toxicpanda.com>
 To: yangyun <yangyun50@huawei.com>
 Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] fuse: replace fuse_queue_forget with
- fuse_force_forget if error
-Message-ID: <20240726153908.GD3432726@perftesting>
+Subject: Re: [PATCH 2/2] fuse: add support for no forget requests
+Message-ID: <20240726154017.GE3432726@perftesting>
 References: <20240726083752.302301-1-yangyun50@huawei.com>
- <20240726083752.302301-2-yangyun50@huawei.com>
+ <20240726083752.302301-3-yangyun50@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,36 +83,121 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240726083752.302301-2-yangyun50@huawei.com>
+In-Reply-To: <20240726083752.302301-3-yangyun50@huawei.com>
 
-On Fri, Jul 26, 2024 at 04:37:51PM +0800, yangyun wrote:
-> Most usecases for 'fuse_queue_forget' in the code are about reverting
-> the lookup count when error happens, except 'fuse_evict_inode' and
-> 'fuse_cleanup_submount_lookup'. Even if there are no errors, it
-> still needs alloc 'struct fuse_forget_link'. It is useless, which
-> contributes to performance degradation and code mess to some extent.
+On Fri, Jul 26, 2024 at 04:37:52PM +0800, yangyun wrote:
+> FUSE_FORGET requests are not used if the fuse file system does not
+> implement the forget operation in userspace (e.g., fuse file system
+> does not cache any inodes).
 > 
-> 'fuse_force_forget' does not need allocate 'struct fuse_forget_link'in
-> advance, and is only used by readdirplus before this patch for the reason
-> that we do not know how many 'fuse_forget_link' structures will be
-> allocated when error happens.
+> However, the kernel is invisible to the userspace implementation and
+> always sends FUSE_FORGET requests, which can lead to performance
+> degradation because of useless contex switch and memory copy in some
+> cases (e.g., many inodes are evicted from icache which was described
+> in commit 07e77dca8a1f ("fuse: separate queue for FORGET requests")).
+> 
+> Just like 'no_interrupt' in 'struct fuse_conn', we add 'no_forget'.
+> But since FUSE_FORGET request does not have a reply from userspce,
+> we can not use ENOSYS to reflect the 'no_forget' assignment. So add
+> the FUSE_NO_FORGET_SUPPORT init flag.
+> 
+> Besides, if no_forget is enabled, 'nlookup' in 'struct fuse_inode'
+> does not used and its value change can be disabled which are protected
+> by spin_lock to reduce lock contention.
 > 
 > Signed-off-by: yangyun <yangyun50@huawei.com>
+> ---
+>  fs/fuse/dev.c             |  6 ++++++
+>  fs/fuse/dir.c             |  4 +---
+>  fs/fuse/fuse_i.h          | 24 ++++++++++++++++++++++++
+>  fs/fuse/inode.c           | 10 +++++-----
+>  fs/fuse/readdir.c         |  8 ++------
+>  include/uapi/linux/fuse.h |  3 +++
+>  6 files changed, 41 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 932356833b0d..10890db9426b 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -238,6 +238,9 @@ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
+>  {
+>  	struct fuse_iqueue *fiq = &fc->iq;
+>  
+> +	if (fc->no_forget)
+> +		return;
+> +
+>  	forget->forget_one.nodeid = nodeid;
+>  	forget->forget_one.nlookup = nlookup;
+>  
+> @@ -257,6 +260,9 @@ void fuse_force_forget(struct fuse_mount *fm, u64 nodeid)
+>  	struct fuse_forget_in inarg;
+>  	FUSE_ARGS(args);
+>  
+> +	if (fm->fc->no_forget)
+> +		return;
+> +
+>  	memset(&inarg, 0, sizeof(inarg));
+>  	inarg.nlookup = 1;
+>  	args.opcode = FUSE_FORGET;
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 6bfb3a128658..833225ed1d4f 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -236,9 +236,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+>  				fuse_force_forget(fm, outarg.nodeid);
+>  				goto invalid;
+>  			}
+> -			spin_lock(&fi->lock);
+> -			fi->nlookup++;
+> -			spin_unlock(&fi->lock);
+> +			fuse_nlookup_inc_if_enabled(fm->fc, fi);
+>  		}
+>  		if (ret == -ENOMEM || ret == -EINTR)
+>  			goto out;
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index b9a5b8ec0de5..924d6b0ad700 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -860,6 +860,9 @@ struct fuse_conn {
+>  	/** Passthrough support for read/write IO */
+>  	unsigned int passthrough:1;
+>  
+> +	/** Do not send FORGET request */
+> +	unsigned int no_forget:1;
+> +
+>  	/** Maximum stack depth for passthrough backing files */
+>  	int max_stack_depth;
+>  
+> @@ -1029,6 +1032,27 @@ static inline void fuse_sync_bucket_dec(struct fuse_sync_bucket *bucket)
+>  	rcu_read_unlock();
+>  }
+>  
+> +static inline void fuse_nlookup_inc_if_enabled(struct fuse_conn *fc, struct fuse_inode *fi)
+> +{
+> +	if (fc->no_forget)
+> +		return;
+> +
+> +	spin_lock(&fi->lock);
+> +	fi->nlookup++;
+> +	spin_unlock(&fi->lock);
+> +}
+> +
+> +static inline void fuse_nlookup_dec_if_enabled(struct fuse_conn *fc, struct fuse_inode *fi)
+> +{
+> +	if (fc->no_forget)
+> +		return;
+> +
+> +	spin_lock(&fi->lock);
+> +	fi->nlookup--;
+> +	spin_lock(&fi->lock);
+> +}
 
-Forcing file systems to have their forget suddenly be synchronous in a lot of
-cases is going to be a perf regression for them.
+This naming scheme is overly verbose, you can simply have
 
-In some of these cases a synchronous forget is probably ok, as you say a lot of
-them are error cases.  However d_revalidate() isn't.  That's us trying to figure
-out if what we have in cache matches the file systems view of the inode, and if
-it doesn't we're going to do a re-lookup, so we don't necessarily care for a
-synchronous forget in this case.  Think of an NFS fuse client where the file got
-renamed on the backend and now we're telling the kernel this is the inode we
-have.  Forcing us to do a synchronous response now is going to be much more
-performance impacting than it was pre-this patch.
+fuse_inc_nlookup()
+fuse_dec_nlookup()
 
-A better approach would be to make the allocation optional based on the
-->no_forget flag.  Thanks,
+Thanks,
 
 Josef
 
