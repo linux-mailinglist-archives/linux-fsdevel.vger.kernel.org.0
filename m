@@ -1,162 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-24309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB41593D291
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 13:51:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B23293D2A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 14:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF5C1F21C98
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 11:51:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 772F51F21716
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 12:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1860A17A93B;
-	Fri, 26 Jul 2024 11:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA70D17A934;
+	Fri, 26 Jul 2024 12:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCRHfvik"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="tgnSLdEa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7AC219EA;
-	Fri, 26 Jul 2024 11:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E7617A936;
+	Fri, 26 Jul 2024 12:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721994706; cv=none; b=kt1TOxwkRuGM/jHnRqSVGbUbuW0/wmSNrce1apHqPB/rg5hwAIWx8vv+xCErMy6W/N2vOp0VJPAGjjKfLJnzeA4lyGOv+9x7SbbfD7GN9dvduFjW6PDX+ihIroqt9lfDtDMUpwzJHB/oUVHIj6D5HeQfYiVcCxokYt2/26Es5Jg=
+	t=1721995217; cv=none; b=FIj1DaGXfYFbyOxo0Z0I8LzQu/jGg0j4qObc2fmhXloZA/HnB+lfckag0NiwbRnGY7SDVI095PTXsyLnKvU/1PXZZCiwTAWqELxxqKYn4pxeTTIAdAOp6GgEMsrXtSwKSTZH7O/kAI3fxydTFu0TkJEGQtI0i5ArRJjHjwBHxK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721994706; c=relaxed/simple;
-	bh=eiFrnlEUEtXEpfYmJoBp3el2l9cHfefFJBOA7DotVU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvpWo5jS1uJHIMDtwY4rO65lEJ8DnJiWF9CvidKa+I2AT5m3Bhabr40TZgC2SgEbFe2ps7pJzcQBxffC4Hp5R/PxDABzlmCqdVEdb8CPou3uUz6oyZ8QGSUfLnz2YSNxHsQUWjis6ano75z1EGQ70F+r1tHTIMGCHyjR5pNFMQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCRHfvik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F72C32782;
-	Fri, 26 Jul 2024 11:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721994705;
-	bh=eiFrnlEUEtXEpfYmJoBp3el2l9cHfefFJBOA7DotVU4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nCRHfvik6OhJ4XuyvfAXfpfygxLpx+LvsQSNomgZxDa7kNkq1Usr+cT+KV9CPEj6K
-	 MccRZPyKf7EoCsjHmlATSsB+iuelf4yxm64NGOdYgs6thSOSo34jgVKoJVZA2dJHgF
-	 PkQGoneFVon5z52+WcYm2jLxhQAioEqc7vYECKQs/3AsLCPkLlrsh9TfkOa9ilgMwr
-	 6B5O0OvBg66P3GmqES4hwTdtn67Eb8coovULuG1UCiy/PilpB4AVu0CI7XTCuzDvGJ
-	 URpaNrpVwseFQKXP1/LxwM3oShCLLiI0bnqeRGqgvLVCz0OA1k5LwNrEzQUVf7N1w+
-	 sNcDKfRVg6fhQ==
-Date: Fri, 26 Jul 2024 13:51:40 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
-	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
- bpf_get_dentry_xattr
-Message-ID: <20240726-beisammen-degen-b70ec88e7ab2@brauner>
-References: <20240725234706.655613-1-song@kernel.org>
- <20240725234706.655613-3-song@kernel.org>
- <20240726-frequentieren-undenkbar-5b816a3b8876@brauner>
- <1A0AAD8C-366E-45E2-A386-B4CCB5401D81@fb.com>
+	s=arc-20240116; t=1721995217; c=relaxed/simple;
+	bh=1Q1S94GCkii3IZUrJeAd70efcdItXXQwyGSa4hlfHb4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=p+SMDIoko70Ckr7B2zCz0y/dp2YkQ10cIwcPQpfo9Lnbcr9vDJb6SNWl7hoXYRIo5udT2ezw4II1Q6aZ90aPELE9S0FoqvWlrPwTRbe6lwLo60proG8l0tKAnltERHa8iDuXU14m7cHnCzxzcABNu6IOtmtPwhJTiFG2dUT76oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=tgnSLdEa; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4WVmXP313Tz9t6L;
+	Fri, 26 Jul 2024 14:00:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1721995205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9qZr/ATSZTta7NMIGHNvqBoEiw6Q/kr2hVtOqD/V8So=;
+	b=tgnSLdEaPvLYG38D4sbvgwj4Sc0DUMOYO+I/SiPFS6rG16hrBXGUAMzY1SIkpzSweYCfsF
+	FLiohDQC/sOZKtEu3f5jBfeyfConpQHYBf2M0tPDKBqLfuAPhddCBmHweMDMKbnC77waej
+	prALgH5tsKWcO7F4gIIhexgdPuc6aAa8HQGoftAHuFrsy6aVkspE+S7PRtG7i8NeigVIiq
+	TaNx2hzBhObP3wKo3req8fWzhj2HNLEkcSgiJCJhudOFHU2NAsNJyb23r/p23TpuMe1NSZ
+	RXLRsdC8JgE7uGm1YGD5wsLc0SEmrBPK+l0sAGpvnjAPoRdvtp09IBGKg6MfZw==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: david@fromorbit.com,
+	willy@infradead.org,
+	chandan.babu@oracle.com,
+	djwong@kernel.org,
+	brauner@kernel.org,
+	akpm@linux-foundation.org
+Cc: yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org,
+	hare@suse.de,
+	p.raghav@samsung.com,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org,
+	kernel@pankajraghav.com,
+	ryan.roberts@arm.com,
+	hch@lst.de,
+	Zi Yan <ziy@nvidia.com>
+Subject: [PATCH v11 00/10] enable bs > ps in XFS
+Date: Fri, 26 Jul 2024 13:59:46 +0200
+Message-ID: <20240726115956.643538-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1A0AAD8C-366E-45E2-A386-B4CCB5401D81@fb.com>
 
-On Fri, Jul 26, 2024 at 09:19:54AM GMT, Song Liu wrote:
-> Hi Christian, 
-> 
-> > On Jul 26, 2024, at 12:06 AM, Christian Brauner <brauner@kernel.org> wrote:
-> 
-> [...]
-> 
-> >> +
-> >> + for (i = 0; i < 10; i++) {
-> >> + ret = bpf_get_dentry_xattr(dentry, "user.kfunc", &value_ptr);
-> >> + if (ret == sizeof(expected_value) &&
-> >> +    !bpf_strncmp(value, ret, expected_value))
-> >> + matches++;
-> >> +
-> >> + prev_dentry = dentry;
-> >> + dentry = bpf_dget_parent(prev_dentry);
-> > 
-> > Why do you need to walk upwards and instead of reading the xattr values
-> > during security_inode_permission()?
-> 
-> In this use case, we would like to add xattr to the directory to cover
-> all files under it. For example, assume we have the following xattrs:
-> 
->   /bin  xattr: user.policy_A = value_A
->   /bin/gcc-6.9/ xattr: user.policy_A = value_B
->   /bin/gcc-6.9/gcc xattr: user.policy_A = value_C
-> 
-> /bin/gcc-6.9/gcc will use value_C;
-> /bin/gcc-6.9/<other_files> will use value_B;
-> /bin/<other_folder_or_file> will use value_A;
-> 
-> By walking upwards from security_file_open(), we can finish the logic 
-> in a single LSM hook:
-> 
->     repeat:
->         if (dentry have user.policy_A) {
->             /* make decision based on value */;
->         } else {
->             dentry = bpf_dget_parent();
->             goto repeat;
->         }
-> 
-> Does this make sense? Or maybe I misunderstood the suggestion?
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-Imho, what you're doing belongs into inode_permission() not into
-security_file_open(). That's already too late and it's somewhat clear
-from the example you're using that you're essentially doing permission
-checking during path lookup.
+This is the 11th version of the series that enables block size > page size
+(Large Block Size) in XFS.
+The context and motivation can be seen in cover letter of the RFC v1 [0].
+We also recorded a talk about this effort at LPC [1], if someone would
+like more context on this effort.
 
-Btw, what you're doing is potentially very heavy-handed because you're
-retrieving xattrs for which no VFS cache exists so you might end up
-causing a lot of io.
+A lot of emphasis has been put on testing using kdevops, starting with an XFS
+baseline [3]. The testing has been split into regression and progression.
 
-Say you have a 10000 deep directory hierarchy and you open a
-file_at_level_10000. With that dget_parent() logic in the worst case you
-end up walking up the whole hierarchy reading xattr values from disk
-10000 times. You can achieve the same result and cleaner if you do the
-checking in inode_permission() where it belongs and you only cause all
-of that pain once and you abort path lookup correctly.
+Regression testing:
+In regression testing, we ran the whole test suite to check for regressions on
+existing profiles due to the page cache changes.
 
-Also, I'm not even sure this is always correct because you're
-retroactively checking what policy to apply based on the xattr value
-walking up the parent chain. But a rename could happen and then the
-ancestor chain you're checking is different from the current chain or
-there's a bunch of mounts along the way.
+I also ran split_huge_page_test selftest on XFS filesystem to check for
+huge page splits in min order chunks is done correctly.
 
-Imho, that dget_parent() thing just encourages very badly written bpf
-LSM programs. That's certainly not an interface we want to expose.
+No regressions were found with these patches added on top.
 
-> Also, we don't have a bpf_get_inode_xattr() yet. I guess we will need
-> it for the security_inode_permission approach. If we agree that's a 
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+compare it with existing support, an ARM VM with 64k base page system (without
+our patches) was used as a reference to check for actual failures due to LBS
+support in a 4k base page size system.
 
-Yes, that's fine.
+There are some tests that assumes block size < page size that needs to be fixed.
+We have a tree with fixes for xfstests [4], most of the changes have been posted
+already, and only a few minor changes need to be posted. Already part of these
+changes has been upstreamed to fstests, and new tests have also been written and
+are out for review, namely for mmap zeroing-around corner cases, compaction
+and fsstress races on mm, and stress testing folio truncation on file mapped
+folios.
 
-You also need to ensure that you're only reading user.* xattrs. I know
-you already do that for bpf_get_file_xattr() but this helper needs the
-same treatment.
+No new failures were found with the LBS support.
 
-And you need to force a drop-out of RCU path lookup btw because you're
-almost definitely going to block when you check the xattr.
+We've done some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+patches applied, and detected no regressions.
 
-> better approach, I more than happy to implement it that way. In fact,
-> I think we will eventually need both bpf_get_inode_xattr() and 
-> bpf_get_dentry_xattr(). 
+We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
 
-I'm not sure about that because it's royally annoying in the first place
-that we have to dentry and inode separately in the xattr handlers
-because LSMs sometimes call them from a location when the dentry and
-inode aren't yet fused together. The dentry is the wrong data structure
-to care about here.
+For those who want this in a git tree we have this up on a kdevops
+large-block-minorder-for-next-v11 tag [6].
+
+[0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+[3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+[5] https://github.com/iovisor/bcc/pull/4813
+[6] https://github.com/linux-kdevops/linux/
+[7] https://lore.kernel.org/linux-kernel/Zl20pc-YlIWCSy6Z@casper.infradead.org/#t
+
+Changes since v10:
+- Revert back to silent clamping in mapping_set_folio_range().
+- Moved mapping_max_folio_size_supported() to patch 10.
+- Collected RVB from Darrick.
+
+Dave Chinner (1):
+  xfs: use kvmalloc for xattr buffers
+
+Luis Chamberlain (1):
+  mm: split a folio in minimum folio order chunks
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (7):
+  filemap: allocate mapping_min_order folios in the page cache
+  readahead: allocate folios with mapping_min_order in readahead
+  filemap: cap PTE range to be created to allowed zero fill in
+    folio_map_range()
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/iomap/buffered-io.c        |   4 +-
+ fs/iomap/direct-io.c          |  45 +++++++++++--
+ fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+ fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+ fs/xfs/libxfs/xfs_shared.h    |   3 +
+ fs/xfs/xfs_icache.c           |   6 +-
+ fs/xfs/xfs_iops.c             |   2 +-
+ fs/xfs/xfs_mount.c            |   8 ++-
+ fs/xfs/xfs_super.c            |  28 +++++---
+ include/linux/huge_mm.h       |  14 ++--
+ include/linux/pagemap.h       | 122 ++++++++++++++++++++++++++++++----
+ mm/filemap.c                  |  36 ++++++----
+ mm/huge_memory.c              |  59 ++++++++++++++--
+ mm/readahead.c                |  83 +++++++++++++++++------
+ 14 files changed, 345 insertions(+), 85 deletions(-)
+
+
+base-commit: 2347b4c79f5e6cd3f4996e80c2d3c15f53006bf5
+-- 
+2.44.1
+
 
