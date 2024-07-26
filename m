@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-24317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6070693D2B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 14:02:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FCBA93D2BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 14:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF461B2240B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 12:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB0F31C20C82
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 12:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331D717C7CD;
-	Fri, 26 Jul 2024 12:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A6717C9F7;
+	Fri, 26 Jul 2024 12:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="RpBM3Xd9"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="qj6gQzzY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3659117C7C8;
-	Fri, 26 Jul 2024 12:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCAD17C7D9;
+	Fri, 26 Jul 2024 12:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721995248; cv=none; b=Evs1ddDRa0FBAvT7cnOWI7bxYZxJTpqWafn4I+hnBrnSFV7z5GvraISmqp2ehFhWAsOUC0BZFwJIg5KlZXJ4l1kI8W1+fdrknl0B5LxwrQ7gSiBhaccu6UzlFyAUAEcHtu5J6AU6iqs/bG38N2krIEcX/1YyRmIV/uMoYMm6/q0=
+	t=1721995251; cv=none; b=dp+506f4CaZcD/eHbInsU/EewvjFI2TvsvVBhIuL7VgqC1nFLmL8jiO4yvg4IMZRGl9exbexwrKBduooqdjCRZOZsN/ds+PYyQJX5sRRmIhdQgzjkTrCZxfHUj8GIk9XvUIEoCESCv1V0l1ZNLi0EwMcC39nBysrLb2ybe1nkXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721995248; c=relaxed/simple;
-	bh=83e+0O9ruf6NHQsjOHUghZzAigZgO9pFvauSb7vbrvw=;
+	s=arc-20240116; t=1721995251; c=relaxed/simple;
+	bh=oVLFbpMiPlCmMAMNE+tGeHJKbYbbrzfNiFNSfbDXslo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O1O4CM6bI5aLT38HUV3CoQPBvMzBDaKwnrMxyMiv0Z/beGqqiPYWYyIfswDxGtwO41l5V+AdRXb1xO+wBaGIwvlOts0IGhkrsx9O+YHx37MxWB9pDeQmVfm1ikyvOtPXTxF15pRFz11BB877Qx9VMqkPN4yqpFRk7uNIqaPhKrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=RpBM3Xd9; arc=none smtp.client-ip=80.241.56.151
+	 MIME-Version; b=LBOMtlsBjabyHEImMPAawvS7OqDIGy75vxIZ8nijtEVnSrDul23TfdjVpDT7Bka+M2MGc5nr3JrI5FHW5lhcMMnUZWmLs+TVQ7T+YEejRNaWCZXHebECuTIk3vgLqxfl5JP2UYVhRgYt9gLsWa+pqLWq3XEIVFfkn/pPT1BIAtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=qj6gQzzY; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WVmY60pGjz9sbL;
-	Fri, 26 Jul 2024 14:00:42 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4WVmYB3Fs6z9t0P;
+	Fri, 26 Jul 2024 14:00:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1721995242;
+	s=MBO0001; t=1721995246;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ndnSuxu0rcgI+ZEpYzFfnAXwgKuKHjCIUBMGSEb9FZY=;
-	b=RpBM3Xd9hnXdfE7erL4HrWZmKKBLxwOcMTt3SFH3QB1WFE0iLXt34fNrq38jDaAE+2vQo5
-	8OJ8H4Ko0fAuOd9NV3+1GdbOqIpJtMxhi2RAuhxGYqJ7NUkkn+IfO3o1LAwgNxNNde80SD
-	psMGOYNGXTFTvWZO2Jr66T8q/sbZn6Cua/enZaGy2jn33nyW3o1gfHMYtYG/aV8eU+EWeu
-	B2HAwF7XS6ocx6yL91QlXSF8ciD1u2bLJinHblTkKys02Xd4mPQ4QdDZBoxw9JI3KcymmJ
-	EgTqVEKd/kfA5s/RnC9s0tbezcFFJ3/SlbwPr2hBfVGM6j/BwRHs1Y2I9feqUA==
+	bh=8rdOu+47Xth5hXKbmOu06fRFiMFY0Pwf2tkrEBizRPk=;
+	b=qj6gQzzYjN9Zakp2rV1btHRBF4MwxpplHYSFNtQ3E+vJk34EKw5Sp8/mrqhBBwj1McnfKu
+	GBxMa28j4v9xwaS6NioIYBZOh2Df0NSrn+lZrtJyyHecW9F9GX5guzxEYav+Hijg7/Re3S
+	Ozy2tLCNgKiVA/H32MKmTQQlN55sZ00Q5fRsEe8nzr01Xj7jELk//lcCP2Dyf0SqIIxzmt
+	DMGClEnuHQQnmK8cwbZLuOeB7iqtTwvAEy8BHwzQFS2RuHetelvNnHCoaN4dsiUKxVm4jR
+	egGJEghTAqte+Qm9c5NzXkWMAeMQ6p0CAXgJsbt94fT/rGImaNC4iyCCAmgdlw==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: david@fromorbit.com,
 	willy@infradead.org,
@@ -72,9 +72,9 @@ Cc: yang@os.amperecomputing.com,
 	hch@lst.de,
 	Zi Yan <ziy@nvidia.com>,
 	Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH v11 08/10] xfs: expose block size in stat
-Date: Fri, 26 Jul 2024 13:59:54 +0200
-Message-ID: <20240726115956.643538-9-kernel@pankajraghav.com>
+Subject: [PATCH v11 09/10] xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+Date: Fri, 26 Jul 2024 13:59:55 +0200
+Message-ID: <20240726115956.643538-10-kernel@pankajraghav.com>
 In-Reply-To: <20240726115956.643538-1-kernel@pankajraghav.com>
 References: <20240726115956.643538-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -87,38 +87,39 @@ Content-Transfer-Encoding: 8bit
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-For block size larger than page size, the unit of efficient IO is
-the block size, not the page size. Leaving stat() to report
-PAGE_SIZE as the block size causes test programs like fsx to issue
-illegal ranges for operations that require block size alignment
-(e.g. fallocate() insert range). Hence update the preferred IO size
-to reflect the block size in this case.
-
-This change is based on a patch originally from Dave Chinner.[1]
-
-[1] https://lwn.net/ml/linux-fsdevel/20181107063127.3902-16-david@fromorbit.com/
+Instead of assuming that PAGE_SHIFT is always higher than the blocklog,
+make the calculation generic so that page cache count can be calculated
+correctly for LBS.
 
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Dave Chinner <dchinner@redhat.com>
 ---
- fs/xfs/xfs_iops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/xfs/xfs_mount.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 1cdc8034f54d9..6483b4c4cf355 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -567,7 +567,7 @@ xfs_stat_blksize(
- 			return 1U << mp->m_allocsize_log;
- 	}
+diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+index 09eef1721ef4f..3949f720b5354 100644
+--- a/fs/xfs/xfs_mount.c
++++ b/fs/xfs/xfs_mount.c
+@@ -132,11 +132,16 @@ xfs_sb_validate_fsb_count(
+ 	xfs_sb_t	*sbp,
+ 	uint64_t	nblocks)
+ {
++	uint64_t		max_bytes;
++
+ 	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
+ 	ASSERT(sbp->sb_blocklog >= BBSHIFT);
  
--	return PAGE_SIZE;
-+	return max_t(uint32_t, PAGE_SIZE, mp->m_sb.sb_blocksize);
++	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
++		return -EFBIG;
++
+ 	/* Limited by ULONG_MAX of page cache index */
+-	if (nblocks >> (PAGE_SHIFT - sbp->sb_blocklog) > ULONG_MAX)
++	if (max_bytes >> PAGE_SHIFT > ULONG_MAX)
+ 		return -EFBIG;
+ 	return 0;
  }
- 
- STATIC int
 -- 
 2.44.1
 
