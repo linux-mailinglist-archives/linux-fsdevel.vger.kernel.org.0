@@ -1,136 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-24330-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1643E93D5A8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 17:09:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB57093D5FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 17:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B181C22916
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 15:09:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43488B236C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 15:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340A417C7CD;
-	Fri, 26 Jul 2024 15:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdWqnRG5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8288E17BB03;
+	Fri, 26 Jul 2024 15:23:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4643B17C7B5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 15:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1161EB31
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 15:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722006501; cv=none; b=XID8ZrqdWb3NRXjnb127+XPTsF/zGlIYS9Bt38N6kS2rwYENeQyah0msij+i0Z4803GP6ctl21HuR+zB9rbLjPgHxJKcgJAq+mUpZFjBjLUachbYeskx2V3eR0E0HtFx9w61BOEKlE/BdmU3139G8gAn+EDIJrAPwUHIRRm/qwU=
+	t=1722007384; cv=none; b=EKRu+meX7+nvb3ml1e1FOhsrMIdNgHH+8MXVdA2og7PaynTM/a73kE/OjqPT7fpTGr2n+aec46e57c2JtHf3NHYVxlgI1juYOWTQYCNc9gtu0u5xvyftEiT2cXgCdWe8lCvZpXon0O0RlyU0fwBK2FZ1/LqmUKwi6icyt2unn7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722006501; c=relaxed/simple;
-	bh=LOfrXGw3pFL0AFHi7Ko+dN4kqf7gwT4HzWn2H79vThs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q7d9da21NhtGNZMXEZJb4UA3dO0kNulc1ymaRj3/MpfGfuQdqxvfc/SY7sStPKPY2dyigktvMCTCLHrOmKFOeJ93DPHCsE+9RP4DogkoVtNL9emD3Zm03yob/roFZR7Ak8MP0f96GJ5aHki1E6NoXSErMU0q+Ll0zj/D5sXmSNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdWqnRG5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722006499;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h2hZ5iaP0GGncGDVruB29gu4r9/BL7FMsu+FThy8pbQ=;
-	b=bdWqnRG5VTTzON3T4WySGYoMF5AhOmjcHnPePsuNj4C8kgsaImDSxHHSYnjyVF3ekeOWAE
-	2/J986piuzF7NBssMUmAlAQB2eZHLJpmBYbwQEgy+lSxjs+141xly3P3bwSRDzATO6lL+S
-	0PWhkAn2/edraPIR3uasruGFi4DrUj0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-672-HOHS8bHhPF-HxdWbNQ7urA-1; Fri,
- 26 Jul 2024 11:08:13 -0400
-X-MC-Unique: HOHS8bHhPF-HxdWbNQ7urA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1CD891955BF7;
-	Fri, 26 Jul 2024 15:08:10 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.39.193.153])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BB2841955D48;
-	Fri, 26 Jul 2024 15:08:00 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	x86@kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	xen-devel@lists.xenproject.org,
-	linux-fsdevel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v1 3/3] powerpc/8xx: document and enforce that split PT locks are not used
-Date: Fri, 26 Jul 2024 17:07:28 +0200
-Message-ID: <20240726150728.3159964-4-david@redhat.com>
-In-Reply-To: <20240726150728.3159964-1-david@redhat.com>
-References: <20240726150728.3159964-1-david@redhat.com>
+	s=arc-20240116; t=1722007384; c=relaxed/simple;
+	bh=qlp7+7AcQXwJaqTb943IHxf/RFYYalN4M2URRp77+tE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=exqRZDSCPhJtoK60qCWItglmhZH7/ttLydyqOk5IIYlDo6Oy8IMvv7AXiCVmzjqKpqxwrRUzyXjHF2qp/AJsG7S780TAt58IgfGPU14hNiivQpK5Z6JBf7Ws9K259dnHVY6kX/oH8PGLBJf7EuvpjG1sdnqQOA11VB3mulOX6kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9053ac4dso68206439f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 08:23:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722007382; x=1722612182;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wrSzqyiMZx4ozjypR+uiSnGPSDS1DfBLU8iYnkXnm8o=;
+        b=ELmC3ymkLDGrSEy7ZYnEBO+ofg5R84SXTQLphRFzjzlTl9XXP2tXqOF1j9meabKzBB
+         WtfYdGi4cPxwVuBoviAIHtip5sMi5XKHj+cOo5VEHpW4gqq6uGKW836l9vq2MnqFvgri
+         4r5RPvE/epgf5/jxCYL5Uwk9+2Oy5Cehaid/NuPUJim0kob3rlClrm1YegvvKFpCUjZ3
+         9gsVCCkiq3elKlQ3tLjGEd0OTLLXerZJsaQvr7vP2nbrfKMVp5zaU7vSUxilkvUB3i0W
+         BVqVyIWTTofN0mfKCVJfEbzkE9oYJleYw89KG0R6kB0MiHRazfsLSLqX8nWX68+IeUdV
+         4i1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVc38W2LH2CiRe1csQjhpuIPYoSCT9/n+eBrzBrYE1LmK4fydbudhlIS4TZgnWr5wdFtHO9NGcuEDoMu91+7XGD3sgqQtvuWuNpalpDCQ==
+X-Gm-Message-State: AOJu0YwfjttyDb8hXcAnQBIbD5OrU6TtBFSNCFx9IRk1gxhxaY3VJsEf
+	3va/lJ0oQjOPeP7Rw2rJMsal9za8m3rwHU7hCcImLzpTchduhHKJVbGIUJ1uv2Z+EX75HF//XyP
+	yuleIDXT13RrbswD6xzvJpOj1f9od77rFEcE5szt7GlRZc+OgMo2JpdY=
+X-Google-Smtp-Source: AGHT+IEitdjrvQfgUSlHI9A5b/o7wbVGbHXJfvr5OeY9BfiBEWaDu7+L2Zu4oFY+y+iyX8y9suRRcOHcvVDTWq93/LtY+DN37WYn
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-Received: by 2002:a05:6638:4120:b0:4c0:9a3e:c24d with SMTP id
+ 8926c6da1cb9f-4c29b6da7acmr341864173.0.1722007382122; Fri, 26 Jul 2024
+ 08:23:02 -0700 (PDT)
+Date: Fri, 26 Jul 2024 08:23:02 -0700
+In-Reply-To: <000000000000b90a8e061e21d12f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004ff2dc061e281637@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
+From: syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chao@kernel.org, frank.li@vivo.com, jack@suse.cz, 
+	jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Right now, we cannot have split PT locks because 8xx does not support
-SMP.
+syzbot has bisected this issue to:
 
-But for the sake of documentation *why* 8xx is fine regarding what
-we documented in huge_pte_lockptr(), let's just add code to enforce it
-at the same time as documenting it.
+commit b62e71be2110d8b52bf5faf3c3ed7ca1a0c113a5
+Author: Chao Yu <chao@kernel.org>
+Date:   Sun Apr 23 15:49:15 2023 +0000
 
-This should also make everybody who wants to copy from the 8xx approach of
-supporting such unusual ways of mapping hugetlb folios aware that it gets
-tricky once multiple page tables are involved.
+    f2fs: support errors=remount-ro|continue|panic mountoption
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- arch/powerpc/mm/pgtable.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119745f1980000
+start commit:   1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=139745f1980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=159745f1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
+dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1237a1f1980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115edac9980000
 
-diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
-index ab0656115424f..7316396e452d8 100644
---- a/arch/powerpc/mm/pgtable.c
-+++ b/arch/powerpc/mm/pgtable.c
-@@ -297,6 +297,12 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- }
- 
- #if defined(CONFIG_PPC_8xx)
-+
-+#if defined(CONFIG_SPLIT_PTE_PTLOCKS) || defined(CONFIG_SPLIT_PMD_PTLOCKS)
-+/* We need the same lock to protect the PMD table and the two PTE tables. */
-+#error "8M hugetlb folios are incompatible with split page table locks"
-+#endif
-+
- static void __set_huge_pte_at(pmd_t *pmd, pte_t *ptep, pte_basic_t val)
- {
- 	pte_basic_t *entry = (pte_basic_t *)ptep;
--- 
-2.45.2
+Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
+Fixes: b62e71be2110 ("f2fs: support errors=remount-ro|continue|panic mountoption")
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
