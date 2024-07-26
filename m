@@ -1,271 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-24300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6DF93CFB7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 10:38:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067E193CFF7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 10:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64E961C221D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 08:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B539A282D6A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 08:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FADB178392;
-	Fri, 26 Jul 2024 08:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A73176FCF;
+	Fri, 26 Jul 2024 08:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gTw7AMAC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8491178364;
-	Fri, 26 Jul 2024 08:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9E236D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 08:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721983089; cv=none; b=F6rDLlxaZSMCRom4REwYCo69G/8q+qjglVEQLdYBrh34NL/3MMh7ZE84Q/Ezub6Bbf2obuDi48Od9NHEKa8PM5mWAsAvtZFnowvh2/yQQuawEyDQrc426dGnJO6Twvt6fjbU5hVAQe87zFLnB+BPRDr/i6I16Bt0tOGFjP4W0r4=
+	t=1721984172; cv=none; b=BN8wgCRja0RarHaArUXEs37vjGe6dwaPALgLFvS8t3ccgU3Scwq97UruqDyu9YhBxdyEB/HvXOwPxqPhL+Xlmh2fSGVCuriVwarH5y6BSpycIRDUiSjHGeA9sfeMXnB2AYIVj0516c0T9yi4VzfxO4M0K1w7jEOnjwPeZkHzSUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721983089; c=relaxed/simple;
-	bh=/hWhfMllA70pWRM2T6uiJE9KAXC26784Z2LWy9Tr0U8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LEOvHZjHIx4eWA9JSe2uN4pDAugxyVX31CzpL9SzsYfnoqxDQ86F40pJ7olYi/6WnRVbWK8RRk8c7rvJi8POc6Tv9Amuh3EwcQYOL61RAAZKYoQYnlDUFvJw1obF2PllKdr8jO+MHn7Cv8eykrikK0WLR8Mv1MgZTn7JEc3sjLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WVgy35N82z2ClN5;
-	Fri, 26 Jul 2024 16:33:31 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 27825180042;
-	Fri, 26 Jul 2024 16:37:59 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 26 Jul
- 2024 16:37:58 +0800
-From: yangyun <yangyun50@huawei.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] fuse: add support for no forget requests
-Date: Fri, 26 Jul 2024 16:37:52 +0800
-Message-ID: <20240726083752.302301-3-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240726083752.302301-1-yangyun50@huawei.com>
-References: <20240726083752.302301-1-yangyun50@huawei.com>
+	s=arc-20240116; t=1721984172; c=relaxed/simple;
+	bh=01rTGrhez7nMcipxCbynimMvPgxooqqono4ewDJXnHw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TNyfaZuosgNlYCOyyZwBqecFidGwHtAP7zheXgcNhFZBr+0cvWSAmAbYT6Lq/Sk5um781ikwJUYXui8bhwynJFttCnPB9lGTTZu1pDZ6j4uSGU8YmcpZKBMJ2ctTfFaS9NkswgRtJUYvnXn5rAJg4b5dFpLlNpe+x6pAdNnwNMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mattbobrowski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gTw7AMAC; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mattbobrowski.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a7abee2b4b0so123103766b.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 01:56:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721984169; x=1722588969; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wzhEE0I2ZSCZWkX/coFdL22YkdHDYtKnmVSDepdfaTc=;
+        b=gTw7AMACEUWwvR2fdt/ky39w1blHGLLsivTQYHP3Zr9dg9s5Hf+n4n4ALryLOHIgDP
+         TDmS4lv2qgySNnEUJEG22jnWCInyTyUsWAabB2zYz1EG8LpefPlBW7PgP6RvvGwMpBNZ
+         Rov9O4mGELwDXiLNCTjwSFKJEh1nt7qK9JUqFujoSyR54+yEM9HckB8Oxt795FoYx+jL
+         Lu2/40TG61ZxeyhxMsNoBPOZrKhp28/AxhQD3rRCUH9Ju8dZC4IGsqQH2Kw7K1s7i1Jy
+         Frb7LYUogdLLoKFBG96G6Axq7Zqfx/G7EQ3oFXTTdqpxevwV5BBw5d4DNKekEj5PJhhJ
+         uysA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721984169; x=1722588969;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wzhEE0I2ZSCZWkX/coFdL22YkdHDYtKnmVSDepdfaTc=;
+        b=bsK5YOnqntzXCNcycq58SVbP5qjXGkcFDV9lqghqbS2RwcuhVj3laZCds+nKmSejxs
+         3Xw49o5WtvidCd1CA9PI0MOuOEbDck/rSSF+nIaltGNf+lJncl2uSFS70r005YTjuwRu
+         zbEfqGdcKzDg1yhDnoStt8YwScQOJTCuEwyTE8lNY7uPqoEyRpVD0LKpz0YlaMmuoWnR
+         YNtSMyeZV6IXM44g0tu5KvYEvC9fjvFj85NpRQRjSC77aSKjk0JgmrVGCZcY9hiZQaJv
+         u8xU9H/MVs4p8IYayv8nMLHExs1x9+2HhSoGfiZlnAXGDy4UL4OWKe4LudBEJ9DqyEa/
+         4xSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuDH/yOH4+qVXIsGlFNgEXVXelFgAzcCzPzyHY621XTQr2yCmkrukXBwvbV+njG4j28HTSYRx1eIl2U4pkQUIMiuHwMreP2IwbOj05Eg==
+X-Gm-Message-State: AOJu0YxOG8qy4W6bfJXg1b9gB3h4y8Zph3neG3/rUmZbJo/xVVfegfTp
+	crMfgj+v55TlmrpsaylcTZk55ADogDi3nNjqNWJGMztGku62VRvfI2hxGG/8E3zfs8uLUUjQbjr
+	hEK2cQvF/2qatCaFTUtp/VFCr/H1A/g==
+X-Google-Smtp-Source: AGHT+IFyXMf6dwxh4GF7E1byYlwWvvDvyucdwlRGsB9mphq0pjANaGoft3BJpuyuA7elNNZyHVgViHE+Ysmk2o0VGG34
+X-Received: from mattbobrowski.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:c5c])
+ (user=mattbobrowski job=sendgmr) by 2002:a17:906:c794:b0:a7a:8c65:641d with
+ SMTP id a640c23a62f3a-a7acb3793cemr286766b.1.1721984169485; Fri, 26 Jul 2024
+ 01:56:09 -0700 (PDT)
+Date: Fri, 26 Jul 2024 08:56:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd100024.china.huawei.com (7.221.188.41)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
+Message-ID: <20240726085604.2369469-1-mattbobrowski@google.com>
+Subject: [PATCH v3 bpf-next 0/3] introduce new VFS based BPF kfuncs
+From: Matt Bobrowski <mattbobrowski@google.com>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org, kpsingh@kernel.org, andrii@kernel.org, jannh@google.com, 
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org, jolsa@kernel.org, 
+	daniel@iogearbox.net, memxor@gmail.com, 
+	Matt Bobrowski <mattbobrowski@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-FUSE_FORGET requests are not used if the fuse file system does not
-implement the forget operation in userspace (e.g., fuse file system
-does not cache any inodes).
+G'day!
 
-However, the kernel is invisible to the userspace implementation and
-always sends FUSE_FORGET requests, which can lead to performance
-degradation because of useless contex switch and memory copy in some
-cases (e.g., many inodes are evicted from icache which was described
-in commit 07e77dca8a1f ("fuse: separate queue for FORGET requests")).
+The original cover letter providing background context and motivating
+factors around the needs for these new VFS related BPF kfuncs
+introduced within this patch series can be found here [0]. Please do
+reference that if needed.
 
-Just like 'no_interrupt' in 'struct fuse_conn', we add 'no_forget'.
-But since FUSE_FORGET request does not have a reply from userspce,
-we can not use ENOSYS to reflect the 'no_forget' assignment. So add
-the FUSE_NO_FORGET_SUPPORT init flag.
+The changes contained within this version of the patch series mainly
+came at the back of discussions held with Christian at LSFMMBPF
+recently. In summary, the primary difference within this patch series
+when compared to the last [1] is that I've reduced the number of VFS
+related BPF kfuncs being introduced, housed them under fs/, and added
+more selftests.
 
-Besides, if no_forget is enabled, 'nlookup' in 'struct fuse_inode'
-does not used and its value change can be disabled which are protected
-by spin_lock to reduce lock contention.
+Changes since v2 [1]:
 
-Signed-off-by: yangyun <yangyun50@huawei.com>
----
- fs/fuse/dev.c             |  6 ++++++
- fs/fuse/dir.c             |  4 +---
- fs/fuse/fuse_i.h          | 24 ++++++++++++++++++++++++
- fs/fuse/inode.c           | 10 +++++-----
- fs/fuse/readdir.c         |  8 ++------
- include/uapi/linux/fuse.h |  3 +++
- 6 files changed, 41 insertions(+), 14 deletions(-)
+* All new VFS related BPF kfuncs now reside in fs/bpf_fs_kfuncs.c
+  rather than kernel/trace/bpf_trace.c. This was something that was
+  explicitly requested by Christian after discussing these new VFS
+  related BPF kfuncs recently at LSFMMBPF.
+  
+* Dropped other initially proposed VFS related BPF kfuncs, including
+  bpf_get_mm_exe_file(), bpf_get_task_fs_root(),
+  bpf_get_task_fs_pwd(), and bpf_put_path().
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 932356833b0d..10890db9426b 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -238,6 +238,9 @@ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
- {
- 	struct fuse_iqueue *fiq = &fc->iq;
- 
-+	if (fc->no_forget)
-+		return;
-+
- 	forget->forget_one.nodeid = nodeid;
- 	forget->forget_one.nlookup = nlookup;
- 
-@@ -257,6 +260,9 @@ void fuse_force_forget(struct fuse_mount *fm, u64 nodeid)
- 	struct fuse_forget_in inarg;
- 	FUSE_ARGS(args);
- 
-+	if (fm->fc->no_forget)
-+		return;
-+
- 	memset(&inarg, 0, sizeof(inarg));
- 	inarg.nlookup = 1;
- 	args.opcode = FUSE_FORGET;
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 6bfb3a128658..833225ed1d4f 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -236,9 +236,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
- 				fuse_force_forget(fm, outarg.nodeid);
- 				goto invalid;
- 			}
--			spin_lock(&fi->lock);
--			fi->nlookup++;
--			spin_unlock(&fi->lock);
-+			fuse_nlookup_inc_if_enabled(fm->fc, fi);
- 		}
- 		if (ret == -ENOMEM || ret == -EINTR)
- 			goto out;
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index b9a5b8ec0de5..924d6b0ad700 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -860,6 +860,9 @@ struct fuse_conn {
- 	/** Passthrough support for read/write IO */
- 	unsigned int passthrough:1;
- 
-+	/** Do not send FORGET request */
-+	unsigned int no_forget:1;
-+
- 	/** Maximum stack depth for passthrough backing files */
- 	int max_stack_depth;
- 
-@@ -1029,6 +1032,27 @@ static inline void fuse_sync_bucket_dec(struct fuse_sync_bucket *bucket)
- 	rcu_read_unlock();
- }
- 
-+static inline void fuse_nlookup_inc_if_enabled(struct fuse_conn *fc, struct fuse_inode *fi)
-+{
-+	if (fc->no_forget)
-+		return;
-+
-+	spin_lock(&fi->lock);
-+	fi->nlookup++;
-+	spin_unlock(&fi->lock);
-+}
-+
-+static inline void fuse_nlookup_dec_if_enabled(struct fuse_conn *fc, struct fuse_inode *fi)
-+{
-+	if (fc->no_forget)
-+		return;
-+
-+	spin_lock(&fi->lock);
-+	fi->nlookup--;
-+	spin_lock(&fi->lock);
-+}
-+
-+
- /** Device operations */
- extern const struct file_operations fuse_dev_operations;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 99e44ea7d875..277dc9479505 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -483,9 +483,7 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 		}
- 	}
- 	fi = get_fuse_inode(inode);
--	spin_lock(&fi->lock);
--	fi->nlookup++;
--	spin_unlock(&fi->lock);
-+	fuse_nlookup_inc_if_enabled(fc, fi);
- done:
- 	fuse_change_attributes(inode, attr, NULL, attr_valid, attr_version);
- 
-@@ -1331,6 +1329,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
- 			}
- 			if (flags & FUSE_NO_EXPORT_SUPPORT)
- 				fm->sb->s_export_op = &fuse_export_fid_operations;
-+			if (flags & FUSE_NO_FORGET_SUPPORT)
-+				fc->no_forget = 1;
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
- 			fc->no_lock = 1;
-@@ -1378,7 +1378,7 @@ void fuse_send_init(struct fuse_mount *fm)
- 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
- 		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
- 		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
--		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND;
-+		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_NO_FORGET_SUPPORT;
- #ifdef CONFIG_FUSE_DAX
- 	if (fm->fc->dax)
- 		flags |= FUSE_MAP_ALIGNMENT;
-@@ -1593,7 +1593,7 @@ static int fuse_fill_super_submount(struct super_block *sb,
- 	 * that, though, so undo it here.
- 	 */
- 	fi = get_fuse_inode(root);
--	fi->nlookup--;
-+	fuse_nlookup_dec_if_enabled(fm->fc, get_fuse_inode(root));
- 
- 	sb->s_d_op = &fuse_dentry_operations;
- 	sb->s_root = d_make_root(root);
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index 39f01ac31f7c..13922662e07a 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -218,9 +218,7 @@ static int fuse_direntplus_link(struct file *file,
- 		}
- 
- 		fi = get_fuse_inode(inode);
--		spin_lock(&fi->lock);
--		fi->nlookup++;
--		spin_unlock(&fi->lock);
-+		fuse_nlookup_inc_if_enabled(fc, fi);
- 
- 		forget_all_cached_acls(inode);
- 		fuse_change_attributes(inode, &o->attr, NULL,
-@@ -247,9 +245,7 @@ static int fuse_direntplus_link(struct file *file,
- 			if (!IS_ERR(inode)) {
- 				struct fuse_inode *fi = get_fuse_inode(inode);
- 
--				spin_lock(&fi->lock);
--				fi->nlookup--;
--				spin_unlock(&fi->lock);
-+				fuse_nlookup_dec_if_enabled(fc, fi);
- 			}
- 			return PTR_ERR(dentry);
- 		}
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index d08b99d60f6f..bf660880bc7a 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -217,6 +217,7 @@
-  *  - add backing_id to fuse_open_out, add FOPEN_PASSTHROUGH open flag
-  *  - add FUSE_NO_EXPORT_SUPPORT init flag
-  *  - add FUSE_NOTIFY_RESEND, add FUSE_HAS_RESEND init flag
-+ *  - add FUSE_NO_FORGET_SUPPORT init flag
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -421,6 +422,7 @@ struct fuse_file_lock {
-  * FUSE_NO_EXPORT_SUPPORT: explicitly disable export support
-  * FUSE_HAS_RESEND: kernel supports resending pending requests, and the high bit
-  *		    of the request ID indicates resend requests
-+ * FUSE_NO_FORGET_SUPPORT: disable forget requests
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -463,6 +465,7 @@ struct fuse_file_lock {
- #define FUSE_PASSTHROUGH	(1ULL << 37)
- #define FUSE_NO_EXPORT_SUPPORT	(1ULL << 38)
- #define FUSE_HAS_RESEND		(1ULL << 39)
-+#define FUSE_NO_FORGET_SUPPORT  (1ULL << 40)
- 
- /* Obsolete alias for FUSE_DIRECT_IO_ALLOW_MMAP */
- #define FUSE_DIRECT_IO_RELAX	FUSE_DIRECT_IO_ALLOW_MMAP
+* bpf_path_d_path() now makes use of __sz argument annotations such
+  that the BPF verifier can enforce relevant size checks on the
+  supplied buf that ends up being passed to d_path(). Relevant
+  selftests have been added to assert __sz checking semantics are
+  enforced.
+
+[0] https://lore.kernel.org/bpf/cover.1708377880.git.mattbobrowski@google.com/
+[1] https://lore.kernel.org/bpf/cover.1709675979.git.mattbobrowski@google.com/
+
+Matt Bobrowski (3):
+  bpf: introduce new VFS based BPF kfuncs
+  selftests/bpf: add negative tests for new VFS based BPF kfuncs
+  selftests/bpf: add positive tests for new VFS based BPF kfuncs
+
+ fs/Makefile                                   |   1 +
+ fs/bpf_fs_kfuncs.c                            | 133 ++++++++++++
+ .../testing/selftests/bpf/bpf_experimental.h  |  26 +++
+ .../selftests/bpf/prog_tests/verifier.c       |   4 +
+ .../selftests/bpf/progs/verifier_vfs_accept.c |  71 +++++++
+ .../selftests/bpf/progs/verifier_vfs_reject.c | 196 ++++++++++++++++++
+ 6 files changed, 431 insertions(+)
+ create mode 100644 fs/bpf_fs_kfuncs.c
+ create mode 100644 tools/testing/selftests/bpf/progs/verifier_vfs_accept.c
+ create mode 100644 tools/testing/selftests/bpf/progs/verifier_vfs_reject.c
+
 -- 
-2.33.0
+2.46.0.rc1.232.g9752f9e123-goog
 
 
