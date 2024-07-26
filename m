@@ -1,77 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-24337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4016593D75F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 19:14:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDB993D79A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 19:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA037B22921
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 17:14:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FB401C2311F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 17:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8B317CA0E;
-	Fri, 26 Jul 2024 17:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7340A17C9F3;
+	Fri, 26 Jul 2024 17:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WozWHB6T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0023121364;
-	Fri, 26 Jul 2024 17:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF4E21364
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 17:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722014045; cv=none; b=LnXTMGy8bfOhtYE5Fgu2DmAH+0+xSAn28OObaxZnJHo24eicW7XVPs0JqToSEHIdrNDQO+Uu3f8mMBJxKibnMkr30Bj2yluga6RAyeW9ipDMpVnaONdR8sUd0FC+3zUtAwj42CuMvu4I/Fi3JPqLSd4UhZUUHi0tyYfHvHR25iA=
+	t=1722014990; cv=none; b=DBh3I0Ec8GSm7FGtEV5Ry+JjuK3IsFqL8lBpl87EGGOcV+tKo6n2Ax6J64a8VG09+qKp7kFpM4Dp1wY3buzb2jzjirP3Y63AGIag+ZwYsFB6JY4ChwDTA9acwvpPOrgvpqziuinDrun6KGrARxJ94YWNG19T+HwTXSNO9PdguFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722014045; c=relaxed/simple;
-	bh=vnaGRt35OXW8GrcOhfdqhoDi2Phsfws9fRC2hdplJOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j/TEAaO2ZA4Rxq/YY/JcFCESw6bl8RzuI+0MgY2M4WmSNFjJZlNMP+XwK7+B+yS66UpL7CsE7l7vSA16OZj7RlK1JMS1+1ko+HF8VLmL/7Kqf7+8obhCS79R8vOKfMG9kkV+zncjxxd3ZkOzfCPm8lWhVrhPMKZutmxkSFIfMok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 1C3AA68B05; Fri, 26 Jul 2024 19:13:59 +0200 (CEST)
-Date: Fri, 26 Jul 2024 19:13:58 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Dave Chinner <david@fromorbit.com>, djwong@kernel.org, hch@lst.de,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v3 14/21] iomap: Sub-extent zeroing
-Message-ID: <20240726171358.GA27612@lst.de>
-References: <20240429174746.2132161-1-john.g.garry@oracle.com> <20240429174746.2132161-15-john.g.garry@oracle.com> <ZjGVuBi6XeJYo4Ca@dread.disaster.area> <c8be257c-833f-4394-937d-eab515ad6996@oracle.com>
+	s=arc-20240116; t=1722014990; c=relaxed/simple;
+	bh=S1P5MgKMAMUuvhX8/9wDrx+JYxisvWaAYv7Gkg3E/m4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KFAZ3EdpsqJAPTwkmkzVoKP1wXfGHnn4Fbpp3dbxYGuDkmumtwYqQkk2ZWSU6hcOiGZvXqDbXWPfKpFvNSuHIPM/GjyisCm1Fjmn+2QmzNLsP6KZ/BWFJxZVkRSaXVLtZKbW/EyghKjWx/BYKlyN75lK9tCVgazOclqcrNESJKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WozWHB6T; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so209889466b.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 10:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722014987; x=1722619787; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DjZxgKP3aOenYjaNo4PQDBRvFtkEaQ4AGQRhMtdBU3M=;
+        b=WozWHB6Ttt563lfMxtcBoC3UBShUMGUc/TJGpGDVvltIJ2jMs4tOLCWSmDU10YU4F0
+         3mSvJw2Ll1ENAx892xcOPEW9K+BoE+2uiE8Jro32hSXfSEHPnLjoZHSQWiDNe+hShPqv
+         Zep1Vt/t+ZjM+4tDtpImeCIuGnNEuGwu3m1hk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722014987; x=1722619787;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DjZxgKP3aOenYjaNo4PQDBRvFtkEaQ4AGQRhMtdBU3M=;
+        b=UWQ5BhkDZu8QC8GdQphwxCPQZX77zpz6MFaWHpZWklx8JNdKvxkHX5ON0kKN6zswLl
+         491byLzWXH6EbF2cqybv4xB7UACDrKW5FXZsd/UnX3YYEpEj9Q3yq/zMy6Blrws0NUjA
+         Di++ztpUGtqy1YHFSVUsWV0+i5y2FqG2/Ioe+Fdjp9QMlPnRlnaF5nGCRIZlkzQUKPKZ
+         3O1O4a689VBoRshtTinNZWJJWyyz2viTBnJOo1rFgP4G6JatMx7lcRrxIGUorf2tc8Pv
+         7nMknIwb9mNRQG+/uxVtefkfRmM4zcKj8JK5epyHTZhhPtYBjfFPbv/DAPf2WTZ51TLq
+         8+Xw==
+X-Gm-Message-State: AOJu0YytiopCefvQN2x/YmuZYbNmtCeYl3dzLrt0aCO8+Jo0xuIkXt+Q
+	fyYueLjAaurQiMtpzaujd4p20kUUfyEXZBOBT9o7YB8JecWOPhp6Hww6Q3QqISFaNQoMEE26tWj
+	5gE8=
+X-Google-Smtp-Source: AGHT+IGtkmCWQM4r2qgqydaVhhVKu8GNl9BdWOstdzQnmI3LoBXQox+Q0wkj8T4jlWXT//pKPs9NRw==
+X-Received: by 2002:a17:907:3f1f:b0:a7a:a4be:2f9d with SMTP id a640c23a62f3a-a7d3ff57b7cmr17419966b.12.1722014986786;
+        Fri, 26 Jul 2024 10:29:46 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb68c2sm197884766b.190.2024.07.26.10.29.46
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 10:29:46 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa63so689803a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 10:29:46 -0700 (PDT)
+X-Received: by 2002:a05:6402:5205:b0:5a1:e7e6:ce37 with SMTP id
+ 4fb4d7f45d1cf-5b0232814d2mr81455a12.26.1722014985942; Fri, 26 Jul 2024
+ 10:29:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c8be257c-833f-4394-937d-eab515ad6996@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20240726054138.GC99483@ZenIV>
+In-Reply-To: <20240726054138.GC99483@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 26 Jul 2024 10:29:29 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgjQOCqchHsohSVPmgqwJOTvZR1RbxAH9efY7_AZunRXQ@mail.gmail.com>
+Message-ID: <CAHk-=wgjQOCqchHsohSVPmgqwJOTvZR1RbxAH9efY7_AZunRXQ@mail.gmail.com>
+Subject: Re: [git pull] (very belated) struct file leak fixes
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 26, 2024 at 03:29:48PM +0100, John Garry wrote:
-> I have been considering another approach to solve this problem.
+On Thu, 25 Jul 2024 at 22:41, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> In this patch - as you know - we zero unwritten parts of a newly allocated 
-> extent. This is so that when we later issue an atomic write, we would not 
-> have the problem of unwritten extents and how the iomap iterator will 
-> create multiple BIOs (which is not permitted).
->
-> How about an alternate approach like this:
-> - no sub-extent zeroing
-> - iomap iter is changed to allocate a single BIO for an atomic write in 
-> first iteration
-> - each iomap extent iteration appends data to that same BIO
-> - when finished iterating, we submit the BIO
->
-> Obviously that will mean many changes to the iomap bio iterator, but is 
-> quite self-contained.
+>   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
 
-Yes, I also suggested that during the zeroing fix discussion.  There
-is generally no good reason to start a new direct I/O bio if the
-write is contiguous on disk and only the state of the srcmap is different.
-This will also be a big win for COW / out of place overwrites.
+Well, it's a signed tag, and it's the same key as always - but that
+key has expired, and a "gpg --refresh" doesn't find a new expiration
+date.
 
+Can you please make sure to push the key with new expiration,
+preferably far far in the future?
+
+            Linus
 
