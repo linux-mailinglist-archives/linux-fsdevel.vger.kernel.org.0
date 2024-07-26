@@ -1,87 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-24286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A5393CCD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 05:06:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92CF93CCE1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 05:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399051C21998
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 03:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A402428256A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 03:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F92262B;
-	Fri, 26 Jul 2024 03:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFF822F1E;
+	Fri, 26 Jul 2024 03:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="DBkVFoXt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SmL25kBq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF088442F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 03:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA8D22611;
+	Fri, 26 Jul 2024 03:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721963162; cv=none; b=GsOi86KqvHQZgBrb2rhTHMSFKAi2I6eLlE/CaIFHlJctVF9omTp1KgUlwSo4KVZULFWWmoE2e2QwMDOTaFXVUXKrytTwtNtOgXEAAT+HVUeLQUrGcE2/SVV10JM+TRR5DPJvoZ6YDovN/AkXETN20P1EIzkTolW/1npsDVlOOQ0=
+	t=1721963598; cv=none; b=YisuC+FJbZ404gTI/QasQR/4ahz9PMUNx1PyKiLdhvd6+69wlXhxGcx2mGiEkrCyjvMxcy1AX7OAwSUYUt2iN46hNF3o3DlxVNSnw1LCNb9d+k3Vyucz+tVIdVa3qngbE13h7pdxR9n1ARTVZjqjUbwrTEqdXZMoLLZ36AKWDIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721963162; c=relaxed/simple;
-	bh=quLpI2hmZVxke/lF3DDSHfy9b3cBQdbVSjdUv4HeYak=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CbVdCpmbb2Yx+YCPzB2JgXrrEZtPaUzQXZJN3Erx8FlMWcUpq3JhsktkW4EkhZO7XzhBx1LarTf4NK3FGBTSLdseni3l9PAD1vZ/pBILuMu76mMSt0l8kg8r28pAEsSgMQrLdbOO/pkIjlFq++NSn5N9iuOUx/UpCQ8JPYja79U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=DBkVFoXt; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2cb63ceff6dso400147a91.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 20:06:00 -0700 (PDT)
+	s=arc-20240116; t=1721963598; c=relaxed/simple;
+	bh=Ay8xxu+taRpgSAApBS8YRZsW8nYWYCytrPALo5KpbuY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ahg+Tk0O5hejaWWHPW0siQ02pM3tHDQVRQy5r7jhf7+j+/fg7Hakb5iDzNPxHEr5kFGv8cWeGBSAXf9uDGYwgWwUWu0C+kz3bYZkv2cvEuv7EirBN+XB7m9XyL/p5vtY2xl1ay2E7O2mwsVVVfJCsBeXtGQzdYSRj51+s/CbYe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SmL25kBq; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-260f863108fso426671fac.1;
+        Thu, 25 Jul 2024 20:13:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1721963160; x=1722567960; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0zMy6Wm4Xr4VmqiEPea2U7nMauV7O2Gfn+WgAXgyr3U=;
-        b=DBkVFoXtO/VB9UG5jdoMKGqAjuOKUt2cJ1yjOm8MyeeHTTTCea7IjrEy9eePHng4ut
-         K/a+Z4qCiVJPn+7FLwmScnrpbbVphPrSN0PrbcorQcvRz1QxMmbBC2OSAY8R8iOil1tz
-         GFFxnbhw+VNaV0mVjr0lxUW1aamLvmEMF+B5hMkvKGw2ktO5kZOctwxP+DOIBD2m9XGL
-         a7GMwgTpV17b1iGVyR7yWTYS8Wc8Q+5po7K1P8lbWnNw8eQ8HV5A/hDLw7pF7qBfF9yY
-         HHXzMfgvCHI7D79apr4fDKbdMRqNy5KAMsqSIHoRL6CLT5F6pM6Id9mdRjZDa+tea4AE
-         S4NQ==
+        d=gmail.com; s=20230601; t=1721963596; x=1722568396; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ci2Gck85EvPCemYSkdaGllILSEgdeKb2oHQPF4Q/Le8=;
+        b=SmL25kBqx5KJvjikWHaPsnyNNSpD0//6g6BqwuYNmy8YficGP5Qd22BGWwEpuMwdjF
+         jx/cBzo9lMm6mJgXtKxAsGOybcRxRZFPtPu8eLrne44OkVJzALn+4JIKeXlN3CNAbVP2
+         VZwm2/TVLhPtnB8qV+6kjhWNlE9FoOE+QtqbAzL5eD0osfjJ6aO7702M9QqejDFlp1BV
+         mDlhykuvMl6He/MertmCwX06Nkwyk1jI9x5JvuR+9we3o3LKMK/wXrhCk4hXU8gKN1Zb
+         Sv/j7NoNn92DKPzF0h+8V+5+JUN0JezGyfN31B+fvIUOdo9wtU46BZZaVpv95RaZJq3I
+         ARQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721963160; x=1722567960;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0zMy6Wm4Xr4VmqiEPea2U7nMauV7O2Gfn+WgAXgyr3U=;
-        b=K59lqLsoxuvxSZKaHVdXyVc8IzNa/DZB8wp/0169DBEeVjKe2FImtj2ONUvYaXmPZV
-         oJ1krWMirIMLeAZBz+8TNhAwCLmR9IfKtN/nyQfG04NESkP0gW7CYaJl8B1f4PrbUGQS
-         zZm8U6QJXt+Y73A25MEk3IgDt/G5qFzEisBpdqbuxK79s9M1DhX/c1Nsdn6JIWjPmskm
-         P5d8LVhlQ46ZRp930GYxGv8JtHzsvK2px3xf0LnmsZs14epynrNsUf7zNuYYet9zOvGi
-         oEspdzlv66ZRjtTd09lcz8o+klZ9xFFk44stS9RBDOOWLXjSbSfi8kzspDMgoE006UVM
-         2oRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHinQSnpdG9bczmyINifJuHhhu0NpeOMBEeS4x1WbYYPek4Bp7g7l4UHQrQPy2JWSvgiZEhjJMSoF7+/KTc86zrVnBx4V2qvzLUCw0iw==
-X-Gm-Message-State: AOJu0Yw1wKx4UwJA2MciwBGvSXyP3EPpPVteyo31Zgd8HfLXCmLMYo+Y
-	jTYsChBG0vSQV3tU+oXAOKPIlVpoK7j4fJtN6dt1eiFddrP1lQPNzT/z2Sfgppk=
-X-Google-Smtp-Source: AGHT+IGpxwOy71N55NwgyOQ41ABsR85yT6e4HPAsYRwjPO/GciuqVW0ATMQ5DpYETORlfje8rrIXtg==
-X-Received: by 2002:a17:90b:4b09:b0:2c4:ee14:94a2 with SMTP id 98e67ed59e1d1-2cf238ccadamr5760863a91.27.1721963160112;
-        Thu, 25 Jul 2024 20:06:00 -0700 (PDT)
-Received: from localhost.localdomain ([143.92.64.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cd8f7692f0sm3435117a91.1.2024.07.25.20.05.57
+        d=1e100.net; s=20230601; t=1721963596; x=1722568396;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ci2Gck85EvPCemYSkdaGllILSEgdeKb2oHQPF4Q/Le8=;
+        b=J5vRK1c1NQw1SGpQreLmYWOEu35nnVScf2wSoC3dkaI4p43VE0G6j00JVQcifLFtmF
+         /hnG5H77Izll2k9XGXONq2TBGwzAhvwqFFsc7ksisjUrsHGFWUVGxIt/XFCoaOHO9Fq4
+         DBu63KXkjRFekPJaRmXFEVqCwKCPgfb877MX/XyupYA2lXNUqFuhc8mbIozUzQvQLVHT
+         S19kcxmxJQr0eERxowV6+P9aQxAkQZZUu9BsfYQHIILhxmFhdrlS55/gUUjj9zE41nG1
+         ruCk0svVKtnd9siY/gmjuAM5ztbQ3xslv/b6uBacZztTSjV5hN8PRMRLjh6ovGLpGyBv
+         7kPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9MfyyhSG9g5oH/8aheKI5+6N+bNg8Zqqd+Kqr0HyXPrIrKT+RfN0/iMMmVUbHstBnjuJyVT1KJZ4jRIDgITaeR/mh9B2nYMQPwjJnwNNPtd1ZxMFx3ejvF6zsjSIkD1iaHg/phHRKMHMbtGE9vd0jYIr+FLpM7HuBGQCqxKwmvSaJ3JbDHKKz0w==
+X-Gm-Message-State: AOJu0YxlS/d9c1tOgjLAeY+fanqKvU8hS5oF+ucpelkZpCof0ZfJCKXi
+	ibSbgBDciTjfagR8jjVMxZ3d0VdwBYfAOCfg+RAnkzWWzU9el5EtGarE6oOH
+X-Google-Smtp-Source: AGHT+IHs0+z0rH8aFg/4yNzNXT6MvnCERGSAbtn6QHnH/2s3SBFq8Gi/yzYBmc0Sm4hD35LUr+J1tQ==
+X-Received: by 2002:a05:6870:828e:b0:254:a09c:6ddf with SMTP id 586e51a60fabf-264a0d34e62mr4816325fac.24.1721963595908;
+        Thu, 25 Jul 2024 20:13:15 -0700 (PDT)
+Received: from localhost ([114.242.33.243])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e18dfsm1852757b3a.11.2024.07.25.20.13.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 20:05:59 -0700 (PDT)
-From: Haifeng Xu <haifeng.xu@shopee.com>
-To: jack@suse.cz
-Cc: axboe@kernel.dk,
-	brauner@kernel.org,
-	tj@kernel.org,
-	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org,
+        Thu, 25 Jul 2024 20:13:15 -0700 (PDT)
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Haifeng Xu <haifeng.xu@shopee.com>
-Subject: [PATCH v2] fs: don't flush in-flight wb switches for superblocks without cgroup writeback
-Date: Fri, 26 Jul 2024 11:05:25 +0800
-Message-Id: <20240726030525.180330-1-haifeng.xu@shopee.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240725084232.bj7apjqqowae575c@quack3>
-References: <20240725084232.bj7apjqqowae575c@quack3>
+	linux-fsdevel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Cc: jack@suse.cz,
+	brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	masahiroy@kernel.org,
+	akpm@linux-foundation.org,
+	n.schier@avm.de,
+	ojeda@kernel.org,
+	djwong@kernel.org,
+	kvalo@kernel.org,
+	Julian Sun <sunjunchao2870@gmail.com>
+Subject: [PATCH v2] scripts: reduce false positives in the macro_checker script.
+Date: Thu, 25 Jul 2024 23:13:10 -0400
+Message-Id: <20240726031310.254742-1-sunjunchao2870@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,81 +92,138 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When deactivating any type of superblock, it had to wait for the in-flight
-wb switches to be completed. wb switches are executed in inode_switch_wbs_work_fn()
-which needs to acquire the wb_switch_rwsem and races against sync_inodes_sb().
-If there are too much dirty data in the superblock, the waiting time may increase
-significantly.
+Reduce false positives in the macro_checker
+in the following scenarios:
+  1. Macro definitions with only a single character
+  2. Macro definitions as (0) and (1)
+  3. Macro definitions as empty
 
-For superblocks without cgroup writeback such as tmpfs, they have nothing to
-do with the wb swithes, so the flushing can be avoided.
+Also provide an option (-v) that alow users to control
+whether or not to check conditional macros. When -v is
+specified, conditional macros are checked; otherwise,
+thet are not.
 
-Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
-Suggested-by: Jan Kara <jack@suse.cz>
+Before this patch:
+	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+	99
+
+After this patch:
+	sjc@sjc:linux$ ./scripts/macro_checker.py  fs | wc -l
+	11
+	sjc@sjc:linux$ ./scripts/macro_checker.py  -v fs | wc -l
+	31
+
+Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
 ---
-Changes since v1:
-- do the check in cgroup_writeback_umount().
-- check the capabilities of bdi.
----
- fs/fs-writeback.c         | 6 +++++-
- fs/super.c                | 2 +-
- include/linux/writeback.h | 4 ++--
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ scripts/macro_checker.py | 50 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 40 insertions(+), 10 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 92a5b8283528..09facd4356d9 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1140,8 +1140,12 @@ int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
-  * rare occurrences and synchronize_rcu() can take a while, perform
-  * flushing iff wb switches are in flight.
-  */
--void cgroup_writeback_umount(void)
-+void cgroup_writeback_umount(struct super_block *sb)
- {
+diff --git a/scripts/macro_checker.py b/scripts/macro_checker.py
+index cd10c9c10d31..ba550982e98f 100755
+--- a/scripts/macro_checker.py
++++ b/scripts/macro_checker.py
+@@ -8,10 +8,20 @@ import argparse
+ import os
+ import re
+ 
++parser = argparse.ArgumentParser()
 +
-+	if (!(sb->s_bdi->capabilities & BDI_CAP_WRITEBACK))
-+		return;
++parser.add_argument("path", type=str, help="The file or dir path that needs check")
++parser.add_argument("-v", "--verbose", action="store_true",
++                    help="Check conditional macros, but may lead to more false positives")
++args = parser.parse_args()
 +
- 	/*
- 	 * SB_ACTIVE should be reliably cleared before checking
- 	 * isw_nr_in_flight, see generic_shutdown_super().
-diff --git a/fs/super.c b/fs/super.c
-index 095ba793e10c..acc16450da0e 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -621,7 +621,7 @@ void generic_shutdown_super(struct super_block *sb)
- 		sync_filesystem(sb);
- 		sb->s_flags &= ~SB_ACTIVE;
+ macro_pattern = r"#define\s+(\w+)\(([^)]*)\)"
+-# below two vars were used to reduce false positives
+-do_while0_pattern = r"\s*do\s*\{\s*\}\s*while\s*\(\s*0\s*\)"
++# below vars were used to reduce false positives
++fp_patterns = [r"\s*do\s*\{\s*\}\s*while\s*\(\s*0\s*\)",
++               r"\(?0\)?", r"\(?1\)?"]
+ correct_macros = []
++cond_compile_mark = "#if"
++cond_compile_end = "#endif"
  
--		cgroup_writeback_umount();
-+		cgroup_writeback_umount(sb);
+ def check_macro(macro_line, report):
+     match = re.match(macro_pattern, macro_line)
+@@ -21,15 +31,25 @@ def check_macro(macro_line, report):
+         content = match.group(2)
+         arguments = [item.strip() for item in content.split(',') if item.strip()]
  
- 		/* Evict all inodes with zero refcount. */
- 		evict_inodes(sb);
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index 112d806ddbe4..d78d3dce4ede 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -217,7 +217,7 @@ void wbc_account_cgroup_owner(struct writeback_control *wbc, struct page *page,
- 			      size_t bytes);
- int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
- 			   enum wb_reason reason, struct wb_completion *done);
--void cgroup_writeback_umount(void);
-+void cgroup_writeback_umount(struct super_block *sb);
- bool cleanup_offline_cgwb(struct bdi_writeback *wb);
+-        if (re.match(do_while0_pattern, macro_def)):
++        macro_def = macro_def.strip()
++        if not macro_def:
++            return
++        # used to reduce false positives, like #define endfor_nexthops(rt) }
++        if len(macro_def) == 1:
+             return
  
- /**
-@@ -324,7 +324,7 @@ static inline void wbc_account_cgroup_owner(struct writeback_control *wbc,
- {
- }
++        for fp_pattern in fp_patterns:
++            if (re.match(fp_pattern, macro_def)):
++                return
++
+         for arg in arguments:
+             # used to reduce false positives
+             if "..." in arg:
+-                continue
++                return
++        for arg in arguments:
+             if not arg in macro_def and report == False:
+                 return
++            # if there is a correct macro with the same name, do not report it.
+             if not arg in macro_def and identifier not in correct_macros:
+                 print(f"Argument {arg} is not used in function-line macro {identifier}")
+                 return
+@@ -49,6 +69,8 @@ def macro_strip(macro):
+     return macro
  
--static inline void cgroup_writeback_umount(void)
-+static inline void cgroup_writeback_umount(struct super_block *sb)
- {
- }
+ def file_check_macro(file_path, report):
++    # number of conditional compiling
++    cond_compile = 0
+     # only check .c and .h file
+     if not file_path.endswith(".c") and not file_path.endswith(".h"):
+         return
+@@ -57,7 +79,14 @@ def file_check_macro(file_path, report):
+         while True:
+             line = f.readline()
+             if not line:
+-                return
++                break
++            line = line.strip()
++            if line.startswith(cond_compile_mark):
++                cond_compile += 1
++                continue
++            if line.startswith(cond_compile_end):
++                cond_compile -= 1
++                continue
  
+             macro = re.match(macro_pattern, line)
+             if macro:
+@@ -67,6 +96,12 @@ def file_check_macro(file_path, report):
+                     macro = macro.strip()
+                     macro += f.readline()
+                     macro = macro_strip(macro)
++                if not args.verbose:
++                    if file_path.endswith(".c")  and cond_compile != 0:
++                        continue
++                    # 1 is for #ifdef xxx at the beginning of the header file
++                    if file_path.endswith(".h") and cond_compile != 1:
++                        continue
+                 check_macro(macro, report)
+ 
+ def get_correct_macros(path):
+@@ -84,11 +119,6 @@ def dir_check_macro(dir_path):
+ 
+ 
+ def main():
+-    parser = argparse.ArgumentParser()
+-
+-    parser.add_argument("path", type=str, help="The file or dir path that needs check")
+-    args = parser.parse_args()
+-
+     if os.path.isfile(args.path):
+         get_correct_macros(args.path)
+         file_check_macro(args.path, True)
 -- 
-2.25.1
+2.39.2
 
 
