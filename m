@@ -1,102 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-24288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C18593CD13
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 05:49:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5B393CD9F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 07:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF50C282C8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 03:49:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B422828D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 05:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354912B9B6;
-	Fri, 26 Jul 2024 03:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76373A8D8;
+	Fri, 26 Jul 2024 05:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="F+Lqyd5N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75951442F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 03:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0720F1A716;
+	Fri, 26 Jul 2024 05:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721965758; cv=none; b=LBNmWh0agk7mkLn08Ubjc8Oy6102P04RmtxN5424VDN4OplFTD5WJX4ItflVptbxKFznLnvH1+kAwXzefTi9lRSNoJaWzaqAC3/gaHcp+jm948/4ovpwzTRrYNtc6gRT0ZbVisy/4ycixolaKMAJcOEBgVCtrYj0W6JaBi72SUo=
+	t=1721972077; cv=none; b=XrOazpybwku7hkfJwBguo4L+XhdyY7RsxVCb/Sbdv0WHBkQ71u4efpt9DyZrNp7waJCZkSTkcovTxLTZhKp8uCZLdGraS78waGukI8q2VNGaX0AV/XvEsWq0nt9emEE9B1osPMAosG3v5DTZ9Fp7jwi6m9ICvFkE/xwxEnDmqzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721965758; c=relaxed/simple;
-	bh=4rfaUAidddvblASjtkMKjWyJL/CQTzUgNAb30NvOGhU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=W+73JmbMjEjXtuPLOuOZqBnAJ/8TryFEeiPWyVB8yNRiKwYOimdZatPNZSBomvuW5E2x0cLDQx4Yzw7rLh7IPlk5dhwfRYiEcUs5qDiQ+RqtFxMmbxUFyGB8g/hxbD31IxwWjcIGtSl6YIqbsm+AwwW36VFSv7hHPL90vUCY19A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39945779edaso17852895ab.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 20:49:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721965756; x=1722570556;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rfaUAidddvblASjtkMKjWyJL/CQTzUgNAb30NvOGhU=;
-        b=qK4ATYMOHWVhFlTlmS8QGChNgzfHxjJNN4DI7/Bouo2BkfLwtApVoKSnSVObe9LuwJ
-         9e6H1NTJvXFA0G4elQMY3hlhdwIUoMhsPepNlRa0+7BrxWiCXTUhUWXdQXeUwD1J7M1T
-         opfchYldi7/jcCEGvWa1M1GZa+9ZtY1M4xsM3JjRvREtIdYUIuUoZxh25qeUaGRHh/66
-         LWEsjJ4AFQFud59DGej3LVTecktKRIRw/0RrOqXGE2gFxVGsw07qnPSpbqjnY09v1+2s
-         WQA0v5vgz4ChdNrhOFmfmb5lQPBnnQfxVVcbolUWU2AT8oMGMZNLLezs9ZSc/JYcI2kG
-         dNgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVB0BErtgWbmmCl72bQNQ9ua1bqCUG9T0sb4ORjC+VROecItsKtb2zGchD038b0ugPwjAouy7veUP0BFRfR4/6swFsTNkA9NdqeHykSSQ==
-X-Gm-Message-State: AOJu0YwxtVJmfywelEbCgHmrAhj98PHud5OMEHvV+OY55X5bsEKsdVHU
-	mwMm/e/aIXYlLZBwHpufJkjTJPPZ674feDFfrqA72r7Fy5FLvzqjGDkbnXdE73Ki2WY0VLimbb3
-	ebxmrjUEiV49q/xtWDblIevbqn0GITJI/7Z9JFqQTxEjrMGz5wwelAwU=
-X-Google-Smtp-Source: AGHT+IGVxDfTZyj3MA9baZrtud7k5xDLfonIewOkOSq9/ct8qPqAYhIrYw1oXuG3klibzz/6OMWw9vi8eO+gii7aToGwnCPs9lAx
+	s=arc-20240116; t=1721972077; c=relaxed/simple;
+	bh=j8S11bQ4rCpOQplRWibtrlGiHW89yVi6R/BAsL7/vAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rlidzeyyLRjSOtwZ7yGTGkGw6kp7FVNqiBgyROPt5fh+rftkkH/Z6dywDYy2S0P+9I4HBZM0s3upKmREqG6RrdreVYyalFbFbTSnoJqjTaHzcAhLBy9f2oBM6lt3//jJDWh+hZSoYp8SoTTYS6mtYxyL7v/EzQtUS0ncW8Bx65w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=F+Lqyd5N; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1ekO3R2vJa5Ho8q/Kh8JU8rDOdI33MwHGdHSPVjRH/Q=; b=F+Lqyd5NBnxm8qAH18kDB2Uruz
+	NiJRYF10Mep2Cgk+TbbZPYv43LsbdLhpWiKjBa4hWOXMh/n9iJ2c3cCXABGowBV2Z8ZRQEt39Kp+1
+	HSJG6XIiuzhkKjZFZvbo1+YDqqCbkOc9kEk7M0gNEF7vs622DH0kWd0AKaMzRmEQ46omUGA7z4V5L
+	1CrwGhbkOmP5I48AVJ/qlm1fqHYycMzRuaNOQPVldOQjnhcXrbYVaDN43V+Tb+QUENR+EJVKO3vx6
+	HEq9qBEnesWr/F1qps9B1NRIE7w64ixsCOAkD0Cddup6GEWYvkJ95o4nyn438Jr2w/bvOTLZ8Nilc
+	9qD+/JDg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sXDb4-0000000294Z-21Cu;
+	Fri, 26 Jul 2024 05:34:30 +0000
+Date: Fri, 26 Jul 2024 06:34:30 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org,
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com
+Subject: Re: [PATCH bpf-next 1/2] bpf: Add kfunc bpf_get_dentry_xattr() to
+ read xattr from dentry
+Message-ID: <20240726053430.GB99483@ZenIV>
+References: <20240725234706.655613-1-song@kernel.org>
+ <20240725234706.655613-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a86:b0:382:6a83:f4fc with SMTP id
- e9e14a558f8ab-39a2185cc84mr2796975ab.5.1721965756603; Thu, 25 Jul 2024
- 20:49:16 -0700 (PDT)
-Date: Thu, 25 Jul 2024 20:49:16 -0700
-In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003cee2a061e1e65b0@google.com>
-Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
-From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725234706.655613-2-song@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-This bug is marked as fixed by commit:
-ext4: fix race condition between buffer write and page_mkwrite
+On Thu, Jul 25, 2024 at 04:47:05PM -0700, Song Liu wrote:
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+> +__bpf_kfunc struct dentry *bpf_file_dentry(const struct file *file)
+> +{
+> +	/* file_dentry() does not hold reference to the dentry. We add a
+> +	 * dget() here so that we can add KF_ACQUIRE flag to
+> +	 * bpf_file_dentry().
+> +	 */
+> +	return dget(file_dentry(file));
+> +}
+> +
+> +__bpf_kfunc struct dentry *bpf_dget_parent(struct dentry *dentry)
+> +{
+> +	return dget_parent(dentry);
+> +}
+> +
+> +__bpf_kfunc void bpf_dput(struct dentry *dentry)
+> +{
+> +	return dput(dentry);
+> +}
 
-#syz fix: exact-commit-title
+	If you keep a file reference, why bother grabbing dentry one?
+If not, you have a very bad trouble if that opened file is the only
+thing that keeps the filesystem busy.
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
-
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
-
----
-[1] I expect the commit to be present in:
-
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
-
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 10 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+	It's almost certainly a wrong interface; please, explain what
+exactly are you trying to do here.
 
