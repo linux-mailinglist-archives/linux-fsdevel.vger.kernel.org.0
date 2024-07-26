@@ -1,70 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-24346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797A493D9F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 22:44:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0172893DA25
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 23:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD456B21E16
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 20:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA61C1F24889
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 21:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E4E149DF1;
-	Fri, 26 Jul 2024 20:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827C4149DE4;
+	Fri, 26 Jul 2024 21:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/HhQ/5r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7Xv0CQm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D06A18641;
-	Fri, 26 Jul 2024 20:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDBE748A;
+	Fri, 26 Jul 2024 21:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722026640; cv=none; b=tG1hDLcmpuYh8omadJxh/7l5ItX13afJi6eddh+lfOgyrsrwr/rXlD7N8R7HFl9FId8GbHx8zcPuRcWab8LTVCW23tCoxe6CF6778V7JQajPXkj72GIaH4TCoZ6Tmpl6mGLEu38B+kuL/6RbuTH+8naOsHrZyemO+/nc1Zw60aQ=
+	t=1722029141; cv=none; b=bi1kZzbCbkGsBMk8sDbXoiguvtEu5kl48gvYYNfH3BdSnmLWS+7cUTiHQa6h/+wmkIUYvgZNUmGxznzJMPD1GlaZqoSB4BzhAie72g9RxmdcTPWHUBf3PjPZFy/VyO9nU5ZRVVo3Tzcq9v1pMtV5eNurtltG1B/kmMLHTpnuSwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722026640; c=relaxed/simple;
-	bh=hM8iivXgSA4AqwIarR0kTiPI4WtIKtBZ4ns7ldzts4I=;
+	s=arc-20240116; t=1722029141; c=relaxed/simple;
+	bh=dGtjdsM0MYUinBeyrunagVNApFyw25OHOkvnVOiuFQ8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oHRYS/fF/pYVt/ix2UAw2MCXnUuyGaeBNOUI9r4RZBzcpG0YnoZKtDYHlk3JA+f1ryyGq++j5mgNrafUn9332IH/4e3+EtF9rTJ3tZu9vW8RGLWdRH6NCWMFvh1z2oACkX9+rvOPfgiQhDgkBk2bbLLRcuu09S5DQXt7+5oSBgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/HhQ/5r; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-368663d7f80so32177f8f.3;
-        Fri, 26 Jul 2024 13:43:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722026637; x=1722631437; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WsUmGU/Xd8GlODUPJCjW1QXb2HsgcufehzB5dimi4dI=;
-        b=T/HhQ/5rK0HMDNEpTWlgKjTnPKEPGHSYA5Emr0kPKtEG9+JTL3rq50Se4uB9Y97s8S
-         rl6BmYiWC1uxJiJ/dAArYYiSs1N2zrbPtCN+c5r247Ej6+ZFdNcoCWKC2WDNTEhEgkro
-         v5NR4zr3mPp/4Jts7SP9MGjub1BkRbiyZiPf1Lo3OiKSZnKJjQORaTI3dLErubwfnaKB
-         EyNn+dl5JOfaGeCh6X/K5snhpyp8aYC3XnPhWoDMiteIf3gzWrkSdat0no/Rvo9iBHLX
-         I2jD5P/V07EEuD61156uRPsujxN49bZFgzyyxeB6QrhOb4FcUYVa676h7bI/SdQCuZmF
-         7l2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722026637; x=1722631437;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WsUmGU/Xd8GlODUPJCjW1QXb2HsgcufehzB5dimi4dI=;
-        b=ISikVOYL9JYyGd8E3MMhzxlscaT39AaJWNmlkl1i4WZhULXmu1ok3f5QAFT0tgGPyW
-         MpZVBxX95oN62ZAjiX4PH0wDQQ+nsn33bl3sk9p/NNL9UHqZhAfPUbbOXfFTKJE0UJpk
-         tMQkKI7ljf9f80CsZyYSf6FwDYAgkh54HEi5NP1LHozcbqXUf5WmHHrUgU/Au74NvEYh
-         4WwuhPATcj/DGXDhyLev5I4QOdBHGS9oGLcDdS3j4HwTwzzHZQutdmtUsGTBRkm4irk9
-         UQYcsBV08zoZWe9HoEyA0wXhBOQQARgAVA/Phx/8byvvqFYyKFfeJQQwRh1xhBvXahrs
-         fGnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwpsek4U3WLlHB02qESESPShWM7AZEWX/JDyIROsAngi2wjMp/gHVRawoOHmbJrLJ4WigBv2mtbFT81b6SuNroSKNqakp/UTy+rnCbTg==
-X-Gm-Message-State: AOJu0YxRn6ddWaie+qoFr5icl9ICjqxShIiD85GRB1WjtcC5iiKFvC28
-	y5YkEA+U52EBUJcgzBiqignxTlKvNHL7TaeSEQEHKVoVf9Yx65DotQjY5Qqp+Wlf55MyJ0bKb7M
-	kl3s3vZhL6tOVh6ZnEGrQ4irQNYU=
-X-Google-Smtp-Source: AGHT+IF/2WvisaCojPRg+FrIbmLFaXFsgDsfCrIqb9HopHeSr/rZn/YC8CZhzxSnXdOi7/orIpacdo0VoODzHctT8Vs=
-X-Received: by 2002:a05:6000:178b:b0:368:3b1a:8350 with SMTP id
- ffacd0b85a97d-36b5cf240a3mr530842f8f.19.1722026636746; Fri, 26 Jul 2024
- 13:43:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=DKWi99aWb24aIf+vCZyd5CucNWkhvOvOiUA7OkoPAcdwNp4Hebo1nIrZKq9WmP57GhUTjSMi419DBRwqm30D6unywtHWcUgXkVgWArNWH8H65GZIIKv7wOVeHBb5cEo2XvzBOgX09p5Ce3PWvr4QHPJazp/lfy3h8P1fbs/C9jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7Xv0CQm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 567A5C4AF0A;
+	Fri, 26 Jul 2024 21:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722029140;
+	bh=dGtjdsM0MYUinBeyrunagVNApFyw25OHOkvnVOiuFQ8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=S7Xv0CQmyzJmB0dLQeAxXkmizQURNojzNqqYBfJPRnXg85BKk9KyQ/qSnFlDEF3xE
+	 jLJ67TkKcTInhEjbiMuHD8LnYl7kVcZrhWWO+C4Fh88GglIIhB1HaOG0e2+QyQVNoJ
+	 5hO8oIXKMoUHWYwXovO+VgVEqQS+YLwcliAVs9DLuTu2Qs9IdX7aXHKXmu0EcARBX6
+	 XS7ayxdoPCQpgHPuS2JN89tPeV6+faaLV2AQ444Oxh34mGl1MouEpufGrPcq8mx1Sm
+	 aPYYq2P+NfY/zIOVwPcqLjwdy8siQ7Kg9ruNL7hzijhpK/AZKyca5Wbc5A6zdn9ABN
+	 nc1ic7DVQduGw==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52efd530a4eso2568954e87.0;
+        Fri, 26 Jul 2024 14:25:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXLftTG21oRPPZhT71WZBkK5NQy7hwViRMtQqQGjCOvEiPgyRgBxNnOFaZafGRO9P4yITo/biyzTo911plJWUtWdLSVufwWpEXxyz6kgQ==
+X-Gm-Message-State: AOJu0YzYrIcQy4splB8n/+QAs23+9//w1RqOxNjvDNm2nnbGRCmaWIOq
+	Kc1WX99Jb0ivGFoOERVj9wu5yEqbhEopbxN333o4UNPKn3lqcMWBYtwBRfoL1j+XhwN4iOyObDf
+	aQ8+pWqg0EwAVxNFCzVJcwSHAIdc=
+X-Google-Smtp-Source: AGHT+IHujnYlHv0s5WVRnzT0cfpS/EzmC5Rz3kif1yuB8sO4y2vzvkxIJkzO5QsyL+rFv5wtcG6Jd+aU44G5q2mk4lk=
+X-Received: by 2002:a05:6512:2524:b0:52e:9b15:1c60 with SMTP id
+ 2adb3069b0e04-5309b2ca2eemr770178e87.48.1722029138560; Fri, 26 Jul 2024
+ 14:25:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,48 +59,40 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240726085604.2369469-1-mattbobrowski@google.com> <20240726085604.2369469-2-mattbobrowski@google.com>
 In-Reply-To: <20240726085604.2369469-2-mattbobrowski@google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 26 Jul 2024 13:43:45 -0700
-Message-ID: <CAADnVQJdv9rjCHMzmE+W4AO3GgKjNjS_c06kC0iXe+itDstGZQ@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Fri, 26 Jul 2024 14:25:26 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7fOvLM+LUf11+iYQH1vAiC0wUonXhq3ewrEvb40eYMdQ@mail.gmail.com>
+Message-ID: <CAPhsuW7fOvLM+LUf11+iYQH1vAiC0wUonXhq3ewrEvb40eYMdQ@mail.gmail.com>
 Subject: Re: [PATCH v3 bpf-next 1/3] bpf: introduce new VFS based BPF kfuncs
 To: Matt Bobrowski <mattbobrowski@google.com>
-Cc: bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Jiri Olsa <jolsa@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: bpf@vger.kernel.org, ast@kernel.org, kpsingh@kernel.org, andrii@kernel.org, 
+	jannh@google.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	jolsa@kernel.org, daniel@iogearbox.net, memxor@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Fri, Jul 26, 2024 at 1:56=E2=80=AFAM Matt Bobrowski <mattbobrowski@googl=
 e.com> wrote:
-> +
-> +static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_i=
-d)
-> +{
-> +       if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
-> +           prog->type =3D=3D BPF_PROG_TYPE_LSM)
-> +               return 0;
-> +       return -EACCES;
+>
+[...]
+> +       len =3D buf + buf__sz - ret;
+> +       memmove(buf, ret, len);
+> +       return len;
 > +}
+> +__bpf_kfunc_end_defs();
 > +
-> +static const struct btf_kfunc_id_set bpf_fs_kfunc_set =3D {
-> +       .owner =3D THIS_MODULE,
-> +       .set =3D &bpf_fs_kfunc_set_ids,
-> +       .filter =3D bpf_fs_kfuncs_filter,
-> +};
+> +BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
+> +BTF_ID_FLAGS(func, bpf_get_task_exe_file,
+> +            KF_ACQUIRE | KF_TRUSTED_ARGS | KF_SLEEPABLE | KF_RET_NULL)
+> +BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE | KF_SLEEPABLE)
+
+Do we really need KF_SLEEPABLE for bpf_put_file?
+
+Thanks,
+Song
+
+> +BTF_ID_FLAGS(func, bpf_path_d_path, KF_TRUSTED_ARGS | KF_SLEEPABLE)
+> +BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
 > +
-> +static int __init bpf_fs_kfuncs_init(void)
-> +{
-> +       return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc=
-_set);
-> +}
-
-Aside from buf__sz <=3D 0 that Christian spotted
-the bpf_fs_kfuncs_filter() is a watery water.
-It's doing a redundant check that is already covered by
-
-register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM,...
-
-I'll remove it while applying.
+[...]
 
