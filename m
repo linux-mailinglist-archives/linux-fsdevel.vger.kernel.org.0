@@ -1,287 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-24283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5216393CB5A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 01:48:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50E193CC35
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 03:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B931C21042
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jul 2024 23:48:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E98811C21110
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jul 2024 01:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E565014A0A2;
-	Thu, 25 Jul 2024 23:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645AF17FF;
+	Fri, 26 Jul 2024 01:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqXj1E3D"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="psekbiTT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A6E1448EF;
-	Thu, 25 Jul 2024 23:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D9380B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 01:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721951253; cv=none; b=PFvTwNU+v22C4ZQd6GaYxZ+zdZSa/tJwfCSiusU5YlHllUmr7x6JyW/HyOISKcKb+GZkKgoiR4OZSeWqNwNM2PZKwK22DIKdrBEaflyZmVDSvwTxerydvRo1x0KhUWCnC0LUDEwIcnLWuFrvut8G5IS8FuIpmiGC3aCHeqWcPe8=
+	t=1721955944; cv=none; b=YZl3rTCkIw2fcrnZttLD4YKNlPPv6wM4nr1sSpxvn2XywDdd6CtPWIgD048ajALIsJjfOKlvZ9li0HdAbPqLHskFxnDrhisFoZgvG/qCrL/1J2XBiczh1YEfLf0zN5WYDP4gzF4DtTThCK7ubB21FCX7W1k9gCAZVMuRQ7Ev/2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721951253; c=relaxed/simple;
-	bh=PUgjQxlKWaIMqyGx3fXaZXi8AHfHJ5blsyfSLofmLmI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hBIAVrlXkNHXifm/HF2FHNqOHDghDdUX5wkPyDFzBPaErxWbAKtE6wSJ4RsQbTDO2GRIWHFyjFqWxz5Z1jD2iNCkBqkNZl//AsLEtJrqOAQtsa0GoI1waMNrJNYI7q0CV1T5prImWTWCjdnGqK1PGGSqRQYBKdSTmzqoLbz/yxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqXj1E3D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D644CC116B1;
-	Thu, 25 Jul 2024 23:47:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721951253;
-	bh=PUgjQxlKWaIMqyGx3fXaZXi8AHfHJ5blsyfSLofmLmI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mqXj1E3D1YE5rgAvYstkrGs85MXZah8kIjgzJRDRuQS5jDD/i4oV4b7Swsotj9jxR
-	 CX/3I7rIpjUWIubBmAw4Oe+kGZjA3eHyr19dd6IYtkVF61LBDsmldFtqWzuEqmD+fT
-	 nMjvgeOh1UiHpX3hvQfint350c+53R4L8TbD+V5zSnudbQwicwKommxhPYkPu2iyMc
-	 7Vr9aGlx03SRjS2EXP/M4zcCKrJtIviJZVgfX/+Htwe9d6KbSKRJ8bYLg+MxAwrona
-	 dbbx/t/STEShG3UkYy3ZNBc/pW0vGcDdP1WNt+hW9NzD+INDPhiCvxIUyAoS1vMkHv
-	 C2HHtPxQq+EyA==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 2/2] selftests/bpf: Add tests for bpf_get_dentry_xattr
-Date: Thu, 25 Jul 2024 16:47:06 -0700
-Message-ID: <20240725234706.655613-3-song@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240725234706.655613-1-song@kernel.org>
-References: <20240725234706.655613-1-song@kernel.org>
+	s=arc-20240116; t=1721955944; c=relaxed/simple;
+	bh=SYiXtPtA7u1goqwd0iJdJa6uUwj2jarWAZpR6Ns6Dk4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=G6cdoTafx98OCIJfpRd3yR6gZZ/XuvudhlqAfFuupRcIncdxrGa3BZctIkpY26SCrWcq/ZttMuf0lANrVBifikv1c1FJPw7a++nmRM5ZMHB6kO8hs6k4sos4dyG+8j+juGwp79eLNX9uDgXWEECDLGSKfeV3fqLPyhTJY/ILORs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=psekbiTT; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5cebd3bd468so296325eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jul 2024 18:05:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721955942; x=1722560742; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wplub1KYBY00My21K+3e0Cz2sX6Rz/xbxhkg+HgxJvY=;
+        b=psekbiTTFHay9shkJxoheIO3/dWGTsEXJXiUFlvGUtU8OsSz4r6sPIx80hg/NUxHOQ
+         2GAAAcccdlqr4TTvILzxp7y20CWCcxDOfYCx1qXV7qNjMm9Z3kjuNMVjQW9+c0s2vjmL
+         Rc4VQgqvHfbTJuDzviTkPZckquo2DiaLW2O9Fa0oXWXWmZsqK+PiC8YNaGdVtHrtNPwT
+         mMsYQ8V5kaRVF4ltroYGArWMfGndTvHol+sdjNOKahjuC75wfsHwJqCxyOMfkgHC3zl/
+         n5UKCS2jgoPkydBYyFSb9uKis+F8C1LTenl0DnAG5zjUEcshtZwfx+WrNLx/7Ei4FoXy
+         hCRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721955942; x=1722560742;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wplub1KYBY00My21K+3e0Cz2sX6Rz/xbxhkg+HgxJvY=;
+        b=EblKc2xliA3vILP0EqzQrVCp/91VbQv4cGoluHeZTkHgAn/5c3fO4SUIwfYbJWWzYS
+         PvbnZACGg4CZkWINdHKdgpsmBvMHQA0Kh8FmEbgSXkGxcuSG+cPWIUkVCwEOVP1N7thg
+         1QLlvG2uKtsBXlZ8XNg+rzI6q1sBWx/kXR/QSkzyNYOtVJ/wmL6lGIpWTm8AdQP+x0wo
+         xhLJxf62i0DrnmiUuNKZb3Ip2is3mYdMxJocwo1LQGxpolscDBCibJP326MOzb/8n44M
+         XDlz9fkEf/eM/0tUZ5K5+qCHdl7biemRYJgix0naTb1mFVg+PmCIj+odG+WNcQqZFUg3
+         1+TA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2zt7Sxe/59cwN2V/q+giSP38Z4F4/wvYjuBix5Bb+xBYGCbyPhDYCJQbEFp3OxUPUt1HZInAOX1uqARkY9lxoZdw7hN6KnaDYiFvL+A==
+X-Gm-Message-State: AOJu0Yz4D9dY6L5OfQ4qSF4YKCBoKjJ9op1wlYh5Tp2RjfbgJeVNdbeB
+	9m8ZsA58u90frZJjoE5o3hJQ5SSvjs5a+ALy2vzA/P5HSsPhPqsdwQM5Upb1cg==
+X-Google-Smtp-Source: AGHT+IGnXV3TJ01uIVgCnW2YbhkwhU19alV6F/dmPEewcN1biNfibE6YR5zlLHgLvW0JKfRTuG4OLw==
+X-Received: by 2002:a05:6820:270b:b0:5b9:e7db:1cf8 with SMTP id 006d021491bc7-5d5b429a512mr4384785eaf.4.1721955942191;
+        Thu, 25 Jul 2024 18:05:42 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-709307923acsm552014a34.76.2024.07.25.18.05.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 18:05:39 -0700 (PDT)
+Date: Thu, 25 Jul 2024 18:05:27 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Chuck Lever <chuck.lever@oracle.com>
+cc: Hugh Dickins <hughd@google.com>, "Hong, Yifan" <jacky8hyf@gmail.com>, 
+    Rob Landley <rob@landley.net>, linux-kernel@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+    bugzilla-daemon@kernel.org
+Subject: Re: [Bug 219094] gen_kheaders.sh gets stuck in an infinite loop (on
+ tmpfs)
+In-Reply-To: <bug-219094-5568-fyOeXKhNmt@https.bugzilla.kernel.org/>
+Message-ID: <a2808893-d257-e6b3-e168-0478d7255621@google.com>
+References: <bug-219094-5568@https.bugzilla.kernel.org/> <bug-219094-5568-fyOeXKhNmt@https.bugzilla.kernel.org/>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-1. Rename fs_kfuncs/xattr to fs_kfuncs/file_xattr and add a call of
-   bpf_get_dentry_xattr() to the test.
-2. Add a new sub test fs_kfuncs/dentry_xattr, which checks 3 levels of
-   parent directories for xattr. This demonstrate the use case that
-   a xattr on a directory is used to tag all files in the directory and
-   sub directories.
+Please send responses by email reply-to-all rather than through bugzilla.
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../selftests/bpf/prog_tests/fs_kfuncs.c      | 61 +++++++++++++++++--
- .../selftests/bpf/progs/test_dentry_xattr.c   | 46 ++++++++++++++
- .../selftests/bpf/progs/test_get_xattr.c      | 16 ++++-
- 3 files changed, 117 insertions(+), 6 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/progs/test_dentry_xattr.c
+On Thu, 25 Jul 2024, bugzilla-daemon@kernel.org wrote:
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-index 37056ba73847..a960cfbe8907 100644
---- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-@@ -2,17 +2,19 @@
- /* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
- 
- #include <stdlib.h>
-+#include <sys/stat.h>
- #include <sys/types.h>
- #include <sys/xattr.h>
- #include <linux/fsverity.h>
- #include <unistd.h>
- #include <test_progs.h>
- #include "test_get_xattr.skel.h"
-+#include "test_dentry_xattr.skel.h"
- #include "test_fsverity.skel.h"
- 
- static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
- 
--static void test_xattr(void)
-+static void test_file_xattr(void)
- {
- 	struct test_get_xattr *skel = NULL;
- 	int fd = -1, err;
-@@ -50,7 +52,8 @@ static void test_xattr(void)
- 	if (!ASSERT_GE(fd, 0, "open_file"))
- 		goto out;
- 
--	ASSERT_EQ(skel->bss->found_xattr, 1, "found_xattr");
-+	ASSERT_EQ(skel->bss->found_xattr_from_file, 1, "found_xattr_from_file");
-+	ASSERT_EQ(skel->bss->found_xattr_from_dentry, 1, "found_xattr_from_dentry");
- 
- out:
- 	close(fd);
-@@ -58,6 +61,53 @@ static void test_xattr(void)
- 	remove(testfile);
- }
- 
-+static void test_directory_xattr(void)
-+{
-+	struct test_dentry_xattr *skel = NULL;
-+	static const char * const paths[] = {
-+		"/tmp/a",
-+		"/tmp/a/b",
-+		"/tmp/a/b/c",
-+	};
-+	const char *file = "/tmp/a/b/c/d";
-+	int i, j, err, fd;
-+
-+	for (i = 0; i < sizeof(paths) / sizeof(char *); i++) {
-+		err = mkdir(paths[i], 0755);
-+		if (!ASSERT_OK(err, "mkdir"))
-+			goto out;
-+		err = setxattr(paths[i], "user.kfunc", "hello", sizeof("hello"), 0);
-+		if (!ASSERT_OK(err, "setxattr")) {
-+			i++;
-+			goto out;
-+		}
-+	}
-+
-+	skel = test_dentry_xattr__open_and_load();
-+
-+	if (!ASSERT_OK_PTR(skel, "test_dentry_xattr__open_and_load"))
-+		goto out;
-+
-+	skel->bss->monitored_pid = getpid();
-+	err = test_dentry_xattr__attach(skel);
-+
-+	if (!ASSERT_OK(err, "test_dentry__xattr__attach"))
-+		goto out;
-+
-+	fd = open(file, O_CREAT | O_RDONLY, 0644);
-+	if (!ASSERT_GE(fd, 0, "open_file"))
-+		goto out;
-+
-+	ASSERT_EQ(skel->bss->number_of_xattr_found, 3, "number_of_xattr_found");
-+	close(fd);
-+out:
-+	test_dentry_xattr__destroy(skel);
-+	remove(file);
-+	for (j = i - 1; j >= 0; j--)
-+		rmdir(paths[j]);
-+}
-+
-+
- #ifndef SHA256_DIGEST_SIZE
- #define SHA256_DIGEST_SIZE      32
- #endif
-@@ -134,8 +184,11 @@ static void test_fsverity(void)
- 
- void test_fs_kfuncs(void)
- {
--	if (test__start_subtest("xattr"))
--		test_xattr();
-+	if (test__start_subtest("file_xattr"))
-+		test_file_xattr();
-+
-+	if (test__start_subtest("dentry_xattr"))
-+		test_directory_xattr();
- 
- 	if (test__start_subtest("fsverity"))
- 		test_fsverity();
-diff --git a/tools/testing/selftests/bpf/progs/test_dentry_xattr.c b/tools/testing/selftests/bpf/progs/test_dentry_xattr.c
-new file mode 100644
-index 000000000000..d2e378b2e2d5
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_dentry_xattr.c
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_kfuncs.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+__u32 monitored_pid;
-+__u32 number_of_xattr_found;
-+
-+static const char expected_value[] = "hello";
-+char value[32];
-+
-+SEC("lsm.s/file_open")
-+int BPF_PROG(test_file_open, struct file *f)
-+{
-+	struct bpf_dynptr value_ptr;
-+	struct dentry *dentry, *prev_dentry;
-+	__u32 pid, matches = 0;
-+	int i, ret;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-+
-+	dentry = bpf_file_dentry(f);
-+
-+	for (i = 0; i < 10; i++) {
-+		ret = bpf_get_dentry_xattr(dentry, "user.kfunc", &value_ptr);
-+		if (ret == sizeof(expected_value) &&
-+		    !bpf_strncmp(value, ret, expected_value))
-+			matches++;
-+
-+		prev_dentry = dentry;
-+		dentry = bpf_dget_parent(prev_dentry);
-+		bpf_dput(prev_dentry);
-+	}
-+
-+	bpf_dput(dentry);
-+	number_of_xattr_found = matches;
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_get_xattr.c b/tools/testing/selftests/bpf/progs/test_get_xattr.c
-index 7eb2a4e5a3e5..3b0dc6106ca5 100644
---- a/tools/testing/selftests/bpf/progs/test_get_xattr.c
-+++ b/tools/testing/selftests/bpf/progs/test_get_xattr.c
-@@ -9,7 +9,8 @@
- char _license[] SEC("license") = "GPL";
- 
- __u32 monitored_pid;
--__u32 found_xattr;
-+__u32 found_xattr_from_file;
-+__u32 found_xattr_from_dentry;
- 
- static const char expected_value[] = "hello";
- char value[32];
-@@ -18,6 +19,7 @@ SEC("lsm.s/file_open")
- int BPF_PROG(test_file_open, struct file *f)
- {
- 	struct bpf_dynptr value_ptr;
-+	struct dentry *dentry;
- 	__u32 pid;
- 	int ret;
- 
-@@ -32,6 +34,16 @@ int BPF_PROG(test_file_open, struct file *f)
- 		return 0;
- 	if (bpf_strncmp(value, ret, expected_value))
- 		return 0;
--	found_xattr = 1;
-+	found_xattr_from_file = 1;
-+
-+	dentry = bpf_file_dentry(f);
-+	ret = bpf_get_dentry_xattr(dentry, "user.kfuncs", &value_ptr);
-+	bpf_dput(dentry);
-+	if (ret != sizeof(expected_value))
-+		return 0;
-+	if (bpf_strncmp(value, ret, expected_value))
-+		return 0;
-+	found_xattr_from_dentry = 1;
-+
- 	return 0;
- }
--- 
-2.43.0
+> https://bugzilla.kernel.org/show_bug.cgi?id=219094
+> 
+> Hong, Yifan (jacky8hyf@gmail.com) reports:
+> 
+> I have hit a similar bug to https://bugzilla.kernel.org/show_bug.cgi?id=217681, but on tmpfs. 
+> 
+> Here's a small reproducer for the bug, from https://bugzilla.kernel.org/show_bug.cgi?id=217681#c1:
+> 
+> ```
+> #include <sys/types.h>
+> #include <dirent.h>
+> #include <stdio.h>
+> 
+> int main(int argc, char *argv[])
+> {
+>   DIR *dir = opendir(".");
+>   struct dirent *dd;
+> 
+>   while ((dd = readdir(dir))) {
+>     printf("%s\n", dd->d_name);
+>     rename(dd->d_name, "TEMPFILE");
+>     rename("TEMPFILE", dd->d_name);
+>   }
+>   closedir(dir);
+> }
+> ```
+> 
+> Run in a directory with multiple (2000) files, it does not complete on tmpfs. I created a tmpfs mount point via
+> 
+> ```
+> mount -o size=1G -t tmpfs none ~/tmpfs/mount/
+> ```
+> 
+> The other bug was fixed on btrfs via https://lore.kernel.org/linux-btrfs/c9ceb0e15d92d0634600603b38965d9b6d986b6d.1691923900.git.fdmanana@suse.com/. Could anyone please see if the issue can be ported to tmpfs as well? Thanks in advance!
+> 
+> I am using a `Linux version 6.6.15` kernel, if that's useful to anyone.
 
+Thank you for reporting, Yifan; and thank you for the easy reproducer, Rob.
+
+Yes, it appears that tmpfs was okay for this up to v6.5, but cannot cope
+from v6.6 onwards - a likely-sounding fix went into v6.10, but that must
+have been for something different, v6.10 still failing on this repro.
+
+Chuck, I'm hoping that you will have time to spare to solve this in latest;
+and then we shall want a backport (of only this fix, or more?) for v6.6 LTS.
+
+Thanks!
+Hugh
 
