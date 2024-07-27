@@ -1,118 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-24359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0DD93DD79
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2024 08:13:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C982293DDA2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2024 09:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089CF284980
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2024 06:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68AD41F223C6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2024 07:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BE91BDD0;
-	Sat, 27 Jul 2024 06:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617A51B86C2;
+	Sat, 27 Jul 2024 07:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIlpbXn5"
+	dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b="cgAwlTeA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91FC1B86F9
-	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jul 2024 06:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9034D282EE
+	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jul 2024 07:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722060830; cv=none; b=HV03E2kM0agk0Oh4PwHZkYSJTUUHHk/Y3DzjfkxlCdmxmG/8eKr4U6ma5r4Z/hTMVC6hQzV1At0nY/OG/bN7HBblUrWlWBpx44gfgea9YKQrDn6s1PB0b9kC+qpwg40AKtr9AO9TcFo8r5++YC9QXxgZ46w8JJxxloRYhM7Q6no=
+	t=1722064927; cv=none; b=uVU5m0cnETWpOynD5cHH6bI7XiI7fS/pRQ7QKoguCR3zwgR2Eh45Oh3vEGEBpW4njbU40KTr6giFKF08RJxjNbTLMDYtZOpbCXRnHvbIu8P4JDe4vad2djkT037ljcD0tvEovv1yRJdkoOoLaSXvcqrQ8Wvs1h965lJOyXvXdhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722060830; c=relaxed/simple;
-	bh=30cMus3ICjoofxFiRIvDmfqr6dT15Jqh6QDYU4tPQ6M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A2TmzyQlRZiwKdjE3gsUfk7JrCr8MoffIGqdzCw8yntkLCe5us7ww02ga6hjhi5zA1HjO5xft33JJdzbdFYXrMI+CDhReQ/fwhVt6CNE63Bp5MfeIKuVJGlAiblFX1C0wk6I+nV+QQhNVlMux7q0DCgBaEJTiqJ0dNpwSRT3MEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIlpbXn5; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc611a0f8cso10792555ad.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jul 2024 23:13:48 -0700 (PDT)
+	s=arc-20240116; t=1722064927; c=relaxed/simple;
+	bh=vzIBUEToGq/rg33KRZqUbS+BZo+vr87Uh3U+ngv0nxY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Orb6HU+GIGUUChVhJe39BY6nybqrffhKLzMKO8Oz/lGcrZ0CKlw2y8txSsvSAs7HSIb+YTcWsnAX47BlL7fAGfTPx/ABy8Oi1CAlKsFD/MdAvF1rxhTss/RPAI8qWKugLPv1k8oN0Nsf4afTkTR7DpX4wxNoPAzpcgwJO7S888c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in; spf=fail smtp.mailfrom=mitaoe.ac.in; dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b=cgAwlTeA; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mitaoe.ac.in
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb566d528aso1305309a91.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jul 2024 00:22:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722060828; x=1722665628; darn=vger.kernel.org;
-        h=content-transfer-encoding:commitdate:commit:authordate:author
-         :mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
+        d=mitaoe.ac.in; s=google; t=1722064924; x=1722669724; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=dIv6o2cjHwR7n5agPON2AEA6FDTvC7wsWd7s+OCH6vk=;
-        b=GIlpbXn53h3Dwpvh7wUsFU3ClEBX3e/M0uRNEyadXXYh9sNg0xZ1kE78UpS1ee1P+k
-         h1WFLjyI691URZA99jSg0jM0Qoz5+7QtMswIoIC7S4Hp2gmN6iVPY1/j2jCGcMqXVJLy
-         4rXvaBm4Ig1ou1mm8D1tx+IWzDo4UKoRNB/3AJV6Gxfe3kZU0diY1Bd3Ctqh9YmUbjob
-         Js+FIQTzYSaPMX/XzjN22SV+WQTtYdtdwNKQt+tPygZm8NhEAc62Bccip/y3qEVHg4cC
-         gTmvBAYM6CwbpKC59XOBHZewGuWnqEyeDo/XlpDk4TK18JCZyHIJswN9rgISB9LLFl3A
-         W3Mw==
+        bh=vzIBUEToGq/rg33KRZqUbS+BZo+vr87Uh3U+ngv0nxY=;
+        b=cgAwlTeAouwmAEyUjvaLlNszhhauusGUfIFUXlmwbY39d1HhBzrj/YqjEa+Q7XwBBc
+         HdgKRQahGw7JY3vYGjrG090SSAJ94KvqtC0rCGeqU4WJsurkgQIou/kqFJwocxpCZXAn
+         SrXEWhWKrxgUC2XFK49/YE3gdZ35xy7Ncz1xCImxTVRBcbIOet93gj1bsMjeqhXOSoE7
+         f7OXzrTuoQ3Bpxq+VLz0p2pegHLofJdbC+WdPgRZuxBddAb6YMfGgBnIuIEBTkTZL2VM
+         Gps29hjaKzZ7dkdF2y1Jlvq1yodxHWLovLLVa5Fb7GX0q6RSC5CqJL/m2XT1BHcUJyWz
+         0EYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722060828; x=1722665628;
-        h=content-transfer-encoding:commitdate:commit:authordate:author
-         :mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
+        d=1e100.net; s=20230601; t=1722064924; x=1722669724;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dIv6o2cjHwR7n5agPON2AEA6FDTvC7wsWd7s+OCH6vk=;
-        b=srkNSL/yZOvnOvu8JCyCJgLPLWiM58e7g79/aF68o7uoOsf5+iHvIa5aLFJtxcrfST
-         Dh/He2ArUgs9vaZdcIRMPndkgczfD0sVO4ckBkEFyl+uPw6CCKHi1jfWADsZAOkrya8S
-         /oBNGRCMcDu2KpKX4osNadf3+6xRcvKjq899iAPdZ2qzHSS4szhzhf4uCN1gKN14cLvf
-         K4JtG1iDAfSgloKJ1yH0wwcG6nTeQsv18D4OXrIfybqrXByKJ21Pp7MiSs2m36WCbrQv
-         7QM7y19F0cHgLIFOowOaIodcaKPZsFM1U288VDW6neD92I4Z0Y5R1HDgbZp+oS1ACuMw
-         z2MQ==
-X-Gm-Message-State: AOJu0YzWxt6s1IAvt3kaA6rZDV+pbnQPyNdXp/6PRCQU8wUX/bIjF2QT
-	UMlhB5d059VniZY3EpnmxDl4OWOUwPZJ0s+Bh9SUglcT4v0y7LctshDOtLWhEM8=
-X-Google-Smtp-Source: AGHT+IFpOo1oQCAtnUf97PPu718sDjJVZonCcKi4Dr7Xm8pgwAGofwWKaluBn7BA4levU45OLmh5OQ==
-X-Received: by 2002:a17:902:d4cd:b0:1fb:68a2:a948 with SMTP id d9443c01a7336-1ff04809ab3mr14672205ad.15.1722060827690;
-        Fri, 26 Jul 2024 23:13:47 -0700 (PDT)
-Received: from BiscuitBobby.am.students.amrita.edu ([175.184.253.10])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee15a9sm43068755ad.151.2024.07.26.23.13.45
+        bh=vzIBUEToGq/rg33KRZqUbS+BZo+vr87Uh3U+ngv0nxY=;
+        b=w/UVv4cZeejlsLThD4wUPXXdFt5r2xJNbNJ5UavfOE0sqJWzSYLuZ1MoyqnmdrWRWD
+         U3qliPZ1RScQ/jJiflH26kPM8vukbJxO+3WQqCUwEKFmTghtIcs/2nIV956J35Zeos9e
+         xiPLiOIFsx/l7CgC31TXRowDbnz/Ijz4JT6o+tlQ1CueWTfihzvxwrKgZNSCq3DIAgHf
+         AmI//cttVphZz30VOsbHeqRYt0lR4DWLM3nb7TYHXcNrw5SbEYimFh34amrSU5lktUNq
+         nTSPTlmMJ508Qm65o78/m7tIYaZydMbFX3qwAfXZPSwHKfvY9HvPdy1wGNSdCuYF+53N
+         eEYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtP1qeyX2ALT/zrFysfV6giSU5c4ID9s2kP7KnvezJLmGYvPfP/XrWfXLyb8Z+pckZWlq4Dq/wV4c1BM3X6CXd5kO8eRoGDU+rcTcFeQ==
+X-Gm-Message-State: AOJu0YwsP+S+SgM2PhIQVGaDpSH+T9YAjECfPh0n9hT1C12t0nOOlkcx
+	PhXd/7KDNPnU7WTyqndih6vA7UkzFXVPezV7fzaN0Dh1abvI5mtWGJ7v/AJKokCwAKYITa41A3Q
+	Wpl4=
+X-Google-Smtp-Source: AGHT+IFczpc3FZ0FglqXNLJYRYQU7w8MjWdAByQrR/3N/RxSEsot5zMll4v5JvehTrzeRMwzFMqKBQ==
+X-Received: by 2002:a17:90b:4a04:b0:2c5:32c3:a777 with SMTP id 98e67ed59e1d1-2cf7e5f5ddemr1921643a91.28.1722064924579;
+        Sat, 27 Jul 2024 00:22:04 -0700 (PDT)
+Received: from localhost.localdomain ([152.58.18.158])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb74e8769sm6634537a91.42.2024.07.27.00.22.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jul 2024 23:13:47 -0700 (PDT)
-From: Siddharth Menon <simeddon@gmail.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
-	syzbot+fdedff847a0e5e84c39f@syzkaller.appspotmail.com,
-	Siddharth Menon <simeddon@gmail.com>
-Subject: [PATCH v2] hfsplus: Initialize directory subfolders in hfsplus_mknod
-Date: Sat, 27 Jul 2024 11:43:04 +0530
-Message-Id: <20240727061303.115044-1-simeddon@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Sat, 27 Jul 2024 00:22:03 -0700 (PDT)
+From: mohitpawar@mitaoe.ac.in
+To: brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [Patch] Fixed-fs-file_table_c-Missing-blank-line-warnings-an.patch
+Date: Sat, 27 Jul 2024 12:51:33 +0530
+Message-Id: <20240727072134.130962-1-mohitpawar@mitaoe.ac.in>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <linux-fsdevel@vger.kernel.org>
+References: <linux-fsdevel@vger.kernel.org>
+Reply-To: brauner@kernel.org jack@suse.cz
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Author:     Siddharth Menon <simeddon@gmail.com>
-AuthorDate: Sat Jul 27 10:31:53 2024 +0530
-Commit:     3f02808f3a98598adf145b3347b50926fd7d5c74
-CommitDate: Sat Jul 27 10:31:53 2024 +0530
 Content-Transfer-Encoding: 8bit
 
-Addresses uninitialized subfolders attribute being used in 
-`hfsplus_subfolders_inc` and `hfsplus_subfolders_dec`.
 
-Fixes: https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
-Reported-by: syzbot+fdedff847a0e5e84c39f@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/x/report.txt?x=16efda06680000
-Signed-off-by: Siddharth Menon <simeddon@gmail.com>
----
-Removed changes that was accidentally added while debugging
-and reformatted the message.
 
- fs/hfsplus/dir.c | 3 +++
- 1 file changed, 3 insertions(+)
-644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -485,6 +485,9 @@ static int hfsplus_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	mutex_lock(&sbi->vh_mutex);
- 	inode = hfsplus_new_inode(dir->i_sb, dir, mode);
-+	if (test_bit(HFSPLUS_SB_HFSX, &sbi->flags))
-+		HFSPLUS_I(dir)->subfolders = 0;
-+
- 	if (!inode)
- 		goto out;
- 
--- 
-2.39.2
+Thank You Jan and Christain for your support!!
+
+I have added the Signed-off-by tag and updated the struct file declaration.
+
+Regards,
+Mohit
 
 
