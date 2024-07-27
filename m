@@ -1,184 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-24364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1193A93DEA6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2024 12:08:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399D893DFCC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2024 16:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E828B2246F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2024 10:08:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D726D1F21BA7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jul 2024 14:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767764DA00;
-	Sat, 27 Jul 2024 10:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272CD1802A5;
+	Sat, 27 Jul 2024 14:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aJdzF1oO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120018F6D;
-	Sat, 27 Jul 2024 10:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7529D18003C
+	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jul 2024 14:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722074920; cv=none; b=DM1qmHhPlL4sGq888mX9aUZ7uVjCGCbiMqJoFYIYA0KUNfdUVbS9fsec8CCNFGrsRM55N9Ii0S4PCewvV95Xw5LtqCej8fyi0HxdOp9PzP2XWCoO+PZlepYrOo5gVb+O2VLrdGNrZVAXOvTCTNlMNF8JywOA3QxjP506Umzn2b0=
+	t=1722091951; cv=none; b=sPd/6T74+d6M321KSqsb2qGz0FTbLDwIOZaLVAW/UCkiBCy72ml0JMdaFkY/SD2R0aomEI47LnFDIU8b79qHXaRVlH2U0Qza4+ts8tf2urXBYD1bYBWdPsF9w9Jkqnfl5zLz4il0R1XovP0R/1dNfEHWVjlH4HTRW2UpWuVZHoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722074920; c=relaxed/simple;
-	bh=xvIrdOAA1BqGl3nNiB9S31qiQPAJqhChIPI76QrwMAo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CyItepAJyCs/OzHv+xq0ilOey6rAI/XnfCyKzD3AUBwidg6PnCX6oNZvzAWtCbNjnFEWPmkEbLdSEsV10g6JkJD8Gs7fs4C8Aazjg9UR1epk/b6V4E/fJ5vHou4maz7xFAaJGMjXdb8WaxMzGS8P9L0/V4v28bl6R/h0i62ZCm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WWKvc2S24zyNjn;
-	Sat, 27 Jul 2024 18:03:40 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 391BC14011B;
-	Sat, 27 Jul 2024 18:08:34 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 27 Jul
- 2024 18:08:33 +0800
-From: yangyun <yangyun50@huawei.com>
-To: <josef@toxicpanda.com>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<miklos@szeredi.hu>, <yangyun50@huawei.com>
-Subject: Re: [PATCH 2/2] fuse: add support for no forget requests
-Date: Sat, 27 Jul 2024 18:08:29 +0800
-Message-ID: <20240727100829.1227123-1-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240726154017.GE3432726@perftesting>
-References: <20240726154017.GE3432726@perftesting>
+	s=arc-20240116; t=1722091951; c=relaxed/simple;
+	bh=K6NxWWNL2QqGdfUs+BXB/kW5QQcfEqNmqGcANuzcQGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EH3z1LKo2R78WctQhUEHwJOkmOWJMAyD18Q+eAabizi3V5RTZrzJc0Xb3AEDbRVEU4GbWTiB+nFQR3p4ZStuPbtlQeNVGL0a/SeVbn40jrhJsWac/stJGuyy1+Wru+P7qiwC8gUN1ti9II5mJkLY8q6eMkVLIpK3Yye7w36FXXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aJdzF1oO; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UrVcCwUbiNWo86A31hbf2V6PwUgVZZxFzYmDkpri+fU=; b=aJdzF1oOhi04inpLbfh9ssab7A
+	SY5fGThBcQmMX/IILXRp9nc4Y3kSUHv14jK3O4XrTMxrpJAfhPn0Mo8AOMGmy2mi2LtbKs8g5+GD0
+	T1GBSBUK5gS0flH/pdE9Ik3/e5Mhr96MnsoghOMTEW+/aINc7Wqrf0DfpgwPy8S8r2pzzAhkXh2hq
+	Jh4tcJr60oDtFSkvGoobNCsSHNU5C3Nj+Sbh2F9t251aNcb7iGz0+rmNPv/mbwoz22ofcGzLSr/pX
+	0fMLL8GfFQQROjk3Q52Yaeu9bbLb6uSZ18qg5URINkvwRyrVBHoOaMHME7sKzfA6QP20iN4RzV8eR
+	fL2a2pBw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sXimX-0000000BQSc-0NFZ;
+	Sat, 27 Jul 2024 14:52:25 +0000
+Date: Sat, 27 Jul 2024 15:52:24 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Siddharth Menon <simeddon@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	syzbot+fdedff847a0e5e84c39f@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] hfsplus: Initialize directory subfolders in
+ hfsplus_mknod
+Message-ID: <ZqUJqAWIuFjtcccA@casper.infradead.org>
+References: <20240727061303.115044-1-simeddon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100024.china.huawei.com (7.221.188.41)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240727061303.115044-1-simeddon@gmail.com>
 
+On Sat, Jul 27, 2024 at 11:43:04AM +0530, Siddharth Menon wrote:
+> Addresses uninitialized subfolders attribute being used in 
+> `hfsplus_subfolders_inc` and `hfsplus_subfolders_dec`.
 
-On Fri, Jul 26, 2024 at 11:40:17AM -0400, Josef Bacik wrote:
-> On Fri, Jul 26, 2024 at 04:37:52PM +0800, yangyun wrote:
-> > FUSE_FORGET requests are not used if the fuse file system does not
-> > implement the forget operation in userspace (e.g., fuse file system
-> > does not cache any inodes).
-> > 
-> > However, the kernel is invisible to the userspace implementation and
-> > always sends FUSE_FORGET requests, which can lead to performance
-> > degradation because of useless contex switch and memory copy in some
-> > cases (e.g., many inodes are evicted from icache which was described
-> > in commit 07e77dca8a1f ("fuse: separate queue for FORGET requests")).
-> > 
-> > Just like 'no_interrupt' in 'struct fuse_conn', we add 'no_forget'.
-> > But since FUSE_FORGET request does not have a reply from userspce,
-> > we can not use ENOSYS to reflect the 'no_forget' assignment. So add
-> > the FUSE_NO_FORGET_SUPPORT init flag.
-> > 
-> > Besides, if no_forget is enabled, 'nlookup' in 'struct fuse_inode'
-> > does not used and its value change can be disabled which are protected
-> > by spin_lock to reduce lock contention.
-> > 
-> > Signed-off-by: yangyun <yangyun50@huawei.com>
-> > ---
-> >  fs/fuse/dev.c             |  6 ++++++
-> >  fs/fuse/dir.c             |  4 +---
-> >  fs/fuse/fuse_i.h          | 24 ++++++++++++++++++++++++
-> >  fs/fuse/inode.c           | 10 +++++-----
-> >  fs/fuse/readdir.c         |  8 ++------
-> >  include/uapi/linux/fuse.h |  3 +++
-> >  6 files changed, 41 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > index 932356833b0d..10890db9426b 100644
-> > --- a/fs/fuse/dev.c
-> > +++ b/fs/fuse/dev.c
-> > @@ -238,6 +238,9 @@ void fuse_queue_forget(struct fuse_conn *fc, struct fuse_forget_link *forget,
-> >  {
-> >  	struct fuse_iqueue *fiq = &fc->iq;
-> >  
-> > +	if (fc->no_forget)
-> > +		return;
-> > +
-> >  	forget->forget_one.nodeid = nodeid;
-> >  	forget->forget_one.nlookup = nlookup;
-> >  
-> > @@ -257,6 +260,9 @@ void fuse_force_forget(struct fuse_mount *fm, u64 nodeid)
-> >  	struct fuse_forget_in inarg;
-> >  	FUSE_ARGS(args);
-> >  
-> > +	if (fm->fc->no_forget)
-> > +		return;
-> > +
-> >  	memset(&inarg, 0, sizeof(inarg));
-> >  	inarg.nlookup = 1;
-> >  	args.opcode = FUSE_FORGET;
-> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> > index 6bfb3a128658..833225ed1d4f 100644
-> > --- a/fs/fuse/dir.c
-> > +++ b/fs/fuse/dir.c
-> > @@ -236,9 +236,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
-> >  				fuse_force_forget(fm, outarg.nodeid);
-> >  				goto invalid;
-> >  			}
-> > -			spin_lock(&fi->lock);
-> > -			fi->nlookup++;
-> > -			spin_unlock(&fi->lock);
-> > +			fuse_nlookup_inc_if_enabled(fm->fc, fi);
-> >  		}
-> >  		if (ret == -ENOMEM || ret == -EINTR)
-> >  			goto out;
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index b9a5b8ec0de5..924d6b0ad700 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -860,6 +860,9 @@ struct fuse_conn {
-> >  	/** Passthrough support for read/write IO */
-> >  	unsigned int passthrough:1;
-> >  
-> > +	/** Do not send FORGET request */
-> > +	unsigned int no_forget:1;
-> > +
-> >  	/** Maximum stack depth for passthrough backing files */
-> >  	int max_stack_depth;
-> >  
-> > @@ -1029,6 +1032,27 @@ static inline void fuse_sync_bucket_dec(struct fuse_sync_bucket *bucket)
-> >  	rcu_read_unlock();
-> >  }
-> >  
-> > +static inline void fuse_nlookup_inc_if_enabled(struct fuse_conn *fc, struct fuse_inode *fi)
-> > +{
-> > +	if (fc->no_forget)
-> > +		return;
-> > +
-> > +	spin_lock(&fi->lock);
-> > +	fi->nlookup++;
-> > +	spin_unlock(&fi->lock);
-> > +}
-> > +
-> > +static inline void fuse_nlookup_dec_if_enabled(struct fuse_conn *fc, struct fuse_inode *fi)
-> > +{
-> > +	if (fc->no_forget)
-> > +		return;
-> > +
-> > +	spin_lock(&fi->lock);
-> > +	fi->nlookup--;
-> > +	spin_lock(&fi->lock);
-> > +}
-> 
-> This naming scheme is overly verbose, you can simply have
-> 
-> fuse_inc_nlookup()
-> fuse_dec_nlookup()
+This is a really poor commit message.  It needs to be more descriptive.
+How can this happen?  Is it just a fuzzing thing?
 
-Thanks for your advice.
-I will modify this in the next version. 
-
+> Fixes: https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
+> Reported-by: syzbot+fdedff847a0e5e84c39f@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/x/report.txt?x=16efda06680000
+> Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+> ---
+> Removed changes that was accidentally added while debugging
+> and reformatted the message.
 > 
-> Thanks,
+>  fs/hfsplus/dir.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 644
+> --- a/fs/hfsplus/dir.c
+> +++ b/fs/hfsplus/dir.c
+> @@ -485,6 +485,9 @@ static int hfsplus_mknod(struct mnt_idmap *idmap, struct inode *dir,
+>  
+>  	mutex_lock(&sbi->vh_mutex);
+>  	inode = hfsplus_new_inode(dir->i_sb, dir, mode);
+> +	if (test_bit(HFSPLUS_SB_HFSX, &sbi->flags))
+> +		HFSPLUS_I(dir)->subfolders = 0;
+> +
+>  	if (!inode)
+>  		goto out;
+>  
+> -- 
+> 2.39.2
 > 
-> Josef
+> 
 
