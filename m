@@ -1,185 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-24375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D8693E51F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jul 2024 14:47:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CE893E69B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jul 2024 17:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BFC51C2122E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jul 2024 12:47:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47837280982
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jul 2024 15:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5963F9FB;
-	Sun, 28 Jul 2024 12:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B85D13AA40;
+	Sun, 28 Jul 2024 15:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKSOfRoy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8P7tb9S"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C860D2562E;
-	Sun, 28 Jul 2024 12:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C991384B9;
+	Sun, 28 Jul 2024 15:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722170862; cv=none; b=PqGVS48ehURadkizRablp5RPqRiahrkUPxu5/wDyrjLovCvZoBJd/gh6+oSviI9ZKuoSWoapLk6nF7x5FnjD8iXSsTDwdPIKOepiUbTLkssIJAsVzijr7ELd8NS6cEiGhgviE8oc0fGQ6/HEbMvCdaAUsdreX0ojDV1QGIVdVXk=
+	t=1722181514; cv=none; b=kaqUGnE/sOm25qyTMJpV8M+Ak0wnG0bhCB7n2STZi2p6KyIwSWiluf7wKJFS0aZOT4V/dFHmd8ycAsGW4hp3aEq0Xzdm9EnV7JfcFM1lEANqQdZbQWs6TZQzXaLjISUuOFnWEeZKilyrx60V+P0gu/jX/qM7zlnPNjdtPn8rWhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722170862; c=relaxed/simple;
-	bh=7DAw1bh/7KLG2aowoCQ2qKx/EFyJdeQ1d+TtPaE81w4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1G/s40lZWjiHnYTnz6NHWg7e6IXrRHlT85HBS7wGCP1xoS6zDTGdk/UNlY0lxiPGGX/gUYP3Ly1YvH0KgyPxh9yotPLAr1CkOu8UcfGWQWhXt93l7xz1qaC8f9mUHXbHxQleWLPzn5yWa9r+9oapqlZIDk5bz1TFAjfnrF6kpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKSOfRoy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1214EC116B1;
-	Sun, 28 Jul 2024 12:47:33 +0000 (UTC)
+	s=arc-20240116; t=1722181514; c=relaxed/simple;
+	bh=gFqPNGNUGY7dUOwVXLM8vPLTwR+/uGY6zrxrriAOGAk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EiWm+22tkLnvWzWqVQfHMumILLjQ4suL/OIDMq4z7PHApf/QPaxDps3OH7r+EvmfSBN+MylAm5TVAWoxQ63leKmGObWoifZDfUSHfF5ZX5AdrNHEKDb6hzweG+HSVwhdFWsfC7WuNX6dkqFcAAK83SGuFAFCsEmsKJ2R8gAy37s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8P7tb9S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18BA8C4AF0A;
+	Sun, 28 Jul 2024 15:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722170862;
-	bh=7DAw1bh/7KLG2aowoCQ2qKx/EFyJdeQ1d+TtPaE81w4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DKSOfRoyAcagm/ZCjuUtmZe1LP1/m3qOMpkt+Ja038rI7l8A3gAIiS9vTlhyRlcph
-	 q9W3Gs/md02my2rqjor8RoVRuhKeRng2CLjeuQpPwElHl4VIJ1PE8mhHy3nlfCsgPo
-	 diba//3nG7207nq7Hoz29mmSrKFjel41IEd1K+OUbqJ9ji9TOMZcPpMQo+WMhANpud
-	 6Q847BLXlRgpdKyKpfoIprH/01r3UrVLIMjJqRG5P1sgBD0Z0nzmDaGOzqSAcDzpJq
-	 76zEEQv9n49HVtrhliR31CW/giJaLvR0UAqUXFsYST53aU5H48QgjliObfxaz9+zTj
-	 RELQP2y7z3fMw==
-Date: Sun, 28 Jul 2024 15:47:19 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	linuxppc-dev@lists.ozlabs.org, xen-devel@lists.xenproject.org,
+	s=k20201202; t=1722181514;
+	bh=gFqPNGNUGY7dUOwVXLM8vPLTwR+/uGY6zrxrriAOGAk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n8P7tb9SaZfw/2+u8cFXvEWz/UDoGh2tiwl/LDWbI9rjJktGIufLUjssiYV6jx0jk
+	 YQI9cVjqjCgm3B2xeQpcX4WWBQePqFTHNUnjyboKwBAF9l3PE10xTdloQvRuiNj7sk
+	 JTx6Bjc7c0ToYqfwbyxX4Dnu9RFG9fJiyy0aFaaWL8koDHJatEf2O0T1NOfbAEniS4
+	 /HAaRO0n8VnaNpW4DSTudiYr9Y39RCMcoLU3sVGJpqzV6Hkas1JpPKmnZ7BLjE2O2Y
+	 dSIubsQ4iB0U8rEnoesp7SAnHtJlO4QTXlDJVfsprcltaowjmYnvCwgolMP0hU/eER
+	 mS+rz+SYTUeaA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: =?UTF-8?q?Wojciech=20G=C5=82adysz?= <wojciech.gladysz@infogain.com>,
+	syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com,
+	Theodore Ts'o <tytso@mit.edu>,
+	Sasha Levin <sashal@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	adilger.kernel@dilger.ca,
 	linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v1 2/3] mm/hugetlb: enforce that PMD PT sharing has split
- PMD PT locks
-Message-ID: <ZqY918UEsmkbIGOn@kernel.org>
-References: <20240726150728.3159964-1-david@redhat.com>
- <20240726150728.3159964-3-david@redhat.com>
+	linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.10 33/34] ext4: sanity check for NULL pointer after ext4_force_shutdown
+Date: Sun, 28 Jul 2024 11:40:57 -0400
+Message-ID: <20240728154230.2046786-33-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240728154230.2046786-1-sashal@kernel.org>
+References: <20240728154230.2046786-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726150728.3159964-3-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.2
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 26, 2024 at 05:07:27PM +0200, David Hildenbrand wrote:
-> Sharing page tables between processes but falling back to per-MM page
-> table locks cannot possibly work.
-> 
-> So, let's make sure that we do have split PMD locks by adding a new
-> Kconfig option and letting that depend on CONFIG_SPLIT_PMD_PTLOCKS.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+From: Wojciech Gładysz <wojciech.gladysz@infogain.com>
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+[ Upstream commit 83f4414b8f84249d538905825b088ff3ae555652 ]
 
-> ---
->  fs/Kconfig              | 4 ++++
->  include/linux/hugetlb.h | 5 ++---
->  mm/hugetlb.c            | 8 ++++----
->  3 files changed, 10 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index a46b0cbc4d8f6..0e4efec1d92e6 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -288,6 +288,10 @@ config HUGETLB_PAGE_OPTIMIZE_VMEMMAP
->  	depends on ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
->  	depends on SPARSEMEM_VMEMMAP
->  
-> +config HUGETLB_PMD_PAGE_TABLE_SHARING
-> +	def_bool HUGETLB_PAGE
-> +	depends on ARCH_WANT_HUGE_PMD_SHARE && SPLIT_PMD_PTLOCKS
-> +
->  config ARCH_HAS_GIGANTIC_PAGE
->  	bool
->  
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index da800e56fe590..4d2f3224ff027 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -1243,7 +1243,7 @@ static inline __init void hugetlb_cma_reserve(int order)
->  }
->  #endif
->  
-> -#ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
-> +#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
->  static inline bool hugetlb_pmd_shared(pte_t *pte)
->  {
->  	return page_count(virt_to_page(pte)) > 1;
-> @@ -1279,8 +1279,7 @@ bool __vma_private_lock(struct vm_area_struct *vma);
->  static inline pte_t *
->  hugetlb_walk(struct vm_area_struct *vma, unsigned long addr, unsigned long sz)
->  {
-> -#if defined(CONFIG_HUGETLB_PAGE) && \
-> -	defined(CONFIG_ARCH_WANT_HUGE_PMD_SHARE) && defined(CONFIG_LOCKDEP)
-> +#if defined(CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING) && defined(CONFIG_LOCKDEP)
->  	struct hugetlb_vma_lock *vma_lock = vma->vm_private_data;
->  
->  	/*
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 0858a18272073..c4d94e122c41f 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -7211,7 +7211,7 @@ long hugetlb_unreserve_pages(struct inode *inode, long start, long end,
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
-> +#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
->  static unsigned long page_table_shareable(struct vm_area_struct *svma,
->  				struct vm_area_struct *vma,
->  				unsigned long addr, pgoff_t idx)
-> @@ -7373,7 +7373,7 @@ int huge_pmd_unshare(struct mm_struct *mm, struct vm_area_struct *vma,
->  	return 1;
->  }
->  
-> -#else /* !CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
-> +#else /* !CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING */
->  
->  pte_t *huge_pmd_share(struct mm_struct *mm, struct vm_area_struct *vma,
->  		      unsigned long addr, pud_t *pud)
-> @@ -7396,7 +7396,7 @@ bool want_pmd_share(struct vm_area_struct *vma, unsigned long addr)
->  {
->  	return false;
->  }
-> -#endif /* CONFIG_ARCH_WANT_HUGE_PMD_SHARE */
-> +#endif /* CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING */
->  
->  #ifdef CONFIG_ARCH_WANT_GENERAL_HUGETLB
->  pte_t *huge_pte_alloc(struct mm_struct *mm, struct vm_area_struct *vma,
-> @@ -7494,7 +7494,7 @@ unsigned long hugetlb_mask_last_page(struct hstate *h)
->  /* See description above.  Architectures can provide their own version. */
->  __weak unsigned long hugetlb_mask_last_page(struct hstate *h)
->  {
-> -#ifdef CONFIG_ARCH_WANT_HUGE_PMD_SHARE
-> +#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
->  	if (huge_page_size(h) == PMD_SIZE)
->  		return PUD_SIZE - PMD_SIZE;
->  #endif
-> -- 
-> 2.45.2
-> 
-> 
+Test case: 2 threads write short inline data to a file.
+In ext4_page_mkwrite the resulting inline data is converted.
+Handling ext4_grp_locked_error with description "block bitmap
+and bg descriptor inconsistent: X vs Y free clusters" calls
+ext4_force_shutdown. The conversion clears
+EXT4_STATE_MAY_INLINE_DATA but fails for
+ext4_destroy_inline_data_nolock and ext4_mark_iloc_dirty due
+to ext4_forced_shutdown. The restoration of inline data fails
+for the same reason not setting EXT4_STATE_MAY_INLINE_DATA.
+Without the flag set a regular process path in ext4_da_write_end
+follows trying to dereference page folio private pointer that has
+not been set. The fix calls early return with -EIO error shall the
+pointer to private be NULL.
 
+Sample crash report:
+
+Unable to handle kernel paging request at virtual address dfff800000000004
+KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
+Mem abort info:
+  ESR = 0x0000000096000005
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x05: level 1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[dfff800000000004] address between user and kernel address ranges
+Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 20274 Comm: syz-executor185 Not tainted 6.9.0-rc7-syzkaller-gfda5695d692c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __block_commit_write+0x64/0x2b0 fs/buffer.c:2167
+lr : __block_commit_write+0x3c/0x2b0 fs/buffer.c:2160
+sp : ffff8000a1957600
+x29: ffff8000a1957610 x28: dfff800000000000 x27: ffff0000e30e34b0
+x26: 0000000000000000 x25: dfff800000000000 x24: dfff800000000000
+x23: fffffdffc397c9e0 x22: 0000000000000020 x21: 0000000000000020
+x20: 0000000000000040 x19: fffffdffc397c9c0 x18: 1fffe000367bd196
+x17: ffff80008eead000 x16: ffff80008ae89e3c x15: 00000000200000c0
+x14: 1fffe0001cbe4e04 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : 0000000000000004 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : fffffdffc397c9c0 x4 : 0000000000000020 x3 : 0000000000000020
+x2 : 0000000000000040 x1 : 0000000000000020 x0 : fffffdffc397c9c0
+Call trace:
+ __block_commit_write+0x64/0x2b0 fs/buffer.c:2167
+ block_write_end+0xb4/0x104 fs/buffer.c:2253
+ ext4_da_do_write_end fs/ext4/inode.c:2955 [inline]
+ ext4_da_write_end+0x2c4/0xa40 fs/ext4/inode.c:3028
+ generic_perform_write+0x394/0x588 mm/filemap.c:3985
+ ext4_buffered_write_iter+0x2c0/0x4ec fs/ext4/file.c:299
+ ext4_file_write_iter+0x188/0x1780
+ call_write_iter include/linux/fs.h:2110 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0x968/0xc3c fs/read_write.c:590
+ ksys_write+0x15c/0x26c fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __arm64_sys_write+0x7c/0x90 fs/read_write.c:652
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+Code: 97f85911 f94002da 91008356 d343fec8 (38796908)
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	97f85911 	bl	0xffffffffffe16444
+   4:	f94002da 	ldr	x26, [x22]
+   8:	91008356 	add	x22, x26, #0x20
+   c:	d343fec8 	lsr	x8, x22, #3
+* 10:	38796908 	ldrb	w8, [x8, x25] <-- trapping instruction
+
+Reported-by: syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=18df508cf00a0598d9a6
+Link: https://lore.kernel.org/all/000000000000f19a1406109eb5c5@google.com/T/
+Signed-off-by: Wojciech Gładysz <wojciech.gladysz@infogain.com>
+Link: https://patch.msgid.link/20240703070112.10235-1-wojciech.gladysz@infogain.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/buffer.c     | 2 ++
+ fs/ext4/inode.c | 5 +++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 8c19e705b9c33..645f0387dfe1d 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2187,6 +2187,8 @@ static void __block_commit_write(struct folio *folio, size_t from, size_t to)
+ 	struct buffer_head *bh, *head;
+ 
+ 	bh = head = folio_buffers(folio);
++	if (!bh)
++		return;
+ 	blocksize = bh->b_size;
+ 
+ 	block_start = 0;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 4bae9ccf5fe01..f14e77c4a6de8 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2945,6 +2945,11 @@ static int ext4_da_do_write_end(struct address_space *mapping,
+ 	bool disksize_changed = false;
+ 	loff_t new_i_size;
+ 
++	if (unlikely(!folio_buffers(folio))) {
++		folio_unlock(folio);
++		folio_put(folio);
++		return -EIO;
++	}
+ 	/*
+ 	 * block_write_end() will mark the inode as dirty with I_DIRTY_PAGES
+ 	 * flag, which all that's needed to trigger page writeback.
 -- 
-Sincerely yours,
-Mike.
+2.43.0
+
 
