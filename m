@@ -1,121 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-24420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3D793F358
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 12:57:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448C093F35A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 12:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 927F728289C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 10:57:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E289D1F22019
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 10:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A74145347;
-	Mon, 29 Jul 2024 10:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A789D1459E2;
+	Mon, 29 Jul 2024 10:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aWpiYhcb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gdboqrGg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D19143751;
-	Mon, 29 Jul 2024 10:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8784814535D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 10:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722250631; cv=none; b=gqtvccIU8HUO9enGGJDEYPa5S2uwS4I/SZ8doiLxWCN+V0A2sEy/4+0ySQW5caw3zuXeXr5tt3ajVXuAeflciOOAw+YHqRWM0hkHJGzFWE0DVeJbFEgNtIK7wwUO/zvMw1Gh+OMlV7ohi7/Ms1EGg/O5EnwQ3nib9h39tZQnVQw=
+	t=1722250647; cv=none; b=HetJh0l5airMGZcuZcbaEnJgZf94UEAQ/JzzKbWWCU3LloxW1IA2SUEd9RyJdUEBlLOH4lV4WcimBBAtAmjguU2L3BHY7WSIxXb0646xeSqKMuWMSVpES244yurm1YNUvHK2lZfyJRtp68mgTv2ZW/haOYvd2Q4z0hR12yBnYeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722250631; c=relaxed/simple;
-	bh=w8GSSPcqI23nQn+Oxi/v7Rnq2v5BOe9aqJpc237LX6k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rHh3OnhH/0ydmI+MvsLdAnEQtfW7K/cgx/PCYdKSISiUIltmhz+ryMjXLtWztx90NCV6VAh78jMi3Do/HPsPNH2Tq/cR+7UrvMNDA6JLGJp4bicSDfwh6vl2F2BgakGch8eWQse7YYiiC3Qlj8GNBYFXwAEXIKQ35Bwn5B1vgOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aWpiYhcb; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a8caef11fso368044866b.0;
-        Mon, 29 Jul 2024 03:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722250628; x=1722855428; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=INLYd6MkBJDtRKL2MMGVSgGrl5yoEzJ269u2K/zCeV4=;
-        b=aWpiYhcbG0MhExZAptAZdbub/eSEuASymqRKEXFBTbRcjE8g0LcSJusaXwW2C0P3dr
-         qGUC2Mp/MlHr9y1YCVgng+M+2bgXRrD9mSC18gEU+DkpEHu2FkOAiAzvjMBPSJaKOLym
-         VQrEn6CuDfCNfEoFbIWVFBOLPjgkZtrrI3tiyJ3TCkurjprI6TtnY+OGw1gcxDZibvYv
-         uGiJMWPXpw8C5JtnKEw046fl3ZaIjLdrYK8BcqbpyydCr1Cq8JHoJOFOvAt80wF3ftt0
-         ujfw8u/7V42/fwyWPzYeleAsKu9dfg9vcsMSiHio3b9GKk+2d7EmbgadTNWz9GJ7K4Uu
-         h5zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722250628; x=1722855428;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=INLYd6MkBJDtRKL2MMGVSgGrl5yoEzJ269u2K/zCeV4=;
-        b=Du8tV6A+2ylcTGiFMpo2KPspA82c1j9Ueq4VI6NuUpbK7O8PHvHb2d/NXbrPmvC2Op
-         WFAPkOlmEuafwuKA9vsXndgq1kOzDq9XeaQ5dIDK5V/p1sJaY8NakyyZcha2AuV2Ekeg
-         K8IafM+EOewKfBUciRY3LplBAiTAW+H/srEqOAugz5+aG95Sqql2TooP7yiLS4X3BHE3
-         x0+M/pOoBi0JIwW+SkLfXZjRAw3oN0oUNNDkE3YTiUkZMuPGsq/7cJpcgELvhb/8Nhk1
-         V8ok6dh3wxlJsBFzOQpiGoMA0d1b2DwQZIbgd+5XA6hcNjwuIGRAbo/fv27XFclvpYwR
-         QaZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeLLFhxeQNN1KjqB9noebaVZxqJH9fQy68Ewr1oxTE6SsP1mppIYWbaVJ5iEYJrj7BZbT6lBVvuAiQHbC4uJweDTh695ioJZrwi41f1WkaCZ4YXPHvGwwHISLvbrtD/ViqoYI9xe5L
-X-Gm-Message-State: AOJu0YxbMzbfQuV4ten+Rou4vtPf2g2kev2OkXMo1yJt979R4eDRPcB4
-	Lacj0ICzcirAeWsGP9S/USG4/hWkkgA9ThuAeqv9DfyconivFOyZDZU6kyTASHWGnPnM3zneqCi
-	VSZt9hV/UV68wzylHFZiZTohewk8=
-X-Google-Smtp-Source: AGHT+IGd8KZTHSY0DEwk0SrmRD2TA6ca0kQ9mCvKAuy3lmSwdNDiRVWmiN34gGLduCOdvS8ZKofIi7iqMUoMBlkOPHw=
-X-Received: by 2002:a17:907:948f:b0:a7a:a960:99ee with SMTP id
- a640c23a62f3a-a7d40074c96mr521592766b.32.1722250627832; Mon, 29 Jul 2024
- 03:57:07 -0700 (PDT)
+	s=arc-20240116; t=1722250647; c=relaxed/simple;
+	bh=MKO/ismtlYm2YYhXLmhB06wPeTf3whlxnZoRdHHbqcY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=io7spAxhGr2GUw6pE+mQCgk//M2YdoiUF4pXA52aRLeClmr0EtiiM0OidNQyCXJ41POjZa98LvwVfGTsmP2b1mpQ2a5OxDDju8PkFFPREEZHuUweJbnh7cvS2OhPcWh2doxQZhFuHHxSXpQmsNJ/i9WWU7gTzr7s9y7Z0ytigDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gdboqrGg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722250644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=10bUMMha3eVKE0pYqfRyimfBDUPmcMHMaix0zL5TC/g=;
+	b=gdboqrGg7s8zmODo1119EO2Ft2bIxPrTeJ41qo+EpYXgsVDxROwcVut3uP/z0g2INglBHq
+	yzuiHK6AW+sZEp4iOKPs/hSdrJvuGbCw0YBO0WNFKBP+FOD2S/GeSucKb7jzm4cBkUtdOX
+	4/0S88EEsPY7/kKvytvp35XqPKewFE8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-468-eGKs7MrkOjyhtwFWWpa_9A-1; Mon,
+ 29 Jul 2024 06:57:21 -0400
+X-MC-Unique: eGKs7MrkOjyhtwFWWpa_9A-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E4C861955D54;
+	Mon, 29 Jul 2024 10:57:19 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 88B80195605F;
+	Mon, 29 Jul 2024 10:57:17 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>
+Subject: Re: Testing if two open descriptors refer to the same inode
+In-Reply-To: <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
+	(Mateusz Guzik's message of "Mon, 29 Jul 2024 12:50:47 +0200")
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+	<ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+	<875xsoqy58.fsf@oldenburg.str.redhat.com>
+	<vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
+Date: Mon, 29 Jul 2024 12:57:14 +0200
+Message-ID: <87sevspit1.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com> <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
- <875xsoqy58.fsf@oldenburg.str.redhat.com> <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
-In-Reply-To: <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 29 Jul 2024 12:56:55 +0200
-Message-ID: <CAGudoHHnpOp5JL-wUnVp+X=dt+pRtX2o-dbfuqQamjWhxJei-A@mail.gmail.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-To: Florian Weimer <fweimer@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Jul 29, 2024 at 12:50=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> =
-wrote:
->
+* Mateusz Guzik:
+
 > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
-> > * Mateusz Guzik:
-> >
-> > > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
-> > >> It was pointed out to me that inode numbers on Linux are no longer
-> > >> expected to be unique per file system, even for local file systems.
-> > >
-> > > I don't know if I'm parsing this correctly.
-> > >
-> > > Are you claiming on-disk inode numbers are not guaranteed unique per
-> > > filesystem? It sounds like utter breakage, with capital 'f'.
-> >
-> > Yes, POSIX semantics and traditional Linux semantics for POSIX-like
-> > local file systems are different.
-> >
+>> * Mateusz Guzik:
+>> 
+>> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
+>> >> It was pointed out to me that inode numbers on Linux are no longer
+>> >> expected to be unique per file system, even for local file systems.
+>> >
+>> > I don't know if I'm parsing this correctly.
+>> >
+>> > Are you claiming on-disk inode numbers are not guaranteed unique per
+>> > filesystem? It sounds like utter breakage, with capital 'f'.
+>> 
+>> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
+>> local file systems are different.
 >
 > Can you link me some threads about this?
->
-> > > While the above is not what's needed here, I guess it sets a preceden=
-t
-> > > for F_DUPINODE_QUERY (or whatever other name) to be added to handily
-> > > compare inode pointers. It may be worthwhile regardless of the above.
-> > > (or maybe kcmp could be extended?)
-> >
-> > I looked at kcmp as well, but I think it's dependent on
-> > checkpoint/restore.  File sameness checks are much more basic than that=
-.
-> >
->
+
+Sorry, it was an internal thread.  It's supposed to be common knowledge
+among Linux file system developers.  Aleksa referenced LSF/MM
+discussions.
+
 > I had this in mind (untested modulo compilation):
 >
 > diff --git a/fs/fcntl.c b/fs/fcntl.c
@@ -123,53 +108,50 @@ t
 > --- a/fs/fcntl.c
 > +++ b/fs/fcntl.c
 > @@ -343,6 +343,13 @@ static long f_dupfd_query(int fd, struct file *filp)
->         return f.file =3D=3D filp;
+>  	return f.file == filp;
 >  }
->
+>  
 > +static long f_dupfd_query_inode(int fd, struct file *filp)
 > +{
-> +       CLASS(fd_raw, f)(fd);
+> +	CLASS(fd_raw, f)(fd);
 > +
-> +       return f.file->f_inode =3D=3D filp->f_inode;
+> +	return f.file->f_inode == filp->f_inode;
 > +}
 > +
 >  static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
->                 struct file *filp)
+>  		struct file *filp)
 >  {
-> @@ -361,6 +368,9 @@ static long do_fcntl(int fd, unsigned int cmd, unsign=
-ed long arg,
->         case F_DUPFD_QUERY:
->                 err =3D f_dupfd_query(argi, filp);
->                 break;
-> +       case F_DUPFD_QUERY_INODE:
-> +               err =3D f_dupfd_query_inode(argi, filp);
-> +               break;
->         case F_GETFD:
->                 err =3D get_close_on_exec(fd) ? FD_CLOEXEC : 0;
->                 break;
+> @@ -361,6 +368,9 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+>  	case F_DUPFD_QUERY:
+>  		err = f_dupfd_query(argi, filp);
+>  		break;
+> +	case F_DUPFD_QUERY_INODE:
+> +		err = f_dupfd_query_inode(argi, filp);
+> +		break;
+>  	case F_GETFD:
+>  		err = get_close_on_exec(fd) ? FD_CLOEXEC : 0;
+>  		break;
 > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
 > index c0bcc185fa48..2e93dbdd8fd2 100644
 > --- a/include/uapi/linux/fcntl.h
 > +++ b/include/uapi/linux/fcntl.h
 > @@ -16,6 +16,8 @@
->
->  #define F_DUPFD_QUERY  (F_LINUX_SPECIFIC_BASE + 3)
->
+>  
+>  #define F_DUPFD_QUERY	(F_LINUX_SPECIFIC_BASE + 3)
+>  
 > +#define F_DUPFD_QUERY_INODE (F_LINUX_SPECIFIC_BASE + 4)
 > +
 >  /*
 >   * Cancel a blocking posix lock; internal use only until we expose an
 >   * asynchronous lock api to userspace:
 
-To clarify, if indeed the dev + ino combo is no longer sufficient to
-conclude it's the same thing, an explicit & handy to use way should be
-provided.
+It's certainly much easier to use than name_to_handle_at, so it looks
+like a useful option to have.
 
-For a case where you got both inodes open something like the above
-will do the trick, unless I'm missing something. I can do a proper
-patch posting later after runtime testing and whatnot if you confirm
-this sorts out your problem.
+Could we return a three-way comparison result for sorting?  Or would
+that expose too much about kernel pointer values?
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Thanks,
+Florian
+
 
