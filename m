@@ -1,79 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-24413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D8893F129
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 11:30:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A10893F12B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 11:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74DCB284B97
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 09:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07FD1F223E8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 09:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD99B1420DF;
-	Mon, 29 Jul 2024 09:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AADE14372B;
+	Mon, 29 Jul 2024 09:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FTz/vxVb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ENmdq1hJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B47A13FD84;
-	Mon, 29 Jul 2024 09:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC30140E37
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 09:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722245395; cv=none; b=PpG9YUdNWrKHpFBc3c+jdor5SvJ/3HXS4QnWAZ9WiGU42xN1UqBhurl5dgTG3u0ZoWfSCExXVKX/tM+bUt4dz5XtHcvREZeJ7iRpOAQeYyToacxuumHM1LMoIorn+DFQQLXXiL0isjK6BO6M/bRmiliLdC+0sibLnIKQTr6hIM4=
+	t=1722245403; cv=none; b=fdy60wXii5/c4O9NQgo9GFU8A1Ppxr99xyJjDXtmvQYnLaNIsraAOU7Vs9NOy8XUjhyMtEWj1OLtKkSwKksTCguGg0mOAaNogCWcAZBHmASWcefYPx86ARqSuZWZSqHvkIIP7jdOsYTy+i9PWkFsQWwn7XxizuEB+l+o71LDS2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722245395; c=relaxed/simple;
-	bh=Okn6Hh7a8OxqdINhFpBMmcm+OFNUZUiCDEeJ7M45+Ag=;
+	s=arc-20240116; t=1722245403; c=relaxed/simple;
+	bh=u5RBreyVfXRXoOakitt/Ifw1gmojIQrfXV5ulIFhMQM=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oYTi/9yTvzqBsJT95RdEpn/rLbh75h8czmABeXug2cp2z1mYhH4ZkIxU+qEgDpUIRDC3gPjjzawRZplVvSJE8T6fXOufheX6XihqrKWCK6BPReAoJ311LPm3P62WdakKBy5tiM/eQYiU9U0jxsPXAYL2D+N28iVWmi8N/qOQnB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FTz/vxVb; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722245393; x=1753781393;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=Okn6Hh7a8OxqdINhFpBMmcm+OFNUZUiCDEeJ7M45+Ag=;
-  b=FTz/vxVbdaVtlhCyuYMslzKkZUiFuUBaYzqYn9LrxwM15kb81n5LYetM
-   u7VHgOIu1LDwy0B5gMcIjYhG2xkV89m95/lanGRU6mClaQjBMp6CiycTv
-   +RV+IypDCFxOdg8RqH8CjdPkkisJ7K8Z0kDfryjJ7hZ4OYurt7Whr1JSM
-   EN6dnqQR22gMSvmC0FzEipdP/2tDKz5w6rXpL3JCUx17ODXSAzQhZB6Jy
-   2kV73zLRiWhEGliUX6QnhJpNc17gu8W0wMxg4X8vnotDuKQEjEIlvpImC
-   2n78RUR9F4iFSH8pImfwcL8f4atWWFngoy8XNQ0XBmnXM5kEw6QiC8JNS
-   A==;
-X-CSE-ConnectionGUID: k4/ihfkhQ3+IZH/Ye47bnQ==
-X-CSE-MsgGUID: jEc1onOnT3mXlMbfxXEiBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11147"; a="30606920"
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="30606920"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:29:52 -0700
-X-CSE-ConnectionGUID: si+UUBxSQyyqZAevhhfeqw==
-X-CSE-MsgGUID: D2TdvVJKRvC0UDCGKJ8A3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,245,1716274800"; 
-   d="scan'208";a="54513537"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.185])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2024 02:29:46 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org
-Cc: torvalds@linux-foundation.org, ebiederm@xmission.com,
- alexei.starovoitov@gmail.com, rostedt@goodmis.org,
- catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- bpf@vger.kernel.org, netdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: [PATCH resend v4 00/11] Improve the copy of task comm
-In-Reply-To: <20240729023719.1933-1-laoar.shao@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240729023719.1933-1-laoar.shao@gmail.com>
-Date: Mon, 29 Jul 2024 12:29:43 +0300
-Message-ID: <87bk2gzgu0.fsf@intel.com>
+	 MIME-Version:Content-Type; b=BouKm2ke/lKatvk3xyKmVpk6GAyPU7fDs+VF4iPwq0z+TkVQkpvhZd9pRviT1KO3K70PhAtoMaAPWnWbCyI4pwLM+jVpfZJpKizq8rPEh1xTeutKPtDYBPv9z8V0xWk2/DzPaIJDecpqa4o+EtGQB/FxGNwCVf4zuFvo53jqAyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ENmdq1hJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722245400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IZTAP+nDSgd5C9ys1nFKui+wNX+zNnEPNP6ru+kr8iY=;
+	b=ENmdq1hJXyu69lQ1iDeAUzwfMD1YZxD69tKIGID7gfpAaUrs9h7Mfm/UzTkkZYOMfMrDFl
+	zEgeiBak+tyD0rp4P2IUSjyf8T2RuqK/aZg72K5zROQh/gstEOgC2h7iL2cD+RS50MPwjx
+	Gbl6HHmyGVkXv96JmBy7tMljBcZcWaM=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-4mD4iOlSM5qQFIZtJyOz1w-1; Mon,
+ 29 Jul 2024 05:29:56 -0400
+X-MC-Unique: 4mD4iOlSM5qQFIZtJyOz1w-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F2B801955D44;
+	Mon, 29 Jul 2024 09:29:54 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C8AE19560AE;
+	Mon, 29 Jul 2024 09:29:52 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>
+Subject: Re: Testing if two open descriptors refer to the same inode
+In-Reply-To: <20240729.085339-ebony.subplot.isolated.pops-b8estyg9vB9Q@cyphar.com>
+	(Aleksa Sarai's message of "Mon, 29 Jul 2024 19:09:56 +1000")
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+	<20240729.085339-ebony.subplot.isolated.pops-b8estyg9vB9Q@cyphar.com>
+Date: Mon, 29 Jul 2024 11:29:49 +0200
+Message-ID: <87a5i0r1f6.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,92 +74,61 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, 29 Jul 2024, Yafang Shao <laoar.shao@gmail.com> wrote:
-> Hello Andrew,
->
-> Is it appropriate for you to apply this to the mm tree?
->
-> Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on the
-> length of task comm. Changes in the task comm could result in a destination
-> string that is overflow. Therefore, we should explicitly ensure the destination
-> string is always NUL-terminated, regardless of the task comm. This approach
-> will facilitate future extensions to the task comm.
+* Aleksa Sarai:
 
-Why are we normalizing calling double-underscore prefixed functions all
-over the place? i.e. __get_task_comm().
+> On 2024-07-29, Florian Weimer <fweimer@redhat.com> wrote:
+>> It was pointed out to me that inode numbers on Linux are no longer
+>> expected to be unique per file system, even for local file systems.
+>> Applications sometimes need to check if two (open) files are the same.
+>> For example, a program may want to use a temporary file if is invoked
+>> with input and output files referring to the same file.
+>
+> Based on the discussions we had at LSF/MM, I believe the "correct" way
+> now is to do
+>
+>   name_to_handle_at(fd, "", ..., AT_EMPTY_PATH|AT_HANDLE_FID)
+>
+> and then use the fhandle as the key to compare inodes. AT_HANDLE_FID is
+> needed for filesystems that don't support decoding file handles, and was
+> added in Linux 6.6[1]. However, I think this inode issue is only
+> relevant for btree filesystems, and I think both btrfs and bcachefs both
+> support decoding fhandles so this should work on fairly old kernels
+> without issue (though I haven't checked).
 
-get_task_comm() is widely used. At a glance, looks like it could be used
-in many of the patches here too.
+> [1]: commit 96b2b072ee62 ("exportfs: allow exporting non-decodeable file handles to userspace")
 
 
-BR,
-Jani.
+Thanks, it's not too bad.  The name_to_handle_at manual page says that
+the handle is supposed to be treated as an opaque value, although it
+mentions AT_HANDLE_FID.  I think this needs to be fixed that it's
+expected to compare the handle bytes, and also say whether it's
+necessary to compare the type or not.
 
+> Lennart suggested there should be a way to get this information from
+> statx(2) so that you can get this new inode identifier without doing a
+> bunch of extra syscalls to verify that inode didn't change between the
+> two syscalls. I have a patchset for this, but I suspect it's too ugly
+> (we can't return the full file handle so we need to hash it). I'll send
+> an RFC later this week or next.
 
->
-> As suggested by Linus [0], we can identify all relevant code with the
-> following git grep command:
->
->   git grep 'memcpy.*->comm\>'
->   git grep 'kstrdup.*->comm\>'
->   git grep 'strncpy.*->comm\>'
->   git grep 'strcpy.*->comm\>'
->
-> PATCH #2~#4:   memcpy
-> PATCH #5~#6:   kstrdup
-> PATCH #7~#9:   strncpy
-> PATCH #10~#11: strcpy
->
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Link: https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/ [0]
->
-> Changes:
-> v3->v4:
-> - Rename __kstrndup() to __kmemdup_nul() and define it inside mm/util.c
->   (Matthew)
-> - Remove unused local varaible (Simon)
->
-> v2->v3: https://lore.kernel.org/all/20240621022959.9124-1-laoar.shao@gmail.com/
-> - Deduplicate code around kstrdup (Andrew)
-> - Add commit log for dropping task_lock (Catalin)
->
-> v1->v2: https://lore.kernel.org/bpf/20240613023044.45873-1-laoar.shao@gmail.com/
-> - Add comment for dropping task_lock() in __get_task_comm() (Alexei)
-> - Drop changes in trace event (Steven)
-> - Fix comment on task comm (Matus)
->
-> v1: https://lore.kernel.org/all/20240602023754.25443-1-laoar.shao@gmail.com/
->
-> Yafang Shao (11):
->   fs/exec: Drop task_lock() inside __get_task_comm()
->   auditsc: Replace memcpy() with __get_task_comm()
->   security: Replace memcpy() with __get_task_comm()
->   bpftool: Ensure task comm is always NUL-terminated
->   mm/util: Fix possible race condition in kstrdup()
->   mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
->   mm/kmemleak: Replace strncpy() with __get_task_comm()
->   tsacct: Replace strncpy() with __get_task_comm()
->   tracing: Replace strncpy() with __get_task_comm()
->   net: Replace strcpy() with __get_task_comm()
->   drm: Replace strcpy() with __get_task_comm()
->
->  drivers/gpu/drm/drm_framebuffer.c     |  2 +-
->  drivers/gpu/drm/i915/i915_gpu_error.c |  2 +-
->  fs/exec.c                             | 10 ++++-
->  include/linux/sched.h                 |  4 +-
->  kernel/auditsc.c                      |  6 +--
->  kernel/trace/trace.c                  |  2 +-
->  kernel/trace/trace_events_hist.c      |  2 +-
->  kernel/tsacct.c                       |  2 +-
->  mm/kmemleak.c                         |  8 +---
->  mm/util.c                             | 61 ++++++++++++---------------
->  net/ipv6/ndisc.c                      |  2 +-
->  security/lsm_audit.c                  |  4 +-
->  security/selinux/selinuxfs.c          |  2 +-
->  tools/bpf/bpftool/pids.c              |  2 +
->  14 files changed, 51 insertions(+), 58 deletions(-)
+Hashing these things is rather nasty because it makes things impossible
+to test.
 
--- 
-Jani Nikula, Intel
+>> How can we check for this?  The POSIX way is to compare st_ino and
+>> st_dev in stat output, but if inode numbers are not unique, that will
+>> result in files falsely being reported as identical.  It's harmless in
+>> the temporary file case, but it in other scenarios, it may result in
+>> data loss.
+>
+> (Another problem is that st_dev can be different for the same mount due
+> to subvolumes.)
+
+Uh-oh.  If st_dev are different, is it still possible that truncating
+one path will affect the other with the different st_dev value?
+
+Thanks,
+Florian
+
 
