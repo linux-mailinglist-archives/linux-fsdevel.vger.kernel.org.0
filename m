@@ -1,189 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-24449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF5393F6F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 15:46:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0F893F722
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 15:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96642281E9B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:46:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C698EB21E44
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9705814EC4E;
-	Mon, 29 Jul 2024 13:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA2C154C0D;
+	Mon, 29 Jul 2024 13:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDpaYfrH"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="mzrbQO8z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8F4147C86;
-	Mon, 29 Jul 2024 13:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB58714EC60
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 13:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722260780; cv=none; b=Sl6o0UKzr8OoBEfZwaefjFBZvd4SArjbUMiuTXzVYbkZLg4xmH83afeiNwD/XdsHdINxmqZZdNB1T1hHSGbaFFJhl8yGlrTs6F1GPjqaRh2KTrV7C5g4EPnjYGE9NQ0Z42MpIrrdCiP5uGzQ7z0cM9Wvb6xPYu16GoX7i1JVF2U=
+	t=1722261569; cv=none; b=f2h4rYXztSbUZDm+6zbUhA03nlOeDygXakag8yNXrhr/4j2/pMF99YvUnrE/BfwS0eH3lPkZoTmwI2vLQGqOy5JcBvOuJtHfj1z1HWpfCU0h8NvhzA4ev6rCGJUH0jeEtr3ZwSELwF3cJCakq57M2hspwmJcGndVtVyiawFvjug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722260780; c=relaxed/simple;
-	bh=O3MU1F+c8ywd1xSZMUCNs8kMjtY9ytEAMnzRHa8ilj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c+IgT5Z6wd0MarjiOhPbjj2wWhWHdPTCTuQIZvxwU6+ZeVYlgJAyPxQxRrPrUcJz+xICUAfgCaDW3F/uqOD6t3P5/o3dqW50P6VTwes7OCAw4OYXM+9TIs+g+m5ETQA328nrKzI4nuz5dT2/f8N7cvNXPH5gPX2TrJ00hhyBVaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDpaYfrH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5366C32786;
-	Mon, 29 Jul 2024 13:46:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722260779;
-	bh=O3MU1F+c8ywd1xSZMUCNs8kMjtY9ytEAMnzRHa8ilj4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WDpaYfrHVrMbDf5qh9q5I3HDuYGxJoKS14RrlGHfCv3BfWbNTZbcgiBE5dsWTnolB
-	 rINh7jqMVBb/Vw1/pGcnbuP0QOXWuzrVxh/7n7f8Ntgyi3jKRib1zLKO8rOEWXXlUZ
-	 3Kd1L3yo/GDb6QehxssSFXf6RLmhZTcFFkUD7HR4zY9p4AZ2oSjWNW3r8a+wZEE6zF
-	 TL45jq6z5MGmT68Zb13ha2TamUw1RAU425cSn8WQFgp8AFSXTUePqesgdHO+XicRN8
-	 rr0OB9Yy0vTHPAbA7rfwwtWtNnJKWXky1pzdFui4zGnLrAFkWzdNKE6x56MNziBOjz
-	 lmhUdyoJ+HRHg==
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Song Liu <song@kernel.org>,
-	bpf <bpf@vger.kernel.org>,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"martin.lau@linux.dev" <martin.lau@linux.dev>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"mattbobrowski@google.com" <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for bpf_get_dentry_xattr
-Date: Mon, 29 Jul 2024 15:46:06 +0200
-Message-ID: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CDDCB34B-4B01-40CA-B512-33023529D104@fb.com>
-References: 
+	s=arc-20240116; t=1722261569; c=relaxed/simple;
+	bh=RQu8iSqpeNKuiSQCz+oMPqtXvZeV68r8qmaYM5C1oco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ol+/dbf7NZmE/63hMRnN/Txb484P7EHete9BMyuWuTe0JCpMWnCG1Eo8OgHjfE+6OiZFqg3yTdCYGEf+2Sy1DB1eZhkWd8iORWJD9J776NGqsCh3/MoUisQHpSr/2BOn9LzFbGYEKvXRXGkqTJVHFFWGOOR9jumrLAQqEoBbF9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=mzrbQO8z; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-113-198.bstnma.fios.verizon.net [173.48.113.198])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46TDwmVU016155
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 09:58:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1722261532; bh=PM7Dhelwt8evrmwJBsFtoBMEI3ETn1PNdtUW08NA2t0=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=mzrbQO8z5kGT7QrVsd7S36FKlagze53iuANsryUVbqE2vNlJqGm2c7jzPQFw+M/Lo
+	 Q6snREaMJuIDbwc9yA+W0bu2/Bek1F4/aRsRcCqpcStJgP6lLpQyUIxYMqMasNMmJe
+	 MKAbdgzt3IvNc3aAcH6IfoBl8lh48hVSB0VW7kz3pmapwQ/kXr7SI9eLF6vHd3d8RW
+	 uR3AQ/CMwQoewSX6076TUuXVYlqYlieHJ5OJS2ySdJEUrdWVFKoC1xuFrsYdL57xmn
+	 A27g05NMVy4148nADQRz8SrUDI84rPzMGWygSrUMeazfyeyfieFGc/yRi17Bl6bBkl
+	 w2Tkh1JbsZU1A==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id EC47215C02D3; Mon, 29 Jul 2024 09:58:47 -0400 (EDT)
+Date: Mon, 29 Jul 2024 09:58:47 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>,
+        paulmck@kernel.org, Hillf Danton <hdanton@sina.com>,
+        rcu@vger.kernel.org, frank.li@vivo.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
+Message-ID: <20240729135847.GB557749@mit.edu>
+References: <0000000000004ff2dc061e281637@google.com>
+ <20240729-himbeeren-funknetz-96e62f9c7aee@brauner>
+ <20240729132721.hxih6ehigadqf7wx@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3699; i=brauner@kernel.org; h=from:subject:message-id; bh=O3MU1F+c8ywd1xSZMUCNs8kMjtY9ytEAMnzRHa8ilj4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQtn6sY/nTdvc/6HNs2h2x7rVZY4FEio+x0bXJV0QUfk /0vTrx27ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI7QtGhgNbDj3/e2RXhvU8 69UBa0P/NPk/rnqavH7WyX75NDaz5w4M/zSuL//OJbJ958aD0Vzruj/ua8s1/yKwiCHe4mer79I lKxgA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729132721.hxih6ehigadqf7wx@quack3>
 
-On Fri, Jul 26, 2024 at 07:43:28PM GMT, Song Liu wrote:
-> Hi Christian, 
+On Mon, Jul 29, 2024 at 03:27:21PM +0200, Jan Kara wrote:
 > 
-> Thanks a lot for your comments.
-> 
-> > On Jul 26, 2024, at 4:51 AM, Christian Brauner <brauner@kernel.org> wrote:
-> > 
-> > On Fri, Jul 26, 2024 at 09:19:54AM GMT, Song Liu wrote:
-> >> Hi Christian, 
-> >> 
-> >>> On Jul 26, 2024, at 12:06 AM, Christian Brauner <brauner@kernel.org> wrote:
-> >> 
-> >> [...]
-> >> 
-> >>>> +
-> >>>> + for (i = 0; i < 10; i++) {
-> >>>> + ret = bpf_get_dentry_xattr(dentry, "user.kfunc", &value_ptr);
-> >>>> + if (ret == sizeof(expected_value) &&
-> >>>> +    !bpf_strncmp(value, ret, expected_value))
-> >>>> + matches++;
-> >>>> +
-> >>>> + prev_dentry = dentry;
-> >>>> + dentry = bpf_dget_parent(prev_dentry);
-> >>> 
-> >>> Why do you need to walk upwards and instead of reading the xattr values
-> >>> during security_inode_permission()?
-> >> 
-> >> In this use case, we would like to add xattr to the directory to cover
-> >> all files under it. For example, assume we have the following xattrs:
-> >> 
-> >>  /bin  xattr: user.policy_A = value_A
-> >>  /bin/gcc-6.9/ xattr: user.policy_A = value_B
-> >>  /bin/gcc-6.9/gcc xattr: user.policy_A = value_C
-> >> 
-> >> /bin/gcc-6.9/gcc will use value_C;
-> >> /bin/gcc-6.9/<other_files> will use value_B;
-> >> /bin/<other_folder_or_file> will use value_A;
-> >> 
-> >> By walking upwards from security_file_open(), we can finish the logic 
-> >> in a single LSM hook:
-> >> 
-> >>    repeat:
-> >>        if (dentry have user.policy_A) {
-> >>            /* make decision based on value */;
-> >>        } else {
-> >>            dentry = bpf_dget_parent();
-> >>            goto repeat;
-> >>        }
-> >> 
-> >> Does this make sense? Or maybe I misunderstood the suggestion?
-> > 
-> > Imho, what you're doing belongs into inode_permission() not into
-> > security_file_open(). That's already too late and it's somewhat clear
-> > from the example you're using that you're essentially doing permission
-> > checking during path lookup.
-> 
-> I am not sure I follow the suggestion to implement this with 
-> security_inode_permission()? Could you please share more details about
-> this idea?
+> So in ext4 we have EXT4_FLAGS_SHUTDOWN flag which we now use
+> internally instead of SB_RDONLY flag for checking whether the
+> filesystem was shutdown (because otherwise races between remount and
+> hitting fs error were really messy). However we still *also* set
+> SB_RDONLY so that VFS bails early from some paths which generally
+> results in less error noise in kernel logs and also out of caution
+> of not breaking something in this path. That being said we also
+> support EXT4_IOC_SHUTDOWN ioctl for several years and in that path
+> we set EXT4_FLAGS_SHUTDOWN without setting SB_RDONLY and nothing
+> seems to have blown up. So I'm inclined to belive we could remove
+> setting of SB_RDONLY from ext4 error handling. Ted, what do you
+> think?
 
-Given a path like /bin/gcc-6.9/gcc what that code currently does is:
+Well, there are some failures of generic/388 (which involves calling
+the shutdown ioctl while running fsstress).  I believe that most of
+those failures are file system corruption errors, as opposed to other
+sorts of failures, but we don't run KASAN kernels all that often,
+especially since generic/388 is now on the exclude list.
 
-* walk down to /bin/gcc-6.9/gcc
-* walk up from /bin/gcc-6.9/gcc and then checking xattr labels for:
-  gcc
-  gcc-6.9/
-  bin/
-  /
+The failure rate of generic/388 varies depending on the storage device
+involved, but it varies from less than 10% to 50% of the time, if
+memory serves correctly.  Since EXT4_IOC_SHUTDOWN is used most of the
+time as a debugging/test (although there are some users use it in
+production, but the failure rate when you're not doing something
+really aggressive like fsstress is very small), this has been on the
+"one of these days, when we have tons of free time, we should really
+look into this.  The challenge is fixing this in a way that doesn't
+involve adding new locking in various file system hotpaths.
 
-That's broken because someone could've done
-mv /bin/gcc-6.9/gcc /attack/ and when this walks back and it checks xattrs on
-/attack even though the path lookup was for /bin/gcc-6.9. IOW, the
-security_file_open() checks have nothing to do with the permission checks that
-were done during path lookup.
+So "nothing seems to have blown up" might be a bit strong.  But it's
+something we can try doing, and see whether it results in more rather
+than less syzbot complaints.
 
-Why isn't that logic:
+> Also as the "filesystem shutdown" is spreading across multiple
+> filesystems, I'm playing with the idea that maybe we could lift a
+> flag like this to VFS so that we can check it in VFS paths and abort
+> some operations early.  But so far I'm not convinced the gain is
+> worth the need to iron out various subtle semantical differences of
+> "shutdown" among filesystems.
 
-* walk down to /bin/gcc-6.9/gcc and check for each component:
+I think that might be a good idea.  Hopefully subtle semantic
+differences are ones that won't matter in terms of the VFS aborting
+operations early.
 
-  security_inode_permission(/)
-  security_inode_permission(gcc-6.9/)
-  security_inode_permission(bin/)
-  security_inode_permission(gcc)
-  security_file_open(gcc)
-
-I think that dget_parent() logic also wouldn't make sense for relative path
-lookups:
-
-	dfd = open("/bin/gcc-6.9", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
-
-This walks down to /bin/gcc-6.9 and then walks back up (subject to the
-same problem mentioned earlier) and check xattrs for:
-
-  gcc-6.9
-  bin/
-  /
-
-then that dfd is passed to openat() to open "gcc":
-
-fd = openat(dfd, "gcc", O_RDONLY);
-
-which again walks up to /bin/gcc-6.9 and checks xattrs for:
-  gcc
-  gcc-6.9
-  bin/
-  /
-
-Which means this code ends up charging relative lookups twice. Even if one
-irons that out in the program this encourages really bad patterns.
-Path lookup is iterative top down. One can't just randomly walk back up and
-assume that's equivalent.
+						- Ted
 
