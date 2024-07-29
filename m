@@ -1,123 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-24452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8CD93F84E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 16:38:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016B793F86D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 16:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1FD6282617
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 14:38:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8D102813E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 14:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7CD15ADBC;
-	Mon, 29 Jul 2024 14:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53622153BEE;
+	Mon, 29 Jul 2024 14:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzuBPrZS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGBYnPIB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE2315AD9B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 14:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8ED2823A9;
+	Mon, 29 Jul 2024 14:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722263661; cv=none; b=aNdeHVmo6HGJf+H4O84cRt4yRCH/Jfgp/8MEAPbHOZ65VZCQG+H0s9VUap68nUtI/ftAthXVltMGelZltAMPBJaAAn6oWnBzCzr5ftairxE+Wwio3VKn0pwe7e/Qwzve2QSdvcP/WtBGinpIVD0eeOLjWNXUYrajfs36yMec3EI=
+	t=1722264070; cv=none; b=fnNQiGK/mxnOWDsDZz1gK/EQVgzXj3NbU21chbbCrh+foCrLFKDLMOulDq3J2U+WRq9XbQ4fpieee4HyjH19YMo64pq66KjoO9ZOtciu/f43++hcyxN2os3K2/wz0V/uWcNK0j8hTcCoZHkz+ypke6hCzhrRbbNXR9Aa5RFePpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722263661; c=relaxed/simple;
-	bh=w5XqgsQI3VLPJ5/5j++f8Jc0bKEckkpeLFFDG7iiQFc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=JMocKY9i6L0q1E+uvZS3qZRzEAjBn1lBh+K9oLJqcTjmDOX/X0y0FXL2l9e48p7bC4fqUJiRUgtxV6zml4xHaAcYTI35caF/8eH+uiKtbigwcUTm9iq/fLX8/oyf5iM4FUwDxE4OJlO6cy2NPJZo8xLL0D+fw0Dt7xecFAmED+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzuBPrZS; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5d5cbe88f70so1644777eaf.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 07:34:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722263659; x=1722868459; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9OqArYKkUlj9N7xmjjT9UT1+jheSUOj0qJQmcibXC3o=;
-        b=XzuBPrZScVD+m+q6NVrOQEsF2/60dOjlvsC72IpM8YDA0J/KgfL27y9Yl1uufJmvwY
-         SVkWAmiJ1BFP/HLy5+tCY6vc7LT5wMwpgIQu7Dk5uFbrT2GydqvO1rrb+73VCy0zscHf
-         C+fuLZIuWMXgnocDgNdJ97nQgVfeIaFoknVzkcRWRV6ybskYR9qAkyIBD/Tp1BRd6Jjy
-         aionMJYXCYbjWpcsd8KCiZANM6z1S51VXNYPwcoQ5FjU/NLZrZuGUu/TIebmhq4fX0NX
-         /1cqY8K19x7MHaTs0dxEZufnO82eIQqMhXU/ls0WQiPFQGqkwdsG94QxRA2KJ6SHCvz/
-         L97Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722263659; x=1722868459;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9OqArYKkUlj9N7xmjjT9UT1+jheSUOj0qJQmcibXC3o=;
-        b=OFerQtMnR68Am1IXpDPyHbY06du6sWaziDsM7bHOcoebLKueE2YJ2diwFD+lo8Bbvz
-         j3cGEPQFue8uQ6wM4v5DXs23LO6sjUyrozHEFbpe+9MWEXGHlGPocptn4QdpR6cEX4ah
-         mQbGXrRY0jaGHV+cM7X6qLdThNTd3wBAMynhlarLDQsWaY0aYs+hsfwVtdGbmymRF1sI
-         jOZCFFNv1Evfs+JxIukYQtF85h9iz7qletQDz3kKO5Kctq0Y6tgmKcPE9IhlQp7FfPoh
-         RqzbfNl1/k390vIRUwsqvEczMQ4wc/LAP5rmRD8T3MBxOo2mC4bqL6UoNh990eKfHiMo
-         ft4A==
-X-Gm-Message-State: AOJu0YyW6nhJAsRFxgQMHAmd1cXLcr4eIi+SQrbsM+OGfu7pW2N/wI6d
-	pb6KMQll70h0aypR4BnQSlv4MXpObCcs9gK8zdsQQC8cWIe/4Ex1yUBMGGW9H3HoiL6QOPKh32v
-	mVsQ+DjlSui7KBawBf8IrMwdsRYG3YFUa
-X-Google-Smtp-Source: AGHT+IF0Q3Xhj4B+HxTKT3Smn5aLJTWMPkA7qSwhwkqxrtZ9Zf5VP2RA6iKHnATGoPAvPeCOrH4tNUVVmM1IaOmu0Ho=
-X-Received: by 2002:a05:6820:160a:b0:5d5:a931:e8d3 with SMTP id
- 006d021491bc7-5d5d0e98d85mr7151168eaf.4.1722263658600; Mon, 29 Jul 2024
- 07:34:18 -0700 (PDT)
+	s=arc-20240116; t=1722264070; c=relaxed/simple;
+	bh=Q1+AFnT8npjT4Lpzo89th+2c5Ce2NhXgTpXjWRxaQgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bCDeF9cLoC5TtFfDFBy5PnJyUzg34VsSTZkO0e3nlMa4W+ViGfG9KexjXsaRYre4KB1WVaBpVb/w0YfhTFiL2J4u9sROd3W9VMmboIbaj5HvJwlsqfDRivNr5gxi4pjfrjXGpnFIwywitK+HmPn4Rd5xW07YhvFaH3XvjBlZfH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGBYnPIB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 432FDC32786;
+	Mon, 29 Jul 2024 14:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722264070;
+	bh=Q1+AFnT8npjT4Lpzo89th+2c5Ce2NhXgTpXjWRxaQgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tGBYnPIBHtddODwHKJTwc5SNcydiu0rIYiiTdQSD6Jcfh58muUgxoWWx1HGhX+dBA
+	 q4aNdnMat9XV/dJSr0Krv+/572bI25pLk/Mw8m3pM/U67w+XRoDfY2+d4KHpmcz3zd
+	 fs7kdyp/5OPkGmfFhDPiV8SESJ0AtpesUlGHkWwO5faFczHM1ygCJXXDhxZQtS9nMM
+	 L7cFmnCjTkawc8+Es8/SthD6tGXrnfkoP8QVC8hDN+yc/Ow6VOcYYv+1KldeWxoBo2
+	 ImEtsNVE8MBdBTpOGXTm/zjat/YsFzJyu+drwCuJE0zSeQMzp8zqe1jcPiaFpveRI2
+	 IYuXCKTTYBmqQ==
+Date: Mon, 29 Jul 2024 15:41:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Amit Daniel Kachhap <amitdaniel.kachhap@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
+	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 18/29] arm64: add POE signal support
+Message-ID: <8a6135cc-67cd-4fbe-96fa-3598491c1c66@sirena.org.uk>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-19-joey.gouly@arm.com>
+ <229bd367-466e-4bf9-9627-24d2d0821ff4@arm.com>
+ <7789da64-34e2-49db-b203-84b80e5831d5@sirena.org.uk>
+ <cf7de572-420a-4d59-a8dd-effaff002e12@arm.com>
+ <ZqJ2I3f2qdiD2DfP@e133380.arm.com>
+ <a13c3d5e-6517-4632-b20d-49ce9f0d8e58@sirena.org.uk>
+ <ZqPLSRjjE+SRoGAQ@e133380.arm.com>
+ <a52f1762-afd4-4527-88ac-76cdd8a59d5d@sirena.org.uk>
+ <Zqemv4YUSM0gouYO@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Vincent <laivcf@gmail.com>
-Date: Mon, 29 Jul 2024 15:33:42 +0100
-Message-ID: <CAEqW9OxJtbqvLHBKygW918tk=hS+ThqR79DmO-2qYp+V1FfqPQ@mail.gmail.com>
-Subject: exfat: slow write performance
-To: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hJtaL31y4F/8RS76"
+Content-Disposition: inline
+In-Reply-To: <Zqemv4YUSM0gouYO@e133380.arm.com>
+X-Cookie: List was current at time of printing.
 
-I've found that write performance of exFAT is a lot lower than other
-filesystems on our setup with a fast NVMe SSD:
 
-- Kernel: 6.10.0-364.vanilla.fc40.x86_64
-- Test cmd: fio -name=fioWr -ioengine=libaio -directory=<mount point>
--blocksize=1M -readwrite=write -filesize=10G -end_fsync=1 -numjobs=8
--direct=1 -group_reporting
-- Benchmarks:
-    - exFAT: Direct I/O: ~1370 MiB/s (Buffered: ~1250 MiB/s)
-(mkfs.exfat -c 1M -b 1M <device>)
-    - ext4: Direct I/O: ~2230 MiB/s (Buffered: ~2150 MiB/s)
-    - xfs: Direct I/O: ~2220 MiB/s (Buffered: ~2200 MiB/s)
+--hJtaL31y4F/8RS76
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I found that direct I/O is disabled for most of these writes in exFAT,
-code responsible is "exfat_direct_IO()" in "fs/exfat/inode.c". As the
-written file is being expanded it is falling back to normal buffered
-write. The relevant code also has the following FIXME comment
-(inherited from the fat driver):
+On Mon, Jul 29, 2024 at 03:27:11PM +0100, Dave Martin wrote:
+> On Fri, Jul 26, 2024 at 06:39:27PM +0100, Mark Brown wrote:
 
-/*
-* FIXME: blockdev_direct_IO() doesn't use ->write_begin(),
-* so we need to update the ->i_size_aligned to block boundary.
-*
-* But we must fill the remaining area or hole by nul for
-* updating ->i_size_aligned
-*
-* Return 0, and fallback to normal buffered write.
-*/
+> > Yes, though that would mean if we had to generate any register in there
+> > we'd always have to generate at least as many entries as whatever number
+> > it got assigned which depending on how much optionality ends up getting
+> > used might be unfortunate.
 
-I have tried working around this problem by preallocating the file. I
-see good write speeds in the direct I/O case (matching ext4 ~2200
-MiB/s, Buffered: ~1700 MiB/s), the problem is that preallocation is
-slow since native fallocate is not supported.
+> Ack, though it's only 150 bytes or so at most, so just zeroing it all
+> (or as much as we know about) doesn't feel like a big cost.
 
-What would the maintainers recommend as the best course of action for
-us here? I have noticed [1] that FALLOC_FL_KEEP_SIZE was implemented
-in fat, so perhaps that would be simple to work on first?
+> It depends how determined we are to squeeze the most out of the
+> remaining space.
 
-Does anyone with more experience in the exFAT driver know the full
-reasons behind the direct I/O disabling, and what it would take to
-support direct I/O during file extension? Perhaps recent changes may
-have made fixing this simpler?
+Indeed, I was more thinking about how it might scale as the number of
+extensions grows rather than the current costs.
 
-Thanks.
+--hJtaL31y4F/8RS76
+Content-Type: application/pgp-signature; name="signature.asc"
 
-1: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/fat?id=b13bb33eacb7266d66a3adf03adaa0886d091789
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmanqfsACgkQJNaLcl1U
+h9AXbgf+JtPrAvhLYf2ZdjhYtqAh1SMzgRQmESORZGriT/8kYjk9Mo4NTTvAC2Yn
+/VfRFTo1v4jtdJYliDP8UNjdn0/QJDc/vV8wuWpM2OuGhJIY632rnSXGdUKRyg1n
+x2CMonSmVuyf9RgJv7ycXFXL2p1CqtQTJ1s1B/q+JMxL0qRTtPouELOvuEzsk6Pu
+cr0MQ6m9KR1RlhfmTeW23zy+Diwyrgj9E6Fp5vHHU31sK1rYS7z7ODNzWxhBOkdw
+JY29M0Zsww4EHQqBRB9CoPAKSbx3GgG6c5yo6BHxem4Fpun2mq0OKuIfobbb8Luk
+psf1yW9CJPnOO6ekMQXlpmPZwS1CPg==
+=os6B
+-----END PGP SIGNATURE-----
+
+--hJtaL31y4F/8RS76--
 
