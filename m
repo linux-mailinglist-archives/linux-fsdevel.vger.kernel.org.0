@@ -1,121 +1,272 @@
-Return-Path: <linux-fsdevel+bounces-24506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7916193FDBD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 20:52:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0FF093FDE7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 20:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB2E5B21844
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 18:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55634283FFC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 18:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD96186E2D;
-	Mon, 29 Jul 2024 18:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35F4188CAF;
+	Mon, 29 Jul 2024 18:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f51CE1tC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nL65FRhc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666F757CB5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 18:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB44D18786C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 18:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722279134; cv=none; b=AVn9FPKH+dSHOwqbfaB2We2cbjxqx0YFkq/2YWfPM0kjrigXkzo5K0t0UHjVCV162sz5ns401FxbGzU2Jl25nQAnyhnrYzMm1c8qwvwbmvYoNEiHeZULQG6TyDNWy6nwwVgQ9VF+a4rpDYEO5YvmcKCycRbQm/NPsVUyRR61pig=
+	t=1722279469; cv=none; b=L2r7sczrQfQsKGzqriMKgaNXpt4bbYhEV2S8PcPI7tgWi2vyV2r7LVHwQdrnYXd4X+gxvOnAIqz/4imr3LN/jcKyQ8nrLkZazWZcjUUmynb8TVSI8a8SxpEZ4jjpDDchXRAXAR04UQlrhQPT/yl6EqBbcDuw1Qjv5i9k68ehu84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722279134; c=relaxed/simple;
-	bh=G67oN5+WTVUK6WnGRkk7RWmpQqDpJc6mwIXKnsb3UBE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fhk/jXwRQXbxYbNhZ1oXmE/eT6osSkx3Sc59K0tm/msuAvpVVGh+SCKcH256V2mqmLpXEHP7ftJrmLSuGJggudtGCGS1+F3LPFSZoTWHIBAnJmb0WlnvmKNfNbw2Vwv74uSOGbYa5Tpd2olPxjP7cNmP7eiM/sHFL1FniPjaGbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f51CE1tC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722279131;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=woXnGJ2FefZ0i/LfFS//feW7ePRaSh2BIl0uOQOK+SY=;
-	b=f51CE1tCwf4lH9lwSVLDG2QemZ7EfviR29lfGIzWm3n3SnR/50YavhL1z5jZza0BDpUJcw
-	3374i/Q9NFctf4EozJMTNeFNrG7HdUIPWrusFTUPkMrbPXHY9a+1RsFPvm0H1HCcgkvZJK
-	YwDzIEX1lwsh6Dl65LK1fgPonf7BJgQ=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-17-9MngdyftMwCFGGVqlS4OTA-1; Mon,
- 29 Jul 2024 14:52:08 -0400
-X-MC-Unique: 9MngdyftMwCFGGVqlS4OTA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FF3419560AA;
-	Mon, 29 Jul 2024 18:52:06 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F0CE19560B2;
-	Mon, 29 Jul 2024 18:52:03 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: libc-alpha@sourceware.org,  linux-fsdevel@vger.kernel.org,  Trond
- Myklebust <trondmy@hammerspace.com>
-Subject: Re: posix_fallocate behavior in glibc
-In-Reply-To: <20240729184430.GA1010@lst.de> (Christoph Hellwig's message of
-	"Mon, 29 Jul 2024 20:44:30 +0200")
-References: <20240729160951.GA30183@lst.de>
-	<87a5i0krml.fsf@oldenburg.str.redhat.com>
-	<20240729184430.GA1010@lst.de>
-Date: Mon, 29 Jul 2024 20:52:00 +0200
-Message-ID: <877cd4jajz.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1722279469; c=relaxed/simple;
+	bh=zbMZZSb8nNYKo8nWqrMvykxDrA3FeoSpLRj1Jzb9uc8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e7G4mxGMtuxh4fopgFcaDS3Lyh/tIHYz6kFeCJMpRDMqRxvcO0y+8Fvs/aceDQaxF30jN2bDdwlzFkODo1wRJTt7olnc6SlhzY8zW7rjoNJrJGVygBJgO8V7EkIpa9DvHbqFo6druHp6eVuAg0R4slMHmt7957FMa0flWebdmVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nL65FRhc; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a1d7a544e7so270519785a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 11:57:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722279466; x=1722884266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+k6TD1jLDB39HUP0yHvZxwHXn6HKPVRSU/jw+jUK1jE=;
+        b=nL65FRhcUiPdVzquprSi94twcs/b3XRPOsFdJVvWFeiy9hfH9H0H6AIddUANQ0isVC
+         kXcfmgl8EFMLr8EEg0TidkhPQJyNxvR11UpZaKlHrYMaAcE1fy6/VAnXfG1oK2qnFTyL
+         9zFk3621UpFBpdb7XCxLniEGCjqYQYbd4AoKm9L100b4lsANakLHYSjAV0piZhRVM8A1
+         0Fm9o3x4fTBPuo9YCawIP+c76YmplFsFt5z0XXK8TpLF2gyl4MEMCTVOLGQzCUNK+lww
+         FiUlrdRTqI6OFfeSRIIe/3+JpTqH6sSUbK78kS6Hy0NLlQzAJ0q9AP/s9M3HaGer0WWK
+         Xucw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722279466; x=1722884266;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+k6TD1jLDB39HUP0yHvZxwHXn6HKPVRSU/jw+jUK1jE=;
+        b=FaLGzEf701qTPesGs6E89SnReOycKOi3m0c4dxk5SnRCnvWwnk9oFyey//yQQaeEG5
+         opvTz8QDHzTFtMrfrk7+7KkEHQCZJaNYSyusarQAW0eX7kz7/xiqlAOSQX0LQZlfsbAY
+         mbAu95FR2YVy0xzuVdDhYLsJtnS2hIZ5ot2pVFmrzxEIRCeyMreiPMSTHy0UP/aiwlNS
+         1jeC/O8cVuNSruTd2yVOkiacNbWNxG4RF6xpTEXCkSLoi3oWj0mT73HnZbR349Qw9exj
+         iLmo3eMde4KVUvmrMHQMLp0MXDqvgqDlTEE8hOctwuIZKjixr1PCHvvyOnAe8LY70k5J
+         yY5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX0xUvNphTFrmZT1lOrSo/aMySYqEINSIqvAD1I0xzMQhmoZDsZwJ6HAbIawQhnVNar1qN4m9wsPfY8v6gSHa/EEXDyCZ/HTcjC1mxnTw==
+X-Gm-Message-State: AOJu0YwAvY6BX8bpMCbknq1DPHxwmhxt9oUieUgspAs2GhW4OptYv08m
+	lrSLDbdkQEyDm0CxQjEjEZlAkjF4dBnaWPUideETLZjksniofZ04CwdpdA1HNnaNiMCjYnSQ0SI
+	7461F1cfYsVb0uSkAiuGm1B3Inio=
+X-Google-Smtp-Source: AGHT+IFBHoHpz2PQr6p+2dxp3Zi2HhRr4uPBrYZFpLfXBn9Quza64DC/XoofznbU24zJoMNOxJf2EvDTtdC+RIAx1nM=
+X-Received: by 2002:a05:620a:2807:b0:79c:b8c:8e2b with SMTP id
+ af79cd13be357-7a1e522fabdmr1121788685a.3.1722279466411; Mon, 29 Jul 2024
+ 11:57:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <cover.1721931241.git.josef@toxicpanda.com> <1bc2855779e7ba1d80592be7d6257b43f1a91886.1721931241.git.josef@toxicpanda.com>
+ <CAOQ4uxgXEzT=Buwu8SOkQG+2qcObmdH4NgsGme8bECObiobfTQ@mail.gmail.com> <20240729171120.GB3596468@perftesting>
+In-Reply-To: <20240729171120.GB3596468@perftesting>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 29 Jul 2024 21:57:34 +0300
+Message-ID: <CAOQ4uxjjBiPkg9uxyW12Xd+GZ7t3aP1m9Ayzr8WzqryfqK1x3g@mail.gmail.com>
+Subject: Re: [PATCH 10/10] fsnotify: generate pre-content permission event on
+ page fault
+To: Josef Bacik <josef@toxicpanda.com>, jack@suse.cz
+Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-* Christoph Hellwig:
-
-> On Mon, Jul 29, 2024 at 07:57:54PM +0200, Florian Weimer wrote:
->> When does the kernel return EOPNOTSUPP these days?
+On Mon, Jul 29, 2024 at 8:11=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
+wrote:
 >
-> In common code whenever the file system does not implement the
-> fallocate file operation, and various file systems can also
-> return it from inside the method if the feature is not actually
-> supported for the particular file system or file it is called on.
+> On Thu, Jul 25, 2024 at 11:19:33PM +0300, Amir Goldstein wrote:
+> > On Thu, Jul 25, 2024 at 9:20=E2=80=AFPM Josef Bacik <josef@toxicpanda.c=
+om> wrote:
+> > >
+> > > FS_PRE_ACCESS or FS_PRE_MODIFY will be generated on page fault depend=
+ing
+> > > on the faulting method.
+> > >
+> > > This pre-content event is meant to be used by hierarchical storage
+> > > managers that want to fill in the file content on first read access.
+> > >
+> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > > ---
+> > >  fs/notify/fsnotify.c             | 13 +++++++++
+> > >  include/linux/fsnotify_backend.h | 14 +++++++++
+> > >  mm/filemap.c                     | 50 ++++++++++++++++++++++++++++--=
+--
+> > >  3 files changed, 71 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> > > index 1ca4a8da7f29..435232d46b4f 100644
+> > > --- a/fs/notify/fsnotify.c
+> > > +++ b/fs/notify/fsnotify.c
+> > > @@ -28,6 +28,19 @@ void __fsnotify_vfsmount_delete(struct vfsmount *m=
+nt)
+> > >         fsnotify_clear_marks_by_mount(mnt);
+> > >  }
+> > >
+> > > +bool fsnotify_file_has_content_watches(struct file *file)
+> >
+> > nit: has_pre_content_watches...
+> >
+> > > +{
+> > > +       struct inode *inode =3D file_inode(file);
+> > > +       struct super_block *sb =3D inode->i_sb;
+> > > +       struct mount *mnt =3D real_mount(file->f_path.mnt);
+> > > +       u32 mask =3D inode->i_fsnotify_mask;
+> > > +
+> > > +       mask |=3D mnt->mnt_fsnotify_mask;
+> > > +       mask |=3D sb->s_fsnotify_mask;
+> > > +
+> > > +       return !!(mask & FSNOTIFY_PRE_CONTENT_EVENTS);
+> >
+> > This can use the fsnotify_object_watched() helper, and it will need
+> > the READ_ONCE() that are just being added to avoid data races.
+> >
+> > > +}
+> > > +
+> > >  /**
+> > >   * fsnotify_unmount_inodes - an sb is unmounting.  handle any watche=
+d inodes.
+> > >   * @sb: superblock being unmounted.
+> > > diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotif=
+y_backend.h
+> > > index 36c3d18cc40a..6983fbf096b8 100644
+> > > --- a/include/linux/fsnotify_backend.h
+> > > +++ b/include/linux/fsnotify_backend.h
+> > > @@ -900,6 +900,15 @@ static inline void fsnotify_init_event(struct fs=
+notify_event *event)
+> > >         INIT_LIST_HEAD(&event->list);
+> > >  }
+> > >
+> > > +#ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
+> > > +bool fsnotify_file_has_content_watches(struct file *file);
+> > > +#else
+> > > +static inline bool fsnotify_file_has_content_watches(struct file *fi=
+le)
+> > > +{
+> > > +       return false;
+> > > +}
+> > > +#endif /* CONFIG_FANOTIFY_ACCESS_PERMISSIONS */
+> > > +
+> > >  #else
+> > >
+> > >  static inline int fsnotify(__u32 mask, const void *data, int data_ty=
+pe,
+> > > @@ -938,6 +947,11 @@ static inline u32 fsnotify_get_cookie(void)
+> > >  static inline void fsnotify_unmount_inodes(struct super_block *sb)
+> > >  {}
+> > >
+> > > +static inline bool fsnotify_file_has_content_watches(struct file *fi=
+le)
+> > > +{
+> > > +       return false;
+> > > +}
+> > > +
+> > >  #endif /* CONFIG_FSNOTIFY */
+> > >
+> > >  #endif /* __KERNEL __ */
+> > > diff --git a/mm/filemap.c b/mm/filemap.c
+> > > index ca8c8d889eef..cc9d7885bbe3 100644
+> > > --- a/mm/filemap.c
+> > > +++ b/mm/filemap.c
+> > > @@ -46,6 +46,7 @@
+> > >  #include <linux/pipe_fs_i.h>
+> > >  #include <linux/splice.h>
+> > >  #include <linux/rcupdate_wait.h>
+> > > +#include <linux/fsnotify.h>
+> > >  #include <asm/pgalloc.h>
+> > >  #include <asm/tlbflush.h>
+> > >  #include "internal.h"
+> > > @@ -3112,13 +3113,13 @@ static int lock_folio_maybe_drop_mmap(struct =
+vm_fault *vmf, struct folio *folio,
+> > >   * that.  If we didn't pin a file then we return NULL.  The file tha=
+t is
+> > >   * returned needs to be fput()'ed when we're done with it.
+> > >   */
+> > > -static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+> > > +static struct file *do_sync_mmap_readahead(struct vm_fault *vmf,
+> > > +                                          struct file *fpin)
+> > >  {
+> > >         struct file *file =3D vmf->vma->vm_file;
+> > >         struct file_ra_state *ra =3D &file->f_ra;
+> > >         struct address_space *mapping =3D file->f_mapping;
+> > >         DEFINE_READAHEAD(ractl, file, ra, mapping, vmf->pgoff);
+> > > -       struct file *fpin =3D NULL;
+> > >         unsigned long vm_flags =3D vmf->vma->vm_flags;
+> > >         unsigned int mmap_miss;
+> > >
+> > > @@ -3182,12 +3183,12 @@ static struct file *do_sync_mmap_readahead(st=
+ruct vm_fault *vmf)
+> > >   * was pinned if we have to drop the mmap_lock in order to do IO.
+> > >   */
+> > >  static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
+> > > -                                           struct folio *folio)
+> > > +                                           struct folio *folio,
+> > > +                                           struct file *fpin)
+> > >  {
+> >
+> > If I am reading correctly, iomap (i.e. xfs) write shared memory fault
+> > does not reach this code?
+> >
+> > Do we care about writable shared memory faults use case for HSM?
+> > It does not sound very relevant to HSM, but we cannot just ignore it..
+> >
 >
->> Last time I looked at this I concluded that it does not make sense to
->> push this write loop from glibc to the applications.  That's what would
->> happen if we had a new version of posix_fallocate that didn't do those
->> writes.  We also updated the manual:
+> Sorry I realized I went off to try and solve this problem and never respo=
+nded to
+> you.  I'm addressing the other comments, but this one is a little tricky.
 >
-> That assumes that the loop is the right thing to do for file systems not
-> supporting fallocate.  That's is generally the wrong thing to do, and
-> spectacularly wrong for file systems that write out of place.
+> We're kind of stuck between a rock and a hard place with this.  I had ori=
+ginally
+> put this before the ->fault() callback, but purposefully moved it into
+> filemap_fault() because I want to be able to drop the mmap lock while we'=
+re
+> waiting for a response from the HSM.
+>
+> The reason to do this is because there are things that take the mmap lock=
+ for
+> simple things outside of the process, like /proc/$PID/smaps and other rel=
+ated
+> things, and this can cause high priority tasks to block behind possibly l=
+ow
+> priority IO, creating a priority inversion.
+>
+> Now, I'm not sure how widespread of a problem this is anymore, I know the=
+re's
+> been work done to the kernel and tools to avoid this style of problem.  I=
+'m ok
+> with a "try it and see" approach, but I don't love that.
+>
 
-In this case, the file system could return another error code besides
-EOPNOTSUPP.  There's a difference between =E2=80=9Cno one bothered to imple=
-ment
-this=E2=80=9D and =E2=80=9Cthis can't be implemented correctly=E2=80=9D, an=
-d it could be
-reflected in the error code.
+I defer this question to Jan.
 
-> The applications might not know about glibc/Linux implementation details
-> and expect posix_fallocate to either fail if can't be supported or
-> actually give the guarantees it is supposed to provide, which this
-> "fallback" doesn't actually do for the not entirely uncommon case of a=20
-> file system that is writing out of place.
+> However I think putting fsnotify hooks into XFS itself for this particula=
+r path
+> is a good choice either.
 
-I think people are aware that with thin provisioning and whatnot, even a
-successful fallocate call doesn't mean that there's sufficient space to
-complete the actual write.
+I think you meant "not a good choice" and I agree -
+it is not only xfs, but could be any fs that will be converted to iomap
+Other fs have ->fault !=3D filemap_fault, even if they do end up calling
+filemap_fault, IOW, there is no API guarantee that they will.
+
+> What do you think?  Just move it to before ->fault(),
+> leave the mmap lock in place, and be done with it?
+
+If Jan blesses the hook called with mmap lock, then yeh,
+putting the hook in the most generic "vfs" code would be
+the best choice for maintenance.
 
 Thanks,
-Florian
-
+Amir.
 
