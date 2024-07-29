@@ -1,70 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-24450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0F893F722
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 15:59:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2D893F837
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 16:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C698EB21E44
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:59:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E14F1B24002
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 14:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA2C154C0D;
-	Mon, 29 Jul 2024 13:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="mzrbQO8z"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6B6187858;
+	Mon, 29 Jul 2024 14:27:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB58714EC60
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 13:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EA7187853
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 14:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722261569; cv=none; b=f2h4rYXztSbUZDm+6zbUhA03nlOeDygXakag8yNXrhr/4j2/pMF99YvUnrE/BfwS0eH3lPkZoTmwI2vLQGqOy5JcBvOuJtHfj1z1HWpfCU0h8NvhzA4ev6rCGJUH0jeEtr3ZwSELwF3cJCakq57M2hspwmJcGndVtVyiawFvjug=
+	t=1722263243; cv=none; b=VTBU18gu2tIGh85TD9ccnJTEX/DpKT8CNqb/3bGNVTatJr2THST6k5QR12d2kK3P5XCoCh7OIUEfBAc1+QrN16Rj86AgkWQScI5Us7QLY3xOHzWEUaRZlMRZbUwng+T6Rab6XbW8SfKKrKQO24LvJCou1yRRVKswZLolDHo8ssY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722261569; c=relaxed/simple;
-	bh=RQu8iSqpeNKuiSQCz+oMPqtXvZeV68r8qmaYM5C1oco=;
+	s=arc-20240116; t=1722263243; c=relaxed/simple;
+	bh=FI0SZtq1fJLkD6eYgak6HSBpiN7qQvZbSjMTOy9yP0I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ol+/dbf7NZmE/63hMRnN/Txb484P7EHete9BMyuWuTe0JCpMWnCG1Eo8OgHjfE+6OiZFqg3yTdCYGEf+2Sy1DB1eZhkWd8iORWJD9J776NGqsCh3/MoUisQHpSr/2BOn9LzFbGYEKvXRXGkqTJVHFFWGOOR9jumrLAQqEoBbF9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=mzrbQO8z; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-198.bstnma.fios.verizon.net [173.48.113.198])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46TDwmVU016155
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 09:58:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1722261532; bh=PM7Dhelwt8evrmwJBsFtoBMEI3ETn1PNdtUW08NA2t0=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=mzrbQO8z5kGT7QrVsd7S36FKlagze53iuANsryUVbqE2vNlJqGm2c7jzPQFw+M/Lo
-	 Q6snREaMJuIDbwc9yA+W0bu2/Bek1F4/aRsRcCqpcStJgP6lLpQyUIxYMqMasNMmJe
-	 MKAbdgzt3IvNc3aAcH6IfoBl8lh48hVSB0VW7kz3pmapwQ/kXr7SI9eLF6vHd3d8RW
-	 uR3AQ/CMwQoewSX6076TUuXVYlqYlieHJ5OJS2ySdJEUrdWVFKoC1xuFrsYdL57xmn
-	 A27g05NMVy4148nADQRz8SrUDI84rPzMGWygSrUMeazfyeyfieFGc/yRi17Bl6bBkl
-	 w2Tkh1JbsZU1A==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id EC47215C02D3; Mon, 29 Jul 2024 09:58:47 -0400 (EDT)
-Date: Mon, 29 Jul 2024 09:58:47 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>,
-        paulmck@kernel.org, Hillf Danton <hdanton@sina.com>,
-        rcu@vger.kernel.org, frank.li@vivo.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
-Message-ID: <20240729135847.GB557749@mit.edu>
-References: <0000000000004ff2dc061e281637@google.com>
- <20240729-himbeeren-funknetz-96e62f9c7aee@brauner>
- <20240729132721.hxih6ehigadqf7wx@quack3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SF4Z/c5mhXuvfaG6VeVWFpxcaA3gwmdB39J2ORPdZFRoZ8+KF+qaLWpSU4Npn/UHFILvtBwDhVGax2CokTU+k4j/b0/aXB1Z84FBmHPgydRch/0o/L9N0vcAq9d+MVsPCvuD/AZZEE25gyZ4CJbNSdRwMh6N/lkrmjAgTZyCMY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38AA21007;
+	Mon, 29 Jul 2024 07:27:46 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD7413F64C;
+	Mon, 29 Jul 2024 07:27:16 -0700 (PDT)
+Date: Mon, 29 Jul 2024 15:27:11 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Amit Daniel Kachhap <amitdaniel.kachhap@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	catalin.marinas@arm.com, christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
+	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 18/29] arm64: add POE signal support
+Message-ID: <Zqemv4YUSM0gouYO@e133380.arm.com>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-19-joey.gouly@arm.com>
+ <229bd367-466e-4bf9-9627-24d2d0821ff4@arm.com>
+ <7789da64-34e2-49db-b203-84b80e5831d5@sirena.org.uk>
+ <cf7de572-420a-4d59-a8dd-effaff002e12@arm.com>
+ <ZqJ2I3f2qdiD2DfP@e133380.arm.com>
+ <a13c3d5e-6517-4632-b20d-49ce9f0d8e58@sirena.org.uk>
+ <ZqPLSRjjE+SRoGAQ@e133380.arm.com>
+ <a52f1762-afd4-4527-88ac-76cdd8a59d5d@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,53 +67,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240729132721.hxih6ehigadqf7wx@quack3>
+In-Reply-To: <a52f1762-afd4-4527-88ac-76cdd8a59d5d@sirena.org.uk>
 
-On Mon, Jul 29, 2024 at 03:27:21PM +0200, Jan Kara wrote:
+On Fri, Jul 26, 2024 at 06:39:27PM +0100, Mark Brown wrote:
+> On Fri, Jul 26, 2024 at 05:14:01PM +0100, Dave Martin wrote:
+> > On Thu, Jul 25, 2024 at 07:11:41PM +0100, Mark Brown wrote:
 > 
-> So in ext4 we have EXT4_FLAGS_SHUTDOWN flag which we now use
-> internally instead of SB_RDONLY flag for checking whether the
-> filesystem was shutdown (because otherwise races between remount and
-> hitting fs error were really messy). However we still *also* set
-> SB_RDONLY so that VFS bails early from some paths which generally
-> results in less error noise in kernel logs and also out of caution
-> of not breaking something in this path. That being said we also
-> support EXT4_IOC_SHUTDOWN ioctl for several years and in that path
-> we set EXT4_FLAGS_SHUTDOWN without setting SB_RDONLY and nothing
-> seems to have blown up. So I'm inclined to belive we could remove
-> setting of SB_RDONLY from ext4 error handling. Ted, what do you
-> think?
+> > > That'd have to be a variably sized structure with pairs of sysreg
+> > > ID/value items in it I think which would be a bit of a pain to implement
+> > > but doable.  The per-record header is 64 bits, we'd get maximal saving
+> > > by allocating a byte for the IDs.
+> 
+> > Or possibly the regs could be identified positionally, avoiding the
+> > need for IDs.  Space would be at a premium, and we would have to think
+> > carefully about what should and should not be allowed in there.
+> 
+> Yes, though that would mean if we had to generate any register in there
+> we'd always have to generate at least as many entries as whatever number
+> it got assigned which depending on how much optionality ends up getting
+> used might be unfortunate.
 
-Well, there are some failures of generic/388 (which involves calling
-the shutdown ioctl while running fsstress).  I believe that most of
-those failures are file system corruption errors, as opposed to other
-sorts of failures, but we don't run KASAN kernels all that often,
-especially since generic/388 is now on the exclude list.
+Ack, though it's only 150 bytes or so at most, so just zeroing it all
+(or as much as we know about) doesn't feel like a big cost.
 
-The failure rate of generic/388 varies depending on the storage device
-involved, but it varies from less than 10% to 50% of the time, if
-memory serves correctly.  Since EXT4_IOC_SHUTDOWN is used most of the
-time as a debugging/test (although there are some users use it in
-production, but the failure rate when you're not doing something
-really aggressive like fsstress is very small), this has been on the
-"one of these days, when we have tons of free time, we should really
-look into this.  The challenge is fixing this in a way that doesn't
-involve adding new locking in various file system hotpaths.
+It depends how determined we are to squeeze the most out of the
+remaining space.
 
-So "nothing seems to have blown up" might be a bit strong.  But it's
-something we can try doing, and see whether it results in more rather
-than less syzbot complaints.
 
-> Also as the "filesystem shutdown" is spreading across multiple
-> filesystems, I'm playing with the idea that maybe we could lift a
-> flag like this to VFS so that we can check it in VFS paths and abort
-> some operations early.  But so far I'm not convinced the gain is
-> worth the need to iron out various subtle semantical differences of
-> "shutdown" among filesystems.
+> > > It would be very unfortunate timing to start gating things on such a
+> > > change though (I'm particularly worried about GCS here, at this point
+> > > the kernel changes are blocking the entire ecosystem).
+> 
+> > For GCS, I wonder whether it should be made a strictly opt-in feature:
+> > i.e., if you use it then you must tolerate large sigframes, and if it
+> > is turned off then its state is neither dumped nor restored.  Since GCS
+> > requires an explict prctl to turn it on, the mechanism seems partly
+> > there already in your series.
+> 
+> Yeah, that's what the current code does actually.  In any case it's not
+> just a single register - there's also the GCS mode in there.
 
-I think that might be a good idea.  Hopefully subtle semantic
-differences are ones that won't matter in terms of the VFS aborting
-operations early.
+Agreed -- I'll ping the GCS series, but this sounds like a reasonable
+starting point.
 
-						- Ted
+Cheers
+---Dave
 
