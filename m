@@ -1,148 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-24428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707A193F44D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:41:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF27793F468
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 246371F22AFD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 11:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849031F22D0B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 11:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75779145B29;
-	Mon, 29 Jul 2024 11:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F872146019;
+	Mon, 29 Jul 2024 11:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="I8cFu9nH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsWE2au6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1479413AA26;
-	Mon, 29 Jul 2024 11:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DBD817;
+	Mon, 29 Jul 2024 11:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253280; cv=none; b=lzxFmHgaQrYqjDPKMqMMyMdA/rCAwp/tA/ut/lxaajwQ075KIYbuzPHmZqTDrTT3YHFl8raDNYwi9T9X8w8xtEPkj1q9Dgzr+xFjPqhMOM5iMeX+QJ+5Ag5TzREBzNTXISLK91/EVcsDcdUM4+P0j2EdtRLaD643l5yDECLnT7s=
+	t=1722253566; cv=none; b=OLDBGHsq1kuOkPMRqC5IiMkxu1l9kSx+LMdMALsoekBZHqt2wVqjJDFN47WStjWvedz8qmZuAME1Iq3Lp0DJmgVCyvl4cmKKDJsyZiF4hulny0TCiKOuPWOFOIMDbrBKMOjFZb4KZ+K3gdkWMDVvdkLKcgZS4Sw0N0R4JsrIH2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253280; c=relaxed/simple;
-	bh=lrN+3+8EM2/uvYXz2S/UGe78pD4ubhoWkqvbpr3MdIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dNsOyQSdLhldkoSM8XuwK98aqKHhei0uKY9qgyaLsweMigrRnFL6Wi4bynI5y9j6SDmc+Z0vfjkLfsGZdLnxEiJkZTPDNXz7TIqPpd48vht0soU8dPEWNZ8RO75pnZY75LqST3oGPCG/p/hQrpIqFFBhBH8qzUVwTiw1WQFP/ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=I8cFu9nH; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4WXbz90Qvkz9sHC;
-	Mon, 29 Jul 2024 13:41:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1722253269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Im3qHJ0gOnmmObZRm5tkGI4O1Z1r39QJ32bo9RzgZ7E=;
-	b=I8cFu9nH5wwnB4lyekJHdrIqriJOZggQm4+heXP7XWoLkWN4Ygrs1+BULV3kwpDyROHNmQ
-	qw6SzauZwQtsZ+bxRwyNpeL0IsL7BusnZ0lHbMOysdaNk6U1j7hlcNgvKmrwp9UaH+Tf9U
-	BS5Ocj4AOO/o5+wlup4CEtfuXrmGKd/dui5L06YjM51KGTF9Mt+fDJfaSLWBKIyBrFH49d
-	ZyUJ7sk2FBbRc/PvKMUTfu3CqpeWnNzoaLpgTZmPP1/patMQ+bdyzeGJIAdfGTbgdcg5yZ
-	GOnEDMmGMbKsonfmBN35UcADHGoggH0TMp+MawVo7S5JtsXFsdgdychKOach8g==
-Date: Mon, 29 Jul 2024 21:40:57 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: Testing if two open descriptors refer to the same inode
-Message-ID: <20240729.113049-lax.waffle.foxy.nit-U1v9CY38xge@cyphar.com>
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
- <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
- <875xsoqy58.fsf@oldenburg.str.redhat.com>
- <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
- <87sevspit1.fsf@oldenburg.str.redhat.com>
- <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+	s=arc-20240116; t=1722253566; c=relaxed/simple;
+	bh=nkcVycGOmjZ53vAR9tu+gTOhYnSE5zhPRCcc2FArpjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZNRxi/aJRz+n4mOIBqgrbT1R0bGBqpBFJZYXClFbqDtcL1si2O4MqeaLm9Uv0lY43MCM9Orz9eQ0g/rS0TXErZoZhXu6zjpbWfO3ZhrPF5R7DhiVREN1syzkAgDkqd0WX2zSGtDN/gAW2QmzvBYEmM7SGsJnoNcarvDOrd0IxVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsWE2au6; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b7aed340daso20293126d6.3;
+        Mon, 29 Jul 2024 04:46:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722253564; x=1722858364; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nkcVycGOmjZ53vAR9tu+gTOhYnSE5zhPRCcc2FArpjU=;
+        b=bsWE2au6C6+jukQE7t+bgHvw2VsGrSytNAxLuWy8WSTOc8Oy4gyrYJO0pxiORbGLzs
+         30Oy/JnLOSRIppu84wr9juFlxZca6fRky/BNRXZ4xlhqK299r8QvNohLF2n3ZR7QdCUU
+         QNb2RnfSBlu/ndkNHtXuzNsn+F7q39zg9TmwliHZwHRffLlMvAMoiO2tkHQPsi6dXnVA
+         oumA9sII4nqlzKy68971yjP62kCtileK4ZKRXpFRLSLVbvsbkq+IA7WqfcKRKom3+Yii
+         IHZN6g9BubIzXUWP5Y93NDfk6odrqY+Wz0vWxjaGQr94X0oK0+ciGpad1q5KoMST3v0b
+         hkMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722253564; x=1722858364;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nkcVycGOmjZ53vAR9tu+gTOhYnSE5zhPRCcc2FArpjU=;
+        b=d2zMhpIyzJIrLqPihSFHgtbQElaek8VNAnSfqjYl5vILv6yimZua6pqgIAN7oZwX7C
+         y/QShjqUF7HuhZWu4eWRaqNRL3knqM8xLDxvpIM9U6hEN/1dJSHf4rfXkv3/W33yUOA+
+         O4SQhTXXMb7io6V9aKadrLLt3f9J84MlLOWFRLWURtL7pnpwxVCRDnm3eh0WfNXNW+Az
+         b6G9VUAmxRQQE/AzslHxvCarAlhe1CrbnkLF6Gddh22TP1KICfNklTkhV++52CNnTEzO
+         y8vYkkRaPILv9hzDRGuhzmyUd4yDbcWRF4L738WuPJQv+vAo3LoUJamAF43g216IGhvI
+         C3Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFqwAF/TWLSSU8OHOQDT4dznTBUFJ1fupxh6EyTLcSfmBjU2FDMuZlTQOh2UM8laiWH02amMA4gdmiU1o3dW7XClLGx4QG8nnc2rV/PAoZTD+aoWRHC+5Hw7k5GnMLVOl+clj5UX9lFaVvEDeK+3y/7HlT59T7xE+GcYpmjxQK7SWcwY2oPi3W6FuATGHqvIyou7CsACdu/VYg7IXqtmvRLy0YJidZAGTJPV8CIpJYjqwwuC3XjiHRer5GMQTUn4XCBUPEt6UDe71H4mmiQflhodvbrRHmtkF0xr442rMT9HsZFfAgNkj9nE6YGX7QQjmyEdrg+Q==
+X-Gm-Message-State: AOJu0YzPsnvrpFXmZAt2AU1/l7hkdAPc+fe1+BOVhPyw27P90oup90UA
+	RcITrDhCj56FmEoPlrJ26RpqAzOZYmUm8NeMvmuJm7cCEXwJwlYqF7AzXK9y3UFDxG4Ze8v3mNL
+	wlOIoxfLp9OydATTIinb7qn8Yfks=
+X-Google-Smtp-Source: AGHT+IF5UmpKUFOnvoAK9lYxcwohmtfgqa1lFzGyA8Akl+YSskrOYOXqexc6VvI8Xmv0jJTGVagDPu5fB/SRGumTpvw=
+X-Received: by 2002:a05:6214:2425:b0:6b7:944f:3cef with SMTP id
+ 6a1803df08f44-6bb55aa2fc3mr125032596d6.44.1722253564270; Mon, 29 Jul 2024
+ 04:46:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vuxpsz4skq525v7n"
-Content-Disposition: inline
-In-Reply-To: <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
-
-
---vuxpsz4skq525v7n
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240729023719.1933-1-laoar.shao@gmail.com> <87bk2gzgu0.fsf@intel.com>
+In-Reply-To: <87bk2gzgu0.fsf@intel.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 29 Jul 2024 19:45:27 +0800
+Message-ID: <CALOAHbCAKEwkDQSmyUqRs-EjM9=aF-QcORr1g=_CnFLoVXsSVg@mail.gmail.com>
+Subject: Re: [PATCH resend v4 00/11] Improve the copy of task comm
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	ebiederm@xmission.com, alexei.starovoitov@gmail.com, rostedt@goodmis.org, 
+	catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	bpf@vger.kernel.org, netdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 2024-07-29, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> On Mon, Jul 29, 2024 at 12:57=E2=80=AFPM Florian Weimer <fweimer@redhat.c=
-om> wrote:
-> > > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
-> > >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
-> > >> >> It was pointed out to me that inode numbers on Linux are no longer
-> > >> >> expected to be unique per file system, even for local file system=
-s.
-> > >> >
-> > >> > I don't know if I'm parsing this correctly.
-> > >> >
-> > >> > Are you claiming on-disk inode numbers are not guaranteed unique p=
-er
-> > >> > filesystem? It sounds like utter breakage, with capital 'f'.
-> > >>
-> > >> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
-> > >> local file systems are different.
-> > >
-> > > Can you link me some threads about this?
+On Mon, Jul 29, 2024 at 5:29=E2=80=AFPM Jani Nikula <jani.nikula@linux.inte=
+l.com> wrote:
+>
+> On Mon, 29 Jul 2024, Yafang Shao <laoar.shao@gmail.com> wrote:
+> > Hello Andrew,
 > >
-> > Sorry, it was an internal thread.  It's supposed to be common knowledge
-> > among Linux file system developers.  Aleksa referenced LSF/MM
-> > discussions.
->=20
-> So much for open development :-P
+> > Is it appropriate for you to apply this to the mm tree?
+> >
+> > Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on t=
+he
+> > length of task comm. Changes in the task comm could result in a destina=
+tion
+> > string that is overflow. Therefore, we should explicitly ensure the des=
+tination
+> > string is always NUL-terminated, regardless of the task comm. This appr=
+oach
+> > will facilitate future extensions to the task comm.
+>
+> Why are we normalizing calling double-underscore prefixed functions all
+> over the place? i.e. __get_task_comm().
+>
+> get_task_comm() is widely used. At a glance, looks like it could be used
+> in many of the patches here too.
 
-To be clear, this wasn't _decided_ at LSF/MM, it was brought up as a
-topic. There is an LWN article about the session that mentions the
-issue[1].
+There is a BUILD_BUG_ON() inside get_task_comm(), so when you use
+get_task_comm(), it implies that the BUILD_BUG_ON() is necessary.
+However, we don't want to impose this restriction on code where the
+length can be dynamically changed.
 
-My understanding is that the btrfs and bcachefs folks independently
-determined they cannot provide this guarantee. As far as I understand,
-the reason why is that inode number allocation on btree filesystems
-stores information about location and some other bits (maybe subvolumes)
-in the bits, making it harder to guarantee there will be no collisions.
-
-Don't quote me on that though, I'm sure they'll tell me I'm wrong when
-they wake up. :D
-
-As the article mentions, Kent Overstreet suggested trying to see how
-many things break if you build a kernel where all inode numbers are the
-same (my guess would be "very badly" -- aside from the classic problem
-of hardlink detection, a lot of programs key things by (dev, ino), and
-some inode numbers are guaranteed by the kernel for pseudo-filesystems
-like PROC_ROOT_INO).
-
-[1]: https://lwn.net/Articles/975444/
+One use case of get_task_comm() is in code that has already exposed
+the length to userspace. In such cases, we specifically add the
+BUILD_BUG_ON() to prevent developers from changing it. For more
+information, see commit 95af469c4f60 ("fs/binfmt_elf: replace
+open-coded string copy with get_task_comm").
 
 --=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---vuxpsz4skq525v7n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZqd/yQAKCRAol/rSt+lE
-b0hIAPsFZ0w4fdaQwqLquyodT7vvjRvPth8GWduxQ4GEClOkCAD/Zp9nyGLPiiUD
-K4miYsQ9szF08yp6uMwLxmv0CsdoOgE=
-=G+k3
------END PGP SIGNATURE-----
-
---vuxpsz4skq525v7n--
+Regards
+Yafang
 
