@@ -1,117 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-24520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9813940159
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 00:48:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD198940187
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 01:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 839DFB21D79
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 22:48:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5597D1F2304F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 23:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F36513DBA7;
-	Mon, 29 Jul 2024 22:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B84118EFFE;
+	Mon, 29 Jul 2024 23:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b="EV09GjUD"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="zZGkFNgY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4BC7641E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 22:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0574318A940
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 23:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722293302; cv=none; b=XPfbA5kNmPY8k0qmfuWkH8yVfAPtD0l5BzEbgSVBccAxtW4cBDhYzGljq2/Z9X0iA2gSSWhmt3nIhGf3LzFkyPB+7y1+Aqao6ZkDoXpbeTRiJZSxQaFYQ3IlALHE5DYzsil3UtXBsd27lS8is5d1D6RVaMtuEVGjsU1lAG7C3+0=
+	t=1722294490; cv=none; b=s2NQLkg7RqX6ELTjUDf7V3SWdGYqsPd4E/pOFcV1sZ+dQMM1mPi0lxosqAUS2g8Spp1bxyP3T+dEDJSW1TG+WnABElf56cAsEIcJo2yo8w4sZAOVmc50zbPjbSrTSWJstCoWk2ouIuAZ8AFFha3zQ7ZzcYhSryKhbRjmuf4ux08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722293302; c=relaxed/simple;
-	bh=/Ct+oKN8zzRsmgd/uPvJL8seFIZJDgy2RpqFOD9c+TA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bhp/OUjHJOcB2PtSr/j8GtTai3X/Ub0s6ciL5DhtzoLkCiuYTx0gcxC1zflyEcwScrwqgJW6WI1RutrCKMPxBGix+ZxnDVNUn+Y4tdmR+LJ2qLewErWA4h7F4t1HxfBF+Uo55/fjZha2ChPoSEjjl7Nr3lh7CGoJU8g01g7r0fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com; spf=none smtp.mailfrom=osandov.com; dkim=pass (2048-bit key) header.d=osandov-com.20230601.gappssmtp.com header.i=@osandov-com.20230601.gappssmtp.com header.b=EV09GjUD; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=osandov.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc566ac769so21693105ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 15:48:20 -0700 (PDT)
+	s=arc-20240116; t=1722294490; c=relaxed/simple;
+	bh=nkaikTFUlSmX3DhO1KpnWb/Z+fKdpA1YmRexhFEeM5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pK0d595lhiNJOZ7fyUuBlTW+6VsGXXnhF+TD4H1yyZp6PtJ/BHSikn9CK8qxVaLMxdlY00FSOKvxiUOvQ25ww1qolDCnGZuzu4/mnr1jvKFoJkSewRj5HXnkma1VNm4HG6Pv3edTyXU2nkXsq08aSFNal++KLUs4RUP83jRu5Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=zZGkFNgY; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70d19c525b5so2448211b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 16:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20230601.gappssmtp.com; s=20230601; t=1722293300; x=1722898100; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tkfRectvbXP2WvgQCNMz09l8lgvhqhAJunfeEU3XPo4=;
-        b=EV09GjUDpX8k0h6eIOyftr9z8Ml5mgOFmG0adaPOqbIpMlgTsWg4JRK5SQ5RIjxJgI
-         rBgjqZdLI6JKz4FQ42mHldAOJeD5/KWWHMhuFE4tSVsNNPilT1Puj9l7PzGG7+3PXHc+
-         b+DMVmHZG7Y4MwNPVU8dEuaaAVzKCuIwIexSHZ/Hj4lcvvpnAHcu218XJjIZPbj5Gab7
-         EXBMzZK4IXw7/ZerAOHoebwE4tbx6j/ylT1WvZdc2tNkihGPmNO1yzZPFm7ugrsCnBYG
-         zyzyPnmMgTg5hEIGk36ym6AHvg4jL6M8wlmOUzxykH0kY9B+yc6bY6j3gB5/h/n+Nu0a
-         HQsQ==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722294488; x=1722899288; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u0LGTo3Y3m1DYT/L064NdzKpJDb4dkxyq3jlUEWujtw=;
+        b=zZGkFNgYvzzuXrCbWxBUIxiDrEwnakvMTDb0y4cBD0KVUGBuWGjbyI9GGvQDHcyj5E
+         igCYWO7oJRCNo0gB0VnWBSfjEyUMUEHzFs3C0Mt7CC7f8nqI+LuFy+UpMWdWhWayegPN
+         gizEGSsyv9Ag+HyaBWZRCCQlObkUBf22IzetK5olxfhFbQKC4DxaeNoJWx6RXV0RkKt3
+         1NQZmW5fe1/5r9hxY7HDoZ+/nEE9q6UrYORZa5Vk2cKZNUePP3dJPT4bmS9T9fEPHPbl
+         qKdgbhuVNc1YZ762F9IACkWGMm3NlGLZjzOgQ8wYImsC4ueCuiaLbhC4zg8KalQ3l3ng
+         OxQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722293300; x=1722898100;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tkfRectvbXP2WvgQCNMz09l8lgvhqhAJunfeEU3XPo4=;
-        b=EBP2kuOJax418/8T/Y8UjvS8vnbqOgfYo++E2PCQevdpf4Ij0oqGDOjOc/UoIbPn6M
-         wt2vQjRnO5s7B0oRVKgZnpMldZgdCt0HgJ3X8K9xi0pbotUuFtP852CXvOR97WQFLSKP
-         dkDjrNEwc/tV5JZbBi4pAxbcIOWVgyt8FdyIWB8fZmSQeOuGOEUmIkwy/oMq+3h/2RLh
-         acVzU7wwZ08CrheMNsbwOqmULi46XlnGyNUx0lhWGb0r1Nt5Jzbu6Obrm2ezZC003JtC
-         BVl95bgYzu4NdBwBKQXvEY920ljoAEprAk0i7G4UW8iBVJpSKii/rogpfhKroL3vPGf/
-         bC+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVM4fdWw/X0mYpU2dbIwtpvaD7vD1ZBx+weQz9rA94XTiltBKsZuzpzZN7VVMcMumAmDVCZz8oNhH3Hy1qrXAiqL8OXLEjsSUVdCQhGqA==
-X-Gm-Message-State: AOJu0YzQ6ur5vdKtC3wYOMWe0YRCs5+7J1Nq44A8YuOeGhHNwv1oqwJ3
-	YYlPCRIKMKEDS/9KQBbDNdtT+Tqns9q5t0kTrUwwoGNQbOAJiFkY8R6Di+MDtbM=
-X-Google-Smtp-Source: AGHT+IE+VCBKH0MHOpEUufDU0eHXth9e6Pq2jjxwkL8+zsC+46JWyZiG/FUqXYw1G6UjWEKc5br9fg==
-X-Received: by 2002:a17:903:41ce:b0:1fd:9e88:e4d1 with SMTP id d9443c01a7336-1ff04842174mr67808195ad.51.1722293300269;
-        Mon, 29 Jul 2024 15:48:20 -0700 (PDT)
-Received: from telecaster.hsd1.wa.comcast.net ([2620:10d:c090:400::5:a8be])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c85c70sm88177095ad.23.2024.07.29.15.48.18
+        d=1e100.net; s=20230601; t=1722294488; x=1722899288;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u0LGTo3Y3m1DYT/L064NdzKpJDb4dkxyq3jlUEWujtw=;
+        b=d6VhTdXhuo1tZEzVBgiT8oi8jkb9LKZ6r/YeB9qxfdANM5M/+eJTgLupXCoe5ECIKI
+         6erSirdnHTsm6RZm+acAFTvvUTp+Pzvt7MHOfzQjxV8o+ZUQwmygtSP55F69jlirQ+eX
+         XsUQye2MaNCo0gej6wrH/jx3Z539jbKGegGjLu1/1UYjQRsMXq1tbmD93OKGrMCaTzZh
+         zE6FWAl1c/Axg4DLaaM964g2+7rrXDauhzlO74iEqqKxMg5ahIo1U7AHCtJn2f+UyCXL
+         fO7SmbwB2uG1UAGsMviDiuWbKp3wwaXwo1L0zbuTZO1YC61/bQWPdf/JO7Ky9vnaX4TP
+         PMmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMpzjMMJL/Pi7U7CDIP97f+1+g6uKQ+E4eWRD83tiIfO13x3LCCZCLz7E/hzU4NmbFRYdjPsiAik+9aydNFm6U+MyDW8JUfSXIijr7ZA==
+X-Gm-Message-State: AOJu0YytYBdrKOFvCa8JLvyiVFiFaACOiOGMUS0qxbw9AfBj+0F2xOrn
+	vW8AEQPVt8z7zJ845M9Mj7oLG+tCkisS6pZ+qR5rnSQQVKCFGAm52Ey1FYgTVew=
+X-Google-Smtp-Source: AGHT+IF4yFB7SHKt3Co4VrPrUq/OiI1/SU/9aa6/HrVKHdg+3npIMDwvHwWJoWmiUNqso5AcYSLxTg==
+X-Received: by 2002:a05:6a20:3d89:b0:1c2:8949:5ba1 with SMTP id adf61e73a8af0-1c4a1529b50mr6652384637.53.1722294488250;
+        Mon, 29 Jul 2024 16:08:08 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8af074sm7303132b3a.218.2024.07.29.16.08.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 15:48:19 -0700 (PDT)
-From: Omar Sandoval <osandov@osandov.com>
-To: Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>
-Cc: Alexander Aring <alex.aring@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	kernel-team@fb.com
-Subject: [PATCH] filelock: fix name of file_lease slab cache
-Date: Mon, 29 Jul 2024 15:48:12 -0700
-Message-ID: <2d1d053da1cafb3e7940c4f25952da4f0af34e38.1722293276.git.osandov@fb.com>
-X-Mailer: git-send-email 2.45.2
+        Mon, 29 Jul 2024 16:08:07 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sYZTJ-00G40t-0V;
+	Tue, 30 Jul 2024 09:08:05 +1000
+Date: Tue, 30 Jul 2024 09:08:05 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: Testing if two open descriptors refer to the same inode
+Message-ID: <Zqgg1Z9GvPZR93WC@dread.disaster.area>
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+ <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+ <875xsoqy58.fsf@oldenburg.str.redhat.com>
+ <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
+ <87sevspit1.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sevspit1.fsf@oldenburg.str.redhat.com>
 
-From: Omar Sandoval <osandov@fb.com>
+On Mon, Jul 29, 2024 at 12:57:14PM +0200, Florian Weimer wrote:
+> * Mateusz Guzik:
+> 
+> > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
+> >> * Mateusz Guzik:
+> >> 
+> >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
+> >> >> It was pointed out to me that inode numbers on Linux are no longer
+> >> >> expected to be unique per file system, even for local file systems.
+> >> >
+> >> > I don't know if I'm parsing this correctly.
+> >> >
+> >> > Are you claiming on-disk inode numbers are not guaranteed unique per
+> >> > filesystem? It sounds like utter breakage, with capital 'f'.
+> >> 
+> >> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
+> >> local file systems are different.
+> >
+> > Can you link me some threads about this?
+> 
+> Sorry, it was an internal thread.  It's supposed to be common knowledge
+> among Linux file system developers.
 
-When struct file_lease was split out from struct file_lock, the name of
-the file_lock slab cache was copied to the new slab cache for
-file_lease. This name conflict causes confusion in /proc/slabinfo and
-/sys/kernel/slab. In particular, it caused failures in drgn's test case
-for slab cache merging.
+btrfs has been dealing with this issue since snapshots/subvols were
+first introduced some 15-odd years ago. This isn't a new problem...
 
-Link: https://github.com/osandov/drgn/blob/9ad29fd86499eb32847473e928b6540872d3d59a/tests/linux_kernel/helpers/test_slab.py#L81
-Fixes: c69ff4071935 ("filelock: split leases out of struct file_lock")
-Signed-off-by: Omar Sandoval <osandov@fb.com>
----
- fs/locks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://lore.kernel.org/linux-fsdevel/20231025210654.GA2892534@perftesting/
 
-diff --git a/fs/locks.c b/fs/locks.c
-index 9afb16e0683f..e45cad40f8b6 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2984,7 +2984,7 @@ static int __init filelock_init(void)
- 	filelock_cache = kmem_cache_create("file_lock_cache",
- 			sizeof(struct file_lock), 0, SLAB_PANIC, NULL);
- 
--	filelease_cache = kmem_cache_create("file_lock_cache",
-+	filelease_cache = kmem_cache_create("file_lease_cache",
- 			sizeof(struct file_lease), 0, SLAB_PANIC, NULL);
- 
- 	for_each_possible_cpu(i) {
+> Aleksa referenced LSF/MM
+> discussions.
+
+I also referenced those discussions and the -fsdevel discussions
+that have been happening for quite some time. I'll reference some
+of them here again, because they are all out in the open....
+
+https://lwn.net/Articles/975444/
+
+https://lore.kernel.org/linux-fsdevel/?q=st_vol
+
+https://lore.kernel.org/linux-fsdevel/20231211233231.oiazgkqs7yahruuw@moria.home.lan/
+
+-Dave.
 -- 
-2.45.2
-
+Dave Chinner
+david@fromorbit.com
 
