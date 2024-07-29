@@ -1,118 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-24461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC2C93F9AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 17:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BDD93F9D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 17:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED26F2830BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 15:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1A08282FDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 15:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6975B15CD7F;
-	Mon, 29 Jul 2024 15:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F8215ADB3;
+	Mon, 29 Jul 2024 15:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GoPBeSjq"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z6ukkpiZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F0515B14C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 15:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CB94A0A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 15:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267583; cv=none; b=dXZAqLHRTAeSJ0ssaRGz1g4yZ6pHWJ6fnkjxfgVtE+xgOeVrEU6K5cgi0NoxCHdUuInPCyHk9MT0+k/CtRd9IbyeSBvSTvXWwBA3zXS8Mrdsq/0gb4/8gXOS/pT4B1x6TfyOyf8M1jI0omgn1i451pBq1kiz5KRuh5znvYFqZro=
+	t=1722268112; cv=none; b=YJ+SRnTbKN8Lb1ha+XPdNRqKMesAlEsKUS4hHoHEZ14LzPU/97cpWVYevdaeu7yJV7dz1mZUqJgTpWw1RucJxCUOtdfIeU7UJXoM03wMJ6Ns/uYmD01owbOJCShTouzo7gC3RDtrWUuDTfMUiwboLAEHhyCnt1C7oeLzdRKsPLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267583; c=relaxed/simple;
-	bh=Km4f0/3Vzz+8Qh1fHaeNKmN2Y2DZ97pJ0lZw8d2Z8gY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QvgR/JlOQBvmKABzVKfM0z7TRrzCtPqGuseBT9vNDpqldQ+KX/3iaih6A0IcU/KBbji56aRJp/jivFR6ILrlu+OCe0qi4464T/7d0iX2K/lpVeK7SHkcbLzStUGf/+T1PQHZ5PiTk9EmIX3YAk7gFMjTMNH0fnMf9sAF6wWyX4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GoPBeSjq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722267581;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bTv5CfW4HXbVM7xQU93V1CPvEqo/zJ6yCu/2thM1qdY=;
-	b=GoPBeSjqP5cKIJt2Oe899fhHU1uQ596cJY4rX767Xah3iuxwGfnib0NJvheK1qOuViyvxC
-	cPGzy4E7TpntDAwkeJnAV7gRRQTpgV9PKfnwbMFJQ6xu5BxfSmtuMHQcE+CBL5oURYV+sV
-	IyX8gA+lh5ZlUBzUpPo5zDyUrbGKEdE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-185-kAsn5MPIMMm01t7Y-2XajQ-1; Mon,
- 29 Jul 2024 11:39:34 -0400
-X-MC-Unique: kAsn5MPIMMm01t7Y-2XajQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9617D1955D5F;
-	Mon, 29 Jul 2024 15:39:33 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 88EEB1955F40;
-	Mon, 29 Jul 2024 15:39:31 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-In-Reply-To: <a13bff5812cb36adf3fed80093cbe1de601ec506.camel@kernel.org> (Jeff
-	Layton's message of "Mon, 29 Jul 2024 11:24:41 -0400")
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
-	<a13bff5812cb36adf3fed80093cbe1de601ec506.camel@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Mon, 29 Jul 2024 17:39:28 +0200
-Message-ID: <87frrsmclr.fsf@oldenburg.str.redhat.com>
+	s=arc-20240116; t=1722268112; c=relaxed/simple;
+	bh=3M44BJ/6llBRI3BY+/27BawTsfMJUQaBcNY4z9SHW/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XM1LsI3xxftqXayBLgPQWaIhlPJD+cHbdncs1fql5q1ChzTQIax7oeBQm+pnS0kXb5IaEw7GjVEU+eK94lbmkmRlxVP8WR5hp1uAuxZq9VGRBlLezX26GWtB4ZwfP8Pt0XdESoSC/y1VCQ6eV982+K7O8b0YdbYqox/gjECVyjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z6ukkpiZ; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a869e3e9dfso15319a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 08:48:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722268109; x=1722872909; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JXhuRVtdMgKztBG06DUybwA27IR+VJWVhO/lY2CgOJc=;
+        b=z6ukkpiZFX3hyMBqjeoOg2GZleki2WIOgK2D4XYceEAUEzXHCQ5vljBHfNxtkJTEh2
+         tGrO18uJk5CjMMp0Nbh9R+J62o/j/p1/0hkNmnY6GIAl3lxEgdIrHaDxSE9ziaCr5wnQ
+         CVTkIQx9zH0fM05603Rgy636VPNxRzIJkhqK/8Sq9OD7rE7HfWVEeULaEQ/ysSltUzV0
+         RbAsijnm6SHje4ZfQvctdSOiXVfXNB/2GSMao0Y0cakr9gX+aUFc/frNOU3lPmWSvX4c
+         fw6rR35qVEByhux1MYM/FHcgWqZBmIaYNfeKQncpfya2j/nE0TPMzGYMILseakonoWnv
+         ESNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722268109; x=1722872909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JXhuRVtdMgKztBG06DUybwA27IR+VJWVhO/lY2CgOJc=;
+        b=l272w0a5N6/iPzxWciMCNuF/GJ3ac4S5NhVZXNzIFlGkX3+I8LAPSlkidXxSi3iQ/b
+         dtHvq9efYrZOZsIv3TafV9wTfL+pDhk/VOIfxr4DcjGZObXsspKnY0VPFLR9/bWJSNJc
+         NaxKDa5yq9Mu0WepeALqT5LJY+dhQVFFqmopitav+imSv3OC+bFkoTYP3VhcMI9SFq3p
+         zdo3J1N2DyqaI9tXOVFCzp+HS6fPeVbNQpbloLoUA6VCYAOTASWUt90oYiza7P+bazxK
+         x9hTLkSZsMFPMVzVo39EmFJiKrMT8T0WHO3ey7JEiZMGnIbDDu+5BhTygnJYgcOsDmBF
+         3/AA==
+X-Gm-Message-State: AOJu0YxyVvLSMtCmf+ZRjoMoUUzyXcd7EGbfoeVjTy8oIJXtMAe2tLBX
+	RxasILCWMwfx9Ioycj4svS32FiWkpBYJ63SgR2kupe/QPREuzZU8ekarl8aumLVbx/zmhT2GEB2
+	gFTyOPmbN5ytHrUtejuEP4anVkELn1fdOsFJ3
+X-Google-Smtp-Source: AGHT+IH7QFyGS9sG4LuxOfocsqAqv82bMTA+QSn7azu9nOm+cFz5UNLcj0gpvytnicRkd122MuYcGBq2TC00htBHepI=
+X-Received: by 2002:a05:6402:350c:b0:5ac:4ce3:8f6a with SMTP id
+ 4fb4d7f45d1cf-5b40d4a1985mr8515a12.6.1722268108796; Mon, 29 Jul 2024 08:48:28
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240627170900.1672542-1-andrii@kernel.org> <20240627170900.1672542-4-andrii@kernel.org>
+In-Reply-To: <20240627170900.1672542-4-andrii@kernel.org>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 29 Jul 2024 17:47:51 +0200
+Message-ID: <CAG48ez3VuVQbbCCPRudOGq8jTVkhH17qe6vv7opuCghHAAd3Zw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/6] fs/procfs: add build ID fetching to PROCMAP_QUERY API
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	gregkh@linuxfoundation.org, linux-mm@kvack.org, liam.howlett@oracle.com, 
+	surenb@google.com, rppt@kernel.org, adobriyan@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-* Jeff Layton:
-
-> On Mon, 2024-07-29 at 08:55 +0200, Florian Weimer wrote:
->> It was pointed out to me that inode numbers on Linux are no longer
->> expected to be unique per file system, even for local file systems.
->> Applications sometimes need to check if two (open) files are the
->> same.
->> For example, a program may want to use a temporary file if is invoked
->> with input and output files referring to the same file.
->>=20
->> How can we check for this?=C2=A0 The POSIX way is to compare st_ino and
->> st_dev in stat output, but if inode numbers are not unique, that will
->> result in files falsely being reported as identical.=C2=A0 It's harmless
->> in
->> the temporary file case, but it in other scenarios, it may result in
->> data loss.
->>=20
+On Thu, Jun 27, 2024 at 7:08=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org>=
+ wrote:
+> The need to get ELF build ID reliably is an important aspect when
+> dealing with profiling and stack trace symbolization, and
+> /proc/<pid>/maps textual representation doesn't help with this.
+[...]
+> @@ -539,6 +543,21 @@ static int do_procmap_query(struct proc_maps_private=
+ *priv, void __user *uarg)
+>                 }
+>         }
 >
-> I believe this is the problem that STATX_SUBVOL was intended to solve.
->
-> Both bcachefs and btrfs will provide this attribute if requested. So,
-> basically to uniquely ID an inode using statx, you need a tuple of:
->
-> stx_dev_major/minor
-> stx_subvol
-> stx_ino
->
-> If the filesystem doesn't provide STATX_SUBVOL, then one can (likely)
-> conclude that stx_dev_* and stx_ino are enough.
+> +       if (karg.build_id_size) {
+> +               __u32 build_id_sz;
+> +
+> +               err =3D build_id_parse(vma, build_id_buf, &build_id_sz);
+> +               if (err) {
+> +                       karg.build_id_size =3D 0;
+> +               } else {
+> +                       if (karg.build_id_size < build_id_sz) {
+> +                               err =3D -ENAMETOOLONG;
+> +                               goto out;
+> +                       }
+> +                       karg.build_id_size =3D build_id_sz;
+> +               }
+> +       }
 
-Does this really work for the virtiofs case, though?  It has to pass
-through all three *and* make things unique relative to the host, I
-think.
+The diff doesn't have enough context lines to see it here, but the two
+closing curly braces above are another copy of exactly the same code
+block from the preceding patch. The current state in mainline looks
+like this, with two repetitions of exactly the same block:
 
-Thanks,
-Florian
+[...]
+                karg.dev_minor =3D 0;
+                karg.inode =3D 0;
+        }
 
+        if (karg.build_id_size) {
+                __u32 build_id_sz;
+
+                err =3D build_id_parse(vma, build_id_buf, &build_id_sz);
+                if (err) {
+                        karg.build_id_size =3D 0;
+                } else {
+                        if (karg.build_id_size < build_id_sz) {
+                                err =3D -ENAMETOOLONG;
+                                goto out;
+                        }
+                        karg.build_id_size =3D build_id_sz;
+                }
+        }
+
+        if (karg.build_id_size) {
+                __u32 build_id_sz;
+
+                err =3D build_id_parse(vma, build_id_buf, &build_id_sz);
+                if (err) {
+                        karg.build_id_size =3D 0;
+                } else {
+                        if (karg.build_id_size < build_id_sz) {
+                                err =3D -ENAMETOOLONG;
+                                goto out;
+                        }
+                        karg.build_id_size =3D build_id_sz;
+                }
+        }
+
+        if (karg.vma_name_size) {
+[...]
 
