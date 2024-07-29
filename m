@@ -1,222 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-24430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2831193F470
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:48:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333D593F477
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7401F227C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 11:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30D011C21F4D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 11:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BDA145FFC;
-	Mon, 29 Jul 2024 11:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFFC14658D;
+	Mon, 29 Jul 2024 11:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="CJV+M+DG"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ch5gCmXp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0yH1hbNV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r9/A1NFm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RtZdSplE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68AE145330;
-	Mon, 29 Jul 2024 11:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02BC13AA26;
+	Mon, 29 Jul 2024 11:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722253685; cv=none; b=a72gCVCizCt0Q4HPrqPu3AR3Cm2e+u5f9PCy9Kca5+qe/HltiOCONCyfuRyt4tzs8IfsxOwG3ch0j5iUuAuZYIKW1OlXAfmNG3GJWKYsDHYJ/++ANT743CpNPQUXUMhkSjRBRmLckPUPNVhp8y9l5lM2/s6WK40MOLnX9tr7/ko=
+	t=1722253811; cv=none; b=ODlUk8swkcAibeYxWRCjGJieusODCD5QZPe3owYzN5r4IRWkQmjjRAI4F8PMKF0ckk9mHdwW3ln/yB+JX721UYAdIe9d6Q83jeRF0bSMHDpxPSjm4wWbNAkvTUAQK222Y1zWXU4nFjiI5yfZVLFSSgOnrniPjfcYGlJjy53YYpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722253685; c=relaxed/simple;
-	bh=s7SuT7s6DzAcQcWzZ2jfx/ybl6s6C2MUhjOmbc5bt5Y=;
+	s=arc-20240116; t=1722253811; c=relaxed/simple;
+	bh=vflESx+RwYGCXjHJ/F0x2Q74Zpg0GCpO+YVUkEqPyR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YdOsSZfepR2CeFjdTsD2DqhFl/rwzpd71fYbYpEJd1KmqrqWJQgMS15vh0r8f8Uo0lISYXbzzSA5Om1QKrdswZ2FHGuUZQv5h5wzP6pXU7by2ho87R6ycC7730CArsTQ7Yh4vRhWL5DH8+5aJJU5EL7oXgPi4BT/h4GrbPb4x3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=CJV+M+DG; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFZew7xndz8vE4R2rkVZMMoiYSUuu2S2X0smCeXtaeLoxg45xwDx3OFeAtO35bYVMXNOr2riZM0ScM3mB7wHtm/JnWRzA2RrEibUM6sXtavi/8i0LWbf6/Od5PKIv/KA4BTO4iN4YSVRlS1iABB+EFTcIfzoA82lvXRxFMxWyIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ch5gCmXp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0yH1hbNV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r9/A1NFm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RtZdSplE; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WXc701lzQz9syL;
-	Mon, 29 Jul 2024 13:47:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1722253676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D56061F790;
+	Mon, 29 Jul 2024 11:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722253808; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=O/XfU/uEXx6KZJxVwg4BEJQGboc/tjpnfUQOZKK0FRM=;
-	b=CJV+M+DGwoMbn6eJPUn9AA1BCy1w5ZRvG8jRK+Y8uWgYOjkRjMoAveSklJQdYSWqib5edV
-	xrMvQl9PIK2Diyv4urDLCVX9jmW2uNZUNh72oGMp3qY5Zz3Ev6i0nLx9fKoMTfo/tzUJon
-	2EF2/Bm6KOaWWbrHe5TeIoP16HYADBtWUMxkU5sqageHNuJvHtEsoL/J1NGpea/je3CZw3
-	mVB6buXnYS3Wg/c/BXwBpKe057aUwd4xTkbzHv8/AVesQVlrYnAlLs0LD/BNzZz9vaNUAg
-	aTXIjojExYsXGQTWM27n0hUlNIaU95yUhpgjt/D+CsFWV6ciIeKUDYJ1qticaQ==
-Date: Mon, 29 Jul 2024 21:47:47 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: Testing if two open descriptors refer to the same inode
-Message-ID: <20240729.114221-bumpy.fronds.spare.forts-a2tVepJTDtVb@cyphar.com>
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
- <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
- <875xsoqy58.fsf@oldenburg.str.redhat.com>
- <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
- <87sevspit1.fsf@oldenburg.str.redhat.com>
- <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+	bh=I2SpeZCMfnPe28cYGli29hQINLIW7jIo2yLrFjcKqEc=;
+	b=Ch5gCmXp0sbzN35nOicOEmYbvv34FcULDnzDOTecWXEDES/PLUQ7xeW/XyxbL6q3if05NV
+	i8iXZZi03eGOViMr9XbtoJkbIruJ8NpWB/bCzbWIPKfLraRd2WKL8kRTsrJYRCzWI2GwvB
+	WR97aW/w63+2iywb0VPXZdl07nFadsU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722253808;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I2SpeZCMfnPe28cYGli29hQINLIW7jIo2yLrFjcKqEc=;
+	b=0yH1hbNVAt8kRN9pmVweEW57WmZwugAhbMHhs6EUQ2pl/rWHU6zOrCQ9T6387OzF/HYbnq
+	WHzyhmfd13W4yHAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722253807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I2SpeZCMfnPe28cYGli29hQINLIW7jIo2yLrFjcKqEc=;
+	b=r9/A1NFmlMo3dikoSExETh5Y/c4rWqqmcTOYaulMGBqYRs2Wm6MIJ3Eo7dN3X97XgUSL//
+	vca0/Z5vZu1qc8RzTd9WlergLZ/4RNKIIH8E0STj+3c2n1hXuxi+kTaTC2CLtp/KP4mdcl
+	YyvgtBNlI+gBPS8yAPATRuQt4nPXOkk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722253807;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I2SpeZCMfnPe28cYGli29hQINLIW7jIo2yLrFjcKqEc=;
+	b=RtZdSplEKwVNV3/TwPuwufG9GvNTqujlgLJmhr7YP8xmk42J6iUlPAbezuS0NpJwtP3LFH
+	nzGR2+0qp5u+WLCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA89F1368A;
+	Mon, 29 Jul 2024 11:50:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CqRyMe+Bp2azNwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 29 Jul 2024 11:50:07 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7B265A099C; Mon, 29 Jul 2024 13:49:59 +0200 (CEST)
+Date: Mon, 29 Jul 2024 13:49:59 +0200
+From: Jan Kara <jack@suse.cz>
+To: mohitpawar@mitaoe.ac.in
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fixed: fs: file_table_c: Missing blank line warnings and
+ struct declaration improved
+Message-ID: <20240729114959.lxhpjhve7lhpf2jm@quack3>
+References: <linux-fsdevel@vger.kernel.org>
+ <20240727072134.130962-1-mohitpawar@mitaoe.ac.in>
+ <20240727072134.130962-2-mohitpawar@mitaoe.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uqrjwa2ur5ehxsxd"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+In-Reply-To: <20240727072134.130962-2-mohitpawar@mitaoe.ac.in>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.60
+
+On Sat 27-07-24 12:51:34, mohitpawar@mitaoe.ac.in wrote:
+> From: Mohit0404 <mohitpawar@mitaoe.ac.in>
+> 
+> Fixed-
+> 	WARNING: Missing a blank line after declarations
+> 	WARNING: Missing a blank line after declarations
+> 	Declaration format: improved struct file declaration format
+> 
+> Signed-off-by: Mohit0404 <mohitpawar@mitaoe.ac.in>
+> ---
+>  fs/file_table.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index ca7843dde56d..306d57623447 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -136,6 +136,7 @@ static int __init init_fs_stat_sysctls(void)
+>  	register_sysctl_init("fs", fs_stat_sysctls);
+>  	if (IS_ENABLED(CONFIG_BINFMT_MISC)) {
+>  		struct ctl_table_header *hdr;
+> +
+>  		hdr = register_sysctl_mount_point("fs/binfmt_misc");
+>  		kmemleak_not_leak(hdr);
+>  	}
+> @@ -383,7 +384,10 @@ EXPORT_SYMBOL_GPL(alloc_file_pseudo_noaccount);
+>  struct file *alloc_file_clone(struct file *base, int flags,
+>  				const struct file_operations *fops)
+>  {
+> -	struct file *f = alloc_file(&base->f_path, flags, fops);
+> +	struct file *f;
+> +
+> +	f = alloc_file(&base->f_path, flags, fops);
+> +
+
+When you separated the function call from the declaration of 'f' this empty
+line is superfluous. Maybe Christian can fix it up in his tree (or maybe he
+already did). Otherwise the patch looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
 
 
---uqrjwa2ur5ehxsxd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2024-07-29, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> On Mon, Jul 29, 2024 at 12:57=E2=80=AFPM Florian Weimer <fweimer@redhat.c=
-om> wrote:
-> >
-> > * Mateusz Guzik:
-> >
-> > > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
-> > >> * Mateusz Guzik:
-> > >>
-> > >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
-> > >> >> It was pointed out to me that inode numbers on Linux are no longer
-> > >> >> expected to be unique per file system, even for local file system=
-s.
-> > >> >
-> > >> > I don't know if I'm parsing this correctly.
-> > >> >
-> > >> > Are you claiming on-disk inode numbers are not guaranteed unique p=
-er
-> > >> > filesystem? It sounds like utter breakage, with capital 'f'.
-> > >>
-> > >> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
-> > >> local file systems are different.
-> > >
-> > > Can you link me some threads about this?
-> >
-> > Sorry, it was an internal thread.  It's supposed to be common knowledge
-> > among Linux file system developers.  Aleksa referenced LSF/MM
-> > discussions.
-> >
->=20
-> So much for open development :-P
->=20
-> > > I had this in mind (untested modulo compilation):
-> > >
-> > > diff --git a/fs/fcntl.c b/fs/fcntl.c
-> > > index 300e5d9ad913..5723c3e82eac 100644
-> > > --- a/fs/fcntl.c
-> > > +++ b/fs/fcntl.c
-> > > @@ -343,6 +343,13 @@ static long f_dupfd_query(int fd, struct file *f=
-ilp)
-> > >       return f.file =3D=3D filp;
-> > >  }
-> > >
-> > > +static long f_dupfd_query_inode(int fd, struct file *filp)
-> > > +{
-> > > +     CLASS(fd_raw, f)(fd);
-> > > +
-> > > +     return f.file->f_inode =3D=3D filp->f_inode;
-> > > +}
-> > > +
-> > >  static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
-> > >               struct file *filp)
-> > >  {
-> > > @@ -361,6 +368,9 @@ static long do_fcntl(int fd, unsigned int cmd, un=
-signed long arg,
-> > >       case F_DUPFD_QUERY:
-> > >               err =3D f_dupfd_query(argi, filp);
-> > >               break;
-> > > +     case F_DUPFD_QUERY_INODE:
-> > > +             err =3D f_dupfd_query_inode(argi, filp);
-> > > +             break;
-> > >       case F_GETFD:
-> > >               err =3D get_close_on_exec(fd) ? FD_CLOEXEC : 0;
-> > >               break;
-> > > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> > > index c0bcc185fa48..2e93dbdd8fd2 100644
-> > > --- a/include/uapi/linux/fcntl.h
-> > > +++ b/include/uapi/linux/fcntl.h
-> > > @@ -16,6 +16,8 @@
-> > >
-> > >  #define F_DUPFD_QUERY        (F_LINUX_SPECIFIC_BASE + 3)
-> > >
-> > > +#define F_DUPFD_QUERY_INODE (F_LINUX_SPECIFIC_BASE + 4)
-> > > +
-> > >  /*
-> > >   * Cancel a blocking posix lock; internal use only until we expose an
-> > >   * asynchronous lock api to userspace:
-> >
-> > It's certainly much easier to use than name_to_handle_at, so it looks
-> > like a useful option to have.
-> >
-> > Could we return a three-way comparison result for sorting?  Or would
-> > that expose too much about kernel pointer values?
-> >
->=20
-> As is this would sort by inode *address* which I don't believe is of
-> any use -- the order has to be assumed arbitrary.
->=20
-> Perhaps there is something which is reliably the same and can be
-> combined with something else to be unique system-wide (the magic
-> handle thing?).
->=20
-> But even then you would need to justify trying to sort by fcntl calls,
-> which sounds pretty dodgey to me.
-
-Programs need to key things by (dev, ino) currently, so you need to be
-able to get some kind of ordinal that you can sort with.
-
-If we really want to make an interface to let you do this without
-exposing hashes in statx, then kcmp(2) makes more sense, but having to
-keep a file descriptor for each entry in a hashtable would obviously
-cause -EMFILE issues.
-
-> Given that thing I *suspect* statx() may want to get extended with
-> some guaranteed unique identifier. Then you can sort in userspace all
-> you want.
-
-Yeah, this is what the hashed fhandle patch I have does.
-
-> Based on your opening mail I assumed you only need to check 2 files,
-> for which the proposed fcntl does the trick.
->=20
-> Or to put it differently: there seems to be more to the picture than
-> in the opening mail, so perhaps you could outline what you are looking
-> for.
-
-Hardlink detection requires creating a hashmap of (dev, ino) to find
-hardlinks. Pair-wise checking is not sufficient for that usecase (which
-AFAIK is the most common thing people use inode numbers for -- it's at
-least probably the most common thing people run in practice since
-archive tools do this.)
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---uqrjwa2ur5ehxsxd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZqeBYwAKCRAol/rSt+lE
-bwnJAP4oTv51+RcPvDPBQrvKsTtuwox2qkQOMIVO+sTn9UNaLwEA6OMkdDb4Ei1Y
-qLX2LagGezM1wrlKU42mk/RC13Bg/Q0=
-=MCMx
------END PGP SIGNATURE-----
-
---uqrjwa2ur5ehxsxd--
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
