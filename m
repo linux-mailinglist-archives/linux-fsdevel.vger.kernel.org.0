@@ -1,151 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-24400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDE693EBAF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 04:48:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BE293EC82
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 06:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725081F21167
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 02:48:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5A72B217A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 04:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC5081ACA;
-	Mon, 29 Jul 2024 02:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE9280C15;
+	Mon, 29 Jul 2024 04:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9lsDSIt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmQu80WT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B4480633;
-	Mon, 29 Jul 2024 02:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917512F5A;
+	Mon, 29 Jul 2024 04:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722221295; cv=none; b=hh5ICYjqkfv7BXPzQYDkhRPRgM/oFAnR1sEp2b7LNtOGEdODYnOISnRrwEdzQlAFc2MqhCEKfSp8/0HZka/u2uZBFz2EEnvZhzCZbd3G463ArnZQ4szv5asunCZvqpXkn5rf1aRhzGBZa6/w+v+eAdJDatHhBW2oMqfgF7C9ybI=
+	t=1722226624; cv=none; b=OolbDCxmM57lqnTxTpfRZ3VNBNUGXvOOrNTuy6dzNT0Z0m1bJqgdzue/2g9Mnhkbnqxi4A9SgfM19TP48A8livefM1qh+yuVT7CNWwofKYpneJHxIP3qQU4uAZajjQfuy/2VNx+NQmr2mflym1s1JsLVvQdQSRF89q+MMgKUnc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722221295; c=relaxed/simple;
-	bh=KFR6O5apdaE005aia/eSIy/aDnoPWMXgYn13tfLkB8g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NidKtHo6gsMpXLzeBZjBLcPU5m9ujV5N5PHO6oKqkPhB6Fo+Xwz2UQd97avGmCAP2faOOEcmMqK6SB3x1fPPChVZmGBjn+Pdn3cjKULJlpyEMeOcnd3PA4LU+KB4hBC0RzQGhYXjWiI9enRVRFpfiq6+wLSSq98tSVI3V6e1WNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9lsDSIt; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1722226624; c=relaxed/simple;
+	bh=RBRXap9AZd8LH2XsGENLNLD3CHvsgScRdJ1v6t+6JhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O53ojFmiZd4eSbPQVRDKm5DDIDi+l2ATTopgSFGpwyhlslZ/WZiLE0leYFFjjOI/5Qe15WmDzj+HbW6rX2E3nm0gLIE1DTuYpDt9ZROZSBQkw+qHcWN7MbcFXJLTY06lBS2Z0goSacVxITFiea29LJdO52aA/5ZtjwGrhEzgPLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmQu80WT; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb4b7fef4aso2146126a91.0;
-        Sun, 28 Jul 2024 19:48:14 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ef2fccca2cso37157901fa.1;
+        Sun, 28 Jul 2024 21:17:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722221294; x=1722826094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722226621; x=1722831421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uws88M38Us6mZwthahlWUK7fM6+CMa7f0lHdNpc5/ec=;
-        b=B9lsDSIt3kPWhwb1rmbg7ZOkxPXGtOIGQSSGs1KNQlCHQPIjBdi9qxOxi533gdKPeU
-         oK3p0XEHR7r8JJNx/mFPvMH26c1HX7LuRq6ZiaW54ONHbf0J54TK+4rKbzf227xsjWOi
-         o/DlEOR1hyKBO+B94cXPKCzmnMreOBr6gJ+cQI6MRHwBcB1YLak4Vq7IhXOaVZOteFiP
-         svMS2geFmg4wJcjlZ/QNGeIu9rARXfrYqjjJHink3MMzqOnjRJfJLt9mlzJKxvfVO/hP
-         FlS6Uzxx/8zGdhMQIq+nRdPOoxUVZvfnlt1mwolgn0QI2kgChxML6ka9c/eQqI3wfG8Z
-         1DWA==
+        bh=QyHOGRmNKmHe8l9zKgDQXc82VPvewqqtTpqW/jtcyNE=;
+        b=lmQu80WTn0ACyDWFgtRvnNYdXRv/WLK9XCZxpvOJVoHPbbM3ffam+SC04GrI3oO222
+         H8LKcG18JMmlGu8Yb0E76BUl5Q4fhYujtyYOr4j/v1swkQeMZztiUBPX0UPNW4055tiI
+         rB8wRfGk39xwq8j59ea8yJqXkULGxmionWZ5y0C4hBCNWgRgQpVwIAFTLlMh4CIA51Uv
+         JCiFZ9HObSuU83QWNWcwWGbLYSXXY6FbRVIM3/8jEECW5rB6pRUKUtEAGkAtKO5lLW2G
+         8Rz0j4MlXWO+Qsc3A2TSkhMegAPn/wfRpMTxrQrqg5qhliQOaY3jIAELGxjVu0SCyJr3
+         6Clw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722221294; x=1722826094;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722226621; x=1722831421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uws88M38Us6mZwthahlWUK7fM6+CMa7f0lHdNpc5/ec=;
-        b=ZwbChy4sV//p3zAHNDAeL98jBTsRi3YHY4It4NjpEUZBKPsqhHrDH/++Sd2A9c7mOJ
-         dPk8/0RysG6za2ylXLoySMYLUJA8kUp0r0ysEzd+Xlv/jDv1SODzRWgDmKR5Srwr+Q1E
-         hSW7poC3ZIQjXlpq/X+kdjbuO0JMHiq1dOCf/SVJnxjm/yVAkPwqfM8MtSEUMD8uksvZ
-         Vx0w9le+4GSLcxMxtMJUqeUMiE966WSFzD4IEBy8iVGpBJR0YGFHWMbWazssGgA4JJmp
-         BXRG9d+p7tvIjiM05ChH46gIh8/FGW7/bix96n6iziChUqZhyLy5GLPJ6+giXPu4Vp/J
-         jk4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWY/BzFN4gMaxXa+/EjxIxb1y0aMk76mDb3BIwu7p/95UTWqCyi/PjiYzzhdjju7suoubMHdidvO3CczTPw7/8V/dmLblrQBx+ZtbuihRg1uH7/GB4ZrdgIhMUHstqUSl2J5ycqENJVaznk03+xmr+MEtb4uK5Bmc6xMK3OFFfWf7nxnZ9KVYZ5GpGcaOZdxhCjo9qpYCbufOXeEtTPcz6HaAsIkdKQcGJFJOLV2nxfcL4u90KTNhUgNQOJdCnHiPpAXzmxWaR1L6oiYuvV0tB0IuEcFB588epAsOD1lgikAkYPh46YemJMA6Lpp5yk+VUGi27mug==
-X-Gm-Message-State: AOJu0YzWEwkOBho51D5p5Ce0hWustFYoKMZhzv3ftu6SlarGmBJu/ths
-	6kvTbUYXz/2RvWAtQrTi2jq3qGr+xy4EMVr5ie473OYZizsH7BI5
-X-Google-Smtp-Source: AGHT+IGofcCeds74VK5yzpBY91R2MnaRyI1ieEFwQ1nBe/Bs8+j0QLJHRaMLwHU9stQw4nuIemwGyw==
-X-Received: by 2002:a17:90a:888:b0:2cb:55f9:b7c5 with SMTP id 98e67ed59e1d1-2cf7e1df02dmr7584677a91.12.1722221293603;
-        Sun, 28 Jul 2024 19:48:13 -0700 (PDT)
-Received: from localhost.localdomain ([223.104.210.31])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cf28c55a38sm7332247a91.10.2024.07.28.19.47.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Jul 2024 19:48:13 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: akpm@linux-foundation.org
-Cc: torvalds@linux-foundation.org,
-	ebiederm@xmission.com,
-	alexei.starovoitov@gmail.com,
-	rostedt@goodmis.org,
-	catalin.marinas@arm.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	audit@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>
-Subject: [PATCH v4 11/11] drm: Replace strcpy() with __get_task_comm()
-Date: Mon, 29 Jul 2024 10:37:19 +0800
-Message-Id: <20240729023719.1933-12-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
-In-Reply-To: <20240729023719.1933-1-laoar.shao@gmail.com>
-References: <20240729023719.1933-1-laoar.shao@gmail.com>
+        bh=QyHOGRmNKmHe8l9zKgDQXc82VPvewqqtTpqW/jtcyNE=;
+        b=jqgdzWr8yEUxXCE0wE/8ZS8xl9PUKTs1rXegBtsPk+C6ZV7u14fU/ydFb9P368J1Uk
+         XqKUH8tJf84/BJURO6X8VBVLwUF6DKnUdZTwM3ZYNZWbM8E+298Lr6ptmRPNfr9Iw4/J
+         jDY4g5pRztVJ6CvqqDC7ND8vfoW/E1dtNv3cPSsX2FhBWD5KndQ+GOy1RiQsbX1zGIXq
+         mEGgeqYsw4520hjN5sSoehp9rmnaFEHmZ83/YkTFAIgZX7kIe7m5iuMtl7BpWZlFljhO
+         yIeH8ag0yMCAS8SnuLPRMfNWz2baejLSblIP10GBCRA4OQ+zy8HLobUckVOcNn1WA9Vx
+         5FTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXX/jAanxxiYkLtOKUwgnmvgzVDFT0OSQpH4tlVVFbXJ6mTPwOmxTjs6rttxfK490HI8NvpSRwpSVpcUg33YAI8Z2OzexSPzEj9i8yTMBpnj0OqH+xU8kQgMRh2HQH1zejwQzzsS6V02g==
+X-Gm-Message-State: AOJu0YyDFHreVzsqhgcsmjIPPmQ1nQxOu7MT3sTGAbRztqdiK2GteAyX
+	8841QFbNLl16WAMW+31/GJ8LBnbrRKBD3WDPXfTx1d6KLq9kvw68k5xvdJYnWLO83FRrophc+MP
+	FuAfbwHEtSgsVNC8qWtGMj6604JE=
+X-Google-Smtp-Source: AGHT+IGDKS6BOTrX3Kytbfj4e3mBi2YdisqBuu4gC9PLP86P7Ov80iia63wyJJS0/M/A8vxechiRKrgcGokg2lv22pI=
+X-Received: by 2002:a05:6512:1249:b0:52f:c14e:2533 with SMTP id
+ 2adb3069b0e04-5309b2dfe13mr4495361e87.48.1722226620220; Sun, 28 Jul 2024
+ 21:17:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
+ <20240729000124.GH99483@ZenIV>
+In-Reply-To: <20240729000124.GH99483@ZenIV>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 28 Jul 2024 23:16:49 -0500
+Message-ID: <CAH2r5mvnpHS7Gs7wMCAYsNZCBte5=jkzvL_bAq84zZoh8-kX5A@mail.gmail.com>
+Subject: Re: Why do very few filesystems have umount helpers
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	CIFS <linux-cifs@vger.kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To prevent erros from occurring when the src string is longer than the
-dst string in strcpy(), we should use __get_task_comm() instead. This
-approach also facilitates future extensions to the task comm.
+On Sun, Jul 28, 2024 at 7:01=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Sun, Jul 28, 2024 at 02:09:14PM -0500, Steve French wrote:
+>
+> > Since umount does not notify the filesystem on unmount until
+> > references are closed (unless you do "umount --force") and therefore
+> > the filesystem is only notified at kill_sb time, an easier approach to
+> > fixing some of the problems where resources are kept around too long
+> > (e.g. cached handles or directory entries etc. or references on the
+> > mount are held) may be to add a mount helper which notifies the fs
+> > (e.g. via fs specific ioctl) when umount has begun.   That may be an
+> > easier solution that adding a VFS call to notify the fs when umount
+> > begins.
+>
+> "references on the mount being held" is not something any userland
+> helpers have a chance to help with.
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Airlie <airlied@gmail.com>
----
- drivers/gpu/drm/drm_framebuffer.c     | 2 +-
- drivers/gpu/drm/i915/i915_gpu_error.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+I don't know the exact reasons why at least three filesystems have umount
+helpers but presumably they can issue private ioctls (or equivalent)
+to release resources, but I am very curious if their reasons would
+overlap any common SMB3.1.1 network mount use cases.
 
-diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-index 888aadb6a4ac..25262b07ffaf 100644
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -868,7 +868,7 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
- 	INIT_LIST_HEAD(&fb->filp_head);
- 
- 	fb->funcs = funcs;
--	strcpy(fb->comm, current->comm);
-+	__get_task_comm(fb->comm, sizeof(fb->comm), current);
- 
- 	ret = __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
- 				    false, drm_framebuffer_free);
-diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
-index 625b3c024540..b2c16a53bd24 100644
---- a/drivers/gpu/drm/i915/i915_gpu_error.c
-+++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-@@ -1411,7 +1411,7 @@ static bool record_context(struct i915_gem_context_coredump *e,
- 	rcu_read_lock();
- 	task = pid_task(ctx->pid, PIDTYPE_PID);
- 	if (task) {
--		strcpy(e->comm, task->comm);
-+		__get_task_comm(e->comm, sizeof(e->comm), task);
- 		e->pid = task->pid;
- 	}
- 	rcu_read_unlock();
--- 
-2.43.5
+> What exactly gets leaked in your tests?  And what would that userland
+> helper do when umount happens due to the last process in given namespace
+> getting killed, for example?  Any unexpected "busy" at umount(2) time
+> would translate into filesystem instances stuck around (already detached
+> from any mount trees) for unspecified time; not a good thing, obviously,
+> and not something a userland helper had a chance to help with...
+>
+> Details, please.
 
+There are three things in particular that got me thinking about how
+other filesystems handle umount (and whether the umount helper
+concept is a bad idea or a good idea for network fs)
+
+1) Better resource usage: network filesystems often have cached
+information due to
+leases (or 'delegations' in NFS terminology) on files or directory
+entries.  Waiting until kill_superblock (rather than when umount began) can
+waste resources.  This cached information is not automatically released
+when the file or directory is closed (note that "deferred close" of files c=
+an
+be a huge performance win for network filesystems which support safe
+caching via leases/delegations) ... but these caches consume
+resources that ideally would be freed when umount starts, but often have to
+wait longer until kill_sb is invoked to be freed.  If "umount_begin"
+were called always e.g. then (assuming this were not multiple mounts
+from the same client that server share) cifs.ko could
+  a) close all deferred network file handles (freeing up some resources)
+  b) stop waiting for any pending network i/o requests
+  c) mark the tree connection (connection to the server share) as "EXITING"
+   so we don't have races sending new i/o operations on that share
+
+2) fixing races between umount and mount:
+There are some common test scenarios where we can run a series of
+xfstests that will eventually fail (e.g. by the time xfstest runs gets
+to 043 or 044
+(to Samba server on localhost e.g.) they sometimes hit races which
+cause this message:
+
+     QA output created by 043
+    +umount: /mnt-local-xfstest/scratch: target is busy.
+    +mount error(16): Device or resource busy
+
+but it works fine if delay is inserted between these tests.  I will
+try some experiments to
+see if changing xfstests to call force unmount which calls "umount_begin" (=
+or
+adding a umount wrapper to do the same) also avoids the problem. It
+could be that
+references may be being held by cifs.ko briefly that are causing the VFS to
+think that files are open and not calling into cifs.ko to
+kill_superblock. This needs
+more investigation but "umount --force" (or equivalent) may help.
+
+3) races in cleaning up directory cache information.  There was a
+patch introduced for
+periodically cleaning up the directory cache (this is only an issue to
+servers like
+Windows or NetApp etc. that support directory leases so you don't see
+it to Samba
+and various other common servers that don't enable directory leases)
+that can cause
+crashes in unmount (use after free).  I want to try to narrow it down
+soon, but it was a little
+tricky (and the assumption was that force unmount would avoid the
+problem - ie the call to
+"umount_begin").  Looks like this patch causes the intermittent umount
+crash to Windows
+servers:
+
+commit d14de8067e3f9653cdef5a094176d00f3260ab20
+Author: Ronnie Sahlberg <lsahlber@redhat.com>
+Date:   Thu Jul 6 12:32:24 2023 +1000
+
+    cifs: Add a laundromat thread for cached directories
+
+    and drop cached directories after 30 seconds
+
+
+
+Steve
 
