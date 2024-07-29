@@ -1,92 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-24385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CB693EA35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 02:01:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EB793EAEB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 04:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C021C20615
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 00:01:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FDB5B20E30
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 02:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0287E8F44;
-	Mon, 29 Jul 2024 00:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BFE41C89;
+	Mon, 29 Jul 2024 02:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="K0Vz2vMk"
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="kQZ0Bm//"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7332838B;
-	Mon, 29 Jul 2024 00:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD73C2770E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 02:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722211289; cv=none; b=BMsfeYbriFY1IWtBjnt5tuHqUpnFtVw759/s6GpxtLCFLfVDEgdxn4I3XhGmNUO3WOA0Fvey6SWDHofjecYRegRwoKgJVoWhZ6vtSIUT2YfrGl98wT1Yvop6A3k720WfhK9DJzs7l8EgpYyeYHik7Jizu3nDttopbu7ss3BBW7I=
+	t=1722218782; cv=none; b=LTCME4jU1UgWBahjI0aiRGRyPsGij0N1mSkR1CjmTTfsMA/g2AtZHzGEg2/QsIi0LhM6ZrypvooxoS8fyPsQT6PMtSbF9ZtnPOblWO0jYQ9+uMbIIeKFYe8eanwd2hQbfUATx5DxrbGsqnOceqDf8NPg3bILUmBh/nRqaHDneJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722211289; c=relaxed/simple;
-	bh=Y17ivoUEZqJMec1bdUlKse1yfK2OEne8uUS4d7z9pdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W44pHBoaG/3Fn/CTm2QkqZHIkQk9PbKQubppobYVo9HOvF93vmhxi9drxApytwbhQ0vWPAtmt7u1MNTsvUVQhIpbSKiRBUdNwDwEyWrWX1wLiMl1kVyu3Oxt0g4cdFzmd6aH+5LSatZiffmNN8xo8hMEiBqt+T9y6exvRCGB6Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=K0Vz2vMk; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1iJrhw/cvkglGTTLotlyOAN80Woc3csC6LR3rVH+UOA=; b=K0Vz2vMkgB3eYtKojYPQO3NJBf
-	J4CVTPwMpvqdjynwfIWVs8E1pchr11aQTyEZ0cFbrBZkweB0B4ISTeSjZemNXhDkyWAE0YPJZk9PA
-	cPpMRR9tMUXcfO693sQMh2kic2IkXvP7Zh2B5wvl58/r8wjlxjgn/rPap0gDNkv0oMgAOv83FNgF5
-	SAndXyO92NaKsYdhreZxIgk2zZF2REybzGLsUIxqu1HZ+c5rE8B7ONN+ONRligLdqbRsIo919bCxM
-	a6AHetFHrectBW3L6EmLTGPKLbwTpXm7cvtJ735iGP7bwI0ZTuaco2ja1ZjuRdcDbRtAilSIWlvGR
-	D/dFYMWg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sYDpM-00000002ZPg-24By;
-	Mon, 29 Jul 2024 00:01:24 +0000
-Date: Mon, 29 Jul 2024 01:01:24 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Steve French <smfrench@gmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	CIFS <linux-cifs@vger.kernel.org>
-Subject: Re: Why do very few filesystems have umount helpers
-Message-ID: <20240729000124.GH99483@ZenIV>
-References: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
+	s=arc-20240116; t=1722218782; c=relaxed/simple;
+	bh=WYM2xGU0PmC38l3hOL0oXi7y0atC1lYkK8tQiSF3Q/0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hr2mYS6KMgM3FEXnDXsMk7824F/MkpDXzw1d3nljtgosQthd0UAfOcEuwbMoCvtXrGwxrlzT2LRYza0CjQq0/9TsXaiKAM7FaTDseLAwBKrJUt8Qzt26ESzv6IJORluHDi6kKzRsVRxkq4Q16LyZjPSQdDAOvI2jN3lJsVcperM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=kQZ0Bm//; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d9e13ef9aaso2017330b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jul 2024 19:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1722218780; x=1722823580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8zC9bvX7BVD+EsCA5T4La2WmcEcSceCtHoiygPes69s=;
+        b=kQZ0Bm//Om6fZhevHFfC05ImvfBhW8Uhwlhf/M2RXIxD30Bm7xFZkI1zraMd2HQsk0
+         MiIQUTarFfsdjwv/v0dP4lA+J6BOAwgy5boo6colKteyC9bsRG8m+iJ9XHaiji2smXIu
+         iD+XTCh2KtxmJsFyChqKTpMS+gXVf4hBMy/mXNA21NEpOkoGWcThBIVQ8Q13oBhryWfh
+         hG2bX7AzOoQxTiEibiReeffO+xvOPX9iZH1wXv/HQiC0OSjYb645zTbzS8cQDcaXhOzE
+         VY+cRRA6e5C5C+qvh84YpntjhFDMvdoLKNjkGjuDcYJb76aD1YXjlmL+myXiBpsJCh9k
+         K1yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722218780; x=1722823580;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8zC9bvX7BVD+EsCA5T4La2WmcEcSceCtHoiygPes69s=;
+        b=rdx4oHIXJnyJRzG04Q8BhLWrn3cw0J7MSCmDglzGEdO7HiJD3fSOGzdLF+FRKhjyqo
+         BcednAyLUp30Zi7B2OCFxYmtlw9o/oLKWut1bABMbWJdwMeWPAyF+mUeFef/YLANkGy9
+         LOCKJa4fy+drj2e+t/x5ziuYVxRQnWJBRmRd41OsfotTdDOW/t7mOSmYNXOByAzkGlLy
+         im31FuUDfevfRo/w18ADH+6wmCHp5JQC4ZJ1EZV0jdFqq96EoW63hpDW3+juWdB4dbwC
+         El8RYINhdVd1QhZy7xDFd6nviqAQ64e7LzxZPwhGIzRK5tiCueqm8Eu8ZqED1Fi8s52Z
+         RnMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3NbY0SnX3qu0j5U49IDqL1SiYiw+bO6GGxv7vTehVCurJZvVkXDRJR6FSkq/2whPjqlex5Bp4buDg01UIcbrAPjE/xUtvzK2s1lkBPQ==
+X-Gm-Message-State: AOJu0Yxs2nSe1SPXJd1OL7emTi2Qt/MWZeFTA8LZzjMqK/bSnbwYPOxU
+	Wim3+xPNcijtQa0RCSN8cRfA7ZLzkbDU9OaF/sxYwfn9tiLsFnhvbs4Gk7sWsHg=
+X-Google-Smtp-Source: AGHT+IEW6Xosig0TLioIL/M/omR4eYkjl0taGC54ge002DpLWqehM7YTSsgSdqALr/1yVUNNNI3UiA==
+X-Received: by 2002:a05:6871:3421:b0:260:f9ee:9700 with SMTP id 586e51a60fabf-267d4d8ed36mr8183041fac.30.1722218779775;
+        Sun, 28 Jul 2024 19:06:19 -0700 (PDT)
+Received: from localhost.localdomain ([143.92.64.18])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead7120dfsm5873316b3a.71.2024.07.28.19.06.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jul 2024 19:06:19 -0700 (PDT)
+From: Haifeng Xu <haifeng.xu@shopee.com>
+To: brauner@kernel.org
+Cc: jack@suse.cz,
+	axboe@kernel.dk,
+	tj@kernel.org,
+	viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haifeng Xu <haifeng.xu@shopee.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] fs/writeback: fix kernel-doc warnings
+Date: Mon, 29 Jul 2024 10:06:06 +0800
+Message-Id: <20240729020606.332894-1-haifeng.xu@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAH2r5ms+vyNND3XPkBo+HYEj3-YMSwqZJup8BSt2B3LYOgPF+A@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 28, 2024 at 02:09:14PM -0500, Steve French wrote:
+The kernel test robot reported kernel-doc warnings here:
 
-> Since umount does not notify the filesystem on unmount until
-> references are closed (unless you do "umount --force") and therefore
-> the filesystem is only notified at kill_sb time, an easier approach to
-> fixing some of the problems where resources are kept around too long
-> (e.g. cached handles or directory entries etc. or references on the
-> mount are held) may be to add a mount helper which notifies the fs
-> (e.g. via fs specific ioctl) when umount has begun.   That may be an
-> easier solution that adding a VFS call to notify the fs when umount
-> begins.
+    fs/fs-writeback.c:1144: warning: Function parameter or struct member 'sb' not described in 'cgroup_writeback_umount'
 
-Huh?
+cgroup_writeback_umount() is missing an argument description, fix it.
 
-"references on the mount being held" is not something any userland
-helpers have a chance to help with.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407261749.LkRbgZxK-lkp@intel.com/
+Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+---
+ fs/fs-writeback.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-What exactly gets leaked in your tests?  And what would that userland
-helper do when umount happens due to the last process in given namespace
-getting killed, for example?  Any unexpected "busy" at umount(2) time
-would translate into filesystem instances stuck around (already detached
-from any mount trees) for unspecified time; not a good thing, obviously,
-and not something a userland helper had a chance to help with...
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 09facd4356d9..cf08f622d720 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1132,6 +1132,7 @@ int cgroup_writeback_by_id(u64 bdi_id, int memcg_id,
+ 
+ /**
+  * cgroup_writeback_umount - flush inode wb switches for umount
++ * @sb: superblock to kill
+  *
+  * This function is called when a super_block is about to be destroyed and
+  * flushes in-flight inode wb switches.  An inode wb switch goes through
+-- 
+2.25.1
 
-Details, please.
 
