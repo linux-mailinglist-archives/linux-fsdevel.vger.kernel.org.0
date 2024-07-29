@@ -1,109 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-24426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EB793F42E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:35:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7A393F438
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FA561F226D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 11:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D7A11C21EE2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 11:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2005D145B25;
-	Mon, 29 Jul 2024 11:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBF314659F;
+	Mon, 29 Jul 2024 11:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mKmAhjZN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SOaUiCfH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B612266A7;
-	Mon, 29 Jul 2024 11:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0964314658A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 11:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722252808; cv=none; b=UPIzYs9JCpxjeGUKjWjCE5GK4e+zeDzT9+hBGo5nRBN9TLcvBN6kr3eXxOigleEozM7fcsSEpMupYCxcumpyRoMHpSTn0FmBoXlRxD1SDrcqIePbeylKyKNxkvYT1qYdiHYldJQRU3F/jPrsIFc1GA9+sI/6l+eIemWbjzq8rvk=
+	t=1722253034; cv=none; b=IZvRWJoZhSpQOWF5goYxfI+5FWTuVwsHfyHWTLSsrf3pwSCeRFIzLNxeHV7NSCHM1jefpmoHCG45Bu7TkDOlnlRRRpFtSOUv6up/VrgGnVjP/Vs9UVmNAvtHCSp4xD3auJTSnWCF9X6Dlke2o5tNXDv09QccpachMuVN77MdtVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722252808; c=relaxed/simple;
-	bh=acN/ezs8iAPLyp3BzBJmwqAy15+20pYOD5fBlU3G2g8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+YTk2RJharMLcVGD3CssYFJK5w9kkuc6qQcr0FqEIALqGWHaDToCK1218hmZHABlnU0lOu8S60nD7Sajwhg5h6RmHLAFI/sCvfAWgzGxeWJZCb5RMQes4AvvhP3JhanL3otI8oqPEGfs/2FFO0pT/PFEuWnLO6zczMSSyt+v88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=mKmAhjZN; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wW9pxkDzQg+yBW1oIEL/KaRBqPYRvqr8l7NCyzI1vz8=; b=mKmAhjZND32uINvoMlw8aAwV45
-	JM8gYQ5yvZxJN9wwL5vOmaP9p9S4woOwnZ0QHbHYGf806WmsaApv6dRXJmvZmK443XlFau4HOK7ty
-	PS1EOh+d95auyIjLW3cnUBc2m95ln+UEU39BI7kAt9oAgI8LjL4HzS341sX85VNHppwtBuwtTxWE0
-	Ulrebm3qogVzFVpthb9yxcTPLXeTs8KauIprCix8nuCPkm3DJlNpNDU65BaNzE8zXehNuISKUkpUy
-	4LOdrFf8xxRKGrTz914qlqIxvyGdrpytWDdz3IW1aet706cA2r7tYL6tXWhsvmN5J1VABBJOwP5gD
-	9btd+zpg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55110)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYOcq-00045I-1a;
-	Mon, 29 Jul 2024 12:33:12 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYOcp-0004HW-NT; Mon, 29 Jul 2024 12:33:11 +0100
-Date: Mon, 29 Jul 2024 12:33:11 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	linuxppc-dev@lists.ozlabs.org, xen-devel@lists.xenproject.org,
-	linux-fsdevel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v1 1/3] mm: turn USE_SPLIT_PTE_PTLOCKS /
- USE_SPLIT_PTE_PTLOCKS into Kconfig options
-Message-ID: <Zqd998jx8NJK+BNX@shell.armlinux.org.uk>
-References: <20240726150728.3159964-1-david@redhat.com>
- <20240726150728.3159964-2-david@redhat.com>
+	s=arc-20240116; t=1722253034; c=relaxed/simple;
+	bh=d1eQ4ssNsC40NFMV3AiIXdST+OmypBvaqEVrV3I+FdQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u/4xKs9k/PQI7OrkUHX6CZ3JtU7hJfTzs7O7o/Gyg1foQxCzfn9Ka8YV+vIP0EpDHM6zxBFeeKpwJ8H5yKIKag84BPhyHVpGK+zJtKGFFiUwRsDJNqNWm+XU3sHrifjgDrZ/ltXHCNJtCZrjfWsfAxom9zqW2yHrFyNCvSaoXlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SOaUiCfH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722253032;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2dgIjtdy9bxsyN5Iula/p7KGAXyxnKNn8eNDxdgyZ60=;
+	b=SOaUiCfHS6zC7nY00kzKz+998NcB1JSR/SmbG/MsLfEe5E9dEsgwZnMM+j6jPjyrN9HSNw
+	Oei+yHRE8uNNWuSM8EcgmKYFvLDCMwkdq47fCNlJnxi6hvnz2UkYu38rn4OrtWdQDN6jcJ
+	F9dkiscYA+ag4sfgfIbbeyfqAO6cPdw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-191-pFefaXg6M7uA4WgyIrOz2g-1; Mon,
+ 29 Jul 2024 07:37:06 -0400
+X-MC-Unique: pFefaXg6M7uA4WgyIrOz2g-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D23019560A1;
+	Mon, 29 Jul 2024 11:37:05 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.31])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 18DF71955D42;
+	Mon, 29 Jul 2024 11:37:02 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-api@vger.kernel.org,  Dave Chinner <dchinner@redhat.com>,
+  Christian Brauner <brauner@kernel.org>
+Subject: Re: Testing if two open descriptors refer to the same inode
+In-Reply-To: <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+	(Mateusz Guzik's message of "Mon, 29 Jul 2024 13:06:28 +0200")
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+	<ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+	<875xsoqy58.fsf@oldenburg.str.redhat.com>
+	<vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
+	<87sevspit1.fsf@oldenburg.str.redhat.com>
+	<CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
+Date: Mon, 29 Jul 2024 13:36:59 +0200
+Message-ID: <87cymwpgys.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240726150728.3159964-2-david@redhat.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Jul 26, 2024 at 05:07:26PM +0200, David Hildenbrand wrote:
-> Let's clean that up a bit and prepare for depending on
-> CONFIG_SPLIT_PMD_PTLOCKS in other Kconfig options.
-> 
-> More cleanups would be reasonable (like the arch-specific "depends on"
-> for CONFIG_SPLIT_PTE_PTLOCKS), but we'll leave that for another day.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+* Mateusz Guzik:
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> On Mon, Jul 29, 2024 at 12:57=E2=80=AFPM Florian Weimer <fweimer@redhat.c=
+om> wrote:
+>>
+>> * Mateusz Guzik:
+>>
+>> > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
+>> >> * Mateusz Guzik:
+>> >>
+>> >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
+>> >> >> It was pointed out to me that inode numbers on Linux are no longer
+>> >> >> expected to be unique per file system, even for local file systems.
+>> >> >
+>> >> > I don't know if I'm parsing this correctly.
+>> >> >
+>> >> > Are you claiming on-disk inode numbers are not guaranteed unique per
+>> >> > filesystem? It sounds like utter breakage, with capital 'f'.
+>> >>
+>> >> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
+>> >> local file systems are different.
+>> >
+>> > Can you link me some threads about this?
+>>
+>> Sorry, it was an internal thread.  It's supposed to be common knowledge
+>> among Linux file system developers.  Aleksa referenced LSF/MM
+>> discussions.
+>>
+>
+> So much for open development :-P
 
-Thanks!
+I found this pretty quickly, so it does seem widely known:
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+  [LSF TOPIC] statx extensions for subvol/snapshot filesystems & more
+  <https://lore.kernel.org/linux-fsdevel/2uvhm6gweyl7iyyp2xpfryvcu2g3padaga=
+eqcbiavjyiis6prl@yjm725bizncq/>
+
+>> It's certainly much easier to use than name_to_handle_at, so it looks
+>> like a useful option to have.
+>>
+>> Could we return a three-way comparison result for sorting?  Or would
+>> that expose too much about kernel pointer values?
+>>
+>
+> As is this would sort by inode *address* which I don't believe is of
+> any use -- the order has to be assumed arbitrary.
+
+Doesn't the order remain valid while the files remain open?  Anything
+else doesn't seem reasonable to expect anyway.
+
+Thanks,
+Florian
+
 
