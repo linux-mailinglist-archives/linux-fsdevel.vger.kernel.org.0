@@ -1,101 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-24448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C1D93F6CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 15:36:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF5393F6F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 15:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9005281024
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:36:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96642281E9B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1256E14A095;
-	Mon, 29 Jul 2024 13:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9705814EC4E;
+	Mon, 29 Jul 2024 13:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="g6JyqTlI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDpaYfrH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82B9149C4D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 13:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8F4147C86;
+	Mon, 29 Jul 2024 13:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722260173; cv=none; b=KrcB9Tc0qXV8WGhKOlt0PMYYe/SwQeELRrtig9Hyundifaat3sCOc66MCDLO4fdL/PW8Yp3QCo1y9RuLzn/dV92C+IemIefIk/N8jm4l3cqPS3kCSqq2qXGbIJ82BXZ/1xD42o8UMA4KEVrps+HbGXApS1TCbdH3/rO3VSQ2Q3o=
+	t=1722260780; cv=none; b=Sl6o0UKzr8OoBEfZwaefjFBZvd4SArjbUMiuTXzVYbkZLg4xmH83afeiNwD/XdsHdINxmqZZdNB1T1hHSGbaFFJhl8yGlrTs6F1GPjqaRh2KTrV7C5g4EPnjYGE9NQ0Z42MpIrrdCiP5uGzQ7z0cM9Wvb6xPYu16GoX7i1JVF2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722260173; c=relaxed/simple;
-	bh=CXFonhFXNonLB+FqwjDxk6atyVr/H0PoH0Eae7oF2cE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XXl+Il1hb8dM6uNH29J6LHwNYDMNBrrOFKMMN5Q2ZcFFvAVJGX+QyT+Thx48d8R2UM17D0SfnpDi1fBM4kUAwjjzV7vAW7dlBKeciaoD4/Bt1kIA6xDzhBLj6V2/ICEaAKxz0+ZYNprwdvvlVeOt4Lb44zvW2H3Xuqu2qPlqNZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=g6JyqTlI; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-198.bstnma.fios.verizon.net [173.48.113.198])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46TDa10S005006
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 09:36:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1722260163; bh=QVUC1V21zgmug77XEM1tO38YThaG7JsTP27Lu2z4v48=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=g6JyqTlIynTo0AHwUDR9SFaOCa3Wz8E+VAzwn5wgr3y2bY2Bnadzvgrq3rA3sEd3X
-	 1yRpN/VmkfILttCIPsC6+2xqReKR3kxHztBPWr1zX5EmdZvueKGI+f5YQnHRCP0zJi
-	 lo0zExFDZ5TkjIey0LytQgEbRiiJCUnn+tQfbFfA6rQKQf+yJgtg04037IhcxANrPa
-	 dtYbVd89YPUvPRadpPu/QjG5XSwmP30YkHGfD/tMeloLo0AvWLSk5rgJH9Q2zM2osP
-	 Vdpw0zGBH8WkCUfbmTBFzx4e46Xn6sWCqeCK+yiFzi9G3Q5nz5KQKciTHNtuiVlboz
-	 YdlNwMXsE8XUw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 1C6CC15C02D3; Mon, 29 Jul 2024 09:36:01 -0400 (EDT)
-Date: Mon, 29 Jul 2024 09:36:01 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: Testing if two open descriptors refer to the same inode
-Message-ID: <20240729133601.GA557749@mit.edu>
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
- <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+	s=arc-20240116; t=1722260780; c=relaxed/simple;
+	bh=O3MU1F+c8ywd1xSZMUCNs8kMjtY9ytEAMnzRHa8ilj4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c+IgT5Z6wd0MarjiOhPbjj2wWhWHdPTCTuQIZvxwU6+ZeVYlgJAyPxQxRrPrUcJz+xICUAfgCaDW3F/uqOD6t3P5/o3dqW50P6VTwes7OCAw4OYXM+9TIs+g+m5ETQA328nrKzI4nuz5dT2/f8N7cvNXPH5gPX2TrJ00hhyBVaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDpaYfrH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5366C32786;
+	Mon, 29 Jul 2024 13:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722260779;
+	bh=O3MU1F+c8ywd1xSZMUCNs8kMjtY9ytEAMnzRHa8ilj4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WDpaYfrHVrMbDf5qh9q5I3HDuYGxJoKS14RrlGHfCv3BfWbNTZbcgiBE5dsWTnolB
+	 rINh7jqMVBb/Vw1/pGcnbuP0QOXWuzrVxh/7n7f8Ntgyi3jKRib1zLKO8rOEWXXlUZ
+	 3Kd1L3yo/GDb6QehxssSFXf6RLmhZTcFFkUD7HR4zY9p4AZ2oSjWNW3r8a+wZEE6zF
+	 TL45jq6z5MGmT68Zb13ha2TamUw1RAU425cSn8WQFgp8AFSXTUePqesgdHO+XicRN8
+	 rr0OB9Yy0vTHPAbA7rfwwtWtNnJKWXky1pzdFui4zGnLrAFkWzdNKE6x56MNziBOjz
+	 lmhUdyoJ+HRHg==
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Song Liu <song@kernel.org>,
+	bpf <bpf@vger.kernel.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	"andrii@kernel.org" <andrii@kernel.org>,
+	"eddyz87@gmail.com" <eddyz87@gmail.com>,
+	"ast@kernel.org" <ast@kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"kpsingh@kernel.org" <kpsingh@kernel.org>,
+	"mattbobrowski@google.com" <mattbobrowski@google.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for bpf_get_dentry_xattr
+Date: Mon, 29 Jul 2024 15:46:06 +0200
+Message-ID: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CDDCB34B-4B01-40CA-B512-33023529D104@fb.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3699; i=brauner@kernel.org; h=from:subject:message-id; bh=O3MU1F+c8ywd1xSZMUCNs8kMjtY9ytEAMnzRHa8ilj4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQtn6sY/nTdvc/6HNs2h2x7rVZY4FEio+x0bXJV0QUfk /0vTrx27ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI7QtGhgNbDj3/e2RXhvU8 69UBa0P/NPk/rnqavH7WyX75NDaz5w4M/zSuL//OJbJ958aD0Vzruj/ua8s1/yKwiCHe4mer79I lKxgA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 29, 2024 at 12:18:15PM +0200, Mateusz Guzik wrote:
+On Fri, Jul 26, 2024 at 07:43:28PM GMT, Song Liu wrote:
+> Hi Christian, 
 > 
-> Are you claiming on-disk inode numbers are not guaranteed unique per
-> filesystem? It sounds like utter breakage, with capital 'f'.
+> Thanks a lot for your comments.
+> 
+> > On Jul 26, 2024, at 4:51 AM, Christian Brauner <brauner@kernel.org> wrote:
+> > 
+> > On Fri, Jul 26, 2024 at 09:19:54AM GMT, Song Liu wrote:
+> >> Hi Christian, 
+> >> 
+> >>> On Jul 26, 2024, at 12:06 AM, Christian Brauner <brauner@kernel.org> wrote:
+> >> 
+> >> [...]
+> >> 
+> >>>> +
+> >>>> + for (i = 0; i < 10; i++) {
+> >>>> + ret = bpf_get_dentry_xattr(dentry, "user.kfunc", &value_ptr);
+> >>>> + if (ret == sizeof(expected_value) &&
+> >>>> +    !bpf_strncmp(value, ret, expected_value))
+> >>>> + matches++;
+> >>>> +
+> >>>> + prev_dentry = dentry;
+> >>>> + dentry = bpf_dget_parent(prev_dentry);
+> >>> 
+> >>> Why do you need to walk upwards and instead of reading the xattr values
+> >>> during security_inode_permission()?
+> >> 
+> >> In this use case, we would like to add xattr to the directory to cover
+> >> all files under it. For example, assume we have the following xattrs:
+> >> 
+> >>  /bin  xattr: user.policy_A = value_A
+> >>  /bin/gcc-6.9/ xattr: user.policy_A = value_B
+> >>  /bin/gcc-6.9/gcc xattr: user.policy_A = value_C
+> >> 
+> >> /bin/gcc-6.9/gcc will use value_C;
+> >> /bin/gcc-6.9/<other_files> will use value_B;
+> >> /bin/<other_folder_or_file> will use value_A;
+> >> 
+> >> By walking upwards from security_file_open(), we can finish the logic 
+> >> in a single LSM hook:
+> >> 
+> >>    repeat:
+> >>        if (dentry have user.policy_A) {
+> >>            /* make decision based on value */;
+> >>        } else {
+> >>            dentry = bpf_dget_parent();
+> >>            goto repeat;
+> >>        }
+> >> 
+> >> Does this make sense? Or maybe I misunderstood the suggestion?
+> > 
+> > Imho, what you're doing belongs into inode_permission() not into
+> > security_file_open(). That's already too late and it's somewhat clear
+> > from the example you're using that you're essentially doing permission
+> > checking during path lookup.
+> 
+> I am not sure I follow the suggestion to implement this with 
+> security_inode_permission()? Could you please share more details about
+> this idea?
 
-The reality is that there exists file systems which do not return
-unique inode numbers.  For example, there are virtiofs implementations
-which pass the inode numbers straight through with a fixed dev_t.  If
-you have a large number of packages mounted via iscsi, and those
-packages include shared libraries, then you can have two different
-shared libraries with the same inode number, and then you can watch
-the dynamic liunker get Very Confused, and debugging the problem can
-be.... interesting.  (Three gueses how I found out about this, and the
-first two don't count.  Yes, we figured out a workaround.)
+Given a path like /bin/gcc-6.9/gcc what that code currently does is:
 
-So that breakage exists already, today.
+* walk down to /bin/gcc-6.9/gcc
+* walk up from /bin/gcc-6.9/gcc and then checking xattr labels for:
+  gcc
+  gcc-6.9/
+  bin/
+  /
 
-For people who don't like this, they can stick to those file systems
-that still guarantee unique inode numbers, at least for local disk
-file systems --- for example, to use ext4 and xfs, over btrfs and
-bcachefs.
+That's broken because someone could've done
+mv /bin/gcc-6.9/gcc /attack/ and when this walks back and it checks xattrs on
+/attack even though the path lookup was for /bin/gcc-6.9. IOW, the
+security_file_open() checks have nothing to do with the permission checks that
+were done during path lookup.
 
-However, this is a short-term expedient, and in the long term, we will
-need to guide userspace to use something that is more likely to work,
-such as file handles.  And ideally, this needs to be standardized at
-venues such as the Austin Group, so that it becomes interfaces which
-are used across operating systems, not just for Linux.  It's going to
-be a multi-year, if not decade-long, effort...
+Why isn't that logic:
 
-						- Ted
+* walk down to /bin/gcc-6.9/gcc and check for each component:
+
+  security_inode_permission(/)
+  security_inode_permission(gcc-6.9/)
+  security_inode_permission(bin/)
+  security_inode_permission(gcc)
+  security_file_open(gcc)
+
+I think that dget_parent() logic also wouldn't make sense for relative path
+lookups:
+
+	dfd = open("/bin/gcc-6.9", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+
+This walks down to /bin/gcc-6.9 and then walks back up (subject to the
+same problem mentioned earlier) and check xattrs for:
+
+  gcc-6.9
+  bin/
+  /
+
+then that dfd is passed to openat() to open "gcc":
+
+fd = openat(dfd, "gcc", O_RDONLY);
+
+which again walks up to /bin/gcc-6.9 and checks xattrs for:
+  gcc
+  gcc-6.9
+  bin/
+  /
+
+Which means this code ends up charging relative lookups twice. Even if one
+irons that out in the program this encourages really bad patterns.
+Path lookup is iterative top down. One can't just randomly walk back up and
+assume that's equivalent.
 
