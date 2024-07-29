@@ -1,107 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-24447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B4193F6A5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 15:27:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C1D93F6CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 15:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9001DB21092
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9005281024
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jul 2024 13:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472C31494BF;
-	Mon, 29 Jul 2024 13:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1256E14A095;
+	Mon, 29 Jul 2024 13:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GOg+Kqte";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mssZc+dW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WuU2gCVp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7ekSSZDj"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="g6JyqTlI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42B83C24;
-	Mon, 29 Jul 2024 13:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82B9149C4D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 13:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722259645; cv=none; b=GaiqhnQYHl/i8lYpUsdcOdQGvqEgWYRxDs+EqTZjEZjQDPWcY+MBCT6RXS7ZRWegxg7kV7HWvbDVSBW/VS6wAoLlx7AWntj7wzFoKNs/LBkyVCCSfWidc3LWCD+h7oRU9gj3JuAgAqdMV+TQlOIL6dG/hukyUKFpHD2x39U22PE=
+	t=1722260173; cv=none; b=KrcB9Tc0qXV8WGhKOlt0PMYYe/SwQeELRrtig9Hyundifaat3sCOc66MCDLO4fdL/PW8Yp3QCo1y9RuLzn/dV92C+IemIefIk/N8jm4l3cqPS3kCSqq2qXGbIJ82BXZ/1xD42o8UMA4KEVrps+HbGXApS1TCbdH3/rO3VSQ2Q3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722259645; c=relaxed/simple;
-	bh=Vd5C2W9GOGnPSed/7HofTczD7Y4FK7ENJ3bLnDQRJ0E=;
+	s=arc-20240116; t=1722260173; c=relaxed/simple;
+	bh=CXFonhFXNonLB+FqwjDxk6atyVr/H0PoH0Eae7oF2cE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azFw2VOCx5XhQtyN6yHEDp4QtGyKZBPG9dA43XLhszumptP1vs52HN96ZgX49WaOkfhEZav1ULm1v1lqo7oZVs+lLEe6ROoB7J9KBmEmAzmGik7frpGk/yFu+65JRLk/6mtpIsOYufMu/xlFlo7y0qXpvCocKX2KP4HKImrWrDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GOg+Kqte; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mssZc+dW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WuU2gCVp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7ekSSZDj; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E067F21ABC;
-	Mon, 29 Jul 2024 13:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722259642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cA0sKnmcbKHN+5poM2Gwzel0FDApKbV56UYCatcL7bE=;
-	b=GOg+KqteQTiABuMLkONHkkQqDi9CWNISiA42PWBd6tBN1LrzZHYSnJIOgfjuI/F4BrAnu4
-	PmOZ6aoddmjs4bM27zUbbRtFpHUHn5cMq9uhCSm65Dwsk0ZvsFi+Eev1dq/rmYXlIg9Dvo
-	dKrcoDP66XZMp72xHlxRJ5a2eCGTIyY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722259642;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cA0sKnmcbKHN+5poM2Gwzel0FDApKbV56UYCatcL7bE=;
-	b=mssZc+dWsaDWX6G1Z81Z9mVnCMeQIKDBeeN8GeMNSfkrtAVFPI+0ZsaokUtTgcYSe+PPlR
-	VfWK/UPBgxDAnyAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722259641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cA0sKnmcbKHN+5poM2Gwzel0FDApKbV56UYCatcL7bE=;
-	b=WuU2gCVpi0VpfhEjlPLAEf8P1ZNDFqSTQUD2Msx0Rz9cU/3rWE6Sm086IHeXzTyLdOi6Oi
-	ZxJkmkvR/KeysUT+IF5bJa7yRxNOWjnYwnoCxHI1mqdB8iSMRG5Pg6px732y/ihU0sv1Zl
-	kWBur90hgwyvMSgEdnPZ9j8AOa2iAUQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722259641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cA0sKnmcbKHN+5poM2Gwzel0FDApKbV56UYCatcL7bE=;
-	b=7ekSSZDjkiW5NnN+2hwFDBVRJDLREXGvb8S7MhyadF1e1L/sESkskvzc/MxkGKv5ZEQoir
-	iJv7SHaOYS0o5mBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D453D1368A;
-	Mon, 29 Jul 2024 13:27:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QJPTM7mYp2aIVQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 29 Jul 2024 13:27:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 79BC1A099C; Mon, 29 Jul 2024 15:27:21 +0200 (CEST)
-Date: Mon, 29 Jul 2024 15:27:21 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
-	syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>,
-	Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>,
-	paulmck@kernel.org, Hillf Danton <hdanton@sina.com>,
-	rcu@vger.kernel.org, frank.li@vivo.com, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-	Ted Tso <tytso@mit.edu>
-Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
-Message-ID: <20240729132721.hxih6ehigadqf7wx@quack3>
-References: <0000000000004ff2dc061e281637@google.com>
- <20240729-himbeeren-funknetz-96e62f9c7aee@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XXl+Il1hb8dM6uNH29J6LHwNYDMNBrrOFKMMN5Q2ZcFFvAVJGX+QyT+Thx48d8R2UM17D0SfnpDi1fBM4kUAwjjzV7vAW7dlBKeciaoD4/Bt1kIA6xDzhBLj6V2/ICEaAKxz0+ZYNprwdvvlVeOt4Lb44zvW2H3Xuqu2qPlqNZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=g6JyqTlI; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-113-198.bstnma.fios.verizon.net [173.48.113.198])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46TDa10S005006
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 29 Jul 2024 09:36:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1722260163; bh=QVUC1V21zgmug77XEM1tO38YThaG7JsTP27Lu2z4v48=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=g6JyqTlIynTo0AHwUDR9SFaOCa3Wz8E+VAzwn5wgr3y2bY2Bnadzvgrq3rA3sEd3X
+	 1yRpN/VmkfILttCIPsC6+2xqReKR3kxHztBPWr1zX5EmdZvueKGI+f5YQnHRCP0zJi
+	 lo0zExFDZ5TkjIey0LytQgEbRiiJCUnn+tQfbFfA6rQKQf+yJgtg04037IhcxANrPa
+	 dtYbVd89YPUvPRadpPu/QjG5XSwmP30YkHGfD/tMeloLo0AvWLSk5rgJH9Q2zM2osP
+	 Vdpw0zGBH8WkCUfbmTBFzx4e46Xn6sWCqeCK+yiFzi9G3Q5nz5KQKciTHNtuiVlboz
+	 YdlNwMXsE8XUw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 1C6CC15C02D3; Mon, 29 Jul 2024 09:36:01 -0400 (EDT)
+Date: Mon, 29 Jul 2024 09:36:01 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: Testing if two open descriptors refer to the same inode
+Message-ID: <20240729133601.GA557749@mit.edu>
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+ <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,124 +66,36 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240729-himbeeren-funknetz-96e62f9c7aee@brauner>
-X-Spam-Level: *
-X-Spamd-Result: default: False [1.90 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	REDIRECTOR_URL(0.00)[goo.gl];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TAGGED_RCPT(0.00)[20d7e439f76bbbd863a7];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.com,kernel.org,lists.sourceforge.net,syzkaller.appspotmail.com,redhat.com,gmail.com,sina.com,vger.kernel.org,vivo.com,suse.cz,googlegroups.com,zeniv.linux.org.uk,mit.edu];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,imap1.dmz-prg2.suse.org:helo,syzkaller.appspot.com:url,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: 1.90
+In-Reply-To: <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
 
-On Mon 29-07-24 11:10:09, Christian Brauner wrote:
-> On Fri, Jul 26, 2024 at 08:23:02AM GMT, syzbot wrote:
-> > syzbot has bisected this issue to:
-> > 
-> > commit b62e71be2110d8b52bf5faf3c3ed7ca1a0c113a5
-> > Author: Chao Yu <chao@kernel.org>
-> > Date:   Sun Apr 23 15:49:15 2023 +0000
-> > 
-> >     f2fs: support errors=remount-ro|continue|panic mountoption
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119745f1980000
-> > start commit:   1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
-> > git tree:       upstream
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=139745f1980000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=159745f1980000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=20d7e439f76bbbd863a7
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1237a1f1980000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115edac9980000
-> > 
-> > Reported-by: syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com
-> > Fixes: b62e71be2110 ("f2fs: support errors=remount-ro|continue|panic mountoption")
-> > 
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On Mon, Jul 29, 2024 at 12:18:15PM +0200, Mateusz Guzik wrote:
 > 
-> Thanks to Paul and Oleg for point me in the right direction and
-> explaining that rcu sync warning.
-> 
-> That patch here is remounting a superblock read-only directly by raising
-> SB_RDONLY without the involvement of the VFS at all. That's pretty
-> broken and is likely to cause trouble if done wrong. The rough order of
-> operations to transition rw->ro usualy include checking that the
-> filsystem is unfrozen, and marking all mounts read-only, then calling
-> into the filesystem so it can do whatever it wants to do.
+> Are you claiming on-disk inode numbers are not guaranteed unique per
+> filesystem? It sounds like utter breakage, with capital 'f'.
 
-Yeah, this way of handling filesystem errors dates back to days when the
-world was much simpler :) It has been always a bit of a hack (but when you
-try to limit damage from corrupted on-disk data structures, a bit of
-hackiness is acceptable) but it is doubly so these days.
+The reality is that there exists file systems which do not return
+unique inode numbers.  For example, there are virtiofs implementations
+which pass the inode numbers straight through with a fixed dev_t.  If
+you have a large number of packages mounted via iscsi, and those
+packages include shared libraries, then you can have two different
+shared libraries with the same inode number, and then you can watch
+the dynamic liunker get Very Confused, and debugging the problem can
+be.... interesting.  (Three gueses how I found out about this, and the
+first two don't count.  Yes, we figured out a workaround.)
 
-> In any case, all of this requires holding sb->s_umount. Not holding
-> sb->s_umount will end up confusing freeze_super() (Thanks to Oleg for
-> noticing!). When freeze_super() is called on a non-ro filesystem it will
-> acquire
-> percpu_down_write(SB_FREEZE_WRITE+SB_FREEZE_PAGEFAULT+SB_FREEZE_FS) and
-> thaw_super() needs to call
-> sb_freeze_unlock(SB_FREEZE_FS+SB_FREEZE_PAGEFAULT+SB_FREEZE_WRITE) but
-> because you just raise SB_RDONLY you end up causing thaw_super() to skip
-> that step causing the bug in rcu_sync_dtor() to be noticed.
+So that breakage exists already, today.
 
-Yeah, good spotting.
+For people who don't like this, they can stick to those file systems
+that still guarantee unique inode numbers, at least for local disk
+file systems --- for example, to use ext4 and xfs, over btrfs and
+bcachefs.
 
-> Btw, ext4 has similar logic where it raises SB_RDONLY without checking
-> whether the filesystem is frozen.
-> 
-> So I guess, this is technically ok as long as that emergency SB_RDONLY raising
-> in sb->s_flags is not done while the fs is already frozen. I think ext4 can
-> probably never do that. Jan?
+However, this is a short-term expedient, and in the long term, we will
+need to guide userspace to use something that is more likely to work,
+such as file handles.  And ideally, this needs to be standardized at
+venues such as the Austin Group, so that it becomes interfaces which
+are used across operating systems, not just for Linux.  It's going to
+be a multi-year, if not decade-long, effort...
 
-You'd wish (or maybe I'd wish ;) No, ext4 can hit it in the same way f2fs
-can. All it takes is for ext4 to hit some metadata corruption on read from
-disk while the filesystem is frozen.
-
-> My guess is that something in f2fs can end up raising SB_RDONLY after
-> the filesystem is frozen and so it causes this bug. I suspect this is coming
-> from the gc_thread() which might issue a f2fs_stop_checkpoint() while the fs is
-> already about to be frozen but before the gc thread is stopped as part of the
-> freeze.
-
-So in ext4 we have EXT4_FLAGS_SHUTDOWN flag which we now use internally
-instead of SB_RDONLY flag for checking whether the filesystem was shutdown
-(because otherwise races between remount and hitting fs error were really
-messy). However we still *also* set SB_RDONLY so that VFS bails early from
-some paths which generally results in less error noise in kernel logs and
-also out of caution of not breaking something in this path. That being said
-we also support EXT4_IOC_SHUTDOWN ioctl for several years and in that path
-we set EXT4_FLAGS_SHUTDOWN without setting SB_RDONLY and nothing seems to
-have blown up. So I'm inclined to belive we could remove setting of
-SB_RDONLY from ext4 error handling. Ted, what do you think?
-
-Also as the "filesystem shutdown" is spreading across multiple filesystems,
-I'm playing with the idea that maybe we could lift a flag like this to VFS
-so that we can check it in VFS paths and abort some operations early.  But
-so far I'm not convinced the gain is worth the need to iron out various
-subtle semantical differences of "shutdown" among filesystems.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+						- Ted
 
