@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-24567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DFD940777
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:26:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D258894077C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97485B21E74
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7261F23805
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1211A00C4;
-	Tue, 30 Jul 2024 05:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712BC1A00FC;
+	Tue, 30 Jul 2024 05:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUD4jSK2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkghWRQ6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287B419FA85;
-	Tue, 30 Jul 2024 05:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4BD1A00C2;
+	Tue, 30 Jul 2024 05:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722316520; cv=none; b=teVoDjr9DHhqt//gf0hb/NYwaDhjk9oNg7Gsu3QhnqL7nC6apG257B2r0YSzwxo8UqDslgehXnqX5G+g+R+R6F9ns5+InZ6Cpf/yFzq3lldpIPrpHwyci/duGgMQPn5PSGNg2Y25mSjtaMX/vd6xfZ40h8Gfj1zYB16z+qlXD0o=
+	t=1722316520; cv=none; b=snYp3+2FrAf/TqDRKBb3wDAAnPwJ0+wNiX8wmiIvLq4O/Pb8gBL9VsJDQvIdZz6LXidBFlzHxOd0DUA2Falp/CT4ET1sTo9i4JHb7VvNPpRa7FT/atDwhCCM9I4CygJisLn1P31Y6QMDeVCHB2nrdRKigMc5mGrSqYoxz1plNVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722316520; c=relaxed/simple;
-	bh=w7ZWUToN2aMnwOQUo1I5gRl/0RWWMx4chuQE47AftYo=;
+	bh=ionwxzIbc2LdJlUSlA7ltKLq42W/4KKLlFBvI2Fnzv8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NSOZVBslud33lThOibFvSsIwJ9Fy3BaLFRE50Q5nCHn/q85NSvFs/fVhG8XMKyKFYrDKMCI7vkYZnKnANWQWl8ZYCprE8/NTStNUX/k5VMZLT1Nxt8+v9StWA4XiTvl4HWyO/czb49brFxjogKJ1xGlRrS6ZV8fUuANew7wdTjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUD4jSK2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03486C4AF0A;
-	Tue, 30 Jul 2024 05:15:18 +0000 (UTC)
+	 MIME-Version; b=hMpM5rEp9VbCQn1Gixeu5s3JZ4mPQ9k8XntZLm/Tc6drnNwGEy8jei4boUNAT9TTsbTC8gPqu//bcorQ+uzsgixsx2IJNTNsfc01QjJuiPTM0CKYH/ZvgA78/4rm1cpPal3U176GJRnbrsVpB97crH9f/5Zujnbe0ROtOi3zVd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkghWRQ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9C8BC4AF0E;
+	Tue, 30 Jul 2024 05:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722316519;
-	bh=w7ZWUToN2aMnwOQUo1I5gRl/0RWWMx4chuQE47AftYo=;
+	s=k20201202; t=1722316520;
+	bh=ionwxzIbc2LdJlUSlA7ltKLq42W/4KKLlFBvI2Fnzv8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VUD4jSK2g9ZgDg4iUV6gqI73Ro+HWI9w/NODCaBNQtVkDAfdS4+qLi+yQL2qfUVdM
-	 sfsQECEVywRsGG/P9HkVg5x+bTPwBy6rn4xBknJ3mM1Wc5ZqEHtahjoMY9OlYXKECL
-	 2+5qVorpRjoizlYV/3tOnbHswHL1BI3PzgFVf4ornlchFtnwmfpPfFPQVaxIkb3hIL
-	 xo8Njz9/Qibc5zoTW6zVfIOQtgq1TlvQzJJgEf02cdGP+QSiCLmaOPm6pbMZK3pfCw
-	 ZWA6GZ6+m1haSDKCW0XAvh3Q/DnGJu4LvJjmEIqkPtw8npytGoKfk7nXGpxKThev5P
-	 Hid5Rp4KRjDNg==
+	b=mkghWRQ6SZ7xfVG53U0yGNwi++kH3SV1fcP215BUiyDra4dsJb8tzcB2k2HYdbT0h
+	 nPuZvlTr0Ysf8NXy7mXQ6cTGRghCCOdI0E5/ZeNM+0fl8kr3Cz12OhdqyPaZk5SORF
+	 hnPzCC6W7QOlHm4u8gVW9CuNDqTmKQQQ0HsoSJ6bJuMUuTWOrq5y4OJ++KVZin531N
+	 N1euhp2w6hxBxqZldEMxh1PwbxlHlJYYVWul7Q9bCKO1l1tZI8fM+igM9m//3VvUx6
+	 +JPIkgjXbTeP69pSAbQveSBoBxXFFnLZK8SSNmjpRfvNnhpwKwJsLpnNRWLObWMBGm
+	 fJTDltwn0HRZA==
 From: viro@kernel.org
 To: linux-fsdevel@vger.kernel.org
 Cc: amir73il@gmail.com,
@@ -50,9 +50,9 @@ Cc: amir73il@gmail.com,
 	kvm@vger.kernel.org,
 	netdev@vger.kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH 35/39] convert bpf_token_create()
-Date: Tue, 30 Jul 2024 01:16:21 -0400
-Message-Id: <20240730051625.14349-35-viro@kernel.org>
+Subject: [PATCH 36/39] assorted variants of irqfd setup: convert to CLASS(fd)
+Date: Tue, 30 Jul 2024 01:16:22 -0400
+Message-Id: <20240730051625.14349-36-viro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240730051625.14349-1-viro@kernel.org>
 References: <20240730050927.GC5334@ZenIV>
@@ -67,149 +67,237 @@ Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-keep file reference through the entire thing, don't bother with
-grabbing struct path reference (except, for now, around the LSM
-call and that only until it gets constified) and while we are
-at it, don't confuse the hell out of readers by random mix of
-path.dentry->d_sb and path.mnt->mnt_sb uses - these two are equal,
-so just put one of those into a local variable and use that.
+in all of those failure exits prior to fdget() are plain returns and
+the only thing done after fdput() is (on failure exits) a kfree(),
+which can be done before fdput() just fine.
+
+NOTE: in acrn_irqfd_assign() 'fail:' failure exit is wrong for
+eventfd_ctx_fileget() failure (we only want fdput() there) and once
+we stop doing that, it doesn't need to check if eventfd is NULL or
+ERR_PTR(...) there.
+
+NOTE: in privcmd we move fdget() up before the allocation - more
+to the point, before the copy_from_user() attempt.
+
+[trivial conflict in privcmd]
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- kernel/bpf/token.c | 69 +++++++++++++++++-----------------------------
- 1 file changed, 26 insertions(+), 43 deletions(-)
+ drivers/vfio/virqfd.c     | 16 +++-------------
+ drivers/virt/acrn/irqfd.c | 13 ++++---------
+ drivers/xen/privcmd.c     | 17 ++++-------------
+ virt/kvm/eventfd.c        | 15 +++------------
+ 4 files changed, 14 insertions(+), 47 deletions(-)
 
-diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-index 9b92cb886d49..15da405d8302 100644
---- a/kernel/bpf/token.c
-+++ b/kernel/bpf/token.c
-@@ -116,67 +116,52 @@ int bpf_token_create(union bpf_attr *attr)
- 	struct user_namespace *userns;
- 	struct inode *inode;
- 	struct file *file;
-+	CLASS(fd, f)(attr->token_create.bpffs_fd);
- 	struct path path;
--	struct fd f;
-+	struct super_block *sb;
- 	umode_t mode;
- 	int err, fd;
+diff --git a/drivers/vfio/virqfd.c b/drivers/vfio/virqfd.c
+index d22881245e89..aa2891f97508 100644
+--- a/drivers/vfio/virqfd.c
++++ b/drivers/vfio/virqfd.c
+@@ -113,7 +113,6 @@ int vfio_virqfd_enable(void *opaque,
+ 		       void (*thread)(void *, void *),
+ 		       void *data, struct virqfd **pvirqfd, int fd)
+ {
+-	struct fd irqfd;
+ 	struct eventfd_ctx *ctx;
+ 	struct virqfd *virqfd;
+ 	int ret = 0;
+@@ -133,8 +132,8 @@ int vfio_virqfd_enable(void *opaque,
+ 	INIT_WORK(&virqfd->inject, virqfd_inject);
+ 	INIT_WORK(&virqfd->flush_inject, virqfd_flush_inject);
  
--	f = fdget(attr->token_create.bpffs_fd);
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADF;
- 
- 	path = fd_file(f)->f_path;
--	path_get(&path);
--	fdput(f);
-+	sb = path.dentry->d_sb;
- 
--	if (path.dentry != path.mnt->mnt_sb->s_root) {
--		err = -EINVAL;
--		goto out_path;
--	}
--	if (path.mnt->mnt_sb->s_op != &bpf_super_ops) {
--		err = -EINVAL;
--		goto out_path;
--	}
-+	if (path.dentry != sb->s_root)
-+		return -EINVAL;
-+	if (sb->s_op != &bpf_super_ops)
-+		return -EINVAL;
- 	err = path_permission(&path, MAY_ACCESS);
- 	if (err)
--		goto out_path;
-+		return err;
- 
--	userns = path.dentry->d_sb->s_user_ns;
-+	userns = sb->s_user_ns;
- 	/*
- 	 * Enforce that creators of BPF tokens are in the same user
- 	 * namespace as the BPF FS instance. This makes reasoning about
- 	 * permissions a lot easier and we can always relax this later.
- 	 */
--	if (current_user_ns() != userns) {
--		err = -EPERM;
--		goto out_path;
--	}
--	if (!ns_capable(userns, CAP_BPF)) {
--		err = -EPERM;
--		goto out_path;
--	}
-+	if (current_user_ns() != userns)
-+		return -EPERM;
-+	if (!ns_capable(userns, CAP_BPF))
-+		return -EPERM;
- 
- 	/* Creating BPF token in init_user_ns doesn't make much sense. */
--	if (current_user_ns() == &init_user_ns) {
--		err = -EOPNOTSUPP;
--		goto out_path;
--	}
-+	if (current_user_ns() == &init_user_ns)
-+		return -EOPNOTSUPP;
- 
--	mnt_opts = path.dentry->d_sb->s_fs_info;
-+	mnt_opts = sb->s_fs_info;
- 	if (mnt_opts->delegate_cmds == 0 &&
- 	    mnt_opts->delegate_maps == 0 &&
- 	    mnt_opts->delegate_progs == 0 &&
--	    mnt_opts->delegate_attachs == 0) {
--		err = -ENOENT; /* no BPF token delegation is set up */
--		goto out_path;
--	}
-+	    mnt_opts->delegate_attachs == 0)
-+		return -ENOENT; /* no BPF token delegation is set up */
- 
- 	mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
--	inode = bpf_get_inode(path.mnt->mnt_sb, NULL, mode);
--	if (IS_ERR(inode)) {
--		err = PTR_ERR(inode);
--		goto out_path;
--	}
-+	inode = bpf_get_inode(sb, NULL, mode);
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
- 
- 	inode->i_op = &bpf_token_iops;
- 	inode->i_fop = &bpf_token_fops;
-@@ -185,8 +170,7 @@ int bpf_token_create(union bpf_attr *attr)
- 	file = alloc_file_pseudo(inode, path.mnt, BPF_TOKEN_INODE_NAME, O_RDWR, &bpf_token_fops);
- 	if (IS_ERR(file)) {
- 		iput(inode);
--		err = PTR_ERR(file);
--		goto out_path;
-+		return PTR_ERR(file);
+-	irqfd = fdget(fd);
+-	if (!fd_file(irqfd)) {
++	CLASS(fd, irqfd)(fd);
++	if (fd_empty(irqfd)) {
+ 		ret = -EBADF;
+ 		goto err_fd;
+ 	}
+@@ -142,7 +141,7 @@ int vfio_virqfd_enable(void *opaque,
+ 	ctx = eventfd_ctx_fileget(fd_file(irqfd));
+ 	if (IS_ERR(ctx)) {
+ 		ret = PTR_ERR(ctx);
+-		goto err_ctx;
++		goto err_fd;
  	}
  
- 	token = kzalloc(sizeof(*token), GFP_USER);
-@@ -205,7 +189,9 @@ int bpf_token_create(union bpf_attr *attr)
- 	token->allowed_progs = mnt_opts->delegate_progs;
- 	token->allowed_attachs = mnt_opts->delegate_attachs;
+ 	virqfd->eventfd = ctx;
+@@ -181,18 +180,9 @@ int vfio_virqfd_enable(void *opaque,
+ 		if ((!handler || handler(opaque, data)) && thread)
+ 			schedule_work(&virqfd->inject);
+ 	}
+-
+-	/*
+-	 * Do not drop the file until the irqfd is fully initialized,
+-	 * otherwise we might race against the EPOLLHUP.
+-	 */
+-	fdput(irqfd);
+-
+ 	return 0;
+ err_busy:
+ 	eventfd_ctx_put(ctx);
+-err_ctx:
+-	fdput(irqfd);
+ err_fd:
+ 	kfree(virqfd);
  
--	err = security_bpf_token_create(token, attr, &path);
-+	path_get(&path);	// kill it
-+	err = security_bpf_token_create(token, attr, &path); // constify
-+	path_put(&path);	// kill it
- 	if (err)
- 		goto out_token;
+diff --git a/drivers/virt/acrn/irqfd.c b/drivers/virt/acrn/irqfd.c
+index 9994d818bb7e..b7da24ca1475 100644
+--- a/drivers/virt/acrn/irqfd.c
++++ b/drivers/virt/acrn/irqfd.c
+@@ -112,7 +112,6 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
+ 	struct eventfd_ctx *eventfd = NULL;
+ 	struct hsm_irqfd *irqfd, *tmp;
+ 	__poll_t events;
+-	struct fd f;
+ 	int ret = 0;
  
-@@ -218,15 +204,12 @@ int bpf_token_create(union bpf_attr *attr)
- 	file->private_data = token;
- 	fd_install(fd, file);
+ 	irqfd = kzalloc(sizeof(*irqfd), GFP_KERNEL);
+@@ -124,8 +123,8 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
+ 	INIT_LIST_HEAD(&irqfd->list);
+ 	INIT_WORK(&irqfd->shutdown, hsm_irqfd_shutdown_work);
  
--	path_put(&path);
- 	return fd;
+-	f = fdget(args->fd);
+-	if (!fd_file(f)) {
++	CLASS(fd, f)(args->fd);
++	if (fd_empty(f)) {
+ 		ret = -EBADF;
+ 		goto out;
+ 	}
+@@ -133,7 +132,7 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
+ 	eventfd = eventfd_ctx_fileget(fd_file(f));
+ 	if (IS_ERR(eventfd)) {
+ 		ret = PTR_ERR(eventfd);
+-		goto fail;
++		goto out;
+ 	}
  
- out_token:
- 	bpf_token_free(token);
- out_file:
- 	fput(file);
--out_path:
--	path_put(&path);
- 	return err;
- }
+ 	irqfd->eventfd = eventfd;
+@@ -162,13 +161,9 @@ static int acrn_irqfd_assign(struct acrn_vm *vm, struct acrn_irqfd *args)
+ 	if (events & EPOLLIN)
+ 		acrn_irqfd_inject(irqfd);
  
+-	fdput(f);
+ 	return 0;
+ fail:
+-	if (eventfd && !IS_ERR(eventfd))
+-		eventfd_ctx_put(eventfd);
+-
+-	fdput(f);
++	eventfd_ctx_put(eventfd);
+ out:
+ 	kfree(irqfd);
+ 	return ret;
+diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+index ba02b732fa49..8a5bdf1f3050 100644
+--- a/drivers/xen/privcmd.c
++++ b/drivers/xen/privcmd.c
+@@ -939,10 +939,11 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
+ 	struct privcmd_kernel_irqfd *kirqfd, *tmp;
+ 	unsigned long flags;
+ 	__poll_t events;
+-	struct fd f;
+ 	void *dm_op;
+ 	int ret, idx;
+ 
++	CLASS(fd, f)(irqfd->fd);
++
+ 	kirqfd = kzalloc(sizeof(*kirqfd) + irqfd->size, GFP_KERNEL);
+ 	if (!kirqfd)
+ 		return -ENOMEM;
+@@ -958,8 +959,7 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
+ 	kirqfd->dom = irqfd->dom;
+ 	INIT_WORK(&kirqfd->shutdown, irqfd_shutdown);
+ 
+-	f = fdget(irqfd->fd);
+-	if (!fd_file(f)) {
++	if (fd_empty(f)) {
+ 		ret = -EBADF;
+ 		goto error_kfree;
+ 	}
+@@ -967,7 +967,7 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
+ 	kirqfd->eventfd = eventfd_ctx_fileget(fd_file(f));
+ 	if (IS_ERR(kirqfd->eventfd)) {
+ 		ret = PTR_ERR(kirqfd->eventfd);
+-		goto error_fd_put;
++		goto error_kfree;
+ 	}
+ 
+ 	/*
+@@ -1000,20 +1000,11 @@ static int privcmd_irqfd_assign(struct privcmd_irqfd *irqfd)
+ 		irqfd_inject(kirqfd);
+ 
+ 	srcu_read_unlock(&irqfds_srcu, idx);
+-
+-	/*
+-	 * Do not drop the file until the kirqfd is fully initialized, otherwise
+-	 * we might race against the EPOLLHUP.
+-	 */
+-	fdput(f);
+ 	return 0;
+ 
+ error_eventfd:
+ 	eventfd_ctx_put(kirqfd->eventfd);
+ 
+-error_fd_put:
+-	fdput(f);
+-
+ error_kfree:
+ 	kfree(kirqfd);
+ 	return ret;
+diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+index 65efb3735e79..70bc0d1f5f6a 100644
+--- a/virt/kvm/eventfd.c
++++ b/virt/kvm/eventfd.c
+@@ -303,7 +303,6 @@ static int
+ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ {
+ 	struct kvm_kernel_irqfd *irqfd, *tmp;
+-	struct fd f;
+ 	struct eventfd_ctx *eventfd = NULL, *resamplefd = NULL;
+ 	int ret;
+ 	__poll_t events;
+@@ -326,8 +325,8 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	INIT_WORK(&irqfd->shutdown, irqfd_shutdown);
+ 	seqcount_spinlock_init(&irqfd->irq_entry_sc, &kvm->irqfds.lock);
+ 
+-	f = fdget(args->fd);
+-	if (!fd_file(f)) {
++	CLASS(fd, f)(args->fd);
++	if (fd_empty(f)) {
+ 		ret = -EBADF;
+ 		goto out;
+ 	}
+@@ -335,7 +334,7 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	eventfd = eventfd_ctx_fileget(fd_file(f));
+ 	if (IS_ERR(eventfd)) {
+ 		ret = PTR_ERR(eventfd);
+-		goto fail;
++		goto out;
+ 	}
+ 
+ 	irqfd->eventfd = eventfd;
+@@ -439,12 +438,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ #endif
+ 
+ 	srcu_read_unlock(&kvm->irq_srcu, idx);
+-
+-	/*
+-	 * do not drop the file until the irqfd is fully initialized, otherwise
+-	 * we might race against the EPOLLHUP
+-	 */
+-	fdput(f);
+ 	return 0;
+ 
+ fail:
+@@ -457,8 +450,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+ 	if (eventfd && !IS_ERR(eventfd))
+ 		eventfd_ctx_put(eventfd);
+ 
+-	fdput(f);
+-
+ out:
+ 	kfree(irqfd);
+ 	return ret;
 -- 
 2.39.2
 
