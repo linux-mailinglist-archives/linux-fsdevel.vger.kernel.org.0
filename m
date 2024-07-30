@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-24563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DAE940763
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE413940767
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A5F3B228EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:25:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E53283739
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50FF19E82C;
-	Tue, 30 Jul 2024 05:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B9719EEBF;
+	Tue, 30 Jul 2024 05:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJZLme2c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFBvDFOH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B1C19E7F4;
-	Tue, 30 Jul 2024 05:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD8819E833;
+	Tue, 30 Jul 2024 05:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722316516; cv=none; b=JVCAc0r6QmEMHqL9QfrUe+BpZOb6dD1KUaT0qOdCxqIBotZR+QtoT52bZKQfbdak8BzRCOxFB0DKHOO1HCspJTt0+TdLwNdr2H3pfweYxVKmRtzb52lLnC8kW8r9phHRbwEnyIUGvP1aKfR1r146VGeehHmWnjhknnx7LrDGgAk=
+	t=1722316517; cv=none; b=A+qLWDZSpTvuWEciDesAZYuCqHd8WHfdOzd5jxFWEL3/ywzEiC/HTEbrrCyVnuHlnE9FLEpkdmYHqA8yw53C/Sr27uWQdM3oZMHbDk9cS2niMoJSj9CxmW2mPtCUx7WXbOcYaxsQXsDN06ksuCn6ycD20WFWvNmi75nfX5eD/Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722316516; c=relaxed/simple;
-	bh=40/H9ZbBn6+yc66cQA7ik6EVZRSXm5GV9IAlCl/Wg4M=;
+	s=arc-20240116; t=1722316517; c=relaxed/simple;
+	bh=xeDLFzUS1+B+uAh15XjSY5PKhu6A4AinBVe4VaaGqS0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AfjMjjoSLOU8NcKqxeLjcs0QyCqd77PalBRn01kDnFrYGZv8sNzL9dslqYHmNVq59NmTPJaDhX759ZSX7/LGh/Vi3zOXisp9CCXPa0XGjzgOcvFokdTM2UXAbexTMl9ugXBls2+V0wF5pvd/2pKoNkGG47q/FQPlVQaJWSU6kMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJZLme2c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C88EC4AF0A;
-	Tue, 30 Jul 2024 05:15:15 +0000 (UTC)
+	 MIME-Version; b=aKFZqdOencEfXzh12yrGT/O0Rwagmnxaq02fYvUjLmC+gW92dPVaBlL3VOPBKaJ3OQMHYgwDvTgl7M+nzwrsv/YoK8EhitOfjp1R6yMzJEvpb5ljdkMeU3pHu28LFWmw8gmrHFby2nEdyUNBogqj/tnCtHSqvKO0Oxar+m2Cr08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFBvDFOH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F136C4AF0F;
+	Tue, 30 Jul 2024 05:15:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722316515;
-	bh=40/H9ZbBn6+yc66cQA7ik6EVZRSXm5GV9IAlCl/Wg4M=;
+	s=k20201202; t=1722316516;
+	bh=xeDLFzUS1+B+uAh15XjSY5PKhu6A4AinBVe4VaaGqS0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dJZLme2cVWlp5otdL20ZDl46dzumzTQ8NQN9c++DQ1Gac4hJN+v/t6HTSYujuBtn5
-	 nDhJ9epDlqFFwVQIiqrsbLnZOuQt5zBAyx2pdPveswj3EXaq333rXz/bcrvQbbh6eY
-	 +i0ead02VeGSFfevXiQvH/mhYkf6n7uUasIYucFaPcphs2vEG7FUKRKdysvLQxXH1G
-	 Fx0QIWPdgeHtFhZe7D9Bl0zB6Suki3R77gkOl9O0YKkO9S5Hp74BGqsqjKjHTFI4v2
-	 z/sJLWLTEL2+adUOSoYfJJyvV+Oz5gf291jswc5OXGZ+nz8iOKATzZxln+Od35ozS8
-	 1e+yDzPHbdgjA==
+	b=tFBvDFOHiGzYfXaU3RHpawLJoWktIe3M19l7hbzYc1b5fsIh+gT1SroCgyDRM0HgF
+	 pr8ug85KvNs6QG5KJV+D39yMRQyAogVhMjLCMxVkKjEw2v+m5G7AvRN7YRCsq+Sfav
+	 ZGP2oHq41BlZimC/dBPRl89mfifxzKahGHhZFJ3+UlnpLt8iO7STjVTEFSCEx/QyTw
+	 Snb5M+xC9Gm65XGYQH80QVGgtiYJ0rAlfWrzBIfIk6CVG0XRNIrHOCeCCE0HXT1Uu+
+	 I04IJLs0a/mukWKc34Upl1+l3C7Ldw162ruK8++jeZuyqmhEppUUzQzJ082wA9Oj2c
+	 eDps3dA7skCvA==
 From: viro@kernel.org
 To: linux-fsdevel@vger.kernel.org
 Cc: amir73il@gmail.com,
@@ -50,9 +50,9 @@ Cc: amir73il@gmail.com,
 	kvm@vger.kernel.org,
 	netdev@vger.kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH 31/39] convert cifs_ioctl_copychunk()
-Date: Tue, 30 Jul 2024 01:16:17 -0400
-Message-Id: <20240730051625.14349-31-viro@kernel.org>
+Subject: [PATCH 32/39] convert vfs_dedupe_file_range().
+Date: Tue, 30 Jul 2024 01:16:18 -0400
+Message-Id: <20240730051625.14349-32-viro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240730051625.14349-1-viro@kernel.org>
 References: <20240730050927.GC5334@ZenIV>
@@ -67,61 +67,50 @@ Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-fdput() moved past mnt_drop_file_write(); harmless, if somewhat cringeworthy.
-Reordering could be avoided either by adding an explicit scope or by making
-mnt_drop_file_write() called via __cleanup.
+fdput() is followed by checking fatal_signal_pending() (and aborting
+the loop in such case).  fdput() is transposable with that check.
+Yes, it'll probably end up with slightly fatter code (call after the
+check has returned false + call on the almost never taken out-of-line path
+instead of one call before the check), but it's not worth bothering with
+explicit extra scope there (or dragging the check into the loop condition,
+for that matter).
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/smb/client/ioctl.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ fs/remap_range.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/smb/client/ioctl.c b/fs/smb/client/ioctl.c
-index 94bf2e5014d9..6d9df3646df3 100644
---- a/fs/smb/client/ioctl.c
-+++ b/fs/smb/client/ioctl.c
-@@ -72,7 +72,6 @@ static long cifs_ioctl_copychunk(unsigned int xid, struct file *dst_file,
- 			unsigned long srcfd)
- {
- 	int rc;
--	struct fd src_file;
- 	struct inode *src_inode;
- 
- 	cifs_dbg(FYI, "ioctl copychunk range\n");
-@@ -89,8 +88,8 @@ static long cifs_ioctl_copychunk(unsigned int xid, struct file *dst_file,
- 		return rc;
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index 017d0d1ea6c9..26afbbbfb10c 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -536,7 +536,7 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
  	}
  
--	src_file = fdget(srcfd);
--	if (!fd_file(src_file)) {
-+	CLASS(fd, src_file)(srcfd);
-+	if (fd_empty(src_file)) {
- 		rc = -EBADF;
- 		goto out_drop_write;
- 	}
-@@ -98,20 +97,18 @@ static long cifs_ioctl_copychunk(unsigned int xid, struct file *dst_file,
- 	if (fd_file(src_file)->f_op->unlocked_ioctl != cifs_ioctl) {
- 		rc = -EBADF;
- 		cifs_dbg(VFS, "src file seems to be from a different filesystem type\n");
--		goto out_fput;
-+		goto out_drop_write;
- 	}
+ 	for (i = 0, info = same->info; i < count; i++, info++) {
+-		struct fd dst_fd = fdget(info->dest_fd);
++		CLASS(fd, dst_fd)(info->dest_fd);
  
- 	src_inode = file_inode(fd_file(src_file));
- 	rc = -EINVAL;
- 	if (S_ISDIR(src_inode->i_mode))
--		goto out_fput;
-+		goto out_drop_write;
+ 		if (fd_empty(dst_fd)) {
+ 			info->status = -EBADF;
+@@ -545,7 +545,7 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
  
- 	rc = cifs_file_copychunk_range(xid, fd_file(src_file), 0, dst_file, 0,
- 					src_inode->i_size, 0);
- 	if (rc > 0)
- 		rc = 0;
--out_fput:
--	fdput(src_file);
- out_drop_write:
- 	mnt_drop_write_file(dst_file);
- 	return rc;
+ 		if (info->reserved) {
+ 			info->status = -EINVAL;
+-			goto next_fdput;
++			goto next_loop;
+ 		}
+ 
+ 		deduped = vfs_dedupe_file_range_one(file, off, fd_file(dst_fd),
+@@ -558,8 +558,6 @@ int vfs_dedupe_file_range(struct file *file, struct file_dedupe_range *same)
+ 		else
+ 			info->bytes_deduped = len;
+ 
+-next_fdput:
+-		fdput(dst_fd);
+ next_loop:
+ 		if (fatal_signal_pending(current))
+ 			break;
 -- 
 2.39.2
 
