@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-24544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE053940703
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:18:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBA4940708
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D241F2182F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:18:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D944B22940
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2981C193065;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1466193095;
 	Tue, 30 Jul 2024 05:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQG71GD1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXdtT3jB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70285192B87;
-	Tue, 30 Jul 2024 05:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BBF193062;
+	Tue, 30 Jul 2024 05:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722316498; cv=none; b=osY7AJaUA1wC48hKTwbA5S5/qXJ/PZsVzX+BDkPjb/2nb+Sdt7Wh/j7rfGDUnaBKYrXsM+9DS1ssK/KMioSCjluJa0788ruy82/7QM3d/FA0rO3K46t1d2fxU2NbKo+5+DUs7/SqiB55ms/nHzuHFsjqyPFR0oSvFUjV9a2mj/g=
+	t=1722316499; cv=none; b=HLS7fhP72SfCKZ5O1WAZJW8DZp6MyZcaZbd5J2DpPacNi0+efYn9QLVeIlWCt2TiiwrJIQUuZj4ngGvB+9xMXJRHK1T5LK3NFGkMH4KTRKrviOJqSfn+xXXtDiqtvKiv07xyuMN+AcCR7E2bvvrc2BfF8fqRKkMEDy1sNv3uZeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722316498; c=relaxed/simple;
-	bh=EM4vCTt9vpScW5Nx9NhATMhgwRcoYbV6qMHNIe41hpo=;
+	s=arc-20240116; t=1722316499; c=relaxed/simple;
+	bh=SnhFHM/V1L+UQ7+JeKgF4mqSQqH9RQKlsqpPUGFQLa4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u2r6kz8cjyBaPBQy4ECaXkxKEuVlcsACjsc7tAT9V//T+JLWUeDJLX8es59Eksr2KdXsEF48b0JI+A2csL8Oh+QxgRVUIZPYenFhUJxSTPChBECGgtZxa/OXD1ex+o8p98lIDuGHYlnBJyfC+xWxPeg5L4g7L8ITfASzlCKr2VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQG71GD1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4505FC32782;
-	Tue, 30 Jul 2024 05:14:57 +0000 (UTC)
+	 MIME-Version; b=efnvS/J4JYEXyg69xu4McBRCot0SDj7fIJFw/khtVsG7trgGM9dbR/Cnp6Sc76yiPUZEkV/sV/KsvDDpDnHAajiel8urJwhp97IOQ1nAjBCKmhbW0LYLXd2OdRvIs6KsZGngMS1mtg6DKbPWkNn+eKKYztQy5yGSGjPacMjiqnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXdtT3jB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3928AC4AF0A;
+	Tue, 30 Jul 2024 05:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722316498;
-	bh=EM4vCTt9vpScW5Nx9NhATMhgwRcoYbV6qMHNIe41hpo=;
+	bh=SnhFHM/V1L+UQ7+JeKgF4mqSQqH9RQKlsqpPUGFQLa4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BQG71GD1mamXBPSk0xd8mfXcI7uwnBVogi4kwrvLMzHgX9zNs790Qe1egWfPeyFV0
-	 bvPnbHMW9d3bXQO8SwDHvTwDCjcYIeyvVlPnBi8PwLCGthIf40pr+eVk7RobCgrzOK
-	 16nXvAYuZtTyVeHWtADcJdxbE8JdMCzDJUGSJF3mKotx8qJMOEVmmF6eqw8ttMLCTV
-	 o4Oc/vFeo/e3YMrvRWL5ySAwEBG70bP8aSJyofk17wtdWZ88OzVOV/+jFkjIkTJlr2
-	 svfriwT2Wll3oBntXxjavTKfyenEHlfhYrFk/hDk2Slybp3s67jvQQSd49cnIFuMKm
-	 S0XNSOyBDj/4Q==
+	b=sXdtT3jBcOlEUi5Q4S+ztULmuC8Sz1CU64VVXQK+y2TrZY2r3jomXOfOtilGdF2Cs
+	 Ktjpafs3f2/jh7c1Hq3HH2t1K8VdcxHocie7BX8gud0gvz3IOIB5ZE12S7xb3Z5JI9
+	 lmm9A5Wtj4cCBMz5b2OgJO7Y388Oti84xO6jaFntzsp+2+SedqKXrNGyjEoJ1olJhA
+	 7W6xB2Sd3HyjXsx0rT1uVhdCfnetiblMwuqqWVyZaQLyIdVgrNI7DmnqaplrsuGbQG
+	 qtMSpQt2IOHOGQgWoUjQO5/eWIdJAP/khZgAEg/ZhKSuvbEpUbSkcWPlj3dkwuttaO
+	 QBdSEIPhCSmSA==
 From: viro@kernel.org
 To: linux-fsdevel@vger.kernel.org
 Cc: amir73il@gmail.com,
@@ -50,9 +50,9 @@ Cc: amir73il@gmail.com,
 	kvm@vger.kernel.org,
 	netdev@vger.kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH 12/39] do_mq_notify(): saner skb freeing on failures
-Date: Tue, 30 Jul 2024 01:15:58 -0400
-Message-Id: <20240730051625.14349-12-viro@kernel.org>
+Subject: [PATCH 13/39] do_mq_notify(): switch to CLASS(fd, ...)
+Date: Tue, 30 Jul 2024 01:15:59 -0400
+Message-Id: <20240730051625.14349-13-viro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240730051625.14349-1-viro@kernel.org>
 References: <20240730050927.GC5334@ZenIV>
@@ -67,61 +67,55 @@ Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-cleanup is convoluted enough as it is; it's easier to have early
-failure outs do explicit kfree_skb(nc), rather than going to
-convolutions needed to reuse the cleanup from late failures.
+semi-simple.  The only failure exit before fdget() is a return, the
+only thing done after fdput() is transposable with it.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- ipc/mqueue.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ ipc/mqueue.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index fd05e3d4f7b6..48640a362637 100644
+index 48640a362637..4f1dec518fae 100644
 --- a/ipc/mqueue.c
 +++ b/ipc/mqueue.c
-@@ -1347,8 +1347,8 @@ static int do_mq_notify(mqd_t mqdes, const struct sigevent *notification)
- 			if (copy_from_user(nc->data,
- 					notification->sigev_value.sival_ptr,
- 					NOTIFY_COOKIE_LEN)) {
--				ret = -EFAULT;
--				goto free_skb;
-+				kfree_skb(nc);
-+				return -EFAULT;
- 			}
- 
- 			/* TODO: add a header? */
-@@ -1357,16 +1357,14 @@ static int do_mq_notify(mqd_t mqdes, const struct sigevent *notification)
- retry:
- 			sock = netlink_getsockbyfd(notification->sigev_signo);
- 			if (IS_ERR(sock)) {
--				ret = PTR_ERR(sock);
--				goto free_skb;
-+				kfree_skb(nc);
-+				return PTR_ERR(sock);
- 			}
- 
- 			timeo = MAX_SCHEDULE_TIMEOUT;
- 			ret = netlink_attachskb(sock, nc, &timeo, NULL);
--			if (ret == 1) {
--				sock = NULL;
-+			if (ret == 1)
- 				goto retry;
--			}
- 			if (ret)
- 				return ret;
+@@ -1317,7 +1317,6 @@ SYSCALL_DEFINE5(mq_timedreceive, mqd_t, mqdes, char __user *, u_msg_ptr,
+ static int do_mq_notify(mqd_t mqdes, const struct sigevent *notification)
+ {
+ 	int ret;
+-	struct fd f;
+ 	struct sock *sock;
+ 	struct inode *inode;
+ 	struct mqueue_inode_info *info;
+@@ -1370,8 +1369,8 @@ static int do_mq_notify(mqd_t mqdes, const struct sigevent *notification)
  		}
-@@ -1425,10 +1423,6 @@ static int do_mq_notify(mqd_t mqdes, const struct sigevent *notification)
+ 	}
+ 
+-	f = fdget(mqdes);
+-	if (!fd_file(f)) {
++	CLASS(fd, f)(mqdes);
++	if (fd_empty(f)) {
+ 		ret = -EBADF;
+ 		goto out;
+ 	}
+@@ -1379,7 +1378,7 @@ static int do_mq_notify(mqd_t mqdes, const struct sigevent *notification)
+ 	inode = file_inode(fd_file(f));
+ 	if (unlikely(fd_file(f)->f_op != &mqueue_file_operations)) {
+ 		ret = -EBADF;
+-		goto out_fput;
++		goto out;
+ 	}
+ 	info = MQUEUE_I(inode);
+ 
+@@ -1418,8 +1417,6 @@ static int do_mq_notify(mqd_t mqdes, const struct sigevent *notification)
+ 		inode_set_atime_to_ts(inode, inode_set_ctime_current(inode));
+ 	}
+ 	spin_unlock(&info->lock);
+-out_fput:
+-	fdput(f);
  out:
  	if (sock)
  		netlink_detachskb(sock, nc);
--	else
--free_skb:
--		dev_kfree_skb(nc);
--
- 	return ret;
- }
- 
 -- 
 2.39.2
 
