@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-24569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81ED7940780
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:26:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F2E940786
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACA881C2269C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:26:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FCE8B21B42
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A837C1A01CD;
-	Tue, 30 Jul 2024 05:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537961A071C;
+	Tue, 30 Jul 2024 05:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4WS1uur"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpbuiIoC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C7E1A01AE;
-	Tue, 30 Jul 2024 05:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A234A1A01CC;
+	Tue, 30 Jul 2024 05:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722316522; cv=none; b=dP0VduZsdfE9NpXRqqHd6vBeGnDpyyKWGGQsZhFUPLZHemns6kzeb+1ITVrdbzDGOriatOZsV72+bZgh+nzjKbQRVA5nUvQBZyIjVEbdVcVr+mqbaswwQqWIY8n8UyFichmSCFYvTLXrTETmKWmStTqZSWksTL+YUywSbr7JU3A=
+	t=1722316522; cv=none; b=tDhyAZBiUaSGzSjT15O/N494avdCkgFil8TNJCzfD8Lo3sZTFJSwHM5ibP+WMjXXGsiKyrpbVQATs8mzCMuo2Lh2Zu7MjU7OPvcn+xmMBJ9G0bM82trYVrOCCwt9CjPFgcGtq7qR+M1R2V2xDycIbXcQKgVQu4gLpUQbpjbJzF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722316522; c=relaxed/simple;
-	bh=aUoBejbujiMz+wTDOR0WpWX6hK62a/dCX4v7RBavop8=;
+	bh=1RWeJteantwQiubozWOdpGDte2QyE8hvi2k4mk8eOfE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hrENWCBjcQ3YgsGuwb3JSDzk/7OaFRMjLlp2lbMLEL19nFxVU3fTQQhZXjT6hzUL9qdqy05fMJ3D55bnH/gSx0qDz9XS1w9ABgH1uPqulWPQi8743ZynoiJE/121c8bgdPyZFLRtN2mlW1ALqxjq6ga+YSXcjtF7dLa07Kk3lOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4WS1uur; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB2C2C4AF0A;
-	Tue, 30 Jul 2024 05:15:20 +0000 (UTC)
+	 MIME-Version; b=VUtcBetHBIaGLFWPpY5PeZTEQ7DEGgK1Nua4BKvr9gjC+FZhl4H7S9yrosgbARhbeRJO9JRKD8/LBte8BF4TDiumwOSDwfpa47LFLllhMr8yJKLxl93+HkftpSXkDNO27Y78jB7qMH7TdNCaN4A7L4qn+7VcRIuscscuPhl+iRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpbuiIoC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD0AFC32782;
+	Tue, 30 Jul 2024 05:15:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722316521;
-	bh=aUoBejbujiMz+wTDOR0WpWX6hK62a/dCX4v7RBavop8=;
+	s=k20201202; t=1722316522;
+	bh=1RWeJteantwQiubozWOdpGDte2QyE8hvi2k4mk8eOfE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F4WS1uurKcX/JKpG4KFx35YJ7/pByzQqnCOySXCLOF1YUyX2CsiS2HEEE8RMnVWOU
-	 L3M/kkckZJ61tP1/wp2i5hRavvJxS/AFFZjfOvNgqGERmiDom0BNLEgL1mn7lTQRP4
-	 /tU1dG6LR1CjAYjs3s/swk2hIVAoW5lwT64A4GdoSd1wU7Av1dorXF3BhXJzZc+pbo
-	 RKKrKa2OjLTcv+Dn5nMh5ou1aN+pDBqT/Ke5Y3KFQWMM/g4k2D34e20jcbb7JFKVlk
-	 MNIpw5S5q8M62X0XCH3FKcDGtOC3ZEoN/7E/Nek2jx7U7bmsS0UKWMxB5Rz6kl+1d/
-	 mKtJZF4J8FKPQ==
+	b=kpbuiIoCPzLkspqm75UTrx1qkTgTMSk7+Z2eWLzL0FmQxrS5uXLLvCVYhmVh3hcNM
+	 VxLXkHwZ/Ed8/gZQUYuBZMGuQFO9i0bmWvlpMV/mK6Ljg6JxZ1vBG30lvHsi4AS2TC
+	 Q95BZNtyZajK7DZFeJ4twaULCT6GQL3pq0xHi+uxQX4qdIxuNYNLd27YG9tQvkID5w
+	 wZedR+wqhOI1V0S8RHkrb81czoj1x9oC+GulTBDYoOagUVRfYi4qAmjd4pd/hk1kRC
+	 GG2OW+MG6HQRixSZeJnOTcpFDjI88IxrlU+J79voPz1CjYX+d4cUF0IPPYx35GaNrh
+	 OFGCQrKf6uANQ==
 From: viro@kernel.org
 To: linux-fsdevel@vger.kernel.org
 Cc: amir73il@gmail.com,
@@ -50,9 +50,9 @@ Cc: amir73il@gmail.com,
 	kvm@vger.kernel.org,
 	netdev@vger.kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH 37/39] memcg_write_event_control(): switch to CLASS(fd)
-Date: Tue, 30 Jul 2024 01:16:23 -0400
-Message-Id: <20240730051625.14349-37-viro@kernel.org>
+Subject: [PATCH 38/39] css_set_fork(): switch to CLASS(fd_raw, ...)
+Date: Tue, 30 Jul 2024 01:16:24 -0400
+Message-Id: <20240730051625.14349-38-viro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240730051625.14349-1-viro@kernel.org>
 References: <20240730050927.GC5334@ZenIV>
@@ -67,135 +67,61 @@ Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-some reordering required - take both fdget() to the point before
-the allocations, with matching move of fdput() to the very end
-of failure exit(s); after that it converts trivially.
-
-simplify the cleanups that involve css_put(), while we are at it...
-
-[stuff moved in mainline]
+reference acquired there by fget_raw() is not stashed anywhere -
+we could as well borrow instead.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- mm/memcontrol-v1.c | 44 +++++++++++++++-----------------------------
- 1 file changed, 15 insertions(+), 29 deletions(-)
+ kernel/cgroup/cgroup.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index 9725c731fb21..478bb3130c1b 100644
---- a/mm/memcontrol-v1.c
-+++ b/mm/memcontrol-v1.c
-@@ -1824,8 +1824,6 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 	struct mem_cgroup_event *event;
- 	struct cgroup_subsys_state *cfile_css;
- 	unsigned int efd, cfd;
--	struct fd efile;
--	struct fd cfile;
- 	struct dentry *cdentry;
- 	const char *name;
- 	char *endp;
-@@ -1849,6 +1847,12 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 	else
- 		return -EINVAL;
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 1244a8c8878e..0838301e4f65 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -6409,7 +6409,6 @@ static int cgroup_css_set_fork(struct kernel_clone_args *kargs)
+ 	struct cgroup *dst_cgrp = NULL;
+ 	struct css_set *cset;
+ 	struct super_block *sb;
+-	struct file *f;
  
-+	CLASS(fd, efile)(efd);
-+	if (fd_empty(efile))
-+		return -EBADF;
-+
-+	CLASS(fd, cfile)(cfd);
-+
- 	event = kzalloc(sizeof(*event), GFP_KERNEL);
- 	if (!event)
- 		return -ENOMEM;
-@@ -1859,20 +1863,13 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 	init_waitqueue_func_entry(&event->wait, memcg_event_wake);
- 	INIT_WORK(&event->remove, memcg_event_remove);
- 
--	efile = fdget(efd);
--	if (!fd_file(efile)) {
--		ret = -EBADF;
--		goto out_kfree;
--	}
--
- 	event->eventfd = eventfd_ctx_fileget(fd_file(efile));
- 	if (IS_ERR(event->eventfd)) {
- 		ret = PTR_ERR(event->eventfd);
--		goto out_put_efile;
-+		goto out_kfree;
+ 	if (kargs->flags & CLONE_INTO_CGROUP)
+ 		cgroup_lock();
+@@ -6426,14 +6425,14 @@ static int cgroup_css_set_fork(struct kernel_clone_args *kargs)
+ 		return 0;
  	}
  
--	cfile = fdget(cfd);
--	if (!fd_file(cfile)) {
-+	if (fd_empty(cfile)) {
+-	f = fget_raw(kargs->cgroup);
+-	if (!f) {
++	CLASS(fd_raw, f)(kargs->cgroup);
++	if (fd_empty(f)) {
  		ret = -EBADF;
- 		goto out_put_eventfd;
+ 		goto err;
  	}
-@@ -1881,7 +1878,7 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 	/* AV: shouldn't we check that it's been opened for read instead? */
- 	ret = file_permission(fd_file(cfile), MAY_READ);
- 	if (ret < 0)
--		goto out_put_cfile;
-+		goto out_put_eventfd;
+-	sb = f->f_path.dentry->d_sb;
++	sb = fd_file(f)->f_path.dentry->d_sb;
  
- 	/*
- 	 * The control file must be a regular cgroup1 file. As a regular cgroup
-@@ -1890,7 +1887,7 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 	cdentry = fd_file(cfile)->f_path.dentry;
- 	if (cdentry->d_sb->s_type != &cgroup_fs_type || !d_is_reg(cdentry)) {
- 		ret = -EINVAL;
--		goto out_put_cfile;
-+		goto out_put_eventfd;
+-	dst_cgrp = cgroup_get_from_file(f);
++	dst_cgrp = cgroup_get_from_file(fd_file(f));
+ 	if (IS_ERR(dst_cgrp)) {
+ 		ret = PTR_ERR(dst_cgrp);
+ 		dst_cgrp = NULL;
+@@ -6481,15 +6480,12 @@ static int cgroup_css_set_fork(struct kernel_clone_args *kargs)
  	}
  
- 	/*
-@@ -1917,7 +1914,7 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 		event->unregister_event = memsw_cgroup_usage_unregister_event;
- 	} else {
- 		ret = -EINVAL;
--		goto out_put_cfile;
-+		goto out_put_eventfd;
- 	}
- 
- 	/*
-@@ -1929,11 +1926,9 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 					       &memory_cgrp_subsys);
- 	ret = -EINVAL;
- 	if (IS_ERR(cfile_css))
--		goto out_put_cfile;
--	if (cfile_css != css) {
--		css_put(cfile_css);
--		goto out_put_cfile;
--	}
-+		goto out_put_eventfd;
-+	if (cfile_css != css)
-+		goto out_put_css;
- 
- 	ret = event->register_event(memcg, event->eventfd, buf);
- 	if (ret)
-@@ -1944,23 +1939,14 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 	spin_lock_irq(&memcg->event_list_lock);
- 	list_add(&event->list, &memcg->event_list);
- 	spin_unlock_irq(&memcg->event_list_lock);
--
--	fdput(cfile);
--	fdput(efile);
--
- 	return nbytes;
- 
- out_put_css:
--	css_put(css);
--out_put_cfile:
--	fdput(cfile);
-+	css_put(cfile_css);
- out_put_eventfd:
- 	eventfd_ctx_put(event->eventfd);
--out_put_efile:
--	fdput(efile);
- out_kfree:
- 	kfree(event);
--
+ 	put_css_set(cset);
+-	fput(f);
+ 	kargs->cgrp = dst_cgrp;
  	return ret;
- }
  
+ err:
+ 	cgroup_threadgroup_change_end(current);
+ 	cgroup_unlock();
+-	if (f)
+-		fput(f);
+ 	if (dst_cgrp)
+ 		cgroup_put(dst_cgrp);
+ 	put_css_set(cset);
 -- 
 2.39.2
 
