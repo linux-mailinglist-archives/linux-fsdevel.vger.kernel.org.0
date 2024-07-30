@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-24562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7958994075E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:24:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DAE940763
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 07:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313791F20DD4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:24:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A5F3B228EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 05:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB8319E7EC;
-	Tue, 30 Jul 2024 05:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50FF19E82C;
+	Tue, 30 Jul 2024 05:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IH17HRdZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJZLme2c"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FCD19DFA6;
-	Tue, 30 Jul 2024 05:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B1C19E7F4;
+	Tue, 30 Jul 2024 05:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722316515; cv=none; b=miOs1jbk4nqUncl8lKMEaror32j+XjbVtGpNQmWdBhA48RMCS2ghAbX+it9lqFdtQCvBDbY3Ka/8FQyKAiDuTHov/mUdrwPKEelsH0DVXvTnkdpwRqY4MLdLZOnUPElzEH6CiO8bRiTTFpBavDBb91kK7GNicF+CnaAIWBll45g=
+	t=1722316516; cv=none; b=JVCAc0r6QmEMHqL9QfrUe+BpZOb6dD1KUaT0qOdCxqIBotZR+QtoT52bZKQfbdak8BzRCOxFB0DKHOO1HCspJTt0+TdLwNdr2H3pfweYxVKmRtzb52lLnC8kW8r9phHRbwEnyIUGvP1aKfR1r146VGeehHmWnjhknnx7LrDGgAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722316515; c=relaxed/simple;
-	bh=5Bzf73UnNx2DxWKpAfCxVR75hckX8NR8HOxkTYPr+A0=;
+	s=arc-20240116; t=1722316516; c=relaxed/simple;
+	bh=40/H9ZbBn6+yc66cQA7ik6EVZRSXm5GV9IAlCl/Wg4M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nkF1cS1abqbrKY7FGp99/9g/dAiUszdM6ed+jEc7PCngKa2DmqtlpFFysm8g0QNEOY34azPyfVEEpw8mpnDUi7lGtYdIO1rOepjyE1Ckwq9wP9l+TvF3kEsWkCbroinhPUdJIWhRruvmejz2e2ZUxDDC0HvrPyEw8+1FOwbfCXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IH17HRdZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ABD2C4AF0E;
-	Tue, 30 Jul 2024 05:15:14 +0000 (UTC)
+	 MIME-Version; b=AfjMjjoSLOU8NcKqxeLjcs0QyCqd77PalBRn01kDnFrYGZv8sNzL9dslqYHmNVq59NmTPJaDhX759ZSX7/LGh/Vi3zOXisp9CCXPa0XGjzgOcvFokdTM2UXAbexTMl9ugXBls2+V0wF5pvd/2pKoNkGG47q/FQPlVQaJWSU6kMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJZLme2c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C88EC4AF0A;
+	Tue, 30 Jul 2024 05:15:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722316515;
-	bh=5Bzf73UnNx2DxWKpAfCxVR75hckX8NR8HOxkTYPr+A0=;
+	bh=40/H9ZbBn6+yc66cQA7ik6EVZRSXm5GV9IAlCl/Wg4M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IH17HRdZPgC3Z/Mx+QlCQBUqlLXlPFIXRcVOYwVqjtaaVPmxhnnX5Z6BjJ/MdDGfI
-	 gUNsJokmc/YSsmGE7uXb0tdmNlxKK3oOVFPw3oihA/hGzzl/T0LCFdJlUAbIc+JLL5
-	 qMohLRoJ2Met2iykQ0yWxnfenAFj84SDICTp+iL0JID5REO91A9m/ivEeCk1PzP4z0
-	 m0ZscW0jJ+aGUAzsgs2qlRDg6f2/gTzehUG5Gm67e884mnEQ8ocfbZtInlhnqfgFrU
-	 q9AFr4NhTI0dWM8p3hWb23i2OR3WRmnM8fHHuXj8gEewLt4ZvJk4uJ+EfwQCsJ//As
-	 VLDntBk/m2gbw==
+	b=dJZLme2cVWlp5otdL20ZDl46dzumzTQ8NQN9c++DQ1Gac4hJN+v/t6HTSYujuBtn5
+	 nDhJ9epDlqFFwVQIiqrsbLnZOuQt5zBAyx2pdPveswj3EXaq333rXz/bcrvQbbh6eY
+	 +i0ead02VeGSFfevXiQvH/mhYkf6n7uUasIYucFaPcphs2vEG7FUKRKdysvLQxXH1G
+	 Fx0QIWPdgeHtFhZe7D9Bl0zB6Suki3R77gkOl9O0YKkO9S5Hp74BGqsqjKjHTFI4v2
+	 z/sJLWLTEL2+adUOSoYfJJyvV+Oz5gf291jswc5OXGZ+nz8iOKATzZxln+Od35ozS8
+	 1e+yDzPHbdgjA==
 From: viro@kernel.org
 To: linux-fsdevel@vger.kernel.org
 Cc: amir73il@gmail.com,
@@ -50,9 +50,9 @@ Cc: amir73il@gmail.com,
 	kvm@vger.kernel.org,
 	netdev@vger.kernel.org,
 	torvalds@linux-foundation.org
-Subject: [PATCH 30/39] convert coda_parse_fd()
-Date: Tue, 30 Jul 2024 01:16:16 -0400
-Message-Id: <20240730051625.14349-30-viro@kernel.org>
+Subject: [PATCH 31/39] convert cifs_ioctl_copychunk()
+Date: Tue, 30 Jul 2024 01:16:17 -0400
+Message-Id: <20240730051625.14349-31-viro@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240730051625.14349-1-viro@kernel.org>
 References: <20240730050927.GC5334@ZenIV>
@@ -67,43 +67,61 @@ Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-fdput() is followed by invalf(), which is transposable with it.
+fdput() moved past mnt_drop_file_write(); harmless, if somewhat cringeworthy.
+Reordering could be avoided either by adding an explicit scope or by making
+mnt_drop_file_write() called via __cleanup.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/coda/inode.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ fs/smb/client/ioctl.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/fs/coda/inode.c b/fs/coda/inode.c
-index 7d56b6d1e4c3..293cf5e6dfeb 100644
---- a/fs/coda/inode.c
-+++ b/fs/coda/inode.c
-@@ -122,22 +122,17 @@ static const struct fs_parameter_spec coda_param_specs[] = {
- static int coda_parse_fd(struct fs_context *fc, int fd)
+diff --git a/fs/smb/client/ioctl.c b/fs/smb/client/ioctl.c
+index 94bf2e5014d9..6d9df3646df3 100644
+--- a/fs/smb/client/ioctl.c
++++ b/fs/smb/client/ioctl.c
+@@ -72,7 +72,6 @@ static long cifs_ioctl_copychunk(unsigned int xid, struct file *dst_file,
+ 			unsigned long srcfd)
  {
- 	struct coda_fs_context *ctx = fc->fs_private;
--	struct fd f;
-+	CLASS(fd, f)(fd);
- 	struct inode *inode;
- 	int idx;
+ 	int rc;
+-	struct fd src_file;
+ 	struct inode *src_inode;
  
--	f = fdget(fd);
--	if (!fd_file(f))
-+	if (fd_empty(f))
- 		return -EBADF;
- 	inode = file_inode(fd_file(f));
--	if (!S_ISCHR(inode->i_mode) || imajor(inode) != CODA_PSDEV_MAJOR) {
--		fdput(f);
-+	if (!S_ISCHR(inode->i_mode) || imajor(inode) != CODA_PSDEV_MAJOR)
- 		return invalf(fc, "code: Not coda psdev");
--	}
+ 	cifs_dbg(FYI, "ioctl copychunk range\n");
+@@ -89,8 +88,8 @@ static long cifs_ioctl_copychunk(unsigned int xid, struct file *dst_file,
+ 		return rc;
+ 	}
  
- 	idx = iminor(inode);
--	fdput(f);
--
- 	if (idx < 0 || idx >= MAX_CODADEVS)
- 		return invalf(fc, "coda: Bad minor number");
- 	ctx->idx = idx;
+-	src_file = fdget(srcfd);
+-	if (!fd_file(src_file)) {
++	CLASS(fd, src_file)(srcfd);
++	if (fd_empty(src_file)) {
+ 		rc = -EBADF;
+ 		goto out_drop_write;
+ 	}
+@@ -98,20 +97,18 @@ static long cifs_ioctl_copychunk(unsigned int xid, struct file *dst_file,
+ 	if (fd_file(src_file)->f_op->unlocked_ioctl != cifs_ioctl) {
+ 		rc = -EBADF;
+ 		cifs_dbg(VFS, "src file seems to be from a different filesystem type\n");
+-		goto out_fput;
++		goto out_drop_write;
+ 	}
+ 
+ 	src_inode = file_inode(fd_file(src_file));
+ 	rc = -EINVAL;
+ 	if (S_ISDIR(src_inode->i_mode))
+-		goto out_fput;
++		goto out_drop_write;
+ 
+ 	rc = cifs_file_copychunk_range(xid, fd_file(src_file), 0, dst_file, 0,
+ 					src_inode->i_size, 0);
+ 	if (rc > 0)
+ 		rc = 0;
+-out_fput:
+-	fdput(src_file);
+ out_drop_write:
+ 	mnt_drop_write_file(dst_file);
+ 	return rc;
 -- 
 2.39.2
 
