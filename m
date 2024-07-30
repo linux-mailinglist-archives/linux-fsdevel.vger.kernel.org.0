@@ -1,102 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-24613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488A394145A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 16:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6459E941587
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 17:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31411F23731
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 14:28:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 209061F248F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 15:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA5B1A255C;
-	Tue, 30 Jul 2024 14:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677421A38C6;
+	Tue, 30 Jul 2024 15:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gi1ZEjPR"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OjhQt4h0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F34E1A08AB;
-	Tue, 30 Jul 2024 14:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E6618A92F;
+	Tue, 30 Jul 2024 15:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722349689; cv=none; b=ppUzdPZ88n6kLhwM45TyRpB2XhLKVZBP//dCn/BZj6lWDUnvv8R7c9Ia6ZXGKaZe19Sh9N/YHhFxFlIyvN+wbABQ2b3AHI+Ic/bFOt1mzkQBiC0vjHRsEuQDyR6qVTsVMpyZgsIGi9fBBZm+/0V/4hi6e8D7bLcNqqklVVD+BYY=
+	t=1722353934; cv=none; b=BgcQgUH6fvWU+Zcfs4a6DMx5wkvafao4DUnoV56MdAbp0UgAfUQXieolf1LDP0ff/0ZKqBl3dw2SaI9StE0A1osqevL2Bnp5zm7nwYTxxOTLD0Uas8edGseQSuyh3qs4mnXZ0YgO04AQUb1KEGtMGKT9Gfvtwr0LBtC+uxj7nvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722349689; c=relaxed/simple;
-	bh=v94Q6O93dIkGqquJJVrs9WTgJESEvwnwlclXeilEtus=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RK4AIJNW5QhSOvjXkwH4LAxAnt8CBrdjrxRIy4UXUlpu1+PdaW0X08IyKlpZ+k4lFIDURhPe5lWfdwEGL2f3hphASFMGJSJ7imFk3hYHmK/l0oYDqOacsj2x3+VDBP4SjwOVm0LSQGht04MUDhSk37CNQvGQxdHAbNjEgiSJVB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gi1ZEjPR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F627C32782;
-	Tue, 30 Jul 2024 14:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722349688;
-	bh=v94Q6O93dIkGqquJJVrs9WTgJESEvwnwlclXeilEtus=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gi1ZEjPRA7JZo8a2YhG1Rl02E1bR2Ma/crld/CAqxWPQmlh3V1QKujEyB1Msa+Si+
-	 eoxXvEK7SPlIK4OLeSAcLtRNRZijercBTXjtL7om62wbFwXAo+yzBgy3+muwhZK1yx
-	 eJHcl1IEy/RPKxLcjH02iCUdnjpqW175UJAamxtOK6dxhLFN8mCqL3MSG+xCcE67Eb
-	 Py0xu9p4DcS60smDSidoV4PNMc01bu03zcgbQgDAGBxvqURiFpjtPn9+wj1Hc6Klp8
-	 BLMcNWR+A0IV1/r1dNbuzhG5cqweVgErcx8zvvEza+ZSm92wa0P8M4O+VGpvdA0cL0
-	 YetbsSaJa+hKQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Richard Fung <richardfung@google.com>,
-	Eric Biggers <ebiggers@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] fuse: fs-verity: aoid out-of-range comparison
-Date: Tue, 30 Jul 2024 16:27:52 +0200
-Message-Id: <20240730142802.1082627-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1722353934; c=relaxed/simple;
+	bh=i6pgSMEHg/5xofzxdXM7OtXe7jLNxbJqEOi3Np4nYq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfWazsiyOhblmabNXS0r9FQeNLg+9cANo4LuvrYIfFdkt5I9IjhyRpFyS0m9dV3QVtwOmbWZb6rEhsXtLzlHvj1Cf52qJlbi4hYvLXCySQgKV1rROswzwpYdPv7qMXGXh4ZetInX+ccL07YVGVVgRXzg+amRP83eA7IqXDZuKVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OjhQt4h0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sxsFs2hPLHi+XqCwIbcUXSHtwWQihjmSFt20iDztleY=; b=OjhQt4h0nWplLdqdaBJKPJppSY
+	cSJWuAlirS4GclWJ3YnUNRh3NnpDmzridD9l932mbQPIX6Qmbv2aoU73rv3Rc/K6+dYwv7dPLXBQV
+	KVoCjXC04w1jOAHjbKwbPiuMcf7tkPIBxXtnUF1SkxRnjZTsiN29RNFSRvFF8FBUu2mdHCwN7q8YQ
+	5nq9tcdmlHik+0XAOBL6woxEVuiKWtst3bxa+VX+7KJVNeYTC/ESAy+/egk4AqAW7DDN28Tjxwvat
+	kanQBisv5IMMxDmcZ7upF8Cyaja2+HkdHjrmglHnvlUG5xoenvgqAZLrREjKzBMjuV+bP9BOrZQi4
+	3dWxqSBA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYow7-0000000Fgnv-0KNB;
+	Tue, 30 Jul 2024 15:38:51 +0000
+Date: Tue, 30 Jul 2024 08:38:51 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Mateusz Guzik <mjguzik@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: Testing if two open descriptors refer to the same inode
+Message-ID: <ZqkJC5vPKRUkIH6m@infradead.org>
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+ <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+ <20240729133601.GA557749@mit.edu>
+ <ZqhQnWQSweXgffdD@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqhQnWQSweXgffdD@dread.disaster.area>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Tue, Jul 30, 2024 at 12:31:57PM +1000, Dave Chinner wrote:
+> There are at least two different "is this inode identical"
+> use cases that {st_dev,st_ino} is being used for.
+> 
+> The first, as Florian described, is to determine if two open fds
+> refer to the same inode for collision avoidance.
+> 
+> This works on traditional filesystems like ext4 and XFS, but isn't
+> reliable on filesystems with integrated snapshot/subvolume
+> functionality.
 
-clang points out that comparing the 16-bit size of the digest against
-SIZE_MAX is not a helpful comparison:
+It's not about snapshot, it's about file systems being broken.  Even
+btrfs for example always has a unique st_dev,st_ino pair, it can
+just unexpectly change at any subvolume root and not just at a mount
+point.
 
-fs/fuse/ioctl.c:130:18: error: result of comparison of constant 18446744073709551611 with expression of type '__u16' (aka 'unsigned short') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
-        if (digest_size > SIZE_MAX - sizeof(struct fsverity_digest))
-            ~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> That is our long term challenge: replacing the use of {dev,ino} for
+> data uniqueness disambiguation. Making the identification of owners
+> of non-unique/shared data simple for applications to use and fast
+> for filesystems to resolve will be a challenge.
 
-This either means tha tthe check can be removed entirely, or that the
-intended comparison was for the 16-bit range. Assuming the latter was
-intended, compare against U16_MAX instead.
-
-Fixes: 9fe2a036a23c ("fuse: Add initial support for fs-verity")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/fuse/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-index 572ce8a82ceb..5711d86c549d 100644
---- a/fs/fuse/ioctl.c
-+++ b/fs/fuse/ioctl.c
-@@ -127,7 +127,7 @@ static int fuse_setup_measure_verity(unsigned long arg, struct iovec *iov)
- 	if (copy_from_user(&digest_size, &uarg->digest_size, sizeof(digest_size)))
- 		return -EFAULT;
- 
--	if (digest_size > SIZE_MAX - sizeof(struct fsverity_digest))
-+	if (digest_size > U16_MAX - sizeof(struct fsverity_digest))
- 		return -EINVAL;
- 
- 	iov->iov_len = sizeof(struct fsverity_digest) + digest_size;
--- 
-2.39.2
+I don't think there is any way to provide such a guarantee as there
+is so many levels of cloning or dedup, many of which are totally
+invisible to the high level file system interface.
 
 
