@@ -1,110 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-24610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B811941400
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 16:12:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BAF941437
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 16:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10133283DA3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 14:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBAD1F212DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 14:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2081A2572;
-	Tue, 30 Jul 2024 14:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E101A08DA;
+	Tue, 30 Jul 2024 14:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozLpGhYZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAcW5wT7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374F41A073C;
-	Tue, 30 Jul 2024 14:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9277B522F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2024 14:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722348667; cv=none; b=DS7aewoyCXb0Q4njUwfeKQ86elj72bZK0zMufz0n/zIEpCCit02mpk5QN0qnkvt+XAfmRMlOPdLdDBhiwpTZcz80ymy4kTjMEdsqsoIoVpZi/D1G3NccnYwn2sho7YBg/i3su/wlRnTrhwN2jFmcEhGZDZL6NAZAsslMTCLXsMo=
+	t=1722349403; cv=none; b=dYH3HqpCoqEx4PR/gXCa1IAv2BaKR+TxObndLe6rMzILF+YjapW+C3qXg24CXDICbCGw4v3OOe035OQAChoNzV/rKGq6WWDk6SnAgWj3Uo2ut9AqUEAi8zwYN5WyVFW+GzFN8Ht7iT2SZxDjP9jw2fRxPtPqmVGNtEzN6wXhhiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722348667; c=relaxed/simple;
-	bh=NXSW+Ww4qnog5Wakb9vB7eNj7FiGI0hJ4qlSFMOdIis=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LPT7yiIMZ/SxHJV+6N+rmJpe5YOCkVhx4q3MXmif++qNmPzDny3KWZjTBYKdv0mzxeOWQicjSdSNeSFHdfYxdn4JoGnSR2wIUBCmVAIkgRDGVY8J+s+KyvqD4xwxhDvy/93cCI5Tsb2I26+amUGaPsP1CPukbzSU9pLaEKm++us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozLpGhYZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7FAC32782;
-	Tue, 30 Jul 2024 14:11:04 +0000 (UTC)
+	s=arc-20240116; t=1722349403; c=relaxed/simple;
+	bh=QGfio2IKSW5gKG9NqApubJUcAr3HLzOJStodwrsNlSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImC5FW4uR3c6QhC3sXmrV9VzezIPZecCcJXgUx++ltG7CjmPH6qdMKUrrxP2FcvBhBHx8/E5m3Gij0+/tsXF3McqT5Xboq4PUTtUfIAIjjRjI6r4Vn+lzMEAky+DtracKg/ZutdVgJO1lHZJODf0tid138qQpDKom5Lq+V4rYas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAcW5wT7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EA2C4AF0E;
+	Tue, 30 Jul 2024 14:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722348666;
-	bh=NXSW+Ww4qnog5Wakb9vB7eNj7FiGI0hJ4qlSFMOdIis=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ozLpGhYZBO6f+OrxkhcxLN8vWcBKBQFGwrRpMExe+1K9qNn2Yh+nQaGW3ECUqOVXV
-	 cO1IMg5JkySVBUfURubNl9MIiTpq/YFSAwKijWsOB4yYP4cK9Sq/ePdkOySk4Hd/jG
-	 7cBtRHxIZSKc568DR9Hk7y/rIjkAPg33TEhPmfhbKIn0tUizsH4p3mlyNquLGv3Ess
-	 71t9viPqmMiu41zocV9T5RFYuZrrt4FM1f6nn5IFjkv+rWk06wejahoKFH16v7wPf1
-	 +0pK2eaDzzYINz7v7oQJFA8/L8nXeICFkfuRNvW2IFjwUpRlQBMxRbXIfnsPXM6ZoC
-	 F2ykVF+8UaGyw==
+	s=k20201202; t=1722349403;
+	bh=QGfio2IKSW5gKG9NqApubJUcAr3HLzOJStodwrsNlSk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FAcW5wT7pfDs2iNeGew9J0qfKyhrZjoxiLbPgMTXQ+TM9aWPmETL0PaGhTgLVGL9k
+	 SXohy2SlHO5eaflkrcO1VAkSlBEIEKgYJJtHp2RzJUONb/snVfmbX/L/g7ZI4jZfim
+	 DMKTxaDk0XEjPaH+eIZh3xE74irxnT+kGcUuem+Usnm0a3k4zhuVF0vlzj7IS7vj8X
+	 6sFUREx02SyrCEgfwS7IwHcCUruD7WhrXa/kvHbHrmc/FGnq4wNu+22zRcgRnY9zyH
+	 upx7psOHe+wC8sUID549kAK5oNgWRQlzTXqqiBYQjtew74jUPAtg6vJUX1y9h7A21I
+	 5hRrvSVqs6UmA==
+Date: Tue, 30 Jul 2024 16:23:19 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/aio: Fix __percpu annotation of *cpu pointer in struct kioctx
-Date: Tue, 30 Jul 2024 16:10:53 +0200
-Message-ID: <20240730-halbmarathon-galionsfigur-8cd5615a4f7d@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240730121915.4514-1-ubizjak@gmail.com>
-References: <20240730121915.4514-1-ubizjak@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 00/23] Convert write_begin / write_end to take a folio
+Message-ID: <20240730-gasteltern-umstritten-36bac982fe4c@brauner>
+References: <20240717154716.237943-1-willy@infradead.org>
+ <20240723-einfuhr-benachbarten-f1abb87dd181@brauner>
+ <Zp-uLk9wCP5tIc6c@casper.infradead.org>
+ <20240723-gelebt-teilen-58ffd6ae35ec@brauner>
+ <ZqA0oachCIQ1Uj6E@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1952; i=brauner@kernel.org; h=from:subject:message-id; bh=NXSW+Ww4qnog5Wakb9vB7eNj7FiGI0hJ4qlSFMOdIis=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSt+FKioz99g7KTs9tKH5FtJcck17dnsgr8fZ/t48GTs XzrJNvSjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkEtDIy7Oiw+MmSGa39uv/b MxdF0fAfz37ar172ctqr7LBJLk4q2xj+Gb1oPfxqjrxTWFOKqjpHm/OTjbf4//8+5tz5RvD1l3U HGAE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZqA0oachCIQ1Uj6E@casper.infradead.org>
 
-On Tue, 30 Jul 2024 14:18:34 +0200, Uros Bizjak wrote:
-> __percpu annotation of *cpu pointer in struct kioctx is put at
-> the wrong place, resulting in several sparse warnings:
+On Tue, Jul 23, 2024 at 11:54:25PM GMT, Matthew Wilcox wrote:
+> On Tue, Jul 23, 2024 at 03:41:37PM +0200, Christian Brauner wrote:
+> > On Tue, Jul 23, 2024 at 02:20:46PM GMT, Matthew Wilcox wrote:
+> > > On Tue, Jul 23, 2024 at 09:49:10AM +0200, Christian Brauner wrote:
+> > > > On Wed, Jul 17, 2024 at 04:46:50PM GMT, Matthew Wilcox wrote:
+> > > > > You can find the full branch at
+> > > > > http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/write-end
+> > > > > aka
+> > > > > git://git.infradead.org/users/willy/pagecache.git write-end
+> > > > > 
+> > > > > On top of the ufs, minix, sysv and qnx6 directory handling patches, this
+> > > > > patch series converts us to using folios for write_begin and write_end.
+> > > > > That's the last mention of 'struct page' in several filesystems.
+> > > > > 
+> > > > > I'd like to get some version of these patches into the 6.12 merge
+> > > > > window.
+> > > > 
+> > > > Is it stable enough that I can already pull it from you?
+> > > > I'd like this to be based on v6.11-rc1.
+> > > 
+> > > It's stable in that it works, but it's still based on linux-next.  I think
+> > > it probably depends on a few fs git pulls that are still outstanding.
+> > > More awkwardly for merging is that it depends on the four directory
+> > > handling patch series, each of which you've put on a separate topic
+> > > branch.  So I'm not sure how you want to handle that.
+> > 
+> > I've put them there before this series here surfaced. But anyway,
+> > there's plenty of options. I can merge all separate topic branches
+> > together in a main branch or I can just pull it all in together. That
+> > depends how complex it turns out to be.
 > 
-> aio.c:623:24: warning: incorrect type in argument 1 (different address spaces)
-> aio.c:623:24:    expected void [noderef] __percpu *__pdata
-> aio.c:623:24:    got struct kioctx_cpu *cpu
-> aio.c:788:18: warning: incorrect type in assignment (different address spaces)
-> aio.c:788:18:    expected struct kioctx_cpu *cpu
-> aio.c:788:18:    got struct kioctx_cpu [noderef] __percpu *
-> aio.c:835:24: warning: incorrect type in argument 1 (different address spaces)
-> aio.c:835:24:    expected void [noderef] __percpu *__pdata
-> aio.c:835:24:    got struct kioctx_cpu *cpu
-> aio.c:940:16: warning: incorrect type in initializer (different address spaces)
-> aio.c:940:16:    expected void const [noderef] __percpu *__vpp_verify
-> aio.c:940:16:    got struct kioctx_cpu *
-> aio.c:958:16: warning: incorrect type in initializer (different address spaces)
-> aio.c:958:16:    expected void const [noderef] __percpu *__vpp_verify
-> aio.c:958:16:    got struct kioctx_cpu *
-> 
-> [...]
+> I've rebased to current-ish Linus, updated to commit f45c4246ab18 at
+> the above URL.  It all seems to work well enough, so I'm not relying on
+> any later commits.  I can rebase it onto -rc1 when it is tagged, or
+> you can pull it now if you'd rather.  It's missing the R-b/A-b tags
+> from Josef & Ryusuke Konishi.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs/aio: Fix __percpu annotation of *cpu pointer in struct kioctx
-      https://git.kernel.org/vfs/vfs/c/b484eca083f7
+I've rebased to v6.11-rc1 and added the missing Acks. I also added your
+SoB to "qnx6: Convert directory handling to use kmap_local" which was
+missing. Let me know if anything looks wrong. It's in the vfs.folio
+branch.
 
