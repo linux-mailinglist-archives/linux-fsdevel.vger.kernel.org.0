@@ -1,137 +1,238 @@
-Return-Path: <linux-fsdevel+bounces-24598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161989411AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 14:19:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDB39411AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 14:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 627ABB24ECA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 12:19:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4724A1F237AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 12:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A8519E81D;
-	Tue, 30 Jul 2024 12:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E6019DFA9;
+	Tue, 30 Jul 2024 12:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Am8G9Y6S"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aWrAGm9a";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K+DCzSl+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aWrAGm9a";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K+DCzSl+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22231957F0;
-	Tue, 30 Jul 2024 12:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51728198850
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2024 12:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722341983; cv=none; b=RrCX2Jh+wPHkr2shg/Y0na80UyVe7zb2aQD58Onmij8tOyr1EsKWNsKsup65KaaDlCTRlbV8kQQd4YOU2fX4lvPmA1infbCX6I8LayHzFM4TLNFNUP0SXTaNGbMoepDi7VIAF6svYNWpJBdNUFuxeECbl/+9RsJ7k5S+g5XnxHA=
+	t=1722341921; cv=none; b=FRuhyyw6T356hotUid6f4pZxSU6lbkeOZaAdyUyb5NmlnkcmEC1yvqWieNqZXKMuuALMXQtF6iLClVShoFJxmhkdnz3k5qQGW5w/3C15I4oFnWI8sHIXLnDXneKZZNqTYHF7wd8uIpgwsLq/xKnrer93CnG4iAdBqnEHZa9IakI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722341983; c=relaxed/simple;
-	bh=Na6bYBOwEr1UOvSI96Mi3YFL2ql7LlGEgYQvcbyWNgk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EYqK1rKn4TsrBOh2R30biiQVDsWL3XWfvJAHkWTuYoAIPxiF37DWoFZvCJd54kkzz75PcS46AWvzPi4iSSq88NzfeRuvV3eWQiAy0xg+gDfQCEWCST+XTZtE7C3KVQVx2GYGb2FJ1A3lF1k6qH5dIw/pEN0/6vKW7n0iEuLguYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Am8G9Y6S; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7d638a1f27so159395166b.2;
-        Tue, 30 Jul 2024 05:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722341980; x=1722946780; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhzbbMF50wjWGe/fOseTA4c3yfyiRq1RlDd9IV2SLmk=;
-        b=Am8G9Y6SHXJY9R/me/DZVm0e0gCN/BZCAL33MYPirHtADR97jEcC5AqYBRzUCocaMQ
-         gCsb9QtMa5ad1aFuIFqnWiiQjawI1WY5u9bLSbCEcDU0Joa5plhXZ6ZEJWtNGaVw+qIj
-         Va4qFYj8q7uO15lsjOctzAzXaI1lxUVM+FtouHwaTvdMFeeeC3uDE1BbjxLeA7U1imWV
-         joSXdl8QC5QQSEp2qgx6t0M5xoYlvMC/s5Ow2P0JGRp2D5U+tLTF1QRBTFjknjteu0UE
-         uv1yt5qhOFsjEE3qIvoIOEoOdeycaHkF3AdnEplwSkQofgDPMRTrtISd9XQguZq9zQnX
-         coiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722341980; x=1722946780;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zhzbbMF50wjWGe/fOseTA4c3yfyiRq1RlDd9IV2SLmk=;
-        b=d6N1faSoIx34ZV2hY2dZa4lHsv8AdizgQ5xSWTKeSDSJdXYOXWzvy8L+PNfuLgCALP
-         EYWufxF8ab6P8/w6yS/2PbzUwI6nzcOkFHWnB3jyhiLixf4ZsIz67v3/puW92hAhXnm7
-         GmrdeDqcwdtxShiZHdO5vW9k+uSAqy8u5iaVcVCBUV3bZXnWgst1LbVnGyrCpCUNyeCl
-         MDuCHBvGuCkmEjViY8q+AUjZcmqrsZxsMsXJ9WTWo63J5dEhweXepOTeFXcb7LXErWWV
-         JcojOsEW97b8afcQpdcMqAXneqc3N7Ja+Q2xp2BXdfaBhO0sZAJpr8TCf4MBK33p1r/5
-         hXvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhgvhWihtgd7L0M5cYQKPYDRvmhH++DOA0zNuluUxc147MCqkjDnADXTu6D5JcBud702LV8WjRtCEBMkTuZEeegesWhiYK9WZNx8tTdQ4R8l4FZcO/qcH1Fhgcb4nDsm/gxxz6WyhtWCpGrg==
-X-Gm-Message-State: AOJu0YwpaeYIpjopeprtI5g2obB+Fn52oUhZxU/SGN6U5Uo2n1AglGAc
-	oA421w9zALsiPdtPiYdOu8ggrYT6VkNnZY+aFAAxLk4aIO0h5QGt
-X-Google-Smtp-Source: AGHT+IHfRp+O14nVgEID49LLxSuex4Ar8OcA5hfvS5NVNTLKChUqfW6WP4zhDTMwJhCu3zBkgzGQRg==
-X-Received: by 2002:a05:6402:50c7:b0:5a0:f9f7:6565 with SMTP id 4fb4d7f45d1cf-5b021e1745dmr10267734a12.21.1722341979914;
-        Tue, 30 Jul 2024 05:19:39 -0700 (PDT)
-Received: from localhost.localdomain (93-103-32-68.dynamic.t-2.net. [93.103.32.68])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b0395sm7224733a12.20.2024.07.30.05.19.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 05:19:39 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] fs/aio: Fix __percpu annotation of *cpu pointer in struct kioctx
-Date: Tue, 30 Jul 2024 14:18:34 +0200
-Message-ID: <20240730121915.4514-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722341921; c=relaxed/simple;
+	bh=iyp2ksf8Ssdwe8kUjwD1QSqEgLWE/lUKNEVgfF7Ld84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AckoQRagq2qQ48IyBmGRcyQ0AOms6879E3rquFnrHK1yU2ysSd664cn/EYqJ6OzQrmzmdUn4q8gUelMkdNpi2BEs4ym6uwCJhG58dZW5ciEdaOIjbpp5j/8RDXhHHtXG+OWjML3GkWhDsSOG5mB63CTHU9q+Z9yvcz7mOp+x3t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aWrAGm9a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K+DCzSl+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aWrAGm9a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K+DCzSl+; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9389A1F7EB;
+	Tue, 30 Jul 2024 12:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722341917; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+EUxgOpV+xRL+481sCjzjumGLfmJXZ4nQhDBQad88g=;
+	b=aWrAGm9afIyu486IPRGx85s4lFeOFRHL04b9rtrjvSLbQ3UWOVRBsVTImLQnyVzUa8ZxEH
+	L0KQLgeUHjO0roI3jlzqPTdIGaDtyC8AEuzCdSK/YUGifl0PxcWrUVus2pqcFQDeCawGHJ
+	Eta3FDznEkqWZT8c+fezNR13wRfdjhs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722341917;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+EUxgOpV+xRL+481sCjzjumGLfmJXZ4nQhDBQad88g=;
+	b=K+DCzSl+ZvjLeMlJ4J60BmH2Sa/3xA4d4LvcBdQ38UKXtOhNwEulgfQEi0kYhpH/eWSu4h
+	9vN1MUrLdSHjmyBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722341917; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+EUxgOpV+xRL+481sCjzjumGLfmJXZ4nQhDBQad88g=;
+	b=aWrAGm9afIyu486IPRGx85s4lFeOFRHL04b9rtrjvSLbQ3UWOVRBsVTImLQnyVzUa8ZxEH
+	L0KQLgeUHjO0roI3jlzqPTdIGaDtyC8AEuzCdSK/YUGifl0PxcWrUVus2pqcFQDeCawGHJ
+	Eta3FDznEkqWZT8c+fezNR13wRfdjhs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722341917;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A+EUxgOpV+xRL+481sCjzjumGLfmJXZ4nQhDBQad88g=;
+	b=K+DCzSl+ZvjLeMlJ4J60BmH2Sa/3xA4d4LvcBdQ38UKXtOhNwEulgfQEi0kYhpH/eWSu4h
+	9vN1MUrLdSHjmyBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8858B13297;
+	Tue, 30 Jul 2024 12:18:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9h1EIR3aqGa9RQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 30 Jul 2024 12:18:37 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2F78EA099C; Tue, 30 Jul 2024 14:18:37 +0200 (CEST)
+Date: Tue, 30 Jul 2024 14:18:37 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, jack@suse.cz, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org
+Subject: Re: [PATCH 10/10] fsnotify: generate pre-content permission event on
+ page fault
+Message-ID: <20240730121837.fixxjcbbu7caxf2s@quack3>
+References: <cover.1721931241.git.josef@toxicpanda.com>
+ <1bc2855779e7ba1d80592be7d6257b43f1a91886.1721931241.git.josef@toxicpanda.com>
+ <CAOQ4uxgXEzT=Buwu8SOkQG+2qcObmdH4NgsGme8bECObiobfTQ@mail.gmail.com>
+ <20240729171120.GB3596468@perftesting>
+ <CAOQ4uxjjBiPkg9uxyW12Xd+GZ7t3aP1m9Ayzr8WzqryfqK1x3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjjBiPkg9uxyW12Xd+GZ7t3aP1m9Ayzr8WzqryfqK1x3g@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.60
 
-__percpu annotation of *cpu pointer in struct kioctx is put at
-the wrong place, resulting in several sparse warnings:
+On Mon 29-07-24 21:57:34, Amir Goldstein wrote:
+> On Mon, Jul 29, 2024 at 8:11 PM Josef Bacik <josef@toxicpanda.com> wrote:
+> > > If I am reading correctly, iomap (i.e. xfs) write shared memory fault
+> > > does not reach this code?
+> > >
+> > > Do we care about writable shared memory faults use case for HSM?
+> > > It does not sound very relevant to HSM, but we cannot just ignore it..
+> > >
+> >
+> > Sorry I realized I went off to try and solve this problem and never responded to
+> > you.  I'm addressing the other comments, but this one is a little tricky.
+> >
+> > We're kind of stuck between a rock and a hard place with this.  I had originally
+> > put this before the ->fault() callback, but purposefully moved it into
+> > filemap_fault() because I want to be able to drop the mmap lock while we're
+> > waiting for a response from the HSM.
+> >
+> > The reason to do this is because there are things that take the mmap lock for
+> > simple things outside of the process, like /proc/$PID/smaps and other related
+> > things, and this can cause high priority tasks to block behind possibly low
+> > priority IO, creating a priority inversion.
+> >
+> > Now, I'm not sure how widespread of a problem this is anymore, I know there's
+> > been work done to the kernel and tools to avoid this style of problem.  I'm ok
+> > with a "try it and see" approach, but I don't love that.
+> >
+> 
+> I defer this question to Jan.
+> 
+> > However I think putting fsnotify hooks into XFS itself for this particular path
+> > is a good choice either.
+> 
+> I think you meant "not a good choice" and I agree -
+> it is not only xfs, but could be any fs that will be converted to iomap
+> Other fs have ->fault != filemap_fault, even if they do end up calling
+> filemap_fault, IOW, there is no API guarantee that they will.
+> 
+> > What do you think?  Just move it to before ->fault(),
+> > leave the mmap lock in place, and be done with it?
+> 
+> If Jan blesses the hook called with mmap lock, then yeh,
+> putting the hook in the most generic "vfs" code would be
+> the best choice for maintenance.
 
-aio.c:623:24: warning: incorrect type in argument 1 (different address spaces)
-aio.c:623:24:    expected void [noderef] __percpu *__pdata
-aio.c:623:24:    got struct kioctx_cpu *cpu
-aio.c:788:18: warning: incorrect type in assignment (different address spaces)
-aio.c:788:18:    expected struct kioctx_cpu *cpu
-aio.c:788:18:    got struct kioctx_cpu [noderef] __percpu *
-aio.c:835:24: warning: incorrect type in argument 1 (different address spaces)
-aio.c:835:24:    expected void [noderef] __percpu *__pdata
-aio.c:835:24:    got struct kioctx_cpu *cpu
-aio.c:940:16: warning: incorrect type in initializer (different address spaces)
-aio.c:940:16:    expected void const [noderef] __percpu *__vpp_verify
-aio.c:940:16:    got struct kioctx_cpu *
-aio.c:958:16: warning: incorrect type in initializer (different address spaces)
-aio.c:958:16:    expected void const [noderef] __percpu *__vpp_verify
-aio.c:958:16:    got struct kioctx_cpu *
+Well, I agree with Josef's comment about a rock and a hard place. For once,
+regardless whether the hook will happen from before ->fault or from inside
+the ->fault handler there will be fault callers where we cannot drop
+mmap_lock (not all archs support dropping mmap_lock inside a fault AFAIR -
+but a quick grep seems to show that these days maybe they do, also some
+callers - most notably through GUP - don't allow dropping of mmap_lock
+inside fault). So we have to have a way to handle a fault without
+FAULT_FLAG_ALLOW_RETRY flag.
 
-Put __percpu annotation at the right place to fix these warnings.
+Now of course waiting for userspace reply to fanotify event with mmap_lock
+held is ... dangerous. For example consider application with two threads:
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Benjamin LaHaise <bcrl@kvack.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- fs/aio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+T1					T2
+page fault on inode I			write to inode I
+  lock mm->mmap_lock			  inode_lock(I)
+    send fanotify event			  ...
+					  fault_in_iov_iter_readable()
+					    lock mm->mmap_lock -> blocks
+					      behind T1
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 6066f64967b3..e8920178b50f 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -100,7 +100,7 @@ struct kioctx {
- 
- 	unsigned long		user_id;
- 
--	struct __percpu kioctx_cpu *cpu;
-+	struct kioctx_cpu __percpu *cpu;
- 
- 	/*
- 	 * For percpu reqs_available, number of slots we move to/from global
+now the HSM handler needs to fill in contents of inode I requested by the
+page fault:
+
+  inode_lock(I) -> deadlock
+
+So conceptually I think the flow could look like (in __do_fault):
+
+	if (!(vmf->flags & FAULT_FLAG_TRIED) &&
+	    fsnotify_may_send_pre_content_event()) {
+		if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
+			return VM_FAULT_RETRY;
+		fpin = maybe_unlock_mmap_for_io(vmf, NULL);
+		if (!fpin)
+			return ???VM_FAULT_SIGSEGV???;
+		err = fsnotify_fault(...);
+		if (err)
+			return VM_FAULT_SIGBUS | VM_FAULT_RETRY;
+		/*
+		 * We are fine with proceeding with the fault. Retry the fault
+		 * to let the filesystem handle it.
+		 */
+		return VM_FAULT_RETRY;
+	}
+
+The downside is that if we enter the page fault without ability to drop
+mmap_lock on a file needing HSM handling, we get SIGSEGV. I'm not sure it
+matters in practice because these are not that common paths e.g. stuff like
+putting a breakpoint / uprobe on a file but maybe there are some surprises.
+
+								Honza
 -- 
-2.45.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
