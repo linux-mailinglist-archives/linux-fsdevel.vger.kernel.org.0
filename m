@@ -1,111 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-24609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3F59413C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 15:59:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B811941400
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 16:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765EAB264F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 13:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10133283DA3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 14:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA26D1A08C2;
-	Tue, 30 Jul 2024 13:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2081A2572;
+	Tue, 30 Jul 2024 14:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbTcuUvN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozLpGhYZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E24119FA7B;
-	Tue, 30 Jul 2024 13:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374F41A073C;
+	Tue, 30 Jul 2024 14:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722347956; cv=none; b=tNBHx2Xrg9PXGVfYqsf8qhpm3SKDoKGVplI43uTfzHxoHhEECIpCHReIcz+RAHSb3mEBkqBbQJHz+85yg3TULjDD+4swBo67VOk8dUZynCqPgcI9mOXUHoSMMZdDDBZFdIe6tmkTrZDZn0CULXVnIcZ3ByMzLLe69dPDw+T+WMc=
+	t=1722348667; cv=none; b=DS7aewoyCXb0Q4njUwfeKQ86elj72bZK0zMufz0n/zIEpCCit02mpk5QN0qnkvt+XAfmRMlOPdLdDBhiwpTZcz80ymy4kTjMEdsqsoIoVpZi/D1G3NccnYwn2sho7YBg/i3su/wlRnTrhwN2jFmcEhGZDZL6NAZAsslMTCLXsMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722347956; c=relaxed/simple;
-	bh=v264fgWbZ86U2QYV32HPmK4Z3wqxajv/pDVJ8OFhcf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDc+6h5nv/dnPeq4NPL3ovHgx9VmgJheXhiQCmwNcmh6q4HO6BXdA9i5aM+Jwc5C8vqxZznViHoXjqROhgNdQXiQH2gw6Jjew7YuoFRmEnFURovJI46FjC7KMRTuVSvr5VTPf6sNMxHorAeWpowILL9OjI2eKB0h0wdF5h9vyBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RbTcuUvN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE802C32782;
-	Tue, 30 Jul 2024 13:59:15 +0000 (UTC)
+	s=arc-20240116; t=1722348667; c=relaxed/simple;
+	bh=NXSW+Ww4qnog5Wakb9vB7eNj7FiGI0hJ4qlSFMOdIis=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LPT7yiIMZ/SxHJV+6N+rmJpe5YOCkVhx4q3MXmif++qNmPzDny3KWZjTBYKdv0mzxeOWQicjSdSNeSFHdfYxdn4JoGnSR2wIUBCmVAIkgRDGVY8J+s+KyvqD4xwxhDvy/93cCI5Tsb2I26+amUGaPsP1CPukbzSU9pLaEKm++us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozLpGhYZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7FAC32782;
+	Tue, 30 Jul 2024 14:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722347955;
-	bh=v264fgWbZ86U2QYV32HPmK4Z3wqxajv/pDVJ8OFhcf8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RbTcuUvND6Vh1TUnuLWSSbuSylfTcMx3QwigTqWDVQ0pZcgn58kRpnY/R5hXM3IHU
-	 aBRxeNRuWy3cTCcEmtLLqyNu4Xgy+y8yNvKErVj1KmWcN57M3P0fZcACbSr5il7530
-	 XMb6Zry53zo7YvdCa0oLVzXvlfDefh5/Y7vlmFdD99pvhWAR5ujHLkZzV4a3+T0B9o
-	 YntFVp3Rx4Ng6v6wKhi/Ams6Jer2algTtKpwqe1yasNNR93jgJXuH1HVrDMLicgZeZ
-	 3axphw5nGuy4TN4ZmNVLlQk9JWIKc5oKKeh46VsUhQ3G8x6yfNMK4P9KtVNgYAcbVk
-	 loTLeW5JT6UvA==
-Date: Tue, 30 Jul 2024 06:59:15 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org,
-	tglx@linutronix.de
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240730135915.GI6352@frogsfrogsfrogs>
-References: <20240730033849.GH6352@frogsfrogsfrogs>
- <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20240730132626.GV26599@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1722348666;
+	bh=NXSW+Ww4qnog5Wakb9vB7eNj7FiGI0hJ4qlSFMOdIis=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ozLpGhYZBO6f+OrxkhcxLN8vWcBKBQFGwrRpMExe+1K9qNn2Yh+nQaGW3ECUqOVXV
+	 cO1IMg5JkySVBUfURubNl9MIiTpq/YFSAwKijWsOB4yYP4cK9Sq/ePdkOySk4Hd/jG
+	 7cBtRHxIZSKc568DR9Hk7y/rIjkAPg33TEhPmfhbKIn0tUizsH4p3mlyNquLGv3Ess
+	 71t9viPqmMiu41zocV9T5RFYuZrrt4FM1f6nn5IFjkv+rWk06wejahoKFH16v7wPf1
+	 +0pK2eaDzzYINz7v7oQJFA8/L8nXeICFkfuRNvW2IFjwUpRlQBMxRbXIfnsPXM6ZoC
+	 F2ykVF+8UaGyw==
+From: Christian Brauner <brauner@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/aio: Fix __percpu annotation of *cpu pointer in struct kioctx
+Date: Tue, 30 Jul 2024 16:10:53 +0200
+Message-ID: <20240730-halbmarathon-galionsfigur-8cd5615a4f7d@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240730121915.4514-1-ubizjak@gmail.com>
+References: <20240730121915.4514-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730132626.GV26599@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1952; i=brauner@kernel.org; h=from:subject:message-id; bh=NXSW+Ww4qnog5Wakb9vB7eNj7FiGI0hJ4qlSFMOdIis=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSt+FKioz99g7KTs9tKH5FtJcck17dnsgr8fZ/t48GTs XzrJNvSjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkEtDIy7Oiw+MmSGa39uv/b MxdF0fAfz37ar172ctqr7LBJLk4q2xj+Gb1oPfxqjrxTWFOKqjpHm/OTjbf4//8+5tz5RvD1l3U HGAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 03:26:26PM +0200, Peter Zijlstra wrote:
-> On Tue, Jul 30, 2024 at 01:00:02PM +0530, Chandan Babu R wrote:
-> > On Mon, Jul 29, 2024 at 08:38:49 PM -0700, Darrick J. Wong wrote:
-> > > Hi everyone,
-> > >
-> > > I got the following splat on 6.11-rc1 when I tried to QA xfs online
-> > > fsck.  Does this ring a bell for anyone?  I'll try bisecting in the
-> > > morning to see if I can find the culprit.
-> > 
-> > xfs/566 on v6.11-rc1 would consistently cause the oops mentioned below.
-> > However, I was able to get xfs/566 to successfully execute for five times on a
-> > v6.11-rc1 kernel with the following commits reverted,
-> > 
-> > 83ab38ef0a0b2407d43af9575bb32333fdd74fb2
-> > 695ef796467ed228b60f1915995e390aea3d85c6
-> > 9bc2ff871f00437ad2f10c1eceff51aaa72b478f
-> > 
-> > Reinstating commit 83ab38ef0a0b2407d43af9575bb32333fdd74fb2 causes the kernel
-> > to oops once again.
+On Tue, 30 Jul 2024 14:18:34 +0200, Uros Bizjak wrote:
+> __percpu annotation of *cpu pointer in struct kioctx is put at
+> the wrong place, resulting in several sparse warnings:
 > 
-> Durr, does this help?
+> aio.c:623:24: warning: incorrect type in argument 1 (different address spaces)
+> aio.c:623:24:    expected void [noderef] __percpu *__pdata
+> aio.c:623:24:    got struct kioctx_cpu *cpu
+> aio.c:788:18: warning: incorrect type in assignment (different address spaces)
+> aio.c:788:18:    expected struct kioctx_cpu *cpu
+> aio.c:788:18:    got struct kioctx_cpu [noderef] __percpu *
+> aio.c:835:24: warning: incorrect type in argument 1 (different address spaces)
+> aio.c:835:24:    expected void [noderef] __percpu *__pdata
+> aio.c:835:24:    got struct kioctx_cpu *cpu
+> aio.c:940:16: warning: incorrect type in initializer (different address spaces)
+> aio.c:940:16:    expected void const [noderef] __percpu *__vpp_verify
+> aio.c:940:16:    got struct kioctx_cpu *
+> aio.c:958:16: warning: incorrect type in initializer (different address spaces)
+> aio.c:958:16:    expected void const [noderef] __percpu *__vpp_verify
+> aio.c:958:16:    got struct kioctx_cpu *
 > 
-> 
-> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-> index 4ad5ed8adf96..57f70dfa1f3d 100644
-> --- a/kernel/jump_label.c
-> +++ b/kernel/jump_label.c
-> @@ -236,7 +236,7 @@ void static_key_disable_cpuslocked(struct static_key *key)
->  	}
->  
->  	jump_label_lock();
-> -	if (atomic_cmpxchg(&key->enabled, 1, 0))
-> +	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
+> [...]
 
-Ah, because key->enabled can be -1 sometimes?  I'll throw that at the
-fstests cloud for a few hours and report back.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
---D
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
->  		jump_label_update(key);
->  	jump_label_unlock();
->  }
-> 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs/aio: Fix __percpu annotation of *cpu pointer in struct kioctx
+      https://git.kernel.org/vfs/vfs/c/b484eca083f7
 
