@@ -1,204 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-24633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EB7942055
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 21:10:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD1F942127
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 21:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F381C23D6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 19:10:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A43B4B22BC8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 19:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFA618C905;
-	Tue, 30 Jul 2024 19:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F3818CBF4;
+	Tue, 30 Jul 2024 19:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="cskqiIVA"
+	dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="O+P8dBOV";
+	dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="S1d/U/Hc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E986318A6C8
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2024 19:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722366629; cv=none; b=PAlOAqjtBLtDQRNV1ekywP2rZEGcNF9NL0JA/wwt7hPDGHS5gXE4n0kMw0Adk9f4JsPHemjuret0WK3UafuWO+EwGyq8hWOqVoc4jbLr1wXaNlJKjcvZLzfVEQ+qMlDOB8O97QxJxugTYu9hJ5PeTb8aa5+b6UGSBh5baRcpZj8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722366629; c=relaxed/simple;
-	bh=cprG9uguQ5xQAd65VG0OmI1dSJ/AIFZZf/rzJXIqOG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ht12T0FgXBvUe1KxUfrsuSCqCs6Eqpl/QQY1xZ0bq1VDI6m2bhfb4/WRTSCJc88QyWeD+lF6VCE/5a3La6l8Kodzub5LIh+D+cSdAV2f6b6oFB3iE49+5JCti+dSR3bRYdwONvGFJwQoWLoeaLzhladszAnPdkbFe8Abql8Akoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=cskqiIVA; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6678a45eaa3so37283007b3.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2024 12:10:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1722366627; x=1722971427; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6GUnz9l9Hov01YwHIE/X99jR0yCQ8jWPdAfQd5kTxAs=;
-        b=cskqiIVAToN8u5ifsNa0Ulq7laX0u7m8tS/Wl+D6PimGeNtq+U5Z0/BwHUtu4/JtCb
-         aW1LvkVXUqvQeVwsETU8Fo3LKdiWzlzXJx/mEumEGJduxRJIsXyiVENDoBZDHQb3cKx2
-         gNNvvVey/3/LdT17UM5DEqAyHhnzvdGno5iy1GaVFnRZF0CxCFpHAzsTI+wZcyhvEiJN
-         CrI+T4hxjE3hUA/dYsEmDhOS4O6DsihpgpKyqG8CDvqbTxMMWONvy75dv1yZOr9kj8ZY
-         oE0asvQyZ/OBGG321K2Bz18mjufhZpGO35gOC5Rgsvju5PhA+VxPOMcF5vGGK6SMk4ta
-         gnRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722366627; x=1722971427;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6GUnz9l9Hov01YwHIE/X99jR0yCQ8jWPdAfQd5kTxAs=;
-        b=W4S07NlciljjAdArUaootNjTRtay22zK3AVuBwt+P8+kedkc3Dr7EGloCJqlBf5hqV
-         adF0WtK3fRVql+/vp2BhIYccy0FwrbNg/+cGxC87Pys/TMzmBv216RlfgmY2MlJ+X8UH
-         N0BM2eRlanTZIizNjX2sdbFSqQzPY4yeVP7gCPQLCT36mOClejmMjEn3b3klXiZjzFQG
-         VBxm0b00haWIJWG83MuSZLY2KICSP03/rHxzz+6U6nOQlCqRnbqbl5hoCIAkNFGcccw0
-         66mCVxMXJvts+dKSq9rKweZsXcL+7m7eOho2NvBqT+XeDsaweYGSJ20Mr+PVJogZ8l5v
-         dhwA==
-X-Gm-Message-State: AOJu0YxgMPgRCHjjEuveoql2riAzrdKnCY4Y5DtMnx6uGyfkvyq4YnuO
-	wvwgGyNT/sv3WlXjkGgpegrjWMuLF2mG5P3Ex70a1hz1kXwaSu9wizPqCFMYLaQ=
-X-Google-Smtp-Source: AGHT+IFlD3BEKMaeWaD720WWKRAG4+pH3jrjmCrAEylXJ2sjoD6Kq8sCVxrr8pWB9p2fWNe43d139w==
-X-Received: by 2002:a0d:dac6:0:b0:618:95a3:70b9 with SMTP id 00721157ae682-67a09592d49mr116965087b3.36.1722366626922;
-        Tue, 30 Jul 2024 12:10:26 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756c44ceb7sm26204097b3.140.2024.07.30.12.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 12:10:26 -0700 (PDT)
-Date: Tue, 30 Jul 2024 15:10:25 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: viro@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, bpf@vger.kernel.org,
-	brauner@kernel.org, cgroups@vger.kernel.org, kvm@vger.kernel.org,
-	netdev@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: [PATCH 08/39] experimental: convert fs/overlayfs/file.c to
- CLASS(...)
-Message-ID: <20240730191025.GB3830393@perftesting>
-References: <20240730050927.GC5334@ZenIV>
- <20240730051625.14349-1-viro@kernel.org>
- <20240730051625.14349-8-viro@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19FB83A17;
+	Tue, 30 Jul 2024 19:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722369529; cv=pass; b=AfHRkA1p7FUUWRyHlC5vf9e+vqwZbfedEAiqk13nhaivJhefwLAE1II+HkeAVxpG3l+LRplBDHmoLrt1gBjWS3PFOKBihtvgeFwwzrT57+gbLA6vWFFLI4TQyNzLqcYNKcVR7YRc4mPgPhMFyCyU1L2xXGgxglZY9hmLDe89HWI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722369529; c=relaxed/simple;
+	bh=rXllNwgPg9V8TBY10KyD+qXKZdw2EfkkClgM1/RQCZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NTNg7zuzd3mFXur1WvHBpivtdHATnbWP/Bxltl7LrGrxqZeOaJ1KNcWPxn9Aco+hkW8+/xFB1UBphNtZwkptZVcPO2C8c8lq63+FEQAG4/0UGOrO+irDSpzfvwVvrMMFJZARo7W26IR/SpEqyIAYwIHWPCdwm0LD7LgRDNC/eto=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de; spf=none smtp.mailfrom=aepfle.de; dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=O+P8dBOV; dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=S1d/U/Hc; arc=pass smtp.client-ip=81.169.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=aepfle.de
+ARC-Seal: i=1; a=rsa-sha256; t=1722369518; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=B2vVThl62f1Q0+3QFP+0zZ2iFfaajdC9qylZqbYAQ543Qx9yn656ClO3VtitjllClr
+    CIfH1HKXEcCYUKrZBG4CG/wtcuNisb9vYiUPg7GayCBWIqmp+chl8vdGQnvYdG7Ohm9c
+    SCzvXqq5A4cy3cQM71Hnfxwk3Xpiy8aq9OhHWQGzcWUb692HL70CyPEEUD0Oqg53eV96
+    rAF69suhfjiw4eszIYJdI+uuQVPfOQv0Oo37DV4q2YR3bbxbO0FWpFD0fNGas7yZx6Cu
+    GEQQqD+UUzdA1rwRaoUDEHDkxXN7+pw1gRJ4bbVjvWXXIIpHU9i4tsZ4cuza26bUf+6N
+    GX/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1722369518;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=rXllNwgPg9V8TBY10KyD+qXKZdw2EfkkClgM1/RQCZk=;
+    b=RTPLXjE0Ymjfl3sMVpOLDJRtMd8/gNry2u05R1HziVHzZSEBt7Q/foI4IHZ7FfhpnK
+    ZxIYcBzQXbmws/mNOQ6t/AMc/JOHTGWJPXt6VmuccnzaD6GFGZadKH8BWJhGO0LZ2Xlt
+    e5d9hptw9Txs3mY3QA2VkU4NrbX9hTihie8HZvBxZYrvDnpMFlJYt2Bw13FvbV289lUa
+    4OT5iWcLTIHRgAUHMG/5SZmG9P+1h608AcB2sznnCHgnVZ9v9hz7iov4/PUl1h7N3YpZ
+    puRnd+BS3UOC8DTuIDk5s0DVluqM4LZkZqtSOSrXBcDQAvVjavpjug9XeKTAav6O7Dl5
+    lMrQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1722369517;
+    s=strato-dkim-0002; d=aepfle.de;
+    h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=rXllNwgPg9V8TBY10KyD+qXKZdw2EfkkClgM1/RQCZk=;
+    b=O+P8dBOVZpEMXNQBMHfelGXi2QhLXZ6BN0ak9thtUW5Tj2H536dqHwtfqszF9tTW+m
+    jrTFcNkjiRXsJoOpPSQGhc6qcW5F9kvhON66j69Z2tkDGg6pdk3dXu3LtXvbaThvD8Q6
+    fmYns72yOUu3CZIZuTvI1v27cAnBn76BTGH6sHGqqtqPulsSDB7CDm0JB6ILYmHz3QS5
+    UVlKgV0V1LrgKN/n+xjUQjj4L39/qzw8aXY0ukGv61P1w8K5g+MZRwPmxgGKeSKaBoPP
+    AtdUR5e+J7itM5PciUyhptLStXoZTFEHrDNa63xKp2BeUsM8cQ0USNnFcvEQ9t1gLRrl
+    3c9w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1722369517;
+    s=strato-dkim-0003; d=aepfle.de;
+    h=References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=rXllNwgPg9V8TBY10KyD+qXKZdw2EfkkClgM1/RQCZk=;
+    b=S1d/U/Hc2aD3qoFv7iaecmh1MJz5KpiLtamCujQ3hkr9zUhwDHPmEb7VzeSPAMLCcj
+    2fnCXxfFKCazL0lw7rCA==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QLpd5ylWvMDX3y/OuD5rXVisR5WhGIY03sl8P3E8+0INaYkLbLK6amJ4tjV9TKUg=="
+Received: from sender
+    by smtp.strato.de (RZmta 51.1.0 AUTH)
+    with ESMTPSA id Da26f206UJwbPFT
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 30 Jul 2024 21:58:37 +0200 (CEST)
+Date: Tue, 30 Jul 2024 21:58:27 +0200
+From: Olaf Hering <olaf@aepfle.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Deepa Dinamani <deepa.kernel@gmail.com>, Jeff Layton
+ <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>
+Subject: Re: [PATCH v1] mount: handle OOM on mnt_warn_timestamp_expiry
+Message-ID: <20240730215827.77b90c8a.olaf@aepfle.de>
+In-Reply-To: <20240730154924.GF5334@ZenIV>
+References: <20240730085856.32385-1-olaf@aepfle.de>
+	<20240730154924.GF5334@ZenIV>
+X-Mailer: Claws Mail (olh) 20240408T134401.7adfa8f7 hat ein Softwareproblem, kann man nichts machen.
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730051625.14349-8-viro@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/ZiFKxp.EPGj5=M_RD=QwsTu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 01:15:54AM -0400, viro@kernel.org wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
-> 
-> There are four places where we end up adding an extra scope
-> covering just the range from constructor to destructor;
-> not sure if that's the best way to handle that.
-> 
-> The functions in question are ovl_write_iter(), ovl_splice_write(),
-> ovl_fadvise() and ovl_copyfile().
-> 
-> This is very likely *NOT* the final form of that thing - it
-> needs to be discussed.
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/overlayfs/file.c | 72 ++++++++++++++++++---------------------------
->  1 file changed, 29 insertions(+), 43 deletions(-)
-> 
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 4b9e145bc7b8..a2911c632137 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -132,6 +132,8 @@ static struct fderr ovl_real_fdget(const struct file *file)
->  	return ovl_real_fdget_meta(file, false);
->  }
->  
-> +DEFINE_CLASS(fd_real, struct fderr, fdput(_T), ovl_real_fdget(file), struct file *file)
-> +
->  static int ovl_open(struct inode *inode, struct file *file)
->  {
->  	struct dentry *dentry = file_dentry(file);
-> @@ -174,7 +176,6 @@ static int ovl_release(struct inode *inode, struct file *file)
->  static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
->  {
->  	struct inode *inode = file_inode(file);
-> -	struct fderr real;
->  	const struct cred *old_cred;
->  	loff_t ret;
->  
-> @@ -190,7 +191,7 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
->  			return vfs_setpos(file, 0, 0);
->  	}
->  
-> -	real = ovl_real_fdget(file);
-> +	CLASS(fd_real, real)(file);
->  	if (fd_empty(real))
->  		return fd_error(real);
->  
-> @@ -211,8 +212,6 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
->  	file->f_pos = fd_file(real)->f_pos;
->  	ovl_inode_unlock(inode);
->  
-> -	fdput(real);
-> -
->  	return ret;
->  }
->  
-> @@ -253,8 +252,6 @@ static void ovl_file_accessed(struct file *file)
->  static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	struct file *file = iocb->ki_filp;
-> -	struct fderr real;
-> -	ssize_t ret;
->  	struct backing_file_ctx ctx = {
->  		.cred = ovl_creds(file_inode(file)->i_sb),
->  		.user_file = file,
-> @@ -264,22 +261,18 @@ static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
->  	if (!iov_iter_count(iter))
->  		return 0;
->  
-> -	real = ovl_real_fdget(file);
-> +	CLASS(fd_real, real)(file);
->  	if (fd_empty(real))
->  		return fd_error(real);
->  
-> -	ret = backing_file_read_iter(fd_file(real), iter, iocb, iocb->ki_flags,
-> -				     &ctx);
-> -	fdput(real);
-> -
-> -	return ret;
-> +	return backing_file_read_iter(fd_file(real), iter, iocb, iocb->ki_flags,
-> +				      &ctx);
->  }
->  
->  static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	struct file *file = iocb->ki_filp;
->  	struct inode *inode = file_inode(file);
-> -	struct fderr real;
->  	ssize_t ret;
->  	int ifl = iocb->ki_flags;
->  	struct backing_file_ctx ctx = {
-> @@ -295,7 +288,9 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->  	/* Update mode */
->  	ovl_copyattr(inode);
->  
-> -	real = ovl_real_fdget(file);
-> +	{
+--Sig_/ZiFKxp.EPGj5=M_RD=QwsTu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Is this what we want to do from a code cleanliness standpoint?  This feels
-pretty ugly to me, I feal like it would be better to have something like
+Tue, 30 Jul 2024 16:49:24 +0100 Al Viro <viro@zeniv.linux.org.uk>:
 
-scoped_class(fd_real, real) {
-	// code
-}
+> d_path() is *NOT* going to return NULL.
 
-rather than the {} at the same indent level as the underlying block.
+The existing documentation does not state that fact.
 
-I don't feel super strongly about this, but I do feel like we need to either
-explicitly say "this is the way/an acceptable way to do this" from a code
-formatting standpoint, or we need to come up with a cleaner way of representing
-the scoped area.  Thanks,
 
-Josef
+Olaf
+
+--Sig_/ZiFKxp.EPGj5=M_RD=QwsTu
+Content-Type: application/pgp-signature
+Content-Description: Digitale Signatur von OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE97o7Um30LT3B+5b/86SN7mm1DoAFAmapReMACgkQ86SN7mm1
+DoCBQQ//YkTVdDlvslQv03pTYTIg+dKeFTXz/SA2mQjxGAHWmHr9m8PHoVgj26JM
+Lzj+WMErLr6ooPKjCqCN7Fs5iWkhKWZaXZVXPweLF03Q/dy+uCSB5FIeXgClkyWz
+d8BzzVO5OKenAmHoM2GK6IL82UaTJoTCYk3SUEdTD9yurrGrb8STh4mTEoZ6dYIe
+KKzASwLqx2yFisB8vXU0KPjr9X0DHX8jUa7WiEo5HnT/yc1WPD1GpEpgb1gMILs/
+4QdtDzHXwte58cTtLivj4jHmllelF565pBIw785eWR7cXc/PcGAp7NTFaEnNjgUt
+Z5vYoBTdMzQCPyvohzr7budI/hJ2apDLlObxOidF0B+DX8/xq9MAr2837S7C5xiI
+urK+I1x1cAT0AkxqUlxLnDykMFiTNqtA7XZ8+qbsGmHD90PaYU9snUljJaEHJStf
+U3J6qR4HzMY3vbjCfWO4j4R3ZkZCJVh4BRkJv6+kPkwKZ5slG8B6Y5eXkuf3gsYK
+wNBb1tIaVQIlyOIrh13b3fVSPj/l1GV4hIfvUQSzD/ufCPrJySPeub43kurQ0tYN
+D7UV7G8kFLhjj6XYQqaRLmyEictbqum281dMzJN0YObL/B+GDG++69swY7sO5fmd
+E6XCzBce1PYPm0ai2O0vm32mDJnIz/SO3gyvrsqPewlYxQJVNx0=
+=/miM
+-----END PGP SIGNATURE-----
+
+--Sig_/ZiFKxp.EPGj5=M_RD=QwsTu--
 
