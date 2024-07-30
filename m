@@ -1,306 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-24526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711F9940239
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 02:29:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C104E940549
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 04:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3505B22130
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 00:29:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36862B2189A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 02:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5197E9460;
-	Tue, 30 Jul 2024 00:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AC780BFC;
+	Tue, 30 Jul 2024 02:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIO6AYzT"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="trIwHAzt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26658C8D7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2024 00:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7BC1CD25
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2024 02:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722299345; cv=none; b=dcQNymyl635sppXPnQsnzCTgrCZKdEcB2q0oGlvIGRlh6gboVm0Eya5ALoKaU1hlgzE6+ogufkGM9/9+cmQq5Npa2CrdEVaZQWGx8/6TXGkEuPKa4taUMvErkEvIOxGeyzl3UMpS5vlZ/Lku13/RFi4fr7GzYanUqHwJ/jT+cdA=
+	t=1722306723; cv=none; b=uvPFh1C587ovsD0GuavAm6wtDBKcmebC1Kr+BCjrqyKhZCd0OH3S1oBSoxkSEcL4OfbphQnTTrXl309+YCAHi4kWBt/ZH2uRKAyzEqZZMa0vTFl0wgZwRjc13MoKeDl2j7kj3CUkDtjEX1CNQ7ctrxg9fTjyiRTEUa7S71DA7l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722299345; c=relaxed/simple;
-	bh=PepCf8Y5wi4kG2lqx7PYwabTGWJDuwDTbc/RUa6uPms=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ao0W2HRweCLU1tk8PHOM7LYwOPuQFppI8+ngtTMI84u2jHdTirGqFxq7fbt4dSDSwci3cJlS8qtYoEIj0NvS70DQjL9WL5wPak7Dh5Xms4jy57ZwcEdYFJl6LLOJPmTUYt0E+Vto/8Nz78nhwA1mcZFuRqQRKxqO08+73EeEKTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIO6AYzT; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-66a048806e6so26526427b3.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 17:29:04 -0700 (PDT)
+	s=arc-20240116; t=1722306723; c=relaxed/simple;
+	bh=tOO86y8V3WUKAK5XBg1b8kaBvFUSchEmH0uCHmb3UAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNleY6RCvW8Iddu7IHxmSDLeLlfdG7zEavNz9MeGOf74oG2YsGd3lLR+wqw1O4AphU255b5SOvSkExxPqoMvijBCJ0Df6tK/xntPLTsOWJ79lkQWYOfAoqcdAHt+Odnifv032TZF7DmYK4kkCqFTkVZdGitHW8C1gC0SsGFOoaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=trIwHAzt; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d199fb3dfso3399739b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jul 2024 19:32:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722299343; x=1722904143; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nblHNCroIUo9tCFUaQld1hjPR6RcG20HQfcEs28FfcY=;
-        b=lIO6AYzTuw4TOKwRU7raQevj/KSSTCj/UVESAbU7Y+XFUW07WojF+3bE97zgDUFAa+
-         VQxva2yQbOebRMHDc0FouHEaB2f17qQHrH33MwcGee4pL+jSr5VAFZwUpzy1MyYt//iR
-         +n8kvp448NlYLO+hcf4gPDThJQeuBYDjtIVz4+rBlVNKSmlKTXiSHR/bTKaoWBUotNk/
-         5q+feDtLqFO50LRpBLGZw7cejTKElM56MaLqFFcNZOr9grcbOTDnEVd2mUcQqTdFH1Md
-         ItCj9PNA/1W5YCzvns3UyersO6B7OWvrgt7YI2HfkmJYcJvRNZ/8UGREYn+YX2mYcG32
-         7KGQ==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722306721; x=1722911521; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eFhRc4/vYKzneuFn+DFlfYxVPf9CprdyrFUOhdCUb6Y=;
+        b=trIwHAzt4vySh8AXYQ11iX8L2SvX7uQTy3rPxwDShEGmVFUgZWLzZOBiInnLWcaejs
+         RA2GO3OaRUUhBfgnu0UquhpE/FQlBPwh2ou7HZNpD3S/zY4gY9ClrJe7K9BEUrisYOsW
+         I7lyDilhCwVSrLV+uSBViePhFXdismWd9PFAHNONaZA8O1ckVfJoRDIK0bSb0CcHIbVY
+         XLu43EuiitdLak7yn97a5qWe3jG/hVeBtY2Lmoec3vyPw5Pd8ERVaDKFq9UWrWZctAWE
+         Bv3hWk5bQFlB2SRNu2KfmsCQuFyJUyn7GT+/XKzsY0G9vLCSOSW0PUaap4tAFc+yTlUJ
+         wRpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722299343; x=1722904143;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nblHNCroIUo9tCFUaQld1hjPR6RcG20HQfcEs28FfcY=;
-        b=aHnWbYtwLZCSuuYiBUgYjc2J7l72TCsPZsy9pClyzeXea7LqB5kKqbZ5+o4pzQ3+90
-         EKESEDq1Q1FUNghDgu5ZmOMn8s+pc9J+u9N70K+E80qs8U3Pd6fczq1CHxi/q5G8HHZ/
-         dT98CewVs1tbUBEtwMTaKDRR4XdI6AlfeCnkVV+9hrR7MIHoLvldJXBxrca9EKuP0KxT
-         nOrt+VR5KyPkGhmdvIezbqGGBBTP1dz24LXvznU7SAsgH4So2fX1c6ZDSJPzKGrP2ZsJ
-         9Tfu0g/EYoTK5hOqSDw9IZDjxafNbs1b7glZa8RBtzILxgFNHw3z8mCmUOTcpoqFEFX3
-         /DpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3xjtD55fk2lZcCq4YSlp6XKNjJK9W4ZDVRlpXBEvRRgpTioMvPfsEOYLN0TjzjnwKK+hWP/rSYybTcWHcuf2FgUDc94QIUL831afVLw==
-X-Gm-Message-State: AOJu0Yy6Z5bVIgGGtcyi3yz+jbP+Dkjwelao76rIlFYkX1BwZo5SniDu
-	DKBNVdXTvR5ji2JwH0XOluKu6Yho6zqdTXXUPxZmpY4q1KfsuRQ2
-X-Google-Smtp-Source: AGHT+IE4E73q70fY2NLN/mH8ZOsXjst0uiCywP0xpBQzMlRS+4tbRZ/jIIQpXUK0FURBKzx96tZ4Qw==
-X-Received: by 2002:a05:6902:150f:b0:e0b:54ae:fee4 with SMTP id 3f1490d57ef6-e0b54af0c72mr9475716276.19.1722299343157;
-        Mon, 29 Jul 2024 17:29:03 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-115.fbsv.net. [2a03:2880:25ff:73::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b2a294a89sm2082288276.33.2024.07.29.17.29.02
+        d=1e100.net; s=20230601; t=1722306721; x=1722911521;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eFhRc4/vYKzneuFn+DFlfYxVPf9CprdyrFUOhdCUb6Y=;
+        b=CxS2XSlgFLKJ+edUMB355EcQSM6G3mgqX75kEtaHpi2JOee4mtsbka95ia+sAETEMV
+         89ZyZVW9XCY3KwlEMzmL2c5FPPwwPK0BEarh6LIgT0jR6wV3jLpvnjSOfgDnLIC9sB98
+         gHY4Oo63uE3dZVO0jCX+//c0xGz5vJVKamEkYL7AA/yeI46upnznrgq1EtUmp5zkxUE8
+         mpmEwa5nkoFecgpBGthKSS795hYZOaoAwJr2gFixWyfGBeQ+jY8qvUFi+bgafIqru5Lt
+         4GKjEBeX0CD+jXCHhCtQs4c35aDJx+MI0rSJCRiR+eSgAw5yUYL9XLSY/dVmCWiD7aRL
+         CkqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGWHiiGB6cYGC1ihPuCtGwfdoU2585KKMoDJjuLAZf8yrG3dob2gGeTD7lJc/BYPWEcN9Jxc9DVFJTOz/ewRAiv3QtcLxU5X5kFPXHyQ==
+X-Gm-Message-State: AOJu0Yw1FGPTxF8mZPQfo0SulhBu+E2vR0mUKl29r77ZpI2jrJlV1S/A
+	JFiNt0Rc9PDnQZlSvEZ7sSwAH/lAFBdAhEUFH2IYlJSqiWRv2V761HqaAun98h0=
+X-Google-Smtp-Source: AGHT+IFtkp9YLxmPFjkciYZk1h4UD8NNOgy3iXel92zDfGVP4wFKLuT7Ekrw2+r413XgYa4i+aYUpg==
+X-Received: by 2002:a05:6a20:7487:b0:1c4:8ddb:3fac with SMTP id adf61e73a8af0-1c4a12e0de9mr12920008637.23.1722306721120;
+        Mon, 29 Jul 2024 19:32:01 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8122ddsm7471291b3a.133.2024.07.29.19.32.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 17:29:02 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com,
-	bernd.schubert@fastmail.fm,
-	laoar.shao@gmail.com,
-	kernel-team@meta.com
-Subject: [PATCH v2 2/2] fuse: add default_request_timeout and max_request_timeout sysctls
-Date: Mon, 29 Jul 2024 17:23:48 -0700
-Message-ID: <20240730002348.3431931-3-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240730002348.3431931-1-joannelkoong@gmail.com>
-References: <20240730002348.3431931-1-joannelkoong@gmail.com>
+        Mon, 29 Jul 2024 19:32:00 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sYceb-00GEgB-2b;
+	Tue, 30 Jul 2024 12:31:57 +1000
+Date: Tue, 30 Jul 2024 12:31:57 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, Florian Weimer <fweimer@redhat.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: Testing if two open descriptors refer to the same inode
+Message-ID: <ZqhQnWQSweXgffdD@dread.disaster.area>
+References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
+ <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
+ <20240729133601.GA557749@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729133601.GA557749@mit.edu>
 
-Introduce two new sysctls, "default_request_timeout" and
-"max_request_timeout". These control timeouts on replies by the
-server to kernel-issued fuse requests.
+On Mon, Jul 29, 2024 at 09:36:01AM -0400, Theodore Ts'o wrote:
+> On Mon, Jul 29, 2024 at 12:18:15PM +0200, Mateusz Guzik wrote:
+> > 
+> > Are you claiming on-disk inode numbers are not guaranteed unique per
+> > filesystem? It sounds like utter breakage, with capital 'f'.
+> 
+> The reality is that there exists file systems which do not return
+> unique inode numbers.  For example, there are virtiofs implementations
+> which pass the inode numbers straight through with a fixed dev_t.  If
+> you have a large number of packages mounted via iscsi, and those
+> packages include shared libraries, then you can have two different
+> shared libraries with the same inode number, and then you can watch
+> the dynamic liunker get Very Confused, and debugging the problem can
+> be.... interesting.  (Three gueses how I found out about this, and the
+> first two don't count.  Yes, we figured out a workaround.)
+> 
+> So that breakage exists already, today.
+> 
+> For people who don't like this, they can stick to those file systems
+> that still guarantee unique inode numbers, at least for local disk
+> file systems --- for example, to use ext4 and xfs, over btrfs and
+> bcachefs.
 
-"default_request_timeout" sets a timeout if no timeout is specified by
-the fuse server on mount. 0 (default) indicates no timeout should be enforced.
+I don't think you can make such a simplistic delineation, because
+there's more than one issue at play here.
 
-"max_request_timeout" sets a maximum timeout for fuse requests. If the
-fuse server attempts to set a timeout greater than max_request_timeout,
-the system will default to max_request_timeout. Similarly, if the max
-default timeout is greater than the max request timeout, the system will
-default to the max request timeout. 0 (default) indicates no timeout should
-be enforced.
+There are at least two different "is this inode identical"
+use cases that {st_dev,st_ino} is being used for.
 
-$ sysctl -a | grep fuse
-fs.fuse.default_request_timeout = 0
-fs.fuse.max_request_timeout = 0
+The first, as Florian described, is to determine if two open fds
+refer to the same inode for collision avoidance.
 
-$ echo 0x100000000 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
+This works on traditional filesystems like ext4 and XFS, but isn't
+reliable on filesystems with integrated snapshot/subvolume
+functionality.
 
-$ echo 0xFFFFFFFF | sudo tee /proc/sys/fs/fuse/default_request_timeout
-0xFFFFFFFF
+The second is that {dev,ino} is being used to disambiguate paths
+that point to hardlinked inodes for the purposes of identifying
+and optimising access and replication of shared (i.e. non-unique)
+file data.
 
-$ sysctl -a | grep fuse
-fs.fuse.default_request_timeout = 4294967295
-fs.fuse.max_request_timeout = 0
+This works on traditional filesystems like ext4, but fails badly on
+filesystem that support FICLONERANGE (XFS, btrfs, NFS, CIFS,
+bcachefs, etc) because cloned files have unique inodes but
+non-unique data.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
----
- Documentation/admin-guide/sysctl/fs.rst | 17 ++++++++++
- fs/fuse/Makefile                        |  2 +-
- fs/fuse/fuse_i.h                        | 16 ++++++++++
- fs/fuse/inode.c                         | 19 ++++++++++-
- fs/fuse/sysctl.c                        | 42 +++++++++++++++++++++++++
- 5 files changed, 94 insertions(+), 2 deletions(-)
- create mode 100644 fs/fuse/sysctl.c
+> However, this is a short-term expedient, and in the long term, we will
+> need to guide userspace to use something that is more likely to work,
+> such as file handles.
 
-diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-index 47499a1742bd..44fd495f69b4 100644
---- a/Documentation/admin-guide/sysctl/fs.rst
-+++ b/Documentation/admin-guide/sysctl/fs.rst
-@@ -332,3 +332,20 @@ Each "watch" costs roughly 90 bytes on a 32-bit kernel, and roughly 160 bytes
- on a 64-bit one.
- The current default value for ``max_user_watches`` is 4% of the
- available low memory, divided by the "watch" cost in bytes.
-+
-+5. /proc/sys/fs/fuse - Configuration options for FUSE filesystems
-+=====================================================================
-+
-+This directory contains the following configuration options for FUSE
-+filesystems:
-+
-+``/proc/sys/fs/fuse/default_request_timeout`` is a read/write file for
-+setting/getting the default timeout (in seconds) for a fuse server to
-+reply to a kernel-issued request in the event where the server did not
-+specify a timeout at mount. 0 indicates no timeout.
-+
-+``/proc/sys/fs/fuse/max_request_timeout`` is a read/write file for
-+setting/getting the maximum timeout (in seconds) for a fuse server to
-+reply to a kernel-issued request. If the server attempts to set a
-+timeout greater than max_request_timeout, the system will use
-+max_request_timeout as the timeout. 0 indicates no timeout.
-diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
-index 6e0228c6d0cb..cd4ef3e08ebf 100644
---- a/fs/fuse/Makefile
-+++ b/fs/fuse/Makefile
-@@ -7,7 +7,7 @@ obj-$(CONFIG_FUSE_FS) += fuse.o
- obj-$(CONFIG_CUSE) += cuse.o
- obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
- 
--fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o
-+fuse-y := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o ioctl.o sysctl.o
- fuse-y += iomode.o
- fuse-$(CONFIG_FUSE_DAX) += dax.o
- fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 2b616c5977b4..1a3a3b8a83ae 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -47,6 +47,14 @@
- /** Number of dentries for each connection in the control filesystem */
- #define FUSE_CTL_NUM_DENTRIES 5
- 
-+/*
-+ * Default timeout (in seconds) for the server to reply to a request
-+ * if no timeout was specified on mount
-+ */
-+extern u32 fuse_default_req_timeout;
-+/** Max timeout (in seconds) for the server to reply to a request */
-+extern u32 fuse_max_req_timeout;
-+
- /** List of active connections */
- extern struct list_head fuse_conn_list;
- 
-@@ -1486,4 +1494,12 @@ ssize_t fuse_passthrough_splice_write(struct pipe_inode_info *pipe,
- 				      size_t len, unsigned int flags);
- ssize_t fuse_passthrough_mmap(struct file *file, struct vm_area_struct *vma);
- 
-+#ifdef CONFIG_SYSCTL
-+extern int fuse_sysctl_register(void);
-+extern void fuse_sysctl_unregister(void);
-+#else
-+#define fuse_sysctl_register()		(0)
-+#define fuse_sysctl_unregister()	do { } while (0)
-+#endif /* CONFIG_SYSCTL */
-+
- #endif /* _FS_FUSE_I_H */
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 9e69006fc026..cf333448f2d3 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -35,6 +35,10 @@ DEFINE_MUTEX(fuse_mutex);
- 
- static int set_global_limit(const char *val, const struct kernel_param *kp);
- 
-+/* default is no timeout */
-+u32 fuse_default_req_timeout = 0;
-+u32 fuse_max_req_timeout = 0;
-+
- unsigned max_user_bgreq;
- module_param_call(max_user_bgreq, set_global_limit, param_get_uint,
- 		  &max_user_bgreq, 0644);
-@@ -1678,6 +1682,7 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
- 	struct fuse_conn *fc = fm->fc;
- 	struct inode *root;
- 	struct dentry *root_dentry;
-+	u32 req_timeout;
- 	int err;
- 
- 	err = -EINVAL;
-@@ -1730,10 +1735,16 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
- 	fc->group_id = ctx->group_id;
- 	fc->legacy_opts_show = ctx->legacy_opts_show;
- 	fc->max_read = max_t(unsigned int, 4096, ctx->max_read);
--	fc->req_timeout = ctx->req_timeout * HZ;
- 	fc->destroy = ctx->destroy;
- 	fc->no_control = ctx->no_control;
- 	fc->no_force_umount = ctx->no_force_umount;
-+	req_timeout = ctx->req_timeout ?: fuse_default_req_timeout;
-+	if (!fuse_max_req_timeout)
-+		fc->req_timeout = req_timeout * HZ;
-+	else if (!req_timeout)
-+		fc->req_timeout = fuse_max_req_timeout * HZ;
-+	else
-+		fc->req_timeout = min(req_timeout, fuse_max_req_timeout) * HZ;
- 
- 	err = -ENOMEM;
- 	root = fuse_get_root_inode(sb, ctx->rootmode);
-@@ -2046,8 +2057,14 @@ static int __init fuse_fs_init(void)
- 	if (err)
- 		goto out3;
- 
-+	err = fuse_sysctl_register();
-+	if (err)
-+		goto out4;
-+
- 	return 0;
- 
-+ out4:
-+	unregister_filesystem(&fuse_fs_type);
-  out3:
- 	unregister_fuseblk();
-  out2:
-diff --git a/fs/fuse/sysctl.c b/fs/fuse/sysctl.c
-new file mode 100644
-index 000000000000..c87bb0ecbfa9
---- /dev/null
-+++ b/fs/fuse/sysctl.c
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+* linux/fs/fuse/fuse_sysctl.c
-+*
-+* Sysctl interface to fuse parameters
-+*/
-+#include <linux/sysctl.h>
-+
-+#include "fuse_i.h"
-+
-+static struct ctl_table_header *fuse_table_header;
-+
-+static struct ctl_table fuse_sysctl_table[] = {
-+	{
-+		.procname	= "default_request_timeout",
-+		.data		= &fuse_default_req_timeout,
-+		.maxlen		= sizeof(fuse_default_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec,
-+	},
-+	{
-+		.procname	= "max_request_timeout",
-+		.data		= &fuse_max_req_timeout,
-+		.maxlen		= sizeof(fuse_max_req_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_douintvec,
-+	},
-+};
-+
-+int fuse_sysctl_register(void)
-+{
-+	fuse_table_header = register_sysctl("fs/fuse", fuse_sysctl_table);
-+	if (!fuse_table_header)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+void fuse_sysctl_unregister(void)
-+{
-+	unregister_sysctl_table(fuse_table_header);
-+	fuse_table_header = NULL;
-+}
+The first case can be done with filehandles - it's a simple
+resolution of fds to filehandles and compare the opaque filehandles.
+That's the short-term solution because it's the easy one to solve.
+
+However, filehandles do not work for the solving the second case.
+
+Hardlinks are basically a mechanism for avoiding data copying within
+the same filesystem.  i.e. hardlink disambiguation is essentially
+the process of detecting which dirents point to the same shared
+data. We can detect a hardlinked inode simply by looking at the
+link count, and we use the inode number to determine that they point
+to the same physical storage.
+
+Applications like tar and rsync are detecting hard links to avoid
+two main issues:
+
+	- moving the same data multiple times
+	- causing destination write amplification by storing the
+	  same data in multiple places
+
+They avoid these by creating a hardlink map of the directory
+structure being processed, and then recreate that hardlink map at
+the destination.  We could use filehandles for that, too, and then
+we wouldn't be relying on {dev,ino} for this, either.
+
+However, any application that is using inode number or filehandle
+comparisons to detect data uniqueness does not work if other
+applications and utilities are using reflink copies rather than
+hardlinks for space efficient data copying.
+
+Let's all keep this in mind here: the default behaviour of `cp` is
+to use file clones on filesystems that support them over physical
+data copies. I have maybe half a dozen hardlinks in most of my local
+XFS filesystems, but I have many tens of thousands of cloned files
+in those same filesystems.
+
+IOWs, any tool that is using {dev,ino} as a proxy for data
+uniqueness is fundamentally deficient on any filesystem that
+supports file cloning. 
+
+Given the potential for badness in replicating filesystems full of
+cloned data, it's far more important and higher priority for such
+utilities to move away from using {dev,ino} to detect data
+uniqueness. Handling cloned data efficiently requires this, and
+that's a far better reason for moving away from {dev,ino} based
+disambiguation than "oh, it doesn't work on btrfs properly".
+
+Detecting "is the data unique" is not that hard - e.g. we could
+add a statx flag to say "this inode has shared data" - and then
+userspace can tag that inode as needing data disambiguation before
+starting to move data.
+
+However, data disambiguation (i.e. finding what inodes share the
+data at which file offset) is a much harder problem. This largely
+requires knowledge of the entire layout of the filesystem, and so
+it's really only a question the filesystem itself can resolve.
+
+We already provide such an interface for XFS with ioctl(GETFSMAP).
+It is driven by the on-disk reverse mapping btrees, and so can
+quickly answer the "what {inode,offset,len} tuples share this
+physical extent" question. The interface is generic, however, so
+asking such a question and determining the answer is .... complex.
+
+That is our long term challenge: replacing the use of {dev,ino} for
+data uniqueness disambiguation. Making the identification of owners
+of non-unique/shared data simple for applications to use and fast
+for filesystems to resolve will be a challenge.
+
+-Dave.
 -- 
-2.43.0
-
+Dave Chinner
+david@fromorbit.com
 
