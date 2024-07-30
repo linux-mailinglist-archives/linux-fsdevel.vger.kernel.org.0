@@ -1,171 +1,592 @@
-Return-Path: <linux-fsdevel+bounces-24593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58386940EBE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 12:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4234D940F04
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 12:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 136712812BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 10:15:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F222A2839F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 10:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F02197A82;
-	Tue, 30 Jul 2024 10:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C511198858;
+	Tue, 30 Jul 2024 10:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZNgOA5m"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NsxVSu12";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uGBOL5ZI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C0A442C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2024 10:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09403197A91;
+	Tue, 30 Jul 2024 10:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722334501; cv=none; b=ERy5cFr9PetYIaOJLMwab7IhC8YhsRi1l2Rsysw+Ao7iEaZqli3CCgyQ+zdGrMjpaTHyQiEmG60vOl11peCkLbe0ahJ7yUgwKCqiWBeiHO106digc8Me30kAbBquye8FIcLeELFN6rR35lXLfb5BVhUwajjmInqfw7KM7XY9TNo=
+	t=1722335158; cv=none; b=QnjqFGeJHa26+/M7TP6PwQ6ij/YJN9IW/xmeQMhKvYMJbr64ANRGc1is9DfEBhxpLD1pq25boyJtH5V1gHA2SDy6/aEvpGkdojaGU2eJUMKVKTCHW4il9N4iZaiCB8qGNNS8lGoFYLFFiXYLVT+0AjhilcENyATcafrL+sAFCYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722334501; c=relaxed/simple;
-	bh=O6MeQjhF0g+dyV0HLnxd8BPRtvAmUQNlwNhCqoMk6OI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P2H73QrdFyo9bI0AaJHXBw0xPsshycta/57+aE1X0HY5OkssD2VTmr1a06HPwG0w7SLXpiM4Fss0pKWt/W3uoAfaRjBkZWXJ/l5aK40pWg/EMrP0gHXchxTnIzkSa+AZhd3a/XwG9O2GaagBounfYKY74MuIPBSooK2+CFav/So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZNgOA5m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA50C32782;
-	Tue, 30 Jul 2024 10:15:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722334500;
-	bh=O6MeQjhF0g+dyV0HLnxd8BPRtvAmUQNlwNhCqoMk6OI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=HZNgOA5masn0en78wUVT/3ltcN2YxbOlJuVQjYi9utWxE+q3hHC1+mQsQ0ilWe1TB
-	 q1ZB4LQuq12WjO/QMxaIrPVkcK3ApjrLgLc6iARHv4AxWuiiaMmjfAf+Ze0ot9BxLq
-	 3qXz2Vx6vajOh+RPwbPIF0xyX67q6Bn/Rf0AiFZs/LD6hoMqTz93QsDDUWaP+4bTEe
-	 /VGKjy9cG+BUCdbXvrtzcqrct4cBMf6xSEKtaihwEx1uTFzj4qqMGg/WmtB8xvRTun
-	 oteTYPbl4jPf5X4dXfi8HSKcXqu57D8te92Q1+JFVxFf5dl0SmhW7EZiQFsbLF+cCn
-	 j8Jg2jJlhH1xg==
-Message-ID: <91b497614ed838a5df1543c925c9bedbe386b77f.camel@kernel.org>
-Subject: Re: [PATCH] filelock: fix name of file_lease slab cache
-From: Jeff Layton <jlayton@kernel.org>
-To: Omar Sandoval <osandov@osandov.com>, Chuck Lever <chuck.lever@oracle.com>
-Cc: Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	kernel-team@fb.com
-Date: Tue, 30 Jul 2024 06:14:59 -0400
-In-Reply-To: <2d1d053da1cafb3e7940c4f25952da4f0af34e38.1722293276.git.osandov@fb.com>
-References: 
-	<2d1d053da1cafb3e7940c4f25952da4f0af34e38.1722293276.git.osandov@fb.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
+	s=arc-20240116; t=1722335158; c=relaxed/simple;
+	bh=lsUauNdqqcjFMUOwmtWcaFnEWgE4LZAVlR9C4pPEIuY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=JXIsqcJfugoJa50AV6c3FlneRb0aCO2Vgkhj0QRC8eHybCmO0UGY0nA0OuDJKbKEcDVaVqJZBdWhzc/vboJ/TpvAH1NZMHT/lDx8K8wYCCtEpPlIr681BmD0iEd6OkPm4ZSdltjFlnYLOZVyA1ZCjItfRapaUVJxUQcC9A4kkAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NsxVSu12; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uGBOL5ZI; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 038C613807C6;
+	Tue, 30 Jul 2024 06:25:54 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Tue, 30 Jul 2024 06:25:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1722335153;
+	 x=1722421553; bh=oT9XhROxtHoG+7NkQnEhnEe3uof2BS2XSiBJG3DkfAE=; b=
+	NsxVSu12TMWQRjBUxUry6bTQNN9Jwc2HCUnD4svtyW5TflgQZVZ0YWdaVb5B2KvS
+	emEyibUQXNr+6OIe9vGeGwFaJQqVJJKmCIP9v6dacLd349LUhXENV9rEmYE3x7VT
+	8t0rU/JSYFJhDkfM50fJGghkQO3Fmw8/NKz1VOpUPUhumtc6BQ6Y0pt2HxpihQWQ
+	EnY/rkEcDiDvr9R34AftwcWmDXmubI1qM79lylfkPBIX369dfO5vXkxec5BkyQX1
+	kNI9+I7k+bR0aXjPG69Mak5VLe0y71+JGAmsQ1Bw6SYfzDzg3KkUN+BXHKnBx4JR
+	XLqq2k9ymWveyrUZiOICrQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722335153; x=
+	1722421553; bh=oT9XhROxtHoG+7NkQnEhnEe3uof2BS2XSiBJG3DkfAE=; b=u
+	GBOL5ZIwiGH+5IaZ6l8zOVjwX+agBc1oY038xqiKO/DilD4qxQfIUag6TgztYCqD
+	4w6xwRmNIa++3IXXcqYgDxdlMWNHt8pUk+/lUxvgO+S51ysXm5B6gqUkYjuL18Qd
+	FzVi7QR9hobkAjlxyJLbt52ScVnqboot92qhOcfWp4MpRJFdk66GFclUpwxP1BKI
+	mtcb6Dgv6P658BjiTlYKQuuuSSAlHzExvlVSPEfOVYjN598LIh3RXKlbxnNu5zmP
+	hWgksP7lFbFRK3zUpkw4Hs/C23tT+clDg3zdtMAsVBgDP8V1h7trhWRqueK5v87J
+	Vgh+o9YZkCRvrlREcXxAQ==
+X-ME-Sender: <xms:sb-oZj_vjQkTW931k5PM_eRFJDxP4E3zzEx-wtIjNjr6E_xXEp2LZg>
+    <xme:sb-oZvuTaw6oJQjE4i-uaVVRUPGFzMPsh2VRMvxYasdzGXKmmSQ9EhMog4Y-Fy5Gj
+    1FRJAj6q-8QMoAPYIE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeggddvkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
+    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:sb-oZhDchddcaEJQnsdR0vSOtYf3unSD5Fb86jehkLHqY68olWy94A>
+    <xmx:sb-oZvd-WAvM0SumV7dBSoQOP01v-SXEtpgyrQzFWcemjdgF2qO9Mw>
+    <xmx:sb-oZoO9t9AQFI_Og0tl6kNseiPRBZelL0yA3K9Cb-tDbNIivcxUHQ>
+    <xmx:sb-oZhn_KcIUPTuO3Sq1zWEMlSNn_Cp_QOXxgNwPLcG1VBX-iXYTTA>
+    <xmx:sb-oZvcSnqDydXqk-dmPQhVMsnJinZb2uRDS6GxqTwU_1tNLm3hlSeNK>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E1642B6008D; Tue, 30 Jul 2024 06:25:52 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Tue, 30 Jul 2024 12:25:31 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: linux-kernel@vger.kernel.org, trivial@kernel.org,
+ linux-fsdevel@vger.kernel.org, "Christoph Hellwig" <hch@infradead.org>,
+ "Hans de Goede" <hdegoede@redhat.com>, "David Howells" <dhowells@redhat.com>
+Message-Id: <fa989a00-4b64-4cbe-9e21-d7fc0aadd9da@app.fastmail.com>
+In-Reply-To: <2024073029-zippy-bats-ca30@gregkh>
+References: <2024073042-observer-overflow-cd04@gregkh>
+ <20240730083158.3583-1-zhangjiao2@cmss.chinamobile.com>
+ <2024073029-zippy-bats-ca30@gregkh>
+Subject: Re: [PATCH v2] char: misc: add missing #ifdef CONFIG_PROC_FS
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-07-29 at 15:48 -0700, Omar Sandoval wrote:
-> From: Omar Sandoval <osandov@fb.com>
->=20
-> When struct file_lease was split out from struct file_lock, the name of
-> the file_lock slab cache was copied to the new slab cache for
-> file_lease. This name conflict causes confusion in /proc/slabinfo and
-> /sys/kernel/slab. In particular, it caused failures in drgn's test case
-> for slab cache merging.
->=20
-> Link: https://github.com/osandov/drgn/blob/9ad29fd86499eb32847473e928b654=
-0872d3d59a/tests/linux_kernel/helpers/test_slab.py#L81
-> Fixes: c69ff4071935 ("filelock: split leases out of struct file_lock")
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
-> ---
->  fs/locks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 9afb16e0683f..e45cad40f8b6 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2984,7 +2984,7 @@ static int __init filelock_init(void)
->  	filelock_cache =3D kmem_cache_create("file_lock_cache",
->  			sizeof(struct file_lock), 0, SLAB_PANIC, NULL);
-> =20
-> -	filelease_cache =3D kmem_cache_create("file_lock_cache",
-> +	filelease_cache =3D kmem_cache_create("file_lease_cache",
->  			sizeof(struct file_lease), 0, SLAB_PANIC, NULL);
-> =20
->  	for_each_possible_cpu(i) {
+On Tue, Jul 30, 2024, at 11:11, Greg KH wrote:
+> On Tue, Jul 30, 2024 at 04:31:58PM +0800, zhangjiao2 wrote:
+>> From: Zhang Jiao <zhangjiao2@cmss.chinamobile.com>
+>> 
+>> Since misc_seq_ops is defined under CONFIG_PROC_FS in this file,
+>> it also need under CONFIG_PROC_FS when use. 
+>> 
+>> >Again, why is a #ifdef ok in this .c file?  What changed to suddenly
+>> >require this?
+>> There is another #ifdef in this file, in there "misc_seq_ops" is defined.
+>> If CONFIG_PROC_FS is not defined, proc_create_seq is using an 
+>> undefined variable "misc_seq_ops", this may cause compile error.
+>> 
+>
+> Why is this in the changelog text?
+>
+> And what changed to suddenly require this proposed patch?  What commit
+> id does it fix?
 
+I suspect this happened with either out-of-tree patches to
+clean up include/linux/proc_fs.h, or from a script that
+misinterprets how the procfs interfaces work.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+To be fair, the way we handle these interfaces makes no sense,
+since proc_create_seq() uses an macro stub that requires the
+'proc_ops' to be in an #ifdef block for CONFIG_PROC_FS=n, but
+proc_create_seq() is an inline function that requires the
+corresponding 'seq_ops' to *not* use an #ifdef.
+
+I actually have a patch to address this by making all
+the stubs use inline functions and remove a lot of the
+#ifdef checks, see below. Adding a few people to Cc
+that last touched those declarations.
+
+    Arnd
+
+ arch/powerpc/kernel/eeh.c                 |  2 -
+ arch/powerpc/platforms/cell/spufs/sched.c |  2 -
+ arch/x86/kernel/apm_32.c                  |  2 -
+ drivers/char/misc.c                       |  2 -
+ drivers/macintosh/via-pmu.c               |  3 --
+ drivers/mtd/mtdcore.c                     |  3 --
+ drivers/net/hamradio/scc.c                |  4 --
+ drivers/net/hamradio/yam.c                |  3 --
+ drivers/net/ppp/pppoe.c                   |  2 -
+ drivers/parisc/sba_iommu.c                |  2 -
+ fs/netfs/main.c                           |  4 ++
+ include/linux/proc_fs.h                   | 63 +++++++++++++++++++++++++------
+ net/ax25/af_ax25.c                        |  3 --
+ net/ipv4/arp.c                            |  2 -
+ net/l2tp/l2tp_ppp.c                       |  3 --
+ net/netrom/af_netrom.c                    |  3 --
+ net/rose/af_rose.c                        |  2 -
+ 17 files changed, 55 insertions(+), 50 deletions(-)
+
+diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+index d03f17987fca..434f0e931bf6 100644
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -1549,7 +1549,6 @@ int eeh_pe_inject_err(struct eeh_pe *pe, int type, int func,
+ }
+ EXPORT_SYMBOL_GPL(eeh_pe_inject_err);
+ 
+-#ifdef CONFIG_PROC_FS
+ static int proc_eeh_show(struct seq_file *m, void *v)
+ {
+ 	if (!eeh_enabled()) {
+@@ -1576,7 +1575,6 @@ static int proc_eeh_show(struct seq_file *m, void *v)
+ 
+ 	return 0;
+ }
+-#endif /* CONFIG_PROC_FS */
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 
+diff --git a/arch/powerpc/platforms/cell/spufs/sched.c b/arch/powerpc/platforms/cell/spufs/sched.c
+index 610ca8570682..13334436529c 100644
+--- a/arch/powerpc/platforms/cell/spufs/sched.c
++++ b/arch/powerpc/platforms/cell/spufs/sched.c
+@@ -1052,7 +1052,6 @@ void spuctx_switch_state(struct spu_context *ctx,
+ 	}
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+ static int show_spu_loadavg(struct seq_file *s, void *private)
+ {
+ 	int a, b, c;
+@@ -1075,7 +1074,6 @@ static int show_spu_loadavg(struct seq_file *s, void *private)
+ 		idr_get_cursor(&task_active_pid_ns(current)->idr) - 1);
+ 	return 0;
+ }
+-#endif
+ 
+ int __init spu_sched_init(void)
+ {
+diff --git a/arch/x86/kernel/apm_32.c b/arch/x86/kernel/apm_32.c
+index b37ab1095707..d6cb01bcfe79 100644
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -1603,7 +1603,6 @@ static int do_open(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+ static int proc_apm_show(struct seq_file *m, void *v)
+ {
+ 	unsigned short	bx;
+@@ -1683,7 +1682,6 @@ static int proc_apm_show(struct seq_file *m, void *v)
+ 		   units);
+ 	return 0;
+ }
+-#endif
+ 
+ static int apm(void *unused)
+ {
+diff --git a/drivers/char/misc.c b/drivers/char/misc.c
+index 541edc26ec89..ded2050eb0f8 100644
+--- a/drivers/char/misc.c
++++ b/drivers/char/misc.c
+@@ -85,7 +85,6 @@ static void misc_minor_free(int minor)
+ 		ida_free(&misc_minors_ida, minor);
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+ static void *misc_seq_start(struct seq_file *seq, loff_t *pos)
+ {
+ 	mutex_lock(&misc_mtx);
+@@ -117,7 +116,6 @@ static const struct seq_operations misc_seq_ops = {
+ 	.stop  = misc_seq_stop,
+ 	.show  = misc_seq_show,
+ };
+-#endif
+ 
+ static int misc_open(struct inode *inode, struct file *file)
+ {
+diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+index 9d5703b60937..96574fce5de6 100644
+--- a/drivers/macintosh/via-pmu.c
++++ b/drivers/macintosh/via-pmu.c
+@@ -203,11 +203,9 @@ static int init_pmu(void);
+ static void pmu_start(void);
+ static irqreturn_t via_pmu_interrupt(int irq, void *arg);
+ static irqreturn_t gpio1_interrupt(int irq, void *arg);
+-#ifdef CONFIG_PROC_FS
+ static int pmu_info_proc_show(struct seq_file *m, void *v);
+ static int pmu_irqstats_proc_show(struct seq_file *m, void *v);
+ static int pmu_battery_proc_show(struct seq_file *m, void *v);
+-#endif
+ static void pmu_pass_intr(unsigned char *data, int len);
+ static const struct proc_ops pmu_options_proc_ops;
+ 
+@@ -847,7 +845,6 @@ query_battery_state(void)
+ 			2, PMU_SMART_BATTERY_STATE, pmu_cur_battery+1);
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+ static int pmu_info_proc_show(struct seq_file *m, void *v)
+ {
+ 	seq_printf(m, "PMU driver version     : %d\n", PMU_DRIVER_VERSION);
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 70df6d8b6017..862938168bc5 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -2468,8 +2468,6 @@ void *mtd_kmalloc_up_to(const struct mtd_info *mtd, size_t *size)
+ }
+ EXPORT_SYMBOL_GPL(mtd_kmalloc_up_to);
+ 
+-#ifdef CONFIG_PROC_FS
+-
+ /*====================================================================*/
+ /* Support for /proc/mtd */
+ 
+@@ -2487,7 +2485,6 @@ static int mtd_proc_show(struct seq_file *m, void *v)
+ 	mutex_unlock(&mtd_table_mutex);
+ 	return 0;
+ }
+-#endif /* CONFIG_PROC_FS */
+ 
+ /*====================================================================*/
+ /* Init code */
+diff --git a/drivers/net/hamradio/scc.c b/drivers/net/hamradio/scc.c
+index a9184a78650b..046cb993058f 100644
+--- a/drivers/net/hamradio/scc.c
++++ b/drivers/net/hamradio/scc.c
+@@ -1972,9 +1972,6 @@ static struct net_device_stats *scc_net_get_stats(struct net_device *dev)
+ /* ******************************************************************** */
+ /* *		dump statistics to /proc/net/z8530drv		      * */
+ /* ******************************************************************** */
+-
+-#ifdef CONFIG_PROC_FS
+-
+ static inline struct scc_channel *scc_net_seq_idx(loff_t pos)
+ {
+ 	int k;
+@@ -2087,7 +2084,6 @@ static const struct seq_operations scc_net_seq_ops = {
+ 	.stop   = scc_net_seq_stop,
+ 	.show   = scc_net_seq_show,
+ };
+-#endif /* CONFIG_PROC_FS */
+ 
+  
+ /* ******************************************************************** */
+diff --git a/drivers/net/hamradio/yam.c b/drivers/net/hamradio/yam.c
+index 2ed2f836f09a..f0b3c02d0f90 100644
+--- a/drivers/net/hamradio/yam.c
++++ b/drivers/net/hamradio/yam.c
+@@ -776,8 +776,6 @@ static irqreturn_t yam_interrupt(int irq, void *dev_id)
+ 	return IRQ_RETVAL(handled);
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+-
+ static void *yam_seq_start(struct seq_file *seq, loff_t *pos)
+ {
+ 	return (*pos < NR_PORTS) ? yam_devs[*pos] : NULL;
+@@ -826,7 +824,6 @@ static const struct seq_operations yam_seqops = {
+ 	.stop = yam_seq_stop,
+ 	.show = yam_seq_show,
+ };
+-#endif
+ 
+ 
+ /* --------------------------------------------------------------------- */
+diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
+index 2ea4f4890d23..0a3822e98f65 100644
+--- a/drivers/net/ppp/pppoe.c
++++ b/drivers/net/ppp/pppoe.c
+@@ -1025,7 +1025,6 @@ static int pppoe_recvmsg(struct socket *sock, struct msghdr *m,
+ 	return error;
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+ static int pppoe_seq_show(struct seq_file *seq, void *v)
+ {
+ 	struct pppox_sock *po;
+@@ -1114,7 +1113,6 @@ static const struct seq_operations pppoe_seq_ops = {
+ 	.stop		= pppoe_seq_stop,
+ 	.show		= pppoe_seq_show,
+ };
+-#endif /* CONFIG_PROC_FS */
+ 
+ static const struct proto_ops pppoe_ops = {
+ 	.family		= AF_PPPOX,
+diff --git a/drivers/parisc/sba_iommu.c b/drivers/parisc/sba_iommu.c
+index fc3863c09f83..594c582a8aca 100644
+--- a/drivers/parisc/sba_iommu.c
++++ b/drivers/parisc/sba_iommu.c
+@@ -1783,7 +1783,6 @@ sba_common_init(struct sba_device *sba_dev)
+ #endif
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+ static int sba_proc_info(struct seq_file *m, void *p)
+ {
+ 	struct sba_device *sba_dev = sba_list;
+@@ -1866,7 +1865,6 @@ sba_proc_bitmap_info(struct seq_file *m, void *p)
+ 
+ 	return 0;
+ }
+-#endif /* CONFIG_PROC_FS */
+ 
+ static const struct parisc_device_id sba_tbl[] __initconst = {
+ 	{ HPHW_IOA, HVERSION_REV_ANY_ID, ASTRO_RUNWAY_PORT, 0xb },
+diff --git a/fs/netfs/main.c b/fs/netfs/main.c
+index 5f0f438e5d21..624f36838279 100644
+--- a/fs/netfs/main.c
++++ b/fs/netfs/main.c
+@@ -124,11 +124,13 @@ static int __init netfs_init(void)
+ 	if (mempool_init_slab_pool(&netfs_subrequest_pool, 100, netfs_subrequest_slab) < 0)
+ 		goto error_subreqpool;
+ 
++#ifdef CONFIG_PROC_FS
+ 	if (!proc_mkdir("fs/netfs", NULL))
+ 		goto error_proc;
+ 	if (!proc_create_seq("fs/netfs/requests", S_IFREG | 0444, NULL,
+ 			     &netfs_requests_seq_ops))
+ 		goto error_procfile;
++#endif
+ #ifdef CONFIG_FSCACHE_STATS
+ 	if (!proc_create_single("fs/netfs/stats", S_IFREG | 0444, NULL,
+ 				netfs_stats_show))
+@@ -141,9 +143,11 @@ static int __init netfs_init(void)
+ 	return 0;
+ 
+ error_fscache:
++#ifdef CONFIG_PROC_FS
+ error_procfile:
+ 	remove_proc_entry("fs/netfs", NULL);
+ error_proc:
++#endif
+ 	mempool_exit(&netfs_subrequest_pool);
+ error_subreqpool:
+ 	kmem_cache_destroy(netfs_subrequest_slab);
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 0b2a89854440..6df409eb485d 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -73,10 +73,10 @@ static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
+ 	return sb->s_fs_info;
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+-
+ typedef int (*proc_write_t)(struct file *, char *, size_t);
+ 
++#ifdef CONFIG_PROC_FS
++
+ extern void proc_root_init(void);
+ extern void proc_flush_pid(struct pid *);
+ 
+@@ -186,11 +186,25 @@ static inline struct proc_dir_entry *proc_mkdir_data(const char *name,
+ 	umode_t mode, struct proc_dir_entry *parent, void *data) { return NULL; }
+ static inline struct proc_dir_entry *proc_mkdir_mode(const char *name,
+ 	umode_t mode, struct proc_dir_entry *parent) { return NULL; }
+-#define proc_create_seq_private(name, mode, parent, ops, size, data) ({NULL;})
+-#define proc_create_seq_data(name, mode, parent, ops, data) ({NULL;})
+-#define proc_create_seq(name, mode, parent, ops) ({NULL;})
+-#define proc_create_single(name, mode, parent, show) ({NULL;})
+-#define proc_create_single_data(name, mode, parent, show, data) ({NULL;})
++static inline struct proc_dir_entry *proc_create_seq_private(const char *name,
++		umode_t mode, struct proc_dir_entry *parent,
++		const struct seq_operations *ops,
++		unsigned int state_size, void *data)
++{
++	return NULL;
++}
++#define proc_create_seq_data(name, mode, parent, ops, data) \
++	proc_create_seq_private(name, mode, parent, ops, 0, data)
++#define proc_create_seq(name, mode, parent, ops) \
++	proc_create_seq_private(name, mode, parent, ops, 0, NULL)
++static inline struct proc_dir_entry *proc_create_single_data(const char *name,
++		umode_t mode, struct proc_dir_entry *parent,
++		int (*show)(struct seq_file *, void *), void *data)
++{
++	return NULL;
++}
++#define proc_create_single(name, mode, parent, show) \
++	proc_create_single_data(name, mode, parent, show, NULL)
+ 
+ static inline struct proc_dir_entry *
+ proc_create(const char *name, umode_t mode, struct proc_dir_entry *parent,
+@@ -211,11 +225,36 @@ static inline void proc_remove(struct proc_dir_entry *de) {}
+ #define remove_proc_entry(name, parent) do {} while (0)
+ static inline int remove_proc_subtree(const char *name, struct proc_dir_entry *parent) { return 0; }
+ 
+-#define proc_create_net_data(name, mode, parent, ops, state_size, data) ({NULL;})
+-#define proc_create_net_data_write(name, mode, parent, ops, write, state_size, data) ({NULL;})
+-#define proc_create_net(name, mode, parent, state_size, ops) ({NULL;})
+-#define proc_create_net_single(name, mode, parent, show, data) ({NULL;})
+-#define proc_create_net_single_write(name, mode, parent, show, write, data) ({NULL;})
++static inline struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
++		struct proc_dir_entry *parent, const struct seq_operations *ops,
++		unsigned int state_size, void *data)
++{
++	return NULL;
++}
++#define proc_create_net(name, mode, parent, ops, state_size) \
++	proc_create_net_data(name, mode, parent, ops, state_size, NULL)
++static inline struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
++		struct proc_dir_entry *parent,
++		int (*show)(struct seq_file *, void *), void *data)
++{
++	return NULL;
++}
++static inline struct proc_dir_entry *proc_create_net_data_write(const char *name, umode_t mode,
++						  struct proc_dir_entry *parent,
++						  const struct seq_operations *ops,
++						  proc_write_t write,
++						  unsigned int state_size, void *data)
++{
++	return NULL;
++}
++static inline struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mode,
++						    struct proc_dir_entry *parent,
++						    int (*show)(struct seq_file *, void *),
++						    proc_write_t write,
++						    void *data)
++{
++	return NULL;
++}
+ 
+ static inline struct pid *tgid_pidfd_to_pid(const struct file *file)
+ {
+diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
+index d6f9fae06a9d..162e4e6e526e 100644
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -1926,8 +1926,6 @@ static int ax25_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 	return res;
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+-
+ static void *ax25_info_start(struct seq_file *seq, loff_t *pos)
+ 	__acquires(ax25_list_lock)
+ {
+@@ -2001,7 +1999,6 @@ static const struct seq_operations ax25_info_seqops = {
+ 	.stop = ax25_info_stop,
+ 	.show = ax25_info_show,
+ };
+-#endif
+ 
+ static const struct net_proto_family ax25_family_ops = {
+ 	.family =	PF_AX25,
+diff --git a/net/ipv4/arp.c b/net/ipv4/arp.c
+index 11c1519b3699..95745d724e5a 100644
+--- a/net/ipv4/arp.c
++++ b/net/ipv4/arp.c
+@@ -1372,7 +1372,6 @@ static struct packet_type arp_packet_type __read_mostly = {
+ 	.func =	arp_rcv,
+ };
+ 
+-#ifdef CONFIG_PROC_FS
+ #if IS_ENABLED(CONFIG_AX25)
+ 
+ /*
+@@ -1486,7 +1485,6 @@ static const struct seq_operations arp_seq_ops = {
+ 	.stop	= neigh_seq_stop,
+ 	.show	= arp_seq_show,
+ };
+-#endif /* CONFIG_PROC_FS */
+ 
+ static int __net_init arp_net_init(struct net *net)
+ {
+diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
+index 3596290047b2..e48f3bee3ff6 100644
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -1408,8 +1408,6 @@ static int pppol2tp_getsockopt(struct socket *sock, int level, int optname,
+ 
+ static unsigned int pppol2tp_net_id;
+ 
+-#ifdef CONFIG_PROC_FS
+-
+ struct pppol2tp_seq_data {
+ 	struct seq_net_private p;
+ 	int tunnel_idx;			/* current tunnel */
+@@ -1611,7 +1609,6 @@ static const struct seq_operations pppol2tp_seq_ops = {
+ 	.stop		= pppol2tp_seq_stop,
+ 	.show		= pppol2tp_seq_show,
+ };
+-#endif /* CONFIG_PROC_FS */
+ 
+ /*****************************************************************************
+  * Network namespace
+diff --git a/net/netrom/af_netrom.c b/net/netrom/af_netrom.c
+index 6ee148f0e6d0..946fe0169945 100644
+--- a/net/netrom/af_netrom.c
++++ b/net/netrom/af_netrom.c
+@@ -1260,8 +1260,6 @@ static int nr_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+-
+ static void *nr_info_start(struct seq_file *seq, loff_t *pos)
+ 	__acquires(&nr_list_lock)
+ {
+@@ -1342,7 +1340,6 @@ static const struct seq_operations nr_info_seqops = {
+ 	.stop = nr_info_stop,
+ 	.show = nr_info_show,
+ };
+-#endif	/* CONFIG_PROC_FS */
+ 
+ static const struct net_proto_family nr_family_ops = {
+ 	.family		=	PF_NETROM,
+diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
+index 59050caab65c..0c18b593966b 100644
+--- a/net/rose/af_rose.c
++++ b/net/rose/af_rose.c
+@@ -1421,7 +1421,6 @@ static int rose_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+ static void *rose_info_start(struct seq_file *seq, loff_t *pos)
+ 	__acquires(rose_list_lock)
+ {
+@@ -1500,7 +1499,6 @@ static const struct seq_operations rose_info_seqops = {
+ 	.stop = rose_info_stop,
+ 	.show = rose_info_show,
+ };
+-#endif	/* CONFIG_PROC_FS */
+ 
+ static const struct net_proto_family rose_family_ops = {
+ 	.family		=	PF_ROSE,
 
