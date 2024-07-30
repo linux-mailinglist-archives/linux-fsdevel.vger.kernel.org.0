@@ -1,146 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-24589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87A6940CAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 11:00:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2AF940CAA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 10:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83CF128413A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 09:00:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27739B293EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 08:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A57D1946A5;
-	Tue, 30 Jul 2024 08:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747771946D2;
+	Tue, 30 Jul 2024 08:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="iSeaF96X";
-	dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="g50jNaPt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKlcqIXN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95312192B9B;
-	Tue, 30 Jul 2024 08:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722329982; cv=pass; b=AT1/XxjWqaEJNw82rFi60bLY+Nc6+n6HZQrZWdVeR0JZxONr9vWneVRxucTs3OH6NvmqSAEm7iVhu0cjsa1g1Zzd6qAev//WPMbCMYjh5HJTuAGQ6PN81Mq7PTPSp+mKPISSN40F0D9IfroGIEGDJvgPcE6U8qbLm3hS7iTIPMo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722329982; c=relaxed/simple;
-	bh=YfTqhFDqJYp+JLjwF5uh/+vKK88aVkgIiewk3DPjjgM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DTOJnNgteQIv7CYOd9TeNdeGejC6nO0gCkypygHnVFdiRM/gd4F3SSrQ65sCv5TtBcC4iBzke99wl+2pWGhLF4vbN5fZB2CSE/CBQPnVBm2rNRG0/bURg02eqx7QPNaeTC+pS7FVWctLaiJiV9rg5y/tFRaxWap2LKnc91okzFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de; spf=none smtp.mailfrom=aepfle.de; dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=iSeaF96X; dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=g50jNaPt; arc=pass smtp.client-ip=85.215.255.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aepfle.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=aepfle.de
-ARC-Seal: i=1; a=rsa-sha256; t=1722329965; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=qOSf1FKAbz8XYjxwFlimLpfQUPpNF+IRljKJUVPqrtRTAkDZJ/5fuGIbym1/NuPZtA
-    lX+XBjqT5Fsr9xOdjdHQHqvBaj9rlnupp1xcTIkfVuTNnZt4jlYCMq837mbEPkv3gFF8
-    272YtmeJNGsFxnFKJNnQntW6ImeuXaTMgK7WtgMpwAk41rJt2PiX9+A4vDn/Jnj075l0
-    tx2U7dm90xFKrwQJ7WfBGGykuf8m5Z+kgZFt/ameVLEJ0rn3Q7LQZqUqBl3lUJkp2glH
-    O8vdtnCCBpDhw/bj6v0dxljYyitlInd6L9c/7hEgX+ep7PaVlU3ORRKrvE/OpoWy8Nu4
-    Dy/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1722329965;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=zh/9T9nyWLdcZOIjv+Rhg6f0fftFaK7VZ4t/7b8wz7s=;
-    b=WiIYunI+4LRCXQSCSr86u9QX+cZOnoqANwjpytOzaIFP7/2mvnYDKlZTSHDsjdJiLT
-    tEtwTVvNdoVZ1uceP6a3m8sjId2dy9b0+0j7sfT7W4yVErW2R8Ew0AqR20KO44LRIxBn
-    oMW+VAtTrNc7+2eedWNOc6c1h87YA6CjIpbSlOH+eeziomgz48YBienR7VZy2orqMEnk
-    FfIBblMMn7NQpUoudiu8poFs6T0h+OpbGuMCPSXsliLErtg6JGUU0Rbo/Zlpac8nn7WI
-    phG4+n/O4sKaJ4S5IznUxHOdcbmjXWOb8oOmk3Lmhe2ndwZJbBbCdUzCkkALaqdfrUci
-    XYSw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1722329965;
-    s=strato-dkim-0002; d=aepfle.de;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=zh/9T9nyWLdcZOIjv+Rhg6f0fftFaK7VZ4t/7b8wz7s=;
-    b=iSeaF96XRvrXC7a4waUjKXeA1LaVSz+fDJVSCLTMvRzbFniqYOKA6rMcs7qjXKJvI9
-    nKIeGz7wr4g+tdlvxEZWCElgw3LhjE0GFC3JDkQEX1fSFgiGyEyS+NmUTT2qbTjk/CYV
-    6NH5gOZU9PBtXVCV1/99kbbPgVb9gjZ45XXAi3y/q1lmweOqVOAvJzlubRlgKzRW2Ran
-    SZz4MaRX6lPKzo7o8sOrJZ2tN2oWxbmRWvM6gCFvuN21BSJcdVF2+JaO0OqQM/HaDftc
-    MX5Gg512xsqd85aNe45RYJxBIW34/BRWj3W5oHZMWelnp6hrWtk5FUSBntBAbK93FCXW
-    5n6A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1722329965;
-    s=strato-dkim-0003; d=aepfle.de;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=zh/9T9nyWLdcZOIjv+Rhg6f0fftFaK7VZ4t/7b8wz7s=;
-    b=g50jNaPtfSJntt3v075sHv+IONjlFfoLW/qhuarjwlTirlizsu+9Ld1CQ2Dtr4dNNh
-    E+00rTw3szQsJbX5JTBw==
-X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAg4w9Fn7GsstJkkzL2wSKUGj13GSl42eC/3RYuHJGQ=="
-Received: from sender
-    by smtp.strato.de (RZmta 51.1.0 AUTH)
-    with ESMTPSA id Da26f206U8xPNQO
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Tue, 30 Jul 2024 10:59:25 +0200 (CEST)
-From: Olaf Hering <olaf@aepfle.de>
-To: Deepa Dinamani <deepa.kernel@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH v1] mount: handle OOM on mnt_warn_timestamp_expiry
-Date: Tue, 30 Jul 2024 10:58:13 +0200
-Message-ID: <20240730085856.32385-1-olaf@aepfle.de>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C936E1946AF;
+	Tue, 30 Jul 2024 08:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722329951; cv=none; b=VPRSjFsuBZWhu20KPGp+eH9UQM0zshwifaYsceHvtFxMkgGiChe0ZxoxwUDDRxrOksVqzgJa9NbJoiuGwIdwECR+lYGbFyEB5z52YYeSyO+dPPFf/Iya6P3c2skdNvN7W38HrdJpQyMzQWHVwfriR6+PXStylYSnKfhJiMM6Z3U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722329951; c=relaxed/simple;
+	bh=j20RqtXFvbXCUyQ8BFQH4YqmQwCiyncX0UNNT58JPcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WesKNa4DNqGadyRH+Yjfgt6BZSdh9ix+wyVfAjTVdAO/iS4rRUMi4WJoxq4Bru1ALn8akm+1eQ/kqikJOprD+hy6BwN9ZjG6wxB1ebmIrKplJpkzF+pFLH/COra/r4XGoYtVXyF6aAu0ygFk7T+fbW3rhs8Hos8ZGbpxbOeoLTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKlcqIXN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A70BCC4AF09;
+	Tue, 30 Jul 2024 08:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722329951;
+	bh=j20RqtXFvbXCUyQ8BFQH4YqmQwCiyncX0UNNT58JPcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XKlcqIXN2gNz/HMazGbiYngqP+Dcqs5f1WV9qb8BxQ0REdTBV1DLgoMe5Lb6Yujqh
+	 JO3v3TDUpm+8lA7jCstdPje6B5/shSi654YRc8Q1EkWrHjZfkjNZE71+QcETEOLEHP
+	 b6jbyZGkoSw9WoSkbiEZEy7e/hNEmm3xuVXQeH7f07AUufjBF6XZzqg/I7y0JTjJR4
+	 2WXdABwRFJcYyRz1bLfopszXmFxDsyDLbl9r3uvTNcwTKCdZy5+lHMskJ4E7BtudHi
+	 Bgs7u8Lc730Zht9AI/iiLP/TZsYeCQpj/z5bd9u1fdP0cfbsrSGYo4OJP/f5u6tK6y
+	 vDv/yPSO3xjRQ==
+Date: Tue, 30 Jul 2024 10:59:04 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
+ bpf_get_dentry_xattr
+Message-ID: <20240730-unwahr-tannenwald-ee6157a063a4@brauner>
+References: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
+ <2FE83412-65A5-451B-8722-E0B8035BFD30@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2FE83412-65A5-451B-8722-E0B8035BFD30@fb.com>
 
-If no page could be allocated, an error pointer was used as format
-string in pr_warn.
+On Tue, Jul 30, 2024 at 05:58:31AM GMT, Song Liu wrote:
+> Hi Christian, 
+> 
+> Thanks a lot for your detailed explanation! We will revisit the design 
+> based on these comments and suggestions. 
+> 
+> One more question about a potential new kfunc bpf_get_inode_xattr(): 
+> Should it take dentry as input? IOW, should it look like:
+> 
+> __bpf_kfunc int bpf_get_inode_xattr(struct dentry *dentry, const char *name__str,
+>                                     struct bpf_dynptr *value_p)
+> {
+>         struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
+>         u32 value_len;
+>         void *value;
+>         int ret;
+> 
+>         if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+>                 return -EPERM;
+> 
+>         value_len = __bpf_dynptr_size(value_ptr);
+>         value = __bpf_dynptr_data_rw(value_ptr, value_len);
+>         if (!value)
+>                 return -EINVAL;
+> 
+>         ret = inode_permission(&nop_mnt_idmap, inode, MAY_READ);
+>         if (ret)
+>                 return ret;
+>         return __vfs_getxattr(dentry, inode, name__str, value, value_len);
+> }
+> 
+> 
+> I am asking because many security_inode_* hooks actually taking dentry as 
+> argument. So it makes sense to use dentry for kfuncs. Maybe we should
 
-Rearrange the code to return early in case of OOM. Also add a check
-for the return value of d_path. The API of that function is not
-documented. It currently returns only ERR_PTR values, but may return
-also NULL in the future. Use PTR_ERR_OR_ZERO to cover both cases.
+Some filesystems (i) require access to the @dentry in their xattr
+handlers (e.g. 9p) and (ii) ->get() and ->set() xattr handlers can be
+called when @inode hasn't been attached to @dentry yet.
 
-Fixes: f8b92ba67c5d ("mount: Add mount warning for impending timestamp expiry")
+So if you allowed to call bpf_get_*_xattr() from
+security_d_instantiate() to somehow retrieve xattrs from there, then you
+need to pass @dentry and @inode separately and you cannot use
+@dentry->d_inode because it would still be NULL.
 
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
----
- fs/namespace.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+However, I doubt you'd call bpf_get_*_xattr() from
+security_d_instantiate() so imo just pass the dentry and add a check
+like:
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 328087a4df8a..539d4f203a20 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2922,7 +2922,14 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
- 	   (!(sb->s_iflags & SB_I_TS_EXPIRY_WARNED)) &&
- 	   (ktime_get_real_seconds() + TIME_UPTIME_SEC_MAX > sb->s_time_max)) {
- 		char *buf = (char *)__get_free_page(GFP_KERNEL);
--		char *mntpath = buf ? d_path(mountpoint, buf, PAGE_SIZE) : ERR_PTR(-ENOMEM);
-+		char *mntpath;
-+		
-+		if (!buf)
-+			return;
-+
-+		mntpath = d_path(mountpoint, buf, PAGE_SIZE);
-+		if (PTR_ERR_OR_ZERO(mntpath))
-+			goto err;
- 
- 		pr_warn("%s filesystem being %s at %s supports timestamps until %ptTd (0x%llx)\n",
- 			sb->s_type->name,
-@@ -2930,8 +2937,9 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
- 			mntpath, &sb->s_time_max,
- 			(unsigned long long)sb->s_time_max);
- 
--		free_page((unsigned long)buf);
- 		sb->s_iflags |= SB_I_TS_EXPIRY_WARNED;
-+err:
-+		free_page((unsigned long)buf);
- 	}
- }
- 
+struct inode *inode = d_inode(dentry);
+if (WARN_ON(!inode))
+	return -EINVAL;
+
+in there.
 
