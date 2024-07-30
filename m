@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-24577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9B89408CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 08:45:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805FA9408D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 08:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C0D284FBC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 06:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A8841F242C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 06:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07429190074;
-	Tue, 30 Jul 2024 06:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBADA18FC89;
+	Tue, 30 Jul 2024 06:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XU5gA41f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otPDGIS+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4630818E741;
-	Tue, 30 Jul 2024 06:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED832190467;
+	Tue, 30 Jul 2024 06:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722321892; cv=none; b=MXKvlZeeJma8SVQjQgPJWjYbrpPaZ4v6MvBhrTxQou0I+3KdJ1ib8Q+cerQ9toIDxddc+IZh1vozsJCdVZZQVq65t7qbItZ3Va7Z5/Nw55r2QIhB/nGRHhrYreFokfsVhyv1LOo4U5WbLoGrlL/fbx1fQRXykYdng+Fm/qm/h9g=
+	t=1722321908; cv=none; b=bse2Q0PKf1SQ7Dcz+NvQmlejy85zq720Spg2PiQytegKrSPV825KX0hlHPdOT5f2MzAJd2tygXzlWK0hGwGWX4zmN8n96i7e85WAkcDfcY/rdyxZK21uPzKDMc5tZjLnp0rvY3ex0xpFtd2taHbXMaB5FfXZ8nQy53H/w4kzS3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722321892; c=relaxed/simple;
-	bh=DVj1dF/3LIG4QvumgddsFqj1lx0SQkF4MqPzNl7vGkQ=;
+	s=arc-20240116; t=1722321908; c=relaxed/simple;
+	bh=W5tYBso4UoPS/fKSVOluC4Ch4cJZaP/H2xHcE2b1FHU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NLBxRjRRSIabzDQiJmMVTg2NAiv0bF7pCb+bX6SQyYFW1bk6YTPUNBxuTtupCJeDelHkPz/0fNjwOpMUsqKsNoBmUcbVrwlbc36ny7p1WzHsGb2GoNtjLKtxXnCkt4jaTvIjBU2/83OHev3KjaMTa0IkRG0txp0NfvUXWJZo5kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XU5gA41f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03182C32782;
-	Tue, 30 Jul 2024 06:44:35 +0000 (UTC)
+	 MIME-Version; b=sOMPA+O+1vwfracG62r5W9DXfbU1r7fxZ13o9EwneulrRBV8FiUBWJ5eWB5mvJOXzXaYdn5AujP61bebIrM0nrsTk17550M4+JuG+/kxehsGr8KQlRnIcjQ7iljPZyKs+86au/nQYl0eL3/oNDuzzH3tgQkCS8PsRgcvteROSH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otPDGIS+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59076C4AF0E;
+	Tue, 30 Jul 2024 06:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722321891;
-	bh=DVj1dF/3LIG4QvumgddsFqj1lx0SQkF4MqPzNl7vGkQ=;
+	s=k20201202; t=1722321907;
+	bh=W5tYBso4UoPS/fKSVOluC4Ch4cJZaP/H2xHcE2b1FHU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XU5gA41fGeeGuG84jrc0u9UbdT/1OsrKiK6gQ3j2Dsfzspr/VFoGGY+9jRktUTxPK
-	 eCGcueThv1EkrEWTBCdEOfYYfg98cNkh9aL9IF5PQmYQLJsXHenG6BTEDfpnx4HRTt
-	 TG8HbzuCVQ0Yi4yCrfqsrt0bVyQPCbBoH3u3b1xRrZCKzGXrJd+WVkan/f/ggLnn2L
-	 OAxW9p4eTi5ixJZtACGTpHef4YO3O2bTkOma9P1V+YtTDRQRofXG8ycaO2YYLPUoLA
-	 G8KSSn7XyBfjWFhT9lu+2dLE6tceUhkIIcFz3EtYj5naYaEqlGB/vOaIaJXYdxgv9q
-	 dGnAH3je2sPvA==
+	b=otPDGIS+BP+zJU1WerV1XStPgq7KbeiiHRdcUEyZGtj4yf/zK6A7xDzbi5ECaayAt
+	 YVSoB/3bQTSLE8x8/QN40AJ0s2PdSq3df6HoYbaIj4z13Vl5vZw9N5ye4PEjdht//7
+	 bqv0egHAAAYkaLavBipdxSHoduTULRxYgtDM4b4mjLw9jYnjamZKyZ8Y6tyDakNpzC
+	 Y0Ij1GnGY4gY870o0InOzrbMFIggAcxm9mvmF741jpwmx9ZohF6o5cMeki7Psq4dLD
+	 /4dfI13pYO7FfkQIWJrOHrtaZ1MHS6fgo+N7tVvA1Q6NzphZJuPFR1n3WFSvbuCYFD
+	 UKCxIcO9HG0sA==
 From: alexs@kernel.org
 To: Will Deacon <will@kernel.org>,
 	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
@@ -110,22 +110,18 @@ Cc: Guo Ren <guoren@kernel.org>,
 	nvdimm@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	sparclinux@vger.kernel.org,
-	Dawei Li <dawei.li@shingroup.cn>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Jan Kara <jack@suse.cz>,
 	Dan Williams <dan.j.williams@intel.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Chris Zankel <chris@zankel.net>,
 	"David S . Miller" <davem@davemloft.net>,
 	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Subject: [RFC PATCH 09/18] mm/pgtable: fully use ptdesc in pte_alloc_one series functions
-Date: Tue, 30 Jul 2024 14:47:03 +0800
-Message-ID: <20240730064712.3714387-10-alexs@kernel.org>
+	Dawei Li <dawei.li@shingroup.cn>
+Subject: [RFC PATCH 10/18] mm/pgtable: pass ptdesc to pte_free()
+Date: Tue, 30 Jul 2024 14:47:04 +0800
+Message-ID: <20240730064712.3714387-11-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240730064712.3714387-1-alexs@kernel.org>
 References: <20240730064712.3714387-1-alexs@kernel.org>
@@ -139,8 +135,7 @@ Content-Transfer-Encoding: 8bit
 
 From: Alex Shi <alexs@kernel.org>
 
-Replace pgtable_t and struct page by ptdesc in pte_alloc_one series
-functions.
+Now we could remove couple of page<->ptdesc converters now.
 
 Signed-off-by: Alex Shi <alexs@kernel.org>
 Cc: linux-mm@kvack.org
@@ -149,9 +144,10 @@ Cc: nvdimm@lists.linux.dev
 Cc: linux-fsdevel@vger.kernel.org
 Cc: sparclinux@vger.kernel.org
 Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-m68k@lists.linux-m68k.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
-Cc: Dawei Li <dawei.li@shingroup.cn>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Vishal Moola  <vishal.moola@gmail.com>
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Christian Brauner <brauner@kernel.org>
@@ -159,337 +155,278 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: Jan Kara <jack@suse.cz>
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: David S. Miller <davem@davemloft.net>
 Cc: Naveen N. Rao <naveen.n.rao@linux.ibm.com>
 Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
 Cc: Nicholas Piggin <npiggin@gmail.com>
 Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Russell King <linux@armlinux.org.uk>
-Cc: Breno Leitao <leitao@debian.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Mike Rapoport  <rppt@kernel.org>
+Cc: Dawei Li <dawei.li@shingroup.cn>
 Cc: Hugh Dickins <hughd@google.com>
 ---
- arch/arm/include/asm/pgalloc.h      |  9 ++++-----
- arch/powerpc/include/asm/pgalloc.h  |  4 ++--
- arch/s390/include/asm/pgalloc.h     |  2 +-
- arch/sparc/include/asm/pgalloc_32.h |  2 +-
- arch/sparc/include/asm/pgalloc_64.h |  2 +-
- arch/sparc/mm/init_64.c             |  2 +-
- arch/sparc/mm/srmmu.c               |  4 ++--
- arch/x86/include/asm/pgalloc.h      |  2 +-
- arch/x86/mm/pgtable.c               |  2 +-
- arch/xtensa/include/asm/pgalloc.h   | 12 ++++++------
- fs/dax.c                            |  2 +-
- include/asm-generic/pgalloc.h       |  6 +++---
- mm/huge_memory.c                    |  8 ++++----
- mm/memory.c                         |  8 ++++----
- 14 files changed, 32 insertions(+), 33 deletions(-)
+ arch/arm/mm/pgd.c                            |  2 +-
+ arch/m68k/include/asm/motorola_pgalloc.h     |  4 ++--
+ arch/powerpc/include/asm/book3s/64/pgalloc.h |  2 +-
+ arch/powerpc/include/asm/pgalloc.h           |  2 +-
+ arch/sparc/include/asm/pgalloc_32.h          |  2 +-
+ arch/sparc/mm/srmmu.c                        |  2 +-
+ fs/dax.c                                     |  2 +-
+ include/asm-generic/pgalloc.h                |  4 +---
+ mm/debug_vm_pgtable.c                        |  2 +-
+ mm/huge_memory.c                             | 20 ++++++++++----------
+ mm/memory.c                                  |  4 ++--
+ mm/pgtable-generic.c                         |  2 +-
+ 12 files changed, 23 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm/include/asm/pgalloc.h b/arch/arm/include/asm/pgalloc.h
-index a17f01235c29..e8501a6c3336 100644
---- a/arch/arm/include/asm/pgalloc.h
-+++ b/arch/arm/include/asm/pgalloc.h
-@@ -91,16 +91,15 @@ pte_alloc_one_kernel(struct mm_struct *mm)
- #define PGTABLE_HIGHMEM 0
- #endif
+diff --git a/arch/arm/mm/pgd.c b/arch/arm/mm/pgd.c
+index f8e9bc58a84f..c384b734d752 100644
+--- a/arch/arm/mm/pgd.c
++++ b/arch/arm/mm/pgd.c
+@@ -168,7 +168,7 @@ void pgd_free(struct mm_struct *mm, pgd_t *pgd_base)
  
--static inline pgtable_t
--pte_alloc_one(struct mm_struct *mm)
-+static inline struct ptdesc *pte_alloc_one(struct mm_struct *mm)
- {
--	struct page *pte;
-+	struct ptdesc *pte;
- 
- 	pte = __pte_alloc_one(mm, GFP_PGTABLE_USER | PGTABLE_HIGHMEM);
- 	if (!pte)
- 		return NULL;
--	if (!PageHighMem(pte))
--		clean_pte_table(page_address(pte));
-+	if (!PageHighMem(ptdesc_page(pte)))
-+		clean_pte_table(ptdesc_address(pte));
- 	return pte;
+ 	pte = pmd_pgtable(*pmd);
+ 	pmd_clear(pmd);
+-	pte_free(mm, pte);
++	pte_free(mm, page_ptdesc(pte));
+ 	mm_dec_nr_ptes(mm);
+ no_pmd:
+ 	pud_clear(pud);
+diff --git a/arch/m68k/include/asm/motorola_pgalloc.h b/arch/m68k/include/asm/motorola_pgalloc.h
+index 74a817d9387f..f6bb375971dc 100644
+--- a/arch/m68k/include/asm/motorola_pgalloc.h
++++ b/arch/m68k/include/asm/motorola_pgalloc.h
+@@ -39,9 +39,9 @@ static inline pgtable_t pte_alloc_one(struct mm_struct *mm)
+ 	return get_pointer_table(TABLE_PTE);
  }
  
+-static inline void pte_free(struct mm_struct *mm, pgtable_t pgtable)
++static inline void pte_free(struct mm_struct *mm, struct ptdesc *ptdesc)
+ {
+-	free_pointer_table(pgtable, TABLE_PTE);
++	free_pointer_table(ptdesc_page(ptdesc), TABLE_PTE);
+ }
+ 
+ static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pgtable,
+diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+index dd2cff53a111..eb7d2ca59f62 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+@@ -162,7 +162,7 @@ static inline void pmd_populate_kernel(struct mm_struct *mm, pmd_t *pmd,
+ }
+ 
+ static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmd,
+-				pgtable_t pte_page)
++				struct ptdesc *pte_page)
+ {
+ 	*pmd = __pmd(__pgtable_ptr_val(pte_page) | PMD_VAL_BITS);
+ }
 diff --git a/arch/powerpc/include/asm/pgalloc.h b/arch/powerpc/include/asm/pgalloc.h
-index 3a971e2a8c73..37512f344b37 100644
+index 37512f344b37..12520521163e 100644
 --- a/arch/powerpc/include/asm/pgalloc.h
 +++ b/arch/powerpc/include/asm/pgalloc.h
-@@ -27,9 +27,9 @@ static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
- 	return (pte_t *)pte_fragment_alloc(mm, 1);
+@@ -40,7 +40,7 @@ static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+ 	pte_fragment_free((unsigned long *)pte, 1);
  }
  
--static inline pgtable_t pte_alloc_one(struct mm_struct *mm)
-+static inline struct ptdesc *pte_alloc_one(struct mm_struct *mm)
+-static inline void pte_free(struct mm_struct *mm, pgtable_t ptepage)
++static inline void pte_free(struct mm_struct *mm, struct ptdesc *ptepage)
  {
--	return (pgtable_t)pte_fragment_alloc(mm, 0);
-+	return (struct ptdesc *)pte_fragment_alloc(mm, 0);
+ 	pte_fragment_free((unsigned long *)ptepage, 0);
  }
- 
- void pte_frag_destroy(void *pte_frag);
-diff --git a/arch/s390/include/asm/pgalloc.h b/arch/s390/include/asm/pgalloc.h
-index 7b84ef6dc4b6..771494526f6e 100644
---- a/arch/s390/include/asm/pgalloc.h
-+++ b/arch/s390/include/asm/pgalloc.h
-@@ -137,7 +137,7 @@ static inline void pmd_populate(struct mm_struct *mm,
-  * page table entry allocation/free routines.
-  */
- #define pte_alloc_one_kernel(mm) ((pte_t *)page_table_alloc(mm))
--#define pte_alloc_one(mm) ((pte_t *)page_table_alloc(mm))
-+#define pte_alloc_one(mm) ((struct ptdesc *)page_table_alloc(mm))
- 
- #define pte_free_kernel(mm, pte) page_table_free(mm, (unsigned long *) pte)
- #define pte_free(mm, pte) page_table_free(mm, (unsigned long *) pte)
 diff --git a/arch/sparc/include/asm/pgalloc_32.h b/arch/sparc/include/asm/pgalloc_32.h
-index 4f73e87b22a3..bc3ef54d9564 100644
+index bc3ef54d9564..addaade56f21 100644
 --- a/arch/sparc/include/asm/pgalloc_32.h
 +++ b/arch/sparc/include/asm/pgalloc_32.h
-@@ -55,7 +55,7 @@ static inline void free_pmd_fast(pmd_t * pmd)
- void pmd_set(pmd_t *pmdp, pte_t *ptep);
- #define pmd_populate_kernel		pmd_populate
+@@ -71,7 +71,7 @@ static inline void free_pte_fast(pte_t *pte)
  
--pgtable_t pte_alloc_one(struct mm_struct *mm);
-+struct ptdesc *pte_alloc_one(struct mm_struct *mm);
+ #define pte_free_kernel(mm, pte)	free_pte_fast(pte)
  
- static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
- {
-diff --git a/arch/sparc/include/asm/pgalloc_64.h b/arch/sparc/include/asm/pgalloc_64.h
-index caa7632be4c2..285aa7958912 100644
---- a/arch/sparc/include/asm/pgalloc_64.h
-+++ b/arch/sparc/include/asm/pgalloc_64.h
-@@ -61,7 +61,7 @@ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
- }
+-void pte_free(struct mm_struct * mm, pgtable_t pte);
++void pte_free(struct mm_struct *mm, struct ptdesc *pte);
+ #define __pte_free_tlb(tlb, pte, addr)	pte_free((tlb)->mm, pte)
  
- pte_t *pte_alloc_one_kernel(struct mm_struct *mm);
--pgtable_t pte_alloc_one(struct mm_struct *mm);
-+struct ptdesc *pte_alloc_one(struct mm_struct *mm);
- void pte_free_kernel(struct mm_struct *mm, pte_t *pte);
- void pte_free(struct mm_struct *mm, pgtable_t ptepage);
- 
-diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
-index 53d7cb5bbffe..e1b33f996469 100644
---- a/arch/sparc/mm/init_64.c
-+++ b/arch/sparc/mm/init_64.c
-@@ -2900,7 +2900,7 @@ pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
- 	return pte;
- }
- 
--pgtable_t pte_alloc_one(struct mm_struct *mm)
-+struct ptdesc *pte_alloc_one(struct mm_struct *mm)
- {
- 	struct ptdesc *ptdesc = pagetable_alloc(GFP_KERNEL | __GFP_ZERO, 0);
- 
+ #endif /* _SPARC_PGALLOC_H */
 diff --git a/arch/sparc/mm/srmmu.c b/arch/sparc/mm/srmmu.c
-index 9df51a62333d..60bb8628bb1f 100644
+index 60bb8628bb1f..05be7d86eda3 100644
 --- a/arch/sparc/mm/srmmu.c
 +++ b/arch/sparc/mm/srmmu.c
-@@ -346,7 +346,7 @@ pgd_t *get_pgd_fast(void)
-  * Alignments up to the page size are the same for physical and virtual
-  * addresses of the nocache area.
-  */
--pgtable_t pte_alloc_one(struct mm_struct *mm)
-+struct ptdesc *pte_alloc_one(struct mm_struct *mm)
+@@ -365,7 +365,7 @@ struct ptdesc *pte_alloc_one(struct mm_struct *mm)
+ 	return (struct ptdesc *)ptep;
+ }
+ 
+-void pte_free(struct mm_struct *mm, pgtable_t ptep)
++void pte_free(struct mm_struct *mm, struct ptdesc *ptep)
  {
- 	pte_t *ptep;
  	struct page *page;
-@@ -362,7 +362,7 @@ pgtable_t pte_alloc_one(struct mm_struct *mm)
- 	}
- 	spin_unlock(&mm->page_table_lock);
  
--	return ptep;
-+	return (struct ptdesc *)ptep;
- }
- 
- void pte_free(struct mm_struct *mm, pgtable_t ptep)
-diff --git a/arch/x86/include/asm/pgalloc.h b/arch/x86/include/asm/pgalloc.h
-index dcd836b59beb..497c757b5b98 100644
---- a/arch/x86/include/asm/pgalloc.h
-+++ b/arch/x86/include/asm/pgalloc.h
-@@ -51,7 +51,7 @@ extern gfp_t __userpte_alloc_gfp;
- extern pgd_t *pgd_alloc(struct mm_struct *);
- extern void pgd_free(struct mm_struct *mm, pgd_t *pgd);
- 
--extern pgtable_t pte_alloc_one(struct mm_struct *);
-+extern struct ptdesc *pte_alloc_one(struct mm_struct *);
- 
- extern void ___pte_free_tlb(struct mmu_gather *tlb, struct page *pte);
- 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 93e54ba91fbf..c27d15cd01b9 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -28,7 +28,7 @@ void paravirt_tlb_remove_table(struct mmu_gather *tlb, void *table)
- 
- gfp_t __userpte_alloc_gfp = GFP_PGTABLE_USER | PGTABLE_HIGHMEM;
- 
--pgtable_t pte_alloc_one(struct mm_struct *mm)
-+struct ptdesc *pte_alloc_one(struct mm_struct *mm)
- {
- 	return __pte_alloc_one(mm, __userpte_alloc_gfp);
- }
-diff --git a/arch/xtensa/include/asm/pgalloc.h b/arch/xtensa/include/asm/pgalloc.h
-index 7fc0f9126dd3..a9206c02956e 100644
---- a/arch/xtensa/include/asm/pgalloc.h
-+++ b/arch/xtensa/include/asm/pgalloc.h
-@@ -51,15 +51,15 @@ static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
- 	return ptep;
- }
- 
--static inline pgtable_t pte_alloc_one(struct mm_struct *mm)
-+static inline struct ptdesc *pte_alloc_one(struct mm_struct *mm)
- {
--	struct page *page;
-+	struct ptdesc *ptdesc;
- 
--	page = __pte_alloc_one(mm, GFP_PGTABLE_USER);
--	if (!page)
-+	ptdesc = __pte_alloc_one(mm, GFP_PGTABLE_USER);
-+	if (!ptdesc)
- 		return NULL;
--	ptes_clear(page_address(page));
--	return page;
-+	ptes_clear(ptdesc_address(ptdesc));
-+	return ptdesc;
- }
- 
- #endif /* CONFIG_MMU */
 diff --git a/fs/dax.c b/fs/dax.c
-index 6f7cea248206..51cbc08b22e7 100644
+index 51cbc08b22e7..61b9bd5200da 100644
 --- a/fs/dax.c
 +++ b/fs/dax.c
-@@ -1222,7 +1222,7 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
- 				  DAX_PMD | DAX_ZERO_PAGE);
+@@ -1246,7 +1246,7 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
  
- 	if (arch_needs_pgtable_deposit()) {
--		ptdesc = page_ptdesc(pte_alloc_one(vma->vm_mm));
-+		ptdesc = pte_alloc_one(vma->vm_mm);
- 		if (!ptdesc)
- 			return VM_FAULT_OOM;
- 	}
+ fallback:
+ 	if (ptdesc)
+-		pte_free(vma->vm_mm, ptdesc_page(ptdesc));
++		pte_free(vma->vm_mm, ptdesc);
+ 	trace_dax_pmd_load_hole_fallback(inode, vmf, zero_folio, *entry);
+ 	return VM_FAULT_FALLBACK;
+ }
 diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
-index 7c48f5fbf8aa..1a4070f8d5dd 100644
+index 1a4070f8d5dd..5f249ec9d289 100644
 --- a/include/asm-generic/pgalloc.h
 +++ b/include/asm-generic/pgalloc.h
-@@ -63,7 +63,7 @@ static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
-  *
-  * Return: `struct page` referencing the ptdesc or %NULL on error
+@@ -105,10 +105,8 @@ static inline struct ptdesc *pte_alloc_one_noprof(struct mm_struct *mm)
+  * @mm: the mm_struct of the current context
+  * @pte_page: the `struct page` referencing the ptdesc
   */
--static inline pgtable_t __pte_alloc_one_noprof(struct mm_struct *mm, gfp_t gfp)
-+static inline struct ptdesc *__pte_alloc_one_noprof(struct mm_struct *mm, gfp_t gfp)
+-static inline void pte_free(struct mm_struct *mm, struct page *pte_page)
++static inline void pte_free(struct mm_struct *mm, struct ptdesc *ptdesc)
  {
- 	struct ptdesc *ptdesc;
+-	struct ptdesc *ptdesc = page_ptdesc(pte_page);
+-
+ 	pagetable_pte_dtor(ptdesc);
+ 	pagetable_free(ptdesc);
+ }
+diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+index e4969fb54da3..f256bc816744 100644
+--- a/mm/debug_vm_pgtable.c
++++ b/mm/debug_vm_pgtable.c
+@@ -1049,7 +1049,7 @@ static void __init destroy_args(struct pgtable_debug_args *args)
  
-@@ -75,7 +75,7 @@ static inline pgtable_t __pte_alloc_one_noprof(struct mm_struct *mm, gfp_t gfp)
- 		return NULL;
+ 	/* Free page table entries */
+ 	if (args->start_ptep) {
+-		pte_free(args->mm, args->start_ptep);
++		pte_free(args->mm, page_ptdesc(args->start_ptep));
+ 		mm_dec_nr_ptes(args->mm);
  	}
  
--	return ptdesc_page(ptdesc);
-+	return ptdesc;
- }
- #define __pte_alloc_one(...)	alloc_hooks(__pte_alloc_one_noprof(__VA_ARGS__))
- 
-@@ -88,7 +88,7 @@ static inline pgtable_t __pte_alloc_one_noprof(struct mm_struct *mm, gfp_t gfp)
-  *
-  * Return: `struct page` referencing the ptdesc or %NULL on error
-  */
--static inline pgtable_t pte_alloc_one_noprof(struct mm_struct *mm)
-+static inline struct ptdesc *pte_alloc_one_noprof(struct mm_struct *mm)
- {
- 	return __pte_alloc_one_noprof(mm, GFP_PGTABLE_USER);
- }
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 236e1582d97e..6274eb7559ac 100644
+index 6274eb7559ac..dc323453fa02 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -959,7 +959,7 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
- 	}
- 	folio_throttle_swaprate(folio, gfp);
+@@ -987,7 +987,7 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+ 		if (userfaultfd_missing(vma)) {
+ 			spin_unlock(vmf->ptl);
+ 			folio_put(folio);
+-			pte_free(vma->vm_mm, ptdesc_page(ptdesc));
++			pte_free(vma->vm_mm, ptdesc);
+ 			ret = handle_userfault(vmf, VM_UFFD_MISSING);
+ 			VM_BUG_ON(ret & VM_FAULT_FALLBACK);
+ 			return ret;
+@@ -1013,7 +1013,7 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+ 	spin_unlock(vmf->ptl);
+ release:
+ 	if (ptdesc)
+-		pte_free(vma->vm_mm, ptdesc_page(ptdesc));
++		pte_free(vma->vm_mm, ptdesc);
+ 	folio_put(folio);
+ 	return ret;
  
--	ptdesc = page_ptdesc(pte_alloc_one(vma->vm_mm));
-+	ptdesc = pte_alloc_one(vma->vm_mm);
- 	if (unlikely(!ptdesc)) {
- 		ret = VM_FAULT_OOM;
- 		goto release;
-@@ -1091,7 +1091,7 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
- 		struct folio *zero_folio;
- 		vm_fault_t ret;
- 
--		ptdesc = page_ptdesc(pte_alloc_one(vma->vm_mm));
-+		ptdesc = pte_alloc_one(vma->vm_mm);
- 		if (unlikely(!ptdesc))
+@@ -1096,7 +1096,7 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
  			return VM_FAULT_OOM;
  		zero_folio = mm_get_huge_zero_folio(vma->vm_mm);
-@@ -1213,7 +1213,7 @@ vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
- 		return VM_FAULT_SIGBUS;
- 
- 	if (arch_needs_pgtable_deposit()) {
--		ptdesc = page_ptdesc(pte_alloc_one(vma->vm_mm));
-+		ptdesc = pte_alloc_one(vma->vm_mm);
- 		if (!ptdesc)
- 			return VM_FAULT_OOM;
+ 		if (unlikely(!zero_folio)) {
+-			pte_free(vma->vm_mm, ptdesc_page(ptdesc));
++			pte_free(vma->vm_mm, ptdesc);
+ 			count_vm_event(THP_FAULT_FALLBACK);
+ 			return VM_FAULT_FALLBACK;
+ 		}
+@@ -1106,10 +1106,10 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+ 			ret = check_stable_address_space(vma->vm_mm);
+ 			if (ret) {
+ 				spin_unlock(vmf->ptl);
+-				pte_free(vma->vm_mm, ptdesc_page(ptdesc));
++				pte_free(vma->vm_mm, ptdesc);
+ 			} else if (userfaultfd_missing(vma)) {
+ 				spin_unlock(vmf->ptl);
+-				pte_free(vma->vm_mm, ptdesc_page(ptdesc));
++				pte_free(vma->vm_mm, ptdesc);
+ 				ret = handle_userfault(vmf, VM_UFFD_MISSING);
+ 				VM_BUG_ON(ret & VM_FAULT_FALLBACK);
+ 			} else {
+@@ -1120,7 +1120,7 @@ vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+ 			}
+ 		} else {
+ 			spin_unlock(vmf->ptl);
+-			pte_free(vma->vm_mm, ptdesc_page(ptdesc));
++			pte_free(vma->vm_mm, ptdesc);
+ 		}
+ 		return ret;
  	}
-@@ -1376,7 +1376,7 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 	if (!vma_is_anonymous(dst_vma))
- 		return 0;
+@@ -1178,7 +1178,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+ out_unlock:
+ 	spin_unlock(ptl);
+ 	if (ptdesc)
+-		pte_free(mm, ptdesc_page(ptdesc));
++		pte_free(mm, ptdesc);
+ }
  
--	ptdesc = page_ptdesc(pte_alloc_one(dst_mm));
-+	ptdesc = pte_alloc_one(dst_mm);
- 	if (unlikely(!ptdesc))
- 		goto out;
+ /**
+@@ -1414,7 +1414,7 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+ #endif
+ 
+ 	if (unlikely(!pmd_trans_huge(pmd))) {
+-		pte_free(dst_mm, ptdesc_page(ptdesc));
++		pte_free(dst_mm, ptdesc);
+ 		goto out_unlock;
+ 	}
+ 	/*
+@@ -1440,7 +1440,7 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+ 	if (unlikely(folio_try_dup_anon_rmap_pmd(src_folio, src_page, src_vma))) {
+ 		/* Page maybe pinned: split and retry the fault on PTEs. */
+ 		folio_put(src_folio);
+-		pte_free(dst_mm, ptdesc_page(ptdesc));
++		pte_free(dst_mm, ptdesc);
+ 		spin_unlock(src_ptl);
+ 		spin_unlock(dst_ptl);
+ 		__split_huge_pmd(src_vma, src_pmd, addr, false, NULL);
+@@ -1830,7 +1830,7 @@ static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
+ 	pgtable_t pgtable;
+ 
+ 	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
+-	pte_free(mm, pgtable);
++	pte_free(mm, page_ptdesc(pgtable));
+ 	mm_dec_nr_ptes(mm);
+ }
  
 diff --git a/mm/memory.c b/mm/memory.c
-index 5b01d94a0b5f..37529e0a9ce2 100644
+index 37529e0a9ce2..3014168e7296 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -445,7 +445,7 @@ void pmd_install(struct mm_struct *mm, pmd_t *pmd, pgtable_t *pte)
+@@ -451,7 +451,7 @@ int __pte_alloc(struct mm_struct *mm, pmd_t *pmd)
  
- int __pte_alloc(struct mm_struct *mm, pmd_t *pmd)
- {
--	struct ptdesc *ptdesc = page_ptdesc(pte_alloc_one(mm));
-+	struct ptdesc *ptdesc = pte_alloc_one(mm);
- 	if (!ptdesc)
- 		return -ENOMEM;
+ 	pmd_install(mm, pmd, (pgtable_t *)&ptdesc);
+ 	if (ptdesc)
+-		pte_free(mm, ptdesc_page(ptdesc));
++		pte_free(mm, ptdesc);
+ 	return 0;
+ }
  
-@@ -4647,7 +4647,7 @@ static vm_fault_t __do_fault(struct vm_fault *vmf)
- 	 *				# flush A, B to clear the writeback
- 	 */
- 	if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
--		vmf->prealloc_pte = pte_alloc_one(vma->vm_mm);
-+		vmf->prealloc_pte = ptdesc_page(pte_alloc_one(vma->vm_mm));
- 		if (!vmf->prealloc_pte)
- 			return VM_FAULT_OOM;
- 	}
-@@ -4725,7 +4725,7 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
- 	 * related to pte entry. Use the preallocated table for that.
- 	 */
- 	if (arch_needs_pgtable_deposit() && !vmf->prealloc_pte) {
--		vmf->prealloc_pte = pte_alloc_one(vma->vm_mm);
-+		vmf->prealloc_pte = ptdesc_page(pte_alloc_one(vma->vm_mm));
- 		if (!vmf->prealloc_pte)
- 			return VM_FAULT_OOM;
- 	}
-@@ -5010,7 +5010,7 @@ static vm_fault_t do_fault_around(struct vm_fault *vmf)
- 		      pte_off + vma_pages(vmf->vma) - vma_off) - 1;
+@@ -5196,7 +5196,7 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
  
- 	if (pmd_none(*vmf->pmd)) {
--		vmf->prealloc_pte = pte_alloc_one(vmf->vma->vm_mm);
-+		vmf->prealloc_pte = ptdesc_page(pte_alloc_one(vmf->vma->vm_mm));
- 		if (!vmf->prealloc_pte)
- 			return VM_FAULT_OOM;
+ 	/* preallocated pagetable is unused: free it */
+ 	if (vmf->prealloc_pte) {
+-		pte_free(vm_mm, vmf->prealloc_pte);
++		pte_free(vm_mm, page_ptdesc(vmf->prealloc_pte));
+ 		vmf->prealloc_pte = NULL;
  	}
+ 	return ret;
+diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+index f34a8d115f5b..92245a32656b 100644
+--- a/mm/pgtable-generic.c
++++ b/mm/pgtable-generic.c
+@@ -241,7 +241,7 @@ static void pte_free_now(struct rcu_head *head)
+ 	struct ptdesc *ptdesc;
+ 
+ 	ptdesc = container_of(head, struct ptdesc, pt_rcu_head);
+-	pte_free(NULL /* mm not passed and not used */, (pgtable_t)ptdesc);
++	pte_free(NULL /* mm not passed and not used */, ptdesc);
+ }
+ 
+ void pte_free_defer(struct mm_struct *mm, pgtable_t pgtable)
 -- 
 2.43.0
 
