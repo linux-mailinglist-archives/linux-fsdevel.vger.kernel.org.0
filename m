@@ -1,59 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-24617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8C89415B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 17:49:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 254D39415EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 17:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDAB21C22E7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 15:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DB1283DEC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 15:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903B81BA863;
-	Tue, 30 Jul 2024 15:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429DC19E80F;
+	Tue, 30 Jul 2024 15:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oN4XIH6X"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SSpK+W1k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC62145A18;
-	Tue, 30 Jul 2024 15:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAA129A2;
+	Tue, 30 Jul 2024 15:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722354569; cv=none; b=S1suAoUaHQw1euKZirwV4zD8ull+HQGsCPRBXALtApv+HKLPxxJ7Lj5bqiVGO8YQi9w4kDkYIAFE5UZyVFjre1xdrM17NvV7yPPFZiQ8CNL5sZnkuD5R4mahnRszKUYRrxPE6rxPb/Qcyh95KriipyevDxT0mG/jMd/UvsLzTsY=
+	t=1722354863; cv=none; b=c3N/5yYIvJzcKBrol0ms/Ah5jCx4HqsJVjXKOOIP4oc54MbwnBz+9h7tWg6VmlnBQOb6gNpHXKoCSJji/l1h0g+uYlOV6uA8Xl+pN3rpafsbU7Z0IJu+1P/lO0AUnG+tdJLIv8JOtOczC4rMU9bjxcHpsudne27DflTAlevMCt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722354569; c=relaxed/simple;
-	bh=mG/lZYRAbNolyavVYbg7FVFULpSSiiaq1xp5oVx/yRY=;
+	s=arc-20240116; t=1722354863; c=relaxed/simple;
+	bh=unEtCF3an6EuUhcVoxrAjGuLanbPeD/vRQNW+01TYfo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FEaQjtwQDAqP7ugCcxmq3r2XaM68pAHWSSQSAnw4o+wu2hLE8yLR5jLNCxOWlLdCY7myfIJpjQ3rIvurm+vs4PdZKUOJqBcne1a1T6cULxKxDAxLNnKjn5c5dDYH52z+2JX0yTDnw/l4PfMWCBbFNs07seaNWLKoY7rQTFFsSjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oN4XIH6X; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=F97/Rkwr28x0C8eqrHLGdVPKU4ZmQtcSmqfRcHhvniW1LegXOrjYD9TXSrzz4sTBemx4rDBVG+vS0i3ETmvaMsl79gpHQV2LDDdt7Zr8/XXGUMRYdEje6w9nDd9C7sdHUyDsW9JjDNcoT5vZy5sEPQj46MiGOM2zG/StSvgNm4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SSpK+W1k; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Kva6ZYHFM4BbWRczdOK/dFl8iQUaafaoo6zDDqkDfis=; b=oN4XIH6X4SztUEwRIot7ltuShb
-	7MOeKwnZAFh/Nk0FT0Q7LhgecS/8zhFoYIOCVaQ/IVpR4pkeN+Agg2A0ruLfGT9nywm0TVNIH+3x0
-	psQ/AlOLsttRzrzFML8DolakaWhQJCuVTtDHgheiuAU821+PlLPUDksFefK9xRMgNal2I5VfvWrdJ
-	1N8Lza2XHWLMcQoM4MODbBU8IU2SI2JYnbiGONpnFXbt3cG+jMEAD8uPqmfNCjEDt8a1rqNoNRGpS
-	1LHQx2Gk36x5+AE5XxHghVDNfLC497c43Qj3syHmcZRt2cMCCfxWgQOpUFfB63gndzlAO1M4Pd3+l
-	FyfaRgOw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sYp6L-00000000GTP-06jJ;
-	Tue, 30 Jul 2024 15:49:25 +0000
-Date: Tue, 30 Jul 2024 16:49:24 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Olaf Hering <olaf@aepfle.de>
-Cc: Deepa Dinamani <deepa.kernel@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v1] mount: handle OOM on mnt_warn_timestamp_expiry
-Message-ID: <20240730154924.GF5334@ZenIV>
-References: <20240730085856.32385-1-olaf@aepfle.de>
+	bh=6MXNumiKKmCQgh40ekmql/XajsTgk+xubikZMvobTSk=; b=SSpK+W1kp26+xjQWTTmaM5ZjCe
+	2XK+V9aC4beetwb6xvFEEtZM0tauZM5ADdlXygFQZYfY1sOVipzzth/ZEc5rMgn9g2gdx7K2PX4ZD
+	02XPutJJJFy3ehJQehM8oID2qMExXoI2bAN3xv/oazWG5i/jIAwnJjIfn9mFm7hzZcEk0xrLb9cnj
+	9RbYHYeYjw/GXs6q6v5Oansql87rCbU2OeqCa/Wj/6cu9tdFyhqgCseznNhe8ybtmWftvIyttUVF7
+	guJoQ5U6hGUmnfBws2Rw7OTuzPSr2N8gcX3iJQYJBWZXk2XQdstPHKE3oHPWK4dPb4D0gjKgHhkC9
+	HadHxXCw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sYpB5-0000000ErhA-2ZyA;
+	Tue, 30 Jul 2024 15:54:19 +0000
+Date: Tue, 30 Jul 2024 16:54:19 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Linux Memory Management List <linux-mm@kvack.org>,
+	linux-fsdevel@vger.kernel.org,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: Forcing vmscan to drop more (related) pages?
+Message-ID: <ZqkMq9Id43s-V_Sf@casper.infradead.org>
+References: <7e68a0b2-0bee-4562-a29f-4dd7d8713cd9@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,22 +61,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730085856.32385-1-olaf@aepfle.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <7e68a0b2-0bee-4562-a29f-4dd7d8713cd9@gmx.com>
 
-On Tue, Jul 30, 2024 at 10:58:13AM +0200, Olaf Hering wrote:
-> If no page could be allocated, an error pointer was used as format
-> string in pr_warn.
+On Tue, Jul 30, 2024 at 03:35:31PM +0930, Qu Wenruo wrote:
+> Hi,
 > 
-> Rearrange the code to return early in case of OOM. Also add a check
-> for the return value of d_path. The API of that function is not
-> documented. It currently returns only ERR_PTR values, but may return
-> also NULL in the future. Use PTR_ERR_OR_ZERO to cover both cases.
+> With recent btrfs attempt to utilize larger folios (for its metadata), I
+> am hitting a case like this:
+> 
+> - Btrfs allocated an order 2 folio for metadata X
+> 
+> - Btrfs tries to add the order 2 folio at filepos X
+>   Then filemap_add_folio() returns -EEXIST for filepos X.
+> 
+> - Btrfs tries to grab the existing metadata
+>   Then filemap_lock_folio() returns -ENOENT for filepos X.
+> 
+> The above case can have two causes:
+> 
+> a) The folio at filepos X is released between add and lock
+>    This is pretty rare, but still possible
+> 
+> b) Some folios exist at range [X+4K, X+16K)
+>    In my observation, this is way more common than case a).
+> 
+> Case b) can be caused by the following situation:
+> 
+> - There is an extent buffer at filepos X
+>   And it is consisted of 4 order 0 folios.
+> 
+> - vmscan wants to free folio at filepos X
+>   It calls into the btrfs callback, btree_release_folio().
+>   And btrfs did all the checks, release the metadata.
+> 
+>   Now all the 4 folios at file pos [X, X+16K) have their private
+>   flags cleared.
+> 
+> - vmscan freed folio at filepos X
+>   However the remaining 3 folios X+4K, X+8K, X+12K are still attached
+>   to the filemap, and in theory we should free all 4 folios in one go.
+> 
+>   And later cause the conflicts with the larger folio we want to insert.
+> 
+> I'm wondering if there is anyway to make sure we can release all
+> involved folios in one go?
+> I guess it will need a new callback, and return a list of folios to be
+> released?
 
-Don't use PTR_ERR_OR_ZERO.  And don't mix ERR_PTR() and NULL for
-error returns without a really good reason for that.
+I feel like we're missing a few pieces of this puzzle:
 
-d_path() is *NOT* going to return NULL.
+ - Why did btrfs decide to create four order-0 folios in the first
+   place?
+ - Why isn't there an EEXIST fallback from order-2 to order-1 to order-0
+   folios?
 
-NAK in that form.
+But there's no need for a new API.  You can remove folios from the page
+cache whenever you like.  See delete_from_page_cache_batch() as an
+example.
 
