@@ -1,122 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-24588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2AF940CAA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 10:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D22E940CB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 11:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27739B293EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 08:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 324CD1F21B67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 09:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747771946D2;
-	Tue, 30 Jul 2024 08:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F15193069;
+	Tue, 30 Jul 2024 09:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKlcqIXN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqQ66qZD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C936E1946AF;
-	Tue, 30 Jul 2024 08:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1846018C325
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jul 2024 09:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722329951; cv=none; b=VPRSjFsuBZWhu20KPGp+eH9UQM0zshwifaYsceHvtFxMkgGiChe0ZxoxwUDDRxrOksVqzgJa9NbJoiuGwIdwECR+lYGbFyEB5z52YYeSyO+dPPFf/Iya6P3c2skdNvN7W38HrdJpQyMzQWHVwfriR6+PXStylYSnKfhJiMM6Z3U=
+	t=1722330042; cv=none; b=lJCuKlbPj0/UVP1Rmy5D1ynAXyDwIdE2TN8USpYcAGyiYSslG2jF6s1283ya0fRb6Xv+6H/59ANHNVXKI4Bqhki7m3MO/brlN/j+zF+GqfGcp+f9POLDuYWl56vHmopYVffpMEIaf1L07UIEoJM7oIa/ziIU2vyRE4UswBsKpw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722329951; c=relaxed/simple;
-	bh=j20RqtXFvbXCUyQ8BFQH4YqmQwCiyncX0UNNT58JPcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WesKNa4DNqGadyRH+Yjfgt6BZSdh9ix+wyVfAjTVdAO/iS4rRUMi4WJoxq4Bru1ALn8akm+1eQ/kqikJOprD+hy6BwN9ZjG6wxB1ebmIrKplJpkzF+pFLH/COra/r4XGoYtVXyF6aAu0ygFk7T+fbW3rhs8Hos8ZGbpxbOeoLTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKlcqIXN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A70BCC4AF09;
-	Tue, 30 Jul 2024 08:59:07 +0000 (UTC)
+	s=arc-20240116; t=1722330042; c=relaxed/simple;
+	bh=DIpTYwtWXCW8YUzekZU0UMx0Wgh4MfFRhN56cWwZnU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MjVjqfzntvhUEa1/Zcj6Xn9LNc09DhjIq/vJScuoKvaSydC71GWwfhyHiUGILoF6B6fAD+YUnFFmbSRgg5zOi1TMQ3GM1ZZSg7Y0NUH/ZaWPtftaZJOCGCeMGtxnwyZNJ7nKbLz50eHXFvb/ScAkh5G7Lm+J15OpeQ6HJ13Tzdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqQ66qZD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC4CC32782;
+	Tue, 30 Jul 2024 09:00:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722329951;
-	bh=j20RqtXFvbXCUyQ8BFQH4YqmQwCiyncX0UNNT58JPcE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XKlcqIXN2gNz/HMazGbiYngqP+Dcqs5f1WV9qb8BxQ0REdTBV1DLgoMe5Lb6Yujqh
-	 JO3v3TDUpm+8lA7jCstdPje6B5/shSi654YRc8Q1EkWrHjZfkjNZE71+QcETEOLEHP
-	 b6jbyZGkoSw9WoSkbiEZEy7e/hNEmm3xuVXQeH7f07AUufjBF6XZzqg/I7y0JTjJR4
-	 2WXdABwRFJcYyRz1bLfopszXmFxDsyDLbl9r3uvTNcwTKCdZy5+lHMskJ4E7BtudHi
-	 Bgs7u8Lc730Zht9AI/iiLP/TZsYeCQpj/z5bd9u1fdP0cfbsrSGYo4OJP/f5u6tK6y
-	 vDv/yPSO3xjRQ==
-Date: Tue, 30 Jul 2024 10:59:04 +0200
+	s=k20201202; t=1722330041;
+	bh=DIpTYwtWXCW8YUzekZU0UMx0Wgh4MfFRhN56cWwZnU0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=UqQ66qZDP2Hl14RL0TkfChaU4eNvQKbF1dqaMLq26ABpZWMAMeKCJ4+VJ2wYNWFRk
+	 vOpOFTogXARs52e26HlNrnsXayGX6qvJczNB6X7frkNWMcXPmirou6L5EuqMAmJ/PR
+	 VrdCe8ziolUpathF2j2G1j5Dd1QYN5oyKPm9uYeXd8rXzEa6oldqc7tctUbr1sj3CG
+	 d5QVyxI3spR2k7PmYC67R3B64viXT89MoQ1MfOoiijZutWTz57/7tYsGOEEiO6cCXA
+	 i43vcRsyCCz24YCEVd/sxp7T5g0hwNt7mE2UHil5Ny0rJgIE4HeGhsZEnJcWaPwtqS
+	 N+/+PlQruKIPA==
 From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
-	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
- bpf_get_dentry_xattr
-Message-ID: <20240730-unwahr-tannenwald-ee6157a063a4@brauner>
-References: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
- <2FE83412-65A5-451B-8722-E0B8035BFD30@fb.com>
+To: Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Omar Sandoval <osandov@osandov.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Aring <alex.aring@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	kernel-team@fb.com
+Subject: Re: [PATCH] filelock: fix name of file_lease slab cache
+Date: Tue, 30 Jul 2024 11:00:32 +0200
+Message-ID: <20240730-gelesen-hebamme-65463a0e2488@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To:  <2d1d053da1cafb3e7940c4f25952da4f0af34e38.1722293276.git.osandov@fb.com>
+References:  <2d1d053da1cafb3e7940c4f25952da4f0af34e38.1722293276.git.osandov@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2FE83412-65A5-451B-8722-E0B8035BFD30@fb.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1148; i=brauner@kernel.org; h=from:subject:message-id; bh=DIpTYwtWXCW8YUzekZU0UMx0Wgh4MfFRhN56cWwZnU0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaStWL35oE/ipp3xTufj2mLTbF4U9JlueVqRO1Wr3Gavm jq/iWR/RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERS0hgZVs53jT1q8lw98EnI xv8OSpYsTndO+zssbyrOFJ/F/eX1RIZ/uuJx6U3ba3ZUJM6bFs7Gs781KM06O3Kj4FNxwYXcL5+ yAAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 05:58:31AM GMT, Song Liu wrote:
-> Hi Christian, 
-> 
-> Thanks a lot for your detailed explanation! We will revisit the design 
-> based on these comments and suggestions. 
-> 
-> One more question about a potential new kfunc bpf_get_inode_xattr(): 
-> Should it take dentry as input? IOW, should it look like:
-> 
-> __bpf_kfunc int bpf_get_inode_xattr(struct dentry *dentry, const char *name__str,
->                                     struct bpf_dynptr *value_p)
-> {
->         struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
->         u32 value_len;
->         void *value;
->         int ret;
-> 
->         if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
->                 return -EPERM;
-> 
->         value_len = __bpf_dynptr_size(value_ptr);
->         value = __bpf_dynptr_data_rw(value_ptr, value_len);
->         if (!value)
->                 return -EINVAL;
-> 
->         ret = inode_permission(&nop_mnt_idmap, inode, MAY_READ);
->         if (ret)
->                 return ret;
->         return __vfs_getxattr(dentry, inode, name__str, value, value_len);
-> }
+On Mon, 29 Jul 2024 15:48:12 -0700, Omar Sandoval wrote:
+> When struct file_lease was split out from struct file_lock, the name of
+> the file_lock slab cache was copied to the new slab cache for
+> file_lease. This name conflict causes confusion in /proc/slabinfo and
+> /sys/kernel/slab. In particular, it caused failures in drgn's test case
+> for slab cache merging.
 > 
 > 
-> I am asking because many security_inode_* hooks actually taking dentry as 
-> argument. So it makes sense to use dentry for kfuncs. Maybe we should
+> [...]
 
-Some filesystems (i) require access to the @dentry in their xattr
-handlers (e.g. 9p) and (ii) ->get() and ->set() xattr handlers can be
-called when @inode hasn't been attached to @dentry yet.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-So if you allowed to call bpf_get_*_xattr() from
-security_d_instantiate() to somehow retrieve xattrs from there, then you
-need to pass @dentry and @inode separately and you cannot use
-@dentry->d_inode because it would still be NULL.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-However, I doubt you'd call bpf_get_*_xattr() from
-security_d_instantiate() so imo just pass the dentry and add a check
-like:
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-struct inode *inode = d_inode(dentry);
-if (WARN_ON(!inode))
-	return -EINVAL;
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-in there.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] filelock: fix name of file_lease slab cache
+      https://git.kernel.org/vfs/vfs/c/af1e6ab8c0e5
 
