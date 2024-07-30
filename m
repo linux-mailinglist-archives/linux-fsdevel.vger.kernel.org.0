@@ -1,113 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-24596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24598-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32EE6940FD3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 12:46:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161989411AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 14:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDA881F24FDF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 10:46:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 627ABB24ECA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jul 2024 12:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FAA1A00F4;
-	Tue, 30 Jul 2024 10:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A8519E81D;
+	Tue, 30 Jul 2024 12:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0E8omvs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Am8G9Y6S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4228B194A73;
-	Tue, 30 Jul 2024 10:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22231957F0;
+	Tue, 30 Jul 2024 12:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722336044; cv=none; b=UlclsyauVS2dctyovupf+emX5rmG95N2T7c+t7to6WmorhanuciQkhCGJgcsC7THSUNPzFLa+JyP2/cKIYm1LJoppQuVT7OYGqY6wWwrh2fvsHM0PpGNhfZcQcf01tU5Tl7RbxU5SI9Gc4eAxC+7ULSAOM/UmxLjsruj3C9GxVk=
+	t=1722341983; cv=none; b=RrCX2Jh+wPHkr2shg/Y0na80UyVe7zb2aQD58Onmij8tOyr1EsKWNsKsup65KaaDlCTRlbV8kQQd4YOU2fX4lvPmA1infbCX6I8LayHzFM4TLNFNUP0SXTaNGbMoepDi7VIAF6svYNWpJBdNUFuxeECbl/+9RsJ7k5S+g5XnxHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722336044; c=relaxed/simple;
-	bh=GtlHiCXe3SP9GrzrDbzPMyQy1TggjvVpoEIpM1wJkFw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BSoLgbQWifsDnkiJCx/OeD00/TcsSyMUgv8b/utqnvXK7gJpwM3H+iXyxLXaG7VU2ylKwvoSD2H0Bpt5ooIuwC00+aFFPHmn3aIVHa4dWX24JafXuU6LM4o/eos6/ZgBfKsz6jCzM6RmCwqjoKZPZHydYiA5VTdQg11u35remVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0E8omvs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0972C32782;
-	Tue, 30 Jul 2024 10:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722336044;
-	bh=GtlHiCXe3SP9GrzrDbzPMyQy1TggjvVpoEIpM1wJkFw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E0E8omvsDHYTL2czP0n0De4+h7DkgjBCVfSGLzuFxGLkYAK/0Pznw8IvCL7RKzyEb
-	 aFCoes9IhXWAdQpPfBeK7RBQPilx2izghkYwF5Gef08hGlU9A5YxKlgo9EVm89XjLx
-	 rkwrXNu3Hdyg1IdhFhUKcx27zTZ731W2iVm3FgpFbMZfO2YDAfW6LgS9R1XFtXXKjH
-	 3cA7Vcrrzvz6DIRMkwolQ3gUwEIKxik1Z8Se4GDpuOgVFNTs3sMIdxNYARys4Sf7KY
-	 z7IiZ3E5odkdcqOpYKleNWUyYI4MEA5DsnexQs9hFJAZZdLqjJJ39hb0z3TyoVPeUy
-	 /jRxBRJrxNvuw==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
+	s=arc-20240116; t=1722341983; c=relaxed/simple;
+	bh=Na6bYBOwEr1UOvSI96Mi3YFL2ql7LlGEgYQvcbyWNgk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EYqK1rKn4TsrBOh2R30biiQVDsWL3XWfvJAHkWTuYoAIPxiF37DWoFZvCJd54kkzz75PcS46AWvzPi4iSSq88NzfeRuvV3eWQiAy0xg+gDfQCEWCST+XTZtE7C3KVQVx2GYGb2FJ1A3lF1k6qH5dIw/pEN0/6vKW7n0iEuLguYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Am8G9Y6S; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7d638a1f27so159395166b.2;
+        Tue, 30 Jul 2024 05:19:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722341980; x=1722946780; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zhzbbMF50wjWGe/fOseTA4c3yfyiRq1RlDd9IV2SLmk=;
+        b=Am8G9Y6SHXJY9R/me/DZVm0e0gCN/BZCAL33MYPirHtADR97jEcC5AqYBRzUCocaMQ
+         gCsb9QtMa5ad1aFuIFqnWiiQjawI1WY5u9bLSbCEcDU0Joa5plhXZ6ZEJWtNGaVw+qIj
+         Va4qFYj8q7uO15lsjOctzAzXaI1lxUVM+FtouHwaTvdMFeeeC3uDE1BbjxLeA7U1imWV
+         joSXdl8QC5QQSEp2qgx6t0M5xoYlvMC/s5Ow2P0JGRp2D5U+tLTF1QRBTFjknjteu0UE
+         uv1yt5qhOFsjEE3qIvoIOEoOdeycaHkF3AdnEplwSkQofgDPMRTrtISd9XQguZq9zQnX
+         coiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722341980; x=1722946780;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zhzbbMF50wjWGe/fOseTA4c3yfyiRq1RlDd9IV2SLmk=;
+        b=d6N1faSoIx34ZV2hY2dZa4lHsv8AdizgQ5xSWTKeSDSJdXYOXWzvy8L+PNfuLgCALP
+         EYWufxF8ab6P8/w6yS/2PbzUwI6nzcOkFHWnB3jyhiLixf4ZsIz67v3/puW92hAhXnm7
+         GmrdeDqcwdtxShiZHdO5vW9k+uSAqy8u5iaVcVCBUV3bZXnWgst1LbVnGyrCpCUNyeCl
+         MDuCHBvGuCkmEjViY8q+AUjZcmqrsZxsMsXJ9WTWo63J5dEhweXepOTeFXcb7LXErWWV
+         JcojOsEW97b8afcQpdcMqAXneqc3N7Ja+Q2xp2BXdfaBhO0sZAJpr8TCf4MBK33p1r/5
+         hXvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhgvhWihtgd7L0M5cYQKPYDRvmhH++DOA0zNuluUxc147MCqkjDnADXTu6D5JcBud702LV8WjRtCEBMkTuZEeegesWhiYK9WZNx8tTdQ4R8l4FZcO/qcH1Fhgcb4nDsm/gxxz6WyhtWCpGrg==
+X-Gm-Message-State: AOJu0YwpaeYIpjopeprtI5g2obB+Fn52oUhZxU/SGN6U5Uo2n1AglGAc
+	oA421w9zALsiPdtPiYdOu8ggrYT6VkNnZY+aFAAxLk4aIO0h5QGt
+X-Google-Smtp-Source: AGHT+IHfRp+O14nVgEID49LLxSuex4Ar8OcA5hfvS5NVNTLKChUqfW6WP4zhDTMwJhCu3zBkgzGQRg==
+X-Received: by 2002:a05:6402:50c7:b0:5a0:f9f7:6565 with SMTP id 4fb4d7f45d1cf-5b021e1745dmr10267734a12.21.1722341979914;
+        Tue, 30 Jul 2024 05:19:39 -0700 (PDT)
+Received: from localhost.localdomain (93-103-32-68.dynamic.t-2.net. [93.103.32.68])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b0395sm7224733a12.20.2024.07.30.05.19.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 05:19:39 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-aio@kvack.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gao Xiang <xiang@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: (subset) [PATCH 00/24] netfs: Read/write improvements
-Date: Tue, 30 Jul 2024 12:38:10 +0200
-Message-ID: <20240730-humpelt-satzreif-0ef607a63e62@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240729162002.3436763-1-dhowells@redhat.com>
-References: <20240729162002.3436763-1-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] fs/aio: Fix __percpu annotation of *cpu pointer in struct kioctx
+Date: Tue, 30 Jul 2024 14:18:34 +0200
+Message-ID: <20240730121915.4514-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1049; i=brauner@kernel.org; h=from:subject:message-id; bh=GtlHiCXe3SP9GrzrDbzPMyQy1TggjvVpoEIpM1wJkFw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaStOCxvEn2hwPPa8wTxI72C4lJ3v3Rea/ReGNcXGxw0T yefRaW6o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCJX5jD8rzu7t0Pz2KVvdqtv 87yVfHz0kKpZ/6QfIZ67Tgnvl4+4MIeR4X367lM/n+s+OMG0cIHnl8WHrnnU3G7J3q6ks8NQdPp ZZXYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Mon, 29 Jul 2024 17:19:29 +0100, David Howells wrote:
-> This set of patches includes one fscache fix and one cachefiles fix
-> 
->  (1) Fix a cookie access race in fscache.
-> 
->  (2) Fix the setxattr/removexattr syscalls to pull their arguments into
->      kernel space before taking the sb_writers lock to avoid a deadlock
->      against mm->mmap_lock.
-> 
-> [...]
+__percpu annotation of *cpu pointer in struct kioctx is put at
+the wrong place, resulting in several sparse warnings:
 
-Applied to the vfs.netfs branch of the vfs/vfs.git tree.
-Patches in the vfs.netfs branch should appear in linux-next soon.
+aio.c:623:24: warning: incorrect type in argument 1 (different address spaces)
+aio.c:623:24:    expected void [noderef] __percpu *__pdata
+aio.c:623:24:    got struct kioctx_cpu *cpu
+aio.c:788:18: warning: incorrect type in assignment (different address spaces)
+aio.c:788:18:    expected struct kioctx_cpu *cpu
+aio.c:788:18:    got struct kioctx_cpu [noderef] __percpu *
+aio.c:835:24: warning: incorrect type in argument 1 (different address spaces)
+aio.c:835:24:    expected void [noderef] __percpu *__pdata
+aio.c:835:24:    got struct kioctx_cpu *cpu
+aio.c:940:16: warning: incorrect type in initializer (different address spaces)
+aio.c:940:16:    expected void const [noderef] __percpu *__vpp_verify
+aio.c:940:16:    got struct kioctx_cpu *
+aio.c:958:16: warning: incorrect type in initializer (different address spaces)
+aio.c:958:16:    expected void const [noderef] __percpu *__vpp_verify
+aio.c:958:16:    got struct kioctx_cpu *
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Put __percpu annotation at the right place to fix these warnings.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Benjamin LaHaise <bcrl@kvack.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ fs/aio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+diff --git a/fs/aio.c b/fs/aio.c
+index 6066f64967b3..e8920178b50f 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -100,7 +100,7 @@ struct kioctx {
+ 
+ 	unsigned long		user_id;
+ 
+-	struct __percpu kioctx_cpu *cpu;
++	struct kioctx_cpu __percpu *cpu;
+ 
+ 	/*
+ 	 * For percpu reqs_available, number of slots we move to/from global
+-- 
+2.45.2
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.netfs
-
-[03/24] - [24/24]
 
