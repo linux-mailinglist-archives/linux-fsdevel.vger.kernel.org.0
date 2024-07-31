@@ -1,154 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-24661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F94942836
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 09:39:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835F39428EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 10:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6CDD28632C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 07:39:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078171F2353E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 08:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F121A76D2;
-	Wed, 31 Jul 2024 07:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cp/icNjX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A10C1A7F7F;
+	Wed, 31 Jul 2024 08:12:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3791A7207
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 07:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AF7450E2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 08:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722411559; cv=none; b=TMjGNfxXfYP1KhwXwcm9blh7qFGWpqD4rOi6MuzVqaydV1Aqq9H7A3o9NpKZZHpbFv8kJK8sddvpQxSv5xCYH8OnY3T9pujYeQ8T8/oRPSmgCZa5xQjxaLW49N4pIFCe4IcsBJvtxM9XZQbMs/8PJ2wqpP79/bAAJ7BS28PJowQ=
+	t=1722413549; cv=none; b=AfMQ0u7k9hOtFR3aGP1/vfDWYnyPkc2jDDOJf+JMTBtJ1QrZivT6+WCZRl5d4cX3CJHIUzKmNbfMuxDaEDFpS9Vam712eZ113mekNLD0r5C9MmW1E2V1xdhNhPCV5btKfOv0aEFs0Kps5QN2kteuXXRl1pcz/eYxZVSl85c0HFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722411559; c=relaxed/simple;
-	bh=fFZMF3NiaRR6TpVbELAswq4kkn1Pf0ZbDbb3nw54F6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A22hFrONCItLW8+BiQYGDiz1FIaxsmohHgJoYlQM7hs+bAhnzGAV/sdqA7Qlt/vQ+UEOOjPccv8wAQ2UNPTS1itqdG984VdEhMbV/3hE4rwlUK3JA8XWLpeQ8Eow2bhQw/eMzBQojI4HT+TUZuXSL6aEzP9HLlvhq91BytHQDNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cp/icNjX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722411557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=t8p7PLZp26QdCSQ6mdeX8yU1Tl2ZcAQTz+tPUUyqyK8=;
-	b=cp/icNjXTqtWRO2WQMshfuPlR8WhPBqZIuv7swJxiQirGS4jTgwYHmbt8MhrU8B9Fkr8tv
-	rquusHDyF7VgjXKHXs7RAgJrjRiutbnJJg0z/BWy0XBFlyFyvgj54MA5kHl8xZRPzdYDMs
-	OeaP5iugKpI9WC3rZpO2GuQwe1qH+6o=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-WSxBQICcNn-HlGlEqSoSfg-1; Wed, 31 Jul 2024 03:39:13 -0400
-X-MC-Unique: WSxBQICcNn-HlGlEqSoSfg-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7aa5885be3so490314066b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 00:39:13 -0700 (PDT)
+	s=arc-20240116; t=1722413549; c=relaxed/simple;
+	bh=qvJpor+LrL/+K3X0/nxl5ABeRnDyAXVwXQac/wHVRvo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qYJd2qWbn0lU6PRJYsuFqMo9KOEFdfRdzY4f7v7OCJr8wzz/jhNiP/ZTu+NGcdRxCidb/9cmDxBzB0zQErFgUpmOZheg37N2UmXaFeA2scgU+IhWJMzJ4ciB520HD1tub2pwCJcVUxD0thUoYJMXRTLejAClA5io5isIohcHGPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3994393abd5so90115205ab.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 01:12:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722411552; x=1723016352;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t8p7PLZp26QdCSQ6mdeX8yU1Tl2ZcAQTz+tPUUyqyK8=;
-        b=E1yeM/jgZoQIHpZcALa9KgWnpDI5qF7o1izRFqmn0ViVY90UrNaS87SrSpOM9z/yWW
-         jxhL3ssAE4EpmMbviRUpjeJx1m0SmFwtzd0FXIMa6WX9DMKOFiDtpw33XwPXhIW2vsil
-         V3DYbJrIyvTPv7WR3BFPTN336LdC1hVY7ybYWgq2fcC33PMVol8iUrZbYt3cpJfRBhiX
-         LMucJ9b3VdrCUrAFr5wsalb0V1Ioj7EfVS86Vht1qZgYRzeyvRn8v2tBi5xCL4exT9kA
-         BbASyqzCxOsyxt9GYQe51+d1zMBvDv3yDyRMmUGqDf7L3ygBeV+t+Zq7SIPj16EouufJ
-         OCEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjcSD6HKLJyAYNzFn2uVlUxx4NFOetjkbOBVnG0pAagLke7bb6fmtD4EiLdqjQ8bYLAYFfzKtxyBYcBZI5BpuDrqHy4ynTFHAhNTOy9g==
-X-Gm-Message-State: AOJu0YxjqQnsYRaqNMVa2ozX8KB6pYgIEwVtMdihz7mgUk2ElDn11FoF
-	lNnwWaAz3NF+kBFuk4P+Pg2WLMbJ272HLnZdshAcXoNySkC0ZggQSjZ+llbce2NzzwWnaBXI/qI
-	0hucesQjMYo5PJV1AyG3LIq9cYTgu99vhk2Vakc2xY96CuD1W6Akx6V+UwKQaifo=
-X-Received: by 2002:a17:906:6a0f:b0:a77:dafb:2bf9 with SMTP id a640c23a62f3a-a7d4017958emr935767866b.49.1722411552487;
-        Wed, 31 Jul 2024 00:39:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtcaFjOt9xSfQUez2BWgFX52e9aHax58DcvCguPN8jHiEXgVGDi0rjSjC1wDm9eFWQJzoLUA==
-X-Received: by 2002:a17:906:6a0f:b0:a77:dafb:2bf9 with SMTP id a640c23a62f3a-a7d4017958emr935766166b.49.1722411551964;
-        Wed, 31 Jul 2024 00:39:11 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23704sm735377266b.3.2024.07.31.00.39.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 00:39:11 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] netfs: clean up after renaming FSCACHE_DEBUG config
-Date: Wed, 31 Jul 2024 09:39:02 +0200
-Message-ID: <20240731073902.69262-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1722413547; x=1723018347;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CVTKQyRC9LK9ysbvwuUUt5aZLW04t0wRCTT0WqX7JWg=;
+        b=wSmz9hVPCRuR6+5mpxX9q/UJWMQzIf1HsHSzPZbuuXEFyeMYMnlNjQa3mlmEQEa3GI
+         8zgp5VqaGEbBWeVtPj5yl7DIid37R4w+djwZn4P1gRxyUE80xeSxw4QnkEDpsycCBxFl
+         i9VT1W01K4o6FkCJqx5TNUpm8q6Lf5ZaOCBc72tYkoT8HDTeJsdPnoAS+ICw4NRxFkK5
+         NyImX7a85WI0SmC/OqRTSKVdHO/PUEUAqBsJLuJqH+kO0NwUjNY4mNnCi4R2a83aCnlv
+         LriR++OI3veHhlbXwXWoOZXMHeaSCYvqKtar95UBwtOnGdRRCer1SHgW9brQ8w1fdPcU
+         5+nA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtVzKW4u5hljZQv/xofdE7EhNDriAoe7eVdYAaCXAhSerJJb7C5Qi8nTKEnsyeE8xcQ75y7CS3hkbOfb60jPqASZ+bQYIuGVs9oAGgBA==
+X-Gm-Message-State: AOJu0Yypub5Jq3/O+J+frVBEP1WKXOVu9kEWVXZ4Fz0l7rTDAOTS2NDT
+	zDc48FLvoRriKbcf58UnBGmD6s3mFIAgDuETdmtbdUVn+WQ3CqwqotXOyWOHu8F3PWe1oeMNGxg
+	WAP0AolWbIUUSEAPpnfvnlo4gg28euUDKO16WXRozmquXNyD2VekvHKY=
+X-Google-Smtp-Source: AGHT+IFngX/W//rbF0BAH2Q/79wqR6rvNFnLJa7T4lGBOJL3HDXIigWQk12LHJ7LCvkCWDA+hRhH3TwpyLegeIYwAts46tu0VDGH
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b22:b0:396:dc3a:72f2 with SMTP id
+ e9e14a558f8ab-39aec40c813mr10289205ab.3.1722413547584; Wed, 31 Jul 2024
+ 01:12:27 -0700 (PDT)
+Date: Wed, 31 Jul 2024 01:12:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a90e8c061e86a76b@google.com>
+Subject: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
+From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk, 
+	squashfs-devel@lists.sourceforge.net, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Hello,
 
-Commit fcad93360df4 ("netfs: Rename CONFIG_FSCACHE_DEBUG to
-CONFIG_NETFS_DEBUG") renames the config, but introduces two issues: First,
-NETFS_DEBUG mistakenly depends on the non-existing config NETFS, whereas
-the actual intended config is called NETFS_SUPPORT. Second, the config
-renaming misses to adjust the documentation of the functionality of this
-config.
+syzbot found the following issue on:
 
-Clean up those two points.
+HEAD commit:    2f8c4f506285 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=145d019d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
+dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1629a655980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16bfb899980000
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ed9f828b1910/disk-2f8c4f50.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b8bdff998eb1/vmlinux-2f8c4f50.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/41b7030717aa/bzImage-2f8c4f50.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/6b20d8f48921/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 8
+=====================================================
+BUG: KMSAN: uninit-value in pick_link+0xd8c/0x1690 fs/namei.c:1850
+ pick_link+0xd8c/0x1690 fs/namei.c:1850
+ step_into+0x156f/0x1640 fs/namei.c:1909
+ open_last_lookups fs/namei.c:3674 [inline]
+ path_openat+0x39da/0x6100 fs/namei.c:3883
+ do_filp_open+0x20e/0x590 fs/namei.c:3913
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
+ x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4719
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
+ alloc_pages_noprof mm/mempolicy.c:2343 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2350
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1008
+ do_read_cache_folio+0x12a/0xfd0 mm/filemap.c:3753
+ do_read_cache_page mm/filemap.c:3855 [inline]
+ read_cache_page+0x63/0x1d0 mm/filemap.c:3864
+ read_mapping_page include/linux/pagemap.h:907 [inline]
+ page_get_link+0x73/0xab0 fs/namei.c:5272
+ pick_link+0xd6c/0x1690
+ step_into+0x156f/0x1640 fs/namei.c:1909
+ open_last_lookups fs/namei.c:3674 [inline]
+ path_openat+0x39da/0x6100 fs/namei.c:3883
+ do_filp_open+0x20e/0x590 fs/namei.c:3913
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
+ x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 5191 Comm: syz-executor190 Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+=====================================================
+
+
 ---
- Documentation/filesystems/caching/fscache.rst | 8 ++++----
- fs/netfs/Kconfig                              | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/filesystems/caching/fscache.rst b/Documentation/filesystems/caching/fscache.rst
-index a74d7b052dc1..de1f32526cc1 100644
---- a/Documentation/filesystems/caching/fscache.rst
-+++ b/Documentation/filesystems/caching/fscache.rst
-@@ -318,10 +318,10 @@ where the columns are:
- Debugging
- =========
- 
--If CONFIG_FSCACHE_DEBUG is enabled, the FS-Cache facility can have runtime
--debugging enabled by adjusting the value in::
-+If CONFIG_NETFS_DEBUG is enabled, the FS-Cache facility and NETFS support can
-+have runtime debugging enabled by adjusting the value in::
- 
--	/sys/module/fscache/parameters/debug
-+	/sys/module/netfs/parameters/debug
- 
- This is a bitmask of debugging streams to enable:
- 
-@@ -343,6 +343,6 @@ This is a bitmask of debugging streams to enable:
- The appropriate set of values should be OR'd together and the result written to
- the control file.  For example::
- 
--	echo $((1|8|512)) >/sys/module/fscache/parameters/debug
-+	echo $((1|8|512)) >/sys/module/netfs/parameters/debug
- 
- will turn on all function entry debugging.
-diff --git a/fs/netfs/Kconfig b/fs/netfs/Kconfig
-index 1b78e8b65ebc..7701c037c328 100644
---- a/fs/netfs/Kconfig
-+++ b/fs/netfs/Kconfig
-@@ -24,7 +24,7 @@ config NETFS_STATS
- 
- config NETFS_DEBUG
- 	bool "Enable dynamic debugging netfslib and FS-Cache"
--	depends on NETFS
-+	depends on NETFS_SUPPORT
- 	help
- 	  This permits debugging to be dynamically enabled in the local caching
- 	  management module.  If this is set, the debugging output may be
--- 
-2.45.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
