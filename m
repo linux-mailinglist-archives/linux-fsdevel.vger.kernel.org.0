@@ -1,272 +1,368 @@
-Return-Path: <linux-fsdevel+bounces-24711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08986943814
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 23:35:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38855943907
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 00:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4A11C21AC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 21:35:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24591F2350B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 22:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F208016C6B0;
-	Wed, 31 Jul 2024 21:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B29816D9A8;
+	Wed, 31 Jul 2024 22:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZIRpDcLH"
+	dkim=pass (2048-bit key) header.d=juniper.net header.i=@juniper.net header.b="FA3YRJav";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=juniper.net header.i=@juniper.net header.b="YRnS9tRK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00273201.pphosted.com (mx0a-00273201.pphosted.com [208.84.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912212F37
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 21:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722461734; cv=none; b=WaBnzPpkT48Q7DZeb11FiLKumLT77aZyc/SxnlblofeQZalIo/L87Q+4J69hMdt9za97QIHFKnHAeQcKEYzESVixMpaUwQutbktw768l6FBfzY8MHFe9j3xs7k7BTaQCMIeYIDSTUA2NavwgQIWjCtkgWKAsKvykrrE/yHhneFA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722461734; c=relaxed/simple;
-	bh=kBpPtVn4WoIbogHJ58hVOQLkgI+5OR+avtjTyVFIqV0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dE55Qg56dSm3C5i//ZXwDhjp5qakAPnZLVTyQsGUeKVpjqaQAMYD/gGrG1KWMQOsZVHg3r8RT/rV957JeJjBTlw79TRW20of5tjG7ruDwMdfRLfmLxo55gsSR1VclOc/MeTSX5R/mNBhUxGSYBQUhAZib+3mpbejSJy6yUc176w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZIRpDcLH; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7aac70e30dso771661266b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 14:35:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722461730; x=1723066530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W12N6LHX7sIMZ/Pj0VYVgcfa6B2i8LosD2F9EKMiNOM=;
-        b=ZIRpDcLH8ZHgBJLsyEm7NTOVRhgGSkT396Y6LWNIzkOJ15L/3/GRDZeZOUQny0B4JP
-         Qk4fwTRjhBs6ZgBIh7xqwGT5k4VkGsF6I1j/dAqnbrsdG0KfDijc3r+95EiZOf7t5dzi
-         id40BZVsy064XKE3qmCKaZhwngqURrrKKPdwBMj/ZZsct3vPvhyq0UtycEzWjkWVTWiA
-         Fv+oLpJTWhBJQTIoOhp1NgAVZUZKFcloM+AJpSvOO2GqoYWmXcg9M52WyDvcQwX9EG9R
-         YZsP3idi7x+Uu+9aK3qY130stahnW9jxOfh1hiIW5XiWUW3KCE+yMxllTCAIq5pyW/8h
-         FHng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722461730; x=1723066530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W12N6LHX7sIMZ/Pj0VYVgcfa6B2i8LosD2F9EKMiNOM=;
-        b=NTNfeK6oF50Jk8qv2iYw6JrUr5xoaLzzRNKOqPmCRmNu9j0N1joCMPk9/dtD58+YDy
-         sCNBD1i/SSAVImHlmByvPQg28zVK3LLRCeDASI4hkas0BHfDErcQNHLdWFjxv2Zpu+LA
-         0QfEEXCH0af6l1M4NAV4DForjQyvwVS7hI6sCsT/KUTsNgJW6m5atlDkCy8VE4Ejisje
-         3Q/fVFuwCTjUVClwLhzy7+y5YbuKyRcISsCAuGPwPsfLwQPBFwB0hQh1svgBcmyJzyl2
-         Xa9mVEHDd5l6aJexm2FR5qCAq3Y9SeHVQ4rj9bNcPtvXk4KEWYG5Xd/fssRfja53Azwd
-         biUQ==
-X-Gm-Message-State: AOJu0YzsH3DGP8ZYMrpjhwFbG1HJzwsDemCYLetHvrcHfkrNkjTxTPwS
-	Z/rIKxuq4HJrww2FQSwR2GjDwEez/Tr1mVNjiXQSV+5R3+CQV1kA7kn3JtCdiMiL9HnTAh/sSKk
-	uXVmW5Z017M4Pv9rN8Kh6nVDtBIne6mU/g3Gaqx10jKnmAIjj9GsamdMMhosKPKFY4yqp/Elx4n
-	O2LYc+g/T3w5hIVCsJ4lw/C50fG6mpzafH6XiT/ND/
-X-Google-Smtp-Source: AGHT+IEyviaDUBvHfIwlNt/TbriWGdOMYYUe+u4Y3yeXdjDr50rxNJ+fjKy3syRXRpP/nCplOQrc03U1vXXuoIr+HFg=
-X-Received: by 2002:a17:907:a686:b0:a7a:b977:4c9e with SMTP id
- a640c23a62f3a-a7daf537eb8mr27987666b.21.1722461729275; Wed, 31 Jul 2024
- 14:35:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D86116C86D;
+	Wed, 31 Jul 2024 22:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=208.84.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722465359; cv=fail; b=BqbhRVYko+GCChqndplqctRWLmCDR0lvBf1O7aqPRrHGJd2IO1Av0EnJYK3lQgtiCnqgNgsWHijywuADFr1M35bHmX1v5D3vjgasZe6Bosx1q++u3LUU+KyMNIPQ72pIEZ/VM2KpkJ+xOLwDmtxfCJCd2m51dAUXnUGTklzXggk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722465359; c=relaxed/simple;
+	bh=ma1ebKw1c7G5LLa8DR7fD8peTxkvxIASwEiE/Bt+JPU=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=frWiR4P332ZsiEnverJtLqObBXAoOksOxe96Kt0U+taNgl7resvHWoOKHXnzx8cU/jrwungpw00/LUIizjy5WKReVcofBZXInOWixpiA6jIOU1mjfCku9rBAfkP05Cs31U+HRrDwIRoSTEO+qFTnr0LnUzohHIycT4ozvSvMUxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=juniper.net; spf=pass smtp.mailfrom=juniper.net; dkim=pass (2048-bit key) header.d=juniper.net header.i=@juniper.net header.b=FA3YRJav; dkim=fail (0-bit key) header.d=juniper.net header.i=@juniper.net header.b=YRnS9tRK reason="key not found in DNS"; arc=fail smtp.client-ip=208.84.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=juniper.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=juniper.net
+Received: from pps.filterd (m0108159.ppops.net [127.0.0.1])
+	by mx0a-00273201.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VE9d93016978;
+	Wed, 31 Jul 2024 15:14:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juniper.net; h=
+	content-id:content-transfer-encoding:content-type:date:from
+	:message-id:mime-version:subject:to; s=PPS1017; bh=YflLRIY8DI4aO
+	nDtpKIdHMlIeX9xbOo9BxY47Q3hTZc=; b=FA3YRJavQesdmoJjqmh/qOSleM+7z
+	ZUXKYDAVheHNps1OPbz7caIwzjroKUpvftByLuIQkZZXtZ6EBqPy1+4ESephvHDO
+	7PzwQqRwOR8mLYLCPl5gVcXScmWgBbeCTkcjegtyhJ3WlHQh8I7UXK+rik9FdC0s
+	SpOsCvSPBfjkGYVFQA7NU3WkNvZGIIu0if5JmpbNjXzvXfLYtaPB6yOKcG2qeOJJ
+	Wmu/U/4ipZ2yX6enLNNpd1lHChsnadSGk4G3id+/5Nx9qXDhgXIOqo2UhyMaDx41
+	UIPdEMw3E5WiNZlRJxFISr+dJog7epwjts/sIipAv7AwCLfhaQSafqgsg==
+Received: from cy4pr05cu001.outbound.protection.outlook.com (mail-westcentralusazlp17010007.outbound.protection.outlook.com [40.93.6.7])
+	by mx0a-00273201.pphosted.com (PPS) with ESMTPS id 40mxussq3d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 15:14:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=unmyrvE//DFsr5AiOdskbe6iiBzx6aa1aPC8BlHwgWxgyNXpHaJV40JUoKNuzVtUtQV096Kx/Vqm1gDQ4PECFxPFv0Ahc7EXtOFIV3ewVk9ntcn1vQp8OVXB2KIfI9FeSFD8bpzRHanyRQ4371D6f6jHOid8/wv4WNb27kXpBdyWkFBTO+Shk0mi9DSxB9m/GAUlkVM2X9HTskLgidkpQK+y44mFx2zJr1fv+Fomuitzi7oUIpd9SLolIjMZVKbksTOqQX/9ricjItBIHBKOJipluOXT6vTxuQxeAKFpjfBoA53CdQrDF9qp/Rb6iYy+R2fez3R2Glb3cIy7aVbccA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YflLRIY8DI4aOnDtpKIdHMlIeX9xbOo9BxY47Q3hTZc=;
+ b=vzxDdKe8l72cICbyDOwwbbJP/ATjkKcxMT9eXwLB1QpwP7Pbpzu18dlQjkLhxuqjpQDRKHjtgzOwUtpNvhmTWb7JgbXTvkt1cR12/jx1CtR7Pqr7tFAnkcV0DEP+dBnOD/Pf4lE9vmAMoID/DnD5rZUFaxypJADu69hZJbU44D7VXsMmlSYqnQtW1F9sdbchIbS9UUJm8OU+zOV7VuQXOwCtTmOYBxcCibWcdWCBSHb8KSv1BB/RVKDiXGRAxF2PQBA7MgAXJR3RLswzTnERfg8jDwxih4QEeju8c/mGM2/XDg7+klNZpEap1lEPweMG1+ctDoCdwZstOahVzkbuoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=juniper.net; dmarc=pass action=none header.from=juniper.net;
+ dkim=pass header.d=juniper.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juniper.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YflLRIY8DI4aOnDtpKIdHMlIeX9xbOo9BxY47Q3hTZc=;
+ b=YRnS9tRKV0sgOI+A968lcWoQmRu2BLsnhcgaZmI1hKHXf36PFlEsZAusGhMZJhBMzctocdGqjQP00LO6835FePNM7nEt26sNJT+SBkc5zOeQcGdVF25lTIkhAzllNeXvziNiWv0jJcmkyWBe+wK/vSd93Igd7R8YyVgBT8NWBL8=
+Received: from BYAPR05MB6743.namprd05.prod.outlook.com (2603:10b6:a03:78::26)
+ by SJ2PR05MB10356.namprd05.prod.outlook.com (2603:10b6:a03:557::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.19; Wed, 31 Jul
+ 2024 22:14:15 +0000
+Received: from BYAPR05MB6743.namprd05.prod.outlook.com
+ ([fe80::12f7:2690:537b:bacf]) by BYAPR05MB6743.namprd05.prod.outlook.com
+ ([fe80::12f7:2690:537b:bacf%6]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
+ 22:14:15 +0000
+From: Brian Mak <makb@juniper.net>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner
+	<brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Eric Biederman
+	<ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] binfmt_elf: Dump smaller VMAs first in ELF cores
+Thread-Topic: [RFC PATCH] binfmt_elf: Dump smaller VMAs first in ELF cores
+Thread-Index: AQHa45b6H7qt2DxWIUm3KHixJZvP5w==
+Date: Wed, 31 Jul 2024 22:14:15 +0000
+Message-ID: <CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BYAPR05MB6743:EE_|SJ2PR05MB10356:EE_
+x-ms-office365-filtering-correlation-id: eca11b77-1aa5-464d-410f-08dcb1ae1d23
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?E6NRzAH+Vop0fauMNDXWcjP1VFJrg63VZ0WFLq2j3dvs9ue5IxnoSMeESvwK?=
+ =?us-ascii?Q?kgzgyoTByHPmoevnyNPZ4RQOADFdP1XEwZ8TIAdHzEVChO0FgE6qHCAnTniF?=
+ =?us-ascii?Q?QLpYE8JWcbIbOjvOxjKqoFAgQiusDl+ZT9tMlNYJtRcyixG5/lCvWET4YZ+2?=
+ =?us-ascii?Q?iIeePylDm3xLu//qcvvpY6owe/04q9FDRVgBHD60vhfU7AEtYPO2KhafJoNU?=
+ =?us-ascii?Q?0/d766ipFSwv5zaBHeoxBXSb9F3SirQH/h2ib+3ndscgHazE6kVh7nHMTroj?=
+ =?us-ascii?Q?U4/C/SAUwkT8fA8Onldf/WFOzcOdPeIwFmgXWYCS4cA0s0NbAEKZQxTHBgt/?=
+ =?us-ascii?Q?920afxzbMPcXNHPIopeTd3jnC/K3vWvims9dCynP3WmQmTAOvp4PaJlQ9SNm?=
+ =?us-ascii?Q?rplRXFHplazc5JAyultq/M5UYy1UMSG2thsjPA8aw6x7brZAlKOD5UpxDzcl?=
+ =?us-ascii?Q?611Jg0nVzt7znVxWPHBI560ZeXrw/HlJigqJaQfdlzYltsMOHWtMUHl3fTD+?=
+ =?us-ascii?Q?sliCTnD3raw00hxxmK4gOMwipK7G76CHKsb0SQDn7hab+S4YjogSC9gWzjJm?=
+ =?us-ascii?Q?PttF6Ven3u4W52gikuyzlYx6YQTFNlPl1QiKZk1JC7rsURuThELINCawbPEI?=
+ =?us-ascii?Q?PQJILDrhlrPCeFSzIWHTwB/Q2+c89hnolG78mAdV2vbzDGnl+4/ULZxEPvqs?=
+ =?us-ascii?Q?evhgJfYD/hVNAofecUMGoTiLNe7ySQomkwE8/pDGF4QSdSi/Mlu008m8ydOa?=
+ =?us-ascii?Q?fgiFoCdV6tHSOGrR1ObRfVSMk65qEjmzH7aIQkfdxxXhJm8/of0E9prJ7tXp?=
+ =?us-ascii?Q?o5HpE++FofG+3bGonoIvb6hHtRiY8liSN5mng8nz/isWjf//g5Qs6pgiYzZ7?=
+ =?us-ascii?Q?iKWCkickQdgWWHnq+HE4BFYE+m15Bq8HgclaUFyF+k1/NyN0NEFpkXyIDeAf?=
+ =?us-ascii?Q?E+q2s2cT1p5wZupNTALRk4k/x8CgX1S3zZ9vSnzl09Hb8bSSTKPRiGbR8qsu?=
+ =?us-ascii?Q?mN0ImhNdGYB4+G3ousl48d59jxCxrTkPtbtrLj/jLuoyXwVZzmafN0/v2YOI?=
+ =?us-ascii?Q?AbHNb8J5hDBw6ieFpS/gIDCwrtZM/sQHgCHKu0KiB5AA2T2sp4V5Nc/0yGD4?=
+ =?us-ascii?Q?3hwMoZVp+t662B8JIhtQUmL3MfwLYyEXQjTIDuRpCxXhLtKFkQm1ofltWqiz?=
+ =?us-ascii?Q?c5k8fEyA/Z9WB79BOsoMQlgQvec5/uzzmTnoPdfzf2E5iJqYqJdHK5bot/fB?=
+ =?us-ascii?Q?WoeLU7hCI3P+c2pjdC6SNICZjbzxbJ5NSVh4M2rideGG5B04QMpI41Q0zaIb?=
+ =?us-ascii?Q?Kz5kgllmOGloLooeTkQBkRozzXAxE9Z/OnGHHKJQ5MpQiEkUlNvX4OD9KIk1?=
+ =?us-ascii?Q?H1JdOGX8uDLhFlx4GhP6y4wnvaeF9BPBoXwIqBg1gHG+sHanOA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR05MB6743.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?adEd+BMlz+TJvP1HvXUcOCMc7qh8qM4qXRQUOX+myLis3BBZQ9bRlKSQO7Mn?=
+ =?us-ascii?Q?vK3YnbgBK0dUznfxuhpxB1tzdghXqO8s4N48YlJ20z6/r9hlC8UEGHzonIoy?=
+ =?us-ascii?Q?DeG5R+YCnysa0SM8rvE0cTD9TYsRCZ8Ui6BLdskqWxucv6KzH+ByoABuJIm9?=
+ =?us-ascii?Q?Yb6vm+EofcxnlqutFuzj6fDoF3kQiGHHM5pV479M/PUbzrJjPlsrJl0hK/8e?=
+ =?us-ascii?Q?4eBpHpugvfyh4S/WDYnVTe7qOgucU6Nl/Y35wSk3RW2rlzlzg5PTHzBYmoxS?=
+ =?us-ascii?Q?FIKiWVf64fiKhhzY6BRDbLAEgSlSf5F5Xd2h/AQksjIn0sntbXrdhFv49wVW?=
+ =?us-ascii?Q?wlXC7elJQmg6OTCz4bH3p4786oLPweitWMNC1xFrB8OqgJxXMR5sr4isFIxq?=
+ =?us-ascii?Q?4qBe0Yw6u9IHOeKOQmtSF1af0gIuk6yGP9KRCg0lqVb4e6LYWLFcRtix1tfX?=
+ =?us-ascii?Q?tq68SFsWaSO3ARE2grhFPiM0s000U0UOf0yKFgTvVUg7wv+OyYgTj8K8EOCs?=
+ =?us-ascii?Q?AJ/+3G8O2Vax136MAzha9GaveQACZcyDQaWQ52UFnxvumpw7speLJm0NbJfO?=
+ =?us-ascii?Q?632ZSICEBrkBytjRsSE4oblPSqp3TKhq2APxOgMjXjde58UP/VpG6pl/gsY3?=
+ =?us-ascii?Q?zzBFDg5utSoBKFssLXxZjMNUaZr15Q2ij8mkxV7/08ArYtCfifYX8PnPKaT5?=
+ =?us-ascii?Q?cOdG3mzrWVMyx4VYXDE7w4mmQSfFsZtCF5ooXqpg3jNOnv/mp0o6EalzYoPU?=
+ =?us-ascii?Q?ju2eGiGKYlJ0mzbcmYBZoiNCKKPvQv12Rvj4MMqahEVXNVi3dyE+nG/7heq4?=
+ =?us-ascii?Q?LXXBZG+yuJHYje5zCBSk+RzioXDk08TkZnFhlmUrDBporh5h2MTohxu/pF21?=
+ =?us-ascii?Q?jIj5XBfboE4pE4Dsfse/ahh1yw+KZjbVHB5U06ViLfjcEKpvcI4SMlic7I9H?=
+ =?us-ascii?Q?gRFbSbpPlPnz3/5PB3LDZrSbw7ngXlz0nozlOSVdIZdxGVllPkEloZzxgNwt?=
+ =?us-ascii?Q?9bNmVchAYF993RwUmsSg5Zni/zoONZ3V16oBtY2HLm1vcXGsjljjMcUnD/Rk?=
+ =?us-ascii?Q?VLY6SP376QfkrbMWAWR4H2B9fMpmWevbHcsMJEnI+Q13cz2fNFR2wQGkw62/?=
+ =?us-ascii?Q?DqReerBBm8A3J2BlCJVGKsuvqz2ZkpTTu6LnicMLICNcsaAEC8TNW7w1x47L?=
+ =?us-ascii?Q?mYqdKzgeWcxymWqsAiWfgkA/TD4v52bHwqZjdl5yxlC9RNwWT4YTmPpXZw6G?=
+ =?us-ascii?Q?LaMP/GOfvR7jhxunS6OujGkVxSQgvHMShjk5zanhAN5c+xS6Wa9qmb3/l6d7?=
+ =?us-ascii?Q?UfCGjEpwiTYLkhG/a4+sGQZANMOBkNcnZXqikuYUehW3uFrBScMEklq2+xf5?=
+ =?us-ascii?Q?zI/Xf7+jrGjx5hz1UZg4OPToHEvNEz9VvFqRMkEMBCnZi7tDQhY+a99K5GBD?=
+ =?us-ascii?Q?CqQGvpt27uilWZC8RH6miWiqTCwOqBMcZbunAQVaB1DPPEW7u6MFJYb+fvHy?=
+ =?us-ascii?Q?2YUQ8ZP7zn5xeMLyj8IW5H92bnU9t4nH1Fjw5/z9aoLoQTi5MA4DKVMh2+qI?=
+ =?us-ascii?Q?B5e00S1B34VIhB/8Z84iXUFnvNjM9XcXC8y7Ty4X?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3C62EEFADFD9394895817721668CD1B3@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAmZXru_m0B4EEbjNec8s6hNufdAA_+Vpm8DFvC_=EUS270pLw@mail.gmail.com>
- <CAJnrk1aqGhPKi3_9jXrJ2n_B_Ptb8CC1SecgxFcyCg_zQ8KFGA@mail.gmail.com>
-In-Reply-To: <CAJnrk1aqGhPKi3_9jXrJ2n_B_Ptb8CC1SecgxFcyCg_zQ8KFGA@mail.gmail.com>
-From: Frank Dinoff <fdinoff@google.com>
-Date: Wed, 31 Jul 2024 17:35:12 -0400
-Message-ID: <CAAmZXrtnbX6Pb3hmEEL06cEQEswk-xsgs_2+NMNun8HS7MTZhQ@mail.gmail.com>
-Subject: Re: fuse: slow cp performance with writeback cache enabled
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ccpol: medium
+X-OriginatorOrg: juniper.net
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR05MB6743.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eca11b77-1aa5-464d-410f-08dcb1ae1d23
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 22:14:15.0865
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bea78b3c-4cdb-4130-854a-1d193232e5f4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WjHPvamN6l8U2OKkYXHYju5A8UluCyD/ofQh3GA2r6d5ejCQ0+3GmqdRVk3oJGoJe/ISJ0OJScfQGTWzxUk54Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR05MB10356
+X-Proofpoint-ORIG-GUID: vYo-ZZqU-OVkY9aLgfGgBKuVvcMJlDV6
+X-Proofpoint-GUID: vYo-ZZqU-OVkY9aLgfGgBKuVvcMJlDV6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_spam_notspam policy=outbound_spam score=0 spamscore=0
+ suspectscore=0 clxscore=1011 impostorscore=0 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 mlxlogscore=745 mlxscore=0 phishscore=0
+ priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407310156
 
-Great thanks for checking. I'll go figure out how to upgrade the kernel and=
- the
-version of libfuse we are using.
+Large cores may be truncated in some scenarios, such as daemons with stop
+timeouts that are not large enough or lack of disk space. This impacts
+debuggability with large core dumps since critical information necessary to
+form a usable backtrace, such as stacks and shared library information, are
+omitted. We can mitigate the impact of core dump truncation by dumping
+smaller VMAs first, which may be more likely to contain memory for stacks
+and shared library information, thus allowing a usable backtrace to be
+formed.
 
+We implement this by sorting the VMAs by dump size and dumping in that
+order.
 
-On Wed, Jul 31, 2024 at 5:11=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
->
-> On Wed, Jul 31, 2024 at 11:38=E2=80=AFAM Frank Dinoff <fdinoff@google.com=
-> wrote:
-> >
-> > I have a fuse filesystem with writeback cache enabled. We noticed a slo=
-w down
-> > when copying files to the fuse filesystem using cp. The slowdown seems =
-to
-> > consistently trigger for the first copy but not later ones.
-> >
-> > Using passthrough_ll from https://github.com/libfuse/libfuse I was able=
- to
-> > reproduce the issue.
-> >
-> > # start the fuse filesystem
-> > $ git clone https://github.com/libfuse/libfuse
-> > $ git checkout fuse-3.16.2
-> > $ meson build && cd build && ninja
-> > $ mkdir /tmp/passthrough
-> > $ ./example/passthrough_ll -o writeback -o debug -f /tmp/passthrough
-> >
-> > In another terminal
-> > $ dd if=3D/dev/urandom of=3D/tmp/foo bs=3D1M count=3D4
-> > # run this multiple times
-> > $ time cp /tmp/foo /tmp/passthrough/tmp/foo2
-> >
-> > On my machine the first cp call takes between 0.4s and 1s. Repeated cp =
-calls
-> > take 0.05s. If you wait long enough between attempts cp becomes slow ag=
-ain
-> >
-> Hi Frank,
->
-> I don't think this is an issue on the most up to date versions of the
-> kernel and libfuse. I'm on top of the fuse tree and libfuse, and I
-> don't see this slowdown for the first cp. Here's what I'm seeing:
->
-> [vmuser@myvm ~]$ dd if=3D/dev/urandom of=3D/tmp/foo bs=3D1M count=3D4
-> 4+0 records in
-> 4+0 records out
-> 4194304 bytes (4.2 MB, 4.0 MiB) copied, 0.0169003 s, 248 MB/s
-> [vmuser@myvm ~]$ time sudo cp /tmp/foo /tmp/passthrough/tmp/foo2
-> real    0m0.035s
-> user    0m0.006s
-> sys     0m0.008s
-> [vmuser@myvm ~]$ time sudo cp /tmp/foo /tmp/passthrough/tmp/foo2
->
-> real    0m0.026s
-> user    0m0.004s
-> sys     0m0.009s
->
->
-> ANd these are the corresponding daemon logs I see:
-> [vmuser@myvm build]$ sudo  ./example/passthrough_ll -o writeback -o
-> debug -f /tmp/passthrough
-> FUSE library version: 3.17.0
-> unique: 2, opcode: INIT (26), nodeid: 0, insize: 104, pid: 0
-> INIT: 7.40
-> flags=3D0x73fffffb
-> max_readahead=3D0x00020000
-> lo_init: activating writeback
->    INIT: 7.40
->    flags=3D0x4041f429
->    max_readahead=3D0x00020000
->    max_write=3D0x00100000
->    max_background=3D0
->    congestion_threshold=3D0
->    time_gran=3D1
->    unique: 2, success, outsize: 80
-> unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 44, pid: 658
-> lo_lookup(parent=3D1, name=3Dtmp)
->   1/tmp -> 139767698164736
->    unique: 4, success, outsize: 144
-> unique: 6, opcode: LOOKUP (1), nodeid: 139767698164736, insize: 45, pid: =
-658
-> lo_lookup(parent=3D139767698164736, name=3Dfoo2)
->    unique: 6, error: -2 (No such file or directory), outsize: 16
-> unique: 8, opcode: LOOKUP (1), nodeid: 139767698164736, insize: 45, pid: =
-658
-> lo_lookup(parent=3D139767698164736, name=3Dfoo2)
->    unique: 8, error: -2 (No such file or directory), outsize: 16
-> unique: 10, opcode: CREATE (35), nodeid: 139767698164736, insize: 61, pid=
-: 658
-> lo_create(parent=3D139767698164736, name=3Dfoo2)
->   139767698164736/foo2 -> 139767832383168
->    unique: 10, success, outsize: 160
-> unique: 12, opcode: GETXATTR (22), nodeid: 139767832383168, insize: 68, p=
-id: 658
->    unique: 12, error: -38 (Function not implemented), outsize: 16
-> unique: 14, opcode: WRITE (16), nodeid: 139767832383168, insize: 131152, =
-pid: 0
-> lo_write(ino=3D139767832383168, size=3D131072, off=3D0)
->    unique: 14, success, outsize: 24
-> unique: 16, opcode: WRITE (16), nodeid: 139767832383168, insize: 1048656,=
- pid: 0
-> lo_write(ino=3D139767832383168, size=3D1048576, off=3D131072)
->    unique: 16, success, outsize: 24
-> unique: 18, opcode: WRITE (16), nodeid: 139767832383168, insize: 1048656,=
- pid: 0
-> lo_write(ino=3D139767832383168, size=3D1048576, off=3D1179648)
->    unique: 18, success, outsize: 24
-> unique: 20, opcode: WRITE (16), nodeid: 139767832383168, insize: 1048656,=
- pid: 0
-> lo_write(ino=3D139767832383168, size=3D1048576, off=3D2228224)
-> unique: 22, opcode: WRITE (16), nodeid: 139767832383168, insize: 409680, =
-pid: 0
-> lo_write(ino=3D139767832383168, size=3D409600, off=3D3276800)
-> unique: 24, opcode: SETATTR (4), nodeid: 139767832383168, insize: 128, pi=
-d: 57
->    unique: 24, success, outsize: 120
->    unique: 22, success, outsize: 24
->    unique: 20, success, outsize: 24
-> unique: 26, opcode: WRITE (16), nodeid: 139767832383168, insize: 507984, =
-pid: 0
-> lo_write(ino=3D139767832383168, size=3D507904, off=3D3686400)
->    unique: 26, success, outsize: 24
-> unique: 28, opcode: FLUSH (25), nodeid: 139767832383168, insize: 64, pid:=
- 658
->    unique: 28, success, outsize: 16
-> unique: 30, opcode: RELEASE (18), nodeid: 139767832383168, insize: 64, pi=
-d: 0
->    unique: 30, success, outsize: 16
-> unique: 32, opcode: LOOKUP (1), nodeid: 1, insize: 44, pid: 664
-> lo_lookup(parent=3D1, name=3Dtmp)
->   1/tmp -> 139767698164736
->    unique: 32, success, outsize: 144
-> unique: 34, opcode: LOOKUP (1), nodeid: 139767698164736, insize: 45, pid:=
- 664
-> lo_lookup(parent=3D139767698164736, name=3Dfoo2)
->   139767698164736/foo2 -> 139767832383168
->    unique: 34, success, outsize: 144
-> unique: 36, opcode: OPEN (14), nodeid: 139767832383168, insize: 48, pid: =
-664
-> lo_open(ino=3D139767832383168, flags=3D33281)
->    unique: 36, success, outsize: 32
-> unique: 38, opcode: GETATTR (3), nodeid: 139767832383168, insize: 56, pid=
-: 664
->    unique: 38, success, outsize: 120
-> unique: 40, opcode: WRITE (16), nodeid: 139767832383168, insize: 1048656,=
- pid: 0
-> lo_write(ino=3D139767832383168, size=3D1048576, off=3D0)
-> unique: 42, opcode: WRITE (16), nodeid: 139767832383168, insize: 1048656,=
- pid: 0
-> lo_write(ino=3D139767832383168, size=3D1048576, off=3D1048576)
->    unique: 40, success, outsize: 24
-> unique: 44, opcode: WRITE (16), nodeid: 139767832383168, insize: 1048656,=
- pid: 0
-> lo_write(ino=3D139767832383168, size=3D1048576, off=3D2097152)
->    unique: 42, success, outsize: 24
-> unique: 46, opcode: WRITE (16), nodeid: 139767832383168, insize: 487504, =
-pid: 0
-> lo_write(ino=3D139767832383168, size=3D487424, off=3D3145728)
-> unique: 48, opcode: SETATTR (4), nodeid: 139767832383168, insize: 128, pi=
-d: 57
->    unique: 44, success, outsize: 24
->    unique: 46, success, outsize: 24
->    unique: 48, success, outsize: 120
-> unique: 50, opcode: WRITE (16), nodeid: 139767832383168, insize: 561232, =
-pid: 0
-> lo_write(ino=3D139767832383168, size=3D561152, off=3D3633152)
->    unique: 50, success, outsize: 24
-> unique: 52, opcode: FLUSH (25), nodeid: 139767832383168, insize: 64, pid:=
- 664
->    unique: 52, success, outsize: 16
-> unique: 54, opcode: RELEASE (18), nodeid: 139767832383168, insize: 64, pi=
-d: 0
->    unique: 54, success, outsize: 16
->
-> > The debug logs for the slow runs say that the write size is 32k (or sma=
-ller).
-> > The fast runs have write sizes of 1M. strace says cp is doing writes in=
- 128k
-> > blocks.
-> >
-> > I think I'm running a kernel based on 6.6.15.
-> >
-> > Is this a known issue? Is there any fix for this?
-> >
+Signed-off-by: Brian Mak <makb@juniper.net>
+---
+
+Hi all,
+
+My initial testing with a program that spawns several threads and allocates=
+ heap
+memory shows that this patch does indeed prioritize information such as sta=
+cks,
+which is crucial to forming a backtrace and debugging core dumps.
+
+Requesting for comments on the following:
+
+Are there cases where this might not necessarily prioritize dumping VMAs
+needed to obtain a usable backtrace?
+
+Thanks,
+Brian Mak
+
+ fs/binfmt_elf.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 62 insertions(+), 2 deletions(-)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 19fa49cd9907..d45240b0748d 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/fs.h>
++#include <linux/debugfs.h>
+ #include <linux/log2.h>
+ #include <linux/mm.h>
+ #include <linux/mman.h>
+@@ -37,6 +38,7 @@
+ #include <linux/elf-randomize.h>
+ #include <linux/utsname.h>
+ #include <linux/coredump.h>
++#include <linux/sort.h>
+ #include <linux/sched.h>
+ #include <linux/sched/coredump.h>
+ #include <linux/sched/task_stack.h>
+@@ -1990,6 +1992,22 @@ static void fill_extnum_info(struct elfhdr *elf, str=
+uct elf_shdr *shdr4extnum,
+ 	shdr4extnum->sh_info =3D segs;
+ }
+=20
++static int cmp_vma_size(const void *vma_meta_lhs_ptr, const void *vma_meta=
+_rhs_ptr)
++{
++	const struct core_vma_metadata *vma_meta_lhs =3D *(const struct core_vma_=
+metadata **)
++		vma_meta_lhs_ptr;
++	const struct core_vma_metadata *vma_meta_rhs =3D *(const struct core_vma_=
+metadata **)
++		vma_meta_rhs_ptr;
++
++	if (vma_meta_lhs->dump_size < vma_meta_rhs->dump_size)
++		return -1;
++	if (vma_meta_lhs->dump_size > vma_meta_rhs->dump_size)
++		return 1;
++	return 0;
++}
++
++static bool sort_elf_core_vmas =3D true;
++
+ /*
+  * Actual dumper
+  *
+@@ -2008,6 +2026,7 @@ static int elf_core_dump(struct coredump_params *cprm=
+)
+ 	struct elf_shdr *shdr4extnum =3D NULL;
+ 	Elf_Half e_phnum;
+ 	elf_addr_t e_shoff;
++	struct core_vma_metadata **sorted_vmas =3D NULL;
+=20
+ 	/*
+ 	 * The number of segs are recored into ELF header as 16bit value.
+@@ -2071,11 +2090,27 @@ static int elf_core_dump(struct coredump_params *cp=
+rm)
+ 	if (!dump_emit(cprm, phdr4note, sizeof(*phdr4note)))
+ 		goto end_coredump;
+=20
++	/* Allocate memory to sort VMAs and sort if needed. */
++	if (sort_elf_core_vmas)
++		sorted_vmas =3D kvmalloc_array(cprm->vma_count, sizeof(*sorted_vmas), GF=
+P_KERNEL);
++
++	if (!ZERO_OR_NULL_PTR(sorted_vmas)) {
++		for (i =3D 0; i < cprm->vma_count; i++)
++			sorted_vmas[i] =3D cprm->vma_meta + i;
++
++		sort(sorted_vmas, cprm->vma_count, sizeof(*sorted_vmas), cmp_vma_size, N=
+ULL);
++	}
++
+ 	/* Write program headers for segments dump */
+ 	for (i =3D 0; i < cprm->vma_count; i++) {
+-		struct core_vma_metadata *meta =3D cprm->vma_meta + i;
++		struct core_vma_metadata *meta;
+ 		struct elf_phdr phdr;
+=20
++		if (ZERO_OR_NULL_PTR(sorted_vmas))
++			meta =3D cprm->vma_meta + i;
++		else
++			meta =3D sorted_vmas[i];
++
+ 		phdr.p_type =3D PT_LOAD;
+ 		phdr.p_offset =3D offset;
+ 		phdr.p_vaddr =3D meta->start;
+@@ -2111,7 +2146,12 @@ static int elf_core_dump(struct coredump_params *cpr=
+m)
+ 	dump_skip_to(cprm, dataoff);
+=20
+ 	for (i =3D 0; i < cprm->vma_count; i++) {
+-		struct core_vma_metadata *meta =3D cprm->vma_meta + i;
++		struct core_vma_metadata *meta;
++
++		if (ZERO_OR_NULL_PTR(sorted_vmas))
++			meta =3D cprm->vma_meta + i;
++		else
++			meta =3D sorted_vmas[i];
+=20
+ 		if (!dump_user_range(cprm, meta->start, meta->dump_size))
+ 			goto end_coredump;
+@@ -2128,10 +2168,26 @@ static int elf_core_dump(struct coredump_params *cp=
+rm)
+ end_coredump:
+ 	free_note_info(&info);
+ 	kfree(shdr4extnum);
++	kvfree(sorted_vmas);
+ 	kfree(phdr4note);
+ 	return has_dumped;
+ }
+=20
++#ifdef CONFIG_DEBUG_FS
++
++static struct dentry *elf_core_debugfs;
++
++static int __init init_elf_core_debugfs(void)
++{
++	elf_core_debugfs =3D debugfs_create_dir("elf_core", NULL);
++	debugfs_create_bool("sort_elf_core_vmas", 0644, elf_core_debugfs, &sort_e=
+lf_core_vmas);
++	return 0;
++}
++
++fs_initcall(init_elf_core_debugfs);
++
++#endif		/* CONFIG_DEBUG_FS */
++
+ #endif		/* CONFIG_ELF_CORE */
+=20
+ static int __init init_elf_binfmt(void)
+@@ -2144,6 +2200,10 @@ static void __exit exit_elf_binfmt(void)
+ {
+ 	/* Remove the COFF and ELF loaders. */
+ 	unregister_binfmt(&elf_format);
++
++#if defined(CONFIG_ELF_CORE) && defined(CONFIG_DEBUG_FS)
++	debugfs_remove(elf_core_debugfs);
++#endif
+ }
+=20
+ core_initcall(init_elf_binfmt);
+
+base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
+--=20
+2.25.1
+
 
