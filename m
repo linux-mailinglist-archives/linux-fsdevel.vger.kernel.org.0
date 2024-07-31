@@ -1,151 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-24672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C53EA942BD7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 12:20:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19775942C32
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 12:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA5FB20E62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 10:20:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C95172857D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 10:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0DC1AC430;
-	Wed, 31 Jul 2024 10:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62AC1AD40D;
+	Wed, 31 Jul 2024 10:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bAXTrcN7"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M+IP+pUz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FDC1AAE3D;
-	Wed, 31 Jul 2024 10:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A5C1AD3E8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 10:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722421237; cv=none; b=UhPlfUDF9MMIamRyuS7VZvDVo5rkom+GLmUwLCfLUfT2Fk52ycf4DWdzrZ5oOJeg6HCAqrADAiMHElAKXdMQUNYJ4n46EE4VrRQu31zH1VZI3nhhU3czalvxtdUNHhaCeu2aqSZCr1ZoE7WNRLLHcGm5cKumQS2/9h50pcNwfZY=
+	t=1722422478; cv=none; b=WIPE90OiL1+J/rA7q2NK6Ez52JOwdR2UpX+p5bFPj6kGHDgaUv0mkYPwYs8Dvo03zQ6bmONxsQD4WptugwjZTitRH396h9Qpkhb1pJtdmuweNA3z8jkBDK9wM27P9XAbiVVQgoQbNYK2JnRVkf7Crn/g377Kq0DI5ZlrA1cAmJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722421237; c=relaxed/simple;
-	bh=grMArfYO8CSfM/P+90j415AKQ/GQfZeA47Ulr1FUtNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3eZFzWt0JZzy1uhwBm88pcehDl1q+XR0DDxVszwL9WPbo5mdo1i6qFgmYx14elKs7AILkBgXCgRHEO0518dcsjpE2845kQQCTkenn68sN5U/0iTmZnSVWvTf4OZqOn+9mopJN6GNAk/5pXMrnETRRL8dcBmGUJtKyPCeIUwrds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bAXTrcN7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28325C4AF15;
-	Wed, 31 Jul 2024 10:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722421236;
-	bh=grMArfYO8CSfM/P+90j415AKQ/GQfZeA47Ulr1FUtNw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bAXTrcN7fwkGLNoMwdmPOj9eb7lfBZ5xwWAAwyr/kGPtjVPGCa6MWY4J9ICI0W4Et
-	 0/5H2em4nBk80ZMyc6Mu3HUnhtZ96lSxqROScZVOWd4V6s9NlxQAOo3x1q7wUl1J6/
-	 bA0WTMa5bEIMcpX/8gj3Aa/p2h1rEZDHecoQyifcdidJsJkN28Wdc99ahyOoqGdx6x
-	 YgjXYZxBC84iA6Rd5XMPGoht8FLDrvOWyyB3DGPRIZkEK4LktMh5cfR8DoC/3GqFXV
-	 elDUmMe+WoT/DN9SkVdlHd8sZbFpSSnbPbnHDVpdeAzqMuXQJcra4o4JeEJo2VBkBl
-	 j8rE0AKiYtPvw==
-Date: Wed, 31 Jul 2024 12:20:33 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	axboe@kernel.dk, hch@lst.de, djwong@kernel.org, dchinner@redhat.com, 
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v5 0/3] man2: Document RWF_ATOMIC
-Message-ID: <dp5zbkeyj5yevce5djgmxvs7dk7dqarunz3x4csdifye7hxlka@3mmo6bpicm3v>
-References: <20240722095723.597846-1-john.g.garry@oracle.com>
+	s=arc-20240116; t=1722422478; c=relaxed/simple;
+	bh=DqYZ5STz9vnEwRu/V8Eme26ZMwgmq8Zah47tPzzpGbw=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=OcjZOHZkQK+IlwFmVrg27WzFgwiXbTtJ1gicFwGtaYCudWO6iXsaekZQ+jbZiDit67wbky1cgA4hANP76ILgxylgnHvht/O5rdi0Uw2o6WTI2WomrDj2tUvdiH+0WlLhvZZoLLmK69jf2ZrKPP4vnUjxNGzZs03EaLtuNxcy6tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M+IP+pUz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722422475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p6G1qM9eT2x8ssI1V4rGxcfkfdJn4nj53XrSd0SvXMg=;
+	b=M+IP+pUzQ+hMccoxoP9XCGft98t6gnvmi3rQQ4NxVeQYtRO6ok6tea5e8UaZ4L6U45Z57l
+	KOHp2i7r+MlBqV0GKbet5kKdudkU3OjXRJrwchLiTCpAevJhfuDF6SsNnnCgBw4PiLbHfD
+	bYqS3ATrT9ekxi2ZqLPueIUhmQAXDS0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-576-7LMUdm6QOhGR78baj6--1A-1; Wed,
+ 31 Jul 2024 06:41:11 -0400
+X-MC-Unique: 7LMUdm6QOhGR78baj6--1A-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A854E1979065;
+	Wed, 31 Jul 2024 10:41:09 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B17C219560AA;
+	Wed, 31 Jul 2024 10:41:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com>
+References: <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com> <20240729091532.855688-1-max.kellermann@ionos.com> <3575457.1722355300@warthog.procyon.org.uk> <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: dhowells@redhat.com, Ilya Dryomov <idryomov@gmail.com>,
+    Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+    willy@infradead.org, ceph-devel@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] netfs, ceph: Revert "netfs: Remove deprecated use of PG_private_2 as a second writeback flag"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2vvjo6s7xhaqvkb2"
-Content-Disposition: inline
-In-Reply-To: <20240722095723.597846-1-john.g.garry@oracle.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3717297.1722422465.1@warthog.procyon.org.uk>
+Date: Wed, 31 Jul 2024 11:41:05 +0100
+Message-ID: <3717298.1722422465@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+Max Kellermann <max.kellermann@ionos.com> wrote:
 
---2vvjo6s7xhaqvkb2
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	axboe@kernel.dk, hch@lst.de, djwong@kernel.org, dchinner@redhat.com, 
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v5 0/3] man2: Document RWF_ATOMIC
-References: <20240722095723.597846-1-john.g.garry@oracle.com>
-MIME-Version: 1.0
-In-Reply-To: <20240722095723.597846-1-john.g.garry@oracle.com>
+> It was not caused by my bad patch. Without my patch, but with your
+> revert instead I just got a crash (this time, I enabled lots of
+> debugging options in the kernel, including KASAN) - it's the same
+> crash as in the post I linked in my previous email:
+> 
+>  ------------[ cut here ]------------
+>  WARNING: CPU: 13 PID: 3621 at fs/ceph/caps.c:3386
+> ceph_put_wrbuffer_cap_refs+0x416/0x500
 
-Hi John, Darrick,
+Is that "WARN_ON_ONCE(ci->i_auth_cap);" for you?
 
-On Mon, Jul 22, 2024 at 09:57:20AM GMT, John Garry wrote:
-> Document RWF_ATOMIC flag for pwritev2().
->=20
-> RWF_ATOMIC is used for enabling torn-write protection.
->=20
-> We use RWF_ATOMIC as this is legacy name for similar feature proposed in
-> the past.
->=20
-> Kernel support has now been merged into Linus' tree, to be released in
-> v6.11
->=20
-> Differences to v4:
-> - Add RB tags from Darrick (thanks)
-> - Revise description for readv.2 (Darrick)
-> - Re-order RWF_ATOMIC in readv.2
->=20
-> Differences to v3:
-> - Formatting changes (Alex)
->  - semantic newlines
->  - Add missing .TP in statx
->  - Combine description of atomic write unit min and max
->  - misc others
->=20
-> Himanshu Madhani (2):
->   statx.2: Document STATX_WRITE_ATOMIC
->   readv.2: Document RWF_ATOMIC flag
->=20
-> John Garry (1):
->   io_submit.2: Document RWF_ATOMIC
+David
 
-I've applied the 3 patches, with Darrick's RB extra tag, and some
-formatting fixes from myself.  Thanks for the patches!
-
-Have a lovely day!
-Alex
-
->=20
->  man/man2/io_submit.2 | 19 ++++++++++++++
->  man/man2/readv.2     | 61 ++++++++++++++++++++++++++++++++++++++++++++
->  man/man2/statx.2     | 27 ++++++++++++++++++++
->  3 files changed, 107 insertions(+)
->=20
-> --=20
-> 2.31.1
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---2vvjo6s7xhaqvkb2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmaqD/AACgkQnowa+77/
-2zJtIA//cNlXwGg3ul8+pJp+ZiEeAMqc/4xk8KLZ3+a1VXSiEOOWo6N6wDaxXIZs
-g17OePGCnQG8RxAarhngK0pzZIkkQSx31GEAlnQTVIqja2b4by/YHaR7V167nVem
-YvOcNKJL3ruwQmKpUgYuHMJi0py+BPYEQSdmARE9PEEdWoXQu2xY271Y5IWYarzf
-mcDimUqhsjMYmyzQmWM7ikiGCWyZdVkg5XCaMxiaXw015q2IB9jHL6HF7Ym/ZtKU
-wBa+pxTrMLqVXWWeA/zPij5UFAfqeigXlreBFE+hsvFD28GYEMv+DETf5OmoW7mK
-Bm/1pjWNXHO4z/5NoYrVJ2GXg3w1fzK2AVv7BbwrwJCkpPxvAvbw9PPLxzHGMRIr
-Hhf9Drdpn29p0J3EXvJMpYPfUs0RKhmgwteYe/FHI2ZpqwNPJlCigxzLsAdpUJFi
-E9fbZMjyKAB4CpwubT6TJLaV0Uk7VxBHJHUZcPQuSH8y+OEnnH2cKEIvy62eg0Jf
-nBwKLQTHgVnCAQZQx7Jl2MZPBdqLC2Znmdnp5kN8UmBafs/HQKKHCSM9WMSkOPEZ
-FSfJho3monlINawWUpTMwKyjUYx2RgZfKSgmSi0JSuTJBOA6NncWVq/IGWJ7WMqU
-VM5XliAnkoY9XWPy13voUTrnO7xFntrjnTnr1Odb3h3+ArEQtms=
-=T+5+
------END PGP SIGNATURE-----
-
---2vvjo6s7xhaqvkb2--
 
