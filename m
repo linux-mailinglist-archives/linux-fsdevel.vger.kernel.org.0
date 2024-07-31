@@ -1,133 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-24669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C36942A26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 11:18:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D439942B6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 12:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AE071C23DDF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 09:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0B8280998
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 10:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4621AC433;
-	Wed, 31 Jul 2024 09:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29A41AAE16;
+	Wed, 31 Jul 2024 10:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e89ZDnvX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35181AC43F;
-	Wed, 31 Jul 2024 09:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4395B4D8AD;
+	Wed, 31 Jul 2024 10:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722417400; cv=none; b=tOmk8ig7ILq3RwDpW4FDykU2iAms1eKO0GfqnV05maUf7fnBvoT9KEYk7pz+1cs7wUp8Veo6THkggfaWp1+K8G2u5EB4bC/BgBfClsO8tfhKJfHcpSxLJ8+B/KYyFi/USR2XmuJgs6JtkzBs4IVjRfGI/VJBPBK2Z+SeeA0IgJY=
+	t=1722420109; cv=none; b=iZGEGembbiTlogBvwxNToczmv5ecg7NymJlyWxg9/7qoe+jqZ7pYboBCq0rhWI0vL5VoVZvBnGtkjYSXMnJ75mIpZW0pt/w0mGx2IIMYs+m34wOspkitot5HCz28kfqghmkbyrTfeGc/1/vx+gsTzK+uQpD5m3Tv7qnnhiXiBmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722417400; c=relaxed/simple;
-	bh=t7fdWK/Ay9juS5kXI8eBeWil8SHXhzTLA3CH4pADQ+Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ToimN412HZKOx0lWBtcFpOld8Rvm1Gcq7fzLGkMaIVPFy6x782wWecn96SALegETwEhIpX3YYg7aCNQmtdCj5mPbzk+vQEvjkmMnYMgSi4AIXarU+T96YLvZ5uZebAuNmYaedypl2q1Dh6zHSTuqjsB7ld5id5T890VVqbW4IWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYmgG6h4fz4f3jtD;
-	Wed, 31 Jul 2024 17:16:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 948A81A018D;
-	Wed, 31 Jul 2024 17:16:35 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB37ILpAKpmm6FzAQ--.49647S10;
-	Wed, 31 Jul 2024 17:16:35 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH 6/6] iomap: drop unnecessary state_lock when changing ifs dirty bits
-Date: Wed, 31 Jul 2024 17:13:05 +0800
-Message-Id: <20240731091305.2896873-7-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
-References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1722420109; c=relaxed/simple;
+	bh=vCDDYkxaDrqr+HkDaZXcGreYiRRijdDkP/Gr8VjNeeg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qu6OaBsl005Xqhcj2WNGW06bTHkVirwR8uv2WZKTBeIP/RAfOxeCCYfjJKquVc3T+Bn0B48VUPd6yPAQ4Nc1zmer/KGwFR1XdZNIk0r2gqKx6oZe8TJ4xgQA3Apmg8tKoKCm6selnNEufT1JnBIcmwD1QMJQS4pZI5My0bUlDJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e89ZDnvX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B4DCC116B1;
+	Wed, 31 Jul 2024 10:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722420108;
+	bh=vCDDYkxaDrqr+HkDaZXcGreYiRRijdDkP/Gr8VjNeeg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=e89ZDnvX8mX2eWxUEsrad9Zibb8KAXSdsJ1CSBeigWhthC1cCmGZCQyFLQ//PFc0O
+	 dNEeRDAl5gP3Aaob8q0e8qLs5vTk77qyWc7j5GfIqGC0EfC95X3Vghk2blnzrvPTeN
+	 NAk/0ANi+MQfMLxbipZGugEugCo3okvIzsjGIwiKZy39bv0jsAVcCnv5Fl6y6FGqd2
+	 SpwXcM9tjAB+DFdO811r2ix8RsG5u3qx3BrmJ2JXxEEhETI/q5JnOHTswTWO//tglT
+	 rKK/TOItJD1I1aSyff5Tft1nehbd78XK2HU17B8s0fT+tqYAkfF1Ix3dRVKdDNEl70
+	 RhNlZ6+QQZDLw==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Tejun Heo <tj@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] pidfd: prevent creation of pidfds for kthreads
+Date: Wed, 31 Jul 2024 12:01:12 +0200
+Message-ID: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1777; i=brauner@kernel.org; h=from:subject:message-id; bh=vCDDYkxaDrqr+HkDaZXcGreYiRRijdDkP/Gr8VjNeeg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSt4s487b8qcdHeyilJl8pFWSs9n0zQL9n5+Oyy+HgZe 8FOvedGHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPRZGFkOP/0do+V0dvyxbEP TzUomFQc3P3741nhSzr1/QVLu5ZkxDEyrO12SL3uwC45Y19X3x6dnzvfcHZmf/hezJCtpL6rxPM VAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB37ILpAKpmm6FzAQ--.49647S10
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw13tFyxuF47AF48KrW7urg_yoW8Ar4DpF
-	s3KFs8Kr4DZryDu3yUXFy8XrnYka9Fq3y8ArWxC3sxGa15ZryYgrn7uay3ZrW0gr9xCFnY
-	vrnrGr18GrZ8C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUma14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsG
-	vfC2KfnxnUUI43ZEXa7VUbb4S7UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+It's currently possible to create pidfds for kthreads but it is unclear
+what that is supposed to mean. Until we have use-cases for it and we
+figured out what behavior we want block the creation of pidfds for
+kthreads.
 
-Hold the state_lock when set and clear ifs dirty bits is unnecessary
-since both paths are protected under folio lock, so it's safe to drop
-the state_lock, which could reduce some unnecessary locking overhead and
-improve the buffer write performance a bit.
-
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Fixes: 32fcb426ec00 ("pid: add pidfd_open()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/iomap/buffered-io.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ kernel/fork.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 248f4a586f8f..22ce6062cfd1 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -137,14 +137,8 @@ static void ifs_clear_range_dirty(struct folio *folio,
- 	unsigned int first_blk = DIV_ROUND_UP(off, i_blocksize(inode));
- 	unsigned int last_blk = (off + len) >> inode->i_blkbits;
- 	unsigned int nr_blks = last_blk - first_blk;
--	unsigned long flags;
- 
--	if (!nr_blks)
--		return;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index cc760491f201..18bdc87209d0 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2053,11 +2053,24 @@ static int __pidfd_prepare(struct pid *pid, unsigned int flags, struct file **re
+  */
+ int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret)
+ {
+-	bool thread = flags & PIDFD_THREAD;
 -
--	spin_lock_irqsave(&ifs->state_lock, flags);
- 	bitmap_clear(ifs->state, first_blk + blks_per_folio, nr_blks);
--	spin_unlock_irqrestore(&ifs->state_lock, flags);
+-	if (!pid || !pid_has_task(pid, thread ? PIDTYPE_PID : PIDTYPE_TGID))
++	if (!pid)
+ 		return -EINVAL;
+ 
++	scoped_guard(rcu) {
++		struct task_struct *tsk;
++
++		if (flags & PIDFD_THREAD)
++			tsk = pid_task(pid, PIDTYPE_PID);
++		else
++			tsk = pid_task(pid, PIDTYPE_TGID);
++		if (!tsk)
++			return -EINVAL;
++
++		/* Don't create pidfds for kernel threads for now. */
++		if (tsk->flags & PF_KTHREAD)
++			return -EINVAL;
++	}
++
+ 	return __pidfd_prepare(pid, flags, ret);
  }
  
- static void iomap_clear_range_dirty(struct folio *folio, size_t off, size_t len)
-@@ -163,11 +157,8 @@ static void ifs_set_range_dirty(struct folio *folio,
- 	unsigned int first_blk = (off >> inode->i_blkbits);
- 	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
- 	unsigned int nr_blks = last_blk - first_blk + 1;
--	unsigned long flags;
+@@ -2403,6 +2416,12 @@ __latent_entropy struct task_struct *copy_process(
+ 	if (clone_flags & CLONE_PIDFD) {
+ 		int flags = (clone_flags & CLONE_THREAD) ? PIDFD_THREAD : 0;
  
--	spin_lock_irqsave(&ifs->state_lock, flags);
- 	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
--	spin_unlock_irqrestore(&ifs->state_lock, flags);
- }
- 
- static void iomap_set_range_dirty(struct folio *folio, size_t off, size_t len)
++		/* Don't create pidfds for kernel threads for now. */
++		if (args->kthread) {
++			retval = -EINVAL;
++			goto bad_fork_free_pid;
++		}
++
+ 		/* Note that no task has been attached to @pid yet. */
+ 		retval = __pidfd_prepare(pid, flags, &pidfile);
+ 		if (retval < 0)
 -- 
-2.39.2
+2.43.0
 
 
