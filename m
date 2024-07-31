@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-24664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 909C8942A16
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 11:17:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F7F942A18
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 11:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4868B1F2554E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 09:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C6CC1C21885
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 09:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD041AD3E0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767711AD3E9;
 	Wed, 31 Jul 2024 09:16:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B571AC433;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045611AC436;
 	Wed, 31 Jul 2024 09:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722417398; cv=none; b=kDi66FGRXsnIfO5vJ2Xc8YXjMI0pMIrqm6YdWSCOxo/jMm1IlCkUr8L6ER4xhJvosPjrVaVeSZIw2XZsDyhUGaCRO3InQbQRJV3b2mOHq5uc+SUctApk01twwdhtC2LVDZgHbBUFBwz2j55JwfbORhic+qXIyj9r/0+iF1e3v9Q=
+	t=1722417399; cv=none; b=uyzBmSxUJmOazTbzO18Y4WcMdyLuYw2twaGycKNLxfmJOrPPYsXeGTTjTvSChLeStDIhJeBuaI/5bMJU70LDRxOfKAzDhR4/eQl4APH+UtxGQwYxUpgs7L20w75BBh5OeJGIJgJUoKG4nFXPv0feoXIctQx5cwo34TAszqtgwSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722417398; c=relaxed/simple;
-	bh=MdWIkbtSsiusByJ7U159VD4rsd6Z8bvqdF3SRHTK9fc=;
+	s=arc-20240116; t=1722417399; c=relaxed/simple;
+	bh=5rAxUpsa29U7VXnhdoJeM35hvhpCE5o97sMMKKKSa8A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S6IlmsJehPgfV6T+hqJhNSd4LAo2AxvDvteuZvKyCgvmx6xK0SqXpCokLIJv9ejPBU3tCyOvUi/QGJFTIhpB0iRsnNueCUso203Z1+vLPcN+7ynC3wbnGjIZR0LWPLZLYRI8asebWoYu3HnNWhRZVFtIpdLIKimIaeqC4Lf3QRc=
+	 MIME-Version; b=MhHq/yTbFpcVaPBiFGETo8udJZTgBP25yrblTNuNFEn2lMZm+0ewYv2MZzwr8mpjnOndghlkTV0wiGRhUK6iJh7etuamXTCyqpJbUmsyUYoAovFW+EsOQ+/Ho2Mx6WNMNjYaIxQBxWwLIFT6OvGmFT9/kL9IB0GDCifMXTSh3TM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WYmg84nf9z4f3jsH;
-	Wed, 31 Jul 2024 17:16:20 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WYmg91LnLz4f3jrw;
+	Wed, 31 Jul 2024 17:16:21 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 916D81A0C12;
-	Wed, 31 Jul 2024 17:16:33 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 183931A0568;
+	Wed, 31 Jul 2024 17:16:34 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB37ILpAKpmm6FzAQ--.49647S6;
+	by APP4 (Coremail) with SMTP id gCh0CgB37ILpAKpmm6FzAQ--.49647S7;
 	Wed, 31 Jul 2024 17:16:33 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-xfs@vger.kernel.org,
@@ -51,9 +51,9 @@ Cc: linux-kernel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com
-Subject: [PATCH 2/6] iomap: support invalidating partial folios
-Date: Wed, 31 Jul 2024 17:13:01 +0800
-Message-Id: <20240731091305.2896873-3-yi.zhang@huaweicloud.com>
+Subject: [PATCH 3/6] iomap: advance the ifs allocation if we have more than one blocks per folio
+Date: Wed, 31 Jul 2024 17:13:02 +0800
+Message-Id: <20240731091305.2896873-4-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
 References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
@@ -64,53 +64,82 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB37ILpAKpmm6FzAQ--.49647S6
-X-Coremail-Antispam: 1UD129KBjvdXoWrtFWxGFW7Jr43Zry5tw13Arb_yoWkJwc_u3
-	4kWw1kXw1rG3WftF1xArWayrsY9345Cr18WFy8tFykC34DJ3Z5Jr1vkFnagFyUJay7JFZx
-	G3Z5ur45Zry29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbkxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXwA2048vs2IY02
-	0Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-	v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
-	AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kfnx
-	nUUI43ZEXa7VUb89N3UUUUU==
+X-CM-TRANSID:gCh0CgB37ILpAKpmm6FzAQ--.49647S7
+X-Coremail-Antispam: 1UD129KBjvJXoW7urWrWF1DCFyDCrW3AF1UWrg_yoW8uryrpF
+	Z8KFWqkFWxJw17urnFqa4DZrWj93y5XrWfCay3W3ZxZF1DJr1UKw4vgayYyF4fXr9rAF4S
+	qFsYvFy8WF15Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUm014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
+	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
+	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
+	IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
+	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
+	xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
+	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
+	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
+	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVj
+	vjDU0xZFpf9x0JUgo7NUUUUU=
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Current iomap_invalidate_folio() could only invalidate an entire folio,
-if we truncate a partial folio on a filesystem with blocksize < folio
-size, it will left over the dirty bits of truncated/punched blocks, and
-the write back process will try to map the invalid hole range, but
-fortunately it hasn't trigger any real problems now since ->map_blocks()
-will fix the length. Fix this by supporting invalidating partial folios.
+Now we allocate ifs if i_blocks_per_folio is larger than one when
+writing back dirty folios in iomap_writepage_map(), so we don't attach
+an ifs after buffer write to an entire folio until it starts writing
+back, if we partial truncate that folio, iomap_invalidate_folio() can't
+clear counterpart block's dirty bit as expected. Fix this by advance the
+ifs allocation to __iomap_write_begin().
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/iomap/buffered-io.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/iomap/buffered-io.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index a896d15c191a..64c4808fab31 100644
+index 64c4808fab31..ec17bf8d62e9 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -631,6 +631,8 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
- 		WARN_ON_ONCE(folio_test_writeback(folio));
- 		folio_cancel_dirty(folio);
- 		ifs_free(folio);
-+	} else {
-+		iomap_clear_range_dirty(folio, offset, len);
- 	}
- }
- EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
+@@ -686,6 +686,12 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 	size_t from = offset_in_folio(folio, pos), to = from + len;
+ 	size_t poff, plen;
+ 
++	if (nr_blocks > 1) {
++		ifs = ifs_alloc(iter->inode, folio, iter->flags);
++		if ((iter->flags & IOMAP_NOWAIT) && !ifs)
++			return -EAGAIN;
++	}
++
+ 	/*
+ 	 * If the write or zeroing completely overlaps the current folio, then
+ 	 * entire folio will be dirtied so there is no need for
+@@ -697,10 +703,6 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 	    pos + len >= folio_pos(folio) + folio_size(folio))
+ 		return 0;
+ 
+-	ifs = ifs_alloc(iter->inode, folio, iter->flags);
+-	if ((iter->flags & IOMAP_NOWAIT) && !ifs && nr_blocks > 1)
+-		return -EAGAIN;
+-
+ 	if (folio_test_uptodate(folio))
+ 		return 0;
+ 	folio_clear_error(folio);
+@@ -1913,7 +1915,12 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	WARN_ON_ONCE(end_pos <= pos);
+ 
+ 	if (i_blocks_per_folio(inode, folio) > 1) {
+-		if (!ifs) {
++		/*
++		 * This should not happen since we always allocate ifs in
++		 * iomap_folio_mkwrite_iter() and there is more than one
++		 * blocks per folio in __iomap_write_begin().
++		 */
++		if (WARN_ON_ONCE(!ifs)) {
+ 			ifs = ifs_alloc(inode, folio, 0);
+ 			iomap_set_range_dirty(folio, 0, end_pos - pos);
+ 		}
 -- 
 2.39.2
 
