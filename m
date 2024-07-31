@@ -1,59 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-24699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487699433B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 17:55:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D60943478
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 18:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87D11F26510
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 15:55:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B17851C21C4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 16:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022671BBBEE;
-	Wed, 31 Jul 2024 15:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEFE1BD4E3;
+	Wed, 31 Jul 2024 16:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JRqAY2g4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n/mv1jIc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD9A1799F;
-	Wed, 31 Jul 2024 15:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D84434CDE;
+	Wed, 31 Jul 2024 16:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722441296; cv=none; b=UL2VpWocLZmD+1JTcxa/juneLevoc1gHAWutTmGemPHpw40sdoxux7K45ipFvwSnzJE85piAnO5WSWls/nhqgGVqDM1dAfcwn36/pTV6uEh7ivNgrTTf2L4tlQReMdbOiiXRfQRG1+iUCAiHVbFFAyf95W3UQS9I6SQNb2B0gWU=
+	t=1722444737; cv=none; b=Upsfg5kWrD/y7fXDLc08Er3YH2Jcak3h6zP2LJiiOu2CRfkmeic8vKpLyJMwG985oRo0CE05fVryE1FGsm/dfZseLoQGLiXxS3jYXfGoifbjtL3hSvZEQ45hYTvXvNwT5k03AEGAkcp77resPsSXWqwpFmSomzuCZuBuVxQCQjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722441296; c=relaxed/simple;
-	bh=18/UMq8EJj3RydzQiisL2ZuorE1XGAfvTcjjkSYiTEo=;
+	s=arc-20240116; t=1722444737; c=relaxed/simple;
+	bh=Py0+MUMLyP+amcrYsRQm71NOW2FLNIcd6AfpvH7QLjU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YRvbdNf03ennBGFV2bfF933U1lo3VZIk84QnnDWxv+ougEukiG3V+kyrhhNRhtffmUPA0GwdesDM0FlqmvE91sMzEmvGJicV2WoCDgmAUS6dihbYBdXIb0Q9PcGH7lBP+TF74F5uAgIr7u0Ntqp87PbL+ht3Mk+HfIXZztopiCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JRqAY2g4; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=aS/vdBKAMpbfrgPW04/vxmLSQvNmyfacSq36Mv7vtNHnnIqF3LTsg5l8PCxyjzoBVZkpW6xvN8eANFp9vAjAy023MaLAl5B6VM5qnt6OkFlzSJK1PABv0q5WYaWh/jA4tab7zfcSaOjssUhFjV20QU8Z+fFA6TIRs3Lj0P4jstU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n/mv1jIc; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=18/UMq8EJj3RydzQiisL2ZuorE1XGAfvTcjjkSYiTEo=; b=JRqAY2g43ZA6+38/TEL7PsUtRZ
-	/AKmPwMnY91ZSyijHWifeMlJiPaFDzeFri13YYiMK8vFSLCM8B55hH7cgmIcXi37noTkUKuUmLkqR
-	zlu6Fo/iW6O+qZRgmPGy532gc9nNesxhbQjMxtTuyeynRKxZH5HU3Y6v2RpbxDL4i0zjZio978gi3
-	dBYWitgm2HpU1raA+vgUyroSFa6mbkXMsYWu4wxsv9UHWhKhvjPcXiKwMltEuSTOYHcFo5zFCp0e3
-	7SqAj1OXS1+eQ14vXT6/F+S+t6M+2+SNxI4W+i+JghhWx4/ohQRLIZ29mwee63TmVOQDn3ZThrs6E
-	pNq7lGMA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZBf8-00000001n7z-25uz;
-	Wed, 31 Jul 2024 15:54:50 +0000
-Date: Wed, 31 Jul 2024 08:54:50 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dongliang Cui <dongliang.cui@unisoc.com>
-Cc: linkinjeon@kernel.org, sj1557.seo@samsung.com, hch@infradead.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	niuzhiguo84@gmail.com, hao_hao.wang@unisoc.com, ke.wang@unisoc.com,
-	Zhiguo Niu <zhiguo.niu@unisoc.com>
-Subject: Re: [PATCH v3] exfat: check disk status during buffer write
-Message-ID: <ZqpeSvEgVtIWrWVr@infradead.org>
-References: <20240731022715.4044482-1-dongliang.cui@unisoc.com>
+	bh=4X8mvoBdcFqyLtDyn+RpakBZQHl2koRfp36O76+J8IE=; b=n/mv1jIcFfqCWKkKbptzGtFXvo
+	0/7jkcF/VDqPqrrfl5Wcsi5XvvobtlzeqBOGKwi0MvPpLOxF6MTgKTXVbrFm1Z+EBzlnDs6AFHwJx
+	iJQ/yeFzihq9sBMprpamy16IGxIsISw9iZ/2e9PSxaFadX27UV80owE5YBRNNgtgHH7Y5Muks84WW
+	RoVcEbPvJJBwy8+M+3rNecMU7FX9D0iz82YBW8zUCzMcdXwEgQD+OJOowOK55KV4Sat0wIKsVDiIv
+	D7XGqc3GdW/fMi2lsUDrvxXAT71gtXFtF4AydsiYubLPcPmVpc+V4rMcEDP3fCrYKMGD/X7CsSjAo
+	FFQyrA8w==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZCYe-0000000GLu2-0Y5p;
+	Wed, 31 Jul 2024 16:52:12 +0000
+Date: Wed, 31 Jul 2024 17:52:12 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, jack@suse.cz,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
+ uptodate bits
+Message-ID: <ZqprvNM5itMbanuH@casper.infradead.org>
+References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
+ <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,15 +64,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240731022715.4044482-1-dongliang.cui@unisoc.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
 
-Besides the additional checks for the shutdown flag already mentioned
-the subject is now incorrect I think, it should talk about implementing
-shutdown handling.
+On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
+> Commit '1cea335d1db1 ("iomap: fix sub-page uptodate handling")' fix a
+> race issue when submitting multiple read bios for a page spans more than
+> one file system block by adding a spinlock(which names state_lock now)
+> to make the page uptodate synchronous. However, the race condition only
+> happened between the read I/O submitting and completeing threads, it's
+> sufficient to use page lock to protect other paths, e.g. buffered write
+> path. After large folio is supported, the spinlock could affect more
+> about the buffered write performance, so drop it could reduce some
+> unnecessary locking overhead.
 
-In case you haven't done so yet, please also see if exfat now passes
-the various testcases in xfstests that exercise the shutdown path.
-
-Otherwise this looks reasonable to me, thanks for the work!
+This patch doesn't work.  If we get two read completions at the same
+time for blocks belonging to the same folio, they will both write to
+the uptodate array at the same time.
 
