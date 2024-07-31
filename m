@@ -1,120 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-24689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D6F9431AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 16:08:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DE99431D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 16:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38A51F22129
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 14:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C568A1C23FFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 14:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD8B1B3749;
-	Wed, 31 Jul 2024 14:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FA61AE873;
+	Wed, 31 Jul 2024 14:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="BSMn+6VP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qAFWlT38"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D6216D4CB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 14:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EAD1E487
+	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 14:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722434915; cv=none; b=ZeMscxaXZhuKD4Ixtol0McRkzPDtUx1XipbW+HmdrRf588rF7HJTlar6Mxo/E9BeXA6pVqmps6ELj9T/p59WuxkVTG1KY2bHxxJgURtsbTbFYms7b4OEsaph993gUbdqTIOZFSi6jGmljnOMGEcR2QhKWWC0kcjtoDxXer99fqE=
+	t=1722435412; cv=none; b=g0g8t4OgEkewsnZaejGak9JeCdFjFJeQ6NuhwzU3lb4pH8WqSqLOZTgtNQy5sDkRfBYQGoG31bi/NOwpWKv+VJWsrRmKQdwa+DxWtIUj5fDVfgilw67K4tHwiP5W7qsFHs5AEpumIfDP/Q8JBwCfjiYeQjOwseNWhh8RwP8BO9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722434915; c=relaxed/simple;
-	bh=J5SiSatowZDOZhueocm/4JGajxjW30Ltk8zkSkH1Szo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ir+uE3QGZnjgWPU9ULZwTA8HJjXnDdoRYUMXdMekyxaFOV7UFgQUh7aVCKmb7NFhuOKY+Cz8Ep4kcinf9hPQylyga5gVL9b2A9I9AiCWc28qJ7JWXHU0NuHklKcJJwB6DvH9XELhHJIyrz1d6Pyerk+v4RKNdF1q3rTwHkDFn0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=BSMn+6VP; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a1dcc7bc05so360247985a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jul 2024 07:08:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1722434912; x=1723039712; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OmbqZ+SwBt9pWBiENqDvPp5IsdPjBdZOSucm6Q9PEz0=;
-        b=BSMn+6VPwgDy5AwT+veSi9Krms5LvEOIwGgXWXEjTzx6caXE+SFLCXJx25YhtYTAPu
-         KcP9Eydf8FME5M3LYu6kOTCd6zDwa+sKdRUyGGDnwoHLTAFuf/nn0hMhahG6hWL45Eub
-         7+JQwHyrdMFTyISQVjF25JTRcE9whjyOrs8hjM/LLYcVDONGL59so6bqi44m+Poh61Gs
-         jd2P1iA+BrHgqg0NHGbxGvURL0nFwGZtOJADqkQbmcJhTvpfiWnq9DdPkwRgrZMewKOm
-         ht5rjF9Jp0zTt03AqVchuD8vswK9M0zDbMU7uiFIe09d1/e/XB4RiR/DFTpeO9dksOUy
-         LL8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722434912; x=1723039712;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OmbqZ+SwBt9pWBiENqDvPp5IsdPjBdZOSucm6Q9PEz0=;
-        b=rmNVnzT5ABYBL7VVdxwcYAZMWFsEi5d0jyTC5vjZhFOwzVuZTWJ/dbObRT4OIH1maR
-         ftXikzjj4CiEoQQvAxAIVUoC+BR8N5B9ySFE7BonC5RNB0yDQVW1ES+3M0BNdTklRHmG
-         wYVCgy4SkWWyrx48aMVBiu92LLRLk0dIG0qgDSKHFhlKZwhO6c7RJwmHM5tzg4aiCwEJ
-         cDd63Gjd8ghf1B2wqvXvrLl2DxSxCkwz3poKaTNUEvNwjtISotQoscpPPRjqRszUE5jy
-         WWMBpx4Y8LTvnYALBsKb4eUiF0AAjDVGBW7GMveRaYr+Kp4fjXSsHKfwqZwCNtTuu9k1
-         bv1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXAg4zCZUZQKDaNy4JKIQ509aV2AFVjqPgpKWG8agMR6vPC/c9QfDcqX/FwRr9UJDx10PyKAYq2KlUUDZ8agsYNtz9cK8epJwD6EfRFNA==
-X-Gm-Message-State: AOJu0YwBiyg8aOrUna/r/hFV/mb6rLtstfeCAoV1Jm3l3V1ebQx6XGGl
-	c74+FJz7TrcC2Ao/vurIGAw14JhF3Nnyzp3g5mru1pfHEhDt9pXPbsWza4TjMw==
-X-Google-Smtp-Source: AGHT+IE6kPGJyplTmL+CdLHYVHoAqc9Zp1sYnDW3Lj3rFha6QTxDYm53FQkQABVQPDmkoe6eOIvPbg==
-X-Received: by 2002:a05:620a:4143:b0:79f:10e6:2ee with SMTP id af79cd13be357-7a1e5260140mr1740167585a.41.1722434912481;
-        Wed, 31 Jul 2024 07:08:32 -0700 (PDT)
-Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1fdd2f90csm210796285a.24.2024.07.31.07.08.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 07:08:32 -0700 (PDT)
-Date: Wed, 31 Jul 2024 10:08:29 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+1acbadd9f48eeeacda29@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, davem@davemloft.net,
-	dvyukov@google.com, elver@google.com, glider@google.com,
-	gregkh@linuxfoundation.org, hdanton@sina.com, jhs@mojatatu.com,
-	kasan-dev@googlegroups.com, keescook@chromium.org, kuba@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-usb@vger.kernel.org, luyun@kylinos.cn,
-	netdev@vger.kernel.org, pctammela@mojatatu.com, rafael@kernel.org,
-	syzkaller-bugs@googlegroups.com, victor@mojatatu.com,
-	vinicius.gomes@intel.com, viro@zeniv.linux.org.uk,
-	vladimir.oltean@nxp.com
-Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in __run_timer_base
-Message-ID: <3eb71b17-33c3-42fa-86e6-459c3bfdbf29@rowland.harvard.edu>
-References: <00000000000022a23c061604edb3@google.com>
- <000000000000d61bb8061e89caa5@google.com>
+	s=arc-20240116; t=1722435412; c=relaxed/simple;
+	bh=DU6S62z+u1Pn9/P/RJpE2/No5dTMVYRqd+P4mbPQmcU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AUQH+Z++ict1womMz8CTROQCyC/bifCdGn2Yi2rT7z/MiVEskSeqdeDt1Y79wNNluZ5UV8vS8AUBWBS8FKSNwz1fj0cxngg9qfa8WvR42X4gIQs8CLYnXeSqqOaEtQuJhvp8fof1/LDR1GaKjvFT6JFmGBpJTuVHVGpgNzzeRbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qAFWlT38; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F1DAC116B1;
+	Wed, 31 Jul 2024 14:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722435411;
+	bh=DU6S62z+u1Pn9/P/RJpE2/No5dTMVYRqd+P4mbPQmcU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qAFWlT38h0aoE8K+kg8hQgeZShue2N2s3C1trQ4Eg4BHb6+e6n2XDDFTA5ujxdnYU
+	 jZwuZJT948BJN409ctKPiQGJhBtxTU75DaFzLcOte3zYs3Kk4OIava/RbGpTfYcbZY
+	 eTLoBki+4fTFZCbbsR2ju+3rMRDBWGEPNtO6dSDBwJyIuc4dBGS9klAsU1QWnFUtR0
+	 6p7osFEb//+DgZ1C5U0/sVv7MRuE0ZExbDiGsLKRr+0NsEHFB6+yp1+OvLusPHA0v/
+	 FjCE6b7UWQTYVbqFxysHPOL8gmhkPMmtUux+vtoP1TFys8EUWcOgkCYRtUKyTkcupV
+	 zCjGIhzwI2L+Q==
+From: Christian Brauner <brauner@kernel.org>
+To: chuck.lever@oracle.com,
+	jack@suse.cz,
+	yangerkun <yangerkun@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	hughd@google.com,
+	zlang@kernel.org,
+	fdmanana@suse.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	yangerkun@huaweicloud.com,
+	hch@infradead.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] libfs: fix infinite directory reads for offset dir
+Date: Wed, 31 Jul 2024 16:16:42 +0200
+Message-ID: <20240731-pfeifen-gingen-4f8635e6ffcb@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240731043835.1828697-1-yangerkun@huawei.com>
+References: <20240731043835.1828697-1-yangerkun@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000d61bb8061e89caa5@google.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1364; i=brauner@kernel.org; h=from:subject:message-id; bh=DU6S62z+u1Pn9/P/RJpE2/No5dTMVYRqd+P4mbPQmcU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaStcvf2nVW3JPtUpgv7Hff7u2b7Cri/Fjtp63t7tbvup prlZ7LvdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkii7DX1mz8JCwm7f4TuyU 0l57mGFmWfXnjc9/rbv659ku/T1L1vMzMhxQuMa3M+z8j6vM1j+t/j5Q1uV7XPnl9G8Trx7W6iM 5K3kB
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 04:57:02AM -0700, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On Wed, 31 Jul 2024 12:38:35 +0800, yangerkun wrote:
+> After we switch tmpfs dir operations from simple_dir_operations to
+> simple_offset_dir_operations, every rename happened will fill new dentry
+> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
+> key starting with octx->newx_offset, and then set newx_offset equals to
+> free key + 1. This will lead to infinite readdir combine with rename
+> happened at the same time, which fail generic/736 in xfstests(detail show
+> as below).
 > 
-> commit 22f00812862564b314784167a89f27b444f82a46
-> Author: Alan Stern <stern@rowland.harvard.edu>
-> Date:   Fri Jun 14 01:30:43 2024 +0000
-> 
->     USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14f906bd980000
-> start commit:   89be4025b0db Merge tag '6.10-rc1-smb3-client-fixes' of git..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1acbadd9f48eeeacda29
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145ed3fc980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c1541c980000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
-> 
+> [...]
 
-#syz fix: USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
+@Chuck, @Jan I did the requested change directly. Please check!
 
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+---
+
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] libfs: fix infinite directory reads for offset dir
+      https://git.kernel.org/vfs/vfs/c/fad90bfe412e
 
