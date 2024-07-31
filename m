@@ -1,74 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-24646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B2E9423ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 02:43:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3315942405
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 03:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F098E1F24826
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 00:43:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48DD828633A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 01:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C59F8F58;
-	Wed, 31 Jul 2024 00:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4239CD2F5;
+	Wed, 31 Jul 2024 00:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KXQpUCxQ"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="yOaRG6xQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4024A31;
-	Wed, 31 Jul 2024 00:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E68C8BEA;
+	Wed, 31 Jul 2024 00:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722386589; cv=none; b=KH71xYPzsBIxzgmwNSCXmvSpw2dZO8hgrLK46A/RseSsRZgX+NS0X2ybQSbN2/Dm+ZWlD9AV3/7a/ng0S7zJ+WIDBdbqN77GfZOPfH8/8sxkx0XW8tSBaLnFx/rz/kP2WNHB5Yw4GiCCZKoxG+Y2usTAuKWDKvkV2Np8q8dvcak=
+	t=1722387584; cv=none; b=teNlGGkw+JMhvQf9I+yWXzw9VhKHqWf2sOmtSG8bszWmYG2kvOCxyQ+zjAGTS0kiztiilNYxu492EjepRgdT0fosZcxQFN121m5gufeucg+vV02aoLVtkUvRoQotZhNU0QwukDHFwGNL5SZJ8SBvTXw8gnNUVHjzuuwhDkXkzKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722386589; c=relaxed/simple;
-	bh=0Ucwoq06RuZunJH9ZTsuF1H8BZYdv3fYzTqpVSxm0js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tr3wDB45+kCW/LjW9qqdoD/qPa/0RDLrvGk12bVhzBBKuFd9IE/IQHDT5A2C1Pw7JzTMKV/m3YZl5BJv1pm2uJpK652FRk1G+hQWTOLR+4O3g+dBXHtLh71+SPg9ThHfY91Kr5JtT8kanP2D2GqpqYb+YdgSeBxJGe+mLyQYAY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KXQpUCxQ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PbApO/TIp5V0FKdRkfodevei4EDfm4ALsJAsgQBECAQ=; b=KXQpUCxQeQh/BBdWhJy+KlHr5X
-	2IU0R8zcgoaWX3U0jChl1zzFm2lPJR/vOavGb8a17TqNlUNF2v4V6kOlhxpJk5Ae6+6MBmUqbQ7av
-	VJqNnvD+nW9sHB7/jiEaX99/vLNCJS63npVjqClID8z5O/y6ND4e42Tj/VXWRMhg1N4GRoBBRvLDd
-	nXo6TXpFdyh6N0bRI1QsEi4+83HAahArycPqeVdST4adY47escnKNq15X4wcN1Q92oEij7Q13dHOA
-	RR5FmIm9pDH6nbWu+VdWnw2h7312jzj/HZAi45Srj8sUmIicEImgy6naSj9l4ZuFDQC/rKRVGCmt0
-	owD4J1/w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sYxQm-00000000MLz-0Nq3;
-	Wed, 31 Jul 2024 00:43:04 +0000
-Date: Wed, 31 Jul 2024 01:43:04 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, bpf@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>, kvm@vger.kernel.org,
-	cgroups@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCHSET][RFC] struct fd and memory safety
-Message-ID: <20240731004304.GI5334@ZenIV>
-References: <20240730050927.GC5334@ZenIV>
+	s=arc-20240116; t=1722387584; c=relaxed/simple;
+	bh=i55BjG4Az1uMgUYMNpiUqocgXqxkBYbCX/reUu941+c=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=asl+Z1mQ0m/GrcMrg7qAqh+GyZz4dUr/YyxxJbVFsuL9Wad1rfrv6+gfcX9/hGOj+4GYrZHI0ga6XpHYDUG8ig6noTxWJlDg8chMD6q1oDBY1VmUUUsfPMpA4nRrW6SiHn5Z+oT+FoUeXs58Hk+PGoHXQ6MW1B06z2HEw7Co/Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=yOaRG6xQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C1AC32782;
+	Wed, 31 Jul 2024 00:59:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722387583;
+	bh=i55BjG4Az1uMgUYMNpiUqocgXqxkBYbCX/reUu941+c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=yOaRG6xQyEFQANhk5kmfHuS8MU5QddMfdLCoZb7Fn3Dn1jftyjHTx1ybi8jCeft8n
+	 6h764jvhO3CQ0c5o+TVnmS20iygHQc9sgKpPD36OTPvk2zso5q2it+qi/r+Kaaa/QE
+	 ytAyGSH7qM171MciKceHCDOOZDW+rPYccVVdYelg=
+Date: Tue, 30 Jul 2024 17:59:27 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: torvalds@linux-foundation.org, ebiederm@xmission.com,
+ alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com,
+ penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ audit@vger.kernel.org, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH resend v4 00/11] Improve the copy of task comm
+Message-Id: <20240730175927.673754c361a70351ad8a3ff9@linux-foundation.org>
+In-Reply-To: <20240729023719.1933-1-laoar.shao@gmail.com>
+References: <20240729023719.1933-1-laoar.shao@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730050927.GC5334@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 06:09:27AM +0100, Al Viro wrote:
+On Mon, 29 Jul 2024 10:37:08 +0800 Yafang Shao <laoar.shao@gmail.com> wrote:
 
-> 	10a.  All calls of fdput_pos() that return a non-empty
-	                   fdget_pos(), that is.
+> Is it appropriate for you to apply this to the mm tree?
 
-> value are followed by exactly one call of fdput_pos().
+There are a couple of minor conflicts against current 6.11-rc1 which
+you'd best check.  So please redo this against current mainline?
 
