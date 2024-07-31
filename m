@@ -1,110 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-24692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB3F94322F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 16:39:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C478E943232
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 16:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08909284D28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 14:39:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622471F26703
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jul 2024 14:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397CC1BBBD3;
-	Wed, 31 Jul 2024 14:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6C91BBBD5;
+	Wed, 31 Jul 2024 14:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZO9UrY4s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amDNhx/D"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878B51BBBC0;
-	Wed, 31 Jul 2024 14:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8A61DDC9;
+	Wed, 31 Jul 2024 14:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722436751; cv=none; b=aZAq3LdflcHVtVd7g7ZEUWihUPyAaQiO07VcSp9MHJ+KgC9t2m9QrjOvCL7nM+KJePBJ10qleFTd/8EOG/WaNQ3uOdv03NP+0dIhzznqgFgp51bK1gV1V0o+BEHp/MuOL04L7uMHZtRMZPEdGykDWv0B5AuJIurtnHBnz2WuXQc=
+	t=1722436861; cv=none; b=hakB3NgFo5TCizcfMfdrTuKvWgqKivO+JGYpO3AanSannn27+rqIgzhUMADZnk9FNUz7KBkANSoB5PkbNK+yKQLmyZ0XWuPGE8znoI0TDZvNuMa93ddcsR0zTPgY+XD1t+nO2QXkxejh5jzm/epY8UC+4igjucKn8WmCM7nPSk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722436751; c=relaxed/simple;
-	bh=Z2KAjo8igGx1GqUFLJxsni1rTAHJZQ5kzFZTFWGu4QE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZPFMXUICpVnxL0zdlWa6BjaxWbcqXvI3klZhVydTcdenjQUhuny6RrJSuDrE4qZgGAzqx7lBVxidr9dU2bXAoCSq8sEZaB8EI6kJngvcuXsMTUNggaNHb2wUT3D5wEEzuX5HYDeLAmPk2MHZsOQ2MLe1XrErrXtYhpPmFYMrJdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZO9UrY4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EDA7C116B1;
-	Wed, 31 Jul 2024 14:39:07 +0000 (UTC)
+	s=arc-20240116; t=1722436861; c=relaxed/simple;
+	bh=bnW6xuwZRXMhJrERIAI3wU1Z7HMnXzuTTSgYcobJcNA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=okTHcMOMiRNG37p08piEEM+WxyDARTuNZgAz38qXqyWOnR/oAEKS3YWHqSXvC8y2LIlY+/UinPMunBfcbUQYwhLfBV1Q+jN8MN7ALT8hibB6bj8Xbo4Y6MGIcJCFWV6SWfoc7JgM6gxV84gODmTBEbGPRle242y9k83TWVL/Vhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amDNhx/D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE70BC4AF0B;
+	Wed, 31 Jul 2024 14:40:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722436751;
-	bh=Z2KAjo8igGx1GqUFLJxsni1rTAHJZQ5kzFZTFWGu4QE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZO9UrY4shavGi32AhjGhU0PIc5WumFGsoaq3Pdh/zQAC9/fafRZXVR9Js9J/fISTh
-	 hnKbtDDnheNibWpVdscDHtSRGCkZ2ENcSIF1AUSeQMsKN8ekrW2zgpVhcDcfroomqv
-	 CKOP9vw76i1htnPmVxHL3pRKGOD4ArtwKshJaOwqOe3KUMH9yLEttZjo4rW5QYOWRx
-	 YBf3p35a1OXhOywPP5r7jZ19l777UMJ46vw/bBBRTwCRM/XObks85G8YMIQXZYNp1x
-	 pvjTRO44HLelRd/baO0wMmsBjiyqcBsWSupSH5HSiziWBL9a2lpxESroUj2zg/2XnP
-	 PGz0no2hjdP/g==
-Date: Wed, 31 Jul 2024 16:39:04 +0200
+	s=k20201202; t=1722436861;
+	bh=bnW6xuwZRXMhJrERIAI3wU1Z7HMnXzuTTSgYcobJcNA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=amDNhx/D9q3Te2VaVhD7jTIzAn6vhUMsTpFFXj/sbot7JZIo24T3EyYxqVD2450a9
+	 rOk9dmf4/Viw/ibNSVrYZqjNIQrcndTSe8H1Nat3tkBXW9iIAxr6upd9Dn4JM63lD+
+	 3O1Le2Wvn02sLYrmGGfVlU59ykSFdSMRvpXyazO7pjoixeX3BO7vr939kNIe49OTiL
+	 7n8Hbwut99cxMna36XlGHd6Z6flRLHbix3cfZTNh+bzl9fEsPygXCQXnY9rfgykH81
+	 p3yqWzLNhNjwRg3GkaJ8LKcOnBVCaAf7d9j/b+YHVgtWcyUpdZgmKc7CAKjijCON1G
+	 d+zd0DDFltTeg==
 From: Christian Brauner <brauner@kernel.org>
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Jeff Xu <jeffxu@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	kernel@collabora.com, gbiv@google.com, inglorion@google.com, ajordanr@google.com, 
-	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>, Kees Cook <kees@kernel.org>, 
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v4] proc: add config & param to block forcing mem writes
-Message-ID: <20240731-gefilde-rehabilitieren-75f77dbdd79f@brauner>
-References: <20240730132528.1143520-1-adrian.ratiu@collabora.com>
- <CALmYWFumfPxoEE-jJEadnep=38edT7KZaY7KO9HLod=tdsOG=w@mail.gmail.com>
- <CAHk-=wiAzuaVxhHUg2De3yWG5fgcZpCFKJptDXYdcgF-uRru4w@mail.gmail.com>
- <3ea8c0-66aa3900-3-2bfd8e00@3451942>
+To: David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] netfs: clean up after renaming FSCACHE_DEBUG config
+Date: Wed, 31 Jul 2024 16:40:50 +0200
+Message-ID: <20240731-denken-marzipan-d7c2a89e8375@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240731073902.69262-1-lukas.bulwahn@redhat.com>
+References: <20240731073902.69262-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3ea8c0-66aa3900-3-2bfd8e00@3451942>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1215; i=brauner@kernel.org; h=from:subject:message-id; bh=bnW6xuwZRXMhJrERIAI3wU1Z7HMnXzuTTSgYcobJcNA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSt8vkmc/DXYsfL6x+HRv66+uG/Ie+c8LgGz/LnJ4od+ SMmM7EGdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEVIiR4dqk3i47bxmlZ6eO 8nyQYE6Zu3Kv3NbD5vybr7S+enY0/CsjwzTWe/qpWZM3lyz52uB43dB+1w3OXQvOz7Q8bHGT10P sChsA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 02:15:54PM GMT, Adrian Ratiu wrote:
-> On Wednesday, July 31, 2024 02:18 EEST, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, 31 Jul 2024 09:39:02 +0200, Lukas Bulwahn wrote:
+> Commit fcad93360df4 ("netfs: Rename CONFIG_FSCACHE_DEBUG to
+> CONFIG_NETFS_DEBUG") renames the config, but introduces two issues: First,
+> NETFS_DEBUG mistakenly depends on the non-existing config NETFS, whereas
+> the actual intended config is called NETFS_SUPPORT. Second, the config
+> renaming misses to adjust the documentation of the functionality of this
+> config.
 > 
-> > On Tue, 30 Jul 2024 at 16:09, Jeff Xu <jeffxu@google.com> wrote:
-> > >
-> > > > +               task = get_proc_task(file_inode(file));
-> > > > +               if (task) {
-> > > > +                       ptrace_active = task->ptrace && task->mm == mm && task->parent == current;
-> > >
-> > > Do we need to call "read_lock(&tasklist_lock);" ?
-> > > see comments in ptrace_check_attach() of  kernel/ptrace.c
-> > 
-> > Well, technically I guess the tasklist_lock should be taken.
-> > 
-> > Practically speaking, maybe just using READ_ONCE() for these fields
-> > would really be sufficient.
-> > 
-> > Yes, it could "race" with the task exiting or just detaching, but the
-> > logic would basically be "at one point we were tracing it", and since
-> > this fundamentally a "one-point" situation (with the actual _accesses_
-> > happening later anyway), logically that should be sufficient.
-> > 
-> > I mean - none of this is about "permissions" per se. We actually did
-> > the proper *permission* check at open() time regardless of all this
-> > code. This is more of a further tightening of the rules (ie it has
-> > gone from "are we allowed to ptrace" to "are we actually actively
-> > ptracing".
-> > 
-> > I suspect that the main difference between the two situations is
-> > probably (a) one extra step required and (b) whatever extra system
-> > call security things people might have which may disable an actual
-> > ptrace() or whatever..
-> 
-> Either approach is fine with me.
-> 
-> Will leave v4 a few days longer in case others have a stronger
-> opinion or to gather & address more feedback.
-> 
-> If no one objects by then, I'll send v5 with READ_ONCE().
+> [...]
 
-I'll just change that directly. No need to resend for that thing.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] netfs: clean up after renaming FSCACHE_DEBUG config
+      https://git.kernel.org/vfs/vfs/c/c9bffce5f3f5
 
