@@ -1,91 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-24726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1447094417B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 04:59:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E90944196
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 05:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77F72B214ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 02:59:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88C821F227BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 03:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF9513D246;
-	Thu,  1 Aug 2024 02:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="it+OZJL5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4086F101C4;
+	Thu,  1 Aug 2024 03:15:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF89613C8EC;
-	Thu,  1 Aug 2024 02:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F358C18D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 03:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722481129; cv=none; b=BFO+i52XmE7pw6cr85c8uypqhGeR0LiubWAH71YWggauF7urye3u0v0/LeCwItSHe6zcEnSP6457rQSEYdLBY9k5EnMPZyp/tWEMeV0iO4O9CTrLYvcLHVkNPpravraW+rAcc6JtfSqVk/i8EcLnshRrNTEio6y43cCiMXHEHss=
+	t=1722482128; cv=none; b=H14KNINOULukqHWaomm+hGmfnW+k8LnMuOVwZ5rfcMIBhSnoW6qqaGLk97P+O1+fB22Gff+i1xMQxApGLtKO5tTkPuUVNPEJY5DR55fccCEno+wvM1RMK27qBnsz0ASS3hEMHmpEITBFLL1q5lblxjfInRdDG+yHlGUbvE+qGjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722481129; c=relaxed/simple;
-	bh=R/PbSfX22IlQq+rDZwAOGy1NlIgtMeekqzgTX2PrhDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L/pWqVnr6vANMOFBlLx6SlF3ddRlGj5njYTpAV7ht6vYFoAPyxagdB7bJ0vdfZUnAFmGkg/AiTTwyxZfSruwILjlARtSvkp+UUE45LwBZJaDB+1ABiD7UfiXj/ushr6MZMWsTjwXmtzX5uxjDTB4+M3A9KI58+jzc98IJN+J8/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=it+OZJL5; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CufbBeCclyoLjGci2RYVjVV3/1sm4zO+QwPlTVVje8s=; b=it+OZJL5pOCL6lOQZdNvsq7ubr
-	ylTkbH24A6AZm3lkLl1CDDDEa4DcghGdbi+poBj7QdB8LVUAr3lRNhcg+AQ/1X/DeuKoyYGGuTQUM
-	iXEbBsPtH96xvVrLBh4e6bTGQVEkMAZcAkHU2All6M5IXu8TnyMqFWqfu5MHhVYybLIk8Uq9MrIKK
-	S/WMFBlifqoqsN26meKv9yv8gEZul9Hh3pJiO9uBcRbzqncM9TbiL8n3mjR2YtWmM/Zc+MuIpkpbU
-	6Lkwp+UrIdRAj2k7q1c3qssb9lVEtPzs8DBhl6HCk6UNzAOEgfOmHvYBhXgWkIykzmHOwJ28DUx6p
-	Ym1BAbcg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sZM1a-00000000cX6-1nj5;
-	Thu, 01 Aug 2024 02:58:42 +0000
-Date: Thu, 1 Aug 2024 03:58:42 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
-	squashfs-devel@lists.sourceforge.net,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] filemap: Init the newly allocated folio memory to 0 for
- the filemap
-Message-ID: <20240801025842.GM5334@ZenIV>
-References: <000000000000a90e8c061e86a76b@google.com>
- <20240801022739.1199700-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1722482128; c=relaxed/simple;
+	bh=omlDw93plxaE1t/jXzOs89yIt1NitfeliMo5aLFqo/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pfzIkIV9sRO38EK7Sq3JkW5PJf6lV21v30GhSuJPXys4LVQoez2GCCj9uSHCRxAmmViD0XB3MN6AhKtje4/OwcK7gpxCBvu3IBuqS0Lmo4rxDOtX+e0xZM+lXUi9zc5x8oLCsB8JUAoQfZtfkvATBszIIDublmIcnbgUPcltsq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WZDbw4XZ0z4f3jXV
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 11:15:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9465D1A0568
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 11:15:21 +0800 (CST)
+Received: from [10.174.177.210] (unknown [10.174.177.210])
+	by APP4 (Coremail) with SMTP id gCh0CgCHr4XH_apm5mS7AQ--.17560S3;
+	Thu, 01 Aug 2024 11:15:21 +0800 (CST)
+Message-ID: <e1316bfe-67d0-3ca4-ffcf-cd46ba5a8b68@huaweicloud.com>
+Date: Thu, 1 Aug 2024 11:15:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801022739.1199700-1-lizhi.xu@windriver.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH] libfs: fix infinite directory reads for offset dir
+To: Filipe Manana <fdmanana@suse.com>
+Cc: Jan Kara <jack@suse.cz>, yangerkun <yangerkun@huawei.com>,
+ hch@infradead.org, chuck.lever@oracle.com, brauner@kernel.org,
+ viro@zeniv.linux.org.uk, hughd@google.com, zlang@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20240731043835.1828697-1-yangerkun@huawei.com>
+ <20240731115134.tkiklyu72lwnhbxg@quack3>
+ <57de6354-f53d-d106-aed8-9dff3e88efa6@huaweicloud.com>
+ <CAKisOQEn-2Rr4O-gKVtpab1p5iyHVUXeR0fChkrBvGb02FTC3w@mail.gmail.com>
+From: yangerkun <yangerkun@huaweicloud.com>
+In-Reply-To: <CAKisOQEn-2Rr4O-gKVtpab1p5iyHVUXeR0fChkrBvGb02FTC3w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHr4XH_apm5mS7AQ--.17560S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Gw18Ww47KFWDKFyUCrWxJFb_yoWxXFW8pr
+	Z8G3W2krWfX34UKr40q3WDur1S93Z7Kr4rXrykWw1UJr9FqrW3KFyIyr1Y9a48Jr4kCr12
+	qF45KFy3ur15CrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
-On Thu, Aug 01, 2024 at 10:27:39AM +0800, Lizhi Xu wrote:
-> syzbot report KMSAN: uninit-value in pick_link, this is because the
-> corresponding folio was not found from the mapping, and the memory was
-> not initialized when allocating a new folio for the filemap.
+Hi!
+
+在 2024/7/31 21:10, Filipe Manana 写道:
+> On Wed, Jul 31, 2024 at 1:51 PM yangerkun <yangerkun@huaweicloud.com> wrote:
+>>
+>> Hi!
+>>
+>> 在 2024/7/31 19:51, Jan Kara 写道:
+>>> On Wed 31-07-24 12:38:35, yangerkun wrote:
+>>>> After we switch tmpfs dir operations from simple_dir_operations to
+>>>> simple_offset_dir_operations, every rename happened will fill new dentry
+>>>> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
+>>>> key starting with octx->newx_offset, and then set newx_offset equals to
+>>>> free key + 1. This will lead to infinite readdir combine with rename
+>>>> happened at the same time, which fail generic/736 in xfstests(detail show
+>>>> as below).
+>>>>
+>>>> 1. create 5000 files(1 2 3...) under one dir
+>>>> 2. call readdir(man 3 readdir) once, and get one entry
+>>>> 3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
+>>>> 4. loop 2~3, until readdir return nothing or we loop too many
+>>>>      times(tmpfs break test with the second condition)
+>>>>
+>>>> We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
+>>>> directory reads") to fix it, record the last_index when we open dir, and
+>>>> do not emit the entry which index >= last_index. The file->private_data
+>>>> now used in offset dir can use directly to do this, and we also update
+>>>> the last_index when we llseek the dir file.
+>>>
+>>> The patch looks good! Just I'm not sure about the llseek part. As far as I
+>>> understand it was added due to this sentence in the standard:
+>>>
+>>> "If a file is removed from or added to the directory after the most recent
+>>> call to opendir() or rewinddir(), whether a subsequent call to readdir()
+>>> returns an entry for that file is unspecified."
+>>>
+>>> So if the offset used in offset_dir_llseek() is 0, then we should update
+>>> last_index. But otherwise I'd leave it alone because IMHO it would do more
+>>> harm than good.
+>>
+>> IIUC, what you means is that we should only reset the private_data to
+>> new last_index when we call rewinddir(which will call lseek to set
+>> offset of dir file to 0)?
+>>
+>> Yeah, I prefer the logic you describle! Besides, we may also change
+>> btrfs that do the same(e60aa5da14d0 ("btrfs: refresh dir last index
+>> during a rewinddir(3) call")). Filipe, how do you think?
 > 
-> To avoid the occurrence of kmsan report uninit-value, initialize the
-> newly allocated folio memory to 0.
+> What problem does it solve?
+> The standard doesn't forbid it, and I can't see anything wrong with it.
 
-NAK.
 
-You are papering over the real bug here.
+Yeah, I didn't find any obvious bugs for this behavior. It's a choose
+does this seems better, and I think it's also ok to keep btrfs not
+change now. Thanks for your reply!
 
-That page either
-	* has been returned by find_get_page(), cached, uptodate and
-with uninitialized contents or
-	* has been returned by successful read_mapping_page() - and
-left with uninitialized contents or
-	* had inode->i_size in excess of initialized contents.
+> 
+>>
+>> Thanks,
+>> Erkun.
+>>
+>>>                                                                Honza
+>>>
+>>>>
+>>>> Fixes: a2e459555c5f ("shmem: stable directory offsets")
+>>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>>>> ---
+>>>>    fs/libfs.c | 34 +++++++++++++++++++++++-----------
+>>>>    1 file changed, 23 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/fs/libfs.c b/fs/libfs.c
+>>>> index 8aa34870449f..38b306738c00 100644
+>>>> --- a/fs/libfs.c
+>>>> +++ b/fs/libfs.c
+>>>> @@ -450,6 +450,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>>       mtree_destroy(&octx->mt);
+>>>>    }
+>>>>
+>>>> +static int offset_dir_open(struct inode *inode, struct file *file)
+>>>> +{
+>>>> +    struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>>> +
+>>>> +    file->private_data = (void *)ctx->next_offset;
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>>    /**
+>>>>     * offset_dir_llseek - Advance the read position of a directory descriptor
+>>>>     * @file: an open directory whose position is to be updated
+>>>> @@ -463,6 +471,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>>     */
+>>>>    static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>>    {
+>>>> +    struct inode *inode = file->f_inode;
+>>>> +    struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>>> +
+>>>>       switch (whence) {
+>>>>       case SEEK_CUR:
+>>>>               offset += file->f_pos;
+>>>> @@ -476,7 +487,7 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>>       }
+>>>>
+>>>>       /* In this case, ->private_data is protected by f_pos_lock */
+>>>> -    file->private_data = NULL;
+>>>> +    file->private_data = (void *)ctx->next_offset;
+>>>>       return vfs_setpos(file, offset, LONG_MAX);
+>>>>    }
+>>>>
+>>>> @@ -507,7 +518,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+>>>>                         inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+>>>>    }
+>>>>
+>>>> -static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>> +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
+>>>>    {
+>>>>       struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
+>>>>       struct dentry *dentry;
+>>>> @@ -515,17 +526,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>>       while (true) {
+>>>>               dentry = offset_find_next(octx, ctx->pos);
+>>>>               if (!dentry)
+>>>> -                    return ERR_PTR(-ENOENT);
+>>>> +                    return;
+>>>> +
+>>>> +            if (dentry2offset(dentry) >= last_index) {
+>>>> +                    dput(dentry);
+>>>> +                    return;
+>>>> +            }
+>>>>
+>>>>               if (!offset_dir_emit(ctx, dentry)) {
+>>>>                       dput(dentry);
+>>>> -                    break;
+>>>> +                    return;
+>>>>               }
+>>>>
+>>>>               ctx->pos = dentry2offset(dentry) + 1;
+>>>>               dput(dentry);
+>>>>       }
+>>>> -    return NULL;
+>>>>    }
+>>>>
+>>>>    /**
+>>>> @@ -552,22 +567,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>>    static int offset_readdir(struct file *file, struct dir_context *ctx)
+>>>>    {
+>>>>       struct dentry *dir = file->f_path.dentry;
+>>>> +    long last_index = (long)file->private_data;
+>>>>
+>>>>       lockdep_assert_held(&d_inode(dir)->i_rwsem);
+>>>>
+>>>>       if (!dir_emit_dots(file, ctx))
+>>>>               return 0;
+>>>>
+>>>> -    /* In this case, ->private_data is protected by f_pos_lock */
+>>>> -    if (ctx->pos == DIR_OFFSET_MIN)
+>>>> -            file->private_data = NULL;
+>>>> -    else if (file->private_data == ERR_PTR(-ENOENT))
+>>>> -            return 0;
+>>>> -    file->private_data = offset_iterate_dir(d_inode(dir), ctx);
+>>>> +    offset_iterate_dir(d_inode(dir), ctx, last_index);
+>>>>       return 0;
+>>>>    }
+>>>>
+>>>>    const struct file_operations simple_offset_dir_operations = {
+>>>> +    .open           = offset_dir_open,
+>>>>       .llseek         = offset_dir_llseek,
+>>>>       .iterate_shared = offset_readdir,
+>>>>       .read           = generic_read_dir,
+>>>> --
+>>>> 2.39.2
+>>>>
+>>
 
-I'd suggest bisecting that.
 
