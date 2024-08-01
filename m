@@ -1,108 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-24744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F45E9449B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 12:51:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D50E9449C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 12:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25A721C25764
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 10:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB4B3288728
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 10:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2484183CC8;
-	Thu,  1 Aug 2024 10:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECGKPem3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC2118453A;
+	Thu,  1 Aug 2024 10:55:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C14183CC4;
-	Thu,  1 Aug 2024 10:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E1C170A32
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 10:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509490; cv=none; b=A0FSfDLnx7hZp8f8NZjouVoIUfLaFSX57PxhKtQocqAZQi36nHuawfasOd2nmtYcntkVKWV5Rzq4iyI9HzhrwO5qaP8m7wQUAxlNWsAOrUHSZqcZUnBe2rfREOJ26WqbhosxBA5typTvnjU2HPSF/n2rAYveveFpI9H2HURi5yo=
+	t=1722509714; cv=none; b=GvXbXyUihTQx9dlumrYvuOJ0YSLpk2gBHIgIvAsKwsqTu9Zj3kX44vUfLHLMpNyrNp7Tu8dmHSrh6p6L/HVjt74hBgVD5xhSnXQte6+G8w6nCLdyOFu57FtenVIDGozEDyfjGk42gzE6gfa6Zdm+2IpcZU+sAjlXuro5juf8DOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509490; c=relaxed/simple;
-	bh=nQfFDUQSVv8HuknkBtK4lXJBt8rvP0e3um6yBQSVNUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OY062rNcGPglJU/IAIGFUqsJYf+OnhT8nEklgvUKIyrg7xi/yEWnUC/SUGZrtabZkORM3h1bVbtqz5GC9A2RrG6qHXGR2UlTAROXQFlaQ0+wWiYG7+V09RnWI1tHAmeWYxn0TuUG7pWAoOyJQiDJxW1EMcOPCwRL9wumF/TrWYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECGKPem3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ACB5C32786;
-	Thu,  1 Aug 2024 10:51:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722509489;
-	bh=nQfFDUQSVv8HuknkBtK4lXJBt8rvP0e3um6yBQSVNUg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ECGKPem3M5JyBbM6Wa57DV81aZXAJGeESobxoiAkrN3aoc6ENYorjhVbDq4/RLRTs
-	 8tUHuRsYnO7ZHEKb8dgAcWo5H0J4nZ2QRK57KlxDruvF4NQm+15fmlZRc2lLfPsvMq
-	 H++KLQMa+MemQrhKSvg0miKUWEqR+oubASngarcs3Pg41tQkgpV42xqi+vCTVGK1nf
-	 tZddURAeiHA1YOTceVFOds5mIJacNM4SgrxGfxuWwMqauGPQlcRGD1EWQbMvVUTGrG
-	 xha4s2E5R8VJDADJkS5ZWLPzEg7YPoNzT9vBaGViGiEF8jDDIXmqSNTRm3kTNjQWye
-	 xmWVyNGgEjwpQ==
-From: Jeff Layton <jlayton@kernel.org>
-To: brauner@kernel.org
-Cc: sfr@canb.auug.org.au,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation: clean up warnings for multigrain timestamp docs
-Date: Thu,  1 Aug 2024 06:51:27 -0400
-Message-ID: <20240801105127.25048-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722509714; c=relaxed/simple;
+	bh=2YJsOeyF6QknChmNBOUpqISVegnDQDQHKri0gspXAc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6hayoLNHYIkDOw9sOnq5KJn4KiZoYwD2iCTfM0Q29l9B4kDN0WIuAxZzvw3tkwJbA2ZTofds2IAUWPphIfrZMcMbLXzMw0Lq1URTTTAODaT2gLcJbs599GMnZZZTkK0DGdYLCdil0w0MmD3bN4QVd4yyC/yVmJWM5I0ob9Fh+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39A931007;
+	Thu,  1 Aug 2024 03:55:37 -0700 (PDT)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C9023F5A1;
+	Thu,  1 Aug 2024 03:55:07 -0700 (PDT)
+Date: Thu, 1 Aug 2024 11:55:02 +0100
+From: Joey Gouly <joey.gouly@arm.com>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	broonie@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
+	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
+	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 13/29] arm64: convert protection key into vm_flags and
+ pgprot values
+Message-ID: <20240801105502.GA841837@e124191.cambridge.arm.com>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-14-joey.gouly@arm.com>
+ <ZqJ0HqR4IbNrgX5y@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqJ0HqR4IbNrgX5y@e133380.arm.com>
 
-Stephen Rothwell reported seeing a couple of warnings when building
-htmldocs:
+On Thu, Jul 25, 2024 at 04:49:50PM +0100, Dave Martin wrote:
+> On Fri, May 03, 2024 at 02:01:31PM +0100, Joey Gouly wrote:
+> > Modify arch_calc_vm_prot_bits() and vm_get_page_prot() such that the pkey
+> > value is set in the vm_flags and then into the pgprot value.
+> > 
+> > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > ---
+> >  arch/arm64/include/asm/mman.h | 8 +++++++-
+> >  arch/arm64/mm/mmap.c          | 9 +++++++++
+> >  2 files changed, 16 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
+> > index 5966ee4a6154..ecb2d18dc4d7 100644
+> > --- a/arch/arm64/include/asm/mman.h
+> > +++ b/arch/arm64/include/asm/mman.h
+> > @@ -7,7 +7,7 @@
+> >  #include <uapi/asm/mman.h>
+> >  
+> >  static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+> > -	unsigned long pkey __always_unused)
+> > +	unsigned long pkey)
+> >  {
+> >  	unsigned long ret = 0;
+> >  
+> > @@ -17,6 +17,12 @@ static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+> >  	if (system_supports_mte() && (prot & PROT_MTE))
+> >  		ret |= VM_MTE;
+> >  
+> > +#if defined(CONFIG_ARCH_HAS_PKEYS)
+> > +	ret |= pkey & 0x1 ? VM_PKEY_BIT0 : 0;
+> > +	ret |= pkey & 0x2 ? VM_PKEY_BIT1 : 0;
+> > +	ret |= pkey & 0x4 ? VM_PKEY_BIT2 : 0;
+> 
+> Out of interest, is this as bad as it looks or does the compiler turn
+> it into a shift and mask?
 
-/home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst:83: WARNING: duplicate label filesystems/multigrain-ts:multigrain timestamps, other instance in /home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst
-/home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst: WARNING: document isn't included in any toctree
+Yeah, (gcc 13.2) produces good code here (this is do_mprotect_pkey after removing a lot of branching):
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- Documentation/filesystems/index.rst         | 1 +
- Documentation/filesystems/multigrain-ts.rst | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+	and     w0, w0, #0x7
+	orr     x1, x1, x0, lsl #32
 
-Christian,
-
-It may be best to fold this patch into f9cb86069bad (Documentation: add a
-new file documenting multigrain timestamps)
-
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index e8e496d23e1d..44e9e77ffe0d 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -29,6 +29,7 @@ algorithms work.
-    fiemap
-    files
-    locks
-+   multigrain-ts
-    mount_api
-    quota
-    seq_file
-diff --git a/Documentation/filesystems/multigrain-ts.rst b/Documentation/filesystems/multigrain-ts.rst
-index f58c14c53b0f..97877ab3d933 100644
---- a/Documentation/filesystems/multigrain-ts.rst
-+++ b/Documentation/filesystems/multigrain-ts.rst
-@@ -79,8 +79,8 @@ is no such guarantee, and the second file may appear to have been modified
- before, after or at the same time as the first, regardless of which one was
- submitted first.
- 
--Multigrain Timestamps
--=====================
-+Multigrain Timestamp Implementation
-+===================================
- Multigrain timestamps are aimed at ensuring that changes to a single file are
- always recognizable, without violating the ordering guarantees when multiple
- different files are modified. This affects the mtime and the ctime, but the
--- 
-2.45.2
-
+> 
+> 
+> > +#endif
+> > +
+> >  	return ret;
+> >  }
+> >  #define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
+> > diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
+> > index 642bdf908b22..86eda6bc7893 100644
+> > --- a/arch/arm64/mm/mmap.c
+> > +++ b/arch/arm64/mm/mmap.c
+> > @@ -102,6 +102,15 @@ pgprot_t vm_get_page_prot(unsigned long vm_flags)
+> >  	if (vm_flags & VM_MTE)
+> >  		prot |= PTE_ATTRINDX(MT_NORMAL_TAGGED);
+> >  
+> > +#ifdef CONFIG_ARCH_HAS_PKEYS
+> > +	if (vm_flags & VM_PKEY_BIT0)
+> > +		prot |= PTE_PO_IDX_0;
+> > +	if (vm_flags & VM_PKEY_BIT1)
+> > +		prot |= PTE_PO_IDX_1;
+> > +	if (vm_flags & VM_PKEY_BIT2)
+> > +		prot |= PTE_PO_IDX_2;
+> > +#endif
+> > +
+> 
+> Ditto.  At least we only have three bits to cope with either way.
+> 
+> I'm guessing that these functions are not super-hot path.
+> 
+> [...]
+> 
+> Cheers
+> ---Dave
 
