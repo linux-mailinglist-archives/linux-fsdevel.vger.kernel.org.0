@@ -1,123 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-24729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257559441E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 05:32:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5903894420B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 05:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCAD81F22696
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 03:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0267F1F22EDE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 03:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8031D696;
-	Thu,  1 Aug 2024 03:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CDA13E03E;
+	Thu,  1 Aug 2024 03:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ivL4X512"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147051EB493
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 03:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4242413958F;
+	Thu,  1 Aug 2024 03:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722483156; cv=none; b=MtzZig6I42mBafKJPYuvBNioGLNRThY0ywq4zEPtsnwXR6FHmULWDHNIk44n2uwkYiqo5GJKHUnSw7bvTAQjzNVMXWc4sw8xDl9be1uYPIPz45RhjQI0v8kaZxxsIWa73VYsShp4glYY7ArUJ7+YRkB14I/OO9bEL7FiKaQsg4M=
+	t=1722484384; cv=none; b=POihT62L3ckRNSkTgQ5bwClkZfWf9DVwTl3tA1AoUgv3y+LjSdZtLQeR2fSxYiie/TWQWjYphEGDmXvkURRfQq4Ayr1FrR1jIw1Tgch9BxZV5fOfsUTjpoeM1KKRbcz6A01FAY6eZvSUE5DO6eXUhZhigA69LgrzVzF9Vf0p9GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722483156; c=relaxed/simple;
-	bh=8ympoBazZMhgaBx6XTcGsXO7VvSzQPHDXMKtgPo79Wk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XOWTYTlSnxnIg02++/e+0UNcjuYmAQnKfMqcaP1SEJvACCUIbmlv1ufgmHBjtcrPQkYh9WDjb8Fuicm4ajo4brhrgaCFsRfHeIHdjIjwTuIX2sU4jPveEKz6TDIeYdRh/OO+eegkxGeLeILH1w0uTE4GAR0MtxrFydSTE+0LWiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WZDzh48m4z4f3jdb
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 11:32:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 89C171A167F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 11:32:29 +0800 (CST)
-Received: from [10.174.177.210] (unknown [10.174.177.210])
-	by APP4 (Coremail) with SMTP id gCh0CgBXfoTJAatmIou8AQ--.18102S3;
-	Thu, 01 Aug 2024 11:32:27 +0800 (CST)
-Message-ID: <9107aa4d-c888-3a73-0a07-a9d49f5ec558@huaweicloud.com>
-Date: Thu, 1 Aug 2024 11:32:25 +0800
+	s=arc-20240116; t=1722484384; c=relaxed/simple;
+	bh=SZh3XCDSFmyPqUeH2ujcUUsjOZ0MyaFTjhvx5nanywQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PW7OH/g3bV7d+QrmbI8mbwlJw/U2gCisRWDpd3Ax3r0b9kDSDbzm0HrN6Gnndxl7BUooY3Ggo2UjmxdwkUKfweRvEZpC1Fz5xOSwqi/x+O5MR+8f/ykHBBduZA+K1sAD/Ujwvv9mboAGjhK/Nzjy4LIxrejLBfJG4uilTgqdp64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ivL4X512; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WZFRX6l72z9skj;
+	Thu,  1 Aug 2024 05:52:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1722484377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=o8hmGv4rMCoc1oB9Naj26I2ZF5t/5CBQ9CJf/mNy8IM=;
+	b=ivL4X5127HkvMXRFkM+qZ53mAZaz5PnfrZCUQkyumyNPbBI6YC4cutP4Mi+YvtXtTUyw2O
+	CC2CxZfWFc8uwfqxXU5UApky4pPMpxf/Q4wV7Ved4KbOyKnY+cvTjI0ueDGNOxpiAoDei/
+	jif0Mf3WWCI+0rBp4PGlpf5fjO5BiKSVxASgf8J++rx3bf5wBtmXwn3X/tZCEBnza6HWtq
+	eKQX+DCyQz+coJ7cFEV03Is54gw6wn/ofRd8p11l39EMzpnaHFSFYvizVQV2cOTxlZQ++m
+	qUV+rYx4VH2kVDHUart8WdjJckC+w5TruDVjAd5684fcTeMgiblNjEMzJgufeg==
+From: Aleksa Sarai <cyphar@cyphar.com>
+Subject: [PATCH RFC v3 0/2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Date: Thu, 01 Aug 2024 13:52:39 +1000
+Message-Id: <20240801-exportfs-u64-mount-id-v3-0-be5d6283144a@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH] libfs: fix infinite directory reads for offset dir
-To: Christian Brauner <brauner@kernel.org>, chuck.lever@oracle.com,
- jack@suse.cz, yangerkun <yangerkun@huawei.com>
-Cc: hughd@google.com, zlang@kernel.org, fdmanana@suse.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, hch@infradead.org,
- viro@zeniv.linux.org.uk
-References: <20240731043835.1828697-1-yangerkun@huawei.com>
- <20240731-pfeifen-gingen-4f8635e6ffcb@brauner>
-From: yangerkun <yangerkun@huaweicloud.com>
-In-Reply-To: <20240731-pfeifen-gingen-4f8635e6ffcb@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXfoTJAatmIou8AQ--.18102S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw48Cw1DGr48Gr45JFy8AFb_yoW8XFWrpa
-	ykGw4DKr4DXF1UG3929FnruFyFgan3Jr13K34DXw4kZryYgr93KFyI9r4Yga4vkr9a9w42
-	qF43t3s5GF1xZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIcGq2YC/3XNsQ6CMBAG4Fcxna2hhVPqZGLiA7gaB1qu0gFKW
+ mgghHe31kUHxv/uv+8W4tEZ9OS8W4jDYLyxXQz5fkdUU3UvpKaOmfCMFxkwoDj11g3a0/FY0Na
+ O3RAbVKCUoKCUkCsSb3uH2kzJfZD77UqecdgYP1g3p1+BpdWX5dkGGxhlVAPoWnAGssSLmvumc
+ gdl20QG/svkWwz/MEILEJqdULI/Zl3XN49rihAHAQAA
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+ Amir Goldstein <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2865; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=SZh3XCDSFmyPqUeH2ujcUUsjOZ0MyaFTjhvx5nanywQ=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaStZus5xb3xoeZKsfOVITXPWrMM+JXjJyuyzDlWryjZH
+ crwdJZXRykLgxgXg6yYIss2P8/QTfMXX0n+tJINZg4rE8gQBi5OAZiIRQrDP/uzYVsuG+yckpBY
+ LqA4J/Yg20n7mq7syXqvCze1hr5Ve8HI8O9DvOjdHy9Xf5F6orL02/yNiTq37jimxqptmv3HYYn
+ WCg4A
+X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
+ fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
 
-Hi!
+Now that we provide a unique 64-bit mount ID interface in statx(2), we
+can now provide a race-free way for name_to_handle_at(2) to provide a
+file handle and corresponding mount without needing to worry about
+racing with /proc/mountinfo parsing or having to open a file just to do
+statx(2).
 
-在 2024/7/31 22:16, Christian Brauner 写道:
-> On Wed, 31 Jul 2024 12:38:35 +0800, yangerkun wrote:
->> After we switch tmpfs dir operations from simple_dir_operations to
->> simple_offset_dir_operations, every rename happened will fill new dentry
->> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
->> key starting with octx->newx_offset, and then set newx_offset equals to
->> free key + 1. This will lead to infinite readdir combine with rename
->> happened at the same time, which fail generic/736 in xfstests(detail show
->> as below).
->>
->> [...]
-> 
-> @Chuck, @Jan I did the requested change directly. Please check!
+While this is not necessary if you are using AT_EMPTY_PATH and don't
+care about an extra statx(2) call, users that pass full paths into
+name_to_handle_at(2) need to know which mount the file handle comes from
+(to make sure they don't try to open_by_handle_at a file handle from a
+different filesystem) and switching to AT_EMPTY_PATH would require
+allocating a file for every name_to_handle_at(2) call, turning
 
-Thanks for applied this patch, the suggestions from Jan and Chuck will
-be a separates patch!
+  err = name_to_handle_at(-EBADF, "/foo/bar/baz", &handle, &mntid,
+                          AT_HANDLE_MNT_ID_UNIQUE);
 
+into
 
-> 
-> ---
-> 
-> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-> Patches in the vfs.fixes branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.fixes
-> 
-> [1/1] libfs: fix infinite directory reads for offset dir
->        https://git.kernel.org/vfs/vfs/c/fad90bfe412e
+  int fd = openat(-EBADF, "/foo/bar/baz", O_PATH | O_CLOEXEC);
+  err1 = name_to_handle_at(fd, "", &handle, &unused_mntid, AT_EMPTY_PATH);
+  err2 = statx(fd, "", AT_EMPTY_PATH, STATX_MNT_ID_UNIQUE, &statxbuf);
+  mntid = statxbuf.stx_mnt_id;
+  close(fd);
+
+Also, this series adds a patch to clarify how AT_* flag allocation
+should work going forwards.
+
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+Changes in v3:
+- Added a patch describing how AT_* flags should be allocated in the
+  future, based on Amir's suggestions.
+- Included AT_* aliases for RENAME_* flags to further indicate that
+  renameat2(2) is an *at(2) syscall and to indicate that those flags
+  have been allocated already in the per-syscall range.
+- Switched AT_HANDLE_MNT_ID_UNIQUE to use 0x01 (to reuse
+  (AT_)RENAME_NOREPLACE).
+- v2: <https://lore.kernel.org/r/20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
+Changes in v2:
+- Fixed a few minor compiler warnings and a buggy copy_to_user() check.
+- Rename AT_HANDLE_UNIQUE_MOUNT_ID -> AT_HANDLE_MNT_ID_UNIQUE to match statx.
+- Switched to using an AT_* bit from 0xFF and defining that range as
+  being "per-syscall" for future usage.
+- Sync tools/ copy of <linux/fcntl.h> to include changes.
+- v1: <https://lore.kernel.org/r/20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
+
+---
+Aleksa Sarai (2):
+      uapi: explain how per-syscall AT_* flags should be allocated
+      fhandle: expose u64 mount id to name_to_handle_at(2)
+
+ fs/fhandle.c                                       | 29 ++++++--
+ include/linux/syscalls.h                           |  2 +-
+ include/uapi/linux/fcntl.h                         | 81 ++++++++++++++-------
+ tools/perf/trace/beauty/include/uapi/linux/fcntl.h | 84 +++++++++++++++-------
+ 4 files changed, 140 insertions(+), 56 deletions(-)
+---
+base-commit: c7b9563b58a77423d4c6e026ff831a69612b02fc
+change-id: 20240515-exportfs-u64-mount-id-9ebb5c58b53c
+
+Best regards,
+-- 
+Aleksa Sarai <cyphar@cyphar.com>
 
 
