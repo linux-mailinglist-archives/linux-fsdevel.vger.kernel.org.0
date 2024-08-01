@@ -1,115 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-24736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3B79442EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 07:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6664944503
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 08:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267481F22893
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 05:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD1C1F27D8C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 06:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9CB157464;
-	Thu,  1 Aug 2024 05:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D12F15854D;
+	Thu,  1 Aug 2024 06:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5z42Y9x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkQQwUTJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FDC1EB490;
-	Thu,  1 Aug 2024 05:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A149A158554;
+	Thu,  1 Aug 2024 06:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722491682; cv=none; b=by+4GtgC1PC/dozRDJqN4sDfsppJG6184k/uWHn+ex7j7tGyzbQHS1yOCfATzM5Mmb7GYkzQ7tuPHEknrehxuFbyVvf0KgAPKfNml3YLTRD+DFc1nGBq1z72KCa2933oRDQEdPfxMQlKBEXpB+3tOMciP4aaNc3zaXkr/KIlC00=
+	t=1722495491; cv=none; b=jwaHASXCRTyhICRgJjCE0krLpCUWVsNMQ4oqXNAdF1YxmcjqmDSty7LG9VGRnSMaTVZOcdUJP1cqdbtfpocXZ6cTpGrlMskhtxyyB1jMaSHmFMQrSNZ+3xVitoBAtd8zrbSYBJwmJsnI+JJTYpJfV7VsDbMLTKcWGKIo3+TvLHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722491682; c=relaxed/simple;
-	bh=igymYzHUQVm5MbWwgMoMzd4vz1YDx9DV1QIU5SLGkJo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ggal7yKxXcImril8dXNtGlt0sCaCP/yEDN16FQa5H/UWLiWge2SZxJTb6+dT9F6rDG6XoA0qeiRL2xrupTvxmaRf5ZoEsh7URhKTHOR11TBQVJydOa+riG5fTTxZveYT6+XdvUGYBgUSIDb5/Ppu5gwQsQApwTPvbau+VEPJ7r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5z42Y9x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EC23C4AF09;
-	Thu,  1 Aug 2024 05:54:42 +0000 (UTC)
+	s=arc-20240116; t=1722495491; c=relaxed/simple;
+	bh=X5/nIHI6eSt6inS+c/hwkA36ObfofUnYr2d5oV0hHoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFIBCJqJMDdCJoXrNLsJD8YAJgm7QdFFLnI+owgB9ndF16kzW25Yr9REmVUwiQ432jnUP9DwmiwslrqUn+z2Zd9WoNnFyOmZzhhkOv7pnS9TfJnppcsc4/M6LHGYnjRwfJ6dHYRXt0/gm60hVxRAMpAb4laMcKe08HfWQp97C1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkQQwUTJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBD3BC4AF09;
+	Thu,  1 Aug 2024 06:58:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722491682;
-	bh=igymYzHUQVm5MbWwgMoMzd4vz1YDx9DV1QIU5SLGkJo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P5z42Y9xbWP7BJbqpdSTiTuYRq5xwUFjAnkq1Ti78s1UoFsBRwQusHnOEh3OmnRI2
-	 Xjqi7bSfmI2gXfBcqlOtZEbdpwsdKCLHKPLrQdLrTxIawG+LviQDq15PZjmawRs9T1
-	 EYgP7LW05f2IGpVxp82M2O7uE3v2sJ+tRprwafpnd0wRHgT+NrzEkMImjANjcHe8ww
-	 3iL6H/kaBhoolddt9qr8CUh9vB+IYzC1lO+JNceHaq2UN+LXDi2ll97K08A3jcAEsZ
-	 mQQazdQpPprllr9f0CtA1+A97DeyUlb1rVoj8ycSE/8ULVULO5RpQAWYlH24IUlOpp
-	 qDmo2K51iuZYQ==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5d5b986a806so914086eaf.1;
-        Wed, 31 Jul 2024 22:54:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUtqJrlPREGLp/MaKQDDJB1Eaj8wTJkOuL2Yzsh/pUTmXBf4EPZYXpDttEyozt4si9u5BEUknQ1s2LdVwHnRq/eM0pEpuvOUwIL4/pM8sjWLHdCsCDkNSNRtTleVRKalSJSNMlwH/O2htYUaQ==
-X-Gm-Message-State: AOJu0YzA9yDIxUpHJjPHHxENIdZ48THijUfixpTRxYNVl96vv9qoAySF
-	vFSQw8PAblxl/EVIACI6drNB6NuO+ezwGzUx0+uAzlMT2s5ZU/DYtp0h0iNsccWBYZGUHQu6HRF
-	mrnPIU/0cJIW6gH67dcEIRkUCrw4=
-X-Google-Smtp-Source: AGHT+IGo7u8EirNjcXThh2hv9rEeu18P6HFYrA+WThuwbS5/ca5Rw01VzcktSLNAJM4/CF91axOCKDNE0ynQ5xSoUF0=
-X-Received: by 2002:a05:6870:eca7:b0:25e:fca:e689 with SMTP id
- 586e51a60fabf-268877a6b76mr93988fac.10.1722491681767; Wed, 31 Jul 2024
- 22:54:41 -0700 (PDT)
+	s=k20201202; t=1722495491;
+	bh=X5/nIHI6eSt6inS+c/hwkA36ObfofUnYr2d5oV0hHoI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZkQQwUTJverPhMso19gcLwM8l9Rx9EkzC3s2uCCB/DPdWMFXTMeXKBbK/+/2XB/KG
+	 r3vF5BWys9vxHtQIWuTDi2eZVSerscTF3yhCbOchsnnYqGdFKgzdlAx2xG2lZ+Csza
+	 zl65GC5CS9zYWEoqI4jKwNamzqq20LJ4eoR/k5MuYZ1HxkI5YEkbWWR0RhFlNnh0Vr
+	 yn1An6LURyglPIQ7NhyBa1P+KfiJn5615IfCFw/vupWuCNr8dWwIpG5z4tKcZK8gc9
+	 NnuRnKohHqlnQWoJL56lhueuhhCLl5iC+EbUA4DYdvHRSLp1Qu+TCRfiKSFjSZttfp
+	 1TIdikt4VGn6A==
+Date: Thu, 1 Aug 2024 08:58:05 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Aleksa Sarai <cyphar@cyphar.com>, Tycho Andersen <tandersen@netflix.com>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Tejun Heo <tj@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] pidfd: prevent creation of pidfds for kthreads
+Message-ID: <20240801-report-strukturiert-48470c1ac4e8@brauner>
+References: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
+ <20240731145132.GC16718@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8d0405eea668458d9507aa36e223f503@BJMBX02.spreadtrum.com>
-In-Reply-To: <8d0405eea668458d9507aa36e223f503@BJMBX02.spreadtrum.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 1 Aug 2024 14:54:30 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8y7-XzBeGLRKgEabcZEabmfn2ZTHXgb9jPXwTN5fb3NA@mail.gmail.com>
-Message-ID: <CAKYAXd8y7-XzBeGLRKgEabcZEabmfn2ZTHXgb9jPXwTN5fb3NA@mail.gmail.com>
-Subject: Re: [PATCH v3] exfat: check disk status during buffer write
-To: =?UTF-8?B?5bSU5Lic5LquIChEb25nbGlhbmcgQ3VpKQ==?= <Dongliang.Cui@unisoc.com>
-Cc: Christoph Hellwig <hch@infradead.org>, "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"niuzhiguo84@gmail.com" <niuzhiguo84@gmail.com>, =?UTF-8?B?546L55qTIChIYW9faGFvIFdhbmcp?= <Hao_hao.Wang@unisoc.com>, 
-	=?UTF-8?B?546L56eRIChLZSBXYW5nKQ==?= <Ke.Wang@unisoc.com>, 
-	=?UTF-8?B?54mb5b+X5Zu9IChaaGlndW8gTml1KQ==?= <Zhiguo.Niu@unisoc.com>, 
-	"cuidongliang390@gmail.com" <cuidongliang390@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240731145132.GC16718@redhat.com>
 
-2024=EB=85=84 8=EC=9B=94 1=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 2:30, =
-=E5=B4=94=E4=B8=9C=E4=BA=AE (Dongliang Cui) <Dongliang.Cui@unisoc.com>=EB=
-=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Besides the additional checks for the shutdown flag already mentioned the=
- subject is now incorrect I think, it should talk about implementing shutdo=
-wn handling.
->
-> In case you haven't done so yet, please also see if exfat now passes the =
-various testcases in xfstests that exercise the shutdown path.
->
-> Otherwise this looks reasonable to me, thanks for the work!
->
-> Hi Christoph,
->
-> Thank you for your suggestion. I think the current patch is primarily aim=
-ed at addressing the issue of hotplug and ensuring writers are notified whe=
-n a device has been ejected.
->
-> Previously, exfat didn't have a shutdown process inherently, and hotplug =
-didn't pose any significant issues, except for the one we're discussing in =
-this email.
->
-> Therefore, regarding what specific actions should be taken during shutdow=
-n, I would appreciate your input or any suggestions from Sungjong and Namja=
-e.
->
-> Additionally, can the shutdown handling be supplemented with another patc=
-h if there is indeed a need to implement some exfat shutdown processes?
->
-> HI Sungjong and Namjae.
->
-> Based on the above, what do you think, or do you have any suggestions?
-There is no reason to split it into two and I would prefer to apply it
-as one patch.
-I would appreciate it if you could send the list an updated v4 patch
-including what Christoph and I pointed out.
+On Wed, Jul 31, 2024 at 04:51:33PM GMT, Oleg Nesterov wrote:
+> On 07/31, Christian Brauner wrote:
+> >
+> > It's currently possible to create pidfds for kthreads but it is unclear
+> > what that is supposed to mean. Until we have use-cases for it and we
+> > figured out what behavior we want block the creation of pidfds for
+> > kthreads.
+> 
+> Hmm... could you explain your concerns? Why do you think we should disallow
+> pidfd_open(pid-of-kthread) ?
+
+It basically just works now and it's not intentional - at least not on
+my part. You can't send signals to them, you may or may not get notified
+via poll when a kthread exits. If we ever want this to be useful I would
+like to enable it explicitly.
+
+Plus, this causes confusion in userspace. When you have qemu running
+with kvm support then kvm creates several kthreads (that inherit the
+cgroup of the calling process). If you try to kill those instances via
+systemctl kill or systemctl stop then pidfds for these kthreads are
+opened but sending a signal to them is meaningless.
+
+(So imho this causes more confusion then it is actually helpful. If we
+add supports for kthreads I'd also like pidfs to gain a way to identify
+them via statx() or fdinfo.)
+
+> > @@ -2403,6 +2416,12 @@ __latent_entropy struct task_struct *copy_process(
+> >  	if (clone_flags & CLONE_PIDFD) {
+> >  		int flags = (clone_flags & CLONE_THREAD) ? PIDFD_THREAD : 0;
+> >  
+> > +		/* Don't create pidfds for kernel threads for now. */
+> > +		if (args->kthread) {
+> > +			retval = -EINVAL;
+> > +			goto bad_fork_free_pid;
+> 
+> Do we really need this check? Userspace can't use args->kthread != NULL,
+> the kernel users should not use CLONE_PIDFD.
+
+Yeah, I know. That's really just proactive so that user of e.g.,
+copy_process() such as vhost or so on don't start handing out pidfds for
+stuff without requring changes to the helper itself.
 
