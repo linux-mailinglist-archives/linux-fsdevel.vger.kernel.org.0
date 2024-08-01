@@ -1,98 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-24734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6A29442B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 07:29:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7769442B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 07:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F4E91F22C5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 05:29:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB678B21777
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 05:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC57B1411E0;
-	Thu,  1 Aug 2024 05:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1673813D897;
+	Thu,  1 Aug 2024 05:30:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423D7132114;
-	Thu,  1 Aug 2024 05:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9C8EC2;
+	Thu,  1 Aug 2024 05:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722490144; cv=none; b=V7h+Ti6XTN3Z29pG1UK7nD/EzdrV/yc8mrXnrUuyThjpdNbj2bGBBmwjS9IHNdbW5q+U+UM0Z58fWJR+rCw+WvHwqlcKNL8cb7Ti5aLM0oYh87SQkKCz1G7epmHyVYA5t98e8dJou5fKtJYswdqxnZx19YoDtE2rfOSh/1Bl+8s=
+	t=1722490229; cv=none; b=Re7LMAD7jsWZkpNOU054pgEmY2Y2oP5r+aLCaCV7i44DPmss2pKwTj5UI2qXgjDo9su37QLhUzTbbCm/wIwzP9qpyPRI+jk9BxLjRmBERF+Wox/iArirlX45ss0JeJ7YvP/8q8fnnmy7YM67Rrhh3OT3FzOjbqHkWhEohTQ/Qcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722490144; c=relaxed/simple;
-	bh=8Ou5pjMJRb/zPenDD4SvV1s3OIKkG5QxAahKkyvdLYE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bwG32RGMr/qGs8zxYhURsqP1cd+xOjjLcygq/IppDT8QSpWr3G9DzlDWeSTQVLwd4UIXCPWE51zUMU60U5plKI3avUjWgV5Sr53tu9ZSjtbPnGp30CfJ/M16m9N1r7yi/zTNJHcdNBGA8qhL2IIVo5qOQBhexufKpb1Dv+inhgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4714de6S025011;
-	Thu, 1 Aug 2024 05:28:42 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40mqv64uv2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 01 Aug 2024 05:28:42 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 31 Jul 2024 22:28:40 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Wed, 31 Jul 2024 22:28:38 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <viro@zeniv.linux.org.uk>
-CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
-        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: Re: [PATCH] filemap: Init the newly allocated folio memory to 0 for the filemap
-Date: Thu, 1 Aug 2024 13:28:37 +0800
-Message-ID: <20240801052837.3388478-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240801025842.GM5334@ZenIV>
-References: <20240801025842.GM5334@ZenIV>
+	s=arc-20240116; t=1722490229; c=relaxed/simple;
+	bh=A487K/HlTfObpmp7htZEGKjDfQEBCpQkCZDFHSDmdqE=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gCS7KMMQCDcFOdf5dMwapvVRh0JQAX8rdbaMMk2wroSJ8qIbjWGLNKvr+f3DeQHVswzmsy4czgWk0ebSoVDR1iQUjbF6W23r5GZeGpwErEaRllbuyxUxf8nasnEiEWiyzj4X3iw6VmhE0SDbmMTIXNSNohkXSYu3y06mxETud9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 4715Tpw6019808;
+	Thu, 1 Aug 2024 13:29:51 +0800 (+08)
+	(envelope-from Dongliang.Cui@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WZHSY2q6xz2LQJ6l;
+	Thu,  1 Aug 2024 13:23:57 +0800 (CST)
+Received: from BJMBX02.spreadtrum.com (10.0.64.8) by BJMBX02.spreadtrum.com
+ (10.0.64.8) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Thu, 1 Aug 2024
+ 13:29:49 +0800
+Received: from BJMBX02.spreadtrum.com ([fe80::c8c3:f3a0:9c9f:b0fb]) by
+ BJMBX02.spreadtrum.com ([fe80::c8c3:f3a0:9c9f:b0fb%19]) with mapi id
+ 15.00.1497.023; Thu, 1 Aug 2024 13:29:49 +0800
+From: =?utf-8?B?5bSU5Lic5LquIChEb25nbGlhbmcgQ3VpKQ==?=
+	<Dongliang.Cui@unisoc.com>
+To: Christoph Hellwig <hch@infradead.org>
+CC: "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
+        "sj1557.seo@samsung.com"
+	<sj1557.seo@samsung.com>,
+        "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "niuzhiguo84@gmail.com"
+	<niuzhiguo84@gmail.com>,
+        =?utf-8?B?546L55qTIChIYW9faGFvIFdhbmcp?=
+	<Hao_hao.Wang@unisoc.com>,
+        =?utf-8?B?546L56eRIChLZSBXYW5nKQ==?=
+	<Ke.Wang@unisoc.com>,
+        =?utf-8?B?54mb5b+X5Zu9IChaaGlndW8gTml1KQ==?=
+	<Zhiguo.Niu@unisoc.com>,
+        "cuidongliang390@gmail.com"
+	<cuidongliang390@gmail.com>
+Subject: Re: [PATCH v3] exfat: check disk status during buffer write
+Thread-Topic: [PATCH v3] exfat: check disk status during buffer write
+Thread-Index: AdrjuT5YHG+eyC7TRnyilKnSRw6r3Q==
+Date: Thu, 1 Aug 2024 05:29:48 +0000
+Message-ID: <8d0405eea668458d9507aa36e223f503@BJMBX02.spreadtrum.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: Dox2R5LnC4_w5BtVKI5x6p1Qg0i9Vu6x
-X-Proofpoint-ORIG-GUID: Dox2R5LnC4_w5BtVKI5x6p1Qg0i9Vu6x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_02,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=793 clxscore=1015 suspectscore=0 impostorscore=0 bulkscore=0
- mlxscore=0 spamscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408010030
+X-MAIL:SHSQR01.spreadtrum.com 4715Tpw6019808
 
-> > syzbot report KMSAN: uninit-value in pick_link, this is because the
-> > corresponding folio was not found from the mapping, and the memory was
-> > not initialized when allocating a new folio for the filemap.
-> >
-> > To avoid the occurrence of kmsan report uninit-value, initialize the
-> > newly allocated folio memory to 0.
-> 
-> NAK.
-> 
-> You are papering over the real bug here.
-Did you see the splat? I think you didn't see that.
-> 
-> That page either
-> 	* has been returned by find_get_page(), cached, uptodate and
-> with uninitialized contents or
-> 	* has been returned by successful read_mapping_page() - and
-> left with uninitialized contents or
-> 	* had inode->i_size in excess of initialized contents.
-> 
-> I'd suggest bisecting that.
+QmVzaWRlcyB0aGUgYWRkaXRpb25hbCBjaGVja3MgZm9yIHRoZSBzaHV0ZG93biBmbGFnIGFscmVh
+ZHkgbWVudGlvbmVkIHRoZSBzdWJqZWN0IGlzIG5vdyBpbmNvcnJlY3QgSSB0aGluaywgaXQgc2hv
+dWxkIHRhbGsgYWJvdXQgaW1wbGVtZW50aW5nIHNodXRkb3duIGhhbmRsaW5nLg0KDQpJbiBjYXNl
+IHlvdSBoYXZlbid0IGRvbmUgc28geWV0LCBwbGVhc2UgYWxzbyBzZWUgaWYgZXhmYXQgbm93IHBh
+c3NlcyB0aGUgdmFyaW91cyB0ZXN0Y2FzZXMgaW4geGZzdGVzdHMgdGhhdCBleGVyY2lzZSB0aGUg
+c2h1dGRvd24gcGF0aC4NCg0KT3RoZXJ3aXNlIHRoaXMgbG9va3MgcmVhc29uYWJsZSB0byBtZSwg
+dGhhbmtzIGZvciB0aGUgd29yayENCg0KSGkgQ2hyaXN0b3BoLA0KDQpUaGFuayB5b3UgZm9yIHlv
+dXIgc3VnZ2VzdGlvbi4gSSB0aGluayB0aGUgY3VycmVudCBwYXRjaCBpcyBwcmltYXJpbHkgYWlt
+ZWQgYXQgYWRkcmVzc2luZyB0aGUgaXNzdWUgb2YgaG90cGx1ZyBhbmQgZW5zdXJpbmcgd3JpdGVy
+cyBhcmUgbm90aWZpZWQgd2hlbiBhIGRldmljZSBoYXMgYmVlbiBlamVjdGVkLg0KDQpQcmV2aW91
+c2x5LCBleGZhdCBkaWRuJ3QgaGF2ZSBhIHNodXRkb3duIHByb2Nlc3MgaW5oZXJlbnRseSwgYW5k
+IGhvdHBsdWcgZGlkbid0IHBvc2UgYW55IHNpZ25pZmljYW50IGlzc3VlcywgZXhjZXB0IGZvciB0
+aGUgb25lIHdlJ3JlIGRpc2N1c3NpbmcgaW4gdGhpcyBlbWFpbC4NCg0KVGhlcmVmb3JlLCByZWdh
+cmRpbmcgd2hhdCBzcGVjaWZpYyBhY3Rpb25zIHNob3VsZCBiZSB0YWtlbiBkdXJpbmcgc2h1dGRv
+d24sIEkgd291bGQgYXBwcmVjaWF0ZSB5b3VyIGlucHV0IG9yIGFueSBzdWdnZXN0aW9ucyBmcm9t
+IFN1bmdqb25nIGFuZCBOYW1qYWUuIA0KDQpBZGRpdGlvbmFsbHksIGNhbiB0aGUgc2h1dGRvd24g
+aGFuZGxpbmcgYmUgc3VwcGxlbWVudGVkIHdpdGggYW5vdGhlciBwYXRjaCBpZiB0aGVyZSBpcyBp
+bmRlZWQgYSBuZWVkIHRvIGltcGxlbWVudCBzb21lIGV4ZmF0IHNodXRkb3duIHByb2Nlc3Nlcz8N
+Cg0KSEkgU3VuZ2pvbmcgYW5kIE5hbWphZS4NCg0KQmFzZWQgb24gdGhlIGFib3ZlLCB3aGF0IGRv
+IHlvdSB0aGluaywgb3IgZG8geW91IGhhdmUgYW55IHN1Z2dlc3Rpb25zPw0K
 
