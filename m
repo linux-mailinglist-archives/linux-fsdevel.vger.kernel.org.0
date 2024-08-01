@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-24774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D601D944C63
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 15:06:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8047B944C69
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 15:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 643C6B283C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 13:06:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD3FA1C25A11
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 13:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482731B5827;
-	Thu,  1 Aug 2024 13:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461721B8EB8;
+	Thu,  1 Aug 2024 13:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dheqn+Er"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zdk/HN3V"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F4116EBE9;
-	Thu,  1 Aug 2024 13:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AA91B8E9C;
+	Thu,  1 Aug 2024 13:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722517212; cv=none; b=DslWEGd3QTmPPlBF7JELfuFI+PrHq50+7z9YaPbfplzoFtA9lyFo3KeSbet5RPHNIALa05Vt2N3ibzmfNkmMP4nyaBMOwODZEpnhfjWDAjwSr7fn6nmE3MPWGCpocK2JlcEMs64YGRgFR/F5gB4L1VEryRspGEI1YP9KmNt+dwQ=
+	t=1722517222; cv=none; b=dqNOCKlT0sdLZKp3c+baN+t/9RuaimAr9fvYvm1JdJtkX8LSUxszSp8tTw0L0MZ4nsm4Ay6yh4abwq464ONxWlp49fzzXNAmM+kLg0DDrBdnVimvbFsCb52I+MTnD9onGyn/Udo8lO7H0dtRPcqFqbUw6Jw+sM+WpH3GWY6X3q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722517212; c=relaxed/simple;
-	bh=qLuXO3WTZsbuYPpzI7zPKGWHTzDvnQwqGL+bk49RD84=;
+	s=arc-20240116; t=1722517222; c=relaxed/simple;
+	bh=jCz9TB/T2gtL+Dj1sBbCVvFYWqxLMS2lgt+ihDoyD98=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ew86GtLFYWFnZLWlREZYZQHSkm4LcSXWdl8v4Vy/wqOr8SMwTmJcnDoCOLOR9pLn7FWqXvw0Flq2LT5sT1Wey6qvpTOZKYU2+m3ZYz6bKPTyAfYJT7YPVlWY/HrU1XYdD9vWPSNffiEa/jQb2/G6/5Rk98PYt9pbdSexhY/zvng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dheqn+Er; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD54C4AF0B;
-	Thu,  1 Aug 2024 13:00:04 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=qgPTMpq7iSYTNwVPnI+zAQav7o8QQwVhlxgt1BOEN6HBl+ccHh07vkogQgbKHwU1qW5fw8WLwhGsrLaYJXvqV1vuCTnkIWV6u6jnoqzSXHqjDpFg/zpGq5qqTZOQeZmKMxGO2IE5a9y+sv52fIvJL92Mn7DjSaxMhhXh6YwJSnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zdk/HN3V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A461EC4AF09;
+	Thu,  1 Aug 2024 13:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722517212;
-	bh=qLuXO3WTZsbuYPpzI7zPKGWHTzDvnQwqGL+bk49RD84=;
+	s=k20201202; t=1722517222;
+	bh=jCz9TB/T2gtL+Dj1sBbCVvFYWqxLMS2lgt+ihDoyD98=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Dheqn+Er6K11xumhJm42mkUH/V7BIqmVa/iaUhbLT0jqde2poT1dilAKQaj5xsg0L
-	 VxQ9SJxd8/RFbjKJCOu8oJEW6BDmvRl03413uvYRs6uhCAOTy35x9VXCZaUW57+FsX
-	 2BAHe3+KUigfMELUPUutEhIP/pwh624TysFBtYrvIbT6f93BkH9t2TsQRDyOeuYDp/
-	 sMpeuwLzAaL9/W4qDNApw/jL5BFjT9ylRbgT1mL1pFK7owhWk/N3jZGn5CNZflGE2E
-	 xa8Fc93BAcyOuQD5jfu3Kwq1s1V9p6ugiaBtkk7Uz2ZTgT4Pd9IjYWA4O2k+05IDpz
-	 M/k9jblxqgkNQ==
+	b=Zdk/HN3Vv5MCR9tWdyaa/VEftixl5lcXiTlx9bdPKbc6eaT3FWEIZma95Z+GhffvM
+	 EcnEtjxjUMY7BtJNNzPCC7DDT43xLDYiM+AZJdYOlDlAIPK9JiTcxM9ZYM42+e7C+U
+	 9M+FRULwYAKFy9B+Z/awaXXUyELOAV1XBrU0mp4w/mkVPsn/eOz7VKSFLsmAIwwW7B
+	 lew6XfI7DwPM58JgIGVw2nkB0gIogzXMI6WGBoekN/T1iW0VC3dDiHWS29AQH9c6VV
+	 IV9oIsnZ+4eQBNTMn/6CGQLJ5TBXgVfn0mxsqA1OzKNu7nMhgKP1rnDfsJkBxLzSKi
+	 FYf/bx/yCadnw==
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 01 Aug 2024 13:06:52 +0100
-Subject: [PATCH v10 25/40] arm64/ptrace: Expose GCS via ptrace and core
- files
+Date: Thu, 01 Aug 2024 13:06:53 +0100
+Subject: [PATCH v10 26/40] arm64: Add Kconfig for Guarded Control Stack
+ (GCS)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240801-arm64-gcs-v10-25-699e2bd2190b@kernel.org>
+Message-Id: <20240801-arm64-gcs-v10-26-699e2bd2190b@kernel.org>
 References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
 In-Reply-To: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -78,153 +78,58 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
  Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4329; i=broonie@kernel.org;
- h=from:subject:message-id; bh=qLuXO3WTZsbuYPpzI7zPKGWHTzDvnQwqGL+bk49RD84=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmq4YZdr9yBWnPgAW1Nv82TOSwbwqggX1VEHC21A4j
- hNX0TrGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZquGGQAKCRAk1otyXVSH0AikB/
- 9sWpL54fumavcASUqLReoawLgEeBl9wJ+bMblvLr0+Roh6ZW9WRvzXzjwjYy3z90LD+QiF+pOWYYKn
- rMuKsJ6z2XqtvIIPNTg4P5ZpRdaZz5ovIAmWMklsYJUqYTG6DeVZJxKfevQKp1fcEjU9iK0mmr8dzm
- bs356DGI6A3Wy9ao30yyJ4Rt0qxmbvfBxBXQj5COujItl8o3sX32OVLk+C0gEHJf4Xn3lb3HQ8vugL
- vUh7A991IJ9nrzKKl2NNDXS+QDQe8r+9touJ4jmUprC2B04ZC9udRJ9bYqTIUOCNUR/5Uc1DjAHDAy
- TO3LJWVaDm0aS/6SPugD5WXUGJvot7
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1438; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=jCz9TB/T2gtL+Dj1sBbCVvFYWqxLMS2lgt+ihDoyD98=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmq4YaZfoQpmqEUbybjMAYNvLQbJaJ5ach0jFFKMwt
+ WAXMRf6JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZquGGgAKCRAk1otyXVSH0GzQB/
+ 0VUEM5IVaWGWCtsoHGuHQHdtM8+bn0nEmmu8lC+oIKaYCzNy9VMZzgyUqowYnTd7bPlWUz/Y86I44V
+ RwpJj/EKex2ZFhiaMSKwZKk5ZycQwwdhmGqd8wkhELOTAU5tPmelrk1C5oPSDSLU5/cK5yCygjrcBh
+ KSD25yGvlDBzmQwU8A2hU2FXizsVvxQGd/XPIkN4qnQLAWZKEaHYFH8a475LGnHg8uUfsFCToCPjWh
+ 6YUfe9z6iCQUb0w218AdqDzqriKwGOuLBU2jkxLaydWomcfvewT1WWRsu2cMVLqUa0d9CiOZRK5wBg
+ Uww68Gf9sKSJ6c/5O3iLSaPKkTUUYX
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Provide a new register type NT_ARM_GCS reporting the current GCS mode
-and pointer for EL0.  Due to the interactions with allocation and
-deallocation of Guarded Control Stacks we do not permit any changes to
-the GCS mode via ptrace, only GCSPR_EL0 may be changed.
+Provide a Kconfig option allowing the user to select if GCS support is
+built into the kernel.
 
 Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/uapi/asm/ptrace.h |  8 +++++
- arch/arm64/kernel/ptrace.c           | 59 ++++++++++++++++++++++++++++++++++++
- include/uapi/linux/elf.h             |  1 +
- 3 files changed, 68 insertions(+)
+ arch/arm64/Kconfig | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
-index 7fa2f7036aa7..0f39ba4f3efd 100644
---- a/arch/arm64/include/uapi/asm/ptrace.h
-+++ b/arch/arm64/include/uapi/asm/ptrace.h
-@@ -324,6 +324,14 @@ struct user_za_header {
- #define ZA_PT_SIZE(vq)						\
- 	(ZA_PT_ZA_OFFSET + ZA_PT_ZA_SIZE(vq))
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index b3fc891f1544..83e27857bc6a 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -2127,6 +2127,26 @@ config ARM64_EPAN
+ 	  if the cpu does not implement the feature.
+ endmenu # "ARMv8.7 architectural features"
  
-+/* GCS state (NT_ARM_GCS) */
++menu "v9.4 architectural features"
 +
-+struct user_gcs {
-+	__u64 features_enabled;
-+	__u64 features_locked;
-+	__u64 gcspr_el0;
-+};
++config ARM64_GCS
++	bool "Enable support for Guarded Control Stack (GCS)"
++	default y
++	select ARCH_HAS_USER_SHADOW_STACK
++	select ARCH_USES_HIGH_VMA_FLAGS
++	help
++	  Guarded Control Stack (GCS) provides support for a separate
++	  stack with restricted access which contains only return
++	  addresses.  This can be used to harden against some attacks
++	  by comparing return address used by the program with what is
++	  stored in the GCS, and may also be used to efficiently obtain
++	  the call stack for applications such as profiling.
 +
- #endif /* __ASSEMBLY__ */
- 
- #endif /* _UAPI__ASM_PTRACE_H */
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 0d022599eb61..9db0b669fee3 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -34,6 +34,7 @@
- #include <asm/cpufeature.h>
- #include <asm/debug-monitors.h>
- #include <asm/fpsimd.h>
-+#include <asm/gcs.h>
- #include <asm/mte.h>
- #include <asm/pointer_auth.h>
- #include <asm/stacktrace.h>
-@@ -1440,6 +1441,51 @@ static int tagged_addr_ctrl_set(struct task_struct *target, const struct
- }
- #endif
- 
-+#ifdef CONFIG_ARM64_GCS
-+static int gcs_get(struct task_struct *target,
-+		   const struct user_regset *regset,
-+		   struct membuf to)
-+{
-+	struct user_gcs user_gcs;
++	  The feature is detected at runtime, and will remain disabled
++	  if the system does not implement the feature.
 +
-+	if (target == current)
-+		gcs_preserve_current_state();
++endmenu # "v9.4 architectural features"
 +
-+	user_gcs.features_enabled = target->thread.gcs_el0_mode;
-+	user_gcs.features_locked = target->thread.gcs_el0_locked;
-+	user_gcs.gcspr_el0 = target->thread.gcspr_el0;
-+
-+	return membuf_write(&to, &user_gcs, sizeof(user_gcs));
-+}
-+
-+static int gcs_set(struct task_struct *target, const struct
-+		   user_regset *regset, unsigned int pos,
-+		   unsigned int count, const void *kbuf, const
-+		   void __user *ubuf)
-+{
-+	int ret;
-+	struct user_gcs user_gcs;
-+
-+	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &user_gcs, 0, -1);
-+	if (ret)
-+		return ret;
-+
-+	if (user_gcs.features_enabled & ~PR_SHADOW_STACK_SUPPORTED_STATUS_MASK)
-+		return -EINVAL;
-+
-+	/* Do not allow enable via ptrace */
-+	if ((user_gcs.features_enabled & PR_SHADOW_STACK_ENABLE) &&
-+	    !(target->thread.gcs_el0_mode & PR_SHADOW_STACK_ENABLE))
-+		return -EBUSY;
-+
-+	target->thread.gcs_el0_mode = user_gcs.features_enabled;
-+	target->thread.gcs_el0_locked = user_gcs.features_locked;
-+	target->thread.gcspr_el0 = user_gcs.gcspr_el0;
-+
-+	return 0;
-+}
-+#endif
-+
- enum aarch64_regset {
- 	REGSET_GPR,
- 	REGSET_FPR,
-@@ -1469,6 +1515,9 @@ enum aarch64_regset {
- #ifdef CONFIG_ARM64_TAGGED_ADDR_ABI
- 	REGSET_TAGGED_ADDR_CTRL,
- #endif
-+#ifdef CONFIG_ARM64_GCS
-+	REGSET_GCS,
-+#endif
- };
- 
- static const struct user_regset aarch64_regsets[] = {
-@@ -1628,6 +1677,16 @@ static const struct user_regset aarch64_regsets[] = {
- 		.set = tagged_addr_ctrl_set,
- 	},
- #endif
-+#ifdef CONFIG_ARM64_GCS
-+	[REGSET_GCS] = {
-+		.core_note_type = NT_ARM_GCS,
-+		.n = sizeof(struct user_gcs) / sizeof(u64),
-+		.size = sizeof(u64),
-+		.align = sizeof(u64),
-+		.regset_get = gcs_get,
-+		.set = gcs_set,
-+	},
-+#endif
- };
- 
- static const struct user_regset_view user_aarch64_view = {
-diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-index b54b313bcf07..77d4910bbb9d 100644
---- a/include/uapi/linux/elf.h
-+++ b/include/uapi/linux/elf.h
-@@ -441,6 +441,7 @@ typedef struct elf64_shdr {
- #define NT_ARM_ZA	0x40c		/* ARM SME ZA registers */
- #define NT_ARM_ZT	0x40d		/* ARM SME ZT registers */
- #define NT_ARM_FPMR	0x40e		/* ARM floating point mode register */
-+#define NT_ARM_GCS	0x40f		/* ARM GCS state */
- #define NT_ARC_V2	0x600		/* ARCv2 accumulator/extra registers */
- #define NT_VMCOREDD	0x700		/* Vmcore Device Dump Note */
- #define NT_MIPS_DSP	0x800		/* MIPS DSP ASE registers */
+ config ARM64_SVE
+ 	bool "ARM Scalable Vector Extension support"
+ 	default y
 
 -- 
 2.39.2
