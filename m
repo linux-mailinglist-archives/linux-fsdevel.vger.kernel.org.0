@@ -1,102 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-24839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE1694542D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 23:40:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374D7945483
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 00:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14277285EED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 21:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB848284A4D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 22:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D88414B95F;
-	Thu,  1 Aug 2024 21:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA82914C5B5;
+	Thu,  1 Aug 2024 22:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bPvXf82Q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sS4er+Ot";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lWVGv/y0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S5ppgNLB"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="LFIKMjtP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACD214A603
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 21:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1011C13DDA3
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 22:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722548430; cv=none; b=jnuCr5stgVbpUO9rDKjnWKzB3bYMqCjAkXJpGDh/WLgxTwpoVCF0ftJDtB+afx4O8EAOGi9541ta2eiGduAsaIn4tN3d7BKW7dQuC6CCF59f3lWc9tgXZ6c9HXS3Du+Hbt1ZsOJoqPRQkzaeGSFO8tSEkvIZmn+ARQBAUA1xYeA=
+	t=1722551324; cv=none; b=eWYVXmRApMqD0kBrdbRd0oy9pidOTo33VsF6LUG2n702Yrv/2NUKRyniWVotUukrnDitPXs9bX9N1IqSRXJ0HeTsxPD5ne3bvPMjfKFZv4zyDh/Qo3UflSEqvF+ej6QqR9U3S+rfw8lkqm2j3MYvCjGg6C/uHT5A4SeIzPN3ATc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722548430; c=relaxed/simple;
-	bh=M8uzxpINF8vB7mnz4qTEFvNEHJ/tNZdhiiChCNAxn9o=;
+	s=arc-20240116; t=1722551324; c=relaxed/simple;
+	bh=cD+DdAn/DPHyEPshk6ipvfRDDw+LFLhg5xkAt5HpHs0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MiWNQftE4K4io7Cr4guOimPr1RSCX8D0lhxXJaKwhEaGl0Z1sIEEYJ7sDtqpVHDDOZAaCwvfaGGXdHfoG9+WElkw/hswZ+UN21D1uAxE3Y31QiSUqMVeKFvFh5w4avxpMBCxd/T1OyBltEmPIhys1ADueH8AJd5QPBmo1WvuE7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bPvXf82Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sS4er+Ot; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lWVGv/y0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S5ppgNLB; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1F2511FB6F;
-	Thu,  1 Aug 2024 21:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722548427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J0Q2PtiHBCLXGENC38iuFqiVU+DWqIYDxSVFpbVu//Q=;
-	b=bPvXf82Qkw0at8cOUyJtdi4RBbV2RVrlCP6xJtKf7QjShN+wlStrywNwyciUvM9iul5Cri
-	MDyLiveQAfKqH670MS45LkZ2ye734B4O5oEoMsmOsaNgFclE3YFbjDa5sxntzvdfuxDAxv
-	+hfzcOC34xE7zI/Vu2KoCYjASf5Qjvo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722548427;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J0Q2PtiHBCLXGENC38iuFqiVU+DWqIYDxSVFpbVu//Q=;
-	b=sS4er+Ot1XeaujgUII1z7PN4wqb14ujHorGr6O78nWFm3FkvRSbIUDkWchLjKChDuY1njz
-	EC7pmBrVyQvwh/AQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="lWVGv/y0";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=S5ppgNLB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722548426; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J0Q2PtiHBCLXGENC38iuFqiVU+DWqIYDxSVFpbVu//Q=;
-	b=lWVGv/y0QX6MOkW+v9O1baOsmjUEXsC6OXqsA0YcjugxHra9XLWuY4DFSUEzMLeGxQeEC+
-	fxgcjXeSmPCVcNrIlNFBd6x0uNwFFvM7C9mfAPv060hzKXEgri6BjUSQbhDtGROLtALTjD
-	CVwx2J6MyOLLuNqwlo5bL0HGi/kEGvE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722548426;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J0Q2PtiHBCLXGENC38iuFqiVU+DWqIYDxSVFpbVu//Q=;
-	b=S5ppgNLBm9ttUwDkNPRi6wxOtBKA99ATXhHLLJFNZxtqPb/E7OgAGUMPmIHuHP50xqPWb7
-	jqNrSIIKBPPgeZCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 15490136CF;
-	Thu,  1 Aug 2024 21:40:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id m+QsBcoArGZ8dgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 01 Aug 2024 21:40:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CBB85A08CB; Thu,  1 Aug 2024 23:40:25 +0200 (CEST)
-Date: Thu, 1 Aug 2024 23:40:25 +0200
-From: Jan Kara <jack@suse.cz>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	amir73il@gmail.com, brauner@kernel.org
-Subject: Re: [PATCH 10/10] fsnotify: generate pre-content permission event on
- page fault
-Message-ID: <20240801214025.t5zjblmdjreheab6@quack3>
-References: <cover.1721931241.git.josef@toxicpanda.com>
- <1bc2855779e7ba1d80592be7d6257b43f1a91886.1721931241.git.josef@toxicpanda.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LbyBdiCtVSSiFm4GOUywwUPCVl25/DkX72EaCY799iqInhsD+glMn+R3xzUv9ZsWXlpuX2btYBANvlG5b6vGgIIt0oOEfvwUursdY+57WCZumzBeeue1mk5ap4/+3dCEnjnlhpXfc/LbKi7BcyLypPa1uuVsTPqK8rZszTYjHl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=LFIKMjtP; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fd9e70b592so53855715ad.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Aug 2024 15:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722551322; x=1723156122; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SRYsGq2oNdjeIvoc5FsVQQM4eH9uksp2HnfPLkPQWTM=;
+        b=LFIKMjtPHzC8qUAuVDrdF4JPihti2inuKp8MtfcIZ89rMiH9drby4WLlbWqMLInTfI
+         G7HkKvXKUS0j9ZznksoSmm29LJcysMu8ojfbF9ecWR80LOf7fBzS0gY0qRRdtc99t6YX
+         z0f0neij1C6HeZLZ7yZaspHxuC2NJXXNsFirEXbwvAR/Elorxoer/zGVjVBXiEBcAI4e
+         dA2rrQZPTMeh8z1xg842jghlPzhNgCP1VkFQpveLjKvrcbTnWhoWejlpMspFeSSm49eF
+         FA/8HbUleoTZQyHNNRYYDVgniSb8uHlmfF5FY47sz4ek4dDd5sMci1x9wHe6yEQrSrmC
+         5hgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722551322; x=1723156122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SRYsGq2oNdjeIvoc5FsVQQM4eH9uksp2HnfPLkPQWTM=;
+        b=cQoolBFCxUDb5+QdXFqE62cx2yr58al4YkvqkOHi98QJQqQPKq3pVKj4ekVdA0tN8E
+         oBzA/3YxQa+peqnbzKatZ2KFe4f9CHPo0rjItHU5uBPXAtkNJEEzb+AeF3WaIDiROoKB
+         EOrYzWu6vqn3K3hjzCDbCRvdELTJjw2ypHHWrUx6mojHn8BJpx/cE1UCnAaqlUQEWygy
+         hrHhG6MzTho06l4ZMyMpjnHYV/vnANvn685ikvH/E8Z10bYKtxCy4v64LkOOB5qx8USi
+         CK1hgKo+gG/zJ6Xtp2+usXVr767US97C4pg3mPMFe8wXLYjm+FNmer8u/cvKlnF1nEh7
+         VpXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXe8wdAH/U9ZQfcQohV9pbSYsivqrpZEloWYaQzpW4zh0+fhk4YMhmrbdB/9Mlwf1k3IMgIwWlxSOyLcF9AAq86YqfTvSZWadRK+LakQA==
+X-Gm-Message-State: AOJu0YzkqqkldQL6fG2bIxyWRVNq620jxgQkfuEDR/ucXgozUXBzXXe+
+	7yQeMA4nnaPz2rgnHfSF29aCin8TaADO3CGY5Pp/tNgMTDjK1+fmRmevkQ4XHvI=
+X-Google-Smtp-Source: AGHT+IG1VyhF7PulV5hUfA0sl/95gL1I+laFS95TuUeXZwqOhTGd3EUHP2S1u9L3VUz7PeMN4aTczg==
+X-Received: by 2002:a17:903:41c3:b0:1f8:44f8:a364 with SMTP id d9443c01a7336-1ff5743b598mr19821295ad.48.1722551322289;
+        Thu, 01 Aug 2024 15:28:42 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29f52sm4084735ad.32.2024.08.01.15.28.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 15:28:41 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sZeHm-001yL8-31;
+	Fri, 02 Aug 2024 08:28:38 +1000
+Date: Fri, 2 Aug 2024 08:28:38 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net,
+	syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>,
+	Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>,
+	paulmck@kernel.org, Hillf Danton <hdanton@sina.com>,
+	rcu@vger.kernel.org, frank.li@vivo.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+	Ted Tso <tytso@mit.edu>
+Subject: Re: [syzbot] [f2fs?] WARNING in rcu_sync_dtor
+Message-ID: <ZqwMFjz7TYgV+hbo@dread.disaster.area>
+References: <0000000000004ff2dc061e281637@google.com>
+ <20240729-himbeeren-funknetz-96e62f9c7aee@brauner>
+ <20240729132721.hxih6ehigadqf7wx@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,113 +96,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1bc2855779e7ba1d80592be7d6257b43f1a91886.1721931241.git.josef@toxicpanda.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.81 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[fb.com,vger.kernel.org,suse.cz,gmail.com,kernel.org];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,toxicpanda.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 1F2511FB6F
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.81
+In-Reply-To: <20240729132721.hxih6ehigadqf7wx@quack3>
 
-On Thu 25-07-24 14:19:47, Josef Bacik wrote:
-> FS_PRE_ACCESS or FS_PRE_MODIFY will be generated on page fault depending
-> on the faulting method.
-> 
-> This pre-content event is meant to be used by hierarchical storage
-> managers that want to fill in the file content on first read access.
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-...
-> @@ -3287,6 +3288,35 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  	if (unlikely(index >= max_idx))
->  		return VM_FAULT_SIGBUS;
->  
-> +	/*
-> +	 * If we have pre-content watchers then we need to generate events on
-> +	 * page fault so that we can populate any data before the fault.
-> +	 *
-> +	 * We only do this on the first pass through, otherwise the populating
-> +	 * application could potentially deadlock on the mmap lock if it tries
-> +	 * to populate it with mmap.
-> +	 */
-> +	if (fault_flag_allow_retry_first(vmf->flags) &&
-> +	    fsnotify_file_has_content_watches(file)) {
+On Mon, Jul 29, 2024 at 03:27:21PM +0200, Jan Kara wrote:
+> Also as the "filesystem shutdown" is spreading across multiple filesystems,
+> I'm playing with the idea that maybe we could lift a flag like this to VFS
+> so that we can check it in VFS paths and abort some operations early. 
 
-I'm somewhat nervous that if ALLOW_RETRY isn't set, we'd silently jump into
-readpage code without ever sending pre-content event and thus we'd possibly
-expose invalid content to userspace? I think we should fail the fault if
-fsnotify_file_has_content_watches(file) && !(vmf->flags &
-FAULT_FLAG_ALLOW_RETRY).
+I've been thinking the same thing since I saw what CIFS was doing a
+couple of days ago with shutdowns. It's basically just stopping all
+new incoming modification operations if the flag is set. i.e. it's
+just a check in each filesystem method, and I suspect that many
+other filesystems that support shutdown do the same thing.
 
-> +		int mask = (vmf->flags & FAULT_FLAG_WRITE) ? MAY_WRITE : MAY_READ;
-> +		loff_t pos = vmf->pgoff << PAGE_SHIFT;
-> +
-> +		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> +
-> +		/*
-> +		 * We can only emit the event if we did actually release the
-> +		 * mmap lock.
-> +		 */
-> +		if (fpin) {
-> +			error = fsnotify_file_area_perm(fpin, mask, &pos,
-> +							PAGE_SIZE);
-> +			if (error) {
-> +				fput(fpin);
-> +				return VM_FAULT_ERROR;
-> +			}
-> +		}
-> +	}
-> +
->  	/*
->  	 * Do we have something in the page cache already?
->  	 */
-...
-> @@ -3612,6 +3643,13 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
->  	unsigned long rss = 0;
->  	unsigned int nr_pages = 0, mmap_miss = 0, mmap_miss_saved, folio_type;
->  
-> +	/*
-> +	 * We are under RCU, we can't emit events here, we need to force a
-> +	 * normal fault to make sure the events get sent.
-> +	 */
-> +	if (fsnotify_file_has_content_watches(file))
-> +		return ret;
-> +
+It looks like exactly the same implementation as CIFS is about to be
+added to exfat - stop all the incoming methods and check in the
+writeback method - so having a generic superblock flag and generic
+checks before calling into filesystem methods would make it real
+easy for all filesystems to have basic ->shutdown support for when
+block devices go away suddenly.
 
-I don't think we need to do anything for filemap_map_pages(). The call just
-inserts page cache content into page tables and whatever is in the page
-cache and has folio_uptodate() set should be already valid file content,
-shouldn't it?
+I also think that we should be lifting *IOC_SHUTDOWN to the VFS -
+the same ioctl is now implemented in 4-5 filesystems and they
+largely do the same thing - just set a bit in the internal
+filesystem superblock flags. Yes, filesystems like XFS and ext4 do
+special stuff with journals, but the generic VFS implemenation could
+call the filesystem ->shutdown method to do that....
 
-								Honza
+> But
+> so far I'm not convinced the gain is worth the need to iron out various
+> subtle semantical differences of "shutdown" among filesystems.
+
+I don't think we need to change how any filesystem behaves when it
+is shut down. As long as filesystems follow at least the "no new
+modifications when shutdown" behaviour, filesystems can implement
+internal shutdown however they want...
+
+-Dave.
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Dave Chinner
+david@fromorbit.com
 
