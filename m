@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-24731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79214944210
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 05:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E6D944214
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 05:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C0551C2218E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 03:53:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6892E1C2276B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 03:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C8714374F;
-	Thu,  1 Aug 2024 03:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443AE1448E5;
+	Thu,  1 Aug 2024 03:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="MM+m0Hir"
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="xrSGFsIv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B77314372E;
-	Thu,  1 Aug 2024 03:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2672BB10;
+	Thu,  1 Aug 2024 03:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722484393; cv=none; b=mF3h39tJ6aN55eAnd41urz13SkSJ/ajP1Rtk1PR/dnULdRS/6/GMASISVc2zckp8C8NBTrMkga6sq6GfFwcC+ZiUf8XTHpval1M+Mc1vOg7qhRqfeVTFEo4Ki9yhOQhf65nBeb0KPJBPK5SRg7FnWtIN8wCX41P9dmyvT1hnfqI=
+	t=1722484401; cv=none; b=Tj9mdq5X9nMlIveYICVbKnlI0F/a4/nAUYPutgyCz/02OJyxvY85XRE2kwd1ALWnmgT2Y27H07DcB/NLXcxFmDkO5bBc7vA22pcATTPPz/9HVi2hTELbUAiMXK0xRbWKyLlLNDsO+7yubXR9tUdvH+XgbXowXjq1sArWmaTlOUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722484393; c=relaxed/simple;
-	bh=iaW9F+1hGplJ+XVY4xEy89+V0guZHjhOi4/zsCtd+ow=;
+	s=arc-20240116; t=1722484401; c=relaxed/simple;
+	bh=1syH90mxQyN1JZLq+KtkoRx8aP8URN8qtch96dhqqfM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ElRqCg9tVx0xdKhBeVZ/+PEFVYna4brMl9foAivEa6pYB3bxblKdDiirWFvyf/9zbkwbQA7yjc5ocQ5ebaMMgYhn4n4advWfuS+bxQv07fi5xww5SA/YmA0VrakkOHAW2atRs5Ey0Y21Mw6JuKO3KpuocNdDJzwcvMq4++LhbzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=MM+m0Hir; arc=none smtp.client-ip=80.241.56.151
+	 In-Reply-To:To:Cc; b=f1x++q+zP6NPLwMo8FQgCcQWIxBibjdQDhqBIzcIuNnSalF4ML6NfaPBTY/vdwq1gllRcMk9GizPNP9poQx+4k8jBXO1ceZgwATT+rxOnQR7CwuRtMp5vFV+1lkGIZbcwO4ryiEv9wg1Ukyu9NJh8ppSRpHHtJPnJphqbYGnK+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=xrSGFsIv; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
 Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WZFRk2SCFz9sW1;
-	Thu,  1 Aug 2024 05:53:06 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WZFRw1nmtz9sWc;
+	Thu,  1 Aug 2024 05:53:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1722484386;
+	t=1722484396;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jED3yi9I8NFf6TIpgjA0Hu/yrPNZC0px3hxjpdzE1No=;
-	b=MM+m0HiroBKZ+HQuwz8vCN1DAx1s3hcq4wUs+2Au6JwAhZ6yVdjW2AtWmo1yI2L+pebohN
-	HR17/rV2SUQJP0iyFQEoO7XcjhodBQNfh19t2x6hskCMeiLK0GMJcJxlsl961SEYi8/ug7
-	ssLwtXrkdxGWoQC/DuIFKwM0qF/aYGpSd9pJ7mmKfAudSPRyNgWuF6H5xfqfsZjOUAL7FQ
-	woH1g46uyXCnY1SnTUzkJLdKIwk6QHrh+dYJmt571RiRsMBCxGZSL4vRG2BFV7JH3FVamR
-	Kti0FwvpEmRXoaVGgU9dkAJdToXlsOWHTUTUo/2BPOVmrtw+i3nfPpaAO0l0HA==
+	bh=NK1pAn3htk8ZyKf4LH6QeGiUOjLLEiElgYnQnuIac4A=;
+	b=xrSGFsIvnww92LoytSn52At6V/qex8FDO9QKRJsq38Ym26LBvJ8erON3LKxA6Kha5yLfBr
+	wAwW6AX/J+1KqiBOxhXmZkPeMqQv37E1rmVyLj/8GttOgGKJuP0OM8sYLoaNqJdAtxHV/y
+	ERHeO8tYklTdm3bQX3bWC8EsyaSVWEjQbOVC8RfxwNpDRSX4lIy5gaW9Pq8ovcmAakF2MF
+	CX3zdddPePKhq0q/UD9p0aHG2Z3AqX5bYGbkOhvPFurH1G+9wkZkgyP4UdNyOfPkt/F9ku
+	lDYgPa5Kb7KtVKtKBrvKJyFV1hmlRw1IPVmbA0uBYXa8BF4nRCKo2PHngzp3Pw==
 From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Thu, 01 Aug 2024 13:52:40 +1000
-Subject: [PATCH RFC v3 1/2] uapi: explain how per-syscall AT_* flags should
- be allocated
+Date: Thu, 01 Aug 2024 13:52:41 +1000
+Subject: [PATCH RFC v3 2/2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,7 +61,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240801-exportfs-u64-mount-id-v3-1-be5d6283144a@cyphar.com>
+Message-Id: <20240801-exportfs-u64-mount-id-v3-2-be5d6283144a@cyphar.com>
 References: <20240801-exportfs-u64-mount-id-v3-0-be5d6283144a@cyphar.com>
 In-Reply-To: <20240801-exportfs-u64-mount-id-v3-0-be5d6283144a@cyphar.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -77,292 +77,160 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
  linux-perf-users@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13765; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=iaW9F+1hGplJ+XVY4xEy89+V0guZHjhOi4/zsCtd+ow=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaStZut5M91IwzFsvYWDzx8ZSSYR9eBT4p1OkbL75jE3H
- wxdsi++o5SFQYyLQVZMkWWbn2fopvmLryR/WskGM4eVCWQIAxenAEzk/w+Gf4a99TNUJVYxSIYv
- mRm0srN63p0TSdZ22aL7HDPN48S9BBgZHkxjdvjr/ZKLKen3nhXFHGqnHeTTFlYVKevLt+5vU3z
- ABAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5914; i=cyphar@cyphar.com;
+ h=from:subject:message-id; bh=1syH90mxQyN1JZLq+KtkoRx8aP8URN8qtch96dhqqfM=;
+ b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMaStZutJC/hgcjQ452WRU3P2vj97trmsl+E8/TKA67nA4
+ VNXwrh4O0pZGMS4GGTFFFm2+XmGbpq/+Eryp5VsMHNYmUCGMHBxCsBEerIZGc7lNl9TT/CKfPr5
+ hL9A9KQJJ05XSJdYehyYuTM+VEtbz46R4eFTv02VPQ3Xp1n3zmwIsjzH9+AO30FHexm2IIUvdjc
+ V2QA=
 X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
  fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4WZFRk2SCFz9sW1
+X-Rspamd-Queue-Id: 4WZFRw1nmtz9sWc
 
-Unfortunately, the way we have gone about adding new AT_* flags has
-been a little messy. In the beginning, all of the AT_* flags had generic
-meanings and so it made sense to share the flag bits indiscriminately.
-However, we inevitably ran into syscalls that needed their own
-syscall-specific flags. Due to the lack of a planned out policy, we
-ended up with the following situations:
+Now that we provide a unique 64-bit mount ID interface in statx(2), we
+can now provide a race-free way for name_to_handle_at(2) to provide a
+file handle and corresponding mount without needing to worry about
+racing with /proc/mountinfo parsing or having to open a file just to do
+statx(2).
 
- * Existing syscalls adding new features tended to use new AT_* bits,
-   with some effort taken to try to re-use bits for flags that were so
-   obviously syscall specific that they only make sense for a single
-   syscall (such as the AT_EACCESS/AT_REMOVEDIR/AT_HANDLE_FID triplet).
+While this is not necessary if you are using AT_EMPTY_PATH and don't
+care about an extra statx(2) call, users that pass full paths into
+name_to_handle_at(2) need to know which mount the file handle comes from
+(to make sure they don't try to open_by_handle_at a file handle from a
+different filesystem) and switching to AT_EMPTY_PATH would require
+allocating a file for every name_to_handle_at(2) call, turning
 
-   Given the constraints of bitflags, this works well in practice, but
-   ideally (to avoid future confusion) we would plan ahead and define a
-   set of "per-syscall bits" ahead of time so that when allocating new
-   bits we don't end up with a complete mish-mash of which bits are
-   supposed to be per-syscall and which aren't.
+  err = name_to_handle_at(-EBADF, "/foo/bar/baz", &handle, &mntid,
+                          AT_HANDLE_MNT_ID_UNIQUE);
 
- * New syscalls dealt with this in several ways:
+into
 
-   - Some syscalls (like renameat2(2), move_mount(2), fsopen(2), and
-     fspick(2)) created their separate own flag spaces that have no
-     overlap with the AT_* flags. Most of these ended up allocating
-     their bits sequentually.
+  int fd = openat(-EBADF, "/foo/bar/baz", O_PATH | O_CLOEXEC);
+  err1 = name_to_handle_at(fd, "", &handle, &unused_mntid, AT_EMPTY_PATH);
+  err2 = statx(fd, "", AT_EMPTY_PATH, STATX_MNT_ID_UNIQUE, &statxbuf);
+  mntid = statxbuf.stx_mnt_id;
+  close(fd);
 
-     In the case of move_mount(2) and fspick(2), several flags have
-     identical meanings to AT_* flags but were allocated in their own
-     flag space.
-
-     This makes sense for syscalls that will never share AT_* flags, but
-     for some syscalls this leads to duplication with AT_* flags in a
-     way that could cause confusion (if renameat2(2) grew a
-     RENAME_EMPTY_PATH it seems likely that users could mistake it for
-     AT_EMPTY_PATH since it is an *at(2) syscall).
-
-   - Some syscalls unfortunately ended up both creating their own flag
-     space while also using bits from other flag spaces. The most
-     obvious example is open_tree(2), where the standard usage ends up
-     using flags from *THREE* separate flag spaces:
-
-       open_tree(AT_FDCWD, "/foo", OPEN_TREE_CLONE|O_CLOEXEC|AT_RECURSIVE);
-
-     (Note that O_CLOEXEC is also platform-specific, so several future
-     OPEN_TREE_* bits are also made unusable in one fell swoop.)
-
-It's not entirely clear to me what the "right" choice is for new
-syscalls. Just saying that all future VFS syscalls should use AT_* flags
-doesn't seem practical. openat2(2) has RESOLVE_* flags (many of which
-don't make much sense to burn generic AT_* flags for) and move_mount(2)
-has separate AT_*-like flags for both the source and target so separate
-flags are needed anyway (though it seems possible that renameat2(2)
-could grow *_EMPTY_PATH flags at some point, and it's a bit of a shame
-they can't be reused).
-
-But at least for syscalls that _do_ choose to use AT_* flags, we should
-explicitly state the policy that 0x2ff is currently intended for
-per-syscall flags and that new flags should err on the side of
-overlapping with existing flag bits (so we can extend the scope of
-generic flags in the future if necessary).
-
-And add AT_* aliases for the RENAME_* flags to further cement that
-renameat2(2) is an *at(2) flag, just with its own per-syscall flags.
-
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- include/uapi/linux/fcntl.h                         | 80 ++++++++++++++-------
- tools/perf/trace/beauty/include/uapi/linux/fcntl.h | 83 +++++++++++++++-------
- 2 files changed, 115 insertions(+), 48 deletions(-)
+ fs/fhandle.c                                       | 29 ++++++++++++++++------
+ include/linux/syscalls.h                           |  2 +-
+ include/uapi/linux/fcntl.h                         |  1 +
+ tools/perf/trace/beauty/include/uapi/linux/fcntl.h |  1 +
+ 4 files changed, 25 insertions(+), 8 deletions(-)
 
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 6e8cea16790e..8cb665629f4a 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -16,7 +16,8 @@
+ 
+ static long do_sys_name_to_handle(const struct path *path,
+ 				  struct file_handle __user *ufh,
+-				  int __user *mnt_id, int fh_flags)
++				  void __user *mnt_id, bool unique_mntid,
++				  int fh_flags)
+ {
+ 	long retval;
+ 	struct file_handle f_handle;
+@@ -69,9 +70,19 @@ static long do_sys_name_to_handle(const struct path *path,
+ 	} else
+ 		retval = 0;
+ 	/* copy the mount id */
+-	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
+-	    copy_to_user(ufh, handle,
+-			 struct_size(handle, f_handle, handle_bytes)))
++	if (unique_mntid) {
++		if (put_user(real_mount(path->mnt)->mnt_id_unique,
++			     (u64 __user *) mnt_id))
++			retval = -EFAULT;
++	} else {
++		if (put_user(real_mount(path->mnt)->mnt_id,
++			     (int __user *) mnt_id))
++			retval = -EFAULT;
++	}
++	/* copy the handle */
++	if (retval != -EFAULT &&
++		copy_to_user(ufh, handle,
++			     struct_size(handle, f_handle, handle_bytes)))
+ 		retval = -EFAULT;
+ 	kfree(handle);
+ 	return retval;
+@@ -83,6 +94,7 @@ static long do_sys_name_to_handle(const struct path *path,
+  * @name: name that should be converted to handle.
+  * @handle: resulting file handle
+  * @mnt_id: mount id of the file system containing the file
++ *          (u64 if AT_HANDLE_MNT_ID_UNIQUE, otherwise int)
+  * @flag: flag value to indicate whether to follow symlink or not
+  *        and whether a decodable file handle is required.
+  *
+@@ -92,7 +104,7 @@ static long do_sys_name_to_handle(const struct path *path,
+  * value required.
+  */
+ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+-		struct file_handle __user *, handle, int __user *, mnt_id,
++		struct file_handle __user *, handle, void __user *, mnt_id,
+ 		int, flag)
+ {
+ 	struct path path;
+@@ -100,7 +112,8 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+ 	int fh_flags;
+ 	int err;
+ 
+-	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID))
++	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID |
++		     AT_HANDLE_MNT_ID_UNIQUE))
+ 		return -EINVAL;
+ 
+ 	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
+@@ -109,7 +122,9 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+ 		lookup_flags |= LOOKUP_EMPTY;
+ 	err = user_path_at(dfd, name, lookup_flags, &path);
+ 	if (!err) {
+-		err = do_sys_name_to_handle(&path, handle, mnt_id, fh_flags);
++		err = do_sys_name_to_handle(&path, handle, mnt_id,
++					    flag & AT_HANDLE_MNT_ID_UNIQUE,
++					    fh_flags);
+ 		path_put(&path);
+ 	}
+ 	return err;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 4bcf6754738d..5758104921e6 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -870,7 +870,7 @@ asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
+ #endif
+ asmlinkage long sys_name_to_handle_at(int dfd, const char __user *name,
+ 				      struct file_handle __user *handle,
+-				      int __user *mnt_id, int flag);
++				      void __user *mnt_id, int flag);
+ asmlinkage long sys_open_by_handle_at(int mountdirfd,
+ 				      struct file_handle __user *handle,
+ 				      int flags);
 diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index e55a3314bcb0..38a6d66d9e88 100644
+index 38a6d66d9e88..87e2dec79fea 100644
 --- a/include/uapi/linux/fcntl.h
 +++ b/include/uapi/linux/fcntl.h
-@@ -90,37 +90,69 @@
- #define DN_ATTRIB	0x00000020	/* File changed attibutes */
- #define DN_MULTISHOT	0x80000000	/* Don't remove notifier */
+@@ -152,6 +152,7 @@
+ #define AT_HANDLE_FID		0x200	/* File handle is needed to compare
+ 					   object identity and may not be
+ 					   usable with open_by_handle_at(2). */
++#define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
  
-+#define AT_FDCWD		-100    /* Special value for dirfd used to
-+					   indicate openat should use the
-+					   current working directory. */
-+
-+
-+/* Generic flags for the *at(2) family of syscalls. */
-+
-+/* Reserved for per-syscall flags	0xff. */
-+#define AT_SYMLINK_NOFOLLOW		0x100   /* Do not follow symbolic
-+						   links. */
-+/* Reserved for per-syscall flags	0x200 */
-+#define AT_SYMLINK_FOLLOW		0x400   /* Follow symbolic links. */
-+#define AT_NO_AUTOMOUNT			0x800	/* Suppress terminal automount
-+						   traversal. */
-+#define AT_EMPTY_PATH			0x1000	/* Allow empty relative
-+						   pathname to operate on dirfd
-+						   directly. */
- /*
-- * The constants AT_REMOVEDIR and AT_EACCESS have the same value.  AT_EACCESS is
-- * meaningful only to faccessat, while AT_REMOVEDIR is meaningful only to
-- * unlinkat.  The two functions do completely different things and therefore,
-- * the flags can be allowed to overlap.  For example, passing AT_REMOVEDIR to
-- * faccessat would be undefined behavior and thus treating it equivalent to
-- * AT_EACCESS is valid undefined behavior.
-+ * These flags are currently statx(2)-specific, but they could be made generic
-+ * in the future and so they should not be used for other per-syscall flags.
-  */
--#define AT_FDCWD		-100    /* Special value used to indicate
--                                           openat should use the current
--                                           working directory. */
--#define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
-+#define AT_STATX_SYNC_TYPE		0x6000	/* Type of synchronisation required from statx() */
-+#define AT_STATX_SYNC_AS_STAT		0x0000	/* - Do whatever stat() does */
-+#define AT_STATX_FORCE_SYNC		0x2000	/* - Force the attributes to be sync'd with the server */
-+#define AT_STATX_DONT_SYNC		0x4000	/* - Don't sync attributes with the server */
-+
-+#define AT_RECURSIVE			0x8000	/* Apply to the entire subtree */
-+
-+/*
-+ * Per-syscall flags for the *at(2) family of syscalls.
-+ *
-+ * These are flags that are so syscall-specific that a user passing these flags
-+ * to the wrong syscall is so "clearly wrong" that we can safely call such
-+ * usage "undefined behaviour".
-+ *
-+ * For example, the constants AT_REMOVEDIR and AT_EACCESS have the same value.
-+ * AT_EACCESS is meaningful only to faccessat, while AT_REMOVEDIR is meaningful
-+ * only to unlinkat. The two functions do completely different things and
-+ * therefore, the flags can be allowed to overlap. For example, passing
-+ * AT_REMOVEDIR to faccessat would be undefined behavior and thus treating it
-+ * equivalent to AT_EACCESS is valid undefined behavior.
-+ *
-+ * Note for implementers: When picking a new per-syscall AT_* flag, try to
-+ * reuse already existing flags first. This leaves us with as many unused bits
-+ * as possible, so we can use them for generic bits in the future if necessary.
-+ */
-+
-+/* Flags for renameat2(2) (must match legacy RENAME_* flags). */
-+#define AT_RENAME_NOREPLACE	0x0001
-+#define AT_RENAME_EXCHANGE	0x0002
-+#define AT_RENAME_WHITEOUT	0x0004
-+
-+/* Flag for faccessat(2). */
- #define AT_EACCESS		0x200	/* Test access permitted for
-                                            effective IDs, not real IDs.  */
-+/* Flag for unlinkat(2). */
- #define AT_REMOVEDIR		0x200   /* Remove directory instead of
-                                            unlinking file.  */
--#define AT_SYMLINK_FOLLOW	0x400   /* Follow symbolic links.  */
--#define AT_NO_AUTOMOUNT		0x800	/* Suppress terminal automount traversal */
--#define AT_EMPTY_PATH		0x1000	/* Allow empty relative pathname */
--
--#define AT_STATX_SYNC_TYPE	0x6000	/* Type of synchronisation required from statx() */
--#define AT_STATX_SYNC_AS_STAT	0x0000	/* - Do whatever stat() does */
--#define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
--#define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
--
--#define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
-+/* Flags for name_to_handle_at(2). */
-+#define AT_HANDLE_FID		0x200	/* File handle is needed to compare
-+					   object identity and may not be
-+					   usable with open_by_handle_at(2). */
- 
--/* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits... */
--#define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
--					compare object identity and may not
--					be usable to open_by_handle_at(2) */
  #if defined(__KERNEL__)
  #define AT_GETATTR_NOSEC	0x80000000
- #endif
 diff --git a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
-index c0bcc185fa48..38a6d66d9e88 100644
+index 38a6d66d9e88..87e2dec79fea 100644
 --- a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
 +++ b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
-@@ -16,6 +16,9 @@
+@@ -152,6 +152,7 @@
+ #define AT_HANDLE_FID		0x200	/* File handle is needed to compare
+ 					   object identity and may not be
+ 					   usable with open_by_handle_at(2). */
++#define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
  
- #define F_DUPFD_QUERY	(F_LINUX_SPECIFIC_BASE + 3)
- 
-+/* Was the file just created? */
-+#define F_CREATED_QUERY	(F_LINUX_SPECIFIC_BASE + 4)
-+
- /*
-  * Cancel a blocking posix lock; internal use only until we expose an
-  * asynchronous lock api to userspace:
-@@ -87,37 +90,69 @@
- #define DN_ATTRIB	0x00000020	/* File changed attibutes */
- #define DN_MULTISHOT	0x80000000	/* Don't remove notifier */
- 
-+#define AT_FDCWD		-100    /* Special value for dirfd used to
-+					   indicate openat should use the
-+					   current working directory. */
-+
-+
-+/* Generic flags for the *at(2) family of syscalls. */
-+
-+/* Reserved for per-syscall flags	0xff. */
-+#define AT_SYMLINK_NOFOLLOW		0x100   /* Do not follow symbolic
-+						   links. */
-+/* Reserved for per-syscall flags	0x200 */
-+#define AT_SYMLINK_FOLLOW		0x400   /* Follow symbolic links. */
-+#define AT_NO_AUTOMOUNT			0x800	/* Suppress terminal automount
-+						   traversal. */
-+#define AT_EMPTY_PATH			0x1000	/* Allow empty relative
-+						   pathname to operate on dirfd
-+						   directly. */
-+/*
-+ * These flags are currently statx(2)-specific, but they could be made generic
-+ * in the future and so they should not be used for other per-syscall flags.
-+ */
-+#define AT_STATX_SYNC_TYPE		0x6000	/* Type of synchronisation required from statx() */
-+#define AT_STATX_SYNC_AS_STAT		0x0000	/* - Do whatever stat() does */
-+#define AT_STATX_FORCE_SYNC		0x2000	/* - Force the attributes to be sync'd with the server */
-+#define AT_STATX_DONT_SYNC		0x4000	/* - Don't sync attributes with the server */
-+
-+#define AT_RECURSIVE			0x8000	/* Apply to the entire subtree */
-+
- /*
-- * The constants AT_REMOVEDIR and AT_EACCESS have the same value.  AT_EACCESS is
-- * meaningful only to faccessat, while AT_REMOVEDIR is meaningful only to
-- * unlinkat.  The two functions do completely different things and therefore,
-- * the flags can be allowed to overlap.  For example, passing AT_REMOVEDIR to
-- * faccessat would be undefined behavior and thus treating it equivalent to
-- * AT_EACCESS is valid undefined behavior.
-+ * Per-syscall flags for the *at(2) family of syscalls.
-+ *
-+ * These are flags that are so syscall-specific that a user passing these flags
-+ * to the wrong syscall is so "clearly wrong" that we can safely call such
-+ * usage "undefined behaviour".
-+ *
-+ * For example, the constants AT_REMOVEDIR and AT_EACCESS have the same value.
-+ * AT_EACCESS is meaningful only to faccessat, while AT_REMOVEDIR is meaningful
-+ * only to unlinkat. The two functions do completely different things and
-+ * therefore, the flags can be allowed to overlap. For example, passing
-+ * AT_REMOVEDIR to faccessat would be undefined behavior and thus treating it
-+ * equivalent to AT_EACCESS is valid undefined behavior.
-+ *
-+ * Note for implementers: When picking a new per-syscall AT_* flag, try to
-+ * reuse already existing flags first. This leaves us with as many unused bits
-+ * as possible, so we can use them for generic bits in the future if necessary.
-  */
--#define AT_FDCWD		-100    /* Special value used to indicate
--                                           openat should use the current
--                                           working directory. */
--#define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
-+
-+/* Flags for renameat2(2) (must match legacy RENAME_* flags). */
-+#define AT_RENAME_NOREPLACE	0x0001
-+#define AT_RENAME_EXCHANGE	0x0002
-+#define AT_RENAME_WHITEOUT	0x0004
-+
-+/* Flag for faccessat(2). */
- #define AT_EACCESS		0x200	/* Test access permitted for
-                                            effective IDs, not real IDs.  */
-+/* Flag for unlinkat(2). */
- #define AT_REMOVEDIR		0x200   /* Remove directory instead of
-                                            unlinking file.  */
--#define AT_SYMLINK_FOLLOW	0x400   /* Follow symbolic links.  */
--#define AT_NO_AUTOMOUNT		0x800	/* Suppress terminal automount traversal */
--#define AT_EMPTY_PATH		0x1000	/* Allow empty relative pathname */
--
--#define AT_STATX_SYNC_TYPE	0x6000	/* Type of synchronisation required from statx() */
--#define AT_STATX_SYNC_AS_STAT	0x0000	/* - Do whatever stat() does */
--#define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
--#define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
--
--#define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
-+/* Flags for name_to_handle_at(2). */
-+#define AT_HANDLE_FID		0x200	/* File handle is needed to compare
-+					   object identity and may not be
-+					   usable with open_by_handle_at(2). */
- 
--/* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits... */
--#define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
--					compare object identity and may not
--					be usable to open_by_handle_at(2) */
  #if defined(__KERNEL__)
  #define AT_GETATTR_NOSEC	0x80000000
- #endif
 
 -- 
 2.45.2
