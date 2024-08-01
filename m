@@ -1,110 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-24723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A409440DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 04:20:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA2094413E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 04:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 211C8283BC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 02:20:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579161F21BE8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 02:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514A71EB4AB;
-	Thu,  1 Aug 2024 01:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC131EB4AF;
+	Thu,  1 Aug 2024 02:34:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12218F5C;
-	Thu,  1 Aug 2024 01:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2EF1EB4A4;
+	Thu,  1 Aug 2024 02:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722477177; cv=none; b=N5ayFrzyOQO0ShGu87ieMykjciZxtteFSNy4gyvQDgJxymYJPq2bWYYrTtexsPDEtczIumUELmYK4Jluo0aVKvoSnF4IWQ4+whvMjWzt7nC257M49KcQqxS4UqruU2oPvh6wP023IJoH0HvIrlB89JIEAB+kfsbjs8YNluO/zIM=
+	t=1722479666; cv=none; b=jReMeedUwT4EqifkaLoL7QkMkDDvjQAy1wj5XBV4+YYf9L1soUBSDSv+WVDK53M/5be8E7QpIEvIQtc8bs8FPk3lxvTcCFFV+S1hPtuJfyDpuwNf06cERw0QLuI73/PllXLr/Q6IThcm8FlmEySyAhAHq3mMuf7hMdgf7fBygKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722477177; c=relaxed/simple;
-	bh=fnu8t9s2QwTd/TCltEsl3p++l1c+Pl/BUsTsX1JMsbE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UHFNY8Jx/NGoeDQYUctrZZrNeYmQ6OdiX+I6vGaeZQ9FfglufwThSRCW4jucnG5jso7X6T6OtiRbsk03Bsnx9/v6uSpI+kMALAN/O04/3Z9zwXEfNC2DqwcOTt42l7ArZHLnhSdGyWd2bRz4pcN+izewbyYhQPRrjaZYzGCY4Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WZBmj3K6kz4f3kvm;
-	Thu,  1 Aug 2024 09:52:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7271F1A018D;
-	Thu,  1 Aug 2024 09:52:51 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAHL4Vx6qpmQ921AQ--.14765S3;
-	Thu, 01 Aug 2024 09:52:51 +0800 (CST)
-Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
- uptodate bits
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
- brauner@kernel.org, david@fromorbit.com, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
- <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
- <ZqprvNM5itMbanuH@casper.infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <995196b3-3571-b23f-eb5f-d3fee5d97593@huaweicloud.com>
-Date: Thu, 1 Aug 2024 09:52:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1722479666; c=relaxed/simple;
+	bh=qQSPNLios5xKWmTFVwyn3gt+MTcOyJ062V/2dZ2JSFg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SlFXfAIDqGi+69Rheiz6Iiu0pS4dW4KkwDvvtaDNOquWlHQ7PWdw5NGDR+ejJ7ziybsIIfE+V37Kp7pPqoKjr6R+N7u0x7r4Hly4yggIhdHl0yLdQKuxxTd6/sI9VhOllmlys6L3HdFDhgkkoyTqFgbBxCtS9YNwmICAweFALMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VMUID4025106;
+	Thu, 1 Aug 2024 02:27:52 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40mp3xctcb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 01 Aug 2024 02:27:52 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 31 Jul 2024 19:27:41 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Wed, 31 Jul 2024 19:27:39 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
+CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <phillip@squashfs.org.uk>,
+        <squashfs-devel@lists.sourceforge.net>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: [PATCH] filemap: Init the newly allocated folio memory to 0 for the filemap
+Date: Thu, 1 Aug 2024 10:27:39 +0800
+Message-ID: <20240801022739.1199700-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000a90e8c061e86a76b@google.com>
+References: <000000000000a90e8c061e86a76b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZqprvNM5itMbanuH@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAHL4Vx6qpmQ921AQ--.14765S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WryUAw1DWF4xtFyDWw1ftFb_yoW8Jr43pF
-	9Y9F9akr4DJFWSkrnFv3W8XF1093sxCa45GF95Jr15Za98WFyagFZ7tF45ZrW8J3s3WFZF
-	va1UWr98GayDZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 2Qn-1ygvAFcpaVndRNr-E9j3oWzc9GPK
+X-Proofpoint-ORIG-GUID: 2Qn-1ygvAFcpaVndRNr-E9j3oWzc9GPK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_12,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ impostorscore=0 malwarescore=0 mlxscore=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 phishscore=0 clxscore=1011 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408010013
 
-On 2024/8/1 0:52, Matthew Wilcox wrote:
-> On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
->> Commit '1cea335d1db1 ("iomap: fix sub-page uptodate handling")' fix a
->> race issue when submitting multiple read bios for a page spans more than
->> one file system block by adding a spinlock(which names state_lock now)
->> to make the page uptodate synchronous. However, the race condition only
->> happened between the read I/O submitting and completeing threads, it's
->> sufficient to use page lock to protect other paths, e.g. buffered write
->> path. After large folio is supported, the spinlock could affect more
->> about the buffered write performance, so drop it could reduce some
->> unnecessary locking overhead.
-> 
-> This patch doesn't work.  If we get two read completions at the same
-> time for blocks belonging to the same folio, they will both write to
-> the uptodate array at the same time.
-> 
-This patch just drop the state_lock in the buffered write path, doesn't
-affect the read path, the uptodate setting in the read completion path
-is still protected the state_lock, please see iomap_finish_folio_read().
-So I think this patch doesn't affect the case you mentioned, or am I
-missing something?
+syzbot report KMSAN: uninit-value in pick_link, this is because the
+corresponding folio was not found from the mapping, and the memory was
+not initialized when allocating a new folio for the filemap.
 
-Thanks,
-Yi.
+To avoid the occurrence of kmsan report uninit-value, initialize the
+newly allocated folio memory to 0.
+
+Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ mm/filemap.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 657bcd887fdb..1b22eab691e8 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3753,6 +3753,11 @@ static struct folio *do_read_cache_folio(struct address_space *mapping,
+ 		folio = filemap_alloc_folio(gfp, 0);
+ 		if (!folio)
+ 			return ERR_PTR(-ENOMEM);
++
++		void *kaddr = kmap_local_folio(folio, 0);
++		memset(kaddr, 0, folio_size(folio));
++		kunmap_local(kaddr);
++
+ 		err = filemap_add_folio(mapping, folio, index, gfp);
+ 		if (unlikely(err)) {
+ 			folio_put(folio);
+-- 
+2.43.0
 
 
