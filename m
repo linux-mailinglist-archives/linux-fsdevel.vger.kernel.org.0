@@ -1,220 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-24828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59224945195
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 19:38:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D132C9451C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 19:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A4F51C228BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 17:38:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8854D1F243F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Aug 2024 17:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C51C1B8EBE;
-	Thu,  1 Aug 2024 17:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD251B3742;
+	Thu,  1 Aug 2024 17:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TJhK8Grg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="b5z+jjDo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KEHKFdTw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CLm2vuCG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="il1JUOQP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4AF182D8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 17:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C767313C8E3
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Aug 2024 17:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722533924; cv=none; b=ZsJXfhH0rSj8itysmGuEbnt+3/4aPBpKAh9u56NdGNmyYGFb3uYUwkz/wOFDdLuBO6/Up3l66PzMcCgK6pYo+Jx62AxbgfWxCQyIw8olMHkFky4pY5nTkRvz0TLjclWuvFUwOVftqeK4iir+IrL7yCT4hLvlCoRbcmKW5oeJh34=
+	t=1722534341; cv=none; b=eVl+8P/6W11Ta94Kst4NRfm9MeTNoP/vdpo2X7tW3vWCbihYO5JWbRcjxeQ9qoUUikDETjbPNt6Z6n9dKtZym3/xNtpqG5eHkHC13u6+C8h7hl1J9YZZW20fYQ/910fV/CguT5bJPAPHM8a09PvGUZde+WUhexRKWDeIUnK6Ad4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722533924; c=relaxed/simple;
-	bh=GbH+o70rEC9qeVH5i++yMujQhNy1Vjt/yKXR6eQxdwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9J3xtwUNvfPTGmv5O9xcMDu1k43jJeiZ7xTYTBXsc2M0gL1NFLaGQtp0leXkw2QuAGXj4M6EjhykGkzoQ00P4dFD6A83dQrPaYcFj1Aapx/d0UtfNQ3FjHp9kcUq+Nk80wE3MKHe8+GiWA4e8WT4OuZRtoBGXi7wW60MrYhDd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TJhK8Grg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=b5z+jjDo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KEHKFdTw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CLm2vuCG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 26AE521AAB;
-	Thu,  1 Aug 2024 17:38:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722533921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yB2SQn1la12G4zOPrM5EVWYYdx0NMjRmwFVTjT38Vm0=;
-	b=TJhK8GrgdMDKc0+ej8mkQQwcepnmT19ccVCvEwV729NeVkTqTej6o7Ub2F4cAzapZbaW3a
-	NJt0/z/KDs3Tc6cNJ8vcVoWbuBtTSx2FO3Ic2nAu3/y6MOTASS+DrkDUv8KhhcEUN5s/w5
-	a82e5Iz7KbeyE0I4HsJfgBzH6pvcljE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722533921;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yB2SQn1la12G4zOPrM5EVWYYdx0NMjRmwFVTjT38Vm0=;
-	b=b5z+jjDoyD9UzFR+RmiPp+bWjQ+5JhnHVU5Ls7YyRgMPb99+MRp6kKlwszXxK/WnOQx5Ev
-	iOFZstY6EXqburDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722533920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yB2SQn1la12G4zOPrM5EVWYYdx0NMjRmwFVTjT38Vm0=;
-	b=KEHKFdTwQh0WI8jrRyk4P8OqceHPFSDRX3TA9DQmtl0wRtCr7nx9BhbTTihbaEfWIwma9N
-	vUptNtyfX5bZzDdv99PXSGsf8BY0RI3Ioy1goypLL7OKeExwpYhTisSpjHtYDKV8WKeioi
-	97TPPSt1EqXVR3M1B7BZKvezwdQFpYI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722533920;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yB2SQn1la12G4zOPrM5EVWYYdx0NMjRmwFVTjT38Vm0=;
-	b=CLm2vuCGOUn/pvqlfAE8vCLSVAesZmKwp+08gmTqg0hIGA3sC/+jxVd/aYiHH9D4ml8dtd
-	dGcfihFuWA5ALFAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0FEE4136CF;
-	Thu,  1 Aug 2024 17:38:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7JThAyDIq2ZGOQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 01 Aug 2024 17:38:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8A90EA08CB; Thu,  1 Aug 2024 19:38:31 +0200 (CEST)
-Date: Thu, 1 Aug 2024 19:38:31 +0200
-From: Jan Kara <jack@suse.cz>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	amir73il@gmail.com, brauner@kernel.org
-Subject: Re: [PATCH 08/10] fanotify: report file range info with pre-content
- events
-Message-ID: <20240801173831.5uzwvhzdqro3om3q@quack3>
-References: <cover.1721931241.git.josef@toxicpanda.com>
- <1a378ca2df2ce30e5aecf7145223906a427d9037.1721931241.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1722534341; c=relaxed/simple;
+	bh=Md+tCugX0T6DBlJwjfQAImnL31p6sihip5oruYd0jwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FpwHn7A7Fzi/9cfHod4i/Ih/J/gZIY+CGnATup2PNBGKr7ehHCHQ5itUvOYUxaI0ojSaQvOJJSlWziwwit3PtAxcnn6MaiKcGi6AV7eBInnarXCXe26l4bJ5KoM0EKqdRa1FnlEQlnHETMIGSpzwOurPbuYGxfodsE6B++yWWRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=il1JUOQP; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b79fc76d03so40830016d6.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Aug 2024 10:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722534339; x=1723139139; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Md+tCugX0T6DBlJwjfQAImnL31p6sihip5oruYd0jwI=;
+        b=il1JUOQPm2e5t3jH9ynm5lAPIr4aXRRPUNbkRi6qZIStlLoaHjHANUmWVb6Kntr6Gu
+         52QCf8XeTIDWtwwtuR8V+RhOT+ByYhGTGvVD/QPX3DyLltIwFzZXvkkjkxmG6KgAHN9B
+         nIIzQeXEYrShVZ70Fr8e5ay4yZr9WrpqTedd5+s+sJTLFFwzbwDEpYM+PECJNJXQHbl2
+         DodFjktjQHHRIxdU9brulkLudt/Wa2AECws+RlSLkBaeODs6CxuFpw+fqqg7ZFziuUfS
+         qgXQM5vXUaptQMSSsr9qtHYOrXn/Zn5P6xbLSnjZCt6grDRE4CGUCLGHJY7awngiKkvS
+         qNKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722534339; x=1723139139;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Md+tCugX0T6DBlJwjfQAImnL31p6sihip5oruYd0jwI=;
+        b=WN/P5t18SoTptY9dH3m2Q2xxUrTljEUXeCa7efhvKO6LHgYeUcJkONRk3pVfNgRKDq
+         4rc0TTyAHpZKmV4AQ6Rt98jzVAZk3qEVn3tG3gkUH5gkjPLr0rbLX9D1C2slUoIVEFWC
+         qwIq8ceSQnYlNfJHon4CxMib3pm/TM+8X3LVG/mglu/dyYS7kCSYldAG7BDYLN77BQe2
+         v4gN59n1dEA29nyUCYwr3HzpDnX4/W6tjATMV3Zzuu3uQXy6fM1z3xdXeI3IBaCkg971
+         riB/PZBUUpstSbPTTZCbSO2R8T+WdrbkWw2BXlqH2l+vRJQNlap6qTH5dwH71Zei7XKJ
+         AQPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLmURfzfZ7u7n2bRLvslDyhmIfOa6MouKBeU78sgeoWx/+vI5cJfKNDdCNDxRiHeIbHAo8qkP483+dFERPdGtWqUzG6tP0Pmp5Sd3GWA==
+X-Gm-Message-State: AOJu0YxQ0ubndNJdy13kr5qwCeCvHdBnHlUSi1N6J7Vk2s2AxZndB3t7
+	h/rhjVON4Ghed678c9Mb1FO8wMqf6Qr2WUj1viVQVOipq6H6Q1MDgwcknFxVH/mzgxzr2bRDy1l
+	ciiWAB5kWasR0DB5VFfMEE871YMLyFcYwG2H6
+X-Google-Smtp-Source: AGHT+IHxqFWXrBnwwKA5uii4m8WRktVKp0ck40g4Sz01mi9eFCVRKd2tDwa3fcr6zENHmZS+RQTGRB9qTrhExEKmqA8=
+X-Received: by 2002:a05:6214:5b85:b0:6b5:e3ba:5251 with SMTP id
+ 6a1803df08f44-6bb98332800mr13418176d6.8.1722534338642; Thu, 01 Aug 2024
+ 10:45:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a378ca2df2ce30e5aecf7145223906a427d9037.1721931241.git.josef@toxicpanda.com>
-X-Spamd-Result: default: False [-3.60 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[fb.com,vger.kernel.org,suse.cz,gmail.com,kernel.org];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.60
+References: <20240730142802.1082627-1-arnd@kernel.org> <20240801010953.GA1835661@google.com>
+In-Reply-To: <20240801010953.GA1835661@google.com>
+From: Richard Fung <richardfung@google.com>
+Date: Thu, 1 Aug 2024 10:45:01 -0700
+Message-ID: <CAGndiTNdCGuHRmnp+G-=_PzTaLXnUZpuXAT8dK-wdoG7Mpwt4A@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fs-verity: aoid out-of-range comparison
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Arnd Bergmann <arnd@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Arnd Bergmann <arnd@arndb.de>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu 25-07-24 14:19:45, Josef Bacik wrote:
-> From: Amir Goldstein <amir73il@gmail.com>
-> 
-> With group class FAN_CLASS_PRE_CONTENT, report offset and length info
-> along with FAN_PRE_ACCESS and FAN_PRE_MODIFY permission events.
-> 
-> This information is meant to be used by hierarchical storage managers
-> that want to fill partial content of files on first access to range.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/notify/fanotify/fanotify.h      |  8 +++++++
->  fs/notify/fanotify/fanotify_user.c | 38 ++++++++++++++++++++++++++++++
->  include/uapi/linux/fanotify.h      |  7 ++++++
->  3 files changed, 53 insertions(+)
-> 
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index 93598b7d5952..7f06355afa1f 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -448,6 +448,14 @@ static inline bool fanotify_is_perm_event(u32 mask)
->  		mask & FANOTIFY_PERM_EVENTS;
->  }
->  
-> +static inline bool fanotify_event_has_access_range(struct fanotify_event *event)
-> +{
-> +	if (!(event->mask & FANOTIFY_PRE_CONTENT_EVENTS))
-> +		return false;
-> +
-> +	return FANOTIFY_PERM(event)->ppos;
-> +}
+> I think this was just defensive coding to ensure that the assignment to iov_len can't overflow regardless of the type of digest_size
 
-Now I'm a bit confused. Can we have legally NULL ppos for an event from
-FANOTIFY_PRE_CONTENT_EVENTS?
-
-> +static size_t copy_range_info_to_user(struct fanotify_event *event,
-> +				      char __user *buf, int count)
-> +{
-> +	struct fanotify_perm_event *pevent = FANOTIFY_PERM(event);
-> +	struct fanotify_event_info_range info = { };
-> +	size_t info_len = FANOTIFY_RANGE_INFO_LEN;
-> +
-> +	if (WARN_ON_ONCE(info_len > count))
-> +		return -EFAULT;
-> +
-> +	if (WARN_ON_ONCE(!pevent->ppos))
-> +		return 0;
-
-I think we should be returning some error here. Maybe EINVAL? Otherwise
-fanotify_event_len() will return different length than we actually generate
-and that could lead to strange failures later.
-
-> +
-> +	info.hdr.info_type = FAN_EVENT_INFO_TYPE_RANGE;
-> +	info.hdr.len = info_len;
-> +	info.offset = *(pevent->ppos);
-> +	info.count = pevent->count;
-> +
-> +	if (copy_to_user(buf, &info, info_len))
-> +		return -EFAULT;
-> +
-> +	return info_len;
-> +}
-> +
->  static int copy_info_records_to_user(struct fanotify_event *event,
->  				     struct fanotify_info *info,
->  				     unsigned int info_mode, int pidfd,
-...
-> @@ -191,6 +192,12 @@ struct fanotify_event_info_error {
->  	__u32 error_count;
->  };
->  
-> +struct fanotify_event_info_range {
-> +	struct fanotify_event_info_header hdr;
-> +	__u32 count;
-> +	__u64 offset;
-> +};
-
-Just for the sake of future-proofing, I'd make 'count' u64. I understand it
-means growing fanotify_event_info_range by 8 bytes and we currently never
-do reads or writes larger than 2 GB but I don't think saving bytes like
-this is really a good tradeoff these days...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I agree with this. Removing it sounds good to me
 
