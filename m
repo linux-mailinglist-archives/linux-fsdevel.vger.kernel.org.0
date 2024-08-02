@@ -1,190 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-24841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474ED94551D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 02:06:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C70945607
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 03:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1D54284E67
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 00:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBDFB1C2310E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 01:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4417D3D6A;
-	Fri,  2 Aug 2024 00:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="KnYaLdmd"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FA5175AE;
+	Fri,  2 Aug 2024 01:39:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2543210F4
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Aug 2024 00:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF079134AB;
+	Fri,  2 Aug 2024 01:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722557160; cv=none; b=TiIMFpz/iJrD1IUdDoeZ5p9wn/H5dEc56L51I0AzXFLu6/uwKRESWMdhq48HgralYSaAOKCRAyp1F/SFlPkewdR9jJvDV5AqhwUCsC8Kjkhuohc0GTHwbcGVnVj+rTtw21LzWpOGVGcqzKxz20fWDx2d1mwRQkyuhvt6IwAJfm8=
+	t=1722562786; cv=none; b=Xaeh2rsF24cStm+74mvy318/9y8Q49mtJEveUSKpE5rqYrhCP+WN+RmZvL6QnXoukph380Gfu4PXHX7vOjQk9zDtVD5oh+gKCpNI7DoyDZgr5VTxOuLD+YnspdA1VMOLLSlhnpfwr724meYh5bvs967Kuw8za5liBsPiS2ruzpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722557160; c=relaxed/simple;
-	bh=kPg6hNpv0fyQQ4C8xugRnahcyI2M1VfEIoO8Iylc6mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W9X8J5a0OHJUEg1ksyaEMVI7+1b04lUm13FqBzvwjvCi9dADHuj8xdy1fUXsd0XzWHNsgqnvPrRNXeJwYZRSdhstxqWjND4E06jsQhSwGLBfrjunLhSEkKriHYLuS3Fqhl7G/3SrF2U5Wh4YxwWm9QmpFJC44rXP0dkSZxbVT64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=KnYaLdmd; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fed72d23a7so58457995ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Aug 2024 17:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722557158; x=1723161958; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BtsQ+3NXr7Z0grTXgI4VJ8mpDigb9614hgPF8/mg2ek=;
-        b=KnYaLdmdx2kIS5cRhTBo9gtYC5Cuu9GWeGnR5/z9WkUTP3MTuLgzH26Y+un7cTRsYv
-         yJjicBTWTBNCawOIBZTDcWdv4BWNIc/mkZRKIddb9YMD+TLu1uBop98FeKxls5Qk1yzE
-         TUReUZcKvWJOhfKmskXQMXSij7vO1d0bHmEYOmecSuIOfcEg4fwKVWZOePvrJpHdJV9b
-         QytxvDv0VDbTl82WF/WQ9T9I3wSGFHPXgDV/7/BFZ2kSWDEJCRa/EOtwi/17BOn8IWM/
-         aqSPG/PcPAThwVhNVGLDusX1cBPb/4SrRJQgnEVPAiCBqnFDleu3VtqIr40a2GMAs7/v
-         HK8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722557158; x=1723161958;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BtsQ+3NXr7Z0grTXgI4VJ8mpDigb9614hgPF8/mg2ek=;
-        b=RDSJPqTEck3eYfYYv7C7DdgcHxuPHxghkDECdJDld3CvIffCe9rZWLRw3VzMFZtO1Y
-         JRfut9r0CF60v2UrRm7kIYsztHiQHKcbeWgO1htOeun4HgWKgPadmvzvz9V+bcSjiw38
-         r8LMS/GaRG7YsqPNSkT/SDMhd3qQbvRLPIxPnubZIvufmDbWj0a1XfdkjORxiM+1dfU3
-         alBDoDNFS0UOEmZg5dqUUwEaq/RU1HqDXbhg9M5bqT5acf8aL/dO5DufW1ZCXMXXrS7o
-         FW2yR6KTVybbsZgwAXgb8I7ZBlKvzPgKQu+jjnN4XKTGnTNuEyuGWqexbUl/dNgZU6B9
-         GMKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUWglYGsd9Ce00zA8goM2Dv9FqXuzykCG8HywVsKFeApfPOjs2A/jqfgyJAChJf4bfj89HAjLMz886lxzv/FJmf368pS3qMDNgjibrAA==
-X-Gm-Message-State: AOJu0Yziy7OEMwxQmB4sAhek/ApozxKFBYAE9DI6B/qwj1zS3R/XtKJS
-	XflCSVgT39NXX2iKbmdYRr8vrt13pmpeHkbpcQZV5+JHzPreSbvMqoh82DUP7+Y=
-X-Google-Smtp-Source: AGHT+IHAi8u2E0Zyx8AqxUHQRqLu9oFcTolJxIePwk6jnTPCdufSt8G3TT6DihMhy1lfh6fr5NcjNA==
-X-Received: by 2002:a17:902:f686:b0:1fb:6294:2e35 with SMTP id d9443c01a7336-1ff5743b563mr26795165ad.50.1722557158429;
-        Thu, 01 Aug 2024 17:05:58 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592acd2fsm4645375ad.286.2024.08.01.17.05.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 17:05:57 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sZfnv-0023B7-1T;
-	Fri, 02 Aug 2024 10:05:55 +1000
-Date: Fri, 2 Aug 2024 10:05:55 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
- uptodate bits
-Message-ID: <Zqwi48H74g2EX56c@dread.disaster.area>
-References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
- <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1722562786; c=relaxed/simple;
+	bh=qLxp/e4geSzSXoWLwJ22yq+h1HK+xkGEd4vJuM3xOzs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iUgXw14l7iMdx/Q+YeQ1hzDMX2vZD3Fn4DQGeAnuiXMOTu6edokPxL7KiOkGWJYr6y9t1NQCspZYynnQcuJPwcL3I5O41ale2UlBJLZvr7zPV7OyndIFHb2PPaZkRQI6xrcNLZsYYdfIHzGE5tFu3lnCqDP+pY/+OZ4Bi4mcZeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4721bcDM002962;
+	Fri, 2 Aug 2024 01:39:23 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40rjf2r4v1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 02 Aug 2024 01:39:23 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 1 Aug 2024 18:39:21 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 18:39:19 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <jack@suse.cz>
+CC: <brauner@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH V2] squashfs: Add length check in squashfs_symlink_read_folio
+Date: Fri, 2 Aug 2024 09:39:18 +0800
+Message-ID: <20240802013918.811227-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801153042.prhbovbuys4zmprv@quack3>
+References: <20240801153042.prhbovbuys4zmprv@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: wS2A7I-Rojq4P1Qa_KSDPeYUIBwkHId1
+X-Proofpoint-GUID: wS2A7I-Rojq4P1Qa_KSDPeYUIBwkHId1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_23,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ impostorscore=0 mlxlogscore=999 adultscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 spamscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.21.0-2407110000
+ definitions=main-2408020010
 
-On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Thu, 1 Aug 2024 17:30:42 +0200, Jan Kara wrote:
+> > syzbot report KMSAN: uninit-value in pick_link, the root cause is that
+> > squashfs_symlink_read_folio did not check the length, resulting in folio
+> > not being initialized and did not return the corresponding error code.
+> > 
+> > The incorrect value of length is due to the incorrect value of inode->i_size.
+> > 
+> > Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> > ---
+> >  fs/squashfs/symlink.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/fs/squashfs/symlink.c b/fs/squashfs/symlink.c
+> > index 6ef735bd841a..d5fa5165ddd6 100644
+> > --- a/fs/squashfs/symlink.c
+> > +++ b/fs/squashfs/symlink.c
+> > @@ -61,6 +61,12 @@ static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
+> >  		}
+> >  	}
+> >  
+> > +	if (length < 0) {
 > 
-> Commit '1cea335d1db1 ("iomap: fix sub-page uptodate handling")' fix a
-> race issue when submitting multiple read bios for a page spans more than
-> one file system block by adding a spinlock(which names state_lock now)
-> to make the page uptodate synchronous. However, the race condition only
-> happened between the read I/O submitting and completeing threads,
+> OK, so this would mean that (int)inode->i_size is a negative number.
+> Possible. Perhaps we should rather better validate i_size of symlinks in
+> squashfs_read_inode()? Otherwise it would be a whack-a-mole game of
+> catching places that get confused by bogus i_size...
+This move is tough enough, start from where i_size is initialized.
+I will send a v3 patch for it.
 
-when we do writeback on a folio that has multiple blocks on it we
-can submit multiple bios for that, too. Hence the write completions
-can race with each other and write submission, too.
-
-Yes, write bio submission and completion only need to update ifs
-accounting using an atomic operation, but the same race condition
-exists even though the folio is fully locked at the point of bio
-submission.
-
-
-> it's
-> sufficient to use page lock to protect other paths, e.g. buffered write
-                    ^^^^ folio
-> path.
->
-> After large folio is supported, the spinlock could affect more
-> about the buffered write performance, so drop it could reduce some
-> unnecessary locking overhead.
-
-From the point of view of simple to understand and maintain code, I
-think this is a bad idea. The data structure is currently protected
-by the state lock in all situations, but this change now makes it
-protected by the state lock in one case and the folio lock in a
-different case.
-
-Making this change also misses the elephant in the room: the
-buffered write path still needs the ifs->state_lock to update the
-dirty bitmap. Hence we're effectively changing the serialisation
-mechanism for only one of the two ifs state bitmaps that the
-buffered write path has to update.
-
-Indeed, we can't get rid of the ifs->state_lock from the dirty range
-updates because iomap_dirty_folio() can be called without the folio
-being locked through folio_mark_dirty() calling the ->dirty_folio()
-aop.
-
-IOWs, getting rid of the state lock out of the uptodate range
-changes does not actually get rid of it from the buffered IO patch.
-we still have to take it to update the dirty range, and so there's
-an obvious way to optimise the state lock usage without changing any
-of the bitmap access serialisation behaviour. i.e.  We combine the
-uptodate and dirty range updates in __iomap_write_end() into a
-single lock context such as:
-
-iomap_set_range_dirty_uptodate()
-{
-	struct iomap_folio_state *ifs = folio->private;
-	struct inode *inode:
-        unsigned int blks_per_folio;
-        unsigned int first_blk;
-        unsigned int last_blk;
-        unsigned int nr_blks;
-	unsigned long flags;
-
-	if (!ifs)
-		return;
-
-	inode = folio->mapping->host;
-	blks_per_folio = i_blocks_per_folio(inode, folio);
-	first_blk = (off >> inode->i_blkbits);
-	last_blk = (off + len - 1) >> inode->i_blkbits;
-	nr_blks = last_blk - first_blk + 1;
-
-	spin_lock_irqsave(&ifs->state_lock, flags);
-	bitmap_set(ifs->state, first_blk, nr_blks);
-	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
-	spin_unlock_irqrestore(&ifs->state_lock, flags);
-}
-
-This means we calculate the bitmap offsets only once, we take the
-state lock only once, and we don't do anything if there is no
-sub-folio state.
-
-If we then fix the __iomap_write_begin() code as Willy pointed out
-to elide the erroneous uptodate range update, then we end up only
-taking the state lock once per buffered write instead of 3 times per
-write.
-
-This patch only reduces it to twice per buffered write, so doing the
-above should provide even better performance without needing to
-change the underlying serialisation mechanism at all.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--
+Lizhi
 
