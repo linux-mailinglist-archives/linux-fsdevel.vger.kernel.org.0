@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-24901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363FD94654F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 23:46:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B32D946553
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 23:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9DE828393B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 21:46:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD17F1C20F18
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 21:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3757913D8B2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DAD13B580;
 	Fri,  2 Aug 2024 21:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGv1WaCx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRTXQoxO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C4B13D504;
-	Fri,  2 Aug 2024 21:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4084513DDBA;
+	Fri,  2 Aug 2024 21:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722635125; cv=none; b=A0dRF2cHoqPf9XkIEInNwIz3JSMw3ToRefuiQWlOBL6BnJlyxLDTLnlt3GWD8BS0eqTzvLnl59jQKDxZbeYZtRlUTQ+v0Gdbpd4WHIErrhiQMIKuQtBrGCz9NmYk312Z57kF+kmA5v7Y94kNElzg7ZLDA95ABQRZcna82FcAqWY=
+	t=1722635126; cv=none; b=EYm6y+uPUw9flxW+BgWvqnEI/uHTgjQPxCg6YGpyYLAfdQfIalrZqRR0lE2Lr1gi7FP+Xcy1AvUyC6fI5+L6sSCFmjOrQdSL7M3SGuoBXGYjUpiAVMWmDKvFReQG4FJQ2AB+i2m7ZJHLpLUBE+orh+q4OhU6mFLjSlo7in8l6Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722635125; c=relaxed/simple;
-	bh=9E9fR9YI/6HM/keRPtqoAkea05ZS6v/bw14Wsy6B4E4=;
+	s=arc-20240116; t=1722635126; c=relaxed/simple;
+	bh=PJfFAxXqJiTj0TbDik95zZrZzvqxpfVymiA5KUdqD9k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VGjCidROfqIK7/X3cjHNxvcF6rGxaek8QPd2d/nxkyESCNeYmtI8DFh3idUzYGRTdXxq6JENqRXcJEVLLSpBmDOQtAcUWnHRFy9qciKkdn08dDA4Wfzm45kRBpVd6J4yr0sL5C/Pdauq81PNILBG9Kks9t7xA1WkZ+i/9E++BkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MGv1WaCx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803AEC4AF10;
-	Fri,  2 Aug 2024 21:45:24 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=F/ltFYp63MD6XeBEetnqxOHUQg42GAFIiOsnp9ZgWrq4X12oYPnQVgb60PnbwrbIJskRuNP5nr+oKtxcj8vf5Ye7bt04UNDMJZolho2bDYFDGSsnXf0ozr6Hs/g0pTJoQJ641UE1xteI61lE/nXPYPuFRsI51hioeAYsKjegum8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRTXQoxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EC7BC4AF0E;
+	Fri,  2 Aug 2024 21:45:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722635125;
-	bh=9E9fR9YI/6HM/keRPtqoAkea05ZS6v/bw14Wsy6B4E4=;
+	s=k20201202; t=1722635126;
+	bh=PJfFAxXqJiTj0TbDik95zZrZzvqxpfVymiA5KUdqD9k=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MGv1WaCxaf2gT1lRVaz6IRpZZutNCuP4mM9VIqT4aPtGILTlcPt/hl7rmIyipx4lD
-	 7tfLldpBfZtFg6jI0Xbr/nCbwPTiKVUWxkfzvqfKQC5PueRc9t9KIojjzTpQT4FF1N
-	 hN5J2DpHZAHZbk9vdb0xoLe9YlBH0CGw8ctFviZrGF2LnVODPgKEIknnqWcDFMoTxe
-	 Bqj9wzWA7JkmGGUASKynfrmpmSUnAMw1itpzwJICP+q8MyQYMxEEZrZD8/lUI3f0lU
-	 ZHznyM/QlmVGZNuXmiNnQlD1hBu7CsK6HaP0nqy0oj679rhb52WVUNtAIAzgPw0p9a
-	 6QgMf3d8Wd9zA==
+	b=sRTXQoxONJKIeoMzcg4mrdp4XI3nnn8g0rhCYCtoRHZ4UEGxa6egJi2FJXgu40JV4
+	 IH0XV744hqZMMzcU9mpB5Y5ixgDEmFjzfK6oH3uuFo57TSfeSph/qwgq7MI6cwdwAb
+	 v6fLA5Tr4O+dUKCr6sRDhoWJmr2gZwttTbq+fJQ+e2+eU7NPB542jkI/04pHfaa8YD
+	 qzESgVne/bpKlc9Y31cpYFiFffI0VXoW4Rylinm5CMxGq1MAT91KE80gU98thc8lvH
+	 JlfVjKeQGAfn/E6/3XswlO3qE0DLTVBc3YSYVP3g3qoe+gCEYl55nWl5astdHXvB+l
+	 sLffw3cyD03jA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 02 Aug 2024 17:45:04 -0400
-Subject: [PATCH RFC 3/4] lockref: rework CMPXCHG_LOOP to handle contention
- better
+Date: Fri, 02 Aug 2024 17:45:05 -0400
+Subject: [PATCH RFC 4/4] fs: try an opportunistic lookup for O_CREAT opens
+ too
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240802-openfast-v1-3-a1cff2a33063@kernel.org>
+Message-Id: <20240802-openfast-v1-4-a1cff2a33063@kernel.org>
 References: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
 In-Reply-To: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -62,202 +62,116 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
 Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5030; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=9E9fR9YI/6HM/keRPtqoAkea05ZS6v/bw14Wsy6B4E4=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmrVNx4uFmosPNS1siz4exI/ZfMzFBWC3I64yDO
- gPHgx9OtnuJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZq1TcQAKCRAADmhBGVaC
- FQJOEADPeMaaFdNdsEzwQU3XPKWqf1DE8A7TajeLSe+KhYbKV2o40Q6AHMOQ+R2FMF01H9T2DFD
- HgeffqIomj0W8mUODdbWRd2zvtSP5bc2ofG1nZ4s7gHnde9zZL6hDe/arIJ821uGKVkzpnxd4Tp
- TpWZI5cqLM7tBHWoIYtdGQ1Xk4uEDh6JlegJdXJQ1EcDI08IhYflyCCwneFDQhDvZblB1fwCMcB
- /oqaPNMEWo43ilvy6u21JJwceDhC+zQoOA1AysMhtuedlFjuicXQ1DKREAKsiBWtbI2ExWGXNGn
- yYPm9PYp2YgVP3MZeTWsvdguv2BwzWs3d+jdKvBHcGN9fCPuBV23yrF3uS8hRgcJYPg2nY2+oxH
- JYeAcUZYk6DxvkC48tg9CQDEufEK1OojN9wVYiWjlDhzlVZHOgbjsDpENvu1vJryKahKYCWjkZy
- YrAQjI+VAaZlyyZnXEbexo0QoFyerTAexxxlsQ5fafSfg8DO/7odYfL6oXKnFn4nSvKXkqJJnNQ
- ngugncp060mBTJBBPgY3KDUwv4o70XNMLAzlMS2ktYMArCmuMTT4J2wk0WsnktRqDlhpI6NM4iJ
- nRMWB9yu2v8Mxl82MTEDd8g8rh5y3hbDcmIeH3i9UtUZ0in/eULfC/oEJXvLlcRa4DMMs9P8LVQ
- wShaph306be5EWg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3154; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=PJfFAxXqJiTj0TbDik95zZrZzvqxpfVymiA5KUdqD9k=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmrVNxIhP58dOD7Dtw1/dwb2bJod6sjqh8QafBf
+ Ub1KN2jttiJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZq1TcQAKCRAADmhBGVaC
+ Ff0GEADCM2i95QIKMKfiz52kq9KA+6Y1cXwUto+w0I0y61CVEU5ePeyp26LeoPF3AEpTQS6O4si
+ 7CrKtcUtW2TnqJkFV+CYfRni0c3QbXGFD6pEuuRPU4SiI6UG+drdR5MQDIQPqFTJIKXf1LsQuwu
+ nTD+0PoCLxhEBnmhIALGLDeKhYD8H+Xrz4JS177y+bznWVYAb9pM+vVLwdka8ZsSvDrc5b4Kxdo
+ Ia1+T13J2Ke1waVDKPwcfGjMXuIG4hLP9c77w/Q2Ytugr10/iJ8lMMQ6LpRY+31LQ9SKDXB23Nj
+ B1nnK5Au6vshRZ9dNXaxT76hLBp1KUSn/AcohwvvTYxBu0dcRsJq6vPHt1bULClBKN59OiKln7X
+ kGONNDTEHJr8ez7q9AYd+ITeXqRGZCHYpJGyr41wWaGMKYNCHI2C/JpYZPe8gwfHJ4jjsQhOzIg
+ IDviVG1FjmUk+hKyeaFS4cLva+eGnj9Y1ZbNIDF5tfgCIxKP7BfgRi8AYXh7ENKZEVdtCFbL+TG
+ DAKq4nITf0m7zLEz08CbhreqrWhVv1N/M6DjaQ1Ru7PQ9H3cxa9XEce34fAXv5C9Zef3ZZi5vsB
+ rohrmXcO8j/uXyMn8oAhgfuNrGAsdgM2hjwe/t8ZiSxq4K7wHKQ4bH8t7EikUcdCB6HgwH9t42s
+ dg1EkfGm8fYYhbQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In a later patch, we want to change the open(..., O_CREAT) codepath to
-avoid taking the inode->i_rwsem for write when the dentry already exists.
-When we tested that initially, the performance devolved significantly
-due to contention for the parent's d_lockref spinlock.
+Today, when opening a file we'll typically do a fast lookup, but if
+O_CREAT is set, the kernel always takes the exclusive inode lock. I'm
+sure this was done with the expectation that O_CREAT being set means
+that we expect to do the create, but that's often not the case. Many
+programs set O_CREAT even in scenarios where the file already exists.
 
-There are two problems with lockrefs today: First, once any concurrent
-task takes the spinlock, they all end up taking the spinlock, which is
-much more costly than a single cmpxchg operation. The second problem is
-that once any task fails to cmpxchg 100 times, it falls back to the
-spinlock. The upshot there is that even moderate contention can cause a
-fallback to serialized spinlocking, which worsens performance.
-
-This patch changes CMPXCHG_LOOP in 2 ways:
-
-First, change the loop to spin instead of falling back to a locked
-codepath when the spinlock is held. Once the lock is released, allow the
-task to continue trying its cmpxchg loop as before instead of taking the
-lock. Second, don't allow the cmpxchg loop to give up after 100 retries.
-Just continue infinitely.
-
-This greatly reduces contention on the lockref when there are large
-numbers of concurrent increments and decrements occurring.
+This patch rearranges the pathwalk-for-open code to also attempt a
+fast_lookup in the O_CREAT case.  Have the code always do a fast_lookup
+(unless O_EXCL is set), and return that without taking the inode_lock
+when a positive dentry is found in the O_CREAT codepath.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- lib/lockref.c | 85 ++++++++++++++++++++++-------------------------------------
- 1 file changed, 32 insertions(+), 53 deletions(-)
+ fs/namei.c | 43 ++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 7 deletions(-)
 
-diff --git a/lib/lockref.c b/lib/lockref.c
-index 2afe4c5d8919..b76941043fe9 100644
---- a/lib/lockref.c
-+++ b/lib/lockref.c
-@@ -8,22 +8,25 @@
-  * Note that the "cmpxchg()" reloads the "old" value for the
-  * failure case.
-  */
--#define CMPXCHG_LOOP(CODE, SUCCESS) do {					\
--	int retry = 100;							\
--	struct lockref old;							\
--	BUILD_BUG_ON(sizeof(old) != 8);						\
--	old.lock_count = READ_ONCE(lockref->lock_count);			\
--	while (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock))) {  	\
--		struct lockref new = old;					\
--		CODE								\
--		if (likely(try_cmpxchg64_relaxed(&lockref->lock_count,		\
--						 &old.lock_count,		\
--						 new.lock_count))) {		\
--			SUCCESS;						\
--		}								\
--		if (!--retry)							\
--			break;							\
--	}									\
-+#define CMPXCHG_LOOP(CODE, SUCCESS) do {						\
-+	struct lockref old;								\
-+	BUILD_BUG_ON(sizeof(old) != 8);							\
-+	old.lock_count = READ_ONCE(lockref->lock_count);				\
-+	for (;;) {									\
-+		struct lockref new = old;						\
-+											\
-+		if (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock))) {	\
-+			CODE								\
-+			if (likely(try_cmpxchg64_relaxed(&lockref->lock_count,		\
-+							 &old.lock_count,		\
-+							 new.lock_count))) {		\
-+				SUCCESS;						\
-+			}								\
-+		} else {								\
-+			cpu_relax();							\
-+			old.lock_count = READ_ONCE(lockref->lock_count);		\
-+		}									\
-+	}										\
- } while (0)
+diff --git a/fs/namei.c b/fs/namei.c
+index b9bdb8e6214a..1793ed090314 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3538,7 +3538,7 @@ static const char *open_last_lookups(struct nameidata *nd,
+ 	struct dentry *dir = nd->path.dentry;
+ 	int open_flag = op->open_flag;
+ 	bool got_write = false;
+-	struct dentry *dentry;
++	struct dentry *dentry = NULL;
+ 	const char *res;
  
- #else
-@@ -46,10 +49,8 @@ void lockref_get(struct lockref *lockref)
- 	,
- 		return;
- 	);
--
--	spin_lock(&lockref->lock);
--	lockref->count++;
--	spin_unlock(&lockref->lock);
-+	/* should never get here */
-+	WARN_ON_ONCE(1);
- }
- EXPORT_SYMBOL(lockref_get);
+ 	nd->flags |= op->intent;
+@@ -3549,28 +3549,57 @@ static const char *open_last_lookups(struct nameidata *nd,
+ 		return handle_dots(nd, nd->last_type);
+ 	}
  
-@@ -60,8 +61,6 @@ EXPORT_SYMBOL(lockref_get);
-  */
- int lockref_get_not_zero(struct lockref *lockref)
- {
--	int retval;
--
- 	CMPXCHG_LOOP(
- 		new.count++;
- 		if (old.count <= 0)
-@@ -69,15 +68,9 @@ int lockref_get_not_zero(struct lockref *lockref)
- 	,
- 		return 1;
- 	);
--
--	spin_lock(&lockref->lock);
--	retval = 0;
--	if (lockref->count > 0) {
--		lockref->count++;
--		retval = 1;
--	}
--	spin_unlock(&lockref->lock);
--	return retval;
-+	/* should never get here */
-+	WARN_ON_ONCE(1);
-+	return -1;
- }
- EXPORT_SYMBOL(lockref_get_not_zero);
+-	if (!(open_flag & O_CREAT)) {
+-		if (nd->last.name[nd->last.len])
++	/*
++	 * We _can_ be in RCU mode here. For everything but O_EXCL case, do a
++	 * fast lookup for the dentry first. For O_CREAT case, we are only
++	 * interested in positive dentries. If nothing suitable is found,
++	 * fall back to locked codepath.
++	 */
++	if ((open_flag & (O_CREAT | O_EXCL)) != (O_CREAT | O_EXCL)) {
++		/* Trailing slashes? */
++		if (unlikely(nd->last.name[nd->last.len]))
+ 			nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+-		/* we _can_ be in RCU mode here */
++
+ 		dentry = lookup_fast(nd);
+ 		if (IS_ERR(dentry))
+ 			return ERR_CAST(dentry);
++	}
++
++	if (!(open_flag & O_CREAT)) {
+ 		if (likely(dentry))
+ 			goto finish_lookup;
  
-@@ -88,8 +81,6 @@ EXPORT_SYMBOL(lockref_get_not_zero);
-  */
- int lockref_put_not_zero(struct lockref *lockref)
- {
--	int retval;
--
- 	CMPXCHG_LOOP(
- 		new.count--;
- 		if (old.count <= 1)
-@@ -97,15 +88,9 @@ int lockref_put_not_zero(struct lockref *lockref)
- 	,
- 		return 1;
- 	);
--
--	spin_lock(&lockref->lock);
--	retval = 0;
--	if (lockref->count > 1) {
--		lockref->count--;
--		retval = 1;
--	}
--	spin_unlock(&lockref->lock);
--	return retval;
-+	/* should never get here */
-+	WARN_ON_ONCE(1);
-+	return -1;
- }
- EXPORT_SYMBOL(lockref_put_not_zero);
+ 		if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU))
+ 			return ERR_PTR(-ECHILD);
+ 	} else {
+-		/* create side of things */
++		/* If negative dentry was found earlier,
++		 * discard it as we'll need to use the slow path anyway.
++		 */
+ 		if (nd->flags & LOOKUP_RCU) {
+-			if (!try_to_unlazy(nd))
++			bool unlazied;
++
++			/* discard negative dentry if one was found */
++			if (dentry && !dentry->d_inode)
++				dentry = NULL;
++
++			unlazied = dentry ? try_to_unlazy_next(nd, dentry) :
++					    try_to_unlazy(nd);
++			if (!unlazied)
+ 				return ERR_PTR(-ECHILD);
++		} else if (dentry && !dentry->d_inode) {
++			/* discard negative dentry if one was found */
++			dput(dentry);
++			dentry = NULL;
+ 		}
+ 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
++
+ 		/* trailing slashes? */
+-		if (unlikely(nd->last.name[nd->last.len]))
++		if (unlikely(nd->last.name[nd->last.len])) {
++			dput(dentry);
+ 			return ERR_PTR(-EISDIR);
++		}
++		if (dentry)
++			goto finish_lookup;
+ 	}
  
-@@ -125,6 +110,8 @@ int lockref_put_return(struct lockref *lockref)
- 	,
- 		return new.count;
- 	);
-+	/* should never get here */
-+	WARN_ON_ONCE(1);
- 	return -1;
- }
- EXPORT_SYMBOL(lockref_put_return);
-@@ -171,8 +158,6 @@ EXPORT_SYMBOL(lockref_mark_dead);
-  */
- int lockref_get_not_dead(struct lockref *lockref)
- {
--	int retval;
--
- 	CMPXCHG_LOOP(
- 		new.count++;
- 		if (old.count < 0)
-@@ -180,14 +165,8 @@ int lockref_get_not_dead(struct lockref *lockref)
- 	,
- 		return 1;
- 	);
--
--	spin_lock(&lockref->lock);
--	retval = 0;
--	if (lockref->count >= 0) {
--		lockref->count++;
--		retval = 1;
--	}
--	spin_unlock(&lockref->lock);
--	return retval;
-+	/* should never get here */
-+	WARN_ON_ONCE(1);
-+	return -1;
- }
- EXPORT_SYMBOL(lockref_get_not_dead);
+ 	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
 
 -- 
 2.45.2
