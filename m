@@ -1,103 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-24875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874AA945F97
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 16:44:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDF0945F99
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 16:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E48F285F82
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 14:44:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1231C216F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 14:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B522101B7;
-	Fri,  2 Aug 2024 14:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzIfzPbq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFF92101A5;
+	Fri,  2 Aug 2024 14:44:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DFD1171C;
-	Fri,  2 Aug 2024 14:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09F61171C;
+	Fri,  2 Aug 2024 14:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722609852; cv=none; b=YTqOhBFEQ97fPvYvP+ogXao6LQrsmHRlS1zklG/i0KCrZeXp8uAj/K/JxvPmN8ZC1eUqnFd4lB9uGBeWVvKcWwYcN/gRkaFSvC4x0EV6Iv7FXaazYx9nFXcbt+bpuvwaRP7kw5CbSUXEb9rNOSZAWHT+W+pthpERDE+jO3plDqA=
+	t=1722609892; cv=none; b=cz4TNX/b/Xcw9OIESWYtBjypmfE2/mqwnNNpd5BI5jK+t2lX47IJVBF1S8SaXIqqdfYxkGJ0aH95JgJQnGpUxQPaG9nL5ZbI8gmEGiT9E0YP8nkhyqIbp8pz0UE/G1XNLYFmEG6IVgKZIhNYg86fRSbTlOVRkbYW7/C773VUIRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722609852; c=relaxed/simple;
-	bh=x8gmfjyvWGUc0bCINyn9NBAMXGuzcpTpCIJEd8Maaqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4BsSTXGghbtJluwou74V6KEfZZqXKooHVZNjZNClxC11h8g4nWDIitjGL/d1DVb/Bt6My39RMobunIY81obv2E7jqxgm9xw6DTGJ4kQTrbUHllxur1vEG+sHHilU7qDq/jjYkgur1SswWGQRrxNZAmFdG9NC3RsoK0W+DNOa+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzIfzPbq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55967C32782;
-	Fri,  2 Aug 2024 14:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722609851;
-	bh=x8gmfjyvWGUc0bCINyn9NBAMXGuzcpTpCIJEd8Maaqg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uzIfzPbqeWDSXjHiBgkEJnEtvR/x00pI80yfMOPspsqu8FySfDHUqzDYaUa33dMPa
-	 9VuWj+8Sla/wxa6LgFUP4mUw5Uqld7oPO/Rc7VTvnZTkP4QUsX0WNIBJRfMKEbOm5E
-	 0O3SbfpH6tCZjpWaiiD1fNODTiZvR3ChGvm1WdEivsVrn36vxh5q5dSLX0Bq7q6TW/
-	 ZIfiaLlaRb/QTv1p8yRpvlyNCDsCx+PAndbRntFM/P58FfzqAwLyMhP9mXUnvR6Pti
-	 auvyf2mCECPYJDUbbakovkI3Q9PN8/kFR339yvIkgqaDOFi20gDtMTllo/pWmelP5F
-	 gBuJs50KKDLcA==
-Date: Fri, 2 Aug 2024 15:44:05 +0100
-From: Simon Horman <horms@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 18/24] netfs: Speed up buffered reading
-Message-ID: <20240802144405.GD2504122@kernel.org>
-References: <20240731190742.GS1967603@kernel.org>
- <20240729162002.3436763-1-dhowells@redhat.com>
- <20240729162002.3436763-19-dhowells@redhat.com>
- <117846.1722608282@warthog.procyon.org.uk>
+	s=arc-20240116; t=1722609892; c=relaxed/simple;
+	bh=TbtraOWhyx3XKowuKv1m3Z/5BsvIqmAlb7jX+usWXSY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tY6Yc8oMnhFgBrIkTD9ygW4Klxb7rpejVT1uaJAVnvV9pgAgDQaw6EkV2fYK+3tIdGs7gGzxZ+eHjZSFzg2D9psVeExvFzN9QiC2SG4SDzri4lSGO5oyDHgxMpjcq01LGNLzLVh7+ph9TNbBO5Az+wCRjFF+KePU7bJfgpjTInU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472DVrA7021119;
+	Fri, 2 Aug 2024 07:44:19 -0700
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40rjf08pdx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 02 Aug 2024 07:44:19 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 2 Aug 2024 07:44:18 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Fri, 2 Aug 2024 07:44:16 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <viro@zeniv.linux.org.uk>
+CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH] filemap: Init the newly allocated folio memory to 0 for the filemap
+Date: Fri, 2 Aug 2024 22:44:15 +0800
+Message-ID: <20240802144415.259364-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240802135214.GU5334@ZenIV>
+References: <20240802135214.GU5334@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <117846.1722608282@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 79bnPn4ka2mgM7vqKYK1eRo_uMASQA5l
+X-Proofpoint-ORIG-GUID: 79bnPn4ka2mgM7vqKYK1eRo_uMASQA5l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_10,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=801
+ priorityscore=1501 spamscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408020101
 
-On Fri, Aug 02, 2024 at 03:18:02PM +0100, David Howells wrote:
-> Simon Horman <horms@kernel.org> wrote:
+On Fri, 2 Aug 2024 14:52:14 +0100, Al Viro wrote:
+> > +			ERROR("Wrong i_size %d!\n", inode->i_size);
+> > +			return -EINVAL;
+> > +		}
 > 
-> > If the code ever reaches this line, then slice will be used
-> > uninitialised below.
-> 
-> It can't actually happen (or, at least, it shouldn't).  There are only three
-> ways of obtaining data: downloading from the server
-> (NETFS_DOWNLOAD_FROM_SERVER), reading from the cache (NETFS_READ_FROM_CACHE)
-> and just clearing space (NETFS_FILL_WITH_ZEROES); each of those has its own
-> if-statement that will set 'slice' or will switch the source to a different
-> type that will set 'slice'.
-> 
-> The problem is that the compiler doesn't know this.
-> 
-> The check for NETFS_INVALID_READ is there just in case.  Possibly:
-> 
-> 		if (source == NETFS_INVALID_READ)
-> 			break;
-> 
-> could be replaced with a WARN_ON_ONCE() and an unconditional break.
+> ITYM something like
+I do not recommend this type of code, as it would add unnecessary calls
+to le32_o_cpu compared to directly using i_size.
+> 		if (le32_to_cpu(sqsh_ino->symlink_size) > PAGE_SIZE) {
+> 			ERROR("Corrupted symlink\n");
+> 			return -EINVAL;
+> 		}
 
-Thanks, I think that should make the compiler happy without
-significantly altering the flow or readability of the code.
+--
+Lizhi
 
