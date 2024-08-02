@@ -1,149 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-24846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBDC94561C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 03:53:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF348945674
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 04:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 658FA1F237E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 01:53:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CD6CB22C32
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 02:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A83E56A;
-	Fri,  2 Aug 2024 01:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lwyyz6NC"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642161CAAF;
+	Fri,  2 Aug 2024 02:57:50 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4501C687
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Aug 2024 01:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B547A13A;
+	Fri,  2 Aug 2024 02:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722563581; cv=none; b=fpNrpUTvZ9NAwzm1WZm55bpjpOJqRi9R8ZoGOxugGbsJ6zw4ADBdEKelCrMNzQrB6ELe6x9F3M7GfHA6fwE2pH1WXwZ326S6aCQTu8vw67VTDkVxlIPOzGbiAUYNLTRbPBbK3TIbUMTtjcangVUAyMrCoVKbd2lfdgRwUdhstC8=
+	t=1722567470; cv=none; b=nT9PjiuhCjP+RF8T330ySLM+6Jq2GJ4vtu3/404QDp6Px0/ZMRXePk9g7GSmo34lNrl49cQ+JQcVYkiEM+aO4os4fWUcSozCkTaxVHoMI2omymROr3U8a2ALIdU2tYYTxOYrK81LSlOQhMpHCcugX1mBMb12dIwTugQZkUg33lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722563581; c=relaxed/simple;
-	bh=js/noxqvwYCGZfwM0D1xppL/Dccb5XOjvpIwuYbt7z0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fi4fli2gGtmJ25zo/+P2xBcZ5epF+X9Xk1czbiSTKvOWrovLrwIFoKetCnzTcNCuEZW12H0mZStBcmVkbZt4tq0pNXNBa8krsRG06DZsL9ymGETTCFf+dMxqKhAnsJez5GO+IEtYU4DxeXnBpm23sTEYuJ0SS/WZJIcZOpjz0D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lwyyz6NC; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722563579; x=1754099579;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=js/noxqvwYCGZfwM0D1xppL/Dccb5XOjvpIwuYbt7z0=;
-  b=Lwyyz6NCXwzkk9RvZQ1pLVyF/QNPRKjA5k2xoqbL+uTfT+K+xthSLKK2
-   9apPk7D1rbTtdDp4OCNiP6lOPO+ODqE/8BwWVohz3VIIsriApptD+a72k
-   N6TeEaLix125YdNbKpHoL5UwVBlYRSk139EZoHejptlq+WzcKZv36qyik
-   Tg7pbsvlhPV+gqUetV8gmKRWx3cBf61r7R5hZa8Rk1/KBamfeznI3CEoD
-   iBme47zJ27jJBFql+me0s0pd2b+zdgrrf6egtj1UHSodPEJGmkwosyEEm
-   b7aBSU8fh+t5tgn58uXuB9BOy5QQA6G4O4AzyDMc9Z6eLJJdsRIgfSear
-   g==;
-X-CSE-ConnectionGUID: b6NgON6nTzKVKcyTejlZjw==
-X-CSE-MsgGUID: 8HBvgCmMSViAKS5LEQGP2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11151"; a="20448354"
-X-IronPort-AV: E=Sophos;i="6.09,256,1716274800"; 
-   d="scan'208";a="20448354"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 18:52:59 -0700
-X-CSE-ConnectionGUID: iSIQLj7nSjOwkJCnhKfGrg==
-X-CSE-MsgGUID: 7xsnDaNBQOmr88jw5lM9ZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,256,1716274800"; 
-   d="scan'208";a="55843967"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 01 Aug 2024 18:52:57 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZhTS-000wDi-2T;
-	Fri, 02 Aug 2024 01:52:54 +0000
-Date: Fri, 2 Aug 2024 09:52:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:work.fd 7/39] drivers/block/ataflop.c:428:13: error:
- conflicting types for 'fd_error'; have 'void(void)'
-Message-ID: <202408020919.BhS4vbmr-lkp@intel.com>
+	s=arc-20240116; t=1722567470; c=relaxed/simple;
+	bh=Ky8NxVSblEJ2L86FKaPjuMhj1pzuGVaEyqERYdCcTOQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=bXRjT2M1Y0XaLyUwP7H+LAPiteZKvEy3SGZIpKEcTcdJcZyE3YpXeLYx/99khNt5kNA+y0/qYzjvI0sqjJVmzLpgeV3kysP+xgvNyc2UT71S1GohEJrqTjKtmsJ0hdEyq+JdKVL5czQxpC/aVr1eB0VsxjOc5QO+8DujCQUx7Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WZr9C0KM6z4f3jYx;
+	Fri,  2 Aug 2024 10:57:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C69671A15D6;
+	Fri,  2 Aug 2024 10:57:43 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCXv4UlS6xmjwQZAg--.57908S3;
+	Fri, 02 Aug 2024 10:57:43 +0800 (CST)
+Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
+ uptodate bits
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+ brauner@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
+ <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+ <Zqwi48H74g2EX56c@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <b40a510d-37b3-da50-79db-d56ebd870bf0@huaweicloud.com>
+Date: Fri, 2 Aug 2024 10:57:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <Zqwi48H74g2EX56c@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCXv4UlS6xmjwQZAg--.57908S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF48Aw17Aw1kAF1xZr1DKFg_yoWrKrWxpF
+	Z8Ka4DKr4ktFWxZwn7Xr1xXF1F9anrW3yrCFZ3K345AF98XF1SgF1I9ay5urW8Jws3Cr1F
+	qr40v34kuFWUZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.fd
-head:   a2303c1df65cfa7933b43246c298d558ad70dbce
-commit: baf640c41da47e7cd98b422391e0d219f749a92d [7/39] introduce struct fderr, convert overlayfs uses to that
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240802/202408020919.BhS4vbmr-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240802/202408020919.BhS4vbmr-lkp@intel.com/reproduce)
+On 2024/8/2 8:05, Dave Chinner wrote:
+> On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Commit '1cea335d1db1 ("iomap: fix sub-page uptodate handling")' fix a
+>> race issue when submitting multiple read bios for a page spans more than
+>> one file system block by adding a spinlock(which names state_lock now)
+>> to make the page uptodate synchronous. However, the race condition only
+>> happened between the read I/O submitting and completeing threads,
+> 
+> when we do writeback on a folio that has multiple blocks on it we
+> can submit multiple bios for that, too. Hence the write completions
+> can race with each other and write submission, too.
+> 
+> Yes, write bio submission and completion only need to update ifs
+> accounting using an atomic operation, but the same race condition
+> exists even though the folio is fully locked at the point of bio
+> submission.
+> 
+> 
+>> it's
+>> sufficient to use page lock to protect other paths, e.g. buffered write
+>                     ^^^^ folio
+>> path.
+>>
+>> After large folio is supported, the spinlock could affect more
+>> about the buffered write performance, so drop it could reduce some
+>> unnecessary locking overhead.
+> 
+> From the point of view of simple to understand and maintain code, I
+> think this is a bad idea. The data structure is currently protected
+> by the state lock in all situations, but this change now makes it
+> protected by the state lock in one case and the folio lock in a
+> different case.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408020919.BhS4vbmr-lkp@intel.com/
+Yeah, I agree that this is a side-effect of this change, after this patch,
+we have to be careful to distinguish between below two cases B1 and B2 as
+Willy mentioned.
 
-All errors (new ones prefixed by >>):
+B. If ifs_set_range_uptodate() is called from iomap_set_range_uptodate(),
+   either we know:
+B1. The caller of iomap_set_range_uptodate() holds the folio lock, and this
+    is the only place that can call ifs_set_range_uptodate() for this folio
+B2. The caller of iomap_set_range_uptodate() holds the state lock
 
->> drivers/block/ataflop.c:428:13: error: conflicting types for 'fd_error'; have 'void(void)'
-     428 | static void fd_error( void );
-         |             ^~~~~~~~
-   In file included from include/linux/blkdev.h:27,
-                    from include/linux/blk-mq.h:5,
-                    from drivers/block/ataflop.c:70:
-   include/linux/file.h:58:20: note: previous definition of 'fd_error' with type 'long int(struct fderr)'
-      58 | static inline long fd_error(struct fderr f)
-         |                    ^~~~~~~~
+> 
+> Making this change also misses the elephant in the room: the
+> buffered write path still needs the ifs->state_lock to update the
+> dirty bitmap. Hence we're effectively changing the serialisation
+> mechanism for only one of the two ifs state bitmaps that the
+> buffered write path has to update.
+> 
+> Indeed, we can't get rid of the ifs->state_lock from the dirty range
+> updates because iomap_dirty_folio() can be called without the folio
+> being locked through folio_mark_dirty() calling the ->dirty_folio()
+> aop.
+> 
 
+Sorry, I don't understand, why folio_mark_dirty() could be called without
+folio lock (isn't this supposed to be a bug)? IIUC, all the file backed
+folios must be locked before marking dirty. Are there any exceptions or am
+I missing something?
 
-vim +428 drivers/block/ataflop.c
+> IOWs, getting rid of the state lock out of the uptodate range
+> changes does not actually get rid of it from the buffered IO patch.
+> we still have to take it to update the dirty range, and so there's
+> an obvious way to optimise the state lock usage without changing any
+> of the bitmap access serialisation behaviour. i.e.  We combine the
+> uptodate and dirty range updates in __iomap_write_end() into a
+> single lock context such as:
+> 
+> iomap_set_range_dirty_uptodate()
+> {
+> 	struct iomap_folio_state *ifs = folio->private;
+> 	struct inode *inode:
+>         unsigned int blks_per_folio;
+>         unsigned int first_blk;
+>         unsigned int last_blk;
+>         unsigned int nr_blks;
+> 	unsigned long flags;
+> 
+> 	if (!ifs)
+> 		return;
+> 
+> 	inode = folio->mapping->host;
+> 	blks_per_folio = i_blocks_per_folio(inode, folio);
+> 	first_blk = (off >> inode->i_blkbits);
+> 	last_blk = (off + len - 1) >> inode->i_blkbits;
+> 	nr_blks = last_blk - first_blk + 1;
+> 
+> 	spin_lock_irqsave(&ifs->state_lock, flags);
+> 	bitmap_set(ifs->state, first_blk, nr_blks);
+> 	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
+> 	spin_unlock_irqrestore(&ifs->state_lock, flags);
+> }
+> 
+> This means we calculate the bitmap offsets only once, we take the
+> state lock only once, and we don't do anything if there is no
+> sub-folio state.
+> 
+> If we then fix the __iomap_write_begin() code as Willy pointed out
+> to elide the erroneous uptodate range update, then we end up only
+> taking the state lock once per buffered write instead of 3 times per
+> write.
+> 
+> This patch only reduces it to twice per buffered write, so doing the
+> above should provide even better performance without needing to
+> change the underlying serialisation mechanism at all.
+> 
 
-^1da177e4c3f41 Linus Torvalds    2005-04-16  421  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  422  static void fd_select_side( int side );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  423  static void fd_select_drive( int drive );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  424  static void fd_deselect( void );
-24ed960abf1d50 Kees Cook         2017-08-28  425  static void fd_motor_off_timer(struct timer_list *unused);
-24ed960abf1d50 Kees Cook         2017-08-28  426  static void check_change(struct timer_list *unused);
-7d12e780e003f9 David Howells     2006-10-05  427  static irqreturn_t floppy_irq (int irq, void *dummy);
-^1da177e4c3f41 Linus Torvalds    2005-04-16 @428  static void fd_error( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  429  static int do_format(int drive, int type, struct atari_format_descr *desc);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  430  static void do_fd_action( int drive );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  431  static void fd_calibrate( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  432  static void fd_calibrate_done( int status );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  433  static void fd_seek( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  434  static void fd_seek_done( int status );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  435  static void fd_rwsec( void );
-24ed960abf1d50 Kees Cook         2017-08-28  436  static void fd_readtrack_check(struct timer_list *unused);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  437  static void fd_rwsec_done( int status );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  438  static void fd_rwsec_done1(int status);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  439  static void fd_writetrack( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  440  static void fd_writetrack_done( int status );
-24ed960abf1d50 Kees Cook         2017-08-28  441  static void fd_times_out(struct timer_list *unused);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  442  static void finish_fdc( void );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  443  static void finish_fdc_done( int dummy );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  444  static void setup_req_params( int drive );
-05bdb9965305bb Christoph Hellwig 2023-06-08  445  static int fd_locked_ioctl(struct block_device *bdev, blk_mode_t mode,
-05bdb9965305bb Christoph Hellwig 2023-06-08  446  		unsigned int cmd, unsigned long param);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  447  static void fd_probe( int drive );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  448  static int fd_test_drive_present( int drive );
-^1da177e4c3f41 Linus Torvalds    2005-04-16  449  static void config_types( void );
-05bdb9965305bb Christoph Hellwig 2023-06-08  450  static int floppy_open(struct gendisk *disk, blk_mode_t mode);
-ae220766d87cd6 Christoph Hellwig 2023-06-08  451  static void floppy_release(struct gendisk *disk);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  452  
+Thanks for the suggestion. I've thought about this solution too, but I
+didn't think we need the state_lock when setting ifs dirty bit since the
+folio lock should work, so I changed my mind and planed to drop all ifs
+state_lock in the write path (please see the patch 6). Please let me
+know if I'm wrong.
 
-:::::: The code at line 428 was first introduced by commit
-:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
+Thanks,
+Yi.
 
-:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
