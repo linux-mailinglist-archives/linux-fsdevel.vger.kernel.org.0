@@ -1,118 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-24873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18BAB945F44
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 16:19:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F1F945F52
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 16:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7869283091
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 14:19:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7CE31F22534
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 14:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B06F1E673C;
-	Fri,  2 Aug 2024 14:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1290E200103;
+	Fri,  2 Aug 2024 14:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VybMJdUa"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KVe9EX5+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753BB1E4F1B
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Aug 2024 14:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDA41EA0D4;
+	Fri,  2 Aug 2024 14:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722608305; cv=none; b=aA/JBDs8ifSpuDUcOCk3bC2n3DIhVi1iUNbNEelBX693Sx60RkffZty5zxfE6k7m2C27Dokt+3Q4AXrPhmpykruSQ9Rn6J+VRPnJi8/QrURozv0ZGCnmYdFKrVElPz/327TGMBs6gNqDYYL3M/iCcSc/FS5n2TRNzYQY4o2oxhw=
+	t=1722608574; cv=none; b=rcAUWnp5UBpXHJ0S1S8t03kdhqO0y9cHBDC9Kb4iIS2mlsc3NFuaGMco7j31WUGx0aj5BVPSSpR2eh2wwRkJsxGA6KvdfFvNfkDHL6iHBkiMquCSHk0WqLYvCsedji5lpNI7kgOMfoI3HVMEeXeofXl5fIgoKWlEUYNXCpkpqss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722608305; c=relaxed/simple;
-	bh=Z5c5T9SO1qEs+S4zGxk90PSnPZppHdEyEZ6FALk8OgI=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=N2gySjsOenknbvO5xhprqJWS+Mb/tD7pyAAXGtu/HeuCtO0l4lM4BQ/ruWb8Q855sWP+wzI44zz5fdd3/XoYhH1l7qsoBUKWuQV60YTk6sLEEKi8ynIVervDMSC2mv/H9vn6dZ2hdyGiJitsiAFKGE9p68TFN6B9NCKg0oypRZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VybMJdUa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722608302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UIDX8cy8H46a6mHnpLua2nDQ7obthpcuLcvJcSVXyfU=;
-	b=VybMJdUa0ND5vs/nPLrwnK9KggR9uMuhA6kn5bX2u40SVGs/qdpGr1WTGZZ+gFtCmUU0mB
-	0j0Uw07eR53gpEnqr4CGkm7BRwiLITCm9lmYEujeGQyukKQ6CWX8ZQ1tR+FVGauxTOYtd1
-	Bei6mlvKi1MvkakhSsJsskf1tj1vTfg=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-141-oNOQTMjXPXOFGGA7YhgjQw-1; Fri,
- 02 Aug 2024 10:18:15 -0400
-X-MC-Unique: oNOQTMjXPXOFGGA7YhgjQw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 378B61955D48;
-	Fri,  2 Aug 2024 14:18:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3AFCD19560AE;
-	Fri,  2 Aug 2024 14:18:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240731190742.GS1967603@kernel.org>
-References: <20240731190742.GS1967603@kernel.org> <20240729162002.3436763-1-dhowells@redhat.com> <20240729162002.3436763-19-dhowells@redhat.com>
-To: Simon Horman <horms@kernel.org>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Jeff Layton <jlayton@kernel.org>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 18/24] netfs: Speed up buffered reading
+	s=arc-20240116; t=1722608574; c=relaxed/simple;
+	bh=//QlMkTn01GLjDeouHHA3hn+2ap1YGLpk+Nya1PPFLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yt2OxYZgv7ZXf41UalbfMqo2IBwlgYbnVGWrSZGwnrkZtpARsRMgBRV8OgaJ2s8xOscjfmNaxgphJ26mUUn8pxQW5OTc6yqSRWlhfLYaU6FMaNE3I7cTtn47+WVYLjSRnK1fqxTzK2qdL+vjjGmZSMlwU0BVItSErgTL3laV1OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KVe9EX5+; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZW0g3mWIZpvqniUnRxNDMW6TbHMHfQAYMOpGWjEw3Ew=; b=KVe9EX5+rFET2/hmrbb0aqwGTK
+	bixHj5LSTnYC7sTcvKEtyNuXL+V8amIKj29b3XAyZv/Lq59hSAfLPSqeWHNIMhWYk5Z+RwCgYwK9V
+	N9R8sIRYRVyA226xOb4H5uufMB1wiCrNFbOqyTzAZ8VZCYceLctW2LDU1U9M3RrQSVMJKkt0MubMc
+	BK1gZV9PSSbrBJ9FXXh8eK1aUcdJ0xmL1ydnEVQ9D9HbukNrJocz6SP47fU8Y4Bd1WJ7D4v2TMjs+
+	ZK6uvqv9KvBEsEkzoVWZtJBRenTnYyuqnjQwlDZElmnrQOaRG+hEbFRWnY0xzwEFZQodtz6q3nfxh
+	ilozdApA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sZtBA-000000017m6-3WUv;
+	Fri, 02 Aug 2024 14:22:48 +0000
+Date: Fri, 2 Aug 2024 15:22:48 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: jack@suse.cz, mjguzik@gmail.com, edumazet@google.com,
+	Yu Ma <yu.ma@intel.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pan.deng@intel.com,
+	tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v5 0/3] fs/file.c: optimize the critical section of
+ file_lock in
+Message-ID: <20240802142248.GV5334@ZenIV>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240722-geliebt-feiern-9b2ab7126d85@brauner>
+ <20240801191304.GR5334@ZenIV>
+ <20240802-bewachsen-einpacken-343b843869f9@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <117845.1722608282.1@warthog.procyon.org.uk>
-Date: Fri, 02 Aug 2024 15:18:02 +0100
-Message-ID: <117846.1722608282@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802-bewachsen-einpacken-343b843869f9@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Simon Horman <horms@kernel.org> wrote:
+On Fri, Aug 02, 2024 at 01:04:44PM +0200, Christian Brauner wrote:
+> > Hmm...   Something fishy's going on - those are not reachable by any branches.
+> 
+> Hm, they probably got dropped when rebasing to v6.11-rc1 and I did have
+> to play around with --onto.
+> 
+> > I'm putting together (in viro/vfs.git) a branch for that area (#work.fdtable)
+> > and I'm going to apply those 3 unless anyone objects.
+> 
+> Fine since they aren't in that branch. Otherwise I generally prefer to
+> just merge a common branch.
 
-> If the code ever reaches this line, then slice will be used
-> uninitialised below.
-
-It can't actually happen (or, at least, it shouldn't).  There are only three
-ways of obtaining data: downloading from the server
-(NETFS_DOWNLOAD_FROM_SERVER), reading from the cache (NETFS_READ_FROM_CACHE)
-and just clearing space (NETFS_FILL_WITH_ZEROES); each of those has its own
-if-statement that will set 'slice' or will switch the source to a different
-type that will set 'slice'.
-
-The problem is that the compiler doesn't know this.
-
-The check for NETFS_INVALID_READ is there just in case.  Possibly:
-
-		if (source == NETFS_INVALID_READ)
-			break;
-
-could be replaced with a WARN_ON_ONCE() and an unconditional break.
-
-David
-
+If it's going to be rebased anyway, I don't see much difference from cherry-pick,
+TBH...
 
