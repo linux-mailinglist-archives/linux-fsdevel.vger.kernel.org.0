@@ -1,194 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-24904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE295946609
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 01:03:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE139466F2
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 04:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A90B283333
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Aug 2024 23:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516081F21CCA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 02:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099FD13A24A;
-	Fri,  2 Aug 2024 23:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B2CF9E4;
+	Sat,  3 Aug 2024 02:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="Cx8wiIiY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jCUllckU"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IxVmMYEc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0B85258;
-	Fri,  2 Aug 2024 23:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850FBBE4F
+	for <linux-fsdevel@vger.kernel.org>; Sat,  3 Aug 2024 02:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722639802; cv=none; b=XOnxXc99nMlzkuraJEsx1/V8lkvyjFqF7cQi0IZ/jJMknzwtHbJQ6gbnmO5mk6rEUvCoEtf38swmesgnZTKyZtAB1Rj4KTGYQCtj+PAW2Tsjy/ujHFAmnswxF9HvggAWP8No0OPUWHi4LnhFrs6q6sWU8R9RNZ87Wrh0uhuvqe0=
+	t=1722653708; cv=none; b=Cyt5dTCxvOS8bZBHRT2KRJoRLdB0U3sMQCIZXOkBkqKc3zPdKMBrAB9DkEaTitSosirQgMsyex5xPO5j2epG+bHHYPf5wGNoCKdyECah2zCwrsk9dNPYj0UhbqAZ5CfMBP8wsBEhMU5sIIMClMMTF9SG142iUX5EJluHfzBIKRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722639802; c=relaxed/simple;
-	bh=q1FFYpuT7vsH2ocHPrBX2aywJ8oBUFY0YfHE2bVjYBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N8OW5m4lNQKvKArgqec5tR0WyHCzEglmd24zp1vHvnKciWnpulVUWarpxEwizKYAU5mW7o9c3QROVdNvqPNrqAx4JlOa0+7h68Mid24AqWj+XLxJb8tLG7yw3Bbk010Gc+VpJUmqF8t14SQCFZRsZKda4oNYFO4E7rU7cWw598w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=Cx8wiIiY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jCUllckU; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfout.nyi.internal (Postfix) with ESMTP id A182A138CD0A;
-	Fri,  2 Aug 2024 19:03:18 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Fri, 02 Aug 2024 19:03:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1722639798;
-	 x=1722726198; bh=G1CFRnyHAXhy+dFKRK51ZyDuS5xaKXWg3D6icphUhIE=; b=
-	Cx8wiIiY0v1tji9HZi5pa40ef5yek0qmhXxeLruTQ2whmNjnGnTdKDNCMKE2mS7O
-	1n4Wed5KiQn9UNQHfqyVUK6GDjXcqmeGw1SI0cpiRSH9A7HH/PtJWICFZzARxa9i
-	q8ILT1EyF+RQzGx/C2CFdRv6geYaJTZroFnNUdh2c3ArF5qvIWrOqraaN5k+aqAa
-	nj7nyWtzAr5ytmoo9Dt8wNGPbDQZXRaNmpL76L4XeS1DUkysF9yBRau14OPFLnNw
-	2TXnXjDCzmSS/1moyb/oB5I0B6qaIF/kGfRYkRg6oy9IcsoEiJNmSe4a9K9Xs440
-	eRG7ML3XQpkQO1oAOfK33A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722639798; x=
-	1722726198; bh=G1CFRnyHAXhy+dFKRK51ZyDuS5xaKXWg3D6icphUhIE=; b=j
-	CUllckUOtJ1KwXkS7DeWTvcfU3ur4lUnwosJ6U2R4LXxAhvtUIQnu9f9agMa6z9j
-	a/h8tBeM/yqUFLZm+ErXHnppyz2h/5iRzW+HPv3Wtt4Kfznso383MEAwn2WmRbdY
-	C9kPacYIEWO6t7tfmUzP9scKkclHQJYqCwKzDzF7Gxl/i5w1+EzytnIvo/Zg8d8z
-	l0WUrdY9YFp+3cvFA9+1xFg092Umzh7aakAmLTZ7Xia/PqYONjGIRQsQTTgCXobF
-	vi/zsWetinM4/5yAdteKGnzlaEmtYpQy7uDqHiR4IFBDNivTZoQ3OHDVfErYvn86
-	v9rh4avSqGqZPZHec92VQ==
-X-ME-Sender: <xms:tWWtZpJQX3T30aMGrFqud4NJGdcuWyLlujb8J176sII9mCIrK5Y8FQ>
-    <xme:tWWtZlKWhln85cIPbY_aY44Xa2ovgv7yYVmZYFXejgnvz72-3g2UJ54oxGQLOdAzZ
-    tFrBNwih2sw9HaM>
-X-ME-Received: <xmr:tWWtZhsFVLCDiwTebUci4P0pQKrqUQU1oHOoFhR_9fw0Y406x_pWGeU2EYDIZsd-mlKulofRbvrb8HatnIxEe6VRSIk7f84Fezs6VE5Qo-35uHoQLhhX>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkedugddulecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdtgfegleefvdehfeeiveej
-    ieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhf
-    mhdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:tmWtZqbaI_R_9MY-82mYHRrpplSJl5ug68dWRv_DASNjg7V9D_jrDQ>
-    <xmx:tmWtZgYBAevZuEiiScW5CENTj8ye1xZ1CxcIqxnEgv4uYUlkgwSw9w>
-    <xmx:tmWtZuBvx5whnhxk4jdGag-3Ef7AiQ3TOy_insao_sCsRIah9FzwUw>
-    <xmx:tmWtZuZzi8S30iV7lzO7uXVDXhvyDZSG4diaJ5sRPn-dhjfcWvrwnw>
-    <xmx:tmWtZsQ5NGlZvRevlkJYKDZ17GM79067z4XJzWdgaBRmpczh-ZT314ol>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 2 Aug 2024 19:03:16 -0400 (EDT)
-Message-ID: <4c1118d0-b871-44e8-93ca-6b0cf8643144@fastmail.fm>
-Date: Sat, 3 Aug 2024 01:03:15 +0200
+	s=arc-20240116; t=1722653708; c=relaxed/simple;
+	bh=RIN8860VKrwG8pGn//fjYw1Ffx/DZsTnQ7DUTwCg1f8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qrr50REe7VE/FsoRKXYaZHp3+m9+rPImiVVTyW4rPx9B7Jyd6kJ6oLwcVs2QT6QbthCKjh0r0d8T4Tq9dR6XQZSqo5+lYyc6KHplSGNlkKoW8NrbWN2bP/EdyOv30inuw8r82lh6BLrb6CeznIvZfFQJ3rppwD98+oXB9vINWI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IxVmMYEc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722653705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=F1wAfXnbDS38XwTTIr6+TPJ2ikyvkJ3Nuyw1zubgkCY=;
+	b=IxVmMYEcPpem7RONPk5ef/ypYMzxGVuwb6u9McqQosf2OmVbet4X9L4mmuVSUYZfjxBBBj
+	SkX5L3Jkmc3N8qPddy2/JmeL9swrDDhr/mNjAxV4OLfHmEZriZ6bv9NEOk7Qg+TmSgSNqT
+	hG8hSlrD3OaelZLAQME0gVMmL0Ln3r4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-616-r25lBCQANJi1NK8s-9V8Hw-1; Fri,
+ 02 Aug 2024 22:55:00 -0400
+X-MC-Unique: r25lBCQANJi1NK8s-9V8Hw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 973FD1955D56;
+	Sat,  3 Aug 2024 02:54:59 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.16.14])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BF27A19560AA;
+	Sat,  3 Aug 2024 02:54:57 +0000 (UTC)
+From: Joel Savitz <jsavitz@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joel Savitz <jsavitz@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] file: remove outdated comment after close_fd()
+Date: Fri,  2 Aug 2024 22:54:55 -0400
+Message-ID: <20240803025455.239276-1-jsavitz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/19] fuse: fuse-over-io-uring
-To: Bernd Schubert <bschubert@ddn.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Andrei Vagin <avagin@google.com>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Josef Bacik <josef@toxicpanda.com>
-References: <20240529-fuse-uring-for-6-9-rfc2-out-v1-0-d149476b1d65@ddn.com>
- <CAJfpegurSNV3Tw1oKWL1DgnR-tST-JxSAxvTuK2jirm+L-odeQ@mail.gmail.com>
- <99d13ae4-8250-4308-b86d-14abd1de2867@fastmail.fm>
- <CAJfpegu7VwDEBsUG_ERLsN58msXUC14jcxRT_FqL53xm8FKcdg@mail.gmail.com>
- <62ecc4cf-97c8-43e6-84a1-72feddf07d29@fastmail.fm>
- <CAJfpegsq06UZSPCDB=0Q3OPoH+c3is4A_d2oFven3Ebou8XPOw@mail.gmail.com>
- <0615e79d-9397-48eb-b89e-f0be1d814baf@ddn.com>
- <CAJfpeguMmTXJPzdnxe87hSBPO_Y8s33eCc_H5fEaznZYC-D8HA@mail.gmail.com>
- <3b74f850-c74c-49d0-be63-a806119cbfbd@ddn.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, fr, ru
-In-Reply-To: <3b74f850-c74c-49d0-be63-a806119cbfbd@ddn.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
 
+The comment on EXPORT_SYMBOL(close_fd) was added in commit 2ca2a09d6215
+("fs: add ksys_close() wrapper; remove in-kernel calls to sys_close()"),
+before commit 8760c909f54a ("file: Rename __close_fd to close_fd and remove
+the files parameter") gave the function its current name, however commit
+1572bfdf21d4 ("file: Replace ksys_close with close_fd") removes the
+referenced caller entirely, obsoleting this comment.
 
-On 6/12/24 16:56, Bernd Schubert wrote:
-> On 6/12/24 16:07, Miklos Szeredi wrote:
->> On Wed, 12 Jun 2024 at 15:33, Bernd Schubert <bschubert@ddn.com> wrote:
->>
->>> I didn't do that yet, as we are going to use the ring buffer for requests,
->>> i.e. the ring buffer immediately gets all the data from network, there is
->>> no copy. Even if the ring buffer would get data from local disk - there
->>> is no need to use a separate application buffer anymore. And with that
->>> there is just no extra copy
->>
->> Let's just tackle this shared request buffer, as it seems to be a
->> central part of your design.
->>
->> You say the shared buffer is used to immediately get the data from the
->> network (or various other sources), which is completely viable.
->>
->> And then the kernel will do the copy from the shared buffer.  Single copy, fine.
->>
->> But if the buffer wasn't shared?  What would be the difference?
->> Single copy also.
->>
->> Why is the shared buffer better?  I mean it may even be worse due to
->> cache aliasing issues on certain architectures.  copy_to_user() /
->> copy_from_user() are pretty darn efficient.
-> 
-> Right now we have:
-> 
-> - Application thread writes into the buffer, then calls io_uring_cmd_done
-> 
-> I can try to do without mmap and set a pointer to the user buffer in the 
-> 80B section of the SQE. I'm not sure if the application is allowed to 
-> write into that buffer, possibly/probably we will be forced to use 
-> io_uring_cmd_complete_in_task() in all cases (without 19/19 we have that 
-> anyway). My greatest fear here is that the extra task has performance 
-> implications for sync requests.
-> 
-> 
->>
->> Why is it better to have that buffer managed by kernel?  Being locked
->> in memory (being unswappable) is probably a disadvantage as well.  And
->> if locking is required, it can be done on the user buffer.
-> 
-> Well, let me try to give the buffer in the 80B section.
-> 
->>
->> And there are all the setup and teardown complexities...
-> 
-> If the buffer in the 80B section works setup becomes easier, mmap and 
-> ioctls go away. Teardown, well, we still need the workaround as we need 
-> to handle io_uring_cmd_done, but if you could live with that for the 
-> instance, I would ask Jens or Pavel or Ming for help if we could solve 
-> that in io-uring itself.
-> Is the ring workaround in fuse_dev_release() acceptable for you? Or do 
-> you have any another idea about it?
-> 
->>
+Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+---
+ fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/file.c b/fs/file.c
+index a3b72aa64f11..cfc58b782bc4 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -676,7 +676,7 @@ int close_fd(unsigned fd)
+ 
+ 	return filp_close(file, files);
+ }
+-EXPORT_SYMBOL(close_fd); /* for ksys_close() */
++EXPORT_SYMBOL(close_fd);
+ 
+ /**
+  * last_fd - return last valid index into fd table
+-- 
+2.45.2
 
-Short update, I have this working for some time now with a hack patch
-that just adds in a user buffer (without removing mmap, it is just
-unused). Initially I thought that is a lot slower, but after removing
-all the kernel debug options perf loss is just around 5% and I think I
-can get back the remaining by having iov_iter_get_pages2() of the user
-buffer in the initialization (with additional code overhead).
-
-I hope to have new patches by mid of next week. I also want to get rid
-of the difference of buffer layout between uring and /dev/fuse as that
-can be troublesome for other changes like alignment. That might require
-an io-uring CQE128, though.
-
-
-Thanks,
-Bernd
 
