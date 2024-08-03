@@ -1,84 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-24919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189EF94698E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 13:52:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7450E946A2A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 16:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B717C1F2174A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 11:52:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB939B21389
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 14:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DFA14D712;
-	Sat,  3 Aug 2024 11:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C43E153567;
+	Sat,  3 Aug 2024 14:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxZWomx8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B16C14E2F1;
-	Sat,  3 Aug 2024 11:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E942747F;
+	Sat,  3 Aug 2024 14:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722685923; cv=none; b=Jbk14k6AZ/R/fLnbaW7crHzUUzkEJuhnGzGod+4qKAjEwyu01y+G4rYuWpJshRS4jbItVyTfY6NxHEPKwsAOZTdt5NyhZP2sEPtx9S2TmH/6wbutkuKqZSfUscvoTN2EETmGJEMecvpfEmfDYuS9wShOSwlOv+vYEUqkW+fjlXc=
+	t=1722697007; cv=none; b=FmC04+6ZOl9jV7wWsyBv7m5DKgc5PVApez+PZcp4yv6UQm7Y6r/KqD7qPkLt+xYBHQ9q3e25+hqslZRGCZZNAM6ql8RhnmdbEPBjd+zAuIpDh6Uu0wZwiLNVMm575qmZrkENbHZv2lu8plPSrfp8Iy9dyRNM0kMjsKCXEuRGPhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722685923; c=relaxed/simple;
-	bh=YnIM0WebRsXwlgleTouTWyauzysBBRQHK7MDVisp/Wo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qQwJysy8/OZk/vFZFO5FzHYdfrdGNVw/Dt/GMnj5cKXvXMZBz5o7tOIHFxECZewLeoriwZyf1wKV617asVnrP8KrUEVnZfBCtgKU0xMZ7MFT45+4dxJ+nTAnpVZkr7Estb0baH3F9VAOfCAIkx/PdhA5VYf0NUMhYyqetcjo4uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WbgzG3sbyzcd5Q;
-	Sat,  3 Aug 2024 19:51:54 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6D9B91800A1;
-	Sat,  3 Aug 2024 19:51:57 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 3 Aug
- 2024 19:51:56 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<mszeredi@redhat.com>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH -next] fs: mounts: Remove unused declaration mnt_cursor_del()
-Date: Sat, 3 Aug 2024 19:50:00 +0800
-Message-ID: <20240803115000.589872-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722697007; c=relaxed/simple;
+	bh=6M1fLpvH8Cu+8uwdOVhkvLYWG8eOFml1oe3uqDnefao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T/AxSQq9boKU3HgrUtbrIWEf56c5mje5VYTVMZNKimMeZwCCVI0oDWqaPcemwkclFC7pxDObdGD/5GjBTTnb+jpWaXbyqIcYEpHKpE5cr7rTzPOsK1cscPUJInO1uCPhoJ+kCnnhL35Je40ESJCiHLpTKKrT0c/BY5w6klzNtoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gxZWomx8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF7EC4AF0A;
+	Sat,  3 Aug 2024 14:56:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722697006;
+	bh=6M1fLpvH8Cu+8uwdOVhkvLYWG8eOFml1oe3uqDnefao=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gxZWomx8nlVEZdtPchXt1qU76luF02foxl7AdCLKVsIGznFs1We36UGFofgn7zkT4
+	 W2FMlcZSyLz/ej5zd/heLTDA8zKjf7KlobiQql9he4uymoQuV2DmUV5jivPXygp/6a
+	 545fvfQCjvZU1SUc/W98bueAfKMH9GhiavEdPuLjpFFVoQZtzJnLnGSSF76qbrpblC
+	 Am4mHj1YGfMO+OLtpT6YJ1g0cH0we6B/TPltJN3riFecbbnxCvfuajOBXnmonCu5LL
+	 aMTRlFuW7PWV9v4j6yA58S6D362SzkCxWx5iICXAWSYet6MMkWSyT8peBldTzl33kD
+	 UBaTtl0dkVBAQ==
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: chandanbabu@kernel.org,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org
+Subject: [GIT PULL] xfs: bug fixes for 6.11
+Date: Sat, 03 Aug 2024 20:20:49 +0530
+Message-ID: <87ikwh1wpg.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
 
-Commit 2eea9ce4310d ("mounts: keep list of mounts in an rbtree")
-removed the implementation but leave declaration.
+Hi Linus,
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- fs/mount.h | 1 -
- 1 file changed, 1 deletion(-)
+Please pull this branch which contains XFS bug fixes for 6.11-rc2. A brief
+description of the fixes is provided below.
 
-diff --git a/fs/mount.h b/fs/mount.h
-index c1db0c709c6a..185fc56afc13 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -153,7 +153,6 @@ static inline void move_from_ns(struct mount *mnt, struct list_head *dt_list)
- 	list_add_tail(&mnt->mnt_list, dt_list);
- }
- 
--extern void mnt_cursor_del(struct mnt_namespace *ns, struct mount *cursor);
- bool has_locked_children(struct mount *mnt, struct dentry *dentry);
- struct mnt_namespace *__lookup_next_mnt_ns(struct mnt_namespace *mnt_ns, bool previous);
- static inline struct mnt_namespace *lookup_next_mnt_ns(struct mnt_namespace *mntns)
--- 
-2.34.1
+I did a test-merge with the main upstream branch as of a few minutes ago and
+didn't see any conflicts.  Please let me know if you encounter any problems.
 
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.11-fixes-1
+
+for you to fetch changes up to 7bf888fa26e8f22bed4bc3965ab2a2953104ff96:
+
+  xfs: convert comma to semicolon (2024-07-29 09:34:18 +0530)
+
+----------------------------------------------------------------
+Bug fixes for 6.11-rc1:
+
+  * Fix memory leak when corruption is detected during scrubbing parent
+    pointers.
+  * Allow SECURE namespace xattrs to use reserved block pool to in order to
+    prevent ENOSPC.
+  * Save stack space by passing tracepoint's char array to file_path() instead
+    of another stack variable.
+  * Remove unused parameter in macro XFS_DQUOT_LOGRES.
+  * Replace comma with semicolon in a couple of places.
+
+Signed-off-by: Chandan Babu R <chandanbabu@kernel.org>
+
+----------------------------------------------------------------
+Chen Ni (2):
+      xfs: convert comma to semicolon
+      xfs: convert comma to semicolon
+
+Darrick J. Wong (2):
+      xfs: fix a memory leak
+      xfs: fix file_path handling in tracepoints
+
+Eric Sandeen (1):
+      xfs: allow SECURE namespace xattrs to use reserved block pool
+
+Julian Sun (1):
+      xfs: remove unused parameter in macro XFS_DQUOT_LOGRES
+
+ fs/xfs/libxfs/xfs_quota_defs.h |  2 +-
+ fs/xfs/libxfs/xfs_trans_resv.c | 28 ++++++++++++++--------------
+ fs/xfs/scrub/agheader_repair.c |  2 +-
+ fs/xfs/scrub/parent.c          |  2 +-
+ fs/xfs/scrub/trace.h           | 10 ++++------
+ fs/xfs/xfs_attr_list.c         |  2 +-
+ fs/xfs/xfs_trace.h             | 10 ++++------
+ fs/xfs/xfs_xattr.c             | 19 ++++++++++++++++++-
+ 8 files changed, 44 insertions(+), 31 deletions(-)
 
