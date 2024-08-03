@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-24915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F78946926
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 12:55:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF9F94694E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 13:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654201C20EBB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 10:55:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96BC1F20FF3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Aug 2024 11:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494C513A242;
-	Sat,  3 Aug 2024 10:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAED14EC43;
+	Sat,  3 Aug 2024 10:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/yEKIHA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sg358cku"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2F8135417;
-	Sat,  3 Aug 2024 10:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9962A14E2F1;
+	Sat,  3 Aug 2024 10:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722682531; cv=none; b=ZDzfWHLxdOB02wdIDUUTSYOqgnFLBbpjSGBx3THx6VjC0AMtEGBSsQ+L6V4gl8c6ND1Y4bccCXT6rJT6HEDM5hIxWPIhe1C1Uc5GY18ju8cmLvaeTt/tQE5MjxIXkfDb3f4FKHpqQrCO4ciDunN7NjqpV+k7Zib2paJfpleSv5A=
+	t=1722682766; cv=none; b=EbSyBb8r7OA57zJ/2qm9804Ub/eur78j+WafgpoE6ctnV0Ge39/S5vj9ilno9O5vG481HbLz51QwGePvxMRi9kzmMc3ha1NnhcbGOpSIgh3HzliYw6gbpojwmzcGZx7yADPqfKE9CpW22//1T2gXzMSH5hP5lqX2WY3G+1e+CHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722682531; c=relaxed/simple;
-	bh=H7Ef1REPpDftwfuxn4he3sqAj9YES5/SW20RZve2waU=;
+	s=arc-20240116; t=1722682766; c=relaxed/simple;
+	bh=wXJibRRZdKerw8MBnL8BT75mXojPWhhoJOnbQymsNj0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Kob9HOlYBkDzwxUzsiVeFXql16v4aByWNRbP0AQqnFqrVfJS00JtjlHIC0qMpndqxBm47P0UwX0sWamI2NxhycB0rCb1rf37ajBTGqo3SZ4/UNiZ/btGDEgj9pTMNKRp66wWU80E9qKDWRBC3ZQtsbS92DF8lHfpCbuav2LKHz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/yEKIHA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC6EC116B1;
-	Sat,  3 Aug 2024 10:55:29 +0000 (UTC)
+	 Content-Type:MIME-Version; b=e1aq4+TGaMymri9s+vxKZDNZc4hRswKkIIevR6e0VsZ6+2ea1LPpoeMIoWjoVCpSkMnkWIzM81kloFg5kvlSLECsPY+uGu403/n4SS/Jo6NQ9EGfBxiFYJK6ip6Zgu7G/20zjGmIpcGaMMLZfneSBEzHUiGKuw22m/A7/tmqqoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sg358cku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A2BC4AF0A;
+	Sat,  3 Aug 2024 10:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722682530;
-	bh=H7Ef1REPpDftwfuxn4he3sqAj9YES5/SW20RZve2waU=;
+	s=k20201202; t=1722682766;
+	bh=wXJibRRZdKerw8MBnL8BT75mXojPWhhoJOnbQymsNj0=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Q/yEKIHAvTTDcFxU9o0osCGc7DGJ2uXVlnfAIt/FiieOF5eeYKkjN22D0xmU5vov4
-	 ybtM5fCFQ05xcKCwueAKIPrIE3M+o0CbMRi935CJ2IibkvmpAqvesDHTDvC9djlZd5
-	 t5KFYeCDZx8K9Tjb1+N5hgC7cKtZEj/tt2Jtl4q8wqbqzjOSAJ/D1cwBZY/tJJZDB7
-	 HfWDfCrBzB6zImVXEBLwFvw/d5TWVA2yCPGRCP0leifSJNcbT+7B8h/HYF2mVlXLRZ
-	 zS6CivWOWbtgHmpyKufswi6m1ymZ97oQwhWHAZLRe4gXrmjxr0Hi1Rl5O/Dr4e75Hv
-	 cRpgu0jlXWPfA==
-Message-ID: <a74f3c4d2d35106c55ed19f38ed68ac056f70dd8.camel@kernel.org>
+	b=sg358ckufK+k2XFwJr6mNo76SJseGXXq+48T6xjlyWPDxe9Cz/ZO9vamfQ2nUfrMt
+	 Fa8HOF+JgsVF67w5hmesBkcIVUbgNUWbcu5awi/QMMCdo/YhjABsW7vrr/FmJ5RYn+
+	 muClUkE+muPBsKVfEpjoxbz1UuKeI3e4W8gKZr69hV4ypvCsuS76s1vZa64T2IJ06b
+	 eF+qW8DiqvW0XemCxqy4luQjv6FzzBqSK9gBg8cNqHwwNjzldeZnuvyuMSdaeHF8bN
+	 51/nG8FVmF5Sc7DvIo1sQgSUwaIQ+96ale2TSn2XZNKiOkrOSk4ZYAnqInQl3LYPrN
+	 raArjW4e/c3Gw==
+Message-ID: <7ff040d4a0fb1634d3dc9282da014165a347dbb2.camel@kernel.org>
 Subject: Re: [PATCH RFC 3/4] lockref: rework CMPXCHG_LOOP to handle
  contention better
 From: Jeff Layton <jlayton@kernel.org>
@@ -50,11 +50,12 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
 	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Andrew Morton
 	 <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sat, 03 Aug 2024 06:55:28 -0400
-In-Reply-To: <r6gyrzb265f5w6sev6he3ctfjjh7wfhktzwxyylwwkeopkzkpj@fo3yp2lkgp7l>
+Date: Sat, 03 Aug 2024 06:59:24 -0400
+In-Reply-To: <CAGudoHHLcKoG6Y2Zzm34gLrtaXmtuMc=CPcVpVQUaJ1Ysz8EDQ@mail.gmail.com>
 References: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
 	 <20240802-openfast-v1-3-a1cff2a33063@kernel.org>
 	 <r6gyrzb265f5w6sev6he3ctfjjh7wfhktzwxyylwwkeopkzkpj@fo3yp2lkgp7l>
+	 <CAGudoHHLcKoG6Y2Zzm34gLrtaXmtuMc=CPcVpVQUaJ1Ysz8EDQ@mail.gmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -139,263 +140,303 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Sat, 2024-08-03 at 06:44 +0200, Mateusz Guzik wrote:
-> On Fri, Aug 02, 2024 at 05:45:04PM -0400, Jeff Layton wrote:
-> > In a later patch, we want to change the open(..., O_CREAT) codepath to
-> > avoid taking the inode->i_rwsem for write when the dentry already exist=
-s.
-> > When we tested that initially, the performance devolved significantly
-> > due to contention for the parent's d_lockref spinlock.
+On Sat, 2024-08-03 at 11:09 +0200, Mateusz Guzik wrote:
+> On Sat, Aug 3, 2024 at 6:44=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
+wrote:
 > >=20
-> > There are two problems with lockrefs today: First, once any concurrent
-> > task takes the spinlock, they all end up taking the spinlock, which is
-> > much more costly than a single cmpxchg operation. The second problem is
-> > that once any task fails to cmpxchg 100 times, it falls back to the
-> > spinlock. The upshot there is that even moderate contention can cause a
-> > fallback to serialized spinlocking, which worsens performance.
+> > On Fri, Aug 02, 2024 at 05:45:04PM -0400, Jeff Layton wrote:
+> > > In a later patch, we want to change the open(..., O_CREAT) codepath t=
+o
+> > > avoid taking the inode->i_rwsem for write when the dentry already exi=
+sts.
+> > > When we tested that initially, the performance devolved significantly
+> > > due to contention for the parent's d_lockref spinlock.
+> > >=20
+> > > There are two problems with lockrefs today: First, once any concurren=
+t
+> > > task takes the spinlock, they all end up taking the spinlock, which i=
+s
+> > > much more costly than a single cmpxchg operation. The second problem =
+is
+> > > that once any task fails to cmpxchg 100 times, it falls back to the
+> > > spinlock. The upshot there is that even moderate contention can cause=
+ a
+> > > fallback to serialized spinlocking, which worsens performance.
+> > >=20
+> > > This patch changes CMPXCHG_LOOP in 2 ways:
+> > >=20
+> > > First, change the loop to spin instead of falling back to a locked
+> > > codepath when the spinlock is held. Once the lock is released, allow =
+the
+> > > task to continue trying its cmpxchg loop as before instead of taking =
+the
+> > > lock. Second, don't allow the cmpxchg loop to give up after 100 retri=
+es.
+> > > Just continue infinitely.
+> > >=20
+> > > This greatly reduces contention on the lockref when there are large
+> > > numbers of concurrent increments and decrements occurring.
+> > >=20
 > >=20
-> > This patch changes CMPXCHG_LOOP in 2 ways:
-> >=20
-> > First, change the loop to spin instead of falling back to a locked
-> > codepath when the spinlock is held. Once the lock is released, allow th=
-e
-> > task to continue trying its cmpxchg loop as before instead of taking th=
-e
-> > lock. Second, don't allow the cmpxchg loop to give up after 100 retries=
-.
-> > Just continue infinitely.
-> >=20
-> > This greatly reduces contention on the lockref when there are large
-> > numbers of concurrent increments and decrements occurring.
+> > This was already tried by me and it unfortunately can reduce performanc=
+e.
 > >=20
 >=20
-> This was already tried by me and it unfortunately can reduce performance.
->=20
-> Key problem is that in some corner cases the lock can be continuously
-> held and be queued on, making the fast path always fail and making all
-> the spins actively waste time (and notably pull on the cacheline).
->=20
-
-The cacheline contention does seem like a real problem with this
-approach.
-
-> See this for more details:
-> https://lore.kernel.org/oe-lkp/lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2mfa=
-qbkvv4ke@hzxat7utjnvx/
->=20
-> However, I *suspect* in the case you are optimizing here (open + O_CREAT
-> of an existing file) lockref on the parent can be avoided altogether
-> with some hackery and that's what should be done here.
+> Oh wait I misread the patch based on what I tried there. Spinning
+> indefinitely waiting for the lock to be free is a no-go as it loses
+> the forward progress guarantee (and it is possible to get the lock
+> being continuously held). Only spinning up to an arbitrary point wins
+> some in some tests and loses in others.
 >=20
 
-Unfortunately I don't think we can in this codepath:
+I'm a little confused about the forward progress guarantee here. Does
+that exist today at all? ISTM that falling back to spin_lock() after a
+certain number of retries doesn't guarantee any forward progress. You
+can still just end up spinning on the lock forever once that happens,
+no?
 
--------------------8<----------------------
-	if (!(open_flag & O_CREAT)) {                                       =20
-		...
-	} else {
-        	/* create side of things */
-                if (nd->flags & LOOKUP_RCU) {
-                        if (!try_to_unlazy(nd))
-                                return ERR_PTR(-ECHILD);
-                }
-                audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-                /* trailing slashes? */
-                if (unlikely(nd->last.name[nd->last.len]))
-                        return ERR_PTR(-EISDIR);
-        }
--------------------8<----------------------
-
-The problem here is the audit_inode call, which can do a GFP_KERNEL
-allocation. We can't stay in RCU mode for that, and we need a reference
-to "dir" (at least with the current way audit works).
-
-> When it comes to lockref in vfs in general, most uses can be elided with
-> some hackery (see the above thread) which is in early WIP (the LSMs are
-> a massive headache).
->=20
-> For open calls which *do* need to take a real ref the hackery does not
-> help of course.
->=20
-> This is where I think decoupling ref from the lock is the best way
-> forward. For that to work the dentry must hang around after the last
-> unref (already done thanks to RCU and dput even explicitly handles that
-> already!) and there needs to be a way to block new refs atomically --
-> can be done with cmpxchg from a 0-ref state to a flag blocking new refs
-> coming in. I have that as a WIP as well.
+> Either way, as described below, chances are decent that:
+> 1. there is an easy way to not lockref_get/put on the parent if the
+> file is already there, dodging the problem
+> .. and even if that's not true
+> 2. lockref can be ditched in favor of atomics. apart from some minor
+> refactoring this all looks perfectly doable and I have a wip. I will
+> try to find the time next week to sort it out
 >=20
 
-These both sound very interesting. FWIW, Josef also started looking at
-decoupling the refcount and lock, but I don't think he's gotten very
-far yet.
+Like I said in the earlier mail, I don't think we can stay in RCU mode
+because of the audit_inode call. I'm definitely interested in your WIP
+though!
 
-I'm happy to help test some of this too if you get to that point. The
-4th patch in this RFC series really amps up the contention for the
-lockref once the i_rwsem isn't being touched.
-
->=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  lib/lockref.c | 85 ++++++++++++++++++++++-----------------------------=
---------
-> >  1 file changed, 32 insertions(+), 53 deletions(-)
+> > Key problem is that in some corner cases the lock can be continuously
+> > held and be queued on, making the fast path always fail and making all
+> > the spins actively waste time (and notably pull on the cacheline).
 > >=20
-> > diff --git a/lib/lockref.c b/lib/lockref.c
-> > index 2afe4c5d8919..b76941043fe9 100644
-> > --- a/lib/lockref.c
-> > +++ b/lib/lockref.c
-> > @@ -8,22 +8,25 @@
-> >   * Note that the "cmpxchg()" reloads the "old" value for the
-> >   * failure case.
-> >   */
-> > -#define CMPXCHG_LOOP(CODE, SUCCESS) do {					\
-> > -	int retry =3D 100;							\
-> > -	struct lockref old;							\
-> > -	BUILD_BUG_ON(sizeof(old) !=3D 8);						\
-> > -	old.lock_count =3D READ_ONCE(lockref->lock_count);			\
-> > -	while (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock))) {  =
-	\
-> > -		struct lockref new =3D old;					\
-> > -		CODE								\
-> > -		if (likely(try_cmpxchg64_relaxed(&lockref->lock_count,		\
-> > -						 &old.lock_count,		\
-> > -						 new.lock_count))) {		\
-> > -			SUCCESS;						\
-> > -		}								\
-> > -		if (!--retry)							\
-> > -			break;							\
-> > -	}									\
-> > +#define CMPXCHG_LOOP(CODE, SUCCESS) do {						\
-> > +	struct lockref old;								\
-> > +	BUILD_BUG_ON(sizeof(old) !=3D 8);							\
-> > +	old.lock_count =3D READ_ONCE(lockref->lock_count);				\
-> > +	for (;;) {									\
-> > +		struct lockref new =3D old;						\
-> > +											\
-> > +		if (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock))) {	\
-> > +			CODE								\
-> > +			if (likely(try_cmpxchg64_relaxed(&lockref->lock_count,		\
-> > +							 &old.lock_count,		\
-> > +							 new.lock_count))) {		\
-> > +				SUCCESS;						\
-> > +			}								\
-> > +		} else {								\
-> > +			cpu_relax();							\
-> > +			old.lock_count =3D READ_ONCE(lockref->lock_count);		\
-> > +		}									\
-> > +	}										\
-> >  } while (0)
-> > =20
-> >  #else
-> > @@ -46,10 +49,8 @@ void lockref_get(struct lockref *lockref)
-> >  	,
-> >  		return;
-> >  	);
-> > -
-> > -	spin_lock(&lockref->lock);
-> > -	lockref->count++;
-> > -	spin_unlock(&lockref->lock);
-> > +	/* should never get here */
-> > +	WARN_ON_ONCE(1);
-> >  }
-> >  EXPORT_SYMBOL(lockref_get);
-> > =20
-> > @@ -60,8 +61,6 @@ EXPORT_SYMBOL(lockref_get);
-> >   */
-> >  int lockref_get_not_zero(struct lockref *lockref)
-> >  {
-> > -	int retval;
-> > -
-> >  	CMPXCHG_LOOP(
-> >  		new.count++;
-> >  		if (old.count <=3D 0)
-> > @@ -69,15 +68,9 @@ int lockref_get_not_zero(struct lockref *lockref)
-> >  	,
-> >  		return 1;
-> >  	);
-> > -
-> > -	spin_lock(&lockref->lock);
-> > -	retval =3D 0;
-> > -	if (lockref->count > 0) {
-> > -		lockref->count++;
-> > -		retval =3D 1;
-> > -	}
-> > -	spin_unlock(&lockref->lock);
-> > -	return retval;
-> > +	/* should never get here */
-> > +	WARN_ON_ONCE(1);
-> > +	return -1;
-> >  }
-> >  EXPORT_SYMBOL(lockref_get_not_zero);
-> > =20
-> > @@ -88,8 +81,6 @@ EXPORT_SYMBOL(lockref_get_not_zero);
-> >   */
-> >  int lockref_put_not_zero(struct lockref *lockref)
-> >  {
-> > -	int retval;
-> > -
-> >  	CMPXCHG_LOOP(
-> >  		new.count--;
-> >  		if (old.count <=3D 1)
-> > @@ -97,15 +88,9 @@ int lockref_put_not_zero(struct lockref *lockref)
-> >  	,
-> >  		return 1;
-> >  	);
-> > -
-> > -	spin_lock(&lockref->lock);
-> > -	retval =3D 0;
-> > -	if (lockref->count > 1) {
-> > -		lockref->count--;
-> > -		retval =3D 1;
-> > -	}
-> > -	spin_unlock(&lockref->lock);
-> > -	return retval;
-> > +	/* should never get here */
-> > +	WARN_ON_ONCE(1);
-> > +	return -1;
-> >  }
-> >  EXPORT_SYMBOL(lockref_put_not_zero);
-> > =20
-> > @@ -125,6 +110,8 @@ int lockref_put_return(struct lockref *lockref)
-> >  	,
-> >  		return new.count;
-> >  	);
-> > +	/* should never get here */
-> > +	WARN_ON_ONCE(1);
-> >  	return -1;
-> >  }
-> >  EXPORT_SYMBOL(lockref_put_return);
-> > @@ -171,8 +158,6 @@ EXPORT_SYMBOL(lockref_mark_dead);
-> >   */
-> >  int lockref_get_not_dead(struct lockref *lockref)
-> >  {
-> > -	int retval;
-> > -
-> >  	CMPXCHG_LOOP(
-> >  		new.count++;
-> >  		if (old.count < 0)
-> > @@ -180,14 +165,8 @@ int lockref_get_not_dead(struct lockref *lockref)
-> >  	,
-> >  		return 1;
-> >  	);
-> > -
-> > -	spin_lock(&lockref->lock);
-> > -	retval =3D 0;
-> > -	if (lockref->count >=3D 0) {
-> > -		lockref->count++;
-> > -		retval =3D 1;
-> > -	}
-> > -	spin_unlock(&lockref->lock);
-> > -	return retval;
-> > +	/* should never get here */
-> > +	WARN_ON_ONCE(1);
-> > +	return -1;
-> >  }
-> >  EXPORT_SYMBOL(lockref_get_not_dead);
+> > See this for more details:
+> > https://lore.kernel.org/oe-lkp/lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2m=
+faqbkvv4ke@hzxat7utjnvx/
 > >=20
-> > --=20
-> > 2.45.2
+> > However, I *suspect* in the case you are optimizing here (open + O_CREA=
+T
+> > of an existing file) lockref on the parent can be avoided altogether
+> > with some hackery and that's what should be done here.
 > >=20
+> > When it comes to lockref in vfs in general, most uses can be elided wit=
+h
+> > some hackery (see the above thread) which is in early WIP (the LSMs are
+> > a massive headache).
+> >=20
+> > For open calls which *do* need to take a real ref the hackery does not
+> > help of course.
+> >=20
+> > This is where I think decoupling ref from the lock is the best way
+> > forward. For that to work the dentry must hang around after the last
+> > unref (already done thanks to RCU and dput even explicitly handles that
+> > already!) and there needs to be a way to block new refs atomically --
+> > can be done with cmpxchg from a 0-ref state to a flag blocking new refs
+> > coming in. I have that as a WIP as well.
+> >=20
+> >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  lib/lockref.c | 85 ++++++++++++++++++++++---------------------------=
+----------
+> > >  1 file changed, 32 insertions(+), 53 deletions(-)
+> > >=20
+> > > diff --git a/lib/lockref.c b/lib/lockref.c
+> > > index 2afe4c5d8919..b76941043fe9 100644
+> > > --- a/lib/lockref.c
+> > > +++ b/lib/lockref.c
+> > > @@ -8,22 +8,25 @@
+> > >   * Note that the "cmpxchg()" reloads the "old" value for the
+> > >   * failure case.
+> > >   */
+> > > -#define CMPXCHG_LOOP(CODE, SUCCESS) do {                            =
+         \
+> > > -     int retry =3D 100;                                             =
+           \
+> > > -     struct lockref old;                                            =
+         \
+> > > -     BUILD_BUG_ON(sizeof(old) !=3D 8);                              =
+           \
+> > > -     old.lock_count =3D READ_ONCE(lockref->lock_count);             =
+           \
+> > > -     while (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock)=
+)) {     \
+> > > -             struct lockref new =3D old;                            =
+           \
+> > > -             CODE                                                   =
+         \
+> > > -             if (likely(try_cmpxchg64_relaxed(&lockref->lock_count, =
+         \
+> > > -                                              &old.lock_count,      =
+         \
+> > > -                                              new.lock_count))) {   =
+         \
+> > > -                     SUCCESS;                                       =
+         \
+> > > -             }                                                      =
+         \
+> > > -             if (!--retry)                                          =
+         \
+> > > -                     break;                                         =
+         \
+> > > -     }                                                              =
+         \
+> > > +#define CMPXCHG_LOOP(CODE, SUCCESS) do {                            =
+                 \
+> > > +     struct lockref old;                                            =
+                 \
+> > > +     BUILD_BUG_ON(sizeof(old) !=3D 8);                              =
+                   \
+> > > +     old.lock_count =3D READ_ONCE(lockref->lock_count);             =
+                   \
+> > > +     for (;;) {                                                     =
+                 \
+> > > +             struct lockref new =3D old;                            =
+                   \
+> > > +                                                                    =
+                 \
+> > > +             if (likely(arch_spin_value_unlocked(old.lock.rlock.raw_=
+lock))) {        \
+> > > +                     CODE                                           =
+                 \
+> > > +                     if (likely(try_cmpxchg64_relaxed(&lockref->lock=
+_count,          \
+> > > +                                                      &old.lock_coun=
+t,               \
+> > > +                                                      new.lock_count=
+))) {            \
+> > > +                             SUCCESS;                               =
+                 \
+> > > +                     }                                              =
+                 \
+> > > +             } else {                                               =
+                 \
+> > > +                     cpu_relax();                                   =
+                 \
+> > > +                     old.lock_count =3D READ_ONCE(lockref->lock_coun=
+t);                \
+> > > +             }                                                      =
+                 \
+> > > +     }                                                              =
+                 \
+> > >  } while (0)
+> > >=20
+> > >  #else
+> > > @@ -46,10 +49,8 @@ void lockref_get(struct lockref *lockref)
+> > >       ,
+> > >               return;
+> > >       );
+> > > -
+> > > -     spin_lock(&lockref->lock);
+> > > -     lockref->count++;
+> > > -     spin_unlock(&lockref->lock);
+> > > +     /* should never get here */
+> > > +     WARN_ON_ONCE(1);
+> > >  }
+> > >  EXPORT_SYMBOL(lockref_get);
+> > >=20
+> > > @@ -60,8 +61,6 @@ EXPORT_SYMBOL(lockref_get);
+> > >   */
+> > >  int lockref_get_not_zero(struct lockref *lockref)
+> > >  {
+> > > -     int retval;
+> > > -
+> > >       CMPXCHG_LOOP(
+> > >               new.count++;
+> > >               if (old.count <=3D 0)
+> > > @@ -69,15 +68,9 @@ int lockref_get_not_zero(struct lockref *lockref)
+> > >       ,
+> > >               return 1;
+> > >       );
+> > > -
+> > > -     spin_lock(&lockref->lock);
+> > > -     retval =3D 0;
+> > > -     if (lockref->count > 0) {
+> > > -             lockref->count++;
+> > > -             retval =3D 1;
+> > > -     }
+> > > -     spin_unlock(&lockref->lock);
+> > > -     return retval;
+> > > +     /* should never get here */
+> > > +     WARN_ON_ONCE(1);
+> > > +     return -1;
+> > >  }
+> > >  EXPORT_SYMBOL(lockref_get_not_zero);
+> > >=20
+> > > @@ -88,8 +81,6 @@ EXPORT_SYMBOL(lockref_get_not_zero);
+> > >   */
+> > >  int lockref_put_not_zero(struct lockref *lockref)
+> > >  {
+> > > -     int retval;
+> > > -
+> > >       CMPXCHG_LOOP(
+> > >               new.count--;
+> > >               if (old.count <=3D 1)
+> > > @@ -97,15 +88,9 @@ int lockref_put_not_zero(struct lockref *lockref)
+> > >       ,
+> > >               return 1;
+> > >       );
+> > > -
+> > > -     spin_lock(&lockref->lock);
+> > > -     retval =3D 0;
+> > > -     if (lockref->count > 1) {
+> > > -             lockref->count--;
+> > > -             retval =3D 1;
+> > > -     }
+> > > -     spin_unlock(&lockref->lock);
+> > > -     return retval;
+> > > +     /* should never get here */
+> > > +     WARN_ON_ONCE(1);
+> > > +     return -1;
+> > >  }
+> > >  EXPORT_SYMBOL(lockref_put_not_zero);
+> > >=20
+> > > @@ -125,6 +110,8 @@ int lockref_put_return(struct lockref *lockref)
+> > >       ,
+> > >               return new.count;
+> > >       );
+> > > +     /* should never get here */
+> > > +     WARN_ON_ONCE(1);
+> > >       return -1;
+> > >  }
+> > >  EXPORT_SYMBOL(lockref_put_return);
+> > > @@ -171,8 +158,6 @@ EXPORT_SYMBOL(lockref_mark_dead);
+> > >   */
+> > >  int lockref_get_not_dead(struct lockref *lockref)
+> > >  {
+> > > -     int retval;
+> > > -
+> > >       CMPXCHG_LOOP(
+> > >               new.count++;
+> > >               if (old.count < 0)
+> > > @@ -180,14 +165,8 @@ int lockref_get_not_dead(struct lockref *lockref=
+)
+> > >       ,
+> > >               return 1;
+> > >       );
+> > > -
+> > > -     spin_lock(&lockref->lock);
+> > > -     retval =3D 0;
+> > > -     if (lockref->count >=3D 0) {
+> > > -             lockref->count++;
+> > > -             retval =3D 1;
+> > > -     }
+> > > -     spin_unlock(&lockref->lock);
+> > > -     return retval;
+> > > +     /* should never get here */
+> > > +     WARN_ON_ONCE(1);
+> > > +     return -1;
+> > >  }
+> > >  EXPORT_SYMBOL(lockref_get_not_dead);
+> > >=20
+> > > --
+> > > 2.45.2
+> > >=20
+>=20
+>=20
+>=20
 
 --=20
 Jeff Layton <jlayton@kernel.org>
