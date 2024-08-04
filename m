@@ -1,70 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-24938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C490946D23
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 09:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0984946D2B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 09:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BFA2B20999
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 07:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97BD228182B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 07:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988FF1BC49;
-	Sun,  4 Aug 2024 07:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38E31CD29;
+	Sun,  4 Aug 2024 07:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYbhDKuo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkGHDiOH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9169A7494;
-	Sun,  4 Aug 2024 07:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1DB18028;
+	Sun,  4 Aug 2024 07:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722758209; cv=none; b=Vbzqr869v0hhWbPqJ+v6DAgEuN7HFdqwL/zJgiYpwqFUTWq/q0z40lFkDBpY/ZgKdQV4CqD2TT++R/wmenm+irQUuCk5iGsObn7ckdTrXv9tlaERxowBgkdWKNiEnuyKIpqdzhMnOKLY5X6xonWutpXtcb+3DPsCYmuBW7haHA4=
+	t=1722758226; cv=none; b=PYssLBwGW8tAVKH4SMMus6vvd2grQwa1yGlVl+99+ecSP/n2sRuiQaXJAnbPUuWgyA05y9ywktG5/OWGRi1Wq1jl+oItdc+99F9DNhRdu0ySlCtOT1Sl9d0wyWr/5X0gmtAlRZXvodiwMArtXjK51ZM3h3+deoCRsHfoTnMEu/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722758209; c=relaxed/simple;
-	bh=zfRBye9XjAyf1w+J+rLHJaLjVkIJJvi7H+/9DoIfN74=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H7Qfjq5dR8inYuZGd0hUxvjIjZSBazf0MHlS2PrNDyRoGBJJ3mD1GNUfgPEjGuLp5Dta6TxFGgeLrpsT8qqKMmbD1diDoDcb3olG+fCKFM32KBXxcVEwO98YSbe1etqesfrBoBLbSCn0y4WmLdwpHPlbDaRQPwViU/Z5kK8G8Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYbhDKuo; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1722758226; c=relaxed/simple;
+	bh=l2UdoLGIj5dmNTe7kniywtU84ZIetJS7/k5zo/1TUMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OTrScLG7pOe0d5Pe/fiIvhBH+pm0nRdGZ0ZA3yNZmUF+Pu+slB9tmALEVB0kvWYtlBK6Q6xmAOHMI3hvlSTiLWhaemNIJHwOPO3FkjKhPC7xm0hJ+d284Q07FTiHKt8zkCeeJ7Spe1yrFq1KONog0mmKVGMImPoL4Oc2lLgDYk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkGHDiOH; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d25b5b6b0so7060495b3a.2;
-        Sun, 04 Aug 2024 00:56:47 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ff1cd07f56so73160825ad.2;
+        Sun, 04 Aug 2024 00:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722758207; x=1723363007; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jAUiIbA9M914l7SbVcGMcRn0qL18BQ5kTGC/RMGMPl4=;
-        b=BYbhDKuoSy5kiP/T/t8AYguX4K08c0CO5oMiU4u7FR4j2serqcH7dhWrta+zc/gvdf
-         PPRFkQgb9bOZZeox0WWrDlMmmo1U6n5nHgNG07zAaVg8gxMBPFvmXzdxMyOSRLq5+dfa
-         IE/KB0iGEbFX8cF0O+NXXos6Lqt9/orLctXpmUzjZXRk+Qn/d4B9VvKIecXTVQVXgNgg
-         RnRqDYjpfGHLnssnIOKx11agZsj/yVhg8/hr4MExjivL3Y4ZvYRbZk4HP4d99ft/imL2
-         czeTMqlqGNR+mkio4pi6FqZgbUgHTWy3gjqAB8TIdKOsDKc1H3d7jVXL0e9PL2XuhDhg
-         Kwxg==
+        d=gmail.com; s=20230601; t=1722758224; x=1723363024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3hHqe/dVMoVlxAlcEkx88W0WqBv09P0jej1HBEqhafw=;
+        b=jkGHDiOHSxN246QcT1JU0j/fHblrWltNi4s0DwB333JXU4H76s5kXIyEmc0tA6XXsm
+         LsYi+uzuk0KhtXIIfCeB3aBsijXjgSC5JGhBY3i6UUT6dSu4rIXgty1+3i9DB9MpjAop
+         gd7b9G4jbRTdFurLedHEpp66f/SHacENp41UjI6IItjDkoHWztRZ90DCBuLXK5jIeu6x
+         SFjGwtn9JHWXSq/TKI3EmWG+LO7LRMnF5JH3yhMQpa4YnOM+4X1rC+e8lqSyEHrK08xz
+         FecxHOJCvXnAajBtDFJ1zptiG1yHFLvoaqrVDDWkaPgdWmCHI/eICHieaGda3nZQLYHk
+         XOrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722758207; x=1723363007;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jAUiIbA9M914l7SbVcGMcRn0qL18BQ5kTGC/RMGMPl4=;
-        b=amj4DBgEmB3OBlDs7Uz2Uof9sLAgcNUVZVH0qaSsHNKhczzoAPhvBOjtq5sVAPNRiG
-         n/Zs80wvdJJB4m1PMY81luR/2jLv6hBCyF5H4+2Q0JgAB++ulkRSUg7gOI/wOVt+0KIb
-         q+FPguNYfJnaFEkOtq8xuAt9UfYuoRq/GPDV/VuSI2ETEH+V91TWNj2wKf/ovUZXcIrs
-         iqGZPjK3AICX6yulmYegislt3KnpprQNL76+lbGLAFXZmna/B7fGyGVJDrEFl41QnyW/
-         YGCS8sA7GF/51pnlNcGrPe59FuYlqjeYOvRNS76ir9zuthEVBD4tJ8jJo+knD0+YRb2G
-         RZ6A==
-X-Forwarded-Encrypted: i=1; AJvYcCV9zWLqFm1r6T82ZQyjEdpuzqOTV7mJSGYB2e7icd+zJix4VavxkAvE6F74avuo46yijBHz9QaLsxxnHmsHTpDBAFVR2MjDVz1uR+jscSnFbvEaLLJWOZOzhohYeAtOpyOwutQNtp2WdO/tshcXSGS8lu0OSPhqVjv5N9erJxjUuoN/CBt45csMf5AKd/IuLWHQNK3aaQ/fnXGwdRb4wcGRpsSRtQKb0jh8sB+hq8EuYDxYpj7Mjsc4IM5GbgJFYttCdKovWK0SZ/9Gu5qf5qO/k/ffWGavNtu3JnR9yh3WYBGvPJolzwMelg9IT6SxPQelj5fjRw==
-X-Gm-Message-State: AOJu0YyyxaJ8rHcNZOXjPeuXE0bT1USDebXZE6P4HHNmclr609MHF+E3
-	vGhVHXnV8uYSpOJ19ejVt1RFqlr4CXVtqqqnkmEmLNkqfc5489rXDy2foJCcIy0=
-X-Google-Smtp-Source: AGHT+IGr87hL+CR9BQ4tkSVsGq67qKnz8TEMjj1/AcYNViYHS42eo8GA1J34i40o5jKuxGL8nismgw==
-X-Received: by 2002:a17:902:d08a:b0:1fd:9e6e:7c10 with SMTP id d9443c01a7336-1ff5748d30cmr59016425ad.41.1722758206776;
-        Sun, 04 Aug 2024 00:56:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722758224; x=1723363024;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3hHqe/dVMoVlxAlcEkx88W0WqBv09P0jej1HBEqhafw=;
+        b=hV48ReGT3MBsRuLjf9Jl1WUv7mJduGSfy2vsBBQl9Hkt5EOYwTwnrXb9gPMGey58Dl
+         U4LDSte5v0mUo2LxaRJJEBDwRYO043WviAF5U0Ksj3V49uKxZVrejbTYgN8Ir9SyAKbd
+         QurkYW24mblZkNxgM0HZIMJKqF+Y1aJbQRq/nM5gcTDGVmmuKqLzNwtnF4RMIexHdRmK
+         PrKN5tRi8e17rGjUs/hPb8OpD+9522N925DfhPdk+lxx+WD3TGKtt+3Q1uQ2KHvcL4Wq
+         alzX2j/IBYr5BGJV5fh63wXwDICGBegyjtfdvl3BPoLyuupQT4zy6NO8RtY55T1foZbd
+         CLMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpZ6unoZDgzyywlJ4Lda6U/ZlftPY/1PR57Vr2HqrO6kIOAMnAdKXTamVTxhgfToygNkz/ewb7yMYEeiFjmTe3ei2BKLrwCPHoC5thIuDeDgGsYknSJpSdXCNS46hdXhXftvMtZ51sw59BVIyhRjyH94fWS9EJ7IZ89dDdJWHGuXAxpPXSMLQQt0mXa580lXrfPGeYoe2tpS2hIlGpBAPK/WuBFrx2ix2dw+lPMvnWojj8JSWtPYR1AJO9LH1dPqwxBb1lVE9qmA3TjKPfoXJsuHT2MHsljsNNug+/zBCXxeMwusPG4tUK4WOUcuJCrAedM8L7lw==
+X-Gm-Message-State: AOJu0Yx1tRUFV0stFpILkENcZqTpmppsKz3HuSKbmCW81ozlfc6FFlie
+	KKVdpYWtvkc3FJlrrc5QXWxQzXqd3EoURDeExJ2Uy0R+eJBGIa1j
+X-Google-Smtp-Source: AGHT+IGGd4NHuT97uC6xOQQvHv4GaxRo9+Vf+VhHCShMz8IgX/0qP5KyCL4xcS6MgRK6pPd/R/ObqA==
+X-Received: by 2002:a17:902:f685:b0:1fc:719c:5f0 with SMTP id d9443c01a7336-1ff573e75a3mr134700565ad.49.1722758224055;
+        Sun, 04 Aug 2024 00:57:04 -0700 (PDT)
 Received: from localhost.localdomain ([39.144.105.172])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59178248sm46387605ad.202.2024.08.04.00.56.31
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59178248sm46387605ad.202.2024.08.04.00.56.47
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 04 Aug 2024 00:56:45 -0700 (PDT)
+        Sun, 04 Aug 2024 00:57:03 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: akpm@linux-foundation.org
 Cc: torvalds@linux-foundation.org,
@@ -82,11 +84,18 @@ Cc: torvalds@linux-foundation.org,
 	bpf@vger.kernel.org,
 	netdev@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v5 0/9] Improve the copy of task comm
-Date: Sun,  4 Aug 2024 15:56:10 +0800
-Message-Id: <20240804075619.20804-1-laoar.shao@gmail.com>
+	Yafang Shao <laoar.shao@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Kees Cook <keescook@chromium.org>,
+	Matus Jokay <matus.jokay@stuba.sk>
+Subject: [PATCH v5 1/9] fs/exec: Drop task_lock() inside __get_task_comm()
+Date: Sun,  4 Aug 2024 15:56:11 +0800
+Message-Id: <20240804075619.20804-2-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+In-Reply-To: <20240804075619.20804-1-laoar.shao@gmail.com>
+References: <20240804075619.20804-1-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,87 +104,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on the
-length of task comm. Changes in the task comm could result in a destination
-string that is overflow. Therefore, we should explicitly ensure the destination
-string is always NUL-terminated, regardless of the task comm. This approach
-will facilitate future extensions to the task comm.
+Quoted from Linus [0]:
 
-As suggested by Linus [0], we can identify all relevant code with the
-following git grep command:
-
-  git grep 'memcpy.*->comm\>'
-  git grep 'kstrdup.*->comm\>'
-  git grep 'strncpy.*->comm\>'
-  git grep 'strcpy.*->comm\>'
-
-PATCH #2~#4:   memcpy
-PATCH #5~#6:   kstrdup
-PATCH #7:      strncpy
-PATCH #8~#9:   strcpy
-
-There is a BUILD_BUG_ON() inside get_task_comm(), so when you use
-get_task_comm(), it implies that the BUILD_BUG_ON() is necessary. However,
-we don't want to impose this restriction on code where the length can be
-changed, so we use __get_task_comm(), rather than the get_task_comm().
-
-One use case of get_task_comm() is in code that has already exposed the
-length to userspace. In such cases, we specifically add the BUILD_BUG_ON()
-to prevent developers from changing it. For more information, see
-commit 95af469c4f60 ("fs/binfmt_elf: replace open-coded string copy with
-get_task_comm").
+  Since user space can randomly change their names anyway, using locking
+  was always wrong for readers (for writers it probably does make sense
+  to have some lock - although practically speaking nobody cares there
+  either, but at least for a writer some kind of race could have
+  long-term mixed results
 
 Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/ [0]
+Link: https://lore.kernel.org/all/CAHk-=wivfrF0_zvf+oj6==Sh=-npJooP8chLPEfaFV0oNYTTBA@mail.gmail.com [0]
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Matus Jokay <matus.jokay@stuba.sk>
+---
+ fs/exec.c             | 10 ++++++++--
+ include/linux/sched.h |  4 ++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-Changes:
-v4->v5:
-- Drop changes in the mm/kmemleak.c as it was fixed by
-  commit 0b84780134fb ("mm/kmemleak: replace strncpy() with strscpy()")
-- Drop changes in kernel/tsacct.c as it was fixed by
-  commmit 0fe2356434e ("tsacct: replace strncpy() with strscpy()")
-
-v3->v4: https://lore.kernel.org/linux-mm/20240729023719.1933-1-laoar.shao@gmail.com/
-- Rename __kstrndup() to __kmemdup_nul() and define it inside mm/util.c
-  (Matthew)
-- Remove unused local varaible (Simon)
-
-v2->v3: https://lore.kernel.org/all/20240621022959.9124-1-laoar.shao@gmail.com/
-- Deduplicate code around kstrdup (Andrew)
-- Add commit log for dropping task_lock (Catalin)
-
-v1->v2: https://lore.kernel.org/bpf/20240613023044.45873-1-laoar.shao@gmail.com/
-- Add comment for dropping task_lock() in __get_task_comm() (Alexei)
-- Drop changes in trace event (Steven)
-- Fix comment on task comm (Matus)
-
-v1: https://lore.kernel.org/all/20240602023754.25443-1-laoar.shao@gmail.com/
-
-Yafang Shao (9):
-  fs/exec: Drop task_lock() inside __get_task_comm()
-  auditsc: Replace memcpy() with __get_task_comm()
-  security: Replace memcpy() with __get_task_comm()
-  bpftool: Ensure task comm is always NUL-terminated
-  mm/util: Fix possible race condition in kstrdup()
-  mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
-  tracing: Replace strncpy() with __get_task_comm()
-  net: Replace strcpy() with __get_task_comm()
-  drm: Replace strcpy() with __get_task_comm()
-
- drivers/gpu/drm/drm_framebuffer.c     |  2 +-
- drivers/gpu/drm/i915/i915_gpu_error.c |  2 +-
- fs/exec.c                             | 10 ++++-
- include/linux/sched.h                 |  4 +-
- kernel/auditsc.c                      |  6 +--
- kernel/trace/trace.c                  |  2 +-
- kernel/trace/trace_events_hist.c      |  2 +-
- mm/util.c                             | 61 ++++++++++++---------------
- net/ipv6/ndisc.c                      |  2 +-
- security/lsm_audit.c                  |  4 +-
- security/selinux/selinuxfs.c          |  2 +-
- tools/bpf/bpftool/pids.c              |  2 +
- 12 files changed, 49 insertions(+), 50 deletions(-)
-
+diff --git a/fs/exec.c b/fs/exec.c
+index e55efc761947..6a0ff2e3631f 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1195,12 +1195,18 @@ static int unshare_sighand(struct task_struct *me)
+ 	return 0;
+ }
+ 
++/*
++ * User space can randomly change their names anyway, so locking for readers
++ * doesn't make sense. For writers, locking is probably necessary, as a race
++ * condition could lead to long-term mixed results.
++ * The strscpy_pad() in __set_task_comm() can ensure that the task comm is
++ * always NUL-terminated. Therefore the race condition between reader and writer
++ * is not an issue.
++ */
+ char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
+ {
+-	task_lock(tsk);
+ 	/* Always NUL terminated and zero-padded */
+ 	strscpy_pad(buf, tsk->comm, buf_size);
+-	task_unlock(tsk);
+ 	return buf;
+ }
+ EXPORT_SYMBOL_GPL(__get_task_comm);
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f8d150343d42..71002f0fc085 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1096,9 +1096,9 @@ struct task_struct {
+ 	/*
+ 	 * executable name, excluding path.
+ 	 *
+-	 * - normally initialized setup_new_exec()
++	 * - normally initialized begin_new_exec()
+ 	 * - access it with [gs]et_task_comm()
+-	 * - lock it with task_lock()
++	 * - lock it with task_lock() for writing
+ 	 */
+ 	char				comm[TASK_COMM_LEN];
+ 
 -- 
 2.34.1
+
 
