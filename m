@@ -1,81 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-24955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47DED94705F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 22:02:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0705F94709E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 23:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 684821C2080D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 20:02:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 308B91C20835
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 21:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54073130A54;
-	Sun,  4 Aug 2024 20:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F4C139D13;
+	Sun,  4 Aug 2024 21:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LrbLq3Px"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RFc9LAuV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7ABFC0E
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Aug 2024 20:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CD6AD59
+	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Aug 2024 21:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722801728; cv=none; b=Ip83eZiJtn5CrkKH8CBkS5pyMaJXiq2tKwEn+Kcl+3dpM/iJhr6NH10rblCPJKP9cvVsBsFMSUQPmBGNhLAf+AbK+O0Q0A0yuJlp+GjzI6Vvur2cWCqZxxc7kFBWcDsUMqDhLkg6Ca8AzzOKx8pF2kQwKqKKMQoaB7AURsCIoqc=
+	t=1722806008; cv=none; b=R9JQ66MKrUi5pvs1GqKdDIo7VVP8Lvi5Wb3rIJzieothkZIjlvz/WqE9tL2bxtFXvLK/2UWg/YSB28RNrMBhpz76clrpDVwq1EcSy3A8qgyQigPnH9OLWXiArmePcx/ZpclQGkV8Ze7HZ7/c7bxNxCJE8xRwSOF9FPiVshvr8K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722801728; c=relaxed/simple;
-	bh=H+rtlATAt9OolKawgkfo2ZCZccJCrnu6Q2G3/BugDm8=;
+	s=arc-20240116; t=1722806008; c=relaxed/simple;
+	bh=+GeISNPwhgcj7l5w33ijUvwoMV8O9/0RoBfS/JLCrjE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8HRPJ//SdMJWXdwDGwckqWqvU/F4EA4ZHqR1xnQ04JGBU+t/bhn/gKlLU6Onoy1p4WFKku7WfRq5zvHgfG6o6kAqB8qKEixn50pFLhbZNaU8zheNYuh2iK8xoBOF7rvjdTYJzH0EIuk0gRydRb4e+dYgmnoPnv9ixI21Z9Hflg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LrbLq3Px; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722801726;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H+rtlATAt9OolKawgkfo2ZCZccJCrnu6Q2G3/BugDm8=;
-	b=LrbLq3PxhxS61FAh/VWX0MErMy8X0x14ZFQp11Q7Bd4FUTAEcBalim8G78RbP8torjQNlg
-	al/jC8U8qNmS25WnFNGu6CRlpEc6Sm0lMKIA78QkXZ4bPT4UpgNS8+udsfxsNxPe2cGDuN
-	iXJiHKVWYrjeCPiyEin+zMgxBZkAXZk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-529-GSJVXezxNgeCIAJSp2csjg-1; Sun,
- 04 Aug 2024 16:02:02 -0400
-X-MC-Unique: GSJVXezxNgeCIAJSp2csjg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5DC6B1955D45;
-	Sun,  4 Aug 2024 20:02:00 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.47])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2E7E21955F40;
-	Sun,  4 Aug 2024 20:01:55 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  4 Aug 2024 22:01:58 +0200 (CEST)
-Date: Sun, 4 Aug 2024 22:01:53 +0200
-From: Oleg Nesterov <oleg@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZCYeqFVYU1uq9zBO2mzmHgYp70yMaPoJqPcxR8ybYSF3xImTNEh9r+JUynJL+40CD2cL2pqFJwANNPXAIL1/lCGi8BnaysjKfnTp3fQzMWvezbBZIIOxRNW9DDG2nWjR7/+U44JStly2nX18yVIdrrRoVPyyFOmbU4eD1PPQ8O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RFc9LAuV; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/SuZmhzCIUM3ZeO9G1RBpQX5N2WkFMVYtvGT+6W1Q1s=; b=RFc9LAuVsT1+MxbDwUs3hRA1iF
+	Wjb2oxYSYxD9oY2FJfE7jdL6Zaqll5DVq88spPx5l6tvodTvJbJt6PuTryHPEsESQp05yEAyTNvjC
+	FZHOQ2DPKmvv71DoVCm5EDvDrewhtKZUgT6v6+TUPuVb+WPxKzK+SFNxoKr5tYIZEK87xOqBejlNT
+	Kwe78FDDrGoR7SxJX6qYBAeg44zl/hdEozL/qtEiFIqf1LvQn08AoMIrrpzTo0O0KYAHIcc/8WFG4
+	hoGsnevV34ZJDKax0Isuhyl2bZRgl2BfP3LwcadvO171/MdEbgKQJx1kvW2arIm79Etdge8ujhtiV
+	yirz2N+w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1saiXa-00000001aoa-1FcU;
+	Sun, 04 Aug 2024 21:13:22 +0000
+Date: Sun, 4 Aug 2024 22:13:22 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Brian Mak <makb@juniper.net>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] piped/ptraced coredump (was: Dump smaller VMAs first
- in ELF cores)
-Message-ID: <20240804200153.GC27866@redhat.com>
-References: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
- <20240804152327.GA27866@redhat.com>
- <CAHk-=whg0d5rxiEcPFApm+4FC2xq12sjynDkGHyTFNLr=tPmiw@mail.gmail.com>
- <20240804185338.GB27866@redhat.com>
- <CAHk-=wjr0p5CxbC-iGEznupau936D24iotTZi7eFXqgKX-otbg@mail.gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fix bitmap corruption on close_range() with
+ CLOSE_RANGE_UNSHARE
+Message-ID: <20240804211322.GD5334@ZenIV>
+References: <20240803225054.GY5334@ZenIV>
+ <CAHk-=wgDgy++ydcF6U2GOLAAxTB526ctk1SS7s1y=1HaexwcvA@mail.gmail.com>
+ <20240804003405.GA5334@ZenIV>
+ <20240804034739.GB5334@ZenIV>
+ <CAHk-=wgH=M9G02hhgPL36cN3g21MmGbg7zAeS6HtN9LarY_PYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,45 +64,108 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjr0p5CxbC-iGEznupau936D24iotTZi7eFXqgKX-otbg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <CAHk-=wgH=M9G02hhgPL36cN3g21MmGbg7zAeS6HtN9LarY_PYg@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 08/04, Linus Torvalds wrote:
->
-> On Sun, 4 Aug 2024 at 11:53, Oleg Nesterov <oleg@redhat.com> wrote:
+On Sun, Aug 04, 2024 at 08:18:14AM -0700, Linus Torvalds wrote:
+> On Sat, 3 Aug 2024 at 20:47, Al Viro <viro@zeniv.linux.org.uk> wrote:
 > >
-> > Apart from SIGKILL, the dumper already has the full control.
->
-> What do you mean? It's a regular usermodehelper. It gets the dump data
-> as input. That's all the control it has.
+> >         bitmap_copy_and_extend(nfdt->open_fds, ofdt->open_fds,
+> >                         copy_words * BITS_PER_LONG, nwords * BITS_PER_LONG);
+> 
+> Ok, thinking about it, I like this interface, since it looks like the
+> compiler would see that it's in BITS_PER_LONG chunks if we inline it
+> and decide it's important.
+> 
+> So make it so.
 
-I meant, the dumping thread can't exit until the dumper reads the data
-from stdin or closes the pipe. Until then the damper can read /proc/pid/mem
-and do other things.
+FWIW, what I'm testing right now is the patch below; it does fix the reproducer
+and it seems to be having no problems with xfstests so far.  Needs profiling;
+again, no visible slowdowns on xfstests, but...
 
-> > And note that the dumper can already use ptrace.
->
-> .. with the normal ptrace() rules, yes.
->
-> You realize that some setups literally disable ptrace() system calls,
-> right? Which your patch now effectively sidesteps.
 
-Well. If, say, selinux disables ptrace, then ptrace_attach() in this
-patch should also fail.
-
-But if some setups disable sys_ptrace() as a system call... then yes,
-I didn't know that.
-
-> THAT is why I don't like it. ptrace() is *dangerous*.
-
-And horrible ;)
-
-> Just adding some implicit tracing willy-nilly needs to be something
-> people really worry about.
-
-Ok, as I said I won't insist.
-
-Oleg.
-
+diff --git a/fs/file.c b/fs/file.c
+index a11e59b5d602..655338effe9c 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -46,27 +46,23 @@ static void free_fdtable_rcu(struct rcu_head *rcu)
+ #define BITBIT_NR(nr)	BITS_TO_LONGS(BITS_TO_LONGS(nr))
+ #define BITBIT_SIZE(nr)	(BITBIT_NR(nr) * sizeof(long))
+ 
++#define fdt_words(fdt) ((fdt)->max_fds / BITS_PER_LONG) // words in ->open_fds
+ /*
+  * Copy 'count' fd bits from the old table to the new table and clear the extra
+  * space if any.  This does not copy the file pointers.  Called with the files
+  * spinlock held for write.
+  */
+-static void copy_fd_bitmaps(struct fdtable *nfdt, struct fdtable *ofdt,
+-			    unsigned int count)
++static inline void copy_fd_bitmaps(struct fdtable *nfdt, struct fdtable *ofdt,
++			    unsigned int copy_words)
+ {
+-	unsigned int cpy, set;
+-
+-	cpy = count / BITS_PER_BYTE;
+-	set = (nfdt->max_fds - count) / BITS_PER_BYTE;
+-	memcpy(nfdt->open_fds, ofdt->open_fds, cpy);
+-	memset((char *)nfdt->open_fds + cpy, 0, set);
+-	memcpy(nfdt->close_on_exec, ofdt->close_on_exec, cpy);
+-	memset((char *)nfdt->close_on_exec + cpy, 0, set);
+-
+-	cpy = BITBIT_SIZE(count);
+-	set = BITBIT_SIZE(nfdt->max_fds) - cpy;
+-	memcpy(nfdt->full_fds_bits, ofdt->full_fds_bits, cpy);
+-	memset((char *)nfdt->full_fds_bits + cpy, 0, set);
++	unsigned int nwords = fdt_words(nfdt);
++
++	bitmap_copy_and_extend(nfdt->open_fds, ofdt->open_fds,
++			copy_words * BITS_PER_LONG, nwords * BITS_PER_LONG);
++	bitmap_copy_and_extend(nfdt->close_on_exec, ofdt->close_on_exec,
++			copy_words * BITS_PER_LONG, nwords * BITS_PER_LONG);
++	bitmap_copy_and_extend(nfdt->full_fds_bits, ofdt->full_fds_bits,
++			copy_words, nwords);
+ }
+ 
+ /*
+@@ -84,7 +80,7 @@ static void copy_fdtable(struct fdtable *nfdt, struct fdtable *ofdt)
+ 	memcpy(nfdt->fd, ofdt->fd, cpy);
+ 	memset((char *)nfdt->fd + cpy, 0, set);
+ 
+-	copy_fd_bitmaps(nfdt, ofdt, ofdt->max_fds);
++	copy_fd_bitmaps(nfdt, ofdt, fdt_words(ofdt));
+ }
+ 
+ /*
+@@ -379,7 +375,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
+ 		open_files = sane_fdtable_size(old_fdt, max_fds);
+ 	}
+ 
+-	copy_fd_bitmaps(new_fdt, old_fdt, open_files);
++	copy_fd_bitmaps(new_fdt, old_fdt, open_files / BITS_PER_LONG);
+ 
+ 	old_fds = old_fdt->fd;
+ 	new_fds = new_fdt->fd;
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 8c4768c44a01..d3b66d77df7a 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -270,6 +270,18 @@ static inline void bitmap_copy_clear_tail(unsigned long *dst,
+ 		dst[nbits / BITS_PER_LONG] &= BITMAP_LAST_WORD_MASK(nbits);
+ }
+ 
++static inline void bitmap_copy_and_extend(unsigned long *to,
++					  const unsigned long *from,
++					  unsigned int count, unsigned int size)
++{
++	unsigned int copy = BITS_TO_LONGS(count);
++
++	memcpy(to, from, copy * sizeof(long));
++	if (count % BITS_PER_LONG)
++		to[copy - 1] &= BITMAP_LAST_WORD_MASK(count);
++	memset(to + copy, 0, bitmap_size(size) - copy * sizeof(long));
++}
++
+ /*
+  * On 32-bit systems bitmaps are represented as u32 arrays internally. On LE64
+  * machines the order of hi and lo parts of numbers match the bitmap structure.
 
