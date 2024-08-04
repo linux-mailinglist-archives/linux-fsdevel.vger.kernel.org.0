@@ -1,171 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-24956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0705F94709E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 23:13:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6451C947126
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 00:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 308B91C20835
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 21:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D111F21054
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 22:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F4C139D13;
-	Sun,  4 Aug 2024 21:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RFc9LAuV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FEA139590;
+	Sun,  4 Aug 2024 22:00:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from sxb1plsmtpa01-01.prod.sxb1.secureserver.net (sxb1plsmtpa01-01.prod.sxb1.secureserver.net [188.121.53.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CD6AD59
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Aug 2024 21:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBDF1755C
+	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Aug 2024 22:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722806008; cv=none; b=R9JQ66MKrUi5pvs1GqKdDIo7VVP8Lvi5Wb3rIJzieothkZIjlvz/WqE9tL2bxtFXvLK/2UWg/YSB28RNrMBhpz76clrpDVwq1EcSy3A8qgyQigPnH9OLWXiArmePcx/ZpclQGkV8Ze7HZ7/c7bxNxCJE8xRwSOF9FPiVshvr8K4=
+	t=1722808856; cv=none; b=dcSck37YpdKfDGzFuRazSUlKVoyBv7dAfIRDx68o7u17o3P/xuMR62VwWSWb5alwg9DyH3JRBzrW6L7yvA1pC7jRfvaZF9iu0WX4cxLrSIGTbeSXNCiRu1K+alAEu3b10SkyCEsMir2bu3l6bik6BKHpIwroAaIOjxcPCgD0bWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722806008; c=relaxed/simple;
-	bh=+GeISNPwhgcj7l5w33ijUvwoMV8O9/0RoBfS/JLCrjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZCYeqFVYU1uq9zBO2mzmHgYp70yMaPoJqPcxR8ybYSF3xImTNEh9r+JUynJL+40CD2cL2pqFJwANNPXAIL1/lCGi8BnaysjKfnTp3fQzMWvezbBZIIOxRNW9DDG2nWjR7/+U44JStly2nX18yVIdrrRoVPyyFOmbU4eD1PPQ8O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=RFc9LAuV; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/SuZmhzCIUM3ZeO9G1RBpQX5N2WkFMVYtvGT+6W1Q1s=; b=RFc9LAuVsT1+MxbDwUs3hRA1iF
-	Wjb2oxYSYxD9oY2FJfE7jdL6Zaqll5DVq88spPx5l6tvodTvJbJt6PuTryHPEsESQp05yEAyTNvjC
-	FZHOQ2DPKmvv71DoVCm5EDvDrewhtKZUgT6v6+TUPuVb+WPxKzK+SFNxoKr5tYIZEK87xOqBejlNT
-	Kwe78FDDrGoR7SxJX6qYBAeg44zl/hdEozL/qtEiFIqf1LvQn08AoMIrrpzTo0O0KYAHIcc/8WFG4
-	hoGsnevV34ZJDKax0Isuhyl2bZRgl2BfP3LwcadvO171/MdEbgKQJx1kvW2arIm79Etdge8ujhtiV
-	yirz2N+w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1saiXa-00000001aoa-1FcU;
-	Sun, 04 Aug 2024 21:13:22 +0000
-Date: Sun, 4 Aug 2024 22:13:22 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fix bitmap corruption on close_range() with
- CLOSE_RANGE_UNSHARE
-Message-ID: <20240804211322.GD5334@ZenIV>
-References: <20240803225054.GY5334@ZenIV>
- <CAHk-=wgDgy++ydcF6U2GOLAAxTB526ctk1SS7s1y=1HaexwcvA@mail.gmail.com>
- <20240804003405.GA5334@ZenIV>
- <20240804034739.GB5334@ZenIV>
- <CAHk-=wgH=M9G02hhgPL36cN3g21MmGbg7zAeS6HtN9LarY_PYg@mail.gmail.com>
+	s=arc-20240116; t=1722808856; c=relaxed/simple;
+	bh=Mvx7rAiUch3Cfin57xpAs/8PbH19eIrf6E8R7cmXm98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q31bymlnbvt2o3TcVptl3MVNPeT732Bdd5g5OPBAliSsyiQyvlMpFr2JLw8rWplL0NaZqgXdoVFXjpjrwnOoDzXK+FLFC5Pm7XP+80pDoHHdAJbtmSX7jLaMBQep843DpCs/rIFQx1GzyNzEyp8IHMYGjFCX/fBMtyu3OGnCrqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.90] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPA
+	id aiaIsPLtwT7r3aiaJs6CIe; Sun, 04 Aug 2024 14:16:12 -0700
+X-CMAE-Analysis: v=2.4 cv=eKHYj2p1 c=1 sm=1 tr=0 ts=66afef9c
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8
+ a=AYFBRnY8-RZy9VRH-ocA:9 a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <ee839d00-fd42-4b69-951d-8571140c077b@squashfs.org.uk>
+Date: Sun, 4 Aug 2024 22:16:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgH=M9G02hhgPL36cN3g21MmGbg7zAeS6HtN9LarY_PYg@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7] squashfs: Add symlink size check in squash_read_inode
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, squashfs-devel@lists.sourceforge.net,
+ syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <20240803040729.1677477-1-lizhi.xu@windriver.com>
+ <20240803074349.3599957-1-lizhi.xu@windriver.com>
+Content-Language: en-GB
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20240803074349.3599957-1-lizhi.xu@windriver.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfDB39zMuKKKGl0cRk055VM/7sOXB+HnqoLITDfM9xE1xUANA6G3b+/JvI6+zDqGRPd1eI5bq9/MMC4F4Dk/xP7JnyEusxHloHYR5RmJW9zaAsQJeDgpN
+ OF9+z5yVJj+JgI6ScB2c0DUAreC8dcrHP8KCtDuWs4RlbRDZwOu+n8+AdFKt4bSLwgrRVk/Ag1uxnLH1dWgXUn54l+2GqXF+kqLjvq5sItCEC5CMuiLgusaO
+ k+V9In1ctMh+9k+wE0e2/9meKkNuPR/nhDptnb1pAogFplkMC4Bd+yuGJFrmZTOtNTvEm9kX5oi8Alfuo4WzeIsZajSHSMpLo5eJbfoCa72qtwxUrPr944Cg
+ Ys02USnup0N/Yy+cUgGUKolQ0EwWUf6JnMgyKb2WebFP4NcTES+hz2wvoDzFEYVirLz6nqeMeIwlf4xKV8DYVbPg/fcT+ob8rgBGInNrCza5OCS+Q8fdvDmm
+ UfeIlDrGrvwivP1+AyubIg7lu1Sa3XA2TIDvWxdAGhoCmkF6hf/DxKaK1J3E3itweHuVdK03QvxBuQ13
 
-On Sun, Aug 04, 2024 at 08:18:14AM -0700, Linus Torvalds wrote:
-> On Sat, 3 Aug 2024 at 20:47, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >         bitmap_copy_and_extend(nfdt->open_fds, ofdt->open_fds,
-> >                         copy_words * BITS_PER_LONG, nwords * BITS_PER_LONG);
+On 03/08/2024 08:43, Lizhi Xu wrote:
+> syzbot report KMSAN: uninit-value in pick_link, the root cause is that
+> squashfs_symlink_read_folio did not check the length, resulting in folio
+> not being initialized and did not return the corresponding error code.
 > 
-> Ok, thinking about it, I like this interface, since it looks like the
-> compiler would see that it's in BITS_PER_LONG chunks if we inline it
-> and decide it's important.
+> The length is calculated from i_size, this case is about symlink, so i_size
+> value is derived from symlink_size, so it is necessary to add a check to
+> confirm that symlink_size value is valid, otherwise an error -EINVAL will
+> be returned.
 > 
-> So make it so.
+> If symlink_size is too large, it may result in a negative value when
+> calculating length in squashfs_symlink_read_folio due to int overflow,
+> and its value must be greater than PAGE_SIZE at this time.
+> 
+> Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+>   fs/squashfs/inode.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+> index 16bd693d0b3a..bed6764e4461 100644
+> --- a/fs/squashfs/inode.c
+> +++ b/fs/squashfs/inode.c
+> @@ -273,14 +273,21 @@ int squashfs_read_inode(struct inode *inode, long long ino)
+>   	case SQUASHFS_SYMLINK_TYPE:
+>   	case SQUASHFS_LSYMLINK_TYPE: {
+>   		struct squashfs_symlink_inode *sqsh_ino = &squashfs_ino.symlink;
+> +		loff_t symlink_size;
+>   
+>   		err = squashfs_read_metadata(sb, sqsh_ino, &block, &offset,
+>   				sizeof(*sqsh_ino));
+>   		if (err < 0)
+>   			goto failed_read;
+>   
+> +		symlink_size = le32_to_cpu(sqsh_ino->symlink_size);
+> +		if (symlink_size > PAGE_SIZE) {
+> +			ERROR("Corrupted symlink, size [%llu]\n", symlink_size);
+> +			return -EINVAL;
+> +		}
+> +
+>   		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+> -		inode->i_size = le32_to_cpu(sqsh_ino->symlink_size);
+> +		inode->i_size = symlink_size;
 
-FWIW, what I'm testing right now is the patch below; it does fix the reproducer
-and it seems to be having no problems with xfstests so far.  Needs profiling;
-again, no visible slowdowns on xfstests, but...
+NACK. I see no reason to introduce an intermediate variable here.
 
+Please do what Al Viro suggested.
 
-diff --git a/fs/file.c b/fs/file.c
-index a11e59b5d602..655338effe9c 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -46,27 +46,23 @@ static void free_fdtable_rcu(struct rcu_head *rcu)
- #define BITBIT_NR(nr)	BITS_TO_LONGS(BITS_TO_LONGS(nr))
- #define BITBIT_SIZE(nr)	(BITBIT_NR(nr) * sizeof(long))
- 
-+#define fdt_words(fdt) ((fdt)->max_fds / BITS_PER_LONG) // words in ->open_fds
- /*
-  * Copy 'count' fd bits from the old table to the new table and clear the extra
-  * space if any.  This does not copy the file pointers.  Called with the files
-  * spinlock held for write.
-  */
--static void copy_fd_bitmaps(struct fdtable *nfdt, struct fdtable *ofdt,
--			    unsigned int count)
-+static inline void copy_fd_bitmaps(struct fdtable *nfdt, struct fdtable *ofdt,
-+			    unsigned int copy_words)
- {
--	unsigned int cpy, set;
--
--	cpy = count / BITS_PER_BYTE;
--	set = (nfdt->max_fds - count) / BITS_PER_BYTE;
--	memcpy(nfdt->open_fds, ofdt->open_fds, cpy);
--	memset((char *)nfdt->open_fds + cpy, 0, set);
--	memcpy(nfdt->close_on_exec, ofdt->close_on_exec, cpy);
--	memset((char *)nfdt->close_on_exec + cpy, 0, set);
--
--	cpy = BITBIT_SIZE(count);
--	set = BITBIT_SIZE(nfdt->max_fds) - cpy;
--	memcpy(nfdt->full_fds_bits, ofdt->full_fds_bits, cpy);
--	memset((char *)nfdt->full_fds_bits + cpy, 0, set);
-+	unsigned int nwords = fdt_words(nfdt);
-+
-+	bitmap_copy_and_extend(nfdt->open_fds, ofdt->open_fds,
-+			copy_words * BITS_PER_LONG, nwords * BITS_PER_LONG);
-+	bitmap_copy_and_extend(nfdt->close_on_exec, ofdt->close_on_exec,
-+			copy_words * BITS_PER_LONG, nwords * BITS_PER_LONG);
-+	bitmap_copy_and_extend(nfdt->full_fds_bits, ofdt->full_fds_bits,
-+			copy_words, nwords);
- }
- 
- /*
-@@ -84,7 +80,7 @@ static void copy_fdtable(struct fdtable *nfdt, struct fdtable *ofdt)
- 	memcpy(nfdt->fd, ofdt->fd, cpy);
- 	memset((char *)nfdt->fd + cpy, 0, set);
- 
--	copy_fd_bitmaps(nfdt, ofdt, ofdt->max_fds);
-+	copy_fd_bitmaps(nfdt, ofdt, fdt_words(ofdt));
- }
- 
- /*
-@@ -379,7 +375,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
- 		open_files = sane_fdtable_size(old_fdt, max_fds);
- 	}
- 
--	copy_fd_bitmaps(new_fdt, old_fdt, open_files);
-+	copy_fd_bitmaps(new_fdt, old_fdt, open_files / BITS_PER_LONG);
- 
- 	old_fds = old_fdt->fd;
- 	new_fds = new_fdt->fd;
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 8c4768c44a01..d3b66d77df7a 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -270,6 +270,18 @@ static inline void bitmap_copy_clear_tail(unsigned long *dst,
- 		dst[nbits / BITS_PER_LONG] &= BITMAP_LAST_WORD_MASK(nbits);
- }
- 
-+static inline void bitmap_copy_and_extend(unsigned long *to,
-+					  const unsigned long *from,
-+					  unsigned int count, unsigned int size)
-+{
-+	unsigned int copy = BITS_TO_LONGS(count);
-+
-+	memcpy(to, from, copy * sizeof(long));
-+	if (count % BITS_PER_LONG)
-+		to[copy - 1] &= BITMAP_LAST_WORD_MASK(count);
-+	memset(to + copy, 0, bitmap_size(size) - copy * sizeof(long));
-+}
-+
- /*
-  * On 32-bit systems bitmaps are represented as u32 arrays internally. On LE64
-  * machines the order of hi and lo parts of numbers match the bitmap structure.
+Thanks
+
+Phillip Lougher
+--
+Squashfs author and maintainer
+
+BTW I have been on vacation since last week, and only saw
+this today.
+
+>   		inode->i_op = &squashfs_symlink_inode_ops;
+>   		inode_nohighmem(inode);
+>   		inode->i_data.a_ops = &squashfs_symlink_aops;
+
 
