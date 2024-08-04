@@ -1,101 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-24947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55CDF946D5A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 09:59:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 982F2946D5C
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 10:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59673B210B2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 07:59:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41015B20D15
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 08:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABE421345;
-	Sun,  4 Aug 2024 07:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2679119470;
+	Sun,  4 Aug 2024 08:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYvdakcs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knYXW94Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3F01802E;
-	Sun,  4 Aug 2024 07:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4BA134AB
+	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Aug 2024 08:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722758350; cv=none; b=Whp+8BLwB+qNn40GrPRPSxKcUJcnS46FMCTYd5e2kkhUr9E+EiEmfPv6u9FTo1q5Ap7neWnVLRRJO2QZPe8Wv/setcONOuJ/r2fuD/cELX9mTf52USxKVno8FC22DZn4ybgXZaL1VbZ6W+1ba0nStIvsIGW9WuDHgX5YQ+pYBpA=
+	t=1722758622; cv=none; b=ANvYukR2MezT/57iUNWL7loZgiEmjDQF/avrrKynIBaRkkhZL6AdbG87DHHpASv2Vpe0whs16bVGelxKyuPyChOk7i2By7rQ1CieCYNm35su0/XLHt0XKcgTmW43Gs3J3MfoXTsph//F3Afgw36erz2CPqAEDQ+CRN/KwbOPaNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722758350; c=relaxed/simple;
-	bh=jrG/JeyScrX8i1Juroefr8qRWmAWEGD49Vd0gv0ZMbg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CENF3EioKgD2uvbhjqU6c4gBMypCfhYIghbPvXKszQvZnrjSMN3J0zFwsD4YxxHBBcWM65K+c0E/2kn90Jnu11NXLKgSdoPaFNxuRLpnWrEM4GymSamHc9QxQfqrTFH2bt1rRIZV2mrHz4viD5hDWKD6VWegsNAVpxQsCTvx7lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYvdakcs; arc=none smtp.client-ip=209.85.167.181
+	s=arc-20240116; t=1722758622; c=relaxed/simple;
+	bh=CqNNbW/EsBaUObUF2KnK4vcgcw9cffFJLSZewzDtJko=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M1rgpQssK6ndVF0J5I6EiiYUrANSJnnWPEBXdFBE5aey0KQTlj99P9w/IVfNHtcdGsCoN4TFVr6llvla33dfr4dYvqQHp2GQRyfMe1uaYO2FK4q+dOUNu/Swpg4vX6JoCILY9/g80+iPvU9wySk9Ok0L6Cm6k9PEWu/wKNoh82c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knYXW94Q; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3db130a872fso6647191b6e.2;
-        Sun, 04 Aug 2024 00:59:08 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d23caf8ddso8218796b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Aug 2024 01:03:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722758348; x=1723363148; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=leoSzvc1irTIRY4t+RZAVg9wXL8E4KK0Ycetp1tzeI4=;
-        b=LYvdakcsZEIuaiD8MjbCGaB+4s11FpfIaVfqLz+mh4ElP2jUGk9zYGClOT4ZIjic/E
-         b/DVM9BoPdJOTYFIMztRCDkl0Flx5NzoLn86EqDx6zZeoKYoE1r1990zVHyJXIKr+uld
-         SEYiJM08BhUdo5TJNAVhZTF64AyW5Nm8jFGH59fDjFkzkyThLVNemcvPE8ykpHGOmv1U
-         zLcrZfD5SRQVOggr3+5sn/22pRb7MI6AX+hrtsVCukoIg6DxB86VEozT8aiNZZpB8TJ6
-         VE+1m9Z/FSNDYbeIUGWGRM82ULedjYGzRRRaqJoVRh4G+ABP85Tj6TBOOlYVopHfxUAK
-         0F5Q==
+        d=gmail.com; s=20230601; t=1722758620; x=1723363420; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cl1rHoOZW4CfvQTCyDf7+3EuviFeFNZFpQCf74PII9c=;
+        b=knYXW94QcCCp0SbXJc84taSSfSuFWZbdm649dCbfe316hBmAkb/8kMF99fcjVeny8M
+         4W7ue5SgTqR4BYmfVp8S8p9NM8OzRYRBW0LpJUJUZYM9qPQkTcNb5TvnNZGtQkh+bky2
+         oMEGuROtv510yXa1mUGmQ+9sTFdeBRmRTNjNa/XAfMsyri308UkxsAogbkfgm4TDvHgt
+         z7ZgtoKa8fOqk621kHyV+mIJT5NzJEQuoZwmAiovQ+u5hVJt8CAPM80S+KJ8/uN3ZFsI
+         yEb2EogBJycTLVf3O8YV0nzfP/bZlD/Uw/EvA7I3GPbQCAY+ZZoCwUrxdxjkGEwI7XHj
+         omVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722758348; x=1723363148;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=leoSzvc1irTIRY4t+RZAVg9wXL8E4KK0Ycetp1tzeI4=;
-        b=FjsaQtR/Dy2jl2QkVf+5q2Eghe0dW3U60RP+wXCENTkz2cCFNR43bUVLCysfOccotX
-         c5s6NjlzzPUMf9jxDA0hLPY8P89vU8+rfUGFwpvAs8d77NgfYR1LcKy8hApVYpqGOf02
-         2dHybn+ECpG9ydLlWxXsrH+iQ+vuUklFHQ0LiJC3DwCmezqYsMeA1u7eX8kRidNCkOxD
-         YvUF/155QHoB66AW7PMnTSOncgp/wOoREQ0KlLOhfwBSe0oqGZfkTBIcrtnBlpI2E/VX
-         BK1Y1FOrNTtIJsAlESMc4m3zGGsTAqtyPu8n2IPnQYSg4d1n0sGQID0qSVgKwqy3DvUr
-         GoKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLU6xAd99k/iFZF4tl8jG3tBIeKDPzxewjqh57W5OzIIuz4MgVwrCNWDUR1VuF6nQVMpxbD6dhksnmpMo1tA1y72V7LZhmbCisTIXuESocPoqClB0TBSAgoMRWpNfgpnELolDeXjWVBpPTW9K4ZFxC+IPvj3yy1AwCJBn7MQPyIEWV3S9VdA70uSIjj+OlrpfON8bFLjKDoaywcIqGQJzJqaevhH/3SBcpCLAgSZaCUd0mi9hyJv33nQrUTrf4Hu7w1Uo6lpWis1d1hMThoR8uIY1xMMow2wzXhQKBBnjjNeDE5y5cn+2Ly8+mlv9NZUhGCmRgFw==
-X-Gm-Message-State: AOJu0YzaiFvTDPizdQzbSp5eC1bjPm/jdI5t22ivJ8/Dyog9PJ799pdq
-	As4sI6u5M8hT3G5ZQViu6HIG7g3EAUsdgSmaC66jnVYK5JmANpuy
-X-Google-Smtp-Source: AGHT+IFvxFD9i5t49STUUYBZ5sy63mPUTCqzaYfVU1LOK5V4jv+UubPbJD8tYCgFeYVMewc026EG+Q==
-X-Received: by 2002:a05:6808:10d5:b0:3db:25f6:a62f with SMTP id 5614622812f47-3db5580f909mr13121118b6e.28.1722758347849;
-        Sun, 04 Aug 2024 00:59:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722758620; x=1723363420;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cl1rHoOZW4CfvQTCyDf7+3EuviFeFNZFpQCf74PII9c=;
+        b=FUgloM1ygC5xBgPpiclyuZOIF3f4zmv+4XtToWUOFLzv+9djf90wyd7nbDX5HIH9k8
+         XXx5GMfwKrz/ZIE6h/ags+GEDG6e0NEMTe7+xwekFwo4Vczrt/QlXBceSBPusuYf8bXg
+         h4o+gSuanEhp03f7+wA0tC1mZxahw/lAUWsqPl7VoaXBUzJjEVejZgcizZyVcVFs/gkg
+         wkCASKYTLs62X/g+KOr4/lPlNnq1wf6JGoudlOisJMV30+E+ZkkGt8N2qtwqC2770+bT
+         95ZQqPHBFiH0lYzyY8ICdQ9VC/rHTfmqOcyyBbmrMld8Ksk7z/hYSL77DBARuyWTDJHR
+         y0xA==
+X-Gm-Message-State: AOJu0Yyiq9Wtt7zg1W6CEEoSAmbVOVRkzKPtqfmVZyn2cMN6Ox28QtA3
+	AaSdWXzge2a2vISf8fUP7ayU5TRxqy3VVItODEViYuMeZqMD1bfO
+X-Google-Smtp-Source: AGHT+IHV1bJsjHXMyK/I3kSrFPKgJSnczzkvGgjWhvZ1817k9xrqQXqtD5m4Qmvx+gG4gAj0q1rF0A==
+X-Received: by 2002:a17:90b:4a08:b0:2c9:9fcd:aa51 with SMTP id 98e67ed59e1d1-2cff9419a1fmr9833368a91.5.1722758620359;
+        Sun, 04 Aug 2024 01:03:40 -0700 (PDT)
 Received: from localhost.localdomain ([39.144.105.172])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59178248sm46387605ad.202.2024.08.04.00.58.52
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4064c3sm8051899a91.10.2024.08.04.01.03.36
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 04 Aug 2024 00:59:07 -0700 (PDT)
+        Sun, 04 Aug 2024 01:03:39 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
-To: akpm@linux-foundation.org
-Cc: torvalds@linux-foundation.org,
-	ebiederm@xmission.com,
-	alexei.starovoitov@gmail.com,
-	rostedt@goodmis.org,
-	catalin.marinas@arm.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	audit@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
 	Yafang Shao <laoar.shao@gmail.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>
-Subject: [PATCH v5 9/9] drm: Replace strcpy() with __get_task_comm()
-Date: Sun,  4 Aug 2024 15:56:19 +0800
-Message-Id: <20240804075619.20804-10-laoar.shao@gmail.com>
+	Dave Chinner <david@fromorbit.com>
+Subject: [PATCH] fs: Add a new flag RWF_IOWAIT for preadv2(2)
+Date: Sun,  4 Aug 2024 16:02:51 +0800
+Message-Id: <20240804080251.21239-1-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.30.1 (Apple Git-130)
-In-Reply-To: <20240804075619.20804-1-laoar.shao@gmail.com>
-References: <20240804075619.20804-1-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,48 +83,101 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To prevent erros from occurring when the src string is longer than the
-dst string in strcpy(), we should use __get_task_comm() instead. This
-approach also facilitates future extensions to the task comm.
+Background
+==========
 
+Our big data workloads are deployed on XFS-based disks, and we frequently
+encounter hung tasks caused by xfs_ilock. These hung tasks arise because
+different applications may access the same files concurrently. For example,
+while a datanode task is writing to a file, a filebeat[0] task might be
+reading the same file concurrently. If the task writing to the file takes a
+long time, the task reading the file will hang due to contention on the XFS
+inode lock.
+
+This inode lock contention between writing and reading files only occurs on
+XFS, but not on other file systems such as EXT4. Dave provided a clear
+explanation for why this occurs only on XFS[1]:
+
+  : I/O is intended to be atomic to ordinary files and pipes and FIFOs.
+  : Atomic means that all the bytes from a single operation that started
+  : out together end up together, without interleaving from other I/O
+  : operations. [2]
+  : XFS is the only linux filesystem that provides this behaviour.
+
+As we have been running big data on XFS for years, we don't want to switch
+to other file systems like EXT4. Therefore, we plan to resolve these issues
+within XFS.
+
+Proposal
+========
+
+One solution we're currently exploring is leveraging the preadv2(2)
+syscall. By using the RWF_NOWAIT flag, preadv2(2) can avoid the XFS inode
+lock hung task. This can be illustrated as follows:
+
+  retry:
+      if (preadv2(fd, iovec, cnt, offset, RWF_NOWAIT) < 0) {
+          sleep(n)
+          goto retry;
+      }
+
+Since the tasks reading the same files are not critical tasks, a delay in
+reading is acceptable. However, RWF_NOWAIT not only enables IOCB_NOWAIT but
+also enables IOCB_NOIO. Therefore, if the file is not in the page cache, it
+will loop indefinitely until someone else reads it from disk, which is not
+acceptable.
+
+So we're planning to introduce a new flag, IOCB_IOWAIT, to preadv2(2). This
+flag will allow reading from the disk if the file is not in the page cache
+but will not allow waiting for the lock if it is held by others. With this
+new flag, we can resolve our issues effectively.
+
+Link: https://lore.kernel.org/linux-xfs/20190325001044.GA23020@dastard/ [0]
+Link: https://github.com/elastic/beats/tree/master/filebeat [1]
+Link: https://pubs.opengroup.org/onlinepubs/009695399/functions/read.html [2]
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Airlie <airlied@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>
 ---
- drivers/gpu/drm/drm_framebuffer.c     | 2 +-
- drivers/gpu/drm/i915/i915_gpu_error.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ include/linux/fs.h      | 6 ++++++
+ include/uapi/linux/fs.h | 5 ++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-index 888aadb6a4ac..25262b07ffaf 100644
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -868,7 +868,7 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
- 	INIT_LIST_HEAD(&fb->filp_head);
- 
- 	fb->funcs = funcs;
--	strcpy(fb->comm, current->comm);
-+	__get_task_comm(fb->comm, sizeof(fb->comm), current);
- 
- 	ret = __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
- 				    false, drm_framebuffer_free);
-diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
-index 96c6cafd5b9e..163457a6e484 100644
---- a/drivers/gpu/drm/i915/i915_gpu_error.c
-+++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-@@ -1412,7 +1412,7 @@ static bool record_context(struct i915_gem_context_coredump *e,
- 	rcu_read_lock();
- 	task = pid_task(ctx->pid, PIDTYPE_PID);
- 	if (task) {
--		strcpy(e->comm, task->comm);
-+		__get_task_comm(e->comm, sizeof(e->comm), task);
- 		e->pid = task->pid;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index fd34b5755c0b..5df7b5b0927a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3472,6 +3472,12 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags,
+ 			return -EPERM;
+ 		ki->ki_flags &= ~IOCB_APPEND;
  	}
- 	rcu_read_unlock();
++	if (flags & RWF_IOWAIT) {
++		kiocb_flags |= IOCB_NOWAIT;
++		/* IOCB_NOIO is not allowed for RWF_IOWAIT */
++		if (kiocb_flags & IOCB_NOIO)
++			return -EINVAL;
++	}
+ 
+ 	ki->ki_flags |= kiocb_flags;
+ 	return 0;
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 191a7e88a8ab..17a8c065d636 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -332,9 +332,12 @@ typedef int __bitwise __kernel_rwf_t;
+ /* Atomic Write */
+ #define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
+ 
++/* per-IO, allow waiting for IO, but not waiting for lock */
++#define RWF_IOWAIT	((__force __kernel_rwf_t)0x00000080)
++
+ /* mask of flags supported by the kernel */
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+-			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC)
++			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC | RWF_IOWAIT)
+ 
+ /* Pagemap ioctl */
+ #define PAGEMAP_SCAN	_IOWR('f', 16, struct pm_scan_arg)
 -- 
-2.34.1
+2.43.5
 
 
