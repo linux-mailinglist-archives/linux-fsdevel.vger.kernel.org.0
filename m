@@ -1,183 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-24948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982F2946D5C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 10:03:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB1F946F25
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 15:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41015B20D15
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 08:03:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ABA01F20F44
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 13:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2679119470;
-	Sun,  4 Aug 2024 08:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E86056766;
+	Sun,  4 Aug 2024 13:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knYXW94Q"
+	dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b="VO5GPWW6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from a1-bg02.venev.name (a1-bg02.venev.name [213.240.239.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4BA134AB
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Aug 2024 08:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D0DAD55;
+	Sun,  4 Aug 2024 13:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.240.239.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722758622; cv=none; b=ANvYukR2MezT/57iUNWL7loZgiEmjDQF/avrrKynIBaRkkhZL6AdbG87DHHpASv2Vpe0whs16bVGelxKyuPyChOk7i2By7rQ1CieCYNm35su0/XLHt0XKcgTmW43Gs3J3MfoXTsph//F3Afgw36erz2CPqAEDQ+CRN/KwbOPaNs=
+	t=1722779895; cv=none; b=A6Hd4mWA+5ejYxSP5pqc5AOyF8tsm6gKd816yB3a9cdqRkgHR6dtmgfOxU8l+ocyTZXtJ8QLjlWirubtCo6iAYFFwZ06q23rdKNNF2UpKrJk4Ul6gTuimla+LtHlmpvqWNqD7wFaQHPdSMyYvdNxIBHRdFSEuyyqzCYVQjkfAIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722758622; c=relaxed/simple;
-	bh=CqNNbW/EsBaUObUF2KnK4vcgcw9cffFJLSZewzDtJko=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M1rgpQssK6ndVF0J5I6EiiYUrANSJnnWPEBXdFBE5aey0KQTlj99P9w/IVfNHtcdGsCoN4TFVr6llvla33dfr4dYvqQHp2GQRyfMe1uaYO2FK4q+dOUNu/Swpg4vX6JoCILY9/g80+iPvU9wySk9Ok0L6Cm6k9PEWu/wKNoh82c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knYXW94Q; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d23caf8ddso8218796b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Aug 2024 01:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722758620; x=1723363420; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cl1rHoOZW4CfvQTCyDf7+3EuviFeFNZFpQCf74PII9c=;
-        b=knYXW94QcCCp0SbXJc84taSSfSuFWZbdm649dCbfe316hBmAkb/8kMF99fcjVeny8M
-         4W7ue5SgTqR4BYmfVp8S8p9NM8OzRYRBW0LpJUJUZYM9qPQkTcNb5TvnNZGtQkh+bky2
-         oMEGuROtv510yXa1mUGmQ+9sTFdeBRmRTNjNa/XAfMsyri308UkxsAogbkfgm4TDvHgt
-         z7ZgtoKa8fOqk621kHyV+mIJT5NzJEQuoZwmAiovQ+u5hVJt8CAPM80S+KJ8/uN3ZFsI
-         yEb2EogBJycTLVf3O8YV0nzfP/bZlD/Uw/EvA7I3GPbQCAY+ZZoCwUrxdxjkGEwI7XHj
-         omVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722758620; x=1723363420;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cl1rHoOZW4CfvQTCyDf7+3EuviFeFNZFpQCf74PII9c=;
-        b=FUgloM1ygC5xBgPpiclyuZOIF3f4zmv+4XtToWUOFLzv+9djf90wyd7nbDX5HIH9k8
-         XXx5GMfwKrz/ZIE6h/ags+GEDG6e0NEMTe7+xwekFwo4Vczrt/QlXBceSBPusuYf8bXg
-         h4o+gSuanEhp03f7+wA0tC1mZxahw/lAUWsqPl7VoaXBUzJjEVejZgcizZyVcVFs/gkg
-         wkCASKYTLs62X/g+KOr4/lPlNnq1wf6JGoudlOisJMV30+E+ZkkGt8N2qtwqC2770+bT
-         95ZQqPHBFiH0lYzyY8ICdQ9VC/rHTfmqOcyyBbmrMld8Ksk7z/hYSL77DBARuyWTDJHR
-         y0xA==
-X-Gm-Message-State: AOJu0Yyiq9Wtt7zg1W6CEEoSAmbVOVRkzKPtqfmVZyn2cMN6Ox28QtA3
-	AaSdWXzge2a2vISf8fUP7ayU5TRxqy3VVItODEViYuMeZqMD1bfO
-X-Google-Smtp-Source: AGHT+IHV1bJsjHXMyK/I3kSrFPKgJSnczzkvGgjWhvZ1817k9xrqQXqtD5m4Qmvx+gG4gAj0q1rF0A==
-X-Received: by 2002:a17:90b:4a08:b0:2c9:9fcd:aa51 with SMTP id 98e67ed59e1d1-2cff9419a1fmr9833368a91.5.1722758620359;
-        Sun, 04 Aug 2024 01:03:40 -0700 (PDT)
-Received: from localhost.localdomain ([39.144.105.172])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4064c3sm8051899a91.10.2024.08.04.01.03.36
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 04 Aug 2024 01:03:39 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Dave Chinner <david@fromorbit.com>
-Subject: [PATCH] fs: Add a new flag RWF_IOWAIT for preadv2(2)
-Date: Sun,  4 Aug 2024 16:02:51 +0800
-Message-Id: <20240804080251.21239-1-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+	s=arc-20240116; t=1722779895; c=relaxed/simple;
+	bh=ETnqFYAnoHQIpW7ILDV1tL4TbB923ixWcTBW6ZXtE7I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c5kxwdDi4hHR9pGYMP44GMV/WSaQ6a98a4en13Zayacb3+FIdL+Whq2c9cy33X1+znioZqUxNlIUzDjjK4XU8SFM0BZEMf+/xfB7O+5ivj5rQyQnNJEFkOKpyCENKKd8AjSaJOWTdgFEjmrzk017CgpwK4/M9ODSRzflje7BXck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name; spf=pass smtp.mailfrom=venev.name; dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b=VO5GPWW6; arc=none smtp.client-ip=213.240.239.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venev.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
+	s=default; h=Content-Type:Date:To:From:Subject:Message-ID:
+	Content-Transfer-Encoding:Reply-To:Sender;
+	bh=2BHCBiQNbBm/UXW3qyZfWY7r56zwJfCgAUwdjP+slDw=; b=VO5GPWW6bNLuaZhCNhpRgEmY8m
+	vK+pXGaKWYYUuxFZ1jI3m1Df2oKtLE8+ZfuEjbzS5p6hslaayQoREf/7Qbq2pVQxPTNauLjFtfJl5
+	fBLzQu+FMh3bn0yGQd4anBjYmE9uQudZUK87Lit1w5Z8mqfTSEAHzcSFSdY7bO9rQf4yLjxiiOnm9
+	gGQEgsp7APlOTmg4cmN8nmoO1SsGcEXOepO0BClZgb3TJdPmfh/fE3ISgbkyoReiFxj6mZDpuLOm7
+	Mhtq1wwOeLtsQFsT3STlSHR1ZVYKbUaEagkS4xO+qSGjKqDRqC4DMYtAf33l9ah1NW7d3/EAOICIC
+	68a1Z82AVV60aLRhMsbA+S+Rf9gQGLdrbZmDHSq2xsNya6wN3nVxHxTkS0glPJtIBm+49YItUvk0O
+	RoECRWB1kJsYHCJ0XORFc+t8qQIbDl4baVd8CLv/6Ik3BGC42A9fhyZXq8YurDNDho1i06cgSEzLg
+	kWABAL8erDUajjNZD5pwDYUNSrh7/5gYUCrpev4UhqQI577HwD1/hXKCxz6d0oHMygTlA0Yj5A4ym
+	lIFZslQlxyKxasf1oSSNpA3dAWq7x5hxwL5lIlmHigAVwoneGVxOoPPFsBGqcwSdAiXwzv+9fgIO+
+	G4QNVe8Ek1ol0AdynLOhL/q71xMBuI6x7FCBG2pJM=;
+Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
+	by a1-bg02.venev.name with esmtps
+	id 1sabkD-00000003j2d-3j0q
+	(TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	(envelope-from <hristo@venev.name>);
+	Sun, 04 Aug 2024 13:57:57 +0000
+Received: from a1-bg02.venev.name ([213.240.239.49])
+	by pmx1.venev.name with ESMTPSA
+	id ISajK+WIr2Y8jQ0AT9YxdQ
+	(envelope-from <hristo@venev.name>); Sun, 04 Aug 2024 13:57:57 +0000
+Message-ID: <845520c7e608c31751506f8162f994b48d235776.camel@venev.name>
+Subject: [PATCH] netfs: Set NETFS_RREQ_WRITE_TO_CACHE when caching is
+ possible
+From: Hristo Venev <hristo@venev.name>
+To: Max Kellermann <max.kellermann@ionos.com>, David Howells
+	 <dhowells@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, Jeff
+ Layton <jlayton@kernel.org>, willy@infradead.org,
+ ceph-devel@vger.kernel.org,  netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, blokos <blokos@free.fr>,  Trond Myklebust
+ <trondmy@hammerspace.com>, "dan.aloni@vastdata.com" <dan.aloni@vastdata.com>
+Date: Sun, 04 Aug 2024 16:57:38 +0300
+In-Reply-To: <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
+References: <20240729091532.855688-1-max.kellermann@ionos.com>
+	 <3575457.1722355300@warthog.procyon.org.uk>
+	 <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
+	 <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com>
+	 <3717298.1722422465@warthog.procyon.org.uk>
+	 <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
+Autocrypt: addr=hristo@venev.name; prefer-encrypt=mutual;
+ keydata=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
+ AjQ6o01lu
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-qzV6eqKdREc03lDMjxSa"
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Background
-==========
 
-Our big data workloads are deployed on XFS-based disks, and we frequently
-encounter hung tasks caused by xfs_ilock. These hung tasks arise because
-different applications may access the same files concurrently. For example,
-while a datanode task is writing to a file, a filebeat[0] task might be
-reading the same file concurrently. If the task writing to the file takes a
-long time, the task reading the file will hang due to contention on the XFS
-inode lock.
+--=-qzV6eqKdREc03lDMjxSa
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This inode lock contention between writing and reading files only occurs on
-XFS, but not on other file systems such as EXT4. Dave provided a clear
-explanation for why this occurs only on XFS[1]:
+In addition to Ceph, in NFS there are also some crashes related to the
+use of 0x356 as a pointer.
 
-  : I/O is intended to be atomic to ordinary files and pipes and FIFOs.
-  : Atomic means that all the bytes from a single operation that started
-  : out together end up together, without interleaving from other I/O
-  : operations. [2]
-  : XFS is the only linux filesystem that provides this behaviour.
+`netfs_is_cache_enabled()` only returns true when the fscache cookie is
+fully initialized. This may happen after the request has been created,
+so check for the cookie's existence instead.
 
-As we have been running big data on XFS for years, we don't want to switch
-to other file systems like EXT4. Therefore, we plan to resolve these issues
-within XFS.
-
-Proposal
-========
-
-One solution we're currently exploring is leveraging the preadv2(2)
-syscall. By using the RWF_NOWAIT flag, preadv2(2) can avoid the XFS inode
-lock hung task. This can be illustrated as follows:
-
-  retry:
-      if (preadv2(fd, iovec, cnt, offset, RWF_NOWAIT) < 0) {
-          sleep(n)
-          goto retry;
-      }
-
-Since the tasks reading the same files are not critical tasks, a delay in
-reading is acceptable. However, RWF_NOWAIT not only enables IOCB_NOWAIT but
-also enables IOCB_NOIO. Therefore, if the file is not in the page cache, it
-will loop indefinitely until someone else reads it from disk, which is not
-acceptable.
-
-So we're planning to introduce a new flag, IOCB_IOWAIT, to preadv2(2). This
-flag will allow reading from the disk if the file is not in the page cache
-but will not allow waiting for the lock if it is held by others. With this
-new flag, we can resolve our issues effectively.
-
-Link: https://lore.kernel.org/linux-xfs/20190325001044.GA23020@dastard/ [0]
-Link: https://github.com/elastic/beats/tree/master/filebeat [1]
-Link: https://pubs.opengroup.org/onlinepubs/009695399/functions/read.html [2]
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>
+Link: https://lore.kernel.org/linux-nfs/b78c88db-8b3a-4008-94cb-82ae08f0e37=
+b@free.fr/T/
+Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private a=
+nd marking dirty")
+Cc: linux-nfs@vger.kernel.org <linux-nfs@vger.kernel.org>
+Cc: blokos <blokos@free.fr>
+Cc: Trond Myklebust <trondmy@hammerspace.com>
+Cc: dan.aloni@vastdata.com <dan.aloni@vastdata.com>
+Signed-off-by: Hristo Venev <hristo@venev.name>
 ---
- include/linux/fs.h      | 6 ++++++
- include/uapi/linux/fs.h | 5 ++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ fs/netfs/objects.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd34b5755c0b..5df7b5b0927a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3472,6 +3472,12 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags,
- 			return -EPERM;
- 		ki->ki_flags &= ~IOCB_APPEND;
- 	}
-+	if (flags & RWF_IOWAIT) {
-+		kiocb_flags |= IOCB_NOWAIT;
-+		/* IOCB_NOIO is not allowed for RWF_IOWAIT */
-+		if (kiocb_flags & IOCB_NOIO)
-+			return -EINVAL;
-+	}
- 
- 	ki->ki_flags |= kiocb_flags;
- 	return 0;
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 191a7e88a8ab..17a8c065d636 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -332,9 +332,12 @@ typedef int __bitwise __kernel_rwf_t;
- /* Atomic Write */
- #define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
- 
-+/* per-IO, allow waiting for IO, but not waiting for lock */
-+#define RWF_IOWAIT	((__force __kernel_rwf_t)0x00000080)
-+
- /* mask of flags supported by the kernel */
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
--			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC)
-+			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC | RWF_IOWAIT)
- 
- /* Pagemap ioctl */
- #define PAGEMAP_SCAN	_IOWR('f', 16, struct pm_scan_arg)
--- 
-2.43.5
+diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+index f4a6427274792..a74ca90c86c9b 100644
+--- a/fs/netfs/objects.c
++++ b/fs/netfs/objects.c
+@@ -27,7 +27,6 @@ struct netfs_io_request *netfs_alloc_request(struct addre=
+ss_space *mapping,
+ 	bool is_unbuffered =3D (origin =3D=3D NETFS_UNBUFFERED_WRITE ||
+ 			      origin =3D=3D NETFS_DIO_READ ||
+ 			      origin =3D=3D NETFS_DIO_WRITE);
+-	bool cached =3D !is_unbuffered && netfs_is_cache_enabled(ctx);
+ 	int ret;
+=20
+ 	for (;;) {
+@@ -56,8 +55,9 @@ struct netfs_io_request *netfs_alloc_request(struct addre=
+ss_space *mapping,
+ 	refcount_set(&rreq->ref, 1);
+=20
+ 	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+-	if (cached) {
+-		__set_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq->flags);
++	if (!is_unbuffered && fscache_cookie_valid(netfs_i_cookie(ctx))) {
++		if(netfs_is_cache_enabled(ctx))
++			__set_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq->flags);
+ 		if (test_bit(NETFS_ICTX_USE_PGPRIV2, &ctx->flags))
+ 			/* Filesystem uses deprecated PG_private_2 marking. */
+ 			__set_bit(NETFS_RREQ_USE_PGPRIV2, &rreq->flags);
 
+
+--=-qzV6eqKdREc03lDMjxSa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJGBAABCgAwFiEEb/2s7vGPWBH9BOGpSkmD6rj9B8sFAmaviNISHGhyaXN0b0B2
+ZW5ldi5uYW1lAAoJEEpJg+q4/QfLPM8QAMlcnpejkhomlkis4nCVv0M5EBzHsPIo
+YWJIrylG81BSH9p2adxgqmzq17G4uYScKEm961qyFyIo8uZNLKWA/5tzCnjeC8sx
+dkyqAnMFuxoG2oEWC++6Z8F45NPxFKrKzIKXB6Fq8JObXHlKV2VXdNDEHCgZFV6d
+AadswPY/YLQi1hc/akw7TAht3IcSUdPCcfWifeOXcGcCoNqEz+D8Gi6VKRJmJkh/
+KDF2MpM4sX3w3R3sTBnhIeM+PTLBvV65N/Brqty3UM4HFAEdwPhksIiOTaoUwXXh
+VNMjifa335G8XPTa8PI2zi9vmO2yzwLzrhdvfWnE8q2LaiAMnPVYiYnP/xs3FdsZ
+GVgCWXEVXRcC1c/CyObEO3muwhFcD3eYo93yDw9nUmD/Zh4PMYqxeiL/C3j9EMHb
+Mc/wamhFQToRa3gZcORi3Bg94dRWPGLuWsBPGP3o04VaOHzveF5aW9oLZtcRedsp
+NQP2nsO7OuTcecCwPihmwWYE2JW1ygyj3Pp0NwdF1Ttn+HG7+Gj6V7Psraoq8IRL
++wNKdzC4+bbdCnefQukR6JF1olapLWvuBYzkfDRtebFE3x8zpvbWYpihw82rM81a
+pvsmHVcQSfPbShpjOxFfcLCYhBmUzgDXgwbWk6hvY5pX3GWnXcOae713wodUbHD8
+3/q6OoLkyoOl
+=/GFb
+-----END PGP SIGNATURE-----
+
+--=-qzV6eqKdREc03lDMjxSa--
 
