@@ -1,814 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-24937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB774946D1A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 09:48:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C490946D23
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 09:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 674492817FA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 07:48:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BFA2B20999
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Aug 2024 07:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CC51802E;
-	Sun,  4 Aug 2024 07:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988FF1BC49;
+	Sun,  4 Aug 2024 07:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PrkDejX0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYbhDKuo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB98A29
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Aug 2024 07:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9169A7494;
+	Sun,  4 Aug 2024 07:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722757685; cv=none; b=Q/9/br5w5rfdmMQuFqt0i19fgqT3NmJd+I1lHcfG56UsEFDOvysWhHrj/meTVUz9nKEUmtzHoYo28wjpFDTWvMo/j7+fxOgI4Jwn2e2gRztAj+k3n3UOMMJtNj7s7SXkg8gY5qyYnrd38z7kRiK3CrQRv3PrLrgv9B++05LSi/o=
+	t=1722758209; cv=none; b=Vbzqr869v0hhWbPqJ+v6DAgEuN7HFdqwL/zJgiYpwqFUTWq/q0z40lFkDBpY/ZgKdQV4CqD2TT++R/wmenm+irQUuCk5iGsObn7ckdTrXv9tlaERxowBgkdWKNiEnuyKIpqdzhMnOKLY5X6xonWutpXtcb+3DPsCYmuBW7haHA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722757685; c=relaxed/simple;
-	bh=id8fnZpzjUn9TAvt2M8DVjZ2weO+W31lX+hjYHdi1KA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bcy8RUMSISYf4q/yOCxuTrNbnQeJFsbnFB9UTLXOyWLVMGLW3QPuQqLZsMDJpcpjg/5ord8NM5kzSNdkASbtIWyJHWAnp9TsedP+bDplb5wWv5YN1GiYI/iOJ+AJbTnj537eAdNwvPhu3yj/CqzKicN78Z7pgc986NKKNqCCLfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PrkDejX0; arc=none smtp.client-ip=209.85.219.44
+	s=arc-20240116; t=1722758209; c=relaxed/simple;
+	bh=zfRBye9XjAyf1w+J+rLHJaLjVkIJJvi7H+/9DoIfN74=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H7Qfjq5dR8inYuZGd0hUxvjIjZSBazf0MHlS2PrNDyRoGBJJ3mD1GNUfgPEjGuLp5Dta6TxFGgeLrpsT8qqKMmbD1diDoDcb3olG+fCKFM32KBXxcVEwO98YSbe1etqesfrBoBLbSCn0y4WmLdwpHPlbDaRQPwViU/Z5kK8G8Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYbhDKuo; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6bb5a4668faso50871416d6.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Aug 2024 00:48:02 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d25b5b6b0so7060495b3a.2;
+        Sun, 04 Aug 2024 00:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722757682; x=1723362482; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lQTtWrFhRvdmscQ04oQz9dNIKuuaGTRxOKfKlYRW0vc=;
-        b=PrkDejX0Eg/FhL6inBfdhFJXiBm4DHt9uMm5eGBe08ztTqYG7uIXckcXeY0oyjzFop
-         ldCgdGZwTddq9554Oeo7+E/TpPR/iT5XEF44MACiRta9aHxL1TKKubYTUATVntUcwmGY
-         2st6gHyzisUmdMeuaRxybzpgiObRUNbjwZoL+1DCD2gA0Rr0YaC4+efjCtWxL/4JoeQ3
-         eqy2xsq/iRnj4aAptl/7mWgFn73yV5SK05r4XsvdrWfGCuokBT2aLmJM5NaNkRSwRQHX
-         2IidIIFr8tX7CCanAv3i6Fh3Xd/tSdS2bngYuaFUXd3ZZv2LaBMEobk3SzHKP1cJVRn+
-         exoQ==
+        d=gmail.com; s=20230601; t=1722758207; x=1723363007; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jAUiIbA9M914l7SbVcGMcRn0qL18BQ5kTGC/RMGMPl4=;
+        b=BYbhDKuoSy5kiP/T/t8AYguX4K08c0CO5oMiU4u7FR4j2serqcH7dhWrta+zc/gvdf
+         PPRFkQgb9bOZZeox0WWrDlMmmo1U6n5nHgNG07zAaVg8gxMBPFvmXzdxMyOSRLq5+dfa
+         IE/KB0iGEbFX8cF0O+NXXos6Lqt9/orLctXpmUzjZXRk+Qn/d4B9VvKIecXTVQVXgNgg
+         RnRqDYjpfGHLnssnIOKx11agZsj/yVhg8/hr4MExjivL3Y4ZvYRbZk4HP4d99ft/imL2
+         czeTMqlqGNR+mkio4pi6FqZgbUgHTWy3gjqAB8TIdKOsDKc1H3d7jVXL0e9PL2XuhDhg
+         Kwxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722757682; x=1723362482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lQTtWrFhRvdmscQ04oQz9dNIKuuaGTRxOKfKlYRW0vc=;
-        b=CVNVTHWrKWhjdgWnCTqEKzmcqQsrnThoSITFOOf6h/5/VtUmFYMluYzYXW4Vx05MFw
-         xJyOa6inYyocccmE/1dgtlwo9LrP47Lr8yybwjG3hZvNOUZ4KIxCmTsSf1hcIyEpyg14
-         JLqXnkfUIkunGYoZ0kJxSHKMrMf6A3IpQLVfQghalJ4c8tA8LKYoHfQm5fSW7YVY438e
-         hv230B7NtvwCztuSlDHGdT9aEHMLEQNc1VX2/UBuZooAuHGrDHRuk9nLGLB89IMt4750
-         VBBTov2/aKBzA3V+2bjnRPUmxpYZTmX2CxulXc4GU2MuPK+mS6eV/usUpeXOYIspNjL1
-         OBKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYO1bDwfKAG0D6EEjZ4v7CpfSvTYrp1cXVl6UEfxkY6FRyxr9tZMk3lBJiuwbDwQYDSOSHJig3TFOJJblHTesJEDaAhy+edoDkLTUlPA==
-X-Gm-Message-State: AOJu0Yw19BKPq8S+gKWgwWrQ/dEIClICfer8yayWObiHSlWWw0i+/ZZm
-	aA9XMPOBT51FM8Xg/6EkAF4enpghpRedpgNjObFV5kw+bw8P72zNTokT8lwI5hj7CeJmZm56zGO
-	JMtIDot/6Xh3fAdcKsejqbpKmjsw=
-X-Google-Smtp-Source: AGHT+IEYVvmPnx4uTLwDo3ngN5pIBPf/rqQHlhieRYTImcYgnPzM5kbNPX14rpdwCNjBUHMW68wr4aP/1b8IXFzScxs=
-X-Received: by 2002:a05:6214:598e:b0:6b0:7482:313 with SMTP id
- 6a1803df08f44-6bb9833d848mr121483146d6.11.1722757681616; Sun, 04 Aug 2024
- 00:48:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722758207; x=1723363007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jAUiIbA9M914l7SbVcGMcRn0qL18BQ5kTGC/RMGMPl4=;
+        b=amj4DBgEmB3OBlDs7Uz2Uof9sLAgcNUVZVH0qaSsHNKhczzoAPhvBOjtq5sVAPNRiG
+         n/Zs80wvdJJB4m1PMY81luR/2jLv6hBCyF5H4+2Q0JgAB++ulkRSUg7gOI/wOVt+0KIb
+         q+FPguNYfJnaFEkOtq8xuAt9UfYuoRq/GPDV/VuSI2ETEH+V91TWNj2wKf/ovUZXcIrs
+         iqGZPjK3AICX6yulmYegislt3KnpprQNL76+lbGLAFXZmna/B7fGyGVJDrEFl41QnyW/
+         YGCS8sA7GF/51pnlNcGrPe59FuYlqjeYOvRNS76ir9zuthEVBD4tJ8jJo+knD0+YRb2G
+         RZ6A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9zWLqFm1r6T82ZQyjEdpuzqOTV7mJSGYB2e7icd+zJix4VavxkAvE6F74avuo46yijBHz9QaLsxxnHmsHTpDBAFVR2MjDVz1uR+jscSnFbvEaLLJWOZOzhohYeAtOpyOwutQNtp2WdO/tshcXSGS8lu0OSPhqVjv5N9erJxjUuoN/CBt45csMf5AKd/IuLWHQNK3aaQ/fnXGwdRb4wcGRpsSRtQKb0jh8sB+hq8EuYDxYpj7Mjsc4IM5GbgJFYttCdKovWK0SZ/9Gu5qf5qO/k/ffWGavNtu3JnR9yh3WYBGvPJolzwMelg9IT6SxPQelj5fjRw==
+X-Gm-Message-State: AOJu0YyyxaJ8rHcNZOXjPeuXE0bT1USDebXZE6P4HHNmclr609MHF+E3
+	vGhVHXnV8uYSpOJ19ejVt1RFqlr4CXVtqqqnkmEmLNkqfc5489rXDy2foJCcIy0=
+X-Google-Smtp-Source: AGHT+IGr87hL+CR9BQ4tkSVsGq67qKnz8TEMjj1/AcYNViYHS42eo8GA1J34i40o5jKuxGL8nismgw==
+X-Received: by 2002:a17:902:d08a:b0:1fd:9e6e:7c10 with SMTP id d9443c01a7336-1ff5748d30cmr59016425ad.41.1722758206776;
+        Sun, 04 Aug 2024 00:56:46 -0700 (PDT)
+Received: from localhost.localdomain ([39.144.105.172])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59178248sm46387605ad.202.2024.08.04.00.56.31
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 04 Aug 2024 00:56:45 -0700 (PDT)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: akpm@linux-foundation.org
+Cc: torvalds@linux-foundation.org,
+	ebiederm@xmission.com,
+	alexei.starovoitov@gmail.com,
+	rostedt@goodmis.org,
+	catalin.marinas@arm.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	audit@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v5 0/9] Improve the copy of task comm
+Date: Sun,  4 Aug 2024 15:56:10 +0800
+Message-Id: <20240804075619.20804-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730002348.3431931-1-joannelkoong@gmail.com>
- <CALOAHbD=PY+forv4WebU06igfTdk2UpuwEpNosimWKE=Y=QmYg@mail.gmail.com>
- <CAJnrk1ZQReyeySuPZctDFKt=_AwRfBE8cZEjLNU3SbEuaO49+w@mail.gmail.com>
- <CALOAHbCWQOw6Hj6+zEiivRtfd4haqO+Q8KZQj2OPpsJ3M2=3AA@mail.gmail.com>
- <CAJnrk1ZGR_a6=GHExrAeQN339++R_rcFqtiRrQ0AS4btr4WDLQ@mail.gmail.com>
- <CAJnrk1bCrsy7s2ODTgZvrXk_4HwC=9hjeHjPvRm8MHDx+yE6PQ@mail.gmail.com>
- <CALOAHbCsqi1LeXkdZr2RT0tMTmuCHJ+h0X1fMipuo1-DWXARWA@mail.gmail.com> <CAJnrk1ZMYj3uheexfb3gG+pH6P_QBrmW-NPDeedWHGXhCo7u_g@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZMYj3uheexfb3gG+pH6P_QBrmW-NPDeedWHGXhCo7u_g@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 4 Aug 2024 15:46:47 +0800
-Message-ID: <CALOAHbA3MRp7X=A52HEZq6A-c2Qi=zZS8dinALGcgsisJ6Ck2g@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] fuse: add timeout option for requests
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 3, 2024 at 3:05=E2=80=AFAM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> On Wed, Jul 31, 2024 at 7:47=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com=
-> wrote:
-> >
-> > On Thu, Aug 1, 2024 at 2:46=E2=80=AFAM Joanne Koong <joannelkoong@gmail=
-.com> wrote:
-> > >
-> > > On Wed, Jul 31, 2024 at 10:52=E2=80=AFAM Joanne Koong <joannelkoong@g=
-mail.com> wrote:
-> > > >
-> > > > On Tue, Jul 30, 2024 at 7:14=E2=80=AFPM Yafang Shao <laoar.shao@gma=
-il.com> wrote:
-> > > > >
-> > > > > On Wed, Jul 31, 2024 at 2:16=E2=80=AFAM Joanne Koong <joannelkoon=
-g@gmail.com> wrote:
-> > > > > >
-> > > > > > On Mon, Jul 29, 2024 at 11:00=E2=80=AFPM Yafang Shao <laoar.sha=
-o@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Tue, Jul 30, 2024 at 8:28=E2=80=AFAM Joanne Koong <joannel=
-koong@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > There are situations where fuse servers can become unrespon=
-sive or take
-> > > > > > > > too long to reply to a request. Currently there is no upper=
- bound on
-> > > > > > > > how long a request may take, which may be frustrating to us=
-ers who get
-> > > > > > > > stuck waiting for a request to complete.
-> > > > > > > >
-> > > > > > > > This patchset adds a timeout option for requests and two dy=
-namically
-> > > > > > > > configurable fuse sysctls "default_request_timeout" and "ma=
-x_request_timeout"
-> > > > > > > > for controlling/enforcing timeout behavior system-wide.
-> > > > > > > >
-> > > > > > > > Existing fuse servers will not be affected unless they expl=
-icitly opt into the
-> > > > > > > > timeout.
-> > > > > > > >
-> > > > > > > > v1: https://lore.kernel.org/linux-fsdevel/20240717213458.16=
-13347-1-joannelkoong@gmail.com/
-> > > > > > > > Changes from v1:
-> > > > > > > > - Add timeout for background requests
-> > > > > > > > - Handle resend race condition
-> > > > > > > > - Add sysctls
-> > > > > > > >
-> > > > > > > > Joanne Koong (2):
-> > > > > > > >   fuse: add optional kernel-enforced timeout for requests
-> > > > > > > >   fuse: add default_request_timeout and max_request_timeout=
- sysctls
-> > > > > > > >
-> > > > > > > >  Documentation/admin-guide/sysctl/fs.rst |  17 +++
-> > > > > > > >  fs/fuse/Makefile                        |   2 +-
-> > > > > > > >  fs/fuse/dev.c                           | 187 ++++++++++++=
-+++++++++++-
-> > > > > > > >  fs/fuse/fuse_i.h                        |  30 ++++
-> > > > > > > >  fs/fuse/inode.c                         |  24 +++
-> > > > > > > >  fs/fuse/sysctl.c                        |  42 ++++++
-> > > > > > > >  6 files changed, 293 insertions(+), 9 deletions(-)
-> > > > > > > >  create mode 100644 fs/fuse/sysctl.c
-> > > > > > > >
-> > > > > > > > --
-> > > > > > > > 2.43.0
-> > > > > > > >
-> > > > > > >
-> > > > > > > Hello Joanne,
-> > > > > > >
-> > > > > > > Thanks for your update.
-> > > > > > >
-> > > > > > > I have tested your patches using my test case, which is simil=
-ar to the
-> > > > > > > hello-fuse [0] example, with an additional change as follows:
-> > > > > > >
-> > > > > > > @@ -125,6 +125,8 @@ static int hello_read(const char *path, c=
-har *buf,
-> > > > > > > size_t size, off_t offset,
-> > > > > > >         } else
-> > > > > > >                 size =3D 0;
-> > > > > > >
-> > > > > > > +       // TO trigger timeout
-> > > > > > > +       sleep(60);
-> > > > > > >         return size;
-> > > > > > >  }
-> > > > > > >
-> > > > > > > [0] https://github.com/libfuse/libfuse/blob/master/example/he=
-llo.c
-> > > > > > >
-> > > > > > > However, it triggered a crash with the following setup:
-> > > > > > >
-> > > > > > > 1. Set FUSE timeout:
-> > > > > > >   sysctl -w fs.fuse.default_request_timeout=3D10
-> > > > > > >   sysctl -w fs.fuse.max_request_timeout =3D 20
-> > > > > > >
-> > > > > > > 2. Start FUSE daemon:
-> > > > > > >   ./hello /tmp/fuse
-> > > > > > >
-> > > > > > > 3. Read from FUSE:
-> > > > > > >   cat /tmp/fuse/hello
-> > > > > > >
-> > > > > > > 4. Kill the process within 10 seconds (to avoid the timeout b=
-eing triggered).
-> > > > > > >    Then the crash will be triggered.
-> > > > > >
-> > > > > > Hi Yafang,
-> > > > > >
-> > > > > > Thanks for trying this out on your use case!
-> > > > > >
-> > > > > > How consistently are you able to repro this?
-> > > > >
-> > > > > It triggers the crash every time.
-> > > > >
-> > > > > > I tried reproing using
-> > > > > > your instructions above but I'm not able to get the crash.
-> > > > >
-> > > > > Please note that it is the `cat /tmp/fuse/hello` process that was
-> > > > > killed, not the fuse daemon.
-> > > > > The crash seems to occur when the fuse daemon wakes up after
-> > > > > sleep(60). Please ensure that the fuse daemon can be woken up.
-> > > > >
-> > > >
-> > > > I'm still not able to trigger the crash by killing the `cat
-> > > > /tmp/fuse/hello` process. This is how I'm repro-ing
-> > > >
-> > > > 1) Add sleep to test code in
-> > > > https://github.com/libfuse/libfuse/blob/master/example/hello.c
-> > > > @@ -125,6 +126,9 @@ static int hello_read(const char *path, char *b=
-uf,
-> > > > size_t size, off_t offset,
-> > > >         } else
-> > > >                 size =3D 0;
-> > > >
-> > > > +       sleep(60);
-> > > > +       printf("hello_read woke up from sleep\n");
-> > > > +
-> > > >         return size;
-> > > >  }
-> > > >
-> > > > 2)  Set fuse timeout to 10 seconds
-> > > > sysctl -w fs.fuse.default_request_timeout=3D10
-> > > >
-> > > > 3) Start fuse daemon
-> > > > ./example/hello ./tmp/fuse
-> > > >
-> > > > 4) Read from fuse
-> > > > cat /tmp/fuse/hello
-> > > >
-> > > > 5) Get pid of cat process
-> > > > top -b | grep cat
-> > > >
-> > > > 6) Kill cat process (within 10 seconds)
-> > > >  sudo kill -9 <cat-pid>
-> > > >
-> > > > 7) Wait 60 seconds for fuse's read request to complete
-> > > >
-> > > > From what it sounds like, this is exactly what you are doing as wel=
-l?
-> > > >
-> > > > I added some kernel-side logs and I'm seeing that the read request =
-is
-> > > > timing out after ~10 seconds and handled by the timeout handler
-> > > > successfully.
-> > > >
-> > > > On the fuse daemon side, these are the logs I'm seeing from the abo=
-ve repro:
-> > > > ./example/hello /tmp/fuse -f -d
-> > > >
-> > > > FUSE library version: 3.17.0
-> > > > nullpath_ok: 0
-> > > > unique: 2, opcode: INIT (26), nodeid: 0, insize: 104, pid: 0
-> > > > INIT: 7.40
-> > > > flags=3D0x73fffffb
-> > > > max_readahead=3D0x00020000
-> > > >    INIT: 7.40
-> > > >    flags=3D0x4040f039
-> > > >    max_readahead=3D0x00020000
-> > > >    max_write=3D0x00100000
-> > > >    max_background=3D0
-> > > >    congestion_threshold=3D0
-> > > >    time_gran=3D1
-> > > >    unique: 2, success, outsize: 80
-> > > > unique: 4, opcode: LOOKUP (1), nodeid: 1, insize: 46, pid: 673
-> > > > LOOKUP /hello
-> > > > getattr[NULL] /hello
-> > > >    NODEID: 2
-> > > >    unique: 4, success, outsize: 144
-> > > > unique: 6, opcode: OPEN (14), nodeid: 2, insize: 48, pid: 673
-> > > > open flags: 0x8000 /hello
-> > > >    open[0] flags: 0x8000 /hello
-> > > >    unique: 6, success, outsize: 32
-> > > > unique: 8, opcode: READ (15), nodeid: 2, insize: 80, pid: 673
-> > > > read[0] 4096 bytes from 0 flags: 0x8000
-> > > > unique: 10, opcode: FLUSH (25), nodeid: 2, insize: 64, pid: 673
-> > > >    unique: 10, error: -38 (Function not implemented), outsize: 16
-> > > > unique: 11, opcode: INTERRUPT (36), nodeid: 0, insize: 48, pid: 0
-> > > > FUSE_INTERRUPT: reply to kernel to disable interrupt
-> > > >    unique: 11, error: -38 (Function not implemented), outsize: 16
-> > > >
-> > > > unique: 12, opcode: RELEASE (18), nodeid: 2, insize: 64, pid: 0
-> > > >    unique: 12, success, outsize: 16
-> > > >
-> > > > hello_read woke up from sleep
-> > > >    read[0] 13 bytes from 0
-> > > >    unique: 8, success, outsize: 29
-> > > >
-> > > >
-> > > > Are these the debug logs you are seeing from the daemon side as wel=
-l?
-> > > >
-> > > > Thanks,
-> > > > Joanne
-> > > > > >
-> > > > > > From the crash logs you provided below, it looks like what's ha=
-ppening
-> > > > > > is that if the process gets killed, the timer isn't getting del=
-eted.
-> > >
-> > > When I looked at this log previously, I thought you were repro-ing by
-> > > killing the fuse daemon process, not the cat process. When we kill th=
-e
-> > > cat process, the timer shouldn't be getting deleted. (if the daemon
-> > > itself is killed, the timers get deleted)
-> > >
-> > > > > > I'll look more into what happens in fuse when a process is kill=
-ed and
-> > > > > > get back to you on this.
-> > >
-> > > This is the flow of what is happening on the kernel side (verified by
-> > > local printks) -
-> > >
-> > > `cat /tmp/fuse/hello`:
-> > > Issues a FUSE_READ background request (via fuse_send_readpages(),
-> > > fm->fc->async_read). This request will have a timeout of 10 seconds o=
-n
-> > > it
-> > >
-> > > The cat process is killed:
-> > > This does not clean up the request. The request is still on the fpq
-> > > processing list.
-> > >
-> > > Timeout on request expires:
-> > > The timeout handler runs and properly cleans up / frees the request.
-> > >
-> > > Fuse daemon wakes from sleep and replies to the request:
-> > > In dev_do_write(), the kernel won't be able to find this request
-> > > (since it timed out and was removed from the fpq processing list) and
-> > > return with -ENOENT
-> >
-> > Thank you for your explanation.
-> > I will verify if there are any issues with my test environment.
-> >
-> Hi Yafang,
->
-> Would you mind adding these printks to your kernel when you run the
-> repro and pasting what they show?
->
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -287,6 +287,9 @@ static void do_fuse_request_end(struct fuse_req
-> *req, bool from_timer_callback)
->         struct fuse_conn *fc =3D fm->fc;
->         struct fuse_iqueue *fiq =3D &fc->iq;
->
-> +       printk("do_fuse_request_end: req=3D%p, from_timer=3D%d,
-> req->timer.func=3D%d\n",
-> +              req, from_timer_callback, req->timer.function !=3D NULL);
-> +
->         if (from_timer_callback)
->                 req->out.h.error =3D -ETIME;
->
-> @@ -415,6 +418,8 @@ static void fuse_request_timeout(struct timer_list *t=
-imer)
->  {
->         struct fuse_req *req =3D container_of(timer, struct fuse_req, tim=
-er);
->
-> +       printk("fuse_request_timeout: req=3D%p\n", req);
-> +
->         /*
->          * Request reply is being finished by the kernel right now.
->          * No need to time out the request.
-> @@ -612,6 +617,7 @@ ssize_t fuse_simple_request(struct fuse_mount *fm,
-> struct fuse_args *args)
->
->         if (!args->noreply)
->                 __set_bit(FR_ISREPLY, &req->flags);
-> +       printk("fuse_simple_request: req=3D%p, op=3D%u\n", req, args->opc=
-ode);
->         __fuse_request_send(req);
->         ret =3D req->out.h.error;
->         if (!ret && args->out_argvar) {
-> @@ -673,6 +679,7 @@ int fuse_simple_background(struct fuse_mount *fm,
-> struct fuse_args *args,
->
->         fuse_args_to_req(req, args);
->
-> +       printk("fuse_background_request: req=3D%p, op=3D%u\n", req, args-=
->opcode);
->         if (!fuse_request_queue_background(req)) {
->                 fuse_put_request(req);
->
->
-> When I run it on my side, I see
->
-> [   68.117740] fuse_background_request: req=3D00000000874e2f14, op=3D26
-> [   68.131440] do_fuse_request_end: req=3D00000000874e2f14,
-> from_timer=3D0, req->timer.func=3D1
-> [   71.558538] fuse_simple_request: req=3D00000000cf643ace, op=3D1
-> [   71.559651] do_fuse_request_end: req=3D00000000cf643ace,
-> from_timer=3D0, req->timer.func=3D1
-> [   71.561044] fuse_simple_request: req=3D00000000f2c001f0, op=3D14
-> [   71.562524] do_fuse_request_end: req=3D00000000f2c001f0,
-> from_timer=3D0, req->timer.func=3D1
-> [   71.563820] fuse_background_request: req=3D00000000584f2cc3, op=3D15
-> [   78.580035] fuse_simple_request: req=3D00000000ecbee970, op=3D25
-> [   78.582614] do_fuse_request_end: req=3D00000000ecbee970,
-> from_timer=3D0, req->timer.func=3D1
-> [   81.624722] fuse_request_timeout: req=3D00000000584f2cc3
-> [   81.625443] do_fuse_request_end: req=3D00000000584f2cc3,
-> from_timer=3D1, req->timer.func=3D1
-> [   81.626377] fuse_background_request: req=3D00000000b2d792ed, op=3D18
-> [   81.627623] do_fuse_request_end: req=3D00000000b2d792ed,
-> from_timer=3D0, req->timer.func=3D1
->
-> I'm seeing only one timer get called, on the read request (opcode=3D15),
-> and I'm not seeing do_fuse_request_end having been called on that
-> request before the timer is invoked.
-> I'm curious to compare this against the logs on your end.
+Using {memcpy,strncpy,strcpy,kstrdup} to copy the task comm relies on the
+length of task comm. Changes in the task comm could result in a destination
+string that is overflow. Therefore, we should explicitly ensure the destination
+string is always NUL-terminated, regardless of the task comm. This approach
+will facilitate future extensions to the task comm.
 
-The log on my side is as follows,
+As suggested by Linus [0], we can identify all relevant code with the
+following git grep command:
 
-[  283.329421] fuse_background_request: req=3D000000002b4f82d4, op=3D26
-[  283.330043] do_fuse_request_end: req=3D000000002b4f82d4,
-from_timer=3D0, req->timer.func=3D0
-[  287.889844] fuse_simple_request: req=3D00000000865e85bf, op=3D3
-[  287.889914] do_fuse_request_end: req=3D00000000865e85bf,
-from_timer=3D0, req->timer.func=3D0
-[  287.889933] fuse_simple_request: req=3D00000000865e85bf, op=3D22
-[  287.889994] do_fuse_request_end: req=3D00000000865e85bf,
-from_timer=3D0, req->timer.func=3D0
-[  287.890096] fuse_simple_request: req=3D00000000865e85bf, op=3D27
-[  287.890130] do_fuse_request_end: req=3D00000000865e85bf,
-from_timer=3D0, req->timer.func=3D0
-[  287.890142] fuse_simple_request: req=3D00000000865e85bf, op=3D28
-[  287.890167] do_fuse_request_end: req=3D00000000865e85bf,
-from_timer=3D0, req->timer.func=3D0
-[  287.890178] fuse_simple_request: req=3D00000000865e85bf, op=3D1
-[  287.890191] do_fuse_request_end: req=3D00000000865e85bf,
-from_timer=3D0, req->timer.func=3D0
-[  287.890209] fuse_simple_request: req=3D00000000865e85bf, op=3D28
-[  287.890216] do_fuse_request_end: req=3D00000000865e85bf,
-from_timer=3D0, req->timer.func=3D0
-[  287.890222] fuse_background_request: req=3D00000000865e85bf, op=3D29
-[  287.890230] do_fuse_request_end: req=3D00000000865e85bf,
-from_timer=3D0, req->timer.func=3D0
-[  312.311752] fuse_background_request: req=3D00000000a8da8b44, op=3D26
-[  312.312249] do_fuse_request_end: req=3D00000000a8da8b44,
-from_timer=3D0, req->timer.func=3D1
-[  317.368786] fuse_simple_request: req=3D00000000bc4817dd, op=3D1
-[  317.368871] do_fuse_request_end: req=3D00000000bc4817dd,
-from_timer=3D0, req->timer.func=3D1
-[  317.368910] fuse_simple_request: req=3D00000000bc4817dd, op=3D14
-[  317.368942] do_fuse_request_end: req=3D00000000bc4817dd,
-from_timer=3D0, req->timer.func=3D1
-[  317.368967] fuse_simple_request: req=3D00000000bc4817dd, op=3D15
-[  327.855189] fuse_request_timeout: req=3D00000000bc4817dd
-[  327.855195] do_fuse_request_end: req=3D00000000bc4817dd,
-from_timer=3D1, req->timer.func=3D1
-[  327.855218] fuse_simple_request: req=3D00000000c34cc363, op=3D15
-[  327.855328] fuse_simple_request: req=3D00000000c34cc363, op=3D25
-[  327.855401] do_fuse_request_end: req=3D00000000c34cc363,
-from_timer=3D0, req->timer.func=3D1
-[  327.855496] fuse_background_request: req=3D00000000c34cc363, op=3D18
-[  327.855508] do_fuse_request_end: req=3D00000000c34cc363,
-from_timer=3D0, req->timer.func=3D1
-[  338.095136] Oops: general protection fault, probably for
-non-canonical address 0xdead00000000012a: 0000 [#1] PREEMPT SMP NOPTI
-[  338.096415] CPU: 58 PID: 0 Comm: swapper/58 Kdump: loaded Not
-tainted 6.10.0+ #8
-[  338.098219] RIP: 0010:__run_timers+0x27e/0x360
-[  338.098686] Code: 07 48 c7 43 08 00 00 00 00 48 85 c0 74 78 4d 8b
-2f 4c 89 6b 08 0f 1f 44 00 00 49 8b 45 00 49 8b 55 08 48 89 02 48 85
-c0 74 04 <48> 89 50 08 4d 8b 65 18 49 c7 45 08 00 00 00 00 48 b8 22 01
-00 00
-[  338.100381] RSP: 0018:ffffb4ef808bced8 EFLAGS: 00010086
-[  338.100907] RAX: dead000000000122 RBX: ffff9827ffca13c0 RCX: 00000000000=
-00001
-[  338.101623] RDX: ffffb4ef808bcef8 RSI: 0000000000000000 RDI: ffff9827ffc=
-a13e8
-[  338.102333] RBP: ffffb4ef808bcf70 R08: 000000000000008b R09: ffff9827ffc=
-a1430
-[  338.103020] R10: ffffffff93e060c0 R11: 0000000000000089 R12: 00000000000=
-00001
-[  338.103726] R13: ffff97e9dc06a0a0 R14: 0000000100009200 R15: ffffb4ef808=
-bcef8
-[  338.104439] FS:  0000000000000000(0000) GS:ffff9827ffc80000(0000)
-knlGS:0000000000000000
-[  338.105229] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  338.105795] CR2: 000000c002f99340 CR3: 0000000148254001 CR4: 00000000003=
-70ef0
-[  338.106502] Call Trace:
-[  338.106836]  <IRQ>
-[  338.107175]  ? show_regs+0x69/0x80
-[  338.107603]  ? die_addr+0x38/0x90
-[  338.108005]  ? exc_general_protection+0x236/0x490
-[  338.108557]  ? asm_exc_general_protection+0x27/0x30
-[  338.109095]  ? __run_timers+0x27e/0x360
-[  338.109563]  ? __run_timers+0x1b4/0x360
-[  338.110009]  ? kvm_sched_clock_read+0x11/0x20
-[  338.110528]  ? sched_clock_noinstr+0x9/0x10
-[  338.111002]  ? sched_clock+0x10/0x30
-[  338.111447]  ? sched_clock_cpu+0x10/0x190
-[  338.111914]  run_timer_softirq+0x3a/0x60
-[  338.112406]  handle_softirqs+0x118/0x350
-[  338.112859]  irq_exit_rcu+0x60/0x80
-[  338.113295]  sysvec_apic_timer_interrupt+0x7f/0x90
-[  338.113823]  </IRQ>
-[  338.114147]  <TASK>
-[  338.114447]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
-[  338.115002] RIP: 0010:default_idle+0xb/0x20
-[  338.115498] Code: 00 4d 29 c8 4c 01 c7 4c 29 c2 e9 6e ff ff ff 90
-90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 eb 07 0f 00 2d b3 51 33
-00 fb f4 <fa> c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40
-00 90
-[  338.117337] RSP: 0018:ffffb4ef8028fe18 EFLAGS: 00000246
-[  338.117894] RAX: 0000000000004000 RBX: 0000000000000001 RCX: 0001b48ebb3=
-a1032
-[  338.118673] RDX: 0000000000000001 RSI: ffffffff9412e060 RDI: ffff9827ffc=
-bc8e0
-[  338.119415] RBP: ffffb4ef8028fe20 R08: 0000004eb7fb01b4 R09: 00000000000=
-00001
-[  338.120151] R10: ffffffff93e56080 R11: 0000000000000001 R12: 00000000000=
-00001
-[  338.120872] R13: ffffffff9412e060 R14: ffffffff9412e0e0 R15: 00000000000=
-00001
-[  338.121615]  ? ct_kernel_exit.constprop.0+0x79/0x90
-[  338.122171]  ? arch_cpu_idle+0x9/0x10
-[  338.122602]  default_enter_idle+0x22/0x2f
-[  338.123064]  cpuidle_enter_state+0x88/0x430
-[  338.123556]  cpuidle_enter+0x34/0x50
-[  338.123978]  call_cpuidle+0x22/0x50
-[  338.124449]  cpuidle_idle_call+0xd2/0x120
-[  338.124909]  do_idle+0x77/0xd0
-[  338.125313]  cpu_startup_entry+0x2c/0x30
-[  338.125763]  start_secondary+0x117/0x140
-[  338.126240]  common_startup_64+0x13e/0x141
-[  338.126711]  </TASK>
+  git grep 'memcpy.*->comm\>'
+  git grep 'kstrdup.*->comm\>'
+  git grep 'strncpy.*->comm\>'
+  git grep 'strcpy.*->comm\>'
 
-In addition to the hello-fuse, there is another FUSE daemon, lxcfs,
-running on my test server. After disabling lxcfs, the system no longer
-panics, but there are still error logs:
+PATCH #2~#4:   memcpy
+PATCH #5~#6:   kstrdup
+PATCH #7:      strncpy
+PATCH #8~#9:   strcpy
 
-[  285.804534] fuse_background_request: req=3D0000000063502a93, op=3D26
-[  285.805041] do_fuse_request_end: req=3D0000000063502a93,
-from_timer=3D0, req->timer.func=3D1
-[  290.967412] fuse_simple_request: req=3D000000003f362e4b, op=3D1
-[  290.967480] do_fuse_request_end: req=3D000000003f362e4b,
-from_timer=3D0, req->timer.func=3D1
-[  290.967517] fuse_simple_request: req=3D000000003f362e4b, op=3D14
-[  290.967585] do_fuse_request_end: req=3D000000003f362e4b,
-from_timer=3D0, req->timer.func=3D1
-[  290.967655] fuse_simple_request: req=3D000000003f362e4b, op=3D15
-[  300.996023] fuse_request_timeout: req=3D000000003f362e4b
-[  300.996030] do_fuse_request_end: req=3D000000003f362e4b,
-from_timer=3D1, req->timer.func=3D1
-[  300.996066] fuse_simple_request: req=3D00000000b4182f02, op=3D15
-[  300.996180] fuse_simple_request: req=3D000000003f362e4b, op=3D25
-[  300.996185] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[  300.996980] BUG: KFENCE: use-after-free write in enqueue_timer+0x24/0xb0
+There is a BUILD_BUG_ON() inside get_task_comm(), so when you use
+get_task_comm(), it implies that the BUILD_BUG_ON() is necessary. However,
+we don't want to impose this restriction on code where the length can be
+changed, so we use __get_task_comm(), rather than the get_task_comm().
 
-[  300.997788] Use-after-free write at 0x0000000022312cb7 (in kfence-#156):
-[  300.998476]  enqueue_timer+0x24/0xb0
-[  300.998479]  __mod_timer+0x23b/0x360
-[  300.998481]  add_timer+0x20/0x30
-[  300.998483]  fuse_simple_request+0x1bc/0x2f0 [fuse]
-[  300.998506]  fuse_flush+0x1ac/0x1f0 [fuse]
-[  300.998511]  filp_flush+0x39/0x90
-[  300.998517]  filp_close+0x15/0x30
-[  300.998519]  put_files_struct+0x77/0xe0
-[  300.998522]  exit_files+0x47/0x60
-[  300.998524]  do_exit+0x262/0x480
-[  300.998528]  do_group_exit+0x34/0x90
-[  300.998531]  get_signal+0x92f/0x980
-[  300.998534]  arch_do_signal_or_restart+0x2a/0x100
-[  300.998537]  syscall_exit_to_user_mode+0xe3/0x1a0
-[  300.998541]  do_syscall_64+0x71/0x170
-[  300.998545]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+One use case of get_task_comm() is in code that has already exposed the
+length to userspace. In such cases, we specifically add the BUILD_BUG_ON()
+to prevent developers from changing it. For more information, see
+commit 95af469c4f60 ("fs/binfmt_elf: replace open-coded string copy with
+get_task_comm").
 
-[  300.998759] kfence-#156: 0x00000000b4182f02-0x0000000084fc5c46,
-size=3D200, cache=3Dip4-frags
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/ [0]
 
-[  300.998761] allocated by task 15064 on cpu 26 at 300.996061s:
-[  300.998766]  fuse_request_alloc+0x21/0xb0 [fuse]
-[  300.998771]  fuse_get_req+0xde/0x270 [fuse]
-[  300.998775]  fuse_simple_request+0x33/0x2f0 [fuse]
-[  300.998779]  fuse_do_readpage+0x15e/0x200 [fuse]
-[  300.998783]  fuse_read_folio+0x29/0x60 [fuse]
-[  300.998787]  filemap_read_folio+0x3b/0xe0
-[  300.998791]  filemap_update_page+0x236/0x2d0
-[  300.998792]  filemap_get_pages+0x225/0x390
-[  300.998794]  filemap_read+0xed/0x3a0
-[  300.998796]  generic_file_read_iter+0xb8/0x100
-[  300.998798]  fuse_file_read_iter+0xd8/0x150 [fuse]
-[  300.998804]  vfs_read+0x25e/0x340
-[  300.998806]  ksys_read+0x67/0xf0
-[  300.998808]  __x64_sys_read+0x19/0x20
-[  300.998810]  x64_sys_call+0x1709/0x20b0
-[  300.998813]  do_syscall_64+0x65/0x170
-[  300.998815]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Changes:
+v4->v5:
+- Drop changes in the mm/kmemleak.c as it was fixed by
+  commit 0b84780134fb ("mm/kmemleak: replace strncpy() with strscpy()")
+- Drop changes in kernel/tsacct.c as it was fixed by
+  commmit 0fe2356434e ("tsacct: replace strncpy() with strscpy()")
 
-[  300.998817] freed by task 15064 on cpu 26 at 300.996084s:
-[  300.998822]  fuse_put_request+0x89/0xf0 [fuse]
-[  300.998826]  fuse_simple_request+0xe1/0x2f0 [fuse]
-[  300.998830]  fuse_do_readpage+0x15e/0x200 [fuse]
-[  300.998835]  fuse_read_folio+0x29/0x60 [fuse]
-[  300.998839]  filemap_read_folio+0x3b/0xe0
-[  300.998840]  filemap_update_page+0x236/0x2d0
-[  300.998842]  filemap_get_pages+0x225/0x390
-[  300.998844]  filemap_read+0xed/0x3a0
-[  300.998846]  generic_file_read_iter+0xb8/0x100
-[  300.998848]  fuse_file_read_iter+0xd8/0x150 [fuse]
-[  300.998852]  vfs_read+0x25e/0x340
-[  300.998854]  ksys_read+0x67/0xf0
-[  300.998856]  __x64_sys_read+0x19/0x20
-[  300.998857]  x64_sys_call+0x1709/0x20b0
-[  300.998859]  do_syscall_64+0x65/0x170
-[  300.998860]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+v3->v4: https://lore.kernel.org/linux-mm/20240729023719.1933-1-laoar.shao@gmail.com/
+- Rename __kstrndup() to __kmemdup_nul() and define it inside mm/util.c
+  (Matthew)
+- Remove unused local varaible (Simon)
 
-[  300.999115] CPU: 26 PID: 15064 Comm: cat Kdump: loaded Not tainted 6.10.=
-0+ #8
-[  301.000803] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[  301.001695] do_fuse_request_end: req=3D000000003f362e4b,
-from_timer=3D0, req->timer.func=3D1
-[  301.001723] fuse_background_request: req=3D000000003f362e4b, op=3D18
-[  301.001767] do_fuse_request_end: req=3D000000003f362e4b,
-from_timer=3D0, req->timer.func=3D1
-[  311.235964] fuse_request_timeout: req=3D00000000b4182f02
-[  311.235969] ------------[ cut here ]------------
-[  311.235970] list_del corruption, ffff9a8072d3a000->next is
-LIST_POISON1 (dead000000000100)
-[  311.235982] WARNING: CPU: 26 PID: 0 at lib/list_debug.c:56
-__list_del_entry_valid_or_report+0x8a/0xf0
-[  311.236036] CPU: 26 PID: 0 Comm: swapper/26 Kdump: loaded Tainted:
-G    B              6.10.0+ #8
-[  311.236040] RIP: 0010:__list_del_entry_valid_or_report+0x8a/0xf0
-[  311.236043] Code: 31 c0 5d c3 cc cc cc cc 48 c7 c7 60 7a 5e b0 e8
-cc ea a4 ff 0f 0b 31 c0 5d c3 cc cc cc cc 48 c7 c7 88 7a 5e b0 e8 b6
-ea a4 ff <0f> 0b 31 c0 5d c3 cc cc cc cc 48 89 ca 48 c7 c7 c0 7a 5e b0
-e8 9d
-[  311.236045] RSP: 0018:ffffb6364056ce60 EFLAGS: 00010282
-[  311.236047] RAX: 0000000000000000 RBX: ffff9a8072d3a0a0 RCX: 00000000000=
-00027
-[  311.236048] RDX: ffff9a807f4a0848 RSI: 0000000000000001 RDI: ffff9a807f4=
-a0840
-[  311.236049] RBP: ffffb6364056ce60 R08: 0000000000000000 R09: ffffb636405=
-6cce0
-[  311.236050] R10: ffffb6364056ccd8 R11: ffffffffb1017ee8 R12: ffff9a8072d=
-3a000
-[  311.236051] R13: ffff9a420d5af000 R14: 0000000100002800 R15: ffff9a420d5=
-af054
-[  311.236054] FS:  0000000000000000(0000) GS:ffff9a807f480000(0000)
-knlGS:0000000000000000
-[  311.236056] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  311.236057] CR2: 000000c000dc5000 CR3: 000000010cc38003 CR4: 00000000003=
-70ef0
-[  311.236058] Call Trace:
-[  311.236059]  <IRQ>
-[  311.236061]  ? show_regs+0x69/0x80
-[  311.236065]  ? __warn+0x88/0x130
-[  311.236068]  ? __list_del_entry_valid_or_report+0x8a/0xf0
-[  311.236070]  ? report_bug+0x18f/0x1a0
-[  311.236074]  ? handle_bug+0x40/0x70
-[  311.236077]  ? exc_invalid_op+0x19/0x70
-[  311.236079]  ? asm_exc_invalid_op+0x1b/0x20
-[  311.236083]  ? __list_del_entry_valid_or_report+0x8a/0xf0
-[  311.236086]  fuse_request_timeout+0x15c/0x1a0 [fuse]
-[  311.236094]  ? __pfx_fuse_request_timeout+0x10/0x10 [fuse]
-[  311.236099]  call_timer_fn+0x2c/0x130
-[  311.236102]  ? __pfx_fuse_request_timeout+0x10/0x10 [fuse]
-[  311.236106]  __run_timers+0x2c2/0x360
-[  311.236108]  ? kvm_sched_clock_read+0x11/0x20
-[  311.236110]  ? sched_clock_noinstr+0x9/0x10
-[  311.236111]  ? sched_clock+0x10/0x30
-[  311.236114]  ? sched_clock_cpu+0x10/0x190
-[  311.236116]  run_timer_softirq+0x3a/0x60
-[  311.236118]  handle_softirqs+0x118/0x350
-[  311.236121]  irq_exit_rcu+0x60/0x80
-[  311.236123]  sysvec_apic_timer_interrupt+0x7f/0x90
-[  311.236124]  </IRQ>
-[  311.236125]  <TASK>
-[  311.236126]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
-[  311.236128] RIP: 0010:default_idle+0xb/0x20
-[  311.236130] Code: 00 4d 29 c8 4c 01 c7 4c 29 c2 e9 6e ff ff ff 90
-90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 eb 07 0f 00 2d b3 51 33
-00 fb f4 <fa> c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40
-00 90
-[  311.236131] RSP: 0018:ffffb6364018fe18 EFLAGS: 00000246
-[  311.236133] RAX: 0000000000004000 RBX: 0000000000000001 RCX: 0001c0582ca=
-6ada0
-[  311.236134] RDX: 0000000000000001 RSI: ffffffffb112e060 RDI: ffff9a807f4=
-bc8e0
-[  311.236135] RBP: ffffb6364018fe20 R08: 00000048770ca8ec R09: 00000000000=
-00001
-[  311.236135] R10: ffffffffb0e56080 R11: 0000000000000001 R12: 00000000000=
-00001
-[  311.236136] R13: ffffffffb112e060 R14: ffffffffb112e0e0 R15: 00000000000=
-00001
-[  311.236138]  ? ct_kernel_exit.constprop.0+0x79/0x90
-[  311.236140]  ? arch_cpu_idle+0x9/0x10
-[  311.236142]  default_enter_idle+0x22/0x2f
-[  311.236144]  cpuidle_enter_state+0x88/0x430
-[  311.236146]  cpuidle_enter+0x34/0x50
-[  311.236150]  call_cpuidle+0x22/0x50
-[  311.236151]  cpuidle_idle_call+0xd2/0x120
-[  311.236154]  do_idle+0x77/0xd0
-[  311.236156]  cpu_startup_entry+0x2c/0x30
-[  311.236158]  start_secondary+0x117/0x140
-[  311.236160]  common_startup_64+0x13e/0x141
-[  311.236163]  </TASK>
-[  311.236163] ---[ end trace 0000000000000000 ]---
-[  311.236165] do_fuse_request_end: req=3D00000000b4182f02,
-from_timer=3D1, req->timer.func=3D1
-[  311.236166] ------------[ cut here ]------------
-[  311.236167] refcount_t: underflow; use-after-free.
-[  311.236174] WARNING: CPU: 26 PID: 0 at lib/refcount.c:28
-refcount_warn_saturate+0xc2/0x110
-[  311.236207] CPU: 26 PID: 0 Comm: swapper/26 Kdump: loaded Tainted:
-G    B   W          6.10.0+ #8
-[  311.236209] RIP: 0010:refcount_warn_saturate+0xc2/0x110
-[  311.236211] Code: 01 e8 d2 72 a6 ff 0f 0b 5d c3 cc cc cc cc 80 3d
-33 d4 b1 01 00 75 81 48 c7 c7 30 69 5e b0 c6 05 23 d4 b1 01 01 e8 ae
-72 a6 ff <0f> 0b 5d c3 cc cc cc cc 80 3d 0d d4 b1 01 00 0f 85 59 ff ff
-ff 48
-[  311.236212] RSP: 0018:ffffb6364056cdf8 EFLAGS: 00010286
-[  311.236213] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000000000=
-00027
-[  311.236214] RDX: ffff9a807f4a0848 RSI: 0000000000000001 RDI: ffff9a807f4=
-a0840
-[  311.236215] RBP: ffffb6364056cdf8 R08: 0000000000000000 R09: ffffb636405=
-6cc78
-[  311.236216] R10: ffffb6364056cc70 R11: ffffffffb1017ee8 R12: ffff9a8072d=
-3a000
-[  311.236217] R13: ffff9a420d5af000 R14: ffff9a42426a6ec0 R15: ffff9a8072d=
-3a010
-[  311.236219] FS:  0000000000000000(0000) GS:ffff9a807f480000(0000)
-knlGS:0000000000000000
-[  311.236221] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  311.236222] CR2: 000000c000dc5000 CR3: 000000010cc38003 CR4: 00000000003=
-70ef0
-[  311.236223] Call Trace:
-[  311.236223]  <IRQ>
-[  311.236224]  ? show_regs+0x69/0x80
-[  311.236233]  ? __warn+0x88/0x130
-[  311.236235]  ? refcount_warn_saturate+0xc2/0x110
-[  311.236236]  ? report_bug+0x18f/0x1a0
-[  311.236238]  ? handle_bug+0x40/0x70
-[  311.236240]  ? exc_invalid_op+0x19/0x70
-[  311.236242]  ? asm_exc_invalid_op+0x1b/0x20
-[  311.236244]  ? refcount_warn_saturate+0xc2/0x110
-[  311.236246]  ? refcount_warn_saturate+0xc2/0x110
-[  311.236247]  fuse_put_request+0xc6/0xf0 [fuse]
-[  311.236253]  do_fuse_request_end+0xcc/0x1e0 [fuse]
-[  311.236258]  fuse_request_timeout+0xac/0x1a0 [fuse]
-[  311.236263]  ? __pfx_fuse_request_timeout+0x10/0x10 [fuse]
-[  311.236267]  call_timer_fn+0x2c/0x130
-[  311.236269]  ? __pfx_fuse_request_timeout+0x10/0x10 [fuse]
-[  311.236274]  __run_timers+0x2c2/0x360
-[  311.236275]  ? kvm_sched_clock_read+0x11/0x20
-[  311.236277]  ? sched_clock_noinstr+0x9/0x10
-[  311.236278]  ? sched_clock+0x10/0x30
-[  311.236280]  ? sched_clock_cpu+0x10/0x190
-[  311.236281]  run_timer_softirq+0x3a/0x60
-[  311.236283]  handle_softirqs+0x118/0x350
-[  311.236285]  irq_exit_rcu+0x60/0x80
-[  311.236286]  sysvec_apic_timer_interrupt+0x7f/0x90
-[  311.236288]  </IRQ>
-[  311.236288]  <TASK>
-[  311.236289]  asm_sysvec_apic_timer_interrupt+0x1b/0x20
-[  311.236291] RIP: 0010:default_idle+0xb/0x20
-[  311.236293] Code: 00 4d 29 c8 4c 01 c7 4c 29 c2 e9 6e ff ff ff 90
-90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 eb 07 0f 00 2d b3 51 33
-00 fb f4 <fa> c3 cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40
-00 90
-[  311.236294] RSP: 0018:ffffb6364018fe18 EFLAGS: 00000246
-[  311.236295] RAX: 0000000000004000 RBX: 0000000000000001 RCX: 0001c0582ca=
-6ada0
-[  311.236296] RDX: 0000000000000001 RSI: ffffffffb112e060 RDI: ffff9a807f4=
-bc8e0
-[  311.236297] RBP: ffffb6364018fe20 R08: 00000048770ca8ec R09: 00000000000=
-00001
-[  311.236298] R10: ffffffffb0e56080 R11: 0000000000000001 R12: 00000000000=
-00001
-[  311.236299] R13: ffffffffb112e060 R14: ffffffffb112e0e0 R15: 00000000000=
-00001
-[  311.236300]  ? ct_kernel_exit.constprop.0+0x79/0x90
-[  311.236302]  ? arch_cpu_idle+0x9/0x10
-[  311.236304]  default_enter_idle+0x22/0x2f
-[  311.236306]  cpuidle_enter_state+0x88/0x430
-[  311.236308]  cpuidle_enter+0x34/0x50
-[  311.236310]  call_cpuidle+0x22/0x50
-[  311.236311]  cpuidle_idle_call+0xd2/0x120
-[  311.236313]  do_idle+0x77/0xd0
-[  311.236315]  cpu_startup_entry+0x2c/0x30
-[  311.236317]  start_secondary+0x117/0x140
-[  311.236318]  common_startup_64+0x13e/0x141
-[  311.236320]  </TASK>
-[  311.236321] ---[ end trace 0000000000000000 ]---
+v2->v3: https://lore.kernel.org/all/20240621022959.9124-1-laoar.shao@gmail.com/
+- Deduplicate code around kstrdup (Andrew)
+- Add commit log for dropping task_lock (Catalin)
 
-I wish I could provide you with a clear explanation of what happened
-in my test environment, but I haven't had the time to delve into the
-details yet.
+v1->v2: https://lore.kernel.org/bpf/20240613023044.45873-1-laoar.shao@gmail.com/
+- Add comment for dropping task_lock() in __get_task_comm() (Alexei)
+- Drop changes in trace event (Steven)
+- Fix comment on task comm (Matus)
 
+v1: https://lore.kernel.org/all/20240602023754.25443-1-laoar.shao@gmail.com/
 
---
-Regards
-Yafang
+Yafang Shao (9):
+  fs/exec: Drop task_lock() inside __get_task_comm()
+  auditsc: Replace memcpy() with __get_task_comm()
+  security: Replace memcpy() with __get_task_comm()
+  bpftool: Ensure task comm is always NUL-terminated
+  mm/util: Fix possible race condition in kstrdup()
+  mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
+  tracing: Replace strncpy() with __get_task_comm()
+  net: Replace strcpy() with __get_task_comm()
+  drm: Replace strcpy() with __get_task_comm()
+
+ drivers/gpu/drm/drm_framebuffer.c     |  2 +-
+ drivers/gpu/drm/i915/i915_gpu_error.c |  2 +-
+ fs/exec.c                             | 10 ++++-
+ include/linux/sched.h                 |  4 +-
+ kernel/auditsc.c                      |  6 +--
+ kernel/trace/trace.c                  |  2 +-
+ kernel/trace/trace_events_hist.c      |  2 +-
+ mm/util.c                             | 61 ++++++++++++---------------
+ net/ipv6/ndisc.c                      |  2 +-
+ security/lsm_audit.c                  |  4 +-
+ security/selinux/selinuxfs.c          |  2 +-
+ tools/bpf/bpftool/pids.c              |  2 +
+ 12 files changed, 49 insertions(+), 50 deletions(-)
+
+-- 
+2.34.1
 
