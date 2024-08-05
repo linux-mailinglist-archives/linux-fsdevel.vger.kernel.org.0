@@ -1,276 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-25024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE1D947E16
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 17:30:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3554A947E33
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 17:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 722862814DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 15:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587171C21E42
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 15:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06391552E1;
-	Mon,  5 Aug 2024 15:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C85C15A4AF;
+	Mon,  5 Aug 2024 15:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SaA6MSXk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S1sk61Lg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xUdLg+Jp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hT8TBwNl"
+	dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b="DU1vCdcd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from a1-bg02.venev.name (a1-bg02.venev.name [213.240.239.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D62C2AEF5;
-	Mon,  5 Aug 2024 15:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D620524D7;
+	Mon,  5 Aug 2024 15:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.240.239.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722871825; cv=none; b=YlaiqWMUSqxiLdtgsjMuThQxCDsE9M9N6q025gogpm44uAOwx+Kdz1v2qshHm8gyz3M1djHxCsv1lW82t+RKPtNamDSJzr+SBdBouY3xvXaIYfv6j6nngdDJk9BzYRununPfNpVV1n7WXItdxxHOM7/LKdol7Zh9LzrZrt9FGys=
+	t=1722872084; cv=none; b=aP/+/GbXCctKNk3kTo8rKSD5zg8eB3uWnz3g6kPaV0/ybUsIDDmEIp0zTzrK/TYu3NFvEF78hQRFsqbZMZQltNKAJebVZdvCek5dWk+50uRwJmcVMezAEEIvxNpkcgMGxVgBAiH8+Z0FK5M7HpqF1nAulYvmZdvQ+5/UNkt4NRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722871825; c=relaxed/simple;
-	bh=P53FcLV3aV/rW8X++Tj7e/Jskpkx55+c2TY91HdrKIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XN7rkf7lFfU+xHiEXTJSV4V206RkKXcoLhkW/5+qiEqsmlxhfDs/glsf3Dhv47yW1sCSTddf/QrQdM81mj7LUV9RHkJ6lYM/f4MFU+8D7s8jqAUTFfB3aHxM+Irtyo1H8VNRdJ99Jgizhc10kActVstUNjrP8/M9b5Xd1rR1n+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SaA6MSXk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S1sk61Lg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xUdLg+Jp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hT8TBwNl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9001E1F7E8;
-	Mon,  5 Aug 2024 15:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722871821; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D63tHi1ufrCqU6aXrDGsdg5HEdJeV4Q3bSuuCaUhptM=;
-	b=SaA6MSXkxaypD9iSpEteM6aCNQEMBiFRM0X7q0LF9cMscQY4uKpaljLTAnWQ+Du4m8n818
-	iw6NrDhQxumz905Yob69dd/Z96u0jx1R/NAj8Xz/PmiWIBZWxTbQbQIRvp3xpmjOu7t7bl
-	oPw07hUecOoMg+iFFr/funBrgcBHgHY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722871821;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D63tHi1ufrCqU6aXrDGsdg5HEdJeV4Q3bSuuCaUhptM=;
-	b=S1sk61Lgj5/WxaLe9T8U5AD9XZGdnbR8UgpsmyrWTBjVdap6t5x1HWSuTsUYv7/pcFzkB5
-	JhY8q+n4QlYUk1Bw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722871819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D63tHi1ufrCqU6aXrDGsdg5HEdJeV4Q3bSuuCaUhptM=;
-	b=xUdLg+JpggbGIlIrTfoeMMSJc70x8RmGtNvxW5Bd4y0G9Jnz3qdKXdTIOQ5rW5wlgY4B7y
-	uwtWxXTNp+ni9Fn5Km79EV7rXpJ2lPFJeLjZDwtKjyAkKxsHrieYUrhKl23eYo32q4aWy2
-	nacoscMNhLPPE5uOjG3j10VlP5dbtkY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722871819;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D63tHi1ufrCqU6aXrDGsdg5HEdJeV4Q3bSuuCaUhptM=;
-	b=hT8TBwNlkAXgd9sPNM9I/YQq/pAa1VuCwACGONEK8P4qdqcw5vTDcDQkNj0/diFMHKvaEo
-	d+xwevl1t4gODVDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7EC9313ACF;
-	Mon,  5 Aug 2024 15:30:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LwnwHgvwsGZTYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 05 Aug 2024 15:30:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D395BA0897; Mon,  5 Aug 2024 17:30:18 +0200 (CEST)
-Date: Mon, 5 Aug 2024 17:30:18 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhihao Cheng <chengzhihao@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, tahsin@google.com,
-	mjguzik@gmail.com, error27@gmail.com, tytso@mit.edu,
-	rydercoding@hotmail.com, jack@suse.cz, hch@infradead.org,
-	andreas.dilger@intel.com, richard@nod.at,
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	chengzhihao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
-	wangzhaolong1@huawei.com
-Subject: Re: [PATCH] vfs: Don't evict inode under the inode lru traversing
- context
-Message-ID: <20240805153018.3sju3nowiqggykvf@quack3>
-References: <20240805013446.814357-1-chengzhihao@huaweicloud.com>
+	s=arc-20240116; t=1722872084; c=relaxed/simple;
+	bh=az9IZNBf572XOHxYtYloLtOpMtowQ2MhfSY+bSjR3u0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UXyP5K77W7JpuiZr+pdCUm1Pqa8jDRVrl40T94ROkxmbtXDkJXJW2eEHN5sDJYr45C0yk/M3iuULt81x+gB716sQdMTUrRiTpOfvt+MSq4ZLnHWQe3mmWoCfG1fSHzU8Y6eBhSGItiueodl3Y/18eNgOLh8NETeqBZzs4O0AN44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name; spf=pass smtp.mailfrom=venev.name; dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b=DU1vCdcd; arc=none smtp.client-ip=213.240.239.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venev.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
+	s=default; h=Content-Type:Date:To:From:Subject:Message-ID:
+	Content-Transfer-Encoding:Reply-To:Sender;
+	bh=+75xdacdFsxgXARR9Bk36Kwb9foV0OHSOEia2xj7zNY=; b=DU1vCdcd8zw9fBuCWcoIUbwd1N
+	2iT4Z2yvNfgooj+qsR6kbQdFMB9mEb7MPKt+VAoy6pAe7pdqbgGMWBQrTjm5IV6JpccyuRHsKWCg8
+	Rm17xbh2I4uvc8TnSgoWclni/8uEnZX1ZZNQZxYYW6vOydyZyCxT1dwypsgxPJWMzLLdQpNi9XOzZ
+	jBdxIDopSyhf0zizQWlafTUXsK7M8QxIKO6z3QFsgepxGo7bCk96cgSQoj9gHujAgmI29thBGKnyZ
+	JIHQo5ifmjbTVVxxKdXiAmT2JnJtfvBzgOSDGRnJiqWkna5Bz5E1b1neZS7ktgEtT2RHJNLn+ij+8
+	c0twlongBZLwZmjIhvx4IMPrzemy8q5T1L97b0sO72NJvGvnJWzyX0TlX2+R8Jw9DwsIohvt63eqW
+	MoEUb5Ss/pbmwKjWA50Ci8vF+YZggJfErFSVHV4vuZ648gk776yysPSbzOrwMy6FxkMY+MrEwAVF6
+	z5CW82XGZNsIuwlYe4uhvqrl67Yygm4I/UHkyfVvGCHb8guYqtSndoAm83uWZbVrjk+/oC6rDYviQ
+	RLzXAlFqmhITeb21xqpoxDmHR7V5nOxYNlXwzj1jjvUHlxOYl3meT+TU7c9TDxbWQmoUuqBsiXZNU
+	4nlHURCPdc4d2xHyDHQQ6UAtQuaw/qfcCTwy00QFM=;
+Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
+	by a1-bg02.venev.name with esmtps
+	id 1sazj7-00000000p6D-1noa
+	(TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	(envelope-from <hristo@venev.name>);
+	Mon, 05 Aug 2024 15:34:25 +0000
+Received: from plank.m.venev.name ([213.240.239.48])
+	by pmx1.venev.name with ESMTPSA
+	id CTunOf/wsGZK/wIAT9YxdQ
+	(envelope-from <hristo@venev.name>); Mon, 05 Aug 2024 15:34:25 +0000
+Message-ID: <c39524ab0e2b2045f21bc64f3742ac2b96abd2b9.camel@venev.name>
+Subject: Re: [PATCH] netfs: Set NETFS_RREQ_WRITE_TO_CACHE when caching is
+ possible
+From: Hristo Venev <hristo@venev.name>
+To: Trond Myklebust <trondmy@hammerspace.com>, "max.kellermann@ionos.com"
+	 <max.kellermann@ionos.com>, "dhowells@redhat.com" <dhowells@redhat.com>
+Cc: "dan.aloni@vastdata.com" <dan.aloni@vastdata.com>, "xiubli@redhat.com"
+ <xiubli@redhat.com>, "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>, "ceph-devel@vger.kernel.org"
+ <ceph-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "netfs@lists.linux.dev"
+ <netfs@lists.linux.dev>,  "jlayton@kernel.org" <jlayton@kernel.org>,
+ "idryomov@gmail.com" <idryomov@gmail.com>,  "willy@infradead.org"
+ <willy@infradead.org>, "blokos@free.fr" <blokos@free.fr>, 
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Date: Mon, 05 Aug 2024 18:34:23 +0300
+In-Reply-To: <ba17aecba9615f85b7901ea96609abdad3c29db1.camel@hammerspace.com>
+References: <20240729091532.855688-1-max.kellermann@ionos.com>
+	 <3575457.1722355300@warthog.procyon.org.uk>
+	 <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
+	 <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com>
+	 <3717298.1722422465@warthog.procyon.org.uk>
+	 <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
+	 <845520c7e608c31751506f8162f994b48d235776.camel@venev.name>
+	 <ba17aecba9615f85b7901ea96609abdad3c29db1.camel@hammerspace.com>
+Autocrypt: addr=hristo@venev.name; prefer-encrypt=mutual;
+ keydata=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
+ AjQ6o01lu
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-m+Z7TPUh5Rd+PvHZw/pU"
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240805013446.814357-1-chengzhihao@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.80 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,hotmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,google.com,gmail.com,mit.edu,hotmail.com,suse.cz,infradead.org,intel.com,nod.at,vger.kernel.org,lists.infradead.org,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -0.80
 
-On Mon 05-08-24 09:34:46, Zhihao Cheng wrote:
-> From: Zhihao Cheng <chengzhihao1@huawei.com>
-> 
-> The inode reclaiming process(See function prune_icache_sb) collects all
-> reclaimable inodes and mark them with I_FREEING flag at first, at that
-> time, other processes will be stuck if they try getting these inodes
-> (See function find_inode_fast), then the reclaiming process destroy the
-> inodes by function dispose_list(). Some filesystems(eg. ext4 with
-> ea_inode feature, ubifs with xattr) may do inode lookup in the inode
-> evicting callback function, if the inode lookup is operated under the
-> inode lru traversing context, deadlock problems may happen.
-> 
-> Case 1: In function ext4_evict_inode(), the ea inode lookup could happen
->         if ea_inode feature is enabled, the lookup process will be stuck
-> 	under the evicting context like this:
-> 
->  1. File A has inode i_reg and an ea inode i_ea
->  2. getfattr(A, xattr_buf) // i_ea is added into lru // lru->i_ea
->  3. Then, following three processes running like this:
-> 
->     PA                              PB
->  echo 2 > /proc/sys/vm/drop_caches
->   shrink_slab
->    prune_dcache_sb
->    // i_reg is added into lru, lru->i_ea->i_reg
->    prune_icache_sb
->     list_lru_walk_one
->      inode_lru_isolate
->       i_ea->i_state |= I_FREEING // set inode state
->      inode_lru_isolate
->       __iget(i_reg)
->       spin_unlock(&i_reg->i_lock)
->       spin_unlock(lru_lock)
->                                      rm file A
->                                       i_reg->nlink = 0
->       iput(i_reg) // i_reg->nlink is 0, do evict
->        ext4_evict_inode
->         ext4_xattr_delete_inode
->          ext4_xattr_inode_dec_ref_all
->           ext4_xattr_inode_iget
->            ext4_iget(i_ea->i_ino)
->             iget_locked
->              find_inode_fast
->               __wait_on_freeing_inode(i_ea) ----→ AA deadlock
->     dispose_list // cannot be executed by prune_icache_sb
->      wake_up_bit(&i_ea->i_state)
-> 
-> Case 2: In deleted inode writing function ubifs_jnl_write_inode(), file
->         deleting process holds BASEHD's wbuf->io_mutex while getting the
-> 	xattr inode, which could race with inode reclaiming process(The
->         reclaiming process could try locking BASEHD's wbuf->io_mutex in
-> 	inode evicting function), then an ABBA deadlock problem would
-> 	happen as following:
-> 
->  1. File A has inode ia and a xattr(with inode ixa), regular file B has
->     inode ib and a xattr.
->  2. getfattr(A, xattr_buf) // ixa is added into lru // lru->ixa
->  3. Then, following three processes running like this:
-> 
->         PA                PB                        PC
->                 echo 2 > /proc/sys/vm/drop_caches
->                  shrink_slab
->                   prune_dcache_sb
->                   // ib and ia are added into lru, lru->ixa->ib->ia
->                   prune_icache_sb
->                    list_lru_walk_one
->                     inode_lru_isolate
->                      ixa->i_state |= I_FREEING // set inode state
->                     inode_lru_isolate
->                      __iget(ib)
->                      spin_unlock(&ib->i_lock)
->                      spin_unlock(lru_lock)
->                                                    rm file B
->                                                     ib->nlink = 0
->  rm file A
->   iput(ia)
->    ubifs_evict_inode(ia)
->     ubifs_jnl_delete_inode(ia)
->      ubifs_jnl_write_inode(ia)
->       make_reservation(BASEHD) // Lock wbuf->io_mutex
->       ubifs_iget(ixa->i_ino)
->        iget_locked
->         find_inode_fast
->          __wait_on_freeing_inode(ixa)
->           |          iput(ib) // ib->nlink is 0, do evict
->           |           ubifs_evict_inode
->           |            ubifs_jnl_delete_inode(ib)
->           ↓             ubifs_jnl_write_inode
->      ABBA deadlock ←-----make_reservation(BASEHD)
->                    dispose_list // cannot be executed by prune_icache_sb
->                     wake_up_bit(&ixa->i_state)
-> 
-> Fix it by forbidding inode evicting under the inode lru traversing
-> context. In details, we import a new inode state flag 'I_LRU_ISOLATING'
-> to pin inode without holding i_count under the inode lru traversing
-> context, the inode evicting process will wait until this flag is
-> cleared from i_state.
 
-Thanks for the patch and sorry for not getting to this myself!  Let me
-rephrase the above paragraph a bit for better readability:
+--=-m+Z7TPUh5Rd+PvHZw/pU
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix the possible deadlock by using new inode state flag I_LRU_ISOLATING to
-pin the inode in memory while inode_lru_isolate() reclaims its pages
-instead of using ordinary inode reference. This way inode deletion cannot
-be triggered from inode_lru_isolate() thus avoiding the deadlock. evict()
-is made to wait for I_LRU_ISOLATING to be cleared before proceeding with
-inode cleanup.
+On Sun, 2024-08-04 at 23:22 +0000, Trond Myklebust wrote:
+> On Sun, 2024-08-04 at 16:57 +0300, Hristo Venev wrote:
+> > In addition to Ceph, in NFS there are also some crashes related to
+> > the
+> > use of 0x356 as a pointer.
+> >=20
+> > `netfs_is_cache_enabled()` only returns true when the fscache
+> > cookie
+> > is
+> > fully initialized. This may happen after the request has been
+> > created,
+> > so check for the cookie's existence instead.
+> >=20
+> > Link:
+> > https://lore.kernel.org/linux-nfs/b78c88db-8b3a-4008-94cb-82ae08f0e37b@=
+free.fr/T/
+> > Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio-
+> > > private and marking dirty")
+> > Cc: linux-nfs@vger.kernel.org=C2=A0<linux-nfs@vger.kernel.org>
+> > Cc: blokos <blokos@free.fr>
+> > Cc: Trond Myklebust <trondmy@hammerspace.com>
+> > Cc: dan.aloni@vastdata.com=C2=A0<dan.aloni@vastdata.com>
+> > Signed-off-by: Hristo Venev <hristo@venev.name>
+> > ---
+> > =C2=A0fs/netfs/objects.c | 6 +++---
+> > =C2=A01 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+> > index f4a6427274792..a74ca90c86c9b 100644
+> > --- a/fs/netfs/objects.c
+> > +++ b/fs/netfs/objects.c
+> > @@ -27,7 +27,6 @@ struct netfs_io_request
+> > *netfs_alloc_request(struct
+> > address_space *mapping,
+> > =C2=A0	bool is_unbuffered =3D (origin =3D=3D NETFS_UNBUFFERED_WRITE ||
+> > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 origin =3D=3D NETFS_DIO_READ ||
+> > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 origin =3D=3D NETFS_DIO_WRITE);
+> > -	bool cached =3D !is_unbuffered &&
+> > netfs_is_cache_enabled(ctx);
+> > =C2=A0	int ret;
+> > =C2=A0
+> > =C2=A0	for (;;) {
+> > @@ -56,8 +55,9 @@ struct netfs_io_request
+> > *netfs_alloc_request(struct
+> > address_space *mapping,
+> > =C2=A0	refcount_set(&rreq->ref, 1);
+> > =C2=A0
+> > =C2=A0	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+> > -	if (cached) {
+> > -		__set_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq-
+> > >flags);
+> > +	if (!is_unbuffered &&
+> > fscache_cookie_valid(netfs_i_cookie(ctx))) {
+> > +		if(netfs_is_cache_enabled(ctx))
+> > +			__set_bit(NETFS_RREQ_WRITE_TO_CACHE,
+> > &rreq-
+> > > flags);
+> > =C2=A0		if (test_bit(NETFS_ICTX_USE_PGPRIV2, &ctx->flags))
+> > =C2=A0			/* Filesystem uses deprecated PG_private_2
+> > marking. */
+> > =C2=A0			__set_bit(NETFS_RREQ_USE_PGPRIV2, &rreq-
+> > > flags);
+>=20
+> Does this mean that netfs could still end up setting a value for
+> folio-
+> > private in NFS given some other set of circumstances?
 
-> @@ -488,6 +488,36 @@ static void inode_lru_list_del(struct inode *inode)
->  		this_cpu_dec(nr_unused);
->  }
->  
-> +static void inode_lru_isolating(struct inode *inode)
+Hopefully not? For NFS the cookie should be allocated in
+`nfs_fscache_init_inode`, and for Ceph I think `ceph_fill_inode` (which
+calls `ceph_fscache_register_inode_cookie`) should also be called early
+enough as well.
 
-Perhaps call this inode_pin_lru_isolating()
+> --=20
+> Trond Myklebust
+> Linux NFS client maintainer, Hammerspace
+> trond.myklebust@hammerspace.com
+>=20
+>=20
 
-> +{
-> +	BUG_ON(inode->i_state & (I_LRU_ISOLATING | I_FREEING | I_WILL_FREE));
-> +	inode->i_state |= I_LRU_ISOLATING;
-> +}
-> +
-> +static void inode_lru_finish_isolating(struct inode *inode)
 
-And call this inode_unpin_lru_isolating()?
+--=-m+Z7TPUh5Rd+PvHZw/pU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Otherwise the patch looks good so feel free to add:
+-----BEGIN PGP SIGNATURE-----
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+iQIzBAABCgAdFiEEb/2s7vGPWBH9BOGpSkmD6rj9B8sFAmaw8P8ACgkQSkmD6rj9
+B8uUow/+N0iSbLU5Dj4n4YCskaXe0oYauxtSCavu/FgTNgiGxMSAZAftYPNXznPt
+pD955SG00oNSAv3pJ899be31Pngurud6Ab7mhBJ+0JRNBsxJnD1NYAcDTAlKhLT/
+u6PDNmB82e0fnDSOx9PYQXuepfTwG3xuUJblbLU62O/D3XEEe9BgTfevf+4LHqZF
+z7ezu6qdGxeKyeVjWysFWdwjDybOYvdpiBgUML+0gnQq8A+RrB7dnVjfEJmxqksL
+0ciUxXg+uvQHNVtCoR+zuKRztS7dpgeYgggUGgHVXFdC3WzCxExJZemZmXJBmB+L
+8rWM4TGFCet6lNE1H5RUsBpvGQcYKqGpPDpeLQuI+dhmmTg3q29IM9ERTsD91FqA
+b+xzw0B84IPa2j6RWHjvh4C8kHRRKaDroCuzB8/9tl5XwqFYFjoF/9aO+Js6Cwf6
+5gukhuhgWFfxlqr8XJ7jQsS+KRMVGbvGxFezuquPGcINEfK+g5yPQDUBv334H/Jh
+W4yKbXZ4pHeXiZLSXqBuDZYK2oGRRJaTYJ+9875HCDEZC377I7DGT7EcpUj1afVb
+KsA9k5xMB/RRbP9n6VVBZ5e1osIwZfkCPG9+ZiqBbi658gHoTPsOJ0X4Z2R0p1I6
+2owPKsdeN2oUerNNVQ/5MBKqWzgwsjvMO0KreUMgl7b97fIDbSI=
+=67v8
+-----END PGP SIGNATURE-----
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=-m+Z7TPUh5Rd+PvHZw/pU--
 
