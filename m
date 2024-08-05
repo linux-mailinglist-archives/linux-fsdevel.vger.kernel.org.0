@@ -1,125 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-25037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED29948214
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 21:10:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8E694828E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 21:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 802351C21AAB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 19:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29B61F22371
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 19:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAB716B389;
-	Mon,  5 Aug 2024 19:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729FA16BE17;
+	Mon,  5 Aug 2024 19:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FaWk2mmi"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Zsl06BGj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EC52AD13
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Aug 2024 19:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CF414A85;
+	Mon,  5 Aug 2024 19:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722885033; cv=none; b=BDDtqCoPlJrozVE8N9nHu8+JshMeuaFyv/In3mUo0XXNHVANSYWhT18G+CS5BJEk9BeNvYPMiMGy8k6ASua5/ld5x+wOAUrW0QYa7bpd1tu6a4SLxq7C74IR5egeuQqzZrA/gre4AGuWFjZh+cSP6RKv07NqKvDffIbD5EdWqiA=
+	t=1722887282; cv=none; b=YUKU5qQT33MTpJOubzUZqsFYYKGuIh38IhMREGteJ7/6fGdDdA3XjBQUMA/SI2SqUKAplPU3eNOePppITKm7NNHafDckC1GEW6b32uUAqpP9jRZ6m0aWVUILF0ySi5fZyuFUw7Wu8b3RLAjGIVT5ILsFcMTGetFpMRouqUCT/Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722885033; c=relaxed/simple;
-	bh=CoU8z7rPwlIktTSPXSLvGcHELQDE66WJAH2fIR5MIEU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dMk7F8yYmyBUgqYsAaamwPEeBBIKXA5osriABdt1MmXFAZeV48TIy4LthQEJp7wrsHkqAFWw9/Xcd+jMNmUMUlK+baPhC64gGM5jSgUw/nweQRh/EJ16hiWsOzOp3AgJKCvDVLkxjMwTasiNwhXEHNkBVxkRMNNzAmevwMd034I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FaWk2mmi; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7ab76558a9so10857066b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 12:10:31 -0700 (PDT)
+	s=arc-20240116; t=1722887282; c=relaxed/simple;
+	bh=hWFIHHWuFbJXkky+ht6BUwYWPc3b4HXDslWubfqa1x0=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KueWE10Zg1DcygLs57Q834aPVjI2OOMNLUV3ZyDMIov2R1ZNvnr9SXzj+7a9cgMcTgQI+dKD9vUmNZ6iei/4ld0CwdWJWQdqCQeZH6Ki8o4wI8QL5jceCN4r4pBbUtq9pyZvzcXA4a/VbUeAZhbfGHCB18C8lV2JvOQhlmRNRZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Zsl06BGj; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722885029; x=1723489829; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UA5U+6t/BL3dNn6z4KME0ljFM05r+burKxZg1qrP5MU=;
-        b=FaWk2mmid+GhVMgVcbUXOeiMxg66qgz9c1HBvm4/BzLNxb699nbnLXW65w8avWakMC
-         8uUD55EC2hv9Fqb1jM/YPzwVk1tDAtgbsE5V4+MbsMihB0ZElqJUfnq/8znXxZevQPEx
-         edewIQW+XqAcV2O8SMjfIFrZhr4pmhBFvIoKs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722885029; x=1723489829;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UA5U+6t/BL3dNn6z4KME0ljFM05r+burKxZg1qrP5MU=;
-        b=N8kyx4AtTjDP3AIgkJnkJWF35WHxIgooNbw/pGET0yTWDr9plqF9dbvA29GWHFBZu/
-         oIoyLX5eKvErs/LJCntgDbDwIBGCavwl6XZnuaXPK0M1HS4wlMzSlQ6AsCRnlJ6+oeK7
-         VEAOS8MC4/Bl5RI3eYsOZUoj7UIlS+N9ZUuO5NaLbe6VQ6f5JicFeiZ+OYnnviCX7dnB
-         MsdHGDxNkps3mEHk8hqP4CFwFO3lwv8oy93VCkNcXH+A+2BdTX2DiSUvKw1b6FsfGl8O
-         MP7ENDUeTqZaRiESAoOtKidGWfKrn/C+lrd19wjxi6EwznUbhfXD0SSowlmk4hjIIch6
-         BxSA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8w3Xssvk1EQZ259jIkjogD+S4gBiDJ97P9BwyXTEnUA6WCtSY/7H5NCc1xwUpYqjCV3lCO1JYWXqGUhpMepHnJVBnQOtuB/HZcACYRg==
-X-Gm-Message-State: AOJu0YzvGs6rw0gYAkfQzH+paiN76Mw+GV1vLy97RiTgDAMEA4kSadMh
-	EVA86m/0H/2fwvfLESpWCHdQjkFDuvprqStroHenn3viM71mBs7AG0d5XROuHnoggxXebI+sEeL
-	Va7kRmw==
-X-Google-Smtp-Source: AGHT+IHGEk/mNzDgEuQYP5/2xvBlPMo5RForW4RG2UUkjAE4tG+SMXUwZC/qZAZCOAr0zVDJtvkhtQ==
-X-Received: by 2002:a17:907:9493:b0:a72:5967:b34 with SMTP id a640c23a62f3a-a7dc6245628mr922303966b.22.1722885029047;
-        Mon, 05 Aug 2024 12:10:29 -0700 (PDT)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e80dedsm477562766b.163.2024.08.05.12.10.28
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 12:10:28 -0700 (PDT)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7aada2358fso976877366b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 12:10:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjpDj/OqZ55FDfM3z+5w1FlpfLicU79/HnoHI+dq6B+uwLtVfAzdewcOt6ZHBrTlRAM/RgLR4DBM1lYfQC5sapB3qn1qUaZ3fUMNyMNg==
-X-Received: by 2002:a17:906:cae5:b0:a77:ce4c:8c9c with SMTP id
- a640c23a62f3a-a7dbcbd4ecamr1191867766b.8.1722885027737; Mon, 05 Aug 2024
- 12:10:27 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1722887281; x=1754423281;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=hWFIHHWuFbJXkky+ht6BUwYWPc3b4HXDslWubfqa1x0=;
+  b=Zsl06BGjIel+Mt4OHv4cTzAme4/zA3IvOePTOcis91+QiiOf0Sdi9Jt8
+   9MmaL7ODp6gsM4FGmsOO49eE76Z0IT7IBilBtFqvvF5PAi4RUy/BZ5HER
+   gZwG6CCaXctzfS/TzFbXxpDGDCsILcp65yHczm01bVkkGgSzc3pJw+4ey
+   8=;
+X-IronPort-AV: E=Sophos;i="6.09,265,1716249600"; 
+   d="scan'208";a="112636161"
+Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
+Thread-Topic: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 19:47:58 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:45937]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.164:2525] with esmtp (Farcaster)
+ id 76bd4af3-4e48-49dc-983a-668f865f6d2a; Mon, 5 Aug 2024 19:47:57 +0000 (UTC)
+X-Farcaster-Flow-ID: 76bd4af3-4e48-49dc-983a-668f865f6d2a
+Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 5 Aug 2024 19:47:57 +0000
+Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
+ EX19D004EUC001.ant.amazon.com (10.252.51.190) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 5 Aug 2024 19:47:56 +0000
+Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
+ EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
+ 15.02.1258.034; Mon, 5 Aug 2024 19:47:56 +0000
+From: "Gowans, James" <jgowans@amazon.com>
+To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "tytso@mit.edu"
+	<tytso@mit.edu>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
+	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "Graf (AWS),
+ Alexander" <graf@amazon.de>, "anthony.yznaga@oracle.com"
+	<anthony.yznaga@oracle.com>, "steven.sistare@oracle.com"
+	<steven.sistare@oracle.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "nh-open-source@amazon.com"
+	<nh-open-source@amazon.com>, "Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
+	"Durrant, Paul" <pdurrant@amazon.co.uk>, "viro@zeniv.linux.org.uk"
+	<viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"jgg@ziepe.ca" <jgg@ziepe.ca>, "usama.arif@bytedance.com"
+	<usama.arif@bytedance.com>
+Thread-Index: AQHa5xp7YUfIGy2/kUGqgjccLElzprIYul2AgAAChoCAAFWigA==
+Date: Mon, 5 Aug 2024 19:47:56 +0000
+Message-ID: <3f9064160b43df488d73302b3d736e23a9cd2b66.camel@amazon.com>
+References: <20240805093245.889357-1-jgowans@amazon.com>
+	 <20240805143223.GA1110778@mit.edu>
+	 <CABgObfYhg6uoR7cQN4wf3bNLZbHfXv6fr35aKsKbqMvuv20Xrg@mail.gmail.com>
+In-Reply-To: <CABgObfYhg6uoR7cQN4wf3bNLZbHfXv6fr35aKsKbqMvuv20Xrg@mail.gmail.com>
+Accept-Language: en-ZA, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4C270A5EF62CAB4FACD59CA91FD35FD4@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
- <20240804152327.GA27866@redhat.com> <CAHk-=whg0d5rxiEcPFApm+4FC2xq12sjynDkGHyTFNLr=tPmiw@mail.gmail.com>
- <E3873B59-D80F-42E7-B571-DBE3A63A0C77@juniper.net>
-In-Reply-To: <E3873B59-D80F-42E7-B571-DBE3A63A0C77@juniper.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 5 Aug 2024 12:10:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whGBPFydX8au65jT=HHnjOCCN0Veqy5=yio6YuOiQmJdw@mail.gmail.com>
-Message-ID: <CAHk-=whGBPFydX8au65jT=HHnjOCCN0Veqy5=yio6YuOiQmJdw@mail.gmail.com>
-Subject: Re: [RFC PATCH] piped/ptraced coredump (was: Dump smaller VMAs first
- in ELF cores)
-To: Brian Mak <makb@juniper.net>
-Cc: Oleg Nesterov <oleg@redhat.com>, "Eric W. Biederman" <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 5 Aug 2024 at 10:56, Brian Mak <makb@juniper.net> wrote:
->
-> Do you mean support truncating VMAs in addition to sorting or as a
-> replacement to sorting? If you mean in addition, then I agree, there may
-> be some VMAs that are known to not contain information critical to
-> debugging, but may aid, and therefore have less priority.
-
-I'd consider it a completely separate issue, so it would be
-independent of the sorting.
-
-We have "ulimit -c" to limit core sizes, but I think it might be
-interesting to have a separate "limit individual mapping sizes" logic.
-
-We already have that as a concept: vma_dump_size() could easily limit
-the vma dump size, but currently only picks "all or nothing", except
-for executable mappings that contain actual ELF headers (then it will
-dump the first page only).
-
-And honestly, *particularly* if you have a limit on the core size, I
-suspect you'd be better off dumping some of all vma's rather than
-dumping all of some vma's.
-
-Now, your sorting approach obviously means that large vma's no longer
-stop smaller ones from dumping, so it does take care of that part of
-it. But I do wonder if we should just in general not dump crazy big
-vmas if the dump size has been limited.
-
-             Linus
+T24gTW9uLCAyMDI0LTA4LTA1IGF0IDE2OjQxICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
+PiBPbiBNb24sIEF1ZyA1LCAyMDI0IGF0IDQ6MzXigK9QTSBUaGVvZG9yZSBUcydvIDx0eXRzb0Bt
+aXQuZWR1PiB3cm90ZToNCj4gPiBPbiBNb24sIEF1ZyAwNSwgMjAyNCBhdCAxMTozMjozNUFNICsw
+MjAwLCBKYW1lcyBHb3dhbnMgd3JvdGU6DQo+ID4gPiBHdWVzdG1lbWZzIGltcGxlbWVudHMgcHJl
+c2VydmF0aW9uIGFjcm9zc3Mga2V4ZWMgYnkgY2FydmluZyBvdXQgYQ0KPiA+ID4gbGFyZ2UgY29u
+dGlndW91cyBibG9jayBvZiBob3N0IHN5c3RlbSBSQU0gZWFybHkgaW4gYm9vdCB3aGljaCBpcw0K
+PiA+ID4gdGhlbiB1c2VkIGFzIHRoZSBkYXRhIGZvciB0aGUgZ3Vlc3RtZW1mcyBmaWxlcy4NCj4g
+PiANCj4gPiBBbHNvLCB0aGUgVk1NIHVwZGF0ZSBwcm9jZXNzIGlzIG5vdCBhIGNvbW1vbiBjYXNl
+IHRoaW5nLCBzbyB3ZSBkb24ndA0KPiA+IG5lZWQgdG8gb3B0aW1pemUgZm9yIHBlcmZvcm1hbmNl
+LiAgSWYgd2UgbmVlZCB0byB0ZW1wb3JhcmlseSB1c2UNCj4gPiBzd2FwL3pzd2FwIHRvIGFsbG9j
+YXRlIG1lbW9yeSBhdCBWTU0gdXBkYXRlIHRpbWUsIGFuZCBpZiB0aGUgcGFnZXMNCj4gPiBhcmVu
+J3QgY29udGlndW91cyB3aGVuIHRoZXkgYXJlIGNvcGllZCBvdXQgYmVmb3JlIGRvaW5nIHRoZSBW
+TU0NCj4gPiB1cGRhdGUNCj4gDQo+IEknbSBub3Qgc3VyZSBJIHVuZGVyc3RhbmQsIHdoZXJlIHdv
+dWxkIHRoaXMgdGVtcG9yYXJ5IGFsbG9jYXRpb24gaGFwcGVuPw0KDQpUaGUgaW50ZW5kZWQgdXNl
+IGNhc2UgZm9yIGxpdmUgdXBkYXRlIGlzIHRvIHVwZGF0ZSB0aGUgZW50aXJlbHkgb2YgdGhlDQpo
+eXBlcnZpc29yOiBrZXhlY2luZyBpbnRvIGEgbmV3IGtlcm5lbCwgbGF1bmNoaW5nIG5ldyBWTU0g
+cHJvY2Vzc2VzLiBTbw0KYW55dGhpbmcgaW4ga2VybmVsIHN0YXRlIChwYWdlIHRhYmxlcywgVk1B
+cywgKHopc3dhcCBlbnRyaWVzLCBzdHJ1Y3QNCnBhZ2VzLCBldGMpIGlzIGFsbCBsb3N0IGFmdGVy
+IGtleGVjIGFuZCBuZWVkcyB0byBiZSByZS1jcmVhdGVkLiBUaGF0J3MNCnRoZSBqb2Igb2YgZ3Vl
+c3RtZW1mczogcHJvdmlkZSB0aGUgcGVyc2lzdGVuY2UgYWNyb3NzIGtleGVjIGFuZCBhYmlsaXR5
+DQp0byByZS1jcmVhdGUgdGhlIG1hcHBpbmcgYnkgcmUtb3BlbmluZyB0aGUgZmlsZXMuDQoNCkl0
+IHdvdWxkIGJlIGZhciB0b28gaW1wYWN0ZnVsIHRvIG5lZWQgdG8gd3JpdGUgb3V0IHRoZSB3aG9s
+ZSBWTSBtZW1vcnkNCnRvIGRpc2suIEFsc28gd2l0aCBDb0NvIFZNcyB0aGF0J3Mgbm90IHJlYWxs
+eSBwb3NzaWJsZS4gV2hlbiB2aXJ0dWFsDQptYWNoaW5lcyBhcmUgcnVubmluZywgZXZlcnkgbWls
+bGlzZWNvbmQgb2YgZG93biB0aW1lIGNvdW50cy4gSXQgd291bGQgYmUNCndhc3RlZnVsIHRvIG5l
+ZWQgdG8ga2VlcCB0ZXJhYnl0ZXMgb2YgU1NEcyBseWluZyBhcm91bmQganVzdCB0byBicmllZmx5
+DQp3cml0ZSBhbGwgdGhlIGd1ZXN0IFJBTSB0aGVyZSBhbmQgdGhlbiByZWFkIGl0IG91dCBhIG1v
+bWVudCBsYXRlci4gTXVjaA0KYmV0dGVyIHRvIGxlYXZlIGFsbCB0aGUgZ3Vlc3QgbWVtb3J5IHdo
+ZXJlIGl0IGlzOiBpbiBtZW1vcnkuDQoNCj4gDQo+ID4gdGhhdCBtaWdodCBiZSB2ZXJ5IHdlbGwg
+d29ydGggdGhlIHZhc3Qgb2Ygb2YgbWVtb3J5IG5lZWRlZCB0bw0KPiA+IHBheSBmb3IgcmVzZXJ2
+aW5nIG1lbW9yeSBvbiB0aGUgaG9zdCBmb3IgdGhlIFZNTSB1cGRhdGUgdGhhdCBvbmx5DQo+ID4g
+bWlnaHQgaGFwcGVuIG9uY2UgZXZlcnkgZmV3IGRheXMvd2Vla3MvbW9udGhzIChkZXBlbmRpbmcg
+b24gd2hldGhlcg0KPiA+IHlvdSBhcmUgZG9pbmcgdXBkYXRlIGp1c3QgZm9yIGhpZ2ggc2V2ZXJp
+dHkgc2VjdXJpdHkgZml4ZXMsIG9yIGZvcg0KPiA+IHJhbmRvbSBWTU0gdXBkYXRlcykuDQo+ID4g
+DQo+ID4gRXZlbiBpZiB5b3UgYXJlIHVwZGF0aW5nIHRoZSBWTU0gZXZlcnkgZmV3IGRheXMsIGl0
+IHN0aWxsIGRvZXNuJ3Qgc2VlbQ0KPiA+IHRoYXQgcGVybWFuZW50bHkgcmVzZXJ2aW5nIGNvbnRp
+Z3VvdXMgbWVtb3J5IG9uIHRoZSBob3N0IGNhbiBiZQ0KPiA+IGp1c3RpZmllZCBmcm9tIGEgVENP
+IHBlcnNwZWN0aXZlLg0KPiANCj4gQXMgZmFyIGFzIEkgdW5kZXJzdGFuZCwgdGhpcyBpcyBpbnRl
+bmRlZCBmb3IgdXNlIGluIHN5c3RlbXMgdGhhdCBkbw0KPiBub3QgZG8gYW55dGhpbmcgZXhjZXB0
+IGhvc3RpbmcgVk1zLCB3aGVyZSBhbnl3YXkgeW91J2QgZGV2b3RlIDkwJSsgb2YNCj4gaG9zdCBt
+ZW1vcnkgdG8gaHVnZXRsYmZzIGdpZ2FwYWdlcy4NCg0KRXhhY3RseSwgdGhlIHVzZSBjYXNlIGhl
+cmUgaXMgZm9yIG1hY2hpbmVzIHdob3NlIG9ubHkgam9iIGlzIHRvIGJlIGEgS1ZNDQpoeXBlcnZp
+c29yLiBUaGUgbWFqb3JpdHkgb2Ygc3lzdGVtIFJBTSBpcyBkb25hdGVkIHRvIGd1ZXN0bWVtZnM7
+DQphbnl0aGluZyBlbHNlIChob3N0IGtlcm5lbCBtZW1vcnkgYW5kIFZNTSBhbm9ueW1vdXMgbWVt
+b3J5KSBpcw0KZXNzZW50aWFsbHkgb3ZlcmhlYWQgYW5kIHNob3VsZCBiZSBtaW5pbWlzZWQuDQoN
+CkpHDQo=
 
