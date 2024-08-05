@@ -1,102 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-25002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2109479E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 12:31:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54237947A0C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 12:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94F741C2032B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 10:31:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4B21F21F87
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 10:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC288158A03;
-	Mon,  5 Aug 2024 10:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBFF154BFC;
+	Mon,  5 Aug 2024 10:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kriIqqh2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwJBCWk6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD15157492
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Aug 2024 10:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A33514F12C;
+	Mon,  5 Aug 2024 10:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722853808; cv=none; b=DsC/CKw/wg/xS6h0cxJarLT+G34BKcYaqO5H6ztnS9d9jDWj5EiiyQZEy+6z+3dPMBdU78hbj+EJtIAy3SrhF77zMrcOB5qYKg43A/w7+TShSn/DC/cOSACGETw6d4LEtSVN5+1MmL90pjIwD+Nzxg1ME/gw19ke0cMdXgo1Wfk=
+	t=1722854785; cv=none; b=GCxkdFsDPgOTa3qTj/yVK5RtO3qosDIl3/hkvCM/sRHO3D2VA1JSKG12Pve20oidXP1EFuG1wGlzw5n3iv4BUlrhcwEeWu6qMMiHvQn160F3C5NmMnchs5VD+/c+N1ULcOFFQV9d/2MoHs0pU3/R4RNq7DNeibSqAIOn0JXeRdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722853808; c=relaxed/simple;
-	bh=WM4jDsNl88icLtOhSZc2z02eEcUwms+W5Nt3XUgfBA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uOmr1kqzavg6eEKPimzP4vdAO4HLgaCEZwch+kXN7l4IyVLGiiDNoSfjBxBQ8Hy4IIMDlS7zhFPB/tp5ecLy0zfQT5lwtF48gsAbSBl9M+CRdsPb0hhAFn/s3DKVebrgHb2xvHHNNddlRcUlfvAT/MTELGlB0yR/7B4XUusrBmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kriIqqh2; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id auyPsh8Id6NRTauybsps9S; Mon, 05 Aug 2024 12:30:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722853805;
-	bh=SUPvmmO6LqCQ5AJ+3l+Xza8HDESgMwZoQBA6LVUiG6Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=kriIqqh2bjejAkv2YmddnEc0Y4ilI3Oz9+o896mHu/UmgG34i37XlCUGmgJBCJKY+
-	 7Nx1UNUqr3mKPSgDFgAzj0KALd2FGAv9NWF16moXTKyZ24nytpJD1ZZ2yv5rieCf20
-	 BSyRL5QCZ5i1BDZ1wwBc6XITuqwkPKziCioYcsxpHfXffY+cObAvFgYrlche/TVshv
-	 kKkgnTILIeJlvPEKTJkuDvXXovt90EOd9WLtU1qAvjgLUCRFfWK5NyPCPJIBdGnk74
-	 d8NYE2cKJhkVFYmDemegMJnJ+AuVEzjhZnFx8m6xs4jgUZ5y2NnPJfJOcRTDTaZrVY
-	 owXjzL7fktMkA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 05 Aug 2024 12:30:05 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: willy@infradead.org,
-	srinivas.kandagatla@linaro.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 3/3] nvmem: Update a comment related to struct nvmem_config
-Date: Mon,  5 Aug 2024 12:29:49 +0200
-Message-ID: <10fd5b4afb1a43f4c4665fe4f362e671a729b37f.1722853349.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1722854785; c=relaxed/simple;
+	bh=jQO7PLs5zn7U0IyLuj5k3CxTmsnpi7j53S8xfLpWJ0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FOoUIvRBzyvsQ8X0aMZG4dN2gKt9W32axTMAxI4J9imtzO/o7kbRkCnJH3WWfZFFx4iVkh3AQT2IqBnu4AIAHjSZJ0uN/d2ppWb9SHQDWcxEEHz37V99Utb9kPpOL2+K/pD7sA6fbs+4r/2WzjIbW2jFLDKomBK3+7j3p8qvhmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwJBCWk6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28BDDC32782;
+	Mon,  5 Aug 2024 10:46:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722854785;
+	bh=jQO7PLs5zn7U0IyLuj5k3CxTmsnpi7j53S8xfLpWJ0c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AwJBCWk61BKgerJoLMjkt/nu4FYIFuVUVEpfO3vKmTV5r7vFOS4Ejl+FuOG1sxo/6
+	 3XAHE5G8dbc4carbdnfvwP3hEwckw/c1CZce1hHMpTfjivEguohgEc0YvaNlMWt66r
+	 X0Gg98U0zje3TnvHbDPCGaHVhGwRDBeq1co6UOme+3Ou6wrbfHidEMFmjSHHH7IR30
+	 6NPFclVqpLlwE5RA1YjaNjums4bkoismwNdgxyCMEq/dTtLs3ZHfExGTGApQwo7SvI
+	 z4OSrkpZScZzrYPHB2O16dfDrAmJTLHybdmlZOrfZds+0Htp+f611qAjgom4pFtSFF
+	 gN4nl3J5v4N1Q==
+Date: Mon, 5 Aug 2024 12:46:20 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/4] fs: try an opportunistic lookup for O_CREAT
+ opens too
+Message-ID: <20240805-rachsucht-lehrzeit-f1c0c47c2fee@brauner>
+References: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
 
-Update a comment to match the function used in nvmem_register().
-ida_simple_get() was replaced by ida_alloc() in commit 1eb51d6a4fce
-("nvmem: switch to simpler IDA interface")
+>       fs: remove comment about d_rcu_to_refcount
+>       fs: add a kerneldoc header over lookup_fast
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Changes in v2:
-  - No chnages
-
-v1: https://lore.kernel.org/all/032b8035bd1f2dcc13ffc781c8348d9fbdf9e3b2.1713606957.git.christophe.jaillet@wanadoo.fr/
----
- include/linux/nvmem-provider.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index 3ebeaa0ded00..9a5f262d20f5 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -103,7 +103,7 @@ struct nvmem_cell_info {
-  *
-  * Note: A default "nvmem<id>" name will be assigned to the device if
-  * no name is specified in its configuration. In such case "<id>" is
-- * generated with ida_simple_get() and provided id field is ignored.
-+ * generated with ida_alloc() and provided id field is ignored.
-  *
-  * Note: Specifying name and setting id to -1 implies a unique device
-  * whose name is provided as-is (kept unaltered).
--- 
-2.45.2
-
+I took both of these into vfs.misc since they're really unrelated cleanups.
 
