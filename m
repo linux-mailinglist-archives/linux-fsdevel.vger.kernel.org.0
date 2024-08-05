@@ -1,346 +1,286 @@
-Return-Path: <linux-fsdevel+bounces-25033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00579481C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 20:37:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0A69481B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 20:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E28241C21518
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 18:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901541F21901
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 18:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A7316C69A;
-	Mon,  5 Aug 2024 18:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151F515AD96;
+	Mon,  5 Aug 2024 18:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nxLGEbTL"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="xXW00r5w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D50F16C692
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Aug 2024 18:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDB42AD13
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Aug 2024 18:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722882950; cv=none; b=rAgrrQTiAhJ86RqHjI16sQaBIPN56Uj6r+7sRrm4xhQkmq/gk5QfQGgdaGFtmYn3FpMGlHXeCPw4hy67hqfdqW5yMnUf0vWy0L7tdod+HdDiI3QvhG4N0mihQEqKCW3Iwk6jdBMDnrJBpFILMQKtxZMlrMmtf/SeDE/kfjrZsSc=
+	t=1722882917; cv=none; b=IZWyLcIEk5ZcfkcGyiPQm0efSS79CNPFfK/st652nldw7bi6y70vqDB46TiX5TFYrcfQI7yvPNSTC5fVBI2WKYeMn6hocYFK03NA4FalgyY8OyuD6aUa481HwgV5s8XgdzgbzRyE6LbkLHpnFqi15Z/qV52vrTwiYp0IE9mETbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722882950; c=relaxed/simple;
-	bh=D0mzlxssOH0u5bsVp6DTAXsAQf1X/UzcQAxdRN9MG+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NNQ6pRo2+24jXimuHj1VWOzwsWtPNilyMuNZWD/yNbBaGmKXypOhCeK5kQqKuhGSi97MNgKwQnq/htsFvO+d0xq4eSw6Zes1yimYYrWazJ2exUQS9zEE5P1GfUwaU1CGRKB2k6v4epJ+Dr+jFFXDZOZfMRmdsUOkpGseACzcW5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nxLGEbTL; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so2654a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 11:35:48 -0700 (PDT)
+	s=arc-20240116; t=1722882917; c=relaxed/simple;
+	bh=DzMgvwzI+LvEfazuLey/j8lOg+VrYKIVQEwU/BYw66k=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=Mm7amz4taYdBYlcrrZMMO3ZXWG+27zWritGjBDL466a9HQL7WpcdIfF3TgjL+p71mgoqxY9TaAm3pjYGzks0D6RbfrWVWRiPC/zbjYoxPCSo0PNJp8UTImN6xjcp3cxRS7vJewEo2qy8OPoiP4EScIC9/s+N1dZZgF0VBwAU0sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=xXW00r5w; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-530c2e5f4feso3127888e87.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 11:35:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722882947; x=1723487747; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bThA5FjCHLI5cTw21zmhlv/WBFyj5sN+HqnnHYmexPA=;
-        b=nxLGEbTL7qXrq437ORm+j09CVWyA/0V3JX9uWk/tJ0L5+/QpkWG7rcjiIW2wKa+Br1
-         OTBGaLKzVmDHhto6yTBsZ7w1wNfX8w5AqNZEwYDFYXGEyTiDCmO2BhKok1T8grdRbsFJ
-         0vG8apgZKForvb73AIjFPUesqTCtmO058B1RF+31hzmdcs3wHyei9QIXqnIKGtLIx91E
-         wu34kRi/JWWeswaUh/w7jnWBfrGV8xqIqPxXV62udf2opKamPA8cuLW4vuwywTRo4quX
-         frJ3CrMVMktewu6rCPuV4zmlzP7g99HTfYRGH3XOS4FelAuuqWFx5pSyUGNOc/oJr5UX
-         wIbA==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1722882913; x=1723487713; darn=vger.kernel.org;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WVkvcEgnyJ+1+Y44sUVbI5lbdMwjxmKY6OzPovi4aG0=;
+        b=xXW00r5wnmYv54pYH80WLT7pUn50yCEa19suqSrU6O6FqqO3uLwGGGypURqUN3Fq6w
+         5UjFgyvLRrD5mcMPHsv5zX89ODH0tj3Gqu38JUFmkBF+iwVA38wmmdoVK9iV9z4BODEL
+         bYghNHQ8W9RLpvoETqOhe2Ac4kt1Ve/Z8Anh/gi+bpMFC5PYC89Hc8UDFt2YDMD6dOPx
+         6wEj9i0vfxFrSy2ybTGZTydkD1qdRwnfJwIO85E/1hQMc70AYb8WBKYYZdOFGuEZMAh1
+         nwAbyKOZ2m4p25RHzv/BSsyVtgsTuBoEyTrrlpeUiBOyAeW1OBl6gczWJiksIMHmJJYg
+         Wt9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722882947; x=1723487747;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722882913; x=1723487713;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bThA5FjCHLI5cTw21zmhlv/WBFyj5sN+HqnnHYmexPA=;
-        b=xO4h+6LowaEd/3dukC1Yc2fJdVZmd7jQDiwlGhrivBOzgVCabrYIWKlgMX4PbbLue5
-         8SukLQSAr9rMLW6b+HFocm198Dzya8HZLM2RWREpPCLCh+VTsCILOQG1zw1NUWcCMxV5
-         ApBf0ASdXgmaSJrg4I9dqse+LYpIRA5aBKuFUBHHy4z3hdJ+2BMYCA7w54kqgAwpQvur
-         MGWUFUnXN/wX3Kk+KwtVSK+BrheSEINczNx1xJQevw02lhsDJHTYokT/8Xnw+xpnp3C2
-         d7G0utZZQW0TsK0Z5Z2YSWuIlTtJ8j3RtKlpGo7Wj4ctxzCjJWPGdCuBGxxcXEUO3YPJ
-         sfnw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3f19bkcVim0F/ETpfUilL/D1Mp+yWv8rgd4Pc5wN93r9njTMjIusf28LezJ8CQaP6wwUya7WUX7PUrs4qaNWyy7iH5OiXiuITGPTw7w==
-X-Gm-Message-State: AOJu0YxCkfweOZqLcT9Axfa6/u0529V4LUoG3ElYSQ0nzRyhwxScGw3p
-	gV5cozoysjRTLXOlb4he52Hqu6Lgk4mJpOrPi8a9XzsZGnTGWZCWXZZwM8JnE1SXBiHdorDChId
-	ewMgyVVg0/JXbZp03HvrOu5DLc79WdyZKMLLW
-X-Google-Smtp-Source: AGHT+IFHW0w+23cEWxRQdQ9i9nzl0CE9JhDT4Dih8izAVQFFjdvtpnnaKmKW0lj5aOxSe7NS6C8BNabcazoemesr9i0=
-X-Received: by 2002:a05:6402:34c7:b0:58b:93:b624 with SMTP id
- 4fb4d7f45d1cf-5bb98241683mr12298a12.1.1722882946512; Mon, 05 Aug 2024
- 11:35:46 -0700 (PDT)
+        bh=WVkvcEgnyJ+1+Y44sUVbI5lbdMwjxmKY6OzPovi4aG0=;
+        b=CRqQdNXqCBesNSXsmSzu53nD13Sd1A/OTLmizWdUaeg5cYg4Y00wSUVL00arw3vCgI
+         M9KPi6EJEaMNjDXFvpUGgS0/rz/D0a3DAOsFscJgdRqVfof/T7Vf6Ie0hIIPCzgTAyT2
+         uJYpCvqH/EYCA9TtANAWj81PDErjnWZeOrVUFhXzUIUTGIWzuXN0HTsJVDX/b9VxHK/2
+         OeCO+Bl3UhfkN2a0CCeRicNy1RBtPhaaLVLSKRH83K2r8AnA2RebD5px3nvcPZSHZ52M
+         T5fBdk+TqG0rgnTvoMlvJxcGy0HEpIuB8dk+z0T6GxcUlCUd95c/t9pMLQUvb9stPh1v
+         U9yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaw6qidpWLTUSh+E7ZtET9Var+naeWDVRoJUqIAxB+P57NvPURXuidSRGMnI6W3o2Bg06TUCHIFf9gwt7jonRoAtY0b2ZDCggtX3dSfQ==
+X-Gm-Message-State: AOJu0Yyr5JEGxr9p66M15KKKg+We212SsWigz5/NWrnva7uIhm9sbXtL
+	W4IucTbW5ALjlxIvJu2yOHBBjtDl0F9iyxMPobHe43mm9DoNLkwXxKprQaqovYOl3DAxXqxfQ/r
+	2
+X-Google-Smtp-Source: AGHT+IH/VaYWA0Z9jJyzClgGdlcJHtRJW1ehk5fJeybQcQEDDraHl3N6c/uXalUPwx7bGUhBYiLCWQ==
+X-Received: by 2002:a05:6512:1051:b0:52e:f4b4:6ec1 with SMTP id 2adb3069b0e04-530bb39d2fcmr7519755e87.46.1722882912901;
+        Mon, 05 Aug 2024 11:35:12 -0700 (PDT)
+Received: from smtpclient.apple ([2a00:1370:81a4:1df5:b5e9:827a:53fc:aa7d])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba3d22csm1207484e87.287.2024.08.05.11.35.11
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2024 11:35:12 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240704190137.696169-2-mic@digikod.net> <CALmYWFss7qcpR9D_r3pbP_Orxs55t3y3yXJsac1Wz=Hk9Di0Nw@mail.gmail.com>
- <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net> <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
- <20240719.shaeK6PaiSie@digikod.net> <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
- <20240719.sah7oeY9pha4@digikod.net> <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
- <20240723.beiTu0qui2ei@digikod.net>
-In-Reply-To: <20240723.beiTu0qui2ei@digikod.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Mon, 5 Aug 2024 11:35:09 -0700
-Message-ID: <CALmYWFtHQY41PbRwGxge1Wo=8D4ocZfQgRUO47-PF1eJCEr0Sw@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.8\))
+Subject: bcachefs mount issue
+Message-Id: <0D2287C8-F086-43B1-85FA-B672BFF908F5@dubeyko.com>
+Date: Mon, 5 Aug 2024 21:35:09 +0300
+Cc: linux-bcache@vger.kernel.org,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ slava@dubeiko.com
+To: Kent Overstreet <kent.overstreet@linux.dev>
+X-Mailer: Apple Mail (2.3696.120.41.1.8)
 
-On Tue, Jul 23, 2024 at 6:15=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> On Fri, Jul 19, 2024 at 08:27:18AM -0700, Jeff Xu wrote:
-> > On Fri, Jul 19, 2024 at 8:04=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
-> > > > On Fri, Jul 19, 2024 at 1:45=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > >
-> > > > > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
-> > > > > > On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=C3=BC=
-n <mic@digikod.net> wrote:
-> > > > > > >
-> > > > > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > > > > > > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sala=
-=C3=BCn <mic@digikod.net> wrote:
-> > > > > > > > >
-> > > > > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > > > > > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=ABl Sa=
-la=C3=BCn <mic@digikod.net> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a =
-file would be
-> > > > > > > > > > > allowed for execution.  The main use case is for scri=
-pt interpreters and
-> > > > > > > > > > > dynamic linkers to check execution permission accordi=
-ng to the kernel's
-> > > > > > > > > > > security policy. Another use case is to add context t=
-o access logs e.g.,
-> > > > > > > > > > > which script (instead of interpreter) accessed a file=
-.  As any
-> > > > > > > > > > > executable code, scripts could also use this check [1=
-].
-> > > > > > > > > > >
-> > > > > > > > > > > This is different than faccessat(2) which only checks=
- file access
-> > > > > > > > > > > rights, but not the full context e.g. mount point's n=
-oexec, stack limit,
-> > > > > > > > > > > and all potential LSM extra checks (e.g. argv, envp, =
-credentials).
-> > > > > > > > > > > Since the use of AT_CHECK follows the exact kernel se=
-mantic as for a
-> > > > > > > > > > > real execution, user space gets the same error codes.
-> > > > > > > > > > >
-> > > > > > > > > > So we concluded that execveat(AT_CHECK) will be used to=
- check the
-> > > > > > > > > > exec, shared object, script and config file (such as se=
-ccomp config),
-> > > > >
-> > > > > > > > > > I think binfmt_elf.c in the kernel needs to check the l=
-d.so to make
-> > > > > > > > > > sure it passes AT_CHECK, before loading it into memory.
-> > > > > > > > >
-> > > > > > > > > All ELF dependencies are opened and checked with open_exe=
-c(), which
-> > > > > > > > > perform the main executability checks (with the __FMODE_E=
-XEC flag).
-> > > > > > > > > Did I miss something?
-> > > > > > > > >
-> > > > > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt i=
-n the kernel.
-> > > > > > > > The app can choose its own dynamic linker path during build=
-, (maybe
-> > > > > > > > even statically link one ?)  This is another reason that re=
-lying on a
-> > > > > > > > userspace only is not enough.
-> > > > > > >
-> > > > > > > The kernel calls open_exec() on all dependencies, including
-> > > > > > > ld-linux-x86-64.so.2, so these files are checked for executab=
-ility too.
-> > > > > > >
-> > > > > > This might not be entirely true. iiuc, kernel  calls open_exec =
-for
-> > > > > > open_exec for interpreter, but not all its dependency (e.g. lib=
-c.so.6)
-> > > > >
-> > > > > Correct, the dynamic linker is in charge of that, which is why it=
- must
-> > > > > be enlighten with execveat+AT_CHECK and securebits checks.
-> > > > >
-> > > > > > load_elf_binary() {
-> > > > > >    interpreter =3D open_exec(elf_interpreter);
-> > > > > > }
-> > > > > >
-> > > > > > libc.so.6 is opened and mapped by dynamic linker.
-> > > > > > so the call sequence is:
-> > > > > >  execve(a.out)
-> > > > > >   - open exec(a.out)
-> > > > > >   - security_bprm_creds(a.out)
-> > > > > >   - open the exec(ld.so)
-> > > > > >   - call open_exec() for interruptor (ld.so)
-> > > > > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going t=
-hrough
-> > > > > > the same check and code path as libc.so below ?
-> > > > >
-> > > > > open_exec() checks are enough.  LSMs can use this information (op=
-en +
-> > > > > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
-> > > > > request.
-> > > > >
-> > > > Then the ld.so doesn't go through the same security_bprm_creds() ch=
-eck
-> > > > as other .so.
-> > >
-> > > Indeed, but...
-> > >
-> > My point is: we will want all the .so going through the same code
-> > path, so  security_ functions are called consistently across all the
-> > objects, And in the future, if we want to develop additional LSM
-> > functionality based on AT_CHECK, it will be applied to all objects.
->
-> I'll extend the doc to encourage LSMs to check for __FMODE_EXEC, which
-> already is the common security check for all executable dependencies.
-> As extra information, they can get explicit requests by looking at
-> execveat+AT_CHECK call.
->
-I agree that security_file_open + __FMODE_EXEC for checking all
-the .so (e.g for executable memfd) is a better option  than checking at
-security_bprm_creds_for_exec.
+Hi Kent,
 
-But then maybe execveat( AT_CHECK) can return after  calling alloc_bprm ?
-See below call graph:
+As far as I  can see, I have found a mount issue. I believe that it=E2=80=99=
+s a mkfs tool issue.
 
-do_execveat_common (AT_CHECK)
--> alloc_bprm
-->->do_open_execat
-->->-> do_filp_open (__FMODE_EXEC)
-->->->->->->> security_file_open
--> bprm_execve
-->-> prepare_exec_creds
-->->-> prepare_creds
-->->->-> security_prepare_creds
-->-> security_bprm_creds_for_exec
+ENVIRONMENT:
+Linux ssdfs-test-0070 6.10.0 #15 SMP PREEMPT_DYNAMIC Mon Aug  5 19:00:55 =
+MSK 2024 x86_64 x86_64 x86_64 GNU/Linux
 
-What is the consideration to mark the end at
-security_bprm_creds_for_exec ? i.e. including brpm_execve,
-prepare_creds, security_prepare_creds, security_bprm_creds_for_exec.
+I am not sure how to share the mkfs.bcachefs tool version because this =
+tool doesn=E2=80=99t show the version.
 
-Since dynamic linker doesn't load ld.so (it is by kernel),  ld.so
-won't go through those  security_prepare_creds and
-security_bprm_creds_for_exec checks like other .so do.
+REPRODUCTION PATH:
 
-> >
-> > Another thing to consider is:  we are asking userspace to make
-> > additional syscall before  loading the file into memory/get executed,
-> > there is a possibility for future expansion of the mechanism, without
-> > asking user space to add another syscall again.
->
-> AT_CHECK is defined with a specific semantic.  Other mechanisms (e.g.
-> LSM policies) could enforce other restrictions following the same
-> semantic.  We need to keep in mind backward compatibility.
->
-> >
-> > I m still not convinced yet that execveat(AT_CHECK) fits more than
-> > faccessat(AT_CHECK)
->
-> faccessat2(2) is dedicated to file permission/attribute check.
-> execveat(2) is dedicated to execution, which is a superset of file
-> permission for executability, plus other checks (e.g. noexec).
->
-That sounds reasonable, but if execveat(AT_CHECK) changes behavior of
-execveat(),  someone might argue that faccessat2(EXEC_CHECK) can be
-made for the executability.
+(1) Format partition by mkfs tool of any file system (for example, =
+NILFS2)
+(2) Mount the prepared volume
+(3) Execute any file system operations on the volume
+(4) Unmount the volume
+(5) Format partition by mkfs.bcachefs tool
+(6) Try to mount the prepared  bcachefs volume
+(7) The bcachefs logic fails too mount the formatted volume
 
-I think the decision might depend on what this PATCH intended to
-check, i.e. where we draw the line.
+sudo mkfs.nilfs2 -f -b 4096 /dev/sda1=20
+mkfs.nilfs2 (nilfs-utils 2.2.8)
+Start writing file system initial data to the device
+       Blocksize:4096  Device:/dev/sda1  Device Size:999292928
+File system initialization succeeded !!
 
-do_open_execat() seems to cover lots of checks for executability, if
-we are ok with the thing that do_open_execat() checks, then
-faccessat(AT_CHECK) calling do_open_execat() is an option, it  won't
-have those "unrelated" calls  in execve path, e.g.  bprm_stack_limits,
-copy argc/env .
+sudo mount /dev/sda1 /mnt/test/
 
-However, you mentioned superset of file permission for executability,
-can you elaborate on that ? Is there something not included in
-do_open_execat() but still necessary for execveat(AT_CHECK)? maybe
-security_bprm_creds_for_exec? (this goes back to my  question above)
+mount
+<skipped>
+/dev/sda1 on /mnt/test type nilfs2 (rw,relatime)
 
-Thanks
-Best regards,
--Jeff
+Aug  5 19:14:40 ssdfs-test-0070 kernel: [  520.066975] NILFS (sda1): =
+segctord starting. Construction interval =3D 5 seconds, CP frequency < =
+30 seconds
+Aug  5 19:14:40 ssdfs-test-0070 nilfs_cleanerd[3854]: start
+Aug  5 19:14:40 ssdfs-test-0070 nilfs_cleanerd[3854]: pause (clean =
+check)
+
+sudo umount /mnt/test
+
+Aug  5 19:15:18 ssdfs-test-0070 nilfs_cleanerd[3854]: shutdown
+
+sudo mkfs.bcachefs -f --block_size=3D4096 /dev/sda1=20
+External UUID: 483fb669-63aa-4f41-b0ba-61eb2446c2fe
+Internal UUID: 43527890-f6c8-43f1-bdd9-1c4936f71a8d
+Device index: 0
+Label:=20
+Version: 14
+Oldest version on disk: 14
+Created: Mon Aug  5 19:20:32 2024
+Squence number: 0
+Block_size: 4.0K
+Btree node size: 128.0K
+Error action: ro
+Clean: 0
+Features: =
+new_siphash,new_extent_overwrite,btree_ptr_v2,extents_above_btree_updates,=
+btree_updates_journalled,new_varint,journal_no_flush,alloc_v2,extents_acro=
+ss_btree_nodes
+Compat features:=20
+Metadata replicas: 1
+Data replicas: 1
+Metadata checksum type: crc32c (1)
+Data checksum type: crc32c (1)
+Compression type: none (0)
+Foreground write target: none
+Background write target: none
+Promote target: none
+Metadata target:                none
+String hash type: siphash (2)
+32 bit inodes: 1
+GC reserve percentage: 8%
+Root reserve percentage: 0%
+Devices: 1 live, 1 total
+Sections: members
+Superblock size: 816
+
+Members (size 64):
+  Device 0:
+    UUID: 2c54ddfc-f50c-4d15-aa80-7d23474de3e6
+    Size: 953.0M
+    Bucket size: 128.0K
+    First bucket: 0
+    Buckets: 7624
+    Last mount: (never)
+    State: rw
+    Group: (none)
+    Data allowed: journal,btree,user
+    Has data: (none)
+    Replacement policy: lru
+    Discard: 0
+initializing new filesystem
+going read-write
+mounted with opts: (null)
+
+sudo mount /dev/sda1 /mnt/test/
+
+mount
+<skipped>
+/dev/sda1 on /mnt/test type nilfs2 (rw,relatime) <=E2=80=94 completely =
+unexpected
+
+Aug  5 19:21:13 ssdfs-test-0070 kernel: [  912.678991] NILFS (sda1): =
+broken superblock, retrying with spare superblock (blocksize =3D 1024)
+Aug  5 19:21:13 ssdfs-test-0070 kernel: [  912.679835] NILFS (sda1): =
+broken superblock, retrying with spare superblock (blocksize =3D 4096)
+Aug  5 19:21:13 ssdfs-test-0070 kernel: [  912.706795] NILFS (sda1): =
+segctord starting. Construction interval =3D 5 seconds, CP frequency < =
+30 seconds
+Aug  5 19:21:13 ssdfs-test-0070 nilfs_cleanerd[4751]: start
+Aug  5 19:21:13 ssdfs-test-0070 nilfs_cleanerd[4751]: pause (clean =
+check)
+
+sudo umount /mnt/test
+
+sudo mount -t bcachefs /dev/sda1 /mnt/test/
+mount: /mnt/test: wrong fs type, bad option, bad superblock on =
+/dev/sda1, missing codepage or helper program, or other error.
+
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311715] bcachefs (sda1): =
+mounting version 0.14: btree_ptr_sectors_written =
+opts=3Dnoshard_inode_numbers,journal_reclaim_delay=3D1000,nojournal_transa=
+ction_names
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311753] bcachefs (sda1): =
+recovering from clean shutdown, journal seq 4
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311782] bcachefs (sda1): =
+Version upgrade required:
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311782] Doing =
+incompatible version upgrade from 0.14: btree_ptr_sectors_written to =
+1.7: mi_btree_bitmap
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311782]   running =
+recovery passes: =
+check_allocations,check_alloc_info,check_lrus,check_btree_backpointers,che=
+ck_backpointers_to_extents,check_extents_to_backpointers,check_alloc_to_lr=
+u_refs,bucket_gens_init,check_snapshot_trees,check_snapshots,check_subvols=
+,check_subvol_children,delete_dead_snapshots,check_inodes,check_extents,ch=
+eck_indirect_extents,check_dirents,check_xattrs,check_root,check_subvolume=
+_structure,check_directory_structure,check_nlinks,delete_dead_inodes,set_f=
+s_needs_rebalance
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431462] bcachefs (sda1): =
+alloc_read... done
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431675] bcachefs (sda1): =
+stripes_read... done
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431688] bcachefs (sda1): =
+snapshots_read... done
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431702] bcachefs (sda1): =
+check_allocations...
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.469609] dev 0 has wrong =
+free buckets: got 0, should be 7537, fixing
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.469683]  done
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.471013] bcachefs (sda1): =
+going read-write
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.471766] bcachefs (sda1): =
+journal_replay... done
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.471794] bcachefs (sda1): =
+check_alloc_info... done
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.472921] bcachefs (sda1): =
+check_lrus... done
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.473309] bcachefs (sda1): =
+check_btree_backpointers... done
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.473960] bcachefs (sda1): =
+check_backpointers_to_extents... done
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474483] bcachefs (sda1): =
+check_extents_to_backpointers...
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474582] missing =
+backpointer for btree=3Dinodes l=3D1 u64s 11 type btree_ptr_v2 SPOS_MAX =
+len 0 ver 0: seq d7dbe59ccc0e54fa written 24 min_key POS_MIN durability: =
+1 ptr: 0:78:0 gen 1
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474590]   got:   u64s 5 =
+type deleted 0:20447232:0 len 0 ver 0
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474595]   want:  u64s 9 =
+type backpointer 0:20447232:0 len 0 ver 0: bucket=3D0:78:0 btree=3Dinodes =
+l=3D1 offset=3D0:0 len=3D256 pos=3DSPOS_MAX, shutting down
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474645] bcachefs (sda1): =
+inconsistency detected - emergency read only at journal seq 4
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474664] bcachefs (sda1): =
+bch2_check_extents_to_backpointers(): error fsck_errors_not_fixed
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474682] bcachefs (sda1): =
+bch2_fs_recovery(): error fsck_errors_not_fixed
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474692] bcachefs (sda1): =
+bch2_fs_start(): error starting filesystem fsck_errors_not_fixed
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474842] bcachefs (sda1): =
+unshutdown complete, journal seq 4
+Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.595522] bcachefs: =
+bch2_mount() error: fsck_errors_not_fixed
+
+Thanks,
+Slava.
 
 
 
 
 
-
-
-
-
-
-
-> >
-> >
-> > > >
-> > > > As my previous email, the ChromeOS LSM restricts executable mfd
-> > > > through security_bprm_creds(), the end result is that ld.so can sti=
-ll
-> > > > be executable memfd, but not other .so.
-> > >
-> > > The chromeOS LSM can check that with the security_file_open() hook an=
-d
-> > > the __FMODE_EXEC flag, see Landlock's implementation.  I think this
-> > > should be the only hook implementation that chromeOS LSM needs to add=
-.
-> > >
-> > > >
-> > > > One way to address this is to refactor the necessary code from
-> > > > execveat() code patch, and make it available to call from both kern=
-el
-> > > > and execveat() code paths., but if we do that, we might as well use
-> > > > faccessat2(AT_CHECK)
-> > >
-> > > That's why I think it makes sense to rely on the existing __FMODE_EXE=
-C
-> > > information.
-> > >
-> > > >
-> > > >
-> > > > > >   - transfer the control to ld.so)
-> > > > > >   - ld.so open (libc.so)
-> > > > > >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this =
-patch,
-> > > > > > require dynamic linker change.
-> > > > > >   - ld.so mmap(libc.so,rx)
-> > > > >
-> > > > > Explaining these steps is useful. I'll include that in the next p=
-atch
-> > > > > series.
-> >
 
