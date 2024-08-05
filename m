@@ -1,286 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-25032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0A69481B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 20:35:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE339481DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 20:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901541F21901
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 18:35:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDAA7B22CD9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 18:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151F515AD96;
-	Mon,  5 Aug 2024 18:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9188A165F18;
+	Mon,  5 Aug 2024 18:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="xXW00r5w"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="Tph/erhd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDB42AD13
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Aug 2024 18:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09417165EEF
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Aug 2024 18:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722882917; cv=none; b=IZWyLcIEk5ZcfkcGyiPQm0efSS79CNPFfK/st652nldw7bi6y70vqDB46TiX5TFYrcfQI7yvPNSTC5fVBI2WKYeMn6hocYFK03NA4FalgyY8OyuD6aUa481HwgV5s8XgdzgbzRyE6LbkLHpnFqi15Z/qV52vrTwiYp0IE9mETbs=
+	t=1722883290; cv=none; b=T4BI+Gjwmol76hlTUZTsv69i3RZnmnGf8vjpQjDDwVt+JdeMaJKRU2jQ5QDPoivXp5xp3iYsTUbV1cIK28LswJJJCd/r+xI9hHOCGopLXd+ARvFGbaqhtnU2SJxjJSiTbAefV+r7ibEKnzdmvx4cbSOX5VukRM3h9CWDKbCWk10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722882917; c=relaxed/simple;
-	bh=DzMgvwzI+LvEfazuLey/j8lOg+VrYKIVQEwU/BYw66k=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=Mm7amz4taYdBYlcrrZMMO3ZXWG+27zWritGjBDL466a9HQL7WpcdIfF3TgjL+p71mgoqxY9TaAm3pjYGzks0D6RbfrWVWRiPC/zbjYoxPCSo0PNJp8UTImN6xjcp3cxRS7vJewEo2qy8OPoiP4EScIC9/s+N1dZZgF0VBwAU0sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=xXW00r5w; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-530c2e5f4feso3127888e87.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 11:35:14 -0700 (PDT)
+	s=arc-20240116; t=1722883290; c=relaxed/simple;
+	bh=Ys/t/CdNVJJmv2lzAuDmT1M/s6j0A9XtgN3oc62Jk5I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KSYz1qX+cyl84lVbc9cM6ALJWmQGfzlXwPyx90qQepCsBgu+qjpDvpuX7F3GjlKb872qZpiJq6lBT6PcZsWxyq3/wHuKUbZd8k9C41rw97v6LpnIddS8zjXsEoJTAuqNc7OcfsAjo5QAe1tATz63bcNfBpjs5+DceJ5oZMAmU+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=Tph/erhd; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3db16129143so6333178b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 11:41:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1722882913; x=1723487713; darn=vger.kernel.org;
-        h=to:cc:date:message-id:subject:mime-version
-         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WVkvcEgnyJ+1+Y44sUVbI5lbdMwjxmKY6OzPovi4aG0=;
-        b=xXW00r5wnmYv54pYH80WLT7pUn50yCEa19suqSrU6O6FqqO3uLwGGGypURqUN3Fq6w
-         5UjFgyvLRrD5mcMPHsv5zX89ODH0tj3Gqu38JUFmkBF+iwVA38wmmdoVK9iV9z4BODEL
-         bYghNHQ8W9RLpvoETqOhe2Ac4kt1Ve/Z8Anh/gi+bpMFC5PYC89Hc8UDFt2YDMD6dOPx
-         6wEj9i0vfxFrSy2ybTGZTydkD1qdRwnfJwIO85E/1hQMc70AYb8WBKYYZdOFGuEZMAh1
-         nwAbyKOZ2m4p25RHzv/BSsyVtgsTuBoEyTrrlpeUiBOyAeW1OBl6gczWJiksIMHmJJYg
-         Wt9w==
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1722883285; x=1723488085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nXDR7qiLrGhxm4QaBcXkbXKBNxx4m/1amTQ3OxtKpcA=;
+        b=Tph/erhdRxbaDcA9Hk7B6yaxgFNtP0dQEEL0icsRDcawCDeE5cVUz5zPmVb0y6uo5P
+         WzBFcTTNTWY1yT5Y+EBI/+l4PIH2+XalMy/sWOKvoMzn5UJvFI0VED6IBAdcjtVUVenX
+         B8E1puC7TFwcVz54Vmi73lOZjDB6VZZQ1Qvp5qzDCn9ofz6xJH5PKrQjbllHnY9InlAN
+         x9/a6CEv5h8UtH9lw2AQBxg6lSwb4Hbd9AMcjJLe0t27k7Te7qn4ug9OKAHZDGQ5/fDT
+         DtzrKCtgQEltlGCpVfEh73NgOpAwd+EQIihgd0Ma3RcgUcLILaBU56pMnAQmnbGqeUzS
+         7jww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722882913; x=1723487713;
-        h=to:cc:date:message-id:subject:mime-version
-         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722883285; x=1723488085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WVkvcEgnyJ+1+Y44sUVbI5lbdMwjxmKY6OzPovi4aG0=;
-        b=CRqQdNXqCBesNSXsmSzu53nD13Sd1A/OTLmizWdUaeg5cYg4Y00wSUVL00arw3vCgI
-         M9KPi6EJEaMNjDXFvpUGgS0/rz/D0a3DAOsFscJgdRqVfof/T7Vf6Ie0hIIPCzgTAyT2
-         uJYpCvqH/EYCA9TtANAWj81PDErjnWZeOrVUFhXzUIUTGIWzuXN0HTsJVDX/b9VxHK/2
-         OeCO+Bl3UhfkN2a0CCeRicNy1RBtPhaaLVLSKRH83K2r8AnA2RebD5px3nvcPZSHZ52M
-         T5fBdk+TqG0rgnTvoMlvJxcGy0HEpIuB8dk+z0T6GxcUlCUd95c/t9pMLQUvb9stPh1v
-         U9yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaw6qidpWLTUSh+E7ZtET9Var+naeWDVRoJUqIAxB+P57NvPURXuidSRGMnI6W3o2Bg06TUCHIFf9gwt7jonRoAtY0b2ZDCggtX3dSfQ==
-X-Gm-Message-State: AOJu0Yyr5JEGxr9p66M15KKKg+We212SsWigz5/NWrnva7uIhm9sbXtL
-	W4IucTbW5ALjlxIvJu2yOHBBjtDl0F9iyxMPobHe43mm9DoNLkwXxKprQaqovYOl3DAxXqxfQ/r
-	2
-X-Google-Smtp-Source: AGHT+IH/VaYWA0Z9jJyzClgGdlcJHtRJW1ehk5fJeybQcQEDDraHl3N6c/uXalUPwx7bGUhBYiLCWQ==
-X-Received: by 2002:a05:6512:1051:b0:52e:f4b4:6ec1 with SMTP id 2adb3069b0e04-530bb39d2fcmr7519755e87.46.1722882912901;
-        Mon, 05 Aug 2024 11:35:12 -0700 (PDT)
-Received: from smtpclient.apple ([2a00:1370:81a4:1df5:b5e9:827a:53fc:aa7d])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba3d22csm1207484e87.287.2024.08.05.11.35.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2024 11:35:12 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-Content-Type: text/plain;
-	charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        bh=nXDR7qiLrGhxm4QaBcXkbXKBNxx4m/1amTQ3OxtKpcA=;
+        b=Z5GfFRf3NJqkzJtGxObMW+JVn8RAQb7ytEks3KOljqEoTf6oY4ojdxtPsW5/FFf9Gs
+         CoxmhyTHpCplRz6eqHNktjPmAlwnIqtub+MtBsDKRfF9qX8JgBnypv3xaSr1hyJZLS8e
+         R0HM4jlxAopnvP4T3AycjfmeoIBxbDurn7Y/zWUzymYk9QMUAHeRqVgnarKISXziWntL
+         yqAyjclsOhagrqIVyKEYBo2lA0Ou+F5JIMoRfyfbrVFw1Q0PZbZUr/t5mtxXXrb6BK6R
+         MvZCAlAIgMGx4dDciMFQuq5Fa/cD7ci2tVBtgowLiVz5jisP7pVfg/rv5r3fIBzozhqr
+         qBpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX18twUPjw5h7OuwvOQL07GJqwXbYsYxxqiIr0uGoD5h6B6B9jv9d3SbPhrm+IdHEGSCBarpvHsBYfWFIc/l2rN8cW1jVZS89/IhYAZAw==
+X-Gm-Message-State: AOJu0Yw3fN6joy0Dh59uQjzbXIz6eTbLKxZ3vE1xPYzN2+0sKDdhw+Hp
+	BcXsC4Db2O9S3KeUA0ZidoLUZGQRdWgrqOM0iFPUDIkpJCxyyU+HBqlfL/guVgyQfybdAWlmKzk
+	ingE0C9MGuPB3L8oGBd8a7QVUHzO4hMZPh4Ra7Q==
+X-Google-Smtp-Source: AGHT+IELiX1V707IcRryP1iDqdmXzsN+eMp7QFXOkdeEr9fYlKlUd987VH8uQ7e08ycHl28xM7Hu7WLB3uBVe3WBGzg=
+X-Received: by 2002:a05:6808:191a:b0:3da:e02f:eb8e with SMTP id
+ 5614622812f47-3db5583e3e9mr18020289b6e.43.1722883285128; Mon, 05 Aug 2024
+ 11:41:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.8\))
-Subject: bcachefs mount issue
-Message-Id: <0D2287C8-F086-43B1-85FA-B672BFF908F5@dubeyko.com>
-Date: Mon, 5 Aug 2024 21:35:09 +0300
-Cc: linux-bcache@vger.kernel.org,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- slava@dubeiko.com
-To: Kent Overstreet <kent.overstreet@linux.dev>
-X-Mailer: Apple Mail (2.3696.120.41.1.8)
+MIME-Version: 1.0
+References: <20240605222751.1406125-1-souravpanda@google.com> <Zq0tPd2h6alFz8XF@aschofie-mobl2>
+In-Reply-To: <Zq0tPd2h6alFz8XF@aschofie-mobl2>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 5 Aug 2024 14:40:48 -0400
+Message-ID: <CA+CK2bAfgamzFos1M-6AtozEDwRPJzARJOmccfZ=uzKyJ7w=kQ@mail.gmail.com>
+Subject: Re: [PATCH v13] mm: report per-page metadata information
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Sourav Panda <souravpanda@google.com>, corbet@lwn.net, gregkh@linuxfoundation.org, 
+	rafael@kernel.org, akpm@linux-foundation.org, mike.kravetz@oracle.com, 
+	muchun.song@linux.dev, rppt@kernel.org, david@redhat.com, 
+	rdunlap@infradead.org, chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, 
+	tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
+	yosryahmed@google.com, hannes@cmpxchg.org, shakeelb@google.com, 
+	kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com, 
+	adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, weixugc@google.com, David Rientjes <rientjes@google.com>, 
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, yi.zhang@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kent,
+On Fri, Aug 2, 2024 at 3:02=E2=80=AFPM Alison Schofield
+<alison.schofield@intel.com> wrote:
+>
+> ++ nvdimm, linux-cxl, Yu Zhang
+>
+> On Wed, Jun 05, 2024 at 10:27:51PM +0000, Sourav Panda wrote:
+> > Today, we do not have any observability of per-page metadata
+> > and how much it takes away from the machine capacity. Thus,
+> > we want to describe the amount of memory that is going towards
+> > per-page metadata, which can vary depending on build
+> > configuration, machine architecture, and system use.
+> >
+> > This patch adds 2 fields to /proc/vmstat that can used as shown
+> > below:
+> >
+> > Accounting per-page metadata allocated by boot-allocator:
+> >       /proc/vmstat:nr_memmap_boot * PAGE_SIZE
+> >
+> > Accounting per-page metadata allocated by buddy-allocator:
+> >       /proc/vmstat:nr_memmap * PAGE_SIZE
+> >
+> > Accounting total Perpage metadata allocated on the machine:
+> >       (/proc/vmstat:nr_memmap_boot +
+> >        /proc/vmstat:nr_memmap) * PAGE_SIZE
+> >
+> > Utility for userspace:
+> >
+> > Observability: Describe the amount of memory overhead that is
+> > going to per-page metadata on the system at any given time since
+> > this overhead is not currently observable.
+> >
+> > Debugging: Tracking the changes or absolute value in struct pages
+> > can help detect anomalies as they can be correlated with other
+> > metrics in the machine (e.g., memtotal, number of huge pages,
+> > etc).
+> >
+> > page_ext overheads: Some kernel features such as page_owner
+> > page_table_check that use page_ext can be optionally enabled via
+> > kernel parameters. Having the total per-page metadata information
+> > helps users precisely measure impact. Furthermore, page-metadata
+> > metrics will reflect the amount of struct pages reliquished
+> > (or overhead reduced) when hugetlbfs pages are reserved which
+> > will vary depending on whether hugetlb vmemmap optimization is
+> > enabled or not.
+> >
+> > For background and results see:
+> > lore.kernel.org/all/20240220214558.3377482-1-souravpanda@google.com
+> >
+> > Acked-by: David Rientjes <rientjes@google.com>
+> > Signed-off-by: Sourav Panda <souravpanda@google.com>
+> > Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+>
+> This patch is leading to Oops in 6.11-rc1 when CONFIG_MEMORY_HOTPLUG
+> is enabled. Folks hitting it have had success with reverting this patch.
+> Disabling CONFIG_MEMORY_HOTPLUG is not a long term solution.
+>
+> Reported here:
+> https://lore.kernel.org/linux-cxl/CAHj4cs9Ax1=3DCoJkgBGP_+sNu6-6=3D6v=3D_=
+L-ZBZY0bVLD3wUWZQg@mail.gmail.com/
 
-As far as I  can see, I have found a mount issue. I believe that it=E2=80=99=
-s a mkfs tool issue.
+Thank you for the heads up. Can you please attach a full config file,
+also was anyone able to reproduce this problem in qemu with emulated
+nvdimm?
 
-ENVIRONMENT:
-Linux ssdfs-test-0070 6.10.0 #15 SMP PREEMPT_DYNAMIC Mon Aug  5 19:00:55 =
-MSK 2024 x86_64 x86_64 x86_64 GNU/Linux
-
-I am not sure how to share the mkfs.bcachefs tool version because this =
-tool doesn=E2=80=99t show the version.
-
-REPRODUCTION PATH:
-
-(1) Format partition by mkfs tool of any file system (for example, =
-NILFS2)
-(2) Mount the prepared volume
-(3) Execute any file system operations on the volume
-(4) Unmount the volume
-(5) Format partition by mkfs.bcachefs tool
-(6) Try to mount the prepared  bcachefs volume
-(7) The bcachefs logic fails too mount the formatted volume
-
-sudo mkfs.nilfs2 -f -b 4096 /dev/sda1=20
-mkfs.nilfs2 (nilfs-utils 2.2.8)
-Start writing file system initial data to the device
-       Blocksize:4096  Device:/dev/sda1  Device Size:999292928
-File system initialization succeeded !!
-
-sudo mount /dev/sda1 /mnt/test/
-
-mount
-<skipped>
-/dev/sda1 on /mnt/test type nilfs2 (rw,relatime)
-
-Aug  5 19:14:40 ssdfs-test-0070 kernel: [  520.066975] NILFS (sda1): =
-segctord starting. Construction interval =3D 5 seconds, CP frequency < =
-30 seconds
-Aug  5 19:14:40 ssdfs-test-0070 nilfs_cleanerd[3854]: start
-Aug  5 19:14:40 ssdfs-test-0070 nilfs_cleanerd[3854]: pause (clean =
-check)
-
-sudo umount /mnt/test
-
-Aug  5 19:15:18 ssdfs-test-0070 nilfs_cleanerd[3854]: shutdown
-
-sudo mkfs.bcachefs -f --block_size=3D4096 /dev/sda1=20
-External UUID: 483fb669-63aa-4f41-b0ba-61eb2446c2fe
-Internal UUID: 43527890-f6c8-43f1-bdd9-1c4936f71a8d
-Device index: 0
-Label:=20
-Version: 14
-Oldest version on disk: 14
-Created: Mon Aug  5 19:20:32 2024
-Squence number: 0
-Block_size: 4.0K
-Btree node size: 128.0K
-Error action: ro
-Clean: 0
-Features: =
-new_siphash,new_extent_overwrite,btree_ptr_v2,extents_above_btree_updates,=
-btree_updates_journalled,new_varint,journal_no_flush,alloc_v2,extents_acro=
-ss_btree_nodes
-Compat features:=20
-Metadata replicas: 1
-Data replicas: 1
-Metadata checksum type: crc32c (1)
-Data checksum type: crc32c (1)
-Compression type: none (0)
-Foreground write target: none
-Background write target: none
-Promote target: none
-Metadata target:                none
-String hash type: siphash (2)
-32 bit inodes: 1
-GC reserve percentage: 8%
-Root reserve percentage: 0%
-Devices: 1 live, 1 total
-Sections: members
-Superblock size: 816
-
-Members (size 64):
-  Device 0:
-    UUID: 2c54ddfc-f50c-4d15-aa80-7d23474de3e6
-    Size: 953.0M
-    Bucket size: 128.0K
-    First bucket: 0
-    Buckets: 7624
-    Last mount: (never)
-    State: rw
-    Group: (none)
-    Data allowed: journal,btree,user
-    Has data: (none)
-    Replacement policy: lru
-    Discard: 0
-initializing new filesystem
-going read-write
-mounted with opts: (null)
-
-sudo mount /dev/sda1 /mnt/test/
-
-mount
-<skipped>
-/dev/sda1 on /mnt/test type nilfs2 (rw,relatime) <=E2=80=94 completely =
-unexpected
-
-Aug  5 19:21:13 ssdfs-test-0070 kernel: [  912.678991] NILFS (sda1): =
-broken superblock, retrying with spare superblock (blocksize =3D 1024)
-Aug  5 19:21:13 ssdfs-test-0070 kernel: [  912.679835] NILFS (sda1): =
-broken superblock, retrying with spare superblock (blocksize =3D 4096)
-Aug  5 19:21:13 ssdfs-test-0070 kernel: [  912.706795] NILFS (sda1): =
-segctord starting. Construction interval =3D 5 seconds, CP frequency < =
-30 seconds
-Aug  5 19:21:13 ssdfs-test-0070 nilfs_cleanerd[4751]: start
-Aug  5 19:21:13 ssdfs-test-0070 nilfs_cleanerd[4751]: pause (clean =
-check)
-
-sudo umount /mnt/test
-
-sudo mount -t bcachefs /dev/sda1 /mnt/test/
-mount: /mnt/test: wrong fs type, bad option, bad superblock on =
-/dev/sda1, missing codepage or helper program, or other error.
-
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311715] bcachefs (sda1): =
-mounting version 0.14: btree_ptr_sectors_written =
-opts=3Dnoshard_inode_numbers,journal_reclaim_delay=3D1000,nojournal_transa=
-ction_names
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311753] bcachefs (sda1): =
-recovering from clean shutdown, journal seq 4
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311782] bcachefs (sda1): =
-Version upgrade required:
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311782] Doing =
-incompatible version upgrade from 0.14: btree_ptr_sectors_written to =
-1.7: mi_btree_bitmap
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.311782]   running =
-recovery passes: =
-check_allocations,check_alloc_info,check_lrus,check_btree_backpointers,che=
-ck_backpointers_to_extents,check_extents_to_backpointers,check_alloc_to_lr=
-u_refs,bucket_gens_init,check_snapshot_trees,check_snapshots,check_subvols=
-,check_subvol_children,delete_dead_snapshots,check_inodes,check_extents,ch=
-eck_indirect_extents,check_dirents,check_xattrs,check_root,check_subvolume=
-_structure,check_directory_structure,check_nlinks,delete_dead_inodes,set_f=
-s_needs_rebalance
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431462] bcachefs (sda1): =
-alloc_read... done
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431675] bcachefs (sda1): =
-stripes_read... done
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431688] bcachefs (sda1): =
-snapshots_read... done
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.431702] bcachefs (sda1): =
-check_allocations...
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.469609] dev 0 has wrong =
-free buckets: got 0, should be 7537, fixing
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.469683]  done
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.471013] bcachefs (sda1): =
-going read-write
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.471766] bcachefs (sda1): =
-journal_replay... done
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.471794] bcachefs (sda1): =
-check_alloc_info... done
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.472921] bcachefs (sda1): =
-check_lrus... done
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.473309] bcachefs (sda1): =
-check_btree_backpointers... done
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.473960] bcachefs (sda1): =
-check_backpointers_to_extents... done
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474483] bcachefs (sda1): =
-check_extents_to_backpointers...
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474582] missing =
-backpointer for btree=3Dinodes l=3D1 u64s 11 type btree_ptr_v2 SPOS_MAX =
-len 0 ver 0: seq d7dbe59ccc0e54fa written 24 min_key POS_MIN durability: =
-1 ptr: 0:78:0 gen 1
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474590]   got:   u64s 5 =
-type deleted 0:20447232:0 len 0 ver 0
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474595]   want:  u64s 9 =
-type backpointer 0:20447232:0 len 0 ver 0: bucket=3D0:78:0 btree=3Dinodes =
-l=3D1 offset=3D0:0 len=3D256 pos=3DSPOS_MAX, shutting down
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474645] bcachefs (sda1): =
-inconsistency detected - emergency read only at journal seq 4
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474664] bcachefs (sda1): =
-bch2_check_extents_to_backpointers(): error fsck_errors_not_fixed
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474682] bcachefs (sda1): =
-bch2_fs_recovery(): error fsck_errors_not_fixed
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474692] bcachefs (sda1): =
-bch2_fs_start(): error starting filesystem fsck_errors_not_fixed
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.474842] bcachefs (sda1): =
-unshutdown complete, journal seq 4
-Aug  5 19:23:01 ssdfs-test-0070 kernel: [ 1020.595522] bcachefs: =
-bch2_mount() error: fsck_errors_not_fixed
-
-Thanks,
-Slava.
-
-
-
-
-
+Pasha
 
