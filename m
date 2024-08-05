@@ -1,162 +1,267 @@
-Return-Path: <linux-fsdevel+bounces-24976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34CB094784A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 11:26:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22066947854
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 11:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E172F282676
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 09:26:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 627A6B21B22
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 09:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DDE15351B;
-	Mon,  5 Aug 2024 09:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7372C1537DA;
+	Mon,  5 Aug 2024 09:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s79evrl8"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="RplKCoy9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE8949650;
-	Mon,  5 Aug 2024 09:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBAE137932;
+	Mon,  5 Aug 2024 09:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722849987; cv=none; b=gR/rT9r5n+CzA2RBjlhluIMHipO95wG/ib3rQkqK5vaLPiR3JtSZndyS++PMcxc/yXhYNizBNpNNmgR48yWSBQcGvCkh6SMZYTaPPjRrOIDm7G7/yQ2tQA2IQXuqI97JzwZHhb+1ADyVc60CPQkoBYjNDr6LFUQ7BRGEzo7DwWU=
+	t=1722850403; cv=none; b=dV8eW4p5jQPn6EetJCOAth8pwVwQlaroegqaF/rRsgn1JilRchx/m79w4eUq0atWt9FC2+ReN5lXsDWUEX/zBEbQZKJ8aIF5lfZjSdoxh/K6gb6eFHN5hIV9PBG/cuvskuQs6pgLm8RX6G22QB41/wYMcjYnsI4tL+RyqZQYzSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722849987; c=relaxed/simple;
-	bh=tnpHQw8Llr6uw/Dtux0kJMHq9kupSIzxaNiemENDgwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1ZzMWJqbg5AmdwUONgjwn2zTcaBU0sPqqlUyT7fPNxG247haFIVVXMbm0KSQ4gnhNM1f0zNxF0oL5zs/L2Xidgcp5b5lqA7trdV1QMJMjubVKt+Nuep0xn+sI2I4jueFMpjZ6wT2k1NWoXGS/Upf4byGwvJmZAJmm2fNHgJk6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s79evrl8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DAFC32782;
-	Mon,  5 Aug 2024 09:26:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722849985;
-	bh=tnpHQw8Llr6uw/Dtux0kJMHq9kupSIzxaNiemENDgwc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s79evrl8kjfRthVCTcvK2m6/eoaxZ3CL3WB1nA6SKpuaXA2SZe49xN+cEVdb/LhYV
-	 ywwjgixEK8xZD/nWp7nKZW+DPY0HQ9xEpRETk8xXzSqby4pqV7WB6QAeKhfHin5h8B
-	 BSKkgwk/IBXBy/YeqZfWfXyYkfDSoVodUKH3k+z0szZBIovusHt6fMP1a7YdrHDBlQ
-	 BYoTGXAje+pgKvryrp+yLe7qONn5IleGDqdeoOub7T/oo3rcfXN1Wi8FwePbLYe0ce
-	 qDe4brVkymcfcX3toKnMw8rl/buz2sZfpWdTow6J/7C7cet4HyktvZYUS8E3KZzt2Q
-	 0vPBBVm8mQeug==
-Date: Mon, 5 Aug 2024 11:26:19 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, 
-	Wojciech =?utf-8?Q?G=C5=82adysz?= <wojciech.gladysz@infogain.com>, viro@zeniv.linux.org.uk, jack@suse.cz, ebiederm@xmission.com, 
-	kees@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/fs: last check for exec credentials on NOEXEC
- mount
-Message-ID: <20240805-fehlbesetzung-nilpferd-1ed58783ad4d@brauner>
-References: <20240801120745.13318-1-wojciech.gladysz@infogain.com>
- <20240801140739.GA4186762@perftesting>
- <mtnfw62q32omz5z4ptiivmzi472vd3zgt7bpwx6bmql5jaozgr@5whxmhm7lf3t>
- <20240802155859.GB6306@perftesting>
- <CAGudoHFOwOaDyLg3Nh=gPvhG6cO+NXf_xqCjqjz9OxP9DLP3kw@mail.gmail.com>
+	s=arc-20240116; t=1722850403; c=relaxed/simple;
+	bh=WSbpP0Ku4d6U5dAt3TMZb4Tcs/Aav+4tPZKh7eaZ2g0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k2BoRYdsNC+EjrEIM3fDvoBqu8bnZDjgp2IHSLsLQ2nr5Ndksbq0rewQeTV5Da++dM2JbJK16lGKwRuXaeElGdKUlNeUysZvDToSSQjmFrScte1vK/6tm/vDT1PHUyB0NejOvVq2O+CpRAOnosg+mB76S25kbORZl83mHEsoD9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=RplKCoy9; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1722850403; x=1754386403;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ysZOagAN9K1zsPHQ0+3bGUwQuaz+/zRHk10ZM4UgRVw=;
+  b=RplKCoy9uHEbAKNkH/OaJptB9xTss2wCmKTwT6hZsadRMa2MkY0lVqCr
+   kKEaO7BhrJH0OHn3tY94US/Y+EfqG6q8isY/hT5VovNHRdWTcZYy4u7V3
+   wsgOXHhZkPGzKgkhZbsW6hWGXORYC3hUlEPi47Mg0y5kY/9g9WLa9//qD
+   c=;
+X-IronPort-AV: E=Sophos;i="6.09,264,1716249600"; 
+   d="scan'208";a="747198291"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 09:33:15 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:40744]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.164:2525] with esmtp (Farcaster)
+ id 42289a65-0a12-41c0-a96c-f792eb8c9be8; Mon, 5 Aug 2024 09:33:13 +0000 (UTC)
+X-Farcaster-Flow-ID: 42289a65-0a12-41c0-a96c-f792eb8c9be8
+Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 5 Aug 2024 09:33:09 +0000
+Received: from u5d18b891348c5b.ant.amazon.com (10.146.13.113) by
+ EX19D014EUC004.ant.amazon.com (10.252.51.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 5 Aug 2024 09:32:59 +0000
+From: James Gowans <jgowans@amazon.com>
+To: <linux-kernel@vger.kernel.org>
+CC: James Gowans <jgowans@amazon.com>, Sean Christopherson
+	<seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Steve Sistare <steven.sistare@oracle.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Anthony
+ Yznaga" <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, "Andrew
+ Morton" <akpm@linux-foundation.org>, <linux-mm@kvack.org>, Jason Gunthorpe
+	<jgg@ziepe.ca>, <linux-fsdevel@vger.kernel.org>, Usama Arif
+	<usama.arif@bytedance.com>, <kvm@vger.kernel.org>, Alexander Graf
+	<graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, Paul Durrant
+	<pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>
+Subject: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
+Date: Mon, 5 Aug 2024 11:32:35 +0200
+Message-ID: <20240805093245.889357-1-jgowans@amazon.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHFOwOaDyLg3Nh=gPvhG6cO+NXf_xqCjqjz9OxP9DLP3kw@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D033UWC004.ant.amazon.com (10.13.139.225) To
+ EX19D014EUC004.ant.amazon.com (10.252.51.182)
 
-On Sat, Aug 03, 2024 at 08:29:17AM GMT, Mateusz Guzik wrote:
-> On Fri, Aug 2, 2024 at 5:59 PM Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> > On Thu, Aug 01, 2024 at 05:15:06PM +0200, Mateusz Guzik wrote:
-> > > I'm not confident this is particularly valuable, but if it is, it
-> > > probably should hide behind some debug flags.
-> >
-> > I'm still going to disagree here, putting it behind a debug flag means it'll
-> > never get caught, and it obviously proved valuable because we're discussing this
-> > particular case.
-> >
-> > Is it racy? Yup sure.  I think that your solution is the right way to fix it,
-> > and then we can have a
-> >
-> > WARN_ON(!(file->f_mode & FMODE_NO_EXEC_CHECKED));
-> >
-> > or however we choose to flag the file, that way we are no longer racing with the
-> > mount flags and only validating that a check that should have already occurred
-> > has in fact occurred.  Thanks,
-> >
-> 
-> To my understanding the submitter ran into the thing tripping over the
-> racy check, so this check did not find a real bug elsewhere in this
-> instance.
+In this patch series a new in-memory filesystem designed specifically
+for live update is implemented. Live update is a mechanism to support
+updating a hypervisor in a way that has limited impact to running
+virtual machines. This is done by pausing/serialising running VMs,
+kexec-ing into a new kernel, starting new VMM processes and then
+deserialising/resuming the VMs so that they continue running from where
+they were. To support this, guest memory needs to be preserved.
 
-Mateusz is right. That check is mostly nonsensical. Nothing will protect
-against mount properties being changed if the caller isn't claiming
-write access to the mount. Which this code doesn't do (And can't do (or
-anything like it) because it would cause spurious remount failures just
-because someone execs something.).
+Guestmemfs implements preservation acrosss kexec by carving out a large
+contiguous block of host system RAM early in boot which is then used as
+the data for the guestmemfs files. As well as preserving that large
+block of data memory across kexec, the filesystem metadata is preserved
+via the Kexec Hand Over (KHO) framework (still under review):
+https://lore.kernel.org/all/20240117144704.602-1-graf@amazon.com/
 
-So 0fd338b2d2cd ("exec: move path_noexec() check earlier") introduced
-WARN_ON_ONCE(). I suspect that it simply wasn't clear that mount
-properties can change while a is file held open if no write access was
-claimed.
+Filesystem metadata is structured to make preservation across kexec
+easy: inodes are one large contiguous array, and each inode has a
+"mappings" block which defines which block from the filesystem data
+memory corresponds to which offset in the file.
 
-Stuff like noexec, nodev or whatever can change anytime if e.g., just
-read access was requested. In other words, successful permission
-checking during path lookup doesn't mean that permission checking
-wouldn't fail if one redid the checks immediately after.
+There are additional constraints/requirements which guestmemfs aims to
+meet:
 
-I think it probably never triggered because noexec -> exec remounts are
-rarely done and the timing would have to be rather precise.
+1. Secret hiding: all filesystem data is removed from the kernel direct
+map so immune from speculative access. read()/write() are not supported;
+the only way to get at the data is via mmap.
 
-I think the immediate solution is to limit the scope of the
-WARN_ON_ONCE() to the ->i_mode check.
+2. Struct page overhead elimination: the memory is not managed by the
+buddy allocator and hence has no struct pages.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index a126e3d1cacb..12914e14132d 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -145,13 +145,14 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
-                goto out;
+3. PMD and PUD level allocations for TLB performance: guestmemfs
+allocates PMD-sized pages to back files which improves TLB perf (caveat
+below!). PUD size allocations are a next step.
 
-        /*
--        * may_open() has already checked for this, so it should be
--        * impossible to trip now. But we need to be extra cautious
--        * and check again at the very end too.
-+        * Safety paranoia: Redo the check whether the mount isn't
-+        * noexec so it's as close the the actual open() as possible.
-+        * may_open() has already check this but the mount properties
-+        * may have already changed since then.
-         */
--       error = -EACCES;
--       if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
--                        path_noexec(&file->f_path)))
-+       err = -EACCES;
-+       if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)) ||
-+           path_noexec(&file->f_path))
-                goto exit;
+4. Device assignment: being able to use guestmemfs memory for
+VFIO/iommufd mappings, and allow those mappings to survive and continue
+to be used across kexec.
 
-        error = -ENOEXEC;
-@@ -974,13 +975,14 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
-                goto out;
 
-        /*
--        * may_open() has already checked for this, so it should be
--        * impossible to trip now. But we need to be extra cautious
--        * and check again at the very end too.
-+        * Safety paranoia: Redo the check whether the mount isn't
-+        * noexec so it's as close the the actual open() as possible.
-+        * may_open() has already check this but the mount properties
-+        * may have already changed since then.
-         */
-        err = -EACCES;
--       if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
--                        path_noexec(&file->f_path)))
-+       if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)) ||
-+           path_noexec(&file->f_path))
-                goto exit;
+Next steps
+=========
 
- out:
+The idea is that this patch series implements a minimal filesystem to
+provide the foundations for in-memory persistent across kexec files.
+One this foundation is in place it will be extended:
+
+1. Improve the filesystem to be more comprehensive - currently it's just
+functional enough to demonstrate the main objective of reserved memory
+and persistence via KHO.
+
+2. Build support for iommufd IOAS and HWPT persistence, and integrate
+that with guestmemfs. The idea is that if VMs have DMA devices assigned
+to them, DMA should continue running across kexec. A future patch series
+will add support for this in iommufd and connect iommufd to guestmemfs
+so that guestmemfs files can remain mapped into the IOMMU during kexec.
+
+3. Support a guest_memfd interface to files so that they can be used for
+confidential computing without needing to mmap into userspace.
+
+3. Gigantic PUD level mappings for even better TLB perf.
+
+Caveats
+=======
+
+There are a issues with the current implementation which should be
+solved either in this patch series or soon in follow-on work:
+
+1. Although PMD-size allocations are done, PTE-level page tables are
+still created. This is because guestmemfs uses remap_pfn_range() to set
+up userspace pgtables. Currently remap_pfn_range() only creates
+PTE-level mappings. I suggest enhancing remap_pfn_range() to support
+creating higher level mappings where possible, by adding pmd_special
+and pud_special flags.
+
+2. NUMA support is currently non-existent. To make this more generally
+useful it's necessary to have NUMA-awareness. One thought on how to do
+this is to be able to specify multiple allocations with wNUMA affinity
+on the kernel cmdline and have multiple mount points, one per NUMA node.
+Currently, for simplicity, only a single contiguous filesystem data
+allocation and a single mount point is supported.
+
+3. MCEs are currently not handled - we need to add functionality for
+this to be able to track block ownership and deliver an MCE correctly.
+
+4. Looking for reviews from filesystem experts to see if necessary
+callbacks, refcounting, locking, etc, is done correctly.
+
+Open questions
+==============
+
+It is not too clear if or how guestmemfs should use DAX as a source of
+memory. Seeing as guestmemfs has an in-memory design, it seems that it
+is not necessary to use DAX as a source of memory, but I am keen for
+guidance/input on whether DAX should be used here.
+
+The filesystem data memory is removed from the direct map for secret
+hiding, but it is still necessary to mmap it to be accessible to KVM.
+For improving secret hiding even more a guest_memfd-style interface
+could be used to remove the need to mmap. That introduces a new problem
+of the memory being completely inaccessible to KVM for this like MMIO
+instruction emulation. How can this be handled?
+
+Related Work
+============
+
+There are similarities to a few attempts at solving aspects of this
+problem previously.
+
+The original was probably PKRAM from Oracle; a tempfs filesystem with
+persistence:
+https://lore.kernel.org/kexec/1682554137-13938-1-git-send-email-anthony.yznaga@oracle.com/
+guestmemfs will additionally provide secret hiding, PMD/PUD allocations
+and a path to DMA persistence and NUMA support.
+
+Dmemfs from Tencent aimed to remove the need for struct page overhead:
+https://lore.kernel.org/kvm/cover.1602093760.git.yuleixzhang@tencent.com/
+Guestmemfs provides this benefit too, along with persistence across
+kexec and secret hiding. 
+
+Pkernfs attempted to solve guest memory persistence and IOMMU
+persistence all in one:
+https://lore.kernel.org/all/20240205120203.60312-1-jgowans@amazon.com/
+Guestmemfs is a re-work of that to only persist guest RAM in the
+filesystem, and to use KHO for filesystem metadata. IOMMU persistence
+will be implemented independently with persistent iommufd domains via
+KHO.
+
+Testing
+=======
+
+The testing for this can be seen in the Documentation file in this patch
+series. Essentially it is using a guestmemfs file for a QEMU VM's RAM,
+doing a kexec, restoring the QEMU VM and confirming that the VM picked
+up from where it left off.
+
+James Gowans (10):
+  guestmemfs: Introduce filesystem skeleton
+  guestmemfs: add inode store, files and dirs
+  guestmemfs: add persistent data block allocator
+  guestmemfs: support file truncation
+  guestmemfs: add file mmap callback
+  kexec/kho: Add addr flag to not initialise memory
+  guestmemfs: Persist filesystem metadata via KHO
+  guestmemfs: Block modifications when serialised
+  guestmemfs: Add documentation and usage instructions
+  MAINTAINERS: Add maintainers for guestmemfs
+
+ Documentation/filesystems/guestmemfs.rst |  87 +++++++
+ MAINTAINERS                              |   8 +
+ arch/x86/mm/init_64.c                    |   2 +
+ fs/Kconfig                               |   1 +
+ fs/Makefile                              |   1 +
+ fs/guestmemfs/Kconfig                    |  11 +
+ fs/guestmemfs/Makefile                   |   8 +
+ fs/guestmemfs/allocator.c                |  40 +++
+ fs/guestmemfs/dir.c                      |  43 ++++
+ fs/guestmemfs/file.c                     | 106 ++++++++
+ fs/guestmemfs/guestmemfs.c               | 160 ++++++++++++
+ fs/guestmemfs/guestmemfs.h               |  60 +++++
+ fs/guestmemfs/inode.c                    | 189 ++++++++++++++
+ fs/guestmemfs/serialise.c                | 302 +++++++++++++++++++++++
+ include/linux/guestmemfs.h               |  16 ++
+ include/uapi/linux/kexec.h               |   6 +
+ kernel/kexec_kho_in.c                    |  12 +-
+ kernel/kexec_kho_out.c                   |   4 +
+ 18 files changed, 1055 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/filesystems/guestmemfs.rst
+ create mode 100644 fs/guestmemfs/Kconfig
+ create mode 100644 fs/guestmemfs/Makefile
+ create mode 100644 fs/guestmemfs/allocator.c
+ create mode 100644 fs/guestmemfs/dir.c
+ create mode 100644 fs/guestmemfs/file.c
+ create mode 100644 fs/guestmemfs/guestmemfs.c
+ create mode 100644 fs/guestmemfs/guestmemfs.h
+ create mode 100644 fs/guestmemfs/inode.c
+ create mode 100644 fs/guestmemfs/serialise.c
+ create mode 100644 include/linux/guestmemfs.h
+
+-- 
+2.34.1
+
 
