@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-24981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-24982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1B3947866
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 11:34:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198B794786A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 11:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69722828D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 09:34:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CF46B23B52
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 09:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F3F1547EC;
-	Mon,  5 Aug 2024 09:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1913615383D;
+	Mon,  5 Aug 2024 09:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ZKqObFiz"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="IkUqHxWA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3A615383D;
-	Mon,  5 Aug 2024 09:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FB4154BE7;
+	Mon,  5 Aug 2024 09:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722850470; cv=none; b=F5GBlaPX72CLnPfsqHl3RDNyqZUKjoM80xsIRWFMBdXjYx7WHicW2WmCotHMeephhxPnZmyCw452JtZ74cJL6FseOdXtbK6F1zweP/TYuF+PoKx5fqQ3TD/SxH072kQgVfOXyW9TvQzlQrzZo7gFK2bi7IBXy2kaNBQPt5/pdyo=
+	t=1722850474; cv=none; b=oQkam1Pn/h+Kbfottc5Pms2yiy28tiSo6NoSmtR7fU4YfMGWyK7az1zdEPX5KkfXV+oS2TbKTRABl86CD1gLdLLr4t1RhBeeaNwB7dW3Bo9MK4BCfgIKP0RhhguEQO2/WI4dQY7OODzzKkLylLNvcKozuL+90mELAiFcwwCcCa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722850470; c=relaxed/simple;
-	bh=AP2P6uLd9rXrpl3zS13MYDJFQU66oOrwe02O7eR19m0=;
+	s=arc-20240116; t=1722850474; c=relaxed/simple;
+	bh=JDBxRZkF7qtTIiobsrij9ABz3RpEDD5fpxOB1egzB0g=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NVnXSjTRtK+JdTX6rtcFGKJE37bJQfsBVG1MV6CJDj4x1fAN7sTXgcisnoTXoHFiOayQIIGEzAZm6wM4tIVFQ6yyo7vaWmRuiNMrJ7UIFupAl39Qfp26q/DHe+lkt1H9KU38xjMOe2dBwwMIm1C3pnDipR03ii+kSLb5p/GZVsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ZKqObFiz; arc=none smtp.client-ip=207.171.184.29
+	 MIME-Version:Content-Type; b=oSXG86KvGVsgzmFxRgROgCX0hXIaWddbEYDMg/CLUS/+07SYBSOU63Ob6ZCHkN61f0C2Ypjz3UgDbQsvgPMvUY1hhtT0ty3Z2eIiMu6NHYx7pfK+rkFYBfjU5i7XwW91wFv5d26tAm+EJ0CKr622i85zIC2Xv428NYWc8fIpDhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=IkUqHxWA; arc=none smtp.client-ip=52.119.213.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1722850470; x=1754386470;
+  t=1722850473; x=1754386473;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=rBGc29GJqkanga86wc+CDruFBMWuAWTKAOMI6eWst9M=;
-  b=ZKqObFizk4ScXCUe1MWqPVPs85PgeWoyJP9Ubt6Qpy8nKDJz0yAdafL7
-   ALMNU61tnDw6ZjI0/YVZyboyDLq4AkpZZvko83CxNlE13m1WE3KHKFq5r
-   JkO8WA7tAT83lQQJVFpR/6crkV1j7x8hza6cJB6tiDPClvZjnoDfsWbR9
-   Q=;
+  bh=QLzX8kQ4Me7VkWkGGUOEVumIPTgCaBccV0Vp9jQZvU0=;
+  b=IkUqHxWAI7TYM9W2XdphdZ415TRyDYS6hLpAGvEqxH5+10J1lkCjK83C
+   C6Kj9OgDLio64suRcfCtH2pPJfN5MDfxsNTFskg/+66TvkOlQHBk6wy5g
+   NRj3lRYATmW8rZPkGp/d3lnCGxnYxIgxxhhv64r2KJARiOLSaTjUNjWWF
+   w=;
 X-IronPort-AV: E=Sophos;i="6.09,264,1716249600"; 
-   d="scan'208";a="440962193"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 09:34:20 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.10.100:16945]
+   d="scan'208";a="650673665"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 09:34:29 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.17.79:60629]
  by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.35.73:2525] with esmtp (Farcaster)
- id bb9ee3fa-f148-4792-ad18-0aaa1262bc00; Mon, 5 Aug 2024 09:34:18 +0000 (UTC)
-X-Farcaster-Flow-ID: bb9ee3fa-f148-4792-ad18-0aaa1262bc00
+ id d3e48c8d-1f8d-494a-8e05-dd641a46ffbf; Mon, 5 Aug 2024 09:34:28 +0000 (UTC)
+X-Farcaster-Flow-ID: d3e48c8d-1f8d-494a-8e05-dd641a46ffbf
 Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 5 Aug 2024 09:34:18 +0000
+ Mon, 5 Aug 2024 09:34:27 +0000
 Received: from u5d18b891348c5b.ant.amazon.com (10.146.13.113) by
  EX19D014EUC004.ant.amazon.com (10.252.51.182) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 5 Aug 2024 09:34:09 +0000
+ Mon, 5 Aug 2024 09:34:18 +0000
 From: James Gowans <jgowans@amazon.com>
 To: <linux-kernel@vger.kernel.org>
 CC: James Gowans <jgowans@amazon.com>, Sean Christopherson
@@ -69,9 +69,9 @@ CC: James Gowans <jgowans@amazon.com>, Sean Christopherson
 	<usama.arif@bytedance.com>, <kvm@vger.kernel.org>, Alexander Graf
 	<graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, Paul Durrant
 	<pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>
-Subject: [PATCH 04/10] guestmemfs: support file truncation
-Date: Mon, 5 Aug 2024 11:32:39 +0200
-Message-ID: <20240805093245.889357-5-jgowans@amazon.com>
+Subject: [PATCH 05/10] guestmemfs: add file mmap callback
+Date: Mon, 5 Aug 2024 11:32:40 +0200
+Message-ID: <20240805093245.889357-6-jgowans@amazon.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
 References: <20240805093245.889357-1-jgowans@amazon.com>
@@ -86,163 +86,115 @@ Content-Type: text/plain
 X-ClientProxiedBy: EX19D044UWB004.ant.amazon.com (10.13.139.134) To
  EX19D014EUC004.ant.amazon.com (10.252.51.182)
 
-In a previous commit a block allocator was added. Now use that block
-allocator to allocate blocks for files when ftruncate is run on them.
+Make the file data usable to userspace by adding mmap. That's all that
+QEMU needs for guest RAM, so that's all be bother implementing for now.
 
-To do that a inode_operations is added on the file inodes with a getattr
-callback handling the ATTR_SIZE attribute. When this is invoked pages
-are allocated, the indexes of which are put into a mappings block.
-The mappings block is an array with the index being the file offset
-block and the value at that index being the pkernfs block backign that
-file offset.
+When mmaping the file the VMA is marked as PFNMAP to indicate that there
+are no struct pages for the memory in this VMA. Remap_pfn_range() is
+used to actually populate the page tables. All PTEs are pre-faulted into
+the pgtables at mmap time so that the pgtables are usable when this
+virtual address range is given to VFIO's MAP_DMA.
 
 Signed-off-by: James Gowans <jgowans@amazon.com>
 ---
- fs/guestmemfs/Makefile     |  2 +-
- fs/guestmemfs/file.c       | 52 ++++++++++++++++++++++++++++++++++++++
- fs/guestmemfs/guestmemfs.h |  2 ++
- fs/guestmemfs/inode.c      | 25 +++++++++++++++---
- 4 files changed, 77 insertions(+), 4 deletions(-)
- create mode 100644 fs/guestmemfs/file.c
+ fs/guestmemfs/file.c       | 43 +++++++++++++++++++++++++++++++++++++-
+ fs/guestmemfs/guestmemfs.c |  2 +-
+ fs/guestmemfs/guestmemfs.h |  3 +++
+ 3 files changed, 46 insertions(+), 2 deletions(-)
 
-diff --git a/fs/guestmemfs/Makefile b/fs/guestmemfs/Makefile
-index b357073a60f3..e93e43ba274b 100644
---- a/fs/guestmemfs/Makefile
-+++ b/fs/guestmemfs/Makefile
-@@ -3,4 +3,4 @@
- # Makefile for persistent kernel filesystem
- #
- 
--obj-y += guestmemfs.o inode.o dir.o allocator.o
-+obj-y += guestmemfs.o inode.o dir.o allocator.o file.o
 diff --git a/fs/guestmemfs/file.c b/fs/guestmemfs/file.c
-new file mode 100644
-index 000000000000..618c93b12196
---- /dev/null
+index 618c93b12196..b1a52abcde65 100644
+--- a/fs/guestmemfs/file.c
 +++ b/fs/guestmemfs/file.c
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "guestmemfs.h"
-+
-+static int truncate(struct inode *inode, loff_t newsize)
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ 
+ #include "guestmemfs.h"
++#include <linux/mm.h>
+ 
+ static int truncate(struct inode *inode, loff_t newsize)
+ {
+@@ -41,6 +42,46 @@ static int inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry, struct
+ 	return 0;
+ }
+ 
++/*
++ * To be able to use PFNMAP VMAs for VFIO DMA mapping we need the page tables
++ * populated with mappings. Pre-fault everything.
++ */
++static int mmap(struct file *filp, struct vm_area_struct *vma)
 +{
-+	unsigned long free_block;
++	int rc;
++	unsigned long *mappings_block;
 +	struct guestmemfs_inode *guestmemfs_inode;
-+	unsigned long *mappings;
 +
-+	guestmemfs_inode = guestmemfs_get_persisted_inode(inode->i_sb, inode->i_ino);
-+	mappings = guestmemfs_inode->mappings;
-+	i_size_write(inode, newsize);
-+	for (int block_idx = 0; block_idx * PMD_SIZE < newsize; ++block_idx) {
-+		free_block = guestmemfs_alloc_block(inode->i_sb);
-+		if (free_block < 0)
-+			/* TODO: roll back allocations. */
-+			return -ENOMEM;
-+		*(mappings + block_idx) = free_block;
-+		++guestmemfs_inode->num_mappings;
++	guestmemfs_inode = guestmemfs_get_persisted_inode(filp->f_inode->i_sb,
++			filp->f_inode->i_ino);
++
++	mappings_block = guestmemfs_inode->mappings;
++
++	/* Remap-pfn-range will mark the range VM_IO */
++	for (unsigned long vma_addr_offset = vma->vm_start;
++			vma_addr_offset < vma->vm_end;
++			vma_addr_offset += PMD_SIZE) {
++		int block, mapped_block;
++		unsigned long map_size = min(PMD_SIZE, vma->vm_end - vma_addr_offset);
++
++		block = (vma_addr_offset - vma->vm_start) / PMD_SIZE;
++		mapped_block = *(mappings_block + block);
++		/*
++		 * It's wrong to use rempa_pfn_range; this will install PTE-level entries.
++		 * The whole point of 2 MiB allocs is to improve TLB perf!
++		 * We should use something like mm/huge_memory.c#insert_pfn_pmd
++		 * but that is currently static.
++		 * TODO: figure out the best way to install PMDs.
++		 */
++		rc = remap_pfn_range(vma,
++				vma_addr_offset,
++				(guestmemfs_base >> PAGE_SHIFT) + (mapped_block * 512),
++				map_size,
++				vma->vm_page_prot);
 +	}
 +	return 0;
 +}
 +
-+static int inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry, struct iattr *iattr)
-+{
-+	struct inode *inode = dentry->d_inode;
-+	int error;
-+
-+	error = setattr_prepare(idmap, dentry, iattr);
-+	if (error)
-+		return error;
-+
-+	if (iattr->ia_valid & ATTR_SIZE) {
-+		error = truncate(inode, iattr->ia_size);
-+		if (error)
-+			return error;
-+	}
-+	setattr_copy(idmap, inode, iattr);
-+	mark_inode_dirty(inode);
-+	return 0;
-+}
-+
-+const struct inode_operations guestmemfs_file_inode_operations = {
-+	.setattr = inode_setattr,
-+	.getattr = simple_getattr,
-+};
-+
-+const struct file_operations guestmemfs_file_fops = {
-+	.owner = THIS_MODULE,
-+	.iterate_shared = NULL,
-+};
+ const struct inode_operations guestmemfs_file_inode_operations = {
+ 	.setattr = inode_setattr,
+ 	.getattr = simple_getattr,
+@@ -48,5 +89,5 @@ const struct inode_operations guestmemfs_file_inode_operations = {
+ 
+ const struct file_operations guestmemfs_file_fops = {
+ 	.owner = THIS_MODULE,
+-	.iterate_shared = NULL,
++	.mmap = mmap,
+ };
+diff --git a/fs/guestmemfs/guestmemfs.c b/fs/guestmemfs/guestmemfs.c
+index c45c796c497a..38f20ad25286 100644
+--- a/fs/guestmemfs/guestmemfs.c
++++ b/fs/guestmemfs/guestmemfs.c
+@@ -9,7 +9,7 @@
+ #include <linux/memblock.h>
+ #include <linux/statfs.h>
+ 
+-static phys_addr_t guestmemfs_base, guestmemfs_size;
++phys_addr_t guestmemfs_base, guestmemfs_size;
+ struct guestmemfs_sb *psb;
+ 
+ static int statfs(struct dentry *root, struct kstatfs *buf)
 diff --git a/fs/guestmemfs/guestmemfs.h b/fs/guestmemfs/guestmemfs.h
-index af9832390be3..7ea03ac8ecca 100644
+index 7ea03ac8ecca..0f2788ce740e 100644
 --- a/fs/guestmemfs/guestmemfs.h
 +++ b/fs/guestmemfs/guestmemfs.h
-@@ -44,3 +44,5 @@ struct inode *guestmemfs_inode_get(struct super_block *sb, unsigned long ino);
- struct guestmemfs_inode *guestmemfs_get_persisted_inode(struct super_block *sb, int ino);
+@@ -8,6 +8,9 @@
+ #define GUESTMEMFS_FILENAME_LEN 255
+ #define GUESTMEMFS_PSB(sb) ((struct guestmemfs_sb *)sb->s_fs_info)
  
- extern const struct file_operations guestmemfs_dir_fops;
-+extern const struct file_operations guestmemfs_file_fops;
-+extern const struct inode_operations guestmemfs_file_inode_operations;
-diff --git a/fs/guestmemfs/inode.c b/fs/guestmemfs/inode.c
-index 2360c3a4857d..61f70441d82c 100644
---- a/fs/guestmemfs/inode.c
-+++ b/fs/guestmemfs/inode.c
-@@ -15,14 +15,28 @@ struct guestmemfs_inode *guestmemfs_get_persisted_inode(struct super_block *sb,
- 
- struct inode *guestmemfs_inode_get(struct super_block *sb, unsigned long ino)
- {
-+	struct guestmemfs_inode *guestmemfs_inode;
- 	struct inode *inode = iget_locked(sb, ino);
- 
- 	/* If this inode is cached it is already populated; just return */
- 	if (!(inode->i_state & I_NEW))
- 		return inode;
--	inode->i_op = &guestmemfs_dir_inode_operations;
-+	guestmemfs_inode = guestmemfs_get_persisted_inode(sb, ino);
- 	inode->i_sb = sb;
--	inode->i_mode = S_IFREG;
++/* Units of bytes */
++extern phys_addr_t guestmemfs_base, guestmemfs_size;
 +
-+	if (guestmemfs_inode->flags & GUESTMEMFS_INODE_FLAG_DIR) {
-+		inode->i_op = &guestmemfs_dir_inode_operations;
-+		inode->i_mode = S_IFDIR;
-+	} else {
-+		inode->i_op = &guestmemfs_file_inode_operations;
-+		inode->i_mode = S_IFREG;
-+		inode->i_fop = &guestmemfs_file_fops;
-+		inode->i_size = guestmemfs_inode->num_mappings * PMD_SIZE;
-+	}
-+
-+	set_nlink(inode, 1);
-+
-+	/* Switch based on file type */
- 	unlock_new_inode(inode);
- 	return inode;
- }
-@@ -103,6 +117,7 @@ static struct dentry *guestmemfs_lookup(struct inode *dir,
- 		unsigned int flags)
- {
- 	struct guestmemfs_inode *guestmemfs_inode;
-+	struct inode *vfs_inode;
- 	unsigned long ino;
- 
- 	guestmemfs_inode = guestmemfs_get_persisted_inode(dir->i_sb, dir->i_ino);
-@@ -112,7 +127,10 @@ static struct dentry *guestmemfs_lookup(struct inode *dir,
- 		if (!strncmp(guestmemfs_inode->filename,
- 			     dentry->d_name.name,
- 			     GUESTMEMFS_FILENAME_LEN)) {
--			d_add(dentry, guestmemfs_inode_get(dir->i_sb, ino));
-+			vfs_inode = guestmemfs_inode_get(dir->i_sb, ino);
-+			mark_inode_dirty(dir);
-+			inode_update_timestamps(vfs_inode, S_ATIME);
-+			d_add(dentry, vfs_inode);
- 			break;
- 		}
- 		ino = guestmemfs_inode->sibling_ino;
-@@ -162,3 +180,4 @@ const struct inode_operations guestmemfs_dir_inode_operations = {
- 	.lookup		= guestmemfs_lookup,
- 	.unlink		= guestmemfs_unlink,
- };
-+
+ struct guestmemfs_sb {
+ 	/* Inode number */
+ 	unsigned long next_free_ino;
 -- 
 2.34.1
 
