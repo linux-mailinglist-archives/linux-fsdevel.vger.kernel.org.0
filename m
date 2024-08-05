@@ -1,153 +1,256 @@
-Return-Path: <linux-fsdevel+bounces-25008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A22947AAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 13:55:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9012947AE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 14:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C9D1F21844
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 11:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48E601F21794
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Aug 2024 12:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A659D156993;
-	Mon,  5 Aug 2024 11:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4135E156862;
+	Mon,  5 Aug 2024 12:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XfCDL+D0"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CX7r3Irc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4q0B/Dlf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CX7r3Irc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4q0B/Dlf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02385155CB5;
-	Mon,  5 Aug 2024 11:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A121553BD
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Aug 2024 12:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722858934; cv=none; b=b4KQzKpLl3+7VmQnHBYU7auTstPdM0uUYg7zAo3TxAN0dCHJNFh/DPqpJSeUMDYbkSO7uBD0m0nDUue7fz4LGG2RHX6xMg5za3iVsG0xzUvpjWkDtQE8JW8rgcXeG+RzgKJElBQUQO9vQJof6viKDg7gHNm4/PvAqL9vJPrkaBE=
+	t=1722860034; cv=none; b=RY4xXuK0g8IlJbTGE1YTT9fDXnp26PGJplgOpaB8eYhiJIEXaMY9jaWTfpgPzbsFkRRoNXQ5AKbFTyTJnEPoQIIFcmvjVuvF3cX/fJ9eN3of+73VLO+OxmPnUwFN3DpYA/l8ZWE8lEvLtAFwL6CAAMIf4qhc298axw4WrP7sQRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722858934; c=relaxed/simple;
-	bh=e/VIQWZQE2//1gR+r6T+0G7nvYPigAQSAWgzUeMf1ZE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XXchTFSPdSwWPKAlJeGtWBQGalD4Ie+Q8UO2ydPL4JO8ZQQsiZWcYh8lDyDsmK/Bim5OpakcenkiF7GXOub+8fEkY9xQBlKfVaF3Q50sFQ3gQrIw48tKGOHKxh9yhZOW8f8dFD5f5ZbFlZ4N5oim0UZfeK/45urOJAK+Lr/04QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XfCDL+D0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E42C8C32782;
-	Mon,  5 Aug 2024 11:55:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722858933;
-	bh=e/VIQWZQE2//1gR+r6T+0G7nvYPigAQSAWgzUeMf1ZE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=XfCDL+D08/E3KkbQ0bo2c7WEi/k4P1XFKArA1ORiTq1DxYkqF0zy8BK62zuZ+zFkW
-	 mU7i8n4MHjP7Ti96tHyttNj77VbPk6vghIZZBwTzujpfiLGKq0RpX3u69Q1Im6p6+N
-	 Uhe0SthqSD+ShyfjxE+mCYBfxQdzJ1OdRh2JJx8f9PFtAw2Av7JD3k4LaGohk0M2Sm
-	 EwTRfHNFeAHzohkgplbboBafPP1SxfN15ND9sNmDagVLXfrtnRDbhLcfreClsOPwch
-	 da47AHVAs6CMdV4GkNIJ08BiaCM1zB4rdKx+MnrYuv8eOsWAdPMXpjsayxeGY0T2fi
-	 SWNmHHMPo2Nbw==
-Message-ID: <8df176f6561e3049435fa41306e4a70537688290.camel@kernel.org>
-Subject: Re: [PATCH RFC 0/4] fs: try an opportunistic lookup for O_CREAT
- opens too
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Andrew Morton <akpm@linux-foundation.org>, Josef Bacik
- <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Mon, 05 Aug 2024 07:55:31 -0400
-In-Reply-To: <20240805-rachsucht-lehrzeit-f1c0c47c2fee@brauner>
-References: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
-	 <20240805-rachsucht-lehrzeit-f1c0c47c2fee@brauner>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
+	s=arc-20240116; t=1722860034; c=relaxed/simple;
+	bh=q1zJdHVn6WpmI07WcosiGlQwtsGk+8FpxbJvdojsXZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TYVvJDy0a8MadSFWb5XAkoSLluuezKEZieRe3cAEkmkprmyyyaJ9pc8sSP4KC/2hLALfqzyWNRdNtX+UvKOO2h4QOnV8cl9E0KtbzUEou0wL2IHoMWlEjpVoEXHoUhsL5txLEmY02wNNaa078J8uWvzW6Bcbq46MOrSfDliZc10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CX7r3Irc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4q0B/Dlf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CX7r3Irc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4q0B/Dlf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 19E991F839;
+	Mon,  5 Aug 2024 12:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722860030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KQy1qhsS25ufuqCAstuLNEzTgHNgD7Jtih3ghMK0QlQ=;
+	b=CX7r3IrcJ01nI/QepPb43kK/hv0TxsRdV10Tfa9M9wwqh0SI+50EpUfWbTNR7SaVmqILjC
+	50gmEyHRPDZzSPSr5rw9ihfzSWkgy23zUu2qb2pnINgO8N87QqXOwEHCAc9nH5LYM7t5NV
+	ydA1Vths7VMXWdIdd9G03qxwALH/Kfw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722860030;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KQy1qhsS25ufuqCAstuLNEzTgHNgD7Jtih3ghMK0QlQ=;
+	b=4q0B/DlfbE9q6200rUYNU4Jj1jN98+4Ha5ssWVD+Xw4bOW3mOLAmk1kY4MmvgVQD3EGeHU
+	bw7gpDBw/pFurjDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=CX7r3Irc;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="4q0B/Dlf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722860030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KQy1qhsS25ufuqCAstuLNEzTgHNgD7Jtih3ghMK0QlQ=;
+	b=CX7r3IrcJ01nI/QepPb43kK/hv0TxsRdV10Tfa9M9wwqh0SI+50EpUfWbTNR7SaVmqILjC
+	50gmEyHRPDZzSPSr5rw9ihfzSWkgy23zUu2qb2pnINgO8N87QqXOwEHCAc9nH5LYM7t5NV
+	ydA1Vths7VMXWdIdd9G03qxwALH/Kfw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722860030;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KQy1qhsS25ufuqCAstuLNEzTgHNgD7Jtih3ghMK0QlQ=;
+	b=4q0B/DlfbE9q6200rUYNU4Jj1jN98+4Ha5ssWVD+Xw4bOW3mOLAmk1kY4MmvgVQD3EGeHU
+	bw7gpDBw/pFurjDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E86813254;
+	Mon,  5 Aug 2024 12:13:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FXaGA/7BsGZkIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 05 Aug 2024 12:13:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9ED50A0897; Mon,  5 Aug 2024 14:13:49 +0200 (CEST)
+Date: Mon, 5 Aug 2024 14:13:49 +0200
+From: Jan Kara <jack@suse.cz>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Jan Kara <jack@suse.cz>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, amir73il@gmail.com,
+	brauner@kernel.org
+Subject: Re: [PATCH 10/10] fsnotify: generate pre-content permission event on
+ page fault
+Message-ID: <20240805121349.i4esnngbuckbpdea@quack3>
+References: <cover.1721931241.git.josef@toxicpanda.com>
+ <1bc2855779e7ba1d80592be7d6257b43f1a91886.1721931241.git.josef@toxicpanda.com>
+ <20240801214025.t5zjblmdjreheab6@quack3>
+ <20240802160357.GD6306@perftesting>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802160357.GD6306@perftesting>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,fb.com,vger.kernel.org,gmail.com,kernel.org];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 19E991F839
 
-On Mon, 2024-08-05 at 12:46 +0200, Christian Brauner wrote:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fs: remove comment about d_rcu_to_r=
-efcount
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fs: add a kerneldoc header over loo=
-kup_fast
->=20
-> I took both of these into vfs.misc since they're really unrelated cleanup=
-s.
+On Fri 02-08-24 12:03:57, Josef Bacik wrote:
+> On Thu, Aug 01, 2024 at 11:40:25PM +0200, Jan Kara wrote:
+> > On Thu 25-07-24 14:19:47, Josef Bacik wrote:
+> > > FS_PRE_ACCESS or FS_PRE_MODIFY will be generated on page fault depending
+> > > on the faulting method.
+> > > 
+> > > This pre-content event is meant to be used by hierarchical storage
+> > > managers that want to fill in the file content on first read access.
+> > > 
+> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > ...
+> > > @@ -3287,6 +3288,35 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> > >  	if (unlikely(index >= max_idx))
+> > >  		return VM_FAULT_SIGBUS;
+> > >  
+> > > +	/*
+> > > +	 * If we have pre-content watchers then we need to generate events on
+> > > +	 * page fault so that we can populate any data before the fault.
+> > > +	 *
+> > > +	 * We only do this on the first pass through, otherwise the populating
+> > > +	 * application could potentially deadlock on the mmap lock if it tries
+> > > +	 * to populate it with mmap.
+> > > +	 */
+> > > +	if (fault_flag_allow_retry_first(vmf->flags) &&
+> > > +	    fsnotify_file_has_content_watches(file)) {
+> > 
+> > I'm somewhat nervous that if ALLOW_RETRY isn't set, we'd silently jump into
+> > readpage code without ever sending pre-content event and thus we'd possibly
+> > expose invalid content to userspace? I think we should fail the fault if
+> > fsnotify_file_has_content_watches(file) && !(vmf->flags &
+> > FAULT_FLAG_ALLOW_RETRY).
+> 
+> I was worried about this too but it seems to not be the case that we'll not ever
+> have ALLOW_RETRY.  That being said I'm fine turning this into a sigbus.
 
-Thanks! I was going to suggest that.
---=20
-Jeff Layton <jlayton@kernel.org>
+Do you mean that with your workloads we always have ALLOW_RETRY set? As I
+wrote, currently you'd have to try really hard to hit such paths but they
+are there - for example if you place uprobe on an address in a VMA that is
+not present, the page fault is going to happen without ALLOW_RETRY set.
+
+> > > +		int mask = (vmf->flags & FAULT_FLAG_WRITE) ? MAY_WRITE : MAY_READ;
+> > > +		loff_t pos = vmf->pgoff << PAGE_SHIFT;
+> > > +
+> > > +		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+> > > +
+> > > +		/*
+> > > +		 * We can only emit the event if we did actually release the
+> > > +		 * mmap lock.
+> > > +		 */
+> > > +		if (fpin) {
+> > > +			error = fsnotify_file_area_perm(fpin, mask, &pos,
+> > > +							PAGE_SIZE);
+> > > +			if (error) {
+> > > +				fput(fpin);
+> > > +				return VM_FAULT_ERROR;
+> > > +			}
+> > > +		}
+> > > +	}
+> > > +
+> > >  	/*
+> > >  	 * Do we have something in the page cache already?
+> > >  	 */
+> > ...
+> > > @@ -3612,6 +3643,13 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+> > >  	unsigned long rss = 0;
+> > >  	unsigned int nr_pages = 0, mmap_miss = 0, mmap_miss_saved, folio_type;
+> > >  
+> > > +	/*
+> > > +	 * We are under RCU, we can't emit events here, we need to force a
+> > > +	 * normal fault to make sure the events get sent.
+> > > +	 */
+> > > +	if (fsnotify_file_has_content_watches(file))
+> > > +		return ret;
+> > > +
+> > 
+> > I don't think we need to do anything for filemap_map_pages(). The call just
+> > inserts page cache content into page tables and whatever is in the page
+> > cache and has folio_uptodate() set should be already valid file content,
+> > shouldn't it?
+> 
+> I'll make this comment more clear.  filemap_fault() will start readahead,
+> but we'll only emit the event for the page size that we're faulting.  I
+> had looked at putting this at the readahead place and figuring out the
+> readahead size, but literally anything could trigger readahead so it's
+> better to just not allow filemap_map_pages() to happen, otherwise we'll
+> end up with empty pages (if the content hasn't been populated yet) and
+> never emit an event for those ranges.
+
+This seems like an interesting problem. Even ordinary read(2) will trigger
+readahead and as you say, we would be instantiating folios with wrong
+content (zeros) due to that. It seems as a fragile design to keep such
+folios in the page cache and place checks in all the places that could
+possibly make their content visible to the user. I'd rather make sure that
+if we pull folios into page cache (and set folio_uptodate() bit), their
+content is indeed valid.
+
+What we could do is to turn off readahead on the inode if
+fsnotify_file_has_content_watches() is true. Essentially the handler of the
+precontent event can do a much better job of prefilling the page cache with
+whatever content is needed in a range that makes sense. And then we could
+leave filemap_map_pages() intact. What do you think guys?
+
+								Honza
+
+
+> Thanks,
+> 
+> Josef
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
