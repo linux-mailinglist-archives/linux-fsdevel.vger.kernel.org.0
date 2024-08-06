@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-25163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98EEF9497F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 21:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E25149497F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 21:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C90EA1C20C74
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:03:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F9AD1C20CF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493A215688C;
-	Tue,  6 Aug 2024 19:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12CD82876;
+	Tue,  6 Aug 2024 19:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqiW44dV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7+7LAWq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F1B155731;
-	Tue,  6 Aug 2024 19:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F05C7580C;
+	Tue,  6 Aug 2024 19:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722970961; cv=none; b=Rj8Ft4htUUW44sDdZcXfFRlou2cdGY3zX+/e4sYfGpm7e5f0oURUXd/b2lH6PksP8G4317tmgvL0YftHj6MJnJn6u05fjpoz6fE9WJcDMgtoZUI1q1QmJFkqBZfnOWB2an8U7ZB5dwIKdJG4IrTr3oEaSsvi9fQKwzszWAY1XYQ=
+	t=1722970994; cv=none; b=U9dMp1mKLUUHU3dl9Vl9566K7ruj4nOHET1BdgYiW8QaWsr/qHJ7PlbokF5wNOoihoz0EOqvSRxeOWvcQXykkPWBm111HXhk3AH4lMoa7UVJ7tgvLcDlovBJk6Vhy2A3i9JhdhzWIxF2o98EdhXYmeMtGhAm1BfJNARYCqxE12k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722970961; c=relaxed/simple;
-	bh=tNlXjMLjQtNVke0XVdcG1dgVjNjKEpqPYYin22sNcMk=;
+	s=arc-20240116; t=1722970994; c=relaxed/simple;
+	bh=Bp0oNZJxEYUtu8d6zx/YyyWK9ATHKzHNwx04mLel4vM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgXEuHNx+4jwBXW85r3OH4wsfp/vnldfc20qqs3RN4pOzJWPuQCZEVlDijuGSMAtPq1VVsj7/dnyQGCr6Q4UMrtgRQkX848te/+OcYMD8/OxM8GWC0x8amaMBHCwAlK+S1x6hWdSo/wv89IA8+g7RnodPPEtSv+DFadIrls2g+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqiW44dV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 115F7C32786;
-	Tue,  6 Aug 2024 19:02:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=e11sS2LqXjXilK0PQIMHAmmZNl2lIr11aS8UhrV2PhOk0aXksLfobZ2i+7gM25LLkUwghB99siAzxp4OjDLCIG3TgAy/qqyNhQn5aqpwolm8wxiafxvtLV+mu28g4y3bxBO51PxTFoXCbweW/3P/yg4tTiIhE5IQsvsBEy4fu9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q7+7LAWq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A63C3C32786;
+	Tue,  6 Aug 2024 19:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722970961;
-	bh=tNlXjMLjQtNVke0XVdcG1dgVjNjKEpqPYYin22sNcMk=;
+	s=k20201202; t=1722970993;
+	bh=Bp0oNZJxEYUtu8d6zx/YyyWK9ATHKzHNwx04mLel4vM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VqiW44dVX4WvaUK5ZZkYhl3pgrQnWECsiSLGgO3wHUJ1P0sm7yue4tEmSrqvxoMYs
-	 Bf5asoRXwEqkoG1gLisRWTQRaZTzQGWRO36eI6vlbTv7cUBV1EIdkdHG9MzYKgBH7k
-	 cS/RkOMRdMRiAE26422S2T2GKLad2TOOrMacnf1qWAuQnrzIa/COa1RhkiYVq9fh7y
-	 EfnZvwc5HsjGdCCdl/cegip+m4ntPaOMHLleMjV3csaxtT0MEmZouTsfso5cFqZ8Ua
-	 gA+30XohsjVQcHqeuWHlHrR36+h+LZ6PqDsECDVFvvSvMM384BRLuCfSM+RMRXlLEu
-	 B69Uw0XEqLUqg==
-Date: Tue, 6 Aug 2024 12:02:40 -0700
+	b=Q7+7LAWqxvwWgAzAHjy+CSbAbQub19e2ggaVo6C6EK8w/B1/pk4e6zuUOi2+KAyPd
+	 9nCO/NufWvr5rPgDjjR7WcF/aBgiYK8xZ9Mb0N6sSb+NfWYk9WRAZxQz7NqBxSuBOU
+	 VNpAVRZCtL+du06DoK75arNK8F72uV6KkAFFgc2rS76S7v2NCoFO271LgNDV+3B8vD
+	 II3dd6+DrRX4prbem64JUkUXYa/B/6ELeVNQCK+bJRC4bmGqa75E/1waJOFq+f5ybq
+	 G8R402GvWK2rCVEDFH0zqCKqygYJzEA2rt3ZWoeFBsQOh9RElNFNYF1QaCirB+ApU9
+	 yBZTkEQ7fEhJw==
+Date: Tue, 6 Aug 2024 12:03:13 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: John Garry <john.g.garry@oracle.com>
 Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
@@ -49,11 +49,10 @@ Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
 	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
 	martin.petersen@oracle.com
-Subject: Re: [PATCH v3 08/14] xfs: Update xfs_inode_alloc_unitsize() for
- forcealign
-Message-ID: <20240806190240.GK623936@frogsfrogsfrogs>
+Subject: Re: [PATCH v3 09/14] xfs: Update xfs_setattr_size() for forcealign
+Message-ID: <20240806190313.GL623936@frogsfrogsfrogs>
 References: <20240801163057.3981192-1-john.g.garry@oracle.com>
- <20240801163057.3981192-9-john.g.garry@oracle.com>
+ <20240801163057.3981192-10-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,14 +61,11 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240801163057.3981192-9-john.g.garry@oracle.com>
+In-Reply-To: <20240801163057.3981192-10-john.g.garry@oracle.com>
 
-On Thu, Aug 01, 2024 at 04:30:51PM +0000, John Garry wrote:
-> For forcealign enabled, the allocation unit size is in ip->i_extsize, and
-> this must never be zero.
-> 
-> Add helper xfs_inode_alloc_fsbsize() to return alloc unit in FSBs, and use
-> it in xfs_inode_alloc_unitsize().
+On Thu, Aug 01, 2024 at 04:30:52PM +0000, John Garry wrote:
+> For when an inode has forcealign, reserve blocks for same reason which we
+> were doing for big RT alloc.
 > 
 > Signed-off-by: John Garry <john.g.garry@oracle.com>
 
@@ -79,57 +75,28 @@ Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 --D
 
 > ---
->  fs/xfs/xfs_inode.c | 17 +++++++++++++----
->  fs/xfs/xfs_inode.h |  1 +
->  2 files changed, 14 insertions(+), 4 deletions(-)
+>  fs/xfs/xfs_iops.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index 7dc6f326936c..5af12f35062d 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -3107,17 +3107,26 @@ xfs_break_layouts(
->  	return error;
->  }
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 1cdc8034f54d..6e017aa6f61d 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -926,12 +926,12 @@ xfs_setattr_size(
+>  	}
 >  
-> -/* Returns the size of fundamental allocation unit for a file, in bytes. */
->  unsigned int
-> -xfs_inode_alloc_unitsize(
-> +xfs_inode_alloc_fsbsize(
->  	struct xfs_inode	*ip)
->  {
->  	unsigned int		blocks = 1;
+>  	/*
+> -	 * For realtime inode with more than one block rtextsize, we need the
+> +	 * For inodes with more than one block alloc unitsize, we need the
+>  	 * block reservation for bmap btree block allocations/splits that can
+>  	 * happen since it could split the tail written extent and convert the
+>  	 * right beyond EOF one to unwritten.
+>  	 */
+> -	if (xfs_inode_has_bigrtalloc(ip))
+> +	if (xfs_inode_alloc_fsbsize(ip) > 1)
+>  		resblks = XFS_DIOSTRAT_SPACE_RES(mp, 0);
 >  
-> -	if (XFS_IS_REALTIME_INODE(ip))
-> +	if (xfs_inode_has_forcealign(ip))
-> +		blocks = ip->i_extsize;
-> +	else if (XFS_IS_REALTIME_INODE(ip))
->  		blocks = ip->i_mount->m_sb.sb_rextsize;
->  
-> -	return XFS_FSB_TO_B(ip->i_mount, blocks);
-> +	return blocks;
-> +}
-> +
-> +/* Returns the size of fundamental allocation unit for a file, in bytes. */
-> +unsigned int
-> +xfs_inode_alloc_unitsize(
-> +	struct xfs_inode	*ip)
-> +{
-> +	return XFS_FSB_TO_B(ip->i_mount, xfs_inode_alloc_fsbsize(ip));
->  }
->  
->  /* Should we always be using copy on write for file writes? */
-> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> index 3e7664ec4d6c..158afad8c7a4 100644
-> --- a/fs/xfs/xfs_inode.h
-> +++ b/fs/xfs/xfs_inode.h
-> @@ -641,6 +641,7 @@ int xfs_inode_reload_unlinked(struct xfs_inode *ip);
->  bool xfs_ifork_zapped(const struct xfs_inode *ip, int whichfork);
->  void xfs_inode_count_blocks(struct xfs_trans *tp, struct xfs_inode *ip,
->  		xfs_filblks_t *dblocks, xfs_filblks_t *rblocks);
-> +unsigned int xfs_inode_alloc_fsbsize(struct xfs_inode *ip);
->  unsigned int xfs_inode_alloc_unitsize(struct xfs_inode *ip);
->  
->  int xfs_icreate_dqalloc(const struct xfs_icreate_args *args,
+>  	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_itruncate, resblks,
 > -- 
 > 2.31.1
 > 
