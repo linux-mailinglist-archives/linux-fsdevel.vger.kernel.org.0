@@ -1,55 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-25169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25168-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068D494982F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 21:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B78A994982B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 21:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36F401C2167A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:25:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7A341C20E24
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F3D1514E1;
-	Tue,  6 Aug 2024 19:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5E71420DD;
+	Tue,  6 Aug 2024 19:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="pU1nIbns"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfsroDnx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B4713C90B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2A1762C1;
 	Tue,  6 Aug 2024 19:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722972288; cv=none; b=N5YV6cJX5QlxXc/A0b44jSQmtKLD7u2axxr+kr0uLjOyv3SMS/BX+onf2Gc1l4eka4x0xNPsqlxofag2QAnELdGueEl/2IgFX1qRiCx2q77NMSrH535+HWlhxjCAlAu9HWCzT0VH+AIpxM7h5hhjx3iQso8O3csP4pXhpW6PkFE=
+	t=1722972282; cv=none; b=pINbv6B0uJoSNcJmpXssP8dKqHi+4JYyxlNdX5SgBciE8Ff2P/2N5D+jM3PpyfUMQaXn3DI+8MBCMIJZsQgNIC9wmlEG+woDODybtAIUfHwFVahMYcIy7ZicClcnvkfJBm4SL3K9rFN/XsBQL8qEoT0BT8gkmrDo4LoZszbn+eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722972288; c=relaxed/simple;
-	bh=4gbTg6sRbIzoCnBVCnT/nCz6ATeU7FH1cjOBD45zYkw=;
+	s=arc-20240116; t=1722972282; c=relaxed/simple;
+	bh=KanH2dsOXDBjIaC/3ljdXiWmUXY7N4CM55GZvVkAZqs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cHIAYCx2umkb1kDIuWDIiZ8eAolNyD6WQbeEWrQfWUhC1CSwoLmvfKk/1SaWDWoJ3sYaAS3Srgs+zUAxkBLHVF9EnAJOaONRZnPGKd5igCz5gUfVulApXA4Oh4s9ljk3Anc9/u5V5R++s54wiqHUAKEeuMjdGYuwE0HbGDowirM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=pU1nIbns; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1722972275;
-	bh=4gbTg6sRbIzoCnBVCnT/nCz6ATeU7FH1cjOBD45zYkw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=KslfIfCQT/5n0WVJWYt0sAkIDskbTRWEyFlgELkhxFyNfFSpbCNfDhIvyXqwFItY19PI/afgWK2mo2KrwXwGgSceFzTnmDW6A27y0cxXeyDNE1J9w8an2ZLqwMZjLQMbNjQULBLn9/82MiHxPhL0sX15lV3VXUyByE6a2jUKd9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfsroDnx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3334AC4AF0D;
+	Tue,  6 Aug 2024 19:24:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722972282;
+	bh=KanH2dsOXDBjIaC/3ljdXiWmUXY7N4CM55GZvVkAZqs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pU1nIbnsSAhLR+Qzy0iAXlaj4sF+T1DUdytsrPVbaG9uu5vXUpqXplO+4KUfunisy
-	 xv/WmPn4pkdHhn4zrAFr4BZSlhZcG3/sWSExdM2JRbxBdUweej9+xsoztftUd16KIW
-	 fhbQ/Wk+8tHXwQEY43UrzcqrHdR2RwtcmH5U1KFE=
-Date: Tue, 6 Aug 2024 21:24:33 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Solar Designer <solar@openwall.com>
-Cc: Joel Granados <j.granados@samsung.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>, Kees Cook <keescook@chromium.org>, Wen Yang <wen.yang@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [GIT PULL] sysctl changes for v6.11-rc1
-Message-ID: <97a52396-3b86-47a5-ae02-8a979f6fc375@t-8ch.de>
-References: <CGME20240716141703eucas1p2f6ddaf91b7363dd893d37b9aa8987dc6@eucas1p2.samsung.com>
- <20240716141656.pvlrrnxziok2jwxt@joelS2.panther.com>
- <20240806185736.GA29664@openwall.com>
+	b=VfsroDnxJeoQkrr8LTbXXj4qV6h65CT/s1tfiagL0/SjcS5Rl/TJBsB9YMwXqAE8q
+	 Jrltu7ohmMQHALNGGUTy+qiqoHAOZlVRHlO1xdxgxpQjN8HbwcaqFpLPywZq4jqk93
+	 SQfX5JawXfqwc7/I5x61Cl1rHb+2aMzlr36cArjeY/FXb9JhybX/BQGiK/KhnHCbcG
+	 UkHgRf7cer9lsvwe4MqnpyLO0pUx/sF/zwm9PJpeXyj7NgMn6zUGZOo9BpxeoiBqpQ
+	 3OrEx4dmzsO7TiW4VA1KSdoLe1aGqJuqdt1VbJcGEdrabM7cl9NESplbtF1QdLm0cy
+	 fYGJu6IIuxyHA==
+Date: Tue, 6 Aug 2024 12:24:41 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v3 10/14] xfs: Do not free EOF blocks for forcealign
+Message-ID: <20240806192441.GM623936@frogsfrogsfrogs>
+References: <20240801163057.3981192-1-john.g.garry@oracle.com>
+ <20240801163057.3981192-11-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,53 +61,124 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806185736.GA29664@openwall.com>
+In-Reply-To: <20240801163057.3981192-11-john.g.garry@oracle.com>
 
-On 2024-08-06 20:57:37+0000, Solar Designer wrote:
-> On Tue, Jul 16, 2024 at 04:16:56PM +0200, Joel Granados wrote:
-> > sysctl changes for 6.11-rc1
-> > 
-> > Summary
-> > 
-> > * Remove "->procname == NULL" check when iterating through sysctl table arrays
-> > 
-> >     Removing sentinels in ctl_table arrays reduces the build time size and
-> >     runtime memory consumed by ~64 bytes per array. With all ctl_table
-> >     sentinels gone, the additional check for ->procname == NULL that worked in
-> >     tandem with the ARRAY_SIZE to calculate the size of the ctl_table arrays is
-> >     no longer needed and has been removed. The sysctl register functions now
-> >     returns an error if a sentinel is used.
-> > 
-> > * Preparation patches for sysctl constification
-> > 
-> >     Constifying ctl_table structs prevents the modification of proc_handler
-> >     function pointers as they would reside in .rodata. The ctl_table arguments
-> >     in sysctl utility functions are const qualified in preparation for a future
-> >     treewide proc_handler argument constification commit.
+On Thu, Aug 01, 2024 at 04:30:53PM +0000, John Garry wrote:
+> For when forcealign is enabled, we want the EOF to be aligned as well, so
+> do not free EOF blocks.
 > 
-> As (I assume it was) expected, these changes broke out-of-tree modules.
-> For LKRG, I am repairing this by adding "#if LINUX_VERSION_CODE >=
-> KERNEL_VERSION(6,11,0)" checks around the corresponding module changes.
-> This works.  However, I wonder if it would possibly be better for the
-> kernel to introduce a corresponding "feature test macro" (or two, for
-> the two changes above).  I worry that these changes (or some of them)
-> could get backported to stable/longterm, which with the 6.11+ checks
-> would unnecessarily break out-of-tree modules again (and again and again
-> for each backport to a different kernel branch).  Feature test macro(s)
-> would avoid such further breakage, as they would (be supposed to be)
-> included along with the backports.
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org> #earlier version
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/xfs_bmap_util.c |  7 +++++--
+>  fs/xfs/xfs_inode.c     | 14 ++++++++++++++
+>  fs/xfs/xfs_inode.h     |  2 ++
+>  3 files changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> index fe2e2c930975..60389ac8bd45 100644
+> --- a/fs/xfs/xfs_bmap_util.c
+> +++ b/fs/xfs/xfs_bmap_util.c
+> @@ -496,6 +496,7 @@ xfs_can_free_eofblocks(
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	xfs_fileoff_t		end_fsb;
+>  	xfs_fileoff_t		last_fsb;
+> +	xfs_fileoff_t		dummy_fsb;
+>  	int			nimaps = 1;
+>  	int			error;
+>  
+> @@ -537,8 +538,10 @@ xfs_can_free_eofblocks(
+>  	 * forever.
+>  	 */
+>  	end_fsb = XFS_B_TO_FSB(mp, (xfs_ufsize_t)XFS_ISIZE(ip));
+> -	if (xfs_inode_has_bigrtalloc(ip))
+> -		end_fsb = xfs_rtb_roundup_rtx(mp, end_fsb);
+> +
+> +	/* Only try to free beyond the allocation unit that crosses EOF */
+> +	xfs_roundout_to_alloc_fsbsize(ip, &dummy_fsb, &end_fsb);
+> +
+>  	last_fsb = XFS_B_TO_FSB(mp, mp->m_super->s_maxbytes);
+>  	if (last_fsb <= end_fsb)
+>  		return false;
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index 5af12f35062d..d765dedebc15 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -3129,6 +3129,20 @@ xfs_inode_alloc_unitsize(
+>  	return XFS_FSB_TO_B(ip->i_mount, xfs_inode_alloc_fsbsize(ip));
+>  }
+>  
+> +void
+> +xfs_roundout_to_alloc_fsbsize(
+> +	struct xfs_inode	*ip,
+> +	xfs_fileoff_t		*start,
+> +	xfs_fileoff_t		*end)
+> +{
+> +	unsigned int		blocks = xfs_inode_alloc_fsbsize(ip);
+> +
+> +	if (blocks == 1)
+> +		return;
+> +	*start = rounddown_64(*start, blocks);
+> +	*end = roundup_64(*end, blocks);
+> +}
 
-I don't see any of these changes being backported.
+This is probably going to start another round of shouting, but I think
+it's silly to do two rounding operations when you only care about one
+value.  In patch 12 it results in a bunch more dummy variables that you
+then ignore.
 
-The removal of the "->procname == NULL" check depends on all in-kernel
-tables being registered with an explicit size, which is not the case on
-old kernels. So a backport would not only silently fail for external
-modules but also for internal code.
-The same for the constification patches but with build errors instead of
-runtime errors.
+Can't this be:
 
-My future sysctl constification patches will be backwards compatible at
-both compiletime and runtime, for both internal and external code.
+static inline xfs_fileoff_t
+xfs_inode_rounddown_alloc_unit(
+	struct xfs_inode	*ip,
+	xfs_fileoff		off)
+{
+	unsigned int		rounding = xfs_inode_alloc_fsbsize(ip);
 
-So the version checks should be enough here.
+	if (rounding == 1)
+		return off;
+	return rounddown_64(off, rounding);
+}
+
+static inline xfs_fileoff_t
+xfs_inode_roundup_alloc_unit(
+	struct xfs_inode	*ip,
+	xfs_fileoff		off)
+{
+	unsigned int		rounding = xfs_inode_alloc_fsbsize(ip);
+
+	if (rounding == 1)
+		return off;
+	return roundup_64(off, rounding);
+}
+
+Then that callsite can be:
+
+	end_fsb = xfs_inode_roundup_alloc_unit(ip,
+			XFS_B_TO_FSB(mp, (xfs_ufsize_t)XFS_ISIZE(ip)));
+
+--D
+
+> +
+>  /* Should we always be using copy on write for file writes? */
+>  bool
+>  xfs_is_always_cow_inode(
+> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> index 158afad8c7a4..7f86c4781bd8 100644
+> --- a/fs/xfs/xfs_inode.h
+> +++ b/fs/xfs/xfs_inode.h
+> @@ -643,6 +643,8 @@ void xfs_inode_count_blocks(struct xfs_trans *tp, struct xfs_inode *ip,
+>  		xfs_filblks_t *dblocks, xfs_filblks_t *rblocks);
+>  unsigned int xfs_inode_alloc_fsbsize(struct xfs_inode *ip);
+>  unsigned int xfs_inode_alloc_unitsize(struct xfs_inode *ip);
+> +void xfs_roundout_to_alloc_fsbsize(struct xfs_inode *ip,
+> +		xfs_fileoff_t *start, xfs_fileoff_t *end);
+>  
+>  int xfs_icreate_dqalloc(const struct xfs_icreate_args *args,
+>  		struct xfs_dquot **udqpp, struct xfs_dquot **gdqpp,
+> -- 
+> 2.31.1
+> 
+> 
 
