@@ -1,70 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-25061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D2F9487C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 05:01:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129B09487D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 05:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3EBF1C2235C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 03:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32C8280DC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 03:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3CE5B1FB;
-	Tue,  6 Aug 2024 03:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305455B69E;
+	Tue,  6 Aug 2024 03:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OEJXF0Zj"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AqIjGFxt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49D9AD51;
-	Tue,  6 Aug 2024 03:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEC73BBC9
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 03:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722913277; cv=none; b=aGSlbWRymuQcOvlQtJ2mpwrCkOuVTbWsrKBXh00ABElDc+LL1kc+biVGCw5U4L7YsFkaHppNbk8VSz4+wAou88TscO6oBMzXCxu/q6HGRuZ8MjCFk8DptvQs1U820uy4PUuPpHXzA3BfHzhMVR0aON9ew/Pn+NuQJ/oBA/KB76A=
+	t=1722913812; cv=none; b=F7fl/eLeMlHzdg11kQ9uOTOUwx5b/UC4b8haWeLEB3+L8QqsPhCtyQUfTGO43ENzI6Qb3y0PkRO6LYAZba8wx6MqGy3qYq/jpngSuU8UunOn41Q51R7+xtAP7s9wElATe9YCBQ/A/DWHz2xjm8H/6qiwDQPXiiYoK7rNkE7OWBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722913277; c=relaxed/simple;
-	bh=gahnyWmiKh242/O7K215R843/jxHuH+fvyVuYT1PRVQ=;
+	s=arc-20240116; t=1722913812; c=relaxed/simple;
+	bh=M8lCPbpz8MJ7MmX8w6ySSM335BKWQPUYdlyNM4pcNL8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GB0VI7rrJK+mxnZHJflzzkAosHmOA/IOHLTVyZpapg3TnpOHx30Pno9pyGQ99Donns4MF5DsYPFTyC6S8wQPSLx75J3L9XY7jKoCmAfrGDmEmdFrqCYTGsVLu554+uU4lgaFJANGkwrcxuuFOpPSmjyZ9hAd4fvjI64mK1GF4Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OEJXF0Zj; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b5dfcfb165so1216126d6.0;
-        Mon, 05 Aug 2024 20:01:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=Ntk34cyQziTkxNfGsavO7ZT531L6AjYeljdIT9YOlu0g1D9vEShwMqkoFaQuF2TfUUCPIv5ZU2w+4rSQpNN/9yznFTsB8ZBDp8LJsuymrGNiRXzqBHyUuBTtm1y35MFgrRJeulLcHgAK0tlqY+DcmuOvB5CWZeOlFiH941DBxGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AqIjGFxt; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7ac449a0e6so3171866b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 20:10:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722913275; x=1723518075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KZR4E8D89jwg4yvmIjI2zPRIKoU2AHuL/vFtEuJY3nU=;
-        b=OEJXF0ZjE3J9wRYhUez4NKc5nQeyfULcGboatdoH++gJdx2dOJUhTODxrFtjHLQwIU
-         K8m7yC1OtDmKqZTTwEc59+JWB9ljTdh8mPWGHRfm5PVITduwwAB8GFhf3Zt9nUYpmgx9
-         OKeLEdWgPNh19AB+tA0fJqUvBSOEroEtgRhCbDGqKUGYYEVj0jCWebdQ4GmxyV47885R
-         nhKqmQuFkwOXZhuLhThgzwmMyg4QBuL3maHkHdWY23eFBU9BBFOgaktjfzQR0ntoxhyl
-         ehh5ibw+cAstEsxdyIKzebIRHRakNfxmIYUwkqfIQZ9VQMCwOR19JXG+aFcyZIKkgx2x
-         /8Hw==
+        d=linux-foundation.org; s=google; t=1722913809; x=1723518609; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ddVwpujzlJzBqKH8my+rFJponoM7SG54MA80H5/+gq8=;
+        b=AqIjGFxtM0nFjNXxOr7KDYCUIJeYxKS32lAgjemtmmhh9bvx3RgcyRhtpne9s7jhkw
+         8JaHUpJqtcDLArsgJamUrkgkrJQk/mdyXVPUbfOYS9kY5bzsrpUHWNPaW1nz9o9qGaEK
+         HB5VZVGmFKgZ0VFV6k1d4LmCh5BFz3eqoS5cg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722913275; x=1723518075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KZR4E8D89jwg4yvmIjI2zPRIKoU2AHuL/vFtEuJY3nU=;
-        b=B6kUFXU8M29r3CjE7dzV65AhFWoUXwQXZwni6VbTIvjllRIe9bB/R5YjygWpfTM4ag
-         +7LEDwsQZo8f46Lv45BbQVm0xz/L2U0SnYc0dwsvoSUsOA7MHRVXY1x/K+8f8QKz3cqK
-         W4Bd2zxgfzBoqJow9Bdg70G/km8THAkyEgm3dU8EEsgOfJr8B4VLo3jFTmUK8vkcv3PG
-         E62NltRcApvLL8+lf9lkg8RVH6pkCMhXhXCKAHbLAF5qAn3DT95YReXW5tqMGaHfz5p6
-         y7odm3Id91bIde10OJWyi6KIhxbWYpIW83brJb4gS8O3k71ItKHOjqIM2v5dB1bU8RWY
-         DvsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzwznoM7Upnu6gIkS6oIzAkHCSCGRm0PPH/VSlW5xHFKcB3qLW0giMK42Ab7qMlfZQzd0D68Zbi1E1ccjALYoU/qV55VKjGHRWAESwvqn/6yIN7T/DFvT8JeQvCdtbr+/26Mhso6JQBnRjZDOrpMyUq+XiQtCVgmfi6COgV/YVgY+xLzf58KL4w7LvxZxuYsH4uebVqkKhod09WT0dN91hQzyJN69tZeTI7AuFh//DeXDzXo+5Q9JeywGWYp6IrSIdThQxy86VVBFypiE3L3OsbJMp7d5ns4y1unPTd+3QVoh+UYXQnqxruYAKVVo0fB5otT/k0w==
-X-Gm-Message-State: AOJu0Yy8BFctZfq0G/3ZbD2WVjDLUt34WqYwywK9kNeOBLGZzMRuneVn
-	+WAjBkgUzkqL2Dy2maQ/ep5MDseJHg0gke+EITStHG5H/WytiPKcCuPNAd4ucsz6gHrA53FxY7J
-	iQDGjvNLTTyCvx3kR9+azgw5JHdk=
-X-Google-Smtp-Source: AGHT+IH5UetJykoQ+AA9lUd/PNGcF9CreQ+CKGIYQr4sa6NtWmr6AOpHiEKJTnDf738MR+GOImNMUHgXoQCs1IfVbM8=
-X-Received: by 2002:a05:6214:440b:b0:6b7:aed6:8470 with SMTP id
- 6a1803df08f44-6bb983f7560mr162583526d6.28.1722913274688; Mon, 05 Aug 2024
- 20:01:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722913809; x=1723518609;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ddVwpujzlJzBqKH8my+rFJponoM7SG54MA80H5/+gq8=;
+        b=j4oq9aoBS821L0/ZTsyXYrTbSENMPQUNdA45AB0jlWW0lXg398j7U8Z4DsB3gCuEnD
+         Z5NPsghQ6bzD4kjMy7NCEhJAvKNsCkQxx4rrtjdf7t3QdHne5DZh9a6PbxsojjxKRcNR
+         7hWLEBbGDwXBx3SflS3lhaPdAVy83bRweEM8elrsEKnMjCIyUNdFWxybvBLXoln/OQXM
+         geRqeXohjUcFL5gdz+4DFUjcviwgd41GIyCZinwSJzoHjooJk6T3n26LD7f+AWatbgWu
+         ACuzfo2i8GhpFBjTWvFOUXpEOuzuu2I9iHkg6Jom9XDxpNgOV6O8QGVWXXhgwPIYzt4d
+         xoHw==
+X-Forwarded-Encrypted: i=1; AJvYcCX767ozdrKK/Q88VLr2CdWv1aNgWPZcea0EQpWSPh7lsPru2pqC7pDSYRlAnvjW/R+C3FsYQBIl6qdPKoej8+IaGZhrTcPj11N8ZQZgfg==
+X-Gm-Message-State: AOJu0YxOhc5wFG0a6Glb2bN6Ze55c2RSAnxyu0EmuhWHX4zn2CiDKHj2
+	LMBdr7ap+U5PPBffCXulCEvAdSqkxwEJrQ7HTy2p7EENy5boXQbmJQmnWlKxrKGuN5HKn3fd9N9
+	9BCQHsg==
+X-Google-Smtp-Source: AGHT+IGuu3zGLLUNcqbiff2a+OoRc4ylzXfmrhQvgDL7H5IJliT3uo/v0eW5D3AB+GOlQPGgIlsWNw==
+X-Received: by 2002:a17:907:3f8b:b0:a7a:9954:1fc1 with SMTP id a640c23a62f3a-a7dc4ea981cmr924654166b.24.1722913808689;
+        Mon, 05 Aug 2024 20:10:08 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dd074ec36sm477786666b.57.2024.08.05.20.10.08
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 20:10:08 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7ac449a0e6so3171566b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 20:10:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUnmNoFYnhd1plM8MIlg71iMKI+davNrpoidhXYXzJ3OUB13OxnI5AHVvte60B7/OhgKR6wRytiWds84JIk1pS/qFarHMOYs2+p4bY0GA==
+X-Received: by 2002:a17:907:da9:b0:a6f:4fc8:266b with SMTP id
+ a640c23a62f3a-a7dc4db9f44mr1005005366b.3.1722913808064; Mon, 05 Aug 2024
+ 20:10:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,12 +78,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240804075619.20804-1-laoar.shao@gmail.com> <CAHk-=whWtUC-AjmGJveAETKOMeMFSTwKwu99v7+b6AyHMmaDFA@mail.gmail.com>
-In-Reply-To: <CAHk-=whWtUC-AjmGJveAETKOMeMFSTwKwu99v7+b6AyHMmaDFA@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 6 Aug 2024 11:00:36 +0800
-Message-ID: <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com>
+ <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com>
+In-Reply-To: <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 5 Aug 2024 20:09:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
+Message-ID: <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
 Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Yafang Shao <laoar.shao@gmail.com>
 Cc: akpm@linux-foundation.org, ebiederm@xmission.com, 
 	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
 	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
@@ -86,73 +94,36 @@ Cc: akpm@linux-foundation.org, ebiederm@xmission.com,
 	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
 	dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 6, 2024 at 5:28=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Mon, 5 Aug 2024 at 20:01, Yafang Shao <laoar.shao@gmail.com> wrote:
 >
-> On Sun, 4 Aug 2024 at 00:56, Yafang Shao <laoar.shao@gmail.com> wrote:
-> >
-> > There is a BUILD_BUG_ON() inside get_task_comm(), so when you use
-> > get_task_comm(), it implies that the BUILD_BUG_ON() is necessary.
->
-> Let's just remove that silly BUILD_BUG_ON(). I don't think it adds any
-> value, and honestly, it really only makes this patch-series uglier
-> when reasonable uses suddenly pointlessly need that double-underscore
-> version..
->
-> So let's aim at
->
->  (a) documenting that the last byte in 'tsk->comm{}' is always
-> guaranteed to be NUL, so that the thing can always just be treated as
-> a string. Yes, it may change under us, but as long as we know there is
-> always a stable NUL there *somewhere*, we really really don't care.
->
->  (b) removing __get_task_comm() entirely, and replacing it with a
-> plain 'str*cpy*()' functions
->
-> The whole (a) thing is a requirement anyway, since the *bulk* of
-> tsk->comm really just seems to be various '%s' things in printk
-> strings etc.
->
-> And once we just admit that we can use the string functions, all the
-> get_task_comm() stuff is just unnecessary.
->
-> And yes, some people may want to use the strscpy_pad() function
-> because they want to fill the whole destination buffer. But that's
-> entirely about the *destination* use, not the tsk->comm[] source, so
-> it has nothing to do with any kind of "get_task_comm()" logic, and it
-> was always wrong to care about the buffer sizes magically matching.
->
-> Hmm?
+> One concern about removing the BUILD_BUG_ON() is that if we extend
+> TASK_COMM_LEN to a larger size, such as 24, the caller with a
+> hardcoded 16-byte buffer may overflow.
 
-One concern about removing the BUILD_BUG_ON() is that if we extend
-TASK_COMM_LEN to a larger size, such as 24, the caller with a
-hardcoded 16-byte buffer may overflow. This could be an issue with
-code in include/linux/elfcore.h and include/linux/elfcore-compat.h,
-posing a risk. However, I believe it is the caller's responsibility to
-explicitly add a null terminator if it uses a fixed buffer that cannot
-be changed. Therefore, the following code change is necessary:
+No, not at all. Because get_task_comm() - and the replacements - would
+never use TASK_COMM_LEN.
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 5ae8045f4df4..e4b0b7cf0c1f 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1579,6 +1579,7 @@ static int fill_psinfo(struct elf_prpsinfo
-*psinfo, struct task_struct *p,
-        SET_GID(psinfo->pr_gid, from_kgid_munged(cred->user_ns, cred->gid))=
-;
-        rcu_read_unlock();
-        get_task_comm(psinfo->pr_fname, p);
-+       psinfo->pr_fname[15] =3D '\0';
+They'd use the size of the *destination*. That's what the code already does:
 
-        return 0;
- }
+  #define get_task_comm(buf, tsk) ({                      \
+  ...
+        __get_task_comm(buf, sizeof(buf), tsk);         \
 
-However, it is currently safe to remove the BUILD_BUG_ON() since
-TASK_COMM_LEN is still 16.
+note how it uses "sizeof(buf)".
 
---
-Regards
-Yafang
+Now, it might be a good idea to also verify that 'buf' is an actual
+array, and that this code doesn't do some silly "sizeof(ptr)" thing.
+
+We do have a helper for that, so we could do something like
+
+   #define get_task_comm(buf, tsk) \
+        strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->comm)
+
+as a helper macro for this all.
+
+(Although I'm not convinced we generally want the "_pad()" version,
+but whatever).
+
+                    Linus
 
