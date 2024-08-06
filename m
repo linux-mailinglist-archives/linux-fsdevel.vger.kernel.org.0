@@ -1,120 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-25125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8308A9494E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 17:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CE394952A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 18:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392711F21B94
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 15:53:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D3B1F23A76
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 16:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184503B182;
-	Tue,  6 Aug 2024 15:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26AB80043;
+	Tue,  6 Aug 2024 16:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fS6lFzDc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ybamsc2n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BB12770B;
-	Tue,  6 Aug 2024 15:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4191F13A26F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 16:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722959604; cv=none; b=TjYN7jKWad/nwzBz29fwIZ3hLwbV32B5/OnRP1JGdQZuHEEQTgVtWRTX6NEcKeKnL5oh1MWN3uOGGxEWybUTD2+whA6M77k+ckb9oMNj9cVQRr8TJ72I5CtV98DdazcSrxUVeKThWLbVdX/71ZZ8RyrVrctTMtxOEaPlbPve754=
+	t=1722960160; cv=none; b=UhoxJ9xDqSU2vkRNw/twBt+09aqvU70w5/N0vt4TPXU7q92m5R0LkJFZRKQwRLnp4G9sl7Gv9VnqbmftFRHHhaby3MusHVR8tLlVyyua8TU6ZFrYr1j/cZO4R+b0a/xC0ARHOSEJo7hX5uZYQ9F0jyUbJr2scf29DHffrOP3OY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722959604; c=relaxed/simple;
-	bh=Zvb5WbpWAR3XdY7lR9+hmOGscoXsRhCtNFT/1o1vKh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h92XBoUeCPpsKJgMy9OagC7y4QIqyjDQRur4qAYOWFwzjrQol1qGkhloDZij32twksl0n587FhDrbknJs15Gg8JUEcCulOUKJjgKVtgMRKIqEjNkVHn2daA/3Wm+SGSg3VXLHdN0Ynx13edjHL6g1JiLM4/Ys/BClxtJQIRC4eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fS6lFzDc; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3VxPttXsv7Kdxw6b65QNfXCHEJt8kkfQKvnPLzvGcgo=; b=fS6lFzDcnP6NtyOBeNZFTJ6kYE
-	eQmIOhrlfh76InDhhQqYY7BLrS+ErJf8THUXJPcb0bmn946pocyEA5JR4U90IM7mjXcyBk2uMSdV6
-	XFYuiDMrY/RJtmJkk8I+XZCLfFtYmKxutH3dHcIibjec1o4VI3XjUCctbMtw/xChPKrUfZOKkSlTD
-	PrZ7UhGKWlGklkABuvIS1z0jxvManT68FAZtYZEiN7yL1UXqUZYgdop+LyNGUW9C/D3tIacCCrKTE
-	PO6f2tutZSTD5VhoNCrsF3pDykLiBbc7qvI6rJSWMudR8cgszCKENQtKLpT4YCsMlvUlNsLZ+8E78
-	S8viEz6g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sbMUx-00000001yoB-2hLV;
-	Tue, 06 Aug 2024 15:53:19 +0000
-Date: Tue, 6 Aug 2024 16:53:19 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-Message-ID: <20240806155319.GP5334@ZenIV>
-References: <20240806144628.874350-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1722960160; c=relaxed/simple;
+	bh=nX8jly5hivqhxcp7i0sBoUlkkwyN6k1tpHVLGLWWs90=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IOrixifEgfpDdruqb7JO5eCM9viflsQSWU/hKmeejihSkI1nKcQigwtHAmAoLfY587uK0GWy0YM4zV2c0lZzVcQ4X6Vnz6iNUUTXtV9PgYFrs9H+P3MXAMhjT8btCXGWdv/aEocOjYu7ZENoP9Tnx8kH5j5ZM+M8Co4Rg/LPVWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ybamsc2n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69133C4AF0E;
+	Tue,  6 Aug 2024 16:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722960159;
+	bh=nX8jly5hivqhxcp7i0sBoUlkkwyN6k1tpHVLGLWWs90=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=Ybamsc2nHcWycUxS3VfPP4bOVMMFJPGCSSNIVYHIUc9Byx74vnbhHbl7EP6EPL9rX
+	 G5ry3P40LidLB58lwyLpwBW2iaYU5ptsz0dax7YBisred384xIRnHnriIQgO3KUb9R
+	 UtQhKxa1svRxzgFPdDKuZoRG69v5Su2iK9N/fLgRjoQhP8CYrRUX5UPAQQfeh0nsKa
+	 dhK3Asg+clsQJRVP+8bQkfaDu1SRmzEWwz2zEt6WaSf5S7u6tuPrSTXedK1B4wdk1h
+	 QTB8Plp9zc86X6QD+hSsL/WfAcON8SJrbHnaP9CSOE0CwI/nIot5WlFtYhI8TKcW5P
+	 fEOV0wI9bDEdQ==
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 06 Aug 2024 18:02:27 +0200
+Subject: [PATCH RFC 1/6] proc: proc_readfd() -> proc_fd_iterate_shared()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806144628.874350-1-mjguzik@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240806-work-procfs-v1-1-fb04e1d09f0c@kernel.org>
+References: <20240806-work-procfs-v1-0-fb04e1d09f0c@kernel.org>
+In-Reply-To: <20240806-work-procfs-v1-0-fb04e1d09f0c@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, 
+ linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Aleksa Sarai <cyphar@cyphar.com>, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=880; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=nX8jly5hivqhxcp7i0sBoUlkkwyN6k1tpHVLGLWWs90=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRt8pRW2PF9+kP+IAWjv6fYLlTetimddqRs0U9ZNevw/
+ vmKs/Z87yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI5BdGhu9F1h5yLVItmWGH
+ qu7yMyxdtjW4TeFalqyP76vFcSxn+RgZHte8W702i6Wa13q/eb7FBFMOiSV7X1/qLtsiKuNqunE
+ nFwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Tue, Aug 06, 2024 at 04:46:28PM +0200, Mateusz Guzik wrote:
+Give the method to iterate through the fd directory a better name.
 
-> The flag thing is optional and can be dropped, but I think the general
-> direction should be to add *more* asserts and whatnot (even if they are
-> to land separately). A debug-only variant would not hurt.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/proc/fd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Asserts do *not* clarify anything; if you want your optional flag,
-come up with clear description of its semantics.  In terms of state,
-_not_ control flow.
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 586bbc84ca04..41bc75d5060c 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -312,14 +312,14 @@ static int proc_readfd_count(struct inode *inode, loff_t *count)
+ 	return 0;
+ }
+ 
+-static int proc_readfd(struct file *file, struct dir_context *ctx)
++static int proc_fd_iterate_shared(struct file *file, struct dir_context *ctx)
+ {
+ 	return proc_readfd_common(file, ctx, proc_fd_instantiate);
+ }
+ 
+ const struct file_operations proc_fd_operations = {
+ 	.read		= generic_read_dir,
+-	.iterate_shared	= proc_readfd,
++	.iterate_shared	= proc_fd_iterate_shared,
+ 	.llseek		= generic_file_llseek,
+ };
+ 
 
-> @@ -3683,6 +3685,7 @@ static const char *open_last_lookups(struct nameidata *nd,
->  static int do_open(struct nameidata *nd,
->  		   struct file *file, const struct open_flags *op)
->  {
-> +	struct vfsmount *mnt;
->  	struct mnt_idmap *idmap;
->  	int open_flag = op->open_flag;
->  	bool do_truncate;
-> @@ -3720,11 +3723,22 @@ static int do_open(struct nameidata *nd,
->  		error = mnt_want_write(nd->path.mnt);
->  		if (error)
->  			return error;
-> +		/*
-> +		 * We grab an additional reference here because vfs_open_consume()
-> +		 * may error out and free the mount from under us, while we need
-> +		 * to undo write access below.
-> +		 */
-> +		mnt = mntget(nd->path.mnt);
+-- 
+2.43.0
 
-It's "after vfs_open_consume() we no longer own the reference in nd->path.mnt",
-error or no error...
-
->  		do_truncate = true;
-
-
->  	}
->  	error = may_open(idmap, &nd->path, acc_mode, open_flag);
-> -	if (!error && !(file->f_mode & FMODE_OPENED))
-> -		error = vfs_open(&nd->path, file);
-> +	if (!error && !(file->f_mode & FMODE_OPENED)) {
-> +		BUG_ON(nd->state & ND_PATH_CONSUMED);
-> +		error = vfs_open_consume(&nd->path, file);
-> +		nd->state |= ND_PATH_CONSUMED;
-> +		nd->path.mnt = NULL;
-> +		nd->path.dentry = NULL;
-
-Umm...  The thing that feels wrong here is that you get an extra
-asymmetry with ->atomic_open() ;-/  We obviously can't do that
-kind of thing there (if nothing else, we have the parent directory's
-inode to unlock, error or no error).
-
-I don't hate that patch, but it really feels like the calling
-conventions are not right.  Let me try to tweak it a bit and
-see if anything falls out...
 
