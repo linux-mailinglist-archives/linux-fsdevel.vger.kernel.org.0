@@ -1,92 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-25096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B96948E0A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 13:45:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F7C948E33
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 13:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964451F25858
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 11:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E926C1C2324F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 11:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E941C231A;
-	Tue,  6 Aug 2024 11:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77A41C379F;
+	Tue,  6 Aug 2024 11:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MxFGNHzB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XluvNxbM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09872A1CF
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 11:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D161C233C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 11:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722944726; cv=none; b=r90e6mJBeRB9Ne04hmdD/vlTezE0u0IM/0jJuJ7ko1hjOJHaDDJnq5mb05P3QksdX6ADkjqxr8Hv5AG4GZ8fYO7vBpaGg++zdoCmnDdPzrQxKzxz9lzQB+hgNl+g9UavmtGWQxA7n/ToO7lAvJC5/lvsxR4uH6wd5qUj/1F8Mrc=
+	t=1722945337; cv=none; b=mXoYok5i+Miu2aoMVqcVXst79BlvOw21Q1K6upe76vJ07Tr0Q7N5gFc9ZjYiQRbpiGS/T9GRLZU7c+etlq1dUWw+Fj4OFDRdQesnENAHO+iElGpxkmFVmq9urF1K19XXpOcoLI1RIm678zK2f9A4IrooAt6adnLTvTLXxfxxKZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722944726; c=relaxed/simple;
-	bh=8AQvrYaoHaxfhCaSRRpl2VZjjX4jSNDsokAAL31E4Oc=;
+	s=arc-20240116; t=1722945337; c=relaxed/simple;
+	bh=l3Hxs192ZIU/QlINb5D9l2U/6mCPGZxc33pyYkARqWY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q/pRwUfHsQYoO3hIOT7QA6rmJ3CzGkBeDRQgoMkxlnZJeX1Gj5ukjBty8lG9SbOArGzeiwwGXq7DtmybGlzXTSCdPYzVN1IeRYtf166BiTYos84EHvbkjyUlCeZlbT5VQlw+wMz4kP82dDbqsu4EGCVkd8xUjrCBsH8DIJ6OT4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MxFGNHzB; arc=none smtp.client-ip=209.85.161.48
+	 To:Cc:Content-Type; b=S5WI8dn4YUmQ/JrTWmn4QNnURK0H4Li/W9MiVJiYY4qpubqsNtEs3NGlWqrTn5NbZC9uNJa7z/gNCPCogp6CCuV7nR3e8czKHSButfFt2fxiqjWscqsFCyQiAQwtCjb0+uzl2qOOgAbBj/mfOZpuHROG9wW0C+sLEcgYaM1nAGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XluvNxbM; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5d5d4d07babso224598eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 04:45:24 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b797fb1c4aso4193006d6.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 04:55:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722944724; x=1723549524; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722945334; x=1723550134; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jN3YKs17M/LKQXCOd52R4CZMj51CVK2LNFp2PvfeFIA=;
-        b=MxFGNHzBrUqSTX5XSm31+3E0G2dGDMPlJJWmMYUiPtyPFjmFjbfasY/hgpxZgP+lGj
-         DQWWS6g8demsSbbONKEJ7xCht7KQoQPak4qFOvL4/RdeNSGf3aZH2qRnEbCqsMc2WOJM
-         fugzHsJiSh5ZsNDw+mnkiWb+/tBWbIwYD8mICl/hcFihxlBuykeHM85k6TrSF13ApiBY
-         RmsZpmpvRI542fx4vTnmBedKPWTGRRuVoWV9INxhQ4iMn7rwhBimFDAj3kz00uK4m21K
-         +h6PMCFTfD5MauRMH6KN6oRZJuBW7m6cTKNqRMWN3y1/iLazp6W/LXOlCH0ORv/PM38J
-         XY5w==
+        bh=zlSPvJLIW4qUMTCPFGl/NV88GgQ1ugTgncNXCuPo7qM=;
+        b=XluvNxbMlrJ89oml+OAn7gQV1hKJSZZY1cb7M5wjOQKOLNYbkYIYn7IIfopLmzzUjv
+         77j6u6LkVJWF17WJVmsTz6Mm2nyCvJNyFpChcm9hJo2JofWLWjTwi7fa7qi8uDB9yssG
+         91zZ4f923+Tip7YtUPun16yNm4b6rXIkIzFpmgPetZyTx9QHjSrrdJpefXLEc1XklKr4
+         eM/CtkQGj0dLMMGMD3hr20C/iLvMydkFF2GHbEukdXKnhNZcoFuJViJdSJmuukN/1nXZ
+         rHyOvA+MIQfBL/BBfs/UmlB2kN0d7191ElZOXG9Rd47HXa/qdpOQzswUrLAB5KpodoCj
+         WZgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722944724; x=1723549524;
+        d=1e100.net; s=20230601; t=1722945334; x=1723550134;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jN3YKs17M/LKQXCOd52R4CZMj51CVK2LNFp2PvfeFIA=;
-        b=oGC+d9hSNbZxcpjJHy3tbdF71iH+p+ouwOx0eexw5ZQMMYu0+wkwVuxvPJUwrK8iZp
-         oG/o1vXXRnOhEwCiHsAz6U4Kh14zpXSVlKJqEMkbWjj1z6OUkxDzc2Ci0AQYYvjIO0L9
-         T6BOhfEWzWQ39JtvTIMjN6eFkenekYXQstegV6fIh4voIjyt6RdsTSHA3Z5aoYEVnHf3
-         d+mPyB3Vs/+urW4m1wPSXX6Lie8jeVHcSHYQY23FLI093XQkWDmLyldKXPELevUdMT8f
-         cmS9HoZBztKzVFQEdEUrx/lgC24EwBicuiqBwZuhnMr56ZjZpGqo8YRO/0RzACH72y5D
-         DL6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUbGCfAyn/XZYPocEHhH1c7AP2XWWakxJB7xaEJgDPaC8ZbRWihCbLyT0cZ4YdysycYDA/X8TAzPplI1UtQsY8zJpf7zgB2hpMO22gxsA==
-X-Gm-Message-State: AOJu0YzFp/hUgnUhrMQgOARGUFlElLNfSGX5UJQTsK4CW4XBnRSFMZ5D
-	kw9gW7tDTnUgTtCi9Go4wNUrX+w08h/3vdA8hH+2wtiD2teWN9Gi8qwjo/4iWwzuTYHCc+183ur
-	agihtrkK1YT0TQsaoVEvLki2AUhtIdt6h4oBoDukT
-X-Google-Smtp-Source: AGHT+IElBQMxACfx+2yZr/jxoXxVHrV2G4+XSdNBJkYK+GM5xdBza6rr8QgagHbmVdvaiZ1aMoQ1MbIaEisvgixEgWE=
-X-Received: by 2002:a05:6358:3a28:b0:1ac:6662:36a1 with SMTP id
- e5c5f4694b2df-1af3baaa162mr2208625355d.10.1722944723650; Tue, 06 Aug 2024
- 04:45:23 -0700 (PDT)
+        bh=zlSPvJLIW4qUMTCPFGl/NV88GgQ1ugTgncNXCuPo7qM=;
+        b=u2j8dwZnGenxeEhwNAbt9ImoK5/OQOWPa5bEFiUlHnYAyDOtVvkcDp9oDbMl/5XIWW
+         W4MM4NBXrRTvFircv0KZNF+9D8XxeObgI+Xe2SRztzid0TrnMQdGP8oOcR89zV24d063
+         329W8rs3IwZGpqc66gtGM3zeTbU75J8Iak7XPGnI4oPQ7Y8NLDvzHfrvU6R578Vs91Ib
+         js8M8ke4/04piyc3z0G95VC+EFiJS9ZnpJa6V91jGdDNY+47cbOuVoM0ci+ZgfDM1zmh
+         RzovVWIlFY46eDKDjCXJ8kZ/K0aQ876zKtvC1qdfiEo5CxCeSQ2LpO3b5IZeWFPbH26Z
+         frdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUJPwc/H7GjjSRbnrhkR63iyrsGZNwnNvCbpQP8zlhNb9mE3MxaanyPqov6iI/UVKPjFVC/FbC/JA3gVex9kd+z5MniQxj0ui+Njhvng==
+X-Gm-Message-State: AOJu0YxFBMa9LeSYqBcBbqRzXckGUTyr9ehZMEfU0uLadbXFhFezJImK
+	Xrq46uYO80PHbwlZB/C7WAN5YG/KOkdmPbyWGGPwAPT0DU19CCPw1rZbRA+QfYiql8Uj844eV56
+	QJzUT4gAO/zfaQLy7LZXRMSG08l0=
+X-Google-Smtp-Source: AGHT+IFsoHps/mQx31mGPxMYrcwThlxh+M3gpd3hSJbNLL4HIMl01Xv6l9GoqRqMiUI1YWR35nYMwCSCmUPBfS8JueQ=
+X-Received: by 2002:a05:6214:5d12:b0:6b0:7413:e0e9 with SMTP id
+ 6a1803df08f44-6bb98348810mr164918866d6.5.1722945334369; Tue, 06 Aug 2024
+ 04:55:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804080251.21239-1-laoar.shao@gmail.com> <ZrG4/8pjGRC2v1PX@dread.disaster.area>
-In-Reply-To: <ZrG4/8pjGRC2v1PX@dread.disaster.area>
+References: <20240804080251.21239-1-laoar.shao@gmail.com> <20240805134034.mf3ljesorgupe6e7@quack3>
+In-Reply-To: <20240805134034.mf3ljesorgupe6e7@quack3>
 From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 6 Aug 2024 19:44:47 +0800
-Message-ID: <CALOAHbC9xyjjpu5Zpqxh20CQKZ_QL=8qojxf4AtC4NXRt1ySPQ@mail.gmail.com>
+Date: Tue, 6 Aug 2024 19:54:58 +0800
+Message-ID: <CALOAHbCor0VoCNLACydSytV7sB8NK-TU2tkfJAej+sAvVsVDwA@mail.gmail.com>
 Subject: Re: [PATCH] fs: Add a new flag RWF_IOWAIT for preadv2(2)
-To: Dave Chinner <david@fromorbit.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	Dave Chinner <david@fromorbit.com>, Amir Goldstein <amir73il@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 6, 2024 at 1:47=E2=80=AFPM Dave Chinner <david@fromorbit.com> w=
-rote:
+On Mon, Aug 5, 2024 at 9:40=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 >
-> On Sun, Aug 04, 2024 at 04:02:51PM +0800, Yafang Shao wrote:
+> On Sun 04-08-24 16:02:51, Yafang Shao wrote:
 > > Background
 > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > >
@@ -120,26 +119,7 @@ tch
 > > to other file systems like EXT4. Therefore, we plan to resolve these is=
 sues
 > > within XFS.
->
-> I've been looking at range locks again in the past few days because,
-> once again, the need for range locking to allow exclusive range
-> based operations to take place whilst concurrent IO is occurring has
-> arisen. We need to be able to clone, unshare, punch holes, exchange
-> extents, etc without interrupting ongoing IO to the same file.
->
-> This is just another one of the cases where range locking will solve
-> the problems you are having without giving up the atomic write vs
-> read behaviour posix asks us to provide...
-
-We noticed you mentioned that the issue could be resolved with range
-locking, but it's unclear when that will be completed. It would be
-helpful if you could send patches for it; we can assist with testing.
-Additionally, aside from encountering xfs_ilock in the read() syscall,
-we have also experienced it in the sendfile() syscall. Currently, our
-only solution for sendfile() is to modify the userspace code to avoid
-using sendfile() when other threads are writing to the file...
-
->
+> >
 > > Proposal
 > > =3D=3D=3D=3D=3D=3D=3D=3D
 > >
@@ -153,9 +133,7 @@ de
 > >           sleep(n)
 > >           goto retry;
 > >       }
->
-> Hmmm.
->
+> >
 > > Since the tasks reading the same files are not critical tasks, a delay =
 in
 > > reading is acceptable. However, RWF_NOWAIT not only enables IOCB_NOWAIT=
@@ -181,43 +159,47 @@ his
 ml [2]
 > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 > > Cc: Dave Chinner <david@fromorbit.com>
-> > ---
-> >  include/linux/fs.h      | 6 ++++++
-> >  include/uapi/linux/fs.h | 5 ++++-
-> >  2 files changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index fd34b5755c0b..5df7b5b0927a 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -3472,6 +3472,12 @@ static inline int kiocb_set_rw_flags(struct kioc=
-b *ki, rwf_t flags,
-> >                       return -EPERM;
-> >               ki->ki_flags &=3D ~IOCB_APPEND;
-> >       }
-> > +     if (flags & RWF_IOWAIT) {
-> > +             kiocb_flags |=3D IOCB_NOWAIT;
-> > +             /* IOCB_NOIO is not allowed for RWF_IOWAIT */
-> > +             if (kiocb_flags & IOCB_NOIO)
-> > +                     return -EINVAL;
-> > +     }
 >
-> I'm not sure that this will be considered an acceptible workaround
-> for what is largely considered by most Linux filesystem developers
-> an anchronistic filesystem behaviour.
+> Thanks for the detailed explanation! I understand your problem but I have=
+ to
+> say I find this flag like a hack to workaround particular XFS behavior an=
+d
+> the guarantees the new RWF_IOWAIT flag should provide are not very clear =
+to
+> me.
 
-Considering that it is required by POSIX, it may not be deemed an
-anachronistic filesystem behavior.
+Its guarantee is clear:
 
-> I don't really want people to
-> work around this XFS behaviour, either - waht I'd like to see is
-> more people putting effort into trying to solve the range locking
-> problem...
+  : I/O is intended to be atomic to ordinary files and pipes and FIFOs.
+  : Atomic means that all the bytes from a single operation that started
+  : out together end up together, without interleaving from other I/O
+  : operations.
 
-I'm not an expert on XFS, but I'm willing to assist by testing this
-new feature for you.
+What this flag does is avoid waiting for this type of lock if it
+exists. Maybe we should consider a more descriptive name like
+RWF_NOATOMICWAIT, RWF_NOFSLOCK, or RWF_NOPOSIXWAIT? Naming is always
+challenging.
 
---
+Since this behavior is required by POSIX, it shouldn't be viewed as an
+XFS-specific behavior. Other filesystems might adopt this rule in the
+future as well.
+
+> I've CCed Amir who's been dealing with similar issues with XFS at his
+> employer and had some patches as far as I remember.
+>
+> What you could possibly do to read the file contents without blocking on
+> xfs_iolock is to mmap the file and grab the data from the mapping. It is
+> still hacky but at least we don't have to pollute the kernel with an IO
+> flag with unclear semantics.
+
+The file size to be read is not fixed, which is why we prefer to use
+the traditional read API rather than mmap. We have implemented a
+hotfix version of this commit on many of our production servers, and
+it works well as expected. While I agree that mmap() is another viable
+option, we may consider switching to it in the future if this new flag
+introduces any issues.
+
+--=20
 Regards
 Yafang
 
