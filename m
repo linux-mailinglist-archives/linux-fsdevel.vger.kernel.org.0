@@ -1,191 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-25100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC2E9491B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 15:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E58949206
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 15:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 674A2B2C60E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 13:34:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50FA9B2C2DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 13:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F8E1D1F75;
-	Tue,  6 Aug 2024 13:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDB71BD009;
+	Tue,  6 Aug 2024 13:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DEW6QBmm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B2A1C9EA5
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 13:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8619B1D2F76;
+	Tue,  6 Aug 2024 13:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951236; cv=none; b=X/hWZpUjG5wHL7o8gZdkgBsNWHarVRegc5BJX9n2W4RRlfqYP1o5eV/KLJZefzgQQnJ9ghDe7PmZRLowLr5ieie6nFd1xJvfpZ4jFjvu0lPcc049TRiFjWiloVczpuwR4abxSR5aYaEd4/nSGlhg68Z8btCkT5hmCKaFn1RTlOc=
+	t=1722951792; cv=none; b=juzTc9NlnkqwIdqj5ctjmyW7dSiGM4bo0zNpskL74gbxzfbH3q/FrEtmvMhnuOpyBI4U+M3apa/3Qw0yH1QE6evGB6h74Lo/w+kY3eQh0C4Tn1nyTS6eUAoWPXQHTfnTEeXLFnID+VqGiDXTltAJ+jNZdUD+6v2mbK/WFCZhQG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951236; c=relaxed/simple;
-	bh=YdUDJoZXiC2IxpC7H5Bj19M4R1HDptmgeXEq2KSWL7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=po00m9KORJGvAyUHtRCXbzLvOpGZ5eLw1XlhYEe4C6wSA7pD4Zs3OCfmpJrSbP/Y6qwQq7JEwxOw03NvCIM0pb18Sz5mquQ297yOi9WA0g1qT47UEqtLWK+7dyRwfjjn+K8kIyypFjM5aTsmBE6NpaemxSzeAa1lH4FlaOppJSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C287DFEC;
-	Tue,  6 Aug 2024 06:34:18 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1780C3F766;
-	Tue,  6 Aug 2024 06:33:49 -0700 (PDT)
-Date: Tue, 6 Aug 2024 14:33:37 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
-	broonie@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
-	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
-	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 15/29] arm64: handle PKEY/POE faults
-Message-ID: <ZrImMQ44dlrqCf6v@e133380.arm.com>
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-16-joey.gouly@arm.com>
- <ZqJ11TqIJq9oB+pt@e133380.arm.com>
- <20240801160110.GC841837@e124191.cambridge.arm.com>
+	s=arc-20240116; t=1722951792; c=relaxed/simple;
+	bh=lA082ip22lLVe8x0ZBmmSfhhxufL60K2q987v+em9hQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jHek6JvqRtDh6mHdkJ0v3//96YymNBOYY2031GCL/v2+UfkHMrcdwtRR7hyR/wl6LzpT/KtxQ/YZGNpQB+MOh1Ywg7Mici1e0Y3Rkur+V3qfNWPABiXHkY3RblTvOJpm1Imz29Bm9NXYzWfiTwi2ulxcmnYC7iQDY5r0dtR6l8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DEW6QBmm; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476DRoHH018110;
+	Tue, 6 Aug 2024 13:42:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
+	ViIYKO1MfeiBQ75UOWsEMrvjkCQ9oS8o3NQEk+YD2SY=; b=DEW6QBmmpr1DTyaq
+	t/tb2eW3cW39ts4r8GQiQCZIdtWv59eyB12PC5kT0hSvwojxns5giEi8eyo3IlCS
+	xujOA+kCrZy+/MXCCVvE+Pt29SptJH418l6+GtfXbvJpeIS2M2Go/9MKM2vHdRVU
+	ZDIySbCU+HNsCet0n0Q0k5xG1S49u0qU9C8mNaBeEN7Se/6cEIb5mTgCpggTRNJB
+	CyvJeHOz5YkJJnaJPwwSMvHPzed7r0oQcxyL7gzq9GTdEuvCd+phB8daoKXUAzrb
+	EobOHbX80GNAr05M1hWI+o3X/Tt7wV0gvPPNxbxCmyjaAJwkxkud9j7urQUZmJdK
+	cRU/Vw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40umqw0153-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Aug 2024 13:42:59 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 476DgwUb013419;
+	Tue, 6 Aug 2024 13:42:58 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40umqw0151-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Aug 2024 13:42:58 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 476D07E5006490;
+	Tue, 6 Aug 2024 13:42:57 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 40t13mbjpt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Aug 2024 13:42:57 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 476DgpSx18809256
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 6 Aug 2024 13:42:53 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9E1242004E;
+	Tue,  6 Aug 2024 13:42:51 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5C71E20043;
+	Tue,  6 Aug 2024 13:42:51 +0000 (GMT)
+Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  6 Aug 2024 13:42:51 +0000 (GMT)
+Date: Tue, 6 Aug 2024 15:42:49 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jonathan Corbet
+ <corbet@lwn.net>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Gerald
+ Schaefer <gerald.schaefer@linux.ibm.com>
+Subject: Re: [PATCH v1 00/11] mm: replace follow_page() by folio_walk
+Message-ID: <20240806154249.7dbfe37e@p-imbrenda.boeblingen.de.ibm.com>
+In-Reply-To: <20240802155524.517137-1-david@redhat.com>
+References: <20240802155524.517137-1-david@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801160110.GC841837@e124191.cambridge.arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: UghynHGbhXTN53HNCkKi-DtAS3l2Q8wb
+X-Proofpoint-ORIG-GUID: _M5No_THOE1ACOCJ7EhjKWEJXSyhoXHM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-06_11,2024-08-06_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ malwarescore=0 bulkscore=0 suspectscore=0 mlxscore=0 adultscore=0
+ clxscore=1011 lowpriorityscore=0 priorityscore=1501 mlxlogscore=371
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408060093
 
-Hi,
+On Fri,  2 Aug 2024 17:55:13 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-On Thu, Aug 01, 2024 at 05:01:10PM +0100, Joey Gouly wrote:
-> On Thu, Jul 25, 2024 at 04:57:09PM +0100, Dave Martin wrote:
-> > On Fri, May 03, 2024 at 02:01:33PM +0100, Joey Gouly wrote:
-> > > If a memory fault occurs that is due to an overlay/pkey fault, report that to
-> > > userspace with a SEGV_PKUERR.
-> > > 
-> > > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-> > > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > > Cc: Will Deacon <will@kernel.org>
-> > > ---
-> > >  arch/arm64/include/asm/traps.h |  1 +
-> > >  arch/arm64/kernel/traps.c      | 12 ++++++--
-> > >  arch/arm64/mm/fault.c          | 56 ++++++++++++++++++++++++++++++++--
-> > >  3 files changed, 64 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/include/asm/traps.h b/arch/arm64/include/asm/traps.h
-> > > index eefe766d6161..f6f6f2cb7f10 100644
-> > > --- a/arch/arm64/include/asm/traps.h
-> > > +++ b/arch/arm64/include/asm/traps.h
-> > > @@ -25,6 +25,7 @@ try_emulate_armv8_deprecated(struct pt_regs *regs, u32 insn)
-> > >  void force_signal_inject(int signal, int code, unsigned long address, unsigned long err);
-> > >  void arm64_notify_segfault(unsigned long addr);
-> > >  void arm64_force_sig_fault(int signo, int code, unsigned long far, const char *str);
-> > > +void arm64_force_sig_fault_pkey(int signo, int code, unsigned long far, const char *str, int pkey);
-> > >  void arm64_force_sig_mceerr(int code, unsigned long far, short lsb, const char *str);
-> > >  void arm64_force_sig_ptrace_errno_trap(int errno, unsigned long far, const char *str);
-> > >  
-> > > diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-> > > index 215e6d7f2df8..1bac6c84d3f5 100644
-> > > --- a/arch/arm64/kernel/traps.c
-> > > +++ b/arch/arm64/kernel/traps.c
-> > > @@ -263,16 +263,24 @@ static void arm64_show_signal(int signo, const char *str)
-> > >  	__show_regs(regs);
-> > >  }
-> > >  
-> > > -void arm64_force_sig_fault(int signo, int code, unsigned long far,
-> > > -			   const char *str)
-> > > +void arm64_force_sig_fault_pkey(int signo, int code, unsigned long far,
-> > > +			   const char *str, int pkey)
-> > >  {
-> > >  	arm64_show_signal(signo, str);
-> > >  	if (signo == SIGKILL)
-> > >  		force_sig(SIGKILL);
-> > > +	else if (code == SEGV_PKUERR)
-> > > +		force_sig_pkuerr((void __user *)far, pkey);
-> > 
-> > Is signo definitely SIGSEGV here?  It looks to me like we can get in
-> > here for SIGBUS, SIGTRAP etc.
-> > 
-> > si_codes are not unique between different signo here, so I'm wondering
-> > whether this should this be:
-> > 
-> > 	else if (signo == SIGSEGV && code == SEGV_PKUERR)
-> > 
-> > ...?
-> > 
-> > 
-> > >  	else
-> > >  		force_sig_fault(signo, code, (void __user *)far);
-> > >  }
-> > >  
-> > > +void arm64_force_sig_fault(int signo, int code, unsigned long far,
-> > > +			   const char *str)
-> > > +{
-> > > +	arm64_force_sig_fault_pkey(signo, code, far, str, 0);
-> > 
-> > Is there a reason not to follow the same convention as elsewhere, where
-> > -1 is passed for "no pkey"?
-> > 
-> > If we think this should never be called with signo == SIGSEGV &&
-> > code == SEGV_PKUERR and no valid pkey but if it's messy to prove, then
-> > maybe a WARN_ON_ONCE() would be worth it here?
-> > 
+> Looking into a way of moving the last folio_likely_mapped_shared() call
+> in add_folio_for_migration() under the PTL, I found myself removing
+> follow_page(). This paves the way for cleaning up all the FOLL_, follow_*
+> terminology to just be called "GUP" nowadays.
 > 
-> Anshuman suggested to separate them out, which I did like below, I think that
-> addresses your comments too?
+> The new page table walker will lookup a mapped folio and return to the
+> caller with the PTL held, such that the folio cannot get unmapped
+> concurrently. Callers can then conditionally decide whether they really
+> want to take a short-term folio reference or whether the can simply
+> unlock the PTL and be done with it.
 > 
-> diff --git arch/arm64/kernel/traps.c arch/arm64/kernel/traps.c
-> index 215e6d7f2df8..49bac9ae04c0 100644
-> --- arch/arm64/kernel/traps.c
-> +++ arch/arm64/kernel/traps.c
-> @@ -273,6 +273,13 @@ void arm64_force_sig_fault(int signo, int code, unsigned long far,
->                 force_sig_fault(signo, code, (void __user *)far);
->  }
->  
-> +void arm64_force_sig_fault_pkey(int signo, int code, unsigned long far,
-> +                          const char *str, int pkey)
-> +{
-> +       arm64_show_signal(signo, str);
-> +       force_sig_pkuerr((void __user *)far, pkey);
-> +}
-> +
->  void arm64_force_sig_mceerr(int code, unsigned long far, short lsb,
->                             const char *str)
->  {
+> folio_walk is similar to page_vma_mapped_walk(), except that we don't know
+> the folio we want to walk to and that we are only walking to exactly one
+> PTE/PMD/PUD.
 > 
-> diff --git arch/arm64/mm/fault.c arch/arm64/mm/fault.c
-> index 451ba7cbd5ad..1ddd46b97f88 100644
-> --- arch/arm64/mm/fault.c
-> +++ arch/arm64/mm/fault.c
+> folio_walk provides access to the pte/pmd/pud (and the referenced folio
+> page because things like KSM need that), however, as part of this series
+> no page table modifications are performed by users.
+> 
+> We might be able to convert some other walk_page_range() users that really
+> only walk to one address, such as DAMON with
+> damon_mkold_ops/damon_young_ops. It might make sense to extend folio_walk
+> in the future to optionally fault in a folio (if applicable), such that we
+> can replace some get_user_pages() users that really only want to lookup
+> a single page/folio under PTL without unconditionally grabbing a folio
+> reference.
+> 
+> I have plans to extend the approach to a range walker that will try
+> batching various page table entries (not just folio pages) to be a better
+> replace for walk_page_range() -- and users will be able to opt in which
+> type of page table entries they want to process -- but that will require
+> more work and more thoughts.
+> 
+> KSM seems to work just fine (ksm_functional_tests selftests) and
+> move_pages seems to work (migration selftest). I tested the leaf
+> implementation excessively using various hugetlb sizes (64K, 2M, 32M, 1G)
+> on arm64 using move_pages and did some more testing on x86-64. Cross
+> compiled on a bunch of architectures.
+> 
+> I am not able to test the s390x Secure Execution changes, unfortunately.
 
-(Guessing where this is means to apply, since there is no hunk header
-or context...)
+the series looks good; we will do some tests and report back if
+everything is ok
 
 > 
-> -               arm64_force_sig_fault(SIGSEGV, si_code, far, inf->name);
-> +               if (si_code == SEGV_PKUERR)
-> +                       arm64_force_sig_fault_pkey(SIGSEGV, si_code, far, inf->name, pkey);
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Janosch Frank <frankja@linux.ibm.com>
+> Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+> 
+> David Hildenbrand (11):
+>   mm: provide vm_normal_(page|folio)_pmd() with
+>     CONFIG_PGTABLE_HAS_HUGE_LEAVES
+>   mm/pagewalk: introduce folio_walk_start() + folio_walk_end()
+>   mm/migrate: convert do_pages_stat_array() from follow_page() to
+>     folio_walk
+>   mm/migrate: convert add_page_for_migration() from follow_page() to
+>     folio_walk
+>   mm/ksm: convert get_mergeable_page() from follow_page() to folio_walk
+>   mm/ksm: convert scan_get_next_rmap_item() from follow_page() to
+>     folio_walk
+>   mm/huge_memory: convert split_huge_pages_pid() from follow_page() to
+>     folio_walk
+>   s390/uv: convert gmap_destroy_page() from follow_page() to folio_walk
+>   s390/mm/fault: convert do_secure_storage_access() from follow_page()
+>     to folio_walk
+>   mm: remove follow_page()
+>   mm/ksm: convert break_ksm() from walk_page_range_vma() to folio_walk
+> 
+>  Documentation/mm/transhuge.rst |   6 +-
+>  arch/s390/kernel/uv.c          |  18 ++-
+>  arch/s390/mm/fault.c           |  16 ++-
+>  include/linux/mm.h             |   3 -
+>  include/linux/pagewalk.h       |  58 ++++++++++
+>  mm/filemap.c                   |   2 +-
+>  mm/gup.c                       |  24 +---
+>  mm/huge_memory.c               |  18 +--
+>  mm/ksm.c                       | 127 +++++++++------------
+>  mm/memory.c                    |   2 +-
+>  mm/migrate.c                   | 131 ++++++++++-----------
+>  mm/nommu.c                     |   6 -
+>  mm/pagewalk.c                  | 202 +++++++++++++++++++++++++++++++++
+>  13 files changed, 413 insertions(+), 200 deletions(-)
+> 
 
-Maybe drop the the signo and si_code argument?  This would mean that
-arm64_force_sig_fault_pkey() can't be called with a signo/si_code
-combination that makes no sense.
-
-I think pkey faults are always going to be SIGSEGV/SEGV_PKUERR, right?
-Or are there other combinations that can apply for these faults?
-
-
-> +               else
-> +                       arm64_force_sig_fault(SIGSEGV, si_code, far, inf->name);
-
-Otherwise yes, I think splitting things this way makes sense.
-
-Cheers
----Dave
 
