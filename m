@@ -1,203 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-25146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F67994967B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:16:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F9B9496BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81ABF1C22D68
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 17:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7EE1F268D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 17:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69853482E2;
-	Tue,  6 Aug 2024 17:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4EC6FE16;
+	Tue,  6 Aug 2024 17:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K7LCt/pK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAXvUE0K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192582A1D3;
-	Tue,  6 Aug 2024 17:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E98F5339D;
+	Tue,  6 Aug 2024 17:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722964592; cv=none; b=QyYuUKDmgMlhzxcuIeJ7j7/WzzOxNNM0ucdMMyZTdzntNunUTax4nWfU/e4rlgxW5zYQK+H5czYCDCsaAi4+iRjyO6wTPP0f0RvTMXWTrIMy6rwuG+rBj7ajokY07Zi8mifJ7Cw2eRqlNTicpgCPuyCEoe32eAJ3iqZGC+wUoUI=
+	t=1722965320; cv=none; b=gHLTCYKB0RwoHLVQqOv2vooqfwrqbZF2n1E64HmNJh8AgHEKSRnw+4Za25TxYR5gGk7Qrv9oDgdbN7ZqjwJhUWGLrDtqJxCKSW7hxxeyP4s0dGgDiHAznRRTCflV9ughUc1QiizD3HJMHvvfe9k179eY+qTuXnHqlK6ElP4xLeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722964592; c=relaxed/simple;
-	bh=PEETIci6hUduaM8hNub+xJEHnlXgc5vOZkcX5XlaWd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NhuII7LClDa5v52pm7ZjD7BigDQnfnk1BYqdGUVnrkCXV+5DsqGS9LY7OusUmyuGG9TrRsyOA0nqS1ZXUpADgqXJvvx1k3q+piM8bSc0C2Qi5fQ9Ao64A7+4I0TGKk4wlAavtPbuZHbWKs1yQDOlF9nfGvnQgmlCA/6JRti8dWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K7LCt/pK; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f16767830dso10026931fa.0;
-        Tue, 06 Aug 2024 10:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722964589; x=1723569389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7sCtlrfFx1xhGzgLdvWohx3gPpnZHRqBbQohEVU2h6E=;
-        b=K7LCt/pKms+r3eB8BR8h7DZiMWLgqd8ig2libB3kmy/9F6Dld9ltovETCxh6f5s//U
-         vUsf9aHfGqqRetNUtWQwXFiOASsS9pmZiW2chRmyUry6xfhOIw2hXg9MTtxNKizC5icG
-         humsXT55lqJZuasCV+FpyHMUXymG0s/t8ITSOU+JdcvNoFSQWfa5rlD6RQIt7ynh5N8x
-         9j58d3hrdgzOXqYpC43dXj53m1dOfevFS29U/H81huHcBfL8/wxZFFtKdyfHtwyEVQ1a
-         vbzo5qqhkv8XtR1UCE6Y576rJ05rvKU3AKAmb2IAdtpoh/ZDevr80OAtmpcLIyKLQ1My
-         tk3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722964589; x=1723569389;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7sCtlrfFx1xhGzgLdvWohx3gPpnZHRqBbQohEVU2h6E=;
-        b=kB7ruV6iKKA3dnA4otVLRgq1ZIMQnS1fKOA0D+JWFrgWkVHrcW+mwAaWwDA75rt6w7
-         9lYqzOojw58cs+gNxHl52brtvI4hHimcgRKDkpbNx/CP1x4DT3Rk1fp2eP2uJWdY0ZaE
-         7N157s9QaSQhgTPM7NxUXPg532Ux5PnzA6OVQrWFphZrW5dFPNC0ln/nzPM/3YmkJ/98
-         Inew0/c3ol2BcM+JAvotM9bAQnbFtL5IIXIWOfDB1QEJKmpMr65ot8oyVY0TWoqTDA6F
-         rauPTTswQsOcYAMCLxzbv3HNVvfK9ztxqDieedR8sqsCy6eOzAjbOCa8450V4396fhGM
-         NzgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsRJQtg56DdSgPWqAaRz6TSZuamuhvSSSPqUlhvBjfxHqeubn5UjA4dTrsQkYzEEPh7iRgopu6MSo2C3ZCReJE8TOry525x7zzcO1a/bGE6rWCY0TlU26pQ2T9z/LvpAxXQwFGALoHpZqvQQ==
-X-Gm-Message-State: AOJu0Yz2X6k24cGOAmzLlX1WbeLX+PsqXY23wpPdrzxx7Vt2F7SDeV1N
-	HTeQ+BlPzgmzD0Suot/dF+VL8JdYPxQ8JODB1DJHEGFxiKIblA8nQPYNe9rZoTzGwYBDOyyOG6d
-	SGqO/eCJs5vozKQ9Knet681lH71cA4KM8
-X-Google-Smtp-Source: AGHT+IHtr+C20+PJjskNV4xHqS1/kkkgmJu5MYIN14r+C/ilL+cKyXGQMxKVuKfBSiLXv0qQfEbvZSJwHE3m4+dY7LE=
-X-Received: by 2002:a2e:984d:0:b0:2ef:2c2d:a603 with SMTP id
- 38308e7fff4ca-2f15aaa70cbmr103338871fa.21.1722964588567; Tue, 06 Aug 2024
- 10:16:28 -0700 (PDT)
+	s=arc-20240116; t=1722965320; c=relaxed/simple;
+	bh=Qi5WxmMVqmR0matvwiMljokUy+VSTuQ68dFhDYopPqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=T01016j0dgpAEoRn+WCPGEvcPtTnuAFP4m0fZ8oNhJMMIV8I+NYT9AKfoU2RTaku6YGfcH/aVRDiVgz3DQL6VXlO12CWqqAGl0zsk3BtReSAZd6CAhhtDTgTWmVT8boJhScLjQ+NPos4OcehdzegcSSqbkRl9u/YfWqKGre9RcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAXvUE0K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A25ADC32786;
+	Tue,  6 Aug 2024 17:28:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722965320;
+	bh=Qi5WxmMVqmR0matvwiMljokUy+VSTuQ68dFhDYopPqQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=FAXvUE0KIKhlW+bPfH7nEjVfB9pnfTRAVLFxq3YBnRaBNeyQInhLUDkVNQ1Yne4fy
+	 1rji3IM/XkY/aW1PHguSfjzwzQu98iEfNi5pJJ3IUWyIkZ2yNjX/LoJRXFU5dO5thy
+	 QDjrU5CIX1ZsXeIt25qlgPx4T8POowARlFSSu32UltQi9hmb751L6+Dnoz1HzEqmAm
+	 dUZ7DRZuCUXA7cCWOngjT52mIrgqZxCQWprWnfRYF5/GqtCVIGmtwAcYK/b3UKXLSz
+	 pQp9ukAAaey9TMGScKUWq38FHIr/ODo+01aCy7rH6Q8pEXYnzbVNa3tBkdjai/iDOo
+	 Hd3b4NCiL9SPA==
+Date: Tue, 6 Aug 2024 19:28:34 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: akpm@linux-foundation.org, alexei.starovoitov@gmail.com, 
+	audit@vger.kernel.org, bpf@vger.kernel.org, catalin.marinas@arm.com, 
+	dri-devel@lists.freedesktop.org, ebiederm@xmission.com, laoar.shao@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	rostedt@goodmis.org, selinux@vger.kernel.org, serge@hallyn.com
+Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
+Message-ID: <2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfbosf5wdo65dk4@srb3hsk72zwq>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730230805.42205-1-song@kernel.org> <20240730230805.42205-3-song@kernel.org>
-In-Reply-To: <20240730230805.42205-3-song@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 6 Aug 2024 10:16:17 -0700
-Message-ID: <CAADnVQJJcJsBk9nR5_gTWNmgQGjNi1BJWCex4XZVB=w9ybsOzA@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add tests for bpf_get_dentry_xattr
-To: Song Liu <song@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	liamwisehart@meta.com, lltang@meta.com, shankaran@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d4izvc7wnp2wjet3"
+Content-Disposition: inline
+
+
+--d4izvc7wnp2wjet3
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: akpm@linux-foundation.org, alexei.starovoitov@gmail.com, 
+	audit@vger.kernel.org, bpf@vger.kernel.org, catalin.marinas@arm.com, 
+	dri-devel@lists.freedesktop.org, ebiederm@xmission.com, laoar.shao@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	rostedt@goodmis.org, selinux@vger.kernel.org, serge@hallyn.com
+Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
+MIME-Version: 1.0
 
-On Tue, Jul 30, 2024 at 4:08=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> Add test for bpf_get_dentry_xattr on hook security_inode_getxattr.
-> Verify that the kfunc can read the xattr. Also test failing getxattr
-> from user space by returning non-zero from the LSM bpf program.
->
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  .../selftests/bpf/prog_tests/fs_kfuncs.c      |  9 ++++-
->  .../selftests/bpf/progs/test_get_xattr.c      | 37 ++++++++++++++++---
->  2 files changed, 40 insertions(+), 6 deletions(-)
->
-> diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/t=
-esting/selftests/bpf/prog_tests/fs_kfuncs.c
-> index 37056ba73847..5a0b51157451 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-> @@ -16,6 +16,7 @@ static void test_xattr(void)
->  {
->         struct test_get_xattr *skel =3D NULL;
->         int fd =3D -1, err;
-> +       int v[32];
->
->         fd =3D open(testfile, O_CREAT | O_RDONLY, 0644);
->         if (!ASSERT_GE(fd, 0, "create_file"))
-> @@ -50,7 +51,13 @@ static void test_xattr(void)
->         if (!ASSERT_GE(fd, 0, "open_file"))
->                 goto out;
->
-> -       ASSERT_EQ(skel->bss->found_xattr, 1, "found_xattr");
-> +       ASSERT_EQ(skel->bss->found_xattr_from_file, 1, "found_xattr_from_=
-file");
-> +
-> +       /* Trigger security_inode_getxattr */
-> +       err =3D getxattr(testfile, "user.kfuncs", v, sizeof(v));
-> +       ASSERT_EQ(err, -1, "getxattr_return");
-> +       ASSERT_EQ(errno, EINVAL, "getxattr_errno");
-> +       ASSERT_EQ(skel->bss->found_xattr_from_dentry, 1, "found_xattr_fro=
-m_dentry");
->
->  out:
->         close(fd);
-> diff --git a/tools/testing/selftests/bpf/progs/test_get_xattr.c b/tools/t=
-esting/selftests/bpf/progs/test_get_xattr.c
-> index 7eb2a4e5a3e5..66e737720f7c 100644
-> --- a/tools/testing/selftests/bpf/progs/test_get_xattr.c
-> +++ b/tools/testing/selftests/bpf/progs/test_get_xattr.c
-> @@ -2,6 +2,7 @@
->  /* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
->
->  #include "vmlinux.h"
-> +#include <errno.h>
->  #include <bpf/bpf_helpers.h>
->  #include <bpf/bpf_tracing.h>
->  #include "bpf_kfuncs.h"
-> @@ -9,10 +10,12 @@
->  char _license[] SEC("license") =3D "GPL";
->
->  __u32 monitored_pid;
-> -__u32 found_xattr;
-> +__u32 found_xattr_from_file;
-> +__u32 found_xattr_from_dentry;
->
->  static const char expected_value[] =3D "hello";
-> -char value[32];
-> +char value1[32];
-> +char value2[32];
->
->  SEC("lsm.s/file_open")
->  int BPF_PROG(test_file_open, struct file *f)
-> @@ -25,13 +28,37 @@ int BPF_PROG(test_file_open, struct file *f)
->         if (pid !=3D monitored_pid)
->                 return 0;
->
-> -       bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
-> +       bpf_dynptr_from_mem(value1, sizeof(value1), 0, &value_ptr);
->
->         ret =3D bpf_get_file_xattr(f, "user.kfuncs", &value_ptr);
->         if (ret !=3D sizeof(expected_value))
->                 return 0;
-> -       if (bpf_strncmp(value, ret, expected_value))
-> +       if (bpf_strncmp(value1, ret, expected_value))
->                 return 0;
-> -       found_xattr =3D 1;
-> +       found_xattr_from_file =3D 1;
->         return 0;
->  }
-> +
-> +SEC("lsm.s/inode_getxattr")
-> +int BPF_PROG(test_inode_getxattr, struct dentry *dentry, char *name)
-> +{
-> +       struct bpf_dynptr value_ptr;
-> +       __u32 pid;
-> +       int ret;
-> +
-> +       pid =3D bpf_get_current_pid_tgid() >> 32;
-> +       if (pid !=3D monitored_pid)
-> +               return 0;
-> +
-> +       bpf_dynptr_from_mem(value2, sizeof(value2), 0, &value_ptr);
-> +
-> +       ret =3D bpf_get_dentry_xattr(dentry, "user.kfuncs", &value_ptr);
+Hi Linus,
 
-Song,
+Serge let me know about this thread earlier today.
 
-See CI failure on s390.
-I think you need to update bpf_kfuncs.h, since s390 doesn't emit
-kfuncs into vmlinux.h
+On 2024-08-05, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Mon, 5 Aug 2024 at 20:01, Yafang Shao <laoar.shao@gmail.com> wrote:
+> >
+> > One concern about removing the BUILD_BUG_ON() is that if we extend
+> > TASK_COMM_LEN to a larger size, such as 24, the caller with a
+> > hardcoded 16-byte buffer may overflow.
+>=20
+> No, not at all. Because get_task_comm() - and the replacements - would
+> never use TASK_COMM_LEN.
+>=20
+> They'd use the size of the *destination*. That's what the code already do=
+es:
+>=20
+>   #define get_task_comm(buf, tsk) ({                      \
+>   ...
+>         __get_task_comm(buf, sizeof(buf), tsk);         \
+>=20
+> note how it uses "sizeof(buf)".
 
-Also pls add a patch to move these kfuncs to fs/bpf_fs_kfuncs.c
+In shadow.git, we also implemented macros that are named after functions
+and calculate the appropriate number of elements internally.
 
-pw-bot: cr
+	$ grepc -h STRNCAT .
+	#define STRNCAT(dst, src)  strncat(dst, src, NITEMS(src))
+	$ grepc -h STRNCPY .
+	#define STRNCPY(dst, src)  strncpy(dst, src, NITEMS(dst))
+	$ grepc -h STRTCPY .
+	#define STRTCPY(dst, src)  strtcpy(dst, src, NITEMS(dst))
+	$ grepc -h STRFTIME .
+	#define STRFTIME(dst, fmt, tm)  strftime(dst, NITEMS(dst), fmt, tm)
+	$ grepc -h DAY_TO_STR .
+	#define DAY_TO_STR(str, day, iso)   day_to_str(NITEMS(str), str, day, iso)
+
+They're quite useful, and when implementing them we found and fixed
+several bugs thanks to them.
+
+> Now, it might be a good idea to also verify that 'buf' is an actual
+> array, and that this code doesn't do some silly "sizeof(ptr)" thing.
+
+I decided to use NITEMS() instead of sizeof() for that reason.
+(NITEMS() is just our name for ARRAY_SIZE().)
+
+	$ grepc -h NITEMS .
+	#define NITEMS(a)            (SIZEOF_ARRAY((a)) / sizeof((a)[0]))
+
+> We do have a helper for that, so we could do something like
+>=20
+>    #define get_task_comm(buf, tsk) \
+>         strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->comm)
+
+We have SIZEOF_ARRAY() for when you want the size of an array:
+
+	$ grepc -h SIZEOF_ARRAY .
+	#define SIZEOF_ARRAY(a)      (sizeof(a) + must_be_array(a))
+
+However, I don't think you want sizeof().  Let me explain why:
+
+-  Let's say you want to call wcsncpy(3) (I know nobody should be using
+   that function, not strncpy(3), but I'm using it as a standard example
+   of a wide-character string function).
+
+   You should call wcsncpy(dst, src, NITEMS(dst)).
+   A call wcsncpy(dst, src, sizeof(dst)) is bogus, since the argument is
+   the number of wide characters, not the number of bytes.
+
+   When translating that to normal characters, you want conceptually the
+   same operation, but on (normal) characters.  That is, you want
+   strncpy(dst, src, NITEMS(dst)).  While strncpy(3) with sizeof() works
+   just fine because sizeof(char)=3D=3D1 by definition, it is conceptually
+   wrong to use it.
+
+   By using NITEMS() (i.e., ARRAY_SIZE()), you get the __must_be_array()
+   check for free.
+
+In the end, SIZEOF_ARRAY() is something we very rarely use.  It's there
+only used in the following two cases at the moment:
+
+	#define NITEMS(a)            (SIZEOF_ARRAY((a)) / sizeof((a)[0]))
+	#define MEMZERO(arr)  memzero(arr, SIZEOF_ARRAY(arr))
+
+Does that sound convincing?
+
+For memcpy(3) for example, you do want sizeof(), because you're copying
+raw bytes, but with strings, in which characters are conceptually
+meaningful elements, NITEMS() makes more sense.
+
+BTW, I'm working on a __lengthof__ operator that will soon allow using
+it on function parameters declared with array notation.  That is,
+
+	size_t
+	f(size_t n, int a[n])
+	{
+		return __lengthof__(a);  // This will return n.
+	}
+
+If you're interested in it, I'm developing and discussing it here:
+<https://inbox.sourceware.org/gcc-patches/20240806122218.3827577-1-alx@kern=
+el.org/>
+
+>=20
+> as a helper macro for this all.
+>=20
+> (Although I'm not convinced we generally want the "_pad()" version,
+> but whatever).
+
+We had problems with it in shadow recently.  In user-space, it's similar
+to strncpy(3) (at least if you wrap it in a macro that makes sure that
+it terminates the string with a null byte).
+
+We had a lot of uses of strncpy(3), from old times where that was used
+to copy strings with truncation.  I audited all of that code (and
+haven't really finished yet), and translated to calls similar to
+strscpy(9) (we call it strtcpy(), as it _t_runcates).  The problem was
+that in some cases the padding was necessary, and in others it was not,
+and it was very hard to distinguish those.
+
+I recommend not zeroing strings unnecessarily, since that will make it
+hard to review the code later.  E.g., twenty years from now, someone
+takes a piece of code with a _pad() call, and has no clue if the zeroing
+was for a reason, or for no reason.
+
+On the other hand, not zeroing may make it easier to explot bugs, so
+whatever you think best.  In the kernel you may need to be more worried
+than in user space.  Whatever.  :)
+
+>=20
+>                     Linus
+
+Have a lovely day!
+Alex
+
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--d4izvc7wnp2wjet3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmayXTwACgkQnowa+77/
+2zKkGg//QGKZL+2Xhpb6wdoKoQMt5Ixm8AxcrhEng31CT2FlaXxnveqkjC9CXsUS
+hvuVRQFMFyhrARydHNtx/Ps5q5f/TSv4qX+5PI6hBFPAIJOuHCh2UfXqPEMrCXb5
+iAhq73HPqXL20Igr1+n9W9buunf2ow4fBxTsK+7eMZCPnTAuS3lMkRpmne8d7ks1
+iOHorYSEbJYJqWUyOCq7i/KNufR7nALJzBHzqPcAE47Gsp0/N0DA/NEzO6zbCRS4
+HLODuEC8T6iWnEh+qoBTS0Gn1ksmVNCQPVyLj4OurtSYeX0pGL6NQWxKjMgxCaQ9
+r0rN2v+o8ULJIOBI1ZVKAqlXZdPxtPpwPxyim82IB5Mok0bkqGSZQYMqEL27YkK0
+k/Ec5R/AkO8Zhc/i3YFzTwa8peXA9s4D2xFCB/hYTdTNL138ugVV1fevoPo6qt9t
+eqA/fKesf5pK9OXftXBdqHNqsDGe6Ps76ahK9FsQNj0ZEi1JLTmWoEGRQMHQ6iZ+
+yXlgOkn3625L2Q0Qofv3x943QicRe8eahFyW/YV7a+8B+n7PP9RQEo95DTv1QjGU
+wCP6XYatwx1uKgauYWE2if5RiXyhsUBbCjEAUrXTmLBAxk/5zJ+vSpDl3j3fr4D0
+hm5Pe6kB02HnX7NQKrnlgmPJi7PhBVGSRSDc+Lj4r4q7e3BYDuY=
+=TwdF
+-----END PGP SIGNATURE-----
+
+--d4izvc7wnp2wjet3--
 
