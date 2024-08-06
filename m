@@ -1,227 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-25081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36883948B95
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 10:48:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C42948BFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 11:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4641280DC7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 08:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A37EF28662A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 09:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B071BD03B;
-	Tue,  6 Aug 2024 08:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935FD1BD507;
+	Tue,  6 Aug 2024 09:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D0Ax9u7d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YIz2+oCu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0F913A884
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 08:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033A41B9B4E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 09:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934107; cv=none; b=ryWCwiiLeNuMho6z99l/Gqj0QjI+vHXzrQU4CTvx0BVN/jjRDoa5XLXQSgyMkTs0ETsx/M7TXVx8dS5lAa1tWDNcd1CSVFRfMzAkJG7AgjR+5/mRe9Zv9MIH+AupMGzqTq91XjCIoeIOJGOtjp6CBx+hpwNslMGMrxkZncfoCIo=
+	t=1722935471; cv=none; b=h/Os8MOKqRUMss7BWRsth/ZpN9Xa1MTCol+idW6e19OSMjbh43uZqsUnzNGlVnm95HL+L0jR819qYfkxNHYDW9kbmCrHGWmTgIcaH9XrbYe5IEMyRLNDffrgDNCT4l7A2Wm4LDEHJJx/nwJNxa2BqPT/60SqZi1zz1X1Q9CPwys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934107; c=relaxed/simple;
-	bh=r/HPO+3T3d3Rsx1+glCgz0NrZqNjccBNAyubtwnWY3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V7Qkh+41qC8/XcvXiES1duBPyR18SCYDB8yAU+ZJP2BAcxLmgXFUT6cNCP4o4ZMLi6/XEwYgtvUB2DiUVTYHtL/GXWcfMkvSXkD9fmx0RDBW5ddZ53VgEmqEdPaHRbznRcvaYaPJdv/BS7K2W9Pi3/AEaYZReF+JFdEMR2/zLBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D0Ax9u7d; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428f5c0833bso11670265e9.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 01:48:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722934104; x=1723538904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vkB0Cd0s/Qf30uEbUTYOzYCP2KGraAxLVDIwggQyhkE=;
-        b=D0Ax9u7dx+o+y3NP9iSx9HaBXOkUFDftI5G0okULj6z6Etr7PR3v56wLKjB+eyTuTo
-         4GuVNvWKt6Bi61E9xnClWL1eA1sEfBEMRBq5KzYnzVrUruuDJSNc+4DYK6bgpWUWLq3v
-         zR4r4IeyDlIYBqePFQBJmwLNxiWltl2LEHqrp0sAhWeDioziiqdY365igi2jz6K5gpmV
-         2l0uyK15iXHiYoUIYTbx5jp7Cr882oD7zKOGIye9/bQnhm4LdjBDSe2KiQQGgyTyG1fw
-         e9QEsuQd8ywXjUk8maS9zbHVgVzf7E5lOZvRuHjHKjf0q6ukr6aCZJYtMSC6j/uZLGby
-         Zdww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722934104; x=1723538904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vkB0Cd0s/Qf30uEbUTYOzYCP2KGraAxLVDIwggQyhkE=;
-        b=RmSSv7J5+u42BvNhxxfoZhhE9OIwaEqrcOHOyzQdbAOkUL1u9zjpUb8RT+pER4pidi
-         aImncXuWdl7K0g/H01zds9lhhsFAN7+41tNtA280t1DrjaXiSCWvUIZWNtG4NHVQFwMa
-         3zGukPEpA2cCJsxGLfrYlYUI1eekcMxEnNEEofus7J1ur+Wst8+5VclGHjGq0ioZvguF
-         /RwxjgL3TeNRmEFbrFQ4CATtyQn5pOWKhzj/Djc0FXKy8nKI0rYpRj977tO9GM7aXunP
-         Mb7BtCzO5GnfswQXg0kW8jwuvqXhQlSYO0aOPe3hNMyKItlwQRpQO93ufUfn+ERh7MTT
-         XaKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAdgqdGatF14dr+gnlA9YOZX3JwLLVqMj6DcsCcdqFSZ+SE47LYKv5KDN01pXuGrK/XeqLwXnCIxwa6zlrchqXsc2lbzWo3IwN3Op13Q==
-X-Gm-Message-State: AOJu0YwAcpKZfWikBUYekVvxnihmMnxHWXCDjJmSQZfFdc1MnyZMIZPj
-	5twdRF7q+tphO2JjOezXbwX5tWjO8hC16DA9e7wad+4pb1yYq2dLLoF/3R1Ms1F+vB7KFCDtB7P
-	cd+yTqkPVVFOECnco3kPF0++F0jIBmxoeY0Fb
-X-Google-Smtp-Source: AGHT+IGFgI0TVkke22UsDZQDfugvSmvi4S+Fu5uBorocOt5O9xaTLJiWkTnkaIRnZXLb/CpZCMg4SficQPlMCFHLlNY=
-X-Received: by 2002:adf:ea02:0:b0:362:69b3:8e4d with SMTP id
- ffacd0b85a97d-36bbbecb622mr12534784f8f.25.1722934103552; Tue, 06 Aug 2024
- 01:48:23 -0700 (PDT)
+	s=arc-20240116; t=1722935471; c=relaxed/simple;
+	bh=/LXnopceb0XyXWy2N956eSajEfINdy0BufKmr4ESbgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eiXMh3xzL4fcuk/VYtF5joJsQsA4gB+6bF+OC6uHWJQd/+Ak7UMyZfOe9cu/H/7Igb5VQ0Pk/IkgU2jGTPHKPclkRxQqfQwG66TUHWHg6fq8fB1B4u5mAPG3ybZ4mqhZSNPn6DSt680ihw12DWp/bcU4RiDQiT4tpyYG76GPrbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YIz2+oCu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E149C32786;
+	Tue,  6 Aug 2024 09:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722935469;
+	bh=/LXnopceb0XyXWy2N956eSajEfINdy0BufKmr4ESbgM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YIz2+oCuORgJHBNWj+odScM0zng9jw6Iq4i7QgSlKx+PBhFmot2r+w0k8b793YJNC
+	 AqHh2g5H99k9GxF14qyshB1TJQlMlEUdZ20sIB4GMjOV4s/Mwvz5GaEvv+q+Bv+Mnr
+	 manFtmCBlaoj0OeN5nTJQdH4PpwU4obQSgLm9j67LpLW4pTQoaLFV9KXipZ+OpA/qR
+	 LtoNg1BLd7HSIg01giiJ0mHTivW4ykOapj9vMWp3Y3E+YCltus8PHkWkBj4GcdbUvv
+	 4R/ZfsgtdZ8Ob7vh2LK2rJeTzZvJYPWXURPaaRxkLrU0JPAo2/4ipiBoY6XW+PGL09
+	 ftTVlEJCDV74Q==
+Date: Tue, 6 Aug 2024 11:11:05 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fix bitmap corruption on close_range() with
+ CLOSE_RANGE_UNSHARE
+Message-ID: <20240806-bildhaft-farbschichten-bee7f7c20125@brauner>
+References: <20240803225054.GY5334@ZenIV>
+ <20240805-modisch-anstreben-dc6f70ad6d3e@brauner>
+ <20240805185429.GH5334@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
- <20240725-alice-file-v8-3-55a2e80deaa8@google.com> <4bf5bf3b-88f4-4ee4-80fd-c566428d9f69@proton.me>
-In-Reply-To: <4bf5bf3b-88f4-4ee4-80fd-c566428d9f69@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 6 Aug 2024 10:48:11 +0200
-Message-ID: <CAH5fLgi0MGUhbD0WV99NtU+08HCJG+LYMtx+Ca4gwfo9FR+hTw@mail.gmail.com>
-Subject: Re: [PATCH v8 3/8] rust: file: add Rust abstraction for `struct file`
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240805185429.GH5334@ZenIV>
 
-On Tue, Aug 6, 2024 at 10:44=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On 25.07.24 16:27, Alice Ryhl wrote:
-> > +/// Wraps the kernel's `struct file`. Not thread safe.
-> > +///
-> > +/// This type represents a file that is not known to be safe to transf=
-er across thread boundaries.
-> > +/// To obtain a thread-safe [`File`], use the [`assume_no_fdget_pos`] =
-conversion.
-> > +///
-> > +/// See the documentation for [`File`] for more information.
-> > +///
-> > +/// # Invariants
-> > +///
-> > +/// * All instances of this type are refcounted using the `f_count` fi=
-eld.
-> > +/// * If there is an active call to `fdget_pos` that did not take the =
-`f_pos_lock` mutex, then it
-> > +///   must be on the same thread as this `File`.
->
-> Do you mean `LocalFile`?
+On Mon, Aug 05, 2024 at 07:54:29PM GMT, Al Viro wrote:
+> On Mon, Aug 05, 2024 at 09:22:08AM +0200, Christian Brauner wrote:
+> 
+> > Really, it doesn't have to be pretty but these repros in there really
+> > have been helpful finding such corruptions when run with a proper k*san
+> > config.
+> 
+> See below; so far it survives beating (and close_range_test passes with
+> the patch, while failing the last test on mainline).  BTW, EXPECT_...
+> alone is sufficient for it to whine, but it doesn't actually fail the
+> test, so don't we need exit(EXIT_FAILURE) on (at least some of) the
+> previous tests?  Hadn't played with the kselftest before, so...
 
-I guess. Perhaps I should just say "file" as a general concept?
+The selftest infrastrcuture is a bit weird and I'm no expert myself.
+So any failure in EXPECT_*() will cause the test to fail but will
+continue running the whole test.
+Using ASSERT_*() instead of EXPECT_*() will also cause the test to fail
+but will also stop the test immediately.
 
-> > +///
-> > +/// [`assume_no_fdget_pos`]: LocalFile::assume_no_fdget_pos
-> > +pub struct LocalFile {
-> > +    inner: Opaque<bindings::file>,
-> > +}
->
-> [...]
->
-> > +    /// Returns the flags associated with the file.
-> > +    ///
-> > +    /// The flags are a combination of the constants in [`flags`].
-> > +    #[inline]
-> > +    pub fn flags(&self) -> u32 {
-> > +        // This `read_volatile` is intended to correspond to a READ_ON=
-CE call.
-> > +        //
-> > +        // SAFETY: The file is valid because the shared reference guar=
-antees a nonzero refcount.
-> > +        //
-> > +        // FIXME(read_once): Replace with `read_once` when available o=
-n the Rust side.
->
-> Do you know the status of this?
+So really no matter if EXPEC_*() or ASSERT_*() the end result should be
+that the test run fails:
 
-It's still unavailable.
+diff --git a/tools/testing/selftests/core/close_range_test.c b/tools/testing/selftests/core/close_range_test.c
+index 991c473e3859..3f7257487b85 100644
+--- a/tools/testing/selftests/core/close_range_test.c
++++ b/tools/testing/selftests/core/close_range_test.c
+@@ -37,6 +37,8 @@ TEST(core_close_range)
+        int i, ret;
+        int open_fds[101];
 
-> > +        unsafe { core::ptr::addr_of!((*self.as_ptr()).f_flags).read_vo=
-latile() }
-> > +    }
-> > +}
-> > +
-> > +impl File {
-> > +    /// Creates a reference to a [`File`] from a valid pointer.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// * The caller must ensure that `ptr` points at a valid file and=
- that the file's refcount is
-> > +    ///   positive for the duration of 'a.
-> > +    /// * The caller must ensure that if there are active `fdget_pos` =
-calls on this file, then they
-> > +    ///   took the `f_pos_lock` mutex.
-> > +    #[inline]
-> > +    pub unsafe fn from_raw_file<'a>(ptr: *const bindings::file) -> &'a=
- File {
-> > +        // SAFETY: The caller guarantees that the pointer is not dangl=
-ing and stays valid for the
-> > +        // duration of 'a. The cast is okay because `File` is `repr(tr=
-ansparent)`.
-> > +        //
-> > +        // INVARIANT: The caller guarantees that there are no problema=
-tic `fdget_pos` calls.
-> > +        unsafe { &*ptr.cast() }
-> > +    }
-> > +}
-> > +
-> > +// Make LocalFile methods available on File.
-> > +impl core::ops::Deref for File {
-> > +    type Target =3D LocalFile;
-> > +    #[inline]
-> > +    fn deref(&self) -> &LocalFile {
-> > +        // SAFETY: The caller provides a `&File`, and since it is a re=
-ference, it must point at a
-> > +        // valid file for the desired duration.
-> > +        //
-> > +        // By the type invariants, there are no `fdget_pos` calls that=
- did not take the
-> > +        // `f_pos_lock` mutex.
-> > +        unsafe { LocalFile::from_raw_file(self as *const File as *cons=
-t bindings::file) }
-> > +    }
-> > +}
-> > +
-> > +// SAFETY: The type invariants guarantee that `LocalFile` is always re=
-f-counted. This implementation
-> > +// makes `ARef<File>` own a normal refcount.
-> > +unsafe impl AlwaysRefCounted for LocalFile {
-> > +    #[inline]
-> > +    fn inc_ref(&self) {
-> > +        // SAFETY: The existence of a shared reference means that the =
-refcount is nonzero.
-> > +        unsafe { bindings::get_file(self.as_ptr()) };
-> > +    }
-> > +
-> > +    #[inline]
-> > +    unsafe fn dec_ref(obj: ptr::NonNull<LocalFile>) {
-> > +        // SAFETY: To call this method, the caller passes us ownership=
- of a normal refcount, so we
-> > +        // may drop it. The cast is okay since `File` has the same rep=
-resentation as `struct file`.
-> > +        unsafe { bindings::fput(obj.cast().as_ptr()) }
-> > +    }
-> > +}
->
-> Can you move these `AlwaysRefCounted` impls towards the struct
-> definitions?
->
-> With those two comments fixed:
->
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
++       EXPECT_NE(0, 0);
++
+        for (i = 0; i < ARRAY_SIZE(open_fds); i++) {
+                int fd;
 
-Thanks!
 
-Alice
+> ./close_range_test
+TAP version 13
+1..7
+# Starting 7 tests from 1 test cases.
+#  RUN           global.core_close_range ...
+# close_range_test.c:40:core_close_range:Expected 0 (0) != 0 (0)
+# core_close_range: Test failed
+#          FAIL  global.core_close_range
+not ok 1 global.core_close_range
+#  RUN           global.close_range_unshare ...
+#            OK  global.close_range_unshare
+ok 2 global.close_range_unshare
+#  RUN           global.close_range_unshare_capped ...
+#            OK  global.close_range_unshare_capped
+ok 3 global.close_range_unshare_capped
+#  RUN           global.close_range_cloexec ...
+#            OK  global.close_range_cloexec
+ok 4 global.close_range_cloexec
+#  RUN           global.close_range_cloexec_unshare ...
+#            OK  global.close_range_cloexec_unshare
+ok 5 global.close_range_cloexec_unshare
+#  RUN           global.close_range_cloexec_syzbot ...
+#            OK  global.close_range_cloexec_syzbot
+ok 6 global.close_range_cloexec_syzbot
+#  RUN           global.close_range_cloexec_unshare_syzbot ...
+#            OK  global.close_range_cloexec_unshare_syzbot
+ok 7 global.close_range_cloexec_unshare_syzbot
+# FAILED: 6 / 7 tests passed.
+# Totals: pass:6 fail:1 xfail:0 xpass:0 skip:0 error:0
+
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index a11e59b5d602..655338effe9c 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -46,27 +46,23 @@ static void free_fdtable_rcu(struct rcu_head *rcu)
+>  #define BITBIT_NR(nr)	BITS_TO_LONGS(BITS_TO_LONGS(nr))
+>  #define BITBIT_SIZE(nr)	(BITBIT_NR(nr) * sizeof(long))
+>  
+> +#define fdt_words(fdt) ((fdt)->max_fds / BITS_PER_LONG) // words in ->open_fds
+>  /*
+>   * Copy 'count' fd bits from the old table to the new table and clear the extra
+>   * space if any.  This does not copy the file pointers.  Called with the files
+>   * spinlock held for write.
+>   */
+> -static void copy_fd_bitmaps(struct fdtable *nfdt, struct fdtable *ofdt,
+> -			    unsigned int count)
+> +static inline void copy_fd_bitmaps(struct fdtable *nfdt, struct fdtable *ofdt,
+> +			    unsigned int copy_words)
+>  {
+> -	unsigned int cpy, set;
+> -
+> -	cpy = count / BITS_PER_BYTE;
+> -	set = (nfdt->max_fds - count) / BITS_PER_BYTE;
+> -	memcpy(nfdt->open_fds, ofdt->open_fds, cpy);
+> -	memset((char *)nfdt->open_fds + cpy, 0, set);
+> -	memcpy(nfdt->close_on_exec, ofdt->close_on_exec, cpy);
+> -	memset((char *)nfdt->close_on_exec + cpy, 0, set);
+> -
+> -	cpy = BITBIT_SIZE(count);
+> -	set = BITBIT_SIZE(nfdt->max_fds) - cpy;
+> -	memcpy(nfdt->full_fds_bits, ofdt->full_fds_bits, cpy);
+> -	memset((char *)nfdt->full_fds_bits + cpy, 0, set);
+> +	unsigned int nwords = fdt_words(nfdt);
+> +
+> +	bitmap_copy_and_extend(nfdt->open_fds, ofdt->open_fds,
+> +			copy_words * BITS_PER_LONG, nwords * BITS_PER_LONG);
+> +	bitmap_copy_and_extend(nfdt->close_on_exec, ofdt->close_on_exec,
+> +			copy_words * BITS_PER_LONG, nwords * BITS_PER_LONG);
+> +	bitmap_copy_and_extend(nfdt->full_fds_bits, ofdt->full_fds_bits,
+> +			copy_words, nwords);
+>  }
+>  
+>  /*
+> @@ -84,7 +80,7 @@ static void copy_fdtable(struct fdtable *nfdt, struct fdtable *ofdt)
+>  	memcpy(nfdt->fd, ofdt->fd, cpy);
+>  	memset((char *)nfdt->fd + cpy, 0, set);
+>  
+> -	copy_fd_bitmaps(nfdt, ofdt, ofdt->max_fds);
+> +	copy_fd_bitmaps(nfdt, ofdt, fdt_words(ofdt));
+>  }
+>  
+>  /*
+> @@ -379,7 +375,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
+>  		open_files = sane_fdtable_size(old_fdt, max_fds);
+>  	}
+>  
+> -	copy_fd_bitmaps(new_fdt, old_fdt, open_files);
+> +	copy_fd_bitmaps(new_fdt, old_fdt, open_files / BITS_PER_LONG);
+>  
+>  	old_fds = old_fdt->fd;
+>  	new_fds = new_fdt->fd;
+> diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+> index 8c4768c44a01..d3b66d77df7a 100644
+> --- a/include/linux/bitmap.h
+> +++ b/include/linux/bitmap.h
+> @@ -270,6 +270,18 @@ static inline void bitmap_copy_clear_tail(unsigned long *dst,
+>  		dst[nbits / BITS_PER_LONG] &= BITMAP_LAST_WORD_MASK(nbits);
+>  }
+>  
+> +static inline void bitmap_copy_and_extend(unsigned long *to,
+> +					  const unsigned long *from,
+> +					  unsigned int count, unsigned int size)
+> +{
+> +	unsigned int copy = BITS_TO_LONGS(count);
+> +
+> +	memcpy(to, from, copy * sizeof(long));
+> +	if (count % BITS_PER_LONG)
+> +		to[copy - 1] &= BITMAP_LAST_WORD_MASK(count);
+> +	memset(to + copy, 0, bitmap_size(size) - copy * sizeof(long));
+> +}
+> +
+>  /*
+>   * On 32-bit systems bitmaps are represented as u32 arrays internally. On LE64
+>   * machines the order of hi and lo parts of numbers match the bitmap structure.
+> diff --git a/tools/testing/selftests/core/close_range_test.c b/tools/testing/selftests/core/close_range_test.c
+> index 991c473e3859..12b4eb9d0434 100644
+> --- a/tools/testing/selftests/core/close_range_test.c
+> +++ b/tools/testing/selftests/core/close_range_test.c
+> @@ -589,4 +589,39 @@ TEST(close_range_cloexec_unshare_syzbot)
+>  	EXPECT_EQ(close(fd3), 0);
+>  }
+>  
+> +TEST(close_range_bitmap_corruption)
+> +{
+> +	pid_t pid;
+> +	int status;
+> +	struct __clone_args args = {
+> +		.flags = CLONE_FILES,
+> +		.exit_signal = SIGCHLD,
+> +	};
+> +
+> +	/* get the first 128 descriptors open */
+> +	for (int i = 2; i < 128; i++)
+> +		EXPECT_GE(dup2(0, i), 0);
+> +
+> +	/* get descriptor table shared */
+> +	pid = sys_clone3(&args, sizeof(args));
+> +	ASSERT_GE(pid, 0);
+> +
+> +	if (pid == 0) {
+> +		/* unshare and truncate descriptor table down to 64 */
+> +		if (sys_close_range(64, ~0U, CLOSE_RANGE_UNSHARE))
+> +			exit(EXIT_FAILURE);
+> +
+> +		ASSERT_EQ(fcntl(64, F_GETFD), -1);
+> +		/* ... and verify that the range 64..127 is not
+> +		   stuck "fully used" according to secondary bitmap */
+> +		EXPECT_EQ(dup(0), 64)
+> +			exit(EXIT_FAILURE);
+> +		exit(EXIT_SUCCESS);
+> +	}
+> +
+> +	EXPECT_EQ(waitpid(pid, &status, 0), pid);
+> +	EXPECT_EQ(true, WIFEXITED(status));
+> +	EXPECT_EQ(0, WEXITSTATUS(status));
+> +}
+> +
+>  TEST_HARNESS_MAIN
 
