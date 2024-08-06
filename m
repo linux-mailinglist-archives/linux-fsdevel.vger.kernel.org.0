@@ -1,205 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-25097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F7C948E33
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 13:55:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D6B948F08
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 14:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E926C1C2324F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 11:55:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 935D81C22104
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 12:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77A41C379F;
-	Tue,  6 Aug 2024 11:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8BF1C3F3E;
+	Tue,  6 Aug 2024 12:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XluvNxbM"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="h/57+CeY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D161C233C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 11:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FF21DFC7
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 12:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722945337; cv=none; b=mXoYok5i+Miu2aoMVqcVXst79BlvOw21Q1K6upe76vJ07Tr0Q7N5gFc9ZjYiQRbpiGS/T9GRLZU7c+etlq1dUWw+Fj4OFDRdQesnENAHO+iElGpxkmFVmq9urF1K19XXpOcoLI1RIm678zK2f9A4IrooAt6adnLTvTLXxfxxKZQ=
+	t=1722947588; cv=none; b=pC7bHtT9xjtZfnl9SH2yoQMcY6JAWIy1UKNUrNRxoS5AC6Kum3tIzRl0BeEsoyRChuhHBsHvOc9xV/D3Ca4ttacV1+KYH5AKSTMbjQdngLAW8GH8Uer/0VRQaEHwUcLPtk8zuilTXucRLlCia24tjtOOnzvuQqJ+xFhI+BF9D28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722945337; c=relaxed/simple;
-	bh=l3Hxs192ZIU/QlINb5D9l2U/6mCPGZxc33pyYkARqWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S5WI8dn4YUmQ/JrTWmn4QNnURK0H4Li/W9MiVJiYY4qpubqsNtEs3NGlWqrTn5NbZC9uNJa7z/gNCPCogp6CCuV7nR3e8czKHSButfFt2fxiqjWscqsFCyQiAQwtCjb0+uzl2qOOgAbBj/mfOZpuHROG9wW0C+sLEcgYaM1nAGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XluvNxbM; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b797fb1c4aso4193006d6.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 04:55:35 -0700 (PDT)
+	s=arc-20240116; t=1722947588; c=relaxed/simple;
+	bh=hLDHnjRdPnpaeg167MxCyofiZQOaLsJlLf+Rmw4qk3M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=adedP4vbrilSrbBOdjM6Nep1mXlW9R4uOZrk0Cr2OOTl07E8BtDb88neXVZE68vMqv4Ey25+H/BiUDDfeDAqq3FD6OktGL8/Ip9N6Z7g+D9WCxBjnbjpq2VOstX9U+gOXjc74u+uheyPrJW3MotvVRM/AubEc6vjS+VtehmQ+50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=h/57+CeY; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d18112b60so617975b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 05:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722945334; x=1723550134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zlSPvJLIW4qUMTCPFGl/NV88GgQ1ugTgncNXCuPo7qM=;
-        b=XluvNxbMlrJ89oml+OAn7gQV1hKJSZZY1cb7M5wjOQKOLNYbkYIYn7IIfopLmzzUjv
-         77j6u6LkVJWF17WJVmsTz6Mm2nyCvJNyFpChcm9hJo2JofWLWjTwi7fa7qi8uDB9yssG
-         91zZ4f923+Tip7YtUPun16yNm4b6rXIkIzFpmgPetZyTx9QHjSrrdJpefXLEc1XklKr4
-         eM/CtkQGj0dLMMGMD3hr20C/iLvMydkFF2GHbEukdXKnhNZcoFuJViJdSJmuukN/1nXZ
-         rHyOvA+MIQfBL/BBfs/UmlB2kN0d7191ElZOXG9Rd47HXa/qdpOQzswUrLAB5KpodoCj
-         WZgw==
+        d=fastly.com; s=google; t=1722947587; x=1723552387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AT7QwYWK8WZyIEtyo3//GG8heHvMwjuLkdYziSoLjUo=;
+        b=h/57+CeYAWdfu365BOQ6Xxc2IhfE3gf2v9om5XyaVH+zMxhTZyrfVAd63mbXzj4qEf
+         Q95+ZeSAqx59QW0Z8pO54tBttZJREbOEuPG0t+qG1wyFGjzdL0h6txUi5Bd+UUL4Bt7d
+         anUs70yV/hEzj9WKZsl3csdVs7eL7xvQz7FKI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722945334; x=1723550134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zlSPvJLIW4qUMTCPFGl/NV88GgQ1ugTgncNXCuPo7qM=;
-        b=u2j8dwZnGenxeEhwNAbt9ImoK5/OQOWPa5bEFiUlHnYAyDOtVvkcDp9oDbMl/5XIWW
-         W4MM4NBXrRTvFircv0KZNF+9D8XxeObgI+Xe2SRztzid0TrnMQdGP8oOcR89zV24d063
-         329W8rs3IwZGpqc66gtGM3zeTbU75J8Iak7XPGnI4oPQ7Y8NLDvzHfrvU6R578Vs91Ib
-         js8M8ke4/04piyc3z0G95VC+EFiJS9ZnpJa6V91jGdDNY+47cbOuVoM0ci+ZgfDM1zmh
-         RzovVWIlFY46eDKDjCXJ8kZ/K0aQ876zKtvC1qdfiEo5CxCeSQ2LpO3b5IZeWFPbH26Z
-         frdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUJPwc/H7GjjSRbnrhkR63iyrsGZNwnNvCbpQP8zlhNb9mE3MxaanyPqov6iI/UVKPjFVC/FbC/JA3gVex9kd+z5MniQxj0ui+Njhvng==
-X-Gm-Message-State: AOJu0YxFBMa9LeSYqBcBbqRzXckGUTyr9ehZMEfU0uLadbXFhFezJImK
-	Xrq46uYO80PHbwlZB/C7WAN5YG/KOkdmPbyWGGPwAPT0DU19CCPw1rZbRA+QfYiql8Uj844eV56
-	QJzUT4gAO/zfaQLy7LZXRMSG08l0=
-X-Google-Smtp-Source: AGHT+IFsoHps/mQx31mGPxMYrcwThlxh+M3gpd3hSJbNLL4HIMl01Xv6l9GoqRqMiUI1YWR35nYMwCSCmUPBfS8JueQ=
-X-Received: by 2002:a05:6214:5d12:b0:6b0:7413:e0e9 with SMTP id
- 6a1803df08f44-6bb98348810mr164918866d6.5.1722945334369; Tue, 06 Aug 2024
- 04:55:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722947587; x=1723552387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AT7QwYWK8WZyIEtyo3//GG8heHvMwjuLkdYziSoLjUo=;
+        b=KDL7T2jXw7XXCAvpBivvvgm/4btnfPrSFo+1HOt6K2nX5x/W0v7xPeeIwh7+1ySVQ8
+         dc3cOkmC/ETNigA1uz5rJfFjqWJgX07ON1ntQ5HaCCMgfAgPrnqJpTYdx+sq5weGVqBY
+         LlB1mWvDEDh7bSFfZjfrGBFDvxkTj+D0biZRAT55ksOsbfQddqgQyGYW77Y4vL0fJ8Pv
+         4b0P0uONALfavmQmYXDNmcswGzn7a6ro1OPWjYN8/FR0GtmTsZ4i+vzYA89MX7CJiZHf
+         V/5YZmbJQOh6AXFV3Dd84OwIQwi5SI9TtqRPRueQrbpRPYbN/OD6sRv0cFVYSq7bvehp
+         lLAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkRZ0nl27B9aA5LGL9lU8f5gx2UBifDwyoEzoprEekY1XnJzEg5TpKD5W81BzRMg/rjVAc2lIaRcE7w6BCJ6f7U6W/yjOkMxY2ggoHnw==
+X-Gm-Message-State: AOJu0YzQqSdn+5+NI6vL9cCSYXyIflVjDGVErM/x7RGbE8NVO53tTdpW
+	QMC+9w2TizzJoMs4ar/+9M8NjMNE11+OFc5e8koKjqfYi1CydnjY65FN0PxMJRI=
+X-Google-Smtp-Source: AGHT+IHrUqiuFtCV3WrfhBJ4arzdppGltRltfSkrJGcbzB3/8Mb8Oiy5ACComQJXPWx7LLJfKZ66aQ==
+X-Received: by 2002:a05:6a21:788a:b0:1c4:d14f:248f with SMTP id adf61e73a8af0-1c69a5f0268mr22605294637.13.1722947586715;
+        Tue, 06 Aug 2024 05:33:06 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed16cb3sm7141271b3a.179.2024.08.06.05.33.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 05:33:06 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	stable@vger.kernel.org,
+	Joe Damato <jdamato@fastly.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>
+Subject: [PATCH net] eventpoll: Annotate data-race of busy_poll_usecs
+Date: Tue,  6 Aug 2024 12:33:01 +0000
+Message-Id: <20240806123301.167557-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804080251.21239-1-laoar.shao@gmail.com> <20240805134034.mf3ljesorgupe6e7@quack3>
-In-Reply-To: <20240805134034.mf3ljesorgupe6e7@quack3>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 6 Aug 2024 19:54:58 +0800
-Message-ID: <CALOAHbCor0VoCNLACydSytV7sB8NK-TU2tkfJAej+sAvVsVDwA@mail.gmail.com>
-Subject: Re: [PATCH] fs: Add a new flag RWF_IOWAIT for preadv2(2)
-To: Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	Dave Chinner <david@fromorbit.com>, Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 5, 2024 at 9:40=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Sun 04-08-24 16:02:51, Yafang Shao wrote:
-> > Background
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Our big data workloads are deployed on XFS-based disks, and we frequent=
-ly
-> > encounter hung tasks caused by xfs_ilock. These hung tasks arise becaus=
-e
-> > different applications may access the same files concurrently. For exam=
-ple,
-> > while a datanode task is writing to a file, a filebeat[0] task might be
-> > reading the same file concurrently. If the task writing to the file tak=
-es a
-> > long time, the task reading the file will hang due to contention on the=
- XFS
-> > inode lock.
-> >
-> > This inode lock contention between writing and reading files only occur=
-s on
-> > XFS, but not on other file systems such as EXT4. Dave provided a clear
-> > explanation for why this occurs only on XFS[1]:
-> >
-> >   : I/O is intended to be atomic to ordinary files and pipes and FIFOs.
-> >   : Atomic means that all the bytes from a single operation that starte=
-d
-> >   : out together end up together, without interleaving from other I/O
-> >   : operations. [2]
-> >   : XFS is the only linux filesystem that provides this behaviour.
-> >
-> > As we have been running big data on XFS for years, we don't want to swi=
-tch
-> > to other file systems like EXT4. Therefore, we plan to resolve these is=
-sues
-> > within XFS.
-> >
-> > Proposal
-> > =3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > One solution we're currently exploring is leveraging the preadv2(2)
-> > syscall. By using the RWF_NOWAIT flag, preadv2(2) can avoid the XFS ino=
-de
-> > lock hung task. This can be illustrated as follows:
-> >
-> >   retry:
-> >       if (preadv2(fd, iovec, cnt, offset, RWF_NOWAIT) < 0) {
-> >           sleep(n)
-> >           goto retry;
-> >       }
-> >
-> > Since the tasks reading the same files are not critical tasks, a delay =
-in
-> > reading is acceptable. However, RWF_NOWAIT not only enables IOCB_NOWAIT=
- but
-> > also enables IOCB_NOIO. Therefore, if the file is not in the page cache=
-, it
-> > will loop indefinitely until someone else reads it from disk, which is =
-not
-> > acceptable.
-> >
-> > So we're planning to introduce a new flag, IOCB_IOWAIT, to preadv2(2). =
-This
-> > flag will allow reading from the disk if the file is not in the page ca=
-che
-> > but will not allow waiting for the lock if it is held by others. With t=
-his
-> > new flag, we can resolve our issues effectively.
-> >
-> > Link: https://lore.kernel.org/linux-xfs/20190325001044.GA23020@dastard/=
- [0]
-> > Link: https://github.com/elastic/beats/tree/master/filebeat [1]
-> > Link: https://pubs.opengroup.org/onlinepubs/009695399/functions/read.ht=
-ml [2]
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Cc: Dave Chinner <david@fromorbit.com>
->
-> Thanks for the detailed explanation! I understand your problem but I have=
- to
-> say I find this flag like a hack to workaround particular XFS behavior an=
-d
-> the guarantees the new RWF_IOWAIT flag should provide are not very clear =
-to
-> me.
+From: Martin Karsten <mkarsten@uwaterloo.ca>
 
-Its guarantee is clear:
+A struct eventpoll's busy_poll_usecs field can be modified via a user
+ioctl at any time. All reads of this field should be annotated with
+READ_ONCE.
 
-  : I/O is intended to be atomic to ordinary files and pipes and FIFOs.
-  : Atomic means that all the bytes from a single operation that started
-  : out together end up together, without interleaving from other I/O
-  : operations.
+Fixes: 85455c795c07 ("eventpoll: support busy poll per epoll instance")
+Cc: stable@vger.kernel.org
+Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+Reviewed-by: Joe Damato <jdamato@fastly.com>
+---
+ fs/eventpoll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What this flag does is avoid waiting for this type of lock if it
-exists. Maybe we should consider a more descriptive name like
-RWF_NOATOMICWAIT, RWF_NOFSLOCK, or RWF_NOPOSIXWAIT? Naming is always
-challenging.
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index f53ca4f7fced..6d0e2f547ae7 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -420,7 +420,7 @@ static bool busy_loop_ep_timeout(unsigned long start_time,
+ 
+ static bool ep_busy_loop_on(struct eventpoll *ep)
+ {
+-	return !!ep->busy_poll_usecs || net_busy_loop_on();
++	return !!READ_ONCE(ep->busy_poll_usecs) || net_busy_loop_on();
+ }
+ 
+ static bool ep_busy_loop_end(void *p, unsigned long start_time)
+-- 
+2.25.1
 
-Since this behavior is required by POSIX, it shouldn't be viewed as an
-XFS-specific behavior. Other filesystems might adopt this rule in the
-future as well.
-
-> I've CCed Amir who's been dealing with similar issues with XFS at his
-> employer and had some patches as far as I remember.
->
-> What you could possibly do to read the file contents without blocking on
-> xfs_iolock is to mmap the file and grab the data from the mapping. It is
-> still hacky but at least we don't have to pollute the kernel with an IO
-> flag with unclear semantics.
-
-The file size to be read is not fixed, which is why we prefer to use
-the traditional read API rather than mmap. We have implemented a
-hotfix version of this commit on many of our production servers, and
-it works well as expected. While I agree that mmap() is another viable
-option, we may consider switching to it in the future if this new flag
-introduces any issues.
-
---=20
-Regards
-Yafang
 
