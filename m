@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-25191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FD0949B50
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 00:32:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F88949B7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 00:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77AD8282877
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 22:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E76BF1C2287C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 22:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3811741C3;
-	Tue,  6 Aug 2024 22:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA69175D33;
+	Tue,  6 Aug 2024 22:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJJ2xgZN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXHpbR52"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3298913C809;
-	Tue,  6 Aug 2024 22:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6228E16CD11;
+	Tue,  6 Aug 2024 22:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722983554; cv=none; b=QOSqdBQR7uaenmQi1UoBMjgwnESNCXA9kBWZBQPWrWiIPZk5C5KIC5qVoT+VRIaYVuizICP/VELSaUybkgqYjXbFwfDsTEIWItL4LQo3RrNZXdRr4ynFXroxiMkyyKiYyN5KvuypBbQWsDnVvksqsCMPAFWX0Rc067dn8lq9FpM=
+	t=1722984191; cv=none; b=SppKYvcMqZagmPOhsABQIQgscOymmUF4VbzFyek9AVtYvyObxWzTq8lsHJCiaCWOfgu0mUNXKVr1fD/fvYgSOv+8HGW2zSUOQMwcRVwsUzTZrA7XusrfH8LQ2ZQVMwgh7dfYz+9r+nCiCyU/rn8juZEY04rOdJEc37c7M/8fU3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722983554; c=relaxed/simple;
-	bh=leEYgUvoPvWJnLdNfwt5o7egZWNN2kQLjZpPsubAb6k=;
+	s=arc-20240116; t=1722984191; c=relaxed/simple;
+	bh=ADMvC4n0oh3wghfjc0I1QjBweofU8AI28CRx4X1nqCQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ai8ysmAOD+MuBcGrNRx3RhiJv9WT++oAxdK+ab+CvE24KrHh/pYBXXpiWdvlfrLEGBzThjtS2CR+0Z7NsO+JvXOoCSrZxrFXdN0M+B3nmyfsBjXot7FUPnvl3oIIySa6eRadi+qtEJMH/CaVwIK+W+Ut4rYtkzdYfo6LXgV/PDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJJ2xgZN; arc=none smtp.client-ip=209.85.216.45
+	 To:Cc:Content-Type; b=mKB1Qzd3NrxA7yXmKTWagjjsz4iHz7c3MInOV7D4FpuleneE84Vm3f+Qw54SMoyydJ/bnp5nBgjV1n8+1OAPtuvPWlDphvBjm3qLqIvXiodiZ01AOkjQM9nBf68k/F/jSlipQdxI+fZh+oWOOOA3SrOrCgmIQszKyyT8GOkjWOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXHpbR52; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb4b7fef4aso881460a91.0;
-        Tue, 06 Aug 2024 15:32:32 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2cd5d6b2581so831739a91.2;
+        Tue, 06 Aug 2024 15:43:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722983552; x=1723588352; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722984189; x=1723588989; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UvxS0dtaG39iN3MDbCHCO5j0u4dk9U4/Rq1cmGTMqE4=;
-        b=XJJ2xgZNaZnzxKDgLXym1FQk1VExQCTP2Ib0r6WFFP8iwFcQk3+9/mCNlzE087IOXY
-         oeL9Q3wNE2rJul8T77Q6h/Lwj4q3lnJETSmDDBuKnNRHNolBp4UfK03cPw6QSIEaXaVq
-         teiH4X0SM1zdkGRSc3/LBShGHmUb2G/sDJTPl5Kt40lvYZ81C+DbiEqm0PXyx140HllM
-         1Re2ii1sqG6nr8JR0bM4Ukd+pyn2nD3JgNnzqhXkaGPnbkL2qlFOlLWZ/Tgm4NcutZD2
-         SO2LH2BoLNFomXEbwVBqK4ZoGaBkRv6OujfABNDI7k4gn9kz4v7nQvv9zVkY8ozw9NFT
-         w1nw==
+        bh=cNt5M+Kul3w3E9npRSXsBL87xWj9mvSGMN2GbHRNel0=;
+        b=hXHpbR52lghJY2g5CGpns138AghAhvCP5ES438H48tYWZNE88oCwNfcYvXIy2wZeHg
+         EIO3EMNeMkGdEja2PN4C7GlUq74kk84OXcwCdCi9xXSdRq9IKknUu7GG5JyULBWaLAX5
+         jzrch2b8CE98RUSObOsMU8gdIupfD8Ota0W+7CnnuFsCzjq4aAmJWvtoebGBJq6uNEOw
+         SZUmNmKfTM0H9OkYp6pT52kTiIwJzZfeYMK/tqZvhRV2KoXrK/UABm9W2uGFRXZqPYmj
+         4pZ4SY0XtCi0A57SUI424J5w7Zn2EGR+dQQOL4NwaYKKDCEl+KOC7/b1mcgpBFgPsstH
+         clzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722983552; x=1723588352;
+        d=1e100.net; s=20230601; t=1722984189; x=1723588989;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UvxS0dtaG39iN3MDbCHCO5j0u4dk9U4/Rq1cmGTMqE4=;
-        b=vW+r8hrf0h95pCBTQVo3j2LzO6DhpklfPYzZvSM56hWyT7r0WQX70m4iS/x6RSTLV6
-         6r/PY2x253E6jCPwD1o7rp3cGUVV1ZLaLtaqJ9qfSGjY4qQK+D9dC83u5HyeIDYY3bUs
-         2yUIIQrgg9reBB5ErLkJsYPffe6V/5IhEx0MZ0HuhJBWnZS9PMQnn5+osz/iXQyw8D70
-         FA/+8l9jz6CICUUqPUDuAaLOwh2+WvECBTYjPmIdjsq/BbLm1FmZFh85GpIri9dcGMW7
-         3JwBXB/uYyuPSk0qXtq1PKFDi7WTC970NrUP4cHUQZgyQdomMdKxJVCxm5kpFEDO3YN8
-         BhAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYqI6/HABR0evgbKCkUPwH1Gyz3tHXYHp7LePjRQulrWzfbHIsXwhz5V1hoc0Bt0uvi96cgLC3JEp6nYVjfvJhK5EhdLRsT1P0NW22528bjMLQTJZu/FKJGlabRkBfKxrqwylNEqK6ja4flq7gihgp8vwiZvFiYqQIGDo58FbHWSCF+290BEy2AA==
-X-Gm-Message-State: AOJu0YwFmlOpb7spsSyl13jwshAgRp553xKgV/xEsxZhTOHj35mc8uA5
-	3nPXKaDxUnbv988WPDfVKJSv1KWX/NCxxW30fyXyDRiqZ+sqkEEQK11PY3H1Av0X5q0/W7Cj1k2
-	Pf8idtZ8zHUKNB4EOKMUi0kcf6FkSJTHg
-X-Google-Smtp-Source: AGHT+IEtlEPVqCq+xX4ug5f2DuXvupAmSeX/5y+TmwkIXkpruMTgXasxCkPgpCT7eJcqS5qs9i5wkJ05VWorf2T0nT0=
-X-Received: by 2002:a17:90a:fe88:b0:2c9:7fba:d88b with SMTP id
- 98e67ed59e1d1-2cff9419943mr19926118a91.14.1722983552377; Tue, 06 Aug 2024
- 15:32:32 -0700 (PDT)
+        bh=cNt5M+Kul3w3E9npRSXsBL87xWj9mvSGMN2GbHRNel0=;
+        b=aIXLL1+7u2TzAhbKW7LS/rUlemuBxisQNCn8ZD+Yh4kHUFuDiMqxFNlczqkjWBAnau
+         1rxMOVILNr9Ug8NWHMq/5BdYJkC4FVtXcG67fsTxozexczLeknpCiFsqcZVxdqKJTK0w
+         CkoZI+MNEF+XZKuQlLgl/1bgEaY0RfEIhsSO4hhlVvxyMr+wyw3qlHST+Q+RnscNB0NR
+         LRjYu5JqNLl6mc+zuH9K3qLki0+q+pUz8/f3iCN190kfSedyMywuR0YBjJBiQq5dqMv6
+         PhT7lq1xNQo4KnnCRkkwQNEQNdwHNWmRboIv2IgnzjjJglStRAnZslmmYOmq4YEKaM5F
+         bNYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUk8HzIdmSlJzLWsouceZYlH0onCivrlSJ+3XJzSgrv8duyxu6JMSJlJoV7CbjEXOjSI8PN8+cZsu408DQ27L1d1Te+HGNvKop1RbpTuAIsJmJhOl0Yw/mNEt8mEDflCxCNZV/TNM19JPHA7A7m5VzquSouKs0BsjlZHSDdLuuVs6pJXOTb6etB2w==
+X-Gm-Message-State: AOJu0Yw/v5mEeZR11qF2OBJVPPg2jELWxqzuQQEMhIjsddEtWRvmb6MA
+	0Jv56CPtFt8LoVRLCYhM8qwlPAwMBcgRjKBQMTl7UsZMLoi9XXdiENAzq6J+a5yzW9WVE+0wkVx
+	fMpYJ40qbHS5civVy+FsSaJAGqtM=
+X-Google-Smtp-Source: AGHT+IEnfhAcfSgoCthpAMSGkKGWhEoY1iGwgvNJm7uNk8jQoZ81xw/lBpbAmrFYQBME1zpJW4lpxRhr78WreNlX4x4=
+X-Received: by 2002:a17:90a:a417:b0:2c9:6f8d:7270 with SMTP id
+ 98e67ed59e1d1-2cff9544dc7mr14391710a91.42.1722984188556; Tue, 06 Aug 2024
+ 15:43:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,288 +72,145 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240730050927.GC5334@ZenIV> <20240730051625.14349-1-viro@kernel.org>
- <20240730051625.14349-17-viro@kernel.org>
-In-Reply-To: <20240730051625.14349-17-viro@kernel.org>
+ <20240730051625.14349-35-viro@kernel.org>
+In-Reply-To: <20240730051625.14349-35-viro@kernel.org>
 From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 6 Aug 2024 15:32:20 -0700
-Message-ID: <CAEf4BzZipqBVhoY-S+WdeQ8=MhpKk-2dE_ESfGpV-VTm31oQUQ@mail.gmail.com>
-Subject: Re: [PATCH 17/39] bpf: resolve_pseudo_ldimm64(): take handling of a
- single ldimm64 insn into helper
-To: viro@kernel.org, bpf@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, brauner@kernel.org, 
-	cgroups@vger.kernel.org, kvm@vger.kernel.org, netdev@vger.kernel.org, 
-	torvalds@linux-foundation.org
+Date: Tue, 6 Aug 2024 15:42:56 -0700
+Message-ID: <CAEf4BzasSXFx5edPknxVnmk+o6oAyOU0h_Tg_yHVaJcaJfpPOQ@mail.gmail.com>
+Subject: Re: [PATCH 35/39] convert bpf_token_create()
+To: viro@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, bpf@vger.kernel.org, 
+	brauner@kernel.org, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
+	netdev@vger.kernel.org, torvalds@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 10:20=E2=80=AFPM <viro@kernel.org> wrote:
+On Mon, Jul 29, 2024 at 10:27=E2=80=AFPM <viro@kernel.org> wrote:
 >
 > From: Al Viro <viro@zeniv.linux.org.uk>
 >
-> Equivalent transformation.  For one thing, it's easier to follow that way=
-.
-> For another, that simplifies the control flow in the vicinity of struct f=
-d
-> handling in there, which will allow a switch to CLASS(fd) and make the
-> thing much easier to verify wrt leaks.
+> keep file reference through the entire thing, don't bother with
+> grabbing struct path reference (except, for now, around the LSM
+> call and that only until it gets constified) and while we are
+> at it, don't confuse the hell out of readers by random mix of
+> path.dentry->d_sb and path.mnt->mnt_sb uses - these two are equal,
+> so just put one of those into a local variable and use that.
 >
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->  kernel/bpf/verifier.c | 342 +++++++++++++++++++++---------------------
->  1 file changed, 172 insertions(+), 170 deletions(-)
+>  kernel/bpf/token.c | 69 +++++++++++++++++-----------------------------
+>  1 file changed, 26 insertions(+), 43 deletions(-)
 >
 
-This looks unnecessarily intrusive. I think it's best to extract the
-logic of fetching and adding bpf_map by fd into a helper and that way
-contain fdget + fdput logic nicely. Something like below, which I can
-send to bpf-next.
+LGTM overall (modulo // comments, but see below)
 
-commit b5eec08241cc0263e560551de91eda73ccc5987d
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+> index 9b92cb886d49..15da405d8302 100644
+> --- a/kernel/bpf/token.c
+> +++ b/kernel/bpf/token.c
+> @@ -116,67 +116,52 @@ int bpf_token_create(union bpf_attr *attr)
+
+[...]
+
+> -       err =3D security_bpf_token_create(token, attr, &path);
+> +       path_get(&path);        // kill it
+> +       err =3D security_bpf_token_create(token, attr, &path); // constif=
+y
+> +       path_put(&path);        // kill it
+>         if (err)
+>                 goto out_token;
+>
+
+By constify you mean something like below?
+
+commit 06a6442ca9cc441805881eea61fd57d7defadaca
 Author: Andrii Nakryiko <andrii@kernel.org>
-Date:   Tue Aug 6 14:31:34 2024 -0700
+Date:   Tue Aug 6 15:38:12 2024 -0700
 
-    bpf: factor out fetching bpf_map from FD and adding it to used_maps lis=
-t
+    security: constify struct path in bpf_token_create() LSM hook
 
-    Factor out the logic to extract bpf_map instances from FD embedded in
-    bpf_insns, adding it to the list of used_maps (unless it's already
-    there, in which case we just reuse map's index). This simplifies the
-    logic in resolve_pseudo_ldimm64(), especially around `struct fd`
-    handling, as all that is now neatly contained in the helper and doesn't
-    leak into a dozen error handling paths.
+    There is no reason why struct path pointer shouldn't be const-qualified
+    when being passed into bpf_token_create() LSM hook. Add that const.
 
+    Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index df3be12096cf..14e4ef687a59 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -18865,6 +18865,58 @@ static bool bpf_map_is_cgroup_storage(struct
-bpf_map *map)
-         map->map_type =3D=3D BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE);
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 855db460e08b..462b55378241 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -431,7 +431,7 @@ LSM_HOOK(int, 0, bpf_prog_load, struct bpf_prog
+*prog, union bpf_attr *attr,
+      struct bpf_token *token)
+ LSM_HOOK(void, LSM_RET_VOID, bpf_prog_free, struct bpf_prog *prog)
+ LSM_HOOK(int, 0, bpf_token_create, struct bpf_token *token, union
+bpf_attr *attr,
+-     struct path *path)
++     const struct path *path)
+ LSM_HOOK(void, LSM_RET_VOID, bpf_token_free, struct bpf_token *token)
+ LSM_HOOK(int, 0, bpf_token_cmd, const struct bpf_token *token, enum
+bpf_cmd cmd)
+ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap=
+)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 1390f1efb4f0..31523a2c71c4 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -2137,7 +2137,7 @@ extern int security_bpf_prog_load(struct
+bpf_prog *prog, union bpf_attr *attr,
+                   struct bpf_token *token);
+ extern void security_bpf_prog_free(struct bpf_prog *prog);
+ extern int security_bpf_token_create(struct bpf_token *token, union
+bpf_attr *attr,
+-                     struct path *path);
++                     const struct path *path);
+ extern void security_bpf_token_free(struct bpf_token *token);
+ extern int security_bpf_token_cmd(const struct bpf_token *token, enum
+bpf_cmd cmd);
+ extern int security_bpf_token_capable(const struct bpf_token *token, int c=
+ap);
+@@ -2177,7 +2177,7 @@ static inline void security_bpf_prog_free(struct
+bpf_prog *prog)
+ { }
+
+ static inline int security_bpf_token_create(struct bpf_token *token,
+union bpf_attr *attr,
+-                     struct path *path)
++                        const struct path *path)
+ {
+     return 0;
+ }
+diff --git a/security/security.c b/security/security.c
+index 8cee5b6c6e6d..d8d0b67ced25 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -5510,7 +5510,7 @@ int security_bpf_prog_load(struct bpf_prog
+*prog, union bpf_attr *attr,
+  * Return: Returns 0 on success, error on failure.
+  */
+ int security_bpf_token_create(struct bpf_token *token, union bpf_attr *att=
+r,
+-                  struct path *path)
++                  const struct path *path)
+ {
+     return call_int_hook(bpf_token_create, token, attr, path);
+ }
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 55c78c318ccd..0eec141a8f37 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6965,7 +6965,7 @@ static void selinux_bpf_prog_free(struct bpf_prog *pr=
+og)
  }
 
-+/* Add map behind fd to used maps list, if it's not already there, and ret=
-urn
-+ * its index. Also set *reused to true if this map was already in the list=
- of
-+ * used maps.
-+ * Returns <0 on error, or >=3D 0 index, on success.
-+ */
-+static int add_used_map_from_fd(struct bpf_verifier_env *env, int fd,
-bool *reused)
-+{
-+    struct fd f =3D fdget(fd);
-+    struct bpf_map *map;
-+    int i;
-+
-+    map =3D __bpf_map_get(f);
-+    if (IS_ERR(map)) {
-+        verbose(env, "fd %d is not pointing to valid bpf_map\n", fd);
-+        return PTR_ERR(map);
-+    }
-+
-+    /* check whether we recorded this map already */
-+    for (i =3D 0; i < env->used_map_cnt; i++) {
-+        if (env->used_maps[i] =3D=3D map) {
-+            *reused =3D true;
-+            fdput(f);
-+            return i;
-+        }
-+    }
-+
-+    if (env->used_map_cnt >=3D MAX_USED_MAPS) {
-+        verbose(env, "The total number of maps per program has
-reached the limit of %u\n",
-+            MAX_USED_MAPS);
-+        fdput(f);
-+        return -E2BIG;
-+    }
-+
-+    if (env->prog->sleepable)
-+        atomic64_inc(&map->sleepable_refcnt);
-+
-+    /* hold the map. If the program is rejected by verifier,
-+     * the map will be released by release_maps() or it
-+     * will be used by the valid program until it's unloaded
-+     * and all maps are released in bpf_free_used_maps()
-+     */
-+    bpf_map_inc(map);
-+
-+    *reused =3D false;
-+    env->used_maps[env->used_map_cnt++] =3D map;
-+
-+    fdput(f);
-+
-+    return env->used_map_cnt - 1;
-+
-+}
-+
- /* find and rewrite pseudo imm in ld_imm64 instructions:
-  *
-  * 1. if it accesses map FD, replace it with actual map pointer.
-@@ -18876,7 +18928,7 @@ static int resolve_pseudo_ldimm64(struct
-bpf_verifier_env *env)
+ static int selinux_bpf_token_create(struct bpf_token *token, union
+bpf_attr *attr,
+-                    struct path *path)
++                    const struct path *path)
  {
-     struct bpf_insn *insn =3D env->prog->insnsi;
-     int insn_cnt =3D env->prog->len;
--    int i, j, err;
-+    int i, err;
-
-     err =3D bpf_prog_calc_tag(env->prog);
-     if (err)
-@@ -18893,9 +18945,10 @@ static int resolve_pseudo_ldimm64(struct
-bpf_verifier_env *env)
-         if (insn[0].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW)) {
-             struct bpf_insn_aux_data *aux;
-             struct bpf_map *map;
--            struct fd f;
-+            int map_idx;
-             u64 addr;
-             u32 fd;
-+            bool reused;
-
-             if (i =3D=3D insn_cnt - 1 || insn[1].code !=3D 0 ||
-                 insn[1].dst_reg !=3D 0 || insn[1].src_reg !=3D 0 ||
-@@ -18956,20 +19009,18 @@ static int resolve_pseudo_ldimm64(struct
-bpf_verifier_env *env)
-                 break;
-             }
-
--            f =3D fdget(fd);
--            map =3D __bpf_map_get(f);
--            if (IS_ERR(map)) {
--                verbose(env, "fd %d is not pointing to valid bpf_map\n", f=
-d);
--                return PTR_ERR(map);
--            }
-+            map_idx =3D add_used_map_from_fd(env, fd, &reused);
-+            if (map_idx < 0)
-+                return map_idx;
-+            map =3D env->used_maps[map_idx];
-+
-+            aux =3D &env->insn_aux_data[i];
-+            aux->map_index =3D map_idx;
-
-             err =3D check_map_prog_compatibility(env, map, env->prog);
--            if (err) {
--                fdput(f);
-+            if (err)
-                 return err;
--            }
-
--            aux =3D &env->insn_aux_data[i];
-             if (insn[0].src_reg =3D=3D BPF_PSEUDO_MAP_FD ||
-                 insn[0].src_reg =3D=3D BPF_PSEUDO_MAP_IDX) {
-                 addr =3D (unsigned long)map;
-@@ -18978,13 +19029,11 @@ static int resolve_pseudo_ldimm64(struct
-bpf_verifier_env *env)
-
-                 if (off >=3D BPF_MAX_VAR_OFF) {
-                     verbose(env, "direct value offset of %u is not
-allowed\n", off);
--                    fdput(f);
-                     return -EINVAL;
-                 }
-
-                 if (!map->ops->map_direct_value_addr) {
-                     verbose(env, "no direct value access support for
-this map type\n");
--                    fdput(f);
-                     return -EINVAL;
-                 }
-
-@@ -18992,7 +19041,6 @@ static int resolve_pseudo_ldimm64(struct
-bpf_verifier_env *env)
-                 if (err) {
-                     verbose(env, "invalid access to map value
-pointer, value_size=3D%u off=3D%u\n",
-                         map->value_size, off);
--                    fdput(f);
-                     return err;
-                 }
-
-@@ -19003,70 +19051,39 @@ static int resolve_pseudo_ldimm64(struct
-bpf_verifier_env *env)
-             insn[0].imm =3D (u32)addr;
-             insn[1].imm =3D addr >> 32;
-
--            /* check whether we recorded this map already */
--            for (j =3D 0; j < env->used_map_cnt; j++) {
--                if (env->used_maps[j] =3D=3D map) {
--                    aux->map_index =3D j;
--                    fdput(f);
--                    goto next_insn;
--                }
--            }
--
--            if (env->used_map_cnt >=3D MAX_USED_MAPS) {
--                verbose(env, "The total number of maps per program
-has reached the limit of %u\n",
--                    MAX_USED_MAPS);
--                fdput(f);
--                return -E2BIG;
--            }
--
--            if (env->prog->sleepable)
--                atomic64_inc(&map->sleepable_refcnt);
--            /* hold the map. If the program is rejected by verifier,
--             * the map will be released by release_maps() or it
--             * will be used by the valid program until it's unloaded
--             * and all maps are released in bpf_free_used_maps()
--             */
--            bpf_map_inc(map);
--
--            aux->map_index =3D env->used_map_cnt;
--            env->used_maps[env->used_map_cnt++] =3D map;
-+            /* proceed with extra checks only if its newly added used map =
-*/
-+            if (reused)
-+                goto next_insn;
-
-             if (bpf_map_is_cgroup_storage(map) &&
-                 bpf_cgroup_storage_assign(env->prog->aux, map)) {
-                 verbose(env, "only one cgroup storage of each type is
-allowed\n");
--                fdput(f);
-                 return -EBUSY;
-             }
-             if (map->map_type =3D=3D BPF_MAP_TYPE_ARENA) {
-                 if (env->prog->aux->arena) {
-                     verbose(env, "Only one arena per program\n");
--                    fdput(f);
-                     return -EBUSY;
-                 }
-                 if (!env->allow_ptr_leaks || !env->bpf_capable) {
-                     verbose(env, "CAP_BPF and CAP_PERFMON are
-required to use arena\n");
--                    fdput(f);
-                     return -EPERM;
-                 }
-                 if (!env->prog->jit_requested) {
-                     verbose(env, "JIT is required to use arena\n");
--                    fdput(f);
-                     return -EOPNOTSUPP;
-                 }
-                 if (!bpf_jit_supports_arena()) {
-                     verbose(env, "JIT doesn't support arena\n");
--                    fdput(f);
-                     return -EOPNOTSUPP;
-                 }
-                 env->prog->aux->arena =3D (void *)map;
-                 if (!bpf_arena_get_user_vm_start(env->prog->aux->arena)) {
-                     verbose(env, "arena's user address must be set
-via map_extra or mmap()\n");
--                    fdput(f);
-                     return -EINVAL;
-                 }
-             }
-
--            fdput(f);
- next_insn:
-             insn++;
-             i++;
-
+     struct bpf_security_struct *bpfsec;
 
 
 [...]
