@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-25159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A6C9497DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 20:58:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C0C9497E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 20:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3A01F2480B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 18:58:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A9B2B24ED9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 18:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4591B7E575;
-	Tue,  6 Aug 2024 18:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6135582498;
+	Tue,  6 Aug 2024 18:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqFqbAUH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRrTHpQ9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFC28F77;
-	Tue,  6 Aug 2024 18:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B872678C73;
+	Tue,  6 Aug 2024 18:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722970685; cv=none; b=bAPsK1ebbe9gnTN51xmfHJHedKqK41qD/eMTSabnvY7EB1mAWUwF/gEVOSe5HRb2s1+kqOGz8qHh01YLlHzo3rQd4yEOnN/FJbRUBAFuICYm20cboHWpoYLxRKHNTzEEENIQxEz+8lWV43E1uAmEvKgzUIDUYUmsvcLux+uFs14=
+	t=1722970735; cv=none; b=koSUD5/osQPtvSkvuJFZ+SxWwYkZIseQCtwsEhWZYTHlF6qkk0PONFREWGIFUY2lvCZMQ6ARcu2/9Gs2L6U6FWqf8BOTYZ6MzOl/FJkkLnXgUtrUiU7V9+RhCkLZWfCzY1AUXPYd6InK0oH5R+VmJS+VfWK/+g0GJuOvtdLq7uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722970685; c=relaxed/simple;
-	bh=XimH0OuNIUTLC54WyHG6saQ35XMNvhja1+IPfPU9k/I=;
+	s=arc-20240116; t=1722970735; c=relaxed/simple;
+	bh=sq/6bIwtgX65g1j9QJ/c/Okf2qDhkpnw1TnxpOt0wEQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkIpqnCkEut9Tr2G3n91VEK3MqYWln3u3DOJy6EJAWwLBzIMKodetaSWGY9BwEZtzZs+PzhvAbQ696V8JVEhCZ6MNFxsmT9czB4DRnihAlN7TCBsCPWZ03jHgwO3Uos0mYBNUcgEiC1UrczqPI1WZeSvCWAsMD81+KwGG4EuP2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqFqbAUH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64701C32786;
-	Tue,  6 Aug 2024 18:58:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbWicNiZE8q0SN04kmUhk4NgzZFBGfwDHU8PQwUnWpGO107ZODJAAzwMfUawHZ9tTutD7Kv4T9OGdoc45RkjDGDMXvZDeYcHGhfDV5vB1Bwu5WCMWkRM25JWeIC4HsP95wq+xKEtZs/MlfsZywtBzXYu3Uko5Pr3gi8xQP+Abaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRrTHpQ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29265C4AF0D;
+	Tue,  6 Aug 2024 18:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722970685;
-	bh=XimH0OuNIUTLC54WyHG6saQ35XMNvhja1+IPfPU9k/I=;
+	s=k20201202; t=1722970735;
+	bh=sq/6bIwtgX65g1j9QJ/c/Okf2qDhkpnw1TnxpOt0wEQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cqFqbAUHYuQbPVnvuqQAElWSBkp5YetK7859aYaQEkMbl+2Vf0wG/H0Tig9nROcxl
-	 0eNIKbTWbW6lO59nmX2mqZN0c9g0mu4G33RDSk3mn0OT6wOo43kpuKyaTVnn06imQh
-	 8kfpnb+gq/qcKVC2tFbhssZffzdhhzZ6b1SliAqoHMydU33AMIU1mRxyd0dVflQn1e
-	 kBeF49GFrBu/rWu7CAhaNcVv7y5bqOkvIUPD4uP2+3TRUiN9AssUnJqhxxh4O7Xs8X
-	 Xl+ks2brMkNyjnP1ggJSrUm7EoboYIjYRAeacaNcq+ptpGGkvOX/ztTaeAOJtWBRKw
-	 /b7cwAp0AisNg==
-Date: Tue, 6 Aug 2024 11:58:04 -0700
+	b=rRrTHpQ9owP18R1gl9dDtsPNHtr0qq6S1eJp3vrSDu8g258nXluRV1aAZ8+CTYcMI
+	 5yBzIxZ8bm68wy6DIsCydKC5CgIEI2J0xyFf2+XurHw4uwlM7TQQzhMHa4w9aVih2g
+	 7VUC0u0Tecb/0m175Oo1AnRdD//rRySlYye+GEFsdnjMGig/cyVIO3lXXYK6kbXA0K
+	 ExKk03xkN22fBZm1YsuyluRoBkD+ewtKzS029dPgmuFkjR4+MrTf1F7FwgEukOIE/D
+	 Jpa4hSfkz7ROq6iTPSSbH3Ih4UDmvxyeVL7YJhpIB7D1YIcaXxGV40/BeQpG/dXrTy
+	 mliaxu4nWmF6Q==
+Date: Tue, 6 Aug 2024 11:58:53 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: John Garry <john.g.garry@oracle.com>
 Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
@@ -49,10 +49,10 @@ Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
 	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
 	martin.petersen@oracle.com
-Subject: Re: [PATCH v2 04/13] xfs: make EOF allocation simpler
-Message-ID: <20240806185804.GH623936@frogsfrogsfrogs>
-References: <20240705162450.3481169-1-john.g.garry@oracle.com>
- <20240705162450.3481169-5-john.g.garry@oracle.com>
+Subject: Re: [PATCH v3 04/14] xfs: make EOF allocation simpler
+Message-ID: <20240806185853.GI623936@frogsfrogsfrogs>
+References: <20240801163057.3981192-1-john.g.garry@oracle.com>
+ <20240801163057.3981192-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,9 +61,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240705162450.3481169-5-john.g.garry@oracle.com>
+In-Reply-To: <20240801163057.3981192-5-john.g.garry@oracle.com>
 
-On Fri, Jul 05, 2024 at 04:24:41PM +0000, John Garry wrote:
+On Thu, Aug 01, 2024 at 04:30:47PM +0000, John Garry wrote:
 > From: Dave Chinner <dchinner@redhat.com>
 > 
 > Currently the allocation at EOF is broken into two cases - when the
@@ -93,10 +93,10 @@ On Fri, Jul 05, 2024 at 04:24:41PM +0000, John Garry wrote:
 >  2 files changed, 54 insertions(+), 77 deletions(-)
 > 
 > diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index b5156bafb7be..4122a2da06ec 100644
+> index 25a87e1154bb..42a75d257b35 100644
 > --- a/fs/xfs/libxfs/xfs_bmap.c
 > +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -3309,12 +3309,12 @@ xfs_bmap_select_minlen(
+> @@ -3310,12 +3310,12 @@ xfs_bmap_select_minlen(
 >  static int
 >  xfs_bmap_btalloc_select_lengths(
 >  	struct xfs_bmalloca	*ap,
@@ -111,7 +111,7 @@ On Fri, Jul 05, 2024 at 04:24:41PM +0000, John Garry wrote:
 >  	int			error = 0;
 >  
 >  	if (ap->tp->t_flags & XFS_TRANS_LOWMODE) {
-> @@ -3328,19 +3328,18 @@ xfs_bmap_btalloc_select_lengths(
+> @@ -3329,19 +3329,18 @@ xfs_bmap_btalloc_select_lengths(
 >  	if (startag == NULLAGNUMBER)
 >  		startag = 0;
 >  
@@ -134,7 +134,7 @@ On Fri, Jul 05, 2024 at 04:24:41PM +0000, John Garry wrote:
 >  	return error;
 >  }
 >  
-> @@ -3550,78 +3549,40 @@ xfs_bmap_exact_minlen_extent_alloc(
+> @@ -3551,78 +3550,40 @@ xfs_bmap_exact_minlen_extent_alloc(
 >   * If we are not low on available data blocks and we are allocating at
 >   * EOF, optimise allocation for contiguous file extension and/or stripe
 >   * alignment of the new extent.
@@ -232,7 +232,7 @@ On Fri, Jul 05, 2024 at 04:24:41PM +0000, John Garry wrote:
 >  }
 >  
 >  /*
-> @@ -3687,12 +3648,19 @@ xfs_bmap_btalloc_filestreams(
+> @@ -3688,12 +3649,19 @@ xfs_bmap_btalloc_filestreams(
 >  	}
 >  
 >  	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
@@ -250,10 +250,12 @@ On Fri, Jul 05, 2024 at 04:24:41PM +0000, John Garry wrote:
 > +		args->alignment = 1;
 > +		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
 
-and again going back a couple of submissions, do we have to zero
-alignslop here?
+Oops, I just replied to the v2 thread instead of this.
 
+From
 https://lore.kernel.org/linux-xfs/20240621203556.GU3058325@frogsfrogsfrogs/
+
+Do we have to zero args->alignslop here?
 
 --D
 
@@ -262,7 +264,7 @@ https://lore.kernel.org/linux-xfs/20240621203556.GU3058325@frogsfrogsfrogs/
 >  out_low_space:
 >  	/*
 >  	 * We are now done with the perag reference for the filestreams
-> @@ -3714,7 +3682,6 @@ xfs_bmap_btalloc_best_length(
+> @@ -3715,7 +3683,6 @@ xfs_bmap_btalloc_best_length(
 >  	struct xfs_bmalloca	*ap,
 >  	struct xfs_alloc_arg	*args)
 >  {
@@ -270,7 +272,7 @@ https://lore.kernel.org/linux-xfs/20240621203556.GU3058325@frogsfrogsfrogs/
 >  	int			error;
 >  
 >  	ap->blkno = XFS_INO_TO_FSB(args->mp, ap->ip->i_ino);
-> @@ -3725,23 +3692,33 @@ xfs_bmap_btalloc_best_length(
+> @@ -3726,23 +3693,33 @@ xfs_bmap_btalloc_best_length(
 >  	 * the request.  If one isn't found, then adjust the minimum allocation
 >  	 * size to the largest space found.
 >  	 */
@@ -315,7 +317,7 @@ https://lore.kernel.org/linux-xfs/20240621203556.GU3058325@frogsfrogsfrogs/
 >  		return error;
 >  
 > diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-> index 9f71a9a3a65e..40a2daeea712 100644
+> index 2fa29d2f004e..c5d220d51757 100644
 > --- a/fs/xfs/libxfs/xfs_ialloc.c
 > +++ b/fs/xfs/libxfs/xfs_ialloc.c
 > @@ -780,7 +780,7 @@ xfs_ialloc_ag_alloc(
