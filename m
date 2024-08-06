@@ -1,281 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-25109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFD894931F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 16:32:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9847094934D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 16:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E237E1C21C3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 14:32:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB9F01C2304E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 14:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8F31BE23E;
-	Tue,  6 Aug 2024 14:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UjsuwahO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987891D54DC;
+	Tue,  6 Aug 2024 14:38:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52F518D659;
-	Tue,  6 Aug 2024 14:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DC51D2F50
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 14:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722954740; cv=none; b=sniDSDLkYMf5oFDdnmSAz+gHZT2u4ND4EZUlLv+UEb9fRJhHJVzzMHrvckOnqa472PFD43t4/wvXXeHgwegDUU0dNj7HtkntNLbvC6+DFlo3Q8L5QXRJ7h60FSA+KXGkbYaRpfQPyz1Fie2yG6zU1zSDPE+fiAFWaTpsyH2gS7o=
+	t=1722955115; cv=none; b=AUBoy6dI6I7EAvEh6bJf2jxqUIxFfjvf8DJ/adlkfRsFm99VVbodqMVHYR3k3qTkRMQWwjaT6GGfMaIyC/6fCK2DaXlbUlfa1s1eghxaJ5sXUFtADXZ6qTlFmlMTlGcIRtEZV4oODU62GwsqEBFix0zGd9v4+HgYMBmMoMo5ZFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722954740; c=relaxed/simple;
-	bh=691QilyEvzlg/2Bt54Q3j8m95vwztLrqKuCrAM5y/Dw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P0Vd4wqjNlEjOvhKbwl7s2LhIbZm4kIqPn5yVmXOWNVOSnn89119kN2NaHdSr4dKpCKm3+u1VTmJssbVK8TShJS8Xz0uS+Yjj+5VfXBJniGEUDDo1ZJi6ACJl8Gbl7fHLZJ0k7Y2SmiTXXqiiOePpPDAqtjP9ZNxfL3FjOUaUO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UjsuwahO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1095C32786;
-	Tue,  6 Aug 2024 14:32:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722954739;
-	bh=691QilyEvzlg/2Bt54Q3j8m95vwztLrqKuCrAM5y/Dw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=UjsuwahOj+Jt7EWqhiFcM1kX04RiH7FOmxi8A36JnsLoNHiKiQPbRiRq4fm1mwCZQ
-	 5V6ol5zZgLnftev2CGHOFJyT4JMqpCONaxxMZBMcVuqjOQKgthf3aCrmAH3B0MNB6I
-	 +bCB2ku07L56R5xjy9+jYuu6Nu2ZAYP7QRstFPY8HdGDZCH2U0Xst1iajW0VEKQoCE
-	 FfpVLJg8Ys0QCY+z6jAOgxMyQuf24GivI06fUSzvaMsyqz1v4UmxYSSeDWelGifF9v
-	 Js08u1vMiOpSY4g1V8JL1JIquX6TosWVcLC+X+QhNFFde5PyOXAKy6tSNj2jUSo9b3
-	 pEBNuwWPkff9A==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 06 Aug 2024 10:32:17 -0400
-Subject: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+	s=arc-20240116; t=1722955115; c=relaxed/simple;
+	bh=I7uuq+gz1aOnDED7ieqVh/OdYhRbOKEI+TyDsKUjMHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hoW0aHao1Xn2Y52RNF60Eu/C1vVLgMFSVeKg2XEKDFsPADdRsxt0gimdWajPHYsCZ0g+SZTQzaS3f2bw+gqNoBZn+nNaxuw4nO/T7eIRk5SXJeUGZdUF0qrcO90isV+N/9sqOV/O4BGQhmnknqdoBmtYTsbVzyMsamsZXSSIjqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D3071063;
+	Tue,  6 Aug 2024 07:38:58 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 168703F6A8;
+	Tue,  6 Aug 2024 07:38:28 -0700 (PDT)
+Date: Tue, 6 Aug 2024 15:38:26 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
+	broonie@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
+	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
+	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 15/29] arm64: handle PKEY/POE faults
+Message-ID: <ZrI1Yo6UZ/grRWYu@e133380.arm.com>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+ <20240503130147.1154804-16-joey.gouly@arm.com>
+ <ZqJ11TqIJq9oB+pt@e133380.arm.com>
+ <20240801160110.GC841837@e124191.cambridge.arm.com>
+ <ZrImMQ44dlrqCf6v@e133380.arm.com>
+ <20240806134357.GA2017741@e124191.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240806-openfast-v2-1-42da45981811@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAPAzsmYC/0XMQQ7CIBCF4as0sxYDQ9OqK+9huhjp0BINNNAQT
- cPdxbpw+b+8fBskjo4TXJoNImeXXPA18NCAmclPLNxYG1BiK3vUIizsLaVVkGnP1N87Ghmh3pf
- I1r126jbUnl1aQ3zvclbf9YecJP6RrIQUpIy1SFrLTl8fHD0/jyFOMJRSPv3g3cihAAAA
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5709; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=691QilyEvzlg/2Bt54Q3j8m95vwztLrqKuCrAM5y/Dw=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmsjPyr6qXd81k0Il4k3F/nEVaNrCMBJs90Adem
- X5fXKKOpzCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZrIz8gAKCRAADmhBGVaC
- FdJwD/9ZtRjBDilpM06eP2KszTn2z+boLaqZ7wSU9gdR0diSG7KHs/aBEkgfcj+l5n2HWSIe2YT
- 56dpcSurrgVqkGI9x+xOI2V8StdWXjKr9eMbYeo3cwFOfyIm8v8aD8xcBdWVMGWdQNTrcJg5Fh7
- CFAn6it42nKwcD6YCvG6lpU+LuqaUdlPe/dHJN0KEsWr//l/MEeUV6gD1UhdKRdmJifZ1ZBA26M
- 4sMhbOtNCk3mtN0IJrIgYz/C/9ZOgB3Fj61sUbbR/xSJvMOns8Ag3yzrbKF6OM775ahokxfElNa
- QWUurkw4tnWa6QaGSPPrroo7sjvh1x0ny3waqKODN7XtJa1hckVTnRwY0Bjq+yLiWMVCRu66TSf
- C4yP5Kq7jUV9MjrorNGN2NAb/NWK7WbqKJW1qA/NRlu7RawGpf8WNNqEOtgjVI+xxBoyufmYMYX
- jKnPVVbxoMQMmsiFFzIUTq2ItA8wTw/C9S/AajaItN74fsWmYVB7azfS13Yq7UyqwQgi/V9+bPu
- SW/YJ7kPxcJMuBbbMPKW3K+edmdOhwLHQwgPV6lLgqiHFMc22JBttVgwBJIJ+2NaEs2TdXgenXf
- 9n3By0pz4shRSZN8qrxJ77nSCcr9wQPw9GO44sEoDuObb1hYBkuA0r3V9YWObHr9XClZJqX9BF+
- XIJ5b01NUr2tolw==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806134357.GA2017741@e124191.cambridge.arm.com>
 
-Today, when opening a file we'll typically do a fast lookup, but if
-O_CREAT is set, the kernel always takes the exclusive inode lock. I
-assume this was done with the expectation that O_CREAT means that we
-always expect to do the create, but that's often not the case. Many
-programs set O_CREAT even in scenarios where the file already exists.
+Hi,
 
-This patch rearranges the pathwalk-for-open code to also attempt a
-fast_lookup in certain O_CREAT cases. If a positive dentry is found, the
-inode_lock can be avoided altogether, and if auditing isn't enabled, it
-can stay in rcuwalk mode for the last step_into.
+On Tue, Aug 06, 2024 at 02:43:57PM +0100, Joey Gouly wrote:
+> On Tue, Aug 06, 2024 at 02:33:37PM +0100, Dave Martin wrote:
+> > Hi,
+> > 
+> > On Thu, Aug 01, 2024 at 05:01:10PM +0100, Joey Gouly wrote:
+> > > On Thu, Jul 25, 2024 at 04:57:09PM +0100, Dave Martin wrote:
+> > > > On Fri, May 03, 2024 at 02:01:33PM +0100, Joey Gouly wrote:
+> > > > > If a memory fault occurs that is due to an overlay/pkey fault, report that to
+> > > > > userspace with a SEGV_PKUERR.
+> > > > > 
+> > > > > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> > > > > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > > > > Cc: Will Deacon <will@kernel.org>
+> > > > > ---
+> > > > >  arch/arm64/include/asm/traps.h |  1 +
+> > > > >  arch/arm64/kernel/traps.c      | 12 ++++++--
+> > > > >  arch/arm64/mm/fault.c          | 56 ++++++++++++++++++++++++++++++++--
+> > > > >  3 files changed, 64 insertions(+), 5 deletions(-)
 
-One notable exception that is hopefully temporary: if we're doing an
-rcuwalk and auditing is enabled, skip the lookup_fast. Legitimizing the
-dentry in that case is more expensive than taking the i_rwsem for now.
+[...]
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-Here's a revised patch that does a fast_lookup in the O_CREAT codepath
-too. The main difference here is that if a positive dentry is found and
-audit_dummy_context is true, then we keep the walk lazy for the last
-component, which avoids having to take any locks on the parent (just
-like with non-O_CREAT opens).
+> > > > > diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> > > > > index 215e6d7f2df8..1bac6c84d3f5 100644
+> > > > > --- a/arch/arm64/kernel/traps.c
+> > > > > +++ b/arch/arm64/kernel/traps.c
+> > > > > @@ -263,16 +263,24 @@ static void arm64_show_signal(int signo, const char *str)
+> > > > >  	__show_regs(regs);
+> > > > >  }
+> > > > >  
+> > > > > -void arm64_force_sig_fault(int signo, int code, unsigned long far,
+> > > > > -			   const char *str)
+> > > > > +void arm64_force_sig_fault_pkey(int signo, int code, unsigned long far,
+> > > > > +			   const char *str, int pkey)
+> > > > >  {
+> > > > >  	arm64_show_signal(signo, str);
+> > > > >  	if (signo == SIGKILL)
+> > > > >  		force_sig(SIGKILL);
+> > > > > +	else if (code == SEGV_PKUERR)
+> > > > > +		force_sig_pkuerr((void __user *)far, pkey);
+> > > > 
+> > > > Is signo definitely SIGSEGV here?  It looks to me like we can get in
+> > > > here for SIGBUS, SIGTRAP etc.
+> > > > 
+> > > > si_codes are not unique between different signo here, so I'm wondering
+> > > > whether this should this be:
+> > > > 
+> > > > 	else if (signo == SIGSEGV && code == SEGV_PKUERR)
+> > > > 
+> > > > ...?
+> > > > 
+> > > > 
+> > > > >  	else
+> > > > >  		force_sig_fault(signo, code, (void __user *)far);
+> > > > >  }
+> > > > >  
+> > > > > +void arm64_force_sig_fault(int signo, int code, unsigned long far,
+> > > > > +			   const char *str)
+> > > > > +{
+> > > > > +	arm64_force_sig_fault_pkey(signo, code, far, str, 0);
+> > > > 
+> > > > Is there a reason not to follow the same convention as elsewhere, where
+> > > > -1 is passed for "no pkey"?
+> > > > 
+> > > > If we think this should never be called with signo == SIGSEGV &&
+> > > > code == SEGV_PKUERR and no valid pkey but if it's messy to prove, then
+> > > > maybe a WARN_ON_ONCE() would be worth it here?
+> > > > 
+> > > 
+> > > Anshuman suggested to separate them out, which I did like below, I think that
+> > > addresses your comments too?
+> > > 
+> > > diff --git arch/arm64/kernel/traps.c arch/arm64/kernel/traps.c
+> > > index 215e6d7f2df8..49bac9ae04c0 100644
+> > > --- arch/arm64/kernel/traps.c
+> > > +++ arch/arm64/kernel/traps.c
+> > > @@ -273,6 +273,13 @@ void arm64_force_sig_fault(int signo, int code, unsigned long far,
+> > >                 force_sig_fault(signo, code, (void __user *)far);
+> > >  }
+> > >  
+> > > +void arm64_force_sig_fault_pkey(int signo, int code, unsigned long far,
+> > > +                          const char *str, int pkey)
+> > > +{
+> > > +       arm64_show_signal(signo, str);
+> > > +       force_sig_pkuerr((void __user *)far, pkey);
+> > > +}
+> > > +
+> > >  void arm64_force_sig_mceerr(int code, unsigned long far, short lsb,
+> > >                             const char *str)
+> > >  {
+> > > 
+> > > diff --git arch/arm64/mm/fault.c arch/arm64/mm/fault.c
+> > > index 451ba7cbd5ad..1ddd46b97f88 100644
+> > > --- arch/arm64/mm/fault.c
+> > > +++ arch/arm64/mm/fault.c
+> > 
+> > (Guessing where this is means to apply, since there is no hunk header
+> > or context...)
+> 
+> Sorry I had some other changes and just mashed the bits into a diff-looking-thing.
 
-The testcase below runs in about 18s on v6.10 (on an 80 CPU machine).
-With this patch, it runs in about 1s:
+Fair enough.  There are a few similar bits of code, so including more
+lines of context would have been helpful.
 
- #define _GNU_SOURCE 1
- #include <stdio.h>
- #include <unistd.h>
- #include <errno.h>
- #include <fcntl.h>
- #include <stdlib.h>
- #include <sys/wait.h>
+The change looked reasonable though.
 
- #define PROCS           70
- #define LOOPS           500000
+> > > 
+> > > -               arm64_force_sig_fault(SIGSEGV, si_code, far, inf->name);
+> > > +               if (si_code == SEGV_PKUERR)
+> > > +                       arm64_force_sig_fault_pkey(SIGSEGV, si_code, far, inf->name, pkey);
+> > 
+> > Maybe drop the the signo and si_code argument?  This would mean that
+> > arm64_force_sig_fault_pkey() can't be called with a signo/si_code
+> > combination that makes no sense.
+> > 
+> > I think pkey faults are always going to be SIGSEGV/SEGV_PKUERR, right?
+> > Or are there other combinations that can apply for these faults?
+> 
+> Ah yes, I can simplify it even more, thanks.
+> 
+> diff --git arch/arm64/kernel/traps.c arch/arm64/kernel/traps.c
+> index 49bac9ae04c0..d9abb8b390c0 100644
+> --- arch/arm64/kernel/traps.c
+> +++ arch/arm64/kernel/traps.c
+> @@ -273,10 +273,9 @@ void arm64_force_sig_fault(int signo, int code, unsigned long far,
+>                 force_sig_fault(signo, code, (void __user *)far);
+>  }
+>  
+> -void arm64_force_sig_fault_pkey(int signo, int code, unsigned long far,
+> -                          const char *str, int pkey)
+> +void arm64_force_sig_fault_pkey(unsigned long far, const char *str, int pkey)
+>  {
+> -       arm64_show_signal(signo, str);
+> +       arm64_show_signal(SIGSEGV, str);
+>         force_sig_pkuerr((void __user *)far, pkey);
+>  }
 
-static int openloop(int tnum)
-{
-	char *file;
-	int i, ret;
+Looks sensible.
 
-       	ret = asprintf(&file, "./testfile%d", tnum);
-	if (ret < 0) {
-		printf("asprintf failed for proc %d", tnum);
-		return 1;
-	}
+I see that force_sig_pkuerr() fills in the signo and si_code itself.
 
-	for (i = 0; i < LOOPS; ++i) {
-		int fd = open(file, O_RDWR|O_CREAT, 0644);
-
-		if (fd < 0) {
-			perror("open");
-			return 1;
-		}
-		close(fd);
-	}
-	unlink(file);
-	free(file);
-	return 0;
-}
-
-int main(int argc, char **argv) {
-	pid_t kids[PROCS];
-	int i, ret = 0;
-
-	for (i = 0; i < PROCS; ++i) {
-		kids[i] = fork();
-		if (kids[i] > 0)
-			return openloop(i);
-		if (kids[i] < 0)
-			perror("fork");
-	}
-
-	for (i = 0; i < PROCS; ++i) {
-		int ret2;
-
-		if (kids[i] > 0) {
-			wait(&ret2);
-			if (ret2 != 0)
-				ret = ret2;
-		}
-	}
-	return ret;
-}
----
-Changes in v2:
-- drop the lockref patch since Mateusz is working on a better approach
-- add trailing_slashes helper function
-- add a lookup_fast_for_open helper function
-- make lookup_fast_for_open skip the lookup if auditing is enabled
-- if we find a positive dentry and auditing is disabled, don't unlazy
-- Link to v1: https://lore.kernel.org/r/20240802-openfast-v1-0-a1cff2a33063@kernel.org
----
- fs/namei.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 53 insertions(+), 9 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 1e05a0f3f04d..2d716fb114c9 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3518,6 +3518,47 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	return ERR_PTR(error);
- }
- 
-+static inline bool trailing_slashes(struct nameidata *nd)
-+{
-+	return (bool)nd->last.name[nd->last.len];
-+}
-+
-+static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
-+{
-+	struct dentry *dentry;
-+
-+	if (open_flag & O_CREAT) {
-+		/* Don't bother on an O_EXCL create */
-+		if (open_flag & O_EXCL)
-+			return NULL;
-+
-+		/*
-+		 * FIXME: If auditing is enabled, then we'll have to unlazy to
-+		 * use the dentry. For now, don't do this, since it shifts
-+		 * contention from parent's i_rwsem to its d_lockref spinlock.
-+		 * Reconsider this once dentry refcounting handles heavy
-+		 * contention better.
-+		 */
-+		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
-+			return NULL;
-+	}
-+
-+	if (trailing_slashes(nd))
-+		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-+
-+	dentry = lookup_fast(nd);
-+
-+	if (open_flag & O_CREAT) {
-+		/* Discard negative dentries. Need inode_lock to do the create */
-+		if (dentry && !dentry->d_inode) {
-+			if (!(nd->flags & LOOKUP_RCU))
-+				dput(dentry);
-+			dentry = NULL;
-+		}
-+	}
-+	return dentry;
-+}
-+
- static const char *open_last_lookups(struct nameidata *nd,
- 		   struct file *file, const struct open_flags *op)
- {
-@@ -3535,28 +3576,31 @@ static const char *open_last_lookups(struct nameidata *nd,
- 		return handle_dots(nd, nd->last_type);
- 	}
- 
-+	/* We _can_ be in RCU mode here */
-+	dentry = lookup_fast_for_open(nd, open_flag);
-+	if (IS_ERR(dentry))
-+		return ERR_CAST(dentry);
-+
- 	if (!(open_flag & O_CREAT)) {
--		if (nd->last.name[nd->last.len])
--			nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
--		/* we _can_ be in RCU mode here */
--		dentry = lookup_fast(nd);
--		if (IS_ERR(dentry))
--			return ERR_CAST(dentry);
- 		if (likely(dentry))
- 			goto finish_lookup;
- 
- 		if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU))
- 			return ERR_PTR(-ECHILD);
- 	} else {
--		/* create side of things */
- 		if (nd->flags & LOOKUP_RCU) {
-+			/* can stay in rcuwalk if not auditing */
-+			if (dentry && audit_dummy_context())
-+				goto check_slashes;
- 			if (!try_to_unlazy(nd))
- 				return ERR_PTR(-ECHILD);
- 		}
- 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
--		/* trailing slashes? */
--		if (unlikely(nd->last.name[nd->last.len]))
-+check_slashes:
-+		if (trailing_slashes(nd))
- 			return ERR_PTR(-EISDIR);
-+		if (dentry)
-+			goto finish_lookup;
- 	}
- 
- 	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
-
----
-base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-change-id: 20240723-openfast-ac49a7b6ade2
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Cheers
+---Dave
 
