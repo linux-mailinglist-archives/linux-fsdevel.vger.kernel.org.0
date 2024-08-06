@@ -1,122 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-25167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAB2949825
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 21:22:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 068D494982F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 21:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA5F1C21647
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:22:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36F401C2167A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D53142E92;
-	Tue,  6 Aug 2024 19:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F3D1514E1;
+	Tue,  6 Aug 2024 19:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chBz3oaV"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="pU1nIbns"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A44580BFF;
-	Tue,  6 Aug 2024 19:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B4713C90B;
+	Tue,  6 Aug 2024 19:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722972145; cv=none; b=Ioqz0cO85kaNyU87umZej1l0mjC8x6mer7XlVRCaBVfJcNwPw/jtYvj6noQKGqfvA+HTrn0mwxPuRdEk7edSPzV9+2M0LxXaI/NGLUwFurZ9joCmHEvQultq9HnLkY9Y5G3evaZvAx48NgQLNN5gP94VBirven8aSxdWrzD4pkk=
+	t=1722972288; cv=none; b=N5YV6cJX5QlxXc/A0b44jSQmtKLD7u2axxr+kr0uLjOyv3SMS/BX+onf2Gc1l4eka4x0xNPsqlxofag2QAnELdGueEl/2IgFX1qRiCx2q77NMSrH535+HWlhxjCAlAu9HWCzT0VH+AIpxM7h5hhjx3iQso8O3csP4pXhpW6PkFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722972145; c=relaxed/simple;
-	bh=s9rPTaztVrfOhHtxuf0ACEj2mdsWUnU9ZZiYXb7t4kM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WOdzZA0Rw7BoN3JDFzgLXAn9rbWy+/Kcc4u0nABgijfll5115SarrrtMhpg9F2OIPStgx5kg3bBidauWZhTI8X+mAb1vR8/nYQL2PfRKtz6K5R/U05AfZ5XaFTcSjrt6CdMAjTMmTAg284NdpDEWQHbcaur03N2sQQhIOOWoq68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chBz3oaV; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7ac449a0e6so86981366b.1;
-        Tue, 06 Aug 2024 12:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722972142; x=1723576942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s9rPTaztVrfOhHtxuf0ACEj2mdsWUnU9ZZiYXb7t4kM=;
-        b=chBz3oaViMF3nyWszWLWSAL3NXFOdKoZ4Sg3hQ8g4O8H3Fw1QCvXVpWh6sAxyLaDyP
-         Hu34r43+PKLM0xt2smquNs884K0Gke8yN0KxfuHiqdsU94t5tNT8qJUa4RaGyjAbJCP2
-         HZlx9OELJcigfEdZJAWk48wNUJujIWlAcFsvYWIOjYv0X2yWZ5A5KWpS0NSNTYJd+BL6
-         K44MoQa8vX8h0+PMwF3ulCtnqAYceehqw4jqOFTkj570Y3TEg4ZDU/ek1ERH5btoIiWw
-         6eRvAp6lP/BvfA7V9URq95KwIcPHbV9q/gi65kJ9OtZCRkzXr4r4cXo+h3HCO0Jz9nLO
-         /4bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722972142; x=1723576942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s9rPTaztVrfOhHtxuf0ACEj2mdsWUnU9ZZiYXb7t4kM=;
-        b=gY9AJLn15ELRzMfuuyN6jbDbJsR7GS31jT+Qo5Q4A7VE/EHVPkxSuPrUfqviY4ULN+
-         orDCGHuBIoQdCIBpVzWTvisewWV47iqw1zOSTm6qhfwoKVHNORKf2uG/H6IrhAIJws9q
-         LJZs4P1hdgJMLrnbQgxCNmpKqBljTKIpUQ+RkT72zopLeCynHwWAkWkRJ9fvidVQ6MFz
-         csDDSBoC93tQigIe45ONv1n/jF6Di4s5y3GsmVD1n/AzU8pO2g8jq7TdmkeUd5heV4og
-         6COZY9Qyp+PgHLgINOqKoqjeFooo6EBmnA9aRhzEfXAKOXW+A6wBnwNSjylA2OgwSPGb
-         kJlw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9/7436nBkOoKq448TGKN7cyK2H4hncX3dV3hGYIhxzi/nmo+4PH7AgJmoWxJZjY57hq5fzT4ZBM/sBeMUgOJkpMVaSufNlIMJq+N2MiPOdU+Zqqr0BRSTGX8vTizCf3KLwJ9iaU92Y3QuLA==
-X-Gm-Message-State: AOJu0YyP/V597YwRhYxjCGXFNUHYfG7AArI0uQzQfI7tVI/A8u8RKQ2N
-	e4FRkPfQoQcVs7fTcQ9S8LY0L51DAZqflJzzfSfvH1+YgZUG55fvUC63IetXvsgrw/wuOlhVIQ7
-	Ut2oMgOSuJw2OyKi04Lvd3fekBfs=
-X-Google-Smtp-Source: AGHT+IFqqBSVVYsN4AwkyrkvpWuHa8xOwsou3MrNf3m9cKjAVctVI6VEn2DZjf4jQMOq/+072uv012kgRFCOA5WGlJI=
-X-Received: by 2002:a17:907:c0e:b0:a7d:3672:a594 with SMTP id
- a640c23a62f3a-a7dc50ff21cmr1182085466b.61.1722972141477; Tue, 06 Aug 2024
- 12:22:21 -0700 (PDT)
+	s=arc-20240116; t=1722972288; c=relaxed/simple;
+	bh=4gbTg6sRbIzoCnBVCnT/nCz6ATeU7FH1cjOBD45zYkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cHIAYCx2umkb1kDIuWDIiZ8eAolNyD6WQbeEWrQfWUhC1CSwoLmvfKk/1SaWDWoJ3sYaAS3Srgs+zUAxkBLHVF9EnAJOaONRZnPGKd5igCz5gUfVulApXA4Oh4s9ljk3Anc9/u5V5R++s54wiqHUAKEeuMjdGYuwE0HbGDowirM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=pU1nIbns; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1722972275;
+	bh=4gbTg6sRbIzoCnBVCnT/nCz6ATeU7FH1cjOBD45zYkw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pU1nIbnsSAhLR+Qzy0iAXlaj4sF+T1DUdytsrPVbaG9uu5vXUpqXplO+4KUfunisy
+	 xv/WmPn4pkdHhn4zrAFr4BZSlhZcG3/sWSExdM2JRbxBdUweej9+xsoztftUd16KIW
+	 fhbQ/Wk+8tHXwQEY43UrzcqrHdR2RwtcmH5U1KFE=
+Date: Tue, 6 Aug 2024 21:24:33 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Solar Designer <solar@openwall.com>
+Cc: Joel Granados <j.granados@samsung.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Jeff Johnson <quic_jjohnson@quicinc.com>, Kees Cook <keescook@chromium.org>, Wen Yang <wen.yang@linux.dev>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [GIT PULL] sysctl changes for v6.11-rc1
+Message-ID: <97a52396-3b86-47a5-ae02-8a979f6fc375@t-8ch.de>
+References: <CGME20240716141703eucas1p2f6ddaf91b7363dd893d37b9aa8987dc6@eucas1p2.samsung.com>
+ <20240716141656.pvlrrnxziok2jwxt@joelS2.panther.com>
+ <20240806185736.GA29664@openwall.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <CAGudoHF9nZMfk_XbRRap+0d=VNs_i8zqTkDXxogVt_M9YGbA8Q@mail.gmail.com> <87ikwdtqiy.fsf@linux.intel.com>
-In-Reply-To: <87ikwdtqiy.fsf@linux.intel.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 6 Aug 2024 21:22:09 +0200
-Message-ID: <CAGudoHHu42+VP6snbtg9gXog0UYaMv68eekxYt+2=5arrhZffg@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806185736.GA29664@openwall.com>
 
-On Tue, Aug 6, 2024 at 9:11=E2=80=AFPM Andi Kleen <ak@linux.intel.com> wrot=
-e:
->
-> Mateusz Guzik <mjguzik@gmail.com> writes:
-> >
-> > I would bench with that myself, but I temporarily don't have handy
-> > access to bigger hw. Even so, the below is completely optional and
-> > perhaps more of a suggestion for the future :)
-> >
-> > I hacked up the test case based on tests/open1.c.
->
-> Don't you need two test cases? One where the file exists and one
-> where it doesn't. Because the "doesn't exist" will likely be slower
-> than before because it will do the lookups twice,
-> and it will likely even slow single threaded.
->
-> I assume the penalty will also depend on the number of entries
-> in the path.
->
-> That all seem to be an important considerations in judging the benefits
-> of the patch.
->
+On 2024-08-06 20:57:37+0000, Solar Designer wrote:
+> On Tue, Jul 16, 2024 at 04:16:56PM +0200, Joel Granados wrote:
+> > sysctl changes for 6.11-rc1
+> > 
+> > Summary
+> > 
+> > * Remove "->procname == NULL" check when iterating through sysctl table arrays
+> > 
+> >     Removing sentinels in ctl_table arrays reduces the build time size and
+> >     runtime memory consumed by ~64 bytes per array. With all ctl_table
+> >     sentinels gone, the additional check for ->procname == NULL that worked in
+> >     tandem with the ARRAY_SIZE to calculate the size of the ctl_table arrays is
+> >     no longer needed and has been removed. The sysctl register functions now
+> >     returns an error if a sentinel is used.
+> > 
+> > * Preparation patches for sysctl constification
+> > 
+> >     Constifying ctl_table structs prevents the modification of proc_handler
+> >     function pointers as they would reside in .rodata. The ctl_table arguments
+> >     in sysctl utility functions are const qualified in preparation for a future
+> >     treewide proc_handler argument constification commit.
+> 
+> As (I assume it was) expected, these changes broke out-of-tree modules.
+> For LKRG, I am repairing this by adding "#if LINUX_VERSION_CODE >=
+> KERNEL_VERSION(6,11,0)" checks around the corresponding module changes.
+> This works.  However, I wonder if it would possibly be better for the
+> kernel to introduce a corresponding "feature test macro" (or two, for
+> the two changes above).  I worry that these changes (or some of them)
+> could get backported to stable/longterm, which with the 6.11+ checks
+> would unnecessarily break out-of-tree modules again (and again and again
+> for each backport to a different kernel branch).  Feature test macro(s)
+> would avoid such further breakage, as they would (be supposed to be)
+> included along with the backports.
 
-This is why I suggested separately running "unlink1" which is
-guaranteed to create a file every time -- all iterations will fail the
-proposed fast path.
+I don't see any of these changes being backported.
 
-Unless you meant a mixed variant where only some of the threads create
-files. Perhaps worthwhile to add, not hard to do (one can switch the
-mode based on passed worker number).
+The removal of the "->procname == NULL" check depends on all in-kernel
+tables being registered with an explicit size, which is not the case on
+old kernels. So a backport would not only silently fail for external
+modules but also for internal code.
+The same for the constification patches but with build errors instead of
+runtime errors.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+My future sysctl constification patches will be backwards compatible at
+both compiletime and runtime, for both internal and external code.
+
+So the version checks should be enough here.
 
