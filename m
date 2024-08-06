@@ -1,129 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-25062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129B09487D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 05:10:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B2F9487EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 05:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32C8280DC9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 03:10:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5A81F23B84
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 03:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305455B69E;
-	Tue,  6 Aug 2024 03:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AqIjGFxt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05065BAF0;
+	Tue,  6 Aug 2024 03:32:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEC73BBC9
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 03:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB75184D;
+	Tue,  6 Aug 2024 03:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722913812; cv=none; b=F7fl/eLeMlHzdg11kQ9uOTOUwx5b/UC4b8haWeLEB3+L8QqsPhCtyQUfTGO43ENzI6Qb3y0PkRO6LYAZba8wx6MqGy3qYq/jpngSuU8UunOn41Q51R7+xtAP7s9wElATe9YCBQ/A/DWHz2xjm8H/6qiwDQPXiiYoK7rNkE7OWBw=
+	t=1722915131; cv=none; b=dcFLmOgsryIcs+V+X7pgWXJfgurSj6cB3+uWdxem30PEJkAYpYvt569cNUMChNgXIYXWUOqGLsIDj9oaIDEqalLllR6aBs/9+6fRphsge9u5Ys+a+7jhkqJUAbSICcSL5GTlkjsgCYGgBhwAbGHWfTAb0Iej1iUphl96VdCOcPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722913812; c=relaxed/simple;
-	bh=M8lCPbpz8MJ7MmX8w6ySSM335BKWQPUYdlyNM4pcNL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ntk34cyQziTkxNfGsavO7ZT531L6AjYeljdIT9YOlu0g1D9vEShwMqkoFaQuF2TfUUCPIv5ZU2w+4rSQpNN/9yznFTsB8ZBDp8LJsuymrGNiRXzqBHyUuBTtm1y35MFgrRJeulLcHgAK0tlqY+DcmuOvB5CWZeOlFiH941DBxGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AqIjGFxt; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7ac449a0e6so3171866b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 20:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722913809; x=1723518609; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ddVwpujzlJzBqKH8my+rFJponoM7SG54MA80H5/+gq8=;
-        b=AqIjGFxtM0nFjNXxOr7KDYCUIJeYxKS32lAgjemtmmhh9bvx3RgcyRhtpne9s7jhkw
-         8JaHUpJqtcDLArsgJamUrkgkrJQk/mdyXVPUbfOYS9kY5bzsrpUHWNPaW1nz9o9qGaEK
-         HB5VZVGmFKgZ0VFV6k1d4LmCh5BFz3eqoS5cg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722913809; x=1723518609;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ddVwpujzlJzBqKH8my+rFJponoM7SG54MA80H5/+gq8=;
-        b=j4oq9aoBS821L0/ZTsyXYrTbSENMPQUNdA45AB0jlWW0lXg398j7U8Z4DsB3gCuEnD
-         Z5NPsghQ6bzD4kjMy7NCEhJAvKNsCkQxx4rrtjdf7t3QdHne5DZh9a6PbxsojjxKRcNR
-         7hWLEBbGDwXBx3SflS3lhaPdAVy83bRweEM8elrsEKnMjCIyUNdFWxybvBLXoln/OQXM
-         geRqeXohjUcFL5gdz+4DFUjcviwgd41GIyCZinwSJzoHjooJk6T3n26LD7f+AWatbgWu
-         ACuzfo2i8GhpFBjTWvFOUXpEOuzuu2I9iHkg6Jom9XDxpNgOV6O8QGVWXXhgwPIYzt4d
-         xoHw==
-X-Forwarded-Encrypted: i=1; AJvYcCX767ozdrKK/Q88VLr2CdWv1aNgWPZcea0EQpWSPh7lsPru2pqC7pDSYRlAnvjW/R+C3FsYQBIl6qdPKoej8+IaGZhrTcPj11N8ZQZgfg==
-X-Gm-Message-State: AOJu0YxOhc5wFG0a6Glb2bN6Ze55c2RSAnxyu0EmuhWHX4zn2CiDKHj2
-	LMBdr7ap+U5PPBffCXulCEvAdSqkxwEJrQ7HTy2p7EENy5boXQbmJQmnWlKxrKGuN5HKn3fd9N9
-	9BCQHsg==
-X-Google-Smtp-Source: AGHT+IGuu3zGLLUNcqbiff2a+OoRc4ylzXfmrhQvgDL7H5IJliT3uo/v0eW5D3AB+GOlQPGgIlsWNw==
-X-Received: by 2002:a17:907:3f8b:b0:a7a:9954:1fc1 with SMTP id a640c23a62f3a-a7dc4ea981cmr924654166b.24.1722913808689;
-        Mon, 05 Aug 2024 20:10:08 -0700 (PDT)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dd074ec36sm477786666b.57.2024.08.05.20.10.08
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 20:10:08 -0700 (PDT)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7ac449a0e6so3171566b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Aug 2024 20:10:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUnmNoFYnhd1plM8MIlg71iMKI+davNrpoidhXYXzJ3OUB13OxnI5AHVvte60B7/OhgKR6wRytiWds84JIk1pS/qFarHMOYs2+p4bY0GA==
-X-Received: by 2002:a17:907:da9:b0:a6f:4fc8:266b with SMTP id
- a640c23a62f3a-a7dc4db9f44mr1005005366b.3.1722913808064; Mon, 05 Aug 2024
- 20:10:08 -0700 (PDT)
+	s=arc-20240116; t=1722915131; c=relaxed/simple;
+	bh=dbHqsLuKz5rqNhNxP6FSPo02iYxp8GzW/NhLzNY1nQU=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=YqB0184gOPvA7DYKUjIEzzlCxIKvHiMIhTMcqQ71SzYnNIYn+kFRQNiuIxOlP1Zsr1nK4qSVN1suDYRit5NkOMWZ3YVSAONQQlcCynOS42bts7MqJh9S23yIY71qf5bB8m2pYEF0r4dBSI1YYo3nnWtHNE2SSE9RolCh0PhNDn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WdJkp5Br2z1LB1h;
+	Tue,  6 Aug 2024 11:31:46 +0800 (CST)
+Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 82644180102;
+	Tue,  6 Aug 2024 11:32:05 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 6 Aug 2024 11:32:04 +0800
+Subject: Re: [PATCH] vfs: Don't evict inode under the inode lru traversing
+ context
+To: Jan Kara <jack@suse.cz>, Zhihao Cheng <chengzhihao@huaweicloud.com>
+CC: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <tahsin@google.com>,
+	<mjguzik@gmail.com>, <error27@gmail.com>, <tytso@mit.edu>,
+	<rydercoding@hotmail.com>, <hch@infradead.org>, <andreas.dilger@intel.com>,
+	<richard@nod.at>, <linux-fsdevel@vger.kernel.org>,
+	<linux-ext4@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <wangzhaolong1@huawei.com>
+References: <20240805013446.814357-1-chengzhihao@huaweicloud.com>
+ <20240805153018.3sju3nowiqggykvf@quack3>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <f942ec06-974b-b9dd-7238-63636e82f3fb@huawei.com>
+Date: Tue, 6 Aug 2024 11:31:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804075619.20804-1-laoar.shao@gmail.com> <CAHk-=whWtUC-AjmGJveAETKOMeMFSTwKwu99v7+b6AyHMmaDFA@mail.gmail.com>
- <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com>
-In-Reply-To: <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 5 Aug 2024 20:09:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
-Message-ID: <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, ebiederm@xmission.com, 
-	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20240805153018.3sju3nowiqggykvf@quack3>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm000013.china.huawei.com (7.193.23.81)
 
-On Mon, 5 Aug 2024 at 20:01, Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> One concern about removing the BUILD_BUG_ON() is that if we extend
-> TASK_COMM_LEN to a larger size, such as 24, the caller with a
-> hardcoded 16-byte buffer may overflow.
+在 2024/8/5 23:30, Jan Kara 写道:
+> On Mon 05-08-24 09:34:46, Zhihao Cheng wrote:
+>> From: Zhihao Cheng <chengzhihao1@huawei.com>
+>>
+>> The inode reclaiming process(See function prune_icache_sb) collects all
+>> reclaimable inodes and mark them with I_FREEING flag at first, at that
+>> time, other processes will be stuck if they try getting these inodes
+>> (See function find_inode_fast), then the reclaiming process destroy the
+>> inodes by function dispose_list(). Some filesystems(eg. ext4 with
+>> ea_inode feature, ubifs with xattr) may do inode lookup in the inode
+>> evicting callback function, if the inode lookup is operated under the
+>> inode lru traversing context, deadlock problems may happen.
+>>
+>> Case 1: In function ext4_evict_inode(), the ea inode lookup could happen
+>>          if ea_inode feature is enabled, the lookup process will be stuck
+>> 	under the evicting context like this:
+>>
+>>   1. File A has inode i_reg and an ea inode i_ea
+>>   2. getfattr(A, xattr_buf) // i_ea is added into lru // lru->i_ea
+>>   3. Then, following three processes running like this:
+>>
+>>      PA                              PB
+>>   echo 2 > /proc/sys/vm/drop_caches
+>>    shrink_slab
+>>     prune_dcache_sb
+>>     // i_reg is added into lru, lru->i_ea->i_reg
+>>     prune_icache_sb
+>>      list_lru_walk_one
+>>       inode_lru_isolate
+>>        i_ea->i_state |= I_FREEING // set inode state
+>>       inode_lru_isolate
+>>        __iget(i_reg)
+>>        spin_unlock(&i_reg->i_lock)
+>>        spin_unlock(lru_lock)
+>>                                       rm file A
+>>                                        i_reg->nlink = 0
+>>        iput(i_reg) // i_reg->nlink is 0, do evict
+>>         ext4_evict_inode
+>>          ext4_xattr_delete_inode
+>>           ext4_xattr_inode_dec_ref_all
+>>            ext4_xattr_inode_iget
+>>             ext4_iget(i_ea->i_ino)
+>>              iget_locked
+>>               find_inode_fast
+>>                __wait_on_freeing_inode(i_ea) ----→ AA deadlock
+>>      dispose_list // cannot be executed by prune_icache_sb
+>>       wake_up_bit(&i_ea->i_state)
+>>
+>> Case 2: In deleted inode writing function ubifs_jnl_write_inode(), file
+>>          deleting process holds BASEHD's wbuf->io_mutex while getting the
+>> 	xattr inode, which could race with inode reclaiming process(The
+>>          reclaiming process could try locking BASEHD's wbuf->io_mutex in
+>> 	inode evicting function), then an ABBA deadlock problem would
+>> 	happen as following:
+>>
+>>   1. File A has inode ia and a xattr(with inode ixa), regular file B has
+>>      inode ib and a xattr.
+>>   2. getfattr(A, xattr_buf) // ixa is added into lru // lru->ixa
+>>   3. Then, following three processes running like this:
+>>
+>>          PA                PB                        PC
+>>                  echo 2 > /proc/sys/vm/drop_caches
+>>                   shrink_slab
+>>                    prune_dcache_sb
+>>                    // ib and ia are added into lru, lru->ixa->ib->ia
+>>                    prune_icache_sb
+>>                     list_lru_walk_one
+>>                      inode_lru_isolate
+>>                       ixa->i_state |= I_FREEING // set inode state
+>>                      inode_lru_isolate
+>>                       __iget(ib)
+>>                       spin_unlock(&ib->i_lock)
+>>                       spin_unlock(lru_lock)
+>>                                                     rm file B
+>>                                                      ib->nlink = 0
+>>   rm file A
+>>    iput(ia)
+>>     ubifs_evict_inode(ia)
+>>      ubifs_jnl_delete_inode(ia)
+>>       ubifs_jnl_write_inode(ia)
+>>        make_reservation(BASEHD) // Lock wbuf->io_mutex
+>>        ubifs_iget(ixa->i_ino)
+>>         iget_locked
+>>          find_inode_fast
+>>           __wait_on_freeing_inode(ixa)
+>>            |          iput(ib) // ib->nlink is 0, do evict
+>>            |           ubifs_evict_inode
+>>            |            ubifs_jnl_delete_inode(ib)
+>>            ↓             ubifs_jnl_write_inode
+>>       ABBA deadlock ←-----make_reservation(BASEHD)
+>>                     dispose_list // cannot be executed by prune_icache_sb
+>>                      wake_up_bit(&ixa->i_state)
+>>
+>> Fix it by forbidding inode evicting under the inode lru traversing
+>> context. In details, we import a new inode state flag 'I_LRU_ISOLATING'
+>> to pin inode without holding i_count under the inode lru traversing
+>> context, the inode evicting process will wait until this flag is
+>> cleared from i_state.
+> 
+> Thanks for the patch and sorry for not getting to this myself!  Let me
+> rephrase the above paragraph a bit for better readability:
+> 
+> Fix the possible deadlock by using new inode state flag I_LRU_ISOLATING to
+> pin the inode in memory while inode_lru_isolate() reclaims its pages
+> instead of using ordinary inode reference. This way inode deletion cannot
+> be triggered from inode_lru_isolate() thus avoiding the deadlock. evict()
+> is made to wait for I_LRU_ISOLATING to be cleared before proceeding with
+> inode cleanup.
+> 
 
-No, not at all. Because get_task_comm() - and the replacements - would
-never use TASK_COMM_LEN.
+Looks clearer, thanks for the rephrasing, you're really nice.
+>> @@ -488,6 +488,36 @@ static void inode_lru_list_del(struct inode *inode)
+>>   		this_cpu_dec(nr_unused);
+>>   }
+>>   
+>> +static void inode_lru_isolating(struct inode *inode)
+> 
+> Perhaps call this inode_pin_lru_isolating()
 
-They'd use the size of the *destination*. That's what the code already does:
+Adopt. Will change in v2.
+> 
+>> +{
+>> +	BUG_ON(inode->i_state & (I_LRU_ISOLATING | I_FREEING | I_WILL_FREE));
+>> +	inode->i_state |= I_LRU_ISOLATING;
+>> +}
+>> +
+>> +static void inode_lru_finish_isolating(struct inode *inode)
+> 
+> And call this inode_unpin_lru_isolating()?
 
-  #define get_task_comm(buf, tsk) ({                      \
-  ...
-        __get_task_comm(buf, sizeof(buf), tsk);         \
+Adopt. Will change in v2.
+> 
+> Otherwise the patch looks good so feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
+> 
 
-note how it uses "sizeof(buf)".
-
-Now, it might be a good idea to also verify that 'buf' is an actual
-array, and that this code doesn't do some silly "sizeof(ptr)" thing.
-
-We do have a helper for that, so we could do something like
-
-   #define get_task_comm(buf, tsk) \
-        strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->comm)
-
-as a helper macro for this all.
-
-(Although I'm not convinced we generally want the "_pad()" version,
-but whatever).
-
-                    Linus
 
