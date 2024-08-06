@@ -1,124 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-25196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD6B949B9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 00:55:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D299949BD0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 01:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9F1B27046
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 22:55:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1DF1F2440A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 23:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715C8172BAE;
-	Tue,  6 Aug 2024 22:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63194175D3D;
+	Tue,  6 Aug 2024 23:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hage8avT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcrR2DF+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF1E374C4;
-	Tue,  6 Aug 2024 22:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEE018D644;
+	Tue,  6 Aug 2024 23:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722984922; cv=none; b=rOu8drBhAG6ULK75IDm+3uXJpLTVmS1VPTi8p4CTeFc4F2hVGccQWWO+WQny2JF0ee1FadiFma6CD4uYmQipz83SnZRdENMRslaeLwUp/MsJh0Gj1DxUxZRRQLz0TbRyjw5IsyinbhwZx4WWUZG4t7tIHE4f9pm3ajujuZyqPQo=
+	t=1722985751; cv=none; b=gLkRs7q4CIgiROovPnhSxVYSUzTGqZDjLJ+zPB++QdskUjQIEPRKOeSH0WOXhGHxBPq9u/2UyUmOeLprIpNtYQYosmpXPmrU61wUUY0TynMniC5bhnaVutg67pR2isKuGQgWvZK956vnNgO6KFAFC377JnkL/YdpIpNLuNFFEvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722984922; c=relaxed/simple;
-	bh=yTjx3e27PQdGOdPL6WPtTZou9RrwJpkYuxZME5Rzyow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lo72fPPej+yllk6CVUALmOxmwZfAZGSWN4DNWHnLIPzdGr3ofIsNZADLJ7ZOdn5YGu34ae0HvZUWrz2X48axdcaxpI1eJ1OOIh8515vuy+dGN+nuMwy1sz8FLUrvt+ORC1veK7xNpy+TKzBzz99b3dC4ZrZt8Cb2PkjRT89mbc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hage8avT; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5af51684d52so1388177a12.1;
-        Tue, 06 Aug 2024 15:55:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722984919; x=1723589719; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WJriyameTutCwynjg3J1SanZc3s9oPRp3ig0wvs/eN8=;
-        b=Hage8avTNR27QQuco0DzA0j7FJ5q46jAj7CniKc6mvYnTJTMNBivdNrDPk+RWZGSJv
-         mLEUmTeQJ3+9g0iO1yBDM2dPYhCPQRrkOvjYsh7Iz69NKo50tX1Nkz4EkwsKKslXs1LK
-         bllU8OE1eiLxVF15f1EePpepH1Zb3plh6N10U1YnnGJWq5gu1v+J9YeRaADseIpRCuN+
-         LYgg2YClEE4eJtT18qIpbbwmYgUCbuuU7Gjir5YdbuJx1v7A1DFfpyennq7eBiuAnC25
-         p/rL2GBe6VyfSUdP5mHXZK1Cj/RJfPH5+JBi4qhTZYVNklL6F0ayo9fvpPNj3O92up1z
-         7Qlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722984919; x=1723589719;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WJriyameTutCwynjg3J1SanZc3s9oPRp3ig0wvs/eN8=;
-        b=BV5xBSj49jT77XUbsAJtyOK9nrj3Tvr9pCm/Ap5OAmK0xBBpVpZJU6QSTFY6dEkFQw
-         pk+qgSsmClPUqO9bzQ7SzG6QTTOMql7aHl6mzn6XH3RHeOBWmQWGW3zvt/7lQ/bc7vev
-         rSIGG7/ysIQm5V1oZg5y0ozOY0mRuOaGCrULYQ1HU4fqvmJxE33aHBt0CClMzpibQdy/
-         1PJ3r3KIx4jGr3jCrx0BdHAr2xp/wsMSqM1a9zw4ZH6GxtOrxdOakU6jmTHT+As2633d
-         ljV8LccXeuTvhlv1DZtHfUJ7UTmvl+4pXHv/l6uva9li/RriICQAYKu8jwWt61ZdwUgr
-         KM0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUNp+Zba+k99rrv8mt1+UbCnVjJYChX7Qg8tElkMcl7Og0X6ECwk/X2l/QEi8Y9/5r+SubQmOolMonh2YNuU4OOyj3OGpAL8l1sRUaSZUe9U152/ax9La57+gjNwHj0VYxop5qLpg7t4Ox0OA==
-X-Gm-Message-State: AOJu0Yxdf4/+itcVrnDtx/l3r5D1eSXOURk+Tr5IyDfsErYqI8p26/17
-	W+kWenZOfd+h8LrLlI4/GemyRDemHLaidOSfFecGVKKNes+4hnHDGPyat+SoMOTsByK5mcmu2VC
-	rCNZbp4o6eVFlHjVTCiGd6S8EyNc=
-X-Google-Smtp-Source: AGHT+IF4nlOsNXy0nAckf/dpIIjWWfD9licBvajmKW7QaItQtDz8oK2iI9H1FJ52aWP4oEbaDdTHbpU1p4wK3tG+6Jk=
-X-Received: by 2002:a17:907:7b85:b0:a77:cbe5:413f with SMTP id
- a640c23a62f3a-a7dc4db8403mr1222388666b.4.1722984919335; Tue, 06 Aug 2024
- 15:55:19 -0700 (PDT)
+	s=arc-20240116; t=1722985751; c=relaxed/simple;
+	bh=OKYxy/HE9AVOUtgRgq9vDg6rJHP16OAnJ6NQcciUb4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uvx5jd4XYdszDgq/xiGqYuA/wZreBGcKaPdYE3lBcsv6qbyAXETgc30tGK1ogt1Lnq7j4JqtO9bNKtu4Q+09l9CiuWuJ5o+GJZGWkEC8ZbM+s8px44oJ/Qu+fd724OvTuq7yVDVrIMlWA37C/8n6js46d2U8wyrnyWECzmhpLxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcrR2DF+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5010C32786;
+	Tue,  6 Aug 2024 23:09:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722985751;
+	bh=OKYxy/HE9AVOUtgRgq9vDg6rJHP16OAnJ6NQcciUb4s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OcrR2DF+lldQwB9GjlTCI4iqCKzULNBdD0dNS8ZUbtcQnyp9TBYoLjDr6phhS+XVi
+	 xUZlsMFli7MFQPXWXy5g+YZBo25OMG1Rhvz2UfmSsK02EoEU1hhfA0AuermjecdKO0
+	 Wk8GazKuKcFFH/fIMMYwx4+6lNGqmuwN5k6KIEV0wRHYn9SKnmclj3EXuVbUJQqF99
+	 qdmUbxrbVkGttROEP892EfkPtkL49mAFhSDp155t0u0esAHvuHzi5J3wutPbEhQxHo
+	 msSngIF28jer96XzpYzzqc4ER0V6bhOail8nHmhGjKwtr3QRPzYFY+/Al4Bv3IVagT
+	 Wgk2rChX+Wvyw==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	liamwisehart@meta.com,
+	lltang@meta.com,
+	shankaran@meta.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v4 bpf-next 0/3] Add bpf_get_dentry_xattr
+Date: Tue,  6 Aug 2024 16:09:01 -0700
+Message-ID: <20240806230904.71194-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806144628.874350-1-mjguzik@gmail.com> <ZrKo23cfS2jtN9wF@dread.disaster.area>
-In-Reply-To: <ZrKo23cfS2jtN9wF@dread.disaster.area>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 7 Aug 2024 00:55:07 +0200
-Message-ID: <CAGudoHEt-mmZaihzTYxmf3KF_LsEC=astL2fOB+SOWGMPOCcFw@mail.gmail.com>
-Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
-To: Dave Chinner <david@fromorbit.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 7, 2024 at 12:51=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
-wrote:
->
-> On Tue, Aug 06, 2024 at 04:46:28PM +0200, Mateusz Guzik wrote:
-> >       error =3D may_open(idmap, &nd->path, acc_mode, open_flag);
-> > -     if (!error && !(file->f_mode & FMODE_OPENED))
-> > -             error =3D vfs_open(&nd->path, file);
-> > +     if (!error && !(file->f_mode & FMODE_OPENED)) {
-> > +             BUG_ON(nd->state & ND_PATH_CONSUMED);
->
-> Please don't litter new code with random BUG_ON() checks. If this
-> every happens, it will panic a production kernel and the fix will
-> generate a CVE.
->
-> Given that these checks should never fire in a production kernel
-> unless something is corrupting memory (i.e. the end is already
-> near), these should be considered debug assertions and we should
-> treat them that way from the start.
->
-> i.e. we really should have a VFS_ASSERT() or VFS_BUG_ON() (following
-> the VM_BUG_ON() pattern) masked by a CONFIG_VFS_DEBUG option so they
-> are only included into debug builds where there is a developer
-> watching to debug the system when one of these things fires.
->
-> This is a common pattern for subsystem specific assertions.  We do
-> this in all the major filesystems, the MM subsystem does this
-> (VM_BUG_ON), etc.  Perhaps it is time to do this in the VFS code as
-> well....
+Add a kfunc to read xattr from dentry. Also add selftest for the new
+kfunc.
 
-I agree, I have this at the bottom of my todo list.
+Changes v3 => v4:
+1. Fix selftest build.
 
-The only reason I BUG_ON'ed here is because proper debug macros are not pre=
-sent.
+V3: https://lore.kernel.org/bpf/20240806203340.3503805-1-song@kernel.org/T/#u
 
-fwiw v2 does not have any of this, so...
+Changes v2 => v3:
+1. Move the kfuncs to fs/bpf_fs_kfuncs.c.
+2. Fix selftests build error on s390. (Alexei)
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+v2: https://lore.kernel.org/bpf/20240730230805.42205-1-song@kernel.org/T/#u
+
+Changes v1 => v2:
+1. Remove 3 kfuncs that are ready yet.
+
+v1: https://lore.kernel.org/linux-fsdevel/20240725234706.655613-1-song@kernel.org/T/#u
+
+Song Liu (3):
+  bpf: Move bpf_get_file_xattr to fs/bpf_fs_kfuncs.c
+  bpf: Add kfunc bpf_get_dentry_xattr() to read xattr from dentry
+  selftests/bpf: Add tests for bpf_get_dentry_xattr
+
+ fs/bpf_fs_kfuncs.c                            | 62 +++++++++++++++++
+ kernel/trace/bpf_trace.c                      | 68 -------------------
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |  9 +++
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      |  9 ++-
+ .../selftests/bpf/progs/test_get_xattr.c      | 37 ++++++++--
+ 5 files changed, 111 insertions(+), 74 deletions(-)
+
+--
+2.43.5
 
