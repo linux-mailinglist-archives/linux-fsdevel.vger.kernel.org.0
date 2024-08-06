@@ -1,148 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-25145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C033E949672
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:11:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F67994967B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2EB11C21CA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 17:11:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81ABF1C22D68
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 17:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEF9481A3;
-	Tue,  6 Aug 2024 17:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69853482E2;
+	Tue,  6 Aug 2024 17:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="tBAcR+Wg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="drwdgXhj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K7LCt/pK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327FF22331
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 17:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192582A1D3;
+	Tue,  6 Aug 2024 17:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722964286; cv=none; b=RdzTESSaWhwbDLPtOx5GsRzrB+9LMUz1ZAhwVW8qUdIDy7eCsRv+dOQ4WkfCbjkr/m7xg4mMV3EEtCdDtOMNFm/wAVXPI6OlDEV3V1rtRjL1mjd73gH5AaXZKkiJ4G2LJYjL8pA2/1x969/kPoXtJgwTinefk4SnYYYIvMkW2eM=
+	t=1722964592; cv=none; b=QyYuUKDmgMlhzxcuIeJ7j7/WzzOxNNM0ucdMMyZTdzntNunUTax4nWfU/e4rlgxW5zYQK+H5czYCDCsaAi4+iRjyO6wTPP0f0RvTMXWTrIMy6rwuG+rBj7ajokY07Zi8mifJ7Cw2eRqlNTicpgCPuyCEoe32eAJ3iqZGC+wUoUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722964286; c=relaxed/simple;
-	bh=HZQb4Ra4fZL5Fv7NnPvoAXkodT2JwCG4SJgEjIgpm/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W5z3gldFyRc1MQcBOc8d43BP5FdW1J20KH9kSNhgtr6ypx/EA5GO3zZ6avGUvy6cZmYeSotz89rzvWRSdhvj1FwMkf++QjvOKHjUGuv1sNderRlBNlRSzbqtUm17URxHH/E2nkW4Wsle0lY2IEPUD978S76io/mFDCOyM/JD2QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=tBAcR+Wg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=drwdgXhj; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 36EF0114AB22;
-	Tue,  6 Aug 2024 13:11:23 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 06 Aug 2024 13:11:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1722964283;
-	 x=1723050683; bh=ina3UfqMkBKENBvx+REx/5aIkefG9mY3I/Qg9oqrEXA=; b=
-	tBAcR+Wg14lPXN7E2V52de+toh4O8qog+qYd7kJhmmLN1vamq7iWnVi5zjvTAQ+v
-	4jevuW5gop1WFYFs9w1/fPWmDB2/NegyoT9jcjxhM5ZO/LFnhdt/QvDAbtgu3ctt
-	dwNyMt69CckiJw3sGdim0s3KUYR6xroBMRYSjk3Ff/uiMfm7h01qkyGXKZR6QZMm
-	s3tBcdEHci1TgRUzEtDGGyw3M2jhUbtsikk5nKXgbYNHGZozbC1rwoJ7mebJtnOH
-	aluRMePkKLCsuS2cec04Ipk0Qq3/d4QsnsD7Zm3k9YtspmSw5zJJdAn1WsKVTD49
-	67WnTsj+2SeywW4CgQ8tFA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722964283; x=
-	1723050683; bh=ina3UfqMkBKENBvx+REx/5aIkefG9mY3I/Qg9oqrEXA=; b=d
-	rwdgXhjduOtGJbpnqfmVotgiVVCFOzuZuEstT9/OtYty9zBQAQjWzbae94Q1vBKc
-	HaVLDKFapALAfHmPRg6Ge1UbQB+85QTSiWfGEBuAKY9sg0UQpIZf6s6zbT5hEEFV
-	AEUYZ3DjkH+lEofgEwvve6rUFREN4CvMuYJyJjASMO9AfiIuRbg/eb57VijiB/0s
-	oiBEJMpEHHnsWYT1vsNwM090UepzWMcoU5sc+Lg97IYSA2ONRZTEbs+Ye0j6blIk
-	65HuYdYJT5xo3xa0Vzb+zZEgvwdkavj14JlLXOHGgpuhBiIB7W8CwdU9zQQbqgoO
-	TnXTpUWW0xwlSbwS2y74g==
-X-ME-Sender: <xms:OlmyZl089ke7NvrH2r4vB8GWlnt_DsgOB3XnTn70mAUe1Q7w-X2xAg>
-    <xme:OlmyZsFdxXGxKhgd5QK2WJlZk0GzDQTdZDIxE1XcOZABb6yLnEvnGNrr_Uw6gyl8J
-    4eNMQk0uSc4XXua>
-X-ME-Received: <xmr:OlmyZl6pkIbGIFKlPbKLXaZiRoQoLA5QNO88yMiBxloZkKslkq5zlfnKR-a3cMzbGWtZ3R_FysJ2z9lF_C4-HFxCG0I9hK6R8p48WoTMGEFnLt84qRVS>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeekgddutdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
-    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhmpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:OlmyZi39TS-wEh7DlIC6k9NOowq3SI5_8l3TiE9zE-Xz9PGAn9g4Jg>
-    <xmx:OlmyZoH-at2TjnDso28Odrj2IzLCJ0NhhWgZCUw3RMRvQ975PmQwOQ>
-    <xmx:OlmyZj_fCGUbO5hvYHjUgDolnTAs3wA9IcSoBfvvEO2BQKAmEqnEQQ>
-    <xmx:OlmyZlk5C-DndzMeEnltLrnDs-HkfdoIxlRsDWrk-EqhcuTo03dShw>
-    <xmx:O1myZt5yjxdDN121j-84jYJc83CvE7gaGKwYfTRzJERMPXEvENZmcalJ>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 6 Aug 2024 13:11:21 -0400 (EDT)
-Message-ID: <d3b42254-3cd0-41f9-8cc1-fd528c150da2@fastmail.fm>
-Date: Tue, 6 Aug 2024 19:11:20 +0200
+	s=arc-20240116; t=1722964592; c=relaxed/simple;
+	bh=PEETIci6hUduaM8hNub+xJEHnlXgc5vOZkcX5XlaWd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NhuII7LClDa5v52pm7ZjD7BigDQnfnk1BYqdGUVnrkCXV+5DsqGS9LY7OusUmyuGG9TrRsyOA0nqS1ZXUpADgqXJvvx1k3q+piM8bSc0C2Qi5fQ9Ao64A7+4I0TGKk4wlAavtPbuZHbWKs1yQDOlF9nfGvnQgmlCA/6JRti8dWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K7LCt/pK; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f16767830dso10026931fa.0;
+        Tue, 06 Aug 2024 10:16:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722964589; x=1723569389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7sCtlrfFx1xhGzgLdvWohx3gPpnZHRqBbQohEVU2h6E=;
+        b=K7LCt/pKms+r3eB8BR8h7DZiMWLgqd8ig2libB3kmy/9F6Dld9ltovETCxh6f5s//U
+         vUsf9aHfGqqRetNUtWQwXFiOASsS9pmZiW2chRmyUry6xfhOIw2hXg9MTtxNKizC5icG
+         humsXT55lqJZuasCV+FpyHMUXymG0s/t8ITSOU+JdcvNoFSQWfa5rlD6RQIt7ynh5N8x
+         9j58d3hrdgzOXqYpC43dXj53m1dOfevFS29U/H81huHcBfL8/wxZFFtKdyfHtwyEVQ1a
+         vbzo5qqhkv8XtR1UCE6Y576rJ05rvKU3AKAmb2IAdtpoh/ZDevr80OAtmpcLIyKLQ1My
+         tk3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722964589; x=1723569389;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7sCtlrfFx1xhGzgLdvWohx3gPpnZHRqBbQohEVU2h6E=;
+        b=kB7ruV6iKKA3dnA4otVLRgq1ZIMQnS1fKOA0D+JWFrgWkVHrcW+mwAaWwDA75rt6w7
+         9lYqzOojw58cs+gNxHl52brtvI4hHimcgRKDkpbNx/CP1x4DT3Rk1fp2eP2uJWdY0ZaE
+         7N157s9QaSQhgTPM7NxUXPg532Ux5PnzA6OVQrWFphZrW5dFPNC0ln/nzPM/3YmkJ/98
+         Inew0/c3ol2BcM+JAvotM9bAQnbFtL5IIXIWOfDB1QEJKmpMr65ot8oyVY0TWoqTDA6F
+         rauPTTswQsOcYAMCLxzbv3HNVvfK9ztxqDieedR8sqsCy6eOzAjbOCa8450V4396fhGM
+         NzgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsRJQtg56DdSgPWqAaRz6TSZuamuhvSSSPqUlhvBjfxHqeubn5UjA4dTrsQkYzEEPh7iRgopu6MSo2C3ZCReJE8TOry525x7zzcO1a/bGE6rWCY0TlU26pQ2T9z/LvpAxXQwFGALoHpZqvQQ==
+X-Gm-Message-State: AOJu0Yz2X6k24cGOAmzLlX1WbeLX+PsqXY23wpPdrzxx7Vt2F7SDeV1N
+	HTeQ+BlPzgmzD0Suot/dF+VL8JdYPxQ8JODB1DJHEGFxiKIblA8nQPYNe9rZoTzGwYBDOyyOG6d
+	SGqO/eCJs5vozKQ9Knet681lH71cA4KM8
+X-Google-Smtp-Source: AGHT+IHtr+C20+PJjskNV4xHqS1/kkkgmJu5MYIN14r+C/ilL+cKyXGQMxKVuKfBSiLXv0qQfEbvZSJwHE3m4+dY7LE=
+X-Received: by 2002:a2e:984d:0:b0:2ef:2c2d:a603 with SMTP id
+ 38308e7fff4ca-2f15aaa70cbmr103338871fa.21.1722964588567; Tue, 06 Aug 2024
+ 10:16:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] fuse: add timeout option for requests
-To: Joanne Koong <joannelkoong@gmail.com>, Yafang Shao <laoar.shao@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
- kernel-team@meta.com
-References: <20240730002348.3431931-1-joannelkoong@gmail.com>
- <CALOAHbD=PY+forv4WebU06igfTdk2UpuwEpNosimWKE=Y=QmYg@mail.gmail.com>
- <CAJnrk1ZQReyeySuPZctDFKt=_AwRfBE8cZEjLNU3SbEuaO49+w@mail.gmail.com>
- <CALOAHbCWQOw6Hj6+zEiivRtfd4haqO+Q8KZQj2OPpsJ3M2=3AA@mail.gmail.com>
- <CAJnrk1ZGR_a6=GHExrAeQN339++R_rcFqtiRrQ0AS4btr4WDLQ@mail.gmail.com>
- <CAJnrk1bCrsy7s2ODTgZvrXk_4HwC=9hjeHjPvRm8MHDx+yE6PQ@mail.gmail.com>
- <CALOAHbCsqi1LeXkdZr2RT0tMTmuCHJ+h0X1fMipuo1-DWXARWA@mail.gmail.com>
- <CAJnrk1ZMYj3uheexfb3gG+pH6P_QBrmW-NPDeedWHGXhCo7u_g@mail.gmail.com>
- <CALOAHbA3MRp7X=A52HEZq6A-c2Qi=zZS8dinALGcgsisJ6Ck2g@mail.gmail.com>
- <CAJnrk1ZRBuEtL65m2e1rwU9wJn3FTLCiJctv_T-fKAQaAbwLFQ@mail.gmail.com>
- <CAJnrk1YL8zvTRESyf_nXvHwHBt-1HLSSpO7s=Ys7ZF28g5YQeA@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, fr, ru
-In-Reply-To: <CAJnrk1YL8zvTRESyf_nXvHwHBt-1HLSSpO7s=Ys7ZF28g5YQeA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240730230805.42205-1-song@kernel.org> <20240730230805.42205-3-song@kernel.org>
+In-Reply-To: <20240730230805.42205-3-song@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 6 Aug 2024 10:16:17 -0700
+Message-ID: <CAADnVQJJcJsBk9nR5_gTWNmgQGjNi1BJWCex4XZVB=w9ybsOzA@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add tests for bpf_get_dentry_xattr
+To: Song Liu <song@kernel.org>
+Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	liamwisehart@meta.com, lltang@meta.com, shankaran@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 30, 2024 at 4:08=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+> Add test for bpf_get_dentry_xattr on hook security_inode_getxattr.
+> Verify that the kfunc can read the xattr. Also test failing getxattr
+> from user space by returning non-zero from the LSM bpf program.
+>
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  .../selftests/bpf/prog_tests/fs_kfuncs.c      |  9 ++++-
+>  .../selftests/bpf/progs/test_get_xattr.c      | 37 ++++++++++++++++---
+>  2 files changed, 40 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/t=
+esting/selftests/bpf/prog_tests/fs_kfuncs.c
+> index 37056ba73847..5a0b51157451 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+> @@ -16,6 +16,7 @@ static void test_xattr(void)
+>  {
+>         struct test_get_xattr *skel =3D NULL;
+>         int fd =3D -1, err;
+> +       int v[32];
+>
+>         fd =3D open(testfile, O_CREAT | O_RDONLY, 0644);
+>         if (!ASSERT_GE(fd, 0, "create_file"))
+> @@ -50,7 +51,13 @@ static void test_xattr(void)
+>         if (!ASSERT_GE(fd, 0, "open_file"))
+>                 goto out;
+>
+> -       ASSERT_EQ(skel->bss->found_xattr, 1, "found_xattr");
+> +       ASSERT_EQ(skel->bss->found_xattr_from_file, 1, "found_xattr_from_=
+file");
+> +
+> +       /* Trigger security_inode_getxattr */
+> +       err =3D getxattr(testfile, "user.kfuncs", v, sizeof(v));
+> +       ASSERT_EQ(err, -1, "getxattr_return");
+> +       ASSERT_EQ(errno, EINVAL, "getxattr_errno");
+> +       ASSERT_EQ(skel->bss->found_xattr_from_dentry, 1, "found_xattr_fro=
+m_dentry");
+>
+>  out:
+>         close(fd);
+> diff --git a/tools/testing/selftests/bpf/progs/test_get_xattr.c b/tools/t=
+esting/selftests/bpf/progs/test_get_xattr.c
+> index 7eb2a4e5a3e5..66e737720f7c 100644
+> --- a/tools/testing/selftests/bpf/progs/test_get_xattr.c
+> +++ b/tools/testing/selftests/bpf/progs/test_get_xattr.c
+> @@ -2,6 +2,7 @@
+>  /* Copyright (c) 2023 Meta Platforms, Inc. and affiliates. */
+>
+>  #include "vmlinux.h"
+> +#include <errno.h>
+>  #include <bpf/bpf_helpers.h>
+>  #include <bpf/bpf_tracing.h>
+>  #include "bpf_kfuncs.h"
+> @@ -9,10 +10,12 @@
+>  char _license[] SEC("license") =3D "GPL";
+>
+>  __u32 monitored_pid;
+> -__u32 found_xattr;
+> +__u32 found_xattr_from_file;
+> +__u32 found_xattr_from_dentry;
+>
+>  static const char expected_value[] =3D "hello";
+> -char value[32];
+> +char value1[32];
+> +char value2[32];
+>
+>  SEC("lsm.s/file_open")
+>  int BPF_PROG(test_file_open, struct file *f)
+> @@ -25,13 +28,37 @@ int BPF_PROG(test_file_open, struct file *f)
+>         if (pid !=3D monitored_pid)
+>                 return 0;
+>
+> -       bpf_dynptr_from_mem(value, sizeof(value), 0, &value_ptr);
+> +       bpf_dynptr_from_mem(value1, sizeof(value1), 0, &value_ptr);
+>
+>         ret =3D bpf_get_file_xattr(f, "user.kfuncs", &value_ptr);
+>         if (ret !=3D sizeof(expected_value))
+>                 return 0;
+> -       if (bpf_strncmp(value, ret, expected_value))
+> +       if (bpf_strncmp(value1, ret, expected_value))
+>                 return 0;
+> -       found_xattr =3D 1;
+> +       found_xattr_from_file =3D 1;
+>         return 0;
+>  }
+> +
+> +SEC("lsm.s/inode_getxattr")
+> +int BPF_PROG(test_inode_getxattr, struct dentry *dentry, char *name)
+> +{
+> +       struct bpf_dynptr value_ptr;
+> +       __u32 pid;
+> +       int ret;
+> +
+> +       pid =3D bpf_get_current_pid_tgid() >> 32;
+> +       if (pid !=3D monitored_pid)
+> +               return 0;
+> +
+> +       bpf_dynptr_from_mem(value2, sizeof(value2), 0, &value_ptr);
+> +
+> +       ret =3D bpf_get_dentry_xattr(dentry, "user.kfuncs", &value_ptr);
 
+Song,
 
-On 8/6/24 18:23, Joanne Koong wrote:
+See CI failure on s390.
+I think you need to update bpf_kfuncs.h, since s390 doesn't emit
+kfuncs into vmlinux.h
 
->>
->> This is very interesting. These logs (and the ones above with the
->> lxcfs server running concurrently) are showing that the read request
->> was freed but not through the do_fuse_request_end path. It's weird
->> that fuse_simple_request reached fuse_put_request without
->> do_fuse_request_end having been called (which is the only place where
->> FR_FINISHED gets set and wakes up the wait events in
->> request_wait_answer).
->>
->> I'll take a deeper look tomorrow and try to make more sense of it.
-> 
-> Finally realized what's happening!
-> When we kill the cat program, if the request hasn't been sent out to
-> userspace yet when the fatal signal interrupts the
-> wait_event_interruptible and wait_event_killable in
-> request_wait_answer(), this will clean up the request manually (not
-> through the fuse_request_end() path), which doesn't delete the timer.
-> 
-> I'll fix this for v3.
-> 
-> Thank you for surfacing this and it would be much appreciated if you
-> could test out v3 when it's submitted to make sure.
+Also pls add a patch to move these kfuncs to fs/bpf_fs_kfuncs.c
 
-It is still just a suggestion, but if the timer would have its own ref,
-any oversight of another fuse_put_request wouldn't be fatal.
-
-
-Thanks,
-Bernd
+pw-bot: cr
 
