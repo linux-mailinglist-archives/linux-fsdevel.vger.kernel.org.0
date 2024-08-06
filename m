@@ -1,372 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-25141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6C69495CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 18:43:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3393594960D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 19:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B4E288E79
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 16:43:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6389C1C2275D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 17:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BED40858;
-	Tue,  6 Aug 2024 16:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8022347A4C;
+	Tue,  6 Aug 2024 17:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9zbZumc"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gJJ2/ksu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E64F2C697
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 16:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF0822331
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 17:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722962609; cv=none; b=j1jYD+c4xewdPIDFFQIRHcJGlGnXKJdf4L5Hby0C57n0UoNpewRZlihQaNIU3ps43DEw8OIrgeMAKo791YC84Q4aYv58TEDxal/y40KbIepxnAm0dYdCVdArUE+loZf9aJsHNZMV2fc9+g016AIuwNG++CnC2uMljwXFg6VxIf8=
+	t=1722963683; cv=none; b=pJ4mqwf9aQDBxG8RBLiLLujGKeF22nN0rxF3tCt7QDZ6E7metuL4F6PKXDHf/zQRuKRZRKYmKhY5iU/7Q/e9DlyIv91WNeXkE213uTFDVo/6yV8l9+ti54+9Cxl3Jep/d7fkVJ++wr8tG6B51U7LsjVMo18f0qwJIoZyXZmrKRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722962609; c=relaxed/simple;
-	bh=spAKRxMAHtLIWo0kMt00qH4Ikj5s7K6LpFUO6oCpdi0=;
+	s=arc-20240116; t=1722963683; c=relaxed/simple;
+	bh=z74moehSgQTr+CrxBCdY3xDjq2CpjqyxeWJ3/rjbUVQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RBp8EZljusUUAjLwPhuGq2dfW8teeFzK30/Kid2WHvQvwyAg1Xy31by1ljy7s0PM3ev806CgwTctn7BIa/cY6pmG+XV547/8J6svQ/giDGxCaJmNvN46V4/JgeRbKLVnzv490gyXMphp+1eByuOfAkAzSKgRfzLG0qr0yYhS+48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D9zbZumc; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d9e13ef8edso475827b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 09:43:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=Vu23Rd5ac6UL9n06idHUUDRDMU4hfW/MGmUcxBSM1wMqnIg778mcQ3nzeDNXYCE/mu1/Eb2LdhRYd9iFaIiB3KAPs9ylnyWsTu1YhdEHZdSrZ+tXkKmux/oZFy6JFpY7dgwLWSiyTbUBFpzLEHeOYBylJDRvEDHq88Qib00UvME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gJJ2/ksu; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5ba43b433beso957668a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 10:01:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722962606; x=1723567406; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=28R1IyvrLm1Fj1Ee5LR+kpFbCkRxYd7hCQ6BmSH1fwY=;
-        b=D9zbZumcda0WjBMz/78/bBLCxDCEENqLM22MVhr1YPfhLIeWXKeC1qmy3vfSB6OSK7
-         +g6ZVCyqGDdu2/GdisFXprCX9f+1WzX8sDU4uWP/t72KbBefUWzB0Vdr6JycofhbFsOE
-         s7X9xw+gjyVhlHkqedBnKcZMhpovrE/2jgrfV4XaGjPCKQkmhiMUkzBI1E5KTqDN4j6B
-         vQmSQgPW8hNGHX/O+aGVTObZCY6pHfKzHhr3YbwNorlEFjoHBAdIiRSkNSWqQCREnx9e
-         o4VI4XUkTIm7ZaEsWT4Gx2AlBxuPW+3rp2/7IgXRri8+qGQHrKMS88ZGUb6yApN6VqbS
-         0f+A==
+        d=linux-foundation.org; s=google; t=1722963680; x=1723568480; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wYjOuLbMCDr/PE8EWIJr5oKj1Wfhs6GBeiD6/n87BEQ=;
+        b=gJJ2/ksufayj03OcSJnhXnyAlFoCT6hxC6lyIlsd2xWaX/ym68tXzDUBpkI9O5v0wz
+         H0btkboWr7v8G6GQoa9GQp+GCJ+zlnu6hd88PFo/MQjz715WBmsbdXljNApZZuq2BJOh
+         g/+N4hp+9uHlYGFW9djN/Fz+KYzO1MGa1G4iw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722962606; x=1723567406;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=28R1IyvrLm1Fj1Ee5LR+kpFbCkRxYd7hCQ6BmSH1fwY=;
-        b=GgPCrI+aoLGHW3egf2HQYXg2C1Qc1ebbR9803PvNdDSZxmyC2bq0na1cixcY/ccmVP
-         PQZ32ZijWWviIJ3QZJtTfGx63d6vFzpsVmOCAYenswNscDRvgXm3YW8voziAYp0/lWuw
-         CcBPLYI05uwgM218ee8jesUIvVCnghZ9aOPFcpuAn8OBHskbvD4sy8Vo0SeZWfULot1A
-         BptmkbVNE1jEx4MTSJ6l/4vm+OwzsFVzeCMxbCKVLu5spTY2XlQTJtFWqOGGHJAo18ax
-         h4fopHQWyTyT916DPX4I4zMypbTJRkydjSw3ba4KO6mN5i2vPmfoxQBvDSyRr0soH5VW
-         5+Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCU/2dc+ajdsT+Uxzu6fthtrirFLkXEkbeYO48w6I/ApTdP9j4s+FddXY0jaWp/2PYwtysti+cSAJt3BPLbkF3kEwGhXptVvuEhYtjGEJA==
-X-Gm-Message-State: AOJu0YwlpBF0PM33RchdUa6B3J6zbxPoZTA83YDvAMn+rGl8u/sKJhiX
-	KneSk+JULImKMRIpEbZ12Hmh95jibU33bi/hsMIQC0NI9hv+xLWzTwKp5hrt4RLeoqFQfn3d/Q1
-	COo00vXPpQo6vVDwy1t+PBGbtg48=
-X-Google-Smtp-Source: AGHT+IEhM+ruFyVEITgHxays2TpoB5dpwa1cW8EkAV5NLZ4tLFF0dgCGs0e10QGbxqB2630sd3cwA42k64sYRYQnJhg=
-X-Received: by 2002:a05:6808:301e:b0:3da:a032:24c5 with SMTP id
- 5614622812f47-3db5580dd35mr16360564b6e.22.1722962606152; Tue, 06 Aug 2024
- 09:43:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722963680; x=1723568480;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wYjOuLbMCDr/PE8EWIJr5oKj1Wfhs6GBeiD6/n87BEQ=;
+        b=cZ7yDmSc9MpQosqVR4YGxpexPEb818RuL8uEznVLe3CzYHVct55muqvV4Slm/IhE8C
+         DHOXO+H8tYtOhJh68FBNGdiBiQYfgzBA6qCPARcsRP1bS3B2CkfuYeCtiKbmstFlMviA
+         qn/NPo85u3k/4N2WTpqa+MPheke3Zj8MpkFWDrlt5RBzG3OprvX+JszAkh1Q/kQ4oPNJ
+         JyVJOiHDcEFRbMDhpxcdzdcIKhvcQUsWQYYaAbL38io1PmQ3er225MsKWnb1LFkyXto0
+         LWpTRF8dodG9Nn3e7l7da5XRSlBoyTcirsPHN5QCherXfr/oOiCoMrole0v1vFx8SUev
+         zUIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrOZFLXx4n1NCASLpXVwoSs1V6iUqmcn/Jj6NgC9NQzUR/evYMif+d+rqQfj8DO3rAs+YiNA86l7BqzFKFK/x+j2xuXi28Ts8axSr8jA==
+X-Gm-Message-State: AOJu0YwgvEr4/rKR0bHukfUyJX5uJgs45RHdw6Q6DiOEPyZm6Pi34/3y
+	T/MwYMk/6NmwSADqaFZ7+8kwuS7w/rQ1Y9/CGKdBjc19EPeqjIyo3DE6U1xDh5qHrTTJlXhYzs3
+	G4xLPtA==
+X-Google-Smtp-Source: AGHT+IGe8lfXjxt/Esrx+cVID4nnXxEP/Ya5hqnHvfp+e5YMWz7zaVM0zKkdGKMHxjDXL0ZiMHcV3Q==
+X-Received: by 2002:a50:eb0b:0:b0:5a1:c793:b440 with SMTP id 4fb4d7f45d1cf-5b7f3cc7601mr12978865a12.10.1722963679595;
+        Tue, 06 Aug 2024 10:01:19 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83b92cbccsm6108144a12.68.2024.08.06.10.01.18
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 10:01:18 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7aa4bf4d1eso97148966b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 10:01:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUBsABd+GfDzQP6YqAwm+yVGMvg9P3UTrtrGxexkT1Sw+Yw8BSTMTyoiGU0uhobA1RmWH5Ok+DusO/B0jV22QNs86QekM91cjVHagfR0g==
+X-Received: by 2002:a17:907:968b:b0:a7d:c9c6:a692 with SMTP id
+ a640c23a62f3a-a7dc9c6a8a1mr1310805966b.51.1722963678478; Tue, 06 Aug 2024
+ 10:01:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730002348.3431931-1-joannelkoong@gmail.com>
- <20240730002348.3431931-2-joannelkoong@gmail.com> <ffce4a22-5104-4707-812b-962638e45aeb@linux.alibaba.com>
- <CAJnrk1aHnn+i2FNxOEnLdhC6m9gF_O77t9yjsvsmFwLjBh-Gkw@mail.gmail.com> <c238a20d-807f-41d2-9ce0-519bffe5ab26@linux.alibaba.com>
-In-Reply-To: <c238a20d-807f-41d2-9ce0-519bffe5ab26@linux.alibaba.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 6 Aug 2024 09:43:15 -0700
-Message-ID: <CAJnrk1boHEZ4_tp0U_3dck0DhH2gtP3k5HG5L7ZfjMLihRJchg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] fuse: add optional kernel-enforced timeout for requests
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, laoar.shao@gmail.com, kernel-team@meta.com
+References: <20240803225054.GY5334@ZenIV> <CAHk-=wgDgy++ydcF6U2GOLAAxTB526ctk1SS7s1y=1HaexwcvA@mail.gmail.com>
+ <20240804003405.GA5334@ZenIV> <20240804034739.GB5334@ZenIV>
+ <CAHk-=wgH=M9G02hhgPL36cN3g21MmGbg7zAeS6HtN9LarY_PYg@mail.gmail.com>
+ <20240804211322.GD5334@ZenIV> <20240805234456.GK5334@ZenIV>
+ <CAHk-=wjb1pGkNuaJOyJf9Uois648to5NJNLXHk5ELFTB_HL0PA@mail.gmail.com>
+ <20240806010217.GL5334@ZenIV> <20240806-beugen-unsinn-9433e4a8e276@brauner> <20240806163208.GQ5334@ZenIV>
+In-Reply-To: <20240806163208.GQ5334@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Aug 2024 10:01:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg7qeXqNt32ReE_oMz+1FjRG7WhZWvLokFfzu5z6RkQ6g@mail.gmail.com>
+Message-ID: <CAHk-=wg7qeXqNt32ReE_oMz+1FjRG7WhZWvLokFfzu5z6RkQ6g@mail.gmail.com>
+Subject: Re: [PATCH] fix bitmap corruption on close_range() with CLOSE_RANGE_UNSHARE
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 5, 2024 at 7:45=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.co=
-m> wrote:
->
->
->
-> On 8/6/24 6:53 AM, Joanne Koong wrote:
-> > On Mon, Aug 5, 2024 at 12:32=E2=80=AFAM Jingbo Xu <jefflexu@linux.aliba=
-ba.com> wrote:
-> >>
-> >>
-> >>
-> >> On 7/30/24 8:23 AM, Joanne Koong wrote:
-> >>> There are situations where fuse servers can become unresponsive or ta=
-ke
-> >>> too long to reply to a request. Currently there is no upper bound on
-> >>> how long a request may take, which may be frustrating to users who ge=
-t
-> >>> stuck waiting for a request to complete.
-> >>>
-> >>> This commit adds a timeout option (in seconds) for requests. If the
-> >>> timeout elapses before the server replies to the request, the request
-> >>> will fail with -ETIME.
-> >>>
-> >>> There are 3 possibilities for a request that times out:
-> >>> a) The request times out before the request has been sent to userspac=
-e
-> >>> b) The request times out after the request has been sent to userspace
-> >>> and before it receives a reply from the server
-> >>> c) The request times out after the request has been sent to userspace
-> >>> and the server replies while the kernel is timing out the request
-> >>>
-> >>> While a request timeout is being handled, there may be other handlers
-> >>> running at the same time if:
-> >>> a) the kernel is forwarding the request to the server
-> >>> b) the kernel is processing the server's reply to the request
-> >>> c) the request is being re-sent
-> >>> d) the connection is aborting
-> >>> e) the device is getting released
-> >>>
-> >>> Proper synchronization must be added to ensure that the request is
-> >>> handled correctly in all of these cases. To this effect, there is a n=
-ew
-> >>> FR_FINISHING bit added to the request flags, which is set atomically =
-by
-> >>> either the timeout handler (see fuse_request_timeout()) which is invo=
-ked
-> >>> after the request timeout elapses or set by the request reply handler
-> >>> (see dev_do_write()), whichever gets there first. If the reply handle=
-r
-> >>> and the timeout handler are executing simultaneously and the reply ha=
-ndler
-> >>> sets FR_FINISHING before the timeout handler, then the request will b=
-e
-> >>> handled as if the timeout did not elapse. If the timeout handler sets
-> >>> FR_FINISHING before the reply handler, then the request will fail wit=
-h
-> >>> -ETIME and the request will be cleaned up.
-> >>>
-> >>> Currently, this is the refcount lifecycle of a request:
-> >>>
-> >>> Synchronous request is created:
-> >>> fuse_simple_request -> allocates request, sets refcount to 1
-> >>>   __fuse_request_send -> acquires refcount
-> >>>     queues request and waits for reply...
-> >>> fuse_simple_request -> drops refcount
-> >>>
-> >>> Background request is created:
-> >>> fuse_simple_background -> allocates request, sets refcount to 1
-> >>>
-> >>> Request is replied to:
-> >>> fuse_dev_do_write
-> >>>   fuse_request_end -> drops refcount on request
-> >>>
-> >>> Proper acquires on the request reference must be added to ensure that=
- the
-> >>> timeout handler does not drop the last refcount on the request while
-> >>> other handlers may be operating on the request. Please note that the
-> >>> timeout handler may get invoked at any phase of the request's
-> >>> lifetime (eg before the request has been forwarded to userspace, etc)=
-.
-> >>>
-> >>> It is always guaranteed that there is a refcount on the request when =
-the
-> >>> timeout handler is executing. The timeout handler will be either
-> >>> deactivated by the reply/abort/release handlers, or if the timeout
-> >>> handler is concurrently executing on another CPU, the reply/abort/rel=
-ease
-> >>> handlers will wait for the timeout handler to finish executing first =
-before
-> >>> it drops the final refcount on the request.
-> >>>
-> >>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> >>> ---
-> >>>  fs/fuse/dev.c    | 187 +++++++++++++++++++++++++++++++++++++++++++++=
---
-> >>>  fs/fuse/fuse_i.h |  14 ++++
-> >>>  fs/fuse/inode.c  |   7 ++
-> >>>  3 files changed, 200 insertions(+), 8 deletions(-)
-> >>>
-> >>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> >>> index 9eb191b5c4de..9992bc5f4469 100644
-> >>> --- a/fs/fuse/dev.c
-> >>> +++ b/fs/fuse/dev.c
-> >>> @@ -31,6 +31,8 @@ MODULE_ALIAS("devname:fuse");
-> >>>
-> >>>  static struct kmem_cache *fuse_req_cachep;
-> >>>
-> >>> +static void fuse_request_timeout(struct timer_list *timer);
-> >>> +
-> >>>  static struct fuse_dev *fuse_get_dev(struct file *file)
-> >>>  {
-> >>>       /*
-> >>> @@ -48,6 +50,8 @@ static void fuse_request_init(struct fuse_mount *fm=
-, struct fuse_req *req)
-> >>>       refcount_set(&req->count, 1);
-> >>>       __set_bit(FR_PENDING, &req->flags);
-> >>>       req->fm =3D fm;
-> >>> +     if (fm->fc->req_timeout)
-> >>> +             timer_setup(&req->timer, fuse_request_timeout, 0);
-> >>>  }
-> >>>
-> >>>  static struct fuse_req *fuse_request_alloc(struct fuse_mount *fm, gf=
-p_t flags)
-> >>> @@ -277,12 +281,15 @@ static void flush_bg_queue(struct fuse_conn *fc=
-)
-> >>>   * the 'end' callback is called if given, else the reference to the
-> >>>   * request is released
-> >>>   */
-> >>> -void fuse_request_end(struct fuse_req *req)
-> >>> +static void do_fuse_request_end(struct fuse_req *req, bool from_time=
-r_callback)
-> >>>  {
-> >>>       struct fuse_mount *fm =3D req->fm;
-> >>>       struct fuse_conn *fc =3D fm->fc;
-> >>>       struct fuse_iqueue *fiq =3D &fc->iq;
-> >>>
-> >>> +     if (from_timer_callback)
-> >>> +             req->out.h.error =3D -ETIME;
-> >>> +
-> >>
-> >> FMHO, could we move the above error assignment up to the caller to mak=
-e
-> >> do_fuse_request_end() look cleaner?
+On Tue, 6 Aug 2024 at 09:32, Al Viro <viro@zeniv.linux.org.uk> wrote:
 > >
-> > Sure, I was thinking that it looks cleaner setting this in
-> > do_fuse_request_end() instead of having to set it in both
-> > timeout_pending_req() and timeout_inflight_req(), but I see your point
-> > as well.
-> > I'll make this change in v3.
-> >
-> >>
-> >>
-> >>>       if (test_and_set_bit(FR_FINISHED, &req->flags))
-> >>>               goto put_request;
-> >>>
-> >>> @@ -296,8 +303,6 @@ void fuse_request_end(struct fuse_req *req)
-> >>>               list_del_init(&req->intr_entry);
-> >>>               spin_unlock(&fiq->lock);
-> >>>       }
-> >>> -     WARN_ON(test_bit(FR_PENDING, &req->flags));
-> >>> -     WARN_ON(test_bit(FR_SENT, &req->flags));
-> >>>       if (test_bit(FR_BACKGROUND, &req->flags)) {
-> >>>               spin_lock(&fc->bg_lock);
-> >>>               clear_bit(FR_BACKGROUND, &req->flags);
-> >>> @@ -324,13 +329,105 @@ void fuse_request_end(struct fuse_req *req)
-> >>>               wake_up(&req->waitq);
-> >>>       }
-> >>>
-> >>> +     if (!from_timer_callback && req->timer.function)
-> >>> +             timer_delete_sync(&req->timer);
-> >>> +
-> >>
-> >> Similarly, move the caller i.e. fuse_request_end() call
-> >> timer_delete_sync() instead?
-> >
-> > I don't think we can do that because the fuse_put_request() at the end
-> > of this function often holds the last refcount on the request which
-> > frees the request when it releases the ref.
+> > So I think smp_wmb() and smp_rmb() would be sufficient. I also find it
+> > clearer in this case.
 >
-> Initially I mean timer_delete_sync() could be called before
-> do_fuse_request_end() inside fuse_request_end().  But anyway it's a
-> rough idea just for making the code look cleaner, without thinking if
-> this logic change is right or not.
+> It's not the question of sufficiency; it's whether anything cheaper can be
+> had.
 
-Ahh I see now what you were saying. Great suggestion! I'll change this for =
-v3.
+I'd avoid smp_rmb(), since that can be very expensive, but
+"smp_load_acquire()" is about as cheap as it comes. As is
+"smp_store_release()" and "smp_wmb()".
 
->
->
-> >>> +static void timeout_pending_req(struct fuse_req *req)
-> >>> +{
-> >>> +     struct fuse_conn *fc =3D req->fm->fc;
-> >>> +     struct fuse_iqueue *fiq =3D &fc->iq;
-> >>> +     bool background =3D test_bit(FR_BACKGROUND, &req->flags);
-> >>> +
-> >>> +     if (background)
-> >>> +             spin_lock(&fc->bg_lock);
-> >>
-> >> Just out of curious, why fc->bg_lock is needed here, which makes the
-> >> code look less clean?
-> >
-> > The fc->bg_lock is needed because the background request may still be
-> > on the fc->bg_queue when the request times out (eg the request hasn't
-> > been flushed yet). We need to acquire the fc->bg_lock so that we can
-> > delete it from the queue, in case somehting else is modifying the
-> > queue at the same time.
->
-> I can understand now.  Thanks!
->
-> >
-> >>
-> >>
-> >>> +     spin_lock(&fiq->lock);
-> >>> +
-> >>> +     if (!test_bit(FR_PENDING, &req->flags)) {
-> >>> +             spin_unlock(&fiq->lock);
-> >>> +             if (background)
-> >>> +                     spin_unlock(&fc->bg_lock);
-> >>> +             timeout_inflight_req(req);
-> >>> +             return;
-> >>> +     }
-> >>> +
-> >>> +     if (!test_bit(FR_PRIVATE, &req->flags))
-> >>> +             list_del_init(&req->list);
-> >>> +
-> >>> +     spin_unlock(&fiq->lock);
-> >>> +     if (background)
-> >>> +             spin_unlock(&fc->bg_lock);
-> >>> +
-> >>> +     do_fuse_request_end(req, true);
-> >>
-> >> I'm not sure if special handling for requests in fpq->io list in neede=
-d
-> >> here.  At least when connection is aborted, thos LOCKED requests in
-> >> fpq->io list won't be finished instantly until they are unlocked.
-> >>
-> >
-> > The places where FR_LOCKED gets set on the request are in
-> > fuse_dev_do_write and fuse_dev_do_read when we do some of the page
-> > copying stuff. In both those functions, this timeout_pending_req()
-> > path isn't hit while we have the lock obtained - in fuse_dev_do_write,
-> > we test and set FR_FINISHING first before doing the page copying (the
-> > timeout handler will return before calling timeout_pending_req()), and
-> > in fuse_dev_do_read, the locking is called after the FR_PENDING flag
-> > has been cleared.
-> >
-> > I think there is a possibility that the timeout handler executes
-> > timeout_inflight_req() while the lock is obtained in fuse_dev_do_read
-> > during the page copying, but this patch added an extra
-> > __fuse_get_request() on the request before doing the page copying,
-> > which means the timeout handler will not free out the request while
-> > the lock is held and the page copying is being done.
-> >
->
-> Yes, this is the only possible place where the timeout handler could
-> concurrently run while the request is in copying state (i.e. LOCKED).
-> As I described above, when connection is aborted, the LOCKED requests
-> will be left there and won't be finished until they are unlocked.  I'm
-> not sure why this special handling is needed for LOCKED requests, but I
-> guess it's not because of UAF issue.  From the comment of
-> lock_request(), "Up to the next unlock_request() there mustn't be
-> anything that could cause a page-fault.", though I can't understand in
-> which case there will be a page fault and it will be an issue.
+So if it's mostly about just ordering with max_fds, I'd suggest just
+doing the store of the bigger max_fds value with a smp_store_release()
+(which guarantees that any previous stores of the bitmap pointers etc
+have been done first and are visible), and then before accessing the
+arrays, do the load of the max_fds thing with a "smp_load_acquire()",
+and it should all be good.
 
-It's not clear to me either what in the end_requests() logic that
-abort_conn would call could cause a page fault. It would be great to
-get some light on this.
+But the array pointers themselves also need the same
+smp_store_release() when updating, just to guarantee that the newly
+copied contents are ordered. Which implies having to read those too
+with smp_load_acquire(), regardless of the max_fds value read.
 
-For v3 I'm going to integrate Bernd's suggestion and disarm the timer
-before dev_do_read's main logic and rearm it after, which will also
-obviate this possible scenario of the timeout handler executing while
-the request is in locked copying state.
+But on x86, smp_store_release/smp_load_acquire is completely free. And
+on other architectures it's generally one of the cheapest possible
+ordering constraints. So I doubt it's a performance issue even outside
+of x86, and avoiding a double indirection is probably a win.
 
-Thanks,
-Joanne
-
->
-> Maybe I'm wrong.  It would be helpful if someone could shed light on this=
-.
->
->
-> --
-> Thanks,
-> Jingbo
+            Linus
 
