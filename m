@@ -1,63 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-25079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A260948B7C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 10:42:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D031948B81
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 10:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ACA32815B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 08:42:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408081C22E03
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 08:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA571BD01C;
-	Tue,  6 Aug 2024 08:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3ECC1BD4FF;
+	Tue,  6 Aug 2024 08:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMPBZN4y"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="de3JxpN5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824D216BE0A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 08:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06D01BD03B;
+	Tue,  6 Aug 2024 08:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722933723; cv=none; b=J1daTGap10Zng+v9CDD06dWJhQfhToqYjg6raSb/4NAKi0b8XnvMKYG3ZpbObWydIffq69wibLRIF8gwKoMZC1ETFhRIA3xy7sxbGdte/mZ7KEA8bNyEFJUwv/qqZyAjsQGON0BItYKJZkRxyIu/WMBMd42tpUIf/kCpysQ7zYo=
+	t=1722933854; cv=none; b=lgI+MIbByPFXYsKh6/RxFOz3ne6CpFpfKVwDDiw4wSyYfjppY28HTqp4BxCzunEJsmtjKSJ5DUDLl5+jn1yICKZIuKb8VyjbFrNgaVqT2WW2T14+HEx1Q5K8B7lPtxLxViLxPXsSVCqPmjbzAvnsKVAh+0GAjo8s4eFRfY0d26I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722933723; c=relaxed/simple;
-	bh=AmmTxrW5E5qRSOipSFVBhB/YrkAurRbSvjsxZ6s06gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHtD6Zx9W2PK26czQKRzcICCGHRDtrqNFE5daBTZ3Xi9xaldcey8aiCYOB4dc1Jnfl2HhW6LkyZWeUX4uX3JQPmmQMZmuR0NqOubaf/b46ha39ydeSVMsYuuNHQtutZSphbtLhE3WfdH0NvjxztWoOKboSxpLzhmPW1dltVrLFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMPBZN4y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE72C32786;
-	Tue,  6 Aug 2024 08:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722933723;
-	bh=AmmTxrW5E5qRSOipSFVBhB/YrkAurRbSvjsxZ6s06gw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hMPBZN4yQAYndqDwttr+pLo5gJMejIw/U7GQNBVM03MxUuohbFOBNBnGHX6PWvLSE
-	 90S0UZEE6suMwDUzbz7IdvR4AtPS2Z1Q+41/sbz7jM7EWWs/Kk+EvRBYXC5xJYoU1e
-	 8eBhiL//mU1RHOGvFQ4DFazybKvE7EvkVpsby5L2eJ7VjtZhVk/2lSm0naATXRRY45
-	 YR/Nm38TVzorHrKDNEfYb2I+x4PvKnmNIgSZ1aJg+L+YbIoF5CYRNTIEZsD99Wx+fU
-	 I/eE6YNy2ZmXQKaD5C2U90npSFKhq9iiwQ6hXD4HCl17/0UMZ5+cPViJaItbW+8Psp
-	 Ei0afiH8jgFFA==
-Date: Tue, 6 Aug 2024 10:41:59 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fix bitmap corruption on close_range() with
- CLOSE_RANGE_UNSHARE
-Message-ID: <20240806-beugen-unsinn-9433e4a8e276@brauner>
-References: <20240803225054.GY5334@ZenIV>
- <CAHk-=wgDgy++ydcF6U2GOLAAxTB526ctk1SS7s1y=1HaexwcvA@mail.gmail.com>
- <20240804003405.GA5334@ZenIV>
- <20240804034739.GB5334@ZenIV>
- <CAHk-=wgH=M9G02hhgPL36cN3g21MmGbg7zAeS6HtN9LarY_PYg@mail.gmail.com>
- <20240804211322.GD5334@ZenIV>
- <20240805234456.GK5334@ZenIV>
- <CAHk-=wjb1pGkNuaJOyJf9Uois648to5NJNLXHk5ELFTB_HL0PA@mail.gmail.com>
- <20240806010217.GL5334@ZenIV>
+	s=arc-20240116; t=1722933854; c=relaxed/simple;
+	bh=5NnzlJHH1Uur4/JIdDKM1bI4iRTWZsSEgo4zWkTensE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bj1hnVDa+4SMD7ShON/yFTVjgTeXAMov7FvFx+pKklpEVh2aYWpkoQRig9SltJmb7hgUdIke0sG44o+dPhtQJWrEhRnmRMaCNavZzymwCYfuHS1pEMEKeyvuSEFnJgL3VQzmrCeQn6njR5GRjMKTVfyF8AFdVHhzWVlFOWCHhhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=de3JxpN5; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722933849; x=1723193049;
+	bh=gHPxGVyssSfW3HceeXUqh8HEKsxaHZzQjVEy69dZFdc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=de3JxpN58fE4yRY235TVsXVn1genOb8G4hkxuIC2Lj8n+FUM8lo6p4WXnXok/ulnI
+	 L2x09TbS7CxT5bt0iNV1VcRvvTuEcQJDF1/nYvCKMEEW4VsMc2fl7QD2Uj2j8skEt0
+	 RG3e2pH4o6BIRLqGYUqbSr79kYvKjuWrudLKjSosIleLe+Orwp/OmLg8otGBIE1D2x
+	 zrMvj+Kow4qGPzKIFym+o8eOOXfewUEAUn0FZbum1O8KDs8WFyCj3Bm7Wq6iwxSluf
+	 1+Q67c/k7lNVZ6VQTyB8aqKi8TdFgHFZEJCzyBmB3B7iuiafX1w/IBhFz+lJF4/RSw
+	 cMiBr9BQtPevA==
+Date: Tue, 06 Aug 2024 08:44:02 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v8 3/8] rust: file: add Rust abstraction for `struct file`
+Message-ID: <4bf5bf3b-88f4-4ee4-80fd-c566428d9f69@proton.me>
+In-Reply-To: <20240725-alice-file-v8-3-55a2e80deaa8@google.com>
+References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com> <20240725-alice-file-v8-3-55a2e80deaa8@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: fd93ad581a32d9f89838e453a9358c2320d4fccd
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,64 +60,129 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240806010217.GL5334@ZenIV>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 02:02:17AM GMT, Al Viro wrote:
-> On Mon, Aug 05, 2024 at 05:04:05PM -0700, Linus Torvalds wrote:
-> > On Mon, 5 Aug 2024 at 16:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > So... do we really need that indirect?  The problem would be
-> > > seeing ->max_fds update before that of the array pointers.
-> > 
-> > The reason is simply so that we can have one single allocation.
-> > 
-> > In fact, quite often, it's zero allocations when you can use the
-> > 'struct fdtable fdtab' that is embedded in 'struct files_struct'.
-> 
-> More to the point, we use arrays embedded into files_struct.
-> 
-> >But
-> > the 'struct fdtable' was a convenient way to allocate all those
-> > bitmaps _and_ the 'struct file *' array all together.
-> 
-> I don't think so - IIRC, it was introduced when we added RCU'd
-> file lookup.  Let me check...  Yep; badf16621c1f "[PATCH] files:
-> break up files struct", with RCU support as rationale.  Followed
-> by ab2af1f50050 "[PATCH] files: files struct with RCU".
-> 
-> Before those commits ->max_fds and ->fd used to live in
-> files_struct and fget() (OK, fcheck_files()) had been taking
-> ->files_lock, so that concurrent expand_files() would not
-> screw us over.
-> 
-> The problem was not just the need to delay freeing old ->fd
-> array; that could be dealt with easily enough.  Think what
-> would've happened if fcheck_files() ended up fetching
-> new value of ->max_fds and old value of ->fd, which pointed
-> to pre-expansion array.  Indirection allowed to update
-> both in one store.
-> 
-> The thing is, ->max_fds for successive ->fdt is monotonously
-> increasing.  So a lockless reader seeing the old size is
-> fine with the new table - we just need to prevent the opposite.
-> 
-> Would rcu_assign_pointer of pointers + smp_store_release of max_fds on expand
-> (all under ->files_lock, etc.) paired with
-> smp_load_acquire of max_fds + rcu_dereference of ->fd on file lookup side
-> be enough, or do we need an explicit smp_wmb/smp_rmb in there?
+On 25.07.24 16:27, Alice Ryhl wrote:
+> +/// Wraps the kernel's `struct file`. Not thread safe.
+> +///
+> +/// This type represents a file that is not known to be safe to transfer=
+ across thread boundaries.
+> +/// To obtain a thread-safe [`File`], use the [`assume_no_fdget_pos`] co=
+nversion.
+> +///
+> +/// See the documentation for [`File`] for more information.
+> +///
+> +/// # Invariants
+> +///
+> +/// * All instances of this type are refcounted using the `f_count` fiel=
+d.
+> +/// * If there is an active call to `fdget_pos` that did not take the `f=
+_pos_lock` mutex, then it
+> +///   must be on the same thread as this `File`.
 
-Afair, smp_load_acquire() would be a barrier for both later loads and
-stores and smp_store_release() would be a barrier for both earlier loads
-and stores.
+Do you mean `LocalFile`?
 
-Iiuc, here we only care about ordering stores to ->fd and max_fds on the
-write side and about ordering loads of max_fds and ->fd on the reader
-side. The reader doesn't actually write anything.
+> +///
+> +/// [`assume_no_fdget_pos`]: LocalFile::assume_no_fdget_pos
+> +pub struct LocalFile {
+> +    inner: Opaque<bindings::file>,
+> +}
 
-In other words, we want to make ->fd visible before max_fds on the write
-side and we want to load max_fds after ->fd.
+[...]
 
-So I think smp_wmb() and smp_rmb() would be sufficient. I also find it
-clearer in this case.
+> +    /// Returns the flags associated with the file.
+> +    ///
+> +    /// The flags are a combination of the constants in [`flags`].
+> +    #[inline]
+> +    pub fn flags(&self) -> u32 {
+> +        // This `read_volatile` is intended to correspond to a READ_ONCE=
+ call.
+> +        //
+> +        // SAFETY: The file is valid because the shared reference guaran=
+tees a nonzero refcount.
+> +        //
+> +        // FIXME(read_once): Replace with `read_once` when available on =
+the Rust side.
+
+Do you know the status of this?
+
+> +        unsafe { core::ptr::addr_of!((*self.as_ptr()).f_flags).read_vola=
+tile() }
+> +    }
+> +}
+> +
+> +impl File {
+> +    /// Creates a reference to a [`File`] from a valid pointer.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// * The caller must ensure that `ptr` points at a valid file and t=
+hat the file's refcount is
+> +    ///   positive for the duration of 'a.
+> +    /// * The caller must ensure that if there are active `fdget_pos` ca=
+lls on this file, then they
+> +    ///   took the `f_pos_lock` mutex.
+> +    #[inline]
+> +    pub unsafe fn from_raw_file<'a>(ptr: *const bindings::file) -> &'a F=
+ile {
+> +        // SAFETY: The caller guarantees that the pointer is not danglin=
+g and stays valid for the
+> +        // duration of 'a. The cast is okay because `File` is `repr(tran=
+sparent)`.
+> +        //
+> +        // INVARIANT: The caller guarantees that there are no problemati=
+c `fdget_pos` calls.
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> +
+> +// Make LocalFile methods available on File.
+> +impl core::ops::Deref for File {
+> +    type Target =3D LocalFile;
+> +    #[inline]
+> +    fn deref(&self) -> &LocalFile {
+> +        // SAFETY: The caller provides a `&File`, and since it is a refe=
+rence, it must point at a
+> +        // valid file for the desired duration.
+> +        //
+> +        // By the type invariants, there are no `fdget_pos` calls that d=
+id not take the
+> +        // `f_pos_lock` mutex.
+> +        unsafe { LocalFile::from_raw_file(self as *const File as *const =
+bindings::file) }
+> +    }
+> +}
+> +
+> +// SAFETY: The type invariants guarantee that `LocalFile` is always ref-=
+counted. This implementation
+> +// makes `ARef<File>` own a normal refcount.
+> +unsafe impl AlwaysRefCounted for LocalFile {
+> +    #[inline]
+> +    fn inc_ref(&self) {
+> +        // SAFETY: The existence of a shared reference means that the re=
+fcount is nonzero.
+> +        unsafe { bindings::get_file(self.as_ptr()) };
+> +    }
+> +
+> +    #[inline]
+> +    unsafe fn dec_ref(obj: ptr::NonNull<LocalFile>) {
+> +        // SAFETY: To call this method, the caller passes us ownership o=
+f a normal refcount, so we
+> +        // may drop it. The cast is okay since `File` has the same repre=
+sentation as `struct file`.
+> +        unsafe { bindings::fput(obj.cast().as_ptr()) }
+> +    }
+> +}
+
+Can you move these `AlwaysRefCounted` impls towards the struct
+definitions?
+
+With those two comments fixed:
+
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+
+---
+Cheers,
+Benno
+
 
