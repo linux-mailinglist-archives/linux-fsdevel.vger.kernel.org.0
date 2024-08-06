@@ -1,158 +1,247 @@
-Return-Path: <linux-fsdevel+bounces-25188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6423949A87
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 23:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B20BE949AB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 00:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2D62283234
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 21:52:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690EA28517C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 22:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF49E16CD3A;
-	Tue,  6 Aug 2024 21:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F00C172BBC;
+	Tue,  6 Aug 2024 22:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="s3Y+JNoD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2uV6y7p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DC516B3BC
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Aug 2024 21:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6128C171E61;
+	Tue,  6 Aug 2024 22:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722981151; cv=none; b=LrFWHWzLIpxHuD2Os3aCc62PuWYrveMq4H4X5u6ZLbqBn4glW59wSe7XRvJ2K/rm4OtJXse9g8TWfkJFu0XNpUFws3r+PDbqvegJYV+8mGVTb/3urXD6h9r/eDNBNKWrM1GjBOQzv5bI7Vkxwd8TgHShmdZvOX6vtosEw8Us/EA=
+	t=1722981677; cv=none; b=kJJCAPVcSW53fk9HPKJlzFLewFK9XUd2O4HoO8ske4XsvrGKXHAn5FrDjdWOtD34cX24ufdqnz2F2GZ6XwDz7WmJUZHqRe6/bSyZn2OxuHW6jQgUs3/Y2Kog0aCZfhu6KXcRL7TDPra/Iy3LX0bj9yi4nZPFdsR2ZcvnF/QWTjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722981151; c=relaxed/simple;
-	bh=qV8Pt10BMkuOtNtK60B4JKISOTmz8NKmHPC0RLGb0Tg=;
+	s=arc-20240116; t=1722981677; c=relaxed/simple;
+	bh=3O2F0dhbujAAe3QdNEIIsduxEQUZMXrFfkhNOLE8mJA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oo8LlFaZ7/PKoGJlJrtYpTi3rhdmWuOUAOQRbzTuK/XcCsSwYSex6NFb8DpCgO/Y4KxtmTyQtdaQ4y1peRKQ6oZhOBd0B5CQ7gu+mZW1ozidbX6rLG6PPxFKvn+Vctx6FTdiMAAPKf69PpDyIXBIgChkLKNHB1F9ikEDqNecAwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=s3Y+JNoD; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc569440e1so11343985ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 14:52:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722981149; x=1723585949; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pqDrhWURH7vgC9EgKdY3Lu9ZKE+qUroVQsEw+kteL7Q=;
-        b=s3Y+JNoDaVly2XkoR4uYD1gvIIMH/3XyZuZM3pPdoGe6R9e8vnuHLg5pDby0Rojdw0
-         TTqHYUfqvS3jP5E+WRup46Asr4rzIR5crlFO311HigLJT2tXgSELxTQpHXJVB5Tb0iX1
-         gEZ2wh3WWsot1YbJEhUnL+ccCmSGk2cPTbrg07vGYUiOHcFJbJPJrUV1bJJbouMjyhzB
-         1bRE3UVHgWllUiSoRxGhV4rbz1S0ydJEihuewRwSzibUXmrZfBYWqRxlzzcdcwP87FHe
-         fBTwISfjDEZcntkfK+eOt6mozSabZk3ZjaDQj7KG6G6dG1OX+wURABZj83EZ6+cNB+T9
-         m1rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722981149; x=1723585949;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pqDrhWURH7vgC9EgKdY3Lu9ZKE+qUroVQsEw+kteL7Q=;
-        b=qEPODlJOAwgFFOUIJdLt8tXs2m2xbS+LIxUx2SE0z92h7Idi5dZeKmq1EC8Z7YwcuJ
-         +Et5CtbmAqQ/2ts+FYuEE8g14tzZzTYRpznrWJL0qrY07DSWTGxZ0LwopW1m8lGVWrro
-         MlswmTpuj4KY7iuAxm0TExcTQI4AqVEjy+sBOmwZodQLBKIz2ebUqCXMBf0phQDniSnV
-         lw7f4pZXKbKjBDhOJXBbJZ/+HDxhMYYkHYZJhcHpMOBsK97cDXABOz05F97wmezyrwME
-         1qv0+KpmsoHcDxpR40qzZi03dEYoujmv4EiX8gzd8s1WvDbDluGuzMcmA/H0sustpu6/
-         +3Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWFGhzmurArQNkxfoBj8onPc4XdCmBUypLFaKdZqz9BsVRRM+Z1bDnJD0rwk6a0oIZfuAiZAq4UQT+so670+VoARISDCo8SCWGOYP92xg==
-X-Gm-Message-State: AOJu0Yz4rJc8HRUKJLOupwkGwYFkZhycGmZ+nxmvpmOHaX8bl17ICUZD
-	2LYwE4zxYhXB4NMPEFD+ZsRgN/lO6jO1ba38VmuNl1k6WgobqshgJ1i2ll9Rqgo=
-X-Google-Smtp-Source: AGHT+IG85IbNeariTMKfQ4JkEPs5HQ0HBX3Ty2+OFAFSryHFA97CvhKepHhFgkUsOYGM4mRrAr1ALw==
-X-Received: by 2002:a17:902:d4c2:b0:1fb:6663:b647 with SMTP id d9443c01a7336-1ff5722debemr213616545ad.3.1722981148850;
-        Tue, 06 Aug 2024 14:52:28 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f19ec5sm92382175ad.20.2024.08.06.14.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 14:52:28 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sbS6U-007pIv-0D;
-	Wed, 07 Aug 2024 07:52:26 +1000
-Date: Wed, 7 Aug 2024 07:52:26 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH] fs: Add a new flag RWF_IOWAIT for preadv2(2)
-Message-ID: <ZrKbGuKFsZsqnrfg@dread.disaster.area>
-References: <20240804080251.21239-1-laoar.shao@gmail.com>
- <20240805134034.mf3ljesorgupe6e7@quack3>
- <CALOAHbCor0VoCNLACydSytV7sB8NK-TU2tkfJAej+sAvVsVDwA@mail.gmail.com>
- <20240806132432.jtdlv5trklgxwez4@quack3>
- <CALOAHbASNdPPRXVAxcjVWW7ucLG_DOM+6dpoonqAPpgBS00b7w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBo5PpXHRrDitvP58cH4a4eFPtaDZ2K6cnbdqpY+hpg3iXdZ76nab+m8IOxYt6wm+m4ywqdy5SAD9k3CUVyyZ2vKumF/xIIlEtDnFlvIeZY4rEKYHsstBfd0/ZmfiapcfXlOjlvdymLl8+aDPXtRzPDfppTohp6lQ1dyy5lQyZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2uV6y7p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3C6AC4AF10;
+	Tue,  6 Aug 2024 22:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722981676;
+	bh=3O2F0dhbujAAe3QdNEIIsduxEQUZMXrFfkhNOLE8mJA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P2uV6y7piAQ2bFmzGGGGvAfoQ8eJjOXelGUVftgvXw+nBV/Aq2L+ZxHMIrRmBRREE
+	 qmC89YOlLMRzo3c9MSWDhsfABmQlJhLAGmJb67fzkCpBk9RZaKsgfmGvb7cjOjtVir
+	 T0ikzr+6GL4bSXa9uPKGrDFq/bq4pLtoi0W3R8yOf13qBUAtx+0fegqQXlvmBZ5Eeq
+	 0ku0gXS0lU/q0U2UG9dIqdtaTWOBLiipp61Ws9VOUcp0vWWiHsl/0DU6+TiOH8SPQz
+	 xOt51yKhogO9FAx7GDxx1ZvUHaLtTOuPMGeoo4VmGtJ+TqDgtjky5/Gz2KwikMNPx4
+	 RBfrKCrBFPXAQ==
+Date: Tue, 6 Aug 2024 15:01:16 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Chandan Babu R <chandanbabu@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	xfs <linux-xfs@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org,
+	tglx@linutronix.de
+Subject: Re: Are jump labels broken on 6.11-rc1?
+Message-ID: <20240806220116.GH623957@frogsfrogsfrogs>
+References: <20240730033849.GH6352@frogsfrogsfrogs>
+ <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <20240730132626.GV26599@noisy.programming.kicks-ass.net>
+ <20240731001950.GN6352@frogsfrogsfrogs>
+ <20240731031033.GP6352@frogsfrogsfrogs>
+ <20240731053341.GQ6352@frogsfrogsfrogs>
+ <20240731105557.GY33588@noisy.programming.kicks-ass.net>
+ <20240805143522.GA623936@frogsfrogsfrogs>
+ <20240806094413.GS37996@noisy.programming.kicks-ass.net>
+ <20240806103808.GT37996@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALOAHbASNdPPRXVAxcjVWW7ucLG_DOM+6dpoonqAPpgBS00b7w@mail.gmail.com>
+In-Reply-To: <20240806103808.GT37996@noisy.programming.kicks-ass.net>
 
-On Tue, Aug 06, 2024 at 10:05:50PM +0800, Yafang Shao wrote:
-> On Tue, Aug 6, 2024 at 9:24 PM Jan Kara <jack@suse.cz> wrote:
-> > On Tue 06-08-24 19:54:58, Yafang Shao wrote:
-> > > Its guarantee is clear:
-> > >
-> > >   : I/O is intended to be atomic to ordinary files and pipes and FIFOs.
-> > >   : Atomic means that all the bytes from a single operation that started
-> > >   : out together end up together, without interleaving from other I/O
-> > >   : operations.
-> >
-> > Oh, I understand why XFS does locking this way and I'm well aware this is
-> > a requirement in POSIX. However, as you have experienced, it has a
-> > significant performance cost for certain workloads (at least with simple
-> > locking protocol we have now) and history shows users rather want the extra
-> > performance at the cost of being a bit more careful in userspace. So I
-> > don't see any filesystem switching to XFS behavior until we have a
-> > performant range locking primitive.
-> >
-> > > What this flag does is avoid waiting for this type of lock if it
-> > > exists. Maybe we should consider a more descriptive name like
-> > > RWF_NOATOMICWAIT, RWF_NOFSLOCK, or RWF_NOPOSIXWAIT? Naming is always
-> > > challenging.
-> >
-> > Aha, OK. So you want the flag to mean "I don't care about POSIX read-write
-> > exclusion". I'm still not convinced the flag is a great idea but
-> > RWF_NOWRITEEXCLUSION could perhaps better describe the intent of the flag.
+On Tue, Aug 06, 2024 at 12:38:08PM +0200, Peter Zijlstra wrote:
+> On Tue, Aug 06, 2024 at 11:44:13AM +0200, Peter Zijlstra wrote:
+> > On Mon, Aug 05, 2024 at 07:35:22AM -0700, Darrick J. Wong wrote:
+> > > On Wed, Jul 31, 2024 at 12:55:57PM +0200, Peter Zijlstra wrote:
+> > > > On Tue, Jul 30, 2024 at 10:33:41PM -0700, Darrick J. Wong wrote:
+> > > > 
+> > > > > Sooooo... it turns out that somehow your patch got mismerged on the
+> > > > > first go-round, and that worked.  The second time, there was no
+> > > > > mismerge, which mean that the wrong atomic_cmpxchg() callsite was
+> > > > > tested.
+> > > > > 
+> > > > > Looking back at the mismerge, it actually changed
+> > > > > __static_key_slow_dec_cpuslocked, which had in 6.10:
+> > > > > 
+> > > > > 	if (atomic_dec_and_test(&key->enabled))
+> > > > > 		jump_label_update(key);
+> > > > > 
+> > > > > Decrement, then return true if the value was set to zero.  With the 6.11
+> > > > > code, it looks like we want to exchange a 1 with a 0, and act only if
+> > > > > the previous value had been 1.
+> > > > > 
+> > > > > So perhaps we really want this change?  I'll send it out to the fleet
+> > > > > and we'll see what it reports tomorrow morning.
+> > > > 
+> > > > Bah yes, I missed we had it twice. Definitely both sites want this.
+> > > > 
+> > > > I'll tentatively merge the below patch in tip/locking/urgent. I can
+> > > > rebase if there is need.
+> > > 
+> > > Hi Peter,
+> > > 
+> > > This morning, I noticed the splat below with -rc2.
+> > > 
+> > > WARNING: CPU: 0 PID: 8578 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
+> > > 
+> > > Line 295 is the else branch of this code:
+> > > 
+> > > 	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
+> > > 		jump_label_update(key);
+> > > 	else
+> > > 		WARN_ON_ONCE(!static_key_slow_try_dec(key));
+> > > 
+> > > Apparently static_key_slow_try_dec returned false?  Looking at that
+> > > function, I suppose the atomic_read of key->enabled returned 0, since it
+> > > didn't trigger the "WARN_ON_ONCE(v < 0)" code.  Does that mean the value
+> > > must have dropped from positive N to 0 without anyone ever taking the
+> > > jump_label_mutex?
+> > 
+> > One possible scenario I see:
+> > 
+> >   slow_dec
+> >     if (try_dec) // dec_not_one-ish, false
+> >     // enabled == 1
+> > 				slow_inc
+> > 				  if (inc_not_disabled) // inc_not_zero-ish
+> > 				  // enabled == 2
+> > 				    return
+> > 
+> >     guard((mutex)(&jump_label_mutex);
+> >     if (atomic_cmpxchg(1,0)==1) // false, we're 2
+> >     
+> > 				slow_dec
+> > 				  if (try-dec) // dec_not_one, true
+> > 				  // enabled == 1
+> > 				    return
+> >     else
+> >       try_dec() // dec_not_one, false
+> >       WARN
+> > 
+> > 
+> > Let me go play to see how best to cure this.
 > 
-> That's better. Should we proceed with implementing this new flag? It
-> provides users with an option to avoid this type of issue.
+> I've ended up with this, not exactly pretty :/
+> 
+> Thomas?
 
-No. If we are going to add a flag like that, the fix to XFS isn't to
-use IOCB_NOWAIT on reads, it's to use shared locking for buffered
-writes just like we do for direct IO.
+It seems to survive a short test, will send it out for overnight testing
+on the full fleet, thanks.
 
-IOWs, this flag would be needed on -writes-, not reads, and at that
-point we may as well just change XFS to do shared buffered writes
-for -everyone- so it is consistent with all other Linux filesystems.
+--D
 
-Indeed, last time Amir brought this up, I suggested that shared
-buffered write locking in XFS was the simplest way forward. Given
-that we use large folios now, small IOs get mapped to a single folio
-and so will still have the same write vs overlapping write exclusion
-behaviour most all the time.
-
-However, since then we've moved to using shared IO locking for
-cloning files. A clone does not modify data, so read IO is allowed
-during the clone. If we move writes to use shared locking, this
-breaks file cloning. We would have to move cloning back to to using
-exclusive locking, and that's going to cause performance and IO
-latency regressions for applications using clones with concurrent IO
-(e.g. VM image snapshots in cloud infrastruction).
-
-Hence the only viable solution to all these different competing "we
-need exclusive access to a range of the file whilst allowing other
-concurrent IO" issues is to move to range locking for IO
-exclusion....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> ---
+> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+> index 6dc76b590703..5fa2c9f094b1 100644
+> --- a/kernel/jump_label.c
+> +++ b/kernel/jump_label.c
+> @@ -168,8 +168,8 @@ bool static_key_slow_inc_cpuslocked(struct static_key *key)
+>  		jump_label_update(key);
+>  		/*
+>  		 * Ensure that when static_key_fast_inc_not_disabled() or
+> -		 * static_key_slow_try_dec() observe the positive value,
+> -		 * they must also observe all the text changes.
+> +		 * static_key_dec() observe the positive value, they must also
+> +		 * observe all the text changes.
+>  		 */
+>  		atomic_set_release(&key->enabled, 1);
+>  	} else {
+> @@ -250,7 +250,7 @@ void static_key_disable(struct static_key *key)
+>  }
+>  EXPORT_SYMBOL_GPL(static_key_disable);
+>  
+> -static bool static_key_slow_try_dec(struct static_key *key)
+> +static bool static_key_dec(struct static_key *key, bool fast)
+>  {
+>  	int v;
+>  
+> @@ -268,31 +268,45 @@ static bool static_key_slow_try_dec(struct static_key *key)
+>  	v = atomic_read(&key->enabled);
+>  	do {
+>  		/*
+> -		 * Warn about the '-1' case though; since that means a
+> -		 * decrement is concurrent with a first (0->1) increment. IOW
+> -		 * people are trying to disable something that wasn't yet fully
+> -		 * enabled. This suggests an ordering problem on the user side.
+> +		 * Warn about the '-1' case; since that means a decrement is
+> +		 * concurrent with a first (0->1) increment. IOW people are
+> +		 * trying to disable something that wasn't yet fully enabled.
+> +		 * This suggests an ordering problem on the user side.
+> +		 *
+> +		 * Warn about the '0' case; simple underflow.
+> +		 *
+> +		 * Neither case should succeed and change things.
+> +		 */
+> +		if (WARN_ON_ONCE(v <= 0))
+> +			return false;
+> +
+> +		/*
+> +		 * Lockless fast-path, dec-not-one like behaviour.
+>  		 */
+> -		WARN_ON_ONCE(v < 0);
+> -		if (v <= 1)
+> +		if (fast && v <= 1)
+>  			return false;
+>  	} while (!likely(atomic_try_cmpxchg(&key->enabled, &v, v - 1)));
+>  
+> -	return true;
+> +	if (fast)
+> +		return true;
+> +
+> +	/*
+> +	 * Locked slow path, dec-and-test like behaviour.
+> +	 */
+> +	lockdep_assert_held(&jump_label_mutex);
+> +	return v == 1;
+>  }
+>  
+>  static void __static_key_slow_dec_cpuslocked(struct static_key *key)
+>  {
+>  	lockdep_assert_cpus_held();
+>  
+> -	if (static_key_slow_try_dec(key))
+> +	if (static_key_dec(key, true)) // dec-not-one
+>  		return;
+>  
+>  	guard(mutex)(&jump_label_mutex);
+> -	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
+> +	if (static_key_dec(key, false)) // dec-and-test
+>  		jump_label_update(key);
+> -	else
+> -		WARN_ON_ONCE(!static_key_slow_try_dec(key));
+>  }
+>  
+>  static void __static_key_slow_dec(struct static_key *key)
+> @@ -329,7 +343,7 @@ void __static_key_slow_dec_deferred(struct static_key *key,
+>  {
+>  	STATIC_KEY_CHECK_USE(key);
+>  
+> -	if (static_key_slow_try_dec(key))
+> +	if (static_key_dec(key, true)) // dec-not-one
+>  		return;
+>  
+>  	schedule_delayed_work(work, timeout);
 
