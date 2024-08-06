@@ -1,235 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-25065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E5694880B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 05:49:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5D3948812
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 05:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB1A1C2232D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 03:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1501F22000
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Aug 2024 03:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0E21B9B5E;
-	Tue,  6 Aug 2024 03:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0991BA879;
+	Tue,  6 Aug 2024 03:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVTmZjs5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45FF17C203;
-	Tue,  6 Aug 2024 03:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4310D17C203;
+	Tue,  6 Aug 2024 03:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722916146; cv=none; b=CBrUeybwqftekAt/sac5NTEhHrhxOwxxFC2XN/MKoX9pt8v6uRNuWPbjrFa87FT7tlZRKHvgW92H1ds88M1BIhH/oxlWMB0GYBRYPrRjPu7PZGZRJReAPDK3275pjkAPnOAnbOFHs/17881gtFTnki8FUQGhSTOgQ7mOtBrPi5k=
+	t=1722916279; cv=none; b=qJr8968gQbcWAQjCIvJWmq9q1KHXSSVMcn7Rc2+4wwnqkQWAS3L49AxBBlrsPNDMysY2Aw0bFtKt0oaCnm/Yf89qk2jI8rDkuh3E2Bxgz7617aAx30oZSviIhs8AUeqR55zbly7C4qQ6NVNXls5191KyIydZDRJW6pO4oKxkjU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722916146; c=relaxed/simple;
-	bh=YpT/++I3Fgd1g9Ai+uSPnGC+7c2sQUlHivfbtMMk1vo=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GxJ+NWZhea2+lWNmRlq2kYcs+cMzZCbUcv2tzXGKfckcv6ZerQT6v23PvP4DlaYPfgiCS32qDxTbVsubhh83vAFQ6aCRVvn7hpyKvFnjjaOhV+KukBSgpls+5c7osFrbQLmgizonkhFChYe3WOFszdFB3I2ydEs/d0BZmE/AoRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WdK6K65fFz1L9bV;
-	Tue,  6 Aug 2024 11:48:41 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id A35EB180102;
-	Tue,  6 Aug 2024 11:49:00 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 6 Aug 2024 11:48:59 +0800
-Subject: Re: [PATCH] vfs: Don't evict inode under the inode lru traversing
- context
-To: Mateusz Guzik <mjguzik@gmail.com>, Zhihao Cheng
-	<chengzhihao@huaweicloud.com>
-CC: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <tahsin@google.com>,
-	<error27@gmail.com>, <tytso@mit.edu>, <rydercoding@hotmail.com>,
-	<jack@suse.cz>, <hch@infradead.org>, <andreas.dilger@intel.com>,
-	<richard@nod.at>, <linux-fsdevel@vger.kernel.org>,
-	<linux-ext4@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
-	<yangerkun@huawei.com>, <wangzhaolong1@huawei.com>
-References: <20240805013446.814357-1-chengzhihao@huaweicloud.com>
- <CAGudoHHVnB3ZV1Pa235uqw+KoJZ6EN4b5An4LsW-z=EVhgHiVg@mail.gmail.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <3a6d4838-7f3b-8790-81dc-ec512930dabf@huawei.com>
-Date: Tue, 6 Aug 2024 11:48:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1722916279; c=relaxed/simple;
+	bh=o2qOFURtd6COH4J6FuPiVJ1ZknbpD5fuWh18UJ6DnM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f/lvq5Ach1gD+89H8EFPhKNrQvqI2rd+3rZKlOhSvAgvZcbRLNVFQcdCPwhiIcVHeuYRIEID7jM4NLL8FpyWaK++efhpd1Bbk2P9c6cu5mEDPzJtERQ7iwmlj2eELUOwizRsocHKM90DgxoP7ptH5LpI55SZCDSPfzGb0sYipVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVTmZjs5; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b797fb1c4aso1840246d6.2;
+        Mon, 05 Aug 2024 20:51:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722916277; x=1723521077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c/kd4WiMmD7cvf5H5grwZdB0fA+VVTIeAtsfQV3Ag+U=;
+        b=VVTmZjs5ps5PZ1tDWhb8RhFE1bgS9BEJ9OveKZV9cm36Mx9R4JgaQ9hJDwdOMjJMiv
+         /SG94mlrH/JLN9cz1cxXaZ1wVCa/4wketftPb4n5jEmy1lmY+nB0Fz4wdF4KPaotsNeB
+         Izwhu1/x/U8Vdua4sVdMt2MObws4WQarIIyfLiq/6ObFXasbIZe1ac+gRvYm28zrVW1o
+         VB+5qIbOHrmVlg6LEqc+4axVFmWwZkmo0NqKyLOHYcPHl6wVKZuLPe/qbJ/NPeOsMWIR
+         in5RphwO/PZF0KzgZZdNmltFOnS+VuM7Zo80SLXQ1hufIwkSIzDQJEW+ROY+RHEHvHxK
+         PqZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722916277; x=1723521077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c/kd4WiMmD7cvf5H5grwZdB0fA+VVTIeAtsfQV3Ag+U=;
+        b=iw/dVFNNbfZ5NJ+l8vXzNEF4f+eWPMpgIyM5eZ+xmXeKWe2NdBYzhC8RrQEdroMZkg
+         WjJdekYE6oXmRDBbwiWAbYOfM/4+g+w9QUtcbhzVbuaLEnk18j51jUjou8YBk/vADg9G
+         AxUvjan1vlpe7cIo5cqDt663ejthjBJZA4SS5pS6THwXzhtX7CXHH+1cpOn//Ey7Jvrf
+         6/MSCj+xtoDrSjaUgdcjAITJXlTqypcOACu4Wc0K+VQvnlmcl9DQ8jLKRcIZxVwQYcLD
+         Q0LyKvht/9+7LqR4mFdQZDGF4aqSr+XyO+vE6XuGRwtqYrSXSJVvwipLu6NGVQQjjeeM
+         KaYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGbB2URhxUzEnELooS88p8BSCxJ9lN8EBG5fu7UssUEKG7spao7IITZD3M1EX8QmeDHouGyxrdVhXKyze8Zc4VEj9m70dbwE9RIp9t7EPM+MVzJJws7nkftDeZEBeVgjFn11D4tp8ir2LCHyKCIqDr431BgeMVog/s8O6M75h83flN3JzrWpMv62O/VUCDvYO0WSLDrMVhQmnG53rBHUTg0oTGKbGdvrNs8zsxHtGnAfZzLNxDehVDeISR1jwbZhSs1lGqH6+WgqR2gyiKerjNpdJ/R2WZc97Z6IjJJM4a8HuEoknOXkSsYneDcWtVADdwyU783Q==
+X-Gm-Message-State: AOJu0YxsiQVXpPfa+UCtdefoQrgjd4z3toFYC24OBUmTm+zMEg1YOAlO
+	JVVT2iYoU+3CEzq7s5rhG+/SW6rBJvfPnUhMTQ33V05beFuAsvzifWk3NXRhaZdwoDuGLA5lIA5
+	AncdDMRJ0DWu2Oc80EDkUCuDxD5s=
+X-Google-Smtp-Source: AGHT+IE2RlAR/mG/tj72IoVOm1m9SyAB0Xj2ZC0vDvmPd0pDeOdqpJgJne85/B4nYiYlXvIL6sxOK+OpkyaCbeLF13M=
+X-Received: by 2002:a05:6214:5687:b0:6b4:f973:d423 with SMTP id
+ 6a1803df08f44-6bb983477a8mr176949846d6.7.1722916276927; Mon, 05 Aug 2024
+ 20:51:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGudoHHVnB3ZV1Pa235uqw+KoJZ6EN4b5An4LsW-z=EVhgHiVg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm000013.china.huawei.com (7.193.23.81)
+References: <20240804075619.20804-1-laoar.shao@gmail.com> <CAHk-=whWtUC-AjmGJveAETKOMeMFSTwKwu99v7+b6AyHMmaDFA@mail.gmail.com>
+ <CALOAHbCVk08DyYtRovXWchm9JHB3-fGFpYD-cA+CKoAsVLNmuw@mail.gmail.com> <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgXYkMueFpxgSY_vfCzdcCnyoaPcjS8e0BXiRfgceRHfQ@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 6 Aug 2024 11:50:40 +0800
+Message-ID: <CALOAHbDPToZDrsB2wSp6Ss5L0ksrCb1ufx3SZ1GWeqQ2jP7Daw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: akpm@linux-foundation.org, ebiederm@xmission.com, 
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org, catalin.marinas@arm.com, 
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 2024/8/6 0:10, Mateusz Guzik 写道:
-> On Mon, Aug 5, 2024 at 3:24 AM Zhihao Cheng <chengzhihao@huaweicloud.com> wrote:
->>
->> From: Zhihao Cheng <chengzhihao1@huawei.com>
->>
->> The inode reclaiming process(See function prune_icache_sb) collects all
->> reclaimable inodes and mark them with I_FREEING flag at first, at that
->> time, other processes will be stuck if they try getting these inodes
->> (See function find_inode_fast), then the reclaiming process destroy the
->> inodes by function dispose_list(). Some filesystems(eg. ext4 with
->> ea_inode feature, ubifs with xattr) may do inode lookup in the inode
->> evicting callback function, if the inode lookup is operated under the
->> inode lru traversing context, deadlock problems may happen.
->>
-[...]
-> 
-> I only have some tidy-ups with stuff I neglected to mention when
-> typing up my proposal.
-> 
->> ---
->>   fs/inode.c         | 37 +++++++++++++++++++++++++++++++++++--
->>   include/linux/fs.h |  5 +++++
->>   2 files changed, 40 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/inode.c b/fs/inode.c
->> index 86670941884b..f1c6e8072f39 100644
->> --- a/fs/inode.c
->> +++ b/fs/inode.c
->> @@ -488,6 +488,36 @@ static void inode_lru_list_del(struct inode *inode)
->>                  this_cpu_dec(nr_unused);
->>   }
->>
->> +static void inode_lru_isolating(struct inode *inode)
->> +{
-> 
->          lockdep_assert_held(&inode->i_lock);
+On Tue, Aug 6, 2024 at 11:10=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, 5 Aug 2024 at 20:01, Yafang Shao <laoar.shao@gmail.com> wrote:
+> >
+> > One concern about removing the BUILD_BUG_ON() is that if we extend
+> > TASK_COMM_LEN to a larger size, such as 24, the caller with a
+> > hardcoded 16-byte buffer may overflow.
+>
+> No, not at all. Because get_task_comm() - and the replacements - would
+> never use TASK_COMM_LEN.
+>
+> They'd use the size of the *destination*. That's what the code already do=
+es:
+>
+>   #define get_task_comm(buf, tsk) ({                      \
+>   ...
+>         __get_task_comm(buf, sizeof(buf), tsk);         \
+>
+> note how it uses "sizeof(buf)".
+>
+> Now, it might be a good idea to also verify that 'buf' is an actual
+> array, and that this code doesn't do some silly "sizeof(ptr)" thing.
+>
+> We do have a helper for that, so we could do something like
+>
+>    #define get_task_comm(buf, tsk) \
+>         strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->comm)
+>
+> as a helper macro for this all.
+>
+> (Although I'm not convinced we generally want the "_pad()" version,
+> but whatever).
+>
 
-Adopt, will change in v2.
-> 
->> +       BUG_ON(inode->i_state & (I_LRU_ISOLATING | I_FREEING | I_WILL_FREE));
->> +       inode->i_state |= I_LRU_ISOLATING;
->> +}
->> +
->> +static void inode_lru_finish_isolating(struct inode *inode)
->> +{
->> +       spin_lock(&inode->i_lock);
->> +       BUG_ON(!(inode->i_state & I_LRU_ISOLATING));
->> +       inode->i_state &= ~I_LRU_ISOLATING;
->> +       wake_up_bit(&inode->i_state, __I_LRU_ISOLATING);
->> +       spin_unlock(&inode->i_lock);
->> +}
->> +
->> +static void inode_wait_for_lru_isolating(struct inode *inode)
->> +{
->> +       DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
->> +       wait_queue_head_t *wqh;
->> +
-> 
-> Top of evict() asserts on I_FREEING being set, used to decide it's not
-> legit to pin above. This dependency can be documented it in the
-> routine as well:
-> 
-> BUG_ON(!(inode->i_state & I_FREEING));
+Will do it.
+Thanks for your explanation.
 
-Sorry, I don't understand it, do you mean add the 
-'BUG_ON(!(inode->i_state & I_FREEING))' in 
-inode_wait_for_lru_isolating()? Just like you talked, evict() already 
-has one. So far, the inode_wait_for_lru_isolating() is called only in 
-evict(), we can add the BUG_ON if it is called more than one places in 
-future.>
->> +       spin_lock(&inode->i_lock);
-> 
-> This lock acquire is avoidable, which is always nice to do for
-> single-threaded perf. Probably can be also done for the writeback code
-> below. Maybe I'll massage it myself after the patch lands.
-
-Yes, maybe inode_wait_for_writeback() and inode_wait_for_lru_isolating() 
-can be lockless, and a smp_rmb() is needed, I think.
-> 
->> +       wqh = bit_waitqueue(&inode->i_state, __I_LRU_ISOLATING);
->> +       while (inode->i_state & I_LRU_ISOLATING) {
->> +               spin_unlock(&inode->i_lock);
->> +               __wait_on_bit(wqh, &wq, bit_wait, TASK_UNINTERRUPTIBLE);
->> +               spin_lock(&inode->i_lock);
->> +       }
->> +       spin_unlock(&inode->i_lock);
->> +}
-> 
-> So new arrivals *are* blocked by this point thanks to I_FREEING being
-> set on entry to evict(). This also means the flag can show up at most
-> once.
-> 
-> Thus instead of looping this should merely go to sleep once and assert
-> the I_LRU_ISOLATING flag is no longer set after waking up.
-
-Good improvement, will change in v2.
-> 
->> +
->>   /**
->>    * inode_sb_list_add - add inode to the superblock list of inodes
->>    * @inode: inode to add
->> @@ -657,6 +687,9 @@ static void evict(struct inode *inode)
->>
->>          inode_sb_list_del(inode);
->>
->> +       /* Wait for LRU isolating to finish. */
-> 
-> I don't think this comment adds anything given the name of the func.
-
-Adopt, will be deleted in v2.
-> 
->> +       inode_wait_for_lru_isolating(inode);
->> +
->>          /*
->>           * Wait for flusher thread to be done with the inode so that filesystem
->>           * does not start destroying it while writeback is still running. Since
->> @@ -855,7 +888,7 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
->>           * be under pressure before the cache inside the highmem zone.
->>           */
->>          if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
->> -               __iget(inode);
->> +               inode_lru_isolating(inode);
->>                  spin_unlock(&inode->i_lock);
->>                  spin_unlock(lru_lock);
->>                  if (remove_inode_buffers(inode)) {
->> @@ -867,7 +900,7 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
->>                                  __count_vm_events(PGINODESTEAL, reap);
->>                          mm_account_reclaimed_pages(reap);
->>                  }
->> -               iput(inode);
->> +               inode_lru_finish_isolating(inode);
->>                  spin_lock(lru_lock);
->>                  return LRU_RETRY;
->>          }
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index fd34b5755c0b..fb0426f349fc 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -2392,6 +2392,9 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
->>    *
->>    * I_PINNING_FSCACHE_WB        Inode is pinning an fscache object for writeback.
->>    *
->> + * I_LRU_ISOLATING     Inode is pinned being isolated from LRU without holding
->> + *                     i_count.
->> + *
->>    * Q: What is the difference between I_WILL_FREE and I_FREEING?
->>    */
->>   #define I_DIRTY_SYNC           (1 << 0)
->> @@ -2415,6 +2418,8 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
->>   #define I_DONTCACHE            (1 << 16)
->>   #define I_SYNC_QUEUED          (1 << 17)
->>   #define I_PINNING_NETFS_WB     (1 << 18)
->> +#define __I_LRU_ISOLATING      19
->> +#define I_LRU_ISOLATING                (1 << __I_LRU_ISOLATING)
->>
->>   #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
->>   #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
->> --
->> 2.39.2
->>
-> 
-> 
-
+--=20
+Regards
+Yafang
 
