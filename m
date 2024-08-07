@@ -1,175 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-25357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806E794B27D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 23:57:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146B394B2E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 00:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103651F21ADD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 21:57:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4197D1C21720
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 22:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CC7153801;
-	Wed,  7 Aug 2024 21:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786C31552EB;
+	Wed,  7 Aug 2024 22:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b="A6u4GmoC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B9o2A2BX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JuUaSKxm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139E577F1B;
-	Wed,  7 Aug 2024 21:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6194C1534EC;
+	Wed,  7 Aug 2024 22:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723067828; cv=none; b=S182auXJ5gWYBFJ4RgeV0hkg1dxhu5b/pLA0YxyqkdndOd8iDxXSP4/FcCckO2Eur0+GEqXIv1m5HMoltBI90EfuySKzmZ/YSa589M5kH70VZDSt/x7hwKmZgJLt9fFFzDmr8/tZKWHwjX68HEyudDxPM7DO5ThdWj+nPoYfQB0=
+	t=1723068852; cv=none; b=ZqsAlV2UT53dw+2JnAL9P2hpm7XFT59wg0NKm0uUgGUWZH3EgJm67NbAx5UF/Oldbf6EshVF6OB2sZM7Y3to0XhsM2/IwBEn8bagdYa7+1gLU8gLshpI0+lUbMLkEOH6+gt0z9Ii1T7g2v5Z8WLiMXP2X08US2iW4IL0W1Jly7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723067828; c=relaxed/simple;
-	bh=IXPJdU6pmr08+Nf1pc1cFAxF41ilQaCrPxISoF1pSP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=okvN6VKZB8Rx91r1+vsvnTYrfJU1cPT6TAusonEmV/zObqX5Y6u5h40kubLYF8wPEREcAaG5aFLHf3eqi4WmgRl0ZWFhUDtIAozNRhCV4wBWW+PCwLfnETuAF+5gJN36yROUHrox2767IVSUevtKqh/C40epyBzt7aR7gSDzDz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io; spf=pass smtp.mailfrom=ryhl.io; dkim=pass (2048-bit key) header.d=ryhl.io header.i=@ryhl.io header.b=A6u4GmoC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B9o2A2BX; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ryhl.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ryhl.io
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 00059114FFD9;
-	Wed,  7 Aug 2024 17:57:04 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Wed, 07 Aug 2024 17:57:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ryhl.io; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1723067824;
-	 x=1723154224; bh=F1x0QI2mdpIAiCDsMu+p8sIP7cQyxdWc2/mkuJXriQc=; b=
-	A6u4GmoC30M4hWD2ftm89wIZq2+xcWd6ASelvqEjrmPuKeBTrPPwGyICxNbJgqyM
-	NzPWMIFbvTJvCDn4uobV/SP1zx16yM0uJum3k2qacfUo89OVyBYLGHRAhjEURWt7
-	dT+uKupIbBC9QBw6Dl+Qf7vVo8NA9+MTHa44YGPlFka0oRPF+AEO6SP7NASTVXW0
-	qU9+zxtFkWJt/3eGIMUiChRaLkvvGbrLXK/euhUj6XzMQwnunNWEKCGtY13L929J
-	RGvwY4nUETiLhdfoymqNEVfZu70G88Q5me5P1u3gTny0pGS+isVBfAu51qRmM0xg
-	swoGsjkhFR8Z3WI5N852Yw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723067824; x=
-	1723154224; bh=F1x0QI2mdpIAiCDsMu+p8sIP7cQyxdWc2/mkuJXriQc=; b=B
-	9o2A2BXooCg66bmhNWNGIglb1Cs1FiTAVNTV9fAOQbDxhD2pe1Ld79T0I8Br71Lq
-	f6WsX4ZKiim/hEesrMSCaTzjnOLeIdQe+7+du+mPnxgqJEc7MpFklR2kp65ULUz0
-	2oXuZxxurXTuCkYCkWAGBQa3PeeE+OBHh2zT5X1fpaX8RIVEdVC5IUTf3hPZrDIT
-	14PvyBMyggY/RKjCbOegkfVkA15ULi0pkS/BjVDFRqxskp5Ty8E4rUHehqaoegYn
-	Posa1DaKYG75llZ/mbwDpGLkjhe/MjIfwS+5rX6JVegAqaiOcgNlBanSymGi4mgq
-	Q45fo21kBC38OqM8JSkNQ==
-X-ME-Sender: <xms:sO2zZtcVdLFl4DDAxxs5Gx0ClthrwXu55A9adc_bRqAfivmzTS3RYg>
-    <xme:sO2zZrOSNrbWINOLzmwLQA0shE8ypIM2disO34sSRSAf-YvdWcYhzKTakmCPau8p-
-    T0pqL1mUt33npl6og>
-X-ME-Received: <xmr:sO2zZmigbQsIwjjHw07HFaApijR4RfRSKAa4YqzxV2vmSyZHPdf-wg-5fl78AnvcNS6OQBsPnT1pnAcyhJQmHs8HNPG4URUnOXeh>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledugddtgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlihgt
-    vgcutfihhhhluceorghlihgtvgesrhihhhhlrdhioheqnecuggftrfgrthhtvghrnhepke
-    fgieeigeehgfdvffeltdevuefgtdfhfeehgfegtddtjeejtefhvdfhtdehkeetnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghlihgtvgesrh
-    ihhhhlrdhiohdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:sO2zZm8ojrB14ds1GZrVdRZGxN_h0wk-erguNVdHAdw661_qc9hwPw>
-    <xmx:sO2zZpu1cql5d3IHwRmvtNg5Xd83kUGtLT5o-imewGJoUAtta44dgA>
-    <xmx:sO2zZlExy4pkuv2NGnvhhYD_rnVqofAHgVSPKHE4B4Un_mQQ3whPLg>
-    <xmx:sO2zZgNXHM4Cfd1TCwHHd1aX1Y2cVgJGz8F0PP6QqqanorGevSI_1Q>
-    <xmx:sO2zZsUxE0wG5ULTinVOmQHdWAgAyedj0-cBiCV2PBtPeWzmS7IcVeOZ>
-Feedback-ID: i56684263:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 7 Aug 2024 17:56:58 -0400 (EDT)
-Message-ID: <51199e48-fd36-4669-a93a-97e5c10aea26@ryhl.io>
-Date: Wed, 7 Aug 2024 23:59:47 +0200
+	s=arc-20240116; t=1723068852; c=relaxed/simple;
+	bh=Tb1TfEuJXqmiSMygvBBV/dXo9gu79yu0IulnaA/6aEM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u/qs90lx5tukLL5n7RtNL3wN6jo0GkqR4jOxCkz3nUmSOnuQB6vlKOY3qK7f0pHwStgKQ/nJ+jMxXyBc4LT0a3kq/MLhF+LM0UZ5UPxqZPPAounRFnXyUhyOAVq97iCp44zQt616zNfJptC6sK9B4jJ+uGAjrZDwgJzbNTzyvZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JuUaSKxm; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so379866a12.3;
+        Wed, 07 Aug 2024 15:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723068850; x=1723673650; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tRh+NoxCveeEorJqzKApgxOU2SIwA28KM+/8Iw5opFM=;
+        b=JuUaSKxmPZUdrAsq2I7ufS7vU01CY+7yCZ+Gm7V8oHsj+Of7NvCTap71+ynLrWxjdg
+         f2nRdh/lVc5N65A/NdFgLBPxFCK1R9GpV+avm9tnJWuCPjQlewvJXquCTnYzfCr4wvVg
+         J0yJklfE4XJuVFRw1i+8Ulk1Ndz12waFaxHKWBGLo7h7cXzsqA2byQHdDQrEjYbLr0qN
+         GoXU2jg3fVKyeb+ol8HMjMY412R1aTvyxrvNdYhQs1nVBQe4w3H3sfcAfrTdKZZe4yRw
+         8Mnsy+6iMQdgegg+AnGBgVH/GGbKJpOvtNLc3o6pFtI8Ms7FDmCPKWFyOAVxrHVzQu+S
+         WGCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723068850; x=1723673650;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tRh+NoxCveeEorJqzKApgxOU2SIwA28KM+/8Iw5opFM=;
+        b=fme+s78aKj+iLLXE9sGUmizX/L/nymPE0Siu+4gIrXDbfC462zGkgtCJBUPiT23xeV
+         //vMXfk3J55mJPjWwV6YCp1CovoEfcfHILjBfmvySGQpe7cqgOzQT2GDolUYOjGeLg+O
+         MdHSgj7YapYbt2YZ6u07ablOsP45magShM8T95i15u5oTbVH6QGqCUDAW8mrYxiXtw8I
+         KW84dqDbDnFJxaRKq5tdOZGMWVmUVWCQlL1fjSWBKNIVtasYn5lYeRKnJRx7MfKYmV2Y
+         FnPLglA9mLOvWlyLPHLAtB1eKRbT5jH4wk6FlDHDWeR7NQ6EFr7P0aMzUCU27EcJAZXh
+         1vDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHd2up30JXMG8jcAyaa+VDpFzP5JDzJNNZfVr2uuAtUH+p5nGS4DL1hwpQWLHIK+5NsMM7PeMqi7JlwIr19kyk5lKdVhaGxv6xe6RLeHt46a8M1FnsNAbGeVKez2jBJHHjzncSGHvyS+SOyA==
+X-Gm-Message-State: AOJu0YxbwpfWgenepvcG6r3D30GegmNpV3E/jZOVrhoFOlLQoWFCOJmV
+	hCiXcox7YTUThTBVkzte4BizIrxTzI7rAiHYCEI8egG0qQdXaaP/3fIbR6ZMMHmOHgLR7kLPy3m
+	8+cQ1xKfBqiOm6vfohUc+HkfaHzQ=
+X-Google-Smtp-Source: AGHT+IEqHLQRGsdg1JTxQcGTt6dR3uLD/D6++NZXGdXYPR3B9yBoK8nfKMkgW7wPL52R5TeN48O2HyGbKKAxEI89sMA=
+X-Received: by 2002:a17:907:9406:b0:a7a:abd8:77ae with SMTP id
+ a640c23a62f3a-a7dc4dc49cemr1418463566b.7.1723068849357; Wed, 07 Aug 2024
+ 15:14:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/8] rust: file: add Rust abstraction for `struct file`
-To: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
- Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
- Joel Fernandes <joel@joelfernandes.org>,
- Carlos Llamas <cmllamas@google.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Matthew Wilcox <willy@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
- Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
- Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Kees Cook <kees@kernel.org>
-References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
- <20240725-alice-file-v8-3-55a2e80deaa8@google.com>
- <4bf5bf3b-88f4-4ee4-80fd-c566428d9f69@proton.me>
- <CAH5fLgi0MGUhbD0WV99NtU+08HCJG+LYMtx+Ca4gwfo9FR+hTw@mail.gmail.com>
- <ZrJ5kORJHsITlxr6@boqun-archlinux>
- <CAH5fLgj2XEvjourzW4aoRDQwMGkKTNiE7Wu9FVRrG=7ae1hiWA@mail.gmail.com>
- <ZrOIsLH2JsoFzCZB@boqun-archlinux>
-Content-Language: en-US, da
-From: Alice Ryhl <alice@ryhl.io>
-In-Reply-To: <ZrOIsLH2JsoFzCZB@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240805100109.14367-1-rgbi3307@gmail.com> <2024080635-neglector-isotope-ea98@gregkh>
+ <CAHOvCC4-298oO9qmBCyrCdD_NZYK5e+gh+SSLQWuMRFiJxYetA@mail.gmail.com>
+ <2024080615-ointment-undertone-9a8e@gregkh> <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
+ <ZrLuelS7yx92SKk7@casper.infradead.org>
+In-Reply-To: <ZrLuelS7yx92SKk7@casper.infradead.org>
+From: JaeJoon Jung <rgbi3307@gmail.com>
+Date: Thu, 8 Aug 2024 07:13:56 +0900
+Message-ID: <CAHOvCC4bYNkoku_HWDadEBNfWNJGFkVVmz5XcAeMe0EAT_5HEw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash Tree
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Sasha Levin <levinsasha928@gmail.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	maple-tree@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/7/24 4:46 PM, Boqun Feng wrote:
-> On Wed, Aug 07, 2024 at 10:50:32AM +0200, Alice Ryhl wrote:
->> On Tue, Aug 6, 2024 at 9:30 PM Boqun Feng <boqun.feng@gmail.com> wrote:
->>>
->>> On Tue, Aug 06, 2024 at 10:48:11AM +0200, Alice Ryhl wrote:
->>> [...]
->>>>>> +    /// Returns the flags associated with the file.
->>>>>> +    ///
->>>>>> +    /// The flags are a combination of the constants in [`flags`].
->>>>>> +    #[inline]
->>>>>> +    pub fn flags(&self) -> u32 {
->>>>>> +        // This `read_volatile` is intended to correspond to a READ_ONCE call.
->>>>>> +        //
->>>>>> +        // SAFETY: The file is valid because the shared reference guarantees a nonzero refcount.
->>>>>> +        //
->>>>>> +        // FIXME(read_once): Replace with `read_once` when available on the Rust side.
->>>>>
->>>>> Do you know the status of this?
->>>>
->>>> It's still unavailable.
->>>>
->>>
->>> I think with our own Atomic API, we can just use atomic_read() here:
->>> yes, I know that to make this is not a UB, we need the C side to also do
->>> atomic write on this `f_flags`, however, my reading of C code seems to
->>> suggest that FS relies on writes to this field is atomic, therefore
->>> unless someone is willing to convert all writes to `f_flags` in C into
->>> a WRITE_ONCE(), nothing more we can do on Rust side. So using
->>> atomic_read() is the correct thing to begin with.
->>
->> Huh? The C side uses atomic reads for this?
->>
-> 
-> Well, READ_ONCE(->f_flags) is atomic, so I thought you want to use
-> atomic here. However, after a quick look of `->f_flags` accesses, I find
-> out they should be protected by `->f_lock` (a few cases rely on
-> data race accesses, see p4_fd_open()), so I think what you should really
-> do here is the similar: make sure Rust code only accesses `->f_flags`
-> if `->f_lock` is held. Unless that's not the case for binder?
+Hello, Matthew
+Thank you so much for the advice above.
+I've been analyzing your XArray for years now and it's helped me a lot.
+Finding an index through bit shifting in XArray seems to very ingenious way.
+If you have time, Could you talk a bit more on the dcache advice you gave above?
+My guess is that it has to do with the memory cache associated with the MMU.
 
-
-Binder just has an `if (filp->f_flags & O_NONBLOCK)` block somewhere in 
-the ioctl, where filp is the `struct file *` passed to the ioctl. Binder 
-doesn't take the lock.
-
-Alice
+On Wed, 7 Aug 2024 at 12:48, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Wed, Aug 07, 2024 at 09:21:12AM +0900, JaeJoon Jung wrote:
+> > Performance comparison when the number of indexes(nr) is 1M stored:
+> > The numeric unit is cycles as calculated by get_cycles().
+> >
+> > Performance  store    find    erase
+> > ---------------------------------------------
+> > XArray            4          6        14
+> >
+> > Maple Tree     7          8        23
+> >
+> > Hash Tree      5          3        12
+> > ---------------------------------------------
+> >
+> > Please check again considering the above.
+>
+> I would suggest that you find something to apply your new data structure
+> to.  My suggestion would be the dcache, as I did with rosebush.  That let
+> us find out that rosebush was not good for that application, and so I
+> abandoned work on it.
 
