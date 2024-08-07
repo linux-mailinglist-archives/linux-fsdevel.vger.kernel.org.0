@@ -1,366 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-25380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AD794B3C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 01:41:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1056294B3D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 01:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3661F23BA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 23:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87012281ED6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 23:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB90F15A873;
-	Wed,  7 Aug 2024 23:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A484156237;
+	Wed,  7 Aug 2024 23:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JlNpBX9j"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="upK82fJx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF57155337;
-	Wed,  7 Aug 2024 23:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFD684037
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Aug 2024 23:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723074066; cv=none; b=u5zRnw/bBGF/IvSvbxzsF7JIm/fGl8bsNS8tVdgjDr9NCIY1+WOE4ysTh8A3onl+FHCoGVajtCjNwCJmAJb9UE3b/k5RqtKvXL6btbBfW4Euf8CIbg0GGWsbelAtGgrt4U4PVJ1ae7Eb4MwB+mrWzXIYcNXGO99L05BHdo0os+M=
+	t=1723074340; cv=none; b=emNIRZ0/3CcOyYX+c7qntWwKOFTSiV++spKyCtM4EzXvc8t1s38MF606Cpt5UgGVb1uijFOnGaXwYJkyKAeusVZfWJVOjf/UHgnonXbmzjbeWiGBtb0ZcFxP6yMm2m4jwh+XDYIKnwuzP/2vzQQtoUHG5y0Y6V1tgIlH8YBhm7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723074066; c=relaxed/simple;
-	bh=hAHRGfhHTT27DNY5NeOM9zG7twQB27NQc7Kw1Yx1Eb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kiVoLNkRh9erYN14YGRYC/L2sEuiwFeeazeuw9U7Or0T28ymijSRMRMtCBJjMGMhuw1OeM5ueS38CY0ydF+aWAF+cO9jYhcEM/fH7veNqAz/67kAMb+qJLWXdqZT/7rwIQT8Aah1YeaSj8zG+vctRl8TPdL5Gj7ztKX9kAMYYGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JlNpBX9j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D440EC32781;
-	Wed,  7 Aug 2024 23:41:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723074066;
-	bh=hAHRGfhHTT27DNY5NeOM9zG7twQB27NQc7Kw1Yx1Eb8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JlNpBX9jVKmIG53xvPwkmLHj8GrI1W0nZDunZqSBiafNrJAimSpyjR0Zoys3ZCVnL
-	 jRxl8G6yD6XeMT9XSCeHXwhBo16rhquu7Z5x6GIea5MUL3DNd27ryjMBi/qUrHtbiM
-	 CiLV7VqELYvDt3NyZ24tAaRZxIMrXplnxmzg8TWxpSmIluLn88IOm09MFFb/kwbxQM
-	 +7TUTxBYYZ0+DJzUigLHsmtcHfKcUfWbN5a05efBShYfG4uJ0xZPzdikya1K4Ts26n
-	 6BSQ6q5MFjq02vEaO5lFmBDpHRGTVOI8Sbvr8GuxhBOEn6y8lvwzB42BqspOvgsTrM
-	 nRIphpYe/SHQA==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: bpf@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	akpm@linux-foundation.org,
-	adobriyan@gmail.com,
-	shakeel.butt@linux.dev,
-	hannes@cmpxchg.org,
-	ak@linux.intel.com,
-	osandov@osandov.com,
-	song@kernel.org,
-	jannh@google.com,
-	linux-fsdevel@vger.kernel.org,
-	willy@infradead.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v4 bpf-next 10/10] selftests/bpf: add build ID tests
-Date: Wed,  7 Aug 2024 16:40:29 -0700
-Message-ID: <20240807234029.456316-11-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240807234029.456316-1-andrii@kernel.org>
-References: <20240807234029.456316-1-andrii@kernel.org>
+	s=arc-20240116; t=1723074340; c=relaxed/simple;
+	bh=zaOh2SrN78k13gIAB523hKMDCQwuksmMWM6kmyL4JCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r6LVpn6qg7vgKMpMz0MdfCtBSZ2u9QQrg0eMTrj4aMcLNWn1OF4J+6KVupWzt9370e+IE2LhfJV+H0fWJogBmxO5UtI9cXFyaKN0JTWveWp7HJiPsp60TgVTYtSIhhvz3lqaOJEmMdrqCbnTEj5XatxpqfrevXWLooTnE00DwPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=upK82fJx; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-367963ea053so294233f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Aug 2024 16:45:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723074337; x=1723679137; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zaOh2SrN78k13gIAB523hKMDCQwuksmMWM6kmyL4JCE=;
+        b=upK82fJx3fOM49m0lroBGccsssYkfAuK3nkq4Pe4Rjo+LwOMpGQROxuhVzR4FIs7p4
+         Bcp3CmojFkxh4/2/2jeUUziD2z4IxIt90SXPVkT6ZqIF6+rYQ8b0i/zLy3z2vgbVsb4g
+         xHM+fMLOnLOxy7XoCJ+d5wqNeb+MkGSijwai8BovIhOI+0lCUBXcVunIBtjWP3YK7yQi
+         WqO8T4m/beh8Un54qnRXWfLRK3TMS2Kn04OV/UYbPVdJyttphglR5gQo2TrZGBJCaXc1
+         ivvET1JqcgkAT8T7FGQ4VmiAwGyFAhvnYciNpnVkyiBGCZEIZdhuMvvFKVtYRPcDdpin
+         qANQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723074337; x=1723679137;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zaOh2SrN78k13gIAB523hKMDCQwuksmMWM6kmyL4JCE=;
+        b=QInJLWMaehZxM1G+I6auuCwMvrx0eR98aurnu7pALrA+8V31fav7RTSvTIQxgA1C8S
+         fWCDu2gXnCtGEOauVkRwacqhd042feamYemDbs7ziibEJzAiw38jRG6jSrS2GHu0xmLi
+         fHIJFvO9BI7UPdy6UP1ggdDYpJmQXtRexoo+snGjN4XSNhZbSfGBuaWi9fjJ3t5tWwQU
+         XIdJmZprR6wUJIpzDPxeOi81eR2WFE3L7VasbDwRExcgfL1dr5H3lIz37XhWgXLnkDJg
+         fjcvLHCp2GSnQQzG3j3JeVJ9mDS5pErbSG+GNDLLFmg8doZi9RInZbgMmUcTq46qlSRe
+         xTiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZN6F+SlcCUkBIRebENawzGGdUf4gDB693RtVkdSUERiLmEssgOlYVZWfXrRRAgwZllaWJlSrfewxNBGWj09YGg3mvqDAhs9vFvMnKGg==
+X-Gm-Message-State: AOJu0Ywf3JGYfyOVYQSRCe3leCIrQHFayW88/r/JLeT9vfYaa5XCofuo
+	4HwUJDhg6xy3noFnt0d6iENzUxHMbbHRpk2jAW6lDkr3wwBWIlbE/j9NofJWGZ/vzHZ7xKOQmzl
+	RbaYhIQPBIwdXlupchKqZyfelxoK5HMBnAkfG
+X-Google-Smtp-Source: AGHT+IEMy5+rvA8Xz5XXMZ4V8cfK+CB3M8rXAjQ//+EAwYb7kYKY/NsJjZngCQzHzQMhpt1v7lVc4+xra3gtXcLRy7U=
+X-Received: by 2002:adf:f842:0:b0:366:f04d:676f with SMTP id
+ ffacd0b85a97d-36d274dc2e5mr83350f8f.12.1723074336434; Wed, 07 Aug 2024
+ 16:45:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240805093245.889357-1-jgowans@amazon.com>
+In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
+From: David Matlack <dmatlack@google.com>
+Date: Wed, 7 Aug 2024 16:45:07 -0700
+Message-ID: <CALzav=ddnKykNSH1WVM5i74MFHSj7BO+bZWkfQpRO0fc0g8_mQ@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
+To: James Gowans <jgowans@amazon.com>
+Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Steve Sistare <steven.sistare@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Anthony Yznaga <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org, 
+	Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org, 
+	Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Paul Durrant <pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>, 
+	James Houghton <jthoughton@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a new set of tests validating behavior of capturing stack traces
-with build ID. We extend uprobe_multi target binary with ability to
-trigger uprobe (so that we can capture stack traces from it), but also
-we allow to force build ID data to be either resident or non-resident in
-memory (see also a comment about quirks of MADV_PAGEOUT).
+Hi James,
 
-That way we can validate that in non-sleepable context we won't get
-build ID (as expected), but with sleepable uprobes we will get that
-build ID regardless of it being physically present in memory.
+On Mon, Aug 5, 2024 at 2:33=E2=80=AFAM James Gowans <jgowans@amazon.com> wr=
+ote:
+>
+> In this patch series a new in-memory filesystem designed specifically
+> for live update is implemented. Live update is a mechanism to support
+> updating a hypervisor in a way that has limited impact to running
+> virtual machines. This is done by pausing/serialising running VMs,
+> kexec-ing into a new kernel, starting new VMM processes and then
+> deserialising/resuming the VMs so that they continue running from where
+> they were. To support this, guest memory needs to be preserved.
 
-Also, we add a small add-on linker script which reorders
-.note.gnu.build-id section and puts it after (big) .text section,
-putting build ID data outside of the very first page of ELF file. This
-will test all the relaxations we did in build ID parsing logic in kernel
-thanks to freader abstraction.
+How do you envision VM state (or other userspace state) being
+preserved? I guess it could just be regular files on this filesystem
+but I wonder if that would become inefficient if the files are
+(eventually) backed with PUD-sized allocations.
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- tools/testing/selftests/bpf/Makefile          |   5 +-
- .../selftests/bpf/prog_tests/build_id.c       | 118 ++++++++++++++++++
- .../selftests/bpf/progs/test_build_id.c       |  31 +++++
- tools/testing/selftests/bpf/uprobe_multi.c    |  41 ++++++
- tools/testing/selftests/bpf/uprobe_multi.ld   |  11 ++
- 5 files changed, 204 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/build_id.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_build_id.c
- create mode 100644 tools/testing/selftests/bpf/uprobe_multi.ld
+>
+> Guestmemfs implements preservation acrosss kexec by carving out a large
+> contiguous block of host system RAM early in boot which is then used as
+> the data for the guestmemfs files. As well as preserving that large
+> block of data memory across kexec, the filesystem metadata is preserved
+> via the Kexec Hand Over (KHO) framework (still under review):
+> https://lore.kernel.org/all/20240117144704.602-1-graf@amazon.com/
+>
+> Filesystem metadata is structured to make preservation across kexec
+> easy: inodes are one large contiguous array, and each inode has a
+> "mappings" block which defines which block from the filesystem data
+> memory corresponds to which offset in the file.
+>
+> There are additional constraints/requirements which guestmemfs aims to
+> meet:
+>
+> 1. Secret hiding: all filesystem data is removed from the kernel direct
+> map so immune from speculative access. read()/write() are not supported;
+> the only way to get at the data is via mmap.
+>
+> 2. Struct page overhead elimination: the memory is not managed by the
+> buddy allocator and hence has no struct pages.
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 7e4b107b37b4..e47d983d2694 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -787,9 +787,10 @@ $(OUTPUT)/veristat: $(OUTPUT)/veristat.o
- 
- # Linking uprobe_multi can fail due to relocation overflows on mips.
- $(OUTPUT)/uprobe_multi: CFLAGS += $(if $(filter mips, $(ARCH)),-mxgot)
--$(OUTPUT)/uprobe_multi: uprobe_multi.c
-+$(OUTPUT)/uprobe_multi: uprobe_multi.c uprobe_multi.ld
- 	$(call msg,BINARY,,$@)
--	$(Q)$(CC) $(CFLAGS) -O0 $(LDFLAGS) $^ $(LDLIBS) -o $@
-+	$(Q)$(CC) $(CFLAGS) -Wl,-T,uprobe_multi.ld -O0 $(LDFLAGS) 	\
-+		$(filter-out %.ld,$^) $(LDLIBS) -o $@
- 
- EXTRA_CLEAN := $(SCRATCH_DIR) $(HOST_SCRATCH_DIR)			\
- 	prog_tests/tests.h map_tests/tests.h verifier/tests.h		\
-diff --git a/tools/testing/selftests/bpf/prog_tests/build_id.c b/tools/testing/selftests/bpf/prog_tests/build_id.c
-new file mode 100644
-index 000000000000..aec9c8d6bc96
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/build_id.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+#include <test_progs.h>
-+
-+#include "test_build_id.skel.h"
-+
-+static char build_id[BPF_BUILD_ID_SIZE];
-+static int build_id_sz;
-+
-+static void print_stack(struct bpf_stack_build_id *stack, int frame_cnt)
-+{
-+	int i, j;
-+
-+	for (i = 0; i < frame_cnt; i++) {
-+		printf("FRAME #%02d: ", i);
-+		switch (stack[i].status) {
-+		case BPF_STACK_BUILD_ID_EMPTY:
-+			printf("<EMPTY>\n");
-+			break;
-+		case BPF_STACK_BUILD_ID_VALID:
-+			printf("BUILD ID = ");
-+			for (j = 0; j < BPF_BUILD_ID_SIZE; j++)
-+				printf("%02hhx", (unsigned)stack[i].build_id[j]);
-+			printf(" OFFSET = %llx", (unsigned long long)stack[i].offset);
-+			break;
-+		case BPF_STACK_BUILD_ID_IP:
-+			printf("IP = %llx", (unsigned long long)stack[i].ip);
-+			break;
-+		default:
-+			printf("UNEXPECTED STATUS %d ", stack[i].status);
-+			break;
-+		}
-+		printf("\n");
-+	}
-+}
-+
-+static void subtest_nofault(bool build_id_resident)
-+{
-+	struct test_build_id *skel;
-+	struct bpf_stack_build_id *stack;
-+	int frame_cnt;
-+
-+	skel = test_build_id__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open"))
-+		return;
-+
-+	skel->links.uprobe_nofault = bpf_program__attach(skel->progs.uprobe_nofault);
-+	if (!ASSERT_OK_PTR(skel->links.uprobe_nofault, "link"))
-+		goto cleanup;
-+
-+	if (build_id_resident)
-+		ASSERT_OK(system("./uprobe_multi uprobe-paged-in"), "trigger_uprobe");
-+	else
-+		ASSERT_OK(system("./uprobe_multi uprobe-paged-out"), "trigger_uprobe");
-+
-+	if (!ASSERT_GT(skel->bss->res_nofault, 0, "res"))
-+		goto cleanup;
-+
-+	stack = skel->bss->stack_nofault;
-+	frame_cnt = skel->bss->res_nofault / sizeof(struct bpf_stack_build_id);
-+	if (env.verbosity >= VERBOSE_NORMAL)
-+		print_stack(stack, frame_cnt);
-+
-+	if (build_id_resident) {
-+		ASSERT_EQ(stack[0].status, BPF_STACK_BUILD_ID_VALID, "build_id_status");
-+		ASSERT_EQ(memcmp(stack[0].build_id, build_id, build_id_sz), 0, "build_id_match");
-+	} else {
-+		ASSERT_EQ(stack[0].status, BPF_STACK_BUILD_ID_IP, "build_id_status");
-+	}
-+
-+cleanup:
-+	test_build_id__destroy(skel);
-+}
-+
-+static void subtest_sleepable(void)
-+{
-+	struct test_build_id *skel;
-+	struct bpf_stack_build_id *stack;
-+	int frame_cnt;
-+
-+	skel = test_build_id__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open"))
-+		return;
-+
-+	skel->links.uprobe_sleepable = bpf_program__attach(skel->progs.uprobe_sleepable);
-+	if (!ASSERT_OK_PTR(skel->links.uprobe_sleepable, "link"))
-+		goto cleanup;
-+
-+	/* force build ID to not be paged in */
-+	ASSERT_OK(system("./uprobe_multi uprobe-paged-out"), "trigger_uprobe");
-+
-+	if (!ASSERT_GT(skel->bss->res_sleepable, 0, "res"))
-+		goto cleanup;
-+
-+	stack = skel->bss->stack_sleepable;
-+	frame_cnt = skel->bss->res_sleepable / sizeof(struct bpf_stack_build_id);
-+	if (env.verbosity >= VERBOSE_NORMAL)
-+		print_stack(stack, frame_cnt);
-+
-+	ASSERT_EQ(stack[0].status, BPF_STACK_BUILD_ID_VALID, "build_id_status");
-+	ASSERT_EQ(memcmp(stack[0].build_id, build_id, build_id_sz), 0, "build_id_match");
-+
-+cleanup:
-+	test_build_id__destroy(skel);
-+}
-+
-+void serial_test_build_id(void)
-+{
-+	build_id_sz = read_build_id("uprobe_multi", build_id, sizeof(build_id));
-+	ASSERT_EQ(build_id_sz, BPF_BUILD_ID_SIZE, "parse_build_id");
-+
-+	if (test__start_subtest("nofault-paged-out"))
-+		subtest_nofault(false /* not resident */);
-+	if (test__start_subtest("nofault-paged-in"))
-+		subtest_nofault(true /* resident */);
-+	if (test__start_subtest("sleepable"))
-+		subtest_sleepable();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_build_id.c b/tools/testing/selftests/bpf/progs/test_build_id.c
-new file mode 100644
-index 000000000000..32ce59f9aa27
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_build_id.c
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+
-+struct bpf_stack_build_id stack_sleepable[128];
-+int res_sleepable;
-+
-+struct bpf_stack_build_id stack_nofault[128];
-+int res_nofault;
-+
-+SEC("uprobe.multi/./uprobe_multi:uprobe")
-+int uprobe_nofault(struct pt_regs *ctx)
-+{
-+	res_nofault = bpf_get_stack(ctx, stack_nofault, sizeof(stack_nofault),
-+				    BPF_F_USER_STACK | BPF_F_USER_BUILD_ID);
-+
-+	return 0;
-+}
-+
-+SEC("uprobe.multi.s/./uprobe_multi:uprobe")
-+int uprobe_sleepable(struct pt_regs *ctx)
-+{
-+	res_sleepable = bpf_get_stack(ctx, stack_sleepable, sizeof(stack_sleepable),
-+				      BPF_F_USER_STACK | BPF_F_USER_BUILD_ID);
-+
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/uprobe_multi.c b/tools/testing/selftests/bpf/uprobe_multi.c
-index 7ffa563ffeba..c7828b13e5ff 100644
---- a/tools/testing/selftests/bpf/uprobe_multi.c
-+++ b/tools/testing/selftests/bpf/uprobe_multi.c
-@@ -2,8 +2,21 @@
- 
- #include <stdio.h>
- #include <string.h>
-+#include <stdbool.h>
-+#include <stdint.h>
-+#include <sys/mman.h>
-+#include <unistd.h>
- #include <sdt.h>
- 
-+#ifndef MADV_POPULATE_READ
-+#define MADV_POPULATE_READ 22
-+#endif
-+
-+int __attribute__((weak)) uprobe(void)
-+{
-+	return 0;
-+}
-+
- #define __PASTE(a, b) a##b
- #define PASTE(a, b) __PASTE(a, b)
- 
-@@ -75,6 +88,30 @@ static int usdt(void)
- 	return 0;
- }
- 
-+extern char build_id_start[];
-+extern char build_id_end[];
-+
-+int __attribute__((weak)) trigger_uprobe(bool build_id_resident)
-+{
-+	int page_sz = sysconf(_SC_PAGESIZE);
-+	void *addr;
-+
-+	/* page-align build ID start */
-+	addr = (void *)((uintptr_t)&build_id_start & ~(page_sz - 1));
-+
-+	/* to guarantee MADV_PAGEOUT work reliably, we need to ensure that
-+	 * memory range is mapped into current process, so we unconditionally
-+	 * do MADV_POPULATE_READ, and then MADV_PAGEOUT, if necessary
-+	 */
-+	madvise(addr, page_sz, MADV_POPULATE_READ);
-+	if (!build_id_resident)
-+		madvise(addr, page_sz, MADV_PAGEOUT);
-+
-+	(void)uprobe();
-+
-+	return 0;
-+}
-+
- int main(int argc, char **argv)
- {
- 	if (argc != 2)
-@@ -84,6 +121,10 @@ int main(int argc, char **argv)
- 		return bench();
- 	if (!strcmp("usdt", argv[1]))
- 		return usdt();
-+	if (!strcmp("uprobe-paged-out", argv[1]))
-+		return trigger_uprobe(false /* page-out build ID */);
-+	if (!strcmp("uprobe-paged-in", argv[1]))
-+		return trigger_uprobe(true /* page-in build ID */);
- 
- error:
- 	fprintf(stderr, "usage: %s <bench|usdt>\n", argv[0]);
-diff --git a/tools/testing/selftests/bpf/uprobe_multi.ld b/tools/testing/selftests/bpf/uprobe_multi.ld
-new file mode 100644
-index 000000000000..a2e94828bc8c
---- /dev/null
-+++ b/tools/testing/selftests/bpf/uprobe_multi.ld
-@@ -0,0 +1,11 @@
-+SECTIONS
-+{
-+	. = ALIGN(4096);
-+	.note.gnu.build-id : { *(.note.gnu.build-id) }
-+	. = ALIGN(4096);
-+}
-+INSERT AFTER .text;
-+
-+build_id_start = ADDR(.note.gnu.build-id);
-+build_id_end = ADDR(.note.gnu.build-id) + SIZEOF(.note.gnu.build-id);
-+
--- 
-2.43.5
+I'm curious if there any downsides of eliminating struct pages? e.g.
+Certain operations/features in the kernel relevant for running VMs
+that do not work?
 
+>
+> 3. PMD and PUD level allocations for TLB performance: guestmemfs
+> allocates PMD-sized pages to back files which improves TLB perf (caveat
+> below!). PUD size allocations are a next step.
+>
+> 4. Device assignment: being able to use guestmemfs memory for
+> VFIO/iommufd mappings, and allow those mappings to survive and continue
+> to be used across kexec.
+>
+>
+> Next steps
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> The idea is that this patch series implements a minimal filesystem to
+> provide the foundations for in-memory persistent across kexec files.
+> One this foundation is in place it will be extended:
+>
+> 1. Improve the filesystem to be more comprehensive - currently it's just
+> functional enough to demonstrate the main objective of reserved memory
+> and persistence via KHO.
+>
+> 2. Build support for iommufd IOAS and HWPT persistence, and integrate
+> that with guestmemfs. The idea is that if VMs have DMA devices assigned
+> to them, DMA should continue running across kexec. A future patch series
+> will add support for this in iommufd and connect iommufd to guestmemfs
+> so that guestmemfs files can remain mapped into the IOMMU during kexec.
+>
+> 3. Support a guest_memfd interface to files so that they can be used for
+> confidential computing without needing to mmap into userspace.
+>
+> 3. Gigantic PUD level mappings for even better TLB perf.
+>
+> Caveats
+> =3D=3D=3D=3D=3D=3D=3D
+>
+> There are a issues with the current implementation which should be
+> solved either in this patch series or soon in follow-on work:
+>
+> 1. Although PMD-size allocations are done, PTE-level page tables are
+> still created. This is because guestmemfs uses remap_pfn_range() to set
+> up userspace pgtables. Currently remap_pfn_range() only creates
+> PTE-level mappings. I suggest enhancing remap_pfn_range() to support
+> creating higher level mappings where possible, by adding pmd_special
+> and pud_special flags.
+
+This might actually be beneficial.
+
+Creating PTEs for userspace mappings would make it for UserfaultFD to
+intercept at PAGE_SIZE granularity. A big pain point for Google with
+using HugeTLB is the inability to use UsefaultFD to intercept at
+PAGE_SIZE for the post-copy phase of VM Live Migration.
+
+As long as the memory is physically contiguous it should be possible
+for KVM to still map it into the guest with PMD or PUD mappings.
+KVM/arm64 already even has support for that for VM_PFNMAP VMAs.
 
