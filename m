@@ -1,435 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-25224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28548949F52
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 07:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD6F949F54
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 07:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D32FF282B8F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 05:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12DA5282D90
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 05:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB431917D2;
-	Wed,  7 Aug 2024 05:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC067190466;
+	Wed,  7 Aug 2024 05:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="WEXpk3J4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMnGbHYG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04914F215
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Aug 2024 05:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723009560; cv=fail; b=ntq3xaGAxWUMvtxmB9sR6tVYy8CDiQOhuVh/tCLj7i7YLg7l4qk0Sftl87922E0rBP45UGdzFfOG1ZHeWyn3P2akSSfqZQGXMHuDkrwN9+7GBtj91BsurruorkX0+fAel5RixWK1NnXBXn/P3Rt91zMmGi0VnzOBdQMzktavfDY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723009560; c=relaxed/simple;
-	bh=ZcAEUTeOX3VJykrZM8ImDOH/pc8jCIcAOUlTnASB9mY=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=WOJE7LBduf+4cJ1zEo9tnXbmNOYrt+faEgqlxxRmxMhWQiJb3zay/UTjqglhSVWWLx1R+XR84f8GWMKCaJyLY1M7q43BTZNs2GWf3wHh75tHNvrobjHzBftUYjrerCyA+1Qs34/qpK6p+XC1PaRtqKCZKnMPMXkrOmAhH9/GmOM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=WEXpk3J4; arc=fail smtp.client-ip=185.183.30.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209322.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4774OmuV025093;
-	Wed, 7 Aug 2024 05:45:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=S1; bh=X2I+si+Df8AJgtDYH5CQjn250B+Zs
-	5sx/ON1CsboFtc=; b=WEXpk3J4tka47mO6jrWASeRvDmZevbUf/UdIyc3yu7tSW
-	7FOjF71o6Z4OrR0XN2zUXQkv2w4FAGff++wt++EmpSUBCRiOp0SyOTia4Weh8Jh/
-	vr/oLcma8cYvVxQnjc80BdjSqhaV0gWVDtx/dOh+lNJ90/Aqd6/9kW48m2h2e1fa
-	g0yie7ERBHxbQPxHjZqjuffLRCq7EuuXHX88fCRAmtEmNlxspjmnsplgFs1VU+2V
-	yIyz1KOmcp92z+isFDFRgyVu8lMae9Oprk8lcnLqcp+Pu8/t8c60BL8vObLCwj1r
-	X9AEwCs2XROJJWVC5vwOUMD57P5pVrCThNEqq9D3w==
-Received: from apc01-sg2-obe.outbound.protection.outlook.com (mail-sgaapc01lp2105.outbound.protection.outlook.com [104.47.26.105])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 40sbb3u77g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 07 Aug 2024 05:45:40 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MpYu+WxZWqfRBgcDghDMCAEsEpBgfz4RZ/SK+VTZXbm1XMPWNO/Nsq/ldleeeSyb9bSjRzgEofWhrk+HgrR+jrzKgmpvtYFGejnfl/ZFuqW550Kcd83rumeVkn1poUmhTErg5PYRjzgOr6V0gHYSNlq3EXcvL2lG5yS3igVC362CQM91eRQs9JbS0Ms9FZBVKOo9/kmfrujqxskXBLUsrgEIxZzhGeA45D8N7tlBql4u+jhx1/c8ljhkR0AUpa1ifEWI+mfuYXMRCrscV5pmTTUdTV9417wSkRKWfU3ie5GDVxXTMW3luMwBELSYOqhZX4nm0r/rR581Z3d6qJQrYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X2I+si+Df8AJgtDYH5CQjn250B+Zs5sx/ON1CsboFtc=;
- b=hkFuhfVs/uTk5RrZgu/6Fa3Mb5eE11p7eYUa+HzL9QLrpQik8aq3y/rBfiAsNkW1d+acelTXHuv6IbC0W3THYXfDIIhtpR9SViHATVcvUuqTqmKHiHKFd1XAOgTfhQei8krIyt9Vq5b+IzF/RkIUvzj67sfVQ4U2lqu1vBgn9lBTlEkudGnksYWYghsj4W5qufSGSMoE4nSphT9MZUaGG7MReDAvo0SlpjzYqDa3W5Ke1zmOJKGztMKwhj6kTe1unQnMut68NtqYo+9yTbNdp9Az+dr4vXkUoYCy2Nrz9fTOLGhExIwHnK6lZSKJ8pA1PBVl7nfdY616SE1DyIW9DQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
- by TYZPR04MB7207.apcprd04.prod.outlook.com (2603:1096:400:45b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.9; Wed, 7 Aug
- 2024 05:45:33 +0000
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06]) by PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06%5]) with mapi id 15.20.7849.008; Wed, 7 Aug 2024
- 05:45:33 +0000
-From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To: "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-        "sj1557.seo@samsung.com"
-	<sj1557.seo@samsung.com>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Subject: [PATCH v1 2/2] exfat: do not fallback to buffered write
-Thread-Topic: [PATCH v1 2/2] exfat: do not fallback to buffered write
-Thread-Index: AQHa6Ix7gtH00S5OykqLk7pXoBgdWA==
-Date: Wed, 7 Aug 2024 05:45:33 +0000
-Message-ID:
- <PUZPR04MB631697B79F5ABF65191F259381B82@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|TYZPR04MB7207:EE_
-x-ms-office365-filtering-correlation-id: 8ae70fc4-0970-4d5f-43f9-08dcb6a4279f
-x-proofpoint-id: d8690225-876f-412f-87c6-a7cb45557a4c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?4bDIUSL6bXmfiFCj7kffeyjLJFwyediB6kUhg9oMI9COG6tBvh72+qjh2j?=
- =?iso-8859-1?Q?kJT926GiEF9+GUS08JCKnJagOtJcVdt3SvHvGEDO/5H+FjwraE3FwBkGpQ?=
- =?iso-8859-1?Q?k2vzwcdqY4/uVLu34VvNWkwcVbvLfaNlJCunISzu/MKfYPPp+Bv+Cu2bpA?=
- =?iso-8859-1?Q?rlOBzvzhXlKkLKzJOhuaOZIt3GL5EXJ63d17QlGhcK3m+8BY05RG+avRfW?=
- =?iso-8859-1?Q?KUC9h9sYBnYJlsEKuvyA5kt14aTe9sWAZzOg45nqeL2qrVPc1KKlU2a7od?=
- =?iso-8859-1?Q?9+0pEHHfAJb2fnaDBL4t6F4tPRGOy2Mfkm0pK8w0SysjQeYMknOj65lOOS?=
- =?iso-8859-1?Q?txKvPNXUlwRl8F7ZNAxuxptJjzIKvFhMkSnce4fpDcznPJOCM9ox0tiLD4?=
- =?iso-8859-1?Q?mJ61GcNDbsV85bLdIpMfznJuvHSFEN7/oddeHCSle864nIHUX+8TAJQqEQ?=
- =?iso-8859-1?Q?z+rEmhemhsz0s3ln7aaIDhBpJ5XZROownaHBWZe7JXQ5oc7g4WyfmTgyHc?=
- =?iso-8859-1?Q?4sdB7UVpNZ0/hUQrksmjNGAdDLxUK6KtE+pMb44h6U/aHFtX9zIy7OiYVK?=
- =?iso-8859-1?Q?ygqzWrsrvmjl1Z4lGt0XAm7r5wm5hM3QC/3afF5v7UDjJ3VC13Yt/Ziq/r?=
- =?iso-8859-1?Q?LrJAB0sGlZkW4dygw7KdJ29aS66MghRuLAVhJPD5GFxbtm2vQLvfscKrc0?=
- =?iso-8859-1?Q?nrHx0+kZboOe620DQUoHQp64KUGFtkeg/eH39cbOaFu/agmeZMwg3LcwoB?=
- =?iso-8859-1?Q?7Vsy11pkDp1K7Zdr4aLUyl+Z1qMuF0ovdfv5ZsuSvU5a+nt5JKM5FzWxn2?=
- =?iso-8859-1?Q?7uDV0NA+8GxSVNvNceRH6prt04q+FchbjJecyeY4GFHkg+d9/WCj+JQbdi?=
- =?iso-8859-1?Q?jrfbTKQXaoSXTqC2HVDi5mzqt1uFi8333813WwmahzsliyPSyKH9AjLheF?=
- =?iso-8859-1?Q?fAuEXanOWy/LveaR0q4dK5SYUxSGxHHTZ0DDUyDYh4/bXJsfZ6yZ3DLs7Q?=
- =?iso-8859-1?Q?r3SU0uFYLjn9y1OSSqmwSIeMfk7KLSJ6XHuvUkEKDFIpNqyMbAqWSzAq1A?=
- =?iso-8859-1?Q?wbL3xHNAOvv3qHReMwG5lt0bLaCxUnzKgTAmTvs3RptXejuJDX72LUegdn?=
- =?iso-8859-1?Q?AdqgzGWMvtAJ/Fwf9vMoT7M36IDEJG6w2NZHj9WLMXUSIGHeQDRmg1eKiy?=
- =?iso-8859-1?Q?/fiihnhAtVugSzTB3hMgWeOJeGR9187qnk4k9dUi06iSZ0C6xcKYxFSxyZ?=
- =?iso-8859-1?Q?6LmeCMBv5LwOeGHFAlJyHBNpRYw0obULq5aJCoMTQCs4iQz1CNJwHBaWpq?=
- =?iso-8859-1?Q?AV7tQFvGg30fxgMkZ9mAkcjTRMVfi3TspMs5X6ATaFJJ7cCHFzkJwDE4Nl?=
- =?iso-8859-1?Q?PNtX+tMGENtus6VXz+qZZbIM0sWmSVv8XR2s7VUArQUhIovrWRBTTOW9ev?=
- =?iso-8859-1?Q?fJvnc+ManhFpMKLcPvjUM/7+fb2A9NJp6y2KYw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?ivTEarJeB5EexbV+31zcNQFzM4GppB0rBOmmrXUbESg6BanQV+ucvCPIsh?=
- =?iso-8859-1?Q?l8wZDO/QzCQsfZtruWX6a80eNRdVaynWTnH7GLep5JCs8mrrajWq4sJgoY?=
- =?iso-8859-1?Q?agztUFZ/bSbBzY3o3sGKtIoUTDTLnsDQj8LR9r1q4rUbvQ/XrhkHr74aTx?=
- =?iso-8859-1?Q?6ovi0VRKeDk2RU/xyQIK0qd9agRQ0k30cx81NXRqmHHITj6CT9uRHiBRSB?=
- =?iso-8859-1?Q?QQrw38mLuAQ2aBkzUGjWpZWFnwlYWFYScUNdVXNl4rqLNZAaa3Jhp/tmlY?=
- =?iso-8859-1?Q?kwh+z14ZY+T8o5NO8ppgnLC4+j5/jCypOBQujvSXGOKr0lfxPouq7FYmoM?=
- =?iso-8859-1?Q?7uAvR4F7i7e0lMK5hco82JCESfBF+V2XG+0w/EXkCRu8HrOCEfcI9goMMc?=
- =?iso-8859-1?Q?JCyAZAaUDQaOfknsrsq539LAuKT8zHHV2QRisJoN/HpN40SlzyyFkgPtpW?=
- =?iso-8859-1?Q?+3DzQuIA1XW1amHjAfA6to8P4RdCViSG6ucv1m0NgRUhWq/784SENnW0vh?=
- =?iso-8859-1?Q?xpIa7bZQO+gZf8/58x+QdXB/iVF9MXd6UJ1IIOlD7nczIevx8Y/SfnfkxA?=
- =?iso-8859-1?Q?ZnzyT8+T6w6X69LfVSfgZDJyHMDlluxo98nv3Q9i13lZhpjpNjbkl29/6v?=
- =?iso-8859-1?Q?t+y2aHsLXmhasl6M8xex4bOr5CrXlVZQcFUa8iNMDjwP72wjL6NtlL5JjZ?=
- =?iso-8859-1?Q?6Q63yHx/c5qNUpegyPaKyxs1AytLnVAQJK362aAfi2qnkSVK7qyblTUX5G?=
- =?iso-8859-1?Q?yQBgwbDE2cxrla1dYY9oMo57tFhV6AgNpM+xv0PFZX16fo6YCamoThARal?=
- =?iso-8859-1?Q?UqdKTXeZmeRoqVlcnfdN3crCXzN5SULn7hj3UGKajhzPadjFPgBL+Coyzz?=
- =?iso-8859-1?Q?BQvTUOFNayCGzN8EZ1WfU0u0f1R1gvNJHl6vChWebiq560YMnAibKEIQZF?=
- =?iso-8859-1?Q?rr4p3QIUkMGSdGWHFZyK2rbWQyjSH96NtYAIk/ns+sfSWKzuJcrQG97udP?=
- =?iso-8859-1?Q?LJDqhtzcPHXQBkypyafYh71cCo0ui5GWwVYd7tNBL2GpslVE3T9+yf9G10?=
- =?iso-8859-1?Q?APd+u5iHDoFEUjk7fpmj5QK/RAhrZXXha9Dqoh9VUGr4AWYoRvIDFcQ1+y?=
- =?iso-8859-1?Q?jgJysMdmqqBrFXCh48+4Bmk1joNRqmC11Srwpxbw5ck9lYu1E5YGo/K1sa?=
- =?iso-8859-1?Q?DSFVM4g9X35Zg59sJiz+BWvClxkpjMCF+GcNyZlrZ83vvWituevhwv18tY?=
- =?iso-8859-1?Q?BmrKD7jxuSw34VdkrJSzGnyjHFPd3HMIVbj77CqBm5BINiiVTQw34BWgjR?=
- =?iso-8859-1?Q?FlkLMdrVP4+XRtVfEnUdzk1/1klZXpL45w2cLO/zIfmD9o2xzwQ2HyXdfA?=
- =?iso-8859-1?Q?yGpN4xEHtwLnpCMQqwhg/gLt4Pbw+uXh5D1FqtTmZHd3V8r2vZsL9sqxPL?=
- =?iso-8859-1?Q?JC8DWAPyRAlj6CzE0MZ1Ec3psgrsnfWGaHYw3MMlf56kYkh9WlEpPs2I6M?=
- =?iso-8859-1?Q?wWPFOJjzhHltqm1T8EtezVRS+Bx17z2ySYykz0lxi/zKXSO77OwnPe0xe+?=
- =?iso-8859-1?Q?HjU9A1dWnlAxlYLxGf8MFd724ewdBmG2EYeuGtEen7st9DTvDS0lA+YFzb?=
- =?iso-8859-1?Q?x3Z8fvBaB/8HB6lNWK+wLq4tI70Bb13oO+xS5Y++XLHFCeLk/FliBXtVHi?=
- =?iso-8859-1?Q?oc2QxmgMFfrexzB1RWc=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7788C6BFA3;
+	Wed,  7 Aug 2024 05:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723009579; cv=none; b=f8aqG0j2WHcMmLoZf7slSQCWYbCOlxsrAIzpez3DCER7SdVJlgRGL64xcfkuEJGi1q/UlHG/Ao+U2ux+eYHoRCvGiXfItJHTtN9o72rJtVb2wLDJwcDS2kVdR1yWIKFbkJoKBmE/xBBTe4NIvPEViTyrRbuOlloa8n5TE7aoBz4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723009579; c=relaxed/simple;
+	bh=ofyRRKO2zYH+BtgiGOTFOSJdLoIl8A/bu4ICuzb3+sI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d5IIHFwZhcNv+2SIw+vdr7FNf78prkXZXPag11L3AKLyiso91HbioFCmL9LPlivGAL5wLu/VR5VmjtVNqfCNpDUFEd4E2BKfkKhLdQSXK9RSi2OUl15WzwUzaupgSW2lqRnwblEN7Ikf5GWDH0KWrzp6XwDkLyKyLn3Ay9yYaE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMnGbHYG; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso20900611fa.2;
+        Tue, 06 Aug 2024 22:46:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723009575; x=1723614375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gcb8I7w4XJr73TE9YkB2Oy7AxbXGoDVjQzJSI+C8LeQ=;
+        b=gMnGbHYGVpp7zew5l4LTRPeHtph3aWVbVqxD8m5Qim+HK75aB6JDfTre8OWSuNIWG4
+         41xItFmjR9ksu3ncYKS8x5m3SMfWNwZlPfAJlKqqRvk6W71t077U+pttHQMsKNnMqtL6
+         2BbSUjm8KFkmIo1xLhBHIMks8C16zEz5EHPBJdiJ0lLpOe0B5E3DC4qS5hUQLp6URry/
+         Y7bmg+GuLwI0vG4PKdA9Lcay5ej7gTt4liMho8A6vPLiK4e+Stk9nzwaOZZ4oW5xuh2S
+         gBygBqaIpt2TA/5opB1iXAfwy/EgzxGdEz45jlqadOzSDhx/SnSEmiqaHmcGvRU7CQO2
+         ahvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723009575; x=1723614375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gcb8I7w4XJr73TE9YkB2Oy7AxbXGoDVjQzJSI+C8LeQ=;
+        b=Xi6T5U2ZlqvJxJ+7Vj5nhCZ+YJgi9HnunrCMk4/PGSRazAINegZBwEhEmfmghk3+h9
+         7IzYNjb8dBreWT3IXLYOOLn0hmwpMiCg0vVQssiZS+YEzZ/pSRqESU6D3B0WxxvAR2TD
+         UOaD6Gae+qZQ2T2/2ZE7wgKgIB1cqq9Xu+odB7aAvdVtxGQ6cAk7o51rI3/x0KQR7TQu
+         MBeupIvi6gp1y/SL588uHQALW/r3LxjJaOC+uGEDHxdU/gVZvusMloYTdwBppAJcn4+p
+         5JYBp3km4OhIXG9xbB9XT5wn54TtTrWtzAh5TOSg8DiRTCEG651OUvh1TREKmR/rECJQ
+         uUcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4M8pcerAbX7qNmxsupw3c7P48beUH6h6OfCWtXXMYdnzxOb5o6XAU4AXqjeTNxnHteI98OisqS1q+IS3mWXu2+MuTW0n0wgRv9AM3eIH0nYvOMBsNqy4RS3gG0A/dhoFDVyx9wTAMnPzzug==
+X-Gm-Message-State: AOJu0YyOQ8TjGPd6n5/06yNFqTX9oZrU06UsDEn/a5Apm16SRkjr3LlW
+	jr+TNFJwE4TZJ3CuAvPA0+dhK2UuNDgYWWKq7NE2IuH12qoeIEmmYlqYu3aD8VgObkoiQRqkrvB
+	yVMXO2Q+S0IOmwCpVDBFFuduRE5NawKj5htk=
+X-Google-Smtp-Source: AGHT+IH7v6xbC2zRXNuxMJ3RK08Eyos2aCCVQ6JCrQHyfYwIV1lQxxVyJwGdDzEFXgbSns5aJw4ItoP1KpZbiXviwls=
+X-Received: by 2002:a2e:9cc9:0:b0:2ef:1c0f:a0f3 with SMTP id
+ 38308e7fff4ca-2f15aa88b76mr136938201fa.6.1723009574993; Tue, 06 Aug 2024
+ 22:46:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	kFs+jeClq0ggQ9oXfkxYL4YpUxxUrBfvUTkNkwucLZELrnrcczyEAeu2uXCUej3p4unm9jXJdswpynRWNznI7fJDFNg+1w9/bcJUMbYldZOnBKe6wrHdsyKm6ucfllG85ji+XyWy5h7iE0e+VJNn/+aRS+DEUrj6dZHhe7EbdWhYL0PYaqWKkcbj1awKxJMbgBv4AF83FGBFNgBnZdCdeTT2l8NSp6cOT8i5qFP4tQ+EpASgGBCqPp20fsW+dgYyzrOhn+Loq8e3fukNgHy0mkHD/jPx3rm7uKwJsvIxxsMp3250fRM54LjfRWgIGEEMcK7K2McxgHyttfvjbew76iKWGiX/enby44DxdxKPxi21MWchsB/UK5QP8iqvbuxeYbDk1Sx8Es8ZYynOsvIlXcnlio6Ob4NqgHBS4XwGyrz2dIMJn0+ajlBQpNZgVEnUwMX9spCmlQj0qVb4tadZWDzawhFVLzB4uGIoFls2mjQbU3Tv1eszD/W8uXMNPfbgpeUA62d1D8CdhAWl7fQWYdeFljIRG03HK932RJ6zLTEye08MapwLY2eML78GJACypmCDVljJ4S8aA1AO1MVDuTcKZwJRj98gi/fSV48r7TTsvbBUmEb2t5aDsC2sB39Z
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ae70fc4-0970-4d5f-43f9-08dcb6a4279f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2024 05:45:33.4898
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Cuv05cX0z6D3Y4TqdSWIZvV0rOH9W6WWGA46UVIsND3g88DMjIG24lqcGFyQoGHsYKHNTH+y9skceAGvRLB5Ig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB7207
-X-Proofpoint-GUID: VY3FTDEqLnsSgRnW_0UA0c3TVeAPO2UX
-X-Proofpoint-ORIG-GUID: VY3FTDEqLnsSgRnW_0UA0c3TVeAPO2UX
-X-Sony-Outbound-GUID: VY3FTDEqLnsSgRnW_0UA0c3TVeAPO2UX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-07_02,2024-08-06_01,2024-05-17_01
+References: <20240806144628.874350-1-mjguzik@gmail.com> <20240806155319.GP5334@ZenIV>
+ <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
+ <20240807033820.GS5334@ZenIV> <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
+ <20240807053232.GT5334@ZenIV>
+In-Reply-To: <20240807053232.GT5334@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 7 Aug 2024 07:46:02 +0200
+Message-ID: <CAGudoHFoVHk1ZZOa=Bbb1MyGgSxeAK1bMvLPFKnagzuLz7PBGw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After commit(11a347fb6cef exfat: change to get file size from=0A=
-DataLength), the remaining area or hole had been filled with=0A=
-zeros before calling exfat_direct_IO(), so there is no need to=0A=
-fallback to buffered write, and ->i_size_aligned is no longer=0A=
-needed, drop it.=0A=
-=0A=
-Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>=0A=
----=0A=
- fs/exfat/exfat_fs.h |  2 --=0A=
- fs/exfat/file.c     | 11 -------=0A=
- fs/exfat/inode.c    | 74 +++++++++------------------------------------=0A=
- fs/exfat/namei.c    |  1 -=0A=
- fs/exfat/super.c    |  1 -=0A=
- 5 files changed, 15 insertions(+), 74 deletions(-)=0A=
-=0A=
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h=0A=
-index 40dec7c0e0a0..344c2f119e3d 100644=0A=
---- a/fs/exfat/exfat_fs.h=0A=
-+++ b/fs/exfat/exfat_fs.h=0A=
-@@ -309,8 +309,6 @@ struct exfat_inode_info {=0A=
- 	/* for avoiding the race between alloc and free */=0A=
- 	unsigned int cache_valid_id;=0A=
- =0A=
--	/* block-aligned i_size (used in cont_write_begin) */=0A=
--	loff_t i_size_aligned;=0A=
- 	/* on-disk position of directory entry or 0 */=0A=
- 	loff_t i_pos;=0A=
- 	loff_t valid_size;=0A=
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c=0A=
-index 8041bbe84745..8cd063a6de4c 100644=0A=
---- a/fs/exfat/file.c=0A=
-+++ b/fs/exfat/file.c=0A=
-@@ -74,7 +74,6 @@ static int exfat_cont_expand(struct inode *inode, loff_t =
-size)=0A=
- 	/* Expanded range not zeroed, do not update valid_size */=0A=
- 	i_size_write(inode, size);=0A=
- =0A=
--	ei->i_size_aligned =3D round_up(size, sb->s_blocksize);=0A=
- 	inode->i_blocks =3D round_up(size, sbi->cluster_size) >> 9;=0A=
- 	mark_inode_dirty(inode);=0A=
- =0A=
-@@ -244,8 +243,6 @@ void exfat_truncate(struct inode *inode)=0A=
- 	struct super_block *sb =3D inode->i_sb;=0A=
- 	struct exfat_sb_info *sbi =3D EXFAT_SB(sb);=0A=
- 	struct exfat_inode_info *ei =3D EXFAT_I(inode);=0A=
--	unsigned int blocksize =3D i_blocksize(inode);=0A=
--	loff_t aligned_size;=0A=
- 	int err;=0A=
- =0A=
- 	mutex_lock(&sbi->s_lock);=0A=
-@@ -263,14 +260,6 @@ void exfat_truncate(struct inode *inode)=0A=
- =0A=
- 	inode->i_blocks =3D round_up(i_size_read(inode), sbi->cluster_size) >> 9;=
-=0A=
- write_size:=0A=
--	aligned_size =3D i_size_read(inode);=0A=
--	if (aligned_size & (blocksize - 1)) {=0A=
--		aligned_size |=3D (blocksize - 1);=0A=
--		aligned_size++;=0A=
--	}=0A=
--=0A=
--	if (ei->i_size_aligned > i_size_read(inode))=0A=
--		ei->i_size_aligned =3D aligned_size;=0A=
- 	mutex_unlock(&sbi->s_lock);=0A=
- }=0A=
- =0A=
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c=0A=
-index 82a23b1beaf7..7c62fbc5027f 100644=0A=
---- a/fs/exfat/inode.c=0A=
-+++ b/fs/exfat/inode.c=0A=
-@@ -258,21 +258,6 @@ static int exfat_map_cluster(struct inode *inode, unsi=
-gned int clu_offset,=0A=
- 	return 0;=0A=
- }=0A=
- =0A=
--static int exfat_map_new_buffer(struct exfat_inode_info *ei,=0A=
--		struct buffer_head *bh, loff_t pos)=0A=
--{=0A=
--	if (buffer_delay(bh) && pos > ei->i_size_aligned)=0A=
--		return -EIO;=0A=
--	set_buffer_new(bh);=0A=
--=0A=
--	/*=0A=
--	 * Adjust i_size_aligned if ondisk_size is bigger than it.=0A=
--	 */=0A=
--	if (exfat_ondisk_size(&ei->vfs_inode) > ei->i_size_aligned)=0A=
--		ei->i_size_aligned =3D exfat_ondisk_size(&ei->vfs_inode);=0A=
--	return 0;=0A=
--}=0A=
--=0A=
- static int exfat_get_block(struct inode *inode, sector_t iblock,=0A=
- 		struct buffer_head *bh_result, int create)=0A=
- {=0A=
-@@ -286,7 +271,6 @@ static int exfat_get_block(struct inode *inode, sector_=
-t iblock,=0A=
- 	sector_t last_block;=0A=
- 	sector_t phys =3D 0;=0A=
- 	sector_t valid_blks;=0A=
--	loff_t pos;=0A=
- =0A=
- 	mutex_lock(&sbi->s_lock);=0A=
- 	last_block =3D EXFAT_B_TO_BLK_ROUND_UP(i_size_read(inode), sb);=0A=
-@@ -314,8 +298,6 @@ static int exfat_get_block(struct inode *inode, sector_=
-t iblock,=0A=
- 	mapped_blocks =3D sbi->sect_per_clus - sec_offset;=0A=
- 	max_blocks =3D min(mapped_blocks, max_blocks);=0A=
- =0A=
--	pos =3D EXFAT_BLK_TO_B((iblock + 1), sb);=0A=
--=0A=
- 	map_bh(bh_result, sb, phys);=0A=
- 	if (buffer_delay(bh_result))=0A=
- 		clear_buffer_delay(bh_result);=0A=
-@@ -336,13 +318,7 @@ static int exfat_get_block(struct inode *inode, sector=
-_t iblock,=0A=
- 		}=0A=
- =0A=
- 		/* The area has not been written, map and mark as new. */=0A=
--		err =3D exfat_map_new_buffer(ei, bh_result, pos);=0A=
--		if (err) {=0A=
--			exfat_fs_error(sb,=0A=
--					"requested for bmap out of range(pos : (%llu) > i_size_aligned(%llu)\=
-n",=0A=
--					pos, ei->i_size_aligned);=0A=
--			goto unlock_ret;=0A=
--		}=0A=
-+		set_buffer_new(bh_result);=0A=
- =0A=
- 		ei->valid_size =3D EXFAT_BLK_TO_B(iblock + max_blocks, sb);=0A=
- 		mark_inode_dirty(inode);=0A=
-@@ -365,7 +341,7 @@ static int exfat_get_block(struct inode *inode, sector_=
-t iblock,=0A=
- 			 * The block has been partially written,=0A=
- 			 * zero the unwritten part and map the block.=0A=
- 			 */=0A=
--			loff_t size, off;=0A=
-+			loff_t size, off, pos;=0A=
- =0A=
- 			max_blocks =3D 1;=0A=
- =0A=
-@@ -376,7 +352,7 @@ static int exfat_get_block(struct inode *inode, sector_=
-t iblock,=0A=
- 			if (!bh_result->b_folio)=0A=
- 				goto done;=0A=
- =0A=
--			pos -=3D sb->s_blocksize;=0A=
-+			pos =3D EXFAT_BLK_TO_B(iblock, sb);=0A=
- 			size =3D ei->valid_size - pos;=0A=
- 			off =3D pos & (PAGE_SIZE - 1);=0A=
- =0A=
-@@ -464,14 +440,6 @@ static int exfat_write_end(struct file *file, struct a=
-ddress_space *mapping,=0A=
- 	int err;=0A=
- =0A=
- 	err =3D generic_write_end(file, mapping, pos, len, copied, pagep, fsdata)=
-;=0A=
--=0A=
--	if (ei->i_size_aligned < i_size_read(inode)) {=0A=
--		exfat_fs_error(inode->i_sb,=0A=
--			"invalid size(size(%llu) > aligned(%llu)\n",=0A=
--			i_size_read(inode), ei->i_size_aligned);=0A=
--		return -EIO;=0A=
--	}=0A=
--=0A=
- 	if (err < len)=0A=
- 		exfat_write_failed(mapping, pos+len);=0A=
- =0A=
-@@ -499,20 +467,6 @@ static ssize_t exfat_direct_IO(struct kiocb *iocb, str=
-uct iov_iter *iter)=0A=
- 	int rw =3D iov_iter_rw(iter);=0A=
- 	ssize_t ret;=0A=
- =0A=
--	if (rw =3D=3D WRITE) {=0A=
--		/*=0A=
--		 * FIXME: blockdev_direct_IO() doesn't use ->write_begin(),=0A=
--		 * so we need to update the ->i_size_aligned to block boundary.=0A=
--		 *=0A=
--		 * But we must fill the remaining area or hole by nul for=0A=
--		 * updating ->i_size_aligned=0A=
--		 *=0A=
--		 * Return 0, and fallback to normal buffered write.=0A=
--		 */=0A=
--		if (EXFAT_I(inode)->i_size_aligned < size)=0A=
--			return 0;=0A=
--	}=0A=
--=0A=
- 	/*=0A=
- 	 * Need to use the DIO_LOCKING for avoiding the race=0A=
- 	 * condition of exfat_get_block() and ->truncate().=0A=
-@@ -526,8 +480,18 @@ static ssize_t exfat_direct_IO(struct kiocb *iocb, str=
-uct iov_iter *iter)=0A=
- 	} else=0A=
- 		size =3D pos + ret;=0A=
- =0A=
--	/* zero the unwritten part in the partially written block */=0A=
--	if (rw =3D=3D READ && pos < ei->valid_size && ei->valid_size < size) {=0A=
-+	if (rw =3D=3D WRITE) {=0A=
-+		/*=0A=
-+		 * If the block had been partially written before this write,=0A=
-+		 * ->valid_size will not be updated in exfat_get_block(),=0A=
-+		 * update it here.=0A=
-+		 */=0A=
-+		if (ei->valid_size < size) {=0A=
-+			ei->valid_size =3D size;=0A=
-+			mark_inode_dirty(inode);=0A=
-+		}=0A=
-+	} else if (pos < ei->valid_size && ei->valid_size < size) {=0A=
-+		/* zero the unwritten part in the partially written block */=0A=
- 		iov_iter_revert(iter, size - ei->valid_size);=0A=
- 		iov_iter_zero(size - ei->valid_size, iter);=0A=
- 	}=0A=
-@@ -667,14 +631,6 @@ static int exfat_fill_inode(struct inode *inode, struc=
-t exfat_dir_entry *info)=0A=
- =0A=
- 	i_size_write(inode, size);=0A=
- =0A=
--	/* ondisk and aligned size should be aligned with block size */=0A=
--	if (size & (inode->i_sb->s_blocksize - 1)) {=0A=
--		size |=3D (inode->i_sb->s_blocksize - 1);=0A=
--		size++;=0A=
--	}=0A=
--=0A=
--	ei->i_size_aligned =3D size;=0A=
--=0A=
- 	exfat_save_attr(inode, info->attr);=0A=
- =0A=
- 	inode->i_blocks =3D round_up(i_size_read(inode), sbi->cluster_size) >> 9;=
-=0A=
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c=0A=
-index 6313dee5c9bb..3e6c789a72c4 100644=0A=
---- a/fs/exfat/namei.c=0A=
-+++ b/fs/exfat/namei.c=0A=
-@@ -372,7 +372,6 @@ static int exfat_find_empty_entry(struct inode *inode,=
-=0A=
- =0A=
- 		/* directory inode should be updated in here */=0A=
- 		i_size_write(inode, size);=0A=
--		ei->i_size_aligned +=3D sbi->cluster_size;=0A=
- 		ei->valid_size +=3D sbi->cluster_size;=0A=
- 		ei->flags =3D p_dir->flags;=0A=
- 		inode->i_blocks +=3D sbi->cluster_size >> 9;=0A=
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c=0A=
-index 61d8377201f6..05fa638b411a 100644=0A=
---- a/fs/exfat/super.c=0A=
-+++ b/fs/exfat/super.c=0A=
-@@ -370,7 +370,6 @@ static int exfat_read_root(struct inode *inode)=0A=
- =0A=
- 	inode->i_blocks =3D round_up(i_size_read(inode), sbi->cluster_size) >> 9;=
-=0A=
- 	ei->i_pos =3D ((loff_t)sbi->root_dir << 32) | 0xffffffff;=0A=
--	ei->i_size_aligned =3D i_size_read(inode);=0A=
- =0A=
- 	exfat_save_attr(inode, EXFAT_ATTR_SUBDIR);=0A=
- 	ei->i_crtime =3D simple_inode_init_ts(inode);=0A=
--- =0A=
-2.34.1=0A=
+On Wed, Aug 7, 2024 at 7:32=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> On Wed, Aug 07, 2024 at 05:57:07AM +0200, Mateusz Guzik wrote:
+>
+> [there'll be a separate reply with what I hope might be a usable
+> approach]
+>
+
+At the moment I'm trying to get the spurious lockref cycle out of the
+way because it is interfering with the actual thing I'm trying to do.
+
+This entire pointer poisoning business is optional and the v2 I posted
+does not do any of it.
+
+With this in mind can you review v2? Here is the link for reference:
+https://lore.kernel.org/linux-fsdevel/20240806163256.882140-1-mjguzik@gmail=
+.com/T/#u
+
+As for the feedback below, I'm going to circle back to it when I take
+a stab at adding debug macros, but no ETA.
+
+> > Yes, this is my understanding of the code and part of my compliant. :)
+> >
+> > Things just work(tm) as is with NULLified pointers, but this is error-p=
+rone.
+>
+> And carrying the arseloads of information (which ones do and which do not
+> need to be dropped) is *less* error-prone?  Are you serious?
+>
+> > As a hypothetical suppose there is code executing some time after
+> > vfs_open which looks at nd->path.dentry and by finding the pointer is
+> > NULL it concludes the lookup did not work out.
+> >
+> > If such code exists *and* the pointer is poisoned in the above sense
+> > (notably merely branching on it with kasan already traps), then the
+> > consumer will be caught immediately during coverage testing by
+> > syzkaller.
+>
+> You are much too optimistic about the quality of test coverage in this
+> particular area.
+>
+> > If such code exists but the pointer is only nullified, one is only
+> > going to find out the hard way when some functionality weirdly breaks.
+>
+> To do _useful_ asserts, one needs invariants to check.  And "we got
+> to this check after having passed through that assignment at some
+> earlier point" is not it.  That's why I'm asking questions about
+> the state.
+>
+> The thing is, suppose I (or you, or somebody else) is trying to modify
+> the whole thing.  There's a magical mystery assert in the way; what
+> should be done with it?  Move it/split it/remove it/do something
+> random and hope syzkaller won't catch anything?  If I can reason
+> about the predicate being checked, I can at least start figuring out
+> what should be done.  If not, it's bloody guaranteed to rot.
+>
+> This particular area (pathwalk machinery) has a nasty history of
+> growing complexity once in a while, with following cleanups and
+> massage to get it back into more or less tolerable shape.
+> And refactoring that had been _painful_ - I'd done more than
+> a few there.
+>
+> As far as I can tell, at the moment this flag (and yes, I've seen its
+> removal in the next version) is "we'd called vfs_open_consume() at
+> some point, then found ourselves still in RCU mode or we'd called
+> vfs_open_consume() more than once".
+>
+> This is *NOT* a property of state; it's a property of execution
+> history.  The first part is checked in the wrong place - one of
+> the invariants (trivially verified by code examination) is that
+> LOOKUP_RCU is never regained after it had been dropped.  The
+> only place where it can be set is path_init() and calling _that_
+> between path_init() and terminate_walk() would be
+>         a) a hard and very visible bug
+>         b) would've wiped your flag anyway.
+> So that part of the check is basically "we are not calling
+> vfs_open_consume() under rcu_read_lock()".  Which is definitely
+> a desirable property, since ->open() can block.  So can
+> mnt_want_write() several lines prior.  Invariant here is
+> "the places where we set FMODE_OPENED or FMODE_CREATED may
+> not have LOOKUP_RCU".  Having
+>         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+>                 error =3D complete_walk(nd);
+>                 if (error)
+>                         return error;
+>         }
+> in the beginning of do_open() guarantees that for vfs_open()
+> call there.  All other places where that can happen are in
+> lookup_open() or called from it (via ->atomic_open() to
+> finish_open()).  And *that* definitely should not be done
+> in RCU mode, due to
+>         if (open_flag & O_CREAT)
+>                 inode_lock(dir->d_inode);
+>         else
+>                 inode_lock_shared(dir->d_inode);
+>         dentry =3D lookup_open(nd, file, op, got_write);
+> in the sole caller of that thing.  Again, can't grab a blocking
+> lock under rcu_read_lock().  Which is why we have this
+>                 if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU))
+>                         return ERR_PTR(-ECHILD);
+>         } else {
+>                 /* create side of things */
+>                 if (nd->flags & LOOKUP_RCU) {
+>                         if (!try_to_unlazy(nd))
+>                                 return ERR_PTR(-ECHILD);
+>                 }
+> slightly prior to that call.  WARN_ON_ONCE is basically "lookup_fast()
+> has returned NULL and stayed in RCU mode", which should never happen.
+> try_to_unlazy() is straight "either switch to non-RCU mode or return an
+> error" - that's what this function is for.  No WARN_ON after that - it
+> would only obfuscate things.
+>
+> *IF* you want to add debugging checks for that kind of stuff, just call
+> that assert_nonrcu(nd), make it check and whine and feel free to slap
+> them in reasonable amount of places (anything that makes a reader go
+> "for fuck sake, hadn't we (a) done that on the entry to this function
+> and (b) done IO since then, anyway?" is obviously not reasonable, etc. -
+> no more than common sense limitations).
+>
+> Another common sense thing: extra asserts won't confuse syzkaller, but
+> they very much can confuse a human reader.  And any rewrites are done
+> by humans...
+>
+> As for the double call of vfs_open_consume()...  You do realize that
+> the damn thing wouldn't have reached that check if it would ever have
+> cause to be triggered, right?  Seeing that we call
+> static inline struct mnt_idmap *mnt_idmap(const struct vfsmount *mnt)
+> {
+>         /* Pairs with smp_store_release() in do_idmap_mount(). */
+>         return smp_load_acquire(&mnt->mnt_idmap);
+> }
+> near the beginning of do_open(), ~20 lines before the place where
+> you added that check...
+>
+> I'm not sure it makes sense to defend against a weird loop appearing
+> out of nowhere near the top of call chain, but if you want to do that,
+> this is not the right place for that.
+
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
