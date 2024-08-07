@@ -1,103 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-25298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3764494A820
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 14:56:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC5494A826
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 14:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB50281070
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 12:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07061F21982
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 12:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BD01E674E;
-	Wed,  7 Aug 2024 12:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8EE1E6755;
+	Wed,  7 Aug 2024 12:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P2RZQvx9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F5T0QIp2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P2RZQvx9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F5T0QIp2"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBRvgArY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4FE1E3CBE;
-	Wed,  7 Aug 2024 12:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD821E6747
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Aug 2024 12:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723035398; cv=none; b=AAvR37xwf4j+APbMbBp9wYAoiMZyXiVDQRU9jkS7zcR+jTK9gi9qYUpCIwydw7HW0dCleLE5vwwhn5hs3dikAGIAUUzXNndcYXCqdS48uT7qneoauhOGxyeTY5TyzJwsci12H7OVPcTCRAsZ8LmyNsTECVb4oXyTbH3FgvLEseU=
+	t=1723035474; cv=none; b=tjjZUFvAa0fH20ZanM/oK20ordIqH3u/XDHqObwvHBYB8iG5O/A+GZt3QoXMIJZvLabjNqFZdZ41k9cIJHFbIJSVhNCSSsI+ImfB/cYzGBzfX51LwjxdnGJdH4bnigpY13TkyrueJXR5NVbrpmpXNNLZBekqPY7N+IOreQSsonY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723035398; c=relaxed/simple;
-	bh=jAP3UPV8S7dAg52wzDeIKI73r8ibmTUCvbRmjAy8WdA=;
+	s=arc-20240116; t=1723035474; c=relaxed/simple;
+	bh=/P12avlELoAnmeKYyR7lb8YFhV1itf6ofxKiFjh29iE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hiyHaYRTEvs5NsFXZwb09JIsjoW3sClzt9SYv3gKxG7h+iUVWOrlDbNrYx+fGD8cgc2P973hOmLJsEzCrGNNGX7O0OafscUQ/OgFsIrXnzVG3v0S+kEXRSu+zcvZezbqOvINUvApUeNuSvFIIWguqe0DR42USDwYh3LLYJdBYlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P2RZQvx9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F5T0QIp2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P2RZQvx9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F5T0QIp2; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1532B1F396;
-	Wed,  7 Aug 2024 12:56:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723035394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ef6g7R8oFl691anvsvAI4zaSbxmFbfpd2rm1KW+VcIg=;
-	b=P2RZQvx9cv0poYr2J5oIp+sNFASV09NUbDlv3rsVT987H1s8Dui6fVYAdgI/rbwfDegpzi
-	2fU6W9iRgUzXqznyfAIxtwX7mqG5O70wRKAer5+++Ysz+q60avrywH0OMuMrA6OqjLqgpU
-	IMU5neRLwWRJzm+59HJLycBNZ4yZTRs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723035394;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ef6g7R8oFl691anvsvAI4zaSbxmFbfpd2rm1KW+VcIg=;
-	b=F5T0QIp2RkOQJd63D7qqB+fi5ZcpQ2pMyJ+YpAsFoQQGIgCV3QmvOdLrhm/RVwMzqddUpN
-	bmBNwW1Rq0EMHZAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=P2RZQvx9;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=F5T0QIp2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723035394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ef6g7R8oFl691anvsvAI4zaSbxmFbfpd2rm1KW+VcIg=;
-	b=P2RZQvx9cv0poYr2J5oIp+sNFASV09NUbDlv3rsVT987H1s8Dui6fVYAdgI/rbwfDegpzi
-	2fU6W9iRgUzXqznyfAIxtwX7mqG5O70wRKAer5+++Ysz+q60avrywH0OMuMrA6OqjLqgpU
-	IMU5neRLwWRJzm+59HJLycBNZ4yZTRs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723035394;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ef6g7R8oFl691anvsvAI4zaSbxmFbfpd2rm1KW+VcIg=;
-	b=F5T0QIp2RkOQJd63D7qqB+fi5ZcpQ2pMyJ+YpAsFoQQGIgCV3QmvOdLrhm/RVwMzqddUpN
-	bmBNwW1Rq0EMHZAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A85913297;
-	Wed,  7 Aug 2024 12:56:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7kiQAgJvs2a1SgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 12:56:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BBFA2A0762; Wed,  7 Aug 2024 14:56:33 +0200 (CEST)
-Date: Wed, 7 Aug 2024 14:56:33 +0200
-From: Jan Kara <jack@suse.cz>
-To: Joe Damato <jdamato@fastly.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, sdf@google.com, edumazet@google.com,
-	kuba@kernel.org, mkarsten@uwaterloo.ca,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH net-next] eventpoll: Don't re-zero eventpoll fields
-Message-ID: <20240807125633.dlwr6rx6yzl4ippv@quack3>
-References: <20240807105231.179158-1-jdamato@fastly.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gb56q0xzpuaTRSTWZ7j/rFCeAwlMK25iKxZXmT2oAol65/TbtM3PeRkDWs4eCZ41YLvvtQKM8afQ5PHyVi6KhYm5f4gLjyEPs/M03rAJEQi7jsu97L+3mktSA3MIRgJiYv6svseTyZaU0dGUgNIl+zpcbAD0DOAbzrtQtrsmNVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LBRvgArY; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3686b554cfcso991236f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Aug 2024 05:57:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723035470; x=1723640270; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=upBTovYLTSLt9PmBzvvo1SLOl10UeXbfEGJHZrAuBGk=;
+        b=LBRvgArY1LcT/818gMwkkzgIA6A/CmeSJwVc5c3JgFa/oaHXTQAvxr/R1AYRszCvZ3
+         EREPGDR51f6IWbgthBTafuc0DYAw5WrDZomFES3l9NSfG8GMwzDw3/P/J+Z5jsvYwYQX
+         El30mK0wo3qzrbetUyq3EDZQcqvhnai3I5qUwcWK4EzeWQ0K1Avylown/XodS09kE8I3
+         tBDQHLEmehNU26fGvte8lu+FNHrfMSrc8HAv12XM4sBMh6ztT1wzWWEx4Z7xenV9UV6b
+         Z3YtkVy/7Qscp3UqrzBgzOoPCx9laczovqOvwXD1qwG7LOdFm6rYTgeMHgjlGJOmDxJU
+         zykg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723035470; x=1723640270;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=upBTovYLTSLt9PmBzvvo1SLOl10UeXbfEGJHZrAuBGk=;
+        b=K/xZYpX7HZe+OyBENXiR8CV5y4m7KqxnXip3A8nPYxBdRAAlgIsBUNyt41YLwwXXBH
+         78TRCMxJmKvUjpUMdu0cn+Kd/Nu+mMZKHaIHSxqLBjuHZ6y0GS0lOodTCv4ylwqOQGAX
+         iWdYypnorKynL2I2F6PtU7iYWJkBG5gcA38Wxp3Qq9ku4KXhbww5cJVMw0/CPvSmWdg4
+         FBh+dwc4xkAaL8/9KbW6lqYjJ12KXNRfbUN+qQIrYLIh6DwM74scfyd2Djbt0B8FFSNW
+         EaxAEkI1kDz1Pigp1i2xHrYE02A7XrllfaFVnU/FBdT8WUymdGk05CcwRmQXnsxLqc23
+         wLVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPLVZaHn5v8oM/obt8Ko6VC3eHtiUN9///bvyAgHC7Nv6YZ4NxSAYPFXG4Co3aEgthuKPWk0oEzyhrRH2jpuyMhb/QbNfQPDPgsGHavg==
+X-Gm-Message-State: AOJu0Yzaek3RC2lByvFHWdYxhO+hkbrpwkTK2IJL4Hg3uKnjO6gAc9rz
+	WKKCZJQW5TWM13bPApcvw2i56qUmhOKg2ziZBTWrjuydORqKlY5/oCJU5i7oWro=
+X-Google-Smtp-Source: AGHT+IEXCPBxskdc7xhLEWtu0Cahqx5SyI1yo58U8XJgoPCwXbriMJ41jBv68bBujcy87mECBIFxog==
+X-Received: by 2002:a5d:5f85:0:b0:367:998a:87b3 with SMTP id ffacd0b85a97d-36bbc11bb33mr15758703f8f.28.1723035470377;
+        Wed, 07 Aug 2024 05:57:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf0cc8esm15818874f8f.19.2024.08.07.05.57.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 05:57:49 -0700 (PDT)
+Date: Wed, 7 Aug 2024 07:57:45 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: willy@infradead.org, srinivas.kandagatla@linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] ida: Remove the ida_simple_xxx() API
+Message-ID: <01487902-4dcf-455e-9530-c04157aa8090@suswa.mountain>
+References: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,81 +83,25 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240807105231.179158-1-jdamato@fastly.com>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	MISSING_XM_UA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Rspamd-Queue-Id: 1532B1F396
+In-Reply-To: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
 
-On Wed 07-08-24 10:52:31, Joe Damato wrote:
-> Remove redundant and unnecessary code.
+On Mon, Aug 05, 2024 at 12:29:46PM +0200, Christophe JAILLET wrote:
+> This is the final steps to remove the ida_simple_xxx() API.
 > 
-> ep_alloc uses kzalloc to create struct eventpoll, so there is no need to
-> set fields to defaults of 0. This was accidentally introduced in commit
-> 85455c795c07 ("eventpoll: support busy poll per epoll instance") and
-> expanded on in follow-up commits.
+> Patch 1 updates the test suite. This is the last users of the API.
 > 
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> Reviewed-by: Martin Karsten <mkarsten@uwaterloo.ca>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/eventpoll.c | 5 -----
->  1 file changed, 5 deletions(-)
+> Patch 2 removes the old API.
 > 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index f53ca4f7fced..6c0a1e9715ea 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -2200,11 +2200,6 @@ static int do_epoll_create(int flags)
->  		error = PTR_ERR(file);
->  		goto out_free_fd;
->  	}
-> -#ifdef CONFIG_NET_RX_BUSY_POLL
-> -	ep->busy_poll_usecs = 0;
-> -	ep->busy_poll_budget = 0;
-> -	ep->prefer_busy_poll = false;
-> -#endif
->  	ep->file = file;
->  	fd_install(fd, file);
->  	return fd;
-> -- 
-> 2.25.1
+> Patch 3 is just a minor clean-up that still speak about the old API.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Christophe JAILLET (3):
+>   idr test suite: Remove usage of the deprecated ida_simple_xx() API
+>   ida: Remove the ida_simple_xxx() API
+>   nvmem: Update a comment related to struct nvmem_config
+
+Congrats.  :)
+
+regards,
+dan carpenter
+
 
