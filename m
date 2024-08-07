@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-25378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F31F94B3C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 01:41:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F2494B3C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 01:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0215D28437E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 23:41:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B8E1F22CB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 23:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7967F15990E;
-	Wed,  7 Aug 2024 23:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8A7158A33;
+	Wed,  7 Aug 2024 23:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLekOaj7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPn5PRsS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FF0155CA0;
-	Wed,  7 Aug 2024 23:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19C3155CA0;
+	Wed,  7 Aug 2024 23:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723074059; cv=none; b=uUW6XJdJj3PzG7tKvKh0xxqCBXgKIlwHWgyTWyMYNHucvQe9ZBg1gq0BdXNjBmf1Q3LGFLPpfBXeIFDmFXQ6quyGFsQXTaiViu2Csars9Nfgux7Yy4L8NgzbL2wJrqZgY4HMxnEhi8QMU0ZbaO1dzwaOlBxx+ILX/+NeWexivhQ=
+	t=1723074063; cv=none; b=ZNqu9CbiChpRR6k6AgAo6JObJrj7UwpWOKr5Syc7oyDXGh2AYW7SiINvN/aYFauGzInL/CyNx3BjdOAu0M2UbnGSm1eNz5SKnNkLeAw/5KLTkM9KAJR8+3G4b2NDXa+TayEOebUIqDYcKlRgrCwwdotl5ZCVzmmgu34fVBn+4eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723074059; c=relaxed/simple;
-	bh=/6b0RVTf764MWC/B03hIXQHQ85gqStIXNWpPwHJJCmw=;
+	s=arc-20240116; t=1723074063; c=relaxed/simple;
+	bh=38WQXgNN+1KvRm9L1MT0/+U7sa1S+7OAXmxtP74KQv8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OqchXUxFeduFbQEOKf4wuP6ri7wQM9jQnR6S0rPWUY1R9bnC3EJL5z066k8v40/M+eUkkx6mMwVSJC5wpZ8ctMMci1Zb6k4w6Yy3+QrnKYH9NCEeHn/2pjqtIiJrfi7qoo6symzgoR2O5wqpTeEhqnnmsM8s09z2hSa9GHhYwwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLekOaj7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C07CC4AF0D;
-	Wed,  7 Aug 2024 23:40:59 +0000 (UTC)
+	 MIME-Version; b=HssrudwDrnXMCPqb7kImad1HgMLA3hxOLDuFckOi0tQPMU+FR3/QMERYHqqUplYujmDoUq6EKGzHINzkSUNHIPSP3B7rlVTROnRQV4Eox8TluRit1nlnHBZFfMFyfRKO4EsTVI7WrkGuOdMowP7s1uCP2RVHcYMjKr+TOAo+SmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPn5PRsS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F0EAC32781;
+	Wed,  7 Aug 2024 23:41:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723074059;
-	bh=/6b0RVTf764MWC/B03hIXQHQ85gqStIXNWpPwHJJCmw=;
+	s=k20201202; t=1723074062;
+	bh=38WQXgNN+1KvRm9L1MT0/+U7sa1S+7OAXmxtP74KQv8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZLekOaj7CDbD8EyecNyIBc8sjxQzRq7CXInvjerv548cEkiy2Ksdxm2A2zRedMgQh
-	 qQe408hJ6cVzKtrjKadFI2IAGBiv1yUCS2hPb3hDV6z6k28hDBLufP9zaku0UyRdI3
-	 VzCb9FOXfll84384UXyhZMw3nom1TDukXrLCO6rTIbFC26+HQYs9SRT3JxML+15WTg
-	 iTMU9/vgH/NU9JP9Qj+dQ6iJeuGDVKkzBSJJ7MP/5ipkuAYZ5lxw+CokzI0POVBQv0
-	 pW5xWgHk98pWXn9pQaXnVrDhmuQ2C+BbbE8IWv0ViV+jx24A4+veuIFXjlOQYhXu2/
-	 ntBbsTN87KRng==
+	b=XPn5PRsS/uB1D4gzGwK2vewfdZ9SdRy/e3WthoZv77k4bNtC1Shdjejl6X9D68B/h
+	 aPOa+0DSInOIaHAHivsed7m06X4dNMb3sOJG43bziVjlmzyJK9QQE+4i4kURqWJs4y
+	 9AeIhSMm6inkSOkZdRC0EF2g/HTi5wBtdzkR5ABvGtHvZy9jWnV4vnVEdfqTNImEB2
+	 57dMS5QAcqUUNcIf81P4eeR5x694iezkHy9KlWPbsObDe6vrFje5x5/T9nlUCfNI8A
+	 G5u/I5wJXpW7/4yqoUuczrhOqiYc2j/yllBxILd5gYCqxjbUwvIp20uulclxjtJbFE
+	 IXVjp1YWNluaQ==
 From: Andrii Nakryiko <andrii@kernel.org>
 To: bpf@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -55,9 +55,9 @@ Cc: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org,
 	willy@infradead.org,
 	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v4 bpf-next 08/10] bpf: decouple stack_map_get_build_id_offset() from perf_callchain_entry
-Date: Wed,  7 Aug 2024 16:40:27 -0700
-Message-ID: <20240807234029.456316-9-andrii@kernel.org>
+Subject: [PATCH v4 bpf-next 09/10] bpf: wire up sleepable bpf_get_stack() and bpf_get_task_stack() helpers
+Date: Wed,  7 Aug 2024 16:40:28 -0700
+Message-ID: <20240807234029.456316-10-andrii@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20240807234029.456316-1-andrii@kernel.org>
 References: <20240807234029.456316-1-andrii@kernel.org>
@@ -69,144 +69,296 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Change stack_map_get_build_id_offset() which is used to convert stack
-trace IP addresses into build ID+offset pairs. Right now this function
-accepts an array of u64s as an input, and uses array of
-struct bpf_stack_build_id as an output.
+Add sleepable implementations of bpf_get_stack() and
+bpf_get_task_stack() helpers and allow them to be used from sleepable
+BPF program (e.g., sleepable uprobes).
 
-This is problematic because u64 array is coming from
-perf_callchain_entry, which is (non-sleepable) RCU protected, so once we
-allows sleepable build ID fetching, this all breaks down.
+Note, the stack trace IPs capturing itself is not sleepable (that would
+need to be a separate project), only build ID fetching is sleepable and
+thus more reliable, as it will wait for data to be paged in, if
+necessary. For that we make use of sleepable build_id_parse()
+implementation.
 
-But its actually pretty easy to make stack_map_get_build_id_offset()
-works with array of struct bpf_stack_build_id as both input and output.
-Which is what this patch is doing, eliminating the dependency on
-perf_callchain_entry. We require caller to fill out
-bpf_stack_build_id.ip fields (all other can be left uninitialized), and
-update in place as we do build ID resolution.
+Now that build ID related internals in kernel/bpf/stackmap.c can be used
+both in sleepable and non-sleepable contexts, we need to add additional
+rcu_read_lock()/rcu_read_unlock() protection around fetching
+perf_callchain_entry, but with the refactoring in previous commit it's
+now pretty straightforward. We make sure to do rcu_read_unlock (in
+sleepable mode only) right before stack_map_get_build_id_offset() call
+which can sleep. By that time we don't have any more use of
+perf_callchain_entry.
 
-We make sure to READ_ONCE() and cache locally current IP value as we
-used it in a few places to find matching VMA and so on. Given this data
-is directly accessible and modifiable by user's BPF code, we should make
-sure to have a consistent view of it.
+Note, bpf_get_task_stack() will fail for user mode if task != current.
+And for kernel mode build ID are irrelevant. So in that sense adding
+sleepable bpf_get_task_stack() implementation is a no-op. It feel right
+to wire this up for symmetry and completeness, but I'm open to just
+dropping it until we support `user && crosstask` condition.
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- kernel/bpf/stackmap.c | 49 +++++++++++++++++++++++++++++--------------
- 1 file changed, 33 insertions(+), 16 deletions(-)
+ include/linux/bpf.h      |  2 +
+ kernel/bpf/stackmap.c    | 90 ++++++++++++++++++++++++++++++++--------
+ kernel/trace/bpf_trace.c |  5 ++-
+ 3 files changed, 77 insertions(+), 20 deletions(-)
 
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index b9425e410bcb..0f3dc903bea8 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -3198,7 +3198,9 @@ extern const struct bpf_func_proto bpf_get_current_uid_gid_proto;
+ extern const struct bpf_func_proto bpf_get_current_comm_proto;
+ extern const struct bpf_func_proto bpf_get_stackid_proto;
+ extern const struct bpf_func_proto bpf_get_stack_proto;
++extern const struct bpf_func_proto bpf_get_stack_sleepable_proto;
+ extern const struct bpf_func_proto bpf_get_task_stack_proto;
++extern const struct bpf_func_proto bpf_get_task_stack_sleepable_proto;
+ extern const struct bpf_func_proto bpf_get_stackid_proto_pe;
+ extern const struct bpf_func_proto bpf_get_stack_proto_pe;
+ extern const struct bpf_func_proto bpf_sock_map_update_proto;
 diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 770ae8e88016..6457222b0b46 100644
+index 6457222b0b46..3615c06b7dfa 100644
 --- a/kernel/bpf/stackmap.c
 +++ b/kernel/bpf/stackmap.c
-@@ -124,8 +124,18 @@ static struct bpf_map *stack_map_alloc(union bpf_attr *attr)
+@@ -124,6 +124,12 @@ static struct bpf_map *stack_map_alloc(union bpf_attr *attr)
  	return ERR_PTR(err);
  }
  
-+/*
-+ * Expects all id_offs[i].ip values to be set to correct initial IPs.
-+ * They will be subsequently:
-+ *   - either adjusted in place to a file offset, if build ID fetching
-+ *     succeeds; in this case id_offs[i].build_id is set to correct build ID,
-+ *     and id_offs[i].status is set to BPF_STACK_BUILD_ID_VALID;
-+ *   - or IP will be kept intact, if build ID fetching failed; in this case
-+ *     id_offs[i].build_id is zeroed out and id_offs[i].status is set to
-+ *     BPF_STACK_BUILD_ID_IP.
-+ */
++static int fetch_build_id(struct vm_area_struct *vma, unsigned char *build_id, bool may_fault)
++{
++	return may_fault ? build_id_parse(vma, build_id, NULL)
++			 : build_id_parse_nofault(vma, build_id, NULL);
++}
++
+ /*
+  * Expects all id_offs[i].ip values to be set to correct initial IPs.
+  * They will be subsequently:
+@@ -135,7 +141,7 @@ static struct bpf_map *stack_map_alloc(union bpf_attr *attr)
+  *     BPF_STACK_BUILD_ID_IP.
+  */
  static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
--					  u64 *ips, u32 trace_nr, bool user)
-+					  u32 trace_nr, bool user)
+-					  u32 trace_nr, bool user)
++					  u32 trace_nr, bool user, bool may_fault)
  {
  	int i;
  	struct mmap_unlock_irq_work *work = NULL;
-@@ -142,30 +152,28 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
- 		/* cannot access current->mm, fall back to ips */
- 		for (i = 0; i < trace_nr; i++) {
- 			id_offs[i].status = BPF_STACK_BUILD_ID_IP;
--			id_offs[i].ip = ips[i];
- 			memset(id_offs[i].build_id, 0, BUILD_ID_SIZE_MAX);
- 		}
- 		return;
- 	}
- 
- 	for (i = 0; i < trace_nr; i++) {
--		if (range_in_vma(prev_vma, ips[i], ips[i])) {
-+		u64 ip = READ_ONCE(id_offs[i].ip);
-+
-+		if (range_in_vma(prev_vma, ip, ip)) {
- 			vma = prev_vma;
--			memcpy(id_offs[i].build_id, prev_build_id,
--			       BUILD_ID_SIZE_MAX);
-+			memcpy(id_offs[i].build_id, prev_build_id, BUILD_ID_SIZE_MAX);
+@@ -166,7 +172,7 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
  			goto build_id_valid;
  		}
--		vma = find_vma(current->mm, ips[i]);
-+		vma = find_vma(current->mm, ip);
- 		if (!vma || build_id_parse_nofault(vma, id_offs[i].build_id, NULL)) {
+ 		vma = find_vma(current->mm, ip);
+-		if (!vma || build_id_parse_nofault(vma, id_offs[i].build_id, NULL)) {
++		if (!vma || fetch_build_id(vma, id_offs[i].build_id, may_fault)) {
  			/* per entry fall back to ips */
  			id_offs[i].status = BPF_STACK_BUILD_ID_IP;
--			id_offs[i].ip = ips[i];
  			memset(id_offs[i].build_id, 0, BUILD_ID_SIZE_MAX);
- 			continue;
- 		}
- build_id_valid:
--		id_offs[i].offset = (vma->vm_pgoff << PAGE_SHIFT) + ips[i]
--			- vma->vm_start;
-+		id_offs[i].offset = (vma->vm_pgoff << PAGE_SHIFT) + ip - vma->vm_start;
- 		id_offs[i].status = BPF_STACK_BUILD_ID_VALID;
- 		prev_vma = vma;
- 		prev_build_id = id_offs[i].build_id;
-@@ -216,7 +224,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
- 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
- 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
--	u32 hash, id, trace_nr, trace_len;
-+	u32 hash, id, trace_nr, trace_len, i;
- 	bool user = flags & BPF_F_USER_STACK;
- 	u64 *ips;
- 	bool hash_matches;
-@@ -238,15 +246,18 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 		return id;
- 
- 	if (stack_map_use_build_id(map)) {
-+		struct bpf_stack_build_id *id_offs;
-+
- 		/* for build_id+offset, pop a bucket before slow cmp */
- 		new_bucket = (struct stack_map_bucket *)
- 			pcpu_freelist_pop(&smap->freelist);
- 		if (unlikely(!new_bucket))
- 			return -ENOMEM;
- 		new_bucket->nr = trace_nr;
--		stack_map_get_build_id_offset(
--			(struct bpf_stack_build_id *)new_bucket->data,
--			ips, trace_nr, user);
-+		id_offs = (struct bpf_stack_build_id *)new_bucket->data;
-+		for (i = 0; i < trace_nr; i++)
-+			id_offs[i].ip = ips[i];
-+		stack_map_get_build_id_offset(id_offs, trace_nr, user);
+@@ -257,7 +263,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ 		id_offs = (struct bpf_stack_build_id *)new_bucket->data;
+ 		for (i = 0; i < trace_nr; i++)
+ 			id_offs[i].ip = ips[i];
+-		stack_map_get_build_id_offset(id_offs, trace_nr, user);
++		stack_map_get_build_id_offset(id_offs, trace_nr, user, false /* !may_fault */);
  		trace_len = trace_nr * sizeof(struct bpf_stack_build_id);
  		if (hash_matches && bucket->nr == trace_nr &&
  		    memcmp(bucket->data, new_bucket->data, trace_len) == 0) {
-@@ -445,10 +456,16 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+@@ -398,7 +404,7 @@ const struct bpf_func_proto bpf_get_stackid_proto_pe = {
+ 
+ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 			    struct perf_callchain_entry *trace_in,
+-			    void *buf, u32 size, u64 flags)
++			    void *buf, u32 size, u64 flags, bool may_fault)
+ {
+ 	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
+ 	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
+@@ -416,8 +422,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 	if (kernel && user_build_id)
+ 		goto clear;
+ 
+-	elem_size = (user && user_build_id) ? sizeof(struct bpf_stack_build_id)
+-					    : sizeof(u64);
++	elem_size = user_build_id ? sizeof(struct bpf_stack_build_id) : sizeof(u64);
+ 	if (unlikely(size % elem_size))
+ 		goto clear;
+ 
+@@ -438,6 +443,9 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 	if (sysctl_perf_event_max_stack < max_depth)
+ 		max_depth = sysctl_perf_event_max_stack;
+ 
++	if (may_fault)
++		rcu_read_lock(); /* need RCU for perf's callchain below */
++
+ 	if (trace_in)
+ 		trace = trace_in;
+ 	else if (kernel && task)
+@@ -445,28 +453,35 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 	else
+ 		trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+ 					   crosstask, false);
+-	if (unlikely(!trace))
+-		goto err_fault;
+ 
+-	if (trace->nr < skip)
++	if (unlikely(!trace) || trace->nr < skip) {
++		if (may_fault)
++			rcu_read_unlock();
+ 		goto err_fault;
++	}
+ 
+ 	trace_nr = trace->nr - skip;
+ 	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
  	copy_len = trace_nr * elem_size;
  
  	ips = trace->ip + skip;
--	if (user && user_build_id)
--		stack_map_get_build_id_offset(buf, ips, trace_nr, user);
--	else
-+	if (user && user_build_id) {
-+		struct bpf_stack_build_id *id_offs = buf;
-+		u32 i;
-+
-+		for (i = 0; i < trace_nr; i++)
-+			id_offs[i].ip = ips[i];
-+		stack_map_get_build_id_offset(buf, trace_nr, user);
-+	} else {
- 		memcpy(buf, ips, copy_len);
-+	}
+-	if (user && user_build_id) {
++	if (user_build_id) {
+ 		struct bpf_stack_build_id *id_offs = buf;
+ 		u32 i;
  
+ 		for (i = 0; i < trace_nr; i++)
+ 			id_offs[i].ip = ips[i];
+-		stack_map_get_build_id_offset(buf, trace_nr, user);
+ 	} else {
+ 		memcpy(buf, ips, copy_len);
+ 	}
+ 
++	/* trace/ips should not be dereferenced after this point */
++	if (may_fault)
++		rcu_read_unlock();
++
++	if (user_build_id)
++		stack_map_get_build_id_offset(buf, trace_nr, user, may_fault);
++
  	if (size > copy_len)
  		memset(buf + copy_len, 0, size - copy_len);
+ 	return copy_len;
+@@ -481,7 +496,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ BPF_CALL_4(bpf_get_stack, struct pt_regs *, regs, void *, buf, u32, size,
+ 	   u64, flags)
+ {
+-	return __bpf_get_stack(regs, NULL, NULL, buf, size, flags);
++	return __bpf_get_stack(regs, NULL, NULL, buf, size, flags, false /* !may_fault */);
+ }
+ 
+ const struct bpf_func_proto bpf_get_stack_proto = {
+@@ -494,8 +509,24 @@ const struct bpf_func_proto bpf_get_stack_proto = {
+ 	.arg4_type	= ARG_ANYTHING,
+ };
+ 
+-BPF_CALL_4(bpf_get_task_stack, struct task_struct *, task, void *, buf,
+-	   u32, size, u64, flags)
++BPF_CALL_4(bpf_get_stack_sleepable, struct pt_regs *, regs, void *, buf, u32, size,
++	   u64, flags)
++{
++	return __bpf_get_stack(regs, NULL, NULL, buf, size, flags, true /* may_fault */);
++}
++
++const struct bpf_func_proto bpf_get_stack_sleepable_proto = {
++	.func		= bpf_get_stack_sleepable,
++	.gpl_only	= true,
++	.ret_type	= RET_INTEGER,
++	.arg1_type	= ARG_PTR_TO_CTX,
++	.arg2_type	= ARG_PTR_TO_UNINIT_MEM,
++	.arg3_type	= ARG_CONST_SIZE_OR_ZERO,
++	.arg4_type	= ARG_ANYTHING,
++};
++
++static long __bpf_get_task_stack(struct task_struct *task, void *buf, u32 size,
++				 u64 flags, bool may_fault)
+ {
+ 	struct pt_regs *regs;
+ 	long res = -EINVAL;
+@@ -505,12 +536,18 @@ BPF_CALL_4(bpf_get_task_stack, struct task_struct *, task, void *, buf,
+ 
+ 	regs = task_pt_regs(task);
+ 	if (regs)
+-		res = __bpf_get_stack(regs, task, NULL, buf, size, flags);
++		res = __bpf_get_stack(regs, task, NULL, buf, size, flags, may_fault);
+ 	put_task_stack(task);
+ 
+ 	return res;
+ }
+ 
++BPF_CALL_4(bpf_get_task_stack, struct task_struct *, task, void *, buf,
++	   u32, size, u64, flags)
++{
++	return __bpf_get_task_stack(task, buf, size, flags, false /* !may_fault */);
++}
++
+ const struct bpf_func_proto bpf_get_task_stack_proto = {
+ 	.func		= bpf_get_task_stack,
+ 	.gpl_only	= false,
+@@ -522,6 +559,23 @@ const struct bpf_func_proto bpf_get_task_stack_proto = {
+ 	.arg4_type	= ARG_ANYTHING,
+ };
+ 
++BPF_CALL_4(bpf_get_task_stack_sleepable, struct task_struct *, task, void *, buf,
++	   u32, size, u64, flags)
++{
++	return __bpf_get_task_stack(task, buf, size, flags, true /* !may_fault */);
++}
++
++const struct bpf_func_proto bpf_get_task_stack_sleepable_proto = {
++	.func		= bpf_get_task_stack_sleepable,
++	.gpl_only	= false,
++	.ret_type	= RET_INTEGER,
++	.arg1_type	= ARG_PTR_TO_BTF_ID,
++	.arg1_btf_id	= &btf_tracing_ids[BTF_TRACING_TYPE_TASK],
++	.arg2_type	= ARG_PTR_TO_UNINIT_MEM,
++	.arg3_type	= ARG_CONST_SIZE_OR_ZERO,
++	.arg4_type	= ARG_ANYTHING,
++};
++
+ BPF_CALL_4(bpf_get_stack_pe, struct bpf_perf_event_data_kern *, ctx,
+ 	   void *, buf, u32, size, u64, flags)
+ {
+@@ -533,7 +587,7 @@ BPF_CALL_4(bpf_get_stack_pe, struct bpf_perf_event_data_kern *, ctx,
+ 	__u64 nr_kernel;
+ 
+ 	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
+-		return __bpf_get_stack(regs, NULL, NULL, buf, size, flags);
++		return __bpf_get_stack(regs, NULL, NULL, buf, size, flags, false /* !may_fault */);
+ 
+ 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+ 			       BPF_F_USER_BUILD_ID)))
+@@ -553,7 +607,7 @@ BPF_CALL_4(bpf_get_stack_pe, struct bpf_perf_event_data_kern *, ctx,
+ 		__u64 nr = trace->nr;
+ 
+ 		trace->nr = nr_kernel;
+-		err = __bpf_get_stack(regs, NULL, trace, buf, size, flags);
++		err = __bpf_get_stack(regs, NULL, trace, buf, size, flags, false /* !may_fault */);
+ 
+ 		/* restore nr */
+ 		trace->nr = nr;
+@@ -565,7 +619,7 @@ BPF_CALL_4(bpf_get_stack_pe, struct bpf_perf_event_data_kern *, ctx,
+ 			goto clear;
+ 
+ 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
+-		err = __bpf_get_stack(regs, NULL, trace, buf, size, flags);
++		err = __bpf_get_stack(regs, NULL, trace, buf, size, flags, false /* !may_fault */);
+ 	}
+ 	return err;
+ 
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index d557bb11e0ff..87fc35778131 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1530,7 +1530,8 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	case BPF_FUNC_jiffies64:
+ 		return &bpf_jiffies64_proto;
+ 	case BPF_FUNC_get_task_stack:
+-		return &bpf_get_task_stack_proto;
++		return prog->sleepable ? &bpf_get_task_stack_sleepable_proto
++				       : &bpf_get_task_stack_proto;
+ 	case BPF_FUNC_copy_from_user:
+ 		return &bpf_copy_from_user_proto;
+ 	case BPF_FUNC_copy_from_user_task:
+@@ -1586,7 +1587,7 @@ kprobe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 	case BPF_FUNC_get_stackid:
+ 		return &bpf_get_stackid_proto;
+ 	case BPF_FUNC_get_stack:
+-		return &bpf_get_stack_proto;
++		return prog->sleepable ? &bpf_get_stack_sleepable_proto : &bpf_get_stack_proto;
+ #ifdef CONFIG_BPF_KPROBE_OVERRIDE
+ 	case BPF_FUNC_override_return:
+ 		return &bpf_override_return_proto;
 -- 
 2.43.5
 
