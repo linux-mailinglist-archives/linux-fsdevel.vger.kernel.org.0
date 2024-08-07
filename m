@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-25223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8932A949F51
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 07:46:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9266C949F53
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 07:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498EE282D34
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 05:46:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E37DAB259BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 05:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE5A190466;
-	Wed,  7 Aug 2024 05:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E22A19753F;
+	Wed,  7 Aug 2024 05:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="fTlob7/U"
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="QMr6QKCQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0454482D8
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Aug 2024 05:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF53558A5
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Aug 2024 05:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723009559; cv=fail; b=iWYsHJM7+V6tcGFaJ3htG/p5iMdaggZQLi76c/vCWFpxgNs387m8rwFW6jk9ZniAkZxlXdgxCCQpHthQwXakgVhmUfkq9G9a+GbiKzTpqrpqQc0IgfzjpLSgygvT6agtmh/mOT+F7+PBfrbCRXRkrdpqnWUY2e1FthvDx5U/Vt4=
+	t=1723009560; cv=fail; b=jGPpJkteellJWX1HQmOiUmyhMmQJrBJWkbagz2nmuwGlec3NZ1WLdPzXQOpVamTNYAHtgJniwK+jT4Hl2llbrKgRf6lvO1gCEsXetUugJt40FkWxiZZF8Y/F2qIL0/UWcNdaHxG4XN2bifl3fCRhonQgHM4uAmk6+d0iEXsZQEE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723009559; c=relaxed/simple;
-	bh=lgU6fGGOJRu5UCXZIoQoAgEe2bTFGsxP3EQi3/Ah5mc=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ifE11CgrHwfarb626gsvD8gFfb8hjJ4ubUnoEKNmph75QTSZZbj9tNf5zd74xwi+Ab9CgtohBdyIL8DVmbIe3lVisT2Y1UXVDLGy5f1l27rs4n1q4s0vpaLHY5KBN0qxRFEBShZkRprC25TUTqdPw/gAHrL1ZBY1p4WK0pNM+NI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=fTlob7/U; arc=fail smtp.client-ip=185.183.30.70
+	s=arc-20240116; t=1723009560; c=relaxed/simple;
+	bh=qAMXniJVUCkAK0/TCmnntJiv1SD2wdShosY+9z7t1G8=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=mNi8DO6oZKQLxf+mlLc8ZIxZkDipYvvAs6J/yBM5gBy+XHtTHjmHXQ8+jEWFo5dzXJAbWuL8jwKAamnTWM3syGS4d7sRwpUtMzHNpBZoEr/QTIUGaYm9gthRLsBBTajBWkhi/myLRY5iM3hVP6a0k0eVRTvKEBBFlaK3AkKOO0I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=QMr6QKCQ; arc=fail smtp.client-ip=185.183.30.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
 Received: from pps.filterd (m0209320.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4775doFt030177;
-	Wed, 7 Aug 2024 05:45:32 GMT
+	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4775doFu030177;
+	Wed, 7 Aug 2024 05:45:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
 	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=S1; bh=eblpkjKZrzZCs1CYHz26oTHDcLdjD
-	mQUnYFEso6ttP4=; b=fTlob7/UPZWq6OGEZUazpyoYL1cAOYDZ0355IHlpJ0hWq
-	TiNRCdx61Q0Et4fbGEFBsjKwr8ACmUcxTqXtIC3yPB2+bOnf80x72DazD+af5/jL
-	/djryiXMt4K4bKpASpPUsyQk4el9rK2tG6xSo6MW1/l2AKW7jIz54XYwcmmGVMJ7
-	NqaLQBGzfkUSRNNB/+rDR4eyfI81XVb11TmSgBKdXt6X2HzKCfiYeakizkrz+B1h
-	L20rj0CXnpYA88Dyqd77pwQzD8Q3geQLalphWrtMYOH3CUc3SL+NiDqI/Or0AQSp
-	qf0kemN0t5vhv4ABSruy2jqaEJ9gq+Mt1xkuqiYkg==
+	:mime-version:subject:to; s=S1; bh=vCGKLuDPnVKmQeql1alxh3bVYSgZ/
+	bDKLfACQExNED0=; b=QMr6QKCQJfZHzGIv4In1sufoCbMK4FKNHwZM8n6aYuNyO
+	KCxr+GdtZrvoLTjkEXqOndippzzZdwERTe6PKgyLMrw9a4Qk0IxDzRHr+FTWRqlJ
+	WUzH80qXxW4WiRBFKXl9TwKANX1mb+4GcEffK9FxbATk5CL0Co3YaAIF6LvtHu8X
+	ddUmM791b1gT6QCFA4Rovwc3WgE337WRwxhsO6q3YOo5TWWWXonj+zw0DOXONyAH
+	+U1rty68vQeK6YhdG+xYl48BY0En+fmrHBNm+KQ60bi8izzUY/d7rfdPSMMSZrRH
+	BunDoBizk5JDUTWXsQl/Ts9+YId8AKFOAeGa+e9ww==
 Received: from apc01-tyz-obe.outbound.protection.outlook.com (mail-tyzapc01lp2041.outbound.protection.outlook.com [104.47.110.41])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 40saep383b-1
+	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 40saep383b-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 07 Aug 2024 05:45:32 +0000 (GMT)
+	Wed, 07 Aug 2024 05:45:33 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LhVXU9Vusgm3exiFez7w48lLWDSe7Cot9Pxa5aEXFbFnLWWvNCKFiTavOG2g+BOyx6MT69MOdDXtNG2als/m/TFdS6aldM054rofQT7iEERV3KxhXlrJu5qPeUA48iC0kXuVleJy1J2HsR18iVOknIK+W5VDHj7O3WIB8PEungGgGKSdKmP8aX0SVk+JaLk957kuIAUqZhzJ+pg+3xVNuzdznJVPU4UXbORgozeqgiSKjcjvx6IbcUIPkOQUhg7YoGdRiqnS5p5CN6dNI9ICHPkynkTDwpsXl3EcpDT8i7I/KJ0j1PG008MVkRA3BntXuiUrcq1eGaMOWQJZsL3XBA==
+ b=HQDxoqTQkd0ViNrVKGITgiy1vf84urth3lhFxH0MsioZ+Xo5szespg729GPp5Gyh4dq8rWI3XIVAEO7bjQmqzb7sRkDFaK1jZKYF8vYnXF6ud8eY8z/Y84QHHzsNvEP1OZIcgMbpPwRdnSs2H3Ki+2sfj/HEyy5crmuCulYn2RdZs6Mgo90osTSlCFNAmiPIxhlgBV6zcX+2WnbOuTefjpT7K1wqzrGLqN9PPaRdTCwqfUWSpKN+tbr9lBjKRr6ChL2Myrf7kvFUleENOzdEawqWmrZUtS6mmkDDSPVz8MXHyk+7j5haiw9qiZ50OPhH93nIjfgI3rZevk2qaYt0tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eblpkjKZrzZCs1CYHz26oTHDcLdjDmQUnYFEso6ttP4=;
- b=Bh0evQy1R2SAIC6udPFNE8RJclzRk78CbFt0Zeu70KRREZYSgcRZq/y01qvtzVqR2H1GcBngtfCLGJuYG9b/4iJBXjQfk+qQb3qRI138I7Re0+85yd9VEWUvP/b6/qnhawkM7vArepeTsufo+IlZPiKEH68NyNC90zOWJWUu3V3haFHeXSJmINQ8628pjp86WNQZuaCWNQ6BbkMzRtHxmEfAGD9pXLNgM73iFqtOxJNGgseNTvlk/TvlaA0lRyEMh7QxDznNbqUUafx/YyJICf+uylsKjPAZJPI0LkNJa/5f7aXsybO6VkYFIAVuRb+tk0tVsWrRsOMoZYKEATv+Jg==
+ bh=vCGKLuDPnVKmQeql1alxh3bVYSgZ/bDKLfACQExNED0=;
+ b=XSE6bn4NHGcWHQfQEsaJ8k7lOWSwnZ1h+UGD2N64PMuRolt5C3i6TDEL13pYDQ3NzJxmEW9zq50FaWCU72uQkn0rN8vg+s1iAB2Ot8BeSOPIUejX9/80a0+G5pcKbr8Hrfa6gC+kJPnRpKyQGsY9xZdkqjHnQSAegdfG7qB8adUtVMV/xX/h2p+U1zozJymcJYJGVEi8KCcO5Py7QzkzXBqhdgrUyrTVMQGKcYbkSVO48PSxdc+rFsU7w8dTW/sc7mpsB8LHIMaSSrcaimK+eEcoM4omuoWpFV4K5NUgNAV4T4hrodr+8Gy2wL5ntYgRwBis3bzjFkbNNYWvpAqNYw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
  dkim=pass header.d=sony.com; arc=none
@@ -60,23 +60,23 @@ Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
  by PUZPR04MB6886.apcprd04.prod.outlook.com (2603:1096:301:118::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Wed, 7 Aug
- 2024 05:45:25 +0000
+ 2024 05:45:28 +0000
 Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
  ([fe80::409e:64d3:cee0:7b06]) by PUZPR04MB6316.apcprd04.prod.outlook.com
  ([fe80::409e:64d3:cee0:7b06%5]) with mapi id 15.20.7849.008; Wed, 7 Aug 2024
- 05:45:25 +0000
+ 05:45:28 +0000
 From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
 To: "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
         "sj1557.seo@samsung.com"
 	<sj1557.seo@samsung.com>
 CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Subject: [PATCH v1 0/2] exfat: direct IO refine and code cleanup
-Thread-Topic: [PATCH v1 0/2] exfat: direct IO refine and code cleanup
-Thread-Index: AQHa6IuYFUwB+4AT/0eaMukoFoEgSw==
-Date: Wed, 7 Aug 2024 05:45:25 +0000
+Subject: [PATCH v1 1/2] exfat: drop ->i_size_ondisk
+Thread-Topic: [PATCH v1 1/2] exfat: drop ->i_size_ondisk
+Thread-Index: AQHa6Iwi3WQKJ9UsFUe2ryZR7fiZWg==
+Date: Wed, 7 Aug 2024 05:45:28 +0000
 Message-ID:
- <PUZPR04MB631656C12DC76EFFAF3D181D81B82@PUZPR04MB6316.apcprd04.prod.outlook.com>
+ <PUZPR04MB63166ED51D1DC677D254595381B82@PUZPR04MB6316.apcprd04.prod.outlook.com>
 Accept-Language: en-US, zh-CN
 Content-Language: en-US
 X-MS-Has-Attach:
@@ -84,70 +84,70 @@ X-MS-TNEF-Correlator:
 msip_labels:
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|PUZPR04MB6886:EE_
-x-ms-office365-filtering-correlation-id: 7a3a8494-fb03-48fa-b9d2-08dcb6a422c2
+x-ms-office365-filtering-correlation-id: fb3b9bfa-426d-432d-7ae9-08dcb6a424ab
 x-proofpoint-id: d8690225-876f-412f-87c6-a7cb45557a4c
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
 x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?N6H5jd7c8Z6f22ykDymtTyFf9YsN2cM/YtT4PJRzAot6VrtiYLn9vuOTh/?=
- =?iso-8859-1?Q?uqnm/+MCaYRvZsPQ9goDn7++AcbSyr6idl2Jt7oJYGptibWRS3ZQlE3R+M?=
- =?iso-8859-1?Q?RH7YPrdu9ws7388cZpJZ/HYeLLd50tNSWmx874iFXTBKrJXH3cCf0Vebpy?=
- =?iso-8859-1?Q?CQbBrS38lN9U9vh6WBQ/kcK9mwGFUe1M0BazhATGWGAau/NiADPn5qpBs9?=
- =?iso-8859-1?Q?62arxdD6jY8yl+xDiP6SYvd+XMyMSeCNZp88JLizfh+yAW7gawbyJ8jY7A?=
- =?iso-8859-1?Q?a8FDKx8+qvwHXs/TJd27RHv9Dn6yOeMzNRCcUA6VqaNOLoQc9hNDNCen8J?=
- =?iso-8859-1?Q?sWzsuHCPqqqBJaenFrc9bBw7lC5NEFqE63vlU+aE/hkwkNYAtGWKRPb9Zf?=
- =?iso-8859-1?Q?GHJPSVRF+54sB1YZytwuqJe1H8yihQsqQ9IVGYeONpuaWXD+KackEXcRv3?=
- =?iso-8859-1?Q?ApWBpX79BXSlesIaSda0to3CWnrj0i3qPNWI04c66CSQaG4DgQ9Sf1et3/?=
- =?iso-8859-1?Q?CvUYUn1wc3qIXaB2qy+RpUtBl5N5a0RxQICQK4/cpiDbQEV6KF/fwyIPpE?=
- =?iso-8859-1?Q?J/B6HmKgGkDD0Cd1oEKAQ29D46IPKK2GprbIZSsM8y/8GF5Q4UDXNy8/li?=
- =?iso-8859-1?Q?BlNPWorEzNJX2wpU5Qk0M3YG3qZ+wB0OB54tQ9+xWi5xYCLg7jdcNvQy2y?=
- =?iso-8859-1?Q?eRSQ8kTTpN5y9VgyBEZ6/I3Ve4WEdMAozyysvzfwZqUFw6/LYv76EMfOlu?=
- =?iso-8859-1?Q?FUqnSbR8NtbWV7DyJV93JCJFHHTAeVB8YT9m1swO4k0kvukUtiLdIqFPLo?=
- =?iso-8859-1?Q?A5VBUX0ZaL7Z3tU7rqfm8Ov7HoQvvHFx5htJ8knr2M4DqiXCSRHmjSHrMN?=
- =?iso-8859-1?Q?rqqDXpROsIT3rH1jcUKLe/hzU95FX1WKVVAhvFBXHbhkik15hoEJhgZUzt?=
- =?iso-8859-1?Q?uFabTTMbXqQPR1IEy8p4MeJKIZr4hIoFFQDeNeTS+B6brFAF+ii28Mix8P?=
- =?iso-8859-1?Q?4qKYwyyLyaqW0OPCorf3DMvztbeVUUy4OwU+m/uP0EzeVgM8847JE0qgeW?=
- =?iso-8859-1?Q?xB5+kJiOraxzJi5gmIH/eXB0Ac29jCz15dah5E2ibbNHXkB6XBIcsThm9S?=
- =?iso-8859-1?Q?ZqSLBSOEVsyIHWjRDwmMwx9UYMAFWAvT+qcUQT4DYdIrcAVpjCrJI/CvJn?=
- =?iso-8859-1?Q?e/Lq+LDDXkYYh1/L4sk3MYGvgsrdkFV8pqbAr9zVT14NU89OV/HRiDOkgu?=
- =?iso-8859-1?Q?pAbGtyptkUxknAVK/6HQWqzp15l8smQHsy7V1RUmie6BzjI5eHhz4asLpt?=
- =?iso-8859-1?Q?7HhQthjLyYDKbXpeltudvefcTzLnuNwSMQGIhFkh1mP4VDcicmq9v1v4gq?=
- =?iso-8859-1?Q?UjJc1QdtHe8bdIgMF1MAnniIrbIWB/s+eyxGzcyKZplqqKbdDp9HajD1YI?=
- =?iso-8859-1?Q?VTCDXDBnEmPmXpaSY0EWHoZGWnJb9I6k97uQ9w=3D=3D?=
+ =?iso-8859-1?Q?YfCNNvbkWbwG/6bn2ObtwAGTizW9k/mT6q8hbVJ/9T6Qwe86dAnKHO6THx?=
+ =?iso-8859-1?Q?6RU82Aw54RazGjHotO+AZdiCtKeEn4rRed5Lgo23OGlEcZDY3TysY7MslL?=
+ =?iso-8859-1?Q?ce0ZGsf9mQyeiOi2aCHuh/YZhn0puAraagJcLsiK1ANjmeowa8vryxCbar?=
+ =?iso-8859-1?Q?njSLB/6yQq0AJC5Y+QkEMstQS4ZERFL0XFSLktEYrmEmDufRgyHYvx7EWl?=
+ =?iso-8859-1?Q?LO+xFWXG/KYiWywQza43ZG6D35GYXcr6eC1u/EK97lfl06Fz1+x6CU++2W?=
+ =?iso-8859-1?Q?CaDyoGnQDmaa/a01ng5NtJIjeaSp6CWgRl+beDSre1hwrFdu85gkfK2qRj?=
+ =?iso-8859-1?Q?HzeUC+B9feAMrjC2ETwRf4+hfOxNMm9WpoIbHObKiTT/dVoQCoOvQRmfwC?=
+ =?iso-8859-1?Q?JgwEkYJa7IXGYEvg7AiBX6dDF+2eGZGIsBpjCgsB3fbizWZfjSnR7ibrDc?=
+ =?iso-8859-1?Q?fUvHh4SLl9WdiTi2uFD6uGfoYqx0picIIzCIH1euPGVFlq+1pW8hPylJvs?=
+ =?iso-8859-1?Q?+MI5b6vLLSEZDVO3BRgTdMotqbU+ZrW+hTsZMqd8sQ8O9oTiaXZ1xacivl?=
+ =?iso-8859-1?Q?WGPI1kS1AR3tAWYZ8a+lVvYso2m2DPJrQTgYyad5AKIFZqOdS61FcheRay?=
+ =?iso-8859-1?Q?MTW4FRnB+XmOulltUHKK0FEqbW63CljujJYEzcpkq/o+LooRjdAe9tR9rc?=
+ =?iso-8859-1?Q?rJgM2teP0XiznMCh9YwEZZT6kMHTcE66/wUbHuGKQLbd2I8F6UNBdoIm29?=
+ =?iso-8859-1?Q?Q1j/sa1EzqwoU72OxdEI5FSQzqPAYXZfqVt1aNJGgRw8tITg+7B3FguSrd?=
+ =?iso-8859-1?Q?a65swAM4jZOV7FEE65kqj/VXZJmdpt30o6bHpqOsR0WHfLplIwgzERBoj2?=
+ =?iso-8859-1?Q?ZEuwcrd5qJXWgFh+6Rsp5pKodOHwBttSG7byP+ul8EBkWbH+6PV2ZcHdg+?=
+ =?iso-8859-1?Q?5uPFxSpDGJfG+qMRCVQS+NwC4ZLLTOGtFM+aEU1EGTdd6ijYuROx33iW9K?=
+ =?iso-8859-1?Q?uDIAe3+YFtEvI+o6c6LvVEhuEy8lEPcV3rPPhZofpBGF0lffX8LObitD/4?=
+ =?iso-8859-1?Q?ZHXA8ZNmA2YF4WA4prMSIqytxxyEoAuHINse0VwkkeT6HNVypvdypQVQTO?=
+ =?iso-8859-1?Q?QP7rNhxkg69RLbEiIo1i73uVd2gYN9i5zBhS5jy3+vA9qa2Q1qxAdcERWg?=
+ =?iso-8859-1?Q?9RwkeM6CRyBZ4I9o/dAy3tIMcLwKPV56WkPKuqlzK/apht4j3Mb7DVh3Wj?=
+ =?iso-8859-1?Q?LbAXjbVOamyt+cbw8xdtY9L/BMXmfhmRE61Spc7cNDNo4y+Ipwoe/oVamV?=
+ =?iso-8859-1?Q?YDUOqW3nYcDZAPp2v8Dq1ruo1XJFamGuMFPDg5i/BZZMAwYStjZvSpDUSD?=
+ =?iso-8859-1?Q?8oqudEgKw3DvMJ1v4LzZALFyMyq/vdkIVPQmHXAC++GBgVUfPHr0KJNHBn?=
+ =?iso-8859-1?Q?t64PD6iFrWw/2BHVSd51JEHHzUSdmIvjlP3RKA=3D=3D?=
 x-forefront-antispam-report:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?6DVV60qX5F3P3bFonOGB1G6uW4e4xpY4/hMoYx9+LshQvrMGgMAbbO1MRz?=
- =?iso-8859-1?Q?IB5MAoG9fD6gPB0vUqfuxOFSE7F6R0E1lekKpsQm9sqbvI7HqQ3JPtIZSj?=
- =?iso-8859-1?Q?QEuObkpXlucNqh8Jsb+Nlw00X6G+c3IvPDe8af8r1gErEGM1aDdEg0y63q?=
- =?iso-8859-1?Q?xflfWzwFmxgdTmNocMCqgutPc8zO5ZRvyoM52R2e89YlXgeprPMH5mluMp?=
- =?iso-8859-1?Q?uGpY844wHUo7MUHk3jIu5vCOGnY0P0Tpe/sARaaDFNmqVBvcw6gTFKVKJm?=
- =?iso-8859-1?Q?0CBZli148jYMhPe4H7/M6qZlpazME8om79vae/TUXwKSf/8K1/FxG4oLlE?=
- =?iso-8859-1?Q?kVOeskDa/odjieWIHs+Hoxslt8ScORnCrVmX7zLRQYMnearxudoSTAFEK2?=
- =?iso-8859-1?Q?rSSznM2ow8ZevBxo5Wm7GjBO/Cy0vvAfVbRdKyQl89oeXpcXBkCVWuqZej?=
- =?iso-8859-1?Q?iuuSIAAalVcW5Ae73yxyMOXA+5+e3tsVCqdEzqVFaao7IuSJfCUB1kEu5j?=
- =?iso-8859-1?Q?QS/kLQj81HP559v+cJeeDZZ5OLN3xzniCRlsziv0fHznrB2NhBfuWbblYI?=
- =?iso-8859-1?Q?fbCHasB46ayjEOKYCbhKME/WVJD4UrIs/2nQ1oV+8AVBeqoqf+I0IjlSvc?=
- =?iso-8859-1?Q?BbSVtPRwn0YogDQ2fxsQs73jXciL9Z9jOGxc9UB0LzuatJMAu5/4YX02Uy?=
- =?iso-8859-1?Q?P/5fjAtJbAriarSJcw34506vodBAUReQwNl1L0mWOI/Bl7lIjLA1mNhKLd?=
- =?iso-8859-1?Q?qLycJjFmm20Ikp2B1nOShsxuXLkD3AHXz5KUjkhHeKkCf9jDtAF6NCRkI0?=
- =?iso-8859-1?Q?JSgaG/fdK9rJyYCGD7wv0MLl+2DtjQBIGpKf3D9ExyQiMBb4eWs6x0I67l?=
- =?iso-8859-1?Q?uHvataBMhDkjtgXBFUod/VKiLBRpSnSySCA5+PevCfh0wEXqVCd9sWdluw?=
- =?iso-8859-1?Q?7gFOS0r2B8Z76hsPrqWbo9rPcfPTrOeqNi0LZLPbnGkRwgAAcmeOj1t4Jh?=
- =?iso-8859-1?Q?n+29YEYLgAvbdhlVIy3iJFdThZRC2gDg9xj3jmiHIbaOMKQFKHvHo34OFz?=
- =?iso-8859-1?Q?gZVcjRVOUTMQylR+JAmOJqLEtOjGcjm1zQq0xgrQSpYhhwGce9anjmivjy?=
- =?iso-8859-1?Q?5kEwbHnJA0Q/f4+n9AqPl58hSBsuAUOwJ12T4lYwY2e6turqGnPTTAeH5l?=
- =?iso-8859-1?Q?srh6EDoMoxlXYf9s75IxKkkKF0/+nNUJU3QVhtVRrb0PFMb3QAsVHRtOKj?=
- =?iso-8859-1?Q?2eXOwgQUnUWsrDdzJPdZBfn3nU1YVGJsN4P426j+0MAuKr8xXtyS4bxkC+?=
- =?iso-8859-1?Q?2gc4swu4o0Zlzu+VXwGCOpTuJGDUUPW7ZoZxD7A+ufk78BhCSABCt/5a6Z?=
- =?iso-8859-1?Q?/JtfnYNd2AaC/poeKHGkxUSn0NezNi4QmHbns1ReLZh00eUewwXXnXnm1s?=
- =?iso-8859-1?Q?Bt80DFaYzDQreSsMZFY2fydd1V6fXHu8NInNjiNr0C8k1QN3+0syxg1njP?=
- =?iso-8859-1?Q?eemnE9zHDXKOHQtoHMP+EvyqEXBgGBYMWmwr1Rmnid8mAEGy9dB1Ff9eHW?=
- =?iso-8859-1?Q?rvj1wnnIPi6QqZ+KMAc0ruTITN6qjxLpjTyqXU15yoC553AETc981ao5Vk?=
- =?iso-8859-1?Q?u/7jPqLbuaUMPWVxdF3ks8f9AL6D1Q99IzTYgHMEV5qxyFTocz8GfmA7vN?=
- =?iso-8859-1?Q?ZOxsm2Xq10krGcW+bRk=3D?=
+ =?iso-8859-1?Q?3/dv4NFi7M7nkMIx+r17slRnIPgQ5HVw+dSsZ37cc8cEO+RK2KB85BAqD/?=
+ =?iso-8859-1?Q?55ZEEHsics1SYc/MLpxvbCiRhHqhMlYvymwvxrIwYm1CLzzQ+6tK4l8khZ?=
+ =?iso-8859-1?Q?m4lr6Fi0GQcRnRr/DE0wuXzptw2H0t5apCA8+w4WUblzdCxRtZRteQT3Ri?=
+ =?iso-8859-1?Q?7s/WJ5snjeQ2lNqTWJaqgRNcrshBYdl3Ei5Tx7N+k8Mi7RMRSaUGKNKNO/?=
+ =?iso-8859-1?Q?ptmegwANktexvFwFhkM40KsmATITMUVvCORtrpmmtmzv8Is1DJfmYkM0wA?=
+ =?iso-8859-1?Q?yp2r0BJTrUdobqyZyCG+2dgzd8i/SpdUlddcjJPaIr5NnJiq7o3xCMeb0F?=
+ =?iso-8859-1?Q?rAdEXCUwlLVE2EKT7P+Ar8N5y+pLhDQdqo0BoKs1mFRj69M3fUsGDzSK2M?=
+ =?iso-8859-1?Q?s3le43HzZHq/1vszXnCvlfiP6/9O0U2/6CVqVt4un6RCNQM0FCFdfiFwwZ?=
+ =?iso-8859-1?Q?yxuaXBLY9UozQQQO6Fh/SFtnMVdcazySRukxwq13uJC8OG9SjFvI8nG0pM?=
+ =?iso-8859-1?Q?0O4Y+qmOtnFJwB4VtQ3M/omjQ/FAvx/du5pvTEXlKVuZ+iUmTJP10U7xzr?=
+ =?iso-8859-1?Q?SRWXs/jceBMuYTWEUethIGOeL2zPJlUhz5EI/th7JX6Uf9oyQ1zKNwsEHZ?=
+ =?iso-8859-1?Q?R8/RdF1f7Xz3xNWBfHfDYjjDXLtGVNkN+Hq21gdhtZtSNcacvlw8QI4+83?=
+ =?iso-8859-1?Q?0rw2VO/rKCnjqKvEdRkK3AnCHcmnOl5bI+eyEWooV2c9g3ccP47focUVxH?=
+ =?iso-8859-1?Q?Lgdcv+olqHnGgSJ23DHgR27A6egY+tmwQD5MC070ii/T/d2xPUqZ8E4aZJ?=
+ =?iso-8859-1?Q?1+WJ1xQLHk34d6dJ98mR/8lQ4y7OJG3xZVzV6h+pxRGNo5jqcmyzAS04ne?=
+ =?iso-8859-1?Q?NKg933jpans7uySkjWjV3kUi0YDIvncThYD/6H2nGv7J44XNChLpafTmh1?=
+ =?iso-8859-1?Q?JvXbV8SgOuXe5hFr+sV/CktM5ZFNMCJcrzgxF6DGUvQ2zHte34Q/oMkgRR?=
+ =?iso-8859-1?Q?TD6wTzYMdED5RGvU9PIdU8UmtloJXxADbcWEOG+U60+QOmGc4oSfGfDKl+?=
+ =?iso-8859-1?Q?FJfojlaEEDUHLyxTRmYq8jZYUOEpP4AWoD/DTJzBBN9TiEu25i89/xSDKF?=
+ =?iso-8859-1?Q?Dex+C8ZB9iehoaZxFZ5U8k3vy5IntfyTYiBB16Sz2KKHdDTKMhcQfIg/cl?=
+ =?iso-8859-1?Q?k1kD6E4Lw/UrcHPMkis8OJA1ocAS6alyau+6cEq56VNvpTE3uEoLdHCNtM?=
+ =?iso-8859-1?Q?EBgEh4C7z62QO5U4dxu6aq1W02ogjuGgU42LNquCjXQLzQEUMTOy8Y/5m5?=
+ =?iso-8859-1?Q?XQu77y2BTdfksvF9QHa/fC9LhhPJcDyL0IboK8K+3s9k7bLSKbiy6EDE0U?=
+ =?iso-8859-1?Q?fyfOnjeBu1Dh1HY8p86LguhCjgnb7XVYE4eXQy0LhtZ1Ng24PL+O31zL2J?=
+ =?iso-8859-1?Q?ewwSo7vYCQ6YGlC8dGeOVoz8i74QQTdaO8jNlEcZe1m057I/ClyLAhVhIn?=
+ =?iso-8859-1?Q?uj9o4qIFTe1XnWaw+wqp9Up/CWBpUfUKEYqFStfrl9MJI38+12F+b4yByS?=
+ =?iso-8859-1?Q?Fv9pKHGNW6tTLDjM8x5dXsJk0Oni6uXlmWe0gAykRbXw6zoxFgOh1k4kBN?=
+ =?iso-8859-1?Q?HOOdhSZuGatvcJ5FoMAHN355712tSsjsW3VSkgCJb7CJMOsh8IgmW+OpzG?=
+ =?iso-8859-1?Q?T0BrqeMSBG33Iwg3DtA=3D?=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -158,39 +158,190 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	N9ciV4jVsON+CjcCSg+ys+1VghFKPVIOc376N8oeY5hFUeJNFr0pt0DUKENUNNSzVnyPqr9QdZlSzelfVHYtlvS5Q+N8IY895dccpCSmVKGkNM2AIqty8B3+nHXP5mKgF54WLzgUqfcC8d81PS4RTgzKp4baOX8BgFtccfxuLbg0paBP6q4+CJEyzpl0sGGoKcBdEi5FYTfCarW8Ef4eMyAud/ZSBrv37sb1VQJM+cI4ZcK2H78819vQiF4az6SvstzSWz+5mmQqVpl7TwNPEXqFFDGYxS2dZEJazCP0aZZs2hSKV4H7b3EZYHMABZ8h1tuDi2RCVwNZUoby9dh0LAy+n+TdRWJ4wH6H/DifFyX7bfS6nIynArstvUCmZnwums+RpZ8DNo5eUZZot8XENqDKSrPiSSnQzYSlXKmUY0vdl/mq0q9fi9jzsV9/oGEeoxARoMM65xGYqcdAd6jyzx47Ix60UK23jk8Z6dgHhCU/uylMbTi5qpe/qzC11eli4/q8E/H5ZD5h3ONfglbFFjlhCsLwAIUw8fZMCP/qK1aGz9wn3ZlVNj/6FeAC374fhI5y17xawFVYNpo1cdr9hqnnS+QrEMB95zD1wlDDX2cGXObhqQo4Yy1Mvhf1c8BO
+	utJhCaa2TC9Y0ODqP5QGSa8O/IP42QKxMLoqIRxoRjrZRAb2aolkcgCU2rcB0ZErQvEPCUW4k3cPToWX/tsmKAWZZ30fZyDuyWGjhVBCQlRJeHiZUPysgsiLIPdJwWG8MJuhKbe3mT3WTFlHRmbTte08z2NTE7fI9NAmqJV2zyJMlPDo0px36f4wTqV6nvPfk+YNKhEyET7DfsixFcR2ocU/rd5fGPVVpcE8F7Al0xXoiR8REHBkFVRnjxTHcBcFSOf5sBTgZPoH7NEGwNPQ66PlJm0ZOv0ezs6hT8jhTlU30a9c1m55KAXEMkYd3s08lRYYg4mhko3K3a2I64wCgoCATD7oQpFj/NsKqJMR9rnhgOnPVkJGL45O0RnLyM+Esz8sdK3vL8D3VBKBeiDjkrtug+zmeAqt20jvwhGfXkPOmoBA5MRv8UFYuEb0+vj52rAFOladXwYd+4rikGcWJvPJZrZ5qREd6ZQMkr0G/fAjPuFH3561mn/ru6oTJ9K1sRpc3ec5TwPlJSe00ZqkIXhWZsQqeBHdtpLs41Wk1vgAQqPpDOeZcpA66N/xXKJM0U/o5NyJ9Gu01+V4AHBxqd5iQBcJKsMtyrri3olzQqrZk2Rvc8UzhiKDSqSJzDq2
 X-OriginatorOrg: sony.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a3a8494-fb03-48fa-b9d2-08dcb6a422c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2024 05:45:25.3688
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb3b9bfa-426d-432d-7ae9-08dcb6a424ab
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2024 05:45:28.5718
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yQV0mT/lsm5QTRQU9sddXjcuGx1VzSb35KD/kXdfmvv8oaVCjnefBUPgWtwCxeB3AGYFzssJRElbRubwsxmIRA==
+X-MS-Exchange-CrossTenant-userprincipalname: YLvHQLOTenImR825YEnlGsoZdqAq9g9OAwDbOeTrIOKZEZqLgPPGbo60wqfqOKYm6vld5LsgIw5SBVMERGR8KQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR04MB6886
-X-Proofpoint-ORIG-GUID: SUZ0xPIOEfa5LUrgrQRiFrki5VV_TF1t
-X-Proofpoint-GUID: SUZ0xPIOEfa5LUrgrQRiFrki5VV_TF1t
-X-Sony-Outbound-GUID: SUZ0xPIOEfa5LUrgrQRiFrki5VV_TF1t
+X-Proofpoint-ORIG-GUID: HolwNgN_xEeHw-tZNPfAWuorUrdDVaDu
+X-Proofpoint-GUID: HolwNgN_xEeHw-tZNPfAWuorUrdDVaDu
+X-Sony-Outbound-GUID: HolwNgN_xEeHw-tZNPfAWuorUrdDVaDu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-07_02,2024-08-06_01,2024-05-17_01
 
-Drop ->i_size_ondisk and ->i_size_aligned, and remove fallback to=0A=
-buffered write in exfat_direct_IO().=0A=
+->i_size_ondisk is no longer used by exfat_write_begin() after=0A=
+commit(11a347fb6cef exfat: change to get file size from DataLength),=0A=
+drop it.=0A=
 =0A=
-Yuezhang Mo (2):=0A=
-  exfat: drop ->i_size_ondisk=0A=
-  exfat: do not fallback to buffered write=0A=
+Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>=0A=
+---=0A=
+ fs/exfat/exfat_fs.h | 10 +++++-----=0A=
+ fs/exfat/file.c     |  8 ++------=0A=
+ fs/exfat/inode.c    | 17 +++++------------=0A=
+ fs/exfat/namei.c    |  1 -=0A=
+ fs/exfat/super.c    |  1 -=0A=
+ 5 files changed, 12 insertions(+), 25 deletions(-)=0A=
 =0A=
- fs/exfat/exfat_fs.h | 12 +++----=0A=
- fs/exfat/file.c     | 19 ++--------=0A=
- fs/exfat/inode.c    | 85 +++++++++------------------------------------=0A=
- fs/exfat/namei.c    |  2 --=0A=
- fs/exfat/super.c    |  2 --=0A=
- 5 files changed, 24 insertions(+), 96 deletions(-)=0A=
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h=0A=
+index 1d207eee3197..40dec7c0e0a0 100644=0A=
+--- a/fs/exfat/exfat_fs.h=0A=
++++ b/fs/exfat/exfat_fs.h=0A=
+@@ -309,11 +309,6 @@ struct exfat_inode_info {=0A=
+ 	/* for avoiding the race between alloc and free */=0A=
+ 	unsigned int cache_valid_id;=0A=
+ =0A=
+-	/*=0A=
+-	 * NOTE: i_size_ondisk is 64bits, so must hold ->inode_lock to access.=0A=
+-	 * physically allocated size.=0A=
+-	 */=0A=
+-	loff_t i_size_ondisk;=0A=
+ 	/* block-aligned i_size (used in cont_write_begin) */=0A=
+ 	loff_t i_size_aligned;=0A=
+ 	/* on-disk position of directory entry or 0 */=0A=
+@@ -417,6 +412,11 @@ static inline bool is_valid_cluster(struct exfat_sb_in=
+fo *sbi,=0A=
+ 	return clus >=3D EXFAT_FIRST_CLUSTER && clus < sbi->num_clusters;=0A=
+ }=0A=
+ =0A=
++static inline loff_t exfat_ondisk_size(const struct inode *inode)=0A=
++{=0A=
++	return ((loff_t)inode->i_blocks) << 9;=0A=
++}=0A=
++=0A=
+ /* super.c */=0A=
+ int exfat_set_volume_dirty(struct super_block *sb);=0A=
+ int exfat_clear_volume_dirty(struct super_block *sb);=0A=
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c=0A=
+index 781b4d4dbda1..8041bbe84745 100644=0A=
+--- a/fs/exfat/file.c=0A=
++++ b/fs/exfat/file.c=0A=
+@@ -29,7 +29,7 @@ static int exfat_cont_expand(struct inode *inode, loff_t =
+size)=0A=
+ 	if (ret)=0A=
+ 		return ret;=0A=
+ =0A=
+-	num_clusters =3D EXFAT_B_TO_CLU_ROUND_UP(ei->i_size_ondisk, sbi);=0A=
++	num_clusters =3D EXFAT_B_TO_CLU(exfat_ondisk_size(inode), sbi);=0A=
+ 	new_num_clusters =3D EXFAT_B_TO_CLU_ROUND_UP(size, sbi);=0A=
+ =0A=
+ 	if (new_num_clusters =3D=3D num_clusters)=0A=
+@@ -75,7 +75,6 @@ static int exfat_cont_expand(struct inode *inode, loff_t =
+size)=0A=
+ 	i_size_write(inode, size);=0A=
+ =0A=
+ 	ei->i_size_aligned =3D round_up(size, sb->s_blocksize);=0A=
+-	ei->i_size_ondisk =3D ei->i_size_aligned;=0A=
+ 	inode->i_blocks =3D round_up(size, sbi->cluster_size) >> 9;=0A=
+ 	mark_inode_dirty(inode);=0A=
+ =0A=
+@@ -159,7 +158,7 @@ int __exfat_truncate(struct inode *inode)=0A=
+ 	exfat_set_volume_dirty(sb);=0A=
+ =0A=
+ 	num_clusters_new =3D EXFAT_B_TO_CLU_ROUND_UP(i_size_read(inode), sbi);=0A=
+-	num_clusters_phys =3D EXFAT_B_TO_CLU_ROUND_UP(ei->i_size_ondisk, sbi);=0A=
++	num_clusters_phys =3D EXFAT_B_TO_CLU(exfat_ondisk_size(inode), sbi);=0A=
+ =0A=
+ 	exfat_chain_set(&clu, ei->start_clu, num_clusters_phys, ei->flags);=0A=
+ =0A=
+@@ -270,9 +269,6 @@ void exfat_truncate(struct inode *inode)=0A=
+ 		aligned_size++;=0A=
+ 	}=0A=
+ =0A=
+-	if (ei->i_size_ondisk > i_size_read(inode))=0A=
+-		ei->i_size_ondisk =3D aligned_size;=0A=
+-=0A=
+ 	if (ei->i_size_aligned > i_size_read(inode))=0A=
+ 		ei->i_size_aligned =3D aligned_size;=0A=
+ 	mutex_unlock(&sbi->s_lock);=0A=
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c=0A=
+index 804de7496a7f..82a23b1beaf7 100644=0A=
+--- a/fs/exfat/inode.c=0A=
++++ b/fs/exfat/inode.c=0A=
+@@ -130,11 +130,9 @@ static int exfat_map_cluster(struct inode *inode, unsi=
+gned int clu_offset,=0A=
+ 	struct exfat_sb_info *sbi =3D EXFAT_SB(sb);=0A=
+ 	struct exfat_inode_info *ei =3D EXFAT_I(inode);=0A=
+ 	unsigned int local_clu_offset =3D clu_offset;=0A=
+-	unsigned int num_to_be_allocated =3D 0, num_clusters =3D 0;=0A=
++	unsigned int num_to_be_allocated =3D 0, num_clusters;=0A=
+ =0A=
+-	if (ei->i_size_ondisk > 0)=0A=
+-		num_clusters =3D=0A=
+-			EXFAT_B_TO_CLU_ROUND_UP(ei->i_size_ondisk, sbi);=0A=
++	num_clusters =3D EXFAT_B_TO_CLU(exfat_ondisk_size(inode), sbi);=0A=
+ =0A=
+ 	if (clu_offset >=3D num_clusters)=0A=
+ 		num_to_be_allocated =3D clu_offset - num_clusters + 1;=0A=
+@@ -268,10 +266,10 @@ static int exfat_map_new_buffer(struct exfat_inode_in=
+fo *ei,=0A=
+ 	set_buffer_new(bh);=0A=
+ =0A=
+ 	/*=0A=
+-	 * Adjust i_size_aligned if i_size_ondisk is bigger than it.=0A=
++	 * Adjust i_size_aligned if ondisk_size is bigger than it.=0A=
+ 	 */=0A=
+-	if (ei->i_size_ondisk > ei->i_size_aligned)=0A=
+-		ei->i_size_aligned =3D ei->i_size_ondisk;=0A=
++	if (exfat_ondisk_size(&ei->vfs_inode) > ei->i_size_aligned)=0A=
++		ei->i_size_aligned =3D exfat_ondisk_size(&ei->vfs_inode);=0A=
+ 	return 0;=0A=
+ }=0A=
+ =0A=
+@@ -317,10 +315,6 @@ static int exfat_get_block(struct inode *inode, sector=
+_t iblock,=0A=
+ 	max_blocks =3D min(mapped_blocks, max_blocks);=0A=
+ =0A=
+ 	pos =3D EXFAT_BLK_TO_B((iblock + 1), sb);=0A=
+-	if ((create && iblock >=3D last_block) || buffer_delay(bh_result)) {=0A=
+-		if (ei->i_size_ondisk < pos)=0A=
+-			ei->i_size_ondisk =3D pos;=0A=
+-	}=0A=
+ =0A=
+ 	map_bh(bh_result, sb, phys);=0A=
+ 	if (buffer_delay(bh_result))=0A=
+@@ -680,7 +674,6 @@ static int exfat_fill_inode(struct inode *inode, struct=
+ exfat_dir_entry *info)=0A=
+ 	}=0A=
+ =0A=
+ 	ei->i_size_aligned =3D size;=0A=
+-	ei->i_size_ondisk =3D size;=0A=
+ =0A=
+ 	exfat_save_attr(inode, info->attr);=0A=
+ =0A=
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c=0A=
+index 631ad9e8e32a..6313dee5c9bb 100644=0A=
+--- a/fs/exfat/namei.c=0A=
++++ b/fs/exfat/namei.c=0A=
+@@ -372,7 +372,6 @@ static int exfat_find_empty_entry(struct inode *inode,=
 =0A=
+ =0A=
+ 		/* directory inode should be updated in here */=0A=
+ 		i_size_write(inode, size);=0A=
+-		ei->i_size_ondisk +=3D sbi->cluster_size;=0A=
+ 		ei->i_size_aligned +=3D sbi->cluster_size;=0A=
+ 		ei->valid_size +=3D sbi->cluster_size;=0A=
+ 		ei->flags =3D p_dir->flags;=0A=
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c=0A=
+index 1f2b3b0c4923..61d8377201f6 100644=0A=
+--- a/fs/exfat/super.c=0A=
++++ b/fs/exfat/super.c=0A=
+@@ -371,7 +371,6 @@ static int exfat_read_root(struct inode *inode)=0A=
+ 	inode->i_blocks =3D round_up(i_size_read(inode), sbi->cluster_size) >> 9;=
+=0A=
+ 	ei->i_pos =3D ((loff_t)sbi->root_dir << 32) | 0xffffffff;=0A=
+ 	ei->i_size_aligned =3D i_size_read(inode);=0A=
+-	ei->i_size_ondisk =3D i_size_read(inode);=0A=
+ =0A=
+ 	exfat_save_attr(inode, EXFAT_ATTR_SUBDIR);=0A=
+ 	ei->i_crtime =3D simple_inode_init_ts(inode);=0A=
 -- =0A=
-2.34.1=
+2.34.1=0A=
 
