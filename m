@@ -1,92 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-25219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DBB949EA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 05:48:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E03AC949EB5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 05:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044841C23D22
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 03:48:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AC8228C822
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 03:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CD9266A7;
-	Wed,  7 Aug 2024 03:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2420619006D;
+	Wed,  7 Aug 2024 03:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dImRH9zK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMGvBrCw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB7F364A0;
-	Wed,  7 Aug 2024 03:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09DE364A0;
+	Wed,  7 Aug 2024 03:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723002497; cv=none; b=lCmT4a9GVmyCw3K/RC/dNjJzK4/YuvFU0hVXcVyrw9qLx1ua4MAnApMIKoVegjAPG0LK3HeOobWUoJfq1i4noFrPRq2O6bIfjCPS+1JOnm8/N1Bo8flI+EFYkgSX44x93bCGa/6eOdVCysguDrw0cl8OVSJLxyY07kgZf2h8qOE=
+	t=1723003043; cv=none; b=awUYKDfb/YBd0RidgWnnlcdX19+JFzW9b88TCASbH5TT5gjTuoPpa27wVEommnB1KUnVIRgDDp7SEPV8QpoCARFAOTDvTK30NGo0To/vBtMi7lUNmOYy5yHU25+kLhw6ypyvfyOtE6G2N5dPHpPVMST/mpIEyO6A6awHPpzGy04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723002497; c=relaxed/simple;
-	bh=qmy3ovyhsYEjjnM3VF2SvTiTc1OzpoV8aQjzohxQrj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SvDVVbzGWgppsWRCDDGcGm5S3oQGnBdpqDAboWyja/uH48R+77hNbMCRZjKnDMGH7iv+1VhwrhiRXSWdl6J0MR+NJucjTl2RAFju5tSZW4qkNjaWcds8pTG67TVZUtaxa1kkkGYnmutiGfx7PPkEX+q0KCJSTPJXKBw7+vxdEyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dImRH9zK; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NgREx1DsWcBDVSTQLM/yM/zhKOhKelHZuFklDwx+PBQ=; b=dImRH9zK7aK5cUsti9r8ItOylY
-	FhScaADiUSrHYUtDK/KHEcwwjkgAaCNJlFCLSWKd5WCliTTWYQCdMk26FXiWWoZUvP6qdENvdxedZ
-	5p7Zx4OxwfT2/jnhCOM4oUgfbnaCFA8nCjKnY5Mrd6qRdJ9nRvBRuYyfhN8GE/CKEPrWLCUV0Koon
-	nYwqMyFaOjX52ujhLLTbKQ2kzPPJxzVBsIoGdQ9eJwMmIMk880Fvo43rJeM/CoURfyWnJaA8GSNsm
-	BngtrrVsL3Y2/I8ff5LwsdhLecCGQ+91Q0nLWUwFP9eMdcroDqHzP0vkbifC05lhq7dnj1DeVv2la
-	+IhSm55Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbXek-00000006gXH-1gn4;
-	Wed, 07 Aug 2024 03:48:10 +0000
-Date: Wed, 7 Aug 2024 04:48:10 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: JaeJoon Jung <rgbi3307@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <levinsasha928@gmail.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	maple-tree@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash Tree
-Message-ID: <ZrLuelS7yx92SKk7@casper.infradead.org>
-References: <20240805100109.14367-1-rgbi3307@gmail.com>
- <2024080635-neglector-isotope-ea98@gregkh>
- <CAHOvCC4-298oO9qmBCyrCdD_NZYK5e+gh+SSLQWuMRFiJxYetA@mail.gmail.com>
- <2024080615-ointment-undertone-9a8e@gregkh>
- <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
+	s=arc-20240116; t=1723003043; c=relaxed/simple;
+	bh=HonGmK+AzQAB2kggFATza4eyYEQ8IslypHEtZ9AtvVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q9icRqrgMb6NtXEaFGgCqDAIhsyr/792hmBpjv0CHzRCBpBB3zWH017f+UItvY2IJlmV8ec2kJ0omjG+MlkaJzt8pyqkXHuWFabymLTxX1uPvywBfdU9Dx8l/U9SDGaYGLALqorY3ULWlIPveQC6thfMjTBOWNtFohhj7eNYCd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMGvBrCw; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7aa4bf4d1eso153562966b.0;
+        Tue, 06 Aug 2024 20:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723003040; x=1723607840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/iA7JRuIalfZ4ro9OHsli9F2Iw3AeOGyZ0oFc/7wxQU=;
+        b=FMGvBrCw8bm+XHL3Xos251H2Ym8mqGUO8MIUfGe/LGt9zT9RpPPRWJ5bxPLROsF52X
+         wW867eeEeKeChpD000nPLpf/RTUZOVYL3M+zTLInbjEf0Eb6dddCSPX4qg+tk0o7bFEs
+         G3fHa55R+VpwJ94oPdMw/MxXxIZQ39bB0AMWlNrZCy0Q0QlL1LBU+qClSErjsJJR+1d9
+         1Dkmp/R65dTX3wFNlfIxZrQ7lwQrShEREnXcwzVIzU3xiE49Gj3naYjlPYwH9vWeTj8F
+         YyOkRVPjip8alr8biXFBGFuM+gWsZTrFI63JfECrLDcTGElskqI80LrrbUz3FShA17kk
+         M8nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723003040; x=1723607840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/iA7JRuIalfZ4ro9OHsli9F2Iw3AeOGyZ0oFc/7wxQU=;
+        b=Sy6vRYJOs1+ukwG24KNE3sDBpLBX0SfDTKF5rRlDWazgUI5seor2Xk4PWY4+KbGdLX
+         iIdWhJZ8y1Z44/RfQyx7f6wQBq8XSBVsWlYr1Dzhru1UkjvfTZ79yjqM9s0ofvsX+nZw
+         JHPXTaSr50g7T4YiAmQe9vpKaUM4zQd2mtEGK1h3FQDCzuTZvblXrkd2hqYZ5rA0VxWv
+         fOA2wWObrZxst8h3gpgjQQNv9TLFfMRDRq2kR/kX0Qscytqj4yeNnd8ZUgVPubFOi1DK
+         D95p6ZQFQnIwJUkERkjL1yqyg4hO24RlUrXoatLWzvn6u4yM7lby9SPQgver6P4BF/wz
+         mNVA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1BFADDbY25ALDI6DcQWJ9QvAG/0TiYdGUmc4HqRinY20WRtkrobN+4OUGZerPAkziWZAANdgh4x13sJ+YK2WRx6MaV1LhpDrkL1Cwm4BW7n7NM1PvabrAlVCCTjU3PMvpO6ETeruJ3bNrYA==
+X-Gm-Message-State: AOJu0Yykv0bFIEnr1KY3x6Rcq35bD/rifOYWrLVk9cmUvpBdg/ikyYQU
+	3b7KHKQLesqBgEcEV49IRYpX79F8ai+kGHRd3gGrLtYTuoWt8lzPErA7nCp4r0dS58Jx5KLHmrP
+	qLEBr+t5TjUdaDUmNfYcWFl6xTB0=
+X-Google-Smtp-Source: AGHT+IHNkGE6nn2QzzK0+S8Jl+HE9EWgUq3bVzznRf2JdX4epa6R/3+ecepXG5DUH+1IiepTwn56KyfgRSayfe292/I=
+X-Received: by 2002:a17:907:7e8a:b0:a7d:a080:bb1 with SMTP id
+ a640c23a62f3a-a7dc517991emr1256020966b.43.1723003039691; Tue, 06 Aug 2024
+ 20:57:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHOvCC7OLfXSN-dExxSFrPACj3sd09TAgrjT1eC96idKirrVJw@mail.gmail.com>
+References: <20240806144628.874350-1-mjguzik@gmail.com> <20240806155319.GP5334@ZenIV>
+ <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com> <20240807033820.GS5334@ZenIV>
+In-Reply-To: <20240807033820.GS5334@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 7 Aug 2024 05:57:07 +0200
+Message-ID: <CAGudoHFJe0X-OD42cWrgTObq=G_AZnqCHWPPGawy0ur1b84HGw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07, 2024 at 09:21:12AM +0900, JaeJoon Jung wrote:
-> Performance comparison when the number of indexes(nr) is 1M stored:
-> The numeric unit is cycles as calculated by get_cycles().
-> 
-> Performance  store    find    erase
-> ---------------------------------------------
-> XArray            4          6        14
-> 
-> Maple Tree     7          8        23
-> 
-> Hash Tree      5          3        12
-> ---------------------------------------------
-> 
-> Please check again considering the above.
+On Wed, Aug 7, 2024 at 5:38=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> On Tue, Aug 06, 2024 at 06:09:43PM +0200, Mateusz Guzik wrote:
+>
+> > It is supposed to indicate that both nd->path.mnt and nd->path.dentry
+> > are no longer usable and must not even be looked at. Ideally code
+> > which *does* look at them despite the flag (=3D=3D there is a bug) trap=
+s.
+> >
+> > However, I did not find a handy macro or anything of the sort to
+> > "poison" these pointers. Instead I found tons of NULL checks all over,
+> > including in lookup clean up.
+>
+> Unless I'm misreading you, those existing NULLs have nothing to do with
+> poisoning of any sort.  Or any kind of defensive programming, while we ar=
+e
+> at it.  Those are about the cleanups on failed transition from lazy mode;
+> if we have already legitimized some of the references (i.e. bumped the
+> refcounts there) by the time we'd run into a stale one, we need to drop
+> the ones we'd grabbed on the way out.  And the easiest way to do that
+> is to leave that until terminate_walk(), when we'll be out of RCU mode.
+> The references that were *NOT* grabbed obviously should be left alone
+> rather than dropped.  Which is where those NULL assignments come from.
 
-I would suggest that you find something to apply your new data structure
-to.  My suggestion would be the dcache, as I did with rosebush.  That let
-us find out that rosebush was not good for that application, and so I
-abandoned work on it.
+Yes, this is my understanding of the code and part of my compliant. :)
+
+Things just work(tm) as is with NULLified pointers, but this is error-prone=
+.
+
+I was looking for an equivalent of the following feature from $elsewhere:
+/*
+ * Trap accesses going through a pointer. Moreover if kasan is available tr=
+ap
+ * reading the pointer itself.
+ *
+ * Sample usage: you have a struct with numerous fields and by API contract
+ * only some of them get populated, even if the implementation temporary wr=
+ites
+ * to them. You can use DEBUG_POISON_POINTER so that the consumer which sho=
+uld
+ * no be looking at the field gets caught.
+ *
+ * DEBUG_POISON_POINTER(obj->ptr);
+ * ....
+ * if (obj->ptr !=3D NULL) // traps with kasan, does not trap otherwise
+ * ....
+ * if (obj->ptr->field) // traps with and without kasan
+ */
+extern caddr_t poisoned_buf;
+#define DEBUG_POISON_POINTER_VALUE poisoned_buf
+
+#define DEBUG_POISON_POINTER(x) ({                              \
+        x =3D (void *)(DEBUG_POISON_POINTER_VALUE);               \
+        kasan_mark(&x, 0, sizeof(x), KASAN_GENERIC_REDZONE);    \
+})
+
+As a hypothetical suppose there is code executing some time after
+vfs_open which looks at nd->path.dentry and by finding the pointer is
+NULL it concludes the lookup did not work out.
+
+If such code exists *and* the pointer is poisoned in the above sense
+(notably merely branching on it with kasan already traps), then the
+consumer will be caught immediately during coverage testing by
+syzkaller.
+If such code exists but the pointer is only nullified, one is only
+going to find out the hard way when some functionality weirdly breaks.
+
+Anyhow, this is really beyond the scope of the patch and I should not
+have done the half-assed thing abandoned mid-effort. I'm going to get
+back to this later(tm).
+
+See the v2 which just gets to the point concerning eliding the extra ref tr=
+ip.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
