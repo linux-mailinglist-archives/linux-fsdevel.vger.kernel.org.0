@@ -1,103 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-25336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D8394AFB6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 20:30:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B45EC94AFBF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 20:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9E11F22A51
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 18:30:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7BF81C21AEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 18:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EBB1428E6;
-	Wed,  7 Aug 2024 18:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527971442FE;
+	Wed,  7 Aug 2024 18:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QEv2/WA0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kDgWZ+MC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W+zS8Szm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ho95xB0D"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y6suBkP9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FqWmWCTr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WyZQmRVj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qL9AIGV3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2020313E02E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4BD13FD86
 	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Aug 2024 18:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723055409; cv=none; b=CI6VXvTYmYH5XdSrFXHA+82IuC0G1vNcmLjlQhqFYXI9H57ni2rLSwuDO1pjju1Ip1lTxuEeVSR6zQBic80ypD9NJqhsSP90RKRwtgDKmvd40B/v38MVZc0TDYd1hRgq3yH6Y0kWfPxO9gP2Vv1qUhbdtlDZiTAz/UhrvPx0Cj8=
+	t=1723055410; cv=none; b=FyRu9P6r9zhJlQdprpdNrOoaGCazbi/1VWMdnBxakrfIdo97Czi3oXl/xdkO3IbnyhRgpoRy+L7ZS+6mqHvosvGnzg/cPCCCGVbSMGUSxtu2E5KGhvynTsv5msJ8QTM8AJiA3ofS2AIGQlWlpAR5oyJB0dFy9JQpKX3Rzwxcot0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723055409; c=relaxed/simple;
-	bh=NLbcVKvoZUnAjBOjxoi6Qb73AMZJY/JT/HFFKPHAeoI=;
+	s=arc-20240116; t=1723055410; c=relaxed/simple;
+	bh=vnTivuYbvkOsdMt+eymjyBgi3CWQtuVU4gGetco1x1s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r0OpYEqSq8E3w7vwiYyYjUjYDkyTB9jindY46bTdG5N8sz2prDxCdNDtZD90lj+9eWfrS2+pfvbw4m4VbrjEson+0DbWNFoSIlC6fzHVI4sGmbWpXsS9HGLZ+9UtGzOzTwthx7JBSXOVYGWoKEXbz2xVcyRRE7KnewwonLa1e5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QEv2/WA0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kDgWZ+MC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W+zS8Szm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ho95xB0D; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=o9J9K141haB7aLUucYkZSMAAMIfmUVNDVI1v1JrdWbw7kShRf2/U64uPrGxsidcfGXm/p1a35VGpmP1Kx57aRW+9o1mo+JX49+glzczW5u4UGyFCkpxKx6MsXqOaoX0cG+CxNj4cwQwAuMQMuYZHbitKBivB86KKLioMEDOQveI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y6suBkP9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FqWmWCTr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WyZQmRVj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qL9AIGV3; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 12F4A21C09;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 189071FB9A;
 	Wed,  7 Aug 2024 18:30:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1723055405; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=q2m+YEtDH4Y6yWo4pxzfKf/t1yicZeM+HgMLdn3QS2Q=;
-	b=QEv2/WA0oWddAdux7iScEWG1hrtUtWRjwmyDyXceQi2scxi97irsxCYmhhUMHZbNq9EcnM
-	93h6ifC9J2SSKs8zt5SXSLKhoEZmR+2TwA1ZmZlBTRbATh/uQvCCaRmq1B7gAEiOEYvGqI
-	i6RtFm+4sQk30PZWTUY7VC21Lodpr8E=
+	bh=f29OTYnCgSYfzrpoPjh3jY3P4l0tMkF/OXMZ05VfvBI=;
+	b=y6suBkP9SpAV54+5HTNEITlZOLe7Xuz1WqMta16zS5P57arSvTi9AOrFSUFyohAw51Tz13
+	lz2w2BbifSvbE9YVoH9aEbE/5TYBPcLPKCHI49KBeqlG3aZjcZGz/ZAOjl1JXhDdJUJ9z7
+	St35+qLReSOD85JnMHPWr7EdFruJ7mQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1723055405;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=q2m+YEtDH4Y6yWo4pxzfKf/t1yicZeM+HgMLdn3QS2Q=;
-	b=kDgWZ+MCDB2DqiI5dv3XqL8XQUQ0eExeqMG6XLSTWN9XDO8uc87ZRIlrumBbwcucGIvG2O
-	mQR1HwnAH7/J6JDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
+	bh=f29OTYnCgSYfzrpoPjh3jY3P4l0tMkF/OXMZ05VfvBI=;
+	b=FqWmWCTr6TehxkCnfptVKtwx2SlheBF7FQYsqicgp8oNS4MEKC3eo//C3c/+QrTI3qG9+d
+	3/HORceXxGUKH2DQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=WyZQmRVj;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qL9AIGV3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1723055404; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=q2m+YEtDH4Y6yWo4pxzfKf/t1yicZeM+HgMLdn3QS2Q=;
-	b=W+zS8Szm4RtgKo2+hS5GtIhJDVK9fkOcdZ1VSxGmTvdjzGxGKZ1SxOCDGOmPmEVSWXUr5I
-	sP3n3XCDSmvxZTh9WOFs4xm1G6WJ/mZ1K7BmfonXzgD60y/WfYBwb7T/2aLhjyq0r04U6g
-	/56w6nJ0cYgppsUcpqvQVP09oG1n+A0=
+	bh=f29OTYnCgSYfzrpoPjh3jY3P4l0tMkF/OXMZ05VfvBI=;
+	b=WyZQmRVjqIKZlaBVoZAH9l9oPsRP2rI3z57JY+ztKFUHVuOI/gyGaHsA++d6eQiVg0o9Wz
+	9BwzrmJq+47zNBXTZLoptVEncM5DPSK26q5R7Yr+4wYQasCl0tGyJ6xK3HW2Pwem+4MlM2
+	ruSh9knSZQ8zSY6LPpWQfQMpEze227c=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1723055404;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=q2m+YEtDH4Y6yWo4pxzfKf/t1yicZeM+HgMLdn3QS2Q=;
-	b=Ho95xB0DXem6cAaiF66ImQXhGoEnPBtC23ByJHiGeh/3Pkq+1NJUrVneE21yC2hZ1kTRf7
-	frw8axAuY4DRNeAg==
+	bh=f29OTYnCgSYfzrpoPjh3jY3P4l0tMkF/OXMZ05VfvBI=;
+	b=qL9AIGV38xi6MtEfpX0IEt32bGZlGVVltJe8GlbMgT+mokRy20egP6vPTgqFnoQbgo3JxX
+	1SQAUFYLHl1YY9DA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0173A13B03;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0919213B05;
 	Wed,  7 Aug 2024 18:30:04 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id G6AFACy9s2ZjNAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 18:30:03 +0000
+	id 4pk3Aiy9s2ZoNAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 18:30:04 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 978B3A083F; Wed,  7 Aug 2024 20:30:03 +0200 (CEST)
+	id 9E116A0851; Wed,  7 Aug 2024 20:30:03 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
 Cc: Dave Chinner <david@fromorbit.com>,
 	Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>
-Subject: [PATCH 01/13] fs: Define bit numbers for SB_I_ flags
-Date: Wed,  7 Aug 2024 20:29:46 +0200
-Message-Id: <20240807183003.23562-1-jack@suse.cz>
+Subject: [PATCH 02/13] fs: Convert fs_context use of SB_I_ flags to new constants
+Date: Wed,  7 Aug 2024 20:29:47 +0200
+Message-Id: <20240807183003.23562-2-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20240807180706.30713-1-jack@suse.cz>
 References: <20240807180706.30713-1-jack@suse.cz>
@@ -107,101 +108,91 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2618; i=jack@suse.cz; h=from:subject; bh=NLbcVKvoZUnAjBOjxoi6Qb73AMZJY/JT/HFFKPHAeoI=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBms70afo9cS29RY9ZnlVQR44SRDWP8Jh6kMj3mSZ7l w8hGs+eJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZrO9GgAKCRCcnaoHP2RA2RtMCA CG/Qz7t7j1RDHC978+XmKcLXuCSSGbMBTe9bETd5veCuWb3KomqgHIH8i9t6gLZ1wQNUnJgJwT+Ou/ fr6WF+mWvi6dgwOcrTq9k+iDIlV3okTd6vVO1kTNL+XY28+aSzHxYOwIWXuaqdAUul3huzj4Op2qaG Oi5RtNMDckz7OMClw7F5gIpESTAOsK2mmPRpfR+Ht+iwbB0xRjSl9Zhv7TBWlACvjXrBAnWPBA21KI Y37hgyRFuTeUm/49XEly6sFl1Kxxln3jNg7qdTQTz6rIy+MbvQtYIiZ7D1mCGWceEPQkf9vORIE2Da QCTV82wXeAKeRPP+nqUQuyEkPuw/Y6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1526; i=jack@suse.cz; h=from:subject; bh=vnTivuYbvkOsdMt+eymjyBgi3CWQtuVU4gGetco1x1s=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBms70b+DxOvVMTSkPz+/cJWzQihyLlOohnwIG3SORq o7sQ56aJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZrO9GwAKCRCcnaoHP2RA2QQ0B/ wNMYKTyXVaZ/taNdcDr97HtuOF43wbrVlg7Noeo9CBnDkNZA8WgN5cEYV8hI6ArLnX9F41Ce3s0ZVt EJofLJGAimVQkosXLDkmPqjeyQPbbD69cgUTqPUZ5m3AN/RSj+zFGivT3kRlU0y/WEiq3TYGkdx5gN 3kixK2zYgQ/KsIj6VssmR4j4RIm9f+DIFBxPtyqzJWwpqPCOASXop42gU/OUodBgVokqmifKYP8dep 5mSxDnYOmhRqbm6a0LhIffUZOJ0HGHlACooUqm+nX+tFrwTbkvpzr+tjY9wbcpmN8nfD8ZsLmVIabb pLF6wEcH94KIgQWuosOOhPIwPOgb4T
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.01 / 50.00];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 189071FB9A
 X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -0.01
 
-sb->s_iflags has unclear locking rules. Some users modify it under
-sb_lock, some under sb->s_umount rwsem, some without any lock.  Readers
-are generally not holding any locks either. The flags are rarely
-modified so this does not lead to any practical problems but it is a
-mess. To reconcile the situation, handle sb->i_flags without any locks
-by using atomic bit operations. Since the flags are rarely modified,
-this does not introduce any noticeable performance overhead and resolves
-all possible issues when different users of sb->s_iflags could possibly
-stomp on each other's toes. Define new constants using bit numbers and
-functions to tests, set and clear the flags.
+Convert uses of SB_I_ constants in fc->s_iflags to the new bit
+constants. No functional changes.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- include/linux/fs.h | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ block/bdev.c        | 2 +-
+ fs/aio.c            | 2 +-
+ fs/nfs/fs_context.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fd34b5755c0b..ff45a97b39cb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1190,6 +1190,25 @@ extern int send_sigurg(struct fown_struct *fown);
- #define SB_I_RETIRED	0x00000800	/* superblock shouldn't be reused */
- #define SB_I_NOUMASK	0x00001000	/* VFS does not apply umask */
- 
-+enum {
-+	_SB_I_CGROUPWB,		/* cgroup-aware writeback enabled */
-+	_SB_I_NOEXEC,		/* Ignore executables on this fs */
-+	_SB_I_NODEV,		/* Ignore devices on this fs */
-+	_SB_I_STABLE_WRITES,	/* don't modify blks until WB is done */
-+
-+	/* sb->s_iflags to limit user namespace mounts */
-+	_SB_I_USERNS_VISIBLE,	/* fstype already mounted */
-+	_SB_I_IMA_UNVERIFIABLE_SIGNATURE,
-+	_SB_I_UNTRUSTED_MOUNTER,
-+	_SB_I_EVM_HMAC_UNSUPPORTED,
-+
-+	_SB_I_SKIP_SYNC,	/* Skip superblock at global sync */
-+	_SB_I_PERSB_BDI,	/* has a per-sb bdi */
-+	_SB_I_TS_EXPIRY_WARNED,	/* warned about timestamp range expiry */
-+	_SB_I_RETIRED,		/* superblock shouldn't be reused */
-+	_SB_I_NOUMASK,		/* VFS does not apply umask */
-+};
-+
- /* Possible states of 'frozen' field */
- enum {
- 	SB_UNFROZEN = 0,		/* FS is unfrozen */
-@@ -1351,6 +1370,21 @@ struct super_block {
- 	struct list_head	s_inodes_wb;	/* writeback inodes */
- } __randomize_layout;
- 
-+static inline bool sb_test_iflag(const struct super_block *sb, int flag)
-+{
-+	return test_bit(flag, &sb->s_iflags);
-+}
-+
-+static inline void sb_set_iflag(struct super_block *sb, int flag)
-+{
-+	set_bit(flag, &sb->s_iflags);
-+}
-+
-+static inline void sb_clear_iflag(struct super_block *sb, int flag)
-+{
-+	clear_bit(flag, &sb->s_iflags);
-+}
-+
- static inline struct user_namespace *i_user_ns(const struct inode *inode)
+diff --git a/block/bdev.c b/block/bdev.c
+index c5507b6f63b8..c1ea2aeb93dd 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -373,7 +373,7 @@ static int bd_init_fs_context(struct fs_context *fc)
+ 	struct pseudo_fs_context *ctx = init_pseudo(fc, BDEVFS_MAGIC);
+ 	if (!ctx)
+ 		return -ENOMEM;
+-	fc->s_iflags |= SB_I_CGROUPWB;
++	fc->s_iflags |= 1 << _SB_I_CGROUPWB;
+ 	ctx->ops = &bdev_sops;
+ 	return 0;
+ }
+diff --git a/fs/aio.c b/fs/aio.c
+index 6066f64967b3..63ce0736c3a3 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -279,7 +279,7 @@ static int aio_init_fs_context(struct fs_context *fc)
  {
- 	return inode->i_sb->s_user_ns;
+ 	if (!init_pseudo(fc, AIO_RING_MAGIC))
+ 		return -ENOMEM;
+-	fc->s_iflags |= SB_I_NOEXEC;
++	fc->s_iflags |= 1 << _SB_I_NOEXEC;
+ 	return 0;
+ }
+ 
+diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+index 6c9f3f6645dd..2fbae7e2b6ce 100644
+--- a/fs/nfs/fs_context.c
++++ b/fs/nfs/fs_context.c
+@@ -1643,7 +1643,7 @@ static int nfs_init_fs_context(struct fs_context *fc)
+ 		ctx->xprtsec.cert_serial	= TLS_NO_CERT;
+ 		ctx->xprtsec.privkey_serial	= TLS_NO_PRIVKEY;
+ 
+-		fc->s_iflags		|= SB_I_STABLE_WRITES;
++		fc->s_iflags		|= 1 << _SB_I_STABLE_WRITES;
+ 	}
+ 	fc->fs_private = ctx;
+ 	fc->ops = &nfs_fs_context_ops;
 -- 
 2.35.3
 
