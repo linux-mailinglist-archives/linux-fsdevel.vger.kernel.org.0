@@ -1,189 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-25215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609ED949DFC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 05:02:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A03949E50
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 05:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAAD01F21D2F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 03:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA701C21483
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 03:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0427C335B5;
-	Wed,  7 Aug 2024 03:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E14C191F60;
+	Wed,  7 Aug 2024 03:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKAf0wNu"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="F6CYRYPn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59591C27
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Aug 2024 03:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD39433BB;
+	Wed,  7 Aug 2024 03:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722999735; cv=none; b=ZTTQEAzf5rxWvUO/vTRxbCGutmY21a+yMPcc4xsqET9ZU/BOA+u7HOvyr+6i9+OERN+ALpXU5uBdHEnQMJxC6fxmaM26zuQEsUp4UHqM/wwYudfb02AX2lAkhr4kAxL3uvlFgeUhVuMglLbayVy+i3SpuR3e2Lte4vbhzQ+aeac=
+	t=1723001906; cv=none; b=rfnMU4bf8GGbx2aR/k2UorgqfmY9EUY4G7/bfGhR0olT0uD7DSee3Bzn8ngbqDX35KdVgt2l3VMUzihW34A/6i8y59FrWRktKKA5SNtnT6CKSux5h5nI1xY7HJVLJV6YUIDrIIj/PIr9nskz6WtE6ZR/aNFA7cZiWhKndalA/Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722999735; c=relaxed/simple;
-	bh=tku6txlydy/2BQzQCvlZw52N87jU/BEOVNGofJz3r88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e15VzB1H9jMHrpI/ekwsf60fQjL66tOIDkrnLWu76kOI5+nFE6s7MO2DNDlVNGTJOVL97AJPs6f1wi+13wPWmoowFAhV9jGZKGwsyaHu+1we009YO5CsKyTxuAtLqjg4U6qNcd4JT8vOaVYqERxAI9LT7XLFr0/OVDJKx52in4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKAf0wNu; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5d829d41a89so781666eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Aug 2024 20:02:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722999733; x=1723604533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L5qZv39EG8kYLMcw6SSx1reFN0g5X2uPZqtqamN1rmo=;
-        b=hKAf0wNuaQgAmQ54an6uS6FGjAO1f0wAxQwjVt2XR981i9ej4bNIfFP30tgxwjIPjy
-         eGSp1XT0jgu5QD5PxTmCexId7vanRMkAL+Ke08j8+iwaDs3vlFkfOH3qMr5jgKSJFQU+
-         2AhlkAq+LnIK2nH9ml3m8uKGw5YwpjOB6PSxtpydJFelJqFhduLQoXOOSYipXG7Rkvbd
-         BKehJMnqe/aRpEdqC1dRRIlxdtikIS3IBJ1Coeakwv+Uqm4q2k0MlUadTmHdah2Y84FW
-         /QKBVHTqVQsLjH2HqTYYyhFUquOEgDuOPzAw+9iT+acVPok0llCo6j1sD3fsqDMg938E
-         GNdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722999733; x=1723604533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L5qZv39EG8kYLMcw6SSx1reFN0g5X2uPZqtqamN1rmo=;
-        b=fxFjERsK4BXzOwdlfANK2bmWw3tRJBgAITgcLwdp5/WMJm9E+ZCbrDFdEb+xX9Rz1f
-         uEp1MydA6oRMBsBGOklzLgAMA5pb8FX8J+9nzRL9WsKDHgRGPb43mIhPEUrASLECAoZl
-         VZRh+mkORcJ9a0tHuxKuyc6zdl6tB8ojlhZ2GPXRQ3rVYrS3Sk+A+krpwJuEw3aj9geb
-         RO1vsuNQ/ywkYWnwffmLDorQcsjKyK0DebO3r/VUXD3dTskaknAqfLTPGix8YA8padwW
-         BCeUJYECKFiV2LbRiaZwpWzI7khAAigH3JGllUaqbeqB+VS34wHWa3bkPqdViXAhjHs5
-         QGEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuIn/0mkpbnRP8G4Zhj5P2xoQBFuOB8A0co2rQH4cU7yjkK8f4647gOdoFFhnjWHIw3TzPBthg9ltWzzIbvcXrkBWWTpBdsIi7Xq+tEg==
-X-Gm-Message-State: AOJu0YyuTAHwNt+2nVhrSGiDaPyxlJVNlEZXQ5b7WsB7cY1dykf331jT
-	WeNhZ2mIfxN8KuHe253MuvaG1iHAiXMT37BWi3OUF7oWyAb/RwS4hjqgkCqODOS4l/FJiwnMk8U
-	xiYbp59QF7tLnmQ8pkBK+FXS2TmI=
-X-Google-Smtp-Source: AGHT+IG8E2q7JXkVADOTX1/ajjqfUcmCnT7bMRWDl6uRUlp2WJC87nEFjTQ4SL6OMgQWYGP3ugB05wfnsSK0pBqDZ34=
-X-Received: by 2002:a05:6358:3421:b0:1ad:282:ab1f with SMTP id
- e5c5f4694b2df-1af3baab1bbmr1858077155d.7.1722999732895; Tue, 06 Aug 2024
- 20:02:12 -0700 (PDT)
+	s=arc-20240116; t=1723001906; c=relaxed/simple;
+	bh=n7K26IFYadrogACCn1wjHepgBJNfjFO93kUwnpijaTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHSii5aseTPWWfpilGaXXXDAcXTRnO+EUf1cnZbWMBxYM3rmaAZU1vf0vDpfQog5WA8J3rgiOyawk8kGxK7cmIvK5EURTSbYTqRLmKDhI3I6xk1I43IcHGoN9qPYzN+FHFgCCgDQ6X4tkDUYVgFrOBGkpPrxU1RjQVqLCjvg1ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=F6CYRYPn; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=x04CPEwFzXiLJZI5LYcEdT0KXHdqtDShGTVN9ZcE9Ew=; b=F6CYRYPnVTBkB7IsWQNLrCjBH0
+	TBq8OsrCyHdY81fK0m73g0NULxzP1v09mNU6IJnWHEJdUTx45k1EjxcJ2inxe+9XYg8K0UMhyL+oW
+	bzT7Bn8/Xrlp1CK1Z4IvynoV4XevbOxr5x6eC6kC4Tin046WLZDt6tCV34PpOOfeyZFW/1vUuuIlp
+	ZMGf8qVQ2R0EN9Sd3UPw3jPf4KZTl+kICWXmFIsqNHD2gHckj+BKciCPCBt9P/EJmMZ49FzIehQAr
+	wR6E+EUioG5lDVc21KFvld3MXh2uKT2b6vgc0rFsgpj3PLFeGScKZlGyNBkqT1gpaz+7f53BhKUca
+	r8aqxTDQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sbXVE-00000002DJM-3XvO;
+	Wed, 07 Aug 2024 03:38:20 +0000
+Date: Wed, 7 Aug 2024 04:38:20 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+Message-ID: <20240807033820.GS5334@ZenIV>
+References: <20240806144628.874350-1-mjguzik@gmail.com>
+ <20240806155319.GP5334@ZenIV>
+ <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804080251.21239-1-laoar.shao@gmail.com> <20240805134034.mf3ljesorgupe6e7@quack3>
- <CALOAHbCor0VoCNLACydSytV7sB8NK-TU2tkfJAej+sAvVsVDwA@mail.gmail.com>
- <20240806132432.jtdlv5trklgxwez4@quack3> <CALOAHbASNdPPRXVAxcjVWW7ucLG_DOM+6dpoonqAPpgBS00b7w@mail.gmail.com>
- <ZrKbGuKFsZsqnrfg@dread.disaster.area>
-In-Reply-To: <ZrKbGuKFsZsqnrfg@dread.disaster.area>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 7 Aug 2024 11:01:36 +0800
-Message-ID: <CALOAHbDqqvtvMMN3ebPwie-qtEakRvjuiVe9Px8YXWnqv+Mxqg@mail.gmail.com>
-Subject: Re: [PATCH] fs: Add a new flag RWF_IOWAIT for preadv2(2)
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHFgtM8Px4mRNM_fsmi3=vAyCMPC3FBCzk5uE7ma7fdbdQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Aug 7, 2024 at 5:52=E2=80=AFAM Dave Chinner <david@fromorbit.com> w=
-rote:
->
-> On Tue, Aug 06, 2024 at 10:05:50PM +0800, Yafang Shao wrote:
-> > On Tue, Aug 6, 2024 at 9:24=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > > On Tue 06-08-24 19:54:58, Yafang Shao wrote:
-> > > > Its guarantee is clear:
-> > > >
-> > > >   : I/O is intended to be atomic to ordinary files and pipes and FI=
-FOs.
-> > > >   : Atomic means that all the bytes from a single operation that st=
-arted
-> > > >   : out together end up together, without interleaving from other I=
-/O
-> > > >   : operations.
-> > >
-> > > Oh, I understand why XFS does locking this way and I'm well aware thi=
-s is
-> > > a requirement in POSIX. However, as you have experienced, it has a
-> > > significant performance cost for certain workloads (at least with sim=
-ple
-> > > locking protocol we have now) and history shows users rather want the=
- extra
-> > > performance at the cost of being a bit more careful in userspace. So =
-I
-> > > don't see any filesystem switching to XFS behavior until we have a
-> > > performant range locking primitive.
-> > >
-> > > > What this flag does is avoid waiting for this type of lock if it
-> > > > exists. Maybe we should consider a more descriptive name like
-> > > > RWF_NOATOMICWAIT, RWF_NOFSLOCK, or RWF_NOPOSIXWAIT? Naming is alway=
-s
-> > > > challenging.
-> > >
-> > > Aha, OK. So you want the flag to mean "I don't care about POSIX read-=
-write
-> > > exclusion". I'm still not convinced the flag is a great idea but
-> > > RWF_NOWRITEEXCLUSION could perhaps better describe the intent of the =
-flag.
-> >
-> > That's better. Should we proceed with implementing this new flag? It
-> > provides users with an option to avoid this type of issue.
->
-> No. If we are going to add a flag like that, the fix to XFS isn't to
-> use IOCB_NOWAIT on reads, it's to use shared locking for buffered
-> writes just like we do for direct IO.
->
-> IOWs, this flag would be needed on -writes-, not reads, and at that
-> point we may as well just change XFS to do shared buffered writes
-> for -everyone- so it is consistent with all other Linux filesystems.
->
-> Indeed, last time Amir brought this up, I suggested that shared
-> buffered write locking in XFS was the simplest way forward. Given
-> that we use large folios now, small IOs get mapped to a single folio
-> and so will still have the same write vs overlapping write exclusion
-> behaviour most all the time.
->
-> However, since then we've moved to using shared IO locking for
-> cloning files. A clone does not modify data, so read IO is allowed
-> during the clone. If we move writes to use shared locking, this
-> breaks file cloning. We would have to move cloning back to to using
-> exclusive locking, and that's going to cause performance and IO
-> latency regressions for applications using clones with concurrent IO
-> (e.g. VM image snapshots in cloud infrastruction).
->
-> Hence the only viable solution to all these different competing "we
-> need exclusive access to a range of the file whilst allowing other
-> concurrent IO" issues is to move to range locking for IO
-> exclusion....
+On Tue, Aug 06, 2024 at 06:09:43PM +0200, Mateusz Guzik wrote:
 
-The initial post you mentioned about range locking dates back to 2019,
-five years ago. Now, five years have passed, and nothing has happened.
+> It is supposed to indicate that both nd->path.mnt and nd->path.dentry
+> are no longer usable and must not even be looked at. Ideally code
+> which *does* look at them despite the flag (== there is a bug) traps.
+> 
+> However, I did not find a handy macro or anything of the sort to
+> "poison" these pointers. Instead I found tons of NULL checks all over,
+> including in lookup clean up.
 
-In 2029, five years later, someone else might encounter this issue
-again, and the response will be the same: "let's try range locking."
-
-And then another five years will pass...
-
-So, "range locking =3D=3D Do nothing." I'm not saying it's your
-responsibility to implement range locking, but it seems no one else is
-capable of implementing this complex feature except you.
-
-RWF_NOWAIT was initially introduced for AIO in commit b745fafaf70c
-("fs: Introduce RWF_NOWAIT and FMODE_AIO_NOWAIT") with a clear
-definition that it shouldn't "block while allocating requests while
-performing direct I/O."
-It was then extended to buffered IO in commit 91f9943e1c7b ("fs:
-support RWF_NOWAIT for buffered reads"), where the IOCB_NOIO was not
-set, meaning it would perform read IO if there was no page cache.
-Readahead support was added for this flag in commit 2e85abf053b9 ("mm:
-allow read-ahead with IOCB_NOWAIT set"). However, this behavior
-changed in commit efa8480a8316 ("fs: RWF_NOWAIT should imply
-IOCB_NOIO"), without a clear use case, simply stating that "RWF_NOWAIT
-semantics of only doing cached reads." If it breaks the "RWF_NOWAIT
-semantics," why not introduce a new flag for this new semantics where
-non-cached reads are allowed?
-
---=20
-Regards
-Yafang
+Unless I'm misreading you, those existing NULLs have nothing to do with
+poisoning of any sort.  Or any kind of defensive programming, while we are
+at it.  Those are about the cleanups on failed transition from lazy mode;
+if we have already legitimized some of the references (i.e. bumped the
+refcounts there) by the time we'd run into a stale one, we need to drop
+the ones we'd grabbed on the way out.  And the easiest way to do that
+is to leave that until terminate_walk(), when we'll be out of RCU mode.
+The references that were *NOT* grabbed obviously should be left alone
+rather than dropped.  Which is where those NULL assignments come from.
 
