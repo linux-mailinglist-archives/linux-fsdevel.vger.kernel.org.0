@@ -1,94 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-25327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5319794AC96
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 17:18:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4033694AD86
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 18:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834481C208CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 15:18:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17360B213FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 15:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525DD12BF02;
-	Wed,  7 Aug 2024 15:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0225412E1EE;
+	Wed,  7 Aug 2024 15:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3TUaQoM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcL40yfM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63327D3E4;
-	Wed,  7 Aug 2024 15:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3925823DE;
+	Wed,  7 Aug 2024 15:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723043853; cv=none; b=lIHNxX7J0ajs9zy140V39SskDxsaMNMQcl/VS9IyM1AgVI/K86dmc4CA8gCQdpYR95YzFXZ3W3XYSR0LOWQ9ON/rDob56fuJ6u30vghgIMN0W2zKmXN2xHhUcmGWXBtBHL5jmaPfE0ZdxJGb7WlTGVzMbuPd05MEA7vLK58P8DE=
+	t=1723044653; cv=none; b=kOo9bjICl2bGAcX/jwqSCpQylxr2pts4A8ryUUFSGM6AcevkTmfVKfHUgVsleeoQQ2OwBGZWglR32qywFpXiNlSmsV0jy6yh35866GokeD2+gjlkxGLGCZdVvNIaizJMttpKp1VHHNeBQ0hoaAKF9UAYQtJr9DAhTGHKpOTAhI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723043853; c=relaxed/simple;
-	bh=/z8rWo6lRF06Eu8KwlaXy7cG2JX+ag7Ljm0iD7hk2Jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8EPqwLYhYQZNq40l4a5Ii23IQLiLW8aamtBLT4ip2iY0UgAZMNLeb2it6t/jeHJGJZaMCQy09wLPdqIksekDoKe9+PVxxuOY/uF+rWWD3V6Kq+2OadpSQ27wGrhIBuJ2tyaRt4SKWCA34nxirD9R93f4XkN1VWJqFwJG4ax31Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3TUaQoM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 352F0C32781;
-	Wed,  7 Aug 2024 15:17:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723043853;
-	bh=/z8rWo6lRF06Eu8KwlaXy7cG2JX+ag7Ljm0iD7hk2Jw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S3TUaQoM+BqXR8OMaKRzxC1os28ge4J4DQaJmqLJU9/0SLQ6QKgOZGNWzB33gd3ri
-	 4NzaCxAHpgIsZBivFU5r/iJP4X8D7RODOBLyoUXkFpyPa0xrLTwFXBRLQoQXK4u4rA
-	 PcquQ7GQiTv76IGmo66GcNNSZhi9lPCwaIQWl3OiiJxSlluVR3PEgworhHQrKcRJhP
-	 HycPMgryMRL5e35gA8UrlMoT9EH53+u48FJ508djBMRM/2dmkRiS9QOoo9cC9nKzLV
-	 7Sn5yMpIy49IwT0NVvdmBNzu+LnoYMz80ABivfgW8UtcbIw64Jy6PufzTZrL3CBnCi
-	 io2jvWhc49kng==
-Date: Wed, 7 Aug 2024 08:17:32 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH v3 14/14] xfs: Enable file data forcealign feature
-Message-ID: <20240807151732.GH6051@frogsfrogsfrogs>
-References: <20240801163057.3981192-1-john.g.garry@oracle.com>
- <20240801163057.3981192-15-john.g.garry@oracle.com>
- <20240806194321.GO623936@frogsfrogsfrogs>
- <19fb82cd-77e6-43af-a0a2-c08700b04066@oracle.com>
+	s=arc-20240116; t=1723044653; c=relaxed/simple;
+	bh=2XnifOrAEcvghCv0yWkE2XeW6zSqyK/G/NxfvmV+WMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HMzj8SaWMAJdhJu8+irYp059Rv939vWEF11oNh7xTTlXSeJ9l2fkC9qTPfCPSqwRYDxZXyql8tdT3zz17B7IeR5QhgpYQfmVRkoRB3mwiy875tnQCKiiwfhlETQydrMtpDnmkjY6frgqhR3+T1vlHphAY49GAGzWQLnHkYxKvu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcL40yfM; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so260599366b.1;
+        Wed, 07 Aug 2024 08:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723044650; x=1723649450; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0oyDFdnWOipjuzTZLeqx4CkLA/xSH6hcPg60gVyTjEU=;
+        b=RcL40yfMEPctF9ipKMMohxB7MIt0yR9z9kbWh9sH/xoUlk/oaQugfGHQHh/099X720
+         ofzVRyfje8rlWGMCFlU1X9DquHyNnv6c1c/8hMNgTqv1gNHxmYXhU4PP0tCPs8ouDKwp
+         7Hq9GxK4dSlBcdVVCjWW1PTot3Q5jbvyEzZn6PNGbsBpD6/6ZXX6+YQWWbgA5Wren4A6
+         Gmd87Qna/ZG6qaxhhJeJdJeugTIj/QSbne0JCbajq70DmgZlQaVFAQcYPPkivVj4PMOY
+         KoBKgamoJSD7jHTS1yCxgLgU8fdYE2+3vZoy+MYLGZR4rd+P5cZrgDhW5biCEQXxgWXl
+         iRIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723044650; x=1723649450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0oyDFdnWOipjuzTZLeqx4CkLA/xSH6hcPg60gVyTjEU=;
+        b=orknJc1llqymqPvomeVF8+viDo7ruwiHBlUmgQP5wyMtg0PITWqjFU9EM+WLvKnl1o
+         TOHm5Fj5huvojNiLWbgTVxuQK/5b8Dnsz7Xuc4YG1j3S9y9stS9FtzhlOSPLY8haCB/i
+         4ny+MKAKhR/yD40yxJSf/YZf6iCuWEkxr0K+MY81uMkKoUZfoHb8SlScTLxDZOUksfMD
+         kXv2IadZ7alc8W9kC2GXwIwp/k8u8SdcbaFppyOHmuXpx7KSydpc1KT9SOCnRmH5ms5D
+         MFzQw6/v+0W+fUUcL9bvmFG+yXBNnVh1q21sTjSnXVislkBz8n5F3uT1vMdin6Y+/c8j
+         DD7A==
+X-Forwarded-Encrypted: i=1; AJvYcCW+G84y613iIt5JUKxXep1zOn4ljLsTrZ0MQktFLU/YeaeQ0/5JyDOdtaB/IF05rdAmoBHOmhqchysDWjxSdb0T6/sVbiz6EJ6zymFJwbi9uDDukwO4GCk0rpHrSd2QGF1y9omjyR5L+XvmmdypkViauC11sv/z+vXMUS9+o9RkcEwggCLmpTBE4zmsAjx9SOdoxBfGFQgy9ds+J8kH/WPsFv+pfoSsNiY=
+X-Gm-Message-State: AOJu0YwJSJy5bVG4i6AyTL6Hq72UxaLUlObKFWc77UU2Z5/pyjuS68vI
+	k5K9IQ85AcwAMi7HBTh+ztZoyirr7KWSkJ3oBRi5wNo7L9PpVEIbiX80vViHDnLc858aWH57VKb
+	JnL/OQki6yL4lRUp7e9U2kRSWwTU=
+X-Google-Smtp-Source: AGHT+IHPnhrxKaIpMWXKHqgXceVSV50kDl3BgP7lMNWmdSEa++OzozUr5LaDBKhp5CX9UYbJBNGqE+rUFxssFg96rns=
+X-Received: by 2002:a17:907:1c2a:b0:a7a:a138:dbd2 with SMTP id
+ a640c23a62f3a-a7dc509f3bcmr1243934466b.50.1723044649601; Wed, 07 Aug 2024
+ 08:30:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19fb82cd-77e6-43af-a0a2-c08700b04066@oracle.com>
+References: <20240730050927.GC5334@ZenIV> <20240730051625.14349-1-viro@kernel.org>
+ <20240730051625.14349-17-viro@kernel.org> <CAEf4BzZipqBVhoY-S+WdeQ8=MhpKk-2dE_ESfGpV-VTm31oQUQ@mail.gmail.com>
+ <20240807-fehlschlag-entfiel-f03a6df0e735@brauner>
+In-Reply-To: <20240807-fehlschlag-entfiel-f03a6df0e735@brauner>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 7 Aug 2024 08:30:29 -0700
+Message-ID: <CAEf4BzaeFTn41pP_hbcrCTKNZjwt3TPojv0_CYbP=+973YnWiA@mail.gmail.com>
+Subject: Re: [PATCH 17/39] bpf: resolve_pseudo_ldimm64(): take handling of a
+ single ldimm64 insn into helper
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@kernel.org, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	amir73il@gmail.com, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
+	netdev@vger.kernel.org, torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07, 2024 at 02:50:18PM +0100, John Garry wrote:
-> On 06/08/2024 20:43, Darrick J. Wong wrote:
-> > On Thu, Aug 01, 2024 at 04:30:57PM +0000, John Garry wrote:
-> > > From: "Darrick J. Wong"<djwong@kernel.org>
-> > > 
-> > > Enable this feature.
-> > > 
-> > > Signed-off-by: "Darrick J. Wong"<djwong@kernel.org>
-> > > Signed-off-by: John Garry<john.g.garry@oracle.com>
-> > You really ought to add your own Reviewed-by tag here...
-> 
-> ok, if you prefer. Normally I think it's implied by the context and
-> signed-off tag.
+On Wed, Aug 7, 2024 at 3:30=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> On Tue, Aug 06, 2024 at 03:32:20PM GMT, Andrii Nakryiko wrote:
+> > On Mon, Jul 29, 2024 at 10:20=E2=80=AFPM <viro@kernel.org> wrote:
+> > >
+> > > From: Al Viro <viro@zeniv.linux.org.uk>
+> > >
+> > > Equivalent transformation.  For one thing, it's easier to follow that=
+ way.
+> > > For another, that simplifies the control flow in the vicinity of stru=
+ct fd
+> > > handling in there, which will allow a switch to CLASS(fd) and make th=
+e
+> > > thing much easier to verify wrt leaks.
+> > >
+> > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > ---
+> > >  kernel/bpf/verifier.c | 342 +++++++++++++++++++++-------------------=
+--
+> > >  1 file changed, 172 insertions(+), 170 deletions(-)
+> > >
+> >
+> > This looks unnecessarily intrusive. I think it's best to extract the
+> > logic of fetching and adding bpf_map by fd into a helper and that way
+> > contain fdget + fdput logic nicely. Something like below, which I can
+> > send to bpf-next.
+> >
+> > commit b5eec08241cc0263e560551de91eda73ccc5987d
+> > Author: Andrii Nakryiko <andrii@kernel.org>
+> > Date:   Tue Aug 6 14:31:34 2024 -0700
+> >
+> >     bpf: factor out fetching bpf_map from FD and adding it to used_maps=
+ list
+> >
+> >     Factor out the logic to extract bpf_map instances from FD embedded =
+in
+> >     bpf_insns, adding it to the list of used_maps (unless it's already
+> >     there, in which case we just reuse map's index). This simplifies th=
+e
+> >     logic in resolve_pseudo_ldimm64(), especially around `struct fd`
+> >     handling, as all that is now neatly contained in the helper and doe=
+sn't
+> >     leak into a dozen error handling paths.
+> >
+> >     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> >
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index df3be12096cf..14e4ef687a59 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -18865,6 +18865,58 @@ static bool bpf_map_is_cgroup_storage(struct
+> > bpf_map *map)
+> >          map->map_type =3D=3D BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE);
+> >  }
+> >
+> > +/* Add map behind fd to used maps list, if it's not already there, and=
+ return
+> > + * its index. Also set *reused to true if this map was already in the =
+list of
+> > + * used maps.
+> > + * Returns <0 on error, or >=3D 0 index, on success.
+> > + */
+> > +static int add_used_map_from_fd(struct bpf_verifier_env *env, int fd,
+> > bool *reused)
+> > +{
+> > +    struct fd f =3D fdget(fd);
+>
+> Use CLASS(fd, f)(fd) and you can avoid all that fdput() stuff.
 
-SoB means only that either you've written the patch yourself and have
-the right to submit it, or that you have the right to pass on a patch
-written by someone else who certified the same thing.
-
-An actual code review should be signalled explicitly, not implied by
-context.
-
---D
-
-> Thanks,
-> John
-> 
+That was the point of Al's next patch in the series, so I didn't want
+to do it in this one that just refactored the logic of adding maps.
+But I can fold that in and send it to bpf-next.
 
