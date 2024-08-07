@@ -1,222 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-25331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A0E94AE5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 18:48:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E87694AF05
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 19:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25E021C20B8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 16:48:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BFC3B254C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 17:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C553A13AD0F;
-	Wed,  7 Aug 2024 16:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B58713D533;
+	Wed,  7 Aug 2024 17:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Psd9+5ko"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y3g4WFyC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xgxkXLTZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HlkjxqrP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iVhA26L6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B505F2D05D;
-	Wed,  7 Aug 2024 16:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57AD8286A;
+	Wed,  7 Aug 2024 17:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723049280; cv=none; b=VDFXrx4nmfRwC34c/k8Q3xASYsTKzKOR0HVsU22H+O/Qkd2JmVtQLr1UMqQ3xHVqWJWrh3wjCGIFvxt+YJFk2iqZ+0pXqv/+PWPJPVB12TqnehhvyzkrK0ZBhtT0WcrxZ9p/iQc432N0ZJMd3j8igRstd+/TURcqUh9+LVDgB7s=
+	t=1723052474; cv=none; b=bwBWOkuhbBa3Aj4Xp17isqyNGYxnrWMozG8MmsbapoDUh94ZyzLMUYq2sdDsWHoKEOL3Xwb1IMplgdCDh/gQEl4tTJHAIy08BgmY7OIyrdB7Inb+ng9BRBbBIaH+sVU/J3vInSHnZv+7iKYp0cfP1hS9wIKaYjYeOCxAFfNT+rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723049280; c=relaxed/simple;
-	bh=uLNkIH+VLgoManrhmSXJCVGi1WPYdQcn+s58XS/3R4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qKSwdyziCZVJkdBQZj8ChjGf2CtPtsNP7j6lN5Si3jx59XRYZxRrSLc45/8Y6wbnk/Y0ByC/VmZ/IvgiUqQGsyGw9FbRMqwxgejP5JvKbMVbsCR3oRbeaK5ALtxf4llC6RrpeJYx54njnHqohq+l5DNgyVJ8k6jJO65YDTq21D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Psd9+5ko; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb53da06a9so46151a91.0;
-        Wed, 07 Aug 2024 09:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723049278; x=1723654078; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0pVZ2dit0aE/3HJ5+JrWqMQmfjhnYPQMARk+CNwPiyE=;
-        b=Psd9+5ko4hcFZjBmvdk6vag/djRTaL1P2cUEncPtAib5D5a17kOJB15zk0q0q46XQZ
-         0W8JjfgtNA/knc4mpPL7/su1TQMu/paNrbqkWEUoYAn54rdcoO3j1tAyX9Fur3gRnGyR
-         wUBcsYHJsiQH0suNzvQf3euhD3eEY5BHrcuELkucLAc/SbDkSTUaIVKw+RAVtIi9nJUv
-         rmsIs9O5BYWSaXIdSCf8RmBTfNPq+PSyz4Qays59pbL4Tdzo7NDSq5DL3n8nLXfN6NpF
-         ctk9dQrifgG2UxTEzra7LYU3taJbu8a0RbPTB4BN60jORlNc1yryFb5vz4MpULzvLAUq
-         KQmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723049278; x=1723654078;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0pVZ2dit0aE/3HJ5+JrWqMQmfjhnYPQMARk+CNwPiyE=;
-        b=OB9ie/VlYFFb9VaN63TUFRpVIHZXiPn8VcfHvJP8xvcQxy469viGt9RzxTmzd0fhGA
-         CuNdG4Bq8LmqSCqgHc7YPwpK6x98YFG7lDsu/TgNmXeuk5FOBWQB5fUxf9Smxq/UWorA
-         uNOy7wQr6UMq0krEpeVMjA7jXmYQzTOyhQlQIE18GKPlr6DPo1RYWmkWK/qrh/oI3oT1
-         Gkx2C9bOTJ5/NPLeqbb0OLYjHjHIhw50lgbjmC4CYcBpK9z99B/c2UWn+EOWUqOOn+35
-         Md/gf0OoLFFpurXLHnctnLRCt6cjbC9WiBP+swg+XvlgNv8V5pSLnUpvN3yuJXm2UhpG
-         n4Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmUouKRb5rc5HwAGdohPvdOBBFmJo8QW+epH0jNvTXgQ7dIAd97nhUXxOMAEKEqSuZxglpbk1PvxVSWpNQpaGuv0XxiVyeY6uR5sZrf3WefbYczFkTcXRZuN9CE/gGpOZ2DENVWsvNpONp4eA0ctxLEwOD8kE/9L7Anw==
-X-Gm-Message-State: AOJu0YyMjcTDHSFsoIc6iRdWId2PZQ253ZivfPBIRW+EU5HOTzUAl3xE
-	L7GHw50lMDR+UoDMxKPrGbzeQwBfMpI1H4K0eTbIgNKro0qry6gD82Cv7SSTPtNUDJ2sMCq4oL7
-	V0R5ESyXMA2RBiSOUCur9CA2GBf4=
-X-Google-Smtp-Source: AGHT+IGBu/VSKgXWgCGsXgFXVRU7MiOUyr/hCi1GoaySMkLFfa0gO/5ARkiPXy+828Gou06G8RpEW7rkeSU10uNhwQo=
-X-Received: by 2002:a17:90b:128e:b0:2c2:4109:9466 with SMTP id
- 98e67ed59e1d1-2d1b2d1cf07mr3976143a91.8.1723049277742; Wed, 07 Aug 2024
- 09:47:57 -0700 (PDT)
+	s=arc-20240116; t=1723052474; c=relaxed/simple;
+	bh=Rq4GKEjVRYzNeNaspEUvwi/V1zw0jvP8g0nu4QQVLh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmXRW/epPBAIh4zi90WDgFh/QbmYSuXUU1/aHeHvUoLgNU4cHjRkxtsQ6CoUi8/UBu6Ta5euRGzNfNBKE3cu7cIpuTlIk1IlfJdEMfCTR5UbBHvMWapMnldieAVRCFMd9ZuyuyT59snXi1wLzW/QJOLUj8NBDx8xe9bnC4upl5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y3g4WFyC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xgxkXLTZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HlkjxqrP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iVhA26L6; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E13841FB95;
+	Wed,  7 Aug 2024 17:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723052470; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
+	b=Y3g4WFyCJxbW0zWQHw5nHgEF6tD4w1cThYmE8jdkFnwpi2c3iLZt2mb71sFjIObr6Zqku4
+	ia+z8Y4wkYeV/opb6PnxtkfcunWo7cqv9tg6PbxnNKTLI56NYFiiMKnA1osnW6faHY21az
+	e9J0x7B4d13C7giQVLZCb13GH/VJKjM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723052470;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
+	b=xgxkXLTZ35jeJE4KMkuDvfo77W2P0ghTr9GAioVu49P2HqoMf6I3WQjHebSGHn4oxDa0KF
+	QquWCb5Sw37ikQAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=HlkjxqrP;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iVhA26L6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723052468; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
+	b=HlkjxqrPYUYLApG6KaK/a+oqpE5Kg7ycpR8XuaDCDfW2jesvhzBy+b99D53z5WLJ1oWXU4
+	rFo1gN0ssEJUtRTgHVV+Q3VFXI5oJoFbE9XCSBxKMG1s7JaaVDmRAUHe8QWeVKvOQbuDwV
+	vbccHYCC7BN3jKjJcFVFJHMCk6uL7Hw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723052468;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/GtgqVmUziMUsWkZ8W64gEKilUHrvGZFRWvP/oTBUM=;
+	b=iVhA26L6dnPTetdpirt2k1YYRn0z5K9EJsqxzWpGnUpVFHbAwNyG5pOxGd9Ndbdsy5sboe
+	7vBGfVNYUqM8dBCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D054813A7D;
+	Wed,  7 Aug 2024 17:41:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TkibMrSxs2Y+JgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 07 Aug 2024 17:41:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7117AA0762; Wed,  7 Aug 2024 19:41:08 +0200 (CEST)
+Date: Wed, 7 Aug 2024 19:41:08 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 06/10] ext4: update delalloc data reserve spcae in
+ ext4_es_insert_extent()
+Message-ID: <20240807174108.l2bbbhlnpznztp34@quack3>
+References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
+ <20240802115120.362902-7-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730203914.1182569-1-andrii@kernel.org> <20240730203914.1182569-2-andrii@kernel.org>
- <CAG48ez16gwq4YZrnPn2OmuSyz2rXM0KKVgb+UjB5GocKZGNgQQ@mail.gmail.com>
-In-Reply-To: <CAG48ez16gwq4YZrnPn2OmuSyz2rXM0KKVgb+UjB5GocKZGNgQQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 7 Aug 2024 09:47:45 -0700
-Message-ID: <CAEf4BzZEwgAYU-FW_yxXdmYA9Y9CaZxGazEHVyUs+X-1hGwbxA@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 01/10] lib/buildid: harden build ID parsing logic
-To: Jann Horn <jannh@google.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, bpf@vger.kernel.org, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, adobriyan@gmail.com, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, ak@linux.intel.com, osandov@osandov.com, song@kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802115120.362902-7-yi.zhang@huaweicloud.com>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [0.49 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim]
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: E13841FB95
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: 0.49
 
-On Wed, Aug 7, 2024 at 8:12=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
->
-> +Matthew and fsdevel list for pagecache question
->
-> On Tue, Jul 30, 2024 at 10:39=E2=80=AFPM Andrii Nakryiko <andrii@kernel.o=
-rg> wrote:
-> > Harden build ID parsing logic, adding explicit READ_ONCE() where it's
-> > important to have a consistent value read and validated just once.
-> >
-> > Fixes tag below points to the code that moved this code into
-> > lib/buildid.c, and then subsequently was used in perf subsystem, making
-> > this code exposed to perf_event_open() users in v5.12+.
->
-> One thing that still seems dodgy to me with this patch applied is the
-> call from build_id_parse() to find_get_page(), followed by reading the
-> page contents. My understanding of the page cache (which might be
-> incorrect) is that find_get_page() can return a page whose contents
-> have not been initialized yet, and you're supposed to check for
-> PageUptodate() or something like that before reading from it.
->
-> Maybe Matthew can check if I understood that right?
->
->
-> Also, it might be a good idea to liberally spray READ_ONCE() around
-> all the remaining unannotated shared memory accesses in
-> build_id_parse(), get_build_id_32(), get_build_id_64() and
-> parse_build_id_buf().
+On Fri 02-08-24 19:51:16, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Now that we update data reserved space for delalloc after allocating
+> new blocks in ext4_{ind|ext}_map_blocks(), and if bigalloc feature is
+> enabled, we also need to query the extents_status tree to calculate the
+> exact reserved clusters. This is complicated now and it appears that
+> it's better to do this job in ext4_es_insert_extent(), because
+> __es_remove_extent() have already count delalloc blocks when removing
+> delalloc extents and __revise_pending() return new adding pending count,
+> we could update the reserved blocks easily in ext4_es_insert_extent().
+> 
+> Thers is one special case needs to concern is the quota claiming, when
+> bigalloc is enabled, if the delayed cluster allocation has been raced
+> by another no-delayed allocation(e.g. from fallocate) which doesn't
+> cover the delayed blocks:
+> 
+>   |<       one cluster       >|
+>   hhhhhhhhhhhhhhhhhhhdddddddddd
+>   ^            ^
+>   |<          >| < fallocate this range, don't claim quota again
+> 
+> We can't claim quota as usual because the fallocate has already claimed
+> it in ext4_mb_new_blocks(), we could notice this case through the
+> removed delalloc blocks count.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+...
+> @@ -926,9 +928,27 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+>  			__free_pending(pr);
+>  			pr = NULL;
+>  		}
+> +		pending = err3;
+>  	}
+>  error:
+>  	write_unlock(&EXT4_I(inode)->i_es_lock);
+> +	/*
+> +	 * Reduce the reserved cluster count to reflect successful deferred
+> +	 * allocation of delayed allocated clusters or direct allocation of
+> +	 * clusters discovered to be delayed allocated.  Once allocated, a
+> +	 * cluster is not included in the reserved count.
+> +	 *
+> +	 * When bigalloc is enabled, allocating non-delayed allocated blocks
+> +	 * which belong to delayed allocated clusters (from fallocate, filemap,
+> +	 * DIO, or clusters allocated when delalloc has been disabled by
+> +	 * ext4_nonda_switch()). Quota has been claimed by ext4_mb_new_blocks(),
+> +	 * so release the quota reservations made for any previously delayed
+> +	 * allocated clusters.
+> +	 */
+> +	resv_used = rinfo.delonly_cluster + pending;
+> +	if (resv_used)
+> +		ext4_da_update_reserve_space(inode, resv_used,
+> +					     rinfo.delonly_block);
 
-Andi was against that, so I kept READ_ONCE() only where strictly
-necessary, AFAICT.
+I'm not sure I understand here. We are inserting extent into extent status
+tree. We are replacing resv_used clusters worth of space with delayed
+allocation reservation with normally allocated clusters so we need to
+release the reservation (mballoc already reduced freeclusters counter).
+That I understand. In normal case we should also claim quota because we are
+converting from reserved into allocated state. Now if we allocated blocks
+under this range (e.g. from fallocate()) without
+EXT4_GET_BLOCKS_DELALLOC_RESERVE, we need to release quota reservation here
+instead of claiming it. But I fail to see how rinfo.delonly_block > 0 is
+related to whether EXT4_GET_BLOCKS_DELALLOC_RESERVE was set when allocating
+blocks for this extent or not.
 
->
-> > Cc: stable@vger.kernel.org
-> > Cc: Jann Horn <jannh@google.com>
-> > Suggested-by: Andi Kleen <ak@linux.intel.com>
-> > Fixes: bd7525dacd7e ("bpf: Move stack_map_get_build_id into lib")
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  lib/buildid.c | 51 +++++++++++++++++++++++++++------------------------
-> >  1 file changed, 27 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/lib/buildid.c b/lib/buildid.c
-> > index e02b5507418b..d21d86f6c19a 100644
-> > --- a/lib/buildid.c
-> > +++ b/lib/buildid.c
-> > @@ -18,28 +18,29 @@ static int parse_build_id_buf(unsigned char *build_=
-id,
-> >                               const void *note_start,
-> >                               Elf32_Word note_size)
-> >  {
-> > +       const char note_name[] =3D "GNU";
-> > +       const size_t note_name_sz =3D sizeof(note_name);
-> >         Elf32_Word note_offs =3D 0, new_offs;
-> > +       u32 name_sz, desc_sz;
-> > +       const char *data;
-> >
-> >         while (note_offs + sizeof(Elf32_Nhdr) < note_size) {
-> >                 Elf32_Nhdr *nhdr =3D (Elf32_Nhdr *)(note_start + note_o=
-ffs);
-> >
-> > +               name_sz =3D READ_ONCE(nhdr->n_namesz);
-> > +               desc_sz =3D READ_ONCE(nhdr->n_descsz);
-> >                 if (nhdr->n_type =3D=3D BUILD_ID &&
-> > -                   nhdr->n_namesz =3D=3D sizeof("GNU") &&
-> > -                   !strcmp((char *)(nhdr + 1), "GNU") &&
-> > -                   nhdr->n_descsz > 0 &&
-> > -                   nhdr->n_descsz <=3D BUILD_ID_SIZE_MAX) {
-> > -                       memcpy(build_id,
-> > -                              note_start + note_offs +
-> > -                              ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_N=
-hdr),
-> > -                              nhdr->n_descsz);
-> > -                       memset(build_id + nhdr->n_descsz, 0,
-> > -                              BUILD_ID_SIZE_MAX - nhdr->n_descsz);
-> > +                   name_sz =3D=3D note_name_sz &&
-> > +                   strcmp((char *)(nhdr + 1), note_name) =3D=3D 0 &&
-> > +                   desc_sz > 0 && desc_sz <=3D BUILD_ID_SIZE_MAX) {
-> > +                       data =3D note_start + note_offs + ALIGN(note_na=
-me_sz, 4);
->
-> I don't think we have any guarantee here that this addition won't
-> result in an OOB pointer?
->
-> > +                       memcpy(build_id, data, desc_sz);
->
-> I think this can access OOB data (because "data" can already be OOB
-> and because "desc_sz" hasn't been checked against the amount of
-> remaining space in the page).
+At this point it would seem much clearer if we passed flag to
+ext4_es_insert_extent() whether EXT4_GET_BLOCKS_DELALLOC_RESERVE was set
+when allocating extent or not instead of computing delonly_block and
+somehow infering from that. But maybe I miss some obvious reason why that
+is correct.
 
-Andi already pointed this out and I fixed it locally, thanks.
-
->
-> > +                       memset(build_id + desc_sz, 0, BUILD_ID_SIZE_MAX=
- - desc_sz);
-> >                         if (size)
-> > -                               *size =3D nhdr->n_descsz;
-> > +                               *size =3D desc_sz;
-> >                         return 0;
-> >                 }
-> > -               new_offs =3D note_offs + sizeof(Elf32_Nhdr) +
-> > -                       ALIGN(nhdr->n_namesz, 4) + ALIGN(nhdr->n_descsz=
-, 4);
-> > +               new_offs =3D note_offs + sizeof(Elf32_Nhdr) + ALIGN(nam=
-e_sz, 4) + ALIGN(desc_sz, 4);
-> >                 if (new_offs <=3D note_offs)  /* overflow */
-> >                         break;
->
-> You check whether "new_offs" has wrapped here, but then on the next
-> loop iteration, you check for "note_offs + sizeof(Elf32_Nhdr) <
-> note_size". So if new_offs is 0xffffffff at this point, then I think
-> the overflow check here will be passed, the loop condition will be
-> true on 32-bit kernels (on 64-bit kernels it won't be because the
-> addition happens on 64-bit numbers thanks to sizeof()), and "nhdr"
-> will point in front of the note?
-
-Correct, and so I moved this new_offs calculation and overflow check
-to the beginning of the loop, which I think should capture this issue.
-
-For the while() condition itself I have:
-
-        if (check_add_overflow(note_offs, note_size, &note_end))
-                return -EINVAL;
-
-        while (note_offs < note_end - sizeof(Elf32_Nhdr) - note_name_sz) {
-            ...
-        }
-
-I'll try to post an updated version soon-ish, have been waiting for mm
-folks feedback before posting a new version.
-
->
-> >                 note_offs =3D new_offs;
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
