@@ -1,168 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-25312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF0F94AA33
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 16:34:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1792D94AA75
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 16:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A9462812ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 14:34:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67176B28766
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 14:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEF57BAE3;
-	Wed,  7 Aug 2024 14:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4664B82C63;
+	Wed,  7 Aug 2024 14:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b6bd+2AY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETRb7TJ+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B351D2B9A1;
-	Wed,  7 Aug 2024 14:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF3F82862;
+	Wed,  7 Aug 2024 14:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723041252; cv=none; b=r/QGkQtu5RWcYy4f3RkOjt+Y6VmPROHnelbBitB73F/ZdSUfOPbVC/OKjuZ/1oXZT1qVRHtZ4ayqgHbHIYEuMEXMEhx4goHBO20LwL8Xmp+I9BZRr/hOGT/v/AaNNCjJuUekTiMGOn3HzaHt0unoAv1qXFEeYddaNXP9tJIDpfE=
+	t=1723041426; cv=none; b=ffRjW59/t2ZR5On7vFmA4UiuUhNPsxEv5FdqEtwsp5jY+VlcglEyOqTm2aXNsKWfYGtqS/RfPihy242vPkQ7LA/JMAwNKYPqQ6VfhkZfyiefVerb4ivzIGQKoGxPM3aFqqMTYyRgmwMugyJrJG610zc5ndH+Y8yqOtv5VgnsgMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723041252; c=relaxed/simple;
-	bh=WqkhNT4x7/zQlM4AhmFxq4Q+ZY4U6nP+ET/fhr6SeRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6ZJSGr+DmnqQ91Fxv8Rfv9MXIs4F4kn8b9DK+8pNIZFkn4ew+u1U1OdC6W1GaZnVI3lDksA+XNS7pi4hYtyxSW4FuvGbclxjogXmWFQztPljTmxA5Tj7CCPbCrrJMeQ7Brp/OCAgwSM0NVPkrRz+6naxmB/gGaueqsKF6gKYxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b6bd+2AY; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jkNguGjcftL7vwINObLdbFR92eHWY0kd9agR1JH7w6w=; b=b6bd+2AYpZJxUv+Pl0+aUW9ZdA
-	ilPREVFTAntdp7SYyHawfVlrWu9oa7IHIfMO5V+7Z+b4VrS2ZfNLgfZBwSvRaRCy67DLaTIIZ2YXI
-	8rlaRX7BWS3Z7WE6vWo2Bg+LRH/nqyczCM0fx01lYC8s2xL9bk6vJ/2KDhfBX1bHeVxa4Z/L9Ct93
-	6t5xMXboQVgxMNg0lpVNnChlPtzGGPnnfoPaBmlZ0rZotJ7+3khUYKrOJaI0FIHHs0Y6uEmCurd0p
-	CjgPhlb/jUBV3U+GXdbu/pPkMKdcDV2ZJ/nM2GuCVfobyLNR9UGMbA+3B/nEEt+yP1UPE70n9Knuf
-	PHdMhTWQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sbhjs-00000006dRC-1A60;
-	Wed, 07 Aug 2024 14:34:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 65FB830033D; Wed,  7 Aug 2024 16:34:07 +0200 (CEST)
-Date: Wed, 7 Aug 2024 16:34:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240807143407.GC31338@noisy.programming.kicks-ass.net>
-References: <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20240730132626.GV26599@noisy.programming.kicks-ass.net>
- <20240731001950.GN6352@frogsfrogsfrogs>
- <20240731031033.GP6352@frogsfrogsfrogs>
- <20240731053341.GQ6352@frogsfrogsfrogs>
- <20240731105557.GY33588@noisy.programming.kicks-ass.net>
- <20240805143522.GA623936@frogsfrogsfrogs>
- <20240806094413.GS37996@noisy.programming.kicks-ass.net>
- <20240806103808.GT37996@noisy.programming.kicks-ass.net>
- <875xsc4ehr.ffs@tglx>
+	s=arc-20240116; t=1723041426; c=relaxed/simple;
+	bh=yglhBzKi3NcaNGNFvbg8JxrI+mqUfjwDOqRUe/qh52k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RYT8CdASyQozv19lQ4az/t+bw/il1Xi7gprye37YtowTvqH8aqxgX6aZK1ImES4aqXIbp2iBrvmMXmG2tbYPRqu+Qm64xpF58+UMETnJI5qVcC+VPqu0gN1e1JpWBRKDqVnNddbvApKFepHvzNZIDpvEQYe3/T5ValP7UwkZk8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETRb7TJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56210C4AF19;
+	Wed,  7 Aug 2024 14:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723041426;
+	bh=yglhBzKi3NcaNGNFvbg8JxrI+mqUfjwDOqRUe/qh52k=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ETRb7TJ+h08Hf+sfFv3QS+DAyOIYGB+YBdE4R3ZhjQLaG+naqvrcnWCfNmMElRvi3
+	 zIBsE1vyGeG0V8YsNojSK7KimkPEqn/m1VYhPRIMnhkNFgyiQKTjYsDBJsxyh4cwSu
+	 /xFgWRu+jo75cCpFr6RGzLViXcnLZZGgkyeqKYJnU74PAwBIxNHBfIZl2+LK0K88xP
+	 zRiFgHzF5u5xF4gdFYNScPWfanJhzb+ynR5dVy29IFd5HhSE9XWx/IFV7zm72znrvr
+	 /FEfz6+Qu41bF3RM3slDJwOZXxTcNtrVMptvHftQgSim9OAr7kYFqm5dLwzbHMh+Ic
+	 yBBmzWXBS2JCA==
+Message-ID: <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Andrew Morton <akpm@linux-foundation.org>, Mateusz Guzik
+ <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 07 Aug 2024 10:36:58 -0400
+In-Reply-To: <20240807-erledigen-antworten-6219caebedc0@brauner>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+	 <20240807-erledigen-antworten-6219caebedc0@brauner>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIg
+ UCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1
+ oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOT
+ tmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+
+ 9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPc
+ og7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/
+ WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EB
+ ny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9
+ KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTi
+ CThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XR
+ MJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875xsc4ehr.ffs@tglx>
 
-On Wed, Aug 07, 2024 at 04:03:12PM +0200, Thomas Gleixner wrote:
+On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
+> > +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int o=
+pen_flag)
+> > +{
+> > +	struct dentry *dentry;
+> > +
+> > +	if (open_flag & O_CREAT) {
+> > +		/* Don't bother on an O_EXCL create */
+> > +		if (open_flag & O_EXCL)
+> > +			return NULL;
+> > +
+> > +		/*
+> > +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
+> > +		 * use the dentry. For now, don't do this, since it shifts
+> > +		 * contention from parent's i_rwsem to its d_lockref spinlock.
+> > +		 * Reconsider this once dentry refcounting handles heavy
+> > +		 * contention better.
+> > +		 */
+> > +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
+> > +			return NULL;
+>=20
+> Hm, the audit_inode() on the parent is done independent of whether the
+> file was actually created or not. But the audit_inode() on the file
+> itself is only done when it was actually created. Imho, there's no need
+> to do audit_inode() on the parent when we immediately find that file
+> already existed. If we accept that then this makes the change a lot
+> simpler.
+>=20
+> The inconsistency would partially remain though. When the file doesn't
+> exist audit_inode() on the parent is called but by the time we've
+> grabbed the inode lock someone else might already have created the file
+> and then again we wouldn't audit_inode() on the file but we would have
+> on the parent.
+>=20
+> I think that's fine. But if that's bothersome the more aggressive thing
+> to do would be to pull that audit_inode() on the parent further down
+> after we created the file. Imho, that should be fine?...
+>=20
+> See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/?ref_type=3D=
+heads
+> for a completely untested draft of what I mean.
 
-> > +	if (static_key_dec(key, true)) // dec-not-one
-> 
-> Eeew.
+Yeah, that's a lot simpler. That said, my experience when I've worked
+with audit in the past is that people who are using it are _very_
+sensitive to changes of when records get emitted or not. I don't like
+this, because I think the rules here are ad-hoc and somewhat arbitrary,
+but keeping everything working exactly the same has been my MO whenever
+I have to work in there.
 
-:-) I knew you'd hate on that
-
-> Something like the below?
-> 
-> Thanks,
-> 
->         tglx
-> ---
-> @@ -250,49 +250,71 @@ void static_key_disable(struct static_ke
->  }
->  EXPORT_SYMBOL_GPL(static_key_disable);
->  
-> -static bool static_key_slow_try_dec(struct static_key *key)
-> +static bool static_key_dec(struct static_key *key, bool dec_not_one)
->  {
-> +	int v = atomic_read(&key->enabled);
->  
->  	do {
->  		/*
-> +		 * Warn about the '-1' case; since that means a decrement is
-> +		 * concurrent with a first (0->1) increment. IOW people are
-> +		 * trying to disable something that wasn't yet fully enabled.
-> +		 * This suggests an ordering problem on the user side.
-> +		 *
-> +		 * Warn about the '0' case; simple underflow.
->  		 */
-> +		if (WARN_ON_ONCE(v <= 0))
-> +			return v;
-> +
-> +		if (dec_not_one && v == 1)
-> +			return v;
-> +
->  	} while (!likely(atomic_try_cmpxchg(&key->enabled, &v, v - 1)));
->  
-> +	return v;
-> +}
-> +
-> +/*
-> + * Fastpath: Decrement if the reference count is greater than one
-> + *
-> + * Returns false, if the reference count is 1 or -1 to force the caller
-> + * into the slowpath.
-> + *
-> + * The -1 case is to handle a decrement during a concurrent first enable,
-> + * which sets the count to -1 in static_key_slow_inc_cpuslocked(). As the
-> + * slow path is serialized the caller will observe 1 once it acquired the
-> + * jump_label_mutex, so the slow path can succeed.
-> + */
-> +static bool static_key_dec_not_one(struct static_key *key)
-> +{
-> +	int v = static_key_dec(key, true);
-> +
-> +	return v != 1 && v != -1;
-
-	if (v < 0)
-		return false;
-
-	/*
-	 * Notably, 0 (underflow) returns true such that it bails out
-	 * without doing anything.
-	 */
-	return v != 1;
-
-Perhaps?
-
-> +}
-> +
-> +/*
-> + * Slowpath: Decrement and test whether the refcount hit 0.
-> + *
-> + * Returns true if the refcount hit zero, i.e. the previous value was one.
-> + */
-> +static bool static_key_dec_and_test(struct static_key *key)
-> +{
-> +	int v = static_key_dec(key, false);
-> +
-> +	lockdep_assert_held(&jump_label_mutex);
-> +	return v == 1;
->  }
-
-But yeah, this is nicer!
+If a certain access pattern suddenly generates a different set of
+records (or some are missing, as would be in this case), we might get
+bug reports about this. I'm ok with simplifying this code in the way
+you suggest, but we may want to do it in a patch on top of mine, to
+make it simple to revert later if that becomes necessary.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
