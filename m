@@ -1,70 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-25364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0073294B323
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 00:36:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFC494B32C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 00:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7361F2375D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 22:36:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 506132815C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 22:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7EF15530B;
-	Wed,  7 Aug 2024 22:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6DF15380A;
+	Wed,  7 Aug 2024 22:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="juMPo6WK"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PS1GHYCS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD400145B26
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Aug 2024 22:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C59384037
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Aug 2024 22:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723070197; cv=none; b=RE7DcaWm4NFAc2xkiS+z/waMiDBUj/KKmnlKf5dYif/PWAa2OhiD4qkt7KbXB4fSssvJ6WHlBckt8nzRR8C4oCDyfAEwaN5g60kFZ2edzTeZMdO0DWIbBzZ7Q4e9UUhXqtvVsQOGlP2WYczkJHS6a8t6NwFAcZO/fRx2shy8sas=
+	t=1723070399; cv=none; b=b0nSNqsek2fbRp269kf1uGhEY7YVIFcT1APmwJM+hjenQz4c/vF/MPpfBy+UyKcrsbHMhxz80kOcxZ8AcczzV4OOiLndA9C794yAXJGECiziHPchaSUoBldFqWFLfrXbKX+9HUX8NTSxyBZKZCivSZwmT21HAbQrA3AE5deMWhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723070197; c=relaxed/simple;
-	bh=a82BazRTsLV8O545SUtLHexI80RAcukz/terjjLKadM=;
+	s=arc-20240116; t=1723070399; c=relaxed/simple;
+	bh=R0SrDgf7L16NODV3yYTuPsDAteT3U+k3VaocKclBG0w=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=n7/8l5NHJ31D4B6YG2dFb/FPUZjapArr7/n/mm6TJFQucJIVrgVR5VRCbxW+mX0WOyTfSHfdo0+8cTajCi3GXqLLqa0SyK+DOtj7vGcekoDyL5p4/HgXOSbdR6mnHxQNsD7rrW0TZAOZMG42v/xCYDfXN6nEzm/CvbupVrVASo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=juMPo6WK; arc=none smtp.client-ip=209.85.210.44
+	 MIME-Version:Content-Type; b=CuxI6pUO1u/11vw7RsOXSI50lD6IPVkbqFZd1DFlPcT4jUcyao3DM1xED+obALdIYlhj6v2ae8LE7uSJoE6kYL92fXfqcAE4L9tOD/2oIg4ynHX3liuFyvmysBPtHE69RK3dTu4qmx9qgVXB822kJjNGA35KTjpYb3VudC2h6p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PS1GHYCS; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7093705c708so347265a34.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Aug 2024 15:36:35 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7104f93a20eso343726b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Aug 2024 15:39:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723070195; x=1723674995; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q5xqVBE75uTakMohQNNM+Ob3mwTWILCE117tt64StnA=;
-        b=juMPo6WK1oMZfx3SBHcJlSj3c0OAieioPg67K4fwY3TboNmdDxI6OxvWHaSwPXE0jH
-         eK2kcYczUnXPkSp9r2nd3ZcPC0eO1UFirsKHaAQhfs4B3XsmiO2rgpN16/xRYst+zXch
-         v1QZuNA2KHlX2wVjEfqlVlphsB12PFmbxgwSDRxJhxWO2YLxmhYaOUuRlWk7PcCjbk+y
-         Fa1343O5HYV8WiUbUAj+4J+E3lqhYfnWQwuqjB8xYEROLCu+ASmt8BRrQ9DlieyXSFqw
-         90DAPW35AVjyBWWyq9AGUFdftONiop8Zvy8vQgTvqIjRNXOYmRUtbEdFnGY13khRg5G+
-         mnIg==
+        d=linaro.org; s=google; t=1723070397; x=1723675197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fpaMsRHZ95ToRGUxAfb1zMIumId8sRSoShxy8vDFiIM=;
+        b=PS1GHYCSsdhNsf2JH9O5SgvWihuGsWagFQAO8BMu/E2y9eG2/I4QGmCWhbIg7XKQ1N
+         S3C43ji3Zv6uqXbbcFmipRiCRMLEK+kxjkFRKJJsTiRLOiN1c1vzUnqun3/v+3sFFgZL
+         ySJAdHyEIrAhyBwT8R86GeRfqmbFNY9yUgMes1rqGd1i6jE9J6blpnnFkeJoH0mj1eR1
+         LKp4UO/gELnqE7QBOOC052U0+Y/BJ0FYYRuE6SgeMiBfGOxUAyzcSpeNZMfm1ju57kwy
+         7/KK4R7ihtdklVAU3gxwX8d/9XjjLVU/x0eC8uLz+nZLS0z3X6pbvj+MU7M92TrPy8tQ
+         eI1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723070195; x=1723674995;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q5xqVBE75uTakMohQNNM+Ob3mwTWILCE117tt64StnA=;
-        b=WOWWWu1caR4pUCsM8N/eDIVQ3ht9CeypTk1jJZXBuFO7Bfj5IHhwwBczT3Sn7CCgzy
-         zpskUEztdcdGiOmmi9s28TIYIVcWcTiK3u5dmTPq4dzgiKHS5zBT2IuhOgcIwKTG/brx
-         Vmt90kviccxH52gyQLlcNv16/NmIOKbYjJ4Oh6GCyecdNxQ2K+25oEnrKL4hVQfUZdpr
-         /RrV5h0OamRNTCwfrpUwutFDk/9lSzpKr/rLnGjcqoUVtdpic+CfPtlId0fM5nlV1KTE
-         LTvLpHKG5AyVPo1XyAnCeujY2spWqsrhNInht2pBxSkQGXoTnNez2wHrx1qlXjQeZLIA
-         KHZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsBPx3KX3prw5uw1ftwCuMROyPZDv/KCAjJj/aPNWm+UsPnOgX1muKEI5FBu+wBYWRilXfuB7XHM5wLg5LXvpfmWzKsD3dVBiqQksSoQ==
-X-Gm-Message-State: AOJu0YyzbS2jCCI6dNc+Z0gX7k3rMhgZkf9nhdnS5zv1vOcSlEr12Etk
-	fZPFW5+xrM+qf2ve8SIpdxAXskR+iAGBxUgi7w2NSN9oOyoBsSm4poaNxQBa1aU=
-X-Google-Smtp-Source: AGHT+IGTBDVQAm3GArH3otwegCgx4BHN1ZL2N8yxYA8F/kedHOZ4Afd+CPHaShh6RvNkbAtiESu5bQ==
-X-Received: by 2002:a05:6358:70c1:b0:1aa:b860:f10e with SMTP id e5c5f4694b2df-1b15cf91432mr25702255d.15.1723070194758;
-        Wed, 07 Aug 2024 15:36:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723070397; x=1723675197;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fpaMsRHZ95ToRGUxAfb1zMIumId8sRSoShxy8vDFiIM=;
+        b=wMXGzpfwU2WnDzfCXe6h3LjKch5t2EinmJsWqys7OcUK193nkGCVevde+spslM/wR7
+         bRtBRjbmJhSgSpJhsu93mTiffHfIndi3hzuMkr79oMEUYi7NalfSVuTyIysrVeqfLL0f
+         4y2kDLfR9wF+/exNzgd38xO/YEsr2hFHuwpm1lskSORfNerTGAZ4ShPV0b3CJtGp2f0I
+         Ep6sM5vkemRoyr1S9dEfLqaUXul54IKnL9EySkUQ+vpUv54/7tuWHA6fhBqadtIwXNwH
+         dE6XzRUnYFFdHXaMYl0f3P1wchGlIhVHXOefi0fCX6C4hm5/GUR18b9yV5qQr3TZIvyv
+         /F0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWbUsEsBWP+OiUnYjgxmiYllgc+6LLFPqFSro7pPGIYMCreScxL4sShi7fjnKIsr7sTScWLwyl/ZzyatXpGl3N1F6AQe7S8UDbfu+vksw==
+X-Gm-Message-State: AOJu0YyJdP9e6YoaDGBnNRrc96ElNRIcwqbaaVOeK+I9p3jg+23Xnjw1
+	TnCHL4gMvTqDk54GZJx8gzB11gCex4b+Mu1FvFj+EWTDRe5H2SnFL3uOL/a2Xrs=
+X-Google-Smtp-Source: AGHT+IESQPvEwbmsSFYakbTK2ll0Tt3rDUIt6IHjj6Copl3/ebwJm0vHuqLsOiAaukYjvG1usCbD8Q==
+X-Received: by 2002:a05:6a00:3cc3:b0:706:6b29:9cf0 with SMTP id d2e1a72fcca58-710cae8d2e0mr108951b3a.30.1723070397365;
+        Wed, 07 Aug 2024 15:39:57 -0700 (PDT)
 Received: from localhost ([2804:14c:87d5:5261:6c30:472f:18a6:cae1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b7654be293sm7403332a12.91.2024.08.07.15.36.33
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710cb2cc9bfsm12167b3a.137.2024.08.07.15.39.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 15:36:34 -0700 (PDT)
+        Wed, 07 Aug 2024 15:39:56 -0700 (PDT)
 From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 To: Mark Brown <broonie@kernel.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
@@ -85,42 +87,106 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
   linux-fsdevel@vger.kernel.org,  linux-arch@vger.kernel.org,
   linux-mm@kvack.org,  linux-kselftest@vger.kernel.org,
   linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 37/40] kselftest/arm64: Add GCS signal tests
-In-Reply-To: <20240801-arm64-gcs-v10-37-699e2bd2190b@kernel.org> (Mark Brown's
-	message of "Thu, 01 Aug 2024 13:07:04 +0100")
+Subject: Re: [PATCH v10 38/40] kselftest/arm64: Add a GCS stress test
+In-Reply-To: <20240801-arm64-gcs-v10-38-699e2bd2190b@kernel.org> (Mark Brown's
+	message of "Thu, 01 Aug 2024 13:07:05 +0100")
 References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
-	<20240801-arm64-gcs-v10-37-699e2bd2190b@kernel.org>
-Date: Wed, 07 Aug 2024 19:36:31 -0300
-Message-ID: <87bk24dkpc.fsf@linaro.org>
+	<20240801-arm64-gcs-v10-38-699e2bd2190b@kernel.org>
+Date: Wed, 07 Aug 2024 19:39:54 -0300
+Message-ID: <877ccsdkjp.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 Mark Brown <broonie@kernel.org> writes:
 
-> Do some testing of the signal handling for GCS, checking that a GCS
-> frame has the expected information in it and that the expected signals
-> are delivered with invalid operations.
+> Add a stress test which runs one more process than we have CPUs spinning
+> through a very recursive function with frequent syscalls immediately prior
+> to return and signals being injected every 100ms. The goal is to flag up
+> any scheduling related issues, for example failure to ensure that barriers
+> are inserted when moving a GCS using task to another CPU. The test runs f=
+or
+> a configurable amount of time, defaulting to 10 seconds.
 >
 > Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 > Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
->  tools/testing/selftests/arm64/signal/.gitignore    |  1 +
->  .../selftests/arm64/signal/test_signals_utils.h    | 10 +++
->  .../arm64/signal/testcases/gcs_exception_fault.c   | 62 +++++++++++++++
->  .../selftests/arm64/signal/testcases/gcs_frame.c   | 88 ++++++++++++++++++++++
->  .../arm64/signal/testcases/gcs_write_fault.c       | 67 ++++++++++++++++
->  5 files changed, 228 insertions(+)
+>  tools/testing/selftests/arm64/gcs/.gitignore       |   2 +
+>  tools/testing/selftests/arm64/gcs/Makefile         |   6 +-
+>  tools/testing/selftests/arm64/gcs/asm-offsets.h    |   0
+>  .../selftests/arm64/gcs/gcs-stress-thread.S        | 311 ++++++++++++
+>  tools/testing/selftests/arm64/gcs/gcs-stress.c     | 530 +++++++++++++++=
+++++++
+>  5 files changed, 848 insertions(+), 1 deletion(-)
 
-The gcs_exception_fault, gcs_frame and gcs_write_fault tests pass on my
-FVP setup:
+Unfortunately, gcs-stress still fails on my FVP setup. I tested on an
+arm64 defconfig with and without THP enabled with, the same results:
 
-Tested-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+$ sudo ./run_kselftest.sh -t arm64:gcs-stress -o 600
+TAP version 13
+1..1
+# overriding timeout to 600
+# selftests: arm64: gcs-stress
+# TAP version 13
+# 1..9
+# # 8 CPUs, 9 GCS threads
+# # Will run for 10s
+# # Started Thread-4870
+# # Started Thread-4871
+# # Started Thread-4872
+# # Started Thread-4873
+# # Started Thread-4874
+# # Started Thread-4875
+# # Started Thread-4876
+# # Started Thread-4877
+# # Started Thread-4878
+# # Waiting for 9 children
+# # Waiting for 9 children
+# # Thread-4870: Failed to enable GCS
+# # Thread-4871: Failed to enable GCS
+# # Thread-4872: Failed to enable GCS
+# # Thread-4873: Failed to enable GCS
+# # Thread-4876: Failed to enable GCS
+# # Thread-4875: Failed to enable GCS
+# # Thread-4874: Failed to enable GCS
+# # Thread-4878: Failed to enable GCS
+# # Thread-4877: Failed to enable GCS
+# # Sending signals, timeout remaining: 10000ms
+# # Sending signals, timeout remaining: 9900ms
+# # Sending signals, timeout remaining: 9800ms
+       =E2=8B=AE
+# # Sending signals, timeout remaining: 300ms
+# # Sending signals, timeout remaining: 200ms
+# # Sending signals, timeout remaining: 100ms
+# # Finishing up...
+# # Thread-4870 exited with error code 255
+# not ok 1 Thread-4870
+# # Thread-4871 exited with error code 255
+# not ok 2 Thread-4871
+# # Thread-4872 exited with error code 255
+# not ok 3 Thread-4872
+# # Thread-4873 exited with error code 255
+# not ok 4 Thread-4873
+# # Thread-4874 exited with error code 255
+# not ok 5 Thread-4874
+# # Thread-4875 exited with error code 255
+# not ok 6 Thread-4875
+# # Thread-4876 exited with error code 255
+# not ok 7 Thread-4876
+# # Thread-4877 exited with error code 255
+# not ok 8 Thread-4877
+# # Thread-4878 exited with error code 255
+# not ok 9 Thread-4878
+# # Totals: pass:0 fail:9 xfail:0 xpass:0 skip:0 error:0
+ok 1 selftests: arm64: gcs-stress
+bauermann@armv94:/var/tmp/selftests-arm64-gcs-v10$ echo $?
+0
 
--- 
+--=20
 Thiago
 
