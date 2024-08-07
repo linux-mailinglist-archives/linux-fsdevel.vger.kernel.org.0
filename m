@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-25257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689DD94A528
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 12:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 081D494A535
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 12:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 136F11F23799
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 10:10:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6B8B1F21B41
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Aug 2024 10:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A611D6DC3;
-	Wed,  7 Aug 2024 10:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7971D47D9;
+	Wed,  7 Aug 2024 10:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3NI6b4T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkpsVuLe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AF51CB33A;
-	Wed,  7 Aug 2024 10:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958953612D;
+	Wed,  7 Aug 2024 10:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723025429; cv=none; b=UbfoOs0xV3xFx7aIspQtyhJ3ObqgdyKkBN5n7z19z8IW5cNzwxP9MbUll4LG8576kRtCVravffUc6icDFN+iLrjY5QXHZo41TvF5roJvyRwpxpycB+mxIOVkpJ6GgBTnqgbIZWritXMCBXMcLLZ//UqfeYgbEegLE8828Z4t42M=
+	t=1723025601; cv=none; b=rrfa5xZ5H87dAOhclFINoBMqOCs9m+6L7B5LcQGiMrWvyh3kyNktorVSXKxwe3wYf/trZwmzi5xArlwCbheyyzlysAgZfzu5+RQ4Xnl0zbhChcCpqdMzGbk+AFb/0xS6nwM+w3bVi4LTVHwsYZQ7ANETaH8PkjHtjefEkQCmmYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723025429; c=relaxed/simple;
-	bh=eBc8BK6TF2PeBiD3vbcn930TmC98UXZiLj/lgQVZk8c=;
+	s=arc-20240116; t=1723025601; c=relaxed/simple;
+	bh=32sFIlH+nIuN+Gj/4FUt6FCBFZ1/79vLbWF2rG8Tqdk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VAHGfPf1l6xFacnGACxw/e72FoYisDGXzg3BKgrhRAzHr7TVQt7y/eTu3n4rSJpd3c4NIgWiT6woyQnHT93EN7zF2HoFzTdMc53MiYHSWkNeIUDBniJF8F8+GbsSXjs5VMPgPUx1a9VJVO2xsqhb94AOIY3tiYTT7ZfYKB5UFGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3NI6b4T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C26E1C32782;
-	Wed,  7 Aug 2024 10:10:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+C3KOceR5ab1+ayDH0kD/gzn+GK9MoCNr5h17u2XIwXoOnNyVcaOdtIL457EBtT71Qqi8se5b910yUmY+tfh0lXnDEBnd4BKt2hjabaIFXlxoHVNFF5Eqif8uBP9eD5wmQaNHwkKWF7ViVeJCQzodOc2somA72MBU66hCmIZ4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkpsVuLe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F93C32782;
+	Wed,  7 Aug 2024 10:13:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723025429;
-	bh=eBc8BK6TF2PeBiD3vbcn930TmC98UXZiLj/lgQVZk8c=;
+	s=k20201202; t=1723025601;
+	bh=32sFIlH+nIuN+Gj/4FUt6FCBFZ1/79vLbWF2rG8Tqdk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o3NI6b4TjqIS2p/fGCEiCrezINlzvUX+cJko6yRAjJRWijiDoHvZ8wipJHJj5gLh/
-	 5/zZKJWgA5QK0GW1uOrCa0tTiP3g3H4brdbuz7eydtvQwXpFoDzfUfKVXoTWslazjR
-	 1PkKF+Gk7ku1BJ05SmuKBJU70tMdW3xbCGHgpFjfNMVKu++/5gFIwUfx2t/usYYYsc
-	 pjSwDlS5NSEoupr0oIlJEzGRsVMlxWo/zK7DUy5OYDGyOdyjtLqYVpGTVnhvfjAzlg
-	 ygDLpJ2TbzGKDAiu2Hp0xU96wgb4mHEojsJOg8YGVlIDFJLhlqqwDW9mrj4W2QRErg
-	 YQSbHOCVmCSgw==
-Date: Wed, 7 Aug 2024 12:10:23 +0200
+	b=nkpsVuLexk5mBFnVJr4I7MG9rIb+LbDGs5pjJycdt3xVTMc1B1btTfi7xUo5Ju8YD
+	 MEMyS9y7+TKz714x+T2mP/rQaxPYXxjdrxnYEWPA5wKGvjJsmX8xhXgklFn6aI5z3N
+	 wFXhtxxvMd21s8wc+gDwMJ73bSLg4p2UCOsM0bK9CrhRN9+Tv+ZUbvbgb9Ey1b7/Mg
+	 Uf3NisLbMkrr5JM6ee6lRjfpjh1W19aJT64qKdHKTqZOGgB4qLRnwWFr5W11DNzazP
+	 ru3ERorOK85dj35fKi7TUmOIuOt0MPbL1a0UXsCzVPWltEPo0lGXeN5slb+6dO5TOd
+	 lZ7pHEJG47Bsw==
+Date: Wed, 7 Aug 2024 12:13:16 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: viro@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, amir73il@gmail.com, bpf@vger.kernel.org, 
 	cgroups@vger.kernel.org, kvm@vger.kernel.org, netdev@vger.kernel.org, 
 	torvalds@linux-foundation.org
-Subject: Re: [PATCH 05/39] regularize emptiness checks in fini_module(2) and
- vfs_dedupe_file_range()
-Message-ID: <20240807-referat-klischee-162c96b05177@brauner>
+Subject: Re: [PATCH 06/39] net/socket.c: switch to CLASS(fd)
+Message-ID: <20240807-erbarmen-getextet-77b673347599@brauner>
 References: <20240730050927.GC5334@ZenIV>
  <20240730051625.14349-1-viro@kernel.org>
- <20240730051625.14349-5-viro@kernel.org>
+ <20240730051625.14349-6-viro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,22 +60,43 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240730051625.14349-5-viro@kernel.org>
+In-Reply-To: <20240730051625.14349-6-viro@kernel.org>
 
-On Tue, Jul 30, 2024 at 01:15:51AM GMT, viro@kernel.org wrote:
+On Tue, Jul 30, 2024 at 01:15:52AM GMT, viro@kernel.org wrote:
 > From: Al Viro <viro@zeniv.linux.org.uk>
 > 
-> Currently all emptiness checks are done as fd_file(...) in boolean
-> context (usually something like if (!fd_file(f))...); those will be
-> taken care of later.
+> 	I strongly suspect that important part in sockfd_lookup_light()
+> is avoiding needless file refcount operations, not the marginal reduction
+> of the register pressure from not keeping a struct file pointer in
+> the caller.
 > 
-> However, there's a couple of places where we do those checks as
-> 'store fd_file(...) into a variable, then check if this variable is
-> NULL' and those are harder to spot.
+> 	If that's true, we should get the same benefits from straight
+> fdget()/fdput().  And AFAICS with sane use of CLASS(fd) we can get a
+> better code generation...
 > 
-> Get rid of those now.
+> 	Would be nice if somebody tested it on networking test suites
+> (including benchmarks)...
 > 
-> use fd_empty() instead of extracting file and then checking it for NULL.
+> 	sockfd_lookup_light() does fdget(), uses sock_from_file() to
+> get the associated socket and returns the struct socket reference to
+> the caller, along with "do we need to fput()" flag.  No matching fdput(),
+> the caller does its equivalent manually, using the fact that sock->file
+> points to the struct file the socket has come from.
+> 
+> 	Get rid of that - have the callers do fdget()/fdput() and
+> use sock_from_file() directly.  That kills sockfd_lookup_light()
+> and fput_light() (no users left).
+> 
+> 	What's more, we can get rid of explicit fdget()/fdput() by
+> switching to CLASS(fd, ...) - code generation does not suffer, since
+> now fdput() inserted on "descriptor is not opened" failure exit
+> is recognized to be a no-op by compiler.
+> 
+> 	We could split that commit in two (getting rid of sockd_lookup_light()
+> and switch to CLASS(fd, ...)), but AFAICS it ends up being harder to read
+> that way.
+> 
+> [conflicts in a couple of functions]
 > 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
