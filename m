@@ -1,228 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-25445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FF194C367
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 19:11:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C6C94C3CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 19:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4DE1F22DAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 17:11:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E0E81C220E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 17:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD820190684;
-	Thu,  8 Aug 2024 17:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B1B190471;
+	Thu,  8 Aug 2024 17:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dFnXEJHT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cVmzgLsC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dFnXEJHT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cVmzgLsC"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KUOvIjL6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Lghl0Cpx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yogjdABV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5VkjSRhB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD1382C7E;
-	Thu,  8 Aug 2024 17:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530B413D8A3
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 17:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723137095; cv=none; b=isbZMG0RPNks1BiJnu3XcF30BcYtuolHVW/aoxu/IuHi8VtqRvRSOx9acRNeyUFka1GgpIkMR4inPz/kaxOcFcQZlBCtryqD8gWDZZjD7Q87Z3cwG0Ocr248jp7vj7jo9AVpOoxY2hfe9u3DIPPE7NvqV/ETf4aKgIeFspwqmYU=
+	t=1723138482; cv=none; b=OEWzyJJkwca6sDmmGu4hMVCd0fnbN9kxyTtO5w2wNo0Ibt0FI5gVoyLO9ZqFr5/bCXM2pa4kaGLHDqTwX1jCF9pJwm0HpQ2r427aKqzvcsFLgPDPUQJDCz8XIUFPPWQAoqcdxk7JLcNcSRWidHyZTw9RQ+nvSYCq4jfjFUzHYG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723137095; c=relaxed/simple;
-	bh=+T3bznHcwl2sKilN3Rsk+DfoLt8TfQPY+ISGsMgYDh8=;
+	s=arc-20240116; t=1723138482; c=relaxed/simple;
+	bh=0PS0MemkpdUBbVtJllMXr0cGbQUfaf8rNmZcLsnMhvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t8r7tIAqFDDpqXVcmAL4Wr37wO/JqcuO7cHZKpxASc/rnQAAu3AEKZRqkonLkPDVSaUgflqdj942ZeQWkLxF37/Ek9QBnCBrvzwVCER1xWIdOys6FmNNXfD+NMglDDI4UuKMePxXnQNO3LVxA+R6LTGjtOL19aPDlbx9SyyePP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dFnXEJHT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cVmzgLsC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dFnXEJHT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cVmzgLsC; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZQMXbimkHe4kq07mNZ0/kVbBkYOpDFIIamBQIlkElGFrWlbrCjxcPJSOXi0zcFDiyQ81PHaZVDmj6VYVpRoi98TPVtw75P+XU5BEJvlOquee1i2Z6JhtSr7i7hNpHKMIGo8uN97Ly3hus5OofSnIymVXOrdmuu49qq9xWqMqks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KUOvIjL6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Lghl0Cpx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yogjdABV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5VkjSRhB; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 23ED921D67;
-	Thu,  8 Aug 2024 17:11:31 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0958A1F7A6;
+	Thu,  8 Aug 2024 17:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723137091; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1723138478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=c5KTl0zSOhEJ1SLkg5NmIdRLgqbBvRlP3mDGSRHB+0k=;
-	b=dFnXEJHTMfpNYIgxAQsbpZmail4sTGUCTpwSHbU9tEw3uDnx7AffsMpIC+v+1a0CEvXTWA
-	d28+ZwDBhojLYle4HliUFcZmJjbH/yYkapQwtT6yaIxrieRWrdeXN0RX1c/+hvVUs6j193
-	TF9ZbkS1nCyZvLKGWgy32bjc9yKlIso=
+	bh=U5PmvDFdAPGIUjp/Wu7NSl72INmdHuySDaPkyheBqzk=;
+	b=KUOvIjL6EVlka74FnT4mT/iIUcy+axnSKeFGaGn+CwunrkFZK6CkcgMZFd+djJVgmXIGSa
+	s0UYcmJtE2pcUeAm1poIOxAxNdscgex7F7cwTWADuQLQLlbE1Yas5MqIiAd5yAr/UvQyoF
+	3gNeLlqkMjgb/dn2uOjH1eLZEke40mc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723137091;
+	s=susede2_ed25519; t=1723138478;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=c5KTl0zSOhEJ1SLkg5NmIdRLgqbBvRlP3mDGSRHB+0k=;
-	b=cVmzgLsCC9zEemztN6gWR1Fw2f5/Bghwif7nD3DqqEOiBtqQO8knrP2KeAYWR+g2gB3krj
-	Cd7CjBhHfLABhJAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dFnXEJHT;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cVmzgLsC
+	bh=U5PmvDFdAPGIUjp/Wu7NSl72INmdHuySDaPkyheBqzk=;
+	b=Lghl0CpxYiXN/FrO1Weqs2+MozYbbKxlMt9l6lgQsCSu47oJAmyhI0JkwvuzMvJbrxbzfW
+	vqtK9ZXwLVo113DQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=yogjdABV;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=5VkjSRhB
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723137091; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1723138477; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=c5KTl0zSOhEJ1SLkg5NmIdRLgqbBvRlP3mDGSRHB+0k=;
-	b=dFnXEJHTMfpNYIgxAQsbpZmail4sTGUCTpwSHbU9tEw3uDnx7AffsMpIC+v+1a0CEvXTWA
-	d28+ZwDBhojLYle4HliUFcZmJjbH/yYkapQwtT6yaIxrieRWrdeXN0RX1c/+hvVUs6j193
-	TF9ZbkS1nCyZvLKGWgy32bjc9yKlIso=
+	bh=U5PmvDFdAPGIUjp/Wu7NSl72INmdHuySDaPkyheBqzk=;
+	b=yogjdABV8tPXpY2WDhuDrHwbTSupeMZzjmZ9pXgVyt6f/JK18gIMeCIDVLKhJI6FrIT80c
+	Rx6qxkxnLlYwrgc+OqJIR+UeqZ7Rea5dUisQPoTB5oVGmkZz0pOy4JPDrX+JasZZOqizMA
+	okETpVluEeWa1P6mmnYPK0T6AEusSK8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723137091;
+	s=susede2_ed25519; t=1723138477;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=c5KTl0zSOhEJ1SLkg5NmIdRLgqbBvRlP3mDGSRHB+0k=;
-	b=cVmzgLsCC9zEemztN6gWR1Fw2f5/Bghwif7nD3DqqEOiBtqQO8knrP2KeAYWR+g2gB3krj
-	Cd7CjBhHfLABhJAQ==
+	bh=U5PmvDFdAPGIUjp/Wu7NSl72INmdHuySDaPkyheBqzk=;
+	b=5VkjSRhBqpZamvE/p85fcpA3NrwEM1TNlC9AecEvGutG1nKgetxaQaFV5y6QoAECluXPiV
+	SZByk9YGgZAvCbCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1516813876;
-	Thu,  8 Aug 2024 17:11:31 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E12DA136A2;
+	Thu,  8 Aug 2024 17:34:36 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id d84eBUP8tGblOgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 08 Aug 2024 17:11:31 +0000
+	id YauoNqwBtWZ7QQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 08 Aug 2024 17:34:36 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B2D4FA0851; Thu,  8 Aug 2024 19:11:30 +0200 (CEST)
-Date: Thu, 8 Aug 2024 19:11:30 +0200
+	id 81BC1A0851; Thu,  8 Aug 2024 19:34:32 +0200 (CEST)
+Date: Thu, 8 Aug 2024 19:34:32 +0200
 From: Jan Kara <jack@suse.cz>
 To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-	audit@vger.kernel.org
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-Message-ID: <20240808171130.5alxaa5qz3br6cde@quack3>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <20240807-erledigen-antworten-6219caebedc0@brauner>
- <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
- <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 06/13] fs: Drop unnecessary underscore from _SB_I_
+ constants
+Message-ID: <20240808173432.bs64kswvkq6qen4z@quack3>
+References: <20240807180706.30713-1-jack@suse.cz>
+ <20240807183003.23562-6-jack@suse.cz>
+ <CAOQ4uxhhzFZy-QBrwhRWubRm75Uw_sx92OZv3gp1bV-MTWwYPA@mail.gmail.com>
+ <20240808143505.GB6043@frogsfrogsfrogs>
+ <20240808-gegolten-dehnen-3a19a0e67edf@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240808-gegolten-dehnen-3a19a0e67edf@brauner>
 X-Spam-Level: 
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.01 / 50.00];
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim,suse.com:email];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	URIBL_BLOCKED(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
 	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,linux-foundation.org,gmail.com,toxicpanda.com,vger.kernel.org,paul-moore.com];
 	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,suse.cz,vger.kernel.org,fromorbit.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,suse.cz:dkim]
 X-Rspamd-Action: no action
 X-Spam-Flag: NO
-X-Spam-Score: -1.01
-X-Rspamd-Queue-Id: 23ED921D67
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 0958A1F7A6
 
-On Thu 08-08-24 12:36:07, Christian Brauner wrote:
-> On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
-> > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
-> > > > +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
-> > > > +{
-> > > > +	struct dentry *dentry;
-> > > > +
-> > > > +	if (open_flag & O_CREAT) {
-> > > > +		/* Don't bother on an O_EXCL create */
-> > > > +		if (open_flag & O_EXCL)
-> > > > +			return NULL;
-> > > > +
-> > > > +		/*
-> > > > +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
-> > > > +		 * use the dentry. For now, don't do this, since it shifts
-> > > > +		 * contention from parent's i_rwsem to its d_lockref spinlock.
-> > > > +		 * Reconsider this once dentry refcounting handles heavy
-> > > > +		 * contention better.
-> > > > +		 */
-> > > > +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
-> > > > +			return NULL;
+On Thu 08-08-24 16:50:42, Christian Brauner wrote:
+> On Thu, Aug 08, 2024 at 07:35:05AM GMT, Darrick J. Wong wrote:
+> > On Thu, Aug 08, 2024 at 01:47:20PM +0200, Amir Goldstein wrote:
+> > > On Wed, Aug 7, 2024 at 8:31 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > Now that old constants are gone, remove the unnecessary underscore from
+> > > > the new _SB_I_ constants. Pure mechanical replacement, no functional
+> > > > changes.
+> > > >
 > > > 
-> > > Hm, the audit_inode() on the parent is done independent of whether the
-> > > file was actually created or not. But the audit_inode() on the file
-> > > itself is only done when it was actually created. Imho, there's no need
-> > > to do audit_inode() on the parent when we immediately find that file
-> > > already existed. If we accept that then this makes the change a lot
-> > > simpler.
+> > > This is a potential backporting bomb.
+> > > It is true that code using the old constant names with new macros
+> > > will not build on stable kernels, but I think this is still asking for trouble.
 > > > 
-> > > The inconsistency would partially remain though. When the file doesn't
-> > > exist audit_inode() on the parent is called but by the time we've
-> > > grabbed the inode lock someone else might already have created the file
-> > > and then again we wouldn't audit_inode() on the file but we would have
-> > > on the parent.
-> > > 
-> > > I think that's fine. But if that's bothersome the more aggressive thing
-> > > to do would be to pull that audit_inode() on the parent further down
-> > > after we created the file. Imho, that should be fine?...
-> > > 
-> > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/?ref_type=heads
-> > > for a completely untested draft of what I mean.
+> > > Also, it is a bit strange that SB_* flags are bit masks and SB_I_*
+> > > flags are bit numbers.
+> > > How about leaving the underscore and using  sb_*_iflag() macros to add
+> > > the underscore?
 > > 
-> > Yeah, that's a lot simpler. That said, my experience when I've worked
-> > with audit in the past is that people who are using it are _very_
-> > sensitive to changes of when records get emitted or not. I don't like
-> > this, because I think the rules here are ad-hoc and somewhat arbitrary,
-> > but keeping everything working exactly the same has been my MO whenever
-> > I have to work in there.
+> > Or append _BIT to the new names, as is sometimes done elsewhere in the
+> > kernel?
 > > 
-> > If a certain access pattern suddenly generates a different set of
-> > records (or some are missing, as would be in this case), we might get
-> > bug reports about this. I'm ok with simplifying this code in the way
-> > you suggest, but we may want to do it in a patch on top of mine, to
-> > make it simple to revert later if that becomes necessary.
+> > #define SB_I_VERSION_BIT	23
 > 
-> Fwiw, even with the rearranged checks in v3 of the patch audit records
-> will be dropped because we may find a positive dentry but the path may
-> have trailing slashes. At that point we just return without audit
-> whereas before we always would've done that audit.
+> Yeah, that's better (Fwiw, SB_I_VERSION is confusingly not an
+> sb->i_flags. I complained about this when it was added.).
 > 
-> Honestly, we should move that audit event as right now it's just really
-> weird and see if that works. Otherwise the change is somewhat horrible
-> complicating the already convoluted logic even more.
+> I don't want to end up with the same confusion that we have for
+> __I_NEW/I_NEW and __I_SYNC/I_SYNC which trips me up every so often when
+> I read that code.
+
+OK, _BIT suffix sounds nice.
+
+> So t probably wouldn't be the worst if we had:
 > 
-> So I'm appending the patches that I have on top of your patch in
-> vfs.misc. Can you (other as well ofc) take a look and tell me whether
-> that's not breaking anything completely other than later audit events?
+> #define SB_I_NODEV_BIT 3
+> #define SB_I_NODEV BIT(SB_I_NODEV_BIT)
+> 
+> so filesystems that raise that flag when they're initialized can do:
+> 
+> sb->i_flags |= SB_I_NODEV;
+> 
+> and not pointlessly make them do:
+> 
+> sb->i_flags |= 1 << SB_I_NODEV_BIT;
 
-The changes look good as far as I'm concerned but let me CC audit guys if
-they have some thoughts regarding the change in generating audit event for
-the parent. Paul, does it matter if open(O_CREAT) doesn't generate audit
-event for the parent when we are failing open due to trailing slashes in
-the pathname? Essentially we are speaking about moving:
+Well, all sb->i_flags modifications should be using sb_set_iflag() /
+sb_clear_iflag(). I know it is unnecessarily more expensive in some cases
+but none of those paths is really that performance sensitive. The only
+(three) places where we have expression like 1 << SB_I_<foo>_BIT are there
+because the flags are also used for fc->s_iflags.
 
-	audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-
-from open_last_lookups() into lookup_open().
+I think that keeping SB_I_NODEV around together with SB_I_NODEV_BIT makes
+it easier to write code like sb->i_flags |= val without thinking twice and
+the three callsites that would be simplified are not really worth it. But
+if someone feels strongly about this, I can live with it.
 
 								Honza
 -- 
