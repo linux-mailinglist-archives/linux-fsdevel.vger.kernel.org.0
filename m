@@ -1,126 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-25419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687A494BEA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 15:39:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 801D494BF78
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFFCAB25C87
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 13:38:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE131C265EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 14:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2668318E022;
-	Thu,  8 Aug 2024 13:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628B318FC79;
+	Thu,  8 Aug 2024 14:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m45SMfYm"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TB7vIZQs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B552C143726;
-	Thu,  8 Aug 2024 13:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF3F18E02D;
+	Thu,  8 Aug 2024 14:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723124331; cv=fail; b=macb099KiUb8EtsG9JW7uafsS5TaYMERkxV4slWn7hayUInFozTXtN69EK5/3UdiNDFtxsczQXJjMS1hLF2KHoEZo6ll7z3NsZ1vfx87wjFybAJnDlI96PuF5/G+2TRSzBuNxstXTlqD+sItFR1PKbP2VJ0oXJrOrV0PCK5elII=
+	t=1723126414; cv=fail; b=djPbOf4koZUVNKeYuorp3EjmSUe6GjxxS7qAl4CvgFYSt39Y4ZcvpKbeAFClj8vxie1HskgnDmZ7eE2haXOTGUsYvx3RKz+/YYsLtl/T/bRPGhxbc3kM/dtHBL2Md5Jwzrwn0VJuBi5cW3OSpyLDS5lDpSltABfLDs7pzMw7XgU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723124331; c=relaxed/simple;
-	bh=dMSaUrgbrWFWvQ/HQ+EK78OV82c+l0BDctGG9sFb28g=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OQvyXmKxGCWEnwiMOPcUSm2dS0K9ybFV+0FkLjo7ABBfLyRqDqivJ9xAsIAbiazs+hQG06rE3CAXonWJMibSSyKCyPU6sx7qKEKJ9kVZW9U1vrqMBaQEJvsH50AiO8wOJlXXsFDlQPjooFpufRd01XF/HKwzLkZJV+bn/77hgP8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m45SMfYm; arc=fail smtp.client-ip=198.175.65.14
+	s=arc-20240116; t=1723126414; c=relaxed/simple;
+	bh=Zbsy/+xPrsporutrn5Ew/1Mu7CwGpApG9pfIZTRX2TE=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=YQzu87DI80RGzyFYHsr2Wy5/F8MRE/wHMIGnyaq8XxooveVFdqsHvFEsTILjLYzsBud/vVLZ6XMHB9VYJitd7Gt18FbOqnRN/xG4avDBWKjz+IhupcHgmG9N78C4OJQEvaxfbBAi+tCtTL/ZW4oxJvRvnefqkhxXJBp7gHOQ7w4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TB7vIZQs; arc=fail smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723124330; x=1754660330;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=dMSaUrgbrWFWvQ/HQ+EK78OV82c+l0BDctGG9sFb28g=;
-  b=m45SMfYm4vbh9AG22+YP5WgSPp2dqjeV92XiSW8qvyKyD8njLa+vJBO2
-   z57RcqBH2gPGGSoi/pcGo1C7xeISZoTeqSPnNyp5p4IpuXpbt/ZR1uCxL
-   2TqHVrZ8sIuL7nCO3dIyr7JNTggwstAYYH6eIX5j6fpEX6UROezrMuk5V
-   dwlPH6uYz1YY9b7tfak31euZSNX4a6ObXxpQl677+mPBKeSWNvuFbGmc2
-   0Lo3MtnPo+qkx8HnjUDD6sycFj23BUS3l2ERMjO76pmlIJ7HA8vVjACEJ
-   KsdDYDGNqVZ0qlr6TZxsjFOD9hA5OBwdByz+ph+tSXF50qA/UBgYfxRZ/
-   Q==;
-X-CSE-ConnectionGUID: QtXdjMufT+G0wtZ8g2hISw==
-X-CSE-MsgGUID: DZ/UBEDIQBizUAY3VlLtZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="25041144"
+  t=1723126412; x=1754662412;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Zbsy/+xPrsporutrn5Ew/1Mu7CwGpApG9pfIZTRX2TE=;
+  b=TB7vIZQs6HYdiDYSjkzj/t5m69I57cymY/fs4LajwLRTFuD9IZqGWcjc
+   EtpC8aCeLrvtwrvcwyMEbRsxJ88dujATzwAJ45tuzzkz+zW+tmPgeSwfl
+   67DgB4ANamypJVQkKA1q4X/DlXZAzHRgjHSTF2WMI6Uxj6jORLURBZZCR
+   KFOC7lFePqKDLK4PJg4tWaR80ECs80tVS5IC0YCBfEPtlyuxjz/bs+50M
+   se+hZA3E34tDFh+a+/S1K9SlRv68siG2og3YeJXszygVsvKEET8i9Q7R9
+   CaQ5eqgrjuR1omGIvAXmdYIKE3kP0HhiKxzwZVRgE0KyrfdlGMS8/zQvx
+   g==;
+X-CSE-ConnectionGUID: A5xGnt0OQL2yeHy1L1xxIQ==
+X-CSE-MsgGUID: uBuhYWeNS267VVsg1LRKWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21224441"
 X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="25041144"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 06:38:49 -0700
-X-CSE-ConnectionGUID: 2h3WjS9ISCaC9179H8jzig==
-X-CSE-MsgGUID: ghKksS73SiSkQ9apgeiWYQ==
+   d="scan'208";a="21224441"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2024 07:13:31 -0700
+X-CSE-ConnectionGUID: dl1oqiA9Sq6YOXh1kBzNxQ==
+X-CSE-MsgGUID: UfyP5Lp7SyK6yFZdrFpvrw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,273,1716274800"; 
-   d="scan'208";a="87874181"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Aug 2024 06:38:48 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+   d="scan'208";a="57191151"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Aug 2024 07:13:29 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 8 Aug 2024 06:38:47 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ 15.1.2507.39; Thu, 8 Aug 2024 07:13:28 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 8 Aug 2024 06:38:47 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ 15.1.2507.39; Thu, 8 Aug 2024 07:13:28 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 8 Aug 2024 06:38:47 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ 15.1.2507.39 via Frontend Transport; Thu, 8 Aug 2024 07:13:28 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 8 Aug 2024 06:38:35 -0700
+ 15.1.2507.39; Thu, 8 Aug 2024 07:13:27 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qynHBsL0yQx4VXxyh+XF8NJmM6QeDrTKWSmT9hD94/ZncL/seHQm/smgizX3HlJ15419q06gpkYXmZS2/OEMobF1c0tHaOXXdd+oTmMQUN+zvVVpHiKGk1wcw87gq87/I/7cNdgO/CQ0nt4P01a9/cZEHytgCH1Ac+wlGadhJNqYbtHWg8au+DfNFglXNGEWzG1idxNEGyOOXvJ4nSCJBTyqfA1dNDvaMEDeJW4GL1fBL+LrBRmZ9dw4FK6oxQjG72SOPkyCvPFMniLGsLzvoVBZCKTJk7J/5tumvmv/vKYXPth6tQrDrXPPUtmX7ZQo1ou2/4DOlWJIXY5Ns6S81Q==
+ b=RiXybMe3rVE1SEKtBfReSt/olBgKbIxAWj6A1XUvQ17ZQk7iP1rt+4M7+5iRelREgI17KSs6oobsA8WUXB7BSxnkm8WLo7MXAIGCf1LddqG0JZTabRgUKxt7c0MZm9/NkGd6s3+eFTibHlq0mf+ghyHHZeTwt0wcdjb90G9PeDegKzMv4KyRzs+WjRzs9xPLEgwrcfpNFmBhr5Skoyb86FhItkODmFQ2D1PmWoeZ0ysurMgINZ+DnsgYxCnRrm3V0GfWa7wcZqvolEGfG6qhYiuCmMTG1zVmQbSIb5cF/pTK1Vb/LjHHoS6ij4fDg3+5CewaQ8sElyN9nJBovWGaIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jRp4hqIoHBpk5PPiuyw3m/h796lXfam0L5JUBCV4GHo=;
- b=aZaK2QTDPNrvUhTxtv49aa1786ppk6aMaRBKRF9m0ER6BQNLIyuaYhPrgTSUtG7yGEI8F65gbTBuTwtWqB4B2F/EAJAchu3mjPCnsvhxWs8CyMiMeBvTg/ogiy/PFHE0UYOyhjzpVMOJngCtFZRjGOm88z35wkhEKUVAWq1lFqZlTEfaLXC74DAFpgS9nuOyYONYMzKSFRk4+Fe2e72+e9ozYoSZAa3lECzkTlgb3hVBW4LkEr96F9dQ+f0QA4BwiaiWwzOA5vyYJec8okBwu0/LCwS7TvT+ePIQWGX1axdAJ0sAJaS02lEEBXVr9gwydQjOQqveU+EpeIkd2adNtA==
+ bh=kqzAgohhDTBbXI/CLlV88KuoVXXPd1PO0fMbtlgqGew=;
+ b=Oc6oczw2sOMR8l9sp9uBvtqUt03UI3LnHBb1nLWQgoYa3/Qt7W1zh45Th9a+mTm2bMMAsADYdS1mM/+S9rzr2z7lyIW3L96fNdO3I+VQgEmYa8DfTno88yRcnfllemupPWH4jLuG1mFOhS0sWUBKfuAEZZ/Mc4TQ0HKCTiU4+HtNgTP8RsrZbsXnrVdyp2SCju4+keHILTwIVN4j+Pw0fwNNITxvqc7zW9nVCc0h7PGFxSZatll0zRxgJvfGLCUwoMCCxTy0raS8TRVjPZZSSjyPwcL6wycLpd69bHmzozwgPuZa2esvlrFlOOhFMghhtOw1OpMeoXzd3pXB8lJ69A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH0PR11MB4839.namprd11.prod.outlook.com (2603:10b6:510:42::18)
- by DS0PR11MB7484.namprd11.prod.outlook.com (2603:10b6:8:14c::10) with
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by SJ2PR11MB7576.namprd11.prod.outlook.com (2603:10b6:a03:4c9::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Thu, 8 Aug
- 2024 13:38:31 +0000
-Received: from PH0PR11MB4839.namprd11.prod.outlook.com
- ([fe80::2c61:4a05:2346:b215]) by PH0PR11MB4839.namprd11.prod.outlook.com
- ([fe80::2c61:4a05:2346:b215%3]) with mapi id 15.20.7828.023; Thu, 8 Aug 2024
- 13:38:31 +0000
-Date: Thu, 8 Aug 2024 21:39:19 +0800
-From: Pengfei Xu <pengfei.xu@intel.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-CC: Andrew Morton <akpm@linux-foundation.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil
- Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>, Kees Cook
-	<kees@kernel.org>, Suren Baghdasaryan <surenb@google.com>, SeongJae Park
-	<sj@kernel.org>, Shuah Khan <shuah@kernel.org>, Brendan Higgins
-	<brendanhiggins@google.com>, David Gow <davidgow@google.com>, Rae Moar
-	<rmoar@google.com>, <syzkaller-bugs@googlegroups.com>, <heng.su@intel.com>
-Subject: Re: [PATCH v4 1/7] userfaultfd: move core VMA manipulation logic to
- mm/userfaultfd.c
-Message-ID: <ZrTKh/UfeOcKLrN9@xpf.sh.intel.com>
-References: <cover.1722251717.git.lorenzo.stoakes@oracle.com>
- <50c3ed995fd81c45876c86304c8a00bf3e396cfd.1722251717.git.lorenzo.stoakes@oracle.com>
- <ZrLt9HIxV9QiZotn@xpf.sh.intel.com>
- <3c947ddc-b804-49b7-8fe9-3ea3ca13def5@lucifer.local>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Thu, 8 Aug
+ 2024 14:13:24 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7828.023; Thu, 8 Aug 2024
+ 14:13:24 +0000
+Date: Thu, 8 Aug 2024 22:13:13 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Jens Axboe <axboe@kernel.dk>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <oliver.sang@intel.com>
+Subject: [axboe-block:rw_iter] [fs/proc]  a461a4f9ee: segfault_at_ip_sp_error
+Message-ID: <202408082200.c3349d39-oliver.sang@intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <3c947ddc-b804-49b7-8fe9-3ea3ca13def5@lucifer.local>
-X-ClientProxiedBy: SG2PR01CA0165.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::21) To PH0PR11MB4839.namprd11.prod.outlook.com
- (2603:10b6:510:42::18)
+X-ClientProxiedBy: SG3P274CA0008.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::20)
+ To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -128,165 +112,380 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR11MB4839:EE_|DS0PR11MB7484:EE_
-X-MS-Office365-Filtering-Correlation-Id: cbd5e1da-46e6-425d-cdde-08dcb7af646d
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SJ2PR11MB7576:EE_
+X-MS-Office365-Filtering-Correlation-Id: 04e46185-2750-48ed-35f6-08dcb7b44426
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?WEjeRl0WjKQZocHuQgB+OyCF2Asyt5YqbDOi9DhX1IRmEF2mMwIW9F2NKnk2?=
- =?us-ascii?Q?tKqsPWhze1KWMMTPcJJxPoi4ePtMlHQSEVTw+LvAhnOz5q5rsstUU7AZH86D?=
- =?us-ascii?Q?quv7ET6NVSlz6Ve22YZHPG8DTc1hKzJrf0H7/11adORXrQGoFvl60IXfgifr?=
- =?us-ascii?Q?4cfexZA6HGe4kbaZpFtNCUALqK6jS51lGvhGrOMRi/V/KQt+/Fhtd9DNWwlS?=
- =?us-ascii?Q?XTkUz1hjp07JoxWMA+2Gow3Azc8WhYbebmSl3vLtdSJ6iFZL1Dl0xt6m3uet?=
- =?us-ascii?Q?gU1xmYunFRwgRB6g8hTKIvI/lwhlpms0Ps6DNJdV2ehSN54tmw/ZYqCmkiUr?=
- =?us-ascii?Q?HOJBp4c4Sjmk4vi25yP4v74d0tXId5uHJXSWOmSFHPjBPHlHDiZRFp6XbHnN?=
- =?us-ascii?Q?cKefE3D2oPs8Vg0nuTKkzS0cvU9wb3gkL+fHiQ+7Zi3JDJnaGwcRA5n8ImLZ?=
- =?us-ascii?Q?U4bxX77btB1kGMjdhKjf9KTFanW2N62yRe9ra+K3crNH8/WbDzGEaUHRr8/q?=
- =?us-ascii?Q?W2+bUEKhwf+ywREi2Z5vI15fVZpl16K8RTSBEBoFGn0Sxks2XSLPs66LbOyH?=
- =?us-ascii?Q?UNbyhWTfY0gxJRv1Wd+r7h6dMbMsAuJk7C9kA1I8HsHccop9mi2U2KJ5+4aw?=
- =?us-ascii?Q?37Q15Gm3Jt6gOcDIquH955+Cs3d0pP+amzbWyYbFyKaU0bpd29Fh9xBUMU0U?=
- =?us-ascii?Q?R0gbWADag1ZBsReMIYkRu+5l8qi9xjnd7H9dunPR95evkFQcm2poXdYcIrw6?=
- =?us-ascii?Q?TbRSuyRVnAO6KEgu13Q/E6OFNTFeSsrVrXlNGm9BUgKkLg98SimXYYFnuh0O?=
- =?us-ascii?Q?1hHgplYGr/DAUrdnAiUGN3Y6Fr5vUpSx/jTAYm8xKWAKHhlqQ18SE1jfttqJ?=
- =?us-ascii?Q?l0pdWB5DBOMT85H0N0cJRQU6TgrElpagn9Ge3Xa8VAYOMDla1bmQ4mnZZb0H?=
- =?us-ascii?Q?KBqK/NYvc38MIwbt7Z+zKnefb1AvUOnElGvkhtORU+2VA8piQnUn9BJ9kJsz?=
- =?us-ascii?Q?KafgEwJknuBYvfo58XjyUwnKc7a6nKTqF7r+ZFRhPE1aQllY5csxoGiCoYFX?=
- =?us-ascii?Q?VPxfb7qUXDMY2srAkOAfFVyYBVJ1JGr3d4sTo2IUg8SG1i7ArlKF56M/Daqg?=
- =?us-ascii?Q?7mB22YFsX5HpncBOWScCa48/QFhI+zyCB4YZ+MM7/riKZENd7EK1+vZRYA7E?=
- =?us-ascii?Q?O5MkzXP7Ny2sstdYI93H0wwy4yK9DvaxTBraUaYL5RbVHNwxdOC5ns2Tz5ku?=
- =?us-ascii?Q?FHNqNHM9byFidDGTBIxfEy2eQsBp603Nx9+EWC4fpjMesON6h31O3m3fm1+h?=
- =?us-ascii?Q?0hpPtfa/RfggvDmN3dTzdjzn?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB4839.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?L4mXggDTGFKgHqPZD4krWi1ziJ8l/fwVSqXlI6b+wzZU1NJ//fAyoUhLevTv?=
+ =?us-ascii?Q?XBROMijen6/eXwKso7ydxoLvG5AwqbKJLQBUxGpiI8YXsaaqN9FGP96J7veq?=
+ =?us-ascii?Q?A/a2YcDJBS4oZyhsPn0TE8dTNH5vWM6DpXxnF0zhSCghHOVrq7KIhRi2vKDb?=
+ =?us-ascii?Q?ibzkZJEZgm1bIFHz6GAR8+aNyjip+ftyK4AmDKGKs6vmHlG4Xm+cANcN/kbc?=
+ =?us-ascii?Q?2aqTMHF1oKy2GuGYA7qg35+HFaNsbvibXU8XGyefZ6z3/8w1TJytw6rnreR8?=
+ =?us-ascii?Q?pmB2kQXMB+u09tcWV/K6kZfAYzZArR/Wvy2jgRqdNVW84AoN5ws8XbrRf4D4?=
+ =?us-ascii?Q?4RhaUwNK9ceQLkoQXPmOV0bMBAxfaSLMu1/a9v6nlSSjIq139+OPOUB190zN?=
+ =?us-ascii?Q?eXV7+AxdKYznscP0687RZpP0brpmBrB779vSrLby38k+qWtMn04a2R34/G7q?=
+ =?us-ascii?Q?TwOCpxuR/XhCGzBpjHTLvUbzSayDSg8qKvAvMYJMgqJKjgDhqO2Sz330/J9L?=
+ =?us-ascii?Q?MdIDWoM1yvNoBGEnWNHx0sv4ykHWrMjk6hVZGGBmIgNo6zUK+T/Eyg6h2NKp?=
+ =?us-ascii?Q?lqiEM+KPyiaLtholNRFISBNZc6c3PX7GVS4EN+rxE6Q1CMPfuVYudBAIxXyA?=
+ =?us-ascii?Q?8FKokrEdjztx/hVTLUexVH7Bz3WYz6JSuFi0AZhsbnO5iheMWP06fIo5Vqg+?=
+ =?us-ascii?Q?KFNRV08VWAQNFVUnfpvUedBh/qAAsbV6S2FJqiqGUtR9/cCsdSt3ELzyVSFR?=
+ =?us-ascii?Q?QF/Uw5oqCOIEzr3LLnkuEwRUM6s4zNVlzZEC0VZeg4qZrvilKYl/gcAgKuPS?=
+ =?us-ascii?Q?0yEg/iTWENk2179lzCfeW4vwD2K2KFu6YR3JroJSlR66z9kV05qnbYEvBI6v?=
+ =?us-ascii?Q?+P3r69UsRcgBlr39KZ9/UTlCMNgCwbZ9gS+fznhX0pHlt5tTpEKJ/OCxZ6rc?=
+ =?us-ascii?Q?XuRc2tVwON80SnYMIchLvz9mjY5f7YcC86N9Pp1l9UcTGXcEdFvbEWiV9sCW?=
+ =?us-ascii?Q?A7w2rcG7Xj1E85zsaR3dWhD5PNJBmYuPV4+olO10fCJYwARehjobQNVWklQU?=
+ =?us-ascii?Q?mU28bKt6AOHZPlcRWbPOQg70mUjJ+pKlRBcWxLFIzBAQZgTUjHvkA9EkA2rA?=
+ =?us-ascii?Q?R6nQ7lf5Wgy5n1yeSiOXPUrpG04u5MxdbbWBPqooJ7xM/9p5ZnRLpyF1Ltp4?=
+ =?us-ascii?Q?eUYaIyiY2CwZgx7p+tXRXiMU4W9q3WVZu6OUIQtKUP7zOvTVYgUexUwRoYGF?=
+ =?us-ascii?Q?EVH++2PMxKLuqoyelKWN7NAjuiAvXFxdKn1UsRwF9N5ooM266f3WgIeVFHwb?=
+ =?us-ascii?Q?jRc=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XCk4eBpEpbijxbi69xlS+9gr3oTEKBrYNLQNbXNV/2GvkU5ro+uh3vIZDRvb?=
- =?us-ascii?Q?xqsFecgY5k8unlTHPxDjb0N/hFacqmvyv49vP8vmqtsOit+bwYMTusLfLMhe?=
- =?us-ascii?Q?vhZsZbzYO2l9gfCVGlAiG9/FaGP6IT1Bqh3ZBmZEUNukCMIuhzkRksc6+3rE?=
- =?us-ascii?Q?KQ8KhRKwjuAMlMyUetxodCEVfWbR17Pb8+b1AJMYjDz7M/Zz6+TqJwSoQMbw?=
- =?us-ascii?Q?7aHz4OcJNcAhP+XAvigA05Vzg3vm4CrdSOpUpNoq1NgaZqmS0HXPzYm9Vi1W?=
- =?us-ascii?Q?4l0C9zKkpusuC3LsRiJs3DIxU8AsyFkXsDG7jTFSnIw0CcsW/iXOmxXw+JWo?=
- =?us-ascii?Q?0GM6D0qMHqphmxj8Ky6qy7jr9E5WoP96LnZa9gKcXg6EK4ds3y+PYDgQD0jc?=
- =?us-ascii?Q?HD5OtmNWNMaqhC9Mbk4y3CPcbXja7fe0M3HExnw23OCrdVWLp+8CXHzbDPiN?=
- =?us-ascii?Q?xGwehVsqvvKo3wZi7mLC9oeEj2/luJG8yAARKZ9Ve/7nmE2e67lebscVbkPI?=
- =?us-ascii?Q?1uBxXKiJx++xBLk85HVx+GF2X2magrTPl7StXwdaV58o9/oXTpbVYHaArXZi?=
- =?us-ascii?Q?sjjlkKKYL1Xihi7MI0UWyi42QuM2jzJtOeoaW45bIWR59Vr7ORAYoUn/ogCM?=
- =?us-ascii?Q?xWVr0YOzMMNOKdSbt6VXBrrdzkaJPu7TX8TRw7QT6xOQWRaCAPmioDGL7XwL?=
- =?us-ascii?Q?evBebleF+6CTeHqZ6cELol+9acyg9DfqQdVL1mYzu3Ur1fYua/FQbWdlantV?=
- =?us-ascii?Q?JTHMqI0YOJ3TrtqeVAjhBUuWfRXEyY+gEF4ApZAjDf84oLxHJNyDlC8MRgQr?=
- =?us-ascii?Q?/oxzmvWh6qqkzlHatU7wKem//+tDsDlRR0K+EPPhMbLIZaOT3RyUwgiWdMPK?=
- =?us-ascii?Q?yhdgeYtLrllejfpPWUTy499rwJCH7en6NnTojayTg6bU/u45G8sZ/y3Oi0+5?=
- =?us-ascii?Q?57tYYqHGrg1AI0mUk6jgJQLfHkaHyp2jmzqilgMdzi3OzSkos1FLv1Im2h6V?=
- =?us-ascii?Q?VKCLvBN4wgXDVXhViojg5DNarru83+KsXqe10vMXKxFfLCa6I2AalMRGnDPG?=
- =?us-ascii?Q?so62q/4OnNMi4Zc7OTpmH2fLIIXWuZu03JK7JEaYk7tQ2Cy/xXTwzWkV9B2E?=
- =?us-ascii?Q?/jy16s/5EfMHCB3mjArbG1nUjNuSynrKnj84XSXLVj99ogVKfmbuqfruJN11?=
- =?us-ascii?Q?62v17NUc6xknUi6fQsjPskuXzV/VWCPJh2XKJk0qgA65mdCZvBVs9BcxaB7/?=
- =?us-ascii?Q?2kP8eZMv5CutV9gpi/o7nAdrDHJgXUgZ0RLGXxG+j6e/g8x6VHcszM9olUyx?=
- =?us-ascii?Q?VbM9YB4K/GNVRlwXXmXGkTkJF3PkJADQa5llauDPqzddf/WLjYasldffdcpI?=
- =?us-ascii?Q?YPV2AZAE4TgCPP7V54HYivuNrFFLuWEgONWK7JF58OW5qw2/WqgQtpGcj3ff?=
- =?us-ascii?Q?c2Whs2bELnIATQ8LhFxabzscxsd+aVSdZWr5AlopdrftjJrn5D4p9sKS737y?=
- =?us-ascii?Q?VOVTU0rScn3zlMn57BzGExpJG7dwhh57J9e2ZkvV+UMi5ntouh8YousQ9Vcj?=
- =?us-ascii?Q?tDdlJwr/qedxbyLWGe+irU4pwfDPK41LkBr1zPqX?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbd5e1da-46e6-425d-cdde-08dcb7af646d
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB4839.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2mohHidx9MhMEto5m1j334Tv6TDkvrBAYBn/Pk7/NuyoK1PqhJM/h1R+Nzod?=
+ =?us-ascii?Q?8wUmPFm77DiE+OJ5aaq1/LsDiCWqdpXbFAENktlFWzI4mrTXYrwRMC+AZVDl?=
+ =?us-ascii?Q?/kJYFVacKWEKrwHwjhrCQJUPVTmYaMYAtHYXUqSRnCOWlWLNPkoxmpUH7hC7?=
+ =?us-ascii?Q?esIiFReeDzKxxaxGAWq9W09yWT2LJJvKurXXDBJzC73+APQGLIE0OJ/T42gK?=
+ =?us-ascii?Q?WMPm/EKLerMUf0nEkp1XZ+1E1FMH6C/X3TWiMYoCZjTPOxZHdvqQjexcp0Vj?=
+ =?us-ascii?Q?VsUhw6/CVYi2nt3KoARKj7rgNwYviW+aRNuTInTIU3IENEiIYV0CuadXhJ0z?=
+ =?us-ascii?Q?c/THOugDo8H0M3iiLRbAK+15i3OHBfd/BJpL9DmM14leaZIopB8ZpuG55Qgs?=
+ =?us-ascii?Q?Jxnjbk3Dnre+mJ82Yl2TVb9yRbyTawAIqnUwDtCO+yxNk6LUPkdEJA2DBjWe?=
+ =?us-ascii?Q?seFtBC55EGrYcHmeDvA2Wzrd7sIx2yjJ/8AAgpArIJ6o73lkSqgz8/y4qK48?=
+ =?us-ascii?Q?pThuytS5M9txDzszMx04c3cCVqzMbdAKMtvsRKtxPxfHAwICLAGSBnA1+XTR?=
+ =?us-ascii?Q?Nx4vS3axdRsRYFBDH+6KouQOyMoX9cCVy8f4eLFUqrSn3FjvKxmJwudCgktd?=
+ =?us-ascii?Q?ZUFdIZnhpcbSz565zpe/oDUelgI3d+3r18Lj+ynh4zrBXsAnXnln2TvVZeos?=
+ =?us-ascii?Q?dqyWVnG/FYTDp9pWYtH46bZryJq9sMU2vhViZII6yNPRIu68iAjNm6IP9CWR?=
+ =?us-ascii?Q?MA/k95uz7pdPV8vTTL9Esv1G/BcxneQA4UnZPcY1GLEzW+STe0fpk8MKFRnw?=
+ =?us-ascii?Q?hu5ti0/AaZUmtr54IKmb8a2Qvr82tnAX2OtHyCtNmlT3qHf+nd8x3H5MlBJp?=
+ =?us-ascii?Q?JqiUQHg8nSkgaykbExp8YKiRJwpSpO6qWl6GMDm0Zv21t0oibVa9Zd+8s6/4?=
+ =?us-ascii?Q?/LM+x3sgQZa2V8Ms+pe4QqZ9HvAryOshQAUgOZphCIIws6fZsTOYDI9A4xRa?=
+ =?us-ascii?Q?qRl2PY5CWV1j+JIjEsZe/YyRvDwQrHW+xOqr5RPZT0IWjFrLzaFh4IjijHNH?=
+ =?us-ascii?Q?XtOHE44JmYnqXvQKDOuXub06q4cw+mT49EJZaZSf8xYfVDor+7Dl23/VA/yY?=
+ =?us-ascii?Q?7TJhvFsPuuMxFFCLR9njGAACV5qT03xlcaMKBfH6kZozd5IxfSXYlLlGoawY?=
+ =?us-ascii?Q?hD8YZWjrxKx5yxJ4+VQXnQL3htcMtDwfARd5Ypz7fOqaYmj3ORyogrc/FI6p?=
+ =?us-ascii?Q?0mdVnZTrV++RozDwBGC+R2lH2KQ771QGTv2gIuW4bdQ7RT9mAqU+IB8JvPzk?=
+ =?us-ascii?Q?gWhW3hxw9VYocOsNSjwQOoT1nwM6HKrvK6RVNc/QItGl8kqoLxhqmhuZuSiL?=
+ =?us-ascii?Q?i5g73OVLvMVBx7zEVZtwwYHhfsviXH1nlKMcQFF3278pR+0rJnbLJFwsc3Yt?=
+ =?us-ascii?Q?1F6ydcHJUeTcUeBVVDmcukS8NaH84nJIp0JHbuXNjkig6aC068m3XNOhN7TV?=
+ =?us-ascii?Q?A9OKvrFw31m3cgKlZ9qbyVbD3bi7YoCT7EenbKk38HLUMF3GrzZ02zv/VWIp?=
+ =?us-ascii?Q?533YCnTxHViqUtSEHoqgayQdW/PDw6t+nP2sqzi54R2G4wtWOH0PJfjkkq9e?=
+ =?us-ascii?Q?sA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04e46185-2750-48ed-35f6-08dcb7b44426
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 13:38:31.4236
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2024 14:13:24.8138
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mAhz5wX5mggYMzaB+jd0LLxhWXlMWZeXHOfFFRNlZ+/gMWQjvo3BDPl/zTXXBIA41ONChFcKYVhnR/Wa3rJXOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7484
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0QTJ5+zASi3p1LO+E+bKtbz3iAYKQ8gSvmJPHfhOeNqbQWsiGEu+6T+v5zI75vH5dkMBiBYcT9UIhfyN1ppiEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7576
 X-OriginatorOrg: intel.com
 
-Hi Lorenzo Stoakes,
 
-On 2024-08-07 at 13:03:52 +0100, Lorenzo Stoakes wrote:
-> On Wed, Aug 07, 2024 at 11:45:56AM GMT, Pengfei Xu wrote:
-> > Hi Lorenzo Stoakes,
-> >
-> > Greetings!
-> >
-> > I used syzkaller and found
-> > KASAN: slab-use-after-free Read in userfaultfd_set_ctx in next-20240805.
-> >
-> > Bisected the first bad commit:
-> > 4651ba8201cf userfaultfd: move core VMA manipulation logic to mm/userfaultfd.c
-> >
-> > All detailed info: https://github.com/xupengfe/syzkaller_logs/tree/main/240806_122723_userfaultfd_set_ct
-> 
-> [snip]
-> 
-> Andrew - As this is so small, could you take this as a fix-patch? The fix
-> is enclosed below.
-> 
-> 
-> Pengfei - Sorry for the delay on getting this resolved, I was struggling to
-> repro with my usual dev setup, after trying a lot of things I ended up
-> using the supplied repro env and was able to do so there.
 
-Glad to know the repro environment is helpful.
-Thank you for your patch(I verified it's fixed) and it helps me learn more.
+Hello,
 
-> 
-> (I suspect that VMAs are laid out slightly differently in my usual arch base
-> image perhaps based on tunables, and this was the delta on that!)
-> 
-> Regardless, I was able to identify the cause - we incorrectly pass a stale
-> pointer to userfaultfd_reset_ctx() if a merge is performed in
-> userfaultfd_clear_vma().
-> 
-> This was a subtle mistake on my part, I don't see any other instances like
-> this in the patch.
-> 
-> Syzkaller managed to get this merge to happen and kasan picked up on it, so
-> thank you very much for supplying the infra!
+kernel test robot noticed "segfault_at_ip_sp_error" on:
 
-You are welcome. :)
+commit: a461a4f9eea48aa2bb8ac2a5c5e6b235e233e891 ("fs/proc: convert to read/write iterators")
+https://git.kernel.org/cgit/linux/kernel/git/axboe/linux-block.git rw_iter
 
-Best Regards,
-Thank you!
+in testcase: boot
 
-> 
-> The fix itself is very simple, a one-liner, enclosed below.
-> 
-> ----8<----
-> From 193abd1c3a51e6bf1d85ddfe01845e9713336970 Mon Sep 17 00:00:00 2001
-> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Date: Wed, 7 Aug 2024 12:44:27 +0100
-> Subject: [PATCH] mm: userfaultfd: fix user-after-free in
->  userfaultfd_clear_vma()
-> 
-> After invoking vma_modify_flags_uffd() in userfaultfd_clear_vma(), we may
-> have merged the vma, and depending on the kind of merge, deleted the vma,
-> rendering the vma pointer invalid.
-> 
-> The code incorrectly referenced this now possibly invalid vma pointer when
-> invoking userfaultfd_reset_ctx().
-> 
-> If no merge is possible, vma_modify_flags_uffd() performs a split and
-> returns the original vma. Therefore the correct approach is to simply pass
-> the ret pointer to userfaultfd_ret_ctx().
-> 
-> Reported-by: Pengfei Xu <pengfei.xu@intel.com>
-> Fixes: e310f2b78a77 ("userfaultfd: move core VMA manipulation logic to mm/userfaultfd.c")
-> Closes: https://lore.kernel.org/all/ZrLt9HIxV9QiZotn@xpf.sh.intel.com/
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  mm/userfaultfd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index 3b7715ecf292..966e6c81a685 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -1813,7 +1813,7 @@ struct vm_area_struct *userfaultfd_clear_vma(struct vma_iterator *vmi,
->  	 * the current one has not been updated yet.
->  	 */
->  	if (!IS_ERR(ret))
-> -		userfaultfd_reset_ctx(vma);
-> +		userfaultfd_reset_ctx(ret);
-> 
->  	return ret;
->  }
-> --
-> 2.45.2
+compiler: clang-18
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
++-------------------------+------------+------------+
+|                         | a6f483c214 | a461a4f9ee |
++-------------------------+------------+------------+
+| segfault_at_ip_sp_error | 0          | 6          |
++-------------------------+------------+------------+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202408082200.c3349d39-oliver.sang@intel.com
+
+
+[  OK  ] Started OpenBSD Secure Shell server.
+LKP: ttyS0: 221: Kernel tests: Boot OK!
+[  OK  ] Started System Logging Service.
+LKP: ttyS0: 221: HOSTNAME vm-snb, MAC 52:54:00:12:34:56, kernel 6.11.0-rc2-00295-ga461a4f9eea4 1
+LKP: ttyS0: 221:  /lkp/lkp/src/bin/run-lkp /lkp/jobs/scheduled/vm-meta-189/boot-1-debian-11.1-i386-20220923.cgz-x86_64-randconfig-076-20240807-a461a4f9eea4-20240808-123352-1sio433-5.yaml
+[  157.838726][  T408] vmstat[408]: segfault at 56633000 ip 00000000f7f4e774 sp 00000000ffbaee70 error 6 in libprocps.so.8.0.3[3774,f7f4e000+a000] likely on CPU 1 (core 1, socket 0)
+[ 157.844239][ T408] Code: 74 24 0c 89 ee 89 cd 8d b4 26 00 00 00 00 57 6a 01 6a 08 55 e8 7d fb ff ff 8b 54 24 24 8b 4c 24 28 83 c4 10 8b 83 20 0b 00 00 <89> 14 30 89 4c 30 04 8b 44 24 14 83 c6 08 85 c0 75 d2 8b 74 24 0c
+All code
+========
+   0:	74 24                	je     0x26
+   2:	0c 89                	or     $0x89,%al
+   4:	ee                   	out    %al,(%dx)
+   5:	89 cd                	mov    %ecx,%ebp
+   7:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+   e:	57                   	push   %rdi
+   f:	6a 01                	pushq  $0x1
+  11:	6a 08                	pushq  $0x8
+  13:	55                   	push   %rbp
+  14:	e8 7d fb ff ff       	callq  0xfffffffffffffb96
+  19:	8b 54 24 24          	mov    0x24(%rsp),%edx
+  1d:	8b 4c 24 28          	mov    0x28(%rsp),%ecx
+  21:	83 c4 10             	add    $0x10,%esp
+  24:	8b 83 20 0b 00 00    	mov    0xb20(%rbx),%eax
+  2a:*	89 14 30             	mov    %edx,(%rax,%rsi,1)		<-- trapping instruction
+  2d:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+  31:	8b 44 24 14          	mov    0x14(%rsp),%eax
+  35:	83 c6 08             	add    $0x8,%esi
+  38:	85 c0                	test   %eax,%eax
+  3a:	75 d2                	jne    0xe
+  3c:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+
+Code starting with the faulting instruction
+===========================================
+   0:	89 14 30             	mov    %edx,(%rax,%rsi,1)
+   3:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+   7:	8b 44 24 14          	mov    0x14(%rsp),%eax
+   b:	83 c6 08             	add    $0x8,%esi
+   e:	85 c0                	test   %eax,%eax
+  10:	75 d2                	jne    0xffffffffffffffe4
+  12:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+[  158.373225][  T352] vmstat[352]: segfault at 56630000 ip 00000000f7edd774 sp 00000000ffec1aa0 error 6 in libprocps.so.8.0.3[3774,f7edd000+a000] likely on CPU 1 (core 1, socket 0)
+[ 158.434212][ T352] Code: 74 24 0c 89 ee 89 cd 8d b4 26 00 00 00 00 57 6a 01 6a 08 55 e8 7d fb ff ff 8b 54 24 24 8b 4c 24 28 83 c4 10 8b 83 20 0b 00 00 <89> 14 30 89 4c 30 04 8b 44 24 14 83 c6 08 85 c0 75 d2 8b 74 24 0c
+All code
+========
+   0:	74 24                	je     0x26
+   2:	0c 89                	or     $0x89,%al
+   4:	ee                   	out    %al,(%dx)
+   5:	89 cd                	mov    %ecx,%ebp
+   7:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+   e:	57                   	push   %rdi
+   f:	6a 01                	pushq  $0x1
+  11:	6a 08                	pushq  $0x8
+  13:	55                   	push   %rbp
+  14:	e8 7d fb ff ff       	callq  0xfffffffffffffb96
+  19:	8b 54 24 24          	mov    0x24(%rsp),%edx
+  1d:	8b 4c 24 28          	mov    0x28(%rsp),%ecx
+  21:	83 c4 10             	add    $0x10,%esp
+  24:	8b 83 20 0b 00 00    	mov    0xb20(%rbx),%eax
+  2a:*	89 14 30             	mov    %edx,(%rax,%rsi,1)		<-- trapping instruction
+  2d:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+  31:	8b 44 24 14          	mov    0x14(%rsp),%eax
+  35:	83 c6 08             	add    $0x8,%esi
+  38:	85 c0                	test   %eax,%eax
+  3a:	75 d2                	jne    0xe
+  3c:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+
+Code starting with the faulting instruction
+===========================================
+   0:	89 14 30             	mov    %edx,(%rax,%rsi,1)
+   3:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+   7:	8b 44 24 14          	mov    0x14(%rsp),%eax
+   b:	83 c6 08             	add    $0x8,%esi
+   e:	85 c0                	test   %eax,%eax
+  10:	75 d2                	jne    0xffffffffffffffe4
+  12:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+[  172.712196][  T457] kill[457]: segfault at 565a1000 ip 00000000f7f70774 sp 00000000fff806a0 error 6 in libprocps.so.8.0.3[3774,f7f70000+a000] likely on CPU 1 (core 1, socket 0)
+[ 172.716785][ T457] Code: 74 24 0c 89 ee 89 cd 8d b4 26 00 00 00 00 57 6a 01 6a 08 55 e8 7d fb ff ff 8b 54 24 24 8b 4c 24 28 83 c4 10 8b 83 20 0b 00 00 <89> 14 30 89 4c 30 04 8b 44 24 14 83 c6 08 85 c0 75 d2 8b 74 24 0c
+All code
+========
+   0:	74 24                	je     0x26
+   2:	0c 89                	or     $0x89,%al
+   4:	ee                   	out    %al,(%dx)
+   5:	89 cd                	mov    %ecx,%ebp
+   7:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+   e:	57                   	push   %rdi
+   f:	6a 01                	pushq  $0x1
+  11:	6a 08                	pushq  $0x8
+  13:	55                   	push   %rbp
+  14:	e8 7d fb ff ff       	callq  0xfffffffffffffb96
+  19:	8b 54 24 24          	mov    0x24(%rsp),%edx
+  1d:	8b 4c 24 28          	mov    0x28(%rsp),%ecx
+  21:	83 c4 10             	add    $0x10,%esp
+  24:	8b 83 20 0b 00 00    	mov    0xb20(%rbx),%eax
+  2a:*	89 14 30             	mov    %edx,(%rax,%rsi,1)		<-- trapping instruction
+  2d:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+  31:	8b 44 24 14          	mov    0x14(%rsp),%eax
+  35:	83 c6 08             	add    $0x8,%esi
+  38:	85 c0                	test   %eax,%eax
+  3a:	75 d2                	jne    0xe
+  3c:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+
+Code starting with the faulting instruction
+===========================================
+   0:	89 14 30             	mov    %edx,(%rax,%rsi,1)
+   3:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+   7:	8b 44 24 14          	mov    0x14(%rsp),%eax
+   b:	83 c6 08             	add    $0x8,%esi
+   e:	85 c0                	test   %eax,%eax
+  10:	75 d2                	jne    0xffffffffffffffe4
+  12:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+[  174.021512][  T463] ps[463]: segfault at 565da000 ip 00000000f7ede774 sp 00000000fff285e0 error 6 in libprocps.so.8.0.3[3774,f7ede000+a000] likely on CPU 1 (core 1, socket 0)
+[ 174.026251][ T463] Code: 74 24 0c 89 ee 89 cd 8d b4 26 00 00 00 00 57 6a 01 6a 08 55 e8 7d fb ff ff 8b 54 24 24 8b 4c 24 28 83 c4 10 8b 83 20 0b 00 00 <89> 14 30 89 4c 30 04 8b 44 24 14 83 c6 08 85 c0 75 d2 8b 74 24 0c
+All code
+========
+   0:	74 24                	je     0x26
+   2:	0c 89                	or     $0x89,%al
+   4:	ee                   	out    %al,(%dx)
+   5:	89 cd                	mov    %ecx,%ebp
+   7:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+   e:	57                   	push   %rdi
+   f:	6a 01                	pushq  $0x1
+  11:	6a 08                	pushq  $0x8
+  13:	55                   	push   %rbp
+  14:	e8 7d fb ff ff       	callq  0xfffffffffffffb96
+  19:	8b 54 24 24          	mov    0x24(%rsp),%edx
+  1d:	8b 4c 24 28          	mov    0x28(%rsp),%ecx
+  21:	83 c4 10             	add    $0x10,%esp
+  24:	8b 83 20 0b 00 00    	mov    0xb20(%rbx),%eax
+  2a:*	89 14 30             	mov    %edx,(%rax,%rsi,1)		<-- trapping instruction
+  2d:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+  31:	8b 44 24 14          	mov    0x14(%rsp),%eax
+  35:	83 c6 08             	add    $0x8,%esi
+  38:	85 c0                	test   %eax,%eax
+  3a:	75 d2                	jne    0xe
+  3c:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+
+Code starting with the faulting instruction
+===========================================
+   0:	89 14 30             	mov    %edx,(%rax,%rsi,1)
+   3:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+   7:	8b 44 24 14          	mov    0x14(%rsp),%eax
+   b:	83 c6 08             	add    $0x8,%esi
+   e:	85 c0                	test   %eax,%eax
+  10:	75 d2                	jne    0xffffffffffffffe4
+  12:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+[  174.448659][  T236] is_virt=true
+[  174.448714][  T236]
+[  175.157784][  T238] Segmentation fault
+[  175.157850][  T238]
+[  175.163573][  T238] Segmentation fault
+[  175.163622][  T238]
+[  175.439350][  T471] kill[471]: segfault at 5657f000 ip 00000000f7f2c774 sp 00000000ffc71110 error 6 in libprocps.so.8.0.3[3774,f7f2c000+a000] likely on CPU 1 (core 1, socket 0)
+[ 175.443889][ T471] Code: 74 24 0c 89 ee 89 cd 8d b4 26 00 00 00 00 57 6a 01 6a 08 55 e8 7d fb ff ff 8b 54 24 24 8b 4c 24 28 83 c4 10 8b 83 20 0b 00 00 <89> 14 30 89 4c 30 04 8b 44 24 14 83 c6 08 85 c0 75 d2 8b 74 24 0c
+All code
+========
+   0:	74 24                	je     0x26
+   2:	0c 89                	or     $0x89,%al
+   4:	ee                   	out    %al,(%dx)
+   5:	89 cd                	mov    %ecx,%ebp
+   7:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+   e:	57                   	push   %rdi
+   f:	6a 01                	pushq  $0x1
+  11:	6a 08                	pushq  $0x8
+  13:	55                   	push   %rbp
+  14:	e8 7d fb ff ff       	callq  0xfffffffffffffb96
+  19:	8b 54 24 24          	mov    0x24(%rsp),%edx
+  1d:	8b 4c 24 28          	mov    0x28(%rsp),%ecx
+  21:	83 c4 10             	add    $0x10,%esp
+  24:	8b 83 20 0b 00 00    	mov    0xb20(%rbx),%eax
+  2a:*	89 14 30             	mov    %edx,(%rax,%rsi,1)		<-- trapping instruction
+  2d:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+  31:	8b 44 24 14          	mov    0x14(%rsp),%eax
+  35:	83 c6 08             	add    $0x8,%esi
+  38:	85 c0                	test   %eax,%eax
+  3a:	75 d2                	jne    0xe
+  3c:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+
+Code starting with the faulting instruction
+===========================================
+   0:	89 14 30             	mov    %edx,(%rax,%rsi,1)
+   3:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+   7:	8b 44 24 14          	mov    0x14(%rsp),%eax
+   b:	83 c6 08             	add    $0x8,%esi
+   e:	85 c0                	test   %eax,%eax
+  10:	75 d2                	jne    0xffffffffffffffe4
+  12:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+[  176.730643][  T236] lkp: kernel tainted state: 131072
+[  176.730707][  T236]
+[  177.388622][  T236] LKP: stdout: 221: Kernel tests: Boot OK!
+[  177.388806][  T236]
+[  177.573487][  T485] pgrep[485]: segfault at 565b5000 ip 00000000f7e99774 sp 00000000ff9741c0 error 6 in libprocps.so.8.0.3[3774,f7e99000+a000] likely on CPU 1 (core 1, socket 0)
+[ 177.578143][ T485] Code: 74 24 0c 89 ee 89 cd 8d b4 26 00 00 00 00 57 6a 01 6a 08 55 e8 7d fb ff ff 8b 54 24 24 8b 4c 24 28 83 c4 10 8b 83 20 0b 00 00 <89> 14 30 89 4c 30 04 8b 44 24 14 83 c6 08 85 c0 75 d2 8b 74 24 0c
+All code
+========
+   0:	74 24                	je     0x26
+   2:	0c 89                	or     $0x89,%al
+   4:	ee                   	out    %al,(%dx)
+   5:	89 cd                	mov    %ecx,%ebp
+   7:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+   e:	57                   	push   %rdi
+   f:	6a 01                	pushq  $0x1
+  11:	6a 08                	pushq  $0x8
+  13:	55                   	push   %rbp
+  14:	e8 7d fb ff ff       	callq  0xfffffffffffffb96
+  19:	8b 54 24 24          	mov    0x24(%rsp),%edx
+  1d:	8b 4c 24 28          	mov    0x28(%rsp),%ecx
+  21:	83 c4 10             	add    $0x10,%esp
+  24:	8b 83 20 0b 00 00    	mov    0xb20(%rbx),%eax
+  2a:*	89 14 30             	mov    %edx,(%rax,%rsi,1)		<-- trapping instruction
+  2d:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+  31:	8b 44 24 14          	mov    0x14(%rsp),%eax
+  35:	83 c6 08             	add    $0x8,%esi
+  38:	85 c0                	test   %eax,%eax
+  3a:	75 d2                	jne    0xe
+  3c:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+
+Code starting with the faulting instruction
+===========================================
+   0:	89 14 30             	mov    %edx,(%rax,%rsi,1)
+   3:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+   7:	8b 44 24 14          	mov    0x14(%rsp),%eax
+   b:	83 c6 08             	add    $0x8,%esi
+   e:	85 c0                	test   %eax,%eax
+  10:	75 d2                	jne    0xffffffffffffffe4
+  12:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+[  177.720110][  T487] ps[487]: segfault at 5668d000 ip 00000000f7f31774 sp 00000000ffd757e0 error 6 in libprocps.so.8.0.3[3774,f7f31000+a000] likely on CPU 1 (core 1, socket 0)
+[ 177.724735][ T487] Code: 74 24 0c 89 ee 89 cd 8d b4 26 00 00 00 00 57 6a 01 6a 08 55 e8 7d fb ff ff 8b 54 24 24 8b 4c 24 28 83 c4 10 8b 83 20 0b 00 00 <89> 14 30 89 4c 30 04 8b 44 24 14 83 c6 08 85 c0 75 d2 8b 74 24 0c
+All code
+========
+   0:	74 24                	je     0x26
+   2:	0c 89                	or     $0x89,%al
+   4:	ee                   	out    %al,(%dx)
+   5:	89 cd                	mov    %ecx,%ebp
+   7:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+   e:	57                   	push   %rdi
+   f:	6a 01                	pushq  $0x1
+  11:	6a 08                	pushq  $0x8
+  13:	55                   	push   %rbp
+  14:	e8 7d fb ff ff       	callq  0xfffffffffffffb96
+  19:	8b 54 24 24          	mov    0x24(%rsp),%edx
+  1d:	8b 4c 24 28          	mov    0x28(%rsp),%ecx
+  21:	83 c4 10             	add    $0x10,%esp
+  24:	8b 83 20 0b 00 00    	mov    0xb20(%rbx),%eax
+  2a:*	89 14 30             	mov    %edx,(%rax,%rsi,1)		<-- trapping instruction
+  2d:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+  31:	8b 44 24 14          	mov    0x14(%rsp),%eax
+  35:	83 c6 08             	add    $0x8,%esi
+  38:	85 c0                	test   %eax,%eax
+  3a:	75 d2                	jne    0xe
+  3c:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+
+Code starting with the faulting instruction
+===========================================
+   0:	89 14 30             	mov    %edx,(%rax,%rsi,1)
+   3:	89 4c 30 04          	mov    %ecx,0x4(%rax,%rsi,1)
+   7:	8b 44 24 14          	mov    0x14(%rsp),%eax
+   b:	83 c6 08             	add    $0x8,%esi
+   e:	85 c0                	test   %eax,%eax
+  10:	75 d2                	jne    0xffffffffffffffe4
+  12:	8b 74 24 0c          	mov    0xc(%rsp),%esi
+[  179.252315][  T238] failed to kill background process	/tmp/lkp/pid-bg-proc-kmsg
+[  179.252379][  T238]
+[  179.256801][  T238] Segmentation fault
+[  179.256847][  T238]
+[  179.260181][  T238] Segmentation fault
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240808/202408082200.c3349d39-oliver.sang@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
