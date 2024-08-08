@@ -1,133 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-25482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FC994C6AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 00:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B75794C6CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 00:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66D81C21584
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 22:03:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D0371C21AD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 22:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9762F15B149;
-	Thu,  8 Aug 2024 22:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA9C15DBAB;
+	Thu,  8 Aug 2024 22:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="jzLEKBpg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9uBcIs1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6152AE91
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 22:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8EF55769;
+	Thu,  8 Aug 2024 22:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723154627; cv=none; b=jwIExmXl0KLhjjzIa0zSx3sL2IYjdS8dL1O25A8LBYVDuMvwvkSy17UOJJI+4hplj0JN8uaVlMRbiKRvtK4zyAmlXNKE8EsUTdfxosBM2zVbmiC5asGBzmXAELBK9EfS72xrtSU1woGexgduge0QqAHSBiWpWan7/1s+DfqKQ1Y=
+	t=1723155011; cv=none; b=M/cGxMn/VA44GMNfm9DlL/U/B7xDjtukp4zCVAo48pOw5zi6IAPVHGIOrjgSvc4OMUkEF+ubeAh8OEtwWRUBNyMkWpNy3iN+Q/AI94GW12VsiLGsbEixZsbZqNNV9oML9K4jwZZHJQ/cYq9zmcvAjLESLSzIAIhGHm6v8NokUuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723154627; c=relaxed/simple;
-	bh=uNcUY8yHRyYsZM3h0TFO6DExo7cRKiSaWW9bFFCHjf0=;
+	s=arc-20240116; t=1723155011; c=relaxed/simple;
+	bh=4l86un5NrlZ8pgXWUQOWiS482rhUX5NkDryNnGVuv1w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lI7GlZFxqARJBByv1zQeaQ7xGGiDvOSovGjJFEnu43zyvxllPTwyrUjIjkTep4bDj1Xnhtk1P0pZSN9YW/7iNOgw7cxY0ZmHhT7IuES5QKq6nOox1Wt8OLFQKaHozR8zh/D86Ickg5nsCXKEIHh8hmTixMintoypy9qIrAGBZgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=jzLEKBpg; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d2b921cd1so1300174b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 15:03:45 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pb3PjBl725ZPjLAr0jnB0bcHZPFc3ajpqFAMcOpSbvDt3smMAcWk+Prq0Ek2FwtmnqCukz4F8Koq5OLxJGT5GExErVorPo8jNUNIc1n+dKM2Vlx0XySwQK3yREuMyPa1XOGdRiqhjabznQFVSP7QuHhhDo8wmNF1/BCKlXNptYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e9uBcIs1; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f00ad303aso1828903e87.2;
+        Thu, 08 Aug 2024 15:10:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1723154625; x=1723759425; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723155008; x=1723759808; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VovAhXzqSeyRFjRdkVXxIjBd1uS33PY0oNHckm00eHs=;
-        b=jzLEKBpgDSGybXWZWEJmJrumuBvpNLa5JQwtVUDab5B9Puo1Z3d3i/lTW1OKBVURyI
-         qz1KErkRRI4RfZs4YSAz7aSjlhvk/Daq3plAdNQAiPOT6Gcd3xkr6Zs5dPtawnCdDKb0
-         GkdIpCEu6G9atrZpms55nFu+ghHAXvIzEb+mdMqUnjVIViJS00XyEfjVAmphmLtUrAPq
-         +zsAKPuk+BMd2wBDSmhzWnHMYvxnfW7P65uuj1O8SFPJwDaVtX5Gk0OdH5o2LsYhj5bh
-         gerMzAnXmmezNKc4bIJbuot1vdgxY8NRZ6Ygo9crXj0xI2I54L3RlJ0zfSAe83Gzhjsb
-         +Sng==
+        bh=/Zc1fzOoTnegyR/h9JvW1UhMkychx7DSkfRxfH1ut1w=;
+        b=e9uBcIs1J+jRNjJbJ4+dgLLVqWJKg6m8wr/VO7uElaKy1ImfenYzE5kEY4vT4H5HSz
+         TJffLiqV1PRoHDLRKuQGP3fnIaDuvg8W8P9QXYSn2toCQsJeVRYVejZ9tWIQSuGi6Lcu
+         kJcA7e/lgX8vyMioL0D9J3+jmOBn5M7AelPEPBY/iGiezTO/nm+GHdkViDNwdaaumBud
+         9h8B/vY/tltJtqppEb9TQhLoX0yavW+zvcj5oOTcTR+30yHrQDMcoF/BK1bHkeG0af/F
+         g88FOCKe9muFqZmu+iwyQwtqtpob7lXKlkwIz9OqWzHnSzx9CBGUP16EDWQcvDyW7xPI
+         fWtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723154625; x=1723759425;
+        d=1e100.net; s=20230601; t=1723155008; x=1723759808;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VovAhXzqSeyRFjRdkVXxIjBd1uS33PY0oNHckm00eHs=;
-        b=W6emvPpNWGxhz9BM+xAmwPteqEBdQ62Q1FhV0jx4Mbr7irKNE/GwfT1KyV6v9O4wR9
-         zSG5x6O00KjLFkUat2rQmGz8DMtV0/64u7zIJ2QrU50iqQWzusrBOXK4E024NUr201Zr
-         3b1oBR6Wnhdpa4jbNLU0HD1XYwlfeDvtnpUVZTwovJi20Pmm+HXktTfUnIk+ZsWgH6la
-         4+Zkdssd1g85q7pxwvnzkm9MZTfT3pQl5OshyKjuOWEMvfo36yMf7x7zWt6OaOlFbuvT
-         YtZX5Pl1ufcvrmhLvZX9lRj8v/2qHk12g8DoEG5pr9HpGdjhlhJPXvb+/+ZInnTe+PSO
-         M7hA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsMmI0Hn2CnY9vo8ow1O04XDWaZRgBMGlRyIwKtvaW758BR/2yne4BO4xnBD0ZTcPrXyfjbumPYrGw+zMsV2YuB4bvG/ilD0iSTPLInw==
-X-Gm-Message-State: AOJu0YxJyENlErVJnqR0Ca2HMEeqxYBqq27aTwJSpN5X7mUT8JB/MttG
-	aKoyx+JFa8RLARb2APes6eVUHA9qUdncZQJZv+DtakUx4zkvLwRG7PdOQxS+Dkk=
-X-Google-Smtp-Source: AGHT+IE5dO8WHZC6Pz9g72R0dboQ8rfRXb+Uzl5pZcpIdVcM7rWuMMHNr1EwN1H2Ba6s/xKz5Hjnbw==
-X-Received: by 2002:a05:6a21:271e:b0:1c4:c160:2859 with SMTP id adf61e73a8af0-1c6fcf32732mr3245526637.31.1723154624900;
-        Thu, 08 Aug 2024 15:03:44 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9c9f03csm1642587a91.26.2024.08.08.15.03.44
+        bh=/Zc1fzOoTnegyR/h9JvW1UhMkychx7DSkfRxfH1ut1w=;
+        b=Y89igQT/kQhSNNsmy7xw/k0UIb8sePV/yC8LD7qjlZ+8lHljQwv6136s2ZO5/p0OEO
+         3G5OGVWiPUpouAG82EsTtLHQ0IG/6e1GTAsOMgMFRZewVaHG+PaDMVmhzwW+qj1mfEV8
+         xnMQ94MJw60Iz9QvIvBlXhz6aAftUHUJQ9sNo2V7Uueiu6Gy6ilFdtM/+8sS0AyfQaOQ
+         IR1qddEanp7D2yf3gLhjeL36nZ9RHYTvn5eme38T8JWFRDDW4fRumZcBU/RNVwt3r11P
+         swShrod+LyWnQbwq0fqVKwIc8Y0PA9IltHzKU4YMzioyJtOQ+6rTA+l+9TYV2b1pl9Yk
+         JIBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZGnHicryrrsejyErL3b6fQ1ojJx1JpnGMZT0kKHbr8Z78qXN020Rl4WX7PlKIYHQydyAecqyUS5XRvf5hwL77DpVfEJvBwDlHfgN5BurhoFalyOq+/uOvl8hZVAf1y92OcQzlQdxhmnu/Cg==
+X-Gm-Message-State: AOJu0Yxj5eLTZMNaCcTWESN19+fv54QgAIFNt9XxtDCpe0C//D0soQ0u
+	wJAOuDhExyD42f15leInTG2YoaQuXgWdS8gWMxQEoJcwLzsne3Yf
+X-Google-Smtp-Source: AGHT+IHnVaaB2vMd/gasRkWZBOc1wvJ+LA4IpIJIeGiSzibv5ZAGjEvSM1Cujp5E825puCCy9Wj4Vw==
+X-Received: by 2002:a05:6512:10c9:b0:52e:999b:7c01 with SMTP id 2adb3069b0e04-530e588ebe7mr2325073e87.48.1723155007535;
+        Thu, 08 Aug 2024 15:10:07 -0700 (PDT)
+Received: from f (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec7311sm778033366b.195.2024.08.08.15.10.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 15:03:44 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1scBET-00ACDg-2F;
-	Fri, 09 Aug 2024 08:03:41 +1000
-Date: Fri, 9 Aug 2024 08:03:41 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	amir73il@gmail.com, brauner@kernel.org, linux-xfs@vger.kernel.org,
-	gfs2@lists.linux.dev, linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH v2 16/16] xfs: add pre-content fsnotify hook for write
- faults
-Message-ID: <ZrVAvQLfP8fNSJwx@dread.disaster.area>
-References: <cover.1723144881.git.josef@toxicpanda.com>
- <aa122a96b7fde9bb49176a1b6c26fcb1e0291a37.1723144881.git.josef@toxicpanda.com>
+        Thu, 08 Aug 2024 15:10:06 -0700 (PDT)
+Date: Fri, 9 Aug 2024 00:09:53 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/9] fs: add infrastructure for multigrain timestamps
+Message-ID: <gh5egnyreorb5h7powbmpcj733treuvk7grqsrdbvvqbrlskb5@cu3ld2km33sh>
+References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
+ <20240715-mgtime-v6-1-48e5d34bd2ba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aa122a96b7fde9bb49176a1b6c26fcb1e0291a37.1723144881.git.josef@toxicpanda.com>
+In-Reply-To: <20240715-mgtime-v6-1-48e5d34bd2ba@kernel.org>
 
-On Thu, Aug 08, 2024 at 03:27:18PM -0400, Josef Bacik wrote:
-> xfs has it's own handling for write faults, so we need to add the
-> pre-content fsnotify hook for this case.  Reads go through filemap_fault
-> so they're handled properly there.
-> 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  fs/xfs/xfs_file.c | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 4cdc54dc9686..585a8c2eea0f 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -1325,14 +1325,28 @@ __xfs_filemap_fault(
->  	bool			write_fault)
->  {
->  	struct inode		*inode = file_inode(vmf->vma->vm_file);
-> +	struct file		*fpin = NULL;
-> +	vm_fault_t		ret;
+On Mon, Jul 15, 2024 at 08:48:52AM -0400, Jeff Layton wrote:
+> diff --git a/fs/stat.c b/fs/stat.c
+> index 6f65b3456cad..df7fdd3afed9 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -26,6 +26,32 @@
+>  #include "internal.h"
+>  #include "mount.h"
 >  
->  	trace_xfs_filemap_fault(XFS_I(inode), order, write_fault);
->  
-> -	if (write_fault)
-> -		return xfs_write_fault(vmf, order);
->  	if (IS_DAX(inode))
->  		return xfs_dax_read_fault(vmf, order);
-> -	return filemap_fault(vmf);
+> +/**
+> + * fill_mg_cmtime - Fill in the mtime and ctime and flag ctime as QUERIED
+> + * @stat: where to store the resulting values
+> + * @request_mask: STATX_* values requested
+> + * @inode: inode from which to grab the c/mtime
+> + *
+> + * Given @inode, grab the ctime and mtime out if it and store the result
+> + * in @stat. When fetching the value, flag it as queried so the next write
+> + * will ensure a distinct timestamp.
+> + */
+> +void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
+> +{
+> +	atomic_t *pcn = (atomic_t *)&inode->i_ctime_nsec;
 > +
-> +	if (!write_fault)
-> +		return filemap_fault(vmf);
+> +	/* If neither time was requested, then don't report them */
+> +	if (!(request_mask & (STATX_CTIME|STATX_MTIME))) {
+> +		stat->result_mask &= ~(STATX_CTIME|STATX_MTIME);
+> +		return;
+> +	}
+> +
+> +	stat->mtime = inode_get_mtime(inode);
+> +	stat->ctime.tv_sec = inode->i_ctime_sec;
+> +	stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn)) & ~I_CTIME_QUERIED;
+> +}
+> +EXPORT_SYMBOL(fill_mg_cmtime);
+> +
 
-Doesn't this break DAX read faults? i.e. they have to go through
-xfs_dax_read_fault(), not filemap_fault().
+[trimmed the ginormous CC]
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+This performs the atomic every time (as in it sets the flag even if it
+was already set), serializing all fstats and reducing scalability of
+stat of the same file.
+
+Bare minimum it should be conditional -- if the flag is already set,
+don't dirty anything.
+
+Even that aside adding an atomic to stat is a bummer, but off hand I
+don't have a good solution for that.
+
+Anyhow, this being in -next, perhaps the conditional dirty can be
+massaged into the thing as present? There are some cosmetic choices to
+be made how to express, may be the fastest if you guys just augment it
+however you see fit.
+
+If not I can submit a patch tomorrow.
 
