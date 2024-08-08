@@ -1,69 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-25453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356D794C529
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 21:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C01B494C52C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 21:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597331C22086
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 19:28:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF99B1C21D67
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 19:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1009157466;
-	Thu,  8 Aug 2024 19:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F16159565;
+	Thu,  8 Aug 2024 19:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="gvpwn+W+"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="3LpYCTl+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628C0156F27
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 19:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F229158D63
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 19:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723145301; cv=none; b=ffq6OSotdWte30d5TWN+VnD8FKKJGGAinCoMLxWDmlGPjvp6QzwtdcinZjVXlMCEDqHGVyRn+n+TqV7Molh5Np/gYva/cp7vLeMU/T5S9/A/tCbI42yw1qy4xeRoqHiJnX7al5E06RN4tQADKgXAMG799CkxZzYNZwstu/qihCQ=
+	t=1723145302; cv=none; b=YfZpSSzQZKGDju/g/Ad244TTnQFJfOjlAZnN0NuQ+9nzGKzgjP8TuvwLdC10geQqa1T76RADWa9INKCFJjRnO7PN8LQP2I/qRXU6HGKexydMHCXGdl7bNTRolrcj42RtxTN3PLmLlmc62BRKCGhs57tRKsaWrOND2NJBh9vuN70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723145301; c=relaxed/simple;
-	bh=moGq7PvzGvB0S6UQMZuwnIDOkPknvOA1+Hh9JdRtibM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Q+a+R/3CgMp/xospULwU/3el0a1dzAdtye5jpaomFqLhmGKJy1qIIJLKh/RBtOPrnSFNX0rTTNuoecST4mfkWGtj/je+BrcLvDLC8BQ/CFTufFeDJZfIPcqieLb95Vhx6JrXpgQGYuxKZ3My8luBeIMwBfldGXB2aPdmgjBqucQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=gvpwn+W+; arc=none smtp.client-ip=209.85.222.170
+	s=arc-20240116; t=1723145302; c=relaxed/simple;
+	bh=2T/bTyebmmWzgd79hiDdf0J2vl5OhNotJm/x2K/voWI=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VSLXvGCSFRaoZmROs76iWP3HiaOE1Ouazrir0t6GLuJRXALYYK04j1yxtjAK+I6QY1zxk/u/b8GRSW6Xyivl32z+OYhzVrKHXlRhBmIwgrh9fBTsAjWd3lBTP+ZT/P4oc0i36QhyPXsCURhr0gDsYOc5EQsDrbIsoMMODqtkW8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=3LpYCTl+; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1e4c75488so84089785a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 12:28:19 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-79ef72bb8c8so56940185a.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 12:28:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723145298; x=1723750098; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=agwST92yUhpv2dWxzT9/pEGlKDn9gtYgiwLWoC5Trsk=;
-        b=gvpwn+W+44B3E05WH/bsIflmSbZjONKg8olq3OJIx/2VxHnCccK0AtrXTf4ps9myvT
-         87/xsU1DrxakXjwa1fMsFxfPJR2g1ngyEXguMvU4Y/61+b0IofrT9jOU7laUKig/TIJz
-         QeO/ybSnVRry2Gy1QsJM+oIpaN13dXjCwOwoiuj/WnhJAKHbZqYZa7Wyz/jnw8qNVGpI
-         L8LSRsBnxRnkBdoMwk8XqxZ4nnLQWY00RgJoUzEUSj2la7HWYeCMjeR122+b49b+wQDi
-         w/g4vLYn2OrSKncemzfrTaUIyefCf9QfnQ4fYTUQa6yPK87gqtePaNWeeJ+5xz86igzu
-         AvyQ==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723145299; x=1723750099; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rE3z53SxlgArsKnVp16449O9VmLlGGSseshi4KP5xk8=;
+        b=3LpYCTl+TTMHPOVTFUjxbAP5FdreSyhgMqNnVG8AMrrjShiMrZMhLtgidkLT/MJPDI
+         WiATpKWSxlMkGnVpxIWnB4E/kOAzfn8XJY2Sid4QEFbARfIW8/znKlX90QQtEudEr7VC
+         WHUwWDfSyathT4saIRCmEnaugWGKfY9PnN1M+WxnVPvFGrv2YdoakfB2RgvWbqEVC2Mi
+         jJIYqt/17FcXGuQRxAmD/5iNfixztyyZ8b1dKqn+oeaOE2/MCEtp1G5JIbAcrSOYvATO
+         4gadLdC8utv4Jl3KgNDdoT0eRdZWf2iST2QeGK/URMvSXAdRnZIN6nRR+4fLV0dz7B5x
+         G5Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723145298; x=1723750098;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=agwST92yUhpv2dWxzT9/pEGlKDn9gtYgiwLWoC5Trsk=;
-        b=sXkBVnkmpsY7Y3EjebX+m2R+c7NJ7betrAmMORuCNetoiq/KydQ75Ndf84oqyoUtWD
-         BpEw16OlJLopR85V+IbhrqrqK9uRm/25NXUnnyuZUf/RNi9Kc2pECg/MntOKKphk2bjv
-         hpDeI1gEYEaMEm7d9HODumxkiulXVC3vm6WhiXG+8XsUI8/4EpMl+AEM9MJX5HRyotPe
-         Vp5GoLrBSULrz91SEhGcA5UxQtbJFJvEHl5NfGplbYuBOxpeJ4grMt+TMrL53ztFQqLz
-         6qzMTapHfvkmBRTXGkrMAIG5iprOhrMg8TbtEo7nh9Q8BVTWL8Zj5+q2gm+0OBIYGmfZ
-         bM0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWI5F7NuvEQXSG9YM0D/ao+UPkMOPqwNc068qlXM8rHrl4PqY72SDnp40j5+9XKDz3FYISGWzxUlo5QcqLvJXTWVbKZG2TZvbtUbXEACw==
-X-Gm-Message-State: AOJu0Yw/U2sPDYR2dfmp2CH0SqZL7WccgTnOchz2g46fKhFbZKinkyoF
-	UQL8SCvooEoK3tYtEB5bp3FHo7Z+JKsJ/sVKCl5LCdzwJy24azBIPsZKyoC5Qtg=
-X-Google-Smtp-Source: AGHT+IGGxHal+nvm3DWblQGxQewjVvUB+tmtzj67hYOald+f6l1Hj85ZVGGxy87PgKyA6cAN7fLx5A==
-X-Received: by 2002:a05:620a:4515:b0:79f:436:7e3a with SMTP id af79cd13be357-7a381872787mr341626485a.48.1723145298198;
-        Thu, 08 Aug 2024 12:28:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723145299; x=1723750099;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rE3z53SxlgArsKnVp16449O9VmLlGGSseshi4KP5xk8=;
+        b=UT5Hm9baOlFe7oxpr4ecLCCg0TIPAKuYI0ikz8iLHU6cnXx2JQJhHaFLiFwGx0XPlw
+         sa0yw4Xsca9svKodeiXiHkYe5fubHJycfjwHfOivRrpWw1Cg+aaEuMEPZBuy/mugjR2Z
+         HwzgMCGKjCy9opJm0sasGyPeehU/m81bCpYo/SCDDbWxmn9VdDXv6CGyuv6LYftpA2RN
+         OrSQiT2F9vBeKEGBoFuhx3KTVSVybaCpw5dqpVzZpXGk2Kyv+YvPWJSTEp2WDdYOk3hn
+         vnqarckRhQMvx84m8PmV7AmK7U5lqHD9rsld9nJmsABtj492bJ4cNAiwfJCAkwnSdCvI
+         bvSg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5O4otcSaqQoS4zCWJKPjwgpZSDF9i55JussgDvG8+6FCSjclAadtwzRhe0KEbci7gH5VVwNS5d7ruNmLcCJsKKIrYwewaWlSh59zppQ==
+X-Gm-Message-State: AOJu0YybV2XTEfPh1XZuFVec2+uWMur7CKYc9t4HNsVpLAHLPcY4lGIA
+	9xy7+ksS0bSVavL13t0jjhGQnLOvvO1XOSmtE8Ojyd1biqJw7S20SFpjeu3S+ow=
+X-Google-Smtp-Source: AGHT+IHIPxOimm17lsK2mRhrmoBs8JQ3/lrD4oPi09uZKL/T2UFWVQatxODNJLMYL/PxGf3Q64nPmg==
+X-Received: by 2002:a05:620a:2596:b0:7a3:49dc:e4c8 with SMTP id af79cd13be357-7a38183e77dmr296678685a.31.1723145299430;
+        Thu, 08 Aug 2024 12:28:19 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785d2a3csm189653585a.18.2024.08.08.12.28.17
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-451c86ff90fsm15610521cf.5.2024.08.08.12.28.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 12:28:17 -0700 (PDT)
+        Thu, 08 Aug 2024 12:28:19 -0700 (PDT)
 From: Josef Bacik <josef@toxicpanda.com>
 To: kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org,
@@ -73,10 +76,12 @@ To: kernel-team@fb.com,
 	linux-xfs@vger.kernel.org,
 	gfs2@lists.linux.dev,
 	linux-bcachefs@vger.kernel.org
-Subject: [PATCH v2 00/16] fanotify: add pre-content hooks
-Date: Thu,  8 Aug 2024 15:27:02 -0400
-Message-ID: <cover.1723144881.git.josef@toxicpanda.com>
+Subject: [PATCH v2 01/16] fanotify: don't skip extra event info if no info_mode is set
+Date: Thu,  8 Aug 2024 15:27:03 -0400
+Message-ID: <6a659625a0d08fae894cc47352453a6be2579788.1723144881.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1723144881.git.josef@toxicpanda.com>
+References: <cover.1723144881.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,129 +90,47 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-v1: https://lore.kernel.org/linux-fsdevel/cover.1721931241.git.josef@toxicpanda.com/
+New pre-content events will be path events but they will also carry
+additional range information. Remove the optimization to skip checking
+whether info structures need to be generated for path events. This
+results in no change in generated info structures for existing events.
 
-v1->v2:
-- reworked the page fault logic based on Jan's suggestion and turned it into a
-  helper.
-- Added 3 patches per-fs where we need to call the fsnotify helper from their
-  ->fault handlers.
-- Disabled readahead in the case that there's a pre-content watch in place.
-- Disabled huge faults when there's a pre-content watch in place (entirely
-  because it's untested, theoretically it should be straightforward to do).
-- Updated the command numbers.
-- Addressed the random spelling/grammer mistakes that Jan pointed out.
-- Addressed the other random nits from Jan.
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+---
+ fs/notify/fanotify/fanotify_user.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
---- Original email ---
-
-Hello,
-
-These are the patches for the bare bones pre-content fanotify support.  The
-majority of this work is Amir's, my contribution to this has solely been around
-adding the page fault hooks, testing and validating everything.  I'm sending it
-because Amir is traveling a bunch, and I touched it last so I'm going to take
-all the hate and he can take all the credit.
-
-There is a PoC that I've been using to validate this work, you can find the git
-repo here
-
-https://github.com/josefbacik/remote-fetch
-
-This consists of 3 different tools.
-
-1. populate.  This just creates all the stub files in the directory from the
-   source directory.  Just run ./populate ~/linux ~/hsm-linux and it'll
-   recursively create all of the stub files and directories.
-2. remote-fetch.  This is the actual PoC, you just point it at the source and
-   destination directory and then you can do whatever.  ./remote-fetch ~/linux
-   ~/hsm-linux.
-3. mmap-validate.  This was to validate the pagefault thing, this is likely what
-   will be turned into the selftest with remote-fetch.  It creates a file and
-   then you can validate the file matches the right pattern with both normal
-   reads and mmap.  Normally I do something like
-
-   ./mmap-validate create ~/src/foo
-   ./populate ~/src ~/dst
-   ./rmeote-fetch ~/src ~/dst
-   ./mmap-validate validate ~/dst/foo
-
-I did a bunch of testing, I also got some performance numbers.  I copied a
-kernel tree, and then did remote-fetch, and then make -j4
-
-Normal
-real    9m49.709s
-user    28m11.372s
-sys     4m57.304s
-
-HSM
-real    10m6.454s
-user    29m10.517s
-sys     5m2.617s
-
-So ~17 seconds more to build with HSM.  I then did a make mrproper on both trees
-to see the size
-
-[root@fedora ~]# du -hs /src/linux
-1.6G    /src/linux
-[root@fedora ~]# du -hs dst
-125M    dst
-
-This mirrors the sort of savings we've seen in production.
-
-Meta has had these patches (minus the page fault patch) deployed in production
-for almost a year with our own utility for doing on-demand package fetching.
-The savings from this has been pretty significant.
-
-The page-fault hooks are necessary for the last thing we need, which is
-on-demand range fetching of executables.  Some of our binaries are several gigs
-large, having the ability to remote fetch them on demand is a huge win for us
-not only with space savings, but with startup time of containers.
-
-There will be tests for this going into LTP once we're satisfied with the
-patches and they're on their way upstream.  Thanks,
-
-Josef
-
-Amir Goldstein (8):
-  fsnotify: introduce pre-content permission event
-  fsnotify: generate pre-content permission event on open
-  fanotify: introduce FAN_PRE_ACCESS permission event
-  fanotify: introduce FAN_PRE_MODIFY permission event
-  fanotify: pass optional file access range in pre-content event
-  fanotify: rename a misnamed constant
-  fanotify: report file range info with pre-content events
-  fanotify: allow to set errno in FAN_DENY permission response
-
-Josef Bacik (8):
-  fanotify: don't skip extra event info if no info_mode is set
-  fanotify: add a helper to check for pre content events
-  fanotify: disable readahead if we have pre-content watches
-  mm: don't allow huge faults for files with pre content watches
-  fsnotify: generate pre-content permission event on page fault
-  bcachefs: add pre-content fsnotify hook to fault
-  gfs2: add pre-content fsnotify hook to fault
-  xfs: add pre-content fsnotify hook for write faults
-
- fs/bcachefs/fs-io-pagecache.c      |  13 ++++
- fs/gfs2/file.c                     |  13 ++++
- fs/namei.c                         |   9 +++
- fs/notify/fanotify/fanotify.c      |  32 ++++++--
- fs/notify/fanotify/fanotify.h      |  20 +++++
- fs/notify/fanotify/fanotify_user.c | 116 +++++++++++++++++++++++------
- fs/notify/fsnotify.c               |  14 +++-
- fs/xfs/xfs_file.c                  |  20 ++++-
- include/linux/fanotify.h           |  20 +++--
- include/linux/fsnotify.h           |  54 ++++++++++++--
- include/linux/fsnotify_backend.h   |  59 ++++++++++++++-
- include/linux/mm.h                 |   2 +
- include/uapi/linux/fanotify.h      |  17 +++++
- mm/filemap.c                       | 109 +++++++++++++++++++++++++--
- mm/memory.c                        |  22 ++++++
- mm/readahead.c                     |  13 ++++
- security/selinux/hooks.c           |   3 +-
- 17 files changed, 482 insertions(+), 54 deletions(-)
-
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 9ec313e9f6e1..2e2fba8a9d20 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -160,9 +160,6 @@ static size_t fanotify_event_len(unsigned int info_mode,
+ 	int fh_len;
+ 	int dot_len = 0;
+ 
+-	if (!info_mode)
+-		return event_len;
+-
+ 	if (fanotify_is_error_event(event->mask))
+ 		event_len += FANOTIFY_ERROR_INFO_LEN;
+ 
+@@ -740,12 +737,10 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	if (fanotify_is_perm_event(event->mask))
+ 		FANOTIFY_PERM(event)->fd = fd;
+ 
+-	if (info_mode) {
+-		ret = copy_info_records_to_user(event, info, info_mode, pidfd,
+-						buf, count);
+-		if (ret < 0)
+-			goto out_close_fd;
+-	}
++	ret = copy_info_records_to_user(event, info, info_mode, pidfd,
++					buf, count);
++	if (ret < 0)
++		goto out_close_fd;
+ 
+ 	if (f)
+ 		fd_install(fd, f);
 -- 
 2.43.0
 
