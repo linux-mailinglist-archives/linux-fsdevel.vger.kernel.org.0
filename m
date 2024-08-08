@@ -1,372 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-25417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 176AA94BE56
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 15:16:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6759B94BE72
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 15:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE19428D425
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 13:16:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 966831C24DCB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 13:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D776C18DF65;
-	Thu,  8 Aug 2024 13:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1D818CC08;
+	Thu,  8 Aug 2024 13:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfl+X6hd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6Yu9PeM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9105913BC3F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 13:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B52148832
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 13:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723123006; cv=none; b=jAznfcBbW+f4QtcKWT8JcaTtwveOG1++k5fpqhlRd1uv/McetNcZ5uTI9gUvHMmq9uf7PnB/7qP+91taZTooGgbfAnhnA0Mo83+rGOQaplTgGwNegn7NSXF5bDcIalacU29i62RzetaAOVemfkzjSH9cC6YaBsi1CaPlfzht9Ew=
+	t=1723123210; cv=none; b=JuIdZxgDtQo0Y5hMCkmB0Xq7YGrsD495801w8C7DOTqRCXJsfsc7fKRubtXZFOXuYjxkJR6Zd2TXd4xR7b35w5ToUHSoKv1bFGoyZ/2k2JROqAvyMYUuVVK+ka5Q2qCJ6Tdo4Uu9Ywx4OheXCR1HZEhwMUmhCSllyCLT1bKaPgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723123006; c=relaxed/simple;
-	bh=fnLtVxfPQxTFgsBZ1EAAwtd0pbt6+5q8TOpoTK1IyIg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u0SjKUEH8OV6CVxlKkgg8nLewUYHfBbk1eOx/UFcf1qggn2xF5CZymetHHiC2FvbD3SDZsVm2lx00KP5tE22Gd88746rw/bQUx7u62bVE+zOWVwO212pyEAA8Ptk7lVPYVOjtXlpCFpAAMMC0R7bwg+OvcuMLI5Hd/Llx8k7vO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jfl+X6hd; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2cd5e3c27c5so780323a91.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 06:16:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723123004; x=1723727804; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BDUmkZZjYykmqfB6ZwvtEcEw34Q4RXb59z6SLou8wPg=;
-        b=jfl+X6hdWuBlRItDiQRYBsa4EdaYG6p684taZYH3tDn+nOkVO5CY7GKxzirul26KCS
-         pf2tcWLxcuIHRLJpZIsUcPFnWDa6OCrQZ7v8sZOc1IJhk3glY/nwXv/nlhFjnEizlfaa
-         JERfAP9yS4lDNtQqZ4lMDwxOpuEKYc/UsPkiJ9miiLeOSJkLxjX0DcrR9xkTUBCE4f0V
-         e5vMl6BNHmN7xr2eAhgRh2AE1v/TmQI2Jqy7rCSENOdisELoRqKISzDb6g4Q+HpAUYky
-         xh9zaKU6fM5R6/LtGJ6ax/u3xO8bH6arlWnZw3GvmItztiVFmST5RYz6S8OVvTyZynGH
-         CXjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723123004; x=1723727804;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BDUmkZZjYykmqfB6ZwvtEcEw34Q4RXb59z6SLou8wPg=;
-        b=CyBZSZT3GjXgepH+3AHlTV0VFcYWGnff28FEj06vgKm9o5su8f+xPUGH9OPC7vFsmX
-         K5W3vrY3vk+k55ePyPv8i+Dn4hLioyLt8a0dOapLcp/c195eOIOUHQJCwExgoWtYvnSX
-         l5D/syXsdut2r5qL+A/ZnYihhkS1FHVgLkmS+hfHrBdN+47mscZr78aWTYjQ98t4Dbb8
-         pMa2jRuUR3+yBs6Fb7hhnexqEUZbJcjG4QK8CSJ2elJi/Od96Q5WPhJFWwj9WNIqRwuM
-         Cuey1y0ed1vASU6p6755GLsd0/M/yBoKLR4aV4kBdZXiil3T8eEk8bztPbjjZenohIQn
-         ZfQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXai4phhXz9+DAgxHNruGE/WBiDpvBw1F1ltTU1Hww1vmwyoARcIxVIrTEv4x9e+jogBVR/QQ4wTBv4ar4Jl8dfe9sLV7edp/L7afQpGw==
-X-Gm-Message-State: AOJu0Yz138eLJQzH/r/YEhxHHY+4aONBihFi+GEez0VBVdRwI8D6+j/b
-	rrfiArlJV/k84rdeTbbBY9xdHD8pIm50JCHITHijWiSR6GJZJeCiKZwlYtIldIV0XLUGGFX2jpc
-	PDydZXfBGgv/sTFbktt6MSNaLBTU=
-X-Google-Smtp-Source: AGHT+IHyIjaV+V+nB7BUzXacM0rnzK9SpbECx9OdyfCMc+E7XrOtwCkzXMCLeDVLyYST//WSExTobNFtnSPyXYsx+JY=
-X-Received: by 2002:a17:90a:d901:b0:2c8:64a:5f77 with SMTP id
- 98e67ed59e1d1-2d1c3472025mr1945533a91.37.1723123003582; Thu, 08 Aug 2024
- 06:16:43 -0700 (PDT)
+	s=arc-20240116; t=1723123210; c=relaxed/simple;
+	bh=6FeaBPbiL76OWLUNN/6MflsMNeiKZ7tugvmzeSVPqtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aeUpPwS5Oj9Gm0kKdGnXAyV2OPsKbza2gEHXIvoyRTTuIwuOJ2yQr5yb056S3HvMQJE0Si7Du4YJ6vUgWtgWh9AOgb3UqlGHfFS8y4e3hUvgfditFvOtID0spNyGIWLAfU954BV5xosEKGKVG8/UW752YrBOL0QmGbjwQH/3kTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6Yu9PeM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B168C32782;
+	Thu,  8 Aug 2024 13:20:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723123209;
+	bh=6FeaBPbiL76OWLUNN/6MflsMNeiKZ7tugvmzeSVPqtg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d6Yu9PeMyGrBkJcE/jM3Wur9FLmeLQWdnBTlIlyAXavLmkxNmvvn9oo3OQAmjan9A
+	 30PHGIxgNa/MB1qOVNtSM2nuoicibs84ZkR/OXLswkCF5A8KmlqOzfOErMAX21WXAf
+	 XlOskBFpH96Udcps0LXCkIKT5bDPkioBDHDX8mK9QDpjUQQWBvAFWp6DOcIbC88un1
+	 EBmATLsQ3eUgDtrg10DtLBmmIYnneqpo7nBXWbxDLZkWmV3CbPhB0kIj45/boXfORQ
+	 hXtpRf8XjgRcj7WinT78zArV6NKOwAfBHob2Ub3ul/0dDeDII7zA8PMgplqGd4ykwC
+	 2lcfS01QZALWg==
+Date: Thu, 8 Aug 2024 15:20:05 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	Mateusz Guzik <mjguzik@gmail.com>, Eric Dumazet <edumazet@google.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [RFC] why do we need smp_rmb/smp_wmb pair in
+ fd_install()/expand_fdtable()?
+Message-ID: <20240808-dates-pechschwarz-0cccfed2c605@brauner>
+References: <20240808025029.GB5334@ZenIV>
+ <CAHk-=wgse0ui5sJgNGSvqvYw_BDTcObqdqcwN1BxgCqKBiiGzQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804080251.21239-1-laoar.shao@gmail.com> <20240805134034.mf3ljesorgupe6e7@quack3>
- <CALOAHbCor0VoCNLACydSytV7sB8NK-TU2tkfJAej+sAvVsVDwA@mail.gmail.com>
- <20240806132432.jtdlv5trklgxwez4@quack3> <CALOAHbASNdPPRXVAxcjVWW7ucLG_DOM+6dpoonqAPpgBS00b7w@mail.gmail.com>
- <ZrKbGuKFsZsqnrfg@dread.disaster.area> <CALOAHbDqqvtvMMN3ebPwie-qtEakRvjuiVe9Px8YXWnqv+Mxqg@mail.gmail.com>
- <ZrQyuBQJ35i+SB/6@dread.disaster.area>
-In-Reply-To: <ZrQyuBQJ35i+SB/6@dread.disaster.area>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 8 Aug 2024 21:16:04 +0800
-Message-ID: <CALOAHbAMh30W-bKZfLFyqQRuz1RyRzi7UAPUWH2DdKCAauk5kg@mail.gmail.com>
-Subject: Re: [PATCH] fs: Add a new flag RWF_IOWAIT for preadv2(2)
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgse0ui5sJgNGSvqvYw_BDTcObqdqcwN1BxgCqKBiiGzQ@mail.gmail.com>
 
-On Thu, Aug 8, 2024 at 10:51=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
-wrote:
->
-> On Wed, Aug 07, 2024 at 11:01:36AM +0800, Yafang Shao wrote:
-> > On Wed, Aug 7, 2024 at 5:52=E2=80=AFAM Dave Chinner <david@fromorbit.co=
-m> wrote:
-> > >
-> > > On Tue, Aug 06, 2024 at 10:05:50PM +0800, Yafang Shao wrote:
-> > > > On Tue, Aug 6, 2024 at 9:24=E2=80=AFPM Jan Kara <jack@suse.cz> wrot=
-e:
-> > > > > On Tue 06-08-24 19:54:58, Yafang Shao wrote:
-> > > > > > Its guarantee is clear:
-> > > > > >
-> > > > > >   : I/O is intended to be atomic to ordinary files and pipes an=
-d FIFOs.
-> > > > > >   : Atomic means that all the bytes from a single operation tha=
-t started
-> > > > > >   : out together end up together, without interleaving from oth=
-er I/O
-> > > > > >   : operations.
-> > > > >
-> > > > > Oh, I understand why XFS does locking this way and I'm well aware=
- this is
-> > > > > a requirement in POSIX. However, as you have experienced, it has =
-a
-> > > > > significant performance cost for certain workloads (at least with=
- simple
-> > > > > locking protocol we have now) and history shows users rather want=
- the extra
-> > > > > performance at the cost of being a bit more careful in userspace.=
- So I
-> > > > > don't see any filesystem switching to XFS behavior until we have =
-a
-> > > > > performant range locking primitive.
-> > > > >
-> > > > > > What this flag does is avoid waiting for this type of lock if i=
-t
-> > > > > > exists. Maybe we should consider a more descriptive name like
-> > > > > > RWF_NOATOMICWAIT, RWF_NOFSLOCK, or RWF_NOPOSIXWAIT? Naming is a=
-lways
-> > > > > > challenging.
-> > > > >
-> > > > > Aha, OK. So you want the flag to mean "I don't care about POSIX r=
-ead-write
-> > > > > exclusion". I'm still not convinced the flag is a great idea but
-> > > > > RWF_NOWRITEEXCLUSION could perhaps better describe the intent of =
-the flag.
-> > > >
-> > > > That's better. Should we proceed with implementing this new flag? I=
-t
-> > > > provides users with an option to avoid this type of issue.
-> > >
-> > > No. If we are going to add a flag like that, the fix to XFS isn't to
-> > > use IOCB_NOWAIT on reads, it's to use shared locking for buffered
-> > > writes just like we do for direct IO.
-> > >
-> > > IOWs, this flag would be needed on -writes-, not reads, and at that
-> > > point we may as well just change XFS to do shared buffered writes
-> > > for -everyone- so it is consistent with all other Linux filesystems.
-> > >
-> > > Indeed, last time Amir brought this up, I suggested that shared
-> > > buffered write locking in XFS was the simplest way forward. Given
-> > > that we use large folios now, small IOs get mapped to a single folio
-> > > and so will still have the same write vs overlapping write exclusion
-> > > behaviour most all the time.
-> > >
-> > > However, since then we've moved to using shared IO locking for
-> > > cloning files. A clone does not modify data, so read IO is allowed
-> > > during the clone. If we move writes to use shared locking, this
-> > > breaks file cloning. We would have to move cloning back to to using
-> > > exclusive locking, and that's going to cause performance and IO
-> > > latency regressions for applications using clones with concurrent IO
-> > > (e.g. VM image snapshots in cloud infrastruction).
-> > >
-> > > Hence the only viable solution to all these different competing "we
-> > > need exclusive access to a range of the file whilst allowing other
-> > > concurrent IO" issues is to move to range locking for IO
-> > > exclusion....
+On Wed, Aug 07, 2024 at 08:06:31PM GMT, Linus Torvalds wrote:
+> On Wed, 7 Aug 2024 at 19:50, Al Viro <viro@zeniv.linux.org.uk> wrote:
 > >
-> > The initial post you mentioned about range locking dates back to 2019,
-> > five years ago. Now, five years have passed, and nothing has happened.
-> >
-> > In 2029, five years later, someone else might encounter this issue
-> > again, and the response will be the same: "let's try range locking."
-> >
-> > And then another five years will pass...
-> >
-> > So, "range locking =3D=3D Do nothing."
->
-> How long do you think it would take you to understand the entire
-> serialisation model for a complex subsystem, understand where it is
-> deficient and then design a novel, scalable serialisation technique
-> that addresses that problem with only limited IO performance
-> regressions?
->
-> Some context:
->
-> It took me 6 years to work out how to do delayed logging in XFS once
-> I first learnt of the idea back in 2004. It took me 4 -from scratch-
-> design and implementation efforts before I found a solution that
-> didn't have a subtle, fatal architectural issue in it. Once I solved
-> the deadlock issues in early 2010, it took about 4 months from first
-> code to being merged in 2.6.35.
->
-> It took me 7 years to go from my initial "self describing metadata"
-> idea (2006) ideas to actually having it implemented and fully merged
-> in 2013. I described reverse mapping at the same time, and that took
-> another couple of years to realise.
->
-> It took me close to 10 years and 6 or 7 separate attemps to solve
-> the "XFS needs blocking RMW IO in the inode reclaim shrinker to
-> prevent OOM" problem. This caused memory allocation latency problems
-> for many production environments over the course of a decade, and
-> the problem was around that long because it took me an awful long
-> time to work out how to pin inode cluster buffers in memory without
-> deadlocking inode modification or inode cluster writeback.
->
-> These sorts of complex problems are *hard to solve* and it often
-> takes several attempts that fail to learn what -doesn't work- before
-> a successful architecture, design and implementation is realised.
+> > What's the problem with droping both barriers and turning that
+> > into
+> >         expanded = expand_fdtable(files, nr);
+> >         smp_store_release(&files->resize_in_progress, false);
+> > and
+> >         if (unlikely(smp_load_acquire(&files->resize_in_progress))) {
+> >                 ....
+> >                 return;
+> >         }
+> 
+> That should be fine. smp_store_release()->smp_load_acquire() is the
+> more modern model, and the better one. But I think we simply have a
+> long history of using the old smp_wmb()->smp_rmb() model, so we have a
+> lot of code that does that.
+> 
+> On x86, there's basically no difference - in all cases it ends up
+> being just an instruction scheduling barrier.
+> 
+> On arm64, store_release->load_acquire is likely better, but obviously
+> micro-architectural implementation issues might make it a wash.
+> 
+> On other architectures, there probably isn't a huge difference, but
+> acquire/release can be more expensive if the architecture is
+> explicitly designed for the old-style rmb/wmb model.
+> 
+> So on alpha, for example, store_release->load_acquire ends up being a
+> full memory barrier in both cases (rmb is always a full memory barrier
+> on alpha), which is hugely more expensive than wmb (well, again, in
+> theory this is all obviously dependent on microarchitectures, but wmb
+> in particular is very cheap unless the uarch really screwed the pooch
+> and just messed up its barriers entirely).
+> 
+> End result: wmb/rmb is usually never _horrific_, while release/acquire
+> can be rather expensive on bad machines.
+> 
+> But release/acquire is the RightThing(tm), and the fact that alpha
+> based its ordering on the bad old model is not really our problem.
+> 
+> So I'm ok with just saying "screw bad memory orderings, go with the
+> modern model"
 
-Thank you for all your hard work and contributions to XFS. The entire
-XFS community has greatly benefited from your efforts.
+So that's what confused me in your earlier mail in the other thread
+where the question around smp_{r,w}mb() and smp_store_release() and
+smp_load_acquire() already came up.
 
->
-> Often, there is no prior art out there that we can use to help solve
-> the problem. Sure, for range locking there's heaps of academic
-> papers out there about scaling concurrency in database key
-> operations (SIX, MGL, ARIES/KVL, multi-dimension key-range lock
-> separation, intention locking, speculative lock inheritance,
-> lightweight intent locks, etc), but none of the underlying
-> algorithms have any significant relevance to the problem we need to
-> solve.
->
-> There's also papers aout there about how to scale concurrent btree
-> modifications. Latching, lock coupling, optimistic lock coupling,
-> etc. The problem with these papers is that they often gloss over or
-> ignore important details such as how they deal with node contention,
-> how concurrent unlocked traversal and modification to the same node
-> are safely handled (i.e. NX concurrency algorithms), how a top-down
-> traversal algorithm that doesn't guarantee temporal path stability
-> is used for bottom up key update propagation (OLC-based algorithms),
-> etc.D...
->
-> They also tend to focus on huge static data sets where concurrent
-> random operations are guaranteed to have unique paths and minimal
-> contention. Hence the researchers are able to demonstrate how much
-> better their new algorithm scales than the previous state of the
-> art.  However, they rarely demonstrate how the algorithm scales
-> down, and that's something we really care about for range locks. A
-> couple of the scalable range indexing algorithms I prototyped simply
-> didn't work for small data sets - they performed far worse than just
-> using a single tree-wide mutex.
->
-> Hence we are in a situation where I can't find an algorithm in
-> existing computer science literature that will work for our problem
-> case.  Hence we need to come up with a novel algorithm that solves
-> the problem ourselves. This is an iterative process where we learn
-> by failing and then understanding why what we did failed.
->
-> Davidlohr Bueso attempted to solve mmap_sem issues with an interval
-> tree based range lock. From that implementation, I learnt that the
-> cost of per-range cacheline misses walking the rb-tree under the
-> tree-wide spin lock was the major performance limitation of that
-> range lock.
->
-> I took that observation, and attempted to adapt that code to a btree
-> (based on the XFS iext btree). That performed a little better, but
-> removing the cacheline miss penalty from the search algorithm simply
-> moved the bottleneck to the spin lock. i.e. I learnt that we can't
-> use a global scope spin lock for protecting the range lock tree -
-> the total number of range lock/unlock operations is bound entirely
-> by how many we can process on a single CPU because they are all done
-> under a single spinlock.
->
-> Further, per-inode IO concurrency is unbound, but a single
-> inode-wide serialisation primitive will not scale beyond a 3-4 CPUs
-> doing IO at the same time. This taught me IO path usage of per-IO,
-> per-inode exclusive cachelines needs to be avoided if at all
-> possible.
->
-> I made another attempt a year or so later after doing a lot of
-> reading about scalable btree structures. The second attempt expanded
-> the original btree I used with an OLC based architecture. I called
-> in an RCU-pathwalk btree because it used RCU and sequence numbers in
-> a very similar way to the dentry cache RCU pathwalk algorithm. This
-> provided range locks with a high concurrency range tracking
-> structure.
->
-> In some situations it scaled out to millions of lock/unlock
-> operations per second (far exceeding perf/scalability requirements),
-> but in others performance was miserably and was 10x slower than
-> plain exclusive locking. IOWs, another failure.
->
-> Again, I learn a lot about what not to do from that attempt. I've
-> spent a good deal of time in the past two years reading through
-> decades of database key range locking optimisation papers in an
-> effort to understand how I might address the issues I came across.
-> I have also had time to understand why several implementation issues
-> existed and how to avoid/mitigate them in the new design I'm
-> currently working on.
+Basically, I had always used smp_load_acquire() and smp_store_release()
+based on the assumption that they're equivalent to smp_{r,w}mb().
 
-Thank you for the detailed explanation of all the efforts that have
-gone into this. It will help others understand why it is the way it is
-if it gets accepted upstream. I appreciate the challenges you=E2=80=99re
-facing, even though I may not fully grasp all the technical details.
+But then multiple times people brought up that supposedly smp_rmb() and
+smp_wmb() are cheaper because they only do load or store ordering
+whereas smp_{load,store}_{acquire,release}() do load and store ordering.
 
->
-> So, yeah, I haven't written any rangelock code in the past couple of
-> years, but:
->
-> $ wc -l Documentation/filesystems/xfs-IO-rangelocks.rst
-> 749 Documentation/filesystems/xfs-IO-rangelocks.rst
-> $
-
-I couldn=E2=80=99t find any information about it online. It would be really
-helpful if you could share your current progress and the roadmap
-somewhere. This could help others better understand XFS range locking
-and potentially contribute to the effort.
-
->
-> I've been writing up a design doc as I've been doing this analysis
-> and research to document the problems and the solutions. I think I'm
-> close to the point where I can start implementing this new
-> design.
-
-Great news.
-
->
-> Clearly, I've been busy doing a lot of nothing on rangelocks, thank
-> you very much.
-
-I=E2=80=99m not suggesting that you haven=E2=80=99t made progress on this c=
-omplex
-feature. What I mean is that XFS users continually express their
-frustration to us when we can=E2=80=99t provide a solution to this issue, e=
-ven
-if it=E2=80=99s less than perfect. Now that we have a workable, though
-imperfect, solution, why not try it if the user=E2=80=99s issue is urgent?
-That way, when users encounter the same problem in the future, we can
-offer them a choice: use the imperfect solution if it=E2=80=99s urgent, or
-wait for range locking if it=E2=80=99s not. As you=E2=80=99re aware, most X=
-FS users
-don=E2=80=99t have the expertise needed to contribute to the development of
-XFS range locking.
-
->
-> > I'm not saying it's your
-> > responsibility to implement range locking, but it seems no one else is
-> > capable of implementing this complex feature except you.
->
-> *cough*
->
-> There's lots of people better qualified than me to solve a problem
-> like this. It's a computer science problem, and I'm not a computer
-> scientist. I'm an engineer - I take stuff that scientists have
-> discovered and documented and build tools, infrastructure and
-> objects based on that knowledge.
->
-> What I'm not good at is coming up with novel new algorithms to solve
-> mathematical problems. A range lock is the latter, not the former,
-> and there are plenty of people who would be better suited to this
-> work than me.  i.e. I'm good at putting knowledge to practical use,
-> not creating new knowledge.
-
-Most XFS users, like myself, are mainly skilled in utilizing the
-features you=E2=80=99ve developed ;)
-
->
-> However, I'm spending time on it because nobody else is going to
-> solve the problem for me.  CPU and IO concurrency is only going up
-> and shared/exclusive IO locking behaviour only gets more restrictive
-> as concurrency requirements go up and we use extent sharing to
-> avoid data copying more extensively. This problem isn't going
-> away...
-
-I understand the challenges you're facing. Thank you once again for
-all your hard work.
-
---=20
-Regards
-Yafang
+And it doesn't help that we seemingly don't have a practical guideline
+of the form "Generally prefer smp_load_acquire() and smp_store_release()
+over smp_rmb() and smp_wmb()." written down anywhere. That really would
+shortcut decisions such as this.
 
