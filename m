@@ -1,178 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-25443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DB694C315
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 18:52:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FF194C367
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 19:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A4E282C3D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:52:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4DE1F22DAF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 17:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB06190668;
-	Thu,  8 Aug 2024 16:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD820190684;
+	Thu,  8 Aug 2024 17:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEswavS+"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dFnXEJHT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cVmzgLsC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dFnXEJHT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cVmzgLsC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D74618EFD6;
-	Thu,  8 Aug 2024 16:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD1382C7E;
+	Thu,  8 Aug 2024 17:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723135908; cv=none; b=h9D2jm5FYc898WcPObVuIj3GS9EStJ11PfswJKpAD/rLTdLxZVbMtUSZxhtKCqPkiWsN8/z4IEDNkYhV4PSXCzpYd4lmpc2MY9AL3hc7itj1nEZlq8C5nxgWoNxzqp2QtPeMZ7qx5QQWOie+E+84EduhoQle1b2loEEUIScq/X0=
+	t=1723137095; cv=none; b=isbZMG0RPNks1BiJnu3XcF30BcYtuolHVW/aoxu/IuHi8VtqRvRSOx9acRNeyUFka1GgpIkMR4inPz/kaxOcFcQZlBCtryqD8gWDZZjD7Q87Z3cwG0Ocr248jp7vj7jo9AVpOoxY2hfe9u3DIPPE7NvqV/ETf4aKgIeFspwqmYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723135908; c=relaxed/simple;
-	bh=Ahxb0BeAC+IzyZ0zPvTEkKoa6qEGzOeVrdvkyRL4udE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XT2+YpTQvxKzJA/Ma25PtfsMfNHxCeb+Wr3bxy5E/ypZkeeN412XW7d9p6LHgTZt0ymdjUvAuZolLcdofoFZPrMtkBLLDgtebWR0EPnKKhB3jFgt6t3nq+l/oVjx4VDsG0JOmAxCyCPV+StAe0xdKqkbhkmchc62QMAYTPEf29o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEswavS+; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-36ba3b06186so608779f8f.2;
-        Thu, 08 Aug 2024 09:51:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723135905; x=1723740705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SwUfNPOLxl+TaZQIeJUM4EzBxGTEYjuduvorsIk5Zhc=;
-        b=KEswavS+JbDNTfr83I9eTksMt+NGXAVbkQdtHDDWFa7I7J1IkWWSVRBPzyYSe+DF1P
-         ZQ9OWtD4vNClHjgCsTfAGx3Fpq1bsR/6IjP9D/Zm4ZZLd7Ah3jk/QJeO8UBQEgLShYMM
-         Vid6PJFwL+FCl273QSlqf4/O414KNCfNmqr6s+FrgiwLs52pS7hvf5zc0Rjp1qLV2N/H
-         LvaN/LQ+q88lxjMnRz8JMT0mvTICHcqxW/rjBhzlI2NGVwrf2fzR329Nwvhg8jyXITUu
-         KvvLbmWape5CUV4dXnC8v9BPbFZ8HkI/JqrOxTq/AnqoqXjU5Y4ka1MbzgKZKQvJvgSA
-         3Wpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723135905; x=1723740705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SwUfNPOLxl+TaZQIeJUM4EzBxGTEYjuduvorsIk5Zhc=;
-        b=o/ieBmerEga04bNOTMM5SWsEEu2vYltG5C/kesYYzrR9LGKrbfsrq2tAc9ZmAlcEoN
-         rNZoIVnI6lnOb2YIb8t8W7YoDuDmImRRWWQv3YuGIYWQzQdV/UncUmw/6DhfdXRLNHlM
-         QMIP0HrP90GEy7Bv4I/lZ9Lgh00f639X+32FQ25gSRwATUfWyuFbn3zqfl8yZRl3ef9Z
-         SlzEw9cPoZ0Kx4AEEE5iAsgP6qq31VCYKkfSMlDkOMymldMHYAErD21YCX6Nsb4/4DsZ
-         r7wvX6e/TKpUMY5qxjdiVowe5x+dIiTkM9YGHFnhFmoIJe+a9Ksfolp8v9FBJvMsSU2Q
-         xOQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOP1tB3ckCRZZRophtwhgYrHxeT3LPqGgNGKdpIk9OszlV0LIwHjtrJIgrKfBFzrmMEUhnGJaSzOR6+o6gw0x5u+T9kk7nfaRfVEAZeA/m3rNtJMDDHNDlc6SMlvjzD+pYNgH0JO5qIJvYKjgsOQTQmi0qKWRpsV938lmoK/2MV+w7jF43q+/Q9DYW8UjqC8Iuh3ixKeT77+6fJhu4BJvbZj+1oUzj0+M=
-X-Gm-Message-State: AOJu0YxJ766/ObmsVyCBuCEC7FKZrkY1uDSXzRoK39sBJKtuRTR586kq
-	yzfFH/03bHCF/vRDs6hhfT5lWusdnVkBrYwPOQf9C+cuBFDQCS0iL5M5emLixiBlfeN2shmKmA4
-	Qm30iWvfpsOdESRF/Hk7e+P8b0BQ=
-X-Google-Smtp-Source: AGHT+IFXYJjv/rTRxsOtN2fZ2AMmazIebFUaeYLLCTxpkH/FUM1kIA1WEgJTWrurDtJ7rl2XjnuqPi70747pH++aGDc=
-X-Received: by 2002:adf:f988:0:b0:368:5b78:c92e with SMTP id
- ffacd0b85a97d-36d274dea28mr1591175f8f.24.1723135905106; Thu, 08 Aug 2024
- 09:51:45 -0700 (PDT)
+	s=arc-20240116; t=1723137095; c=relaxed/simple;
+	bh=+T3bznHcwl2sKilN3Rsk+DfoLt8TfQPY+ISGsMgYDh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8r7tIAqFDDpqXVcmAL4Wr37wO/JqcuO7cHZKpxASc/rnQAAu3AEKZRqkonLkPDVSaUgflqdj942ZeQWkLxF37/Ek9QBnCBrvzwVCER1xWIdOys6FmNNXfD+NMglDDI4UuKMePxXnQNO3LVxA+R6LTGjtOL19aPDlbx9SyyePP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dFnXEJHT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cVmzgLsC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dFnXEJHT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cVmzgLsC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 23ED921D67;
+	Thu,  8 Aug 2024 17:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723137091; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c5KTl0zSOhEJ1SLkg5NmIdRLgqbBvRlP3mDGSRHB+0k=;
+	b=dFnXEJHTMfpNYIgxAQsbpZmail4sTGUCTpwSHbU9tEw3uDnx7AffsMpIC+v+1a0CEvXTWA
+	d28+ZwDBhojLYle4HliUFcZmJjbH/yYkapQwtT6yaIxrieRWrdeXN0RX1c/+hvVUs6j193
+	TF9ZbkS1nCyZvLKGWgy32bjc9yKlIso=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723137091;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c5KTl0zSOhEJ1SLkg5NmIdRLgqbBvRlP3mDGSRHB+0k=;
+	b=cVmzgLsCC9zEemztN6gWR1Fw2f5/Bghwif7nD3DqqEOiBtqQO8knrP2KeAYWR+g2gB3krj
+	Cd7CjBhHfLABhJAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dFnXEJHT;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cVmzgLsC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723137091; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c5KTl0zSOhEJ1SLkg5NmIdRLgqbBvRlP3mDGSRHB+0k=;
+	b=dFnXEJHTMfpNYIgxAQsbpZmail4sTGUCTpwSHbU9tEw3uDnx7AffsMpIC+v+1a0CEvXTWA
+	d28+ZwDBhojLYle4HliUFcZmJjbH/yYkapQwtT6yaIxrieRWrdeXN0RX1c/+hvVUs6j193
+	TF9ZbkS1nCyZvLKGWgy32bjc9yKlIso=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723137091;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c5KTl0zSOhEJ1SLkg5NmIdRLgqbBvRlP3mDGSRHB+0k=;
+	b=cVmzgLsCC9zEemztN6gWR1Fw2f5/Bghwif7nD3DqqEOiBtqQO8knrP2KeAYWR+g2gB3krj
+	Cd7CjBhHfLABhJAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1516813876;
+	Thu,  8 Aug 2024 17:11:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id d84eBUP8tGblOgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 08 Aug 2024 17:11:31 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B2D4FA0851; Thu,  8 Aug 2024 19:11:30 +0200 (CEST)
+Date: Thu, 8 Aug 2024 19:11:30 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+	audit@vger.kernel.org
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+Message-ID: <20240808171130.5alxaa5qz3br6cde@quack3>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+ <20240807-erledigen-antworten-6219caebedc0@brauner>
+ <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
+ <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730050927.GC5334@ZenIV> <20240730051625.14349-1-viro@kernel.org>
- <20240730051625.14349-17-viro@kernel.org> <CAEf4BzZipqBVhoY-S+WdeQ8=MhpKk-2dE_ESfGpV-VTm31oQUQ@mail.gmail.com>
- <20240807-fehlschlag-entfiel-f03a6df0e735@brauner> <CAEf4BzaeFTn41pP_hbcrCTKNZjwt3TPojv0_CYbP=+973YnWiA@mail.gmail.com>
-In-Reply-To: <CAEf4BzaeFTn41pP_hbcrCTKNZjwt3TPojv0_CYbP=+973YnWiA@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 8 Aug 2024 09:51:34 -0700
-Message-ID: <CAADnVQKZW--EOkn5unFybxTKPNw-6rPB+=mY+cy_yUUsXe8R-w@mail.gmail.com>
-Subject: Re: [PATCH 17/39] bpf: resolve_pseudo_ldimm64(): take handling of a
- single ldimm64 insn into helper
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, viro@kernel.org, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, kvm@vger.kernel.org, 
-	Network Development <netdev@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.01 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	URIBL_BLOCKED(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,linux-foundation.org,gmail.com,toxicpanda.com,vger.kernel.org,paul-moore.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -1.01
+X-Rspamd-Queue-Id: 23ED921D67
 
-On Wed, Aug 7, 2024 at 8:31=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Wed, Aug 7, 2024 at 3:30=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> >
-> > On Tue, Aug 06, 2024 at 03:32:20PM GMT, Andrii Nakryiko wrote:
-> > > On Mon, Jul 29, 2024 at 10:20=E2=80=AFPM <viro@kernel.org> wrote:
-> > > >
-> > > > From: Al Viro <viro@zeniv.linux.org.uk>
-> > > >
-> > > > Equivalent transformation.  For one thing, it's easier to follow th=
-at way.
-> > > > For another, that simplifies the control flow in the vicinity of st=
-ruct fd
-> > > > handling in there, which will allow a switch to CLASS(fd) and make =
-the
-> > > > thing much easier to verify wrt leaks.
-> > > >
-> > > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> > > > ---
-> > > >  kernel/bpf/verifier.c | 342 +++++++++++++++++++++-----------------=
-----
-> > > >  1 file changed, 172 insertions(+), 170 deletions(-)
-> > > >
-> > >
-> > > This looks unnecessarily intrusive. I think it's best to extract the
-> > > logic of fetching and adding bpf_map by fd into a helper and that way
-> > > contain fdget + fdput logic nicely. Something like below, which I can
-> > > send to bpf-next.
-> > >
-> > > commit b5eec08241cc0263e560551de91eda73ccc5987d
-> > > Author: Andrii Nakryiko <andrii@kernel.org>
-> > > Date:   Tue Aug 6 14:31:34 2024 -0700
-> > >
-> > >     bpf: factor out fetching bpf_map from FD and adding it to used_ma=
-ps list
-> > >
-> > >     Factor out the logic to extract bpf_map instances from FD embedde=
-d in
-> > >     bpf_insns, adding it to the list of used_maps (unless it's alread=
-y
-> > >     there, in which case we just reuse map's index). This simplifies =
-the
-> > >     logic in resolve_pseudo_ldimm64(), especially around `struct fd`
-> > >     handling, as all that is now neatly contained in the helper and d=
-oesn't
-> > >     leak into a dozen error handling paths.
-> > >
-> > >     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > >
-> > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > > index df3be12096cf..14e4ef687a59 100644
-> > > --- a/kernel/bpf/verifier.c
-> > > +++ b/kernel/bpf/verifier.c
-> > > @@ -18865,6 +18865,58 @@ static bool bpf_map_is_cgroup_storage(struct
-> > > bpf_map *map)
-> > >          map->map_type =3D=3D BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE);
-> > >  }
-> > >
-> > > +/* Add map behind fd to used maps list, if it's not already there, a=
-nd return
-> > > + * its index. Also set *reused to true if this map was already in th=
-e list of
-> > > + * used maps.
-> > > + * Returns <0 on error, or >=3D 0 index, on success.
-> > > + */
-> > > +static int add_used_map_from_fd(struct bpf_verifier_env *env, int fd=
-,
-> > > bool *reused)
-> > > +{
-> > > +    struct fd f =3D fdget(fd);
-> >
-> > Use CLASS(fd, f)(fd) and you can avoid all that fdput() stuff.
->
-> That was the point of Al's next patch in the series, so I didn't want
-> to do it in this one that just refactored the logic of adding maps.
-> But I can fold that in and send it to bpf-next.
+On Thu 08-08-24 12:36:07, Christian Brauner wrote:
+> On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
+> > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
+> > > > +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
+> > > > +{
+> > > > +	struct dentry *dentry;
+> > > > +
+> > > > +	if (open_flag & O_CREAT) {
+> > > > +		/* Don't bother on an O_EXCL create */
+> > > > +		if (open_flag & O_EXCL)
+> > > > +			return NULL;
+> > > > +
+> > > > +		/*
+> > > > +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
+> > > > +		 * use the dentry. For now, don't do this, since it shifts
+> > > > +		 * contention from parent's i_rwsem to its d_lockref spinlock.
+> > > > +		 * Reconsider this once dentry refcounting handles heavy
+> > > > +		 * contention better.
+> > > > +		 */
+> > > > +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
+> > > > +			return NULL;
+> > > 
+> > > Hm, the audit_inode() on the parent is done independent of whether the
+> > > file was actually created or not. But the audit_inode() on the file
+> > > itself is only done when it was actually created. Imho, there's no need
+> > > to do audit_inode() on the parent when we immediately find that file
+> > > already existed. If we accept that then this makes the change a lot
+> > > simpler.
+> > > 
+> > > The inconsistency would partially remain though. When the file doesn't
+> > > exist audit_inode() on the parent is called but by the time we've
+> > > grabbed the inode lock someone else might already have created the file
+> > > and then again we wouldn't audit_inode() on the file but we would have
+> > > on the parent.
+> > > 
+> > > I think that's fine. But if that's bothersome the more aggressive thing
+> > > to do would be to pull that audit_inode() on the parent further down
+> > > after we created the file. Imho, that should be fine?...
+> > > 
+> > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/?ref_type=heads
+> > > for a completely untested draft of what I mean.
+> > 
+> > Yeah, that's a lot simpler. That said, my experience when I've worked
+> > with audit in the past is that people who are using it are _very_
+> > sensitive to changes of when records get emitted or not. I don't like
+> > this, because I think the rules here are ad-hoc and somewhat arbitrary,
+> > but keeping everything working exactly the same has been my MO whenever
+> > I have to work in there.
+> > 
+> > If a certain access pattern suddenly generates a different set of
+> > records (or some are missing, as would be in this case), we might get
+> > bug reports about this. I'm ok with simplifying this code in the way
+> > you suggest, but we may want to do it in a patch on top of mine, to
+> > make it simple to revert later if that becomes necessary.
+> 
+> Fwiw, even with the rearranged checks in v3 of the patch audit records
+> will be dropped because we may find a positive dentry but the path may
+> have trailing slashes. At that point we just return without audit
+> whereas before we always would've done that audit.
+> 
+> Honestly, we should move that audit event as right now it's just really
+> weird and see if that works. Otherwise the change is somewhat horrible
+> complicating the already convoluted logic even more.
+> 
+> So I'm appending the patches that I have on top of your patch in
+> vfs.misc. Can you (other as well ofc) take a look and tell me whether
+> that's not breaking anything completely other than later audit events?
 
-+1.
+The changes look good as far as I'm concerned but let me CC audit guys if
+they have some thoughts regarding the change in generating audit event for
+the parent. Paul, does it matter if open(O_CREAT) doesn't generate audit
+event for the parent when we are failing open due to trailing slashes in
+the pathname? Essentially we are speaking about moving:
 
-The bpf changes look ok and Andrii's approach is easier to grasp.
-It's better to route bpf conversion to CLASS(fd,..) via bpf-next,
-so it goes through bpf CI and our other testing.
+	audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
 
-bpf patches don't seem to depend on newly added CLASS(fd_pos, ...
-and fderr, so pretty much independent from other patches.
+from open_last_lookups() into lookup_open().
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
