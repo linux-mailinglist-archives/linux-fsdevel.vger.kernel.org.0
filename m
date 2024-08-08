@@ -1,98 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-25399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D835594B789
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 09:19:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B8894B860
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 09:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 077AD1C238B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 07:19:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166431F2357B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 07:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7821891B5;
-	Thu,  8 Aug 2024 07:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476171891B7;
+	Thu,  8 Aug 2024 07:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsHyLPLe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xr2QwR/4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2151A186294;
-	Thu,  8 Aug 2024 07:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846C81CD25;
+	Thu,  8 Aug 2024 07:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101219; cv=none; b=b1ve1okvM9vzeUL3jGqsDPWdBSOwwj8msqbCo+ABCV6fjNDzqlpneMETA8SDCKygpNz9hDk5BgByBH1uPx6cdZLf301Kwava80mi8fvenaTdUof5e+DMMeiCULo967/WQgP9DDkUPU8BvtLfhzFhNC9TWmCESSbhLEaxXHLEokg=
+	t=1723103935; cv=none; b=RDdGNxjxnTX+WgGUoI/mV/6H5JMyRP/iY/PiGo54NjwHwmS/UOBgyiXev4F/fSQJsQPbRjhUA8j+ToEuY3KG6rLLYHmODfXio00fa4JblPiQORzictFtLtXSYUShJ478sGydH9Xq5ur99dGG8lBf5QWBTC4Odb0MNoYQ8idYATQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101219; c=relaxed/simple;
-	bh=0g9XRgxfeMZc9/uVHfto4j4RtP6dqmPPmizw0m2bd6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mmj8ETtRBXRtNDhuTQ54dvMf7TAlD/6dSNSO8yzZjV+ZdtWcyGVZT4cuTAeyOortdSZv2OsYMF6afq+Bhrv1v6earOliE9YrZ5lQ7o3tSAsrl2num2hKaVrHH3nBa5Lw94M3mtIrK/hDMwP7/k72/7nHoI6Q9Xpx8Wdhw2anSuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsHyLPLe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D572FC4AF09;
-	Thu,  8 Aug 2024 07:13:35 +0000 (UTC)
+	s=arc-20240116; t=1723103935; c=relaxed/simple;
+	bh=lBgKsSZMNn5ItIypje4300VtOpFDmA6vuT10xWV/5tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R9T7osUHUKt4V5emWdGMUtglxHW4Y0BJ0HKkOQWUaoe+2gTH4uqfJM53KJ6bcGyxZj2PpJxq3nM43xrRgYRl/0LVVPnZtjNtw52G/cyZyTH8c0SEga0/ZYw3MxwK5udfmL27uJz+/emvs/3yvobPwRQDauC8f3VkeJjGJJIqY9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xr2QwR/4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E30C32782;
+	Thu,  8 Aug 2024 07:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723101218;
-	bh=0g9XRgxfeMZc9/uVHfto4j4RtP6dqmPPmizw0m2bd6g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FsHyLPLefdQdvQC+jQGRnXZVwnSjt7F3ggBBoZL/I0bL6nAjbVdkePPxZv+aHPTeF
-	 WiywH3KMXzzxx/upp6GV14gSZ8JeW66TVawsFgZS0b1bAIGsaKdAe01jnCNKUx3Q2R
-	 uydw63ZfXUrkzhFR7Zvk9qIl9+oYHx41Psd4Nb2Di9438tvjQtLePmZOxuym6niaPI
-	 NGcL67xBk0hKa2hue4EAiE1lCKEDxlwePef+t7D9evgmFd2KPVby0xVOEw3iWcfsDt
-	 yrvHlFsMiApjDeagf6EdReWd5f7IuuBQYBOaMsOkLU8Xmk4X+nzA9YXG277WHy5JOd
-	 e+qK7vu5psi+Q==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Joe Damato <jdamato@fastly.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	netdev@vger.kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	stable@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH net] eventpoll: Annotate data-race of busy_poll_usecs
-Date: Thu,  8 Aug 2024 09:13:26 +0200
-Message-ID: <20240808-geteert-skala-44fb9303360b@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240806123301.167557-1-jdamato@fastly.com>
-References: <20240806123301.167557-1-jdamato@fastly.com>
+	s=k20201202; t=1723103935;
+	bh=lBgKsSZMNn5ItIypje4300VtOpFDmA6vuT10xWV/5tg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xr2QwR/4R0+Yb+9pUu6BgnmvD4j3cPKIXj9murfquFun6YQ/CtU3vzU8MbgPfxoVB
+	 xkYuiK/L381eurFZAGr+8yLDvjaR3DzrA+JEA1NP4Vt+8DfpQV63+glF1dNVLIQsq9
+	 6RBkYf4cl5QgGfcCJ1oif1ZReVXjPbf9VLx/sL5k79gAC60zyJMW6wlzXP12dzF2Rc
+	 p4bKCzhJtNliCTOKjwmeTyFJU0Gexb1/mRb2uw8ieff4BFHRFqqAiCcznbtnOjYbgL
+	 JV6WcSTcuur9WiLhmc6LF8JIVUwLAzh7TtU9G4P0oFwufwGX278D7l8mKJw9TUCRKf
+	 UXtdzQYOEKN6g==
+Date: Thu, 8 Aug 2024 09:58:49 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	alexei.starovoitov@gmail.com, audit@vger.kernel.org, bpf@vger.kernel.org, 
+	catalin.marinas@arm.com, dri-devel@lists.freedesktop.org, ebiederm@xmission.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	rostedt@goodmis.org, selinux@vger.kernel.org, serge@hallyn.com
+Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
+Message-ID: <mywl5fk4ob4c4xekplom3ysiyo57h2iqirbiza6wdka3kdoa7q@exrkx5uwn2yc>
+References: <2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfbosf5wdo65dk4@srb3hsk72zwq>
+ <CALOAHbBKzrvibUbj-1W7Z79AZsvOpMeG--EZ0pf2k0iyuPa1_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=981; i=brauner@kernel.org; h=from:subject:message-id; bh=0g9XRgxfeMZc9/uVHfto4j4RtP6dqmPPmizw0m2bd6g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRtKZCcru3wjZH7y1Tr4lcXYtY4z7+z+9E80/z5CgeOb 9ylNonhe0cpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE5ixg+F+ScbQ3kHVFkbb0 4iNbX5QEufRwPrpmNLXIYMbWcK2PK60Z/ld6l/85uiprkdKjvJDvJdy3rJ63cJXq2AmZnoxSCSj /zwEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qwav3xltx7orscp7"
+Content-Disposition: inline
+In-Reply-To: <CALOAHbBKzrvibUbj-1W7Z79AZsvOpMeG--EZ0pf2k0iyuPa1_w@mail.gmail.com>
 
-On Tue, 06 Aug 2024 12:33:01 +0000, Joe Damato wrote:
-> A struct eventpoll's busy_poll_usecs field can be modified via a user
-> ioctl at any time. All reads of this field should be annotated with
-> READ_ONCE.
-> 
-> 
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+--qwav3xltx7orscp7
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	alexei.starovoitov@gmail.com, audit@vger.kernel.org, bpf@vger.kernel.org, 
+	catalin.marinas@arm.com, dri-devel@lists.freedesktop.org, ebiederm@xmission.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	rostedt@goodmis.org, selinux@vger.kernel.org, serge@hallyn.com
+Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
+References: <2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfbosf5wdo65dk4@srb3hsk72zwq>
+ <CALOAHbBKzrvibUbj-1W7Z79AZsvOpMeG--EZ0pf2k0iyuPa1_w@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CALOAHbBKzrvibUbj-1W7Z79AZsvOpMeG--EZ0pf2k0iyuPa1_w@mail.gmail.com>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Hi Yafang,
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+On Thu, Aug 08, 2024 at 10:49:17AM GMT, Yafang Shao wrote:
+> > > Now, it might be a good idea to also verify that 'buf' is an actual
+> > > array, and that this code doesn't do some silly "sizeof(ptr)" thing.
+> >
+> > I decided to use NITEMS() instead of sizeof() for that reason.
+> > (NITEMS() is just our name for ARRAY_SIZE().)
+> >
+> >         $ grepc -h NITEMS .
+> >         #define NITEMS(a)            (SIZEOF_ARRAY((a)) / sizeof((a)[0]=
+))
+> >
+> > > We do have a helper for that, so we could do something like
+> > >
+> > >    #define get_task_comm(buf, tsk) \
+> > >         strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->com=
+m)
+> >
+> > We have SIZEOF_ARRAY() for when you want the size of an array:
+> >
+> >         $ grepc -h SIZEOF_ARRAY .
+> >         #define SIZEOF_ARRAY(a)      (sizeof(a) + must_be_array(a))
+>=20
+> There is already a similar macro in Linux:
+>=20
+>   /**
+>    * ARRAY_SIZE - get the number of elements in array @arr
+>    * @arr: array to be sized
+>    */
+>   #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) +
+> __must_be_array(arr))
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+This is actually the same as our NITEMS(), not SIZEOF_ARRAY().
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+> will use it instead of the sizeof().
 
-[1/1] eventpoll: Annotate data-race of busy_poll_usecs
-      https://git.kernel.org/vfs/vfs/c/b4988e3bd1f0
+But yeah, indeed I think you should use ARRAY_SIZE() in
+get_task_comm().  :)
+
+>=20
+> Good point.
+> I will avoid using the _pad().
+
+Nice.  :)
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--qwav3xltx7orscp7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAma0erkACgkQnowa+77/
+2zI/JRAAoVxukBH7uw9FKXnQL5urmTajhZ9amPoHARet43Vg/lzzBNf6fKGg+8Sw
+Ia/9Wj4w2X8FhIeCkj6N9ZS8SaIRgXExdZQxfOdfNWRXk8i+UVm0HzH3maGvLLi7
+uSkYvr0HKnB/bk8tjJWDfvEEwNFS0f6rTlz3gcK2AggiDr9N1ZZBKS1/6qXDTgps
+Z+83Dzqy6UmjYa43Rg9MLoS5hux8uJyepFVgJQ3YzNoLlT4RCnXz99pTQffEGf/u
+Z1pH8dsthc5ObspRQoWHzKVRv2LmatVaitOfoxEnqw7nqcKkwV6hfKYwArb1PR5x
+46De/I8Q2SFzcCT+MjcCHQrlYo4ae7YVGpk2dpIYxkFnH7WCR3UeMamLrsPAkydf
+bAisGt0aUSSnXv6Nx+AyJzqJVYwfXY87aUMBxU6M6tiD1WaBCxMkgEyCqGRI4T4M
+SxLDjWDUNMP3dzrilzfy+7Q5mBSoDP0fyVZD9PvQyj2I3OQuaSco8SiKocb6YPyv
+NlIPR7vs2K7n+Cmbv1FtrW2XTDnYsHpUYs1iI81FGoqQmK0I3JM+M1PSFs1m/VLB
+UMkeE70pWxJlewI3USP3BVhAVMn9LGP3k0r6eRLlea0y8Y8VRx77S8+D7Im1RNqs
+ybegRL10BeXA+FLXX9xvCPi4ClFH2e/r0dFUpNTzg9bDXJG5sr8=
+=hUNj
+-----END PGP SIGNATURE-----
+
+--qwav3xltx7orscp7--
 
