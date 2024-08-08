@@ -1,72 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-25434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1F194C26D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 18:17:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0955294C26F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 18:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E205EB22FD0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BC231C24E85
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC01E18FC8F;
-	Thu,  8 Aug 2024 16:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4077C1917C6;
+	Thu,  8 Aug 2024 16:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xngOMi15"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WEOMKDNT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69203190484
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 16:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F13919069B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 16:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723133794; cv=none; b=Q0Zt8VcSkyvfafPHE6y8E9ex13k6zOItmUHjERZZFvAv5VTp9muyE5rBOnBfv9K6ZsAYXvO3Q5CQGZ07TQZ8SKXsZv87U1CXauoBKTN38dKBf92dKqi7UwhqM5eU9Rs/FEQFA48t1QEp2LI3bza+6ccQ8w1BrTPsAU1b54uAzg4=
+	t=1723133796; cv=none; b=W8T4sY87nB4ZllzHsna2fEJk2aleEnmkQrfBkgm2BguH9nicT76YnnWXSe/hM/4PkpNBEUlTn5yAk9YTTBUNgjhEVw0P2kPJkt3YGHnib5e69RMK67gKaXacKWRf3J1S1ontJTnewNs3NqMOPhNrBh5xBX3egQVdp1c0f39RpIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723133794; c=relaxed/simple;
-	bh=4PQaFBps8VktqGwrRnYv70CrPEKA5C/LpKWYnG6Le3w=;
+	s=arc-20240116; t=1723133796; c=relaxed/simple;
+	bh=6Ih3i+4Hw1P+6eHIXABlsLLf+5mhyzhRH25qSqltXX4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZEL3Z2shamG2A91P8KOgFM3Dc2AHIQ0khl1ThsIZMmnPpu7UfIp36Rz6RXD1Aa7f4cES0/bSUk1Nn+PeG6Rn3kTlZWNIu5T/yZf/9wqw99Aad5bY5pGiomfW5pD/xY0ulnV60/gipSKK7FyFy+MxdJDDmvqSHH/NIl4dbraPTP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xngOMi15; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=JblSP4hSOcu402OHAe8wFwUU+PFaqiOtgiz52d8wqmZzNgu79hSv/f4IJYNZm3V7xp1ezr13+jLnVb4Rv1d9hxX8J2spOqXlSdaqPLrDrNF1OCKe5xe6f6tlP5Q/jCncc/oZEtRXzAvoHqOWcEUGZKjL2hX667pnbc8QhBE0zhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WEOMKDNT; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6506bfeaf64so21672417b3.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 09:16:32 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0e3eb3fe93so1971460276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 09:16:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723133791; x=1723738591; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D6Q99M30pfVow/VZrp0OXErUk9qZ3L/8/fDluo5OZ/Y=;
-        b=xngOMi157CPmp9o4UJ88t5aUiLJO3bU4faiKUVD+zbVk8fJ91XED3ToLB3G+Lr5DXt
-         iQPLrX5+DWSV9VJy5nWLt6e/CSO6GmLGKElt+BLZ4RS7gj7UJ5fkq8NV6d9XvzyzYY/+
-         1HwxK3gdRe9nEtH9UPARXMeo+nxMrmrFV65xccteYOhbdVvbIPUoQhV2bcdaKQMgir8g
-         QGvwmNod+bsBEWesN5O73hR159wwPxtiXP2lWzNaYtcemJBdm29/DxymnsztaqFrRsJr
-         XNCKuBa+zOfpEosoIj1nYqyviE8T2/gWfDgy1oaEU6TLIc7l93HTUiL9X1ujRA/vbK+b
-         sMyQ==
+        d=google.com; s=20230601; t=1723133794; x=1723738594; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LnrOkpnPCFdbzQn/x9iHS+wX+2l97GUTugL+KcnmTkA=;
+        b=WEOMKDNTc2CnSFdd1+kswUEuLqiC7PtjET+Rb9U9fZzxoPEv/FwIQIdhVyUYgU30D6
+         UtO0+lqVAeTJJeoWSm892IvQy81mYEAXp/Ymt4cQTGfHvlgDJbqoYt6079RcIGW2537J
+         bAAX27BxQnwYlJBhlBLL9Bm0drBp6PfzscaR5vlrkNihZFHnI9r+SZhSs4N1uTmH2gE8
+         lQzGivb7yIFjb2IPlbAUvgQBNXVzyVuMdkwOuTSCLeHRHmoOu2/QK0A1nVlooDH1Xw3Q
+         iox9NSAzQXrWXYtD1Qg6G0tfYTipRjzt0K1v6nGMrNeACEVrOB7bzEMW/IcfYp4tKD/n
+         r3pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723133791; x=1723738591;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=D6Q99M30pfVow/VZrp0OXErUk9qZ3L/8/fDluo5OZ/Y=;
-        b=dlUtabdZ45tzKdpP0q9PES/2kTVfELysEEMEPZyQQFdrrmqGlyH1u5O8aw9HWL+N42
-         Q5leRSs9Cbntm7OGycYQwxwTejjvQnlLi32FsnxXtUWQncigFMR4ekjpJLpt0g9H9aMW
-         ossEzw+7ihe+3LLfcOreWiO9/WrlN1muc+v0yx/hcJe3UbmQr2xpUtAMBgIyJkou5xT4
-         K/DjpjKHWTv1G5AxnUFaSuFhn4oGW4stKiYg2ggmZ5Utkz+pM0ElA7PffUnYMt4s2L1a
-         88dzSfjfKJDw4uhTGwdEUG1KnIIqVlGh4/mybvG2t4xMJKPIyTi0M5vFUNui21T23W/I
-         qJOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzw5oNodwLRalRDKCAbhLhlREfNWoqVxpTtXDf+Q0RTTlTD5aEuxi189WdOF2A8SV9JNsO0TFYv+66SakbgiktrLSfFuzJ26MQra25Qw==
-X-Gm-Message-State: AOJu0YxwYn5Y3OBBc0u4+znchKy5mFksU9i6KQ05uXmz1uzhkCeHoDgB
-	fKEYh2HPwz9OPhXsU0zYC8dVkjxMWnTqnSLvldoUgHDcRXBtBHTQVOIasVqIp5QwlZ+0BhCev4y
-	TOYxwNoj4BLLIDA==
-X-Google-Smtp-Source: AGHT+IHjKhmt3D8bcbLRy83MdOEq8l2jcjlXOpQD3wWuk5ZNpxZjN0ccli1jrWq07BiA2HaEn1LRXqh39g1w4TM=
+        d=1e100.net; s=20230601; t=1723133794; x=1723738594;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LnrOkpnPCFdbzQn/x9iHS+wX+2l97GUTugL+KcnmTkA=;
+        b=e+I41YMIctGUw9AHogK0/PBXhVqNtSUGiZQT3cYSljym7aeH5cxthFsgsD7clTuDDw
+         WuSbI0pOckx0uD+cied4uzEuiXTVNV5mR/WaejhBNhLAsCbn5jseMLSS6/XlvblXb+qI
+         2+XDyuX/sXwO3GO0K7r7ElE/Ozcp5RfUDQWC+2kPPHfOx3aeNQ56sWH4/iO1Ozr5wY4e
+         5L7SkeLcerM+XeX+b05KcXZUVC0ubh8n3uYc9AncfeNv3QtxbAmwPCMeXiNynmyUmD5O
+         Jq8gWs49Czg07mXnrfO/z1MSnbp6bZMhNaypGn/0990w9GfCP7VsU9hr7H7Ud+HNJR7w
+         4GUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZRJB9BIJmRCXRbUmo81se3fhDoqFapSOGvm4CYEBHOICKvNknZ/k6o/CGkbT/eyvbeZbvbi6sVg9y89YMBnlPNYSN4fUnrq6HFJBb5g==
+X-Gm-Message-State: AOJu0Yzw+/Lm3xrPcGJXnEiSa9WmQXhpvYA44aAllZkVEJWDJqlL/F+B
+	iZ4m532++PpnstjLHXExe+MIYVLnnqEv974GlFnFO8hdf+AU2aXMkQcI0cOwI6GTD4R+sJ05ML0
+	0B5xFO0EJs1uRiA==
+X-Google-Smtp-Source: AGHT+IErYjafy0I8ODbgd/7fZg54LDTDd7vHtt2H8T5U9KTddFirQ5oOi7NGxvr6EQ57PdY69ofn8ahJXQz+vb4=
 X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a81:5b08:0:b0:62c:ff73:83f with SMTP id
- 00721157ae682-69bfd009861mr992547b3.8.1723133791340; Thu, 08 Aug 2024
- 09:16:31 -0700 (PDT)
-Date: Thu, 08 Aug 2024 16:15:44 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a25:26d2:0:b0:e03:2217:3c8f with SMTP id
+ 3f1490d57ef6-e0e9da86880mr4196276.2.1723133794036; Thu, 08 Aug 2024 09:16:34
+ -0700 (PDT)
+Date: Thu, 08 Aug 2024 16:15:45 +0000
 In-Reply-To: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -76,22 +74,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5621; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=O79cAbTLjOkpOxwEF3Z9QrUnv7nzcQMruideT4KM+Fk=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmtO9VxvPC11vAKiPwxCea0/BDfH8/XkTnCPamv
- zalojrmzeCJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZrTvVQAKCRAEWL7uWMY5
- RqpRD/9vzLR6fVIVLVEQp85pk/Z2XQ6E89etE+ffgbDSHdgTLT/KXtLMLTqf1fnLhQgEVfnm02T
- docSA46GvH4T5g8fiU6sbXk4KACtp6IUAHqPCVi1Vl61gbvx/CK3gN97Tx6n57r5VEegobnCjVN
- W7mTISf/azV8LOUoFVp5DJh4CeQDJYGjiwGeyT1A6ba1becU4CdctxYu9XEJ43NWWB22yxGiCt7
- 7ISrlCQ8FHaIqHkyuCfSKP2GD705HrNLTfJxLWfy2htYuoYCs9vDH2VpQTPLduWc039D5JQ3PZm
- 0T3t9UmvoWaL9d7MtvbgcAfCvN9Vc5NXcTiISCCeyPn632HpnjKe+1rAODW0mPbxt+eRNO0KrLP
- BQRQZpnzc1NOkTW+v/jgJiUPDoqhPmVxA4BzRl7CCT4/HxoCggL1X3XVB7lzwqEO7OHi1fl7lY1
- 5daZxIE0aHSD/ob0P3viYeU3vq0E2pBTYfySSVEBbz42CFPU/l/K5BVgR/w5/nYY+6CIhvuz2If
- npUUIrmmBHbbklZqEazx2GvbzfdnUU8MKQ6PKSRpfj4wCGyFq/TErj5O9iaM1UvC5vwA3EV529v
- 1EusNG3U0NQaKopGt+n8YSl8UYf1QI7mM+KksuYmtKzMav7Bgy2gQlY72wP1YBNJA8kduZ03elb WJc5gNhABnwFeUw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2428; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=6Ih3i+4Hw1P+6eHIXABlsLLf+5mhyzhRH25qSqltXX4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmtO9W8ShuSxK2tF6pVinnkGiah1DUVK31iGo3K
+ 2Sc7+2LDPaJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZrTvVgAKCRAEWL7uWMY5
+ RlTSD/9fuN1pb719WKFq9tEB3IAVCXdxBm3YMiS28NgN2w9S+NkWrO/NDIC6+9Gr3rUYizVGk7B
+ 7PldiVjZG+ONB+GuxvcbumwPjtp4uqGlH4yMuK9yriHZYtJ8mVaqFidxLmskQBvpAtqW8kPX2I3
+ pQUNHDaCfR5mAWWGD/mG1GNu5LRaZLYV0IBso1axFN3sdkRgvoVxIkax8YQR8/XruZoIvdrMtH7
+ 5ci/7UM5r1EHZ8U+OagwjSVhQu6ZbrYk743ZeAXJ+pdy1Adkeh+bY3FSGWteIzi/T+5Bi0HdGzH
+ zYvyEZ6TNMbOoN4P3ILsvaslshULgAECovmpSJ06bCcLFZNGyoFMvQDKXgraUK/nqqitERXeu/V
+ 6Bh+4+CruxzdT8MJ/WpAZfdGZZo3luGBU5aQcHDLluxVKUrz4v8O0x7rEfu77990evr5XnOpns+
+ K4IVSzTe0wsV3QhW4CEnC4i1TjOH21aK3kMTsjuDF6uc0fIbt14ZLTHjgTVW8sOrNSzYdnW0kRZ
+ 4M2NrFhtj5SvsJ1eNs7JAY8zP0xzeIcJ2SoTU0p2dSsEYONa8B3NwvdUuldqmUJcT4f7CrPY/uH
+ l6HbLQ0VRV7GV9FFW7vptQlfZzAj1A+VlySWKWKBGmB+gR1lqf0w2Eb3CxqXnmX7ttRfQKBYBDO FYmIRq23yMQwmFw==
 X-Mailer: b4 0.13.0
-Message-ID: <20240808-alice-file-v9-1-2cb7b934e0e1@google.com>
-Subject: [PATCH v9 1/8] rust: types: add `NotThreadSafe`
+Message-ID: <20240808-alice-file-v9-2-2cb7b934e0e1@google.com>
+Subject: [PATCH v9 2/8] rust: task: add `Task::current_raw`
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -108,164 +106,66 @@ Cc: Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org
 	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	Alice Ryhl <aliceryhl@google.com>, Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-This introduces a new marker type for types that shouldn't be thread
-safe. By adding a field of this type to a struct, it becomes non-Send
-and non-Sync, which means that it cannot be accessed in any way from
-threads other than the one it was created on.
+Introduces a safe function for getting a raw pointer to the current
+task.
 
-This is useful for APIs that require globals such as `current` to remain
-constant while the value exists.
+When writing bindings that need to access the current task, it is often
+more convenient to call a method that directly returns a raw pointer
+than to use the existing `Task::current` method. However, the only way
+to do that is `bindings::get_current()` which is unsafe since it calls
+into C. By introducing `Task::current_raw()`, it becomes possible to
+obtain a pointer to the current task without using unsafe.
 
-We update two existing users in the Kernel to use this helper:
-
- * `Task::current()` - moving the return type of this value to a
-   different thread would not be safe as you can no longer be guaranteed
-   that the `current` pointer remains valid.
- * Lock guards. Mutexes and spinlocks should be unlocked on the same
-   thread as where they were locked, so we enforce this using the Send
-   trait.
-
-There are also additional users in later patches of this patchset. See
-[1] and [2] for the discussion that led to the introduction of this
-patch.
-
-Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQfWI=
-lN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=3D@proto=
-n.me/ [1]
-Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQfWI=
-lN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=3D@proto=
-n.me/ [2]
-Suggested-by: Benno Lossin <benno.lossin@proton.me>
+Link: https://lore.kernel.org/all/CAH5fLgjT48X-zYtidv31mox3C4_Ogoo_2cBOCmX0Ang3tAgGHA@mail.gmail.com/
 Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-Reviewed-by: Trevor Gross <tmgross@umich.edu>
 Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-Reviewed-by: Bj=C3=B6rn Roy Baron <bjorn3_gh@protonmail.com>
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 Reviewed-by: Gary Guo <gary@garyguo.net>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/sync/lock.rs | 13 +++++++++----
- rust/kernel/task.rs      | 10 ++++++----
- rust/kernel/types.rs     | 21 +++++++++++++++++++++
- 3 files changed, 36 insertions(+), 8 deletions(-)
+ rust/kernel/task.rs | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index f6c34ca4d819..d6e9bab114b8 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -6,8 +6,13 @@
- //! spinlocks, raw spinlocks) to be provided with minimal effort.
-=20
- use super::LockClassKey;
--use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::Scop=
-eGuard};
--use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned};
-+use crate::{
-+    init::PinInit,
-+    pin_init,
-+    str::CStr,
-+    types::{NotThreadSafe, Opaque, ScopeGuard},
-+};
-+use core::{cell::UnsafeCell, marker::PhantomPinned};
- use macros::pin_data;
-=20
- pub mod mutex;
-@@ -139,7 +144,7 @@ pub fn lock(&self) -> Guard<'_, T, B> {
- pub struct Guard<'a, T: ?Sized, B: Backend> {
-     pub(crate) lock: &'a Lock<T, B>,
-     pub(crate) state: B::GuardState,
--    _not_send: PhantomData<*mut ()>,
-+    _not_send: NotThreadSafe,
- }
-=20
- // SAFETY: `Guard` is sync when the data protected by the lock is also syn=
-c.
-@@ -191,7 +196,7 @@ pub(crate) unsafe fn new(lock: &'a Lock<T, B>, state: B=
-::GuardState) -> Self {
-         Self {
-             lock,
-             state,
--            _not_send: PhantomData,
-+            _not_send: NotThreadSafe,
-         }
-     }
- }
 diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-index 55dff7e088bf..278c623de0c6 100644
+index 278c623de0c6..367b4bbddd9f 100644
 --- a/rust/kernel/task.rs
 +++ b/rust/kernel/task.rs
-@@ -4,10 +4,12 @@
- //!
- //! C header: [`include/linux/sched.h`](srctree/include/linux/sched.h).
-=20
--use crate::types::Opaque;
-+use crate::{
-+    bindings,
-+    types::{NotThreadSafe, Opaque},
-+};
- use core::{
-     ffi::{c_int, c_long, c_uint},
--    marker::PhantomData,
-     ops::Deref,
-     ptr,
- };
-@@ -106,7 +108,7 @@ impl Task {
-     pub unsafe fn current() -> impl Deref<Target =3D Task> {
-         struct TaskRef<'a> {
-             task: &'a Task,
--            _not_send: PhantomData<*mut ()>,
-+            _not_send: NotThreadSafe,
+@@ -97,6 +97,15 @@ unsafe impl Sync for Task {}
+ type Pid = bindings::pid_t;
+ 
+ impl Task {
++    /// Returns a raw pointer to the current task.
++    ///
++    /// It is up to the user to use the pointer correctly.
++    #[inline]
++    pub fn current_raw() -> *mut bindings::task_struct {
++        // SAFETY: Getting the current pointer is always safe.
++        unsafe { bindings::get_current() }
++    }
++
+     /// Returns a task reference for the currently executing task/thread.
+     ///
+     /// The recommended way to get the current task/thread is to use the
+@@ -119,14 +128,12 @@ fn deref(&self) -> &Self::Target {
+             }
          }
-=20
-         impl Deref for TaskRef<'_> {
-@@ -125,7 +127,7 @@ fn deref(&self) -> &Self::Target {
-             // that `TaskRef` is not `Send`, we know it cannot be transfer=
-red to another thread
+ 
+-        // SAFETY: Just an FFI call with no additional safety requirements.
+-        let ptr = unsafe { bindings::get_current() };
+-
++        let current = Task::current_raw();
+         TaskRef {
+             // SAFETY: If the current thread is still running, the current task is valid. Given
+             // that `TaskRef` is not `Send`, we know it cannot be transferred to another thread
              // (where it could potentially outlive the caller).
-             task: unsafe { &*ptr.cast() },
--            _not_send: PhantomData,
-+            _not_send: NotThreadSafe,
+-            task: unsafe { &*ptr.cast() },
++            task: unsafe { &*current.cast() },
+             _not_send: NotThreadSafe,
          }
      }
-=20
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index bd189d646adb..bb115d730ebb 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -473,3 +473,24 @@ unsafe impl AsBytes for str {}
- // does not have any uninitialized portions either.
- unsafe impl<T: AsBytes> AsBytes for [T] {}
- unsafe impl<T: AsBytes, const N: usize> AsBytes for [T; N] {}
-+
-+/// Zero-sized type to mark types not [`Send`].
-+///
-+/// Add this type as a field to your struct if your type should not be sen=
-t to a different task.
-+/// Since [`Send`] is an auto trait, adding a single field that is `!Send`=
- will ensure that the
-+/// whole type is `!Send`.
-+///
-+/// If a type is `!Send` it is impossible to give control over an instance=
- of the type to another
-+/// task. This is useful to include in types that store or reference task-=
-local information. A file
-+/// descriptor is an example of such task-local information.
-+///
-+/// This type also makes the type `!Sync`, which prevents immutable access=
- to the value from
-+/// several threads in parallel.
-+pub type NotThreadSafe =3D PhantomData<*mut ()>;
-+
-+/// Used to construct instances of type [`NotThreadSafe`] similar to how `=
-PhantomData` is
-+/// constructed.
-+///
-+/// [`NotThreadSafe`]: type@NotThreadSafe
-+#[allow(non_upper_case_globals)]
-+pub const NotThreadSafe: NotThreadSafe =3D PhantomData;
 
---=20
+-- 
 2.46.0.rc2.264.g509ed76dc8-goog
 
 
