@@ -1,231 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-25444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F40894C31F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 18:57:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A2A94C251
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 18:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0281F2176F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:57:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398521F2419C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CCA190492;
-	Thu,  8 Aug 2024 16:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BB618F2F4;
+	Thu,  8 Aug 2024 16:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkYPIoW7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hWndcGU4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkYPIoW7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hWndcGU4"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a0Q6z2wr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775B4190470
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 16:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9DD8003F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 16:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723136272; cv=none; b=u492G4F7PH/2ZbVKRnGIr13S9sF8RDC71feLCFjA2qEKddfGNHLeFRnM3wteZdmqtlNNx+ayPqDpOO9Uf3KSQvomz/U036E9UxvYhYgS74GnOjQyhG2H/a+HKNoojlMG6kFySrlOEx9h2aVgtWegUDhffZCdMSOruSy5bRKeOBg=
+	t=1723133484; cv=none; b=aFBGz1o0qSuyI5XEvJSFR4RIyMIBK32cbMkxWx6OqBkKfu4dR8Yviw+uLMifUNGDJJ9CVaJ5Glbumi90ERx+UhTruLJv3R8lymfMQvQZnTPPJ1DX2undjt5QOaMDrblUcPiuk8VRZLGYG2bxybM7sWqO8+9d+rXUM3vIKTYsoIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723136272; c=relaxed/simple;
-	bh=AN4bbGXaPGoAkdoWNT5s4r7vEn5yuigAH2Dgin5P77w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5ZjSmvrRyka7Mu+sCUrqfHBwHCXp2iFLKrNs8g+FyniC1V0KvKvwetGdw0Q6KzPzgzFUCpeNmMMUACXetzf7SX7U/XmmHGQtA+fMpjUwrfrefsutlYUo3+eq5mEqj7aP+/UCAH7PeMYkDa10PRlxnNp4gH00A1csxzr1ZRadu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkYPIoW7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hWndcGU4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkYPIoW7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hWndcGU4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 68C6021D58;
-	Thu,  8 Aug 2024 16:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723136267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZaukEdMzff6NG6Vxs6+B0BgkjdSaFfw7CXlNMZ+T58M=;
-	b=EkYPIoW71lgcAeZJn3QgaV6PkHMVoNLntkCl7CWaAimL+Ix6TqgnXFyRGnMm+I1E8MCKVg
-	pBUEUZOTjmQBHEEMgs+ietauLKicRojOsefzXtZcOv5teDa3Ro32qAB9ZqIqwethTHb4+B
-	SWnfYAHBNfv3TUnN+DJCt9ofJtH9A88=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723136267;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZaukEdMzff6NG6Vxs6+B0BgkjdSaFfw7CXlNMZ+T58M=;
-	b=hWndcGU4P6ROGFikOleuKMBT2Yn3tAkwrfCQkbHrwijGnxcdvYJ1hEzgMXDuLee8JEZjOw
-	Viq5HyTyjbsIgMDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=EkYPIoW7;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hWndcGU4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723136267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZaukEdMzff6NG6Vxs6+B0BgkjdSaFfw7CXlNMZ+T58M=;
-	b=EkYPIoW71lgcAeZJn3QgaV6PkHMVoNLntkCl7CWaAimL+Ix6TqgnXFyRGnMm+I1E8MCKVg
-	pBUEUZOTjmQBHEEMgs+ietauLKicRojOsefzXtZcOv5teDa3Ro32qAB9ZqIqwethTHb4+B
-	SWnfYAHBNfv3TUnN+DJCt9ofJtH9A88=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723136267;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZaukEdMzff6NG6Vxs6+B0BgkjdSaFfw7CXlNMZ+T58M=;
-	b=hWndcGU4P6ROGFikOleuKMBT2Yn3tAkwrfCQkbHrwijGnxcdvYJ1hEzgMXDuLee8JEZjOw
-	Viq5HyTyjbsIgMDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4373B13C44;
-	Thu,  8 Aug 2024 14:32:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LbszEPfWtGamBgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 08 Aug 2024 14:32:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BA0D0A0851; Thu,  8 Aug 2024 16:32:22 +0200 (CEST)
-Date: Thu, 8 Aug 2024 16:32:22 +0200
-From: Jan Kara <jack@suse.cz>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH RFC 0/13] fs: generic filesystem shutdown handling
-Message-ID: <20240808143222.4m56qw5jujorqrfv@quack3>
-References: <20240807180706.30713-1-jack@suse.cz>
- <ZrQA2/fkHdSReAcv@dread.disaster.area>
+	s=arc-20240116; t=1723133484; c=relaxed/simple;
+	bh=AdKmFqksDmNclyIkEncPJZfDqK2vHjO7yPng37E+E0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fI+/Z/qLZLckS0TZxBt7lq2tBZITkC2OdyIWjG7bkmnzcoBxeJ3HEgVaHTsR2x+y7U0tK+28K2I+e7RLH+tyryGIc7ObScByiKUILVDEO1htVqlZPtUXPOim2/03q0hD8ks2zlXppV8kAaqlRwgiAg0riUblfixpIHzbE6BTV5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=a0Q6z2wr; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bb477e3a6dso1128211a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 09:11:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1723133479; x=1723738279; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKQvCncQGxuRHIk0L9mOtoKBGHkt2/dJnHYSaRcyDAk=;
+        b=a0Q6z2wrqR8dv+Fg8eecf4mdJ+91NN4605sM7u//DONi8o/65Qex1XbDT49B1xel2m
+         Y+m6MdFXe6WBOuEpEjje8wRTSPuw0IQ4Fk2gdgw4WU7pV6X9pXXu1b1h8AdqLp9UGQwp
+         Mo3gOqnOWPU8f8Q7UNe3HaLyPPPqwMg2D/11g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723133479; x=1723738279;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YKQvCncQGxuRHIk0L9mOtoKBGHkt2/dJnHYSaRcyDAk=;
+        b=oEsCsY+3OxUpXywszV/QnWnzLIUvCI5163rRHCv0qvDf8Aod8KBDoyRDcWOIkI/tSa
+         IbFcuSJkDNQXL2ZFZ+RmGCGVLwx3tM+4rmarOA4/MVSMswNq2IfqjIFJ6x9xDTfYkfm/
+         LWjwPWHm3VE0YEOrr+X03nCi3/X8nctcFUrjlwv3RCqt7jK0kmN7oOWzFZWuO0qufHIZ
+         hpx6Xta/yHjkIAE559mMIXu459/SbgX7TLre+Ydjk30Uqyxar1aCRJrZj5wPhXRWdsRs
+         4V03j29eOP/S8OmBpzNYH1cmjoeO3r+gd4M8RiKy14krqvAezJ6yJPbOwIA/KrtDuqXH
+         nWYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdI6LMb+Zi9od8lQwzA/i/uJxA6B3ixKRN5/Ez9qYE5vRJv7a/wtU3OzgcYfJMtO65z2rd/RF9aA0GQ4zH3Y4ozE7cZR3mPLcxDnRBFg==
+X-Gm-Message-State: AOJu0YxMJjvTI3eIpuHtgRCsmYoHqgB63jkLbyBV709rXPaKm6668bA0
+	gzSt6SnSvPaCwZLPDnxPkY2tLQN7NJo67JYC4TjUij0pK6YvvTeO3XrNQaygtFufY21LCBYD+oD
+	Omwl4sQ==
+X-Google-Smtp-Source: AGHT+IFu+2t4A5wAd+QJd7GQ7pzdsK7eo7wmaKbiJ1E0MeoE50Uz0J7LhRf2XKXVHKje6oWnPQJZGg==
+X-Received: by 2002:a17:907:ea6:b0:a7d:ea36:b294 with SMTP id a640c23a62f3a-a8090c83627mr186845166b.26.1723133479094;
+        Thu, 08 Aug 2024 09:11:19 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e80df8sm752038866b.160.2024.08.08.09.11.18
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Aug 2024 09:11:18 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso106573466b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 09:11:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUN2fXfZLdrdX5MYcQBSCoIl5YHG1tytFdxV3/LtZQlr0n1qNlGFzKVxSPqOF//ZhYLiHjH+oeDm9kUOaid38vksYtqd3hIheMZ8TpIuw==
+X-Received: by 2002:a17:907:d2da:b0:a72:8762:1f5d with SMTP id
+ a640c23a62f3a-a8090e9e1ecmr183599366b.55.1723133478002; Thu, 08 Aug 2024
+ 09:11:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrQA2/fkHdSReAcv@dread.disaster.area>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.01 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	MISSING_XM_UA(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -1.01
-X-Rspamd-Queue-Id: 68C6021D58
+References: <20240808025029.GB5334@ZenIV> <CAHk-=wgse0ui5sJgNGSvqvYw_BDTcObqdqcwN1BxgCqKBiiGzQ@mail.gmail.com>
+ <20240808-dates-pechschwarz-0cccfed2c605@brauner>
+In-Reply-To: <20240808-dates-pechschwarz-0cccfed2c605@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 8 Aug 2024 09:11:00 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wivmMgGiSnUm35WVm9=yNM1=jrHG4fgWo09XWwWZzvTMw@mail.gmail.com>
+Message-ID: <CAHk-=wivmMgGiSnUm35WVm9=yNM1=jrHG4fgWo09XWwWZzvTMw@mail.gmail.com>
+Subject: Re: [RFC] why do we need smp_rmb/smp_wmb pair in fd_install()/expand_fdtable()?
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	Mateusz Guzik <mjguzik@gmail.com>, Eric Dumazet <edumazet@google.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu 08-08-24 09:18:51, Dave Chinner wrote:
-> On Wed, Aug 07, 2024 at 08:29:45PM +0200, Jan Kara wrote:
-> > Hello,
-> > 
-> > this patch series implements generic handling of filesystem shutdown. The idea
-> > is very simple: Have a superblock flag, which when set, will make VFS refuse
-> > modifications to the filesystem. The patch series consists of several parts.
-> > Patches 1-6 cleanup handling of SB_I_ flags which is currently messy (different
-> > flags seem to have different locks protecting them although they are modified
-> > by plain stores). Patches 7-12 gradually convert code to be able to handle
-> > errors from sb_start_write() / sb_start_pagefault(). Patch 13 then shows how
-> > filesystems can use this generic flag. Additionally, we could remove some
-> > shutdown checks from within ext4 code and rely on checks in VFS but I didn't
-> > want to complicate the series with ext4 specific things.
-> 
-> Overall this looks good. Two things that I noticed that we should
-> nail down before anything else:
-> 
-> 1. The original definition of a 'shutdown filesystem' (i.e. from the
-> XFS origins) is that a shutdown filesystem must *never* do -physical
-> IO- after the shutdown is initiated. This is a protection mechanism
-> for the underlying storage to prevent potential propagation of
-> problems in the storage media once a serious issue has been
-> detected. (e.g. suspect physical media can be made worse by
-> continually trying to read it.) It also allows the block device to
-> go away and we won't try to access issue new IO to it once the
-> ->shutdown call has been complete.
-> 
-> IOWs, XFS implements a "no new IO after shutdown" architecture, and
-> this is also largely what ext4 implements as well.
+On Thu, 8 Aug 2024 at 06:20, Christian Brauner <brauner@kernel.org> wrote:
+>
+> But then multiple times people brought up that supposedly smp_rmb() and
+> smp_wmb() are cheaper because they only do load or store ordering
+> whereas smp_{load,store}_{acquire,release}() do load and store ordering.
 
-Thanks for sharing this. I wasn't aware that "no new IO after shutdown" is
-the goal. I knew this is required for modifications but I wasn't sure how
-strict this was for writes.
+It really can go either way.
 
-> However, this isn't what this generic shutdown infrastructure
-> implements. It only prevents new user modifications from being
-> started - it is effectively a "instant RO" mechanism rather than an
-> "instant no more IO" architecture.
-> 
-> Hence we have an impedence mismatch between existing shutdown
-> implementations that currently return -EIO on shutdown for all
-> operations (both read and write) and this generic implementation
-> which returns -EROFS only for write operations.
-> 
-> Hence the proposed generic shutdown model doesn't really solve the
-> inconsistent shutdown behaviour problem across filesystems - it just
-> adds a new inconsistency between existing filesystem shutdown
-> implementations and the generic infrastructure.
+But I think we've reached a point where release/acquire is "typically
+cheaper", and the reason is simply arm64.
 
-OK, understood. I also agree it would be good to keep this no-IO semantics
-when implementing the generic solution. I'm just pondering how to achieve
-that in a maintainable way. For the write path what I've done looks like
-the least painful way. For the read path the simplest is probably to still
-return whatever is in cache and just do the check + error return somewhere
-down in the call stack just before calling into filesystem. It is easy
-enough to stop things like ->read_folio, ->readahead, or ->lookup. But how
-about things like ->evict_inode or ->release?  They can trigger IO but
-allowing inode reclaim on shutdown fs is desirable I'd say. Similarly for
-things like ->remount_fs or ->put_super. So avoiding IO from operations
-like these would rely on fs implementation anyway.
+As mentioned, on x86 none of this matters. And on older architectures
+that were designed around the concept of separate memory barriers, the
+rmb/wmb model thus matches that architecture model and tends to be
+natural and likely the best impedance match.
 
-> 2. On shutdown, this patchset returns -EROFS.
-> 
-> As per #1, returning -EROFS on shutdown will be a significant change
-> of behaviour for some filesystems as they currently return -EIO when
-> the filesystem is shut down.
-> 
-> I don't think -EROFS is right, because existing shutdown behaviour
-> also impacts read-only operations and will return -EIO for them,
-> too.
-> 
-> I think the error returned by a shutdown filesystem should always be
-> consistent and that really means -EIO needs to be returned rather
-> than -EROFS.
-> 
-> However, given this is new generic infrastructure, we can define a
-> new error like -ESHUTDOWN (to reuse an existing errno) or even a
-> new errno like -EFSSHUTDOWN for this, document it man pages and then
-> convert all the existing filesystem shutdown checks to return this
-> error instead of -EIO...
+But the arm64 memory ordering was created after people had figured out
+the rules of good memory ordering, and so we have this:
 
-Right, -EROFS isn't really good return value when we refuse also reads. I
-think -EIO is fine. -ESHUTDOWN would be ok but the standard message ("Cannot
-send after transport endpoint shutdown") whould be IMO confusing to users.
-I was also thinking about -EFSCORRUPTED (alias -EUCLEAN) which already has
-some precedens in the filesystem space but -EIO is probably better.
+   https://developer.arm.com/documentation/102336/0100/Load-Acquire-and-Store-Release-instructions
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+and this particular quote:
+
+ "Weaker ordering requirements that are imposed by Load-Acquire and
+  Store-Release instructions allow for micro-architectural
+  optimizations, which could reduce some of the performance impacts that
+  are otherwise imposed by an explicit memory barrier.
+
+  If the ordering requirement is satisfied using either a Load-Acquire
+  or Store-Release, then it would be preferable to use these
+  instructions instead of a DMB"
+
+iow we now have a relevant architecture that gets memory ordering
+right, and that officially prefers release/acquire ordering.
+
+End result: we *used* to prefer rmb/wmb pairs, because (a) it was how
+we did memory ordering originally, (b) relevant architectures didn't
+care, and (c) it matched the questionable architectures.
+
+And now, in the last few years, the equation has simply shifted.
+
+So rmb/wmb has gone from "this is the only way to do it" to "this is
+the legacy way to do it and it performs ok everywhere" to "this is the
+historical way that some people are more used to".
+
+For new code, release/acquire is preferred. And if it's *critical*
+code, maybe it's even worth converting from wmb/rmb to
+release/acquire.
+
+Partly because of that "it should be better on arm64", but also partly
+because I think release/acquire is both a better model conceptually,
+_and_ is more self-documenting (ie it's a nice explicit hand-off in
+ways that some of our subtler "this wmb pairs with that rmb" code is
+very much not at all self-documenting and needs very explicit and
+clear comments).
+
+Now, I'm not saying you shouldn't add a comment about a
+release/acquire pair, but at the same time, the very fact that you
+release a _particular_ variable and acquire that variable elsewhere
+*is* a big clue. So when I'm saying it's "more self-documenting", I
+want to emphasize that "more". I'm not claiming it's _completely_
+self-documenting ;)
+
+        Linus
 
