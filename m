@@ -1,82 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-25473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4D294C5F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 22:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD34794C603
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 22:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 912131C21D33
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 20:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE05A1C21EA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 20:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866131553B7;
-	Thu,  8 Aug 2024 20:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E051015920B;
+	Thu,  8 Aug 2024 20:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="GOSpd7XY"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="cEz1hUR5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41ADB1442E8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 20:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FB91553B7
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 20:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723150233; cv=none; b=Hym0CjE6gku83CIyQlIFTiNZ5L60IP8r4t4llmRkeU7B84+Zey2ao5YuSpbHcHAahMavi7c5epwO/VFX9v8ZCLXF2cSkuZAkE8uMRkNLzMD2Gcnv3G1Coz+W/YN3O/OI6ZsTsfcQFRND/9ugbarsyjddke3+Mkeul1Gf1Vzxh9Q=
+	t=1723150512; cv=none; b=Fyzv/aCmx/wMZNx9JETg+vIVrzWU4QRdQYC+RJMDuwKfo3Il9lMBxrrrfMocZY+2MDrGkGTiCjtq9SyX1CbDYL+lbuG6XlzuIKiBSMLFLbhSuM0PJTUrw31/Q9pcKPhbyTIG77qaBDG7kAlcGOc8phf0mTdgvswRHGUVbt3ZhmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723150233; c=relaxed/simple;
-	bh=NF6KyH3UsAmN4LWReHK2pTpLs/p9ZMxJErloaNEhvMo=;
+	s=arc-20240116; t=1723150512; c=relaxed/simple;
+	bh=alL33QDUMO3Gtu8T02QKWb6GAI04j9PGhdR9ysqgNsg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QL5k6IkzKgiLOceFfsWc5z5IoJhbrEAxDE6lWIaA43p6kuV9kq4QD1HT8m2XFEfvt3T1Rfw/pdcacsqDXuc2zC8Ds4CPF9GyzyG4igJ7eVj58xj3yRj7BcE0YGGgHI8af6s0CuXoNo6ashcs5B3Y/piyPLjDhGi9ZA/Ed9eGTiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=GOSpd7XY; arc=none smtp.client-ip=209.85.222.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=ih2pa6VnezCACC0UYeyW1dY8PTL6Grl3EqXCpXXfFDpw1Mu0k1bmYNiXaY2YHAP2u5XbYNJvBVi7DAkWmrISADTO6jSfzLFp8cYmN+Wxoo6+/MyZdCQCNE06jDJrwY3qftrOPzierGdNbMVIlTa0dE+A1SQjwriJx8S5SwLA6L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=cEz1hUR5; arc=none smtp.client-ip=209.85.222.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a1d3959ad5so124347885a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 13:50:32 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a1d3959ad5so124683385a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 13:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723150231; x=1723755031; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723150510; x=1723755310; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3NUCc5ybKrwsGXUqn+cVvFn+SP4JHoG5BO1R5KQLL9w=;
-        b=GOSpd7XYGrlJki3OTFDSA/jzyoltdbWcQpD9RvTJH67LNweigz3aOLFXdVCu0tRbc8
-         EKIOUrRh3T9yH26EFfjFcVMSOjxER0M0HW9DewKgDX4udwAZlS6ztu1In3j3XedNq8EN
-         /pm7vU/LfkKctqYhg8LZhPdP1SHxOL8XYpcVnqgpQvMiRGuICco85lTEu1BLuSnRtNpm
-         vEJ/rqrC30q8RqQSIlJLp09UyCIhjnWDH1GeVL1426W+N+z9dfKmYH9BzHGTMlaKAtyh
-         Qenfz9e19L1zXTHVjIK6AjEGs+qXLDu/fG9rmgadHcz09B7Z+KB77qISYkrWxGmBUUl8
-         Dltw==
+        bh=1vfljrX8OmsTedNdC+viOpTYZfWEYyL9LY8J596dK+A=;
+        b=cEz1hUR5kFRVOr105l/RNP9jFs+jMoa1jkJpan9cXSuj/mNOZJpsKQIJSj+SFTgWCI
+         sdXQgwB2Ou7we0vC32Tl9YSyWkG4KaRzC9hCjVO6ftQBGGZOvIHrx3F8zlaSOhZwCp7F
+         Pn4wDNm1Tlvp7OZKMBZAU5A+uR75WDaWWw44O+KS//e0VzlorMIhmbouWnDX2bjazq0e
+         tJvvTqybsLpQj/vqRbYbs1wx+dzprgfnq6fdD1F1C7zhMikBt0ISuDdlZAenU92Q1koH
+         w7fr238EG9GALDxiPyPJGJUdpPcgGnpcpOQHUpm7LfzwO4PsScC/zrjWSY7GI51LHy5X
+         4Nkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723150231; x=1723755031;
+        d=1e100.net; s=20230601; t=1723150510; x=1723755310;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3NUCc5ybKrwsGXUqn+cVvFn+SP4JHoG5BO1R5KQLL9w=;
-        b=Cn9PI1X6Jziamqv3Wf13bYsDQC8ci+ciT22fcQOXsEMOJuRp52fMiZcO9KWYL7GAfm
-         UzbkHToh8pBHggvaYd5PX4AcQ3lEIY3d0mHYQxmXsQzfGA+93UErQcCa3Z8ppcsHGK+I
-         MuULUqddhI/LldCZJ2TSVkvxYvnrNuDzL/4mky5PfHVKYeiGwU/DHCJ+qMFntfL8AIpB
-         NIE747Peck4ghe8ZvQ5x8G0vKTZq1A5Ox5s+eI6mb1tynZ0HCigs8JsuP0WsWxOWRWHx
-         ESqYa9uY1aCTrqL/5autYLdIizPC89OgYHzTCiEB6A808iucjH3gceVy7rbNFmHnc46x
-         iZVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpB77gAjejOxHsszs40NTQMuSZ1siPid+CTiC4eq6JswZSEMUH3qKmZVgjQRpvTak03EAJLm6mAYdRCmNiDCPU4ia/wSI8LjHj51uAZQ==
-X-Gm-Message-State: AOJu0YziDEgL9AmZJT1S4/+EaZl3bSmaxk5iBVj/c4k7v/ORR2MClfu1
-	hGTqzlmagW0z+Zc5mXGAHY54XyqN1DZhB8FFey61Lg/QpPkVRDOFLX91P4cxd8U=
-X-Google-Smtp-Source: AGHT+IHKOV/4hlpNHk4cod3ihgLc0qmUgInJrNvpD3BPboiZ6KdfQKtlo5lZ6Lpcy0qVyTUvOX70nw==
-X-Received: by 2002:a05:620a:bc4:b0:79f:399:332 with SMTP id af79cd13be357-7a38278b535mr496133385a.33.1723150231144;
-        Thu, 08 Aug 2024 13:50:31 -0700 (PDT)
+        bh=1vfljrX8OmsTedNdC+viOpTYZfWEYyL9LY8J596dK+A=;
+        b=aGBmJhALHl8mmlWrvkvSTeOIvcqXKghIiNNVXmE6wX0zJrpIN5uUcuW7NVGZQeXhr+
+         3j7CEMugKgDeYNzdhql47TuRnS8fTJ2qXXTuwinN1xECZBOEZLXgveLXjKEM13INoB/s
+         GCuumGbHgO/5XsXOjZX8iAaSrhJS9xVubj2pMKdC3cbbwXraTnfcp3xYEXigPOgBeYbG
+         V2WBjQjs3Ubwta7qIV3LyAxxgab2LG0IHtTfG4eSOxkjnw0re8dcbgqSB98g8AyqJJ0J
+         LsPrX/D3tSOIJCuR8jGJohhFgRy8pOyLaFa24WGL2DsevcMMJ0hYtFDyvuW9nU53btXa
+         9arw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOz2G5QxzLEK0XnCC8n050/emb04xTqmxABBRw9wGTJoX57pfiWzo+73QvxmCx0Afyk+gYhtjCz2+GSTuYMAR5gGx4MFEnXbLUYEgNhg==
+X-Gm-Message-State: AOJu0YxpWDwgBwt8CHFtNphw3iCGLEcI+E8EDjGZlFc7VUHFdXb+Yl45
+	uEYA1o2z5Bs83PH46ZjilBxf2ENx6mYjIPMq8b9aK7w9sYMT5dIG4vXDGh+Zxgc=
+X-Google-Smtp-Source: AGHT+IGSVfRGUHjK+gji8OfdSpSNjQG5FHFefm5SGanJdS1BEqCoewLuJZ9fedevfAj2h75Keaw3Ew==
+X-Received: by 2002:a05:620a:44c3:b0:7a1:e2d7:fc98 with SMTP id af79cd13be357-7a382476346mr641259985a.11.1723150509891;
+        Thu, 08 Aug 2024 13:55:09 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785e56dasm195395185a.43.2024.08.08.13.50.30
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785f4301sm194991485a.69.2024.08.08.13.55.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 13:50:30 -0700 (PDT)
-Date: Thu, 8 Aug 2024 16:50:30 -0400
+        Thu, 08 Aug 2024 13:55:09 -0700 (PDT)
+Date: Thu, 8 Aug 2024 16:55:08 -0400
 From: Josef Bacik <josef@toxicpanda.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
-	laoar.shao@gmail.com, kernel-team@meta.com
-Subject: Re: [PATCH v3 2/2] fuse: add default_request_timeout and
- max_request_timeout sysctls
-Message-ID: <20240808205030.GB625513@perftesting>
-References: <20240808190110.3188039-1-joannelkoong@gmail.com>
- <20240808190110.3188039-3-joannelkoong@gmail.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: only read fops once in fops_get/put
+Message-ID: <20240808205508.GC625513@perftesting>
+References: <20240808155429.1080545-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,38 +82,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240808190110.3188039-3-joannelkoong@gmail.com>
+In-Reply-To: <20240808155429.1080545-1-mjguzik@gmail.com>
 
-On Thu, Aug 08, 2024 at 12:01:10PM -0700, Joanne Koong wrote:
-> Introduce two new sysctls, "default_request_timeout" and
-> "max_request_timeout". These control timeouts on replies by the
-> server to kernel-issued fuse requests.
+On Thu, Aug 08, 2024 at 05:54:28PM +0200, Mateusz Guzik wrote:
+> The compiler emits 2 access in fops_get(), put is patched to maintain some
+> consistency.
 > 
-> "default_request_timeout" sets a timeout if no timeout is specified by
-> the fuse server on mount. 0 (default) indicates no timeout should be enforced.
+> This makes do_dentry_open() go down from 1177 to 1154 bytes.
 > 
-> "max_request_timeout" sets a maximum timeout for fuse requests. If the
-> fuse server attempts to set a timeout greater than max_request_timeout,
-> the system will default to max_request_timeout. Similarly, if the max
-> default timeout is greater than the max request timeout, the system will
-> default to the max request timeout. 0 (default) indicates no timeout should
-> be enforced.
+> This popped up due to false-sharing where loads from inode->i_fop end up
+> bouncing a cacheline on parallel open. While this is going to be fixed,
+> the spurious load does not need to be there.
 > 
-> $ sysctl -a | grep fuse
-> fs.fuse.default_request_timeout = 0
-> fs.fuse.max_request_timeout = 0
+> No functional changes.
 > 
-> $ echo 0x100000000 | sudo tee /proc/sys/fs/fuse/default_request_timeout
-> tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
-> 
-> $ echo 0xFFFFFFFF | sudo tee /proc/sys/fs/fuse/default_request_timeout
-> 0xFFFFFFFF
-> 
-> $ sysctl -a | grep fuse
-> fs.fuse.default_request_timeout = 4294967295
-> fs.fuse.max_request_timeout = 0
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
