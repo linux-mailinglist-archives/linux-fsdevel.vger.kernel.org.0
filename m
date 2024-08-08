@@ -1,158 +1,262 @@
-Return-Path: <linux-fsdevel+bounces-25431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A2A94C251
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 18:11:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED4A94C26A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 18:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398521F2419C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:11:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C89281EBD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BB618F2F4;
-	Thu,  8 Aug 2024 16:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9EA190499;
+	Thu,  8 Aug 2024 16:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a0Q6z2wr"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jrPYNGP8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9DD8003F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 16:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BE918B47A
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 16:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723133484; cv=none; b=aFBGz1o0qSuyI5XEvJSFR4RIyMIBK32cbMkxWx6OqBkKfu4dR8Yviw+uLMifUNGDJJ9CVaJ5Glbumi90ERx+UhTruLJv3R8lymfMQvQZnTPPJ1DX2undjt5QOaMDrblUcPiuk8VRZLGYG2bxybM7sWqO8+9d+rXUM3vIKTYsoIY=
+	t=1723133793; cv=none; b=Dgcf0xXJZdRlQgXKUZvuRL1U2SMtz/DeklPVISu8dfSfj5LqHge5mFBFeRxydOUc7gBQrGD+gmAxk62pGXHM9odK/QC+TphcmIEsWaz1gpu9PQbp8sr5ze4aXrJ6dXA+aP4ESO4f2ofMugoqp/0vFxqi8fIiMX3yyXha4Kuuvdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723133484; c=relaxed/simple;
-	bh=AdKmFqksDmNclyIkEncPJZfDqK2vHjO7yPng37E+E0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fI+/Z/qLZLckS0TZxBt7lq2tBZITkC2OdyIWjG7bkmnzcoBxeJ3HEgVaHTsR2x+y7U0tK+28K2I+e7RLH+tyryGIc7ObScByiKUILVDEO1htVqlZPtUXPOim2/03q0hD8ks2zlXppV8kAaqlRwgiAg0riUblfixpIHzbE6BTV5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=a0Q6z2wr; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bb477e3a6dso1128211a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 09:11:21 -0700 (PDT)
+	s=arc-20240116; t=1723133793; c=relaxed/simple;
+	bh=SOYgy4P8Uq9oM6a25K6PQa+h3uLwgPZuAxedEQTf/NY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=D6R0bfdv6R84TG3W4vpgq49EHCPg5i7XODBoLZv8lBVKSPfvvYKav+cPY9TD6gUahStcVVsvokc7irHljCIrAkVPacX8B6G9QStu6V9kVanjaUmANNiSfZ2sY7UXl5jGyj7fQBRJjNGAfya3TTpyMIcTFXsIfisLuEmgT2ETP5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jrPYNGP8; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-664aa55c690so24070927b3.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 09:16:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1723133479; x=1723738279; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YKQvCncQGxuRHIk0L9mOtoKBGHkt2/dJnHYSaRcyDAk=;
-        b=a0Q6z2wrqR8dv+Fg8eecf4mdJ+91NN4605sM7u//DONi8o/65Qex1XbDT49B1xel2m
-         Y+m6MdFXe6WBOuEpEjje8wRTSPuw0IQ4Fk2gdgw4WU7pV6X9pXXu1b1h8AdqLp9UGQwp
-         Mo3gOqnOWPU8f8Q7UNe3HaLyPPPqwMg2D/11g=
+        d=google.com; s=20230601; t=1723133789; x=1723738589; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=j1g997ZUPo5uTCGLqcMqUdwvoRpJcfe+1yvZrZi1dTw=;
+        b=jrPYNGP8YWe8ZJ+VNfxFDeEb2TnvJIzivBTf5CBhcs7tWwrPgpYwvZ+Y6P1ELWi6Wf
+         pP0sPvFV4Fmev4fYOnqpjSiy9LBJ2jiZqkIOk18crd97WPtV5LffEfkPWaMt4JrJJtRP
+         fWHfXj82j2+etYruuNpPV4p2DjrgbwKSX4OOCoHpOmqOiJwz5vaRmBsavB00OhZV7jWY
+         9AVxzX7tQyDBc7ozSyBOjrMtckB2BYHLfeVoji508ogfoGNGAqZwL98rXdXjDwaV5YmR
+         rGROBzlitqC7+iJZs33mYLX0zW7fAYUKR+aEgvFTnTe8LwJOWTL4VHnZt2ne1pzvszKG
+         7upQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723133479; x=1723738279;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YKQvCncQGxuRHIk0L9mOtoKBGHkt2/dJnHYSaRcyDAk=;
-        b=oEsCsY+3OxUpXywszV/QnWnzLIUvCI5163rRHCv0qvDf8Aod8KBDoyRDcWOIkI/tSa
-         IbFcuSJkDNQXL2ZFZ+RmGCGVLwx3tM+4rmarOA4/MVSMswNq2IfqjIFJ6x9xDTfYkfm/
-         LWjwPWHm3VE0YEOrr+X03nCi3/X8nctcFUrjlwv3RCqt7jK0kmN7oOWzFZWuO0qufHIZ
-         hpx6Xta/yHjkIAE559mMIXu459/SbgX7TLre+Ydjk30Uqyxar1aCRJrZj5wPhXRWdsRs
-         4V03j29eOP/S8OmBpzNYH1cmjoeO3r+gd4M8RiKy14krqvAezJ6yJPbOwIA/KrtDuqXH
-         nWYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdI6LMb+Zi9od8lQwzA/i/uJxA6B3ixKRN5/Ez9qYE5vRJv7a/wtU3OzgcYfJMtO65z2rd/RF9aA0GQ4zH3Y4ozE7cZR3mPLcxDnRBFg==
-X-Gm-Message-State: AOJu0YxMJjvTI3eIpuHtgRCsmYoHqgB63jkLbyBV709rXPaKm6668bA0
-	gzSt6SnSvPaCwZLPDnxPkY2tLQN7NJo67JYC4TjUij0pK6YvvTeO3XrNQaygtFufY21LCBYD+oD
-	Omwl4sQ==
-X-Google-Smtp-Source: AGHT+IFu+2t4A5wAd+QJd7GQ7pzdsK7eo7wmaKbiJ1E0MeoE50Uz0J7LhRf2XKXVHKje6oWnPQJZGg==
-X-Received: by 2002:a17:907:ea6:b0:a7d:ea36:b294 with SMTP id a640c23a62f3a-a8090c83627mr186845166b.26.1723133479094;
-        Thu, 08 Aug 2024 09:11:19 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e80df8sm752038866b.160.2024.08.08.09.11.18
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 09:11:18 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso106573466b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 09:11:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUN2fXfZLdrdX5MYcQBSCoIl5YHG1tytFdxV3/LtZQlr0n1qNlGFzKVxSPqOF//ZhYLiHjH+oeDm9kUOaid38vksYtqd3hIheMZ8TpIuw==
-X-Received: by 2002:a17:907:d2da:b0:a72:8762:1f5d with SMTP id
- a640c23a62f3a-a8090e9e1ecmr183599366b.55.1723133478002; Thu, 08 Aug 2024
- 09:11:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723133789; x=1723738589;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j1g997ZUPo5uTCGLqcMqUdwvoRpJcfe+1yvZrZi1dTw=;
+        b=eU/7W6CXNxsrBFU3ubPfcck0nxNl24nzTSm7lyJKcO7uAD7/GDMPYYoW7549jlTR3R
+         Zl/ikXEDMM61Yzv5P+skgVLQVdA+o3vc/f8k/l7D49xuBHk+k8PgefMV9srSxMKb1GPw
+         7suyxDmXp5AR4E90iFUH0+WgDhUW1BGqGDI0Bfzmhirw+NerxooYduK9EFMVOnLwjJgT
+         M61JO9dKXa9UGYD6yEgBQwuBBt4nMCPN4Ra41hNRAxQYgd28mJUXXpjxrkzAAoju6FEi
+         weMyCJxTN2Zi87w3uJOWRETfUE/2ws3jzQY5nTxOlgJ0x4A4IEC+QXzwVSEgUJgh6duZ
+         naMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxUnYafCICxl3dqWCFUIkkfB83GiKoOhNBFBm+1x47wvRUEKnN4sGtIVdZ87krRlVRglMhqeLju4r5ZNaTnKSzdQ3HdlSPkpop4lQR9g==
+X-Gm-Message-State: AOJu0YzZ1H4Lw+BkpF+BKfPuRM+XXNGJNDd3U/BYs1aNYD2sJ9l3K6Hr
+	2RwALfWRA31GSyvmN7hdgjuXNmSwesbUVLdrNZQS8uAs7ctcjSw16eVsrRuZO2K/F4K7uxlf6KS
+	8VzoC90Swfy5bzg==
+X-Google-Smtp-Source: AGHT+IFNExh/sgSZD9y2EoWqTq3W6QpGxGyaEAJpJOajV2Z59sxKgyErz8I79tAW9ax6csc/LDhVpPKOVEOv5IY=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a25:68c1:0:b0:e0b:fe07:1e22 with SMTP id
+ 3f1490d57ef6-e0e9db2234emr58583276.1.1723133788824; Thu, 08 Aug 2024 09:16:28
+ -0700 (PDT)
+Date: Thu, 08 Aug 2024 16:15:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240808025029.GB5334@ZenIV> <CAHk-=wgse0ui5sJgNGSvqvYw_BDTcObqdqcwN1BxgCqKBiiGzQ@mail.gmail.com>
- <20240808-dates-pechschwarz-0cccfed2c605@brauner>
-In-Reply-To: <20240808-dates-pechschwarz-0cccfed2c605@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 8 Aug 2024 09:11:00 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wivmMgGiSnUm35WVm9=yNM1=jrHG4fgWo09XWwWZzvTMw@mail.gmail.com>
-Message-ID: <CAHk-=wivmMgGiSnUm35WVm9=yNM1=jrHG4fgWo09XWwWZzvTMw@mail.gmail.com>
-Subject: Re: [RFC] why do we need smp_rmb/smp_wmb pair in fd_install()/expand_fdtable()?
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	Mateusz Guzik <mjguzik@gmail.com>, Eric Dumazet <edumazet@google.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAC/vtGYC/2XQ3WrEIBAF4FdZvK5FRx3HXvU9Si+MP1lhuylJC
+ S1L3r1mYcmKN8IRvsPM3NiS5pIW9na6sTmtZSnTtQb3cmLh7K9j4iXWzECAkhIU95cSEs/lkrg
+ BMzhK5C1oVsH3nHL5vZd9fNZ8LsvPNP/du1e5/z5q3HPNKrngmaTPiYIFlO/jNI2X9BqmL7b3r
+ HBYENhYqNZnlDaI6KLTnVUPq4WU1FhVrUOnB8zOkAid1YetT2P1PnNwAQQJRDV01jzbdl+zz6w
+ sEVpSAkxn8bBG2sZitUO9u88xuMHZztrDIrT72mp1tEJmVMpk1Vk6rAXTWKrWGA+JREzeU2O3b fsHyPB1FkkCAAA=
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6257; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=SOYgy4P8Uq9oM6a25K6PQa+h3uLwgPZuAxedEQTf/NY=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmtO9B+en6UCwSIgY+owBIXNfBggQV1Bu64LXPs
+ s02GT7TMn2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZrTvQQAKCRAEWL7uWMY5
+ RkvFEACwzWgxCxfZThdM+IksTLxlQ0N+xd+EHF3AdZWmxYpeA2oPxFqYWd6drXHlilOG0jS6Xm5
+ 7+dRFG9I0cbj13uHPIGPCbw9kLvnMgNpUcLTlECWqdqOKfyEXoPU3shLufNpM7FCmY7Njx/7YMM
+ V8DN2Jswsee2qHHfQZ8MfVZOKCOnvQNjIpcdCj9NSYRYVAeOhVA0UmxXSgYcj95RgFHxrFZdg6g
+ iYqy+itK9+HiGGRsjArp+X77naO6uL5wIvGOtMaqbzIl/6VVulCOPaSfb5JK3jRoTDaOYHXY4D6
+ R1LGmdZjfx51Cnjr/SvgJoF4IJnGbOLAtXC7OubsFtIA4vGU3h+yujl7Di/s5ab7mwxKcRrg3+C
+ OuXEHB+rX2j12E21jYigIQpeEWLTrWlg47MZAyXpwnqN2+e1z01D39mPpfgfneaMSiu8j8cjQ6q
+ V/2pDa0G91JBwwRscDEIzKfRNkqZmwMwO//oqHDTIxea2ah0o2/C3DlaIF5JnKVmYrRopyq1q91
+ fNoBn8BxolQqowusJSIF/VYD/6ZUBxFHjqHGFuGq8FkAJBFuwDcJYywIfdfXjoVfhkKYvrK3MJr
+ dMSZ18yRhuvTHgB831aDJ5UYJc7G7jHJMBtiZzi7VL+1yX7it33xL8+bP6Wfv6dP6sf5EntVJOy Sw+syoE0eDsDU+w==
+X-Mailer: b4 0.13.0
+Message-ID: <20240808-alice-file-v9-0-2cb7b934e0e1@google.com>
+Subject: [PATCH v9 0/8] File abstractions needed by Rust Binder
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, 8 Aug 2024 at 06:20, Christian Brauner <brauner@kernel.org> wrote:
->
-> But then multiple times people brought up that supposedly smp_rmb() and
-> smp_wmb() are cheaper because they only do load or store ordering
-> whereas smp_{load,store}_{acquire,release}() do load and store ordering.
+This patchset contains the file abstractions needed by the Rust
+implementation of the Binder driver.
 
-It really can go either way.
+Please see the Rust Binder RFC for usage examples:
+https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/
 
-But I think we've reached a point where release/acquire is "typically
-cheaper", and the reason is simply arm64.
+Users of "rust: types: add `NotThreadSafe`":
+	[PATCH 5/9] rust: file: add `FileDescriptorReservation`
 
-As mentioned, on x86 none of this matters. And on older architectures
-that were designed around the concept of separate memory barriers, the
-rmb/wmb model thus matches that architecture model and tends to be
-natural and likely the best impedance match.
+Users of "rust: task: add `Task::current_raw`":
+	[PATCH 7/9] rust: file: add `Kuid` wrapper
+	[PATCH 8/9] rust: file: add `DeferredFdCloser`
 
-But the arm64 memory ordering was created after people had figured out
-the rules of good memory ordering, and so we have this:
+Users of "rust: file: add Rust abstraction for `struct file`":
+	[PATCH RFC 02/20] rust_binder: add binderfs support to Rust binder
+	[PATCH RFC 03/20] rust_binder: add threading support
 
-   https://developer.arm.com/documentation/102336/0100/Load-Acquire-and-Store-Release-instructions
+Users of "rust: cred: add Rust abstraction for `struct cred`":
+	[PATCH RFC 05/20] rust_binder: add nodes and context managers
+	[PATCH RFC 06/20] rust_binder: add oneway transactions
+	[PATCH RFC 11/20] rust_binder: send nodes in transaction
+	[PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
 
-and this particular quote:
+Users of "rust: security: add abstraction for secctx":
+	[PATCH RFC 06/20] rust_binder: add oneway transactions
 
- "Weaker ordering requirements that are imposed by Load-Acquire and
-  Store-Release instructions allow for micro-architectural
-  optimizations, which could reduce some of the performance impacts that
-  are otherwise imposed by an explicit memory barrier.
+Users of "rust: file: add `FileDescriptorReservation`":
+	[PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
+	[PATCH RFC 14/20] rust_binder: add BINDER_TYPE_FDA support
 
-  If the ordering requirement is satisfied using either a Load-Acquire
-  or Store-Release, then it would be preferable to use these
-  instructions instead of a DMB"
+Users of "rust: file: add `Kuid` wrapper":
+	[PATCH RFC 05/20] rust_binder: add nodes and context managers
+	[PATCH RFC 06/20] rust_binder: add oneway transactions
 
-iow we now have a relevant architecture that gets memory ordering
-right, and that officially prefers release/acquire ordering.
+Users of "rust: file: add abstraction for `poll_table`":
+	[PATCH RFC 07/20] rust_binder: add epoll support
 
-End result: we *used* to prefer rmb/wmb pairs, because (a) it was how
-we did memory ordering originally, (b) relevant architectures didn't
-care, and (c) it matched the questionable architectures.
+This patchset has some uses of read_volatile in place of READ_ONCE.
+Please see the following rfc for context on this:
+https://lore.kernel.org/all/20231025195339.1431894-1-boqun.feng@gmail.com/
 
-And now, in the last few years, the equation has simply shifted.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v9:
+- Rebase on top of v6.11-rc2.
+- Reorder things in file.rs
+- Fix minor typo in file.rs
+- Add Reviewed-bys.
+- Link to v8: https://lore.kernel.org/r/20240725-alice-file-v8-0-55a2e80deaa8@google.com
 
-So rmb/wmb has gone from "this is the only way to do it" to "this is
-the legacy way to do it and it performs ok everywhere" to "this is the
-historical way that some people are more used to".
+Changes in v8:
+- Rename File::from_ptr to File::from_raw_file.
+- Mention that NotThreadSafe also affects Sync.
+- Fix copyright lines.
+- Move rust/kernel/file.rs to rust/kernel/fs/file.rs to reduce conflicts
+  with Wedson's vfs patches.
+- Link to v7: https://lore.kernel.org/r/20240628-alice-file-v7-0-4d701f6335f3@google.com
 
-For new code, release/acquire is preferred. And if it's *critical*
-code, maybe it's even worth converting from wmb/rmb to
-release/acquire.
+Changes in v7:
+- Replace file sharing modes with File / LocalFile.
+- Link to v6: https://lore.kernel.org/r/20240517-alice-file-v6-0-b25bafdc9b97@google.com
 
-Partly because of that "it should be better on arm64", but also partly
-because I think release/acquire is both a better model conceptually,
-_and_ is more self-documenting (ie it's a nice explicit hand-off in
-ways that some of our subtler "this wmb pairs with that rmb" code is
-very much not at all self-documenting and needs very explicit and
-clear comments).
+Changes in v6:
+- Introduce file sharing modes.
+- Rewrite most documentation for `struct file` wrapper.
+- Drop `DeferredFdCloser`. It will be sent later when it can be placed
+  somewhere where only Rust Binder can use it.
+- Rebase on top of rust-next: 97ab3e8eec0c ("rust: alloc: fix dangling pointer in VecExt<T>::reserve()")
+- Link to v5: https://lore.kernel.org/r/20240209-alice-file-v5-0-a37886783025@google.com
 
-Now, I'm not saying you shouldn't add a comment about a
-release/acquire pair, but at the same time, the very fact that you
-release a _particular_ variable and acquire that variable elsewhere
-*is* a big clue. So when I'm saying it's "more self-documenting", I
-want to emphasize that "more". I'm not claiming it's _completely_
-self-documenting ;)
+Changes in v5:
+- Pass a null pointer to task_tgid_nr_ns.
+- Fix some typos and other formatting issues.
+- Add Reviewed-by where appropriate.
+- Link to v4: https://lore.kernel.org/r/20240202-alice-file-v4-0-fc9c2080663b@google.com
 
-        Linus
+Changes in v4:
+- Moved the two really simple patches to the beginning of the patchset.
+- Update Send safety comments.
+- Use srctree relative links.
+- Mention that `Credential::euid` is immutable.
+- Update some safety comments to mention the invariant on Self.
+- Use new name for close_fd_get_file.
+- Move safety comments on DeferredFdCloser around and be more explicit
+  about how many refcounts we own.
+- Reword safety comments related to _qproc.
+- Add Reviewed-by where appropriate.
+- Link to v3: https://lore.kernel.org/r/20240118-alice-file-v3-0-9694b6f9580c@google.com
+
+Changes in v3:
+- Completely rewrite comments about refcounting in the first patch.
+  - And add a note to the documentation in fs/file.c.
+- Discuss speculation gadgets in commit message for the Kuid wrapper.
+- Introduce NotThreadSafe and Task::current_raw patches and use them in
+  later patches.
+- Improve safety comments in DeferredFdCloser.
+- Some other minor changes.
+- Link to v2: https://lore.kernel.org/r/20231206-alice-file-v2-0-af617c0d9d94@google.com
+
+Changes in v2:
+- Update various docs and safety comments.
+- Rename method names to match the C name.
+- Use ordinary read instead of READ_ONCE in File::cred.
+- Changed null check in secctx.
+- Add type alias for PhantomData in FileDescriptorReservation.
+- Use Kuid::from_raw in Kuid::current_euid.
+- Make DeferredFdCloser fallible if it is unable to schedule a task
+  work. And also schedule the task work *before* closing the file.
+- Moved PollCondVar to rust/kernel/sync.
+- Updated PollCondVar to use wake_up_pollfree.
+- Link to v1: https://lore.kernel.org/all/20231129-alice-file-v1-0-f81afe8c7261@google.com/
+
+Link to RFC:
+https://lore.kernel.org/all/20230720152820.3566078-1-aliceryhl@google.com/
+
+---
+Alice Ryhl (5):
+      rust: types: add `NotThreadSafe`
+      rust: task: add `Task::current_raw`
+      rust: security: add abstraction for secctx
+      rust: file: add `Kuid` wrapper
+      rust: file: add abstraction for `poll_table`
+
+Wedson Almeida Filho (3):
+      rust: file: add Rust abstraction for `struct file`
+      rust: cred: add Rust abstraction for `struct cred`
+      rust: file: add `FileDescriptorReservation`
+
+ fs/file.c                       |   7 +
+ rust/bindings/bindings_helper.h |   6 +
+ rust/helpers.c                  |  86 ++++++++
+ rust/kernel/cred.rs             |  85 ++++++++
+ rust/kernel/fs.rs               |   8 +
+ rust/kernel/fs/file.rs          | 461 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   3 +
+ rust/kernel/security.rs         |  74 +++++++
+ rust/kernel/sync.rs             |   1 +
+ rust/kernel/sync/lock.rs        |  13 +-
+ rust/kernel/sync/poll.rs        | 121 +++++++++++
+ rust/kernel/task.rs             |  91 +++++++-
+ rust/kernel/types.rs            |  29 +++
+ 13 files changed, 973 insertions(+), 12 deletions(-)
+---
+base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+change-id: 20231123-alice-file-525b98e8a724
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
