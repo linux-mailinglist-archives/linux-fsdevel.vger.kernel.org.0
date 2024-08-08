@@ -1,160 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-25400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B8894B860
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 09:59:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B64794B894
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 10:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166431F2357B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 07:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00EDA288837
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 08:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476171891B7;
-	Thu,  8 Aug 2024 07:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xr2QwR/4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAB2189519;
+	Thu,  8 Aug 2024 08:07:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846C81CD25;
-	Thu,  8 Aug 2024 07:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF4B15444E;
+	Thu,  8 Aug 2024 08:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723103935; cv=none; b=RDdGNxjxnTX+WgGUoI/mV/6H5JMyRP/iY/PiGo54NjwHwmS/UOBgyiXev4F/fSQJsQPbRjhUA8j+ToEuY3KG6rLLYHmODfXio00fa4JblPiQORzictFtLtXSYUShJ478sGydH9Xq5ur99dGG8lBf5QWBTC4Odb0MNoYQ8idYATQ=
+	t=1723104458; cv=none; b=KwbbQN1Qxw9e8GAzxPdr7ahI6+LYcNI59FVTN6EJnT6Jm/POZIx5Cycu+i2cN5QYN/a9AU7zlHcvBuvcI/5dYE70Z4zK025tJ9zGZGDTppugWQY2TAQRawl5iOIsuWQBKNqce/biszk4RZMtJicQGMx62PhdJKVik+RQgObL6aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723103935; c=relaxed/simple;
-	bh=lBgKsSZMNn5ItIypje4300VtOpFDmA6vuT10xWV/5tg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9T7osUHUKt4V5emWdGMUtglxHW4Y0BJ0HKkOQWUaoe+2gTH4uqfJM53KJ6bcGyxZj2PpJxq3nM43xrRgYRl/0LVVPnZtjNtw52G/cyZyTH8c0SEga0/ZYw3MxwK5udfmL27uJz+/emvs/3yvobPwRQDauC8f3VkeJjGJJIqY9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xr2QwR/4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E30C32782;
-	Thu,  8 Aug 2024 07:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723103935;
-	bh=lBgKsSZMNn5ItIypje4300VtOpFDmA6vuT10xWV/5tg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xr2QwR/4R0+Yb+9pUu6BgnmvD4j3cPKIXj9murfquFun6YQ/CtU3vzU8MbgPfxoVB
-	 xkYuiK/L381eurFZAGr+8yLDvjaR3DzrA+JEA1NP4Vt+8DfpQV63+glF1dNVLIQsq9
-	 6RBkYf4cl5QgGfcCJ1oif1ZReVXjPbf9VLx/sL5k79gAC60zyJMW6wlzXP12dzF2Rc
-	 p4bKCzhJtNliCTOKjwmeTyFJU0Gexb1/mRb2uw8ieff4BFHRFqqAiCcznbtnOjYbgL
-	 JV6WcSTcuur9WiLhmc6LF8JIVUwLAzh7TtU9G4P0oFwufwGX278D7l8mKJw9TUCRKf
-	 UXtdzQYOEKN6g==
-Date: Thu, 8 Aug 2024 09:58:49 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	alexei.starovoitov@gmail.com, audit@vger.kernel.org, bpf@vger.kernel.org, 
-	catalin.marinas@arm.com, dri-devel@lists.freedesktop.org, ebiederm@xmission.com, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
-	rostedt@goodmis.org, selinux@vger.kernel.org, serge@hallyn.com
-Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
-Message-ID: <mywl5fk4ob4c4xekplom3ysiyo57h2iqirbiza6wdka3kdoa7q@exrkx5uwn2yc>
-References: <2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfbosf5wdo65dk4@srb3hsk72zwq>
- <CALOAHbBKzrvibUbj-1W7Z79AZsvOpMeG--EZ0pf2k0iyuPa1_w@mail.gmail.com>
+	s=arc-20240116; t=1723104458; c=relaxed/simple;
+	bh=BemnLbNZnMbV3JJfddi2l5f6/qJhZOt32VGqVnE2aGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fDW64NmtC6LIp6JdN2zrqYNs/wNpPvCfCguFqaPPLBPVlWm6gav6be4CsLr0wFABETNf1szxnyfL+MnXAuuxWhYn/9y6NqSwYOABiqMzikUFatrRjOcMPbztx1vQ3Evlok+OJIuHhR2a3aaO2jMI/dQs09VdBff09vbzE8Rp9EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id 73F0741EE1;
+	Thu,  8 Aug 2024 10:07:27 +0200 (CEST)
+Message-ID: <d0ada96d-1805-44d2-b02c-eff64ec0c7d6@proxmox.com>
+Date: Thu, 8 Aug 2024 10:07:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qwav3xltx7orscp7"
-Content-Disposition: inline
-In-Reply-To: <CALOAHbBKzrvibUbj-1W7Z79AZsvOpMeG--EZ0pf2k0iyuPa1_w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 14/40] netfs: Add iov_iters to (sub)requests to
+ describe various buffers
+To: David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+ Steve French <smfrench@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20231221132400.1601991-1-dhowells@redhat.com>
+ <20231221132400.1601991-15-dhowells@redhat.com>
+Content-Language: en-US, de-DE
+From: Christian Ebner <c.ebner@proxmox.com>
+In-Reply-To: <20231221132400.1601991-15-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
---qwav3xltx7orscp7
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	alexei.starovoitov@gmail.com, audit@vger.kernel.org, bpf@vger.kernel.org, 
-	catalin.marinas@arm.com, dri-devel@lists.freedesktop.org, ebiederm@xmission.com, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
-	rostedt@goodmis.org, selinux@vger.kernel.org, serge@hallyn.com
-Subject: Re: [PATCH v5 0/9] Improve the copy of task comm
-References: <2jxak5v6dfxlpbxhpm3ey7oup4g2lnr3ueurfbosf5wdo65dk4@srb3hsk72zwq>
- <CALOAHbBKzrvibUbj-1W7Z79AZsvOpMeG--EZ0pf2k0iyuPa1_w@mail.gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CALOAHbBKzrvibUbj-1W7Z79AZsvOpMeG--EZ0pf2k0iyuPa1_w@mail.gmail.com>
+recently some of our (Proxmox VE) users report issues with file 
+corruptions when accessing contents located on CephFS via the in-kernel 
+ceph client [0,1]. According to these reports, our kernels based on 
+(Ubuntu) v6.8 do show these corruptions, using the FUSE client or the 
+in-kernel ceph client with kernels based on v6.5 does not show these.
+Unfortunately the corruption is hard to reproduce.
 
-Hi Yafang,
+After a further report of file corruption [2] with a completely 
+unrelated code path, we managed to reproduce the corruption for one file 
+by sheer chance on one of our ceph test clusters. We were able to narrow 
+it down to be possibly an issue with reading of the contents via the 
+in-kernel ceph client. Note that we can exclude the file contents itself 
+being corrupt, as any not affected kernel version or the FUSE client 
+gives the correct contents.
 
-On Thu, Aug 08, 2024 at 10:49:17AM GMT, Yafang Shao wrote:
-> > > Now, it might be a good idea to also verify that 'buf' is an actual
-> > > array, and that this code doesn't do some silly "sizeof(ptr)" thing.
-> >
-> > I decided to use NITEMS() instead of sizeof() for that reason.
-> > (NITEMS() is just our name for ARRAY_SIZE().)
-> >
-> >         $ grepc -h NITEMS .
-> >         #define NITEMS(a)            (SIZEOF_ARRAY((a)) / sizeof((a)[0]=
-))
-> >
-> > > We do have a helper for that, so we could do something like
-> > >
-> > >    #define get_task_comm(buf, tsk) \
-> > >         strscpy_pad(buf, __must_be_array(buf)+sizeof(buf), (tsk)->com=
-m)
-> >
-> > We have SIZEOF_ARRAY() for when you want the size of an array:
-> >
-> >         $ grepc -h SIZEOF_ARRAY .
-> >         #define SIZEOF_ARRAY(a)      (sizeof(a) + must_be_array(a))
->=20
-> There is already a similar macro in Linux:
->=20
->   /**
->    * ARRAY_SIZE - get the number of elements in array @arr
->    * @arr: array to be sized
->    */
->   #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) +
-> __must_be_array(arr))
+The issue is present also in the current mainline kernel 6.11-rc2.
 
-This is actually the same as our NITEMS(), not SIZEOF_ARRAY().
+Bisection with the reproducer points to this commit:
 
-> will use it instead of the sizeof().
+"92b6cc5d: netfs: Add iov_iters to (sub)requests to describe various 
+buffers"
 
-But yeah, indeed I think you should use ARRAY_SIZE() in
-get_task_comm().  :)
+Description of the issue:
 
->=20
-> Good point.
-> I will avoid using the _pad().
+* file copied from local filesystem to cephfs via:
+`cp /tmp/proxmox-backup-server_3.2-1.iso 
+/mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
+* sha256sum on local filesystem:
+`1d19698e8f7e769cf0a0dcc7ba0018ef5416c5ec495d5e61313f9c84a4237607 
+/tmp/proxmox-backup-server_3.2-1.iso`
+* sha256sum on cephfs with kernel up to above commit:
+`1d19698e8f7e769cf0a0dcc7ba0018ef5416c5ec495d5e61313f9c84a4237607 
+/mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
+* sha256sum on cephfs with kernel after above commit:
+`89ad3620bf7b1e0913b534516cfbe48580efbaec944b79951e2c14e5e551f736 
+/mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
+* removing and/or recopying the file does not change the issue, the 
+corrupt checksum remains the same.
+* Only this one particular file has been observed to show the issue, for 
+others the checksums match.
+* Accessing the same file from different clients results in the same 
+output: The one with above patch applied do show the incorrect checksum, 
+ones without the patch show the correct checksum.
+* The issue persists even across reboot of the ceph cluster and/or clients.
+* The file is indeed corrupt after reading, as verified by a `cmp -b`.
 
-Nice.  :)
+Does anyone have an idea what could be the cause of this issue, or how 
+to further debug this? Happy to provide more information or a dynamic 
+debug output if needed.
 
-Have a lovely day!
-Alex
+Best regards,
 
---=20
-<https://www.alejandro-colomar.es/>
+Chris
 
---qwav3xltx7orscp7
-Content-Type: application/pgp-signature; name="signature.asc"
+[0] https://forum.proxmox.com/threads/78340/post-676129
+[1] https://forum.proxmox.com/threads/149249/
+[2] https://forum.proxmox.com/threads/151291/
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAma0erkACgkQnowa+77/
-2zI/JRAAoVxukBH7uw9FKXnQL5urmTajhZ9amPoHARet43Vg/lzzBNf6fKGg+8Sw
-Ia/9Wj4w2X8FhIeCkj6N9ZS8SaIRgXExdZQxfOdfNWRXk8i+UVm0HzH3maGvLLi7
-uSkYvr0HKnB/bk8tjJWDfvEEwNFS0f6rTlz3gcK2AggiDr9N1ZZBKS1/6qXDTgps
-Z+83Dzqy6UmjYa43Rg9MLoS5hux8uJyepFVgJQ3YzNoLlT4RCnXz99pTQffEGf/u
-Z1pH8dsthc5ObspRQoWHzKVRv2LmatVaitOfoxEnqw7nqcKkwV6hfKYwArb1PR5x
-46De/I8Q2SFzcCT+MjcCHQrlYo4ae7YVGpk2dpIYxkFnH7WCR3UeMamLrsPAkydf
-bAisGt0aUSSnXv6Nx+AyJzqJVYwfXY87aUMBxU6M6tiD1WaBCxMkgEyCqGRI4T4M
-SxLDjWDUNMP3dzrilzfy+7Q5mBSoDP0fyVZD9PvQyj2I3OQuaSco8SiKocb6YPyv
-NlIPR7vs2K7n+Cmbv1FtrW2XTDnYsHpUYs1iI81FGoqQmK0I3JM+M1PSFs1m/VLB
-UMkeE70pWxJlewI3USP3BVhAVMn9LGP3k0r6eRLlea0y8Y8VRx77S8+D7Im1RNqs
-ybegRL10BeXA+FLXX9xvCPi4ClFH2e/r0dFUpNTzg9bDXJG5sr8=
-=hUNj
------END PGP SIGNATURE-----
-
---qwav3xltx7orscp7--
 
