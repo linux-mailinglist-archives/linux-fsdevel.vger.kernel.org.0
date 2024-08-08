@@ -1,87 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-25391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D0D94B59D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 05:46:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E76894B631
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 07:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B646B23700
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 03:46:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F02A31F2477E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 05:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BFF83A17;
-	Thu,  8 Aug 2024 03:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WUA7L4p9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F06F13E41D;
+	Thu,  8 Aug 2024 05:20:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB176F31E
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 03:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AFA13CFA3
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 05:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723088768; cv=none; b=M1laacCJrUgeirHwm9oSFAmPbI5cGRM9L11aLhnREtr0pcu9nSsJ0WAgJeqGdgOuL7YUs9u7jncdsPuj7EQjzeK5XF6NiNMgX86d2WC/ETyEfYsIVYneVb2JsZ6jVavhK/oQZstfG5uNJBzKBcgVmLh82pOzXBQIug+DruQZWg0=
+	t=1723094406; cv=none; b=ri0+9aVLTjoOSOAWFYZPlTeU2xk5rh+45nRfWb71cE0JrWf0Yac/0x9HGAR5lt9KB1u6OjmcRhQhj1o+x1cNHYKiPfduCPo87os63iw+tqEane8XJxx+dJLbcaxfpX8m148Ee6x+A9TEmRW2h2uHGACyOm4OtVe/HUXHJu1WlRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723088768; c=relaxed/simple;
-	bh=LqoiOWPj1xEzobcLIxeL0eUb/HrLj3HRbNtGB9iqv8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ty+SGDmtrrcKV0Wybn5xmPMU9rWV0ByAKwbQKeVb/caqWvsQMuVozNITxf9L6i3UUWRy8uIasqK+jfkKKtHRQRdhaDhl7AGSAwYaaZ7agYTkEgQu4ZTQujv1LinoOI53rj9lZkHXVKpa4sRH39B4ixO+mpIJEgvxuz+zG3/Cusw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WUA7L4p9; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cdxZKuTwj1uWMuPwzg0uGBp8/VGNsA4zXguS82/fi0I=; b=WUA7L4p9kqoIyHn1M5avDfoVbH
-	MZhvTmVJPUrZrvAhRVS1kE/rc0AGGS8DbcT8rrq3/++qm9dJf/1fx7oJuNBekkm1n6oXpb0c3O9k1
-	W82dvxzGzQwhSuXgjC+0ZZuaM0bxwTO0IdO+whkPUubpbsr2HUfNyDscerOauYqRs1gyvvbHzD3Rp
-	2G2EmWf5o7mblYpQUK4jVcBvn5qPEVoh4KodlpGKoH3gytf0Vy6QvHCle+OwB2bRTOeooIJRGVPKm
-	u68XmmhlmFZp/Lua8A0GJ9emeEDy7Vd/5UMF+Orr7rsQEF6vAAzCYbJWLc7i2ruf+vSJUUWzccQYd
-	z9inuN1A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sbu6C-00000002ZiP-41FK;
-	Thu, 08 Aug 2024 03:46:00 +0000
-Date: Thu, 8 Aug 2024 04:46:00 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [RFC] why do we need smp_rmb/smp_wmb pair in
- fd_install()/expand_fdtable()?
-Message-ID: <20240808034600.GD5334@ZenIV>
-References: <20240808025029.GB5334@ZenIV>
- <CAHk-=wgse0ui5sJgNGSvqvYw_BDTcObqdqcwN1BxgCqKBiiGzQ@mail.gmail.com>
- <20240808033505.GC5334@ZenIV>
+	s=arc-20240116; t=1723094406; c=relaxed/simple;
+	bh=5fs52SLgd/Wa9Qk6AnGY2MINv0qRxrKfG2vAjMob6wo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rH7nfgFpidzt4HScX/Qgz4V2N8xpKBPv6jYkNUoGoQ1irSfQ/rB1uWHkj0U2wBa2j5z3N+M02j8DWHGvspin9UGSicpHAB+5SYe3OXXSWfW4yjH0AwXhxiApW38+e/zYlBTmFj4fNjSodUuijjecQobENvGY/1tDlISH7hs4PTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8223aed779aso68806539f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Aug 2024 22:20:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723094404; x=1723699204;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n/8Sl/8wtZuOpXGHi6WNR/MUTmmUjWmBACkoHV+PUDs=;
+        b=B/ARTTsy0mS0fxY9QWoV9HpF4caESivcS01yUlz9J9HwvT+IP0cipGbvf6Ckp6z5lu
+         4/1/8pgTfzN4li0ZrJ7LG6xTTBehSyf0IIkUj2VkAngWLFsY/ykUf/p+D7Efgcks7S9z
+         xkoeyX/Sfheug/40/OyXOtqIupvrq3CE6YTj3M7vyfbyscsHTNYTPPc4CH+P5hGVRCgv
+         F9UIxBAB+rhBxdpvsBby11fdCzs6rr/z09lB/OdbNJPBCa114O4ankhD4zDbhsQ4RwyF
+         Z34ARxDBzyIB1h/GRBu6apOt/j3oX8EEhhGl2/7Y9VA3MNuE/pLLIMwC894DlDDrvZUX
+         J5Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ1Syl1fUArX2UB/ABWXpkCrWICL0nnrRQLrG3XSFikI4yJiVtZTqWee3vNE139J0DJTqGZEotY2G9TH3C8cUGJJXOuVuX19llgxEYrQ==
+X-Gm-Message-State: AOJu0YyxC4LidcfkSt2p3QcMk7yzkqCpdIm35au7orerTvFEVEjCFcPu
+	VHlsTCOhJ5ygFyy1nvW5wByiXul5nj+9QpSSgmVqbMt3yTYFyfQlq2yZ4vznx+esihLFV6fZkBu
+	3BH7mFWvAmNxiwlksXt1MzykmDaAVQP5iJIjQnnJRH7XBRDoBy7VvBn4=
+X-Google-Smtp-Source: AGHT+IF7GD4v7lHspJC+Jfs24j4tamRlFwZl1OSJoLkUDwS5Ibf9MNjk30+Z0IWeFZHASh3iI8qbJOSsalcz40AT5pDGZk+0wk7E
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808033505.GC5334@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6638:130b:b0:4c2:7a26:278b with SMTP id
+ 8926c6da1cb9f-4ca5e153b10mr47876173.5.1723094403922; Wed, 07 Aug 2024
+ 22:20:03 -0700 (PDT)
+Date: Wed, 07 Aug 2024 22:20:03 -0700
+In-Reply-To: <000000000000f52642060d4e3750@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dc521a061f252d4c@google.com>
+Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
+ dereference in do_pagemap_scan
+From: syzbot <syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, seanjc@google.com, 
+	syzkaller-bugs@googlegroups.com, usama.anjum@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 08, 2024 at 04:35:05AM +0100, Al Viro wrote:
-> On Wed, Aug 07, 2024 at 08:06:31PM -0700, Linus Torvalds wrote:
+syzbot suspects this issue was fixed by commit:
 
-> > But release/acquire is the RightThing(tm), and the fact that alpha
-> > based its ordering on the bad old model is not really our problem.
-> 
-> alpha would have fuckloads of full barriers simply from all those READ_ONCE()
-> in rcu reads...
-> 
-> smp_rmb() is on the side that is much hotter - fd_install() vs. up to what, 25 calls
-> of expand_fdtable() per files_struct instance history in the worst possible case?
-> With rather big memcpy() done by those calls, at that...
+commit 4cccb6221cae6d020270606b9e52b1678fc8b71a
+Author: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Date:   Tue Jan 9 11:24:42 2024 +0000
 
-BTW, an alternative would be to have LSB of ->fdt (or ->fd, if we try to
-eliminate that extra dereference) for ->resize_in_progress.  Then no barrier
-is needed for ordering of those.  Would cost an extra &~1 on ->fdt fetches,
-though...
+    fs/proc/task_mmu: move mmu notification mechanism inside mm lock
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=141753f9980000
+start commit:   fbafc3e621c3 Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=298e57794135adf0
+dashboard link: https://syzkaller.appspot.com/bug?extid=f9238a0a31f9b5603fef
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1108a595e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16777bbee80000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs/proc/task_mmu: move mmu notification mechanism inside mm lock
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
