@@ -1,212 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-25430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0916094C246
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 18:05:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F40894C31F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 18:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83E641F27615
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0281F2176F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 16:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533A7190062;
-	Thu,  8 Aug 2024 16:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CCA190492;
+	Thu,  8 Aug 2024 16:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdMEc/9D"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkYPIoW7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hWndcGU4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkYPIoW7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hWndcGU4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BD62A1D8;
-	Thu,  8 Aug 2024 16:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775B4190470
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Aug 2024 16:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723133140; cv=none; b=VF6Uj3nbx3gkyncGYRb/GYa2XsDDP6tpxb3NStlU1M8C1POT9HjbGW0Om+DYRL8rVD9T4sI5FBCOzJQTUrQSGznOhIoKqS30EW7lH7d3fC66l+XpIZQGyA0Yr/skdVixB56KgVy7X4+o38Il4rEVevKueedUWDjmX7B0y2c3SXY=
+	t=1723136272; cv=none; b=u492G4F7PH/2ZbVKRnGIr13S9sF8RDC71feLCFjA2qEKddfGNHLeFRnM3wteZdmqtlNNx+ayPqDpOO9Uf3KSQvomz/U036E9UxvYhYgS74GnOjQyhG2H/a+HKNoojlMG6kFySrlOEx9h2aVgtWegUDhffZCdMSOruSy5bRKeOBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723133140; c=relaxed/simple;
-	bh=hGPLkLuBujDWzSCZRROeSp5q8jzVfe/dq/k46RgEwFY=;
+	s=arc-20240116; t=1723136272; c=relaxed/simple;
+	bh=AN4bbGXaPGoAkdoWNT5s4r7vEn5yuigAH2Dgin5P77w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gxAgGXIroE+wk2gohjcvKxUeTdfxM6GbVpXc8B28bi7Bra5lYHgdEs7CnEAGR83NsegfpSxKBrZ4Ne2DTzAVnZUQGHpeuBAWaUHLQgyFlHzE3zYExYpJZ7HSHButdv8i/A0qAoufAHH5ZG2bEJwhecjJdXe2FXKbxzrzPQ8Blu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdMEc/9D; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a1d3959ad5so99456985a.0;
-        Thu, 08 Aug 2024 09:05:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723133138; x=1723737938; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0QGPS3K735vF0gCg8FwAak2G3PS56HZ9k7EbicOXtxk=;
-        b=QdMEc/9DLgxLmVlU3FjdOLqo+aWHkdCeRLES+8fJda30Co5205GABnXo8MCiprSAJ4
-         PGFeiEm3lWbz3PAyX7nhuW7qpo3FdM4cXl65penv97OTuW4GkhuehJ8EiT5Fwp6hXceb
-         b1zf8RpgngtTC12nwmVFLXSd/GQvAqewEfEt51GtBYGWhgyrJEJBG2+gvd4IvP12picC
-         Bt3j3CI4nx2p4IhGnguT5jGwrAw9Aq6bEojNi3wcEtFrhEs+HBRwXp0VkIrR00fzXm62
-         whr5afash/BvVc0mauV97Vqq2tInPRNNILMbwLpep9u3TmBAnc346udNMYLRJLGO1QAh
-         sz/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723133138; x=1723737938;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0QGPS3K735vF0gCg8FwAak2G3PS56HZ9k7EbicOXtxk=;
-        b=oL6W3a1ahHRMYx95x8Nsy60bfWU9WbHuvzXCJva+mLMro0ccPlZgPl2ldmQZA7doHe
-         Y8LL8NGr/dH3Ob45KHJvmFotoUiGNWjmAesFiQnOY4I943V23RlbwyBXcat/h/Vbl90M
-         fe3hQgXIE6vUG5YoE2Kjlpa4l4sXEuDphK37vMBKOOQMRrlrNJ5a7jDq8Yf2QSYdT2xv
-         UdudS1zkfEmMT2l4yhI1xTRpX+156nwu5uMq0Ipr6wpvltElsGtKQsa0fTimDrojT/Hr
-         OquKX54HwRL2KbO5YBuTJ21i/rr9ZF1HLWHx8ekJn99AaxS4fBnlMCeq+IrNNzBgjoJG
-         DPGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiNgfHbXa7PEoQAWn+z1mz6unYkATOxmB7JYHWSz7XOYqcqGVkUS0qgDWdApDLzScIBg4CRSaYwdrVQ6pZ6xXEvpf7mUHVRHG+tIhNHyzLd4XwElZKx/I9M7aapg7UgpGJ8SNL5gESisPra5udQeGuDS7TAkXeb4uvbnT9199EFIAukit6nO2IpizF
-X-Gm-Message-State: AOJu0Yxvakj6r77jX7GShKPN3qMQXvTjDyFCOtojDP1HyC3rJ9CIlhWO
-	iogQtU1OornYuk2tD+0i99DcFQSb9DDFVJj1xtFCQtMM0Kq+Gko9
-X-Google-Smtp-Source: AGHT+IEWmL2YczOsYZhq8z7160r63ZHHN5CVVCuzTfuy7bXzdNjBuNS4e3VSmC6l++qpo3e41kNFnw==
-X-Received: by 2002:a05:620a:1a8a:b0:79f:1352:8318 with SMTP id af79cd13be357-7a3826f3360mr388942885a.4.1723133137765;
-        Thu, 08 Aug 2024 09:05:37 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785cfc23sm173005885a.13.2024.08.08.09.05.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 09:05:36 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 14A6D1200069;
-	Thu,  8 Aug 2024 12:05:36 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Thu, 08 Aug 2024 12:05:36 -0400
-X-ME-Sender: <xms:z-y0ZuGvg5Xtnp58dq_EkiXmn9iauz350RugK5McJx2a5KLYlCqwmA>
-    <xme:z-y0ZvUkeIIiurIKlwJYdj0R2CVkQB5C1E_hnM2ibw8JoLf7dkiH6UBnrl7zFbSK3
-    NeSKHig0-ttTqjVHA>
-X-ME-Received: <xmr:z-y0ZoIymP3mAQfntoxw16wADBCw0fbQOt7Klo7nXn0fpmGFO0bOhTdq7oB8eg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrledvgdeliecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekrodttddtjeen
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeffleekfedutefhkefhheekhfelvdejgfegvdej
-    jeffudelkedtffeiveejteetudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepfedtpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegrlhhitggvsehrhihhlhdrihhopdhrtghpth
-    htoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsggvnhhn
-    ohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtohepohhjvggurgeskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtgho
-    mhdprhgtphhtthhopeifvggushhonhgrfhesghhmrghilhdrtghomhdprhgtphhtthhope
-    hgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehp
-    rhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrghesshgrmh
-    hsuhhnghdrtghomh
-X-ME-Proxy: <xmx:0Oy0ZoG56UcGdqdFp0HEz84kMKpXFfnHQGE83xOQDRkTklQh4xuCRQ>
-    <xmx:0Oy0ZkWmXbjsZ4RltyJSnm9N-wX2pQsNkV7ONjuDo5J3jfnSkuTKWg>
-    <xmx:0Oy0ZrNlxEFxGSKyatK7E_mVs-XXbKOsZHEWmLEsvRGMGcgOJB3vLQ>
-    <xmx:0Oy0Zr2wn-G7Y645szN55bT2W5NI3dvK4mCGBJPz5zqXjYgI8mZitQ>
-    <xmx:0Oy0ZlXbtGbP8KB1eqji8wy6FeQqXeTMDXLXC-MsugnoZX7eKw_bUO7G>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 8 Aug 2024 12:05:35 -0400 (EDT)
-Date: Thu, 8 Aug 2024 09:04:26 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <alice@ryhl.io>
-Cc: Alice Ryhl <aliceryhl@google.com>,	Benno Lossin <benno.lossin@proton.me>,
-	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v8 3/8] rust: file: add Rust abstraction for `struct file`
-Message-ID: <ZrTsiiRIRSNyttRz@boqun-archlinux>
-References: <20240725-alice-file-v8-0-55a2e80deaa8@google.com>
- <20240725-alice-file-v8-3-55a2e80deaa8@google.com>
- <4bf5bf3b-88f4-4ee4-80fd-c566428d9f69@proton.me>
- <CAH5fLgi0MGUhbD0WV99NtU+08HCJG+LYMtx+Ca4gwfo9FR+hTw@mail.gmail.com>
- <ZrJ5kORJHsITlxr6@boqun-archlinux>
- <CAH5fLgj2XEvjourzW4aoRDQwMGkKTNiE7Wu9FVRrG=7ae1hiWA@mail.gmail.com>
- <ZrOIsLH2JsoFzCZB@boqun-archlinux>
- <51199e48-fd36-4669-a93a-97e5c10aea26@ryhl.io>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i5ZjSmvrRyka7Mu+sCUrqfHBwHCXp2iFLKrNs8g+FyniC1V0KvKvwetGdw0Q6KzPzgzFUCpeNmMMUACXetzf7SX7U/XmmHGQtA+fMpjUwrfrefsutlYUo3+eq5mEqj7aP+/UCAH7PeMYkDa10PRlxnNp4gH00A1csxzr1ZRadu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkYPIoW7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hWndcGU4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkYPIoW7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hWndcGU4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 68C6021D58;
+	Thu,  8 Aug 2024 16:57:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723136267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZaukEdMzff6NG6Vxs6+B0BgkjdSaFfw7CXlNMZ+T58M=;
+	b=EkYPIoW71lgcAeZJn3QgaV6PkHMVoNLntkCl7CWaAimL+Ix6TqgnXFyRGnMm+I1E8MCKVg
+	pBUEUZOTjmQBHEEMgs+ietauLKicRojOsefzXtZcOv5teDa3Ro32qAB9ZqIqwethTHb4+B
+	SWnfYAHBNfv3TUnN+DJCt9ofJtH9A88=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723136267;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZaukEdMzff6NG6Vxs6+B0BgkjdSaFfw7CXlNMZ+T58M=;
+	b=hWndcGU4P6ROGFikOleuKMBT2Yn3tAkwrfCQkbHrwijGnxcdvYJ1hEzgMXDuLee8JEZjOw
+	Viq5HyTyjbsIgMDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=EkYPIoW7;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=hWndcGU4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723136267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZaukEdMzff6NG6Vxs6+B0BgkjdSaFfw7CXlNMZ+T58M=;
+	b=EkYPIoW71lgcAeZJn3QgaV6PkHMVoNLntkCl7CWaAimL+Ix6TqgnXFyRGnMm+I1E8MCKVg
+	pBUEUZOTjmQBHEEMgs+ietauLKicRojOsefzXtZcOv5teDa3Ro32qAB9ZqIqwethTHb4+B
+	SWnfYAHBNfv3TUnN+DJCt9ofJtH9A88=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723136267;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZaukEdMzff6NG6Vxs6+B0BgkjdSaFfw7CXlNMZ+T58M=;
+	b=hWndcGU4P6ROGFikOleuKMBT2Yn3tAkwrfCQkbHrwijGnxcdvYJ1hEzgMXDuLee8JEZjOw
+	Viq5HyTyjbsIgMDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4373B13C44;
+	Thu,  8 Aug 2024 14:32:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LbszEPfWtGamBgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 08 Aug 2024 14:32:23 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BA0D0A0851; Thu,  8 Aug 2024 16:32:22 +0200 (CEST)
+Date: Thu, 8 Aug 2024 16:32:22 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH RFC 0/13] fs: generic filesystem shutdown handling
+Message-ID: <20240808143222.4m56qw5jujorqrfv@quack3>
+References: <20240807180706.30713-1-jack@suse.cz>
+ <ZrQA2/fkHdSReAcv@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <51199e48-fd36-4669-a93a-97e5c10aea26@ryhl.io>
+In-Reply-To: <ZrQA2/fkHdSReAcv@dread.disaster.area>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.01 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -1.01
+X-Rspamd-Queue-Id: 68C6021D58
 
-On Wed, Aug 07, 2024 at 11:59:47PM +0200, Alice Ryhl wrote:
-> On 8/7/24 4:46 PM, Boqun Feng wrote:
-> > On Wed, Aug 07, 2024 at 10:50:32AM +0200, Alice Ryhl wrote:
-> > > On Tue, Aug 6, 2024 at 9:30 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> > > > 
-> > > > On Tue, Aug 06, 2024 at 10:48:11AM +0200, Alice Ryhl wrote:
-> > > > [...]
-> > > > > > > +    /// Returns the flags associated with the file.
-> > > > > > > +    ///
-> > > > > > > +    /// The flags are a combination of the constants in [`flags`].
-> > > > > > > +    #[inline]
-> > > > > > > +    pub fn flags(&self) -> u32 {
-> > > > > > > +        // This `read_volatile` is intended to correspond to a READ_ONCE call.
-> > > > > > > +        //
-> > > > > > > +        // SAFETY: The file is valid because the shared reference guarantees a nonzero refcount.
-> > > > > > > +        //
-> > > > > > > +        // FIXME(read_once): Replace with `read_once` when available on the Rust side.
-> > > > > > 
-> > > > > > Do you know the status of this?
-> > > > > 
-> > > > > It's still unavailable.
-> > > > > 
-> > > > 
-> > > > I think with our own Atomic API, we can just use atomic_read() here:
-> > > > yes, I know that to make this is not a UB, we need the C side to also do
-> > > > atomic write on this `f_flags`, however, my reading of C code seems to
-> > > > suggest that FS relies on writes to this field is atomic, therefore
-> > > > unless someone is willing to convert all writes to `f_flags` in C into
-> > > > a WRITE_ONCE(), nothing more we can do on Rust side. So using
-> > > > atomic_read() is the correct thing to begin with.
-> > > 
-> > > Huh? The C side uses atomic reads for this?
-> > > 
+On Thu 08-08-24 09:18:51, Dave Chinner wrote:
+> On Wed, Aug 07, 2024 at 08:29:45PM +0200, Jan Kara wrote:
+> > Hello,
 > > 
-> > Well, READ_ONCE(->f_flags) is atomic, so I thought you want to use
-> > atomic here. However, after a quick look of `->f_flags` accesses, I find
-> > out they should be protected by `->f_lock` (a few cases rely on
-> > data race accesses, see p4_fd_open()), so I think what you should really
-> > do here is the similar: make sure Rust code only accesses `->f_flags`
-> > if `->f_lock` is held. Unless that's not the case for binder?
+> > this patch series implements generic handling of filesystem shutdown. The idea
+> > is very simple: Have a superblock flag, which when set, will make VFS refuse
+> > modifications to the filesystem. The patch series consists of several parts.
+> > Patches 1-6 cleanup handling of SB_I_ flags which is currently messy (different
+> > flags seem to have different locks protecting them although they are modified
+> > by plain stores). Patches 7-12 gradually convert code to be able to handle
+> > errors from sb_start_write() / sb_start_pagefault(). Patch 13 then shows how
+> > filesystems can use this generic flag. Additionally, we could remove some
+> > shutdown checks from within ext4 code and rely on checks in VFS but I didn't
+> > want to complicate the series with ext4 specific things.
 > 
+> Overall this looks good. Two things that I noticed that we should
+> nail down before anything else:
 > 
-> Binder just has an `if (filp->f_flags & O_NONBLOCK)` block somewhere in the
-> ioctl, where filp is the `struct file *` passed to the ioctl. Binder doesn't
-> take the lock.
+> 1. The original definition of a 'shutdown filesystem' (i.e. from the
+> XFS origins) is that a shutdown filesystem must *never* do -physical
+> IO- after the shutdown is initiated. This is a protection mechanism
+> for the underlying storage to prevent potential propagation of
+> problems in the storage media once a serious issue has been
+> detected. (e.g. suspect physical media can be made worse by
+> continually trying to read it.) It also allows the block device to
+> go away and we won't try to access issue new IO to it once the
+> ->shutdown call has been complete.
 > 
+> IOWs, XFS implements a "no new IO after shutdown" architecture, and
+> this is also largely what ext4 implements as well.
 
-Yep, that's my point, I think binder C driver relies on the behaviors of
-data race today (or probably all `->f_flags`s accessed by binder don't
-have any concurrent write to them). Either way, what you do here is
-better than C code if there was a data race. I was simply suggesting
-instead of `read_once`, we could just do a `atomic_read` on `->f_flags`
-once we support *unsafe` usage of doing atomic accesses on normal data
-fields (of course, such a usage will be limited).
+Thanks for sharing this. I wasn't aware that "no new IO after shutdown" is
+the goal. I knew this is required for modifications but I wasn't sure how
+strict this was for writes.
 
-In other words, nothing needs to be changed here right now.
+> However, this isn't what this generic shutdown infrastructure
+> implements. It only prevents new user modifications from being
+> started - it is effectively a "instant RO" mechanism rather than an
+> "instant no more IO" architecture.
+> 
+> Hence we have an impedence mismatch between existing shutdown
+> implementations that currently return -EIO on shutdown for all
+> operations (both read and write) and this generic implementation
+> which returns -EROFS only for write operations.
+> 
+> Hence the proposed generic shutdown model doesn't really solve the
+> inconsistent shutdown behaviour problem across filesystems - it just
+> adds a new inconsistency between existing filesystem shutdown
+> implementations and the generic infrastructure.
 
-Regards,
-Boqun
+OK, understood. I also agree it would be good to keep this no-IO semantics
+when implementing the generic solution. I'm just pondering how to achieve
+that in a maintainable way. For the write path what I've done looks like
+the least painful way. For the read path the simplest is probably to still
+return whatever is in cache and just do the check + error return somewhere
+down in the call stack just before calling into filesystem. It is easy
+enough to stop things like ->read_folio, ->readahead, or ->lookup. But how
+about things like ->evict_inode or ->release?  They can trigger IO but
+allowing inode reclaim on shutdown fs is desirable I'd say. Similarly for
+things like ->remount_fs or ->put_super. So avoiding IO from operations
+like these would rely on fs implementation anyway.
 
-> Alice
+> 2. On shutdown, this patchset returns -EROFS.
+> 
+> As per #1, returning -EROFS on shutdown will be a significant change
+> of behaviour for some filesystems as they currently return -EIO when
+> the filesystem is shut down.
+> 
+> I don't think -EROFS is right, because existing shutdown behaviour
+> also impacts read-only operations and will return -EIO for them,
+> too.
+> 
+> I think the error returned by a shutdown filesystem should always be
+> consistent and that really means -EIO needs to be returned rather
+> than -EROFS.
+> 
+> However, given this is new generic infrastructure, we can define a
+> new error like -ESHUTDOWN (to reuse an existing errno) or even a
+> new errno like -EFSSHUTDOWN for this, document it man pages and then
+> convert all the existing filesystem shutdown checks to return this
+> error instead of -EIO...
+
+Right, -EROFS isn't really good return value when we refuse also reads. I
+think -EIO is fine. -ESHUTDOWN would be ok but the standard message ("Cannot
+send after transport endpoint shutdown") whould be IMO confusing to users.
+I was also thinking about -EFSCORRUPTED (alias -EUCLEAN) which already has
+some precedens in the filesystem space but -EIO is probably better.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
