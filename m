@@ -1,325 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-25506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F292F94CC92
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 10:45:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB48994CEC5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 12:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F401B2397B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 08:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B3561C22412
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 10:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDACA18C930;
-	Fri,  9 Aug 2024 08:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739981922F5;
+	Fri,  9 Aug 2024 10:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="h2Ipt9D2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3OXQZdt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10CA219E1
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 08:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE661922DD;
+	Fri,  9 Aug 2024 10:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723193147; cv=none; b=cvDpfPrJe+9Lcm58vzWt+k5cGZd6DSp3g9ROI8GBSMfrz1vIpukQzA9weOa5a7kjWpf1NkNe4jW6dAy00T+P7BofobkyoJ+LjsZ54VZ6tph0G7xT0e4dL9IP7q6gi8MhDZk9krY+HYIg8Iq+Hu85UAyfNbPiQ/Ixk+qfM4EZmzk=
+	t=1723199688; cv=none; b=J1mETrl/cgPcn/o9+3jB+pYvxatJB52vAa1Aiti+ucxiRSdSa4pzs50nFYSUmFxk0jxNnHw1FOV3ktjQKVzDfOYTzs5v75zkQokwmMe/ZFVK1snKOELMERpAzLaefT5jzZYC2v7ne+WvvdVvCXUUqyQ8oBVi9dFtK44rSUE+F7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723193147; c=relaxed/simple;
-	bh=Cc3CTSJnqciZ5F97WujY8wtP6LwylWlntc2UMCDJOAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYPxGkKs124yk6CBZvXEBLHGyBeD/uzMvs8qZc/gb0GyddUE2yPvmTcLrkiDuM/1dX0zSBHrZZwoMqFhNzRf0rMrflE9nKQScmY8F6FIrn0Ac7IVduWZkQeFCL7s9S9dtmYPnP3eRe8EeGZ35mAajUbzIVtwelcx5QJOnMuQGUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=h2Ipt9D2; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WgHYY28mjzcxg;
-	Fri,  9 Aug 2024 10:45:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723193137;
-	bh=A4Mye3W1GO6Qfy6D2ZWCed9/6+HjtrIW34KoXP/3AGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h2Ipt9D2gSZ/q8ygM/sKMThiKAgF5W7JXFX6TJPXNTZAYDmh1klJCHwS2nWk1/Ls6
-	 rODW1Jw9gRqcGJJlyTfXdlR0gZLZ9XfO6hh5TppcVcLc35YP40xdWPET10w2N9LHIp
-	 rSAeWKTu4mMzgbT0el463lS6S0/0zMcqfxAW+NGE=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WgHYN5HlJzLZR;
-	Fri,  9 Aug 2024 10:45:28 +0200 (CEST)
-Date: Fri, 9 Aug 2024 10:45:23 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240809.Taiyah0ii7ph@digikod.net>
-References: <20240717.neaB5Aiy2zah@digikod.net>
- <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net>
- <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
- <20240719.shaeK6PaiSie@digikod.net>
- <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
- <20240719.sah7oeY9pha4@digikod.net>
- <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
- <20240723.beiTu0qui2ei@digikod.net>
- <CALmYWFtHQY41PbRwGxge1Wo=8D4ocZfQgRUO47-PF1eJCEr0Sw@mail.gmail.com>
+	s=arc-20240116; t=1723199688; c=relaxed/simple;
+	bh=1wgzFHAy5ZAm/MtvH67YFXkiLkUENjoMu00WdPC/oWg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nxsJRug9CE8thaSiXDcrAgd/II80LmW1h3DZTJ8ycM5Hfsb67e+41kbt9aOUQpqbBoGz7W+/EYBcwinxjZQKjgrKssChI0R6IAY7zXNa3wvDYufzSguL3ipcT10qt6bCIaWJM6MacdyfrzWrtI+myhxe/EibJ2vdrWtLdKupUZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3OXQZdt; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a1d0dc869bso116623785a.2;
+        Fri, 09 Aug 2024 03:34:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723199686; x=1723804486; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I8Rt2uRteO3s/W93KxwWyA+7W/jfG/qdLIJu/l21pOI=;
+        b=B3OXQZdt+38zEghIitqe/x9lYDtt06bGaR1apxZBN/lBtm1p2o0CcLnRWHjigjrqb5
+         ms3q1jcIsbP42wgTc5bHw9MHPeJXTH+C7sXLy3nxjx22soO3sd9wrVIwo2q0kdhqRsc+
+         svpL5wm+cwPuMI9CohGOGX3DbfOwW60KAzzxfW/0NEdGgQgJ7t3fMyqD3SEC1EwEdUxl
+         3xXSratkBPQJKCTfNBAa1iiLPPJ8c2bpn/PNhmVwKKl2bMHRMl3Jec+k7Ghocaa2exsa
+         cmX3yuoYE7VJZiRE9d4AebV+uOYfDe1+YFHFRcyiMvEqKj+afwcBLfj/l/RNRYCOMWhX
+         dR8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723199686; x=1723804486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I8Rt2uRteO3s/W93KxwWyA+7W/jfG/qdLIJu/l21pOI=;
+        b=GpkhwddUXNXeJI3/DK28bUi6FQRlTmACXkjBHVqJUDks8LU2ccIRvD7zfZ6DSnMGy1
+         RgqhMIjwTF/afmMf7bW7op0SkqrYsC3GAWTFB3KjhWxsmwS0aLsb13W3lIYfhKCAAG84
+         kA0RBz7cAm/FeB/g9TLcd5Ej0vU6J96FS0Nbbd1Gajj74wRnWcwufnL2RdQlnmtiu3+g
+         jHWIuBNMT3G3iLmCbDVQjXRTPXRwf5Ynbq8U0sK66wWqfUd+fhmIiUlviMdFvdJtdyrN
+         lqJeXFXkzLtU4HowBxU1fKiCcxz1he39jCNBqMlqVGila1Q2lDmoP5NYY//aNGYawvLA
+         hEyw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1iMM4BUdKJn4zI+1GY1ksSKpbt4aBuiezBkzDP7yasV7WitM5AIlUOaCRZFT/B2iSJ7rwy6l1tCUUu/n0xN9HrSpp/H1FIGwVZteyjli5WIcCNyhUmt3u1gHhhgNFW+Qs7OlpUQ6Vr77/SYDp2ai2ZA82XozPzkcrHPjhb0zsteKp4RL9GZFJ
+X-Gm-Message-State: AOJu0YyxOamNzTHnqsoIe4lQ03UW+urxTZqmQM8iIPsoY6JdnUOl2GhV
+	7HCVVq0N1QDww43puWL8eNv+camAtk7Pfdm3l3U782LtozvuXetwJSXKYFTQlEfOG5RiOc0enSW
+	dvZBOSg8vjcT4DhmLvGDOjIZj/4c=
+X-Google-Smtp-Source: AGHT+IE6k6jkC8soHuhF1UAvmWBUGOJEeJmvZcTjFrXx9tN32I5U8WvEF79pt2abgUumNMCCZykVhqG90c2xr7MI1JQ=
+X-Received: by 2002:a05:620a:3954:b0:7a2:317:a845 with SMTP id
+ af79cd13be357-7a4c1781a52mr112774385a.2.1723199685925; Fri, 09 Aug 2024
+ 03:34:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFtHQY41PbRwGxge1Wo=8D4ocZfQgRUO47-PF1eJCEr0Sw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+References: <cover.1723144881.git.josef@toxicpanda.com> <b8c3f0d9ed6d23f9a636919e28293cdbbe22e0db.1723144881.git.josef@toxicpanda.com>
+In-Reply-To: <b8c3f0d9ed6d23f9a636919e28293cdbbe22e0db.1723144881.git.josef@toxicpanda.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 9 Aug 2024 12:34:34 +0200
+Message-ID: <CAOQ4uxivX+mxfpOUTAsxHVoCGb9YHdi-qHswN9O4EJ53sKUVfw@mail.gmail.com>
+Subject: Re: [PATCH v2 13/16] fsnotify: generate pre-content permission event
+ on page fault
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	brauner@kernel.org, linux-xfs@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-bcachefs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024 at 11:35:09AM -0700, Jeff Xu wrote:
-> On Tue, Jul 23, 2024 at 6:15 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Fri, Jul 19, 2024 at 08:27:18AM -0700, Jeff Xu wrote:
-> > > On Fri, Jul 19, 2024 at 8:04 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > >
-> > > > On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
-> > > > > On Fri, Jul 19, 2024 at 1:45 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > >
-> > > > > > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
-> > > > > > > On Thu, Jul 18, 2024 at 5:24 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > >
-> > > > > > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > > > > > > > On Wed, Jul 17, 2024 at 3:01 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wrote:
-> > > > > > > > > > > On Thu, Jul 4, 2024 at 12:02 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> > > > > > > > > > > > allowed for execution.  The main use case is for script interpreters and
-> > > > > > > > > > > > dynamic linkers to check execution permission according to the kernel's
-> > > > > > > > > > > > security policy. Another use case is to add context to access logs e.g.,
-> > > > > > > > > > > > which script (instead of interpreter) accessed a file.  As any
-> > > > > > > > > > > > executable code, scripts could also use this check [1].
-> > > > > > > > > > > >
-> > > > > > > > > > > > This is different than faccessat(2) which only checks file access
-> > > > > > > > > > > > rights, but not the full context e.g. mount point's noexec, stack limit,
-> > > > > > > > > > > > and all potential LSM extra checks (e.g. argv, envp, credentials).
-> > > > > > > > > > > > Since the use of AT_CHECK follows the exact kernel semantic as for a
-> > > > > > > > > > > > real execution, user space gets the same error codes.
-> > > > > > > > > > > >
-> > > > > > > > > > > So we concluded that execveat(AT_CHECK) will be used to check the
-> > > > > > > > > > > exec, shared object, script and config file (such as seccomp config),
-> > > > > >
-> > > > > > > > > > > I think binfmt_elf.c in the kernel needs to check the ld.so to make
-> > > > > > > > > > > sure it passes AT_CHECK, before loading it into memory.
-> > > > > > > > > >
-> > > > > > > > > > All ELF dependencies are opened and checked with open_exec(), which
-> > > > > > > > > > perform the main executability checks (with the __FMODE_EXEC flag).
-> > > > > > > > > > Did I miss something?
-> > > > > > > > > >
-> > > > > > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binfmt in the kernel.
-> > > > > > > > > The app can choose its own dynamic linker path during build, (maybe
-> > > > > > > > > even statically link one ?)  This is another reason that relying on a
-> > > > > > > > > userspace only is not enough.
-> > > > > > > >
-> > > > > > > > The kernel calls open_exec() on all dependencies, including
-> > > > > > > > ld-linux-x86-64.so.2, so these files are checked for executability too.
-> > > > > > > >
-> > > > > > > This might not be entirely true. iiuc, kernel  calls open_exec for
-> > > > > > > open_exec for interpreter, but not all its dependency (e.g. libc.so.6)
-> > > > > >
-> > > > > > Correct, the dynamic linker is in charge of that, which is why it must
-> > > > > > be enlighten with execveat+AT_CHECK and securebits checks.
-> > > > > >
-> > > > > > > load_elf_binary() {
-> > > > > > >    interpreter = open_exec(elf_interpreter);
-> > > > > > > }
-> > > > > > >
-> > > > > > > libc.so.6 is opened and mapped by dynamic linker.
-> > > > > > > so the call sequence is:
-> > > > > > >  execve(a.out)
-> > > > > > >   - open exec(a.out)
-> > > > > > >   - security_bprm_creds(a.out)
-> > > > > > >   - open the exec(ld.so)
-> > > > > > >   - call open_exec() for interruptor (ld.so)
-> > > > > > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so going through
-> > > > > > > the same check and code path as libc.so below ?
-> > > > > >
-> > > > > > open_exec() checks are enough.  LSMs can use this information (open +
-> > > > > > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user space
-> > > > > > request.
-> > > > > >
-> > > > > Then the ld.so doesn't go through the same security_bprm_creds() check
-> > > > > as other .so.
-> > > >
-> > > > Indeed, but...
-> > > >
-> > > My point is: we will want all the .so going through the same code
-> > > path, so  security_ functions are called consistently across all the
-> > > objects, And in the future, if we want to develop additional LSM
-> > > functionality based on AT_CHECK, it will be applied to all objects.
-> >
-> > I'll extend the doc to encourage LSMs to check for __FMODE_EXEC, which
-> > already is the common security check for all executable dependencies.
-> > As extra information, they can get explicit requests by looking at
-> > execveat+AT_CHECK call.
-> >
-> I agree that security_file_open + __FMODE_EXEC for checking all
-> the .so (e.g for executable memfd) is a better option  than checking at
-> security_bprm_creds_for_exec.
-> 
-> But then maybe execveat( AT_CHECK) can return after  calling alloc_bprm ?
-> See below call graph:
-> 
-> do_execveat_common (AT_CHECK)
-> -> alloc_bprm
-> ->->do_open_execat
-> ->->-> do_filp_open (__FMODE_EXEC)
-> ->->->->->->> security_file_open
-> -> bprm_execve
-> ->-> prepare_exec_creds
-> ->->-> prepare_creds
-> ->->->-> security_prepare_creds
-> ->-> security_bprm_creds_for_exec
-> 
-> What is the consideration to mark the end at
-> security_bprm_creds_for_exec ? i.e. including brpm_execve,
-> prepare_creds, security_prepare_creds, security_bprm_creds_for_exec.
+On Thu, Aug 8, 2024 at 9:28=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> w=
+rote:
+>
+> FS_PRE_ACCESS or FS_PRE_MODIFY will be generated on page fault depending
+> on the faulting method.
+>
+> This pre-content event is meant to be used by hierarchical storage
+> managers that want to fill in the file content on first read access.
+>
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  include/linux/mm.h |  2 +
+>  mm/filemap.c       | 97 ++++++++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 92 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ab3d78116043..c33f3b7f7261 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3503,6 +3503,8 @@ extern vm_fault_t filemap_fault(struct vm_fault *vm=
+f);
+>  extern vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>                 pgoff_t start_pgoff, pgoff_t end_pgoff);
+>  extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
+> +extern vm_fault_t filemap_maybe_emit_fsnotify_event(struct vm_fault *vmf=
+,
+> +                                                   struct file **fpin);
+>
+>  extern unsigned long stack_guard_gap;
+>  /* Generic expand stack which grows the stack according to GROWS{UP,DOWN=
+} */
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 8b1684b62177..3d232166b051 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -46,6 +46,7 @@
+>  #include <linux/pipe_fs_i.h>
+>  #include <linux/splice.h>
+>  #include <linux/rcupdate_wait.h>
+> +#include <linux/fsnotify.h>
+>  #include <asm/pgalloc.h>
+>  #include <asm/tlbflush.h>
+>  #include "internal.h"
+> @@ -3112,13 +3113,13 @@ static int lock_folio_maybe_drop_mmap(struct vm_f=
+ault *vmf, struct folio *folio,
+>   * that.  If we didn't pin a file then we return NULL.  The file that is
+>   * returned needs to be fput()'ed when we're done with it.
+>   */
+> -static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+> +static struct file *do_sync_mmap_readahead(struct vm_fault *vmf,
+> +                                          struct file *fpin)
+>  {
+>         struct file *file =3D vmf->vma->vm_file;
+>         struct file_ra_state *ra =3D &file->f_ra;
+>         struct address_space *mapping =3D file->f_mapping;
+>         DEFINE_READAHEAD(ractl, file, ra, mapping, vmf->pgoff);
+> -       struct file *fpin =3D NULL;
+>         unsigned long vm_flags =3D vmf->vma->vm_flags;
+>         unsigned int mmap_miss;
+>
+> @@ -3190,12 +3191,12 @@ static struct file *do_sync_mmap_readahead(struct=
+ vm_fault *vmf)
+>   * was pinned if we have to drop the mmap_lock in order to do IO.
+>   */
+>  static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
+> -                                           struct folio *folio)
+> +                                           struct folio *folio,
+> +                                           struct file *fpin)
+>  {
+>         struct file *file =3D vmf->vma->vm_file;
+>         struct file_ra_state *ra =3D &file->f_ra;
+>         DEFINE_READAHEAD(ractl, file, ra, file->f_mapping, vmf->pgoff);
+> -       struct file *fpin =3D NULL;
+>         unsigned int mmap_miss;
+>
+>         /* See comment in do_sync_mmap_readahead. */
+> @@ -3260,6 +3261,72 @@ static vm_fault_t filemap_fault_recheck_pte_none(s=
+truct vm_fault *vmf)
+>         return ret;
+>  }
+>
+> +/**
+> + * filemap_maybe_emit_fsnotify_event - maybe emit a pre-content event.
+> + * @vmf:       struct vm_fault containing details of the fault.
+> + * @fpin:      pointer to the struct file pointer that may be pinned.
+> + *
+> + * If we have pre-content watches on this file we will need to emit an e=
+vent for
+> + * this range.  We will handle dropping the lock and emitting the event.
+> + *
+> + * If FAULT_FLAG_RETRY_NOWAIT is set then we'll return VM_FAULT_RETRY.
+> + *
+> + * If no event was emitted then *fpin will be NULL and we will return 0.
+> + *
+> + * If any error occurred we will return VM_FAULT_SIGBUS, *fpin could sti=
+ll be
+> + * set and will need to have fput() called on it.
+> + *
+> + * If we emitted the event then we will return 0 and *fpin will be set, =
+this
+> + * must have fput() called on it, and the caller must call VM_FAULT_RETR=
+Y after
+> + * any other operations it does in order to re-fault the page and make s=
+ure the
+> + * appropriate locking is maintained.
+> + *
+> + * Return: the appropriate vm_fault_t return code, 0 on success.
+> + */
+> +vm_fault_t filemap_maybe_emit_fsnotify_event(struct vm_fault *vmf,
+> +                                            struct file **fpin)
+> +{
+> +       struct file *file =3D vmf->vma->vm_file;
+> +       loff_t pos =3D vmf->pgoff << PAGE_SHIFT;
+> +       int mask =3D (vmf->flags & FAULT_FLAG_WRITE) ? MAY_WRITE : MAY_RE=
+AD;
 
-This enables LSMs to know/log an explicit execution request, including
-context with argv and envp.
+You missed my comment about using MAY_ACCESS here
+and alter fsnotify hook, so legacy FAN_ACCESS_PERM event
+won't be generated from page fault.
 
-> 
-> Since dynamic linker doesn't load ld.so (it is by kernel),  ld.so
-> won't go through those  security_prepare_creds and
-> security_bprm_creds_for_exec checks like other .so do.
+Thanks,
+Amir.
 
-Yes, but this is not an issue nor an explicit request. ld.so is only one
-case of this patch series.
-
-> 
-> > >
-> > > Another thing to consider is:  we are asking userspace to make
-> > > additional syscall before  loading the file into memory/get executed,
-> > > there is a possibility for future expansion of the mechanism, without
-> > > asking user space to add another syscall again.
-> >
-> > AT_CHECK is defined with a specific semantic.  Other mechanisms (e.g.
-> > LSM policies) could enforce other restrictions following the same
-> > semantic.  We need to keep in mind backward compatibility.
-> >
-> > >
-> > > I m still not convinced yet that execveat(AT_CHECK) fits more than
-> > > faccessat(AT_CHECK)
-> >
-> > faccessat2(2) is dedicated to file permission/attribute check.
-> > execveat(2) is dedicated to execution, which is a superset of file
-> > permission for executability, plus other checks (e.g. noexec).
-> >
-> That sounds reasonable, but if execveat(AT_CHECK) changes behavior of
-> execveat(),  someone might argue that faccessat2(EXEC_CHECK) can be
-> made for the executability.
-
-AT_CHECK, as any other syscall flags, changes the behavior of execveat,
-but the overall semantic is clearly defined.
-
-Again, faccessat2 is only dedicated to file attributes/permissions, not
-file executability.
-
-> 
-> I think the decision might depend on what this PATCH intended to
-> check, i.e. where we draw the line.
-
-The goal is clearly defined in the cover letter and patches: makes it
-possible to control (or log) script execution.
-
-> 
-> do_open_execat() seems to cover lots of checks for executability, if
-> we are ok with the thing that do_open_execat() checks, then
-> faccessat(AT_CHECK) calling do_open_execat() is an option, it  won't
-> have those "unrelated" calls  in execve path, e.g.  bprm_stack_limits,
-> copy argc/env .
-
-I don't thing there is any unrelated calls in execve path, quite the
-contrary, it follows the same semantic as for a full execution, and
-that's another argument to use the execveat interface.  Otherwise, we
-couldn't argue that `./script.sh` can be the same as `sh script.sh`
-
-The only difference is that user space is in charge of parsing and
-interpreting the file's content.
-
-> 
-> However, you mentioned superset of file permission for executability,
-> can you elaborate on that ? Is there something not included in
-> do_open_execat() but still necessary for execveat(AT_CHECK)? maybe
-> security_bprm_creds_for_exec? (this goes back to my  question above)
-
-As explained above, the goal is to have the same semantic as a full
-execveat call, taking into account all the checks (e.g. stack limit,
-argv/envp...).
-
-> 
-> Thanks
-> Best regards,
-> -Jeff
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> > >
-> > >
-> > > > >
-> > > > > As my previous email, the ChromeOS LSM restricts executable mfd
-> > > > > through security_bprm_creds(), the end result is that ld.so can still
-> > > > > be executable memfd, but not other .so.
-> > > >
-> > > > The chromeOS LSM can check that with the security_file_open() hook and
-> > > > the __FMODE_EXEC flag, see Landlock's implementation.  I think this
-> > > > should be the only hook implementation that chromeOS LSM needs to add.
-> > > >
-> > > > >
-> > > > > One way to address this is to refactor the necessary code from
-> > > > > execveat() code patch, and make it available to call from both kernel
-> > > > > and execveat() code paths., but if we do that, we might as well use
-> > > > > faccessat2(AT_CHECK)
-> > > >
-> > > > That's why I think it makes sense to rely on the existing __FMODE_EXEC
-> > > > information.
-> > > >
-> > > > >
-> > > > >
-> > > > > > >   - transfer the control to ld.so)
-> > > > > > >   - ld.so open (libc.so)
-> > > > > > >   - ld.so call execveat(AT_CHECK,libc.so) <-- proposed by this patch,
-> > > > > > > require dynamic linker change.
-> > > > > > >   - ld.so mmap(libc.so,rx)
-> > > > > >
-> > > > > > Explaining these steps is useful. I'll include that in the next patch
-> > > > > > series.
-> > >
-> 
+> +       int ret;
+> +
+> +       /*
+> +        * We already did this and now we're retrying with everything loc=
+ked,
+> +        * don't emit the event and continue.
+> +        */
+> +       if (vmf->flags & FAULT_FLAG_TRIED)
+> +               return 0;
+> +
+> +       /* No watches, return NULL. */
+> +       if (!fsnotify_file_has_pre_content_watches(file))
+> +               return 0;
+> +
+> +       /* We are NOWAIT, we can't wait, just return EAGAIN. */
+> +       if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
+> +               return VM_FAULT_RETRY;
+> +
+> +       /*
+> +        * If this fails then we're not allowed to drop the fault lock, r=
+eturn a
+> +        * SIGBUS so we don't errantly populate pagecache with bogus data=
+ for
+> +        * this file.
+> +        */
+> +       *fpin =3D maybe_unlock_mmap_for_io(vmf, *fpin);
+> +       if (*fpin =3D=3D NULL)
+> +               return VM_FAULT_SIGBUS | VM_FAULT_RETRY;
+> +
+> +       /*
+> +        * We can't fput(*fpin) at this point because we could have been =
+passed
+> +        * in fpin from a previous call.
+> +        */
+> +       ret =3D fsnotify_file_area_perm(*fpin, mask, &pos, PAGE_SIZE);
+> +       if (ret)
+> +               return VM_FAULT_SIGBUS;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(filemap_maybe_emit_fsnotify_event);
+> +
+>  /**
+>   * filemap_fault - read in file data for page fault handling
+>   * @vmf:       struct vm_fault containing details of the fault
+> @@ -3299,6 +3366,19 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>         if (unlikely(index >=3D max_idx))
+>                 return VM_FAULT_SIGBUS;
+>
+> +       /*
+> +        * If we have pre-content watchers then we need to generate event=
+s on
+> +        * page fault so that we can populate any data before the fault.
+> +        */
+> +       ret =3D filemap_maybe_emit_fsnotify_event(vmf, &fpin);
+> +       if (unlikely(ret)) {
+> +               if (fpin) {
+> +                       fput(fpin);
+> +                       ret |=3D VM_FAULT_RETRY;
+> +               }
+> +               return ret;
+> +       }
+> +
+>         /*
+>          * Do we have something in the page cache already?
+>          */
+> @@ -3309,21 +3389,24 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>                  * the lock.
+>                  */
+>                 if (!(vmf->flags & FAULT_FLAG_TRIED))
+> -                       fpin =3D do_async_mmap_readahead(vmf, folio);
+> +                       fpin =3D do_async_mmap_readahead(vmf, folio, fpin=
+);
+>                 if (unlikely(!folio_test_uptodate(folio))) {
+>                         filemap_invalidate_lock_shared(mapping);
+>                         mapping_locked =3D true;
+>                 }
+>         } else {
+>                 ret =3D filemap_fault_recheck_pte_none(vmf);
+> -               if (unlikely(ret))
+> +               if (unlikely(ret)) {
+> +                       if (fpin)
+> +                               goto out_retry;
+>                         return ret;
+> +               }
+>
+>                 /* No page in the page cache at all */
+>                 count_vm_event(PGMAJFAULT);
+>                 count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+>                 ret =3D VM_FAULT_MAJOR;
+> -               fpin =3D do_sync_mmap_readahead(vmf);
+> +               fpin =3D do_sync_mmap_readahead(vmf, fpin);
+>  retry_find:
+>                 /*
+>                  * See comment in filemap_create_folio() why we need
+> --
+> 2.43.0
+>
 
