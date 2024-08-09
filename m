@@ -1,83 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-25528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6F694D1EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 16:14:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051E294D1F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 16:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D48A1F2376D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 14:14:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EFAFB20D27
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 14:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F5019755E;
-	Fri,  9 Aug 2024 14:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560ED18E749;
+	Fri,  9 Aug 2024 14:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="ODYrNe7g"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="p2e6ZgVc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B88319753F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 14:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FEB195FEA
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 14:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723212850; cv=none; b=sX5Q9NmGWoBshj49pQ9QasJfZCql8L5LCqOXGz3OaDk+6kn0oy8/g/fIjRjRKPkAsT6sZ4hLZjdvqCrq8jg+OVNyIyyH27w2sa+hGiR6MHGM9N0vn9TRWnSKTvJPLm7DFgFJH6QiYTtSNf32xlJfIADVi7Xntle/2bOYtUSprWc=
+	t=1723212952; cv=none; b=PKOeQ7Y/9XXfHDMELoUWzUH+XPYSoJi8tLr7EFbFV8dIiU82Wkc8CnBuxH9/hzDyAPCibaRmwZR7NMnyxRSwKE3m4lh0gvFI8sRZeEFNqImYeytxMTWmYaabGMmK5H8kTtZ7mPkqpLpfbNwz2OMvgbH+w/LrqEXlMbBcY9VFkBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723212850; c=relaxed/simple;
-	bh=Qg6peh4W1uw0keiI+fBLVAXx38shr6oNqapP+0hqOSU=;
+	s=arc-20240116; t=1723212952; c=relaxed/simple;
+	bh=LpyRcD+ea3Jdp/nt2MlljsOpqITTF/5WPLQdiyEFQoc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O5yIotNCNXMVn2XPFQHOl5CTufMgubTMquaDhec16k6uh4WzAxtUqqEZ9JbVlykefMUk5WovP0T84pUXwtyVt+r0lh4anxLcq99zQR+5IJNwFYhe2SIejlPwgMZCYndjxO8StzqERa7LEFHJB0xCrTovIZrBUo+UIxa7KoHF2qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=ODYrNe7g; arc=none smtp.client-ip=209.85.222.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3bEziGcrq0weLBurLhRPnW4bdy68jp+o3Pu8+stdY6j+Bg6OFCis5XQywL/GwYEPI61resXwCSY78auNcMfJBphZ65FDRMan7xqKOkzFl5bCLwnT2xvohGhsl5hvVMQOhh8ZewwqhuM04LVOlG7OWZibBXzZfNR57Ra3Y1iVIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=p2e6ZgVc; arc=none smtp.client-ip=209.85.210.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a1d3e93cceso290420385a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 07:14:07 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7093abb12edso1448843a34.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 07:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723212847; x=1723817647; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723212950; x=1723817750; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqaU4YPFEFPDpzs7lhUNFHbREIXhMM3YN1rP0YBOnz0=;
-        b=ODYrNe7gS+8FY/1cOHIY1BWqhxtCTjJKGW6zRGnFn4cQxcxl52cRpMHhjys3zoLIQ1
-         BnkpePuBZWItU8F5lZM/JZ7uYfZaCSP6boqovwl56qlfc4kU6cDDYgb71JOpogQId0Hm
-         iG7MIGaNtn0IXuha1h60DAmYW4r1Owu6LT16pXtGRqpDkdkwxDcR24jcrSWwMMHOzhCl
-         wr7d4ze3yuZZftk3Rvazkaa5SDkMflx+TxZgvScXBX/Z6R8YIyzsTP0E9mvCL4M34Dt0
-         n0iO2JOWH95kIgVR1YfmJqwEbIagE4sogAnN3J8DTmFcgMjpCH5C+x15/cUtKpR/NIq9
-         OmkA==
+        bh=qjz2iKWP20OEyPShdLMLvLzhS5bKm3+7Fe0VrhQtc4A=;
+        b=p2e6ZgVc8HRvca6+qmNO22eUNW5XLtUUY0ANVyzCXyBAYZe8WaORYSWePoOfQ1/3i9
+         O6gMkqL/rIPAFHXiTutd5VyMyaR/TxmApqfgKj3wQRf/R7KJOCLsggGkslCvZLAG3xPf
+         EN7GLdsAZR4Z1CE6jyUvtX8ilFEJCWoyRXwLltFGHZ+RW3u/GxJr7g3vHuBhJ8b310uH
+         CyIyeFSxXrAymMkANSUmCHPToh0JHEDDVbM6esCKgllNzy0xLP0eRPso8kPVCE7aXBaU
+         6TkTyK3IxIRxp1wC89QX7hwFS92BYAF7ubduMjgP6WlNdd0lhacGSYHbAdjR5LOYpLMn
+         DwFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723212847; x=1723817647;
+        d=1e100.net; s=20230601; t=1723212950; x=1723817750;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VqaU4YPFEFPDpzs7lhUNFHbREIXhMM3YN1rP0YBOnz0=;
-        b=Uc2g4UxDRrKmA/KwBSe/SeprPxajPVBnR1rZK65D49cYz9NE8j/W2CsyWvRnGaV8Dy
-         7lDfKjKf7ETA8W9hilbI86kZ24wZEtTs7rxaG85ejuumMDdye0aB/U+N+9iOp6cxa/ni
-         8OAgZ0v8trxAOYJuILNWWHLsKxkbs0KzEKYKQiIbiZPc1D+uvbhUln54rbKIVA/LkaW+
-         dUFRJ8CHYMXajoWc8OdMxrfqkIVDA+iooojYNlcVTUOQk+RVYs+mHKEsoIjNmN0773Ib
-         sL/xreGRWvthTipTy/HU90HFHkjcFLSgMQTH3dVWERmYO3BBEwidsJtY62ktJpMyWRr2
-         q2NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkS90cqSkKihKBXACIcc7Mt8RmKO7DeZJb/Pksb0zA6EXkMIcpU4KP1w+IlxBP8qB4BbUpylS2+8vewskZKQSlOBgWwjWNyGosda3WNQ==
-X-Gm-Message-State: AOJu0Yz9rQOnDldmkMnHUkXjok8Tw0Rov8LkI5EJBlwF6eZ4TPdu/gZk
-	7SDHNl09dTZmqDy7jRlWOP9Yb/z5Hk5tLZL9xKsDVU+Ct9GmElG4dUzFvM66PSI=
-X-Google-Smtp-Source: AGHT+IFT+KF5iW1aowJACdjt8G3RckzwQvK6JrXZ1GVqd3fvEF1GJIW4kFtFzdJDQJxs+Zm/R8rhtw==
-X-Received: by 2002:a05:620a:2991:b0:7a1:da71:e73a with SMTP id af79cd13be357-7a38245db34mr934984485a.2.1723212846746;
-        Fri, 09 Aug 2024 07:14:06 -0700 (PDT)
+        bh=qjz2iKWP20OEyPShdLMLvLzhS5bKm3+7Fe0VrhQtc4A=;
+        b=CnFXqYEPbn+DHXxhd6I/I4TD3d7H7nS1FygcQRA7CVeXR98BhQ/81RFut2cMJnJ3hW
+         QB9Flf4hclXhSEBQuTnj1emfNSKVV4m95KOgHfyERwQvwbQLwaKzhIRoMXimH5IoAPRh
+         FhX5cjxgBvzYFPWdQAEUDmpHKX4Agz+XyNj7qVLFKiNLClSE7fnJErQz1n7SeILLzRdo
+         Us2dsXRRwBupV79hZpdTUmiPpyJ1LqLRdd9TsRpG8a3A+I/UZ0+GhHqZSokVB3CpLK8r
+         HpOkKwA/cqKYN6m19NLHVDswzTGR+e87OgEO+WeTipJHrT0aqN10rCKxTbM0fBBkmHVO
+         q6Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZcwG6Hmj1YBFaiVxoliog2cSr6+ImN3VQNNRAL0mAUrepScMHUWYJ8gK2HQ1/QUgekf8x4Oe7LYaDOoMnncku0dPxWkHTegU1j39aYA==
+X-Gm-Message-State: AOJu0Yw0ui5j4ezx3NV7iDBhgXIeEDc0k5etaw6L+CSZFjqCH2TbT5P7
+	xYvbUVkR5CCFVe+BxWJtmU4HcAa4PH4CrKA3lJsS0awYsCG56dX7rm5O3Kado0Y=
+X-Google-Smtp-Source: AGHT+IGEYKuTYzX7n9Q4WkJAqsc2BKy4Op03cbPrmVLdwnUtrw0LcKrosgOY3AEQ0Vv59SDfcwKgvw==
+X-Received: by 2002:a05:6830:611a:b0:703:5c2d:56a7 with SMTP id 46e09a7af769-70b74879a7cmr2362612a34.24.1723212949757;
+        Fri, 09 Aug 2024 07:15:49 -0700 (PDT)
 Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3786f7680sm261656985a.133.2024.08.09.07.14.06
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3785e1f93sm265995685a.38.2024.08.09.07.15.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 07:14:06 -0700 (PDT)
-Date: Fri, 9 Aug 2024 10:14:05 -0400
+        Fri, 09 Aug 2024 07:15:49 -0700 (PDT)
+Date: Fri, 9 Aug 2024 10:15:48 -0400
 From: Josef Bacik <josef@toxicpanda.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
-	laoar.shao@gmail.com, kernel-team@meta.com
-Subject: Re: [PATCH v3 1/2] fuse: add optional kernel-enforced timeout for
- requests
-Message-ID: <20240809141405.GA645452@perftesting>
-References: <20240808190110.3188039-1-joannelkoong@gmail.com>
- <20240808190110.3188039-2-joannelkoong@gmail.com>
- <20240808205006.GA625513@perftesting>
+To: Dave Chinner <david@fromorbit.com>
+Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	amir73il@gmail.com, brauner@kernel.org, linux-xfs@vger.kernel.org,
+	gfs2@lists.linux.dev, linux-bcachefs@vger.kernel.org
+Subject: Re: [PATCH v2 16/16] xfs: add pre-content fsnotify hook for write
+ faults
+Message-ID: <20240809141548.GB645452@perftesting>
+References: <cover.1723144881.git.josef@toxicpanda.com>
+ <aa122a96b7fde9bb49176a1b6c26fcb1e0291a37.1723144881.git.josef@toxicpanda.com>
+ <ZrVAvQLfP8fNSJwx@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,140 +86,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240808205006.GA625513@perftesting>
+In-Reply-To: <ZrVAvQLfP8fNSJwx@dread.disaster.area>
 
-On Thu, Aug 08, 2024 at 04:50:06PM -0400, Josef Bacik wrote:
-> On Thu, Aug 08, 2024 at 12:01:09PM -0700, Joanne Koong wrote:
-> > There are situations where fuse servers can become unresponsive or take
-> > too long to reply to a request. Currently there is no upper bound on
-> > how long a request may take, which may be frustrating to users who get
-> > stuck waiting for a request to complete.
+On Fri, Aug 09, 2024 at 08:03:41AM +1000, Dave Chinner wrote:
+> On Thu, Aug 08, 2024 at 03:27:18PM -0400, Josef Bacik wrote:
+> > xfs has it's own handling for write faults, so we need to add the
+> > pre-content fsnotify hook for this case.  Reads go through filemap_fault
+> > so they're handled properly there.
 > > 
-> > This commit adds a timeout option (in seconds) for requests. If the
-> > timeout elapses before the server replies to the request, the request
-> > will fail with -ETIME.
-> > 
-> > There are 3 possibilities for a request that times out:
-> > a) The request times out before the request has been sent to userspace
-> > b) The request times out after the request has been sent to userspace
-> > and before it receives a reply from the server
-> > c) The request times out after the request has been sent to userspace
-> > and the server replies while the kernel is timing out the request
-> > 
-> > While a request timeout is being handled, there may be other handlers
-> > running at the same time if:
-> > a) the kernel is forwarding the request to the server
-> > b) the kernel is processing the server's reply to the request
-> > c) the request is being re-sent
-> > d) the connection is aborting
-> > e) the device is getting released
-> > 
-> > Proper synchronization must be added to ensure that the request is
-> > handled correctly in all of these cases. To this effect, there is a new
-> > FR_FINISHING bit added to the request flags, which is set atomically by
-> > either the timeout handler (see fuse_request_timeout()) which is invoked
-> > after the request timeout elapses or set by the request reply handler
-> > (see dev_do_write()), whichever gets there first. If the reply handler
-> > and the timeout handler are executing simultaneously and the reply handler
-> > sets FR_FINISHING before the timeout handler, then the request will be
-> > handled as if the timeout did not elapse. If the timeout handler sets
-> > FR_FINISHING before the reply handler, then the request will fail with
-> > -ETIME and the request will be cleaned up.
-> > 
-> > Currently, this is the refcount lifecycle of a request:
-> > 
-> > Synchronous request is created:
-> > fuse_simple_request -> allocates request, sets refcount to 1
-> >   __fuse_request_send -> acquires refcount
-> >     queues request and waits for reply...
-> > fuse_simple_request -> drops refcount
-> > 
-> > Background request is created:
-> > fuse_simple_background -> allocates request, sets refcount to 1
-> > 
-> > Request is replied to:
-> > fuse_dev_do_write
-> >   fuse_request_end -> drops refcount on request
-> > 
-> > Proper acquires on the request reference must be added to ensure that the
-> > timeout handler does not drop the last refcount on the request while
-> > other handlers may be operating on the request. Please note that the
-> > timeout handler may get invoked at any phase of the request's
-> > lifetime (eg before the request has been forwarded to userspace, etc).
-> > 
-> > It is always guaranteed that there is a refcount on the request when the
-> > timeout handler is executing. The timeout handler will be either
-> > deactivated by the reply/abort/release handlers, or if the timeout
-> > handler is concurrently executing on another CPU, the reply/abort/release
-> > handlers will wait for the timeout handler to finish executing first before
-> > it drops the final refcount on the request.
-> > 
-> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > > ---
-> >  fs/fuse/dev.c    | 197 +++++++++++++++++++++++++++++++++++++++++++++--
-> >  fs/fuse/fuse_i.h |  14 ++++
-> >  fs/fuse/inode.c  |   7 ++
-> >  3 files changed, 210 insertions(+), 8 deletions(-)
+> >  fs/xfs/xfs_file.c | 20 +++++++++++++++++---
+> >  1 file changed, 17 insertions(+), 3 deletions(-)
 > > 
-> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > index 9eb191b5c4de..bcb9ff2156c0 100644
-> > --- a/fs/fuse/dev.c
-> > +++ b/fs/fuse/dev.c
-> > @@ -31,6 +31,8 @@ MODULE_ALIAS("devname:fuse");
-> >  
-> >  static struct kmem_cache *fuse_req_cachep;
-> >  
-> > +static void fuse_request_timeout(struct timer_list *timer);
-> > +
-> >  static struct fuse_dev *fuse_get_dev(struct file *file)
+> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > index 4cdc54dc9686..585a8c2eea0f 100644
+> > --- a/fs/xfs/xfs_file.c
+> > +++ b/fs/xfs/xfs_file.c
+> > @@ -1325,14 +1325,28 @@ __xfs_filemap_fault(
+> >  	bool			write_fault)
 > >  {
-> >  	/*
-> > @@ -48,6 +50,8 @@ static void fuse_request_init(struct fuse_mount *fm, struct fuse_req *req)
-> >  	refcount_set(&req->count, 1);
-> >  	__set_bit(FR_PENDING, &req->flags);
-> >  	req->fm = fm;
-> > +	if (fm->fc->req_timeout)
-> > +		timer_setup(&req->timer, fuse_request_timeout, 0);
-> >  }
+> >  	struct inode		*inode = file_inode(vmf->vma->vm_file);
+> > +	struct file		*fpin = NULL;
+> > +	vm_fault_t		ret;
 > >  
-> >  static struct fuse_req *fuse_request_alloc(struct fuse_mount *fm, gfp_t flags)
-> > @@ -277,7 +281,7 @@ static void flush_bg_queue(struct fuse_conn *fc)
-> >   * the 'end' callback is called if given, else the reference to the
-> >   * request is released
-> >   */
-> > -void fuse_request_end(struct fuse_req *req)
-> > +static void do_fuse_request_end(struct fuse_req *req)
-> >  {
-> >  	struct fuse_mount *fm = req->fm;
-> >  	struct fuse_conn *fc = fm->fc;
-> > @@ -296,8 +300,6 @@ void fuse_request_end(struct fuse_req *req)
-> >  		list_del_init(&req->intr_entry);
-> >  		spin_unlock(&fiq->lock);
-> >  	}
-> > -	WARN_ON(test_bit(FR_PENDING, &req->flags));
-> > -	WARN_ON(test_bit(FR_SENT, &req->flags));
-> >  	if (test_bit(FR_BACKGROUND, &req->flags)) {
-> >  		spin_lock(&fc->bg_lock);
-> >  		clear_bit(FR_BACKGROUND, &req->flags);
-> > @@ -329,8 +331,104 @@ void fuse_request_end(struct fuse_req *req)
-> >  put_request:
-> >  	fuse_put_request(req);
-> >  }
+> >  	trace_xfs_filemap_fault(XFS_I(inode), order, write_fault);
+> >  
+> > -	if (write_fault)
+> > -		return xfs_write_fault(vmf, order);
+> >  	if (IS_DAX(inode))
+> >  		return xfs_dax_read_fault(vmf, order);
+> > -	return filemap_fault(vmf);
 > > +
-> > +void fuse_request_end(struct fuse_req *req)
-> > +{
-> > +	WARN_ON(test_bit(FR_PENDING, &req->flags));
-> > +	WARN_ON(test_bit(FR_SENT, &req->flags));
-> > +
-> > +	if (req->timer.function)
-> > +		timer_delete_sync(&req->timer);
+> > +	if (!write_fault)
+> > +		return filemap_fault(vmf);
 > 
-> This becomes just timer_delete_sync();
-> 
+> Doesn't this break DAX read faults? i.e. they have to go through
+> xfs_dax_read_fault(), not filemap_fault().
 
-Err ignore this, I had another comment about always initializing the timer, but
-I realized why you're doing what you're doing and so this isn't relevant.
-Thanks,
+Oops my bad, I had it right before then decided to make it cleaner and forgot
+what the original code was doing, I'll fix it up, thanks!
 
 Josef
 
