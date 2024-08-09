@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-25553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E9294D59F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 19:51:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE39994D64B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 20:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C347D281A4E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 17:51:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52DD81F21EA8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 18:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4123C131182;
-	Fri,  9 Aug 2024 17:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118DB14B96C;
+	Fri,  9 Aug 2024 18:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFtbajqS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/u0iDyp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B8217557
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 17:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86C62F41
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 18:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723225874; cv=none; b=e7HU+WrgASjgZOcJPXjhVlbL7jYOgG9O0ZNHItv3RwO4alHT0DbTA4YzgJZ0h87TipSCAl6DBxpzSPgOyNslZmU6kSXnx7CC5cFW5Ewu2cKVnjkmXW3iW2FL3NGucpUgild4+7rYdcZE6bDYWU1BT9y93vw1YmboHkBNNSQK+7I=
+	t=1723228430; cv=none; b=YNxyhF54zULZW6nUWlH4pIdQSPQwoTC5XYXwsQCNXQ+HlmmxezhZ3Zc6bIodQblr/1HPpOcfc4fislJm7q8Hb2OWvphH5ub0iSoK0veFJt6DmqdEvfrdY022/+R/HUffVQ0t85oxU0z/SGhBiQ9x3RQDt1vt21O/TAAae19fWo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723225874; c=relaxed/simple;
-	bh=8IR/mkH0Guo+lIHaPZIHH364Mfd0Qt+Ka5F6UUOc2Fc=;
+	s=arc-20240116; t=1723228430; c=relaxed/simple;
+	bh=sax4dU70FQ1lE7PK7wnI+Xr5K5a1JNdBQ4rPk1vuiYA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jgNxrWmGTh6YT9V/4enD9pCudN2/rvnYt1wp+7/tvS2IJOp8LiBGtcLFm9+jgf3U6uKDAw6jSQy6Vf6wmRMOoyhmlxeyjif4/h6IDHxwadLuCvi0oDB8ZTfFS9y+W3/pkhRiVE0cnDBAGOxsEmkvkKapPFfJEQT1cRcNSSaM3xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WFtbajqS; arc=none smtp.client-ip=209.85.167.174
+	 To:Cc:Content-Type; b=A302RjGqqUorBk8+a0vWEic82ZoZuapsBn+yaNgMSMSD1b+A9zdV359+zmx+/RBsGWew2mAeY5ivCABeqBOjlBoxGmueuXT3pDlOu4A2r5Bl8/1SaTIglkXQCAlyGv0b2eb3JUuaWa1CBhvmmeabI+8tiUNVQ88Wd05mH3acIyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/u0iDyp; arc=none smtp.client-ip=209.85.167.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3dc16d00ba6so1549179b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 10:51:12 -0700 (PDT)
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3db23a608eeso1755287b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 11:33:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723225872; x=1723830672; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723228428; x=1723833228; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TS2/KCvCm9mnTGvHBImwiGBH87PYPwcsqmjF5lg3AwY=;
-        b=WFtbajqSFKfDCV5WfLdN/F/1UAtBEsbpi3QHU3zHr+qNqY+/dIyI4xgHPTTDc0Uv5C
-         qiafKT5krRiFhvE/HzVbFlYkXChHOMnZ0kHYoEVXjBgKzZkeOG44T4ic5xK2vxtxe3ix
-         cQA+CqBu6btqongAJz2NvykCGXw3n/pylqTVA7ojDRCa72JpbDMl0iDNfuxlZM/7/XVO
-         sXjWBkgQ6eMKZOBunuij/xzYB9a5ZTjilrpxfo+zeUV7BKMIf7576YV8CQwdt8OdIYKC
-         n3OVZyC7Kxlk2r3WeZR00Jvg2lH3tNAmfqxKfhf1wUx8wTMEQfyMJDFEx3sNW1BBwygb
-         O5iA==
+        bh=hn1UuRY15K5l6GZv+j73xbsfKIzYb4xUSwEmnFOdRc8=;
+        b=D/u0iDypGQK5ECUv1oPbkEOrDfVdAIbu2/BtN92V2+XqDMNSKnwRqBVpCG6a4fqbg+
+         vd41wgu1SfSHZYeFKugn/ppTAshkglEOD1sF+PFvfXMccKzZLlZJgQeAB6/DovpL30DP
+         C8aZMol3HyQao+jQkL/Mfy8zcGiMjiWTDzHxBR5Mz0/ZpBiygrbBPnAP+gLVwqBSemVB
+         Pu84fM3ihfKtNmGa3IFvnPHBP/OhFTMGNzFK/bOJEYKlaPP4wr8Xj8KNnT2oXKVZwjba
+         X7IrJ5FQdeSqASk5HvmXChYYCZDZHjHYAzAEIEJboDR4lVG7rxIb39S8Cbx/hs2+DbpR
+         UuWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723225872; x=1723830672;
+        d=1e100.net; s=20230601; t=1723228428; x=1723833228;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TS2/KCvCm9mnTGvHBImwiGBH87PYPwcsqmjF5lg3AwY=;
-        b=XqHd7Vm/U7y3B1j/DfHqhhW9+XE3Tj0hI6S4b5asdTM+PLTUqWpfkzeDfPgXbdkhOP
-         Tpa00Px4bRLH9sXzXC/rl68IEKjqub7pYPVnubY9Edm2TILyoosOqljVgeCHXUeQvjkq
-         LRoLuEO9fatC3LKl53q+jCYkHx/fJ3acQnaONKJ+Mc/jG7C5P14ep0DPYUfHhWU6pFUm
-         AFpViHnezU0JIoygwu/9p/QtC7smsh9bRikNTjHg8fL7Y4bmaPV6fVhIZzZhSqldTiVr
-         uiZlQNAK2S+/2odvoWU7m+RqnT24nxguFg9yYtEn6IpFDvR89ZXk8gof3cSdpIFAmfyf
-         ajvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXU3/a34pFVup/RpLFwyLtc4KO4hDHwT9IA+NxpwAFzX0f5s5LsV2uYoWBVZZDEKqCJYxG/EiuNSvvLrHitMqZITuNjawhxbPKHTXigiQ==
-X-Gm-Message-State: AOJu0YwM+q9M3Vh1a9aAHaQBzU2e00E5F+IZQ1TeoCAi/5+1uCIkuZ6s
-	f+lPqtYZ8IFuGPU9IeS+pcFCA6QlXxfjI7/yybCOV7hMT6eOMYRBAQGw03cVWWj1CvC8/dDegVa
-	/8M79FxF5/Hp3DFvoo3vFHuD4Cts=
-X-Google-Smtp-Source: AGHT+IEl/SZIvc9NUrbSCR7IzO5/uT0y1+GkJpIGkk4JphWLR4sOvpAzWVikRCLpQbD9k0CAJaw6RnsEhnwFTuFzG5k=
-X-Received: by 2002:a05:6808:148f:b0:3d5:6504:6713 with SMTP id
- 5614622812f47-3dc416e3c8emr2524896b6e.43.1723225871812; Fri, 09 Aug 2024
- 10:51:11 -0700 (PDT)
+        bh=hn1UuRY15K5l6GZv+j73xbsfKIzYb4xUSwEmnFOdRc8=;
+        b=vsp5GihhqlqIsb59iFsRHbo+gAWdzxHreb9GmOTFI1LtF3h4IMtZXhD/HkUchPtkgQ
+         cBhFR9ueiJXeG3diMsHiaVchxJpdhfTc9O7klAH/nwfzLn2aE/DpQiWzFKg3FUKYzJt0
+         dKM2jc8uL8ILf3i4kTiI3xZLbz2oA4R7SdlYPeCgaWUCf77ww9qrlaLJeqYtDOKqrXFN
+         qEESGxH+Dz7yqiy5f9JMUfb0+4ckKOpKMshHg9muwRvwX7DIdJTaoqYXaJ3ghpjJv5pM
+         49rD3fdpz2pz6cIupSXDoPGurmoffHl8ggTa7+t5C9x6FdRY/MsPxut+I8YctGA0sUcD
+         BH0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOvDCY7RfoaShV5crBR1IJLDJphgHdwnhopR6h3iexZOGV8konbeFTtF0CcFmqPI7oH5/ypAWWkLv4PwcR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxNwQ7540g2gmNqQOjXb2tvODIWuxuI1pNqr73B4JxQsckLezL
+	e23LNPQxOC2TwReKewSiP5dMAGnqX/fXfaFJfGlOdCTfZTl6e7sf5LkZCaOAJhmkoQsPzh9hrDh
+	beKzjCRTUNDsqEXVA6nR7KqRPpS0=
+X-Google-Smtp-Source: AGHT+IEhkfdVX8aJJDAR/jJORDA50Dx9qePNs/Q1q9lZ3/LOB/oK2kB7IBxLZE/mn8ETt+1wO4l7nWiKRPmHrKRpdp8=
+X-Received: by 2002:a05:6808:10cf:b0:3d9:da81:6d59 with SMTP id
+ 5614622812f47-3dc416dd189mr3063080b6e.34.1723228427559; Fri, 09 Aug 2024
+ 11:33:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,24 +72,23 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240808190110.3188039-1-joannelkoong@gmail.com>
- <20240808190110.3188039-2-joannelkoong@gmail.com> <8d28f744-0f14-4cad-9b51-30dec0fec692@linux.alibaba.com>
-In-Reply-To: <8d28f744-0f14-4cad-9b51-30dec0fec692@linux.alibaba.com>
+ <20240808190110.3188039-2-joannelkoong@gmail.com> <20240808205006.GA625513@perftesting>
+In-Reply-To: <20240808205006.GA625513@perftesting>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 9 Aug 2024 10:51:00 -0700
-Message-ID: <CAJnrk1bZhd3jenHDvx1kDi3ZirYfQ5YaSnf80qiw=N5Kb22dRg@mail.gmail.com>
+Date: Fri, 9 Aug 2024 11:33:35 -0700
+Message-ID: <CAJnrk1bSXakZkyiHJ38TD42wbVRE5mQ0amapGM++3Py0PTcD3g@mail.gmail.com>
 Subject: Re: [PATCH v3 1/2] fuse: add optional kernel-enforced timeout for requests
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, laoar.shao@gmail.com, kernel-team@meta.com
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 8, 2024 at 11:22=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
+On Thu, Aug 8, 2024 at 1:50=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> w=
+rote:
 >
->
->
-> On 8/9/24 3:01 AM, Joanne Koong wrote:
+> On Thu, Aug 08, 2024 at 12:01:09PM -0700, Joanne Koong wrote:
 > > There are situations where fuse servers can become unresponsive or take
 > > too long to reply to a request. Currently there is no upper bound on
 > > how long a request may take, which may be frustrating to users who get
@@ -221,6 +220,9 @@ t flags)
 > > +
 > > +     if (req->timer.function)
 > > +             timer_delete_sync(&req->timer);
+>
+> This becomes just timer_delete_sync();
+>
 > > +
 > > +     do_fuse_request_end(req);
 > > +}
@@ -329,6 +331,12 @@ q->timer);
 > > +                             if (timed_out)
 > > +                                     return;
 > > +                     }
+>
+> This can just be
+>
+>         if (!timer_delete_sync(&req->timer))
+>                 return;
+>
 > >                       __fuse_put_request(req);
 > >                       req->out.h.error =3D -EINTR;
 > >                       return;
@@ -352,6 +360,12 @@ eq)
 > > +                     req->timer.expires =3D jiffies + fc->req_timeout;
 > > +                     add_timer(&req->timer);
 > > +             }
+>
+> This can just be
+>
+> if (req->timer.function)
+>         mod_timer(&req->timer, jiffies + fc->req_timeout);
+>
 > >               queue_request_and_unlock(fiq, req);
 > >
 > >               request_wait_answer(req);
@@ -364,6 +378,9 @@ use_req *req)
 > > +                     req->timer.expires =3D jiffies + fc->req_timeout;
 > > +                     add_timer(&req->timer);
 > > +             }
+>
+> Same comment as above.
+>
 > >               flush_bg_queue(fc);
 > >               queued =3D true;
 > >       }
@@ -377,6 +394,9 @@ unt *fm,
 out;
 > > +                     add_timer(&req->timer);
 > > +             }
+>
+> Here as well.
+>
 > >               queue_request_and_unlock(fiq, req);
 > >       } else {
 > >               err =3D -ENODEV;
@@ -401,49 +421,12 @@ race
 > > +              */
 > > +             bool timed_out =3D !timer_delete_sync(&req->timer);
 > > +             if (timed_out) {
+>
+> This can also just be
+>
+> if (!timer_delete_sync(&req->timer));
+>
 > > +                     WARN_ON(!test_bit(FR_FINISHED, &req->flags));
->
-> Is there any possibility that FR_FINISHED bit has not been set for the
-> request when the timeout handler finishes, e.g. for the following sequenc=
-e?
-
-Ah, i meant for this to be FR_FINISHING, not FR_FINISHED. Just as a
-sanity check that the timeout handler was invoked, even if it wasn't
-the one that ultimately cleaned up the request. I will make this fix
-in v4. Thanks!
-
->
->
-> ```
-> # read                  # timer handler         #aborting
-> fuse_dev_do_read
->   spin_lock(&fiq->lock)
->   # remove req from
->   # pending list
->   spin_unlock(&fiq->lock)
->
->                                                 fuse_abort_conn
->                                                   spin_lock(fpq->lock)
->                                                   fpq->connected =3D 0
->                                                   spin_unlock(fpq->lock)
->
->                         fuse_request_timeout
->   # disarm the timer
->     # wait for
->     # timer handler
->                           timeout_inflight_req
->                             spin_lock(&fpq->lock)
->                             if !fpq->connected:
->                               spin_unlock(&fpq->lock)
->                               return
->   WARN(no FR_FINISHED)!
->                                                   end_requests
->                                                     set FR_FINISHED bit
-> ```
->
->
->
->
 > > +                     fuse_put_request(req);
 > > +                     goto restart;
 > > +             }
@@ -472,25 +455,16 @@ fud, struct file *file,
 > > +     /* re-arm the original timer */
 > > +     if (req->timer.function)
 > > +             add_timer(&req->timer);
-> > +
-> >       spin_unlock(&fpq->lock);
-> >       /* matches barrier in request_wait_answer() */
-> >       smp_mb__after_atomic();
-> >       if (test_bit(FR_INTERRUPTED, &req->flags))
-> >               queue_interrupt(req);
-> > +
 >
-> A nonsense newline diff?
+> This will not change anything if the timer was already armed, do you want
+> mod_timer_pending() here?  Or maybe just mod_timer()?  Thanks,
 
-I'll remove this newline in v4.
+In this path, the timer will always be inactive here (we deactivated
+it earlier in this function to make race condition handling simpler),
+so I will keep this as add_timer() here.
 
 >
->
->
-> --
-> Thanks,
-> Jingbo
+> Josef
 
-Thanks,
-Joanne
+Thanks for your review, Josef! I will add these changes into v4.
 
