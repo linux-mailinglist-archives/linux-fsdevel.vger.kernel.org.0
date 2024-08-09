@@ -1,140 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-25522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022A294D0E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 15:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3FB94D106
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 15:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 354B01C21264
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 13:11:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB8B1C20A08
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 13:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84A2194AF4;
-	Fri,  9 Aug 2024 13:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B77F194AF4;
+	Fri,  9 Aug 2024 13:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICb702YT"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mcChpKnK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E4B194C65;
-	Fri,  9 Aug 2024 13:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D92438DCC;
+	Fri,  9 Aug 2024 13:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723209108; cv=none; b=YZwUkafFDzXZk/7s7XQAbeTIDpZnQyZMsJvW5x8SPqVU1DYFLn4HRcVqmm4aRxiFy4QwBEpZYGggAmIakBByi0tvyu3icypA9K7m6GpH4d8Li1aq4zr6+tUqvZlZUUQYIRtjE4pOys2+dHrpkNp/vRX8UeGXoH5LBY3q2AdJhJk=
+	t=1723209491; cv=none; b=aBZ6+wVwhx13z3gkigz7J8kqkqUrsL4wAhQDLiT3MVW+bb2f0T3UI0dwKngNeqlY7jgAvziGEpB7naiCtn8wUnCyf4nqzgMm5ZT2G6g/yajZXb94+hCcPwQx6ci9bCG8nfciHcHAOP/F0seXjDie6C464XFiMr6Geyr8nxmZ+CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723209108; c=relaxed/simple;
-	bh=jOXOaRYT4L48wJhp4miCKXU2dG1qcgRd2+ZqF+ia1M4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cp37lg15M5nhoV6sOetonmG8TFHiwrmEuR6KCnKCwCzHDNIvslB+HUsLdk6E135TcK8a+BG+m0nJYHxmOm5irBujEhz2d+GfK+8qcBsA1YU7qdBqVhso56qU6VByGbPbjQKwidrcDMs6QZi2BfiiuJKDZD81x/9zx/yC8P+g7CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ICb702YT; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3daf0e73a5bso1577415b6e.0;
-        Fri, 09 Aug 2024 06:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723209106; x=1723813906; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hLy+w1i8+q3J1zYjzqllPpeRDTQRavcNaGacNPXrk+g=;
-        b=ICb702YTG5tmKI1SZimZriqs6eEtC2lJcfGhjB+wxDzKcIGLFjgBTAHHm3pz1lkEPu
-         9QVV2Cj3qFIUW+MlS5WOCwlFAFACNvRBHOJl2bdgXjrVLnlZ7Re8UfT0ptAgOKmWR9vX
-         WpX7Yxpd604BAOclncV34nL3ngDA6N7w1eU97ilsVIjZ+MFz72i1hZKcWom0wGxPf/fh
-         uqkK/eDMPhLXwQS7RTyVRjQbUKOVQceKN9puzT0KEidlI6QDjMJ+dNrn7RgO/4hfyYWZ
-         If+vD+vij+85lzWM26sI20BEaycNLcYyn405nHUxidGqwgx+3uTBj0Czon7OcQaOw6Cg
-         Z+Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723209106; x=1723813906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hLy+w1i8+q3J1zYjzqllPpeRDTQRavcNaGacNPXrk+g=;
-        b=T9O0+QsvHVFD9JKySkDn+5TbB3xB51x6a4DHN7F2zcHLph+CMp+Ol6NZkN1cKhahRZ
-         ygzIAoeZOiJ8L+Zq8wrk1jFJmvHLN+v8C7ysoo1aPtgekgtwclI8QA1Y3Bpc7H6KHsig
-         MDzUitlhJw2EgPpRjExj25wFq/iHvIN9e683OMQ5pUmdcaGGOhZF3PHR5PqplkuvrLUz
-         CAntiNEGmnz4KphyAFJqaXN/3ibmYSMyr98HQbMYHzh5xAfyuQZphvPE3PLHEjwlAHgg
-         yQvc9/0IdJMtPbVrcYdNtFLGdFiAWkRwMyRVC07aoSdq1AhrnNNZmyKA1z7yVqi3Tdje
-         Qyog==
-X-Forwarded-Encrypted: i=1; AJvYcCVQMcGxLCy3cgPBijkSrwkrOon+kR6tOjW9GP1OsS7Atwg95TrhNXuSR+4cgrmOBJNFnx6WDm8Bjiw/mrmSq4tyZpuEVfqLnP74a/qxiaENmFdqGoc2qIRCJdvjYUq7YIGvwWkXQBq1d7s4cq00F3bJtmx7nXekVp0PRwfzyV759DyWKdCzWhN8
-X-Gm-Message-State: AOJu0Yx658do7FpskGTjMRVli9Dj/OdzEf2DNA82IIQTDm60GmfstfLV
-	5VM/YOT+HaNen24fzfHkbeT1dCgmna4iJR4AWZp0O3dSAsrUAeaxi6U0XEeIN+wFHK7vqLeviEG
-	ug9JYNU7gVyh/mJ23LMUDKpeK+xk=
-X-Google-Smtp-Source: AGHT+IFh+5SDIMKVPJMEfKkArRSdLe+gdR/fEMyRksrtueer4tYEJVyB95v8DzaJtFGvzdhBu6HNqGhWwHIjD6xVK2o=
-X-Received: by 2002:a54:4e93:0:b0:3db:50d9:c6ec with SMTP id
- 5614622812f47-3dc416f10fbmr1292288b6e.49.1723209105655; Fri, 09 Aug 2024
- 06:11:45 -0700 (PDT)
+	s=arc-20240116; t=1723209491; c=relaxed/simple;
+	bh=q8oFJ6K14ti4AQLK6XdG+/LYuY63JwP/I8q1yCKwPQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPt8kX7BvYjSs4Uuk65xKkU2dZGvh80LCP23+rFNZI3ggooiseivJD/7oVzeIxBskuyG0rgMVX3uS+KLu3mNo2PHRcw0mOJPbZzjSQxbR5TcZ7JLgOl2ge3Svxh7tf38EQD6Ie01qwEjdA6Bg/l1hFjruNgrpYoVUcMTZXfwz+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mcChpKnK; arc=none smtp.client-ip=84.16.66.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WgPbx276fzGS7;
+	Fri,  9 Aug 2024 15:18:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723209485;
+	bh=8q0uMX7tRV16e+74Wja3JoKpQoc7+O1R17EEnmf2d4E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mcChpKnKXoBQDUVS6APCY4X8MEEW2+vQIMX78usfyc4876MD9PSrjaRIaphad53Aj
+	 ctN8yRjFqqyWkqCDhA2qq85gS7iY37fY2a1OKKutZ/CVbTAyrNl5teAhXo8MKRbuSR
+	 /tcpGWvG1QbqKBJmuaQauVSSd7PqwAbQBawqHlPI=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WgPbw27Byzbn0;
+	Fri,  9 Aug 2024 15:18:04 +0200 (CEST)
+Date: Fri, 9 Aug 2024 15:17:59 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>
+Cc: Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	gnoack@google.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
+ signal control)
+Message-ID: <20240809.se0ha8tiuJai@digikod.net>
+References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
+ <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
+ <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
+ <20240807.Yee4al2lahCo@digikod.net>
+ <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
+ <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
+ <20240808.kaiyaeZoo1ha@digikod.net>
+ <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
+ <20240809.eejeekoo4Quo@digikod.net>
+ <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1723144881.git.josef@toxicpanda.com> <bce66af61dd98d4f81032b97c73dce09658ae02d.1723144881.git.josef@toxicpanda.com>
-In-Reply-To: <bce66af61dd98d4f81032b97c73dce09658ae02d.1723144881.git.josef@toxicpanda.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 9 Aug 2024 15:11:34 +0200
-Message-ID: <CAOQ4uxiWJ60Srtep4FiDP_hUd8WU5Mn1kq-dxRz4BpyMc40J2g@mail.gmail.com>
-Subject: Re: [PATCH v2 14/16] bcachefs: add pre-content fsnotify hook to fault
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	brauner@kernel.org, linux-xfs@vger.kernel.org, gfs2@lists.linux.dev, 
-	linux-bcachefs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Aug 8, 2024 at 9:28=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> w=
-rote:
->
-> bcachefs has its own locking around filemap_fault, so we have to make
-> sure we do the fsnotify hook before the locking.  Add the check to emit
-> the event before the locking and return VM_FAULT_RETRY to retrigger the
-> fault once the event has been emitted.
->
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  fs/bcachefs/fs-io-pagecache.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->
-> diff --git a/fs/bcachefs/fs-io-pagecache.c b/fs/bcachefs/fs-io-pagecache.=
-c
-> index a9cc5cad9cc9..359856df52d4 100644
-> --- a/fs/bcachefs/fs-io-pagecache.c
-> +++ b/fs/bcachefs/fs-io-pagecache.c
-> @@ -562,6 +562,7 @@ void bch2_set_folio_dirty(struct bch_fs *c,
->  vm_fault_t bch2_page_fault(struct vm_fault *vmf)
->  {
->         struct file *file =3D vmf->vma->vm_file;
-> +       struct file *fpin =3D NULL;
->         struct address_space *mapping =3D file->f_mapping;
->         struct address_space *fdm =3D faults_disabled_mapping();
->         struct bch_inode_info *inode =3D file_bch_inode(file);
-> @@ -570,6 +571,18 @@ vm_fault_t bch2_page_fault(struct vm_fault *vmf)
->         if (fdm =3D=3D mapping)
->                 return VM_FAULT_SIGBUS;
->
-> +       ret =3D filemap_maybe_emit_fsnotify_event(vmf, &fpin);
-> +       if (unlikely(ret)) {
-> +               if (fpin) {
-> +                       fput(fpin);
-> +                       ret |=3D VM_FAULT_RETRy;
+Talking about f_modown() and security_file_set_fowner(), it looks like
+there are some issues:
 
-Typo RETRy
+On Fri, Aug 09, 2024 at 02:44:06PM +0200, Jann Horn wrote:
+> On Fri, Aug 9, 2024 at 12:59 PM Mickaël Salaün <mic@digikod.net> wrote:
 
-> +               }
-> +               return ret;
-> +       } else if (fpin) {
-> +               fput(fpin);
-> +               return VM_FAULT_RETRY;
-> +       }
-> +
+[...]
 
-This chunk is almost duplicate in all call sites in filesystems.
-Could it maybe be enclosed in a helper.
-It is bad enough that we have to spray those in filesystem code,
-so at least give the copy&paste errors to the bare minimum?
+> > BTW, I don't understand why neither SELinux nor Smack use (explicit)
+> > atomic operations nor lock.
+> 
+> Yeah, I think they're sloppy and kinda wrong - but it sorta works in
+> practice mostly because they don't have to do any refcounting around
+> this?
+> 
+> > And it looks weird that
+> > security_file_set_fowner() isn't called by f_modown() with the same
+> > locking to avoid races.
+> 
+> True. I imagine maybe the thought behind this design could have been
+> that LSMs should have their own locking, and that calling an LSM hook
+> with IRQs off is a little weird? But the way the LSMs actually use the
+> hook now, it might make sense to call the LSM with the lock held and
+> IRQs off...
+> 
 
-Thanks,
-Amir.
+Would it be OK (for VFS, SELinux, and Smack maintainers) to move the
+security_file_set_fowner() call into f_modown(), especially where
+UID/EUID are populated.  That would only call security_file_set_fowner()
+when the fown is actually set, which I think could also fix a bug for
+SELinux and Smack.
+
+Could we replace the uid and euid fields with a pointer to the current
+credentials?  This would enables LSMs to not copy the same kind of
+credential informations and save some memory, simplify credential
+management, and improve consistency.
 
