@@ -1,63 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-25488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E80694C76E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 01:43:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77A694C780
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 02:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D760EB2496C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Aug 2024 23:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1D31F2366A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 00:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C211649C6;
-	Thu,  8 Aug 2024 23:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CBA8F66;
+	Fri,  9 Aug 2024 00:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBoAAJtm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoKXeSOz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216B4166314;
-	Thu,  8 Aug 2024 23:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9183623DE;
+	Fri,  9 Aug 2024 00:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723160609; cv=none; b=Jv9FkwWhFIerHt1FiyPox1Tv86ujuEfWuOhdhpJwYmbOthpXWHFVml9ib7NJB13HyiuJItT1FAzToWbbFhLolyHeLkcJKcb2ntTxtSZ9sO4ElkFHKHHYp2S8AbpOj+EQRMgPqRgNBPf5KM1/mF7SewCesepI5jSO2eHsarUxncg=
+	t=1723161646; cv=none; b=ilGMrvAMatcUF/UPwOhlNo+LpL93jCQBAba5NhV8EClvSfDFLlAdFmg5aYJPhpwYadV8ok+wsAqwyirFa8uy5WuLMAwjOBaOPVwatdkgiHTb3EZ3WGNtWyi+KkxALrxMQ06EQSzX9vDybC992Shprnly7GTILEK8GUsKPGon0gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723160609; c=relaxed/simple;
-	bh=D0nZdzoiJnGLrGHXx+vX60YdnArnxjQB/HltQXsiEAo=;
+	s=arc-20240116; t=1723161646; c=relaxed/simple;
+	bh=Jl7/6yxGYz+l6WkVBWiWZ6jL7unPDbOfR3JUeia4tLg=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bHXnVbBPXWxV3flAcIFFEN3a/PdzLeCtTiorIfjCfuFX8FmBi0L2dAiUBqUFU+aVzJbv3UP5x7NPrzxzWSfQgSldtgA0/SzjwiYz3930/f5aX7R/AXys2KbW/Pjh7FXnioOszvnd91mDKa8v2yJh3RzOQdDma9i6mks60XGPuZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBoAAJtm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB0FC32782;
-	Thu,  8 Aug 2024 23:43:27 +0000 (UTC)
+	 Content-Type:MIME-Version; b=DZaoNHMw1/2Ga1t5ZTSUtHehgDDXG7pEwX/IDxMQ1PPwRpcpZFgDQ+0XIPCZF/DN2hnRILmPD5kn5Coo+exzFUq9bDm+fzy15JjfZMwNzptEzNziZ8LJ5o1xmzS4w0FrJkRtAokHDJmMl0gvj2oyIWg6QivV/yXYiqOvlLv0zFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoKXeSOz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95110C32782;
+	Fri,  9 Aug 2024 00:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723160608;
-	bh=D0nZdzoiJnGLrGHXx+vX60YdnArnxjQB/HltQXsiEAo=;
+	s=k20201202; t=1723161646;
+	bh=Jl7/6yxGYz+l6WkVBWiWZ6jL7unPDbOfR3JUeia4tLg=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rBoAAJtmx+jLN0E7BUSujTsNdDuEdUti7AvjHAXQkh5pnk6h2fXip4VxdjUYbM8dH
-	 Epm+Iped9l/uijtzh1zAs78PEJFwTOkZqw7maB269106FQNhyj34UIwDy1Vb8GgDiL
-	 H+e53tazwedjj0xIyw6tFRdFl2FIpfVc4hLjQ4O9nUjuS+O56aPuuUgj51KfO0UIaK
-	 DcdH7kbGJ2vdBxKnoW0I0NI+0mCofBkkYtbi65Cyatp+c4ccsc5tEXRbR5kGFxllSy
-	 B0aIHlPmOhNCMHsvDZeuZNIgjUn0rvKe3qhB29kupltbC1qSoHRe7wBvQJu6ZPC+D3
-	 a+tmp9ubK1lFw==
-Message-ID: <d0677c60eb1f47eb186f3e5493ba5aa7e0eaa445.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+	b=XoKXeSOzGdh6dZ5157CyrLl2q2/EKEB6Y6ANgYOzhjF44JkjEy8VOooRL1oXvAdmT
+	 gZjeLTjs+LvCacHK+newdFi7GLn/DB176G6R45GESPp9z621G+Xydbmv/5L0IxLbgO
+	 yGwEdBG0ZySz846vytakd6BpXTAIAhG4VFezOlcKm3DwTxlP1fHZ098pryTz0LsXEJ
+	 7YB6j9XUwaWLpne5sKDDPyOTH3VsLQw2GZ/Wu3IkyEWcYjWdrTmznzEDOdGfEGSJJv
+	 GitXmleEXahsvO8tKvnzzPS66bBxxb26F7vlFEQCq80eUpItbkfZgvgF+71g3OcfJ1
+	 Yl8IvHoewpZHQ==
+Message-ID: <796973ee97c0b16761b41f510b852725da07eed7.camel@kernel.org>
+Subject: Re: [PATCH v6 1/9] fs: add infrastructure for multigrain timestamps
 From: Jeff Layton <jlayton@kernel.org>
-To: Paul Moore <paul@paul-moore.com>, Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
- Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
- audit@vger.kernel.org
-Date: Thu, 08 Aug 2024 19:43:26 -0400
-In-Reply-To: <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-	 <20240807-erledigen-antworten-6219caebedc0@brauner>
-	 <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
-	 <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner>
-	 <20240808171130.5alxaa5qz3br6cde@quack3>
-	 <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Thu, 08 Aug 2024 20:00:44 -0400
+In-Reply-To: <gh5egnyreorb5h7powbmpcj733treuvk7grqsrdbvvqbrlskb5@cu3ld2km33sh>
+References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
+	 <20240715-mgtime-v6-1-48e5d34bd2ba@kernel.org>
+	 <gh5egnyreorb5h7powbmpcj733treuvk7grqsrdbvvqbrlskb5@cu3ld2km33sh>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -142,170 +137,68 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Thu, 2024-08-08 at 17:12 -0400, Paul Moore wrote:
-> On Thu, Aug 8, 2024 at 1:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > On Thu 08-08-24 12:36:07, Christian Brauner wrote:
-> > > On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
-> > > > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
-> > > > > > +static struct dentry *lookup_fast_for_open(struct nameidata *n=
-d, int open_flag)
-> > > > > > +{
-> > > > > > +       struct dentry *dentry;
-> > > > > > +
-> > > > > > +       if (open_flag & O_CREAT) {
-> > > > > > +               /* Don't bother on an O_EXCL create */
-> > > > > > +               if (open_flag & O_EXCL)
-> > > > > > +                       return NULL;
-> > > > > > +
-> > > > > > +               /*
-> > > > > > +                * FIXME: If auditing is enabled, then we'll ha=
-ve to unlazy to
-> > > > > > +                * use the dentry. For now, don't do this, sinc=
-e it shifts
-> > > > > > +                * contention from parent's i_rwsem to its d_lo=
-ckref spinlock.
-> > > > > > +                * Reconsider this once dentry refcounting hand=
-les heavy
-> > > > > > +                * contention better.
-> > > > > > +                */
-> > > > > > +               if ((nd->flags & LOOKUP_RCU) && !audit_dummy_co=
-ntext())
-> > > > > > +                       return NULL;
-> > > > >=20
-> > > > > Hm, the audit_inode() on the parent is done independent of whethe=
-r the
-> > > > > file was actually created or not. But the audit_inode() on the fi=
-le
-> > > > > itself is only done when it was actually created. Imho, there's n=
-o need
-> > > > > to do audit_inode() on the parent when we immediately find that f=
-ile
-> > > > > already existed. If we accept that then this makes the change a l=
-ot
-> > > > > simpler.
-> > > > >=20
-> > > > > The inconsistency would partially remain though. When the file do=
-esn't
-> > > > > exist audit_inode() on the parent is called but by the time we've
-> > > > > grabbed the inode lock someone else might already have created th=
-e file
-> > > > > and then again we wouldn't audit_inode() on the file but we would=
- have
-> > > > > on the parent.
-> > > > >=20
-> > > > > I think that's fine. But if that's bothersome the more aggressive=
- thing
-> > > > > to do would be to pull that audit_inode() on the parent further d=
-own
-> > > > > after we created the file. Imho, that should be fine?...
-> > > > >=20
-> > > > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/?ref=
-_type=3Dheads
-> > > > > for a completely untested draft of what I mean.
-> > > >=20
-> > > > Yeah, that's a lot simpler. That said, my experience when I've work=
-ed
-> > > > with audit in the past is that people who are using it are _very_
-> > > > sensitive to changes of when records get emitted or not. I don't li=
-ke
-> > > > this, because I think the rules here are ad-hoc and somewhat arbitr=
-ary,
-> > > > but keeping everything working exactly the same has been my MO when=
-ever
-> > > > I have to work in there.
-> > > >=20
-> > > > If a certain access pattern suddenly generates a different set of
-> > > > records (or some are missing, as would be in this case), we might g=
-et
-> > > > bug reports about this. I'm ok with simplifying this code in the wa=
-y
-> > > > you suggest, but we may want to do it in a patch on top of mine, to
-> > > > make it simple to revert later if that becomes necessary.
-> > >=20
-> > > Fwiw, even with the rearranged checks in v3 of the patch audit record=
-s
-> > > will be dropped because we may find a positive dentry but the path ma=
-y
-> > > have trailing slashes. At that point we just return without audit
-> > > whereas before we always would've done that audit.
-> > >=20
-> > > Honestly, we should move that audit event as right now it's just real=
-ly
-> > > weird and see if that works. Otherwise the change is somewhat horribl=
-e
-> > > complicating the already convoluted logic even more.
-> > >=20
-> > > So I'm appending the patches that I have on top of your patch in
-> > > vfs.misc. Can you (other as well ofc) take a look and tell me whether
-> > > that's not breaking anything completely other than later audit events=
-?
-> >=20
-> > The changes look good as far as I'm concerned but let me CC audit guys =
-if
-> > they have some thoughts regarding the change in generating audit event =
-for
-> > the parent. Paul, does it matter if open(O_CREAT) doesn't generate audi=
-t
-> > event for the parent when we are failing open due to trailing slashes i=
-n
-> > the pathname? Essentially we are speaking about moving:
-> >=20
-> >         audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-> >=20
-> > from open_last_lookups() into lookup_open().
+On Fri, 2024-08-09 at 00:09 +0200, Mateusz Guzik wrote:
+> On Mon, Jul 15, 2024 at 08:48:52AM -0400, Jeff Layton wrote:
+> > diff --git a/fs/stat.c b/fs/stat.c
+> > index 6f65b3456cad..df7fdd3afed9 100644
+> > --- a/fs/stat.c
+> > +++ b/fs/stat.c
+> > @@ -26,6 +26,32 @@
+> >  #include "internal.h"
+> >  #include "mount.h"
+> > =20
+> > +/**
+> > + * fill_mg_cmtime - Fill in the mtime and ctime and flag ctime as QUER=
+IED
+> > + * @stat: where to store the resulting values
+> > + * @request_mask: STATX_* values requested
+> > + * @inode: inode from which to grab the c/mtime
+> > + *
+> > + * Given @inode, grab the ctime and mtime out if it and store the resu=
+lt
+> > + * in @stat. When fetching the value, flag it as queried so the next w=
+rite
+> > + * will ensure a distinct timestamp.
+> > + */
+> > +void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode=
+ *inode)
+> > +{
+> > +	atomic_t *pcn =3D (atomic_t *)&inode->i_ctime_nsec;
+> > +
+> > +	/* If neither time was requested, then don't report them */
+> > +	if (!(request_mask & (STATX_CTIME|STATX_MTIME))) {
+> > +		stat->result_mask &=3D ~(STATX_CTIME|STATX_MTIME);
+> > +		return;
+> > +	}
+> > +
+> > +	stat->mtime =3D inode_get_mtime(inode);
+> > +	stat->ctime.tv_sec =3D inode->i_ctime_sec;
+> > +	stat->ctime.tv_nsec =3D ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn)) =
+& ~I_CTIME_QUERIED;
+> > +}
+> > +EXPORT_SYMBOL(fill_mg_cmtime);
+> > +
 >=20
-> Thanks for adding the audit mailing list to the CC, Jan.  I would ask
-> for others to do the same when discussing changes that could impact
-> audit (similar requests for the LSM framework, SELinux, etc.).
+> [trimmed the ginormous CC]
 >=20
-> The inode/path logging in audit is ... something.  I have a
-> longstanding todo item to go revisit the audit inode logging, both to
-> fix some known bugs, and see what we can improve (I'm guessing quite a
-> bit).  Unfortunately, there is always something else which is burning
-> a little bit hotter and I haven't been able to get to it yet.
+> This performs the atomic every time (as in it sets the flag even if it
+> was already set), serializing all fstats and reducing scalability of
+> stat of the same file.
 >=20
-
-It is "something" alright. The audit logging just happens at strange
-and inconvenient times vs. what else we're trying to do wrt pathwalking
-and such. In particular here, the fact __audit_inode can block is what
-really sucks.
-
-Since we're discussing it...
-
-ISTM that the inode/path logging here is something like a tracepoint.
-In particular, we're looking to record a specific set of information at
-specific points in the code. One of the big differences between them
-however is that tracepoints don't block.  The catch is that we can't
-just drop messages if we run out of audit logging space, so that would
-have to be handled reasonably.
-
-I wonder if we could leverage the tracepoint infrastructure to help us
-record the necessary info somehow? Copy the records into a specific
-ring buffer, and then copy them out to the audit infrastructure in
-task_work?
-
-I don't have any concrete ideas here, but the path/inode audit code has
-been a burden for a while now and it'd be good to think about how we
-could do this better.
-
-> The general idea with audit is that you want to record the information
-> both on success and failure.  It's easy to understand the success
-> case, as it is a record of what actually happened on the system, but
-> you also want to record the failure case as it can provide some
-> insight on what a process/user is attempting to do, and that can be
-> very important for certain classes of users.  I haven't dug into the
-> patches in Christian's tree, but in general I think Jeff's guidance
-> about not changing what is recorded in the audit log is probably good
-> advice (there will surely be exceptions to that, but it's still good
-> guidance).
+> Bare minimum it should be conditional -- if the flag is already set,
+> don't dirty anything.
 >=20
+> Even that aside adding an atomic to stat is a bummer, but off hand I
+> don't have a good solution for that.
+>=20
+> Anyhow, this being in -next, perhaps the conditional dirty can be
+> massaged into the thing as present? There are some cosmetic choices to
+> be made how to express, may be the fastest if you guys just augment it
+> however you see fit.
+>=20
+> If not I can submit a patch tomorrow.
 
-In this particular case, the question is:
-
-Do we need to emit a AUDIT_INODE_PARENT record when opening an existing
-file, just because O_CREAT was set? We don't emit such a record when
-opening without O_CREAT set.
-
+I'm fine with that change. It should simple enough.
 --=20
 Jeff Layton <jlayton@kernel.org>
 
