@@ -1,485 +1,252 @@
-Return-Path: <linux-fsdevel+bounces-25551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2828094D541
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 19:15:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9547A94D55A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 19:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99112824B4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 17:15:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 210E3B20E35
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 17:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B1249630;
-	Fri,  9 Aug 2024 17:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFF361FFE;
+	Fri,  9 Aug 2024 17:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gX2ak6pV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RBRnnKXG";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gX2ak6pV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RBRnnKXG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jv1qewTm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9508145957
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 17:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A53E61FD8;
+	Fri,  9 Aug 2024 17:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723223703; cv=none; b=YbcExFxfSyZg+3AsLY1d4e6OdAys/BH3FoO+DK8e0RUb46TXgfgrocm58tcaNUuIuPKsTWv1sd/f1fc1BL+pxYLeFQAOZHrHQ7HA6KbC1AS47kycNkS6VoOHEbhYaKGv92k2sTAHIaU1Jd6yVSbDUq4sfqJL6mkaTqS4mFuKS6E=
+	t=1723224203; cv=none; b=MHICQOYM1b4DfuooSHq1goofCAN8COneY1KSJVj0Bz7RkcacnKP39mTKbHs5XSa0pGpWPNOTfJe4km7e/i6C1WLvVXzofNnbz6G9sSpIYso+9HWhD7SlmdfQFwr9LkeMV7eSiyM/T1e+JH2rpTTKwt0LC1KEfM30xRfw7Ea6V30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723223703; c=relaxed/simple;
-	bh=uLCRCAv1qd35wMIKk1H+zT5mvQPlnSdRgV6Gq39wGZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aq4g7IVaBBgrN4mEU6zTVQx+82t7h1/dU96GWpq1UTAALJOV/Gwjxm2OaX+4gkZT+kpRaP/ERG7uwm5vfC7d++lGag1/PRVca/KGp8YrQVAlt7Nk68eGRL4vfJL//VjBMuNJ6yN8zrxOW2Ss41dincvuRxE0yuGAa5dr2dboSnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gX2ak6pV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RBRnnKXG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gX2ak6pV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RBRnnKXG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9DBD11FF9E;
-	Fri,  9 Aug 2024 17:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723223699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tAQ6MF8EYg3gDYU8FKMbjSAwsxl8g4nhqn1366Xfs2Y=;
-	b=gX2ak6pV55jwteeZwfeq4QM9FJcwRQQIaSrN2vDgINayHL6D56frLXi5dq/hXAARMti5Oz
-	IFTVAKQpwtPTq7nVD99t5U3/ZoehQKzx9CbjSURrjV679XhOWujT/x/st5mJ+zO1u9+xTU
-	G7EhsXEgjwAM1+GQ8bmIaokyGPcyQws=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723223699;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tAQ6MF8EYg3gDYU8FKMbjSAwsxl8g4nhqn1366Xfs2Y=;
-	b=RBRnnKXGW73dDQTvq0RzyMzO3/BGDQ9ROW/a1mfFoJ7gqiGVTRw6bfb+vqHpGrHL6199C2
-	wNcxsLGM3skYWyCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gX2ak6pV;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RBRnnKXG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723223699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tAQ6MF8EYg3gDYU8FKMbjSAwsxl8g4nhqn1366Xfs2Y=;
-	b=gX2ak6pV55jwteeZwfeq4QM9FJcwRQQIaSrN2vDgINayHL6D56frLXi5dq/hXAARMti5Oz
-	IFTVAKQpwtPTq7nVD99t5U3/ZoehQKzx9CbjSURrjV679XhOWujT/x/st5mJ+zO1u9+xTU
-	G7EhsXEgjwAM1+GQ8bmIaokyGPcyQws=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723223699;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tAQ6MF8EYg3gDYU8FKMbjSAwsxl8g4nhqn1366Xfs2Y=;
-	b=RBRnnKXGW73dDQTvq0RzyMzO3/BGDQ9ROW/a1mfFoJ7gqiGVTRw6bfb+vqHpGrHL6199C2
-	wNcxsLGM3skYWyCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 837551379A;
-	Fri,  9 Aug 2024 17:14:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +d7OH5NOtmbbQQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 09 Aug 2024 17:14:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 34F79A084C; Fri,  9 Aug 2024 19:14:55 +0200 (CEST)
-Date: Fri, 9 Aug 2024 19:14:55 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH] fs: move FMODE_UNSIGNED_OFFSET to fop_flags
-Message-ID: <20240809171455.voevkrfvvrhcptwh@quack3>
-References: <20240809-work-fop_unsigned-v1-1-658e054d893e@kernel.org>
+	s=arc-20240116; t=1723224203; c=relaxed/simple;
+	bh=0PZo/Ac9ke36wG6AVSpgHrTHheHjhZfH3xagdecugsg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BUbSD+VKgP+yUXR7dlLEJLG7mR3Pl94IbcnEUFIlUlb0f3AUCDUgOebntton7J2kpzo1EQRMWGdwScbMbEoRhkFABF9edn63FWK/tHONIbo0YpgIvFzYB7muccOdcve7AYq8+PKdYNHL0w1Og6KBfLHOqueMDUGuUWSiQ9Qzm2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jv1qewTm; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2caff99b1c9so1927374a91.3;
+        Fri, 09 Aug 2024 10:23:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723224200; x=1723829000; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E4nf2vVsE4rNUghEnE6rx77U4NSKcuKPAo9x1pxrGbo=;
+        b=jv1qewTmpmPgxMvEDzSH1CBdK07PWwrGOxnzORqGIigBvrarMwPkMevUO1mWizxphm
+         TA4jVXmE0tyVrgFP4xEMUPg5c8gJgRq61aY1ttVffFZGsWZeCO5oM1rlzwdGUmlbLyLz
+         OVp73wgIy7Odh2UfLpwUSefi5Kek3Ic4nxo6BsXQyRSNC7xlMg0tYJHZ1fIWrEg8QHrv
+         aR0TbQxZEQu1xC7sJYQ28HtRI0EMf4UBMvcpHfM0P6SNQjmtK1iytNGU1ISh/damRgVC
+         /62/HrzyiH/d2cN6PM/+XyT9tLZFxSPAa9RbNGTf/SBN9vt7m9S4g+XTXP/lQSOtrVG+
+         uYeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723224200; x=1723829000;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E4nf2vVsE4rNUghEnE6rx77U4NSKcuKPAo9x1pxrGbo=;
+        b=TRvaFUe3P5edMVQ1MvEknu6qPvIUcKkUSaKxB/8vQhxvdQ1syPwIuU7ZAlkYbmF4DI
+         9bkFY3VI0/pi5irNJA3R59uoQavxmIWEMkElrEOUbVoaBfsITizh4KtHzpKjM/VIn3wC
+         vYj4dQ+awPiK5nJwaVxo/CNupHzSUGeO6uaVxBkGtg8g/3PdUR0b7t0Z68tTtEkame+/
+         5pLkIG7DQLtAeLC0CyvoG6hGQeNusy2OMsrm8BRUuB3XjF9DGcLbKyD+dRM+eB9qPRAs
+         M97uDGSMHNYM1+6ltFDaxLQnpkSLyAIYUFC9uzhCajVYATouuz8IA7nEIN8712ZUGLWU
+         p3Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCV70eiijf6W1sjI6/MFVhzOo4sv3o39eR0l80TdpyW0Axsa1M+yvTBToi6xMBFRI1RGuchbQp4/YOvDOXvQZ7/9eYtI0wm4wx6eyiaALKTWCRrSi3iRJ7F94Yu2o2QOGCyLQoBzkYUZJabGyW/uYlDy8TZ2JFihWG+oeBgadDF7WzZTP0+QfuYqjT/K9ze2KtMVHTD3dJspsQFxnFbw8+rFxPLOr3kyvho=
+X-Gm-Message-State: AOJu0Yx9TQ6zOypQ488WpjEkJKe9ugMU3eJfx1DRi9f+X+NvVi8HLyTR
+	hzabhWEjfY88FcZo4sRCsRDRxNDqJ8PcPOcm7lo2bKiydYpjrPZZtsT5GHp7QaWTjs6+xtfIeCC
+	dH+/aB0g7iOY9TKPSXXMxaWRjvPl9Fw==
+X-Google-Smtp-Source: AGHT+IEpnb6/gaAmxrz4Xp5pn0+3G4YQxfp9iu1mxL9WijR0M987FyzWp5uOkoCxw99MaeryCykCUqfcrz831oW7wsA=
+X-Received: by 2002:a17:90a:b113:b0:2cd:b915:c80b with SMTP id
+ 98e67ed59e1d1-2d1e8082b97mr2434499a91.27.1723224200505; Fri, 09 Aug 2024
+ 10:23:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809-work-fop_unsigned-v1-1-658e054d893e@kernel.org>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.01 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -1.01
-X-Rspamd-Queue-Id: 9DBD11FF9E
+References: <20240730050927.GC5334@ZenIV> <20240730051625.14349-1-viro@kernel.org>
+ <20240730051625.14349-17-viro@kernel.org> <CAEf4BzZipqBVhoY-S+WdeQ8=MhpKk-2dE_ESfGpV-VTm31oQUQ@mail.gmail.com>
+ <20240807-fehlschlag-entfiel-f03a6df0e735@brauner> <CAEf4BzaeFTn41pP_hbcrCTKNZjwt3TPojv0_CYbP=+973YnWiA@mail.gmail.com>
+ <CAADnVQKZW--EOkn5unFybxTKPNw-6rPB+=mY+cy_yUUsXe8R-w@mail.gmail.com>
+ <CAEf4Bzauw1tD4UsyhX1PmRs_Y1MzfPqsoRUf40cmNuu7SJKi9w@mail.gmail.com> <CAADnVQ+55NKkEaAsjGh52=VsSgr9G-qvjBCPmaPrTxiN6eCZOw@mail.gmail.com>
+In-Reply-To: <CAADnVQ+55NKkEaAsjGh52=VsSgr9G-qvjBCPmaPrTxiN6eCZOw@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 9 Aug 2024 10:23:08 -0700
+Message-ID: <CAEf4BzYLQhO_UwaQLfpwoiQMvb0-wLQM6Yr7v-5CYLvoa8qzkA@mail.gmail.com>
+Subject: Re: [PATCH 17/39] bpf: resolve_pseudo_ldimm64(): take handling of a
+ single ldimm64 insn into helper
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, viro@kernel.org, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, kvm@vger.kernel.org, 
+	Network Development <netdev@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 09-08-24 12:38:56, Christian Brauner wrote:
-> This is another flag that is statically set and doesn't need to use up
-> an FMODE_* bit. Move it to ->fop_flags and free up another FMODE_* bit.
-> 
-> (1) mem_open() used from proc_mem_operations
-> (2) adi_open() used from adi_fops
-> (3) drm_open_helper():
->     (3.1) accel_open() used from DRM_ACCEL_FOPS
->     (3.2) drm_open() used from
->     (3.2.1) amdgpu_driver_kms_fops
->     (3.2.2) psb_gem_fops
->     (3.2.3) i915_driver_fops
->     (3.2.4) nouveau_driver_fops
->     (3.2.5) panthor_drm_driver_fops
->     (3.2.6) radeon_driver_kms_fops
->     (3.2.7) tegra_drm_fops
->     (3.2.8) vmwgfx_driver_fops
->     (3.2.9) xe_driver_fops
->     (3.2.10) DRM_GEM_FOPS
->     (3.2.11) DEFINE_DRM_GEM_DMA_FOPS
-> (4) struct memdev sets fmode flags based on type of device opened. For
->     devices using struct mem_fops unsigned offset is used.
-> 
-> Mark all these file operations as FOP_UNSIGNED_OFFSET and add asserts
-> into the open helper to ensure that the flag is always set.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Thu, Aug 8, 2024 at 6:23=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Thu, Aug 8, 2024 at 1:35=E2=80=AFPM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Thu, Aug 8, 2024 at 9:51=E2=80=AFAM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Wed, Aug 7, 2024 at 8:31=E2=80=AFAM Andrii Nakryiko
+> > > <andrii.nakryiko@gmail.com> wrote:
+> > > >
+> > > > On Wed, Aug 7, 2024 at 3:30=E2=80=AFAM Christian Brauner <brauner@k=
+ernel.org> wrote:
+> > > > >
+> > > > > On Tue, Aug 06, 2024 at 03:32:20PM GMT, Andrii Nakryiko wrote:
+> > > > > > On Mon, Jul 29, 2024 at 10:20=E2=80=AFPM <viro@kernel.org> wrot=
+e:
+> > > > > > >
+> > > > > > > From: Al Viro <viro@zeniv.linux.org.uk>
+> > > > > > >
+> > > > > > > Equivalent transformation.  For one thing, it's easier to fol=
+low that way.
+> > > > > > > For another, that simplifies the control flow in the vicinity=
+ of struct fd
+> > > > > > > handling in there, which will allow a switch to CLASS(fd) and=
+ make the
+> > > > > > > thing much easier to verify wrt leaks.
+> > > > > > >
+> > > > > > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > > > > > ---
+> > > > > > >  kernel/bpf/verifier.c | 342 +++++++++++++++++++++-----------=
+----------
+> > > > > > >  1 file changed, 172 insertions(+), 170 deletions(-)
+> > > > > > >
+> > > > > >
+> > > > > > This looks unnecessarily intrusive. I think it's best to extrac=
+t the
+> > > > > > logic of fetching and adding bpf_map by fd into a helper and th=
+at way
+> > > > > > contain fdget + fdput logic nicely. Something like below, which=
+ I can
+> > > > > > send to bpf-next.
+> > > > > >
+> > > > > > commit b5eec08241cc0263e560551de91eda73ccc5987d
+> > > > > > Author: Andrii Nakryiko <andrii@kernel.org>
+> > > > > > Date:   Tue Aug 6 14:31:34 2024 -0700
+> > > > > >
+> > > > > >     bpf: factor out fetching bpf_map from FD and adding it to u=
+sed_maps list
+> > > > > >
+> > > > > >     Factor out the logic to extract bpf_map instances from FD e=
+mbedded in
+> > > > > >     bpf_insns, adding it to the list of used_maps (unless it's =
+already
+> > > > > >     there, in which case we just reuse map's index). This simpl=
+ifies the
+> > > > > >     logic in resolve_pseudo_ldimm64(), especially around `struc=
+t fd`
+> > > > > >     handling, as all that is now neatly contained in the helper=
+ and doesn't
+> > > > > >     leak into a dozen error handling paths.
+> > > > > >
+> > > > > >     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > > >
+> > > > > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > > > > > index df3be12096cf..14e4ef687a59 100644
+> > > > > > --- a/kernel/bpf/verifier.c
+> > > > > > +++ b/kernel/bpf/verifier.c
+> > > > > > @@ -18865,6 +18865,58 @@ static bool bpf_map_is_cgroup_storage(=
+struct
+> > > > > > bpf_map *map)
+> > > > > >          map->map_type =3D=3D BPF_MAP_TYPE_PERCPU_CGROUP_STORAG=
+E);
+> > > > > >  }
+> > > > > >
+> > > > > > +/* Add map behind fd to used maps list, if it's not already th=
+ere, and return
+> > > > > > + * its index. Also set *reused to true if this map was already=
+ in the list of
+> > > > > > + * used maps.
+> > > > > > + * Returns <0 on error, or >=3D 0 index, on success.
+> > > > > > + */
+> > > > > > +static int add_used_map_from_fd(struct bpf_verifier_env *env, =
+int fd,
+> > > > > > bool *reused)
+> > > > > > +{
+> > > > > > +    struct fd f =3D fdget(fd);
+> > > > >
+> > > > > Use CLASS(fd, f)(fd) and you can avoid all that fdput() stuff.
+> > > >
+> > > > That was the point of Al's next patch in the series, so I didn't wa=
+nt
+> > > > to do it in this one that just refactored the logic of adding maps.
+> > > > But I can fold that in and send it to bpf-next.
+> > >
+> > > +1.
+> > >
+> > > The bpf changes look ok and Andrii's approach is easier to grasp.
+> > > It's better to route bpf conversion to CLASS(fd,..) via bpf-next,
+> > > so it goes through bpf CI and our other testing.
+> > >
+> > > bpf patches don't seem to depend on newly added CLASS(fd_pos, ...
+> > > and fderr, so pretty much independent from other patches.
+> >
+> > Ok, so CLASS(fd, f) won't work just yet because of peculiar
+> > __bpf_map_get() contract: if it gets valid struct fd but it doesn't
+> > contain a valid struct bpf_map, then __bpf_map_get() does fdput()
+> > internally. In all other cases the caller has to do fdput() and
+> > returned struct bpf_map's refcount has to be bumped by the caller
+> > (__bpf_map_get() doesn't do that, I guess that's why it's
+> > double-underscored).
+> >
+> > I think the reason it was done was just a convenience to not have to
+> > get/put bpf_map for temporary uses (and instead rely on file's
+> > reference keeping bpf_map alive), plus we have bpf_map_inc() and
+> > bpf_map_inc_uref() variants, so in some cases we need to bump just
+> > refcount, and in some both user and normal refcounts.
+> >
+> > So can't use CLASS(fd, ...) without some more clean up.
+> >
+> > Alexei, how about changing __bpf_map_get(struct fd f) to
+> > __bpf_map_get_from_fd(int ufd), doing fdget/fdput internally, and
+> > always returning bpf_map with (normal) refcount bumped (if successful,
+> > of course). We can then split bpf_map_inc_with_uref() into just
+> > bpf_map_inc() and bpf_map_inc_uref(), and callers will be able to do
+> > extra uref-only increment, if necessary.
+> >
+> > I can do that as a pre-patch, there are about 15 callers, so not too
+> > much work to clean this up. Let me know.
+>
+> Yeah. Let's kill __bpf_map_get(struct fd ..) altogether.
+> This logic was added in 2014.
+> fdget() had to be first and fdput() last to make sure
+> the map won't disappear while sys_bpf command is running.
+> All of the places can use bpf_map_get(), bpf_map_put() pair
+> and rely on map->refcnt, but...
+>
+> - it's atomic64_inc(&map->refcnt); The cost is probably
+> in the noise compared to all the work that map sys_bpf commands do.
+>
 
-Looks good. Feel free to add:
+agreed, not too worried about this
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> - It also opens new fuzzing opportunity to do some map operation
+> in one thread and close(map_fd) in the other, so map->usercnt can
+> drop to zero and map_release_uref() cleanup can start while
+> the other thread is still busy doing something like map_update_elem().
+> It can be mitigated by doing bpf_map_get_with_uref(), but two
+> atomic64_inc() is kinda too much.
+>
 
-								Honza
+yep, with_uref() is an overkill for most cases. I'd rather fix any
+such bugs, if we have them.
 
-> ---
-> ---
->  drivers/char/adi.c                      |  8 +-------
->  drivers/char/mem.c                      |  3 ++-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c |  1 +
->  drivers/gpu/drm/drm_file.c              |  3 ++-
->  drivers/gpu/drm/gma500/psb_drv.c        |  1 +
->  drivers/gpu/drm/i915/i915_driver.c      |  1 +
->  drivers/gpu/drm/nouveau/nouveau_drm.c   |  1 +
->  drivers/gpu/drm/radeon/radeon_drv.c     |  1 +
->  drivers/gpu/drm/tegra/drm.c             |  1 +
->  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c     |  1 +
->  drivers/gpu/drm/xe/xe_device.c          |  1 +
->  fs/proc/base.c                          | 10 ++++------
->  fs/read_write.c                         |  2 +-
->  include/drm/drm_accel.h                 |  3 ++-
->  include/drm/drm_gem.h                   |  3 ++-
->  include/drm/drm_gem_dma_helper.h        |  1 +
->  include/linux/fs.h                      |  5 +++--
->  mm/mmap.c                               |  2 +-
->  18 files changed, 27 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/char/adi.c b/drivers/char/adi.c
-> index 751d7cc0da1b..1c76c8758f0f 100644
-> --- a/drivers/char/adi.c
-> +++ b/drivers/char/adi.c
-> @@ -14,12 +14,6 @@
->  
->  #define MAX_BUF_SZ	PAGE_SIZE
->  
-> -static int adi_open(struct inode *inode, struct file *file)
-> -{
-> -	file->f_mode |= FMODE_UNSIGNED_OFFSET;
-> -	return 0;
-> -}
-> -
->  static int read_mcd_tag(unsigned long addr)
->  {
->  	long err;
-> @@ -206,9 +200,9 @@ static loff_t adi_llseek(struct file *file, loff_t offset, int whence)
->  static const struct file_operations adi_fops = {
->  	.owner		= THIS_MODULE,
->  	.llseek		= adi_llseek,
-> -	.open		= adi_open,
->  	.read		= adi_read,
->  	.write		= adi_write,
-> +	.fop_flags	= FOP_UNSIGNED_OFFSET,
->  };
->  
->  static struct miscdevice adi_miscdev = {
-> diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-> index 7c359cc406d5..169eed162a7f 100644
-> --- a/drivers/char/mem.c
-> +++ b/drivers/char/mem.c
-> @@ -643,6 +643,7 @@ static const struct file_operations __maybe_unused mem_fops = {
->  	.get_unmapped_area = get_unmapped_area_mem,
->  	.mmap_capabilities = memory_mmap_capabilities,
->  #endif
-> +	.fop_flags	= FOP_UNSIGNED_OFFSET,
->  };
->  
->  static const struct file_operations null_fops = {
-> @@ -693,7 +694,7 @@ static const struct memdev {
->  	umode_t mode;
->  } devlist[] = {
->  #ifdef CONFIG_DEVMEM
-> -	[DEVMEM_MINOR] = { "mem", &mem_fops, FMODE_UNSIGNED_OFFSET, 0 },
-> +	[DEVMEM_MINOR] = { "mem", &mem_fops, 0, 0 },
->  #endif
->  	[3] = { "null", &null_fops, FMODE_NOWAIT, 0666 },
->  #ifdef CONFIG_DEVPORT
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> index 094498a0964b..d7ef8cbecf6c 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> @@ -2908,6 +2908,7 @@ static const struct file_operations amdgpu_driver_kms_fops = {
->  #ifdef CONFIG_PROC_FS
->  	.show_fdinfo = drm_show_fdinfo,
->  #endif
-> +	.fop_flags = FOP_UNSIGNED_OFFSET,
->  };
->  
->  int amdgpu_file_to_fpriv(struct file *filp, struct amdgpu_fpriv **fpriv)
-> diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
-> index 714e42b05108..f8de3cba1a08 100644
-> --- a/drivers/gpu/drm/drm_file.c
-> +++ b/drivers/gpu/drm/drm_file.c
-> @@ -318,6 +318,8 @@ int drm_open_helper(struct file *filp, struct drm_minor *minor)
->  	if (dev->switch_power_state != DRM_SWITCH_POWER_ON &&
->  	    dev->switch_power_state != DRM_SWITCH_POWER_DYNAMIC_OFF)
->  		return -EINVAL;
-> +	if (WARN_ON_ONCE(!(filp->f_op->fop_flags & FOP_UNSIGNED_OFFSET)))
-> +		return -EINVAL;
->  
->  	drm_dbg_core(dev, "comm=\"%s\", pid=%d, minor=%d\n",
->  		     current->comm, task_pid_nr(current), minor->index);
-> @@ -335,7 +337,6 @@ int drm_open_helper(struct file *filp, struct drm_minor *minor)
->  	}
->  
->  	filp->private_data = priv;
-> -	filp->f_mode |= FMODE_UNSIGNED_OFFSET;
->  	priv->filp = filp;
->  
->  	mutex_lock(&dev->filelist_mutex);
-> diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
-> index 8b64f61ffaf9..d67c2b3ad901 100644
-> --- a/drivers/gpu/drm/gma500/psb_drv.c
-> +++ b/drivers/gpu/drm/gma500/psb_drv.c
-> @@ -498,6 +498,7 @@ static const struct file_operations psb_gem_fops = {
->  	.mmap = drm_gem_mmap,
->  	.poll = drm_poll,
->  	.read = drm_read,
-> +	.fop_flags = FOP_UNSIGNED_OFFSET,
->  };
->  
->  static const struct drm_driver driver = {
-> diff --git a/drivers/gpu/drm/i915/i915_driver.c b/drivers/gpu/drm/i915/i915_driver.c
-> index fb8e9c2fcea5..cf276299bccb 100644
-> --- a/drivers/gpu/drm/i915/i915_driver.c
-> +++ b/drivers/gpu/drm/i915/i915_driver.c
-> @@ -1671,6 +1671,7 @@ static const struct file_operations i915_driver_fops = {
->  #ifdef CONFIG_PROC_FS
->  	.show_fdinfo = drm_show_fdinfo,
->  #endif
-> +	.fop_flags = FOP_UNSIGNED_OFFSET,
->  };
->  
->  static int
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> index a58c31089613..e243b42f8582 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-> @@ -1274,6 +1274,7 @@ nouveau_driver_fops = {
->  	.compat_ioctl = nouveau_compat_ioctl,
->  #endif
->  	.llseek = noop_llseek,
-> +	.fop_flags = FOP_UNSIGNED_OFFSET,
->  };
->  
->  static struct drm_driver
-> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-> index 7bf08164140e..ac49779ed03d 100644
-> --- a/drivers/gpu/drm/radeon/radeon_drv.c
-> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
-> @@ -520,6 +520,7 @@ static const struct file_operations radeon_driver_kms_fops = {
->  #ifdef CONFIG_COMPAT
->  	.compat_ioctl = radeon_kms_compat_ioctl,
->  #endif
-> +	.fop_flags = FOP_UNSIGNED_OFFSET,
->  };
->  
->  static const struct drm_ioctl_desc radeon_ioctls_kms[] = {
-> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index 03d1c76aec2d..108c26a33edb 100644
-> --- a/drivers/gpu/drm/tegra/drm.c
-> +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -801,6 +801,7 @@ static const struct file_operations tegra_drm_fops = {
->  	.read = drm_read,
->  	.compat_ioctl = drm_compat_ioctl,
->  	.llseek = noop_llseek,
-> +	.fop_flags = FOP_UNSIGNED_OFFSET,
->  };
->  
->  static int tegra_drm_context_cleanup(int id, void *p, void *data)
-> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> index 50ad3105c16e..2825dd3149ed 100644
-> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-> @@ -1609,6 +1609,7 @@ static const struct file_operations vmwgfx_driver_fops = {
->  	.compat_ioctl = vmw_compat_ioctl,
->  #endif
->  	.llseek = noop_llseek,
-> +	.fop_flags = FOP_UNSIGNED_OFFSET,
->  };
->  
->  static const struct drm_driver driver = {
-> diff --git a/drivers/gpu/drm/xe/xe_device.c b/drivers/gpu/drm/xe/xe_device.c
-> index 76109415eba6..ea7e3ff6feba 100644
-> --- a/drivers/gpu/drm/xe/xe_device.c
-> +++ b/drivers/gpu/drm/xe/xe_device.c
-> @@ -197,6 +197,7 @@ static const struct file_operations xe_driver_fops = {
->  #ifdef CONFIG_PROC_FS
->  	.show_fdinfo = drm_show_fdinfo,
->  #endif
-> +	.fop_flags = FOP_UNSIGNED_OFFSET,
->  };
->  
->  static struct drm_driver driver = {
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 72a1acd03675..1409d1003101 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -827,12 +827,9 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
->  
->  static int mem_open(struct inode *inode, struct file *file)
->  {
-> -	int ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
-> -
-> -	/* OK to pass negative loff_t, we can catch out-of-range */
-> -	file->f_mode |= FMODE_UNSIGNED_OFFSET;
-> -
-> -	return ret;
-> +	if (WARN_ON_ONCE(!(file->f_op->fop_flags & FOP_UNSIGNED_OFFSET)))
-> +		return -EINVAL;
-> +	return __mem_open(inode, file, PTRACE_MODE_ATTACH);
->  }
->  
->  static ssize_t mem_rw(struct file *file, char __user *buf,
-> @@ -932,6 +929,7 @@ static const struct file_operations proc_mem_operations = {
->  	.write		= mem_write,
->  	.open		= mem_open,
->  	.release	= mem_release,
-> +	.fop_flags	= FOP_UNSIGNED_OFFSET,
->  };
->  
->  static int environ_open(struct inode *inode, struct file *file)
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 90e283b31ca1..89d4af0e3b93 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -36,7 +36,7 @@ EXPORT_SYMBOL(generic_ro_fops);
->  
->  static inline bool unsigned_offsets(struct file *file)
->  {
-> -	return file->f_mode & FMODE_UNSIGNED_OFFSET;
-> +	return file->f_op->fop_flags & FOP_UNSIGNED_OFFSET;
->  }
->  
->  /**
-> diff --git a/include/drm/drm_accel.h b/include/drm/drm_accel.h
-> index f4d3784b1dce..41c78b7d712c 100644
-> --- a/include/drm/drm_accel.h
-> +++ b/include/drm/drm_accel.h
-> @@ -28,7 +28,8 @@
->  	.poll		= drm_poll,\
->  	.read		= drm_read,\
->  	.llseek		= noop_llseek, \
-> -	.mmap		= drm_gem_mmap
-> +	.mmap		= drm_gem_mmap, \
-> +	.fop_flags	= FOP_UNSIGNED_OFFSET
->  
->  /**
->   * DEFINE_DRM_ACCEL_FOPS() - macro to generate file operations for accelerators drivers
-> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-> index bae4865b2101..d8b86df2ec0d 100644
-> --- a/include/drm/drm_gem.h
-> +++ b/include/drm/drm_gem.h
-> @@ -447,7 +447,8 @@ struct drm_gem_object {
->  	.poll		= drm_poll,\
->  	.read		= drm_read,\
->  	.llseek		= noop_llseek,\
-> -	.mmap		= drm_gem_mmap
-> +	.mmap		= drm_gem_mmap, \
-> +	.fop_flags	= FOP_UNSIGNED_OFFSET
->  
->  /**
->   * DEFINE_DRM_GEM_FOPS() - macro to generate file operations for GEM drivers
-> diff --git a/include/drm/drm_gem_dma_helper.h b/include/drm/drm_gem_dma_helper.h
-> index a827bde494f6..f2678e7ecb98 100644
-> --- a/include/drm/drm_gem_dma_helper.h
-> +++ b/include/drm/drm_gem_dma_helper.h
-> @@ -267,6 +267,7 @@ unsigned long drm_gem_dma_get_unmapped_area(struct file *filp,
->  		.read		= drm_read,\
->  		.llseek		= noop_llseek,\
->  		.mmap		= drm_gem_mmap,\
-> +		.fop_flags = FOP_UNSIGNED_OFFSET, \
->  		DRM_GEM_DMA_UNMAPPED_AREA_FOPS \
->  	}
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index fd34b5755c0b..40ebfa09112c 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -146,8 +146,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  /* Expect random access pattern */
->  #define FMODE_RANDOM		((__force fmode_t)(1 << 12))
->  
-> -/* File is huge (eg. /dev/mem): treat loff_t as unsigned */
-> -#define FMODE_UNSIGNED_OFFSET	((__force fmode_t)(1 << 13))
-> +/* FMODE_* bit 13 */
->  
->  /* File is opened with O_PATH; almost nothing can be done with it */
->  #define FMODE_PATH		((__force fmode_t)(1 << 14))
-> @@ -2073,6 +2072,8 @@ struct file_operations {
->  #define FOP_DIO_PARALLEL_WRITE	((__force fop_flags_t)(1 << 3))
->  /* Contains huge pages */
->  #define FOP_HUGE_PAGES		((__force fop_flags_t)(1 << 4))
-> +/* Treat loff_t as unsigned (e.g., /dev/mem) */
-> +#define FOP_UNSIGNED_OFFSET	((__force fop_flags_t)(1 << 5))
->  
->  /* Wrap a directory iterator that needs exclusive inode access */
->  int wrap_directory_iterator(struct file *, struct dir_context *,
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index d0dfc85b209b..6ddb278a5ee8 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1229,7 +1229,7 @@ static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
->  		return MAX_LFS_FILESIZE;
->  
->  	/* Special "we do even unsigned file positions" case */
-> -	if (file->f_mode & FMODE_UNSIGNED_OFFSET)
-> +	if (file->f_op->fop_flags & FOP_UNSIGNED_OFFSET)
->  		return 0;
->  
->  	/* Yes, random drivers might want more. But I'm tired of buggy drivers */
-> 
-> ---
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> change-id: 20240809-work-fop_unsigned-5f6f7734cb7b
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> So let's remove __bpf_map_get() and replace all users with bpf_map_get(),
+> but we may need to revisit that later.
+
+Ok, I will probably send something next week.
 
