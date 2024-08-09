@@ -1,125 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-25543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CDC394D3C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 17:39:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8098194D422
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 18:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0473E1F20616
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 15:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 404A82853B7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 16:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C932198E78;
-	Fri,  9 Aug 2024 15:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451911991BB;
+	Fri,  9 Aug 2024 16:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="SK4W6xrk"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U06bC5C7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ED8198A2F;
-	Fri,  9 Aug 2024 15:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3D918AF9;
+	Fri,  9 Aug 2024 16:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723217951; cv=none; b=Hr+wHji7YhpOn2K6D/eaGQ1GHlGYXyl6Jbh48OyyRBvs0/jpyS07S5OSkZB6IcJJi2USWmGe9ciN5QtfGjrTF42V5IHdYLba3qH0niQ0IQePxInSd6BH47eXuPznLCr+676Wib0/1hrolwtMHmefKXoCy/PdTcmMAXsQuHe16xg=
+	t=1723219442; cv=none; b=Uzk5clgtpIKT17UzzWmwNolsE7fUkVTaM174ZCNHBfhtWz2W1Ga2E53ag/Cy3YI8VzlVixkGREcar6ev/GhpMh22G5Jq3vYqV+/SXLgnW5C/Mx6AaIwkKf9PlZrxfhRDXmIVfX/w1NxlB7eBLrUMIzR55JeMZaq9dJkx5IrT7pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723217951; c=relaxed/simple;
-	bh=6j82V0+H0NTxc31P8JscPmTgjrKBCKmSwDsYbDXsLpw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d5+FdVhPt2qhcdTivYyLYd4OySu+FcCiJG6pjvhZDvk+69pGZRxeLLRDH77BwDRkPiGA1VozyRzCgBpS7hRlxe2Um8mYt2Rbn/57bEI0oRtExtcszZdXnNv3y7y1UkmhHlTVwciy9b5/CVVVPJX6SFoy7rHbdSLEiqjgnJxaoAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=SK4W6xrk; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1723217936;
-	bh=6j82V0+H0NTxc31P8JscPmTgjrKBCKmSwDsYbDXsLpw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=SK4W6xrkod35MgbYnBmUrWdfsm85xUH+/OmabHpcrIZy2sFVk1jkpxi8myZMxWJde
-	 71bOc/pCtDQdoQH8IC9Tq+UfNNulLWVi+LoyEJJvlkQze0m36kr/+/dRX4P0BYD57k
-	 qvDDY6zMdLV0wJiIZaonul/5sqf1mPOkDGlBSogk=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Fri, 09 Aug 2024 17:38:53 +0200
-Subject: [PATCH] unicode: constify utf8 data table
+	s=arc-20240116; t=1723219442; c=relaxed/simple;
+	bh=/TwqSYdP2eTeRw4+V9mHKhuIJJr/NXSu+QP2k09qYYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HpcgPZFKOQIwW/JTRknbxcOoyY1KsUIfVolDJIQeJP5pwhoBmreq0VhRfh67KF7ldTt6LiAbsELX2Z6xWpyf1o2f3bJm5uEL9NmOjugiQX1HUJolw4Dk8TdS8we5fUyCUiDWWogmz/fiU/rRZ9OpbtmIW5Hkb9xgPuz8Tm9IMco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=U06bC5C7; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=p+HKet5Xq76vUhEX4KeY5OC4X4HMbnKEvmndrRAXLrs=; b=U06bC5C7BHpLcTbm6mHky7qz/P
+	6UYO6pJt0LYGfEs11cG4CPcrL/RRQWJFNQ2LEkGX5jJmFNizKWWltlJaN2advBQUB7WH4kdjqJHnH
+	VQWAVqnh8YIBwMVA3HpuW6sWb2hwgh/ljZlXp3AButxmZUbS3WYHDkYyqKVF622LL83n5caz5OUCK
+	GxyiwyVhexkqyvEyNjrkVIiRxkzpQaDBxoCgBcWciIbD6lbaJ+yNYEDwGYdeqOMJEGAtd77zs8hFY
+	keK8xHCD9wKOPjbS9X6LH6QYLRQ7EiBF6GP+BtGx4IUCzV2ew0xD0bH845AqG6xwGBf8ZOy9hTxQl
+	iP/RIakA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1scS5s-0000000AnjP-30no;
+	Fri, 09 Aug 2024 16:03:56 +0000
+Date: Fri, 9 Aug 2024 17:03:56 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: =?iso-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [REGRESSION] fuse: copy_file_range() fails with EIO
+Message-ID: <ZrY97Pq9xM-fFhU2@casper.infradead.org>
+References: <792a3f54b1d528c2b056ae3c4ebaefe46bca8ef9.camel@bitron.ch>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240809-unicode-const-v1-1-69968a258092@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAA04tmYC/x3MMQqAMAxA0auUzBZqVFCvIg7SRM3SSqMiSO9uc
- XzD/y8oJ2GF0byQ+BaVGArqyoDfl7CxFSoGdNi63g32CuIjsfUx6GnRE+LQUUNrA6U5Eq/y/L9
- pzvkDRo6oL18AAAA=
-To: Gabriel Krisman Bertazi <krisman@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723217936; l=1992;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=6j82V0+H0NTxc31P8JscPmTgjrKBCKmSwDsYbDXsLpw=;
- b=aplz7Z9wZkAApOYb0SecwwfSjDr/36NkOYt4WQYctYaPKTUH9u8ovJWtEjW17eO39t/YPxtpc
- GNpqI0/IbPhCjLc1Rt5o6app6DGreyCvT3GI9O51q0nDN+w6yA9tnqf
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+In-Reply-To: <792a3f54b1d528c2b056ae3c4ebaefe46bca8ef9.camel@bitron.ch>
 
-All users already handle the table as const data.
-Move the table itself into .rodata to guard against accidental or
-malicious modifications.
+On Fri, Aug 09, 2024 at 05:53:26PM +0200, J�rg Billeter wrote:
+> Starting with 6.10, I'm seeing `copy_file_range()`, with source and
+> destination being on the same FUSE filesystem[1], failing with EIO in
+> some cases. The (low-level libfuse3) userspace filesystem does not
+> implement `copy_file_range`, so the kernel falls back to the generic
+> implementation. The userspace filesystem receives read requests and
+> replies with the `FUSE_BUF_SPLICE_MOVE` flag.
+> 
+> I'm not sure what exactly triggers the issue but it may depend on the
+> file size, among other things. I can reproduce it fairly reliably
+> attempting to copy files that are exactly 65536 bytes in size.
+> 
+> 6.9 works fine but I see the issue in 6.10, 6.10.3 and also in current
+> master ee9a43b7cfe2.
+> 
+> 413e8f014c8b848e4ce939156f210df59fbd1c24 is the first bad commit
+> commit 413e8f014c8b848e4ce939156f210df59fbd1c24 (HEAD)
+> Author: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Date:   Sat Apr 20 03:50:06 2024 +0100
+> 
+>     fuse: Convert fuse_readpages_end() to use folio_end_read()
+>     
+>     Nobody checks the error flag on fuse folios, so stop setting it.
+>     Optimise the (optional) setting of the uptodate flag and clearing
+>     of the lock flag by using folio_end_read().
+>     
+>     Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+>     Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> 
+> I've confirmed the bisection by reverting this commit on top of 6.10.3,
+> which resolves the issue.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- fs/unicode/mkutf8data.c       | 2 +-
- fs/unicode/utf8data.c_shipped | 2 +-
- fs/unicode/utf8n.h            | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Umm.  I don't see it.  This is all that's in the commit:
 
-diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
-index 77b685db8275..57e0e290ce6f 100644
---- a/fs/unicode/mkutf8data.c
-+++ b/fs/unicode/mkutf8data.c
-@@ -3338,7 +3338,7 @@ static void write_file(void)
- 	}
- 	fprintf(file, "};\n");
- 	fprintf(file, "\n");
--	fprintf(file, "struct utf8data_table utf8_data_table = {\n");
-+	fprintf(file, "const struct utf8data_table utf8_data_table = {\n");
- 	fprintf(file, "\t.utf8agetab = utf8agetab,\n");
- 	fprintf(file, "\t.utf8agetab_size = ARRAY_SIZE(utf8agetab),\n");
- 	fprintf(file, "\n");
-diff --git a/fs/unicode/utf8data.c_shipped b/fs/unicode/utf8data.c_shipped
-index dafa5fed761d..73a93d49b3ba 100644
---- a/fs/unicode/utf8data.c_shipped
-+++ b/fs/unicode/utf8data.c_shipped
-@@ -4107,7 +4107,7 @@ static const unsigned char utf8data[64256] = {
- 	0x81,0x80,0xcf,0x86,0x85,0x84,0xcf,0x86,0xcf,0x06,0x02,0x00,0x00,0x00,0x00,0x00
- };
- 
--struct utf8data_table utf8_data_table = {
-+const struct utf8data_table utf8_data_table = {
- 	.utf8agetab = utf8agetab,
- 	.utf8agetab_size = ARRAY_SIZE(utf8agetab),
- 
-diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
-index bd00d587747a..fc703aa4b28e 100644
---- a/fs/unicode/utf8n.h
-+++ b/fs/unicode/utf8n.h
-@@ -78,6 +78,6 @@ struct utf8data_table {
- 	const unsigned char *utf8data;
- };
- 
--extern struct utf8data_table utf8_data_table;
-+extern const struct utf8data_table utf8_data_table;
- 
- #endif /* UTF8NORM_H */
+        for (i = 0; i < ap->num_pages; i++) {
+-               struct page *page = ap->pages[i];
++               struct folio *folio = page_folio(ap->pages[i]);
 
----
-base-commit: ee9a43b7cfe2d8a3520335fea7d8ce71b8cabd9d
-change-id: 20240809-unicode-const-2cd2295d3df3
+-               if (!err)
+-                       SetPageUptodate(page);
+-               else
+-                       SetPageError(page);
+-               unlock_page(page);
+-               put_page(page);
++               folio_end_read(folio, !err);
++               folio_put(folio);
+        }
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+Do you have CONFIG_DEBUG_VM enabled?  There are some debugging asserts
+which that will enable that might indicate a problem.
 
+Otherwise we can try splitting the commit into individual steps and
+seeing which one shows the problem.
 
