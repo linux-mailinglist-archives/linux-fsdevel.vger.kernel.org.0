@@ -1,142 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-25527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8260494D1C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 16:01:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D6F694D1EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 16:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385321F22ACE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 14:01:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D48A1F2376D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 14:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0213197A6B;
-	Fri,  9 Aug 2024 14:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F5019755E;
+	Fri,  9 Aug 2024 14:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dcXLEqsx"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="ODYrNe7g"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF5D197556
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 14:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B88319753F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 14:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723212082; cv=none; b=tkHCPQK9vmL8y/JdsiJBZJaj7kwjFFNlCDt645BdeRraZkcPV2+ZZqO/gRVSBJAa4IM0QUAezGTZ+Y8v27xYCW6i0HRtt7LcBAuHLePdF3X6GPGvLCt0VRbO0BPf1X6hf0KeoTRrKV9LlDujTIBSyXPy1u7itUMDwaT0joAH9ag=
+	t=1723212850; cv=none; b=sX5Q9NmGWoBshj49pQ9QasJfZCql8L5LCqOXGz3OaDk+6kn0oy8/g/fIjRjRKPkAsT6sZ4hLZjdvqCrq8jg+OVNyIyyH27w2sa+hGiR6MHGM9N0vn9TRWnSKTvJPLm7DFgFJH6QiYTtSNf32xlJfIADVi7Xntle/2bOYtUSprWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723212082; c=relaxed/simple;
-	bh=SLvVfUhTgJPSIy5piWgUXzQZF9qDlIZhZnOEWDwoLZk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gHbFw6xcB5zUehzy0gbQruyYPAA+Pwf2gUCbuY2dBkgziiScbhVmYUH7I/Tc46eUzsOPR6O2/HjOGpS0cAO44LqaFRzq7l3oh7TmwlvohSRS+qTABsfqpTrcdPdXyDQeKpKABcs1aQIcdhkuZyxPszK8cxoV9OPEhonC8u45S8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dcXLEqsx; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso12265a12.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 07:01:20 -0700 (PDT)
+	s=arc-20240116; t=1723212850; c=relaxed/simple;
+	bh=Qg6peh4W1uw0keiI+fBLVAXx38shr6oNqapP+0hqOSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5yIotNCNXMVn2XPFQHOl5CTufMgubTMquaDhec16k6uh4WzAxtUqqEZ9JbVlykefMUk5WovP0T84pUXwtyVt+r0lh4anxLcq99zQR+5IJNwFYhe2SIejlPwgMZCYndjxO8StzqERa7LEFHJB0xCrTovIZrBUo+UIxa7KoHF2qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=ODYrNe7g; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a1d3e93cceso290420385a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 07:14:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723212079; x=1723816879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ybf1WG84h42H572TtPv2LZmVlcjwNEKQd+fCxEmYBk0=;
-        b=dcXLEqsx+Xjpd3WHsZy0bZB1VzNRLpAj2c2NlDMbdu2j0Oqg/c468WiWWxVALk60by
-         aOM3BaW8dL3RGyqeGCdOxkirAH6bpqEguPF+NTiZ/wdmrYWzl4pYGlHPhmO+eXko4QLf
-         21jvVSUdp3HnMIgJojkh4L/EgKtsj7XHCF+EZW+NjNYIPF+8/bLkWHxTBEZiE9cXICPN
-         vYotZjtjHZnxvvFKWj2QY82T1r5rLr42xa5nXZviyOoGa5DyPaH5rAX+Sq8Jxg4iQ4zx
-         vJyvge11laqZcA7yvdc88/3kwQ0RYBSdSaFE1L6QSrsf1cg2wj54eAZLN0pME3ln9Jh1
-         mlgA==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723212847; x=1723817647; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VqaU4YPFEFPDpzs7lhUNFHbREIXhMM3YN1rP0YBOnz0=;
+        b=ODYrNe7gS+8FY/1cOHIY1BWqhxtCTjJKGW6zRGnFn4cQxcxl52cRpMHhjys3zoLIQ1
+         BnkpePuBZWItU8F5lZM/JZ7uYfZaCSP6boqovwl56qlfc4kU6cDDYgb71JOpogQId0Hm
+         iG7MIGaNtn0IXuha1h60DAmYW4r1Owu6LT16pXtGRqpDkdkwxDcR24jcrSWwMMHOzhCl
+         wr7d4ze3yuZZftk3Rvazkaa5SDkMflx+TxZgvScXBX/Z6R8YIyzsTP0E9mvCL4M34Dt0
+         n0iO2JOWH95kIgVR1YfmJqwEbIagE4sogAnN3J8DTmFcgMjpCH5C+x15/cUtKpR/NIq9
+         OmkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723212079; x=1723816879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ybf1WG84h42H572TtPv2LZmVlcjwNEKQd+fCxEmYBk0=;
-        b=j2JqZSMgG3iRaDamwIaZ9gRg4z+maV8nKxruUZNzySJ2N789u1RUBE/VVletEAc8WC
-         XokzOLLosksvw6eUGKVp5heZhVbB9ZncLNliJnK7BWaKmlRcnLfg7tBn87H1Nj6LHPkZ
-         sopNZ9Lw8j3tEIReEYE4O2xw4HT/yeGzkN7QKbpU2PiK5+5BfzIjV+0AsKlCEITBK5YT
-         AdVPzbXZDegHU2ahGDjzGxWYbcGxcw1cns/UWmZdChrdGuSMAePaDSpgqMWtTA18MNXd
-         g4paTpBwff+17SGv1M5cnb4lrpoW3u02RKI//HC4GTMpopdKLvOn9fXyl9XoxnK2zQmE
-         im7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVAEXkbb4Z94Trfib6Hbk5L35S66FQM3ayTuDf35coJlzsiWsC9OdAnIdRBygTCizgUFkzQNlyaueqCLen7N1GgOgmrLt1PuBckezCa7A==
-X-Gm-Message-State: AOJu0YzegXIvhhOh+P1ToAEfIZceIAKuQRtQF1FzzpILR9pDMbRl92Rg
-	wWEacFMqrYtVtOwOQVRbiYIt2A0tzEh3uZ0UYl4ChHRppE2YYd2Xtlb9T4GD71l7u1zj9R7ArEw
-	S3xAl4OwiozxiPu2jR3oJCEcBEKNtBD7hPPwB
-X-Google-Smtp-Source: AGHT+IEub+hoxVm4xWSuTOI3C11h8h/fX4KSqoaDWKa7V1e19RKutQ6uPrwA1941jQxEaXlNpwu8L2ZBgfRyxcIlx7Y=
-X-Received: by 2002:a05:6402:35cc:b0:57c:c5e2:2c37 with SMTP id
- 4fb4d7f45d1cf-5bc4b3fc8d7mr129304a12.3.1723212077931; Fri, 09 Aug 2024
- 07:01:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723212847; x=1723817647;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VqaU4YPFEFPDpzs7lhUNFHbREIXhMM3YN1rP0YBOnz0=;
+        b=Uc2g4UxDRrKmA/KwBSe/SeprPxajPVBnR1rZK65D49cYz9NE8j/W2CsyWvRnGaV8Dy
+         7lDfKjKf7ETA8W9hilbI86kZ24wZEtTs7rxaG85ejuumMDdye0aB/U+N+9iOp6cxa/ni
+         8OAgZ0v8trxAOYJuILNWWHLsKxkbs0KzEKYKQiIbiZPc1D+uvbhUln54rbKIVA/LkaW+
+         dUFRJ8CHYMXajoWc8OdMxrfqkIVDA+iooojYNlcVTUOQk+RVYs+mHKEsoIjNmN0773Ib
+         sL/xreGRWvthTipTy/HU90HFHkjcFLSgMQTH3dVWERmYO3BBEwidsJtY62ktJpMyWRr2
+         q2NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkS90cqSkKihKBXACIcc7Mt8RmKO7DeZJb/Pksb0zA6EXkMIcpU4KP1w+IlxBP8qB4BbUpylS2+8vewskZKQSlOBgWwjWNyGosda3WNQ==
+X-Gm-Message-State: AOJu0Yz9rQOnDldmkMnHUkXjok8Tw0Rov8LkI5EJBlwF6eZ4TPdu/gZk
+	7SDHNl09dTZmqDy7jRlWOP9Yb/z5Hk5tLZL9xKsDVU+Ct9GmElG4dUzFvM66PSI=
+X-Google-Smtp-Source: AGHT+IFT+KF5iW1aowJACdjt8G3RckzwQvK6JrXZ1GVqd3fvEF1GJIW4kFtFzdJDQJxs+Zm/R8rhtw==
+X-Received: by 2002:a05:620a:2991:b0:7a1:da71:e73a with SMTP id af79cd13be357-7a38245db34mr934984485a.2.1723212846746;
+        Fri, 09 Aug 2024 07:14:06 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a3786f7680sm261656985a.133.2024.08.09.07.14.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 07:14:06 -0700 (PDT)
+Date: Fri, 9 Aug 2024 10:14:05 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
+	laoar.shao@gmail.com, kernel-team@meta.com
+Subject: Re: [PATCH v3 1/2] fuse: add optional kernel-enforced timeout for
+ requests
+Message-ID: <20240809141405.GA645452@perftesting>
+References: <20240808190110.3188039-1-joannelkoong@gmail.com>
+ <20240808190110.3188039-2-joannelkoong@gmail.com>
+ <20240808205006.GA625513@perftesting>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net> <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
- <20240809.eejeekoo4Quo@digikod.net> <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
- <20240809.se0ha8tiuJai@digikod.net>
-In-Reply-To: <20240809.se0ha8tiuJai@digikod.net>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 9 Aug 2024 16:00:41 +0200
-Message-ID: <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
-Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
- signal control)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808205006.GA625513@perftesting>
 
-On Fri, Aug 9, 2024 at 3:18=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
-> Talking about f_modown() and security_file_set_fowner(), it looks like
-> there are some issues:
->
-> On Fri, Aug 09, 2024 at 02:44:06PM +0200, Jann Horn wrote:
-> > On Fri, Aug 9, 2024 at 12:59=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
->
-> [...]
->
-> > > BTW, I don't understand why neither SELinux nor Smack use (explicit)
-> > > atomic operations nor lock.
-> >
-> > Yeah, I think they're sloppy and kinda wrong - but it sorta works in
-> > practice mostly because they don't have to do any refcounting around
-> > this?
-> >
-> > > And it looks weird that
-> > > security_file_set_fowner() isn't called by f_modown() with the same
-> > > locking to avoid races.
-> >
-> > True. I imagine maybe the thought behind this design could have been
-> > that LSMs should have their own locking, and that calling an LSM hook
-> > with IRQs off is a little weird? But the way the LSMs actually use the
-> > hook now, it might make sense to call the LSM with the lock held and
-> > IRQs off...
-> >
->
-> Would it be OK (for VFS, SELinux, and Smack maintainers) to move the
-> security_file_set_fowner() call into f_modown(), especially where
-> UID/EUID are populated.  That would only call security_file_set_fowner()
-> when the fown is actually set, which I think could also fix a bug for
-> SELinux and Smack.
->
-> Could we replace the uid and euid fields with a pointer to the current
-> credentials?  This would enables LSMs to not copy the same kind of
-> credential informations and save some memory, simplify credential
-> management, and improve consistency.
+On Thu, Aug 08, 2024 at 04:50:06PM -0400, Josef Bacik wrote:
+> On Thu, Aug 08, 2024 at 12:01:09PM -0700, Joanne Koong wrote:
+> > There are situations where fuse servers can become unresponsive or take
+> > too long to reply to a request. Currently there is no upper bound on
+> > how long a request may take, which may be frustrating to users who get
+> > stuck waiting for a request to complete.
+> > 
+> > This commit adds a timeout option (in seconds) for requests. If the
+> > timeout elapses before the server replies to the request, the request
+> > will fail with -ETIME.
+> > 
+> > There are 3 possibilities for a request that times out:
+> > a) The request times out before the request has been sent to userspace
+> > b) The request times out after the request has been sent to userspace
+> > and before it receives a reply from the server
+> > c) The request times out after the request has been sent to userspace
+> > and the server replies while the kernel is timing out the request
+> > 
+> > While a request timeout is being handled, there may be other handlers
+> > running at the same time if:
+> > a) the kernel is forwarding the request to the server
+> > b) the kernel is processing the server's reply to the request
+> > c) the request is being re-sent
+> > d) the connection is aborting
+> > e) the device is getting released
+> > 
+> > Proper synchronization must be added to ensure that the request is
+> > handled correctly in all of these cases. To this effect, there is a new
+> > FR_FINISHING bit added to the request flags, which is set atomically by
+> > either the timeout handler (see fuse_request_timeout()) which is invoked
+> > after the request timeout elapses or set by the request reply handler
+> > (see dev_do_write()), whichever gets there first. If the reply handler
+> > and the timeout handler are executing simultaneously and the reply handler
+> > sets FR_FINISHING before the timeout handler, then the request will be
+> > handled as if the timeout did not elapse. If the timeout handler sets
+> > FR_FINISHING before the reply handler, then the request will fail with
+> > -ETIME and the request will be cleaned up.
+> > 
+> > Currently, this is the refcount lifecycle of a request:
+> > 
+> > Synchronous request is created:
+> > fuse_simple_request -> allocates request, sets refcount to 1
+> >   __fuse_request_send -> acquires refcount
+> >     queues request and waits for reply...
+> > fuse_simple_request -> drops refcount
+> > 
+> > Background request is created:
+> > fuse_simple_background -> allocates request, sets refcount to 1
+> > 
+> > Request is replied to:
+> > fuse_dev_do_write
+> >   fuse_request_end -> drops refcount on request
+> > 
+> > Proper acquires on the request reference must be added to ensure that the
+> > timeout handler does not drop the last refcount on the request while
+> > other handlers may be operating on the request. Please note that the
+> > timeout handler may get invoked at any phase of the request's
+> > lifetime (eg before the request has been forwarded to userspace, etc).
+> > 
+> > It is always guaranteed that there is a refcount on the request when the
+> > timeout handler is executing. The timeout handler will be either
+> > deactivated by the reply/abort/release handlers, or if the timeout
+> > handler is concurrently executing on another CPU, the reply/abort/release
+> > handlers will wait for the timeout handler to finish executing first before
+> > it drops the final refcount on the request.
+> > 
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  fs/fuse/dev.c    | 197 +++++++++++++++++++++++++++++++++++++++++++++--
+> >  fs/fuse/fuse_i.h |  14 ++++
+> >  fs/fuse/inode.c  |   7 ++
+> >  3 files changed, 210 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index 9eb191b5c4de..bcb9ff2156c0 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> > @@ -31,6 +31,8 @@ MODULE_ALIAS("devname:fuse");
+> >  
+> >  static struct kmem_cache *fuse_req_cachep;
+> >  
+> > +static void fuse_request_timeout(struct timer_list *timer);
+> > +
+> >  static struct fuse_dev *fuse_get_dev(struct file *file)
+> >  {
+> >  	/*
+> > @@ -48,6 +50,8 @@ static void fuse_request_init(struct fuse_mount *fm, struct fuse_req *req)
+> >  	refcount_set(&req->count, 1);
+> >  	__set_bit(FR_PENDING, &req->flags);
+> >  	req->fm = fm;
+> > +	if (fm->fc->req_timeout)
+> > +		timer_setup(&req->timer, fuse_request_timeout, 0);
+> >  }
+> >  
+> >  static struct fuse_req *fuse_request_alloc(struct fuse_mount *fm, gfp_t flags)
+> > @@ -277,7 +281,7 @@ static void flush_bg_queue(struct fuse_conn *fc)
+> >   * the 'end' callback is called if given, else the reference to the
+> >   * request is released
+> >   */
+> > -void fuse_request_end(struct fuse_req *req)
+> > +static void do_fuse_request_end(struct fuse_req *req)
+> >  {
+> >  	struct fuse_mount *fm = req->fm;
+> >  	struct fuse_conn *fc = fm->fc;
+> > @@ -296,8 +300,6 @@ void fuse_request_end(struct fuse_req *req)
+> >  		list_del_init(&req->intr_entry);
+> >  		spin_unlock(&fiq->lock);
+> >  	}
+> > -	WARN_ON(test_bit(FR_PENDING, &req->flags));
+> > -	WARN_ON(test_bit(FR_SENT, &req->flags));
+> >  	if (test_bit(FR_BACKGROUND, &req->flags)) {
+> >  		spin_lock(&fc->bg_lock);
+> >  		clear_bit(FR_BACKGROUND, &req->flags);
+> > @@ -329,8 +331,104 @@ void fuse_request_end(struct fuse_req *req)
+> >  put_request:
+> >  	fuse_put_request(req);
+> >  }
+> > +
+> > +void fuse_request_end(struct fuse_req *req)
+> > +{
+> > +	WARN_ON(test_bit(FR_PENDING, &req->flags));
+> > +	WARN_ON(test_bit(FR_SENT, &req->flags));
+> > +
+> > +	if (req->timer.function)
+> > +		timer_delete_sync(&req->timer);
+> 
+> This becomes just timer_delete_sync();
+> 
 
-To clarify: These two paragraphs are supposed to be two alternative
-options, right? One option is to call security_file_set_fowner() with
-the lock held, the other option is to completely rip out the
-security_file_set_fowner() hook and instead let the VFS provide LSMs
-with the creds they need for the file_send_sigiotask hook?
+Err ignore this, I had another comment about always initializing the timer, but
+I realized why you're doing what you're doing and so this isn't relevant.
+Thanks,
+
+Josef
 
