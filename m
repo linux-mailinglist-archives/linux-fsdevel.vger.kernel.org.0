@@ -1,309 +1,408 @@
-Return-Path: <linux-fsdevel+bounces-25507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB48994CEC5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 12:34:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E7894CED4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 12:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B3561C22412
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 10:34:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D39E2B21E8E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 10:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739981922F5;
-	Fri,  9 Aug 2024 10:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48187192B69;
+	Fri,  9 Aug 2024 10:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3OXQZdt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAP8EjRG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE661922DD;
-	Fri,  9 Aug 2024 10:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD23E1922DB
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 10:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723199688; cv=none; b=J1mETrl/cgPcn/o9+3jB+pYvxatJB52vAa1Aiti+ucxiRSdSa4pzs50nFYSUmFxk0jxNnHw1FOV3ktjQKVzDfOYTzs5v75zkQokwmMe/ZFVK1snKOELMERpAzLaefT5jzZYC2v7ne+WvvdVvCXUUqyQ8oBVi9dFtK44rSUE+F7A=
+	t=1723199946; cv=none; b=puI7KVLuZy5iP/ROSvc/lQeUlNLNIOE48YPwwssajd+Q4mUz81QWWE+x+IiT0drL/06+f1FPj2i1xEERI2h9Qa3URUHAat9q7awZumEZXv4x3kPGWrqFsZGzlAGqA18TVebZtwd7eAbRLZL8nVSOakKv2sKGNakBz2YuwhofZXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723199688; c=relaxed/simple;
-	bh=1wgzFHAy5ZAm/MtvH67YFXkiLkUENjoMu00WdPC/oWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nxsJRug9CE8thaSiXDcrAgd/II80LmW1h3DZTJ8ycM5Hfsb67e+41kbt9aOUQpqbBoGz7W+/EYBcwinxjZQKjgrKssChI0R6IAY7zXNa3wvDYufzSguL3ipcT10qt6bCIaWJM6MacdyfrzWrtI+myhxe/EibJ2vdrWtLdKupUZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3OXQZdt; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a1d0dc869bso116623785a.2;
-        Fri, 09 Aug 2024 03:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723199686; x=1723804486; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I8Rt2uRteO3s/W93KxwWyA+7W/jfG/qdLIJu/l21pOI=;
-        b=B3OXQZdt+38zEghIitqe/x9lYDtt06bGaR1apxZBN/lBtm1p2o0CcLnRWHjigjrqb5
-         ms3q1jcIsbP42wgTc5bHw9MHPeJXTH+C7sXLy3nxjx22soO3sd9wrVIwo2q0kdhqRsc+
-         svpL5wm+cwPuMI9CohGOGX3DbfOwW60KAzzxfW/0NEdGgQgJ7t3fMyqD3SEC1EwEdUxl
-         3xXSratkBPQJKCTfNBAa1iiLPPJ8c2bpn/PNhmVwKKl2bMHRMl3Jec+k7Ghocaa2exsa
-         cmX3yuoYE7VJZiRE9d4AebV+uOYfDe1+YFHFRcyiMvEqKj+afwcBLfj/l/RNRYCOMWhX
-         dR8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723199686; x=1723804486;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I8Rt2uRteO3s/W93KxwWyA+7W/jfG/qdLIJu/l21pOI=;
-        b=GpkhwddUXNXeJI3/DK28bUi6FQRlTmACXkjBHVqJUDks8LU2ccIRvD7zfZ6DSnMGy1
-         RgqhMIjwTF/afmMf7bW7op0SkqrYsC3GAWTFB3KjhWxsmwS0aLsb13W3lIYfhKCAAG84
-         kA0RBz7cAm/FeB/g9TLcd5Ej0vU6J96FS0Nbbd1Gajj74wRnWcwufnL2RdQlnmtiu3+g
-         jHWIuBNMT3G3iLmCbDVQjXRTPXRwf5Ynbq8U0sK66wWqfUd+fhmIiUlviMdFvdJtdyrN
-         lqJeXFXkzLtU4HowBxU1fKiCcxz1he39jCNBqMlqVGila1Q2lDmoP5NYY//aNGYawvLA
-         hEyw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1iMM4BUdKJn4zI+1GY1ksSKpbt4aBuiezBkzDP7yasV7WitM5AIlUOaCRZFT/B2iSJ7rwy6l1tCUUu/n0xN9HrSpp/H1FIGwVZteyjli5WIcCNyhUmt3u1gHhhgNFW+Qs7OlpUQ6Vr77/SYDp2ai2ZA82XozPzkcrHPjhb0zsteKp4RL9GZFJ
-X-Gm-Message-State: AOJu0YyxOamNzTHnqsoIe4lQ03UW+urxTZqmQM8iIPsoY6JdnUOl2GhV
-	7HCVVq0N1QDww43puWL8eNv+camAtk7Pfdm3l3U782LtozvuXetwJSXKYFTQlEfOG5RiOc0enSW
-	dvZBOSg8vjcT4DhmLvGDOjIZj/4c=
-X-Google-Smtp-Source: AGHT+IE6k6jkC8soHuhF1UAvmWBUGOJEeJmvZcTjFrXx9tN32I5U8WvEF79pt2abgUumNMCCZykVhqG90c2xr7MI1JQ=
-X-Received: by 2002:a05:620a:3954:b0:7a2:317:a845 with SMTP id
- af79cd13be357-7a4c1781a52mr112774385a.2.1723199685925; Fri, 09 Aug 2024
- 03:34:45 -0700 (PDT)
+	s=arc-20240116; t=1723199946; c=relaxed/simple;
+	bh=AIOq5jHV/80Hs+BUH/I7dz1tkC99Ooev+lzR9sw0d+k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JctMWybxT0IRyZzOJ8PR+/e5sz6vXWzjG5PCIgcGtp51kkzhL7J8rFqaFEuMlT3MTR7lpwQwSJU3pcevQ2jOyF2MtytWZHvMgMG8/oaOfA9O4ZfamUHPARVRE28JTnPYVKuwlWHxMqx611Y+H5hEripBCxisaaw4JLvaYWpffPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAP8EjRG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABAA4C32782;
+	Fri,  9 Aug 2024 10:39:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723199946;
+	bh=AIOq5jHV/80Hs+BUH/I7dz1tkC99Ooev+lzR9sw0d+k=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GAP8EjRGUNI8wxzcHlltB+xbDcNfB6CQFqTNtk8Pbm4/JeVEksPVP6/KdLQw56jXa
+	 Wf03Bw9HWHxdPa2uf0nNE87SnigGyWcNMfezAn+hpl2M0pSP5R2jMZ1P0zuB9GHpZg
+	 zwyO2cY41C5KugnMQWXy4S5Uq4noGkM4RM3GHSLMBv8JqXJIetpjXXm3zUqQgDKYSY
+	 YyRxI0YjuNthrSqgo2ypp1vbhLWQIIwQzHufjwXIZj36mYMaiTxPsgPP3NyRxsqQyM
+	 74eSzGXv1uhfmWBixCamrC48h2cFkvMkQKW10E7kzl5oxLRAzCRHhCjzxU0A2UXyfg
+	 LWWGykyUZrkxA==
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, 09 Aug 2024 12:38:56 +0200
+Subject: [PATCH] fs: move FMODE_UNSIGNED_OFFSET to fop_flags
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1723144881.git.josef@toxicpanda.com> <b8c3f0d9ed6d23f9a636919e28293cdbbe22e0db.1723144881.git.josef@toxicpanda.com>
-In-Reply-To: <b8c3f0d9ed6d23f9a636919e28293cdbbe22e0db.1723144881.git.josef@toxicpanda.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 9 Aug 2024 12:34:34 +0200
-Message-ID: <CAOQ4uxivX+mxfpOUTAsxHVoCGb9YHdi-qHswN9O4EJ53sKUVfw@mail.gmail.com>
-Subject: Re: [PATCH v2 13/16] fsnotify: generate pre-content permission event
- on page fault
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, jack@suse.cz, 
-	brauner@kernel.org, linux-xfs@vger.kernel.org, gfs2@lists.linux.dev, 
-	linux-bcachefs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240809-work-fop_unsigned-v1-1-658e054d893e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAL/xtWYC/x3MQQ6CMBBA0auQWTukRQT1KsaYtkxhYmzJjKIJ4
+ e5Wl2/x/wpKwqRwrlYQWlg5pwK7qyBMLo2EPBRDY5rWHM0J31nuGPN8eyXlMdGAh9jFvt+3wfc
+ eSjcLRf78n5drsXdK6MWlMP1OD6dPknrpamtRgoVt+wIwzme0hgAAAA==
+To: linux-fsdevel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+ Al Viro <viro@zeniv.linux.org.uk>, Josef Bacik <josef@toxicpanda.com>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12244; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=AIOq5jHV/80Hs+BUH/I7dz1tkC99Ooev+lzR9sw0d+k=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRt/XiicoK8q83lf63zLt4Ld/q+7dAe0RLfneZGbKyvy
+ zv2ea6d1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARv2eMDAuWaN/St1TUll2o
+ dPbLBg6zxYYd9hrvzGOidXSvN99lP8nwP0ShONlxwye/hy8f/ZdXOCbvvMVd/3S5xsVUqexsi5m
+ 1zAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Thu, Aug 8, 2024 at 9:28=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> w=
-rote:
->
-> FS_PRE_ACCESS or FS_PRE_MODIFY will be generated on page fault depending
-> on the faulting method.
->
-> This pre-content event is meant to be used by hierarchical storage
-> managers that want to fill in the file content on first read access.
->
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  include/linux/mm.h |  2 +
->  mm/filemap.c       | 97 ++++++++++++++++++++++++++++++++++++++++++----
->  2 files changed, 92 insertions(+), 7 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ab3d78116043..c33f3b7f7261 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3503,6 +3503,8 @@ extern vm_fault_t filemap_fault(struct vm_fault *vm=
-f);
->  extern vm_fault_t filemap_map_pages(struct vm_fault *vmf,
->                 pgoff_t start_pgoff, pgoff_t end_pgoff);
->  extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
-> +extern vm_fault_t filemap_maybe_emit_fsnotify_event(struct vm_fault *vmf=
-,
-> +                                                   struct file **fpin);
->
->  extern unsigned long stack_guard_gap;
->  /* Generic expand stack which grows the stack according to GROWS{UP,DOWN=
-} */
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 8b1684b62177..3d232166b051 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -46,6 +46,7 @@
->  #include <linux/pipe_fs_i.h>
->  #include <linux/splice.h>
->  #include <linux/rcupdate_wait.h>
-> +#include <linux/fsnotify.h>
->  #include <asm/pgalloc.h>
->  #include <asm/tlbflush.h>
->  #include "internal.h"
-> @@ -3112,13 +3113,13 @@ static int lock_folio_maybe_drop_mmap(struct vm_f=
-ault *vmf, struct folio *folio,
->   * that.  If we didn't pin a file then we return NULL.  The file that is
->   * returned needs to be fput()'ed when we're done with it.
->   */
-> -static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
-> +static struct file *do_sync_mmap_readahead(struct vm_fault *vmf,
-> +                                          struct file *fpin)
->  {
->         struct file *file =3D vmf->vma->vm_file;
->         struct file_ra_state *ra =3D &file->f_ra;
->         struct address_space *mapping =3D file->f_mapping;
->         DEFINE_READAHEAD(ractl, file, ra, mapping, vmf->pgoff);
-> -       struct file *fpin =3D NULL;
->         unsigned long vm_flags =3D vmf->vma->vm_flags;
->         unsigned int mmap_miss;
->
-> @@ -3190,12 +3191,12 @@ static struct file *do_sync_mmap_readahead(struct=
- vm_fault *vmf)
->   * was pinned if we have to drop the mmap_lock in order to do IO.
->   */
->  static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
-> -                                           struct folio *folio)
-> +                                           struct folio *folio,
-> +                                           struct file *fpin)
->  {
->         struct file *file =3D vmf->vma->vm_file;
->         struct file_ra_state *ra =3D &file->f_ra;
->         DEFINE_READAHEAD(ractl, file, ra, file->f_mapping, vmf->pgoff);
-> -       struct file *fpin =3D NULL;
->         unsigned int mmap_miss;
->
->         /* See comment in do_sync_mmap_readahead. */
-> @@ -3260,6 +3261,72 @@ static vm_fault_t filemap_fault_recheck_pte_none(s=
-truct vm_fault *vmf)
->         return ret;
->  }
->
-> +/**
-> + * filemap_maybe_emit_fsnotify_event - maybe emit a pre-content event.
-> + * @vmf:       struct vm_fault containing details of the fault.
-> + * @fpin:      pointer to the struct file pointer that may be pinned.
-> + *
-> + * If we have pre-content watches on this file we will need to emit an e=
-vent for
-> + * this range.  We will handle dropping the lock and emitting the event.
-> + *
-> + * If FAULT_FLAG_RETRY_NOWAIT is set then we'll return VM_FAULT_RETRY.
-> + *
-> + * If no event was emitted then *fpin will be NULL and we will return 0.
-> + *
-> + * If any error occurred we will return VM_FAULT_SIGBUS, *fpin could sti=
-ll be
-> + * set and will need to have fput() called on it.
-> + *
-> + * If we emitted the event then we will return 0 and *fpin will be set, =
-this
-> + * must have fput() called on it, and the caller must call VM_FAULT_RETR=
-Y after
-> + * any other operations it does in order to re-fault the page and make s=
-ure the
-> + * appropriate locking is maintained.
-> + *
-> + * Return: the appropriate vm_fault_t return code, 0 on success.
-> + */
-> +vm_fault_t filemap_maybe_emit_fsnotify_event(struct vm_fault *vmf,
-> +                                            struct file **fpin)
-> +{
-> +       struct file *file =3D vmf->vma->vm_file;
-> +       loff_t pos =3D vmf->pgoff << PAGE_SHIFT;
-> +       int mask =3D (vmf->flags & FAULT_FLAG_WRITE) ? MAY_WRITE : MAY_RE=
-AD;
+This is another flag that is statically set and doesn't need to use up
+an FMODE_* bit. Move it to ->fop_flags and free up another FMODE_* bit.
 
-You missed my comment about using MAY_ACCESS here
-and alter fsnotify hook, so legacy FAN_ACCESS_PERM event
-won't be generated from page fault.
+(1) mem_open() used from proc_mem_operations
+(2) adi_open() used from adi_fops
+(3) drm_open_helper():
+    (3.1) accel_open() used from DRM_ACCEL_FOPS
+    (3.2) drm_open() used from
+    (3.2.1) amdgpu_driver_kms_fops
+    (3.2.2) psb_gem_fops
+    (3.2.3) i915_driver_fops
+    (3.2.4) nouveau_driver_fops
+    (3.2.5) panthor_drm_driver_fops
+    (3.2.6) radeon_driver_kms_fops
+    (3.2.7) tegra_drm_fops
+    (3.2.8) vmwgfx_driver_fops
+    (3.2.9) xe_driver_fops
+    (3.2.10) DRM_GEM_FOPS
+    (3.2.11) DEFINE_DRM_GEM_DMA_FOPS
+(4) struct memdev sets fmode flags based on type of device opened. For
+    devices using struct mem_fops unsigned offset is used.
 
-Thanks,
-Amir.
+Mark all these file operations as FOP_UNSIGNED_OFFSET and add asserts
+into the open helper to ensure that the flag is always set.
 
-> +       int ret;
-> +
-> +       /*
-> +        * We already did this and now we're retrying with everything loc=
-ked,
-> +        * don't emit the event and continue.
-> +        */
-> +       if (vmf->flags & FAULT_FLAG_TRIED)
-> +               return 0;
-> +
-> +       /* No watches, return NULL. */
-> +       if (!fsnotify_file_has_pre_content_watches(file))
-> +               return 0;
-> +
-> +       /* We are NOWAIT, we can't wait, just return EAGAIN. */
-> +       if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
-> +               return VM_FAULT_RETRY;
-> +
-> +       /*
-> +        * If this fails then we're not allowed to drop the fault lock, r=
-eturn a
-> +        * SIGBUS so we don't errantly populate pagecache with bogus data=
- for
-> +        * this file.
-> +        */
-> +       *fpin =3D maybe_unlock_mmap_for_io(vmf, *fpin);
-> +       if (*fpin =3D=3D NULL)
-> +               return VM_FAULT_SIGBUS | VM_FAULT_RETRY;
-> +
-> +       /*
-> +        * We can't fput(*fpin) at this point because we could have been =
-passed
-> +        * in fpin from a previous call.
-> +        */
-> +       ret =3D fsnotify_file_area_perm(*fpin, mask, &pos, PAGE_SIZE);
-> +       if (ret)
-> +               return VM_FAULT_SIGBUS;
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(filemap_maybe_emit_fsnotify_event);
-> +
->  /**
->   * filemap_fault - read in file data for page fault handling
->   * @vmf:       struct vm_fault containing details of the fault
-> @@ -3299,6 +3366,19 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->         if (unlikely(index >=3D max_idx))
->                 return VM_FAULT_SIGBUS;
->
-> +       /*
-> +        * If we have pre-content watchers then we need to generate event=
-s on
-> +        * page fault so that we can populate any data before the fault.
-> +        */
-> +       ret =3D filemap_maybe_emit_fsnotify_event(vmf, &fpin);
-> +       if (unlikely(ret)) {
-> +               if (fpin) {
-> +                       fput(fpin);
-> +                       ret |=3D VM_FAULT_RETRY;
-> +               }
-> +               return ret;
-> +       }
-> +
->         /*
->          * Do we have something in the page cache already?
->          */
-> @@ -3309,21 +3389,24 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->                  * the lock.
->                  */
->                 if (!(vmf->flags & FAULT_FLAG_TRIED))
-> -                       fpin =3D do_async_mmap_readahead(vmf, folio);
-> +                       fpin =3D do_async_mmap_readahead(vmf, folio, fpin=
-);
->                 if (unlikely(!folio_test_uptodate(folio))) {
->                         filemap_invalidate_lock_shared(mapping);
->                         mapping_locked =3D true;
->                 }
->         } else {
->                 ret =3D filemap_fault_recheck_pte_none(vmf);
-> -               if (unlikely(ret))
-> +               if (unlikely(ret)) {
-> +                       if (fpin)
-> +                               goto out_retry;
->                         return ret;
-> +               }
->
->                 /* No page in the page cache at all */
->                 count_vm_event(PGMAJFAULT);
->                 count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
->                 ret =3D VM_FAULT_MAJOR;
-> -               fpin =3D do_sync_mmap_readahead(vmf);
-> +               fpin =3D do_sync_mmap_readahead(vmf, fpin);
->  retry_find:
->                 /*
->                  * See comment in filemap_create_folio() why we need
-> --
-> 2.43.0
->
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+---
+ drivers/char/adi.c                      |  8 +-------
+ drivers/char/mem.c                      |  3 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c |  1 +
+ drivers/gpu/drm/drm_file.c              |  3 ++-
+ drivers/gpu/drm/gma500/psb_drv.c        |  1 +
+ drivers/gpu/drm/i915/i915_driver.c      |  1 +
+ drivers/gpu/drm/nouveau/nouveau_drm.c   |  1 +
+ drivers/gpu/drm/radeon/radeon_drv.c     |  1 +
+ drivers/gpu/drm/tegra/drm.c             |  1 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c     |  1 +
+ drivers/gpu/drm/xe/xe_device.c          |  1 +
+ fs/proc/base.c                          | 10 ++++------
+ fs/read_write.c                         |  2 +-
+ include/drm/drm_accel.h                 |  3 ++-
+ include/drm/drm_gem.h                   |  3 ++-
+ include/drm/drm_gem_dma_helper.h        |  1 +
+ include/linux/fs.h                      |  5 +++--
+ mm/mmap.c                               |  2 +-
+ 18 files changed, 27 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/char/adi.c b/drivers/char/adi.c
+index 751d7cc0da1b..1c76c8758f0f 100644
+--- a/drivers/char/adi.c
++++ b/drivers/char/adi.c
+@@ -14,12 +14,6 @@
+ 
+ #define MAX_BUF_SZ	PAGE_SIZE
+ 
+-static int adi_open(struct inode *inode, struct file *file)
+-{
+-	file->f_mode |= FMODE_UNSIGNED_OFFSET;
+-	return 0;
+-}
+-
+ static int read_mcd_tag(unsigned long addr)
+ {
+ 	long err;
+@@ -206,9 +200,9 @@ static loff_t adi_llseek(struct file *file, loff_t offset, int whence)
+ static const struct file_operations adi_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.llseek		= adi_llseek,
+-	.open		= adi_open,
+ 	.read		= adi_read,
+ 	.write		= adi_write,
++	.fop_flags	= FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static struct miscdevice adi_miscdev = {
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index 7c359cc406d5..169eed162a7f 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -643,6 +643,7 @@ static const struct file_operations __maybe_unused mem_fops = {
+ 	.get_unmapped_area = get_unmapped_area_mem,
+ 	.mmap_capabilities = memory_mmap_capabilities,
+ #endif
++	.fop_flags	= FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static const struct file_operations null_fops = {
+@@ -693,7 +694,7 @@ static const struct memdev {
+ 	umode_t mode;
+ } devlist[] = {
+ #ifdef CONFIG_DEVMEM
+-	[DEVMEM_MINOR] = { "mem", &mem_fops, FMODE_UNSIGNED_OFFSET, 0 },
++	[DEVMEM_MINOR] = { "mem", &mem_fops, 0, 0 },
+ #endif
+ 	[3] = { "null", &null_fops, FMODE_NOWAIT, 0666 },
+ #ifdef CONFIG_DEVPORT
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+index 094498a0964b..d7ef8cbecf6c 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+@@ -2908,6 +2908,7 @@ static const struct file_operations amdgpu_driver_kms_fops = {
+ #ifdef CONFIG_PROC_FS
+ 	.show_fdinfo = drm_show_fdinfo,
+ #endif
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ int amdgpu_file_to_fpriv(struct file *filp, struct amdgpu_fpriv **fpriv)
+diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
+index 714e42b05108..f8de3cba1a08 100644
+--- a/drivers/gpu/drm/drm_file.c
++++ b/drivers/gpu/drm/drm_file.c
+@@ -318,6 +318,8 @@ int drm_open_helper(struct file *filp, struct drm_minor *minor)
+ 	if (dev->switch_power_state != DRM_SWITCH_POWER_ON &&
+ 	    dev->switch_power_state != DRM_SWITCH_POWER_DYNAMIC_OFF)
+ 		return -EINVAL;
++	if (WARN_ON_ONCE(!(filp->f_op->fop_flags & FOP_UNSIGNED_OFFSET)))
++		return -EINVAL;
+ 
+ 	drm_dbg_core(dev, "comm=\"%s\", pid=%d, minor=%d\n",
+ 		     current->comm, task_pid_nr(current), minor->index);
+@@ -335,7 +337,6 @@ int drm_open_helper(struct file *filp, struct drm_minor *minor)
+ 	}
+ 
+ 	filp->private_data = priv;
+-	filp->f_mode |= FMODE_UNSIGNED_OFFSET;
+ 	priv->filp = filp;
+ 
+ 	mutex_lock(&dev->filelist_mutex);
+diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
+index 8b64f61ffaf9..d67c2b3ad901 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.c
++++ b/drivers/gpu/drm/gma500/psb_drv.c
+@@ -498,6 +498,7 @@ static const struct file_operations psb_gem_fops = {
+ 	.mmap = drm_gem_mmap,
+ 	.poll = drm_poll,
+ 	.read = drm_read,
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static const struct drm_driver driver = {
+diff --git a/drivers/gpu/drm/i915/i915_driver.c b/drivers/gpu/drm/i915/i915_driver.c
+index fb8e9c2fcea5..cf276299bccb 100644
+--- a/drivers/gpu/drm/i915/i915_driver.c
++++ b/drivers/gpu/drm/i915/i915_driver.c
+@@ -1671,6 +1671,7 @@ static const struct file_operations i915_driver_fops = {
+ #ifdef CONFIG_PROC_FS
+ 	.show_fdinfo = drm_show_fdinfo,
+ #endif
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static int
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index a58c31089613..e243b42f8582 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -1274,6 +1274,7 @@ nouveau_driver_fops = {
+ 	.compat_ioctl = nouveau_compat_ioctl,
+ #endif
+ 	.llseek = noop_llseek,
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static struct drm_driver
+diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+index 7bf08164140e..ac49779ed03d 100644
+--- a/drivers/gpu/drm/radeon/radeon_drv.c
++++ b/drivers/gpu/drm/radeon/radeon_drv.c
+@@ -520,6 +520,7 @@ static const struct file_operations radeon_driver_kms_fops = {
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl = radeon_kms_compat_ioctl,
+ #endif
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static const struct drm_ioctl_desc radeon_ioctls_kms[] = {
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 03d1c76aec2d..108c26a33edb 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -801,6 +801,7 @@ static const struct file_operations tegra_drm_fops = {
+ 	.read = drm_read,
+ 	.compat_ioctl = drm_compat_ioctl,
+ 	.llseek = noop_llseek,
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static int tegra_drm_context_cleanup(int id, void *p, void *data)
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+index 50ad3105c16e..2825dd3149ed 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+@@ -1609,6 +1609,7 @@ static const struct file_operations vmwgfx_driver_fops = {
+ 	.compat_ioctl = vmw_compat_ioctl,
+ #endif
+ 	.llseek = noop_llseek,
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static const struct drm_driver driver = {
+diff --git a/drivers/gpu/drm/xe/xe_device.c b/drivers/gpu/drm/xe/xe_device.c
+index 76109415eba6..ea7e3ff6feba 100644
+--- a/drivers/gpu/drm/xe/xe_device.c
++++ b/drivers/gpu/drm/xe/xe_device.c
+@@ -197,6 +197,7 @@ static const struct file_operations xe_driver_fops = {
+ #ifdef CONFIG_PROC_FS
+ 	.show_fdinfo = drm_show_fdinfo,
+ #endif
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static struct drm_driver driver = {
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 72a1acd03675..1409d1003101 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -827,12 +827,9 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
+ 
+ static int mem_open(struct inode *inode, struct file *file)
+ {
+-	int ret = __mem_open(inode, file, PTRACE_MODE_ATTACH);
+-
+-	/* OK to pass negative loff_t, we can catch out-of-range */
+-	file->f_mode |= FMODE_UNSIGNED_OFFSET;
+-
+-	return ret;
++	if (WARN_ON_ONCE(!(file->f_op->fop_flags & FOP_UNSIGNED_OFFSET)))
++		return -EINVAL;
++	return __mem_open(inode, file, PTRACE_MODE_ATTACH);
+ }
+ 
+ static ssize_t mem_rw(struct file *file, char __user *buf,
+@@ -932,6 +929,7 @@ static const struct file_operations proc_mem_operations = {
+ 	.write		= mem_write,
+ 	.open		= mem_open,
+ 	.release	= mem_release,
++	.fop_flags	= FOP_UNSIGNED_OFFSET,
+ };
+ 
+ static int environ_open(struct inode *inode, struct file *file)
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 90e283b31ca1..89d4af0e3b93 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -36,7 +36,7 @@ EXPORT_SYMBOL(generic_ro_fops);
+ 
+ static inline bool unsigned_offsets(struct file *file)
+ {
+-	return file->f_mode & FMODE_UNSIGNED_OFFSET;
++	return file->f_op->fop_flags & FOP_UNSIGNED_OFFSET;
+ }
+ 
+ /**
+diff --git a/include/drm/drm_accel.h b/include/drm/drm_accel.h
+index f4d3784b1dce..41c78b7d712c 100644
+--- a/include/drm/drm_accel.h
++++ b/include/drm/drm_accel.h
+@@ -28,7 +28,8 @@
+ 	.poll		= drm_poll,\
+ 	.read		= drm_read,\
+ 	.llseek		= noop_llseek, \
+-	.mmap		= drm_gem_mmap
++	.mmap		= drm_gem_mmap, \
++	.fop_flags	= FOP_UNSIGNED_OFFSET
+ 
+ /**
+  * DEFINE_DRM_ACCEL_FOPS() - macro to generate file operations for accelerators drivers
+diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+index bae4865b2101..d8b86df2ec0d 100644
+--- a/include/drm/drm_gem.h
++++ b/include/drm/drm_gem.h
+@@ -447,7 +447,8 @@ struct drm_gem_object {
+ 	.poll		= drm_poll,\
+ 	.read		= drm_read,\
+ 	.llseek		= noop_llseek,\
+-	.mmap		= drm_gem_mmap
++	.mmap		= drm_gem_mmap, \
++	.fop_flags	= FOP_UNSIGNED_OFFSET
+ 
+ /**
+  * DEFINE_DRM_GEM_FOPS() - macro to generate file operations for GEM drivers
+diff --git a/include/drm/drm_gem_dma_helper.h b/include/drm/drm_gem_dma_helper.h
+index a827bde494f6..f2678e7ecb98 100644
+--- a/include/drm/drm_gem_dma_helper.h
++++ b/include/drm/drm_gem_dma_helper.h
+@@ -267,6 +267,7 @@ unsigned long drm_gem_dma_get_unmapped_area(struct file *filp,
+ 		.read		= drm_read,\
+ 		.llseek		= noop_llseek,\
+ 		.mmap		= drm_gem_mmap,\
++		.fop_flags = FOP_UNSIGNED_OFFSET, \
+ 		DRM_GEM_DMA_UNMAPPED_AREA_FOPS \
+ 	}
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index fd34b5755c0b..40ebfa09112c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -146,8 +146,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* Expect random access pattern */
+ #define FMODE_RANDOM		((__force fmode_t)(1 << 12))
+ 
+-/* File is huge (eg. /dev/mem): treat loff_t as unsigned */
+-#define FMODE_UNSIGNED_OFFSET	((__force fmode_t)(1 << 13))
++/* FMODE_* bit 13 */
+ 
+ /* File is opened with O_PATH; almost nothing can be done with it */
+ #define FMODE_PATH		((__force fmode_t)(1 << 14))
+@@ -2073,6 +2072,8 @@ struct file_operations {
+ #define FOP_DIO_PARALLEL_WRITE	((__force fop_flags_t)(1 << 3))
+ /* Contains huge pages */
+ #define FOP_HUGE_PAGES		((__force fop_flags_t)(1 << 4))
++/* Treat loff_t as unsigned (e.g., /dev/mem) */
++#define FOP_UNSIGNED_OFFSET	((__force fop_flags_t)(1 << 5))
+ 
+ /* Wrap a directory iterator that needs exclusive inode access */
+ int wrap_directory_iterator(struct file *, struct dir_context *,
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d0dfc85b209b..6ddb278a5ee8 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1229,7 +1229,7 @@ static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
+ 		return MAX_LFS_FILESIZE;
+ 
+ 	/* Special "we do even unsigned file positions" case */
+-	if (file->f_mode & FMODE_UNSIGNED_OFFSET)
++	if (file->f_op->fop_flags & FOP_UNSIGNED_OFFSET)
+ 		return 0;
+ 
+ 	/* Yes, random drivers might want more. But I'm tired of buggy drivers */
+
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240809-work-fop_unsigned-5f6f7734cb7b
+
 
