@@ -1,318 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-25495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411C494C7FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 03:23:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1855B94C804
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 03:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62C791C21F42
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 01:23:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399CA1C21751
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 01:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A631D517;
-	Fri,  9 Aug 2024 01:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1241168B7;
+	Fri,  9 Aug 2024 01:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="c4RdXLHH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAsI2n3w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B26A846F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 01:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7483916419;
+	Fri,  9 Aug 2024 01:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723166588; cv=none; b=Y7C351x5Z0o4MvEvQrguixI24exCEtemqe6WraChJ31qYrrQ9A0yaCpd/MXBTr+L+buDJ1839WW74ryAxr7zSF/Ej8uLLBlxwZe+3EnjkdKYC0Hjbx9HSDYaOPAmz0S4tblkKZIDSxFCApBzXduXGToVORQkEWGhuedOy9XEyyA=
+	t=1723166597; cv=none; b=Y+SvtgpUCTnHf4vR4K4gJtJo9x/K8+dXjdEwwi8t02pJYoTNrgLFA7+3WA6p0zaPkvb4ZAP14Hfw/2xy/p/jOO3E0gI426/k6gIF2HuComL0VRcv9+qhOTBWQ+F09WfzEMGyVRcSQxjhqFVmljkrjTsfVfbXNP6nVZ2O3ATPGPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723166588; c=relaxed/simple;
-	bh=hbGnygk7hxJbZu0jyxT9iMEYWeJVRVSEXdmikHa4ArQ=;
+	s=arc-20240116; t=1723166597; c=relaxed/simple;
+	bh=QfAZBS4GejPe4aSNdqRUxycvxP0gcOc3pmsy8Yr2lCQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k63+DqmI6Z84cscqkzYvHfR27Ic2AUytgCUEcacUvY16y0XLHkGSyihZB0JgpJUvRtIksbOvAGuoy2BDNznREXTAA1ZnuZiaGfwiQ9zpPQl6m+0tvQa1e+m4G2HmvNWhrN2wSD9b119NnowmlFJ000WPzoJW8EZwOfN5rOCYTMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=c4RdXLHH; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-690ad83d4d7so14939817b3.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Aug 2024 18:23:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=rVXwxuWrTRMqpTwyHrymZK+hqUH7eD8Hlo9lEW5lK9QYEh3xoAwVqkKyTQRLDOjsPdwRMFmaWWja1aBp3+6deUYWG6hKSOiScpLHYXieVFKRv1Rxyer68r8Y3l7OyE9WXSkSfUggcIjM8ChwV1ktbRWf3L520Fs27hAdTuynmpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JAsI2n3w; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428243f928fso15258965e9.0;
+        Thu, 08 Aug 2024 18:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723166585; x=1723771385; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723166594; x=1723771394; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D9bXLF4NefoobiKX9+zIRi7gWzdnSGjmqx0nUbqIEf8=;
-        b=c4RdXLHHmAJRfUYj6g7GpxHyzE6i3Q/LQ83cO8Yemdu4x96BG+j6IMHpQmvQikxNBo
-         NP6AqdkknPDurOVcJ12Yz4+xXHqHUcBdx70rt8CMomWULievM35bLYH/oJ5zeOlcZiqV
-         DZMKVqFbhzdsoaIeVECkt7haAk4K2hzTXranHlkhen/Wg/QpDfSfmBuL9op+LdCUFp93
-         luz9USN+xOQoouBIN0GRn+QPrOUFy4aJ1uuCu6ofT3+F+wzP8000RmqL9ulQvr7sCJnC
-         czudtwraUGQieYMpznwc1Wi8PuMq7iU9JSrxCWeXRm7k85tJa+dD7a13yjI7mbl62FmC
-         D/eQ==
+        bh=F3DjGbT2aLpp9iseww7zvuSC6N2dborSRxte3s5JRsY=;
+        b=JAsI2n3wT/XJb2rWBJzVW0YNq5a6n0XpFDc7yYSbchGpf7dJkzMYcisopiAkZU8tT1
+         J6TpROrCUYxGw0QgC27lozRLQd5a4uUp30917I1bGqh8ZFgxIynuFA44/M2zVh8a0GOA
+         zY/uMU6NYxM0YmM1wKDuMGgz3dHviwNtitKjzyCV2mgS3AYv7Vvo87ZiP9KoHmBGW3Fy
+         YP/6bUFF3TkwU1kod7sPHIPuMNlNRHTdnMMegJrCjhx7TMeUod2MEKL9u+IlDyChF2X7
+         YUZsPhdYTX/RP+l27qI2dE3uklxUt5trl4mNu97IFIxPtQAsx3ojyT38mbdEQ4bipU2x
+         IwWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723166585; x=1723771385;
+        d=1e100.net; s=20230601; t=1723166594; x=1723771394;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D9bXLF4NefoobiKX9+zIRi7gWzdnSGjmqx0nUbqIEf8=;
-        b=Tcpn2HNm8zMI/mUozbakKyac/hhtO8y80P5/HSTfDCKOytCBQvfXeMXwjMPVFeQNjB
-         urpqzZV2UAyLcLJaiUjJroQhGHnJJVpDPFOmo7T7rcrHscKVp4mrylT2s6KNMFA53PAf
-         hpDs5/1Qh4TctCt89uU1FGLnhzk6OFamRAbHSSu47yHE4y0NtQAHe7SsWqPuoAAiUh+j
-         uilZB8IWgQTP+3MdpivMQPScOWa+8+Mp1Ke1tSN9oog10FHF3erdz80ncCXCLpM4Mfih
-         pqLfpWrdwR4pBgW9JWydo3pqEVmHSML2bjv4yhU2x/XQBI7dQNsi7CT/Nb1OV272ZqYZ
-         qhNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmHB/D1/Qvrl2kQimKRwimEWJAZETdbRNEhQxeSrKxq3zqNwa/kQSAduaXxX8i0QTnEWtwKCPVwh4e7niS0/LX4QRVWQFeqBCqiCnUNg==
-X-Gm-Message-State: AOJu0YzD39RnuQOQaC8ezx6s/btYiRjpLUspY/d5goKBv1fwwlAgZJNC
-	ocPL1eElnKerWBOgCmsBXEn10reYFbg6GnFRyzmspZm/hRq9N4FjYhJs9koM4HVTfC7d3A7L6ps
-	9VFV9UZHCmbTCDWor2uS/D7xToh1PIKA11wIB
-X-Google-Smtp-Source: AGHT+IHAUa6Q+LYMkbNRDeMI4FjrabMEZxysSMR+Wn8lEcrEUa9i7f8iYckyZqbRN3DpJ6uezP+4mRsx6Ws4h4d3IaQ=
-X-Received: by 2002:a05:690c:fce:b0:64b:7859:a92f with SMTP id
- 00721157ae682-69ec49238d6mr406897b3.5.1723166585032; Thu, 08 Aug 2024
- 18:23:05 -0700 (PDT)
+        bh=F3DjGbT2aLpp9iseww7zvuSC6N2dborSRxte3s5JRsY=;
+        b=nmkNojXpbetKFCLU3HqHWPUYJ1g95ypDeXpP52YPitaGvdZ/YPc3Mop6YkigSMLEcv
+         thq3LYU1JnanVoPb2zW6oJNirPdcY+/bK+2r/vn6zUSTDVVe5aBzKGjA6e9L+F0/pgcT
+         rg8jNtiTFIByGDYaYPThB3JBJ/yV0PM5g7sBUuQb/mZj/5yy8vx7gkkZLQCNhSVAe0Ne
+         WLglqhyM2gHAUVzgJ5izBwKoRIpNBVqaFGozKuPniSipv2MpCm08WEk1zLkjCxrKLCyW
+         nHj0boDdwvhjCfGs7DdKV1bsRi22BajA29qCKE09K71JXpT7fBbjFM0d4LesHh7NDZTg
+         lkbg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6EGAeHkFskCExQ78EIOgi7VSZub8hjlBsYWyJQvhpvc1E6E9I+Qt2xHL0cvovDhdyn3NfkHJ8DA==@vger.kernel.org, AJvYcCUGEiLbvHkrQb5ALZfbbQW9niAEBYFmQXMAecxVLrPn348xmXz4SgQsSwH6GLFwP0xbE1k=@vger.kernel.org, AJvYcCUl86teQckyjraV2CBm91+RBw08XEylCfpqIttYiXybC5nXT1ON4nQwC6JF8V3YYrMso82cs7JZ@vger.kernel.org, AJvYcCWUv4KTYXa1g+P4HhrdR0vZCK+uftA8RJx6iYGLkXvtLNcyl02fLLKrHXJSt92S6Yk3MyS3@vger.kernel.org, AJvYcCWoMqpPYtod5oJwr+YsQchM5qt2NSzQ6KFQ7d2onfnpTjvPxlyVo1YG7cNlSaGwhnfJrrCrZ7QmgSZbur9iqQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyerTHP0jztCEeLfZLn2fGmKl8m4emXLFb6oxS3gimT52Op8yg2
+	SdJFxr8/l2Fu0t7FRhR07Ljcrk3KijyeKTQkDypwzydzf/zIIP63DdYwnchtfy5H4LdrJU43JVi
+	y4HnPIh2UNfN+gdOXlOanu5Rh080=
+X-Google-Smtp-Source: AGHT+IEczA4JxzigX7BfBtlnZI47DVmwIhzMmfVxMqZ+wK1QS6ljlNJAF+x8rFbhe+4uOEqkzsD12yK42LIMLMWG98Q=
+X-Received: by 2002:a05:600c:1c27:b0:428:e30:fa8d with SMTP id
+ 5b1f17b1804b1-4290aedf987mr30435955e9.6.1723166593361; Thu, 08 Aug 2024
+ 18:23:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <20240807-erledigen-antworten-6219caebedc0@brauner> <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
- <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner> <20240808171130.5alxaa5qz3br6cde@quack3>
- <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
- <d0677c60eb1f47eb186f3e5493ba5aa7e0eaa445.camel@kernel.org>
- <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com> <a8e24c94fa5500ee3c99a3dabba452e381512808.camel@kernel.org>
-In-Reply-To: <a8e24c94fa5500ee3c99a3dabba452e381512808.camel@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 8 Aug 2024 21:22:54 -0400
-Message-ID: <CAHC9VhSEuj_70ohbrgHrFv7Y8-MvwH7EwkD_L0=0KhVW-bX=Nw@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, audit@vger.kernel.org
+References: <20240730050927.GC5334@ZenIV> <20240730051625.14349-1-viro@kernel.org>
+ <20240730051625.14349-17-viro@kernel.org> <CAEf4BzZipqBVhoY-S+WdeQ8=MhpKk-2dE_ESfGpV-VTm31oQUQ@mail.gmail.com>
+ <20240807-fehlschlag-entfiel-f03a6df0e735@brauner> <CAEf4BzaeFTn41pP_hbcrCTKNZjwt3TPojv0_CYbP=+973YnWiA@mail.gmail.com>
+ <CAADnVQKZW--EOkn5unFybxTKPNw-6rPB+=mY+cy_yUUsXe8R-w@mail.gmail.com> <CAEf4Bzauw1tD4UsyhX1PmRs_Y1MzfPqsoRUf40cmNuu7SJKi9w@mail.gmail.com>
+In-Reply-To: <CAEf4Bzauw1tD4UsyhX1PmRs_Y1MzfPqsoRUf40cmNuu7SJKi9w@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 8 Aug 2024 18:23:02 -0700
+Message-ID: <CAADnVQ+55NKkEaAsjGh52=VsSgr9G-qvjBCPmaPrTxiN6eCZOw@mail.gmail.com>
+Subject: Re: [PATCH 17/39] bpf: resolve_pseudo_ldimm64(): take handling of a
+ single ldimm64 insn into helper
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, viro@kernel.org, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, kvm@vger.kernel.org, 
+	Network Development <netdev@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 8, 2024 at 8:33=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
-te:
-> On Thu, 2024-08-08 at 20:28 -0400, Paul Moore wrote:
-> > On Thu, Aug 8, 2024 at 7:43=E2=80=AFPM Jeff Layton <jlayton@kernel.org>=
- wrote:
-> > > On Thu, 2024-08-08 at 17:12 -0400, Paul Moore wrote:
-> > > > On Thu, Aug 8, 2024 at 1:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrot=
-e:
-> > > > > On Thu 08-08-24 12:36:07, Christian Brauner wrote:
-> > > > > > On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
-> > > > > > > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
-> > > > > > > > > +static struct dentry *lookup_fast_for_open(struct nameid=
-ata *nd, int open_flag)
-> > > > > > > > > +{
-> > > > > > > > > +       struct dentry *dentry;
-> > > > > > > > > +
-> > > > > > > > > +       if (open_flag & O_CREAT) {
-> > > > > > > > > +               /* Don't bother on an O_EXCL create */
-> > > > > > > > > +               if (open_flag & O_EXCL)
-> > > > > > > > > +                       return NULL;
-> > > > > > > > > +
-> > > > > > > > > +               /*
-> > > > > > > > > +                * FIXME: If auditing is enabled, then we=
-'ll have to unlazy to
-> > > > > > > > > +                * use the dentry. For now, don't do this=
-, since it shifts
-> > > > > > > > > +                * contention from parent's i_rwsem to it=
-s d_lockref spinlock.
-> > > > > > > > > +                * Reconsider this once dentry refcountin=
-g handles heavy
-> > > > > > > > > +                * contention better.
-> > > > > > > > > +                */
-> > > > > > > > > +               if ((nd->flags & LOOKUP_RCU) && !audit_du=
-mmy_context())
-> > > > > > > > > +                       return NULL;
-> > > > > > > >
-> > > > > > > > Hm, the audit_inode() on the parent is done independent of =
-whether the
-> > > > > > > > file was actually created or not. But the audit_inode() on =
-the file
-> > > > > > > > itself is only done when it was actually created. Imho, the=
-re's no need
-> > > > > > > > to do audit_inode() on the parent when we immediately find =
-that file
-> > > > > > > > already existed. If we accept that then this makes the chan=
-ge a lot
-> > > > > > > > simpler.
-> > > > > > > >
-> > > > > > > > The inconsistency would partially remain though. When the f=
-ile doesn't
-> > > > > > > > exist audit_inode() on the parent is called but by the time=
- we've
-> > > > > > > > grabbed the inode lock someone else might already have crea=
-ted the file
-> > > > > > > > and then again we wouldn't audit_inode() on the file but we=
- would have
-> > > > > > > > on the parent.
-> > > > > > > >
-> > > > > > > > I think that's fine. But if that's bothersome the more aggr=
-essive thing
-> > > > > > > > to do would be to pull that audit_inode() on the parent fur=
-ther down
-> > > > > > > > after we created the file. Imho, that should be fine?...
-> > > > > > > >
-> > > > > > > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jef=
-f/?ref_type=3Dheads
-> > > > > > > > for a completely untested draft of what I mean.
-> > > > > > >
-> > > > > > > Yeah, that's a lot simpler. That said, my experience when I'v=
-e worked
-> > > > > > > with audit in the past is that people who are using it are _v=
-ery_
-> > > > > > > sensitive to changes of when records get emitted or not. I do=
-n't like
-> > > > > > > this, because I think the rules here are ad-hoc and somewhat =
-arbitrary,
-> > > > > > > but keeping everything working exactly the same has been my M=
-O whenever
-> > > > > > > I have to work in there.
-> > > > > > >
-> > > > > > > If a certain access pattern suddenly generates a different se=
-t of
-> > > > > > > records (or some are missing, as would be in this case), we m=
-ight get
-> > > > > > > bug reports about this. I'm ok with simplifying this code in =
-the way
-> > > > > > > you suggest, but we may want to do it in a patch on top of mi=
-ne, to
-> > > > > > > make it simple to revert later if that becomes necessary.
-> > > > > >
-> > > > > > Fwiw, even with the rearranged checks in v3 of the patch audit =
-records
-> > > > > > will be dropped because we may find a positive dentry but the p=
-ath may
-> > > > > > have trailing slashes. At that point we just return without aud=
-it
-> > > > > > whereas before we always would've done that audit.
-> > > > > >
-> > > > > > Honestly, we should move that audit event as right now it's jus=
-t really
-> > > > > > weird and see if that works. Otherwise the change is somewhat h=
-orrible
-> > > > > > complicating the already convoluted logic even more.
-> > > > > >
-> > > > > > So I'm appending the patches that I have on top of your patch i=
-n
-> > > > > > vfs.misc. Can you (other as well ofc) take a look and tell me w=
-hether
-> > > > > > that's not breaking anything completely other than later audit =
-events?
-> > > > >
-> > > > > The changes look good as far as I'm concerned but let me CC audit=
- guys if
-> > > > > they have some thoughts regarding the change in generating audit =
-event for
-> > > > > the parent. Paul, does it matter if open(O_CREAT) doesn't generat=
-e audit
-> > > > > event for the parent when we are failing open due to trailing sla=
-shes in
-> > > > > the pathname? Essentially we are speaking about moving:
-> > > > >
-> > > > >         audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-> > > > >
-> > > > > from open_last_lookups() into lookup_open().
-> > > >
-> > > > Thanks for adding the audit mailing list to the CC, Jan.  I would a=
-sk
-> > > > for others to do the same when discussing changes that could impact
-> > > > audit (similar requests for the LSM framework, SELinux, etc.).
-> > > >
-> > > > The inode/path logging in audit is ... something.  I have a
-> > > > longstanding todo item to go revisit the audit inode logging, both =
-to
-> > > > fix some known bugs, and see what we can improve (I'm guessing quit=
-e a
-> > > > bit).  Unfortunately, there is always something else which is burni=
-ng
-> > > > a little bit hotter and I haven't been able to get to it yet.
-> > > >
-> > >
-> > > It is "something" alright. The audit logging just happens at strange
-> > > and inconvenient times vs. what else we're trying to do wrt pathwalki=
-ng
-> > > and such. In particular here, the fact __audit_inode can block is wha=
-t
-> > > really sucks.
-> > >
-> > > Since we're discussing it...
-> > >
-> > > ISTM that the inode/path logging here is something like a tracepoint.
-> > > In particular, we're looking to record a specific set of information =
-at
-> > > specific points in the code. One of the big differences between them
-> > > however is that tracepoints don't block.  The catch is that we can't
-> > > just drop messages if we run out of audit logging space, so that woul=
-d
-> > > have to be handled reasonably.
-> >
-> > Yes, the buffer allocation is the tricky bit.  Audit does preallocate
-> > some structs for tracking names which ideally should handle the vast
-> > majority of the cases, but yes, we need something to handle all of the
-> > corner cases too without having to resort to audit_panic().
-> >
-> > > I wonder if we could leverage the tracepoint infrastructure to help u=
-s
-> > > record the necessary info somehow? Copy the records into a specific
-> > > ring buffer, and then copy them out to the audit infrastructure in
-> > > task_work?
-> >
-> > I believe using task_work will cause a number of challenges for the
-> > audit subsystem as we try to bring everything together into a single
-> > audit event.  We've had a lot of problems with io_uring doing similar
-> > things, some of which are still unresolved.
-> >
-> > > I don't have any concrete ideas here, but the path/inode audit code h=
-as
-> > > been a burden for a while now and it'd be good to think about how we
-> > > could do this better.
-> >
-> > I've got some grand ideas on how to cut down on a lot of our
-> > allocations and string generation in the critical path, not just with
-> > the inodes, but with audit records in general.  Sadly I just haven't
-> > had the time to get to any of it.
-> >
-> > > > The general idea with audit is that you want to record the informat=
-ion
-> > > > both on success and failure.  It's easy to understand the success
-> > > > case, as it is a record of what actually happened on the system, bu=
-t
-> > > > you also want to record the failure case as it can provide some
-> > > > insight on what a process/user is attempting to do, and that can be
-> > > > very important for certain classes of users.  I haven't dug into th=
-e
-> > > > patches in Christian's tree, but in general I think Jeff's guidance
-> > > > about not changing what is recorded in the audit log is probably go=
-od
-> > > > advice (there will surely be exceptions to that, but it's still goo=
-d
-> > > > guidance).
-> > > >
-> > >
-> > > In this particular case, the question is:
-> > >
-> > > Do we need to emit a AUDIT_INODE_PARENT record when opening an existi=
-ng
-> > > file, just because O_CREAT was set? We don't emit such a record when
-> > > opening without O_CREAT set.
-> >
-> > I'm not as current on the third-party security requirements as I used
-> > to be, but I do know that oftentimes when a file is created the parent
-> > directory is an important bit of information to have in the audit log.
-> >
+On Thu, Aug 8, 2024 at 1:35=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 >
-> Right. We'd still have that here since we have to unlazy to actually
-> create the file.
+> On Thu, Aug 8, 2024 at 9:51=E2=80=AFAM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> > On Wed, Aug 7, 2024 at 8:31=E2=80=AFAM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > On Wed, Aug 7, 2024 at 3:30=E2=80=AFAM Christian Brauner <brauner@ker=
+nel.org> wrote:
+> > > >
+> > > > On Tue, Aug 06, 2024 at 03:32:20PM GMT, Andrii Nakryiko wrote:
+> > > > > On Mon, Jul 29, 2024 at 10:20=E2=80=AFPM <viro@kernel.org> wrote:
+> > > > > >
+> > > > > > From: Al Viro <viro@zeniv.linux.org.uk>
+> > > > > >
+> > > > > > Equivalent transformation.  For one thing, it's easier to follo=
+w that way.
+> > > > > > For another, that simplifies the control flow in the vicinity o=
+f struct fd
+> > > > > > handling in there, which will allow a switch to CLASS(fd) and m=
+ake the
+> > > > > > thing much easier to verify wrt leaks.
+> > > > > >
+> > > > > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > > > > ---
+> > > > > >  kernel/bpf/verifier.c | 342 +++++++++++++++++++++-------------=
+--------
+> > > > > >  1 file changed, 172 insertions(+), 170 deletions(-)
+> > > > > >
+> > > > >
+> > > > > This looks unnecessarily intrusive. I think it's best to extract =
+the
+> > > > > logic of fetching and adding bpf_map by fd into a helper and that=
+ way
+> > > > > contain fdget + fdput logic nicely. Something like below, which I=
+ can
+> > > > > send to bpf-next.
+> > > > >
+> > > > > commit b5eec08241cc0263e560551de91eda73ccc5987d
+> > > > > Author: Andrii Nakryiko <andrii@kernel.org>
+> > > > > Date:   Tue Aug 6 14:31:34 2024 -0700
+> > > > >
+> > > > >     bpf: factor out fetching bpf_map from FD and adding it to use=
+d_maps list
+> > > > >
+> > > > >     Factor out the logic to extract bpf_map instances from FD emb=
+edded in
+> > > > >     bpf_insns, adding it to the list of used_maps (unless it's al=
+ready
+> > > > >     there, in which case we just reuse map's index). This simplif=
+ies the
+> > > > >     logic in resolve_pseudo_ldimm64(), especially around `struct =
+fd`
+> > > > >     handling, as all that is now neatly contained in the helper a=
+nd doesn't
+> > > > >     leak into a dozen error handling paths.
+> > > > >
+> > > > >     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > >
+> > > > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > > > > index df3be12096cf..14e4ef687a59 100644
+> > > > > --- a/kernel/bpf/verifier.c
+> > > > > +++ b/kernel/bpf/verifier.c
+> > > > > @@ -18865,6 +18865,58 @@ static bool bpf_map_is_cgroup_storage(st=
+ruct
+> > > > > bpf_map *map)
+> > > > >          map->map_type =3D=3D BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE)=
+;
+> > > > >  }
+> > > > >
+> > > > > +/* Add map behind fd to used maps list, if it's not already ther=
+e, and return
+> > > > > + * its index. Also set *reused to true if this map was already i=
+n the list of
+> > > > > + * used maps.
+> > > > > + * Returns <0 on error, or >=3D 0 index, on success.
+> > > > > + */
+> > > > > +static int add_used_map_from_fd(struct bpf_verifier_env *env, in=
+t fd,
+> > > > > bool *reused)
+> > > > > +{
+> > > > > +    struct fd f =3D fdget(fd);
+> > > >
+> > > > Use CLASS(fd, f)(fd) and you can avoid all that fdput() stuff.
+> > >
+> > > That was the point of Al's next patch in the series, so I didn't want
+> > > to do it in this one that just refactored the logic of adding maps.
+> > > But I can fold that in and send it to bpf-next.
+> >
+> > +1.
+> >
+> > The bpf changes look ok and Andrii's approach is easier to grasp.
+> > It's better to route bpf conversion to CLASS(fd,..) via bpf-next,
+> > so it goes through bpf CI and our other testing.
+> >
+> > bpf patches don't seem to depend on newly added CLASS(fd_pos, ...
+> > and fderr, so pretty much independent from other patches.
 >
-> The question here is about the case where O_CREAT is set, but the file
-> already exists. Nothing is being created in that case, so do we need to
-> emit an audit record for the parent?
+> Ok, so CLASS(fd, f) won't work just yet because of peculiar
+> __bpf_map_get() contract: if it gets valid struct fd but it doesn't
+> contain a valid struct bpf_map, then __bpf_map_get() does fdput()
+> internally. In all other cases the caller has to do fdput() and
+> returned struct bpf_map's refcount has to be bumped by the caller
+> (__bpf_map_get() doesn't do that, I guess that's why it's
+> double-underscored).
+>
+> I think the reason it was done was just a convenience to not have to
+> get/put bpf_map for temporary uses (and instead rely on file's
+> reference keeping bpf_map alive), plus we have bpf_map_inc() and
+> bpf_map_inc_uref() variants, so in some cases we need to bump just
+> refcount, and in some both user and normal refcounts.
+>
+> So can't use CLASS(fd, ...) without some more clean up.
+>
+> Alexei, how about changing __bpf_map_get(struct fd f) to
+> __bpf_map_get_from_fd(int ufd), doing fdget/fdput internally, and
+> always returning bpf_map with (normal) refcount bumped (if successful,
+> of course). We can then split bpf_map_inc_with_uref() into just
+> bpf_map_inc() and bpf_map_inc_uref(), and callers will be able to do
+> extra uref-only increment, if necessary.
+>
+> I can do that as a pre-patch, there are about 15 callers, so not too
+> much work to clean this up. Let me know.
 
-As long as the full path information is present in the existing file's
-audit record it should be okay.
+Yeah. Let's kill __bpf_map_get(struct fd ..) altogether.
+This logic was added in 2014.
+fdget() had to be first and fdput() last to make sure
+the map won't disappear while sys_bpf command is running.
+All of the places can use bpf_map_get(), bpf_map_put() pair
+and rely on map->refcnt, but...
 
---=20
-paul-moore.com
+- it's atomic64_inc(&map->refcnt); The cost is probably
+in the noise compared to all the work that map sys_bpf commands do.
+
+- It also opens new fuzzing opportunity to do some map operation
+in one thread and close(map_fd) in the other, so map->usercnt can
+drop to zero and map_release_uref() cleanup can start while
+the other thread is still busy doing something like map_update_elem().
+It can be mitigated by doing bpf_map_get_with_uref(), but two
+atomic64_inc() is kinda too much.
+
+So let's remove __bpf_map_get() and replace all users with bpf_map_get(),
+but we may need to revisit that later.
 
