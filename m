@@ -1,356 +1,292 @@
-Return-Path: <linux-fsdevel+bounces-25545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47D894D46E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 18:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3221A94D47A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 18:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26E131F21694
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 16:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E7D1F217DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 16:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8E1199E9D;
-	Fri,  9 Aug 2024 16:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C9F1991CA;
+	Fri,  9 Aug 2024 16:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YJZcBUS5"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L4gBGvlF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wRwRuPLe";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L4gBGvlF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wRwRuPLe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE111990C7
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 16:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373761990DE;
+	Fri,  9 Aug 2024 16:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723220192; cv=none; b=WfSSYXXp0+JGmVBEwIqboJYfNxayqnzcNVhVBdwj4Bhj/PP3Pyh0hx9EMooysnvfvAwanZVR6YKv5CPqxXNwz0V8N/R1gXlm4U+/WrJl4Q8n2xOJYCaVrS92rmL+WOIVKq0sAIf491VKmGVK9Bjk+8H+po0P5Z6bC0Mdhy+ZCCQ=
+	t=1723220418; cv=none; b=F87CH9Am2ZyEUq+QPiLq3DVtzJCLhuUoG4pLc7rE87EvS4nftn6z5kpLejpYbN6PN4POI8ZmfIVnS+7aCs3jVmcn0ZKKgZ2cFIyolJwAZfzfx8QOVgNbpy4qTqG5hpbIKNoBCp0MErDbH7AkkjZcv+1Jd8q3zt/rVlL+mCf03wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723220192; c=relaxed/simple;
-	bh=vtsj5wvSoVll1YUf1x6rxnBfwekwZDkX1NKUQ+hmB/c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aLy70TowT/ZFaWKbqrk9of3wwrysld4cXt7z1gs0NJehaAD4sEjPiLgnZ1JMTI/3GByV+mAoTV5IIvY0+ve7cf2qYe9WP6uVxkIEIawcsP2RQsohfl1fvt3HZ0FND0VU7ICFmGdHQRPa9/oS62iM1YCzcIp333ef/0jGBufN72o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YJZcBUS5; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so11659a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 09:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723220189; x=1723824989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xZYpvg30KBqeml0aLfdzOyX6A2jzs5hukakJb6/9ItY=;
-        b=YJZcBUS5oJ58JufdRA6QfpXlO1cBY51Uf/arsSUYI2jgWkzlmTYD/TJ/W46o5/5i57
-         MC2PMvlGxWttMVSfNmuFpAZ33PR40ZMFOFUh4tJTYSYkw4bHH6ze8IPUtdNeYyoIn/6q
-         FsD0ckR0gLBsoB0UEfENMyqwZ65EOTYybgs/nBNxSKEBe3YplJYD7oe2Io9Ml6axQ7N1
-         92pFGy6MeglYnusIntslP0zvMstIz60580+tq+Er6fp6SWgGsTtWcI3yoMeYROxITXKC
-         FO6L4vOu4EOhFH6EBhbc4edvlVWvfaHLoXJaa1CBdaDbWViKrvX6cmDsA5H4eggBT2I6
-         oFSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723220189; x=1723824989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xZYpvg30KBqeml0aLfdzOyX6A2jzs5hukakJb6/9ItY=;
-        b=TfLMoGFP4Tqto8ycyheFHDPszEPEuf/82mc7FEkdw+jDaD3L9C1PNCxWCjTGXfJvkn
-         yAGPcZoUoj/NWJGOzrundbhBPpvp4Gd+ES++ikdwfsl4M8Cxz6h9p0qcDrjs7RVPD4hK
-         Q2n7WuLQnQTM9YGARryVjZlHVdGrtyz7NEflXeMTaIIflG7eAMjK/olc8p5n1w5XjUh1
-         mp/b0I6mJWopRAOwBddK8ytyMLIJ725psGoGSMh1oUP/5O9OVRmwhFPI9QSAcLyjcJr7
-         6dQ3tEEqJaRO807Avxskk1YNT5AJg6ltNxm2Q7aDpB8p+3o7908KBSKNI7b+DX2RW3Q/
-         7oPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWg3NlWleo83yHxu1OMHbq/vEAXezOmexRzqB67dnhyZ6t4pwMx+MivVluI+kIwuLN8kA8RqEQ+SQXajgF0HIY2de9kDXWrvKcWmbi5XA==
-X-Gm-Message-State: AOJu0Yz8F+Ea3+sbfWYnRaPZdMddEkFwvK+MUpX1QlvhySNG20dtxakG
-	3ZDm/rJi+OYTAfTf2KXqkQLhXajZHHAzJVbZyKAzP9hUA2S3QC9GUNQnwdPunrfR7w5n8DXRMXU
-	60dxruokM9I10V9d2XLaL7CayQL3qsf78Tczx
-X-Google-Smtp-Source: AGHT+IGLV2f7xz3HiASPgoXucNkkjSY0HlUpcr+1pRB8vDlxtZCp/4YEgM5Ck/9IgOs88u6eub6Gmvxv+P8wO7+gNTA=
-X-Received: by 2002:a05:6402:40cc:b0:5a7:7f0f:b70b with SMTP id
- 4fb4d7f45d1cf-5bbbc38adbemr223144a12.0.1723220188246; Fri, 09 Aug 2024
- 09:16:28 -0700 (PDT)
+	s=arc-20240116; t=1723220418; c=relaxed/simple;
+	bh=yZaiFbp/BGYhOatReN+abAtfZEaHS43dHoaBRz5xxKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDfLuXPouL4RZmba7EeJ2GDSqEcch0wct7+Un8gsp+a5+He3SiRo0b5zfDMdSQMDBEkHFlBq66kvBAB5dxKlVHnO5rCxKlNoaMR+Fiew3XEJrTRPtLmkrXBA7eMt7YQu2VlBYYNgfw+nah+aHII9EIrD2PcmYCp2HHtATk1Q97c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L4gBGvlF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wRwRuPLe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L4gBGvlF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wRwRuPLe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 318E11F7F6;
+	Fri,  9 Aug 2024 16:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723220414; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oN0VY5gulIc1EHn3LcstMCeAw0A23iCam/gCOtjuplI=;
+	b=L4gBGvlFVcSb7gA8VF2pbJVbKsQEnlPxJLfuHUqO/rVmcpY3zy+vC+5T+VSgthq8fLc0IB
+	FKtY24YsUVz3etKGsEMcxF1tHLZroII1SFGx+Vg1PPiSrOgUSsDA6k61nrCbd+Z/pMvebm
+	KGBJ+ciCyaqk+Cr7KZPZ153gEZ1i7f4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723220414;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oN0VY5gulIc1EHn3LcstMCeAw0A23iCam/gCOtjuplI=;
+	b=wRwRuPLeCZK2BjFuUoUX3Q6f4hn/EZyAC9dBT5uq1FoYPBrRfw1kAZXtMDl2xK3KpTHLGs
+	Skn4dtwPYCe+xTDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723220414; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oN0VY5gulIc1EHn3LcstMCeAw0A23iCam/gCOtjuplI=;
+	b=L4gBGvlFVcSb7gA8VF2pbJVbKsQEnlPxJLfuHUqO/rVmcpY3zy+vC+5T+VSgthq8fLc0IB
+	FKtY24YsUVz3etKGsEMcxF1tHLZroII1SFGx+Vg1PPiSrOgUSsDA6k61nrCbd+Z/pMvebm
+	KGBJ+ciCyaqk+Cr7KZPZ153gEZ1i7f4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723220414;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oN0VY5gulIc1EHn3LcstMCeAw0A23iCam/gCOtjuplI=;
+	b=wRwRuPLeCZK2BjFuUoUX3Q6f4hn/EZyAC9dBT5uq1FoYPBrRfw1kAZXtMDl2xK3KpTHLGs
+	Skn4dtwPYCe+xTDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1BC3713A7D;
+	Fri,  9 Aug 2024 16:20:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PxK/Br5BtmYnMwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 09 Aug 2024 16:20:14 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B1226A084B; Fri,  9 Aug 2024 18:20:13 +0200 (CEST)
+Date: Fri, 9 Aug 2024 18:20:13 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tytso@mit.edu, adilger.kernel@dilger.ca, ritesh.list@gmail.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 06/10] ext4: update delalloc data reserve spcae in
+ ext4_es_insert_extent()
+Message-ID: <20240809162013.tieom26umwqcsfe4@quack3>
+References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
+ <20240802115120.362902-7-yi.zhang@huaweicloud.com>
+ <20240807174108.l2bbbhlnpznztp34@quack3>
+ <a23023f6-93cc-584d-c55a-9f8395e360ae@huaweicloud.com>
+ <20240808183619.vmxttspcs5ngm6g3@quack3>
+ <d6b8ed3c-82a7-6344-bdb9-8c18b1f526ca@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717.neaB5Aiy2zah@digikod.net> <CALmYWFt=yXpzhS=HS9FjwVMvx6U1MoR31vK79wxNLhmJm9bBoA@mail.gmail.com>
- <20240718.kaePhei9Ahm9@digikod.net> <CALmYWFto4sw-Q2+J0Gc54POhnM9C8YpnJ44wMz=fd_K3_+dWmw@mail.gmail.com>
- <20240719.shaeK6PaiSie@digikod.net> <CALmYWFsd-=pOPZZmiKvYJ8pOhACsTvW_d+pRjG_C4jD6+Li0AQ@mail.gmail.com>
- <20240719.sah7oeY9pha4@digikod.net> <CALmYWFsAZjU5sMcXTT23Mtw2Y30ewc94FAjKsnuSv1Ex=7fgLQ@mail.gmail.com>
- <20240723.beiTu0qui2ei@digikod.net> <CALmYWFtHQY41PbRwGxge1Wo=8D4ocZfQgRUO47-PF1eJCEr0Sw@mail.gmail.com>
- <20240809.Taiyah0ii7ph@digikod.net>
-In-Reply-To: <20240809.Taiyah0ii7ph@digikod.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Fri, 9 Aug 2024 09:15:49 -0700
-Message-ID: <CALmYWFvPxWyYdGvCcTPYrUtC0DVMGcmM+JsAe0KGE+3p2Jb=Ug@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, "Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Elliott Hughes <enh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6b8ed3c-82a7-6344-bdb9-8c18b1f526ca@huaweicloud.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,mit.edu,dilger.ca,gmail.com,huawei.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Aug 9, 2024 at 1:45=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> On Mon, Aug 05, 2024 at 11:35:09AM -0700, Jeff Xu wrote:
-> > On Tue, Jul 23, 2024 at 6:15=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > On Fri, Jul 19, 2024 at 08:27:18AM -0700, Jeff Xu wrote:
-> > > > On Fri, Jul 19, 2024 at 8:04=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > >
-> > > > > On Fri, Jul 19, 2024 at 07:16:55AM -0700, Jeff Xu wrote:
-> > > > > > On Fri, Jul 19, 2024 at 1:45=E2=80=AFAM Micka=C3=ABl Sala=C3=BC=
-n <mic@digikod.net> wrote:
-> > > > > > >
-> > > > > > > On Thu, Jul 18, 2024 at 06:29:54PM -0700, Jeff Xu wrote:
-> > > > > > > > On Thu, Jul 18, 2024 at 5:24=E2=80=AFAM Micka=C3=ABl Sala=
-=C3=BCn <mic@digikod.net> wrote:
-> > > > > > > > >
-> > > > > > > > > On Wed, Jul 17, 2024 at 07:08:17PM -0700, Jeff Xu wrote:
-> > > > > > > > > > On Wed, Jul 17, 2024 at 3:01=E2=80=AFAM Micka=C3=ABl Sa=
-la=C3=BCn <mic@digikod.net> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > On Tue, Jul 16, 2024 at 11:33:55PM -0700, Jeff Xu wro=
-te:
-> > > > > > > > > > > > On Thu, Jul 4, 2024 at 12:02=E2=80=AFPM Micka=C3=AB=
-l Sala=C3=BCn <mic@digikod.net> wrote:
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Add a new AT_CHECK flag to execveat(2) to check i=
-f a file would be
-> > > > > > > > > > > > > allowed for execution.  The main use case is for =
-script interpreters and
-> > > > > > > > > > > > > dynamic linkers to check execution permission acc=
-ording to the kernel's
-> > > > > > > > > > > > > security policy. Another use case is to add conte=
-xt to access logs e.g.,
-> > > > > > > > > > > > > which script (instead of interpreter) accessed a =
-file.  As any
-> > > > > > > > > > > > > executable code, scripts could also use this chec=
-k [1].
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > This is different than faccessat(2) which only ch=
-ecks file access
-> > > > > > > > > > > > > rights, but not the full context e.g. mount point=
-'s noexec, stack limit,
-> > > > > > > > > > > > > and all potential LSM extra checks (e.g. argv, en=
-vp, credentials).
-> > > > > > > > > > > > > Since the use of AT_CHECK follows the exact kerne=
-l semantic as for a
-> > > > > > > > > > > > > real execution, user space gets the same error co=
-des.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > So we concluded that execveat(AT_CHECK) will be use=
-d to check the
-> > > > > > > > > > > > exec, shared object, script and config file (such a=
-s seccomp config),
-> > > > > > >
-> > > > > > > > > > > > I think binfmt_elf.c in the kernel needs to check t=
-he ld.so to make
-> > > > > > > > > > > > sure it passes AT_CHECK, before loading it into mem=
-ory.
-> > > > > > > > > > >
-> > > > > > > > > > > All ELF dependencies are opened and checked with open=
-_exec(), which
-> > > > > > > > > > > perform the main executability checks (with the __FMO=
-DE_EXEC flag).
-> > > > > > > > > > > Did I miss something?
-> > > > > > > > > > >
-> > > > > > > > > > I mean the ld-linux-x86-64.so.2 which is loaded by binf=
-mt in the kernel.
-> > > > > > > > > > The app can choose its own dynamic linker path during b=
-uild, (maybe
-> > > > > > > > > > even statically link one ?)  This is another reason tha=
-t relying on a
-> > > > > > > > > > userspace only is not enough.
-> > > > > > > > >
-> > > > > > > > > The kernel calls open_exec() on all dependencies, includi=
-ng
-> > > > > > > > > ld-linux-x86-64.so.2, so these files are checked for exec=
-utability too.
-> > > > > > > > >
-> > > > > > > > This might not be entirely true. iiuc, kernel  calls open_e=
-xec for
-> > > > > > > > open_exec for interpreter, but not all its dependency (e.g.=
- libc.so.6)
-> > > > > > >
-> > > > > > > Correct, the dynamic linker is in charge of that, which is wh=
-y it must
-> > > > > > > be enlighten with execveat+AT_CHECK and securebits checks.
-> > > > > > >
-> > > > > > > > load_elf_binary() {
-> > > > > > > >    interpreter =3D open_exec(elf_interpreter);
-> > > > > > > > }
-> > > > > > > >
-> > > > > > > > libc.so.6 is opened and mapped by dynamic linker.
-> > > > > > > > so the call sequence is:
-> > > > > > > >  execve(a.out)
-> > > > > > > >   - open exec(a.out)
-> > > > > > > >   - security_bprm_creds(a.out)
-> > > > > > > >   - open the exec(ld.so)
-> > > > > > > >   - call open_exec() for interruptor (ld.so)
-> > > > > > > >   - call execveat(AT_CHECK, ld.so) <-- do we want ld.so goi=
-ng through
-> > > > > > > > the same check and code path as libc.so below ?
-> > > > > > >
-> > > > > > > open_exec() checks are enough.  LSMs can use this information=
- (open +
-> > > > > > > __FMODE_EXEC) if needed.  execveat+AT_CHECK is only a user sp=
-ace
-> > > > > > > request.
-> > > > > > >
-> > > > > > Then the ld.so doesn't go through the same security_bprm_creds(=
-) check
-> > > > > > as other .so.
-> > > > >
-> > > > > Indeed, but...
-> > > > >
-> > > > My point is: we will want all the .so going through the same code
-> > > > path, so  security_ functions are called consistently across all th=
-e
-> > > > objects, And in the future, if we want to develop additional LSM
-> > > > functionality based on AT_CHECK, it will be applied to all objects.
-> > >
-> > > I'll extend the doc to encourage LSMs to check for __FMODE_EXEC, whic=
-h
-> > > already is the common security check for all executable dependencies.
-> > > As extra information, they can get explicit requests by looking at
-> > > execveat+AT_CHECK call.
-> > >
-> > I agree that security_file_open + __FMODE_EXEC for checking all
-> > the .so (e.g for executable memfd) is a better option  than checking at
-> > security_bprm_creds_for_exec.
-> >
-> > But then maybe execveat( AT_CHECK) can return after  calling alloc_bprm=
- ?
-> > See below call graph:
-> >
-> > do_execveat_common (AT_CHECK)
-> > -> alloc_bprm
-> > ->->do_open_execat
-> > ->->-> do_filp_open (__FMODE_EXEC)
-> > ->->->->->->> security_file_open
-> > -> bprm_execve
-> > ->-> prepare_exec_creds
-> > ->->-> prepare_creds
-> > ->->->-> security_prepare_creds
-> > ->-> security_bprm_creds_for_exec
-> >
-> > What is the consideration to mark the end at
-> > security_bprm_creds_for_exec ? i.e. including brpm_execve,
-> > prepare_creds, security_prepare_creds, security_bprm_creds_for_exec.
->
-> This enables LSMs to know/log an explicit execution request, including
-> context with argv and envp.
->
-> >
-> > Since dynamic linker doesn't load ld.so (it is by kernel),  ld.so
-> > won't go through those  security_prepare_creds and
-> > security_bprm_creds_for_exec checks like other .so do.
->
-> Yes, but this is not an issue nor an explicit request. ld.so is only one
-> case of this patch series.
->
-> >
-> > > >
-> > > > Another thing to consider is:  we are asking userspace to make
-> > > > additional syscall before  loading the file into memory/get execute=
-d,
-> > > > there is a possibility for future expansion of the mechanism, witho=
-ut
-> > > > asking user space to add another syscall again.
-> > >
-> > > AT_CHECK is defined with a specific semantic.  Other mechanisms (e.g.
-> > > LSM policies) could enforce other restrictions following the same
-> > > semantic.  We need to keep in mind backward compatibility.
-> > >
-> > > >
-> > > > I m still not convinced yet that execveat(AT_CHECK) fits more than
-> > > > faccessat(AT_CHECK)
-> > >
-> > > faccessat2(2) is dedicated to file permission/attribute check.
-> > > execveat(2) is dedicated to execution, which is a superset of file
-> > > permission for executability, plus other checks (e.g. noexec).
-> > >
-> > That sounds reasonable, but if execveat(AT_CHECK) changes behavior of
-> > execveat(),  someone might argue that faccessat2(EXEC_CHECK) can be
-> > made for the executability.
->
-> AT_CHECK, as any other syscall flags, changes the behavior of execveat,
-> but the overall semantic is clearly defined.
->
-> Again, faccessat2 is only dedicated to file attributes/permissions, not
-> file executability.
->
-> >
-> > I think the decision might depend on what this PATCH intended to
-> > check, i.e. where we draw the line.
->
-> The goal is clearly defined in the cover letter and patches: makes it
-> possible to control (or log) script execution.
->
-> >
-> > do_open_execat() seems to cover lots of checks for executability, if
-> > we are ok with the thing that do_open_execat() checks, then
-> > faccessat(AT_CHECK) calling do_open_execat() is an option, it  won't
-> > have those "unrelated" calls  in execve path, e.g.  bprm_stack_limits,
-> > copy argc/env .
->
-> I don't thing there is any unrelated calls in execve path, quite the
-> contrary, it follows the same semantic as for a full execution, and
-> that's another argument to use the execveat interface.  Otherwise, we
-> couldn't argue that `./script.sh` can be the same as `sh script.sh`
->
-It is a good point from the  "scrip.sh/exec" perspective that we want
-it to go through the same execve path.
-The reasoning is not obvious from the ".so" which doesn't go through
-stack/env check.
-Since execveat(AT_CHECK) wants to cover both cases, it is fine.
+On Fri 09-08-24 11:35:49, Zhang Yi wrote:
+> On 2024/8/9 2:36, Jan Kara wrote:
+> > On Thu 08-08-24 19:18:30, Zhang Yi wrote:
+> >> On 2024/8/8 1:41, Jan Kara wrote:
+> >>> On Fri 02-08-24 19:51:16, Zhang Yi wrote:
+> >>>> From: Zhang Yi <yi.zhang@huawei.com>
+> >>>>
+> >>>> Now that we update data reserved space for delalloc after allocating
+> >>>> new blocks in ext4_{ind|ext}_map_blocks(), and if bigalloc feature is
+> >>>> enabled, we also need to query the extents_status tree to calculate the
+> >>>> exact reserved clusters. This is complicated now and it appears that
+> >>>> it's better to do this job in ext4_es_insert_extent(), because
+> >>>> __es_remove_extent() have already count delalloc blocks when removing
+> >>>> delalloc extents and __revise_pending() return new adding pending count,
+> >>>> we could update the reserved blocks easily in ext4_es_insert_extent().
+> >>>>
+> >>>> Thers is one special case needs to concern is the quota claiming, when
+> >>>> bigalloc is enabled, if the delayed cluster allocation has been raced
+> >>>> by another no-delayed allocation(e.g. from fallocate) which doesn't
+> >>>> cover the delayed blocks:
+> >>>>
+> >>>>   |<       one cluster       >|
+> >>>>   hhhhhhhhhhhhhhhhhhhdddddddddd
+> >>>>   ^            ^
+> >>>>   |<          >| < fallocate this range, don't claim quota again
+> >>>>
+> >>>> We can't claim quota as usual because the fallocate has already claimed
+> >>>> it in ext4_mb_new_blocks(), we could notice this case through the
+> >>>> removed delalloc blocks count.
+> >>>>
+> >>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> >>> ...
+> >>>> @@ -926,9 +928,27 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+> >>>>  			__free_pending(pr);
+> >>>>  			pr = NULL;
+> >>>>  		}
+> >>>> +		pending = err3;
+> >>>>  	}
+> >>>>  error:
+> >>>>  	write_unlock(&EXT4_I(inode)->i_es_lock);
+> >>>> +	/*
+> >>>> +	 * Reduce the reserved cluster count to reflect successful deferred
+> >>>> +	 * allocation of delayed allocated clusters or direct allocation of
+> >>>> +	 * clusters discovered to be delayed allocated.  Once allocated, a
+> >>>> +	 * cluster is not included in the reserved count.
+> >>>> +	 *
+> >>>> +	 * When bigalloc is enabled, allocating non-delayed allocated blocks
+> >>>> +	 * which belong to delayed allocated clusters (from fallocate, filemap,
+> >>>> +	 * DIO, or clusters allocated when delalloc has been disabled by
+> >>>> +	 * ext4_nonda_switch()). Quota has been claimed by ext4_mb_new_blocks(),
+> >>>> +	 * so release the quota reservations made for any previously delayed
+> >>>> +	 * allocated clusters.
+> >>>> +	 */
+> >>>> +	resv_used = rinfo.delonly_cluster + pending;
+> >>>> +	if (resv_used)
+> >>>> +		ext4_da_update_reserve_space(inode, resv_used,
+> >>>> +					     rinfo.delonly_block);
+> >>>
+> >>> I'm not sure I understand here. We are inserting extent into extent status
+> >>> tree. We are replacing resv_used clusters worth of space with delayed
+> >>> allocation reservation with normally allocated clusters so we need to
+> >>> release the reservation (mballoc already reduced freeclusters counter).
+> >>> That I understand. In normal case we should also claim quota because we are
+> >>> converting from reserved into allocated state. Now if we allocated blocks
+> >>> under this range (e.g. from fallocate()) without
+> >>> EXT4_GET_BLOCKS_DELALLOC_RESERVE, we need to release quota reservation here
+> >>> instead of claiming it. But I fail to see how rinfo.delonly_block > 0 is
+> >>> related to whether EXT4_GET_BLOCKS_DELALLOC_RESERVE was set when allocating
+> >>> blocks for this extent or not.
+> >>
+> >> Oh, this is really complicated due to the bigalloc feature, please let me
+> >> explain it more clearly by listing all related situations.
+> >>
+> >> There are 2 types of paths of allocating delayed/reserved cluster:
+> >> 1. Normal case, normally allocate delayed clusters from the write back path.
+> >> 2. Special case, allocate blocks under this delayed range, e.g. from
+> >>    fallocate().
+> >>
+> >> There are 4 situations below:
+> >>
+> >> A. bigalloc is disabled. This case is simple, after path 2, we don't need
+> >>    to distinguish path 1 and 2, when calling ext4_es_insert_extent(), we
+> >>    set EXT4_GET_BLOCKS_DELALLOC_RESERVE after EXT4_MAP_DELAYED bit is
+> >>    detected. If the flag is set, we must be replacing a delayed extent and
+> >>    rinfo.delonly_block must be > 0. So rinfo.delonly_block > 0 is equal
+> >>    to set EXT4_GET_BLOCKS_DELALLOC_RESERVE.
+> > 
+> > Right. So fallocate() will call ext4_map_blocks() and
+> > ext4_es_lookup_extent() will find delayed extent and set EXT4_MAP_DELAYED
+> > which you (due to patch 2 of this series) transform into
+> > EXT4_GET_BLOCKS_DELALLOC_RESERVE. We used to update the delalloc
+> > accounting through in ext4_ext_map_blocks() but this patch moved the update
+> > to ext4_es_insert_extent(). But there is one cornercase even here AFAICT:
+> > 
+> > Suppose fallocate is called for range 0..16k, we have delalloc extent at
+> > 8k..16k. In this case ext4_map_blocks() at block 0 will not find the
+> > delalloc extent but ext4_ext_map_blocks() will allocate 16k from mballoc
+> > without using delalloc reservation but then ext4_es_insert_extent() will
+> > still have rinfo.delonly_block > 0 so we claim the quota reservation
+> > instead of releasing it?
+> > 
+> 
+> After commit 6430dea07e85 ("ext4: correct the hole length returned by
+> ext4_map_blocks()"), the fallocate range 0-16K would be divided into two
+> rounds. When we first calling ext4_map_blocks() with 0-16K, the map range
+> will be corrected to 0-8k by ext4_ext_determine_insert_hole() and the
+> allocating range should not cover any delayed range.
 
-> The only difference is that user space is in charge of parsing and
-> interpreting the file's content.
->
-> >
-> > However, you mentioned superset of file permission for executability,
-> > can you elaborate on that ? Is there something not included in
-> > do_open_execat() but still necessary for execveat(AT_CHECK)? maybe
-> > security_bprm_creds_for_exec? (this goes back to my  question above)
->
-> As explained above, the goal is to have the same semantic as a full
-> execveat call, taking into account all the checks (e.g. stack limit,
-> argv/envp...).
->
-I'm fine with this, thanks for taking time to explain the design.
+Eww, subtle, subtle, subtle... And isn't this also racy? We drop i_data_sem
+in ext4_map_blocks() after we do the initial lookup. So there can be some
+changes to both the extent tree and extent status tree before we grab
+i_data_sem again for the allocation. We hold inode_lock so there can be
+only writeback and page faults racing with us but e.g. ext4_page_mkwrite()
+-> block_page_mkwrite -> ext4_da_get_block_prep() -> ext4_da_map_blocks()
+can add delayed extent into extent status tree in that window causing
+breakage, can't it?
 
-Regarding the future LSM based on this patch series:
-For .so,  security_file_open is recommended for LSM.
-For scripts/exec (that needs a full exec code path),
-security_file_open and security_bprm_creds_for_exec can both be used.
+> Then
+> ext4_alloc_file_blocks() will call ext4_map_blocks() again to allocate
+> 8K-16K in the second round, in this round, we are allocating a real
+> delayed range. Please below graph for details,
+> 
+> ext4_alloc_file_blocks() //0-16K
+>  ext4_map_blocks()  //0-16K
+>   ext4_es_lookup_extent() //find nothing
+>    ext4_ext_map_blocks(0)
+>     ext4_ext_determine_insert_hole() //change map range to 0-8K
+>    ext4_ext_map_blocks(EXT4_GET_BLOCKS_CREATE) //allocate blocks under hole
+>  ext4_map_blocks()  //8-16K
+>   ext4_es_lookup_extent() //find delayed extent
+>   ext4_ext_map_blocks(EXT4_GET_BLOCKS_CREATE)
+>     //allocate blocks under a whole delayed range,
+>     //use rinfo.delonly_block > 0 is okay
+> 
+> Hence the allocating range can't mixed with delayed and non-delayed extent
+> at a time, and the rinfo.delonly_block > 0 should work.
 
-Thanks
-Best regards,
--Jeff
+Besides the race above I agree. So either we need to trim mapping extent in
+ext4_map_blocks() after re-acquiring i_data_sem or we need to deal with
+unwritten extents that are partially delalloc. I'm more and more leaning
+towards just passing the information whether delalloc was used or not to
+extent status tree insertion. Because that can deal with partial extents
+just fine...
+
+Thanks for your patience with me :).
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
