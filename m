@@ -1,115 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-25523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3FB94D106
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 15:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCA594D174
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 15:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB8B1C20A08
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 13:18:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F04961C2082E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 13:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B77F194AF4;
-	Fri,  9 Aug 2024 13:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB4B195805;
+	Fri,  9 Aug 2024 13:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mcChpKnK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFuypPs7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D92438DCC;
-	Fri,  9 Aug 2024 13:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A21194A43;
+	Fri,  9 Aug 2024 13:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723209491; cv=none; b=aBZ6+wVwhx13z3gkigz7J8kqkqUrsL4wAhQDLiT3MVW+bb2f0T3UI0dwKngNeqlY7jgAvziGEpB7naiCtn8wUnCyf4nqzgMm5ZT2G6g/yajZXb94+hCcPwQx6ci9bCG8nfciHcHAOP/F0seXjDie6C464XFiMr6Geyr8nxmZ+CY=
+	t=1723210815; cv=none; b=HiwRRzh9vMh8nw+jC7DCqim91hZj9DkRCvMRd23lN+bNF5aIHTd3VEZZk72TofIrprGbHOvLWb0sOIOKHszBVTHPNVjO/aC2P2UlLRETtd16UfeLMYBhRz6g+58iY0Xoy+/XusH4/XrrYpqacFFQu1aNlgWHSpcz4HU7c2GddQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723209491; c=relaxed/simple;
-	bh=q8oFJ6K14ti4AQLK6XdG+/LYuY63JwP/I8q1yCKwPQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iPt8kX7BvYjSs4Uuk65xKkU2dZGvh80LCP23+rFNZI3ggooiseivJD/7oVzeIxBskuyG0rgMVX3uS+KLu3mNo2PHRcw0mOJPbZzjSQxbR5TcZ7JLgOl2ge3Svxh7tf38EQD6Ie01qwEjdA6Bg/l1hFjruNgrpYoVUcMTZXfwz+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mcChpKnK; arc=none smtp.client-ip=84.16.66.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WgPbx276fzGS7;
-	Fri,  9 Aug 2024 15:18:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723209485;
-	bh=8q0uMX7tRV16e+74Wja3JoKpQoc7+O1R17EEnmf2d4E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mcChpKnKXoBQDUVS6APCY4X8MEEW2+vQIMX78usfyc4876MD9PSrjaRIaphad53Aj
-	 ctN8yRjFqqyWkqCDhA2qq85gS7iY37fY2a1OKKutZ/CVbTAyrNl5teAhXo8MKRbuSR
-	 /tcpGWvG1QbqKBJmuaQauVSSd7PqwAbQBawqHlPI=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WgPbw27Byzbn0;
-	Fri,  9 Aug 2024 15:18:04 +0200 (CEST)
-Date: Fri, 9 Aug 2024 15:17:59 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>
-Cc: Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	gnoack@google.com, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
- signal control)
-Message-ID: <20240809.se0ha8tiuJai@digikod.net>
-References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net>
- <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net>
- <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
- <20240809.eejeekoo4Quo@digikod.net>
- <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
+	s=arc-20240116; t=1723210815; c=relaxed/simple;
+	bh=PCOC6t5DUlw6Zai6p4bX3oYBp74piqtotQ4OSwhgsZU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d3UcjIgLqfz1aDkaNqkCQBhS91Aj9p5um+dLP4l0IPZO8xDPPBcnEiCQFem16M4x5pCWnxSjCwT6roQWM/RgUEnX8uOHYOwNl3kK30nzhaeCMj7L6XcThFWyxINaCKq5nlGZ1hOKFFAC/90moG8aIXtB0CaP/BchFRCP24sUzNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFuypPs7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A687C32782;
+	Fri,  9 Aug 2024 13:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723210815;
+	bh=PCOC6t5DUlw6Zai6p4bX3oYBp74piqtotQ4OSwhgsZU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BFuypPs7UPPwv1QU90slF1cFAdExzRWbGKRcrWZLq1AfHnAKZn/tlgfSkMa27/cnY
+	 V3MpUoXvVj5JiptZM8hWM8IoshYyYSD5pN/ZRnZKhjE6xblzGs8ITn8n0xaIFG03U7
+	 lvMT1Wb4gBlyjpB9aXgGcL9848XKDIvEy/Y1OCW33/WT8X3Figf4dyVLnt6yg9ZW+P
+	 j1OVc5s6AyxmEQ+LamM8iaQ81l5BCn40vplj4En1CV6YSPVa5atSFyNfIWU7IEnw0c
+	 iCB+aC4M7Pc0Z06kS7bjik4PeKmwPnqS3Z5ZlXHZfgJmxUzk/c85/QlH0lP8TBlwwG
+	 9WzTMuclZ+YAA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Fri, 09 Aug 2024 09:39:43 -0400
+Subject: [PATCH] fs: don't overwrite the nsec field if I_CTIME_QUERIED is
+ already set
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240809-mgtime-v1-1-b2cab4f1558d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAB8ctmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCwNL3dz0kszcVN3kpGSjxESzlGSDtFQloOKCotS0zAqwQdGxtbUAqts
+ gflgAAAA=
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2103; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=PCOC6t5DUlw6Zai6p4bX3oYBp74piqtotQ4OSwhgsZU=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmthw+OIwQZVqktO49/ow2VAmNNr0ZpytiuuLhj
+ 10a9LEhP76JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZrYcPgAKCRAADmhBGVaC
+ FSOYEACJdVic638uQHhz0mp/jJD1UDNaRxqW8vMDlhgLa0Gt7tlMyZVd9i5IGl8BV+RSLA1LTGa
+ 8qSFrVkNejAU4iZWjM9zQTjeFZaaNao2rb8JEGVv6XSX5RvXQHWs3+wkqHp7k8zU3oGhZX3J7kN
+ Wo/o+DEHk+ZReMhhu9Xk2UIs0lveK0cmcnjtIFsMTA94JPx5F7DNjhd3BtgBATOuiGHXvcfGDlg
+ ySGCZxO4Y4iaj+CIxfjhFAIqOn/KhVQAVyZVqd8njM/WeOtBowYB80eLmmb7DvxXiqo4QMkkVp0
+ eK5Vwx2O+Pup+fd3cBnyot5xvCeJMiIXFTmxIActwdDXtDvlGf8WcQoiPxKATPyMjh+Nmmvv78u
+ 0TwlsWdvW1l+rPbAt9adtum9KMI3BvXBcTGVqz3iuV5GVkp1YraZrF+vNGKFQ/I2Bj/JpvSsYET
+ UVh4ZpsoAbW5X62y8ZM2JHxdOdxD1IiXBizTQXGlkEyYIOjvKNi/a5nfhupJ/0Qhy2uig80wk6u
+ SJnWgSnvIl9tZCI4+Az9BOHUqyeSpT+d9I9qh1YRA3diJV+rHca16UJVrmRK3I1rr9ZLYXLWoQN
+ M2vAqIZgwQveoDBAhDtXHbD6ALtWNRiXZs6gAFyVpICsnf6SWYam6xkyCf1QIKSj3mvHBmFQimf
+ RJ/7MIl5Sl7x0tQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Talking about f_modown() and security_file_set_fowner(), it looks like
-there are some issues:
+When fetching the ctime's nsec value for a stat-like operation, do a
+simple fetch first and avoid the atomic_fetch_or if the flag is already
+set.
 
-On Fri, Aug 09, 2024 at 02:44:06PM +0200, Jann Horn wrote:
-> On Fri, Aug 9, 2024 at 12:59 PM Mickaël Salaün <mic@digikod.net> wrote:
+Suggested-by: Mateusz Guzik <mjguzik@gmail.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+I'm running tests on this now, but I don't expect any problems.
 
-[...]
+This is based on top of Christian's vfs.mgtime branch. It may be best to
+squash this into 6feb43ecdd8e ("fs: add infrastructure for multigrain
+timestamps").
+---
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ fs/stat.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-> > BTW, I don't understand why neither SELinux nor Smack use (explicit)
-> > atomic operations nor lock.
-> 
-> Yeah, I think they're sloppy and kinda wrong - but it sorta works in
-> practice mostly because they don't have to do any refcounting around
-> this?
-> 
-> > And it looks weird that
-> > security_file_set_fowner() isn't called by f_modown() with the same
-> > locking to avoid races.
-> 
-> True. I imagine maybe the thought behind this design could have been
-> that LSMs should have their own locking, and that calling an LSM hook
-> with IRQs off is a little weird? But the way the LSMs actually use the
-> hook now, it might make sense to call the LSM with the lock held and
-> IRQs off...
-> 
+diff --git a/fs/stat.c b/fs/stat.c
+index f2bf7cca64b2..9eb6d9b2d010 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -35,8 +35,8 @@
+  * @inode: inode from which to grab the c/mtime
+  *
+  * Given @inode, grab the ctime and mtime out if it and store the result
+- * in @stat. When fetching the value, flag it as queried so the next write
+- * will ensure a distinct timestamp.
++ * in @stat. When fetching the value, flag it as QUERIED (if not already)
++ * so the next write will record a distinct timestamp.
+  */
+ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
+ {
+@@ -50,7 +50,10 @@ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
+ 
+ 	stat->mtime = inode_get_mtime(inode);
+ 	stat->ctime.tv_sec = inode->i_ctime_sec;
+-	stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn)) & ~I_CTIME_QUERIED;
++	stat->ctime.tv_nsec = (u32)atomic_read(pcn);
++	if (!(stat->ctime.tv_nsec & I_CTIME_QUERIED))
++		stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn));
++	stat->ctime.tv_nsec &= ~I_CTIME_QUERIED;
+ 	trace_fill_mg_cmtime(inode, &stat->ctime, &stat->mtime);
+ }
+ EXPORT_SYMBOL(fill_mg_cmtime);
 
-Would it be OK (for VFS, SELinux, and Smack maintainers) to move the
-security_file_set_fowner() call into f_modown(), especially where
-UID/EUID are populated.  That would only call security_file_set_fowner()
-when the fown is actually set, which I think could also fix a bug for
-SELinux and Smack.
+---
+base-commit: 9000eec2bdc08a0b9027427f9d3d9a3545694258
+change-id: 20240809-mgtime-cbc2aa6dc0fe
 
-Could we replace the uid and euid fields with a pointer to the current
-credentials?  This would enables LSMs to not copy the same kind of
-credential informations and save some memory, simplify credential
-management, and improve consistency.
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
