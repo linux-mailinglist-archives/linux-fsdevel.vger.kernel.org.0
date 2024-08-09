@@ -1,349 +1,699 @@
-Return-Path: <linux-fsdevel+bounces-25493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E827194C79F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 02:33:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF68C94C7AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 02:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E10F51F22A62
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 00:33:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12C91C22B8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 00:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0954B33C0;
-	Fri,  9 Aug 2024 00:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10DD4437;
+	Fri,  9 Aug 2024 00:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxj18S27"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kx8/sIZp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCAC1FB4;
-	Fri,  9 Aug 2024 00:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576822905;
+	Fri,  9 Aug 2024 00:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723163607; cv=none; b=Pt5bBgYk5FU9Nr9hvximrm24ipsX96yOTWMvwzjzPJXdsWV2SVERELFz9ZXtfKBrCsiaYyArUXwW9vFdRzGYv+QaH9xx2wL45g2XJC2xDYbkd6IROyUGE7OMu+xdj5F1jvaHNJisyU+kJKDJFqE6sKYjvulSeslHWd/8DFhz90E=
+	t=1723164072; cv=none; b=S6VJKxd10TE8MgwwmUQrkSp6o4uQ+k5Ghm2ZLcPoLhXbInYI0bQAsZWGZnEYu3EqDhqpnEKu97K84mF8+ikTpDpGUsDH+g1CnSAqxVh8GotnjUuUkfh/rV0DCY6IsmcCFxL3JIRqSLc4m1yFGVxWjUvJ109AEu1lCknrbjK+6r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723163607; c=relaxed/simple;
-	bh=uQYhGj9VBxzOGt86Wrg3aBgYrE+Tc4iOlBOj2w3iD4s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oXo0JP3xZsa2adAaBuRUOOQ79mdeg21sL+Ehwrr74QFpVjeyt80rZXce72wZjZWFONowx4pd40j7ia8kIAuXvBeey++Yv6bpfJtzs5bMyLQxwMnBBW9Uy3PSBXIpZqjRedXj/xHAWTGVA+b08oIxhgWQoH4XFZSJM73w+UGRpxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxj18S27; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEAEC32782;
-	Fri,  9 Aug 2024 00:33:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723163606;
-	bh=uQYhGj9VBxzOGt86Wrg3aBgYrE+Tc4iOlBOj2w3iD4s=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=cxj18S27Z3Hw7brUxZx3momhag5Pp8cf4XSSUIFkPXXELRVUX7V18B4XDmyqfRZIJ
-	 uaP1wrhK7/lqIb7T0Pv+IviITmNxwSts3BIgy72t6FrhEDoLFUtKOleKrNls1TcrJL
-	 /RDllv1RIBnEqPvIYtlD0ddldB1L4wiWfeornw+BubfqAOj2u9T/HTmeTGzuEga2FW
-	 fo2jpTujw5otiHpZ9Nr02sNM0Ld1zCrFbKAq04STuoUfbVA9DDRFLIScwXhk0dnNVH
-	 yttXMRFb9Bzhnr2mhY3rIE0ITMQ+uEWRNy08NVV1yrgqw9e/UZXlzm/9m6cfn15pzH
-	 +jKHB2x++Hcnw==
-Message-ID: <a8e24c94fa5500ee3c99a3dabba452e381512808.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-From: Jeff Layton <jlayton@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton
- <akpm@linux-foundation.org>, Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik
- <josef@toxicpanda.com>,  linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,  audit@vger.kernel.org
-Date: Thu, 08 Aug 2024 20:33:24 -0400
-In-Reply-To: <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-	 <20240807-erledigen-antworten-6219caebedc0@brauner>
-	 <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
-	 <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner>
-	 <20240808171130.5alxaa5qz3br6cde@quack3>
-	 <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
-	 <d0677c60eb1f47eb186f3e5493ba5aa7e0eaa445.camel@kernel.org>
-	 <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
+	s=arc-20240116; t=1723164072; c=relaxed/simple;
+	bh=FGrnrr/6DYUCmaixaG6t5/NFv/UZKdElNOMkbHpxn3Y=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=cWPr4rCkUMTjz1aZNPSz+jrgfs+xvPDppU40XFFXsDSkUQXeWkiMFOpWCa4arddNHVoxfSM9iipmuIGcSISKbKERSfsKgq1+w4ZRAgh7tYLTefZKWzKz+XKauCsgFN+iHJqncF43RDwzZyp5P9ohT90Hb8UE/FCWPuRZ6WjK49o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kx8/sIZp; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5d5eec95a74so904297eaf.1;
+        Thu, 08 Aug 2024 17:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723164069; x=1723768869; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=47tFDCUc6tXdpmSpkydMhn345YMpNq+/67xmcx53pO8=;
+        b=Kx8/sIZpmZpdn1xuOCnGqX5AHiuv3E9zAbEJwpH+lyryeRE8x0yw2IpyuX0dSOCRzD
+         KuhWaYODp2NzgpLNDAz48D2be9YF56q5DdMi2BklZsLVL24oWBS2Ufb9YeanJNGCQVAi
+         gpATXNwu3L4bit+lQ6A6eBij+5fs2fa9sJKVHkscCuXiigwbMTwAFz+lr76MtU89caVK
+         UlkMfR3u7MUHh2tBsT2LXx/bnq2kkOYkwlFNIc8L+7BDBaJ0G5mlzIUgzRDfVaUdSMLz
+         EFMtTODB1N9WDkfxatg71H6WzDCLr34m8zsUSS/1WhwYFBeiiO59cZfvdAAwl8zV/pgf
+         Lgaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723164069; x=1723768869;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=47tFDCUc6tXdpmSpkydMhn345YMpNq+/67xmcx53pO8=;
+        b=jOKEtLK6Fv/XyAbBcDgzL6IpTzQIzLyQVn4beTdYa/0BbnSYQ4JO81uH0s4fwPFsgO
+         F9nQeszxnE+8iT0eJOamMaCgrlqZ8U8qkOLzfwqbw5f73u356dquNQMt3/fL5hdUPDyV
+         2tI8r7mlnVHEOfj9hpC0PIcExT/AuVs5Ytcl8E5KAE0L8h4owDlRtJMM8noepXKlhc3M
+         reKidQcyN2dvSB08ePCTmT/bH1zylTHdnPYXznP2MkQhatj0LgIxTOPnPxnTvTDdJzxT
+         7zbNB6YxhXBXSDCeApgwso4Vp5Uhr/F8tt7qURiDU1fyVz+YUihfon5ZdIaVzX+679uY
+         Tshw==
+X-Forwarded-Encrypted: i=1; AJvYcCXw2VYPCvcuJjVW72+VNprvEyoxw9DMvN9X4NosX8aaWtFg1qk9pmfdXsAwMU0qhOENECTkmBIjON6tczCFXF5yEfPTdpFmso+VfYEY5oQps0NuVBOd/0vkbkvN6TIA/5e3tL+9Px5UA7x/8Q==
+X-Gm-Message-State: AOJu0YyBteRej8xp0fLx6DItaWhL72fLhtF4rmUjIpRkJX7XFjJVHH6y
+	VAn1tXBjHt54EZhx2JGDVzHpHLE1NtWslxaXN26La2TPcxkk91Hp
+X-Google-Smtp-Source: AGHT+IFhIItUWWpk89Z4/39Ud304fq3N5qoG9HxVrrwiXghvj575kpBn/nstK7/CoFpyXqSjSvA38Q==
+X-Received: by 2002:a05:6358:6f06:b0:1ad:14ec:9ff7 with SMTP id e5c5f4694b2df-1b15cf882b4mr432011155d.16.1723164069185;
+        Thu, 08 Aug 2024 17:41:09 -0700 (PDT)
+Received: from localhost.localdomain ([180.69.210.41])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7b76346b394sm8779613a12.23.2024.08.08.17.41.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 17:41:08 -0700 (PDT)
+From: JaeJoon Jung <rgbi3307@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <levinsasha928@gmail.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: JaeJoon Jung <rgbi3307@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	maple-tree@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3] lib/htree: Added get_cycles() to measure execution time
+Date: Fri,  9 Aug 2024 09:40:48 +0900
+Message-Id: <20240809004048.19511-1-rgbi3307@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-On Thu, 2024-08-08 at 20:28 -0400, Paul Moore wrote:
-> On Thu, Aug 8, 2024 at 7:43=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
-rote:
-> > On Thu, 2024-08-08 at 17:12 -0400, Paul Moore wrote:
-> > > On Thu, Aug 8, 2024 at 1:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > > > On Thu 08-08-24 12:36:07, Christian Brauner wrote:
-> > > > > On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
-> > > > > > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
-> > > > > > > > +static struct dentry *lookup_fast_for_open(struct nameidat=
-a *nd, int open_flag)
-> > > > > > > > +{
-> > > > > > > > +       struct dentry *dentry;
-> > > > > > > > +
-> > > > > > > > +       if (open_flag & O_CREAT) {
-> > > > > > > > +               /* Don't bother on an O_EXCL create */
-> > > > > > > > +               if (open_flag & O_EXCL)
-> > > > > > > > +                       return NULL;
-> > > > > > > > +
-> > > > > > > > +               /*
-> > > > > > > > +                * FIXME: If auditing is enabled, then we'l=
-l have to unlazy to
-> > > > > > > > +                * use the dentry. For now, don't do this, =
-since it shifts
-> > > > > > > > +                * contention from parent's i_rwsem to its =
-d_lockref spinlock.
-> > > > > > > > +                * Reconsider this once dentry refcounting =
-handles heavy
-> > > > > > > > +                * contention better.
-> > > > > > > > +                */
-> > > > > > > > +               if ((nd->flags & LOOKUP_RCU) && !audit_dumm=
-y_context())
-> > > > > > > > +                       return NULL;
-> > > > > > >=20
-> > > > > > > Hm, the audit_inode() on the parent is done independent of wh=
-ether the
-> > > > > > > file was actually created or not. But the audit_inode() on th=
-e file
-> > > > > > > itself is only done when it was actually created. Imho, there=
-'s no need
-> > > > > > > to do audit_inode() on the parent when we immediately find th=
-at file
-> > > > > > > already existed. If we accept that then this makes the change=
- a lot
-> > > > > > > simpler.
-> > > > > > >=20
-> > > > > > > The inconsistency would partially remain though. When the fil=
-e doesn't
-> > > > > > > exist audit_inode() on the parent is called but by the time w=
-e've
-> > > > > > > grabbed the inode lock someone else might already have create=
-d the file
-> > > > > > > and then again we wouldn't audit_inode() on the file but we w=
-ould have
-> > > > > > > on the parent.
-> > > > > > >=20
-> > > > > > > I think that's fine. But if that's bothersome the more aggres=
-sive thing
-> > > > > > > to do would be to pull that audit_inode() on the parent furth=
-er down
-> > > > > > > after we created the file. Imho, that should be fine?...
-> > > > > > >=20
-> > > > > > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/=
-?ref_type=3Dheads
-> > > > > > > for a completely untested draft of what I mean.
-> > > > > >=20
-> > > > > > Yeah, that's a lot simpler. That said, my experience when I've =
-worked
-> > > > > > with audit in the past is that people who are using it are _ver=
-y_
-> > > > > > sensitive to changes of when records get emitted or not. I don'=
-t like
-> > > > > > this, because I think the rules here are ad-hoc and somewhat ar=
-bitrary,
-> > > > > > but keeping everything working exactly the same has been my MO =
-whenever
-> > > > > > I have to work in there.
-> > > > > >=20
-> > > > > > If a certain access pattern suddenly generates a different set =
-of
-> > > > > > records (or some are missing, as would be in this case), we mig=
-ht get
-> > > > > > bug reports about this. I'm ok with simplifying this code in th=
-e way
-> > > > > > you suggest, but we may want to do it in a patch on top of mine=
-, to
-> > > > > > make it simple to revert later if that becomes necessary.
-> > > > >=20
-> > > > > Fwiw, even with the rearranged checks in v3 of the patch audit re=
-cords
-> > > > > will be dropped because we may find a positive dentry but the pat=
-h may
-> > > > > have trailing slashes. At that point we just return without audit
-> > > > > whereas before we always would've done that audit.
-> > > > >=20
-> > > > > Honestly, we should move that audit event as right now it's just =
-really
-> > > > > weird and see if that works. Otherwise the change is somewhat hor=
-rible
-> > > > > complicating the already convoluted logic even more.
-> > > > >=20
-> > > > > So I'm appending the patches that I have on top of your patch in
-> > > > > vfs.misc. Can you (other as well ofc) take a look and tell me whe=
-ther
-> > > > > that's not breaking anything completely other than later audit ev=
-ents?
-> > > >=20
-> > > > The changes look good as far as I'm concerned but let me CC audit g=
-uys if
-> > > > they have some thoughts regarding the change in generating audit ev=
-ent for
-> > > > the parent. Paul, does it matter if open(O_CREAT) doesn't generate =
-audit
-> > > > event for the parent when we are failing open due to trailing slash=
-es in
-> > > > the pathname? Essentially we are speaking about moving:
-> > > >=20
-> > > >         audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-> > > >=20
-> > > > from open_last_lookups() into lookup_open().
-> > >=20
-> > > Thanks for adding the audit mailing list to the CC, Jan.  I would ask
-> > > for others to do the same when discussing changes that could impact
-> > > audit (similar requests for the LSM framework, SELinux, etc.).
-> > >=20
-> > > The inode/path logging in audit is ... something.  I have a
-> > > longstanding todo item to go revisit the audit inode logging, both to
-> > > fix some known bugs, and see what we can improve (I'm guessing quite =
-a
-> > > bit).  Unfortunately, there is always something else which is burning
-> > > a little bit hotter and I haven't been able to get to it yet.
-> > >=20
-> >=20
-> > It is "something" alright. The audit logging just happens at strange
-> > and inconvenient times vs. what else we're trying to do wrt pathwalking
-> > and such. In particular here, the fact __audit_inode can block is what
-> > really sucks.
-> >=20
-> > Since we're discussing it...
-> >=20
-> > ISTM that the inode/path logging here is something like a tracepoint.
-> > In particular, we're looking to record a specific set of information at
-> > specific points in the code. One of the big differences between them
-> > however is that tracepoints don't block.  The catch is that we can't
-> > just drop messages if we run out of audit logging space, so that would
-> > have to be handled reasonably.
->=20
-> Yes, the buffer allocation is the tricky bit.  Audit does preallocate
-> some structs for tracking names which ideally should handle the vast
-> majority of the cases, but yes, we need something to handle all of the
-> corner cases too without having to resort to audit_panic().
->=20
-> > I wonder if we could leverage the tracepoint infrastructure to help us
-> > record the necessary info somehow? Copy the records into a specific
-> > ring buffer, and then copy them out to the audit infrastructure in
-> > task_work?
->=20
-> I believe using task_work will cause a number of challenges for the
-> audit subsystem as we try to bring everything together into a single
-> audit event.  We've had a lot of problems with io_uring doing similar
-> things, some of which are still unresolved.
->=20
-> > I don't have any concrete ideas here, but the path/inode audit code has
-> > been a burden for a while now and it'd be good to think about how we
-> > could do this better.
->=20
-> I've got some grand ideas on how to cut down on a lot of our
-> allocations and string generation in the critical path, not just with
-> the inodes, but with audit records in general.  Sadly I just haven't
-> had the time to get to any of it.
->=20
-> > > The general idea with audit is that you want to record the informatio=
-n
-> > > both on success and failure.  It's easy to understand the success
-> > > case, as it is a record of what actually happened on the system, but
-> > > you also want to record the failure case as it can provide some
-> > > insight on what a process/user is attempting to do, and that can be
-> > > very important for certain classes of users.  I haven't dug into the
-> > > patches in Christian's tree, but in general I think Jeff's guidance
-> > > about not changing what is recorded in the audit log is probably good
-> > > advice (there will surely be exceptions to that, but it's still good
-> > > guidance).
-> > >=20
-> >=20
-> > In this particular case, the question is:
-> >=20
-> > Do we need to emit a AUDIT_INODE_PARENT record when opening an existing
-> > file, just because O_CREAT was set? We don't emit such a record when
-> > opening without O_CREAT set.
->=20
-> I'm not as current on the third-party security requirements as I used
-> to be, but I do know that oftentimes when a file is created the parent
-> directory is an important bit of information to have in the audit log.
->=20
+Added get_cycles() to measure execution time during insert, find, and erase operations.
+Added check_latency() in the lib/test_xarray.c and the lib/test_maple_tree.c
+Added likely/unlikely to improve if conditional code.
 
-Right. We'd still have that here since we have to unlazy to actually
-create the file.
+check_latency() measures latency using get_cycles()
+with 1M indices(nr) on XArray and Maple Tree.
+The output of this can be used to make the performance comparison table like this:
+The numerical unit is cycle.
 
-The question here is about the case where O_CREAT is set, but the file
-already exists. Nothing is being created in that case, so do we need to
-emit an audit record for the parent?
---=20
-Jeff Layton <jlayton@kernel.org>
+performance	insert	find	erase
+------------------------------------------------
+XArray		9	6	16
+Maple Tree	11	7	27
+Hash Tree	6	2	12
+------------------------------------------------
+
+Full source of Hash Tree is also available in the following github link:
+https://github.com/kernel-bz/htree.git
+
+Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
+---
+ lib/htree-test.c      | 90 +++++++++++++++++++++++++++----------------
+ lib/htree.c           | 26 ++++++-------
+ lib/test_maple_tree.c | 32 +++++++++++++++
+ lib/test_xarray.c     | 31 +++++++++++++++
+ 4 files changed, 132 insertions(+), 47 deletions(-)
+
+diff --git a/lib/htree-test.c b/lib/htree-test.c
+index 5bf862706ce2..07c6a144a1be 100644
+--- a/lib/htree-test.c
++++ b/lib/htree-test.c
+@@ -10,6 +10,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/random.h>
+ #include <linux/sched.h>
++#include <asm/timex.h>
+ 
+ #include <linux/htree.h>
+ 
+@@ -44,8 +45,8 @@
+ */
+ 
+ 
+-/*
+ #define HTREE_DEBUG_INFO
++/*
+ #define HTREE_DEBUG_DETAIL
+ */
+ 
+@@ -277,7 +278,7 @@ static void htree_debug_hdata(struct htree_state *hts, struct hash_tree *hcurr,
+ 		"htf_freed",
+ 	};
+ 
+-	if (!hcurr)
++	if (unlikely(!hcurr))
+ 		return;
+ 
+ 	dept = hts->dept;
+@@ -331,7 +332,7 @@ static void __htree_debug_walks_all(struct htree_state *hts,
+ 
+ 	for (k = 0; k < anum; k++) {
+ 		ncnt = ht_ncnt_get(htree[k].next);
+-		if (ncnt > 0) {
++		if (likely(ncnt > 0)) {
+ 			bits = ht_bits_from_depth(hts->sbit, hts->dept);
+ 			pr_ht_debug("d:%u b:%u [%u] %p (%u): ",
+ 				    hts->dept, bits, k, &htree[k], ncnt);
+@@ -407,14 +408,14 @@ static void __htree_erase_all_lock(struct htree_state *hts,
+ 
+ 	for (k = 0; k < anum; k++) {
+ 		ncnt = ht_ncnt_get(htree[k].next);
+-		if (ncnt > 0) {
++		if (likely(ncnt > 0)) {
+ 			bits = ht_bits_from_depth(hts->sbit, hts->dept);
+ 			hlist_for_each_entry_safe(pos, tmp,
+ 						  &htree[k].head, hnode) {
+ 				hlist_del(&pos->hnode);
+ 				udata = hlist_entry_safe(pos, 
+ 						struct data_struct, hdata);
+-				if (udata) {
++				if (likely(udata)) {
+ 					kfree(udata);
+ 					(*erased)++;
+ 				}
+@@ -478,17 +479,20 @@ static u64 _htree_insert_range(struct htree_state *hts, struct htree_root *root,
+ {
+ 	u64 index;
+ 	u64 loop = 0, ins = 0, era = 0;
++	cycles_t time1, time2;
++	u64 latency;
+ 	struct data_struct *udata;
+ 	struct htree_data *rdata;
+ 
+ 	pr_ht_info("[++++) inserting: [s:%llu ... e:%llu] (g:%llu)\n",
+ 		   start, end, gap);
++	time1 = get_cycles();
+ 	for (index = start; index <= end; index += gap) {
+ 		udata = _htree_data_alloc(index);
+ 		rdata = ht_insert_lock(hts, root, &udata->hdata, req);
+ 		if (req == htf_erase && rdata) {
+ 			udata = hlist_entry_safe(rdata, struct data_struct, hdata);
+-			if (udata && rdata->index == index) {
++			if (likely((udata && rdata->index == index))) {
+ 				kfree(udata);
+ 				era++;
+ 			}
+@@ -498,8 +502,10 @@ static u64 _htree_insert_range(struct htree_state *hts, struct htree_root *root,
+ 		if (!(loop % HTREE_TEST_SCHED_CNT))
+ 			schedule();
+ 	}
+-	pr_ht_info("(++++] done: loop:%llu, inserted:%llu, same erased:%llu\n\n",
+-		   loop, ins, era);
++	time2 = get_cycles();
++	latency = div_u64(time2 - time1, loop);
++	pr_ht_info("(++++] done: loop:%llu, inserted:%llu, same erased:%llu, \
++latency:%llu cycles\n\n", loop, ins, era, latency);
+ 
+ 	return ins - era;
+ }
+@@ -517,16 +523,19 @@ static u64 _htree_find_range(struct htree_state *hts, struct htree_root *root,
+ {
+ 	u64 index;
+ 	u64 loop = 0, found = 0;
++	cycles_t time1, time2;
++	u64 latency;
+ 	struct data_struct *udata;
+ 	struct htree_data *rdata;
+ 
+ 	pr_ht_info("[****) finding: [s:%llu ... e:%llu] (g:%llu)\n",
+ 		   start, end, gap);
++	time1 = get_cycles();
+ 	for (index = start; index <= end; index += gap) {
+ 		rdata = ht_find(hts, htree_first_rcu(root), index);
+ 		if (rdata) {
+ 			udata = hlist_entry_safe(rdata, struct data_struct, hdata);
+-			if (udata && rdata->index == index) {
++			if (likely(udata && rdata->index == index)) {
+ 				pr_ht_find("*todo: find:<%llu> %c %c %c\n",
+ 				index, udata->a, (char)udata->b, (char)udata->c);
+ 				found++;
+@@ -537,8 +546,10 @@ static u64 _htree_find_range(struct htree_state *hts, struct htree_root *root,
+ 		if (!(loop % HTREE_TEST_SCHED_CNT))
+ 			schedule();
+ 	}
+-	pr_ht_info("(****] done: loop:%llu, found:%llu, diff:%llu\n\n",
+-		   loop, found, loop - found);
++	time2 = get_cycles();
++	latency = div_u64(time2 - time1, loop);
++	pr_ht_info("(****] done: loop:%llu, found:%llu, diff:%llu, \
++latency:%llu cycles\n\n", loop, found, loop - found, latency);
+ 	return found;
+ }
+ 
+@@ -555,18 +566,21 @@ static u64 _htree_erase_range(struct htree_state *hts, struct htree_root *root,
+ {
+ 	u64 index;
+ 	u64 loop = 0, erased = 0;
++	cycles_t time1, time2;
++	u64 latency;
+ 	struct hash_tree *htree;
+ 	struct data_struct *udata;
+ 	struct htree_data *rdata;
+ 
+ 	pr_ht_info("[----) erasing: [s:%llu ... e:%llu] (g:%llu)\n",
+ 		   start, end, gap);
++	time1 = get_cycles();
+ 	for (index = start; index <= end; index += gap) {
+ 		htree = htree_first_rcu(root);
+ 		rdata = ht_erase_lock(hts, root, index);
+ 		if (rdata) {
+ 			udata = hlist_entry_safe(rdata, struct data_struct, hdata);
+-			if (udata && rdata->index == index) {
++			if (likely(udata && rdata->index == index)) {
+ 				pr_ht_erase("*todo: erase:<%llu> %c %c %c\n",
+ 				index, udata->a, (char)udata->b, (char)udata->c);
+ 				kfree(udata);
+@@ -582,8 +596,10 @@ static u64 _htree_erase_range(struct htree_state *hts, struct htree_root *root,
+ 		if (!(loop % HTREE_TEST_SCHED_CNT))
+ 			schedule();
+ 	}
+-	pr_ht_info("(----] done: loop:%llu, erased:%llu, diff:%llu\n\n",
+-		   loop, erased, loop - erased);
++	time2 = get_cycles();
++	latency = div_u64(time2 - time1, loop);
++	pr_ht_info("(----] done: loop:%llu, erased:%llu, diff:%llu, \
++latency:%llu cycles\n\n", loop, erased, loop - erased, latency);
+ 	return erased;
+ }
+ 
+@@ -600,18 +616,21 @@ static u64 _htree_update_range(struct htree_state *hts, struct htree_root *root,
+ {
+ 	u64 index;
+ 	u64 loop = 0, updated = 0;
++	cycles_t time1, time2;
++	u64 latency;
+ 	struct hash_tree *htree;
+ 	struct data_struct *udata;
+ 	struct htree_data *rdata;
+ 
+ 	pr_ht_info("[####) updating: [s:%llu ... e:%llu] (g:%llu)\n",
+ 		   start, end, gap);
++	time1 = get_cycles();
+ 	for (index = start; index <= end; index += gap) {
+ 		htree = htree_first_rcu(root);
+ 		rdata = ht_find(hts, htree, index);
+ 		if (rdata) {
+ 			udata = hlist_entry_safe(rdata, struct data_struct, hdata);
+-			if (udata && rdata->index == index) {
++			if (likely(udata && rdata->index == index)) {
+ 				pr_ht_update("*todo: update:<%llu> %c %c %c ",
+ 				index, udata->a, (char)udata->b, (char)udata->c);
+ 				/* todo: update user defined data */
+@@ -633,8 +652,11 @@ static u64 _htree_update_range(struct htree_state *hts, struct htree_root *root,
+ 		if (!(loop % HTREE_TEST_SCHED_CNT))
+ 			schedule();
+ 	}
+-	pr_ht_info("(####] done: loop:%llu, updated:%llu, diff:%llu\n\n",
+-		   loop, updated, loop - updated);
++	time2 = get_cycles();
++	latency = div_u64(time2 - time1, loop);
++	pr_ht_info("(####] done: loop:%llu, updated:%llu, diff:%llu, \
++latency: %llu cycles\n\n",
++		   loop, updated, loop - updated, latency);
+ 
+ 	return updated;
+ }
+@@ -651,7 +673,7 @@ static void _htree_statis(struct htree_state *hts, struct htree_root *root)
+ 
+ 	ht_statis(hts, htree_first_rcu(root), &acnt, &dcnt);
+ 
+-	if (hts->dcnt == dcnt && hts->acnt == acnt) {
++	if (likely(hts->dcnt == dcnt && hts->acnt == acnt)) {
+ 		pr_ht_info("[ OK ] statist: acnt:%d, dcnt:%llu ", acnt, dcnt);
+ 	} else {
+ 		pr_ht_info("[FAIL] statist: acnt:%d(%d), dcnt:%llu(%llu)\n",
+@@ -676,7 +698,7 @@ static void _htree_statis_info(struct htree_state *hts, struct htree_root *root)
+ 	u64 dsum = (sizd * hts->dcnt) >> 10;
+ 	u64 smem = hsum + dsum;
+ 
+-	if (hts->asum == 0)
++	if (unlikely(hts->asum == 0))
+ 		_htree_statis(hts, root);
+ 
+ 	pr_ht_stat("------------------------------------------\n");
+@@ -711,7 +733,7 @@ static void _htree_get_most_index(struct htree_state *hts, struct htree_root *ro
+ 	struct htree_data *hdata;
+ 
+ 	hdata = ht_most_index(hts, htree_first_rcu(root));
+-	if (hdata) {
++	if (likely(hdata)) {
+ 		if (hts->sort == HTREE_FLAG_ASCD) {
+ 			pr_ht_stat("[MOST] smallest index:%llu\n\n", hdata->index);
+ 		} else {
+@@ -730,13 +752,13 @@ static void _htree_remove_all(struct htree_state *hts, struct htree_root *root)
+ {
+ 	/* remove all udata */
+ 	hts->dcnt -= htree_erase_all_lock(hts, root);
+-	if (hts->dcnt != 0) {
++	if (unlikely(hts->dcnt != 0)) {
+ 		pr_ht_warn("[WARN] erase remained acnt:%d, dcnt:%llu\n\n",
+ 			   hts->acnt, hts->dcnt);
+ 	}
+ 
+ 	/* remove all hash trees */
+-	if (ht_destroy_lock(hts, root) == htf_ok) {
++	if (likely(ht_destroy_lock(hts, root) == htf_ok)) {
+ 		pr_ht_stat("[ OK ] destroy remained acnt:%d, dcnt:%llu\n\n",
+ 			   hts->acnt, hts->dcnt);
+ 	} else {
+@@ -761,7 +783,7 @@ static u64 _htree_test_index_loop(struct htree_state *hts, u64 start, u64 end)
+ 	u64 inserted, found, erased, updated;
+ 	u64 dcnt, slice;
+ 
+-	if (start > end)
++	if (unlikely(start > end))
+ 		return 0;
+ 	slice = (end - start) / 10 + 2;
+ 
+@@ -769,7 +791,7 @@ static u64 _htree_test_index_loop(struct htree_state *hts, u64 start, u64 end)
+ 	htree_root_alloc(hts, &ht_root);
+ 
+ 	inserted = _htree_insert_range(hts, &ht_root, start, end, 1, htf_ins);
+-	if (inserted != hts->dcnt) {
++	if (unlikely(inserted != hts->dcnt)) {
+ 		pr_ht_err("[FAIL] inserted:%llu, dcnt:%llu, diff:%lld\n\n",
+ 			  inserted, hts->dcnt, inserted - hts->dcnt);
+ 	}
+@@ -778,7 +800,7 @@ static u64 _htree_test_index_loop(struct htree_state *hts, u64 start, u64 end)
+ 
+ 	erased = _htree_erase_range(hts, &ht_root, start, end, slice);
+ 	found = _htree_find_range(hts, &ht_root, start, end, slice);
+-	if (found) {
++	if (unlikely(found)) {
+ 		pr_ht_err("[FAIL] erased:%llu, found:%llu, diff:%lld\n\n",
+ 			  erased, found, erased - found);
+ 	}
+@@ -787,7 +809,7 @@ static u64 _htree_test_index_loop(struct htree_state *hts, u64 start, u64 end)
+ 
+ 	inserted = _htree_insert_range(hts, &ht_root, start, end, slice, htf_ins);
+ 	updated = _htree_update_range(hts, &ht_root, start, end, slice);
+-	if (inserted != updated) {
++	if (unlikely(inserted != updated)) {
+ 		pr_ht_err("[FAIL] inserted:%llu, updated:%llu, diff:%lld\n\n",
+ 			  inserted, updated, inserted - updated);
+ 	}
+@@ -916,7 +938,7 @@ static void _htree_test_idx_random(u8 idx_type, u8 sort_type, u64 maxnr)
+ 
+ 		udata = _htree_data_alloc(index);
+ 		rdata = ht_insert_lock(hts, &ht_root, &udata->hdata, htf_ins);
+-		if (!rdata)
++		if (likely(!rdata))
+ 			inserted++;
+ 		loop++;
+ 		if (!(loop % HTREE_TEST_SCHED_CNT))
+@@ -926,7 +948,7 @@ static void _htree_test_idx_random(u8 idx_type, u8 sort_type, u64 maxnr)
+ 	_htree_statis(hts, &ht_root);
+ 
+ 	rdata = ht_find(hts, htree_first_rcu(&ht_root), check_idx);
+-	if (!rdata) {
++	if (unlikely(!rdata)) {
+ 		pr_ht_err("[FAIL] NOT found check index:%llu\n\n", check_idx);
+ 	}
+ 
+@@ -939,7 +961,7 @@ static void _htree_test_idx_random(u8 idx_type, u8 sort_type, u64 maxnr)
+ 		rdata = ht_erase_lock(hts, &ht_root, index);
+ 		if (rdata) {
+ 			udata = hlist_entry_safe(rdata, struct data_struct, hdata);
+-			if (udata && rdata->index == index) {
++			if (likely(udata && rdata->index == index)) {
+ 				pr_ht_erase("*todo: erase:<%llu> %c %c %c\n",
+ 				index, udata->a, (char)udata->b, (char)udata->c);
+ 				kfree(udata);
+@@ -954,7 +976,7 @@ static void _htree_test_idx_random(u8 idx_type, u8 sort_type, u64 maxnr)
+ 	_htree_statis(hts, &ht_root);
+ 
+ 	rdata = ht_find(hts, htree_first_rcu(&ht_root), check_idx);
+-	if (!rdata) {
++	if (unlikely(!rdata)) {
+ 		pr_ht_info("[INFO] check index:%llu (erased)\n\n", check_idx);
+ 	}
+ 
+@@ -1006,7 +1028,7 @@ static void _htree_test_index_same(u8 idx_type, u8 sort_type, u64 maxnr)
+ 
+ 	pr_ht_stat("[loop) %llu: new index inserting(htf_ins)\n\n", maxnr);
+ 	inserted = _htree_insert_range(hts, &ht_root, 0, maxnr, gap - 1, htf_ins);
+-	if (inserted != hts->dcnt) {
++	if (unlikely(inserted != hts->dcnt)) {
+ 		pr_ht_err("[FAIL] inserted:%llu, dcnt:%llu, diff:%lld\n\n",
+ 			  inserted, hts->dcnt, inserted - hts->dcnt);
+ 	}
+@@ -1015,20 +1037,20 @@ static void _htree_test_index_same(u8 idx_type, u8 sort_type, u64 maxnr)
+ 
+ 	pr_ht_stat("[loop) %llu: SAME index inserting(htf_erase)\n\n", maxnr);
+ 	inserted = _htree_insert_range(hts, &ht_root, 1, maxnr, gap, htf_erase);
+-	if (inserted != 0) {
++	if (unlikely(inserted != 0)) {
+ 		pr_ht_err("[FAIL] inserted:%llu, dcnt:%llu, diff:%lld\n\n",
+ 			  inserted, hts->dcnt, inserted - hts->dcnt);
+ 	}
+ 
+ 	pr_ht_stat("[loop) %llu: SAME index inserting(htf_ins)\n\n", maxnr);
+ 	inserted = _htree_insert_range(hts, &ht_root, 1, maxnr, gap, htf_ins);
+-	if (inserted != (maxnr / gap)) {
++	if (unlikely(inserted != (maxnr / gap))) {
+ 		pr_ht_err("[FAIL] inserted:%llu, dcnt:%llu, diff:%lld\n\n",
+ 			  inserted, hts->dcnt, inserted - hts->dcnt);
+ 	}
+ 
+ 	found = _htree_find_range(hts, &ht_root, 0, maxnr, gap - 1);
+-	if (found != (hts->dcnt - inserted)) {
++	if (unlikely(found != (hts->dcnt - inserted))) {
+ 		pr_ht_err("[FAIL] dcnt:%llu, inserted:%llu, found:%llu\n\n",
+ 			  hts->dcnt, inserted, found);
+ 	}
+diff --git a/lib/htree.c b/lib/htree.c
+index 1fcdb8d69730..54e5e6c5f5d1 100644
+--- a/lib/htree.c
++++ b/lib/htree.c
+@@ -114,7 +114,7 @@ static enum ht_flags __ht_find(struct htree_state *hts, struct hash_tree *htree,
+ _retry:
+ 	*rtree = htree;
+ 	ncnt = ht_ncnt_get(htree[hts->hkey].next);
+-	if (ncnt == 0)
++	if (unlikely(ncnt == 0))
+ 		goto _next_step;
+ 
+ 	hlist_for_each_entry(pos, &htree[hts->hkey].head, hnode) {
+@@ -180,7 +180,7 @@ struct htree_data *ht_find(struct htree_state *hts,
+ 	struct htree_data *rdata = NULL;
+ 	struct hash_tree *rtree;
+ 
+-	if (!htree)
++	if (unlikely(!htree))
+ 		return NULL;
+ 
+ 	if (_ht_find(hts, htree, index, &rdata, &rtree) == htf_find)
+@@ -232,7 +232,7 @@ static void _ht_move_to_next(struct htree_state *hts, struct htree_data *sdata,
+ 	}
+ 
+ 	ncnt = ht_ncnt_get(ntree[hkey].next);
+-	if (ncnt == 0) {
++	if (unlikely(ncnt == 0)) {
+ 		htree_add_head(ntree, &edata->hnode, hkey);
+ 		goto _next;
+ 	}
+@@ -292,7 +292,7 @@ static void _ht_insert(struct htree_state *hts, struct hash_tree *htree,
+ 	hts->hkey = ht_get_hkey(index, hts->dept, bits, hts->idxt);
+ 	ncnt = ht_ncnt_get(htree[hts->hkey].next);
+ 
+-	if (ncnt == 0) {
++	if (unlikely(ncnt == 0)) {
+ 		htree_add_head(htree, &hdata->hnode, hts->hkey);
+ 		goto _finish;
+ 	}
+@@ -348,7 +348,7 @@ struct htree_data *ht_insert(struct htree_state *hts, struct hash_tree *htree,
+ 	struct hash_tree *rtree = NULL;
+ 	enum ht_flags htf;
+ 
+-	if (!htree)
++	if (unlikely(!htree))
+ 		return NULL;
+ 
+ 	htf = _ht_find(hts, htree, hdata->index, &rdata, &rtree);
+@@ -379,7 +379,7 @@ static enum ht_flags ___ht_erase(struct htree_state *hts,
+ 		if (htree[k].next)
+ 			break;
+ 
+-	if (k == anum) {
++	if (unlikely(k == anum)) {
+ 		kfree(htree);
+ 		hts->acnt--;
+ 		hts->dept--;
+@@ -408,7 +408,7 @@ static int __ht_erase(struct htree_state *hts, struct hash_tree *htree,
+ 	ncnt = ht_ncnt_get(htree[key].next);
+ 	bits = ht_bits_from_depth(hts->sbit, hts->dept);
+ 
+-	if (ncnt == 0)
++	if (unlikely(ncnt == 0))
+ 		goto _next_step;
+ 
+ 	hlist_for_each_entry_safe(pos, tmp, &htree[key].head, hnode) {
+@@ -429,7 +429,7 @@ static int __ht_erase(struct htree_state *hts, struct hash_tree *htree,
+ 		}
+ 	}
+ 
+-	if (ncnt == 0)
++	if (unlikely(ncnt == 0))
+ 		ret = ___ht_erase(hts, htree, bits);
+ 
+ 	if (ret > htf_none)	/* erased or freed */
+@@ -444,7 +444,7 @@ static int __ht_erase(struct htree_state *hts, struct hash_tree *htree,
+ 		/* must be recursive call */
+ 		ret = __ht_erase(hts, _next, rdata, index);
+ 
+-		if (ret == htf_freed) {
++		if (unlikely(ret == htf_freed)) {
+ 			WRITE_ONCE(htree[key].next, ht_ncnt_set(NULL, ncnt));
+ 			ret = htf_erase;
+ 		}
+@@ -484,7 +484,7 @@ struct htree_data *ht_erase(struct htree_state *hts,
+ {
+ 	struct htree_data *rdata = NULL;
+ 
+-	if (!htree)
++	if (unlikely(!htree))
+ 		return NULL;
+ 
+ 	if (_ht_erase(hts, htree, &rdata, index) == htf_erase)
+@@ -558,7 +558,7 @@ enum ht_flags ht_destroy_lock(struct htree_state *hts, struct htree_root *root)
+ 		return htf_ok;
+ 
+ 	htree = htree_first_rcu(root);
+-	if (!htree)
++	if (unlikely(!htree))
+ 		return htf_none;
+ 
+ 	hts->dept = 0;
+@@ -598,7 +598,7 @@ static void __ht_statis(struct htree_state *hts,
+ 
+ 	for (k = 0; k < anum; k++) {
+ 		ncnt = ht_ncnt_get(htree[k].next);
+-		if (ncnt > 0) {
++		if (likely(ncnt > 0)) {
+ 			(*dcnt) += ncnt;
+ 		}
+ 		_next = ht_ncnt_pointer(htree[k].next);
+@@ -631,7 +631,7 @@ void ht_statis(struct htree_state *hts,
+ 	hts->dept = 0;
+ 	hts->dmax = 0;
+ 
+-	if (!htree)
++	if (unlikely(!htree))
+ 		return;
+ 
+ 	__ht_statis(hts, htree, acnt, dcnt);
+diff --git a/lib/test_maple_tree.c b/lib/test_maple_tree.c
+index 31561e0e1a0d..dbc332d15e9d 100644
+--- a/lib/test_maple_tree.c
++++ b/lib/test_maple_tree.c
+@@ -10,6 +10,7 @@
+ #include <linux/maple_tree.h>
+ #include <linux/module.h>
+ #include <linux/rwsem.h>
++#include <asm/timex.h>
+ 
+ #define MTREE_ALLOC_MAX 0x2000000000000Ul
+ #define CONFIG_MAPLE_SEARCH
+@@ -3638,6 +3639,34 @@ static noinline void __init alloc_cyclic_testing(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, ret != 1);
+ }
+ 
++static noinline void check_latency(struct maple_tree *mt)
++{
++        MA_STATE(mas, mt, 25203307, 25203307);
++        cycles_t time1, time2;
++        void *val;
++        unsigned long i, cnt = 1 << 20;
++
++        for (i = 0; i < cnt; i++)
++                mtree_store(mt, i, xa_mk_value(i), GFP_KERNEL);
++
++        pr_info("\n*check_latency(): index nr:%lu\n", cnt);
++
++        time1 = get_cycles();
++        mtree_store(mt, cnt, xa_mk_value(cnt), GFP_KERNEL);
++        time2 = get_cycles();
++        pr_info("mtree_store(): latency:%lu cycles\n", time2 - time1);
++
++        time1 = get_cycles();
++        val = mas_find(&mas, ULONG_MAX);
++        time2 = get_cycles();
++        pr_info("mas_find(): latency:%lu cycles\n", time2 - time1);
++
++        time1 = get_cycles();
++        mtree_erase(mt, cnt);
++        time2 = get_cycles();
++        pr_info("mtree_erase(): latency:%lu cycles\n", time2 - time1);
++}
++
+ static DEFINE_MTREE(tree);
+ static int __init maple_tree_seed(void)
+ {
+@@ -3923,6 +3952,9 @@ static int __init maple_tree_seed(void)
+ 	alloc_cyclic_testing(&tree);
+ 	mtree_destroy(&tree);
+ 
++	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
++        check_latency(&tree);
++        mtree_destroy(&tree);
+ 
+ #if defined(BENCH)
+ skip:
+diff --git a/lib/test_xarray.c b/lib/test_xarray.c
+index d5c5cbba33ed..02fa3c95428d 100644
+--- a/lib/test_xarray.c
++++ b/lib/test_xarray.c
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/xarray.h>
+ #include <linux/module.h>
++#include <asm/timex.h>
+ 
+ static unsigned int tests_run;
+ static unsigned int tests_passed;
+@@ -2125,6 +2126,34 @@ static noinline void check_destroy(struct xarray *xa)
+ #endif
+ }
+ 
++static noinline void check_latency(struct xarray *xa)
++{
++        unsigned long i, index;
++        unsigned long cnt = 1 << 20;
++        cycles_t time1, time2;
++
++        for (i = 0; i < cnt; i++)
++                xa_store(xa, i, xa_mk_index(i), GFP_KERNEL);
++
++        pr_info("\n*check_latency: index nr:%lu\n", cnt);
++        index = 25203307;
++
++        time1 = get_cycles();
++        xa_store(xa, index, xa_mk_index(index), GFP_KERNEL);
++        time2 = get_cycles();
++        pr_info("xa_store(): latency: %lu cycles\n", time2 - time1);
++
++        time1 = get_cycles();
++        xa_find(xa, &index, ULONG_MAX, XA_PRESENT);
++        time2 = get_cycles();
++        pr_info("xa_find(): latency: %lu cycles\n", time2 - time1);
++
++        time1 = get_cycles();
++        xa_erase(xa, index);
++        time2 = get_cycles();
++        pr_info("xa_erase(): latency: %lu cycles\n", time2 - time1);
++}
++
+ static DEFINE_XARRAY(array);
+ 
+ static int xarray_checks(void)
+@@ -2162,6 +2191,8 @@ static int xarray_checks(void)
+ 	check_workingset(&array, 64);
+ 	check_workingset(&array, 4096);
+ 
++	check_latency(&array);
++
+ 	printk("XArray: %u of %u tests passed\n", tests_passed, tests_run);
+ 	return (tests_run == tests_passed) ? 0 : -EINVAL;
+ }
+-- 
+2.17.1
+
 
