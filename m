@@ -1,58 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-25492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D956594C79D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 02:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E827194C79F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 02:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E291F214DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 00:29:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E10F51F22A62
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 00:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D203033D1;
-	Fri,  9 Aug 2024 00:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0954B33C0;
+	Fri,  9 Aug 2024 00:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lngIqQXf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxj18S27"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371AD23BB;
-	Fri,  9 Aug 2024 00:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCAC1FB4;
+	Fri,  9 Aug 2024 00:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723163360; cv=none; b=gPDTmr5J4Fm1s4+g6ph2XKSlf9u6HpPjcAut5F4gvAYNm2xGXmJqUv4PuyeHoPfLB+DsfcJAGncnkcJkmN2EtjJo7SvUekHTDgvPrQoF6TxiY6Bhx4Yg2I9rubKw0wB7UweHRxoCmwZtSR57klBJbr9BVFGdog3m6DoFTwWaDVI=
+	t=1723163607; cv=none; b=Pt5bBgYk5FU9Nr9hvximrm24ipsX96yOTWMvwzjzPJXdsWV2SVERELFz9ZXtfKBrCsiaYyArUXwW9vFdRzGYv+QaH9xx2wL45g2XJC2xDYbkd6IROyUGE7OMu+xdj5F1jvaHNJisyU+kJKDJFqE6sKYjvulSeslHWd/8DFhz90E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723163360; c=relaxed/simple;
-	bh=L7N8uUVHrw09j7LRpNUl7Yt1FGkSGaZzLOi9UF1nk2M=;
+	s=arc-20240116; t=1723163607; c=relaxed/simple;
+	bh=uQYhGj9VBxzOGt86Wrg3aBgYrE+Tc4iOlBOj2w3iD4s=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SbOSM+1jgnb5uB4xi/uVaCUiUOUfiWtsGcZwwPfDgQB0aV87VxjLM1ykComERDXFKMK2HjhQsgHYb/6nCzE4h1iL50UR+HmU79hMc0bV5FuEF2wjWdUTXP03k3WmjMAQSwD7g+BVintCAkKdGEF0j3jxvanTipg/GSTNLLdj3KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lngIqQXf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C8BC32782;
-	Fri,  9 Aug 2024 00:29:19 +0000 (UTC)
+	 Content-Type:MIME-Version; b=oXo0JP3xZsa2adAaBuRUOOQ79mdeg21sL+Ehwrr74QFpVjeyt80rZXce72wZjZWFONowx4pd40j7ia8kIAuXvBeey++Yv6bpfJtzs5bMyLQxwMnBBW9Uy3PSBXIpZqjRedXj/xHAWTGVA+b08oIxhgWQoH4XFZSJM73w+UGRpxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxj18S27; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEAEC32782;
+	Fri,  9 Aug 2024 00:33:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723163359;
-	bh=L7N8uUVHrw09j7LRpNUl7Yt1FGkSGaZzLOi9UF1nk2M=;
+	s=k20201202; t=1723163606;
+	bh=uQYhGj9VBxzOGt86Wrg3aBgYrE+Tc4iOlBOj2w3iD4s=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=lngIqQXfmlcSY2j3GFiGEAdUGfPfAJdmJLFa+hie1nPcmrkKY0TryHDe0YL2vq8d2
-	 aysHqGT1AxOiWvMgeAQ6yaKOm+OwV3W5Ac0dOLnwnbzk8U8XtafNnrKzmYtZoPnCqf
-	 DTwk3JLq1G6J+s7gTOrvS9utxiKNDrsrtTdy05xdw2PZDwSCb8ICGVbAC2SLMhrtIZ
-	 RXlDlue17G2ozZF8t5LV9X3/dm5EaFu27pE08AVJXQgJiHNWuoxAn7DaRdP92NqgH+
-	 /XLVgkxNtxXJO7XEx55oBoSCjBG+ABUjPN5RM1c75hq5fQG8BCQrEvgC7LYV5b5YXS
-	 U0xE4/u6A8NEg==
-Message-ID: <165c8f15eec4412cf76f46fcff794ae1792ac8db.camel@kernel.org>
-Subject: Re: [PATCH v6 1/9] fs: add infrastructure for multigrain timestamps
+	b=cxj18S27Z3Hw7brUxZx3momhag5Pp8cf4XSSUIFkPXXELRVUX7V18B4XDmyqfRZIJ
+	 uaP1wrhK7/lqIb7T0Pv+IviITmNxwSts3BIgy72t6FrhEDoLFUtKOleKrNls1TcrJL
+	 /RDllv1RIBnEqPvIYtlD0ddldB1L4wiWfeornw+BubfqAOj2u9T/HTmeTGzuEga2FW
+	 fo2jpTujw5otiHpZ9Nr02sNM0Ld1zCrFbKAq04STuoUfbVA9DDRFLIScwXhk0dnNVH
+	 yttXMRFb9Bzhnr2mhY3rIE0ITMQ+uEWRNy08NVV1yrgqw9e/UZXlzm/9m6cfn15pzH
+	 +jKHB2x++Hcnw==
+Message-ID: <a8e24c94fa5500ee3c99a3dabba452e381512808.camel@kernel.org>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
 From: Jeff Layton <jlayton@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Thu, 08 Aug 2024 20:29:18 -0400
-In-Reply-To: <gcn5kkrc2eeger6uzwqe5iinxtevhrgi3qz6ru3th3bkt4nrfd@ldkkwu4ndpnn>
-References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
-	 <20240715-mgtime-v6-1-48e5d34bd2ba@kernel.org>
-	 <gcn5kkrc2eeger6uzwqe5iinxtevhrgi3qz6ru3th3bkt4nrfd@ldkkwu4ndpnn>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton
+ <akpm@linux-foundation.org>, Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik
+ <josef@toxicpanda.com>,  linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  audit@vger.kernel.org
+Date: Thu, 08 Aug 2024 20:33:24 -0400
+In-Reply-To: <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+	 <20240807-erledigen-antworten-6219caebedc0@brauner>
+	 <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
+	 <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner>
+	 <20240808171130.5alxaa5qz3br6cde@quack3>
+	 <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
+	 <d0677c60eb1f47eb186f3e5493ba5aa7e0eaa445.camel@kernel.org>
+	 <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -137,159 +144,206 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2024-08-09 at 01:43 +0200, Mateusz Guzik wrote:
-> On Mon, Jul 15, 2024 at 08:48:52AM -0400, Jeff Layton wrote:
-> >  /**
-> >   * inode_set_ctime_current - set the ctime to current_time
-> >   * @inode: inode
-> >   *
-> > - * Set the inode->i_ctime to the current value for the inode. Returns
-> > - * the current value that was assigned to i_ctime.
-> > + * Set the inode's ctime to the current value for the inode. Returns t=
-he
-> > + * current value that was assigned. If this is not a multigrain inode,=
- then we
-> > + * just set it to whatever the coarse_ctime is.
-> > + *
-> > + * If it is multigrain, then we first see if the coarse-grained timest=
-amp is
-> > + * distinct from what we have. If so, then we'll just use that. If we =
-have to
-> > + * get a fine-grained timestamp, then do so, and try to swap it into t=
-he floor.
-> > + * We accept the new floor value regardless of the outcome of the cmpx=
-chg.
-> > + * After that, we try to swap the new value into i_ctime_nsec. Again, =
-we take
-> > + * the resulting ctime, regardless of the outcome of the swap.
-> >   */
-> >  struct timespec64 inode_set_ctime_current(struct inode *inode)
-> >  {
-> > -	struct timespec64 now =3D current_time(inode);
-> > +	ktime_t now, floor =3D atomic64_read(&ctime_floor);
-> > +	struct timespec64 now_ts;
-> > +	u32 cns, cur;
-> > +
-> > +	now =3D coarse_ctime(floor);
-> > +
-> > +	/* Just return that if this is not a multigrain fs */
-> > +	if (!is_mgtime(inode)) {
-> > +		now_ts =3D timestamp_truncate(ktime_to_timespec64(now), inode);
-> > +		inode_set_ctime_to_ts(inode, now_ts);
-> > +		goto out;
-> > +	}
-> > +
-> > +	/*
-> > +	 * We only need a fine-grained time if someone has queried it,
-> > +	 * and the current coarse grained time isn't later than what's
-> > +	 * already there.
-> > +	 */
-> > +	cns =3D smp_load_acquire(&inode->i_ctime_nsec);
-> > +	if (cns & I_CTIME_QUERIED) {
-> > +		ktime_t ctime =3D ktime_set(inode->i_ctime_sec, cns & ~I_CTIME_QUERI=
-ED);
-> > +
-> > +		if (!ktime_after(now, ctime)) {
-> > +			ktime_t old, fine;
-> > +
-> > +			/* Get a fine-grained time */
-> > +			fine =3D ktime_get();
-> > =20
-> > -	inode_set_ctime_to_ts(inode, now);
-> > -	return now;
-> > +			/*
-> > +			 * If the cmpxchg works, we take the new floor value. If
-> > +			 * not, then that means that someone else changed it after we
-> > +			 * fetched it but before we got here. That value is just
-> > +			 * as good, so keep it.
-> > +			 */
-> > +			old =3D floor;
-> > +			if (!atomic64_try_cmpxchg(&ctime_floor, &old, fine))
-> > +				fine =3D old;
-> > +			now =3D ktime_mono_to_real(fine);
-> > +		}
-> > +	}
-> > +	now_ts =3D timestamp_truncate(ktime_to_timespec64(now), inode);
-> > +	cur =3D cns;
-> > +
-> > +	/* No need to cmpxchg if it's exactly the same */
-> > +	if (cns =3D=3D now_ts.tv_nsec && inode->i_ctime_sec =3D=3D now_ts.tv_=
-sec)
-> > +		goto out;
-> > +retry:
-> > +	/* Try to swap the nsec value into place. */
-> > +	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now_ts.tv_nsec)) {
-> > +		/* If swap occurred, then we're (mostly) done */
-> > +		inode->i_ctime_sec =3D now_ts.tv_sec;
+On Thu, 2024-08-08 at 20:28 -0400, Paul Moore wrote:
+> On Thu, Aug 8, 2024 at 7:43=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
+rote:
+> > On Thu, 2024-08-08 at 17:12 -0400, Paul Moore wrote:
+> > > On Thu, Aug 8, 2024 at 1:11=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > > > On Thu 08-08-24 12:36:07, Christian Brauner wrote:
+> > > > > On Wed, Aug 07, 2024 at 10:36:58AM GMT, Jeff Layton wrote:
+> > > > > > On Wed, 2024-08-07 at 16:26 +0200, Christian Brauner wrote:
+> > > > > > > > +static struct dentry *lookup_fast_for_open(struct nameidat=
+a *nd, int open_flag)
+> > > > > > > > +{
+> > > > > > > > +       struct dentry *dentry;
+> > > > > > > > +
+> > > > > > > > +       if (open_flag & O_CREAT) {
+> > > > > > > > +               /* Don't bother on an O_EXCL create */
+> > > > > > > > +               if (open_flag & O_EXCL)
+> > > > > > > > +                       return NULL;
+> > > > > > > > +
+> > > > > > > > +               /*
+> > > > > > > > +                * FIXME: If auditing is enabled, then we'l=
+l have to unlazy to
+> > > > > > > > +                * use the dentry. For now, don't do this, =
+since it shifts
+> > > > > > > > +                * contention from parent's i_rwsem to its =
+d_lockref spinlock.
+> > > > > > > > +                * Reconsider this once dentry refcounting =
+handles heavy
+> > > > > > > > +                * contention better.
+> > > > > > > > +                */
+> > > > > > > > +               if ((nd->flags & LOOKUP_RCU) && !audit_dumm=
+y_context())
+> > > > > > > > +                       return NULL;
+> > > > > > >=20
+> > > > > > > Hm, the audit_inode() on the parent is done independent of wh=
+ether the
+> > > > > > > file was actually created or not. But the audit_inode() on th=
+e file
+> > > > > > > itself is only done when it was actually created. Imho, there=
+'s no need
+> > > > > > > to do audit_inode() on the parent when we immediately find th=
+at file
+> > > > > > > already existed. If we accept that then this makes the change=
+ a lot
+> > > > > > > simpler.
+> > > > > > >=20
+> > > > > > > The inconsistency would partially remain though. When the fil=
+e doesn't
+> > > > > > > exist audit_inode() on the parent is called but by the time w=
+e've
+> > > > > > > grabbed the inode lock someone else might already have create=
+d the file
+> > > > > > > and then again we wouldn't audit_inode() on the file but we w=
+ould have
+> > > > > > > on the parent.
+> > > > > > >=20
+> > > > > > > I think that's fine. But if that's bothersome the more aggres=
+sive thing
+> > > > > > > to do would be to pull that audit_inode() on the parent furth=
+er down
+> > > > > > > after we created the file. Imho, that should be fine?...
+> > > > > > >=20
+> > > > > > > See https://gitlab.com/brauner/linux/-/commits/vfs.misc.jeff/=
+?ref_type=3Dheads
+> > > > > > > for a completely untested draft of what I mean.
+> > > > > >=20
+> > > > > > Yeah, that's a lot simpler. That said, my experience when I've =
+worked
+> > > > > > with audit in the past is that people who are using it are _ver=
+y_
+> > > > > > sensitive to changes of when records get emitted or not. I don'=
+t like
+> > > > > > this, because I think the rules here are ad-hoc and somewhat ar=
+bitrary,
+> > > > > > but keeping everything working exactly the same has been my MO =
+whenever
+> > > > > > I have to work in there.
+> > > > > >=20
+> > > > > > If a certain access pattern suddenly generates a different set =
+of
+> > > > > > records (or some are missing, as would be in this case), we mig=
+ht get
+> > > > > > bug reports about this. I'm ok with simplifying this code in th=
+e way
+> > > > > > you suggest, but we may want to do it in a patch on top of mine=
+, to
+> > > > > > make it simple to revert later if that becomes necessary.
+> > > > >=20
+> > > > > Fwiw, even with the rearranged checks in v3 of the patch audit re=
+cords
+> > > > > will be dropped because we may find a positive dentry but the pat=
+h may
+> > > > > have trailing slashes. At that point we just return without audit
+> > > > > whereas before we always would've done that audit.
+> > > > >=20
+> > > > > Honestly, we should move that audit event as right now it's just =
+really
+> > > > > weird and see if that works. Otherwise the change is somewhat hor=
+rible
+> > > > > complicating the already convoluted logic even more.
+> > > > >=20
+> > > > > So I'm appending the patches that I have on top of your patch in
+> > > > > vfs.misc. Can you (other as well ofc) take a look and tell me whe=
+ther
+> > > > > that's not breaking anything completely other than later audit ev=
+ents?
+> > > >=20
+> > > > The changes look good as far as I'm concerned but let me CC audit g=
+uys if
+> > > > they have some thoughts regarding the change in generating audit ev=
+ent for
+> > > > the parent. Paul, does it matter if open(O_CREAT) doesn't generate =
+audit
+> > > > event for the parent when we are failing open due to trailing slash=
+es in
+> > > > the pathname? Essentially we are speaking about moving:
+> > > >=20
+> > > >         audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
+> > > >=20
+> > > > from open_last_lookups() into lookup_open().
+> > >=20
+> > > Thanks for adding the audit mailing list to the CC, Jan.  I would ask
+> > > for others to do the same when discussing changes that could impact
+> > > audit (similar requests for the LSM framework, SELinux, etc.).
+> > >=20
+> > > The inode/path logging in audit is ... something.  I have a
+> > > longstanding todo item to go revisit the audit inode logging, both to
+> > > fix some known bugs, and see what we can improve (I'm guessing quite =
+a
+> > > bit).  Unfortunately, there is always something else which is burning
+> > > a little bit hotter and I haven't been able to get to it yet.
+> > >=20
+> >=20
+> > It is "something" alright. The audit logging just happens at strange
+> > and inconvenient times vs. what else we're trying to do wrt pathwalking
+> > and such. In particular here, the fact __audit_inode can block is what
+> > really sucks.
+> >=20
+> > Since we're discussing it...
+> >=20
+> > ISTM that the inode/path logging here is something like a tracepoint.
+> > In particular, we're looking to record a specific set of information at
+> > specific points in the code. One of the big differences between them
+> > however is that tracepoints don't block.  The catch is that we can't
+> > just drop messages if we run out of audit logging space, so that would
+> > have to be handled reasonably.
 >=20
+> Yes, the buffer allocation is the tricky bit.  Audit does preallocate
+> some structs for tracking names which ideally should handle the vast
+> majority of the cases, but yes, we need something to handle all of the
+> corner cases too without having to resort to audit_panic().
 >=20
-> Linux always had rather lax approach to consistency of getattr results
-> and I wonder if with this patchset it is no longer viable.
+> > I wonder if we could leverage the tracepoint infrastructure to help us
+> > record the necessary info somehow? Copy the records into a specific
+> > ring buffer, and then copy them out to the audit infrastructure in
+> > task_work?
 >=20
-> Ignoring the flag, suppose ctime on the inode is { nsec =3D 12, sec =3D 1=
- },
-> while the new timestamp is { nsec =3D 1, sec =3D 2 }
+> I believe using task_work will cause a number of challenges for the
+> audit subsystem as we try to bring everything together into a single
+> audit event.  We've had a lot of problems with io_uring doing similar
+> things, some of which are still unresolved.
 >=20
-> The current update method results in a transient state where { nsec =3D 1=
-,
-> sec =3D 1 }. But this represents an earlier point in time.
+> > I don't have any concrete ideas here, but the path/inode audit code has
+> > been a burden for a while now and it'd be good to think about how we
+> > could do this better.
 >=20
-> Thus a thread which observed the first state and spotted the transient
-> value in the second one is going to conclude time went backwards. Is
-> this considered fine given what the multigrain stuff is trying to
-> accomplish?
+> I've got some grand ideas on how to cut down on a lot of our
+> allocations and string generation in the critical path, not just with
+> the inodes, but with audit records in general.  Sadly I just haven't
+> had the time to get to any of it.
+>=20
+> > > The general idea with audit is that you want to record the informatio=
+n
+> > > both on success and failure.  It's easy to understand the success
+> > > case, as it is a record of what actually happened on the system, but
+> > > you also want to record the failure case as it can provide some
+> > > insight on what a process/user is attempting to do, and that can be
+> > > very important for certain classes of users.  I haven't dug into the
+> > > patches in Christian's tree, but in general I think Jeff's guidance
+> > > about not changing what is recorded in the audit log is probably good
+> > > advice (there will surely be exceptions to that, but it's still good
+> > > guidance).
+> > >=20
+> >=20
+> > In this particular case, the question is:
+> >=20
+> > Do we need to emit a AUDIT_INODE_PARENT record when opening an existing
+> > file, just because O_CREAT was set? We don't emit such a record when
+> > opening without O_CREAT set.
+>=20
+> I'm not as current on the third-party security requirements as I used
+> to be, but I do know that oftentimes when a file is created the parent
+> directory is an important bit of information to have in the audit log.
 >=20
 
-Yes, I think so.
+Right. We'd still have that here since we have to unlazy to actually
+create the file.
 
-> As for fixing this, off hand I note there is a 4-byte hole in struct
-> inode, just enough to store a sequence counter which fill_mg_cmtime
-> could use to safely read the sec/nsec pair. The write side would take
-> the inode spinlock.
->=20
-
-Note that this is also a problem today with always-coarse timestamps.
-We track timestamps in two separate words, and "torn reads" are always
-a possibility. I suspect it happens occasionally and we just never
-notice.
-
-The main goal with the multigrain series was to make sure that
-measuring the ctime of the same inode on both sides of a change always
-shows a change in value. I think we'll still achieve that here, even
-with a torn read (unless we're just exceptionally unlucky).
-
-As far as the ordering of timestamps between two different files; this
-patchset doesn't make that any worse.
-
-I did have an earlier version of this patchset that converted the
-i_ctime fields to a ktime_t. That would have solved this problem too,
-but it had other drawbacks. We could reconsider that though.
-
-In any case, I think that's really a separate project from the
-multigrain work. Given that no one has complained about torn reads so
-far, I wouldn't bother at this point.
-
-> > +	} else {
-> > +		/*
-> > +		 * Was the change due to someone marking the old ctime QUERIED?
-> > +		 * If so then retry the swap. This can only happen once since
-> > +		 * the only way to clear I_CTIME_QUERIED is to stamp the inode
-> > +		 * with a new ctime.
-> > +		 */
-> > +		if (!(cns & I_CTIME_QUERIED) && (cns | I_CTIME_QUERIED) =3D=3D cur) =
-{
-> > +			cns =3D cur;
-> > +			goto retry;
-> > +		}
-> > +		/* Otherwise, keep the existing ctime */
-> > +		now_ts.tv_sec =3D inode->i_ctime_sec;
-> > +		now_ts.tv_nsec =3D cur & ~I_CTIME_QUERIED;
-> > +	}
-> > +out:
-> > +	return now_ts;
-> >  }
-> >  EXPORT_SYMBOL(inode_set_ctime_current);
-
+The question here is about the case where O_CREAT is set, but the file
+already exists. Nothing is being created in that case, so do we need to
+emit an audit record for the parent?
 --=20
 Jeff Layton <jlayton@kernel.org>
 
