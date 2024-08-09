@@ -1,139 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-25524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCA594D174
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 15:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2231D94D196
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 15:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F04961C2082E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 13:40:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 554351C20C32
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 13:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB4B195805;
-	Fri,  9 Aug 2024 13:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF1C1957FD;
+	Fri,  9 Aug 2024 13:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFuypPs7"
+	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="cuK/19ym"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A21194A43;
-	Fri,  9 Aug 2024 13:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA081DFE4
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 13:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723210815; cv=none; b=HiwRRzh9vMh8nw+jC7DCqim91hZj9DkRCvMRd23lN+bNF5aIHTd3VEZZk72TofIrprGbHOvLWb0sOIOKHszBVTHPNVjO/aC2P2UlLRETtd16UfeLMYBhRz6g+58iY0Xoy+/XusH4/XrrYpqacFFQu1aNlgWHSpcz4HU7c2GddQE=
+	t=1723211453; cv=none; b=FV7DLsVSyC540SiDuSiOsik7DmrwSBQu+jLawIpRQvpUjopNXujzWBYK0s7/tu4QzhtnOXeUARo2CMpxFJc1DFJ/53o1rsBMiHpxpI9eBmeyyPte5G9a2Okg12qC+0MEnPVAVhewdj1t77V1BqU+fpVIJHxLLHgBQVlVnpWpVbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723210815; c=relaxed/simple;
-	bh=PCOC6t5DUlw6Zai6p4bX3oYBp74piqtotQ4OSwhgsZU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d3UcjIgLqfz1aDkaNqkCQBhS91Aj9p5um+dLP4l0IPZO8xDPPBcnEiCQFem16M4x5pCWnxSjCwT6roQWM/RgUEnX8uOHYOwNl3kK30nzhaeCMj7L6XcThFWyxINaCKq5nlGZ1hOKFFAC/90moG8aIXtB0CaP/BchFRCP24sUzNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFuypPs7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A687C32782;
-	Fri,  9 Aug 2024 13:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723210815;
-	bh=PCOC6t5DUlw6Zai6p4bX3oYBp74piqtotQ4OSwhgsZU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=BFuypPs7UPPwv1QU90slF1cFAdExzRWbGKRcrWZLq1AfHnAKZn/tlgfSkMa27/cnY
-	 V3MpUoXvVj5JiptZM8hWM8IoshYyYSD5pN/ZRnZKhjE6xblzGs8ITn8n0xaIFG03U7
-	 lvMT1Wb4gBlyjpB9aXgGcL9848XKDIvEy/Y1OCW33/WT8X3Figf4dyVLnt6yg9ZW+P
-	 j1OVc5s6AyxmEQ+LamM8iaQ81l5BCn40vplj4En1CV6YSPVa5atSFyNfIWU7IEnw0c
-	 iCB+aC4M7Pc0Z06kS7bjik4PeKmwPnqS3Z5ZlXHZfgJmxUzk/c85/QlH0lP8TBlwwG
-	 9WzTMuclZ+YAA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 09 Aug 2024 09:39:43 -0400
-Subject: [PATCH] fs: don't overwrite the nsec field if I_CTIME_QUERIED is
- already set
+	s=arc-20240116; t=1723211453; c=relaxed/simple;
+	bh=8VXVkijJVYOudc51d16DRap/MnTRCD1bNvkCPlpdPIg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=izXn4QVxsZqfOZ8v0Ir52xBb2QTHTMv8DFaeJ/niEcVAko2Wd8jxBYREzcn3b0CH/Lfu2bWABj8GsJT5pXSaRhc58mR+Z1ahDIoCdIs5awL6Sxmvd9whGRgjVMyupT3ZgFO0KSZZyiUAGkGF4BFJmNdLz4+sOlJEZaPhx4M3FBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=cuK/19ym; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ef23d04541so22410011fa.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 06:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=grsecurity.net; s=grsec; t=1723211450; x=1723816250; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VrXClc+hdla+EQ6sAd35hB5qF2J1V7ARtFD4VnI10xQ=;
+        b=cuK/19ymkGi7OkcSuiBSBe6FsHvehbZChegMVbW9d2bIUWWQahXncV9FhFewEb3vGo
+         cEPzngzNvEFzms6rruLp7w4kYpJ0SAlk8XnEQr+OYXv2eU3IRBNRLbbgYTQogO3h6JNY
+         gGbkCP7iiagC8bD2VBNBHuFnx0MenO7+piA2mg6gdJOGOGH8QYpfF3CtJW5xO6m0AAiP
+         Vkw20wH2Z9IDu/V0sOtdClUgAtka/LjBcFGCUUnF+lYu3AOlWSCI7nKGLQ4UGXw3jjxt
+         f3KZW7ae1sB5uJid1efTv9zzijKNclkuk0mDPGg5FUuE5NFrOFJxkCv09JaD6cafZ1fv
+         Ig8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723211450; x=1723816250;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VrXClc+hdla+EQ6sAd35hB5qF2J1V7ARtFD4VnI10xQ=;
+        b=mOUgqj6lFYMxZDhyaixkcG3IByePd3WBkN5KkCavFjZ8RY3dpEhG8QEhxaEmQksm2H
+         iIzMmT36Qhq4OkhabVUzrJiORVGFD9sQ7v02vjvqp+shuA8v+txImf2uuaC1SRAY738s
+         H4ulPcAwNHfOhkWBYhST19jlNn+2U6a9JN93jXAZ3k7FpeXQHYtXX2Jc8kU1OLWbjp2H
+         8GRv+cVFCPGlQhgdgzUczq6b0/rvqSdbylzKW95L/7uRDRfIXoadnpWALzHNH1nPvyih
+         F5cofPUnk9HJyDrUWxcb3a9aYSZoqhAiTJebgEXLMRd5pzsEcfzmk77c2TQb+tolNAE/
+         WW9A==
+X-Gm-Message-State: AOJu0Yzc7qaS4/RoM60sVwHk1Z1aoQtktxd+f/9lZ9OKpILKpBe6xfBX
+	TqnpBhHAdANaPR6aSFdTOhz8JZmQFmvbNsDR9kBAluBnkQsSpXOGxwJae04Rv5EPDmfVsfzc3m8
+	g
+X-Google-Smtp-Source: AGHT+IGLsGkjh4jvQRt2XS1icYtDlISJ5BcVLCJNM6329WueVf5J1rYY6Bo5KoJ9Wgo4tbXTP9Gc5g==
+X-Received: by 2002:a05:6512:3e0a:b0:52b:8ef7:bf1f with SMTP id 2adb3069b0e04-530ee979d77mr1195469e87.17.1723211449443;
+        Fri, 09 Aug 2024 06:50:49 -0700 (PDT)
+Received: from x1.fritz.box (p200300f6af3dec00bc0487030dc7beee.dip0.t-ipconnect.de. [2003:f6:af3d:ec00:bc04:8703:dc7:beee])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c12ad3sm842920866b.88.2024.08.09.06.50.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 06:50:49 -0700 (PDT)
+From: Mathias Krause <minipli@grsecurity.net>
+To: linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>,
+	Mathias Krause <minipli@grsecurity.net>
+Subject: [PATCH] file: fix typo in take_fd() comment
+Date: Fri,  9 Aug 2024 15:50:35 +0200
+Message-Id: <20240809135035.748109-1-minipli@grsecurity.net>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240809-mgtime-v1-1-b2cab4f1558d@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAB8ctmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCwNL3dz0kszcVN3kpGSjxESzlGSDtFQloOKCotS0zAqwQdGxtbUAqts
- gflgAAAA=
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2103; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=PCOC6t5DUlw6Zai6p4bX3oYBp74piqtotQ4OSwhgsZU=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmthw+OIwQZVqktO49/ow2VAmNNr0ZpytiuuLhj
- 10a9LEhP76JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZrYcPgAKCRAADmhBGVaC
- FSOYEACJdVic638uQHhz0mp/jJD1UDNaRxqW8vMDlhgLa0Gt7tlMyZVd9i5IGl8BV+RSLA1LTGa
- 8qSFrVkNejAU4iZWjM9zQTjeFZaaNao2rb8JEGVv6XSX5RvXQHWs3+wkqHp7k8zU3oGhZX3J7kN
- Wo/o+DEHk+ZReMhhu9Xk2UIs0lveK0cmcnjtIFsMTA94JPx5F7DNjhd3BtgBATOuiGHXvcfGDlg
- ySGCZxO4Y4iaj+CIxfjhFAIqOn/KhVQAVyZVqd8njM/WeOtBowYB80eLmmb7DvxXiqo4QMkkVp0
- eK5Vwx2O+Pup+fd3cBnyot5xvCeJMiIXFTmxIActwdDXtDvlGf8WcQoiPxKATPyMjh+Nmmvv78u
- 0TwlsWdvW1l+rPbAt9adtum9KMI3BvXBcTGVqz3iuV5GVkp1YraZrF+vNGKFQ/I2Bj/JpvSsYET
- UVh4ZpsoAbW5X62y8ZM2JHxdOdxD1IiXBizTQXGlkEyYIOjvKNi/a5nfhupJ/0Qhy2uig80wk6u
- SJnWgSnvIl9tZCI4+Az9BOHUqyeSpT+d9I9qh1YRA3diJV+rHca16UJVrmRK3I1rr9ZLYXLWoQN
- M2vAqIZgwQveoDBAhDtXHbD6ALtWNRiXZs6gAFyVpICsnf6SWYam6xkyCf1QIKSj3mvHBmFQimf
- RJ/7MIl5Sl7x0tQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Transfer-Encoding: 8bit
 
-When fetching the ctime's nsec value for a stat-like operation, do a
-simple fetch first and avoid the atomic_fetch_or if the flag is already
-set.
+The explanatory comment above take_fd() contains a typo, fix that to not
+confuse readers.
 
-Suggested-by: Mateusz Guzik <mjguzik@gmail.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Mathias Krause <minipli@grsecurity.net>
 ---
-I'm running tests on this now, but I don't expect any problems.
+Btw, include/linux/file.h could get an entry in MAINTAINERS, maybe, as
+could a few others matching the include/linux/fs*.h pattern?
 
-This is based on top of Christian's vfs.mgtime branch. It may be best to
-squash this into 6feb43ecdd8e ("fs: add infrastructure for multigrain
-timestamps").
----
-To: Alexander Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- fs/stat.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ include/linux/file.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index f2bf7cca64b2..9eb6d9b2d010 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -35,8 +35,8 @@
-  * @inode: inode from which to grab the c/mtime
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 237931f20739..59b146a14dca 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -110,7 +110,7 @@ DEFINE_CLASS(get_unused_fd, int, if (_T >= 0) put_unused_fd(_T),
   *
-  * Given @inode, grab the ctime and mtime out if it and store the result
-- * in @stat. When fetching the value, flag it as queried so the next write
-- * will ensure a distinct timestamp.
-+ * in @stat. When fetching the value, flag it as QUERIED (if not already)
-+ * so the next write will record a distinct timestamp.
-  */
- void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
- {
-@@ -50,7 +50,10 @@ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
- 
- 	stat->mtime = inode_get_mtime(inode);
- 	stat->ctime.tv_sec = inode->i_ctime_sec;
--	stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn)) & ~I_CTIME_QUERIED;
-+	stat->ctime.tv_nsec = (u32)atomic_read(pcn);
-+	if (!(stat->ctime.tv_nsec & I_CTIME_QUERIED))
-+		stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn));
-+	stat->ctime.tv_nsec &= ~I_CTIME_QUERIED;
- 	trace_fill_mg_cmtime(inode, &stat->ctime, &stat->mtime);
- }
- EXPORT_SYMBOL(fill_mg_cmtime);
-
----
-base-commit: 9000eec2bdc08a0b9027427f9d3d9a3545694258
-change-id: 20240809-mgtime-cbc2aa6dc0fe
-
-Best regards,
+  * f = dentry_open(&path, O_RDONLY, current_cred());
+  * if (IS_ERR(f))
+- *         return PTR_ERR(fd);
++ *         return PTR_ERR(f);
+  *
+  * fd_install(fd, f);
+  * return take_fd(fd);
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.39.2
 
 
