@@ -1,126 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-25538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 243AD94D2E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 17:06:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED6494D30D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 17:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1C56281A6B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 15:06:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F17711C21452
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Aug 2024 15:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65967197A72;
-	Fri,  9 Aug 2024 15:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF32198833;
+	Fri,  9 Aug 2024 15:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbgVgRUt"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MmvztOTd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C235D155A25;
-	Fri,  9 Aug 2024 15:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC1A197A8B
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Aug 2024 15:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723215956; cv=none; b=MBSYf+9i1G6QvBadgyelNBJkQ8x7DP0zDHh6Qu5BygWXGsyrvWcyC5E8kFZPkFxIaZB+782ju25/VSkflaVSZexPHrvmVQ02BwXy25vMWn4WkDof2f2FGFMfgNE01G3NAPedMvZVORkYV1B5e+ZdV1PBops9YM+O7B+ntL6SbMU=
+	t=1723216410; cv=none; b=XTFgTe+G6UNNyI+PmjPKbGl7UHdp+2YYROKutKrS4OMt8jYoexTNpL8xv9tSBlPlElGI4fGkgIiMZ9NJFcF4OKrniphrWkcdrzpMsaZt8qhjhTFh72lqfN77Uoc/wHqRQ8izvT2BTrrUosYTmfOEeU3XqouaFe7o/wI4fB/N3hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723215956; c=relaxed/simple;
-	bh=7qDlyyI8Jx84O+NvDkukMrDOqIIur+2yKj4WcB2YsV0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=orQtP/VA/rau3SOBC78XjLM1iq8KUETQI6gYHr/3O/OJrtMvyK6EJou4CSRQ6wb32FSJn+G8vT/POw+2ZsBn9pT9810aAq7+RZeNYvMIJL5MqE3SnswmjMTRZiZ5mHLejPISJZ051j+o6GckOmGOozotcfNr6cq2gcl2A4UhNk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QbgVgRUt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3366C4AF0B;
-	Fri,  9 Aug 2024 15:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723215956;
-	bh=7qDlyyI8Jx84O+NvDkukMrDOqIIur+2yKj4WcB2YsV0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=QbgVgRUtZRO0Qt0o9vrmJRqL4EONm0x7Smr6jWITS6bkoGVBHsGRrRm0lmorz1vfu
-	 RvRAwVGSmfYHPNJpmkJaRLZARcj3mvTp8k95YTQIIgNR/40RJw4cmxkpUfEcVaFt3+
-	 Yf6T+1Mw5pc7skPTPKP7NB94RaBeY4tvsVK1RXK5ySU3GsAikg7pGyBq2q0tuJW247
-	 egT36NMDrEe9YsXpPecm6JQIf/V8qmhlS43wacZcZBKaSl/RJhHnSHzejiMzPZrx9v
-	 9OkxrRGonDIeiJtTnYoH6zoB+nCzdETX1cWcvd/+vVGAd9GR9heoPrs9bDZbm1BG6s
-	 zWSp/Fg3slXDA==
-Message-ID: <96dd05ee4ec91ea4ee25e1af395975d37893fcfc.camel@kernel.org>
-Subject: Re: [PATCH] fs: don't overwrite the nsec field if I_CTIME_QUERIED
- is already set
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Fri, 09 Aug 2024 11:05:54 -0400
-In-Reply-To: <20240809-ausrollen-halsschlagader-02e0126179bc@brauner>
-References: <20240809-mgtime-v1-1-b2cab4f1558d@kernel.org>
-	 <20240809-ausrollen-halsschlagader-02e0126179bc@brauner>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIg
- UCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1
- oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOT
- tmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+
- 9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPc
- og7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/
- WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EB
- ny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9
- KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTi
- CThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XR
- MJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1723216410; c=relaxed/simple;
+	bh=zjn3YmKXlPxzbD8VKXj7SB08Iibw46diwUCwOIFAoyo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QCSwaRhkhECSxZX4UO2xYqRHoIMGux/PdceJc0lLncvYpWhdZmLtTt6JWMoDa8BWAh1joqwnG/yL+gC9I+yhj7NBc11aVRsjUia6jMm+veRl2sUFOyG5/QFQFYzgzudN/tJmH8TtBG0M0iH1BZ6IFFcz39G77qwro3djxl5lR3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MmvztOTd; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a6135dso2788706a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 08:13:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1723216406; x=1723821206; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SQb4P6KW7DwW15iPQt+xRBs0vTrFbvLGmJcOvQXiPP0=;
+        b=MmvztOTdzxx98OeVNk5YcLW8VIgx4wN0hLJynOMaGsPqpCzQSv+xb3yPwvN52p8kfv
+         XOxRdO71eC1rP5n7JLPUj6OkHJ9xiZJUWBjQXJM08ChRJk679stOD/iIuhCWsF+VSaak
+         1k9QgzbqRk3Aw6bESUltbXb8OpiJDFtVqd2wc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723216406; x=1723821206;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SQb4P6KW7DwW15iPQt+xRBs0vTrFbvLGmJcOvQXiPP0=;
+        b=PFcm/clofah9gxo/ht1ImLOKeAiAEORWlwPDNtXyUsbbo7UaaWwM/+4cgRGuJ8VadE
+         Q3RIeMgO7+QTUxnMy6ZXEN4/wQc5d5SO0Y8wxATC84EalqPkl/PAxt5Uv8CfFf37ORqk
+         Sw0tEJ386iy7Di8aMuCLyJLs2v0mHhabnUlIAGCVuLggILrkcyFfMCqYZtM2B0eCV8A0
+         XQCNoBrP6FT3AVYILbEhLVnRhRGZ8/by0ls7Tz3cNGjFEyYB6ydPMpVuHunL0UENPlc8
+         btrgaoawWJSil5DUXk0mIWYqUy+uDZcIUU33gKbbBZpZD0Je/NFO9ngBkeG4MqjZdh3i
+         y/IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2PohZDJ1RDkDZuvOTWXgwHKopm1Yq0pTHa5NAMsOJWLlSyKCF4xRbauA5NhSPn4X/LOhRjLABiaVxWXPyKc8jCCZMgudMYU+NpcIfBw==
+X-Gm-Message-State: AOJu0Yz3lrio7Sk0WL0SdladLVAJNwhp8LxaMTjTqK7mRtWnQrvqZFkQ
+	cCmpAqdrd+S5n856VYUl5naZzJ03DToW3r5Cs7Q8YjKoa+Bzc+vNqgmtw+iUJE2z6FWkQ8TxYrs
+	gviTk5A==
+X-Google-Smtp-Source: AGHT+IGITYXrfFGXqq49qe/57tHiXlBNiHSgjLrKH510SFvslzdFKSOKyyeDiYdPR8I1Ncj28Q40Aw==
+X-Received: by 2002:a05:6402:13d2:b0:5a1:f9bc:7f17 with SMTP id 4fb4d7f45d1cf-5bd0a50e1a4mr1581421a12.5.1723216406376;
+        Fri, 09 Aug 2024 08:13:26 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2bf96f5sm1613624a12.14.2024.08.09.08.13.25
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Aug 2024 08:13:25 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so289961666b.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Aug 2024 08:13:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXwDVMnXF5paHmQmBnnuqgL69P3DlLdsdL+tGtwDdxTzWDN9k0aQ8FFZlcIHDOGd+Gb/uS4Veu7r3BBMp33Msfps5mzHBhBrTeCXsP+hw==
+X-Received: by 2002:a17:907:7e92:b0:a7a:ab8a:391 with SMTP id
+ a640c23a62f3a-a80aa65c854mr137777266b.45.1723216405166; Fri, 09 Aug 2024
+ 08:13:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+ <CAHk-=wh_P7UR6RiYmgBDQ4L-kgmmLMziGarLsx_0bUn5vYTJUw@mail.gmail.com> <875xs93glh.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <875xs93glh.fsf@email.froward.int.ebiederm.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 9 Aug 2024 08:13:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj+buZ5Efw4so9FbaJ5Q=xLr0+bcYDafouehVG93Msd7w@mail.gmail.com>
+Message-ID: <CAHk-=wj+buZ5Efw4so9FbaJ5Q=xLr0+bcYDafouehVG93Msd7w@mail.gmail.com>
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Brian Mak <makb@juniper.net>, Kees Cook <kees@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 2024-08-09 at 16:55 +0200, Christian Brauner wrote:
-> On Fri, Aug 09, 2024 at 09:39:43AM GMT, Jeff Layton wrote:
-> > When fetching the ctime's nsec value for a stat-like operation, do
-> > a
-> > simple fetch first and avoid the atomic_fetch_or if the flag is
-> > already
-> > set.
-> >=20
-> > Suggested-by: Mateusz Guzik <mjguzik@gmail.com>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> > I'm running tests on this now, but I don't expect any problems.
-> >=20
-> > This is based on top of Christian's vfs.mgtime branch. It may be
-> > best to
-> > squash this into 6feb43ecdd8e ("fs: add infrastructure for
-> > multigrain
-> > timestamps").
->=20
-> Squashed it. Can you double-check that things look correct?
+On Fri, 9 Aug 2024 at 07:40, Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> I asked him to perform this at snapshot time.  Plus it is obvious at
+> snapshot time that you can change the allocated array, while it is
+> not so obvious in the ->core_dump methods.
 
-One minor issue in fill_mg_cmtime:
+Fair enough. The days when we supported a.out dumps are obviously long
+long gone, and aren't coming back.
 
--------------8<-----------------
-        if (!(stat->ctime.tv_nsec & I_CTIME_QUERIED))
-                stat->ctime.tv_nsec =3D ((u32)atomic_fetch_or(I_CTIME_QUERI=
-ED, pcn));
-        trace_fill_mg_cmtime(inode, &stat->ctime, &stat->mtime);
-        stat->ctime.tv_nsec &=3D ~I_CTIME_QUERIED;
-}
--------------8<-----------------
+So I am not adamant that it has to be done in the dumper, and I
+probably just have that historical "we have multiple different dumpers
+with different rules" mindset that isn't really relevant any more.
 
-I'd swap the last two lines of the function. We print the ctime in the
-tracepoint as a timestamp, so if the QUERIED bit is present it's going
-to look funny. We _know_ that it's flagged after this function, so
-leaving it set is not terribly helpful.
+> I would argue that the long term maintainable thing to do is to
+> merge elf_core_dump and elf_fdpic_core_dump and put all of the code
+> in fs/coredump.c
 
---=20
-Jeff Layton <jlayton@kernel.org>
+I wouldn't object. It's not like there's any foreseeable new core dump
+format that we'd expect, and the indirection makes the code flow
+harder to follow.
+
+Not that most people look at this code a lot.
+
+             Linus
 
