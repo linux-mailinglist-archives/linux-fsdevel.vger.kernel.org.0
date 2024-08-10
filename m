@@ -1,87 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-25581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9803994DA52
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 05:42:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E4A94DA5C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 05:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF4AFB218E9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 03:42:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35A21F228B2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 03:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9050113698E;
-	Sat, 10 Aug 2024 03:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A862013B590;
+	Sat, 10 Aug 2024 03:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OKcteNk8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2161802B;
-	Sat, 10 Aug 2024 03:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A361802B;
+	Sat, 10 Aug 2024 03:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723261365; cv=none; b=W2r9OcvqFOgnflAvqKwF08vg3p9lNdt73++kcZJFKFsschmbHJTtzvuKV8cIVRBFbtdpOseMs4P7vTA17jKx8smhIGvchkL5yJZqjpJb1CoffClZdy6P4tapk6JR8dpl6N6HySUwYn6AlDjeR/3e0TmyUtFzx/taL5wjjjHsQuE=
+	t=1723261609; cv=none; b=NvccSnj+CyxJVmcQ9XBRvOtjGjyTj/HDeSA+Z2IKt1UmXlmjPGvsYYSrkLiRCsY3wTruTYuEU1+a7hWVVsjDmZTDpS6hTtTIovkweoywkI7YfULqEUo5OyEdrVt8XhJ/zQLUkDILw1ZeewuJ2Fhvs6ZHrV+UE6MVamxVhgA3ZuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723261365; c=relaxed/simple;
-	bh=bWiOZFESha6w2e8euh3cc5J5iNkTjLJHUyoFWKpq0sQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dDjIrwba5oCYb92CzQ4TqX6EfBqS8FUFUAq6SKju4uOovxjbRIjUcdU4SkkC5J6RmkCT73LZCrbMYen+9q0ELD0ZPfarnvuRxjJ9liRP44fKrK0PzPUUyCNRRCfsu6qhsq2TSvwC5FWdua3+c7MvGEpR1pqT/OJnjEjkytqqmHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wgmm26TP2zpSvb;
-	Sat, 10 Aug 2024 11:41:22 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 21F15180AE5;
-	Sat, 10 Aug 2024 11:42:37 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 10 Aug
- 2024 11:42:36 +0800
-From: yangyun <yangyun50@huawei.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lixiaokeng@huawei.com>
-Subject: [PATCH] fuse: fix race conditions on fi->nlookup
-Date: Sat, 10 Aug 2024 11:42:09 +0800
-Message-ID: <20240810034209.552795-1-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1723261609; c=relaxed/simple;
+	bh=pCc5rZlUkjug+JYB2R0ck8yvhlhb886WMpEdh1diQiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PKy6vmaUrfS13GGbxD3vC836Jnmu6WQ0T2AY5KjN6E4HDf49d1qUk5ECJU57SDmNZA0ke8raHkPWUcuyEV5D0V7bf9s39a8R9L9Jc7nHHsPULEkZGWebkrcCV/SbeNT673L+U6vY9wPJ1OLmkVmSUDuMOEAQ9/+TxRId8dmf4Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OKcteNk8; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=V4V88+6ORKnoZTEvMKe3KHy18Q83Bw1qagLhsOGfx48=; b=OKcteNk84wbrZYnhyixObNQn0q
+	HY4geaS3G4th988swtHI8B8dbTHZtTjWxKG9ZWCXLdJJ84bP6ZuG/ZG0cwe95qpA2QAbJ6LydzCOO
+	CdQOPA7cndO56rD+DLrmBBX5yNwTgBrb5cA946JLXoLe9juipYYLmT79oKtaLhuIjJ/uYqggLQuMU
+	3Z8chDpZsZqPOk7cuDu2ZLNYf0I9nKHg8INUeoS8K7nrc8YIzW8PdWalnKRoXT1o87kjDa7EwZCMo
+	xV0HIlFdOOxSAJOmNvSnnVP5+bRilPjlGAn7IMz9fCVFXk773ZB0rpAFO9SPCByK8xjbV8I+756Mk
+	dTDHk5Aw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1scd40-00000000Ku3-1OUp;
+	Sat, 10 Aug 2024 03:46:44 +0000
+Date: Sat, 10 Aug 2024 04:46:44 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: viro@kernel.org, linux-fsdevel@vger.kernel.org, amir73il@gmail.com,
+	bpf@vger.kernel.org, brauner@kernel.org, cgroups@vger.kernel.org,
+	kvm@vger.kernel.org, netdev@vger.kernel.org,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 35/39] convert bpf_token_create()
+Message-ID: <20240810034644.GC13701@ZenIV>
+References: <20240730050927.GC5334@ZenIV>
+ <20240730051625.14349-1-viro@kernel.org>
+ <20240730051625.14349-35-viro@kernel.org>
+ <CAEf4BzasSXFx5edPknxVnmk+o6oAyOU0h_Tg_yHVaJcaJfpPOQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd100024.china.huawei.com (7.221.188.41)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzasSXFx5edPknxVnmk+o6oAyOU0h_Tg_yHVaJcaJfpPOQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Lock on fi->nlookup is missed in fuse_fill_super_submount(). Add lock
-on it to prevent race conditions.
+On Tue, Aug 06, 2024 at 03:42:56PM -0700, Andrii Nakryiko wrote:
 
-Fixes: 1866d779d5d2 ("fuse: Allow fuse_fill_super_common() for submounts")
-Cc: stable@vger.kernel.org
-Signed-off-by: yangyun <yangyun50@huawei.com>
----
- fs/fuse/inode.c | 2 ++
- 1 file changed, 2 insertions(+)
+> By constify you mean something like below?
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 99e44ea7d875..2e220f245ceb 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1593,7 +1593,9 @@ static int fuse_fill_super_submount(struct super_block *sb,
- 	 * that, though, so undo it here.
- 	 */
- 	fi = get_fuse_inode(root);
-+	spin_lock(&fi->lock);
- 	fi->nlookup--;
-+	spin_unlock(&fi->lock);
- 
- 	sb->s_d_op = &fuse_dentry_operations;
- 	sb->s_root = d_make_root(root);
--- 
-2.33.0
-
+Yep.  Should go through LSM folks, probably, and once it's in
+those path_get() and path_put() around the call can go to hell,
+along with 'path' itself (we can use file->f_path instead).
 
