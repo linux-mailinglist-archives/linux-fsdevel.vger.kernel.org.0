@@ -1,232 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-25590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303A194DC00
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 11:36:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5246A94DC3A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 12:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F7A2820AB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 09:36:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 093E91F21E7B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 10:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88CA14D714;
-	Sat, 10 Aug 2024 09:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DB6157472;
+	Sat, 10 Aug 2024 10:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FbrFb+tH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YX1LFxoi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E4F43ACB
-	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Aug 2024 09:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C03814D283;
+	Sat, 10 Aug 2024 10:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723282605; cv=none; b=On7yNAhA889IA7im5E9RYGdJNPb+wT/gQ6b7sVJxhctxBptG/ScZAnDuDJejHgGQvceKR9ByfR60o84EnFtrzkL+4i9H2CYjGOVBc+HHiD25k6HtH6OUE44+0v+0ryyjY8kJH3y4lTe+3nJh7eJbCpMpuZDSAThr2qKKgBTn4/4=
+	t=1723285033; cv=none; b=eVmH7WJ4y5Mut9bwYrTl/WibvsRQD2yl95Lzp+PHES8BbUlJXH9FH6oKJh4GVC8/FkhSEhwyLaHHei+rS6OH3JhN8A5/jdNydpgL+rJF/Pb2iZvpGAkRcqc8HwxhA8MV3LoI6sll/uL92pk9fA0wAFUKkOlnAnyF+JDN75c2YIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723282605; c=relaxed/simple;
-	bh=TCWNY5v+WntrG/qjrMGNjXNmsLZK5TyaKRojN4p135M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VzITYPQeiTuR7PG3hVeMX3RzBERPw2mSZf49xSn14Csg4lRLm1vHokuaMfSPY7WbscOr7xrvoF+Ng4lvVxUpcu6ky5ufWmX1WenZXergLpKKOjFykjnngOXpoMvxaBK0fzh8tTKC/rHLODoP3StqhlVEvTq9s/gbFGngAXQ+wqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FbrFb+tH; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1723285033; c=relaxed/simple;
+	bh=0J4RB0A0mmNUZDMDMImrBJQYByqCZaDq6FuoBs5H1DU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oJRrEJ97xmh1MfIsRuwO2Q/gFA5bA1R2uyuDpR4laf2DqXWSp5Ca/enZEwq6UG6dCklZBPTiAYI/cLi72cuIPghpUCVnN6zA/rB+tweLcdqIIMpYC8OZpzUUAnBQ2cSZEk/RbKrtY9JT4ww7/DeIBLR0Di2mHYjQHD/w1/OxQF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YX1LFxoi; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5afa207b8bfso2911243a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Aug 2024 02:36:43 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a8553db90so353002966b.2;
+        Sat, 10 Aug 2024 03:17:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723282602; x=1723887402; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xaEEX/IgmGllSzPdescFTCnAysQGeKBTUd/W3DGc5C0=;
-        b=FbrFb+tH288n44wVbJ4Sc5OCvRg8gLx6nUFWb3ULXGMpYiMvsRGtzSGX+8eZ5owqOZ
-         GSK2/wO4BZgM7pgnvQ6uYdyE93cKC0e0J3IHeTzHBp5geFWYiNx8HeGF0XW6eDFonKoN
-         EOd++iBREvIksm3ySr9r6KGN+DDI4KPtSA9pHm2ml8rjgKyInFoqyBqzalTqtRxxyA/S
-         I2uN3aQbgI/6DXVpS3bPM3nsDAoAKyuzLRjYNhFoQx81GSMzRKAtm20K6cGeOcPpwtsP
-         M5slQEdpy8vIl+oX31xZ1eyLOEpTsXX8YY1VYWZKus3xNGaCvVrrhaAUHXWXBHkIkfCT
-         XnIw==
+        d=gmail.com; s=20230601; t=1723285030; x=1723889830; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=l8nSCAz/QPE8Oq0QL5MoGe+UBHWDrszdnf2o7o2yT14=;
+        b=YX1LFxoiD9V4BjXNCZAahBKm4XtaLwh6QqiTYpc0MS11rO0lBLDBTnQqSyJBQZwbrK
+         BqK+gpUtcsQUBWqXaTuE1XO0uzSx31tKA0oGtxciIry317yszxTwLDFl0HE06CTSrgv3
+         blWNIWwT3rjq8hQZsOo4a5P7VDDX2vnRQ9K8Ok5JFSuSx3YAI7UvRESJi+gP5qWVNo5B
+         3jDZ4lmwoGUdsCj/EBNeJN2kJXJDPjNP+604PcCW33ipb+aH7wF8enNc0auXsV7gJc/q
+         OByXi10uLxG9kZIcAMxEn9a/oXA2sI5Lg8t5oLIrGqhMsaElEKL6BuWUWhqhQ+mZebRL
+         OY5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723282602; x=1723887402;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xaEEX/IgmGllSzPdescFTCnAysQGeKBTUd/W3DGc5C0=;
-        b=lLBEBldohzcSE7TsXLXcgYGNHHoEmCkAteRyf9j+qKuxKE0l3YfBihmvq8gt3i3YqC
-         BTiwAWErDvgdBPAbdDCj/Bj11ZqVe8iHF/rhPgiKMg7yhsoYLrzSQ+d16XNt0j73EHPN
-         JBv4IuLgFge3//eJzc9wOA+Qd5Hn64+bvW2qC0HnGBcWRJDraW7Ycg/V3OhZyvNME0u2
-         haTdneQBNImvRbhFjjP+2Y3wFCL45WNgOngL1iMNyidzarkPxyOtF0mu8kIfrxyECh7E
-         U7lfuMcdnes5jrlfpq9q2XMJlsEP1iDBdTXZHTfrD8kvQV/KVwLGHMleG9O/Fyy+XxjT
-         pTTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0KWES5S/Qok4gV7yGlvdgFfV34dpTQIZczvSyFe6+ZBqzAmSC2UY4UzgTdXqiyoZnN1HeUU89W14QpcKg8KYqQzgwgSC2vQCiUpdGGQ==
-X-Gm-Message-State: AOJu0Ywttty7BEbK2cliE2PSCzXkYRQubROu3Vw7UmccLK0yOp8GAXvP
-	znQyhBpd9DoUSdv9XfLJI0+78xz5ywG1aSs7sBBGFjwP3uie4x9O
-X-Google-Smtp-Source: AGHT+IG43O4oTkOqaXKUdmrLasOOTA/+oKA9+wi6xdvpTL3aC7oB6gFQuCtNh8HCa/oNRNavY4p0mw==
-X-Received: by 2002:a17:907:f160:b0:a72:8d2f:859c with SMTP id a640c23a62f3a-a80aa5e006dmr287031266b.33.1723282601325;
-        Sat, 10 Aug 2024 02:36:41 -0700 (PDT)
-Received: from f (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb1d1ac6sm54457466b.131.2024.08.10.02.36.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Aug 2024 02:36:40 -0700 (PDT)
-Date: Sat, 10 Aug 2024 11:36:32 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] [DRAFT RFC]: file: reclaim 24 bytes from f_owner
-Message-ID: <6o2fjmgt2yixzjwc2fffzdtbr4cjey3vhm6kwpieag33kzmmga@5ogofkglj2hj>
-References: <20240809-koriander-biobauer-6237cbc106f3@brauner>
+        d=1e100.net; s=20230601; t=1723285030; x=1723889830;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l8nSCAz/QPE8Oq0QL5MoGe+UBHWDrszdnf2o7o2yT14=;
+        b=R6NqKrY+oe6DwX19U/UNoKxl3XopzK22KxC/kBc6H6p3QPbONctRj7ZBNwbdnTSP6G
+         i6iyIL1bd20IN+J2d/ASwe+bJLbhp/YnPKCnsS0LDs977KsAbBjremQ1NcVKipRL4rBP
+         RszY4kwIv3OrTde/LxjtXlMrKlQeDBZAa4UpHVw8x91rTgvhgIm1weeSHqti4E3CXy+o
+         EVKHTNgnjBt96Fa7K8b8J94xkO2PiOlLSaS0LPX86IwgehMukwe2WLLeE+GfEVQow6bo
+         3D9QW7pgpMgxKx1zmcGBMlNDbQaIL2rcASyKM1eOKpzGq/j/uRttwHr849iN3z42yZEQ
+         nedA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSCn/WY2kmNDItxeeZyX026eebK5IufHj1owtHA5zCjBPKudF0XIGVWYqzQv+/YOoii87aQJEqw1upPu2dmy5wdcCQ8jPeM4ChNw==
+X-Gm-Message-State: AOJu0YyIEYoyUojqcO7dFjQzYsEMdNuOHyRE+609Cd111Qd07CXxkZLU
+	K1ghdBxnH1aRaV8Us70BhANXxJsUKmKGIzPlrm0fHdyHfiScRkaTEQ7DpTEDsXp1/rDcLtxCAc9
+	GKm9OvUl5CsorDtUxnjFKGAoSk4o=
+X-Google-Smtp-Source: AGHT+IHgaBqz1NZqp96W5r64buwgrcPXLs/FOkGIHsbhyMyHsQXns27Jh/tYYaQH2MfZplMaE6IgP3Aw2vGN3U43AO4=
+X-Received: by 2002:a17:907:f718:b0:a7d:e956:ad51 with SMTP id
+ a640c23a62f3a-a80aa5a490bmr339468466b.21.1723285029548; Sat, 10 Aug 2024
+ 03:17:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240809-koriander-biobauer-6237cbc106f3@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sat, 10 Aug 2024 12:16:57 +0200
+Message-ID: <CAGudoHFxuVQPLgrsWMoCA1NMFJxVJ7Hm+ymp_S1WM_0+iz7XPQ@mail.gmail.com>
+Subject: ext4 avoidably stalls waiting on writeback when unlinking a truncated file
+To: "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 09, 2024 at 10:10:40PM +0200, Christian Brauner wrote:
-> This is in rough shape. I just drafted it quickly to get the idea
-> across. Compiled with all the SANS we have, booted and ran parts of LTP
-> and so far nothing murderd my vms. /me goes to get some sleep
-> 
-> The struct fown_struct wastes 32 bytes of precious memory in struct
-> file. It is often unused in a lot of workloads. We should put the burden
-> on the use-cases that care about this and make them allocate the struct
-> on demand. This will allow us to free up 24 bytes in struct file.
-> 
+I'm messing around with an old microbenchmark which I massaged into
+state pluggable into will-it-scale [pasted at the end]
 
-Here is an alternative which smaller saving, but also less work, noting
-it here just in case. Commentary on the patch is after that.
+I verified that with btrfs and xfs the bench stays on cpu the entire time.
 
-On my kernel pahole says the following about struct file:
-[snip]
-        /* --- cacheline 1 boundary (64 bytes) --- */
-        loff_t                     f_pos;                /*    64     8 */
-        unsigned int               f_flags;              /*    72     4 */
+In contrast, running in on top of ext4 gives me about 50% idle.
 
-        /* XXX 4 bytes hole, try to pack */
+According to offcputime-bpfcc -K this is why:
+   finish_task_switch.isra.0
+    __schedule
+    schedule
+    io_schedule
+    folio_wait_bit_common
+    folio_wait_writeback
+    truncate_inode_partial_folio
+    truncate_inode_pages_range
+    ext4_evict_inode
+    evict
+    do_unlinkat
+    __x64_sys_unlink
+    do_syscall_64
+    entry_SYSCALL_64_after_hwframe
+    -                vfsmix2_process (22793)
+        3913285
 
-        struct fown_struct         f_owner;              /*    80    32 */
-        const struct cred  *       f_cred;               /*   112     8 */
-        struct file_ra_state       f_ra;                 /*   120    32 */
-        /* --- cacheline 2 boundary (128 bytes) was 24 bytes ago --- */
-[snip]
+The code reopens the file with O_TRUNC. Whacking the flag gets rid of
+the off cpu time.
 
-And of course:
-struct fown_struct {
-        rwlock_t                   lock;                 /*     0     8 */
-        struct pid *               pid;                  /*     8     8 */
-        enum pid_type              pid_type;             /*    16     4 */
-        kuid_t                     uid;                  /*    20     4 */
-        kuid_t                     euid;                 /*    24     4 */
-        int                        signum;               /*    28     4 */
+I have no interest in digging into it. I suspect this is an easy fix
+for someone familiar with the fs.
 
-        /* size: 32, cachelines: 1, members: 6 */
-        /* last cacheline: 32 bytes */
-};
+git clone https://github.com/antonblanchard/will-it-scale.git
 
-So *some* saving can be achieved without moving stuff out.
+plug the code below into tests/vfsmix2.c && gmake && ./vfsmix2_processes
 
-1. there is no way using a rwlock is warranted, a spinlock is 4 bytes
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <assert.h>
 
-Moving the lock to the end in this struct and placing f_flags *after*
-f_owner should result in plugging the alignment gap.
+/*
+ * Repurposed code stolen from Ingo Molnar, see:
+ * https://lkml.org/lkml/2015/5/19/1009
+ */
 
-2. enum pid_type would fit in one byte no problem, there is very opts
-defined there. compilers support specifying enum size, but there is a
-lot of bikeshedding possible around implementing it and I have no
-interest in fighting that, fwiw in FreeBSD this landed as follows:
+char *testcase_description = "vfsmix";
 
-/* declare */
-__enum_uint8_decl(vstate) {
-        VSTATE_UNINITIALIZED,
-        VSTATE_CONSTRUCTED,
-        VSTATE_DESTROYING,
-        VSTATE_DEAD,
-        VLASTSTATE = VSTATE_DEAD,
-};
+void testcase(unsigned long long *iterations, unsigned long nr)
+{
+        char tmpfile[] = "/tmp/willitscale.XXXXXX";
+        int fd = mkstemp(tmpfile);
+        assert(fd >= 0);
+        close(fd);
+        unlink(tmpfile);
 
-/* use */
-__enum_uint8(vstate) v_state;
+        while (1) {
+                fd = open(tmpfile, O_RDWR | O_CREAT | O_EXCL, 0600);
+                assert(fd >= 0);
 
-/* implementation */
-#define __enum_uint8_decl(name) enum enum_ ## name ## _uint8 : uint8_t
-#define __enum_uint8(name)      enum enum_ ## name ## _uint8
+                int ret;
 
-as a hack here you could merely enum pid_type:uint8_t pid_type; or
-similar
+                ret = lseek(fd, 4095, SEEK_SET);
+                assert(ret == 4095);
 
-3. signum does not have to be int either, sounds like another one-byter
+                close(fd);
 
-then this results in 6 bytes of padding which may or may not be possible
-to fill in in struct file later.
+                fd = open(tmpfile, O_RDWR|O_CREAT|O_TRUNC);
+                assert(fd >= 0);
 
-> +struct fown_struct nop_fown_struct = {
-> +	.lock		= __RW_LOCK_UNLOCKED(nop_fown_struct.lock),
-> +	.pid		= NULL,
-> +	.pid_type	= PIDTYPE_MAX,
-> +	.uid		= INVALID_UID,
-> +	.euid		= INVALID_UID,
-> +	.signum		= 0,
-> +};
+                {
+                        char c = 1;
 
-why this instead of NULL checking?
+                        ret = write(fd, &c, 1);
+                        assert(ret == 1);
+                }
 
-For funcs which are not guaranteed to see the thing already allocated
-you can still:
-	f_owner = file_f_owner_allocate(filp);
-	if (IS_ERR(f_owner))
-		return PTR_ERR(f_owner);
+                {
+                        char *mmap_buf = (char *)mmap(0, 4096,
+PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 
-while for funcs where it is optionally present you just
-	if (filp->f_owner != NULL) ....
+                        assert(mmap_buf != (void *)-1L);
 
-am I missing something here?
+                        mmap_buf[0] = 1;
 
-that aside error handling as implemented is weirdly inconsistent -- you
-got ERR_CAST(fowner), PTR_ERR(fowner) and -ENOMEM.
+                        ret = munmap(mmap_buf, 4096);
+                        assert(ret == 0);
+                }
 
-> +
-> +/*
-> + * Allocate an file->f_owner struct if it doesn't exist, handling racing
-> + * allocations correctly.
-> + */
-> +struct fown_struct *file_f_owner_allocate(struct file *file)
-> +{
-> +	struct fown_struct *f_owner;
-> +
-> +	f_owner = smp_load_acquire(&file->f_owner);
+                close(fd);
 
-For all spots of the sort you don't need an acquire fence, a consume
-fence is sufficient which I believe in Linux is guaranteed to be
-provided with READ_ONCE. I failed to find smp_load_consume, presumably
-for that reason.
+                ret = unlink(tmpfile);
+                assert(ret == 0);
 
-> +struct fown_struct *file_f_owner_allocate(struct file *file)
-> +{
-> +	struct fown_struct *f_owner;
-> +
-> +	f_owner = smp_load_acquire(&file->f_owner);
-> +	if (f_owner != &nop_fown_struct)
-> +		return NULL;
-> +
-> +	f_owner = kzalloc(sizeof(struct fown_struct), GFP_KERNEL);
-> +	if (!f_owner)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	rwlock_init(&f_owner->lock);
-> +	f_owner->file = file;
-> +	/* If someone else raced us, drop our allocation. */
-> +	if (unlikely(cmpxchg(&file->f_owner, &nop_fown_struct, f_owner) !=
-> +		     &nop_fown_struct)) {
-> +		kfree(f_owner);
-> +		return NULL;
+                (*iterations)++;
+        }
+}
 
-this wants to return the found pointer, not NULL
-
-> +	}
-> +
-> +	return f_owner;
-> +}
+-- 
+Mateusz Guzik <mjguzik gmail.com>
 
