@@ -1,106 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-25592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF62194DCC4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 14:31:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE7794DD06
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 15:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85A921F215B8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 12:31:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F072BB219B1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 13:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B8F158520;
-	Sat, 10 Aug 2024 12:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bitron.ch header.i=@bitron.ch header.b="iPo8QfVq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8047515886A;
+	Sat, 10 Aug 2024 13:07:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from nov-007-i658.relay.mailchannels.net (nov-007-i658.relay.mailchannels.net [46.232.183.212])
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42605182D8
-	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Aug 2024 12:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.183.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A3F4502F;
+	Sat, 10 Aug 2024 13:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723293069; cv=none; b=aFvtvqPWs1JYBI0sFoQU8MJMhisMB8L35DfCV1pYSsdceGW2eoufptNTXFgf5A3C8HucNO25jg/dAaC7Gl4d6rW/KmmZIqARr2O1u+wFBpE4Ytsw3QPKLagj5FPkzsDN4AfWhPiBJz3xnSsLVSEvu8Rny0rdbkz/8ZS0R8ZaXEM=
+	t=1723295246; cv=none; b=GnbWRwB2pA3zxFpuCL2M0oKvUFfBU6SdHWFnfP78bTXZ/FQWIGoGoR4/RwB6rhjw3iBZo7t25tqomwvX6skNlgkIGnL9+gs2OYLB0NBw86K780sFS0VRe71fG3Y2rVQnuGrSd5nqrSP1T3vgOZ4rH+znZUVpf25GhoxJOTn12L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723293069; c=relaxed/simple;
-	bh=E5I3QtUuprySi+I00V0UhUG7i9DuMS6lBdeWilqP39c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O9c53hXOHrVPzgmhLUiDqwaj5mOToc6UfATfl6+cwL9lQJss7i9nmwb8lNwnf2nDCgDN/LAkrQMRTCDg1YD/tlvmfpYTsokuE0Ag/HLPDZKk3ZFvltH8qJQ5Cr/4KVJRNHIf5+lGmnNFKmFMDrPV6sB32QV6qwJND+8rAt8Pm28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch; spf=pass smtp.mailfrom=bitron.ch; dkim=pass (2048-bit key) header.d=bitron.ch header.i=@bitron.ch header.b=iPo8QfVq; arc=none smtp.client-ip=46.232.183.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitron.ch
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id A3E227E0066;
-	Sat, 10 Aug 2024 12:24:29 +0000 (UTC)
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
-X-MailChannels-Auth-Id: novatrend
-X-Company-Tart: 501d02243c178ce2_1723292668917_298374908
-X-MC-Loop-Signature: 1723292668917:1083076595
-X-MC-Ingress-Time: 1723292668917
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitron.ch;
-	s=default; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=2IQ89S6VdaRNpfBclR0snL1k6Vsm/eFQU1+7PuHzWGs=; b=iPo8QfVqFGa2H8N7Xe4Q3av0rF
-	pZ5v4LxHDNyEc6tmnXmbiSz1G5Uu4Odeq9oGyOp46OGGGeQyXUOqsMcJVC+6BEVwRB3bK3ujgHWLo
-	NaOneYvyFPeTIa6A7AuL/B966xYoujvaQ5YEw522JZurbJvwITzD/FLAN4D7QE+bPKcGF0QjNxUaq
-	5h1uxhjMylXyqeH8PXLC1iw/mUQFvVpNSpd9i7v58KEf7ATPQisbl+KHGNmWLOvNYcIADjZmWTEct
-	WqwUtROspuYz3i61TFXGZihut4W65gMGq5E/BXS7kjSExTYTSv+ArL6J4ncVKkaQKGsz3pChdvNLy
-	xUvB+9MQ==;
-Message-ID: <d0844e7465a12eef0e2998b5f44b350ee9e185be.camel@bitron.ch>
-Subject: Re: [PATCH 3/3] fuse: use folio_end_read
-From: =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Date: Sat, 10 Aug 2024 14:24:24 +0200
-In-Reply-To: <20240809162221.2582364-3-willy@infradead.org>
-References: <ZrY97Pq9xM-fFhU2@casper.infradead.org>
-	 <20240809162221.2582364-3-willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1723295246; c=relaxed/simple;
+	bh=lA7wfsTzEeALFVA1uePvAiyAa2UikxL8+WrnzDm/SRo=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=IgaROTYh/+H+sgpSdFAH+1KCd8EsuIyGG2nAHPyEEVWuaDKVyc1niZzN8M6D8hDS5PRg8CJF7cy0YuxtjIZA2EpCGAoFggCNZIUrwmFp62aBY73jcoa1tcI6KYCTx5rK4fJROXUYZftjtOdBlFVb9Gy5Bv+NCW2FyDDu2oYrejs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:40214)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sclEN-009WSV-KQ; Sat, 10 Aug 2024 06:30:00 -0600
+Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:33268 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sclEM-00GlCe-80; Sat, 10 Aug 2024 06:29:59 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Brian Mak <makb@juniper.net>
+Cc: Kees Cook <kees@kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+  "linux-mm@kvack.org" <linux-mm@kvack.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Oleg
+ Nesterov <oleg@redhat.com>,  Linus Torvalds
+ <torvalds@linux-foundation.org>
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+Date: Sat, 10 Aug 2024 07:28:44 -0500
+In-Reply-To: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net> (Brian Mak's
+	message of "Tue, 6 Aug 2024 18:16:02 +0000")
+Message-ID: <87ttfs1s03.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AuthUser: juerg@bitron.ch
+Content-Type: text/plain
+X-XM-SPF: eid=1sclEM-00GlCe-80;;;mid=<87ttfs1s03.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/rrQC2FQR/9/Kgl9SrfSvI8sFe1P4ilOg=
+X-SA-Exim-Connect-IP: 68.227.165.127
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: 
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Brian Mak <makb@juniper.net>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 509 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 3.9 (0.8%), b_tie_ro: 2.6 (0.5%), parse: 1.02
+	(0.2%), extract_message_metadata: 15 (3.0%), get_uri_detail_list: 2.3
+	(0.5%), tests_pri_-2000: 13 (2.6%), tests_pri_-1000: 2.0 (0.4%),
+	tests_pri_-950: 1.04 (0.2%), tests_pri_-900: 0.79 (0.2%),
+	tests_pri_-90: 158 (31.1%), check_bayes: 144 (28.2%), b_tokenize: 7
+	(1.4%), b_tok_get_all: 43 (8.5%), b_comp_prob: 2.2 (0.4%),
+	b_tok_touch_all: 88 (17.2%), b_finish: 0.73 (0.1%), tests_pri_0: 303
+	(59.5%), check_dkim_signature: 0.42 (0.1%), check_dkim_adsp: 6 (1.2%),
+	poll_dns_idle: 0.84 (0.2%), tests_pri_10: 1.72 (0.3%), tests_pri_500:
+	6 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-On Fri, 2024-08-09 at 17:22 +0100, Matthew Wilcox (Oracle) wrote:
-> part three
->=20
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Brian Mak <makb@juniper.net> writes:
+
+> Large cores may be truncated in some scenarios, such as with daemons
+> with stop timeouts that are not large enough or lack of disk space. This
+> impacts debuggability with large core dumps since critical information
+> necessary to form a usable backtrace, such as stacks and shared library
+> information, are omitted.
+>
+> We attempted to figure out which VMAs are needed to create a useful
+> backtrace, and it turned out to be a non-trivial problem. Instead, we
+> try simply sorting the VMAs by size, which has the intended effect.
+>
+> By sorting VMAs by dump size and dumping in that order, we have a
+> simple, yet effective heuristic.
+
+To make finding the history easier I would include:
+v1: https://lkml.kernel.org/r/CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net
+v2: https://lkml.kernel.org/r/C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net
+
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+
+As Kees has already picked this up this is quite possibly silly.
+But *shrug* that was when I was out.
+
+
+> Signed-off-by: Brian Mak <makb@juniper.net>
 > ---
-> =C2=A0fs/fuse/file.c | 4 +---
-> =C2=A01 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 2b5533e41a62..f39456c65ed7 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -937,9 +937,7 @@ static void fuse_readpages_end(struct fuse_mount
-> *fm, struct fuse_args *args,
-> =C2=A0	for (i =3D 0; i < ap->num_pages; i++) {
-> =C2=A0		struct folio *folio =3D page_folio(ap->pages[i]);
-> =C2=A0
-> -		if (!err)
-> -			folio_mark_uptodate(folio);
-> -		folio_unlock(folio);
-> +		folio_end_read(folio, !err);
-> =C2=A0		folio_put(folio);
-> =C2=A0	}
-> =C2=A0	if (ia->ff)
-
-Reverting this part is sufficient to fix the issue for me.
-
-Cheers,
-J=C3=BCrg
+>
+> Hi all,
+>
+> Still need to run rr tests on this, per Kees Cook's suggestion, will
+> update back once done. GDB and readelf show that this patch works
+> without issue though.
+>
+> Thanks,
+> Brian Mak
+>
+> v3: Edited commit message to better convey alternative solution as
+>     non-trivial
+>
+>     Moved sorting logic to fs/coredump.c to make it in place
+>
+>     Above edits suggested by Eric Biederman <ebiederm@xmission.com>
+>
+> v2: Edited commit message to include more reasoning for sorting VMAs
+>     
+>     Removed conditional VMA sorting with debugfs knob
+>     
+>     Above edits suggested by Eric Biederman <ebiederm@xmission.com>
+>
+>  fs/coredump.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index 7f12ff6ad1d3..33c5ac53ab31 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/personality.h>
+>  #include <linux/binfmts.h>
+>  #include <linux/coredump.h>
+> +#include <linux/sort.h>
+>  #include <linux/sched/coredump.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/sched/task_stack.h>
+> @@ -1191,6 +1192,18 @@ static void free_vma_snapshot(struct coredump_params *cprm)
+>  	}
+>  }
+>  
+> +static int cmp_vma_size(const void *vma_meta_lhs_ptr, const void *vma_meta_rhs_ptr)
+> +{
+> +	const struct core_vma_metadata *vma_meta_lhs = vma_meta_lhs_ptr;
+> +	const struct core_vma_metadata *vma_meta_rhs = vma_meta_rhs_ptr;
+> +
+> +	if (vma_meta_lhs->dump_size < vma_meta_rhs->dump_size)
+> +		return -1;
+> +	if (vma_meta_lhs->dump_size > vma_meta_rhs->dump_size)
+> +		return 1;
+> +	return 0;
+> +}
+> +
+>  /*
+>   * Under the mmap_lock, take a snapshot of relevant information about the task's
+>   * VMAs.
+> @@ -1253,5 +1266,8 @@ static bool dump_vma_snapshot(struct coredump_params *cprm)
+>  		cprm->vma_data_size += m->dump_size;
+>  	}
+>  
+> +	sort(cprm->vma_meta, cprm->vma_count, sizeof(*cprm->vma_meta),
+> +		cmp_vma_size, NULL);
+> +
+>  	return true;
+>  }
+>
+> base-commit: eb5e56d1491297e0881c95824e2050b7c205f0d4
 
