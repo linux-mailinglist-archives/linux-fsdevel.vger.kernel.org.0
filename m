@@ -1,191 +1,446 @@
-Return-Path: <linux-fsdevel+bounces-25593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE7794DD06
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 15:07:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5665394DD38
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 16:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F072BB219B1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 13:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B2531C20F16
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 14:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8047515886A;
-	Sat, 10 Aug 2024 13:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF8B15FD08;
+	Sat, 10 Aug 2024 14:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIyxOg4O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A3F4502F;
-	Sat, 10 Aug 2024 13:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B05D157E78
+	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Aug 2024 14:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723295246; cv=none; b=GnbWRwB2pA3zxFpuCL2M0oKvUFfBU6SdHWFnfP78bTXZ/FQWIGoGoR4/RwB6rhjw3iBZo7t25tqomwvX6skNlgkIGnL9+gs2OYLB0NBw86K780sFS0VRe71fG3Y2rVQnuGrSd5nqrSP1T3vgOZ4rH+znZUVpf25GhoxJOTn12L4=
+	t=1723299509; cv=none; b=ilxuO+MqLqKIzRKcJyzMWtBNTONEs+QZSvODUN4xce/u7G98aDeJRfssjJ7RPclEA7PvFypwsmjYHZdq3ABp8a7eNOeveWuomzrL9iHhCCgifvb665W84fzLMJWlSIrak+WrHgVEDge/OuLFrbC48xXvlulXQ77p522RT3X2lQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723295246; c=relaxed/simple;
-	bh=lA7wfsTzEeALFVA1uePvAiyAa2UikxL8+WrnzDm/SRo=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=IgaROTYh/+H+sgpSdFAH+1KCd8EsuIyGG2nAHPyEEVWuaDKVyc1niZzN8M6D8hDS5PRg8CJF7cy0YuxtjIZA2EpCGAoFggCNZIUrwmFp62aBY73jcoa1tcI6KYCTx5rK4fJROXUYZftjtOdBlFVb9Gy5Bv+NCW2FyDDu2oYrejs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:40214)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sclEN-009WSV-KQ; Sat, 10 Aug 2024 06:30:00 -0600
-Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:33268 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sclEM-00GlCe-80; Sat, 10 Aug 2024 06:29:59 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Brian Mak <makb@juniper.net>
-Cc: Kees Cook <kees@kernel.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-  "linux-mm@kvack.org" <linux-mm@kvack.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Oleg
- Nesterov <oleg@redhat.com>,  Linus Torvalds
- <torvalds@linux-foundation.org>
-References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
-Date: Sat, 10 Aug 2024 07:28:44 -0500
-In-Reply-To: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net> (Brian Mak's
-	message of "Tue, 6 Aug 2024 18:16:02 +0000")
-Message-ID: <87ttfs1s03.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1723299509; c=relaxed/simple;
+	bh=mnqJSa61RLD0RE36tTtg0kWzR+kp7Gi484K8CiclVZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KN6sJtk2li+KIQ2Gz9zaWNs2aTwGA73aHE38Mn09n1+RwLbWKbp+2cWKKkcAOROpruUGpNOBhzmn8zIfkyeoT0opdfzmZ2I+1FqyL9gM8/9zaLs0FN2yg3KyZov6Xq/wpQjlb17dnbHse8PwnXlc2bU33eCm4O+8+pEQsHIdz/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIyxOg4O; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723299507; x=1754835507;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=mnqJSa61RLD0RE36tTtg0kWzR+kp7Gi484K8CiclVZg=;
+  b=lIyxOg4OzFZPXm22l9Xu+cpYDsTMu8SbeDTh7nrX0h1U394dbkw9f4gK
+   tK/RMypJhAuKIzIYKkVNDUBCRkTgKTMxqGk/7XpMO/kMNeElwz2Qo8KB+
+   Xs23xmGH1XhEohM2E6iWubStX23LuWhlhVBpmoc1huSz6hkrijcQ2CgJG
+   dk+At4B5n4db7FIFOneCHXaycU9pM5AFzt7Z1fHbrUfjw77I1fVTJnoLP
+   903mD0n5PKxwV+i/nUyu+41EkWxvyoiJQPFXy8yo+dNcD8jHv6+zl7QdQ
+   BPhlwiYNQgtMJT9h7gh3v5+W1x3G9BVJ9u17iVBGPNRLAxdaOI7yAhihq
+   w==;
+X-CSE-ConnectionGUID: 2YXvghDmSoqquCgE6JsM3w==
+X-CSE-MsgGUID: cj+oVxyVT1+GbqbXE5oYbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11160"; a="38970879"
+X-IronPort-AV: E=Sophos;i="6.09,279,1716274800"; 
+   d="scan'208";a="38970879"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2024 07:18:25 -0700
+X-CSE-ConnectionGUID: Bos9gpV2RH63M8zVe05Shw==
+X-CSE-MsgGUID: JRDocl7kRe+F6zg6t0RPvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,279,1716274800"; 
+   d="scan'208";a="95355829"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 10 Aug 2024 07:18:23 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1scmvE-000A0H-34;
+	Sat, 10 Aug 2024 14:18:20 +0000
+Date: Sat, 10 Aug 2024 22:17:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: [viro-vfs:work.fd 3/39] fs/open.c:1654:1: error: expected
+ declaration or statement at end of input
+Message-ID: <202408102227.Zok7P1xp-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1sclEM-00GlCe-80;;;mid=<87ttfs1s03.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/rrQC2FQR/9/Kgl9SrfSvI8sFe1P4ilOg=
-X-SA-Exim-Connect-IP: 68.227.165.127
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: 
-X-Spam-Virus: No
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Brian Mak <makb@juniper.net>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 509 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 3.9 (0.8%), b_tie_ro: 2.6 (0.5%), parse: 1.02
-	(0.2%), extract_message_metadata: 15 (3.0%), get_uri_detail_list: 2.3
-	(0.5%), tests_pri_-2000: 13 (2.6%), tests_pri_-1000: 2.0 (0.4%),
-	tests_pri_-950: 1.04 (0.2%), tests_pri_-900: 0.79 (0.2%),
-	tests_pri_-90: 158 (31.1%), check_bayes: 144 (28.2%), b_tokenize: 7
-	(1.4%), b_tok_get_all: 43 (8.5%), b_comp_prob: 2.2 (0.4%),
-	b_tok_touch_all: 88 (17.2%), b_finish: 0.73 (0.1%), tests_pri_0: 303
-	(59.5%), check_dkim_signature: 0.42 (0.1%), check_dkim_adsp: 6 (1.2%),
-	poll_dns_idle: 0.84 (0.2%), tests_pri_10: 1.72 (0.3%), tests_pri_500:
-	6 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Brian Mak <makb@juniper.net> writes:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.fd
+head:   9d58a36411c167b4126de90e5fe844270b858082
+commit: f3270beef0d85432783be702bb9509879415e747 [3/39] struct fd: representation change
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240810/202408102227.Zok7P1xp-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240810/202408102227.Zok7P1xp-lkp@intel.com/reproduce)
 
-> Large cores may be truncated in some scenarios, such as with daemons
-> with stop timeouts that are not large enough or lack of disk space. This
-> impacts debuggability with large core dumps since critical information
-> necessary to form a usable backtrace, such as stacks and shared library
-> information, are omitted.
->
-> We attempted to figure out which VMAs are needed to create a useful
-> backtrace, and it turned out to be a non-trivial problem. Instead, we
-> try simply sorting the VMAs by size, which has the intended effect.
->
-> By sorting VMAs by dump size and dumping in that order, we have a
-> simple, yet effective heuristic.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408102227.Zok7P1xp-lkp@intel.com/
 
-To make finding the history easier I would include:
-v1: https://lkml.kernel.org/r/CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net
-v2: https://lkml.kernel.org/r/C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net
+All errors (new ones prefixed by >>):
 
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+   In file included from fs/open.c:10:
+   include/linux/file.h: In function 'fdput':
+   include/linux/file.h:60:34: error: expected ')' before ';' token
+      60 |                 fput(fd_file(fd));
+         |                     ~            ^
+         |                                  )
+   include/linux/file.h:60:35: error: expected ';' before '}' token
+      60 |                 fput(fd_file(fd));
+         |                                   ^
+         |                                   ;
+      61 | }
+         | ~                                  
+   include/linux/file.h: In function 'fdput_pos':
+   include/linux/file.h:94:43: error: expected ')' before ';' token
+      94 |                 __f_unlock_pos(fd_file(f));
+         |                               ~           ^
+         |                                           )
+   include/linux/file.h:95:18: error: expected ';' before '}' token
+      95 |         fdput(f);
+         |                  ^
+         |                  ;
+      96 | }
+         | ~                 
+   fs/open.c: In function 'do_sys_ftruncate':
+   fs/open.c:196:25: error: expected ')' before 'return'
+     196 |         if (!fd_file(f))
+         |            ~            ^
+         |                         )
+     197 |                 return -EBADF;
+         |                 ~~~~~~   
+   fs/open.c:196:9: note: '-Wmisleading-indentation' is disabled from this point onwards, since column-tracking was disabled due to the size of the code/headers
+     196 |         if (!fd_file(f))
+         |         ^~
+   fs/open.c:196:9: note: adding '-flarge-source-files' will allow for more column-tracking support, at the expense of compilation time and memory
+>> fs/open.c:1654:1: error: expected declaration or statement at end of input
+    1654 | EXPORT_SYMBOL(stream_open);
+         | ^~~~~~~~~~~~~
+   fs/open.c:191:13: warning: unused variable 'error' [-Wunused-variable]
+     191 |         int error;
+         |             ^~~~~
+   fs/open.c:1655: warning: control reaches end of non-void function [-Wreturn-type]
+--
+   In file included from fs/read_write.c:12:
+   include/linux/file.h: In function 'fdput':
+   include/linux/file.h:60:34: error: expected ')' before ';' token
+      60 |                 fput(fd_file(fd));
+         |                     ~            ^
+         |                                  )
+   include/linux/file.h:60:35: error: expected ';' before '}' token
+      60 |                 fput(fd_file(fd));
+         |                                   ^
+         |                                   ;
+      61 | }
+         | ~                                  
+   include/linux/file.h: In function 'fdput_pos':
+   include/linux/file.h:94:43: error: expected ')' before ';' token
+      94 |                 __f_unlock_pos(fd_file(f));
+         |                               ~           ^
+         |                                           )
+   include/linux/file.h:95:18: error: expected ';' before '}' token
+      95 |         fdput(f);
+         |                  ^
+         |                  ;
+      96 | }
+         | ~                 
+   fs/read_write.c: In function 'ksys_lseek':
+   fs/read_write.c:297:25: error: expected ')' before 'return'
+     297 |         if (!fd_file(f))
+         |            ~            ^
+         |                         )
+     298 |                 return -EBADF;
+         |                 ~~~~~~   
+   fs/read_write.c:297:9: note: '-Wmisleading-indentation' is disabled from this point onwards, since column-tracking was disabled due to the size of the code/headers
+     297 |         if (!fd_file(f))
+         |         ^~
+   fs/read_write.c:297:9: note: adding '-flarge-source-files' will allow for more column-tracking support, at the expense of compilation time and memory
+>> fs/read_write.c:1754:1: error: expected declaration or statement at end of input
+    1754 | }
+         | ^
+   fs/read_write.c:295:15: warning: unused variable 'retval' [-Wunused-variable]
+     295 |         off_t retval;
+         |               ^~~~~~
+   fs/read_write.c:1754:1: warning: no return statement in function returning non-void [-Wreturn-type]
+    1754 | }
+         | ^
+   fs/read_write.c: At top level:
+   fs/read_write.c:293:14: warning: 'ksys_lseek' defined but not used [-Wunused-function]
+     293 | static off_t ksys_lseek(unsigned int fd, off_t offset, unsigned int whence)
+         |              ^~~~~~~~~~
+--
+   In file included from include/linux/blkdev.h:27,
+                    from fs/stat.c:8:
+   include/linux/file.h: In function 'fdput':
+   include/linux/file.h:60:34: error: expected ')' before ';' token
+      60 |                 fput(fd_file(fd));
+         |                     ~            ^
+         |                                  )
+   include/linux/file.h:60:35: error: expected ';' before '}' token
+      60 |                 fput(fd_file(fd));
+         |                                   ^
+         |                                   ;
+      61 | }
+         | ~                                  
+   include/linux/file.h: In function 'fdput_pos':
+   include/linux/file.h:94:43: error: expected ')' before ';' token
+      94 |                 __f_unlock_pos(fd_file(f));
+         |                               ~           ^
+         |                                           )
+   include/linux/file.h:95:18: error: expected ';' before '}' token
+      95 |         fdput(f);
+         |                  ^
+         |                  ;
+      96 | }
+         | ~                 
+   fs/stat.c: In function 'vfs_fstat':
+   fs/stat.c:227:25: error: expected ')' before 'return'
+     227 |         if (!fd_file(f))
+         |            ~            ^
+         |                         )
+     228 |                 return -EBADF;
+         |                 ~~~~~~   
+   fs/stat.c:227:9: note: '-Wmisleading-indentation' is disabled from this point onwards, since column-tracking was disabled due to the size of the code/headers
+     227 |         if (!fd_file(f))
+         |         ^~
+   fs/stat.c:227:9: note: adding '-flarge-source-files' will allow for more column-tracking support, at the expense of compilation time and memory
+>> fs/stat.c:952:1: error: expected declaration or statement at end of input
+     952 | EXPORT_SYMBOL(inode_set_bytes);
+         | ^~~~~~~~~~~~~
+   fs/stat.c:224:13: warning: unused variable 'error' [-Wunused-variable]
+     224 |         int error;
+         |             ^~~~~
+   fs/stat.c:953: warning: control reaches end of non-void function [-Wreturn-type]
+--
+   In file included from include/linux/kernel_read_file.h:5,
+                    from include/linux/security.h:26,
+                    from fs/namei.c:29:
+   include/linux/file.h: In function 'fdput':
+   include/linux/file.h:60:34: error: expected ')' before ';' token
+      60 |                 fput(fd_file(fd));
+         |                     ~            ^
+         |                                  )
+   include/linux/file.h:60:35: error: expected ';' before '}' token
+      60 |                 fput(fd_file(fd));
+         |                                   ^
+         |                                   ;
+      61 | }
+         | ~                                  
+   include/linux/file.h: In function 'fdput_pos':
+   include/linux/file.h:94:43: error: expected ')' before ';' token
+      94 |                 __f_unlock_pos(fd_file(f));
+         |                               ~           ^
+         |                                           )
+   include/linux/file.h:95:18: error: expected ';' before '}' token
+      95 |         fdput(f);
+         |                  ^
+         |                  ;
+      96 | }
+         | ~                 
+   fs/namei.c: In function 'path_init':
+   fs/namei.c:2495:33: error: expected ')' before 'return'
+    2495 |                 if (!fd_file(f))
+         |                    ~            ^
+         |                                 )
+    2496 |                         return ERR_PTR(-EBADF);
+         |                         ~~~~~~   
+   fs/namei.c:2495:17: note: '-Wmisleading-indentation' is disabled from this point onwards, since column-tracking was disabled due to the size of the code/headers
+    2495 |                 if (!fd_file(f))
+         |                 ^~
+   fs/namei.c:2495:17: note: adding '-flarge-source-files' will allow for more column-tracking support, at the expense of compilation time and memory
+>> fs/namei.c:5340:1: error: expected declaration or statement at end of input
+    5340 | EXPORT_SYMBOL(page_symlink_inode_operations);
+         | ^~~~~~~~~~~~~
+   fs/namei.c:2493:32: warning: unused variable 'dentry' [-Wunused-variable]
+    2493 |                 struct dentry *dentry;
+         |                                ^~~~~~
+>> fs/namei.c:5340:1: error: expected declaration or statement at end of input
+    5340 | EXPORT_SYMBOL(page_symlink_inode_operations);
+         | ^~~~~~~~~~~~~
+   fs/namei.c: At top level:
+   fs/namei.c:2425:20: warning: 'path_init' defined but not used [-Wunused-function]
+    2425 | static const char *path_init(struct nameidata *nd, unsigned flags)
+         |                    ^~~~~~~~~
+   fs/namei.c:2329:12: warning: 'link_path_walk' defined but not used [-Wunused-function]
+    2329 | static int link_path_walk(const char *name, struct nameidata *nd)
+         |            ^~~~~~~~~~~~~~
+   fs/namei.c:1243:12: warning: 'may_create_in_sticky' defined but not used [-Wunused-function]
+    1243 | static int may_create_in_sticky(struct mnt_idmap *idmap, struct nameidata *nd,
+         |            ^~~~~~~~~~~~~~~~~~~~
+   fs/namei.c:883:12: warning: 'complete_walk' defined but not used [-Wunused-function]
+     883 | static int complete_walk(struct nameidata *nd)
+         |            ^~~~~~~~~~~~~
+   fs/namei.c:687:13: warning: 'terminate_walk' defined but not used [-Wunused-function]
+     687 | static void terminate_walk(struct nameidata *nd)
+         |             ^~~~~~~~~~~~~~
+   fs/namei.c:627:13: warning: 'restore_nameidata' defined but not used [-Wunused-function]
+     627 | static void restore_nameidata(void)
+         |             ^~~~~~~~~~~~~~~~~
+--
+   In file included from include/linux/kernel_read_file.h:5,
+                    from include/linux/security.h:26,
+                    from include/linux/perf_event.h:62,
+                    from include/linux/trace_events.h:10,
+                    from include/trace/syscall.h:7,
+                    from include/linux/syscalls.h:93,
+                    from fs/fcntl.c:8:
+   include/linux/file.h: In function 'fdput':
+   include/linux/file.h:60:34: error: expected ')' before ';' token
+      60 |                 fput(fd_file(fd));
+         |                     ~            ^
+         |                                  )
+   include/linux/file.h:60:35: error: expected ';' before '}' token
+      60 |                 fput(fd_file(fd));
+         |                                   ^
+         |                                   ;
+      61 | }
+         | ~                                  
+   include/linux/file.h: In function 'fdput_pos':
+   include/linux/file.h:94:43: error: expected ')' before ';' token
+      94 |                 __f_unlock_pos(fd_file(f));
+         |                               ~           ^
+         |                                           )
+   include/linux/file.h:95:18: error: expected ';' before '}' token
+      95 |         fdput(f);
+         |                  ^
+         |                  ;
+      96 | }
+         | ~                 
+   fs/fcntl.c: In function 'f_dupfd_query':
+   fs/fcntl.c:343:34: error: expected ')' before ';' token
+     343 |         return fd_file(f) == filp;
+         |                                  ^
+         |                                  )
+   include/linux/file.h:49:20: note: to match this '('
+      49 | #define fd_file(f) ((struct file *)((f).word & ~(FDPUT_FPUT|FDPUT_POS_UNLOCK))
+         |                    ^
+   fs/fcntl.c:343:16: note: in expansion of macro 'fd_file'
+     343 |         return fd_file(f) == filp;
+         |                ^~~~~~~
+   fs/fcntl.c:343:35: error: expected ';' before '}' token
+     343 |         return fd_file(f) == filp;
+         |                                   ^
+         |                                   ;
+     344 | }
+         | ~                                  
+   fs/fcntl.c: In function '__do_sys_fcntl':
+   fs/fcntl.c:482:25: error: expected ')' before 'goto'
+     482 |         if (!fd_file(f))
+         |            ~            ^
+         |                         )
+     483 |                 goto out;
+         |                 ~~~~     
+   fs/fcntl.c:482:9: note: '-Wmisleading-indentation' is disabled from this point onwards, since column-tracking was disabled due to the size of the code/headers
+     482 |         if (!fd_file(f))
+         |         ^~
+   fs/fcntl.c:482:9: note: adding '-flarge-source-files' will allow for more column-tracking support, at the expense of compilation time and memory
+>> fs/fcntl.c:1073:1: error: expected declaration or statement at end of input
+    1073 | module_init(fcntl_init)
+         | ^~~~~~~~~~~
+   fs/fcntl.c:480:14: warning: unused variable 'err' [-Wunused-variable]
+     480 |         long err = -EBADF;
+         |              ^~~
+   fs/fcntl.c:1073:1: warning: no return statement in function returning non-void [-Wreturn-type]
+    1073 | module_init(fcntl_init)
+         | ^~~~~~~~~~~
+   fs/fcntl.c: At top level:
+   fs/fcntl.c:463:12: warning: 'check_fcntl_cmd' defined but not used [-Wunused-function]
+     463 | static int check_fcntl_cmd(unsigned cmd)
+         |            ^~~~~~~~~~~~~~~
+   fs/fcntl.c:346:13: warning: 'do_fcntl' defined but not used [-Wunused-function]
+     346 | static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+         |             ^~~~~~~~
+--
+   In file included from include/linux/kernel_read_file.h:5,
+                    from include/linux/security.h:26,
+                    from include/linux/perf_event.h:62,
+                    from include/linux/trace_events.h:10,
+                    from include/trace/syscall.h:7,
+                    from include/linux/syscalls.h:93,
+                    from fs/ioctl.c:8:
+   include/linux/file.h: In function 'fdput':
+   include/linux/file.h:60:34: error: expected ')' before ';' token
+      60 |                 fput(fd_file(fd));
+         |                     ~            ^
+         |                                  )
+   include/linux/file.h:60:35: error: expected ';' before '}' token
+      60 |                 fput(fd_file(fd));
+         |                                   ^
+         |                                   ;
+      61 | }
+         | ~                                  
+   include/linux/file.h: In function 'fdput_pos':
+   include/linux/file.h:94:43: error: expected ')' before ';' token
+      94 |                 __f_unlock_pos(fd_file(f));
+         |                               ~           ^
+         |                                           )
+   include/linux/file.h:95:18: error: expected ';' before '}' token
+      95 |         fdput(f);
+         |                  ^
+         |                  ;
+      96 | }
+         | ~                 
+   fs/ioctl.c: In function 'ioctl_file_clone':
+   fs/ioctl.c:238:32: error: expected ')' before 'return'
+     238 |         if (!fd_file(src_file))
+         |            ~                   ^
+         |                                )
+     239 |                 return -EBADF;
+         |                 ~~~~~~          
+   fs/ioctl.c:238:9: note: '-Wmisleading-indentation' is disabled from this point onwards, since column-tracking was disabled due to the size of the code/headers
+     238 |         if (!fd_file(src_file))
+         |         ^~
+   fs/ioctl.c:238:9: note: adding '-flarge-source-files' will allow for more column-tracking support, at the expense of compilation time and memory
+>> fs/ioctl.c:912:1: error: expected declaration or statement at end of input
+     912 | }
+         | ^
+   fs/ioctl.c:236:13: warning: unused variable 'ret' [-Wunused-variable]
+     236 |         int ret;
+         |             ^~~
+   fs/ioctl.c:235:16: warning: unused variable 'cloned' [-Wunused-variable]
+     235 |         loff_t cloned;
+         |                ^~~~~~
+   fs/ioctl.c:912:1: warning: no return statement in function returning non-void [-Wreturn-type]
+     912 | }
+         | ^
+   fs/ioctl.c: At top level:
+   fs/ioctl.c:231:13: warning: 'ioctl_file_clone' defined but not used [-Wunused-function]
+     231 | static long ioctl_file_clone(struct file *dst_file, unsigned long srcfd,
+         |             ^~~~~~~~~~~~~~~~
+   fs/ioctl.c:200:12: warning: 'ioctl_fiemap' defined but not used [-Wunused-function]
+     200 | static int ioctl_fiemap(struct file *filp, struct fiemap __user *ufiemap)
+         |            ^~~~~~~~~~~~
+   fs/ioctl.c:59:12: warning: 'ioctl_fibmap' defined but not used [-Wunused-function]
+      59 | static int ioctl_fibmap(struct file *filp, int __user *p)
+         |            ^~~~~~~~~~~~
+..
 
-As Kees has already picked this up this is quite possibly silly.
-But *shrug* that was when I was out.
 
+vim +1654 fs/open.c
 
-> Signed-off-by: Brian Mak <makb@juniper.net>
-> ---
->
-> Hi all,
->
-> Still need to run rr tests on this, per Kees Cook's suggestion, will
-> update back once done. GDB and readelf show that this patch works
-> without issue though.
->
-> Thanks,
-> Brian Mak
->
-> v3: Edited commit message to better convey alternative solution as
->     non-trivial
->
->     Moved sorting logic to fs/coredump.c to make it in place
->
->     Above edits suggested by Eric Biederman <ebiederm@xmission.com>
->
-> v2: Edited commit message to include more reasoning for sorting VMAs
->     
->     Removed conditional VMA sorting with debugfs knob
->     
->     Above edits suggested by Eric Biederman <ebiederm@xmission.com>
->
->  fs/coredump.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index 7f12ff6ad1d3..33c5ac53ab31 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -18,6 +18,7 @@
->  #include <linux/personality.h>
->  #include <linux/binfmts.h>
->  #include <linux/coredump.h>
-> +#include <linux/sort.h>
->  #include <linux/sched/coredump.h>
->  #include <linux/sched/signal.h>
->  #include <linux/sched/task_stack.h>
-> @@ -1191,6 +1192,18 @@ static void free_vma_snapshot(struct coredump_params *cprm)
->  	}
->  }
->  
-> +static int cmp_vma_size(const void *vma_meta_lhs_ptr, const void *vma_meta_rhs_ptr)
-> +{
-> +	const struct core_vma_metadata *vma_meta_lhs = vma_meta_lhs_ptr;
-> +	const struct core_vma_metadata *vma_meta_rhs = vma_meta_rhs_ptr;
-> +
-> +	if (vma_meta_lhs->dump_size < vma_meta_rhs->dump_size)
-> +		return -1;
-> +	if (vma_meta_lhs->dump_size > vma_meta_rhs->dump_size)
-> +		return 1;
-> +	return 0;
-> +}
-> +
->  /*
->   * Under the mmap_lock, take a snapshot of relevant information about the task's
->   * VMAs.
-> @@ -1253,5 +1266,8 @@ static bool dump_vma_snapshot(struct coredump_params *cprm)
->  		cprm->vma_data_size += m->dump_size;
->  	}
->  
-> +	sort(cprm->vma_meta, cprm->vma_count, sizeof(*cprm->vma_meta),
-> +		cmp_vma_size, NULL);
-> +
->  	return true;
->  }
->
-> base-commit: eb5e56d1491297e0881c95824e2050b7c205f0d4
+10dce8af34226d Kirill Smelkov 2019-03-26  1653  
+10dce8af34226d Kirill Smelkov 2019-03-26 @1654  EXPORT_SYMBOL(stream_open);
+
+:::::: The code at line 1654 was first introduced by commit
+:::::: 10dce8af34226d90fa56746a934f8da5dcdba3df fs: stream_open - opener for stream-like files so that read and write can run simultaneously without deadlock
+
+:::::: TO: Kirill Smelkov <kirr@nexedi.com>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
