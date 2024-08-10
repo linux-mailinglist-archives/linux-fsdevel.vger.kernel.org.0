@@ -1,172 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-25587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C889A94DAFD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 07:56:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82A094DB20
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 08:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CFDC28292E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 05:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36C21C20A96
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 06:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFE647F46;
-	Sat, 10 Aug 2024 05:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC0814A4F1;
+	Sat, 10 Aug 2024 06:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bitron.ch header.i=@bitron.ch header.b="I9mMPaOM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOh1NUBr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from nov-007-i651.relay.mailchannels.net (nov-007-i651.relay.mailchannels.net [46.232.183.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4943D0A9
-	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Aug 2024 05:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.183.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD191BC2F;
+	Sat, 10 Aug 2024 06:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723269397; cv=none; b=nNTzwnbiykRnAzcG9IB3PDNKq2U+GoT+h3X5HK0QK8/yEFvCZoKjE5KegNwkHEOqxjkSE7d82Nm4oloawUtchdCZuMZ/3LiBIZsLTK0seWbdqDrhyWV8oAGliTp0r/g0EtQQfnNzetE5A2D1TsM79z/OkSocZm7T8lIGUEmX0VE=
+	t=1723272489; cv=none; b=HJ742PmjzimuP26kRQAgG0Nm1YJRv0lcHq8kh0gRbgxF6KRioA1msnP7niJz1Y3IDc5+WQZZduWuffV7k0dNpAxUI490M5lML2sC/svOadzuDrRJe20TYmSEMU8R/IgdTLt+ouTPR4TOBy7P3BnD0Coej5W/cOpNzpJYC3gLWcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723269397; c=relaxed/simple;
-	bh=VxgaU1LK9xtJ0JbcMhju+WzSssGxxFYTn5cSdpfNky4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M0nQnP2deBWCbFbSzsBf13r1qwCE6Qz+xPFWbMYPunHq9jyuV952+uN4Wholb9j4tZ+aQvW8SGWQcUmTaoQxEJ5UhmnkTQk0md+CgtjyNPcWr9+sZX/zoF2yXlFSgyzHhrK19HWwIKEyCUXT67kS+Bf2l2F/qIbeoIk+zwBxvig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch; spf=pass smtp.mailfrom=bitron.ch; dkim=pass (2048-bit key) header.d=bitron.ch header.i=@bitron.ch header.b=I9mMPaOM; arc=none smtp.client-ip=46.232.183.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitron.ch
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id D4D3B7E000F;
-	Sat, 10 Aug 2024 05:56:29 +0000 (UTC)
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
-X-MailChannels-Auth-Id: novatrend
-X-Tank-Obese: 75ea7ae33ffd7d1e_1723269389321_906078804
-X-MC-Loop-Signature: 1723269389321:2065153395
-X-MC-Ingress-Time: 1723269389321
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitron.ch;
-	s=default; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=J2Iw9kGo2ORryaAUGaJlxOEenGCMX0xfNB34sdFoAFw=; b=I9mMPaOMJRF9Z5P4uUgy+xLgpW
-	dVamQ+XssGgUm6GVdf/UWQfQr8c16bXrDfcKlNkgZdfFUt0LKyTZEOsq5Ua4OD8qayaXd5X1Uc1uy
-	YE7OD6S4tdVAIg1/VjmBs8aWDWhoejAADzL8758Se21DOlYLYrkjaO2J/cYPf7cWv8egFV9Zx+w/9
-	gWkWjnDYtxciYU2juHc//H/IMe89Pcex8AlrbAS+0TCMEs+yuCWBY6UhFWlcS1lF4c7lxg+NFAEp8
-	3OUNXqyEOLwVmK6w0Hh96x8EMsJ2loLtmzJym6JUCO4ihUESCTvo+19WZxNirbYPkc0JY6Wq7H8br
-	Hf5CwTwg==;
-Message-ID: <5b54cb7e5bfdd5439c3a431d4f86ad20c9b22e76.camel@bitron.ch>
-Subject: Re: [REGRESSION] fuse: copy_file_range() fails with EIO
-From: =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	regressions@lists.linux.dev
-Date: Sat, 10 Aug 2024 07:56:21 +0200
-In-Reply-To: <ZrY97Pq9xM-fFhU2@casper.infradead.org>
-References: <792a3f54b1d528c2b056ae3c4ebaefe46bca8ef9.camel@bitron.ch>
-	 <ZrY97Pq9xM-fFhU2@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1723272489; c=relaxed/simple;
+	bh=2aBKsvw/7eAmcVMx4np8T+QpRUtZjEaVBMKXT90GpqE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VlFtT//KJY34GzQqhHOtkKiQah/Sc2Bx18uIm54W2qgyijkuXyxvJPluIT+1gFEOqK6zIH/b7V85U/vwiMPbdJZ3Bg6PSwppnZtypiU0A8yxLGXmedjpa5bDaMEQZsG5NWQ3SCSo43S5xlcwg/7GI2Y8OCEwL1zE4jZDL9IdjMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOh1NUBr; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f025ab3a7so3474487e87.2;
+        Fri, 09 Aug 2024 23:48:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723272485; x=1723877285; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YGVwGkYoOW2hmbgHFaX2pCkcnciPQPU19yUSzm3vxW0=;
+        b=QOh1NUBroyCKWUy7QB6e4R5jWFRBqgjf3lw1ifWUPtX2wX/w66JmONUd5IGvVjS50/
+         fGpF8kVnYJMAwgwCFH/6TfhmhUTB/7NqKPU8lwo8XuljgfBPbwSJRyJHGPh6mI/O0jX5
+         htOh5agIjaDVd9AL31gXREZ4f6//vBjhP+wKSi+3I4sHl81/rzXS1V2ugejSuznI4Dnc
+         cCTT31Zc8PSNoh6Uckq3hvxTopXTUcJAsAe9WAMVKWzE5jPndMmPH3iiITasy01C+PZA
+         +zPc2MyAx5xcSJd1apcxC7AGIt/mI/7EIz6e7aSdHtQXGB8NWyj1OGJmoQUALROfHmMt
+         5cgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723272485; x=1723877285;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YGVwGkYoOW2hmbgHFaX2pCkcnciPQPU19yUSzm3vxW0=;
+        b=jtJkZEFcIXLhR1s/ASVWE4bNLHHl4m5xtIRXxaQNgtZOczuZF0RgsO4aDYHmB3U+bF
+         sSG+cFn43/VOq17rReFyReaAiHIIDv6JvkuEwQfpWdmhDmdZ3gIc9PqKzcClPiCPyTGc
+         6eWh/LUkXXRVFuoBOQHCfAKRuEVLTLlcca0CM4mpr7LV3VcsfZmnOhkHlN9VGMmkcryA
+         /IW2b+aIJS7Jf6EzIe31EvReaEuWEQkTku7Jjsas6LtYMwBOHwkIrfuECXSDyHR8Xnd/
+         VU7qJDC89j/cl7MbQ4szjT1ChyF+oy+TKAHfJb9Xe+DMv0jAcxI20k4YJckRg6xyFefZ
+         21bw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5/aaCi/FlvR3AWlifHWXswbmrWbxLbyWNEBm0CSGMR5YwwGceqBF85EjvAiZ6jnZJx96gBcAfHu7zTdqR0H0u7qZlSEUAekjZHhU5tKcnlopqi0VKL44MYtmq8E6YzJPMownM3DKsAzDUPw==
+X-Gm-Message-State: AOJu0YwZSiW1LmHXok0L8jaVQGVzgZj7l4o/xZ8XkGuej1wQPhh9yq6g
+	VCtMhfSVuP+PQi5QEEKb1ExsbjyDX0Ol940apsYZX8nF2qhXDMc3
+X-Google-Smtp-Source: AGHT+IFhi/0+AjXCkvuFQ3UeKIULxACot3KpIrraSIu/4sbNCJJripap19DqStSqeLQq8SyBgPFLpg==
+X-Received: by 2002:a05:6512:318c:b0:52c:8a12:3d3b with SMTP id 2adb3069b0e04-530eea064b6mr2381380e87.56.1723272485007;
+        Fri, 09 Aug 2024 23:48:05 -0700 (PDT)
+Received: from f.. (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd191a1ffesm374776a12.38.2024.08.09.23.48.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 23:48:04 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>
+Subject: [PATCH v2] vfs: only read fops once in fops_get/put
+Date: Sat, 10 Aug 2024 08:47:53 +0200
+Message-ID: <20240810064753.1211441-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AuthUser: juerg@bitron.ch
+Content-Transfer-Encoding: 8bit
 
-Hi Matthew,
+In do_dentry_open() the usage is:
+	f->f_op = fops_get(inode->i_fop);
 
-Thanks for the quick response.
+In generated asm the compiler emits 2 reads from inode->i_fop instead of
+just one.
 
-On Fri, 2024-08-09 at 17:03 +0100, Matthew Wilcox wrote:
-> Do you have CONFIG_DEBUG_VM enabled?=C2=A0 There are some debugging asser=
-ts
-> which that will enable that might indicate a problem.
+This popped up due to false-sharing where loads from that offset end up
+bouncing a cacheline during parallel open. While this is going to be fixed,
+the spurious load does not need to be there.
 
-With CONFIG_DEBUG_VM enabled, I get:
+This makes do_dentry_open() go down from 1177 to 1154 bytes.
 
-page: refcount:2 mapcount:0 mapping:00000000b2c30835 index:0x0 pfn:0x12a113
-memcg:ffff9d8e3a660800
-aops:0xffffffff8a056820 ino:21 dentry name:"bash"
-flags: 0x24000000000022d(locked|referenced|uptodate|lru|workingset|node=3D0=
-|zone=3D2)
-raw: 024000000000022d ffffd9ce04a827c8 ffffd9ce04a84508 ffff9d8e0bbc99f0
-raw: 0000000000000000 0000000000000000 00000002ffffffff ffff9d8e3a660800
-page dumped because: VM_BUG_ON_FOLIO(folio_test_uptodate(folio))
-------------[ cut here ]------------
-kernel BUG at mm/filemap.c:1534!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-CPU: 0 UID: 1000 PID: 1638 Comm: buildbox-fuse Not tainted 6.11.0-rc2+ #26
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-RIP: 0010:folio_end_read+0xa2/0xb0
-Code: 37 8a e8 21 1b 05 00 0f 0b 48 c7 c6 48 7f 39 8a e8 13 1b 05 00 0f 0b =
-31 f6 e9 7a f9 ff ff 48 c7 c6 a8 7f 39 8a e8 fe 1a 05 00 <0f> 0b 90 66 66 2=
-e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90
-RSP: 0018:ffffaa0ec289fc68 EFLAGS: 00010246
-RAX: 0000000000000040 RBX: ffffd9ce04a844c0 RCX: 0000000000000027
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9d8f77c1c8c0
-RBP: ffff9d8e07298a38 R08: 00000000ffffefff R09: ffffffff8a6b0d68
-R10: 0000000000000003 R11: 0000000000000002 R12: 0000000000000000
-R13: 0000000000000001 R14: ffff9d8e305ba098 R15: 0000000000000000
-FS:  00007f83d62b4140(0000) GS:ffff9d8f77c00000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000564ef5598078 CR3: 00000001013be000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- ? __die+0x56/0x97
- ? die+0x2e/0x50
- ? do_trap+0x10a/0x110
- ? do_error_trap+0x65/0x80
- ? folio_end_read+0xa2/0xb0
- ? exc_invalid_op+0x50/0x70
- ? folio_end_read+0xa2/0xb0
- ? asm_exc_invalid_op+0x1a/0x20
- ? folio_end_read+0xa2/0xb0
- ? folio_end_read+0xa2/0xb0
- fuse_readpages_end+0xc3/0x150
- fuse_request_end+0x84/0x170
- fuse_dev_do_write+0x24d/0x1050
- ? __kmalloc_node_noprof+0x25e/0x480
- ? fuse_dev_splice_write+0x9d/0x390
- fuse_dev_splice_write+0x2b0/0x390
- do_splice+0x311/0x8b0
- __do_splice+0x204/0x220
- __x64_sys_splice+0xb2/0x120
- do_syscall_64+0x54/0x140
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x7f83d5f29a03
-Code: 64 89 02 b8 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 =
-80 3d 29 48 0d 00 00 49 89 ca 74 14 b8 13 01 00 00 0f 05 <48> 3d 00 f0 ff f=
-f 77 75 c3 0f 1f 40 00 55 48 83 ec 30 44 89 4c 24
-RSP: 002b:00007fff2c0b8ce8 EFLAGS: 00000202 ORIG_RAX: 0000000000000113
-RAX: ffffffffffffffda RBX: 00007fff2c0b8eb0 RCX: 00007f83d5f29a03
-RDX: 0000000000000105 RSI: 0000000000000000 RDI: 0000000000000106
-RBP: 0000564ef555a4f0 R08: 0000000000004010 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000202 R12: 00007fff2c0b8e20
-R13: 0000000000000001 R14: 00000000000000fb R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:folio_end_read+0xa2/0xb0
-Code: 37 8a e8 21 1b 05 00 0f 0b 48 c7 c6 48 7f 39 8a e8 13 1b 05 00 0f 0b =
-31 f6 e9 7a f9 ff ff 48 c7 c6 a8 7f 39 8a e8 fe 1a 05 00 <0f> 0b 90 66 66 2=
-e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90
-RSP: 0018:ffffaa0ec289fc68 EFLAGS: 00010246
-RAX: 0000000000000040 RBX: ffffd9ce04a844c0 RCX: 0000000000000027
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9d8f77c1c8c0
-RBP: ffff9d8e07298a38 R08: 00000000ffffefff R09: ffffffff8a6b0d68
-R10: 0000000000000003 R11: 0000000000000002 R12: 0000000000000000
-R13: 0000000000000001 R14: ffff9d8e305ba098 R15: 0000000000000000
-FS:  00007f83d62b4140(0000) GS:ffff9d8f77c00000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000564ef5598078 CR3: 00000001013be000 CR4: 0000000000350ef0
-Kernel panic - not syncing: Fatal exception
-Kernel Offset: 0x8000000 from 0xffffffff81000000 (relocation range: 0xfffff=
-fff80000000-0xffffffffbfffffff)
+fops_put() is patched to maintain some consistency.
 
-Cheers,
-J=C3=BCrg
+No functional changes.
+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+This is the same as v1 except for the commit message, which on second
+look might have failed to convey what's up.
+
+That said please replace the patch, thanks and sorry for the churn :)
+
+ include/linux/fs.h | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ef5ada9d5e33..87d191798454 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2565,10 +2565,17 @@ struct super_block *sget(struct file_system_type *type,
+ struct super_block *sget_dev(struct fs_context *fc, dev_t dev);
+ 
+ /* Alas, no aliases. Too much hassle with bringing module.h everywhere */
+-#define fops_get(fops) \
+-	(((fops) && try_module_get((fops)->owner) ? (fops) : NULL))
+-#define fops_put(fops) \
+-	do { if (fops) module_put((fops)->owner); } while(0)
++#define fops_get(fops) ({						\
++	const struct file_operations *_fops = (fops);			\
++	(((_fops) && try_module_get((_fops)->owner) ? (_fops) : NULL));	\
++})
++
++#define fops_put(fops) ({						\
++	const struct file_operations *_fops = (fops);			\
++	if (_fops)							\
++		module_put((_fops)->owner);				\
++})
++
+ /*
+  * This one is to be used *ONLY* from ->open() instances.
+  * fops must be non-NULL, pinned down *and* module dependencies
+-- 
+2.43.0
+
 
