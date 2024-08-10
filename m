@@ -1,181 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-25591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5246A94DC3A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 12:17:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF62194DCC4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 14:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 093E91F21E7B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 10:17:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85A921F215B8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Aug 2024 12:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DB6157472;
-	Sat, 10 Aug 2024 10:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B8F158520;
+	Sat, 10 Aug 2024 12:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YX1LFxoi"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bitron.ch header.i=@bitron.ch header.b="iPo8QfVq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from nov-007-i658.relay.mailchannels.net (nov-007-i658.relay.mailchannels.net [46.232.183.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C03814D283;
-	Sat, 10 Aug 2024 10:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42605182D8
+	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Aug 2024 12:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.183.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723285033; cv=none; b=eVmH7WJ4y5Mut9bwYrTl/WibvsRQD2yl95Lzp+PHES8BbUlJXH9FH6oKJh4GVC8/FkhSEhwyLaHHei+rS6OH3JhN8A5/jdNydpgL+rJF/Pb2iZvpGAkRcqc8HwxhA8MV3LoI6sll/uL92pk9fA0wAFUKkOlnAnyF+JDN75c2YIA=
+	t=1723293069; cv=none; b=aFvtvqPWs1JYBI0sFoQU8MJMhisMB8L35DfCV1pYSsdceGW2eoufptNTXFgf5A3C8HucNO25jg/dAaC7Gl4d6rW/KmmZIqARr2O1u+wFBpE4Ytsw3QPKLagj5FPkzsDN4AfWhPiBJz3xnSsLVSEvu8Rny0rdbkz/8ZS0R8ZaXEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723285033; c=relaxed/simple;
-	bh=0J4RB0A0mmNUZDMDMImrBJQYByqCZaDq6FuoBs5H1DU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oJRrEJ97xmh1MfIsRuwO2Q/gFA5bA1R2uyuDpR4laf2DqXWSp5Ca/enZEwq6UG6dCklZBPTiAYI/cLi72cuIPghpUCVnN6zA/rB+tweLcdqIIMpYC8OZpzUUAnBQ2cSZEk/RbKrtY9JT4ww7/DeIBLR0Di2mHYjQHD/w1/OxQF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YX1LFxoi; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a8553db90so353002966b.2;
-        Sat, 10 Aug 2024 03:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723285030; x=1723889830; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=l8nSCAz/QPE8Oq0QL5MoGe+UBHWDrszdnf2o7o2yT14=;
-        b=YX1LFxoiD9V4BjXNCZAahBKm4XtaLwh6QqiTYpc0MS11rO0lBLDBTnQqSyJBQZwbrK
-         BqK+gpUtcsQUBWqXaTuE1XO0uzSx31tKA0oGtxciIry317yszxTwLDFl0HE06CTSrgv3
-         blWNIWwT3rjq8hQZsOo4a5P7VDDX2vnRQ9K8Ok5JFSuSx3YAI7UvRESJi+gP5qWVNo5B
-         3jDZ4lmwoGUdsCj/EBNeJN2kJXJDPjNP+604PcCW33ipb+aH7wF8enNc0auXsV7gJc/q
-         OByXi10uLxG9kZIcAMxEn9a/oXA2sI5Lg8t5oLIrGqhMsaElEKL6BuWUWhqhQ+mZebRL
-         OY5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723285030; x=1723889830;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l8nSCAz/QPE8Oq0QL5MoGe+UBHWDrszdnf2o7o2yT14=;
-        b=R6NqKrY+oe6DwX19U/UNoKxl3XopzK22KxC/kBc6H6p3QPbONctRj7ZBNwbdnTSP6G
-         i6iyIL1bd20IN+J2d/ASwe+bJLbhp/YnPKCnsS0LDs977KsAbBjremQ1NcVKipRL4rBP
-         RszY4kwIv3OrTde/LxjtXlMrKlQeDBZAa4UpHVw8x91rTgvhgIm1weeSHqti4E3CXy+o
-         EVKHTNgnjBt96Fa7K8b8J94xkO2PiOlLSaS0LPX86IwgehMukwe2WLLeE+GfEVQow6bo
-         3D9QW7pgpMgxKx1zmcGBMlNDbQaIL2rcASyKM1eOKpzGq/j/uRttwHr849iN3z42yZEQ
-         nedA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSCn/WY2kmNDItxeeZyX026eebK5IufHj1owtHA5zCjBPKudF0XIGVWYqzQv+/YOoii87aQJEqw1upPu2dmy5wdcCQ8jPeM4ChNw==
-X-Gm-Message-State: AOJu0YyIEYoyUojqcO7dFjQzYsEMdNuOHyRE+609Cd111Qd07CXxkZLU
-	K1ghdBxnH1aRaV8Us70BhANXxJsUKmKGIzPlrm0fHdyHfiScRkaTEQ7DpTEDsXp1/rDcLtxCAc9
-	GKm9OvUl5CsorDtUxnjFKGAoSk4o=
-X-Google-Smtp-Source: AGHT+IHgaBqz1NZqp96W5r64buwgrcPXLs/FOkGIHsbhyMyHsQXns27Jh/tYYaQH2MfZplMaE6IgP3Aw2vGN3U43AO4=
-X-Received: by 2002:a17:907:f718:b0:a7d:e956:ad51 with SMTP id
- a640c23a62f3a-a80aa5a490bmr339468466b.21.1723285029548; Sat, 10 Aug 2024
- 03:17:09 -0700 (PDT)
+	s=arc-20240116; t=1723293069; c=relaxed/simple;
+	bh=E5I3QtUuprySi+I00V0UhUG7i9DuMS6lBdeWilqP39c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=O9c53hXOHrVPzgmhLUiDqwaj5mOToc6UfATfl6+cwL9lQJss7i9nmwb8lNwnf2nDCgDN/LAkrQMRTCDg1YD/tlvmfpYTsokuE0Ag/HLPDZKk3ZFvltH8qJQ5Cr/4KVJRNHIf5+lGmnNFKmFMDrPV6sB32QV6qwJND+8rAt8Pm28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch; spf=pass smtp.mailfrom=bitron.ch; dkim=pass (2048-bit key) header.d=bitron.ch header.i=@bitron.ch header.b=iPo8QfVq; arc=none smtp.client-ip=46.232.183.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitron.ch
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id A3E227E0066;
+	Sat, 10 Aug 2024 12:24:29 +0000 (UTC)
+X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
+X-MailChannels-Auth-Id: novatrend
+X-Company-Tart: 501d02243c178ce2_1723292668917_298374908
+X-MC-Loop-Signature: 1723292668917:1083076595
+X-MC-Ingress-Time: 1723292668917
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitron.ch;
+	s=default; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=2IQ89S6VdaRNpfBclR0snL1k6Vsm/eFQU1+7PuHzWGs=; b=iPo8QfVqFGa2H8N7Xe4Q3av0rF
+	pZ5v4LxHDNyEc6tmnXmbiSz1G5Uu4Odeq9oGyOp46OGGGeQyXUOqsMcJVC+6BEVwRB3bK3ujgHWLo
+	NaOneYvyFPeTIa6A7AuL/B966xYoujvaQ5YEw522JZurbJvwITzD/FLAN4D7QE+bPKcGF0QjNxUaq
+	5h1uxhjMylXyqeH8PXLC1iw/mUQFvVpNSpd9i7v58KEf7ATPQisbl+KHGNmWLOvNYcIADjZmWTEct
+	WqwUtROspuYz3i61TFXGZihut4W65gMGq5E/BXS7kjSExTYTSv+ArL6J4ncVKkaQKGsz3pChdvNLy
+	xUvB+9MQ==;
+Message-ID: <d0844e7465a12eef0e2998b5f44b350ee9e185be.camel@bitron.ch>
+Subject: Re: [PATCH 3/3] fuse: use folio_end_read
+From: =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
+Date: Sat, 10 Aug 2024 14:24:24 +0200
+In-Reply-To: <20240809162221.2582364-3-willy@infradead.org>
+References: <ZrY97Pq9xM-fFhU2@casper.infradead.org>
+	 <20240809162221.2582364-3-willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sat, 10 Aug 2024 12:16:57 +0200
-Message-ID: <CAGudoHFxuVQPLgrsWMoCA1NMFJxVJ7Hm+ymp_S1WM_0+iz7XPQ@mail.gmail.com>
-Subject: ext4 avoidably stalls waiting on writeback when unlinking a truncated file
-To: "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-AuthUser: juerg@bitron.ch
 
-I'm messing around with an old microbenchmark which I massaged into
-state pluggable into will-it-scale [pasted at the end]
+On Fri, 2024-08-09 at 17:22 +0100, Matthew Wilcox (Oracle) wrote:
+> part three
+>=20
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+> =C2=A0fs/fuse/file.c | 4 +---
+> =C2=A01 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 2b5533e41a62..f39456c65ed7 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -937,9 +937,7 @@ static void fuse_readpages_end(struct fuse_mount
+> *fm, struct fuse_args *args,
+> =C2=A0	for (i =3D 0; i < ap->num_pages; i++) {
+> =C2=A0		struct folio *folio =3D page_folio(ap->pages[i]);
+> =C2=A0
+> -		if (!err)
+> -			folio_mark_uptodate(folio);
+> -		folio_unlock(folio);
+> +		folio_end_read(folio, !err);
+> =C2=A0		folio_put(folio);
+> =C2=A0	}
+> =C2=A0	if (ia->ff)
 
-I verified that with btrfs and xfs the bench stays on cpu the entire time.
+Reverting this part is sufficient to fix the issue for me.
 
-In contrast, running in on top of ext4 gives me about 50% idle.
-
-According to offcputime-bpfcc -K this is why:
-   finish_task_switch.isra.0
-    __schedule
-    schedule
-    io_schedule
-    folio_wait_bit_common
-    folio_wait_writeback
-    truncate_inode_partial_folio
-    truncate_inode_pages_range
-    ext4_evict_inode
-    evict
-    do_unlinkat
-    __x64_sys_unlink
-    do_syscall_64
-    entry_SYSCALL_64_after_hwframe
-    -                vfsmix2_process (22793)
-        3913285
-
-The code reopens the file with O_TRUNC. Whacking the flag gets rid of
-the off cpu time.
-
-I have no interest in digging into it. I suspect this is an easy fix
-for someone familiar with the fs.
-
-git clone https://github.com/antonblanchard/will-it-scale.git
-
-plug the code below into tests/vfsmix2.c && gmake && ./vfsmix2_processes
-
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <assert.h>
-
-/*
- * Repurposed code stolen from Ingo Molnar, see:
- * https://lkml.org/lkml/2015/5/19/1009
- */
-
-char *testcase_description = "vfsmix";
-
-void testcase(unsigned long long *iterations, unsigned long nr)
-{
-        char tmpfile[] = "/tmp/willitscale.XXXXXX";
-        int fd = mkstemp(tmpfile);
-        assert(fd >= 0);
-        close(fd);
-        unlink(tmpfile);
-
-        while (1) {
-                fd = open(tmpfile, O_RDWR | O_CREAT | O_EXCL, 0600);
-                assert(fd >= 0);
-
-                int ret;
-
-                ret = lseek(fd, 4095, SEEK_SET);
-                assert(ret == 4095);
-
-                close(fd);
-
-                fd = open(tmpfile, O_RDWR|O_CREAT|O_TRUNC);
-                assert(fd >= 0);
-
-                {
-                        char c = 1;
-
-                        ret = write(fd, &c, 1);
-                        assert(ret == 1);
-                }
-
-                {
-                        char *mmap_buf = (char *)mmap(0, 4096,
-PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-
-                        assert(mmap_buf != (void *)-1L);
-
-                        mmap_buf[0] = 1;
-
-                        ret = munmap(mmap_buf, 4096);
-                        assert(ret == 0);
-                }
-
-                close(fd);
-
-                ret = unlink(tmpfile);
-                assert(ret == 0);
-
-                (*iterations)++;
-        }
-}
-
--- 
-Mateusz Guzik <mjguzik gmail.com>
+Cheers,
+J=C3=BCrg
 
