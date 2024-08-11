@@ -1,120 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-25606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70F994E2FD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 22:32:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF2994E37F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 23:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 672D4B214DD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 20:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1657B281506
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 21:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F6514C5AE;
-	Sun, 11 Aug 2024 20:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4C015FA7A;
+	Sun, 11 Aug 2024 21:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KH3Q3Nyr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sxb1plsmtpa01-12.prod.sxb1.secureserver.net (sxb1plsmtpa01-12.prod.sxb1.secureserver.net [188.121.53.125])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FAE273F9
-	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 20:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FB1158D98
+	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 21:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723408366; cv=none; b=nkKZAMsMKLvuSglJGNq4tJgr8erm1jbYd2WObrkyrors9wk4EnTVTtzSLXecgX9qiVpXm0xkYhcUwOGcYCuX2BCpxUL/Mv6fWGHWL3+0Y5MCUyI0ooqtQ16MVs3wPsMetdHnstrq2XBg9jYR13noUlViEvz17PydPvOcv7RQMKU=
+	t=1723413160; cv=none; b=XWpuJjxXs0ORv4M/SZwfCUdI++yQA4qSXk4mLCKrjZdHUBFPBxW0XXcb0BMBC8W+OEFKHo1ZUf0BqcDVb2LQAaUJ8KZao0MrVJjKoTfMCi+qyMlUYjPA96C31mlWouHXicRIet9DCFVBshDnYUbff6lQNzm9jve+pVo73L1hfps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723408366; c=relaxed/simple;
-	bh=pKCnh7GHvmWQ33Np4n9VMUFEvgaWl5uOyP095/wAG0k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IxiIRlxkNVIgFVtsfWpeZdzulV6Qtf1yL78IT+syHZ7/cF4Qaos40ia7Nc+CVBAtmj9NFWUm1NvuGfzU21YXpuKf1t3ZCI2CKQ9y7Dn3W7e0ZYxjwzYJ2jHyTS1XBhr3CuFgpKR4FD3AgS3IaWazhadELf6HdfR1Gwt2V2N1UyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from phoenix.fritz.box ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPA
-	id dEwOsxzsHeSaBdEwdsz0rz; Sun, 11 Aug 2024 13:13:40 -0700
-X-CMAE-Analysis: v=2.4 cv=GJnDEfNK c=1 sm=1 tr=0 ts=66b91b75
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=FXvPX3liAAAA:8
- a=t7CeM3EgAAAA:8 a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=aXxt9TpeGBesqlHbmUgA:9 a=UObqyxdv-6Yh2QiB9mM_:22 a=FdTzh2GWekK77mhwV6Dw:22
- a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: akpm@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Phillip Lougher <phillip@squashfs.org.uk>,
-	Lizhi Xu <lizhi.xu@windriver.com>,
-	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
-Subject: [PATCH] Squashfs: sanity check symbolic link size
-Date: Sun, 11 Aug 2024 21:13:01 +0100
-Message-Id: <20240811201301.13076-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1723413160; c=relaxed/simple;
+	bh=lkN+3TiNLpwallZ3vrHXPkv+UXdMUyM6EzKmhH6umec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jnJIrPLTUG4qa8pUYx2CUumPTv89hZs2vAmBESQwpUe0NKobKUwkD35qeb6igEDsAYP+B0z/31DIYcf485QY+XjjMwc/EzgIZAEv4oFuBYdh8biYbFzASrjsWMeJ/1ezubEHV2LnwVkgKDbNQe2KwgKftnW7uNV1FPmZBqZG+5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KH3Q3Nyr; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-690ad83d4d7so36034777b3.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 14:52:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1723413157; x=1724017957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HcvCzrHT6sCG5JT/BAYJjycnIV3Ulp99ay2/Oh7WNDU=;
+        b=KH3Q3Nyr5CDK8pSNh0B/KlYcwNxlxEtIszJU/d54P2CbJ60DGletUn6vQUkjXulYAf
+         st8sB6nwFA3qOiSlZCMn/ueqt8nBwhynOnghnQMknc5KWY8YiZz31d0b1T5nW4BMQgcU
+         orgV7BvpUFCBvr9AZukr0PElLGi3xnktftqh88Pvs8f12ycxB3qfD7Xv0+4+Alp5sfR8
+         DLuxiVjNaoglQvFDERvOtceqsehJboZ2212oUY3EEmoz/wjTY5eb6UNlX75fkFJj7sLV
+         E0M4zdJy00KAp6tH+4xZG7Er5Zw7zCtMGHzuPKHw58RKKu/rzd58Wy5vKPiDXX29UMbz
+         g/nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723413157; x=1724017957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HcvCzrHT6sCG5JT/BAYJjycnIV3Ulp99ay2/Oh7WNDU=;
+        b=AHVrflroHS1WbhiEfx8azMuYhcbBHImm/rdY3quldG5ddhUec/6DLeuHHXiDTJfxWM
+         +ofNqvoETllwtHifMDzT2u04vLomz+In6XM/JU5ETsY/ZqzIGkj0DHolfkbwYhxJN9KM
+         iDXCTit5jkK+Jr03PKrfhvYUZNCVQ1+MEEUqbXm5tbIdNesbadFUAOfe6w5w1wKiisZS
+         rYXbD02naTFKG+ugZ/fOLd6MkKdvZGxF4v7uWYMhpZO1V+jSn4jAWGNaL3E0t6pY6VhT
+         zVGJiAWy8QgDHgjTKu4hzJyHQ5dNG7oq7w+kh8W3AZ4+/WhtcbS97h5CCZINa+UZTzRM
+         h7IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFv9ChO/VLddBO7RvgcDyhXZf0CwZtzvjLe+GNWnBteJKBuaL8drfE8CirZjf7rjujV5HhU+8rvGh2A9eGzqxZk50UMImYPEsCrztBdg==
+X-Gm-Message-State: AOJu0YzA79l+T4LF/vpsUSOUjZf/vYNaXIgJyX/eh04tJftIohaYxHau
+	8l2CjLNiPGmZWkfxhVKiv0TH7YegpUqdmnHG9xeuWNW81j9uQiOpZvyFxGFmIo2Q8sqvxC5Szp4
+	kaW6TsvDkH/X2XL3IGC340bMULhmGRzXUBBy+/7xjdNW2gSMhcQ==
+X-Google-Smtp-Source: AGHT+IEFAnQowhRq6J95RW92DmycBod9Jt4jIh1EBEgxnj0aFfyybdIHgYhavVKVVj8MFqkpwlaTJmB1wWmj97QKYR0=
+X-Received: by 2002:a05:690c:ec8:b0:632:e098:a9e0 with SMTP id
+ 00721157ae682-69ec49239fbmr92358147b3.9.1723413157487; Sun, 11 Aug 2024
+ 14:52:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfMe3ExLrd/5tQ3ORwglA4RyjvgH85sDDHMPGC0AHVUBI5YGPACZxJCYUJ8JhPjcy0FNzv0ARflDa0NgBfoc4ck5eVoFiCy2Cc2drAyaK875muPzPZ+NH
- Fl0Fzh5DfDboOnAFmAyMCdtHI1FfhKC4BSagv1ZfpkHx3OubStAY5kmTZofNbRlm/mZy8guO7dkGDmDmjuLZVR/hQukY1RexRlIAz2ZSxqizbQUnJO1Fkxvs
- LfNX/3dxxPykFbKSMaGSaTFNwH20S7W2hNEskqkhFZBvtm9tPwGDwvrk92ESu/ilHR8xJhG1Tok7CS7yXoQgz9ESOiKr/WivyRN0315G9VQrUd7QoQf94bNU
- 9HrftJQlgl0pP2zevy7mt3//wO1T8EqBwEKDghcJ6yBfl9i1+2eRPdrngJRgsMAXsKa0g16w6zQ5nnXaMd/tHHmfze1Yk2AuldRBOztqd80Fow/4v9ozSgM4
- q0HaJLRD0JXGugAusx4L02Ntl5RUt81Yqx1Ri1VLT+RDEZZrKMdgrsx0XfY=
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+ <20240807-erledigen-antworten-6219caebedc0@brauner> <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
+ <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner> <20240808171130.5alxaa5qz3br6cde@quack3>
+ <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
+ <d0677c60eb1f47eb186f3e5493ba5aa7e0eaa445.camel@kernel.org>
+ <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com>
+ <a8e24c94fa5500ee3c99a3dabba452e381512808.camel@kernel.org>
+ <CAHC9VhSEuj_70ohbrgHrFv7Y8-MvwH7EwkD_L0=0KhVW-bX=Nw@mail.gmail.com> <cd7133462f3018114f16366bae14ef6504d75b68.camel@kernel.org>
+In-Reply-To: <cd7133462f3018114f16366bae14ef6504d75b68.camel@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 11 Aug 2024 17:52:26 -0400
+Message-ID: <CAHC9VhQBN1H9b2aTa-OHzowXeR4Y3DzRnF=do5Q5SWDTsbu4cw@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, audit@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Syzkiller reports a "KMSAN: uninit-value in pick_link" bug.
+On Fri, Aug 9, 2024 at 10:21=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+> On Thu, 2024-08-08 at 21:22 -0400, Paul Moore wrote:
+> > On Thu, Aug 8, 2024 at 8:33=E2=80=AFPM Jeff Layton <jlayton@kernel.org>
+> > wrote:
 
-This is caused by an uninitialised page, which is ultimately caused
-by a corrupted symbolic link size read from disk.
+...
 
-The reason why the corrupted symlink size causes an uninitialised
-page is due to the following sequence of events:
+> > > The question here is about the case where O_CREAT is set, but the
+> > > file
+> > > already exists. Nothing is being created in that case, so do we
+> > > need to
+> > > emit an audit record for the parent?
+> >
+> > As long as the full path information is present in the existing
+> > file's
+> > audit record it should be okay.
+>
+> O_CREAT is ignored when the dentry already exists, so doing the same
+> thing that we do when O_CREAT isn't set seems reasonable.
+>
+> We do call this in do_open, which would apply in this case:
+>
+>         if (!(file->f_mode & FMODE_CREATED))
+>                 audit_inode(nd->name, nd->path.dentry, 0);
+>
+> That should have the necessary path info. If that's the case, then I
+> think Christian's cleanup series on top of mine should be OK. I think
+> that the only thing that would be missing is the AUDIT_INODE_PARENT
+> record for the directory in the case where the dentry already exists,
+> which should be superfluous.
+>
+> ISTR that Red Hat has a pretty extensive testsuite for audit. We might
+> want to get them to run their tests on Christian's changes to be sure
+> there are no surprises, if they are amenable.
 
-1. squashfs_read_inode() is called to read the symbolic
-   link from disk.  This assigns the corrupted value
-   3875536935 to inode->i_size.
+I believe you are thinking of the audit-test project, which started as
+a community effort to develop a test suite suitable for the popular
+Common Criteria protection profiles of the time (of which auditing was
+an important requirement).  Unfortunately, after a couple rounds of
+certifications I couldn't get the various companies involved to
+continue to maintain the public test suite anymore, so everyone went
+their own way with private forks.  I have no idea if the community
+project still works, but someone at IBM/RH should have a recent~ish
+version that either runs on a modern system or is close to it.  FWIW,
+the dead/dormant community project can be found at the link below
+(yes, that is a sf.net link):
 
-2. Later squashfs_symlink_read_folio() is called, which assigns
-   this corrupted value to the length variable, which being a
-   signed int, overflows producing a negative number.
+https://sourceforge.net/projects/audit-test
 
-3. The following loop that fills in the page contents checks that
-   the copied bytes is less than length, which being negative means
-   the loop is skipped, producing an unitialised page.
+It's been a while since I've been at RH, so I'm not sure if my test/QA
+contacts are still there, but if you don't have a contact at IBM/RH
+Jeff let me know and I can try to reach out.
 
-This patch adds a sanity check which checks that the symbolic
-link size is not larger than expected.
-
-Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
-Reported-by: Lizhi Xu <lizhi.xu@windriver.com>
-Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/000000000000a90e8c061e86a76b@google.com/
----
- fs/squashfs/inode.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
-index 16bd693d0b3a..d5918eba27e3 100644
---- a/fs/squashfs/inode.c
-+++ b/fs/squashfs/inode.c
-@@ -279,8 +279,13 @@ int squashfs_read_inode(struct inode *inode, long long ino)
- 		if (err < 0)
- 			goto failed_read;
- 
--		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
- 		inode->i_size = le32_to_cpu(sqsh_ino->symlink_size);
-+		if (inode->i_size > PAGE_SIZE) {
-+			ERROR("Corrupted symlink\n");
-+			return -EINVAL;
-+		}
-+
-+		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
- 		inode->i_op = &squashfs_symlink_inode_ops;
- 		inode_nohighmem(inode);
- 		inode->i_data.a_ops = &squashfs_symlink_aops;
--- 
-2.39.2
-
+--=20
+paul-moore.com
 
