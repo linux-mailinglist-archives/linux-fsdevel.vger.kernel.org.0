@@ -1,150 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-25607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF2994E37F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 23:52:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1752394E39E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 00:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1657B281506
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 21:52:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AA501C20AC1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 22:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4C015FA7A;
-	Sun, 11 Aug 2024 21:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176CA15FCE7;
+	Sun, 11 Aug 2024 22:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KH3Q3Nyr"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="d3uGLSBm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FB1158D98
-	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 21:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E8741C75
+	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 22:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723413160; cv=none; b=XWpuJjxXs0ORv4M/SZwfCUdI++yQA4qSXk4mLCKrjZdHUBFPBxW0XXcb0BMBC8W+OEFKHo1ZUf0BqcDVb2LQAaUJ8KZao0MrVJjKoTfMCi+qyMlUYjPA96C31mlWouHXicRIet9DCFVBshDnYUbff6lQNzm9jve+pVo73L1hfps=
+	t=1723413887; cv=none; b=NaWAefu9xkj6aTrgdsclR8t0B+D9Q3VrxlPe+JfLc7/yAmfEwwrl6UFMFkxu5SLGTLok79CWoKTS9wO0AUdQe326niapNSaJn5W9Fnp8un6C7YCE2+4mja34+tPHl/26YzpVzcK8zbdTu11FkJQvb5XQOG+cp81FsGaxZ6LgYo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723413160; c=relaxed/simple;
-	bh=lkN+3TiNLpwallZ3vrHXPkv+UXdMUyM6EzKmhH6umec=;
+	s=arc-20240116; t=1723413887; c=relaxed/simple;
+	bh=mjPzQh3zJdKltirt+QHNSwjQaJ8ZHl0cmjRwRp4LBeY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jnJIrPLTUG4qa8pUYx2CUumPTv89hZs2vAmBESQwpUe0NKobKUwkD35qeb6igEDsAYP+B0z/31DIYcf485QY+XjjMwc/EzgIZAEv4oFuBYdh8biYbFzASrjsWMeJ/1ezubEHV2LnwVkgKDbNQe2KwgKftnW7uNV1FPmZBqZG+5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KH3Q3Nyr; arc=none smtp.client-ip=209.85.128.170
+	 To:Cc:Content-Type; b=TTchopfVXfFB1b91sIdx0IC+znbAzdOyVndxhb8RsnQqspcNEG3Y/01BzQMDUGXFOCxFUHYFm8gfqCqZzVAZlKFjtaxNRAr2a/5Ugw+J66H1W8IufC2BooA6xzR0r+DWXFDm8sbyh+QS068mrAmO6Q+Pq9XrCn5ITCRu6eR714o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=d3uGLSBm; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-690ad83d4d7so36034777b3.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 14:52:38 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e08a538bf7bso3594007276.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 15:04:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723413157; x=1724017957; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1723413885; x=1724018685; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HcvCzrHT6sCG5JT/BAYJjycnIV3Ulp99ay2/Oh7WNDU=;
-        b=KH3Q3Nyr5CDK8pSNh0B/KlYcwNxlxEtIszJU/d54P2CbJ60DGletUn6vQUkjXulYAf
-         st8sB6nwFA3qOiSlZCMn/ueqt8nBwhynOnghnQMknc5KWY8YiZz31d0b1T5nW4BMQgcU
-         orgV7BvpUFCBvr9AZukr0PElLGi3xnktftqh88Pvs8f12ycxB3qfD7Xv0+4+Alp5sfR8
-         DLuxiVjNaoglQvFDERvOtceqsehJboZ2212oUY3EEmoz/wjTY5eb6UNlX75fkFJj7sLV
-         E0M4zdJy00KAp6tH+4xZG7Er5Zw7zCtMGHzuPKHw58RKKu/rzd58Wy5vKPiDXX29UMbz
-         g/nA==
+        bh=8MTvCp16xe4s8tj8cdyJ3RRjmDsFaj02tw+pbvvViL0=;
+        b=d3uGLSBmkqbWvkR9emtvfFpAd758ZUmUQ6/ghSCxp997M0jUpfsn+vP9WbxS2m6uBx
+         jOThi5s09frpxhZRw3t6gcd8UvLLQrV4Bd6PZzytOF0fBMstmfGyTV1J9/z9d3D/VyAD
+         A0Q/iYXmS50uPLXbEtcsDljSeys9gR72IDxRgxnqoVdUJB3TbVtTdda0pWQGjt0Z6ova
+         YzocJ4ePYwC9zBkmQEAcGnhO++TKa/71wUX+GbdNcfWau0AmzsGSa4NIqorPjINyRHWK
+         /+3JHNZi0KoyVRW6xkkPhtxDlozGS6hER7qlOjOdhPwPTyXtJ1LwteuBBQlo7fmgu+PB
+         q/4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723413157; x=1724017957;
+        d=1e100.net; s=20230601; t=1723413885; x=1724018685;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HcvCzrHT6sCG5JT/BAYJjycnIV3Ulp99ay2/Oh7WNDU=;
-        b=AHVrflroHS1WbhiEfx8azMuYhcbBHImm/rdY3quldG5ddhUec/6DLeuHHXiDTJfxWM
-         +ofNqvoETllwtHifMDzT2u04vLomz+In6XM/JU5ETsY/ZqzIGkj0DHolfkbwYhxJN9KM
-         iDXCTit5jkK+Jr03PKrfhvYUZNCVQ1+MEEUqbXm5tbIdNesbadFUAOfe6w5w1wKiisZS
-         rYXbD02naTFKG+ugZ/fOLd6MkKdvZGxF4v7uWYMhpZO1V+jSn4jAWGNaL3E0t6pY6VhT
-         zVGJiAWy8QgDHgjTKu4hzJyHQ5dNG7oq7w+kh8W3AZ4+/WhtcbS97h5CCZINa+UZTzRM
-         h7IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFv9ChO/VLddBO7RvgcDyhXZf0CwZtzvjLe+GNWnBteJKBuaL8drfE8CirZjf7rjujV5HhU+8rvGh2A9eGzqxZk50UMImYPEsCrztBdg==
-X-Gm-Message-State: AOJu0YzA79l+T4LF/vpsUSOUjZf/vYNaXIgJyX/eh04tJftIohaYxHau
-	8l2CjLNiPGmZWkfxhVKiv0TH7YegpUqdmnHG9xeuWNW81j9uQiOpZvyFxGFmIo2Q8sqvxC5Szp4
-	kaW6TsvDkH/X2XL3IGC340bMULhmGRzXUBBy+/7xjdNW2gSMhcQ==
-X-Google-Smtp-Source: AGHT+IEFAnQowhRq6J95RW92DmycBod9Jt4jIh1EBEgxnj0aFfyybdIHgYhavVKVVj8MFqkpwlaTJmB1wWmj97QKYR0=
-X-Received: by 2002:a05:690c:ec8:b0:632:e098:a9e0 with SMTP id
- 00721157ae682-69ec49239fbmr92358147b3.9.1723413157487; Sun, 11 Aug 2024
- 14:52:37 -0700 (PDT)
+        bh=8MTvCp16xe4s8tj8cdyJ3RRjmDsFaj02tw+pbvvViL0=;
+        b=u4ACniKj5IJ1UBL8hEPGuGomFOqiTkZNvKNOZXnBCoir9I4wNkhLQyZ2lX2hek9cL+
+         7c+2CHDgEJh2fN1NFbKWxAOFX2LSyDYyffbUkjNjwWcz8S7kLaw71o34r5qbb9GM9AhK
+         eNfyuXJOO2nBc6Q8Py3EuZ+BSbh+5Zt5Cco9qJNjJeSJftxqCpuVNRwpJpPEnCNR9HFu
+         dv0imJYN9dLUBNsaz4ksv1HZcRzUrnygK1aZyeHqIMGrrnzMyMXg8zuM6vWiSgHJM0SH
+         6ofkIlHaL9dL6duwyhOJc4Ppg489Yc1KnrFDNdnW3DOvTPpXNggyTTFsU50J+SCYbNFz
+         jDaA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Ek70aZPMBudK2R79cbCx/7y+764X+aNq/pqTW1eJ9LLJhirGUoIaBRwRZ/1tc3Q4zngPopSUabg8nUWq@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjAh7uNl7L1JgCM/886CYyKW6LicRL0QqxaES45ZvYdCYEiSRg
+	Uirl5N2vx3WNmQ/sNzUawYWD3I7xTn/RqxSFxy+QpWrJBV47yeWQTVMvr6efWuzdKYRBfhR7T2V
+	v4beO5srZEUyYMzcpCzrygG6FajEThAZVjV17/vXF9SpdcgA=
+X-Google-Smtp-Source: AGHT+IHyjpnn1PIJQvOaEQGSYhVNf1jkFokG+Mtlcnvj9pmFNQeJBtS+bJqawYBxtJdKf9F1jwGjp9W8zNFTE0mREac=
+X-Received: by 2002:a05:690c:4d05:b0:665:71a4:21ac with SMTP id
+ 00721157ae682-69c0e36eab8mr89308447b3.10.1723413885015; Sun, 11 Aug 2024
+ 15:04:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <20240807-erledigen-antworten-6219caebedc0@brauner> <d682e7c2749f8e8c74ea43b8893a17bd6e9a0007.camel@kernel.org>
- <20240808-karnickel-miteinander-d4fa6cd5f3c7@brauner> <20240808171130.5alxaa5qz3br6cde@quack3>
- <CAHC9VhQ8h-a3HtRERGxAK77g6nw3fDzguFvwNkDcdbOYojQ6PQ@mail.gmail.com>
- <d0677c60eb1f47eb186f3e5493ba5aa7e0eaa445.camel@kernel.org>
- <CAHC9VhREbEAYQUoVrJ3=YHUh2tuL5waUMaXQGG_yzFsMNomRVg@mail.gmail.com>
- <a8e24c94fa5500ee3c99a3dabba452e381512808.camel@kernel.org>
- <CAHC9VhSEuj_70ohbrgHrFv7Y8-MvwH7EwkD_L0=0KhVW-bX=Nw@mail.gmail.com> <cd7133462f3018114f16366bae14ef6504d75b68.camel@kernel.org>
-In-Reply-To: <cd7133462f3018114f16366bae14ef6504d75b68.camel@kernel.org>
+References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
+ <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
+ <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
+ <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
+ <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
+ <20240808.kaiyaeZoo1ha@digikod.net> <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
+ <20240809.eejeekoo4Quo@digikod.net> <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
+ <20240809.se0ha8tiuJai@digikod.net> <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
+In-Reply-To: <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 11 Aug 2024 17:52:26 -0400
-Message-ID: <CAHC9VhQBN1H9b2aTa-OHzowXeR4Y3DzRnF=do5Q5SWDTsbu4cw@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, audit@vger.kernel.org
+Date: Sun, 11 Aug 2024 18:04:34 -0400
+Message-ID: <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
+Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
+ signal control)
+To: Jann Horn <jannh@google.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 9, 2024 at 10:21=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
-> On Thu, 2024-08-08 at 21:22 -0400, Paul Moore wrote:
-> > On Thu, Aug 8, 2024 at 8:33=E2=80=AFPM Jeff Layton <jlayton@kernel.org>
-> > wrote:
-
-...
-
-> > > The question here is about the case where O_CREAT is set, but the
-> > > file
-> > > already exists. Nothing is being created in that case, so do we
-> > > need to
-> > > emit an audit record for the parent?
+On Fri, Aug 9, 2024 at 10:01=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
+> On Fri, Aug 9, 2024 at 3:18=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+> > Talking about f_modown() and security_file_set_fowner(), it looks like
+> > there are some issues:
 > >
-> > As long as the full path information is present in the existing
-> > file's
-> > audit record it should be okay.
+> > On Fri, Aug 09, 2024 at 02:44:06PM +0200, Jann Horn wrote:
+> > > On Fri, Aug 9, 2024 at 12:59=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic=
+@digikod.net> wrote:
+> >
+> > [...]
+> >
+> > > > BTW, I don't understand why neither SELinux nor Smack use (explicit=
+)
+> > > > atomic operations nor lock.
+> > >
+> > > Yeah, I think they're sloppy and kinda wrong - but it sorta works in
+> > > practice mostly because they don't have to do any refcounting around
+> > > this?
+> > >
+> > > > And it looks weird that
+> > > > security_file_set_fowner() isn't called by f_modown() with the same
+> > > > locking to avoid races.
+> > >
+> > > True. I imagine maybe the thought behind this design could have been
+> > > that LSMs should have their own locking, and that calling an LSM hook
+> > > with IRQs off is a little weird? But the way the LSMs actually use th=
+e
+> > > hook now, it might make sense to call the LSM with the lock held and
+> > > IRQs off...
+> > >
+> >
+> > Would it be OK (for VFS, SELinux, and Smack maintainers) to move the
+> > security_file_set_fowner() call into f_modown(), especially where
+> > UID/EUID are populated.  That would only call security_file_set_fowner(=
+)
+> > when the fown is actually set, which I think could also fix a bug for
+> > SELinux and Smack.
+> >
+> > Could we replace the uid and euid fields with a pointer to the current
+> > credentials?  This would enables LSMs to not copy the same kind of
+> > credential informations and save some memory, simplify credential
+> > management, and improve consistency.
 >
-> O_CREAT is ignored when the dentry already exists, so doing the same
-> thing that we do when O_CREAT isn't set seems reasonable.
->
-> We do call this in do_open, which would apply in this case:
->
->         if (!(file->f_mode & FMODE_CREATED))
->                 audit_inode(nd->name, nd->path.dentry, 0);
->
-> That should have the necessary path info. If that's the case, then I
-> think Christian's cleanup series on top of mine should be OK. I think
-> that the only thing that would be missing is the AUDIT_INODE_PARENT
-> record for the directory in the case where the dentry already exists,
-> which should be superfluous.
->
-> ISTR that Red Hat has a pretty extensive testsuite for audit. We might
-> want to get them to run their tests on Christian's changes to be sure
-> there are no surprises, if they are amenable.
+> To clarify: These two paragraphs are supposed to be two alternative
+> options, right? One option is to call security_file_set_fowner() with
+> the lock held, the other option is to completely rip out the
+> security_file_set_fowner() hook and instead let the VFS provide LSMs
+> with the creds they need for the file_send_sigiotask hook?
 
-I believe you are thinking of the audit-test project, which started as
-a community effort to develop a test suite suitable for the popular
-Common Criteria protection profiles of the time (of which auditing was
-an important requirement).  Unfortunately, after a couple rounds of
-certifications I couldn't get the various companies involved to
-continue to maintain the public test suite anymore, so everyone went
-their own way with private forks.  I have no idea if the community
-project still works, but someone at IBM/RH should have a recent~ish
-version that either runs on a modern system or is close to it.  FWIW,
-the dead/dormant community project can be found at the link below
-(yes, that is a sf.net link):
+I'm not entirely clear on what is being proposed either.  Some quick
+pseudo code might do wonders here to help clarify things.
 
-https://sourceforge.net/projects/audit-test
-
-It's been a while since I've been at RH, so I'm not sure if my test/QA
-contacts are still there, but if you don't have a contact at IBM/RH
-Jeff let me know and I can try to reach out.
+From a LSM perspective I suspect we are always going to need some sort
+of hook in the F_SETOWN code path as the LSM needs to potentially
+capture state/attributes/something-LSM-specific at that
+context/point-in-time.  While I think it is okay if we want to
+consider relocating the security_file_set_fowner() within the F_SETOWN
+call path, I don't think we can remove it, even if we add additional
+LSM security blobs.
 
 --=20
 paul-moore.com
