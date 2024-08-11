@@ -1,127 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-25605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BC694E142
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 14:42:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C70F994E2FD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 22:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44AAE1C20EE0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 12:42:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 672D4B214DD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Aug 2024 20:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB8B535A3;
-	Sun, 11 Aug 2024 12:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1AfxvSp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F6514C5AE;
+	Sun, 11 Aug 2024 20:32:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sxb1plsmtpa01-12.prod.sxb1.secureserver.net (sxb1plsmtpa01-12.prod.sxb1.secureserver.net [188.121.53.125])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0002F4FB
-	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 12:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FAE273F9
+	for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 20:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.125
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723380151; cv=none; b=jfFy/UF+3ZEbrWB1rCl2lFFPQSyKphilPA3fIhi1q8P5W+BQ0ISIA6mUNYwSW+iQGCO9unJKkE9MxkkUIijI3Ti/qB/VR/in6ZNd3baG9xuRWsTQEp8ppepAd1I2Z7GuwxMh2Y7axBjEXbwblBFkXEoQVe/x1Cq7OUgDmbsJjbo=
+	t=1723408366; cv=none; b=nkKZAMsMKLvuSglJGNq4tJgr8erm1jbYd2WObrkyrors9wk4EnTVTtzSLXecgX9qiVpXm0xkYhcUwOGcYCuX2BCpxUL/Mv6fWGHWL3+0Y5MCUyI0ooqtQ16MVs3wPsMetdHnstrq2XBg9jYR13noUlViEvz17PydPvOcv7RQMKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723380151; c=relaxed/simple;
-	bh=faSluxF5RFwGvACjhCxCKAJ9zkyymRLgFSkidB4Gmds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Znj+ELU/owWVgUaHpiMFXvEjnDT6BLdwhIDKNstSn3aJi/yGqpI3BX7C8G8sbzcrwldW0Z2fuEbu1BsyHKB3xwg1Bpppt4AZRHHtyYGUUeZOWLkc//eUEYt0CAMMaMEHJ4VimB+sahOjtlhbHI1PiAcfMDlT/ZLJWxN9TNz6grw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1AfxvSp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C771CC32786;
-	Sun, 11 Aug 2024 12:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723380150;
-	bh=faSluxF5RFwGvACjhCxCKAJ9zkyymRLgFSkidB4Gmds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y1AfxvSpdbmdRWXv6WGKTxVgpstJ4M9FBNPTs54Q5EjUBWOXCFVtIS3hAnMylZ8Xi
-	 Bd/j0izFcCDxOpLTFHBN3lhu8WtTF+B6QocOhtZ7CDm16CF+2MlMWHpq717mmtxCrV
-	 pxHsBByj6nW9n1vxFYrN3YNHjvHN5WFmzF+4+gQA3cb0haRRwd57kWgxqh7d2ku8Mq
-	 B90GGEp5s4QUYptZr+xGUz7jEeLWYG4Zhm6wLNq9y9RE9jUZMfls1zGxSPh0dLCvIu
-	 v5MWBpNnJr9xD1R/iyDBagY8/9XbkAzAy407AyYtZtLp56HliD7beQYWAk1BOg5AGn
-	 ogLspcl1RT3ig==
-Date: Sun, 11 Aug 2024 14:42:25 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>, 
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] [DRAFT RFC]: file: reclaim 24 bytes from f_owner
-Message-ID: <20240811-geldgeber-lauwarm-0d162fe31e60@brauner>
-References: <20240809-koriander-biobauer-6237cbc106f3@brauner>
- <6o2fjmgt2yixzjwc2fffzdtbr4cjey3vhm6kwpieag33kzmmga@5ogofkglj2hj>
+	s=arc-20240116; t=1723408366; c=relaxed/simple;
+	bh=pKCnh7GHvmWQ33Np4n9VMUFEvgaWl5uOyP095/wAG0k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IxiIRlxkNVIgFVtsfWpeZdzulV6Qtf1yL78IT+syHZ7/cF4Qaos40ia7Nc+CVBAtmj9NFWUm1NvuGfzU21YXpuKf1t3ZCI2CKQ9y7Dn3W7e0ZYxjwzYJ2jHyTS1XBhr3CuFgpKR4FD3AgS3IaWazhadELf6HdfR1Gwt2V2N1UyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from phoenix.fritz.box ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPA
+	id dEwOsxzsHeSaBdEwdsz0rz; Sun, 11 Aug 2024 13:13:40 -0700
+X-CMAE-Analysis: v=2.4 cv=GJnDEfNK c=1 sm=1 tr=0 ts=66b91b75
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=FXvPX3liAAAA:8
+ a=t7CeM3EgAAAA:8 a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
+ a=aXxt9TpeGBesqlHbmUgA:9 a=UObqyxdv-6Yh2QiB9mM_:22 a=FdTzh2GWekK77mhwV6Dw:22
+ a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+From: Phillip Lougher <phillip@squashfs.org.uk>
+To: akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Phillip Lougher <phillip@squashfs.org.uk>,
+	Lizhi Xu <lizhi.xu@windriver.com>,
+	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Subject: [PATCH] Squashfs: sanity check symbolic link size
+Date: Sun, 11 Aug 2024 21:13:01 +0100
+Message-Id: <20240811201301.13076-1-phillip@squashfs.org.uk>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6o2fjmgt2yixzjwc2fffzdtbr4cjey3vhm6kwpieag33kzmmga@5ogofkglj2hj>
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfMe3ExLrd/5tQ3ORwglA4RyjvgH85sDDHMPGC0AHVUBI5YGPACZxJCYUJ8JhPjcy0FNzv0ARflDa0NgBfoc4ck5eVoFiCy2Cc2drAyaK875muPzPZ+NH
+ Fl0Fzh5DfDboOnAFmAyMCdtHI1FfhKC4BSagv1ZfpkHx3OubStAY5kmTZofNbRlm/mZy8guO7dkGDmDmjuLZVR/hQukY1RexRlIAz2ZSxqizbQUnJO1Fkxvs
+ LfNX/3dxxPykFbKSMaGSaTFNwH20S7W2hNEskqkhFZBvtm9tPwGDwvrk92ESu/ilHR8xJhG1Tok7CS7yXoQgz9ESOiKr/WivyRN0315G9VQrUd7QoQf94bNU
+ 9HrftJQlgl0pP2zevy7mt3//wO1T8EqBwEKDghcJ6yBfl9i1+2eRPdrngJRgsMAXsKa0g16w6zQ5nnXaMd/tHHmfze1Yk2AuldRBOztqd80Fow/4v9ozSgM4
+ q0HaJLRD0JXGugAusx4L02Ntl5RUt81Yqx1Ri1VLT+RDEZZrKMdgrsx0XfY=
 
-> So *some* saving can be achieved without moving stuff out.
+Syzkiller reports a "KMSAN: uninit-value in pick_link" bug.
 
-I thought about that but fowner doesn't need to be in there at all.
-And then we don't have to care about growing or shrinking the struct, or
-its padding.
+This is caused by an uninitialised page, which is ultimately caused
+by a corrupted symbolic link size read from disk.
 
-> > +struct fown_struct nop_fown_struct = {
-> > +	.lock		= __RW_LOCK_UNLOCKED(nop_fown_struct.lock),
-> > +	.pid		= NULL,
-> > +	.pid_type	= PIDTYPE_MAX,
-> > +	.uid		= INVALID_UID,
-> > +	.euid		= INVALID_UID,
-> > +	.signum		= 0,
-> > +};
-> 
-> why this instead of NULL checking?
+The reason why the corrupted symlink size causes an uninitialised
+page is due to the following sequence of events:
 
-Dedicated nop types makes it harder to cause accidental NULL
-dereferences and currently checking whether a signal needs to be sent is
-predicated on ->pid within fowner not being NULL. Which made a nop type
-at least a viable option. I don't have a strong opinion.
+1. squashfs_read_inode() is called to read the symbolic
+   link from disk.  This assigns the corrupted value
+   3875536935 to inode->i_size.
 
-> > +
-> > +/*
-> > + * Allocate an file->f_owner struct if it doesn't exist, handling racing
-> > + * allocations correctly.
-> > + */
-> > +struct fown_struct *file_f_owner_allocate(struct file *file)
-> > +{
-> > +	struct fown_struct *f_owner;
-> > +
-> > +	f_owner = smp_load_acquire(&file->f_owner);
-> 
-> For all spots of the sort you don't need an acquire fence, a consume
-> fence is sufficient which I believe in Linux is guaranteed to be
-> provided with READ_ONCE. I failed to find smp_load_consume, presumably
-> for that reason.
+2. Later squashfs_symlink_read_folio() is called, which assigns
+   this corrupted value to the length variable, which being a
+   signed int, overflows producing a negative number.
 
-Thanks.
+3. The following loop that fills in the page contents checks that
+   the copied bytes is less than length, which being negative means
+   the loop is skipped, producing an unitialised page.
 
-> > +struct fown_struct *file_f_owner_allocate(struct file *file)
-> > +{
-> > +	struct fown_struct *f_owner;
-> > +
-> > +	f_owner = smp_load_acquire(&file->f_owner);
-> > +	if (f_owner != &nop_fown_struct)
-> > +		return NULL;
-> > +
-> > +	f_owner = kzalloc(sizeof(struct fown_struct), GFP_KERNEL);
-> > +	if (!f_owner)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	rwlock_init(&f_owner->lock);
-> > +	f_owner->file = file;
-> > +	/* If someone else raced us, drop our allocation. */
-> > +	if (unlikely(cmpxchg(&file->f_owner, &nop_fown_struct, f_owner) !=
-> > +		     &nop_fown_struct)) {
-> > +		kfree(f_owner);
-> > +		return NULL;
-> 
-> this wants to return the found pointer, not NULL
+This patch adds a sanity check which checks that the symbolic
+link size is not larger than expected.
 
-Caller was supposed to only see an allocation if they own it.
+Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
+Reported-by: Lizhi Xu <lizhi.xu@windriver.com>
+Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/000000000000a90e8c061e86a76b@google.com/
+---
+ fs/squashfs/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+index 16bd693d0b3a..d5918eba27e3 100644
+--- a/fs/squashfs/inode.c
++++ b/fs/squashfs/inode.c
+@@ -279,8 +279,13 @@ int squashfs_read_inode(struct inode *inode, long long ino)
+ 		if (err < 0)
+ 			goto failed_read;
+ 
+-		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+ 		inode->i_size = le32_to_cpu(sqsh_ino->symlink_size);
++		if (inode->i_size > PAGE_SIZE) {
++			ERROR("Corrupted symlink\n");
++			return -EINVAL;
++		}
++
++		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+ 		inode->i_op = &squashfs_symlink_inode_ops;
+ 		inode_nohighmem(inode);
+ 		inode->i_data.a_ops = &squashfs_symlink_aops;
+-- 
+2.39.2
+
 
