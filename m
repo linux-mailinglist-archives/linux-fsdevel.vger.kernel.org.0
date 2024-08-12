@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-25715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A773794F6A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 20:27:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7BD94F713
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 21:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522DF1F23003
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 18:27:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC33282220
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 19:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE03319413B;
-	Mon, 12 Aug 2024 18:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC4C18E764;
+	Mon, 12 Aug 2024 19:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E81DuNFU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zlk31/Pe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273CA1917DB;
-	Mon, 12 Aug 2024 18:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2E8187356;
+	Mon, 12 Aug 2024 19:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723487111; cv=none; b=TSkUxaifMsBDVAqJEwIzR0w6GhafbVsCTuA+IRaguGhiuV4OHDlG316SYdCM0tQrkG9cYkCJq+RMlXbtnEhiTtHgL0eLHtjTWmDas2RQ572nNlLgsiHorB7ul1gTiqC+a/5Zu/Sh1/+EZ3koCZtwiOtQuTDpUp05D+Lfdy+ZaKs=
+	t=1723489367; cv=none; b=ty09e4bqDSLYh+eOvhUb2HQgKzU5Z6ZRoFSymFqSgpFEM7IaXA4246toNZ4iDhMuYj1CwsTNlkjjt/LapolKFqAbwRxJzOVz/ZsW8aXTqb1SxFaklGOgBHV1Bg4+K6RSeDVTLKEj/i/ty4FQiU6AEIEO/cPDirg3AHGIaZGlafE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723487111; c=relaxed/simple;
-	bh=b9XMtJBDz1eS9eHtLGMNWgjburbqn9Im8RPbrEwodd0=;
+	s=arc-20240116; t=1723489367; c=relaxed/simple;
+	bh=ezMmUg7mHTwVHN5XujxTb1haTuUKj91GEz6kSdHQPy0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8zWePti0WWfDov2Pfxvh539W1FVNQSFOEV9qvs6ZM0hRaAInvQEZibieVvAWjK7pVSKC87hUmuxkeG6y/EEd8NceK2GuhUg1XBtVdqtmR5lM8DoQU038bTb61Rw8io2rsLM8bCUn8HN2SPwU0pcmqH4BvihRWS1LvNkhL/1CbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E81DuNFU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2282C32782;
-	Mon, 12 Aug 2024 18:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723487111;
-	bh=b9XMtJBDz1eS9eHtLGMNWgjburbqn9Im8RPbrEwodd0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E81DuNFUQBf+Hp0FbT2dTh9FMz6izZjqLPR8pbFkTDHAwRcUSi9U5m4y+b7a5D84S
-	 L4T1X6GfeBl5U02jvjl9KAFPYvCkhlnnu6mzL1APe2tZXOEtBs31xMIYkbdSYXb0uw
-	 OCZ8ZDxNXF7b9OEHsVto4zb2JZ3KhWUgU8eKSa/fkUBVjkpmgRmH38JMJrE/d+keLW
-	 JS9jz+vUKujhhhB11sboKhh4NrSYNASIY94gwq4RxOhzVpA5LDtW+iKVMQnO+sX8+f
-	 uubQ8A9wcfOwIxJzy/nBX9COA4qzl87jmWK/AILzeuT6hD8woAsZ10LokHwHHjv8zw
-	 nSNBePSfzuDjw==
-Date: Mon, 12 Aug 2024 11:25:10 -0700
-From: Kees Cook <kees@kernel.org>
-To: Brian Mak <makb@juniper.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
-Message-ID: <202408121123.FBAE8191A3@keescook>
-References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
- <87ttfs1s03.fsf@email.froward.int.ebiederm.org>
- <202408121105.E056E92@keescook>
- <713A0ABD-531D-4186-822A-4555906FD7EC@juniper.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ClL6wmZydoefitqePRCx2YurXieFRAgg8uEMTfHgbH2LQarhnlfkZROtf74FQfjjIk/zfvilikkhfnjfwv/1/FfedcHcpLcMWeSD5i2qlDeDsGDmWDJiLT9YQNFWn1tf8tjcNVkQN/vFaNuSY4ktHmOhyKOfK33VInuD8Vl5kTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zlk31/Pe; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GpykWVB4jVqd4iXL28CO+MJFswhu6BiB100HaYD/b6k=; b=Zlk31/Pe8Ro8nKwrfBAa6P6ZGz
+	BItQl+tCoekxITYt6NKsWG7r6hZOMSw09ROtD5nH7FuRBegXhcxOuTFOe4qAjI3FtrSvXGwSw7aWU
+	SBw27vNuOfCPJJpQXfbr0AKv+VARznrJaDyn6hXi14YXmUbn4KN0EdsdcHzfv+4j36Sdb39JivTJ+
+	kGjNLkCOt/QPbHpSjnitU78Yt2rpiHsSEYNRtzGzSjvkV048RnPr0NTRoTXoxqp0VK3kLlpSDjFXe
+	gNLlaf3HZB1DNWZlM9Jti8hbPm2czNP75GrfI3aF2GHbevhRd+M+tU3/4SJCL5IpDMCOQpGf1u4bZ
+	M5m8/cvw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sdaJQ-0000000FPkA-2I3C;
+	Mon, 12 Aug 2024 19:02:36 +0000
+Date: Mon, 12 Aug 2024 20:02:36 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, p.raghav@samsung.com
+Subject: Re: [PATCH 2/3] xfs: convert perag lookup to xarray
+Message-ID: <ZrpcTAuJFSzE4-nA@casper.infradead.org>
+References: <20240812063143.3806677-1-hch@lst.de>
+ <20240812063143.3806677-3-hch@lst.de>
+ <20240812163956.xduakibqyzuapfkt@quentin>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,51 +66,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <713A0ABD-531D-4186-822A-4555906FD7EC@juniper.net>
+In-Reply-To: <20240812163956.xduakibqyzuapfkt@quentin>
 
-On Mon, Aug 12, 2024 at 06:21:15PM +0000, Brian Mak wrote:
-> On Aug 12, 2024, at 11:05 AM, Kees Cook <kees@kernel.org> wrote
-> 
-> > On Sat, Aug 10, 2024 at 07:28:44AM -0500, Eric W. Biederman wrote:
-> >> Brian Mak <makb@juniper.net> writes:
-> >> 
-> >>> Large cores may be truncated in some scenarios, such as with daemons
-> >>> with stop timeouts that are not large enough or lack of disk space. This
-> >>> impacts debuggability with large core dumps since critical information
-> >>> necessary to form a usable backtrace, such as stacks and shared library
-> >>> information, are omitted.
-> >>> 
-> >>> We attempted to figure out which VMAs are needed to create a useful
-> >>> backtrace, and it turned out to be a non-trivial problem. Instead, we
-> >>> try simply sorting the VMAs by size, which has the intended effect.
-> >>> 
-> >>> By sorting VMAs by dump size and dumping in that order, we have a
-> >>> simple, yet effective heuristic.
-> >> 
-> >> To make finding the history easier I would include:
-> >> v1: https://urldefense.com/v3/__https://lkml.kernel.org/r/CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net__;!!NEt6yMaO-gk!DavIB4o54KGrCPK44iq9_nJrOpKMJxUAlazBVF6lfKwmMCgLD_NviY088SQXriD19pS0rwhadvc$
-> >> v2: https://urldefense.com/v3/__https://lkml.kernel.org/r/C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net__;!!NEt6yMaO-gk!DavIB4o54KGrCPK44iq9_nJrOpKMJxUAlazBVF6lfKwmMCgLD_NviY088SQXriD19pS0G7RQv4o$
-> >> 
-> >> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> >> 
-> >> As Kees has already picked this up this is quite possibly silly.
-> >> But *shrug* that was when I was out.
-> > 
-> > I've updated the trailers. Thanks for the review!
-> 
-> Hi Kees,
-> 
-> Thanks! I think you added it to the wrong commit though.
+On Mon, Aug 12, 2024 at 04:39:56PM +0000, Pankaj Raghav (Samsung) wrote:
+> On Mon, Aug 12, 2024 at 08:31:01AM +0200, Christoph Hellwig wrote:
+> > diff --git a/fs/xfs/libxfs/xfs_ag.c b/fs/xfs/libxfs/xfs_ag.c
+> > index 7e80732cb54708..5efb1e8b4107a9 100644
+> > --- a/fs/xfs/libxfs/xfs_ag.c
+> > +++ b/fs/xfs/libxfs/xfs_ag.c
+> > @@ -46,7 +46,7 @@ xfs_perag_get(
+> >  	struct xfs_perag	*pag;
+> >  
+> >  	rcu_read_lock();
+> xa_load() already calls rcu_read_lock(). So we can get rid of this I
+> guess?
 
-Ugh. Time for more coffee. Thanks; fixed. I need to update my "b4" -- it
-was hanging doing the trailers update so I did it myself manually...
-That'll teach me. ;)
+Almost certainly not; I assume pag is RCU-freed, so you'd be introducing
+a UAF if the RCU lock is dropped before getting a refcount on the pag.
 
-> tests. Since all the other tests pass, I'm just going to leave it at
-> that.
 
-Yeah, I think you're good. Thank you for taking the time to test rr!
-
--- 
-Kees Cook
 
