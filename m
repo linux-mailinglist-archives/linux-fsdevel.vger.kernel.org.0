@@ -1,143 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-25612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F017A94E485
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 03:41:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FEA94E4AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 04:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC474281F90
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 01:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0AA1F21F08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 02:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA03A535D8;
-	Mon, 12 Aug 2024 01:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C4951C5A;
+	Mon, 12 Aug 2024 02:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAn7JBeA"
+	dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b="o1kC0CBF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omr009.pc5.atmailcloud.com (omr009.pc5.atmailcloud.com [103.150.252.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC58B136A;
-	Mon, 12 Aug 2024 01:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B0A4690
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 02:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.150.252.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723426855; cv=none; b=p/kMs21nlq/PEzXtwfWAOxe749SN7nRzKXiLbJ86u3vIj2ee44+uL2+8v6cETeWLBUpMtgWS1IwuAfVR0yVsDs/I4XnluFR4sV+Yj1To8K8rhhZR3OQzYmD6XXRO6Tl7pfCoTC+LTCsHl7PWiGeHoWs3VtCghWHRADeqR5JNUNU=
+	t=1723428977; cv=none; b=J0pb10VPQ30FdN0S8eDVQ10hz9UXEwZuPeMTa3BI3O7SurOoB38D0FRp/GUCoU9xdFFyNvnQxqQNWIo9T46S1mEygqmYAhfe/Uzd+qp+03H+7tEzxn7rhfhquKRC4iX0Ue/a6rbIDqJRVFABilwNbkbTeo+ucsI38xYokWpmKzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723426855; c=relaxed/simple;
-	bh=fsBFrNLLtzlG49Koe/sc1Hhd8woCXP7D15SVvyauwzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RYAfahg9q8QTB6nmleTZ+9OXXmEMH9ljH2gEG/UN/NlNQZkoemzRYq0/TEXax6yEhgCBRLbx2okkOhBumK9eFLK4A04s4lriN9xOX4DFSZZ4eCUU5cU5E0vYyAm2286BrHmtbExy84qE/S0kTxC1Bq4opt9CxRHP/EmBfzSMp98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAn7JBeA; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a1e4c75488so234960285a.0;
-        Sun, 11 Aug 2024 18:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723426853; x=1724031653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fsBFrNLLtzlG49Koe/sc1Hhd8woCXP7D15SVvyauwzU=;
-        b=KAn7JBeAN8OpraPJbo/ZBWIoyNGKAESGvdHiJ5NsKQEeHIOi/7ucGNe0muBvZNlgLR
-         W/ggsMQeHddJ7gRwxTUSQupZvvNe+7iW5hBiGvZIGj/c/hbW5rTg/bX3MxgbBSLvZqmt
-         eVQ3TJOnxR3QO35fN/BhcBt/BKW7oAz+z+Pkx7BfDgk5kVV7m4Xj1LQj9DaLS8UhYxHv
-         sDHe5sG+8syjme7Mi5DDTQzk5ye1yPG1WK1Cka5BGIBMqNkrUgd94NTB9GZHvZM1PHj/
-         xR6QCeHWd4VRpLJxks1g/WQq5Le1o83PjmVn+LUtfVXghPweelS5Ankndf/mxHsRLE/g
-         AUOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723426853; x=1724031653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fsBFrNLLtzlG49Koe/sc1Hhd8woCXP7D15SVvyauwzU=;
-        b=PuYLKRXqG6yPUokNiajr5iYEEHio9weoFMB+vIZ8mlfnzZRMLfF4tQkXThOGapJMZV
-         N4GOax/Yz7aBCJ7ongmQPWOq+sADR+gFrzXepgs/Pkj6QXlbrUgVBy+e5TbU+mpy7AMO
-         ctk6M4S7rtY/q9uFo9kCCbcdB4Pdn86pTG9Z7HT31f55O1mhoPeEq0HOhmY10qdjmBrZ
-         cIKV90qy11whanihr+BwQgr3jdnBodppFCJihqOPUadyr3O4zfimTMZQD1K3KX1itPLU
-         Zs0Dy0XmouHaYIADnPdSXTqebLFiKpZTD8xndNnkC4GMdZQNigsVVlEJpSeALYalalAT
-         jNgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSurfAW/6ewSmbHhY0Z/EudYkJ49TC7xn6jGUF0h25MyZHIIui39Y5W6vu7t3dHTIMH0OcA5CAGW+rEwjqmbaeDoX6SqN59e22HVVf/kIztN5D3W1nCCp2w9iFITlaQzJw8iLeJq4jSt08HQ==
-X-Gm-Message-State: AOJu0Yw5J2zeJOyd88jLKSsmD97lvy2T7mwnpnEmRWiMP3FrM2IQxpn3
-	j1uYwxjyjJlFKvuAB7Uh8dEVgcGbPYf97Ymw1Y9XgJms4TM9r0myXi7zJAWhj3uJLkPeYVIjmvV
-	vftgn/XS2/fAz6eWcgUY7lWNvjSs=
-X-Google-Smtp-Source: AGHT+IGhruwW8mfWXdXYB6NY1D9uuX+zqq1fu7gnegpSeSaLplC40Y001HBg0OtwsfPG8szz0XRVoPECu9dfBrUoJ0s=
-X-Received: by 2002:a05:620a:4486:b0:7a3:524f:7ef7 with SMTP id
- af79cd13be357-7a4c17920f1mr791178585a.12.1723426852473; Sun, 11 Aug 2024
- 18:40:52 -0700 (PDT)
+	s=arc-20240116; t=1723428977; c=relaxed/simple;
+	bh=pJN99/PGtsS8lPgvBKoMBI4Z0QgkoC7SkSske6zzXaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mn4ACXgGgLypIUJge94d3svDTN/0ZJ/OCSzzSx1gG2XnurLvSbuVb63xMtb4E3A/mdumQdD7ltxxhEkQb2yu7X0J42k4DOzx5M+uqaBZdFfrDbYkQhmz5nbpu0fSDw22w86D2DJQq87D4BiykBexZAwocKxu2l8VjadngqEvkVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au; spf=pass smtp.mailfrom=westnet.com.au; dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b=o1kC0CBF; arc=none smtp.client-ip=103.150.252.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=westnet.com.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=westnet.com.au; s=202309; h=Content-Type:From:To:Subject:MIME-Version:Date:
+	Message-ID; bh=2mrRSNbjyOXH0WGKyiiw/xHUYAwRvAtEjOypjx8tiJc=; b=o1kC0CBFwnReJB
+	y46mHsZvng/a2a8ML/JqCAakjG+YV58cfdHPmfto2KyFEKsQWE4Ie7psmbkinObYxPa4ypPfjRljg
+	TxPPSejmIOnhM4fX+4/GCgKXul49WmJ8+KTgn07rDa4jLF+FK/7ts21nqYEiexgv25nndjRVvZiXF
+	IY9tn/iajgIogOkStCxcL3nrZnbGZ0jxBWll2djAGKVHJvt+wvdR5ez6/Xc/36MiZw8V2xO9VFMAu
+	ZNmoM4nryKVDp4U3DzYrIMxugif7W+/800e0SYf8+vXPrX8yjqLmmKGcaMSmhXXHmtKY0mgyoVbUl
+	yqbP93gYODR35D453jRA==;
+Received: from CMR-KAKADU04.i-0c3ae8fd8bf390367
+	 by OMR.i-0e903b7f5690dc9e4 with esmtps
+	(envelope-from <gregungerer@westnet.com.au>)
+	id 1sdK8u-0007QQ-Ld;
+	Mon, 12 Aug 2024 01:46:40 +0000
+Received: from [27.33.250.67] (helo=[192.168.0.22])
+	 by CMR-KAKADU04.i-0c3ae8fd8bf390367 with esmtpsa
+	(envelope-from <gregungerer@westnet.com.au>)
+	id 1sdK8u-0006YX-0v;
+	Mon, 12 Aug 2024 01:46:40 +0000
+Message-ID: <597dd1bb-43ee-4531-8869-c46b38df56bd@westnet.com.au>
+Date: Mon, 12 Aug 2024 11:46:34 +1000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808063648.255732-1-dongliang.cui@unisoc.com> <CAKYAXd8U1P_+WYfkPnO4JeTA=_V1ScrfkApJxi7F-iyOw9n-cw@mail.gmail.com>
-In-Reply-To: <CAKYAXd8U1P_+WYfkPnO4JeTA=_V1ScrfkApJxi7F-iyOw9n-cw@mail.gmail.com>
-From: dongliang cui <cuidongliang390@gmail.com>
-Date: Mon, 12 Aug 2024 09:40:41 +0800
-Message-ID: <CAPqOJe1HUgoyQ_wBy00KYnkya2n0hORs5SjU-tHL5KOiqA72gg@mail.gmail.com>
-Subject: Re: [PATCH v4] exfat: check disk status during buffer write
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Dongliang Cui <dongliang.cui@unisoc.com>, sj1557.seo@samsung.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	niuzhiguo84@gmail.com, hao_hao.wang@unisoc.com, ke.wang@unisoc.com, 
-	Zhiguo Niu <zhiguo.niu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/16] romfs: Convert romfs_read_folio() to use a folio
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+References: <20240530202110.2653630-1-willy@infradead.org>
+ <20240530202110.2653630-13-willy@infradead.org>
+Content-Language: en-US
+From: Greg Ungerer <gregungerer@westnet.com.au>
+In-Reply-To: <20240530202110.2653630-13-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Atmail-Id: gregungerer@westnet.com.au
+X-atmailcloud-spam-action: no action
+X-Cm-Analysis: v=2.4 cv=fLk/34ae c=1 sm=1 tr=0 ts=66b96980 a=Pz+tuLbDt1M46b9uk18y4g==:117 a=Pz+tuLbDt1M46b9uk18y4g==:17 a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=80-xaVIC0AIA:10 a=x7bEGLp0ZPQA:10 a=JfrnYn6hAAAA:8 a=-_dQqna_KL3JswWU-PQA:9 a=QEXdDO2ut3YA:10 a=2EAlj0jRiK55KS37XwDd:22 a=1CNFftbPRP8L7MoqJWF3:22
+X-Cm-Envelope: MS4xfKfJY//dcaAr/XbBIrUWkJTcjPiMmVUB2W8W6FdSSVU5Mz1ziUt2aZ+/I2zlsRMmdUk2uF/F2ymYsnDE8xW4nTRjOwH4WXVjubqoD2Dd0RgxSeBPO15D 1g9cyatvfYPAcj9PgL6OeMtEXzHpJMZnra8Pz1QTnMaOsuOmSPo/2Qn6n6uU1qRQGkll3cX23Yzl9A==
+X-atmailcloud-route: unknown
 
-On Fri, Aug 9, 2024 at 8:57=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org> =
-wrote:
->
-> 2024=EB=85=84 8=EC=9B=94 8=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 3:40, =
-Dongliang Cui <dongliang.cui@unisoc.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
-=B1:
-> >
-> > We found that when writing a large file through buffer write, if the
-> > disk is inaccessible, exFAT does not return an error normally, which
-> > leads to the writing process not stopping properly.
-> >
-> > To easily reproduce this issue, you can follow the steps below:
-> >
-> > 1. format a device to exFAT and then mount (with a full disk erase)
-> > 2. dd if=3D/dev/zero of=3D/exfat_mount/test.img bs=3D1M count=3D8192
-> > 3. eject the device
-> >
-> > You may find that the dd process does not stop immediately and may
-> > continue for a long time.
-> >
-> > The root cause of this issue is that during buffer write process,
-> > exFAT does not need to access the disk to look up directory entries
-> > or the FAT table (whereas FAT would do) every time data is written.
-> > Instead, exFAT simply marks the buffer as dirty and returns,
-> > delegating the writeback operation to the writeback process.
-> >
-> > If the disk cannot be accessed at this time, the error will only be
-> > returned to the writeback process, and the original process will not
-> > receive the error, so it cannot be returned to the user side.
-> >
-> > When the disk cannot be accessed normally, an error should be returned
-> > to stop the writing process.
-> >
-> > xfstests results:
-> >
-> > Apart from generic/622, all other shutdown-related cases can pass.
-> >
-> > generic/622 fails the test after the shutdown ioctl implementation, but
-> > when it's not implemented, this case will be skipped.
-> >
-> > This case designed to test the lazytime mount option, based on the test
-> > results, it appears that the atime and ctime of files cannot be
-> > synchronized to the disk through interfaces such as sync or fsync.
-> > It seems that it has little to do with the implementation of shutdown
-> > itself.
-> >
-> > If you need detailed information about generic/622, I can upload it.
-> >
-> > Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
-> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> You still haven't updated the patch subject and description with
-> shutdown support.
-> I've directly updated it and applied it to #dev.
-> Thanks for your patch:)
-Thank you for your help in updating.
+Hi Mathew,
+
+On 31/5/24 06:21, Matthew Wilcox (Oracle) wrote:
+> Remove the conversion back to struct page and use the folio APIs instead
+> of the page APIs.  It's probably more trouble than it's worth to support
+> large folios in romfs, so there are still PAGE_SIZE assumptions in
+> this function.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+This is breaking for me on my m68k/ColdFire 5475 target. That is a full
+MMU CPU. The usual test build I do (m5475evb_defconfig) fails to boot,
+not being able to load and start init or sh at startup from a ROMfs
+resident in RAM within the uclinux MTD mapper:
+
+...
+Freeing unused kernel image (initmem) memory: 80K
+This architecture does not have kernel memory protection.
+Run /sbin/init as init process
+Run /etc/init as init process
+Run /bin/init as init process
+Starting init: /bin/init exists but couldn't execute it (error -13)
+Run /bin/sh as init process
+Starting init: /bin/sh exists but couldn't execute it (error -13)
+Kernel panic - not syncing: No working init found.  Try passing init= option to
+kernel. See Linux Documentation/admin-guide/init.rst for guidance.
+CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.11.0-rc3 #4
+Stack from 00829f74:
+         00829f74 003d8508 003d8508 00000000 0000000a 00000003 0032b864 003d8508
+         00325126 00000001 00002700 00000003 00829fb0 00324e9e 00000000 00000000
+         00000000 0032ba9a 003ce1bd 0032b9b8 000218a4 00000000 00000000 00000000
+         00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+         00000000 00002000 00000000
+Call Trace: [<0032b864>] dump_stack+0xc/0x10
+  [<00325126>] panic+0xca/0x236
+  [<00324e9e>] try_to_run_init_process+0x0/0x36
+  [<0032ba9a>] kernel_init+0xe2/0xe8
+  [<0032b9b8>] kernel_init+0x0/0xe8
+  [<000218a4>] ret_from_kernel_thread+0xc/0x14
+
+Reverting this change gets it going again.
+
+Any idea what might be going on?
+
+Regards
+Greg
+
+
+> ---
+>   fs/romfs/super.c | 22 ++++++----------------
+>   1 file changed, 6 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/romfs/super.c b/fs/romfs/super.c
+> index 2cbb92462074..68758b6fed94 100644
+> --- a/fs/romfs/super.c
+> +++ b/fs/romfs/super.c
+> @@ -101,19 +101,15 @@ static struct inode *romfs_iget(struct super_block *sb, unsigned long pos);
+>    */
+>   static int romfs_read_folio(struct file *file, struct folio *folio)
+>   {
+> -	struct page *page = &folio->page;
+> -	struct inode *inode = page->mapping->host;
+> +	struct inode *inode = folio->mapping->host;
+>   	loff_t offset, size;
+>   	unsigned long fillsize, pos;
+>   	void *buf;
+>   	int ret;
+>   
+> -	buf = kmap(page);
+> -	if (!buf)
+> -		return -ENOMEM;
+> +	buf = kmap_local_folio(folio, 0);
+>   
+> -	/* 32 bit warning -- but not for us :) */
+> -	offset = page_offset(page);
+> +	offset = folio_pos(folio);
+>   	size = i_size_read(inode);
+>   	fillsize = 0;
+>   	ret = 0;
+> @@ -125,20 +121,14 @@ static int romfs_read_folio(struct file *file, struct folio *folio)
+>   
+>   		ret = romfs_dev_read(inode->i_sb, pos, buf, fillsize);
+>   		if (ret < 0) {
+> -			SetPageError(page);
+>   			fillsize = 0;
+>   			ret = -EIO;
+>   		}
+>   	}
+>   
+> -	if (fillsize < PAGE_SIZE)
+> -		memset(buf + fillsize, 0, PAGE_SIZE - fillsize);
+> -	if (ret == 0)
+> -		SetPageUptodate(page);
+> -
+> -	flush_dcache_page(page);
+> -	kunmap(page);
+> -	unlock_page(page);
+> +	buf = folio_zero_tail(folio, fillsize, buf);
+> +	kunmap_local(buf);
+> +	folio_end_read(folio, ret == 0);
+>   	return ret;
+>   }
+>   
 
