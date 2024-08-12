@@ -1,116 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-25679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525FB94ED8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 15:00:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90CD94ED92
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 15:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84BD91C21E23
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 13:00:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBC381C21780
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 13:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D675217B50F;
-	Mon, 12 Aug 2024 13:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+tBdt+j"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5673D17BB3D;
+	Mon, 12 Aug 2024 13:02:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA46D4D8D1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 13:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05864D8D1;
+	Mon, 12 Aug 2024 13:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723467632; cv=none; b=njCQ99+ZXY8OSFeYrpE5S4/Jl4xJXOurmpJ+erkrwdN5kNtga53dhDNvv10+YTrm8txdTs/fO+4Knx2AfRnVBzoPy9PFPW9it8FzexOEPBeDi50oEpRx3+s2FUmxFWTWSytgAdykwLgnhxZvKTsDw7cxgyoErMT+LQlfhzFV2/s=
+	t=1723467726; cv=none; b=AhCW2rRYTEEpjX99hTG1q/v83EftL/tbe6mYcEczH4z4OBFgPZ0j1o6W59A97l08dIAyuPmvW2TZo2nlWuW3Py2j1KTude+G4rjyMtMCBnD7OcXPioUmomS++2j28dP9GsbwCSSwj50hPrGI2rrTn/S8ckEWox3tXT8mIZBnaN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723467632; c=relaxed/simple;
-	bh=wRfI3FdFEJ3MkaXnIoLgQ90LoAHwRYhh3fwjWRkFJ5I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sQ9Pb5tI/YkQltFmBWf5dKLPGuc5tBbMthtzAuRyXLAJrg0wM7Q51cuyI2U2Nry5TsIFzF2b4A3YMZTUUmjffauRCMGGIlQSFgt4zOshfoJ/1HxuCmwWUUFbQ6yfsQPQJ7Vs+GL5U1SWMsj5HLCA1BnC+9AYh6/wPfIfPgNRT3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V+tBdt+j; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b796667348so34585116d6.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 06:00:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723467630; x=1724072430; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wRfI3FdFEJ3MkaXnIoLgQ90LoAHwRYhh3fwjWRkFJ5I=;
-        b=V+tBdt+jbu/8dOtYqZIhSVfUYmqiVlI5g3N2e0Z0D5Cqf+fafYwh502zGIy01S1yuV
-         UndrijeAxsISHsWm5F7TbXBFoGkD48Z5XRRoRJifiGoNI6CLSDbaKGhRow2KvVsIsEL3
-         NUpP6hqxAVY2FCYpHyqlum0GeaGtp/mUVO0RnNCQZ4TXHr9pKdkaqqMZPaGgYEH9Q6JD
-         gudY4cYO1wZYc9CpnMv9wNPJ5EQ4c3Hjt7YlXD9b/zswzfmemzamr+i/48Z1uC+WTveb
-         r2+VWAOYm9f3s12wpVrjm4CRMw/Gt9cakrl5EIBrGppNe0bfSwL+O0wnY3+GzTPoGSbK
-         SgOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723467630; x=1724072430;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wRfI3FdFEJ3MkaXnIoLgQ90LoAHwRYhh3fwjWRkFJ5I=;
-        b=goP9Vw+gd0QRBD5GY/jhC99D/dRQ4LyBTdLfxDIOvidbxW+mXSey1H4AY9H0NLUUn/
-         SiBc6KI3wCXvdjnLWqb+W4p8XLsZ8O2FJ9JfyeK3mTyvChR3a9qO2CPOq/tF7z8mcTTi
-         WjHWy3+O2QgnTf4Pl3tWqGJ5+mYi7aI2K/L4rFPcEWVGQG4vvuhDtYZu9hPieTJnCy4X
-         nVzlvdkiB9fWosiVZe+CHNQpUmWh5tZqstqDSwk7MGpB7lhc6xLXIsATa5fsJ/kGfKu/
-         JEC8+GbV6P3uHGVm5i8BJp3ZGdqJRlDNmPRD9YGFcospraGSY/phrujF8sszXv8bnHoH
-         MxZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyFId/YH3O/Et1LuMxpfPt805ssvGcu/tVN+kFZIoN8KD7tu5FZZT4cyLYXRGnxaNVpm5yDrjIRjQNSC1aZHBoNcc6voYuIgTPVWE7OA==
-X-Gm-Message-State: AOJu0YwR+Ol7QSBA1IvrRS3k90vZ+Nlr/HgFI4A37l+SYWX9IiZj1cQj
-	i40iIS8roYhVUN10sfqcOHXTFK0VH2UFcNpScXSyj3UCZDXzBm5FdnQwuEUBEOOUqmX+g/5RCIJ
-	Hod/YtxJjGLAqQW999d1FOcnYk1o=
-X-Google-Smtp-Source: AGHT+IFrFB3KO4+jWsUGUYpYpu9veYHWvnx3aSQt6EztweIohhZIrswF8wq3QcozZnQgSswagyVouOHj0SWC2V3/Aes=
-X-Received: by 2002:a05:6214:3f8f:b0:6bb:b18c:f67a with SMTP id
- 6a1803df08f44-6bf4fa9314amr73076d6.26.1723467629482; Mon, 12 Aug 2024
- 06:00:29 -0700 (PDT)
+	s=arc-20240116; t=1723467726; c=relaxed/simple;
+	bh=as8kn+c7p1Dq/fpAWxsQXzGWdCzINA9p7OO4grgDg74=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZYUyE/uPaoMerS67FvXPyY1Fe19/VtQETWzvz3XTtldNd/Q/5KhER6kvv3FxSjIQUlCBjH5N/MGHJ2fuv2MqIXN2E6fZKIkx1IKPkLpUguO3o0bKzkp9uG7D0GJqMriteoadkscutx5LeJxpC+2QnRjOSWDBQvJ00cXxj8Qhsis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id 35255464CE;
+	Mon, 12 Aug 2024 15:01:55 +0200 (CEST)
+Message-ID: <db686d0c-2f27-47c8-8c14-26969433b13b@proxmox.com>
+Date: Mon, 12 Aug 2024 15:01:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812090525.80299-1-laoar.shao@gmail.com> <20240812090525.80299-2-laoar.shao@gmail.com>
- <Zrn0FlBY-kYMftK4@infradead.org>
-In-Reply-To: <Zrn0FlBY-kYMftK4@infradead.org>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Mon, 12 Aug 2024 20:59:53 +0800
-Message-ID: <CALOAHbBd2oCVKsMwcH_YGUWT5LGLWmNSUAZzRPp8j7bBaqc1PQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm: Add memalloc_nowait_{save,restore}
-To: Christoph Hellwig <hch@infradead.org>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, david@fromorbit.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, Kent Overstreet <kent.overstreet@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 14/40] netfs: Add iov_iters to (sub)requests to
+ describe various buffers
+From: Christian Ebner <c.ebner@proxmox.com>
+To: David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+ Steve French <smfrench@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20231221132400.1601991-1-dhowells@redhat.com>
+ <20231221132400.1601991-15-dhowells@redhat.com>
+ <d0ada96d-1805-44d2-b02c-eff64ec0c7d6@proxmox.com>
+Content-Language: en-US, de-DE
+In-Reply-To: <d0ada96d-1805-44d2-b02c-eff64ec0c7d6@proxmox.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 7:37=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Mon, Aug 12, 2024 at 05:05:24PM +0800, Yafang Shao wrote:
-> > The PF_MEMALLOC_NORECLAIM flag was introduced in commit eab0af905bfc
-> > ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN"). To complem=
-ent
-> > this, let's add two helper functions, memalloc_nowait_{save,restore}, w=
-hich
-> > will be useful in scenarios where we want to avoid waiting for memory
-> > reclamation.
->
-> No, forcing nowait on callee contets is just asking for trouble.
-> Unlike NOIO or NOFS this is incompatible with NOFAIL allocations
+On 8/8/24 10:07, Christian Ebner wrote:
+> Hi,
+> 
+> recently some of our (Proxmox VE) users report issues with file 
+> corruptions when accessing contents located on CephFS via the in-kernel 
+> ceph client [0,1]. According to these reports, our kernels based on 
+> (Ubuntu) v6.8 do show these corruptions, using the FUSE client or the 
+> in-kernel ceph client with kernels based on v6.5 does not show these.
+> Unfortunately the corruption is hard to reproduce.
+> 
+> After a further report of file corruption [2] with a completely 
+> unrelated code path, we managed to reproduce the corruption for one file 
+> by sheer chance on one of our ceph test clusters. We were able to narrow 
+> it down to be possibly an issue with reading of the contents via the 
+> in-kernel ceph client. Note that we can exclude the file contents itself 
+> being corrupt, as any not affected kernel version or the FUSE client 
+> gives the correct contents.
+> 
+> The issue is present also in the current mainline kernel 6.11-rc2.
+> 
+> Bisection with the reproducer points to this commit:
+> 
+> "92b6cc5d: netfs: Add iov_iters to (sub)requests to describe various 
+> buffers"
+> 
+> Description of the issue:
+> 
+> * file copied from local filesystem to cephfs via:
+> `cp /tmp/proxmox-backup-server_3.2-1.iso 
+> /mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
+> * sha256sum on local filesystem:
+> `1d19698e8f7e769cf0a0dcc7ba0018ef5416c5ec495d5e61313f9c84a4237607 
+> /tmp/proxmox-backup-server_3.2-1.iso`
+> * sha256sum on cephfs with kernel up to above commit:
+> `1d19698e8f7e769cf0a0dcc7ba0018ef5416c5ec495d5e61313f9c84a4237607 
+> /mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
+> * sha256sum on cephfs with kernel after above commit:
+> `89ad3620bf7b1e0913b534516cfbe48580efbaec944b79951e2c14e5e551f736 
+> /mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
+> * removing and/or recopying the file does not change the issue, the 
+> corrupt checksum remains the same.
+> * Only this one particular file has been observed to show the issue, for 
+> others the checksums match.
+> * Accessing the same file from different clients results in the same 
+> output: The one with above patch applied do show the incorrect checksum, 
+> ones without the patch show the correct checksum.
+> * The issue persists even across reboot of the ceph cluster and/or clients.
+> * The file is indeed corrupt after reading, as verified by a `cmp -b`.
+> 
+> Does anyone have an idea what could be the cause of this issue, or how 
+> to further debug this? Happy to provide more information or a dynamic 
+> debug output if needed.
+> 
+> Best regards,
+> 
+> Chris
+> 
+> [0] https://forum.proxmox.com/threads/78340/post-676129
+> [1] https://forum.proxmox.com/threads/149249/
+> [2] https://forum.proxmox.com/threads/151291/
 
-I don=E2=80=99t see any incompatibility in __alloc_pages_slowpath(). The
-~__GFP_DIRECT_RECLAIM flag only ensures that direct reclaim is not
-performed, but it doesn=E2=80=99t prevent the allocation of pages from
-ALLOC_MIN_RESERVE, correct?
+Hi,
 
-> and thus will lead to kernel crashes.
+please allow me to send a followup regarding this:
 
-Could you please explain in detail where this might lead to kernel crashes?
+Thanks to a suggestion by my colleague Friedrich Weber we have some 
+further interesting findings.
 
---
-Regards
+The issue is related to the readahead size passed to `mount.ceph`, when 
+mounting the filesystem [0].
 
-Yafang
+Passing an `rasize` in the range of [0..1k] leads to the correct 
+checksum, independent of the bisected patch being applied or not.
+Ranges from (1k..1M] lead to corrupt, but different checksums for 
+different `rasize` values, and finally `rasize` values above 1M lead to 
+a corrupt, but constant checksum value. Again, without the bisected 
+patch, the issue is not present.
+
+Please let me know if I can provide further information or debug outputs 
+in order to narrow down the issue.
+
+Best regards,
+Chris
+
+[0] https://docs.ceph.com/en/reef/man/8/mount.ceph/#advanced
+
 
