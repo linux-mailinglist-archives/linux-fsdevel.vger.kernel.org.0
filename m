@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-25672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AB194ECAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 14:18:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D385694ECA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 14:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 647C1B227B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 12:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951A828332F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 12:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBEF17C217;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFE317BB35;
 	Mon, 12 Aug 2024 12:16:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7784217B512;
-	Mon, 12 Aug 2024 12:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FF517B4FD;
+	Mon, 12 Aug 2024 12:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723464987; cv=none; b=CAiZQcPbxCrXFXTGbc7MI/Vo3QD8tMOCdA84cpG+oktldgDeO6L3t5Zo80+v72IobDum3Yv3sGxx4lbbhUgZMjWHqp1amEp2XxraPaYt8u19tRf0snm3Vq00+WsXL+B35m1VY/BxsWJKc7Z5GOl5KIkGzhBitcE13MWdkxjPBus=
+	t=1723464986; cv=none; b=KGpISuUdI38FuXlzxpTiLUSvLZ4zabVakk3HMRbOBjOK86dEMf0aZkxEPA68xHNZBvIGN9w9m+AOVHSVH9d0OBXSNLNrWkCFgPq36PCJHfps3crdS3ZmQVxrteOKHPF5NXl9XW/x01qgN5rXU5bcG9zHlJGEwIE0q1AnTjzbtDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723464987; c=relaxed/simple;
-	bh=qwwFYGMWC22LSZVs7J52wbNCW10XLQrjH2GIDCGBkBQ=;
+	s=arc-20240116; t=1723464986; c=relaxed/simple;
+	bh=51TeY73ZfcfHsbXKyd+uQriWs57Uk1pq+S2vwwDi1Lg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=orhGq+XB8l2exQMtO3J+mnb+txOmgJH6fE+40qwPBWlmUmCB/iSgLhIHF8xWHJZIJSWJXuz7w1NNlvuFBlNfJS0Qo2u5WXqOPrO5bO0nxKCatsjMZPSxpChtsxKkU/A+GWhQVTHFXJlPQ+F+9DmogSdH/cffqK7XMRxSizFvtpc=
+	 MIME-Version; b=NZEZmiZ8BC8+WOSStZiI/CqwjzA+Seju/m4KvfVRbIETGf20fxBY9VPQUfekm9pFd6RJSBSmNPtB4dfUZ634PuNswnjV8dpkF+jev/NVYFv4vTf2bYrALrRSk0rpZMLW9KHJjJF/U8l4zODY5qFAa7/qFPyAwJlZJg0kZ0Y+rSM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjD534627z4f3kKT;
-	Mon, 12 Aug 2024 20:16:07 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjD4y58L1z4f3mJ5;
+	Mon, 12 Aug 2024 20:16:02 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id CAFA01A1537;
-	Mon, 12 Aug 2024 20:16:16 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 534B51A1535;
+	Mon, 12 Aug 2024 20:16:17 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgDHeLcD_blmHhy7BQ--.21435S9;
-	Mon, 12 Aug 2024 20:16:13 +0800 (CST)
+	by APP3 (Coremail) with SMTP id _Ch0CgDHeLcD_blmHhy7BQ--.21435S10;
+	Mon, 12 Aug 2024 20:16:17 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: linux-kernel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com
-Subject: [PATCH v2 5/6] iomap: don't mark blocks uptodate after partial zeroing
-Date: Mon, 12 Aug 2024 20:11:58 +0800
-Message-Id: <20240812121159.3775074-6-yi.zhang@huaweicloud.com>
+Subject: [PATCH v2 6/6] iomap: reduce unnecessary state_lock when setting ifs uptodate and dirty bits
+Date: Mon, 12 Aug 2024 20:11:59 +0800
+Message-Id: <20240812121159.3775074-7-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
 References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
@@ -65,10 +65,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgDHeLcD_blmHhy7BQ--.21435S9
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4UKryxCF1fXryfXF4ruFg_yoW8GFWDpF
-	Z8KFWkKryqgF43u3WkAF93Zw10ya90gr4fCr4UWwn8uF45tF4jgr92ga13ZFy0vry7Cr4Y
-	vr4vgFy8uF15ZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:_Ch0CgDHeLcD_blmHhy7BQ--.21435S10
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF4kGFykJF4DKF15Ww17ZFb_yoW5Ar4DpF
+	W5Ka98KrZ8Xw17uw1fXF18Zr1Yk34xXr48CayfGwn3CF45Ary2gF18ua4jyFW8Xrn7Ar1v
+	qF1DtFy8WF4jyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -87,37 +87,81 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-In __iomap_write_begin(), if we unaligned buffered write data to a hole
-of a regular file, we only zero out the place where aligned to block
-size that we don't want to write, but mark the whole range uptodate if
-block size < folio size. This is wrong since the not zeroed part will
-contains stale data and can be accessed by a concurrent buffered read
-easily (on the filesystem may not hold inode->i_rwsem) once we mark the
-range uptodate. Fix this by drop iomap_set_range_uptodate() in the
-zeroing out branch.
+When doing buffered write, we set uptodate and drity bits of the written
+range separately, it holds the ifs->state_lock twice when blocksize <
+folio size, which is redundant. After large folio is supported, the
+spinlock could affect more about the performance, merge them could
+reduce some unnecessary locking overhead and gets some performance gain.
 
-Fixes: 9dc55f1389f9 ("iomap: add support for sub-pagesize buffered I/O without buffer heads")
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Closes: https://lore.kernel.org/all/ZqsN5ouQTEc1KAzV@casper.infradead.org/
+Suggested-by: Dave Chinner <david@fromorbit.com>
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/iomap/buffered-io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/iomap/buffered-io.c | 38 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 35 insertions(+), 3 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index ac762de9a27f..96600405dbb5 100644
+index 96600405dbb5..67d7c1c22c98 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -744,8 +744,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
- 					poff, plen, srcmap);
- 			if (status)
- 				return status;
-+			iomap_set_range_uptodate(folio, poff, plen);
- 		}
--		iomap_set_range_uptodate(folio, poff, plen);
- 	} while ((block_start += plen) < block_end);
+@@ -182,6 +182,37 @@ static void iomap_set_range_dirty(struct folio *folio, size_t off, size_t len)
+ 		ifs_set_range_dirty(folio, ifs, off, len);
+ }
  
- 	return 0;
++static void ifs_set_range_dirty_uptodate(struct folio *folio,
++		struct iomap_folio_state *ifs, size_t off, size_t len)
++{
++	struct inode *inode = folio->mapping->host;
++	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
++	unsigned int first_blk = (off >> inode->i_blkbits);
++	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
++	unsigned int nr_blks = last_blk - first_blk + 1;
++	unsigned long flags;
++
++	spin_lock_irqsave(&ifs->state_lock, flags);
++	bitmap_set(ifs->state, first_blk, nr_blks);
++	if (ifs_is_fully_uptodate(folio, ifs))
++		folio_mark_uptodate(folio);
++	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
++	spin_unlock_irqrestore(&ifs->state_lock, flags);
++}
++
++static void iomap_set_range_dirty_uptodate(struct folio *folio,
++		size_t off, size_t len)
++{
++	struct iomap_folio_state *ifs = folio->private;
++
++	if (ifs)
++		ifs_set_range_dirty_uptodate(folio, ifs, off, len);
++	else
++		folio_mark_uptodate(folio);
++
++	filemap_dirty_folio(folio->mapping, folio);
++}
++
+ static struct iomap_folio_state *ifs_alloc(struct inode *inode,
+ 		struct folio *folio, unsigned int flags)
+ {
+@@ -851,6 +882,8 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+ static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+ 		size_t copied, struct folio *folio)
+ {
++	size_t from = offset_in_folio(folio, pos);
++
+ 	flush_dcache_folio(folio);
+ 
+ 	/*
+@@ -866,9 +899,8 @@ static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+ 	 */
+ 	if (unlikely(copied < len && !folio_test_uptodate(folio)))
+ 		return false;
+-	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
+-	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
+-	filemap_dirty_folio(inode->i_mapping, folio);
++
++	iomap_set_range_dirty_uptodate(folio, from, copied);
+ 	return true;
+ }
+ 
 -- 
 2.39.2
 
