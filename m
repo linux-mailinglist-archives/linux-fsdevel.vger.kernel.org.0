@@ -1,66 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-25698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8721F94F515
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 18:40:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09B694F526
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 18:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA981F21B24
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 16:40:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A251C20FFC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 16:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CF6187332;
-	Mon, 12 Aug 2024 16:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C595E18754D;
+	Mon, 12 Aug 2024 16:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="hoQRIyKZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8+ASycA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FE61494B8;
-	Mon, 12 Aug 2024 16:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281B44317C;
+	Mon, 12 Aug 2024 16:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723480815; cv=none; b=P5o+V8LdriEorWc9y09vMpGuB8qrZOpunJTqhpsBY+pjCm9LwsF36t0+yicrpMBQDz8gtIVVp86BTHveAWFUO9OJMUdz2KtFhVXQcaGKvfghmEnWQua597rFHMNRHezQojh7uUkbsWRZW1izfenVzxaVBHJ98ZlrJpIys8XKmro=
+	t=1723481137; cv=none; b=P3TNBal3gvfvuiIAAH1QQWyKmZWxgvdmV9FWlzFYlaiCMJv3iy7rlIU4Wmy1VxEyr3KotnlD+SEtYo+VCr1Ms0+dmqmHm7BRN2G7Ut640oxfVDbvAfcSXgnhLv4XB/sl6d9GCA1F8AokphAJz2W7dPSH0jlMKx1BdXnO1m/lPTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723480815; c=relaxed/simple;
-	bh=BhuxBHwSqvK3NfpdV6y7jZbOqPnGXVRVotuTD2awFSI=;
+	s=arc-20240116; t=1723481137; c=relaxed/simple;
+	bh=fKYlJwy9loPmywPAiGijdAnHNQS3azjgKPmKvKK6vnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRuEAIalEehhpJgq61npSTVzFcdF2M5AtCv1pbFunnNVUMNJufQALk6gksPJCuK7ExvvVH5z1d/o5DbWAO2aVd7XxEnnaiYR/W1dj/XWff3q5U2l5jAkPzsJBYKChHMlrQ4ttseLwWMeUuR/9HbGzf7sYWOonY2KNOdus/NUvTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=hoQRIyKZ; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WjKxb0d8yz9t6q;
-	Mon, 12 Aug 2024 18:40:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1723480803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rJk4Vnl04Aw7j+NDa+iBHRI+DmCBEW0NB+2kLgBa26E=;
-	b=hoQRIyKZjG/fYVUmT/agpW2XV974v/vv4+sVRs19uH3+KkIBDIBu7ezLh6wWIF6h76NT16
-	TUWz6o/OdRRR5qtGX26SfbxPxDPHIXezFf2yt4cXepvXQkhflwtBgDZBaQX2Zin3x1cric
-	uOX6q0jkxexjQOiZ+TdWOL9I6qgRrA0MTbuV8fVELOcPM6qaZv7VsxWodc3v8FObdzWzV1
-	D5mVTXKVKlzOLxmMSalVIO9NC50PIi120AWLUn9U/kg5GuwNhctn/C4iA59rJIghlssIvH
-	IWdQI2xxs1MYCSkavZDk+RC6mK1ZYUPGklribuB0zSluA0nnpXi8btmrhR3ZlQ==
-Date: Mon, 12 Aug 2024 16:39:56 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, p.raghav@samsung.com
-Subject: Re: [PATCH 2/3] xfs: convert perag lookup to xarray
-Message-ID: <20240812163956.xduakibqyzuapfkt@quentin>
-References: <20240812063143.3806677-1-hch@lst.de>
- <20240812063143.3806677-3-hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aVeWpUFdl0vjvMAmNtgil+dHtQZGwNYraMApLKQksyqC+qZ81JepnhYaSUJ4uRtMc9o3nDe2U/Ipv5CDkq2P5ImWWaNvFDag2n5Lp3S+1khTCOp8LeIoE10JhFWiw5aCtkMhiHu0tut1OJ5OC1IhYF74uDnng0fubv0S2IgE0Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8+ASycA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CAFCC32782;
+	Mon, 12 Aug 2024 16:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723481136;
+	bh=fKYlJwy9loPmywPAiGijdAnHNQS3azjgKPmKvKK6vnc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E8+ASycALNsiF2BhYXKB6kjgfZ3w0ym6uo6Unsy4YGHsIajhych9ZRoTk1MZxYCGs
+	 KaYpm3tzTLyPQVsdDMmUcVKeRBHZoGLqJg+jvMB7kibTsxk3gVxEGnbgxnMGUxesJh
+	 eZd5izfSA/m2+rMXJRv7e4dTdHJNSotDSznNNEKHuBGf3+78712MqwWNgsQSUrR1o5
+	 7yiiRl774k/FQORrZBQRbivYa/cGuBXLzhYXmPisIKXJOL5yms7YEtl1DzrX/k9CvK
+	 4uH0tPBrWU8YxfjzOryWq6euyTe4uG38sKiSXse1x+C5UOdE5AZxLv/hNjOYstzHKf
+	 iMUq/1ng0tZrQ==
+Date: Mon, 12 Aug 2024 09:45:36 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+	david@fromorbit.com, jack@suse.cz, willy@infradead.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
+Message-ID: <20240812164536.GE6043@frogsfrogsfrogs>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,47 +60,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812063143.3806677-3-hch@lst.de>
+In-Reply-To: <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
 
-On Mon, Aug 12, 2024 at 08:31:01AM +0200, Christoph Hellwig wrote:
-> diff --git a/fs/xfs/libxfs/xfs_ag.c b/fs/xfs/libxfs/xfs_ag.c
-> index 7e80732cb54708..5efb1e8b4107a9 100644
-> --- a/fs/xfs/libxfs/xfs_ag.c
-> +++ b/fs/xfs/libxfs/xfs_ag.c
-> @@ -46,7 +46,7 @@ xfs_perag_get(
->  	struct xfs_perag	*pag;
+On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
+> folio by folio_mark_dirty() even the map length is shorter than one
+> folio. However, on the filesystem with more than one blocks per folio,
+> we'd better to only set counterpart block's dirty bit according to
+> iomap_length(), so open code folio_mark_dirty() and pass the correct
+> length.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/iomap/buffered-io.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 79031b7517e5..ac762de9a27f 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1492,7 +1492,10 @@ static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
+>  		block_commit_write(&folio->page, 0, length);
+>  	} else {
+>  		WARN_ON_ONCE(!folio_test_uptodate(folio));
+> -		folio_mark_dirty(folio);
+> +
+> +		ifs_alloc(iter->inode, folio, 0);
+> +		iomap_set_range_dirty(folio, 0, length);
+> +		filemap_dirty_folio(iter->inode->i_mapping, folio);
+
+Is it correct to be doing a lot more work by changing folio_mark_dirty
+to filemap_dirty_folio?  Now pagefaults call __mark_inode_dirty which
+they did not before.  Also, the folio itself must be marked dirty if any
+of the ifs bitmap is marked dirty, so I don't understand the change
+here.
+
+--D
+
+>  	}
 >  
->  	rcu_read_lock();
-xa_load() already calls rcu_read_lock(). So we can get rid of this I
-guess?
-> -	pag = radix_tree_lookup(&mp->m_perag_tree, agno);
-> -xfs_perag_get_tag(
-> -	struct xfs_mount	*mp,
-> -	xfs_agnumber_t		first,
-> -	unsigned int		tag)
-> -{
-> -	struct xfs_perag	*pag;
-> -	int			found;
-> -
-> -	rcu_read_lock();
-> -	found = radix_tree_gang_lookup_tag(&mp->m_perag_tree,
-> -					(void **)&pag, first, 1, tag);
-> -	if (found <= 0) {
-> -		rcu_read_unlock();
-> -		return NULL;
-> -	}
-> -	trace_xfs_perag_get_tag(pag, _RET_IP_);
-> -	atomic_inc(&pag->pag_ref);
-> -	rcu_read_unlock();
-> -	return pag;
-> -}
-> -
->  /* Get a passive reference to the given perag. */
->  struct xfs_perag *
->  xfs_perag_hold(
-> @@ -117,38 +92,13 @@ xfs_perag_grab(
->  	struct xfs_perag	*pag;
->  
->  	rcu_read_lock();
-Same here.
+>  	return length;
+> -- 
+> 2.39.2
+> 
+> 
 
