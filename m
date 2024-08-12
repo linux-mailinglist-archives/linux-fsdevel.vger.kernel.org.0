@@ -1,116 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-25690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE4D94F110
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 17:01:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF24994F145
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 17:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60C8BB24C12
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 15:01:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57411B22232
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 15:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14523183CB4;
-	Mon, 12 Aug 2024 15:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905D117F4FE;
+	Mon, 12 Aug 2024 15:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VbEL/7l6"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PH9uJ1aj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EF1178370
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 15:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6361115B0E2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 15:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723474842; cv=none; b=ZAdP4RWNGzR4CYyLBwZJtqLZFKuQOWBgUXktdeRTOJxEw/n9pUvKRapktFQAgUCCHoPzOmB4O3KEezSRaQd1u85e4baedIf1WQ9brQjVCuRypumpsB/FDNjUyOSeDRB98IvKAuo52VCPPJVNNwSWGXB6ibN71ODlHAxIVXa06Mo=
+	t=1723475219; cv=none; b=JM8PddGzBDumCTIvy1RhVSc2ik624w29dD++J72ZjS16JLBiqII8RPRmrc7kShpZ8FtFQCgh/hRkmOkrJW8vpKgYnQ9+tGzS5bZaNuMsov+WiMIQQIMR20Ka9kdFoGfQn72Q6kaQSt9otdq1m45F2IX8Z7JQeXDLsyDdRvUQdts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723474842; c=relaxed/simple;
-	bh=BdVvw5wi8ulgbL0r425IYgyBXwtsKVJ08h7eG+xL5q4=;
+	s=arc-20240116; t=1723475219; c=relaxed/simple;
+	bh=/le9A2aEVKUmIV4UkSEJp/ETmS0AvR1tTz3Yj+RukI4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LX/am0C4Bs1vD4IbcKw4z0R8w3Mnz/hKa4wbLRBC6jKrsjh4aj0V/AmKCIhxhyL2qYSqsGoUqgKnLjceWk961m3QWT3AeMlGX8oyKgjpmo7hLV/4DxdhRrqbDW3w3DafQkbkwHGA8rw3vbk+qhPe3M6sKxLEVnAei4hs9rPfqBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VbEL/7l6; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4f527c0c959so1271268e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 08:00:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=cZwPdA2echParu5NGwKVDkRRp8MosOUPP4XRXeI9SpssCqXO1usKMfHQLvpB/Z4MnsCBupaImu3TTMncTyWqWkyTI9ImVnGcQ3cfWATQdrm1WvxpjmJ/4HplwPTdtgQMDBbHVrJH7grXkzSP2FKgFmoh2wTgOzEeeBRrlV/a2+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PH9uJ1aj; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b9fe5ea355so14655a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 08:06:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723474840; x=1724079640; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723475216; x=1724080016; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E1LfnoSFlT+OLyzx/vYttf9gF0d/fk7KCwIj4mtQAzU=;
-        b=VbEL/7l6zEzAgEpHngOhJU7+vra/3YzhtTeLqHZgiqMm7QnJkuHKUGKoY+jp79NOhw
-         9DMflT36Ig4isIiY0K1UGRZDbT1OzBHxWZlB+sQ/3zBchDoeE+FiK+l3fJ3XAZkhfAlO
-         gupl5pIxZnOsqmdRmKsx/RgncbDZMYiSJ3cX/k0CPZAEWFZDocK2XZXv9Ci3kgI3P4Xg
-         u0835w2YQ8G2tyEJTlqlD56TYpA5AdvIIh7BVyw42Xb41B6mHkHXW8p+uhXgl7AEl+nR
-         D9MPtRn4qWnXN+eHh16gViKwXedb11GXDnMYbrTRRDFhvv2Hr6gJ2+2191WR3P+QYR72
-         NWGw==
+        bh=/le9A2aEVKUmIV4UkSEJp/ETmS0AvR1tTz3Yj+RukI4=;
+        b=PH9uJ1ajF+VwsbFmieHQ/jDrNVgDM9gz+/DwqwKIF639c7FJEroC/+cyv8n69v5Isl
+         nXUvZJkMXhotNViuWUQOirS8pm8gCgFTYB1LhjzaD98BUiDA/5TZqcIa0l6gnVVkYsE0
+         3wjH3PKctHMrh58LjomGY94dm4VhgSPE6Ks1f0xB2oj17ZlEgpGq53395gDutO15JB9B
+         RmbjYBWtTvvPI7DvFZnzQGmyfawvk0JNUpRXluI6yWZHmckLUyvt06mxzxrJsCpvTriw
+         qWHpsD+J81TuG7gAhzKsvLNCvYeEKwRggvxtPQEwwZpiilLZAwmndZ7aoyZNd0TRnKck
+         dIAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723474840; x=1724079640;
+        d=1e100.net; s=20230601; t=1723475216; x=1724080016;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E1LfnoSFlT+OLyzx/vYttf9gF0d/fk7KCwIj4mtQAzU=;
-        b=c9wRyk0CLrFAYU+bBo6QVNC+0y75kmnJ0djxqdGgFSG4oDEoOFckYh8pwm3dxWers+
-         TvHxQ+OqNqEECa6PAIVBjSnlj3bEGX6vbBY0YqBpQ9b2M6I7Bs3nXJeYa7Tw07h33FyP
-         qXEauk4d+20DdTZLQ9SHynE5I+6vwcHyLuWg/rPXOfoXLccm97YTbplG8yMbyObW7D8y
-         yG4OKmF8AdsNpmouHDkjWH/2f9IW4pFYo8J3/cZtEyAK6fmCZwgic7q8q8v0OO6CZZrx
-         /vPp+Y+N/pWoni7ZMtc1eHlwGFsomBs6gp2qgAbRELB9LOU8vELAQKrzMCWiqA6HGxBK
-         ULTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkqoJSbdbqgBMWj0Xdjypj/35b01QQS+tYDEFz0pTRnmZ/foK+Uz7qZ2BNt74MN7MgCu4GUekfIC02O5u+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz9qtrR6CfDn52QICqPmqvX2G/0Z808dvyDup2k0SZvIe2JHYh
-	UV1r06yg/ivMeCG8fqsbkEy2nr4Qcc3P2LgzufbX7KJWhSq2VYpO7jPt6M6JS4C1Mqspp5UFQ8C
-	zegJ5OjV9ZdNB/W8ndnCmlCHkLrRUvNfYk/tt
-X-Google-Smtp-Source: AGHT+IF0QTAbx41bggszGNeJJztfb6bYw1GrU0MEoge0vOkbY0MKZLCZxdKF6yLUy5pNifp1N3/5Fx2G7TY+Nwqu6lI=
-X-Received: by 2002:a05:6122:2a07:b0:4f2:f1f1:a9f2 with SMTP id
- 71dfb90a1353d-4fabeef04e5mr797889e0c.4.1723474839871; Mon, 12 Aug 2024
- 08:00:39 -0700 (PDT)
+        bh=/le9A2aEVKUmIV4UkSEJp/ETmS0AvR1tTz3Yj+RukI4=;
+        b=RVnG9VKdfZhhpkZBgOf7KlM9BVnP+kDiyxQ8vR2AWjref9iZZ856Bb0Po66BcrZihL
+         qHLfJYflxGdHATb4sz95jVfZqa93r1hpCdDmhgNqBHxDQbja9YCIKma0D62uGPUOJNWV
+         GIrgqW/OPgokFwkd19FcjIBzBe//WGISgFZGHhw3hh3Y0HAT1V03hDcVToIkucMq0lha
+         XnNkiGi1X+8T3gHC+N6Lc+JvNNF8dnsu84gzzIRD5eyIcF9GK0QJvJJf2/rd3k0MQ1fU
+         SuEaQ5d+mydQbO/bjYlfIXFJxJfA8ikDbykzmyNnOnKLN5q9Go9egbDkg6albgUNrRiW
+         cu/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVTm0+lMQk2kfHTGBG9gPkSbKUpeJmktegOBLx5j7018ELsAQewrtoE200wkOugb4yASI4RgdT4FVQGJGMWfRD7REg7OV/hMLgu+GCUtQ==
+X-Gm-Message-State: AOJu0YxPgQHDtPaIMgLhKnD6PGtox5kDHHiaWziP4DIhQOgsH9YRD3R6
+	sDDl+YO/MmU4TrLaKBsIDkuqZKEXNG9E17dtcmJMxlg9PA76CHJ38OE2WasFbkIT6kZqLzyOOx/
+	OOTCHRej8izcyq26pAOdBM2xPcdpfBu+3T3kl
+X-Google-Smtp-Source: AGHT+IH0SfAmG8rb+QcktSGfHWi/AHs2OD7smK1wxxMlrDuISAWiDiKzS7E7leJ1IekWL3YFAERaSLWneIBYBvP6CMA=
+X-Received: by 2002:a05:6402:5206:b0:58b:93:b623 with SMTP id
+ 4fb4d7f45d1cf-5bd1b40925cmr206174a12.5.1723475214958; Mon, 12 Aug 2024
+ 08:06:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
- <20240812144936.1616628-1-mic@digikod.net>
-In-Reply-To: <20240812144936.1616628-1-mic@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 12 Aug 2024 11:00:28 -0400
-Message-ID: <CAHC9VhTVO1-KDBisD9sZjG+5mZUiSy6SOE=6c5_rGp5ApoC77A@mail.gmail.com>
-Subject: Re: [PATCH] fs,security: Fix file_set_fowner LSM hook inconsistencies
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>
+References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
+ <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
+ <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
+ <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
+ <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
+ <20240808.kaiyaeZoo1ha@digikod.net> <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
+ <20240809.eejeekoo4Quo@digikod.net> <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
+ <20240809.se0ha8tiuJai@digikod.net> <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
+ <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
+ <CAG48ez1fVS=Hg0szXxQym9Yfw4Pgs1THeviXO7wLXbC2-YrLEg@mail.gmail.com> <CAHC9VhS6=s9o4niaLzkDG6Egir4WL=ieDdyeKk4qzQo1WFi=WQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhS6=s9o4niaLzkDG6Egir4WL=ieDdyeKk4qzQo1WFi=WQ@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 12 Aug 2024 17:06:17 +0200
+Message-ID: <CAG48ez2tvHgv7sOVP14gCF1MAGE-UzJoMCfZqdmY1nXX4FFV4Q@mail.gmail.com>
+Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
+ signal control)
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 10:49=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
-h
-> index 44488b1ab9a9..974bcc1c8f8f 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -196,7 +196,6 @@ LSM_HOOK(int, 0, file_mprotect, struct vm_area_struct=
- *vma,
->  LSM_HOOK(int, 0, file_lock, struct file *file, unsigned int cmd)
->  LSM_HOOK(int, 0, file_fcntl, struct file *file, unsigned int cmd,
->          unsigned long arg)
-> -LSM_HOOK(void, LSM_RET_VOID, file_set_fowner, struct file *file)
+On Mon, Aug 12, 2024 at 4:57=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Mon, Aug 12, 2024 at 9:09=E2=80=AFAM Jann Horn <jannh@google.com> wrot=
+e:
+> > On Mon, Aug 12, 2024 at 12:04=E2=80=AFAM Paul Moore <paul@paul-moore.co=
+m> wrote:
+>
+> ...
+>
+> > > From a LSM perspective I suspect we are always going to need some sor=
+t
+> > > of hook in the F_SETOWN code path as the LSM needs to potentially
+> > > capture state/attributes/something-LSM-specific at that
+> > > context/point-in-time.
+> >
+> > The only thing LSMs currently do there is capture state from
+> > current->cred. So if the VFS takes care of capturing current->cred
+> > there, we should be able to rip out all the file_set_fowner stuff.
+> > Something like this (totally untested):
+>
+> I've very hesitant to drop the LSM hook from the F_SETOWN path both
+> because it is reasonable that other LSMs may want to do other things
+> here,
 
-As I mentioned in the other thread, I don't want to see the
-file_set_owner hook removed at this point in time.  I'm open to the
-idea of moving it around, but as of right now I think it is important
-to keep it around.
+What is an example for other things an LSM might want to do there? As
+far as I understand, the whole point of this hook is to record the
+identity of the sender of signals - are you talking about an LSM that
+might not be storing credentials in struct cred, or something like
+that?
 
->  LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
->          struct fown_struct *fown, int sig)
->  LSM_HOOK(int, 0, file_receive, struct file *file)
+> and adding a LSM hook to the kernel, even if it is re-adding a
+> hook that was previously removed, is a difficult and painful process
+> with an uncertain outcome.
 
---=20
-paul-moore.com
+Do you mean that even if the LSM hook ends up with zero users
+remaining, you'd still want to keep it around in case it's needed
+again later?
 
