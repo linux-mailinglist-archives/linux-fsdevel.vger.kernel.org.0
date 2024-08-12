@@ -1,127 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-25633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C9F94E6B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 08:33:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D95294E6EE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 08:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DF551C203AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 06:33:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 491FB1C21A9D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 06:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2016914F9CD;
-	Mon, 12 Aug 2024 06:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3614F14F9DC;
+	Mon, 12 Aug 2024 06:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v8dCCDjM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WI40beOb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64CD165EFF;
-	Mon, 12 Aug 2024 06:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43E514F9CD
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 06:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723444317; cv=none; b=AHmb4Dfbj3EHJ4SN3M1uQz7OPsl0ZVwcStrr8YgSETjw/GcS8pe07ZBYwdk4gT+p5CXfbMtABLsLs8ICGvI8sw8F7dc+Hb4wLa4aj4GMQELNvLbhz2HNnf1RHHhBGavAh4giZTO9A1/p/Wqo9pwyC6c3U5clOIZVSMiuLKP1KQ4=
+	t=1723444939; cv=none; b=R2te5mv9iRQFK2YTXA6IoSnl0XMTQFRpzYyLgjP1HHpPKhUyAth3fWlo4DWZHBGo9F7LxWKgGSOJUggZRS7o5ACF2Pta0lhot2xoR02Z9TRFEGF5nzLLsyVFm20jem24qVXP4ljselLoQjzEn1i4gFBG6aXDzO0q/hC3UFKy5fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723444317; c=relaxed/simple;
-	bh=Z2rKMDvRnVUsDNHEJGouG/LnRfw084gmu32pKKx+v3E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tSf4ERaJTrGTP4hqBuRSlv3munu8Cr9z0agBGjMTUYe9iM5JgOO9EVyrYAb2fanWiVhQPxIbEO+UJ3MOsgus+8/ie3swxIuNfH3byrnYYTxmRlj+GGeGZw8ekQA2BqWKW95YIVJtXomcLvV7BEmBigWN3kf38L/j0Ry8qq97858=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=v8dCCDjM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	s=arc-20240116; t=1723444939; c=relaxed/simple;
+	bh=FzioMDXI7UqBG1e1GjwRqNw0+o5ViuQ4KbnDQa0Ltbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m543nK8BME1t6n13QA45I+WUGEubWr9cVnRRIjZNZTdG7ofRIHKYUwziWlxBT3H0j16P96XKDfAJQF1res/DV7kvztHt/P4VjHb6CcUMYxLWCCH/ZVa++10akx+PTd0zDIV9iJJHwZPmWXkT2IeU/HVFVBP6/6zfqs8+UGnyVAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WI40beOb; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=1Mf47dsmFdXaLM/5Uz2vFkWWSorSPzCT+SfcQvDKnl4=; b=v8dCCDjMy85t9lz4dQD1eOiMk+
-	OZqfIxBSgcM1Caa/Uxqx165Mzst6gpmHn9QrkHaRrZMCwDbL6RBuqDiMqimtgThJEtiCdhvnY16VF
-	drd9NUn3Or/qOPcfiwz5bqhFNo5rjGxiLhiRjAGSOcrEwbzrwZ4rB8pBjX0tk7GDvDMBVFbKKwQbm
-	25W7VwB4yiJVCUi3qKsHAuRf9ClwpGUsSbQG1EvEo8Fh0G8d7XNki8wV1RrPcov9CAuxj2dxl5hFs
-	FHapcKp5TgB8kffCpfeR0dS0U7lC92VeChSl0N3BUOyqI3k+5E70RgkrOWs1xebEsV/RUzBDb7r+k
-	fLA8AbKA==;
-Received: from 2a02-8389-2341-5b80-ee60-2eea-6f8f-8d7f.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:ee60:2eea:6f8f:8d7f] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdOaw-0000000H1Me-13e8;
-	Mon, 12 Aug 2024 06:31:54 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Chandan Babu R <chandan.babu@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/3] xfs: use kfree_rcu_mightsleep to free the perag structures
-Date: Mon, 12 Aug 2024 08:31:02 +0200
-Message-ID: <20240812063143.3806677-4-hch@lst.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240812063143.3806677-1-hch@lst.de>
-References: <20240812063143.3806677-1-hch@lst.de>
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=9DQd6kYY+EzRR2epFy5oprtTJphDc03M9a272nQMMJk=; b=WI40beObA6bgpQiWGLo1T1PBJq
+	TQoPI50oRbWQAL/Y9pTiA9HEAAJaHwEMW6KqznxidwsHVQJt/LtSjvjdswQPCKMOUTA5QDla9aYf9
+	WMoCbx3g1hbRMyYPYNBpMVBq/oIyjF8f9Z9JD+GEA1TJfH5i7ShLuwejqO8jEmuF8/rplD3VTtmT3
+	76yrLGfDgDkSeNJ7f6pWhndoKxQXpD76kVO2t6j4pocPCiIAC7/TqUa7llDSKOEABO/MEv+PZ4TRp
+	W2bk0mRmt+Io2mtVS4rI2as8kmxLEuuUF7iJE0acXUEbFpggKMAoIpP02qjPKyd/F3D14Ycaa827B
+	divSbrCA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sdOkw-000000010RN-2qhy;
+	Mon, 12 Aug 2024 06:42:14 +0000
+Date: Mon, 12 Aug 2024 07:42:14 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: [PATCHES] fs/file.c stuff
+Message-ID: <20240812064214.GH13701@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Using the kfree_rcu_mightsleep is simpler and removes the need for a
-rcu_head in the perag structure.
+	Assorted cleanups, part from the previous cycle, part new.
+Branch is in git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git #work.fdtable
+Individual patches in followups.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/xfs/libxfs/xfs_ag.c | 12 +-----------
- fs/xfs/libxfs/xfs_ag.h |  3 ---
- 2 files changed, 1 insertion(+), 14 deletions(-)
+	Appears to work; if nobody objects, into -next it goes...
 
-diff --git a/fs/xfs/libxfs/xfs_ag.c b/fs/xfs/libxfs/xfs_ag.c
-index 5efb1e8b4107a9..55cf41be04d145 100644
---- a/fs/xfs/libxfs/xfs_ag.c
-+++ b/fs/xfs/libxfs/xfs_ag.c
-@@ -185,16 +185,6 @@ xfs_initialize_perag_data(
- 	return error;
- }
- 
--STATIC void
--__xfs_free_perag(
--	struct rcu_head	*head)
--{
--	struct xfs_perag *pag = container_of(head, struct xfs_perag, rcu_head);
--
--	ASSERT(!delayed_work_pending(&pag->pag_blockgc_work));
--	kfree(pag);
--}
--
- /*
-  * Free up the per-ag resources associated with the mount structure.
-  */
-@@ -218,7 +208,7 @@ xfs_free_perag(
- 		xfs_perag_rele(pag);
- 		XFS_IS_CORRUPT(pag->pag_mount,
- 				atomic_read(&pag->pag_active_ref) != 0);
--		call_rcu(&pag->rcu_head, __xfs_free_perag);
-+		kfree_rcu_mightsleep(pag);
- 	}
- }
- 
-diff --git a/fs/xfs/libxfs/xfs_ag.h b/fs/xfs/libxfs/xfs_ag.h
-index b5eee2c787b6b7..d9cccd093b60e0 100644
---- a/fs/xfs/libxfs/xfs_ag.h
-+++ b/fs/xfs/libxfs/xfs_ag.h
-@@ -63,9 +63,6 @@ struct xfs_perag {
- 	/* Blocks reserved for the reverse mapping btree. */
- 	struct xfs_ag_resv	pag_rmapbt_resv;
- 
--	/* for rcu-safe freeing */
--	struct rcu_head	rcu_head;
--
- 	/* Precalculated geometry info */
- 	xfs_agblock_t		block_count;
- 	xfs_agblock_t		min_block;
--- 
-2.43.0
+Shortlog:
+Al Viro (8):
+      get rid of ...lookup...fdget_rcu() family
+      remove pointless includes of <linux/fdtable.h>
+      close_files(): don't bother with xchg()
+      proc_fd_getattr(): don't bother with S_ISDIR() check
+      move close_range(2) into fs/file.c, fold __close_range() into it
+      sane_fdtable_size(): don't bother looking at descriptors we are not going to copy
+      alloc_fdtable(): change calling conventions.
+      dup_fd(): change calling conventions
+
+Yu Ma (3):
+      fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()
+      fs/file.c: conditionally clear full_fds
+      fs/file.c: add fast path in find_next_fd()
+
+Diffstat:
+ arch/powerpc/platforms/cell/spufs/coredump.c |   4 +-
+ fs/fcntl.c                                   |   1 -
+ fs/file.c                                    | 195 +++++++++++----------------
+ fs/file_table.c                              |   1 -
+ fs/gfs2/glock.c                              |  12 +-
+ fs/notify/dnotify/dnotify.c                  |   5 +-
+ fs/notify/fanotify/fanotify.c                |   1 -
+ fs/notify/fanotify/fanotify_user.c           |   1 -
+ fs/open.c                                    |  17 ---
+ fs/overlayfs/copy_up.c                       |   1 -
+ fs/proc/base.c                               |   1 -
+ fs/proc/fd.c                                 |  23 +---
+ include/linux/fdtable.h                      |   7 +-
+ include/linux/file.h                         |   1 +
+ io_uring/io_uring.c                          |   1 -
+ kernel/bpf/bpf_inode_storage.c               |   1 -
+ kernel/bpf/bpf_task_storage.c                |   1 -
+ kernel/bpf/task_iter.c                       |   6 +-
+ kernel/bpf/token.c                           |   1 -
+ kernel/exit.c                                |   1 -
+ kernel/fork.c                                |  26 ++--
+ kernel/kcmp.c                                |   4 +-
+ kernel/module/dups.c                         |   1 -
+ kernel/module/kmod.c                         |   1 -
+ kernel/umh.c                                 |   1 -
+ net/handshake/request.c                      |   1 -
+ security/apparmor/domain.c                   |   1 -
+ 27 files changed, 104 insertions(+), 212 deletions(-)
 
 
