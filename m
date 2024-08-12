@@ -1,112 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-25629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D94D94E620
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 07:22:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E38794E6AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 08:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2FB2B20B36
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 05:22:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0102282404
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 06:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC12E14B940;
-	Mon, 12 Aug 2024 05:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A6E153565;
+	Mon, 12 Aug 2024 06:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b="K/OPDwy9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JKDWWdaB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from omr000.pc5.atmailcloud.com (omr000.pc5.atmailcloud.com [103.150.252.0])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FA943AA1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 05:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.150.252.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5402599;
+	Mon, 12 Aug 2024 06:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723440115; cv=none; b=EpysPRNTOLrcGsGPSCLnqKZcxWYpBFWenoGn5QICpz+3XPsMm6ujvaZVQItG9XsZJ95g49BW2vjtzZa2Tj9d1gOYhsqEoudz21ChDccU6nk+rkLexq+8LAZg7Px8NeN+rm1Ngu80Rnz/r7NAEM2FnCrUZs0+TnSemwtCL3U2VeU=
+	t=1723444310; cv=none; b=V1D1JJP/DFLXvBj4W2JpzrnZn3k/5zFo7tEtdTLYkQRAxZAayQqt9SXMvpeQI56CMWF53ZRCxMoZqyjScWeSwUzio/TFUeLLW3PaDBis2A6hwDOqvh7ee9IZGXonk7/xSADI2crmkzVPiY+CQmbbpamTtz5C7TDqbp7nkTe1kTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723440115; c=relaxed/simple;
-	bh=h9V1gKwBinnV+XKmck3MYnRqujBJYafL4Schx2hArJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QHlNte6enMh3SpeqO3sfOvXip6DsOmW3bwJbjIED90w+9WU2oBX4XXFcGULNeTNqYseYro1oq1lkdEOwe99N/sBm+UVzxhPQtHu2FEyGfig2TWvgdzzqujs48s5P7hDdv6IVL73rxx5BSN81FG9ktUCc66HNVIjQ6Tdwli0Mvdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au; spf=pass smtp.mailfrom=westnet.com.au; dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b=K/OPDwy9; arc=none smtp.client-ip=103.150.252.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=westnet.com.au
+	s=arc-20240116; t=1723444310; c=relaxed/simple;
+	bh=yGngzFisU3hHM/W+/P9PCmF6ot5hT/WB3q7V+4e6Sqk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P3pE76T/zGXezKUFxE+7JX/de/DJenx4RNcojVk7gd4z9WayLKFqjQLZumVXlXYdRa9ABKUJNRoQErrWluzuht5E/UGwjucIOANtj6Dapl4COX4+72iPuSua4LGsUUIiDnGbs9WUUQVMn/iLkQq4PihTysEnua3EpqapGrIElbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JKDWWdaB; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=westnet.com.au; s=202309; h=Content-Type:From:To:Subject:MIME-Version:Date:
-	Message-ID; bh=AaDYcRfKXTyEZ6jBMotVIQU3FKYuF/9zV7sS8dzbx98=; b=K/OPDwy9z0W5cX
-	be8AIXhPqWpZj7CCNaW4lp5gMvGTvPQtI1A0xGtOIHr9Vpzvw7lXOglSUcPprvP4Bv9N5VEmHyu04
-	FE5aUjsrR5KRdV3nwsa/Kgocd8nm7pqJiVtaREcb6aJfpd9F5pn8TXcJ9t1jFFDQphs9eTCfuPi0N
-	W7QuMwQSfQY2PPP/fJdOAiACH1Re4EanlIeGfZT47RKA/e47lmOhAFW4lpYIO8PTrXnQTqINMyOI4
-	7o6ii4XdsWLMYnPTzJLMtEcmw0Q93iO1QS3pdIEGhQ4aQq/FwHkLqFN3si/wYgTq8G+wtxl4sY315
-	5AKqb7uQG58weMNqSQ8w==;
-Received: from CMR-KAKADU04.i-0c3ae8fd8bf390367
-	 by OMR.i-0e491b094b8af55fe with esmtps
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1sdMnj-0002B6-Vd;
-	Mon, 12 Aug 2024 04:36:59 +0000
-Received: from [27.33.250.67] (helo=[192.168.0.22])
-	 by CMR-KAKADU04.i-0c3ae8fd8bf390367 with esmtpsa
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1sdMnj-0006Il-1y;
-	Mon, 12 Aug 2024 04:36:59 +0000
-Message-ID: <bafe6129-209b-4172-996e-5d79389fc496@westnet.com.au>
-Date: Mon, 12 Aug 2024 14:36:57 +1000
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=FuyQkuQbkI6CMzqgMD1lf+z72iAYbcxitO6ISRVGreY=; b=JKDWWdaBFDZ62CMNAal85eU9iv
+	MsbwcVQaHQA6SUi3Zn0vLwWn1eOgE+FkiiLTCh5zjG2RzlAx8KelK6ahb5r3WdknDokvmhWnIXmwq
+	eoTJCZCETv5t5Ll+pwGaO9z596zDLpq2HYFPR3uUyxGcEek5aG7OH+E4Kwah3MUvtg4zcZM8zPas5
+	PSMSTr8sgVxD95JhgQob+feDXghhTq65+sOUMAuu88AtpTLQLK/ke3b4duSrQBevFDteUnGWZTDLs
+	y2ySCF3h073H9aPSzwX1+DnP4b0wjXpP4BKy5tcXnOGkkb1TdK25efwogfcTXB/Qfswg7yqN22aZX
+	9t0SF+iA==;
+Received: from 2a02-8389-2341-5b80-ee60-2eea-6f8f-8d7f.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:ee60:2eea:6f8f:8d7f] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sdOao-0000000H1JW-3sGv;
+	Mon, 12 Aug 2024 06:31:47 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Chandan Babu R <chandan.babu@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: conver XFS perag lookup to xarrays
+Date: Mon, 12 Aug 2024 08:30:59 +0200
+Message-ID: <20240812063143.3806677-1-hch@lst.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/16] romfs: Convert romfs_read_folio() to use a folio
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-References: <20240530202110.2653630-1-willy@infradead.org>
- <20240530202110.2653630-13-willy@infradead.org>
- <597dd1bb-43ee-4531-8869-c46b38df56bd@westnet.com.au>
- <ZrmBvo6c1N7YnJ6y@casper.infradead.org>
-Content-Language: en-US
-From: Greg Ungerer <gregungerer@westnet.com.au>
-In-Reply-To: <ZrmBvo6c1N7YnJ6y@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Atmail-Id: gregungerer@westnet.com.au
-X-atmailcloud-spam-action: no action
-X-Cm-Analysis: v=2.4 cv=fLk/34ae c=1 sm=1 tr=0 ts=66b9916b a=Pz+tuLbDt1M46b9uk18y4g==:117 a=Pz+tuLbDt1M46b9uk18y4g==:17 a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=80-xaVIC0AIA:10 a=x7bEGLp0ZPQA:10 a=Kl0MfWnbE3h2Nfpd_ZgA:9 a=QEXdDO2ut3YA:10
-X-Cm-Envelope: MS4xfADQzl3K9idOr25qStOsqBkihoPFnJIsVdDwUb5CnwGkZEI33CFICTl/pc8aLAF16NAitkkZV6PZfgGRu2nata0xRdjCw/GGmcUiopnPDVZltto6ZWYj z40DuTHR5U+ZeDUHiztlEAlLmRN1quRJ4pTk55yfjZ/ZZGqKvcb6EOSVdEIbLOQuc3wxlELHkbSXUg==
-X-atmailcloud-route: unknown
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+Hi all,
 
-On 12/8/24 13:30, Matthew Wilcox wrote:
-> On Mon, Aug 12, 2024 at 11:46:34AM +1000, Greg Ungerer wrote:
->>> @@ -125,20 +121,14 @@ static int romfs_read_folio(struct file *file, struct folio *folio)
->>>    		ret = romfs_dev_read(inode->i_sb, pos, buf, fillsize);
->>>    		if (ret < 0) {
->>> -			SetPageError(page);
->>>    			fillsize = 0;
->>>    			ret = -EIO;
->>>    		}
->>>    	}
->>> -	if (fillsize < PAGE_SIZE)
->>> -		memset(buf + fillsize, 0, PAGE_SIZE - fillsize);
->>> -	if (ret == 0)
->>> -		SetPageUptodate(page);
->>> -
->>> -	flush_dcache_page(page);
->>> -	kunmap(page);
->>> -	unlock_page(page);
->>> +	buf = folio_zero_tail(folio, fillsize, buf);
-> 
-> I think this should have been:
-> 
-> 	buf = folio_zero_tail(folio, fillsize, buf + fillsize);
-> 
-> Can you give that a try?
+for a project with the pending RT group code in XFS that reuses the basic
+perag concepts I'd much prefer to use xarrays over the old radix tree for
+nicer iteration semantics.
 
-Yep, that fixes it.
+This series converts the perag code to xarrays to keep them in sync and
+throws in the use of kfree_rcu_mightsleep in the same area.
 
-Thanks
-Greg
+To easily allow porting libxfs code to userspace this can't use xa_set
+which requires stealing bits from the pointer, and as part of
+investigating that I realized that the xa_set API is generally not so
+nice for callers for which a pre-existing entry in the xarray is
+always an error.  Thus the first patch adds a new xa_set wrapper that
+treats an existing entry as an error and avoids the need to use of
+xa_err.  It could also be used to clean up a significant number of
+existing callers.
 
-
+Diffstat:
+ fs/xfs/libxfs/xfs_ag.c |   93 ++++---------------------------------------------
+ fs/xfs/libxfs/xfs_ag.h |   14 -------
+ fs/xfs/xfs_icache.c    |   77 ++++++++++++++++++++++++++--------------
+ fs/xfs/xfs_mount.h     |    3 -
+ fs/xfs/xfs_super.c     |    3 -
+ fs/xfs/xfs_trace.h     |    3 -
+ include/linux/xarray.h |    1 
+ lib/xarray.c           |   33 +++++++++++++++++
+ 8 files changed, 96 insertions(+), 131 deletions(-)
 
