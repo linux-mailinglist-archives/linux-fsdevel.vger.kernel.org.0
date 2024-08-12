@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-25699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09B694F526
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 18:45:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51AF494F534
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 18:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A251C20FFC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 16:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E300280EDD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 16:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C595E18754D;
-	Mon, 12 Aug 2024 16:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7086186E34;
+	Mon, 12 Aug 2024 16:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8+ASycA"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TrIPGtNu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281B44317C;
-	Mon, 12 Aug 2024 16:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43198187342
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 16:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481137; cv=none; b=P3TNBal3gvfvuiIAAH1QQWyKmZWxgvdmV9FWlzFYlaiCMJv3iy7rlIU4Wmy1VxEyr3KotnlD+SEtYo+VCr1Ms0+dmqmHm7BRN2G7Ut640oxfVDbvAfcSXgnhLv4XB/sl6d9GCA1F8AokphAJz2W7dPSH0jlMKx1BdXnO1m/lPTo=
+	t=1723481315; cv=none; b=SPJietmUoUSnfI9K8fIZpPKhQFd1ZCPDMoeuYFXAIC1T8Pd4/ub8tvLOp0w8/L/fYdLTHRUI89wm7X8bm5S9FUeoAecreY4WCuSt5dNN6s0UxzbeSEujfuHqmqN1+inX3ASg0TQXUVMy0LrS/AH5Lu8tVYvprD/njIVPAkJw0uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481137; c=relaxed/simple;
-	bh=fKYlJwy9loPmywPAiGijdAnHNQS3azjgKPmKvKK6vnc=;
+	s=arc-20240116; t=1723481315; c=relaxed/simple;
+	bh=vlxgpT2n5Xps903ECbjYYd6/1bI3E1QPI8KYM/sxDYQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aVeWpUFdl0vjvMAmNtgil+dHtQZGwNYraMApLKQksyqC+qZ81JepnhYaSUJ4uRtMc9o3nDe2U/Ipv5CDkq2P5ImWWaNvFDag2n5Lp3S+1khTCOp8LeIoE10JhFWiw5aCtkMhiHu0tut1OJ5OC1IhYF74uDnng0fubv0S2IgE0Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8+ASycA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CAFCC32782;
-	Mon, 12 Aug 2024 16:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723481136;
-	bh=fKYlJwy9loPmywPAiGijdAnHNQS3azjgKPmKvKK6vnc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E8+ASycALNsiF2BhYXKB6kjgfZ3w0ym6uo6Unsy4YGHsIajhych9ZRoTk1MZxYCGs
-	 KaYpm3tzTLyPQVsdDMmUcVKeRBHZoGLqJg+jvMB7kibTsxk3gVxEGnbgxnMGUxesJh
-	 eZd5izfSA/m2+rMXJRv7e4dTdHJNSotDSznNNEKHuBGf3+78712MqwWNgsQSUrR1o5
-	 7yiiRl774k/FQORrZBQRbivYa/cGuBXLzhYXmPisIKXJOL5yms7YEtl1DzrX/k9CvK
-	 4uH0tPBrWU8YxfjzOryWq6euyTe4uG38sKiSXse1x+C5UOdE5AZxLv/hNjOYstzHKf
-	 iMUq/1ng0tZrQ==
-Date: Mon, 12 Aug 2024 09:45:36 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
-	david@fromorbit.com, jack@suse.cz, willy@infradead.org,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
-Message-ID: <20240812164536.GE6043@frogsfrogsfrogs>
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OG9U5299UU/v1xV2hCuLE7+ZyhqampNnlfHq5V6woQ0wfdyAy1iY4YXJcFveI0FXszIYq70Kx9ro8kSLaTWp9LW8fVHS2+lVupNEPi7GTIqTS/hOhBAA+qZ6j1xas6KeIgG8lRSSx3heb+8haLZBjdOcv/kXqqV5LadzGN6Fca8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TrIPGtNu; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 12 Aug 2024 12:48:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723481311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oup5KvnReVwL5g2TjaX2imedpZh9Y3hrP7CG0s2fWjA=;
+	b=TrIPGtNutq+lSGGCHWPnv7sShgOyt433IP1UlTymAL6HJfz29xeImVxoISTweeuQfCxsYD
+	WFS+UxgiH98HsVJ6Zqfausur9ndo9hlTazukETyvliFbxHSuWxuvY7csx3RA1iQxsuw1A3
+	GCPYCwQm4RRbJkXJnZbkbJ3ncWi9pvk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, david@fromorbit.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] mm: Add memalloc_nowait_{save,restore}
+Message-ID: <5evd6n5ncanmyc2qtjpb44bd76xj7icitdf3g6xeb2eiofh6ht@eqm6r2ch4b3l>
+References: <20240812090525.80299-1-laoar.shao@gmail.com>
+ <20240812090525.80299-2-laoar.shao@gmail.com>
+ <Zrn0FlBY-kYMftK4@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,50 +60,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
+In-Reply-To: <Zrn0FlBY-kYMftK4@infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Mon, Aug 12, 2024 at 04:37:58AM GMT, Christoph Hellwig wrote:
+> On Mon, Aug 12, 2024 at 05:05:24PM +0800, Yafang Shao wrote:
+> > The PF_MEMALLOC_NORECLAIM flag was introduced in commit eab0af905bfc
+> > ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN"). To complement
+> > this, let's add two helper functions, memalloc_nowait_{save,restore}, which
+> > will be useful in scenarios where we want to avoid waiting for memory
+> > reclamation.
 > 
-> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
-> folio by folio_mark_dirty() even the map length is shorter than one
-> folio. However, on the filesystem with more than one blocks per folio,
-> we'd better to only set counterpart block's dirty bit according to
-> iomap_length(), so open code folio_mark_dirty() and pass the correct
-> length.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  fs/iomap/buffered-io.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 79031b7517e5..ac762de9a27f 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1492,7 +1492,10 @@ static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
->  		block_commit_write(&folio->page, 0, length);
->  	} else {
->  		WARN_ON_ONCE(!folio_test_uptodate(folio));
-> -		folio_mark_dirty(folio);
-> +
-> +		ifs_alloc(iter->inode, folio, 0);
-> +		iomap_set_range_dirty(folio, 0, length);
-> +		filemap_dirty_folio(iter->inode->i_mapping, folio);
-
-Is it correct to be doing a lot more work by changing folio_mark_dirty
-to filemap_dirty_folio?  Now pagefaults call __mark_inode_dirty which
-they did not before.  Also, the folio itself must be marked dirty if any
-of the ifs bitmap is marked dirty, so I don't understand the change
-here.
-
---D
-
->  	}
->  
->  	return length;
-> -- 
-> 2.39.2
-> 
-> 
+> No, forcing nowait on callee contets is just asking for trouble.
+> Unlike NOIO or NOFS this is incompatible with NOFAIL allocations
+> and thus will lead to kernel crashes.
+ 
+ No different from passing GFP_NOWAIT to mempoool_alloc(), and we're
+ trying to get away from passing gfp flags directly for multiple reasons
+ so we need it.
 
