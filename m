@@ -1,57 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-25646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3FD94E70C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 08:45:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F23B94E73F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 08:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D161C21D18
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 06:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDEE282156
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 06:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC60C1509B0;
-	Mon, 12 Aug 2024 06:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E4515351A;
+	Mon, 12 Aug 2024 06:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k4njBcV3"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Prn3nkMn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08292B2DA;
-	Mon, 12 Aug 2024 06:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B15714A4E0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 06:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445121; cv=none; b=HTW4xim4EFLD+xWTVGULSKlTCTcA+u/IlZYUzqJ6fpoI2VMts1bW+WQTHP2zAQM02qHjxmQB5oMaiQHN/z3YeOm1QwbRfsUwPlWWjV3vsHJcIzz2DnV4VSRwZwu+DbQt7tDW3LSUoS69IiRupBBTX4sXYitS0Rmaa49GZOKf2kE=
+	t=1723445819; cv=none; b=qwOFfU//7s4eTvGcvGNr6b7MkaFM/DtjngBugSADs3RjDafAj1/0X+mE7CoFxIcgGHLxMpFC5uHnQpC8nGZRhnpcLjYUeVYl2jRu+TklahiWB7IhnEasBHIiupaddYXMv+qGjwBuZtaqs9y4nQd1p4oYP9LJww8NZD8FTgyZTw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445121; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMb+aB8p4Xg8XLHc1o02uF03iGvwMuHKn4W4+yXyweXpjYJirjpCj/SWra4stku6hKYnLbbS4cGtcsasXNs4s3MQb0d/rth/RJXr5ZsaJT+8xQLPdQBsLx/gIVFDNbWPWCg46P1vqkB3rtVFouQ+GpUe47EqlM4dxRQReVfkDzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k4njBcV3; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	s=arc-20240116; t=1723445819; c=relaxed/simple;
+	bh=ErkK/L6nvneEgnu4IZVBvsnnX3P/80WwwwRTRhuVxcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XTJubcLS21uyaVRuubIAcFFPOb5DBOkSpgy01SsPnrsy3AnVXvAx3+dcT9zA1jX5qScKS348Fw8j6GqLOdnV3WbZtbYvvn9pbEHQpcveOgwMPWF/QkX7TfYnKAgB923Gm6Myjjd5qqkAX0Wxj2ZsuYyd9UKTb5A2Ly4gP8RYyig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Prn3nkMn; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=k4njBcV3nujtAGkRx9y+bw0zDv
-	UIKNDRp+P6N3zUK3WCe/iczCdc1mwjXt57NAaphC9VtFPV1h8XIbxqq6t+KHiTMp20s5C9v577IhE
-	W4v0wR4ZFDNvJOI5+9YNEqT8bSuXtYnZo0fWz2IO+blUIV5crLdGaT3bT4LC0iv1O+J7VuGu1xpaJ
-	4WmfqwjqJzBYsH97rlBfny0MFuP8vC6yaQcOO+NDw1oHx9PVifhMOaIaa6Wq9L+yLS7K8FFVgQNne
-	M5FLfdPPW6giKt7GkaLG3stuh/2N/WIgc7fIo6T9vWjNQIIvXY9Lzy904uNLxHwiIBZSQrIGr4Rco
-	GxaP7Emg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdOnu-0000000H4PC-2unm;
-	Mon, 12 Aug 2024 06:45:18 +0000
-Date: Sun, 11 Aug 2024 23:45:18 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Gabriel Krisman Bertazi <krisman@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] unicode: constify utf8 data table
-Message-ID: <Zrmvfke-kHJmQkKa@infradead.org>
-References: <20240809-unicode-const-v1-1-69968a258092@weissschuh.net>
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=idBXxM8dGSa96iv7+rsnoNHkcGWImDmOE5L/dsu42Mc=; b=Prn3nkMnCmNcJvqLeA8rzN+iqV
+	/xCh8fUxCllblZcx93hhu0lAvNYRNA9TbG2aDEfYJzG+y8Jq0TtoWLyXU//VT5G6i+cVZUXWBJwdZ
+	/PMhi1NJ9pV5Xz3tqJ+5AK9YyZsH/l54z2/IfRyt0J1cn7UkXo9R935A43H3v1mwFNqGmai6mcxr8
+	1XmgzM1vlwfBAejZWcOec++qoSeZJRx6Mxw+xU9heosEEne1OefXsOAe5ctp/Ozsl/K04TkmWnnB1
+	64Eut1YpoMBmp9eqVfFy6CN3TGrfYZZTCdUSVx4XLmA8ePrwmMOYJzhblBjXAREcQuUEffew9S6It
+	RAcOZe9Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sdOzA-000000010k7-3Ama;
+	Mon, 12 Aug 2024 06:56:56 +0000
+Date: Mon, 12 Aug 2024 07:56:56 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCHES] [drm] file descriptor fixes
+Message-ID: <20240812065656.GI13701@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,11 +58,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240809-unicode-const-v1-1-69968a258092@weissschuh.net>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Looks good:
+	Resurrecting the stuff from last cycle.
+Context: several places in drm have racy uses of close_fd().
+Not hard to fix, thankfully.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+	Changed since the last posting: as requested, KFD
+fix had been split in two commits - introduction of helper
+(drm_gem_prime_handle_to_dmabuf()) and switching kfd_mem_export_dmabuf()
+to that.
+
+	Branch in git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #for-drm,
+individual patches in followups.
+
+	Please, review; IMO that ought to go through drm and amd-gfx
+trees.
+
+Shortlog:
+
+Al Viro (4):
+      new helper: drm_gem_prime_handle_to_dmabuf()
+      amdgpu: fix a race in kfd_mem_export_dmabuf()
+      amdkfd CRIU fixes
+      amdgpu: get rid of bogus includes of fdtable.h
+
+Diffstat:
+ .../gpu/drm/amd/amdgpu/amdgpu_amdkfd_arcturus.c    |  1 -
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c   | 12 +---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_sched.c          |  1 -
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c           | 64 ++++++++++++-----
+ drivers/gpu/drm/drm_prime.c                        | 84 +++++++++++-----------
+ include/drm/drm_prime.h                            |  3 +
+ 6 files changed, 95 insertions(+), 70 deletions(-)
 
 
