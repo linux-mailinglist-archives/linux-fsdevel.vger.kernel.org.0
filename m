@@ -1,145 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-25624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D33494E50C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 04:33:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CAE94E512
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 04:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBA628099B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 02:33:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B7F61F212C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 02:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C57713049E;
-	Mon, 12 Aug 2024 02:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39838136328;
+	Mon, 12 Aug 2024 02:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJTThQyM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BikFb0wJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CC1EAF9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 02:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B3912C486;
+	Mon, 12 Aug 2024 02:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723430024; cv=none; b=EBweZQnKYiCQSrNs/gB7s6Mu3ZcSkuS2u+9vG6xU6GbDh/vypyl9wn34oj0OQlzH9qog3tk5pyBr0wdzt4ejP534WtAzyJixQTNDzqHAkt6cs4YLjvEhyZxhdmufjTHHYJjx7BVAcV5wEn0RBKW2NP3q1SP+z7usM0fflHBwoBI=
+	t=1723430452; cv=none; b=cHD8Zks7+gNghk5XtyFbIioXG5N4FshDQ4zB96e0/GAPl52O2U/C9ojSvjq2+MwaBCr6XdszmNvjuOo3dAllrkFk6pIVz/MOk+ThhKvSp9/vb7JNuBNxeULkxQxEAsJ+iAbawXE4V0STcK03rwNHVdIooq6RlLeu28GV1kITvfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723430024; c=relaxed/simple;
-	bh=AGSqEzujcT4rhms5DQXOtKvLjWEYm/benqGijoNojHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k5UjIS+yOJBq1aeGl7saRuNis69OBWmhqpD25hqK0vRyOZGYIPwM81OnoEKdvglyox1UnwAYoZ3a7infPvthBKXUDorAvzABIA9i/b9SPh55BXTua8RM69R1mN3tQFm1q2tlu3S0brgLbfqvVpxn4akDVcq+/Yo0U4iGLUL9AfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJTThQyM; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-825eaedff30so736937241.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Aug 2024 19:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723430021; x=1724034821; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i1le6XpHEPwKYcJAYoAolP384jq2LdapH+EnbsvFQA4=;
-        b=MJTThQyMd3fT+aBZ1rxerJGflsZ8SHjPiiDWgcSA88Epdz4eUEBPfuOjvOSlohGctE
-         p15Eh5U/bS2Xu7Wv273bFxIEH2UBI1aqo4ni99LuaBaygBYJsknzbqgOSkCk97z2yY10
-         pFi8cUgLx9yjeOWfEo5kjZZg8sHJUwX3cHXTpAdlfjiK61+fw6iCn1odXbF5WI+JbM6y
-         aO9DqzR76agwMpgcvHmcL+vRaLX3GZP8ynlUi1Z5f4c305V2Qc80tkbdPxwpJY2w5evo
-         uuskud8sBQKkBXE7crZdZjSdoCpEoZuqKrzlBGf6deqA0uTAqqqGJjjf0f7J/7jbfZoz
-         Ja9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723430021; x=1724034821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i1le6XpHEPwKYcJAYoAolP384jq2LdapH+EnbsvFQA4=;
-        b=rX+M3or2RNbNs//Sl683tb33JdNRvsvCAtAMcdRUhNzmwuBNYO7kAJkxS9zLDtC+9r
-         N2mbNzZ3ubUYeyzGogBVfN9sTljGS+I1JAFTLpMBSwxHt17IkP0cFU4jZJLGlpPH3eTW
-         OZKTtp6vaFTgi8dPplGKwsJPQ9QKQ2seW4ZnW9aa57s/i8Pns7I/eCSKRBgM1taq+tWT
-         VXnLpHguaXkCgW7A1VdSPGpBw6VvDpwKGqPDJvIu1spTml6OWTNIt7d7gE62/qhhpTvF
-         k8vzXltBHpLF7i/y7WANYg4SyQoH699KGyQtaFuCmJ/jxDmNPziM3WXWjsHdGtDfO2F2
-         vTdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6LuNuKmmafY/8+L5plt9XbkZFuRw6uaxaVJlHjjMsbtylWyQXdMi1AR/sGIHIUNOnVpFEt679zUsVoQSzQzpVMFpxcDX02UbOHRvn6Q==
-X-Gm-Message-State: AOJu0YwOgcSmhbEvg5xeB6DN/0OGAEz7aKUZCl1qlrJsDYS9sS2YrYCj
-	Q+R+mUY8QtGAfVopXS80gNk9+yPXsBX657rbcR1n0NMzZI9t5xa3Aj4tvMN/7+AH8zxZwpJR3Ft
-	HDAzGsmm/bsy1q14RTF6VibcaU7Y=
-X-Google-Smtp-Source: AGHT+IHG/cdNyRJKtw4V9g/L3iA7GhxhTbwyQWeYGTSldR9zCwRllml9D5e5tkJOxIA8j5wkoc541lhD4jVMtdaK+BI=
-X-Received: by 2002:a05:6102:3ed4:b0:493:c81c:3148 with SMTP id
- ada2fe7eead31-495d822673amr5585382137.0.1723430021400; Sun, 11 Aug 2024
- 19:33:41 -0700 (PDT)
+	s=arc-20240116; t=1723430452; c=relaxed/simple;
+	bh=T9Yld2q72WF/ECrqdIH1NemhWrlLZZCEYX8teec6w+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1BRzVVLQIwgV/9GKMOqIs/5nxQTadZwGaPEBcgw7aXc/qd0hZ+nyjs1tO5OyWdz+gFdaYNAdEw/UVR4eb/84o5O1qFsTAlKTYjldf4acXIyKg9haqbXqht7QD7/xFEOJk3cpS3EJkPCmnnR9bbqpIu1YavOcc6uZVvXFvXcrxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BikFb0wJ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pgEtrVlv/kMeVCF2Dckbik9jinBIaKG6z7DYc+o7tA0=; b=BikFb0wJzI7QGfvQ7U+WjUOj0F
+	DTCU6hR2MVlPl9mYLkM9LnjjnmyjBnq+BkpbFfu4KAymljFCn470jRmj3jwuh+S6Yw0TYnyEtKV/H
+	GscMO7INLg4945eIBZ3vvn0qrc18D+f6Sn3laNS6ziz++XT8LTudAqxhfpQKGG8sKsKJhNQRyKwcG
+	6Cy/vUNXhHIHqMz1olckuoNXKjzZu3c0+QmJB2YUW4yW65rCFSFvgfvGrAD8tyVZzietf617lrZr3
+	fLOtbyo/vs7/pFBh1yseYX4iwmrNQVwK53yLwr9mJlp85dN1b5PWcwXW2eKoru3PmMNAdJA+ieO8U
+	6s/eUz7Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sdKzE-00000000xdX-0SEF;
+	Mon, 12 Aug 2024 02:40:44 +0000
+Date: Mon, 12 Aug 2024 03:40:44 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "Ma, Yu" <yu.ma@intel.com>
+Cc: Christian Brauner <brauner@kernel.org>, jack@suse.cz, mjguzik@gmail.com,
+	edumazet@google.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pan.deng@intel.com,
+	tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v5 0/3] fs/file.c: optimize the critical section of
+ file_lock in
+Message-ID: <20240812024044.GF13701@ZenIV>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240722-geliebt-feiern-9b2ab7126d85@brauner>
+ <20240801191304.GR5334@ZenIV>
+ <20240802-bewachsen-einpacken-343b843869f9@brauner>
+ <20240802142248.GV5334@ZenIV>
+ <20240805-gesaugt-crashtest-705884058a28@brauner>
+ <5210f83c-d2d9-4df6-b3eb-3311da128dae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808190110.3188039-1-joannelkoong@gmail.com>
-In-Reply-To: <20240808190110.3188039-1-joannelkoong@gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Mon, 12 Aug 2024 10:33:03 +0800
-Message-ID: <CALOAHbCOBy66VQVBax4BEnGaadaq3x=8_GSBc2OXJQ1WOntvkw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] fuse: add timeout option for requests
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5210f83c-d2d9-4df6-b3eb-3311da128dae@intel.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Aug 9, 2024 at 3:02=E2=80=AFAM Joanne Koong <joannelkoong@gmail.com=
-> wrote:
->
-> There are situations where fuse servers can become unresponsive or take
-> too long to reply to a request. Currently there is no upper bound on
-> how long a request may take, which may be frustrating to users who get
-> stuck waiting for a request to complete.
->
-> This patchset adds a timeout option for requests and two dynamically
-> configurable fuse sysctls "default_request_timeout" and "max_request_time=
-out"
-> for controlling/enforcing timeout behavior system-wide.
->
-> Existing fuse servers will not be affected unless they explicitly opt int=
-o the
-> timeout.
->
-> v2: https://lore.kernel.org/linux-fsdevel/20240730002348.3431931-1-joanne=
-lkoong@gmail.com/
-> Changes from v2:
-> - Disarm / rearm timer in dev_do_read to handle race conditions (Bernrd)
-> - Disarm timer in error handling for fatal interrupt (Yafang)
-> - Clean up do_fuse_request_end (Jingbo)
-> - Add timer for notify retrieve requests
-> - Fix kernel test robot errors for #define no-op functions
->
-> v1: https://lore.kernel.org/linux-fsdevel/20240717213458.1613347-1-joanne=
-lkoong@gmail.com/
-> Changes from v1:
-> - Add timeout for background requests
-> - Handle resend race condition
-> - Add sysctls
->
->
-> Joanne Koong (2):
->   fuse: add optional kernel-enforced timeout for requests
->   fuse: add default_request_timeout and max_request_timeout sysctls
->
->  Documentation/admin-guide/sysctl/fs.rst |  17 ++
->  fs/fuse/Makefile                        |   2 +-
->  fs/fuse/dev.c                           | 197 +++++++++++++++++++++++-
->  fs/fuse/fuse_i.h                        |  30 ++++
->  fs/fuse/inode.c                         |  24 +++
->  fs/fuse/sysctl.c                        |  42 +++++
->  6 files changed, 303 insertions(+), 9 deletions(-)
->  create mode 100644 fs/fuse/sysctl.c
->
-> --
-> 2.43.5
->
+On Mon, Aug 12, 2024 at 09:31:17AM +0800, Ma, Yu wrote:
+> 
+> On 8/5/2024 2:56 PM, Christian Brauner wrote:
+> > On Fri, Aug 02, 2024 at 03:22:48PM GMT, Al Viro wrote:
+> > > On Fri, Aug 02, 2024 at 01:04:44PM +0200, Christian Brauner wrote:
+> > > > > Hmm...   Something fishy's going on - those are not reachable by any branches.
+> > > > Hm, they probably got dropped when rebasing to v6.11-rc1 and I did have
+> > > > to play around with --onto.
+> > > > 
+> > > > > I'm putting together (in viro/vfs.git) a branch for that area (#work.fdtable)
+> > > > > and I'm going to apply those 3 unless anyone objects.
+> > > > Fine since they aren't in that branch. Otherwise I generally prefer to
+> > > > just merge a common branch.
+> > > If it's going to be rebased anyway, I don't see much difference from cherry-pick,
+> > > TBH...
+> > Yeah, but I generally don't rebase after -rc1 anymore unles there's
+> > really annoying conflicts.
+> 
+> Thanks Christian and Al for your time and efforts. I'm not familiar with the
+> merging process, may i know about when these patches could be seen in master
 
-Hello Joanne,
-
-I have tested this version, and the crash no longer occurs. Thanks for
-the update.
-
---
-Regards
-Yafang
+It's in work.fdtable in my tree, will post that series tonight and add to #for-next
 
