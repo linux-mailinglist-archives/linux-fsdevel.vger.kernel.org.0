@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-25619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDAC94E4F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 04:31:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D321A94E4FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 04:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156851C20869
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 02:31:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539571F2192D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Aug 2024 02:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917FF13D8B6;
-	Mon, 12 Aug 2024 02:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0301148837;
+	Mon, 12 Aug 2024 02:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJEx7Rch"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhQEtGVL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A070681E;
-	Mon, 12 Aug 2024 02:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D008E74BE1;
+	Mon, 12 Aug 2024 02:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723429868; cv=none; b=rs/oqMxh0Ee3HLdlghP5LvUa5y1o8P/4U/lhu6DBpdKm6IR6NhYvik7hmUA76o53hHJRumVpUExcmi+ebBXeBmZrU06sRtomLetwQzrpxl8jeB7p82rfNCKU3pQ1dSwttuXpC3nXddd5DWtcM5hSwcbUsS25/F4xgNOBSf2P5+g=
+	t=1723429874; cv=none; b=ZENwWoD16X+9jGg8vZzREgbZhpk5eUT78ChMtEou/Hs2dV3q4wzWyzwv0sqDvPLSoPRv4fyIgQPEp0swubLDar07XuvWgt6CkYEzZ28kkeR9tAKgDwiHtrZdnJLKL0xvV2ua9D+W87kutsGOUsFRgWM7sGkFAeb/nd2EWalywC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723429868; c=relaxed/simple;
-	bh=ads9a+vJAdf3fW1daUgzeFpk3FAtZrgaeqt3aAf0isQ=;
+	s=arc-20240116; t=1723429874; c=relaxed/simple;
+	bh=5WV7uCuVFeiQhB6uPkorf9Ro8xX/Kt/wufZ1+PzCENI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m3Mdp6cQB16sM4isO5dxeyHZeuEoTMqXTpZJ/A6fqvF7KruI+GuyINEx8Q/N0kaacLTVOKer2IViYVQoet7mbdEPxLS+PWKvf62v/gGXj/9h8P18qRXOorfA5MmpoOOpDXVnl1Yo1WbQ6l/DSDI4TDdG46l8jPkm4Dplhb5BKEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJEx7Rch; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=PKWR8fCZfcNV5+Nc4S0KKe/nNJ4a2Uf8B8XuhlH/6OybtzLSIK6uI2/X0qCo7JFSVHiq0IJZ7t2X4uFUVr8nDZ+BsdOZ4+O8TyBBoTBJH4Hr9ByilSVudgzE02i+WyOen6OCWJCHTMhbB1/h52sPQVEL8QIZ+Vp+M5p59t2YdJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bhQEtGVL; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd640a6454so28754745ad.3;
-        Sun, 11 Aug 2024 19:31:06 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc569440e1so35476085ad.3;
+        Sun, 11 Aug 2024 19:31:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723429866; x=1724034666; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723429872; x=1724034672; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Dg8K6fIsZQLFiS7Xpg/1YZlm81yjN4oHJWyrWmInMGw=;
-        b=MJEx7RchUXtd2X0ZD9RP8/gt4Bt8NYNwbgrN0Jrr00AWwWhUrLiIUXB62M8pwrwPZU
-         Ox7FFs0W144uXLhg4OfGJ5wVUL5JrlvFdXQz40MQa3Jv+AsIdY8nLyTgwpPnllYkhaO2
-         nLgCu7kB9teV3O2tFWmyKPzq17Xj3hf2jyKm+Miqi2FBbDN6wdmeQV4H+uW8mhWFefgH
-         20ZwEtLwJwrDgF/yvrD4yZJ/G2C71vHVAH4ehaduTz2vXaGgos0H+jTyuSN08HGpFbE0
-         GCYXRabEW1ohmLBNTA4ZTj+/UxB1Uey8Eb4+wTGzx7xIUmFnECw20ApmTZPFayfeGw2N
-         e8ig==
+        bh=mY4VRCvd9L4i067FYJCdAQbgb2obGf5r9hy8hsyaNQ4=;
+        b=bhQEtGVLkFkmefwPn+/1+jt/l3pbsvjwUrQaOCbqFiFAA+CqnxXCchq+D4mfIV10/c
+         wQ/MN/kOdKF4NZghZDZx0XkOuBGAVxtYL/OGLze4F1Z2wGqjd8o+PKiqwungGFKXMwhA
+         0SdPDKImAp2aRmSwt0jI93DeMDP2F+zzmCjv1TU8zScy9UnHDoLjgZx7OZDKOemoD9eM
+         YqcTZBtFezeITYfQUh73PBB77FIxMKhd1jdt3s2ZTSHmNnSzrDdg4x2Z981liyf705oP
+         vHALtYofgQxVVfvYRNPLUe63q4b7cmh8VTrL6rSAL6HcQYqFysNs1U7mFEk2p16uIuFH
+         PcMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723429866; x=1724034666;
+        d=1e100.net; s=20230601; t=1723429872; x=1724034672;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Dg8K6fIsZQLFiS7Xpg/1YZlm81yjN4oHJWyrWmInMGw=;
-        b=Fqkv7koM6sYNPm+9IRdQrDe02dtFN3uFScc3+sxX1uomkGUselcdHWmxWBHYv/FiWQ
-         vRJ+vn5fMhx5ZdvA/VT0DVyiyPYK+Bu8KbyhQQ6t+yMyWkpUAzoVlOkiX1Q7rEoN7G0O
-         o3mDBCUxY8utCq1Bp9DISki+7fSmrvjboX9RWylIOBo2ASkECBZaNBrrmh155K3JJ6zK
-         CsBtLEwkyhsgkiwoqEdTGCyUqdJMF3px0PzQG16blfC/CZgc+St0eLxMh2psNE8jzjdS
-         oZAka9fxZX6LAEMQ54VpPMDyuWy8+LiZ5nYeR9AD8VA3W0dWBEjC2591ZGiuwjPzhmcL
-         Jftw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHz5DNPikUz6vnpm9ciVLAoqOZiRBwjbiqPbXa6qp9RQvWtg+pT8vgGEulTfwau3CVIZkiy2t7BkJ8TWdmk+MmvbkM79MBClauTVYlDXW8QNuCObJFk6ya2U8bsESZaR4pLHirc5TskSpaEDC0wdtC8YJ/kP2lZDiud8rjmAzBqoxoKvniI0+WZIZfdDv+7wesmy+ts4+2KhOjFBXr3ZtXaLROYpNa+Ee1eNa9K1kr6e8TNqVVi34eZf8NGnv43e+w23Tax5ZAhat1LWnaiN0oEA8sqmLThR3vyy4UTWKegp79ngVfacWf3wEsMxnzoTMnAqs0Uw==
-X-Gm-Message-State: AOJu0YwFb/F3RVrzP1XuL5VRb6uM3LwTChVqIgAza/LRZ/us3MMplv8Q
-	hmDlnXsb0Pu4apEay8/1WuccyAMfe+sIyU2LAwGCVaMXO18kjv6P
-X-Google-Smtp-Source: AGHT+IGpTCkxya5k7tDP0eeWIg02IZrGkBb+Xs7WqcLI3e7hWnKKPF02puCEAAGLT4aj9e0Erpx/iw==
-X-Received: by 2002:a17:902:cccf:b0:1f7:1655:825c with SMTP id d9443c01a7336-200ae5a8934mr50792845ad.36.1723429865812;
-        Sun, 11 Aug 2024 19:31:05 -0700 (PDT)
+        bh=mY4VRCvd9L4i067FYJCdAQbgb2obGf5r9hy8hsyaNQ4=;
+        b=GOlrVEWeDUicTKfwrgtF54rLQZ04Ym+B8TutwJ/VeWI4XUwJzkTY1sr+r1xUX/Srrm
+         0QYIyQt7o3qdon9Pn5n3ItgvTrudULzm9+FX9JceIHh2G5WuHAI3dfuP7qqqabF9/z60
+         RrxmC2BTst/4lLIVuh2eSgkG9weei7gkHfnyKRE4T+d0IskO19sIP9BC5dJ5Q7BQBZ/z
+         e7HkhovZgfTue961+a99t1Q7mfuG60au5F/noow6yYXERtrJvl3oDWc7Spr8M6e5CQ6K
+         TlcyObaBpKrFJsAE+vJvEwKwQDZ+roidGz4GNiP+vJ7vyJBZ/2HS9ndBrwSbJjK9yT3W
+         PTcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKGXjkBifeIfhz8abWPJayuKIUuoXq+IZB32Tnyn1rmUDlvmp+trVADyD7deUVgWiQ0acpO1WAZNUmRcF7BdNJZT4cT9doaRHKNkJ5jv8S4HxPN+CliQf2RGDLRSMy9fnNfdKPJ5EBktWKnGPwdO+/3WT4RdMrHGgiCtlN7Q9a/juefgOz1lIlACCZA1AUM/PlvuF7nkETDHp53VBa4pPFGP8/uSDP2AqYvxwOc5GrKVfNSYL39q0a4p4qI3CMQLakfFAgh04G+/nO5x9BGWr3MyovdbuwYEA6JOorOG8S/KQaU4FlU+NXxtS4QuWX/XJQkB+KPA==
+X-Gm-Message-State: AOJu0YzR3DHAMvsx07z9uu3CNHXN26+vkqlIlrjoL00EF3d3SYWoOFDb
+	5FkZr8qhQITgpyPIOn0Swv/u/RrIlDLze3WAYQi2fMZCVETRKVhk
+X-Google-Smtp-Source: AGHT+IGDYbe0RTpouvyRH8j57LNI0ygI4N2QpIwMJo/CclCqBa2C0H4JAnlCXTMiS2Sh5vz84U44EQ==
+X-Received: by 2002:a17:902:dac3:b0:1fb:48c6:a2b0 with SMTP id d9443c01a7336-200ae4dbc8amr93864745ad.5.1723429872026;
+        Sun, 11 Aug 2024 19:31:12 -0700 (PDT)
 Received: from localhost.localdomain ([39.144.39.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9fed69sm27884765ad.188.2024.08.11.19.30.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9fed69sm27884765ad.188.2024.08.11.19.31.06
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Aug 2024 19:31:05 -0700 (PDT)
+        Sun, 11 Aug 2024 19:31:11 -0700 (PDT)
 From: Yafang Shao <laoar.shao@gmail.com>
 To: akpm@linux-foundation.org
 Cc: torvalds@linux-foundation.org,
@@ -84,10 +84,12 @@ Cc: torvalds@linux-foundation.org,
 	bpf@vger.kernel.org,
 	netdev@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v6 5/9] mm/util: Fix possible race condition in kstrdup()
-Date: Mon, 12 Aug 2024 10:29:29 +0800
-Message-Id: <20240812022933.69850-6-laoar.shao@gmail.com>
+	Yafang Shao <laoar.shao@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 6/9] mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
+Date: Mon, 12 Aug 2024 10:29:30 +0800
+Message-Id: <20240812022933.69850-7-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 In-Reply-To: <20240812022933.69850-1-laoar.shao@gmail.com>
 References: <20240812022933.69850-1-laoar.shao@gmail.com>
@@ -99,55 +101,119 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In kstrdup(), it is critical to ensure that the dest string is always
-NUL-terminated. However, potential race condidtion can occur between a
-writer and a reader.
+These three functions follow the same pattern. To deduplicate the code,
+let's introduce a common helper __kmemdup_nul().
 
-Consider the following scenario involving task->comm:
-
-    reader                    writer
-
-  len = strlen(s) + 1;
-                             strlcpy(tsk->comm, buf, sizeof(tsk->comm));
-  memcpy(buf, s, len);
-
-In this case, there is a race condition between the reader and the
-writer. The reader calculate the length of the string `s` based on the
-old value of task->comm. However, during the memcpy(), the string `s`
-might be updated by the writer to a new value of task->comm.
-
-If the new task->comm is larger than the old one, the `buf` might not be
-NUL-terminated. This can lead to undefined behavior and potential
-security vulnerabilities.
-
-Let's fix it by explicitly adding a NUL-terminator.
-
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Simon Horman <horms@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
 ---
- mm/util.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ mm/util.c | 67 +++++++++++++++++++++----------------------------------
+ 1 file changed, 26 insertions(+), 41 deletions(-)
 
 diff --git a/mm/util.c b/mm/util.c
-index 983baf2bd675..4542d8a800d9 100644
+index 4542d8a800d9..310c7735c617 100644
 --- a/mm/util.c
 +++ b/mm/util.c
-@@ -62,8 +62,14 @@ char *kstrdup(const char *s, gfp_t gfp)
+@@ -45,33 +45,40 @@ void kfree_const(const void *x)
+ EXPORT_SYMBOL(kfree_const);
  
- 	len = strlen(s) + 1;
- 	buf = kmalloc_track_caller(len, gfp);
--	if (buf)
-+	if (buf) {
- 		memcpy(buf, s, len);
-+		/* During memcpy(), the string might be updated to a new value,
-+		 * which could be longer than the string when strlen() is
-+		 * called. Therefore, we need to add a null termimator.
-+		 */
-+		buf[len - 1] = '\0';
-+	}
+ /**
+- * kstrdup - allocate space for and copy an existing string
+- * @s: the string to duplicate
++ * __kmemdup_nul - Create a NUL-terminated string from @s, which might be unterminated.
++ * @s: The data to copy
++ * @len: The size of the data, including the null terminator
+  * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+  *
+- * Return: newly allocated copy of @s or %NULL in case of error
++ * Return: newly allocated copy of @s with NUL-termination or %NULL in
++ * case of error
+  */
+-noinline
+-char *kstrdup(const char *s, gfp_t gfp)
++static __always_inline char *__kmemdup_nul(const char *s, size_t len, gfp_t gfp)
+ {
+-	size_t len;
+ 	char *buf;
+ 
+-	if (!s)
++	buf = kmalloc_track_caller(len, gfp);
++	if (!buf)
+ 		return NULL;
+ 
+-	len = strlen(s) + 1;
+-	buf = kmalloc_track_caller(len, gfp);
+-	if (buf) {
+-		memcpy(buf, s, len);
+-		/* During memcpy(), the string might be updated to a new value,
+-		 * which could be longer than the string when strlen() is
+-		 * called. Therefore, we need to add a null termimator.
+-		 */
+-		buf[len - 1] = '\0';
+-	}
++	memcpy(buf, s, len);
++	/* Ensure the buf is always NUL-terminated, regardless of @s. */
++	buf[len - 1] = '\0';
  	return buf;
  }
++
++/**
++ * kstrdup - allocate space for and copy an existing string
++ * @s: the string to duplicate
++ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
++ *
++ * Return: newly allocated copy of @s or %NULL in case of error
++ */
++noinline
++char *kstrdup(const char *s, gfp_t gfp)
++{
++	return s ? __kmemdup_nul(s, strlen(s) + 1, gfp) : NULL;
++}
  EXPORT_SYMBOL(kstrdup);
+ 
+ /**
+@@ -106,19 +113,7 @@ EXPORT_SYMBOL(kstrdup_const);
+  */
+ char *kstrndup(const char *s, size_t max, gfp_t gfp)
+ {
+-	size_t len;
+-	char *buf;
+-
+-	if (!s)
+-		return NULL;
+-
+-	len = strnlen(s, max);
+-	buf = kmalloc_track_caller(len+1, gfp);
+-	if (buf) {
+-		memcpy(buf, s, len);
+-		buf[len] = '\0';
+-	}
+-	return buf;
++	return s ? __kmemdup_nul(s, strnlen(s, max) + 1, gfp) : NULL;
+ }
+ EXPORT_SYMBOL(kstrndup);
+ 
+@@ -192,17 +187,7 @@ EXPORT_SYMBOL(kvmemdup);
+  */
+ char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
+ {
+-	char *buf;
+-
+-	if (!s)
+-		return NULL;
+-
+-	buf = kmalloc_track_caller(len + 1, gfp);
+-	if (buf) {
+-		memcpy(buf, s, len);
+-		buf[len] = '\0';
+-	}
+-	return buf;
++	return s ? __kmemdup_nul(s, len + 1, gfp) : NULL;
+ }
+ EXPORT_SYMBOL(kmemdup_nul);
+ 
 -- 
 2.43.5
 
