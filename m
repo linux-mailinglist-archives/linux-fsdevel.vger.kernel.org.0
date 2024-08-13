@@ -1,128 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-25756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB54094FC1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 05:12:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BE494FC47
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 05:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0883F1C22436
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 03:12:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A852B20E2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 03:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A7C1B970;
-	Tue, 13 Aug 2024 03:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10BB1CA9E;
+	Tue, 13 Aug 2024 03:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpxiS30S"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbg7Os3R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293961AACA;
-	Tue, 13 Aug 2024 03:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70E81BC39;
+	Tue, 13 Aug 2024 03:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723518729; cv=none; b=Jwx2BoPyZsSRK3EoDU8sU9oP4iYuDeVIM678RkTfKK4NhXviTew1umAIr6bNMVXcvGU2t08MiUL9yFCR3FzIlGIcwqcs2vLgPRMoHyPeQG2hxa6kwsTsSKCSY0VsGfU4nzl9jXC+qX1InLhsnhiDV7diFsmDExjSfoj9XDxg7nQ=
+	t=1723519970; cv=none; b=hlt4lQhArZzK+LsUw1A677gFvR6gO5gD3O6RkEnhxY6Rv7Dia3oxSrhJiodQ0/lg8h/7kGPuSDaVxMrsMjcXb8kpvXuy/67E/9mhwQXUcWhnQYP5IW0zQwQCSSrvGCjnwyA2zhUQSYlCZH9eLLbYFivgmsSIw3cmoFFZ36D4ArY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723518729; c=relaxed/simple;
-	bh=rTtnXF99PTHPF2ZHz6+Yl/cT93BFrIKnjBWBmoxYJ1c=;
+	s=arc-20240116; t=1723519970; c=relaxed/simple;
+	bh=VfZKpzSzmxeCP+ISk3acmz4CxXRITaKL5T/IGvJTi+Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o/zDSU9r2igC046Gv7hvzeD8d3GGZrmQJS6iehGA1A7AgtwOZU/pK8hztJ+aZuyDrvksComgkbO1NjVvCkCj/pokBZM6TDd78jNrPrXWo6CLhdrFxhRiRUIhbKCm0uEwiECdLVnxXZxgGTRzWd9lWNNsh2RGKX8A0PdfNQdMvXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TpxiS30S; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=Zsx9W5tWKLAFKYhQ155qVaZT5dfiYIt1A3YzKNnjX+j17JPEnjF5A3MPcbOHqtJIvnESneJ5Q3XIJIhPvXmiZgNJLnc/SgxNncL9caw+3X/qpn8XhGCf4our+gDuX+ztmMwkqCkukTzgxe6omsG8VvjbigSyIOkeHRrEcDgM+HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbg7Os3R; arc=none smtp.client-ip=209.85.215.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a8e73b29cso452386666b.3;
-        Mon, 12 Aug 2024 20:12:07 -0700 (PDT)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so3488866a12.3;
+        Mon, 12 Aug 2024 20:32:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723518726; x=1724123526; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723519968; x=1724124768; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rTtnXF99PTHPF2ZHz6+Yl/cT93BFrIKnjBWBmoxYJ1c=;
-        b=TpxiS30SnvQMSH33lviT/pcZUGltSb7O0ec31e9qlqZfzGpjfF/TaXv01kChT3uKCK
-         BY2EByK6yw+m21JS6WT2E2R+Rnd9J2lyHvbhtknxKtfrEeyLEG7UjMHxQusrvWf2RjoB
-         hKkLT6T7h0Yf5oMpFKdRtbZlw4xOFofXObeBEcpOtwmBEp7vKYYVyahcVD2b/u8Pt62q
-         YKC6ghwl7qqn/mOfUwIVii+xBnUrlYXXCT3k8B5pKFYXdFGS184jJpxtwixq2BtkgKXE
-         4JOmsa+kwQXCQOPntY2H1G0oBid4ADN5zs6EazjwtSdTvzg3NiCO5tkccHQl//AZcfKS
-         0n2g==
+        bh=VfZKpzSzmxeCP+ISk3acmz4CxXRITaKL5T/IGvJTi+Q=;
+        b=mbg7Os3RAD59PViOLvpbChvTi/DIanI+AaQJyGt92MdNw+K6IjLuTRDdqYiaTEwkzz
+         LW4XVBfRRT1/4VGRwSKa/3NN5/Bjqf8sVJCxD78DSiCux3eSbIuaUGIZb9zrErbxAIuP
+         dxM9m/nJ2zGKN/RhZjKwxGvEV0ikdK90MCWqphsizJIz2vRCojjtIadQeBSIhsVvqljC
+         PT+kaQkmzCMPJfkyvPPuyav34Q3pIzVaag+GQ0SChb8NSJk0XtWMohdB4WBd++AV1a0/
+         SKmvfuKzkid2j/q4+SuTWgMccbOkHyeurfyMTYF2fGv9oR60n5BLYJfQjixX3hOd6f9o
+         +S9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723518726; x=1724123526;
+        d=1e100.net; s=20230601; t=1723519968; x=1724124768;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rTtnXF99PTHPF2ZHz6+Yl/cT93BFrIKnjBWBmoxYJ1c=;
-        b=Izd9N/3PaLX0PnJSJlmdB3EcTUE3L7ICqNoeUtNwhP5fJWEvdcHmJBJpvQxXd5cJ5F
-         URyNF6XcxLE8BsSO/yyIPjnPmmCcI6RtAXV7tgDL9mmDSmc1bQ8KRv6iZzo53Q+t1SNJ
-         GOWXA6mJ/CEO59IleKf4IOxeoSowGyUoJTGqIrw/a1jSM8vl0d8CeTgJQS6wrLaAm2Bz
-         5DZr/zDgQyrFc2jJSJtRJzzXgX6WPuM5GmbmNu10rze4ruopPv6wUZDQGSnbSCaW+Pn4
-         L7pqNytsrZEnHmf55fqISK+K/nulxCr3Ek6wcFuqE0gpNpByTaMVoWqzlRAhZQ4WsOO0
-         RHrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJLxsxtVBc7/G7kmiMt1dYX6eNCa9VC7RKtYMZVWtIhq0SZUMFvvfr3eY2Fhegoq/8mui5JAPZT80GDyinPfPVdmeNiMj7Q19Ll2E3kOUpdld/sBU5OWJLiXT04B8iBzPt5w==
-X-Gm-Message-State: AOJu0YzBxxq/qQ1MsswVqWjcaxGC7iSzhtdcK34ymrzT22Sbo55wJ3p3
-	sLHmK9YJDFhl8ZlR0FHGB5ovYVny+KERJguuue7/e3Ra5KOe6hKZn0ukbuKWXtfhAVsu9qk+dSy
-	N8i3mDFt0cBoCwmH8WqPToQACxsU=
-X-Google-Smtp-Source: AGHT+IGryIF97jL72LtObexbretu1TBnT67f9tiepatQNyfk+8+b+X25SMytGgrA2Qx65P6YIFaHKS/Oh3kTbZktFJw=
-X-Received: by 2002:a17:906:794f:b0:a7d:c148:ec85 with SMTP id
- a640c23a62f3a-a80ed2d1de8mr142537866b.62.1723518726153; Mon, 12 Aug 2024
- 20:12:06 -0700 (PDT)
+        bh=VfZKpzSzmxeCP+ISk3acmz4CxXRITaKL5T/IGvJTi+Q=;
+        b=hQwvrmpWcnRyo42Hk1B4CqPQj4qrJ8lqcL+3ctxclVELhqS93JC73dvHwYoEuFw9Qi
+         o+W2c0SUOC208m7rd7ujsUPa8DfUnpWw75aZAogNOy9cvgmurguDfBmU1q0J5LGJ7tFx
+         dDjBjHcENRGwUHypXublDCPj183WTN1Nuk1cI0qSZGqj27VLgM6smQwuclCKbtyhyl0C
+         Pnu6VZHj5GsD4RE2C26B1/Tw7ZeCvIK0KNCueLzlmtgtsApC2zYHfGP3NvtQHYlgxwFx
+         fM5tpIoMShDQ9i7v9GuzrbhinBV6pcRuQlkHGh98QUBYtdog5H8Yac75f8G/UBMdFqzq
+         XMKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWg5e0lU1cCJAC6I9GhEcnG2uBxjka/KWK0EF6PBFiBkjW8elDaCsvyKOfn/EgyePmOqRIjmc2p1rphXg8N9EKESxd+lzYreLQm6qn52CStTV1dN2qnAiIAZy/QZiChQ2CoY45wSYllrT9ONZ6wWymmLK1bH+5jmIfgP5bA4PeQ1I4HUvTGc3NphC5VbkEj/OCx5OfglkmwxaXibvQOQz4yaVkUdcJKzrE=
+X-Gm-Message-State: AOJu0YwQYCGW/AxsZlqiSz8kuOgdL5RtN9rcYyIjSapbO1/VnQo1w7ls
+	DauZ4WjhsiaFnTi4FKT1wN5nx3qFj0v+/x+P4bXJcodhxNpXP9f/jREmJmEzvvKUSsE59684RkS
+	Q/Iu1thpSxIT4z01ZX7mDprDD1X4=
+X-Google-Smtp-Source: AGHT+IFh/5uOEOg72gpS6vOsn2g3n3u2/ODBL1YjJAJxMbMVs16tdzK2dKIlRduQHPcaa0PYK8jzxCJwm051A8lpwD8=
+X-Received: by 2002:a17:90a:460f:b0:2c9:95c7:7521 with SMTP id
+ 98e67ed59e1d1-2d3924d2a73mr2756900a91.1.1723519967564; Mon, 12 Aug 2024
+ 20:32:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813002932.3373935-1-andrii@kernel.org> <20240813002932.3373935-10-andrii@kernel.org>
- <ZrqxXfZE5bFy-5qv@tassilo>
-In-Reply-To: <ZrqxXfZE5bFy-5qv@tassilo>
+References: <20240730050927.GC5334@ZenIV> <20240730051625.14349-1-viro@kernel.org>
+ <20240730051625.14349-17-viro@kernel.org> <CAEf4BzZipqBVhoY-S+WdeQ8=MhpKk-2dE_ESfGpV-VTm31oQUQ@mail.gmail.com>
+ <20240807-fehlschlag-entfiel-f03a6df0e735@brauner> <CAEf4BzaeFTn41pP_hbcrCTKNZjwt3TPojv0_CYbP=+973YnWiA@mail.gmail.com>
+ <CAADnVQKZW--EOkn5unFybxTKPNw-6rPB+=mY+cy_yUUsXe8R-w@mail.gmail.com>
+ <20240810032952.GB13701@ZenIV> <CAEf4Bzb=yJKSByBktNXQDd8rqWPNCU9EWziqQhFBnCVuTGKCdg@mail.gmail.com>
+ <20240813020651.GJ13701@ZenIV>
+In-Reply-To: <20240813020651.GJ13701@ZenIV>
 From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 12 Aug 2024 20:11:51 -0700
-Message-ID: <CAEf4BzbNdOUv5iUbkmw0n2uUWK78kUcbjs92pJc1EhGHqscGGA@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 09/10] bpf: wire up sleepable bpf_get_stack()
- and bpf_get_task_stack() helpers
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, adobriyan@gmail.com, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, osandov@osandov.com, song@kernel.org, jannh@google.com, 
-	linux-fsdevel@vger.kernel.org, willy@infradead.org
+Date: Mon, 12 Aug 2024 20:32:34 -0700
+Message-ID: <CAEf4BzbNfA0usftdY16jg=+zD5zadM5BsDqtcZqd1y9+G0cfLA@mail.gmail.com>
+Subject: Re: [PATCH 17/39] bpf: resolve_pseudo_ldimm64(): take handling of a
+ single ldimm64 insn into helper
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Christian Brauner <brauner@kernel.org>, viro@kernel.org, 
+	bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, 
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, kvm@vger.kernel.org, 
+	Network Development <netdev@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 6:05=E2=80=AFPM Andi Kleen <ak@linux.intel.com> wro=
-te:
+On Mon, Aug 12, 2024 at 7:06=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
 >
-> On Mon, Aug 12, 2024 at 05:29:31PM -0700, Andrii Nakryiko wrote:
-> > Add sleepable implementations of bpf_get_stack() and
-> > bpf_get_task_stack() helpers and allow them to be used from sleepable
-> > BPF program (e.g., sleepable uprobes).
+> On Mon, Aug 12, 2024 at 01:05:19PM -0700, Andrii Nakryiko wrote:
+> > On Fri, Aug 9, 2024 at 8:29???PM Al Viro <viro@zeniv.linux.org.uk> wrot=
+e:
+> > >
+> > > On Thu, Aug 08, 2024 at 09:51:34AM -0700, Alexei Starovoitov wrote:
+> > >
+> > > > The bpf changes look ok and Andrii's approach is easier to grasp.
+> > > > It's better to route bpf conversion to CLASS(fd,..) via bpf-next,
+> > > > so it goes through bpf CI and our other testing.
+> > > >
+> > > > bpf patches don't seem to depend on newly added CLASS(fd_pos, ...
+> > > > and fderr, so pretty much independent from other patches.
+> > >
+> > > Representation change and switch to accessors do matter, though.
+> > > OTOH, I can put just those into never-rebased branch (basically,
+> > > "introduce fd_file(), convert all accessors to it" +
+> > > "struct fd representation change" + possibly "add struct fd construct=
+ors,
+> > > get rid of __to_fd()", for completeness sake), so you could pull it.
+> > > Otherwise you'll get textual conflicts on all those f.file vs. fd_fil=
+e(f)...
+> >
+> > Yep, makes sense. Let's do that, we can merge that branch into
+> > bpf-next/master and I will follow up with my changes on top of that.
+> >
+> > Let's just drop the do_one_ldimm64() extraction, and keep fdput(f)
+> > logic, plus add fd_file() accessor changes. I'll then add a switch to
+> > CLASS(fd) after a bit more BPF-specific clean ups. This code is pretty
+> > sensitive, so I'd rather have all the non-trivial refactoring done
+> > separately. Thanks!
 >
-> Is missing the header actually a real problem you saw?
+> Done (#stable-struct_fd);
 
-It's hard to quantify this from production data, because there are
-multiple possible reasons to fail to get build ID in BPF program. All
-of which will result in "no build ID" condition.
+great, thanks, I'll look at this tomorrow
 
-But more generally speaking, failure to read some piece of memory from
-non-sleepable BPF programs is a real problem for a meaningful
-percentage of cases, so being able to do that more reliably in
-sleepable context is important.
+> BTW, which tree do you want "convert __bpf_prog_get()
+> to CLASS(fd)" to go through?
 
-In this case, given this build ID fetching code is used from
-PROCMAP_QUERY ioctl() on top of /proc/<pid>/maps, it's good to have a
-guarantee that if underlying file is a proper ELF file with valid
-build ID, that API will return it. It allows applications to avoid
-overhead of retrying it through other less reliable and more
-cumbersome means.
+So we seem to have the following for BPF-related stuff:
 
->
-> I presume the user tools do have a fallback to read the
-> build by themselves if it happens
->
+[PATCH 16/39] convert __bpf_prog_get() to CLASS(fd, ...)
 
-It's all best effort, strictly speaking, but the percentage of
-successful cases matters across the entire fleet, so anything that can
-be done to improve the success rate is helpful. Retrying is possible,
-but comes with extra complications, which are not always acceptable.
-E.g., it's just racy (application might exit by the time we retry), or
-will require extra privileges (because user space will be accessing
-entire ELF file contents), etc.
+This looks to be ready to go in.
+
+[PATCH 17/39] bpf: resolve_pseudo_ldimm64(): take handling of a single
+ldimm64 insn into helper
+
+This one I'd like to rework differently and land it through bpf-next.
+
+[PATCH 18/39] bpf maps: switch to CLASS(fd, ...)
+
+This one touches __bpf_map_get() which I'm going to remove or refactor
+as part of the abovementioned refactoring, so there will be conflicts.
+
+[PATCH 19/39] fdget_raw() users: switch to CLASS(fd_raw, ...)
+
+This one touches a bunch of cases across multiple systems, including
+BPF's kernel/bpf/bpf_inode_storage.c.
+
+
+So how about this. We take #16 as is through bpf-next, change how #17
+is done, take 18 mostly as is but adjust as necessary. As for #19, if
+you could split out changes in bpf_inode_storage.c to a separate
+patch, we can also apply it in bpf-next as one coherent set. I'll send
+all that as one complete patch set for you to do the final review.
+
+WDYT?
 
