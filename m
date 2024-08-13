@@ -1,131 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-25767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE29950218
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 12:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F299F9503FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 13:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC61C1F254B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 10:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5E6282150
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 11:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E1618953E;
-	Tue, 13 Aug 2024 10:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9661991C6;
+	Tue, 13 Aug 2024 11:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qsAGM+/0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sn7MwSWR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F271168C20
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 10:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31D52D611;
+	Tue, 13 Aug 2024 11:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543770; cv=none; b=M/4U+jx7cOHb2YkJFHUwubTCyaZma0uOEtAqjYCt7daGlwNbxt1+KwFRW4FV02CaXqJru2CwLdux4yiRtVw5vFKq+hqB9BMz+zmOJcUeM5LgunKX5oNEEXxJ2gLHP0NWAstO1b4FtzpLRlvtf156zme+Ys2VzU+7HCCq8COsPDo=
+	t=1723549526; cv=none; b=tyuGJ2kfBn8fivVXVS9YFCOnq/KrRK9y2/lnzyTptAtncNyJRLwFChGS539UqKJOa/zVC+8Jda2RyWXjhKVPl9EEP/tfWJZHtZ1CDAkCh/pYsh++RkPzs2CyIW1wY16pviBCEHn99mAdkXezFVhoPi0WIynwHHFa+vAuQbK6tNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543770; c=relaxed/simple;
-	bh=JtIGOIfEY2J5+HBYsOLJeZbv7srucT4gvTbpsHqH1js=;
+	s=arc-20240116; t=1723549526; c=relaxed/simple;
+	bh=4S7bFWnGTGe5F/hKeyLOIxVvEHDSz1EjGPCsdLTcSe4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ez9rLrfBA3mFMtwpcTmImVZa4wx6qYGU0qoeLCpVPpXaRaGBhVoKvereW3WB9ZGX3De2/rk3K2TMCmXv+N3BZZoTNPDgBJvLhEvh097gl5mDbPx7MSb5l5hQNdPIr4ZhacZ+r7QEu4pMHAQexC8j2NCMpCANdYmAiRE49RKbGOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qsAGM+/0; arc=none smtp.client-ip=45.157.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WjnDP3HxZzHlD;
-	Tue, 13 Aug 2024 12:09:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1723543765;
-	bh=BvkxhLSfP0GLpl/b5SaDUQzyCrdpCwqRP9YOE3sw4cU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qsAGM+/0bA96YKHhFPmDzMqqJdgNJHZB4TyLk1rnFwJNOAEpwAAi4fNU5HddTwIMW
-	 SDzuGAwoD/NPuRzOzgO2KcBCCBQZ6SJFTJYdynTsWi2PdRYTFgiZqpcogwCrSAE74O
-	 6i2zNmfoyAF12QwGuM9cLfrfVqnaniWVILgpJ7Kc=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WjnDN6HWTzDXr;
-	Tue, 13 Aug 2024 12:09:24 +0200 (CEST)
-Date: Tue, 13 Aug 2024 12:09:19 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzGkb548IDesyc+8INfqTmFjEvswRS/t8bLK8i8Ec631z/bocRSEmp1BgQZWoM/ptLQSiM5bt0JBS3+HXjL/80Is2rPyTEi4qxm+tYmE133U/Mx8HoMYIrE2S5fZ8GxpAFb8QkHVrsFCat+TD6tEs+kpMngp848NhzltEZwVP8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sn7MwSWR; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723549525; x=1755085525;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=4S7bFWnGTGe5F/hKeyLOIxVvEHDSz1EjGPCsdLTcSe4=;
+  b=Sn7MwSWRGgUxMrgrIYZ79Mb7IvLaGolV72Pgg2dFDa7uFhYo8QSVrFy2
+   X3yIVmxHQGob8ZWOZlg/J0EG8wXJgeGWX/jRPMAeMarKEzniKYrivxVSM
+   vgTwQTs8DoyEf3CK06USz8QTMhEoRFIVGeR0EdTNF2IyYDKcZN6qV5KFL
+   rZuTd/0eXetaANXsMvGgLoyNtq9gw1nG6AM3lCHxYgAt0jByXZaaPtmxY
+   5Sl8ThDmaki+pdp5nzHWRaumLBwShnr7pe6bKZyYp+xpTLgi2a4hf85wg
+   JWTZHyVmI4LXgyFuFAqBUnk5+VrzpbHhEVdVzPd7T8ihxZ3GXEAsIiZ+R
+   A==;
+X-CSE-ConnectionGUID: wS6y8s7bTkKKSRIUdmPQEg==
+X-CSE-MsgGUID: RkVhylHqS9WbeX0hneKdrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="47109653"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="47109653"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:45:24 -0700
+X-CSE-ConnectionGUID: CIwk+6DETtaD7q/E3IQgAg==
+X-CSE-MsgGUID: MvFldAgNSQeC0+Wgcchl1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="89440581"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 13 Aug 2024 04:45:19 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sdpxl-0000Nq-2h;
+	Tue, 13 Aug 2024 11:45:17 +0000
+Date: Tue, 13 Aug 2024 19:44:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
 	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook
- inconsistencies
-Message-ID: <20240813.iidaejohj5Oo@digikod.net>
-References: <20240812174421.1636724-1-mic@digikod.net>
- <o6ptrfa7gjdukphqtp6dakq3ykndrjusuhi4fyvpc5ne6amcig@lqbdb2dg7yzv>
+Subject: Re: [PATCH] fs,security: Fix file_set_fowner LSM hook inconsistencies
+Message-ID: <202408131900.xhbYFHR4-lkp@intel.com>
+References: <20240812144936.1616628-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <o6ptrfa7gjdukphqtp6dakq3ykndrjusuhi4fyvpc5ne6amcig@lqbdb2dg7yzv>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20240812144936.1616628-1-mic@digikod.net>
 
-On Mon, Aug 12, 2024 at 11:45:29PM +0200, Mateusz Guzik wrote:
-> On Mon, Aug 12, 2024 at 07:44:17PM +0200, Mickaël Salaün wrote:
-> 
-> No opinion about the core idea, I'll note though that this conflicts
-> with a patch to move f_owner out of the struct:
-> https://lore.kernel.org/linux-fsdevel/20240809-koriander-biobauer-6237cbc106f3@brauner/
+Hi Micka�l,
 
-Thanks for the heads-up.
+kernel test robot noticed the following build warnings:
 
-> 
-> Presumably nothing which can't get sorted out with some shoveling.
-> 
-> I do have actionable remark concerning creds though: both get_cred and
-> put_cred are slow. Sorting that out is on my todo list.
-> 
-> In the meantime adding more calls can be avoided:
+[auto build test WARNING on pcmoore-selinux/next]
+[also build test WARNING on linus/master v6.11-rc3]
+[cannot apply to brauner-vfs/vfs.all next-20240813]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-OK, I'll add that in the next version.
+url:    https://github.com/intel-lab-lkp/linux/commits/Micka-l-Sala-n/fs-security-Fix-file_set_fowner-LSM-hook-inconsistencies/20240813-004648
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20240812144936.1616628-1-mic%40digikod.net
+patch subject: [PATCH] fs,security: Fix file_set_fowner LSM hook inconsistencies
+config: x86_64-randconfig-122-20240813 (https://download.01.org/0day-ci/archive/20240813/202408131900.xhbYFHR4-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240813/202408131900.xhbYFHR4-lkp@intel.com/reproduce)
 
-> 
-> > diff --git a/fs/file_table.c b/fs/file_table.c
-> > index 4f03beed4737..d28b76aef4f3 100644
-> > --- a/fs/file_table.c
-> > +++ b/fs/file_table.c
-> > @@ -66,6 +66,7 @@ static inline void file_free(struct file *f)
-> >  	if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
-> >  		percpu_counter_dec(&nr_files);
-> >  	put_cred(f->f_cred);
-> > +	put_cred(f->f_owner.cred);
-> 
-> 	if (likely(f->f_cred == f->f_owner.cred)) {
-> 		put_cred_many(f->f_cred, 2);
-> 	} else {
-> 		put_cred(f->f_cred);
-> 		put_cred(f->f_owner.cred);
-> 	}
-> 
-> >  	if (unlikely(f->f_mode & FMODE_BACKING)) {
-> >  		path_put(backing_file_user_path(f));
-> >  		kfree(backing_file(f));
-> > @@ -149,9 +150,11 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
-> >  	int error;
-> >  
-> >  	f->f_cred = get_cred(cred);
-> > +	f->f_owner.cred = get_cred(cred);
-> 
-> 	f->f_cred = f->f_owner.cred = get_cred_many(cred, 2);
-> 
-> >  	error = security_file_alloc(f);
-> >  	if (unlikely(error)) {
-> >  		put_cred(f->f_cred);
-> > +		put_cred(f->f_owner.cred);
-> 
-> 		put_cred_many(cred, 2);
-> 
-> >  		return error;
-> >  	}
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408131900.xhbYFHR4-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> fs/file_table.c:153:25: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct cred const [noderef] __rcu *cred @@     got struct cred const * @@
+   fs/file_table.c:153:25: sparse:     expected struct cred const [noderef] __rcu *cred
+   fs/file_table.c:153:25: sparse:     got struct cred const *
+>> fs/file_table.c:157:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
+   fs/file_table.c:157:36: sparse:     expected struct cred const *cred
+   fs/file_table.c:157:36: sparse:     got struct cred const [noderef] __rcu *cred
+   fs/file_table.c:69:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
+   fs/file_table.c:69:28: sparse:     expected struct cred const *cred
+   fs/file_table.c:69:28: sparse:     got struct cred const [noderef] __rcu *cred
+   fs/file_table.c:69:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
+   fs/file_table.c:69:28: sparse:     expected struct cred const *cred
+   fs/file_table.c:69:28: sparse:     got struct cred const [noderef] __rcu *cred
+
+vim +153 fs/file_table.c
+
+   147	
+   148	static int init_file(struct file *f, int flags, const struct cred *cred)
+   149	{
+   150		int error;
+   151	
+   152		f->f_cred = get_cred(cred);
+ > 153		f->f_owner.cred = get_cred(cred);
+   154		error = security_file_alloc(f);
+   155		if (unlikely(error)) {
+   156			put_cred(f->f_cred);
+ > 157			put_cred(f->f_owner.cred);
+   158			return error;
+   159		}
+   160	
+   161		rwlock_init(&f->f_owner.lock);
+   162		spin_lock_init(&f->f_lock);
+   163		mutex_init(&f->f_pos_lock);
+   164		f->f_flags = flags;
+   165		f->f_mode = OPEN_FMODE(flags);
+   166		/* f->f_version: 0 */
+   167	
+   168		/*
+   169		 * We're SLAB_TYPESAFE_BY_RCU so initialize f_count last. While
+   170		 * fget-rcu pattern users need to be able to handle spurious
+   171		 * refcount bumps we should reinitialize the reused file first.
+   172		 */
+   173		atomic_long_set(&f->f_count, 1);
+   174		return 0;
+   175	}
+   176	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
