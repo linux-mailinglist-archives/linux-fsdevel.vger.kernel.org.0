@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-25773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A70950537
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 14:40:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503F995053F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 14:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76189B22F2A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 12:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D39451F233B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 12:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E3519CCF0;
-	Tue, 13 Aug 2024 12:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E5019D078;
+	Tue, 13 Aug 2024 12:39:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAE4199E81;
-	Tue, 13 Aug 2024 12:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF3F19ADA8;
+	Tue, 13 Aug 2024 12:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723552765; cv=none; b=HzYZo7abt/7gNDiRiCAV3dK6fXP47D0QXnI7ikD4lLts2sk0rzkMXld+boyAckZxBW60FqUaVu3bu6cMiGiHa7VmE8BTEwcewRZsFc2lNikqb3XwxViE/QovRARu5ECHOsQl/5zZlUVDcpUmWCkYf54KCFtlr6y69bLst3XCi78=
+	t=1723552765; cv=none; b=gQsTe2zGPZyF0WeXlWqQo0W0axcDqQBGuX7P4TR4HkFq2RTtZO457DFtDGe2Nu9SsCNlDp+CZsz0UbpcHQSYg8xr7jpgBXN0dl3ULR9x97CFgw8k/Juj7Kpc8hw0HX5gBYnz3wrht2Q6yZFJKjCQlYSwRmMnRHfq2iqYN4j3cLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723552765; c=relaxed/simple;
-	bh=xQzrcK+qiJEQQKGTJKElJXRSm117PNToSqPCee3UAgk=;
+	bh=adkynFk6UkrXf4A9kGMKOA/PeVnyYImDF0Cqb393QU4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HmQQvPcLLFPcbzsa6WJaKF9n2IQY5VVr2ng12UU+L8IaqOIqb2zuGbn03/qgNGUK6ssuurB7cGytnxW3nxQRPWK9UICsLa9igyDnnUJcuRc7Ha1/a0o/7jK9Mgpdb1V/p3wL5uoptv8oOgEH+fOJyYOXzfALId7upz5KEhBbBno=
+	 MIME-Version; b=J1lj+Xe5pSbGBWVPGpHboUbl/gf7jx6r6ky+8yJF1SBwROFsI01n6ZUketGMh9TZ3cLW7MoPZQBLStkCc1ZZ81awEH/3mv84M28MUx4NtikwS0G56mcfVWyoLPBB2Ftd5uCl1mEBExZnJ+Vt8yWFPoVNlWb9yNRxHvVGbxe7jTQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjrY55Vv3z4f3jdM;
-	Tue, 13 Aug 2024 20:39:05 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjrY61bzPz4f3jdR;
+	Tue, 13 Aug 2024 20:39:06 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 759BD1A07B6;
+	by mail.maildlp.com (Postfix) with ESMTP id E65E01A1881;
 	Tue, 13 Aug 2024 20:39:19 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBnj4XkU7tmejNSBg--.17625S10;
+	by APP4 (Coremail) with SMTP id gCh0CgBnj4XkU7tmejNSBg--.17625S11;
 	Tue, 13 Aug 2024 20:39:19 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -50,9 +50,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com
-Subject: [PATCH v3 06/12] ext4: update delalloc data reserve spcae in ext4_es_insert_extent()
-Date: Tue, 13 Aug 2024 20:34:46 +0800
-Message-Id: <20240813123452.2824659-7-yi.zhang@huaweicloud.com>
+Subject: [PATCH v3 07/12] ext4: drop ext4_es_delayed_clu()
+Date: Tue, 13 Aug 2024 20:34:47 +0800
+Message-Id: <20240813123452.2824659-8-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
 References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
@@ -63,10 +63,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnj4XkU7tmejNSBg--.17625S10
-X-Coremail-Antispam: 1UD129KBjvJXoWxtF47Kr4UCFyfCr4xZFyrWFg_yoWxAFykpr
-	ZIkr1fJw1rWw1q9rZ3Xw4UWr15WayrKw4UGrZ3tryxuFW3Ar1fKF1DtF1rZFWI9rWkJ3Z8
-	XFyUCw17uayDCa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgBnj4XkU7tmejNSBg--.17625S11
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw1fZw43Cw18Cw13XFyUAwb_yoWrGF1Dpr
+	y3try7JrW3Xw4v9a1xtw17Xr15t3Wqk3yUGr93t3WrKFyrAr1SkFnYyFyfZFyrtrWxuF1Y
+	qFWj9a4UCF4jgFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUma14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -85,173 +85,128 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Now that we update data reserved space for delalloc after allocating
-new blocks in ext4_{ind|ext}_map_blocks(), and if bigalloc feature is
-enabled, we also need to query the extents_status tree to calculate the
-exact reserved clusters. This is complicated now and it appears that
-it's better to do this job in ext4_es_insert_extent(), because
-__es_remove_extent() have already count delalloc blocks when removing
-delalloc extents and __revise_pending() return new adding pending count,
-we could update the reserved blocks easily in ext4_es_insert_extent().
-
-We direct reduce the reserved cluster count when replacing a delalloc
-extent. However, thers are two special cases need to concern about the
-quota claiming when doing direct block allocation (e.g. from fallocate).
-
-A),
-fallocate a range that covers a delalloc extent but start with
-non-delayed allocated blocks, e.g. a hole.
-
-  hhhhhhh+ddddddd+ddddddd
-  ^^^^^^^^^^^^^^^^^^^^^^^  fallocate this range
-
-Current ext4_map_blocks() can't always trim the extent since it may
-release i_data_sem before calling ext4_map_create_blocks() and raced by
-another delayed allocation. Hence the EXT4_GET_BLOCKS_DELALLOC_RESERVE
-may not set even when we are replacing a delalloc extent, without this
-flag set, the quota has already been claimed by ext4_mb_new_blocks(), so
-we should release the quota reservations instead of claim them again.
-
-B),
-bigalloc feature is enabled, fallocate a range that contains non-delayed
-allocated blocks.
-
-  |<         one cluster       >|
-  hhhhhhh+hhhhhhh+hhhhhhh+ddddddd
-  ^^^^^^^  fallocate this range
-
-This case is similar to above case, the EXT4_GET_BLOCKS_DELALLOC_RESERVE
-flag is also not set.
-
-Hence we should release the quota reservations if we replace a delalloc
-extent but without EXT4_GET_BLOCKS_DELALLOC_RESERVE set.
+Since we move ext4_da_update_reserve_space() to ext4_es_insert_extent(),
+no one uses ext4_es_delayed_clu() and __es_delayed_clu(), just drop
+them.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/extents.c        | 37 -------------------------------------
- fs/ext4/extents_status.c | 25 ++++++++++++++++++++++++-
- fs/ext4/indirect.c       |  7 -------
- 3 files changed, 24 insertions(+), 45 deletions(-)
+ fs/ext4/extents_status.c | 88 ----------------------------------------
+ fs/ext4/extents_status.h |  2 -
+ 2 files changed, 90 deletions(-)
 
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 671dacd7c873..db8f9d79477c 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4357,43 +4357,6 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
- 		goto out;
- 	}
- 
--	/*
--	 * Reduce the reserved cluster count to reflect successful deferred
--	 * allocation of delayed allocated clusters or direct allocation of
--	 * clusters discovered to be delayed allocated.  Once allocated, a
--	 * cluster is not included in the reserved count.
--	 */
--	if (test_opt(inode->i_sb, DELALLOC) && allocated_clusters) {
--		if (flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE) {
--			/*
--			 * When allocating delayed allocated clusters, simply
--			 * reduce the reserved cluster count and claim quota
--			 */
--			ext4_da_update_reserve_space(inode, allocated_clusters,
--							1);
--		} else {
--			ext4_lblk_t lblk, len;
--			unsigned int n;
--
--			/*
--			 * When allocating non-delayed allocated clusters
--			 * (from fallocate, filemap, DIO, or clusters
--			 * allocated when delalloc has been disabled by
--			 * ext4_nonda_switch), reduce the reserved cluster
--			 * count by the number of allocated clusters that
--			 * have previously been delayed allocated.  Quota
--			 * has been claimed by ext4_mb_new_blocks() above,
--			 * so release the quota reservations made for any
--			 * previously delayed allocated clusters.
--			 */
--			lblk = EXT4_LBLK_CMASK(sbi, map->m_lblk);
--			len = allocated_clusters << sbi->s_cluster_bits;
--			n = ext4_es_delayed_clu(inode, lblk, len);
--			if (n > 0)
--				ext4_da_update_reserve_space(inode, (int) n, 0);
--		}
--	}
--
- 	/*
- 	 * Cache the extent and update transaction to commit on fdatasync only
- 	 * when it is _not_ an unwritten extent.
 diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index 0580bc4bc762..41adf0d69959 100644
+index 41adf0d69959..b372b98af366 100644
 --- a/fs/ext4/extents_status.c
 +++ b/fs/ext4/extents_status.c
-@@ -853,6 +853,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 	struct extent_status newes;
- 	ext4_lblk_t end = lblk + len - 1;
- 	int err1 = 0, err2 = 0, err3 = 0;
-+	int resv_used = 0, pending = 0;
- 	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
- 	struct extent_status *es1 = NULL;
- 	struct extent_status *es2 = NULL;
-@@ -891,7 +892,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 		pr = __alloc_pending(true);
- 	write_lock(&EXT4_I(inode)->i_es_lock);
+@@ -2178,94 +2178,6 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
+ 	return;
+ }
  
--	err1 = __es_remove_extent(inode, lblk, end, NULL, es1);
-+	err1 = __es_remove_extent(inode, lblk, end, &resv_used, es1);
- 	if (err1 != 0)
- 		goto error;
- 	/* Free preallocated extent if it didn't get used. */
-@@ -921,9 +922,31 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 			__free_pending(pr);
- 			pr = NULL;
- 		}
-+		pending = err3;
- 	}
- error:
- 	write_unlock(&EXT4_I(inode)->i_es_lock);
-+	/*
-+	 * Reduce the reserved cluster count to reflect successful deferred
-+	 * allocation of delayed allocated clusters or direct allocation of
-+	 * clusters discovered to be delayed allocated.  Once allocated, a
-+	 * cluster is not included in the reserved count.
-+	 *
-+	 * When direct allocating (from fallocate, filemap, DIO, or clusters
-+	 * allocated when delalloc has been disabled by ext4_nonda_switch())
-+	 * an extent either 1) contains delayed blocks but start with
-+	 * non-delayed allocated blocks (e.g. hole) or 2) contains non-delayed
-+	 * allocated blocks which belong to delayed allocated clusters when
-+	 * bigalloc feature is enabled, quota has already been claimed by
-+	 * ext4_mb_new_blocks(), so release the quota reservations made for
-+	 * any previously delayed allocated clusters instead of claim them
-+	 * again.
-+	 */
-+	resv_used += pending;
-+	if (resv_used)
-+		ext4_da_update_reserve_space(inode, resv_used,
-+				flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE);
-+
- 	if (err1 || err2 || err3 < 0)
- 		goto retry;
- 
-diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
-index d8ca7f64f952..7404f0935c90 100644
---- a/fs/ext4/indirect.c
-+++ b/fs/ext4/indirect.c
-@@ -652,13 +652,6 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
- 	ext4_update_inode_fsync_trans(handle, inode, 1);
- 	count = ar.len;
- 
--	/*
--	 * Update reserved blocks/metadata blocks after successful block
--	 * allocation which had been deferred till now.
--	 */
--	if (flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE)
--		ext4_da_update_reserve_space(inode, count, 1);
+-/*
+- * __es_delayed_clu - count number of clusters containing blocks that
+- *                    are delayed only
+- *
+- * @inode - file containing block range
+- * @start - logical block defining start of range
+- * @end - logical block defining end of range
+- *
+- * Returns the number of clusters containing only delayed (not delayed
+- * and unwritten) blocks in the range specified by @start and @end.  Any
+- * cluster or part of a cluster within the range and containing a delayed
+- * and not unwritten block within the range is counted as a whole cluster.
+- */
+-static unsigned int __es_delayed_clu(struct inode *inode, ext4_lblk_t start,
+-				     ext4_lblk_t end)
+-{
+-	struct ext4_es_tree *tree = &EXT4_I(inode)->i_es_tree;
+-	struct extent_status *es;
+-	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+-	struct rb_node *node;
+-	ext4_lblk_t first_lclu, last_lclu;
+-	unsigned long long last_counted_lclu;
+-	unsigned int n = 0;
 -
- got_it:
- 	map->m_flags |= EXT4_MAP_MAPPED;
- 	map->m_pblk = le32_to_cpu(chain[depth-1].key);
+-	/* guaranteed to be unequal to any ext4_lblk_t value */
+-	last_counted_lclu = ~0ULL;
+-
+-	es = __es_tree_search(&tree->root, start);
+-
+-	while (es && (es->es_lblk <= end)) {
+-		if (ext4_es_is_delonly(es)) {
+-			if (es->es_lblk <= start)
+-				first_lclu = EXT4_B2C(sbi, start);
+-			else
+-				first_lclu = EXT4_B2C(sbi, es->es_lblk);
+-
+-			if (ext4_es_end(es) >= end)
+-				last_lclu = EXT4_B2C(sbi, end);
+-			else
+-				last_lclu = EXT4_B2C(sbi, ext4_es_end(es));
+-
+-			if (first_lclu == last_counted_lclu)
+-				n += last_lclu - first_lclu;
+-			else
+-				n += last_lclu - first_lclu + 1;
+-			last_counted_lclu = last_lclu;
+-		}
+-		node = rb_next(&es->rb_node);
+-		if (!node)
+-			break;
+-		es = rb_entry(node, struct extent_status, rb_node);
+-	}
+-
+-	return n;
+-}
+-
+-/*
+- * ext4_es_delayed_clu - count number of clusters containing blocks that
+- *                       are both delayed and unwritten
+- *
+- * @inode - file containing block range
+- * @lblk - logical block defining start of range
+- * @len - number of blocks in range
+- *
+- * Locking for external use of __es_delayed_clu().
+- */
+-unsigned int ext4_es_delayed_clu(struct inode *inode, ext4_lblk_t lblk,
+-				 ext4_lblk_t len)
+-{
+-	struct ext4_inode_info *ei = EXT4_I(inode);
+-	ext4_lblk_t end;
+-	unsigned int n;
+-
+-	if (len == 0)
+-		return 0;
+-
+-	end = lblk + len - 1;
+-	WARN_ON(end < lblk);
+-
+-	read_lock(&ei->i_es_lock);
+-
+-	n = __es_delayed_clu(inode, lblk, end);
+-
+-	read_unlock(&ei->i_es_lock);
+-
+-	return n;
+-}
+-
+ /*
+  * __revise_pending - makes, cancels, or leaves unchanged pending cluster
+  *                    reservations for a specified block range depending
+diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
+index b74d693c1adb..47b3b55a852c 100644
+--- a/fs/ext4/extents_status.h
++++ b/fs/ext4/extents_status.h
+@@ -252,8 +252,6 @@ extern bool ext4_is_pending(struct inode *inode, ext4_lblk_t lblk);
+ extern void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
+ 					  ext4_lblk_t len, bool lclu_allocated,
+ 					  bool end_allocated);
+-extern unsigned int ext4_es_delayed_clu(struct inode *inode, ext4_lblk_t lblk,
+-					ext4_lblk_t len);
+ extern void ext4_clear_inode_es(struct inode *inode);
+ 
+ #endif /* _EXT4_EXTENTS_STATUS_H */
 -- 
 2.39.2
 
