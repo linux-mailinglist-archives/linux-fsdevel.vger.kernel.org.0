@@ -1,124 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-25749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CD594FBA3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 04:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6180794FBB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 04:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704FA281F15
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 02:10:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D98B282E34
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 02:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AA91173F;
-	Tue, 13 Aug 2024 02:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLZ4cQvA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3901400A;
+	Tue, 13 Aug 2024 02:14:50 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E686AB8
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 02:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4580ED531;
+	Tue, 13 Aug 2024 02:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723515002; cv=none; b=WJKuQ0EbIrK6xSt+rGT5RFi0JJAMuisKDe3Z3qmIuIGgQj8/Bu4u4KfIgHQsJDW6c2kiarrmtK/pOhimNbrfgWqVRxZo5M4HPINi9aCNsLO/SVpkjy0WtUR1q0fD5M6poHM/jAGeWVjJGFKW0sxQJdp08aNswCXt7oqcSNCMFIM=
+	t=1723515289; cv=none; b=UTqFHQ7D8yK4GM14CoU1x84RMUq2zvZDMh4DQ1/tSqqAEfs4m68SX3vC6ScpycFXblPsinlzaKDaj2ON8FvSBSNTlCCcP28DWrtzEC+C2DEytSWBkarfsW/Cm1nZAXe19wEhKDy4pdy+UZu4mv01mR6hDFjil5qkMDsl3DnT3UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723515002; c=relaxed/simple;
-	bh=9+E80Lsjcn13gZ6bcfWRidYya32AR9TvenUvK0jOBkU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RvF0p9lDXsGUeohJoucwAoKde5Y27xwzMsjmxEkY4fQFEnjV0cfB+cOtILxfGQe/lZnXfR1qrnkqcgXZjP+NJMFZlHFnVyIpZlIo90ABv9ezEqB3rh5Kj4t0G+HjfEAxkSl6l4ZLfsjeZJaUn6bKWl2sJG6uN42IJlMPwolDI2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLZ4cQvA; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5da6865312eso505281eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 19:10:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723515000; x=1724119800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bWTXWJaSuJqXRYZNghI1V7yuEE01g8xrWbX3wwO/YSg=;
-        b=NLZ4cQvARLfxsNRze7rhDHydhyXetaUYTtroLmKYXROdpWJLObQEz31lu/VcYg7skq
-         ccC/IejGI/V+Mw2AXVEaLc1NIAqmRWKOzJCm/vDVhaCXBf8chRIBIqXb5vTszV9rnuYC
-         GOwSjLocrboHCpyO4praAXK6OXnaCfmAdKfbudaT1fDmIrsI/pKAcdEmpTRQTVPiP1Ld
-         9+nQcMlJiyryjJfHe6lDwcTeVuipheVzim0AD8DiM7jrPr/kewX0FxY7mn2l9TZQiw76
-         v2w0LWkdNIywrDval1zqFaIVLUvWgzOcmpghuU7vfnIYzYnfctsJzKpONxB8K56azpaO
-         jOsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723515000; x=1724119800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bWTXWJaSuJqXRYZNghI1V7yuEE01g8xrWbX3wwO/YSg=;
-        b=jS0oy/5dYWxnCqePS10T+lMrq9Txs+fuHr/lOTE9J9w1AVYBBdreiw9EeBM8+QXoFv
-         GIlpgG9NxbfJTqtx20iJZT7ACLCVuYcKobNJnPFBnnhJ2sOycSI6dqt/ZsqPsqP9KASp
-         NSdSaHhaDi/vPITpgfqYQ6OkJ2P9a0Hax/QeHseAP1BFK45t4HzQXn4NbIW8vIlcY3Gu
-         vdmyU5/eq2NeiarH6FMKkcNwA+gv2n86z7iWEg9ZBexoBSJ/ydeEWc92B8JsjHfQNN1r
-         kYaiXjI0ox7zA7Tl7ejB+w3AmuGNJ9oO9xAIy9swVxJNd7ZSduChav9dg0BRoxLubOrJ
-         CTlA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/yYrEKIlBo9r9IpFv/exSPvMPnhlVUCbbvncma0K4HUW1byQH5cK2eUeohE9+50HH0d93iOrBE3DVgMNwm2BK+OMl8ya1ql6u99uVJg==
-X-Gm-Message-State: AOJu0YzpaNoIy7TuVLO2FlSvMVdJJxZFeA/2iht+oM4sqhB5NDgHqxj7
-	22uRVnhX+7uiDx2uqxXW4lk/ycX5NeCXnZdWfIuUz9pZktXivGOEka18HtRDZSGoYw/XpWcecvn
-	ax42mQvz6fcsloGX/N1sC4Rp6nZY=
-X-Google-Smtp-Source: AGHT+IHRZrGX87cuGJRiUHttBtwhs8p+UCodXELlCDBbkFapXCMyAly9V29tY8JwT210q4nacgpgx2nFxvBIhZrCkVE=
-X-Received: by 2002:a05:6358:12a6:b0:1aa:d6fe:f424 with SMTP id
- e5c5f4694b2df-1b19d2ceac7mr295616955d.13.1723515000263; Mon, 12 Aug 2024
- 19:10:00 -0700 (PDT)
+	s=arc-20240116; t=1723515289; c=relaxed/simple;
+	bh=vvhvWKIh2t4mtzuVwGeHfsr+W2bjpTI1kncVkcWG15g=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OwfhQ4boemyuW//CA1MQ1JYC2/zo2zSu9N+khH7Ya8WQJKdmJRSVv7qEVyHt9373XwWbYR/5BLrYXgAxfP86GuyMmeLDUUKaHWLIb0b9eiRuKv1JQ5zR699/qv1zJ4irkH9F5nb4cSRDzcbF6kAANm/91UZmyClPX4OuiLrdMf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjZhM6kHwz4f3kvY;
+	Tue, 13 Aug 2024 10:14:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 91AA81A058E;
+	Tue, 13 Aug 2024 10:14:42 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAHL4WQwbpmVecoBg--.63080S3;
+	Tue, 13 Aug 2024 10:14:42 +0800 (CST)
+Subject: Re: [PATCH v2 1/6] iomap: correct the range of a partial dirty clear
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+ david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-2-yi.zhang@huaweicloud.com>
+ <20240812163339.GD6043@frogsfrogsfrogs>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <d56e3183-a27e-fbbb-4203-28e8e10127cb@huaweicloud.com>
+Date: Tue, 13 Aug 2024 10:14:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812090525.80299-1-laoar.shao@gmail.com> <20240812090525.80299-2-laoar.shao@gmail.com>
- <Zrn0FlBY-kYMftK4@infradead.org> <CALOAHbBd2oCVKsMwcH_YGUWT5LGLWmNSUAZzRPp8j7bBaqc1PQ@mail.gmail.com>
- <ZroMalgcQFUowTLX@infradead.org>
-In-Reply-To: <ZroMalgcQFUowTLX@infradead.org>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 13 Aug 2024 10:09:24 +0800
-Message-ID: <CALOAHbC=fB0h-YgS9Fr6aTavhPFWKLJzzfM4huYjVaa9+97Y4g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm: Add memalloc_nowait_{save,restore}
-To: Christoph Hellwig <hch@infradead.org>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, david@fromorbit.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, Kent Overstreet <kent.overstreet@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240812163339.GD6043@frogsfrogsfrogs>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAHL4WQwbpmVecoBg--.63080S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ury8Jr13Kw1UWrW5Xw1UWrg_yoW8ur1rpr
+	s3KF4UKrWDXry29r1xXFyrXFn5tanrWF48JrW7WryrWan0qr1fKr109ay3uF92gr4xAF10
+	vF1agrWxCrWqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Mon, Aug 12, 2024 at 9:21=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Mon, Aug 12, 2024 at 08:59:53PM +0800, Yafang Shao wrote:
-> >
-> > I don=E2=80=99t see any incompatibility in __alloc_pages_slowpath(). Th=
-e
-> > ~__GFP_DIRECT_RECLAIM flag only ensures that direct reclaim is not
-> > performed, but it doesn=E2=80=99t prevent the allocation of pages from
-> > ALLOC_MIN_RESERVE, correct?
-> >
-> > > and thus will lead to kernel crashes.
-> >
-> > Could you please explain in detail where this might lead to kernel cras=
-hes?
->
-> Sorry, I misread your patch as doing what your subject says.
-> A nestable noreclaim is probably fine, but please name it that way,
-> as memalloc_nowait_{save,restore} implies a context version
-> of GFP_NOWAIT.
+On 2024/8/13 0:33, Darrick J. Wong wrote:
+> On Mon, Aug 12, 2024 at 08:11:54PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> The block range calculation in ifs_clear_range_dirty() is incorrect when
+>> partial clear a range in a folio. We can't clear the dirty bit of the
+>> first block or the last block if the start or end offset is blocksize
+>> unaligned, this has not yet caused any issue since we always clear a
+>> whole folio in iomap_writepage_map()->iomap_clear_range_dirty(). Fix
+>> this by round up the first block and round down the last block and
+>> correct the calculation of nr_blks.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/iomap/buffered-io.c | 9 ++++++---
+>>  1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+>> index f420c53d86ac..4da453394aaf 100644
+>> --- a/fs/iomap/buffered-io.c
+>> +++ b/fs/iomap/buffered-io.c
+>> @@ -138,11 +138,14 @@ static void ifs_clear_range_dirty(struct folio *folio,
+>>  {
+>>  	struct inode *inode = folio->mapping->host;
+>>  	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
+>> -	unsigned int first_blk = (off >> inode->i_blkbits);
+>> -	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
+>> -	unsigned int nr_blks = last_blk - first_blk + 1;
+>> +	unsigned int first_blk = DIV_ROUND_UP(off, i_blocksize(inode));
+> 
+> Is there a round up macro that doesn't involve integer division?
+> 
 
-There are already memalloc_noreclaim_{save,restore} which imply __GFP_MEMAL=
-LOC:
+Sorry, I don't find a common macro now, if we want to avoid integer division,
+how about open code here?
 
-  memalloc_noreclaim_save - Marks implicit __GFP_MEMALLOC scope.
+	first_blk = round_up(off, i_blocksize(inode)) >> inode->i_blkbits;
 
-That is why I name it memalloc_nowait_{save,restore}. GFP_NOWAIT has
-the same meaning with ~__GFP_DIRECT_RECLAIM:
+Thanks,
+Yi.
 
-  %GFP_NOWAIT is for kernel allocations that should not stall for direct
-  reclaim, start physical IO or use any filesystem callback.
+> 
+>> +	unsigned int last_blk = (off + len) >> inode->i_blkbits;
+>> +	unsigned int nr_blks = last_blk - first_blk;
+>>  	unsigned long flags;
+>>  
+>> +	if (!nr_blks)
+>> +		return;
+>> +
+>>  	spin_lock_irqsave(&ifs->state_lock, flags);
+>>  	bitmap_clear(ifs->state, first_blk + blks_per_folio, nr_blks);
+>>  	spin_unlock_irqrestore(&ifs->state_lock, flags);
+>> -- 
+>> 2.39.2
+>>
+>>
 
---=20
-Regards
-Yafang
 
