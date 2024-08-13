@@ -1,137 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-25821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99279950E3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 23:00:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7912F950F1A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 23:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56CD02840C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 21:00:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5D03B2125A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 21:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31231A76CC;
-	Tue, 13 Aug 2024 20:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047B91A76CD;
+	Tue, 13 Aug 2024 21:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vshsCTUu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="giFNn+kR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13C11A707A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 20:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46D843155
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 21:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723582796; cv=none; b=RozQswFhRMwmEO35rrXREKZK1MlNDp5lMMtwmqvnk5PgK6gZE+qaP4OKYFYFIpK4fgtEZHfjpuk2Y0dgrGp4ab3+DlZy9tnRz5PZo/Cq3k5A240yoz8CUtcV7ZzwO7ka4h7peUDXZ+bcY5TriZ+R++DnN5A3r5yPo4L7TVKBojk=
+	t=1723584146; cv=none; b=kCdecTvOBHzCUFtcKAZuVV8YSwC2ksrYH0+giWXBCjLCAl9EMsaxYV45xoFSf4VZDbVF5tQe0pmaxYt9fnZBhMKQcDUIHPHo97PAuJ+azuMrw25U2lfDW5Y9Ck1VkUEzsu4tPZjYvrm+yH2tx9clskRgKtZvTiGUwTuD7OrjB3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723582796; c=relaxed/simple;
-	bh=hlBe3bO5nqL/9JxUsPJ41ih8e91oO5SDAycqip8w3t0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N/rjdKgPhq7V7wygLhcQZB7560PA6gZ6ySqBu5R+BPtbSTZiTRLW6nrAic0OEGTnXa5MZ8tZePE8YzFk0UP3YYdsRYZQrGQAjQcqJYgUthKivdnBBCZC8UMjpzujQ2Il13wgwnRmM6Owrq0QbXlNf64IDZzN++3uf0RGoYPpsu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vshsCTUu; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd657c9199so10575ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 13:59:54 -0700 (PDT)
+	s=arc-20240116; t=1723584146; c=relaxed/simple;
+	bh=p0A9o2oUU/1HgAoajU1CwpXKwZGxUIb+/hezF8rWzmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FggY9AEDKDNmX/DmiG2Wn9VNL1/OyYAMz68wtS4qqVF1hkrRKIVjPTuPj5+PKOU/kRL710ucKVDq2BQBvgCkQn4F9Tv1Ly0CXcP3oqHLijhPm2ZNBXoaYZLu5o/7IQJ/UITdxbwifB819uJr5TldRIf4TWDk6SQoncqMSPwdP3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=giFNn+kR; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e0bfa541c05so5232386276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 14:22:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723582794; x=1724187594; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RhgGYVMx+jW9NS5avNe3UcbWXP3uzGmp3M9nSD5W+Bo=;
-        b=vshsCTUuNNTZL2oqksGKcyE19bjvuZRnBweL8t6iC2HOt88hS5++QZ3fxDxME+nF5d
-         xVWcAlSt+0dtb64fUT/EXa6kZkRy9STOC9ITpu+5f3iTYx1hSAfABAKfshQAn4+kj6j9
-         2umV+ES7ZYtp5AzSM8a1I3t/F/VFcDhOhC5hScwAn3N8WSgo5YRyG3FUGbH+OhidqvKg
-         AMoFTSus2uAivEhqEfsudgcytpJQKn4w/U3fk8jSxAU48eEzoSM38wjHzbI+LtlCjiBG
-         z0T+hUCuS2Wbf1bib/sYJv5OZ14Mod95q0EaXDZSoOWO17yc92Pay/hDs561h0q3Jowh
-         MeuA==
+        d=gmail.com; s=20230601; t=1723584144; x=1724188944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FPo9dQpQLsf7z6K7R1mbR86q27Tov9VN11ZVUbU6rUI=;
+        b=giFNn+kRrLIPW6VlahcHnjVBCeeJEWQNDOOBEa17q8KihWHkcrlNx2+KOm35SFpFQ1
+         lVFwBY/ymoVS4UylUVpcHiAUPkD72v9qVd1bWLcp3glejL2E9HztlCINapuothI5OHfq
+         6CQgltD6jM7tsvRcJMbis5LVolJ9XSB4+7Sx9Uv/SMLNw9yr7CIcBscGqRPeCT/iw0gM
+         KGoeNoEodOqWXYwRxeEnoKcMLEnJzqOJ7wIuqnlC4vp6sHtQUYSSGjRLR7m94RogH6Il
+         F3JotNS4g90bgga7RjHmqvph38WOsd6289IuEafqUoIUQwscsOoAGlMCXUFcCUXXmRUu
+         vnuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723582794; x=1724187594;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RhgGYVMx+jW9NS5avNe3UcbWXP3uzGmp3M9nSD5W+Bo=;
-        b=ZXKFAnMbgD4isiGXfFXdqSc3qbjJtiHl4G1GfknQrqtFoNQ5tBo1RTbP6p6+3ZGEbr
-         pshvQCxefcdZxV2AzKNHoAkj+2L9HN2aUUpDRriol8/SXOy77lvwb3hfS8OIXndywq/x
-         t75mdz6WObBTFU9GHfBjf77ZWz67LxFhjahqNiDIfOZvV8ELFV3NcBWonf0OnvZNntlm
-         SjvGU87uLK6pVhcoITydM9d0QPBqXREQymIP8oS/f46B8yo04gDxSvCz2ZYCQ6u6PcUS
-         l9hM5xnm8W5ivXdXleg1FY4+c832FWtAIiYW7eyWkZ5LI2aLmAMli4JUcb/0Cu+IIOYj
-         6Tyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZLod4sbxysCcSNe/3mlKx04wkNpezAG58QIGga6rUibViS2GaihEzLeolTGwkhGeik+56FOBHEqXOyNJ6usXoSfiTmPRnpWyn00Hj4w==
-X-Gm-Message-State: AOJu0YzfAuMu8UfyLnJBwERxYRzLZuoHxWs5LTm+qqRyVFAFLasOqh5U
-	pkaDgqohex4eRqqcVp6AXz1ffX0rqdO7h7Koj2+T6CIqHjSqv4lcyH4qaz9rKu88S1Iy6evmq/y
-	BcLV+NBoLXksAXS9gukWJRI1rwgut4AvNPtbK
-X-Google-Smtp-Source: AGHT+IE7evxZcY5Q1trGPNN8QB7kOuoEiJu2YVj+e1IaKF5gw6xisj04CQzafN0peuVm9S/Q8W+/NmStPFUsjWgQGzQ=
-X-Received: by 2002:a17:902:c949:b0:1fd:d0c0:1a69 with SMTP id
- d9443c01a7336-201d9261633mr66975ad.9.1723582793740; Tue, 13 Aug 2024 13:59:53
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723584144; x=1724188944;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FPo9dQpQLsf7z6K7R1mbR86q27Tov9VN11ZVUbU6rUI=;
+        b=Lxia584RqH6e0MCHb4fKCfpK9my5DNxGwAOffPm0FMEzla1D+eMyQLZMRCWKI2WiPy
+         sHfppjjqjkF1M2W82cIzDA9wfLV++dDsUC4TV5d8NgUixWQWb9XKs46y1Fwbn+fj7GUP
+         URYwGZlBSm3ojJG8T3ycF+mBz9GMq5a0jylaBOSgOo1IA1gPpRWuuPcv6MINtYzm3omp
+         Q+C1W1ObjTKpJfEKyff2/hRiw+Q7MTyF+1p4DckkESdXuloZchOia8YzT6AorzdGSDf8
+         ClEwms6VY9ohHiI6IiE/a4BItiuqjtNpecSBlHqOq7K49aD8/wc0Wn9c/3XGy06QyZZ9
+         b30A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnkeeyzHCTE3JdJLBTEFgirpRatOZBZMfrqbpG6rEvbw/c8hiYE/jRczQT+2ZgtmcA/3z6THypFUM4TxqVhG3SO5osubI4SI6QWwX10Q==
+X-Gm-Message-State: AOJu0Ywf3w/e+mjO02zSaIc01iPMGFiMIitT8AccsX3m3+qG8x09/aU5
+	HoE5w5fzpQeF4O+BQGPTeX/+Tc8z/Y6/Ft5kxNgaLR2wIkz2dZgopNzkiw==
+X-Google-Smtp-Source: AGHT+IHibWji546Z+QPFpSXgvPb9WNo2I+Lnw+1wMNBczqvHFDt2zT5rOmppSXcDDS9bKSxwnuu2ow==
+X-Received: by 2002:a05:6902:2305:b0:e0e:900c:946b with SMTP id 3f1490d57ef6-e1155a426fbmr1000095276.1.1723584143783;
+        Tue, 13 Aug 2024 14:22:23 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-008.fbsv.net. [2a03:2880:25ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0ec8be6625sm1697628276.25.2024.08.13.14.22.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 14:22:23 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com,
+	osandov@osandov.com,
+	bernd.schubert@fastmail.fm,
+	sweettea-kernel@dorminy.me,
+	kernel-team@meta.com
+Subject: [PATCH] fuse: add FOPEN_FETCH_ATTR flag for fetching attributes after open
+Date: Tue, 13 Aug 2024 14:21:49 -0700
+Message-ID: <20240813212149.1909627-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813002932.3373935-1-andrii@kernel.org> <20240813002932.3373935-2-andrii@kernel.org>
-In-Reply-To: <20240813002932.3373935-2-andrii@kernel.org>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 13 Aug 2024 22:59:14 +0200
-Message-ID: <CAG48ez1oUas3ZMsDdJSxbZoFK0xfsLFiEZjJmOryzkURPPBeBA@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 01/10] lib/buildid: harden build ID parsing logic
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org, 
-	adobriyan@gmail.com, shakeel.butt@linux.dev, hannes@cmpxchg.org, 
-	ak@linux.intel.com, osandov@osandov.com, song@kernel.org, 
-	linux-fsdevel@vger.kernel.org, willy@infradead.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 2:29=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org>=
- wrote:
-> Harden build ID parsing logic, adding explicit READ_ONCE() where it's
-> important to have a consistent value read and validated just once.
->
-> Also, as pointed out by Andi Kleen, we need to make sure that entire ELF
-> note is within a page bounds, so move the overflow check up and add an
-> extra note_size boundaries validation.
->
-> Fixes tag below points to the code that moved this code into
-> lib/buildid.c, and then subsequently was used in perf subsystem, making
-> this code exposed to perf_event_open() users in v5.12+.
+Add FOPEN_FETCH_ATTR flag to indicate that attributes should be
+fetched from the server after an open.
 
-Sorry, I missed some things in previous review rounds:
+For fuse servers that are backed by network filesystems, this is
+needed to ensure that file attributes are up to date between
+consecutive open calls.
 
-[...]
-> @@ -18,31 +18,37 @@ static int parse_build_id_buf(unsigned char *build_id=
-,
-[...]
->                 if (nhdr->n_type =3D=3D BUILD_ID &&
-> -                   nhdr->n_namesz =3D=3D sizeof("GNU") &&
-> -                   !strcmp((char *)(nhdr + 1), "GNU") &&
-> -                   nhdr->n_descsz > 0 &&
-> -                   nhdr->n_descsz <=3D BUILD_ID_SIZE_MAX) {
-> -                       memcpy(build_id,
-> -                              note_start + note_offs +
-> -                              ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhd=
-r),
-> -                              nhdr->n_descsz);
-> -                       memset(build_id + nhdr->n_descsz, 0,
-> -                              BUILD_ID_SIZE_MAX - nhdr->n_descsz);
-> +                   name_sz =3D=3D note_name_sz &&
-> +                   strcmp((char *)(nhdr + 1), note_name) =3D=3D 0 &&
+For example, if there is a file that is opened on two fuse mounts,
+in the following scenario:
 
-Please change this to something like "memcmp((char *)(nhdr + 1),
-note_name, note_name_sz) =3D=3D 0" to ensure that we can't run off the end
-of the page if there are no null bytes in the rest of the page.
+on mount A, open file.txt w/ O_APPEND, write "hi", close file
+on mount B, open file.txt w/ O_APPEND, write "world", close file
+on mount A, open file.txt w/ O_APPEND, write "123", close file
 
-[...]
-> @@ -90,8 +97,8 @@ static int get_build_id_32(const void *page_addr, unsig=
-ned char *build_id,
->         for (i =3D 0; i < ehdr->e_phnum; ++i) {
+when the file is reopened on mount A, the file inode contains the old
+size and the last append will overwrite the data that was written when
+the file was opened/written on mount B.
 
-Please change this to "for (i =3D 0; i < phnum; ++i) {" like in the
-64-bit version.
+(This corruption can be reproduced on the example libfuse passthrough_hp
+server with writeback caching disabled and nopassthrough)
 
-With these two changes applied:
+Having this flag as an option enables parity with NFS's close-to-open
+consistency.
 
-Reviewed-by: Jann Horn <jannh@google.com>
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+---
+ fs/fuse/file.c            | 7 ++++++-
+ include/uapi/linux/fuse.h | 7 ++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index f39456c65ed7..437487ce413d 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -264,7 +264,12 @@ static int fuse_open(struct inode *inode, struct file *file)
+ 	err = fuse_do_open(fm, get_node_id(inode), file, false);
+ 	if (!err) {
+ 		ff = file->private_data;
+-		err = fuse_finish_open(inode, file);
++		if (ff->open_flags & FOPEN_FETCH_ATTR) {
++			fuse_invalidate_attr(inode);
++			err = fuse_update_attributes(inode, file, STATX_BASIC_STATS);
++		}
++		if (!err)
++			err = fuse_finish_open(inode, file);
+ 		if (err)
+ 			fuse_sync_release(fi, ff, file->f_flags);
+ 		else if (is_truncate)
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index d08b99d60f6f..f5d1af6fe352 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -217,6 +217,9 @@
+  *  - add backing_id to fuse_open_out, add FOPEN_PASSTHROUGH open flag
+  *  - add FUSE_NO_EXPORT_SUPPORT init flag
+  *  - add FUSE_NOTIFY_RESEND, add FUSE_HAS_RESEND init flag
++ *
++ *  7.41
++ *  - add FOPEN_FETCH_ATTR
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -252,7 +255,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 40
++#define FUSE_KERNEL_MINOR_VERSION 41
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -360,6 +363,7 @@ struct fuse_file_lock {
+  * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
+  * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on the same inode
+  * FOPEN_PASSTHROUGH: passthrough read/write io for this open file
++ * FOPEN_FETCH_ATTR: attributes are fetched after file is opened
+  */
+ #define FOPEN_DIRECT_IO		(1 << 0)
+ #define FOPEN_KEEP_CACHE	(1 << 1)
+@@ -369,6 +373,7 @@ struct fuse_file_lock {
+ #define FOPEN_NOFLUSH		(1 << 5)
+ #define FOPEN_PARALLEL_DIRECT_WRITES	(1 << 6)
+ #define FOPEN_PASSTHROUGH	(1 << 7)
++#define FOPEN_FETCH_ATTR	(1 << 8)
+ 
+ /**
+  * INIT request/reply flags
+-- 
+2.43.5
+
 
