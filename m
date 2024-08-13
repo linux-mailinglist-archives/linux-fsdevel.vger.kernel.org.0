@@ -1,290 +1,287 @@
-Return-Path: <linux-fsdevel+bounces-25794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F56E950870
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 17:04:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E329950A47
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 18:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937B91F219D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 15:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B10131F237C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 16:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF90E1A00C9;
-	Tue, 13 Aug 2024 15:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0017D1A2C09;
+	Tue, 13 Aug 2024 16:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Z28wd3r+"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="i3ahcxFJ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="dLqD2C2U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFB51DFD1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 15:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723561467; cv=none; b=VnUIgekomBpRIvsJl8SX1rzSzketnW5pn1bXGzhIEl72nQ8XBZyfPvnO2B/rvBTUd7aNcdkqw0oSdF+GfzksLErzfT8t/SiSacBKk6fWP/KMXjvcINkGFrsh6AxEakftQyK461T2kJ0RfNfMiskg9srqyh/HRrjxdB5hPADKgQ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723561467; c=relaxed/simple;
-	bh=rlMeZFw2l5meUNRx2SEMXoKUXtDu/BtobZpP6EJPnk0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VebU7k+zwFZKaRUZan2RSVP02IiU+0JNP6TbXj1M8i6tr8oXhceH5pJez5Pc1InTrvCsCl/yHXQPAyRh9SHSCqPV2h/PSX9JBQwTZIKzGZbnewDc7Uapyt5oiZOWG83yehkCeOHGoCq2CpMMgrNjcDpoWmHR/YNb1Fhchcu9s2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Z28wd3r+; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e0bf9b821e8so5467707276.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 08:04:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA1F1A2558;
+	Tue, 13 Aug 2024 16:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723567023; cv=fail; b=PoKkIeBKWAMsjKMwZe/f9nPqIUmZVu/0A0uHDtWqS3B25WpQr1NfVBwD/MfooJYURtwNmIZwfn44mxPLVPL5Y3WAyeZd6GELW5cqzJQ8GumjEtOzrWyH6WE39sAWe1RKinkNmBUWMCG74dwgcqVzbd/2v1u1x137/gSeWjU32Vo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723567023; c=relaxed/simple;
+	bh=SIeYeCN3naivfWQgEfPod6tH4say91ENejq+clpn/4M=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=edOqW+24LU1jz0Q5Kib/tIOH2Xg1BV1C/x4cjqHQ8w8ErddYJ85z8TxqSgsHn/a5m+QPbMxwZg+hOAKtiOSIcR49S20Eo6a4lQv5qj7v9N7xR4EH06QiBjXsutY3ucz9/dICj1IEqYqrojm/LN0oNRyhV0Go/WHLdqbHWW/1Ej4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=i3ahcxFJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=dLqD2C2U; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DGBVIg014878;
+	Tue, 13 Aug 2024 16:36:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:content-transfer-encoding
+	:content-type:mime-version; s=corp-2023-11-20; bh=SPKXZG0d8UdYrO
+	QWjvKj3bxSUlAd2LhVY5lMe8Bn7Gc=; b=i3ahcxFJ5KLdvKJFmLmU5U1D6iAFqW
+	NYaE7MJAtXFrY/zqL9LuGjG0nZb9k92MD90vLnau/DrHOGhxyV+w4qs1ctyTmR6n
+	KtZMMFq5XYun5YSohyCTJA4gqGawAhSL6XhfkK9QjnxTroWteYHtdvGvIFs6N6Gc
+	Vo9WdIDQeLirSWslit3g8wgPpPPO02aPnfy7nI610URPDdN4ZSB+SczT4YpXMisx
+	aSQ+hqQp50Ah4uHpqhYSr89lJ5/rRblccd0yVoQiG3axtXCPkcD2+WxNbptHslDz
+	k7+vwOPY3mUaHEe0pmlWdiI0zx0rpOW8dpWND1YlmR+XlWUQ8wAXq8ww==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wy4beghh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 Aug 2024 16:36:50 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47DFeTNo017662;
+	Tue, 13 Aug 2024 16:36:50 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn9pd6n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 Aug 2024 16:36:49 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RTVYIV8KxycLqTxzv6ztzESyg+GY6gIjfp/JaiRnxJvqYOiZd6d+iqqqKBXt8jGaTO+SxS0q0l0jwJJAET2UYAkjUCwPFffxnx2WyzVJ78c1+QedVsjU+Fu+n56Je7PBaaKooSpNlfK+mAZGxkeGOvfq5QbTaNQ2dNFeTFECR2gTMR1b0njFWI3j/MpAXENN3nUJAladX+gdzqvTB66V/Y7OwnM6Ue/k8bZ7LP63ykzrasU2jJSDJf1ThLP69ZDJl8XyU+tuV0x29su5sebS55rn37c1FxQtQl0aIMdyDXq5pNx5Ea9MdZtX6xBr90Dpsw8ByQLDi5mGm26TmlS4gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SPKXZG0d8UdYrOQWjvKj3bxSUlAd2LhVY5lMe8Bn7Gc=;
+ b=agQNdXtA5bXHVav4NZLBVxVJRCGS8XEXQ51PmOd/wzaCEpUbqnSiR4b9GqlPYYmOWmTE3SfK51KI2/a7KlD8f3OacVzm9XAdnvtHMQ/aVnKGTTLp9sBTB5XM84QGqEpN4nmkPGi2L1kqt0NzzF1H+yW9d3DrZk6O23Mey/UGBEwoHJOoXuZu3EAbUNXVHBkXczOe0TGo9fnvqn7z04S7zw/Erxq89uc5DLdZsnE1PPdech0o4+cTy4QsEjnu9AEjPMf7cZi2p8v8XQajsUNQslCpv5nHD+8qRs4/ObHntTVvAmlhsfySn/G4c78LnZemtsUz0leeWXjUhbDFhHP/rw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723561464; x=1724166264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BTJyLP31uzhtBv0LyySvr0BFuiD5ePD4qsAd+xXreOM=;
-        b=Z28wd3r+Bb9210QgFjdOlq4Tg/jtKsu7O7QZqHOsqzjzAXb0bvoViV6wVPTunJcvB9
-         Q4j1ny0T0t0r4lMaqyTfyj9YaShM2RQ4Y3yuOQRvWrzMRD1C57sLloiWasqiytIlQa+h
-         +Ose0Qtnqtki9hu9MATEttnZvf6NL6XyiZOLBc3wzq6D6jbZ7HCOrIn3luUGO+40seN6
-         WCTIVmgWwPojSt1RGUwFjZAsGafRjJLRi5t3OdjPoT6HTsacUt6QZBen5lflE1KMWy0Q
-         WDaQzCtkAecG+CC0EIHv1Iydt1LrCvCmdv2v+p+gg47A9Lj7hj5R6CsqpWN6skbTWRRZ
-         nWZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723561464; x=1724166264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BTJyLP31uzhtBv0LyySvr0BFuiD5ePD4qsAd+xXreOM=;
-        b=Hx9SF54L+PZWU7ssNDIuic/3VLdQe033aTBYXelMXzhayIK/pkhwWx6aQ4ss4dcu7X
-         iIhwRCJnMKavABT0OZS12dYC2XjLHMgWYgNAXZ6SsjKECq9poZuyBC9tlNTQap9p3Zdi
-         azC+ZPAde1zN4tqTMFrxMZx7G4TPS4IGK9uEQjl+dgXXL1ddkIaz3f6d7olb+a1OnNoB
-         1Kg5fD2yhTuucl8Uw6RYHbFs+u47GzuiBUUiVnGma1p9XVb17DPMcHvH/IBdXsONqhWF
-         Uum/rLhns757Dg0KAUIdSKk+CMdXSVZop5GvI8xIvtgQVIkqf9e/hXL4VBR7jW6DUmdN
-         W4BA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsiU/+8Q3qOo4iwLU08lmpGfUCRKwWYaFDEaFqYEtjgt+JLIeo/az6PIqnk/kVSuXKM0Yk4UcG1dGHRfdZjaWCYz02E46KbWp95xl+zg==
-X-Gm-Message-State: AOJu0YzyGvpnkSYVJ2tQ2cvoUw++qtno4j3YFxKcjgsSDj2S1H7eLET1
-	MT8IGTIitatEaMSn3iDP1hkttJT+fk+vAR8cAHuPxZIgRstyD5NBalWQhdLs44SVEXfldWLtjGr
-	kWRxeXx8/iwZBupg8gUvrZWzATjZ2wmShUGej
-X-Google-Smtp-Source: AGHT+IFEH2UHHfqzjJOs+zOkRyDaP1qlz9v98QdLK/yiqrHGQs7eqhzN/Uc94M+fouP0QiOwiznQtTn01v1eWvVQJhU=
-X-Received: by 2002:a05:690c:b84:b0:66a:b6d2:c184 with SMTP id
- 00721157ae682-6a971eb6ed8mr59099287b3.16.1723561464066; Tue, 13 Aug 2024
- 08:04:24 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SPKXZG0d8UdYrOQWjvKj3bxSUlAd2LhVY5lMe8Bn7Gc=;
+ b=dLqD2C2U/JD9yM2TlUYXBjPKch2hujuggJYR1SnJznYVPsXSJSmFpQviJLdWTgmJV+qF6s82F/0UJ1vIYGg8WmALEw0bPxNTXjvkpWwTFIqkKP2yvcwoxBeyYdsVLIsvI8QxpFs9DRdew7iTHCgqcSgmFZ4uGDVLkqVjuj1Ul6M=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by PH7PR10MB6354.namprd10.prod.outlook.com (2603:10b6:510:1b5::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.8; Tue, 13 Aug
+ 2024 16:36:46 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%7]) with mapi id 15.20.7875.015; Tue, 13 Aug 2024
+ 16:36:46 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com,
+        hch@lst.de
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+        martin.petersen@oracle.com, John Garry <john.g.garry@oracle.com>
+Subject: [PATCH v4 00/14] forcealign for xfs
+Date: Tue, 13 Aug 2024 16:36:24 +0000
+Message-Id: <20240813163638.3751939-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR06CA0054.namprd06.prod.outlook.com
+ (2603:10b6:a03:14b::31) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812174421.1636724-1-mic@digikod.net> <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
- <20240813.la2Aiyico3lo@digikod.net>
-In-Reply-To: <20240813.la2Aiyico3lo@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 13 Aug 2024 11:04:13 -0400
-Message-ID: <CAHC9VhRrcTo4gXrexb=fqEGbNcynKUUoMWR=EseJ+oa0ZM-8qA@mail.gmail.com>
-Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook inconsistencies
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB6354:EE_
+X-MS-Office365-Filtering-Correlation-Id: 348dffee-7467-4584-e3ad-08dcbbb61f5f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?F5a5Gmdu6992Ws3lP4guK6MB9Hq6AiRugVHYqsX0G3JKo/OHomBVqUVcWGpQ?=
+ =?us-ascii?Q?EFiBzrElkngKrpk164aSX9gIuDwUEBDEmgo9IfxbUq2yCGmCck9M0XmeY+qz?=
+ =?us-ascii?Q?GtZAnboYDC3HF1ByV0E51MmFz7jGxedcCA4o0E+z83wME/QUM/HqFqDZaTh7?=
+ =?us-ascii?Q?pQTXIefc5NEoRiklmsDjaGEvJtanc5sH+hhVAcTJ80Mr1JG/ISMpTaGZoRTr?=
+ =?us-ascii?Q?7GNr8DUuLjvJecB4OMScE4QyXjeH+gsHVBfTngcHiK43rbXR5ULNaDBiYW/Q?=
+ =?us-ascii?Q?BGsI6PmT67dOtHHL9U/S5G5ufVSFMelP/KmskabchUVkKidJZaCJe08THlR5?=
+ =?us-ascii?Q?bU+dw+UsgtASM3crs2TudxuWN71L9cWYK2npwI5xZxGbRxxPz66NDN8ZM7gl?=
+ =?us-ascii?Q?f+ToBcPT3vXjjmsojMS+kPbNkQeUqtmJh226uqYm0W3YR1oEM9WEkv/Oj1+e?=
+ =?us-ascii?Q?HJ+kWRI9GoXLjfo25ygWK5sZaPuJMnZ16csnfvQqMW63uI54Fh9os39vrOvE?=
+ =?us-ascii?Q?TLqGusKpEfehauIDgDt24W474WUKL0fQhA3kta9dqfhiUog4K4s4YaV4VgSd?=
+ =?us-ascii?Q?cIUdAjh2N6ucT3Vzo31VLA58oxrpvVBi3WHyVzNkchuYv0WCNvPTYkOIcmCm?=
+ =?us-ascii?Q?LT1nY1RjUE3plKsqHmdx9/XCRNNkocoXcoy5+KmnWeA4w3bwvQBIzQy/iUEP?=
+ =?us-ascii?Q?6OX5yFVQoFENYZlUJLUmG0BVdEqi6+iLlzjtztLl5o8w6/1ZogTLxbbxo2lN?=
+ =?us-ascii?Q?Gaq4PCEFXOJiDabv94pNnCRdhGxdLMEV3JXfs0wDhkEx5HbRzGmZM4MHebRM?=
+ =?us-ascii?Q?UiXnDxP1kuwi6nkkRTWzWiNPYFxGs0tWETZy5xiVTXkpnYiKO6gPdU/Su6Fc?=
+ =?us-ascii?Q?ah75AaCkhAx9C5L2pwbtv+RPxqmSfyIk5LUWJ2rBTZju5skHlf9tQwBoDCKM?=
+ =?us-ascii?Q?06cGl4ueQygKhiowr2V6NtuyQkxOr/l5nGx4UEzXwtRfSt+TilAzKTsKWKe4?=
+ =?us-ascii?Q?ijlwZVudjqpMEjW6Qi4Rp+vC2faxnK7fJpXZAP7cWedK0FyUShVzGl1Ya8o9?=
+ =?us-ascii?Q?SjwtKuUubb9w3BqERpCClcuJa1nkW1RYW2C53iZsW3Zg0VQYiN+RarbUtvye?=
+ =?us-ascii?Q?vlp6O54I7lytLhC8b2QrF+xwagnyPezr6BD/mnof1vMpySUNZZCjBCYjgrzc?=
+ =?us-ascii?Q?C4IuXYIfIHZPnlMfRa3Th5MU4weMiStOFXp4tNRGw6WO2eTaId2nXwG3vrBN?=
+ =?us-ascii?Q?rO6EAI/EBHcHsAPCYlGijbzfkxMRpynqq89gXuQ6e9QMq33V8hUj0ar9HgP7?=
+ =?us-ascii?Q?WEZYWdp+wrsu1fFN8eRkKbFK?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sHBUZHII1MurpyDLtF9V0GA+rAMp/DduVUYmTxeMpgVg3dtxTXbMfc+ahK8K?=
+ =?us-ascii?Q?GT91A+pGRE7AR2fpmNl7lPg1IRN3NWdeTBLI3Gc0wlv1+qa7aWDd3WfmqcNk?=
+ =?us-ascii?Q?22clWghLfv1MYNmtOx6ccenh5svWaWnXDLqp+xFjDwGS2zdFYkH4RU7wGZnn?=
+ =?us-ascii?Q?wwnO8lwOytdkTuUL0v3XIyyHj0XKsz2CzBMGfmQj/OWQdCET7OVZLD2pVyrH?=
+ =?us-ascii?Q?zKeSadiKFTW8Qw4EKugNwee7Ad9q3pchvKda+nUzX++yAsVttIKGS3OQUsu0?=
+ =?us-ascii?Q?K4DtqVdDUSnZpMqEY7HBaQcdWXElADQcfN1rH9Sdnr2lZh2ymdjLEUxQG63y?=
+ =?us-ascii?Q?MAaKIx7rDI9nrX54dRS9VoyZ1wENSfzaprz9dra6PJXqKeMCDcwXTDMolm6p?=
+ =?us-ascii?Q?qnfJSPb2fNv7EgFjI+0FXg10/CsKj9AV3yCjBmvlwejmnGGWNA0w3hd9G0u4?=
+ =?us-ascii?Q?gxeKyOYYlUzyvhZxnpVu+ejn8+FJJdLt5Zbc/QCoVu/hx3iRGjg8MD2msMCV?=
+ =?us-ascii?Q?5pEalDZ1mkAgIXG9QZuAH9U1qK5mEl8MrGNug4qtMlLZz6ry0L/5Gl2UCxoI?=
+ =?us-ascii?Q?bp8kwrcXMhWJV8QQo3dM4rrrq+OlAzGlXxy+h8IhNXwA/lPhbWFsMmdKTG94?=
+ =?us-ascii?Q?/01u7uTtwtGnUpIdlvZIfLbKw0zLcHx8CKIhzVh7HQ8pN0tGd1kNg9lmq0zO?=
+ =?us-ascii?Q?Y+C6+El7WMeHLCi+T2F5x3oV5qi8+XSoMSPCh7M/17aNsqaUkyspUUJrLdFF?=
+ =?us-ascii?Q?SKTMVHNUFtui9uiWzFd3JMk8NWI2h2PkifuXTd7oZilsyREiJ2qndfv4GQEd?=
+ =?us-ascii?Q?eLtvwdkMTxw6KcJ+Q5NxZoI2I5KvxyO6g9AaeSikFXjblSMp0NrGDECdM7Mx?=
+ =?us-ascii?Q?U22ifFnl3FxugQ8wd0jVlaZyg9moyQPmRFklbA2Y0qucErSwujgUP/MVTezA?=
+ =?us-ascii?Q?OhzhWR1B9JYxSGuvc1EuO/XHOlxzbGsAXgLq6sjpFfA13YWoVulIW5O41xmD?=
+ =?us-ascii?Q?nh4ToTzvdrKt/93UGjeFNPhNxs7g/Dj9PVCJE98k4CNymtFe3bsC7F1eUaXo?=
+ =?us-ascii?Q?TPJgE7zWD5/RGQF1hXflQDSVxg0NTDIFJ9dpiTGUH9G2pKsLGLQWWdcnZWCc?=
+ =?us-ascii?Q?VdRvclynV8PTR4QEv8gDy4+KpLfva32Not2jLAQnH3TIUfAQTLzJaFAL2Xr9?=
+ =?us-ascii?Q?RAGMbSk1BCY3GEkXnclytzpzPFe5KQv6ZwSSeGzmoMKSlC5Tusd493znyGMb?=
+ =?us-ascii?Q?mfoCYG50Ntk5H6CibDDZMO0VA5AHv55RqVpv4C4JAz2qk9inF1kuZ+yGkO+W?=
+ =?us-ascii?Q?FU3MLsFc0610q0YwzsUO/+Albf3UBuo3rlFBtShxe+bd/e+G+MiczSETEbyZ?=
+ =?us-ascii?Q?9PuvEGcto9Ll10ZrSOBujrC6wz+jR1ckImMSgOhairdGALHnN96kDRW7CxJO?=
+ =?us-ascii?Q?EM4jPKnJOD2f4cqn2iAtsMk8IAYS0NDWZEi1C+GeUmbMPflE79Ok+3fZJ1G4?=
+ =?us-ascii?Q?1Gh+++4zBEh9SJ8aoaTHJH6rZM70f5HqFHjG/jI0dMmgRepm4mKSZvSTkBLe?=
+ =?us-ascii?Q?UMEl3NtSJ90soP27xxXyN6+cjtAUCYKycwDOCaEIo5AUslXo4Qh9l1Rp37E+?=
+ =?us-ascii?Q?bQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	buRNnkWuvQnDRl3qOflZVVbsFZDWdmmDFhuTXImNIPYT6cO963d0sgM+NvVm5/OGyCJbDgRXT82HcRGDyRHXfYiiVgeYT3PtbIEdmFVqvC/3fDIBt2nCPBzQU+TmLlST0oR4aIZRarZwgQItB+ZV5aU3RXD/vCp9c/uCOAdCjpWQT3NtY9IalNHEp2LlMgN8V2rTgWCTGiLe9RsfAPcQ0/F72xRX4FUPnbKsMpXBUBBkuZ0900FGDBR6PeXRiD1ISgchQoCyG1Xo0SidxToaqezcs68v938ngCEVRS4hQ8LGhvR55Z2zemOFTFX5Lpv1mroXrDo0Ob9R49m3MiUvhWiKxAcQaFTyTf6Xf78DvBWoxwlzMJ8QxZ36Vl+3iD1KZfGUnhymolNTkWNGU1EHGwWCQGQd38fcdvULBn6TiAxoYPDnDEwe6h9X5GQ6seeNWuQMQS8Uz8qhpdTSYOM4eATjgsHHob3FYcSmIOB2zE1PpYwPC+UoPmJQcxXPH8bPauQxpR4esf1Zsd5U0t9jDZDlhrtfwCSGWT+8e7TZiKCpfx148mYA40+TJ/eoNGRt6c/B9Qb2VgCI7f8igkYoSICl6inVozXKB9lPqi1mNaE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 348dffee-7467-4584-e3ad-08dcbbb61f5f
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 16:36:46.5358
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kg39CmPa8vAk82bB67+3tWbFs9eaZoSnEjiLIutKMI9+vTKDAXI2n/lvt+y0SySnnPy1lEH7Cw5NtbcSRXMTuQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6354
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_07,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 spamscore=0
+ phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408130120
+X-Proofpoint-GUID: Lt7X6impXTgZgJuIqsxDvw9QkYsYXP4N
+X-Proofpoint-ORIG-GUID: Lt7X6impXTgZgJuIqsxDvw9QkYsYXP4N
 
-On Tue, Aug 13, 2024 at 6:05=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-> On Mon, Aug 12, 2024 at 06:26:58PM -0400, Paul Moore wrote:
-> > On Mon, Aug 12, 2024 at 1:44=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGUR=
-G
-> > > for the related file descriptor.  Before this change, the
-> > > file_set_fowner LSM hook was used to store this information.  However=
-,
-> > > there are three issues with this approach:
-> > >
-> > > - Because security_file_set_fowner() only get one argument, all hook
-> > >   implementations ignore the VFS logic which may not actually change =
-the
-> > >   process that handles SIGIO (e.g. TUN, TTY, dnotify).
-> > >
-> > > - Because security_file_set_fowner() is called before f_modown() with=
-out
-> > >   lock (e.g. f_owner.lock), concurrent F_SETOWN commands could result=
- to
-> > >   a race condition and inconsistent LSM states (e.g. SELinux's fown_s=
-id)
-> > >   compared to struct fown_struct's UID/EUID.
-> > >
-> > > - Because the current hook implementations does not use explicit atom=
-ic
-> > >   operations, they may create inconsistencies.  It would help to
-> > >   completely remove this constraint, as well as the requirements of t=
-he
-> > >   RCU read-side critical section for the hook.
-> > >
-> > > Fix these issues by replacing f_owner.uid and f_owner.euid with a new
-> > > f_owner.cred [1].  This also saves memory by removing dedicated LSM
-> > > blobs, and simplifies code by removing file_set_fowner hook
-> > > implementations for SELinux and Smack.
-> > >
-> > > This changes enables to remove the smack_file_alloc_security
-> > > implementation, Smack's file blob, and SELinux's
-> > > file_security_struct->fown_sid field.
-> > >
-> > > As for the UID/EUID, f_owner.cred is not always updated.  Move the
-> > > file_set_fowner hook to align with the VFS semantic.  This hook does =
-not
-> > > have user anymore [2].
-> > >
-> > > Before this change, f_owner's UID/EUID were initialized to zero
-> > > (i.e. GLOBAL_ROOT_UID), but to simplify code, f_owner's cred is now
-> > > initialized with the file descriptor creator's credentials (i.e.
-> > > file->f_cred), which is more consistent and simplifies LSMs logic.  T=
-he
-> > > sigio_perm()'s semantic does not need any change because SIGIO/SIGURG
-> > > are only sent when a process is explicitly set with __f_setown().
-> > >
-> > > Rename f_modown() to __f_setown() to simplify code.
-> > >
-> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: James Morris <jmorris@namei.org>
-> > > Cc: Jann Horn <jannh@google.com>
-> > > Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> > > Cc: Paul Moore <paul@paul-moore.com>
-> > > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > Link: https://lore.kernel.org/r/20240809-explosionsartig-ablesen-b039=
-dbc6ce82@brauner [1]
-> > > Link: https://lore.kernel.org/r/CAHC9VhQY+H7n2zCn8ST0Vu672UA=3D_eiUik=
-RDW2sUDSN3c=3DgVQw@mail.gmail.com [2]
-> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > ---
-> > >
-> > > Changes since v1:
-> > > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
-> > > - Add back the file_set_fowner hook (but without user) as
-> > >   requested by Paul, but move it for consistency.
-> > > ---
-> > >  fs/fcntl.c                        | 42 +++++++++++++++--------------=
---
-> > >  fs/file_table.c                   |  3 +++
-> > >  include/linux/fs.h                |  2 +-
-> > >  security/security.c               |  5 +++-
-> > >  security/selinux/hooks.c          | 22 +++-------------
-> > >  security/selinux/include/objsec.h |  1 -
-> > >  security/smack/smack.h            |  6 -----
-> > >  security/smack/smack_lsm.c        | 39 +---------------------------
-> > >  8 files changed, 33 insertions(+), 87 deletions(-)
-> > >
-> > > diff --git a/fs/fcntl.c b/fs/fcntl.c
-> > > index 300e5d9ad913..4217b66a4e99 100644
-> > > --- a/fs/fcntl.c
-> > > +++ b/fs/fcntl.c
-> > > @@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, unsign=
-ed int arg)
-> > >         return error;
-> > >  }
-> > >
-> > > -static void f_modown(struct file *filp, struct pid *pid, enum pid_ty=
-pe type,
-> > > -                     int force)
-> > > +void __f_setown(struct file *filp, struct pid *pid, enum pid_type ty=
-pe,
-> > > +               int force)
-> > >  {
-> > >         write_lock_irq(&filp->f_owner.lock);
-> > >         if (force || !filp->f_owner.pid) {
-> > > @@ -97,20 +97,15 @@ static void f_modown(struct file *filp, struct pi=
-d *pid, enum pid_type type,
-> > >                 filp->f_owner.pid_type =3D type;
-> > >
-> > >                 if (pid) {
-> > > -                       const struct cred *cred =3D current_cred();
-> > > -                       filp->f_owner.uid =3D cred->uid;
-> > > -                       filp->f_owner.euid =3D cred->euid;
-> > > +                       security_file_set_fowner(filp);
-> > > +                       put_cred(rcu_replace_pointer(
-> > > +                               filp->f_owner.cred,
-> > > +                               get_cred_rcu(current_cred()),
-> > > +                               lockdep_is_held(&filp->f_owner.lock))=
-);
-> > >                 }
-> > >         }
-> > >         write_unlock_irq(&filp->f_owner.lock);
-> > >  }
-> >
-> > Looking at this quickly, why can't we accomplish pretty much the same
-> > thing by moving the security_file_set_fowner() into f_modown (as
-> > you've done above) and leveraging the existing file->f_security field
-> > as Smack and SELinux do today?  I'm seeing a lot of churn to get a
-> > cred pointer into fown_struct which doesn't seem to offer that much
-> > additional value.
->
-> As explained in the commit message, this patch removes related LSM
-> (sub)blobs because they are duplicates of what's referenced by the new
-> f_owner.cred, which is a more generic approach and saves memory.
+This series is being spun off the block atomic writes for xfs series at
+[0].
 
-That's not entirely correct.  While yes you do remove the need for a
-Smack entry in file->f_security, there is still a need for the SELinux
-entry in file->f_security no matter what you do, and since the LSM
-framework handles the LSM security blob allocations, on systems where
-SELinux is enabled you are going to do a file->f_security allocation
-regardless.
+That series got too big.
 
-While a cred based approach may be more generic from a traditional
-UID/GID/etc. perspective, file->f_security is always going to be more
-generic from a LSM perspective as the LSM has more flexibility about
-what is placed into that blob.  Yes, the LSM can also place data into
-the cred struct, but that is used across a wide variety of kernel
-objects and placing file specific data in there could needlessly
-increase the size of the cred struct.
+The actual forcealign patches are roughly the same in this series.
 
-> > From what I can see this seems really focused on adding a cred
-> > reference when it isn't clear an additional one is needed.  If a new
-> > cred reference *is* needed, please provide an explanation as to why;
-> > reading the commit description this isn't clear.  Of course, if I'm
-> > mistaken, feel free to correct me, although I'm sure all the people on
-> > the Internet don't need to be told that ;)
->
-> This is a more generic approach that saves memory, sticks to the VFS
-> semantic, and removes code.  So I'd say it's a performance improvement
+Why forcealign?
+In some scenarios to may be required to guarantee extent alignment and
+granularity.
 
-Considering that additional cred gets/puts are needed I question if
-there are actually any performance improvements; in some cases I
-suspect the performance will actually be worse.  On SELinux enabled
-systems you are still going to do the file->f_security allocation and
-now you are going to add the cred management operations on top of
-that.
+For example, for atomic writes, the maximum atomic write unit size would
+be limited at the extent alignment and granularity, guaranteeing that an
+atomic write would not span data present in multiple extents.
 
-> it saves memory
+forcealign may be useful as a performance tuning optimization in other
+scenarios.
 
-With the move in linux-next to pull fown_struct out of the file
-struct, I suspect this is not as important as it once may have been.
+I decided not to support forcealign for RT devices here. Initially I
+thought that it would be quite simple of implement. However, I discovered
+through much testing and subsequent debug that this was not true, so I
+decided to defer support to later.
 
-> it fixes the LSM/VFS inconsistency
+Early development xfsprogs support is at:
+https://github.com/johnpgarry/xfsprogs-dev/commits/atomic-writes/
 
-Simply moving the security_file_set_fowner() inside the lock protected
-region should accomplish that too.  Unless you're talking about
-something else?
+Differences to v3:
+- Add more RB tags (thanks)
+- Change round-in/out API to up/down
+- Change unmap blocks patch to use alloc_fsb and rework helper
+  (Darrick)
 
-> it guarantees
-> that the VFS semantic is always visible to each LSMs thanks to the use
-> of the same f_owner.cred
+Differences to v2:
+- Add rounding to alloc unit helpers
+- Update xfs_setattr_size()
+- Disallow mount for forcealign and reflink
+- Remove forcealign and RT/reflink inode checks
+- Relocate setting of XFS_ALLOC_FORCEALIGN
 
-The existing hooks are designed to make sure that the F_SETOWN
-operation is visible to the LSM.
+Differences to v1:
+- Add Darricks RB tags (thanks)
+- Disallow mount for forcealign and RT
+- Disallow cp --reflink from forcealign inode
+- Comments improvements (Darrick)
+- Coding style improvements (Darrick)
+- Fix xfs_inode_alloc_unitsize() (Darrick)
 
-> and it avoids LSM mistakes (except if an LSM implements the now-useless h=
-ook).
+Baseline:
+7bf888fa26e8 (tag: xfs-6.11-fixes-1, xfs/xfs-6.11-fixes, xfs/for-next)
+xfs: convert comma to semicolon
 
-The only mistake I'm seeing is that the call into
-security_file_set_fowner() is not in the lock protected region, and
-that is easily corrected.  Forcing the LSM framework to reuse a cred
-struct has the potential to restrict LSM security models which is
-something we try very hard not to do.
+[0] https://lore.kernel.org/linux-xfs/20240607143919.2622319-1-john.g.garry@oracle.com/
+[1] https://lore.kernel.org/linux-block/20240620125359.2684798-1-john.g.garry@oracle.com/
 
---=20
-paul-moore.com
+Darrick J. Wong (2):
+  xfs: Introduce FORCEALIGN inode flag
+  xfs: Enable file data forcealign feature
+
+Dave Chinner (6):
+  xfs: only allow minlen allocations when near ENOSPC
+  xfs: always tail align maxlen allocations
+  xfs: simplify extent allocation alignment
+  xfs: make EOF allocation simpler
+  xfs: introduce forced allocation alignment
+  xfs: align args->minlen for forced allocation alignment
+
+John Garry (6):
+  xfs: Update xfs_inode_alloc_unitsize() for forcealign
+  xfs: Update xfs_setattr_size() for forcealign
+  xfs: Do not free EOF blocks for forcealign
+  xfs: Only free full extents for forcealign
+  xfs: Unmap blocks according to forcealign
+  xfs: Don't revert allocated offset for forcealign
+
+ fs/xfs/libxfs/xfs_alloc.c      |  33 ++--
+ fs/xfs/libxfs/xfs_alloc.h      |   3 +-
+ fs/xfs/libxfs/xfs_bmap.c       | 320 ++++++++++++++++++---------------
+ fs/xfs/libxfs/xfs_format.h     |   9 +-
+ fs/xfs/libxfs/xfs_ialloc.c     |  12 +-
+ fs/xfs/libxfs/xfs_inode_buf.c  |  46 +++++
+ fs/xfs/libxfs/xfs_inode_buf.h  |   3 +
+ fs/xfs/libxfs/xfs_inode_util.c |  14 ++
+ fs/xfs/libxfs/xfs_sb.c         |   2 +
+ fs/xfs/xfs_bmap_util.c         |  14 +-
+ fs/xfs/xfs_inode.c             |  41 ++++-
+ fs/xfs/xfs_inode.h             |  16 ++
+ fs/xfs/xfs_ioctl.c             |  46 ++++-
+ fs/xfs/xfs_iops.c              |   4 +-
+ fs/xfs/xfs_mount.h             |   2 +
+ fs/xfs/xfs_reflink.c           |   5 +-
+ fs/xfs/xfs_super.c             |  18 ++
+ fs/xfs/xfs_trace.h             |   8 +-
+ include/uapi/linux/fs.h        |   2 +
+ 19 files changed, 405 insertions(+), 193 deletions(-)
+
+-- 
+2.31.1
+
 
