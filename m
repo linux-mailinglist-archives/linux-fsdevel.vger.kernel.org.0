@@ -1,217 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-25759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C31E94FDE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 08:34:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0684194FDF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 08:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763D11F2333E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 06:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE11D28149F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 06:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBA73BBFB;
-	Tue, 13 Aug 2024 06:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A974C3CF7E;
+	Tue, 13 Aug 2024 06:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b="tkOZaraJ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SNzOnwtJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from omr02.pc5.atmailcloud.com (omr02.pc5.atmailcloud.com [54.206.55.205])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B469917999;
-	Tue, 13 Aug 2024 06:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.55.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE804317C;
+	Tue, 13 Aug 2024 06:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723530831; cv=none; b=cEtvQ7GEswiMffkeceLC7u4WBQrZFz19FRoBC8fLkclU3YZYyNt+YhBgJoDY4Ea9gLFHvxdCR6TYSBkuf/ZxbYWcYcCLeKagJGsgdUOqzWFunsFiUowySkQL307wyYWPTcVGjOr3+RbxOYHXHlkCH4HrajkYc1wWqRM8FV4bWMI=
+	t=1723531097; cv=none; b=Sgx/+7ACIoGRmhU7v+NW7uMvyloxz2E/R+fg/LyuvPhSSTNsGL5V94GCO7QTIdKO3wbWNr/MsZX0kUI3eMeo4uok65x5MvyltH5wgnjXioAz2L432eNrcKGBS9YecQmRioSnslyktAvnKnETJGKp3HtCKkHxBuSMewSnrixO/iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723530831; c=relaxed/simple;
-	bh=xLP94HoUSUt8ifOuF94rnAIWTfpREcUO4j61xow5Ezw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Id0riakXw9Y9/Yc5qR5wZdFazsxdEgzFSnAF8E06OkSwe3/UVs9mgV0y4OvOCHfl8F4nFypG7M3hYlCZgIzpwtKyIlEpAeuQwKlCpdxBHmRNlBD2j9ZV1JR0swI7mxSSkVzT9g4D7126nbZkaCIw9R5q3q1Mr01EqbWd/oPPmwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au; spf=pass smtp.mailfrom=westnet.com.au; dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b=tkOZaraJ; arc=none smtp.client-ip=54.206.55.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=westnet.com.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=westnet.com.au; s=202309; h=Content-Type:From:To:Subject:MIME-Version:Date:
-	Message-ID; bh=3cJHkeEWJdTOPVkgsndMVLebgcWMcA0m5U/SakPWxQY=; b=tkOZaraJYTjLyZ
-	XUpMdUu9RBTqo9x0MAMwPf4FNM/BKUwTWVEt0lAo73SQ9hQUcb37HwyLxO8vSUoIKG+zd7gyf0s2f
-	691njGEOdoTspkJrOwmDZyTwnF5AI/8dNoejNwuB4HIkMMEkhDWwYN1l5BRkPyqV+k3AM/FFzGgVT
-	wGIufyxj6+v+L5LAS3y41emtekHO3Eun/IqCop1+QtJXEKuJDsKXOCzsMVYm1reZkL574H1Qm9Iyp
-	4fb0tTRImuZRQ1d319SgPJTgUO524gDBXqrjOh5dZ1gO5Wz6ag+VBTl5Ho/La8AJRoo9d0Menj8dt
-	MjWp/Rxo843lnvdxNRlA==;
-Received: from CMR-KAKADU04.i-058615fd6484c2476
-	 by OMR.i-0e491b094b8af55fe with esmtps
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1sdjWw-00049a-PY;
-	Tue, 13 Aug 2024 04:53:10 +0000
-Received: from [27.33.250.67] (helo=[192.168.0.22])
-	 by CMR-KAKADU04.i-058615fd6484c2476 with esmtpsa
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1sdjWw-0001YC-0C;
-	Tue, 13 Aug 2024 04:53:10 +0000
-Message-ID: <a0293b2d-7a43-49b7-8146-c20fd4be262f@westnet.com.au>
-Date: Tue, 13 Aug 2024 14:53:07 +1000
+	s=arc-20240116; t=1723531097; c=relaxed/simple;
+	bh=bI3QCyj1ouSefMrJYxldIjc9xOGTvnZw7aaw26QGLm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nb2kAY8BnnIc/FkAV1NNZPnH3CimJ8SCy59ILw+g0c0FP66g495AYpNvQqawIw9E9LzL9Ed4GY6JcuANhj805BCzDo5e4r8bMJKEbx/DHkTqXIVHJ1rBWBzJepJC12XnuleIenmkle3xstCiVFcQfrKZwvTtNsQOx/EQrP2xndU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SNzOnwtJ; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723531094; x=1755067094;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bI3QCyj1ouSefMrJYxldIjc9xOGTvnZw7aaw26QGLm0=;
+  b=SNzOnwtJFjrxIqgvDIL4Nau3oHUqvcrFSoYQ+r7pfBEBCF2uc3cROI+H
+   tnfBqBV68HB07GH2TQmhVP1k6/jP6C+RoJ38yhoKt6JpBtySbuzznMefP
+   HffNyQZdwLxeTbpTOoGkmqbpLBC+fVmci7AqeNLEuLrhhk7w6xdVex4oP
+   8on5s3NganONucQlnk57QQUT73Qn8iGCrAvyJBCtJ9Cu6Nl9Ttvksfqbg
+   66Zm0roXTaupl43JM+aaZNRcXGXEwb1Lt1flizieyomV+WJvlTTpimLjh
+   c4SC7NoBiqKwMv6GKglfG6fFtrvT+8+AYg+fZGNVw7f93w/PgZm7Moicv
+   A==;
+X-CSE-ConnectionGUID: PpAdSaHyQkm/2ZL4jC++GA==
+X-CSE-MsgGUID: o3qD3bwzQhKu6M2qJjvyIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21816019"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="21816019"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:38:13 -0700
+X-CSE-ConnectionGUID: 6UhcKNQEQkOFiAUabJw7PA==
+X-CSE-MsgGUID: Q6L2i1QFTLy43wvGSJeQpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="63252911"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 12 Aug 2024 23:38:11 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sdlAW-0000Es-2m;
+	Tue, 13 Aug 2024 06:38:08 +0000
+Date: Tue, 13 Aug 2024 14:37:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christoph Hellwig <hch@lst.de>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: oe-kbuild-all@lists.linux.dev, "Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] xfs: convert perag lookup to xarray
+Message-ID: <202408131403.L5SrjEa7-lkp@intel.com>
+References: <20240812063143.3806677-3-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] binfmt_elf_fdpic: fix /proc/<pid>/auxv
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
- Kees Cook <keescook@chromium.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-References: <20240322195418.2160164-1-jcmvbkbc@gmail.com>
- <5b51975f-6d0b-413c-8b38-39a6a45e8821@westnet.com.au>
- <CAMo8Bf+RKVpYT309ystJKVHDqDaK4ZavGe3e-a_jvG7AOcqciw@mail.gmail.com>
-Content-Language: en-US
-From: Greg Ungerer <gregungerer@westnet.com.au>
-In-Reply-To: <CAMo8Bf+RKVpYT309ystJKVHDqDaK4ZavGe3e-a_jvG7AOcqciw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Atmail-Id: gregungerer@westnet.com.au
-X-atmailcloud-spam-action: no action
-X-Cm-Analysis: v=2.4 cv=dZSG32Xe c=1 sm=1 tr=0 ts=66bae6b6 a=Pz+tuLbDt1M46b9uk18y4g==:117 a=Pz+tuLbDt1M46b9uk18y4g==:17 a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=80-xaVIC0AIA:10 a=x7bEGLp0ZPQA:10 a=8-D65JXZAAAA:8 a=pGLkceISAAAA:8 a=NEAV23lmAAAA:8 a=wDIXi1D9eSG_FC4LhKkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Cm-Envelope: MS4xfGLLfUTOnIyosU8mZRs+INHuoDdA5S0SVVGBv2L8f3kXyXEZSVvjnrVglC3oauLk/3M9hDB+OJwXATfshCbPyX9+pDh3gNqB+dHGrd3YSTeTnPcL2cuE kppVlSMtE8zEIWT1uwhFqGy0rnqMVpgvVxj/Vk6smPooxnDaOKDwZm5sfUGrw+3wGfXybDw/ZVMQ+Q==
-X-atmailcloud-route: unknown
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812063143.3806677-3-hch@lst.de>
 
-Hi Max,
+Hi Christoph,
 
-On 13/8/24 04:02, Max Filippov wrote:
-> Hi Greg,
-> 
-> On Sun, Aug 11, 2024 at 7:26 PM Greg Ungerer <gregungerer@westnet.com.au> wrote:
->> On 23/3/24 05:54, Max Filippov wrote:
->>> Althought FDPIC linux kernel provides /proc/<pid>/auxv files they are
->>> empty because there's no code that initializes mm->saved_auxv in the
->>> FDPIC ELF loader.
->>>
->>> Synchronize FDPIC ELF aux vector setup with ELF. Replace entry-by-entry
->>> aux vector copying to userspace with initialization of mm->saved_auxv
->>> first and then copying it to userspace as a whole.
->>>
->>> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
->>
->> This is breaking ARM nommu builds supporting fdpic and elf binaries for me.
->>
->> Tests I have for m68k and riscv nommu setups running elf binaries
->> don't show any problems - I am only seeing this on ARM.
->>
->>
->> ...
->> Freeing unused kernel image (initmem) memory: 472K
->> This architecture does not have kernel memory protection.
->> Run /init as init process
->> Internal error: Oops - undefined instruction: 0 [#1] ARM
->> Modules linked in:
->> CPU: 0 PID: 1 Comm: init Not tainted 6.10.0 #1
->> Hardware name: ARM-Versatile (Device Tree Support)
->> PC is at load_elf_fdpic_binary+0xb34/0xb80
->> LR is at 0x0
->> pc : [<00109ce8>]    lr : [<00000000>]    psr: 80000153
->> sp : 00823e40  ip : 00000000  fp : 00b8fee4
->> r10: 009c9b80  r9 : 00b8ff80  r8 : 009ee800
->> r7 : 00000000  r6 : 009f7e80  r5 : 00b8fedc  r4 : 00b87000
->> r3 : 00b8fed8  r2 : 00b8fee0  r1 : 00b87128  r0 : 00b8fef0
->> Flags: Nzcv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment none
->> Control: 00091176  Table: 00000000  DAC: 00000000
->> Register r0 information: non-slab/vmalloc memory
->> Register r1 information: slab/vmalloc mm_struct start 00b87000 pointer offset 296 size 428
->> Register r2 information: non-slab/vmalloc memory
->> Register r3 information: non-slab/vmalloc memory
->> Register r4 information: slab/vmalloc mm_struct start 00b87000 pointer offset 0 size 428
->> Register r5 information: non-slab/vmalloc memory
->> Register r6 information: slab/vmalloc kmalloc-32 start 009f7e80 pointer offset 0 size 32
->> Register r7 information: non-slab/vmalloc memory
->> Register r8 information: slab/vmalloc kmalloc-512 start 009ee800 pointer offset 0 size 512
->> Register r9 information: non-slab/vmalloc memory
->> Register r10 information: slab/vmalloc kmalloc-128 start 009c9b80 pointer offset 0 size 128
->> Register r11 information: non-slab/vmalloc memory
->> Register r12 information: non-slab/vmalloc memory
->> Process init (pid: 1, stack limit = 0x(ptrval))
->> Stack: (0x00823e40 to 0x00824000)
->> 3e40: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3e60: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3e80: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3ea0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3ec0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3ee0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3f00: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3f20: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3f40: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3f60: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3f80: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3fa0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3fc0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3fe0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> Call trace:
->>    load_elf_fdpic_binary from bprm_execve+0x1b4/0x488
->>    bprm_execve from kernel_execve+0x154/0x1e4
->>    kernel_execve from kernel_init+0x4c/0x108
->>    kernel_init from ret_from_fork+0x14/0x38
->> Exception stack(0x00823fb0 to 0x00823ff8)
->> 3fa0:                                     ???????? ???????? ???????? ????????
->> 3fc0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
->> 3fe0: ???????? ???????? ???????? ???????? ???????? ????????
->> Code: bad PC value
->> ---[ end trace 0000000000000000 ]---
->> note: init[1] exited with irqs disabled
->> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
->> ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b ]---
->>
->>
->> The code around that PC is:
->>
->>     109cd0:       e2833ff1        add     r3, r3, #964    @ 0x3c4
->>     109cd4:       e5933000        ldr     r3, [r3]
->>     109cd8:       e5933328        ldr     r3, [r3, #808]  @ 0x328
->>     109cdc:       e5933084        ldr     r3, [r3, #132]  @ 0x84
->>     109ce0:       e5843034        str     r3, [r4, #52]   @ 0x34
->>     109ce4:       eafffdbc        b       1093dc <load_elf_fdpic_binary+0x228>
->>     109ce8:       e7f001f2        .word   0xe7f001f2
->>     109cec:       eb09471d        bl      35b968 <__stack_chk_fail>
->>     109cf0:       e59f0038        ldr     r0, [pc, #56]   @ 109d30 <load_elf_fdpic_binary+0xb7c>
->>     109cf4:       eb092f03        bl      355908 <_printk>
->>     109cf8:       eafffdb7        b       1093dc <load_elf_fdpic_binary+0x228>
->>
->>
->> Reverting just this change gets it working again.
->>
->> Any idea what might be going on?
-> 
-> Other than that the layout of the aux vector has slightly changed I don't
-> see anything. I can take a look at what's going on if you can share the
-> reproducer.
+kernel test robot noticed the following build warnings:
 
-I build the test binary using a simple script:
+[auto build test WARNING on xfs-linux/for-next]
+[also build test WARNING on akpm-mm/mm-nonmm-unstable linus/master v6.11-rc3 next-20240813]
+[cannot apply to djwong-xfs/djwong-devel]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-   https://github.com/gregungerer/simple-linux/blob/master/build-armnommu-linux-uclibc-fdpic.sh
+url:    https://github.com/intel-lab-lkp/linux/commits/Christoph-Hellwig/xfs-convert-perag-lookup-to-xarray/20240812-183447
+base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
+patch link:    https://lore.kernel.org/r/20240812063143.3806677-3-hch%40lst.de
+patch subject: [PATCH 2/3] xfs: convert perag lookup to xarray
+config: x86_64-randconfig-122-20240813 (https://download.01.org/0day-ci/archive/20240813/202408131403.L5SrjEa7-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240813/202408131403.L5SrjEa7-lkp@intel.com/reproduce)
 
-Run the resulting vmlinux and devicetree under qemu as per comments at top of that script.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408131403.L5SrjEa7-lkp@intel.com/
 
-Note that that script has a revert of this change (at line 191), so you would need
-to take that out to reproduce the problem. This script will look for a couple of
-configs and a versatile patch:
+sparse warnings: (new ones prefixed by >>)
+>> fs/xfs/xfs_icache.c:1776:9: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got unsigned int enum xfs_icwalk_goal goal @@
+   fs/xfs/xfs_icache.c:1776:9: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:1776:9: sparse:     got unsigned int enum xfs_icwalk_goal goal
+>> fs/xfs/xfs_icache.c:1776:9: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got unsigned int enum xfs_icwalk_goal goal @@
+   fs/xfs/xfs_icache.c:1776:9: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:1776:9: sparse:     got unsigned int enum xfs_icwalk_goal goal
+>> fs/xfs/xfs_icache.c:244:51: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got unsigned int tag @@
+   fs/xfs/xfs_icache.c:244:51: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:244:51: sparse:     got unsigned int tag
+   fs/xfs/xfs_icache.c:286:53: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got unsigned int tag @@
+   fs/xfs/xfs_icache.c:286:53: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:286:53: sparse:     got unsigned int tag
+>> fs/xfs/xfs_icache.c:1379:9: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got int @@
+   fs/xfs/xfs_icache.c:1379:9: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:1379:9: sparse:     got int
+>> fs/xfs/xfs_icache.c:1379:9: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got int @@
+   fs/xfs/xfs_icache.c:1379:9: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:1379:9: sparse:     got int
+   fs/xfs/xfs_icache.c:1509:9: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got int @@
+   fs/xfs/xfs_icache.c:1509:9: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:1509:9: sparse:     got int
+   fs/xfs/xfs_icache.c:1509:9: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got int @@
+   fs/xfs/xfs_icache.c:1509:9: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:1509:9: sparse:     got int
+   fs/xfs/xfs_icache.c:1515:9: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got int @@
+   fs/xfs/xfs_icache.c:1515:9: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:1515:9: sparse:     got int
+   fs/xfs/xfs_icache.c:1515:9: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted xa_mark_t [usertype] @@     got int @@
+   fs/xfs/xfs_icache.c:1515:9: sparse:     expected restricted xa_mark_t [usertype]
+   fs/xfs/xfs_icache.c:1515:9: sparse:     got int
+   fs/xfs/xfs_icache.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
+   include/linux/rcupdate.h:869:25: sparse: sparse: context imbalance in 'xfs_iget_recycle' - unexpected unlock
+   fs/xfs/xfs_icache.c:580:28: sparse: sparse: context imbalance in 'xfs_iget_cache_hit' - different lock contexts for basic block
 
-   https://github.com/gregungerer/simple-linux/blob/master/configs/linux-6.10-armnommu-versatile.config
-   https://github.com/gregungerer/simple-linux/blob/master/configs/uClibc-ng-1.0.49-armnommu-fdpic.config
-   https://github.com/gregungerer/simple-linux/blob/master/configs/busybox-1.36.1.config
-   https://github.com/gregungerer/simple-linux/blob/master/configs/rootfs.dev
-   https://github.com/gregungerer/simple-linux/blob/master/patches/linux-6.10-armnommu-versatile.patch
-   https://github.com/gregungerer/simple-linux/blob/master/patches/linux-6.10-binfmt_elf_fdpic-fix-proc-pid-auxv.patch
+vim +1776 fs/xfs/xfs_icache.c
 
-Or you could just clone the whole small set in one step from:
+  1762	
+  1763	/* Walk all incore inodes to achieve a given goal. */
+  1764	static int
+  1765	xfs_icwalk(
+  1766		struct xfs_mount	*mp,
+  1767		enum xfs_icwalk_goal	goal,
+  1768		struct xfs_icwalk	*icw)
+  1769	{
+  1770		struct xfs_perag	*pag;
+  1771		int			error = 0;
+  1772		int			last_error = 0;
+  1773		unsigned long		index = 0;
+  1774	
+  1775		rcu_read_lock();
+> 1776		xa_for_each_marked(&mp->m_perags, index, pag, goal) {
+  1777			if (!atomic_inc_not_zero(&pag->pag_active_ref))
+  1778				continue;
+  1779			rcu_read_unlock();
+  1780	
+  1781			error = xfs_icwalk_ag(pag, goal, icw);
+  1782			xfs_perag_rele(pag);
+  1783	
+  1784			rcu_read_lock();
+  1785			if (error) {
+  1786				last_error = error;
+  1787				if (error == -EFSCORRUPTED)
+  1788					break;
+  1789			}
+  1790		}
+  1791		rcu_read_unlock();
+  1792	
+  1793		return last_error;
+  1794		BUILD_BUG_ON(XFS_ICWALK_PRIVATE_FLAGS & XFS_ICWALK_FLAGS_VALID);
+  1795	}
+  1796	
 
-   https://github.com/gregungerer/simple-linux.git
-   
-If you need to me to run something I can do that easily too.
-
-Regards
-Greg
-
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
