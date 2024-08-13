@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-25831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3B1951029
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 01:03:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04F595102B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 01:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADB4B1C22E08
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 23:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7981C22BC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 23:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61091ABED0;
-	Tue, 13 Aug 2024 23:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C8B1AC428;
+	Tue, 13 Aug 2024 23:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YH8/LvNU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xw6YcfUq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6D716DEA9;
-	Tue, 13 Aug 2024 23:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6657716DEA9;
+	Tue, 13 Aug 2024 23:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723590199; cv=none; b=nIunNmcbcIzaYXkrQylJY9A3IIhNay1EyLhtYTrhQPjGTDqOn15bf7OtZ9u0XgYGWQ4kp076IkpVnn4IaBYUpsXyc6Y4JeaBBCoI6A0mcdX7JSV+3S8t97JQ66xiEf1BB4s92I7s508tEaUujDK4tu3wHfjVJaLnMNxeSRcmTfY=
+	t=1723590202; cv=none; b=gYd4xRPevg3f06p5jQpCDm7jxX9NruajQDDf/hizgOWVf4DM/h2QHIapSDuQ9vwcrl3eHRn/X5h89NSjVDsTv76o1flIbIg1+SLZ0xxaRhdU/P1jKd/NSBSvGTKHdHfdRK0dyvjLfGnRW0dz6S6y4Yevfx6cHQkd8v926WEdJMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723590199; c=relaxed/simple;
-	bh=jBacy3t2SemLe/iWHcLPvNfBjPA8E3+Du9oyNnED44c=;
+	s=arc-20240116; t=1723590202; c=relaxed/simple;
+	bh=OvYOUI0EkJHm+DNxy2OTlBdQWylE9HXqB/XZ282TLtE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fz8saice3hHLhCX9Mr6p9QR7k2PJTRBO/iHX1pJIGi9vX6DgCFs+R3gXkeCoGmZu7pGPHsKLbE1cuwdRABnWuDz8Z33m8YCTnsHSEwhza+/nUTkDKA3GkIIhegabBpseQthL/zLy9/Bgn3R/SuhOsU5+zO0YKS2U44sXU6aQ7nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YH8/LvNU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BC83C32782;
-	Tue, 13 Aug 2024 23:03:18 +0000 (UTC)
+	 MIME-Version; b=oJ+4LxeuzF4juPL873aQz2k4xVwI5v7Rd7T3Z20FqCRzvow6epoepHD8Djj3DwSGDgtQLSqmkybfO33UNBpKtakm8yj9y3w5mjM1o79oqXGItKFG1lZGhtRiExlse2h+1Y2PBVktJGr3nN5hqrsU2R5a/azoBbjWXTwGscF835s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xw6YcfUq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4528C32782;
+	Tue, 13 Aug 2024 23:03:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723590198;
-	bh=jBacy3t2SemLe/iWHcLPvNfBjPA8E3+Du9oyNnED44c=;
+	s=k20201202; t=1723590202;
+	bh=OvYOUI0EkJHm+DNxy2OTlBdQWylE9HXqB/XZ282TLtE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YH8/LvNU/SopVIHrK5yNdWErpSNBfAcnMxH/gw22QTVTKo6la0H9x6n8iGoJMuxRx
-	 rXqbz90Zu2vUcrp3nVQZ5kGLZCgC6BzYkxx++/eZ+G5N0DIHmR2jrb+BMAZBXiYy48
-	 SsXUHLbuc5AgZnfGzcZ+uojes8+X3GQ3t2w1bgQ/iJAp4HOr3XfxffS+bhNYWeYVfT
-	 CkWPtzKd7WCs5EDcoiAGd0SPllOUnkZaS+Z7WH40VnQgRsGReY9czFuK5qw2RoufQo
-	 U1NfjuwSynF9TwN5oMVAsRYKa7PRjnCn+4czlXm5wCC1J0uQ3fOp/cjG9AHzqJVxHZ
-	 5wMjd5vrRri5g==
+	b=Xw6YcfUq1VQGf3PqpAethNN5GBiC1WGeYeFa4PkEHUi0uC7c6E5MyltjEZLVbUhuq
+	 HCAJps1qt3tEZMPLL96JoT4QrJTJ/Wd/9eSjivGMu9WW40jEkXLTFWa1cVO0Nd3VyJ
+	 db+VEdJEZxa9WA11c3uH0JggJ4AADjAmKTYjTe+G7Mb69o4W/Wjd5/dglkG+CguSZ8
+	 r7np6RQiFJJSwycg/6uJwXUO8MzRC5P90MnFmADR+NfNInSKnqNTlOABR/K+G6gXAp
+	 5aP39yjNS9PlMswH/+M4nmVCHZxO5vG6+GS4FIG9g4v0Ja50qRJgJVR3g04M5AFGfe
+	 mraHCZWIs5DHg==
 From: Andrii Nakryiko <andrii@kernel.org>
 To: bpf@vger.kernel.org,
 	ast@kernel.org,
@@ -52,9 +52,9 @@ Cc: viro@kernel.org,
 	torvalds@linux-foundation.org,
 	Andrii Nakryiko <andrii@kernel.org>,
 	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH bpf-next 1/8] bpf: convert __bpf_prog_get() to CLASS(fd, ...)
-Date: Tue, 13 Aug 2024 16:02:53 -0700
-Message-ID: <20240813230300.915127-2-andrii@kernel.org>
+Subject: [PATCH bpf-next 2/8] bpf: switch fdget_raw() uses to CLASS(fd_raw, ...)
+Date: Tue, 13 Aug 2024 16:02:54 -0700
+Message-ID: <20240813230300.915127-3-andrii@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20240813230300.915127-1-andrii@kernel.org>
 References: <20240813230300.915127-1-andrii@kernel.org>
@@ -68,71 +68,77 @@ Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Irregularity here is fdput() not in the same scope as fdget();
-just fold ____bpf_prog_get() into its (only) caller and that's
-it...
+Swith fdget_raw() use cases in bpf_inode_storage.c to CLASS(fd_raw).
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
 Reviewed-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- kernel/bpf/syscall.c | 31 +++++++++----------------------
- 1 file changed, 9 insertions(+), 22 deletions(-)
+ kernel/bpf/bpf_inode_storage.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 3093bf2cc266..4909e3f23065 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2407,18 +2407,6 @@ int bpf_prog_new_fd(struct bpf_prog *prog)
- 				O_RDWR | O_CLOEXEC);
- }
+diff --git a/kernel/bpf/bpf_inode_storage.c b/kernel/bpf/bpf_inode_storage.c
+index 0a79aee6523d..29da6d3838f6 100644
+--- a/kernel/bpf/bpf_inode_storage.c
++++ b/kernel/bpf/bpf_inode_storage.c
+@@ -78,13 +78,12 @@ void bpf_inode_storage_free(struct inode *inode)
+ static void *bpf_fd_inode_storage_lookup_elem(struct bpf_map *map, void *key)
+ {
+ 	struct bpf_local_storage_data *sdata;
+-	struct fd f = fdget_raw(*(int *)key);
++	CLASS(fd_raw, f)(*(int *)key);
  
--static struct bpf_prog *____bpf_prog_get(struct fd f)
--{
 -	if (!fd_file(f))
--		return ERR_PTR(-EBADF);
--	if (fd_file(f)->f_op != &bpf_prog_fops) {
--		fdput(f);
--		return ERR_PTR(-EINVAL);
--	}
--
--	return fd_file(f)->private_data;
--}
--
- void bpf_prog_add(struct bpf_prog *prog, int i)
- {
- 	atomic64_add(i, &prog->aux->refcnt);
-@@ -2474,20 +2462,19 @@ bool bpf_prog_get_ok(struct bpf_prog *prog,
- static struct bpf_prog *__bpf_prog_get(u32 ufd, enum bpf_prog_type *attach_type,
- 				       bool attach_drv)
- {
--	struct fd f = fdget(ufd);
-+	CLASS(fd, f)(ufd);
- 	struct bpf_prog *prog;
- 
--	prog = ____bpf_prog_get(f);
--	if (IS_ERR(prog))
--		return prog;
--	if (!bpf_prog_get_ok(prog, attach_type, attach_drv)) {
--		prog = ERR_PTR(-EINVAL);
--		goto out;
--	}
 +	if (fd_empty(f))
-+		return ERR_PTR(-EBADF);
-+	if (fd_file(f)->f_op != &bpf_prog_fops)
-+		return ERR_PTR(-EINVAL);
-+
-+	prog = fd_file(f)->private_data;
-+	if (!bpf_prog_get_ok(prog, attach_type, attach_drv))
-+		return ERR_PTR(-EINVAL);
+ 		return ERR_PTR(-EBADF);
  
- 	bpf_prog_inc(prog);
--out:
+ 	sdata = inode_storage_lookup(file_inode(fd_file(f)), map, true);
 -	fdput(f);
- 	return prog;
+ 	return sdata ? sdata->data : NULL;
  }
  
+@@ -92,19 +91,16 @@ static long bpf_fd_inode_storage_update_elem(struct bpf_map *map, void *key,
+ 					     void *value, u64 map_flags)
+ {
+ 	struct bpf_local_storage_data *sdata;
+-	struct fd f = fdget_raw(*(int *)key);
++	CLASS(fd_raw, f)(*(int *)key);
+ 
+-	if (!fd_file(f))
++	if (fd_empty(f))
+ 		return -EBADF;
+-	if (!inode_storage_ptr(file_inode(fd_file(f)))) {
+-		fdput(f);
++	if (!inode_storage_ptr(file_inode(fd_file(f))))
+ 		return -EBADF;
+-	}
+ 
+ 	sdata = bpf_local_storage_update(file_inode(fd_file(f)),
+ 					 (struct bpf_local_storage_map *)map,
+ 					 value, map_flags, GFP_ATOMIC);
+-	fdput(f);
+ 	return PTR_ERR_OR_ZERO(sdata);
+ }
+ 
+@@ -123,15 +119,11 @@ static int inode_storage_delete(struct inode *inode, struct bpf_map *map)
+ 
+ static long bpf_fd_inode_storage_delete_elem(struct bpf_map *map, void *key)
+ {
+-	struct fd f = fdget_raw(*(int *)key);
+-	int err;
++	CLASS(fd_raw, f)(*(int *)key);
+ 
+-	if (!fd_file(f))
++	if (fd_empty(f))
+ 		return -EBADF;
+-
+-	err = inode_storage_delete(file_inode(fd_file(f)), map);
+-	fdput(f);
+-	return err;
++	return inode_storage_delete(file_inode(fd_file(f)), map);
+ }
+ 
+ /* *gfp_flags* is a hidden argument provided by the verifier */
 -- 
 2.43.5
 
