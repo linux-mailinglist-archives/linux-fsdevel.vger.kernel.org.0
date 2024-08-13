@@ -1,767 +1,325 @@
-Return-Path: <linux-fsdevel+bounces-25788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5AB9505DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 15:07:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CB3950641
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 15:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E340FB292DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 13:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB1AB1C21E1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 13:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E6319ADB9;
-	Tue, 13 Aug 2024 13:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB2929A5;
+	Tue, 13 Aug 2024 13:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wxwxxorj"
+	dkim=pass (1024-bit key) header.d=uwaterloo.ca header.i=@uwaterloo.ca header.b="bAw1+rQl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa.hc503-62.ca.iphmx.com (esa.hc503-62.ca.iphmx.com [216.71.131.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56904C8C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 13:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723554131; cv=none; b=Zg+BWVG3ojjcqDDfN0Yiz5yxyVfpS6HQ1rwmtiNanrfGKwKLQX9mFOneIJKQsTxUphXcdGG3NcZv67o3WoeJmJBcSS1hyqwQLjxEWTCtS5kVPDpD5k7eN6dnZ7hUYa3Y+U5Q7BxsuJ6Xa8V9vi7z1rM/0XVFElnpBCSenRxK3J4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723554131; c=relaxed/simple;
-	bh=v6DB+SN8DZsQ0wJaHO+zLFuxDhHPLMmbb/cxcPA9tTQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TBGJZC6j96jpqQ2LA3ARGtl4s6frQ9CopF/SIUYT+nK+mZBpAUL+cD1I+3X6ISQIraUVRTvlGe1iqSCkNDWwmjU7eJSFTc8Cde/Ihud9qgMttJ116YwBkF5vy/y2utPGyEl1TCg6NYgkYqctISCLp9DE40h+2lfdAXhOP1Z9qJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wxwxxorj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0BBFC4AF0B;
-	Tue, 13 Aug 2024 13:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723554131;
-	bh=v6DB+SN8DZsQ0wJaHO+zLFuxDhHPLMmbb/cxcPA9tTQ=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=WxwxxorjA7Y0MI7oU4eVXmsNOV/Sk90CsYNVdJLfaljI3m4rN7NOskSsvx/mQchrc
-	 cd+npUk/3WAuBtIfIN3xn7nHlCXAC9ej/t0HZpVaeLBSJ9UePWGLf/nHSCD5dUqgAa
-	 q/R8gY3eIxJcGB0M36F7LnM6n+Tby820htl3Xw/cK5s0QzISgqP4uLGlANZTTDU8aG
-	 0h9Q+fdQl0kknpmpCqUTpqbitdQunKDYUdIOn8RnFz3yfoZJpXU9Ln2DPg/Ve2WB5q
-	 Kul4xmoIMrH9f7St6G1O7JvDZ6BxZK1E+0r6G4seHQsfRppKg2X7eT8sXRayEF8vrx
-	 1zaxcVP1LM5qA==
-Message-ID: <99445ca03b6b3edc4b4943add498e2b29c367dec.camel@kernel.org>
-Subject: Re: [PATCH v2] file: reclaim 24 bytes from f_owner
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Al Viro
-	 <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.com>, Josef Bacik
-	 <josef@toxicpanda.com>, Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 13 Aug 2024 09:02:09 -0400
-In-Reply-To: <20240813-work-f_owner-v2-1-4e9343a79f9f@kernel.org>
-References: <20240813-work-f_owner-v2-1-4e9343a79f9f@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E970319B3D3;
+	Tue, 13 Aug 2024 13:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.131.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723555107; cv=fail; b=TwJ956UThT165XjTDwtFZsI9PObeMBuz50kkYaBf6+qr9Ke6A2/rdXH+4dSYRGQ4szGYQPLOfd22K/TfiCoINTThaohVojAz2/nVQ4jsYbsplbqkV/dPY79GNszcsH1icmatvjQe2KNjeD6N7lJEEu+8h692MdXEgg+qWcR1CH8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723555107; c=relaxed/simple;
+	bh=LddgduS1Yi9PYQIxMhxv7ydbgoZet/fMx2YxKkV5Kx4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z8/KVKoScCARkSb7ceBDQfqUDCsf6rIpCUG/AOrSVVUv8Vj6yFYILAxYiPe7A+pWL3lbagzUAZN6+GV8yUzFdKq0UIyZyUckCIf8aRp86PKDf+sikncl6PcJlkRaEcf18Q9OO+jXI0ho8uOo9in62EGOemRvQOE5CYOMdN/WSHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uwaterloo.ca; spf=pass smtp.mailfrom=uwaterloo.ca; dkim=pass (1024-bit key) header.d=uwaterloo.ca header.i=@uwaterloo.ca header.b=bAw1+rQl; arc=fail smtp.client-ip=216.71.131.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uwaterloo.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uwaterloo.ca
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=uwaterloo.ca; i=@uwaterloo.ca; q=dns/txt; s=default;
+  t=1723555104; x=1755091104;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=LddgduS1Yi9PYQIxMhxv7ydbgoZet/fMx2YxKkV5Kx4=;
+  b=bAw1+rQlSnH2goa0V3J29WX9+WY6THmieKLQ0hfiPcXk8cU88/i+ZyTr
+   h49mlQvAFZevUeNDF8aKfvsb28PXkKdQXHKbV0lOZ3kRGroXKsWgf5Dud
+   NjeLFNxSOYFP/3wkxTp4cL7X6tQAGIKYJP9NY6HX5bcvWRzMC9eVSl7JM
+   Y=;
+X-CSE-ConnectionGUID: /F6tH4q2SryhwqUCNsvRnA==
+X-CSE-MsgGUID: 9bOf5ajGT2CYTA4V1sW2iA==
+X-Talos-CUID: 9a23:ZDe4bW+K4t1Xa+aTb++Vvwk6RNwFLmSH923BI1ChNE1PU6OvT3bFrQ==
+X-Talos-MUID: =?us-ascii?q?9a23=3Awj3teA300IssrfMRuiMgXsyLszUjsq6JBh0Ek7o?=
+ =?us-ascii?q?64eK1CQUsBW6Gs262a9py?=
+Received: from mail-canadacentralazlp17010005.outbound.protection.outlook.com (HELO YT3PR01CU008.outbound.protection.outlook.com) ([40.93.18.5])
+  by ob1.hc503-62.ca.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 09:18:15 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i7ZqdoMc1BOqt3pHblpOffQSiODtW2JnBG4BJ5ay0oNuhEssA0yg70kj3Bs7191rNu3r5+VR0E64UYZrRQmIC6Let/7dn21e+64q2kGi2XmBlfni3BydtmU5busWsPHkFpvht80tATbao4n4P2XKjv138WN/LiPc5ne5v4rWlx+V3nKwRUVvzkAxubAkaiJNR+JYbdMzPhmQksgi7B40lvJweqPXtSGrxxwOr/xnCBfTcP9jUGWZfncMLvfsBD6PWauzog+wPePrmDcCAMN+R7SvwSWBfhu6zj7U8N3L1es3nmJlAZ+OkqQNdCFwbEkZuikWP3vdRswHQRgWox63jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xc/h6+6amqYMlD+YvtVKnBJFPZi5FsNGgTXhV0Oar0Q=;
+ b=NFIvMWFKD/1avmDV/gvXpbqkWYDGRuOoG2wpE/aX7BtFldyzHzJ4vJdfOmwmgfQsvtXlVaQeFjZ8j0yGjskqbWZmAD0ta9KggKHYp6FKulrJxuLE+YzKjKKvgCGIClB471F3lXLJzKL67sZQgtNeHSjQNpCCqz7rgE/iC5nZo1Cl4zJD6a6AmhRLC5BR7D1+U0zYPyIBKR0lkQ6f1w/Uhwwxmxr8fznpm3Y1Nfl8K5R6SWw0i2btBDRpUFAoY6Taya6kvWO5fNwrbpHIyTyldTw/pKxMnvVlDZKxZypQp7Lf08/Z7PHNn1ZpGMseW21i3696aG6QjIlpAnZgnP/lGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=uwaterloo.ca; dmarc=pass action=none header.from=uwaterloo.ca;
+ dkim=pass header.d=uwaterloo.ca; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=uwaterloo.ca;
+Received: from YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:4b::13) by YT6PR01MB11347.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:139::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Tue, 13 Aug
+ 2024 13:18:14 +0000
+Received: from YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::d36e:ef93:93fd:930]) by YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::d36e:ef93:93fd:930%6]) with mapi id 15.20.7849.021; Tue, 13 Aug 2024
+ 13:18:14 +0000
+Message-ID: <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
+Date: Tue, 13 Aug 2024 09:18:13 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+ amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
+ Jiri Pirko <jiri@resnulli.us>, Johannes Berg <johannes.berg@intel.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ "open list:FILESYSTEMS (VFS and infrastructure)"
+ <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+References: <20240812125717.413108-1-jdamato@fastly.com>
+ <ZrpuWMoXHxzPvvhL@mini-arch>
+ <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
+ <ZrqU3kYgL4-OI-qj@mini-arch>
+ <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
+ <Zrq8zCy1-mfArXka@mini-arch>
+ <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
+ <Zrrb8xkdIbhS7F58@mini-arch>
+Content-Language: en-CA, de-DE
+From: Martin Karsten <mkarsten@uwaterloo.ca>
+In-Reply-To: <Zrrb8xkdIbhS7F58@mini-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0466.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d6::8) To YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:4b::13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YQBPR0101MB6572:EE_|YT6PR01MB11347:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b1bec83-4a1e-43bf-0ae8-08dcbb9a6372
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QlBtaUVSMnNDb1RJYkJxN1BUbENFZzJtVEtqbDNCYnpsQWM3Y3E3ZFMyN1V2?=
+ =?utf-8?B?ZVp0WEhkZEdIUUdRZDZQK0ZJZzM4enJwRnBRVjZiRGlQRzl3Q0Qyb0RNUC9O?=
+ =?utf-8?B?amVUVWZNMlFNNUt0dWt2Z0FIbXBmMEw4YXR3enEyditDZXhqLzZIY3Fsa3Er?=
+ =?utf-8?B?d1JiWUtjcThoZi9pRjNRQ1RHcGVoNkhsSkhpQkU5N0R2V2NibXFqYVlzdUx2?=
+ =?utf-8?B?SkNteENoRDZoYnQxWVo3blRBRWxod01xc2RaZ0t0QWZMQzNQY1dDeUpkTjBn?=
+ =?utf-8?B?OC9YR3lITEd1OFdpcnN2ZTdGWmVOc29QQTNuMG5vczdRSWxpWTJ6YVdVaC84?=
+ =?utf-8?B?TWpvU2FXRVAwemI4U1lyRlFIYjlwODFtUjVlSGhMV29ZRHliS0J5QWVoaExM?=
+ =?utf-8?B?NDNnditZVnprWnQxYXVyNVdOWlpQRTZhZzlBQi9FLzJGYkkrdVJ4d2tvdXFz?=
+ =?utf-8?B?cVovNzdhSUlERU9tb1MzdkxhVFNDQThNZDRNcVRvSGpEdkdsN2Q1VU9YakVV?=
+ =?utf-8?B?RUNkMHNOT1J0ajFqSW0vVk5sSktOU25DQytuemJ6SDVkNmZKNHpzL2JIT2Vp?=
+ =?utf-8?B?N0J2d0NBcG9OcmhsVTZ5cElQaGNkZWpDTjc5UEZVTU1KVWVLUU9OSjVvall6?=
+ =?utf-8?B?czMxVURYM0pFU3RoRkxublpZY2FONnlJaTJ2ZnAvbk1JUkVMcGZRcjlDMUxK?=
+ =?utf-8?B?TkR2SmtMZk4zcUREVTVsUWNjaENkMlJkMmI3R0k0SjFieHVNRmM5WjVGN2Mw?=
+ =?utf-8?B?OVNXYXdjdEpVajVCck1HUFdQZjM4Z0d1WWFYd0F2QWhQODZmVHZESGwwWnF1?=
+ =?utf-8?B?UjAxM2RnMUpnY2UvVy9wd1M2VEErOXZ5NmlhcEtSV2hOeDdMYXpBd2oxMDR6?=
+ =?utf-8?B?OVMvMnlscTR6M0dycXNtMFhud3NXczlqQTNyTU9nRmowMDhkdnF6dWZMcS9N?=
+ =?utf-8?B?T3p5K0lPTWJhL2doNVZUdGVLM1ROWDF0NmRwNjVqVVZJM3phN0M0cVFMMFRT?=
+ =?utf-8?B?cm1jWXZLT0JidjN3REdvU3IyVUtYWkswM1djakljN2FNcXR3RTVkTTQ4NzdV?=
+ =?utf-8?B?ZnFtUzFhMHZ4ditwQjg3WmtRcmJPemdYMjFTWUtBenFrTi9Ed050SzFJNlRm?=
+ =?utf-8?B?dC9QNndmdXc5U09PUjlGRUltMGpSRm9leXBlbkxhUjhnUFQ3ZENhWmYveGNC?=
+ =?utf-8?B?MmlGWXVxc1YxbnlIdDNLQXJ3Nk5hZStIeWk0dFY0bWFEbHBWZUl5ZlNVZzMy?=
+ =?utf-8?B?TlVEaVZJNnVjdWdTWWF6aEc4QXRhcDFGMEp6ZUFoQUJJRy84UUh2MTJWQUNL?=
+ =?utf-8?B?OWtHZFFYNEs4MUhWWXBxMlVvSk9lZFppU1hZbkVMS1NldXJPQnNXcUgzeStK?=
+ =?utf-8?B?TWxVcUF6N3grdDl5SHBvOGFTdkpRRXVMVVNEa1FNTk9ETTJlcVlaZ0w0R000?=
+ =?utf-8?B?MGdkaGZkT1Z4WXdhMDlRMG5uQi8rWkV5dUtzNUJZcElUTXdrQXRzK25SSUFv?=
+ =?utf-8?B?TjlPUkVXdlRrUjRNY2Z0ZFA1NU85emg3WlJPWVF2V2RNaXhrMEVyY0VNYW4y?=
+ =?utf-8?B?UGJBcEc4TUdndjNKVDdibEFFUStBbVJYNUpRc282ZnJHbjRYOFFyb1dpcEo2?=
+ =?utf-8?B?bVJadTFFNmMreHl4ZDZkaTl0Nm94ZDE5VXhsSW1Oa1Y3Q2duUTNhZHhSQUVI?=
+ =?utf-8?B?dXNOdHVPaGVFdURkNUZnazlFQXJwVUtaOTdxbXMrNDhLRmxpb3BqeUFDNDZP?=
+ =?utf-8?B?cDhNallJeEFTeEs5cjVzcUxjbEU5VFNER3I1YUxmY3Z0Yy9FTzNIekNsYm94?=
+ =?utf-8?B?bWJraGY1OFhnaGx6QTRXZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WGhHNlppdDdUbndpYjFueStMNk5TVGJLck1WNGlvbTJIRExlMzZzOGc0VnJw?=
+ =?utf-8?B?VGF6cTVBeU1mZ1RNSDdmamY3Qm5oMERXekozQ01LaytpNnNRQnI0V1FLSEd6?=
+ =?utf-8?B?cUxOWi8wWUt4K3Rkc3ByekRTY2pNK0pBYWVvSHdkcHdMVDlMUjBYVVdDdlgr?=
+ =?utf-8?B?NCtXcXJoR1JtYW9QV3Eza2xLNThhME8wcSt6MGd6MzZDYjJYVGwwN0pxc0hk?=
+ =?utf-8?B?T0pCOGZQVDNtVm81am9tVThlam1mb0tZNkJNK1FVd1pBNUk0bENBUTRBdVcw?=
+ =?utf-8?B?RmlPR1k1dnlscG8yTGdmZ2NtZS9PVCtHcTV5empvakpPeUhLR2RKcGdaanBm?=
+ =?utf-8?B?U1lBODhGcUZpYzJXRUVQOGZlbVNscW5KVGhCV3pkTkJia1lrcjlJeng0Vlp2?=
+ =?utf-8?B?T0l5S0Q2M1dBdFJ4TjlBdTJQUDNwUnRVQXdJakYrN3NiSVRwTXloV296Z2s4?=
+ =?utf-8?B?UmJTZ1d5bmErWUV1VEV3dGhWbFZyc0Q4bkNOMnRIYnZoRkJGQ3pvbEE0MGZZ?=
+ =?utf-8?B?RG5ad1YxNTFHR1dsdnpDUUhKbDZDUFBXV3FLUWo2elpzYnJFa2JjMUF2YjVV?=
+ =?utf-8?B?TFJnVEZiM08xaExjSjdDQTZ4ZlZ5VW91dUl0OHIySURmZE0xMTRVbzlZRkxi?=
+ =?utf-8?B?ZU9KWjJDSHZsT3IrQTdlZEl6YUVHNHgxZHJBSnQrSmJrQ0pFQ25XWDJMczIy?=
+ =?utf-8?B?TkNrUGxKdzIvOGZMYjBpeFg0R1YyRG4wRXNsaHZnM3QyOGdYeU1BRGpjRGw0?=
+ =?utf-8?B?OTFnZ0JMWDBYQTVYVEpLMXNmaFBlNHRvZHA4UnY1SHNZODZBTWNlTXpKQzBn?=
+ =?utf-8?B?ODRoSklkMHQ1UXpTRm05ZDZOOVRNV0kvcG1YcW1Fbk1yTll3QWJUekxmMUtM?=
+ =?utf-8?B?K3pMblFZRUpOaFFjTklzdEVGSnJaWGpld1VrWmlRUFlRNW5Tc1c5UWQ4NVAz?=
+ =?utf-8?B?T0pSVXdnYWd6UG9OTEZYZFVQTWJIdHo4WmxYQTRpWWNuZmFGanlHeEtPalFB?=
+ =?utf-8?B?dkI4aGFUWWd5SnNzN3RvdkFCT3JkUVZ1WGhjV0dwSHh5SzEwVndreFR3NU9C?=
+ =?utf-8?B?RlppdTBNWGJtaS9TWTg4RHNOUm96eElxRG94RXN0NlNuYXArTDVSOExjbmpC?=
+ =?utf-8?B?TnhlMkhzVVB2b0RzYUltcG9iRXVGaUpsZiszM2QzRnd0TlFrNE5HanJGMmxG?=
+ =?utf-8?B?UWYwT3pyNDZITWY4UVpqVE5QRTBzZnNwK1B0OUZZZ3Vrb0VIV00xaGdZM25O?=
+ =?utf-8?B?bm8zNGhncEVXWE9TeEh5VWVnYWR6VkQ2RVh4MGJReStTdjFXUWdvdk9vT2J5?=
+ =?utf-8?B?Ym5PaHNDUE5oc0ZyTFRwWUNiSU1wL3lPYzhBT21BVjRnTnJXYjgxVmhQdlM1?=
+ =?utf-8?B?TUNwc1RqbVdyUnY1NXNmU1dLUW91OXo1REI2NlRlRmNtekk3NGdTWnFjUGpT?=
+ =?utf-8?B?VXorUU9MYW5UcEVDTkhQQXlnZEdxcEpsQ1c3NmVYbDZwSnY5WjBnUk5CdXp4?=
+ =?utf-8?B?Y29kc0I0aGNZSnRlbDY2a1hHaThsV0JYaXNaZkpaUlU3NkdoeW9aWmRleTNj?=
+ =?utf-8?B?SUl6d1JYT1BGbGtjbCtlT2NqbkN6MkpxSXZta2x2WlNpdFdOamdHUXdQYXlX?=
+ =?utf-8?B?TkVjSVl3RGI2YXdiWGd3Ui9KSjlRTkgzS3hpdmZKRnBFcE9RWmtXNVBQTEFo?=
+ =?utf-8?B?b2tqRHpkbW01NEVZbXV0a1pFZHFsNmU0bWc3dW1HYWxnWkdOcy90cWNvUmZ0?=
+ =?utf-8?B?M2Y2MU9yTzcyWTVaVmVZVUlaV0NTTDRXWW5pckd3UytkYS8vaURwRG4rUzJF?=
+ =?utf-8?B?d0xUK1NrU2JSUzV1TzRreHg5bkNXY0pTMW1GeWFBNWxzL2RpNWx5dVpHZUZr?=
+ =?utf-8?B?eSswdTE2VS9uZlJiTjRFdkxGRG4vOUVaMFllcklSSmNEVTVNb0pPRkRHTTlV?=
+ =?utf-8?B?VC9HUEVUMkRYMlpPWlpsSzlZVzZiRjFhb21nSUFrZzVrVCtNRFl6TUMrVENV?=
+ =?utf-8?B?R00vaWY3SnlkcEFnZFhITU9PNnJUejkrSXNyQjB6VkZZWDR1Y01vSVEzd1dn?=
+ =?utf-8?B?V3k5NGhsVGNFakp3TkVuL09ZSURKNlBVL0NEZHp1MWdDZS9aVjMyOVRlUW1z?=
+ =?utf-8?Q?+RSXHpupyq0NIXvwpPY9cbg6C?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	uKz4wG2CFzhgFuO0z2sY8E1uKWB10yAFsmuLRkcXHB0Z3W7PpVuc5r13FE0DqT8NnDPkoFGlYKrxzV9Q4JVmlQLZXUiIjH9gaQOWTLC769NA/hyGwywLCdW7SAZa/MdppOjmssZ3lBNr+6jp0dUP5TuVWBc+n+dR7OY39EyhmWZzDtv+SgY90MEn4puGBwy9vDkwm8lQrlCqprf4cqR4DD5X4rfyaCP8dGOOryQXgz9jU1me88If+ceMS6iv7+W0GbNfgem9efKQDZsnIpv5WT00/0qfsxFnvLrBKhe1mAQNRHs+MqFmAtuZDGFugtKYdgaNI7ommd5XpRHD+eeVZ4o1M8nKOJuZcxuvdcswaxuxcJ/zv0hP9BFyOuIzVy4kOVitDoFue++yIWrTFOkDaSZsMr/auPGfcYMmh5ZAxbRW0dCxJjV6R/yF/TVrjAX/EzlF1r+DgtHl+dPioeMrDOkk8Z8DR6nEJJCqMfYGwnHCUbp/u1QwkaGiqfEMh7EWb9nZ4K986I8BcHdgSvszA3mQH1vtWkjGYLygBwshy66zXSrUHgYjpwiDFbkJ08mO4AQwfSGii11e7lsHxzfagyGS9SYG7/7PiYdquNIU0Qw5Ug+Er0dySCMLLNl1OoQk
+X-OriginatorOrg: uwaterloo.ca
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b1bec83-4a1e-43bf-0ae8-08dcbb9a6372
+X-MS-Exchange-CrossTenant-AuthSource: YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 13:18:14.8430
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 723a5a87-f39a-4a22-9247-3fc240c01396
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jmg6z6+ofDooH81MM2I+kB7umob/aT8mi8QodVCQwBLSYVYEQ+5U9A0jxEKEELAhyb9byUY4i/I3pYXxZtb1dA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT6PR01MB11347
 
-On Tue, 2024-08-13 at 14:30 +0200, Christian Brauner wrote:
-> We do embedd struct fown_struct into struct file letting it take up 32
-> bytes in total. We could tweak struct fown_struct to be more compact but
-> really it shouldn't even be embedded in struct file in the first place.
->=20
-> Instead, actual users of struct fown_struct should allocate the struct
-> on demand. This frees up 24 bytes in struct file.
->=20
-> That will have some potentially user-visible changes for the ownership
-> fcntl()s. Some of them can now fail due to allocation failures.
-> Practically, that probably will almost never happen as the allocations
-> are small and they only happen once per file.
->=20
-> The fown_struct is used during kill_fasync() which is used by e.g.,
-> pipes to generate a SIGIO signal. Sending of such signals is conditional
-> on userspace having set an owner for the file using one of the F_OWNER
-> fcntl()s. Such users will be unaffected if struct fown_struct is
-> allocated during the fcntl() call.
->=20
-> There are a few subsystems that call __f_setown() expecting
-> file->f_owner to be allocated:
->=20
-> (1) tun devices
->     file->f_op->fasync::tun_chr_fasync()
->     -> __f_setown()
->=20
->     There are no callers of tun_chr_fasync().
->=20
-> (2) tty devices
->=20
->     file->f_op->fasync::tty_fasync()
->     -> __tty_fasync()
->        -> __f_setown()
->=20
->     tty_fasync() has no additional callers but __tty_fasync() has. Note
->     that __tty_fasync() only calls __f_setown() if the @on argument is
->     true. It's called from:
->=20
->     file->f_op->release::tty_release()
->     -> tty_release()
->        -> __tty_fasync()
->           -> __f_setown()
->=20
->     tty_release() calls __tty_fasync() with @on false
->     =3D> __f_setown() is never called from tty_release().
->        =3D> All callers of tty_release() are safe as well.
->=20
->     file->f_op->release::tty_open()
->     -> tty_release()
->        -> __tty_fasync()
->           -> __f_setown()
->=20
->     __tty_hangup() calls __tty_fasync() with @on false
->     =3D> __f_setown() is never called from tty_release().
->        =3D> All callers of __tty_hangup() are safe as well.
->=20
-> From the callchains it's obvious that (1) and (2) end up getting called
-> via file->f_op->fasync(). That can happen either through the F_SETFL
-> fcntl() with the FASYNC flag raised or via the FIOASYNC ioctl(). If
-> FASYNC is requested and the file isn't already FASYNC then
-> file->f_op->fasync() is called with @on true which ends up causing both
-> (1) and (2) to call __f_setown().
->=20
-> (1) and (2) are the only subsystems that call __f_setown() from the
-> file->f_op->fasync() handler. So both (1) and (2) have been updated to
-> allocate a struct fown_struct prior to calling fasync_helper() to
-> register with the fasync infrastructure. That's safe as they both call
-> fasync_helper() which also does allocations if @on is true.
->=20
-> The other interesting case are file leases:
->=20
-> (3) file leases
->     lease_manager_ops->lm_setup::lease_setup()
->     -> __f_setown()
->=20
->     Which in turn is called from:
->=20
->     generic_add_lease()
->     -> lease_manager_ops->lm_setup::lease_setup()
->        -> __f_setown()
->=20
-> So here again we can simply make generic_add_lease() allocate struct
-> fown_struct prior to the lease_manager_ops->lm_setup::lease_setup()
-> which happens under a spinlock.
->=20
-> With that the two remaining subsystems that call __f_setown() are:
->=20
-> (4) dnotify
-> (5) sockets
->=20
-> Both have their own custom ioctls to set struct fown_struct and both
-> have been converted to allocate a struct fown_struct on demand from
-> their respective ioctls.
->=20
-> Interactions with O_PATH are fine as well e.g., when opening a /dev/tty
-> as O_PATH then no file->f_op->open() happens thus no file->f_owner is
-> allocated. That's fine as no file operation will be set for those and
-> the device has never been opened. fcntl()s called on such things will
-> just allocate a ->f_owner on demand. Although I have zero idea why'd you
-> care about f_owner on an O_PATH fd.
->=20
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
-> * There's no more cleanup macros used in this version as we can solve
->   that all much simpler.
-> * Survives LTP which tests a bunch of that stuff.
-> * Survives perf's watermak signal tests which make use of FASYNC.
->=20
-> Goes into -next unless I hear objections.
-> ---
->=20
-> ---
->  drivers/net/tun.c           |   6 ++
->  drivers/tty/tty_io.c        |   6 ++
->  fs/fcntl.c                  | 153 ++++++++++++++++++++++++++++++++++----=
-------
->  fs/file_table.c             |   6 +-
->  fs/locks.c                  |   6 +-
->  fs/notify/dnotify/dnotify.c |   6 +-
->  include/linux/fs.h          |  11 +++-
->  net/core/sock.c             |   2 +-
->  security/selinux/hooks.c    |   2 +-
->  security/smack/smack_lsm.c  |   2 +-
->  10 files changed, 157 insertions(+), 43 deletions(-)
->=20
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 1d06c560c5e6..6fe5e8f7017c 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -3451,6 +3451,12 @@ static int tun_chr_fasync(int fd, struct file *fil=
-e, int on)
->  	struct tun_file *tfile =3D file->private_data;
->  	int ret;
-> =20
-> +	if (on) {
-> +		ret =3D file_f_owner_allocate(file);
-> +		if (ret)
-> +			goto out;
-> +	}
-> +
->  	if ((ret =3D fasync_helper(fd, file, on, &tfile->fasync)) < 0)
->  		goto out;
-> =20
-> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-> index 407b0d87b7c1..7ae0c8934f42 100644
-> --- a/drivers/tty/tty_io.c
-> +++ b/drivers/tty/tty_io.c
-> @@ -2225,6 +2225,12 @@ static int __tty_fasync(int fd, struct file *filp,=
- int on)
->  	if (tty_paranoia_check(tty, file_inode(filp), "tty_fasync"))
->  		goto out;
-> =20
-> +	if (on) {
-> +		retval =3D file_f_owner_allocate(filp);
-> +		if (retval)
-> +			goto out;
-> +	}
-> +
->  	retval =3D fasync_helper(fd, filp, on, &tty->fasync);
->  	if (retval <=3D 0)
->  		goto out;
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 300e5d9ad913..b002730fdcd1 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -87,22 +87,53 @@ static int setfl(int fd, struct file * filp, unsigned=
- int arg)
->  	return error;
->  }
-> =20
-> +/*
-> + * Allocate an file->f_owner struct if it doesn't exist, handling racing
-> + * allocations correctly.
-> + */
-> +int file_f_owner_allocate(struct file *file)
-> +{
-> +	struct fown_struct *f_owner;
-> +
-> +	f_owner =3D file_f_owner(file);
-> +	if (f_owner)
-> +		return 0;
-> +
-> +	f_owner =3D kzalloc(sizeof(struct fown_struct), GFP_KERNEL);
-> +	if (!f_owner)
-> +		return -ENOMEM;
-> +
-> +	rwlock_init(&f_owner->lock);
-> +	f_owner->file =3D file;
-> +	/* If someone else raced us, drop our allocation. */
-> +	if (unlikely(cmpxchg(&file->f_owner, NULL, f_owner)))
+On 2024-08-13 00:07, Stanislav Fomichev wrote:
+> On 08/12, Martin Karsten wrote:
+>> On 2024-08-12 21:54, Stanislav Fomichev wrote:
+>>> On 08/12, Martin Karsten wrote:
+>>>> On 2024-08-12 19:03, Stanislav Fomichev wrote:
+>>>>> On 08/12, Martin Karsten wrote:
+>>>>>> On 2024-08-12 16:19, Stanislav Fomichev wrote:
+>>>>>>> On 08/12, Joe Damato wrote:
+>>>>>>>> Greetings:
 
-nit: try_cmpxchg generates better asm and should be fine here.
+[snip]
 
-> +		kfree(f_owner);
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(file_f_owner_allocate);
-> +
->  static void f_modown(struct file *filp, struct pid *pid, enum pid_type t=
-ype,
->                       int force)
->  {
-> -	write_lock_irq(&filp->f_owner.lock);
-> -	if (force || !filp->f_owner.pid) {
-> -		put_pid(filp->f_owner.pid);
-> -		filp->f_owner.pid =3D get_pid(pid);
-> -		filp->f_owner.pid_type =3D type;
-> +	struct fown_struct *f_owner;
-> +
-> +	f_owner =3D file_f_owner(filp);
-> +	if (WARN_ON_ONCE(!f_owner))=20
-> +		return;
-> +
-> +	write_lock_irq(&f_owner->lock);
-> +	if (force || !f_owner->pid) {
-> +		put_pid(f_owner->pid);
-> +		f_owner->pid =3D get_pid(pid);
-> +		f_owner->pid_type =3D type;
-> =20
->  		if (pid) {
->  			const struct cred *cred =3D current_cred();
-> -			filp->f_owner.uid =3D cred->uid;
-> -			filp->f_owner.euid =3D cred->euid;
-> +			f_owner->uid =3D cred->uid;
-> +			f_owner->euid =3D cred->euid;
->  		}
->  	}
-> -	write_unlock_irq(&filp->f_owner.lock);
-> +	write_unlock_irq(&f_owner->lock);
->  }
-> =20
->  void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
-> @@ -119,6 +150,8 @@ int f_setown(struct file *filp, int who, int force)
->  	struct pid *pid =3D NULL;
->  	int ret =3D 0;
-> =20
-> +	might_sleep();
-> +
->  	type =3D PIDTYPE_TGID;
->  	if (who < 0) {
->  		/* avoid overflow below */
-> @@ -129,6 +162,10 @@ int f_setown(struct file *filp, int who, int force)
->  		who =3D -who;
->  	}
-> =20
-> +	ret =3D file_f_owner_allocate(filp);
-> +	if (ret)
-> +		return ret;
-> +
->  	rcu_read_lock();
->  	if (who) {
->  		pid =3D find_vpid(who);
-> @@ -152,16 +189,21 @@ void f_delown(struct file *filp)
->  pid_t f_getown(struct file *filp)
->  {
->  	pid_t pid =3D 0;
-> +	struct fown_struct *f_owner;
-> =20
-> -	read_lock_irq(&filp->f_owner.lock);
-> +	f_owner =3D file_f_owner(filp);
-> +	if (!f_owner)
-> +		return pid;
-> +
-> +	read_lock_irq(&f_owner->lock);
->  	rcu_read_lock();
-> -	if (pid_task(filp->f_owner.pid, filp->f_owner.pid_type)) {
-> -		pid =3D pid_vnr(filp->f_owner.pid);
-> -		if (filp->f_owner.pid_type =3D=3D PIDTYPE_PGID)
-> +	if (pid_task(f_owner->pid, f_owner->pid_type)) {
-> +		pid =3D pid_vnr(f_owner->pid);
-> +		if (f_owner->pid_type =3D=3D PIDTYPE_PGID)
->  			pid =3D -pid;
->  	}
->  	rcu_read_unlock();
-> -	read_unlock_irq(&filp->f_owner.lock);
-> +	read_unlock_irq(&f_owner->lock);
->  	return pid;
->  }
-> =20
-> @@ -194,6 +236,10 @@ static int f_setown_ex(struct file *filp, unsigned l=
-ong arg)
->  		return -EINVAL;
->  	}
-> =20
-> +	ret =3D file_f_owner_allocate(filp);
-> +	if (ret)
-> +		return ret;
-> +
->  	rcu_read_lock();
->  	pid =3D find_vpid(owner.pid);
->  	if (owner.pid && !pid)
-> @@ -210,13 +256,20 @@ static int f_getown_ex(struct file *filp, unsigned =
-long arg)
->  	struct f_owner_ex __user *owner_p =3D (void __user *)arg;
->  	struct f_owner_ex owner =3D {};
->  	int ret =3D 0;
-> +	struct fown_struct *f_owner;
-> +	enum pid_type pid_type =3D PIDTYPE_PID;
-> =20
-> -	read_lock_irq(&filp->f_owner.lock);
-> -	rcu_read_lock();
-> -	if (pid_task(filp->f_owner.pid, filp->f_owner.pid_type))
-> -		owner.pid =3D pid_vnr(filp->f_owner.pid);
-> -	rcu_read_unlock();
-> -	switch (filp->f_owner.pid_type) {
-> +	f_owner =3D file_f_owner(filp);
-> +	if (f_owner) {
-> +		read_lock_irq(&f_owner->lock);
-> +		rcu_read_lock();
-> +		if (pid_task(f_owner->pid, f_owner->pid_type))
-> +			owner.pid =3D pid_vnr(f_owner->pid);
-> +		rcu_read_unlock();
-> +		pid_type =3D f_owner->pid_type;
-> +	}
-> +
-> +	switch (pid_type) {
->  	case PIDTYPE_PID:
->  		owner.type =3D F_OWNER_TID;
->  		break;
-> @@ -234,7 +287,8 @@ static int f_getown_ex(struct file *filp, unsigned lo=
-ng arg)
->  		ret =3D -EINVAL;
->  		break;
->  	}
-> -	read_unlock_irq(&filp->f_owner.lock);
-> +	if (f_owner)
-> +		read_unlock_irq(&f_owner->lock);
-> =20
->  	if (!ret) {
->  		ret =3D copy_to_user(owner_p, &owner, sizeof(owner));
-> @@ -248,14 +302,18 @@ static int f_getown_ex(struct file *filp, unsigned =
-long arg)
->  static int f_getowner_uids(struct file *filp, unsigned long arg)
->  {
->  	struct user_namespace *user_ns =3D current_user_ns();
-> +	struct fown_struct *f_owner;
->  	uid_t __user *dst =3D (void __user *)arg;
-> -	uid_t src[2];
-> +	uid_t src[2] =3D {0, 0};
->  	int err;
-> =20
-> -	read_lock_irq(&filp->f_owner.lock);
-> -	src[0] =3D from_kuid(user_ns, filp->f_owner.uid);
-> -	src[1] =3D from_kuid(user_ns, filp->f_owner.euid);
-> -	read_unlock_irq(&filp->f_owner.lock);
-> +	f_owner =3D file_f_owner(filp);
-> +	if (f_owner) {
-> +		read_lock_irq(&f_owner->lock);
-> +		src[0] =3D from_kuid(user_ns, f_owner->uid);
-> +		src[1] =3D from_kuid(user_ns, f_owner->euid);
-> +		read_unlock_irq(&f_owner->lock);
-> +	}
-> =20
->  	err  =3D put_user(src[0], &dst[0]);
->  	err |=3D put_user(src[1], &dst[1]);
-> @@ -343,6 +401,30 @@ static long f_dupfd_query(int fd, struct file *filp)
->  	return f.file =3D=3D filp;
->  }
-> =20
-> +static int f_owner_sig(struct file *filp, int signum, bool setsig)
-> +{
-> +	int ret =3D 0;
-> +	struct fown_struct *f_owner;
-> +
-> +	might_sleep();
-> +
-> +	if (setsig) {
-> +		if (!valid_signal(signum))
-> +			return -EINVAL;
-> +
-> +		ret =3D file_f_owner_allocate(filp);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	f_owner =3D file_f_owner(filp);
-> +	if (setsig)
-> +		f_owner->signum =3D signum;
-> +	else if (f_owner)
-> +		ret =3D f_owner->signum;
-> +	return ret;
-> +}
-> +
->  static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
->  		struct file *filp)
->  {
-> @@ -421,15 +503,10 @@ static long do_fcntl(int fd, unsigned int cmd, unsi=
-gned long arg,
->  		err =3D f_getowner_uids(filp, arg);
->  		break;
->  	case F_GETSIG:
-> -		err =3D filp->f_owner.signum;
-> +		err =3D f_owner_sig(filp, 0, false);
->  		break;
->  	case F_SETSIG:
-> -		/* arg =3D=3D 0 restores default behaviour. */
-> -		if (!valid_signal(argi)) {
-> -			break;
-> -		}
-> -		err =3D 0;
-> -		filp->f_owner.signum =3D argi;
-> +		err =3D f_owner_sig(filp, argi, true);
->  		break;
->  	case F_GETLEASE:
->  		err =3D fcntl_getlease(filp);
-> @@ -844,14 +921,19 @@ static void send_sigurg_to_task(struct task_struct =
-*p,
->  		do_send_sig_info(SIGURG, SEND_SIG_PRIV, p, type);
->  }
-> =20
-> -int send_sigurg(struct fown_struct *fown)
-> +int send_sigurg(struct file *file)
->  {
-> +	struct fown_struct *fown;
->  	struct task_struct *p;
->  	enum pid_type type;
->  	struct pid *pid;
->  	unsigned long flags;
->  	int ret =3D 0;
->  =09
-> +	fown =3D file_f_owner(file);
-> +	if (fown)
-> +		return 0;
+>>>>>>> Maybe expand more on what code paths are we trying to improve? Existing
+>>>>>>> busy polling code is not super readable, so would be nice to simplify
+>>>>>>> it a bit in the process (if possible) instead of adding one more tunable.
+>>>>>>
+>>>>>> There are essentially three possible loops for network processing:
+>>>>>>
+>>>>>> 1) hardirq -> softirq -> napi poll; this is the baseline functionality
+>>>>>>
+>>>>>> 2) timer -> softirq -> napi poll; this is deferred irq processing scheme
+>>>>>> with the shortcomings described above
+>>>>>>
+>>>>>> 3) epoll -> busy-poll -> napi poll
+>>>>>>
+>>>>>> If a system is configured for 1), not much can be done, as it is difficult
+>>>>>> to interject anything into this loop without adding state and side effects.
+>>>>>> This is what we tried for the paper, but it ended up being a hack.
+>>>>>>
+>>>>>> If however the system is configured for irq deferral, Loops 2) and 3)
+>>>>>> "wrestle" with each other for control. Injecting the larger
+>>>>>> irq-suspend-timeout for 'timer' in Loop 2) essentially tilts this in favour
+>>>>>> of Loop 3) and creates the nice pattern describe above.
+>>>>>
+>>>>> And you hit (2) when the epoll goes to sleep and/or when the userspace
+>>>>> isn't fast enough to keep up with the timer, presumably? I wonder
+>>>>> if need to use this opportunity and do proper API as Joe hints in the
+>>>>> cover letter. Something over netlink to say "I'm gonna busy-poll on
+>>>>> this queue / napi_id and with this timeout". And then we can essentially make
+>>>>> gro_flush_timeout per queue (and avoid
+>>>>> napi_resume_irqs/napi_suspend_irqs). Existing gro_flush_timeout feels
+>>>>> too hacky already :-(
+>>>>
+>>>> If someone would implement the necessary changes to make these parameters
+>>>> per-napi, this would improve things further, but note that the current
+>>>> proposal gives strong performance across a range of workloads, which is
+>>>> otherwise difficult to impossible to achieve.
+>>>
+>>> Let's see what other people have to say. But we tried to do a similar
+>>> setup at Google recently and getting all these parameters right
+>>> was not trivial. Joe's recent patch series to push some of these into
+>>> epoll context are a step in the right direction. It would be nice to
+>>> have more explicit interface to express busy poling preference for
+>>> the users vs chasing a bunch of global tunables and fighting against softirq
+>>> wakups.
+>>
+>> One of the goals of this patch set is to reduce parameter tuning and make
+>> the parameter setting independent of workload dynamics, so it should make
+>> things easier. This is of course notwithstanding that per-napi settings
+>> would be even better.
+>>
+>> If you are able to share more details of your previous experiments (here or
+>> off-list), I would be very interested.
+> 
+> We went through a similar exercise of trying to get the tail latencies down.
+> Starting with SO_BUSY_POLL, then switching to the per-epoll variant (except
+> we went with a hard-coded napi_id argument instead of tracking) and trying to
+> get a workable set of budget/timeout/gro_flush. We were fine with burning all
+> cpu capacity we had and no sleep at all, so we ended up having a bunch
+> of special cases in epoll loop to avoid the sleep.
+> 
+> But we were trying to make a different model work (the one you mention in the
+> paper as well) where the userspace busy-pollers are just running napi_poll
+> on one cpu and the actual work is consumed by the userspace on a different cpu.
+> (we had two epoll fds - one with napi_id=xxx and no sockets to drive napi_poll
+> and another epoll fd with actual sockets for signaling).
+> 
+> This mode has a different set of challenges with socket lock, socket rx
+> queue and the backlog processing :-(
 
-This needs to be fixed (as Mateusz pointed out).
+I agree. That model has challenges and is extremely difficult to tune right.
 
-> +
->  	read_lock_irqsave(&fown->lock, flags);
-> =20
->  	type =3D fown->pid_type;
-> @@ -1027,13 +1109,16 @@ static void kill_fasync_rcu(struct fasync_struct =
-*fa, int sig, int band)
->  		}
->  		read_lock_irqsave(&fa->fa_lock, flags);
->  		if (fa->fa_file) {
-> -			fown =3D &fa->fa_file->f_owner;
-> +			fown =3D file_f_owner(fa->fa_file);
-> +			if (!fown)
-> +				goto next;
->  			/* Don't send SIGURG to processes which have not set a
->  			   queued signum: SIGURG has its own default signalling
->  			   mechanism. */
->  			if (!(sig =3D=3D SIGURG && fown->signum =3D=3D 0))
->  				send_sigio(fown, fa->fa_fd, band);
->  		}
-> +next:
->  		read_unlock_irqrestore(&fa->fa_lock, flags);
->  		fa =3D rcu_dereference(fa->fa_next);
->  	}
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index ca7843dde56d..41ff037a8dc9 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -155,7 +155,6 @@ static int init_file(struct file *f, int flags, const=
- struct cred *cred)
->  		return error;
->  	}
-> =20
-> -	rwlock_init(&f->f_owner.lock);
->  	spin_lock_init(&f->f_lock);
->  	mutex_init(&f->f_pos_lock);
->  	f->f_flags =3D flags;
-> @@ -425,7 +424,10 @@ static void __fput(struct file *file)
->  		cdev_put(inode->i_cdev);
->  	}
->  	fops_put(file->f_op);
-> -	put_pid(file->f_owner.pid);
-> +	if (file->f_owner) {
-> +		put_pid(file->f_owner->pid);
-> +		kfree(file->f_owner);
-> +	}
->  	put_file_access(file);
->  	dput(dentry);
->  	if (unlikely(mode & FMODE_NEED_UNMOUNT))
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 9afb16e0683f..c0d312481b97 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1451,7 +1451,7 @@ int lease_modify(struct file_lease *fl, int arg, st=
-ruct list_head *dispose)
->  		struct file *filp =3D fl->c.flc_file;
-> =20
->  		f_delown(filp);
-> -		filp->f_owner.signum =3D 0;
-> +		file_f_owner(filp)->signum =3D 0;
->  		fasync_helper(0, fl->c.flc_file, 0, &fl->fl_fasync);
->  		if (fl->fl_fasync !=3D NULL) {
->  			printk(KERN_ERR "locks_delete_lock: fasync =3D=3D %p\n", fl->fl_fasyn=
-c);
-> @@ -1783,6 +1783,10 @@ generic_add_lease(struct file *filp, int arg, stru=
-ct file_lease **flp, void **pr
->  	lease =3D *flp;
->  	trace_generic_add_lease(inode, lease);
-> =20
-> +	error =3D file_f_owner_allocate(filp);
-> +	if (error)
-> +		return error;
-> +
->  	/* Note that arg is never F_UNLCK here */
->  	ctx =3D locks_get_lock_context(inode, arg);
->  	if (!ctx)
-> diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-> index f3669403fabf..46440fbb8662 100644
-> --- a/fs/notify/dnotify/dnotify.c
-> +++ b/fs/notify/dnotify/dnotify.c
-> @@ -110,7 +110,7 @@ static int dnotify_handle_event(struct fsnotify_mark =
-*inode_mark, u32 mask,
->  			prev =3D &dn->dn_next;
->  			continue;
->  		}
-> -		fown =3D &dn->dn_filp->f_owner;
-> +		fown =3D file_f_owner(dn->dn_filp);
->  		send_sigio(fown, dn->dn_fd, POLL_MSG);
->  		if (dn->dn_mask & FS_DN_MULTISHOT)
->  			prev =3D &dn->dn_next;
-> @@ -316,6 +316,10 @@ int fcntl_dirnotify(int fd, struct file *filp, unsig=
-ned int arg)
->  		goto out_err;
->  	}
-> =20
-> +	error =3D file_f_owner_allocate(filp);
-> +	if (error)
-> +		goto out_err;
-> +
->  	/* set up the new_fsn_mark and new_dn_mark */
->  	new_fsn_mark =3D &new_dn_mark->fsn_mark;
->  	fsnotify_init_mark(new_fsn_mark, dnotify_group);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index fd34b5755c0b..319c566a9e98 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -947,6 +947,7 @@ static inline unsigned imajor(const struct inode *ino=
-de)
->  }
-> =20
->  struct fown_struct {
-> +	struct file *file;	/* backpointer for security modules */
+>>>> Note that napi_suspend_irqs/napi_resume_irqs is needed even for the sake of
+>>>> an individual queue or application to make sure that IRQ suspension is
+>>>> enabled/disabled right away when the state of the system changes from busy
+>>>> to idle and back.
+>>>
+>>> Can we not handle everything in napi_busy_loop? If we can mark some napi
+>>> contexts as "explicitly polled by userspace with a larger defer timeout",
+>>> we should be able to do better compared to current NAPI_F_PREFER_BUSY_POLL
+>>> which is more like "this particular napi_poll call is user busy polling".
+>>
+>> Then either the application needs to be polling all the time (wasting cpu
+>> cycles) or latencies will be determined by the timeout.
+>>
+>> Only when switching back and forth between polling and interrupts is it
+>> possible to get low latencies across a large spectrum of offered loads
+>> without burning cpu cycles at 100%.
+> 
+> Ah, I see what you're saying, yes, you're right. In this case ignore my comment
+> about ep_suspend_napi_irqs/napi_resume_irqs.
 
-This struct was 32 bytes before (on x86_64). Now it'll be 40. That's
-fine, but it may be worthwhile to create a dedicated slabcache for this
-now, since it's no longer a power-of-2 size.
+Thanks for probing and double-checking everything! Feedback is important 
+for us to properly document our proposal.
 
->  	rwlock_t lock;          /* protects pid, uid, euid fields */
->  	struct pid *pid;	/* pid or -pgrp where SIGIO should be sent */
->  	enum pid_type pid_type;	/* Kind of process group SIGIO should be sent t=
-o */
-> @@ -1011,7 +1012,7 @@ struct file {
->  	struct mutex		f_pos_lock;
->  	loff_t			f_pos;
->  	unsigned int		f_flags;
-> -	struct fown_struct	f_owner;
-> +	struct fown_struct	*f_owner;
->  	const struct cred	*f_cred;
->  	struct file_ra_state	f_ra;
->  	struct path		f_path;
-> @@ -1076,6 +1077,12 @@ struct file_lease;
->  #define OFFT_OFFSET_MAX	type_max(off_t)
->  #endif
-> =20
-> +int file_f_owner_allocate(struct file *file);
-> +static inline struct fown_struct *file_f_owner(const struct file *file)
-> +{
-> +	return READ_ONCE(file->f_owner);
-> +}
-> +
->  extern void send_sigio(struct fown_struct *fown, int fd, int band);
-> =20
->  static inline struct inode *file_inode(const struct file *f)
-> @@ -1124,7 +1131,7 @@ extern void __f_setown(struct file *filp, struct pi=
-d *, enum pid_type, int force
->  extern int f_setown(struct file *filp, int who, int force);
->  extern void f_delown(struct file *filp);
->  extern pid_t f_getown(struct file *filp);
-> -extern int send_sigurg(struct fown_struct *fown);
-> +extern int send_sigurg(struct file *file);
-> =20
->  /*
->   * sb->s_flags.  Note that these mirror the equivalent MS_* flags where
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index 9abc4fe25953..bbe4c58470c3 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -3429,7 +3429,7 @@ static void sock_def_destruct(struct sock *sk)
->  void sk_send_sigurg(struct sock *sk)
->  {
->  	if (sk->sk_socket && sk->sk_socket->file)
-> -		if (send_sigurg(&sk->sk_socket->file->f_owner))
-> +		if (send_sigurg(sk->sk_socket->file))
->  			sk_wake_async(sk, SOCK_WAKE_URG, POLL_PRI);
->  }
->  EXPORT_SYMBOL(sk_send_sigurg);
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 55c78c318ccd..ed252cfba4e9 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3940,7 +3940,7 @@ static int selinux_file_send_sigiotask(struct task_=
-struct *tsk,
->  	struct file_security_struct *fsec;
-> =20
->  	/* struct fown_struct is never outside the context of a struct file */
-> -	file =3D container_of(fown, struct file, f_owner);
-> +	file =3D fown->file;
-> =20
->  	fsec =3D selinux_file(file);
-> =20
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 4164699cd4f6..cb33920ab67c 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -1950,7 +1950,7 @@ static int smack_file_send_sigiotask(struct task_st=
-ruct *tsk,
->  	/*
->  	 * struct fown_struct is never outside the context of a struct file
->  	 */
-> -	file =3D container_of(fown, struct file, f_owner);
-> +	file =3D fown->file;
-> =20
->  	/* we don't log here as rc can be overriden */
->  	blob =3D smack_file(file);
->=20
-> ---
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> change-id: 20240813-work-f_owner-0fbbc50f9671
->=20
+> Let's see how other people feel about per-dev irq_suspend_timeout. Properly
+> disabling napi during busy polling is super useful, but it would still
+> be nice to plumb irq_suspend_timeout via epoll context or have it set on
+> a per-napi basis imho.
 
-Aside from the bug that Mateusz pointed out, this looks fine to me.
-Assuming you fix that bug:
+Fingers crossed. I hope this patch will be accepted, because it has 
+practical performance and efficiency benefits, and that this will 
+further increase the motivation to re-design the entire irq 
+defer(/suspend) infrastructure for per-napi settings.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Thanks,
+Martin
+
 
