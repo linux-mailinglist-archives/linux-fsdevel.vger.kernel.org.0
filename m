@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-25833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F6995102D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 01:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74259951031
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 01:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4D51C2265F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 23:03:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 962081C22DB6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 23:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDF21AC434;
-	Tue, 13 Aug 2024 23:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E1F1AC450;
+	Tue, 13 Aug 2024 23:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dj8UIw/F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGg6flPK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4C0183CAD;
-	Tue, 13 Aug 2024 23:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B466B1AC43B;
+	Tue, 13 Aug 2024 23:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723590205; cv=none; b=fRKe4f9KQmIW560LV0ZSvEIsEkdhOYSmVrliLc+hYKAW8SpBywd5YtiBGWQbss34Mclx0JjMt1tCVlEuDmpwSUQXUCxQwWXHlgwiCVLdYYhc784Yl16B0pry9xUOiyK5gn6FUqz58qmfgwv3ozW/r4FIMAHBKqNh2aGqyHEERUg=
+	t=1723590208; cv=none; b=YLgGPphLQQHY1MEIOLdCCif55dXZzGy+9VBX51VlVS44/rmwp3RBN5sxJaBTRPg9ko49+YII6bnKkVkClMVHg2uQvA8VHVBhW6AeT6OLyDk7kqCMrRkTkjuhivHy+ojWVXdhgnmYZw/fzSbC3Dp+4Vag6P9yGiMCLorfZuYhR+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723590205; c=relaxed/simple;
-	bh=NeUoxEqpb7RO0TujT+JXKZO3CYi5Yb07K3mzhzAfO5g=;
+	s=arc-20240116; t=1723590208; c=relaxed/simple;
+	bh=p/zhSQF45yL3nbhwKwarGk2vPhVDiD2bdPY1ydSm9HM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eD+OFGVQiNaid3bQ5E03LoKmbSm4JlWjUs2vsTQfnOJPj8JXJ0kWdfa9Vc6pHbktij26IFznexZok5oxpAwst6Byyw+cBEIafy/mlImUOaHzJVs5Qc/8o92U0JnsKQN3IlWd6UN0RQlazMtOxevwhp3smNf4egXrmCFPtlnUwW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dj8UIw/F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B155C4AF10;
-	Tue, 13 Aug 2024 23:03:25 +0000 (UTC)
+	 MIME-Version; b=AHEX81WOc8+Bu+wMEYVacUWtM+Wasgl63nfDH/rbSp4aUwE25IP3niXnfu7FPZ1ipWKqYgf+rT8QwGpSDE3vwrsHEg1HY1pRYu1p4AR/fpFZNXlcxoYA3oPYIqv/CG99XTwuI5x2UBun1g66mDadPBNsnp0VtpDtb8HXPCmx5Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGg6flPK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6259DC32782;
+	Tue, 13 Aug 2024 23:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723590205;
-	bh=NeUoxEqpb7RO0TujT+JXKZO3CYi5Yb07K3mzhzAfO5g=;
+	s=k20201202; t=1723590208;
+	bh=p/zhSQF45yL3nbhwKwarGk2vPhVDiD2bdPY1ydSm9HM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Dj8UIw/FjsDxinKPZCjtbtiAcpXJBleZ1ORrsiNyRl+5aF5jWKuEhXeD0KKk6Wb9J
-	 gR8mMSClfEO3QBGBIjNwJN1BOalgubN2Tv418cV47OSeumWvyux5DLZPp4YqMRXB9R
-	 4AcPsCtZCXnKE7ebla4XqROI6dynxflKX0Iij9wHoXub/JHiv4VS6r6NCepuhE54aE
-	 xbUIx4+D/t1XADsumTjY9fH1dfJ1KgXRlMW8s+vMJ0+fB6vAMpqyX9kjfTL4u5ZSj6
-	 C+YrHjPRtaZCnk4Ojg2DvNGrWE5xHMU7uu9aXcKdplKX93aObthtRb4fp+aDMvzaiB
-	 wdCLeorSmjQ4g==
+	b=rGg6flPKp+xZHxI1R7HJUeGTvqiC+SFvmGTcG15H3sf4NCmYXncL/X2T30R9PiitK
+	 7KW72SRLCHoL28SNwhQ7Sqr5epxXYADGDSDGgyPXop36oohIr4KHgtD2gyjO0mwDtX
+	 MEgX4L7ulD8w+LDiyRbRZaYNi8De5DOa/J6DOQNIlc2UxxQpK2fF+Yz1gFGY92QhPE
+	 Lp6iwVXH0sIJehr050xwSTVbl84nIHGRxRNsY7KzzYU4+BP4u474yoiAfZeVob/qlH
+	 7NRAoctzteBlKWLN502onqDDviD6htHUEOIfbrfTo52z2LqCU1Z+YjCTsC1RAtG+66
+	 peO6IMuPu8ppA==
 From: Andrii Nakryiko <andrii@kernel.org>
 To: bpf@vger.kernel.org,
 	ast@kernel.org,
@@ -50,10 +50,11 @@ Cc: viro@kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	torvalds@linux-foundation.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH bpf-next 3/8] bpf: factor out fetching bpf_map from FD and adding it to used_maps list
-Date: Tue, 13 Aug 2024 16:02:55 -0700
-Message-ID: <20240813230300.915127-4-andrii@kernel.org>
+	Andrii Nakryiko <andrii@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH bpf-next 4/8] bpf: switch maps to CLASS(fd, ...)
+Date: Tue, 13 Aug 2024 16:02:56 -0700
+Message-ID: <20240813230300.915127-5-andrii@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20240813230300.915127-1-andrii@kernel.org>
 References: <20240813230300.915127-1-andrii@kernel.org>
@@ -65,227 +66,593 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out the logic to extract bpf_map instances from FD embedded in
-bpf_insns, adding it to the list of used_maps (unless it's already
-there, in which case we just reuse map's index). This simplifies the
-logic in resolve_pseudo_ldimm64(), especially around `struct fd`
-handling, as all that is now neatly contained in the helper and doesn't
-leak into a dozen error handling paths.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
+        Calling conventions for __bpf_map_get() would be more convenient
+if it left fpdut() on failure to callers.  Makes for simpler logics
+in the callers.
+
+	Among other things, the proof of memory safety no longer has to
+rely upon file->private_data never being ERR_PTR(...) for bpffs files.
+Original calling conventions made it impossible for the caller to tell
+whether __bpf_map_get() has returned ERR_PTR(-EINVAL) because it has found
+the file not be a bpf map one (in which case it would've done fdput())
+or because it found that ERR_PTR(-EINVAL) in file->private_data of a
+bpf map file (in which case fdput() would _not_ have been done).
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- kernel/bpf/verifier.c | 115 ++++++++++++++++++++++++------------------
- 1 file changed, 66 insertions(+), 49 deletions(-)
+ include/linux/bpf.h     |  11 +++-
+ kernel/bpf/map_in_map.c |  38 ++++---------
+ kernel/bpf/syscall.c    | 118 ++++++++++------------------------------
+ kernel/bpf/verifier.c   |   7 +--
+ net/core/sock_map.c     |  23 ++------
+ 5 files changed, 58 insertions(+), 139 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index df3be12096cf..14e4ef687a59 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -18865,6 +18865,58 @@ static bool bpf_map_is_cgroup_storage(struct bpf_map *map)
- 		map->map_type == BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE);
- }
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index b9425e410bcb..9f35df07e86d 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2241,7 +2241,16 @@ void __bpf_obj_drop_impl(void *p, const struct btf_record *rec, bool percpu);
  
-+/* Add map behind fd to used maps list, if it's not already there, and return
-+ * its index. Also set *reused to true if this map was already in the list of
-+ * used maps.
-+ * Returns <0 on error, or >= 0 index, on success.
-+ */
-+static int add_used_map_from_fd(struct bpf_verifier_env *env, int fd, bool *reused)
+ struct bpf_map *bpf_map_get(u32 ufd);
+ struct bpf_map *bpf_map_get_with_uref(u32 ufd);
+-struct bpf_map *__bpf_map_get(struct fd f);
++
++static inline struct bpf_map *__bpf_map_get(struct fd f)
 +{
-+	struct fd f = fdget(fd);
-+	struct bpf_map *map;
-+	int i;
-+
-+	map = __bpf_map_get(f);
-+	if (IS_ERR(map)) {
-+		verbose(env, "fd %d is not pointing to valid bpf_map\n", fd);
-+		return PTR_ERR(map);
-+	}
-+
-+	/* check whether we recorded this map already */
-+	for (i = 0; i < env->used_map_cnt; i++) {
-+		if (env->used_maps[i] == map) {
-+			*reused = true;
-+			fdput(f);
-+			return i;
-+		}
-+	}
-+
-+	if (env->used_map_cnt >= MAX_USED_MAPS) {
-+		verbose(env, "The total number of maps per program has reached the limit of %u\n",
-+			MAX_USED_MAPS);
-+		fdput(f);
-+		return -E2BIG;
-+	}
-+
-+	if (env->prog->sleepable)
-+		atomic64_inc(&map->sleepable_refcnt);
-+
-+	/* hold the map. If the program is rejected by verifier,
-+	 * the map will be released by release_maps() or it
-+	 * will be used by the valid program until it's unloaded
-+	 * and all maps are released in bpf_free_used_maps()
-+	 */
-+	bpf_map_inc(map);
-+
-+	*reused = false;
-+	env->used_maps[env->used_map_cnt++] = map;
-+
-+	fdput(f);
-+
-+	return env->used_map_cnt - 1;
-+
++	if (fd_empty(f))
++		return ERR_PTR(-EBADF);
++	if (unlikely(fd_file(f)->f_op != &bpf_map_fops))
++		return ERR_PTR(-EINVAL);
++	return fd_file(f)->private_data;
 +}
 +
- /* find and rewrite pseudo imm in ld_imm64 instructions:
-  *
-  * 1. if it accesses map FD, replace it with actual map pointer.
-@@ -18876,7 +18928,7 @@ static int resolve_pseudo_ldimm64(struct bpf_verifier_env *env)
+ void bpf_map_inc(struct bpf_map *map);
+ void bpf_map_inc_with_uref(struct bpf_map *map);
+ struct bpf_map *__bpf_map_inc_not_zero(struct bpf_map *map, bool uref);
+diff --git a/kernel/bpf/map_in_map.c b/kernel/bpf/map_in_map.c
+index b4f18c85d7bc..645bd30bc9a9 100644
+--- a/kernel/bpf/map_in_map.c
++++ b/kernel/bpf/map_in_map.c
+@@ -11,24 +11,18 @@ struct bpf_map *bpf_map_meta_alloc(int inner_map_ufd)
  {
- 	struct bpf_insn *insn = env->prog->insnsi;
- 	int insn_cnt = env->prog->len;
--	int i, j, err;
-+	int i, err;
+ 	struct bpf_map *inner_map, *inner_map_meta;
+ 	u32 inner_map_meta_size;
+-	struct fd f;
+-	int ret;
++	CLASS(fd, f)(inner_map_ufd);
  
- 	err = bpf_prog_calc_tag(env->prog);
- 	if (err)
-@@ -18893,9 +18945,10 @@ static int resolve_pseudo_ldimm64(struct bpf_verifier_env *env)
- 		if (insn[0].code == (BPF_LD | BPF_IMM | BPF_DW)) {
- 			struct bpf_insn_aux_data *aux;
- 			struct bpf_map *map;
--			struct fd f;
-+			int map_idx;
- 			u64 addr;
- 			u32 fd;
-+			bool reused;
+-	f = fdget(inner_map_ufd);
+ 	inner_map = __bpf_map_get(f);
+ 	if (IS_ERR(inner_map))
+ 		return inner_map;
  
- 			if (i == insn_cnt - 1 || insn[1].code != 0 ||
- 			    insn[1].dst_reg != 0 || insn[1].src_reg != 0 ||
-@@ -18956,20 +19009,18 @@ static int resolve_pseudo_ldimm64(struct bpf_verifier_env *env)
- 				break;
- 			}
+ 	/* Does not support >1 level map-in-map */
+-	if (inner_map->inner_map_meta) {
+-		ret = -EINVAL;
+-		goto put;
+-	}
++	if (inner_map->inner_map_meta)
++		return ERR_PTR(-EINVAL);
  
--			f = fdget(fd);
--			map = __bpf_map_get(f);
--			if (IS_ERR(map)) {
--				verbose(env, "fd %d is not pointing to valid bpf_map\n", fd);
--				return PTR_ERR(map);
--			}
-+			map_idx = add_used_map_from_fd(env, fd, &reused);
-+			if (map_idx < 0)
-+				return map_idx;
-+			map = env->used_maps[map_idx];
+-	if (!inner_map->ops->map_meta_equal) {
+-		ret = -ENOTSUPP;
+-		goto put;
+-	}
++	if (!inner_map->ops->map_meta_equal)
++		return ERR_PTR(-ENOTSUPP);
+ 
+ 	inner_map_meta_size = sizeof(*inner_map_meta);
+ 	/* In some cases verifier needs to access beyond just base map. */
+@@ -36,10 +30,8 @@ struct bpf_map *bpf_map_meta_alloc(int inner_map_ufd)
+ 		inner_map_meta_size = sizeof(struct bpf_array);
+ 
+ 	inner_map_meta = kzalloc(inner_map_meta_size, GFP_USER);
+-	if (!inner_map_meta) {
+-		ret = -ENOMEM;
+-		goto put;
+-	}
++	if (!inner_map_meta)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	inner_map_meta->map_type = inner_map->map_type;
+ 	inner_map_meta->key_size = inner_map->key_size;
+@@ -53,8 +45,9 @@ struct bpf_map *bpf_map_meta_alloc(int inner_map_ufd)
+ 		 * invalid/empty/valid, but ERR_PTR in case of errors. During
+ 		 * equality NULL or IS_ERR is equivalent.
+ 		 */
+-		ret = PTR_ERR(inner_map_meta->record);
+-		goto free;
++		struct bpf_map *ret = ERR_CAST(inner_map_meta->record);
++		kfree(inner_map_meta);
++		return ret;
+ 	}
+ 	/* Note: We must use the same BTF, as we also used btf_record_dup above
+ 	 * which relies on BTF being same for both maps, as some members like
+@@ -77,14 +70,7 @@ struct bpf_map *bpf_map_meta_alloc(int inner_map_ufd)
+ 		inner_array_meta->elem_size = inner_array->elem_size;
+ 		inner_map_meta->bypass_spec_v1 = inner_map->bypass_spec_v1;
+ 	}
+-
+-	fdput(f);
+ 	return inner_map_meta;
+-free:
+-	kfree(inner_map_meta);
+-put:
+-	fdput(f);
+-	return ERR_PTR(ret);
+ }
+ 
+ void bpf_map_meta_free(struct bpf_map *map_meta)
+@@ -110,9 +96,8 @@ void *bpf_map_fd_get_ptr(struct bpf_map *map,
+ 			 int ufd)
+ {
+ 	struct bpf_map *inner_map, *inner_map_meta;
+-	struct fd f;
++	CLASS(fd, f)(ufd);
+ 
+-	f = fdget(ufd);
+ 	inner_map = __bpf_map_get(f);
+ 	if (IS_ERR(inner_map))
+ 		return inner_map;
+@@ -123,7 +108,6 @@ void *bpf_map_fd_get_ptr(struct bpf_map *map,
+ 	else
+ 		inner_map = ERR_PTR(-EINVAL);
+ 
+-	fdput(f);
+ 	return inner_map;
+ }
+ 
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 4909e3f23065..ab0d94f41c48 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1418,21 +1418,6 @@ static int map_create(union bpf_attr *attr)
+ 	return err;
+ }
+ 
+-/* if error is returned, fd is released.
+- * On success caller should complete fd access with matching fdput()
+- */
+-struct bpf_map *__bpf_map_get(struct fd f)
+-{
+-	if (!fd_file(f))
+-		return ERR_PTR(-EBADF);
+-	if (fd_file(f)->f_op != &bpf_map_fops) {
+-		fdput(f);
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+-	return fd_file(f)->private_data;
+-}
+-
+ void bpf_map_inc(struct bpf_map *map)
+ {
+ 	atomic64_inc(&map->refcnt);
+@@ -1448,15 +1433,11 @@ EXPORT_SYMBOL_GPL(bpf_map_inc_with_uref);
+ 
+ struct bpf_map *bpf_map_get(u32 ufd)
+ {
+-	struct fd f = fdget(ufd);
+-	struct bpf_map *map;
+-
+-	map = __bpf_map_get(f);
+-	if (IS_ERR(map))
+-		return map;
++	CLASS(fd, f)(ufd);
++	struct bpf_map *map = __bpf_map_get(f);
+ 
+-	bpf_map_inc(map);
+-	fdput(f);
++	if (!IS_ERR(map))
++		bpf_map_inc(map);
+ 
+ 	return map;
+ }
+@@ -1464,15 +1445,11 @@ EXPORT_SYMBOL(bpf_map_get);
+ 
+ struct bpf_map *bpf_map_get_with_uref(u32 ufd)
+ {
+-	struct fd f = fdget(ufd);
+-	struct bpf_map *map;
+-
+-	map = __bpf_map_get(f);
+-	if (IS_ERR(map))
+-		return map;
++	CLASS(fd, f)(ufd);
++	struct bpf_map *map = __bpf_map_get(f);
+ 
+-	bpf_map_inc_with_uref(map);
+-	fdput(f);
++	if (!IS_ERR(map))
++		bpf_map_inc_with_uref(map);
+ 
+ 	return map;
+ }
+@@ -1537,11 +1514,9 @@ static int map_lookup_elem(union bpf_attr *attr)
+ {
+ 	void __user *ukey = u64_to_user_ptr(attr->key);
+ 	void __user *uvalue = u64_to_user_ptr(attr->value);
+-	int ufd = attr->map_fd;
+ 	struct bpf_map *map;
+ 	void *key, *value;
+ 	u32 value_size;
+-	struct fd f;
+ 	int err;
+ 
+ 	if (CHECK_ATTR(BPF_MAP_LOOKUP_ELEM))
+@@ -1550,26 +1525,20 @@ static int map_lookup_elem(union bpf_attr *attr)
+ 	if (attr->flags & ~BPF_F_LOCK)
+ 		return -EINVAL;
+ 
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->map_fd);
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+-	if (!(map_get_sys_perms(map, f) & FMODE_CAN_READ)) {
+-		err = -EPERM;
+-		goto err_put;
+-	}
++	if (!(map_get_sys_perms(map, f) & FMODE_CAN_READ))
++		return -EPERM;
+ 
+ 	if ((attr->flags & BPF_F_LOCK) &&
+-	    !btf_record_has_field(map->record, BPF_SPIN_LOCK)) {
+-		err = -EINVAL;
+-		goto err_put;
+-	}
++	    !btf_record_has_field(map->record, BPF_SPIN_LOCK))
++		return -EINVAL;
+ 
+ 	key = __bpf_copy_key(ukey, map->key_size);
+-	if (IS_ERR(key)) {
+-		err = PTR_ERR(key);
+-		goto err_put;
+-	}
++	if (IS_ERR(key))
++		return PTR_ERR(key);
+ 
+ 	value_size = bpf_map_value_size(map);
+ 
+@@ -1600,8 +1569,6 @@ static int map_lookup_elem(union bpf_attr *attr)
+ 	kvfree(value);
+ free_key:
+ 	kvfree(key);
+-err_put:
+-	fdput(f);
+ 	return err;
+ }
+ 
+@@ -1612,17 +1579,15 @@ static int map_update_elem(union bpf_attr *attr, bpfptr_t uattr)
+ {
+ 	bpfptr_t ukey = make_bpfptr(attr->key, uattr.is_kernel);
+ 	bpfptr_t uvalue = make_bpfptr(attr->value, uattr.is_kernel);
+-	int ufd = attr->map_fd;
+ 	struct bpf_map *map;
+ 	void *key, *value;
+ 	u32 value_size;
+-	struct fd f;
+ 	int err;
+ 
+ 	if (CHECK_ATTR(BPF_MAP_UPDATE_ELEM))
+ 		return -EINVAL;
+ 
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->map_fd);
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+@@ -1660,7 +1625,6 @@ static int map_update_elem(union bpf_attr *attr, bpfptr_t uattr)
+ 	kvfree(key);
+ err_put:
+ 	bpf_map_write_active_dec(map);
+-	fdput(f);
+ 	return err;
+ }
+ 
+@@ -1669,16 +1633,14 @@ static int map_update_elem(union bpf_attr *attr, bpfptr_t uattr)
+ static int map_delete_elem(union bpf_attr *attr, bpfptr_t uattr)
+ {
+ 	bpfptr_t ukey = make_bpfptr(attr->key, uattr.is_kernel);
+-	int ufd = attr->map_fd;
+ 	struct bpf_map *map;
+-	struct fd f;
+ 	void *key;
+ 	int err;
+ 
+ 	if (CHECK_ATTR(BPF_MAP_DELETE_ELEM))
+ 		return -EINVAL;
+ 
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->map_fd);
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+@@ -1715,7 +1677,6 @@ static int map_delete_elem(union bpf_attr *attr, bpfptr_t uattr)
+ 	kvfree(key);
+ err_put:
+ 	bpf_map_write_active_dec(map);
+-	fdput(f);
+ 	return err;
+ }
+ 
+@@ -1726,30 +1687,24 @@ static int map_get_next_key(union bpf_attr *attr)
+ {
+ 	void __user *ukey = u64_to_user_ptr(attr->key);
+ 	void __user *unext_key = u64_to_user_ptr(attr->next_key);
+-	int ufd = attr->map_fd;
+ 	struct bpf_map *map;
+ 	void *key, *next_key;
+-	struct fd f;
+ 	int err;
+ 
+ 	if (CHECK_ATTR(BPF_MAP_GET_NEXT_KEY))
+ 		return -EINVAL;
+ 
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->map_fd);
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+-	if (!(map_get_sys_perms(map, f) & FMODE_CAN_READ)) {
+-		err = -EPERM;
+-		goto err_put;
+-	}
++	if (!(map_get_sys_perms(map, f) & FMODE_CAN_READ))
++		return -EPERM;
+ 
+ 	if (ukey) {
+ 		key = __bpf_copy_key(ukey, map->key_size);
+-		if (IS_ERR(key)) {
+-			err = PTR_ERR(key);
+-			goto err_put;
+-		}
++		if (IS_ERR(key))
++			return PTR_ERR(key);
+ 	} else {
+ 		key = NULL;
+ 	}
+@@ -1781,8 +1736,6 @@ static int map_get_next_key(union bpf_attr *attr)
+ 	kvfree(next_key);
+ free_key:
+ 	kvfree(key);
+-err_put:
+-	fdput(f);
+ 	return err;
+ }
+ 
+@@ -2011,11 +1964,9 @@ static int map_lookup_and_delete_elem(union bpf_attr *attr)
+ {
+ 	void __user *ukey = u64_to_user_ptr(attr->key);
+ 	void __user *uvalue = u64_to_user_ptr(attr->value);
+-	int ufd = attr->map_fd;
+ 	struct bpf_map *map;
+ 	void *key, *value;
+ 	u32 value_size;
+-	struct fd f;
+ 	int err;
+ 
+ 	if (CHECK_ATTR(BPF_MAP_LOOKUP_AND_DELETE_ELEM))
+@@ -2024,7 +1975,7 @@ static int map_lookup_and_delete_elem(union bpf_attr *attr)
+ 	if (attr->flags & ~BPF_F_LOCK)
+ 		return -EINVAL;
+ 
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->map_fd);
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+@@ -2094,7 +2045,6 @@ static int map_lookup_and_delete_elem(union bpf_attr *attr)
+ 	kvfree(key);
+ err_put:
+ 	bpf_map_write_active_dec(map);
+-	fdput(f);
+ 	return err;
+ }
+ 
+@@ -2102,27 +2052,22 @@ static int map_lookup_and_delete_elem(union bpf_attr *attr)
+ 
+ static int map_freeze(const union bpf_attr *attr)
+ {
+-	int err = 0, ufd = attr->map_fd;
++	int err = 0;
+ 	struct bpf_map *map;
+-	struct fd f;
+ 
+ 	if (CHECK_ATTR(BPF_MAP_FREEZE))
+ 		return -EINVAL;
+ 
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->map_fd);
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+ 
+-	if (map->map_type == BPF_MAP_TYPE_STRUCT_OPS || !IS_ERR_OR_NULL(map->record)) {
+-		fdput(f);
++	if (map->map_type == BPF_MAP_TYPE_STRUCT_OPS || !IS_ERR_OR_NULL(map->record))
+ 		return -ENOTSUPP;
+-	}
+ 
+-	if (!(map_get_sys_perms(map, f) & FMODE_CAN_WRITE)) {
+-		fdput(f);
++	if (!(map_get_sys_perms(map, f) & FMODE_CAN_WRITE))
+ 		return -EPERM;
+-	}
+ 
+ 	mutex_lock(&map->freeze_mutex);
+ 	if (bpf_map_write_active(map)) {
+@@ -2137,7 +2082,6 @@ static int map_freeze(const union bpf_attr *attr)
+ 	WRITE_ONCE(map->frozen, true);
+ err_put:
+ 	mutex_unlock(&map->freeze_mutex);
+-	fdput(f);
+ 	return err;
+ }
+ 
+@@ -5175,14 +5119,13 @@ static int bpf_map_do_batch(const union bpf_attr *attr,
+ 			 cmd == BPF_MAP_LOOKUP_AND_DELETE_BATCH;
+ 	bool has_write = cmd != BPF_MAP_LOOKUP_BATCH;
+ 	struct bpf_map *map;
+-	int err, ufd;
+-	struct fd f;
++	int err;
+ 
+ 	if (CHECK_ATTR(BPF_MAP_BATCH))
+ 		return -EINVAL;
+ 
+-	ufd = attr->batch.map_fd;
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->batch.map_fd);
 +
-+			aux = &env->insn_aux_data[i];
-+			aux->map_index = map_idx;
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+@@ -5210,7 +5153,6 @@ static int bpf_map_do_batch(const union bpf_attr *attr,
+ 		maybe_wait_bpf_programs(map);
+ 		bpf_map_write_active_dec(map);
+ 	}
+-	fdput(f);
+ 	return err;
+ }
  
- 			err = check_map_prog_compatibility(env, map, env->prog);
--			if (err) {
--				fdput(f);
-+			if (err)
- 				return err;
--			}
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 14e4ef687a59..e3932f8ce10a 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -18872,7 +18872,7 @@ static bool bpf_map_is_cgroup_storage(struct bpf_map *map)
+  */
+ static int add_used_map_from_fd(struct bpf_verifier_env *env, int fd, bool *reused)
+ {
+-	struct fd f = fdget(fd);
++	CLASS(fd, f)(fd);
+ 	struct bpf_map *map;
+ 	int i;
  
--			aux = &env->insn_aux_data[i];
- 			if (insn[0].src_reg == BPF_PSEUDO_MAP_FD ||
- 			    insn[0].src_reg == BPF_PSEUDO_MAP_IDX) {
- 				addr = (unsigned long)map;
-@@ -18978,13 +19029,11 @@ static int resolve_pseudo_ldimm64(struct bpf_verifier_env *env)
- 
- 				if (off >= BPF_MAX_VAR_OFF) {
- 					verbose(env, "direct value offset of %u is not allowed\n", off);
--					fdput(f);
- 					return -EINVAL;
- 				}
- 
- 				if (!map->ops->map_direct_value_addr) {
- 					verbose(env, "no direct value access support for this map type\n");
--					fdput(f);
- 					return -EINVAL;
- 				}
- 
-@@ -18992,7 +19041,6 @@ static int resolve_pseudo_ldimm64(struct bpf_verifier_env *env)
- 				if (err) {
- 					verbose(env, "invalid access to map value pointer, value_size=%u off=%u\n",
- 						map->value_size, off);
--					fdput(f);
- 					return err;
- 				}
- 
-@@ -19003,70 +19051,39 @@ static int resolve_pseudo_ldimm64(struct bpf_verifier_env *env)
- 			insn[0].imm = (u32)addr;
- 			insn[1].imm = addr >> 32;
- 
--			/* check whether we recorded this map already */
--			for (j = 0; j < env->used_map_cnt; j++) {
--				if (env->used_maps[j] == map) {
--					aux->map_index = j;
--					fdput(f);
--					goto next_insn;
--				}
--			}
--
--			if (env->used_map_cnt >= MAX_USED_MAPS) {
--				verbose(env, "The total number of maps per program has reached the limit of %u\n",
--					MAX_USED_MAPS);
--				fdput(f);
--				return -E2BIG;
--			}
--
--			if (env->prog->sleepable)
--				atomic64_inc(&map->sleepable_refcnt);
--			/* hold the map. If the program is rejected by verifier,
--			 * the map will be released by release_maps() or it
--			 * will be used by the valid program until it's unloaded
--			 * and all maps are released in bpf_free_used_maps()
--			 */
--			bpf_map_inc(map);
--
--			aux->map_index = env->used_map_cnt;
--			env->used_maps[env->used_map_cnt++] = map;
-+			/* proceed with extra checks only if its newly added used map */
-+			if (reused)
-+				goto next_insn;
- 
- 			if (bpf_map_is_cgroup_storage(map) &&
- 			    bpf_cgroup_storage_assign(env->prog->aux, map)) {
- 				verbose(env, "only one cgroup storage of each type is allowed\n");
--				fdput(f);
- 				return -EBUSY;
- 			}
- 			if (map->map_type == BPF_MAP_TYPE_ARENA) {
- 				if (env->prog->aux->arena) {
- 					verbose(env, "Only one arena per program\n");
--					fdput(f);
- 					return -EBUSY;
- 				}
- 				if (!env->allow_ptr_leaks || !env->bpf_capable) {
- 					verbose(env, "CAP_BPF and CAP_PERFMON are required to use arena\n");
--					fdput(f);
- 					return -EPERM;
- 				}
- 				if (!env->prog->jit_requested) {
- 					verbose(env, "JIT is required to use arena\n");
--					fdput(f);
- 					return -EOPNOTSUPP;
- 				}
- 				if (!bpf_jit_supports_arena()) {
- 					verbose(env, "JIT doesn't support arena\n");
--					fdput(f);
- 					return -EOPNOTSUPP;
- 				}
- 				env->prog->aux->arena = (void *)map;
- 				if (!bpf_arena_get_user_vm_start(env->prog->aux->arena)) {
- 					verbose(env, "arena's user address must be set via map_extra or mmap()\n");
--					fdput(f);
- 					return -EINVAL;
- 				}
- 			}
- 
+@@ -18886,7 +18886,6 @@ static int add_used_map_from_fd(struct bpf_verifier_env *env, int fd, bool *reus
+ 	for (i = 0; i < env->used_map_cnt; i++) {
+ 		if (env->used_maps[i] == map) {
+ 			*reused = true;
 -			fdput(f);
- next_insn:
- 			insn++;
- 			i++;
+ 			return i;
+ 		}
+ 	}
+@@ -18894,7 +18893,6 @@ static int add_used_map_from_fd(struct bpf_verifier_env *env, int fd, bool *reus
+ 	if (env->used_map_cnt >= MAX_USED_MAPS) {
+ 		verbose(env, "The total number of maps per program has reached the limit of %u\n",
+ 			MAX_USED_MAPS);
+-		fdput(f);
+ 		return -E2BIG;
+ 	}
+ 
+@@ -18911,10 +18909,7 @@ static int add_used_map_from_fd(struct bpf_verifier_env *env, int fd, bool *reus
+ 	*reused = false;
+ 	env->used_maps[env->used_map_cnt++] = map;
+ 
+-	fdput(f);
+-
+ 	return env->used_map_cnt - 1;
+-
+ }
+ 
+ /* find and rewrite pseudo imm in ld_imm64 instructions:
+diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+index d3dbb92153f2..0f5f80f44d52 100644
+--- a/net/core/sock_map.c
++++ b/net/core/sock_map.c
+@@ -67,46 +67,39 @@ static struct bpf_map *sock_map_alloc(union bpf_attr *attr)
+ 
+ int sock_map_get_from_fd(const union bpf_attr *attr, struct bpf_prog *prog)
+ {
+-	u32 ufd = attr->target_fd;
+ 	struct bpf_map *map;
+-	struct fd f;
+ 	int ret;
+ 
+ 	if (attr->attach_flags || attr->replace_bpf_fd)
+ 		return -EINVAL;
+ 
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->target_fd);
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+ 	mutex_lock(&sockmap_mutex);
+ 	ret = sock_map_prog_update(map, prog, NULL, NULL, attr->attach_type);
+ 	mutex_unlock(&sockmap_mutex);
+-	fdput(f);
+ 	return ret;
+ }
+ 
+ int sock_map_prog_detach(const union bpf_attr *attr, enum bpf_prog_type ptype)
+ {
+-	u32 ufd = attr->target_fd;
+ 	struct bpf_prog *prog;
+ 	struct bpf_map *map;
+-	struct fd f;
+ 	int ret;
+ 
+ 	if (attr->attach_flags || attr->replace_bpf_fd)
+ 		return -EINVAL;
+ 
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->target_fd);
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+ 
+ 	prog = bpf_prog_get(attr->attach_bpf_fd);
+-	if (IS_ERR(prog)) {
+-		ret = PTR_ERR(prog);
+-		goto put_map;
+-	}
++	if (IS_ERR(prog))
++		return PTR_ERR(prog);
+ 
+ 	if (prog->type != ptype) {
+ 		ret = -EINVAL;
+@@ -118,8 +111,6 @@ int sock_map_prog_detach(const union bpf_attr *attr, enum bpf_prog_type ptype)
+ 	mutex_unlock(&sockmap_mutex);
+ put_prog:
+ 	bpf_prog_put(prog);
+-put_map:
+-	fdput(f);
+ 	return ret;
+ }
+ 
+@@ -1550,18 +1541,17 @@ int sock_map_bpf_prog_query(const union bpf_attr *attr,
+ 			    union bpf_attr __user *uattr)
+ {
+ 	__u32 __user *prog_ids = u64_to_user_ptr(attr->query.prog_ids);
+-	u32 prog_cnt = 0, flags = 0, ufd = attr->target_fd;
++	u32 prog_cnt = 0, flags = 0;
+ 	struct bpf_prog **pprog;
+ 	struct bpf_prog *prog;
+ 	struct bpf_map *map;
+-	struct fd f;
+ 	u32 id = 0;
+ 	int ret;
+ 
+ 	if (attr->query.query_flags)
+ 		return -EINVAL;
+ 
+-	f = fdget(ufd);
++	CLASS(fd, f)(attr->target_fd);
+ 	map = __bpf_map_get(f);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+@@ -1593,7 +1583,6 @@ int sock_map_bpf_prog_query(const union bpf_attr *attr,
+ 	    copy_to_user(&uattr->query.prog_cnt, &prog_cnt, sizeof(prog_cnt)))
+ 		ret = -EFAULT;
+ 
+-	fdput(f);
+ 	return ret;
+ }
+ 
 -- 
 2.43.5
 
