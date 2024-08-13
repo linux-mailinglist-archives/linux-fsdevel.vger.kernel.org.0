@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-25836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A004951042
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 01:05:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B78D951045
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 01:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89ABB1C22B6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 23:05:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71941B26661
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 23:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16EE1AE875;
-	Tue, 13 Aug 2024 23:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198851AE879;
+	Tue, 13 Aug 2024 23:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbyI7etw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oW5ztAkV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345F21AE869;
-	Tue, 13 Aug 2024 23:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715C81AC427;
+	Tue, 13 Aug 2024 23:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723590215; cv=none; b=sZeAOB6iRoX/AF0jG0ixZ1Jsg+8MalgveLk3v5eOgZ9dv+yiGBBfIq4+sOmYD2w4WIu8oNqsdXRNnEMUOZYyhpDNr+xNwjfHBlyILbJBgXcPlOoXRT65W4nFAhsm05dQ1+mrWcPaGCpJ1ijOXcuA+hCBNq+mhyXakzzJWIYBUVQ=
+	t=1723590218; cv=none; b=g3ntH4vRVImBGLE64Q5c+s21o0HWuYbdDakFqXGfA3YbSUkG+QV+OMvnQAMO3L+uxsRHBJ9CKYumt0wMRYC2HKzcq/GSeMPLgWkxC6aiv3Spq42+VJ63hDSHhURuxSxSqZifUcYw14C2b70dIIO378L2+thViyUqIqrH2GhAUBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723590215; c=relaxed/simple;
-	bh=yN88ZLKxTwYXK058BiNyVx5tkQ8DX5UbNvpbwGdvGJI=;
+	s=arc-20240116; t=1723590218; c=relaxed/simple;
+	bh=aFjrlhkayKPX3G36/i+lQmbPMJDdAqx+NoxLgJo3/oA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bk4ZdkasowMNo+FAdzV+ZXBO8qaZZTjdjabWXunleYgJnjFcVEQUTIFi8hk17nQEQUCuc7CSL0je2A4zMv2shSxBMsdlLOqp9qP0m/5U8CedJ4SZCPbwj4BOqa7PeXtGDBza2smZdbKtIYt1yz+diOu31Lb8d1PLczfJL2zKP2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbyI7etw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9BCCC4AF0C;
-	Tue, 13 Aug 2024 23:03:34 +0000 (UTC)
+	 MIME-Version; b=c9cqM4X2TIxBENZlYiEeWRTDXjWLx5wC7N54FbnNTsn9Jgkd4Fuji4cf3Dc9B45mkCO9RxuhZUnuIfDVsa09RjHqwfgpslefStqDA5rl/vnoDeHCgBFvpoGTxyzt7l5APTWMaGB6xso8nyh50KfxozsYM2cRtN0/JimFabcbxeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oW5ztAkV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AB43C32782;
+	Tue, 13 Aug 2024 23:03:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723590215;
-	bh=yN88ZLKxTwYXK058BiNyVx5tkQ8DX5UbNvpbwGdvGJI=;
+	s=k20201202; t=1723590218;
+	bh=aFjrlhkayKPX3G36/i+lQmbPMJDdAqx+NoxLgJo3/oA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IbyI7etwWMJWAh7hFr22d14bE+ZLJ/j6jLonWZWodCBYZ456B5YAx0n78UWrK03gF
-	 l/ux7gxqlPoltYNLUtIWBEv2hyTjzPqnxpMOzUmM+xfAy/zjZRyGMtxieXO2zdRvxd
-	 HD7t1UeQov4DtwHytbS8ZREVE9OMpNP4nsCkOBkxwZm4HDdAuKrhBaHfSQzUmE1WKA
-	 6hw72BrwAPh7z7jyXfnLP6EqWCpDUKeErA7qQ8whr+ZKs7nlLxPlVVkP0kPsgNODn0
-	 TUWQT1TnfmabSBVjEKWEgVROyoVoB6wByWEXusRREePadqpc+B/3NmLb7dL2BHTS+X
-	 ULjxV8L61o7dA==
+	b=oW5ztAkVcOkCLu2K17pzi7WefR1yIri+agXg8fdUG3Z3qn+VanHrYl+0+xggCfkzb
+	 9AVOFbDj1Y/cmyM15HaYhWKvr8I35Bb1phFRVKD69Tv35l62KvRu4jzOnZT1zfRybp
+	 rze18C1ITJD0t76qvn9ahIGoqDDjKD7HKoQzgSOvYQvHC3iHPr1huPe8aWq8+QzwtQ
+	 X6LsUzlcrquE5MjRQjnh4wDfOSUsGgvcDRllrhXxT9ooJDpkvahOkwBwtJ2vVYTmab
+	 2ldkuVKvxnSQ+nYsxo4jcFnqPUJu9xRvVkEvey+gqQgUyWoViHRC6dKK6dc/MoCilp
+	 ZseEUZhlmd5tQ==
 From: Andrii Nakryiko <andrii@kernel.org>
 To: bpf@vger.kernel.org,
 	ast@kernel.org,
@@ -52,9 +52,9 @@ Cc: viro@kernel.org,
 	torvalds@linux-foundation.org,
 	Andrii Nakryiko <andrii@kernel.org>,
 	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH bpf-next 6/8] bpf: more trivial fdget() conversions
-Date: Tue, 13 Aug 2024 16:02:58 -0700
-Message-ID: <20240813230300.915127-7-andrii@kernel.org>
+Subject: [PATCH bpf-next 7/8] security,bpf: constify struct path in bpf_token_create() LSM hook
+Date: Tue, 13 Aug 2024 16:02:59 -0700
+Message-ID: <20240813230300.915127-8-andrii@kernel.org>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20240813230300.915127-1-andrii@kernel.org>
 References: <20240813230300.915127-1-andrii@kernel.org>
@@ -66,63 +66,79 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+There is no reason why struct path pointer shouldn't be const-qualified
+when being passed into bpf_token_create() LSM hook. Add that const.
 
-All failure exits prior to fdget() leave the scope, all matching fdput()
-are immediately followed by leaving the scope.
-
-Reviewed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- kernel/bpf/syscall.c | 22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+ include/linux/lsm_hook_defs.h | 2 +-
+ include/linux/security.h      | 4 ++--
+ security/security.c           | 2 +-
+ security/selinux/hooks.c      | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index d75e4e68801e..65dcd92d0b2c 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -4901,33 +4901,25 @@ static int bpf_link_get_info_by_fd(struct file *file,
- static int bpf_obj_get_info_by_fd(const union bpf_attr *attr,
- 				  union bpf_attr __user *uattr)
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 855db460e08b..462b55378241 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -431,7 +431,7 @@ LSM_HOOK(int, 0, bpf_prog_load, struct bpf_prog *prog, union bpf_attr *attr,
+ 	 struct bpf_token *token)
+ LSM_HOOK(void, LSM_RET_VOID, bpf_prog_free, struct bpf_prog *prog)
+ LSM_HOOK(int, 0, bpf_token_create, struct bpf_token *token, union bpf_attr *attr,
+-	 struct path *path)
++	 const struct path *path)
+ LSM_HOOK(void, LSM_RET_VOID, bpf_token_free, struct bpf_token *token)
+ LSM_HOOK(int, 0, bpf_token_cmd, const struct bpf_token *token, enum bpf_cmd cmd)
+ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 1390f1efb4f0..31523a2c71c4 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -2137,7 +2137,7 @@ extern int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+ 				  struct bpf_token *token);
+ extern void security_bpf_prog_free(struct bpf_prog *prog);
+ extern int security_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
+-				     struct path *path);
++				     const struct path *path);
+ extern void security_bpf_token_free(struct bpf_token *token);
+ extern int security_bpf_token_cmd(const struct bpf_token *token, enum bpf_cmd cmd);
+ extern int security_bpf_token_capable(const struct bpf_token *token, int cap);
+@@ -2177,7 +2177,7 @@ static inline void security_bpf_prog_free(struct bpf_prog *prog)
+ { }
+ 
+ static inline int security_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
+-				     struct path *path)
++					    const struct path *path)
  {
--	int ufd = attr->info.bpf_fd;
--	struct fd f;
--	int err;
--
- 	if (CHECK_ATTR(BPF_OBJ_GET_INFO_BY_FD))
- 		return -EINVAL;
- 
--	f = fdget(ufd);
--	if (!fd_file(f))
-+	CLASS(fd, f)(attr->info.bpf_fd);
-+	if (fd_empty(f))
- 		return -EBADFD;
- 
- 	if (fd_file(f)->f_op == &bpf_prog_fops)
--		err = bpf_prog_get_info_by_fd(fd_file(f), fd_file(f)->private_data, attr,
-+		return bpf_prog_get_info_by_fd(fd_file(f), fd_file(f)->private_data, attr,
- 					      uattr);
- 	else if (fd_file(f)->f_op == &bpf_map_fops)
--		err = bpf_map_get_info_by_fd(fd_file(f), fd_file(f)->private_data, attr,
-+		return bpf_map_get_info_by_fd(fd_file(f), fd_file(f)->private_data, attr,
- 					     uattr);
- 	else if (fd_file(f)->f_op == &btf_fops)
--		err = bpf_btf_get_info_by_fd(fd_file(f), fd_file(f)->private_data, attr, uattr);
-+		return bpf_btf_get_info_by_fd(fd_file(f), fd_file(f)->private_data, attr, uattr);
- 	else if (fd_file(f)->f_op == &bpf_link_fops || fd_file(f)->f_op == &bpf_link_fops_poll)
--		err = bpf_link_get_info_by_fd(fd_file(f), fd_file(f)->private_data,
-+		return bpf_link_get_info_by_fd(fd_file(f), fd_file(f)->private_data,
- 					      attr, uattr);
--	else
--		err = -EINVAL;
--
--	fdput(f);
--	return err;
-+	return -EINVAL;
+ 	return 0;
+ }
+diff --git a/security/security.c b/security/security.c
+index 8cee5b6c6e6d..d8d0b67ced25 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -5510,7 +5510,7 @@ int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+  * Return: Returns 0 on success, error on failure.
+  */
+ int security_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
+-			      struct path *path)
++			      const struct path *path)
+ {
+ 	return call_int_hook(bpf_token_create, token, attr, path);
+ }
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 55c78c318ccd..0eec141a8f37 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6965,7 +6965,7 @@ static void selinux_bpf_prog_free(struct bpf_prog *prog)
  }
  
- #define BPF_BTF_LOAD_LAST_FIELD btf_token_fd
+ static int selinux_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
+-				    struct path *path)
++				    const struct path *path)
+ {
+ 	struct bpf_security_struct *bpfsec;
+ 
 -- 
 2.43.5
 
