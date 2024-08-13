@@ -1,111 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-25748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D3F94FB9A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 04:07:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3CD594FBA3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 04:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C491F228CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 02:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704FA281F15
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 02:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4D31BC40;
-	Tue, 13 Aug 2024 02:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AA91173F;
+	Tue, 13 Aug 2024 02:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wntuwfQe"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLZ4cQvA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62451B27D;
-	Tue, 13 Aug 2024 02:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E686AB8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 02:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723514818; cv=none; b=Jdo73GzOrte/xkK8pi7DJjiPC1BEm9VmajPKkemDkCAIPAujWrlz2ca+UHWC748jm8PK8haPaePx4UMsIIY1SRbQkggihTbvrpNT17RT7jO7zVjBTokqwcpf4DJH15ZHY68rg2Jvnm8VIis8PpUlFFMD59bABiiiRVfJWAWVwUA=
+	t=1723515002; cv=none; b=WJKuQ0EbIrK6xSt+rGT5RFi0JJAMuisKDe3Z3qmIuIGgQj8/Bu4u4KfIgHQsJDW6c2kiarrmtK/pOhimNbrfgWqVRxZo5M4HPINi9aCNsLO/SVpkjy0WtUR1q0fD5M6poHM/jAGeWVjJGFKW0sxQJdp08aNswCXt7oqcSNCMFIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723514818; c=relaxed/simple;
-	bh=corVORvV5k/DGCqcVkY6rnEC5BkIcEdPfj2clKEZgII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQmIG0HX8ye8DdnAabRDYWhNrEo61Q3kgqkUpAD9EHkof4ADCBGpfsWXS1Ex5Phyl48L/nFeL670lZqTXc41XeFkjvOw+vWM/264el27ynKbqyqsTlBinAs3hd5PIJl60oHhymswuPJX5dZigcxNbdJFfJnYB1I14Aysk/LRjZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wntuwfQe; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=txsNHBxQvWtLf0VpxS59PXDVocFGq080wGelPeQfVz0=; b=wntuwfQeuuOoqMv0Qf7ZjfFRmV
-	4Tv3wJQChMzeZxtJ71bIS3Arst0jMGCeUUtlXzMyGENsDQcDPugimaIxQnJ63v/xMX9Bx2SKl6kPt
-	pR+0jg4lKgPTJHwnny3VqQO3xgJnaRtJA9s5OsFEpQIPh4hPAmgkizyWkXpQmWJNxIyWCJNJu1mhU
-	B+7salhZ2nOxTpcj6TCO/ulx2mPxb4Kcui5i4gO+YM+v9TjErXQXp5cs2C285mjS+kLIf9i1JbTgO
-	iR6s+EXWk7M5/jbqJA/absXhsT6/zNhIMf52lNYceshXf7ls5qlLbFZ+UYvqUG/Iliq1CMudxdYWh
-	iJ7vlvSQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sdgvz-00000001GNS-3BM1;
-	Tue, 13 Aug 2024 02:06:51 +0000
-Date: Tue, 13 Aug 2024 03:06:51 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Christian Brauner <brauner@kernel.org>, viro@kernel.org,
-	bpf <bpf@vger.kernel.org>,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-	kvm@vger.kernel.org, Network Development <netdev@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 17/39] bpf: resolve_pseudo_ldimm64(): take handling of a
- single ldimm64 insn into helper
-Message-ID: <20240813020651.GJ13701@ZenIV>
-References: <20240730050927.GC5334@ZenIV>
- <20240730051625.14349-1-viro@kernel.org>
- <20240730051625.14349-17-viro@kernel.org>
- <CAEf4BzZipqBVhoY-S+WdeQ8=MhpKk-2dE_ESfGpV-VTm31oQUQ@mail.gmail.com>
- <20240807-fehlschlag-entfiel-f03a6df0e735@brauner>
- <CAEf4BzaeFTn41pP_hbcrCTKNZjwt3TPojv0_CYbP=+973YnWiA@mail.gmail.com>
- <CAADnVQKZW--EOkn5unFybxTKPNw-6rPB+=mY+cy_yUUsXe8R-w@mail.gmail.com>
- <20240810032952.GB13701@ZenIV>
- <CAEf4Bzb=yJKSByBktNXQDd8rqWPNCU9EWziqQhFBnCVuTGKCdg@mail.gmail.com>
+	s=arc-20240116; t=1723515002; c=relaxed/simple;
+	bh=9+E80Lsjcn13gZ6bcfWRidYya32AR9TvenUvK0jOBkU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RvF0p9lDXsGUeohJoucwAoKde5Y27xwzMsjmxEkY4fQFEnjV0cfB+cOtILxfGQe/lZnXfR1qrnkqcgXZjP+NJMFZlHFnVyIpZlIo90ABv9ezEqB3rh5Kj4t0G+HjfEAxkSl6l4ZLfsjeZJaUn6bKWl2sJG6uN42IJlMPwolDI2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLZ4cQvA; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5da6865312eso505281eaf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Aug 2024 19:10:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723515000; x=1724119800; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bWTXWJaSuJqXRYZNghI1V7yuEE01g8xrWbX3wwO/YSg=;
+        b=NLZ4cQvARLfxsNRze7rhDHydhyXetaUYTtroLmKYXROdpWJLObQEz31lu/VcYg7skq
+         ccC/IejGI/V+Mw2AXVEaLc1NIAqmRWKOzJCm/vDVhaCXBf8chRIBIqXb5vTszV9rnuYC
+         GOwSjLocrboHCpyO4praAXK6OXnaCfmAdKfbudaT1fDmIrsI/pKAcdEmpTRQTVPiP1Ld
+         9+nQcMlJiyryjJfHe6lDwcTeVuipheVzim0AD8DiM7jrPr/kewX0FxY7mn2l9TZQiw76
+         v2w0LWkdNIywrDval1zqFaIVLUvWgzOcmpghuU7vfnIYzYnfctsJzKpONxB8K56azpaO
+         jOsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723515000; x=1724119800;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bWTXWJaSuJqXRYZNghI1V7yuEE01g8xrWbX3wwO/YSg=;
+        b=jS0oy/5dYWxnCqePS10T+lMrq9Txs+fuHr/lOTE9J9w1AVYBBdreiw9EeBM8+QXoFv
+         GIlpgG9NxbfJTqtx20iJZT7ACLCVuYcKobNJnPFBnnhJ2sOycSI6dqt/ZsqPsqP9KASp
+         NSdSaHhaDi/vPITpgfqYQ6OkJ2P9a0Hax/QeHseAP1BFK45t4HzQXn4NbIW8vIlcY3Gu
+         vdmyU5/eq2NeiarH6FMKkcNwA+gv2n86z7iWEg9ZBexoBSJ/ydeEWc92B8JsjHfQNN1r
+         kYaiXjI0ox7zA7Tl7ejB+w3AmuGNJ9oO9xAIy9swVxJNd7ZSduChav9dg0BRoxLubOrJ
+         CTlA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/yYrEKIlBo9r9IpFv/exSPvMPnhlVUCbbvncma0K4HUW1byQH5cK2eUeohE9+50HH0d93iOrBE3DVgMNwm2BK+OMl8ya1ql6u99uVJg==
+X-Gm-Message-State: AOJu0YzpaNoIy7TuVLO2FlSvMVdJJxZFeA/2iht+oM4sqhB5NDgHqxj7
+	22uRVnhX+7uiDx2uqxXW4lk/ycX5NeCXnZdWfIuUz9pZktXivGOEka18HtRDZSGoYw/XpWcecvn
+	ax42mQvz6fcsloGX/N1sC4Rp6nZY=
+X-Google-Smtp-Source: AGHT+IHRZrGX87cuGJRiUHttBtwhs8p+UCodXELlCDBbkFapXCMyAly9V29tY8JwT210q4nacgpgx2nFxvBIhZrCkVE=
+X-Received: by 2002:a05:6358:12a6:b0:1aa:d6fe:f424 with SMTP id
+ e5c5f4694b2df-1b19d2ceac7mr295616955d.13.1723515000263; Mon, 12 Aug 2024
+ 19:10:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4Bzb=yJKSByBktNXQDd8rqWPNCU9EWziqQhFBnCVuTGKCdg@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240812090525.80299-1-laoar.shao@gmail.com> <20240812090525.80299-2-laoar.shao@gmail.com>
+ <Zrn0FlBY-kYMftK4@infradead.org> <CALOAHbBd2oCVKsMwcH_YGUWT5LGLWmNSUAZzRPp8j7bBaqc1PQ@mail.gmail.com>
+ <ZroMalgcQFUowTLX@infradead.org>
+In-Reply-To: <ZroMalgcQFUowTLX@infradead.org>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 13 Aug 2024 10:09:24 +0800
+Message-ID: <CALOAHbC=fB0h-YgS9Fr6aTavhPFWKLJzzfM4huYjVaa9+97Y4g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: Add memalloc_nowait_{save,restore}
+To: Christoph Hellwig <hch@infradead.org>
+Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, david@fromorbit.com, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, Kent Overstreet <kent.overstreet@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 01:05:19PM -0700, Andrii Nakryiko wrote:
-> On Fri, Aug 9, 2024 at 8:29???PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Mon, Aug 12, 2024 at 9:21=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Mon, Aug 12, 2024 at 08:59:53PM +0800, Yafang Shao wrote:
 > >
-> > On Thu, Aug 08, 2024 at 09:51:34AM -0700, Alexei Starovoitov wrote:
+> > I don=E2=80=99t see any incompatibility in __alloc_pages_slowpath(). Th=
+e
+> > ~__GFP_DIRECT_RECLAIM flag only ensures that direct reclaim is not
+> > performed, but it doesn=E2=80=99t prevent the allocation of pages from
+> > ALLOC_MIN_RESERVE, correct?
 > >
-> > > The bpf changes look ok and Andrii's approach is easier to grasp.
-> > > It's better to route bpf conversion to CLASS(fd,..) via bpf-next,
-> > > so it goes through bpf CI and our other testing.
-> > >
-> > > bpf patches don't seem to depend on newly added CLASS(fd_pos, ...
-> > > and fderr, so pretty much independent from other patches.
+> > > and thus will lead to kernel crashes.
 > >
-> > Representation change and switch to accessors do matter, though.
-> > OTOH, I can put just those into never-rebased branch (basically,
-> > "introduce fd_file(), convert all accessors to it" +
-> > "struct fd representation change" + possibly "add struct fd constructors,
-> > get rid of __to_fd()", for completeness sake), so you could pull it.
-> > Otherwise you'll get textual conflicts on all those f.file vs. fd_file(f)...
-> 
-> Yep, makes sense. Let's do that, we can merge that branch into
-> bpf-next/master and I will follow up with my changes on top of that.
-> 
-> Let's just drop the do_one_ldimm64() extraction, and keep fdput(f)
-> logic, plus add fd_file() accessor changes. I'll then add a switch to
-> CLASS(fd) after a bit more BPF-specific clean ups. This code is pretty
-> sensitive, so I'd rather have all the non-trivial refactoring done
-> separately. Thanks!
+> > Could you please explain in detail where this might lead to kernel cras=
+hes?
+>
+> Sorry, I misread your patch as doing what your subject says.
+> A nestable noreclaim is probably fine, but please name it that way,
+> as memalloc_nowait_{save,restore} implies a context version
+> of GFP_NOWAIT.
 
-Done (#stable-struct_fd); BTW, which tree do you want "convert __bpf_prog_get()
-to CLASS(fd)" to go through?
+There are already memalloc_noreclaim_{save,restore} which imply __GFP_MEMAL=
+LOC:
+
+  memalloc_noreclaim_save - Marks implicit __GFP_MEMALLOC scope.
+
+That is why I name it memalloc_nowait_{save,restore}. GFP_NOWAIT has
+the same meaning with ~__GFP_DIRECT_RECLAIM:
+
+  %GFP_NOWAIT is for kernel allocations that should not stall for direct
+  reclaim, start physical IO or use any filesystem callback.
+
+--=20
+Regards
+Yafang
 
