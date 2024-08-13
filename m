@@ -1,260 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-25765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25766-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00F79501F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 12:05:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD309501F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 12:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19456B29825
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 10:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C06B1C2194E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 10:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7866119AD85;
-	Tue, 13 Aug 2024 10:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5509518DF62;
+	Tue, 13 Aug 2024 10:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gB7aL9K8"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OTFC0ea9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F9819AD81
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 10:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E6817B4FA
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 10:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543401; cv=none; b=WxxRM/UhV+JHAgk5C9z3cMMuA0l2zW3+6DaXA002IzQ7cOAPHxSO1RE14sxa0C+xYQG4mopCZRiAfhleGnhGf8+S8E2KRAnNtWqhIVYgS4ypfaJoKDbt8z7RT+y23/I0yQ5yhtMR4prsscbWD3OR+lunydMJcTTRa5o6x5Xhv+o=
+	t=1723543521; cv=none; b=RSJH2uDAkBqlns6l0yvzDzY0Emn7uyhtdcDbUEEEnkuOMNyYddqr5PQeDHZPP2T/n/JlBjNCsysx5U66Dai9SfXq7/uQ/qJ9oHLQmEYBL6iKaUpdHXpJ3Wn4NvM5cYEqhb9QpLLXLRC9ZBYrczVWwPEklwsUjwvG75QLPcmtv7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543401; c=relaxed/simple;
-	bh=ZaRZPIKMb9tT1bgJXnZN+jAzi+AtsUj/jTsR+EdbRoQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gv2oe8XuKp0IiSQyh3cmG0MH8Mq9AooWkL4AcsLRCnY4LWoMNLA8d9kgyr3fc7VrrVhxyeCfICyROVgjTMbJcKFoDK9BzkOGih49InR2orERsRzeXBH3lFQZO94QGMNOh/vMAtWHpZzB4hRU7X9l4D4dzKwFv/bnt0rgLNBGwzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gB7aL9K8; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7a10b293432so3740408a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 03:03:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723543399; x=1724148199; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NoxN63bBPaM/wCd8ZvlEoxvS8xfn7jCuCDDPzEXx9AA=;
-        b=gB7aL9K8rxT92KTPA0kUHFxVnq8g92F1/0AKw6e+zNZQ1SNqtgs+5iCbJPK89PagJa
-         YQF478bmuSxDbkLlx5Qq1QqS0aH740VuEc7k8iTU5Yrjj61C/lmA74GZIHLWGEM+7FuR
-         AA1zaADBs8Ye7lXJUM/vy2HwYIvJ9E2jt4A3Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723543399; x=1724148199;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NoxN63bBPaM/wCd8ZvlEoxvS8xfn7jCuCDDPzEXx9AA=;
-        b=dAjP/fjWI+CZyQog6dYB4DbOC6SAfkYT71GufDr+RyS/k9Zn9qmQqn8//TsQ/sNgQt
-         iH9Z1YXgWfQs1DBmHgwsFwiseFiz4itHH/mK/NJzkyz6M4TBr/2+gmozFnvXxUSA38FC
-         wbT8FdW9uTmWE5TRL6qOQwflG4/L8EWg+xN+jqiD1GsuFOOdcGyTkxQN1y3zTJ6AiLVb
-         7jwPVS+EQ4drsy4u9dHh7B26WGtltvnCvqh1yGSMFc7JjRiPapwRAXVPsmH84W9VjAaj
-         4smLkVasdL9KFDUNPuafsB+kxZHL6V7HKGniP2mdlTu/KJ3YoSIHVfEa45y5cuLxJ6RA
-         37lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxtT3TAI4AZcZAsexM7/nqKlD+0WprhP1d/igKyjN0MEa5xBWSl+8PFCsgF5vDB0f5O1MICyWkbwyM1KyafilVsMjihTjsE/JXOLNBOQ==
-X-Gm-Message-State: AOJu0YwztC229d7RHOdty38KoRB3xn2vK4Tu4CoCexZjr6UzeUZd/HE6
-	vzQVbclOq8hPY+nOwAOWTLZ2phY5H/cQcsVaraEx63JkDGoQYjaigfF4+Lk6
-X-Google-Smtp-Source: AGHT+IFosWR7zkd7jgDT2HviKT6vEjybZ5RhsLylZWQSu4p1a07i1ADAXGsNcDrKZxIxqrj/LlkKPw==
-X-Received: by 2002:a05:6a20:96c8:b0:1c8:d7b7:dcbd with SMTP id adf61e73a8af0-1c8d7b7dcf2mr2811688637.1.1723543399534;
-        Tue, 13 Aug 2024 03:03:19 -0700 (PDT)
-Received: from localhost (0.223.81.34.bc.googleusercontent.com. [34.81.223.0])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-7c697a549d8sm944650a12.67.2024.08.13.03.03.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 03:03:18 -0700 (PDT)
-From: Takaya Saeki <takayas@chromium.org>
-To: Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Junichi Uekawa <uekawa@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Takaya Saeki <takayas@chromium.org>
-Subject: [PATCH v3] filemap: add trace events for get_pages, map_pages, and fault
-Date: Tue, 13 Aug 2024 10:03:12 +0000
-Message-ID: <20240813100312.3930505-1-takayas@chromium.org>
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+	s=arc-20240116; t=1723543521; c=relaxed/simple;
+	bh=mcVXGd7HEj3qie/WwvYJrS76ohzixIpRyTnktrmAATU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKf1A4rx3n8S21m+a088rt8ofvozDdzQ6QnJoREfOVKoV1cRPY/50xzRl5qFBctVZAJNEe9T136VI5/qfeT7kX2Rzrm+X/MvqMfYzyyerEQvSTzfvwu4+aWqJN/OClM2qAK2etUhOwvP00xa1tmrT3MDfpnm+xbYCRJcCy/f03E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OTFC0ea9; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wjn7X6y2ZzDSX;
+	Tue, 13 Aug 2024 12:05:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723543512;
+	bh=4ouoaXjq3cssWM64uNKVrlNuRIEzdBnGbfaxp1fhKEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OTFC0ea96KOVuNXqUg9PashAKp+Egn6zWk/QOCye+vFUNX0LRrPZ8MU/NninpLGzb
+	 ++vK198kk9pGicr6j0vBkcqOUKb3lPT2liAlmBwZcBbfhLoDmenI9ShiNbojHVCYqj
+	 VCguEmZILYGfE561ONQl3v/qGGk+OQGEbxUalaOo=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wjn7W5lGDzKHQ;
+	Tue, 13 Aug 2024 12:05:11 +0200 (CEST)
+Date: Tue, 13 Aug 2024 12:05:06 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook
+ inconsistencies
+Message-ID: <20240813.la2Aiyico3lo@digikod.net>
+References: <20240812174421.1636724-1-mic@digikod.net>
+ <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-To allow precise tracking of page caches accessed, add new tracepoints
-that trigger when a process actually accesses them.
+On Mon, Aug 12, 2024 at 06:26:58PM -0400, Paul Moore wrote:
+> On Mon, Aug 12, 2024 at 1:44 PM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
+> > for the related file descriptor.  Before this change, the
+> > file_set_fowner LSM hook was used to store this information.  However,
+> > there are three issues with this approach:
+> >
+> > - Because security_file_set_fowner() only get one argument, all hook
+> >   implementations ignore the VFS logic which may not actually change the
+> >   process that handles SIGIO (e.g. TUN, TTY, dnotify).
+> >
+> > - Because security_file_set_fowner() is called before f_modown() without
+> >   lock (e.g. f_owner.lock), concurrent F_SETOWN commands could result to
+> >   a race condition and inconsistent LSM states (e.g. SELinux's fown_sid)
+> >   compared to struct fown_struct's UID/EUID.
+> >
+> > - Because the current hook implementations does not use explicit atomic
+> >   operations, they may create inconsistencies.  It would help to
+> >   completely remove this constraint, as well as the requirements of the
+> >   RCU read-side critical section for the hook.
+> >
+> > Fix these issues by replacing f_owner.uid and f_owner.euid with a new
+> > f_owner.cred [1].  This also saves memory by removing dedicated LSM
+> > blobs, and simplifies code by removing file_set_fowner hook
+> > implementations for SELinux and Smack.
+> >
+> > This changes enables to remove the smack_file_alloc_security
+> > implementation, Smack's file blob, and SELinux's
+> > file_security_struct->fown_sid field.
+> >
+> > As for the UID/EUID, f_owner.cred is not always updated.  Move the
+> > file_set_fowner hook to align with the VFS semantic.  This hook does not
+> > have user anymore [2].
+> >
+> > Before this change, f_owner's UID/EUID were initialized to zero
+> > (i.e. GLOBAL_ROOT_UID), but to simplify code, f_owner's cred is now
+> > initialized with the file descriptor creator's credentials (i.e.
+> > file->f_cred), which is more consistent and simplifies LSMs logic.  The
+> > sigio_perm()'s semantic does not need any change because SIGIO/SIGURG
+> > are only sent when a process is explicitly set with __f_setown().
+> >
+> > Rename f_modown() to __f_setown() to simplify code.
+> >
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > Link: https://lore.kernel.org/r/20240809-explosionsartig-ablesen-b039dbc6ce82@brauner [1]
+> > Link: https://lore.kernel.org/r/CAHC9VhQY+H7n2zCn8ST0Vu672UA=_eiUikRDW2sUDSN3c=gVQw@mail.gmail.com [2]
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> >
+> > Changes since v1:
+> > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
+> > - Add back the file_set_fowner hook (but without user) as
+> >   requested by Paul, but move it for consistency.
+> > ---
+> >  fs/fcntl.c                        | 42 +++++++++++++++----------------
+> >  fs/file_table.c                   |  3 +++
+> >  include/linux/fs.h                |  2 +-
+> >  security/security.c               |  5 +++-
+> >  security/selinux/hooks.c          | 22 +++-------------
+> >  security/selinux/include/objsec.h |  1 -
+> >  security/smack/smack.h            |  6 -----
+> >  security/smack/smack_lsm.c        | 39 +---------------------------
+> >  8 files changed, 33 insertions(+), 87 deletions(-)
+> >
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index 300e5d9ad913..4217b66a4e99 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, unsigned int arg)
+> >         return error;
+> >  }
+> >
+> > -static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> > -                     int force)
+> > +void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> > +               int force)
+> >  {
+> >         write_lock_irq(&filp->f_owner.lock);
+> >         if (force || !filp->f_owner.pid) {
+> > @@ -97,20 +97,15 @@ static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> >                 filp->f_owner.pid_type = type;
+> >
+> >                 if (pid) {
+> > -                       const struct cred *cred = current_cred();
+> > -                       filp->f_owner.uid = cred->uid;
+> > -                       filp->f_owner.euid = cred->euid;
+> > +                       security_file_set_fowner(filp);
+> > +                       put_cred(rcu_replace_pointer(
+> > +                               filp->f_owner.cred,
+> > +                               get_cred_rcu(current_cred()),
+> > +                               lockdep_is_held(&filp->f_owner.lock)));
+> >                 }
+> >         }
+> >         write_unlock_irq(&filp->f_owner.lock);
+> >  }
+> 
+> Looking at this quickly, why can't we accomplish pretty much the same
+> thing by moving the security_file_set_fowner() into f_modown (as
+> you've done above) and leveraging the existing file->f_security field
+> as Smack and SELinux do today?  I'm seeing a lot of churn to get a
+> cred pointer into fown_struct which doesn't seem to offer that much
+> additional value.
 
-The ureadahead program used by ChromeOS traces the disk access of
-programs as they start up at boot up. It uses mincore(2) or the
-'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
-this information in a "pack" file and on subsequent boots, it will read
-the pack file and call readahead(2) on the information so that disk
-storage can be loaded into RAM before the applications actually need it.
+As explained in the commit message, this patch removes related LSM
+(sub)blobs because they are duplicates of what's referenced by the new
+f_owner.cred, which is a more generic approach and saves memory.  That's
+why the v1 entirely removed the LSM hook, which is now useless.
 
-A problem we see is that due to the kernel's readahead algorithm that
-can aggressively pull in more data than needed (to try and accomplish
-the same goal) and this data is also recorded. The end result is that
-the pack file contains a lot of pages on disk that are never actually
-used. Calling readahead(2) on these unused pages can slow down the
-system boot up times.
+Also, f_modown() is renamed to __f_setown().
 
-To solve this, add 3 new trace events, get_pages, map_pages, and fault.
-These will be used to trace the pages are not only pulled in from disk,
-but are actually used by the application. Only those pages will be
-stored in the pack file, and this helps out the performance of boot up.
+> 
+> From what I can see this seems really focused on adding a cred
+> reference when it isn't clear an additional one is needed.  If a new
+> cred reference *is* needed, please provide an explanation as to why;
+> reading the commit description this isn't clear.  Of course, if I'm
+> mistaken, feel free to correct me, although I'm sure all the people on
+> the Internet don't need to be told that ;)
 
-With the combination of these 3 new trace events and
-mm_filemap_add_to_page_cache, we observed a reduction in the pack file
-by 7.3% - 20% on ChromeOS varying by device.
-
-Signed-off-by: Takaya Saeki <takayas@chromium.org>
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changelog between v3 and v2
-- Use a range notation in the printf format 
-
-Changelog between v2 and v1
-- Fix a file offset type usage by casting pgoff_t to loff_t
-- Fix format string of dev and inode
-
- include/trace/events/filemap.h | 84 ++++++++++++++++++++++++++++++++++
- mm/filemap.c                   |  4 ++
- 2 files changed, 88 insertions(+)
-
-V2:https://lore.kernel.org/all/20240620161903.3176859-1-takayas@chromium.org/
-V1:https://lore.kernel.org/all/20240618093656.1944210-1-takayas@chromium.org/
-
-diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
-index 46c89c1e460c..f48fe637bfd2 100644
---- a/include/trace/events/filemap.h
-+++ b/include/trace/events/filemap.h
-@@ -56,6 +56,90 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
- 	TP_ARGS(folio)
- 	);
- 
-+DECLARE_EVENT_CLASS(mm_filemap_op_page_cache_range,
-+
-+	TP_PROTO(
-+		struct address_space *mapping,
-+		pgoff_t index,
-+		pgoff_t last_index
-+	),
-+
-+	TP_ARGS(mapping, index, last_index),
-+
-+	TP_STRUCT__entry(
-+		__field(unsigned long, i_ino)
-+		__field(dev_t, s_dev)
-+		__field(unsigned long, index)
-+		__field(unsigned long, last_index)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->i_ino = mapping->host->i_ino;
-+		if (mapping->host->i_sb)
-+			__entry->s_dev =
-+				mapping->host->i_sb->s_dev;
-+		else
-+			__entry->s_dev = mapping->host->i_rdev;
-+		__entry->index = index;
-+		__entry->last_index = last_index;
-+	),
-+
-+	TP_printk(
-+		"dev=%d:%d ino=%lx ofs=%lld-%lld",
-+		MAJOR(__entry->s_dev),
-+		MINOR(__entry->s_dev), __entry->i_ino,
-+		((loff_t)__entry->index) << PAGE_SHIFT,
-+		((((loff_t)__entry->last_index + 1) << PAGE_SHIFT) - 1)
-+	)
-+);
-+
-+DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_get_pages,
-+	TP_PROTO(
-+		struct address_space *mapping,
-+		pgoff_t index,
-+		pgoff_t last_index
-+	),
-+	TP_ARGS(mapping, index, last_index)
-+);
-+
-+DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_map_pages,
-+	TP_PROTO(
-+		struct address_space *mapping,
-+		pgoff_t index,
-+		pgoff_t last_index
-+	),
-+	TP_ARGS(mapping, index, last_index)
-+);
-+
-+TRACE_EVENT(mm_filemap_fault,
-+	TP_PROTO(struct address_space *mapping, pgoff_t index),
-+
-+	TP_ARGS(mapping, index),
-+
-+	TP_STRUCT__entry(
-+		__field(unsigned long, i_ino)
-+		__field(dev_t, s_dev)
-+		__field(unsigned long, index)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->i_ino = mapping->host->i_ino;
-+		if (mapping->host->i_sb)
-+			__entry->s_dev =
-+				mapping->host->i_sb->s_dev;
-+		else
-+			__entry->s_dev = mapping->host->i_rdev;
-+		__entry->index = index;
-+	),
-+
-+	TP_printk(
-+		"dev=%d:%d ino=%lx ofs=%lld",
-+		MAJOR(__entry->s_dev),
-+		MINOR(__entry->s_dev), __entry->i_ino,
-+		((loff_t)__entry->index) << PAGE_SHIFT
-+	)
-+);
-+
- TRACE_EVENT(filemap_set_wb_err,
- 		TP_PROTO(struct address_space *mapping, errseq_t eseq),
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d62150418b91..925eef5e16f0 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2556,6 +2556,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
- 			goto err;
- 	}
- 
-+	trace_mm_filemap_get_pages(mapping, index, last_index);
- 	return 0;
- err:
- 	if (err < 0)
-@@ -3287,6 +3288,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	if (unlikely(index >= max_idx))
- 		return VM_FAULT_SIGBUS;
- 
-+	trace_mm_filemap_fault(mapping, index);
-+
- 	/*
- 	 * Do we have something in the page cache already?
- 	 */
-@@ -3653,6 +3656,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
- 	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
- 	add_mm_counter(vma->vm_mm, folio_type, rss);
- 	pte_unmap_unlock(vmf->pte, vmf->ptl);
-+	trace_mm_filemap_map_pages(mapping, start_pgoff, end_pgoff);
- out:
- 	rcu_read_unlock();
- 
--- 
-2.46.0.76.ge559c4bf1a-goog
-
+This is a more generic approach that saves memory, sticks to the VFS
+semantic, and removes code.  So I'd say it's a performance improvement,
+it saves memory, it fixes the LSM/VFS inconsistency, it guarantees
+that the VFS semantic is always visible to each LSMs thanks to the use
+of the same f_owner.cred, and it avoids LSM mistakes (except if an LSM
+implements the now-useless hook).
 
