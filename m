@@ -1,208 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-25816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBA5950C67
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 20:39:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE865950D19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 21:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96705285015
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 18:39:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 601F3B286CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Aug 2024 19:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295181A3BA0;
-	Tue, 13 Aug 2024 18:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F1A1A4F13;
+	Tue, 13 Aug 2024 19:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WozYlAm2"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NQ5CaaBR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eUlLWPNz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fipF3S6l";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6i5+tYsn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1CA1A38F7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 18:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CD419D089;
+	Tue, 13 Aug 2024 19:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723574338; cv=none; b=aC+zeP4AfSjRbBmUro1NLNwUUXLNbFLwmQHStbeM3c7Yt3GWZxURp7mzei+x96i+7RbAzf7hwRIU2FFueI6Haphd46k+Pv8vGrERu+fhKkkWzHghuH7486KfrMS6of2P9KdNgRGoTKcUk/Fa1V0Jfwmf0lJhY/9Mn5ukH2LWhTI=
+	t=1723577127; cv=none; b=S4GswYsxfaoTUlMhCveeUwPqPRoXHSMvFs6Mj317IS9lSXz02RCXyb7dsdwcvk0HUbNn5EkWk3y+tzAzX4t6USDd8Ra5Il5cm6fcpVW1e2Go8jVU2JAuHusID4BHgCyPfStVyUK3IVejwYPsyySU/m+HCPzjQmzK6irvfu/BZw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723574338; c=relaxed/simple;
-	bh=QLBms9jm35gcWLy69kgtiXdP9NCp+gHBrxBGtJCSUQI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fsZB+odDF3U/0gkxHiyXIwKpolwlmXmALugo+6W4SmYKIJsZBZ3wcR0UkS5rxCC2r9nfAEHrbeY1YbymGA/XfXqcouOGpU09zkTFXE0uZrSBYQunopsRTvX06U+NA3PNegemiL1nEnRwt3eXzJDew7bm7IANwfCkVvHSR/Bl5EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WozYlAm2; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44ff99fcd42so31597391cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 11:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723574336; x=1724179136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vl7nqGi3lOoOY6/lgGA3zFM73EovJBpH/t+hkyv7UI8=;
-        b=WozYlAm2qbm3lx/QZkkaDxjR5sJ/MuzMp75nCFucorEFYx/kOetBJZBpB/uSY9yCqS
-         TUKHNXmYjG7ny3KnmbHyGg5d/fcP4sFmtbvrLV9laNQDFiBquskNcYuxsciWmMQ0vbgv
-         9mGHuvnSn/5q0gZmMBOMGG35uo1gDWFnG1UBuS8c3AMlJjvXmhjnuabzhK7t5wbzjd0y
-         Yhd/v93M88fUZHHXAfuijI0BhOyLFNNJrAa/RVzswnlYRsokiKPRu9ejeZhP9PkiFv9L
-         V8PlCnzVWlsKSYjIw9K9rVKE8ESiLrIzdRlQFHGL+9AGXtQ8Gbdc/f4wNBG5QUIFOu5D
-         7n3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723574336; x=1724179136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vl7nqGi3lOoOY6/lgGA3zFM73EovJBpH/t+hkyv7UI8=;
-        b=kVeTKYcwybh3NLKwYvqbgTMuxddJMeXVWBWP9kYNBgonuDqCxYtD3WAjHl0fGtmXtx
-         vts1Fgkl9MwYGgc8rH7/ADd5lzo+O3VfL/WvdMZgGYpFbgZ9xpfMTCmEBvQpjSC6o/NJ
-         WwraRUnJtUFbWvsjBXQ7qwDtszHGxBtUFdzTes8sijlsHbPO4+sXhAfvIfXgQV5Wm+4L
-         lRKJtWs3RDvO/pCGr8iYkXwHH5pw7VMxifTosdDwuZ6sXKAatlWfmiJB9zwr6sSd/3Ky
-         XIbNrq+Sx80RIvD3JNpCoMsYAyxhMVUrMBoOtacPeNXqXnayvFsqA06w6+R+BQFIx3e8
-         Jqag==
-X-Forwarded-Encrypted: i=1; AJvYcCUgtFejnnjHunx6a4H9PL4OjVmCNSMo+YQ8p6nraONBo2N/y81CDs1kN3333q2WW7TZ0mmrEUuAmvojrkVHTo8uXqZdVD+/pZv0QcMTdA==
-X-Gm-Message-State: AOJu0YytKnwVkQN0HdzBPr4MpCeT36LmkfpXIvYnjN4C7T0UTnwJsAL+
-	QcP1cD/I9mmOfgC8WIbRrKNEYFkLQMJ6+VGUdQ8C7ADNXtpj1jkKP0q2L85qBxkDfkpgsAYK7fE
-	pGdI4PeQ/NbLrcnR7OhoRg3S2aRk=
-X-Google-Smtp-Source: AGHT+IHNEn9NZiHYBr5PA5hASKl9WuMjPkM8GjE3iQ3ymfjAuPYlUMcsfxvIKUXEL1UA71PG9ueV1PPlAMgi+N4kwtg=
-X-Received: by 2002:a05:622a:1f98:b0:44f:f06a:d6f5 with SMTP id
- d75a77b69052e-4535bb370dcmr2900581cf.36.1723574335793; Tue, 13 Aug 2024
- 11:38:55 -0700 (PDT)
+	s=arc-20240116; t=1723577127; c=relaxed/simple;
+	bh=Mt6cj9PlVfv2J3ubnFH9Qln42zBuj+jvEHFHpAtHF1E=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:References:Message-Id:
+	 MIME-Version:Content-Type; b=PxJiHAhWFYmjM7s1xPSco4VghftqHMoOabFStjNNNAYgoJCmvSJBcw2YX6DkCsZtV4fxoIRIASFedP14AtWskAwZFNVN7nKJrAofgCu2npP+PFW/wUXEElXxT2uuCylIT6e5tfO1x6UsWknBn2sZmha7HZhV3z6bHERXqxok55I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NQ5CaaBR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eUlLWPNz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fipF3S6l; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6i5+tYsn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E0A812271D;
+	Tue, 13 Aug 2024 19:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723577123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ugKjNhRMNgwXJ5EiAXRajci6DMtc6jQk92sVFu7H7iM=;
+	b=NQ5CaaBRddWSnMj4ZrG6aoAM08iZw7wD44tyM7DnCEmnWDpJxeP1j66fbCfsadIUIGDYal
+	XxnD77id68+gHQop1R27V4bRkahiAUgvuyQ24aMqnzKAmK7XA8GVqnyiX2KWpLWyaDd2wm
+	p8TknCMuVzyKnUZ4xjkhdgn9gARhJso=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723577123;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ugKjNhRMNgwXJ5EiAXRajci6DMtc6jQk92sVFu7H7iM=;
+	b=eUlLWPNz2tljd0J/s2l2TeE2zpowpXOn9ntXbcSEmyMymjK20a+kB8DbT6NR5nVuXv1GKP
+	XcdGEgWsrmwY3JBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723577121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ugKjNhRMNgwXJ5EiAXRajci6DMtc6jQk92sVFu7H7iM=;
+	b=fipF3S6lPpRW5BttneiBdn0b1F9NpjtIWSH5au0LrNgAQ4cecqZN0MmrqfC/SV9ZfyezG8
+	Qy8MoyDokytUSJnduUPvjib3wgcfvVey08Rorg6C3Z+pGAAJtzUzv/EAmMnX8C8xK6/NQj
+	XbSgyWiIilAolivj5cIL4GJuuMbrvAE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723577121;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ugKjNhRMNgwXJ5EiAXRajci6DMtc6jQk92sVFu7H7iM=;
+	b=6i5+tYsnvwloc3G2zIj6gi9Rul5fUQ2n0bRG3ZrefsCnqOXYSunlSsY2DKpf0or+HWOSsf
+	tQkpFJ7c4TQh+LCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4F8A136A2;
+	Tue, 13 Aug 2024 19:25:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6Ww7IiGzu2ZGeQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 13 Aug 2024 19:25:21 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] unicode: constify utf8 data table
+In-Reply-To: <20240809-unicode-const-v1-1-69968a258092@weissschuh.net>
+Date: Tue, 13 Aug 2024 15:22:59 -0400
+References: <20240809-unicode-const-v1-1-69968a258092@weissschuh.net>
+Message-Id: <172357697992.2513606.16354340416648362105.b4-ty@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808190110.3188039-1-joannelkoong@gmail.com>
- <20240808190110.3188039-2-joannelkoong@gmail.com> <3754bc57-a887-4ac1-86cd-7858bacdb595@fastmail.fm>
-In-Reply-To: <3754bc57-a887-4ac1-86cd-7858bacdb595@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 13 Aug 2024 11:38:44 -0700
-Message-ID: <CAJnrk1ae7V01GwegJBfGcUPUBS0Exg1bXsy=d05LEdSbcdryNQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] fuse: add optional kernel-enforced timeout for requests
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	jefflexu@linux.alibaba.com, laoar.shao@gmail.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-
-On Tue, Aug 13, 2024 at 10:04=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 8/8/24 21:01, Joanne Koong wrote:
->
-> > @@ -1951,9 +2115,10 @@ static ssize_t fuse_dev_do_write(struct fuse_dev=
- *fud,
-> >               goto copy_finish;
-> >       }
-> >
-> > +     __fuse_get_request(req);
-> > +
-> >       /* Is it an interrupt reply ID? */
-> >       if (oh.unique & FUSE_INT_REQ_BIT) {
-> > -             __fuse_get_request(req);
-> >               spin_unlock(&fpq->lock);
-> >
-> >               err =3D 0;
-> > @@ -1969,6 +2134,13 @@ static ssize_t fuse_dev_do_write(struct fuse_dev=
- *fud,
-> >               goto copy_finish;
-> >       }
-> >
-> > +     if (test_and_set_bit(FR_FINISHING, &req->flags)) {
-> > +             /* timeout handler is already finishing the request */
-> > +             spin_unlock(&fpq->lock);
-> > +             fuse_put_request(req);
-> > +             goto copy_finish;
-> > +     }
-> > +
->
-> It should be safe already with the FR_FINISHING flag and
-> timer_delete_sync, but maybe we could unset req->fpq here to make that
-> easier to read and to be double sure?
-
-Sure, I can add this into v4. I'll add a comment as well explaining
-that it's not necessary but is here as a safeguard to ensure that the
-timeout handler is a no-op.
-
->
-> >       clear_bit(FR_SENT, &req->flags);
-> >       list_move(&req->list, &fpq->io);
-> >       req->out.h =3D oh;
-> > @@ -1995,6 +2167,7 @@ static ssize_t fuse_dev_do_write(struct fuse_dev =
-*fud,
-> >       spin_unlock(&fpq->lock);
-> >
-> >       fuse_request_end(req);
-> > +     fuse_put_request(req);
-> >  out:
-> >       return err ? err : nbytes;
-> >
-> > @@ -2260,13 +2433,21 @@ int fuse_dev_release(struct inode *inode, struc=
-t file *file)
-> >       if (fud) {
-> >               struct fuse_conn *fc =3D fud->fc;
-> >               struct fuse_pqueue *fpq =3D &fud->pq;
-> > +             struct fuse_req *req;
-> >               LIST_HEAD(to_end);
-> >               unsigned int i;
-> >
-> >               spin_lock(&fpq->lock);
-> >               WARN_ON(!list_empty(&fpq->io));
-> > -             for (i =3D 0; i < FUSE_PQ_HASH_SIZE; i++)
-> > +             for (i =3D 0; i < FUSE_PQ_HASH_SIZE; i++) {
-> > +                     /*
-> > +                      * Set the req error here so that the timeout
-> > +                      * handler knows it's being released
-> > +                      */
-> > +                     list_for_each_entry(req, &fpq->processing[i], lis=
-t)
-> > +                             req->out.h.error =3D -ECONNABORTED;
-> >                       list_splice_init(&fpq->processing[i], &to_end);
-> > +             }
-> >               spin_unlock(&fpq->lock);
-> >
-> >               end_requests(&to_end);
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index f23919610313..2b616c5977b4 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -375,6 +375,8 @@ struct fuse_io_priv {
-> >   * FR_FINISHED:              request is finished
-> >   * FR_PRIVATE:               request is on private list
-> >   * FR_ASYNC:         request is asynchronous
-> > + * FR_FINISHING:     request is being finished, by either the timeout =
-handler
-> > + *                   or the reply handler
-> >   */
-> >  enum fuse_req_flag {
-> >       FR_ISREPLY,
-> > @@ -389,6 +391,7 @@ enum fuse_req_flag {
-> >       FR_FINISHED,
-> >       FR_PRIVATE,
-> >       FR_ASYNC,
-> > +     FR_FINISHING,
-> >  };
-> >
-> >  /**
-> > @@ -435,6 +438,12 @@ struct fuse_req {
-> >
-> >       /** fuse_mount this request belongs to */
-> >       struct fuse_mount *fm;
-> > +
-> > +     /** page queue this request has been added to */
-> > +     struct fuse_pqueue *fpq;
->
-> Processing queue?
-
-You're right, this should be "processing queue", I'll make this change in v=
-4.
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.989];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
 
-Thanks,
-Joanne
->
->
-> Thanks,
-> Bernd
+On Fri, 09 Aug 2024 17:38:53 +0200, Thomas Wei=C3=9Fschuh wrote:
+> All users already handle the table as const data.
+> Move the table itself into .rodata to guard against accidental or
+> malicious modifications.
+
+Applied, thanks!
+
+[1/1] unicode: constify utf8 data table
+      commit: 43bf9d9755bd21970d8382dc88f071f74fc18fbf
+
+Best regards,
+--=20
+Gabriel Krisman Bertazi
 
