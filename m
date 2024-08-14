@@ -1,109 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-25898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC95951814
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 11:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6049519CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 13:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 417A41C213BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 09:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAD3280CA4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 11:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB4F19FA86;
-	Wed, 14 Aug 2024 09:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD0A1AED33;
+	Wed, 14 Aug 2024 11:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sIlQHpec"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="dfvJ/BYc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E2613E8A5;
-	Wed, 14 Aug 2024 09:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF921442F7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 11:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723629373; cv=none; b=E2QP9QoRSGtuLBJ90b1YX3AXbmfUVveK82EaoAC4rrQUFPsDx7n/2Rs1CcYpjsL5Khwsq7+rsnDaKxNcFcii6J5CWlg/wsMAlrvSGxRPkCy40Z6me3tjKEUZ595KSiZsal6HMh4OJNTAcsHPzf55cN1CxHq4Mln81knLnuZ29+I=
+	t=1723634664; cv=none; b=nIgdNynsWqDsLX5QF4UOShWRg4LtUpGJV9xYpzePukLsWGsaQ4/OhzQs2Yr42Cf6mASYDJw7GPcNQjun1c9LDKwUBTWBKs9ZixUlVsFAOMqzDu4weVzAfz+lmljGD/105h4SJ9o9tvW5ukpzfsKGERk3TyHKJqPu3GWOt559K90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723629373; c=relaxed/simple;
-	bh=pgXrhGyXFiJp2u9xmhk5ZGF/2T7Qp2CzM2cvoE6iQMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YhaC0W7XWEREZUDCxkhLAVwxwBv+ENPtHC/6vX/P/KVIPjsxevk3FgfUWPRsvzIlgJ9LF0DXSg3NGs4g5cFwVlbLbXLoSjtoPLOX8j0lL26pajyDPVdWDzq+4im8FWbl55wmyzLjM7JBudlYvDzrepUub/z91tykzxl+WWxcu1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sIlQHpec; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723629368; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=rZmzJsrFiA02elDROcrJ0lc8mmUbPT+8Svhl6m6pUbI=;
-	b=sIlQHpecC/DmY07X8yJB4RnJL3Pz24+onUjgYE4v4c5mkptLkogOEFkhhmRywZI9pRWVotZdau67S0fGwpkRSkL8Gue7FHkK91oug2vyZnhdg6ujYuYRV9XOT5PAT+oODLxkMW0r5HIuAjMpV0Yg5KqzLsJPEhUA5Sqn+kc1lPs=
-Received: from 30.221.146.67(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WCsVv0F_1723629367)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Aug 2024 17:56:08 +0800
-Message-ID: <8e235c73-faac-4cb7-bc6a-e1eea5075cbe@linux.alibaba.com>
-Date: Wed, 14 Aug 2024 17:56:06 +0800
+	s=arc-20240116; t=1723634664; c=relaxed/simple;
+	bh=kqDpV6GW4s9LS7UCsXnQnFTFNDMtjqH17Enqz0woQgs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WML2rmJBZtXyPIVf+fWvdTRTVG1tfm717yJJAunfRdCp6UtyWbdmHN48O/fT1/udbASfWJGM5IvuGzCsEiuGY1qYUZ6u+0KyhK7fvM2Hg8YsFhJmGfdL0Bkirg0PTNLIWGIxARkf8S/miI/v6pnFzJ+s8qrBxvy0Fa3AtCXn/aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=dfvJ/BYc; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D9E30421F8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 11:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1723634654;
+	bh=DGRTrpULtBgL9ziW5qYGERpz+KbgogQRgUFpUA3ONkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=dfvJ/BYcniG8ZTZ9kzNEpMMJavOyHkX14qW3lJqDLSwRnwnH71jPL/1lGQqgvWJS4
+	 EOt3z5ASvInzCNoX2PXcVutdRGF5KJKIUCu8jgCwx9CApOev8rxEf4ElOi1Zg4fiTb
+	 eIXznJS88urdS/2KQCIasrktvIY5WkRcuoq7JzJ9PJmAsVCq7umVfHZhwROnIzMear
+	 uG+dj2wXYeDNkLkm015GVyWqhNWAbiub2Nz5PNAtCfZcZlFnNJmOZYodI9CFnho6Xn
+	 MyigY5MtfaJf+NRua8erVYIswelBa92dWMuz1tS6PC4LLAX5YwyFo5i+Y7Ybg6nMip
+	 zf+df4tlRpXSA==
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5af95f7d65bso5510909a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 04:24:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723634654; x=1724239454;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DGRTrpULtBgL9ziW5qYGERpz+KbgogQRgUFpUA3ONkY=;
+        b=MAn+rMAuE3EhXd1nZ81LuQgaRnQXttijfL7G3xlGCXbC/Ahk6g/eqko12sgCZCzYnM
+         Gd9UVjyLmvkpJ61soubIcT25xNqSU9q8nCxWz+59OAyjonzP6F4vwhfpP0u2lSfIOhXa
+         daQkQQ/mDmmE6Y4OQfF5UaQnqzK+/5n7mf4P/ub0i8vFNgm6PcXD8BwXT8PNfgJsnI8T
+         evuuLYG3c4z2yPlrGU5mAv56BlJnxJtGER8V+bZmNefs4iMGZ1OKAF6/0mBbg76ESzw8
+         pSGRymUKOqn0tGkHwHuQO6YiY0wifdfjXZIf2DGtsSSsyt6d/+sD8KjO6A5TG6oBbZ6u
+         QsUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWN4ohNszvLjP23+MGDDYCnMcC6X/v1J04NVXyT6/Cm7uivqJprvdMEy23ysSQLs4PGHZwXwRO4gJOBqfW9INqsklm4MJtQ09/kT+E2hQ==
+X-Gm-Message-State: AOJu0YwARk9jqjVRNUUrbopSnJHA4/L2c9wagz1c6r0SJvDlt70Qo52v
+	8CDPI4nw9jey6ZryKiWUu8a9ZFn/bxMdiNV/wdr4XwOJf0Rd/2bTgiW2v5gUxOuxkW280yNThUL
+	CVMK5kTJfKhVO0cbBZyZOsbe9DbszeBGS7vsNb6DDkOBqOzO/q1swCoyR+VNWdZAVbQVrpDZVlA
+	ZL2IY=
+X-Received: by 2002:a17:907:e2d3:b0:a72:750d:ab08 with SMTP id a640c23a62f3a-a8366bfc25bmr166647366b.14.1723634654208;
+        Wed, 14 Aug 2024 04:24:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqJ/FYMhm3HKEPcMJXzca42gbyfdyklEBH91iFSJATAmPNeFRFyyNn+G3/we+Qa3Mu8pH8iw==
+X-Received: by 2002:a17:907:e2d3:b0:a72:750d:ab08 with SMTP id a640c23a62f3a-a8366bfc25bmr166644666b.14.1723634653684;
+        Wed, 14 Aug 2024 04:24:13 -0700 (PDT)
+Received: from amikhalitsyn.. ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fb2110sm159919966b.78.2024.08.14.04.24.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 04:24:13 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: miklos@szeredi.hu
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fuse: use GFP_KERNEL_ACCOUNT for allocations in fuse_dev_alloc
+Date: Wed, 14 Aug 2024 13:23:56 +0200
+Message-Id: <20240814112356.112329-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: add fast path for fuse_range_is_writeback
-To: yangyun <yangyun50@huawei.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- lixiaokeng@huawei.com
-References: <20240814093600.216757-1-yangyun50@huawei.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240814093600.216757-1-yangyun50@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+fuse_dev_alloc() is called from the process context and it makes
+sense to properly account allocated memory to the kmemcg as these
+allocations are for long living objects.
 
+Link: https://lore.kernel.org/all/20240105152129.196824-3-aleksandr.mikhalitsyn@canonical.com/
 
-On 8/14/24 5:36 PM, yangyun wrote:
-> In some cases, the fi->writepages may be empty. And there is no need
-> to check fi->writepages with spin_lock, which may have an impact on
-> performance due to lock contention. For example, in scenarios where
-> multiple readers read the same file without any writers, or where
-> the page cache is not enabled.
-> 
-> Also remove the outdated comment since commit 6b2fb79963fb ("fuse:
-> optimize writepages search") has optimize the situation by replacing
-> list with rb-tree.
-> 
-> Signed-off-by: yangyun <yangyun50@huawei.com>
-> ---
->  fs/fuse/file.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index f39456c65ed7..59c911b61000 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -448,9 +448,6 @@ static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
->  
->  /*
->   * Check if any page in a range is under writeback
-> - *
-> - * This is currently done by walking the list of writepage requests
-> - * for the inode, which can be pretty inefficient.
->   */
->  static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
->  				   pgoff_t idx_to)
-> @@ -458,6 +455,9 @@ static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
->  	struct fuse_inode *fi = get_fuse_inode(inode);
->  	bool found;
->  
-> +	if (RB_EMPTY_ROOT(&fi->writepages))
-> +		return false;
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: <linux-fsdevel@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ fs/fuse/inode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-fi->lock is held when inserting wpa into fi->writepages rbtree (see
-fuse_writepage_add()).  I doubt if there is race condition when checking
-if fi->writepages rbtree is empty without fi->lock held.
-
-
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index ed4c2688047f..6dae007186e1 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1486,11 +1486,11 @@ struct fuse_dev *fuse_dev_alloc(void)
+ 	struct fuse_dev *fud;
+ 	struct list_head *pq;
+ 
+-	fud = kzalloc(sizeof(struct fuse_dev), GFP_KERNEL);
++	fud = kzalloc(sizeof(struct fuse_dev), GFP_KERNEL_ACCOUNT);
+ 	if (!fud)
+ 		return NULL;
+ 
+-	pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
++	pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL_ACCOUNT);
+ 	if (!pq) {
+ 		kfree(fud);
+ 		return NULL;
 -- 
-Thanks,
-Jingbo
+2.34.1
+
 
