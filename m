@@ -1,255 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-25909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2840B951A50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 13:46:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20856951A5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 13:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB631F23407
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 11:46:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0D77282EE7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 11:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3F61B8EA2;
-	Wed, 14 Aug 2024 11:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCE61AC43D;
+	Wed, 14 Aug 2024 11:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Mq2+gTyL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYSMNK7S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2971BA86B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A797A143879;
+	Wed, 14 Aug 2024 11:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635708; cv=none; b=ffvVvSIbTljexBTUVhSay1cmy456erzWMqivs7WYmomws5SQ1oSu1EtVQ2dO08qZ0z8VmhGdJA8FUZoXZDPAWD9XcVKNkcE50bWB7TWAcjgUc+jUM7rovEZb3vYTG076/LyTFBkc597f7gpFEMJVjYzgrLSBMCkU6+VVsezaDQE=
+	t=1723636099; cv=none; b=BkTrwc9xrAx9pS5pzb/7DWquXTRq4FUgCcINeE5+qJ1p+ngTQkfWTG1LvUvB/QK7Ym2zA7JTtYLhMgH88kAk6Wnt2ckZKzvCNeB5Z8tgXTLiUY7xYxwaSokTkHEKbebDz8daOPiUF/jE0YGbEnbY1QHoCrcSGAPPy1R7yZXkJq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635708; c=relaxed/simple;
-	bh=Nu3JnzracDB30usuIQ+vj3dQwpeU56RAKyxTWUIz45g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CtBxty2piXVOWa+/kh4VpQTwuRnoRZWkA19DEyKG1bg/54TVIaEw17FtDnnzPhtQ7Ubs1OyYbhTtQXntG7c9/FTVm1iSphOBUX0TS1GRxVTJhOiUDqoqaDY5ByD8eLpL+2iD725h8qCd7UavM6Crj1lk2nCmDol69pXR4IBnzHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Mq2+gTyL; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 87983402E8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723635704;
-	bh=KD9NzSm5+MMz93MQtyiG/0y5v89JycwxOffT6YGByAg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version;
-	b=Mq2+gTyLGqPeBpOgRLIH5AKqn2oBHrvAZk3M7xtH+F4Sirzh6zBB05xHa7uxwtxQZ
-	 nzv/rbE6eZhb8tPch/JhCzB/UuJVSFVv0vPgTSDtnGJGdeStpLn7/yIuRA+xGoianI
-	 n2CoB/TlBKBLAo6w3hrBtdkx1LJAXvdDpUgw5X9isBLIBsgjccMQexHwj42kCa7nug
-	 ED2ud/T4gSx6tcTl+QKoE6sRwnEqtryXJlAjCrxjuOOSQwFekApcsZi31J3ptwU0IH
-	 Mp6VkXCeNpk2/uugHOnOlSNceOM3fo7dHtgdKW/4G6GpGlrUTgoLyvM+83Sv32ABpV
-	 4TWubTLx8aFUg==
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a7ab644746eso481146166b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 04:41:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723635704; x=1724240504;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KD9NzSm5+MMz93MQtyiG/0y5v89JycwxOffT6YGByAg=;
-        b=u8+1tja8gcvnjkMyRr6eeRJuH6afU566TmpvZeqyabpnETtxvKAukDN3rxLF1Hx5l6
-         WwExNxFAaG3GvveeD9SXok4q1BkLNJFluM2iCd6cGPFkoqCOc6xiN4+c4eIp3jUo5B1Y
-         kb1NpTfPzO/zWIoEqdl8qaLqNQgGWw5AR/N0Dop292XZfV54bOGyy4l8J3uJJvbuUeI6
-         InbPApjuqyh9w6af+mD7mezuK3Sxo7uaU2V0OPTmEgT70Nz4NeXTSfplXEkbQYwBI4Wm
-         N9UrR/ukw5pJJju1yShhIlPRGCcPWaP2Yd/VTnc3BiGh3hgfUD/r8ZHirdOWgCJmOt5R
-         YK3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUHOxiMr4TsEwrGmrkX47d89YRiq7aVOde8W+Y/lC/j7w2nrK6meD4uf2A0yyOWcR/QrHRLorLpza6B2VXpEBE6pr7305uBzitrruqtPg==
-X-Gm-Message-State: AOJu0YwMkdlhbzfpN9oJDLZIFCSUeRxGAuRsX+HgLk9FTkZLiHeJUCBH
-	PTdTdm0iAdvafiFQoz53BTeLshFWJMbEBFra1vs8Ryx0RGE5VqxWw9JK40d+0FTwG8FFEQKTWe0
-	kaqaxX1ZKdB2DCo5eJ4WBzu+0Fvfckn6IG4LXz2nbS1pEx1KIls/kj7lrf68EM6Sy8DsAP/Vv38
-	Xd//s=
-X-Received: by 2002:a17:907:e69e:b0:a6f:dc17:500a with SMTP id a640c23a62f3a-a8366c346e8mr193024566b.23.1723635703970;
-        Wed, 14 Aug 2024 04:41:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCtDuBcjhSjqmuN/1KTcbSpwd8Zoqt9Rg7qDsLMEgubihtTvt9UxHmb+ZDmB/MWTEeXYYmHg==
-X-Received: by 2002:a17:907:e69e:b0:a6f:dc17:500a with SMTP id a640c23a62f3a-a8366c346e8mr193021966b.23.1723635703569;
-        Wed, 14 Aug 2024 04:41:43 -0700 (PDT)
-Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa782csm162586166b.60.2024.08.14.04.41.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 04:41:43 -0700 (PDT)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: mszeredi@redhat.com
-Cc: brauner@kernel.org,
-	stgraber@stgraber.org,
-	linux-fsdevel@vger.kernel.org,
-	Seth Forshee <sforshee@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Bernd Schubert <bschubert@ddn.com>,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] fs/fuse: allow idmapped mounts
-Date: Wed, 14 Aug 2024 13:40:34 +0200
-Message-Id: <20240814114034.113953-10-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com>
+	s=arc-20240116; t=1723636099; c=relaxed/simple;
+	bh=W+L/sfojA497thSO+8njO/M5WaH5FCjsR9F4mnjTIF4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qxyBp9wtYQPvW+AJmhD/WQLTza3Mgmp8S6K7Hwdx9eC9+xqALXbwVkXnlqmwiNeVghQmApEJ0ZL1mAUmjdKlc887+SHqz+lSQXezHkDzZ5Im+H4vrJ1k9nyQPDNjaSjtlF/8lBTc393pbzWZrNJAqQckNdrnlQ6q8qsZNfM+Us0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYSMNK7S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F8EC32786;
+	Wed, 14 Aug 2024 11:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723636099;
+	bh=W+L/sfojA497thSO+8njO/M5WaH5FCjsR9F4mnjTIF4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=JYSMNK7SsA6NRR+uf2NTIgIlKnDlQMFNUvJZCxt67tR+wNRJR4PS1xppWke6plTg8
+	 b1eJvp933rtr33332D0KUFye6kfLGDpjs7+a79Tso43TDPsUfxgCNCB++fqMaJ57U7
+	 ddQ6R/ZRAWaLnTlG5PFzySSz52LJndOos0+ehfHlBN0TFW6D6bYWql7/4gkjXNEzDB
+	 GoLEIcBmOkco48uBstxgBmWJyBP7I+/+GCVJ/PIhKTCypqxounVSGnaP64xXj1ZbVI
+	 84qfgPRYxXxzWKZgegsNMby1ONEiiek17+7qVC5aN8A3BeDHz70/QNoXWwKk0FB4o8
+	 JusnbRmd95S1Q==
+Message-ID: <df9ee1d9d34b07b9d72a3d8ee8d11c40cf07d193.camel@kernel.org>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+From: Jeff Layton <jlayton@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Andrew
+ Morton <akpm@linux-foundation.org>, Mateusz Guzik <mjguzik@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Wed, 14 Aug 2024 07:48:17 -0400
+In-Reply-To: <20240814024057.GP13701@ZenIV>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+	 <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
+	 <20240814021817.GO13701@ZenIV> <20240814024057.GP13701@ZenIV>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Now we have everything in place and we can allow idmapped mounts
-by setting the FS_ALLOW_IDMAP flag. Notice that real availability
-of idmapped mounts will depend on the fuse daemon. Fuse daemon
-have to set FUSE_ALLOW_IDMAP flag in the FUSE_INIT reply.
+On Wed, 2024-08-14 at 03:40 +0100, Al Viro wrote:
+> On Wed, Aug 14, 2024 at 03:18:17AM +0100, Al Viro wrote:
+>=20
+> > That's not the only problem; your "is it negative" test is inherently
+> > racy in RCU mode.  IOW, what is positive at the time you get here can
+> > bloody well go negative immediately afterwards.  Hit that with
+> > O_CREAT and you've got a bogus ENOENT...
+>=20
+> Hmm...  OTOH, in that case you end up in step_into(), which will do the
+> right thing...
+>=20
+> 	How well does that series survive NFS client regression tests?
+> That's where I'd expect potentially subtle shite, what with short-circuit=
+ed
+> ->d_revalidate() on the final pathwalk step in open()...
 
-To discuss:
-- we enable idmapped mounts support only if "default_permissions" mode is enabled,
-because otherwise we would need to deal with UID/GID mappings in the userspace side OR
-provide the userspace with idmapped req->in.h.uid/req->in.h.gid values which is not
-something that we probably want to. Idmapped mounts phylosophy is not about faking
-caller uid/gid.
+Christian took in my v3 patch which is a bit different from this one.
+It seems to be doing fine in testing with NFS and otherwise.
 
-- We have a small offlist discussion with Christian around adding fs_type->allow_idmap
-hook. Christian pointed that it would be nice to have a superblock flag instead like
-SB_I_NOIDMAP and we can set this flag during mount time if we see that filesystem does not
-support idmappings. But, unfortunately I didn't succeed here because the kernel will
-know if the filesystem supports idmapping or not after FUSE_INIT request, but FUSE_INIT request
-is being sent at the end of mounting process, so mount and superblock will exist and
-visible by the userspace in that time. It seems like setting SB_I_NOIDMAP flag in this
-case is too late as user may do the trick with creating a idmapped mount while it wasn't
-restricted by SB_I_NOIDMAP. Alternatively, we can introduce a "positive" version SB_I_ALLOWIDMAP
-and "weak" version of FS_ALLOW_IDMAP like FS_MAY_ALLOW_IDMAP. So if FS_MAY_ALLOW_IDMAP is set,
-then SB_I_ALLOWIDMAP has to be set on the superblock to allow creation of an idmapped mount.
-But that's a matter of our discussion.
-
-Some extra links and examples:
-
-- libfuse support
-https://github.com/mihalicyn/libfuse/commits/idmap_support
-
-- fuse-overlayfs support:
-https://github.com/mihalicyn/fuse-overlayfs/commits/idmap_support
-
-- cephfs-fuse conversion example
-https://github.com/mihalicyn/ceph/commits/fuse_idmap
-
-- glusterfs conversion example
-https://github.com/mihalicyn/glusterfs/commits/fuse_idmap
-
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Seth Forshee <sforshee@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bschubert@ddn.com>
-Cc: <linux-fsdevel@vger.kernel.org>
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- fs/fuse/fuse_i.h          |  3 +++
- fs/fuse/inode.c           | 13 ++++++++++---
- include/uapi/linux/fuse.h |  5 ++++-
- 3 files changed, 17 insertions(+), 4 deletions(-)
-
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 883151a44d72..b2780ab59069 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -848,6 +848,9 @@ struct fuse_conn {
- 	/* Add owner_{u,g}id info when creating a new inode */
- 	unsigned int owner_uid_gid_ext:1;
- 
-+	/* Allow creation of idmapped mounts */
-+	unsigned int allow_idmap:1;
-+
- 	/* Does the filesystem support per inode DAX? */
- 	unsigned int inode_dax:1;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 6c205731c844..ed4c2688047f 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1345,6 +1345,12 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
- 				fm->sb->s_export_op = &fuse_export_fid_operations;
- 			if (flags & FUSE_OWNER_UID_GID_EXT)
- 				fc->owner_uid_gid_ext = 1;
-+			if (flags & FUSE_ALLOW_IDMAP) {
-+				if (fc->owner_uid_gid_ext && fc->default_permissions)
-+					fc->allow_idmap = 1;
-+				else
-+					ok = false;
-+			}
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
- 			fc->no_lock = 1;
-@@ -1392,7 +1398,8 @@ void fuse_send_init(struct fuse_mount *fm)
- 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
- 		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
- 		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
--		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_OWNER_UID_GID_EXT;
-+		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_OWNER_UID_GID_EXT |
-+		FUSE_ALLOW_IDMAP;
- #ifdef CONFIG_FUSE_DAX
- 	if (fm->fc->dax)
- 		flags |= FUSE_MAP_ALIGNMENT;
-@@ -1981,7 +1988,7 @@ static void fuse_kill_sb_anon(struct super_block *sb)
- static struct file_system_type fuse_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "fuse",
--	.fs_flags	= FS_HAS_SUBTYPE | FS_USERNS_MOUNT,
-+	.fs_flags	= FS_HAS_SUBTYPE | FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
- 	.init_fs_context = fuse_init_fs_context,
- 	.parameters	= fuse_fs_parameters,
- 	.kill_sb	= fuse_kill_sb_anon,
-@@ -2002,7 +2009,7 @@ static struct file_system_type fuseblk_fs_type = {
- 	.init_fs_context = fuse_init_fs_context,
- 	.parameters	= fuse_fs_parameters,
- 	.kill_sb	= fuse_kill_sb_blk,
--	.fs_flags	= FS_REQUIRES_DEV | FS_HAS_SUBTYPE,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_HAS_SUBTYPE | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("fuseblk");
- 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index d9ecc17fd13b..b23e8247ce43 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -221,6 +221,7 @@
-  *  7.41
-  *  - add FUSE_EXT_OWNER_UID_GID
-  *  - add FUSE_OWNER_UID_GID_EXT
-+ *  - add FUSE_ALLOW_IDMAP
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -256,7 +257,7 @@
- #define FUSE_KERNEL_VERSION 7
- 
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 40
-+#define FUSE_KERNEL_MINOR_VERSION 41
- 
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-@@ -427,6 +428,7 @@ struct fuse_file_lock {
-  *		    of the request ID indicates resend requests
-  * FUSE_OWNER_UID_GID_EXT: add inode owner UID/GID info to create, mkdir,
-  *			   symlink and mknod
-+ * FUSE_ALLOW_IDMAP: allow creation of idmapped mounts
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -473,6 +475,7 @@ struct fuse_file_lock {
- /* Obsolete alias for FUSE_DIRECT_IO_ALLOW_MMAP */
- #define FUSE_DIRECT_IO_RELAX	FUSE_DIRECT_IO_ALLOW_MMAP
- #define FUSE_OWNER_UID_GID_EXT	(1ULL << 40)
-+#define FUSE_ALLOW_IDMAP	(1ULL << 41)
- 
- /**
-  * CUSE INIT request/reply flags
--- 
-2.34.1
-
+I don't think we short-circuit the d_revalidate though, do we? That
+version calls lookup_fast on the last component which should
+d_revalidate the last dentry before returning it.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
