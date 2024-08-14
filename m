@@ -1,189 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-25867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B819512AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 04:46:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9C09512B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 04:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5C8284F44
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 02:46:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F2541C228CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 02:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C93224E8;
-	Wed, 14 Aug 2024 02:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0A32C6BD;
+	Wed, 14 Aug 2024 02:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Qosryk1d"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YFWlQEIl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1822E3E5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 02:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BD3374FA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 02:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723603576; cv=none; b=K5dLBB90xmM1aIpJMO0SYOEn1HLFiMv5gBQTKs+vB9Xgr1WGR6ZDC/iBXywsIgBCGx1AHDEa3IZ1FZb3J8PCy1DD76wosNwSUYcIke1dGAc4ei1FqBb4MBBWNUM2zI3lRj4HJFi2KIeH4xZekvXEGKgoYLAmvF8/Txjz1FfMdKc=
+	t=1723603628; cv=none; b=MiYWWI7nZa/BW9q3NrvyccQvFwcBwDbHvsSgvXul99/27ahNLQsfMeJ4PBPEjM5kh8pSCgf/Sl04nl8CAGMaAx6ztuA6TzUKIk7UC6dfRhB1aqQpT3c+6WxWAMfuGIxaVm9atWEkuUp9BHH/y+DWKA7sbyan8n6ramadYTsFnLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723603576; c=relaxed/simple;
-	bh=HbPnQmc2wzO6neAO6PTfyWtMZST2zrnWxHU9ybdTbQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fh+XuwYps/PiIxhMpvS7ZqQmiC0NVnpYa2RDtNm8nRXnCXNzZr5tymc2NEYNlgSNncCCUf7MwmlCIJ/0MwicMKVwsh/uXVrxsl5MHeLAdjhq309M9CJDHVYdVlNxUU3ysfZKyPYzAb+E7QlG6Gh/1D4Sn8DwKUr/Mj7ogBm4aJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Qosryk1d; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723603570; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=oGOS9NNFZw1ngtEUhdB8FxJC3GtTI8f3Bz1yhj15yDU=;
-	b=Qosryk1dOSLSAhmjkiL4q5gmOdjlcun8hVEApzm5h821L/ytypVrAgLFQl2Jm/M1oO7NW+LpqHJuMU8rGb9bkK4zgW2wArDWMJXxn89UsQ729QZaHpd2aaM+BB0kq/vT+xK6eQDdG4CEr688LYtjHidgsp3w4qgqEoAR/2gLP8Y=
-Received: from 30.221.146.67(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WCqjPr2_1723603568)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Aug 2024 10:46:09 +0800
-Message-ID: <6ff03b54-fac8-47d4-bbda-7ebf7f8c9572@linux.alibaba.com>
-Date: Wed, 14 Aug 2024 10:46:08 +0800
+	s=arc-20240116; t=1723603628; c=relaxed/simple;
+	bh=+XSQP6JjRisu6j+WPBg6o/c6mx52smfB/O54cIEbdwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQT/xwD61xKc91Nv1agM0b2+2W+O0GnlJH3hKKMwvt7ujWVXViaWWR+Z+GB/MlJisoWzeb/EJ+lm0XdCOqRuHB+9+6xl5tJKtlNcZaJ0VL5+wNBfRPbK3fmtDOrHq+Dpl1R4hBycGzQbIVUyxs0PuPSotThSOLIvJnBwUc2RfMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YFWlQEIl; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7c68b71ada4so1634937a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 19:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1723603626; x=1724208426; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HndCF9glIkOMUvWq/mEOxgU2lZeOnPtNB9Xnwe55q3I=;
+        b=YFWlQEIlPEvEWs0LdGfHHM4fN5ynFFJBk8v1jaZnuX5K5gT2mZtwj+CV34rQ8lFYT8
+         pJ4JDvB2JuYI0ogyER/u/NmiAtvWNiV+K0q490ReT5TPyxyCBkPVTDvGUKMNwW+003fe
+         Nxyfr5Q6PqhRG3aAFoad11jOWKeG1fIEhYP8R8zKo6fKVPSb1Ftx8ifk1yifQkhRFnuV
+         oMIqlKymMo2xs6W1LeLV0pjKMsWZSc7fxCETKBsTFO/gnxyV7MtZsW52zIL2NeMnxv7G
+         0/A84dxRf50jgYW1VF6ZdGKNQhXqJNFNxl2g92SLH8kcnmeMDZUxNa0OqJT61M0R9Se2
+         H94w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723603626; x=1724208426;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HndCF9glIkOMUvWq/mEOxgU2lZeOnPtNB9Xnwe55q3I=;
+        b=rFPBB4hVX91YeVC2Ly/53aFuX5zwOSaxP0iyLsTXhp00j/GlKwYd58edPZfgWwrAo6
+         w99OawgE4E761ZeVDfWSfsHmIxxv39DdNb6ZiQFv3yDYc5WCjl5efEIJ4Elu6H8/Sv/H
+         uYxSIQRBLLVoc8ilK/g74ScmiJIGxKoj0fKETV5SW2SAYAzc+TPmNraBTBL7ewfVTRxh
+         oxxkTEwG6A92PKFIfR2j4ZuYIFR7bPtHDLCrN1TDuNAaqrvBCsIgh+xz3EaUudnbTkE+
+         cn7bgeoJKoBqOXk5yT4nH/asf5wYeecIdpsIfntXJ0TCffeWbfjMm+CBseeMzLIKEeAc
+         08pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7zzXiREFSroZlISDlyXPEfsYJR2Kma+cobDaoYKafcbhOfL3xLlDz5qFcFH0HrXAYAPaCvEguDOEsckR+bOsjCOS+QdjgY6mqKTjZ4g==
+X-Gm-Message-State: AOJu0Yz22jsqy/K2dq+COCCCNtJaB4kQotuYR4CmqmAy/BirdZjOLjob
+	Xji+l8cSdQKtHYotpzGxEut90h9a9pCRf1PQ05qcbrzfDtzpTTM++soxOhHKB5U=
+X-Google-Smtp-Source: AGHT+IHp+5SEOXnqyHBJUu8nZh2c1nW001BOSSG1PaVG7oaO5Q+f5qABUl3n1SRexvQ5+uArfDwtLA==
+X-Received: by 2002:a05:6a21:3a81:b0:1c6:f043:693f with SMTP id adf61e73a8af0-1c8eae6f47dmr1952825637.17.1723603625970;
+        Tue, 13 Aug 2024 19:47:05 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd14de23sm20058735ad.104.2024.08.13.19.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 19:47:05 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1se42R-00GJdn-1E;
+	Wed, 14 Aug 2024 12:47:03 +1000
+Date: Wed, 14 Aug 2024 12:47:03 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, jack@suse.cz, willy@infradead.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 0/6] iomap: some minor non-critical fixes and
+ improvements when block size < folio size
+Message-ID: <Zrwap10baOW8XeIv@dread.disaster.area>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <ZrwNG9ftNaV4AJDd@dread.disaster.area>
+ <feead66e-5b83-7e54-1164-c7c61e78e7be@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fuse: add FOPEN_FETCH_ATTR flag for fetching attributes
- after open
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com, osandov@osandov.com, bernd.schubert@fastmail.fm,
- sweettea-kernel@dorminy.me, kernel-team@meta.com
-References: <20240813212149.1909627-1-joannelkoong@gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240813212149.1909627-1-joannelkoong@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <feead66e-5b83-7e54-1164-c7c61e78e7be@huaweicloud.com>
 
-
-
-On 8/14/24 5:21 AM, Joanne Koong wrote:
-> Add FOPEN_FETCH_ATTR flag to indicate that attributes should be
-> fetched from the server after an open.
+On Wed, Aug 14, 2024 at 10:14:01AM +0800, Zhang Yi wrote:
+> On 2024/8/14 9:49, Dave Chinner wrote:
+> > important to know if the changes made actually provided the benefit
+> > we expected them to make....
+> > 
+> > i.e. this is the sort of table of results I'd like to see provided:
+> > 
+> > platform	base		v1		v2
+> > x86		524708.0	569218.0	????
+> > arm64		801965.0	871605.0	????
+> > 
 > 
-> For fuse servers that are backed by network filesystems, this is
-> needed to ensure that file attributes are up to date between
-> consecutive open calls.
-> 
-> For example, if there is a file that is opened on two fuse mounts,
-> in the following scenario:
-> 
-> on mount A, open file.txt w/ O_APPEND, write "hi", close file
-> on mount B, open file.txt w/ O_APPEND, write "world", close file
-> on mount A, open file.txt w/ O_APPEND, write "123", close file
-> 
-> when the file is reopened on mount A, the file inode contains the old
-> size and the last append will overwrite the data that was written when
-> the file was opened/written on mount B.
-> 
-> (This corruption can be reproduced on the example libfuse passthrough_hp
-> server with writeback caching disabled and nopassthrough)
-> 
-> Having this flag as an option enables parity with NFS's close-to-open
-> consistency.
+>  platform	base		v1		v2
+>  x86		524708.0	571315.0 	569218.0
+>  arm64	801965.0	876077.0	871605.0
 
-It seems a general demand for close-to-open consistency similar to NFS
-when the backend store for FUSE is a NFS-like filesystem.  We have a
-similar private implementation for close-to-open consistency in our
-internal distribution.  Also FYI there was a similar proposal for this:
+So avoiding the lock cycle in iomap_write_begin() (in patch 5) in
+this partial block write workload made no difference to performance
+at all, and removing a lock cycle in iomap_write_end provided all
+that gain?
 
-https://lore.kernel.org/linux-fsdevel/20220608104202.19461-1-zhangjiachen.jaycee@bytedance.com/
+Is this an overwrite workload or a file extending workload? The
+result implies that iomap_block_needs_zeroing() is returning false,
+hence it's an overwrite workload and it's reading partial blocks
+from disk. i.e. it is doing synchronous RMW cycles from the ramdisk
+and so still calling the uptodate bitmap update function rather than
+hitting the zeroing case and skipping it.
 
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  fs/fuse/file.c            | 7 ++++++-
->  include/uapi/linux/fuse.h | 7 ++++++-
->  2 files changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index f39456c65ed7..437487ce413d 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -264,7 +264,12 @@ static int fuse_open(struct inode *inode, struct file *file)
->  	err = fuse_do_open(fm, get_node_id(inode), file, false);
->  	if (!err) {
->  		ff = file->private_data;
-> -		err = fuse_finish_open(inode, file);
-> +		if (ff->open_flags & FOPEN_FETCH_ATTR) {
-> +			fuse_invalidate_attr(inode);
-> +			err = fuse_update_attributes(inode, file, STATX_BASIC_STATS);
-> +		}
-> +		if (!err)
-> +			err = fuse_finish_open(inode, file);
->  		if (err)
->  			fuse_sync_release(fi, ff, file->f_flags);
->  		else if (is_truncate)
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index d08b99d60f6f..f5d1af6fe352 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -217,6 +217,9 @@
->   *  - add backing_id to fuse_open_out, add FOPEN_PASSTHROUGH open flag
->   *  - add FUSE_NO_EXPORT_SUPPORT init flag
->   *  - add FUSE_NOTIFY_RESEND, add FUSE_HAS_RESEND init flag
-> + *
-> + *  7.41
-> + *  - add FOPEN_FETCH_ATTR
->   */
->  
->  #ifndef _LINUX_FUSE_H
-> @@ -252,7 +255,7 @@
->  #define FUSE_KERNEL_VERSION 7
->  
->  /** Minor version number of this interface */
-> -#define FUSE_KERNEL_MINOR_VERSION 40
-> +#define FUSE_KERNEL_MINOR_VERSION 41
->  
->  /** The node ID of the root inode */
->  #define FUSE_ROOT_ID 1
-> @@ -360,6 +363,7 @@ struct fuse_file_lock {
->   * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
->   * FOPEN_PARALLEL_DIRECT_WRITES: Allow concurrent direct writes on the same inode
->   * FOPEN_PASSTHROUGH: passthrough read/write io for this open file
-> + * FOPEN_FETCH_ATTR: attributes are fetched after file is opened
->   */
->  #define FOPEN_DIRECT_IO		(1 << 0)
->  #define FOPEN_KEEP_CACHE	(1 << 1)
-> @@ -369,6 +373,7 @@ struct fuse_file_lock {
->  #define FOPEN_NOFLUSH		(1 << 5)
->  #define FOPEN_PARALLEL_DIRECT_WRITES	(1 << 6)
->  #define FOPEN_PASSTHROUGH	(1 << 7)
-> +#define FOPEN_FETCH_ATTR	(1 << 8)
->  
->  /**
->   * INIT request/reply flags
+Hence I'm just trying to understand what the test is doing because
+that tells me what the result should be...
 
-Does this close-to-open consistency support writeback mode? AFAIK, the
-cached ctime/mtime/size at the kernel side are always trusted while
-these attributes from the server are dropped, see:
+Cheers,
 
-```
-fuse_update_attributes
-    fuse_update_get_attr
-        cache_mask = fuse_get_cache_mask(inode)
-            if writeback mode:
-                return STATX_MTIME | STATX_CTIME | STATX_SIZE
-```
-
-Also FYI there's a similar proposal for enhancing the close-to-open
-consistency in writeback mode to fix the above issue:
-
-https://lore.kernel.org/linux-fsdevel/20220624055825.29183-1-zhangjiachen.jaycee@bytedance.com/
-
-Besides, IIUC this patch only implements the revalidate-on-open semantic
-for metadata.  To fulfill the full close-to-open consistency, do you
-need to disable FOPEN_KEEP_CACHE to fulfill the revalidate-on-open
-semantic for data? (Though the revalidate-on-open semantic for data is
-not needed in your append-only case.)
-
+Dave.
 -- 
-Thanks,
-Jingbo
+Dave Chinner
+david@fromorbit.com
 
