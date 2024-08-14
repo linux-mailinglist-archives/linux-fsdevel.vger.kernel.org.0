@@ -1,216 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-25932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D673E951F9C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 18:16:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2AA951FD8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 18:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928F5282F98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 16:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135A21F21619
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 16:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A3D1B86EF;
-	Wed, 14 Aug 2024 16:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2641BBBDE;
+	Wed, 14 Aug 2024 16:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ET4IDp+3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4rPNJ6Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C1D1B3F0F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 16:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F135D1BBBC1;
+	Wed, 14 Aug 2024 16:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652157; cv=none; b=Qpzc5RJCoscv9bDt8j+JM4Q+I9L5rHPeH/X3UYZIFvx51fRysTWuG+doPjZBStzEh42ENGtSHI0grlFj9u18j3WJFLW27vRYVgsVpX63Areqvm5Zi6sdttHG2btY1QorMkfUf+uhLaYhzj8Fm9nkuNS6EaLWCfKMcGjHSv5HQHk=
+	t=1723652514; cv=none; b=r3MSCah6bq70dpv42QfWQaocr5iXxMwGHY7ZCl+SspKMpj9h2/AhCotoWBLopAe2P7YyyI+N4ArQ3CBlqbcpIrnDpvl5LGRFYOmZKZ9qTtC56PWe4E8mlo5Yhz1OXH0eef4wiESvy4Qj4/t7xtacTDb1fXicixRJdA15l1vWcjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652157; c=relaxed/simple;
-	bh=3mXr/6h6lT95ur+dscFgm9tZkCxglKXqx5l9umpgz7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ih5Rc0X3ddZpP5QpcpDRFOSwhD9Lbo2nkYi/TgGME1S36WIfSfB4sXpO2Ffa6t4ecDPwSERapKSyg05IGYCE1fG7AoS91SVmophuRfZH7O6dCDQgrs+zEbfk4wIb6zZ/CM3DOW543hiLybtK6URHVOgFkfmyEc8BofV9I/WRvX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ET4IDp+3; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723652153;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cfSA6DWqUV6iEzUz38Yd8F3h1Wfcr8ykatb0DJro06A=;
-	b=ET4IDp+3z8YnwfSgfouUmDUX2Ajs8uytSGcauLb+Pt7qJDi0vHNOnXL4qb8sSQOHI4xwvT
-	GiWe9GqPAvuZOA8bhPJxPzKoADmwVMmbRqkybIH28hgW7asvfZjoDCbhQJKBO8NIxGFVp+
-	x1Sqc7P2MgjEU5MIPS5anLCAcDqiyrg=
-Date: Thu, 15 Aug 2024 00:15:28 +0800
+	s=arc-20240116; t=1723652514; c=relaxed/simple;
+	bh=y8gPBkTOEvl5zKXterrWvlJucqFgWO/8eWjzKQnvzD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MypPMNqIFcx80G15We0GjLvZpIA/0VzUFScWZrw3gD/EgtXRrmBzU9oDXtlApeuBIpgWmgPgT+foK8IAEuIRCon6ICva2hJJsAkI2GktoBfodfNXPrCQdC1Er+O6d/DO6nYfbKe+WEpQ8yfCuzJAQPv165ezRpDtgC8PAOh2saQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4rPNJ6Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5CBC4AF09;
+	Wed, 14 Aug 2024 16:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723652513;
+	bh=y8gPBkTOEvl5zKXterrWvlJucqFgWO/8eWjzKQnvzD4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q4rPNJ6ZS8/YTjHc/9HkxRU27ouAY0yibwaXXAm+1vcSBPqrepnOKEU4AR3KEhnOt
+	 s58dD84l+9v/yfPZN6YN2ee+5/Ym6lay4t2aiB6H3CiXfg445fDVhup1StlDclBTyN
+	 d6Tf9ZIXcKqcM2L3sfgF+ddNkeVAxqDhU5qIjR7ZPgaAoUWw/E0xVSN5pIIVghvJgH
+	 ao3pIeIoMl3CcpagSZ9IYoUJzDC0aICQgPiBRlV88oVgdcBIHluUExu1ctrkOZWkoE
+	 9l/H09OLwebwQfZ3EaETR7W2P/kahXmTAg0E5aVvsQbbYfL+9JItY7NLBOg8IGqomK
+	 WAZ23R2KyrVjw==
+Date: Wed, 14 Aug 2024 17:21:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 24/40] arm64/signal: Expose GCS state in signal frames
+Message-ID: <7433e3d2-996a-45a0-b917-666a340ad109@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-24-699e2bd2190b@kernel.org>
+ <ZrzIv3FWNgJizDc2@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for
- non-semaphore eventfd
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
- Dylan Yudaken <dylany@fb.com>, David Woodhouse <dwmw@amazon.co.uk>,
- Paolo Bonzini <pbonzini@redhat.com>, Dave Young <dyoung@redhat.com>,
- kernel test robot <lkp@intel.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240811085954.17162-1-wen.yang@linux.dev>
- <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-In-Reply-To: <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="m4k347TUK5jMfMto"
+Content-Disposition: inline
+In-Reply-To: <ZrzIv3FWNgJizDc2@e133380.arm.com>
+X-Cookie: The second best policy is dishonesty.
 
 
+--m4k347TUK5jMfMto
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2024/8/11 18:26, Mateusz Guzik wrote:
-> On Sun, Aug 11, 2024 at 04:59:54PM +0800, Wen Yang wrote:
->> For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
->> value provided in its buffer to the counter, while a read (2) returns the
->> 8-byte value containing the value and resetting the counter value to 0.
->> Therefore, the accumulated value of multiple writes can be retrieved by a
->> single read.
->>
->> However, the current situation is to immediately wake up the read thread
->> after writing the NON-SEMAPHORE eventfd, which increases unnecessary CPU
->> overhead. By introducing a configurable rate limiting mechanism in
->> eventfd_write, these unnecessary wake-up operations are reduced.
->>
->>
-> [snip]
-> 
->> 	# ./a.out  -p 2 -s 3
->> 	The original cpu usage is as follows:
->> 09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->> 09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->> 09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>
->> 09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->> 09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->> 09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>
->> 09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->> 09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->> 09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>
->> Then enable the ratelimited wakeup, eg:
->> 	# ./a.out  -p 2 -s 3  -r1000 -c2
->>
->> Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30%), as shown below:
->> 10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->> 10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->> 10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.00    0.00    0.00   38.38
->>
->> 10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->> 10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->> 10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.00    0.00    0.00   39.11
->>
->> 10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->> 10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->> 10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.00    0.00    0.00   42.71
->>
->>
-> 
-> Where are these stats from? Is this from your actual program you coded
-> the feature for?
-> 
-> The program you inlined here does next to nothing in userspace and
-> unsurprisingly the entire thing is dominated by kernel time, regardless
-> of what event rate can be achieved.
-> 
-> For example I got: /a.out -p 2 -s 3  5.34s user 60.85s system 99% cpu 66.19s (1:06.19) total
-> 
-> Even so, looking at perf top shows me that a significant chunk is
-> contention stemming from calls to poll -- perhaps the overhead will
-> sufficiently go down if you epoll instead?
+On Wed, Aug 14, 2024 at 04:09:51PM +0100, Dave Martin wrote:
+> On Thu, Aug 01, 2024 at 01:06:51PM +0100, Mark Brown wrote:
 
-We have two threads here, one publishing and one subscribing, running on 
-CPUs 2 and 3 respectively. If we further refine and collect performance 
-data on CPU 2, we will find that a large amount of CPU is consumed on 
-the spin lock of the wake-up logic of event write, for example:
+> > +	if (add_all || task_gcs_el0_enabled(current)) {
+> > +		err = sigframe_alloc(user, &user->gcs_offset,
+> > +				     sizeof(struct gcs_context));
+> > +		if (err)
+> > +			return err;
+> > +	}
 
-  # perf top  -C 2  -e cycles:k
+> Who turns on GCS?  I have a concern that if libc is new enough to be
+> built for GCS then the libc startup code will to turn it on, even if
+> the binary stack running on top of libc is old.
 
-     65.80%  [kernel]       [k] do_syscall_64
-     14.71%  [kernel]       [k] _raw_spin_unlock_irq
-      7.54%  [kernel]       [k] __fget_light
-      4.52%  [kernel]       [k] ksys_write
-      1.94%  [kernel]       [k] vfs_write
-      1.43%  [kernel]       [k] _copy_from_user
-      0.87%  [kernel]       [k] common_file_perm
-      0.61%  [kernel]       [k] aa_file_perm
-      0.46%  [kernel]       [k] eventfd_write
+It should normally be the dynamic linker which should be looking for
+annotatations in the binaries it's loading before it decides if it's
+going to turn on GCS (and libc doing something similar if it's going to
+dlopen() things in a process with GCS enabled).
 
+> Is there any scenario where it is legitimate for the signal handler to
+> change the shadow stack mode or to return with an altered GCSPR_EL0?
 
-One of its call stacks:
+If userspace can rewrite the stack pointer on return (eg, to return to a
+different context as part of userspace threading) then it will need to
+be able to also update GCSPR_EL0 to something consistent otherwise
+attempting to return from the interrupted context isn't going to go
+well.  Changing the mode is a bit more exotic, as it is in general.
+It's as much to provide information to the signal handler as anything
+else.
 
-|--6.39%--vfs_write
-|           --5.46%--eventfd_write
-|                      --4.73%--_raw_spin_unlock_irq
+> Is the guarded stack considered necessary (or at least beneficial) for
+> backtracing, or is the regular stack sufficient?
 
+It's potentially beneficial, being less vulnerable to corruption and
+simpler to parse if all you're interested in is return addresses.
+Profiling in particular was mentioned, grabbing a linear block of memory
+will hopefully be less overhead than chasing down the stack.  The
+regular stack should generally be sufficient though.
 
->  > I think the idea is pretty dodgey. If the consumer program can tolerate
-> some delay in event processing, this probably can be massaged entirely in
-> userspace.
-> 
-> If your real program has the wake up rate so high that it constitutes a
-> tangible problem I wonder if eventfd is even the right primitive to use
-> -- perhaps something built around shared memory and futexes would do the
-> trick significantly better?
+--m4k347TUK5jMfMto
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thank you for your feedback.
+-----BEGIN PGP SIGNATURE-----
 
-This demo comes from the real world: the test vehicle has sensors with 
-multiple cycles (such as 1ms, 5ms, 10ms, etc.), and due to the large 
-number of sensors, data is reported at all times. The publisher reported 
-data through libzmq and went to the write logic of eventfd, frequently 
-waking up the receiver. We collected flame graph and observed that a 
-significant amount of CPU was consumed in this path: eventfd_write -> 
-_raw_spin_unlock_irq.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma82ZcACgkQJNaLcl1U
+h9Dw8Af/XElMBO/KVokIR07KfaB7sgnHeJUwP31NSZhm66aDj1xZVgyEok6vrQOQ
+UAQRifPV98myi1QmsusRk+fCC2OGUG2eLWctGHDghxBwYs5hOCl5kebcUIKzzjNH
+8aqD3GZNX1JLH8PLbzDMVhdLpM4uyKOvZFammGDrnoXjhZaBVSKS0PibtS54TY+R
+HA7tSTIm/+xG4rXkAPJ/vo9YZf+cF1bTp1ccC47oQGzsPJIlPfulipp25A71VIiQ
+9enlRUbkSEEZhQH+UZ2Rkpk1+sMCKUv5uT/m2vNWx1gRkngD8YkNUG2TnE9FQqSE
+01uJahLacQ3yCSaWsm6UnjpUxI3Qng==
+=9afo
+-----END PGP SIGNATURE-----
 
-We did modify a lot of code in user mode on the test vehicle to avoid 
-this issue, such as not using wake-up, not using eventfd, the publisher 
-writing shared memory directly, the receiver periodically extracting the 
-content of shared memory, and so on.
-
-However, since the eventfd mechanism of the kernel provides two 
-different attributes, EFD_SEMAPHORE and EFD_NONSEMAPHORE, should we 
-utilize both of them instead of default to only using EFD_SEMAPHORE?
-
-By utilizing EFD_NONSEMAPHORE on the write side, it is indeed possible 
-to avoid the problem of frequently waking up the read side process.
-
-Since last year, in my spare time, I have released multiple versions of 
-patches and received some feedback, such as:
-
-https://lkml.org/lkml/2023/1/29/228
-https://lkml.org/lkml/2023/4/16/149
-https://lkml.org/lkml/2024/5/19/135
-
-
-Fortunately, some small optimization patches around EFD_SEMAPHORE have 
-already entered the mainline kernel, such as:
-
-eventfd: add a BUILD_BUG_ON() to ensure consistency between 
-EFD_SEMAPHORE and the uapi
-eventfd: prevent underflow for eventfd semaphores
-eventfd: show the EFD_SEMAPHORE flag in fdinfo
-
-
-Looking forward to the final resolution of this issue, and we welcome 
-your further suggestions.
-
---
-Best wishes,
-Wen
-
-
-
+--m4k347TUK5jMfMto--
 
