@@ -1,85 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-25846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E58D951105
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 02:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0BD951157
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 03:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF2D0281449
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 00:28:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E5541C229C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 01:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE17B1FA1;
-	Wed, 14 Aug 2024 00:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09303B64C;
+	Wed, 14 Aug 2024 01:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="pXhW7HHs"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="YdLi6oxI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC87E1859
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 00:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECB7A953;
+	Wed, 14 Aug 2024 01:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723595291; cv=none; b=alJ32Rg96qqTfgKzGjTPvF5SUrOonqcC9aVcl4ORCXuJ7OPTHEmBvnG58wdx5qT3EySp9vgSE4bTRZvOdA8Q+KZp+EDDWI3qBhC/UAFIdFd7cEads5BPwDZHMcbxTp9df3o7OgGguI6NO6No3GbRyqt/AiLsDyUgzzLVHehcDiE=
+	t=1723597408; cv=none; b=CbunFdqZh9w5oBp9C+KTM3pnClc0PPCTL0mSe/xvF7CBIDDX9PrN26sfuFYr1UXIMgpwXnG+TOI/JAul/zwZ1gKHQyBgN6viPxyt+SY5pt/oLbsdAWU0OCAnIFBJQGVIaAcekVqV2A7EBS63Iw63AqK5TEugYg30apQvBT1k7y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723595291; c=relaxed/simple;
-	bh=24MruGhDlX2JWI1CHWe1e4B6nwuCUAe+eYWwAbYt85k=;
+	s=arc-20240116; t=1723597408; c=relaxed/simple;
+	bh=X2cjWhK91yZUd8NfItDNnRujO8ZZmUojRLMU3NX+WNY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CTxtRKoxun1JjbDnuNWU6OvTKdPjXsuFj9yZax42CFutp6Y7PdfX8ogtOfVmNSJrcNj89WPkoQo2OCVrIWtETyKAeFeQcWkr9g3xyyTSwnP0YjhMbU/hmLhtCGvp1jguT6kF8aapIovGbxUFoEM8z8bwN3qFtAsoRz3G3z7DVNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=pXhW7HHs; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-200aa78d35aso31437495ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 17:28:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1723595289; x=1724200089; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4be7udvz9R9rydsaMSDozSuZk0sYO5yu7qJyyDml2NU=;
-        b=pXhW7HHs5tFz/oyoOmjKY/6txWsoOxZUkWCmJixYSD4ese+vk7TCCUOr4ew5TvXNb4
-         AHZgUH056rEW9CiR4gcSYFk4SXCWAnAPoOVWGnwVIO7Viymlr66+3rj7ecTCBGGUvEKM
-         3s3ARxv8EEPAn3c/9xUOjdhuTpVyvGvKvyEKAZP4w/5rRPAGM+wIvkxGrKvw8l2nmizy
-         iNAmfkdkykyq/SsVUqDrwDYziHDeVOxdfC7eN5bpf17Ws+wdvRQQMjEcqB7NczVG+u8k
-         Uj9CUKT/QwNED+S1zLVI7VRImvPOoI6qYk3NSJOH/1j5YMg7o6dgT2UQlw6fmz8G5wox
-         4/Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723595289; x=1724200089;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4be7udvz9R9rydsaMSDozSuZk0sYO5yu7qJyyDml2NU=;
-        b=upld+nxM5dHtn7pj7q0TzERU2u9NsmPZ/vxI1hVgLBgFSb1/mrVyU/iALTt4ZOt7n2
-         ohC8Fio/FEOLeifb4iN1WsXrx5Vw0/DSoBB4uPTYTqlqWtUl+Dul0XI9W0DZ+S/UeqbT
-         AKiRfFmwPyVW5I8/mIIWL0EAbFZ7CAjHWWA41MyXD/moH0rHQLUsOdOmvhC926VidOxf
-         8Nx5xlS6cPmP7i5y+y+L+D0T12ahhAMTi5c8duFCdZC+9ECe1HT+P58qXPouI07pkvuH
-         4DhX/DvPIRWsozDKHEKFAnR1N56K5VVOCXcxRRp0d0YAkg55Nfy6HrWSoqoGl4M1srcb
-         6DlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqP4sg49BYc0c0uHKZ3zDcd/HG0adVanc6IjL4mAlobbPVdO35YNJLl9JLG3iJ64eHlYz9VtMs5CuF8hcAaninjxyGINtMJJxf5nTRUw==
-X-Gm-Message-State: AOJu0YzodLT+w37n4TCq8QRo/JZgp1nEJl3m0eY6Jti4VCqL8KclQQaJ
-	h8sriQVdv5+d6Mwue8rVkZgwSRoMCYQG2S6+yS6flYsTXFdG0DB4x2rS9WOnvd0=
-X-Google-Smtp-Source: AGHT+IH2RpvA6yqK5DHVPHFaL19vHW061hRoHggconhnsf2N1F+CHfcBeuIKIlaZb9+7z3wGoubZHA==
-X-Received: by 2002:a17:903:3607:b0:1fb:8f72:d5ea with SMTP id d9443c01a7336-201d64a5b20mr15553525ad.50.1723595289074;
-        Tue, 13 Aug 2024 17:28:09 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1e583esm19080015ad.302.2024.08.13.17.28.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 17:28:08 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1se1ry-00GChE-0X;
-	Wed, 14 Aug 2024 10:28:06 +1000
-Date: Wed, 14 Aug 2024 10:28:06 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Subject: Re: [PATCH 1/2] mm: Add memalloc_nowait_{save,restore}
-Message-ID: <Zrv6Fts73FECScyd@dread.disaster.area>
-References: <20240812090525.80299-1-laoar.shao@gmail.com>
- <20240812090525.80299-2-laoar.shao@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=frbk228vmLv9szyP8Pbon/GtS3mWHMRnFVXQmfckr82GZmxKJPt5MKMzeBKQbkVbbsaEFKKWMjxsoYKIeE8f3SUlq+84Dj+aC4I+nr6xBNKIAYq3gztpEdetLLch0sdERa8Dot7ax5ijHtsDH9Asg7eIdG+zqkzh2aMna7kO4ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=YdLi6oxI; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oN93NLjR7WOWPcVE9mK5Uy/eGRzf8KT3MmZMXRntGOM=; b=YdLi6oxISNoUTQxrG04ftHXe8r
+	NW3tq1v1j8+8IbQ7Hg3ZL2jck1M3shoxFjeNV8WKgPVDzCQFatXPx3rK+a5ZbtKv/28LJd0Ja5PBL
+	/zr7uECMSSgA8yuP0aYxDsr5MZSbJ394ufzre3a78VXreT3tRujtHDihSTZ7C9v8vXAnwgnIJ8t3/
+	xiThBxLmRXmMpmjsGvdKFuqp8FqoXlFsX332Dy0i+DvWj/rnyR0afYvJ054EquCA0DzWgDrSkg0te
+	SATpP/saXzq+j9ZD24AoXTODje0R+whTKh06Expl4I1ZHXKWytaUG5E3jqqqSPGpFKk6OCKeRjLHE
+	5bqlbdkQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1se2Q5-00000001TwP-44X1;
+	Wed, 14 Aug 2024 01:03:22 +0000
+Date: Wed, 14 Aug 2024 02:03:21 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+Subject: Re: [viro-vfs:work.fdtable 13/13] kernel/fork.c:3242 unshare_fd()
+ warn: passing a valid pointer to 'PTR_ERR'
+Message-ID: <20240814010321.GL13701@ZenIV>
+References: <020d5bd0-2fae-481f-bc82-88e71de1137c@stanley.mountain>
+ <20240813181600.GK13701@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,37 +62,138 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812090525.80299-2-laoar.shao@gmail.com>
+In-Reply-To: <20240813181600.GK13701@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Aug 12, 2024 at 05:05:24PM +0800, Yafang Shao wrote:
-> The PF_MEMALLOC_NORECLAIM flag was introduced in commit eab0af905bfc
-> ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN"). To complement
-> this, let's add two helper functions, memalloc_nowait_{save,restore}, which
-> will be useful in scenarios where we want to avoid waiting for memory
-> reclamation.
+On Tue, Aug 13, 2024 at 07:16:00PM +0100, Al Viro wrote:
+> On Tue, Aug 13, 2024 at 11:00:04AM +0300, Dan Carpenter wrote:
+> > 3f4b0acefd818e Al Viro           2024-08-06  3240  		if (IS_ERR(*new_fdp)) {
+> > 3f4b0acefd818e Al Viro           2024-08-06  3241  			*new_fdp = NULL;
+> > 3f4b0acefd818e Al Viro           2024-08-06 @3242  			return PTR_ERR(new_fdp);
+> >                                                                                ^^^^^^^^^^^^^^^^
+> > 	err = PTR_ERR(*new_fdp);
+> > 	*new_fdp = NULL;
+> > 	return err;
+> 
+> Argh...  Obvious braino, but what it shows is that failures of that
+> thing are not covered by anything in e.g. LTP.  Or in-kernel
+> self-tests, for that matter...
 
-Readahead already uses this context:
+FWIW, this does exercise that codepath, but I would really like to
+have kselftest folks to comment on the damn thing - I'm pretty sure
+that it's _not_ a good style for those.
 
-static inline gfp_t readahead_gfp_mask(struct address_space *x)
-{
-        return mapping_gfp_mask(x) | __GFP_NORETRY | __GFP_NOWARN;
-}
-
-and __GFP_NORETRY means minimal direct reclaim should be performed.
-Most filesystems already have GFP_NOFS context from
-mapping_gfp_mask(), so how much difference does completely avoiding
-direct reclaim actually make under memory pressure?
-
-i.e. doing some direct reclaim without blocking when under memory
-pressure might actually give better performance than skipping direct
-reclaim and aborting readahead altogether....
-
-This really, really needs some numbers (both throughput and IO
-latency histograms) to go with it because we have no evidence either
-way to determine what is the best approach here.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+diff --git a/tools/testing/selftests/core/Makefile b/tools/testing/selftests/core/Makefile
+index ce262d097269..8e99f87f5d7c 100644
+--- a/tools/testing/selftests/core/Makefile
++++ b/tools/testing/selftests/core/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ CFLAGS += -g $(KHDR_INCLUDES)
+ 
+-TEST_GEN_PROGS := close_range_test
++TEST_GEN_PROGS := close_range_test unshare_test
+ 
+ include ../lib.mk
+ 
+diff --git a/tools/testing/selftests/core/unshare_test.c b/tools/testing/selftests/core/unshare_test.c
+new file mode 100644
+index 000000000000..7fec9dfb1b0e
+--- /dev/null
++++ b/tools/testing/selftests/core/unshare_test.c
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/kernel.h>
++#include <limits.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <syscall.h>
++#include <unistd.h>
++#include <sys/resource.h>
++#include <linux/close_range.h>
++
++#include "../kselftest_harness.h"
++#include "../clone3/clone3_selftests.h"
++
++TEST(unshare_EMFILE)
++{
++	pid_t pid;
++	int status;
++	struct __clone_args args = {
++		.flags = CLONE_FILES,
++		.exit_signal = SIGCHLD,
++	};
++	int fd;
++	ssize_t n, n2;
++	static char buf[512], buf2[512];
++	struct rlimit rlimit;
++	int nr_open;
++
++	fd = open("/proc/sys/fs/nr_open", O_RDWR);
++	ASSERT_GE(fd, 0);
++
++	n = read(fd, buf, sizeof(buf));
++	ASSERT_GT(n, 0);
++	ASSERT_EQ(buf[n - 1], '\n');
++
++	ASSERT_EQ(sscanf(buf, "%d", &nr_open), 1);
++
++	ASSERT_EQ(0, getrlimit(RLIMIT_NOFILE, &rlimit));
++
++	/* bump fs.nr_open */
++	n2 = sprintf(buf2, "%d\n", nr_open + 1024);
++	lseek(fd, 0, SEEK_SET);
++	write(fd, buf2, n2);
++
++	/* bump ulimit -n */
++	rlimit.rlim_cur = nr_open + 1024;
++	rlimit.rlim_max = nr_open + 1024;
++	EXPECT_EQ(0, setrlimit(RLIMIT_NOFILE, &rlimit)) {
++		lseek(fd, 0, SEEK_SET);
++		write(fd, buf, n);
++		exit(EXIT_FAILURE);
++	}
++
++	/* get a descriptor past the old fs.nr_open */
++	EXPECT_GE(dup2(2, nr_open + 64), 0) {
++		lseek(fd, 0, SEEK_SET);
++		write(fd, buf, n);
++		exit(EXIT_FAILURE);
++	}
++
++	/* get descriptor table shared */
++	pid = sys_clone3(&args, sizeof(args));
++	EXPECT_GE(pid, 0) {
++		lseek(fd, 0, SEEK_SET);
++		write(fd, buf, n);
++		exit(EXIT_FAILURE);
++	}
++
++	if (pid == 0) {
++		int err;
++
++		/* restore fs.nr_open */
++		lseek(fd, 0, SEEK_SET);
++		write(fd, buf, n);
++		/* ... and now unshare(CLONE_FILES) must fail with EMFILE */
++		err = unshare(CLONE_FILES);
++		EXPECT_EQ(err, -1)
++			exit(EXIT_FAILURE);
++		EXPECT_EQ(errno, EMFILE)
++			exit(EXIT_FAILURE);
++		exit(EXIT_SUCCESS);
++	}
++
++	EXPECT_EQ(waitpid(pid, &status, 0), pid);
++	EXPECT_EQ(true, WIFEXITED(status));
++	EXPECT_EQ(0, WEXITSTATUS(status));
++}
++
++TEST_HARNESS_MAIN
 
