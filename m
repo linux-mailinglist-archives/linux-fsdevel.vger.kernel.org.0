@@ -1,59 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-25910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20856951A5E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 13:48:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDEB0951A86
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 14:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0D77282EE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 11:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48EC41F235EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 12:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCE61AC43D;
-	Wed, 14 Aug 2024 11:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AEB1AE847;
+	Wed, 14 Aug 2024 12:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYSMNK7S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZmb8Zwr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A797A143879;
-	Wed, 14 Aug 2024 11:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBBE13D51D;
+	Wed, 14 Aug 2024 12:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723636099; cv=none; b=BkTrwc9xrAx9pS5pzb/7DWquXTRq4FUgCcINeE5+qJ1p+ngTQkfWTG1LvUvB/QK7Ym2zA7JTtYLhMgH88kAk6Wnt2ckZKzvCNeB5Z8tgXTLiUY7xYxwaSokTkHEKbebDz8daOPiUF/jE0YGbEnbY1QHoCrcSGAPPy1R7yZXkJq4=
+	t=1723637044; cv=none; b=SyidQ3BzYjwgVmIKIOUpLokOYgIpUIp9ksEyLgzY1S4RFtnfyASKl1YtNcYAWobSrqsa1pfa76seg2wv2xk08ziugeBOdKduYBRDWC/ZqSEtIN+8H76G4f7+D+OR9rOJ7KKk0IgxmwTHzDLYppIv+U7CwBI14qzwhpoclneRCbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723636099; c=relaxed/simple;
-	bh=W+L/sfojA497thSO+8njO/M5WaH5FCjsR9F4mnjTIF4=;
+	s=arc-20240116; t=1723637044; c=relaxed/simple;
+	bh=mJC8bfWvfQg78Ul16meJjJNrey0FbR5OLBUbT9IBlSk=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qxyBp9wtYQPvW+AJmhD/WQLTza3Mgmp8S6K7Hwdx9eC9+xqALXbwVkXnlqmwiNeVghQmApEJ0ZL1mAUmjdKlc887+SHqz+lSQXezHkDzZ5Im+H4vrJ1k9nyQPDNjaSjtlF/8lBTc393pbzWZrNJAqQckNdrnlQ6q8qsZNfM+Us0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYSMNK7S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F8EC32786;
-	Wed, 14 Aug 2024 11:48:18 +0000 (UTC)
+	 Content-Type:MIME-Version; b=Nu/wNNKVkV9zPQ4hA89Q3oiui6UYwZW0g/auYUx8msEmwLYE552lvJ3FhlCXzTg0NXPZzEOlbKJYtBt7CuV4t1y3Zyf+NKrvV74mG4pWEhqW6CM4FhWL/IVbB7nVBdA3khIkD6kf28ixUt6E1HygwsTyRdUNEp8r6pZH2WaxXA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZmb8Zwr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26553C32786;
+	Wed, 14 Aug 2024 12:04:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723636099;
-	bh=W+L/sfojA497thSO+8njO/M5WaH5FCjsR9F4mnjTIF4=;
+	s=k20201202; t=1723637043;
+	bh=mJC8bfWvfQg78Ul16meJjJNrey0FbR5OLBUbT9IBlSk=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JYSMNK7SsA6NRR+uf2NTIgIlKnDlQMFNUvJZCxt67tR+wNRJR4PS1xppWke6plTg8
-	 b1eJvp933rtr33332D0KUFye6kfLGDpjs7+a79Tso43TDPsUfxgCNCB++fqMaJ57U7
-	 ddQ6R/ZRAWaLnTlG5PFzySSz52LJndOos0+ehfHlBN0TFW6D6bYWql7/4gkjXNEzDB
-	 GoLEIcBmOkco48uBstxgBmWJyBP7I+/+GCVJ/PIhKTCypqxounVSGnaP64xXj1ZbVI
-	 84qfgPRYxXxzWKZgegsNMby1ONEiiek17+7qVC5aN8A3BeDHz70/QNoXWwKk0FB4o8
-	 JusnbRmd95S1Q==
-Message-ID: <df9ee1d9d34b07b9d72a3d8ee8d11c40cf07d193.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+	b=bZmb8ZwrWeaXVp7db4gu2xjMfPYfB0Cytp+1K78HhDjsw3/QWCQLDZmOWBuztkoNS
+	 ubFsmkjzXRFXwkIe1m1HuqrMPe9sYap17TRSoGSCMG98SedWeQB0yDb8EAIvMKLFAy
+	 7uxCGZHLl9td2hERJrL9BHnG1JhBeyj+clz4pw4bsRUdCrlH/MTYzr/pOKN5zbqlEn
+	 oKKuK2C1N/rmhJL38ZBGbdCMKFduhVBNY8SExl31Xe24eFDfrEFURdwj/+/Guqku/W
+	 bs3xnLFfy1egAuXP9WeRN54xSf6z5KnGa05WZ58LfFVFln0ZFnmDaIdrod8prpcWNW
+	 tOUEuBWK0wdZg==
+Message-ID: <4244e028b15819c0149c8f0395d28abcd1da01e4.camel@kernel.org>
+Subject: Re: [PATCH] vfs: drop one lock trip in evict()
 From: Jeff Layton <jlayton@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Andrew
- Morton <akpm@linux-foundation.org>, Mateusz Guzik <mjguzik@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Wed, 14 Aug 2024 07:48:17 -0400
-In-Reply-To: <20240814024057.GP13701@ZenIV>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-	 <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
-	 <20240814021817.GO13701@ZenIV> <20240814024057.GP13701@ZenIV>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Date: Wed, 14 Aug 2024 08:04:01 -0400
+In-Reply-To: <20240813143626.1573445-1-mjguzik@gmail.com>
+References: <20240813143626.1573445-1-mjguzik@gmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -138,28 +134,119 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2024-08-14 at 03:40 +0100, Al Viro wrote:
-> On Wed, Aug 14, 2024 at 03:18:17AM +0100, Al Viro wrote:
+On Tue, 2024-08-13 at 16:36 +0200, Mateusz Guzik wrote:
+> Most commonly neither I_LRU_ISOLATING nor I_SYNC are set, but the stock
+> kernel takes a back-to-back relock trip to check for them.
 >=20
-> > That's not the only problem; your "is it negative" test is inherently
-> > racy in RCU mode.  IOW, what is positive at the time you get here can
-> > bloody well go negative immediately afterwards.  Hit that with
-> > O_CREAT and you've got a bogus ENOENT...
+> It probably can be avoided altogether, but for now massage things back
+> to just one lock acquire.
 >=20
-> Hmm...  OTOH, in that case you end up in step_into(), which will do the
-> right thing...
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
 >=20
-> 	How well does that series survive NFS client regression tests?
-> That's where I'd expect potentially subtle shite, what with short-circuit=
-ed
-> ->d_revalidate() on the final pathwalk step in open()...
+> there are smp_mb's in the area I'm going to look at removing at some
+> point(tm), in the meantime I think this is an easy cleanup
+>=20
+> has a side effect of whacking a inode_wait_for_writeback which was only
+> there to deal with not holding the lock
+>=20
+>  fs/fs-writeback.c | 17 +++--------------
+>  fs/inode.c        |  5 +++--
+>  2 files changed, 6 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 4451ecff37c4..1a5006329f6f 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1510,13 +1510,12 @@ static int write_inode(struct inode *inode, struc=
+t writeback_control *wbc)
+>   * Wait for writeback on an inode to complete. Called with i_lock held.
+>   * Caller must make sure inode cannot go away when we drop i_lock.
+>   */
+> -static void __inode_wait_for_writeback(struct inode *inode)
+> -	__releases(inode->i_lock)
+> -	__acquires(inode->i_lock)
+> +void inode_wait_for_writeback(struct inode *inode)
+>  {
+>  	DEFINE_WAIT_BIT(wq, &inode->i_state, __I_SYNC);
+>  	wait_queue_head_t *wqh;
+> =20
+> +	lockdep_assert_held(&inode->i_lock);
+>  	wqh =3D bit_waitqueue(&inode->i_state, __I_SYNC);
+>  	while (inode->i_state & I_SYNC) {
+>  		spin_unlock(&inode->i_lock);
+> @@ -1526,16 +1525,6 @@ static void __inode_wait_for_writeback(struct inod=
+e *inode)
+>  	}
+>  }
+> =20
+> -/*
+> - * Wait for writeback on an inode to complete. Caller must have inode pi=
+nned.
+> - */
+> -void inode_wait_for_writeback(struct inode *inode)
+> -{
+> -	spin_lock(&inode->i_lock);
+> -	__inode_wait_for_writeback(inode);
+> -	spin_unlock(&inode->i_lock);
+> -}
+> -
+>  /*
+>   * Sleep until I_SYNC is cleared. This function must be called with i_lo=
+ck
+>   * held and drops it. It is aimed for callers not holding any inode refe=
+rence
+> @@ -1757,7 +1746,7 @@ static int writeback_single_inode(struct inode *ino=
+de,
+>  		 */
+>  		if (wbc->sync_mode !=3D WB_SYNC_ALL)
+>  			goto out;
+> -		__inode_wait_for_writeback(inode);
+> +		inode_wait_for_writeback(inode);
+>  	}
+>  	WARN_ON(inode->i_state & I_SYNC);
+>  	/*
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 73183a499b1c..d48d29d39cd2 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -582,7 +582,7 @@ static void inode_unpin_lru_isolating(struct inode *i=
+node)
+> =20
+>  static void inode_wait_for_lru_isolating(struct inode *inode)
+>  {
+> -	spin_lock(&inode->i_lock);
+> +	lockdep_assert_held(&inode->i_lock);
+>  	if (inode->i_state & I_LRU_ISOLATING) {
+>  		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
+>  		wait_queue_head_t *wqh;
+> @@ -593,7 +593,6 @@ static void inode_wait_for_lru_isolating(struct inode=
+ *inode)
+>  		spin_lock(&inode->i_lock);
+>  		WARN_ON(inode->i_state & I_LRU_ISOLATING);
+>  	}
+> -	spin_unlock(&inode->i_lock);
+>  }
+> =20
+>  /**
+> @@ -765,6 +764,7 @@ static void evict(struct inode *inode)
+> =20
+>  	inode_sb_list_del(inode);
+> =20
+> +	spin_lock(&inode->i_lock);
+>  	inode_wait_for_lru_isolating(inode);
+> =20
+>  	/*
+> @@ -774,6 +774,7 @@ static void evict(struct inode *inode)
+>  	 * the inode.  We just have to wait for running writeback to finish.
+>  	 */
+>  	inode_wait_for_writeback(inode);
+> +	spin_unlock(&inode->i_lock);
+> =20
+>  	if (op->evict_inode) {
+>  		op->evict_inode(inode);
 
-Christian took in my v3 patch which is a bit different from this one.
-It seems to be doing fine in testing with NFS and otherwise.
+...and a nice cleanup to boot.
 
-I don't think we short-circuit the d_revalidate though, do we? That
-version calls lookup_fast on the last component which should
-d_revalidate the last dentry before returning it.
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
