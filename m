@@ -1,259 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-25990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55596952459
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 22:59:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9102D9524A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 23:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73C631C21977
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 20:59:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D6E1C22745
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 21:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB2C1C57B5;
-	Wed, 14 Aug 2024 20:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7031C8240;
+	Wed, 14 Aug 2024 21:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hm0WOU5H"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="jVibL81K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7996A1B86C1;
-	Wed, 14 Aug 2024 20:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B67E1BE241
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 21:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723669150; cv=none; b=LB4nxvnH8iwdxvGaoEDXxcs7M9HDBlWKVjBN0WphGSgeOITZcf69GJOTVMXx0x/QasJK5MsqCY1EFuk7Zu7+TWtkcS+TKI23Vfc/zQvUoiVHctmK/O8UTMmAr8Vjp0hk5maK0UNQMCRGAJQChBa0hSsmh2tIbcYNi750INUJ2Rc=
+	t=1723670767; cv=none; b=YXsrJu2tPG2X7dW+3OrapA89Sl5myR8plTHSb7Km/gC2DWsvJmoAAuAqGPsMfc7F/QZL4wrlckX4HrFxSNeTBEEjO2PYIqRRMfKv1y2/TDxkZ/PE9616JgSpKw9Zl8iR8DX4eivcuAoP0UfP+v88V+P7TtUOBSgliL1pTZCSw7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723669150; c=relaxed/simple;
-	bh=8vFVUwpWpI+/TgcmZS2f6NXJyi95TXmRURxuOJMiRuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qGM/YckFYzqaS4pliqYuftEq40/MPzEiTJbMHCobnTOlgrCdqU+UA4Q4b/vG94rD7MnX7j4yWPZ0QJAF/X+UeK+7vIPeoshDMn/PiOqPiI1TbM3nygZcScUUZ1S76+efYSsfdxG93vWOUaob5pBfkfwbsJuS/qREAHOQN6Fc+ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hm0WOU5H; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5b01af9b0c9so457944a12.3;
-        Wed, 14 Aug 2024 13:59:07 -0700 (PDT)
+	s=arc-20240116; t=1723670767; c=relaxed/simple;
+	bh=GWaaaFa5p9YV8pWOdymeo3ub/M+DKWgxitUWjUW2hSU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=g8bv2kutC/WVPVOxKFHIRySiYXTXSMlfXKm1AjXgbUMNTLgqcFgOu1juQBnFKQnOIVLC5xlUtIMRRNsSgXUAHpsjNhtuELItuvDFxUn+Uqj5Sh7cYc45wGooDPOpo9O8J16izkQHuZCCYs7xqlvMW0xkr4COWo6wQtszGtL7Kjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=jVibL81K; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7093d565310so217548a34.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 14:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723669146; x=1724273946; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xUFsxtwjK4qBkT3u2gTB6Vh0/NowA8UD9DfqrFrunBQ=;
-        b=hm0WOU5HppKZU+7oZL95RF3daLFHEx33rV+SjMloWfvriV8wlD9QT2xlwKmRJdnVWU
-         OnTLB2T6xKMpl+OyeC99MMoLBEdvwJaIQMcs99r6plzw4W2lAejjMICm7QcbmahMM+Oc
-         c+P5pg3JCgNgNPcSGmvouKxT/f720mr5/rJvTzAtK4WCb5Ia7WJoUjxdfDKbjCuoiI7x
-         8DWejXxyhXo0dMSfoir3AAFxHfcZBh7XCVAt/LyzGEKe2BJEcbDM3txZlkl8XY6Bh+1d
-         r/GSzIRQYt8kxyZx/phTANyBEIzN81xuG5ZwG5Ym4znKP96CkYIPCQKMRMZLZBQhcfXA
-         kAqw==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723670764; x=1724275564; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pyau8aOJuyZnZfGNcIVxqfibv2avRjwgFV+ZdZpslNc=;
+        b=jVibL81KoTI+z5PO2jZyD1uBfNfYwaUdOYs+fABzlNFmbGlJK7S5WiNg9ZcY6NG4h6
+         uOdv57E9cSR89XoVQY8dFZ2h4F+7JTESMRwk1CtpO0oFHQlVcpicIkGWkQtwJyc/7uK+
+         A4SeRwJv6z0PiAg659NHE2cMDGDPGbTkRSNkm7p9K9GqKf+lsk75y7t5jrpwFGBKv2DO
+         0xRj9PqqeLGV4fe6/RsjDQLUgKonl77sPVmNz3vTRqDHLwaibilVWl0ocERXEDxRGJCW
+         0sXjkk00e+mqXO99bQhaXIqGzagF9UrMqhE092QYmOzZUJp90tCTw8QNPG3u9usaZHwb
+         3l0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723669146; x=1724273946;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xUFsxtwjK4qBkT3u2gTB6Vh0/NowA8UD9DfqrFrunBQ=;
-        b=XjvxuBpbOAQxT406lWgkwxfDry3UoeelNEZFQizMUK187rfMkgkA1bBnFfgKeUL9fp
-         tAdrfrUns4RqP0nWaWKmm5/zpI29yKaicPUf9H4InFjxBEGCTo55v8axski/V/K7AND/
-         elROu1T1algavZqP6KLJ52APOavaSZKQiilcQ6whALh5TxGyZ3vBMeUX9TH5rQ/mJaI9
-         2peAVvL35U7yYksA6tgs4w1DOLfrY5P5njkCcLzu+tR8asWYXj6HtQi1XrLxY2XOUtjA
-         wsjZFpNsQ4Pro+DvK0zuI2ACI1+StFgVslgZnOyb9lQZrTdYY0aD66S9nkH7gcysUAQ/
-         vXjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyi+kwEEDCB7y4mtOhvvs6K57yw7+JsFqjNAi70HE7cTyfC1w9DXNFwvJ5diGpNhbwAY+lqsFO0dpxeyPywMOjLTPg877OTIDj7Ouq/Vfy7nmttGRiqGs2OgUrWan87glQKNz6YZJIfjSlZg==
-X-Gm-Message-State: AOJu0Yzg6N/73OKmTiu5s9W/UDA4AZAJIz/vkix46483+JlCTG9yKS7M
-	zw4HbpLIF3M3M+B168Dx6Al8+WW8XBfAtpg7lRmdzkpVDVYYZcSQ/FioS4t0eQZ4BSUCF8kB/5U
-	gx5hneU1cRWLAaKk+fven+sAZLTI=
-X-Google-Smtp-Source: AGHT+IE+q8WyDRZou/tM0fmC4CDOmu67S4j/1xw7k9NIFZ1RfVTzOUezdCAG+mkrItstm3Yg/SA/rc57D1GEF4GexHI=
-X-Received: by 2002:a17:907:e2cc:b0:a77:dd1c:6276 with SMTP id
- a640c23a62f3a-a8366c1fc04mr288940966b.7.1723669145319; Wed, 14 Aug 2024
- 13:59:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723670764; x=1724275564;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pyau8aOJuyZnZfGNcIVxqfibv2avRjwgFV+ZdZpslNc=;
+        b=lfdGQB/zBnf+f4/cSc+RtiNIem2YNJJbN2C5yNnfnV1A0HTLnj6E03R9pQFKAHhNCK
+         c5FKsI7WNmFzOfYdfPokaMzyH+rgJ33Ng64JQYZNp+5pqOKla+mJSpCPC2O4UfBUuxX1
+         W6jtuezzNhrj50tBu1Ky0Y2EO2tADdTM9eSYQBBiIGfZ85A1TCCKCbQOanqg4HKm1i6z
+         2Pmx6WoggTaHZk5kmSiSfG3lIarNiqNzEhXb+JjN8tUOIwk4TB6p0ZtVXKt++vKy/BQB
+         my43BaoB2XSCSMoXdEusXvCiR8hNw8bMFwPs8WEa46AMjuuVsBMZrmNaJsqpcTF9TTbQ
+         t8Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoQCAd/nycq0dhNIWK/h8LgpSBCX/qgcUp7y77TyAw+wmOuifwF5ijOBgM4XczIL/4MhNNcIkmNl/uS7ZDlaWsp76fr8bFoEVRTq9ZtA==
+X-Gm-Message-State: AOJu0Yx3V3M/aQ5QNE8c1Lyud2qDUydM43Vo8YArFAsUldyDMu5Rtr3T
+	LGisRP2r30xhsfFnpV+xMiyKmCijXqeBej61jfse04dLuIrHGx9XlcQhq6g5XIQ=
+X-Google-Smtp-Source: AGHT+IEJyMAMyA8U3woOzIEEj3JSvwjQmFqO5kjZauXzQokagOUrsDyTtU+QTE5PXpZ2YP7fpxx74w==
+X-Received: by 2002:a05:6358:6f15:b0:1b1:a666:2bba with SMTP id e5c5f4694b2df-1b1aad5368dmr492206355d.24.1723670764131;
+        Wed, 14 Aug 2024 14:26:04 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fe06fdfsm642966d6.34.2024.08.14.14.26.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 14:26:03 -0700 (PDT)
+From: Josef Bacik <josef@toxicpanda.com>
+To: kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org,
+	jack@suse.cz,
+	amir73il@gmail.com,
+	brauner@kernel.org,
+	linux-xfs@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-bcachefs@vger.kernel.org
+Subject: [PATCH v4 00/16] fanotify: add pre-content hooks
+Date: Wed, 14 Aug 2024 17:25:18 -0400
+Message-ID: <cover.1723670362.git.josef@toxicpanda.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240811085954.17162-1-wen.yang@linux.dev> <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
- <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
-In-Reply-To: <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 14 Aug 2024 22:58:52 +0200
-Message-ID: <CAGudoHFQtxU7r+Y9AV2yPc+JrTdMtzJopsjUinFK8uE5h7cbTQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for
- non-semaphore eventfd
-To: Wen Yang <wen.yang@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@fb.com>, 
-	David Woodhouse <dwmw@amazon.co.uk>, Paolo Bonzini <pbonzini@redhat.com>, Dave Young <dyoung@redhat.com>, 
-	kernel test robot <lkp@intel.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 6:15=E2=80=AFPM Wen Yang <wen.yang@linux.dev> wrote=
-:
->
->
->
-> On 2024/8/11 18:26, Mateusz Guzik wrote:
-> > On Sun, Aug 11, 2024 at 04:59:54PM +0800, Wen Yang wrote:
-> >> For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte intege=
-r
-> >> value provided in its buffer to the counter, while a read (2) returns =
-the
-> >> 8-byte value containing the value and resetting the counter value to 0=
-.
-> >> Therefore, the accumulated value of multiple writes can be retrieved b=
-y a
-> >> single read.
-> >>
-> >> However, the current situation is to immediately wake up the read thre=
-ad
-> >> after writing the NON-SEMAPHORE eventfd, which increases unnecessary C=
-PU
-> >> overhead. By introducing a configurable rate limiting mechanism in
-> >> eventfd_write, these unnecessary wake-up operations are reduced.
-> >>
-> >>
-> > [snip]
-> >
-> >>      # ./a.out  -p 2 -s 3
-> >>      The original cpu usage is as follows:
-> >> 09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
-al  %guest  %gnice   %idle
-> >> 09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.=
-00    0.00    0.00    0.00
-> >> 09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.=
-00    0.00    0.00    0.00
-> >>
-> >> 09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
-al  %guest  %gnice   %idle
-> >> 09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.=
-00    0.00    0.00    0.00
-> >> 09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.=
-00    0.00    0.00    0.00
-> >>
-> >> 09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
-al  %guest  %gnice   %idle
-> >> 09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.=
-00    0.00    0.00    0.00
-> >> 09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.=
-00    0.00    0.00    0.00
-> >>
-> >> Then enable the ratelimited wakeup, eg:
-> >>      # ./a.out  -p 2 -s 3  -r1000 -c2
-> >>
-> >> Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30=
-%), as shown below:
-> >> 10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
-al  %guest  %gnice   %idle
-> >> 10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.=
-00    0.00    0.00    0.00
-> >> 10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.=
-00    0.00    0.00   38.38
-> >>
-> >> 10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
-al  %guest  %gnice   %idle
-> >> 10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.=
-00    0.00    0.00    0.00
-> >> 10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.=
-00    0.00    0.00   39.11
-> >>
-> >> 10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
-al  %guest  %gnice   %idle
-> >> 10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.=
-00    0.00    0.00    0.00
-> >> 10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.=
-00    0.00    0.00   42.71
-> >>
-> >>
-> >
-> > Where are these stats from? Is this from your actual program you coded
-> > the feature for?
-> >
-> > The program you inlined here does next to nothing in userspace and
-> > unsurprisingly the entire thing is dominated by kernel time, regardless
-> > of what event rate can be achieved.
-> >
-> > For example I got: /a.out -p 2 -s 3  5.34s user 60.85s system 99% cpu 6=
-6.19s (1:06.19) total
-> >
-> > Even so, looking at perf top shows me that a significant chunk is
-> > contention stemming from calls to poll -- perhaps the overhead will
-> > sufficiently go down if you epoll instead?
->
-> We have two threads here, one publishing and one subscribing, running on
-> CPUs 2 and 3 respectively. If we further refine and collect performance
-> data on CPU 2, we will find that a large amount of CPU is consumed on
-> the spin lock of the wake-up logic of event write, for example:
->
->   # perf top  -C 2  -e cycles:k
->
->      65.80%  [kernel]       [k] do_syscall_64
->      14.71%  [kernel]       [k] _raw_spin_unlock_irq
->       7.54%  [kernel]       [k] __fget_light
->       4.52%  [kernel]       [k] ksys_write
->       1.94%  [kernel]       [k] vfs_write
->       1.43%  [kernel]       [k] _copy_from_user
->       0.87%  [kernel]       [k] common_file_perm
->       0.61%  [kernel]       [k] aa_file_perm
->       0.46%  [kernel]       [k] eventfd_write
->
->
-> One of its call stacks:
->
-> |--6.39%--vfs_write
-> |           --5.46%--eventfd_write
-> |                      --4.73%--_raw_spin_unlock_irq
->
->
-> >  > I think the idea is pretty dodgey. If the consumer program can toler=
-ate
-> > some delay in event processing, this probably can be massaged entirely =
-in
-> > userspace.
-> >
-> > If your real program has the wake up rate so high that it constitutes a
-> > tangible problem I wonder if eventfd is even the right primitive to use
-> > -- perhaps something built around shared memory and futexes would do th=
-e
-> > trick significantly better?
->
-> Thank you for your feedback.
->
-> This demo comes from the real world: the test vehicle has sensors with
-> multiple cycles (such as 1ms, 5ms, 10ms, etc.), and due to the large
-> number of sensors, data is reported at all times. The publisher reported
-> data through libzmq and went to the write logic of eventfd, frequently
-> waking up the receiver. We collected flame graph and observed that a
-> significant amount of CPU was consumed in this path: eventfd_write ->
-> _raw_spin_unlock_irq.
->
-> We did modify a lot of code in user mode on the test vehicle to avoid
-> this issue, such as not using wake-up, not using eventfd, the publisher
-> writing shared memory directly, the receiver periodically extracting the
-> content of shared memory, and so on.
->
+v3: https://lore.kernel.org/linux-fsdevel/cover.1723228772.git.josef@toxicpanda.com/
+v2: https://lore.kernel.org/linux-fsdevel/cover.1723144881.git.josef@toxicpanda.com/
+v1: https://lore.kernel.org/linux-fsdevel/cover.1721931241.git.josef@toxicpanda.com/
 
-Well I don't have the full picture and whatnot, but given the
-additional info you posted here I even more strongly suspect eventfd
-is a bad fit. AFAICS this boils down to batching a number of updates
-and collecting them at some interval.
+v3->v4:
+- Trying to send a final verson Friday at 5pm before you go on vacation is a
+  recipe for silly mistakes, fixed the xfs handling yet again, per Christoph's
+  review.
+- Reworked the file system helper so it's handling of fpin was a little less
+  silly, per Chinner's suggestion.
+- Updated the return values to not or in VM_FAULT_RETRY, as we have a comment
+  in filemap_fault that says if VM_FAULT_ERROR is set we won't have
+  VM_FAULT_RETRY set.
 
-With the assumption that updates to the eventfd counter are guaranteed
-to not overflow within the wakeup delay and that there is constant
-traffic, I'm suspect you would get the expected speed up by using
-timerfd to wake the consumer up periodically. Then you would only
-issue an eventfd read when the timerfd tells you time is up. You would
-(e)poll only on that as well, never on the eventfd.
+v2->v3:
+- Fix the pagefault path to do MAY_ACCESS instead, updated the perm handler to
+  emit PRE_ACCESS in this case, so we can avoid the extraneous perm event as per
+  Amir's suggestion.
+- Reworked the exported helper so the per-filesystem changes are much smaller,
+  per Amir's suggestion.
+- Fixed the screwup for DAX writes per Chinner's suggestion.
+- Added Christian's reviewed-by's where appropriate.
 
-Even so, as is I think this wants a page shared between producer(s)
-and the consumer updating everything with atomics and the consumer
-collecting it periodically (atomic add on one side, atomic swap with 0
-on the consumer, I don't know the c11 intrinsics). It would be
-drastically cheaper all around.
+v1->v2:
+- reworked the page fault logic based on Jan's suggestion and turned it into a
+  helper.
+- Added 3 patches per-fs where we need to call the fsnotify helper from their
+  ->fault handlers.
+- Disabled readahead in the case that there's a pre-content watch in place.
+- Disabled huge faults when there's a pre-content watch in place (entirely
+  because it's untested, theoretically it should be straightforward to do).
+- Updated the command numbers.
+- Addressed the random spelling/grammer mistakes that Jan pointed out.
+- Addressed the other random nits from Jan.
 
-Bottom line though, my non-maintainer feedback so far is that the
-functionality you are proposing does not seem warranted for the
-problem you are facing.
+--- Original email ---
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Hello,
+
+These are the patches for the bare bones pre-content fanotify support.  The
+majority of this work is Amir's, my contribution to this has solely been around
+adding the page fault hooks, testing and validating everything.  I'm sending it
+because Amir is traveling a bunch, and I touched it last so I'm going to take
+all the hate and he can take all the credit.
+
+There is a PoC that I've been using to validate this work, you can find the git
+repo here
+
+https://github.com/josefbacik/remote-fetch
+
+This consists of 3 different tools.
+
+1. populate.  This just creates all the stub files in the directory from the
+   source directory.  Just run ./populate ~/linux ~/hsm-linux and it'll
+   recursively create all of the stub files and directories.
+2. remote-fetch.  This is the actual PoC, you just point it at the source and
+   destination directory and then you can do whatever.  ./remote-fetch ~/linux
+   ~/hsm-linux.
+3. mmap-validate.  This was to validate the pagefault thing, this is likely what
+   will be turned into the selftest with remote-fetch.  It creates a file and
+   then you can validate the file matches the right pattern with both normal
+   reads and mmap.  Normally I do something like
+
+   ./mmap-validate create ~/src/foo
+   ./populate ~/src ~/dst
+   ./rmeote-fetch ~/src ~/dst
+   ./mmap-validate validate ~/dst/foo
+
+I did a bunch of testing, I also got some performance numbers.  I copied a
+kernel tree, and then did remote-fetch, and then make -j4
+
+Normal
+real    9m49.709s
+user    28m11.372s
+sys     4m57.304s
+
+HSM
+real    10m6.454s
+user    29m10.517s
+sys     5m2.617s
+
+So ~17 seconds more to build with HSM.  I then did a make mrproper on both trees
+to see the size
+
+[root@fedora ~]# du -hs /src/linux
+1.6G    /src/linux
+[root@fedora ~]# du -hs dst
+125M    dst
+
+This mirrors the sort of savings we've seen in production.
+
+Meta has had these patches (minus the page fault patch) deployed in production
+for almost a year with our own utility for doing on-demand package fetching.
+The savings from this has been pretty significant.
+
+The page-fault hooks are necessary for the last thing we need, which is
+on-demand range fetching of executables.  Some of our binaries are several gigs
+large, having the ability to remote fetch them on demand is a huge win for us
+not only with space savings, but with startup time of containers.
+
+There will be tests for this going into LTP once we're satisfied with the
+patches and they're on their way upstream.  Thanks,
+
+Josef
+
+Amir Goldstein (8):
+  fsnotify: introduce pre-content permission event
+  fsnotify: generate pre-content permission event on open
+  fanotify: introduce FAN_PRE_ACCESS permission event
+  fanotify: introduce FAN_PRE_MODIFY permission event
+  fanotify: pass optional file access range in pre-content event
+  fanotify: rename a misnamed constant
+  fanotify: report file range info with pre-content events
+  fanotify: allow to set errno in FAN_DENY permission response
+
+Josef Bacik (8):
+  fanotify: don't skip extra event info if no info_mode is set
+  fanotify: add a helper to check for pre content events
+  fanotify: disable readahead if we have pre-content watches
+  mm: don't allow huge faults for files with pre content watches
+  fsnotify: generate pre-content permission event on page fault
+  bcachefs: add pre-content fsnotify hook to fault
+  gfs2: add pre-content fsnotify hook to fault
+  xfs: add pre-content fsnotify hook for write faults
+
+ fs/bcachefs/fs-io-pagecache.c      |   4 +
+ fs/gfs2/file.c                     |   4 +
+ fs/namei.c                         |   9 ++
+ fs/notify/fanotify/fanotify.c      |  32 ++++++--
+ fs/notify/fanotify/fanotify.h      |  20 +++++
+ fs/notify/fanotify/fanotify_user.c | 116 +++++++++++++++++++++-----
+ fs/notify/fsnotify.c               |  14 +++-
+ fs/xfs/xfs_file.c                  |   4 +
+ include/linux/fanotify.h           |  20 +++--
+ include/linux/fsnotify.h           |  54 ++++++++++--
+ include/linux/fsnotify_backend.h   |  59 ++++++++++++-
+ include/linux/mm.h                 |   1 +
+ include/uapi/linux/fanotify.h      |  17 ++++
+ mm/filemap.c                       | 128 +++++++++++++++++++++++++++--
+ mm/memory.c                        |  22 +++++
+ mm/readahead.c                     |  13 +++
+ security/selinux/hooks.c           |   3 +-
+ 17 files changed, 469 insertions(+), 51 deletions(-)
+
+-- 
+2.43.0
+
 
