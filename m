@@ -1,259 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-25944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25945-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D8B9521D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 20:07:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF20952241
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 20:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A601C220A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 18:07:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F55B1F22709
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 18:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B571BE232;
-	Wed, 14 Aug 2024 18:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1F81BD50D;
+	Wed, 14 Aug 2024 18:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdNbvxa+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHodFtsl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7433D1BDAAC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 18:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3C8374FA;
+	Wed, 14 Aug 2024 18:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723658820; cv=none; b=I1QCvc0jvzW6hfVKFCqFuXMjSpr4v/Uf0yJBcdR3NfVbBtQszkaeCR03GPvfHZbqUGnDPbhGV8sPR8N5pazEQ38SFjSwLlSQzyQ2pnPVdMHNCHOE7UPehgz34ab+ABh9d6dTs6cU8L0yViipWFS/vkAZZMsIVN3fMVXxzSdUT8Y=
+	t=1723661661; cv=none; b=YWNhVJMMmKfJK0lcU2vt8Q9i5mUe5c07Muldtudov/UtgjJjor51jSwwGkzhq6i2blFGWEW7CE+vziv7Wc5mjOJoxtKjHwQ/8VXSIcXn8QUy6H+h3JGMfCnLn1Blh4VBmAlZvwnDZuYU9W9/orQUqZ56p8AwQYYZZ9nwGjVKk4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723658820; c=relaxed/simple;
-	bh=hhQnGejS85oljjcKKoWKUmtO/cN7haSuShx1Vfv+uVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jYVoHFsY/GdwBvpATvXTZfka3P7WUTME5EDDB8Ce76n2jynCsUzvK+RBU7z1cT8Gt5hgC5wwuYCCCSz6oPyjgZ8Dm16sY70c7hSymCLSOgO3YPUm3ISowcgDXI6+xl7roU+0hubUaBuinYDUAHditmabH6ueP+/D2SGE1sMetYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdNbvxa+; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-451a0b04f6bso733241cf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 11:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723658817; x=1724263617; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+H0ahRmKwJYTlqK1rmFO0QO/5bggrvOevbBZ28EMQpo=;
-        b=TdNbvxa+SzSeIc3LtSDYqXYiDMa1zLIa2qel+1Z2yWMj8Wia2JSTsW5CY9NshDT/o2
-         3eIG1TCYT86Hf0tlPKv1XbsDlWyKzGosqVeFCb1+XSMWWNQFw8gUjHXnEM49CRlbioPD
-         PAaGCSaj46bf0U/XB76Ui5cpd7Llt3fpHdGDpJjmq2TJSX/twae/mG/QBo2fP8L327WM
-         0WDlVRlQkOVZsIJsYQh43guERRwFEzafq5MQIfqeVbJ1Q/0eafMt1DfjRXQHGfpNLBnZ
-         WJI9lAxjhf6mp8xEJZ3VvnUjJYiKL8YV26CppkmvDbqsiibn012eedZvAaHzo5am/qCx
-         z5sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723658817; x=1724263617;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+H0ahRmKwJYTlqK1rmFO0QO/5bggrvOevbBZ28EMQpo=;
-        b=QzhJ29q4LKabh3tNdLupOgojCJ8hh34CH86pBMdu4cJX6k0Z/o3ntFsfc13meZoSi+
-         1Zm5zUd5s8n5Ld21hB7VKRLF5vPsrGN+9HfjGIwxRdapgUFhnYTGa0a2tVW2nxNe98NC
-         N0TiSNievWeCqw30XtckXbEqvWAj1CvKcr4V17dozSfcd7ChacCl1SLtqSv1GF/Z4rL3
-         0+0VwWTFUtsMXTaJ/Tnu/37v6/K34LWdahSzUqbVmtDper8ued6cpjqwpxhEl0xVKolv
-         HU+Joi6Tqbpjp6YpNhcwfDlSN0H9IFPh6eUChrhoXTuNLCLWbfAodZbKrCag/2o6Wmil
-         iOJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrYq5oYetkfmri+9o8GEH3KOm4ZUhJUvNC7SFB9yX0xbXHIslZQLi/8orhPpaIDJWdBJ+axXgBUZ6NED+LZSmfF46Ssa+XJGHYI2ocMw==
-X-Gm-Message-State: AOJu0YxXJIoLTZJ9kS/KxcFYTxdso/RDnlA9CFMjZftP138Edy9f/3br
-	dQ0L7XjSPXp4HI/gAzS1bjkRPgJs8WYEiYHuqWQKDX1eNjGE+5602mIa5gUCce4GGM4p+tRdKMU
-	xZSHypsAOb5MhTB6JibDJR+IPoMY=
-X-Google-Smtp-Source: AGHT+IG9UxoUFkci4IXgWfhDED1XKEdAjvUAAPWlQyfSE5GCYdyEtUNZayMy64CxLeXLqzsBPNI+npVm+SQNuqFddY4=
-X-Received: by 2002:ac8:70c:0:b0:453:5c20:90b7 with SMTP id
- d75a77b69052e-4535c2091eemr31221251cf.0.1723658817135; Wed, 14 Aug 2024
- 11:06:57 -0700 (PDT)
+	s=arc-20240116; t=1723661661; c=relaxed/simple;
+	bh=mbghPs69mZVoRPsfVF5bAy9PBdak792WWklTSzxXxKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EyqAi/hmCcGJ67yfoFVrU/gQ0Bxd88yiHOneXGbg+qFzVpdav1GuQPm+ick50cadNBBZ5n5mSA+XZNeMWRB82m9FLsFef4MUF2BcvIg0eM8fsqjvedDwDptz3fOxt2ZPddUFlckqvL91MEzZM3GVV674zGQiSwCCaGI8rRYdoQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHodFtsl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03BBBC116B1;
+	Wed, 14 Aug 2024 18:54:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723661661;
+	bh=mbghPs69mZVoRPsfVF5bAy9PBdak792WWklTSzxXxKY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qHodFtsl6O+X7wo7pPDlMvNh80RhbXwpXJDheJVSqqICi14kUY01jOFTFN15R1RWO
+	 6OQzMGIuCdVUpZtIY/dL2OJA10uUbKek+LAOqbBTqWA2NNe1wkZ5ezWCAjpSspwGIw
+	 ozDUmS4bzU3tjY9OpQAm5vWr60rpDGCUIncKZ29PJHQfWeDQYjpgXEG+A+Yjd2pDzQ
+	 +segpEQVfbdFkD6uTO5dv2aXDl7zx905gH3SNkBAQcv+HTYLuz2a5FCR13gR8KDF8b
+	 N7sX1NyDYDfspZQ8S1N1uRAvHsLe3VBUoDitr/RWZ8fwtux+olkuaCuEZ2f68Rx2XP
+	 r0WBFvcvVbf9A==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: bpf@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	adobriyan@gmail.com,
+	shakeel.butt@linux.dev,
+	hannes@cmpxchg.org,
+	ak@linux.intel.com,
+	osandov@osandov.com,
+	song@kernel.org,
+	jannh@google.com,
+	linux-fsdevel@vger.kernel.org,
+	willy@infradead.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v6 bpf-next 00/10] Harden and extend ELF build ID parsing logic
+Date: Wed, 14 Aug 2024 11:54:07 -0700
+Message-ID: <20240814185417.1171430-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813212149.1909627-1-joannelkoong@gmail.com>
- <4c37917a-9a64-4ea0-9437-d537158a8f40@fastmail.fm> <CAJnrk1aC-qUTb1e-n7O-wqrbUKMcq18tyE7LAxattdGU22NaPA@mail.gmail.com>
- <C23FB164-EB7A-436F-8C3F-533B00F67730@fastmail.fm> <CAJnrk1ZZ2eEcwYeXHmJxxMywQ8=iDkffvcJK8W8exA02vjrvUg@mail.gmail.com>
- <9941c561-b358-4058-8797-3e8081b019dc@fastmail.fm>
-In-Reply-To: <9941c561-b358-4058-8797-3e8081b019dc@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Wed, 14 Aug 2024 11:06:46 -0700
-Message-ID: <CAJnrk1a3EFerySC+eEkfLdeo9fe8bqccOqcFK_S547aoLVWUEw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: add FOPEN_FETCH_ATTR flag for fetching attributes
- after open
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
-	osandov@osandov.com, sweettea-kernel@dorminy.me, kernel-team@meta.com, 
-	Dharmendra Singh <dsingh@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 10:52=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 8/14/24 19:18, Joanne Koong wrote:
-> > On Tue, Aug 13, 2024 at 3:41=E2=80=AFPM Bernd Schubert
-> > <bernd.schubert@fastmail.fm> wrote:
-> >>
-> >> On August 13, 2024 11:57:44 PM GMT+02:00, Joanne Koong <joannelkoong@g=
-mail.com> wrote:
-> >>> On Tue, Aug 13, 2024 at 2:44=E2=80=AFPM Bernd Schubert
-> >>> <bernd.schubert@fastmail.fm> wrote:
-> >>>>
-> >>>> On 8/13/24 23:21, Joanne Koong wrote:
-> >>>>> Add FOPEN_FETCH_ATTR flag to indicate that attributes should be
-> >>>>> fetched from the server after an open.
-> >>>>>
-> >>>>> For fuse servers that are backed by network filesystems, this is
-> >>>>> needed to ensure that file attributes are up to date between
-> >>>>> consecutive open calls.
-> >>>>>
-> >>>>> For example, if there is a file that is opened on two fuse mounts,
-> >>>>> in the following scenario:
-> >>>>>
-> >>>>> on mount A, open file.txt w/ O_APPEND, write "hi", close file
-> >>>>> on mount B, open file.txt w/ O_APPEND, write "world", close file
-> >>>>> on mount A, open file.txt w/ O_APPEND, write "123", close file
-> >>>>>
-> >>>>> when the file is reopened on mount A, the file inode contains the o=
-ld
-> >>>>> size and the last append will overwrite the data that was written w=
-hen
-> >>>>> the file was opened/written on mount B.
-> >>>>>
-> >>>>> (This corruption can be reproduced on the example libfuse passthrou=
-gh_hp
-> >>>>> server with writeback caching disabled and nopassthrough)
-> >>>>>
-> >>>>> Having this flag as an option enables parity with NFS's close-to-op=
-en
-> >>>>> consistency.
-> >>>>>
-> >>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> >>>>> ---
-> >>>>>  fs/fuse/file.c            | 7 ++++++-
-> >>>>>  include/uapi/linux/fuse.h | 7 ++++++-
-> >>>>>  2 files changed, 12 insertions(+), 2 deletions(-)
-> >>>>>
-> >>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> >>>>> index f39456c65ed7..437487ce413d 100644
-> >>>>> --- a/fs/fuse/file.c
-> >>>>> +++ b/fs/fuse/file.c
-> >>>>> @@ -264,7 +264,12 @@ static int fuse_open(struct inode *inode, stru=
-ct file *file)
-> >>>>>       err =3D fuse_do_open(fm, get_node_id(inode), file, false);
-> >>>>>       if (!err) {
-> >>>>>               ff =3D file->private_data;
-> >>>>> -             err =3D fuse_finish_open(inode, file);
-> >>>>> +             if (ff->open_flags & FOPEN_FETCH_ATTR) {
-> >>>>> +                     fuse_invalidate_attr(inode);
-> >>>>> +                     err =3D fuse_update_attributes(inode, file, S=
-TATX_BASIC_STATS);
-> >>>>> +             }
-> >>>>> +             if (!err)
-> >>>>> +                     err =3D fuse_finish_open(inode, file);
-> >>>>>               if (err)
-> >>>>>                       fuse_sync_release(fi, ff, file->f_flags);
-> >>>>>               else if (is_truncate)
-> >>>>
-> >>>> I didn't come to it yet, but I actually wanted to update Dharmendras=
-/my
-> >>>> atomic open patches - giving up all the vfs changes (for now) and th=
-en
-> >>>> always use atomic open if available, for FUSE_OPEN and FUSE_CREATE. =
-And
-> >>>> then update attributes through that.
-> >>>> Would that be an alternative for you? Would basically require to add=
- an
-> >>>> atomic_open method into your file system.
-> >>>>
-> >>>> Definitely more complex than your solution, but avoids a another
-> >>>> kernel/userspace transition.
-> >>>
-> >>> Hi Bernd,
-> >>>
-> >>> Unfortunately I don't think this is an alternative for my use case. I
-> >>> haven't looked closely at the implementation details of your atomic
-> >>> open patchset yet but if I'm understanding the gist of it correctly,
-> >>> it bundles the lookup with the open into 1 request, where the
-> >>> attributes can be passed from server -> kernel through the reply to
-> >>> that request. I think in the case I'm working on, the file open call
-> >>> does not require a lookup so it can't take advantage of your feature.
-> >>> I just tested it on libfuse on the passthrough_hp server (with no
-> >>> writeback caching and nopassthrough) on the example in the commit
-> >>> message and I'm not seeing any lookup request being sent for that las=
-t
-> >>> open call (for writing "123").
-> >>>
-> >>
-> >>
-> >> Hi Joanne,
-> >>
-> >> gets late here and I'm typing on my phone.  I hope formatting is ok.
-> >>
-> >> what I meant is that we use the atomic open op code for both, lookup-o=
-pen and plain open - i.e. we always update attributes on open. Past atomic =
-open patches did not do that yet, but I later realized that always using at=
-omic open op
-> >>
-> >> - avoids the data corruption you run into
-> >> - probably no need for atomic-revalidate-open vfs patches anymore  as =
-we can now safely set a high attr timeout
-> >>
-> >>
-> >> Kind of the same as your patch, just through a new op code.
-> >
-> > Awesome, thanks for the context Bernd. I think this works for our use
-> > case then. To confirm the "we will always update attributes on open"
-> > part, this will only send the FUSE_GETATTR request to the server if
-> > the server has invalidated the inode (eg through the
-> > fuse_lowlevel_notify_inval_inode() api), otherwise this will not send
-> > an extra FUSE_GETATTR request, correct? Other than the attribute
->
-> If we send FUSE_OPEN_ATOMIC (or whatever we name it) in
-> fuse_file_open(), it would always ask server side for attributes.
+The goal of this patch set is to extend existing ELF build ID parsing logic,
+currently mostly used by BPF subsystem, with support for working in sleepable
+mode in which memory faults are allowed and can be relied upon to fetch
+relevant parts of ELF file to find and fetch .note.gnu.build-id information.
 
-Oh I see, the FUSE_OPEN_ATOMIC request itself would ask for attributes
-and the attributes would be sent by the server as the reply to the
-FUSE_ATOMIC_OPEN. This sounds great! in my patch, there's an
-additional FUSE_GETATTR request incurred to get the attributes.
+This is useful and important for BPF subsystem itself, but also for
+PROCMAP_QUERY ioctl(), built atop of /proc/<pid>/maps functionality (see [0]),
+which makes use of the same build_id_parse() functionality. PROCMAP_QUERY is
+always called from sleepable user process context, so it doesn't have to
+suffer from current restrictions of build_id_parse() which are due to the NMI
+context assumption.
 
-> I.e. we assume that a server that has atomic open implemented can easily
-> provide attributes or asks for close-to-open coherency.
->
->
-> I'm not sure if I correctly understood your questions about
-> notifications and FUSE_GETATTR - from my point of view that that is
-> entirely independent from open. And personally I try to reduce
+Along the way, we harden the logic to avoid TOCTOU, overflow, out-of-bounds
+access problems.  This is the very first patch, which can be backported to
+older releases, if necessary.
 
-I missed that the attributes would be bundled with FUSE_OPEN_ATOMIC so
-I thought we would need an additional FUSE_GETATTR request to get
-them. Apologies for the confusion!
+We also lift existing limitations of only working as long as ELF program
+headers and build ID note section is contained strictly within the very first
+page of ELF file.
 
-> kernel/userspace transitions - additional notifications and FUSE_GETATTR
-> are not helpful here :)
->
-> > updating, would there be any other differences from using plain open
-> > vs the atomic open version of plain open?
->
-> Just the additional file attributes and complexity that brings.
->
-> >
-> > Do you have a tentative timeline in mind for when the next iteration
-> > of the atomic open patchset would be out?
->
-> I wanted to have new fuse-uring patches ready by last week, but I'm
-> still refactoring things - changing things on top of the existing series
-> is easy, rebasing it is painful...  I can _try_ to make a raw new
-> atomic-open patch set during the next days (till Sunday), but not promise=
-d.
->
+We achieve all of the above without duplication of logic between sleepable and
+non-sleepable modes through freader abstraction that manages underlying folio
+from page cache (on demand) and gives a simple to use direct memory access
+interface. With that, single page restrictions and adding sleepable mode
+support is rather straightforward.
 
-Sounds great. thanks for your work on this!
+We also extend existing set of BPF selftests with a few tests targeting build
+ID logic across sleepable and non-sleepabe contexts (we utilize sleepable and
+non-sleepable uprobes for that).
 
->
-> Thanks,
-> Bernd
+   [0] https://lore.kernel.org/linux-mm/20240627170900.1672542-4-andrii@kernel.org/
+
+v5->v6:
+  - use local phnum variable in get_build_id_32() (Jann);
+  - switch memcmp() instead of strcmp() in parse_build_id() (Jann);
+v4->v5:
+  - pass proper file reference to read_cache_folio() (Shakeel);
+  - fix another potential overflow due to two u32 additions (Andi);
+  - add PageUptodate() check to patch #1 (Jann);
+v3->v4:
+  - fix few more potential overflow and out-of-bounds access issues (Andi);
+  - use purely folio-based implementation for freader (Matthew);
+v2->v3:
+  - remove unneeded READ_ONCE()s and force phoff to u64 for 32-bit mode (Andi);
+  - moved hardening fixes to the front for easier backporting (Jann);
+  - call freader_cleanup() from build_id_parse_buf() for consistency (Jiri);
+v1->v2:
+  - ensure MADV_PAGEOUT works reliably by paging data in first (Shakeel);
+  - to fix BPF CI build optionally define MADV_POPULATE_READ in selftest.
+
+Andrii Nakryiko (10):
+  lib/buildid: harden build ID parsing logic
+  lib/buildid: add single folio-based file reader abstraction
+  lib/buildid: take into account e_phoff when fetching program headers
+  lib/buildid: remove single-page limit for PHDR search
+  lib/buildid: rename build_id_parse() into build_id_parse_nofault()
+  lib/buildid: implement sleepable build_id_parse() API
+  lib/buildid: don't limit .note.gnu.build-id to the first page in ELF
+  bpf: decouple stack_map_get_build_id_offset() from
+    perf_callchain_entry
+  bpf: wire up sleepable bpf_get_stack() and bpf_get_task_stack()
+    helpers
+  selftests/bpf: add build ID tests
+
+ include/linux/bpf.h                           |   2 +
+ include/linux/buildid.h                       |   4 +-
+ kernel/bpf/stackmap.c                         | 131 ++++--
+ kernel/events/core.c                          |   2 +-
+ kernel/trace/bpf_trace.c                      |   5 +-
+ lib/buildid.c                                 | 395 +++++++++++++-----
+ tools/testing/selftests/bpf/Makefile          |   5 +-
+ .../selftests/bpf/prog_tests/build_id.c       | 118 ++++++
+ .../selftests/bpf/progs/test_build_id.c       |  31 ++
+ tools/testing/selftests/bpf/uprobe_multi.c    |  41 ++
+ tools/testing/selftests/bpf/uprobe_multi.ld   |  11 +
+ 11 files changed, 603 insertions(+), 142 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/build_id.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_build_id.c
+ create mode 100644 tools/testing/selftests/bpf/uprobe_multi.ld
+
+-- 
+2.43.5
+
 
