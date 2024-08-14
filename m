@@ -1,104 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-25853-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580B295124A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 04:23:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6171995124E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 04:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D5471F247FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 02:23:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E4CC286D0D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 02:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0881C694;
-	Wed, 14 Aug 2024 02:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8939C376E0;
+	Wed, 14 Aug 2024 02:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="u3HBsvkM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLBpcB+h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F9E1CD31;
-	Wed, 14 Aug 2024 02:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809C11CF8A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 02:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723601902; cv=none; b=p6c/UkR3d1nEcYKdV8L9OmOvZxQQ4KSCK9bCgIFE8PEUGywdEbdJGwdLgAMzLTljbdZEpvu2mAEhj0ZYUcRSV7aGS5EkikNcADLF8LpLdoXYDQdOgyOLnBKEKWkzKxLDBHIzlb98UJq2wTltIyYu4wO37JA2N2z1aeukV8HhoyU=
+	t=1723602014; cv=none; b=LA7YGa0KwRdMjEdsULZPpNu+dTrXn+pijpgnpGYjX2ftmzBHCoIuFHo7pTAHqVl+rFUy2okthIIPwQsqpiMXTF/uDu4gnVLp14EfWuTxt8u9yeYFsGcfsL3rar2zubbfDW9ZT9Wd+BAnqWucRaLX/UZe5xcF3ZY+kSsvIXzKIBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723601902; c=relaxed/simple;
-	bh=nA6UxXiujvxSFnNeSvgiILf4WW8LZvvaIFl7hB21qf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uljHNQwuvBoP0dcEBqlS9Su1kgnm8lbcdnesf0pe18/MSCAUyYW+ThkjzcRy6AiSzmPWYXlsbhcoQ+6SlwXvQ8UW5Oqy9Oky805SwQ6TA/W36+phyjHCOb92xSa7Sz4ctyA9nz/XaZlUUKbGVu+Oum0IAj+LHEneCjxFEMCyonY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=u3HBsvkM; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=q8M9VFnTo721A/GaQMu/ptKzt9bsSKNvxU7i0Y8y6/0=; b=u3HBsvkMkekX42LhLvvmEnD1Dq
-	XePLEqR4fxTwT6ip7u/VWTS7qLqQtCLiMV/szNIVqCNdAjC5k9M/DKdeldVWMV3uI1WGn7KP/dnT3
-	zqacKx77YuJwJxKyxPXZZLCIXeFgGGYtnU0MOmCt3pWNE+eZKwmUVCFJrQ6pKtNBByI0KMBfhaGDZ
-	AgGYYzL3CfFYhU86X1ggjYG1MplxOr192HOGH9KbBdEQLAD2DBen0lPOR1Z30LY5DzCpbglaDHEFM
-	UgfRuH1bNmsgC/cQuc8toLIo32yRL4AlxxwrOOnBYUR8B+KXt+Xf07WBduC7mBOLME8UYo6NBQG+b
-	CgfD/jcg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1se3ab-00000001Uge-0Q3n;
-	Wed, 14 Aug 2024 02:18:17 +0000
-Date: Wed, 14 Aug 2024 03:18:17 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-Message-ID: <20240814021817.GO13701@ZenIV>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
+	s=arc-20240116; t=1723602014; c=relaxed/simple;
+	bh=HYrxpf21d7XH2DRDLA2zJF2YgLgbO5mhSkmEaKVmWbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YfVrN7ne1FpKyPvXaidqGPleYTQh6NjB1AViTozYGleAPiPlyLek0Deh+OeF7C0OEiJpTgJJFop7ge79RYZtP2dXu6B1us3t9tqfcsIgJbo0upBBUYlOp2DTVMzJIkhV/UWe5yzJ9H94PuzSoWQ7jlqh0LwuZhXtPDU1bGbjJ3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLBpcB+h; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-70949118d26so4582254a34.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 19:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723602012; x=1724206812; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f3V+DLbt+gBJxvflbIYvl5HUcut4u3GQMh9nwUHnO0o=;
+        b=mLBpcB+hqOj9rW9mE2KkNk0qc5X3kKwyodZumArNL009GR8mlS68AMfXh+EJWrqicJ
+         KahRhB2FfFN7ENiObEM0Gp+2I+3Sgfgu92lJMFpiqxTVp/1J9solipCt0aE7+8NSOQPg
+         O0hdgU1Q5BBWjBAFajARv5SPx9xcmwHg36j7w5Rkn7vvy49EiEiYZl5e3rlQvUaM4GBQ
+         7YGal3DJsZZrhQcvglTkLoQg3WYLWKgiI6wWAxJDdKzd5us5Y1HdfBXNBSSwTo0z9y7n
+         yWZL60IpVzSQlUJgEi+QyRYNrfZrCxKhZkZdzF5s2wMhOkadrlPoGV+rw4Suamg2Dgxp
+         3AyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723602012; x=1724206812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f3V+DLbt+gBJxvflbIYvl5HUcut4u3GQMh9nwUHnO0o=;
+        b=H0Y9c1rnRE/4ivNEdrYVAMLC2AdYYg6VbzVMAka3sX0qXZ0pPdYpUFpBmQe2wQSP6g
+         hF+XmE1LC7zWqbPrUYVRNeRJjDrgTr2+0iokK7yDikt+2jWbH/0qPWaYuGRfxJJy6253
+         mDfVJrVPFNRp74OcWPhrisk/ID7/S+tZvaz1ayalaNw0+OOKVpUJiOf9ajCqp6EknyX/
+         Y8mw7LEhJgNw9LtfGOmvZA05FIz/88wjLYJ78UgOemB+eFuecl08WGuzaYOFpklM1xKh
+         OG/3y95+IEQ5ooIGBtdzu252jm2KRrubr1q/tqqnG3UUm6VS7VSxn+nT9EmLY2Hh+TBj
+         2UIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrgtmt+WfhB7ZAYrGQ+vSHy7j/Z0qvlFInkU3cgm/9GaJgQhinhukTvxdXZ9Dx7sjvaoLJSDEi/7dpJQFR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3OkggPlmAJCoB9/HFTtgv6zF6SIYAeBwcX1tqk2nYhCTIYFJb
+	TFqY0TapBJURwCmjzS30/KAtjAR+LGNV/r99LRcSkco0jkseuVco+gJcyoHDBT6zhf0cKmMRJ3T
+	irBuhUbn9UIjmGgu9XjrKpeUBYLI=
+X-Google-Smtp-Source: AGHT+IFi/RRWEoYuIcX8DevLhOsamNomcbuQLC280BbkURJY8WIipWABfMbY2reYR9/jrfvyKYbpzMsESqWN3yrPd54=
+X-Received: by 2002:a05:6358:9144:b0:1ad:471:9b7 with SMTP id
+ e5c5f4694b2df-1b1aab85b53mr160088755d.18.1723602012558; Tue, 13 Aug 2024
+ 19:20:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240812090525.80299-1-laoar.shao@gmail.com> <20240812090525.80299-2-laoar.shao@gmail.com>
+ <Zrv6Fts73FECScyd@dread.disaster.area>
+In-Reply-To: <Zrv6Fts73FECScyd@dread.disaster.area>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Wed, 14 Aug 2024 10:19:36 +0800
+Message-ID: <CALOAHbAfQPdpXt0SHGxQdJEi1R_u+1x2KSwZ5XfrQD-sQmhKiA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: Add memalloc_nowait_{save,restore}
+To: Dave Chinner <david@fromorbit.com>
+Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	Kent Overstreet <kent.overstreet@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 03:51:35PM -0400, Jeff Layton wrote:
+On Wed, Aug 14, 2024 at 8:28=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
+wrote:
+>
+> On Mon, Aug 12, 2024 at 05:05:24PM +0800, Yafang Shao wrote:
+> > The PF_MEMALLOC_NORECLAIM flag was introduced in commit eab0af905bfc
+> > ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN"). To complem=
+ent
+> > this, let's add two helper functions, memalloc_nowait_{save,restore}, w=
+hich
+> > will be useful in scenarios where we want to avoid waiting for memory
+> > reclamation.
+>
+> Readahead already uses this context:
+>
+> static inline gfp_t readahead_gfp_mask(struct address_space *x)
+> {
+>         return mapping_gfp_mask(x) | __GFP_NORETRY | __GFP_NOWARN;
+> }
+>
+> and __GFP_NORETRY means minimal direct reclaim should be performed.
+> Most filesystems already have GFP_NOFS context from
+> mapping_gfp_mask(), so how much difference does completely avoiding
+> direct reclaim actually make under memory pressure?
 
-> > +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
-> > +{
-> > +	struct dentry *dentry;
-> > +
-> > +	if (open_flag & O_CREAT) {
-> > +		/* Don't bother on an O_EXCL create */
-> > +		if (open_flag & O_EXCL)
-> > +			return NULL;
-> > +
-> > +		/*
-> > +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
-> > +		 * use the dentry. For now, don't do this, since it shifts
-> > +		 * contention from parent's i_rwsem to its d_lockref spinlock.
-> > +		 * Reconsider this once dentry refcounting handles heavy
-> > +		 * contention better.
-> > +		 */
-> > +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
-> > +			return NULL;
-> > +	}
-> > +
-> > +	if (trailing_slashes(nd))
-> > +		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-> > +
-> > +	dentry = lookup_fast(nd);
-> 
-> Self-NAK on this patch. We have to test for IS_ERR on the returned
-> dentry here. I'll send a v3 along after I've retested it.
+Besides the __GFP_NOFS , ~__GFP_DIRECT_RECLAIM also implies
+__GPF_NOIO. If we don't set __GPF_NOIO, the readahead can wait for IO,
+right?
 
-That's not the only problem; your "is it negative" test is inherently
-racy in RCU mode.  IOW, what is positive at the time you get here can
-bloody well go negative immediately afterwards.  Hit that with
-O_CREAT and you've got a bogus ENOENT...
+>
+> i.e. doing some direct reclaim without blocking when under memory
+> pressure might actually give better performance than skipping direct
+> reclaim and aborting readahead altogether....
+>
+> This really, really needs some numbers (both throughput and IO
+> latency histograms) to go with it because we have no evidence either
+> way to determine what is the best approach here.
+>
+> -Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
+
+
+
+--=20
+Regards
+Yafang
 
