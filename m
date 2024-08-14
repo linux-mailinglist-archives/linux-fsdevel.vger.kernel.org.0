@@ -1,153 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-25929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6609951F4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 18:00:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65675951F55
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 18:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126061C210B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 16:00:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1881E1F2392D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 16:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F88E1B86D1;
-	Wed, 14 Aug 2024 16:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8D91B86E7;
+	Wed, 14 Aug 2024 16:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1Qo0Znc"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="S99vt2bA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8515C3D552;
-	Wed, 14 Aug 2024 16:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145F81B86D2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 16:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723651233; cv=none; b=HHfFwydcQ3IV9xTwvzx1fw3fAyV6fyRlW+jTFbEwHigLrZA+7oZg/yeWw+f+HmMjKL/Yy/pfRgGoWrGRiy6OA9V9k31lRtSlkj2DzwH1O1VczD1ts3zvILZl55wHxa4fkxG4cIOnpoZhjg7SoVq/E3CoC+kskV1JBvPqvfhOwKE=
+	t=1723651374; cv=none; b=XUfx7kCkhKJgLR5qm8xtY1+4SvvblZB4nyDmmc9xf5oOiOsaZH0/KQ0hYycK7WjObWq1BFZk+ajBAtnOVjr8smZfAeqvgJoVItBlJA5R1bsYp/k/82YXFhweWzb7vm3kWuZHiWNdojJVVZOoNq8wDUpzDRctZzGwM1Fpn7HlDIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723651233; c=relaxed/simple;
-	bh=tJ9y/t0p8CoWT3GLrKdQZ0dSWk0FZ5F+3VCb9/8rtJc=;
+	s=arc-20240116; t=1723651374; c=relaxed/simple;
+	bh=HbgQOO1pMh9zXn9zb9L6wLmMxEX4oUvgefQm6XRXhCo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X7XGZRWMcpbMavEVGi3q05wmpt+fgLDWxzw9/hRsYv5DM4jFHWaiP26xAY3nkrwrphVyuLQ+WArt5vz4+mD0FlW8ZmBRnhCXoe5XK+OVqPq5wH8lGG7JyLOO543LOBXln1CTf7pNkw1APPKloIwMZWclRO3fd7zT0F2NxCB212g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1Qo0Znc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE22C116B1;
-	Wed, 14 Aug 2024 16:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723651233;
-	bh=tJ9y/t0p8CoWT3GLrKdQZ0dSWk0FZ5F+3VCb9/8rtJc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C1Qo0Zncz+RdR9DeUEI52CB7DQtewBYXVGfRUQ4A1toxpkFsbuQ6aJyDgJz7UfDuH
-	 bzxXCMK2CVyRwzj4Fzsp12NcASucmaKle8j/eMgOwWVzR2lvflN7lzCLHhTyQ3ScD3
-	 +3H4j8mCCyM0GSJc3pBhGBO2bXmXG5WzBuDhGy5GyWML6OrUSxKM3fVQt794iZbGN7
-	 zq37MEqlxsQmv9ud3qgMIDnCP26tQt1p0hjVBhliLYp5ui4XBUgvCNn/OsKWmUZrSd
-	 Krpj/jmqgiJLPoYpTX6m1uOjpJNj4kjuDK0YvvBuQWHt0Y9IyIEzIa3etR5NZwtbL6
-	 zsq/MP82yJmiw==
-Date: Wed, 14 Aug 2024 17:00:23 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 23/40] arm64/signal: Set up and restore the GCS
- context for signal handlers
-Message-ID: <08932f6d-01ef-40e8-97d2-08f0d2016191@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
- <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WMr39PMn7ef6dWGk+IRSuMn17w744OGNcyMwTpZvm3j5X9Kaqf2z/92Lx/0Ad6hjkTkYB2ehP5umBqKcJXgbKIm9tw//UnuD61xl9QmVWYpFk+4Knvt5EsEGHTOxphbKHsku/JclnygV+esSHzUGlwlwhCCSYNqM9grj9LCE7Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=S99vt2bA; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a1da7cafccso346104685a.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 09:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723651371; x=1724256171; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bl9T1PS2AEmFiqovXXb+ctpjMbiWaIBX2G2Lgx03hk8=;
+        b=S99vt2bAgGPuew0HV6gmPagiCet+s9iSJYapblJQHWedAG9u2M1JqupmR+1SJvOa5Z
+         +xpfkFiAJcXqeNPGMVr4KzEzJrFvZznSFELrAcc5k4dFQQsKo2SaxQnTx/8SifuuHefb
+         gXN+n97CGzJq/sDxQn6T8nQyHwL1KHeIyra9l6BsW1//0kU1vH3LoP30rHuVVIsDrmVa
+         0FoTOANz8lyO0jnbrhce86O+lRHzCU5qoEnHXLRdPsy7PICDo1X2NOVU12o8dWZquY7f
+         UZ5216tdREm0cvx0ndjTEtMYIHWHt3Auy7Z1KxuAtW5gOcJOjQJpluMRjJSJB43WRks4
+         MWfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723651371; x=1724256171;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bl9T1PS2AEmFiqovXXb+ctpjMbiWaIBX2G2Lgx03hk8=;
+        b=lfICCfuVUJnuqpU1XZNeDk2D1tKHKp99pnmoQV5BFLYpaj9eKC14CXMInsCYpGey6g
+         9yGoXKye+XF69TS2dCeqbWKgovL5Z4xu/jctvjiWhWJdM54uWkZZj+DK/JI/v2vivXfy
+         TO00h1+7OSICcTCYmy5FcTn/7Ob3QlSeqb3o0DCQi3vpHSBPtlW29lzfXyXLvHgiwrCF
+         r/OgXw6GPMPWi01EjMI0el7+cENYlrHHOJJEH6F1tHKnyFAEw6hfwD6Bgh5Bm1MwLwNS
+         bJFveM+aXDFlKPgVMUyzwQmVqW4/JjTqG+t3XwsSDxerqRff9DP/HAIgHnIUpLqxkJ2C
+         J1/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUqauiywd+ZlnnzXgbf/lzlhgImB9OyMCelQbfIg0RG97JIl40m7Zxd6EOe8NkAbjKinMUmXWGk3F7qv0iJmYeVmexkUXyNm2+7Xum3mg==
+X-Gm-Message-State: AOJu0YwqDHyfg6ZCxWRrvOvATuW8Lvl9exu9Tjpoy7zBhaDxA1DdNhgP
+	Oi9loxsAtt7MmRmZPLXGLAH7tG7aY/AlUc12LJLvLt8FkvKhBAjlwJ3A5C637ow=
+X-Google-Smtp-Source: AGHT+IEigntk7HKjxwRMkP5QGGQIwTVVfljj9y8TRxI8eB9OgmTcO4FQWjNrf+soernUVU/sBy42XA==
+X-Received: by 2002:a05:620a:4587:b0:79f:d0f:2b1f with SMTP id af79cd13be357-7a4ee3f4995mr402715285a.61.1723651370624;
+        Wed, 14 Aug 2024 09:02:50 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d79076sm450945385a.60.2024.08.14.09.02.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 09:02:50 -0700 (PDT)
+Date: Wed, 14 Aug 2024 12:02:49 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Bernd Schubert <bschubert@ddn.com>, miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com
+Subject: Re: [PATCH v3] fuse: Allow page aligned writes
+Message-ID: <20240814160249.GA1053520@perftesting>
+References: <20240812161839.1961311-1-bschubert@ddn.com>
+ <a71d9bc4-fa6f-4cfd-bd96-e1001c3061fe@fastmail.fm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d9byunHM6BED1bDk"
-Content-Disposition: inline
-In-Reply-To: <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
-X-Cookie: The second best policy is dishonesty.
-
-
---d9byunHM6BED1bDk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <a71d9bc4-fa6f-4cfd-bd96-e1001c3061fe@fastmail.fm>
 
-On Wed, Aug 14, 2024 at 03:51:42PM +0100, Dave Martin wrote:
-> On Thu, Aug 01, 2024 at 01:06:50PM +0100, Mark Brown wrote:
+On Mon, Aug 12, 2024 at 06:37:49PM +0200, Bernd Schubert wrote:
+> Sorry, I had sent out the wrong/old patch file - it doesn't have one change
+> (handling of already aligned buffers). 
+> Shall I sent v4? The correct version is below
+> 
+> ---
+> 
+> From: Bernd Schubert <bschubert@ddn.com>
+> Date: Fri, 21 Jun 2024 11:51:23 +0200
+> Subject: [PATCH v3] fuse: Allow page aligned writes
+> 
+> Write IOs should be page aligned as fuse server
+> might need to copy data to another buffer otherwise in
+> order to fulfill network or device storage requirements.
+> 
+> Simple reproducer is with libfuse, example/passthrough*
+> and opening a file with O_DIRECT - without this change
+> writing to that file failed with -EINVAL if the underlying
+> file system was requiring alignment.
+> 
+> Required server side changes:
+> Server needs to seek to the next page, without splice that is
+> just page size buffer alignment, with splice another splice
+> syscall is needed to seek over the unaligned area.
+> 
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
 
-> > +	put_user_gcs((unsigned long)sigtramp, gcspr_el0 - 2, &ret);
-> > +	put_user_gcs(GCS_SIGNAL_CAP(gcspr_el0 - 1), gcspr_el0 - 1, &ret);
-> > +	if (ret != 0)
-> > +		return ret;
+This looks good,
 
-> What happens if we went wrong here, or if the signal we are delivering
-> was caused by a GCS overrun or bad GCSPR_EL0 in the first place?
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-> It feels like a program has no way to rescue itself from excessive
-> recursion in some thread.  Is there something equivalent to
-> sigaltstack()?
+Thanks Bernd,
 
-> Or is the shadow stack always supposed to be big enough to cope with
-> recursion that exhausts the main stack and alternate signal stack (and
-> if so, how is this ensured)?
-
-There's no sigaltstack() for GCS, this is also the ABI with the existing
-shadow stack on x86 and should be addressed in a cross architecture
-fashion.  There have been some discussions about providing a shadow alt
-stack but they've generally been circular and inconclusive, there were a
-bunch of tradeoffs for corner cases and nobody had a clear sense as to
-what a good solution should be.  It was a bit unclear that actively
-doing anything was worthwhile.  The issues were IIRC around unwinders
-and disjoint shadow stacks, compatibility with non-shadow stacks and
-behaviour when we overflow the shadow stack.  I think there were also
-some applications trying to be very clever with alt stacks that needed
-to be interacted with and complicated everything but I could be
-misremembering there.
-
-Practically speaking since we're only storing return addresses the
-default GCS should be extremely large so it's unlikely to come up
-without first encountering and handling issues on the normal stack.
-Users allocating their own shadow stacks should be careful.  This isn't
-really satisfying but is probably fine in practice, there's certainly
-not been any pressure yet from the existing x86 deployments (though at
-present nobody can explicitly select their own shadow stack size,
-perhaps it'll become more of an issue when the clone3() stuff is in).
-
---d9byunHM6BED1bDk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma81JcACgkQJNaLcl1U
-h9DStQf+MHf5MIvFUrZBpQZg07XSllBYTCVHtBIGn5XzIx/KW1GJXKIov1DxWUTX
-4/a2ua/8So/yt7XHqWLjBgCUd7U4AsSNKO3kBxUGH1j85SY4YPkZtb+t8AriDoS5
-aBVNq2boS8RzipYyeieLa1TUtet845IqOUX6AZ6yMIyWEcqaST5KfdYG0vmy3tKH
-Rk85zpx0YvxXhmd63f+dAZYPPsOxVaJxVgUGl8/qDJzXEHHsT8nNlkLc4x6s7vja
-MyVsVWQGYTa7MKQofcxfH+yB1UtWlMV9oxMRWab4Uy7GPaBO05yTKxDukJQUklbt
-S47T7TUaZvxSLe1aJLMls0FHfdO5uQ==
-=go3J
------END PGP SIGNATURE-----
-
---d9byunHM6BED1bDk--
+Josef
 
