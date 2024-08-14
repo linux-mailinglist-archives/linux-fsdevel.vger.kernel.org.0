@@ -1,120 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-26007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908999524C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 23:27:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EFD49524D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 23:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 471EB281E49
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 21:27:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87DB284406
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 21:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2655E1D27BD;
-	Wed, 14 Aug 2024 21:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3061C8222;
+	Wed, 14 Aug 2024 21:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="yKYxjzMI"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VkoKIQks"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05831C8FB3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 21:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7FB1B0125;
+	Wed, 14 Aug 2024 21:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723670784; cv=none; b=Z4iNMNK1guYIb9SzxIsF8ocYCVVLygOJrzpEIT72Q2N6ttWoWUMpuG5szfhnKumPKHqQGPehiFwEaAlo8wQ1IGha211/IDyHo12HL+As7c24v/2VIOF9s1ytWVJ+Q1eCPkEOIb2kCfXMxn3/GjKe6QQhyTcNEFsNIMUmTqhq3Gg=
+	t=1723671523; cv=none; b=NxAKtOABRG4qBsoBZWgjvLTjpVDKgpuSVG2DbVpyVerYGUfgg2nARqlIhIE6KDPeiZAj/oQbXT8rqq8TLELUiOXYhrXotwOhnNjMIw4UoCHDxOBV2UphMxg7Q+Jhb4yW2rUdxZ74ltDE68w2hgVRj6jDn6dD9DVZV/4uPjY5bu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723670784; c=relaxed/simple;
-	bh=S0mezk7lokrHR+8fcU6LAupASbj5zKj9YDRU//oGrc4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mGBEXz83uR+l2ywnN6Ap63lcSPFYn1bWlq7j3JOP9TPJU4w6UbOLKRzK6uHKx2xHawM+Xd8/x9K5xSJDzyCNVin2T+gQur1XUI3WuZIw6HV3hrMiym6tESERH8EotDYdA8o1eCENH8mEBfm81ItGGpQhS9nQomQi0o4+1dxoBO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=yKYxjzMI; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a1d7bc07b7so21122285a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 14:26:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723670781; x=1724275581; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/g0betjFPlSWGNNLN2rg+et8Qa/vCpguwAUALfab+wk=;
-        b=yKYxjzMIHOKVD7hCfqqDbQ3M9MRTo7yLBD72u9lQJ+mFdhbDV088MXtG8urZrAPysj
-         ybweUtaUr1xYRQjBHW3DQNwKBR6ilAPSyNAAgy4azinX3OB/tADp5lcp+O2Ao76NSl5W
-         s3+SUN7NHq4J3Q3nBYeySTQ3XDRRkzuYWgokHzhhzEyFsSMOrU6fHRmzrADK2UmaS+sw
-         sD5zjeXI7O0VSwDIQ8mbQfa/R0kBM46kV9F1c3m3bkfJgpk3+6b8oinyn11+cihhjfSq
-         p80SBcXJJR6YPvjyS2+u5jPAGMxJqc5jGBkFwGpGNotkYebUJM1fS8IVHF/EZt02H1GS
-         ngOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723670781; x=1724275581;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/g0betjFPlSWGNNLN2rg+et8Qa/vCpguwAUALfab+wk=;
-        b=wwfO3xBcY6xNbcr4DdCT9Ob5MPqiwmLdRLCsbtb+uQsvSrsiR0HHKbgcc+4unEj4mr
-         cJHrXEGhKBV2IBj5jq3465bk1RK44cYGjGoea0yiP70g/tzxyZsi5mUnDl84WAdhbRvI
-         QKamUaa8r1sJOEET8wgD2fVoIr5po55fNKemof+Zg0rUucFk1V5D3P8xSJzrGVeGnJu8
-         ukwO837whSDcNgcl+Y+DiIQElWETll1MmpjpfZCSrDfSyN/LhmE98vhK3PBIZukf5HV7
-         ICPuluzkHz1nJR2Xub10NzjuorpFKp9FUvZXXWWBSVv0Jvh21xZwRoteMY4IiQjPIDjn
-         A3kA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwLXzOCmbEGNg8QgrWreaXhMFeUlkorGpsvc3unCXRynbAxvoThryKkpy4GUcqZTq2f4XB/LRofUPfKSajGPFSMh6K9COz1QN61eB9sw==
-X-Gm-Message-State: AOJu0YzjGXjnOxWL3ltDG6+tlKzGCNeZKItl1INMUY9vVOM2ntBQqBX2
-	yr8A8ZKCstD/OIY5raWu5mYTuWmXrKkc1yy7OJ//yO2ubtBbacSWFtJF1jGDMPE=
-X-Google-Smtp-Source: AGHT+IEwLYSHYYTuAZJvUuE3hfd+/zuyGZIMkGIICNZLTcaMoU6Cqa81XGFABSQNoiEu298KSeXnZA==
-X-Received: by 2002:a05:620a:288a:b0:79f:17d9:d86b with SMTP id af79cd13be357-7a4ee318773mr448400785a.12.1723670781667;
-        Wed, 14 Aug 2024 14:26:21 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4536a072683sm480751cf.85.2024.08.14.14.26.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 14:26:21 -0700 (PDT)
-From: Josef Bacik <josef@toxicpanda.com>
-To: kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org,
-	jack@suse.cz,
-	amir73il@gmail.com,
-	brauner@kernel.org,
-	linux-xfs@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org
-Subject: [PATCH v4 16/16] xfs: add pre-content fsnotify hook for write faults
-Date: Wed, 14 Aug 2024 17:25:34 -0400
-Message-ID: <631039816bbac737db351e3067520e85a8774ba1.1723670362.git.josef@toxicpanda.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1723670362.git.josef@toxicpanda.com>
-References: <cover.1723670362.git.josef@toxicpanda.com>
+	s=arc-20240116; t=1723671523; c=relaxed/simple;
+	bh=CCbQ83Iy1WzmBG4dBLFnVf1SI1eFl9/q84aiMtQ7YIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yg8X0vI7x3l32F+qReWEo1iq3wlvLzrZLsCS4sd1TnJr9VrFigDdn5TgQTIe3hbmqeo9IDnmHCRt/O8rhDVIWFb21A7bCG6jrQevrrYYmzB91OQjfhVbGPFH2iTnK759xAn97sADQr50hvOLxiN7pfzVEG9nGkoc6YcDc9elT5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VkoKIQks; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=co+EjIeuQKptCH4asuM2220HsBlmKKFCANnTP/24k2g=; b=VkoKIQksG7ZyEOcK2IRicOVob/
+	EX3C9hozgV45MdjC2uw/t5NtCszDQTj/d5t9Q/73NeQb/J6iQTmbrhr3O7vrmKza1yUMIQfAEAF+V
+	d0TSl1tBwRKRnWEeWX7fFJ5Yh95aCm50PJ9PAtZU/gIdog9JHgcWzHXLYNi4aVIXaKIZDURLlUZrg
+	OZudE4pvZxymh7PCXaIz+vYCd//uXolUOpFo7Pe786LehJabUEuqm0rDPj1sGEBAK9JMluHehx9bl
+	X0iSzCZq4DNjMBr/+wR8WI8iv3cXxNTB/3hq6+BRdgiWTZRO4eFfyhsfxGpQyIJ4to5GRhOiJxYdv
+	cit8M0oQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1seLhU-00000001itB-099Y;
+	Wed, 14 Aug 2024 21:38:36 +0000
+Date: Wed, 14 Aug 2024 22:38:35 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yu Ma <yu.ma@intel.com>
+Cc: brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com,
+	edumazet@google.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pan.deng@intel.com,
+	tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v5 1/3] fs/file.c: remove sanity_check and add
+ likely/unlikely in alloc_fd()
+Message-ID: <20240814213835.GU13701@ZenIV>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240717145018.3972922-2-yu.ma@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717145018.3972922-2-yu.ma@intel.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-xfs has it's own handling for write faults, so we need to add the
-pre-content fsnotify hook for this case.  Reads go through filemap_fault
-so they're handled properly there.
+On Wed, Jul 17, 2024 at 10:50:16AM -0400, Yu Ma wrote:
+> alloc_fd() has a sanity check inside to make sure the struct file mapping to the
+> allocated fd is NULL. Remove this sanity check since it can be assured by
+> exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
+> likely/unlikely and expand_file() call avoidance to reduce the work under
+> file_lock.
 
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
----
- fs/xfs/xfs_file.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> +	if (unlikely(fd >= fdt->max_fds)) {
+> +		error = expand_files(files, fd);
+> +		if (error < 0)
+> +			goto out;
+>  
+> -	/*
+> -	 * If we needed to expand the fs array we
+> -	 * might have blocked - try again.
+> -	 */
+> -	if (error)
+> -		goto repeat;
+> +		/*
+> +		 * If we needed to expand the fs array we
+> +		 * might have blocked - try again.
+> +		 */
+> +		if (error)
+> +			goto repeat;
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 4cdc54dc9686..e61c4c389d7d 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1283,6 +1283,10 @@ xfs_write_fault(
- 	unsigned int		lock_mode = XFS_MMAPLOCK_SHARED;
- 	vm_fault_t		ret;
- 
-+	ret = filemap_maybe_emit_fsnotify_event(vmf);
-+	if (unlikely(ret))
-+		return ret;
-+
- 	sb_start_pagefault(inode->i_sb);
- 	file_update_time(vmf->vma->vm_file);
- 
--- 
-2.43.0
+With that change you can't get 0 from expand_files() here, so the
+last goto should be unconditional.  The only case when expand_files()
+returns 0 is when it has found the descriptor already being covered
+by fdt; since fdt->max_fds is stabilized by ->files_lock we are
+holding here, comparison in expand_files() will give the same
+result as it just had.
 
+IOW, that goto repeat should be unconditional.  The fun part here is
+that this was the only caller that distinguished between 0 and 1...
 
