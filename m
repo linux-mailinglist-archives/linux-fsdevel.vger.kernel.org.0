@@ -1,189 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-25931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4580C951F95
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 18:15:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D673E951F9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 18:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F16D0282CE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 16:15:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928F5282F98
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 16:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FA11B8EBC;
-	Wed, 14 Aug 2024 16:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A3D1B86EF;
+	Wed, 14 Aug 2024 16:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y6bsfOlF"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ET4IDp+3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16191B8EB4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 16:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C1D1B3F0F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 16:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652081; cv=none; b=CfSvHXz8YJG0v4aAvT9wljIjztdRTfGjdyqTmTsC5aexwC84wHDGnkUoRG446wfR3RrBua0ezRCzYSjjvf0hTAmwtE0qUq3LYZKMqIItwTPWygrR0FxHWml0U0vCEPMLLs67JcJNej46ccTcfccIk9tU0++lNbfgW3YNUXKeCXA=
+	t=1723652157; cv=none; b=Qpzc5RJCoscv9bDt8j+JM4Q+I9L5rHPeH/X3UYZIFvx51fRysTWuG+doPjZBStzEh42ENGtSHI0grlFj9u18j3WJFLW27vRYVgsVpX63Areqvm5Zi6sdttHG2btY1QorMkfUf+uhLaYhzj8Fm9nkuNS6EaLWCfKMcGjHSv5HQHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652081; c=relaxed/simple;
-	bh=1gR7IPGJlvDuH9OGf4O4TKswFpP6LwMPMY2YDmqcZhU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EezTDsd2UviKhnhIl2VOvZROU6iT2AN7Nr3TlceyRzullHI7MPP6s5vfnUYhufNa//OyKbOFqTz0zSpBXKpt8+0vKc269ThnhIblwPW2dgFRAqHyvPk/epPKYIdAofXGxvv8x8TnDtTLoNmPvT5qsT/KeVe1K/7vAtqqDNVvxlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y6bsfOlF; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so7648a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 09:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723652078; x=1724256878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6bQ9j9ErtrrpZhSLzeUe548UlFsO7KLb0/TyLtNcWJw=;
-        b=Y6bsfOlFnrM681/3d/iqNng48eYUH2/3fxGvd1bip/5D70uhu/GyEUXi4dJ4BJTsV8
-         iDJxh8vz3zqBMkfPRYAXED+FfWtM3OXeI9iWoBcPddFwIdt9L/rFZc0vDXiKsTsQKgY+
-         s5A/F5wZNsgIDkiQT/kRNgJ2zCTbH8Ge/1TnRpTnZWc17goih2AlA0l5w4H3+jmmXh3f
-         Fg6FYIjoMqbd8r8Gos/GFq8p2ZXiY/faQfzKGimgEYREspLO8+KYMooQe0xZ1AOb0Jiy
-         cT+skCXnNy5eWhN3NP8pvDLOOpEhh9j4UsW78PENIUSD1Bs/S7uRjmgf3LpHV/Yo1+x4
-         Ls3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723652078; x=1724256878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6bQ9j9ErtrrpZhSLzeUe548UlFsO7KLb0/TyLtNcWJw=;
-        b=YTaoNHXxJPar9CkoUEUun5J/U4j7m9BI5eiEaGvPbjLZlmpDsaWyozZtPoiobDlQyv
-         crC5r7RHs3ZUWWAQCUq5MKE0AIUs2xhOzLkwx0DqDb5cFim7w0FC8vzc1w4BkbxMKJz/
-         1CC9ZNjrol4QI2GmxxMeDD0j9vUnQGhKW1g4TMKYySvhRldAUGmvhDXuJUtvEkpB7+AD
-         IuSthVkksIpfVCJ8EqQR5tN3FxI1nyNx8We5iLA4gpjs0PUQGzRi+e0CcklJKkuRtXeS
-         d/ziFHaZgKTNltctQQLf/xNf9RwS6wrZAP7RDwbhoi0+Xnjz+mHm54T/eurpk+aYKJHU
-         9Cyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoIkenyMrl6FFvNZipv1aRgTcMrndirRSe0RZjUWH1wlYn5ngn71MDEdwZxdYArDe5BmDyrT/hzYHC169M@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmmRbDN4p/p2n5cr3SH82l+mmVOslzOIfohB8Rlcc0hsdafIbw
-	gNJpKilM9J5rYhmMcGOrV0gzlxXJfS5aLgdj+tvo/Bc3lZfHN2V6v06SNABPJHEz+qCkJbmElxx
-	UPbnbKENlOemTE2qzFwJG6+e/cnx4Uj336mkk
-X-Google-Smtp-Source: AGHT+IEDxZPD3vJxwWTsDeOPtGLySgwgkgr6dRkg5BY1PBUpXws7SIHVDHMiXTM6viwfIH4s0+WA4qXy/HT+Mlhdu7E=
-X-Received: by 2002:a05:6402:50cf:b0:58b:93:b623 with SMTP id
- 4fb4d7f45d1cf-5bea55635d8mr87569a12.5.1723652077454; Wed, 14 Aug 2024
- 09:14:37 -0700 (PDT)
+	s=arc-20240116; t=1723652157; c=relaxed/simple;
+	bh=3mXr/6h6lT95ur+dscFgm9tZkCxglKXqx5l9umpgz7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ih5Rc0X3ddZpP5QpcpDRFOSwhD9Lbo2nkYi/TgGME1S36WIfSfB4sXpO2Ffa6t4ecDPwSERapKSyg05IGYCE1fG7AoS91SVmophuRfZH7O6dCDQgrs+zEbfk4wIb6zZ/CM3DOW543hiLybtK6URHVOgFkfmyEc8BofV9I/WRvX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ET4IDp+3; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723652153;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cfSA6DWqUV6iEzUz38Yd8F3h1Wfcr8ykatb0DJro06A=;
+	b=ET4IDp+3z8YnwfSgfouUmDUX2Ajs8uytSGcauLb+Pt7qJDi0vHNOnXL4qb8sSQOHI4xwvT
+	GiWe9GqPAvuZOA8bhPJxPzKoADmwVMmbRqkybIH28hgW7asvfZjoDCbhQJKBO8NIxGFVp+
+	x1Sqc7P2MgjEU5MIPS5anLCAcDqiyrg=
+Date: Thu, 15 Aug 2024 00:15:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813002932.3373935-1-andrii@kernel.org> <20240813002932.3373935-2-andrii@kernel.org>
- <CAG48ez1oUas3ZMsDdJSxbZoFK0xfsLFiEZjJmOryzkURPPBeBA@mail.gmail.com> <CAEf4BzZa9Rkm=MAOOF58K444NAfiRry2Y1DDgPYaB48x6yEdbw@mail.gmail.com>
-In-Reply-To: <CAEf4BzZa9Rkm=MAOOF58K444NAfiRry2Y1DDgPYaB48x6yEdbw@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 14 Aug 2024 18:13:59 +0200
-Message-ID: <CAG48ez0QdmjJua8V4RPhs2WmuGGhD++H-e2vacfP1=2jVgCy+w@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 01/10] lib/buildid: harden build ID parsing logic
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, adobriyan@gmail.com, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, ak@linux.intel.com, osandov@osandov.com, song@kernel.org, 
-	linux-fsdevel@vger.kernel.org, willy@infradead.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 14, 2024 at 1:21=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
-> On Tue, Aug 13, 2024 at 1:59=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
-e:
-> >
-> > On Tue, Aug 13, 2024 at 2:29=E2=80=AFAM Andrii Nakryiko <andrii@kernel.=
-org> wrote:
-> > > Harden build ID parsing logic, adding explicit READ_ONCE() where it's
-> > > important to have a consistent value read and validated just once.
-> > >
-> > > Also, as pointed out by Andi Kleen, we need to make sure that entire =
-ELF
-> > > note is within a page bounds, so move the overflow check up and add a=
-n
-> > > extra note_size boundaries validation.
-> > >
-> > > Fixes tag below points to the code that moved this code into
-> > > lib/buildid.c, and then subsequently was used in perf subsystem, maki=
-ng
-> > > this code exposed to perf_event_open() users in v5.12+.
-> >
-> > Sorry, I missed some things in previous review rounds:
-> >
-> > [...]
-> > > @@ -18,31 +18,37 @@ static int parse_build_id_buf(unsigned char *buil=
-d_id,
-> > [...]
-> > >                 if (nhdr->n_type =3D=3D BUILD_ID &&
-> > > -                   nhdr->n_namesz =3D=3D sizeof("GNU") &&
-> > > -                   !strcmp((char *)(nhdr + 1), "GNU") &&
-> > > -                   nhdr->n_descsz > 0 &&
-> > > -                   nhdr->n_descsz <=3D BUILD_ID_SIZE_MAX) {
-> > > -                       memcpy(build_id,
-> > > -                              note_start + note_offs +
-> > > -                              ALIGN(sizeof("GNU"), 4) + sizeof(Elf32=
-_Nhdr),
-> > > -                              nhdr->n_descsz);
-> > > -                       memset(build_id + nhdr->n_descsz, 0,
-> > > -                              BUILD_ID_SIZE_MAX - nhdr->n_descsz);
-> > > +                   name_sz =3D=3D note_name_sz &&
-> > > +                   strcmp((char *)(nhdr + 1), note_name) =3D=3D 0 &&
-> >
-> > Please change this to something like "memcmp((char *)(nhdr + 1),
-> > note_name, note_name_sz) =3D=3D 0" to ensure that we can't run off the =
-end
-> > of the page if there are no null bytes in the rest of the page.
->
-> I did switch this to strncmp() at some earlier point, but then
-> realized that there is no point because note_name is controlled by us
-> and will ensure there is a zero at byte (note_name_sz - 1). So I don't
-> think memcmp() buys us anything.
-
-There are two reasons why using strcmp() here makes me uneasy.
+Subject: Re: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for
+ non-semaphore eventfd
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+ Dylan Yudaken <dylany@fb.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Paolo Bonzini <pbonzini@redhat.com>, Dave Young <dyoung@redhat.com>,
+ kernel test robot <lkp@intel.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240811085954.17162-1-wen.yang@linux.dev>
+ <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
-First: We're still operating on shared memory that can concurrently change.
 
-Let's say strcmp is implemented like this, this is the generic C
-implementation in the kernel (which I think is the implementation
-that's used for x86-64):
+On 2024/8/11 18:26, Mateusz Guzik wrote:
+> On Sun, Aug 11, 2024 at 04:59:54PM +0800, Wen Yang wrote:
+>> For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
+>> value provided in its buffer to the counter, while a read (2) returns the
+>> 8-byte value containing the value and resetting the counter value to 0.
+>> Therefore, the accumulated value of multiple writes can be retrieved by a
+>> single read.
+>>
+>> However, the current situation is to immediately wake up the read thread
+>> after writing the NON-SEMAPHORE eventfd, which increases unnecessary CPU
+>> overhead. By introducing a configurable rate limiting mechanism in
+>> eventfd_write, these unnecessary wake-up operations are reduced.
+>>
+>>
+> [snip]
+> 
+>> 	# ./a.out  -p 2 -s 3
+>> 	The original cpu usage is as follows:
+>> 09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>> 09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>> 09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>
+>> 09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>> 09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>> 09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>
+>> 09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>> 09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>> 09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>
+>> Then enable the ratelimited wakeup, eg:
+>> 	# ./a.out  -p 2 -s 3  -r1000 -c2
+>>
+>> Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30%), as shown below:
+>> 10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>> 10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>> 10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.00    0.00    0.00   38.38
+>>
+>> 10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>> 10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>> 10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.00    0.00    0.00   39.11
+>>
+>> 10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>> 10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>> 10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.00    0.00    0.00   42.71
+>>
+>>
+> 
+> Where are these stats from? Is this from your actual program you coded
+> the feature for?
+> 
+> The program you inlined here does next to nothing in userspace and
+> unsurprisingly the entire thing is dominated by kernel time, regardless
+> of what event rate can be achieved.
+> 
+> For example I got: /a.out -p 2 -s 3  5.34s user 60.85s system 99% cpu 66.19s (1:06.19) total
+> 
+> Even so, looking at perf top shows me that a significant chunk is
+> contention stemming from calls to poll -- perhaps the overhead will
+> sufficiently go down if you epoll instead?
 
-int strcmp(const char *cs, const char *ct)
-{
-        unsigned char c1, c2;
+We have two threads here, one publishing and one subscribing, running on 
+CPUs 2 and 3 respectively. If we further refine and collect performance 
+data on CPU 2, we will find that a large amount of CPU is consumed on 
+the spin lock of the wake-up logic of event write, for example:
 
-        while (1) {
-                c1 =3D *cs++;
-                c2 =3D *ct++;
-                if (c1 !=3D c2)
-                        return c1 < c2 ? -1 : 1;
-                if (!c1)
-                        break;
-        }
-        return 0;
-}
+  # perf top  -C 2  -e cycles:k
 
-No READ_ONCE() or anything like that - it's not designed for being
-used on concurrently changing memory.
-
-And let's say you call it like strcmp(<shared memory>, "GNU"), and
-we're now in the fourth iteration. If the compiler decides to re-fetch
-the value of "c1" from memory for each of the two conditions, then it
-could be that the "if (c1 !=3D c2)" sees c1=3D'\0' and c2=3D'\0', so the
-condition evaluates as false; but then at the "if (!c1)", the value in
-memory changed, and we see c1=3D'A'. So now in the next round, we'll be
-accessing out-of-bounds memory behind the 4-byte string constant
-"GNU".
-
-So I don't think strcmp() on memory that can concurrently change is allowed=
-.
-
-(It actually seems like the generic memcmp() is also implemented
-without READ_ONCE(), maybe we should change that...)
+     65.80%  [kernel]       [k] do_syscall_64
+     14.71%  [kernel]       [k] _raw_spin_unlock_irq
+      7.54%  [kernel]       [k] __fget_light
+      4.52%  [kernel]       [k] ksys_write
+      1.94%  [kernel]       [k] vfs_write
+      1.43%  [kernel]       [k] _copy_from_user
+      0.87%  [kernel]       [k] common_file_perm
+      0.61%  [kernel]       [k] aa_file_perm
+      0.46%  [kernel]       [k] eventfd_write
 
 
-Second: You are assuming that if one side of the strcmp() is at most
-four bytes long (including null terminator), then strcmp() also won't
-access more than 4 bytes of the other string, even if that string does
-not have a null terminator at index 4. I don't think that's part of
-the normal strcmp() API contract.
+One of its call stacks:
+
+|--6.39%--vfs_write
+|           --5.46%--eventfd_write
+|                      --4.73%--_raw_spin_unlock_irq
+
+
+>  > I think the idea is pretty dodgey. If the consumer program can tolerate
+> some delay in event processing, this probably can be massaged entirely in
+> userspace.
+> 
+> If your real program has the wake up rate so high that it constitutes a
+> tangible problem I wonder if eventfd is even the right primitive to use
+> -- perhaps something built around shared memory and futexes would do the
+> trick significantly better?
+
+Thank you for your feedback.
+
+This demo comes from the real world: the test vehicle has sensors with 
+multiple cycles (such as 1ms, 5ms, 10ms, etc.), and due to the large 
+number of sensors, data is reported at all times. The publisher reported 
+data through libzmq and went to the write logic of eventfd, frequently 
+waking up the receiver. We collected flame graph and observed that a 
+significant amount of CPU was consumed in this path: eventfd_write -> 
+_raw_spin_unlock_irq.
+
+We did modify a lot of code in user mode on the test vehicle to avoid 
+this issue, such as not using wake-up, not using eventfd, the publisher 
+writing shared memory directly, the receiver periodically extracting the 
+content of shared memory, and so on.
+
+However, since the eventfd mechanism of the kernel provides two 
+different attributes, EFD_SEMAPHORE and EFD_NONSEMAPHORE, should we 
+utilize both of them instead of default to only using EFD_SEMAPHORE?
+
+By utilizing EFD_NONSEMAPHORE on the write side, it is indeed possible 
+to avoid the problem of frequently waking up the read side process.
+
+Since last year, in my spare time, I have released multiple versions of 
+patches and received some feedback, such as:
+
+https://lkml.org/lkml/2023/1/29/228
+https://lkml.org/lkml/2023/4/16/149
+https://lkml.org/lkml/2024/5/19/135
+
+
+Fortunately, some small optimization patches around EFD_SEMAPHORE have 
+already entered the mainline kernel, such as:
+
+eventfd: add a BUILD_BUG_ON() to ensure consistency between 
+EFD_SEMAPHORE and the uapi
+eventfd: prevent underflow for eventfd semaphores
+eventfd: show the EFD_SEMAPHORE flag in fdinfo
+
+
+Looking forward to the final resolution of this issue, and we welcome 
+your further suggestions.
+
+--
+Best wishes,
+Wen
+
+
+
 
