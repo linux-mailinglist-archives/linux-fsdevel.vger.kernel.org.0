@@ -1,267 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-25919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53BC951CE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 16:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC72951D74
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 16:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322C3288F05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 14:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833C81C2579B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 14:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A49E1B32BC;
-	Wed, 14 Aug 2024 14:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71161B3F0E;
+	Wed, 14 Aug 2024 14:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Kv1LNkky"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3LcKHrq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D051B32B8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 14:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483D91B373B;
+	Wed, 14 Aug 2024 14:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723645190; cv=none; b=ToYYy5+fB5fnp8f5AAZ/ocQ5ovix5EbWp8dqh1Y4Mk4tojRy/aJtc/SfNnrrbzElJCvYNChCIfOEalezVHqTiWfjC7eyHJYAk9KvxXARFMwohaF7f5EgFxR2bWECPZMG7CUNgiL3vilDxAL0Ko2vZoXCRhqoSpkeJuN5tbFoFoc=
+	t=1723646376; cv=none; b=F99rjQ7EVRO2eScs5pIOZQA+D+MOmKNYQQ5tffQDVNJ7CrIRg9vECDoWr8p7meJsJ9ZP2mli1sQxn4WW6V05QQYE14G61L8b7NCUvXieQbyHTT/6+6/fMPZmTwgqs/YIJfDn2fmeEkMgeSOv+obcMaS5nGoxdIVxZrv2ShGk3ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723645190; c=relaxed/simple;
-	bh=HVroeHgT75p4mx/kjl9PfYZHiauPCT5X26P0iCgBt8Q=;
+	s=arc-20240116; t=1723646376; c=relaxed/simple;
+	bh=Lz3WZju4AIx0XhLGlChFQhykhUMFjefQLlxi1VNM7LU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N607PT+/ch2RNj3GeDqnD2D8rOhUI88yeKrp98blR5XUFx4969mKFa33lodeUi/keFe6L3nmND5cjoLim26My3mMhB0FcFndump+4R0Y1yfR8RIli1b4JEucK+BhGuyWJr3oRC/RKi7X443ggGMw8Mj18mKENSH172lMzj3UDyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Kv1LNkky; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso49528425e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 07:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1723645187; x=1724249987; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Da9YmzdiApbeXQcXz3ENTfNNAAvA7VbcLD5ruFK2oT8=;
-        b=Kv1LNkkyR07JHWqaWkJHxmTRgFcMAuCg2XyA/068C6NbwtoVFqA/Ce85IDHFnNEdUJ
-         MGEVPmf11ZaTxOyPK84i+XyGxjuqZTS18R9TzYRZGFhGOM5Qt/PBzs0YFdb5pa6v58Xu
-         3IKZB1UJfL72aCXFGl2+rrZIZPT1z1c8QDEF0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723645187; x=1724249987;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Da9YmzdiApbeXQcXz3ENTfNNAAvA7VbcLD5ruFK2oT8=;
-        b=O5lo5Zqo7jQbfF675y2JJOspl7gmzhncmXsnNIaICL+B6bM8EMCuqZu8Bm214ZXETb
-         fuKCwr6DACOf/QP+bj/mynOs41ly0dSdBSwelaqUFcEu+gXG2TbQ8vxZePq2nVixt5Vg
-         2zaH0vwT1X00W56gnxvhIA/yCF0ViPUbmZ70m4OalSymyK4EyjgH+izNhFqUZ2yRLwRU
-         O1stEZyLvjmgXYG1wurrHlUwyu1w2GtKEcxfRGIaVo/xXT0KRjSy8dbcroXM30+meAWx
-         0yU6/tvHizSGdV6AaKemFa7fjidadQ1M7oJYSHQRHjYaaN8u/38qnl/SlWL6/e3qbCmz
-         uYLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXxJ7iwbeQfmkFWdO5qwLawodLiJRioe/ljj2LSrdcfXC8h90lsoGVHLSuPY5QlWWtk76fp2JO7wfXDOmDRsmOS9J5dCTLlxTbQAIZKw==
-X-Gm-Message-State: AOJu0YyGaTOQV3tXArKDFAHP56DP8bFDhaj6ebKYR8eXkwdkmZRk4X1S
-	H63IgGHe1ANryiijSV9JNuBaBz2wC5p3dBeshtxpYEpC7AwzHbOJlbGB82d87O8=
-X-Google-Smtp-Source: AGHT+IGjy6UqrgdbSznY5oj8eOp/e9kukvu2+aB5a/gmgZLDw2cmWwT3/5lBN+QfWxZEkEbw6anX3g==
-X-Received: by 2002:a05:600c:4e87:b0:426:6158:962d with SMTP id 5b1f17b1804b1-429dd25fa21mr21152715e9.23.1723645187017;
-        Wed, 14 Aug 2024 07:19:47 -0700 (PDT)
-Received: from LQ3V64L9R2.home ([80.208.222.2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded32538sm21204145e9.16.2024.08.14.07.19.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 07:19:46 -0700 (PDT)
-Date: Wed, 14 Aug 2024 15:19:44 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Martin Karsten <mkarsten@uwaterloo.ca>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
-Message-ID: <Zry9AO5Im6rjW0jm@LQ3V64L9R2.home>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <20240812125717.413108-1-jdamato@fastly.com>
- <ZrpuWMoXHxzPvvhL@mini-arch>
- <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
- <ZrqU3kYgL4-OI-qj@mini-arch>
- <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
- <Zrq8zCy1-mfArXka@mini-arch>
- <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
- <Zrrb8xkdIbhS7F58@mini-arch>
- <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
- <66bc21772c6bd_985bf294b0@willemb.c.googlers.com.notmuch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XkVHVm8/A6sJXkrs3hNSaVvP84ovzCkVpf7ZBCGDo7ZZYgdBIbc3cVF++Cv+etnTS++t1zZlSk7SGVM5J2UA+U3fatQqzH0kVz++G6Tyq/RTMurUu3qgYbv4cWxOqUhL8tcrBx8zxrqNSRZvVKfZUQfcOLAFvOdKSplsE1+v3VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3LcKHrq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A812C116B1;
+	Wed, 14 Aug 2024 14:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723646375;
+	bh=Lz3WZju4AIx0XhLGlChFQhykhUMFjefQLlxi1VNM7LU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P3LcKHrqsXQ/S/eSdVxcNBL9VCpUxk0hLYjOrsaOIY5o6KtN5e/7M6xrghhCMeNz1
+	 +Eann4WzY8xQES0SDLqNU8mgTvM30yikIw1tISdJNwugjrCT6K8VVV2GTA1jxxLxXT
+	 tT4rWXaOA20aMslvdcs5O5mDJ5xyrY5qnScyAnX7/s5jcBasuH1aQA6qnru2Ugvgxc
+	 OmGWR4z8za9O0BPGE+j/VRuMRMB+hixckCBjNn/Xbid3jBjK0/+38J1I8qVvM5s152
+	 bEsjRQOSr8YGjKKvqev6KSG/b7YSsMfoGm0hsy1mP/XVaCFjdR71zY8Cw38Vd33E+A
+	 H0GmXn0WNmocg==
+Date: Wed, 14 Aug 2024 16:39:31 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ian Kent <raven@themaw.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	autofs mailing list <autofs@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] autofs: add per dentry expire timeout
+Message-ID: <20240814-darauf-schund-23ec844f4a09@brauner>
+References: <20240814090231.963520-1-raven@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <66bc21772c6bd_985bf294b0@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20240814090231.963520-1-raven@themaw.net>
 
-On Tue, Aug 13, 2024 at 11:16:07PM -0400, Willem de Bruijn wrote:
-> Martin Karsten wrote:
-> > On 2024-08-13 00:07, Stanislav Fomichev wrote:
-> > > On 08/12, Martin Karsten wrote:
-> > >> On 2024-08-12 21:54, Stanislav Fomichev wrote:
-> > >>> On 08/12, Martin Karsten wrote:
-> > >>>> On 2024-08-12 19:03, Stanislav Fomichev wrote:
-> > >>>>> On 08/12, Martin Karsten wrote:
-> > >>>>>> On 2024-08-12 16:19, Stanislav Fomichev wrote:
-> > >>>>>>> On 08/12, Joe Damato wrote:
-
-[...]
-
-> > >>
-> > >> One of the goals of this patch set is to reduce parameter tuning and make
-> > >> the parameter setting independent of workload dynamics, so it should make
-> > >> things easier. This is of course notwithstanding that per-napi settings
-> > >> would be even better.
+On Wed, Aug 14, 2024 at 05:02:31PM GMT, Ian Kent wrote:
+> Add ability to set per-dentry mount expire timeout to autofs.
 > 
-> I don't follow how adding another tunable reduces parameter tuning.
-
-Thanks for taking a look and providing valuable feedback, Willem.
-
-An early draft of the cover letter included some paragraphs which were removed
-for the sake of brevity that we can add back in, which addresses your comment
-above:
-
- The existing mechanism in the kernel (defer_hard_irqs and gro_flush_timeout)
- is useful, but picking the correct values for these settings is difficult and
- the ideal values change as the type of traffic and workload changes.
-
- For example: picking a large timeout value is good for batching packet
- processing, but induces latency. Picking a small timeout value will interrupt
- user app processing and reduce efficiency. The value chosen would be different
- depending on whether the system is under high load (large timeout) or when less
- busy (small timeout).
-
-As such, adding the new tunable makes it much easier to use the existing ones
-and also produces better performance as shown in the results we presented. 
-
-Please let me know if you have any questions; I know that the change we are
-introducing is very subtle and I am happy to expand the cover letter if it'd be
-helpful for you.
-
-My concern was that the cover letter was too long already, but a big takeaway
-for me thus far has been that we should expand the cover letter.
-
-[...]
-
-> > > Let's see how other people feel about per-dev irq_suspend_timeout. Properly
-> > > disabling napi during busy polling is super useful, but it would still
-> > > be nice to plumb irq_suspend_timeout via epoll context or have it set on
-> > > a per-napi basis imho.
-> > 
-> > Fingers crossed. I hope this patch will be accepted, because it has 
-> > practical performance and efficiency benefits, and that this will 
-> > further increase the motivation to re-design the entire irq 
-> > defer(/suspend) infrastructure for per-napi settings.
+> There are two fairly well known automounter map formats, the autofs
+> format and the amd format (more or less System V and Berkley).
 > 
-> Overall, the idea of keeping interrupts disabled during event
-> processing is very interesting.
-
-Thanks; I'm happy to hear we are aligned on this.
-
-> Hopefully the interface can be made more intuitive. Or documented more
-> easily. I had to read the kernel patches to fully (perhaps) grasp it.
+> Some time ago Linux autofs added an amd map format parser that
+> implemented a fair amount of the amd functionality. This was done
+> within the autofs infrastructure and some functionality wasn't
+> implemented because it either didn't make sense or required extra
+> kernel changes. The idea was to restrict changes to be within the
+> existing autofs functionality as much as possible and leave changes
+> with a wider scope to be considered later.
 > 
-> Another +1 on the referenced paper. Pointing out a specific difference
-> in behavior that is unrelated to the protection domain, rather than a
-> straightforward kernel vs user argument. The paper also had some
-> explanation that may be clearer for a commit message than the current
-> cover letter:
+> One of these changes is implementing the amd options:
+> 1) "unmount", expire this mount according to a timeout (same as the
+>    current autofs default).
+> 2) "nounmount", don't expire this mount (same as setting the autofs
+>    timeout to 0 except only for this specific mount) .
+> 3) "utimeout=<seconds>", expire this mount using the specified
+>    timeout (again same as setting the autofs timeout but only for
+>    this mount).
 > 
-> "user-level network stacks put the application in charge of the entire
-> network stack processing (cf. Section 2). Interrupts are disabled and
-> the application coordinates execution by alternating between
-> processing existing requests and polling the RX queues for new data"
-> " [This series extends this behavior to kernel busy polling, while
-> falling back onto interrupt processing to limit CPU overhead.]
+> To implement these options per-dentry expire timeouts need to be
+> implemented for autofs indirect mounts. This is because all map keys
+> (mounts) for autofs indirect mounts use an expire timeout stored in
+> the autofs mount super block info. structure and all indirect mounts
+> use the same expire timeout.
 > 
-> "Instead of re-enabling the respective interrupt(s) as soon as
-> epoll_wait() returns from its NAPI busy loop, the relevant IRQs stay
-> masked until a subsequent epoll_wait() call comes up empty, i.e., no
-> events of interest are found and the application thread is about to be
-> blocked."
+> Now I have a request to add the "nounmount" option so I need to add
+> the per-dentry expire handling to the kernel implementation to do this.
 > 
-> "A fallback technical approach would use a kernel timeout set on the
-> return path from epoll_wait(). If necessary, the timeout re-enables
-> interrupts regardless of the application´s (mis)behaviour."
-> [Where misbehavior is not calling epoll_wait again]
+> The implementation uses the trailing path component to identify the
+> mount (and is also used as the autofs map key) which is passed in the
+> autofs_dev_ioctl structure path field. The expire timeout is passed
+> in autofs_dev_ioctl timeout field (well, of the timeout union).
 > 
-> "The resulting execution model mimics the execution model of typical
-> user-level network stacks and does not add any requirements compared
-> to user-level networking. In fact, it is slightly better, because it
-> can resort to blocking and interrupt delivery, instead of having to
-> continuously busyloop during idle times."
->
-> This last part shows a preference on your part to a trade-off:
-> you want low latency, but also low cpu utilization if possible.
-> This also came up in this thread. Please state that design decision
-> explicitly.
+> If the passed in timeout is equal to -1 the per-dentry timeout and
+> flag are cleared providing for the "unmount" option. If the timeout
+> is greater than or equal to 0 the timeout is set to the value and the
+> flag is also set. If the dentry timeout is 0 the dentry will not expire
+> by timeout which enables the implementation of the "nounmount" option
+> for the specific mount. When the dentry timeout is greater than zero it
+> allows for the implementation of the "utimeout=<seconds>" option.
+> 
+> Signed-off-by: Ian Kent <raven@themaw.net>
+> ---
+>  fs/autofs/autofs_i.h         |  4 ++
+>  fs/autofs/dev-ioctl.c        | 97 ++++++++++++++++++++++++++++++++++--
+>  fs/autofs/expire.c           |  7 ++-
+>  fs/autofs/inode.c            |  2 +
+>  include/uapi/linux/auto_fs.h |  2 +-
+>  5 files changed, 104 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+> index 8c1d587b3eef..77c7991d89aa 100644
+> --- a/fs/autofs/autofs_i.h
+> +++ b/fs/autofs/autofs_i.h
+> @@ -62,6 +62,7 @@ struct autofs_info {
+>  	struct list_head expiring;
+>  
+>  	struct autofs_sb_info *sbi;
+> +	unsigned long exp_timeout;
+>  	unsigned long last_used;
+>  	int count;
+>  
+> @@ -81,6 +82,9 @@ struct autofs_info {
+>  					*/
+>  #define AUTOFS_INF_PENDING	(1<<2) /* dentry pending mount */
+>  
+> +#define AUTOFS_INF_EXPIRE_SET	(1<<3) /* per-dentry expire timeout set for
+> +					  this mount point.
+> +					*/
+>  struct autofs_wait_queue {
+>  	wait_queue_head_t queue;
+>  	struct autofs_wait_queue *next;
+> diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
+> index 5bf781ea6d67..f011e026358e 100644
+> --- a/fs/autofs/dev-ioctl.c
+> +++ b/fs/autofs/dev-ioctl.c
+> @@ -128,7 +128,13 @@ static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
+>  			goto out;
+>  		}
+>  
+> +		/* Setting the per-dentry expire timeout requires a trailing
+> +		 * path component, ie. no '/', so invert the logic of the
+> +		 * check_name() return for AUTOFS_DEV_IOCTL_TIMEOUT_CMD.
+> +		 */
+>  		err = check_name(param->path);
+> +		if (cmd == AUTOFS_DEV_IOCTL_TIMEOUT_CMD)
+> +			err = err ? 0 : -EINVAL;
+>  		if (err) {
+>  			pr_warn("invalid path supplied for cmd(0x%08x)\n",
+>  				cmd);
+> @@ -396,16 +402,97 @@ static int autofs_dev_ioctl_catatonic(struct file *fp,
+>  	return 0;
+>  }
+>  
+> -/* Set the autofs mount timeout */
+> +/*
+> + * Set the autofs mount expire timeout.
+> + *
+> + * There are two places an expire timeout can be set, in the autofs
+> + * super block info. (this is all that's needed for direct and offset
+> + * mounts because there's a distinct mount corresponding to each of
+> + * these) and per-dentry within within the dentry info. If a per-dentry
+> + * timeout is set it will override the expire timeout set in the parent
+> + * autofs super block info.
+> + *
+> + * If setting the autofs super block expire timeout the autofs_dev_ioctl
+> + * size field will be equal to the autofs_dev_ioctl structure size. If
+> + * setting the per-dentry expire timeout the mount point name is passed
+> + * in the autofs_dev_ioctl path field and the size field updated to
+> + * reflect this.
+> + *
+> + * Setting the autofs mount expire timeout sets the timeout in the super
+> + * block info. struct. Setting the per-dentry timeout does a little more.
+> + * If the timeout is equal to -1 the per-dentry timeout (and flag) is
+> + * cleared which reverts to using the super block timeout, otherwise if
+> + * timeout is 0 the timeout is set to this value and the flag is left
+> + * set which disables expiration for the mount point, lastly the flag
+> + * and the timeout are set enabling the dentry to use this timeout.
+> + */
+>  static int autofs_dev_ioctl_timeout(struct file *fp,
+>  				    struct autofs_sb_info *sbi,
+>  				    struct autofs_dev_ioctl *param)
+>  {
+> -	unsigned long timeout;
+> +	unsigned long timeout = param->timeout.timeout;
+> +
+> +	/* If setting the expire timeout for an individual indirect
+> +	 * mount point dentry the mount trailing component path is
+> +	 * placed in param->path and param->size adjusted to account
+> +	 * for it otherwise param->size it is set to the structure
+> +	 * size.
+> +	 */
+> +	if (param->size == AUTOFS_DEV_IOCTL_SIZE) {
+> +		param->timeout.timeout = sbi->exp_timeout / HZ;
+> +		sbi->exp_timeout = timeout * HZ;
+> +	} else {
+> +		struct dentry *base = fp->f_path.dentry;
+> +		struct inode *inode = base->d_inode;
+> +		int path_len = param->size - AUTOFS_DEV_IOCTL_SIZE - 1;
+> +		struct dentry *dentry;
+> +		struct autofs_info *ino;
+> +
+> +		if (!autofs_type_indirect(sbi->type))
+> +			return -EINVAL;
+> +
+> +		/* An expire timeout greater than the superblock timeout
+> +		 * could be a problem at shutdown but the super block
+> +		 * timeout itself can change so all we can really do is
+> +		 * warn the user.
+> +		 */
+> +		if (timeout >= sbi->exp_timeout)
+> +			pr_warn("per-mount expire timeout is greater than "
+> +				"the parent autofs mount timeout which could "
+> +				"prevent shutdown\n");
 
-Sure, we can include that in the list of cover letter updates we
-need to make. I could have called it out more clearly, but in the cover
-letter [1] I mentioned that latency improved for compared CPU usage (i.e.
-CPU efficiency improved):
-
-  The overall takeaway from the results below is that the new mechanism
-  (suspend20, see below) results in reduced 99th percentile latency and
-  increased QPS in the MAX QPS case (compared to the other cases), and
-  reduced latency in the lower QPS cases for comparable CPU usage to the
-  base case (and less CPU than the busy case).
-
-> There are plenty of workloads where burning a core is acceptable
-> (especially as core count continues increasing), not "slightly worse".
-
-Respectfully, I don't think I'm on board with this argument. "Burning a core"
-has side effects even as core counts increase (power, cooling, etc) and it
-seems the counter argument is equally valid, as well: there are plenty of
-workloads where burning a core is undesirable.
-
-Using less CPU to get comparable performance is strictly better, even if a
-system can theoretically support the increased CPU/power/cooling load.
-
-Either way: this is not an either/or. Adding support for the code we've
-proposed will be very beneficial for an important set of workloads without
-taking anything anyway.
-
-- Joe
-
-[1]: https://lore.kernel.org/netdev/20240812125717.413108-1-jdamato@fastly.com/
+Wouldn't it be possible to just record the lowest known per-dentry
+timeout in idk sbi->exp_lower_bound and reject sbi->exp_timeout changes
+that go below that?
 
