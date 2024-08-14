@@ -1,134 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-25885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AEE9514B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 08:34:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67DA9514FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 09:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 789D4282053
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 06:34:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D91761C22484
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 07:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A926131E2D;
-	Wed, 14 Aug 2024 06:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Bi7UGi/2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE5013A87C;
+	Wed, 14 Aug 2024 07:08:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16ABF1F94D;
-	Wed, 14 Aug 2024 06:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1CA27446;
+	Wed, 14 Aug 2024 07:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723617262; cv=none; b=JkL3LIv1wbvGwreAbHQoILfYqByoUb2y7m1ehNfFjF5qDkv3HzrO9vKCbiglqTk7YoliO30v7UkL/FW3v0yWNpxHJsic2Eu1U09I2bxgEVxt6ATRq7mkcC00fKHST99j1XjGu0F8//djqeIMDVwPE9EjxWM1Jps8q9Bl9Rz0Neo=
+	t=1723619314; cv=none; b=idYtXZPFc5OwY5IWX7oCtZ38DOOwQ7k38eo8De56q+EcnNFLkKLbU3v88Y6qNLZNJo8Vl9SfGUAnN67vXVZvOU/pkcVAiVTWQ8/XBaiYxtVucWubpyKbakemS0GXok8T2gYF6Tc3UMyXLxbG9GIY6epR1TzhTafAVefojlExMkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723617262; c=relaxed/simple;
-	bh=SvN65VjKhuXKd6CKLzEt4RIsg4fOL4Wc6gAnyXw2OcI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MfJo24Zr/GfD22aC1GHO+Vii8qEAQ1RKmS00kbht19MzwsS91FrRSYu+7i1g7+ot3rcHfltkmQtT5X0EODOIE3GyGwFoWhCPzj0AUGKtosgh2IEZQailOvv52FH0kOre0ppjvFeq5W88fp4+D3Ep3ug6AbY/KDyPuABxielOneA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Bi7UGi/2; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723617256; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=nSEfCzq3QVSYVGN/VRTP0Jf/ksFbu5uVwNghY3Ohau4=;
-	b=Bi7UGi/2jU/7xC3rmXPIgG/pwldRjF+ubOjSEZG2i0kVEiYb4BvIX4i3FfwR47tSlWWOgY/h2+2a8n6qgjqxbYxl6s9V78BEFnKki99S38HW+WEVYpZy7tlARbxPUX05EcaNnIdCmuEcnmlRXof7xp32m6tcKzzLj9AnP+wcFms=
-Received: from 30.221.146.67(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WCrEqfU_1723617255)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Aug 2024 14:34:16 +0800
-Message-ID: <5d809485-7e29-41ce-b683-7d19b829f86c@linux.alibaba.com>
-Date: Wed, 14 Aug 2024 14:34:14 +0800
+	s=arc-20240116; t=1723619314; c=relaxed/simple;
+	bh=Gm3F+nnI84YxUt6gJumvaW5Wn1prq0qr+MJe9fRtBbU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=IayDNOCBKBZ5APiu8/CizdzqmRcvKqHMf3gbigOj07LqeZCEE20K/FQcNtYiVITYmILZb5aCgPyfmEvJKfw8YDv8acmXvu5DGoCEIrsaKURlVkqfaqoCHEHT/Npr96KTCsQCL7cQsIMiq3vm2AQuMyZTpQAbMrY/dkq8kSUK/rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WkK8y1j2dz4f3jZL;
+	Wed, 14 Aug 2024 15:08:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8E2EC1A1537;
+	Wed, 14 Aug 2024 15:08:27 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBXzILpV7xmHJyaBg--.14959S3;
+	Wed, 14 Aug 2024 15:08:27 +0800 (CST)
+Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
+ than one blocks per folio
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
+ david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
+ <ZrxBfKi_DpThYo94@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <b098d15b-4b80-2b73-d05b-f4dbb5d4631a@huaweicloud.com>
+Date: Wed, 14 Aug 2024 15:08:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] virtiofs: fix the warning for kernel direct IO
-To: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
- Stefan Hajnoczi <stefanha@redhat.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>,
- "Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox
- <willy@infradead.org>, Benjamin Coddington <bcodding@redhat.com>,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- houtao1@huawei.com
-References: <20240426143903.1305919-1-houtao@huaweicloud.com>
+In-Reply-To: <ZrxBfKi_DpThYo94@infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240426143903.1305919-1-houtao@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXzILpV7xmHJyaBg--.14959S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw47uF4UJF4kKr1xtw47Arb_yoW8JFyfpF
+	WxKa15Gr48tF1fZ3srXayUXr1rK3yfJrW3GFZIq3W29anxGr1a9F1qg3Z0ga47JrnrJF48
+	Xr47Xa4xGFy5Z3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi, Tao,
-
-On 4/26/24 10:39 PM, Hou Tao wrote:
-> From: Hou Tao <houtao1@huawei.com>
+On 2024/8/14 13:32, Christoph Hellwig wrote:
+> On Mon, Aug 12, 2024 at 08:11:56PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Now we allocate ifs if i_blocks_per_folio is larger than one when
+>> writing back dirty folios in iomap_writepage_map(), so we don't attach
+>> an ifs after buffer write to an entire folio until it starts writing
+>> back, if we partial truncate that folio, iomap_invalidate_folio() can't
+>> clear counterpart block's dirty bit as expected. Fix this by advance the
+>> ifs allocation to __iomap_write_begin().
 > 
-> Hi,
-> 
-> The patch set aims to fix the warning related to an abnormal size
-> parameter of kmalloc() in virtiofs. Patch #1 fixes it by introducing
-> use_pages_for_kvec_io option in fuse_conn and enabling it in virtiofs.
-> Beside the abnormal size parameter for kmalloc, the gfp parameter is
-> also questionable: GFP_ATOMIC is used even when the allocation occurs
-> in a kworker context. Patch #2 fixes it by using GFP_NOFS when the
-> allocation is initiated by the kworker. For more details, please check
-> the individual patches.
-> 
-> As usual, comments are always welcome.
-> 
-> Change Log:
-> 
-> v3:
->  * introduce use_pages_for_kvec_io for virtiofs. When the option is
->    enabled, fuse will use iov_iter_extract_pages() to construct a page
->    array and pass the pages array instead of a pointer to virtiofs.
->    The benefit is twofold: the length of the data passed to virtiofs is
->    limited by max_pages, and there is no memory copy compared with v2.
-> 
-> v2: https://lore.kernel.org/linux-fsdevel/20240228144126.2864064-1-houtao@huaweicloud.com/
->   * limit the length of ITER_KVEC dio by max_pages instead of the
->     newly-introduced max_nopage_rw. Using max_pages make the ITER_KVEC
->     dio being consistent with other rw operations.
->   * replace kmalloc-allocated bounce buffer by using a bounce buffer
->     backed by scattered pages when the length of the bounce buffer for
->     KVEC_ITER dio is larger than PAG_SIZE, so even on hosts with
->     fragmented memory, the KVEC_ITER dio can be handled normally by
->     virtiofs. (Bernd Schubert)
->   * merge the GFP_NOFS patch [1] into this patch-set and use
->     memalloc_nofs_{save|restore}+GFP_KERNEL instead of GFP_NOFS
->     (Benjamin Coddington)
-> 
-> v1: https://lore.kernel.org/linux-fsdevel/20240103105929.1902658-1-houtao@huaweicloud.com/
-> 
-> [1]: https://lore.kernel.org/linux-fsdevel/20240105105305.4052672-1-houtao@huaweicloud.com/
-> 
-> Hou Tao (2):
->   virtiofs: use pages instead of pointer for kernel direct IO
->   virtiofs: use GFP_NOFS when enqueuing request through kworker
-> 
->  fs/fuse/file.c      | 12 ++++++++----
->  fs/fuse/fuse_i.h    |  3 +++
->  fs/fuse/virtio_fs.c | 25 ++++++++++++++++---------
->  3 files changed, 27 insertions(+), 13 deletions(-)
+> Wouldn't it make more sense to only allocate the ifѕ in
+> iomap_invalidate_folio when it actually is needed?
 > 
 
-We also encountered the same issue as [1] these days when attempting to
-insmod a module with ~6MB size, which is upon a virtiofs filesystem.
+Therefore, you mean current strategy of allocating ifs is to try to delay
+the allocation time as much as possible? The advantage is that it could
+avoid some unnecessary allocation operations if the whole folio are
+invalidated before write back. right?
 
-It would be much helpful if this issue has a standard fix in the
-upstream.  I see there will be v4 when reading through the mailing
-thread.  Glad to know if there's any update to this series.
+> Also do you have a reproducer for this?
+> 
 
-[1]
-https://lore.kernel.org/linux-fsdevel/20240103105929.1902658-1-houtao@huaweicloud.com/
+This mistake doesn't case any real problem now, because once the folio
+has been partial truncated, the counterpart range becomes a hole, although
+the ifs dirty bit is not cleared, iomap_writepage_map_blocks() can deal
+with it and won't cause any problem. Hence I don't have reproducer for
+this.
 
--- 
 Thanks,
-Jingbo
+Yi.
+
 
