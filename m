@@ -1,154 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-25928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246A9951EF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 17:46:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6609951F4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 18:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5481F23CCC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 15:46:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126061C210B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 16:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E0C1B5839;
-	Wed, 14 Aug 2024 15:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F88E1B86D1;
+	Wed, 14 Aug 2024 16:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Fd6F1YzY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1Qo0Znc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250C61B5815
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 15:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8515C3D552;
+	Wed, 14 Aug 2024 16:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650400; cv=none; b=nViH06W7OfBfmVBZPMsmdCANe+Ox+Ch2g6yGuWzShqNFEzfla0CH8zZ3+w4Of8w/1/MqgXXkCrQYksxhoCuyoZPrVrOlSQxCpLdK1D9qXFsA+PJeL4+HHePJsfxyyEpLZmqGYuRp8xmEoaUm4ovCLp+HPXlW6KIuNCOfSl7+7Mk=
+	t=1723651233; cv=none; b=HHfFwydcQ3IV9xTwvzx1fw3fAyV6fyRlW+jTFbEwHigLrZA+7oZg/yeWw+f+HmMjKL/Yy/pfRgGoWrGRiy6OA9V9k31lRtSlkj2DzwH1O1VczD1ts3zvILZl55wHxa4fkxG4cIOnpoZhjg7SoVq/E3CoC+kskV1JBvPqvfhOwKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650400; c=relaxed/simple;
-	bh=3CZ+eZQLTvRe5s8+CdkE8KJ8fPl1lbuinuD2iVYUImE=;
+	s=arc-20240116; t=1723651233; c=relaxed/simple;
+	bh=tJ9y/t0p8CoWT3GLrKdQZ0dSWk0FZ5F+3VCb9/8rtJc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkP/o9v4855jhFj6a3w2O2dA6CRDCcV+HCf8T2ZhMceUN8HuG0fmdpm6ODgtnhoSHFdpBbj/1lqp76wZxZvaFEsSwYsI6pZIwIs0U5Vw/hVUmsI6dsRMMDO875vpBsf4Aza5AWcql0flcHaWCNgyRHUm+cvE185MKYsNgMmyfUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Fd6F1YzY; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso353901fa.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 08:46:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1723650396; x=1724255196; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UMvW5XN814MmHmeNdCsuQ+x/zBS9ZcHLiBHoPUEkIYk=;
-        b=Fd6F1YzY7RgsiEhc4a1ml1Rr2waWCADgGhCnIqbCpF5cO93cBaPpzW4nrkxK7Rllqi
-         m8iGbN9oxduu8REIlhm0oXvKqdTq6nRqp7FpN6smp/XWu8uHZEhYx0eiJ0yG1Mt942U4
-         KiyqDwt6Zpqun9b6SPRd05oiHq/lDbNunTeTc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723650396; x=1724255196;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UMvW5XN814MmHmeNdCsuQ+x/zBS9ZcHLiBHoPUEkIYk=;
-        b=fchT3A4Vh98clqpDH2xjrIVtJPpHn++ahS9HquJhXStJUBGYhp+i6IFhp9z+jC451x
-         9Hmq3muNqjef7mxCPP1+lveilu58U2ankoCPgBRBOkVfPqK0nnQW0ttHNFJyq/XdKyYi
-         OEgyTuOQy6p/R4DZeDXkFN4ZVeUv1XG7Lir5mSjok5pGWk/GHmGk5tKDinakxEdJsa1R
-         88OjYqjsDtv9EChnsNEPIPwqNu1YCsDHiWD48FnHGRPMvlIUsTLjzyiTh6UZN1rrA/VC
-         cKUn32vVU8aXExhmG+RWDD2LZhK3BmEmc4CssNhImlpLwB7keAbdAHPS/fT72M41yiKL
-         DE+w==
-X-Forwarded-Encrypted: i=1; AJvYcCU0cXcKjyWUD3qE41CG4ell2UdBTicRSYSA57t2FOLOfYTuYhkQV37iE3lcycBCUPOIjtsvdyH6bMfq15eVXOmbHaNV/6BLQc3yVnEyDw==
-X-Gm-Message-State: AOJu0Yxfm7QD7b1dQd7wEHP0xBtJWh40SixHVq1qiKChG/F+w6Ylk+8/
-	qIt5Sid+TaWiIC/Mdn5ktyscTQ9q1saU4ugaZaZxmvmtwPHrRQU/L3zxrWs6zic=
-X-Google-Smtp-Source: AGHT+IFAW+r4bsXhzgqn4nSPYnHoVTMgVTn+Fc+6nuodprTLSx0anVrp0sa8TsMaaN15SPWkigXMXg==
-X-Received: by 2002:a05:651c:b2c:b0:2f3:a854:78f6 with SMTP id 38308e7fff4ca-2f3aa1de7c6mr25666671fa.34.1723650396054;
-        Wed, 14 Aug 2024 08:46:36 -0700 (PDT)
-Received: from LQ3V64L9R2 ([80.208.222.2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429df78a7c6sm18550645e9.45.2024.08.14.08.46.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 08:46:35 -0700 (PDT)
-Date: Wed, 14 Aug 2024 16:46:33 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Martin Karsten <mkarsten@uwaterloo.ca>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7XGZRWMcpbMavEVGi3q05wmpt+fgLDWxzw9/hRsYv5DM4jFHWaiP26xAY3nkrwrphVyuLQ+WArt5vz4+mD0FlW8ZmBRnhCXoe5XK+OVqPq5wH8lGG7JyLOO543LOBXln1CTf7pNkw1APPKloIwMZWclRO3fd7zT0F2NxCB212g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1Qo0Znc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE22C116B1;
+	Wed, 14 Aug 2024 16:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723651233;
+	bh=tJ9y/t0p8CoWT3GLrKdQZ0dSWk0FZ5F+3VCb9/8rtJc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C1Qo0Zncz+RdR9DeUEI52CB7DQtewBYXVGfRUQ4A1toxpkFsbuQ6aJyDgJz7UfDuH
+	 bzxXCMK2CVyRwzj4Fzsp12NcASucmaKle8j/eMgOwWVzR2lvflN7lzCLHhTyQ3ScD3
+	 +3H4j8mCCyM0GSJc3pBhGBO2bXmXG5WzBuDhGy5GyWML6OrUSxKM3fVQt794iZbGN7
+	 zq37MEqlxsQmv9ud3qgMIDnCP26tQt1p0hjVBhliLYp5ui4XBUgvCNn/OsKWmUZrSd
+	 Krpj/jmqgiJLPoYpTX6m1uOjpJNj4kjuDK0YvvBuQWHt0Y9IyIEzIa3etR5NZwtbL6
+	 zsq/MP82yJmiw==
+Date: Wed, 14 Aug 2024 17:00:23 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
 	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
-Message-ID: <ZrzRWU_39wpePVvg@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
- <ZrqU3kYgL4-OI-qj@mini-arch>
- <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
- <Zrq8zCy1-mfArXka@mini-arch>
- <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
- <Zrrb8xkdIbhS7F58@mini-arch>
- <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
- <66bc21772c6bd_985bf294b0@willemb.c.googlers.com.notmuch>
- <Zry9AO5Im6rjW0jm@LQ3V64L9R2.home>
- <66bcc87d605_b1f942948@willemb.c.googlers.com.notmuch>
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 23/40] arm64/signal: Set up and restore the GCS
+ context for signal handlers
+Message-ID: <08932f6d-01ef-40e8-97d2-08f0d2016191@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
+ <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d9byunHM6BED1bDk"
+Content-Disposition: inline
+In-Reply-To: <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
+X-Cookie: The second best policy is dishonesty.
+
+
+--d9byunHM6BED1bDk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <66bcc87d605_b1f942948@willemb.c.googlers.com.notmuch>
 
-On Wed, Aug 14, 2024 at 11:08:45AM -0400, Willem de Bruijn wrote:
-> Joe Damato wrote:
+On Wed, Aug 14, 2024 at 03:51:42PM +0100, Dave Martin wrote:
+> On Thu, Aug 01, 2024 at 01:06:50PM +0100, Mark Brown wrote:
 
-[...]
+> > +	put_user_gcs((unsigned long)sigtramp, gcspr_el0 - 2, &ret);
+> > +	put_user_gcs(GCS_SIGNAL_CAP(gcspr_el0 - 1), gcspr_el0 - 1, &ret);
+> > +	if (ret != 0)
+> > +		return ret;
 
-> > On Tue, Aug 13, 2024 at 11:16:07PM -0400, Willem de Bruijn wrote:
-> > Using less CPU to get comparable performance is strictly better, even if a
-> > system can theoretically support the increased CPU/power/cooling load.
-> 
-> If it is always a strict win yes. But falling back onto interrupts
-> with standard moderation will not match busy polling in all cases.
-> 
-> Different solutions for different workloads. No need to stack rank
-> them. My request is just to be explicit which design point this
-> chooses, and that the other design point (continuous busy polling) is
-> already addressed in Linux kernel busypolling.
+> What happens if we went wrong here, or if the signal we are delivering
+> was caused by a GCS overrun or bad GCSPR_EL0 in the first place?
 
-Sure, sounds good; we can fix that in the cover letter.
+> It feels like a program has no way to rescue itself from excessive
+> recursion in some thread.  Is there something equivalent to
+> sigaltstack()?
 
-Thanks for taking a look.
+> Or is the shadow stack always supposed to be big enough to cope with
+> recursion that exhausts the main stack and alternate signal stack (and
+> if so, how is this ensured)?
+
+There's no sigaltstack() for GCS, this is also the ABI with the existing
+shadow stack on x86 and should be addressed in a cross architecture
+fashion.  There have been some discussions about providing a shadow alt
+stack but they've generally been circular and inconclusive, there were a
+bunch of tradeoffs for corner cases and nobody had a clear sense as to
+what a good solution should be.  It was a bit unclear that actively
+doing anything was worthwhile.  The issues were IIRC around unwinders
+and disjoint shadow stacks, compatibility with non-shadow stacks and
+behaviour when we overflow the shadow stack.  I think there were also
+some applications trying to be very clever with alt stacks that needed
+to be interacted with and complicated everything but I could be
+misremembering there.
+
+Practically speaking since we're only storing return addresses the
+default GCS should be extremely large so it's unlikely to come up
+without first encountering and handling issues on the normal stack.
+Users allocating their own shadow stacks should be careful.  This isn't
+really satisfying but is probably fine in practice, there's certainly
+not been any pressure yet from the existing x86 deployments (though at
+present nobody can explicitly select their own shadow stack size,
+perhaps it'll become more of an issue when the clone3() stuff is in).
+
+--d9byunHM6BED1bDk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma81JcACgkQJNaLcl1U
+h9DStQf+MHf5MIvFUrZBpQZg07XSllBYTCVHtBIGn5XzIx/KW1GJXKIov1DxWUTX
+4/a2ua/8So/yt7XHqWLjBgCUd7U4AsSNKO3kBxUGH1j85SY4YPkZtb+t8AriDoS5
+aBVNq2boS8RzipYyeieLa1TUtet845IqOUX6AZ6yMIyWEcqaST5KfdYG0vmy3tKH
+Rk85zpx0YvxXhmd63f+dAZYPPsOxVaJxVgUGl8/qDJzXEHHsT8nNlkLc4x6s7vja
+MyVsVWQGYTa7MKQofcxfH+yB1UtWlMV9oxMRWab4Uy7GPaBO05yTKxDukJQUklbt
+S47T7TUaZvxSLe1aJLMls0FHfdO5uQ==
+=go3J
+-----END PGP SIGNATURE-----
+
+--d9byunHM6BED1bDk--
 
