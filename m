@@ -1,171 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-25849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25850-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD69F951199
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 03:33:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2F79511AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 03:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D305285245
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 01:33:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71132B226C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 01:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A301643A;
-	Wed, 14 Aug 2024 01:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE051C680;
+	Wed, 14 Aug 2024 01:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bvh3SQ7J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0B0195;
-	Wed, 14 Aug 2024 01:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E0218040
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 01:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723599204; cv=none; b=fVFCxTB+2E1EASo5ccZofkGhdwzv0RNwbLcqyCv8QQZcNg+GJjYKgbEAuXaOOmi6YdmPqW+d5wW0yGfMNLdR4VBZFHr7acbv5idq3Vz1GX5uizUqtl6ab4lYK26peCfNB/Y7+gGXzcS0QKlecc/MfDzPcv+HnqL2gwK65zynRW8=
+	t=1723600161; cv=none; b=rjCQsC6m7x5D/4Wfdhu/BuSjZdC0CX0Xxd8X5VAxLPrwgVk83YIi4orgqTedOuCUqKc+6XCWqDkGleRKLbxHay1GGo5bp2/KPPMiE73i7ibCIkGZxvrD8cybDFUaSTuJtVbP6R6pzWSksJiqj2dQc8iLUPqqhZhwfmtBpyoxxR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723599204; c=relaxed/simple;
-	bh=wDTRoJXq1+5WgaMwT8JkuFyCS8wfq1HfaF/3VBgpZo8=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PZYZ1QIPjJMbUF5eH4TwtQE2VYlN9DL2SD8rTpFL0UOtLGQG4tdYUweoszvbaLQ3XlPwsBUIvBvEVbxOOXI6JzwC3rpVGn0DtiSxB33Y0bwEsAMRcSGIUwXxRjvlRpV3bSDoTqEDtIPy0whKJOBvEMJYTrimHXU0EqeADEgZPts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wk9ft0cnNz1HFwp;
-	Wed, 14 Aug 2024 09:30:14 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 07FEB1402CF;
-	Wed, 14 Aug 2024 09:33:18 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 14 Aug 2024 09:33:17 +0800
-Subject: Re: [PATCH] vfs: drop one lock trip in evict()
-To: Mateusz Guzik <mjguzik@gmail.com>, <brauner@kernel.org>
-CC: <viro@zeniv.linux.org.uk>, <jack@suse.cz>, <jlayton@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <20240813143626.1573445-1-mjguzik@gmail.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <0be88aea-9438-2c74-762e-b8aaa549fd40@huawei.com>
-Date: Wed, 14 Aug 2024 09:33:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1723600161; c=relaxed/simple;
+	bh=pbuNWprQEBoJyI8KBTUf/yY/joRLqqEHcwtKN3Yy+ss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GtLw6pACSi5lPMOcYjniMZ2EErl2a74PNwAaBC8rNUP9yceBesdYHwendo14NHwzxIo5tVUUJoJ3f+W7A/G2L7BuQ+1vikvP0zR4wpUdcDhUNaPreZF5CKGCqtnMk9MCQ7qrKVex2ZY9xCP3xEp+6nQMeAzpeLtIN3xUV8xGzyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bvh3SQ7J; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc587361b6so51330945ad.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Aug 2024 18:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1723600159; x=1724204959; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oQuPtUQiqDIJaa11XX2bCBMMxTq1jV8ulgi33bMi18Q=;
+        b=bvh3SQ7JSSHYF4bKwQt1z6ZTN3VHi7YEwUff1RlWFM6T6hWaOZEWVKd9qWcGOtjDLY
+         vMaZAtLWAhh8PsMaaPi0QjzbkwaIr/DaKvnFOOcTYuE/xB2NsIHBpzVM3UiAh1r6z1n8
+         JYH4BWO7MweYE0RfIraMwcan7dVFBmslCxVFQS+LHhSgoXrJb6tCA+m1fd+GHZYvoUcp
+         1KCPH5B5eebBFSg3PME0n3VpAdusHs2yeJwd+qUD/NT6p00wiMGR3ZacIFO9JhkeR1wo
+         Bc1BIZDVe3/hHrNV8DRV/5okjC1RqRvA7AIrm2LEO3E6W+3N4I8CKmrD8B1Yr/jk3DXm
+         MLBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723600159; x=1724204959;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oQuPtUQiqDIJaa11XX2bCBMMxTq1jV8ulgi33bMi18Q=;
+        b=JlZEoRN3ggTgaz0H1DiI515QJTo/vW+ZkTq8faZgxUctufIbsuGjIbzGwE/XJ+oI3U
+         DSClhK7icmfQJ6jdaf23QoGMk/eRB8+qo7XQ1xQv84aXNmhlggkv8AmNIw1zp1mwV3le
+         YMQreKSgJ5hU9I47qE+vLdipwYE8ISqZClKikSTHoPd2WVTlOEkibMsIq1QWP2uJeQmP
+         CNPkKAqx+b1kxk3gM2VVCUkoqC+V1qBubx3uxHHshQ2ygxcubvW3t8KRyhRJzcw4RMAU
+         Cst1pRorFBH1JER6bbhyxa071NrRwzlLbZVbIBqJzpnUtjGMDZSBvWsobnq5tjeG0fz4
+         1QtA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Wq7FRKE9xnH5PXKpw4tKxi+P0bl6Bvfpa+oyxntDaaHxyFzyajuq3VW+aZu1mj4u9cE6Q6voWvSp4YIYEYKdHWE+LxM2ZLRWBfTIhw==
+X-Gm-Message-State: AOJu0YyHXwyT/TNDNxZ8HUIHmH6ZAP0spk9wE1DWUsXY0hsvSH4g2C0z
+	TMJegN5GG2YyY6+NCsXFOmGJ8GIJGDPSHAFxFtkEvoXG3r2UCmbdlxoZnhVkQhw=
+X-Google-Smtp-Source: AGHT+IEfAFPrWlCTO6wXtIMc3ItUikWnNtj+Pc/IdeokdwRfNhZ15x5Xomn4t0XPqIDvMxyohfjP+g==
+X-Received: by 2002:a17:902:f552:b0:1f9:c508:acd5 with SMTP id d9443c01a7336-201d639c93emr18247355ad.5.1723600159010;
+        Tue, 13 Aug 2024 18:49:19 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201d9a78499sm1710655ad.153.2024.08.13.18.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 18:49:18 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1se38V-00GGfh-2C;
+	Wed, 14 Aug 2024 11:49:15 +1000
+Date: Wed, 14 Aug 2024 11:49:15 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, jack@suse.cz, willy@infradead.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 0/6] iomap: some minor non-critical fixes and
+ improvements when block size < folio size
+Message-ID: <ZrwNG9ftNaV4AJDd@dread.disaster.area>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240813143626.1573445-1-mjguzik@gmail.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm000013.china.huawei.com (7.193.23.81)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
 
-ÔÚ 2024/8/13 22:36, Mateusz Guzik Ð´µÀ:
-> Most commonly neither I_LRU_ISOLATING nor I_SYNC are set, but the stock
-> kernel takes a back-to-back relock trip to check for them.
+On Mon, Aug 12, 2024 at 08:11:53PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> It probably can be avoided altogether, but for now massage things back
-> to just one lock acquire.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
+> Changes since v1:
+>  - Patch 5 fix a stale data exposure problem pointed out by Willy, drop
+>    the setting of uptodate bits after zeroing out unaligned range.
+>  - As Dave suggested, in order to prevent increasing the complexity of
+>    maintain the state_lock, don't just drop all the state_lock in the
+>    buffered write path, patch 6 introduce a new helper to set uptodate
+>    bit and dirty bits together under the state_lock, reduce one time of
+>    locking per write, the benefits of performance optimization do not
+>    change too much.
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> 
-> there are smp_mb's in the area I'm going to look at removing at some
-> point(tm), in the meantime I think this is an easy cleanup
-> 
-> has a side effect of whacking a inode_wait_for_writeback which was only
-> there to deal with not holding the lock
-> 
->   fs/fs-writeback.c | 17 +++--------------
->   fs/inode.c        |  5 +++--
->   2 files changed, 6 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 4451ecff37c4..1a5006329f6f 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1510,13 +1510,12 @@ static int write_inode(struct inode *inode, struct writeback_control *wbc)
->    * Wait for writeback on an inode to complete. Called with i_lock held.
->    * Caller must make sure inode cannot go away when we drop i_lock.
->    */
-> -static void __inode_wait_for_writeback(struct inode *inode)
-> -	__releases(inode->i_lock)
-> -	__acquires(inode->i_lock)
-> +void inode_wait_for_writeback(struct inode *inode)
->   {
->   	DEFINE_WAIT_BIT(wq, &inode->i_state, __I_SYNC);
->   	wait_queue_head_t *wqh;
->   
-> +	lockdep_assert_held(&inode->i_lock);
->   	wqh = bit_waitqueue(&inode->i_state, __I_SYNC);
->   	while (inode->i_state & I_SYNC) {
->   		spin_unlock(&inode->i_lock);
-> @@ -1526,16 +1525,6 @@ static void __inode_wait_for_writeback(struct inode *inode)
->   	}
->   }
->   
-> -/*
-> - * Wait for writeback on an inode to complete. Caller must have inode pinned.
-> - */
-> -void inode_wait_for_writeback(struct inode *inode)
-> -{
-> -	spin_lock(&inode->i_lock);
-> -	__inode_wait_for_writeback(inode);
-> -	spin_unlock(&inode->i_lock);
-> -}
-> -
->   /*
->    * Sleep until I_SYNC is cleared. This function must be called with i_lock
->    * held and drops it. It is aimed for callers not holding any inode reference
-> @@ -1757,7 +1746,7 @@ static int writeback_single_inode(struct inode *inode,
->   		 */
->   		if (wbc->sync_mode != WB_SYNC_ALL)
->   			goto out;
-> -		__inode_wait_for_writeback(inode);
-> +		inode_wait_for_writeback(inode);
->   	}
->   	WARN_ON(inode->i_state & I_SYNC);
->   	/*
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 73183a499b1c..d48d29d39cd2 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -582,7 +582,7 @@ static void inode_unpin_lru_isolating(struct inode *inode)
->   
->   static void inode_wait_for_lru_isolating(struct inode *inode)
->   {
-> -	spin_lock(&inode->i_lock);
-> +	lockdep_assert_held(&inode->i_lock);
->   	if (inode->i_state & I_LRU_ISOLATING) {
->   		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
->   		wait_queue_head_t *wqh;
-> @@ -593,7 +593,6 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
->   		spin_lock(&inode->i_lock);
->   		WARN_ON(inode->i_state & I_LRU_ISOLATING);
->   	}
-> -	spin_unlock(&inode->i_lock);
->   }
->   
->   /**
-> @@ -765,6 +764,7 @@ static void evict(struct inode *inode)
->   
->   	inode_sb_list_del(inode);
->   
-> +	spin_lock(&inode->i_lock);
->   	inode_wait_for_lru_isolating(inode);
->   
->   	/*
-> @@ -774,6 +774,7 @@ static void evict(struct inode *inode)
->   	 * the inode.  We just have to wait for running writeback to finish.
->   	 */
->   	inode_wait_for_writeback(inode);
-> +	spin_unlock(&inode->i_lock);
->   
->   	if (op->evict_inode) {
->   		op->evict_inode(inode);
-> 
+It's helpful to provide a lore link to the previous version so that
+reviewers don't have to go looking for it themselves to remind them
+of what was discussed last time.
 
+https://lore.kernel.org/linux-xfs/20240731091305.2896873-1-yi.zhang@huaweicloud.com/T/
+
+> This series contains some minor non-critical fixes and performance
+> improvements on the filesystem with block size < folio size.
+> 
+> The first 4 patches fix the handling of setting and clearing folio ifs
+> dirty bits when mark the folio dirty and when invalidat the folio.
+> Although none of these code mistakes caused a real problem now, it's
+> still deserve a fix to correct the behavior.
+> 
+> The second 2 patches drop the unnecessary state_lock in ifs when setting
+> and clearing dirty/uptodate bits in the buffered write path, it could
+> improve some (~8% on my machine) buffer write performance. I tested it
+> through UnixBench on my x86_64 (Xeon Gold 6151) and arm64 (Kunpeng-920)
+> virtual machine with 50GB ramdisk and xfs filesystem, the results shows
+> below.
+> 
+> UnixBench test cmd:
+>  ./Run -i 1 -c 1 fstime-w
+> 
+> Before:
+> x86    File Write 1024 bufsize 2000 maxblocks       524708.0 KBps
+> arm64  File Write 1024 bufsize 2000 maxblocks       801965.0 KBps
+> 
+> After:
+> x86    File Write 1024 bufsize 2000 maxblocks       569218.0 KBps
+> arm64  File Write 1024 bufsize 2000 maxblocks       871605.0 KBps
+
+Those are the same performance numbers as you posted for the
+previous version of the patch. How does this new version perform
+given that it's a complete rework of the optimisation? It's
+important to know if the changes made actually provided the benefit
+we expected them to make....
+
+i.e. this is the sort of table of results I'd like to see provided:
+
+platform	base		v1		v2
+x86		524708.0	569218.0	????
+arm64		801965.0	871605.0	????
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
