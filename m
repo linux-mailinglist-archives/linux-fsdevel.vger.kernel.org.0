@@ -1,155 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-25914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7A5951B10
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 14:43:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE82951BD9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 15:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA79282D56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 12:43:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D88AB23228
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 13:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD63319FA86;
-	Wed, 14 Aug 2024 12:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0381B151B;
+	Wed, 14 Aug 2024 13:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KmFV+lTq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjn9mCJk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0593A1E498
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 12:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521F31B14F9;
+	Wed, 14 Aug 2024 13:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723639421; cv=none; b=Usfs8Pe9d4w4JTXqfznS2zSMI5/gvFJqs0Hc+dsaqWL6oTtQA9g+1PwTEKtvyuzaFPx+G+p/QWgvPueSwOWcH3mj/A2TO8iHp6Jy/ozTKVal2sb+yJMz5kCjG32R6cF1Qysy/neBOSBhNQkHUBYQw09BMpRzP7vZtXSgkauk8nk=
+	t=1723642202; cv=none; b=I7yEYTHLJvs5lJxAOeQZy6mrnnHLOs8bTxjQZp4X0iwLb5r5mNeNEJ9WIMwIXS48kN+qJZ8lxaTVRDBLm5KstRCJTucTSNspM6Hwq/U/1vDR9INWJ1hMIXl+vTyh/YZW2AsGjs+mn133t4adFCXF7JF/Txw2PMnrS83ue99KGEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723639421; c=relaxed/simple;
-	bh=evgg8ridhsj9AdiXWkL0DlKKBEGhSogGjSaqY1vNkfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mxEv+YUooHz1A+IaKxgyqRHRnbUGRBQfco+LJOcch+3EDnOGNSeY9zWH/wlJQMhFeEwleWO2jXoU7hHIY/saHRpio4sPQrPOsr0wLr/ChoWA1E8swNJ23hNn9ZzVGfbz9m2qIeJ17H9sCtUXJIZcUf40qbW2HIbIpHx5Ij67JDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KmFV+lTq; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-368663d7f80so3426169f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Aug 2024 05:43:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723639417; x=1724244217; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ypomk+HJlRap9+lz8oD/wJ+MqAQGpQKIAWyfRaZGgio=;
-        b=KmFV+lTqc2W95Zvg+CklS8oxN88GKVrWvDJw13Yb99nIGt/yyB5Q1p9cUHJJlcvK10
-         lkn/0q9fP8qvCvQueZta7V1jjpXh2kSeiBEwuprEWmBXkaf4wUPOi5Bh38YWiIQL2+e3
-         /kTYNOHAfi2+Km4mbZryQ/IAsh+frv9OVNDwaqdPWGvQspjyoCa72uVNA/LVqGjVsCUL
-         2fMaV/l/kVdNnycONglxVQZO27rlW0sbmIJxmxw/+6ZPc70tjmDwSZGYx1mhUK4lKArH
-         bI5ADW1/hCD1KW3jnOx2Y7OZaxKhYam3pvtZWqrmpHGLZLUP+c6m30dsF/wKXRlfdrKJ
-         5KDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723639417; x=1724244217;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ypomk+HJlRap9+lz8oD/wJ+MqAQGpQKIAWyfRaZGgio=;
-        b=hZMWsu+sTeY814DoeBvND5K4oG0bEe9CUgA+8VcrdVvH7pX1hySWkTTo9iHEm5HpBh
-         2hxTdp8OQoVG1sT2eZYujH59oEMnqkHSQcsW+LWW6TypxP+MQ17c8tcdXY4e0yfOzwxi
-         1oorfFYe/GGyGWv3BwfmNy662rJcu2rm5hZUuysKmFTjWCl+8oXAdM6Fxi/MTCjsC+H3
-         RwJ4riuPkEorAo3hGIg7BjFnhqEAw/Svl+mBZFOVViZdL/R4dtbV3A+/c5cmht4Hn2ET
-         uxk7sT2M7zUwM5pQFI1Kms+/DDRWSRV+/yA6siuoWouOgVKr2fEOZq0IY3bWahMQnWCh
-         TPPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVakdUTON2IpQkC8L9UMedTysEjUrjTPjyCAFanI2JUuBWw/lq5i7rJBHEW7UgfuUhwgFUibE4CwmVUKwtw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs2V53EiPrg8mkU+vDzEnSbdhyIbMjGk9LlrYXgeezay5C4wBL
-	cFj/cDhu01QM5bFkM7abBnDsMRGyPZP3w2dWoRv2nGzF0R6tziemUwUAtmGdsLs=
-X-Google-Smtp-Source: AGHT+IG8GAJoiQZJUBkzacdtcwF40DeKG3vAyhQ3gVD0geVHLmeVuo6ZEHKUw5aW7JibBFEaEdZuAg==
-X-Received: by 2002:a05:6000:4388:b0:371:8319:4dcc with SMTP id ffacd0b85a97d-371831950c5mr115307f8f.2.1723639417172;
-        Wed, 14 Aug 2024 05:43:37 -0700 (PDT)
-Received: from localhost (109-81-83-166.rct.o2.cz. [109.81.83.166])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4cfeeb09sm12790032f8f.51.2024.08.14.05.43.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 05:43:36 -0700 (PDT)
-Date: Wed, 14 Aug 2024 14:43:36 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, akpm@linux-foundation.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	david@fromorbit.com, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, Kent Overstreet <kent.overstreet@linux.dev>
-Subject: Re: [PATCH 1/2] mm: Add memalloc_nowait_{save,restore}
-Message-ID: <ZrymePQHzTHaUIch@tiehlicka>
-References: <20240812090525.80299-1-laoar.shao@gmail.com>
- <20240812090525.80299-2-laoar.shao@gmail.com>
- <Zrn0FlBY-kYMftK4@infradead.org>
- <CALOAHbBd2oCVKsMwcH_YGUWT5LGLWmNSUAZzRPp8j7bBaqc1PQ@mail.gmail.com>
- <Zrxfy-F1ZkvQdhNR@tiehlicka>
- <CALOAHbCLPLpi39-HVVJvUj=qVcNFcQz=3cd95wFpKZzUntCtdw@mail.gmail.com>
+	s=arc-20240116; t=1723642202; c=relaxed/simple;
+	bh=r8U02fHcDjglTW1ClVVqzhXOPoM7YtNCoUpax9EOHuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MI+Xa9AbRYdBRYOiBkd5lzamg+BY119hkKh2Q4159SaPhCo4w+9EBeReUa3KOFSW8aD2qWQcHPs0v2EYOvNVipxbHcKmLy4ShErb4q6HKN+n+i1SBwJmrw9Q7lEl/3jeR9A6HidhdCkrCCyb0YeRsvX58WLMq2WtYWhCGq8G/nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjn9mCJk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56FE7C32786;
+	Wed, 14 Aug 2024 13:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723642201;
+	bh=r8U02fHcDjglTW1ClVVqzhXOPoM7YtNCoUpax9EOHuA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bjn9mCJkWCILjYbICd0fecqIzkCxB3tkBgZFRU8EGY0X2ZuIdOcTiL4IDUaVhvzs7
+	 kWK2XLtb2bVtrKB7kG5WfZHXo0XGJ/5L7C3FkwtU1wKQ0SrvwlV1CLIQskiVZAaQEC
+	 2uIbVZiREp8+/tuv8rbNGnZgSjS4EZzQTNjrUREso0LJKQiQrwS7AWnWDKljZZL+Q7
+	 qSQNgAaYnrDeKpwOqT55CQia1tGoh5ImPB3wTzbeeJLGwPU2maPIuDi7hvbTmJwF2d
+	 vrDDgBgVgHolRbFZoWkVRrprSC++X56P5w/Fmrqlg4bzGKWSjOSCD8kBKKYes2qImY
+	 EGci4jDfjobtg==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Wed, 14 Aug 2024 15:29:46 +0200
+Message-ID: <20240814-vfs-fixes-93bdbd119998@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5660; i=brauner@kernel.org; h=from:subject:message-id; bh=r8U02fHcDjglTW1ClVVqzhXOPoM7YtNCoUpax9EOHuA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTt2ejnr7vM4LDMuqtFhs9MLj3Z0Gj0VvxzespO/kVPy 50VsmVudpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzETY2R4e4TFomt3+d6rZTe knFyp1399nXusy9mNR3l7F587nqGuQDDXxnPIje2iKMfZ68SP8R4V/erS8eHFT5S525xas8OXlt nyQEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALOAHbCLPLpi39-HVVJvUj=qVcNFcQz=3cd95wFpKZzUntCtdw@mail.gmail.com>
 
-On Wed 14-08-24 16:12:27, Yafang Shao wrote:
-> On Wed, Aug 14, 2024 at 3:42 PM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Mon 12-08-24 20:59:53, Yafang Shao wrote:
-> > > On Mon, Aug 12, 2024 at 7:37 PM Christoph Hellwig <hch@infradead.org> wrote:
-> > > >
-> > > > On Mon, Aug 12, 2024 at 05:05:24PM +0800, Yafang Shao wrote:
-> > > > > The PF_MEMALLOC_NORECLAIM flag was introduced in commit eab0af905bfc
-> > > > > ("mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC_NOWARN"). To complement
-> > > > > this, let's add two helper functions, memalloc_nowait_{save,restore}, which
-> > > > > will be useful in scenarios where we want to avoid waiting for memory
-> > > > > reclamation.
-> > > >
-> > > > No, forcing nowait on callee contets is just asking for trouble.
-> > > > Unlike NOIO or NOFS this is incompatible with NOFAIL allocations
-> > >
-> > > I don’t see any incompatibility in __alloc_pages_slowpath(). The
-> > > ~__GFP_DIRECT_RECLAIM flag only ensures that direct reclaim is not
-> > > performed, but it doesn’t prevent the allocation of pages from
-> > > ALLOC_MIN_RESERVE, correct?
-> >
-> > Right but this means that you just made any potential nested allocation
-> > within the scope that is GFP_NOFAIL a busy loop essentially. Not to
-> > mention it BUG_ON as non-sleeping GFP_NOFAIL allocations are
-> > unsupported. I believe this is what Christoph had in mind.
-> 
-> If that's the case, I believe we should at least consider adding the
-> following code change to the kernel:
+/* Summary */
+This contains fixes for this merge window:
 
-We already do have that
-                /*
-                 * All existing users of the __GFP_NOFAIL are blockable, so warn
-                 * of any new users that actually require GFP_NOWAIT
-                 */
-                if (WARN_ON_ONCE_GFP(!can_direct_reclaim, gfp_mask))
-                        goto fail;
+VFS:
 
-But Barry has patches to turn that into BUG because failing NOFAIL
-allocations is not cool and cause unexpected failures. Have a look at
-https://lore.kernel.org/all/20240731000155.109583-1-21cnbao@gmail.com/
+-  Fix the name of file lease slab cache. When file leases were split out of
+   file locks the name of the file lock slab cache was used for the file leases
+   slab cache as well.
 
-> > I am really
-> > surprised that we even have PF_MEMALLOC_NORECLAIM in the first place!
-> 
-> There's use cases for it.
+- Fix a type in take_fd() helper.
 
-Right but there are certain constrains that we need to worry about to
-have a maintainable code. Scope allocation contrains are really a good
-feature when that has a well defined semantic. E.g. NOFS, NOIO or
-NOMEMALLOC (although this is more self inflicted injury exactly because
-PF_MEMALLOC had a "use case"). NOWAIT scope semantic might seem a good
-feature but it falls appart on nested NOFAIL allocations! So the flag is
-usable _only_ if you fully control the whole scoped context. Good luck
-with that long term! This is fragile, hard to review and even harder to
-keep working properly. The flag would have been Nacked on that ground.
-But nobody asked...
--- 
-Michal Hocko
-SUSE Labs
+- Fix infinite directory iteration for stable offsets in tmpfs.
+
+- When the icache is pruned all reclaimable inodes are marked with I_FREEING
+  and other processes that try to lookup such inodes will block.
+
+  But some filesystems like ext4 can trigger lookups in their inode evict
+  callback causing deadlocks. Ext4 does such lookups if the ea_inode feature is
+  used whereby a separate inode may be used to store xattrs.
+
+  Introduce I_LRU_ISOLATING which pins the inode while its pages are
+  reclaimed. This avoids inode deletion during inode_lru_isolate() avoiding the
+  deadlock and evict is made to wait until I_LRU_ISOLATING is done.
+
+netfs:
+
+- Fault in smaller chunks for non-large folio mappings for filesystems that
+  haven't been converted to large folios yet.
+
+- Fix the CONFIG_NETFS_DEBUG config option. The config option was renamed a
+  short while ago and that introduced two minor issues. First, it depended on
+  CONFIG_NETFS whereas it wants to depend on CONFIG_NETFS_SUPPORT. The former
+  doesn't exist, while the latter does. Second, the documentation for the
+  config option wasn't fixed up.
+
+- Revert the removal of the PG_private_2 writeback flag as ceph is using it and
+  fix how that flag is handled in netfs.
+
+- Fix DIO reads on 9p. A program watching a file on a 9p mount wouldn't see any
+  changes in the size of the file being exported by the server if the file was
+  changed directly in the source filesystem. Fix this by attempting to read the
+  full size specified when a DIO read is requested.
+
+- Fix a NULL pointer dereference bug due to a data race where a cachefiles
+  cookies was retired even though it was still in use. Check the cookie's
+  n_accesses counter before discarding it.
+
+nsfs:
+
+- Fix ioctl declaration for NS_GET_MNTNS_ID from _IO() to _IOR() as the kernel
+  is writing to userspace.
+
+pidfs:
+
+- Prevent the creation of pidfds for kthreads until we have a use-case for it
+  and we know the semantics we want. It also confuses userspace why they can
+  get pidfds for kthreads.
+
+squashfs:
+
+- Fix an unitialized value bug reported by KMSAN caused by a corrupted symbolic
+  link size read from disk. Check that the symbolic link size is not larger
+  than expected.
+
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11-rc4.fixes
+
+for you to fetch changes up to 810ee43d9cd245d138a2733d87a24858a23f577d:
+
+  Squashfs: sanity check symbolic link size (2024-08-13 13:56:46 +0200)
+
+----------------------------------------------------------------
+vfs-6.11-rc4.fixes
+
+----------------------------------------------------------------
+Christian Brauner (2):
+      nsfs: fix ioctl declaration
+      pidfd: prevent creation of pidfds for kthreads
+
+David Howells (2):
+      netfs, ceph: Revert "netfs: Remove deprecated use of PG_private_2 as a second writeback flag"
+      netfs: Fix handling of USE_PGPRIV2 and WRITE_TO_CACHE flags
+
+Dominique Martinet (1):
+      9p: Fix DIO read through netfs
+
+Lukas Bulwahn (1):
+      netfs: clean up after renaming FSCACHE_DEBUG config
+
+Mathias Krause (1):
+      file: fix typo in take_fd() comment
+
+Matthew Wilcox (Oracle) (1):
+      netfs: Fault in smaller chunks for non-large folio mappings
+
+Max Kellermann (1):
+      fs/netfs/fscache_cookie: add missing "n_accesses" check
+
+Omar Sandoval (1):
+      filelock: fix name of file_lease slab cache
+
+Phillip Lougher (1):
+      Squashfs: sanity check symbolic link size
+
+Zhihao Cheng (1):
+      vfs: Don't evict inode under the inode lru traversing context
+
+yangerkun (1):
+      libfs: fix infinite directory reads for offset dir
+
+ Documentation/filesystems/caching/fscache.rst |   8 +-
+ fs/9p/vfs_addr.c                              |   3 +-
+ fs/afs/file.c                                 |   3 +-
+ fs/ceph/addr.c                                |  28 ++++-
+ fs/ceph/inode.c                               |   2 -
+ fs/inode.c                                    |  39 ++++++-
+ fs/libfs.c                                    |  35 ++++--
+ fs/locks.c                                    |   2 +-
+ fs/netfs/Kconfig                              |   2 +-
+ fs/netfs/buffered_read.c                      | 123 +++++++++++++++++---
+ fs/netfs/buffered_write.c                     |   2 +-
+ fs/netfs/fscache_cookie.c                     |   4 +
+ fs/netfs/io.c                                 | 161 +++++++++++++++++++++++++-
+ fs/netfs/objects.c                            |  10 --
+ fs/netfs/write_issue.c                        |   4 +-
+ fs/nfs/fscache.c                              |   5 +-
+ fs/nfs/fscache.h                              |   2 -
+ fs/smb/client/file.c                          |   3 +-
+ fs/squashfs/inode.c                           |   7 +-
+ include/linux/file.h                          |   2 +-
+ include/linux/fs.h                            |   5 +
+ include/linux/netfs.h                         |   3 -
+ include/trace/events/netfs.h                  |   2 +
+ include/uapi/linux/nsfs.h                     |   3 +-
+ kernel/fork.c                                 |  25 +++-
+ 25 files changed, 412 insertions(+), 71 deletions(-)
 
