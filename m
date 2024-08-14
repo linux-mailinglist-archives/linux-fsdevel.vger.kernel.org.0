@@ -1,119 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-25879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-25880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91F19513EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 07:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 726BA9513F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 07:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6E91F250EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 05:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184B31F25306
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 05:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508F554720;
-	Wed, 14 Aug 2024 05:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB056F2FA;
+	Wed, 14 Aug 2024 05:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V9k59Uqs"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VaShOaTf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B0E10953;
-	Wed, 14 Aug 2024 05:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A3538385;
+	Wed, 14 Aug 2024 05:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723613686; cv=none; b=n/0kdUrGManPdOeM7id6j1QpuU22udnH1z/1otfX0v7oy1+q7zEGaUo0tjoPWHWIR3xtkzb08mGW2QjmN/ueGjwwgQIkU1bp4KSYX65c0OCpVulyln1MYZIfK7M0HORb04Z3Sk0LKrgc4DIoJNBzmgW7KB7K1QSbrKu4q8GA2nw=
+	t=1723613795; cv=none; b=aElkra05axZp3Vqc0QPXNdUUVDd1An2T/k4ZanV/i70f3takGBn/mwov3MD7LXVbHWVkRXDWYdAoG/g6/pIj02tueyRPHPZQafqJZdVRkxYyCysjsQpVcILu6FwKTIcIyf09zMRI1eGDnZWkd0QaqJTb9AQIdbxDn6lrQ0wjHyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723613686; c=relaxed/simple;
-	bh=a+oH29lRdI7crXE0cpk9MRBl+dxUEEErbE4XgjMV8HE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WUAULKySyOUTtgJCZHXDA/S5UDDZPL43++fBmbrgkF3f0kMt2K3Ca37tCGWDHYnddlWOJk9yupEsRXkZqFOUnlhUXQe8D/7UsiNWTJoZW7s5ikN2erZiLlD543Z9HY2TxJ2Q4whAI/rGtMdtI5YFeM2XaJu4YafaU0qX35wTyac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V9k59Uqs; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a9a7af0d0so699325166b.3;
-        Tue, 13 Aug 2024 22:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723613683; x=1724218483; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a+oH29lRdI7crXE0cpk9MRBl+dxUEEErbE4XgjMV8HE=;
-        b=V9k59Uqs4uuVQB7VvJFll3Sg3aLr5K2+bxRPoEEMtODYG67Uy/TP+8c9Lg+kzWcHJP
-         B5C3MeoNVDcAWdO1dy6yr19RDwkRhuv2lIeglHmxgaxLmwji+yAWuItgD87tWCsc3bgc
-         NXiLm1YZnZqMdHh2c/2XftUJT8d4SI6hcyfVAI4bw0vtVKc/mlBNFyf2X2q6W5jJmnkI
-         WI9Oueq9QfOz53mKGLPGwwkbn0gHEsSTWizhf4CKmN28iAiwwwlWGSQd+O+rQKVfR2QP
-         p2SNMKEzRmGQssFxOskljSJ3+mh8omAYQdjc+/ZYuCX8WP8VwpASpCWQhJyKiGJX8QCW
-         SQSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723613683; x=1724218483;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a+oH29lRdI7crXE0cpk9MRBl+dxUEEErbE4XgjMV8HE=;
-        b=CbVVLq091IilWCj691gD/QOA61Z2FoGtkwGexqVqO0eyeklpWlPuTPvgIRmL8I6y2d
-         Gj935+/lIh3Vjn0k9aMpb1EMaZHE55oCnX6UVvKCvAId2ar/sBi9kDGHDQPTFFSI06RF
-         yIAlMTqOZAdXnSmHHuasbRmkEfqMJl7ZqbIDUpTYcFjajBzhd3PpmWXZOIeQlKIa2mXY
-         7uGRJ0Wt16qU2JOsvYvfdmtRg93zC2Pbjx3GYgSGDBMYItP5o83gVhtrg5iFYSdowB16
-         QxKUCKWdn4PTUB1LDm1bsYJz/XHa2aMsv7AV0K8FVfHmmxQDe/2b1RuT/r3XXXnj27gs
-         unPA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+9UScgoZpmQPtm6Cto6c6GvfxfBtPPeLwIYAVXoR6cwkrbJVSnS/EREH+zUKZN3W8tD6ktjUW5H257q1UMzoh4UjxqWUCemOcDUfDQ/xhmLLe+VwFkH3j21g+DaRY4q1BGzARayhgkPpKqg==
-X-Gm-Message-State: AOJu0YyyY1jj02I+AEq9I30z9SypYE1bhmjD1RwWKxXPriTf9dv+G3n0
-	26bif4FwReaqKh9vuqqV6GhXKpX3jCmwOOEyiR5jCvG/rOcecp6sFhtMh4ttYB3JAF6DQ/fXLRw
-	GX9uGPp/Ho1tT8RqBgYpSkoXfvKjIzoY8apU=
-X-Google-Smtp-Source: AGHT+IH3VgdXYh6HVn/9fML6mBkauVagXt6paXq+xRbc4b+/BF5+dluodYQxmL5DjtINS5R3yWB+IHuUlcb8BIW+m+o=
-X-Received: by 2002:a17:907:d2d3:b0:a7a:bd5a:1ec0 with SMTP id
- a640c23a62f3a-a8366d46ccamr101427666b.29.1723613682778; Tue, 13 Aug 2024
- 22:34:42 -0700 (PDT)
+	s=arc-20240116; t=1723613795; c=relaxed/simple;
+	bh=/rAEJs1r0VD4fmwlanwnKSDqoQUALUIzkvQEReJ6Jvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JTbxTd+AQf3wnJMXINR4lltab1DeotJmCQCD6Mdl/qyledkys7Bqrk2CebpPheTfzec2rLVSeLg/dbni5iCwMR8PmD38pU8X/EKeZnUKwU0PJVippWoo1z3Usyn0ldxvYfD+dsk7+v5Jxk1APyRoy0euOy1RJMY3GgjWWU6RLWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VaShOaTf; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xEfWbo8r2cyR9oaWqebE1Q4YcRl+hmd5XVA7kyPWT3I=; b=VaShOaTf5lfz3eoGIoM2Zqoyk+
+	GpoKDkROSOU/YhGjjqEvAb3i4qE2dzzDu2ceLytVmzakSVv2i9pkVLMPuK2XIalOqCBdQDy7VFEXs
+	7fDLSuaillPBuDTAHHRWdB97GEq2Ft6uDWfE1GCqbCQ6nROU40R1NjA81jTgA6HPKlwRvGg2Loe7j
+	g5+xPWtIN1k1zJmiIeQLtnWgCz1cSYaMOsi2KB1N7Uq8LBFfnNAHRUIPMnArRpdRpRGmtgX/pR45N
+	kM9YhMvpuM5L5PHUW4KiVjHpFN5fbD6Mntda234wLgWeNv0I4FzjOOQ4sOVvjVhtU4k4ePmAfEgsy
+	TNYtAiEw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1se6gT-00000005p9e-2EX9;
+	Wed, 14 Aug 2024 05:36:33 +0000
+Date: Tue, 13 Aug 2024 22:36:33 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, jack@suse.cz,
+	willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
+Message-ID: <ZrxCYbqSHbpKpZjH@infradead.org>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812064427.240190-3-viro@zeniv.linux.org.uk>
- <20240812075659.1399447-1-mjguzik@gmail.com> <20240814052420.GQ13701@ZenIV>
-In-Reply-To: <20240814052420.GQ13701@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 14 Aug 2024 07:34:30 +0200
-Message-ID: <CAGudoHHwzzL-hVrbKV05wkFedY8eWHsZToEHFu_odfysz21gWg@mail.gmail.com>
-Subject: Re: [PATCH] close_files(): reimplement based on do_close_on_exec()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Aug 14, 2024 at 7:24=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Mon, Aug 12, 2024 at 09:56:58AM +0200, Mateusz Guzik wrote:
-> > While here take more advantage of the fact nobody should be messing wit=
-h
-> > the table anymore and don't clear the fd slot.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >
-> > how about this instead, I think it's a nicer clean up.
->
-> > It's literally do_close_on_exec except locking and put fd are deleted.
->
-> TBH, I don't see much benefit that way - if anything, you are doing
-> a bunch of extra READ_ONCE() of the same thing (files->fdt), for no
-> visible reason...
+On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
+> folio by folio_mark_dirty() even the map length is shorter than one
+> folio. However, on the filesystem with more than one blocks per folio,
+> we'd better to only set counterpart block's dirty bit according to
+> iomap_length(), so open code folio_mark_dirty() and pass the correct
+> length.
 
-I claim the stock code avoidably implements traversal differently from
-do_close_on_exec.
+What about moving the folio_mark_dirty out of the loop and directly
+into iomap_page_mkwrite so that it is exactly called once?  The
+iterator then does nothing for the !buffer_head case (but we still
+need to call it to allocate the blocks).
 
-The fdt reload can be trivially lifted out of the loop, does not
-affect what I was going for.
-
-But now that you mention this can also be done in the do_close_on_exec
-case -- the thread calling it is supposed to be the only consumer, so
-fdt can't change.
-
-that's my $0,03 here, I'm not going to further argue about it
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
