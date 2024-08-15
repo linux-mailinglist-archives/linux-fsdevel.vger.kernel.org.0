@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-26047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4332952C1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 12:29:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42288952C1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 12:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41BBA1F24BB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 10:29:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DB69B25F8B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 10:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAE420125A;
-	Thu, 15 Aug 2024 09:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E158120FAAB;
+	Thu, 15 Aug 2024 09:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="QwwuyKaE"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="DKXqD5e9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6344B205E20
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3E8201266
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723713903; cv=none; b=HcQc9hl+ZraOaVtfoCm3CEiqqiRiXduXClwq0VXDS/dDuecipBI7nceUPpNv0rLpM3WhreCFixq1avndY7vlNO77cd57emW00mWDVbcTkOV/mxT9/G+7KawOpj9s9FIafT0xe5Q6nPwhMpzyWdnUXEpm2nlZtVDAqaqor264Ub8=
+	t=1723713909; cv=none; b=YqpaT0JwZiYZotynb0/2FfixYP0WJST2YOMfHLahSbqE1TtXHI9/PYcrhBtxA12acGqLq+Y5TBb2of8bnYvzoGIZy6TlL1iIDN4FzZaYfXW9S4GZlH8c//CAeCovfsm7sMLWUA+RQaI9MZ2nlJWpYZ0jDWYu5UGVK3NGJNCnEUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723713903; c=relaxed/simple;
-	bh=WQyGP3ArX26n53a7N84tK4GY62m6jwfx6zeJykj/kFg=;
+	s=arc-20240116; t=1723713909; c=relaxed/simple;
+	bh=4adc61tKzjK2fTdo7B9pTquQAHQKVd/XEnUnW9CoK7g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FQWzMaZEUq8UkSfk5mIjZ3H+eWlCll9sN28nLKfRDq+jBLKXMQ2rruKA8yh9bD5lD7hD1aSvtt46IY+ZuNR6Kfp/XCideLZI/PwokPL25pJX3/tnxWFcycbptqpG7pRuY7HPX205LysIVpTIAAPV/wSzpt/Fdy9VM3J9XwSmA6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=QwwuyKaE; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=rMPDENPrrGvUQ2E3iZ+hk2cZKVWE5qUL5o8dj71CT4YzwVC896lf1cI9YMbeCwBl5ZCkpuvguLwuu3qMMgokF2SkQV0wZJdY8+vrZW0W1ZzisfjNxjF4lPzy/wuE7K5cdbM9AaTmGpyFut4O6GNjqudpVXSl5jSWgMRKJIS9Ftk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=DKXqD5e9; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B1F933F1BD
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:00 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6D9003F31C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723713900;
-	bh=Cr6mS4vM8svS+Y0pvJjPEy2yIGPChWIqWWxar373974=;
+	s=20210705; t=1723713906;
+	bh=ftHOv+os2MH3Qk9OKnsGMHrGZxHBoFg3umKFJ4e1joU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=QwwuyKaEO8Km5slwrbdEzcfbvUHOhYYpw0r44U1UgUTQZC6xwdwWsXWPt9H4eWlgg
-	 gMZoA89iFym/FbpNoIOweCFgT7ukqzwvvf95uMTGCVZkjYt6RzJGAB4JCD/flJZdmn
-	 ql8BL6809vzHclsflKwv9ISRNo7Ju6mQ+nfwpJKfpe1fIfRH+MuWQHV5M5baSgP3tO
-	 ia7+MJiRQNvZUzJBV9m0ol7DO5IEggrZ0e+olS7wud/KOv2YUrCfPGQ0XIeRB80n03
-	 zL1IAbcHC5TwFgiYJVp8nUS5l1UJGO9JR/u+bhWF1sBusIePPPSDRaC3hRsfcydZGQ
-	 M43s2lRu/VUHg==
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a80ebde3f94so65035366b.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 02:25:00 -0700 (PDT)
+	b=DKXqD5e9tHFJS/l+r2i86IlJfKbS9PFq/X6Jj4pjfhuwvKJL/HpOPsFJKMmLIk77f
+	 Hd7dFi8dAMV1fgJyK49q0ZSdoL57991ge89/T4q/bkffN2pvstqg8Z8QcHQhjDH81L
+	 gSnTxMzgDTxmUfkvFWdf5VxmlU2ort6Y5yULD2s6T8NWgxydsGaOwPzI8Zr0QI0l/L
+	 vv8uYid8OUpaImQI4vWMwYuG54B/JBbFKBK1Ej4lraly5CXynOD2HuOuyeWZnSFt7H
+	 UN3OBgoILwsGfkeQEMVozK0mDfkAhQhDCQs+dM3PxJdj2q/WOwYnTjzNs8pfL+UoaK
+	 YcwFd1Y3AZcqQ==
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-532fbabc468so773704e87.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 02:25:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723713900; x=1724318700;
+        d=1e100.net; s=20230601; t=1723713903; x=1724318703;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Cr6mS4vM8svS+Y0pvJjPEy2yIGPChWIqWWxar373974=;
-        b=eKW1NauBsWqAHLKKdYuZZxE3ahiReO1ZfcamEZ9lYNI/GHKMzvFDS4XvHi5VCvB92K
-         iVeWuVNk2YZVBsrqGexngi89cTYa4qvMgjTD0beDihQDjimHCmjpbCD/L0jYt8/TphYl
-         oms8QJuLo239vdQgugZMK0nxyPL/0rH6/Mzu85aoC/tk+0rZYw72aTrbr6WxwiVrFNn1
-         O/l4k+ACSPIzpsC9j2wuFe2Q3d+EbEZ9QCkv9A/XHubfImSqrF6hcJslCYgUk1/q6p0H
-         maeBSXKmYCTyjsu/Q4p3f9TPPiHISFa+jQ2F0Qxanz6xObZ1VftYt662OEu84jo9OwJA
-         qChQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURwnSc4Rz4Vw9WIdDvuANba9UQLjg4S7UTv92xo36FkLLn51YglC50uVxWJI6E4U72NNy4DtdMas83vsJB0tR8WI2yj7HCMQ0cNojG6w==
-X-Gm-Message-State: AOJu0YzRn5YsFBFpDNLd+8cNfMOyqNVWxFMiNMkGODkN4FjJvhEQdlID
-	XijqG5emnhNPxNZK87kvLeLCV/IVaedZqiVW+BSUTVcA1N0TJnnETw5nDNX8Ez5ZJmZuHXT+gUY
-	znutjP31im8krPFKVsNpCEk1P1KnjHyzdKvP3mrQLxEMG4xAVm9gJ8IVOVRuQJ2oTE/OY03YCZc
-	HEne4=
-X-Received: by 2002:a17:907:3f89:b0:a7a:a33e:47b7 with SMTP id a640c23a62f3a-a83670722aemr419369866b.69.1723713900169;
-        Thu, 15 Aug 2024 02:25:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEghyVaXn5Dbtn6avz2ju4iyCpDYekR/UIUNfpUCzBfAEqAmdPwUCKFJ/4+cn52QZhbpY2Qjw==
-X-Received: by 2002:a17:907:3f89:b0:a7a:a33e:47b7 with SMTP id a640c23a62f3a-a83670722aemr419367866b.69.1723713899831;
-        Thu, 15 Aug 2024 02:24:59 -0700 (PDT)
+        bh=ftHOv+os2MH3Qk9OKnsGMHrGZxHBoFg3umKFJ4e1joU=;
+        b=Sr7O6pQA4MBAUtSSz5L25iiP2HVfUUnfav4pQLcSJuKUprzdlu4xqpHlQ6Gq537VSB
+         yjY9GO3YOx5LQp+JFycDAhYHvbO8kzzf0ffTV+cYNimny7n+hpIxQIuasCTKLHPKmHAx
+         Q60EUAzqfOlhdNS7plfh8j4P793qw4EVgolT2luKTtWXarcQ+ji89B7R72k367kbESAJ
+         zz6Ghn9kNkYS+y6rzYwVgihLR35hGDaV5r8Tj9By1ALwe0lorNc7KA00QmC+LVJzCub7
+         KqNrEguWV+LvA62MoHcA57NCmdg3FxzHenu2VC7vanY+rCcozn/oRdtNjwdw58kbR5oM
+         4D/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXrvLuO12w67JPeI6xfnStkIECxyC/O+6iRyIJd1748CJdOggP9pug4DYaq2kviZFAtilMCk+r/vWZcRRzTfUXq6ZFICJM67kwiqUx9Dg==
+X-Gm-Message-State: AOJu0YyFkfAsNWityC4na4+u8CpN948Xvrad7U+09vKx0WzhFmtx0M1l
+	sf9eAmvwqPrbctUIflD4mzw5Pgp76a3ETB8g1bEgSYRgPp9SSoDgc2Ue8U6EXR8NhFvjiTOwQig
+	nF930O7Og9+qQLIdrNAcnRPEbV19U4TBXamQeNYPztHok5pdCaY3btEXPBTxr81ebyc9Zvp5DSs
+	5YnpE=
+X-Received: by 2002:a05:6512:282a:b0:52d:582e:410f with SMTP id 2adb3069b0e04-532edbbcdddmr3352411e87.46.1723713902558;
+        Thu, 15 Aug 2024 02:25:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTZkKDHUW/a1SQ8jPfQJ+Q+tEU5ep/4T2uXV0NfHa+967OhzX5TBfB5pRRpmHTOYVJYolsYw==
+X-Received: by 2002:a05:6512:282a:b0:52d:582e:410f with SMTP id 2adb3069b0e04-532edbbcdddmr3352395e87.46.1723713902114;
+        Thu, 15 Aug 2024 02:25:02 -0700 (PDT)
 Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934585sm72142866b.107.2024.08.15.02.24.58
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934585sm72142866b.107.2024.08.15.02.25.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 02:24:59 -0700 (PDT)
+        Thu, 15 Aug 2024 02:25:01 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: mszeredi@redhat.com
 Cc: brauner@kernel.org,
@@ -87,9 +87,9 @@ Cc: brauner@kernel.org,
 	Bernd Schubert <bschubert@ddn.com>,
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 06/11] fs/fuse: support idmapped ->setattr op
-Date: Thu, 15 Aug 2024 11:24:23 +0200
-Message-Id: <20240815092429.103356-7-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v3 07/11] fs/fuse: drop idmap argument from __fuse_get_acl
+Date: Thu, 15 Aug 2024 11:24:24 +0200
+Message-Id: <20240815092429.103356-8-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
@@ -101,6 +101,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+We don't need to have idmap in the __fuse_get_acl as we don't
+have any use for it.
+
+In the current POSIX ACL implementation, idmapped mounts are
+taken into account on the userspace/kernel border
+(see vfs_set_acl_idmapped_mnt() and vfs_posix_acl_to_xattr()).
+
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Seth Forshee <sforshee@kernel.org>
 Cc: Miklos Szeredi <miklos@szeredi.hu>
@@ -108,119 +115,42 @@ Cc: Amir Goldstein <amir73il@gmail.com>
 Cc: Bernd Schubert <bschubert@ddn.com>
 Cc: <linux-fsdevel@vger.kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
-v2:
-	- pass idmap in more cases to make code easier to understand
----
- fs/fuse/dir.c    | 32 +++++++++++++++++++++-----------
- fs/fuse/file.c   |  2 +-
- fs/fuse/fuse_i.h |  4 ++--
- 3 files changed, 24 insertions(+), 14 deletions(-)
+ fs/fuse/acl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index cd3b91b60cae..c50f951596dd 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1771,17 +1771,27 @@ static bool update_mtime(unsigned ivalid, bool trust_local_mtime)
- 	return true;
+diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
+index 04cfd8fee992..897d813c5e92 100644
+--- a/fs/fuse/acl.c
++++ b/fs/fuse/acl.c
+@@ -12,7 +12,6 @@
+ #include <linux/posix_acl_xattr.h>
+ 
+ static struct posix_acl *__fuse_get_acl(struct fuse_conn *fc,
+-					struct mnt_idmap *idmap,
+ 					struct inode *inode, int type, bool rcu)
+ {
+ 	int size;
+@@ -74,7 +73,7 @@ struct posix_acl *fuse_get_acl(struct mnt_idmap *idmap,
+ 	if (fuse_no_acl(fc, inode))
+ 		return ERR_PTR(-EOPNOTSUPP);
+ 
+-	return __fuse_get_acl(fc, idmap, inode, type, false);
++	return __fuse_get_acl(fc, inode, type, false);
  }
  
--static void iattr_to_fattr(struct fuse_conn *fc, struct iattr *iattr,
--			   struct fuse_setattr_in *arg, bool trust_local_cmtime)
-+static void iattr_to_fattr(struct mnt_idmap *idmap, struct fuse_conn *fc,
-+			   struct iattr *iattr, struct fuse_setattr_in *arg,
-+			   bool trust_local_cmtime)
- {
- 	unsigned ivalid = iattr->ia_valid;
- 
- 	if (ivalid & ATTR_MODE)
- 		arg->valid |= FATTR_MODE,   arg->mode = iattr->ia_mode;
--	if (ivalid & ATTR_UID)
--		arg->valid |= FATTR_UID,    arg->uid = from_kuid(fc->user_ns, iattr->ia_uid);
--	if (ivalid & ATTR_GID)
--		arg->valid |= FATTR_GID,    arg->gid = from_kgid(fc->user_ns, iattr->ia_gid);
-+
-+	if (ivalid & ATTR_UID) {
-+		kuid_t fsuid = from_vfsuid(idmap, fc->user_ns, iattr->ia_vfsuid);
-+		arg->valid |= FATTR_UID;
-+		arg->uid = from_kuid(fc->user_ns, fsuid);
-+	}
-+
-+	if (ivalid & ATTR_GID) {
-+		kgid_t fsgid = from_vfsgid(idmap, fc->user_ns, iattr->ia_vfsgid);
-+		arg->valid |= FATTR_GID;
-+		arg->gid = from_kgid(fc->user_ns, fsgid);
-+	}
-+
- 	if (ivalid & ATTR_SIZE)
- 		arg->valid |= FATTR_SIZE,   arg->size = iattr->ia_size;
- 	if (ivalid & ATTR_ATIME) {
-@@ -1901,8 +1911,8 @@ int fuse_flush_times(struct inode *inode, struct fuse_file *ff)
-  * vmtruncate() doesn't allow for this case, so do the rlimit checking
-  * and the actual truncation by hand.
-  */
--int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
--		    struct file *file)
-+int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+		    struct iattr *attr, struct file *file)
- {
- 	struct inode *inode = d_inode(dentry);
- 	struct fuse_mount *fm = get_fuse_mount(inode);
-@@ -1922,7 +1932,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
- 	if (!fc->default_permissions)
- 		attr->ia_valid |= ATTR_FORCE;
- 
--	err = setattr_prepare(&nop_mnt_idmap, dentry, attr);
-+	err = setattr_prepare(idmap, dentry, attr);
- 	if (err)
- 		return err;
- 
-@@ -1981,7 +1991,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
- 
- 	memset(&inarg, 0, sizeof(inarg));
- 	memset(&outarg, 0, sizeof(outarg));
--	iattr_to_fattr(fc, attr, &inarg, trust_local_cmtime);
-+	iattr_to_fattr(idmap, fc, attr, &inarg, trust_local_cmtime);
- 	if (file) {
- 		struct fuse_file *ff = file->private_data;
- 		inarg.valid |= FATTR_FH;
-@@ -2116,7 +2126,7 @@ static int fuse_setattr(struct mnt_idmap *idmap, struct dentry *entry,
- 	if (!attr->ia_valid)
- 		return 0;
- 
--	ret = fuse_do_setattr(entry, attr, file);
-+	ret = fuse_do_setattr(idmap, entry, attr, file);
- 	if (!ret) {
- 		/*
- 		 * If filesystem supports acls it may have updated acl xattrs in
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index f39456c65ed7..562bdf8d5976 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2966,7 +2966,7 @@ static void fuse_do_truncate(struct file *file)
- 	attr.ia_file = file;
- 	attr.ia_valid |= ATTR_FILE;
- 
--	fuse_do_setattr(file_dentry(file), &attr, file);
-+	fuse_do_setattr(file_mnt_idmap(file), file_dentry(file), &attr, file);
+ struct posix_acl *fuse_get_inode_acl(struct inode *inode, int type, bool rcu)
+@@ -90,8 +89,7 @@ struct posix_acl *fuse_get_inode_acl(struct inode *inode, int type, bool rcu)
+ 	 */
+ 	if (!fc->posix_acl)
+ 		return NULL;
+-
+-	return __fuse_get_acl(fc, &nop_mnt_idmap, inode, type, rcu);
++	return __fuse_get_acl(fc,  inode, type, rcu);
  }
  
- static inline loff_t fuse_round_up(struct fuse_conn *fc, loff_t off)
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index d06934e70cc5..883151a44d72 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1333,8 +1333,8 @@ bool fuse_write_update_attr(struct inode *inode, loff_t pos, ssize_t written);
- int fuse_flush_times(struct inode *inode, struct fuse_file *ff);
- int fuse_write_inode(struct inode *inode, struct writeback_control *wbc);
- 
--int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
--		    struct file *file);
-+int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+		    struct iattr *attr, struct file *file);
- 
- void fuse_set_initialized(struct fuse_conn *fc);
- 
+ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
 -- 
 2.34.1
 
