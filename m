@@ -1,49 +1,41 @@
-Return-Path: <linux-fsdevel+bounces-26079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26080-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE35953797
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 17:46:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA3C953843
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 18:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C743B249BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 15:46:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229F31F2369A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 16:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4426C1B3740;
-	Thu, 15 Aug 2024 15:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQHxQvc5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D161B9B49;
+	Thu, 15 Aug 2024 16:32:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA9D1A4F3B;
-	Thu, 15 Aug 2024 15:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F389126AE4;
+	Thu, 15 Aug 2024 16:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723736774; cv=none; b=tK8R4wTQjXSItjCcyt2LB2GmzfmSwT8Jp7Vbi6Mb0Yt6Dhb43qw9ECOXfER8pLsRbr6JeMKX2JZm6EAfx0nd2UtG2mmhrGmVv4VNkS14ybfYwELYUIOaDmIEwnDAKmnhwjrdHOYM4C7/1zMxU10Obx44xfmP1iR2VbK2248OGnQ=
+	t=1723739520; cv=none; b=gIM93NydbOVP9TkwhYCL+J2ZIhzCtQwN5Rwo12AGasw1G7+adZO/ZdU87v4YwJCyxRPtu7gBJuXKJktCf7AZ1P4GDssiwNQCDF/jwLNQcjPnCYp2OIxDimbJMQnGglbXAFlFmN6cnQjuvCud8eRiuHp3L9bCPRoRuS4513h7vtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723736774; c=relaxed/simple;
-	bh=OhahuUFfndYeeiIAqMoZWO/itLbhbmCl9Dektx2bSmw=;
+	s=arc-20240116; t=1723739520; c=relaxed/simple;
+	bh=v2DuIKDRYstSgnLhL+gVxytmZsWL98Xb4yRNcEnje9M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Do8fxN4JEcNSI1DtjxbxpoOw4H+WuJbkuvy6QBOV3yKEfuPWDb1vppfqcWL7AG4LbOwoIwLzp04QRhorlteGAlF+b9uj8M/n1fOfmhdMOwAj1keUkRq7nUtgc7uvLKlqsQDN7Fixrk2NUxesjEsyeMBunw2pPYVmgwlHjTgA0VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQHxQvc5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A925FC32786;
-	Thu, 15 Aug 2024 15:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723736774;
-	bh=OhahuUFfndYeeiIAqMoZWO/itLbhbmCl9Dektx2bSmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZQHxQvc5mzqu6Xt9OdE1XNZLD70/O3dkcJiXZaxebgJDxx2JQVYIg435975yYCQQr
-	 l5jUPJ9oJMKRElz7Dpy6UeqrDFRWxrZL9GgVJl4lw07+FN4VZhWpX5TJn27GiUUmzn
-	 zflbVeq8Fynrs4ZZayXEmrP67CO7FB82ptXHbETuTJY707TwQqihr/CnxYOeOkK3Iq
-	 Dls40SNfnnISQ4sF8cCZV+d/wVSzh4VpXAdOpq9qVv/6PVrUYatD7Il2JO1i+4JRAP
-	 0bkotokage4eWgXhiPbnrXkVCVs4p5DoijU6EnNn09pzgcTeB9heRVbuopXzrzYpak
-	 8cbW3fI2l2ChA==
-Date: Thu, 15 Aug 2024 16:46:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dave Martin <Dave.Martin@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EmBs3P8UeX6Ynvz6tmGfKlRoWOwX+dfow9XdM/KjKg8maFXlPzsHonlcAfMrQvQfFgY2PWP2jGEZ3FAx2h98l1ACxqzq25I8msCbEo9KK6PcHNf28EfKuzvn/hyz7YeR4MIRTbL2l88hpM6REXU/nP8EVR4pddzR4MLu1/jHN0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47EB014BF;
+	Thu, 15 Aug 2024 09:32:24 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 94A073F6A8;
+	Thu, 15 Aug 2024 09:31:52 -0700 (PDT)
+Date: Thu, 15 Aug 2024 17:31:49 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Mark Brown <broonie@kernel.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -70,90 +62,55 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
 	linux-arch@vger.kernel.org, linux-mm@kvack.org,
 	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 24/40] arm64/signal: Expose GCS state in signal frames
-Message-ID: <280e4455-9cf7-40e1-9114-7bb3aa9de868@sirena.org.uk>
+Subject: Re: [PATCH v10 23/40] arm64/signal: Set up and restore the GCS
+ context for signal handlers
+Message-ID: <Zr4tdcj8DF92GzVS@e133380.arm.com>
 References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-24-699e2bd2190b@kernel.org>
- <ZrzIv3FWNgJizDc2@e133380.arm.com>
- <7433e3d2-996a-45a0-b917-666a340ad109@sirena.org.uk>
- <Zr4KMaBv4JXx8uBz@e133380.arm.com>
- <efe1d936-011d-49e3-a0ff-8f6276e4d782@sirena.org.uk>
- <Zr4fxZ8wf+Wcey4E@e133380.arm.com>
+ <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
+ <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
+ <08932f6d-01ef-40e8-97d2-08f0d2016191@sirena.org.uk>
+ <Zr4EkmtUKop9o9wu@e133380.arm.com>
+ <c56fa974-88f7-4c1f-83bd-8c481fe0045d@sirena.org.uk>
+ <Zr4avB6+U4tLDy8E@e133380.arm.com>
+ <7fa96f26-5bf6-490f-8986-258033fbfe0e@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GXfbjsfo8XCmDLMF"
-Content-Disposition: inline
-In-Reply-To: <Zr4fxZ8wf+Wcey4E@e133380.arm.com>
-X-Cookie: -- Owen Meredith
-
-
---GXfbjsfo8XCmDLMF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7fa96f26-5bf6-490f-8986-258033fbfe0e@sirena.org.uk>
 
-On Thu, Aug 15, 2024 at 04:33:25PM +0100, Dave Martin wrote:
-> On Thu, Aug 15, 2024 at 04:05:32PM +0100, Mark Brown wrote:
+On Thu, Aug 15, 2024 at 04:29:54PM +0100, Mark Brown wrote:
+> On Thu, Aug 15, 2024 at 04:11:56PM +0100, Dave Martin wrote:
+> > On Thu, Aug 15, 2024 at 03:45:45PM +0100, Mark Brown wrote:
+> > > On Thu, Aug 15, 2024 at 02:37:22PM +0100, Dave Martin wrote:
+> 
+> > > > Is there a test for taking and returning from a signal on an alternate
+> > > > (main) stack, when a shadow stack is in use?  Sounds like something
+> > > > that would be good to check if not.
+> 
+> > > Not specifically for any of the architectures.
+> 
+> > Can you see any reason why this shouldn't work?
+> 
+> No, it's expected to work - I'm just not specifically aware of an
+> explicit test for it.  Possibly some of the userspace bringup work
+> might've covered it?  Any libc tests for altstack support should've
+> exercised it for example.
 
-> > The expectation (at least for arm64) is that the main program will only
-> > have shadow stacks if everything says it can support them.  If the
-> > dynamic linker turns them on during startup prior to parsing the main
-> > executables this means that it should turn them off before actually
-> > starting the executable, taking care to consider any locking of feature=
-s.
+That's true; if libc is built to use shadow stack, generic API tests
+ought to cover this.
 
-> Hmm, so we really do get a clear "enable shadow stack" call to the
-> kernel, which we can reasonaly expect won't happen for ancient software?
+> > Maybe I'll hacking up a test if I get around to it, but don't take this
+> > as a promise!
+> 
+> Thanks for your firm commitment!  :P
 
-Yes, userspace always has to explicitly enable the GCS.
+No problem...
 
-> If so, I think dumping the GCS state in the sigframe could be made
-> conditional on that without problems (?)
-
-It is - we only allocate the sigframe if the task has GCS enabled.
-
-> > > Related question: does shadow stack work with ucontext-based coroutin=
-es?
-> > > Per-context stacks need to be allocated by the program for that.
-
-> > Yes, ucontext based coroutines are the sort of thing I meant when I was
-> > talking about returning to a different context? =20
-
-> Ah, right.  Doing this asynchronously on the back of a signal (instead
-> of doing a sigreturn) is the bad thing.  setcontext() officially
-> doesn't work for this any more, and doing it by hacking or rebuilding
-> the sigframe is extremely hairy and probably a terrible idea for the
-> reasons I gave.
-
-I see.  I tend to view this as more adventurous than I personally would
-be when writing userspace code but equally I don't see a need to
-actively break things.  There's no *requirement* to use libc...
-
-> So, overall I think making ucontext coroutines with with GCS is purely
-> a libc matter that is "interesting" here, but we don't need to worry
-> about.
-
-Yes, it's not our problem so long as we don't get in the way somehow.
-
---GXfbjsfo8XCmDLMF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+IrsACgkQJNaLcl1U
-h9DSDwf/fvoSsWjkRUucDXlPXcS3xALg/zYnf2jri8K1FvhKbx6ExKFpnk/0g2BM
-wK2PwaNUJU1aco+sWt4qWO5BpC2IehhK4SayS1RosRQNYaC++NMOh2/8HVNEHE10
-XYPyfSZwI+nnf/4yS6Zz1HdzVTbuTkNBtkWyJtEO+gVukwrqd8ZroQ0fuSBvQyOu
-ZmkniP6ouY5JUJvZtbLtaP0MurY44KnJyfZKbDuNyinTVw/SRukqIPVzy3RT0tTJ
-rYVAnu34kZUCOei6ztPt+st1eA0IfyO0JvM2DcPAY7ZI1JHi15NFj0P2SedICD9d
-gFptQBZcUxVlVAqy5L/gZ2G4JmaFVw==
-=AdhV
------END PGP SIGNATURE-----
-
---GXfbjsfo8XCmDLMF--
+Cheers
+---Dave
 
