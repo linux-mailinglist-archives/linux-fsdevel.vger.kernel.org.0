@@ -1,87 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-26075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBF795372F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 17:27:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1EC953746
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 17:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB071C23503
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 15:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DD51282788
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 15:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53461B1427;
-	Thu, 15 Aug 2024 15:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB991AD3F3;
+	Thu, 15 Aug 2024 15:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psefFyFw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2VOK3AI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB321AD9E8;
-	Thu, 15 Aug 2024 15:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FF41AD408;
+	Thu, 15 Aug 2024 15:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723735608; cv=none; b=WB+5R7LwF42YEazsx7N/wvLP3wac/GW+Xw+84Y0qalwLWEkqVmMMAvHT8y7cI7r65MtANDNh49VRYV1f7BWFolxUJF1eXmOlarLrD0kUZQ09Hbv2kHP1InQ0aIaWEnLcIYInWaheUXuSpjATwW+y5dAeh65wB7HIxIf3F7/nEss=
+	t=1723735804; cv=none; b=NxDouc4hbo76zpjRsgLGdKcsiObamiUAswOG6VuCpunDfG6sWILKk1TD/KJm62Mexkl8Veabrvy2A2F6b2+TI/vs3ylXtKdiCxUluLjbfW6rMdlo6PbPMk/GwsLVHMfKA3fkwOeK/Ud5aXr36Wegh3e8wsIcho9kDwl+R0wIBSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723735608; c=relaxed/simple;
-	bh=Wv1kQ8mBOvNs2q3MqL2TJnvCXLTai7JxFQflhk6OGQo=;
+	s=arc-20240116; t=1723735804; c=relaxed/simple;
+	bh=eIyx3IBfKno0cNAgEw1iBNzp1pqq6ljpPhCQTDU9dZk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pg//R7WFypvQLdlCpOGBqFsmdjbzC6tz2UQSZ55dvFJgIMTITpA0KttVJ8vpOF/U+3n1WH8SsCDv8bwKg10fZfW+cJKO4lDGXCkuIh3FgWb1mu+P2PLbCWRb1yDg5qiQeXRswIPoacvM6wlsBJssvLDHgWn2pmy2T0P3iyX77hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psefFyFw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714D9C4AF0D;
-	Thu, 15 Aug 2024 15:26:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hQXV2jzuFR26xsYd3d2AJUZKgg3G+FJysj5nxQgTz1+OnF2/Ny33wMpqPrmFX50yGGfvVyADvD1y29lxMa3TdkHWEHy4+fn7bH76iKI7iX87Y3L19FNwdpVb0tCTJnlcBF6RtxDC43Y1YBVmxLR+mTKD8tK9CqsE1MLWaVHB5fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2VOK3AI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01F12C32786;
+	Thu, 15 Aug 2024 15:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723735607;
-	bh=Wv1kQ8mBOvNs2q3MqL2TJnvCXLTai7JxFQflhk6OGQo=;
+	s=k20201202; t=1723735803;
+	bh=eIyx3IBfKno0cNAgEw1iBNzp1pqq6ljpPhCQTDU9dZk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=psefFyFwcCSMM704n/PghElOSiJNvILlJNI0F9AWzTMwXrebRp5JcacIDypratT/1
-	 0v73e8fN2mho163LqjEJtpaHXOuGAR1msR4cfx917H+frORBPL41NHpr7hKJ52tLV7
-	 DDOLTfoES26QUqTBCR6Mi7zHCAZM1FdO91OOgnmLXfhnmLymP+AKnXqRXuJisb/8Hn
-	 CaiF+u1pKyKBUNTe8jpwL11FVRnO6ahy5qNXExYGGIF7OEKCfLzQ+wkytqH2lktzeM
-	 Fx7GWcm+n0dGpb7ocTZSESpLstlhljmUetVxXd/Y7BbrABrVO2e8I9L4aakKxQ2CHg
-	 1Xn27J8A2inAw==
-Date: Thu, 15 Aug 2024 16:26:38 +0100
+	b=f2VOK3AIWLU8QSUcuez403jAVeUCxkGiqTwl/3vXpTISYj5ZNiaC7iRk9B1NZQLjA
+	 ovS1xr5gzeXsj2qNTSBFtyK1r+NxVe1nNs7sFTPO/KORonQhYRYOL9MBdvAC1kTDUW
+	 vaAvADvtMEuupWZG7KxvNlIMv37mit4/B9L6sSEm1SlLUCoOOZInyG6S0M6A8fjPBo
+	 O0D6R9ho6KCsny6znOChjPwNDpYIp/Ae8NQuuWxnILZlVGI6zgwCn/Allcb9RHmYO+
+	 fd68FywO/qwePHjIoRGOlchOiPZz3nc64ZdSlgTIdvCBcid+R8wy8E1G3vTTrZTKT1
+	 QB/eLkqJrI0jg==
+Date: Thu, 15 Aug 2024 16:29:54 +0100
 From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "corbet@lwn.net" <corbet@lwn.net>, "ardb@kernel.org" <ardb@kernel.org>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"oleg@redhat.com" <oleg@redhat.com>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"ross.burton@arm.com" <ross.burton@arm.com>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v10 12/40] mm: Define VM_SHADOW_STACK for arm64 when we
- support GCS
-Message-ID: <3a7d9b69-e9df-4271-a3f0-8e8683c2654f@sirena.org.uk>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 23/40] arm64/signal: Set up and restore the GCS
+ context for signal handlers
+Message-ID: <7fa96f26-5bf6-490f-8986-258033fbfe0e@sirena.org.uk>
 References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-12-699e2bd2190b@kernel.org>
- <34f7a5378447b1a8d5a9561594b37cfeaa6bd2b1.camel@intel.com>
+ <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
+ <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
+ <08932f6d-01ef-40e8-97d2-08f0d2016191@sirena.org.uk>
+ <Zr4EkmtUKop9o9wu@e133380.arm.com>
+ <c56fa974-88f7-4c1f-83bd-8c481fe0045d@sirena.org.uk>
+ <Zr4avB6+U4tLDy8E@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,42 +87,52 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MksM19X6NXlfICdi"
+	protocol="application/pgp-signature"; boundary="YyEFoEtU1rhfM5GN"
 Content-Disposition: inline
-In-Reply-To: <34f7a5378447b1a8d5a9561594b37cfeaa6bd2b1.camel@intel.com>
+In-Reply-To: <Zr4avB6+U4tLDy8E@e133380.arm.com>
 X-Cookie: -- Owen Meredith
 
 
---MksM19X6NXlfICdi
+--YyEFoEtU1rhfM5GN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Aug 15, 2024 at 03:20:52PM +0000, Edgecombe, Rick P wrote:
-> On Thu, 2024-08-01 at 13:06 +0100, Mark Brown wrote:
-> > Use VM_HIGH_ARCH_5 for guarded control stack pages.
+On Thu, Aug 15, 2024 at 04:11:56PM +0100, Dave Martin wrote:
+> On Thu, Aug 15, 2024 at 03:45:45PM +0100, Mark Brown wrote:
+> > On Thu, Aug 15, 2024 at 02:37:22PM +0100, Dave Martin wrote:
 
-> FYI - If you want to have more complete guard gaps, you need to do this for arm
-> too:
-> https://lore.kernel.org/linux-mm/20240326021656.202649-14-rick.p.edgecombe@intel.com/
+> > > Is there a test for taking and returning from a signal on an alternate
+> > > (main) stack, when a shadow stack is in use?  Sounds like something
+> > > that would be good to check if not.
 
-> Using VM_SHADOW_STACK only gets you part of the way there.
+> > Not specifically for any of the architectures.
 
-Oh, thanks for the heads up - I'd missed that.
+> Can you see any reason why this shouldn't work?
 
---MksM19X6NXlfICdi
+No, it's expected to work - I'm just not specifically aware of an
+explicit test for it.  Possibly some of the userspace bringup work
+might've covered it?  Any libc tests for altstack support should've
+exercised it for example.
+
+> Maybe I'll hacking up a test if I get around to it, but don't take this
+> as a promise!
+
+Thanks for your firm commitment!  :P
+
+--YyEFoEtU1rhfM5GN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+Hi4ACgkQJNaLcl1U
-h9Doewf/XswNKQ3VlzKzKEKNyYD5iFma82uwYhlhHv9Nqsb6eiF4zUSOOgbna6xT
-Cq8p3DS/Im1Fgx/SaMcGP6tNihKE5DGkEufWy+6GIiS5SsrxhPlnzDtY0F4cJ4a5
-AELeMm6OD9wZFwcAwnuUJraMRY6olKHlI+cfrFcncvwLNwLkaVE0JlcB1dOxMNSR
-OqvnO/G0VM25OdY7SV+tJKRi/U5eIa+chRhV0i+qaQOu8oRJfEo6BqkFxz+ZHF19
-Dwr/HiGZa663RJVxgdp7mhrotkqK/nCoNksP+gjuEt6z2TIFNdcxPg0BK6mfgN+0
-qAKWzvjayIQ9j400dGkkiwuj5/+SNw==
-=TSgi
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+HvEACgkQJNaLcl1U
+h9BAegf/QtK1e+T9WZ1prxPIxk18DlFBSQaVl3fAvm96vjPtE5PP3xAzEPik0b3O
+Z8qDui3LXfB5xvftgIUUnEo1Yl7a5NiEUuqdU1fUUvXGk8OCVEmEQLXbBPOC6cyQ
+e0jNgMzBJ0L/zIM5XPjEBw33aYk0GrwL/ib4Fyzo7SfscLaZQ926T72vSydRXaIo
+TXc3QKHKWYHOaCAEMZgW2uBgmm7u97mFH7E7HJAqEiRPE0T4f6qQjluDGEcy1crb
+DJfTgadShNXTjshCzNYyYtHXZgrQjyRUSbCA4Cgnwj9McpBbwQQkbx9kXH6sZdHV
+Qgdiabh+uFXtADbJInyFT0RqRakHXg==
+=3J6F
 -----END PGP SIGNATURE-----
 
---MksM19X6NXlfICdi--
+--YyEFoEtU1rhfM5GN--
 
