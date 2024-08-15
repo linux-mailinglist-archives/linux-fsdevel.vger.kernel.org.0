@@ -1,147 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-26012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59D6952621
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 01:17:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F619527F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 04:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71D40282860
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Aug 2024 23:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEEA11F22B20
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 02:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A626314E2D6;
-	Wed, 14 Aug 2024 23:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD3433997;
+	Thu, 15 Aug 2024 02:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYAAYsoz"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MGSvRkRy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B298B143748;
-	Wed, 14 Aug 2024 23:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762A528E0F;
+	Thu, 15 Aug 2024 02:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723677460; cv=none; b=L6KCkCTPhxuBed47NV8xANH6i7nkSzqrFV3bRhjfxSH15EQwNg5Vf2vQW8Y2SZ+VWpv+9jOqpx07RXUjDvJB/CQ51sdxE+lOhnzWPPmQe7XfUz6msFqMvK06/If+JevMulI6eW1PQ2P/wGgK87d/kcR0eCGmvhjOx7X1GgFCbdU=
+	t=1723690189; cv=none; b=aQi4u4+o/0jwh57SIjGvL/X1RvxXDTQYXvB59u/rxkQ2cAok92UriaaAwUgH4ZhfpWwuz+XgCYXnj9plCZM45eu+ZXXwGfMl2cyqafI4BZIAuCdOP84XVD6tfpggk4+GmZ+pYDd11zzBY4szBKFXCzBPwKRcatVSLod/CPnBeBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723677460; c=relaxed/simple;
-	bh=6P5Sf1tLHK77YZ/7H49513aGplraseyEymSyPX8onHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nutdf9UrYVScVGrpXDsrd/cpllv4evAFc/WIJvVk6AhYqvaFghymdwCK3XtyLi9tG6LxrqODgG6XarOz2TuJq6Go96mhORAq/FmIHuZjMmIwvPFevW1WagNMdUayovXN+Lfyg237O9uk5ON7BcjIjGtLyO5huIQ4K7BrNYJvLdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DYAAYsoz; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d3bdab22b1so250141a91.0;
-        Wed, 14 Aug 2024 16:17:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723677458; x=1724282258; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dsmt7PofX/6vqTcTWZf5lQLEqw46EkJZz305dvn1YTI=;
-        b=DYAAYsozUVrxgfqpUS9JPVItlEyykMnXlK0TCnchRQ6R+L2l0N4X0Dlt14DXShipg7
-         AMTrQf6CP9X5og3JoBlGRTFwnsEBzl1cWvHOarCkKQV/CJ+vDDZlpVJmhgf2hZHZB+VW
-         d2k+PLYOx8IfFduHRoECEDhTUZwB7dU3uizOOvvYPhq3Y/y9Hx9CIfBJs2hEhm/sDsQ3
-         wciOPcodYK42P/I5pjMWq3NWF3Le9B3RxQbxygFPztxb4d9uDaX+TwZJQRxvUbHmA3v6
-         c5fAy0/R4MicR/6RNx6mKpElf/sbOJtyd2h8ROHCcg8C4ZZMdpuOhAhkSLq6PeSS24yz
-         x8Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723677458; x=1724282258;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dsmt7PofX/6vqTcTWZf5lQLEqw46EkJZz305dvn1YTI=;
-        b=BvUk8oDK05lqNFD7h5tKmYgq7zlL9UIcqYQjSut96FPhTjNsl36rnLaAcv30Zj0rqv
-         DnbA/hVW/7XoRxphB4enUsvCEFmgbQ+LFJaSlo5EvVL8HUJewO4flVkX1f30ia/ydw9p
-         BB0jRCoLzI/q6/VUhC3N/XheA25CjHNgnSP0KU2nOKJS3i9t8pfmlsAlXZ0Ewo8Ut+/Z
-         4DLDA1yqs8o/TSCU0NZXJq6Eld+zAP43V8mCKU4kVhJCS5cGfesp9rST9Zbx+0TQtDYm
-         OgnMGHR1kYMGoNrYNnKnj/eMCCa2hdekBuaqjVolKaJYDl3irGBLwZh32XkDlo2HZ6YI
-         /Eaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiTHNHBvuqBkOPtJ/5QXh9AMiTK3qRyt2dar84F8CKsF0RWS5qxMUyX/w/f1ofER9W+mivNQs2k2Om6nUXayaI4Kgw49sx1f4fIch76BOb8JmmW5cOHtdBzW3bLNHspnCvRg==
-X-Gm-Message-State: AOJu0YyKZQIkkz0UWZ0cwEPC2IbTfb6PyGzK3cmfp4E3l8eVNCzWE460
-	7ioLOjYHwWJwvXwWnh/982ouRC9YoU7T/ZHRJEXrKP2gFR/JmECBVcz9JiWF4X0PxZ/7GVdGC+p
-	r06gVyQkVx+uvkCvFkWpOHoum6PM=
-X-Google-Smtp-Source: AGHT+IF7zEO6TOwIaZLOsjSzZTn/Bf0jDNRTBkavterMLVDPAXCr9bLu+sq0vwpCMcujo6ViwNwk7DIrhJuH/9b67JQ=
-X-Received: by 2002:a17:90a:fc81:b0:2d3:c0ea:72b3 with SMTP id
- 98e67ed59e1d1-2d3c0ea72dbmr1824092a91.34.1723677457867; Wed, 14 Aug 2024
- 16:17:37 -0700 (PDT)
+	s=arc-20240116; t=1723690189; c=relaxed/simple;
+	bh=L8b2IGlmI+/1Z8arUmqiuhUYfrXszN0dgzodXoNXRLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NJG/sPe9bDIlSCXYefXFolC0u0krXJTAtz5m0oVuKzI6w058GhCFtSbQWvkrOLEVSnu8JJs/ILeNSDzhxgNYZadJxDJamWcZjMWlCqkoC8Po6GPFEqBJQK6MR3FfwkipkSsgiPkB4loJavJNABEK/FpdznKsryj+MviYas9tHZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MGSvRkRy; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723690187; x=1755226187;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=L8b2IGlmI+/1Z8arUmqiuhUYfrXszN0dgzodXoNXRLo=;
+  b=MGSvRkRyFGS29qNd7XI62740JhSAesjDC++ODzSipAaTEA9c6Rhd8uNT
+   pChOMKK/Gydxdhp6k26WBe1Sb6d/nePZ49qxfNiKqNovIM0/QqVAvKMZo
+   7ZOlIYPVQtu5nZof98uB9w0j+riOh0EdA2KQi2+zmVX0GWhILS33b7Amo
+   S4jRRzBgGwRFqLtLzfVM4gxrtrAlthrEXRCkQR7pYosKpQBxZV5WuujmN
+   S0JG8aduiWTIgNVgwGd32xYmKoGIjsYzCHzuGG84mlGHIDKxIR5rP1NgH
+   7eU21lEnukAW14hNpWSi+UdpKQrjBAYb5S4LSrTfeAe38CfHo9mlnLgpD
+   w==;
+X-CSE-ConnectionGUID: LdQ2vBbBRge75/x2qQKNdw==
+X-CSE-MsgGUID: kFIrGV3OQaKDzcDUJ5OKMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="44456216"
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="44456216"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 19:49:47 -0700
+X-CSE-ConnectionGUID: 7LQ4FysTTA6NOSvS6XAhgg==
+X-CSE-MsgGUID: uJMWUOfBQHeyoH8KkuyoNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="59979240"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.248.81]) ([10.124.248.81])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 19:49:44 -0700
+Message-ID: <d5c8edc6-68fc-44fd-90c6-5deb7c027566@intel.com>
+Date: Thu, 15 Aug 2024 10:49:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813230300.915127-1-andrii@kernel.org> <20240813230300.915127-4-andrii@kernel.org>
- <Zr0j_mYCtM-P-vlK@krava>
-In-Reply-To: <Zr0j_mYCtM-P-vlK@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 14 Aug 2024 16:17:25 -0700
-Message-ID: <CAEf4BzbSWG=mZXx1tn1n1OEvOwinpXMJ2fJhPRpVUqP7u_RY8A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 3/8] bpf: factor out fetching bpf_map from FD and
- adding it to used_maps list
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@kernel.org, viro@kernel.org, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	torvalds@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/3] fs/file.c: remove sanity_check and add
+ likely/unlikely in alloc_fd()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com, edumazet@google.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+ tim.c.chen@linux.intel.com, yu.ma@intel.com
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240717145018.3972922-2-yu.ma@intel.com> <20240814213835.GU13701@ZenIV>
+From: "Ma, Yu" <yu.ma@intel.com>
+Content-Language: en-US
+In-Reply-To: <20240814213835.GU13701@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024 at 2:39=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Tue, Aug 13, 2024 at 04:02:55PM -0700, Andrii Nakryiko wrote:
-> > Factor out the logic to extract bpf_map instances from FD embedded in
-> > bpf_insns, adding it to the list of used_maps (unless it's already
-> > there, in which case we just reuse map's index). This simplifies the
-> > logic in resolve_pseudo_ldimm64(), especially around `struct fd`
-> > handling, as all that is now neatly contained in the helper and doesn't
-> > leak into a dozen error handling paths.
-> >
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  kernel/bpf/verifier.c | 115 ++++++++++++++++++++++++------------------
-> >  1 file changed, 66 insertions(+), 49 deletions(-)
-> >
-> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > index df3be12096cf..14e4ef687a59 100644
-> > --- a/kernel/bpf/verifier.c
-> > +++ b/kernel/bpf/verifier.c
-> > @@ -18865,6 +18865,58 @@ static bool bpf_map_is_cgroup_storage(struct b=
-pf_map *map)
-> >               map->map_type =3D=3D BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE);
-> >  }
-> >
-> > +/* Add map behind fd to used maps list, if it's not already there, and=
- return
-> > + * its index. Also set *reused to true if this map was already in the =
-list of
-> > + * used maps.
-> > + * Returns <0 on error, or >=3D 0 index, on success.
-> > + */
-> > +static int add_used_map_from_fd(struct bpf_verifier_env *env, int fd, =
-bool *reused)
-> > +{
-> > +     struct fd f =3D fdget(fd);
->
-> using 'CLASS(fd, f)(fd)' would remove few fdput lines below?
 
-That's done in the next patch once we change __bpf_map_get() behavior
-to allow usage of CLASS(fd, ...)
-
+On 8/15/2024 5:38 AM, Al Viro wrote:
+> On Wed, Jul 17, 2024 at 10:50:16AM -0400, Yu Ma wrote:
+>> alloc_fd() has a sanity check inside to make sure the struct file mapping to the
+>> allocated fd is NULL. Remove this sanity check since it can be assured by
+>> exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
+>> likely/unlikely and expand_file() call avoidance to reduce the work under
+>> file_lock.
+>> +	if (unlikely(fd >= fdt->max_fds)) {
+>> +		error = expand_files(files, fd);
+>> +		if (error < 0)
+>> +			goto out;
+>>   
+>> -	/*
+>> -	 * If we needed to expand the fs array we
+>> -	 * might have blocked - try again.
+>> -	 */
+>> -	if (error)
+>> -		goto repeat;
+>> +		/*
+>> +		 * If we needed to expand the fs array we
+>> +		 * might have blocked - try again.
+>> +		 */
+>> +		if (error)
+>> +			goto repeat;
+> With that change you can't get 0 from expand_files() here, so the
+> last goto should be unconditional.  The only case when expand_files()
+> returns 0 is when it has found the descriptor already being covered
+> by fdt; since fdt->max_fds is stabilized by ->files_lock we are
+> holding here, comparison in expand_files() will give the same
+> result as it just had.
 >
-> jirka
->
-> > +     struct bpf_map *map;
-> > +     int i;
-> > +
-> > +     map =3D __bpf_map_get(f);
-> > +     if (IS_ERR(map)) {
-> > +             verbose(env, "fd %d is not pointing to valid bpf_map\n", =
-fd);
-> > +             return PTR_ERR(map);
-> > +     }
-> > +
+> IOW, that goto repeat should be unconditional.  The fun part here is
+> that this was the only caller that distinguished between 0 and 1...
 
-[...]
+Yes, thanks Al, fully agree with you. The if (error) could be removed 
+here as the above unlikely would make sure no 0 return here. Should I 
+submit another version of patch set to update it, or you may help to 
+update it directly during merge? I'm not very familiar with the rules, 
+please let me know if I'd update and I'll take action soon. Thanks again 
+for your careful check here.
+
 
