@@ -1,216 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-26027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C268952AB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 10:39:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D41952B34
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 11:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 686BF1C21596
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 08:39:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA0F281B1E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 09:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0351A76B3;
-	Thu, 15 Aug 2024 08:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DBE1C7B77;
+	Thu, 15 Aug 2024 08:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="PUPXQEIU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RI2rqNL6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8075D1993BD
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 08:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C95C19ADAC;
+	Thu, 15 Aug 2024 08:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723709303; cv=none; b=pckTyclv4TTqt3+mnR/1vN3fv9uWy81dj+Rv9Nv4WakmX1RyP0UCq7xRdyO29w+kIu+r8s2/Jhm5LOqtWmT/PwfVTghwSfXw2JA7E3YlPIHc0EofTgxeOlr1YWtict2kfk4a1YSOBheLu+QfZF7SNIgZeOG96zgaqLcD4HITxjY=
+	t=1723710803; cv=none; b=HKqEbarCD/76l2fT84kh+s5c5+9QsaibG510l+ybAhHshgE0Ro3oe9hXS/Q81U7rG6Nn3cl4FOHYoe63ykTQ1L5+NozUAh1XgKcrvSXC5RFebud/C7lFXIfixO1YfL9NHBFhHwjzx5Fgbf8wdV0tkRzVq2ZfFgnwE1ldOAUVNN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723709303; c=relaxed/simple;
-	bh=+Zd7PLS5h6fj7q4S8XQLSecPTF3PKTeEVSECo0mbYNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YQIeuQyGb0s5AxLqTBd/MI8sZLS4lbhJAoMt+C8jL78p4c7Be8OUu72aSMfj5VF1bhYSf/7hhBBeYHEuFiQP2rpPMI8E+bihoQrkQ/y31S1MqQGhKN2pBvcOU84BgrNB7L2Uup6LcYKcBAdYl7KSH3hmRT7iICCIpZwqFCBSR+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=PUPXQEIU; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5CBB93F162
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 08:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723709298;
-	bh=QwzUdLAd7aHB4wJiWgZPpnda9jdXnSJALlxOCLuXUk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=PUPXQEIUZTdiF7i9C+IJVWWN4MJ/J1yIe5Wi/XKVYUpxvr6mvIiHnTdC0q0vtdThO
-	 ziwKXtXVH7SUvE6vZnf7Rb9w5Dk7zB4lofqezWoqpDskR7Z0gmMJNOY3cIzCKoGu76
-	 ebcPmTDu8Q85p0KZbLlE2LP+PN7ArmofulnQZQC9Ud/g5qB5DD91NhtoqyNYoownhC
-	 MurAQ9UlnMzOgYICfTdP8S0HZcxkNTWeFvCqVT29zLvGUTfZkVxTjV3/axK1p0l8H6
-	 QVDXNvR69vPfLVZtjRkj/8mFrpEf9cDubcxzttUQKw0/HWqZR2CKiOVnMwWfBbngz/
-	 Uoef4cMmm44Mg==
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-4f8adf118e9so279422e0c.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 01:08:18 -0700 (PDT)
+	s=arc-20240116; t=1723710803; c=relaxed/simple;
+	bh=GMzzota/QZ0aheGCs5gsIslxm2Am5d0pOVDpyY8JbVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DZBLC1X3avZ/EzHhD5DpArCYigzoCh6umcKI5xD3bz/hVtbnquiZvtUuHDBBwqnq8TZyZavsXRB6DbrJP5+9GCh7b3LOyZg4t+OmyGxjJlfRv4Wc5OIhObotfbzvIgSS1vaF4IAOfzgNw/2ApDWXybb6GMh1ejRq6cFNN+ojoGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RI2rqNL6; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42817f1eb1fso4224815e9.1;
+        Thu, 15 Aug 2024 01:33:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723710800; x=1724315600; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dOUgcV0PdB7WRC4oxjKNSTuSQWbV/DMgAxLwybn5b9M=;
+        b=RI2rqNL68AmwHu3jkEh35n41Esm9ixwKZhW/Zp5vIshJVrYFS0VroWqUBilp+v1o22
+         1iE40cmKDH1yNzaUPCwwD/8DzyG9lXuSr9q0VuOxF2YAwMljAeR7uAH50RzGU/g8vrAf
+         LmOwby8J0l0lvGVkLotf6fDvdflMutQ2V+anhKIG415LHPZu3XOKgTPJvx6/67iBQINO
+         rIWKoRBB+EuQVenE6o/Llr61n9Hk/wG/w1JyK+cOmDwxryCQOgJ7a79XdiWa8UGLVOPo
+         RZw6zH4BtI6yBpidxtTW/yj0/g1KYGEmHZ8q58oLeer8Nho8+65Ihg8RA0y5mfjq6cmj
+         FG9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723709297; x=1724314097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QwzUdLAd7aHB4wJiWgZPpnda9jdXnSJALlxOCLuXUk8=;
-        b=qjIaLurYXvbs/qyuSDx4zg23TY04wPCSUn5MmB1QV4Lwi7iaORaDtABCgVNxOSO4ar
-         US1Lxc0P5JDrzAEwxUTJ7/6NpBW90tCh/aGxa5OfZV2Kl2Q2//qPjMPSPapvr1Xgbf05
-         EUBnngklSkJLhGfgNaT7y7rxlVMg+ozv51a4uOoFyxffTU+b811A9vhWh/dEUQPEvYYz
-         HT8JV3KnhsjCxxbsxyRlu5F4v/vqh/Vnxd+bElyQ537mvk8Q2/j3uLprhvYEqut+U0gX
-         wM49bdB9f2kD3Rbef5ZnWr7oa9C3vsAze43IFxAv0m98wy9ZFGNQkK8Fy/IHhbrItSV8
-         jTng==
-X-Forwarded-Encrypted: i=1; AJvYcCVup/0VP6OamVlUBg3an8DwBko4FmRdT3oYppRMCSsZGFwGsZZK8ugfJiw07+t+DUSWGUOzkoPfy1w51MUdytYf3s2CaebMyTbxbfxV3g==
-X-Gm-Message-State: AOJu0YzwTnyD2i4gD4tjX6BRw8BSCx6zvtekGT+720XKUr7LuFp0aoNH
-	evvn8+czgstNj/YFXCuUZlDlP43IZFSzGcYCK5TzID1WjIeUNew6ndGsx7HZxrGvpGeh8NZw+Va
-	laF3I6ZZ54Yu+viv1w+Fe0BVLvE1gpc1Rv5Lx+Zls8DpNzcMLPKSnhgpzesaIWUUd6pK3BV1cgH
-	V1FXrgVPmL9SIGwD9mS7puMprJzKDECeFe2c8s2CsLRg0bwgdDUT6ODQ==
-X-Received: by 2002:a05:6122:3c49:b0:4f6:a85d:38b3 with SMTP id 71dfb90a1353d-4fad2333ecamr6572748e0c.13.1723709296696;
-        Thu, 15 Aug 2024 01:08:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGFGN8CN0DSqDWCPM1VOUm2IQgxthofz228sV9vN9siAmKC/cV/UuZJl2+ATDIB7LSvUrwIx5kTE1n2/k62gk=
-X-Received: by 2002:a05:6122:3c49:b0:4f6:a85d:38b3 with SMTP id
- 71dfb90a1353d-4fad2333ecamr6572734e0c.13.1723709296323; Thu, 15 Aug 2024
- 01:08:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723710800; x=1724315600;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dOUgcV0PdB7WRC4oxjKNSTuSQWbV/DMgAxLwybn5b9M=;
+        b=Q4S0cpAaQ/jkBdn7wQ6k6EvOZkYE98mVcuKwAWbhBatt81NclN9mMLMtY+EKFtqBWO
+         clACaqsqR+yxTnfv1YvKCOnPcrhLSm037CDns0ulYXb9b5oyGxei95HNigD66/pXcBZ/
+         wRYFy88UePxdtd/p0HR4PNSBVARP3HxDFx/wwcAtgn9lZSwxAuynVZWYMNWcItMXqbbD
+         6lLq/ni7qajvVRN0CkzvGiEw12mWoVCoQL5nCRXDUL7gpPFfvuQpSaLEbTSDYVqY/N+8
+         Kg/qgv+jTHKktUvg4HXG1mrlB4aNPYE6W9UYM4FLD21ZgV0aP+NhXiby+KOPZE7M/plZ
+         k6Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3AQvKM1NaWJQsYYgWGaaw9MCAhsYYf83x0TF9WifsRAawSDufGZhiZ2uuHN0Xc78Q26WkGoEtNvAakNxKgtS6ZcWJ6e/YJZXvjPCCOcJzHk75kblkLDGfq4W3tDNkaPpLBfhfb1kdIYHh7w==
+X-Gm-Message-State: AOJu0YyrCc2EwL/m3Biskiq0vPZdzLwMvqaaJYQxws+9BFcSKjUB7JZH
+	a9w8n7GccQhlJKPI2tBR5d/TsVglJxRR27Q1JE2Y8ptGvoXYnrLz
+X-Google-Smtp-Source: AGHT+IHQzn/DXetZMa7WOlQ//oiqNh7mgiStObblGepgQWWz58K6W1c+r0bHJt/+boiDUWeMcKHv/w==
+X-Received: by 2002:a05:600c:5246:b0:428:f79:1836 with SMTP id 5b1f17b1804b1-429dd25fb5emr37201705e9.26.1723710799904;
+        Thu, 15 Aug 2024 01:33:19 -0700 (PDT)
+Received: from f.. (cst-prg-76-86.cust.vodafone.cz. [46.135.76.86])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429e7c03b71sm12567475e9.14.2024.08.15.01.33.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 01:33:19 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] vfs: elide smp_mb in iversion handling in the common case
+Date: Thu, 15 Aug 2024 10:33:10 +0200
+Message-ID: <20240815083310.3865-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com>
- <20240814114034.113953-10-aleksandr.mikhalitsyn@canonical.com> <20240814-knochen-ersparen-9b3f366caac4@brauner>
-In-Reply-To: <20240814-knochen-ersparen-9b3f366caac4@brauner>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Thu, 15 Aug 2024 10:08:05 +0200
-Message-ID: <CAEivzxeQOY6h2AB+eHpnNPAkHMjVoCdOxG99KmkPZx7MVyjhvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 9/9] fs/fuse: allow idmapped mounts
-To: Christian Brauner <brauner@kernel.org>
-Cc: mszeredi@redhat.com, stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
-	Seth Forshee <sforshee@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 4:19=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Wed, Aug 14, 2024 at 01:40:34PM GMT, Alexander Mikhalitsyn wrote:
-> > Now we have everything in place and we can allow idmapped mounts
-> > by setting the FS_ALLOW_IDMAP flag. Notice that real availability
-> > of idmapped mounts will depend on the fuse daemon. Fuse daemon
-> > have to set FUSE_ALLOW_IDMAP flag in the FUSE_INIT reply.
-> >
-> > To discuss:
-> > - we enable idmapped mounts support only if "default_permissions" mode =
-is enabled,
-> > because otherwise we would need to deal with UID/GID mappings in the us=
-erspace side OR
-> > provide the userspace with idmapped req->in.h.uid/req->in.h.gid values =
-which is not
-> > something that we probably want to. Idmapped mounts phylosophy is not a=
-bout faking
-> > caller uid/gid.
-> >
-> > - We have a small offlist discussion with Christian around adding fs_ty=
-pe->allow_idmap
-> > hook. Christian pointed that it would be nice to have a superblock flag=
- instead like
-> > SB_I_NOIDMAP and we can set this flag during mount time if we see that =
-filesystem does not
-> > support idmappings. But, unfortunately I didn't succeed here because th=
-e kernel will
-> > know if the filesystem supports idmapping or not after FUSE_INIT reques=
-t, but FUSE_INIT request
-> > is being sent at the end of mounting process, so mount and superblock w=
-ill exist and
-> > visible by the userspace in that time. It seems like setting SB_I_NOIDM=
-AP flag in this
-> > case is too late as user may do the trick with creating a idmapped moun=
-t while it wasn't
-> > restricted by SB_I_NOIDMAP. Alternatively, we can introduce a "positive=
-" version SB_I_ALLOWIDMAP
+According to bpftrace on these routines most calls result in cmpxchg,
+which already provides the same guarantee.
 
-Hi Christian,
+In inode_maybe_inc_iversion elision is possible because even if the
+wrong value was read due to now missing smp_mb fence, the issue is going
+to correct itself after cmpxchg. If it appears cmpxchg wont be issued,
+the fence + reload are there bringing back previous behavior.
 
->
-> Hm, I'm confused why won't the following (uncompiled) work?
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-I believe that your way should work. Sorry about that. It's my bad that I
-didn't consider setting SB_I_NOIDMAP in fill_super and unsetting it
-later on once
-we had enough information.
+chances are this entire barrier guarantee is of no significance, but i'm
+not signing up to review it
 
-Huge thanks for pointing this out!
+I verified the force flag is not *always* set (but it is set in the most common case).
 
-I'll drop -v3 soon and also add support for virtiofs in the same series.
+ fs/libfs.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-Kind regards,
-Alex
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 8aa34870449f..61ae4811270a 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1990,13 +1990,19 @@ bool inode_maybe_inc_iversion(struct inode *inode, bool force)
+ 	 * information, but the legacy inode_inc_iversion code used a spinlock
+ 	 * to serialize increments.
+ 	 *
+-	 * Here, we add full memory barriers to ensure that any de-facto
+-	 * ordering with other info is preserved.
++	 * We add a full memory barrier to ensure that any de facto ordering
++	 * with other state is preserved (either implicitly coming from cmpxchg
++	 * or explicitly from smp_mb if we don't know upfront if we will execute
++	 * the former).
+ 	 *
+-	 * This barrier pairs with the barrier in inode_query_iversion()
++	 * These barriers pair with inode_query_iversion().
+ 	 */
+-	smp_mb();
+ 	cur = inode_peek_iversion_raw(inode);
++	if (!force && !(cur & I_VERSION_QUERIED)) {
++		smp_mb();
++		cur = inode_peek_iversion_raw(inode);
++	}
++
+ 	do {
+ 		/* If flag is clear then we needn't do anything */
+ 		if (!force && !(cur & I_VERSION_QUERIED))
+@@ -2025,20 +2031,22 @@ EXPORT_SYMBOL(inode_maybe_inc_iversion);
+ u64 inode_query_iversion(struct inode *inode)
+ {
+ 	u64 cur, new;
++	bool fenced = false;
+ 
++	/*
++	 * Memory barriers (implicit in cmpxchg, explicit in smp_mb) pair with
++	 * inode_maybe_inc_iversion(), see that routine for more details.
++	 */
+ 	cur = inode_peek_iversion_raw(inode);
+ 	do {
+ 		/* If flag is already set, then no need to swap */
+ 		if (cur & I_VERSION_QUERIED) {
+-			/*
+-			 * This barrier (and the implicit barrier in the
+-			 * cmpxchg below) pairs with the barrier in
+-			 * inode_maybe_inc_iversion().
+-			 */
+-			smp_mb();
++			if (!fenced)
++				smp_mb();
+ 			break;
+ 		}
+ 
++		fenced = true;
+ 		new = cur | I_VERSION_QUERIED;
+ 	} while (!atomic64_try_cmpxchg(&inode->i_version, &cur, new));
+ 	return cur >> I_VERSION_QUERIED_SHIFT;
+-- 
+2.43.0
 
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index ed4c2688047f..8ead1cacdd2f 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1346,10 +1346,12 @@ static void process_init_reply(struct fuse_mount =
-*fm, struct fuse_args *args,
->                         if (flags & FUSE_OWNER_UID_GID_EXT)
->                                 fc->owner_uid_gid_ext =3D 1;
->                         if (flags & FUSE_ALLOW_IDMAP) {
-> -                               if (fc->owner_uid_gid_ext && fc->default_=
-permissions)
-> +                               if (fc->owner_uid_gid_ext && fc->default_=
-permissions) {
->                                         fc->allow_idmap =3D 1;
-> -                               else
-> +                                       fm->sb->s_iflags &=3D ~SB_I_NOIDM=
-AP;
-> +                               } else {
->                                         ok =3D false;
-> +                               }
->                         }
->                 } else {
->                         ra_pages =3D fc->max_read / PAGE_SIZE;
-> @@ -1576,6 +1578,7 @@ static void fuse_sb_defaults(struct super_block *sb=
-)
->         sb->s_time_gran =3D 1;
->         sb->s_export_op =3D &fuse_export_operations;
->         sb->s_iflags |=3D SB_I_IMA_UNVERIFIABLE_SIGNATURE;
-> +       sb->s_iflags |=3D SB_I_NOIDMAP;
->         if (sb->s_user_ns !=3D &init_user_ns)
->                 sb->s_iflags |=3D SB_I_UNTRUSTED_MOUNTER;
->         sb->s_flags &=3D ~(SB_NOSEC | SB_I_VERSION);
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 328087a4df8a..d1702285c915 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -4436,6 +4436,10 @@ static int can_idmap_mount(const struct mount_katt=
-r *kattr, struct mount *mnt)
->         if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
->                 return -EINVAL;
->
-> +       /* The filesystem has turned off idmapped mounts. */
-> +       if (m->mnt_sb->s_iflags & SB_I_NOIDMAP)
-> +               return -EINVAL;
-> +
->         /* We're not controlling the superblock. */
->         if (!ns_capable(fs_userns, CAP_SYS_ADMIN))
->                 return -EPERM;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index fd34b5755c0b..185004c41a5e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1189,6 +1189,7 @@ extern int send_sigurg(struct fown_struct *fown);
->  #define SB_I_TS_EXPIRY_WARNED 0x00000400 /* warned about timestamp range=
- expiry */
->  #define SB_I_RETIRED   0x00000800      /* superblock shouldn't be reused=
- */
->  #define SB_I_NOUMASK   0x00001000      /* VFS does not apply umask */
-> +#define SB_I_NOIDMAP   0x00002000      /* No idmapped mounts on this sup=
-erblock */
->
->  /* Possible states of 'frozen' field */
->  enum {
 
