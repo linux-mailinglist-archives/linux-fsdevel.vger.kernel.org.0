@@ -1,374 +1,261 @@
-Return-Path: <linux-fsdevel+bounces-26154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5CD955226
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 22:59:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D9E95523F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 23:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C4B3B2297E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 20:59:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB97B1F224D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 21:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A401C688D;
-	Fri, 16 Aug 2024 20:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113451C463B;
+	Fri, 16 Aug 2024 21:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3xF0FM+"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nm3r609/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353E01C57A8;
-	Fri, 16 Aug 2024 20:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E26A26AFC
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 21:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723841933; cv=none; b=iLB7nYzUDmfhFCQqAdvK0b3PxmHK7p93sBNiZGeh03Cj9KbJYLu3JmfGqXzxZ9YmV55ltZk9gKID4dA0ChgNCjk9cUzoBjjxRWZ/Ep2XomYfDKCkGELBFvuIqqSFz3DxAfo5DElVelRFruapy7dloVPJavkfZl8e8Q8jqRD2FAA=
+	t=1723842640; cv=none; b=cbB7QocT/XPunQrF6qzpH6GncXtqByhiJvzC4g+zy2kU7Wj1WkGkfgYAAKQ9fnGGsh/KStVMvAbq4K+AE/Yez12Dhkh/IH8bMSGnES17vYACujvdhKvwopCdoXKrPoOe7YDieFzmZ0t2yl04M5NokmHEFVVCPVSNbJNi+tz8/ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723841933; c=relaxed/simple;
-	bh=Hkseho2gbj9M73LGJxgB5OFhE3ZRRs44yU8CaNeyeYM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=uryfE6eGlpszbvF0AwvPQvFeN8hn62udEXBecssGsChSXRCKaH+ZFWjJjx4DoR7LwIFozwr8jMJXsR2QfFza4EFTD61TlFFrMWOJXyLskFKRgey2YTFLQInWI6LKZlZahfZjCWNVvjvbCzCVwlo4kk0liijSD91Kv3rSta3o4Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3xF0FM+; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b5dfcfb165so12209956d6.0;
-        Fri, 16 Aug 2024 13:58:50 -0700 (PDT)
+	s=arc-20240116; t=1723842640; c=relaxed/simple;
+	bh=MSC9Wsd9Cu5G7C0nXc29mjiGnfrNd0iG55mgzzoZ0Y8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CI67dNlUDijHO1eWAncbQ2mvewkx8DAqcdkAUT4Aud+6JPOh8pSMyhfOJbmkGBohHRQggwrzXV///YgdI5fwxgkIfkBT0EriuTsdUhrHq/MvNP9oKR0+zX6tMzDXndj6N8FdG6aAE9MFXSO4lpHt4dlctSukd1mQ0TOB0R19G44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Nm3r609/; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fd9e70b592so24915435ad.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 14:10:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723841930; x=1724446730; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=50ZMsm0NckQShxpbUylHY0WLBAGbdAiawYsjxO+GGiQ=;
-        b=G3xF0FM+xGA9hH1Jdbxkjijf82/YWqb4FDVo6tfPcfCC2KAd2NB+ITJH4IMaUQV3vE
-         dqU5CSOJoACXK223uNmzHSlm5trJ8ybkl3/eV3sEBitnuJWPYP0D6BHZuFZD7znyJxrB
-         Q6B8pWoFrm30yVwHPRG32gMWVWBOpioL0O0vb7c5+1RNl3uz3ZZ8w+cYAI7DXD5DGwrD
-         Zh71MOLFNI8ycfQiysryL7jTugcB59kTtXDROeTYy6TxKF1T4DS0J2Aq/nX2w1HDhCb3
-         dD8PiiPXboR64IqereCNdpkfRiILj5l65JePY6e9fx+6UrPH+JI38yJTYbMBYpX2jDLl
-         OJbA==
+        d=chromium.org; s=google; t=1723842638; x=1724447438; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mIVamb0t+ukSevWtGDhnJxmQQeMGvGtS5gLAZtBpwhQ=;
+        b=Nm3r609/NSmmN3JdOTs+0j3tSWhK4mF/QZZgZ0fL/dlR9nxcynUgzo6bekjBEOP2Xs
+         +3dvr7Wx1hbgT3z3h6U8v7ViPiDy771vAxDvJbddXG54VpYh4Hi859VRvYKOwZfFVNu/
+         udbhBM/FbTGtUYxUpsZ5IWuHqLM89RnEJuIM8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723841930; x=1724446730;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=50ZMsm0NckQShxpbUylHY0WLBAGbdAiawYsjxO+GGiQ=;
-        b=ChCJGqLR1Gh6yip/2z048nbb/tN7LYrPxtAiJq+U0bRHff0KaQXIr8EPWSsJZXaE3p
-         ipIzQ3AlEhnTc1d9Trp+xnpXCPVSNRRTzyMWkfcjOjsJizOAsJ8zTEfUZeQnelNqdxLB
-         8WKA8tkYVqRD7FnxF0uaGCjLr5t5vzCAJhfdiFPLds8zlGu58dVIxFzRM/0QpS1bxDH5
-         jD47xqUGP4Fw7VX4GwfHey6qDbHVeaY0WWfoIoMxndLilgIKV73CtbSzfcJP/Y+PDw+s
-         SpL/ztWCepuvS95MhEkX053Y81IbAwAUAcYjXPUdIqTKYgPA9/v++qIGztx89TaR975h
-         F66A==
-X-Forwarded-Encrypted: i=1; AJvYcCXGsNAxhapN2a9uZ/WQ0Uo7p26HLNOStdS5iPCSMVj34lmgjMtDRDoG/dvoFvpQmWD312JqtQEpVlHoznhyiHpfCW4oqx+2fPywtmbOAtHUcvXNuSYyB49bWl4pte4ls0xUSmw3BhqDVX20Q0Fx7h+KbALfNDpVHbkpzZNPy0otm/vX35UHAdtnArv9TRfuXfLgvcgdh26DJDtKFBnMsw==
-X-Gm-Message-State: AOJu0YzpyYjppVp+OJwSFJ1H380PSKP5AnER0DhJraGRnO5zX9LpNBRJ
-	2SGDtp0S6mrub3Pn8NVodLhu5Dk5u7/EvevK9tDjJPUeFTQgsfOH
-X-Google-Smtp-Source: AGHT+IEMZWEggv7hC0PHC/Feg286AIeQvGaJlAZoIrFHOPu101CmQQUSM1qpEq6z+K68Yv/IEfvOKQ==
-X-Received: by 2002:a05:6214:4283:b0:6bf:7ea9:b5d9 with SMTP id 6a1803df08f44-6bf89564fe6mr6973876d6.38.1723841929781;
-        Fri, 16 Aug 2024 13:58:49 -0700 (PDT)
-Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6ff0a5a6sm21522856d6.138.2024.08.16.13.58.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 13:58:49 -0700 (PDT)
-Date: Fri, 16 Aug 2024 16:58:48 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Martin Karsten <mkarsten@uwaterloo.ca>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Joe Damato <jdamato@fastly.com>
-Cc: Samiullah Khawaja <skhawaja@google.com>, 
- Stanislav Fomichev <sdf@fomichev.me>, 
- netdev@vger.kernel.org, 
- amritha.nambiar@intel.com, 
- sridhar.samudrala@intel.com, 
- Alexander Lobakin <aleksander.lobakin@intel.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Breno Leitao <leitao@debian.org>, 
- Christian Brauner <brauner@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Jan Kara <jack@suse.cz>, 
- Jiri Pirko <jiri@resnulli.us>, 
- Johannes Berg <johannes.berg@intel.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
- "open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, 
- open list <linux-kernel@vger.kernel.org>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Message-ID: <66bfbd88dc0c6_18d7b829435@willemb.c.googlers.com.notmuch>
-In-Reply-To: <02091b4b-de85-457d-993e-0548f788f4a1@uwaterloo.ca>
-References: <ZrqU3kYgL4-OI-qj@mini-arch>
- <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
- <Zrq8zCy1-mfArXka@mini-arch>
- <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
- <Zrrb8xkdIbhS7F58@mini-arch>
- <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
- <CAAywjhRsRYUHT0wdyPgqH82mmb9zUPspoitU0QPGYJTu+zL03A@mail.gmail.com>
- <d63dd3e8-c9e2-45d6-b240-0b91c827cc2f@uwaterloo.ca>
- <66bf61d4ed578_17ec4b294ba@willemb.c.googlers.com.notmuch>
- <66bf696788234_180e2829481@willemb.c.googlers.com.notmuch>
- <Zr9vavqD-QHD-JcG@LQ3V64L9R2>
- <66bf85f635b2e_184d66294b9@willemb.c.googlers.com.notmuch>
- <02091b4b-de85-457d-993e-0548f788f4a1@uwaterloo.ca>
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
+        d=1e100.net; s=20230601; t=1723842638; x=1724447438;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mIVamb0t+ukSevWtGDhnJxmQQeMGvGtS5gLAZtBpwhQ=;
+        b=uLYLczieV9vcpbVYLu4reCaVueUhEYtNO3yAhKfZvo6fU4CvpEeKx4KefcTSqdMQEq
+         nCtF643shlMZNMqlYfpZYGrUteTJwRyq3rZCq2Oa//Aiz8Qwo6iOPO9kmwX3OpO1WsF4
+         bb+2vryJaBz0pAdn9knzTgzCS35+0eNi9q1gzMD3dVYZrq2RjjrMLjLbXBOFHXCtn8Mg
+         +jJUHtzU+mnVT7TUoxBEe7VEp2+vus6xQgEn4eN1d/2f/v7WEhNasfIBb6Bs2KP6Pyv+
+         qWEOv5YhQC5eaQQa5zy+FaNmgp0vGoz9U4OToa4nE+vklQCWwJKYdrvGfSYYYOSubJ1T
+         McWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVt7k1Psg6B5dTkjd5Z3atbSIuZE1Z7HOfphogar1+0WEnQegmLwLHAG7U748A87fRFAtLnINQwMFYONrCVkmP+dGub8UW+UV1fNSXLSw==
+X-Gm-Message-State: AOJu0Yy9HUG84Xzl5be1BSx2hPN/CuOc+MA+/QvsZtMPOYVC+eXo9EAy
+	P5loOIyKjaEQwTThSNAFC11+z2zhaFqnW8wcxxRDI/JZLD2aKiKDGoYekGDreBEqs2P6eu2Bzg=
+	=
+X-Google-Smtp-Source: AGHT+IEM/jRWr5rAkRLa/IpFUV9K3uejMQWznzf/9GJt778E8nRMTEi2Y3OtuwWQtPn8GLL5M3N1uw==
+X-Received: by 2002:a17:90a:67c6:b0:2c9:5ecd:e3c5 with SMTP id 98e67ed59e1d1-2d4063e7697mr766956a91.33.1723842637621;
+        Fri, 16 Aug 2024 14:10:37 -0700 (PDT)
+Received: from localhost (0.223.81.34.bc.googleusercontent.com. [34.81.223.0])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2d3f0f1f51bsm1867399a91.32.2024.08.16.14.10.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 14:10:37 -0700 (PDT)
+From: Takaya Saeki <takayas@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Junichi Uekawa <uekawa@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Takaya Saeki <takayas@chromium.org>
+Subject: [PATCH v4] filemap: add trace events for get_pages, map_pages, and fault
+Date: Fri, 16 Aug 2024 21:10:29 +0000
+Message-ID: <20240816211029.903842-1-takayas@chromium.org>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Martin Karsten wrote:
-> On 2024-08-16 13:01, Willem de Bruijn wrote:
-> > Joe Damato wrote:
-> >> On Fri, Aug 16, 2024 at 10:59:51AM -0400, Willem de Bruijn wrote:
-> >>> Willem de Bruijn wrote:
-> >>>> Martin Karsten wrote:
-> >>>>> On 2024-08-14 15:53, Samiullah Khawaja wrote:
-> >>>>>> On Tue, Aug 13, 2024 at 6:19=E2=80=AFAM Martin Karsten <mkarsten=
-@uwaterloo.ca> wrote:
-> >>>>>>>
-> >>>>>>> On 2024-08-13 00:07, Stanislav Fomichev wrote:
-> >>>>>>>> On 08/12, Martin Karsten wrote:
-> >>>>>>>>> On 2024-08-12 21:54, Stanislav Fomichev wrote:
-> >>>>>>>>>> On 08/12, Martin Karsten wrote:
-> >>>>>>>>>>> On 2024-08-12 19:03, Stanislav Fomichev wrote:
-> >>>>>>>>>>>> On 08/12, Martin Karsten wrote:
-> >>>>>>>>>>>>> On 2024-08-12 16:19, Stanislav Fomichev wrote:
-> >>>>>>>>>>>>>> On 08/12, Joe Damato wrote:
-> >>>>>>>>>>>>>>> Greetings:
-> >>>>>
-> >>>>> [snip]
-> >>>>>
-> >>>>>>>>>>> Note that napi_suspend_irqs/napi_resume_irqs is needed even=
- for the sake of
-> >>>>>>>>>>> an individual queue or application to make sure that IRQ su=
-spension is
-> >>>>>>>>>>> enabled/disabled right away when the state of the system ch=
-anges from busy
-> >>>>>>>>>>> to idle and back.
-> >>>>>>>>>>
-> >>>>>>>>>> Can we not handle everything in napi_busy_loop? If we can ma=
-rk some napi
-> >>>>>>>>>> contexts as "explicitly polled by userspace with a larger de=
-fer timeout",
-> >>>>>>>>>> we should be able to do better compared to current NAPI_F_PR=
-EFER_BUSY_POLL
-> >>>>>>>>>> which is more like "this particular napi_poll call is user b=
-usy polling".
-> >>>>>>>>>
-> >>>>>>>>> Then either the application needs to be polling all the time =
-(wasting cpu
-> >>>>>>>>> cycles) or latencies will be determined by the timeout.
-> >>>>>> But if I understand correctly, this means that if the applicatio=
-n
-> >>>>>> thread that is supposed
-> >>>>>> to do napi busy polling gets busy doing work on the new data/eve=
-nts in
-> >>>>>> userspace, napi polling
-> >>>>>> will not be done until the suspend_timeout triggers? Do you disp=
-atch
-> >>>>>> work to a separate worker
-> >>>>>> threads, in userspace, from the thread that is doing epoll_wait?=
+To allow precise tracking of page caches accessed, add new tracepoints
+that trigger when a process actually accesses them.
 
-> >>>>>
-> >>>>> Yes, napi polling is suspended while the application is busy betw=
-een
-> >>>>> epoll_wait calls. That's where the benefits are coming from.
-> >>>>>
-> >>>>> The consequences depend on the nature of the application and over=
-all
-> >>>>> preferences for the system. If there's a "dominant" application f=
-or a
-> >>>>> number of queues and cores, the resulting latency for other backg=
-round
-> >>>>> applications using the same queues might not be a problem at all.=
+The ureadahead program used by ChromeOS traces the disk access of
+programs as they start up at boot up. It uses mincore(2) or the
+'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
+this information in a "pack" file and on subsequent boots, it will read
+the pack file and call readahead(2) on the information so that disk
+storage can be loaded into RAM before the applications actually need it.
 
-> >>>>>
-> >>>>> One other simple mitigation is limiting the number of events that=
- each
-> >>>>> epoll_wait call accepts. Note that this batch size also determine=
-s the
-> >>>>> worst-case latency for the application in question, so there is a=
+A problem we see is that due to the kernel's readahead algorithm that
+can aggressively pull in more data than needed (to try and accomplish
+the same goal) and this data is also recorded. The end result is that
+the pack file contains a lot of pages on disk that are never actually
+used. Calling readahead(2) on these unused pages can slow down the
+system boot up times.
 
-> >>>>> natural incentive to keep it limited.
-> >>>>>
-> >>>>> A more complex application design, like you suggest, might also b=
-e an
-> >>>>> option.
-> >>>>>
-> >>>>>>>>> Only when switching back and forth between polling and interr=
-upts is it
-> >>>>>>>>> possible to get low latencies across a large spectrum of offe=
-red loads
-> >>>>>>>>> without burning cpu cycles at 100%.
-> >>>>>>>>
-> >>>>>>>> Ah, I see what you're saying, yes, you're right. In this case =
-ignore my comment
-> >>>>>>>> about ep_suspend_napi_irqs/napi_resume_irqs.
-> >>>>>>>
-> >>>>>>> Thanks for probing and double-checking everything! Feedback is =
-important
-> >>>>>>> for us to properly document our proposal.
-> >>>>>>>
-> >>>>>>>> Let's see how other people feel about per-dev irq_suspend_time=
-out. Properly
-> >>>>>>>> disabling napi during busy polling is super useful, but it wou=
-ld still
-> >>>>>>>> be nice to plumb irq_suspend_timeout via epoll context or have=
- it set on
-> >>>>>>>> a per-napi basis imho.
-> >>>>>> I agree, this would allow each napi queue to tune itself based o=
-n
-> >>>>>> heuristics. But I think
-> >>>>>> doing it through epoll independent interface makes more sense as=
- Stan
-> >>>>>> suggested earlier.
-> >>>>>
-> >>>>> The question is whether to add a useful mechanism (one sysfs para=
-meter
-> >>>>> and a few lines of code) that is optional, but with demonstrable =
-and
-> >>>>> significant performance/efficiency improvements for an important =
-class
-> >>>>> of applications - or wait for an uncertain future?
-> >>>>
-> >>>> The issue is that this one little change can never be removed, as =
-it
-> >>>> becomes ABI.
-> >>>>
-> >>>> Let's get the right API from the start.
-> >>>>
-> >>>> Not sure that a global variable, or sysfs as API, is the right one=
-.
-> >>>
-> >>> Sorry per-device, not global.
-> >>>
-> >>> My main concern is that it adds yet another user tunable integer, f=
-or
-> >>> which the right value is not obvious.
-> >>
-> >> This is a feature for advanced users just like SO_INCOMING_NAPI_ID
-> >> and countless other features.
-> >>
-> >> The value may not be obvious, but guidance (in the form of
-> >> documentation) can be provided.
-> > =
+To solve this, add 3 new trace events, get_pages, map_pages, and fault.
+These will be used to trace the pages are not only pulled in from disk,
+but are actually used by the application. Only those pages will be
+stored in the pack file, and this helps out the performance of boot up.
 
-> > Okay. Could you share a stab at what that would look like?
-> =
+With the combination of these 3 new trace events and
+mm_filemap_add_to_page_cache, we observed a reduction in the pack file
+by 7.3% - 20% on ChromeOS varying by device.
 
-> The timeout needs to be large enough that an application can get a =
+Signed-off-by: Takaya Saeki <takayas@chromium.org>
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changelog between v4 and v3
+- fix mm_filemap_get_pages by replacing last_index with last_index-1.
+  it is an open interval while mm_filemap_map_pages's one is inclusive.
 
-> meaningful number of incoming requests processed without softirq =
+Changelog between v3 and v2
+- Use a range notation in the printf format 
 
-> interference. At the same time, the timeout value determines the =
+Changelog between v2 and v1
+- Fix a file offset type usage by casting pgoff_t to loff_t
+- Fix format string of dev and inode
+ include/trace/events/filemap.h | 84 ++++++++++++++++++++++++++++++++++
+ mm/filemap.c                   |  4 ++
+ 2 files changed, 88 insertions(+)
 
-> worst-case delivery delay that a concurrent application using the same =
+diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
+index 46c89c1e460c..f48fe637bfd2 100644
+--- a/include/trace/events/filemap.h
++++ b/include/trace/events/filemap.h
+@@ -56,6 +56,90 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
+ 	TP_ARGS(folio)
+ 	);
+ 
++DECLARE_EVENT_CLASS(mm_filemap_op_page_cache_range,
++
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++
++	TP_ARGS(mapping, index, last_index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++		__field(unsigned long, last_index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++		__entry->last_index = last_index;
++	),
++
++	TP_printk(
++		"dev=%d:%d ino=%lx ofs=%lld-%lld",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		((loff_t)__entry->index) << PAGE_SHIFT,
++		((((loff_t)__entry->last_index + 1) << PAGE_SHIFT) - 1)
++	)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_get_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_map_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++TRACE_EVENT(mm_filemap_fault,
++	TP_PROTO(struct address_space *mapping, pgoff_t index),
++
++	TP_ARGS(mapping, index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++	),
++
++	TP_printk(
++		"dev=%d:%d ino=%lx ofs=%lld",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		((loff_t)__entry->index) << PAGE_SHIFT
++	)
++);
++
+ TRACE_EVENT(filemap_set_wb_err,
+ 		TP_PROTO(struct address_space *mapping, errseq_t eseq),
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d62150418b91..e6b20cda9912 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2556,6 +2556,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 			goto err;
+ 	}
+ 
++	trace_mm_filemap_get_pages(mapping, index, last_index - 1);
+ 	return 0;
+ err:
+ 	if (err < 0)
+@@ -3287,6 +3288,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	if (unlikely(index >= max_idx))
+ 		return VM_FAULT_SIGBUS;
+ 
++	trace_mm_filemap_fault(mapping, index);
++
+ 	/*
+ 	 * Do we have something in the page cache already?
+ 	 */
+@@ -3653,6 +3656,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
+ 	add_mm_counter(vma->vm_mm, folio_type, rss);
+ 	pte_unmap_unlock(vmf->pte, vmf->ptl);
++	trace_mm_filemap_map_pages(mapping, start_pgoff, end_pgoff);
+ out:
+ 	rcu_read_unlock();
+ 
+-- 
+2.46.0.184.g6999bdac58-goog
 
-> queue(s) might experience. Please also see my response to Samiullah =
-
-> quoted above. The specific circumstances and trade-offs might vary, =
-
-> that's why a simple constant likely won't do.
-
-Thanks. I really do mean this as an exercise of what documentation in
-Documentation/networking/napi.rst will look like. That helps makes the
-case that the interface is reasonably ease to use (even if only
-targeting advanced users).
-
-How does a user measure how much time a process will spend on
-processing a meaningful number of incoming requests, for instance.
-In practice, probably just a hunch?
-
-Playing devil's advocate some more: given that ethtool usecs have to
-be chosen with a similar trade-off between latency and efficiency,
-could a multiplicative factor of this (or gro_flush_timeout, same
-thing) be sufficient and easier to choose? The documentation does
-state that the value chosen must be >=3D gro_flush_timeout.
- =
-
-> >>> If the only goal is to safely reenable interrupts when the applicat=
-ion
-> >>> stops calling epoll_wait, does this have to be user tunable?
-> >>>
-> >>> Can it be either a single good enough constant, or derived from
-> >>> another tunable, like busypoll_read.
-> >>
-> >> I believe you meant busy_read here, is that right?
-> >>
-> >> At any rate:
-> >>
-> >>    - I don't think a single constant is appropriate, just as it
-> >>      wasn't appropriate for the existing mechanism
-> >>      (napi_defer_hard_irqs/gro_flush_timeout), and
-> >>
-> >>    - Deriving the value from a pre-existing parameter to preserve th=
-e
-> >>      ABI, like busy_read, makes using this more confusing for users
-> >>      and complicates the API significantly.
-> >>
-> >> I agree we should get the API right from the start; that's why we've=
-
-> >> submit this as an RFC ;)
-> >>
-> >> We are happy to take suggestions from the community, but, IMHO,
-> >> re-using an existing parameter for a different purpose only in
-> >> certain circumstances (if I understand your suggestions) is a much
-> >> worse choice than adding a new tunable that clearly states its
-> >> intended singular purpose.
-> > =
-
-> > Ack. I was thinking whether an epoll flag through your new epoll
-> > ioctl interface to toggle the IRQ suspension (and timer start)
-> > would be preferable. Because more fine grained.
-> =
-
-> A value provided by an application through the epoll ioctl would not be=
- =
-
-> subject to admin oversight, so a misbehaving application could set an =
-
-> arbitrary timeout value. A sysfs value needs to be set by an admin. The=
- =
-
-> ideal timeout value depends both on the particular target application a=
-s =
-
-> well as concurrent applications using the same queue(s) - as sketched a=
-bove.
-
-I meant setting the value systemwide (or per-device), but opting in to
-the feature a binary epoll options. Really an epoll_wait flag, if we
-had flags.
-
-Any admin privileged operations can also be protected at the epoll
-level by requiring CAP_NET_ADMIN too, of course. But fair point that
-this might operate in a multi-process environment, so values should
-not be hardcoded into the binaries.
-
-Just asking questions to explore the option space so as not to settle
-on an API too soon. Given that, as said, we cannot remove it later.
-
-> > Also, the value is likely dependent more on the expected duration
-> > of userspace processing? If so, it would be the same for all
-> > devices, so does a per-netdev value make sense?
-> =
-
-> It is per-netdev in the current proposal to be at the same granularity =
-
-> as gro_flush_timeout and napi_defer_hard_irqs, because irq suspension =
-
-> operates at the same level/granularity. This allows for more control =
-
-> than a global setting and it can be migrated to per-napi settings along=
- =
-
-> with gro_flush_timeout and napi_defer_hard_irqs when the time comes.
-
-Ack, makes sense. Many of these design choices and their rationale are
-good to explicitly capture in the commit message.
 
