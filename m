@@ -1,264 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-26127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBAF5954C5A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 16:27:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256E4954C6F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 16:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4211C21A26
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 14:27:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37561F22E4A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 14:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970191BD016;
-	Fri, 16 Aug 2024 14:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA531BD02F;
+	Fri, 16 Aug 2024 14:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X2MT2ZLB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCLICXGy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8131C1E520;
-	Fri, 16 Aug 2024 14:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8751BD016
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 14:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723818457; cv=none; b=cxUHuq4HGN588V511rJO8XGjrEJEvxipFzjOD5+mKAUWS4hXcupl+aVFaY72jrIqduespZub4ocqISqi4PKzX351Ie020yMng2i6rZ6pPl7PFfWO/KLqj4EUGDsuo9dXCSmrHVkug2KIGgeQFNnzEoxreZETzXHadOrLdma3Fhk=
+	t=1723818990; cv=none; b=tK59r7zSt4aSUcabAHlTi6DBpY4lW5p0unrpg3sQTaQLviPAHNWN0GUtojSmvTb2twCy5ikMO6nUWzzYoRrj8nFdb5FBVaL4KA2w3ZJWj2MevvJ6pbK+a6V57Hofj+CUQx17Ed0rvBWGWOretoTpN+c01iKyAYPaL/N4CAhofNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723818457; c=relaxed/simple;
-	bh=epUQhCUoZJomPlLyNhHI2k19KhOtsav0prihszzKOeI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=o8CcbOJ3+bZ72XYB4j7fMj9t/PTEj2xQS0jLqqbFXHnTNH9b2jYLNICdU/fNHowVtz14qa0aNeLUOApe5EsT0pflT8LWA2bhI17i6MNWKv4qY9vayGeEmEcUDdQ8sBlpllX0HGvH1UjfuZY0AYf5HKz8MqnX3cFo5ztondDC+9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X2MT2ZLB; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-65fe1239f12so20325307b3.0;
-        Fri, 16 Aug 2024 07:27:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723818454; x=1724423254; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=epUQhCUoZJomPlLyNhHI2k19KhOtsav0prihszzKOeI=;
-        b=X2MT2ZLBKj1f0vC5LYVbMoO1+rJt1XwoFuVNSuPjiHq1Byxczh7X3x21BMYtJy4hCw
-         OB4MzYSbuwUnurhV7mMqK2Gq58FFW5G/pvpirNX65c3IvlMHdEwWHgRFhA+vM45id9Gf
-         c/+JF4yL2zHyhp+9XQW11irk+wa14w2bAZGuJuCguuJ16YJVqBvli8evZSVROr2OAtJ0
-         ixJNLtR57TDoKl6k+HiDuXYMuPiXEz9FXdtQBjTFR8hzSY4RoFkd3TmBvmmcYN2HriAL
-         ecmiPMwVlCjtluGfXaSFhKckZ7Do7Bz7XVEzGCjHnL3QKOuxXhkTkSg1JyIfT7P/uIQZ
-         rwcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723818454; x=1724423254;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=epUQhCUoZJomPlLyNhHI2k19KhOtsav0prihszzKOeI=;
-        b=VBSGAIlqi8tt6FmSDq8AfNgGtGq8UhfcjJ0d/iWwhbAR3j/4PmkIbmskJCak+vsvNb
-         +iKAAMFI4WKK9Us5oELtZQX9/eMDlw48sfT6rzPIR7ZPn5IoiqAyrHiY156CjWHOTo5A
-         ASJsC/xgBbUhqF190umCaQFfGQTBXpLeNF4emBq2NZrTodtj+bJpzhnUuzI6Vxn7Xl9K
-         wJzTHHo7qqiqtGLd9ANrldVdwEkJF08UksRIZAe73sngG/nohovi3SbHvpqmCtnbhzbj
-         zI++BlBFCQIxwxhBKt1lLJecMKGJlCr/1sSAMIU6bRE7gOZFZyagJVPoINJ/RKjMq9Q3
-         UpEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaiEvhEhLgGyRjxH48UCAwXgNm5y/yyU1CvEo7SupMoVveZLh4TafJDBNxHjIP5JbWiJ5GXMi+EPmHzI7zLRMbSlhBQjmSkHJvYd0hFM/FhfuZZ65Fm+NiiNhtegSczvEWjFnMaPDbJjHry1v3P8iMXPsHMVII/sqVkraPzqkWuOkqRofZQ3lJ0j2fC1e0SR7MkqY6PG6F3RPSQ3Msng==
-X-Gm-Message-State: AOJu0Yz13DGD0CEG02UiZVOnn09+9wyBUdC4ti6RGfxZxlbJvVfpF15U
-	1yaM1hrIHXZjREll7NdMXIVdrzNpS9wUfNuEUElfPEbsWs5voFxQ
-X-Google-Smtp-Source: AGHT+IGt/dJGWf0EDGxWM6ryJxB8oHTyXH4vDL8ur9dEAQcu5rwOL7x8XtvPchwmTEGKORnNrV19DQ==
-X-Received: by 2002:a05:690c:2f0b:b0:61b:3364:d193 with SMTP id 00721157ae682-6b1bb570dd9mr28289787b3.40.1723818454218;
-        Fri, 16 Aug 2024 07:27:34 -0700 (PDT)
-Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fe06fd4sm18000986d6.43.2024.08.16.07.27.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 07:27:33 -0700 (PDT)
-Date: Fri, 16 Aug 2024 10:27:32 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Martin Karsten <mkarsten@uwaterloo.ca>, 
- Samiullah Khawaja <skhawaja@google.com>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, 
- netdev@vger.kernel.org, 
- Joe Damato <jdamato@fastly.com>, 
- amritha.nambiar@intel.com, 
- sridhar.samudrala@intel.com, 
- Alexander Lobakin <aleksander.lobakin@intel.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Breno Leitao <leitao@debian.org>, 
- Christian Brauner <brauner@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Jan Kara <jack@suse.cz>, 
- Jiri Pirko <jiri@resnulli.us>, 
- Johannes Berg <johannes.berg@intel.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
- "open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, 
- open list <linux-kernel@vger.kernel.org>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Message-ID: <66bf61d4ed578_17ec4b294ba@willemb.c.googlers.com.notmuch>
-In-Reply-To: <d63dd3e8-c9e2-45d6-b240-0b91c827cc2f@uwaterloo.ca>
-References: <20240812125717.413108-1-jdamato@fastly.com>
- <ZrpuWMoXHxzPvvhL@mini-arch>
- <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
- <ZrqU3kYgL4-OI-qj@mini-arch>
- <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
- <Zrq8zCy1-mfArXka@mini-arch>
- <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
- <Zrrb8xkdIbhS7F58@mini-arch>
- <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
- <CAAywjhRsRYUHT0wdyPgqH82mmb9zUPspoitU0QPGYJTu+zL03A@mail.gmail.com>
- <d63dd3e8-c9e2-45d6-b240-0b91c827cc2f@uwaterloo.ca>
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
+	s=arc-20240116; t=1723818990; c=relaxed/simple;
+	bh=PFh/MC7hnmiY49gEzApxdD/Zitn/cn/+dP783jvd8YA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o4Ztve90f/xCuQ9+D+fY0tLOCeMKMYDvdsiDbOV7G6MEHDLubdoAPhQu5Nf8Dvhg6JqnQmjpP8tRi2BHW6yXfmufBGJrfXpQoYfYzWK6fVriTAfjfA5bw3LmRJlqeyJFmQj9+p1vefPPxsgRrzFPnbMTq6dXr/2wotqUP7emK78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCLICXGy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F240C4AF13;
+	Fri, 16 Aug 2024 14:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723818990;
+	bh=PFh/MC7hnmiY49gEzApxdD/Zitn/cn/+dP783jvd8YA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GCLICXGydPQTOKxQP0Ib+vHodmTjxe9QaFgKx0nhSNnggRr6YiI0QaVakdmqu4xkV
+	 zeahZ1/0FM1PaL4vVOpSh+/TUcuTypRCl/JiXxoWOlMBKSErqBKjDNz/5M3adqD5sl
+	 1BOqMjFlU7IYe7niKmekpqwNg5mOAT0l0IVsUzq59QR0kRxkp47Dw4H6i2PoZb557t
+	 2vOWTAQyYBBaekDdTUl7/meLN3n4T6arywmCRi2oc0l1yxyJCNDde4BIKtjdEtRhdE
+	 M3BOL3bPUKCvw/AaTgA8I48tP5LMdOj49CaMkfMF8ZCb9THlyS6GQ89q3jRWY3S8dM
+	 avG+vHMAIChsA==
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, 16 Aug 2024 16:35:52 +0200
+Subject: [PATCH] inode: remove __I_DIO_WAKEUP
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240816-vfs-misc-dio-v1-1-80fe21a2c710@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMdjv2YC/x3MwQqDMAyA4VeRnJfRinWyVxk7pDVqDtbRgAjFd
+ 1/0+B++v4JyEVZ4NxUK76KyZQv/aCAtlGdGGa2hdW3nBt/jPimuoglH2TCk6F5MxD4EMPIrPMl
+ x7z5f60jKGAvltFwTs8/Lwnn+AYvW1uh5AAAA
+To: linux-fsdevel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>, 
+ Jeff Layton <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4678; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=PFh/MC7hnmiY49gEzApxdD/Zitn/cn/+dP783jvd8YA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTtT34TFyl/1M1hQV7/c7n7+6tehrlm3mpX0zW8tv7J4
+ q4n/n8SO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbCc47hr2ySiH377LaDnufu
+ zXAtjlshFbLw56X6zz9cSx8p7Fz1z4vhv//Ny5LPqo1PxtUm39x8qd7o84w4/fklfr9PSzA3/ve
+ oYgQA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Martin Karsten wrote:
-> On 2024-08-14 15:53, Samiullah Khawaja wrote:
-> > On Tue, Aug 13, 2024 at 6:19=E2=80=AFAM Martin Karsten <mkarsten@uwat=
-erloo.ca> wrote:
-> >>
-> >> On 2024-08-13 00:07, Stanislav Fomichev wrote:
-> >>> On 08/12, Martin Karsten wrote:
-> >>>> On 2024-08-12 21:54, Stanislav Fomichev wrote:
-> >>>>> On 08/12, Martin Karsten wrote:
-> >>>>>> On 2024-08-12 19:03, Stanislav Fomichev wrote:
-> >>>>>>> On 08/12, Martin Karsten wrote:
-> >>>>>>>> On 2024-08-12 16:19, Stanislav Fomichev wrote:
-> >>>>>>>>> On 08/12, Joe Damato wrote:
-> >>>>>>>>>> Greetings:
-> =
+Afaict, we can just rely on inode->i_dio_count for waiting instead of
+this awkward indirection through __I_DIO_WAKEUP. This survives LTP dio
+and xfstests dio tests.
 
-> [snip]
-> =
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+---
+ fs/inode.c         | 23 +++++++++++------------
+ fs/netfs/locking.c | 18 +++---------------
+ include/linux/fs.h |  9 ++++-----
+ 3 files changed, 18 insertions(+), 32 deletions(-)
 
-> >>>>>> Note that napi_suspend_irqs/napi_resume_irqs is needed even for =
-the sake of
-> >>>>>> an individual queue or application to make sure that IRQ suspens=
-ion is
-> >>>>>> enabled/disabled right away when the state of the system changes=
- from busy
-> >>>>>> to idle and back.
-> >>>>>
-> >>>>> Can we not handle everything in napi_busy_loop? If we can mark so=
-me napi
-> >>>>> contexts as "explicitly polled by userspace with a larger defer t=
-imeout",
-> >>>>> we should be able to do better compared to current NAPI_F_PREFER_=
-BUSY_POLL
-> >>>>> which is more like "this particular napi_poll call is user busy p=
-olling".
-> >>>>
-> >>>> Then either the application needs to be polling all the time (wast=
-ing cpu
-> >>>> cycles) or latencies will be determined by the timeout.
-> > But if I understand correctly, this means that if the application
-> > thread that is supposed
-> > to do napi busy polling gets busy doing work on the new data/events i=
-n
-> > userspace, napi polling
-> > will not be done until the suspend_timeout triggers? Do you dispatch
-> > work to a separate worker
-> > threads, in userspace, from the thread that is doing epoll_wait?
-> =
+diff --git a/fs/inode.c b/fs/inode.c
+index 7a4e27606fca..46bf05d826db 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2465,18 +2465,12 @@ EXPORT_SYMBOL(inode_owner_or_capable);
+ /*
+  * Direct i/o helper functions
+  */
+-static void __inode_dio_wait(struct inode *inode)
++bool inode_dio_finished(const struct inode *inode)
+ {
+-	wait_queue_head_t *wq = bit_waitqueue(&inode->i_state, __I_DIO_WAKEUP);
+-	DEFINE_WAIT_BIT(q, &inode->i_state, __I_DIO_WAKEUP);
+-
+-	do {
+-		prepare_to_wait(wq, &q.wq_entry, TASK_UNINTERRUPTIBLE);
+-		if (atomic_read(&inode->i_dio_count))
+-			schedule();
+-	} while (atomic_read(&inode->i_dio_count));
+-	finish_wait(wq, &q.wq_entry);
++	smp_mb__before_atomic();
++	return atomic_read(&inode->i_dio_count) == 0;
+ }
++EXPORT_SYMBOL(inode_dio_finished);
+ 
+ /**
+  * inode_dio_wait - wait for outstanding DIO requests to finish
+@@ -2490,11 +2484,16 @@ static void __inode_dio_wait(struct inode *inode)
+  */
+ void inode_dio_wait(struct inode *inode)
+ {
+-	if (atomic_read(&inode->i_dio_count))
+-		__inode_dio_wait(inode);
++	wait_var_event(&inode->i_dio_count, inode_dio_finished);
+ }
+ EXPORT_SYMBOL(inode_dio_wait);
+ 
++void inode_dio_wait_interruptible(struct inode *inode)
++{
++	wait_var_event_interruptible(&inode->i_dio_count, inode_dio_finished);
++}
++EXPORT_SYMBOL(inode_dio_wait_interruptible);
++
+ /*
+  * inode_set_flags - atomically set some inode flags
+  *
+diff --git a/fs/netfs/locking.c b/fs/netfs/locking.c
+index 75dc52a49b3a..c2cfdda85230 100644
+--- a/fs/netfs/locking.c
++++ b/fs/netfs/locking.c
+@@ -21,23 +21,11 @@
+  */
+ static int inode_dio_wait_interruptible(struct inode *inode)
+ {
+-	if (!atomic_read(&inode->i_dio_count))
++	if (inode_dio_finished(inode))
+ 		return 0;
+ 
+-	wait_queue_head_t *wq = bit_waitqueue(&inode->i_state, __I_DIO_WAKEUP);
+-	DEFINE_WAIT_BIT(q, &inode->i_state, __I_DIO_WAKEUP);
+-
+-	for (;;) {
+-		prepare_to_wait(wq, &q.wq_entry, TASK_INTERRUPTIBLE);
+-		if (!atomic_read(&inode->i_dio_count))
+-			break;
+-		if (signal_pending(current))
+-			break;
+-		schedule();
+-	}
+-	finish_wait(wq, &q.wq_entry);
+-
+-	return atomic_read(&inode->i_dio_count) ? -ERESTARTSYS : 0;
++	inode_dio_wait_interruptible(inode);
++	return !inode_dio_finished(inode) ? -ERESTARTSYS : 0;
+ }
+ 
+ /* Call with exclusively locked inode->i_rwsem */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index b6f2e2a1e513..f744cd918259 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2380,8 +2380,6 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+  *
+  * I_REFERENCED		Marks the inode as recently references on the LRU list.
+  *
+- * I_DIO_WAKEUP		Never set.  Only used as a key for wait_on_bit().
+- *
+  * I_WB_SWITCH		Cgroup bdi_writeback switching in progress.  Used to
+  *			synchronize competing switching instances and to tell
+  *			wb stat updates to grab the i_pages lock.  See
+@@ -2413,8 +2411,6 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+ #define __I_SYNC		7
+ #define I_SYNC			(1 << __I_SYNC)
+ #define I_REFERENCED		(1 << 8)
+-#define __I_DIO_WAKEUP		9
+-#define I_DIO_WAKEUP		(1 << __I_DIO_WAKEUP)
+ #define I_LINKABLE		(1 << 10)
+ #define I_DIRTY_TIME		(1 << 11)
+ #define I_WB_SWITCH		(1 << 13)
+@@ -3230,6 +3226,7 @@ static inline ssize_t blockdev_direct_IO(struct kiocb *iocb,
+ #endif
+ 
+ void inode_dio_wait(struct inode *inode);
++void inode_dio_wait_interruptible(struct inode *inode);
+ 
+ /**
+  * inode_dio_begin - signal start of a direct I/O requests
+@@ -3241,6 +3238,7 @@ void inode_dio_wait(struct inode *inode);
+ static inline void inode_dio_begin(struct inode *inode)
+ {
+ 	atomic_inc(&inode->i_dio_count);
++	smp_mb__after_atomic();
+ }
+ 
+ /**
+@@ -3252,8 +3250,9 @@ static inline void inode_dio_begin(struct inode *inode)
+  */
+ static inline void inode_dio_end(struct inode *inode)
+ {
++	smp_mb__before_atomic();
+ 	if (atomic_dec_and_test(&inode->i_dio_count))
+-		wake_up_bit(&inode->i_state, __I_DIO_WAKEUP);
++		wake_up_var(&inode->i_dio_count);
+ }
+ 
+ extern void inode_set_flags(struct inode *inode, unsigned int flags,
 
-> Yes, napi polling is suspended while the application is busy between =
-
-> epoll_wait calls. That's where the benefits are coming from.
-> =
-
-> The consequences depend on the nature of the application and overall =
-
-> preferences for the system. If there's a "dominant" application for a =
-
-> number of queues and cores, the resulting latency for other background =
-
-> applications using the same queues might not be a problem at all.
-> =
-
-> One other simple mitigation is limiting the number of events that each =
-
-> epoll_wait call accepts. Note that this batch size also determines the =
-
-> worst-case latency for the application in question, so there is a =
-
-> natural incentive to keep it limited.
-> =
-
-> A more complex application design, like you suggest, might also be an =
-
-> option.
-> =
-
-> >>>> Only when switching back and forth between polling and interrupts =
-is it
-> >>>> possible to get low latencies across a large spectrum of offered l=
-oads
-> >>>> without burning cpu cycles at 100%.
-> >>>
-> >>> Ah, I see what you're saying, yes, you're right. In this case ignor=
-e my comment
-> >>> about ep_suspend_napi_irqs/napi_resume_irqs.
-> >>
-> >> Thanks for probing and double-checking everything! Feedback is impor=
-tant
-> >> for us to properly document our proposal.
-> >>
-> >>> Let's see how other people feel about per-dev irq_suspend_timeout. =
-Properly
-> >>> disabling napi during busy polling is super useful, but it would st=
-ill
-> >>> be nice to plumb irq_suspend_timeout via epoll context or have it s=
-et on
-> >>> a per-napi basis imho.
-> > I agree, this would allow each napi queue to tune itself based on
-> > heuristics. But I think
-> > doing it through epoll independent interface makes more sense as Stan=
-
-> > suggested earlier.
-> =
-
-> The question is whether to add a useful mechanism (one sysfs parameter =
-
-> and a few lines of code) that is optional, but with demonstrable and =
-
-> significant performance/efficiency improvements for an important class =
-
-> of applications - or wait for an uncertain future?
-
-The issue is that this one little change can never be removed, as it
-becomes ABI.
-
-Let's get the right API from the start.
-
-Not sure that a global variable, or sysfs as API, is the right one.
- =
-
-> Note that adding our mechanism in no way precludes switching the contro=
-l =
-
-> parameters from per-device to per-napi as Joe alluded to earlier. In =
-
-> fact, it increases the incentive for doing so.
-> =
-
-> After working on this for quite a while, I am skeptical that anything =
-
-> fundamentally different could be done without re-architecting the entir=
-e =
-
-> napi control flow.
-> =
-
-> Thanks,
-> Martin
-> =
-
-
+---
+base-commit: 5570f04d0bb1a34ebcb27caac76c797a7c9e36c9
+change-id: 20240816-vfs-misc-dio-5cb07eaae155
 
 
