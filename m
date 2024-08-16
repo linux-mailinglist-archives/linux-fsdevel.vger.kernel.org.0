@@ -1,98 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-26149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A1A9550CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 20:27:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0C6955180
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 21:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FB5B1F23BB4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 18:27:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A6BB1C226A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 19:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541B1C3F2B;
-	Fri, 16 Aug 2024 18:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E627F1C4623;
+	Fri, 16 Aug 2024 19:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Pbny/DJ9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CYkBmuSm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C127B1C3F21
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 18:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35D61C37A8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 19:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723832793; cv=none; b=oszbW4DLtiWoCmHKjfY/oAJ3n1LuevDSUrjiTyw9U/kMH8Ow7ZBGc9E+6EVvNJF93bEcKVQng6YEPjfVx6vDm/9aelMMri0rflIvrGz/A06i0imbRwuydfkTRf64juDbNn/l1AWpbSI+wv95F2OxPwS/d4h7W42GoBiOirlgLRI=
+	t=1723836684; cv=none; b=fR7J7C0xhVWpSbqhIEWGLVxm2esHPNSJDFyI1CSt09dn9gQmxJbYq1IqpFNyUhmeCq2+Kh8zrOFsbIJxnWy/PnrM29Rgln7YJlOg1afMAYw4fHXa0ZRJrD4pvY6SZigN8Yre4zZLv1dFaqY+3EIBkx+lLTI1Shf3VdSjoCwbQ5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723832793; c=relaxed/simple;
-	bh=4VRY6Ev0EMB8vEEfu632WJ4VdJ2u8YfCKsflPPcloDA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TELEEO+9fWkhCq4syPop19M3ZA1B98FguQ6/GAiUYrV3gfqBq+9myIpEknRDaw43LyoLltsV9bnfLaMcS4z0hOFZ4F8dK4gzJGTURFxZCXgf0wD95crkIIFjqpbCGuJNPFr1VPWm75hd4uiG6MxvfMcMP9sw0Cm4+fEBu4+5HTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Pbny/DJ9; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f189a2a841so22324171fa.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 11:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1723832788; x=1724437588; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lMjEIJUKp6awmOAjCbdVEe7k1/FANrERf50MN76C80I=;
-        b=Pbny/DJ9Iib8wZyt+HB61rRssFbFvescu/HZapymdTdbt6eAlsYnkPkGu1usQqFBau
-         lGu4ktRBrnL0MyAMKP9O4LP6Mxk18uGR0MOPemYyDNJL7Z15qi5/vHHn3MnRo1yvdUdD
-         zhaGgwIUl6AwEGPubLBIiU3AVFScKPHvmxAIE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723832788; x=1724437588;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lMjEIJUKp6awmOAjCbdVEe7k1/FANrERf50MN76C80I=;
-        b=tgOtdduUVp9TpW55mhpUXksxNIEI6Iai9qgLm2j8f1J/aaAc4LEAfW096AnKGE7lop
-         9UGiY2e+WqCbCsQn/47YoNPuAIRqwOLYk+jN4/Jy0pDcZuG5Jm79JyeIsemN3rbr11X+
-         H/vKz69nknifjL6L1tK6AXrtFkgaSDOUgB6rD+7MnTP66Y+46Wix1dzuCbLyRUjGO2MU
-         HpovX6At4Wo7PHyJcMIbuM7a/mGgQbVGL+6ohvBQZxX26juG1rcVrlC+MVnVdeU9suGS
-         6fzNNs+FJnjHUHZ1JDNS9NDUKoBNNOvb9ONhmRw5mKFr4re77TBEHhVV+cFNf0nmIXR4
-         rKzw==
-X-Gm-Message-State: AOJu0Yx+hHTDRoYNVzgUkamiAKFrUfVBPoiu7xU6lUp1av6iX+4NQp6e
-	wYY85Z6yJoEy+drz7VPODatE4e9hXiPq8KzImopnAIR3HQPoTYHa5Ixg5hZdDsGrWZcPftKKxmg
-	NPeFFFA==
-X-Google-Smtp-Source: AGHT+IGksA73I84vQALtTbEYJpe3sMlTtK5V08Q4wrMbkTTD2PPe5n7R9VJ2NNSNJMLihaOFgWCQXQ==
-X-Received: by 2002:a2e:a582:0:b0:2f1:9a3d:88ea with SMTP id 38308e7fff4ca-2f3be5f4f1emr30253821fa.31.1723832787968;
-        Fri, 16 Aug 2024 11:26:27 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b771ee9csm6359631fa.122.2024.08.16.11.26.27
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2024 11:26:27 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eeb1ba0481so32373001fa.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 11:26:27 -0700 (PDT)
-X-Received: by 2002:a2e:8705:0:b0:2f1:a5bb:b5ae with SMTP id
- 38308e7fff4ca-2f3be5899admr24325091fa.15.1723832787024; Fri, 16 Aug 2024
- 11:26:27 -0700 (PDT)
+	s=arc-20240116; t=1723836684; c=relaxed/simple;
+	bh=a3UBjcnOVg9NQFsbusket7qF4bskI8OeVBv1Iky1Ikk=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Ho+B7yZVB7sHRH0nLPOEh067+E5noURE5/e4KYqZhzGvy7SZxHEuW2E3nvYI+xW/CAtpreTuR+ommrWMt33WUQHjMkjKCgrHXrmDnxxWHxwnnJpU58cYkp0P+1d0s3jVyxznOwqb/bdBdoQlxlUR76+9bfDa3gfsULe+qIa2Hbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CYkBmuSm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723836682;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dAUVeRgH13oxbvE6MJ/L04r2yM6YzE3o8WtEBRvyajM=;
+	b=CYkBmuSmV2/nUgKhd1Y5R5YEkYp4xqrso1YiuYAn8qFXy9/qslYX3cJcusqKF4gJlrNXF7
+	IAp/UvUqxDcDN7PR+jdPAQTrKduFIGOA98fM/4MRAmylqDY5E1QB6T9kwNXZTCCkaSEtRB
+	rlq6jc825AO42pPU6kJ0zE0C1eA+q90=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-KiX_NkxMM_erpn1TlFqLZQ-1; Fri,
+ 16 Aug 2024 15:31:15 -0400
+X-MC-Unique: KiX_NkxMM_erpn1TlFqLZQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CBF101955F45;
+	Fri, 16 Aug 2024 19:31:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6593719560A3;
+	Fri, 16 Aug 2024 19:31:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240815090849.972355-1-kernel@pankajraghav.com>
+References: <20240815090849.972355-1-kernel@pankajraghav.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: dhowells@redhat.com, brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, hare@suse.de, gost.dev@samsung.com,
+    linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
+    Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240816030341.GW13701@ZenIV> <CAHk-=wh_K+qj=gmTjiUqr8R3x9Tco31FSBZ5qkikKN02bL4y7A@mail.gmail.com>
- <20240816171925.GB504335@ZenIV> <CAHk-=wh7NJnJeKroRhZsSRxWGM4uYTgONWX7Ad8V9suO=t777w@mail.gmail.com>
- <20240816181545.GD504335@ZenIV>
-In-Reply-To: <20240816181545.GD504335@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 16 Aug 2024 11:26:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiawf_fuA8E45Qo6hjf8VB5Tb49_6=Sjvo6zefMEsTxZA@mail.gmail.com>
-Message-ID: <CAHk-=wiawf_fuA8E45Qo6hjf8VB5Tb49_6=Sjvo6zefMEsTxZA@mail.gmail.com>
-Subject: Re: [RFC] more close_range() fun
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2924796.1723836663.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 16 Aug 2024 20:31:03 +0100
+Message-ID: <2924797.1723836663@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, 16 Aug 2024 at 11:15, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> As in https://lore.kernel.org/all/20240812064427.240190-11-viro@zeniv.linux.org.uk/?
+Hi Pankaj,
 
-Heh. Ack.
+I applied the first five patches and set minimum folio size for afs files =
+to
+8K (see attached patch) and ran some tests.
 
-           Linus
+With simple tests, I can see in the trace log that it is definitely creati=
+ng
+8K folios where it would previously create 4K folios.
+
+However, with 'xfstests -g quick', generic/075 generic/112 generic/393 fai=
+l
+where they didn't previously.  I won't be able to look into this more till
+Monday.
+
+If you want to try using afs for yourself, install the kafs-client package
+(available on Fedora and Debian), do 'systemctl start afs.mount' and then =
+you
+can, say, do:
+
+	ls /afs/openafs.org/www/docs.openafs.org/
+
+and browse the publicly accessible files under there.
+
+David
+---
+commit d676df787baee3b710b9f0d284b21518473feb3c
+Author: David Howells <dhowells@redhat.com>
+Date:   Fri Aug 16 19:54:25 2024 +0100
+
+    afs: [DEBUGGING] Set min folio order
+
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 3acf5e050072..c3842cba92e7 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -104,6 +104,7 @@ static int afs_inode_init_from_status(struct afs_opera=
+tion *op,
+ 		inode->i_fop	=3D &afs_file_operations;
+ 		inode->i_mapping->a_ops	=3D &afs_file_aops;
+ 		mapping_set_large_folios(inode->i_mapping);
++		mapping_set_folio_min_order(inode->i_mapping, 1);
+ 		break;
+ 	case AFS_FTYPE_DIR:
+ 		inode->i_mode	=3D S_IFDIR |  (status->mode & S_IALLUGO);
+
 
