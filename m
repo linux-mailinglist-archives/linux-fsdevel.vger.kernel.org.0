@@ -1,112 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-26148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5621B9550C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 20:24:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A1A9550CF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 20:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 004531F23786
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 18:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FB5B1F23BB4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 18:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EC71C3F1A;
-	Fri, 16 Aug 2024 18:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541B1C3F2B;
+	Fri, 16 Aug 2024 18:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mn08UjU6"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Pbny/DJ9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD2A1C2338
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 18:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C127B1C3F21
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 18:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723832627; cv=none; b=NI9vv/30g4bg3mx+z6fTaGn5hkbJuTcrFRFP0dM8JWCu9IQsvVSr2L1/jEkgdiLv1utF2Wlovxb4zrvjwM3XYX9qrcDbS5gTcFcYLCpjyGUJzdnMGUmZEle4LPIjVqATj7Mcn/Fcryz3uKQIhrKKo2WRlvfKkAQa1nKQdZOCGHg=
+	t=1723832793; cv=none; b=oszbW4DLtiWoCmHKjfY/oAJ3n1LuevDSUrjiTyw9U/kMH8Ow7ZBGc9E+6EVvNJF93bEcKVQng6YEPjfVx6vDm/9aelMMri0rflIvrGz/A06i0imbRwuydfkTRf64juDbNn/l1AWpbSI+wv95F2OxPwS/d4h7W42GoBiOirlgLRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723832627; c=relaxed/simple;
-	bh=kQ1Uus7lOLPKfEI1znCUipAS8W09PYgHvRFbSeVUxQg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lfJbgduUGIPQXaVcGz/MD84mlE/Z4X1T6E6c8ntwenGVrp5dMNKG5UGCUqvg67MRPM7joXDK4mBfljJez6oLiXVzzfjTronszP8yuB7Jr7+Eb1UBYaLp8Hw5mlXspzEEZuqtRqE1uqzCh5YmyBSPRkWZ6F7y1GNUh30EEyHfaFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mn08UjU6; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7a28217cfecso1758383a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 11:23:45 -0700 (PDT)
+	s=arc-20240116; t=1723832793; c=relaxed/simple;
+	bh=4VRY6Ev0EMB8vEEfu632WJ4VdJ2u8YfCKsflPPcloDA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TELEEO+9fWkhCq4syPop19M3ZA1B98FguQ6/GAiUYrV3gfqBq+9myIpEknRDaw43LyoLltsV9bnfLaMcS4z0hOFZ4F8dK4gzJGTURFxZCXgf0wD95crkIIFjqpbCGuJNPFr1VPWm75hd4uiG6MxvfMcMP9sw0Cm4+fEBu4+5HTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Pbny/DJ9; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f189a2a841so22324171fa.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 11:26:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723832625; x=1724437425; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=05nSFmbx6P/1DfD7+boXGyw0DEDSw8F82FYswNLhYr4=;
-        b=mn08UjU6r9hN08F6IrD7U5clqCKPyp8RdHTmwIQ3pL/A9tFeDMXujYEeg2V+sgRNzx
-         C3W/NWYzd0uM9KWAU6//GF77JB2B+vmD3Lpn/m7M7RKQ76HCbEoQWZ/9GdXVd3cUqu14
-         FCPqrnDwxmjnHhHtGYKjD/TdnIdwU7rs58pFSFxvBOBO/rU3muyj1biA/tPlydnZoxuJ
-         xqwGPKPXuVcm1aD7/ADXSmlEJhawZVm8fAyoei95QyqHy0VvZfGq7ch5dIFkVRjx638K
-         WbDxmdztga5VOVk84l9GhW0nWX1ZEaKOXs+CeyXrUeLv+7Ge1ynmO3evbAm7PVL5Ig1+
-         eCuA==
+        d=linux-foundation.org; s=google; t=1723832788; x=1724437588; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lMjEIJUKp6awmOAjCbdVEe7k1/FANrERf50MN76C80I=;
+        b=Pbny/DJ9Iib8wZyt+HB61rRssFbFvescu/HZapymdTdbt6eAlsYnkPkGu1usQqFBau
+         lGu4ktRBrnL0MyAMKP9O4LP6Mxk18uGR0MOPemYyDNJL7Z15qi5/vHHn3MnRo1yvdUdD
+         zhaGgwIUl6AwEGPubLBIiU3AVFScKPHvmxAIE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723832625; x=1724437425;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=05nSFmbx6P/1DfD7+boXGyw0DEDSw8F82FYswNLhYr4=;
-        b=RIcPGsh7ULxNoQIlzaaQn0EHdAwuLO0592VoJynFtcdmxSnFPpC8JsmFb15KCmsJpA
-         dCqhhkrmBgjWd76iif73+cB1DEsjjXwL3YqabbjBbVJ6PUGxVGQ2uZBmXnHhqEnyzbDp
-         zir1ZXouN7ZEXE0L5q5s9JvZKpEW86Bt0atAjyaHBRE1ZpcByF01daS2awfx0v0AASfa
-         OtxZ45PQ3ep5uM9sDSUcKGBc7RRjuu/6EGtuwoEUYBeUn2BU0QGJAuqDMibE/NM93EYm
-         oH9rbePbojUIl4ITuqepG2RoE/8sOfWaOZZPzeNQdJPbM0DJVgaW93B9FWHJQg6DTLaY
-         1qJg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9uajPMNN4TdnbC37voMI/JXoWhh9mw9FOvXHaor+FkCfuS1+vWGIBzSi0JUgR2oEn3J39yKqMY/5O9pKTYBKyg2ad40qPTH80WWl12Q==
-X-Gm-Message-State: AOJu0YxGdRceyFn4Ax/g9OehOuagTAvlbFVgjYLQYsiLx3KLdag70ghX
-	Mz1qBVvlxkMCoiczxi1+4tBAkc7wAVf2DTEh3uoaYPP4vN91FY+6hwe2g2FgP1mwxObn2KBP/Is
-	4vg==
-X-Google-Smtp-Source: AGHT+IE9H5LQQCH68NcdXMmYnIevmE/u5gJozQKiFZVITwrrnrd7MOM5/NVJLVxUdZgmbRbmnPYElRigQGc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:60e:b0:75d:16f9:c075 with SMTP id
- 41be03b00d2f7-7c97b8222femr5928a12.9.1723832624835; Fri, 16 Aug 2024 11:23:44
- -0700 (PDT)
-Date: Fri, 16 Aug 2024 11:23:43 -0700
-In-Reply-To: <000000000000d258a006179e07df@google.com>
+        d=1e100.net; s=20230601; t=1723832788; x=1724437588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lMjEIJUKp6awmOAjCbdVEe7k1/FANrERf50MN76C80I=;
+        b=tgOtdduUVp9TpW55mhpUXksxNIEI6Iai9qgLm2j8f1J/aaAc4LEAfW096AnKGE7lop
+         9UGiY2e+WqCbCsQn/47YoNPuAIRqwOLYk+jN4/Jy0pDcZuG5Jm79JyeIsemN3rbr11X+
+         H/vKz69nknifjL6L1tK6AXrtFkgaSDOUgB6rD+7MnTP66Y+46Wix1dzuCbLyRUjGO2MU
+         HpovX6At4Wo7PHyJcMIbuM7a/mGgQbVGL+6ohvBQZxX26juG1rcVrlC+MVnVdeU9suGS
+         6fzNNs+FJnjHUHZ1JDNS9NDUKoBNNOvb9ONhmRw5mKFr4re77TBEHhVV+cFNf0nmIXR4
+         rKzw==
+X-Gm-Message-State: AOJu0Yx+hHTDRoYNVzgUkamiAKFrUfVBPoiu7xU6lUp1av6iX+4NQp6e
+	wYY85Z6yJoEy+drz7VPODatE4e9hXiPq8KzImopnAIR3HQPoTYHa5Ixg5hZdDsGrWZcPftKKxmg
+	NPeFFFA==
+X-Google-Smtp-Source: AGHT+IGksA73I84vQALtTbEYJpe3sMlTtK5V08Q4wrMbkTTD2PPe5n7R9VJ2NNSNJMLihaOFgWCQXQ==
+X-Received: by 2002:a2e:a582:0:b0:2f1:9a3d:88ea with SMTP id 38308e7fff4ca-2f3be5f4f1emr30253821fa.31.1723832787968;
+        Fri, 16 Aug 2024 11:26:27 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b771ee9csm6359631fa.122.2024.08.16.11.26.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 11:26:27 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eeb1ba0481so32373001fa.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 11:26:27 -0700 (PDT)
+X-Received: by 2002:a2e:8705:0:b0:2f1:a5bb:b5ae with SMTP id
+ 38308e7fff4ca-2f3be5899admr24325091fa.15.1723832787024; Fri, 16 Aug 2024
+ 11:26:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <000000000000d258a006179e07df@google.com>
-Message-ID: <Zr-ZL9X87N6XhE60@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING in srcu_check_nmi_safety
-From: Sean Christopherson <seanjc@google.com>
-To: syzbot <syzbot+62be362ff074b84ca393@syzkaller.appspotmail.com>
-Cc: kent.overstreet@linux.dev, kvm@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240816030341.GW13701@ZenIV> <CAHk-=wh_K+qj=gmTjiUqr8R3x9Tco31FSBZ5qkikKN02bL4y7A@mail.gmail.com>
+ <20240816171925.GB504335@ZenIV> <CAHk-=wh7NJnJeKroRhZsSRxWGM4uYTgONWX7Ad8V9suO=t777w@mail.gmail.com>
+ <20240816181545.GD504335@ZenIV>
+In-Reply-To: <20240816181545.GD504335@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 16 Aug 2024 11:26:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiawf_fuA8E45Qo6hjf8VB5Tb49_6=Sjvo6zefMEsTxZA@mail.gmail.com>
+Message-ID: <CAHk-=wiawf_fuA8E45Qo6hjf8VB5Tb49_6=Sjvo6zefMEsTxZA@mail.gmail.com>
+Subject: Re: [RFC] more close_range() fun
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, May 04, 2024, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    3d25a941ea50 Merge tag 'block-6.9-20240503' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1143ae60980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=45d8db3acdc1ccc6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=62be362ff074b84ca393
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: i386
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-3d25a941.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/49d9f26b0beb/vmlinux-3d25a941.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d2c424c14fff/bzImage-3d25a941.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+62be362ff074b84ca393@syzkaller.appspotmail.com
+On Fri, 16 Aug 2024 at 11:15, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> As in https://lore.kernel.org/all/20240812064427.240190-11-viro@zeniv.linux.org.uk/?
 
-See https://lore.kernel.org/all/Zr-Ydj8FBpiqmY_c@google.com for an explanation.
+Heh. Ack.
 
-#syz invalid
+           Linus
 
