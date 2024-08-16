@@ -1,399 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-26121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491DF954B61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 15:48:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD4E954B95
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 15:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDCB7286F0C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 13:48:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B137B1C23B9F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 13:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2939B1BC9E7;
-	Fri, 16 Aug 2024 13:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3888B1BCA16;
+	Fri, 16 Aug 2024 13:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="v4yVnjSS"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GCJTneti"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC691B9B2A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 13:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723815959; cv=none; b=jbkE7YomDNvwcdwiO6sDtRmJCe/Bnic6PJ1kxUcJbc/2f62sjJ3SgI00WN11Uk29ROawxrSO7y6KKaIIMGsza08y5nhwcPWu24R1UxsLtpp2rlfY+pzEzutf+NYgVZBDqv81CNylxtzkD31uQo0OUzkdxg5uKyTUPIJzZvESd4E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723815959; c=relaxed/simple;
-	bh=YjnkaqEjeiZJjCJ4SMEE+H6vOrJ3/vbOxyVXkygsqlQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lJNFd7aUoK4zCekx4iM3EyRFaYKMQu6CzUIcatEgEYFpns1HO1kOJJHW5DyzWwsEyCsjEOpiqMtGYX5+HZMUrjVslvXes6gYuPyJmpazuf8Olhl+UIodDsDChd+jQhP0YXZpBWwe3pM5VnCXWPtfiP7bHe+vPz9+q5HMEdNRsLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=v4yVnjSS; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D4C023F31C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 13:45:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723815947;
-	bh=AgeewcS5kqKeOP856aRXSh6oiDU1aOWalQ4gW9NNbXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=v4yVnjSSlaMKDFj1GojuNvTRJlyATdi1l6XwO5BSO0iJ/vScvHMZK7Jeaoz6PfpQO
-	 1oPFbJIQZIndS6sQPDbQXT6PSFIMS6NEk9FvjyGmUfs9+KJJ5XNLzhYhKDGnhsG9xi
-	 jx9bc1OszUzqGlPsJ6QL5obVJRtmqtvlgRJ5NAPsLcsfdq2JCJ13QM5dpX1CJVrsox
-	 PIamANS3ZhVNnoPkNKIwSUTvoLdIA/bR3k9KnACkgbdCTZaLEwS3A2vgQKbPNeP14y
-	 Jz7qe0V6Q3mOcpqUkyPdRie0TCFyU/YcL/zS6qys5on/7A1oIF+BIZFXB4B54FAZpb
-	 VnHy21Zp9PXZg==
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-4f519ea76e5so907246e0c.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 06:45:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723815946; x=1724420746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AgeewcS5kqKeOP856aRXSh6oiDU1aOWalQ4gW9NNbXg=;
-        b=p8KsbWmNlokrSwirqm+JDBun2iL39SE+y+xkSX6Lhn+jb9JghQVzVli0qipi2EseXF
-         PIj2QTgbj2xCKSrHszC/TIz0i6E9HlRZ9FizoP0QB+KhWbWetqpjTTnDLERSNziRrueg
-         1/zegsqMl13mpPCZkwpgMNLh4P2J0KMHMhLlwIFUcHfKNkyhp+hzBEF3d0l08HiNzlK+
-         Q1fYZlEgIH0xytku/EmTtz7UJmouhxpuvA/D7KdFIEWjnw7UfdSFBoQrbntHkZu6s5WB
-         Yh/lIMzwmqnGL5AHXA4Kzz8+9G4fwzUxTN9zSaf+ouHyM2JyUnwgcLLykcaHJ6ouInCW
-         wbJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWXRQ9kupPgUk0zt3EeinnQgOdLQtvE/wBUFGbyq34BJL0QMWJ0xsVvFmW7RefuQmfTwe41i6Hynwgjr9l@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH2Z+Z4DYDFmmgccYAzt9h0GmYuk1UVcfhzJREo32PBlFpj0Zl
-	WqeJ9FzJfU0NKKy6S/Nk4a5dN26A3jSlveHl5nsm73lFtwT5z2HGAhfYHPTIqOEyRoPYZ/GMg4T
-	yZjQ10P7cSKKJi3KOsTE2de6r1uxFqmIPsybg6gYF4IhelXWcAAfJC2L26GJGmP/lylSPkclSiq
-	XdnoDRmfg71zOFWPqHTHHcDsvBChBDHA6MsyIkQme9i4GaeOp1v2eLyg==
-X-Received: by 2002:a05:6122:3124:b0:4f5:261a:bdc4 with SMTP id 71dfb90a1353d-4fc6c5e2d57mr3552261e0c.2.1723815946497;
-        Fri, 16 Aug 2024 06:45:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHRRxgu1guXj0GfP5BNcgezp0uyDf7mr44vUMoChBSarxeu0X/lOyOo5YhWYYzIk9CCFqxf70d/aEV1D6sotU=
-X-Received: by 2002:a05:6122:3124:b0:4f5:261a:bdc4 with SMTP id
- 71dfb90a1353d-4fc6c5e2d57mr3552208e0c.2.1723815946058; Fri, 16 Aug 2024
- 06:45:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60441BC08C;
+	Fri, 16 Aug 2024 13:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723816759; cv=fail; b=HJ2lFnlrlPug8JHH0TV7hqdxRDCwMW8F6+AknMDk87pxaazQes9hgI+Ikkk5nSFgWn9Q06cH3Wb0v2J5Z+IOJMhbXmVkpisQZuonyKB/Z1Z88FbdXQ0y8+quCDPOTEtF6yoyf3ygYp1XZVtGld4FNhFvWFDT2wriKbrD7QDQ5pQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723816759; c=relaxed/simple;
+	bh=GoynHsdnG4k72j2B1kI3w8vSQhFIXi47Q2FPr1AHzSY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z8a/qnHrIwFyi0wNyOOoLu8FWRCeZLDsskg01gDUKy+0yke3XgcDgF1uNbc4+RjuJFCTAZy4M8ZSZ6KPaH7dpCIBY0whfb6ob1A+9nfnxNtqAVjmEtriNw95kAcwgWbM9N7Kp0VYyw57QoLoI0/SSVl0xvex8K04PW3h2PUKNds=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GCJTneti; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723816758; x=1755352758;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=GoynHsdnG4k72j2B1kI3w8vSQhFIXi47Q2FPr1AHzSY=;
+  b=GCJTnetiqUui8ENLhsg/gxdF57V6rFUO6oLEnIODRV1Dptg9uDBufNb3
+   JCPd9auRQWjfJL+EGFGHfnv4VEutYd7OeC+eSnbFaAHetXJkvS0dy75Gx
+   hqsr7NGrvW2kTw7COxTKHPdNMeUPL5YpZrt58T64L/MnQ92UXMoc7UWBo
+   OkwnVG6B3Du0/3gSa1/Nx6tvrTMjNRDuYiiYYQ5pPkk/a9Gfd6cHMyF/t
+   K8OTT6yb2LddyX2uY1d/BKyYCFzbHrm5cY2wAkgTRLg2FH+36gS3MoW/9
+   I3kqaTkVm+WCkQShiCMG9fb/pDor8onZKrg6AFs1T7y++4jqVFyb5Q8KU
+   g==;
+X-CSE-ConnectionGUID: 8X+qiXQmQ7CLnkC7mGWUGQ==
+X-CSE-MsgGUID: buulw0xsRR6hN0LgnyGEsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11166"; a="22083712"
+X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
+   d="scan'208";a="22083712"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2024 06:59:17 -0700
+X-CSE-ConnectionGUID: EpZ8HQ+VR6W0X+0W1ueKtA==
+X-CSE-MsgGUID: 8FxvSvCFSnOqanuRKyoyyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,151,1719903600"; 
+   d="scan'208";a="64569906"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Aug 2024 06:59:16 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 16 Aug 2024 06:59:16 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 16 Aug 2024 06:59:16 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.174)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 16 Aug 2024 06:59:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ITflLPERkA4AVZBj9IkIIKkmxBBRDAoh9xhyjyF0MrIenOQPAM/QtzETE9HN9NmQpaw2J+haNZhl6XfbIb34EM336k78tQAzG7r29jGbc/JEhCIDRin8fj1KbDZSjgGnAp7WQiGfIE3c6IL0cJVqmVleIGq+bou8+TvWd0qVs37cdqBbL9LtsJ7yrTn4eG8x71Z33mHkTR4L+JgYgsLnSwdV9qwCWtOdx/IpxqmM0vcwLMIA2MqV8rRoJT69MwgwXPiscKH02hi3Emd308wSbiFPJAN8dpRAlcUsoic01aiPOb3UqXfCVCHY7xOcEU/uHqpwAtVQyx0TCiXYTNkz0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GoynHsdnG4k72j2B1kI3w8vSQhFIXi47Q2FPr1AHzSY=;
+ b=ZggRQ8d7eKZ6GziGNCqW2IZS0yTEtI016RYmpJhYu6KHpbvNWlOB2iL45pfKt5kewiZ4OPEFpfIoyMFOuXfunz23sTLOuwhG6rVsVrcyHStvSjin2hDrMtAI6HqTNLtOpp34kql/tZvFTWx48IcdcoMNkBUepw5x5mElh7vLa81MA+bZpkOWgsw2RndBaY8AgA5eHeKjhHJPsNC5CguSBP9vvEAQL8Eoo23dOX8oSm+cOt2B/fJDIsS0HpTA0KKO0yjSTHbaBupIiwR9TiJQgNSxNAU1Xv+dwGYXzQBULQc9CkaI7/RwR9QMpH8RT/Y9QaUYj++Xrz5QJHDfi1ARHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by DM6PR11MB4721.namprd11.prod.outlook.com (2603:10b6:5:2a3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
+ 2024 13:59:14 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.7875.018; Fri, 16 Aug 2024
+ 13:59:14 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "broonie@kernel.org" <broonie@kernel.org>
+CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"ross.burton@arm.com" <ross.burton@arm.com>, "suzuki.poulose@arm.com"
+	<suzuki.poulose@arm.com>, "Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, "corbet@lwn.net"
+	<corbet@lwn.net>, "kees@kernel.org" <kees@kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "palmer@dabbelt.com"
+	<palmer@dabbelt.com>, "debug@rivosinc.com" <debug@rivosinc.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "shuah@kernel.org"
+	<shuah@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>, "maz@kernel.org"
+	<maz@kernel.org>, "oleg@redhat.com" <oleg@redhat.com>, "fweimer@redhat.com"
+	<fweimer@redhat.com>, "thiago.bauermann@linaro.org"
+	<thiago.bauermann@linaro.org>, "james.morse@arm.com" <james.morse@arm.com>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>, "will@kernel.org"
+	<will@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "ardb@kernel.org"
+	<ardb@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v10 12/40] mm: Define VM_SHADOW_STACK for arm64 when we
+ support GCS
+Thread-Topic: [PATCH v10 12/40] mm: Define VM_SHADOW_STACK for arm64 when we
+ support GCS
+Thread-Index: AQHa5BKUVD7wI5NTNUm62iFzIM90d7IohUeAgAABngCAABRGAIAAFLaAgAAHSQCAAUmjgA==
+Date: Fri, 16 Aug 2024 13:59:14 +0000
+Message-ID: <6e246375ed9e798906c9de59692d4b10f089c98e.camel@intel.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+	 <20240801-arm64-gcs-v10-12-699e2bd2190b@kernel.org>
+	 <34f7a5378447b1a8d5a9561594b37cfeaa6bd2b1.camel@intel.com>
+	 <3a7d9b69-e9df-4271-a3f0-8e8683c2654f@sirena.org.uk>
+	 <68ec09da-fb4a-4d59-9c8c-6fae4c48ea68@sirena.org.uk>
+	 <e6c8618a1585006dde44c17192a3bb7ae8ec5c0b.camel@intel.com>
+	 <9949a344-be8e-40ed-b483-02ff95175072@sirena.org.uk>
+In-Reply-To: <9949a344-be8e-40ed-b483-02ff95175072@sirena.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|DM6PR11MB4721:EE_
+x-ms-office365-filtering-correlation-id: 8aa42662-7562-47c9-66f8-08dcbdfb9c9d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?RFU4YW5tT0ZBMDJodnd5bi9ZampraFVubTNINVpBWHQ4QnZxUkI4WWljb0xo?=
+ =?utf-8?B?OXJ2Zm9ZMTBqbjEvbzNVNU1RSzMxdk1GUUQ0TmNaaU9GK0V2WGlhUm5qSURR?=
+ =?utf-8?B?WkdZYXUzYmRRa3JhY2dUZVFBOGNBNysvbzFVR1ZMM0VSZGZaajRVTkpONUZF?=
+ =?utf-8?B?K24rc29JWk5OSjNKMU0yUU51RkxjVHFBZ3RHdzFtR21ldmMvVmVQVy9MWEF2?=
+ =?utf-8?B?dFdhYm9wM2Z4d3JReS9QYnhUUk0vaE5QcEdqUjVHdkZmM1oyTjZ1OUM1NWEx?=
+ =?utf-8?B?R01aeU9sb3VyMEtvQUNiVHhBVUQ3clRxaGszMU1MQkR0YU56NGJiTEtVZ2xM?=
+ =?utf-8?B?WUpITjQyK05jNU5VNVpXb3ZMWG1wTE40QWcxVmpPaUlqUUwxRW0xczRJdTdI?=
+ =?utf-8?B?QkorbXNqdlZXTEJZOFQ0eHhxdjdIOE1ocTEzT0paODVEQjlBRHp4K1NIcGVs?=
+ =?utf-8?B?YmVTb29xNi9pN3FTTUIxa1FYTDFWdmI2ejc1TWZsd0ppYnkwc1VZY1RmTW94?=
+ =?utf-8?B?TCtmY2M3RmhacVltSVNOUTQwcUVVZzVFazRRMEp4NEN5OGNMOEp4RWtoNDd4?=
+ =?utf-8?B?ZXYrTHZ0eU1yNjliT0FXZjlXUkFFajYwZkEvOHE1QWR1azV4R0oyVXB3WS9r?=
+ =?utf-8?B?WFRvYm1wbUVzRlhpQXRyNGJiZ0picjF6UUFuMTBHV2V1OG1LK1NUSVZad3NB?=
+ =?utf-8?B?c0E2WVkrRjZEMTJ3eWw0d1kvNTBiTFl5OGYzbk1ZU3A0UThwY1p6UkpWVjlK?=
+ =?utf-8?B?R0pacmJZQUdidVBNZngxd2pFeERnY0RPQjZXSzR3Y1BaTUY1aWlRL29qR2Zo?=
+ =?utf-8?B?N2k3ZHdHMHlCdGJVQkVlcVc2SlE3RjVkd1c2ejdTekZjeWF2Y1ZaajB1S3ZK?=
+ =?utf-8?B?MzhxOEUrRW51eFBhSndGWElPN0lBQVNZOXZyNjF5cWYvb0tUMDc2VlV5SEEw?=
+ =?utf-8?B?UlBuWStuMm5yMXJaVS9lSlZ2K2Y1Q0xuZVlOeEZ6TTlzRWUwN0RrbTRXUFFE?=
+ =?utf-8?B?KzZLT2N1Z3Q0RnFQQW9US2VjbDh6cWY3Qm9mWFMrbzBRc1F5V0dDMjlDTmFr?=
+ =?utf-8?B?M2tScGF5Q1ZEMWNITXl4K245YUh1WFVua0Njc3BCVTVuZ1F4dC9ycm9PS09H?=
+ =?utf-8?B?bDBJM2dDY2R6dC9yeFJtZFhEdlpyWnNtSVFOZEtOZ1M2aVgvL0UvK2FpL3pI?=
+ =?utf-8?B?QjlySTRKWTdRRHJnU3JQWldzcm9VUktESi8wTlB4RGxOc1ZqWXlmSlRuQW16?=
+ =?utf-8?B?OUgva1RZV3RXQitiVk9wMFBxZ01qWmRGejRhcFdORlRUTUx1bWdTZ0wwN3Ey?=
+ =?utf-8?B?VGhydCt6SmEwdTMwSzdNZnk1a0lkTy85N0Nyays5RXhtS3c5bjE0QkY1R2lv?=
+ =?utf-8?B?OFNTMUpmQUdQZVVjNjV4U0lYdWRRc0t2dUl1cWJEOHlXQnBpVHQxOHFkNGhU?=
+ =?utf-8?B?amxudjFXZVU3MFY1dzBSbHM0UzlUMmhZVkliNEYxU0JuVWhheW0rZmhWcFlL?=
+ =?utf-8?B?VlgwbkJaSmtHa25HRVhPazBDeE45WmYyWEpoZmFJajFYZ0pGRy9kejVpS1pm?=
+ =?utf-8?B?NzJaY3hxdEVtWWRBSFBXWWU0QW9XSllnQXhxQ0hIRlJYRStkOHJvbjFsaWVk?=
+ =?utf-8?B?YzdRWnd1TjJwZ0xLTjZyVXVMY2FXM1VMRXN2VnFTZVB3MHpXdDdOVndua0dN?=
+ =?utf-8?B?R1FHOGFQWWRDSlJ4d2FvYXRPWm9qdFRxS1hCckw4ei92RVlyNTFKbFBTUUYw?=
+ =?utf-8?B?QW1lblgwdHZQT1R2Wit6UU1ma0Y5TlJSdlZKa2NnZVpzU0x5UWRkRXZrU0Nu?=
+ =?utf-8?B?dnFnNE4rUUxTcVNwL1pQWGcvNkZ4YXY5VDArcEFjMWNpb25WVW9kMnBTMXdp?=
+ =?utf-8?B?RE1GOUdpWk4vMENIc1IveTJIUjlYSjRiRmRhWU5idEx3SEE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dW9yVkNFZVNaVzdtd3F0Ukk0R1ByNTlmMWlYVzlYL1VFMGoxMysrcjlvUGs5?=
+ =?utf-8?B?SHNvbjZDTVBzTkpUWGh6QS9EV1dIcVBwZXROeWUxTFN1dEhxbWMwNGwxbWth?=
+ =?utf-8?B?OTlGSmw1aEx6VTJOZzVnWnZiWG9BblZCbkdUOHM0TzlhZ2pWbk0rckErVlBN?=
+ =?utf-8?B?aTVlcVlHVFk4empRZnpvc3dPNWpDVWpiUDZvcHBwUE5DdHBpbllzSXJ1eHJi?=
+ =?utf-8?B?WllvRVJzTFRXOEZZVWFSTGxkZmZtZUhqLzhoWXFReE45VGhPWFpvTUROcWVQ?=
+ =?utf-8?B?anJFVVhucEhobFprVDE3dUZpZHBUTlFDQWdPck1PRzUrbzRoODBuOXdML2Nz?=
+ =?utf-8?B?UlRlaWZIeHAybGZ3aGYwSTJQeTA5NC9TOUc2aEpOUWkzL3VOM1F5dmZyWUlH?=
+ =?utf-8?B?bS9kSkVWbHY2TkpITk13NXJDemhTbG96Z0RQcVlEUTFkSGdHZjFZcHRqT0Rm?=
+ =?utf-8?B?RXNYOW9Hbkg2MWZ4SzA1b0pkSUFCQ01kZUI0WndJY25yNXYzbzNqUHNMWm9U?=
+ =?utf-8?B?elVaa3dxZ0RhT0toL1VIRmhmbTEyOEJPUjIvS0hFVWE1UmhWWUdUTUxCZlNq?=
+ =?utf-8?B?cUxiSkFaWkVKRDVUYjRSNmRjYVRrNENud0ZielRSUVJLQ1phcmpSOG1aQXJD?=
+ =?utf-8?B?VkRxTjBUY2lIZTA0a0NaR1RMMjNzMGNEa3JiQUlaRHFvOG1zV3JzL3JEOHpI?=
+ =?utf-8?B?U0Z3cFRZT0hqZXZPSVNpd0ZFYzJtSnlGV3h4b3ZlM1hSOHMwelJJTjdQZ0Rw?=
+ =?utf-8?B?cDZmaFAzK1VzN0xqM0pNQngxbmlobTZpRzg5UEJLSUw5aWNPOWhpSDhkL1lX?=
+ =?utf-8?B?M3llWk9LN1hBbHZ1ZTduUWtUcW5zU2hVV0E5U2x5clF3ZHNpNkhKVjNoVU1q?=
+ =?utf-8?B?ZzlramVhZHdRdFZ3emk2c00yOEJiaFdSK3ZIbXFUMFFlR2ZSV0lsTVhvcEw1?=
+ =?utf-8?B?YURtdUl1SUlPbjIzNEo4dXRhVXlONmdvTXlMYm9oblJiV2g2eTJGeUhKWk83?=
+ =?utf-8?B?NGQ0WUZxMVpSeWdUaWk3T2VqZStmdUp1SGFnSmE5a3cyejhkUTVSMGYzVnpD?=
+ =?utf-8?B?eXcvWlhFZFUvKzZiUzMyMmd3THVpelFzSXlnQmxvbkFEbEhJakxNRG5lVmFk?=
+ =?utf-8?B?cEFsb1lNQ1NYRW1tbHlPdU5UUklHTlVHdWtkdWN0K1UxYWNja2t4SFlIREdS?=
+ =?utf-8?B?Wmppa2pMSGduRmt1Z2xJZnFjeU9NMmxVL0w4bDBEN2RMWXVyQWE5My9VcVc0?=
+ =?utf-8?B?Q20rWHRIZFNjQmRwTU1pQi9QZWxLb2g1YnBpVGJ3QUppTldFTHVuSGdsY3Ju?=
+ =?utf-8?B?UDNKcDJrd0l2eWVWQVNTa0NWS3lhamV2dzRKZEdSTG5ZL1hGMUZoMzlJOVRZ?=
+ =?utf-8?B?VExiVjYrWWNKWEcwTHdQOTdMQ3N2N3ZDdFFXc1l6dDlqL25EL3J1RFgyQUkw?=
+ =?utf-8?B?MjU4RVMrS3hHYis3UTRVdXlBKzFEcHRIS1lBMnVnQ2N4emxFOEVrUVJVc2pG?=
+ =?utf-8?B?bU05eEtvVDROdU9tUytuV01UQ3I4Ni9YZzh2cWhHSi95aUdDVExoR0lheHZB?=
+ =?utf-8?B?d3gvdFFCTTF2dng0aS94ekphS2pKZ2JNS2ZtVGxpYklEQndYZkhRMFBiRi9l?=
+ =?utf-8?B?S2trTnpkbWh6YTQ5cEgwQzR1TWhOK0lDR2ZDa085VExkeldUOFFNQmRLa0s2?=
+ =?utf-8?B?cDV2NTdQSzl0cmhWb0dGZkF5YTVYcXRLazA4a3o4Qk0vMHE4MWVudTkza3lY?=
+ =?utf-8?B?NWhLOHF6NlZMbkwwNi80RTAvME5SUjBMUjFjem5zbTNKRTVtbC9aTFZNZWt4?=
+ =?utf-8?B?ZWdxQjFHdVo1bjVwa2VzSCtLRlR4VHMwTnpKcFVVWmVmWEJkdy9KMlNUQVBw?=
+ =?utf-8?B?dWloeTR3bWgxV3Z5OUFiMndWZUg4cFBJMmFJazJBRHV3UnRMemRjVDNvaFBt?=
+ =?utf-8?B?clhDYUF2dTA4ZzROOTl6SEF3RDZHZ0VRdVNEZnBxeVEyWXJKZE84a3d5MFoz?=
+ =?utf-8?B?OXdQSjVpMXFVMTE4alJ2eVlsTTI3VVBSZWJBdVJnNVdKTUY2UW8vdHNmejBK?=
+ =?utf-8?B?Z3dseG0vVXpLcXNlV0xyL2xzZDFrRnhuNHVPZlF0MG1NeWNLbDRhZmM1MG1Y?=
+ =?utf-8?B?ZzlnNFBSWXdaZWtLKzkzQWVGM0poUUxYOTF1Y2VBMWEzQmtManB2Y0NRcHNK?=
+ =?utf-8?Q?J3qb1qUGQKD4rQ/XsC/cJHk=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0C53E84EC3B9E042A86E55E4DE4DDDEB@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
- <20240815-ehemaligen-duftstoffe-a5f2ab60ddc9@brauner> <CAEivzxf2qH8XBXA2a+U4bQeeVC+eB8m9tDC08jxT=trFEzLpTA@mail.gmail.com>
-In-Reply-To: <CAEivzxf2qH8XBXA2a+U4bQeeVC+eB8m9tDC08jxT=trFEzLpTA@mail.gmail.com>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Fri, 16 Aug 2024 15:45:35 +0200
-Message-ID: <CAEivzxe2fdT1fPhbT4XUWLsR7LyTxv5oUmExyrq7QP4QfeDWyw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/11] fuse: basic support for idmapped mounts
-To: Christian Brauner <brauner@kernel.org>
-Cc: mszeredi@redhat.com, stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
-	Seth Forshee <sforshee@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>, 
-	German Maglione <gmaglione@redhat.com>, Amir Goldstein <amir73il@gmail.com>, 
-	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8aa42662-7562-47c9-66f8-08dcbdfb9c9d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2024 13:59:14.1165
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5ujkp7BUYvBDerYLDPdSv+wEvYrR8p61LAjaAoi6BAFXPVmUVICQWb5TS6aKmC6sD3o5C6Tt9c5BtN9SsODZDXRVC9D/1ihN6Rg/22U9s0Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4721
+X-OriginatorOrg: intel.com
 
-On Fri, Aug 16, 2024 at 10:58=E2=80=AFAM Aleksandr Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
->
-> On Fri, Aug 16, 2024 at 10:02=E2=80=AFAM Christian Brauner <brauner@kerne=
-l.org> wrote:
-> >
-> > On Thu, Aug 15, 2024 at 11:24:17AM GMT, Alexander Mikhalitsyn wrote:
-> > > Dear friends,
-> > >
-> > > This patch series aimed to provide support for idmapped mounts
-> > > for fuse & virtiofs. We already have idmapped mounts support for almo=
-st all
-> > > widely-used filesystems:
-> > > * local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, Z=
-FS (out-of-tree))
-> > > * network (ceph)
-> > >
-> > > Git tree (based on torvalds/master):
-> > > v3: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v=
-3
-> > > current: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mou=
-nts
-> > >
-> > > Changelog for version 3:
-> > > - introduce and use a new SB_I_NOIDMAP flag (suggested by Christian)
-> > > - add support for virtiofs (+user space virtiofsd conversion)
-> > >
-> > > Changelog for version 2:
-> > > - removed "fs/namespace: introduce fs_type->allow_idmap hook" and sim=
-plified logic
-> > > to return -EIO if a fuse daemon does not support idmapped mounts (sug=
-gested
-> > > by Christian Brauner)
-> > > - passed an "idmap" in more cases even when it's not necessary to sim=
-plify things (suggested
-> > > by Christian Brauner)
-> > > - take ->rename() RENAME_WHITEOUT into account and forbid it for idma=
-pped mount case
-> > >
-> > > Links to previous versions:
-> > > v2: https://lore.kernel.org/linux-fsdevel/20240814114034.113953-1-ale=
-ksandr.mikhalitsyn@canonical.com
-> > > tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts=
-.v2
-> > > v1: https://lore.kernel.org/all/20240108120824.122178-1-aleksandr.mik=
-halitsyn@canonical.com/#r
-> > > tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts=
-.v1
-> > >
-> > > Having fuse (+virtiofs) supported looks like a good next step. At the=
- same time
-> > > fuse conceptually close to the network filesystems and supporting it =
-is
-> > > a quite challenging task.
-> > >
-> > > Let me briefly explain what was done in this series and which obstacl=
-es we have.
-> > >
-> > > With this series, you can use idmapped mounts with fuse if the follow=
-ing
-> > > conditions are met:
-> > > 1. The filesystem daemon declares idmap support (new FUSE_INIT respon=
-se feature
-> > > flags FUSE_OWNER_UID_GID_EXT and FUSE_ALLOW_IDMAP)
-> > > 2. The filesystem superblock was mounted with the "default_permission=
-s" parameter
-> > > 3. The filesystem fuse daemon does not perform any UID/GID-based chec=
-ks internally
-> > > and fully trusts the kernel to do that (yes, it's almost the same as =
-2.)
-> > >
-> > > I have prepared a bunch of real-world examples of the user space modi=
-fications
-> > > that can be done to use this extension:
-> > > - libfuse support
-> > > https://github.com/mihalicyn/libfuse/commits/idmap_support
-> > > - fuse-overlayfs support:
-> > > https://github.com/mihalicyn/fuse-overlayfs/commits/idmap_support
-> > > - cephfs-fuse conversion example
-> > > https://github.com/mihalicyn/ceph/commits/fuse_idmap
-> > > - glusterfs conversion example (there is a conceptual issue)
-> > > https://github.com/mihalicyn/glusterfs/commits/fuse_idmap
-> > > - virtiofsd conversion example
-> > > https://gitlab.com/virtio-fs/virtiofsd/-/merge_requests/245
-> >
-> > So I have no further comments on this and from my perspective this is:
-> >
-> > Reviewed-by: Christian Brauner <brauner@kernel.org>
->
-> Thanks, Christian! ;-)
->
-> >
-> > I would really like to see tests for this feature as this is available
-> > to unprivileged users.
->
-> Sure. I can confirm that this thing passes xfstests for virtiofs.
->
-> My setup:
->
-> - host machine
->
-> Virtiofsd options:
->
-> [ virtiofsd sources from
-> https://gitlab.com/virtio-fs/virtiofsd/-/merge_requests/245 ]
-> ./target/debug/virtiofsd --socket-path=3D/tmp/vfsd.sock --shared-dir
-> /home/alex/Documents/dev/tmp --announce-submounts
-> --inode-file-handles=3Dmandatory --posix-acl
->
-> QEMU options:
->         -object memory-backend-memfd,id=3Dmem,size=3D$RAM,share=3Don \
->         -numa node,memdev=3Dmem \
->         -chardev socket,id=3Dchar0,path=3D/tmp/vfsd.sock \
->         -device vhost-user-fs-pci,queue-size=3D1024,chardev=3Dchar0,tag=
-=3Dmyfs \
->
-> - guest
->
-> xfstests version:
->
-> root@ubuntu:/home/ubuntu/xfstests-dev# git log | head -n 3
-> commit f5ada754d5838d29fd270257003d0d123a9d1cd2
-> Author: Darrick J. Wong <djwong@kernel.org>
-> Date:   Fri Jul 26 09:51:07 2024 -0700
->
-> root@ubuntu:/home/ubuntu/xfstests-dev# cat local.config
-> export TEST_DEV=3Dmyfs
-> export TEST_DIR=3D/mnt/test
-> export FSTYP=3Dvirtiofs
->
-> root@ubuntu:/home/ubuntu/xfstests-dev# ./check -g idmapped
-> FSTYP         -- virtiofs
-> PLATFORM      -- Linux/x86_64 ubuntu 6.11.0-rc3+ #2 SMP
-> PREEMPT_DYNAMIC Fri Aug 16 10:23:41 CEST 2024
->
-> generic/633 1s ...  0s
-> generic/644 0s ...  1s
-> generic/645 18s ...  18s
-> generic/656       [not run] fsgqa user not defined.
-> generic/689       [not run] fsgqa user not defined.
-> generic/696       [not run] this test requires a valid $SCRATCH_DEV
-> generic/697 0s ...  1s
-> generic/698       [not run] this test requires a valid $SCRATCH_DEV
-> generic/699       [not run] this test requires a valid $SCRATCH_DEV
-> Ran: generic/633 generic/644 generic/645 generic/656 generic/689
-> generic/696 generic/697 generic/698 generic/699
-> Not run: generic/656 generic/689 generic/696 generic/698 generic/699
-> Passed all 9 tests
->
-> I'll try to do more tests, for example with fuse-overlayfs and get
-> back with results.
-
-Ok, it wasn't smooth to make xfstests to run with overlayfs-fuse.
-
-It only started to live after I commented out a bunch of checks in
-_check_if_dev_already_mounted/_check_mounted_on:
-https://git.kernel.org/pub/scm/linux/kernel/git/brauner/xfstests-dev.git/tr=
-ee/common/rc#n1613
-https://git.kernel.org/pub/scm/linux/kernel/git/brauner/xfstests-dev.git/tr=
-ee/common/rc#n1635
-https://git.kernel.org/pub/scm/linux/kernel/git/brauner/xfstests-dev.git/tr=
-ee/common/rc#n1644
-
-I think we have some space for improvements for xfstests+fuse combination. =
-:-)
-
-$ cat /sbin/mount.fuse.overlayfs
-#!/bin/bash
-ulimit -n 1048576
-exec /mnt/fuse-overlayfs/fuse-overlayfs -o $4 $1 $2
-
-$ cat local.config
-export TEST_DEV=3Dnon1
-export TEST_DIR=3D/mnt2
-export FSTYP=3Dfuse
-export FUSE_SUBTYP=3D.overlayfs
-export MOUNT_OPTIONS=3D"-olowerdir=3D/home/ubuntu/fuse_tmp/scratch_lower,up=
-perdir=3D/home/ubuntu/fuse_tmp/scratch_upper,workdir=3D/home/ubuntu/fuse_tm=
-p/scratch_work,allow_other,default_permissions"
-export TEST_FS_MOUNT_OPTS=3D"-olowerdir=3D/home/ubuntu/fuse_tmp/lower,upper=
-dir=3D/home/ubuntu/fuse_tmp/upper,workdir=3D/home/ubuntu/fuse_tmp/work,allo=
-w_other,default_permissions"
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D without idmapped mou=
-nts support =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-# ./check -g idmapped
-FSTYP         -- fuse
-PLATFORM      -- Linux/x86_64 ubuntu 6.11.0-rc3+ #2 SMP
-PREEMPT_DYNAMIC Fri Aug 16 10:23:41 CEST 2024
-
-generic/633 0s ... [failed, exit status 1]- output mismatch (see
-/home/ubuntu/xfstests-dev/results//generic/633.out.bad)
-    --- tests/generic/633.out    2023-06-07 12:19:04.309062045 +0000
-    +++ /home/ubuntu/xfstests-dev/results//generic/633.out.bad
-2024-08-16 13:30:20.471569848 +0000
-    @@ -1,2 +1,4 @@
-     QA output created by 633
-     Silence is golden
-    +vfstest.c: 1561: setgid_create - Success - failure: is_setgid
-    +vfstest.c: 2418: run_test - Success - failure: create operations
-in directories with setgid bit set
-    ...
-    (Run 'diff -u /home/ubuntu/xfstests-dev/tests/generic/633.out
-/home/ubuntu/xfstests-dev/results//generic/633.out.bad'  to see the
-entire diff)
-generic/644 0s ... [not run] vfstest not support by fuse
-generic/645 10s ... [not run] vfstest not support by fuse
-generic/656 0s ... [not run] vfstest not support by fuse
-generic/689 0s ... [not run] vfstest not support by fuse
-generic/696       [not run] this test requires a valid $SCRATCH_DEV
-generic/697 1s ... - output mismatch (see
-/home/ubuntu/xfstests-dev/results//generic/697.out.bad)
-    --- tests/generic/697.out    2023-06-07 12:19:04.313062164 +0000
-    +++ /home/ubuntu/xfstests-dev/results//generic/697.out.bad
-2024-08-16 13:30:21.919598831 +0000
-    @@ -1,2 +1,4 @@
-     QA output created by 697
-    +vfstest.c: 2018: setgid_create_acl - Success - failure: is_setgid
-    +vfstest.c: 2418: run_test - Success - failure: create operations
-in directories with setgid bit set under posix acl
-     Silence is golden
-    ...
-    (Run 'diff -u /home/ubuntu/xfstests-dev/tests/generic/697.out
-/home/ubuntu/xfstests-dev/results//generic/697.out.bad'  to see the
-entire diff)
-
-HINT: You _MAY_ be missing kernel fix:
-      1639a49ccdce fs: move S_ISGID stripping into the vfs_*() helpers
-
-generic/698       [not run] this test requires a valid $SCRATCH_DEV
-generic/699       [not run] this test requires a valid $SCRATCH_DEV
-Ran: generic/633 generic/644 generic/645 generic/656 generic/689
-generic/696 generic/697 generic/698 generic/699
-Not run: generic/644 generic/645 generic/656 generic/689 generic/696
-generic/698 generic/699
-Failures: generic/633 generic/697
-Failed 2 of 9 tests
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D with idmapped mounts=
- support =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-# ./check -g idmapped
-FSTYP         -- fuse
-PLATFORM      -- Linux/x86_64 ubuntu 6.11.0-rc3+ #2 SMP
-PREEMPT_DYNAMIC Fri Aug 16 10:23:41 CEST 2024
-
-generic/633 0s ... [failed, exit status 1]- output mismatch (see
-/home/ubuntu/xfstests-dev/results//generic/633.out.bad)
-    --- tests/generic/633.out    2023-06-07 12:19:04.309062045 +0000
-    +++ /home/ubuntu/xfstests-dev/results//generic/633.out.bad
-2024-08-16 13:29:30.358557063 +0000
-    @@ -1,2 +1,4 @@
-     QA output created by 633
-     Silence is golden
-    +vfstest.c: 1561: setgid_create - Success - failure: is_setgid
-    +vfstest.c: 2418: run_test - Success - failure: create operations
-in directories with setgid bit set
-    ...
-    (Run 'diff -u /home/ubuntu/xfstests-dev/tests/generic/633.out
-/home/ubuntu/xfstests-dev/results//generic/633.out.bad'  to see the
-entire diff)
-generic/644 0s ...  0s
-generic/645 10s ...  10s
-generic/656        0s
-generic/689        0s
-generic/696       [not run] this test requires a valid $SCRATCH_DEV
-generic/697 1s ... - output mismatch (see
-/home/ubuntu/xfstests-dev/results//generic/697.out.bad)
-    --- tests/generic/697.out    2023-06-07 12:19:04.313062164 +0000
-    +++ /home/ubuntu/xfstests-dev/results//generic/697.out.bad
-2024-08-16 13:29:41.466783240 +0000
-    @@ -1,2 +1,4 @@
-     QA output created by 697
-    +vfstest.c: 2018: setgid_create_acl - Success - failure: is_setgid
-    +vfstest.c: 2418: run_test - Success - failure: create operations
-in directories with setgid bit set under posix acl
-     Silence is golden
-    ...
-    (Run 'diff -u /home/ubuntu/xfstests-dev/tests/generic/697.out
-/home/ubuntu/xfstests-dev/results//generic/697.out.bad'  to see the
-entire diff)
-
-HINT: You _MAY_ be missing kernel fix:
-      1639a49ccdce fs: move S_ISGID stripping into the vfs_*() helpers
-
-generic/698       [not run] this test requires a valid $SCRATCH_DEV
-generic/699       [not run] this test requires a valid $SCRATCH_DEV
-Ran: generic/633 generic/644 generic/645 generic/656 generic/689
-generic/696 generic/697 generic/698 generic/699
-Not run: generic/696 generic/698 generic/699
-Failures: generic/633 generic/697
-Failed 2 of 9 tests
-
-As we can see it's clearly not related to idmapped mounts, as I
-compare two cases, overlayfs-fuse compiled *without* support for
-idmapped
-mounts and *with*.
-
->
-> Kind regards,
-> Alex
+T24gVGh1LCAyMDI0LTA4LTE1IGF0IDE5OjE5ICswMTAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiA+
+IFRoZSBzZXJpZXMgaXMgYWxyZWFkeSB1cHN0cmVhbS4gWW91IGp1c3QgbmVlZCB0byBhZGQgYW4g
+YXJtIHZlcnNpb24gb2YgdGhhdA0KPiA+IGxpbmtlZCBwYXRjaC4gQnV0IHVwIHRvIHlvdS4NCj4g
+DQo+IFlvdXIgc2VyaWVzIG1vZGlmaWVkIHRoZSBleGlzdGluZyB4ODYgY3VzdG9tIGFyY2hfZ2V0
+X3VubWFwcGVkX2FyZWEqKCkNCj4gZnVuY3Rpb25zLCBhcm02NCB1c2VzIHRoZSBnZW5lcmljIGlt
+cGxlbWVudGF0aW9uIG9mIHRob3NlIHNvIEknZCBoYXZlIHRvDQo+IGVpdGhlciBhZGQgY3VzdG9t
+IGltcGxlbWVudGF0aW9ucyAod2hpY2ggSSBjYW4ndCBpbWFnaW5lIHdvdWxkIGJlIG1ldA0KPiB3
+aXRoIGdyZWF0IGVudGh1c2lhc20pIG9yIHVwZGF0ZSB0aGUgZ2VuZXJpYyBvbmVzLsKgIEEgZ2Vu
+ZXJpYw0KPiBpbXBsZW1lbnRhdGlvbiBzZWVtcyByZWFzb25hYmxlIGFuZCBpdCBsb29rcyBsaWtl
+IFJJU0MtViB3b3VsZCBhbHNvIGVuZA0KPiB1cCB1c2luZyBpdCBzbyB3aGlsZSBpdCdzIGEgYml0
+IGludmFzaXZlIGl0IGRvZXMgc2VlbSBtb3JlIHNlbnNpYmxlIHRvDQo+IGRvIHRoZSBjaGFuZ2Ug
+dGhlcmUuDQoNCkFoLCBJIG1pc3VuZGVyc3Rvb2QuIE1ha2VzIHNlbnNlLg0K
 
