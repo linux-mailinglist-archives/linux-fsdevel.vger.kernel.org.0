@@ -1,56 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-26091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF57953FF1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 05:03:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2950953FF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 05:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABDFE283560
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 03:03:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E740F1C2226C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 03:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F0153363;
-	Fri, 16 Aug 2024 03:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332E355898;
+	Fri, 16 Aug 2024 03:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="LIfE9tvM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OEpBkw44"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE312D05D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 03:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084A626AC3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 03:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723777427; cv=none; b=Q51i2g16Ydoh1vBw1BqvDJKJjUYsLqNDbnyEpuDxCOipPvtgjwHrbmscgemej7rSTGsb+RFDb/V6aL6B3eB7ABCcqy7Ayn/4pYQJnHVr/8t7+ljzZPguRlDwVnZgs9lPnXKiO4aZ2gYP+frbD0WgOYFJjrHn398LMX4mdtAiEi8=
+	t=1723777658; cv=none; b=cc4exKHSm0e4WnogkMaLFtoWSdlot1+Ni923WjwTHrY1P9Pwn0C1KYu8OVo6V6gq1VZuLLPYqrsUydI9dsAdH1E/wtCjaBbUTyN1Umv8BvpOXz/xG+/LznlB8KRGpvzdFY5vGFE1rM1S8FlNvq1Obq0rIIBj1/NB9W9/NTz5r7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723777427; c=relaxed/simple;
-	bh=OZsI85MKr3yonot9osEoBrWYi7c9chOKp6nW4BcxxZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=n7eFjN7ImDNl285sRiIHkcMonMJ54b57ORmoXWuEavAhmCNOkInbw4L3KP49K52Tyk5DdST81bjH7SUBGR6+PSs9fj4CTnmQuu9bDDYqBWk6ZmYtZPK2WVXmCd1IyI58FM58CO0pm6MKpg0PGfKqDpsPkE2zigSIOGec5rGMTr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=LIfE9tvM; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1723777658; c=relaxed/simple;
+	bh=2AS6i8E50HO1I0rIGPTQKotWvbeM3PXlHYbq8SisDMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMhbQks6N0uTl2BhnpFrJukTQ98jvlkb0//ktgsEVuFr8ItSdxbykJA3uKbTyJR+8Q7JfWkIsYlw1NyNpGqrehEDeCshqZFHLTOpODF0+De2lQt5cBfkY3FKGGs/xf0bI4r+GZOmmBm8zKPUlC4e15e33q44gYMJiInRYsExW98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OEpBkw44; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=nnkSAJEjGoJe3O/hhVuODFoJNW92u+c6bmJq1DBcKK4=; b=LIfE9tvMkOA3B2H+xz0jzKseuD
-	HQGrhAG3WZbyqnm4LdvjVxg91GYAm7kbToHpley1+4sEE2KmgQV8cZsFEJHt9R9hqUmcR4DPkTTRz
-	pUCLuwfyKmlN8UZ7PB68hS0CtuqUUi7oBfWfPYi5vIDJu3A1/+mSFY/aVBO071lLa9U/GNozBgBVo
-	wknhgsjad/6LyfsveQdc9HdZmiOlV6JG5jXX9gSjWl0ym3i6qBR8LwNtAiDn5LZau62PK9E/7BsLC
-	rTcMZLX316mJ/rfO4fWE33p11BIhW2VchzPTP9jWEirtM9IUrAD7cIHDiwsQEEKc9pI7T4VHCWhtN
-	UxCe7M8Q==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sdtNm+SOjxRoJfa703Oa//ouhBHz6H5oi86u5eiUjTs=; b=OEpBkw446v6LxzkgNf8inv6CaP
+	PzuZ60JODGX9Oeqh24GvmuM73PbmBIRmGD+aCUJiNEXQABRLGLcwNlblRNtx/TmzKUEZFlbaycgIZ
+	eF2nKg4vFAENhFNv2AUD3tfHQJL/hTq0WrSezCyls6rO9vKebCsZjOxZcHlJHUrgp/9CRub9mYy4c
+	bB5mENIbwsVHBQfhytuVUp29AH52DJtUattvbx98EAr1AqdXQWuMQa/LHq5xVYs3KsyTp6WXHaU1V
+	bGe+I+CQovbtnH/g/mTjA9C4/k+bt+3xoXqtk0iJrfVJn618j9zw1nS9kH6c5JDiY46h+SVDH7IR5
+	06J/0axA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1senFd-000000025Jn-2CQX;
-	Fri, 16 Aug 2024 03:03:41 +0000
-Date: Fri, 16 Aug 2024 04:03:41 +0100
+	id 1senJO-000000025OW-1QdX;
+	Fri, 16 Aug 2024 03:07:34 +0000
+Date: Fri, 16 Aug 2024 04:07:34 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Christian Brauner <brauner@kernel.org>
-Subject: [RFC] more close_range() fun
-Message-ID: <20240816030341.GW13701@ZenIV>
+Subject: Re: [RFC] more close_range() fun
+Message-ID: <20240816030734.GX13701@ZenIV>
+References: <20240816030341.GW13701@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,50 +60,54 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240816030341.GW13701@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Thread 1:
-	if (dup2(0, 1023) >= 0)
-		dup2(0, 10);
+On Fri, Aug 16, 2024 at 04:03:41AM +0100, Al Viro wrote:
+> Thread 1:
+> 	if (dup2(0, 1023) >= 0)
+> 		dup2(0, 10);
+> 
+> Thread 2:
+> 	if (close_range(64, 127, CLOSE_RANGE_UNSHARE) == 0 &&
+> 	    fcntl(10, F_GETFD) >= 0 &&
+> 	    fcntl(1023, F_GETFD) == -1)
+> 		printf("broken");
+> 
+> 
+> Note that close_range() call in the second thread does not
+> affect any of the descriptors we work with in the first thread
+> and at no point does thread 1 have descriptor 10 opened without
+> descriptor 1023 also being opened.
+> 
+> It *can* actually happen - all it takes is close_range(2) decision
+> to trim the copied descriptor table made before the first dup2()
+> and actual copying done after both dup2() are done.
+> 
+> I would not expect that printf to trigger - not without having
+> looked through the close_range(2) implementation.  Note that
+> manpage doesn't even hint at anything of that sort.
+> 
+> IMO it's a QoI issue at the very least, and arguably an outright
+> bug.
+> 
+> Note that there is a case where everything works fine, and I suspect
+> that most of the callers where we want trimming are of that sort -
+> if the second argument of close_range() is above the INT_MAX.
+> 
+> If that's the only case where we want trimming to happen, the
+> fix is trivial; if not... also doable.  We just need to pass the
+> range to be punched out all way down to sane_fdtable_size()
+> (e.g. as a pointer, NULL meaning "no holes to punch").  I wouldn't
+> bother with unshare_fd() - it's not hard for __close_range() to
+> use dup_fd() instead.
+> 
+> Something like this (completely untested), perhaps?
 
-Thread 2:
-	if (close_range(64, 127, CLOSE_RANGE_UNSHARE) == 0 &&
-	    fcntl(10, F_GETFD) >= 0 &&
-	    fcntl(1023, F_GETFD) == -1)
-		printf("broken");
-
-
-Note that close_range() call in the second thread does not
-affect any of the descriptors we work with in the first thread
-and at no point does thread 1 have descriptor 10 opened without
-descriptor 1023 also being opened.
-
-It *can* actually happen - all it takes is close_range(2) decision
-to trim the copied descriptor table made before the first dup2()
-and actual copying done after both dup2() are done.
-
-I would not expect that printf to trigger - not without having
-looked through the close_range(2) implementation.  Note that
-manpage doesn't even hint at anything of that sort.
-
-IMO it's a QoI issue at the very least, and arguably an outright
-bug.
-
-Note that there is a case where everything works fine, and I suspect
-that most of the callers where we want trimming are of that sort -
-if the second argument of close_range() is above the INT_MAX.
-
-If that's the only case where we want trimming to happen, the
-fix is trivial; if not... also doable.  We just need to pass the
-range to be punched out all way down to sane_fdtable_size()
-(e.g. as a pointer, NULL meaning "no holes to punch").  I wouldn't
-bother with unshare_fd() - it's not hard for __close_range() to
-use dup_fd() instead.
-
-Something like this (completely untested), perhaps?
+or, with a braino fixed, this:
 
 diff --git a/fs/file.c b/fs/file.c
-index 655338effe9c..870c0c65530b 100644
+index 655338effe9c..312574fda320 100644
 --- a/fs/file.c
 +++ b/fs/file.c
 @@ -272,20 +272,6 @@ static inline bool fd_is_open(unsigned int fd, const struct fdtable *fdt)
@@ -143,7 +148,7 @@ index 655338effe9c..870c0c65530b 100644
 +
 +	if (last == fdt->max_fds)	// empty
 +		return NR_OPEN_DEFAULT;
-+	if (punch_hole && punch_hole[1] >= last) {
++	if (punch_hole && punch_hole[1] >= last && punch_hole[0] <= last) {
 +		last = find_last_bit(fdt->open_fds, punch_hole[0]);
 +		if (last == punch_hole[0])
 +			return NR_OPEN_DEFAULT;
