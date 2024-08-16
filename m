@@ -1,428 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-26152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C15B9551D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 22:27:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FEE89551DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 22:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ED1C1C22C1C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 20:27:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7B8DB20E97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 20:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274DD1C4637;
-	Fri, 16 Aug 2024 20:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5461C579D;
+	Fri, 16 Aug 2024 20:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aKsjco8L"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BSaAijJN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8491BD006
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 20:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723840023; cv=none; b=NrwU72S+ieYfaGVpJZxPJmtbgFph96lRFez6fvf5uOJqqVGnZUb0ljmxByCT9J80w1x/HFhraKixpISJkxpq3vyG9FRvGtKbPwhlZ2yI7nj35HdyHcl0Z7jBYKR4RNHKDhWqZz87s6e9kQuWRFp5+thyQmOkf3Ic31VJlZqmPyM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723840023; c=relaxed/simple;
-	bh=LgPnv6aSA9O299PNi8PeEYDYzhFo5904ou9IXsUoKVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXXhqao4f106/DT5pPIoQ4fKznzUtL6W7tLzFTKjcQI4rGcFeuUd5ySzd1EyRDPK1rXmL37D7hrN7TDi3Gc40dhIZz5nbnHd7Y/GzhqUkmeoVdZzzYmR3kGth5rHb0/ElAAEQCuKyyFY3OtHipoDxtvY9oRaOOCuquUODc/gqRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aKsjco8L; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1MNq1G4L2llVaez3TXNg7gb9UIKgGqS+DbMSdk8W2aE=; b=aKsjco8LA4/hc0qXdDYNC9+5nH
-	01hFgo0cBu1hZ0xR8ISo1q2AiviRP6aWlOepAHJyfCIU6TC3sO4AOxpieWiVtkWcqWSn5cr5X8mhI
-	z6w8jZVUeY0/SYzy7fbrOUY7i3pizg3pwIloIG/bayEytmc8Zbv1XulQfJisAX5Le5zkbhC3oxgEL
-	+joeu1+0Mci9UGqJMYmTMjn5IWTiRoeUeztrkbTQU2FPpKnQpONJsP6NiKpo8voGuzA47kpltWQz2
-	Z/WW0Yhww1MN5D+WfprwklsgAyF8D7bAiXpitdhdrrzUw+Em3SJUmhrvLvjPHLAVC4O/kHDs8gcUG
-	8SliRzmg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sf3XF-00000002Ohi-0jhC;
-	Fri, 16 Aug 2024 20:26:57 +0000
-Date: Fri, 16 Aug 2024 21:26:57 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [RFC] more close_range() fun
-Message-ID: <20240816202657.GE504335@ZenIV>
-References: <20240816030341.GW13701@ZenIV>
- <CAHk-=wh_K+qj=gmTjiUqr8R3x9Tco31FSBZ5qkikKN02bL4y7A@mail.gmail.com>
- <20240816171925.GB504335@ZenIV>
- <CAHk-=wh7NJnJeKroRhZsSRxWGM4uYTgONWX7Ad8V9suO=t777w@mail.gmail.com>
- <20240816181545.GD504335@ZenIV>
- <CAHk-=wiawf_fuA8E45Qo6hjf8VB5Tb49_6=Sjvo6zefMEsTxZA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5231C27;
+	Fri, 16 Aug 2024 20:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.168.131
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723840130; cv=fail; b=X2QWUvlfCPGREd8kpocv2NL31WeaLeMbQ/K6pfOHT4F0Q8lr5nSvufyyxeUc4N0UwywhtNfhRFvOw/9DgKIlzypvEkmgV2QiOOUXMwBgp369b6uAJUkikShuSQDxfbynJMck4OlDNiNL/KvfQ1hojzD7C2J/O0zKh6IX1KnDFLI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723840130; c=relaxed/simple;
+	bh=is/OEV6lSd1R2DyBx7fSQXKkeflWPjgA5Es4ARv55ms=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gXwxi46eioPlDtLwX4qNuuz2ilE59MSnEZEXOiAo6ddSRXOzN0AtrbRYsRE27Kl2JbaOpu5D/7Lh5SPVXL2zm36O8J5tf+4h0qNP5/pCuf3UDVOY1UZUhI1WLQlmwz8Qn9LIvFhkyD5V9rwL+APLHRercAkeWy87h1/7SXh3BGo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BSaAijJN; arc=fail smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47GJLBnb022157;
+	Fri, 16 Aug 2024 20:27:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mT11hHlOMFmYUjmcvT/oA2J9+yYNu/mfj9erMEw/K7M=; b=BSaAijJNmjDAE1Qc
+	zwnZ5WgB+QdSW2NEr7w9nqqW//kZLF+6TAh4I+PdnSnX1sJozSLIapmQQvKD9xLQ
+	DGWy1C7P2VoSkgvn0SmiX74nohHluy75Yr9eVyxJhDD4e5DW/H93w5nR5/XozwR/
+	iH1CyijcaH407+Ah9W7ASiH6pDXAZmk8ZXM6iIlIHehKP1olfO5e9al6jtxf3yo8
+	rnulknquhqAUOYGc71VAWvWsLO94afrftUXy2820lDHAGi2lMjG/QXOAylGkGYCc
+	5UROQrEIbsEllEvXru45eBZGkODu1Veb2ozWUZUG1gpBO3/Qh+V7E6Qzz9n4EClx
+	KoMC5A==
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2171.outbound.protection.outlook.com [104.47.57.171])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412bqe8cc2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Aug 2024 20:27:34 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eFGR10JUVBp5TSFnTORurwW/9tZpbxlPJIm0P+aiD3dhsi6BnUxFCqkRjO1mvdoknVJ2sAVQx1wKx6k9/Ef/IpuTwOpQMrE0I213pGE/U6qClUvy6WlXFU21A0/Bw+lhwwcmkmg8HDMGqoDPy4x9EAfcU8b5nFSez3UmHMvE0RoapyCW2cZ/Q461wenNkgErAsQDC0aGWPrPTdoTw5ppciduXTggtf7cn1Z81VMZMq3sAkIvsOsbWdZvcZDgDBhaZFxmU3XMDMo6B0A6uFgi73JWh3Hyg6Q4LwlMGT6eSLB3o8HWvC0FLXwaMtmI9FGGAiT5mUesJogsjH2sBxqzsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mT11hHlOMFmYUjmcvT/oA2J9+yYNu/mfj9erMEw/K7M=;
+ b=jPf4XIuXzBEETesko569xmdtoCEQeDw6MAwqcmosa9H8lbUsDhhNEE4VNQRcOPKsjYSUOQNQm+bDm0dTU2mZDqhXRZ4mBJ3xhRer42wG/ZsmGfZZzQ452bwXoxKiFlJxsn7PeLZmTx3EO+v00i/IBKVQxJ/HCXC+UG2qK7btdXHPQHccZoPfpy3gKUFAMQVsS03ea3YcAw+fNxJEPXuvJJX28+Klxa1yrqCq5a5HCVjR26ssl5yIHg6sG+jdS3/u9xCmby1Is8f8UVahAm+MLKGA9wxuS549rJHtk0D+rkLKeBjiXYvBXZBAwsSgNHQ8B0nxq/IbQ4EKSp1E7jUisQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=quicinc.com; dmarc=pass action=none header.from=quicinc.com;
+ dkim=pass header.d=quicinc.com; arc=none
+Received: from CH3PR02MB10247.namprd02.prod.outlook.com
+ (2603:10b6:610:1c2::10) by CH3PR02MB10153.namprd02.prod.outlook.com
+ (2603:10b6:610:195::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.20; Fri, 16 Aug
+ 2024 20:27:30 +0000
+Received: from CH3PR02MB10247.namprd02.prod.outlook.com
+ ([fe80::2980:17c4:6e92:2b11]) by CH3PR02MB10247.namprd02.prod.outlook.com
+ ([fe80::2980:17c4:6e92:2b11%4]) with mapi id 15.20.7875.019; Fri, 16 Aug 2024
+ 20:27:30 +0000
+From: Brian Cain <bcain@quicinc.com>
+To: Arnd Bergmann <arnd@kernel.org>,
+        "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>,
+        Thomas Bogendoerfer
+	<tsbogend@alpha.franken.de>,
+        "linux-mips@vger.kernel.org"
+	<linux-mips@vger.kernel.org>,
+        Helge Deller <deller@gmx.de>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        Michael Ellerman
+	<mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy
+	<christophe.leroy@csgroup.eu>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+        Guo Ren
+	<guoren@kernel.org>,
+        "linux-csky@vger.kernel.org"
+	<linux-csky@vger.kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        Rich Felker
+	<dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "H. Peter Anvin"
+	<hpa@zytor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner
+	<brauner@kernel.org>,
+        "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>,
+        "libc-alpha@sourceware.org"
+	<libc-alpha@sourceware.org>,
+        "musl@lists.openwall.com"
+	<musl@lists.openwall.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v2 09/13] csky, hexagon: fix broken sys_sync_file_range
+Thread-Topic: [PATCH v2 09/13] csky, hexagon: fix broken sys_sync_file_range
+Thread-Index: AQHaxlTwF2LstnDJtUq+N6pFZE3dlrIqqHnw
+Date: Fri, 16 Aug 2024 20:27:30 +0000
+Message-ID:
+ <CH3PR02MB10247E03891A370B0721648E1B8812@CH3PR02MB10247.namprd02.prod.outlook.com>
+References: <20240624163707.299494-1-arnd@kernel.org>
+ <20240624163707.299494-10-arnd@kernel.org>
+In-Reply-To: <20240624163707.299494-10-arnd@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH3PR02MB10247:EE_|CH3PR02MB10153:EE_
+x-ms-office365-filtering-correlation-id: ebc3cff4-c0cb-4ffa-1a48-08dcbe31da42
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?txMvJcGetuSqgQmVNTHazoVVwncOukb7AGgRk3B/xQdxFZ89TzFFXnDIA75e?=
+ =?us-ascii?Q?jVuaz32qNyTTfE+SzSKkV5xt3T+Ne0cbLsSY8KWQA7j0pfLukl3A+FvOmPaP?=
+ =?us-ascii?Q?jXYvmKLnEMAI4oS/wlJ3dmR80J70BeeKksXHi7JCIeBT3lVS4Rt20aJIuMFq?=
+ =?us-ascii?Q?4SxCfxr6loaUx8vTQ2bb3oXlPwiW+bn/qB0tXl1u9PZnrJJU0aSg0Wit0Axo?=
+ =?us-ascii?Q?awgjCr9N/q2pHhaQYv1IwZd1l/7t52OhtU4YgDCu6jTZa0R7aP0eDICN+IDl?=
+ =?us-ascii?Q?dez5ADenkDyMdF8JDxmD2RLAP7sWF/Z8xq4eyrfMEDWjzIwGOYosmNhKRyX7?=
+ =?us-ascii?Q?xkxXBp/i+wex4OUHwk0y7CjouA8V2a/HNG8a1P5YaaZk+vnNXZFdRD5CtaSL?=
+ =?us-ascii?Q?phLbF/S0zCLTSxdEJlHsHDGync68JTvll5xhP2OdGW0bUZa0aekU77NsunGZ?=
+ =?us-ascii?Q?T1vSgm5CwAYLNVw4I3DRfEmAUigMIBGiI3eQcAyA3ggFFGUFWm4ci9lEOdl9?=
+ =?us-ascii?Q?EZmIFDbAyvCKLkzCVw3Jy8E9rWysOaDWb+6+gTTsY4NnfIF5LgM55r+DQIbe?=
+ =?us-ascii?Q?I8xiGBMAZUvHiEeHIitsaOaXHeT4v+y1bplIrmNr6v9p8+EPyYjTH00sTcYN?=
+ =?us-ascii?Q?c/NwWCNgp1bXjxrBezw/YYtGmLmulMmgFIs0A5LDAPOrtweygSpHkXzOr60p?=
+ =?us-ascii?Q?u1xH5o2nCE9rk/1XPtqcDcBFlqfSVA1KG5o9b2xZAUFYnyuerUDMaCD3Qm/S?=
+ =?us-ascii?Q?r/U2oKKT4PMHXozC5DBevjvW/hy8XW6kzcga3kKu76kXIoAu9FKmaMUhO1FY?=
+ =?us-ascii?Q?mAKb7eMk35bBJJVOK0x1Y8WBl3pS871DSmSx73eKI9JnxjbVU9ttWV3zX1ZY?=
+ =?us-ascii?Q?0Zs7G2xJPqPsyALGVKqiYY3mpLqdjfU+t0mj6XwFp/T5XqaSsG5wSmJ00Vaa?=
+ =?us-ascii?Q?ocxVI1Fw+EKryTsm1Msv9aTdjV7OIaxl0HVeWdGgzLGx+0BZ1NBsN8i8Hd60?=
+ =?us-ascii?Q?WPU0jRCZQxcpLDXy/sy0B6vdZrMHVrsBYXIfCz3SX0osDG5vnm7JwxjqB7BA?=
+ =?us-ascii?Q?k6GOOFE4CASNsggISAHsGeQiC4zPjlJU1xx306qYhxepjT8n8iVAlJ3Fszvl?=
+ =?us-ascii?Q?v+69UxMdbO1ni1n0zQ5WIrGhaku6LPQk63DpWP2Y41KHgSw6CyR8klKnHRWD?=
+ =?us-ascii?Q?0uv9TVyODD3gt9kzOJunAGtZqIufQPD9G3JH93ZlJw2XT8obpb2ZtSH30oJm?=
+ =?us-ascii?Q?/BiDJfgfofQrH5bqGlVVWxopF2jr4V1C56y+rMtqgME+4rXtqN7OGtoK9nI2?=
+ =?us-ascii?Q?Sza65Q+do9zXFAMm4PDv0bq1+JF/oyepB98NF2D0NxnsY/0hyVkmqDKxzAO6?=
+ =?us-ascii?Q?++U957gBK+B7jQGj8uF1JxvYAuEsCZk5+/hB7oftJa5D1rXLRA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR02MB10247.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?UA57RS6B/4UavXOoDN95VWIUFHKdCfSepCAdzAnOxQyDOj5WTWl4MJ5wyeEH?=
+ =?us-ascii?Q?rM3TQCgv5usO4uGcN4kxImd261auLrlMjh8JpAtcs5nKIpsQJMsDgXEUvQ5h?=
+ =?us-ascii?Q?SpLBNkjs4XHHKhLKUUdN/1/4+usWNWh4twGUuLrGxEhHW6xd3QiBU4HVtv0G?=
+ =?us-ascii?Q?je9L9IXaB5RtEa9T7p2PfNmBgWX9s3apX01FNg0/QlLRUkvBjo1LSpQbqite?=
+ =?us-ascii?Q?EczeF7taykdZdCPlAUP3/0gI98Q51NZDIn2j0Ax4VnYRHL5/pwXU+Dp2JLHN?=
+ =?us-ascii?Q?yItX1mD/Xlfvu68Ksl+ThltLj7Z0KX+f8DuetVElATc9tYHHI9wqSH1aGN3J?=
+ =?us-ascii?Q?1aIKLIT+21m6iuMvachCui6u6gUEOxphCE6f3XzH7R7z3oJ1oc7ELBFfFmLn?=
+ =?us-ascii?Q?YDPCJdGcn705IQiCi61JGD5pVLAv1u4zADj4OnKFFV1mp4So0lg2UU/YIPiU?=
+ =?us-ascii?Q?S3uqaMpTwa/G3WSot7626U6iiupDv6TO04z4U5oJReb9upA6UBT/pgA3ksk2?=
+ =?us-ascii?Q?yg7RMER1LhL6KYkJXhJtRFlL1jWLFqGWI+HYWpH2VUcrYPnpUQsZIwCaCqoS?=
+ =?us-ascii?Q?IyKpC7dJ/Kk7B4jKzTg7iDNJ1eI06uW4udaxwZCXpahHySMUfkxbkuk5d3LT?=
+ =?us-ascii?Q?D6B4Z0wH+wayNpw3w2g7BYQnql6uCc3iigtDn+2a/RwVuHJ9cniff0ZAWKWJ?=
+ =?us-ascii?Q?zg4JlsuxnTkPD5UeUcg5zm5njppx+8xHQIVzbbe0v8xifwwYzoyLLpAZwTn9?=
+ =?us-ascii?Q?Ckyf1SJX/ZNyiOHtqDEDvv8e28RbSqOhsZETig59uA4wGrtE18uXumVIArFG?=
+ =?us-ascii?Q?aAeO6F5sjFSBhEXKDgGKKKm031Em6aTof5LI7+elfz7gZrJKzLqLk7okHXbC?=
+ =?us-ascii?Q?SdMBSNm5VhnLNPu7qE7Cb7Q1ycVWtygNcGe8vGUGdvgIQJpAcd7aPe/wzu33?=
+ =?us-ascii?Q?5GjuZRGwAK+c9LsXWcTS5YJfnqyMysp+8Ws1gaFHF+glXgGoppgLZ+OXzx+H?=
+ =?us-ascii?Q?IFZ/b/SLckffAPlLfpvxdDfPt17ZejXI7hlLHExkxfEmCz0avlZy91GK4qGU?=
+ =?us-ascii?Q?8XdifBeAIUciZOUvFK7GxRTSHIPV/Qqf2o68PVNB6A9ulWG0WXFElWA07iPq?=
+ =?us-ascii?Q?4FU30stW5FPJ0psnHp0mng10b/ka6ZrMxeo4czxcbJSlwKIusRuTqguu5lK9?=
+ =?us-ascii?Q?1YBVPNhLgcylwHbqhCxzm56cn9e4HgkhFmlpkrXL1g7AdnTI36HAUMWjy0CO?=
+ =?us-ascii?Q?6zd1Rf24DQCufYJ+5fUlHM4q0n7YCdta93vZJI5SO4Zn6C6xtIYUjZE34bks?=
+ =?us-ascii?Q?P0UCFFYRH82W9Q8EeDEKEKD63hgG9YdwfUi9j5XwFVaoKZ8ZrE1hdJlZgpKf?=
+ =?us-ascii?Q?ByKhy9s+JDYuKrA/fV4zkHovMKduhrHUp1I9JjYUeG7lOGYezfLVY60dXsiM?=
+ =?us-ascii?Q?iJKejojkzsvt09Oi7j+qEK+Fz2KvvNeZ14Uz/PgaYIC3/lP8V1nNwO/JD69k?=
+ =?us-ascii?Q?5yapsQeOqXTTc381KrKcyiiAAUSFgj8ktabSCYx+oF6ZD1kymsTlXdRrwGeV?=
+ =?us-ascii?Q?Tpin3dDAaBURIU841esRo+Bnk2I8MC+wKHtqMgLz?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiawf_fuA8E45Qo6hjf8VB5Tb49_6=Sjvo6zefMEsTxZA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	/56sKNiGJbhe3oPIg+IDGQMCO9Hb4dl7lO6Z2Cko6d94QKR5CvBtB3CS7M2QmsbEtDLDw60+w1YWUevHvYViqNkq8Md4NbzeEAyMaIUoBCtib6UjBhSUwZLoinj+7UTehW+chx/Ak9Sod3hOvxV+shMj9B7RpX8UPzI06U6GoVhpjCiPGZ+qpLMaq4t/CX3FKfD+KE99XXzuA50PlLbMSJ9RyHwovqFPHmLDxXARdz2qY/SeC29AF5v4u08AjzzFvJLDv3MHH+mZr853JvAXZD5GDVfdDkA/d/UnMsTr4275lLaNh1EVf6vCLlxY0nC3hrpNu7AhHJeo8DdrT6gyYmX5nphtrAIUwftp0fFjUEqQLbvcUTXXgxABixIs/z8qvdQdUtCbDueLaWCgHKORnPJVB5ZxqRNaUEX7spvvaOVkPTOT+2X4Ym4l5Aw5kW52qsEJ7nTNUyP8dkmzwa80UPOv/qepHAtbhuLUvqRBoFijeOcvOd1pgKKMPsyw9+CUWSn/Ujngj+HOnML6mK6IyFxiYqek66QoUC5jSacKs2a1HAlR1u1YHhLhAvuIevb59XS9qMcODn0sU1oivk5MCv3zXsP4kwSBI5Kuhzx+PuQpSdLk/Q5ifo4wK7NehUDg
+X-OriginatorOrg: quicinc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR02MB10247.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebc3cff4-c0cb-4ffa-1a48-08dcbe31da42
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2024 20:27:30.3690
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: G5vaSYR4vwlIGkH1Q6Bq2zi4gGIsz79xkBiHLjb9Pm+snU3+kAacwgvL3BpE9kDBOqXpczIvB9H8dvZXj1sWFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR02MB10153
+X-Proofpoint-GUID: K6Vq6vPhdeeh0pPvkJT723zGvuMuGaQC
+X-Proofpoint-ORIG-GUID: K6Vq6vPhdeeh0pPvkJT723zGvuMuGaQC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-16_16,2024-08-16_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 spamscore=0 adultscore=0 impostorscore=0 phishscore=0
+ bulkscore=0 mlxscore=0 mlxlogscore=956 clxscore=1011 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408160145
 
-On Fri, Aug 16, 2024 at 11:26:10AM -0700, Linus Torvalds wrote:
-> On Fri, 16 Aug 2024 at 11:15, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > As in https://lore.kernel.org/all/20240812064427.240190-11-viro@zeniv.linux.org.uk/?
-> 
-> Heh. Ack.
 
-Variant being tested right now:
 
-commit e52e593a8494feb745489cdf5e826ca06d32f495
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Fri Aug 16 15:17:00 2024 -0400
+> -----Original Message-----
+> From: Arnd Bergmann <arnd@kernel.org>
+> Sent: Monday, June 24, 2024 11:37 AM
+> To: linux-arch@vger.kernel.org; linux-kernel@vger.kernel.org
+> Cc: Arnd Bergmann <arnd@arndb.de>; Thomas Bogendoerfer
+> <tsbogend@alpha.franken.de>; linux-mips@vger.kernel.org; Helge Deller
+> <deller@gmx.de>; linux-parisc@vger.kernel.org; David S. Miller
+> <davem@davemloft.net>; Andreas Larsson <andreas@gaisler.com>;
+> sparclinux@vger.kernel.org; Michael Ellerman <mpe@ellerman.id.au>; Nichol=
+as
+> Piggin <npiggin@gmail.com>; Christophe Leroy
+> <christophe.leroy@csgroup.eu>; Naveen N . Rao
+> <naveen.n.rao@linux.ibm.com>; linuxppc-dev@lists.ozlabs.org; Brian Cain
+> <bcain@quicinc.com>; linux-hexagon@vger.kernel.org; Guo Ren
+> <guoren@kernel.org>; linux-csky@vger.kernel.org; Heiko Carstens
+> <hca@linux.ibm.com>; linux-s390@vger.kernel.org; Rich Felker
+> <dalias@libc.org>; John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.d=
+e>;
+> linux-sh@vger.kernel.org; H. Peter Anvin <hpa@zytor.com>; Alexander Viro
+> <viro@zeniv.linux.org.uk>; Christian Brauner <brauner@kernel.org>; linux-
+> fsdevel@vger.kernel.org; libc-alpha@sourceware.org;
+> musl@lists.openwall.com; stable@vger.kernel.org
+> Subject: [PATCH v2 09/13] csky, hexagon: fix broken sys_sync_file_range
+>=20
+> WARNING: This email originated from outside of Qualcomm. Please be wary o=
+f
+> any links or attachments, and do not enable macros.
+>=20
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> Both of these architectures require u64 function arguments to be
+> passed in even/odd pairs of registers or stack slots, which in case of
+> sync_file_range would result in a seven-argument system call that is
+> not currently possible. The system call is therefore incompatible with
+> all existing binaries.
+>=20
+> While it would be possible to implement support for seven arguments
+> like on mips, it seems better to use a six-argument version, either
+> with the normal argument order but misaligned as on most architectures
+> or with the reordered sync_file_range2() calling conventions as on
+> arm and powerpc.
+>=20
+> Cc: stable@vger.kernel.org
+> Acked-by: Guo Ren <guoren@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/csky/include/uapi/asm/unistd.h    | 1 +
+>  arch/hexagon/include/uapi/asm/unistd.h | 1 +
+>  2 files changed, 2 insertions(+)
+>=20
+> diff --git a/arch/csky/include/uapi/asm/unistd.h
+> b/arch/csky/include/uapi/asm/unistd.h
+> index 7ff6a2466af1..e0594b6370a6 100644
+> --- a/arch/csky/include/uapi/asm/unistd.h
+> +++ b/arch/csky/include/uapi/asm/unistd.h
+> @@ -6,6 +6,7 @@
+>  #define __ARCH_WANT_SYS_CLONE3
+>  #define __ARCH_WANT_SET_GET_RLIMIT
+>  #define __ARCH_WANT_TIME32_SYSCALLS
+> +#define __ARCH_WANT_SYNC_FILE_RANGE2
+>  #include <asm-generic/unistd.h>
+>=20
+>  #define __NR_set_thread_area   (__NR_arch_specific_syscall + 0)
+> diff --git a/arch/hexagon/include/uapi/asm/unistd.h
+> b/arch/hexagon/include/uapi/asm/unistd.h
+> index 432c4db1b623..21ae22306b5d 100644
+> --- a/arch/hexagon/include/uapi/asm/unistd.h
+> +++ b/arch/hexagon/include/uapi/asm/unistd.h
+> @@ -36,5 +36,6 @@
+>  #define __ARCH_WANT_SYS_VFORK
+>  #define __ARCH_WANT_SYS_FORK
+>  #define __ARCH_WANT_TIME32_SYSCALLS
+> +#define __ARCH_WANT_SYNC_FILE_RANGE2
 
-    close_range(): fix the logics in descriptor table trimming
-    
-    Cloning a descriptor table picks the size that would cover all currently
-    opened files.  That's fine for clone() and unshare(), but for close_range()
-    there's an additional twist - we clone before we close, and it would be
-    a shame to have
-            close_range(3, ~0U, CLOSE_RANGE_UNSHARE)
-    leave us with a huge descriptor table when we are not going to keep
-    anything past stderr, just because some large file descriptor used to
-    be open before our call has taken it out.
-    
-    Unfortunately, it had been dealt with in an inherently racy way -
-    sane_fdtable_size() gets a "don't copy anything past that" argument
-    (passed via unshare_fd() and dup_fd()), close_range() decides how much
-    should be trimmed and passes that to unshare_fd().
-    
-    The problem is, a range that used to extend to the end of descriptor
-    table back when close_range() had looked at it might very well have stuff
-    grown after it by the time dup_fd() has allocated a new files_struct
-    and started to figure out the capacity of fdtable to be attached to that.
-    
-    That leads to interesting pathological cases; at the very least it's a
-    QoI issue, since unshare(CLONE_FILES) is atomic in a sense that it takes
-    a snapshot of descriptor table one might have observed at some point.
-    Since CLOSE_RANGE_UNSHARE close_range() is supposed to be a combination
-    of unshare(CLONE_FILES) with plain close_range(), ending up with a
-    weird state that would never occur with unshare(2) is confusing, to put
-    it mildly.
-    
-    It's not hard to get rid of - all it takes is passing both ends of the
-    range down to sane_fdtable_size().  There we are under ->files_lock,
-    so the race is trivially avoided.
-    
-    So we do the following:
-            * switch close_files() from calling unshare_fd() to calling
-    dup_fd().
-            * undo the calling convention change done to unshare_fd() in
-    60997c3d45d9 "close_range: add CLOSE_RANGE_UNSHARE"
-            * introduce struct fd_range, pass a pointer to that to dup_fd()
-    and sane_fdtable_size() instead of "trim everything past that point"
-    they are currently getting.  NULL means "we are not going to be punching
-    any holes"; NR_OPEN_MAX is gone.
-            * make sane_fdtable_size() use find_last_bit() instead of
-    open-coding it; it's easier to follow that way.
-            * while we are at it, have dup_fd() report errors by returning
-    ERR_PTR(), no need to use a separate int *errorp argument.
-    
-    Fixes: 60997c3d45d9 "close_range: add CLOSE_RANGE_UNSHARE"
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Acked-by: Brian Cain <bcain@quicinc.com>
 
-diff --git a/fs/file.c b/fs/file.c
-index 655338effe9c..c2403cde40e4 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -272,59 +272,45 @@ static inline bool fd_is_open(unsigned int fd, const struct fdtable *fdt)
- 	return test_bit(fd, fdt->open_fds);
- }
- 
--static unsigned int count_open_files(struct fdtable *fdt)
--{
--	unsigned int size = fdt->max_fds;
--	unsigned int i;
--
--	/* Find the last open fd */
--	for (i = size / BITS_PER_LONG; i > 0; ) {
--		if (fdt->open_fds[--i])
--			break;
--	}
--	i = (i + 1) * BITS_PER_LONG;
--	return i;
--}
--
- /*
-  * Note that a sane fdtable size always has to be a multiple of
-  * BITS_PER_LONG, since we have bitmaps that are sized by this.
-  *
-- * 'max_fds' will normally already be properly aligned, but it
-- * turns out that in the close_range() -> __close_range() ->
-- * unshare_fd() -> dup_fd() -> sane_fdtable_size() we can end
-- * up having a 'max_fds' value that isn't already aligned.
-- *
-- * Rather than make close_range() have to worry about this,
-- * just make that BITS_PER_LONG alignment be part of a sane
-- * fdtable size. Becuase that's really what it is.
-+ * punch_hole is optional - when close_range() is asked to unshare
-+ * and close, we don't need to copy descriptors in that range, so
-+ * a smaller cloned descriptor table might suffice if the last
-+ * currently opened descriptor falls into that range.
-  */
--static unsigned int sane_fdtable_size(struct fdtable *fdt, unsigned int max_fds)
-+static unsigned int sane_fdtable_size(struct fdtable *fdt, struct fd_range *punch_hole)
- {
--	unsigned int count;
--
--	count = count_open_files(fdt);
--	if (max_fds < NR_OPEN_DEFAULT)
--		max_fds = NR_OPEN_DEFAULT;
--	return ALIGN(min(count, max_fds), BITS_PER_LONG);
-+	unsigned int last = find_last_bit(fdt->open_fds, fdt->max_fds);
-+
-+	if (last == fdt->max_fds)
-+		return NR_OPEN_DEFAULT;
-+	if (punch_hole && punch_hole->to >= last && punch_hole->from <= last) {
-+		last = find_last_bit(fdt->open_fds, punch_hole->from);
-+		if (last == punch_hole->from)
-+			return NR_OPEN_DEFAULT;
-+	}
-+	return ALIGN(last + 1, BITS_PER_LONG);
- }
- 
- /*
-- * Allocate a new files structure and copy contents from the
-- * passed in files structure.
-- * errorp will be valid only when the returned files_struct is NULL.
-+ * Allocate a new descriptor table and copy contents from the passed in
-+ * instance.  Returns a pointer to cloned table on success, ERR_PTR()
-+ * on failure.  For 'punch_hole' see sane_fdtable_size().
-  */
--struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int *errorp)
-+struct files_struct *dup_fd(struct files_struct *oldf, struct fd_range *punch_hole)
- {
- 	struct files_struct *newf;
- 	struct file **old_fds, **new_fds;
- 	unsigned int open_files, i;
- 	struct fdtable *old_fdt, *new_fdt;
-+	int error;
- 
--	*errorp = -ENOMEM;
- 	newf = kmem_cache_alloc(files_cachep, GFP_KERNEL);
- 	if (!newf)
--		goto out;
-+		return ERR_PTR(-ENOMEM);
- 
- 	atomic_set(&newf->count, 1);
- 
-@@ -341,7 +327,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
- 
- 	spin_lock(&oldf->file_lock);
- 	old_fdt = files_fdtable(oldf);
--	open_files = sane_fdtable_size(old_fdt, max_fds);
-+	open_files = sane_fdtable_size(old_fdt, punch_hole);
- 
- 	/*
- 	 * Check whether we need to allocate a larger fd array and fd set.
-@@ -354,14 +340,14 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
- 
- 		new_fdt = alloc_fdtable(open_files - 1);
- 		if (!new_fdt) {
--			*errorp = -ENOMEM;
-+			error = -ENOMEM;
- 			goto out_release;
- 		}
- 
- 		/* beyond sysctl_nr_open; nothing to do */
- 		if (unlikely(new_fdt->max_fds < open_files)) {
- 			__free_fdtable(new_fdt);
--			*errorp = -EMFILE;
-+			error = -EMFILE;
- 			goto out_release;
- 		}
- 
-@@ -372,7 +358,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
- 		 */
- 		spin_lock(&oldf->file_lock);
- 		old_fdt = files_fdtable(oldf);
--		open_files = sane_fdtable_size(old_fdt, max_fds);
-+		open_files = sane_fdtable_size(old_fdt, punch_hole);
- 	}
- 
- 	copy_fd_bitmaps(new_fdt, old_fdt, open_files / BITS_PER_LONG);
-@@ -406,8 +392,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
- 
- out_release:
- 	kmem_cache_free(files_cachep, newf);
--out:
--	return NULL;
-+	return ERR_PTR(error);
- }
- 
- static struct fdtable *close_files(struct files_struct * files)
-@@ -748,37 +733,25 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
- 	if (fd > max_fd)
- 		return -EINVAL;
- 
--	if (flags & CLOSE_RANGE_UNSHARE) {
--		int ret;
--		unsigned int max_unshare_fds = NR_OPEN_MAX;
-+	if ((flags & CLOSE_RANGE_UNSHARE) && atomic_read(&cur_fds->count) > 1) {
-+		struct fd_range range = {fd, max_fd}, *punch_hole = &range;
- 
- 		/*
- 		 * If the caller requested all fds to be made cloexec we always
- 		 * copy all of the file descriptors since they still want to
- 		 * use them.
- 		 */
--		if (!(flags & CLOSE_RANGE_CLOEXEC)) {
--			/*
--			 * If the requested range is greater than the current
--			 * maximum, we're closing everything so only copy all
--			 * file descriptors beneath the lowest file descriptor.
--			 */
--			rcu_read_lock();
--			if (max_fd >= last_fd(files_fdtable(cur_fds)))
--				max_unshare_fds = fd;
--			rcu_read_unlock();
--		}
--
--		ret = unshare_fd(CLONE_FILES, max_unshare_fds, &fds);
--		if (ret)
--			return ret;
-+		if (flags & CLOSE_RANGE_CLOEXEC)
-+			punch_hole = NULL;
- 
-+		fds = dup_fd(cur_fds, punch_hole);
-+		if (IS_ERR(fds))
-+			return PTR_ERR(fds);
- 		/*
- 		 * We used to share our file descriptor table, and have now
- 		 * created a private one, make sure we're using it below.
- 		 */
--		if (fds)
--			swap(cur_fds, fds);
-+		swap(cur_fds, fds);
- 	}
- 
- 	if (flags & CLOSE_RANGE_CLOEXEC)
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index 2944d4aa413b..b1c5722f2b3c 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -22,7 +22,6 @@
-  * as this is the granularity returned by copy_fdset().
-  */
- #define NR_OPEN_DEFAULT BITS_PER_LONG
--#define NR_OPEN_MAX ~0U
- 
- struct fdtable {
- 	unsigned int max_fds;
-@@ -106,7 +105,10 @@ struct task_struct;
- 
- void put_files_struct(struct files_struct *fs);
- int unshare_files(void);
--struct files_struct *dup_fd(struct files_struct *, unsigned, int *) __latent_entropy;
-+struct fd_range {
-+	unsigned int from, to;
-+};
-+struct files_struct *dup_fd(struct files_struct *, struct fd_range *) __latent_entropy;
- void do_close_on_exec(struct files_struct *);
- int iterate_fd(struct files_struct *, unsigned,
- 		int (*)(const void *, struct file *, unsigned),
-@@ -115,8 +117,6 @@ int iterate_fd(struct files_struct *, unsigned,
- extern int close_fd(unsigned int fd);
- extern int __close_range(unsigned int fd, unsigned int max_fd, unsigned int flags);
- extern struct file *file_close_fd(unsigned int fd);
--extern int unshare_fd(unsigned long unshare_flags, unsigned int max_fds,
--		      struct files_struct **new_fdp);
- 
- extern struct kmem_cache *files_cachep;
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index cc760491f201..6b97fb2ac4af 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1754,33 +1754,30 @@ static int copy_files(unsigned long clone_flags, struct task_struct *tsk,
- 		      int no_files)
- {
- 	struct files_struct *oldf, *newf;
--	int error = 0;
- 
- 	/*
- 	 * A background process may not have any files ...
- 	 */
- 	oldf = current->files;
- 	if (!oldf)
--		goto out;
-+		return 0;
- 
- 	if (no_files) {
- 		tsk->files = NULL;
--		goto out;
-+		return 0;
- 	}
- 
- 	if (clone_flags & CLONE_FILES) {
- 		atomic_inc(&oldf->count);
--		goto out;
-+		return 0;
- 	}
- 
--	newf = dup_fd(oldf, NR_OPEN_MAX, &error);
--	if (!newf)
--		goto out;
-+	newf = dup_fd(oldf, NULL);
-+	if (IS_ERR(newf))
-+		return PTR_ERR(newf);
- 
- 	tsk->files = newf;
--	error = 0;
--out:
--	return error;
-+	return 0;
- }
- 
- static int copy_sighand(unsigned long clone_flags, struct task_struct *tsk)
-@@ -3232,17 +3229,16 @@ static int unshare_fs(unsigned long unshare_flags, struct fs_struct **new_fsp)
- /*
-  * Unshare file descriptor table if it is being shared
-  */
--int unshare_fd(unsigned long unshare_flags, unsigned int max_fds,
--	       struct files_struct **new_fdp)
-+static int unshare_fd(unsigned long unshare_flags, struct files_struct **new_fdp)
- {
- 	struct files_struct *fd = current->files;
--	int error = 0;
- 
- 	if ((unshare_flags & CLONE_FILES) &&
- 	    (fd && atomic_read(&fd->count) > 1)) {
--		*new_fdp = dup_fd(fd, max_fds, &error);
--		if (!*new_fdp)
--			return error;
-+		fd = dup_fd(fd, NULL);
-+		if (IS_ERR(fd))
-+			return PTR_ERR(fd);
-+		*new_fdp = fd;
- 	}
- 
- 	return 0;
-@@ -3300,7 +3296,7 @@ int ksys_unshare(unsigned long unshare_flags)
- 	err = unshare_fs(unshare_flags, &new_fs);
- 	if (err)
- 		goto bad_unshare_out;
--	err = unshare_fd(unshare_flags, NR_OPEN_MAX, &new_fd);
-+	err = unshare_fd(unshare_flags, &new_fd);
- 	if (err)
- 		goto bad_unshare_cleanup_fs;
- 	err = unshare_userns(unshare_flags, &new_cred);
-@@ -3392,7 +3388,7 @@ int unshare_files(void)
- 	struct files_struct *old, *copy = NULL;
- 	int error;
- 
--	error = unshare_fd(CLONE_FILES, NR_OPEN_MAX, &copy);
-+	error = unshare_fd(CLONE_FILES, &copy);
- 	if (error || !copy)
- 		return error;
- 
+>=20
+>  #include <asm-generic/unistd.h>
+> --
+> 2.39.2
+
 
