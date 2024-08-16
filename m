@@ -1,96 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-26130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D33954D37
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 16:57:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CCC954D43
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 16:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341162897AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 14:57:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D2DB26508
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 14:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219261C37B9;
-	Fri, 16 Aug 2024 14:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0521F1BD034;
+	Fri, 16 Aug 2024 14:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeF+YsDn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JyEiBPl3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CF91BE25A;
-	Fri, 16 Aug 2024 14:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612812BB0D;
+	Fri, 16 Aug 2024 14:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723819924; cv=none; b=taLGIpD/2cO1KUpixPmRyb5f0h3nWdRsSGNRVgjbbKYq/7DlmKw3YWq/UdlrcVKPwkvq3ku255zt91IsRNy7walpHfrbC6y9KFeyXAYs16GTIY/j/UcHM9tH/C873WtUXn3jBHZeu5kYectEz95jX34AjvL2WtM2MWvgcuujzOs=
+	t=1723820116; cv=none; b=RFloNNG9e2PungTgBi2OQbiyfE6KXwCbbcxCT7qOR9Izuh/HbXtPIJLs/WBSLREA6WuKgNrP1741n6uFXz21crxTmJdPyudUo2f9Q5hcoJCfNk58V839xV+EcUWbNY2yJFVGlRl+HuO0tOCMHcB2xDPN96UN0SxDQNpE57abiUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723819924; c=relaxed/simple;
-	bh=aCsAMYNwuNLSPVHVux3H7Fr1gU8Y/2OHAz58FNdjFh4=;
+	s=arc-20240116; t=1723820116; c=relaxed/simple;
+	bh=bYtlUyfEW4UQCA052w/rCM0SWf2EWY5Q9Ki9PbroHxE=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LTlocXFzinosb+wsNAbQEewIxmWveFZGEfrGiJj015JQukUWz7Hxaj8g/+i/g4h+RM2tL4YL/cMVNHpTlBibq+7PkoYAsC4DftVlfMksVcxBUJHHZm03vqd4Q3tLI2Bjw+3P7EiIERsRd5JjSEIYncRjR5zpKLqdkc0on8fjVlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeF+YsDn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D69DBC32782;
-	Fri, 16 Aug 2024 14:52:03 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Fp+wpYrCgkoUv1sg+9m9w9sJz283GTBDDCALOttr7lB1trRhVBVmqZ8YxfgsYbWn0QOtBQJvpMudlvFJeqJ8h4JW+RRfiYhx6ER5mkRIDDKlq4JDCVSZBmS25GBcD+zbJDAntor3HG6HqnrftR4ug+e9w0l6YwGgHq8AmxpxlwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JyEiBPl3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C954BC32782;
+	Fri, 16 Aug 2024 14:55:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723819923;
-	bh=aCsAMYNwuNLSPVHVux3H7Fr1gU8Y/2OHAz58FNdjFh4=;
+	s=k20201202; t=1723820116;
+	bh=bYtlUyfEW4UQCA052w/rCM0SWf2EWY5Q9Ki9PbroHxE=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BeF+YsDnIob191w0ZGxINOu0jYhGxn63hEvhpdwFa5jW6Ni9L1j5zNVOpziP8Me0j
-	 VdJs4rtfVWtbONAJ2r0/x3uS1uJZc2XPYoBcdPMqJrUCV+x88lcdwCaKqSzjILyxCl
-	 pPqLCIIfO0T4TVHG0cB1VAhMSqMnUKLz0cQF1rYeVUgRmF3ySFmVl5HH9P3APi/JdA
-	 OGvydVVsY9YgrNN5+mf6fbDIFAeE2+9CGNMViKsCCCrgA8yjKVqwuBgIuodAtGnMB+
-	 bJ1HDN0++jB7l7MXDZDd5l+5rR7YSeKr9kXUadrtaZSXP/sile1fdjzQVOwoK02sNK
-	 pOQwo0zbUdYjg==
+	b=JyEiBPl3rzQ1CsXkhZb1NtQc33N+/6CcwX1zhxLPCl6Oz2HWKQb7Rn1YDKdiE5YTr
+	 MZlLryH7YBV08sQCoon3k+/Rm1ZYyLkHJIHaBSlbez/ZhxQ/FapXTOQIWaxvDonbpT
+	 54wbSd9ggMkaVWYXZEEf1cvKygxGCMNRhIwmlDkPwoDsszSjfiqtF7bvJOBLc0lPwA
+	 PLiVkhUSe9uqIdftlQBa++sYzz51bknJNoevIDwSS5w9glmzdTAE2RaOSZyia9QhEV
+	 w3lR0Rs5XCPshZ6vm2InA7F5JfsDieuFs8pEIz4Aj6ZITPkxODhNaA5NbM/4bkoayG
+	 q9jYjIWv8gSGA==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
 	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.95)
 	(envelope-from <maz@kernel.org>)
-	id 1seyJ7-004JCN-Lr;
-	Fri, 16 Aug 2024 15:52:01 +0100
-Date: Fri, 16 Aug 2024 15:52:00 +0100
-Message-ID: <86frr4zfjj.wl-maz@kernel.org>
+	id 1seyMC-004JGf-Be;
+	Fri, 16 Aug 2024 15:55:13 +0100
+Date: Fri, 16 Aug 2024 15:55:11 +0100
+Message-ID: <86ed6ozfe8.wl-maz@kernel.org>
 From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	akpm@linux-foundation.org,
+	aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com,
+	bp@alien8.de,
+	broonie@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
 	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	joey.gouly@arm.com
-Subject: Re: [PATCH v10 14/40] KVM: arm64: Manage GCS access and registers for guests
-In-Reply-To: <8c1e8fb6-0152-42f7-ab6d-93f6fe70b4aa@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
-	<20240801-arm64-gcs-v10-14-699e2bd2190b@kernel.org>
-	<86h6bkzh8o.wl-maz@kernel.org>
-	<8c1e8fb6-0152-42f7-ab6d-93f6fe70b4aa@sirena.org.uk>
+	linuxppc-dev@lists.ozlabs.org,
+	mingo@redhat.com,
+	mpe@ellerman.id.au,
+	naveen.n.rao@linux.ibm.com,
+	npiggin@gmail.com,
+	oliver.upton@linux.dev,
+	shuah@kernel.org,
+	szabolcs.nagy@arm.com,
+	tglx@linutronix.de,
+	will@kernel.org,
+	x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 07/29] KVM: arm64: Save/restore POE registers
+In-Reply-To: <20240503130147.1154804-8-joey.gouly@arm.com>
+References: <20240503130147.1154804-1-joey.gouly@arm.com>
+	<20240503130147.1154804-8-joey.gouly@arm.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -102,52 +90,177 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
 X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, kees@kernel.org, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, ross.burton@arm.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, joey.gouly@arm.com
+X-SA-Exim-Rcpt-To: joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org, aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com, tglx@linutronix.de, will@kernel.org, x86@kernel.org, kvmarm@lists.linux.dev
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, 16 Aug 2024 15:40:33 +0100,
-Mark Brown <broonie@kernel.org> wrote:
+On Fri, 03 May 2024 14:01:25 +0100,
+Joey Gouly <joey.gouly@arm.com> wrote:
 > 
-> [1  <text/plain; us-ascii (7bit)>]
-> On Fri, Aug 16, 2024 at 03:15:19PM +0100, Marc Zyngier wrote:
-> > Mark Brown <broonie@kernel.org> wrote:
+> Define the new system registers that POE introduces and context switch them.
 > 
-> > > +	{ SYS_DESC(SYS_GCSCR_EL1), NULL, reset_val, GCSCR_EL1, 0 },
-> > > +	{ SYS_DESC(SYS_GCSPR_EL1), NULL, reset_unknown, GCSPR_EL1 },
-> > > +	{ SYS_DESC(SYS_GCSCRE0_EL1), NULL, reset_val, GCSCRE0_EL1, 0 },
+> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> ---
+>  arch/arm64/include/asm/kvm_host.h          |  4 +++
+>  arch/arm64/include/asm/vncr_mapping.h      |  1 +
+>  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 29 ++++++++++++++++++++++
+>  arch/arm64/kvm/sys_regs.c                  |  8 ++++--
+>  4 files changed, 40 insertions(+), 2 deletions(-)
 > 
-> > Global visibility for these registers? Why should we expose them to
-> > userspace if the feature is neither present nor configured?
-> 
-> ...
-> 
-> > > +	if (!kvm_has_feat(kvm, ID_AA64PFR1_EL1, GCS, IMP))
-> > > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nGCS_EL0 |
-> > > +						HFGxTR_EL2_nGCS_EL1);
-> 
-> > How can this work if you don't handle ID_AA64PFR_EL1 being written to?
-> > You are exposing GCS to all guests without giving the VMM an
-> > opportunity to turn it off. This breaks A->B->A migration, which is
-> > not acceptable.
-> 
-> This was done based on your positive review of the POE series which
-> follows the same pattern:
-> 
->    https://lore.kernel.org/linux-arm-kernel/20240503130147.1154804-8-joey.gouly@arm.com/
->    https://lore.kernel.org/linux-arm-kernel/864jagmxn7.wl-maz@kernel.org/
-> 
-> in which you didn't note any concerns about the handling for the
-> sysregs.
-> 
-> If your decisions have changed then you'll need to withdraw your review
-> there, I'd figured that given the current incompleteness of the
-> writability conversions and there being a bunch of existing registers
-> exposed unconditionally you'd decided to defer until some more general
-> cleanup of the situation.
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 9e8a496fb284..28042da0befd 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -419,6 +419,8 @@ enum vcpu_sysreg {
+>  	GCR_EL1,	/* Tag Control Register */
+>  	TFSRE0_EL1,	/* Tag Fault Status Register (EL0) */
+>  
+> +	POR_EL0,	/* Permission Overlay Register 0 (EL0) */
+> +
+>  	/* 32bit specific registers. */
+>  	DACR32_EL2,	/* Domain Access Control Register */
+>  	IFSR32_EL2,	/* Instruction Fault Status Register */
+> @@ -489,6 +491,8 @@ enum vcpu_sysreg {
+>  	VNCR(PIR_EL1),	 /* Permission Indirection Register 1 (EL1) */
+>  	VNCR(PIRE0_EL1), /*  Permission Indirection Register 0 (EL1) */
+>  
+> +	VNCR(POR_EL1),	/* Permission Overlay Register 1 (EL1) */
+> +
+>  	VNCR(HFGRTR_EL2),
+>  	VNCR(HFGWTR_EL2),
+>  	VNCR(HFGITR_EL2),
+> diff --git a/arch/arm64/include/asm/vncr_mapping.h b/arch/arm64/include/asm/vncr_mapping.h
+> index df2c47c55972..06f8ec0906a6 100644
+> --- a/arch/arm64/include/asm/vncr_mapping.h
+> +++ b/arch/arm64/include/asm/vncr_mapping.h
+> @@ -52,6 +52,7 @@
+>  #define VNCR_PIRE0_EL1		0x290
+>  #define VNCR_PIRE0_EL2		0x298
+>  #define VNCR_PIR_EL1		0x2A0
+> +#define VNCR_POR_EL1		0x2A8
+>  #define VNCR_ICH_LR0_EL2        0x400
+>  #define VNCR_ICH_LR1_EL2        0x408
+>  #define VNCR_ICH_LR2_EL2        0x410
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> index 4be6a7fa0070..1c9536557bae 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> @@ -16,9 +16,15 @@
+>  #include <asm/kvm_hyp.h>
+>  #include <asm/kvm_mmu.h>
+>  
+> +static inline bool ctxt_has_s1poe(struct kvm_cpu_context *ctxt);
+> +
+>  static inline void __sysreg_save_common_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	ctxt_sys_reg(ctxt, MDSCR_EL1)	= read_sysreg(mdscr_el1);
+> +
+> +	// POR_EL0 can affect uaccess, so must be saved/restored early.
+> +	if (ctxt_has_s1poe(ctxt))
+> +		ctxt_sys_reg(ctxt, POR_EL0)	= read_sysreg_s(SYS_POR_EL0);
+>  }
+>  
+>  static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
+> @@ -55,6 +61,17 @@ static inline bool ctxt_has_s1pie(struct kvm_cpu_context *ctxt)
+>  	return kvm_has_feat(kern_hyp_va(vcpu->kvm), ID_AA64MMFR3_EL1, S1PIE, IMP);
+>  }
+>  
+> +static inline bool ctxt_has_s1poe(struct kvm_cpu_context *ctxt)
+> +{
+> +	struct kvm_vcpu *vcpu;
+> +
+> +	if (!system_supports_poe())
+> +		return false;
+> +
+> +	vcpu = ctxt_to_vcpu(ctxt);
+> +	return kvm_has_feat(kern_hyp_va(vcpu->kvm), ID_AA64MMFR3_EL1, S1POE, IMP);
+> +}
+> +
+>  static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	ctxt_sys_reg(ctxt, SCTLR_EL1)	= read_sysreg_el1(SYS_SCTLR);
+> @@ -77,6 +94,10 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
+>  		ctxt_sys_reg(ctxt, PIR_EL1)	= read_sysreg_el1(SYS_PIR);
+>  		ctxt_sys_reg(ctxt, PIRE0_EL1)	= read_sysreg_el1(SYS_PIRE0);
+>  	}
+> +
+> +	if (ctxt_has_s1poe(ctxt))
+> +		ctxt_sys_reg(ctxt, POR_EL1)	= read_sysreg_el1(SYS_POR);
+> +
+>  	ctxt_sys_reg(ctxt, PAR_EL1)	= read_sysreg_par();
+>  	ctxt_sys_reg(ctxt, TPIDR_EL1)	= read_sysreg(tpidr_el1);
+>  
+> @@ -107,6 +128,10 @@ static inline void __sysreg_save_el2_return_state(struct kvm_cpu_context *ctxt)
+>  static inline void __sysreg_restore_common_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	write_sysreg(ctxt_sys_reg(ctxt, MDSCR_EL1),  mdscr_el1);
+> +
+> +	// POR_EL0 can affect uaccess, so must be saved/restored early.
+> +	if (ctxt_has_s1poe(ctxt))
+> +		write_sysreg_s(ctxt_sys_reg(ctxt, POR_EL0),	SYS_POR_EL0);
+>  }
+>  
+>  static inline void __sysreg_restore_user_state(struct kvm_cpu_context *ctxt)
+> @@ -153,6 +178,10 @@ static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
+>  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIR_EL1),	SYS_PIR);
+>  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIRE0_EL1),	SYS_PIRE0);
+>  	}
+> +
+> +	if (ctxt_has_s1poe(ctxt))
+> +		write_sysreg_el1(ctxt_sys_reg(ctxt, POR_EL1),	SYS_POR);
+> +
+>  	write_sysreg(ctxt_sys_reg(ctxt, PAR_EL1),	par_el1);
+>  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL1),	tpidr_el1);
+>  
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index c9f4f387155f..be04fae35afb 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -2423,6 +2423,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	{ SYS_DESC(SYS_MAIR_EL1), access_vm_reg, reset_unknown, MAIR_EL1 },
+>  	{ SYS_DESC(SYS_PIRE0_EL1), NULL, reset_unknown, PIRE0_EL1 },
+>  	{ SYS_DESC(SYS_PIR_EL1), NULL, reset_unknown, PIR_EL1 },
+> +	{ SYS_DESC(SYS_POR_EL1), NULL, reset_unknown, POR_EL1 },
+>  	{ SYS_DESC(SYS_AMAIR_EL1), access_vm_reg, reset_amair_el1, AMAIR_EL1 },
+>  
+>  	{ SYS_DESC(SYS_LORSA_EL1), trap_loregion },
+> @@ -2506,6 +2507,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	  .access = access_pmovs, .reg = PMOVSSET_EL0,
+>  	  .get_user = get_pmreg, .set_user = set_pmreg },
+>  
+> +	{ SYS_DESC(SYS_POR_EL0), NULL, reset_unknown, POR_EL0 },
+>  	{ SYS_DESC(SYS_TPIDR_EL0), NULL, reset_unknown, TPIDR_EL0 },
+>  	{ SYS_DESC(SYS_TPIDRRO_EL0), NULL, reset_unknown, TPIDRRO_EL0 },
+>  	{ SYS_DESC(SYS_TPIDR2_EL0), undef_access },
+> @@ -4057,8 +4059,6 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
+>  	kvm->arch.fgu[HFGxTR_GROUP] = (HFGxTR_EL2_nAMAIR2_EL1		|
+>  				       HFGxTR_EL2_nMAIR2_EL1		|
+>  				       HFGxTR_EL2_nS2POR_EL1		|
+> -				       HFGxTR_EL2_nPOR_EL1		|
+> -				       HFGxTR_EL2_nPOR_EL0		|
+>  				       HFGxTR_EL2_nACCDATA_EL1		|
+>  				       HFGxTR_EL2_nSMPRI_EL1_MASK	|
+>  				       HFGxTR_EL2_nTPIDR2_EL0_MASK);
+> @@ -4093,6 +4093,10 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
+>  		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPIRE0_EL1 |
+>  						HFGxTR_EL2_nPIR_EL1);
+>  
+> +	if (!kvm_has_feat(kvm, ID_AA64MMFR3_EL1, S1POE, IMP))
+> +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPOR_EL1 |
+> +						HFGxTR_EL2_nPOR_EL0);
+> +
 
-Thanks for pointing out that I missed this crucial detail in the POE
-series. I'll immediately go and point that out.
+As Broonie pointed out in a separate thread, this cannot work, short
+of making ID_AA64MMFR3_EL1 writable.
+
+This can be done in a separate patch, but it needs doing as it
+otherwise breaks migration.
+
+Thanks,
 
 	M.
 
