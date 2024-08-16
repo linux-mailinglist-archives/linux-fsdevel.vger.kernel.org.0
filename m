@@ -1,199 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-26088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FFF953CD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 23:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1150E953F08
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 03:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB774B24B34
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Aug 2024 21:41:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BB5BB23606
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 01:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA81B1537DA;
-	Thu, 15 Aug 2024 21:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cbntlZAA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A2729CEF;
+	Fri, 16 Aug 2024 01:44:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FF61494C4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 21:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D922E1DFFC;
+	Fri, 16 Aug 2024 01:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723758091; cv=none; b=uHopagg21AsFIK1VbLhIByGWje3iIlDFp18cQh2J23y1l6gYxfM8DGQJ5p+lD+rtN3iSRU/EpMnJV2p4a8R0pyBoL2xpMfmSDmCs938BqvXj8+p9HYAr4dLMxEEZJMEEzQCxuRlV3KEZs1Qh8vQbrTHO8taOOcSjVeIXjcCwvjM=
+	t=1723772652; cv=none; b=kdfgY68/c0T/W099OOhHT7ORf5nVVlKK1kc+t2hbQppi/e3YYk/+zn8v3S4QAxAujEQaguEdIxvrPNyIVyPfutepmchBAigY8fFv0bI1f+Tr2vKJNPGM61418KiC3wwSY6syJ5JgBPy/ny69aItsnM1Zu+IsxsDAyH+Z1SS2UbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723758091; c=relaxed/simple;
-	bh=AN3nKp0u/wUIrYmQUvDr4r+SbNnpW51DD/sRfxfZWHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uTK9R5wEihIYWYwNbgjIQlVy12e8/D2h3d/UJS+m7O5MupRxITuQVD0watni30T5x3gkdsM04BUTi+6Ua9Z5gPDPr0wF3+2gSzV+EWdJXr+gDovzIiu9WDqGlId/+WQOrOXrmqStAQkAJPcwJY+7vuF9uBt8CtFGV89z1T9cMbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cbntlZAA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723758088;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=JURWrCXIvW+9KwIAhhKh1yrmLu7AEBTXxn2VFlVxB2E=;
-	b=cbntlZAAqKcCl6LGvsLQbI9oYZUavl8hlAFQxXnZs8s1mANqU2vv0zeFyY3vgKGGcgLbyr
-	PvralE4SG7Tw6KFrKmHAv6okuaolblNen0CD8hqrutlOuVtxVEyMu7pW++Wa7X2giuO+ai
-	eYD4UXj2pm3uyw4rSfEM/0YPavZd/3A=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-414-UTcle9dGMl-iEek3SgdY4A-1; Thu, 15 Aug 2024 17:41:26 -0400
-X-MC-Unique: UTcle9dGMl-iEek3SgdY4A-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3718a4d3a82so598087f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Aug 2024 14:41:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723758085; x=1724362885;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JURWrCXIvW+9KwIAhhKh1yrmLu7AEBTXxn2VFlVxB2E=;
-        b=aUqzUNBVz4tFTptVYBkgEwG0yJ6UHbjiVp9mBgJ+f75YGpkZkJQn6YKoptyveL02ZY
-         plib+5br/S2+zwiT1AlF/5FVthrLQXMHcnFuGSqZFiad7ynCk5tZ0cvHe3PO5GPDtEa0
-         YrtzwtZSaPik390LTS250abKQupJv5U5pluvUCGzmvcLRFW7eCatCAaZ+n7PMCn+VD9X
-         0JIzs1sEDuXFBe+px9+Hc+HX4P8qw9ANnA7VANUACVvfCQVBeMg6d50mH/cIjIsYbuwS
-         aHsGtwbCNqFfXrDdCAxWnMIT+YJcpywsOaDSkzw1gAhBlPhw+IxrLvBCNs2WuJfSln8V
-         j5PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXQPXUNF4L9Td77M/r9oZ+ReNLR250HXfAfSJ8Lf8geKAqpmGv/vt8QPM7Xj3f0ie8XF68djCAL79ACgh32fx93wb9eJQp6/sN5bET0Q==
-X-Gm-Message-State: AOJu0Yz5y3ExDNiMYxLkJI+TYo3+mTA1E0cQhpc6L1JHS01HV/SoTJgw
-	88P5ByOVEaEi5HqNATOzvPlZr/S3C/JBsrzMeWDv+FLWljsz/qp8OwhRn+Goko4jblcW5d56u5R
-	MWvvcEE3ubck2AtNSch8VUUhipPgnIbptlVlKwPd5D+wtmdFeyHPtYv1MulCeVTE=
-X-Received: by 2002:adf:fa50:0:b0:367:9881:7d5e with SMTP id ffacd0b85a97d-3719431e648mr347156f8f.8.1723758085482;
-        Thu, 15 Aug 2024 14:41:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5OtX77dZx+5yj4Z/Gv2EIHNZ9s0B/bJudWMFSpBwkEzY9hefMYVIDxB4Z1RbpvGcZNHzncQ==
-X-Received: by 2002:adf:fa50:0:b0:367:9881:7d5e with SMTP id ffacd0b85a97d-3719431e648mr347147f8f.8.1723758084978;
-        Thu, 15 Aug 2024 14:41:24 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c717:6d00:aebb:127d:2c1a:7f3a? (p200300cbc7176d00aebb127d2c1a7f3a.dip0.t-ipconnect.de. [2003:cb:c717:6d00:aebb:127d:2c1a:7f3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718985ae26sm2354517f8f.55.2024.08.15.14.41.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 14:41:24 -0700 (PDT)
-Message-ID: <7e7ee391-6f4d-4d36-ace5-4f8ca81479bc@redhat.com>
-Date: Thu, 15 Aug 2024 23:41:23 +0200
+	s=arc-20240116; t=1723772652; c=relaxed/simple;
+	bh=XJp+Jb3dve6kiWKebsssb6P1PqxlbemB2ygfIkOkhs8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eQfdw8c7lySJkMEn8BkD4A80VDPkhq10uZsP3/78pFq38+FoX/sbH9feeFN2Xw1fwRyCrDteUSNfd3sawr7tQMfdLdw3mn/pr25BPeoO5Legpotdaljmhw9lwNVTgs063dHA9ESQAIT0zaTinpW+EngIcGGlsyypM1PIY+4id4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WlPsh1Fswz4f3jsD;
+	Fri, 16 Aug 2024 09:43:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 092791A0568;
+	Fri, 16 Aug 2024 09:44:06 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBHboTkrr5miBBBBw--.52648S3;
+	Fri, 16 Aug 2024 09:44:05 +0800 (CST)
+Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
+ than one blocks per folio
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
+ david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
+ <ZrxBfKi_DpThYo94@infradead.org>
+ <b098d15b-4b80-2b73-d05b-f4dbb5d4631a@huaweicloud.com>
+ <Zr2Zd-fjb96D3ZQi@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <ff66af8c-2b56-aa72-2470-00ff097fc6a6@huaweicloud.com>
+Date: Fri, 16 Aug 2024 09:44:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Merge PG_private_2 and PG_mappedtodisk
-To: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-References: <ZrzrIEDcJRFHOTNh@casper.infradead.org>
-From: David Hildenbrand <david@redhat.com>
+In-Reply-To: <Zr2Zd-fjb96D3ZQi@infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZrzrIEDcJRFHOTNh@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBHboTkrr5miBBBBw--.52648S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFW3ArWxZFy3XrWrKr15Jwb_yoWxAFc_uF
+	4v9r4kur95Way5A3W2g3Z8JrZagrZ0yF18XrZ8GFZ3Wa98Aa9aqr1vkrZYvFy2yFZF9Fnx
+	WFy2gay5XryagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 14.08.24 19:36, Matthew Wilcox wrote:
-> I believe these two flags have entirely disjoint uses and there will
-> be no confusion in amalgamating them.
+On 2024/8/15 14:00, Christoph Hellwig wrote:
+> On Wed, Aug 14, 2024 at 03:08:25PM +0800, Zhang Yi wrote:
+>>> iomap_invalidate_folio when it actually is needed?
+>>>
+>>
+>> Therefore, you mean current strategy of allocating ifs is to try to delay
+>> the allocation time as much as possible?
 > 
-> Anonymous memory (re)uses mappedtodisk for anon_exclusive.
-> Anonymous memory does not use PG_private_2.
+> Yes.
+> 
+>> The advantage is that it could
+>> avoid some unnecessary allocation operations if the whole folio are
+>> invalidated before write back. right?
+> 
+> Yes.  And hopefully we can also get to the point where we don't need
+> to actually allocate it for writeback.  I've been wanting to do that
+> for a while but never got it.
+> 
 
-Also not when they are in the swapcache, right?
+Yeah, this sounds like a good idea.
 
-> 
-> $ git grep -El '(folio.*mappedtodisk)|PageMappedToDisk'
-> fs/buffer.c
-> fs/ext4/readpage.c
-> fs/f2fs/data.c
-> fs/f2fs/file.c
-> fs/fuse/dev.c
-> fs/mpage.c
-> fs/nilfs2/file.c
-> fs/nilfs2/page.c
-> include/trace/events/pagemap.h
-> mm/memory.c
-> mm/migrate.c
-> mm/truncate.c
-> 
-> $ git grep -El '(folio.*private_2)|PagePrivate2'
-> fs/btrfs/ctree.h
-> fs/ceph/addr.c
-> fs/netfs/buffered_read.c
-> fs/netfs/fscache_io.c
-> fs/netfs/io.c
-> fs/nfs/file.c
-> fs/nfs/fscache.h
-> fs/nfs/write.c
-> include/linux/netfs.h
-> include/linux/pagemap.h
-> mm/filemap.c
-> mm/migrate.c
-> 
-> The one thing that's going to stand in the way of this is that various
-> parts of the VFS treat private_2 as a "wait for this bit to be clear",
-> due to its use in fscache (which is going away).
-> 
-> So my approach here is going to be:
-> 
->   - Rename mappedtodisk to be PG_owner_priv_2 (add appropriate aliases)
->   - Switch btrfs to use owner_priv_2 instead of private_2
->   - Wait for the fscache use of private2 to finish its deprecation cycle
->   - Remove private_2 entirely
-> 
-> Sound good?
-
-Yes, one step into the right direction.
-
--- 
-Cheers,
-
-David / dhildenb
+Thanks,
+Yi.
 
 
