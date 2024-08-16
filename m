@@ -1,56 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-26133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC501954D61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 17:13:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB65954D99
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 17:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E10BF1C21B31
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 15:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59CD72833E2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 15:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC6B1BD4E3;
-	Fri, 16 Aug 2024 15:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FF11BD034;
+	Fri, 16 Aug 2024 15:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="ZB92LjnH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1369198A3E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 15:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8844413CF86
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 15:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723821194; cv=none; b=g0v9WcyVqXEUGEM5A9EAntqsgDtvvMSJWhJo4JPD6BEv/eYF2Xrs81X9s63vKF9U8wFKiy+FPtU/QRPwIHirfGE3BOytkU5TofSeIXRHwN/0Yn9b/0RN5bAW5MjJ9M+63i251rwYjI9yRSh+B7A4pBr+aM7ai2Z2Dn5R7gYGYwU=
+	t=1723821897; cv=none; b=eJ+oWQ5sAhl0LJk8Dh1Q7tgPvIxouBORs2elRbXgc3Z1qcljqoOZWR9QLOKJsWlBCem8Rx3hM4YAf+2rf0GO39Cfx9o1l2pHz89QI/Q5qvI93v3BYnL0y3fR/REoVDeyWub6kdxFz+ZxInL+C1WwZyX08LnrxSl1iqwh6leBclQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723821194; c=relaxed/simple;
-	bh=BwXkT8qJsxeKFgXPuj34GBkj1PMWj8yaR+BdQmqbXnU=;
+	s=arc-20240116; t=1723821897; c=relaxed/simple;
+	bh=UL12sWs8tNQMMWLPV43UgqCmeXSMBu86FNVq3NaCk44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwKPE8y/GaFweNiUjnPodkdTo7FMq6hf/wpd+JCXYFumj+jM/nR1o8BYSVgofYSCPEJj4BpB4rKXjuQSf9wT7777nx3uRRsGkMR3lyWWeGLub49orJqCIk6sDEollS9eM4fMjaJKK6GaAmnqLo0YBOUgJy3FeYSevc9avTRIn7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA36213D5;
-	Fri, 16 Aug 2024 08:13:35 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E4FF3F6A8;
-	Fri, 16 Aug 2024 08:13:06 -0700 (PDT)
-Date: Fri, 16 Aug 2024 16:13:01 +0100
-From: Joey Gouly <joey.gouly@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
-	broonie@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
-	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, mingo@redhat.com, mpe@ellerman.id.au,
-	naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
-	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 07/29] KVM: arm64: Save/restore POE registers
-Message-ID: <20240816151301.GA138302@e124191.cambridge.arm.com>
-References: <20240503130147.1154804-1-joey.gouly@arm.com>
- <20240503130147.1154804-8-joey.gouly@arm.com>
- <86ed6ozfe8.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DlSxXhASGANuGa1wLl5ZhOnVNwF9pHYNdadnxUJLDYfrzI2P3k1fIAp3LBcizitSfz4RUouhd6CrzoH3fGsVK4YPnzVUMhDX5GHAbxPk00wQd194whzNLBBjMJZ8ZWaDLbRPGyFZAZs2l/qr7aiVBZxdyyWlb5prQS+uSP5QXg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=ZB92LjnH; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-704466b19c4so1210767a34.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 08:24:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1723821894; x=1724426694; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCNUHUhalYmJfkcmHjirMHIoFN5R1oIHSymBUgRqkPU=;
+        b=ZB92LjnH3loGuicbAppiYi2IFj6B4/s4qJmRC3UADEPiqk4YhvYkITPaD5G8qVJR8y
+         LneyWnPuTywFxIW+XYguPZugSLJFI7C2LbfO6QOhTAH8wky/0nKZ/QwCQy64I6BApNBB
+         OhyxfGJ++F6WSh9U4ImTAoyQWMQtB3ylIZBjnQJ3QMMI7v4gMC5y+fG+aiS3/Wf/6eVH
+         QckcNuUyUiIkBFJ56ZaWvffo3ZxENFkHokpRZwTG0XBXTngC/4d9UqRa2BNJlLfx+B0D
+         QRFCzJWwZnaHFeN9sceTpz3rc+fMIrmbHefkPdpVdR51tQzizN7TsS6JMuXXcAfZYk/G
+         T9ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723821894; x=1724426694;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uCNUHUhalYmJfkcmHjirMHIoFN5R1oIHSymBUgRqkPU=;
+        b=MV3Sg8HIgi6AtIvf9mgF8vje8g1nPq0pnSBKPXwrU6HIPnoXJXbRsO64csvMoKHYr9
+         vnm/AYDdSbqwLwi2WjT/SZG/ubJb4lfIjOAmYtlgJXOUm/KxoKZJZF13v7jfddwrZ7uN
+         ecRKkCsImZbYRqnNdXHu8iN2xdz5LQcAOdCfw8sQH1AE40+U2Asb+DiheMNINE4zZL8q
+         HnrLObUqtG3mYWG15OHIiTAxOi4Yx19okoc+a3X/YfRodupmIU4/PNpdKrYvEts4cGm6
+         qEaHIqhrxqao9NtgZ4wfsC4d2txTILCBqnBYxFWnsbFrcDZK+eHhs6Wd6wmb57o1BKgH
+         xc7w==
+X-Gm-Message-State: AOJu0Yw4jUWuF+++xSBnCC/epCX8Ck7UEm/7eAL3vFDrTW1jro4QPtMB
+	N2RNgmAKPzfl+mO1zzv28a7wfv13/f9p4H3pANmD75cjDbOvpFt0iRW3Sjdxiy4=
+X-Google-Smtp-Source: AGHT+IHiJdwu83Ixxqxj+tD6EFiXuAkTzztN0lfn18Y9TtNHJg96G1Tysd9uIP2Nq8btgXgyTKi3Xw==
+X-Received: by 2002:a05:6830:2641:b0:703:61ea:f289 with SMTP id 46e09a7af769-70cac8b615dmr2902887a34.28.1723821894514;
+        Fri, 16 Aug 2024 08:24:54 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4536a0596a1sm17437331cf.72.2024.08.16.08.24.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 08:24:53 -0700 (PDT)
+Date: Fri, 16 Aug 2024 11:24:52 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH] inode: remove __I_DIO_WAKEUP
+Message-ID: <20240816152452.GA1255093@perftesting>
+References: <20240816-vfs-misc-dio-v1-1-80fe21a2c710@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,186 +82,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <86ed6ozfe8.wl-maz@kernel.org>
+In-Reply-To: <20240816-vfs-misc-dio-v1-1-80fe21a2c710@kernel.org>
 
-On Fri, Aug 16, 2024 at 03:55:11PM +0100, Marc Zyngier wrote:
-> On Fri, 03 May 2024 14:01:25 +0100,
-> Joey Gouly <joey.gouly@arm.com> wrote:
-> > 
-> > Define the new system registers that POE introduces and context switch them.
-> > 
-> > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Oliver Upton <oliver.upton@linux.dev>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > ---
-> >  arch/arm64/include/asm/kvm_host.h          |  4 +++
-> >  arch/arm64/include/asm/vncr_mapping.h      |  1 +
-> >  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 29 ++++++++++++++++++++++
-> >  arch/arm64/kvm/sys_regs.c                  |  8 ++++--
-> >  4 files changed, 40 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> > index 9e8a496fb284..28042da0befd 100644
-> > --- a/arch/arm64/include/asm/kvm_host.h
-> > +++ b/arch/arm64/include/asm/kvm_host.h
-> > @@ -419,6 +419,8 @@ enum vcpu_sysreg {
-> >  	GCR_EL1,	/* Tag Control Register */
-> >  	TFSRE0_EL1,	/* Tag Fault Status Register (EL0) */
-> >  
-> > +	POR_EL0,	/* Permission Overlay Register 0 (EL0) */
-> > +
-> >  	/* 32bit specific registers. */
-> >  	DACR32_EL2,	/* Domain Access Control Register */
-> >  	IFSR32_EL2,	/* Instruction Fault Status Register */
-> > @@ -489,6 +491,8 @@ enum vcpu_sysreg {
-> >  	VNCR(PIR_EL1),	 /* Permission Indirection Register 1 (EL1) */
-> >  	VNCR(PIRE0_EL1), /*  Permission Indirection Register 0 (EL1) */
-> >  
-> > +	VNCR(POR_EL1),	/* Permission Overlay Register 1 (EL1) */
-> > +
-> >  	VNCR(HFGRTR_EL2),
-> >  	VNCR(HFGWTR_EL2),
-> >  	VNCR(HFGITR_EL2),
-> > diff --git a/arch/arm64/include/asm/vncr_mapping.h b/arch/arm64/include/asm/vncr_mapping.h
-> > index df2c47c55972..06f8ec0906a6 100644
-> > --- a/arch/arm64/include/asm/vncr_mapping.h
-> > +++ b/arch/arm64/include/asm/vncr_mapping.h
-> > @@ -52,6 +52,7 @@
-> >  #define VNCR_PIRE0_EL1		0x290
-> >  #define VNCR_PIRE0_EL2		0x298
-> >  #define VNCR_PIR_EL1		0x2A0
-> > +#define VNCR_POR_EL1		0x2A8
-> >  #define VNCR_ICH_LR0_EL2        0x400
-> >  #define VNCR_ICH_LR1_EL2        0x408
-> >  #define VNCR_ICH_LR2_EL2        0x410
-> > diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> > index 4be6a7fa0070..1c9536557bae 100644
-> > --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> > +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> > @@ -16,9 +16,15 @@
-> >  #include <asm/kvm_hyp.h>
-> >  #include <asm/kvm_mmu.h>
-> >  
-> > +static inline bool ctxt_has_s1poe(struct kvm_cpu_context *ctxt);
-> > +
-> >  static inline void __sysreg_save_common_state(struct kvm_cpu_context *ctxt)
-> >  {
-> >  	ctxt_sys_reg(ctxt, MDSCR_EL1)	= read_sysreg(mdscr_el1);
-> > +
-> > +	// POR_EL0 can affect uaccess, so must be saved/restored early.
-> > +	if (ctxt_has_s1poe(ctxt))
-> > +		ctxt_sys_reg(ctxt, POR_EL0)	= read_sysreg_s(SYS_POR_EL0);
-> >  }
-> >  
-> >  static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
-> > @@ -55,6 +61,17 @@ static inline bool ctxt_has_s1pie(struct kvm_cpu_context *ctxt)
-> >  	return kvm_has_feat(kern_hyp_va(vcpu->kvm), ID_AA64MMFR3_EL1, S1PIE, IMP);
-> >  }
-> >  
-> > +static inline bool ctxt_has_s1poe(struct kvm_cpu_context *ctxt)
-> > +{
-> > +	struct kvm_vcpu *vcpu;
-> > +
-> > +	if (!system_supports_poe())
-> > +		return false;
-> > +
-> > +	vcpu = ctxt_to_vcpu(ctxt);
-> > +	return kvm_has_feat(kern_hyp_va(vcpu->kvm), ID_AA64MMFR3_EL1, S1POE, IMP);
-> > +}
-> > +
-> >  static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
-> >  {
-> >  	ctxt_sys_reg(ctxt, SCTLR_EL1)	= read_sysreg_el1(SYS_SCTLR);
-> > @@ -77,6 +94,10 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
-> >  		ctxt_sys_reg(ctxt, PIR_EL1)	= read_sysreg_el1(SYS_PIR);
-> >  		ctxt_sys_reg(ctxt, PIRE0_EL1)	= read_sysreg_el1(SYS_PIRE0);
-> >  	}
-> > +
-> > +	if (ctxt_has_s1poe(ctxt))
-> > +		ctxt_sys_reg(ctxt, POR_EL1)	= read_sysreg_el1(SYS_POR);
-> > +
-> >  	ctxt_sys_reg(ctxt, PAR_EL1)	= read_sysreg_par();
-> >  	ctxt_sys_reg(ctxt, TPIDR_EL1)	= read_sysreg(tpidr_el1);
-> >  
-> > @@ -107,6 +128,10 @@ static inline void __sysreg_save_el2_return_state(struct kvm_cpu_context *ctxt)
-> >  static inline void __sysreg_restore_common_state(struct kvm_cpu_context *ctxt)
-> >  {
-> >  	write_sysreg(ctxt_sys_reg(ctxt, MDSCR_EL1),  mdscr_el1);
-> > +
-> > +	// POR_EL0 can affect uaccess, so must be saved/restored early.
-> > +	if (ctxt_has_s1poe(ctxt))
-> > +		write_sysreg_s(ctxt_sys_reg(ctxt, POR_EL0),	SYS_POR_EL0);
-> >  }
-> >  
-> >  static inline void __sysreg_restore_user_state(struct kvm_cpu_context *ctxt)
-> > @@ -153,6 +178,10 @@ static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
-> >  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIR_EL1),	SYS_PIR);
-> >  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIRE0_EL1),	SYS_PIRE0);
-> >  	}
-> > +
-> > +	if (ctxt_has_s1poe(ctxt))
-> > +		write_sysreg_el1(ctxt_sys_reg(ctxt, POR_EL1),	SYS_POR);
-> > +
-> >  	write_sysreg(ctxt_sys_reg(ctxt, PAR_EL1),	par_el1);
-> >  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL1),	tpidr_el1);
-> >  
-> > diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> > index c9f4f387155f..be04fae35afb 100644
-> > --- a/arch/arm64/kvm/sys_regs.c
-> > +++ b/arch/arm64/kvm/sys_regs.c
-> > @@ -2423,6 +2423,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
-> >  	{ SYS_DESC(SYS_MAIR_EL1), access_vm_reg, reset_unknown, MAIR_EL1 },
-> >  	{ SYS_DESC(SYS_PIRE0_EL1), NULL, reset_unknown, PIRE0_EL1 },
-> >  	{ SYS_DESC(SYS_PIR_EL1), NULL, reset_unknown, PIR_EL1 },
-> > +	{ SYS_DESC(SYS_POR_EL1), NULL, reset_unknown, POR_EL1 },
-> >  	{ SYS_DESC(SYS_AMAIR_EL1), access_vm_reg, reset_amair_el1, AMAIR_EL1 },
-> >  
-> >  	{ SYS_DESC(SYS_LORSA_EL1), trap_loregion },
-> > @@ -2506,6 +2507,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
-> >  	  .access = access_pmovs, .reg = PMOVSSET_EL0,
-> >  	  .get_user = get_pmreg, .set_user = set_pmreg },
-> >  
-> > +	{ SYS_DESC(SYS_POR_EL0), NULL, reset_unknown, POR_EL0 },
-> >  	{ SYS_DESC(SYS_TPIDR_EL0), NULL, reset_unknown, TPIDR_EL0 },
-> >  	{ SYS_DESC(SYS_TPIDRRO_EL0), NULL, reset_unknown, TPIDRRO_EL0 },
-> >  	{ SYS_DESC(SYS_TPIDR2_EL0), undef_access },
-> > @@ -4057,8 +4059,6 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
-> >  	kvm->arch.fgu[HFGxTR_GROUP] = (HFGxTR_EL2_nAMAIR2_EL1		|
-> >  				       HFGxTR_EL2_nMAIR2_EL1		|
-> >  				       HFGxTR_EL2_nS2POR_EL1		|
-> > -				       HFGxTR_EL2_nPOR_EL1		|
-> > -				       HFGxTR_EL2_nPOR_EL0		|
-> >  				       HFGxTR_EL2_nACCDATA_EL1		|
-> >  				       HFGxTR_EL2_nSMPRI_EL1_MASK	|
-> >  				       HFGxTR_EL2_nTPIDR2_EL0_MASK);
-> > @@ -4093,6 +4093,10 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
-> >  		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPIRE0_EL1 |
-> >  						HFGxTR_EL2_nPIR_EL1);
-> >  
-> > +	if (!kvm_has_feat(kvm, ID_AA64MMFR3_EL1, S1POE, IMP))
-> > +		kvm->arch.fgu[HFGxTR_GROUP] |= (HFGxTR_EL2_nPOR_EL1 |
-> > +						HFGxTR_EL2_nPOR_EL0);
-> > +
+On Fri, Aug 16, 2024 at 04:35:52PM +0200, Christian Brauner wrote:
+> Afaict, we can just rely on inode->i_dio_count for waiting instead of
+> this awkward indirection through __I_DIO_WAKEUP. This survives LTP dio
+> and xfstests dio tests.
 > 
-> As Broonie pointed out in a separate thread, this cannot work, short
-> of making ID_AA64MMFR3_EL1 writable.
-> 
-> This can be done in a separate patch, but it needs doing as it
-> otherwise breaks migration.
-> 
-> Thanks,
-> 
-> 	M.
-> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Looks like it's wrong for PIE currently too, but your patch here fixes that:
-	https://lore.kernel.org/kvmarm/20240813144738.2048302-11-maz@kernel.org/
-
-If I basically apply that patch, but only for POE, the conflict can be resolved
-later, or a rebase will fix it up, depending on what goes through first.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
 Thanks,
-Joey
+
+Josef
 
