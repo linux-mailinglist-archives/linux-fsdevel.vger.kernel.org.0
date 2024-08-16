@@ -1,81 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-26143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B912954FF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 19:23:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58CCE955057
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 19:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01AEE1F25A3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 17:23:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1650B287891
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 17:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95731C230E;
-	Fri, 16 Aug 2024 17:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4731C37B7;
+	Fri, 16 Aug 2024 17:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="keliqowv"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XQD3/Ufi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962072BB0D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 17:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258D81BE22D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 17:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723828982; cv=none; b=ZdrSpFvQNmc4gRP12l6NtZ1sQ/tyXau4s0F440W+OZjJjCDbAzLTFEwLmLareJqhWjeU5NrFHqqznXUcOvZ24V2NrZ/C7cY+w54R5T2Vh0caE3WOXoodxKhpK9hStL5xJFHIMtSGaEqqeaRAs3fAiNRGvOwYiXceiKNT3iwqCwI=
+	t=1723830953; cv=none; b=Nae70bYykQJnanrtEV9gjfGRHj6vxBov6QU4PT97f6Xh8z3OjSiLlgiaqTANt+MFktJ343AMeIcvgTmJGp8zNE824euFtEdrxxMlIBFrWICmBdHedwblnfYsd5X0nwRCwGGxe8WJccSSOZCzSyhohTtHH06/Lr77HVZ1uu6bjeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723828982; c=relaxed/simple;
-	bh=vl8R5U87bSlR4b7hwPZ6eCTc9T+v/pzyr1w+pppq7DI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ap65lyhVttEODH5qEIyHYZWuqFSOqCdIY0844lf3CKGDst1oZmox5IPyHW1s3Wfthyffcy8eEXnfdkz3JF8p1nPTPkd46wiclVbdtykYcdsihXMcYQPKf4qo3RjifZ69aoaB3LbCvk+U6jIuwcYIh43dE0zorNI4ENZRj3yX5fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=keliqowv; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=P8ANIVlyDQ/t9cCk1cGTAhsqmcvFF9OGTrgGAaLzOSA=; b=keliqowv2ejl+bYoPKeRl++Sht
-	waS6rHsLGFYe1BT8fbFSv/wsuER7XIu5/TDgxSMV6IXIrYBRfoVgCXkZE2N1Vgltl5QLIK0LUrE/V
-	Uc1atk3FH5bkIkeWBmhQx/5uyv/VPLe1cnS8HXECzSn/5abthOE0WzQTu6Uc2etpHEzKMVhglRiMB
-	5l7F0bpq7xP1gUMfwmYyfQggamdLlZWo8lqB2g7wAPm0ntgFLRlwpvmCti7kWhZdsTHINphYnRdly
-	Cgfr5JhGEdZ4vp+AQsBki5gw1uKlnk1qpZ9/S/ps1xB+y75xwQkO7VBiwkesRFQAREp7DrQY7eFF6
-	g5tzo8jQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sf0fC-00000002MzF-07sy;
-	Fri, 16 Aug 2024 17:22:58 +0000
-Date: Fri, 16 Aug 2024 18:22:57 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [RFC] more close_range() fun
-Message-ID: <20240816172257.GC504335@ZenIV>
-References: <20240816030341.GW13701@ZenIV>
- <CAHk-=wh_K+qj=gmTjiUqr8R3x9Tco31FSBZ5qkikKN02bL4y7A@mail.gmail.com>
- <20240816171925.GB504335@ZenIV>
+	s=arc-20240116; t=1723830953; c=relaxed/simple;
+	bh=AWTKE4rGnr7kEezD/HwaTefRMpxDaj9O3tUOgq9aXQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RN15Y86o0gNdwqDR9EOirqy/0vsn1nkhoCYyJPDg1jSIwX7MKm39WNILjwbjTsQ36+ECJW3jmD67H321w9ZnISbUuOaCyO7aI6O1P85kFybH1HOPDOALVGZFKyA5CJtAvwVoYHRERiA+USOvSJshEfv/G9wQo+rNetAhmKlM5V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XQD3/Ufi; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f0dfdc9e16so26102781fa.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 10:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1723830949; x=1724435749; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JsRgxkokO1/8xV4hNS+4Va4SrJsyUDUb9cmLcxFUkm0=;
+        b=XQD3/UfifaErKl5aYCYk2YyTGvuBzctEcFyoOe2Odlfyb+Pag+wwrONiuLVOOP2PQU
+         cZ8TKhDuOp+Lk/T5D7z1MR9o7JLaSjmXLxGpX0veHxfb+TCOCOOgRhoIii3tzxXjAiOh
+         Buns4uxkX8QV9+FX9ueKlCYkajICr9lY6i/08=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723830949; x=1724435749;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JsRgxkokO1/8xV4hNS+4Va4SrJsyUDUb9cmLcxFUkm0=;
+        b=G1TNF7sZcp90gk9IjVM/KtrwIPOAZLvR2vXB7C/UTwhSbPDM+XtmR5NBcF9DwTMAKq
+         X9ujBjuwslZSbyarBmRN9jJ76Xw8h8MMw1dYtSkG/+wVjcrVxaJCZ0X2rPPfeVpeB9ge
+         MFVB9xV34b36uYRUU+ESJN4AY0J6hfKnVciePj3lzaIHrviobrSzikXjdIGuUa2pcckH
+         kbJHFpaADzO888ogBLRstZdTjOcIdgaMWeLKemKbSr7MjCjdQtrX02PhAPE+Wwa8WMvJ
+         Mp+Ka46noZx1HwafME6Dd/4iWPsuvNpWLzzDQX7Zrh6hDX44DfBbW6sE6YvHd78djDRa
+         Rktg==
+X-Gm-Message-State: AOJu0Yy4CekdoMwvAJ5avk4DxWjyXwrYzBZp//CZ8jSuWnMS+/qhzPj8
+	oRrpNKdjdCrdRkTq7dRPo+ICYgSimifHatDiPhZpTs5d8VEGw36bnY62sF2neMgFIPULWFMzR1U
+	fa+A=
+X-Google-Smtp-Source: AGHT+IH1lBtQD5kEn7rMsAji7ot3TnfBHmReg5n84mFlh40ZO2mq1YhuAnTTm5cgd+CoE/CkfTJU9A==
+X-Received: by 2002:a05:651c:1545:b0:2f0:1e0a:4696 with SMTP id 38308e7fff4ca-2f3c8eb1607mr2222621fa.7.1723830948456;
+        Fri, 16 Aug 2024 10:55:48 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b774af9asm6291211fa.134.2024.08.16.10.55.47
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 10:55:47 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52efd8807aaso3073752e87.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 10:55:47 -0700 (PDT)
+X-Received: by 2002:a05:6512:1289:b0:52e:fefe:49c9 with SMTP id
+ 2adb3069b0e04-5332df51660mr174463e87.36.1723830947291; Fri, 16 Aug 2024
+ 10:55:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240816030341.GW13701@ZenIV> <CAHk-=wh_K+qj=gmTjiUqr8R3x9Tco31FSBZ5qkikKN02bL4y7A@mail.gmail.com>
+ <20240816171925.GB504335@ZenIV>
 In-Reply-To: <20240816171925.GB504335@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 16 Aug 2024 10:55:30 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh7NJnJeKroRhZsSRxWGM4uYTgONWX7Ad8V9suO=t777w@mail.gmail.com>
+Message-ID: <CAHk-=wh7NJnJeKroRhZsSRxWGM4uYTgONWX7Ad8V9suO=t777w@mail.gmail.com>
+Subject: Re: [RFC] more close_range() fun
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 16, 2024 at 06:19:25PM +0100, Al Viro wrote:
-> On Fri, Aug 16, 2024 at 09:26:45AM -0700, Linus Torvalds wrote:
-> > On Thu, 15 Aug 2024 at 20:03, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > It *can* actually happen - all it takes is close_range(2) decision
-> > > to trim the copied descriptor table made before the first dup2()
-> > > and actual copying done after both dup2() are done.
-> > 
-> > I think this is fine. It's one of those "if user threads have no
-> > serialization, they get what they get" situations.
-> 
-> As it is, unshare(CLOSE_FILES) gives you a state that might be possible
+On Fri, 16 Aug 2024 at 10:19, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> All it takes, and IMO it's simpler that way.
 
-CLONE_FILES, that is.
+Hey, if it' simpler and gives more natural semantics, I obviously
+won't argue against it.
+
+That said, I do hate your "punch_hole" argument. At least make it a
+'struct' with start/end, not a random int pointer, ok?
+
+Oh, and can we please make 'dup_fd()' return an error pointer instead
+of having that other int pointer argument for the error code?
+
+I wonder why it was done that way - it goes back to 2006 and commit
+a016f3389c06 ("unshare system call -v5: unshare files"), it's not like
+it's some ancient interface that predates that model.
+
+                Linus
 
