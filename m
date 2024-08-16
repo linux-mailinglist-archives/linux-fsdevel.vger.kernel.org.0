@@ -1,67 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-26125-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CFB954C25
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 16:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724D9954C55
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 16:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 617B4281765
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 14:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A61451C236B8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Aug 2024 14:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E981D1BCA1C;
-	Fri, 16 Aug 2024 14:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CAF1BCA0A;
+	Fri, 16 Aug 2024 14:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZGVbDCMJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EFA156967;
-	Fri, 16 Aug 2024 14:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA611E520
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Aug 2024 14:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723817825; cv=none; b=Bp6vDaQuNcTAgrWnXiqKGIDY9MAPHwVw/VVJTLGMeZ30zawDlNT+ACYX1Uv15J6mz0gKOZgpRazrrJWPWcUlRfjBbLdkvVmQQlDAtQSDtMz1E0AWYhZBFMBbcNyKid20XWyLHSpaKE+WQiRHsCJ47W2eotCBdoujiIT824pkgl4=
+	t=1723818374; cv=none; b=i6N6+t1FrMAiPKvBiJIrtlQTXJFAjkGaMcS9uP7RWHq0VfEnhhZhVv46nkuKKb/tXM9Bn/aP1pq3XLMx4KDvqTQKG0g3/gjei8Jx4RAYxuDzHW3y1rDJrIqbBnky3xvC+FqyEcjHypqS+HrZLTl/6H+eLESWWL9xfrVOefR1rtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723817825; c=relaxed/simple;
-	bh=opkN6ZS9Pvj4MDCFP9lC8HtXMGO+HgUQLEsFJbfmIF8=;
+	s=arc-20240116; t=1723818374; c=relaxed/simple;
+	bh=YlriYsXOqwiTgS6I2KpCXQbTpQsu2jOM4HwsURrgwvk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VytnRPGCFSFu/dgtFIDx0gmRCo9f7Cj63kVpJtdlZgPWf4hr6cCYVapdDjM2+XBgEF5p9Mi8Lp/HeJcK0MxfGNQakt+r0fyVNs0LoaDilZXvwaffhSLB2A/rrue3FhPPhedO/ijMP33QBGf4K3ZbvPdI9j4g6NLLG2Ylh9UGFeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A30C32782;
-	Fri, 16 Aug 2024 14:16:59 +0000 (UTC)
-Date: Fri, 16 Aug 2024 15:16:57 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 11/40] arm64/mm: Allocate PIE slots for EL0 guarded
- control stack
-Message-ID: <Zr9fWfRObI5TNNXg@arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-11-699e2bd2190b@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KphRAVUjyQ/P6tDOgsgdVhJTROjLsYZgsfII3VOmGCzuR8GkbDSEvd3UROZSc1uvu85Heu6rhPjqxwr7gXKj+169x5gKULV/T4MGvMeo0S8V7R8RsfOCgMRJbLwrksPbLoR3Z9q0lA/mbSb1JRVwVsV2NNjb000dDJsaXrPf9ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZGVbDCMJ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YlriYsXOqwiTgS6I2KpCXQbTpQsu2jOM4HwsURrgwvk=; b=ZGVbDCMJ5EQ7fDp/OW1w/N7NOw
+	4t+UGUuzMVqEK9/1UpIg5LVG+0GmLRIQrnvLOOjD2AxfnJdrrhEqzr5VehqR6c/WWe4Q3PHQqzsHj
+	f/x9rq1sXJN0QvuLCMVJSch8/gBas02AEufR03nbqbnPUGKg8d5QmzW0Te/lIzEkacXUNISSGeKwU
+	60rG7hv9cp+sos/3IXW0eY+GOTuZOuouu62pxF8Y4uz51gooHNqk2g/493D12BrNKUHv7fJxLTERT
+	qF+qjvvfjj3EuugholQ1ggNpllxtTJBAjHQ6fmhY6AXsTS+bJztsBU3yi8o67zBw3RyA/LqexGukV
+	WnT3W9JQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sexu2-0000000DCiv-3kjF;
+	Fri, 16 Aug 2024 14:26:06 +0000
+Date: Fri, 16 Aug 2024 07:26:06 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, david@fromorbit.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Subject: Re: [PATCH] mm: document risk of PF_MEMALLOC_NORECLAIM
+Message-ID: <Zr9hfsZDfLohgj0m@infradead.org>
+References: <Zrxfy-F1ZkvQdhNR@tiehlicka>
+ <CALOAHbCLPLpi39-HVVJvUj=qVcNFcQz=3cd95wFpKZzUntCtdw@mail.gmail.com>
+ <ZrymePQHzTHaUIch@tiehlicka>
+ <CALOAHbDw5_hFGsQGYpmaW2KPXi8TxnxPQg4z7G3GCyuJWWywpQ@mail.gmail.com>
+ <Zr2eiFOT--CV5YsR@tiehlicka>
+ <CALOAHbCnWDPnErCDOWaPo6vc__G56wzmX-j=bGrwAx6J26DgJg@mail.gmail.com>
+ <Zr2liCOFDqPiNk6_@tiehlicka>
+ <Zr8LMv89fkfpmBlO@tiehlicka>
+ <Zr8MTWiz6ULsZ-tD@infradead.org>
+ <Zr8TzTJc-0lDOIWF@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,49 +73,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240801-arm64-gcs-v10-11-699e2bd2190b@kernel.org>
+In-Reply-To: <Zr8TzTJc-0lDOIWF@tiehlicka>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Aug 01, 2024 at 01:06:38PM +0100, Mark Brown wrote:
-> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
-> index b11cfb9fdd37..545d54c88520 100644
-> --- a/arch/arm64/include/asm/pgtable-prot.h
-> +++ b/arch/arm64/include/asm/pgtable-prot.h
-> @@ -144,15 +144,23 @@ static inline bool __pure lpa2_is_enabled(void)
->  /* 6:                                PTE_PXN | PTE_WRITE            */
->  /* 7: PAGE_SHARED_EXEC               PTE_PXN | PTE_WRITE | PTE_USER */
->  /* 8: PAGE_KERNEL_ROX      PTE_UXN                                  */
-> -/* 9:                      PTE_UXN |                       PTE_USER */
-> +/* 9: PAGE_GCS_RO          PTE_UXN |                       PTE_USER */
->  /* a: PAGE_KERNEL_EXEC     PTE_UXN |           PTE_WRITE            */
-> -/* b:                      PTE_UXN |           PTE_WRITE | PTE_USER */
-> +/* b: PAGE_GCS             PTE_UXN |           PTE_WRITE | PTE_USER */
->  /* c: PAGE_KERNEL_RO       PTE_UXN | PTE_PXN                        */
->  /* d: PAGE_READONLY        PTE_UXN | PTE_PXN |             PTE_USER */
->  /* e: PAGE_KERNEL          PTE_UXN | PTE_PXN | PTE_WRITE            */
->  /* f: PAGE_SHARED          PTE_UXN | PTE_PXN | PTE_WRITE | PTE_USER */
->  
-> +#define _PAGE_GCS	(_PAGE_DEFAULT | PTE_NG | PTE_UXN | PTE_WRITE | PTE_USER)
-> +#define _PAGE_GCS_RO	(_PAGE_DEFAULT | PTE_NG | PTE_UXN | PTE_USER)
-> +
-> +#define PAGE_GCS	__pgprot(_PAGE_GCS)
-> +#define PAGE_GCS_RO	__pgprot(_PAGE_GCS_RO)
-> +
->  #define PIE_E0	( \
-> +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS),           PIE_GCS)  | \
-> +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS_RO),        PIE_R)   | \
->  	PIRx_ELx_PERM(pte_pi_index(_PAGE_EXECONLY),      PIE_X_O) | \
->  	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY_EXEC), PIE_RX)  | \
->  	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RWX) | \
-> @@ -160,6 +168,8 @@ static inline bool __pure lpa2_is_enabled(void)
->  	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED),        PIE_RW))
->  
->  #define PIE_E1	( \
-> +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS),           PIE_NONE_O) | \
-> +	PIRx_ELx_PERM(pte_pi_index(_PAGE_GCS_RO),        PIE_NONE_O) | \
+On Fri, Aug 16, 2024 at 10:54:37AM +0200, Michal Hocko wrote:
+> Yes, I think we should kill it before it spreads even more but I would
+> not like to make the existing user just broken. I have zero visibility
+> and understanding of the bcachefs code but from a quick look at __bch2_new_inode
+> it shouldn't be really terribly hard to push GFP_NOWAIT flag there
+> directly. It would require inode_init_always_gfp variant as well (to not
+> touch all existing callers that do not have any locking requirements but
+> I do not see any other nested allocations.
 
-It's fine to keep PIE_NONE_O here, the kernel wouldn't need to access
-this memory with unprivileged instructions (it only matters for the
-futex code using LDXR/STXR).
+I'll probably have to go down into security_inode_alloc as well.
+That being said there is no explanation for the behavior here in the
+commit logs or the code itself, so who knows.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
