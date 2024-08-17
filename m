@@ -1,58 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-26174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48449555BE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2024 08:16:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220279555CC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2024 08:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A271F22A04
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2024 06:16:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2EB1C21BA6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2024 06:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEFB139D07;
-	Sat, 17 Aug 2024 06:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194B913B78F;
+	Sat, 17 Aug 2024 06:43:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25283BA2D;
-	Sat, 17 Aug 2024 06:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38B5BA2D;
+	Sat, 17 Aug 2024 06:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723875399; cv=none; b=ZOrwXBSDX2hra12XNxzXAC8HAmqowaDVqQThw1pfNa/Qo3xIwiS7WTKZmeyaqBZ44eagePFKNkzRUFoHvyfdke9E7QTrtb0ra5zeNVRQ5QGDm+8JEMTAZ9BpGLyZhKLdsZlYACLUi40XbEzKJ5xheeph8seaXVUpHqOKvlHNdhE=
+	t=1723877001; cv=none; b=fL8UeP6FZN8wY5MgDHoVDumUH6pc+7WzfjZQCp7mGBhgzk4ozJeqCRjQS1slLCuuV38CAzXDNS7+62W6cUPOLH311GUXhQ09LaqS1XgZ+Sz+NfEb4a8CMOdLvRUmgx5fLjehEC+A9daq2FisEtlnrxwKp8aAYG+6t2imtHgAx6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723875399; c=relaxed/simple;
-	bh=4IRGa72FdT2uVCvD1C6kgQEUqWo/gKm1kKoke0mBBZ8=;
+	s=arc-20240116; t=1723877001; c=relaxed/simple;
+	bh=f1W0HHHrGQ+9M+f+peZJqHg5y6H7TaYQhI0iN8WAeVw=;
 	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=QUf67vEK8/UjLeb6Cp335kKnCkFHq39yBv/4ow4qjjvRKTf4RjhQwONvF0thtPWRQwZg4UggdmUDHRmZg4nuS8o86hd/L1AIBjjI9dPmfDlqXlppIEmmyUFXvpm1EeBLJQcYwbDvhPYJPGhNgAKxZPdbkUmbj32VyzGv+/NP/cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 In-Reply-To:Content-Type; b=IiTi4j9RVuXj8eE6N6gNa3zpJCUYZgRLrIwJT8na5PfyJxgiUm3A4SO3n4qVSp73TOltv+qDq59dQUh7Dv7MFWh0NGwmEdDbAzfOwayojGv23U/r8InBs1cICHDmOqYfNN4DNR7yuP6R8mQBRr62zLNrGaNfrPjkE/Ht1GFLBCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wm7sg0fgVz4f3jjk;
-	Sat, 17 Aug 2024 14:16:23 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wm8SN1VCcz4f3jdF;
+	Sat, 17 Aug 2024 14:43:00 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 899701A06D7;
-	Sat, 17 Aug 2024 14:16:32 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 22AE61A0568;
+	Sat, 17 Aug 2024 14:43:14 +0800 (CST)
 Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBXzII+QMBmzDWwBw--.2489S3;
-	Sat, 17 Aug 2024 14:16:32 +0800 (CST)
-Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
- than one blocks per folio
+	by APP4 (Coremail) with SMTP id gCh0CgBnj4V+RsBmEPKxBw--.36495S3;
+	Sat, 17 Aug 2024 14:43:11 +0800 (CST)
+Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
 To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- djwong@kernel.org, brauner@kernel.org, david@fromorbit.com, jack@suse.cz,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+ brauner@kernel.org, david@fromorbit.com, jack@suse.cz, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
 References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
- <ZrxBfKi_DpThYo94@infradead.org>
- <58d9c752-1b40-0af8-370c-cf03144c54c0@huaweicloud.com>
- <ZsAqG-Q527PYWYrz@casper.infradead.org>
+ <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
+ <ZsAq11RKg-dRfPv2@casper.infradead.org>
 From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <73a60117-79c2-fa69-2113-1932a644363f@huaweicloud.com>
-Date: Sat, 17 Aug 2024 14:16:30 +0800
+Message-ID: <53da5ebf-3d91-7c70-1be9-4c8a5485cd17@huaweicloud.com>
+Date: Sat, 17 Aug 2024 14:43:10 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.12.0
 Precedence: bulk
@@ -61,14 +58,14 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZsAqG-Q527PYWYrz@casper.infradead.org>
+In-Reply-To: <ZsAq11RKg-dRfPv2@casper.infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXzII+QMBmzDWwBw--.2489S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF13tw1UZrWUtr4kWrWUCFg_yoW8KFy3pF
-	9rKFyDGFW8Ga17Cr9293W7Zw1Fq347JFy5XF4aqw1akFn0q3W7K3W2ga4jkay7Gwn7Aw40
-	q3y7XFZrWFy5A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBnj4V+RsBmEPKxBw--.36495S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFW8JF18Jr4DKrWDXF4fKrg_yoW8Xr13pa
+	yfK3Wqkrn5t3Z7Cwn7uw10qw1Fy3y5KF45ZF1qgr15ArZ8WF1agryxKa1qvay7Kw1ft3WI
+	vFWUZ34xCF15ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
 	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
@@ -84,55 +81,38 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7CF13tw1UZrWUtr4kWrWUCFg_yoW8KFy3pF
 	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2024/8/17 12:42, Matthew Wilcox wrote:
-> On Sat, Aug 17, 2024 at 12:27:49PM +0800, Zhang Yi wrote:
->> On 2024/8/14 13:32, Christoph Hellwig wrote:
->>> On Mon, Aug 12, 2024 at 08:11:56PM +0800, Zhang Yi wrote:
->>>> From: Zhang Yi <yi.zhang@huawei.com>
->>>>
->>>> Now we allocate ifs if i_blocks_per_folio is larger than one when
->>>> writing back dirty folios in iomap_writepage_map(), so we don't attach
->>>> an ifs after buffer write to an entire folio until it starts writing
->>>> back, if we partial truncate that folio, iomap_invalidate_folio() can't
->>>> clear counterpart block's dirty bit as expected. Fix this by advance the
->>>> ifs allocation to __iomap_write_begin().
->>>
->>> Wouldn't it make more sense to only allocate the ifѕ in
->>> iomap_invalidate_folio when it actually is needed?
->>>
+On 2024/8/17 12:45, Matthew Wilcox wrote:
+> On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
 >>
->> I forget to mention that truncate_inode_partial_folio() call
->> folio_invalidate()->iomap_invalidate_folio() only when the folio has
->> private, if the folio doesn't has ifs, the iomap_invalidate_folio()
->> would nerver be called, hence allocate the ifs in
->> iomap_invalidate_folio() is useless.
->>
->> In my opinion, one solution is change to always call folio_invalidate()
->> in truncate_inode_partial_folio(), all callbacks should handle the no
->> private case. Another solution is add a magic (a fake ifs) to
->> folio->private and then convert it to a real one in
->> iomap_invalidate_folio(), any thoughts?
+>> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
+>> folio by folio_mark_dirty() even the map length is shorter than one
+>> folio. However, on the filesystem with more than one blocks per folio,
+>> we'd better to only set counterpart block's dirty bit according to
+>> iomap_length(), so open code folio_mark_dirty() and pass the correct
+>> length.
 > 
-> Why do we need iomap_invalidate_folio() to be called if there is no ifs?
-> Even today, all it does is call ifs_free() if we're freeing the entire
-> folio (which is done by truncate_cleanup_folio() and not by
-> truncate_inode_partial_folio().
+> We shouldn't waste any time trying to optimise writing to files through
+> mmap().  People have written papers about what a terrible programming
+> model this is.  eg https://db.cs.cmu.edu/mmap-cidr2022/
 > 
-Please see patch 2, if we truncate a partial folio (through punch hole or
-truncate) on a filesystem with blocksize < folio size, it will left over
-dirty bits of truncated/punched blocks, and this will lead to a hole with
-dirty bit set but without any block allocated/reserved, this is not
-correct.
+> There are some programs that do it, but they are few and far between.
+> 
 
-Hence we also need to call iomap_invalidate_folio() by
-truncate_inode_partial_folio() and clear partial folio of the counterpart
-dirty bits. But now we don't allocate ifs in __iomap_write_begin() when
-writing an entire folio, so it doesn't has ifs, but we still can
-partial truncate this folio, we should allocate ifs for it and update
-the dirty bits on it.
+I don't think it's an optimization, this is a fix, the issue is the same
+to the one that previous 2 patches want to fix: there left a hole with
+ifs dirty bit set but without any valid data and without any block
+allocated/reserved. This mmap() path is just once case that could lead
+to this issue (The case if as I said in my reply to Christoph, suppose
+we have a 3K regular file on a filesystem with 1K block size. If the
+folio size is 4K, In iomap_page_mkwrite(), it will mark all 4 bits of ifs
+dirty, the last one will become redundant if we expand the file to 4K
+later).
+
+Hence in my opinion, we need to fix this, or it's gonna be a potential
+problem one day.
 
 Thanks,
 Yi.
-
 
 
