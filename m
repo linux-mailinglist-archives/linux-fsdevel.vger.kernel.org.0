@@ -1,163 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-26178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320AA955668
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2024 10:39:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8322A95567C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2024 10:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F3E1C20BFB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2024 08:39:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 965E41C20D9C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Aug 2024 08:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0584A14534A;
-	Sat, 17 Aug 2024 08:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4qRGs68"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E156144D27;
+	Sat, 17 Aug 2024 08:50:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D1883A06;
-	Sat, 17 Aug 2024 08:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3988814374C
+	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Aug 2024 08:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723883944; cv=none; b=Tb5ZN1o4hVdGBeyU2c9N0EpHk7K7x7iLQyUqAUAXqX/cx3IZ9iVDUinkqPzqvT5AMBhvS0VlgJXlNjRcW9Ne+VKO9TQfBZfUIiCbpUaRJ87X4OaU7fFaLFQ74aZZtrhDYDWw2otl0/IyIx10OsNnKx+2ibLvSjVAXoTB4n+c0ec=
+	t=1723884655; cv=none; b=J3n17o2qOEz7g7CtEkrYKjOe+91CeKDwUDlINx+dxP8Wsoz4bAjGhBHJXfNaqxFa1gtOpaMxODYl3OP+ZCh3QOd0IaDep7+9FFn363qqFN2od3eXSMQL2mtoQYixMBMLogAJ+nKwyAYAw26d1ssfgZdPT1occ7qAonkzm4oozUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723883944; c=relaxed/simple;
-	bh=drcR0Ggvob9Xsaq04tuibw0a3w723D1cXfmcavnp7v8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b7BwKmLHyHTYMfLYBG633ylyJqnndLX6ON95yyfoQNUdtZvcAbYVUDP9dXtEgxYhwmOXVx5mONVcbxdKZPpVWaQou0Go+aQryP0nuw2Ou5eeQo12tmf4eDrg+8263elIfIcxNF1Pk+pdz1c5+WQmMjCXtmNBT3EAmDEagSVivYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4qRGs68; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30869C116B1;
-	Sat, 17 Aug 2024 08:39:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723883943;
-	bh=drcR0Ggvob9Xsaq04tuibw0a3w723D1cXfmcavnp7v8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X4qRGs68mHWdMwsIm8IcqoC0AjlA9unRAZyZItSaeap7PHizirk/hNNBeXaBbSGyi
-	 8TXQAjPdxFfBxyi7yYHq6mqApaR7yxkD08nUzjQj/awldhvM9VJr1i07GxDJn/8scG
-	 h28lmq1aJ4tliJZ6C4qTmJbhnufQdVSICkHH28rbualNjCN+dMGOAKFWA7bYRML9Dp
-	 zwk6+UUbpp+JiZxIrb3mn6+4/C5QLDZrwDqVugy8N3Q+dWQyhmirfyEUCVdCO3dsJH
-	 B0bz++Fwz+qpQzZ2Ia9SU0OIHOlNdgLk+3ah1rTJqAY9M7W4pASoQ/+TjDqoROGXH3
-	 JeShGAxlHtFsQ==
-Date: Sat, 17 Aug 2024 10:38:58 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH v7 4/8] bpftool: Ensure task comm is always NUL-terminated
-Message-ID: <teajtay63uw2ukcwhna7yfblnjeyrppw4zcx2dfwtdz3tapspn@rntw3luvstci>
-References: <20240817025624.13157-1-laoar.shao@gmail.com>
- <20240817025624.13157-5-laoar.shao@gmail.com>
+	s=arc-20240116; t=1723884655; c=relaxed/simple;
+	bh=F7HBEHKXFO0xpO53ZBEeYIwp3RgZ1ffoQoBDp9NUi2w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K8ucIlfY3G5frdHzXZtjMnHGIBYm2zhxpbQo5UWfemTnXFGBiV01zmBRFG4Q5Gq/FaV7XmUqdMYnFL3x31IBEamvlU8MfsbYf13kiSjk7V5gBDtzEpZLu5b/h8QqIgt1NW5aIQAZpApIGz7Pt2JEMd0w6uV2oahGU1Vy3PTMqKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WmCHY3SfQz4f3kw3
+	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Aug 2024 16:50:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5C92C1A018D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Aug 2024 16:50:48 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCHr4VhZMBmPT66Bw--.39037S4;
+	Sat, 17 Aug 2024 16:50:48 +0800 (CST)
+From: yangerkun <yangerkun@huaweicloud.com>
+To: dhowells@redhat.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	jlayton@kernel.org,
+	hsiangkao@linux.alibaba.com
+Cc: netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] netfs: fix the mismatch used for CONFIG_FSCACHE_DEBUG
+Date: Sat, 17 Aug 2024 16:46:19 +0800
+Message-Id: <20240817084619.2075189-1-yangerkun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="psoj2t3rvkbpqmnp"
-Content-Disposition: inline
-In-Reply-To: <20240817025624.13157-5-laoar.shao@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHr4VhZMBmPT66Bw--.39037S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gr1DGryUCF1DCF48tFWkZwb_yoWDZrc_tF
+	40yF18Xr45tF9aq34xCrWI9FWUWa97KF48uw13trZIqrZxtas5CFsag393AwsxWF4UWrnr
+	Awnaqrs8ury7GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267
+	AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80
+	ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4
+	AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
+From: yangerkun <yangerkun@huawei.com>
 
---psoj2t3rvkbpqmnp
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH v7 4/8] bpftool: Ensure task comm is always NUL-terminated
-References: <20240817025624.13157-1-laoar.shao@gmail.com>
- <20240817025624.13157-5-laoar.shao@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20240817025624.13157-5-laoar.shao@gmail.com>
+The name of debug config used in fs/netfs/internal.h has a mismatch
+compared to the define in fs/netfs/Kconfig, which lead to that debug for
+netfs won't work.
 
-Hi Yafang,
+Signed-off-by: yangerkun <yangerkun@huawei.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/netfs/internal.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sat, Aug 17, 2024 at 10:56:20AM GMT, Yafang Shao wrote:
-> Let's explicitly ensure the destination string is NUL-terminated. This wa=
-y,
-> it won't be affected by changes to the source string.
->=20
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> Reviewed-by: Quentin Monnet <qmo@kernel.org>
-> ---
->  tools/bpf/bpftool/pids.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/tools/bpf/bpftool/pids.c b/tools/bpf/bpftool/pids.c
-> index 9b898571b49e..23f488cf1740 100644
-> --- a/tools/bpf/bpftool/pids.c
-> +++ b/tools/bpf/bpftool/pids.c
-> @@ -54,6 +54,7 @@ static void add_ref(struct hashmap *map, struct pid_ite=
-r_entry *e)
->  		ref =3D &refs->refs[refs->ref_cnt];
->  		ref->pid =3D e->pid;
->  		memcpy(ref->comm, e->comm, sizeof(ref->comm));
-> +		ref->comm[sizeof(ref->comm) - 1] =3D '\0';
+No logic change, send v2 since this patch does not accept for a long
+time...
 
-Why doesn't this use strscpy()?  Isn't the source terminated?
+diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
+index 7773f3d855a9..a683a8505696 100644
+--- a/fs/netfs/internal.h
++++ b/fs/netfs/internal.h
+@@ -365,7 +365,7 @@ void fscache_create_volume(struct fscache_volume *volume, bool wait);
+ #define _leave(FMT, ...) kleave(FMT, ##__VA_ARGS__)
+ #define _debug(FMT, ...) kdebug(FMT, ##__VA_ARGS__)
+ 
+-#elif defined(CONFIG_NETFS_DEBUG)
++#elif defined(CONFIG_FSCACHE_DEBUG)
+ #define _enter(FMT, ...)			\
+ do {						\
+ 	if (netfs_debug)			\
+-- 
+2.39.2
 
-Both the source and the destination measure 16 characters.  If it is
-true that the source is not terminated, then this copy might truncate
-the (non-)string by overwriting the last byte with a NUL.  Is that
-truncation a good thing?
-
->  		refs->ref_cnt++;
-> =20
->  		return;
-> @@ -77,6 +78,7 @@ static void add_ref(struct hashmap *map, struct pid_ite=
-r_entry *e)
->  	ref =3D &refs->refs[0];
->  	ref->pid =3D e->pid;
->  	memcpy(ref->comm, e->comm, sizeof(ref->comm));
-> +	ref->comm[sizeof(ref->comm) - 1] =3D '\0';
-
-Same question here.
-
->  	refs->ref_cnt =3D 1;
->  	refs->has_bpf_cookie =3D e->has_bpf_cookie;
->  	refs->bpf_cookie =3D e->bpf_cookie;
-> --=20
-> 2.43.5
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---psoj2t3rvkbpqmnp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbAYZwACgkQnowa+77/
-2zKmIA/9Gqjb53CpMspqZM8sUUCdmGhqPv1cYcL2EDkg7W9lkRgn0GLudREK/roq
-y4QBmGljgAhm3UbecLPiKvAPtiYmGoOmndrjJ4mq8E6lSqkMjHoaiMZ2EEPI7u+p
-xPTHJklCQHIAndCjVjC7A4cIx2RZuBtx6Xg/JMgO7i/s0jtb2SqiQtXEEIHjuUd5
-q0YybNl407qq/IRSt72qEL+rKEBVdcZppyDfoxPVKEZYOgbmhYpyyViq6Rli9HhU
-loprXpAdwiumkNZQHJ7It8nXlC5/J3VDuazDN193PNRprMfzC5TjBpWezf+KY7Wn
-Vx5tAC4H6ZTNdhD5a+NwfaApt9xqOcRVaYe2E1m1dMfIgojmUvJYd4zcRZBYRE5M
-uhQxkrRLueuJoKeqVcIlbPRTafIUd6lev0ccKam+Ao9J5Nt4TmqAUMyYIOymQ90B
-ldUgSSiofzyioNhrKNS1mLBCOVjTKClEBH+rbjKfO7KLf6Qo2dtvLoOCC5f7YZvy
-k9GsCv9jGEF64bGdcK82pM+LjftAWuTbO3Uwlw7qUNDKJb7OWjQS5BtejgQpiOh6
-RB4z4wZkDZ/Skwke7F16AsEeMugdcRyD1Wyl4paqcw8sXhc1AquvuymC6OPV5u8z
-GZt0uJeVRKbg7CVQEny1jGFO8BiPLK6JzTHLRV3KRlTKCGc5vEY=
-=fb44
------END PGP SIGNATURE-----
-
---psoj2t3rvkbpqmnp--
 
