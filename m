@@ -1,105 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-26203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2A1955AB4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 05:58:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF018955BED
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 10:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDAD71C20A83
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 03:58:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70993B21202
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 08:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D231944F;
-	Sun, 18 Aug 2024 03:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A350717C79;
+	Sun, 18 Aug 2024 08:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFOwn/7c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHZkHNV5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7AC748D;
-	Sun, 18 Aug 2024 03:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD964134B2;
+	Sun, 18 Aug 2024 08:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723953501; cv=none; b=s74+3dm0308wQHhaBRL92O/QxBFEBcMPzIELEmM063QBaES+TdGzZoOEi+Ei7tcfn46VGTqeP5qQTLc7Jvyte5gXJCYGbC/sDwhtbHXVhHf17J97fOT2HElA/NWicdGebcRWffcEZGa5EQMxu3nWdnTpPp8qN3dQn2nvNXwC+Dg=
+	t=1723969537; cv=none; b=dB7Ouxn84zDLYwo7sCHwGLv2g3MaQCnknqf47H4XFAd1tvSgg6jctY71rXr1YxQscgnwz4d3VNspW197zPgkhkK847KeaD9Vg07RtB7P2POPvlYenX/tFQXb1vszhjAjtNQaKYqtH8/XdQMToQ1nM+ww4qECY6o3Iyx4Sj0Vacw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723953501; c=relaxed/simple;
-	bh=L9oJBUC516q+ejSs4MQDSm90WpWXosKx1wQ5yOBnEq8=;
+	s=arc-20240116; t=1723969537; c=relaxed/simple;
+	bh=HNPlU0M/3vqiQI+da9DTWN8QwJm2bLjTnAaFdwzaWig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fj/TTaK6olpE0p9RY3SpvVVu5eqe6j0BozpnQv4YQRVn6hVBfLxBHtif9xo9YQyivec3UEB03PMBXgioE2w7RmoHQOcIh6HFp5WAaugUXEXdyTJWDgLRvke2Neie2zu/5r0BiBOSGM2LZTV8nOihkG34OVQ3O0UkuesI7t0of8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFOwn/7c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356DBC32786;
-	Sun, 18 Aug 2024 03:58:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KPttER1GaWchJ4kvblETLq+25BF4I2PXCI0HeMjCyrUXpZ+FYvTy+zSoXufvpk6/JY6E44icWs+FS1+V4BJqqTGXlSNEhqK/LstB4YFBj+IjOQpMPHl4zlWtIjZVoYGR5pGrDhNg2hZOwbeTs2ZtYi9D8tknvQTLK9XHOoeZylk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHZkHNV5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79F9C32786;
+	Sun, 18 Aug 2024 08:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723953500;
-	bh=L9oJBUC516q+ejSs4MQDSm90WpWXosKx1wQ5yOBnEq8=;
+	s=k20201202; t=1723969536;
+	bh=HNPlU0M/3vqiQI+da9DTWN8QwJm2bLjTnAaFdwzaWig=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pFOwn/7c2x2YWhkYlDvtta1Rcl8axckpl3SGPQQ9X4KZzjL5hdaEr3T2j7OJP1Rc7
-	 Ubcq8Vz/6dXUGmeHw8e6DDcU1S+XXVdpV4+TF8xEnhxBSX+kWobJs71VwYG7z3kNwc
-	 egQaStHzciEZY+g0Rv03F8HHpLOy1VRJ3bYi1HBCphKNaiRKwHlNxu4ADg6yP01wWh
-	 qbqfTu3p/YDqzmD0IrkDfjm/3fwGzOikPY/djYZbN8wINfE4SZA80sq9dek92sbtcY
-	 fzRnaNuSVpoc3eixOVSWJc9IM+E2ts8thyKDNs8JEBzeCKwq+2+eh1VgF6K3V+aV6s
-	 ZbKFm7jXUfzVQ==
-Date: Sat, 17 Aug 2024 20:58:18 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Tejun Heo <tj@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] pidfd: prevent creation of pidfds for kthreads
-Message-ID: <20240818035818.GA1929@sol.localdomain>
-References: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
+	b=vHZkHNV5oUFehXU9H208C3BbvikBh69Map7MNwYhsAz/H+RCy1qVmhkneBJXg6XjJ
+	 A4yHeH0HSJKwxa7FLYPOTmemN1bnz5cRIh6lcVsrPvla+TthtasHx5rjtn8C4jsDQk
+	 yFp0s7cOZozpGsEjAghDarTvbyerVUBwdhHxnSfOD9KlTBerTrANtAUJssjdzPrjNl
+	 EhSD2ZYUuJmNQNe1xBJ/twr+KdnK0XkPc9svL3TfLFPiHpoxVJoRf5gEij63/YgQR2
+	 vdZEieAN5ajY1WQBCTOuo56n3Dt/ZdoRgYqRpXRd3S9XddtW7UgbZC41BpdvWHqRIm
+	 XHhHkzQ8KNsPg==
+Date: Sun, 18 Aug 2024 10:25:30 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
+Subject: Re: [PATCH v7 4/8] bpftool: Ensure task comm is always NUL-terminated
+Message-ID: <gmhyl3zdnxy6q2tn5wtasqbuhxpfbejmh7qxeuk7lnbhcdlfsc@b3b56vgdrzgm>
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+ <20240817025624.13157-5-laoar.shao@gmail.com>
+ <teajtay63uw2ukcwhna7yfblnjeyrppw4zcx2dfwtdz3tapspn@rntw3luvstci>
+ <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bqpbjdxuldrazcxq"
 Content-Disposition: inline
-In-Reply-To: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
+In-Reply-To: <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
 
-Hi Christian,
 
-On Wed, Jul 31, 2024 at 12:01:12PM +0200, Christian Brauner wrote:
-> It's currently possible to create pidfds for kthreads but it is unclear
-> what that is supposed to mean. Until we have use-cases for it and we
-> figured out what behavior we want block the creation of pidfds for
-> kthreads.
-> 
-> Fixes: 32fcb426ec00 ("pid: add pidfd_open()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  kernel/fork.c | 25 ++++++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
+--bqpbjdxuldrazcxq
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
+Subject: Re: [PATCH v7 4/8] bpftool: Ensure task comm is always NUL-terminated
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+ <20240817025624.13157-5-laoar.shao@gmail.com>
+ <teajtay63uw2ukcwhna7yfblnjeyrppw4zcx2dfwtdz3tapspn@rntw3luvstci>
+ <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
 
-Unfortunately this commit broke systemd-shutdown's ability to kill processes,
-which makes some filesystems no longer get unmounted at shutdown.
+Hi Yafang,
 
-It looks like systemd-shutdown relies on being able to create a pidfd for any
-process listed in /proc (even a kthread), and if it gets EINVAL it treats it a
-fatal error and stops looking for more processes...
+On Sun, Aug 18, 2024 at 10:27:01AM GMT, Yafang Shao wrote:
+> On Sat, Aug 17, 2024 at 4:39=E2=80=AFPM Alejandro Colomar <alx@kernel.org=
+> wrote:
+> >
+> > Hi Yafang,
+> >
+> > On Sat, Aug 17, 2024 at 10:56:20AM GMT, Yafang Shao wrote:
+> > > Let's explicitly ensure the destination string is NUL-terminated. Thi=
+s way,
+> > > it won't be affected by changes to the source string.
+> > >
+> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > > Reviewed-by: Quentin Monnet <qmo@kernel.org>
+> > > ---
+> > >  tools/bpf/bpftool/pids.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/tools/bpf/bpftool/pids.c b/tools/bpf/bpftool/pids.c
+> > > index 9b898571b49e..23f488cf1740 100644
+> > > --- a/tools/bpf/bpftool/pids.c
+> > > +++ b/tools/bpf/bpftool/pids.c
+> > > @@ -54,6 +54,7 @@ static void add_ref(struct hashmap *map, struct pid=
+_iter_entry *e)
+> > >               ref =3D &refs->refs[refs->ref_cnt];
+> > >               ref->pid =3D e->pid;
+> > >               memcpy(ref->comm, e->comm, sizeof(ref->comm));
+> > > +             ref->comm[sizeof(ref->comm) - 1] =3D '\0';
+> >
+> > Why doesn't this use strscpy()?
+>=20
+> bpftool is a userspace tool, so strscpy() is only applicable in kernel
+> code, correct?
 
-This is what shows up in the system log:
+Ahh, makes sense.  LGTM, then.  Maybe the closest user-space function to
+strscpy(9) would be strlcpy(3), but I don't know how old of a glibc you
+support.  strlcpy(3) is currently in POSIX, and supported by both glibc
+and musl, but that's too recent.
 
-    systemd[1]: Shutting down.
-    systemd-shutdown[1]: Syncing filesystems and block devices.
-    systemd-shutdown[1]: Sending SIGTERM to remaining processes...
-    systemd-shutdown[1]: Failed to enumerate /proc/: Invalid argument
-    systemd-shutdown[1]: Sending SIGKILL to remaining processes...
-    systemd-shutdown[1]: Failed to enumerate /proc/: Invalid argument
-    systemd-shutdown[1]: Unmounting file systems.
-    (sd-umount)[17359]: Unmounting '/run/credentials/systemd-vconsole-setup.service'.
-    (sd-umount)[17360]: Unmounting '/run/credentials/systemd-journald.service'.
-    (sd-remount)[17361]: Remounting '/' read-only with options ''.
-    (sd-remount)[17361]: Failed to remount '/' read-only: Device or resource busy
-    (sd-remount)[17362]: Remounting '/' read-only with options ''.
-    (sd-remount)[17362]: Failed to remount '/' read-only: Device or resource busy
-    systemd-shutdown[1]: Not all file systems unmounted, 1 left.
+Have a lovely day!
+Alex
 
-- Eric
+> --
+> Regards
+> Yafang
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--bqpbjdxuldrazcxq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbBr/oACgkQnowa+77/
+2zKlWg//bIam9Z2S2oGYdx1Es2yhqgRhsYrxX1OVGAonZ9d+7XaXBTpsSjfcy8AT
+EqipznL0pk8B0uQ+sagT8w6h0H2StHg59E+gR4M8YKp5s/X6Rhq+aim+k19Qh53S
+afYHd+jfvzFBe1dXQXm5Pe80X1ncmIcISMqXh/O3ykzqpuPWanKo4torJlbqtXMM
+yGxL8yJu15D00/cwjEwT9mh7KB9zsmVNyHPiY3aTvtjd0F/tNlP9qvnxgi+81duU
+ciTElwVWSG14g9TcDFWHkNBarUuBiHe240JQE7ARDPJmPkZrzHo6GcpC4AdydU6Q
+yvA/1Hp4dCFLoiXspmTWmAyR3Q+Nnn1wetdU555oIpEhYk+dpgAdO1MAYOJ+izdh
+f71cefEGfG60FG0tkzgwkbpa4xPUaCEi5L/5Voms4yRIoj5eYvmQs0+/N8IM2Fbk
+HSLIjf+5YiMw0SycNUP0XKFZGJ2MbXU8c+MBM4pTwfl4MFhgVPvI53j0J+5D43x8
+AgvgLJ3kp44JOC+FoeCDgraJ7ZD5nasDl1YBaNUS7lCxAAJ80V4CMWzi9kX0YOrG
+HRB6XOquSAF0pGarE6FLeKCmwKRTcsrDTrVPRgkrHgxt/lYqJJFnaWY1lLKDQViF
+zUzZFqndM8ocPo0p3o645SxxtVDEvxgJolM+5sdOdjqMKUmKg+U=
+=rl7R
+-----END PGP SIGNATURE-----
+
+--bqpbjdxuldrazcxq--
 
