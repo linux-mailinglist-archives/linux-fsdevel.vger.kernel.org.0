@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-26207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701D9955D02
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 16:41:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D0E955D04
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 16:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3C2DB21287
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 14:41:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 325D3B21351
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 14:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A2B132132;
-	Sun, 18 Aug 2024 14:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CE6129E9C;
+	Sun, 18 Aug 2024 14:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y9YXuniO"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g9htMhSq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D860645007
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Aug 2024 14:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E903219F
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Aug 2024 14:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723992105; cv=none; b=eu7dXSXcod2EsYHQv/ss09JR3enx3xF3PK0vW64OmtQJP5OjYyao1nsp7vHhh9V0GLRXvAXnLeSwizHlal4/RJlsi58g+R+6khbVxM2T/VkUlVCIF9fM87609LcVQFVkHkWJa9cUEhK3hPpC+EdcThJ8GC2GxyQQ5Vl5eyFQcPI=
+	t=1723992543; cv=none; b=D3QyKWpwaWysaLCBFSP/4j2OCQ8TmgLyhx6JBC7SPs/qvaw+XDmtl7ztxlRus4YR/T6Ydd0EnFJPiXMf4Ty+Iq0OB7z54nm2CpYpaMy6QWmwgdeTer+5myqHpPl+nOoxhN20gMYEnXBZ+rQd2AVsHHc5LaN9iTBKgaI0d2YqgLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723992105; c=relaxed/simple;
-	bh=f/Yyh1SQiz037i+coZ5d5gnMdIEpE5sBF1HqgTYcoPs=;
+	s=arc-20240116; t=1723992543; c=relaxed/simple;
+	bh=4FXY7KCGViYQageFCrEku4bznRLF5CklrCoH/VMP5Go=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rWgxnuvRB3B7Pe8KE3OPluwQbV4DqV73gXTRBdhmm3+Fc/7NFBM8bcoT1SgE1rBMO8sdSwT5biSrSe5cT2wM+qXActo0u8AyXw60vj/nmAG/atVfYHELe7g1U5aaB6EqHcuNNumgJwB8tPLQKCYe/H28bvKwskcpGxI3Tc9VbGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y9YXuniO; arc=none smtp.client-ip=95.215.58.188
+	 In-Reply-To:Content-Type; b=rGnSXWkVwkGKnmAQRqIVzn6nYRqCxBPIeeXS9BvbGH0+WgwkLWGgOa9NEOv2rTi1A2NJfGb4D30AIpZHz7cZquTgk/TCPG9GyEkZ+fKFxIHgd6BHic75VxZZjCUnrrYj34mpPYdbB+sftc521wqBMyrfEZgviQT34V9LFg+hD2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g9htMhSq; arc=none smtp.client-ip=91.218.175.186
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4a50889c-aa90-4a99-b3d9-45d5666b3171@linux.dev>
+Message-ID: <311ac3f4-5fa2-4bff-8fe9-6db355ad3673@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723992100;
+	t=1723992538;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oPs/TgqEJtnJfx1BsHQyi/jmTIqnp3sMt5LKa8FQ7vg=;
-	b=Y9YXuniODlvYIxuioQ4x6VUkcnKCIAxWiuv9SoLe13t7cEkLVCIM5YKppOqjZfWZLTlDZR
-	fjFg0EvtmipEogfdvkm02pz15Fsa+BMHObb6RqfYNsrC1W+eo0i/QIx6WDi14oOkng12Mk
-	c0N05ZdRec6wtPrXoKUAwb5MFgt/Wcg=
-Date: Sun, 18 Aug 2024 22:41:11 +0800
+	bh=40ma2DFTtgvhta8iN3PF21Sc1IhOndM8X//XyFcAIew=;
+	b=g9htMhSqEL0EAcOwLp/3dllVOyGRZn61y+DTGQodJOzz+86NC1UjL2q5M6JxncwGGHHBHj
+	B61q28XKwHdZ7rMKHVP9IjbUed8gGSdt5PhBrK+1bXrG4TPLtomCa3s9q5Rnynpn5RtBfM
+	yF5MqNc8O6/rjbYJ/OoWmKScFgUikww=
+Date: Sun, 18 Aug 2024 22:48:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -205,7 +205,6 @@ On 2024/8/15 04:58, Mateusz Guzik wrote:
 > collecting it periodically (atomic add on one side, atomic swap with 0
 > on the consumer, I don't know the c11 intrinsics). It would be
 > drastically cheaper all around.
-> 
 
 Thank you for your suggestion.
 
@@ -223,6 +222,10 @@ programs can benefit from it.
 You also mentioned that "AFAICS this boils down to batching a number of 
 updates and collecting them at some interval."
 Yes, it's also similar to 'TCP's silly windw syndrome':
+
+eventfd_write has two stages: adding one to the counter and waking up 
+the reader process. The former has low overhead, while the latter has 
+very high overhead. And the current situation is:
 Every time the counter is incremented by 1, the read side process needs 
 to be awakened. When such operations are frequently performed, a lot of 
 time is wasted on awakening.
@@ -235,7 +238,7 @@ Eventfd has already provided the NON-SEMAPHORE attribute, but it has not
 been used yet. We look forward to your collaboration in using it 
 together to solve such problems.
 
---
+-- 
 Best wishes,
 Wen
 
