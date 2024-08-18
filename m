@@ -1,272 +1,242 @@
-Return-Path: <linux-fsdevel+bounces-26206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D899955CA1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 14:55:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 701D9955D02
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 16:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EBBDB21146
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 12:55:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3C2DB21287
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 14:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF6B47F69;
-	Sun, 18 Aug 2024 12:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A2B132132;
+	Sun, 18 Aug 2024 14:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlRIdFvx"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y9YXuniO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4349CCA6B;
-	Sun, 18 Aug 2024 12:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D860645007
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Aug 2024 14:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723985710; cv=none; b=AASvVm959CkF2gjPSJO9UBTxACxmtKY2ShegaNWCIYBrOO59B347T0lmmltIXRdjJFYwsITd88wOjTlUe6mH8yB5eewUd7iEdHpIXN4nD+ArnnFJ1DAEtipb9vYQNrzfdq9BfLJnD4i7DatoPTptR1/Z+VKMdCW8I1OgbjRRTGI=
+	t=1723992105; cv=none; b=eu7dXSXcod2EsYHQv/ss09JR3enx3xF3PK0vW64OmtQJP5OjYyao1nsp7vHhh9V0GLRXvAXnLeSwizHlal4/RJlsi58g+R+6khbVxM2T/VkUlVCIF9fM87609LcVQFVkHkWJa9cUEhK3hPpC+EdcThJ8GC2GxyQQ5Vl5eyFQcPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723985710; c=relaxed/simple;
-	bh=Y3b3/eSoBdaAQ/aiYFD0jOOTCuomiR75iL8y6Ek3v+I=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=RO+F03lumtW6glp4D0AlU8wxgVJgfhRp7cTfd/aPfOxrikIESkEygrOJd7EC0N+1iLeFACWWp39o1S4PqK34pTkAdLbnetH2bOQN8vl+p1cRyKKc+aWXpG1sRz1ULVyPabGrP4tmrbSZEXpwyw3qVryBad4C/SH5503X1Q6SolM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GlRIdFvx; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a3574acafeso227535385a.1;
-        Sun, 18 Aug 2024 05:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723985708; x=1724590508; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xjPNQ2hdnuzOp+Zw7QWesXyWkAdRx5XpbRcEGdtXU6Q=;
-        b=GlRIdFvx9E9B6TIrHeJKMv455q77yMeVl81EZ398CsAqRtRnKCAQrTbLeRpNJdDZ1y
-         Tdc8GAWmzwxPjeM6QmlrwKS41fK+si7TgdHwq+JW4e9FsxYpdQvZz358zsqUnvQP/qri
-         lCR5pfxBJkb/i80RCxdk9bE5UTCZqgRNZCiYJPcB0zEYDYUHQxcFjGamp2YkF1MmPf9f
-         UYssmv+XQGXlgCJmoW7IQ/jAkJo3T8ckYRpGHxt//mB+ifTK6j8LISlLnNzujAnwKVyH
-         tYyN9RwSYVTJy4qu0A6qxvlG8n8HxiNG9fdLlEYoCWcPxiXPH2QaHIbt9ipEWk0KiMSM
-         oDPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723985708; x=1724590508;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xjPNQ2hdnuzOp+Zw7QWesXyWkAdRx5XpbRcEGdtXU6Q=;
-        b=Y1aALEh2/CgA8PyB+1twWjsBGF5FKhiuAUQAJD+3rZerR98i36KpNxq4OE36HMgdeQ
-         xLMSSU1h5e8Ci9c/yYpWIsQBsaq9BLDm+sUQSQPJE0632OZbfYv+MG6g5e0jhBtah7f6
-         n/Vnxd004vEv6I8TQuQqRrrl2OMqmUa4UMbpXj+bTNq4ptVtX5z2STsKokTw+qAeLZhn
-         h3K5T0YAvzRsJ0ZpFJNnN16ydMY2POEP3uDcaFKRvAXQd8LAWq23z3q9hnInyU6avc9E
-         f9I8Uaw193pVyxMA5BWErpxvtbVar21yz5DYAr04o7k7y2S+PIiQU3Uooy9u68jwBj6J
-         a81Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVoh82GouYYhAY1KlwUqxPkesc295pZIbJAeEpM9u8gB3o/0M9uF9upKihY+5a4+Wqku0Cop/HPBgGjFUVlx7v4nK9HQS75cR9PsXjZC2YISrTIgVjtCMNix7mQ46Kuqqo6X4M2W29ruVLPfdgZLi2NWJX8/Rg2WZzevPa0FxCZ2kKtjFDdtfTqRBRwVJmF1IRfIg2/w+UAtLMMWXuJ5w==
-X-Gm-Message-State: AOJu0Ywr9hG4p9vF+Pj7IsygrI0nijv/JDEEfkbB7I9PEwGO7Ry6Yq2l
-	DkG/shqxbUyZuIuzs3qir78KSx4ir1nPGQDvSbkcCZfv0RkoUbbw
-X-Google-Smtp-Source: AGHT+IHXou7EVQZ4L9O73YUn4QevN6HlCLXEx1eNoii0u5tbjCLWMah8dxMkJ3k0lkAwqrBGWE+a7Q==
-X-Received: by 2002:a05:622a:4016:b0:453:15f2:a320 with SMTP id d75a77b69052e-453741b5a35mr102611211cf.12.1723985707905;
-        Sun, 18 Aug 2024 05:55:07 -0700 (PDT)
-Received: from localhost (193.132.150.34.bc.googleusercontent.com. [34.150.132.193])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45369fee649sm32610841cf.29.2024.08.18.05.55.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 05:55:06 -0700 (PDT)
-Date: Sun, 18 Aug 2024 08:55:06 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Martin Karsten <mkarsten@uwaterloo.ca>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Joe Damato <jdamato@fastly.com>
-Cc: Samiullah Khawaja <skhawaja@google.com>, 
- Stanislav Fomichev <sdf@fomichev.me>, 
- netdev@vger.kernel.org, 
- amritha.nambiar@intel.com, 
- sridhar.samudrala@intel.com, 
- Alexander Lobakin <aleksander.lobakin@intel.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Breno Leitao <leitao@debian.org>, 
- Christian Brauner <brauner@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Jan Kara <jack@suse.cz>, 
- Jiri Pirko <jiri@resnulli.us>, 
- Johannes Berg <johannes.berg@intel.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
- "open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, 
- open list <linux-kernel@vger.kernel.org>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Message-ID: <66c1ef2a2e94c_362202942d@willemb.c.googlers.com.notmuch>
-In-Reply-To: <e4f6639e-53eb-412d-b998-699099570107@uwaterloo.ca>
-References: <ZrqU3kYgL4-OI-qj@mini-arch>
- <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
- <Zrq8zCy1-mfArXka@mini-arch>
- <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
- <Zrrb8xkdIbhS7F58@mini-arch>
- <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
- <CAAywjhRsRYUHT0wdyPgqH82mmb9zUPspoitU0QPGYJTu+zL03A@mail.gmail.com>
- <d63dd3e8-c9e2-45d6-b240-0b91c827cc2f@uwaterloo.ca>
- <66bf61d4ed578_17ec4b294ba@willemb.c.googlers.com.notmuch>
- <66bf696788234_180e2829481@willemb.c.googlers.com.notmuch>
- <Zr9vavqD-QHD-JcG@LQ3V64L9R2>
- <66bf85f635b2e_184d66294b9@willemb.c.googlers.com.notmuch>
- <02091b4b-de85-457d-993e-0548f788f4a1@uwaterloo.ca>
- <66bfbd88dc0c6_18d7b829435@willemb.c.googlers.com.notmuch>
- <e4f6639e-53eb-412d-b998-699099570107@uwaterloo.ca>
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
+	s=arc-20240116; t=1723992105; c=relaxed/simple;
+	bh=f/Yyh1SQiz037i+coZ5d5gnMdIEpE5sBF1HqgTYcoPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rWgxnuvRB3B7Pe8KE3OPluwQbV4DqV73gXTRBdhmm3+Fc/7NFBM8bcoT1SgE1rBMO8sdSwT5biSrSe5cT2wM+qXActo0u8AyXw60vj/nmAG/atVfYHELe7g1U5aaB6EqHcuNNumgJwB8tPLQKCYe/H28bvKwskcpGxI3Tc9VbGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y9YXuniO; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4a50889c-aa90-4a99-b3d9-45d5666b3171@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723992100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oPs/TgqEJtnJfx1BsHQyi/jmTIqnp3sMt5LKa8FQ7vg=;
+	b=Y9YXuniODlvYIxuioQ4x6VUkcnKCIAxWiuv9SoLe13t7cEkLVCIM5YKppOqjZfWZLTlDZR
+	fjFg0EvtmipEogfdvkm02pz15Fsa+BMHObb6RqfYNsrC1W+eo0i/QIx6WDi14oOkng12Mk
+	c0N05ZdRec6wtPrXoKUAwb5MFgt/Wcg=
+Date: Sun, 18 Aug 2024 22:41:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: Re: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for
+ non-semaphore eventfd
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+ Dylan Yudaken <dylany@fb.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Paolo Bonzini <pbonzini@redhat.com>, Dave Young <dyoung@redhat.com>,
+ kernel test robot <lkp@intel.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240811085954.17162-1-wen.yang@linux.dev>
+ <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
+ <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
+ <CAGudoHFQtxU7r+Y9AV2yPc+JrTdMtzJopsjUinFK8uE5h7cbTQ@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <CAGudoHFQtxU7r+Y9AV2yPc+JrTdMtzJopsjUinFK8uE5h7cbTQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-> >>>> The value may not be obvious, but guidance (in the form of
-> >>>> documentation) can be provided.
-> >>>
-> >>> Okay. Could you share a stab at what that would look like?
-> >>
-> >> The timeout needs to be large enough that an application can get a
-> >> meaningful number of incoming requests processed without softirq
-> >> interference. At the same time, the timeout value determines the
-> >> worst-case delivery delay that a concurrent application using the same
-> >> queue(s) might experience. Please also see my response to Samiullah
-> >> quoted above. The specific circumstances and trade-offs might vary,
-> >> that's why a simple constant likely won't do.
-> > 
-> > Thanks. I really do mean this as an exercise of what documentation in
-> > Documentation/networking/napi.rst will look like. That helps makes the
-> > case that the interface is reasonably ease to use (even if only
-> > targeting advanced users).
-> > 
-> > How does a user measure how much time a process will spend on
-> > processing a meaningful number of incoming requests, for instance.
-> > In practice, probably just a hunch?
-> 
-> As an example, we measure around 1M QPS in our experiments, fully 
-> utilizing 8 cores and knowing that memcached is quite scalable. Thus we 
-> can conclude a single request takes about 8 us processing time on 
-> average. That has led us to a 20 us small timeout (gro_flush_timeout), 
-> enough to make sure that a single request is likely not interfered with, 
-> but otherwise as small as possible. If multiple requests arrive, the 
-> system will quickly switch back to polling mode.
-> 
-> At the other end, we have picked a very large irq_suspend_timeout of 
-> 20,000 us to demonstrate that it does not negatively impact latency. 
-> This would cover 2,500 requests, which is likely excessive, but was 
-> chosen for demonstration purposes. One can easily measure the 
-> distribution of epoll_wait batch sizes and batch sizes as low as 64 are 
-> already very efficient, even in high-load situations.
 
-Overall Ack on both your and Joe's responses.
 
-epoll_wait disables the suspend if no events are found and ep_poll
-would go to sleep. As the paper also hints, the timeout is only there
-for misbehaving applications that stop calling epoll_wait, correct?
-If so, then picking a value is not that critical, as long as not too
-low to do meaningful work.
+On 2024/8/15 04:58, Mateusz Guzik wrote:
+> On Wed, Aug 14, 2024 at 6:15 PM Wen Yang <wen.yang@linux.dev> wrote:
+>>
+>>
+>>
+>> On 2024/8/11 18:26, Mateusz Guzik wrote:
+>>> On Sun, Aug 11, 2024 at 04:59:54PM +0800, Wen Yang wrote:
+>>>> For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
+>>>> value provided in its buffer to the counter, while a read (2) returns the
+>>>> 8-byte value containing the value and resetting the counter value to 0.
+>>>> Therefore, the accumulated value of multiple writes can be retrieved by a
+>>>> single read.
+>>>>
+>>>> However, the current situation is to immediately wake up the read thread
+>>>> after writing the NON-SEMAPHORE eventfd, which increases unnecessary CPU
+>>>> overhead. By introducing a configurable rate limiting mechanism in
+>>>> eventfd_write, these unnecessary wake-up operations are reduced.
+>>>>
+>>>>
+>>> [snip]
+>>>
+>>>>       # ./a.out  -p 2 -s 3
+>>>>       The original cpu usage is as follows:
+>>>> 09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>>
+>>>> 09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>>
+>>>> 09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>>
+>>>> Then enable the ratelimited wakeup, eg:
+>>>>       # ./a.out  -p 2 -s 3  -r1000 -c2
+>>>>
+>>>> Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30%), as shown below:
+>>>> 10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.00    0.00    0.00   38.38
+>>>>
+>>>> 10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.00    0.00    0.00   39.11
+>>>>
+>>>> 10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+>>>> 10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.00    0.00    0.00   42.71
+>>>>
+>>>>
+>>>
+>>> Where are these stats from? Is this from your actual program you coded
+>>> the feature for?
+>>>
+>>> The program you inlined here does next to nothing in userspace and
+>>> unsurprisingly the entire thing is dominated by kernel time, regardless
+>>> of what event rate can be achieved.
+>>>
+>>> For example I got: /a.out -p 2 -s 3  5.34s user 60.85s system 99% cpu 66.19s (1:06.19) total
+>>>
+>>> Even so, looking at perf top shows me that a significant chunk is
+>>> contention stemming from calls to poll -- perhaps the overhead will
+>>> sufficiently go down if you epoll instead?
+>>
+>> We have two threads here, one publishing and one subscribing, running on
+>> CPUs 2 and 3 respectively. If we further refine and collect performance
+>> data on CPU 2, we will find that a large amount of CPU is consumed on
+>> the spin lock of the wake-up logic of event write, for example:
+>>
+>>    # perf top  -C 2  -e cycles:k
+>>
+>>       65.80%  [kernel]       [k] do_syscall_64
+>>       14.71%  [kernel]       [k] _raw_spin_unlock_irq
+>>        7.54%  [kernel]       [k] __fget_light
+>>        4.52%  [kernel]       [k] ksys_write
+>>        1.94%  [kernel]       [k] vfs_write
+>>        1.43%  [kernel]       [k] _copy_from_user
+>>        0.87%  [kernel]       [k] common_file_perm
+>>        0.61%  [kernel]       [k] aa_file_perm
+>>        0.46%  [kernel]       [k] eventfd_write
+>>
+>>
+>> One of its call stacks:
+>>
+>> |--6.39%--vfs_write
+>> |           --5.46%--eventfd_write
+>> |                      --4.73%--_raw_spin_unlock_irq
+>>
+>>
+>>>   > I think the idea is pretty dodgey. If the consumer program can tolerate
+>>> some delay in event processing, this probably can be massaged entirely in
+>>> userspace.
+>>>
+>>> If your real program has the wake up rate so high that it constitutes a
+>>> tangible problem I wonder if eventfd is even the right primitive to use
+>>> -- perhaps something built around shared memory and futexes would do the
+>>> trick significantly better?
+>>
+>> Thank you for your feedback.
+>>
+>> This demo comes from the real world: the test vehicle has sensors with
+>> multiple cycles (such as 1ms, 5ms, 10ms, etc.), and due to the large
+>> number of sensors, data is reported at all times. The publisher reported
+>> data through libzmq and went to the write logic of eventfd, frequently
+>> waking up the receiver. We collected flame graph and observed that a
+>> significant amount of CPU was consumed in this path: eventfd_write ->
+>> _raw_spin_unlock_irq.
+>>
+>> We did modify a lot of code in user mode on the test vehicle to avoid
+>> this issue, such as not using wake-up, not using eventfd, the publisher
+>> writing shared memory directly, the receiver periodically extracting the
+>> content of shared memory, and so on.
+>>
+> 
+> Well I don't have the full picture and whatnot, but given the
+> additional info you posted here I even more strongly suspect eventfd
+> is a bad fit. AFAICS this boils down to batching a number of updates
+> and collecting them at some interval.
+> 
+> With the assumption that updates to the eventfd counter are guaranteed
+> to not overflow within the wakeup delay and that there is constant
+> traffic, I'm suspect you would get the expected speed up by using
+> timerfd to wake the consumer up periodically. Then you would only
+> issue an eventfd read when the timerfd tells you time is up. You would
+> (e)poll only on that as well, never on the eventfd.
+> 
+> Even so, as is I think this wants a page shared between producer(s)
+> and the consumer updating everything with atomics and the consumer
+> collecting it periodically (atomic add on one side, atomic swap with 0
+> on the consumer, I don't know the c11 intrinsics). It would be
+> drastically cheaper all around.
+> 
 
-> Also see next paragraph.
-> 
-> > Playing devil's advocate some more: given that ethtool usecs have to
-> > be chosen with a similar trade-off between latency and efficiency,
-> > could a multiplicative factor of this (or gro_flush_timeout, same
-> > thing) be sufficient and easier to choose? The documentation does
-> > state that the value chosen must be >= gro_flush_timeout.
-> 
-> I believe this would take away flexibility without gaining much. You'd 
-> still want some sort of admin-controlled 'enable' flag, so you'd still 
-> need some kind of parameter.
-> 
-> When using our scheme, the factor between gro_flush_timeout and 
-> irq_suspend_timeout should *roughly* correspond to the maximum batch 
-> size that an application would process in one go (orders of magnitude, 
-> see above). This determines both the target application's worst-case 
-> latency as well as the worst-case latency of concurrent applications, if 
-> any, as mentioned previously.
+Thank you for your suggestion.
 
-Oh is concurrent applications the argument against a very high
-timeout?
+By using these methods above instead of eventfd, CPU consumption can 
+indeed be reduced.
 
-> I believe the optimal factor will vary 
-> between different scenarios.
-> 
-> >>>>> If the only goal is to safely reenable interrupts when the application
-> >>>>> stops calling epoll_wait, does this have to be user tunable?
-> >>>>>
-> >>>>> Can it be either a single good enough constant, or derived from
-> >>>>> another tunable, like busypoll_read.
-> >>>>
-> >>>> I believe you meant busy_read here, is that right?
-> >>>>
-> >>>> At any rate:
-> >>>>
-> >>>>     - I don't think a single constant is appropriate, just as it
-> >>>>       wasn't appropriate for the existing mechanism
-> >>>>       (napi_defer_hard_irqs/gro_flush_timeout), and
-> >>>>
-> >>>>     - Deriving the value from a pre-existing parameter to preserve the
-> >>>>       ABI, like busy_read, makes using this more confusing for users
-> >>>>       and complicates the API significantly.
-> >>>>
-> >>>> I agree we should get the API right from the start; that's why we've
-> >>>> submit this as an RFC ;)
-> >>>>
-> >>>> We are happy to take suggestions from the community, but, IMHO,
-> >>>> re-using an existing parameter for a different purpose only in
-> >>>> certain circumstances (if I understand your suggestions) is a much
-> >>>> worse choice than adding a new tunable that clearly states its
-> >>>> intended singular purpose.
-> >>>
-> >>> Ack. I was thinking whether an epoll flag through your new epoll
-> >>> ioctl interface to toggle the IRQ suspension (and timer start)
-> >>> would be preferable. Because more fine grained.
-> >>
-> >> A value provided by an application through the epoll ioctl would not be
-> >> subject to admin oversight, so a misbehaving application could set an
-> >> arbitrary timeout value. A sysfs value needs to be set by an admin. The
-> >> ideal timeout value depends both on the particular target application as
-> >> well as concurrent applications using the same queue(s) - as sketched above.
-> > 
-> > I meant setting the value systemwide (or per-device), but opting in to
-> > the feature a binary epoll options. Really an epoll_wait flag, if we
-> > had flags.
-> > 
-> > Any admin privileged operations can also be protected at the epoll
-> > level by requiring CAP_NET_ADMIN too, of course. But fair point that
-> > this might operate in a multi-process environment, so values should
-> > not be hardcoded into the binaries.
-> > 
-> > Just asking questions to explore the option space so as not to settle
-> > on an API too soon. Given that, as said, we cannot remove it later.
-> 
-> I agree, but I believe we are converging? Also taking into account Joe's 
-> earlier response, given that the suspend mechanism dovetails so nicely 
-> with gro_flush_timeout and napi_defer_hard_irqs, it just seems natural 
-> to put irq_suspend_timeout at the same level and I haven't seen any 
-> strong reason to put it elsewhere.
+But this requires modifying some user mode programs. Some of the 
+programs on the test vehicle are our own and can be modified; But there 
+is still a portion from various suppliers, and some even only deliver 
+binary, which is difficult to change.
 
-Yes, this sounds good.
- 
-> >>> Also, the value is likely dependent more on the expected duration
-> >>> of userspace processing? If so, it would be the same for all
-> >>> devices, so does a per-netdev value make sense?
-> >>
-> >> It is per-netdev in the current proposal to be at the same granularity
-> >> as gro_flush_timeout and napi_defer_hard_irqs, because irq suspension
-> >> operates at the same level/granularity. This allows for more control
-> >> than a global setting and it can be migrated to per-napi settings along
-> >> with gro_flush_timeout and napi_defer_hard_irqs when the time comes.
-> > 
-> > Ack, makes sense. Many of these design choices and their rationale are
-> > good to explicitly capture in the commit message.
-> 
-> Agreed.
-> 
-> Thanks,
-> Martin
+And the kernel is open source, if it can be optimized, all user mode 
+programs can benefit from it.
 
+You also mentioned that "AFAICS this boils down to batching a number of 
+updates and collecting them at some interval."
+Yes, it's also similar to 'TCP's silly windw syndrome':
+Every time the counter is incremented by 1, the read side process needs 
+to be awakened. When such operations are frequently performed, a lot of 
+time is wasted on awakening.
+
+This patch is also inspired by algorithms such as Nagle and Cork. It 
+attempts to delay wake-up, accumulate a larger counter value, and then 
+wake up the reader process to consume the accumulated counter value at once.
+
+Eventfd has already provided the NON-SEMAPHORE attribute, but it has not 
+been used yet. We look forward to your collaboration in using it 
+together to solve such problems.
+
+--
+Best wishes,
+Wen
 
 
