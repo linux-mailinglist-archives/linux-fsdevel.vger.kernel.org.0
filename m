@@ -1,164 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-26204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF018955BED
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 10:25:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8152F955C66
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 14:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70993B21202
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 08:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DC641C2098C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Aug 2024 12:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A350717C79;
-	Sun, 18 Aug 2024 08:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C00D1B964;
+	Sun, 18 Aug 2024 12:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHZkHNV5"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SCATIv7O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD964134B2;
-	Sun, 18 Aug 2024 08:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C0B18AE4
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Aug 2024 12:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723969537; cv=none; b=dB7Ouxn84zDLYwo7sCHwGLv2g3MaQCnknqf47H4XFAd1tvSgg6jctY71rXr1YxQscgnwz4d3VNspW197zPgkhkK847KeaD9Vg07RtB7P2POPvlYenX/tFQXb1vszhjAjtNQaKYqtH8/XdQMToQ1nM+ww4qECY6o3Iyx4Sj0Vacw=
+	t=1723984031; cv=none; b=ZSNdPd4XfrV6DAxRtzL1eelOZyNqVdOs5p3nomswyCq9O83e4Pyw1SsIEzbGED0UOxXPZEi6/tHkk7cQIj4bF/jY6qUxyHBknqCrHn0rpKDVmcrWt45YttGA4MVycftzQjZ+lFey9Nr9kHmg76YqouT5fy6qNDrLFQlgRjcRPC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723969537; c=relaxed/simple;
-	bh=HNPlU0M/3vqiQI+da9DTWN8QwJm2bLjTnAaFdwzaWig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KPttER1GaWchJ4kvblETLq+25BF4I2PXCI0HeMjCyrUXpZ+FYvTy+zSoXufvpk6/JY6E44icWs+FS1+V4BJqqTGXlSNEhqK/LstB4YFBj+IjOQpMPHl4zlWtIjZVoYGR5pGrDhNg2hZOwbeTs2ZtYi9D8tknvQTLK9XHOoeZylk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHZkHNV5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79F9C32786;
-	Sun, 18 Aug 2024 08:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723969536;
-	bh=HNPlU0M/3vqiQI+da9DTWN8QwJm2bLjTnAaFdwzaWig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vHZkHNV5oUFehXU9H208C3BbvikBh69Map7MNwYhsAz/H+RCy1qVmhkneBJXg6XjJ
-	 A4yHeH0HSJKwxa7FLYPOTmemN1bnz5cRIh6lcVsrPvla+TthtasHx5rjtn8C4jsDQk
-	 yFp0s7cOZozpGsEjAghDarTvbyerVUBwdhHxnSfOD9KlTBerTrANtAUJssjdzPrjNl
-	 EhSD2ZYUuJmNQNe1xBJ/twr+KdnK0XkPc9svL3TfLFPiHpoxVJoRf5gEij63/YgQR2
-	 vdZEieAN5ajY1WQBCTOuo56n3Dt/ZdoRgYqRpXRd3S9XddtW7UgbZC41BpdvWHqRIm
-	 XHhHkzQ8KNsPg==
-Date: Sun, 18 Aug 2024 10:25:30 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH v7 4/8] bpftool: Ensure task comm is always NUL-terminated
-Message-ID: <gmhyl3zdnxy6q2tn5wtasqbuhxpfbejmh7qxeuk7lnbhcdlfsc@b3b56vgdrzgm>
-References: <20240817025624.13157-1-laoar.shao@gmail.com>
- <20240817025624.13157-5-laoar.shao@gmail.com>
- <teajtay63uw2ukcwhna7yfblnjeyrppw4zcx2dfwtdz3tapspn@rntw3luvstci>
- <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
+	s=arc-20240116; t=1723984031; c=relaxed/simple;
+	bh=vuTn9I8VI9M2T/7djjzuWv0Z3S0bU9RsStRKN/m/RXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gJUPcGNcf0NglOimdHeIZB0Pbh/JMlk1YSZv9ImKxAwI4T13GlaECSPgvCkoDiyNJrrdGByVwUdq+nXBcJyQTE/3mPI+kLWDftFNjk5lBVQHZaz8nrnadQxrFz+WZVEQt/P/2IjEC9ctsYfTlRSb8ez3yJYKyrpySO5a4izxqYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SCATIv7O; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723984030; x=1755520030;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=vuTn9I8VI9M2T/7djjzuWv0Z3S0bU9RsStRKN/m/RXg=;
+  b=SCATIv7OK7xvMR8XLZMaz9zUYKlggm7YWWg/bhrj7DS/9Y0DERWwK1y7
+   MHBVXNAiPaHUggY/jx195jR5SIVRTjUHpzhuRs8G0lEFPRVXanPOEEdgJ
+   uSfCE4q2dDH50HIaa6lgEa794yL7naD/06RCPBcdBP+dJNPDwCvCqDY5N
+   srV76Toa2T687/pQzpbnFFFuBAi4IUXWl4AGFyoVFifIgQiEaQk/7tRLV
+   Gln0x7XW0OVhesgq++LmJr9YDl262lQ4Fhzhc2K1ujn/VGR+WlhCsaWPo
+   LGWPrhO41L8O1uukoBmcd81cPRAJ6L81toQNYqnYPMuEB3NbeUndrU8td
+   g==;
+X-CSE-ConnectionGUID: yXzMGZ92T0GPmenMZGWH3g==
+X-CSE-MsgGUID: r5AMt+CkS0+EVBDQLoTakA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11168"; a="44753113"
+X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
+   d="scan'208";a="44753113"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2024 05:27:09 -0700
+X-CSE-ConnectionGUID: DIk8VhKGR/i+hhJB4ZAEzQ==
+X-CSE-MsgGUID: 9fOoMiY7QiS0cMhYMgLCdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,156,1719903600"; 
+   d="scan'208";a="64935370"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 18 Aug 2024 05:27:08 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sfezx-0008EM-2F;
+	Sun, 18 Aug 2024 12:27:05 +0000
+Date: Sun, 18 Aug 2024 20:26:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: [viro-vfs:work.headers.unaligned 2/2]
+ arch/x86/../../../arch/x86/lib/insn.c:16:10: fatal error:
+ ../include/linux/unaligned.h: No such file or directory
+Message-ID: <202408182032.bPmVfkhF-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bqpbjdxuldrazcxq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
 
+Hi Al,
 
---bqpbjdxuldrazcxq
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH v7 4/8] bpftool: Ensure task comm is always NUL-terminated
-References: <20240817025624.13157-1-laoar.shao@gmail.com>
- <20240817025624.13157-5-laoar.shao@gmail.com>
- <teajtay63uw2ukcwhna7yfblnjeyrppw4zcx2dfwtdz3tapspn@rntw3luvstci>
- <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CALOAHbAzSAQMtts5x+OMDDy1ZY5icUJv2wAM5w74ffhtEbN1mQ@mail.gmail.com>
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
 
-Hi Yafang,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.headers.unaligned
+head:   5adcdf60b29da8386cab7bb157927fec96a46c42
+commit: 5adcdf60b29da8386cab7bb157927fec96a46c42 [2/2] move asm/unaligned.h to linux/unaligned.h
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20240818/202408182032.bPmVfkhF-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240818/202408182032.bPmVfkhF-lkp@intel.com/reproduce)
 
-On Sun, Aug 18, 2024 at 10:27:01AM GMT, Yafang Shao wrote:
-> On Sat, Aug 17, 2024 at 4:39=E2=80=AFPM Alejandro Colomar <alx@kernel.org=
-> wrote:
-> >
-> > Hi Yafang,
-> >
-> > On Sat, Aug 17, 2024 at 10:56:20AM GMT, Yafang Shao wrote:
-> > > Let's explicitly ensure the destination string is NUL-terminated. Thi=
-s way,
-> > > it won't be affected by changes to the source string.
-> > >
-> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > Reviewed-by: Quentin Monnet <qmo@kernel.org>
-> > > ---
-> > >  tools/bpf/bpftool/pids.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/tools/bpf/bpftool/pids.c b/tools/bpf/bpftool/pids.c
-> > > index 9b898571b49e..23f488cf1740 100644
-> > > --- a/tools/bpf/bpftool/pids.c
-> > > +++ b/tools/bpf/bpftool/pids.c
-> > > @@ -54,6 +54,7 @@ static void add_ref(struct hashmap *map, struct pid=
-_iter_entry *e)
-> > >               ref =3D &refs->refs[refs->ref_cnt];
-> > >               ref->pid =3D e->pid;
-> > >               memcpy(ref->comm, e->comm, sizeof(ref->comm));
-> > > +             ref->comm[sizeof(ref->comm) - 1] =3D '\0';
-> >
-> > Why doesn't this use strscpy()?
->=20
-> bpftool is a userspace tool, so strscpy() is only applicable in kernel
-> code, correct?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408182032.bPmVfkhF-lkp@intel.com/
 
-Ahh, makes sense.  LGTM, then.  Maybe the closest user-space function to
-strscpy(9) would be strlcpy(3), but I don't know how old of a glibc you
-support.  strlcpy(3) is currently in POSIX, and supported by both glibc
-and musl, but that's too recent.
+All errors (new ones prefixed by >>):
 
-Have a lovely day!
-Alex
+   In file included from arch/x86/decode.c:12:
+>> arch/x86/../../../arch/x86/lib/insn.c:16:10: fatal error: ../include/linux/unaligned.h: No such file or directory
+      16 | #include "../include/linux/unaligned.h" /* __ignore_sync_check__ */
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+   make[6]: *** [tools/build/Makefile.build:105: tools/objtool/arch/x86/decode.o] Error 1
+   make[6]: *** Waiting for unfinished jobs....
+   make[5]: *** [tools/build/Makefile.build:158: arch/x86] Error 2
+   make[5]: *** Waiting for unfinished jobs....
+   make[4]: *** [Makefile:70: tools/objtool/objtool-in.o] Error 2
+   make[3]: *** [Makefile:72: objtool] Error 2
+   make[2]: *** [Makefile:1360: tools/objtool] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:224: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:224: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
-> --
-> Regards
-> Yafang
-
---=20
-<https://www.alejandro-colomar.es/>
-
---bqpbjdxuldrazcxq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbBr/oACgkQnowa+77/
-2zKlWg//bIam9Z2S2oGYdx1Es2yhqgRhsYrxX1OVGAonZ9d+7XaXBTpsSjfcy8AT
-EqipznL0pk8B0uQ+sagT8w6h0H2StHg59E+gR4M8YKp5s/X6Rhq+aim+k19Qh53S
-afYHd+jfvzFBe1dXQXm5Pe80X1ncmIcISMqXh/O3ykzqpuPWanKo4torJlbqtXMM
-yGxL8yJu15D00/cwjEwT9mh7KB9zsmVNyHPiY3aTvtjd0F/tNlP9qvnxgi+81duU
-ciTElwVWSG14g9TcDFWHkNBarUuBiHe240JQE7ARDPJmPkZrzHo6GcpC4AdydU6Q
-yvA/1Hp4dCFLoiXspmTWmAyR3Q+Nnn1wetdU555oIpEhYk+dpgAdO1MAYOJ+izdh
-f71cefEGfG60FG0tkzgwkbpa4xPUaCEi5L/5Voms4yRIoj5eYvmQs0+/N8IM2Fbk
-HSLIjf+5YiMw0SycNUP0XKFZGJ2MbXU8c+MBM4pTwfl4MFhgVPvI53j0J+5D43x8
-AgvgLJ3kp44JOC+FoeCDgraJ7ZD5nasDl1YBaNUS7lCxAAJ80V4CMWzi9kX0YOrG
-HRB6XOquSAF0pGarE6FLeKCmwKRTcsrDTrVPRgkrHgxt/lYqJJFnaWY1lLKDQViF
-zUzZFqndM8ocPo0p3o645SxxtVDEvxgJolM+5sdOdjqMKUmKg+U=
-=rl7R
------END PGP SIGNATURE-----
-
---bqpbjdxuldrazcxq--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
