@@ -1,83 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-26270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A28956CC3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 16:11:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB13956CBC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 16:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B752811E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 14:11:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62BF1F23107
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 14:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D3516CD18;
-	Mon, 19 Aug 2024 14:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACBF16D311;
+	Mon, 19 Aug 2024 14:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QW3BVxYZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC2616CD0D;
-	Mon, 19 Aug 2024 14:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A9B16CD0E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2024 14:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724076658; cv=none; b=O90WhgExjK67tqayTT8jXJCGMPJ6azhdvYWzJ7Wgh9OTC3s17NOfWvuKj2S0oJO7Nn0CpLlQw99kP0o+lI4lE2EKM6smtTBh5IOSwYSO9HTW2Yu7MqFa5yF6OWV775jLOOIsBrGvTouKWMmywDWWGq4dtbM9808l2+beIX7QW2s=
+	t=1724076508; cv=none; b=RvTIeHL3KCbbCW5ghzWaOFEZGv4shBhtsexwxD5UJbORGjouXKu0gv9EqV02697kTAk0HvfxB3XGa8yZS89oZz95ZVmdG5/nRbeGd81W9VjpkNwJIAIHJCslhBjh8x3N0HMqyJmHW8b21gkWByXGtallXoR8WAJekCsZZEr6mRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724076658; c=relaxed/simple;
-	bh=AT80N4kX0Weit1QCb6vW/2az1vWcL8RNu9TsMON4QT4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DqwMsifQ9ainONFvtcYxZxX7N26HyldCsUM2HG84MU+6zZ4eggmmhQd12Ux6rqUtfdKirMGVWVMYkDDzhieAdOqr0lx7Uquw0SSRo7w3Ueu9g30aMPcBm4nBxzBGpZpNBAXAxD3c9UFvBLyuNBSl7z7MTGzm08fwmWSVEPfMv7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WnZBr5kJ6z20m7R;
-	Mon, 19 Aug 2024 22:06:12 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 69D5318001B;
-	Mon, 19 Aug 2024 22:10:52 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 19 Aug
- 2024 22:10:51 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <dhowells@redhat.com>, <jlayton@kernel.org>
-CC: <netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: [PATCH -next] netfs: Remove unused declaration netfs_queue_write_request()
-Date: Mon, 19 Aug 2024 21:52:59 +0800
-Message-ID: <20240819135259.120068-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724076508; c=relaxed/simple;
+	bh=bfUU3TjT0pGgF5mvvVDRDiP7W/MFzy2EcVVV0czuQz8=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=ekN0lkbQKeJVGYGVAnKWnOWqtNgKujq8y5utee0odqqdqjGvEybIwd4BsUDwH1r47MeDDDmmG5evnA0dZl4LuCpc+SBsH//LMQa53wvMuCq9/DdL1ox8URhz7NF08hF4FuKIHFVQpF5rvmH1sci8bAr+vsc1M5EAELkDar/yP3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QW3BVxYZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724076505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6XYur11TPtGEn1C9y/LldAZB5i+hKJ1iTdKnEq29u2s=;
+	b=QW3BVxYZR687AOfHTOSY4z0gbUGMj0PUhBYBeGqyr218IucNFbWiTHbB5S5MniR5gHD8f1
+	iNodoX9QOh5dViC1HbKdhU8AATtC1ya2brD8m2VlgFAjz/Tu+MvyaPdowoI6bIBCPK0Tyd
+	8bZWdhBK+9Iw2KcxGw+iqaaKpdzD32s=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-61-jHbrzhgdPny4TS4KDOGWhQ-1; Mon,
+ 19 Aug 2024 10:08:20 -0400
+X-MC-Unique: jHbrzhgdPny4TS4KDOGWhQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6B441954B14;
+	Mon, 19 Aug 2024 14:08:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EBABC1955BF8;
+	Mon, 19 Aug 2024 14:08:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <03ae65df-a369-436d-b31c-b3cec6ca3bc1@suse.de>
+References: <03ae65df-a369-436d-b31c-b3cec6ca3bc1@suse.de> <20240818165124.7jrop5sgtv5pjd3g@quentin> <20240815090849.972355-1-kernel@pankajraghav.com> <2924797.1723836663@warthog.procyon.org.uk> <3402933.1724068015@warthog.procyon.org.uk>
+To: Hannes Reinecke <hare@suse.de>
+Cc: dhowells@redhat.com,
+    "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+    brauner@kernel.org, akpm@linux-foundation.org,
+    chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org,
+    djwong@kernel.org, gost.dev@samsung.com, linux-xfs@vger.kernel.org,
+    hch@lst.de, david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
+    yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+    linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
+    cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
+    ryan.roberts@arm.com
+Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3427741.1724076489.1@warthog.procyon.org.uk>
+Date: Mon, 19 Aug 2024 15:08:09 +0100
+Message-ID: <3427742.1724076489@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Commit c245868524cc ("netfs: Remove the old writeback code")
-removed the implementation but leave declaration.
+Hannes Reinecke <hare@suse.de> wrote:
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- include/linux/netfs.h | 1 -
- 1 file changed, 1 deletion(-)
+> Wouldn't the second truncate end up with a 4k file, and not an 8k?
+> IE the resulting file will be:
+> After step 1: 8k
+> After step 2: 4
+> After step 3: 4k
 
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 983816608f15..712c34f6c332 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -434,7 +434,6 @@ size_t netfs_limit_iter(const struct iov_iter *iter, size_t start_offset,
- void netfs_prepare_write_failed(struct netfs_io_subrequest *subreq);
- void netfs_write_subrequest_terminated(void *_op, ssize_t transferred_or_error,
- 				       bool was_async);
--void netfs_queue_write_request(struct netfs_io_subrequest *subreq);
- 
- int netfs_start_io_read(struct inode *inode);
- void netfs_end_io_read(struct inode *inode);
--- 
-2.34.1
+Yes, but the folio should still be an 8K folio, and it is:
+
+>   pankaj-5833: netfs_folio: pfn=116fec i=0009e ix=00000-00001 inval-part
+
+as indicated by the inclusive folio index range ix=00000-00001.
+
+The problem is that the bottom four bytes of the file are getting cleared
+somewhere.  They *should* be "XXXX", but they're all zeros.
+
+David
 
 
