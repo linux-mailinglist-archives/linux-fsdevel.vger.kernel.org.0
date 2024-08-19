@@ -1,179 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-26259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FC7956AA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 14:22:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C139956AAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 14:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1A71F22AB0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 12:22:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1658BB24BAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 12:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6782A16B749;
-	Mon, 19 Aug 2024 12:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="HU33gL+C"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DB716B3B8;
+	Mon, 19 Aug 2024 12:22:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-gcp.globallogic.com (smtp-gcp.globallogic.com [34.141.19.47])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2AA16B397;
-	Mon, 19 Aug 2024 12:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.141.19.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EC116B3A3;
+	Mon, 19 Aug 2024 12:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724070145; cv=none; b=JEzygXa5nO9oOKDheb9c2DFEbTRFcHdBC37gpDNNCNVAdzPKZSqLwqYFk2nrSUOABcZVVDbmYe6cPiCgdT/Z5z6mKMmQT0/hNNHCuHASK7gh0Ev42MHn3fOv38IuXvS3gGyoISo63z/9Jf0h/N+666ZhzTovkCAgvJPziOMiOhc=
+	t=1724070166; cv=none; b=cc7w9C+5CCFDafZQzxM6uNbBspjSWD0mb0buG/nxGx/vkuz/+igPfWX+cvS/8qM12KovAVuyuZxa008eA5dtU0oseQAqYb5aBT26YPsVNAXZDXLJA34SdD1JkobJWMAK+5uF2OE3Uu+jFCl46/TDBQEsqdx+oKokktZgJFFz8SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724070145; c=relaxed/simple;
-	bh=l3rnuOVeuDgXuBMCSynPabSVDMK1NVcIBJ15TwJZBmA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RIbQ8+B+58+O2ULw5T3iLLPo7/iF19qKFHwM/06fbo15VdpwHWYJXgpbFbNWE3rVKElLE2onA6VX4HiMKGswZdLWlprqu2dArkIpPYvizP30xAN2UrUOoL0mLrTnnfieQyUT4ZdZfkLO8rV6BgChwx0MWwafXOyuJ/nFA4mGIE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=globallogic.com; spf=pass smtp.mailfrom=globallogic.com; dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b=HU33gL+C; arc=none smtp.client-ip=34.141.19.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=globallogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=globallogic.com
-Received: from KBP1-LHP-A14474.synapse.com (unknown [172.22.130.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-gcp.globallogic.com (Postfix) with ESMTPSA id 7BB5810AA16C;
-	Mon, 19 Aug 2024 12:15:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=globallogic.com;
-	s=smtp-kbp; t=1724069742;
-	bh=0LJeP7LSGwMpodtCsRzZk4Ldvm/eC1mSXQdjUTuOMhY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=HU33gL+CCKD3S+HWb7z0PdOiAPOacb69CJ7EIGnWdobSBt9W1cSnndKYluKSvlYcg
-	 nlxzsDk4iIJcQplhpT5RO2sAXAev+KQp9kqywL9XRtWUAAHBU4OKMIObesRirCJT2G
-	 O0zZCOYlaPy7W6vSRAUeYvxEevd+CQ2bOZFwaSLQ2rPGBeY2FoLX6e5tCELuROtzbJ
-	 EEth+znH9jTig2UGdWw/zElSkHtAdNHbKBJrbmjWL1kERJqAZ4xmJwHHs3YDP/a5qL
-	 D2Be5fa3FUyr/fp/KGfCaYn68Y0WxS1quDl7eeppZMQhzQw72hpVMwZFuTnwVeVK4H
-	 JkAyR9MReCcdg==
-From: andrii.polianytsia@globallogic.com
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com
-Cc: zach.malinowski@garmin.com,
-	artem.dombrovskyi@globallogic.com,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org,
-	Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>,
-	Andrii Polianytsia <andrii.polianytsia@globallogic.com>
-Subject: [PATCH] fs/exfat: add NFS export support
-Date: Mon, 19 Aug 2024 15:15:28 +0300
-Message-Id: <20240819121528.70149-1-andrii.polianytsia@globallogic.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724070166; c=relaxed/simple;
+	bh=KbhLAfk7Tce1c5moY4E2Fw2cl5jXZgt1xlAgNKyCp+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IXEoBt2XZtU11jjao5WMsctVIGJrkxC+7OLdOXwp5UkXz3MTbCCBg84TUG6Fddo7ozcbWU4Fettv/1VCCdOEJ1b/hjeLkiJfTeffpFIjwhPTBz5Ru5lYU/GxRg/HNXwVz6GuE7EcclAuj6uRjaO2nMEELaWcEnOECYum+dkosxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WnWng4VYrz2Cmyb;
+	Mon, 19 Aug 2024 20:17:43 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 299981A0188;
+	Mon, 19 Aug 2024 20:22:42 +0800 (CST)
+Received: from [10.67.108.52] (10.67.108.52) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 19 Aug
+ 2024 20:22:41 +0800
+Message-ID: <9b3795de-c67c-4582-9eb1-bed096b3eb67@huawei.com>
+Date: Mon, 19 Aug 2024 20:22:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] zonefs: add support for FS_IOC_GETFSSYSFSPATH
+Content-Language: en-US
+To: <linux-fsdevel@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <dlemoal@kernel.org>,
+	<naohiro.aota@wdc.com>, <jth@kernel.org>
+References: <20240809013627.3546649-1-liaochen4@huawei.com>
+From: "liaochen (A)" <liaochen4@huawei.com>
+In-Reply-To: <20240809013627.3546649-1-liaochen4@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-Add NFS export support to the exFAT filesystem by implementing
-the necessary export operations in fs/exfat/super.c. Enable
-exFAT filesystems to be exported and accessed over NFS, enhancing
-their utility in networked environments.
+On 2024/8/9 9:36, Liao Chen wrote:
+> FS_IOC_GETFSSYSFSPATH ioctl expects sysfs sub-path of a filesystem, the
+> format can be "$FSTYP/$SYSFS_IDENTIFIER" under /sys/fs, it can helps to
+> standardizes exporting sysfs datas across filesystems.
+> 
+> This patch wires up FS_IOC_GETFSSYSFSPATH for zonefs, it will output
+> "zonefs/<dev>".
+> 
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+> ---
+>   fs/zonefs/super.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index faf1eb87895d..e180daa39578 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -1262,6 +1262,7 @@ static int zonefs_fill_super(struct super_block *sb, struct fs_context *fc)
+>   	sb->s_maxbytes = 0;
+>   	sb->s_op = &zonefs_sops;
+>   	sb->s_time_gran	= 1;
+> +	super_set_sysfs_name_id(sb);
+>   
+>   	/*
+>   	 * The block size is set to the device zone write granularity to ensure
+Gentle ping
 
-Introduce the exfat_export_ops structure, which includes
-functions to handle file handles and inode lookups necessary for NFS
-operations.
-
-Signed-off-by: Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
-Signed-off-by: Andrii Polianytsia <andrii.polianytsia@globallogic.com>
----
- fs/exfat/super.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
-
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 323ecebe6f0e..cb6dcafc3007 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -18,6 +18,7 @@
- #include <linux/nls.h>
- #include <linux/buffer_head.h>
- #include <linux/magic.h>
-+#include <linux/exportfs.h>
- 
- #include "exfat_raw.h"
- #include "exfat_fs.h"
-@@ -195,6 +196,69 @@ static const struct super_operations exfat_sops = {
- 	.show_options	= exfat_show_options,
- };
- 
-+/**
-+ * exfat_export_get_inode - Get inode for export operations
-+ * @sb: Superblock pointer
-+ * @ino: Inode number
-+ * @generation: Generation number
-+ *
-+ * Returns pointer to inode or error pointer in case of an error.
-+ */
-+static struct inode *exfat_export_get_inode(struct super_block *sb, u64 ino,
-+	u32 generation)
-+{
-+	struct inode *inode = NULL;
-+
-+	if (ino == 0)
-+		return ERR_PTR(-ESTALE);
-+
-+	inode = ilookup(sb, ino);
-+	if (inode && generation && inode->i_generation != generation) {
-+		iput(inode);
-+		return ERR_PTR(-ESTALE);
-+	}
-+
-+	return inode;
-+}
-+
-+/**
-+ * exfat_fh_to_dentry - Convert file handle to dentry
-+ * @sb: Superblock pointer
-+ * @fid: File identifier
-+ * @fh_len: Length of the file handle
-+ * @fh_type: Type of the file handle
-+ *
-+ * Returns dentry corresponding to the file handle.
-+ */
-+static struct dentry *exfat_fh_to_dentry(struct super_block *sb,
-+	struct fid *fid, int fh_len, int fh_type)
-+{
-+	return generic_fh_to_dentry(sb, fid, fh_len, fh_type,
-+		exfat_export_get_inode);
-+}
-+
-+/**
-+ * exfat_fh_to_parent - Convert file handle to parent dentry
-+ * @sb: Superblock pointer
-+ * @fid: File identifier
-+ * @fh_len: Length of the file handle
-+ * @fh_type: Type of the file handle
-+ *
-+ * Returns parent dentry corresponding to the file handle.
-+ */
-+static struct dentry *exfat_fh_to_parent(struct super_block *sb,
-+	struct fid *fid, int fh_len, int fh_type)
-+{
-+	return generic_fh_to_parent(sb, fid, fh_len, fh_type,
-+		exfat_export_get_inode);
-+}
-+
-+static const struct export_operations exfat_export_ops = {
-+	.encode_fh = generic_encode_ino32_fh,
-+	.fh_to_dentry = exfat_fh_to_dentry,
-+	.fh_to_parent = exfat_fh_to_parent,
-+};
-+
- enum {
- 	Opt_uid,
- 	Opt_gid,
-@@ -633,6 +697,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_flags |= SB_NODIRATIME;
- 	sb->s_magic = EXFAT_SUPER_MAGIC;
- 	sb->s_op = &exfat_sops;
-+	sb->s_export_op = &exfat_export_ops;
- 
- 	sb->s_time_gran = 10 * NSEC_PER_MSEC;
- 	sb->s_time_min = EXFAT_MIN_TIMESTAMP_SECS;
--- 
-2.25.1
-
+Thanks,
+Chen
 
