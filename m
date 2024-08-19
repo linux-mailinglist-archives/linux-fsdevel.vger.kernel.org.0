@@ -1,195 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-26320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A399575E9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 22:52:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4932695765B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 23:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 772BE1C21F7D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 20:52:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C031C23262
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 21:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD3C158DD8;
-	Mon, 19 Aug 2024 20:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BE315A84D;
+	Mon, 19 Aug 2024 21:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qnx1iWRD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ntzf2Tlx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qnx1iWRD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ntzf2Tlx"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hnmbyhEO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C97015E96;
-	Mon, 19 Aug 2024 20:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD455158A08
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2024 21:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724100760; cv=none; b=CtqK5gFOs36tG6h4/7qhPJYoRsE/UYelazo7cvqUS1l1gRLq5zkbzrH9MUpB4klzUW/RPoHUQ7ajwxqJ4P2HW2AOe14FqunoRf6iqlzDkrsVqNQaDYVssILu5/JGxrtYDxnJSKhGYlsw81YtwcFs6xd6xDvJrpIoZLKl35onwzg=
+	t=1724101987; cv=none; b=nqhW3wZXkK2G3bjlSUu47liZp42odwP8K2g/ktELURdZfxhdAB5MsEhPD83bxzFypW/JCHY87nLuN3/EtgBauy7xuPAShsLYp1Kp4JdAvHSwmqXtMXAeQPCHevb2JPkzdVoehRvOKz2Yg27wWnr6Osd1pNxGbdt4IZ27WyCST1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724100760; c=relaxed/simple;
-	bh=VHsbWr9rZjDMgU2XJZu3a86HtX+f/X636MoPUwVQe/w=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=r3U5Y4zFoR24hQKILAAo8RtgfVMPYfY9hn4d9NJ2bYwPAiS1lBYfX1P+QnO8DGt4o8OCCBQtY/tAWjsqMzUFvi0ERPw0F9Whwg3ahkV15DlfWYtki7nL6t578Nnz+c98ap5fY1sTawnTSGZideZ0etrPATQx8pqquen1qS+Bnjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qnx1iWRD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ntzf2Tlx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qnx1iWRD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ntzf2Tlx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F2DBE22784;
-	Mon, 19 Aug 2024 20:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724100757; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvWtThllQ7ghmiGYjwKH0w44hAeQ77b5rmz8qdXu2yY=;
-	b=qnx1iWRDu1F+1bGqzo5ONjaJclIKI5dfGZWrSqVZ1/cC3Pz48HGekIHqHWG/07lNCchgNQ
-	EjPpk3fgBt+T38HVExoVqSbXKVw/ZJ7Sn5ivQ2maFzLqct9RQKy5sqGreKB4MWQq44brEd
-	fLi5HfFRkhivokIyRlzVoAbrIoNvN/4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724100757;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvWtThllQ7ghmiGYjwKH0w44hAeQ77b5rmz8qdXu2yY=;
-	b=Ntzf2Tlx/vg7h2mcCUzvOGLcMGSbu3kcM8XweiGh+QoZrbIFRkvDFTKSzhzppNLwy1RcyR
-	a1SqndmpuZ2fssBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724100757; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvWtThllQ7ghmiGYjwKH0w44hAeQ77b5rmz8qdXu2yY=;
-	b=qnx1iWRDu1F+1bGqzo5ONjaJclIKI5dfGZWrSqVZ1/cC3Pz48HGekIHqHWG/07lNCchgNQ
-	EjPpk3fgBt+T38HVExoVqSbXKVw/ZJ7Sn5ivQ2maFzLqct9RQKy5sqGreKB4MWQq44brEd
-	fLi5HfFRkhivokIyRlzVoAbrIoNvN/4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724100757;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FvWtThllQ7ghmiGYjwKH0w44hAeQ77b5rmz8qdXu2yY=;
-	b=Ntzf2Tlx/vg7h2mcCUzvOGLcMGSbu3kcM8XweiGh+QoZrbIFRkvDFTKSzhzppNLwy1RcyR
-	a1SqndmpuZ2fssBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C92481397F;
-	Mon, 19 Aug 2024 20:52:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IffpHpKww2b/cwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 19 Aug 2024 20:52:34 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1724101987; c=relaxed/simple;
+	bh=v2Aym6xEcSutqoJryNuAWCSxUt2U3T2dVmbfnKDCBN4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lE81LuwXQukp0+KRtEX5hoE/GARHsAG7oqR1Jx9qM2eBA1nV1dThBsddsAc0TGmPiNExfCdW1E0iN8ZMY+V8gffeNnzUKNZ+VQddfW3iHz3n9PmnHpyaeDB2Ba3DptfzpyhPXv3Jb1niyISBtJ2+eYecJ6HR0ZwSRhIPuS1y44I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hnmbyhEO; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso6043058e87.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2024 14:13:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1724101984; x=1724706784; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5WVBrXjTXXG+AbrwGZturOsFDzAUbfUxMoRB6dkGwEE=;
+        b=hnmbyhEOUCRqiWTkya7zEkK+xrDcaerbqcjG67PLLU3bjP/TM5Uc9/60sa/IiCHMoO
+         2MQRP2+ripYo72p55xWv6kBdNhSGwZjgxD195qiZX2JwEbZLUEsPrePEX+TtyIDPlFL0
+         QKVWKFIo+KlkM4o+CfX0279Uw6XdEuQat/Pqg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724101984; x=1724706784;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5WVBrXjTXXG+AbrwGZturOsFDzAUbfUxMoRB6dkGwEE=;
+        b=Ao8uoAJPFkUXjiraqScIsaQgoSFEYHBv3gA1iBQWpX3vUac0rWriXvm1UVTNm6QMBK
+         SBG09yZ+XidWFO7e2rkLlpRXQaDp2KuZsn0E4K6bVsp8pFof9A4Am3ymuxitRpRTHgkP
+         /wDbCrbk0Cuhmbeie8XQMYLLSMiYTlY+EzVndLtXN2SOgtfYBcefioGVWF32aphlFQBM
+         4zEu5eN3sv6ArDTiGheak/95P9LOaVvTKdUPCr489B7B34bmc+HuavOOXkUybLeU4hKu
+         WP19hiQJHRGLH00t6lWUsavpkSyinvZhgSXF1KZZm08ZHQl/FO2fT8VlrzJnIYzBLm7p
+         wrww==
+X-Forwarded-Encrypted: i=1; AJvYcCUdw8a7Z4bvaq03EwyLYFBU4Lkcp4Mwr+qZg5w2b9dqG/RWdQyHvx2pQ3TM7fawmeDcGX181YTqYNYA97MlRexw5VH7BaF1V+K5s9E9uA==
+X-Gm-Message-State: AOJu0YwDDYfS4pmVDnUQws+gY4ajRXDooDNmJElHucT0MS9rVFOj5hRc
+	vuWrvOME8kuAWDD/2QJb3pHmVfXMDV838yzVK+b4rskwpEOBLEBCpLGkmUnP4JiEJyTVCOAYDkg
+	q6wP1Iw==
+X-Google-Smtp-Source: AGHT+IFHYCyQhNvgfRDRXmLpap+0SB3h5RMVGTC+CqPAucl6G7jgRNferNgb5liDNPgHFWj4q6OOeg==
+X-Received: by 2002:a05:6512:3d28:b0:52e:9f17:8418 with SMTP id 2adb3069b0e04-5331c69093amr6699562e87.12.1724101983117;
+        Mon, 19 Aug 2024 14:13:03 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d41dbaesm1597439e87.183.2024.08.19.14.13.02
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 14:13:02 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f040733086so47300001fa.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2024 14:13:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWuWlD49JVdYXAVbmnC5/IbGy1L6dLJGXtPHd+oOrjts8sivEB8qZY1+DKbyCWzs1aulUTUl2r1oaYT3nQB2irOeOfJAirQVb7fw0z1Tg==
+X-Received: by 2002:a05:651c:114:b0:2f0:1a19:f3f3 with SMTP id
+ 38308e7fff4ca-2f3be5ddea6mr73422331fa.33.1724101981970; Mon, 19 Aug 2024
+ 14:13:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Christian Brauner" <brauner@kernel.org>
-Cc: "Peter Zijlstra" <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20240819053605.11706-1-neilb@suse.de> <20240819-bestbezahlt-galaabend-36a83208e172@brauner>
+ <172410075061.6062.16885080304623041632@noble.neil.brown.name>
+In-Reply-To: <172410075061.6062.16885080304623041632@noble.neil.brown.name>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 19 Aug 2024 14:12:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh4=w4pANpAPbx=Kw-jiExEabJ0pwYHFgAYXVaD0AJjrA@mail.gmail.com>
+Message-ID: <CAHk-=wh4=w4pANpAPbx=Kw-jiExEabJ0pwYHFgAYXVaD0AJjrA@mail.gmail.com>
 Subject: Re: [PATCH 0/9 RFC] Make wake_up_{bit,var} less fragile
-In-reply-to: <20240819-bestbezahlt-galaabend-36a83208e172@brauner>
-References: <20240819053605.11706-1-neilb@suse.de>,
- <20240819-bestbezahlt-galaabend-36a83208e172@brauner>
-Date: Tue, 20 Aug 2024 06:52:30 +1000
-Message-id: <172410075061.6062.16885080304623041632@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 19 Aug 2024, Christian Brauner wrote:
-> On Mon, Aug 19, 2024 at 03:20:34PM GMT, NeilBrown wrote:
-> > I wasn't really sure who to send this too, and get_maintainer.pl
-> > suggested 132 addresses which seemed excessive.  So I've focussed on
-> > 'sched' maintainers.  I'll probably submit individual patches to
-> > relevant maintainers/lists if I get positive feedback at this level.
-> >=20
-> > This series was motivated by=20
-> >=20
-> >    Commit ed0172af5d6f ("SUNRPC: Fix a race to wake a sync task")
-> >=20
-> > which adds smp_mb__after_atomic().  I thought "any API that requires that
-> > sort of thing needs to be fixed".
-> >=20
-> > The main patches here are 7 and 8 which revise wake_up_bit and
-> > wake_up_var respectively.  They result in 3 interfaces:
-> >   wake_up_{bit,var}           includes smp_mb__after_atomic()
-> >   wake_up_{bit,var}_relaxed() doesn't have a barrier
-> >   wake_up_{bit,var}_mb()      includes smb_mb().
->=20
-> It's great that this api is brought up because it gives me a reason to
-> ask a stupid question I've had for a while.
->=20
-> I want to change the i_state member in struct inode from an unsigned
-> long to a u32 because really we're wasting 4 bytes on 64 bit that we're
-> never going to use given how little I_* flags we actually have and I
-> dislike that we use that vacuous type in a bunch of our structures for
-> that reason.
->=20
-> (Together with another 4 byte shrinkage we would get a whopping 8 bytes
-> back.)
->=20
-> The problem is that we currently use wait_on_bit() and wake_up_bit() in
-> various places on i_state and all of these functions require an unsigned
-> long (probably because some architectures only handle atomic ops on
-> unsigned long).
+On Mon, 19 Aug 2024 at 13:52, NeilBrown <neilb@suse.de> wrote:
+>
+> You could fit those in a short and two bools which gives you three
+> different addresses to pass to wake_up_var().
 
-i_state contains two bits that are used for wake_up - I_NEW and I_SYNC,
-one virtual bit that is used for wake_up - I_DIO_WAKEUP - and 15 others.
-You could fit those in a short and two bools which gives you three
-different addresses to pass to wake_up_var().
-Doing that would make it a little difficult to test for=20
-   I_NEW | I_FREEING | I_WILL_FREE
-but you could probably make an inline that the compile with optimise
-effectively.
+You don't actually have to even do that.
 
-Alternately you could union the "u32" with an array for 4 char to give
-you 4 addresses for wakeup.
+The address passed to 'wake_up_var()' doesn't actually have to *match*
+anything. It's used purely as a cookie.
 
-Both of these would be effective, but a bit hackish.  If you want
-something clean we would need a new interface.  Maybe
-wake_var_bit()/wait_var_bit_event().
-It could store the bit in wait_bit_key.bit_nr as "-2-n" or similar.  Or
-better still, add another field: enum { WAIT_BIT, WAIT_VAR, WAIT_VAR_BIT } wa=
-it_type
-to wait_bit_key.
+So you can literally do something like
 
-I would probably go with the union approach and re-order the bits so that
-the ones you want to use for wake_up are less than sizeof(u32).
+   #define inode_state(X,inode) ((X)+(char *)&(inode)->i_state)
 
-NeilBrown
+and then just use inode_state(0/1/2,inode) for waiting/waking the
+different bits (and the numbers 0/1/2 do not have to bear any relation
+to the bit numbers, although you may obviously do that).
+
+              Linus
 
