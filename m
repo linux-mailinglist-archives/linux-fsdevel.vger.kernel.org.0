@@ -1,426 +1,294 @@
-Return-Path: <linux-fsdevel+bounces-26322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711F795778C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 00:36:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D50C957793
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 00:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A062846EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 22:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25382285DCF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 22:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299551DF68A;
-	Mon, 19 Aug 2024 22:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E021DD3B0;
+	Mon, 19 Aug 2024 22:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXaoYmvG"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="uTzpq9U0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jPRlare2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66799158216;
-	Mon, 19 Aug 2024 22:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2501DD394
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2024 22:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724106977; cv=none; b=b5KpIVbd1I7BRnWvNoukgzE80P6ZE/5m/aQd7YrqffF2ezBAm+uLMbb+AbCBBQNm1Up9vJ3zeGjfNFwY2TD28X2lJIV+MnwmdNILpUq1vyyDmrMqK4LEkVoNa58zpYfoSH4yO2SpXFTUKBZmX+4u/0U2ZTdjPej0AdaAvdgn4LU=
+	t=1724107010; cv=none; b=JekXMgqbfFDbK8wT5fydqTvqrBdhQrCyWU/SR7rIktAC/sn88RaKHm12YWvtx2ABQtNWvsw2MN/DO2PLmorojvnf0VVLzR7KhEcB5euc/nRz0VmSMIaLOQhm8s+Xt6UMNpcqi0Q8fcbsKO3A1cy7OeCo5O7oIYZXDPJzo644Ah0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724106977; c=relaxed/simple;
-	bh=1G9aDsJMVAuDJ3cqhNDnd+KzVaMg5MGilUcivSbjYkc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c3Uw7lm0Fu4AJwOkoK73VJJfT2CLDG3F/fw4J9HNioayT9ZNVjuNnR5Sbpd/IUz8Yh77ICTFexapRBL38K8SDrErmwii4q6QIL8giCFX7ehWoS1Z1DzmHXentLqRpxENu9KrnilqkZwXVom1M+iwO7SG3R2PDDEuxKIQuVkVqvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CXaoYmvG; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52efa16aad9so6028681e87.0;
-        Mon, 19 Aug 2024 15:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724106973; x=1724711773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=++VCcm6FrNCS+6UytOZ4cKi7ezoRKCpG0F5c0Jp2cCk=;
-        b=CXaoYmvGCKDjDuzfSLEzPfMVEN2SX4kEN2NNU1dOEtPvUrzIpGcuH77KZvoJ5KW79q
-         bBdlbCv8jEUvNZz/hcGC94Ze2RnTK/R7u+hwVYzsJ/lBSjFoR/vgXbUQMa59Y+40Lodq
-         50J/g5tqEpKPDk9QV8XtN3Y12fm0nG71GoNndc+qvLsd2NDrnXqY86Fn17hMAnHTdnxh
-         9kZ2ldmDNnfO4s3qrBoz3OTgQi14Owr/EuHMovebhJ+AyoxivMkH42kjmJjjZjK4cySl
-         QnxCk92itNGntQaaJ7Tu9CADy11kjSqJ5P6yDeQx064+KlU78v//8F+pChAlz+P6N0ER
-         9OrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724106973; x=1724711773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=++VCcm6FrNCS+6UytOZ4cKi7ezoRKCpG0F5c0Jp2cCk=;
-        b=NfG+xi6h6C1tJ929zqCc8PFCDDLbE+o9cQenoHfZhdJlIKlMwJGPPLDfWmLmL3aP1e
-         vN27SCIXLy4u/uvPcwklBTlkVUgutuzZ4dhVJK5nblIlybDjTXv2t05AelSBNweIlfg0
-         VLQ+Uryr2rpLnp7rwRyoVsYqn9HeapzG04/zNTsgBnl79cEuT8JrLvVG58UGptNdUrnB
-         J7eLRYd1U87N3oBR/rhmSblCApmIgzP2AFtKbqHOgbYVWa9kgZlQR9zHe+czI8e6e6r9
-         BQMDnDVleWlm888HJ/hsgpFEFQs9jrqCz3zUHmOCB4mMsDIvQFgkKJ7JuwAoozOlBq0z
-         aiDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEwFjCOmWVZ+7jaKI6ooIQoqkmwm/9oH/Vf//Fp7a/QJBvbVWUSVqbxc15kgDGqvtuV7BtFUsqF7NjNm76MBRRbV0G0jpFAwtX0pyW8LsZZsZT+aB0mVmOAc/ldVLBl57cQ0dpb7GbOL7DoHAa8Q0em7q+3lE+HMRRbiwfxLnMJBx1q9Q+gCw=
-X-Gm-Message-State: AOJu0YzXbFozrCb8LKtddp5nESOlHcxUSANGWNdVzyrbcOj7cvZHdxFA
-	lcpzZGSNnXuvWS4d0QImWmGNz4WT5Je2fs47O71zOFmrNpl2vCbMWcBTdcGEs7T/JmkY5t5L6xB
-	B6YMkpbPlTVqxbB42805GzORQjGM=
-X-Google-Smtp-Source: AGHT+IHfw0kqqwq5xAQSeTY5kw86EWTmZwz1spOhNQCNIm3z486eLKzHsutUH7QtawxGiX6DlMKis98zNcQDoOqo9mI=
-X-Received: by 2002:a05:6512:10c1:b0:533:6f3:9857 with SMTP id
- 2adb3069b0e04-5331c6904c5mr8137995e87.5.1724106973016; Mon, 19 Aug 2024
- 15:36:13 -0700 (PDT)
+	s=arc-20240116; t=1724107010; c=relaxed/simple;
+	bh=QdhFYQXidTpXUATGlxh9uljbb2EsBdhPb5Yq2ETXspg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k2TucpWWHN1TCGBvaZ7ALKyi6SK1raBSXoSVd65dW9d+8B8iFSGtI/3e9FhqLMOsScEfx3BX/q8TatHRkuWf8V1xhy1/3rsQRFI1JbNu/3hrfE729oCN5NOeR0zQBInoSBDDHAh9pyiyFwpthLdNkePT1GiSuGGptAznDlA7ENU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=uTzpq9U0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jPRlare2; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 2A8FE138EBAE;
+	Mon, 19 Aug 2024 18:36:47 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 19 Aug 2024 18:36:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1724107007;
+	 x=1724193407; bh=zBsedjLPrjSCCJpRg2DcZ8AUqiYJTAJ28CzEvAyqevY=; b=
+	uTzpq9U0g86MIIuGA6tLkYbsiBGgKlN1h+6rfrnQJfd/VUIfUrYmMM3kbSmp9abH
+	FYApW/IJ8ntvcwgMRC4+I/HR1i95l+QQ05AwSuju317cjxBzjrrgUoi8YXNlaSRP
+	Sezjd+o56wjqbhVOTsCaKBHxumcgp6yvnjrGclsen7jYnQytaTpUqS53aHqmFDR+
+	krirskfDYE26haT0Mq/fvyPzsrbgb1gcEfk6C7ltRKuNVV16FV80Wewh2XEijG3X
+	0jdkegbVPE76UrKiF9tNnIg/skxDqm+aQ/CwfNeqmMNpzTKOrg/2mbirceDup1MO
+	ve+WqhBGZNH3JvV/ZZ+yQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724107007; x=
+	1724193407; bh=zBsedjLPrjSCCJpRg2DcZ8AUqiYJTAJ28CzEvAyqevY=; b=j
+	PRlare2yWOlN0sTZgzcXvkh6+U3FoydRonCuoajgll0ehzuvlLyNOhnzaoLQT440
+	BE/z9epOmrGd/vLV5m4ZIxEz85Hrx/4YxQa714998NNmtyVrRjTWmPICMJWeJilf
+	icfGcBdChCASskoy772DXvhJAulKy+t0dIO350/MSe2mrc15hYy4cJ3puqRmTXjY
+	7i9exqdHUkY9JZruFGTj9P4jACPLCogKBRN12djsqLcdZdZRXkYIbg8HfTjqQ1j/
+	dS0RxCISnZh38j5+Hu/tdKkT1GRNxayeiCspAj/H9/axBA7AKwA1T3jrBIUtYEOY
+	kwIyPCjUlKACBIJfdfQDA==
+X-ME-Sender: <xms:_sjDZhn9n1RT-_ezwV91WAwD1KK9gaWqBdd1KWAsBrb9jWDH192ksg>
+    <xme:_sjDZs1VhQ4g0sz8ye_ditFrPxILQRyzai2IBPj5EYUYf15MT7V-mn95WYGWJaA_r
+    oKr4UPECGRBIGil>
+X-ME-Received: <xmr:_sjDZnoOONDzt4mSbenqRFwloF3Fz5jdC4CjhNKDnEz86eChkyLDeP3Tt47ooXdduEsuX5wIhhBZ5PXluDQvWuDqdPM8gEcWmPDKbZWndXEi4sdBuGM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudduhedguddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepuedtkeeileeghedu
+    kefghfdtuddvudfgheeljeejgeelueffueekheefheffveelnecuffhomhgrihhnpehgih
+    hthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdpnhgspg
+    hrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhorghnnhgv
+    lhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsiigvrh
+    gvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepjhhoshgvfhesthhogihitghprghnuggrrdgtoh
+    hmpdhrtghpthhtohepohhsrghnughovhesohhsrghnughovhdrtghomhdprhgtphhtthho
+    pehsfigvvghtthgvrgdqkhgvrhhnvghlseguohhrmhhinhihrdhmvgdprhgtphhtthhope
+    hkvghrnhgvlhdqthgvrghmsehmvghtrgdrtghomhdprhgtphhtthhopegushhinhhghhes
+    uggunhdrtghomh
+X-ME-Proxy: <xmx:_sjDZhkyO26fVgfdLVl_Wuz0UYpZ6WC9Il7PBTacPafJPrs5P98Law>
+    <xmx:_sjDZv2Ohjf7mewIKcvuTVKDlYxpnA8q1zc4OZhir4jwFUIlVpySEA>
+    <xmx:_sjDZgvM5EBsSJ5Jf7urrJYRL2uXvKE3-XZVvF6e5eahfgkH20OOkQ>
+    <xmx:_sjDZjVUfkdK4FcUfBLa2PnLaiyti1mSPlPFTI0e9NH_UQKy4WT1uw>
+    <xmx:_8jDZoKJT9VofW-S6a_bZxwCNQfzkVatV4L9mqZ2VMh1TyVhsvysZigG>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 19 Aug 2024 18:36:44 -0400 (EDT)
+Message-ID: <e36998aa-3bb6-4d57-b29f-6bcdc586357b@fastmail.fm>
+Date: Tue, 20 Aug 2024 00:36:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1229195.1723211769@warthog.procyon.org.uk> <ZrbgRnXV-snNicjY@codewreck.org>
-In-Reply-To: <ZrbgRnXV-snNicjY@codewreck.org>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 19 Aug 2024 17:36:01 -0500
-Message-ID: <CAH2r5mvXE9kKEFfEpsf3AA0s8oVA8737aLZ2LkOrz1hptujt2A@mail.gmail.com>
-Subject: Re: [PATCH] 9p: Fix DIO read through netfs
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: David Howells <dhowells@redhat.com>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
-	Marc Dionne <marc.dionne@auristor.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Trond Myklebust <trond.myklebust@hammerspace.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thorsten Leemhuis <regressions@leemhuis.info>, Thorsten Leemhuis <linux@leemhuis.info>, 
-	Shyam Prasad N <nspmangalore@gmail.com>, Bharath S M <bharathsm@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-I did some additional testing of this patch after seeing regressions
-starting with 6.11-rc4 with xfstests generic/125 and generic/210 and
-was able to bisect it to this patch which just went in:
-
-commit e3786b29c54cdae3490b07180a54e2461f42144c
-Author: Dominique Martinet <asmadeus@codewreck.org>
-
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index b2405dd4d4d4..3f3842e7b44a 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -217,7 +217,8 @@ static void cifs_req_issue_read(struct
-netfs_io_subrequest *subreq)
-                        goto out;
-        }
-
--       __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-+       if (subreq->rreq->origin !=3D NETFS_DIO_READ)
-+               __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-
-        rc =3D rdata->server->ops->async_readv(rdata);
- out:
-
-It is very simple to repro.
-I originally noticed it with tests to shares in Azure, but it also
-fails locally to Samba with default cifs.ko mount options.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: add FOPEN_FETCH_ATTR flag for fetching attributes
+ after open
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
+ osandov@osandov.com, sweettea-kernel@dorminy.me, kernel-team@meta.com,
+ Dharmendra Singh <dsingh@ddn.com>
+References: <20240813212149.1909627-1-joannelkoong@gmail.com>
+ <4c37917a-9a64-4ea0-9437-d537158a8f40@fastmail.fm>
+ <CAJnrk1aC-qUTb1e-n7O-wqrbUKMcq18tyE7LAxattdGU22NaPA@mail.gmail.com>
+ <C23FB164-EB7A-436F-8C3F-533B00F67730@fastmail.fm>
+ <CAJnrk1ZZ2eEcwYeXHmJxxMywQ8=iDkffvcJK8W8exA02vjrvUg@mail.gmail.com>
+ <9941c561-b358-4058-8797-3e8081b019dc@fastmail.fm>
+ <CAJnrk1a3EFerySC+eEkfLdeo9fe8bqccOqcFK_S547aoLVWUEw@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJnrk1a3EFerySC+eEkfLdeo9fe8bqccOqcFK_S547aoLVWUEw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-log message is below:
 
-[ 7884.205037] Workqueue: cifsiod smb2_readv_worker [cifs]
-[ 7884.205262] RIP: 0010:netfs_subreq_terminated+0x3f0/0x4b0 [netfs]
-[ 7884.205299] Code: 01 00 00 e8 02 b4 07 df 4c 8b 4c 24 08 49 89 d8
-4c 89 e9 41 8b b4 24 d4 01 00 00 44 89 f2 48 c7 c7 40 10 65 c1 e8 30
-a9 b6 de <0f> 0b 48 8b 7c 24 18 4c 8d bd c0 00 00 00 e8 2d b5 07 df 48
-8b 7c
-[ 7884.205305] RSP: 0018:ff1100010705fce8 EFLAGS: 00010286
-[ 7884.205312] RAX: dffffc0000000000 RBX: 0000000000001000 RCX: 00000000000=
-00027
-[ 7884.205317] RDX: 0000000000000027 RSI: 0000000000000004 RDI: ff110004cb1=
-b1a08
-[ 7884.205322] RBP: ff11000119450900 R08: ffffffffa03e346e R09: ffe21c00996=
-36341
-[ 7884.205326] R10: ff110004cb1b1a0b R11: 0000000000000001 R12: ff11000137b=
-68a80
-[ 7884.205330] R13: 000000000000012c R14: 0000000000000001 R15: ff11000126a=
-96f78
-[ 7884.205335] FS:  0000000000000000(0000) GS:ff110004cb180000(0000)
-knlGS:0000000000000000
-[ 7884.205339] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 7884.205344] CR2: 00007f0035f0a67c CR3: 000000000f664004 CR4: 00000000003=
-71ef0
-[ 7884.205354] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[ 7884.205359] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
-00400
-[ 7884.205363] Call Trace:
-[ 7884.205367]  <TASK>
-[ 7884.205373]  ? __warn+0xa4/0x220
-[ 7884.205386]  ? netfs_subreq_terminated+0x3f0/0x4b0 [netfs]
-[ 7884.205423]  ? report_bug+0x1d4/0x1e0
-[ 7884.205436]  ? handle_bug+0x42/0x80
-[ 7884.205442]  ? exc_invalid_op+0x18/0x50
-[ 7884.205449]  ? asm_exc_invalid_op+0x1a/0x20
-[ 7884.205464]  ? irq_work_claim+0x1e/0x40
-[ 7884.205475]  ? netfs_subreq_terminated+0x3f0/0x4b0 [netfs]
-[ 7884.205512]  ? netfs_subreq_terminated+0x3f0/0x4b0 [netfs]
-[ 7884.205554]  process_one_work+0x4cf/0xb80
-[ 7884.205573]  ? __pfx_lock_acquire+0x10/0x10
-[ 7884.205582]  ? __pfx_process_one_work+0x10/0x10
-[ 7884.205599]  ? assign_work+0xd6/0x110
-[ 7884.205609]  worker_thread+0x2cd/0x550
-[ 7884.205622]  ? __pfx_worker_thread+0x10/0x10
-[ 7884.205632]  kthread+0x187/0x1d0
-[ 7884.205639]  ? __pfx_kthread+0x10/0x10
-[ 7884.205648]  ret_from_fork+0x34/0x60
-[ 7884.205655]  ? __pfx_kthread+0x10/0x10
-[ 7884.205661]  ret_from_fork_asm+0x1a/0x30
-[ 7884.205684]  </TASK>
-[ 7884.205688] irq event stamp: 23635
-[ 7884.205692] hardirqs last  enabled at (23641): [<ffffffffa022b58b>]
-console_unlock+0x15b/0x170
-[ 7884.205699] hardirqs last disabled at (23646): [<ffffffffa022b570>]
-console_unlock+0x140/0x170
-[ 7884.205705] softirqs last  enabled at (23402): [<ffffffffa0131a6e>]
-__irq_exit_rcu+0xfe/0x120
-[ 7884.205712] softirqs last disabled at (23397): [<ffffffffa0131a6e>]
-__irq_exit_rcu+0xfe/0x120
-[ 7884.205718] ---[ end trace 0000000000000000 ]---
+On 8/14/24 20:06, Joanne Koong wrote:
+> On Wed, Aug 14, 2024 at 10:52 AM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+>>
+>>
+>>
+>> On 8/14/24 19:18, Joanne Koong wrote:
+>>> On Tue, Aug 13, 2024 at 3:41 PM Bernd Schubert
+>>> <bernd.schubert@fastmail.fm> wrote:
+>>>>
+>>>> On August 13, 2024 11:57:44 PM GMT+02:00, Joanne Koong <joannelkoong@gmail.com> wrote:
+>>>>> On Tue, Aug 13, 2024 at 2:44 PM Bernd Schubert
+>>>>> <bernd.schubert@fastmail.fm> wrote:
+>>>>>>
+>>>>>> On 8/13/24 23:21, Joanne Koong wrote:
+>>>>>>> Add FOPEN_FETCH_ATTR flag to indicate that attributes should be
+>>>>>>> fetched from the server after an open.
+>>>>>>>
+>>>>>>> For fuse servers that are backed by network filesystems, this is
+>>>>>>> needed to ensure that file attributes are up to date between
+>>>>>>> consecutive open calls.
+>>>>>>>
+>>>>>>> For example, if there is a file that is opened on two fuse mounts,
+>>>>>>> in the following scenario:
+>>>>>>>
+>>>>>>> on mount A, open file.txt w/ O_APPEND, write "hi", close file
+>>>>>>> on mount B, open file.txt w/ O_APPEND, write "world", close file
+>>>>>>> on mount A, open file.txt w/ O_APPEND, write "123", close file
+>>>>>>>
+>>>>>>> when the file is reopened on mount A, the file inode contains the old
+>>>>>>> size and the last append will overwrite the data that was written when
+>>>>>>> the file was opened/written on mount B.
+>>>>>>>
+>>>>>>> (This corruption can be reproduced on the example libfuse passthrough_hp
+>>>>>>> server with writeback caching disabled and nopassthrough)
+>>>>>>>
+>>>>>>> Having this flag as an option enables parity with NFS's close-to-open
+>>>>>>> consistency.
+>>>>>>>
+>>>>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>>>>>> ---
+>>>>>>>  fs/fuse/file.c            | 7 ++++++-
+>>>>>>>  include/uapi/linux/fuse.h | 7 ++++++-
+>>>>>>>  2 files changed, 12 insertions(+), 2 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>>>>>> index f39456c65ed7..437487ce413d 100644
+>>>>>>> --- a/fs/fuse/file.c
+>>>>>>> +++ b/fs/fuse/file.c
+>>>>>>> @@ -264,7 +264,12 @@ static int fuse_open(struct inode *inode, struct file *file)
+>>>>>>>       err = fuse_do_open(fm, get_node_id(inode), file, false);
+>>>>>>>       if (!err) {
+>>>>>>>               ff = file->private_data;
+>>>>>>> -             err = fuse_finish_open(inode, file);
+>>>>>>> +             if (ff->open_flags & FOPEN_FETCH_ATTR) {
+>>>>>>> +                     fuse_invalidate_attr(inode);
+>>>>>>> +                     err = fuse_update_attributes(inode, file, STATX_BASIC_STATS);
+>>>>>>> +             }
+>>>>>>> +             if (!err)
+>>>>>>> +                     err = fuse_finish_open(inode, file);
+>>>>>>>               if (err)
+>>>>>>>                       fuse_sync_release(fi, ff, file->f_flags);
+>>>>>>>               else if (is_truncate)
+>>>>>>
+>>>>>> I didn't come to it yet, but I actually wanted to update Dharmendras/my
+>>>>>> atomic open patches - giving up all the vfs changes (for now) and then
+>>>>>> always use atomic open if available, for FUSE_OPEN and FUSE_CREATE. And
+>>>>>> then update attributes through that.
+>>>>>> Would that be an alternative for you? Would basically require to add an
+>>>>>> atomic_open method into your file system.
+>>>>>>
+>>>>>> Definitely more complex than your solution, but avoids a another
+>>>>>> kernel/userspace transition.
+>>>>>
+>>>>> Hi Bernd,
+>>>>>
+>>>>> Unfortunately I don't think this is an alternative for my use case. I
+>>>>> haven't looked closely at the implementation details of your atomic
+>>>>> open patchset yet but if I'm understanding the gist of it correctly,
+>>>>> it bundles the lookup with the open into 1 request, where the
+>>>>> attributes can be passed from server -> kernel through the reply to
+>>>>> that request. I think in the case I'm working on, the file open call
+>>>>> does not require a lookup so it can't take advantage of your feature.
+>>>>> I just tested it on libfuse on the passthrough_hp server (with no
+>>>>> writeback caching and nopassthrough) on the example in the commit
+>>>>> message and I'm not seeing any lookup request being sent for that last
+>>>>> open call (for writing "123").
+>>>>>
+>>>>
+>>>>
+>>>> Hi Joanne,
+>>>>
+>>>> gets late here and I'm typing on my phone.  I hope formatting is ok.
+>>>>
+>>>> what I meant is that we use the atomic open op code for both, lookup-open and plain open - i.e. we always update attributes on open. Past atomic open patches did not do that yet, but I later realized that always using atomic open op
+>>>>
+>>>> - avoids the data corruption you run into
+>>>> - probably no need for atomic-revalidate-open vfs patches anymore  as we can now safely set a high attr timeout
+>>>>
+>>>>
+>>>> Kind of the same as your patch, just through a new op code.
+>>>
+>>> Awesome, thanks for the context Bernd. I think this works for our use
+>>> case then. To confirm the "we will always update attributes on open"
+>>> part, this will only send the FUSE_GETATTR request to the server if
+>>> the server has invalidated the inode (eg through the
+>>> fuse_lowlevel_notify_inval_inode() api), otherwise this will not send
+>>> an extra FUSE_GETATTR request, correct? Other than the attribute
+>>
+>> If we send FUSE_OPEN_ATOMIC (or whatever we name it) in
+>> fuse_file_open(), it would always ask server side for attributes.
+> 
+> Oh I see, the FUSE_OPEN_ATOMIC request itself would ask for attributes
+> and the attributes would be sent by the server as the reply to the
+> FUSE_ATOMIC_OPEN. This sounds great! in my patch, there's an
+> additional FUSE_GETATTR request incurred to get the attributes.
+> 
+>> I.e. we assume that a server that has atomic open implemented can easily
+>> provide attributes or asks for close-to-open coherency.
+>>
+>>
+>> I'm not sure if I correctly understood your questions about
+>> notifications and FUSE_GETATTR - from my point of view that that is
+>> entirely independent from open. And personally I try to reduce
+> 
+> I missed that the attributes would be bundled with FUSE_OPEN_ATOMIC so
+> I thought we would need an additional FUSE_GETATTR request to get
+> them. Apologies for the confusion!
+> 
+>> kernel/userspace transitions - additional notifications and FUSE_GETATTR
+>> are not helpful here :)
+>>
+>>> updating, would there be any other differences from using plain open
+>>> vs the atomic open version of plain open?
+>>
+>> Just the additional file attributes and complexity that brings.
+>>
+>>>
+>>> Do you have a tentative timeline in mind for when the next iteration
+>>> of the atomic open patchset would be out?
+>>
+>> I wanted to have new fuse-uring patches ready by last week, but I'm
+>> still refactoring things - changing things on top of the existing series
+>> is easy, rebasing it is painful...  I can _try_ to make a raw new
+>> atomic-open patch set during the next days (till Sunday), but not promised.
+>>
+> 
+> Sounds great. thanks for your work on this!
 
-On Fri, Aug 9, 2024 at 10:43=E2=80=AFPM Dominique Martinet
-<asmadeus@codewreck.org> wrote:
->
-> David Howells wrote on Fri, Aug 09, 2024 at 02:56:09PM +0100:
-> > From: Dominique Martinet <asmadeus@codewreck.org>
-> >
-> > 9p: Fix DIO read through netfs
->
-> nitpick: now sure how that ended up here but this is duplicated with the
-> subject (the commit message ends up with this line twice)
->
-> > If a program is watching a file on a 9p mount, it won't see any change =
-in
-> > size if the file being exported by the server is changed directly in th=
-e
-> > source filesystem, presumably because 9p doesn't have change notificati=
-ons,
-> > and because netfs skips the reads if the file is empty.
-> >
-> > Fix this by attempting to read the full size specified when a DIO read =
-is
-> > requested (such as when 9p is operating in unbuffered mode) and dealing
-> > with a short read if the EOF was less than the expected read.
-> >
-> > To make this work, filesystems using netfslib must not set
-> > NETFS_SREQ_CLEAR_TAIL if performing a DIO read where that read hit the =
-EOF.
-> > I don't want to mandatorily clear this flag in netfslib for DIO because=
-,
-> > say, ceph might make a read from an object that is not completely fille=
-d,
-> > but does not reside at the end of file - and so we need to clear the
-> > excess.
-> >
-> > This can be tested by watching an empty file over 9p within a VM (such =
-as
-> > in the ktest framework):
-> >
-> >         while true; do read content; if [ -n "$content" ]; then echo $c=
-ontent; break; fi; done < /host/tmp/foo
->
-> (This is basically the same thing but if one wants to control the read
-> timing for more precise/verbose debugging:
->   exec 3< /host/tmp/foo
->   read -u 3 content && echo $content
->   (repeat as appropriate)
->   exec 3>&-
-> )
->
-> > then writing something into the empty file.  The watcher should immedia=
-tely
-> > display the file content and break out of the loop.  Without this fix, =
-it
-> > remains in the loop indefinitely.
-> >
-> > Fixes: 80105ed2fd27 ("9p: Use netfslib read/write_iter")
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218916
-> > Written-by: Dominique Martinet <asmadeus@codewreck.org>
->
-> Thanks for adding extra comments & fixing other filesystems.
->
-> I've checked this covers all cases of setting NETFS_SREQ_CLEAR_TAIL so
-> hopefully shouldn't have further side effects, this sounds good to me:
->
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
->
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > cc: Eric Van Hensbergen <ericvh@kernel.org>
-> > cc: Latchesar Ionkov <lucho@ionkov.net>
-> > cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-> > cc: Marc Dionne <marc.dionne@auristor.com>
-> > cc: Ilya Dryomov <idryomov@gmail.com>
-> > cc: Steve French <sfrench@samba.org>
-> > cc: Paulo Alcantara <pc@manguebit.com>
-> > cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-> > cc: v9fs@lists.linux.dev
-> > cc: linux-afs@lists.infradead.org
-> > cc: ceph-devel@vger.kernel.org
-> > cc: linux-cifs@vger.kernel.org
-> > cc: linux-nfs@vger.kernel.org
-> > cc: netfs@lists.linux.dev
-> > cc: linux-fsdevel@vger.kernel.org
-> > ---
-> >  fs/9p/vfs_addr.c     |    3 ++-
-> >  fs/afs/file.c        |    3 ++-
-> >  fs/ceph/addr.c       |    6 ++++--
-> >  fs/netfs/io.c        |   17 +++++++++++------
-> >  fs/nfs/fscache.c     |    3 ++-
-> >  fs/smb/client/file.c |    3 ++-
-> >  6 files changed, 23 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-> > index a97ceb105cd8..24fdc74caeba 100644
-> > --- a/fs/9p/vfs_addr.c
-> > +++ b/fs/9p/vfs_addr.c
-> > @@ -75,7 +75,8 @@ static void v9fs_issue_read(struct netfs_io_subreques=
-t *subreq)
-> >
-> >       /* if we just extended the file size, any portion not in
-> >        * cache won't be on server and is zeroes */
-> > -     __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> > +     if (subreq->rreq->origin !=3D NETFS_DIO_READ)
-> > +             __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> >
-> >       netfs_subreq_terminated(subreq, err ?: total, false);
-> >  }
-> > diff --git a/fs/afs/file.c b/fs/afs/file.c
-> > index c3f0c45ae9a9..ec1be0091fdb 100644
-> > --- a/fs/afs/file.c
-> > +++ b/fs/afs/file.c
-> > @@ -242,7 +242,8 @@ static void afs_fetch_data_notify(struct afs_operat=
-ion *op)
-> >
-> >       req->error =3D error;
-> >       if (subreq) {
-> > -             __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> > +             if (subreq->rreq->origin !=3D NETFS_DIO_READ)
-> > +                     __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> >               netfs_subreq_terminated(subreq, error ?: req->actual_len,=
- false);
-> >               req->subreq =3D NULL;
-> >       } else if (req->done) {
-> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > index cc0a2240de98..c4744a02db75 100644
-> > --- a/fs/ceph/addr.c
-> > +++ b/fs/ceph/addr.c
-> > @@ -246,7 +246,8 @@ static void finish_netfs_read(struct ceph_osd_reque=
-st *req)
-> >       if (err >=3D 0) {
-> >               if (sparse && err > 0)
-> >                       err =3D ceph_sparse_ext_map_end(op);
-> > -             if (err < subreq->len)
-> > +             if (err < subreq->len &&
-> > +                 subreq->rreq->origin !=3D NETFS_DIO_READ)
-> >                       __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> >               if (IS_ENCRYPTED(inode) && err > 0) {
-> >                       err =3D ceph_fscrypt_decrypt_extents(inode,
-> > @@ -282,7 +283,8 @@ static bool ceph_netfs_issue_op_inline(struct netfs=
-_io_subrequest *subreq)
-> >       size_t len;
-> >       int mode;
-> >
-> > -     __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> > +     if (rreq->origin !=3D NETFS_DIO_READ)
-> > +             __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> >       __clear_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
-> >
-> >       if (subreq->start >=3D inode->i_size)
-> > diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-> > index c179a1c73fa7..5367caf3fa28 100644
-> > --- a/fs/netfs/io.c
-> > +++ b/fs/netfs/io.c
-> > @@ -530,7 +530,8 @@ void netfs_subreq_terminated(struct netfs_io_subreq=
-uest *subreq,
-> >
-> >       if (transferred_or_error =3D=3D 0) {
-> >               if (__test_and_set_bit(NETFS_SREQ_NO_PROGRESS, &subreq->f=
-lags)) {
-> > -                     subreq->error =3D -ENODATA;
-> > +                     if (rreq->origin !=3D NETFS_DIO_READ)
-> > +                             subreq->error =3D -ENODATA;
-> >                       goto failed;
-> >               }
-> >       } else {
-> > @@ -601,9 +602,14 @@ netfs_rreq_prepare_read(struct netfs_io_request *r=
-req,
-> >                       }
-> >                       if (subreq->len > ictx->zero_point - subreq->star=
-t)
-> >                               subreq->len =3D ictx->zero_point - subreq=
-->start;
-> > +
-> > +                     /* We limit buffered reads to the EOF, but let th=
-e
-> > +                      * server deal with larger-than-EOF DIO/unbuffere=
-d
-> > +                      * reads.
-> > +                      */
-> > +                     if (subreq->len > rreq->i_size - subreq->start)
-> > +                             subreq->len =3D rreq->i_size - subreq->st=
-art;
-> >               }
-> > -             if (subreq->len > rreq->i_size - subreq->start)
-> > -                     subreq->len =3D rreq->i_size - subreq->start;
-> >               if (rreq->rsize && subreq->len > rreq->rsize)
-> >                       subreq->len =3D rreq->rsize;
-> >
-> > @@ -739,11 +745,10 @@ int netfs_begin_read(struct netfs_io_request *rre=
-q, bool sync)
-> >       do {
-> >               _debug("submit %llx + %llx >=3D %llx",
-> >                      rreq->start, rreq->submitted, rreq->i_size);
-> > -             if (rreq->origin =3D=3D NETFS_DIO_READ &&
-> > -                 rreq->start + rreq->submitted >=3D rreq->i_size)
-> > -                     break;
-> >               if (!netfs_rreq_submit_slice(rreq, &io_iter))
-> >                       break;
-> > +             if (test_bit(NETFS_SREQ_NO_PROGRESS, &rreq->flags))
-> > +                     break;
-> >               if (test_bit(NETFS_RREQ_BLOCKED, &rreq->flags) &&
-> >                   test_bit(NETFS_RREQ_NONBLOCK, &rreq->flags))
-> >                       break;
-> > diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
-> > index bf29a65c5027..7a558dea75c4 100644
-> > --- a/fs/nfs/fscache.c
-> > +++ b/fs/nfs/fscache.c
-> > @@ -363,7 +363,8 @@ void nfs_netfs_read_completion(struct nfs_pgio_head=
-er *hdr)
-> >               return;
-> >
-> >       sreq =3D netfs->sreq;
-> > -     if (test_bit(NFS_IOHDR_EOF, &hdr->flags))
-> > +     if (test_bit(NFS_IOHDR_EOF, &hdr->flags) &&
-> > +         sreq->rreq->origin !=3D NETFS_DIO_READ)
-> >               __set_bit(NETFS_SREQ_CLEAR_TAIL, &sreq->flags);
-> >
-> >       if (hdr->error)
-> > diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-> > index b2405dd4d4d4..3f3842e7b44a 100644
-> > --- a/fs/smb/client/file.c
-> > +++ b/fs/smb/client/file.c
-> > @@ -217,7 +217,8 @@ static void cifs_req_issue_read(struct netfs_io_sub=
-request *subreq)
-> >                       goto out;
-> >       }
-> >
-> > -     __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> > +     if (subreq->rreq->origin !=3D NETFS_DIO_READ)
-> > +             __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> >
-> >       rc =3D rdata->server->ops->async_readv(rdata);
-> >  out:
-> >
->
-> --
-> Dominique Martinet | Asmadeus
->
+Here is a totally untested (and probably ugly) version of what I had in my 
+mind 
+
+https://github.com/bsbernd/linux/commits/open-getattr/
+https://github.com/libfuse/libfuse/pull/1020
+
+(It builds, but nothing more tested).
+
+Instead of rather complex atomic-open it adds FUSE_OPEN_GETATTR and hooks into
+fuse_file_open. 
+I was considering to hook into fuse_do_open, but that would cause quite some code
+dup for fuse_file_open. We need the inode to update attributes and in fuse_do_open
+we could use file->f_inode, but I didn't verify if it is reliable at this stage
+(do_dentry_open() assignes it, but I didn't verify possible other code paths) - for
+now I added the inode parameter to all code paths.
 
 
---=20
+Going to test and clean it up tomorrow.
+
+
 Thanks,
-
-Steve
+Bernd
 
