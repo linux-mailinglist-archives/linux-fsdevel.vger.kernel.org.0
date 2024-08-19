@@ -1,246 +1,267 @@
-Return-Path: <linux-fsdevel+bounces-26262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4E4956B20
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 14:48:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51560956B2F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 14:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0EC1C21DA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 12:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28071F22001
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 12:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E16916B741;
-	Mon, 19 Aug 2024 12:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C83916BE39;
+	Mon, 19 Aug 2024 12:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RXtoiguI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="We9J5E7k";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RXtoiguI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="We9J5E7k"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJPTWKBQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-vk1-f195.google.com (mail-vk1-f195.google.com [209.85.221.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400F4171AA;
-	Mon, 19 Aug 2024 12:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A1116B3BD;
+	Mon, 19 Aug 2024 12:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724071688; cv=none; b=Yl7tGl+RENOewZ/sz2aa++SSLWYOu9d7er8fhwI8UKWiymtR0NKjFJKrtEYofRmUiqpo5PD3kadUJlIhY8WeP5cXaM2Ci4bwTP1nP8yikoDLC1d1ZQZsABIgQsymvmfxGC4OmU1jJ/ayKbOOZplZboBg/QXMGAKSjkNXmDx7d2Q=
+	t=1724071863; cv=none; b=kgcDpHufJW1YzxI5wLlRJmWLrwTrwdfOo41g2ebijVMotiyJx0C+mWzFVcdv2YDnIuP1607zSLOD1qSzjMoWNjyj4Zv1Zg5mzkv2LfkC2m1+aUeK1Uuli6SyvAq5sos0hdRfukQJWV4EaQE56nTGhyPxZZkyUYeHFH7aNwkPqjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724071688; c=relaxed/simple;
-	bh=HydNc9YeqS1n2tCRGnqjq33aIE7b/dj2IgGJsXVSX4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZN1+Le4en7ZbwOpSJ9grnG1oayCqOgQ49WO/8B2PQ5ZsHjVkNzMFFsOYch7AwbgRqgnHlpTIy6fCmZPzGpSa4flBe/GnvQNFNGuLo/yRLdWXhPi1zzSIR8e3loHzjfuTXQX74xi6KDhP4X4fLlIY4gZCT4vY48QTTgz2oGrM5m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RXtoiguI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=We9J5E7k; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RXtoiguI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=We9J5E7k; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 89E6B2117A;
-	Mon, 19 Aug 2024 12:48:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724071681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VFCFhO6hZl457IRzJhBFYas41P7AtvK65yfv9OH7YqA=;
-	b=RXtoiguI5s78ePFTXA+h+Cd5vs0DWIs8ilCGivIQ6fcrOKDB4WCbzpZPjKMcXKU/xsKw+I
-	3lB+eNZyjkf8bXKONnKptjyDs39ZsxOehYjM8qhmy5zfiJtVXFdZ81nbPE9XJkfP4rcskM
-	+0Zup79oCaOXMrNTQea/w1nEmOnS+S8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724071681;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VFCFhO6hZl457IRzJhBFYas41P7AtvK65yfv9OH7YqA=;
-	b=We9J5E7kt2BQCD3uo3xHiT0zA+7SUDRNmLi2TlbLRFrcSVvxrUaWe8yVHe/phG94FeOJ+u
-	Z/Us8laZaGP0gjCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724071681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VFCFhO6hZl457IRzJhBFYas41P7AtvK65yfv9OH7YqA=;
-	b=RXtoiguI5s78ePFTXA+h+Cd5vs0DWIs8ilCGivIQ6fcrOKDB4WCbzpZPjKMcXKU/xsKw+I
-	3lB+eNZyjkf8bXKONnKptjyDs39ZsxOehYjM8qhmy5zfiJtVXFdZ81nbPE9XJkfP4rcskM
-	+0Zup79oCaOXMrNTQea/w1nEmOnS+S8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724071681;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VFCFhO6hZl457IRzJhBFYas41P7AtvK65yfv9OH7YqA=;
-	b=We9J5E7kt2BQCD3uo3xHiT0zA+7SUDRNmLi2TlbLRFrcSVvxrUaWe8yVHe/phG94FeOJ+u
-	Z/Us8laZaGP0gjCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 383AD1397F;
-	Mon, 19 Aug 2024 12:48:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8SK7BQE/w2YcZwAAD6G6ig
-	(envelope-from <hare@suse.de>); Mon, 19 Aug 2024 12:48:01 +0000
-Message-ID: <03ae65df-a369-436d-b31c-b3cec6ca3bc1@suse.de>
-Date: Mon, 19 Aug 2024 14:48:00 +0200
+	s=arc-20240116; t=1724071863; c=relaxed/simple;
+	bh=FKl0KwX9kaYeqWKtVzU8B+3h3rVePRElk6v5fiEqfhI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=KU7MNdCIJFFnLkQJ3v+HzmbkNiS7sXinQAnCh0x2lY2NvJi96RSRG8AF1ghORfMB77sgxcN+plJTQY9m2E1u0j7AVpCFFNdIyiQXCuSpmBJJosfw68RqEoajQWJX0edCOuUngMnRfTnqRYup8lKhNqvKDsC90h9EQwrZeqD07eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJPTWKBQ; arc=none smtp.client-ip=209.85.221.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f195.google.com with SMTP id 71dfb90a1353d-4fc7bd8763cso638574e0c.2;
+        Mon, 19 Aug 2024 05:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724071860; x=1724676660; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lnKuH6/Z7p+5tbY7/eWIdXLNca1WlHLa2FXE5gB5NJQ=;
+        b=hJPTWKBQoEThCYBv7UBuvZZmk8yG+75MnpguYBLWNmGRoagsPjSOtFDwRYjtO3GAnn
+         Z9jIr5JL7QChxga+CIoiWlqG9XVxXpS5Ny2K+nnBmPMUur19sMoGbjNHDqAwvShZzpPF
+         3nZVWWX2xbHJbc6w+aGVQbFvGI8DfQFXVUJt/PzzJpIkdIsrNDaiQfr4XR0kYmEZhwR8
+         wTQlAFXEEHVV3hhHy2WqI1M62s/WzZ2JQA6xKsdokAlG/skWoW3aFxs4ccREpB9Bd2jt
+         B8PYtb6WxRcU9sQiYhxCNW79F7Eq5n6OAanaAHJeQIWau0K9RIsOppEvyMhTrUOUOuGp
+         nh8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724071860; x=1724676660;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lnKuH6/Z7p+5tbY7/eWIdXLNca1WlHLa2FXE5gB5NJQ=;
+        b=Hvq22dAnQZVIgnA2hYllMnQoFLgiWaTo2r/9Nc12tDiD/emK99WjToyKExsrvjDnya
+         VuFyQ5CFYuWDYJbmARAmJWQq2CuPORaWrQPC04AZQoPc4L/m3FDS2X+dPbz7Uifp6cvI
+         0YJeFl96JgBnSfM+kl9+ckr7EG2Tg8XbRmRNmgiorRaza8YqdUpgEbQ2ge2+WbNiVnxW
+         J1vTJJ7Ct29/gGLPpLgzUW5LVkTCXiUYlgpJtbhfrNI6S7MsunIBITZht7g7eiafudvp
+         B9xo9c9hZziEAglmy1b+VnnoNMr/n3Wq8kiXxnDeG7ttYFR2q3qfEQFKIjhiDoh1nhMi
+         Kglw==
+X-Forwarded-Encrypted: i=1; AJvYcCUufdkRlJkthppwKOfXHzrqo9ECavzyQ/KFmRcxy0T8h1iIleBdOvIjQsRIpYKLtGeEUsqUw0MtlAhM8/1m6Cam1lxBrdEEyFYCixNk65b5NdGn9pwmtpqZFfC9UMywyLUh2oJ6KQZwqmMrDw==
+X-Gm-Message-State: AOJu0YwFE1L7EWFcEyDhv4pf9EVbMjHGKzXb4diWx3h++gPlmxp3E5aE
+	Wu/2Nc0PQ568iZlH0P1y6kaG51x6snELe+0gZKoxlpBzzDjU3v1wLMzG+q8j/CrxrSgEIizVktz
+	bgmsc4CWz9oRlR1jFk46kUvd8Eag=
+X-Google-Smtp-Source: AGHT+IG5OJo2tMUGG3n/2sHWnen1J1sR3PdX9e7ygyWCirUNsEsrW/hJKSAqpZLXIXZ9gTGqI2He3UFrt2zfLcwirJw=
+X-Received: by 2002:a05:6122:2193:b0:4f6:b094:80b1 with SMTP id
+ 71dfb90a1353d-4fc6c9fff96mr8441137e0c.11.1724071859734; Mon, 19 Aug 2024
+ 05:50:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
-To: David Howells <dhowells@redhat.com>,
- "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
- linux-fsdevel@vger.kernel.org, djwong@kernel.org, gost.dev@samsung.com,
- linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
- Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
- john.g.garry@oracle.com, cl@os.amperecomputing.com, p.raghav@samsung.com,
- mcgrof@kernel.org, ryan.roberts@arm.com
-References: <20240818165124.7jrop5sgtv5pjd3g@quentin>
- <20240815090849.972355-1-kernel@pankajraghav.com>
- <2924797.1723836663@warthog.procyon.org.uk>
- <3402933.1724068015@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <3402933.1724068015@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.991];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+From: Hui Guo <guohui.study@gmail.com>
+Date: Mon, 19 Aug 2024 20:50:48 +0800
+Message-ID: <CAHOo4gJyho_xXKRJB52qTJuCrrq9L-RL59XYyo_oS5+vN7Osiw@mail.gmail.com>
+Subject: KASAN: stack-out-of-bounds Write in end_buffer_read_sync
+To: Andrew Morton <akpm@linux-foundation.org>, Alexander Potapenko <glider@google.com>, 
+	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Uros Bizjak <ubizjak@gmail.com>, Carlos Llamas <cmllamas@google.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Cc: syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/19/24 13:46, David Howells wrote:
-> Hi Pankaj,
-> 
-> I can reproduce the problem with:
-> 
-> xfs_io -t -f -c "pwrite -S 0x58 0 40" -c "fsync" -c "truncate 4" -c "truncate 4096" /xfstest.test/wubble; od -x /xfstest.test/wubble
-> 
-> borrowed from generic/393.  I've distilled it down to the attached C program.
-> 
-> Turning on tracing and adding a bit more, I can see the problem happening.
-> Here's an excerpt of the tracing (I've added some non-upstream tracepoints).
-> Firstly, you can see the second pwrite at fpos 0, 40 bytes (ie. 0x28):
-> 
->   pankaj-5833: netfs_write_iter: WRITE-ITER i=9e s=0 l=28 f=0
->   pankaj-5833: netfs_folio: pfn=116fec i=0009e ix=00000-00001 mod-streamw
-> 
-> Then first ftruncate() is called to reduce the file size to 4:
-> 
->   pankaj-5833: netfs_truncate: ni=9e isz=2028 rsz=2028 zp=4000 to=4
->   pankaj-5833: netfs_inval_folio: pfn=116fec i=0009e ix=00000-00001 o=4 l=1ffc d=78787878
->   pankaj-5833: netfs_folio: pfn=116fec i=0009e ix=00000-00001 inval-part
->   pankaj-5833: netfs_set_size: ni=9e resize-file isz=4 rsz=4 zp=4
-> 
-> You can see the invalidate_folio call, with the offset at 0x4 an the length as
-> 0x1ffc.  The data at the beginning of the page is 0x78787878.  This looks
-> correct.
-> 
-> Then second ftruncate() is called to increase the file size to 4096
-> (ie. 0x1000):
-> 
->   pankaj-5833: netfs_truncate: ni=9e isz=4 rsz=4 zp=4 to=1000
->   pankaj-5833: netfs_inval_folio: pfn=116fec i=0009e ix=00000-00001 o=1000 l=1000 d=78787878
->   pankaj-5833: netfs_folio: pfn=116fec i=0009e ix=00000-00001 inval-part
->   pankaj-5833: netfs_set_size: ni=9e resize-file isz=1000 rsz=1000 zp=4
-> 
-> And here's the problem: in the invalidate_folio() call, the offset is 0x1000
-> and the length is 0x1000 (o= and l=).  But that's the wrong half of the folio!
-> I'm guessing that the caller thereafter clears the other half of the folio -
-> the bit that should be kept.
-> 
-> David
-> ---
-> /* Distillation of the generic/393 xfstest */
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <unistd.h>
-> #include <fcntl.h>
-> 
-> #define ERR(x, y) do { if ((long)(x) == -1) { perror(y); exit(1); } } while(0)
-> 
-> static const char xxx[40] = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-> static const char yyy[40] = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
-> static const char dropfile[] = "/proc/sys/vm/drop_caches";
-> static const char droptype[] = "3";
-> static const char file[] = "/xfstest.test/wubble";
-> 
-> int main(int argc, char *argv[])
-> {
->          int fd, drop;
-> 
-> 	/* Fill in the second 8K block of the file... */
->          fd = open(file, O_CREAT|O_TRUNC|O_WRONLY, 0666);
->          ERR(fd, "open");
->          ERR(ftruncate(fd, 0), "pre-trunc $file");
->          ERR(pwrite(fd, yyy, sizeof(yyy), 0x2000), "write-2000");
->          ERR(close(fd), "close");
-> 
-> 	/* ... and drop the pagecache so that we get a streaming
-> 	 * write, attaching some private data to the folio.
-> 	 */
->          drop = open(dropfile, O_WRONLY);
->          ERR(drop, dropfile);
->          ERR(write(drop, droptype, sizeof(droptype) - 1), "write-drop");
->          ERR(close(drop), "close-drop");
-> 
->          fd = open(file, O_WRONLY, 0666);
->          ERR(fd, "reopen");
-> 	/* Make a streaming write on the first 8K block (needs O_WRONLY). */
->          ERR(pwrite(fd, xxx, sizeof(xxx), 0), "write-0");
-> 	/* Now use truncate to shrink and reexpand. */
->          ERR(ftruncate(fd, 4), "trunc-4");
->          ERR(ftruncate(fd, 4096), "trunc-4096");
->          ERR(close(fd), "close-2");
->          exit(0);
-> }
-> 
+Hi Kernel Maintainers,
+Our tool found the following kernel bug "KASAN: stack-out-of-bounds
+Write in end_buffer_read_sync" on:
+HEAD Commit: 6b0f8db921abf0520081d779876d3a41069dab95 Merge tag
+'execve-v6.11-rc4' of
+git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux
+kernel config: https://github.com/androidAppGuard/KernelBugs/blob/main/6b0f8db921abf0520081d779876d3a41069dab95/.config
+repro log: https://github.com/androidAppGuard/KernelBugs/blob/main/6b0f8db921abf0520081d779876d3a41069dab95/d41d191102504ccfea2e8408a29f03973e4ccc81/repro.log
+syz repro: https://github.com/androidAppGuard/KernelBugs/blob/main/6b0f8db921abf0520081d779876d3a41069dab95/d41d191102504ccfea2e8408a29f03973e4ccc81/repro.prog
 
-Wouldn't the second truncate end up with a 4k file, and not an 8k?
-IE the resulting file will be:
-After step 1: 8k
-After step 2: 4
-After step 3: 4k
+Please let me know if there is anything I can help.
 
-Hmm?
+Best,
+HuiGuo
 
-Cheers,
+====================================[cut
+here]===========================================
+BUG: KASAN: stack-out-of-bounds in instrument_atomic_read_write
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/./include/linux/instrumented.h:96
+[inline]
+BUG: KASAN: stack-out-of-bounds in atomic_dec
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/./include/linux/atomic/atomic-instrumented.h:592
+[inline]
+BUG: KASAN: stack-out-of-bounds in put_bh
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/./include/linux/buffer_head.h:303
+[inline]
+BUG: KASAN: stack-out-of-bounds in end_buffer_read_sync+0x93/0xe0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/fs/buffer.c:161
+Write of size 4 at addr ffffc90009c9f828 by task ksoftirqd/0/16
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted
+6.11.0-rc3-00013-g6b0f8db921ab #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/lib/dump_stack.c:93
+[inline]
+ dump_stack_lvl+0x116/0x1b0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/lib/dump_stack.c:119
+ print_address_description
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/kasan/report.c:377
+[inline]
+ print_report+0xc0/0x5e0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/kasan/report.c:488
+ kasan_report+0xbd/0xf0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/kasan/report.c:601
+ check_region_inline
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/kasan/generic.c:183
+[inline]
+ kasan_check_range+0xf4/0x1a0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/kasan/generic.c:189
+ instrument_atomic_read_write
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/./include/linux/instrumented.h:96
+[inline]
+ atomic_dec data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/./include/linux/atomic/atomic-instrumented.h:592
+[inline]
+ put_bh data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/./include/linux/buffer_head.h:303
+[inline]
+ end_buffer_read_sync+0x93/0xe0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/fs/buffer.c:161
+ end_bio_bh_io_sync+0xe7/0x140
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/fs/buffer.c:2776
+ bio_endio+0x6d4/0x810
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/block/bio.c:1646
+ blk_update_request+0x5cb/0x1780
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/block/blk-mq.c:925
+ blk_mq_end_request+0x5d/0x610
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/block/blk-mq.c:1053
+ lo_complete_rq+0x235/0x300
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/drivers/block/loop.c:386
+ blk_complete_reqs+0xb2/0xf0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/block/blk-mq.c:1128
+ handle_softirqs+0x1d7/0x870
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/softirq.c:554
+ run_ksoftirqd data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/softirq.c:928
+[inline]
+ run_ksoftirqd+0x3a/0x60
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/softirq.c:920
+ smpboot_thread_fn+0x63f/0x9f0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/smpboot.c:164
+ kthread+0x2ca/0x3b0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/kthread.c:389
+ ret_from_fork+0x48/0x80
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/arch/x86/entry/entry_64.S:244
+ </TASK>
 
+The buggy address belongs to the virtual mapping at
+ [ffffc90009c98000, ffffc90009ca1000) created by:
+ kernel_clone+0xeb/0x910
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/fork.c:2781
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x51cc1
+memcg:ffff888000798d02
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: 0000000000000001 0000000000000000 00000001ffffffff ffff888000798d02
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask
+0x102dc2(GFP_HIGHUSER|__GFP_NOWARN|__GFP_ZERO), pid 30926, tgid 30926
+(syz-executor.10), ts 987852775054, free_ts 987008041304
+ set_page_owner
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/./include/linux/page_owner.h:32
+[inline]
+ post_alloc_hook+0x2e7/0x350
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/page_alloc.c:1493
+ prep_new_page data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/page_alloc.c:1501
+[inline]
+ get_page_from_freelist+0xbf3/0x2850
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/page_alloc.c:3442
+ __alloc_pages_noprof+0x214/0x21e0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/page_alloc.c:4700
+ alloc_pages_mpol_noprof+0x262/0x610
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/mempolicy.c:2263
+ vm_area_alloc_pages
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/vmalloc.c:3584
+[inline]
+ __vmalloc_area_node
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/vmalloc.c:3660
+[inline]
+ __vmalloc_node_range_noprof+0xd32/0x1410
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/vmalloc.c:3841
+ alloc_thread_stack_node
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/fork.c:313
+[inline]
+ dup_task_struct
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/fork.c:1113
+[inline]
+ copy_process+0x304d/0x6f20
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/fork.c:2204
+ kernel_clone+0xeb/0x910
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/fork.c:2781
+ __do_sys_clone3+0x1d7/0x250
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/fork.c:3085
+ do_syscall_x64
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/arch/x86/entry/common.c:52
+[inline]
+ do_syscall_64+0xcb/0x250
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 16 tgid 16 stack trace:
+ reset_page_owner
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/./include/linux/page_owner.h:25
+[inline]
+ free_pages_prepare
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/page_alloc.c:1094
+[inline]
+ free_unref_page+0x655/0xe40
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/mm/page_alloc.c:2612
+ rcu_do_batch data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/rcu/tree.c:2569
+[inline]
+ rcu_core+0x829/0x16d0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/rcu/tree.c:2843
+ handle_softirqs+0x1d7/0x870
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/softirq.c:554
+ run_ksoftirqd data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/softirq.c:928
+[inline]
+ run_ksoftirqd+0x3a/0x60
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/softirq.c:920
+ smpboot_thread_fn+0x63f/0x9f0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/smpboot.c:164
+ kthread+0x2ca/0x3b0
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/kernel/kthread.c:389
+ ret_from_fork+0x48/0x80
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30
+data/ghui/docker_data/linux_kernel/upstream/6b0f8db921abf0520081d779876d3a41069dab95/arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffffc90009c9f700: f3 f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90009c9f780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc90009c9f800: 00 00 00 00 00 f1 f1 f1 f1 f1 f1 01 f2 00 f2 f2
+                                  ^
+ ffffc90009c9f880: f2 00 00 00 00 00 00 00 f3 f3 f3 f3 f3 00 00 00
+ ffffc90009c9f900: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f3 f3 f3
+==========================================================================================
+This report is generated by reproducing the syz repro. It may contain errors.
 
