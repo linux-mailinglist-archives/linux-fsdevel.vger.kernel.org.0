@@ -1,103 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-26225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CD6956348
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 07:38:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88EA295634A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 07:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F2D1F227DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 05:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3490B1F215C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 05:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEED152517;
-	Mon, 19 Aug 2024 05:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A877B14A4F9;
+	Mon, 19 Aug 2024 05:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GtdM9Gik";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="K9U8BCkB";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GtdM9Gik";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="K9U8BCkB"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q4UOQzW1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DhqnJEJ7";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q4UOQzW1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DhqnJEJ7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3711314F9D5;
-	Mon, 19 Aug 2024 05:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78223154C14;
+	Mon, 19 Aug 2024 05:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724045838; cv=none; b=deqvD2PUgdcxGIpSoc0LpGkEegjreivWvQUlHiJSiB1+RXeNfezfCXJbzUDTMkYThKspxEly1tMj5OwFj9UcERAiTsviR3dYFJgSdJNgKtJZKhsJS4BG1v0wpUwZNU/uF3Sjp4TJ/SYKvfHp4VfmN06z/Hy4+fT6zonXhfo4JgY=
+	t=1724045848; cv=none; b=beQ+dLOVAk7ZkoFgXfKl4cOVKLrrGKJgDY+qYxQp1IEf9JeC8tUQt29fAjF0Fkob7KZl4HkPoyZKUAmLLv3sPxxtyJuCuEVyaJh7pQ156UU+nqWoNKM/PRehSD3LJexbNGZuT5j4OFsBTLwaYm1DG6EjoD1r90heyKUiCzTKC0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724045838; c=relaxed/simple;
-	bh=p+2eYszvjeDRh02VS9vlzU4X00hqz0hlvvh8NqQF+iU=;
+	s=arc-20240116; t=1724045848; c=relaxed/simple;
+	bh=+b7nmQ4Sr2Sg9L4LCj11wIQ6G6RwWM5O4aYEDZmDUZo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dhMgNKQToPZiGIbGYRKUgZ02fJ0TrQX+rFsrvSmtf/kL83bf6f/YAY/bK0Jbos3slPZ5XPNA0377tyhWtq97eWQhZfJkHrVq6W+hx871VOHcaaXzAHtXdKsEMck2bBSrMgGFWX88uFhw8Znf1RCWF1wFX9qRgWv71AQ4MvJVvpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GtdM9Gik; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=K9U8BCkB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GtdM9Gik; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=K9U8BCkB; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=NQ4G38QORUR0xhx4GxSjBBr0G59fPAnUraOIjhlR7LsHD5BU9Lc+jpYIZDtZ1PAvZyMFVZ1q3QGGD5Ypz5WPi+RtKkr25t0f0aD4qaBudk67g1u6gU6dyvnnM2KOekaOu5pkYrw9SWXSh2AFShj8pClsUr1K5MqFQs6D+SscTHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q4UOQzW1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DhqnJEJ7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q4UOQzW1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DhqnJEJ7; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 564B01FE4C;
-	Mon, 19 Aug 2024 05:37:15 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8894B21AF5;
+	Mon, 19 Aug 2024 05:37:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724045835; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724045844; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=x7ITmCsqCLDIRP3HBMUg4mi1uCfxSxsm+7TIJdoo9tk=;
-	b=GtdM9GikltCh7iWzAz1RrhnZ7oclD9uC+i0htLqBIeIZYQzf54xq5Dt4tsOwHVbaJX/GRG
-	Cbr0CDDHNywmmCTS2SvCFlyw3/t+jjRCpZd5+atZBXA92AZ8I3pm8vagicQh6FCPM2hjKE
-	iLAIrnpxDeNg9kMTZ71YvE47xlF4PAU=
+	bh=wP1OxRACFCi3CeZXPSAq2tmZvmlqIkYwyzh7BNYf83o=;
+	b=Q4UOQzW1s5LqoZvh2oq5egHzU8I+hrwEZV+sBOKVUcLZHcR1XX1AXsx8MkHqfXBWbBKfA+
+	TBEjJuuD4pgzOhVLJORPkQs4K8YB1FzslNBdFYiqvkafzJh65ATZuujjm5TE+5t+tJqwPZ
+	krBVOX5uHzbAXvR4ZaecdXdinGINKko=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724045835;
+	s=susede2_ed25519; t=1724045844;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=x7ITmCsqCLDIRP3HBMUg4mi1uCfxSxsm+7TIJdoo9tk=;
-	b=K9U8BCkBj5c1OGutvh9BnV8oUGdwwJ2OyCMt8En3Xxm1Ll8Dpr7vMNYGIdG3WPhO4L0+NK
-	JSYze9xYzqfVXFBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=GtdM9Gik;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=K9U8BCkB
+	bh=wP1OxRACFCi3CeZXPSAq2tmZvmlqIkYwyzh7BNYf83o=;
+	b=DhqnJEJ7lvw1jq9xCt9jza5DLqTfx5rSLq+rqA7vVkbwigk9JGEXrHwJTR7N+PZrZRlwWV
+	LTUtgoDWJ3+2txDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Q4UOQzW1;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=DhqnJEJ7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724045835; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724045844; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=x7ITmCsqCLDIRP3HBMUg4mi1uCfxSxsm+7TIJdoo9tk=;
-	b=GtdM9GikltCh7iWzAz1RrhnZ7oclD9uC+i0htLqBIeIZYQzf54xq5Dt4tsOwHVbaJX/GRG
-	Cbr0CDDHNywmmCTS2SvCFlyw3/t+jjRCpZd5+atZBXA92AZ8I3pm8vagicQh6FCPM2hjKE
-	iLAIrnpxDeNg9kMTZ71YvE47xlF4PAU=
+	bh=wP1OxRACFCi3CeZXPSAq2tmZvmlqIkYwyzh7BNYf83o=;
+	b=Q4UOQzW1s5LqoZvh2oq5egHzU8I+hrwEZV+sBOKVUcLZHcR1XX1AXsx8MkHqfXBWbBKfA+
+	TBEjJuuD4pgzOhVLJORPkQs4K8YB1FzslNBdFYiqvkafzJh65ATZuujjm5TE+5t+tJqwPZ
+	krBVOX5uHzbAXvR4ZaecdXdinGINKko=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724045835;
+	s=susede2_ed25519; t=1724045844;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=x7ITmCsqCLDIRP3HBMUg4mi1uCfxSxsm+7TIJdoo9tk=;
-	b=K9U8BCkBj5c1OGutvh9BnV8oUGdwwJ2OyCMt8En3Xxm1Ll8Dpr7vMNYGIdG3WPhO4L0+NK
-	JSYze9xYzqfVXFBA==
+	bh=wP1OxRACFCi3CeZXPSAq2tmZvmlqIkYwyzh7BNYf83o=;
+	b=DhqnJEJ7lvw1jq9xCt9jza5DLqTfx5rSLq+rqA7vVkbwigk9JGEXrHwJTR7N+PZrZRlwWV
+	LTUtgoDWJ3+2txDQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 88B501397F;
-	Mon, 19 Aug 2024 05:37:13 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BA7681397F;
+	Mon, 19 Aug 2024 05:37:22 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GT7IDwnawmb5YQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 19 Aug 2024 05:37:13 +0000
+	id yunoGxLawmYCYgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 19 Aug 2024 05:37:22 +0000
 From: NeilBrown <neilb@suse.de>
 To: Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5/9] Block: switch bd_prepare_to_claim to use ___wait_var_event()
-Date: Mon, 19 Aug 2024 15:20:39 +1000
-Message-ID: <20240819053605.11706-6-neilb@suse.de>
+Subject: [PATCH 6/9] block/pktdvd: switch congestion waiting to ___wait_var_event()
+Date: Mon, 19 Aug 2024 15:20:40 +1000
+Message-ID: <20240819053605.11706-7-neilb@suse.de>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240819053605.11706-1-neilb@suse.de>
 References: <20240819053605.11706-1-neilb@suse.de>
@@ -110,11 +110,11 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Level: 
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 564B01FE4C
+X-Rspamd-Queue-Id: 8894B21AF5
 X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+	BAYES_HAM(-3.00)[99.99%];
 	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -124,132 +124,75 @@ X-Spamd-Result: default: False [-5.01 / 50.00];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	ARC_NA(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	TO_DN_SOME(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
+	ARC_NA(0.00)[];
 	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RCPT_COUNT_FIVE(0.00)[5];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
 	RCVD_TLS_ALL(0.00)[];
 	DKIM_TRACE(0.00)[suse.de:+]
 X-Spam-Score: -5.01
 
-bd_prepare_to_claim() current uses a bit waitqueue with a matching
-wake_up_bit() in bd_clear_claiming().  However it is really waiting on a
-"var", not a "bit".
+Rather than having an open-coded wait event loop, use
+__var_wait_event().
+This fixes a bug as the existing loop doesn't call finish_wait().
 
-So change to wake_up_var(), and use ___wait_var_event() for the waiting.
-Using the triple-underscore version allows us to drop the mutex across
-the schedule() call.
-
-Add a missing memory barrier before the wake_up_var() call.
+Also add missing memory barrier before wake_up_var().
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- block/bdev.c | 49 ++++++++++++++++++++-----------------------------
- 1 file changed, 20 insertions(+), 29 deletions(-)
+ drivers/block/pktcdvd.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
-diff --git a/block/bdev.c b/block/bdev.c
-index c5507b6f63b8..d804c91c651b 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -487,10 +487,10 @@ long nr_blockdev_pages(void)
-  * Test whether @bdev can be claimed by @holder.
-  *
-  * RETURNS:
-- * %true if @bdev can be claimed, %false otherwise.
-+ * %0 if @bdev can be claimed, %-EBUSY otherwise.
-  */
--static bool bd_may_claim(struct block_device *bdev, void *holder,
--		const struct blk_holder_ops *hops)
-+static int bd_may_claim(struct block_device *bdev, void *holder,
-+			const struct blk_holder_ops *hops)
- {
- 	struct block_device *whole = bdev_whole(bdev);
- 
-@@ -503,9 +503,9 @@ static bool bd_may_claim(struct block_device *bdev, void *holder,
- 		if (bdev->bd_holder == holder) {
- 			if (WARN_ON_ONCE(bdev->bd_holder_ops != hops))
- 				return false;
--			return true;
-+			return 0;
- 		}
--		return false;
-+		return -EBUSY;
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 7cece5884b9c..273fbe05d80f 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -1210,6 +1210,7 @@ static int pkt_handle_queue(struct pktcdvd_device *pd)
+ 	if (pd->congested &&
+ 	    pd->bio_queue_size <= pd->write_congestion_off) {
+ 		pd->congested = false;
++		smp_mb();
+ 		wake_up_var(&pd->congested);
  	}
+ 	spin_unlock(&pd->lock);
+@@ -2383,20 +2384,16 @@ static void pkt_make_request_write(struct bio *bio)
+ 	spin_lock(&pd->lock);
+ 	if (pd->write_congestion_on > 0
+ 	    && pd->bio_queue_size >= pd->write_congestion_on) {
+-		struct wait_bit_queue_entry wqe;
  
- 	/*
-@@ -514,8 +514,8 @@ static bool bd_may_claim(struct block_device *bdev, void *holder,
- 	 */
- 	if (whole != bdev &&
- 	    whole->bd_holder && whole->bd_holder != bd_may_claim)
--		return false;
--	return true;
-+		return -EBUSY;
-+	return 0;
- }
+-		init_wait_var_entry(&wqe, &pd->congested, 0);
+-		for (;;) {
+-			prepare_to_wait_event(__var_waitqueue(&pd->congested),
+-					      &wqe.wq_entry,
+-					      TASK_UNINTERRUPTIBLE);
+-			if (pd->bio_queue_size <= pd->write_congestion_off)
+-				break;
+-			pd->congested = true;
+-			spin_unlock(&pd->lock);
+-			schedule();
+-			spin_lock(&pd->lock);
+-		}
++		___wait_var_event(&pd->congested,
++				  pd->bio_queue_size <= pd->write_congestion_off,
++				  TASK_UNINTERRUPTIBLE, 0, 0,
++				  ({ pd->congested = true;
++				    spin_unlock(&pd->lock);
++				    schedule();
++				    spin_lock(&pd->lock);
++				  })
++		);
+ 	}
+ 	spin_unlock(&pd->lock);
  
- /**
-@@ -535,33 +535,23 @@ int bd_prepare_to_claim(struct block_device *bdev, void *holder,
- 		const struct blk_holder_ops *hops)
- {
- 	struct block_device *whole = bdev_whole(bdev);
-+	int err = 0;
- 
- 	if (WARN_ON_ONCE(!holder))
- 		return -EINVAL;
--retry:
--	mutex_lock(&bdev_lock);
--	/* if someone else claimed, fail */
--	if (!bd_may_claim(bdev, holder, hops)) {
--		mutex_unlock(&bdev_lock);
--		return -EBUSY;
--	}
--
--	/* if claiming is already in progress, wait for it to finish */
--	if (whole->bd_claiming) {
--		wait_queue_head_t *wq = bit_waitqueue(&whole->bd_claiming, 0);
--		DEFINE_WAIT(wait);
- 
--		prepare_to_wait(wq, &wait, TASK_UNINTERRUPTIBLE);
--		mutex_unlock(&bdev_lock);
--		schedule();
--		finish_wait(wq, &wait);
--		goto retry;
--	}
-+	mutex_lock(&bdev_lock);
-+	___wait_var_event(&whole->bd_claiming,
-+			  (err = bd_may_claim(bdev, holder, hops)) != 0 || !whole->bd_claiming,
-+			  TASK_UNINTERRUPTIBLE, 0, 0,
-+			  mutex_unlock(&bdev_lock); schedule(); mutex_lock(&bdev_lock));
- 
--	/* yay, all mine */
--	whole->bd_claiming = holder;
-+	/* if someone else claimed, fail */
-+	if (!err)
-+		/* yay, all mine */
-+		whole->bd_claiming = holder;
- 	mutex_unlock(&bdev_lock);
--	return 0;
-+	return err;
- }
- EXPORT_SYMBOL_GPL(bd_prepare_to_claim); /* only for the loop driver */
- 
-@@ -571,7 +561,8 @@ static void bd_clear_claiming(struct block_device *whole, void *holder)
- 	/* tell others that we're done */
- 	BUG_ON(whole->bd_claiming != holder);
- 	whole->bd_claiming = NULL;
--	wake_up_bit(&whole->bd_claiming, 0);
-+	smp_mb();
-+	wake_up_var(&whole->bd_claiming);
- }
- 
- /**
 -- 
 2.44.0
 
