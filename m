@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-26294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8702E9572D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 20:18:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EDC9572DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 20:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43363285255
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 18:18:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139C11C22E8A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Aug 2024 18:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DA0189F2F;
-	Mon, 19 Aug 2024 18:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78818189F42;
+	Mon, 19 Aug 2024 18:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grB86qAr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjzBduyC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322D8189BAF;
-	Mon, 19 Aug 2024 18:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DE2189F33;
+	Mon, 19 Aug 2024 18:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724091483; cv=none; b=R5dxMMDKVRmT/enlCyiOe8JybckBWL9wqq35CSCa9eEOpkga1aTq8c1Op9p3I+i0WTKeg9KkpMfe8IO4GGx6Okfg4A/g+xoeuBjbLkamXFjrZyvzRNC6+1Gz4bP1qEGZsOwQ9UMPBHzjaxrnqszTRd0Q09wzZrCNAX3c5/aH4+0=
+	t=1724091484; cv=none; b=SMRQvqEsPNP0rWAQfpDb2SDu8Ggs/09eQzLFKxFYS8ATeZjsauL5WvtIV94l+wRpHINXSng88P+9bGlkKRNoitsVWe1C3H5MPrvy9Ayl22A/uliNkdbQ/EhKf0PC1dnHgcTI1fZLRfWljzIIxAeio/oOmd+oP0KEN+Jz7iUBpFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724091483; c=relaxed/simple;
-	bh=eKSyo4M/PwL7v/TFiclRIphm4rgipy9E/7hryKERvTk=;
+	s=arc-20240116; t=1724091484; c=relaxed/simple;
+	bh=PNkd3vaN135BkXm9X90tBGpk2HmP8V5YpvH4nnGEmm0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sGk/zJUu5TyPKp1vH91LQnlOUjLdCJkaGU/X1EJRvgVuuvXO0X51U6WgYnPj0jR6qYoE7Z8pirbFIR+PIdFePJ9XcjnuB6UKjjyh1ezuD5dGSV/0IgKHaqYk0jTDKIEQc0CkfVDbpUpA1rIocrC1jlFSFnmWB+4pN1aWKIlT9Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grB86qAr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2EA4C4AF0C;
-	Mon, 19 Aug 2024 18:18:02 +0000 (UTC)
+	 MIME-Version; b=uIruOQEru1OhTT6HWHDs94XGKVd4qYqebzcla1DWHSLCZPavYaG5zJ/Amy8YVf5bW6XbrbRfy7tc+GrVsRShuG/79wTkIieHXixFX/Iei++EsEn7u86GECxXxtH+UXDhtVM5T0yjEgcnoBtUmHifprGEVi86Lwyvcv3IbrX8nE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjzBduyC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302C1C4AF11;
+	Mon, 19 Aug 2024 18:18:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724091483;
-	bh=eKSyo4M/PwL7v/TFiclRIphm4rgipy9E/7hryKERvTk=;
+	s=k20201202; t=1724091484;
+	bh=PNkd3vaN135BkXm9X90tBGpk2HmP8V5YpvH4nnGEmm0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=grB86qArsvXye1TvUsFsxOSJerPr4NqyGMXSeXt1hcd7aAjxVK8KLI+RFWSi2Fkxj
-	 h/JEz1V6uj43CmhHx0kQyaCvQ7v161RvOwUAgOxpjnrvp+I0EogcNt6LDd/rbEZOJn
-	 0nScu9dKiF7IVhg2V1tFQjQ/wVW73QImgZp5E7Mw6wyZ2xsstVf/vA3qvg6BaejR8R
-	 pmAE7oQzjRptd1GRD+K/BOSWKasK3JGZ1z9MiVOmvSbp8073kkE5wsvf/A+GbN9hfD
-	 VHyBMsWrlW/8KmEpK6bpmd9GC0ZzIwL6iCH3wBNelEl/lPV1B9YrW6vtzMHU3ei7Cj
-	 nLup4ml8sEYZQ==
+	b=TjzBduyCdrTRJwlqHCvhJqWCjEBYUYG/4HRZTVLnjkGxlwi/PnXwH0EZ3cPDYavAQ
+	 VmGpH062xrwzxdrg9fFgg/OzNxx2zBBg36m44vaKBaL07S+wmq6KNgNMXg1zmzDu5w
+	 AJ2V0wFQE53bwec61mXGSI8xODBcH7FySD7hdaG4m8Mokm5IoOnKFVSDUeMDY/jTRr
+	 XVE1jQrQz5/oJ7+Ie6zX3VOoQblc1F9qL2d2IVE44ZxD5FKdWwHzVGqXA5hGwfmbO3
+	 Zw8cUSY3QT3dX5Kz1Z126lMpUs+dQfh3eWudRgl740WOP8fErYEb3nA4gExymx+Uid
+	 PMbiGVKFBxRYw==
 From: Mike Snitzer <snitzer@kernel.org>
 To: linux-nfs@vger.kernel.org
 Cc: Jeff Layton <jlayton@kernel.org>,
@@ -49,9 +49,9 @@ Cc: Jeff Layton <jlayton@kernel.org>,
 	Trond Myklebust <trondmy@hammerspace.com>,
 	NeilBrown <neilb@suse.de>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v12 08/24] SUNRPC: add rpcauth_map_clnt_to_svc_cred_local
-Date: Mon, 19 Aug 2024 14:17:13 -0400
-Message-ID: <20240819181750.70570-9-snitzer@kernel.org>
+Subject: [PATCH v12 09/24] nfs_common: add NFS LOCALIO auxiliary protocol enablement
+Date: Mon, 19 Aug 2024 14:17:14 -0400
+Message-ID: <20240819181750.70570-10-snitzer@kernel.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240819181750.70570-1-snitzer@kernel.org>
 References: <20240819181750.70570-1-snitzer@kernel.org>
@@ -63,91 +63,239 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Weston Andros Adamson <dros@primarydata.com>
+fs/nfs_common/nfslocalio.c provides interfaces that enable an NFS client
+to generate a nonce (single-use UUID) and associated short-lived
+nfs_uuid_t struct, register it with nfs_common for subsequent lookup and
+verification by the NFS server and if matched the NFS server populates
+members in the nfs_uuid_t struct.
 
-Add new funtion rpcauth_map_clnt_to_svc_cred_local which maps a
-generic cred to a svc_cred suitable for use in nfsd.
+nfs_common's nfs_uuids list is the basis for localio enablement, as such
+it has members that point to nfsd memory for direct use by the client
+(e.g. 'net' is the server's network namespace, through it the client can
+access nn->nfsd_serv with proper rcu read access).
 
-This is needed by the localio code to map nfs client creds to nfs
-server credentials.
+This commit adds all the nfs_client members required to implement
+the entire localio feature (which depends on the LOCALIO protocol).
 
-Following from net/sunrpc/auth_unix.c:unx_marshal() it is clear that
-->fsuid and ->fsgid must be used (rather than ->uid and ->gid).  In
-addition, these uid and gid must be translated with from_kuid_munged()
-so local client uses correct uid and gid when acting as local server.
-
-Suggested-by: NeilBrown <neilb@suse.de> # to approximate unx_marshal()
-Signed-off-by: Weston Andros Adamson <dros@primarydata.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Co-developed-by: Mike Snitzer <snitzer@kernel.org>
 Signed-off-by: Mike Snitzer <snitzer@kernel.org>
 ---
- include/linux/sunrpc/auth.h |  4 ++++
- net/sunrpc/auth.c           | 22 ++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
+ fs/nfs/client.c            |  9 ++++
+ fs/nfs_common/Makefile     |  3 ++
+ fs/nfs_common/nfslocalio.c | 97 ++++++++++++++++++++++++++++++++++++++
+ include/linux/nfs_fs_sb.h  | 10 ++++
+ include/linux/nfslocalio.h | 37 +++++++++++++++
+ 5 files changed, 156 insertions(+)
+ create mode 100644 fs/nfs_common/nfslocalio.c
+ create mode 100644 include/linux/nfslocalio.h
 
-diff --git a/include/linux/sunrpc/auth.h b/include/linux/sunrpc/auth.h
-index 61e58327b1aa..4cfb68f511db 100644
---- a/include/linux/sunrpc/auth.h
-+++ b/include/linux/sunrpc/auth.h
-@@ -11,6 +11,7 @@
- #define _LINUX_SUNRPC_AUTH_H
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 8286edd6062d..1b65a5d7af49 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -178,6 +178,15 @@ struct nfs_client *nfs_alloc_client(const struct nfs_client_initdata *cl_init)
+ 	clp->cl_max_connect = cl_init->max_connect ? cl_init->max_connect : 1;
+ 	clp->cl_net = get_net(cl_init->net);
  
- #include <linux/sunrpc/sched.h>
-+#include <linux/sunrpc/svcauth.h>
- #include <linux/sunrpc/msg_prot.h>
- #include <linux/sunrpc/xdr.h>
++#if IS_ENABLED(CONFIG_NFS_LOCALIO)
++	seqlock_init(&clp->cl_boot_lock);
++	ktime_get_real_ts64(&clp->cl_nfssvc_boot);
++	clp->cl_rpcclient_localio = ERR_PTR(-EINVAL);
++	clp->nfsd_open_local_fh = NULL;
++	clp->cl_nfssvc_net = NULL;
++	clp->cl_nfssvc_dom = NULL;
++#endif /* CONFIG_NFS_LOCALIO */
++
+ 	clp->cl_principal = "*";
+ 	clp->cl_xprtsec = cl_init->xprtsec;
+ 	return clp;
+diff --git a/fs/nfs_common/Makefile b/fs/nfs_common/Makefile
+index e58b01bb8dda..a5e54809701e 100644
+--- a/fs/nfs_common/Makefile
++++ b/fs/nfs_common/Makefile
+@@ -6,6 +6,9 @@
+ obj-$(CONFIG_NFS_ACL_SUPPORT) += nfs_acl.o
+ nfs_acl-objs := nfsacl.o
  
-@@ -184,6 +185,9 @@ int			rpcauth_uptodatecred(struct rpc_task *);
- int			rpcauth_init_credcache(struct rpc_auth *);
- void			rpcauth_destroy_credcache(struct rpc_auth *);
- void			rpcauth_clear_credcache(struct rpc_cred_cache *);
-+void			rpcauth_map_clnt_to_svc_cred_local(struct rpc_clnt *clnt,
-+							   const struct cred *,
-+							   struct svc_cred *);
- char *			rpcauth_stringify_acceptor(struct rpc_cred *);
++obj-$(CONFIG_NFS_COMMON_LOCALIO_SUPPORT) += nfs_localio.o
++nfs_localio-objs := nfslocalio.o
++
+ obj-$(CONFIG_GRACE_PERIOD) += grace.o
+ obj-$(CONFIG_NFS_V4_2_SSC_HELPER) += nfs_ssc.o
  
- static inline
-diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-index 04534ea537c8..3b6d91b36589 100644
---- a/net/sunrpc/auth.c
-+++ b/net/sunrpc/auth.c
-@@ -17,6 +17,7 @@
- #include <linux/sunrpc/clnt.h>
- #include <linux/sunrpc/gss_api.h>
- #include <linux/spinlock.h>
-+#include <linux/user_namespace.h>
- 
- #include <trace/events/sunrpc.h>
- 
-@@ -308,6 +309,27 @@ rpcauth_init_credcache(struct rpc_auth *auth)
- }
- EXPORT_SYMBOL_GPL(rpcauth_init_credcache);
- 
-+void
-+rpcauth_map_clnt_to_svc_cred_local(struct rpc_clnt *clnt,
-+				   const struct cred *cred,
-+				   struct svc_cred *svc)
+diff --git a/fs/nfs_common/nfslocalio.c b/fs/nfs_common/nfslocalio.c
+new file mode 100644
+index 000000000000..a20ff7607707
+--- /dev/null
++++ b/fs/nfs_common/nfslocalio.c
+@@ -0,0 +1,97 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2024 Mike Snitzer <snitzer@hammerspace.com>
++ */
++
++#include <linux/module.h>
++#include <linux/rculist.h>
++#include <linux/nfslocalio.h>
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("NFS localio protocol bypass support");
++
++DEFINE_MUTEX(nfs_uuid_mutex);
++
++/*
++ * Global list of nfs_uuid_t instances, add/remove
++ * is protected by nfs_uuid_mutex.
++ * Reads are protected by RCU read lock (see below).
++ */
++LIST_HEAD(nfs_uuids);
++
++void nfs_uuid_begin(nfs_uuid_t *nfs_uuid)
 +{
-+	struct user_namespace *userns = clnt->cl_cred ?
-+		clnt->cl_cred->user_ns : &init_user_ns;
++	nfs_uuid->net = NULL;
++	nfs_uuid->dom = NULL;
++	uuid_gen(&nfs_uuid->uuid);
 +
-+	memset(svc, 0, sizeof(struct svc_cred));
-+
-+	svc->cr_uid = KUIDT_INIT(from_kuid_munged(userns, cred->fsuid));
-+	svc->cr_gid = KGIDT_INIT(from_kgid_munged(userns, cred->fsgid));
-+	svc->cr_flavor = clnt->cl_auth->au_flavor;
-+	if (cred->group_info)
-+		svc->cr_group_info = get_group_info(cred->group_info);
-+	/* These aren't relevant for local (network is bypassed) */
-+	svc->cr_principal = NULL;
-+	svc->cr_gss_mech = NULL;
++	mutex_lock(&nfs_uuid_mutex);
++	list_add_tail_rcu(&nfs_uuid->list, &nfs_uuids);
++	mutex_unlock(&nfs_uuid_mutex);
 +}
-+EXPORT_SYMBOL_GPL(rpcauth_map_clnt_to_svc_cred_local);
++EXPORT_SYMBOL_GPL(nfs_uuid_begin);
 +
- char *
- rpcauth_stringify_acceptor(struct rpc_cred *cred)
- {
++void nfs_uuid_end(nfs_uuid_t *nfs_uuid)
++{
++	mutex_lock(&nfs_uuid_mutex);
++	list_del_rcu(&nfs_uuid->list);
++	mutex_unlock(&nfs_uuid_mutex);
++}
++EXPORT_SYMBOL_GPL(nfs_uuid_end);
++
++/* Must be called with RCU read lock held. */
++static nfs_uuid_t * nfs_uuid_lookup(const uuid_t *uuid)
++{
++	nfs_uuid_t *nfs_uuid;
++
++	list_for_each_entry_rcu(nfs_uuid, &nfs_uuids, list)
++		if (uuid_equal(&nfs_uuid->uuid, uuid))
++			return nfs_uuid;
++
++	return NULL;
++}
++
++bool nfs_uuid_is_local(const uuid_t *uuid, struct net *net, struct auth_domain *dom)
++{
++	bool is_local = false;
++	nfs_uuid_t *nfs_uuid;
++
++	rcu_read_lock();
++	nfs_uuid = nfs_uuid_lookup(uuid);
++	if (nfs_uuid) {
++		is_local = true;
++		nfs_uuid->net = net;
++		kref_get(&dom->ref);
++		nfs_uuid->dom = dom;
++	}
++	rcu_read_unlock();
++
++	return is_local;
++}
++EXPORT_SYMBOL_GPL(nfs_uuid_is_local);
++
++/*
++ * The nfs localio code needs to call into nfsd to do the filehandle -> struct path
++ * mapping, but cannot be statically linked, because that will make the nfs module
++ * depend on the nfsd module.
++ *
++ * Instead, do dynamic linking to the nfsd module (via nfs_common module). The
++ * nfs_common module will only hold a reference on nfsd when localio is in use.
++ * This allows some sanity checking, like giving up on localio if nfsd isn't loaded.
++ */
++
++extern int nfsd_open_local_fh(struct net *, struct auth_domain *, struct rpc_clnt *,
++			const struct cred *, const struct nfs_fh *,
++			const fmode_t, struct file **);
++
++nfs_to_nfsd_open_t get_nfsd_open_local_fh(void)
++{
++	return symbol_request(nfsd_open_local_fh);
++}
++EXPORT_SYMBOL_GPL(get_nfsd_open_local_fh);
++
++void put_nfsd_open_local_fh(void)
++{
++	symbol_put(nfsd_open_local_fh);
++}
++EXPORT_SYMBOL_GPL(put_nfsd_open_local_fh);
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index 1df86ab98c77..3849cc2832f0 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -8,6 +8,7 @@
+ #include <linux/wait.h>
+ #include <linux/nfs_xdr.h>
+ #include <linux/sunrpc/xprt.h>
++#include <linux/nfslocalio.h>
+ 
+ #include <linux/atomic.h>
+ #include <linux/refcount.h>
+@@ -125,6 +126,15 @@ struct nfs_client {
+ 	struct net		*cl_net;
+ 	struct list_head	pending_cb_stateids;
+ 	struct rcu_head		rcu;
++
++#if IS_ENABLED(CONFIG_NFS_LOCALIO)
++	struct timespec64	cl_nfssvc_boot;
++	seqlock_t		cl_boot_lock;
++	struct rpc_clnt *	cl_rpcclient_localio;
++	struct net *	        cl_nfssvc_net;
++	struct auth_domain *	cl_nfssvc_dom;
++	nfs_to_nfsd_open_t	nfsd_open_local_fh;
++#endif /* CONFIG_NFS_LOCALIO */
+ };
+ 
+ /*
+diff --git a/include/linux/nfslocalio.h b/include/linux/nfslocalio.h
+new file mode 100644
+index 000000000000..109cb8534e3f
+--- /dev/null
++++ b/include/linux/nfslocalio.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2024 Mike Snitzer <snitzer@hammerspace.com>
++ */
++#ifndef __LINUX_NFSLOCALIO_H
++#define __LINUX_NFSLOCALIO_H
++
++#include <linux/list.h>
++#include <linux/uuid.h>
++#include <linux/sunrpc/clnt.h>
++#include <linux/sunrpc/svcauth.h>
++#include <linux/nfs.h>
++#include <net/net_namespace.h>
++
++/*
++ * Useful to allow a client to negotiate if localio
++ * possible with its server.
++ */
++typedef struct {
++	uuid_t uuid;
++	struct list_head list;
++	struct net *net; /* nfsd's network namespace */
++	struct auth_domain *dom; /* auth_domain for localio */
++} nfs_uuid_t;
++
++void nfs_uuid_begin(nfs_uuid_t *);
++void nfs_uuid_end(nfs_uuid_t *);
++bool nfs_uuid_is_local(const uuid_t *, struct net *, struct auth_domain *);
++
++typedef int (*nfs_to_nfsd_open_t)(struct net *, struct auth_domain *, struct rpc_clnt *,
++				const struct cred *, const struct nfs_fh *,
++				const fmode_t, struct file **);
++
++nfs_to_nfsd_open_t get_nfsd_open_local_fh(void);
++void put_nfsd_open_local_fh(void);
++
++#endif  /* __LINUX_NFSLOCALIO_H */
 -- 
 2.44.0
 
