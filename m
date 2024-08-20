@@ -1,143 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-26354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229679581F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 11:18:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A284A95832C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 11:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54C5D1C23D58
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 09:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D5F81F247EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 09:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFAE18C32E;
-	Tue, 20 Aug 2024 09:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FCF18C352;
+	Tue, 20 Aug 2024 09:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="1TpC3XNR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGls2WAE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BEF18991B;
-	Tue, 20 Aug 2024 09:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342D18B462;
+	Tue, 20 Aug 2024 09:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724145498; cv=none; b=hTlko+BQpGReLGDEQ6aduQb1XrMo0t5S0OCoA9FaRXgTJGSTngZeaMfxDssCeAho5B40YBFKvBrcSnuevMuRM2QVcf4FV1nttJLdKcjhVbF0K+ro5kh0mj5ROmKoMMyljtM++hZP3eD/7ETqwvfY4Gl4pReFlKdvevAMCQ8HMCs=
+	t=1724147371; cv=none; b=uuj5oZSi8ZJMu+s7+l6GEXauRIm2EgBBfJFjtqUyjWMr5PJuwQ08YIh5BSei98Db4GSjNTXPKp+qDNGxeH3ZPUHLpoVEfiyP2DIH6FVF0dEb2fjNVL8m2w2obP0knDwToY5/dTL/3PO4UipjnkhgCckHKV2/YA223rQG5txAPrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724145498; c=relaxed/simple;
-	bh=bW0QWsueAOcspiCecWtg2SVyi4gHSZ6HSezrXT5+Pyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AjfpbO33iONiwsFAfXLXC+x0eo4wlyu4wl7qOyGFw7GiHXq6FTnAr2T1BwT9SfTsGOJjmykcTNCn1UECipRNMg869QXdL/cAbjIkFhcNzRl5CvO7Itw/byV7tSYiHXvOpiE1ZhNgwW6FRyoNm7GzBAll+5p1w/ubjoqWj37eQ7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=1TpC3XNR; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Wp3lz2FtCz9sbL;
-	Tue, 20 Aug 2024 11:18:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1724145487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f+ICdms72HfoF4mAv99/z3Z6CJn/38fKcvyPjiB+emU=;
-	b=1TpC3XNRabaGO7N5sW4gKUNX5AldqRHL0F+Q59ySDOOMW11dpqYvmdHXKrjFzE9+kEuAZc
-	xD7L+OQgpO1UWy0xxTYs0ehlCqmrkOSejl8Sm3hgg0pwypovKKLdlPC/yO9YEUWCttiG55
-	585Ut50eLrkQdYnUR3ZqzFFJnbXHKWs/A4N4A1YpvDJWifoBUhRebkRmuajq9lQ5LZSKH3
-	Btk12vH/oJvaKJsnGa20r52My7EROT0wIyldnP6WuodgZr9oQp+zzd5CpdUeCOABlVJ6Fk
-	olyyXoEJURraAgRQFMmi/973uUUnaxScwem2gEIjqq1nD6LuiZXVyiVaIwY4Cg==
-Date: Tue, 20 Aug 2024 09:17:59 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Howells <dhowells@redhat.com>
-Cc: brauner@kernel.org, akpm@linux-foundation.org, chandan.babu@oracle.com,
-	linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
-	gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	david@fromorbit.com, Zi Yan <ziy@nvidia.com>,
-	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, willy@infradead.org, john.g.garry@oracle.com,
-	cl@os.amperecomputing.com, p.raghav@samsung.com, mcgrof@kernel.org,
-	ryan.roberts@arm.com
-Subject: Re: [PATCH v12 00/10] enable bs > ps in XFS
-Message-ID: <20240820091759.vogo5uxaldvik2u2@quentin>
-References: <20240819163938.qtsloyko67cqrmb6@quentin>
- <20240818165124.7jrop5sgtv5pjd3g@quentin>
- <20240815090849.972355-1-kernel@pankajraghav.com>
- <2924797.1723836663@warthog.procyon.org.uk>
- <3402933.1724068015@warthog.procyon.org.uk>
- <3458347.1724092844@warthog.procyon.org.uk>
+	s=arc-20240116; t=1724147371; c=relaxed/simple;
+	bh=8VZjNFrNswWpOmns2LxJtRv26FRpYGO9OKZ3n8H2CPA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Hu/Te23q1rDrOELbQd62Cj49RFnHrRqh3N8yxGTVQDILnH0p3xbnWLeqnEXF3F707Bqq5KZmoBZItVhOoPtnkMJ3nmL4JBm/xnCaRWENbefLG3GCcSAZmPEsZzsPI03KuBLq4XWvwjMu69MQX6p0NZ5pTzBGpgaDmFs7abHE56Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGls2WAE; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-656d8b346d2so3105682a12.2;
+        Tue, 20 Aug 2024 02:49:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724147369; x=1724752169; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oksjuiJ+Fd+IdFBbr4NtZxm8Q/7F80HnKwwrINvO5XE=;
+        b=AGls2WAEpBJMY9jdxa3M0+xi7CPJQ+OsrrdWeXZfm1OzMvxwPCxYVyS2zJ1T9qCssH
+         nT6WRzVcBQz0edcW59S5M/lhMnyNXiY3nxHd52ixvkmKOK0tlmZkqBSN3TPkmOMEANn0
+         S68EiDd0mH+vAhTEyAweXKSDj3KyqfJGHFJJD8LxYnurtVhp6hvlhzth+0yZv5oXrb6e
+         J1AznvH5wYKxC9aiFmh2rPoo0erD7ViJgwn/D+k47Quqs00TkHYBhCSNz8qn6OJPiQaC
+         KyURn70xLEzDZvivjdXOSIyBys6/BQRVyhsGDyUN1DFclI9oNfrphNEhVREcTu7m1LKR
+         YiVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724147369; x=1724752169;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oksjuiJ+Fd+IdFBbr4NtZxm8Q/7F80HnKwwrINvO5XE=;
+        b=a8vFba6D61BcIybN0ctQha2QPJGWVujqTQEd/qVLp4GYLpIiJNlvWf9JrgRM7KrfLI
+         AFW8UEhPI3SG+Jmf6oepcUpL+VN+es3JGB/nFoQebjn4VTj5bHitA3NJO5EQ9Y30EN63
+         4aASQCerW1pwxIfRed3iUR4ZVQT9vQEqMuHOpnX/Eu/mjiliyYRLPx4UqeTPaYjYsALH
+         wveZmWtJEFyp0DuKAxRKv7VhSEYuW1PBaceWiUEfdTCJoFuZ2YQN1yydWC9/fRUlp7Go
+         8I7UFkE7XLmPPFJezoiiTdJxbLyGYoBseqKttTLcpMq9W+vK54Cp1q6LggjvW8N41FFq
+         VLiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeLVr4lzNh6AhtBMTlVvAb6RHkR4w6kB/9Oay1r5rFUAUYZhbsQjK4Q26kqBPPjOHy2RbpN2NsQxG6m0S8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFkse+tIwhuFi1TFB0gl2Ub0LzC40nKGmNIyIRzM6EzVpm3Kgg
+	t8RrT9sw/HinJmBb7kTI9oSy3NzYpqJR4njOJp/4Cc5LkWn3+7mYlaZbb4xa
+X-Google-Smtp-Source: AGHT+IG6/xe5UEm9QVs9Mz3JJM4sk29hmdtHxRZZ8AE5ozJ2XFTkdo3vxJzfrSjyoo4BEk4H3aeoaQ==
+X-Received: by 2002:a05:6a20:6f05:b0:1c2:8c32:1392 with SMTP id adf61e73a8af0-1c904f91cf4mr14693271637.22.1724147368677;
+        Tue, 20 Aug 2024 02:49:28 -0700 (PDT)
+Received: from localhost ([123.113.110.156])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d427efec73sm5014596a91.48.2024.08.20.02.49.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 02:49:28 -0700 (PDT)
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: jack@suse.cz,
+	brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	mhiramat@kernel.org,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	Julian Sun <sunjunchao2870@gmail.com>
+Subject: [PATCH] writeback: Refine the show_inode_state() macro definition
+Date: Tue, 20 Aug 2024 17:49:22 +0800
+Message-Id: <20240820094922.375996-1-sunjunchao2870@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3458347.1724092844@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 07:40:44PM +0100, David Howells wrote:
-> Pankaj Raghav (Samsung) <kernel@pankajraghav.com> wrote:
-> 
-> > I tried this code on XFS, and it is working as expected (I am getting
-> > xxxx).
-> 
-> XFS doesn't try to use mapping_set_release_always().
+Currently, the show_inode_state() macro only prints
+part of the state of inode->i_state. Let’s improve it
+to display more of its state.
 
-Thanks David for digging deep. It is indeed a bug in this patchset
-(PATCH 1). I think I overlooked the way we MASK the folio order bits
-when we changed it sometime back. 
+Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+---
+ include/trace/events/writeback.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-But still I don't know why AS_RELEASE_ALWAYS is being cleared because it
-is in BIT 6, and existing bug should not affect BIT 6.
-
-The following triggers an ASSERT failure.
-
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 0fcf235e5023..35961d73d54a 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -88,9 +88,13 @@ xfs_inode_alloc(
+diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+index 54e353c9f919..a2c2bb1cddd7 100644
+--- a/include/trace/events/writeback.h
++++ b/include/trace/events/writeback.h
+@@ -21,6 +21,15 @@
+ 		{I_SYNC,		"I_SYNC"},		\
+ 		{I_DIRTY_TIME,		"I_DIRTY_TIME"},	\
+ 		{I_REFERENCED,		"I_REFERENCED"}		\
++		{I_DIO_WAKEUP,	"I_DIO_WAKEUP"}	\
++		{I_LINKABLE,	"I_LINKABLE"}	\
++		{I_DIRTY_TIME,	"I_DIRTY_TIME"}	\
++		{I_WB_SWITCH,	"I_WB_SWITCH"}	\
++		{I_OVL_INUSE,	"I_OVL_INUSE"}	\
++		{I_CREATING,	"I_CREATING"}	\
++		{I_DONTCACHE,	"I_DONTCACHE"}	\
++		{I_SYNC_QUEUED,	"I_SYNC_QUEUED"}	\
++		{I_PINNING_NETFS_WB, "I_PINNING_NETFS_WB"} \
+ 	)
  
-        /* VFS doesn't initialise i_mode! */
-        VFS_I(ip)->i_mode = 0;
-+       mapping_set_unevictable(VFS_I(ip)->i_mapping);
-        mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
-                                    M_IGEO(mp)->min_folio_order);
- 
-+       ASSERT(mapping_unevictable(VFS_I(ip)->i_mapping) == 1);
-+
-+       mapping_clear_unevictable(VFS_I(ip)->i_mapping);
-        XFS_STATS_INC(mp, vn_active);
-        ASSERT(atomic_read(&ip->i_pincount) == 0);
-        ASSERT(ip->i_ino == 0);
+ /* enums need to be exported to user space */
+-- 
+2.39.2
 
-The patch that fixes this is:
-
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 61a7649d86e5..5e245b8dcfd6 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -217,6 +217,7 @@ enum mapping_flags {
- #define AS_FOLIO_ORDER_MASK     ((1u << AS_FOLIO_ORDER_BITS) - 1)
- #define AS_FOLIO_ORDER_MIN_MASK (AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MIN)
- #define AS_FOLIO_ORDER_MAX_MASK (AS_FOLIO_ORDER_MASK << AS_FOLIO_ORDER_MAX)
-+#define AS_FOLIO_ORDER_MIN_MAX_MASK (AS_FOLIO_ORDER_MIN_MASK | AS_FOLIO_ORDER_MAX_MASK)
- 
- /**
-  * mapping_set_error - record a writeback error in the address_space
-@@ -418,7 +419,7 @@ static inline void mapping_set_folio_order_range(struct address_space *mapping,
-        if (max < min)
-                max = min;
- 
--       mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
-+       mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MIN_MAX_MASK) |
-                (min << AS_FOLIO_ORDER_MIN) | (max << AS_FOLIO_ORDER_MAX);
- }
- 
-Could you try this patch and see if it fixes it by any chance?
-
---
-Pankaj
 
