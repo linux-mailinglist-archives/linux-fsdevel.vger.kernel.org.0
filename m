@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-26377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A397D958BED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:08:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D281958BEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EE9B1F22A65
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 16:08:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE141C21C80
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 16:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F971BB691;
-	Tue, 20 Aug 2024 16:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C3A1BB6A1;
+	Tue, 20 Aug 2024 16:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTmQ34ns"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SL4ZQlS9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E24192B83
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 16:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4602192B83
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 16:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724170054; cv=none; b=U+sZkxkTP671ctqdAO4UAF/DrJW/zvDdTy+uFV9paoldJZ+UaxwC9XtNpo2VMhnhkNiFoC5a0rQEnapcO8bfvx9tcexvTDYpcP2tTkHc8oQ3gD6SPskUbrZaQCVl3PKibMb+2XbKweALk6BnlxCF1YeRchN4CHOAgNWl3nETxz4=
+	t=1724170056; cv=none; b=WT9hHQ8J2Ns6ib9XKcGfNAiB/I2VuJfQIXT5xM7AyL+sJnVdYhSV189lE6JrfpMwKwdQPOMjrsfn8y2x2rIdy+OHYb70C5VdB70GDQo+Hwx9DoIEOszDmdNf4oxWgOjDPBqRO3ygK1upqRkrItNVq5c2k+uh6FeFrV+gSSdslUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724170054; c=relaxed/simple;
-	bh=cgTUGY9nCB2XXnhteA5TnY+XSftnWg0S3KrFGXJg4qU=;
+	s=arc-20240116; t=1724170056; c=relaxed/simple;
+	bh=vQaqAitSD8zjQ4WrCi/snDMGSRzMp5NkTpK7rN760cM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tK74csk+Kxi8oycIK4TTf5m8EKxy7EXB/M1GDQt98imOrDJIf/rtswCUdxacwWbNNl7sGzmXGM7C20THH9WB0a3EL+12hSaJVyxqhhIEtZ40qms7/2q3OtfK4OL76jr6BkrwzSsNNpWK8lLcx812SO3Gq+3a1xSb6eQ2se49w6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTmQ34ns; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E2DC4AF13;
-	Tue, 20 Aug 2024 16:07:31 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Ha/NvA5G8FbasTcMHGqlfjUy0awGd85yvXjKYto0BpeK5DA//riFd5IxLIsgatpfF0wy6mPUzZxrAj8djvkErYdVkW9MZsutXBCtrYcJyIXwQydTHjj4oh/JJj9Ack0J46QImbBBvCXB5/A6v5gVcEoHr/81l+GtYfGrANaElbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SL4ZQlS9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCA2C4AF10;
+	Tue, 20 Aug 2024 16:07:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724170053;
-	bh=cgTUGY9nCB2XXnhteA5TnY+XSftnWg0S3KrFGXJg4qU=;
+	s=k20201202; t=1724170056;
+	bh=vQaqAitSD8zjQ4WrCi/snDMGSRzMp5NkTpK7rN760cM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CTmQ34nskKtetveDymW+jLg53G5Z+FvS4KHdQHDEuq6E3K9PaWTO8pojy7DXjhfmV
-	 fScjZL/1TYaSFmKRzaJzzNVQPDJlh1spCjgLn+f6jW6u9wJ4DWvHLzW9iSBC7f4Ey1
-	 0iU/7JkrXWsetGCtqQnqmsrq2OudPgIiX4nnYrvatFKVPJsFTHl4pa4WvRb1QYragc
-	 AFErQNPPjWWdNXskSZYp3cJOCgWtp2MA8pGjRQ6sQIwl/pyevkpzzzUr4RUPYO1Khz
-	 kAyncRavBkqp1kYGpdrZunED0JUEiFoP589IgCMpOXGXSS8jxN9DKlHl1eDIWsGtx9
-	 CsOM12+u8kDpA==
+	b=SL4ZQlS9+VHyJktxi4MIQKwUBrPTWCCtWRa3FkrYKggLoe9YJevrcH5S3Tka3Rbz3
+	 t5erCNq/KFqbzLEoiq5XR2RqS5v7KLz00Z1VxkRYeYyj9ko3SPBoXk13ccGqhe7XS2
+	 mcNhzJR+emLSazKQjECSEqdwMvUtnBreG7pf5NkUIP+GkzDpsGMnQf38Tlv5ms4Qim
+	 lh1gndWKU18fEt0B0JFduSua24JyksGngllIbw9n3RaqRom7goNPPWp04ZNXsza87k
+	 ivs3rHw9Kfu/ExxNrrVjVkhgGEFV69SdYVaiI5oskYaGRiGE0coIDiLhuDR5Luv8W+
+	 ThQZdGsNhIQhg==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -50,9 +50,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Jeff Layton <jlayton@kernel.org>,
 	Jan Kara <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH RFC 4/5] inode: port __I_LRU_ISOLATING to var event
-Date: Tue, 20 Aug 2024 18:06:57 +0200
-Message-ID: <20240820-work-i_state-v1-4-794360714829@kernel.org>
+Subject: [PATCH RFC 5/5] inode: make i_state a u32
+Date: Tue, 20 Aug 2024 18:06:58 +0200
+Message-ID: <20240820-work-i_state-v1-5-794360714829@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240820-work-i_state-v1-0-794360714829@kernel.org>
 References: <20240820-work-i_state-v1-0-794360714829@kernel.org>
@@ -64,61 +64,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1669; i=brauner@kernel.org; h=from:subject:message-id; bh=cgTUGY9nCB2XXnhteA5TnY+XSftnWg0S3KrFGXJg4qU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd2a+oV+Ui0n/zy71J2wIdJZKXfpjj+N9qe2Ptp9lz4 x56nO1x6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIxSWG/xFROVN/z+z7M/X4 7L0LmXfssWjR1ixVKfHSOf3+9KlopjuMDE3VJcycBv9f9ApvPcs4+9+VF5tCDBMk+6f0XZt4l2e /Ey8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=677; i=brauner@kernel.org; h=from:subject:message-id; bh=vQaqAitSD8zjQ4WrCi/snDMGSRzMp5NkTpK7rN760cM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd2a/Uc+vR5TtFtY9Kr2+1+npucsZjLmU9//NSpryPl lasvLMyv6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiIeaMDLPYLvxewmWafsD0 /ta/6383bvi2yTXzA7fOns990lHcN1IYGS7qe1W8SXlUa64WzXjpksU8s9rsS3M2h6710OKdOOW BGDcA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Port the __I_LRU_ISOLATING mechanism to use the new var event mechanism.
+Now that we use the wait var event mechanism make i_state a u32 and free
+up 4 bytes. This means we currently have two 4 byte holes in struct
+inode which we can pack.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/inode.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ include/linux/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index d9e119b5eeef..a48b6df05139 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -511,8 +511,7 @@ static void inode_unpin_lru_isolating(struct inode *inode)
- 	spin_lock(&inode->i_lock);
- 	WARN_ON(!(inode->i_state & I_LRU_ISOLATING));
- 	inode->i_state &= ~I_LRU_ISOLATING;
--	smp_mb();
--	wake_up_bit(&inode->i_state, __I_LRU_ISOLATING);
-+	inode_wake_up_bit(inode, __I_LRU_ISOLATING);
- 	spin_unlock(&inode->i_lock);
- }
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f854f83e91af..54cfb75b6a28 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -681,7 +681,7 @@ struct inode {
+ #endif
  
-@@ -520,13 +519,22 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
- {
- 	lockdep_assert_held(&inode->i_lock);
- 	if (inode->i_state & I_LRU_ISOLATING) {
--		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
--		wait_queue_head_t *wqh;
--
--		wqh = bit_waitqueue(&inode->i_state, __I_LRU_ISOLATING);
--		spin_unlock(&inode->i_lock);
--		__wait_on_bit(wqh, &wq, bit_wait, TASK_UNINTERRUPTIBLE);
--		spin_lock(&inode->i_lock);
-+		struct wait_bit_queue_entry wqe;
-+		struct wait_queue_head *wq_head;
-+
-+		wq_head = inode_bit_waitqueue(&wqe, inode, __I_NEW);
-+		for (;;) {
-+			prepare_to_wait_event(wq_head, &wqe.wq_entry,
-+					      TASK_UNINTERRUPTIBLE);
-+			if (inode->i_state & I_LRU_ISOLATING) {
-+				spin_unlock(&inode->i_lock);
-+				schedule();
-+				spin_lock(&inode->i_lock);
-+				continue;
-+			}
-+			break;
-+		}
-+		finish_wait(wq_head, &wqe.wq_entry);
- 		WARN_ON(inode->i_state & I_LRU_ISOLATING);
- 	}
- }
+ 	/* Misc */
+-	unsigned long		i_state;
++	u32			i_state;
+ 	struct rw_semaphore	i_rwsem;
+ 
+ 	unsigned long		dirtied_when;	/* jiffies of first dirtying */
 
 -- 
 2.43.0
