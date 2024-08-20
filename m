@@ -1,104 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-26357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D5E958348
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 11:54:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D689958349
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 11:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E345F285C9B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 09:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61821F254A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 09:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0875D18C01C;
-	Tue, 20 Aug 2024 09:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C41B18C01C;
+	Tue, 20 Aug 2024 09:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PyUAi9Q7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB8814A0A8
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 09:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEB118C00D;
+	Tue, 20 Aug 2024 09:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724147691; cv=none; b=t7N88J1/JPFzzp4ayX6Syer9OosMmFn+Ovq34SmViZgAkrdMbW3f2imIoqaTQfM4I1bx8l8MNeQf+sMoVQeZqv3V+N/3ISwNVdoca9wJuwH3GoUekP/OVn4EnGaxeyYQdEDktAO0X+tP3Wie3W5xMlf6gUpjR7jMHSGXyZhmgzA=
+	t=1724147699; cv=none; b=nz2wzY5LplrnDC4H8/sKcvDKuEw4z9InG5go7/XaINcw7EkTfojm4dTJYawOw8TiLcc4pJOS4his0fwwqzyg4By3PzMYKO3ll+W38rYprM610xKRwATYeQrC0gYI+QKpf3tQqQQZ4LJE7bBOttcc2SALpQNFBXOcCVLJq3FP3ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724147691; c=relaxed/simple;
-	bh=Xsq0jN/Nr+6zUwRCip9WuKjFgEPV9fhR9Eb321ulRpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MfENZBE7JrAJoxcHwqn9OE1cWhmsOGHMarYIBR2pDB+qciAolZrdudCAL/axYYKX7XNZgDSPioUM71H1azsfasiyStDr3yN5daQMR9kg32E5PJJrE/9UN7TrKJPfjck/Mcz2+4tnWDrB/eHD9P1yMXNBz2u/ElseUSAO2D0Y+D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50B44DA7;
-	Tue, 20 Aug 2024 02:55:15 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 532323F66E;
-	Tue, 20 Aug 2024 02:54:46 -0700 (PDT)
-Date: Tue, 20 Aug 2024 10:54:41 +0100
-From: Joey Gouly <joey.gouly@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel@lists.infradead.org,
-	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org,
-	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
-	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
-	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 18/29] arm64: add POE signal support
-Message-ID: <20240820095441.GA688664@e124191.cambridge.arm.com>
-References: <20240503130147.1154804-19-joey.gouly@arm.com>
- <ZqJ2knGETfS4nfEA@e133380.arm.com>
- <20240801155441.GB841837@e124191.cambridge.arm.com>
- <Zqu2VYELikM5LFY/@e133380.arm.com>
- <20240806103532.GA1986436@e124191.cambridge.arm.com>
- <20240806143103.GB2017741@e124191.cambridge.arm.com>
- <ZrzHU9et8L_0Tv_B@arm.com>
- <20240815131815.GA3657684@e124191.cambridge.arm.com>
- <Zr4aJqc/ifRXJQAd@e133380.arm.com>
- <ZsN8MnSqIWEMh7Ma@arm.com>
+	s=arc-20240116; t=1724147699; c=relaxed/simple;
+	bh=7wLbMmT0cymuj60iU2xcEmfyuNwxpL/PH69BMR1wDNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mtzm8PMWyvvyjjHW1YJqBlhi4LBFVpzT6xQ0YN3RO88VU9xKM5o8erAoDmGDx9pozcPMp1TYK3K93XD0HEslu7PH7C4fTanCmCOrLycJbyI/A+nACTwtfh5Mtl32/7MfHWnnOxut4hiXl+3OMljb0pwG3MtJnxJKu0/DPSZO3GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PyUAi9Q7; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bef4d9e7f8so2884980a12.2;
+        Tue, 20 Aug 2024 02:54:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724147696; x=1724752496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4uVyAOTP+cI1Nk3qF4l5hctewWGZnAnWEVSxLItpk9k=;
+        b=PyUAi9Q7ETBgLbYf5qFTIs1pNxB+awIgRpfJi0rR8ExLTOTb9L6RV4+vF/JwsgNaZO
+         tksq423zMmuUcc3CNxC3sQkVR+Ewsa4d6LLy4DuJdZ4linSNrXFZFxMVaNpcPFCNGsPJ
+         1Q3uk6wh3rrWArU3q/fN9F08REfQyrpO4hJ2zKn19k+MTSK33T4fuePUAUxVsKyxxPqq
+         9ZGbKd3jyErRJg9E5FRjQ/gbLJbFWzLxLJkblwlNqtq2sLaJn4zRW5mmRAiMIdq/vEdh
+         DjzekQIHw3tluhyI2MZXcArNemAWI8NZCqZ3xiDaxHjbk+cZF3fwuOZVyHD7NnGwCPFs
+         DqkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724147696; x=1724752496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4uVyAOTP+cI1Nk3qF4l5hctewWGZnAnWEVSxLItpk9k=;
+        b=UvynWesTCl8qqppzJFojqHYoJ9zHMIhv809Wv/TUhxT9LPJO5/34zNjiIlQhCjjBl4
+         +vIkwWAAgsgOx/cOzTfb4S+uDJlYVBENi7MKv5al0eUSmPAGGmi0FrJhW+2MvY/k5Lp3
+         ZtfoRKE20Rww3bzpf8SVk7at3EIE9O1dLNq8c0KUbvRw+seL/28wLvwdtSCCE+UDMTrM
+         OFWh98QzFnzKYzvft6espsr5+1vIARtjt00dnduSOunQkm+EzjHfSw8bFrChjdl24HLu
+         V3FLE9lBdr1vrINnE6zjGJT1CsO2mtNHv4Fynd39IEzlK8RTQSEhCgZDcd64jPo/7y/A
+         qD3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUuUHiGwuuB8EOSVzVI2pQlQz5jaLEVd1lK/7FgkkwP8UcCpLeoHqagfJ4B//kavfCinEmftPggDJp3UdEq8huBqQPD0CnMGZ8NlfSbnw==
+X-Gm-Message-State: AOJu0YxMhUGI4Pa+c35Wvb6FFLasdtjv8DPtOSI83f9QYeWRAAlYW094
+	q8xMlRJyVIZWtoS3GUOI+xQecXVyAtUFO490tQ2OGvEE3ftbGb96qObMyD0BAn4KBPNTjYiwcjH
+	wovDqQBIAFV5MNKu0Ezm0EpSRDZItqBVzdgI=
+X-Google-Smtp-Source: AGHT+IHuM5/0QGY0ecxei/ODBj2RXcPAwWdJVE/jGIbBQmVLl+0lkbe5s424RPR7HftbauNYEvRDsGqGpqVGr+WPzms=
+X-Received: by 2002:a05:6402:40cd:b0:5be:fe26:daac with SMTP id
+ 4fb4d7f45d1cf-5befe26db97mr3536460a12.17.1724147695315; Tue, 20 Aug 2024
+ 02:54:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsN8MnSqIWEMh7Ma@arm.com>
+References: <20240820094922.375996-1-sunjunchao2870@gmail.com>
+In-Reply-To: <20240820094922.375996-1-sunjunchao2870@gmail.com>
+From: Julian Sun <sunjunchao2870@gmail.com>
+Date: Tue, 20 Aug 2024 17:54:44 +0800
+Message-ID: <CAHB1NagnXCDh_dVMX7TLBamtyF+G_1Ug0vohQg+jkJs8e2RuGg@mail.gmail.com>
+Subject: Re: [PATCH] writeback: Refine the show_inode_state() macro definition
+To: linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	mhiramat@kernel.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 06:09:06PM +0100, Catalin Marinas wrote:
-> On Thu, Aug 15, 2024 at 04:09:26PM +0100, Dave P Martin wrote:
-> > On Thu, Aug 15, 2024 at 02:18:15PM +0100, Joey Gouly wrote:
-> > > That's a lot of words to say, or ask, do you agree with the approach of only
-> > > saving POR_EL0 in the signal frame if num_allocated_pkeys() > 1?
-> > > 
-> > > Thanks,
-> > > Joey
-> > 
-> > ...So..., given all the above, it is perhaps best to go back to
-> > dumping POR_EL0 unconditionally after all, unless we have a mechanism
-> > to determine whether pkeys are in use at all.
-> 
-> Ah, I can see why checking for POR_EL0_INIT is useful. Only checking for
-> the allocated keys gets confusing with pkey 0.
-> 
-> Not sure what the deal is with pkey 0. Is it considered allocated by
-> default or unallocatable? If the former, it implies that pkeys are
-> already in use (hence the additional check for POR_EL0_INIT). In
-> principle the hardware allows us to use permissions where the pkeys do
-> not apply but we'd run out of indices and PTE bits to encode them, so I
-> think by default we should assume that pkey 0 is pre-allocated.
-> 
-> 
+Apologies, this patch was sent by mistake. Please refer to the latest patch
 
-You can consider pkey 0 allocated by default. You can actually pkey_free(0), there's nothing stopping that.
+Julian Sun <sunjunchao2870@gmail.com> =E4=BA=8E2024=E5=B9=B48=E6=9C=8820=E6=
+=97=A5=E5=91=A8=E4=BA=8C 17:49=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Currently, the show_inode_state() macro only prints
+> part of the state of inode->i_state. Let=E2=80=99s improve it
+> to display more of its state.
+>
+> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> ---
+>  include/trace/events/writeback.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/include/trace/events/writeback.h b/include/trace/events/writ=
+eback.h
+> index 54e353c9f919..a2c2bb1cddd7 100644
+> --- a/include/trace/events/writeback.h
+> +++ b/include/trace/events/writeback.h
+> @@ -21,6 +21,15 @@
+>                 {I_SYNC,                "I_SYNC"},              \
+>                 {I_DIRTY_TIME,          "I_DIRTY_TIME"},        \
+>                 {I_REFERENCED,          "I_REFERENCED"}         \
+> +               {I_DIO_WAKEUP,  "I_DIO_WAKEUP"} \
+> +               {I_LINKABLE,    "I_LINKABLE"}   \
+> +               {I_DIRTY_TIME,  "I_DIRTY_TIME"} \
+> +               {I_WB_SWITCH,   "I_WB_SWITCH"}  \
+> +               {I_OVL_INUSE,   "I_OVL_INUSE"}  \
+> +               {I_CREATING,    "I_CREATING"}   \
+> +               {I_DONTCACHE,   "I_DONTCACHE"}  \
+> +               {I_SYNC_QUEUED, "I_SYNC_QUEUED"}        \
+> +               {I_PINNING_NETFS_WB, "I_PINNING_NETFS_WB"} \
+>         )
+>
+>  /* enums need to be exported to user space */
+> --
+> 2.39.2
+>
 
-> So I agree that it's probably best to save it unconditionally.
 
-Alright, will leave it as is!
-
-Thanks,
-Joey
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
