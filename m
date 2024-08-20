@@ -1,141 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-26391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDE0958DE5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 20:20:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C178E958DE9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 20:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09592830DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811401F23500
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633F1C37A4;
-	Tue, 20 Aug 2024 18:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBB81C37A4;
+	Tue, 20 Aug 2024 18:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0zqSmJJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q5MKs0KG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448CC1BDA8C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 18:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7831990B5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 18:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724177996; cv=none; b=VfowERXciscNN++xQbWCe+qMhTh4lQ0gotfN7Tdt61KQe9/M+V+IP9cYt9FFDYr++EZJBZDRQdBUUaFiTqDEGu/gEnbUiuvDsyyV7pVkAuktK/P/pZL07AbxYMaKxuaTyf7Cs8dprjcI/LQO+vzLYHP7SNgDVbnN4c7VnFjFt3o=
+	t=1724178077; cv=none; b=uFJgFpCT7Gh7sBvHfbtG0QqbxBrwFG7BrLoAbjWDunozHeupaj1fgGfnhJtbB3f2pBQYJchhFTXQxEqRSbe+F/+Vd3FPQgZgG2eIkVj8MjJq1y76J/5TD0pjuJ7PqY2vEpp2YZ6JMJTbYby9sSBL03GA2gfOqAafcie3sRihUeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724177996; c=relaxed/simple;
-	bh=Z48K+XibslftzZa+2cejdG7u1Go9k9G5I6LFjRMSQg8=;
+	s=arc-20240116; t=1724178077; c=relaxed/simple;
+	bh=tGnKR3EdSCXJUGm0ylQwuAW3GbynvklW/jxSgD8UwCE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BxJw1DDkHeF9RYHtL36yMccp8pQpECjeqINYOWd10sLj5HbyNc07jPeFV/Ool3UQWbbEnJlUUZyCSoKnBBxW/WMVaDyH2aY20Z9IQEYx3IpH02Y1EKU93vU+J2VRzBo6kJ1QZKW+KHFHY0z1kWlnPKUue9g3xxGNX+jiLIRbDRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D0zqSmJJ; arc=none smtp.client-ip=209.85.160.169
+	 To:Cc:Content-Type; b=ZVotIiJqXaUitW/2I+AVGVslQNa66fbBBmROnfG0MDCQ+JYZBi70OK6Na0vOSGY9zeD2QKjMgttdRE9HWGCeDgujd6bRLDKfqbqBkJwYwKq91gilZkw72ON+5mVkLr+4TFz7W5Inu5cmxsp/ZvjROf3pLUV5iVnvYaqFCxSRfmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q5MKs0KG; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44ff99fcd42so33999441cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 11:19:54 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-44fe9cf83c7so32629101cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 11:21:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724177994; x=1724782794; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724178074; x=1724782874; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6Gt4plaeup3PoWZZfcR33PlFRbf9IOtcKRUvDQ0PJEk=;
-        b=D0zqSmJJbRHj8u5lWeLlPPE8DZOyQO15OlnTGBhJ40jh/LIXsIcik00CC9mxwE7SwR
-         5W/bLwBrNx3RwQYr+LACC7VN2GkJpcY3jo3ke/tKorZ8mbFR2G2mqE45/R1MboHJCX22
-         lhIXeTlfDQ91MCp+ae/lH8oLt/YY7K52dM4F9QJPT3p+IttNjfrsFCh3IbRGCsxBMzWo
-         XHugqbSMkFdG3Fvgy1XkT6gz7JUuVy0xotXrfCTqYyszzqnudyhY6lvCOZg7IWcxo34G
-         jkhzqHRap7rbZQkUw+wl0bnUrUv8m6hWIOuSb2TmzoWmx34Fn2cE8HHEuwd9Qi2W9rWO
-         i0BQ==
+        bh=R0X0+yqRvCxdbSJzsqCCAhCXIQW9wdQ1IgSaO9uCusc=;
+        b=Q5MKs0KGKFsYQC7hGq10t+qTlUgN3xV5WssYE43ms3I0PhBwLCaWch3nEghlHfAxj2
+         U2ibwdwHNh31PyMFiHNXrDObSDM05b2dooOpOJQiwTeL3x3jGNvTQJVH+Yr0Dh5hTeVa
+         U1BF4bLmTlj/131R2bp/CfgunS09InkmFrRYrwomRyMBcG/cuEHrtP5pLQsV3BYCvPdh
+         Qtgtu4KaS3IwLvDCj315QL40WfT4TH7qNwmjLz4SDh1fqj3Ql1f8ZEDLaKPDo8ZSBmba
+         U/x+/tllMDAef/zPcfT3Hd7i09jjMssxnY6TOlhRm2VGFsLD0E1t6U4pATZ+SlN4RIyS
+         QnYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724177994; x=1724782794;
+        d=1e100.net; s=20230601; t=1724178074; x=1724782874;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6Gt4plaeup3PoWZZfcR33PlFRbf9IOtcKRUvDQ0PJEk=;
-        b=fGaVwsI5/r7CaIltk67HKLAlUaM0OaVYUVivYuROb6LqtxiR5YSnMMPTZRPi2FxumI
-         xXF3yn2+Lc9envo4aGA6PHPacuNLtfR2zMU266VqNREISYmG4ZUzJD8FNj94QIXKcMpJ
-         a6l3G7RR+OflDUnGmb/cz+AwO37jPM6NHcHJXQ6J3nwBkcCPOMsXY7oKfCAIMQej/Alt
-         xtAqdiuoT9rrMHT2vAT5DNfPHZRf+wwpSRrJBwhrVUwcGo+/8YiDJ+9G4bhImopoGROv
-         GWRHrVfRKUoIC1gAxX2fYkZFGsJ0rxSRrLCP6+0qwR0UyQqWW3TR4qioWV4sh6tN+eQc
-         IlQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnOYMcf22oPbMGDi1sp7skPPOV6hP2Rh+Ai0M28nYUHJdX1Z2+qRog0u/W325H5TaK6iIEI6WVtnQpT7LB84Lqe+Fkzsrps5sZOcYt8w==
-X-Gm-Message-State: AOJu0YyG62tentJ4QV3VCxcQ1FayfekHwdz3ZYWP794GN6kbiE2oIY+Z
-	M6MP7D0Q5/qgJ1DiRfS07PiBh7d3AK4XCjPeHODuaOdyLEDGy3T2DkBB34jN2gWp8Anosktemkd
-	4CK4sK7xEVoqEoqyUxkUXXJL1AYc=
-X-Google-Smtp-Source: AGHT+IHdq/7qQhGG/UOwqxg5dtfSee0LCjZjJPaalALsHyI+Qi2MK5zfS0V1GhQik2LZOfMr1U1Q/y5VqgUT2XnJYfg=
-X-Received: by 2002:a05:622a:1e8e:b0:447:f361:e2e0 with SMTP id
- d75a77b69052e-453743ae440mr189583091cf.59.1724177994025; Tue, 20 Aug 2024
- 11:19:54 -0700 (PDT)
+        bh=R0X0+yqRvCxdbSJzsqCCAhCXIQW9wdQ1IgSaO9uCusc=;
+        b=HXIj+TdRtRn7tu5u/qq+x4WhHQBu1dwWhSjHiGoZ2e8oZGpAaCfam2RnbirbosxC6B
+         RTQXZrj8rGc5trnwcznJXMPcQ6ePb22aMqzoq+f3vZDnYpMIfWEOMPGdl+e5YwBDBJDd
+         1BKi5dH8V5SHCsQpt5crH+ZvllbBqhCfl7xKjrnfzP3MV5bLZl1mpoUJLG2glLAtdbgy
+         v/LOsuVhd9fyCPKGcS4jH9AytFw2X42WHj4bIXN+fZyMWhEGtmaCBhBKwWTfBMKUDugK
+         MgfWlrcTfbQQ+6xAa0Y8PakkyNs/ccldEdwLVer49Gd9pOD5uKuqWwAc5LWdeZVHquu8
+         /gxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzYcdE74E6l6wU1lFVAn6sBD0j/ZAJmJHsvXoyIgzQYluVBfbzXf9TTb+9+YkjG4d7EBmYz1ilwuLQOBoBsEmR7xrsGSKbtXyM7pIT5A==
+X-Gm-Message-State: AOJu0YyTzgP7x0552y8v5Ao+BC28Cts9nrgCCXLA5Rg2CUw5BPpGfLAT
+	/77uScSkuDU92Apg51ckI7XVsImiyWuYFzeNwz/9DHYIZ1xYgpz83SKNj5JFwy7emif9mUXX5Q+
+	RsHz0lUUkWjc8QMMGnm/DCq81lH4=
+X-Google-Smtp-Source: AGHT+IHiIeFQjCGRuEm64jIL/fS96Pd3qxXG9KaUHEEr/AkbFEtzDbX2ewQNXGwoMhtEbaX/A6jn+r8fgBwdApQtk0o=
+X-Received: by 2002:a05:622a:510b:b0:453:1e13:4e88 with SMTP id
+ d75a77b69052e-453743acaf2mr179088041cf.39.1724178074305; Tue, 20 Aug 2024
+ 11:21:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819182417.504672-1-joannelkoong@gmail.com> <f93cde51-d2f9-40c9-9ebb-fea1fbbf56d8@linux.alibaba.com>
-In-Reply-To: <f93cde51-d2f9-40c9-9ebb-fea1fbbf56d8@linux.alibaba.com>
+References: <20240819182417.504672-1-joannelkoong@gmail.com>
+ <20240819182417.504672-2-joannelkoong@gmail.com> <b17f0ab0-af46-4d0c-ab4c-44d1ee858c26@linux.alibaba.com>
+In-Reply-To: <b17f0ab0-af46-4d0c-ab4c-44d1ee858c26@linux.alibaba.com>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 20 Aug 2024 11:19:42 -0700
-Message-ID: <CAJnrk1ZT+-30vMSUEVof7RNmrewvft14XbJjknL+y2y45-NrZw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fuse: drop unused fuse_mount arg in fuse_writepage_finish
+Date: Tue, 20 Aug 2024 11:21:03 -0700
+Message-ID: <CAJnrk1ZbT3MhQS+_2eP2GdEVFJnWRyzb_n82hw6Z+Sxi9a+-Yw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fuse: update stats for pages in dropped aux writeback list
 To: Jingbo Xu <jefflexu@linux.alibaba.com>
 Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
 	bernd.schubert@fastmail.fm, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 6:53=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.c=
+On Mon, Aug 19, 2024 at 7:10=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.c=
 om> wrote:
 >
 >
+>
 > On 8/20/24 2:24 AM, Joanne Koong wrote:
+> > In the case where the aux writeback list is dropped (eg the pages
+> > have been truncated or the connection is broken), the stats for
+> > its pages and backing device info need to be updated as well.
+> >
+> > Fixes: e2653bd53a98 ("fuse: fix leaked aux requests")
 > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > > ---
-> >  fs/fuse/file.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
+> >  fs/fuse/file.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
 > >
 > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index f39456c65ed7..63fd5fc6872e 100644
+> > index 63fd5fc6872e..7ac56be5fee6 100644
 > > --- a/fs/fuse/file.c
 > > +++ b/fs/fuse/file.c
-> > @@ -1769,8 +1769,7 @@ static void fuse_writepage_free(struct fuse_write=
-page_args *wpa)
-> >       kfree(wpa);
-> >  }
-> >
-> > -static void fuse_writepage_finish(struct fuse_mount *fm,
-> > -                               struct fuse_writepage_args *wpa)
-> > +static void fuse_writepage_finish(struct fuse_writepage_args *wpa)
-> >  {
-> >       struct fuse_args_pages *ap =3D &wpa->ia.ap;
-> >       struct inode *inode =3D wpa->inode;
-> > @@ -1829,7 +1828,7 @@ __acquires(fi->lock)
-> >   out_free:
-> >       fi->writectr--;
-> >       rb_erase(&wpa->writepages_entry, &fi->writepages);
-> > -     fuse_writepage_finish(fm, wpa);
-> > +     fuse_writepage_finish(wpa);
+> > @@ -1831,10 +1831,11 @@ __acquires(fi->lock)
+> >       fuse_writepage_finish(wpa);
 > >       spin_unlock(&fi->lock);
 > >
-> >       /* After fuse_writepage_finish() aux request list is private */
-> > @@ -1959,7 +1958,7 @@ static void fuse_writepage_end(struct fuse_mount =
-*fm, struct fuse_args *args,
-> >               fuse_send_writepage(fm, next, inarg->offset + inarg->size=
-);
+> > -     /* After fuse_writepage_finish() aux request list is private */
+> > +     /* After rb_erase() aux request list is private */
+> >       for (aux =3D wpa->next; aux; aux =3D next) {
+> >               next =3D aux->next;
+> >               aux->next =3D NULL;
+> > +             fuse_writepage_finish(aux);
+> >               fuse_writepage_free(aux);
 > >       }
-> >       fi->writectr--;
-> > -     fuse_writepage_finish(fm, wpa);
-> > +     fuse_writepage_finish(wpa);
-> >       spin_unlock(&fi->lock);
-> >       fuse_writepage_free(wpa);
-> >  }
+> >
 >
-> I'm afraid an empty commit message will trigger a warning when running
-> checkpatch.  Otherwise LGTM.
+> LGTM.
+>
+> Besides, there is similar logic of decreasing stats info for replaced
+> aux (temp) request inside fuse_writepage_add(), though without waking up
+> fi->page_waitq.
+>
+> I wonder if we could factor out a new helper function, saying
+> fuse_writepage_dec_stat(), which could be called both from
+> fuse_writepage_add() and fuse_send_writepage().
 
-Gotcha, I'll resubmit this with a commit message. Thanks for taking a look.
+This sounds good to me. I'll add this refactoring when I resubmit this
+patch series.
+
+Thanks,
+Joanne
 
 >
-> Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 >
 > --
 > Thanks,
