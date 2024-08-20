@@ -1,109 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-26332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22991957B57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 04:10:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3C0957B67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 04:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55AE51C210FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 02:10:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1375C1C23A74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 02:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F7C22EF0;
-	Tue, 20 Aug 2024 02:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vUvqvmkC"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AEF2E634;
+	Tue, 20 Aug 2024 02:28:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F192F22EF2
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 02:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE22F22EF2;
+	Tue, 20 Aug 2024 02:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724119811; cv=none; b=C4wFDZ17p1aU4kuDA4wAmF04aEutsapqm/0L8YdrDTzsVoJMPSi2L+Uygz/IF5H8ehuUKKl7f7vVyq9eU/+J9letzeSJ6ZRvRiJESvzNWHFTkch/An0kp4bXypIQ9J2DeCd1REdS7Pbv6YFkVh06p+dPSUca6Ta7FE7XLXcFbT4=
+	t=1724120914; cv=none; b=eyM5nouooktOEnLtKTQ1DpL+/PqQ8dx58o/yYQhiCpyOnFGYzUO27QdriEqRQX1x8bRXXkyZ0t/lKlMOmW1FN2o+eBxxMKbxZW6Y//xhJdlOVV8X/iJw+SkYSWU23e77zgvoSscZ9yQf+EtJegMDo7bgSskEJGDy4HkclZCkDXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724119811; c=relaxed/simple;
-	bh=aWVcWk6hwmdfngQNuqazj73yxa3QywFzLV8od+KERaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dpOBlIIHww8nupwIka7hCzoCi2wfuVSj9VnhX/k0yPofNhYY47m8ZEhUJyKgc/u26tMErOvMJlaKTjvdY475AZOqj9oBR8pQp9ZwXsL6Fva+pxXxYQPf/Ux/J7HF3phIakSiCjQ93L3BKKxviojS2HqBocbMacsGBm7jxVUf5Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vUvqvmkC; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724119805; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Sja6If0k6r9RqqlJrsjJLBZciX8BbWmN/n6Io+3Nxzs=;
-	b=vUvqvmkCqITq22FHWi342Hw6g+OaHhLMl7NUQcVwBoI1mFrFsSDui/C/Alrus3+3cGDUXKMT6Ct/zwXxsN+BBy11m6FpSwLEJMlQ5pX6gc7ViLxbM8ZzjS41I2HzznRqVx2i46DJHKbA5LbCDo1VEr3uBlDjB6COIJiOVNwu/YE=
-Received: from 30.221.146.21(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WDGhGAe_1724119803)
-          by smtp.aliyun-inc.com;
-          Tue, 20 Aug 2024 10:10:04 +0800
-Message-ID: <b17f0ab0-af46-4d0c-ab4c-44d1ee858c26@linux.alibaba.com>
-Date: Tue, 20 Aug 2024 10:10:02 +0800
+	s=arc-20240116; t=1724120914; c=relaxed/simple;
+	bh=CDXhsasnshXdv2F7kEyqpa9BSMgkrn3BNHigrOJuj1c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GqRrmhIjMpk9mXT8jdLEAtUwceFseCZ8I8GkgCr5WV5toChqIQugckKEKQDZxNBiVYAhFQCMi94Uqo9T+fizbVX7aWspV8HaTWC0s/q14vYPp6yYCd0OdzQ7MZGk8ulaZYu1NksK2DGKUMT17hmdqL1aFXE379P3RLvX3GZMUGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Wntd71Zt4z1xvRp;
+	Tue, 20 Aug 2024 10:26:35 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 297DD1400FD;
+	Tue, 20 Aug 2024 10:28:29 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 20 Aug
+ 2024 10:28:28 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-fsdevel@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <dlemoal@kernel.org>,
+	<naohiro.aota@wdc.com>, <jth@kernel.org>
+Subject: [PATCH -next v2] zonefs: add support for FS_IOC_GETFSSYSFSPATH
+Date: Tue, 20 Aug 2024 02:20:29 +0000
+Message-ID: <20240820022029.8261-1-liaochen4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] fuse: update stats for pages in dropped aux writeback
- list
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
- linux-fsdevel@vger.kernel.org
-Cc: josef@toxicpanda.com, bernd.schubert@fastmail.fm, kernel-team@meta.com
-References: <20240819182417.504672-1-joannelkoong@gmail.com>
- <20240819182417.504672-2-joannelkoong@gmail.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240819182417.504672-2-joannelkoong@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
+FS_IOC_GETFSSYSFSPATH ioctl expects sysfs sub-path of a filesystem, the
+format can be "$FSTYP/$SYSFS_IDENTIFIER" under /sys/fs, it can helps to
+standardizes exporting sysfs datas across filesystems.
 
+This patch wires up FS_IOC_GETFSSYSFSPATH for zonefs, it will output
+"zonefs/<dev>".
 
-On 8/20/24 2:24 AM, Joanne Koong wrote:
-> In the case where the aux writeback list is dropped (eg the pages
-> have been truncated or the connection is broken), the stats for
-> its pages and backing device info need to be updated as well.
-> 
-> Fixes: e2653bd53a98 ("fuse: fix leaked aux requests")
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  fs/fuse/file.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 63fd5fc6872e..7ac56be5fee6 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1831,10 +1831,11 @@ __acquires(fi->lock)
->  	fuse_writepage_finish(wpa);
->  	spin_unlock(&fi->lock);
->  
-> -	/* After fuse_writepage_finish() aux request list is private */
-> +	/* After rb_erase() aux request list is private */
->  	for (aux = wpa->next; aux; aux = next) {
->  		next = aux->next;
->  		aux->next = NULL;
-> +		fuse_writepage_finish(aux);
->  		fuse_writepage_free(aux);
->  	}
->  
+Signed-off-by: Liao Chen <liaochen4@huawei.com>
+---
+ fs/zonefs/sysfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-LGTM.
-
-Besides, there is similar logic of decreasing stats info for replaced
-aux (temp) request inside fuse_writepage_add(), though without waking up
-fi->page_waitq.
-
-I wonder if we could factor out a new helper function, saying
-fuse_writepage_dec_stat(), which could be called both from
-fuse_writepage_add() and fuse_send_writepage().
-
-
+diff --git a/fs/zonefs/sysfs.c b/fs/zonefs/sysfs.c
+index 8ccb65c2b419..ff9a688f1f9c 100644
+--- a/fs/zonefs/sysfs.c
++++ b/fs/zonefs/sysfs.c
+@@ -92,6 +92,7 @@ int zonefs_sysfs_register(struct super_block *sb)
+ 	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+ 	int ret;
+ 
++	super_set_sysfs_name_id(sb);
+ 	init_completion(&sbi->s_kobj_unregister);
+ 	ret = kobject_init_and_add(&sbi->s_kobj, &zonefs_sb_ktype,
+ 				   zonefs_sysfs_root, "%s", sb->s_id);
 -- 
-Thanks,
-Jingbo
+2.34.1
+
 
