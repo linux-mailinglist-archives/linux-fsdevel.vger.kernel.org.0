@@ -1,97 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-26378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D281958BEE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:08:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C9A958BFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE141C21C80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 16:08:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6058B1F23316
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 16:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C3A1BB6A1;
-	Tue, 20 Aug 2024 16:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA9219D8BB;
+	Tue, 20 Aug 2024 16:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SL4ZQlS9"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ur7gB0XH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4602192B83
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 16:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80C073176;
+	Tue, 20 Aug 2024 16:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724170056; cv=none; b=WT9hHQ8J2Ns6ib9XKcGfNAiB/I2VuJfQIXT5xM7AyL+sJnVdYhSV189lE6JrfpMwKwdQPOMjrsfn8y2x2rIdy+OHYb70C5VdB70GDQo+Hwx9DoIEOszDmdNf4oxWgOjDPBqRO3ygK1upqRkrItNVq5c2k+uh6FeFrV+gSSdslUY=
+	t=1724170428; cv=none; b=vE/5I5+QpnkeXSNBPrWVR6N2W1d29NgN+d94Q91YHlIBTzElPeXBOJiR34J2lbjnd4omYNxYsXB+YQzYB0dx/PMi1gBTL3HeH5ExwPcU38jRnjPoEzXhgRX74nhoZLWBxPbXxbqRTPlnzy0yK/wB/8WPZ7S0TXZ4HngEFXTZvEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724170056; c=relaxed/simple;
-	bh=vQaqAitSD8zjQ4WrCi/snDMGSRzMp5NkTpK7rN760cM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ha/NvA5G8FbasTcMHGqlfjUy0awGd85yvXjKYto0BpeK5DA//riFd5IxLIsgatpfF0wy6mPUzZxrAj8djvkErYdVkW9MZsutXBCtrYcJyIXwQydTHjj4oh/JJj9Ack0J46QImbBBvCXB5/A6v5gVcEoHr/81l+GtYfGrANaElbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SL4ZQlS9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCA2C4AF10;
-	Tue, 20 Aug 2024 16:07:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724170056;
-	bh=vQaqAitSD8zjQ4WrCi/snDMGSRzMp5NkTpK7rN760cM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SL4ZQlS9+VHyJktxi4MIQKwUBrPTWCCtWRa3FkrYKggLoe9YJevrcH5S3Tka3Rbz3
-	 t5erCNq/KFqbzLEoiq5XR2RqS5v7KLz00Z1VxkRYeYyj9ko3SPBoXk13ccGqhe7XS2
-	 mcNhzJR+emLSazKQjECSEqdwMvUtnBreG7pf5NkUIP+GkzDpsGMnQf38Tlv5ms4Qim
-	 lh1gndWKU18fEt0B0JFduSua24JyksGngllIbw9n3RaqRom7goNPPWp04ZNXsza87k
-	 ivs3rHw9Kfu/ExxNrrVjVkhgGEFV69SdYVaiI5oskYaGRiGE0coIDiLhuDR5Luv8W+
-	 ThQZdGsNhIQhg==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	NeilBrown <neilb@suse.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH RFC 5/5] inode: make i_state a u32
-Date: Tue, 20 Aug 2024 18:06:58 +0200
-Message-ID: <20240820-work-i_state-v1-5-794360714829@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240820-work-i_state-v1-0-794360714829@kernel.org>
-References: <20240820-work-i_state-v1-0-794360714829@kernel.org>
+	s=arc-20240116; t=1724170428; c=relaxed/simple;
+	bh=u1OBCw8lhJ/KBGXPAHwJBxAiK9D1v7xPpp+SY2QNN4E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AQZZD1erbnEVjFKf2QRxAiNgqYU/Fergix2tPVPTCk6TBSjnGzn6kI9rzdUWZKW0p75iwn14fF2wRzKHygcekNTsWqQfRF4N+m+dLukRB2uToQOqqa/V3smtH4ZKavAKzHXIppVWlCsj0cs9RBmg0SnB8+xV6rLzGAvsoDNhyaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ur7gB0XH; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WpDzP4qljz9slY;
+	Tue, 20 Aug 2024 18:13:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1724170417;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MRDbeKxPsqXdChWWngfAVr7jcYfztwIhGfk2/Sk7XsE=;
+	b=ur7gB0XH7LiF+8vnFRN+mF+Zx5CGOcBWZ8NS/yjaFQRbNqHiyQSf+9GtrZBpfh+RTqhHWV
+	dvEN/lLkCNIis8RyIsdzMFgIlYkaERQPnn+d5laIj6KBXUFvsotuPBPYxCNhkWaHQ5dZfa
+	0T/U0Lr8YeKqsRP0IZDlcR3G/jaBJY1twHM+ljo6G196UVVKv8vqRC7IyJDRsKntxjnnhG
+	+AHZ3FpXOAxlPCmQFblJ2g0+0EF0xVJD260OgQDzXeyK1urkq/V9wDBzV315Pxi9u+9sfF
+	EVW7Aax0wEjiu+JL9u1K0TfNSC95ubs9tupLO1NyH1uG3l3KsneWraYXTW/Nug==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	kernel@pankajraghav.com,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH] Documentation: iomap: fix a typo
+Date: Tue, 20 Aug 2024 18:13:29 +0200
+Message-ID: <20240820161329.1293718-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=677; i=brauner@kernel.org; h=from:subject:message-id; bh=vQaqAitSD8zjQ4WrCi/snDMGSRzMp5NkTpK7rN760cM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd2a/Uc+vR5TtFtY9Kr2+1+npucsZjLmU9//NSpryPl lasvLMyv6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiIeaMDLPYLvxewmWafsD0 /ta/6383bvi2yTXzA7fOns990lHcN1IYGS7qe1W8SXlUa64WzXjpksU8s9rsS3M2h6710OKdOOW BGDcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4WpDzP4qljz9slY
 
-Now that we use the wait var event mechanism make i_state a u32 and free
-up 4 bytes. This means we currently have two 4 byte holes in struct
-inode which we can pack.
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Change voidw -> void.
+
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- include/linux/fs.h | 2 +-
+ Documentation/filesystems/iomap/design.rst | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f854f83e91af..54cfb75b6a28 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -681,7 +681,7 @@ struct inode {
- #endif
- 
- 	/* Misc */
--	unsigned long		i_state;
-+	u32			i_state;
- 	struct rw_semaphore	i_rwsem;
- 
- 	unsigned long		dirtied_when;	/* jiffies of first dirtying */
-
+diff --git a/Documentation/filesystems/iomap/design.rst b/Documentation/filesystems/iomap/design.rst
+index 37594e1c5914..7261b1b2c379 100644
+--- a/Documentation/filesystems/iomap/design.rst
++++ b/Documentation/filesystems/iomap/design.rst
+@@ -165,7 +165,7 @@ structure below:
+      u16                 flags;
+      struct block_device *bdev;
+      struct dax_device   *dax_dev;
+-     voidw               *inline_data;
++     void                *inline_data;
+      void                *private;
+      const struct iomap_folio_ops *folio_ops;
+      u64                 validity_cookie;
 -- 
-2.43.0
+2.44.1
 
 
