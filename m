@@ -1,113 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-26399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E93E958EB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 21:41:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FDE0958DE5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 20:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9E2AB222C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 19:41:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09592830DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AE5157488;
-	Tue, 20 Aug 2024 19:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633F1C37A4;
+	Tue, 20 Aug 2024 18:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bitron.ch header.i=@bitron.ch header.b="hsUqAq3D"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0zqSmJJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from nov-007-i674.relay.mailchannels.net (nov-007-i674.relay.mailchannels.net [46.232.183.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA4818E344
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 19:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.183.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448CC1BDA8C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 18:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724182872; cv=none; b=WP/rDs7A1moaz6jUDsMNsF24xxSIyGFl6CLZ1d5kLPywirzI6CBa1Oe2lgBrNFKKzjV3tjguD35sSe5K61Rk/GXWOptts9Ppf1A+ho79O94MSDUVlAKRvAutcDKC21CWJceUy22k8ZVt8zbZ2qX6Wp28a2wPzVIuHvU1jIJjCm0=
+	t=1724177996; cv=none; b=VfowERXciscNN++xQbWCe+qMhTh4lQ0gotfN7Tdt61KQe9/M+V+IP9cYt9FFDYr++EZJBZDRQdBUUaFiTqDEGu/gEnbUiuvDsyyV7pVkAuktK/P/pZL07AbxYMaKxuaTyf7Cs8dprjcI/LQO+vzLYHP7SNgDVbnN4c7VnFjFt3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724182872; c=relaxed/simple;
-	bh=R16rU2/2jUzw7hsMxQEPVFBSANsG6uCqEI/fMe006dU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YfV87buG2CqQKn/dYcTHQP2B9vQfexdUb6cDs5pGBxYVqBfB82coWj8xBjc47NwpiUNf+9Up8MWllwDSDDkepjV1+vhCpVl6ZzSjcOlbttQo7IrVlVBRdl97GYf8li7flD0ciEgZFRos+wj/9qUjHXOroFLIheh+sFeUnFJL1CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch; spf=pass smtp.mailfrom=bitron.ch; dkim=pass (2048-bit key) header.d=bitron.ch header.i=@bitron.ch header.b=hsUqAq3D; arc=none smtp.client-ip=46.232.183.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitron.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitron.ch
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id A85E56C0090;
-	Tue, 20 Aug 2024 12:57:09 +0000 (UTC)
-X-Sender-Id: novatrend|x-authuser|juerg@bitron.ch
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: novatrend|x-authuser|juerg@bitron.ch
-X-MailChannels-Auth-Id: novatrend
-X-Drop-Zesty: 35c074cb1114ae44_1724158628999_1251448083
-X-MC-Loop-Signature: 1724158628999:1204312
-X-MC-Ingress-Time: 1724158628999
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitron.ch;
-	s=default; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=n7zgAnQMqBioxrmxJr5nMa8DsN3lhqmmF/39n5E226M=; b=hsUqAq3DwA4y8veWc5GORBhBc9
-	zlYLgKe0okkA89u/HbeLzRiB1LE2+v1Rn6N0kGk7Edf/xFlBBNtKQdZpPN1uAPUa1tY6V8/r8HV9q
-	fceh2g4lMhAOFdLjmq+lOoKE6e+9szPM+Qh4ooGXChpQssg+POM3hxiJkiWdnpRCZOFQGEmX/S0tL
-	5+VPDY3yzIoph4TgZKRoENJryiOSsvk/MVkNilrSEf8GMSj2tyzm1FI5KKOCZuiM0a1S45gb9H6Py
-	eV3e+IURHNYF971fVox+2eQzUFianzxfN0n3NHWV06DUTrFahHLQVW2dQpQk5NOIGyBat7YMYN4IY
-	t7lnJecw==;
-Message-ID: <2aeca29ce9b17f67e1fac32b49c3c6ec19fdb035.camel@bitron.ch>
-Subject: Re: [PATCH 3/3] fuse: use folio_end_read
-From: =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Date: Tue, 20 Aug 2024 14:57:04 +0200
-In-Reply-To: <d0844e7465a12eef0e2998b5f44b350ee9e185be.camel@bitron.ch>
-References: <ZrY97Pq9xM-fFhU2@casper.infradead.org>
-	 <20240809162221.2582364-3-willy@infradead.org>
-	 <d0844e7465a12eef0e2998b5f44b350ee9e185be.camel@bitron.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1724177996; c=relaxed/simple;
+	bh=Z48K+XibslftzZa+2cejdG7u1Go9k9G5I6LFjRMSQg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BxJw1DDkHeF9RYHtL36yMccp8pQpECjeqINYOWd10sLj5HbyNc07jPeFV/Ool3UQWbbEnJlUUZyCSoKnBBxW/WMVaDyH2aY20Z9IQEYx3IpH02Y1EKU93vU+J2VRzBo6kJ1QZKW+KHFHY0z1kWlnPKUue9g3xxGNX+jiLIRbDRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D0zqSmJJ; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44ff99fcd42so33999441cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 11:19:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724177994; x=1724782794; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Gt4plaeup3PoWZZfcR33PlFRbf9IOtcKRUvDQ0PJEk=;
+        b=D0zqSmJJbRHj8u5lWeLlPPE8DZOyQO15OlnTGBhJ40jh/LIXsIcik00CC9mxwE7SwR
+         5W/bLwBrNx3RwQYr+LACC7VN2GkJpcY3jo3ke/tKorZ8mbFR2G2mqE45/R1MboHJCX22
+         lhIXeTlfDQ91MCp+ae/lH8oLt/YY7K52dM4F9QJPT3p+IttNjfrsFCh3IbRGCsxBMzWo
+         XHugqbSMkFdG3Fvgy1XkT6gz7JUuVy0xotXrfCTqYyszzqnudyhY6lvCOZg7IWcxo34G
+         jkhzqHRap7rbZQkUw+wl0bnUrUv8m6hWIOuSb2TmzoWmx34Fn2cE8HHEuwd9Qi2W9rWO
+         i0BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724177994; x=1724782794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6Gt4plaeup3PoWZZfcR33PlFRbf9IOtcKRUvDQ0PJEk=;
+        b=fGaVwsI5/r7CaIltk67HKLAlUaM0OaVYUVivYuROb6LqtxiR5YSnMMPTZRPi2FxumI
+         xXF3yn2+Lc9envo4aGA6PHPacuNLtfR2zMU266VqNREISYmG4ZUzJD8FNj94QIXKcMpJ
+         a6l3G7RR+OflDUnGmb/cz+AwO37jPM6NHcHJXQ6J3nwBkcCPOMsXY7oKfCAIMQej/Alt
+         xtAqdiuoT9rrMHT2vAT5DNfPHZRf+wwpSRrJBwhrVUwcGo+/8YiDJ+9G4bhImopoGROv
+         GWRHrVfRKUoIC1gAxX2fYkZFGsJ0rxSRrLCP6+0qwR0UyQqWW3TR4qioWV4sh6tN+eQc
+         IlQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnOYMcf22oPbMGDi1sp7skPPOV6hP2Rh+Ai0M28nYUHJdX1Z2+qRog0u/W325H5TaK6iIEI6WVtnQpT7LB84Lqe+Fkzsrps5sZOcYt8w==
+X-Gm-Message-State: AOJu0YyG62tentJ4QV3VCxcQ1FayfekHwdz3ZYWP794GN6kbiE2oIY+Z
+	M6MP7D0Q5/qgJ1DiRfS07PiBh7d3AK4XCjPeHODuaOdyLEDGy3T2DkBB34jN2gWp8Anosktemkd
+	4CK4sK7xEVoqEoqyUxkUXXJL1AYc=
+X-Google-Smtp-Source: AGHT+IHdq/7qQhGG/UOwqxg5dtfSee0LCjZjJPaalALsHyI+Qi2MK5zfS0V1GhQik2LZOfMr1U1Q/y5VqgUT2XnJYfg=
+X-Received: by 2002:a05:622a:1e8e:b0:447:f361:e2e0 with SMTP id
+ d75a77b69052e-453743ae440mr189583091cf.59.1724177994025; Tue, 20 Aug 2024
+ 11:19:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AuthUser: juerg@bitron.ch
+References: <20240819182417.504672-1-joannelkoong@gmail.com> <f93cde51-d2f9-40c9-9ebb-fea1fbbf56d8@linux.alibaba.com>
+In-Reply-To: <f93cde51-d2f9-40c9-9ebb-fea1fbbf56d8@linux.alibaba.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 20 Aug 2024 11:19:42 -0700
+Message-ID: <CAJnrk1ZT+-30vMSUEVof7RNmrewvft14XbJjknL+y2y45-NrZw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fuse: drop unused fuse_mount arg in fuse_writepage_finish
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 2024-08-10 at 14:24 +0200, J=C3=BCrg Billeter wrote:
-> On Fri, 2024-08-09 at 17:22 +0100, Matthew Wilcox (Oracle) wrote:
-> > part three
-> >=20
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Mon, Aug 19, 2024 at 6:53=E2=80=AFPM Jingbo Xu <jefflexu@linux.alibaba.c=
+om> wrote:
+>
+>
+> On 8/20/24 2:24 AM, Joanne Koong wrote:
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 > > ---
-> > =C2=A0fs/fuse/file.c | 4 +---
-> > =C2=A01 file changed, 1 insertion(+), 3 deletions(-)
-> >=20
+> >  fs/fuse/file.c | 7 +++----
+> >  1 file changed, 3 insertions(+), 4 deletions(-)
+> >
 > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index 2b5533e41a62..f39456c65ed7 100644
+> > index f39456c65ed7..63fd5fc6872e 100644
 > > --- a/fs/fuse/file.c
 > > +++ b/fs/fuse/file.c
-> > @@ -937,9 +937,7 @@ static void fuse_readpages_end(struct
-> > fuse_mount
-> > *fm, struct fuse_args *args,
-> > =C2=A0	for (i =3D 0; i < ap->num_pages; i++) {
-> > =C2=A0		struct folio *folio =3D page_folio(ap->pages[i]);
-> > =C2=A0
-> > -		if (!err)
-> > -			folio_mark_uptodate(folio);
-> > -		folio_unlock(folio);
-> > +		folio_end_read(folio, !err);
-> > =C2=A0		folio_put(folio);
-> > =C2=A0	}
-> > =C2=A0	if (ia->ff)
->=20
-> Reverting this part is sufficient to fix the issue for me.
+> > @@ -1769,8 +1769,7 @@ static void fuse_writepage_free(struct fuse_write=
+page_args *wpa)
+> >       kfree(wpa);
+> >  }
+> >
+> > -static void fuse_writepage_finish(struct fuse_mount *fm,
+> > -                               struct fuse_writepage_args *wpa)
+> > +static void fuse_writepage_finish(struct fuse_writepage_args *wpa)
+> >  {
+> >       struct fuse_args_pages *ap =3D &wpa->ia.ap;
+> >       struct inode *inode =3D wpa->inode;
+> > @@ -1829,7 +1828,7 @@ __acquires(fi->lock)
+> >   out_free:
+> >       fi->writectr--;
+> >       rb_erase(&wpa->writepages_entry, &fi->writepages);
+> > -     fuse_writepage_finish(fm, wpa);
+> > +     fuse_writepage_finish(wpa);
+> >       spin_unlock(&fi->lock);
+> >
+> >       /* After fuse_writepage_finish() aux request list is private */
+> > @@ -1959,7 +1958,7 @@ static void fuse_writepage_end(struct fuse_mount =
+*fm, struct fuse_args *args,
+> >               fuse_send_writepage(fm, next, inarg->offset + inarg->size=
+);
+> >       }
+> >       fi->writectr--;
+> > -     fuse_writepage_finish(fm, wpa);
+> > +     fuse_writepage_finish(wpa);
+> >       spin_unlock(&fi->lock);
+> >       fuse_writepage_free(wpa);
+> >  }
+>
+> I'm afraid an empty commit message will trigger a warning when running
+> checkpatch.  Otherwise LGTM.
 
-Would it make sense to get a revert of this part (or a full revert of
-commit 413e8f014c8b) into mainline and also 6.10 stable if a proper fix
-will take more time?
+Gotcha, I'll resubmit this with a commit message. Thanks for taking a look.
 
-Cheers,
-J=C3=BCrg
+>
+> Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+>
+> --
+> Thanks,
+> Jingbo
 
