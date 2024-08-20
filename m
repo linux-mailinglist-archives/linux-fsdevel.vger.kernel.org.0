@@ -1,149 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-26372-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF063958B44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 17:29:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8AED958BE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E1241C21DF9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 15:29:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA4E6282ED6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 16:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C75194137;
-	Tue, 20 Aug 2024 15:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BFD19E83F;
+	Tue, 20 Aug 2024 16:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUHjXyZ2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMsljkim"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CE9192B79;
-	Tue, 20 Aug 2024 15:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E48195FE5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 16:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724167712; cv=none; b=Wlt8mNVL7suFyw9uY3nEAIyejhpSV9aWbKMdlaKRf3G9RIBwTqO0mlUpZJ44C0E2klzxO85K/UORwA68u8H5/BgPOFfrNdtU3dF3XVqL1oZ3Qlc0HUpSDo7upbhX7U7iSjWoosAem2atRPQArRnjRStGO0ZViaMwLs9xJGgCcoI=
+	t=1724170046; cv=none; b=UNBVNK19zvvFrSTNu8DRKF6UJL1VPedX8bDgWHAazAv7AXLyOconnoF5Mi2fN0WYDpsI/NTP3Nol50ShTgmjmQDSV/notVz7KtqJMXPoE1OVHrBzYpwJNbIgcAmtQLJYDL5dycGqfy+RBCNlQf0QXNGQEUJ4gINmOM+9YFy3BCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724167712; c=relaxed/simple;
-	bh=xOjQogCtboiaDEhhAKTxRH8bKSHT1uounx3l9TGETkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ucknl9L1tszzlP7Wrr6/gtl/+udJuYaD+PTIGOcZ7+RpEzU+K3Z5ae1TmofJHQzVSW9ZQrpW8A5Hsci+T5GjyJgAtRBTOSiEYitM+4BelMaa4KWCH0YKBJMBSlcuUqjb9Ph0/CsYHrdTOF+Bs7kWaXFv46582dYtOpG+3jINVuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUHjXyZ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A68C4AF15;
-	Tue, 20 Aug 2024 15:28:23 +0000 (UTC)
+	s=arc-20240116; t=1724170046; c=relaxed/simple;
+	bh=JzOgszMyRZu4ya/XA9J0pgOYhicdJbxVYhqllfjcWnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R+tgg5B1yNZ+S/DZIl7Hgz+TTPSfUZLlFC1KldSO3qaucwqppRB1YrQokFkcIjJOOnygAddilqJDel8+Lz4W651KgmZRpdMJ5aV/PeJ8Y4EgioyQKpw1IYdfCi3ed71r4NL3Nl+R0k36peLQgjzHHxEoKSFSMf2gQEqzjekgqbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMsljkim; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C7E4C4AF0E;
+	Tue, 20 Aug 2024 16:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724167711;
-	bh=xOjQogCtboiaDEhhAKTxRH8bKSHT1uounx3l9TGETkQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eUHjXyZ2cuMRwBZU5drzIzAGHafYcOZVbd1dCQIvRqjL+mp8tIA7XyiFy2cCb1lAg
-	 shLO3+WN20Pzstfw7TIY2Fm2/7O7P4rPMgRslOFF8FRrg5Tw2W6K9hg6CDeDyr8s2Z
-	 dKLgO9QioVdce5HjIPnrHbA9CcZr9rhwfYiWAECOhm3Baxn+aET9P9N/7KW01x8G0S
-	 /YxbQ0SJf9JMPYzBsRG29MU+0Jcbf2gF1OwWZVEZ7C4nAiUP1XjAknZZ1nqJiNVWhj
-	 kyX3Qc98DJ/Vu/F5kkqrEn7yAsqfSZ1u+3FxpVBchfgoZTJgonBtBTHqFWeoKMXyEt
-	 2C+GLM3zIUHtg==
-Date: Tue, 20 Aug 2024 16:28:21 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 13/40] arm64/mm: Map pages for guarded control stack
-Message-ID: <ec999bf5-6273-4a3c-b1df-f8594d7bb228@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-13-699e2bd2190b@kernel.org>
- <ZsMMDNIp6Pkfbg1e@arm.com>
- <d43f8036-cc06-430c-9e9e-b938037fc64c@sirena.org.uk>
- <ZsSvSeE303LGtk4b@arm.com>
+	s=k20201202; t=1724170043;
+	bh=JzOgszMyRZu4ya/XA9J0pgOYhicdJbxVYhqllfjcWnI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aMsljkimux+aTBAkDasHsrT9UfP5FUyWErWpDU5+iaIL1zlydzVmpUryhK7pHaMRn
+	 mb+eyccPLsvNzTpyku7SBugvRKZHC/Mk974ylnZ3RhYgQsxj96lY/jZqjYn5qbb7rf
+	 koVYM0RqVNNQbRbe7ytob25Y2arCJKSjj4JnCCprM6oZzw9Fd3kH76gx/RQr2hBVrW
+	 t4S+2TiXbILJtVEC7mjo4R/5eZjx9ulZmmYsXBMxVoZXN25KrDXZzMFzcj2i3lKeGJ
+	 Gdp9w3x2Z4nQVkkPnGepR2EyIrxrANPAmgaXObhhKN1NFSIufDA9zt70HRx1110FkB
+	 RwiauB3soAh5Q==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	NeilBrown <neilb@suse.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH RFC 0/5] inode: turn i_state into u32
+Date: Tue, 20 Aug 2024 18:06:53 +0200
+Message-ID: <20240820-work-i_state-v1-0-794360714829@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To:  <CAHk-=wh4=w4pANpAPbx=Kw-jiExEabJ0pwYHFgAYXVaD0AJjrA@mail.gmail.com>
+References:  <CAHk-=wh4=w4pANpAPbx=Kw-jiExEabJ0pwYHFgAYXVaD0AJjrA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RmO2vT/CXaa26vbH"
-Content-Disposition: inline
-In-Reply-To: <ZsSvSeE303LGtk4b@arm.com>
-X-Cookie: You are false data.
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=721; i=brauner@kernel.org; h=from:subject:message-id; bh=JzOgszMyRZu4ya/XA9J0pgOYhicdJbxVYhqllfjcWnI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd2S9vezl2unNX8TODXoZK63l/2u2v/TwsXCt+ac77S 28bprfxd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExk/zpGho0PzJceV5Kpb/nv 5LvWYmLI8sx/5t/5hCKktCzTbt++2s/I0BO7mlt9fccpNu9N5zW5vHlWhTuvX6EeVqXc/MH++B8 FBgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+Hey,
 
---RmO2vT/CXaa26vbH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I've recently looked for some free space in struct inode again because
+of some exec kerfuffle we recently had and while my idea didn't turn
+into anything I noticed that we often waste bytes when using wait bit
+operations. So I set out to switch that to another mechanism that would
+allow us to free up bytes. So this is the attempt to turn i_state from
+an unsigned long into an u32 using the address of the i_state bit in the
+wait var event mechanism.
 
-On Tue, Aug 20, 2024 at 03:59:21PM +0100, Catalin Marinas wrote:
-> On Mon, Aug 19, 2024 at 05:33:24PM +0100, Mark Brown wrote:
-> > On Mon, Aug 19, 2024 at 10:10:36AM +0100, Catalin Marinas wrote:
+This survives LTP, xfstests on various filesystems, and will-it-scale.
+It's possible I got it all wrong but I want to have the RFC out.
 
-> > > At a quick look, do_mmap() seems to always set VM_MAYEXEC but discard it
-> > > for non-executable file mmap. Last time I looked (when doing MTE) there
-> > > wasn't a way for the arch code to clear specific VM_* flags, only to
-> > > validate them. But I think we should just clear VM_MAYEXEC and also
-> > > return an error for VM_EXEC in the core do_mmap() if VM_SHADOW_STACK. It
-> > > would cover the other architectures doing shadow stacks.
+---
+---
+base-commit: 01e603fb789c75b3a0c63bddd42a42a710da7a52
+change-id: 20240820-work-i_state-4e34db39bcf8
 
-> > Yes, I think adding something generic would make sense here.  That feels
-> > like a cleanup which could be split out?
-
-> It can be done separately. It doesn't look like x86 has such checks.
-> Adding it generically would be a slight ABI tightening but I doubt it
-> matters, no sane software would use an executable shadow stack.
-
-OK.
-
-> > > Is there any arch restriction with setting BTI and GCS? It doesn't make
-> > > sense but curious if it matters. We block the exec permission anyway
-> > > (unless the BTI pages moved to PIE as well, I don't remember).
-
-> > As you say BTI should be meaningless for a non-executable page like GCS,
-> > I'm not aware of any way in which it matters.  BTI is separate to PIE.
-
-> My thoughts were whether we can get rid of this hunk entirely by
-> handling it in the core code. We'd allow BTI if one wants such useless
-> combination but clear VM_MAYEXEC in the core code (and ignore VM_SHARED
-> since you can't set it anyway).
-
-I have to admit that the BTI because I was shoving _EXEC in there rather
-than because it specifically needed to be blocked.  So change the check
-for VM_SHARED to a VM_WARN_ON(), and leave the _EXEC check for now
-pending the above core change?
-
---RmO2vT/CXaa26vbH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbEthQACgkQJNaLcl1U
-h9C1gwf+L79Si923x11LZKfwuy0dQkE7LpTPSafOEhNGVDQZTOrYQW9x1homrSt5
-28vBitZZV/TtBmLO+HSzt1fq5JM76Q0BaPH3ngunEJ0umUMkZwC3r59YzFHNXhQL
-THzCh+B05luDGr58Ay6K29M/I8JVGiXNBd+Ag+/LYQTq2HXOPC7lJimbZAU0aS+Q
-mV43kq/p+Ipazr6Bymd4tGQI5HjdMgMp2dhKT0bLH06aGJhif8691f8t9ZTp4lGX
-1PqWpOuyg0qYDA8JAraUHsc+4FaMyygUqV1ZRC+aTjL/EVsIFwhvqeZzESS+C+/p
-C9zocGnFLEdepXWg3jQHODDOF+LxiQ==
-=8nDO
------END PGP SIGNATURE-----
-
---RmO2vT/CXaa26vbH--
 
