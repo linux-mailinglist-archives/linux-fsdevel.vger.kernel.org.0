@@ -1,64 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-26370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC059958A0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 16:48:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE9F958A92
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 17:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5021C216C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 14:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E69928C85F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 15:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F88C193064;
-	Tue, 20 Aug 2024 14:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C27C192B84;
+	Tue, 20 Aug 2024 14:59:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA52191F7B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 14:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CCD1922FA;
+	Tue, 20 Aug 2024 14:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724165129; cv=none; b=LMW+V5KkygzqeykzxN7zJaJg8SdDgkrTseT27CcTk7Q9nx6tMXeSp5cVmn3zUzrNjH9zriaIOmJsass1pm+xmhIOAZvwJvTPQE7chroUEPfk4y7bzuyzQ+CtR5y6hkf76/5Raif2pK23lQsTAEi4OF1hGxYXMzZQsSlpGvIUKnc=
+	t=1724165969; cv=none; b=NGqNE1nvCGxGy0odgj6vNPwPkRroptFAxogfzDH3ttXsJu1psezxxnGaSxDG24QMQl+NacMyAYRR61yA5RHK+Jvk+uVrlhaeIrx7nUQmVC6s2b0lbHS+Yz3d6y+4aSohFI8Tt3NhqOHYcO34LJzvsxkpVT7roJN/3dX2ycknTDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724165129; c=relaxed/simple;
-	bh=vlryMHK2Fs/BfF1L8tDkzmLCv7GbWXARabhNUAS+VSA=;
+	s=arc-20240116; t=1724165969; c=relaxed/simple;
+	bh=fFyycMNcHqQKpVsT6qjvKb11en2SqC7MqG20NMYTK+I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QWHbXarBYkp5rIPtUYeRkQTHdFuaVK3b3OVkiNjxyzccy6RMN2/yMRViovAfa85jQ8AJeL8uYMAI/46pcPwivHA4kcRdo/lMRmxb+AUAkOTrlv4Wf6rCSvYexLb9x6/PN+WBVMMhmvpxYzlecGGpB/xML8uUjO6S/lfeOOjrOQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7AD6DA7;
-	Tue, 20 Aug 2024 07:45:52 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2E113F66E;
-	Tue, 20 Aug 2024 07:45:23 -0700 (PDT)
-Date: Tue, 20 Aug 2024 15:45:21 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-	aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, bp@alien8.de,
-	broonie@kernel.org, christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
-	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
-	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
-	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v4 18/29] arm64: add POE signal support
-Message-ID: <ZsSsAdGc99I10cMn@e133380.arm.com>
-References: <Zqu2VYELikM5LFY/@e133380.arm.com>
- <20240806103532.GA1986436@e124191.cambridge.arm.com>
- <20240806143103.GB2017741@e124191.cambridge.arm.com>
- <ZrzHU9et8L_0Tv_B@arm.com>
- <20240815131815.GA3657684@e124191.cambridge.arm.com>
- <Zr4aJqc/ifRXJQAd@e133380.arm.com>
- <ZsN8MnSqIWEMh7Ma@arm.com>
- <20240820095441.GA688664@e124191.cambridge.arm.com>
- <ZsSgKl2JINjdpuW1@e133380.arm.com>
- <20240820140606.GA1011855@e124191.cambridge.arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/u7yPzp5CZ8h8uRhRW1L4rxdv9MVmmnuyGR9cjaSXLtYOIh1AIPabLK0DiGSzK4DumJl8ePal85Zor/2JkLoeeHZyfwrDcEc7HQbAJjwm8xLGMzVSLFWsCkYXsGizqrSTd2vFxiQBLGN5uu6iN9o4ghH9DvQUfQr1KIsWUp8KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA71FC4AF0F;
+	Tue, 20 Aug 2024 14:59:23 +0000 (UTC)
+Date: Tue, 20 Aug 2024 15:59:21 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 13/40] arm64/mm: Map pages for guarded control stack
+Message-ID: <ZsSvSeE303LGtk4b@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-13-699e2bd2190b@kernel.org>
+ <ZsMMDNIp6Pkfbg1e@arm.com>
+ <d43f8036-cc06-430c-9e9e-b938037fc64c@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,59 +71,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240820140606.GA1011855@e124191.cambridge.arm.com>
+In-Reply-To: <d43f8036-cc06-430c-9e9e-b938037fc64c@sirena.org.uk>
 
-On Tue, Aug 20, 2024 at 03:06:06PM +0100, Joey Gouly wrote:
-> On Tue, Aug 20, 2024 at 02:54:50PM +0100, Dave Martin wrote:
-> > On Tue, Aug 20, 2024 at 10:54:41AM +0100, Joey Gouly wrote:
-> > > On Mon, Aug 19, 2024 at 06:09:06PM +0100, Catalin Marinas wrote:
-> > > > On Thu, Aug 15, 2024 at 04:09:26PM +0100, Dave P Martin wrote:
-> > > > > On Thu, Aug 15, 2024 at 02:18:15PM +0100, Joey Gouly wrote:
-> > > > > > That's a lot of words to say, or ask, do you agree with the approach of only
-> > > > > > saving POR_EL0 in the signal frame if num_allocated_pkeys() > 1?
-> > > > > > 
-> > > > > > Thanks,
-> > > > > > Joey
-> > > > > 
-> > > > > ...So..., given all the above, it is perhaps best to go back to
-> > > > > dumping POR_EL0 unconditionally after all, unless we have a mechanism
-> > > > > to determine whether pkeys are in use at all.
-> > > > 
-> > > > Ah, I can see why checking for POR_EL0_INIT is useful. Only checking for
-> > > > the allocated keys gets confusing with pkey 0.
-> > > > 
-> > > > Not sure what the deal is with pkey 0. Is it considered allocated by
-> > > > default or unallocatable? If the former, it implies that pkeys are
-> > > > already in use (hence the additional check for POR_EL0_INIT). In
-> > > > principle the hardware allows us to use permissions where the pkeys do
-> > > > not apply but we'd run out of indices and PTE bits to encode them, so I
-> > > > think by default we should assume that pkey 0 is pre-allocated.
-> > > > 
-> > > > 
-> > > 
-> > > You can consider pkey 0 allocated by default. You can actually pkey_free(0), there's nothing stopping that.
-> > 
-> > Is that intentional?
+On Mon, Aug 19, 2024 at 05:33:24PM +0100, Mark Brown wrote:
+> On Mon, Aug 19, 2024 at 10:10:36AM +0100, Catalin Marinas wrote:
+> > On Thu, Aug 01, 2024 at 01:06:40PM +0100, Mark Brown wrote:
+> > > +	if (system_supports_gcs() && (vm_flags & VM_SHADOW_STACK)) {
+> > > +		/*
+> > > +		 * An executable GCS isn't a good idea, and the mm
+> > > +		 * core can't cope with a shared GCS.
+> > > +		 */
+> > > +		if (vm_flags & (VM_EXEC | VM_ARM64_BTI | VM_SHARED))
+> > > +			return false;
+> > > +	}
 > 
-> I don't really know? It's intentional from my side in that it, I allow it,
-> because it doesn't look like x86 or PPC block pkey_free(0).
+> > I wonder whether we should clear VM_MAYEXEC early on during the vma
+> > creation. This way the mprotect() case will be handled in the core code.
+> > At a quick look, do_mmap() seems to always set VM_MAYEXEC but discard it
+> > for non-executable file mmap. Last time I looked (when doing MTE) there
+> > wasn't a way for the arch code to clear specific VM_* flags, only to
+> > validate them. But I think we should just clear VM_MAYEXEC and also
+> > return an error for VM_EXEC in the core do_mmap() if VM_SHADOW_STACK. It
+> > would cover the other architectures doing shadow stacks.
 > 
-> I found this code that does pkey_free(0), but obviously it's a bit of a weird test case:
+> Yes, I think adding something generic would make sense here.  That feels
+> like a cleanup which could be split out?
+
+It can be done separately. It doesn't look like x86 has such checks.
+Adding it generically would be a slight ABI tightening but I doubt it
+matters, no sane software would use an executable shadow stack.
+
+> > Regarding VM_SHARED, how do we even end up with this via the
+> > map_shadow_stack() syscall? I can't see how one can pass MAP_SHARED to
+> > do_mmap() on this path. I'm fine with a VM_WARN_ON() if you want the
+> > check (and there's no way a user can trigger it).
 > 
-> 	https://github.com/ColinIanKing/stress-ng/blob/master/test/test-pkey-free.c#L29
+> It's just a defenesive programming thing, I'm not aware of any way in
+> which it should be possible to trigger this.
+> 
+> > Is there any arch restriction with setting BTI and GCS? It doesn't make
+> > sense but curious if it matters. We block the exec permission anyway
+> > (unless the BTI pages moved to PIE as well, I don't remember).
+> 
+> As you say BTI should be meaningless for a non-executable page like GCS,
+> I'm not aware of any way in which it matters.  BTI is separate to PIE.
 
-Of course, pkey 0 will still be in use for everything, and if the man
-pages are to be believed, the PKRU bits for pkey 0 may no longer be
-maintained after this call...
+My thoughts were whether we can get rid of this hunk entirely by
+handling it in the core code. We'd allow BTI if one wants such useless
+combination but clear VM_MAYEXEC in the core code (and ignore VM_SHARED
+since you can't set it anyway).
 
-So this test is possibly a little braindead.  A clear use-case for
-freeing pkey 0 would be more convincing.
-
-In the meantime though, it makes most sense for arm64 to follow
-the precedent set by other arches on this (as you did).
-
-[...]
-
-Cheers
----Dave
+-- 
+Catalin
 
