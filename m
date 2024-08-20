@@ -1,258 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-26402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E18958F1A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 22:17:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDB9958F7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 23:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A575284F84
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 20:17:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D2D4B22B6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 21:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F381BBBF0;
-	Tue, 20 Aug 2024 20:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19F31C6880;
+	Tue, 20 Aug 2024 21:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L0x1ULb8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xwM6zom+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r7I3Mecn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SGlp+5t+"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="USTz7YFO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF781862;
-	Tue, 20 Aug 2024 20:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D833E1BE222
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 21:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724185025; cv=none; b=Ac2PCMcPY9Z4zI22U9QmQG7vLJBgo3qrm5+PKg/vZ965UdEQXm2PUU25h7fjackYhtlXDzaotMgZgFlMkBrEucXyrrPhT+u2xoi5hVEg3gV4yUqDaINexSFHKD9mKMPonUn6W0Bj5qzVJQDic0epbP+QYMdgY2HgJ+LMRJzHaSI=
+	t=1724188275; cv=none; b=fQba0ksgvO/i6OQ5dUXy6oqQoREX5ZwSiapsvsRsitEBqL3lkzWrwm3H4R4ITuCeoOlaeqPcsMXVadB4D2lBb9j4LewA6Ik2oM3bE8qeFRWswsqMGWkRfnPeE9QpyI8aB9Wu+Xc2x9voYWpOqWJ11JTOa2psWGq0gsWMu7/qyqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724185025; c=relaxed/simple;
-	bh=OxJUUNwFru9yJDpld+I0d8zMg7aA6LbgQCI85+gNk/8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=St2ALV55bh9OgOIkC7HK3NWvVjptfZ8jIaqfGDbyIckktmBYFFYetVxv3M9Woi+sWC1i49hWrWp5bDk6baU/xnegasp94Igh/ZjX60V659N203i2djN+pAl8v7xCkMlcjgUx04avi5R6ZffsqqKMGVuwS4OQqZur06ualtRTKgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L0x1ULb8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xwM6zom+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r7I3Mecn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SGlp+5t+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DB907225AD;
-	Tue, 20 Aug 2024 20:16:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724185021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pvUdTrpsiCOOSJ6uovsNbdjF3G6E2dKscI4/V4e1O6M=;
-	b=L0x1ULb8woeQUD0Y1V1qpY1dQFroXrFWztz7bW6zw62wtirM1Q60vvGOElV5lRlTh8lFNs
-	/RkarrvxqrGJbqEQ4BmxLLIOAMeEftt0EaTcI2Q/mifyI8MSr2LjAWQCqGCUq47/pCUbPI
-	Rtu2xlgRkLOy040DNO5jsxfXOkP5i8Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724185021;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pvUdTrpsiCOOSJ6uovsNbdjF3G6E2dKscI4/V4e1O6M=;
-	b=xwM6zom+6ET6iqPFmVsZk6czKy+9bdvz3x++HMwfvaJFsjJJBtCIHO3jgaXVhOq9dyC2MS
-	JxNqRf1VikQ8ESCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724185019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pvUdTrpsiCOOSJ6uovsNbdjF3G6E2dKscI4/V4e1O6M=;
-	b=r7I3MecnjpB0o0BGv+7zzx2koEX87wrUDbg4EsDp4cjtdfH+UgfctT2d9En/KWGeuYvoo9
-	xK6oSB5IHIpRhcG/yUhME1yuZVE3KHLYrwvgjyKTO6Xkp1b+Nzc2Rt96cgFb4g0Ik5LO78
-	rbac/SNSBF5Y/hf4Y9lWe1gU8sikd38=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724185019;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pvUdTrpsiCOOSJ6uovsNbdjF3G6E2dKscI4/V4e1O6M=;
-	b=SGlp+5t+UNVYvji81egQNiYXDqR/32rHe2J0UkaFI/VqftMiuYtXYXum0VdwahMyMFJyR8
-	Fg8Ybor1rl+sP6DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9B6B913770;
-	Tue, 20 Aug 2024 20:16:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hZwdILv5xGaKBgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 20 Aug 2024 20:16:59 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: viro@zeniv.linux.org.uk,  brauner@kernel.org,  tytso@mit.edu,
-  linux-ext4@vger.kernel.org,  jack@suse.cz,  adilger.kernel@dilger.ca,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  kernel@collabora.com,  shreeya.patel@collabora.com
-Subject: Re: [PATCH 1/2] fs/dcache: introduce d_alloc_parallel_check_existing
-In-Reply-To: <20240705062621.630604-2-eugen.hristev@collabora.com> (Eugen
-	Hristev's message of "Fri, 5 Jul 2024 09:26:20 +0300")
-References: <20240705062621.630604-1-eugen.hristev@collabora.com>
-	<20240705062621.630604-2-eugen.hristev@collabora.com>
-Date: Tue, 20 Aug 2024 16:16:58 -0400
-Message-ID: <87zfp7rltx.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1724188275; c=relaxed/simple;
+	bh=EXmtwN9WYu5r9hb1G06mSDSZ5jR9OiA6OQQFjalEZNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lxSYpTrkfHmnOGQSt/zttQ6ugoyl6RfGZATxFJYF008uowjopByifFL576jaQgZj1j007H47Xs1XRzsn2g7rCAWMUBWreCUecD3PX/GpegjNcL62CnJ1eIHKSmpQVTXonBbjLS0k09SgRKHLnVvf4b9GmWiuh8cyXskQG5RliD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=USTz7YFO; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6b3afc6cd01so1059197b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 14:11:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724188273; x=1724793073; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4u4JZXVf3fbTLvsAUW5memSWwVG5jYMuxlS/FZaFGqQ=;
+        b=USTz7YFOdTh2v6bsxrilGeFIx0VBTGt0LyD+av7pbWdC7SGfV+HM/jm8vVBRV7GjJc
+         IjR5XJ3jcivzFwtZbKN/pOKLiUug/g1/yXC3rtaGQzLFWrAeTXXZ1FyvxEmE3voF8wQx
+         QZMLpHP1aigERaIBQjWeTlpN2k3P/UVDFIqb0kQS83A61G396GFZSjfzwNnPlIl61fQE
+         xhnJW9+Zi/2xxM7+F0GlKMC9NEgnN0pkJ50XWEztURahDbNV500EbEhu1hmklHExBmJj
+         zoo4/rAkVVOYldud13G4Y6Ck47stu2c+do8i78rZqI1OdR1MSHEs3VOEMazQAt8CsWiT
+         sFAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724188273; x=1724793073;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4u4JZXVf3fbTLvsAUW5memSWwVG5jYMuxlS/FZaFGqQ=;
+        b=Cq+7bFAln29t632GQhuT6OEVd17rex0ZndCpnRXzXJ1e2N5pvtidem3mXZuNfLvAWo
+         M/HI++RTJfOZtkcEEGlliOZLIC/0bvK16lveJwCDs2Lvq11zoSceqiSYu6mNi9JuGv0k
+         rDFWgEh/Stsm2DyyzDwmJoB+CJGaTY23bqRzZo5Jwq5QSVsDYSHGarDYhrYXt/sBn0ua
+         eyfFwXWL2bjM4gqF4c22FAEi6tEh5Y0XYE/CYBTYq0X78+A9LXA0iKA3TPPoc6TAHRnR
+         ckAv8Lde7dU3ztPICSk55qe3uchX6LZ3TWLPR2rYZRUXC6nZQAsFonmAuOJcIDNWi/U5
+         i1ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXzVhM44Z/q2yMUyLbedK85Jj+M5kv0A36F7icBJDUs39HM2maxoCo4o7Oqyorvgm+xV6/XPwXvtakpWSFb@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlpc2La3Oylg5oE6K9bozDqS/EvR8Y9D/dK7LxvVrU7zc0cgBK
+	Cm3mZntV8UYwlUNGiR0ZJbDxPhTzX1ylhWBkOd0D7yPrmR8XjEi0HSK8+TWJwh7tee7xxjdLCYk
+	Y4LpN+2+2gknU3rA7SBDaRBFD0d1WJJ7l5cWZ
+X-Google-Smtp-Source: AGHT+IFjR4IpW2i5A2QBopIgS953eWYvBoGSZ6/OdZCVoBwe1iS+H7W43WgDgm2EzqEA3tHpnD1imThTf7c/exuDAME=
+X-Received: by 2002:a05:690c:67c7:b0:6b5:d1ed:468e with SMTP id
+ 00721157ae682-6c0d9707e2fmr2003157b3.8.1724188272854; Tue, 20 Aug 2024
+ 14:11:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[collabora.com:email,mailhost.krisman.be:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
+ <8DFC3BD2-84DC-4A0C-A997-AA9F57771D92@fb.com> <20240819-keilen-urlaub-2875ef909760@brauner>
+ <20240819.Uohee1oongu4@digikod.net> <370A8DB0-5636-4365-8CAC-EF35F196B86F@fb.com>
+ <20240820.eeshaiz3Zae6@digikod.net> <1FFB2F15-EB60-4EAD-AEB0-6895D3E216C1@fb.com>
+In-Reply-To: <1FFB2F15-EB60-4EAD-AEB0-6895D3E216C1@fb.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 20 Aug 2024 17:11:02 -0400
+Message-ID: <CAHC9VhQ3Sq_vOCo_XJ4hEo6fA8RvRn28UDaxwXAM52BAdCkUSg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for bpf_get_dentry_xattr
+To: Song Liu <songliubraving@meta.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Christian Brauner <brauner@kernel.org>, Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	Liam Wisehart <liamwisehart@meta.com>, Liang Tang <lltang@meta.com>, 
+	Shankaran Gnanashanmugam <shankaran@meta.com>, LSM List <linux-security-module@vger.kernel.org>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+On Tue, Aug 20, 2024 at 1:43=E2=80=AFPM Song Liu <songliubraving@meta.com> =
+wrote:
+> > On Aug 20, 2024, at 5:45=E2=80=AFAM, Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
 
-> d_alloc_parallel currently looks for entries that match the name being
-> added and return them if found.
-> However if d_alloc_parallel is being called during the process of adding
-> a new entry (that becomes in_lookup), the same entry is found by
-> d_alloc_parallel in the in_lookup_hash and d_alloc_parallel will wait
-> forever for it to stop being in lookup.
-> To avoid this, it makes sense to check for an entry being currently
-> added (e.g. by d_add_ci from a lookup func, like xfs is doing) and if this
-> exact match is found, return the entry.
-> This way, to add a new entry , as xfs is doing, is the following flow:
-> _lookup_slow -> d_alloc_parallel -> entry is being created -> xfs_lookup ->
-> d_add_ci -> d_alloc_parallel_check_existing(entry created before) ->
-> d_splice_alias.
+...
 
-Hi Eugen,
-
-I have a hard time understanding what xfs has anything to do with this.
-xfs already users d_add_ci without problems.  The issue is that
-ext4/f2fs have case-insensitive d_compare/d_hash functions, so they will
-find the dentry-under-lookup itself here. Xfs doesn't have that problem
-at all because it doesn't try to match case-inexact names in the dcache.
-
-> The initial entry stops being in_lookup after d_splice_alias finishes, and
-> it's returned to d_add_ci by d_alloc_parallel_check_existing.
-> Without d_alloc_parallel_check_existing, d_alloc_parallel would be called
-> instead and wait forever for the entry to stop being in lookup, as the
-> iteration through the in_lookup_hash matches the entry.
-> Currently XFS does not hang because it creates another entry in the second
-> call of d_alloc_parallel if the name differs by case as the hashing and
-> comparison functions used by XFS are not case insensitive.
+> > What about adding BPF hooks to Landlock?  User space could create
+> > Landlock sandboxes that would delegate the denials to a BPF program,
+> > which could then also allow such access, but without directly handling
+> > nor reimplementing filesystem path walks.  The Landlock user space ABI
+> > changes would mainly be a new landlock_ruleset_attr field to explicitly
+> > ask for a (system-wide) BPF program to handle access requests if no
+> > Landlock rule allow them.  We could also tie a BPF data (i.e. blob) to
+> > Landlock domains for consistent sandbox management.  One of the
+> > advantage of this approach is to only run related BPF programs if the
+> > sandbox policy would deny the request.  Another advantage would be to
+> > leverage the Landlock user space interface to let any program partially
+> > define and extend their security policy.
 >
-> Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
-> ---
->  fs/dcache.c            | 29 +++++++++++++++++++++++------
->  include/linux/dcache.h |  4 ++++
->  2 files changed, 27 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index a0a944fd3a1c..459a3d8b8bdb 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -2049,8 +2049,9 @@ struct dentry *d_add_ci(struct dentry *dentry, struct inode *inode,
->  		return found;
->  	}
->  	if (d_in_lookup(dentry)) {
-> -		found = d_alloc_parallel(dentry->d_parent, name,
-> -					dentry->d_wait);
-> +		found = d_alloc_parallel_check_existing(dentry,
-> +							dentry->d_parent, name,
-> +							dentry->d_wait);
->  		if (IS_ERR(found) || !d_in_lookup(found)) {
->  			iput(inode);
->  			return found;
-> @@ -2452,9 +2453,10 @@ static void d_wait_lookup(struct dentry *dentry)
->  	}
->  }
->  
-> -struct dentry *d_alloc_parallel(struct dentry *parent,
-> -				const struct qstr *name,
-> -				wait_queue_head_t *wq)
-> +struct dentry *d_alloc_parallel_check_existing(struct dentry *d_check,
-> +					       struct dentry *parent,
-> +					       const struct qstr *name,
-> +					       wait_queue_head_t *wq)
->  {
->  	unsigned int hash = name->hash;
->  	struct hlist_bl_head *b = in_lookup_hash(parent, hash);
-> @@ -2523,6 +2525,14 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
->  		}
->  
->  		rcu_read_unlock();
-> +
-> +		/* if the entry we found is the same as the original we
-> +		 * are checking against, then return it
-> +		 */
-> +		if (d_check == dentry) {
-> +			dput(new);
-> +			return dentry;
-> +		}
+> Given there is BPF LSM, I have never thought about adding BPF hooks to
+> Landlock or other LSMs. I personally would prefer to have a common API
+> to walk the path, maybe something like vma_iterator. But I need to read
+> more code to understand whether this makes sense?
 
-The point of the patchset is to install a dentry with the disk-name in
-the dcache if the name isn't an exact match to the name of the
-dentry-under-lookup.  But, since you return the same
-dentry-under-lookup, d_add_ci will just splice that dentry into the
-cache - which is exactly the same as just doing d_splice_alias(dentry) at
-the end of ->d_lookup() like we currently do, no?  Shreeya's idea in
-that original patchset was to return a new dentry with the new name.
+Just so there isn't any confusion, I want to make sure that everyone
+is clear that "adding BPF hooks to Landlock" should mean "add a new
+Landlock specific BPF hook inside Landlock" and not "reuse existing
+BPF LSM hooks inside Landlock".
 
->  		/*
->  		 * somebody is likely to be still doing lookup for it;
->  		 * wait for them to finish
-> @@ -2560,8 +2570,15 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
->  	dput(dentry);
->  	goto retry;
->  }
-> -EXPORT_SYMBOL(d_alloc_parallel);
-> +EXPORT_SYMBOL(d_alloc_parallel_check_existing);
->  
-> +struct dentry *d_alloc_parallel(struct dentry *parent,
-> +				const struct qstr *name,
-> +				wait_queue_head_t *wq)
-> +{
-> +	return d_alloc_parallel_check_existing(NULL, parent, name, wq);
-> +}
-> +EXPORT_SYMBOL(d_alloc_parallel);
->  /*
->   * - Unhash the dentry
->   * - Retrieve and clear the waitqueue head in dentry
-> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> index bf53e3894aae..6eb21a518cb0 100644
-> --- a/include/linux/dcache.h
-> +++ b/include/linux/dcache.h
-> @@ -232,6 +232,10 @@ extern struct dentry * d_alloc(struct dentry *, const struct qstr *);
->  extern struct dentry * d_alloc_anon(struct super_block *);
->  extern struct dentry * d_alloc_parallel(struct dentry *, const struct qstr *,
->  					wait_queue_head_t *);
-> +extern struct dentry * d_alloc_parallel_check_existing(struct dentry *,
-> +						       struct dentry *,
-> +						       const struct qstr *,
-> +						       wait_queue_head_t *);
->  extern struct dentry * d_splice_alias(struct inode *, struct dentry *);
->  extern struct dentry * d_add_ci(struct dentry *, struct inode *, struct qstr *);
->  extern bool d_same_name(const struct dentry *dentry, const struct dentry *parent,
-
--- 
-Gabriel Krisman Bertazi
+--=20
+paul-moore.com
 
