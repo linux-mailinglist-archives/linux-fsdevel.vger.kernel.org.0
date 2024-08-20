@@ -1,99 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-26380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9291B958C08
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:15:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E935958C26
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 18:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF3B1F2371A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 16:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BC8F2853F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 16:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E2A19D8BB;
-	Tue, 20 Aug 2024 16:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2E31AE878;
+	Tue, 20 Aug 2024 16:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtBRqQo/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9XUTqKk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3460C208D7;
-	Tue, 20 Aug 2024 16:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8405E190671;
+	Tue, 20 Aug 2024 16:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724170539; cv=none; b=fv/MgplxziuqrUCmzL4PIvCUTrf3U66EA7av8Mk2TwPzIdQYeS8o6l2CexIoW/2spwCPAeF8wCEQXnBpRxdkWcmg1Npa1uasC+jggTQlqmiRfR7tRhaW6PEAj7zvRRjZMjoE7ymfpYTABPyru2cVQt8HEOGZM8fdLZtotKKcOiY=
+	t=1724171040; cv=none; b=SKpsOrC4WVbkI9SoJlsm1e8S6l6Z/RrEnA3K2TTSpCJiuEuyKZw6mVsUUiPLrFQFkTAHMi+rI/Mu+dLcFarmSHsrKwS55+zzos/rYf6koz0hQD34xIe45zBQ6aL/iyDZoWtz9suYVXkVtr4741exXqSbuaNOz4YP5QfvQ+QjJuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724170539; c=relaxed/simple;
-	bh=9X9zE81M2UtM+HT2hiECWQgG2TJ/K92mEOc886Ex72Y=;
+	s=arc-20240116; t=1724171040; c=relaxed/simple;
+	bh=nYOUa7CO3WCFF78SuWC9irp0kY+U+/n/V6358gWQpxo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RbnxYS2LpTRE9cMWPzUedDbwE49de7L7Y5T/BOTX0WWEY2zIDGrVXNqKTtJdptIy3kX6mA9e6Cqd5o33wXw3pXjGChCq0fqfXC06S+njLt1xpkSTAQ6ckGeBSO0ysrbhmbtr9KJSN8KSYlOExDDHfrrSWe1RaC5ytLNzjjqjNZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtBRqQo/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97C1BC4AF16;
-	Tue, 20 Aug 2024 16:15:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZEMPMoYW8PCScYqvFRBBmrs22cX0+ld0aMf1wPVfmqCIoy94XCBDHVrkWJVW5qvCDPAs5W+/TfKQ53Qu54X5fgQQOor+JReCkT34Ameo+6wEpDlWf46tp66Ts0CI5DeYUhKQPmO4I/NrXSwGv3SpEu7W+yxYqAm4kFWvLhV+Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9XUTqKk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F52C4AF0F;
+	Tue, 20 Aug 2024 16:24:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724170538;
-	bh=9X9zE81M2UtM+HT2hiECWQgG2TJ/K92mEOc886Ex72Y=;
+	s=k20201202; t=1724171040;
+	bh=nYOUa7CO3WCFF78SuWC9irp0kY+U+/n/V6358gWQpxo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qtBRqQo/ZC8HF/Y6sJF35K11EqskwB1AzpvttVKPgjXjqTXy0pQjVKLwWLbYyV3l/
-	 GfwPMcvMPkJL6UcLp9p6OQREpXwmV7kVk/GCw4U3nGzdkWcfPj/LokYTcA/V+vAmGy
-	 TM57kGQmSePD3Xn0BpgKnq+b77EkCAdNNF/2A2P3poqsSB//223YsAvHJfOzAchI/4
-	 Wr2Y6Dq+XldKSWTNkoXca81p9G0k4yvzRtbJUXDoJ6zHOuUUQxgVMSgO2J/WV9xfVu
-	 WkhH97LRrOsMLSNyRv4DO/FpfP3+r5+p5IJctiK0QYP6Df8pYsO+xUk6BfsuKM76Ln
-	 Rw5sE7q8HRFWA==
-Date: Tue, 20 Aug 2024 09:15:37 -0700
+	b=C9XUTqKkTl0LWa3v9R0uLMuZ2nXn0ymESVQMNIqZ2k36LWTFdKpAoWfRhrJsYTW6P
+	 UaPbsZckrq1IDY4krs5hRu6TDObkMOaoXy5gVny+iX6+/WlEX8DA+KsVHDeh65yC8L
+	 7t5E/4DWfLxMpAf7dekK7UYKekKNPu5vBaw3jU8MNS4yAeatxjQOHUvsEKiSrPozNX
+	 iZlXumKBH3YRBy0ClIH1vXm/lohHOAW+W755zHxRWmmXZ+UB7QnutThsow8trHrfgy
+	 B7AUbFRgmbSGLG4OLz0NqoBq7aRpJYwdX+2oAl3sDtRU3w5k2u1qFNaTmCXlxYIOW+
+	 KPHrMNelZW9og==
+Date: Tue, 20 Aug 2024 09:23:59 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] Documentation: iomap: fix a typo
-Message-ID: <20240820161537.GS865349@frogsfrogsfrogs>
-References: <20240820161329.1293718-1-kernel@pankajraghav.com>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: linux-doc@vger.kernel.org, corbet@lwn.net, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	kernel-dev@igalia.com, kernel@gpiccoli.net
+Subject: Re: [PATCH] Documentation: Document the kernel flag
+ bdev_allow_write_mounted
+Message-ID: <20240820162359.GI6043@frogsfrogsfrogs>
+References: <20240819225626.2000752-2-gpiccoli@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240820161329.1293718-1-kernel@pankajraghav.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240819225626.2000752-2-gpiccoli@igalia.com>
 
-On Tue, Aug 20, 2024 at 06:13:29PM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On Mon, Aug 19, 2024 at 07:56:27PM -0300, Guilherme G. Piccoli wrote:
+> Commit ed5cc702d311 ("block: Add config option to not allow writing to mounted
+> devices") added a Kconfig option along with a kernel command-line tuning to
+> control writes to mounted block devices, as a means to deal with fuzzers like
+> Syzkaller, that provokes kernel crashes by directly writing on block devices
+> bypassing the filesystem (so the FS has no awareness and cannot cope with that).
 > 
-> Change voidw -> void.
+> The patch just missed adding such kernel command-line option to the kernel
+> documentation, so let's fix that.
 > 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 09126bb8cc9f..709d1ee342db 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -517,6 +517,16 @@
+>  			Format: <io>,<irq>,<mode>
+>  			See header of drivers/net/hamradio/baycom_ser_hdx.c.
+>  
+> +	bdev_allow_write_mounted=
+> +			Format: <bool>
+> +			Control the ability of directly writing to mounted block
+> +			devices' page cache, i.e., allow / disallow writes that
+> +			bypasses the FS. This was implemented as a means to
+> +			prevent fuzzers to crash the kernel by breaking the
+> +			filesystem without its awareness, through direct block
+> +			device writes. Default is Y and can be changed through
+> +			the Kconfig option CONFIG_BLK_DEV_WRITE_MOUNTED.
 
-Heh, whoopsw.
-
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Can we mention that this also solves the problem of naïve storage
+management tools (aka the ones that don't use O_EXCL) writing over a
+mounted filesystem and trashing it?
 
 --D
 
-> ---
->  Documentation/filesystems/iomap/design.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/filesystems/iomap/design.rst b/Documentation/filesystems/iomap/design.rst
-> index 37594e1c5914..7261b1b2c379 100644
-> --- a/Documentation/filesystems/iomap/design.rst
-> +++ b/Documentation/filesystems/iomap/design.rst
-> @@ -165,7 +165,7 @@ structure below:
->       u16                 flags;
->       struct block_device *bdev;
->       struct dax_device   *dax_dev;
-> -     voidw               *inline_data;
-> +     void                *inline_data;
->       void                *private;
->       const struct iomap_folio_ops *folio_ops;
->       u64                 validity_cookie;
+> +
+>  	bert_disable	[ACPI]
+>  			Disable BERT OS support on buggy BIOSes.
+>  
 > -- 
-> 2.44.1
+> 2.45.2
 > 
 > 
 
