@@ -1,125 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-26356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0150895833A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 11:52:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D5E958348
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 11:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B170D2829C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 09:52:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E345F285C9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 09:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03A218C01C;
-	Tue, 20 Aug 2024 09:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YFkqkvmA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0875D18C01C;
+	Tue, 20 Aug 2024 09:54:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F2117740;
-	Tue, 20 Aug 2024 09:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB8814A0A8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 09:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724147558; cv=none; b=XMae0Qe2Y38sHgfmoIOhpFnBnMsnCHjN8taAEHmcF+AoHAQvRdaBoyz9ToU/dOkMmNcZXLy27S5li7hchB3c7Z4mF4JQnjd6mfOjsuM1aAVFmAAebQ9TOf2RUfaEeriS+/VQTmAvrPzNHkk/FDx/Af78fZa3w0adyY3qi682DNY=
+	t=1724147691; cv=none; b=t7N88J1/JPFzzp4ayX6Syer9OosMmFn+Ovq34SmViZgAkrdMbW3f2imIoqaTQfM4I1bx8l8MNeQf+sMoVQeZqv3V+N/3ISwNVdoca9wJuwH3GoUekP/OVn4EnGaxeyYQdEDktAO0X+tP3Wie3W5xMlf6gUpjR7jMHSGXyZhmgzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724147558; c=relaxed/simple;
-	bh=5HfN+SVxgVSpi4+a5bxf/c5ATq5crTrGcd9sdNvl2U8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mNMkPQOrhlTiPaLWknpKDjw5NwuUYXhsA5kN4HvQxbZwjv51P9X3BLIXxXWFyroYXu6BukCnoRs37xbu4zuGjGp7lobYlvoQ3pX9teKg5JYe5UX6vg3lvKG1PqexaO46L1lmsbEiAo6/Zj7J7kVPu42LMI1Lj3x539hP5BWZUM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YFkqkvmA; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fec34f94abso46756915ad.2;
-        Tue, 20 Aug 2024 02:52:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724147556; x=1724752356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jjmjW8rP7gw35M3crfIBureq8zsjQF5WZRXE1lCMGyM=;
-        b=YFkqkvmAMrL3fNW/mHJzmEkkKBzktF0Xgov2QGDiIYDkRzBlltut5ccT7zCguSH0JL
-         LcK8rAxiqe+yD0IEfunSEifAdGSMjDXHYn5mllkfJUKH/WlhzOa9FgSrAqYgIfG/3Z6r
-         m7J+y/CgSnvLEssp1Kn/jowYfybMEg5GrAt294naS549RhTlNirhUYtDo3oi8jM/oylz
-         s/pu6Ld1SzWXI6GFgfxx8TNYEHh8n5vxkoUVqClfghya9uMspogroEePQwHSvC9CLlvf
-         CIkKjeSB3S9gcfyZUPEGpesyrvzk1xXq59X2EdJZw50f/C/VuMUYbiE0m2j4+ov8fFIv
-         /88Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724147556; x=1724752356;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jjmjW8rP7gw35M3crfIBureq8zsjQF5WZRXE1lCMGyM=;
-        b=YgkuC1G/nmzNISToD5mWUa/CmcNaVwzzz9hiMtX128hJsqhdLyRd1dIl9uvYU7fCzX
-         wXlPODDeEYNAYtTQk7R8BijGez0+ankFcP8ODpPI0Uj5y/3mkxZNwQVg8EaeG9K8LKiv
-         0R5oIeVfO8ZPygCZ+CMXKR3MGXDsmHM2IUt1ebw7OQGz60U6cHdb5SqbU3zocjoYPnXp
-         NJZUx1rnmQgU1T7avWfW/PVCXxRF75Emni/gOYAYaJcl4ESZFW/N9/DZzYS/1Sfxi8GF
-         7PNtoOpCtgcEkP+4D010Iilk+GtVgI2uyyxbSHYLMQpMhXIh1h2l9BM58RQytFstA8q9
-         IquQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyErHuFNnDzk4+U26HOhxO/j04OlE/3gD8rCV/ErzB+Y419CSyEHkc/vHn+xF+LmCfrGQawfAD4OuCUJTO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzmGzutsqskeefPuS0SgmUjjIDrnnnwpzdee0qL/KVdtPfXloQ
-	6RaTyG8q81TF/vx2HCQzCurVzsKbXoAV1IwCSnv9to3zaEXwD2tOUJ+C0V851rM=
-X-Google-Smtp-Source: AGHT+IHbSrT+dVNMI17JQzi7xo2ca6yjZioPmIBHBR30gimfH6IsEObzjlDgx98j+zUgs/EFxZ0kfw==
-X-Received: by 2002:a17:902:ef44:b0:202:445:3c8f with SMTP id d9443c01a7336-20204453e1cmr163248895ad.30.1724147555538;
-        Tue, 20 Aug 2024 02:52:35 -0700 (PDT)
-Received: from localhost ([123.113.110.156])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f030350csm74651915ad.22.2024.08.20.02.52.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 02:52:35 -0700 (PDT)
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: linux-trace-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: jack@suse.cz,
-	brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	mhiramat@kernel.org,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	Julian Sun <sunjunchao2870@gmail.com>
-Subject: [PATCH] writeback: Refine the show_inode_state() macro definition
-Date: Tue, 20 Aug 2024 17:52:29 +0800
-Message-Id: <20240820095229.380539-1-sunjunchao2870@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724147691; c=relaxed/simple;
+	bh=Xsq0jN/Nr+6zUwRCip9WuKjFgEPV9fhR9Eb321ulRpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MfENZBE7JrAJoxcHwqn9OE1cWhmsOGHMarYIBR2pDB+qciAolZrdudCAL/axYYKX7XNZgDSPioUM71H1azsfasiyStDr3yN5daQMR9kg32E5PJJrE/9UN7TrKJPfjck/Mcz2+4tnWDrB/eHD9P1yMXNBz2u/ElseUSAO2D0Y+D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50B44DA7;
+	Tue, 20 Aug 2024 02:55:15 -0700 (PDT)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 532323F66E;
+	Tue, 20 Aug 2024 02:54:46 -0700 (PDT)
+Date: Tue, 20 Aug 2024 10:54:41 +0100
+From: Joey Gouly <joey.gouly@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel@lists.infradead.org,
+	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com, bp@alien8.de, broonie@kernel.org,
+	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
+	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, szabolcs.nagy@arm.com,
+	tglx@linutronix.de, will@kernel.org, x86@kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v4 18/29] arm64: add POE signal support
+Message-ID: <20240820095441.GA688664@e124191.cambridge.arm.com>
+References: <20240503130147.1154804-19-joey.gouly@arm.com>
+ <ZqJ2knGETfS4nfEA@e133380.arm.com>
+ <20240801155441.GB841837@e124191.cambridge.arm.com>
+ <Zqu2VYELikM5LFY/@e133380.arm.com>
+ <20240806103532.GA1986436@e124191.cambridge.arm.com>
+ <20240806143103.GB2017741@e124191.cambridge.arm.com>
+ <ZrzHU9et8L_0Tv_B@arm.com>
+ <20240815131815.GA3657684@e124191.cambridge.arm.com>
+ <Zr4aJqc/ifRXJQAd@e133380.arm.com>
+ <ZsN8MnSqIWEMh7Ma@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsN8MnSqIWEMh7Ma@arm.com>
 
-Currently, the show_inode_state() macro only prints
-part of the state of inode->i_state. Let’s improve it
-to display more of its state.
+On Mon, Aug 19, 2024 at 06:09:06PM +0100, Catalin Marinas wrote:
+> On Thu, Aug 15, 2024 at 04:09:26PM +0100, Dave P Martin wrote:
+> > On Thu, Aug 15, 2024 at 02:18:15PM +0100, Joey Gouly wrote:
+> > > That's a lot of words to say, or ask, do you agree with the approach of only
+> > > saving POR_EL0 in the signal frame if num_allocated_pkeys() > 1?
+> > > 
+> > > Thanks,
+> > > Joey
+> > 
+> > ...So..., given all the above, it is perhaps best to go back to
+> > dumping POR_EL0 unconditionally after all, unless we have a mechanism
+> > to determine whether pkeys are in use at all.
+> 
+> Ah, I can see why checking for POR_EL0_INIT is useful. Only checking for
+> the allocated keys gets confusing with pkey 0.
+> 
+> Not sure what the deal is with pkey 0. Is it considered allocated by
+> default or unallocatable? If the former, it implies that pkeys are
+> already in use (hence the additional check for POR_EL0_INIT). In
+> principle the hardware allows us to use permissions where the pkeys do
+> not apply but we'd run out of indices and PTE bits to encode them, so I
+> think by default we should assume that pkey 0 is pre-allocated.
+> 
+> 
 
-Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
----
- include/trace/events/writeback.h | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+You can consider pkey 0 allocated by default. You can actually pkey_free(0), there's nothing stopping that.
 
-diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-index 54e353c9f919..f3e0edc1a311 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -20,7 +20,16 @@
- 		{I_CLEAR,		"I_CLEAR"},		\
- 		{I_SYNC,		"I_SYNC"},		\
- 		{I_DIRTY_TIME,		"I_DIRTY_TIME"},	\
--		{I_REFERENCED,		"I_REFERENCED"}		\
-+		{I_REFERENCED,		"I_REFERENCED"},	\
-+		{I_DIO_WAKEUP,	"I_DIO_WAKEUP"},	\
-+		{I_LINKABLE,	"I_LINKABLE"},	\
-+		{I_DIRTY_TIME,	"I_DIRTY_TIME"},	\
-+		{I_WB_SWITCH,	"I_WB_SWITCH"},	\
-+		{I_OVL_INUSE,	"I_OVL_INUSE"},	\
-+		{I_CREATING,	"I_CREATING"},	\
-+		{I_DONTCACHE,	"I_DONTCACHE"},	\
-+		{I_SYNC_QUEUED,	"I_SYNC_QUEUED"},	\
-+		{I_PINNING_NETFS_WB, "I_PINNING_NETFS_WB"} \
- 	)
- 
- /* enums need to be exported to user space */
--- 
-2.39.2
+> So I agree that it's probably best to save it unconditionally.
 
+Alright, will leave it as is!
+
+Thanks,
+Joey
 
