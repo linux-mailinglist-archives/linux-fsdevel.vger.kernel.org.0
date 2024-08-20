@@ -1,113 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-26341-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745CC957E15
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 08:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A52B957E51
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 08:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A72591C23BC9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 06:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DD751C2379E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 06:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B73616CD00;
-	Tue, 20 Aug 2024 06:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69301E4EF5;
+	Tue, 20 Aug 2024 06:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KXAOVG4G"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ecli/CT9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D0D16B723;
-	Tue, 20 Aug 2024 06:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6143D1E4EE4
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 06:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724135369; cv=none; b=Tz5W/DLZ8MAHu10PF/aovLDW4RGT0Y7X6Lz5jQ47kh7NJe0HhYKD4012WYr0OLPSA+Dim1DmIjW6QAxOt4anQxjcOLQiK7HjNLjL0MvyLqq3kipfl3tUK3tATv78u0NQKxc3IIFpityEtseYcfHqUVt0Ncbo4i5ayA0RYYawx7o=
+	t=1724135630; cv=none; b=tZJrF3vOzKhOtIGd93ZU/zVI68Lb4lvehFCli9NVzJ44UqVmzoykbjSog5itdHNf18m7zzQfyApuYeKF14Yf2bcf44+YR50uB0u95iF3CMWNc/6nb+ObsHRyYlTEt6z5gL1T/Dex/vX/7IqU93XiQm5azhGCp19CcbetfhWfTA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724135369; c=relaxed/simple;
-	bh=G82YABrxIy3ymNPql9ONoNsdRdjsTTguzbQc8oGr6NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qhn9fzrlrwXCfU5spabjO91ve7golZcs9l3vZelC2GFzPSuxbCvniUo3BSWKA3UNtdWwEb12rP69HSpsYBL/lBVdV8HOIyBAdnNO2vRvMW5690l/uJB/p5wzwvc1LP3WpeMMwGBQrJO3wOAWLtrt7uFMmBov/Ys3CVDfsSUQRog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KXAOVG4G; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YnZWlbhcbike8X1nXSaQ/pwmdD6FhwYUsisfNGkSYaA=; b=KXAOVG4GXjyPAVtjZIF2+1jGS3
-	/V1GZ51DWST366w+0GculGnphKMcHu2ZQtkiE5sbSFOQpLSFBNeOlzV++U1ThDiJmaEenCLHOM7ka
-	gZyQx31YzVMeJe+AlelJyn6dkQR4J6ENHPuOXQdwdhQdgFv74HlusEc4vgv6HBR6v3j7ep6H8cQYY
-	me3xz1mdS5s+8EZcbyESjUt+w2ajCWP42fwJR/YPNinpVH/URbOXoPe6nNXGXs41strHLPG5NUltj
-	yspSVz/p+wifWq0hwv35nPuFFNq8cL625TIZhGMzilWAlSMevu//BQ8j42ftEI6LqH7DF2/3q8B1d
-	N6QBrTew==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sgIMs-00000003OAK-3RJR;
-	Tue, 20 Aug 2024 06:29:22 +0000
-Date: Tue, 20 Aug 2024 07:29:22 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Song Liu <songliubraving@meta.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"martin.lau@linux.dev" <martin.lau@linux.dev>,
-	"jack@suse.cz" <jack@suse.cz>,
-	"kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"mattbobrowski@google.com" <mattbobrowski@google.com>,
-	Liam Wisehart <liamwisehart@meta.com>, Liang Tang <lltang@meta.com>,
-	Shankaran Gnanashanmugam <shankaran@meta.com>,
-	LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
- bpf_get_dentry_xattr
-Message-ID: <20240820062922.GJ504335@ZenIV>
-References: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
- <8DFC3BD2-84DC-4A0C-A997-AA9F57771D92@fb.com>
- <20240819-keilen-urlaub-2875ef909760@brauner>
- <DB8E8B09-094E-4C32-9D3F-29C88822751A@fb.com>
+	s=arc-20240116; t=1724135630; c=relaxed/simple;
+	bh=s6oLVLudE3Hlrcb3NSM12n/aL0wm6duShgC7tYMwKjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XMD+h6FstcsXFvUORvpszv88/5nNsL8aD/BW/e0EP6F829jmXi3pG4z5tGNfMIBvr3fa9QjZxJRpCYVFjQcyiEBmqVdFqbZXeI3mCGHCJwDQBKpazmFHydLwWaJSPb7Wz8EQVsg76IN4tVo/TsNv3NDWGHwHMqYJ7FPxrB1e48E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ecli/CT9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724135627;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lxu/JaDhP8Y+hBmSZIP+97DXMICgK3G2N7aESVf67vs=;
+	b=Ecli/CT9Eue15Yy7IQxrQVQaDbkZ0w1oIQ4qlliT/HL/cE8oGXmN1LFvpPN739haM7OLpO
+	4Lq+Ru00MPSoM8dcSI7JCA9xc1J6c2rvwFX15IzZMOpXVNeDcMxrQSiY5d1N6rIwDPc8Dd
+	fQdYP51HR5LnRyF1IzVDYMQThcDGaH0=
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
+ [209.85.167.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-142-3hK0p4_wN8Onkz-YttD9bg-1; Tue, 20 Aug 2024 02:33:45 -0400
+X-MC-Unique: 3hK0p4_wN8Onkz-YttD9bg-1
+Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3db2f0e5afaso5968810b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2024 23:33:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724135624; x=1724740424;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lxu/JaDhP8Y+hBmSZIP+97DXMICgK3G2N7aESVf67vs=;
+        b=KYc2wgOjFIRIcXUHCU/ODJTl8c+r66XrY6zv9tC6emP8xKCOXahvPND3Qs3qtL3I3K
+         sTNCuTlDEE4nllLTejiyhPoWD6RhiU7GTcXidCg6b2y+YcGwcOy9Dsdc5cGaB/mIoy8i
+         hzhC8bmcptIg+yHL8Q0mtNUfEesHplZoNY9rEyTpnrpHCBrmQQABz9C0RqEYQDIj50Zn
+         dLThwxg8Nwuj6ux4p0bHDVyOdCIS1fWC1tIPTRrzABsMZskqluRw3YF/1W7o9tK9q0St
+         TnSHtkPbkWIdqVm9lk2ZTphwCEH+8mBD5ZcJjT2+HBUmvdhhrPS+rn5iKyW+rBHDmDUs
+         pXfA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/A2zS0nZhxOWtASeyrOy5IzUSK3jT6HMtHJ3Al/WQjh3CauuC4bosdfKd7XRjTG9Cuq3g6pni84oe0vOL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyano2k74ifYN59GXU4DAuszMJRoUzk4PTzap3tssy6bWsu1iVZ
+	XRVi+q/As1Eb8puj0bkDUQC9luVCI6/U3OiVIxCahb2P2tK+LTJi9nuL6dHqzbpnWkTqPc0vGFG
+	xug9+uURykMt8HMMiw1AgTGQsRFFLvh8ZK0iiaVMbHyKwCi56Cms6ILG8qkGGPXQ=
+X-Received: by 2002:a05:6870:c18e:b0:261:1600:b1eb with SMTP id 586e51a60fabf-2701c5a0f1amr15718599fac.31.1724135624500;
+        Mon, 19 Aug 2024 23:33:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8KkMFHadnq0O47HFRRH7mfcRoBRFl5n5bs0K+MpLyDgPkvJUq6Qf7YTL/Zl0oYygtgXFAZQ==
+X-Received: by 2002:a05:6870:c18e:b0:261:1600:b1eb with SMTP id 586e51a60fabf-2701c5a0f1amr15718588fac.31.1724135624177;
+        Mon, 19 Aug 2024 23:33:44 -0700 (PDT)
+Received: from [10.72.116.30] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61c691csm8591114a12.21.2024.08.19.23.33.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 23:33:43 -0700 (PDT)
+Message-ID: <cb360270-caf1-4128-918a-59b1bb6ab2d3@redhat.com>
+Date: Tue, 20 Aug 2024 14:33:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB8E8B09-094E-4C32-9D3F-29C88822751A@fb.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] netfs, ceph: Partially revert "netfs: Replace PG_fscache
+ by setting folio->private and marking dirty"
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org,
+ netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <2181767.1723665003@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <2181767.1723665003@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 08:25:38PM +0000, Song Liu wrote:
 
-> int bpf_get_parent_path(struct path *p) {
-> again:
->     if (p->dentry == p->mnt.mnt_root) {
->         follow_up(p);
->         goto again;
->     }
->     if (unlikely(IS_ROOT(p->dentry))) {
->         return PARENT_WALK_DONE;  
->     }
->     parent_dentry = dget_parent(p->dentry);
->     dput(p->dentry);
->     p->dentry = parent_dentry;
->     return PARENT_WALK_NEXT; 
-> }
-> 
-> This will handle the mount. However, we cannot guarantee deny-by-default
-> policies like LandLock does, because this is just a building block of 
-> some security policies. 
+On 8/15/24 03:50, David Howells wrote:
+>      
+> This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
+>
+> In addition to reverting the removal of PG_private_2 wrangling from the
+> buffered read code[1][2], the removal of the waits for PG_private_2 from
+> netfs_release_folio() and netfs_invalidate_folio() need reverting too.
+>
+> It also adds a wait into ceph_evict_inode() to wait for netfs read and
+> copy-to-cache ops to complete.
+>
+> Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private and marking dirty")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Max Kellermann <max.kellermann@ionos.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Xiubo Li <xiubli@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: ceph-devel@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk [1]
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8e5ced7804cb9184c4a23f8054551240562a8eda [2]
+> ---
+>   fs/ceph/inode.c |    1 +
+>   fs/netfs/misc.c |    7 +++++++
+>   2 files changed, 8 insertions(+)
+>
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 71cd70514efa..4a8eec46254b 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -695,6 +695,7 @@ void ceph_evict_inode(struct inode *inode)
+>   
+>   	percpu_counter_dec(&mdsc->metric.total_inodes);
+>   
+> +	netfs_wait_for_outstanding_io(inode);
+>   	truncate_inode_pages_final(&inode->i_data);
+>   	if (inode->i_state & I_PINNING_NETFS_WB)
+>   		ceph_fscache_unuse_cookie(inode, true);
+> diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+> index 83e644bd518f..554a1a4615ad 100644
+> --- a/fs/netfs/misc.c
+> +++ b/fs/netfs/misc.c
+> @@ -101,6 +101,8 @@ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
+>   
+>   	_enter("{%lx},%zx,%zx", folio->index, offset, length);
+>   
+> +	folio_wait_private_2(folio); /* [DEPRECATED] */
+> +
+>   	if (!folio_test_private(folio))
+>   		return;
+>   
+> @@ -165,6 +167,11 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
+>   
+>   	if (folio_test_private(folio))
+>   		return false;
+> +	if (unlikely(folio_test_private_2(folio))) { /* [DEPRECATED] */
+> +		if (current_is_kswapd() || !(gfp & __GFP_FS))
+> +			return false;
+> +		folio_wait_private_2(folio);
+> +	}
+>   	fscache_note_page_release(netfs_i_cookie(ctx));
+>   	return true;
+>   }
+>
+Tested it and worked fine.
 
-You do realize that above is racy as hell, right?
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Tested-by: Xiubo Li <xiubli@redhat.com>
 
-Filesystem objects do get moved around.  You can, theoretically, play with
-rename_lock, but that is highly antisocial.
+Thanks
 
-What's more, _mounts_ can get moved around.  That is to say, there is no
-such thing as stable canonical pathname of a file.
+
 
