@@ -1,125 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-26343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91513957E5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 08:39:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD06A957E74
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 08:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495E1282C4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 06:39:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E651F24FC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 06:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000801E6752;
-	Tue, 20 Aug 2024 06:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2467816C696;
+	Tue, 20 Aug 2024 06:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMi/vOG0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AUXlBEqP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AA61E2122;
-	Tue, 20 Aug 2024 06:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E484918E375
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 06:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724135678; cv=none; b=u6gISV62KybrXl+5CchUYgnWDU+PajXWhGl/YxjGpLJr00NX3Kru2BNIdKwkjT/QLtFcg74NEKGywsR1SfhO/LChPkTroT4XT130qRf+FkWgrCpyEAf6SEUSmNQjJBXAhgymmtctPQi9QPXV1QmLxSVFeiaIm+8nAV/RLKL+pq0=
+	t=1724136015; cv=none; b=Q9m8GozWlTyZiWsc88ZLgKaPEJsabkfC6Hu3k/5a/NoPI8zYoZv+lv/h0hQRn+FGUDEnWCOOhxNZW4RZL3ZJdNy/tlyfhHJZ8wiBwIhpeLSaN9xxbAfX8ls7X3E+WXe6zCyhDdYPcUdm1yunaQ9xK6k5/uzxTf1JglbnGQfx6l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724135678; c=relaxed/simple;
-	bh=Cp3w7kkVxT1uWBiSkJuqzh8y0qcCGvAe5kQ4ewJ5zHg=;
+	s=arc-20240116; t=1724136015; c=relaxed/simple;
+	bh=kP8n14qwZP/guqRmk5n6M3hDQvDSOh8PKZWRKCjEAWY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GfsLQmtZSm7z2jSXHOsjvPS+9Ja6/bTtivGY2/H7+JErL2neFRIufa0J2XFQypVtKU7TkL6fSOAmQ5CSUJogPBoKC1VzRe8dXXn6ydrD7ztVL7UE+Unxqqmn+RuNXqeyXHASE32gWmsBzeaxGpRF49+qjqtDNc5Yp8aPuBoi8K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aMi/vOG0; arc=none smtp.client-ip=209.85.128.47
+	 To:Cc:Content-Type; b=PzgJVIIaTqWu3BTWdZERzGavcxtbWUM42MV01zcVRCZykhCAD5laeSNg7hUNgVe6IrAtojNEJeFExw19BZbdNAgcj74M5H+nVcwTaZ0CzJz3gQDB/adJ9u8Zyux6eHC1dfchSGUhj9xGFXLmR4uV7fMzhQs3DOsc11m1/2RzgFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AUXlBEqP; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4280bca3960so44799175e9.3;
-        Mon, 19 Aug 2024 23:34:36 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a1d3e93cceso583938185a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Aug 2024 23:40:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724135675; x=1724740475; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724136012; x=1724740812; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Cp3w7kkVxT1uWBiSkJuqzh8y0qcCGvAe5kQ4ewJ5zHg=;
-        b=aMi/vOG0w4Ujctyqn9JdNEMZot+mwgry6EY1K+2p3E76SrYdPCfvRbXWP+twFoYWCP
-         H7Ky+JnCrF5RfFHOjm1EbSCEtHKiI69HzcsBFvg0SXR+89uYMe7lbLq6iz7/pYdLjhRB
-         WsO7X5PnHagvB1+l1akD3vOvmRShzp+fBPYzD3WychOBGLyanwPzcmrNgOH7TM8kDR6w
-         1bwvv2KjmsqNsJGHaU2q24RueNNVfj8MRJo2QW3THhJcCOTf80VIC9kfRvxpqps7M35c
-         OvyUMysOlxgl/PPFQoJ+BVOSlx1+iLGZqNvdelAKb+AzEffL1T1oO/z0TDYRuJ8ErW6+
-         QgjA==
+        bh=tF1ri6syvhfZOujy5H9/jH+tQf0oDs3nQaoeCM2BCPc=;
+        b=AUXlBEqP3ExZqUBo8gN2xxur6LT/CWAAfFieU7g6FtcGCBpjd0Ae8lIV7+ua7XKwsi
+         7N/x3iZMIlBdLKoS9CDFfHB2fqnO+1OL2Y1FNoqNcqnxVAA/r0lzEykOQKbEoD3UfD/2
+         3A8znZz3yi0U9cPxHmtQQKbDncZnI5J/6crgWdkhEL5BHP9lTV1z3Ay256gYAUrCr3Gt
+         ABQMmxkTLGp8NgsnuVGSG7V99sFJfzCvvCRGFr5S9kWYTtTLsWRSO6YLEfyOwBBxasdw
+         qN2siz1ElRXB8IvCAdxV4YGKrmhllZ2LD+z/k3S4hSS98uYjRoVD1S7wYyxcm7CLn6eQ
+         SVgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724135675; x=1724740475;
+        d=1e100.net; s=20230601; t=1724136012; x=1724740812;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Cp3w7kkVxT1uWBiSkJuqzh8y0qcCGvAe5kQ4ewJ5zHg=;
-        b=gOj9+lfbykWidLGYX3sYOlkFRZ4fWXRmRkyhIs2EhK26fPYjDfFMU5CLa0Ct+XQvp7
-         MkBGK5a0eDOGFe5Fv6jcREucSlyTO2K0YBJesdL1zWEERt3atnb5HXnQ2Y+fxmee7ikb
-         db4zK3MYkhDQiUl2FxR/Raw9krb5SkqeasUeZzljFaNIJ/J6lbFJ6bun/apa9oYRUCS3
-         CN0OeMxopxJ1KAkwZ/NC+GjduiClszT7/DZt1KxU8J00bpoDs6ipzMT0binahYBarF+m
-         QIxHrcV+L1edSDQ+iaM5BxgLp5VC1eBpXfYeFpwN/iEC/1Cb4fEzecCELfg2LYg607hs
-         khSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHDiIOVPg1g91eSD7OGexSLDOFJvS3zcMkHGHVztWvqoYcTsPxyX1my3iKjmxl5WBd2+3lyDaC/vLhbpfRqIvjbUUT@vger.kernel.org, AJvYcCUJ5Z2+yEWh/CRA8eQvvtD/R+pbemEekHTU2kMxl7R9gxqblUpwiz6n7iESUst86PtpJH01ugJmawwJiRzhsg==@vger.kernel.org, AJvYcCUJC+giXO/G+aMc5k0Zwp6AbUbHVNgnf+1c9N3APxDh6joo/EFoa+UfQQ4QTjidce+QKNSaGcoX6AGS762l@vger.kernel.org, AJvYcCUWftmaz7HN34cJrsabgktD87GlhM4op9c83UGxLEnW0MYn91om7DaW/N/1FuDPrfX+1W2Mept+eQns@vger.kernel.org, AJvYcCUYo3pZyseWL8Rd4St27B6ilQBBF1kwYlj0YzOmBnDRGGHvbaQjel1RUk+dEthY4BlUrVP7uYSE@vger.kernel.org, AJvYcCV0YfjI+lkLrSE9VmW5gSnZBigdVF/gHk+x5/FNQQSoy2EgQIcLDG35lyIO9iM+wRT2Ia0WO+dewGIrjLh5mPSH@vger.kernel.org, AJvYcCVKX6LoBJMKg4DlseA0aT3Pt6nLmqKg70sUPox43oZsc95LTZwj8oeyCEzCBVVtmEU0NZwucOzw7k66lRcM0X9S@vger.kernel.org, AJvYcCWboRS8CSBbE9+epPETx7FSt6DWFSfq4fagxTl/B6WOVvpKjIQibierJ8P89Mno7iJ6Gl11N1dHVBzqXzE=@vger.kernel.org, AJvYcCXjmZW0MVweeOUmZH20WONnv6dIAXZN8tYdgPjaNUl6ws7omwM6pfFfBdITk7cR9oET7v+spaYR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdYOX985kSnkyz8+Y7BFXhKep7fL18Y/djYC9kVMsaK7Tq1mAn
-	Q048aFSrIh1KR66ZIP2aICBmzQw7WRUTKxon82zJyDnjfH06q97Mnx5VvD7NLXcPUUfc/SO6Iwo
-	coSD0lqwNLwY1WjjHPC0H/BggP2M=
-X-Google-Smtp-Source: AGHT+IF6za5LfGR9PignCMfdAU4RNKydBE/DzDRowSAFw6jEwJKhTPBuMISHwbyJUdIMUQaOdSTMFb1oGckbgA2aLOw=
-X-Received: by 2002:a05:600c:3ba5:b0:426:6667:5c42 with SMTP id
- 5b1f17b1804b1-429ed7856camr83213885e9.4.1724135674405; Mon, 19 Aug 2024
- 23:34:34 -0700 (PDT)
+        bh=tF1ri6syvhfZOujy5H9/jH+tQf0oDs3nQaoeCM2BCPc=;
+        b=k+mrQZPF6xPooVXsG2RCjlg7iPsm+M6Ee7dWOCtCKFdiyTo5RHuybP0IdJbxd+XTn7
+         DzzR1dGHnfVaHES9JvmjOB7LH8Wjo7CT43XGUXVl3Uso2RMtRluCa4lvZxTHdfiVtMEz
+         qqtAedzLCMbFhM2NKljDUEqDOzVU1uw2hIerptzdsUUVPvFWrbYsvXF4n4XexI7m2E9+
+         3FXIQSEAhjxXSz6IRpli45qzecfbfvacsdHIfcb0gECnBp242pWCLtwUDVdRDBnm24Hw
+         16f/bXLqWHrR2REppmHQ5uDtyzFPG8wneBSkWuO9Thlqi1V9u4WbG8bcAfARkl02wwSD
+         zHxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJgs3eJV/Kl9U/7FVec3apTV3AiczeBCJuSNTzrvlQVaNeQMHsT60jSuwlZ5iw9oFz+aMS0smI8gUi5bys@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMsCSa/GWW30LvA4MO8Nx6JQ0/p+vWA8K/FinTPxUglCDmXeJQ
+	+JEvzAQiVBF1JFaaWc4ntMFShvzurRWgN5pS4djxgEO+6jzz90yciTfaEG0MmE7BsmBFnHNTY0N
+	cENVULJtefqp+3AYzbYZG6EuPIMA=
+X-Google-Smtp-Source: AGHT+IH2NxGaT39Hmf7CzIQS6YAbvB7OHnfL8S6jCFmfuaC9MItLQZfp7SM7V66wSlD8OtNj92AmNkqFxFcm7rx1Kr0=
+X-Received: by 2002:a0c:c791:0:b0:6bf:97e1:ed65 with SMTP id
+ 6a1803df08f44-6bfa8a796acmr26288826d6.23.1724136012594; Mon, 19 Aug 2024
+ 23:40:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820000245.61787-1-technoboy85@gmail.com>
-In-Reply-To: <20240820000245.61787-1-technoboy85@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 20 Aug 2024 08:34:23 +0200
-Message-ID: <CAADnVQKYLu4gW95gK=kbFUCT+vCZtb595vdd5jVNVzcLn7qsiw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: use kfunc hooks instead of program types
-To: Matteo Croce <technoboy85@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	David Ahern <dsahern@kernel.org>, Pablo Neira Ayuso <pablo@netfilter.org>, 
-	Jozsef Kadlecsik <kadlec@netfilter.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Shuah Khan <shuah@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	fsverity@lists.linux.dev, 
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, netfilter-devel <netfilter-devel@vger.kernel.org>, 
-	coreteam@netfilter.org, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Matteo Croce <teknoraver@meta.com>
+References: <20240813232241.2369855-1-joannelkoong@gmail.com> <20240813232241.2369855-3-joannelkoong@gmail.com>
+In-Reply-To: <20240813232241.2369855-3-joannelkoong@gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 20 Aug 2024 14:39:34 +0800
+Message-ID: <CALOAHbDt6QiUt4mzMx2DS=16u5dx1tnPBqO2kT4gh_9gBgoq1A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] fuse: add default_request_timeout and
+ max_request_timeout sysctls
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, kernel-team@meta.com, 
+	Bernd Schubert <bschubert@ddn.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 2:03=E2=80=AFAM Matteo Croce <technoboy85@gmail.com=
-> wrote:
+On Wed, Aug 14, 2024 at 7:24=E2=80=AFAM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
 >
-> From: Matteo Croce <teknoraver@meta.com>
+> Introduce two new sysctls, "default_request_timeout" and
+> "max_request_timeout". These control timeouts on replies by the
+> server to kernel-issued fuse requests.
 >
-> Pass to register_btf_kfunc_id_set() a btf_kfunc_hook directly, instead
-> of a bpf_prog_type.
-> Many program types share the same kfunc hook, so some calls to
-> register_btf_kfunc_id_set() can be removed.
+> "default_request_timeout" sets a timeout if no timeout is specified by
+> the fuse server on mount. 0 (default) indicates no timeout should be enfo=
+rced.
 >
-> Tested compiling the kernel with -Werror=3Denum-conversion to catch all
-> the occourrences.
+> "max_request_timeout" sets a maximum timeout for fuse requests. If the
+> fuse server attempts to set a timeout greater than max_request_timeout,
+> the system will default to max_request_timeout. Similarly, if the max
+> default timeout is greater than the max request timeout, the system will
+> default to the max request timeout. 0 (default) indicates no timeout shou=
+ld
+> be enforced.
 >
-> Signed-off-by: Matteo Croce <teknoraver@meta.com>
+> $ sysctl -a | grep fuse
+> fs.fuse.default_request_timeout =3D 0
+> fs.fuse.max_request_timeout =3D 0
+>
+> $ echo 0x100000000 | sudo tee /proc/sys/fs/fuse/default_request_timeout
+> tee: /proc/sys/fs/fuse/default_request_timeout: Invalid argument
+>
+> $ echo 0xFFFFFFFF | sudo tee /proc/sys/fs/fuse/default_request_timeout
+> 0xFFFFFFFF
+>
+> $ sysctl -a | grep fuse
+> fs.fuse.default_request_timeout =3D 4294967295
+> fs.fuse.max_request_timeout =3D 0
+>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>  Documentation/admin-guide/sysctl/fs.rst | 17 ++++++++++
+>  fs/fuse/Makefile                        |  2 +-
+>  fs/fuse/fuse_i.h                        | 16 ++++++++++
+>  fs/fuse/inode.c                         | 19 ++++++++++-
+>  fs/fuse/sysctl.c                        | 42 +++++++++++++++++++++++++
+>  5 files changed, 94 insertions(+), 2 deletions(-)
+>  create mode 100644 fs/fuse/sysctl.c
+>
+> diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admi=
+n-guide/sysctl/fs.rst
+> index 47499a1742bd..44fd495f69b4 100644
+> --- a/Documentation/admin-guide/sysctl/fs.rst
+> +++ b/Documentation/admin-guide/sysctl/fs.rst
+> @@ -332,3 +332,20 @@ Each "watch" costs roughly 90 bytes on a 32-bit kern=
+el, and roughly 160 bytes
+>  on a 64-bit one.
+>  The current default value for ``max_user_watches`` is 4% of the
+>  available low memory, divided by the "watch" cost in bytes.
+> +
+> +5. /proc/sys/fs/fuse - Configuration options for FUSE filesystems
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +This directory contains the following configuration options for FUSE
+> +filesystems:
+> +
+> +``/proc/sys/fs/fuse/default_request_timeout`` is a read/write file for
+> +setting/getting the default timeout (in seconds) for a fuse server to
+> +reply to a kernel-issued request in the event where the server did not
+> +specify a timeout at mount. 0 indicates no timeout.
 
-I think it's too soon to do this kind of cleanup.
-We need to refactor this logic to accommodate sched-ext
-allow/deny pattern for kfunc per struct-ops hook.
-Let's keep this code as-is for now.
-pw-bot: cr
+While testing on my servers, I observed that the timeout value appears
+to be doubled. For instance, if I set the timeout to 10 seconds, the
+"Timer expired" message occurs after 20 seconds.
+
+Is this an expected behavior, or is the doubling unavoidable? I'm okay
+with it as long as we have a functioning timeout. However, I recommend
+documenting this behavior to avoid any potential confusion for users.
+
+--
+Regards
+Yafang
 
