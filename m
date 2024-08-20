@@ -1,109 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-26384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFAA958D1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 19:20:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE662958D5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 19:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609F81F2434D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 17:20:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94FC21F2331E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Aug 2024 17:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD1F1BE228;
-	Tue, 20 Aug 2024 17:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TGuey5sy"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2308E1C6889;
+	Tue, 20 Aug 2024 17:28:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBC81C4635
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 17:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE2D1C4635;
+	Tue, 20 Aug 2024 17:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724174374; cv=none; b=N1Z8FOrLH0Dst8WSUeV4V+6aMZzP4zL8p8uzulKcyr3Pf5zfFCV0WyToW87Vhk4iNZqQk4L8mupo58VHURt/91m9okMosbZXX0WxhIbZ8j/47FrynCuobkll7a1uc5xGnz1hooov+iz2TXTMFQSMYCYtU6jH056RFw+Fto3YxUk=
+	t=1724174922; cv=none; b=i2JkiEzB+WU3mq1vPJWO4D2p29L1y7zIwRIGvpALhdwWIREGWTUJAwBcib9Fi2DbzAmpS/sbXg4pxo/yQcARdo4jLi2xpiFzcapBmnRzMBaTdvuxHv1w5vkDVWIXC+OSFYZyA71OLtMo/XS/al24GUXHrSmFMHzUjPNv4HWNUzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724174374; c=relaxed/simple;
-	bh=h8+rAT6PKkf3l/JsLf4+AjmrK3P6xlDQaWUbOqj5V88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cAWL85QFyJ/uY9QUgZLzrmeTZJfK+HlSn8ppehLU7B7CNp3ZmiVbG5QgFMzH45x3Do10qaJ5CE9JxXow+BguFAqRBIkeJhCnSJWW8khJNz40H5DX0iZhUznlIuQtYvI/j4Upily2aZxtm1TZwdZ6gMDCO87LTMV7gJAAUrxn4XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TGuey5sy; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efd8807aaso7532505e87.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 10:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724174369; x=1724779169; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6paAwPht6e0edIulQ9pkTptE1WNbdOgM93RCIpCEbrY=;
-        b=TGuey5sySDHK0lLKBsw2/LkXY8ETmqdbmi7sOO0NTeb/8Skx/uNx6+mnzg1fvxELzX
-         aUnizjt4awax5tWL1+0pbK4gDSlMXlQtO8o8P65dJ1uumxUtoKW/sB7rxozRjinXUW/K
-         FePKsOKx4ZmbdyRnQjLUmhb5+eZht5uOtHSSk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724174369; x=1724779169;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6paAwPht6e0edIulQ9pkTptE1WNbdOgM93RCIpCEbrY=;
-        b=tUlZPJA+JB44yQRiIjNTSg36zVkwXUgV1kCZb9NLt6WW0DUzzAd2jQAd7rV1S+u4qk
-         JHV6h9Dadmov/P8/Xrkkkedsr8ZgOlEsxzR+KG6Ar+EllFwuR63gQMf3CCTv+iZBH/Gx
-         3CjjnlCuXfAqXjtSlWo/6K0NEfTYMzsNI7i118i00nPz71ja6XVCFQYyUZsS9+ysRRD+
-         OxrZBkkH6mQmXD/qaQFPWEl3hCOo5Lf1hLrkSZM1dZ0FMHFWj1TFAzBaeLgCi0qaaANX
-         gTBhX0BS1XF3CQ4e/hDd3Yrd0E8Be0iVpERLh8y8V4BUrmp8TqykOyQwsxr/wcmQLE54
-         Mjfg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+8jnzjeoB/fuhvXjsnV3GB5G6ml7klsdPM7Lc6SRThdFwrZ9LtRWMbo41gCPd0nJSzKLSCH3XMxeXOb6P@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy3xe7HVIFwFQdD2lOaqp/3ZdWjli/Yt+28skgq70Wz7dTWXjP
-	NQf6q4LHTf/inOYivQBFozScvP1+9T1z3n5A+CS4kaGFwc5kGq15Q2sMnm7OGesYeKArsvAwsDI
-	8jhcP2g==
-X-Google-Smtp-Source: AGHT+IE4kSHs/X21GBPyjJUduAEJxy5o9Wg0gCzPHTLiRXxtCvjsvK/OVejrzcPRW98tju1dwyBaSQ==
-X-Received: by 2002:a05:6512:3989:b0:52e:fd53:a25e with SMTP id 2adb3069b0e04-533407870fcmr1554693e87.2.1724174369099;
-        Tue, 20 Aug 2024 10:19:29 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53346869800sm22458e87.55.2024.08.20.10.19.28
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2024 10:19:28 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efd8807aaso7532465e87.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Aug 2024 10:19:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUYz4QjNZCYzuqERsPLi2a8B1mWuwR+xVrvJ5jG7zPVrFWaf6xHNjo1+zxqhW0zMcmsPqbnBShGQqBrZP8U@vger.kernel.org
-X-Received: by 2002:a05:651c:54b:b0:2ef:26dc:efbe with SMTP id
- 38308e7fff4ca-2f3e9fdb1eamr25221991fa.42.1724174367649; Tue, 20 Aug 2024
- 10:19:27 -0700 (PDT)
+	s=arc-20240116; t=1724174922; c=relaxed/simple;
+	bh=HqgIFw/MNbVJxTLj0yyv6f+URL447V9dt+D8R5sOaP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mE0u/yrlYZjeoFH/zAZMgQh3PAL+dfaLiIeiUd31BUx10w89WcnU29qdiolxdo5KNGM7VpqcB7qUIMdJtO0R8IzzT3hR0NxJJlXC/JVwrrzPq2CSMOs100RB7CUmXYC0VUFuG0sn39Xx34Eic84+sj5OQlBMulBuxvr/jUzoexw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1055C4AF0E;
+	Tue, 20 Aug 2024 17:28:36 +0000 (UTC)
+Date: Tue, 20 Aug 2024 18:28:34 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 20/40] arm64/gcs: Ensure that new threads have a GCS
+Message-ID: <ZsTSQmKV4zAEnara@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-20-699e2bd2190b@kernel.org>
+ <ZsM0wkRRguMchecK@arm.com>
+ <e1d40f17-2c03-4440-8d41-85368e138f03@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820-work-i_state-v1-0-794360714829@kernel.org>
- <20240820-work-i_state-v1-1-794360714829@kernel.org> <CAHk-=whU6+8ndPZjXnebdW-LK+oVnp07e7EfY1M3yhdDpcinLg@mail.gmail.com>
-In-Reply-To: <CAHk-=whU6+8ndPZjXnebdW-LK+oVnp07e7EfY1M3yhdDpcinLg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 20 Aug 2024 10:19:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgxDM_g+PHPriey7J8OEy49dAKx2D5ASFXPuaed=x86-A@mail.gmail.com>
-Message-ID: <CAHk-=wgxDM_g+PHPriey7J8OEy49dAKx2D5ASFXPuaed=x86-A@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/5] fs: add i_state helpers
-To: Christian Brauner <brauner@kernel.org>
-Cc: NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1d40f17-2c03-4440-8d41-85368e138f03@sirena.org.uk>
 
-.. and one more comment on that patch: it would probably be a good
-idea to make sure that the __I_xyz constants that are used for this
-are in the range 0-3.
+On Mon, Aug 19, 2024 at 04:57:08PM +0100, Mark Brown wrote:
+> On Mon, Aug 19, 2024 at 01:04:18PM +0100, Catalin Marinas wrote:
+> > On Thu, Aug 01, 2024 at 01:06:47PM +0100, Mark Brown wrote:
+> > > +static int copy_thread_gcs(struct task_struct *p,
+> > > +			   const struct kernel_clone_args *args)
+> > > +{
+> > > +	unsigned long gcs;
+> > > +
+> > > +	gcs = gcs_alloc_thread_stack(p, args);
+> > > +	if (IS_ERR_VALUE(gcs))
+> > > +		return PTR_ERR((void *)gcs);
+> 
+> > Is 0 an ok value here? I can see further down that
+> > gcs_alloc_thread_stack() may return 0.
+> 
+> Yes, it's fine for a thread not to have a GCS.
 
-It doesn't really *matter*, in the sense that it will all just be a
-cookie with a random address, but if anybody else ever uses the same
-trick (or just uses bit_waitqueue) for another field in the inode, the
-two cookies might end up being the same if you are very unlucky.
+OK, so we only get a 0 here if the gcs_{base,size} has not be
+initialised. Looks fine.
 
-So from a future-proofing standpoint it would be good if the cookies
-that are used are always "within" the address range of i_state.
+> > > +	p->thread.gcs_el0_mode = current->thread.gcs_el0_mode;
+> > > +	p->thread.gcs_el0_locked = current->thread.gcs_el0_locked;
+> 
+> > > +	/* Ensure the current state of the GCS is seen by CoW */
+> > > +	gcsb_dsync();
+> 
+> > I don't get this barrier. What does it have to do with CoW, which memory
+> > effects is it trying to order?
+> 
+> Yeah, I can't remember what that's supposed to be protecting.
 
-I don't think any of the bits in i_state have any actual meaning, so
-moving the bits around shouldn't be a problem.
+The GCS memory writes in the parent must indeed be visible in the child
+that could start on a different CPU. So, in principle, we need some form
+of ordering similar to the context switch. However, in case of classic
+fork(), the child won't be started until the PTEs have been made
+read-only and a TLBI issued. This would ensure the completion of any GCS
+memory accesses in the parent (at least that's my reading of the Arm
+ARM).
 
-                 Linus
+If we have normal thread creation without CoW, is the parent writing
+anything to the stack that the new thread needs to observe? The
+map_shadow_stack() call will cause a GCSSTTR and this wouldn't be
+ordered with subsequent memory writes. But we already have a GCSB DSYNC
+in map_shadow_stack() after put_user_gcs().
+
+My conclusion is that we don't need this barrier.
+
+> > > +	/* Allocate RLIMIT_STACK/2 with limits of PAGE_SIZE..2G */
+> > > +	size = PAGE_ALIGN(min_t(unsigned long long,
+> > > +				rlimit(RLIMIT_STACK) / 2, SZ_2G));
+> > > +	return max(PAGE_SIZE, size);
+> > > +}
+> 
+> > So we still have RLIMIT_STACK/2. I thought we got rid of that and just
+> > went with RLIMIT_STACK (or I misremember).
+> 
+> I honestly can't remember either way, it's quite possible it's changed
+> multiple times.  I don't have super strong feelings on the particular
+> value here.
+
+The half size looks a lot more arbitrary to me than picking the same
+size as the stack. So I'd go with RLIMIT_STACK.
+
+> > > +static bool gcs_consume_token(struct mm_struct *mm, unsigned long user_addr)
+> > > +{
+> 
+> > As per the clone3() thread, I think we should try to use
+> > get_user_page_vma_remote() and do a cmpxchg() directly.
+> 
+> I've left this as is for now, mainly because it keeps the code in line
+> with x86 and I can't directly test the x86 code. 
+
+I thought for the clone3() x86 code we'll need the remote vma, so we
+have to use the get_user_page_vma_remote() API anyway.
+
+> IIRC we can't just do
+> a standard userspace cmpxchg since that will access as though we were at
+> EL0 but EL0 doesn't have standard write permission for the page.
+
+Correct but GUP goes through the kernel mapping, not the user one. So
+get_user_page_vma_remote() returns a page and you just do a classic
+cmpxchg() at page_address() (plus some offset).
+
+-- 
+Catalin
 
