@@ -1,120 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-26563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC9895A7F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 00:53:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08F495A81E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80209284B05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 22:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E47CB1C21FCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 23:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8B217BB00;
-	Wed, 21 Aug 2024 22:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CA3176AA5;
+	Wed, 21 Aug 2024 23:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P8n/w3Qf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6crJZt7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF56168497
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 22:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5638526ACB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 23:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724280830; cv=none; b=XLg9rmN9z54q/SMJo96GGYnZrL0Z/AWEVDB425C7Q9Qjig83V5s2c/6XdlM8RmCHS81oHJCMxmVbNNLfMPg3lFQ8GVTgIqZn0Jsxlpu5mjxhuj77LaM6bv97LKMDtGErIvU3lZ/+i6J3xUpZ933Y66CmhGxwgvByvw/cpmlfTeI=
+	t=1724282707; cv=none; b=DPlaFUIyY1tcHjqSjscuoACZRBGUNgn3/JnR/3HIsLQJH+HiduzaRVLSTJdHgRMsuBIyIKkdPbuqjWXYLD1RcB0bvWLUvcFPZzTfbjakANB1/4kWonec9U7Vy83TTo0EMPWZRSK1kJnpJr7MFqr32rZ6YdH9hiUvIj7q5f8TROU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724280830; c=relaxed/simple;
-	bh=sYHcltixyJC9BU/MLb7HzoJd+QTv9zJpqQlJQYncUPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SPdcd7eNf97LUBahrR6zHajdThZbTNlXAvr7K8/C7QkphCsN8VSzQuOMPrrzpDEKQw5H9pYn7Xf3LbqINLRHGQkf01bODCOSIAlFJNzuP6uukQupUmuSLm5kKxt7oidSSDwVPd+1gwqT/4sYH6ksyZffQRHRC6hcMJ4hHroXTjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P8n/w3Qf; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f3edb2d908so1760311fa.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:53:47 -0700 (PDT)
+	s=arc-20240116; t=1724282707; c=relaxed/simple;
+	bh=V0qP413ewLP+EloTSnMUyrGRt1DzEJlZMA9vUmknKu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M9Xm+jV6BCOZUArnl250AgVxBYDdR/gRjOMEeYBMN7UrS5ZGPG9Dswz1IwEXssl5DTri/lwGLmYD3LpShqe8WDL5ahT4uImJWvp/KcRNR4IlpPLgNePwVGckCz/NfzsvO/I5/Vjg3lqcwQOtDvdZp1E2F7YmcUAq/Hirl79IfK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6crJZt7; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6b5c37a3138so2501157b3.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 16:25:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724280826; x=1724885626; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=p+HYCIGDmbAGvPO4lszl1UyZkDNKUCxUn11dV2OZ4OE=;
-        b=P8n/w3QfT3X9fU/IgPtmksVb4mBU6ia6Mt0siBL0+wggKq7OQ1CcSZCpC/oRXJLLJU
-         xW6drkKvlkih6SVfIg0mqEWoR+lsqPpzcwgSfENuBh83K3n1Vuiv8b2Mdk9Ra3y/E6KT
-         srwXY3xqfdiCtNdQb51kwaHkKGjPGFwllOqsY=
+        d=gmail.com; s=20230601; t=1724282705; x=1724887505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CyuApc9mYmmnNkCZOFZsxFAJOS0r3TiuX7DWMb9thm8=;
+        b=X6crJZt7XR70psR+c8eY+NO5UDtLyfWsDO3mnUL0UgEP0MigUKhoSd6MRsjhEJ35nR
+         IzrPIyvSgL+yKBZbTNck0uEPBMbGyZ8bS9ombopXPJ+d0HXtJflwdX3Y33gZb6pB3GtF
+         kx6fAy91ACRRUs8S2BFofyrSpomqCghqhHSj7/ouzh4G74QCh4uEJoUGvfx162pnuOqq
+         WL5A9Mdc+dEBSstkSdMt0nnajLif3GDMnolY4QW5yCw1807Xh0YiBDpNOP0428c2tvD4
+         09K1T2T9A23YuUvBReF/8uWUQQ+mNOO1AtwtrjPLk/DwUw+FRtbwDDYUPUqatTP/A1GB
+         TsCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724280826; x=1724885626;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724282705; x=1724887505;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=p+HYCIGDmbAGvPO4lszl1UyZkDNKUCxUn11dV2OZ4OE=;
-        b=iB8Jxq7VI7cmkToGcdVmt1vabfeQrT1ac4DgOSFsBkbykK9cqDtoYrMbU+kclR+Kxu
-         ISaW7y4Fhl2VGjxus+iS4BW6F8G2lKLSTwi11c9PD3t9V/tSPmXvK4za/h3y5v5za1Kc
-         W0UPgbHZ5q+lpoQ6WZHJMoanGMeg2haZmnFa3H5nCm6zcYyAFU04VtrWgddYieKAZ4GZ
-         3vfD10HOIVYyZSOAyBNCMxUY0ps7zW/lZfhF1Bjltv75vtQ0qIERe/RLd1BtUunjLaK8
-         W86c4mlBrYE3PetB0wD7sYoAdcIV0W2dGilI3kLGlxydCCkWyPachuKWUa2GpYmhEsDL
-         w+Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgSXPYYUj0bvhWtSvWeFsW5n84L8YQzlHzK+wIsTLLx70Sy4oSRUTyQKL6rZDKgp5JL+MsZRe2TsILX8Gt@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZmWzUir8P3XfmHLUo5tdVJpivO8UvKFk9L2xA+XiuaWvgGUsA
-	Q+X76WbyQiCchtQjrM0Q4o86VJkm3fPh278llcdLTt/c4AKZhhfmB/bdjuYRX8PLSt8HgeXws6W
-	NrFPeZw==
-X-Google-Smtp-Source: AGHT+IFnUZUmNQ6yLm/vsHK0RcSQEyjDCS6vQ9aaorRVyAsq5tmGLn4GpYNkw7YMSuFGW5yPKR3snA==
-X-Received: by 2002:a2e:a9a8:0:b0:2ef:2f19:a8b3 with SMTP id 38308e7fff4ca-2f3f8b5732cmr26772601fa.41.1724280825556;
-        Wed, 21 Aug 2024 15:53:45 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f4048add76sm216701fa.126.2024.08.21.15.53.44
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 15:53:44 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5334879ba28so224193e87.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:53:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVhjAC0sc/dVJjxhLUCDorA5u+hawlMOc9bwhvIjTYr88xa7PrrD2UbIbHDnIjFa63njE5qrWjF3wSHU7he@vger.kernel.org
-X-Received: by 2002:a05:6512:3d86:b0:533:71f:3a53 with SMTP id
- 2adb3069b0e04-5334855751dmr3079353e87.19.1724280824072; Wed, 21 Aug 2024
- 15:53:44 -0700 (PDT)
+        bh=CyuApc9mYmmnNkCZOFZsxFAJOS0r3TiuX7DWMb9thm8=;
+        b=IPXyIlTWc6kJh5t6/SvmowEbwryJ/GoiTwrLzSReyCONF8K+IVEmS9l5hlaBKgChTx
+         XTfFex+WvO4n4kwuyfuB3Ri10eULH48PhANR80ZHZWy6E5/smVY7YE1mnNc4XmL1KeP7
+         ZVixWdaznBXwKXz559Ga07eGtf073UvEYA5YWnlWdaMGvJYdCeZ0tox9yFHFHauH9zCD
+         6afV1SaRwV5EToepxFNr6RtmXawMXrPKxxV1KUTjjSBZP9F3iLKgMs6INS/aH8JdTwQ0
+         KL7vZuQTb44oVObTxgEdhgN8mWd3theSLr/1DfnZW+dMBUcpZUBFV0KVWTocVFK62Y83
+         eyZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkw0fG43uw1gDWqBSeafF5MU06L3iCBnF9FlkvA9happ6rSxDL682Wf4MKhV4zr6lJrUaFPj43VNT6gms+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL5O3fED1W8a6k0sFA3OFTwkMFcCzCzqGw9S66ulzxPyW/2jsA
+	xiKAy6zFgqtlLYg/cQESZZP5pbCVKaKgrhlOE7+frLUWGgn1kK+4cXaO3w==
+X-Google-Smtp-Source: AGHT+IHu1DerUf9Fj18pj7DlD5rYBw2tK6cwi4aasG8/K1/is9JXcDuAwCaYPepGluGDpY4tDRqGTg==
+X-Received: by 2002:a05:690c:5701:b0:6ad:b725:4418 with SMTP id 00721157ae682-6c3d62a337emr370547b3.41.1724282705152;
+        Wed, 21 Aug 2024 16:25:05 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-002.fbsv.net. [2a03:2880:25ff:2::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39dd47b1bsm364407b3.104.2024.08.21.16.25.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 16:25:04 -0700 (PDT)
+From: Joanne Koong <joannelkoong@gmail.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: josef@toxicpanda.com,
+	bernd.schubert@fastmail.fm,
+	jefflexu@linux.alibaba.com,
+	kernel-team@meta.com
+Subject: [PATCH v2 0/9] fuse: writeback clean up / refactoring
+Date: Wed, 21 Aug 2024 16:22:32 -0700
+Message-ID: <20240821232241.3573997-1-joannelkoong@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
- <20240821-work-i_state-v2-1-67244769f102@kernel.org> <ZsZqCttfl/QtMJqp@dread.disaster.area>
-In-Reply-To: <ZsZqCttfl/QtMJqp@dread.disaster.area>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 22 Aug 2024 06:53:27 +0800
-X-Gmail-Original-Message-ID: <CAHk-=whuOCMgsq_VyOfqj=j=AKGv2xHaCFReBwbh6+5VYi6SZw@mail.gmail.com>
-Message-ID: <CAHk-=whuOCMgsq_VyOfqj=j=AKGv2xHaCFReBwbh6+5VYi6SZw@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 1/6] fs: add i_state helpers
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neilb@suse.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 22 Aug 2024 at 06:28, Dave Chinner <david@fromorbit.com> wrote:
->
-> wakeup_var() takes the wait queue head spinlock
+This patchset contains some minor clean up / refactoring for the fuse
+writeback code.
 
-That's the part you missed.
+As a sanity check, I ran fio to check against crashes -
+./libfuse/build/example/passthrough_ll -o cache=always -o writeback -o source=~/fstests ~/tmp_mount
+fio --name=test --ioengine=psync --iodepth=1 --rw=randwrite --bs=1M --direct=0 --size=2G --numjobs=2 --directory=/home/user/tmp_mount
 
-wake_up_var() does no such thing. It calles __wake_up_bit(), which does this:
+v1: https://lore.kernel.org/linux-fsdevel/20240819182417.504672-1-joannelkoong@gmail.com/
+Changes from v1 -> v2:
+* Added patches 2 and 4-9
+* Add commit message to patch 1 (Jingbo)
 
-        if (waitqueue_active(wq_head))
-                __wake_up(wq_head, TASK_NORMAL, 1, &key);
+Joanne Koong (9):
+  fuse: drop unused fuse_mount arg in fuse_writepage_finish()
+  fuse: refactor finished writeback stats updates into helper function
+  fuse: update stats for pages in dropped aux writeback list
+  fuse: clean up error handling in fuse_writepages()
+  fuse: move initialization of fuse_file to fuse_writepages() instead of
+    in callback
+  fuse: convert fuse_writepages_fill() to use a folio for its tmp page
+  fuse: move folio_start_writeback to after the allocations in
+    fuse_writepage_locked()
+  fuse: refactor out shared logic in fuse_writepages_fill() and
+    fuse_writepage_locked()
+  fuse: tidy up error paths in fuse_writepages_fill() and
+    fuse_writepage_locked()
 
-and that waitqueue_active() is lockless.
+ fs/fuse/file.c | 192 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 102 insertions(+), 90 deletions(-)
 
-That's the thing that wants the barrier (or something else that
-guarantees that the waiters actually *see* the new state after they've
-added themselves to the wait-list, and before we then look at the
-wait-list being empty).
+-- 
+2.43.5
 
-See the comment in <linux/wait.h> above the waitqueue_active().
-
-And yes, this is annoying and subtle and has caused bugs. But taking
-waitqueue locks just to notice nobody is waiting is very expensive
-indeed, and much more expensive than a memory barrier when the common
-case is typically often "nobody is waiting".
-
-               Linus
 
