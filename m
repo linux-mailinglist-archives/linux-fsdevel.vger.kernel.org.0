@@ -1,158 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-26513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0E595A40C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:40:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA7D95A421
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C27F51F25DCC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 17:40:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C77691C20F0E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 17:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074F61B2EF8;
-	Wed, 21 Aug 2024 17:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00EC1B2ED8;
+	Wed, 21 Aug 2024 17:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gN8GhA2Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8015C1B2EDE;
-	Wed, 21 Aug 2024 17:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E3A4206B;
+	Wed, 21 Aug 2024 17:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724262028; cv=none; b=U0Mrp16t8SNuVhKrHhAS057tCsNmBhWaRUjsvZixG9IjvbJfZ3vYT5cWjKxyx+bP3J33YoRlQ2W+6hiIN+1NJVoaivBggqrj7Sb9u0J/5+5O7OYjR+4ZpuMN9LP3vIH2xwBDC3UWsY1rqX6QFPCmrhIZTykAgwyUTXblXN1RlGg=
+	t=1724262364; cv=none; b=ZZ8+sWRtcXtjVrqEtKU8Q6rExuSG5PDYQp2WHEQRRq5bvrWJaSZEXTE3JRutweeHMqXOtdCN9aEulU/hik2IbsPj4HdYVYITqqbNx8fG3OkeOn3Au2okeqYz7U1N6ZZgIHhC9TwREadC1PJAneVFofifnd7sPRf/bda5jf6XPF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724262028; c=relaxed/simple;
-	bh=3jSo8xTV6g9gk/XnSONwS00e5gGR/ZZ3onU+FR9wQio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RyTxCN/8YGTCW4g6AdSboYlFeBlnO9ctQWrlWOORPeuh6AmruK8RCfO+WH0yOpz9N5J2tuCmyb+AinaSz8KhjygqasbZ8jfqf54Hn0yFLfuliFkfkKWRL5rEKaV+wXX5Eq0bSK/fkbprEXiInNlVA1j5ANUKlSKWk0Yf8d7TIys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A67B2C32781;
-	Wed, 21 Aug 2024 17:40:22 +0000 (UTC)
-Date: Wed, 21 Aug 2024 18:40:20 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 24/40] arm64/signal: Expose GCS state in signal frames
-Message-ID: <ZsYmhHHmqSu7wWWW@arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-24-699e2bd2190b@kernel.org>
+	s=arc-20240116; t=1724262364; c=relaxed/simple;
+	bh=1BK99sTFr7816wkAtISZpPlUAsnYjks7tComubUaZyo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bdXjXpPsLASILT5vmlufFPlVFBTqRnwrxCITtHuJP0cFkHxcwr/9eUink5w6kczup8JZEDAclDWlWRwq1zjumY5SIYB9IeDWGd4eRDUmB5IZ4rxLmPaEApy3JTF32EMjqo4slunEsGe55ZBoKjhyeuz6hIUOmZBtCBKLTcJTpZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gN8GhA2Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87860C32781;
+	Wed, 21 Aug 2024 17:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724262364;
+	bh=1BK99sTFr7816wkAtISZpPlUAsnYjks7tComubUaZyo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=gN8GhA2YOiwOCqdnusrke2P48jlw5jg0jJLt1aXJpWJvrn949d/LYwgD3okCnF7FN
+	 p2KwdwMShlYvfXVNKNPLBXwXiccUTFi5Yto8/jjLyx8TrYi/l9CFshtMED1TFGVdYT
+	 JzFm/JOx47mqM+PuH/VGZ8tRkGymPqNghil8uxm7DhqeYmFpTOaI8tTw587/2NS6pB
+	 MUtzjygSHzcN3o4F0hyva/CgEPRSXTqIIV+c8L7M4vHNsuImSp94eMq1+w9E3ugaNJ
+	 p2EC0D7CMM9/TZV8jIe96EMSyIpXcRSDO4KbLO+j4V3DXlmC0E9uPYgIo9V8h/aqj1
+	 UOcmgxneMa5AQ==
+Message-ID: <4ab36f95604da25d8c5b419c927d85d362bca2e8.camel@kernel.org>
+Subject: Re: [PATCH v12 05/24] nfsd: fix nfsfh tracepoints to properly
+ handle NULL rqstp
+From: Jeff Layton <jlayton@kernel.org>
+To: Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org
+Cc: Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <anna@kernel.org>, 
+ Trond Myklebust <trondmy@hammerspace.com>, NeilBrown <neilb@suse.de>,
+ linux-fsdevel@vger.kernel.org
+Date: Wed, 21 Aug 2024 13:46:02 -0400
+In-Reply-To: <20240819181750.70570-6-snitzer@kernel.org>
+References: <20240819181750.70570-1-snitzer@kernel.org>
+	 <20240819181750.70570-6-snitzer@kernel.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801-arm64-gcs-v10-24-699e2bd2190b@kernel.org>
 
-On Thu, Aug 01, 2024 at 01:06:51PM +0100, Mark Brown wrote:
-> @@ -636,6 +639,81 @@ extern int restore_zt_context(struct user_ctxs *user);
->  
->  #endif /* ! CONFIG_ARM64_SME */
->  
-> +#ifdef CONFIG_ARM64_GCS
-> +
-> +static int preserve_gcs_context(struct gcs_context __user *ctx)
-> +{
-> +	int err = 0;
-> +	u64 gcspr;
-> +
-> +	/*
-> +	 * We will add a cap token to the frame, include it in the
-> +	 * GCSPR_EL0 we report to support stack switching via
-> +	 * sigreturn.
-> +	 */
-> +	gcs_preserve_current_state();
-> +	gcspr = current->thread.gcspr_el0 - 8;
+On Mon, 2024-08-19 at 14:17 -0400, Mike Snitzer wrote:
+> Fixes stop-gap used in previous commit where caller avoided using
+> tracepoint if rqstp is NULL.=C2=A0 Instead, have each tracepoint avoid
+> dereferencing NULL rqstp.
+>=20
+> Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+> ---
+> =C2=A0fs/nfsd/nfsfh.c | 12 ++++--------
+> =C2=A0fs/nfsd/trace.h | 36 +++++++++++++++++++++---------------
+> =C2=A02 files changed, 25 insertions(+), 23 deletions(-)
+>=20
+> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> index 19e173187ab9..bae727e65214 100644
+> --- a/fs/nfsd/nfsfh.c
+> +++ b/fs/nfsd/nfsfh.c
+> @@ -195,8 +195,7 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst
+> *rqstp, struct net *net,
+> =C2=A0
+> =C2=A0	error =3D nfserr_stale;
+> =C2=A0	if (IS_ERR(exp)) {
+> -		if (rqstp)
+> -			trace_nfsd_set_fh_dentry_badexport(rqstp,
+> fhp, PTR_ERR(exp));
+> +		trace_nfsd_set_fh_dentry_badexport(rqstp, fhp,
+> PTR_ERR(exp));
+> =C2=A0
+> =C2=A0		if (PTR_ERR(exp) =3D=3D -ENOENT)
+> =C2=A0			return error;
+> @@ -244,8 +243,7 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst
+> *rqstp, struct net *net,
+> =C2=A0						data_left,
+> fileid_type, 0,
+> =C2=A0						nfsd_acceptable,
+> exp);
+> =C2=A0		if (IS_ERR_OR_NULL(dentry)) {
+> -			if (rqstp)
+> -
+> 				trace_nfsd_set_fh_dentry_badhandle(rqstp, fhp,
+> +			trace_nfsd_set_fh_dentry_badhandle(rqstp,
+> fhp,
+> =C2=A0					dentry ?=C2=A0 PTR_ERR(dentry) :
+> -ESTALE);
+> =C2=A0			switch (PTR_ERR(dentry)) {
+> =C2=A0			case -ENOMEM:
+> @@ -321,8 +319,7 @@ __fh_verify(struct svc_rqst *rqstp,
+> =C2=A0	dentry =3D fhp->fh_dentry;
+> =C2=A0	exp =3D fhp->fh_export;
+> =C2=A0
+> -	if (rqstp)
+> -		trace_nfsd_fh_verify(rqstp, fhp, type, access);
+> +	trace_nfsd_fh_verify(net, rqstp, fhp, type, access);
+> =C2=A0
+> =C2=A0	/*
+> =C2=A0	 * We still have to do all these permission checks, even
+> when
+> @@ -376,8 +373,7 @@ __fh_verify(struct svc_rqst *rqstp,
+> =C2=A0	/* Finally, check access permissions. */
+> =C2=A0	error =3D nfsd_permission(cred, exp, dentry, access);
+> =C2=A0out:
+> -	if (rqstp)
+> -		trace_nfsd_fh_verify_err(rqstp, fhp, type, access,
+> error);
+> +	trace_nfsd_fh_verify_err(net, rqstp, fhp, type, access,
+> error);
+> =C2=A0	if (error =3D=3D nfserr_stale)
+> =C2=A0		nfsd_stats_fh_stale_inc(nn, exp);
+> =C2=A0	return error;
+> diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
+> index 77bbd23aa150..d49b3c1e3ba9 100644
+> --- a/fs/nfsd/trace.h
+> +++ b/fs/nfsd/trace.h
+> @@ -195,12 +195,13 @@ TRACE_EVENT(nfsd_compound_encode_err,
+> =C2=A0
+> =C2=A0TRACE_EVENT(nfsd_fh_verify,
+> =C2=A0	TP_PROTO(
+> +		const struct net *net,
+> =C2=A0		const struct svc_rqst *rqstp,
+> =C2=A0		const struct svc_fh *fhp,
+> =C2=A0		umode_t type,
+> =C2=A0		int access
+> =C2=A0	),
+> -	TP_ARGS(rqstp, fhp, type, access),
+> +	TP_ARGS(net, rqstp, fhp, type, access),
+> =C2=A0	TP_STRUCT__entry(
+> =C2=A0		__field(unsigned int, netns_ino)
+> =C2=A0		__sockaddr(server, rqstp->rq_xprt->xpt_remotelen)
+> @@ -212,12 +213,14 @@ TRACE_EVENT(nfsd_fh_verify,
+> =C2=A0		__field(unsigned long, access)
+> =C2=A0	),
+> =C2=A0	TP_fast_assign(
+> -		__entry->netns_ino =3D SVC_NET(rqstp)->ns.inum;
+> -		__assign_sockaddr(server, &rqstp->rq_xprt-
+> >xpt_local,
+> -		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rqstp->rq_xprt->xpt_locallen);
+> -		__assign_sockaddr(client, &rqstp->rq_xprt-
+> >xpt_remote,
+> -				=C2=A0 rqstp->rq_xprt->xpt_remotelen);
+> -		__entry->xid =3D be32_to_cpu(rqstp->rq_xid);
+> +		__entry->netns_ino =3D net->ns.inum;
+> +		if (rqstp) {
+> +			__assign_sockaddr(server, &rqstp->rq_xprt-
+> >xpt_local,
+> +					=C2=A0 rqstp->rq_xprt-
+> >xpt_locallen);
+> +			__assign_sockaddr(client, &rqstp->rq_xprt-
+> >xpt_remote,
+> +					=C2=A0 rqstp->rq_xprt-
+> >xpt_remotelen);
+> +		}
 
-We discussed briefly offline. Not a problem in this patch but
-gcs_preserve_current_state() only saves it conditionally on GCS being
-enabled for the task. However, you mentioned that the register is always
-available to the user, so I'd rather change the preserving function to
-save it unconditionally.
+Does this need an else branch to set these values to something when
+rqstp is NULL, or are we guaranteed that they are already zeroed out
+when they aren't assigned?
 
-> +
-> +	__put_user_error(GCS_MAGIC, &ctx->head.magic, err);
-> +	__put_user_error(sizeof(*ctx), &ctx->head.size, err);
-> +	__put_user_error(gcspr, &ctx->gcspr, err);
-> +	__put_user_error(0, &ctx->reserved, err);
-> +	__put_user_error(current->thread.gcs_el0_mode,
-> +			 &ctx->features_enabled, err);
-> +
-> +	return err;
-> +}
-> +
-> +static int restore_gcs_context(struct user_ctxs *user)
-> +{
-> +	u64 gcspr, enabled;
-> +	int err = 0;
-> +
-> +	if (user->gcs_size != sizeof(*user->gcs))
-> +		return -EINVAL;
-> +
-> +	__get_user_error(gcspr, &user->gcs->gcspr, err);
-> +	__get_user_error(enabled, &user->gcs->features_enabled, err);
-> +	if (err)
-> +		return err;
-> +
-> +	/* Don't allow unknown modes */
-> +	if (enabled & ~PR_SHADOW_STACK_SUPPORTED_STATUS_MASK)
-> +		return -EINVAL;
-> +
-> +	err = gcs_check_locked(current, enabled);
-> +	if (err != 0)
-> +		return err;
-> +
-> +	/* Don't allow enabling */
-> +	if (!task_gcs_el0_enabled(current) &&
-> +	    (enabled & PR_SHADOW_STACK_ENABLE))
-> +		return -EINVAL;
+> +		__entry->xid =3D rqstp ? be32_to_cpu(rqstp->rq_xid) :
+> 0;
+> =C2=A0		__entry->fh_hash =3D knfsd_fh_hash(&fhp->fh_handle);
+> =C2=A0		__entry->inode =3D d_inode(fhp->fh_dentry);
+> =C2=A0		__entry->type =3D type;
+> @@ -232,13 +235,14 @@ TRACE_EVENT(nfsd_fh_verify,
+> =C2=A0
+> =C2=A0TRACE_EVENT_CONDITION(nfsd_fh_verify_err,
+> =C2=A0	TP_PROTO(
+> +		const struct net *net,
+> =C2=A0		const struct svc_rqst *rqstp,
+> =C2=A0		const struct svc_fh *fhp,
+> =C2=A0		umode_t type,
+> =C2=A0		int access,
+> =C2=A0		__be32 error
+> =C2=A0	),
+> -	TP_ARGS(rqstp, fhp, type, access, error),
+> +	TP_ARGS(net, rqstp, fhp, type, access, error),
+> =C2=A0	TP_CONDITION(error),
+> =C2=A0	TP_STRUCT__entry(
+> =C2=A0		__field(unsigned int, netns_ino)
+> @@ -252,12 +256,14 @@ TRACE_EVENT_CONDITION(nfsd_fh_verify_err,
+> =C2=A0		__field(int, error)
+> =C2=A0	),
+> =C2=A0	TP_fast_assign(
+> -		__entry->netns_ino =3D SVC_NET(rqstp)->ns.inum;
+> -		__assign_sockaddr(server, &rqstp->rq_xprt-
+> >xpt_local,
+> -		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rqstp->rq_xprt->xpt_locallen);
+> -		__assign_sockaddr(client, &rqstp->rq_xprt-
+> >xpt_remote,
+> -				=C2=A0 rqstp->rq_xprt->xpt_remotelen);
+> -		__entry->xid =3D be32_to_cpu(rqstp->rq_xid);
+> +		__entry->netns_ino =3D net->ns.inum;
+> +		if (rqstp) {
+> +			__assign_sockaddr(server, &rqstp->rq_xprt-
+> >xpt_local,
+> +					=C2=A0 rqstp->rq_xprt-
+> >xpt_locallen);
+> +			__assign_sockaddr(client, &rqstp->rq_xprt-
+> >xpt_remote,
+> +					=C2=A0 rqstp->rq_xprt-
+> >xpt_remotelen);
+> +		}
+> +		__entry->xid =3D rqstp ? be32_to_cpu(rqstp->rq_xid) :
+> 0;
+> =C2=A0		__entry->fh_hash =3D knfsd_fh_hash(&fhp->fh_handle);
+> =C2=A0		if (fhp->fh_dentry)
+> =C2=A0			__entry->inode =3D d_inode(fhp->fh_dentry);
+> @@ -286,7 +292,7 @@ DECLARE_EVENT_CLASS(nfsd_fh_err_class,
+> =C2=A0		__field(int, status)
+> =C2=A0	),
+> =C2=A0	TP_fast_assign(
+> -		__entry->xid =3D be32_to_cpu(rqstp->rq_xid);
+> +		__entry->xid =3D rqstp ? be32_to_cpu(rqstp->rq_xid) :
+> 0;
+> =C2=A0		__entry->fh_hash =3D knfsd_fh_hash(&fhp->fh_handle);
+> =C2=A0		__entry->status =3D status;
+> =C2=A0	),
 
-We don't allow enabling and that's fine but we don't restore gcspr
-either with this early return.
-
-> +
-> +	/* If we are disabling disable everything */
-> +	if (!(enabled & PR_SHADOW_STACK_ENABLE))
-> +		enabled = 0;
-> +
-> +	current->thread.gcs_el0_mode = enabled;
-> +
-> +	/*
-> +	 * We let userspace set GCSPR_EL0 to anything here, we will
-> +	 * validate later in gcs_restore_signal().
-> +	 */
-> +	current->thread.gcspr_el0 = gcspr;
-> +	write_sysreg_s(current->thread.gcspr_el0, SYS_GCSPR_EL0);
-
-I think you should move this further up unconditionally.
-
--- 
-Catalin
+--=20
+Jeff Layton <jlayton@kernel.org>
 
