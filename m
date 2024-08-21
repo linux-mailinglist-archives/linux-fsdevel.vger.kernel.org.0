@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-26544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BECC295A55A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:35:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B28295A555
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E403D1C21948
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:35:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E62DC283853
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E1E170855;
-	Wed, 21 Aug 2024 19:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD1316F27F;
+	Wed, 21 Aug 2024 19:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bz4y1KMz"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WylXN9Ka"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAC516E895
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 19:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6275A1684AB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 19:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724268908; cv=none; b=nV7JAmQrg40v60pzP9s83zYMLjsEzdj3dmDNtPccSuCXwJVisrWbz3PUdLVYYa2BvnvEcFGiSO31llFxH3/5noqgjR4xAfXZfzxDgii/ABYNVFzCT/mTylLGza+lgkG8pN0MqE5lJh+tgf+WowP2M+0yiqPB+kLjeSOUWPPZVyc=
+	t=1724268898; cv=none; b=FZzbwv97NgKWSyQGNMQw9PAEIuSCa8r5Fz3AXWO7BAqbH68DjmqSpGa2ITOVAW36paIKoySTTZQeGVvPq+8lG7DKlvGe54iyG8wqU9gYo73HC7jiAK/tjKSNroO/tzJ/RSvt6YHUnDAiDap3O9gqPd4UqnUC0yS/xTaor2z7mFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724268908; c=relaxed/simple;
-	bh=rSBS39uXpIZsM1m8Gfutk+e6ssZCJKIqFV7L8jFeVdg=;
+	s=arc-20240116; t=1724268898; c=relaxed/simple;
+	bh=Sbi7u/F05xjUQGNDJZ2A6rIQmJj66v+ZWRoN7Pc5mB8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EdB/RbWZVQW4BUeN9gjxrfPHhSBKFYf/XbjW9TfnG6p+zdpqlb1SMYMcolyJ3wP0hz2+4CJAks8mlBjOm+YUhK01ZEwGcBuFqT6oQWcR7Y39vZutLLCwtylKX1pDqaYGKhvNkaA/BFiIb19qtdxABCQoP8WEOYd/ww6qKrdhI3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bz4y1KMz; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=XuhaJOrfQvMDi16rpNKVUVqpqnZpoIghVw2lkecTHJBdL5HuJEWm6kyEhknN9VrdEhKfCJWyZtwpav40xCJybDVDgrFJHWkwO83q3QgJ1DkNRh40UA+rnHpjjPy9wZf3LpcTqkanOCBBySYAeLZFqvpe+IvJRR2Klm5grxWf49E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WylXN9Ka; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=PFYGF888esVx5is+dDOIN1XZFjPX09/KPzfotQSNrpE=; b=bz4y1KMzS8T/uu3zwWjk/iTFzg
-	Dz9zVtDX+aD2O81VUnyS8Ci9+9iROW7x9hQql9Wl5x+3DUJBCFOA8Rc6THDTlZPyNUw1JNh8r97EL
-	9Uyvq+us/PqHxShueB0wN+4yqlLVJYl2pJBKi1F822Gmz1+NW14DGHuqCdc3gzGW33NKNnDnyKkzb
-	mkjaG4Xmsa2cZq+dwzT7ZSmEdJB0PqXbB/tHlpwQnaFPRAORo7YVew2AdiCEBpTOsF4oPdJogOMHH
-	35SWcnbOzIBtUZjARl0d8MNDoJRMzBo0Kiluc4G6jTBIz79/mPp0tqyo0s+9yvEonoR4dgaQC9Jrq
-	IVLRVLAg==;
+	bh=uK8Vt42wFQRzdcmG5GR/Wkh51WwyJybLOsQGLqtZDk0=; b=WylXN9KaKLZCC27qUPd+VKLvzI
+	EEywSDbKYBo1MyvJbciFl8KGyL2yLzGdrPEZ3uKpBHk01qt8OMll5J4+luB2P0CKHS3XazzH19/vk
+	VnF7KdvducHWtJYgDK7RFspQ7razapMZQ/3Nu4AaedbJBRGxiyvqJMr1zjS6PvHId9b+EmD2Z9gb3
+	VSNUG2wL456sm7IGFeOhAHbB/N/1U3EXity8fcoUbar3SLRB8ZsxMGdy1A8Z4e2BYMLhGU/+Y2YU1
+	6cdKUXUNwO7yMDl9Pordxy+JPhxLXfBqshlhHmdZaeCFV4ZXUnWRtTcmL0eQdYj9B/L63KQWtJ0Qj
+	3C8+5NOw==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sgr6V-00000009cqj-0l7L;
+	id 1sgr6V-00000009cql-19FT;
 	Wed, 21 Aug 2024 19:34:47 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
@@ -50,9 +50,9 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org,
 	x86@kernel.org
-Subject: [PATCH 05/10] mm: Remove PageUnevictable
-Date: Wed, 21 Aug 2024 20:34:38 +0100
-Message-ID: <20240821193445.2294269-6-willy@infradead.org>
+Subject: [PATCH 06/10] mm: Remove PageMlocked
+Date: Wed, 21 Aug 2024 20:34:39 +0100
+Message-ID: <20240821193445.2294269-7-willy@infradead.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240821193445.2294269-1-willy@infradead.org>
 References: <20240821193445.2294269-1-willy@infradead.org>
@@ -64,78 +64,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is only one caller of PageUnevictable() left; convert it to call
-folio_test_unevictable() and remove all the page accessors.
+This flag is now only used on folios, so we can remove all the page
+accessors.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/page-flags.h |  6 +++---
- mm/huge_memory.c           | 16 ++++++++--------
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ Documentation/mm/unevictable-lru.rst |  4 ++--
+ include/linux/page-flags.h           | 13 ++++++++-----
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
+diff --git a/Documentation/mm/unevictable-lru.rst b/Documentation/mm/unevictable-lru.rst
+index 2feb2ed51ae2..255ef12a432b 100644
+--- a/Documentation/mm/unevictable-lru.rst
++++ b/Documentation/mm/unevictable-lru.rst
+@@ -253,8 +253,8 @@ Basic Management
+ 
+ mlocked pages - pages mapped into a VM_LOCKED VMA - are a class of unevictable
+ pages.  When such a page has been "noticed" by the memory management subsystem,
+-the page is marked with the PG_mlocked flag.  This can be manipulated using the
+-PageMlocked() functions.
++the folio is marked with the PG_mlocked flag.  This can be manipulated using
++folio_set_mlocked() and folio_clear_mlocked() functions.
+ 
+ A PG_mlocked page will be placed on the unevictable list when it is added to
+ the LRU.  Such pages can be "noticed" by memory management in several places:
 diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 43a7996c53d4..bdf24f65d998 100644
+index bdf24f65d998..f1358f86a673 100644
 --- a/include/linux/page-flags.h
 +++ b/include/linux/page-flags.h
-@@ -580,9 +580,9 @@ FOLIO_CLEAR_FLAG(swapcache, FOLIO_HEAD_PAGE)
- FOLIO_FLAG_FALSE(swapcache)
- #endif
- 
--PAGEFLAG(Unevictable, unevictable, PF_HEAD)
--	__CLEARPAGEFLAG(Unevictable, unevictable, PF_HEAD)
--	TESTCLEARFLAG(Unevictable, unevictable, PF_HEAD)
-+FOLIO_FLAG(unevictable, FOLIO_HEAD_PAGE)
-+	__FOLIO_CLEAR_FLAG(unevictable, FOLIO_HEAD_PAGE)
-+	FOLIO_TEST_CLEAR_FLAG(unevictable, FOLIO_HEAD_PAGE)
+@@ -585,12 +585,15 @@ FOLIO_FLAG(unevictable, FOLIO_HEAD_PAGE)
+ 	FOLIO_TEST_CLEAR_FLAG(unevictable, FOLIO_HEAD_PAGE)
  
  #ifdef CONFIG_MMU
- PAGEFLAG(Mlocked, mlocked, PF_NO_TAIL)
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index cf8e34f62976..d92f19812c89 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3017,25 +3017,25 @@ static void remap_page(struct folio *folio, unsigned long nr)
- 	}
- }
+-PAGEFLAG(Mlocked, mlocked, PF_NO_TAIL)
+-	__CLEARPAGEFLAG(Mlocked, mlocked, PF_NO_TAIL)
+-	TESTSCFLAG(Mlocked, mlocked, PF_NO_TAIL)
++FOLIO_FLAG(mlocked, FOLIO_HEAD_PAGE)
++	__FOLIO_CLEAR_FLAG(mlocked, FOLIO_HEAD_PAGE)
++	FOLIO_TEST_CLEAR_FLAG(mlocked, FOLIO_HEAD_PAGE)
++	FOLIO_TEST_SET_FLAG(mlocked, FOLIO_HEAD_PAGE)
+ #else
+-PAGEFLAG_FALSE(Mlocked, mlocked) __CLEARPAGEFLAG_NOOP(Mlocked, mlocked)
+-	TESTSCFLAG_FALSE(Mlocked, mlocked)
++FOLIO_FLAG_FALSE(mlocked)
++	__FOLIO_CLEAR_FLAG_NOOP(mlocked)
++	FOLIO_TEST_CLEAR_FLAG_FALSE(mlocked)
++	FOLIO_TEST_SET_FLAG_FALSE(mlocked)
+ #endif
  
--static void lru_add_page_tail(struct page *head, struct page *tail,
-+static void lru_add_page_tail(struct folio *folio, struct page *tail,
- 		struct lruvec *lruvec, struct list_head *list)
- {
--	VM_BUG_ON_PAGE(!PageHead(head), head);
--	VM_BUG_ON_PAGE(PageLRU(tail), head);
-+	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
-+	VM_BUG_ON_FOLIO(PageLRU(tail), folio);
- 	lockdep_assert_held(&lruvec->lru_lock);
- 
- 	if (list) {
- 		/* page reclaim is reclaiming a huge page */
--		VM_WARN_ON(PageLRU(head));
-+		VM_WARN_ON(folio_test_lru(folio));
- 		get_page(tail);
- 		list_add_tail(&tail->lru, list);
- 	} else {
- 		/* head is still on lru (and we have it frozen) */
--		VM_WARN_ON(!PageLRU(head));
--		if (PageUnevictable(tail))
-+		VM_WARN_ON(!folio_test_lru(folio));
-+		if (folio_test_unevictable(folio))
- 			tail->mlock_count = 0;
- 		else
--			list_add_tail(&tail->lru, &head->lru);
-+			list_add_tail(&tail->lru, &folio->lru);
- 		SetPageLRU(tail);
- 	}
- }
-@@ -3134,7 +3134,7 @@ static void __split_huge_page_tail(struct folio *folio, int tail,
- 	 * pages to show after the currently processed elements - e.g.
- 	 * migrate_pages
- 	 */
--	lru_add_page_tail(head, page_tail, lruvec, list);
-+	lru_add_page_tail(folio, page_tail, lruvec, list);
- }
- 
- static void __split_huge_page(struct page *page, struct list_head *list,
+ #ifdef CONFIG_ARCH_USES_PG_UNCACHED
 -- 
 2.43.0
 
