@@ -1,95 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-26457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2099596B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 10:41:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E025995980C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 12:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03BE71F21443
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 08:41:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E6B31C21A51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 10:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CD4188A34;
-	Wed, 21 Aug 2024 08:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FlxWS6sp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CDE1BF800;
+	Wed, 21 Aug 2024 08:50:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914F31531D7;
-	Wed, 21 Aug 2024 08:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C865F1547C2;
+	Wed, 21 Aug 2024 08:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724227984; cv=none; b=P0759f/6S9GoSGBIM+pPRyZ6aHhOQHPEBFkMc4gLSDeUKOZwcR76lSn9mqgt99RuRxsqu5n2sxWs80OvV/UVSQKdKSOcyBC6ga6mn2al3Xk8wEQkUjcPvOT+zltWORaLsqAkFuuBmSwHK1mye8EnluzqVO+1HW4SmvbcOqOVjwI=
+	t=1724230231; cv=none; b=bfSLzsptzWHGrM04ob6zKSGHjJ1vrmJ/sBJVRspq7rPczM9h2NyCZgPB5Qg7yDTwNLMb33H7yw40oWMMnLApB7QBBz7b6pcR14meOmqDCBSz9s2p6b/DmCC9DhlJ1lzyOwYFu6zwWbd3YDQXEqocdfQfZ9Vxc2NS9Itq1jSxHQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724227984; c=relaxed/simple;
-	bh=OKRSLZg7P9zOd0NxN52EI30tXAwi2KRvt/ZPHX2qB8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uQ1bDSD2qer2TVa5zLkX2U9TcIi/vyAQ8LiSFA3Ec7ackA+elx5kHMC0EO/JWGI43/mdSmcr8nbdgxrVCEpy60f7nJL62QmXAnBdYqJnDpcX9WUEHDJvVRJEpnTl21GACUhgMuos07YCkkFjfH1ocq5d6m9MvXrlXWB3Uve15PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FlxWS6sp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98055C32782;
-	Wed, 21 Aug 2024 08:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724227984;
-	bh=OKRSLZg7P9zOd0NxN52EI30tXAwi2KRvt/ZPHX2qB8o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FlxWS6sp8wEgcl/LayFmvliQREEx21Yx5r8ug+Ea7xOi/KbzBz4yWL+Kvsu1554vR
-	 l7/80faymfhUkCyDgWb6dSvrwa7Jr9q8mREEk8WZ2Gb8hJ6c2eOenzvQxkucOJIHoR
-	 Kt/qYNmN6+2ZoTjMrv4RdaMfsdFfa4ZpgysmD5/RZae0ucqWfv0OVgkfYn6pi26b4G
-	 68RRHV4MuB5sOkl/0AJOB1QpL4NeRwBBshcpEKGT6P9I/iALsJ+suodG2sQJuHnZFH
-	 wor/dT4G5nnIcdD5KN6iIy7zdMQExDRtZ1zdTlaaGJYyy8pPkseudRYgVZ81KopD5D
-	 2eLK64mYnLcsA==
-From: Christian Brauner <brauner@kernel.org>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/4] Squashfs: Ensure all readahead pages have been used
-Date: Wed, 21 Aug 2024 10:12:32 +0200
-Message-ID: <20240821-erfinden-gegeben-be787ce7eb3b@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240820232622.19271-1-phillip@squashfs.org.uk>
-References: <20240820232622.19271-1-phillip@squashfs.org.uk>
+	s=arc-20240116; t=1724230231; c=relaxed/simple;
+	bh=tnrxtob0yb9eMmfLRERGvYJGOSdmCt6YF/gYnTDfJ+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIgOSgd1AuLpSXERShrgmYznd3wAfPk6UQk4cgtiAaPTScbsEMh7q75xpZqYV83RrEJLhTSJOm2cG/eETjcDdEWH7ghQxrsluvVRxpuce4XVkFofMNxlSVmsr2WoPIQTrV+1d7Cf7D7HRDeXGz42jm9YysL5ZA+JQyPtktGfwqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F403AC32782;
+	Wed, 21 Aug 2024 08:50:24 +0000 (UTC)
+Date: Wed, 21 Aug 2024 09:50:22 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 19/40] arm64/gcs: Context switch GCS state for EL0
+Message-ID: <ZsWqTtCq1mNJH1vz@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-19-699e2bd2190b@kernel.org>
+ <ZsMwhdmE_Ai9BbM9@arm.com>
+ <0f6fd3ec-2481-4507-af0e-3cbbb7406b54@sirena.org.uk>
+ <3b316422-7f88-4f5d-a691-eb9209ec4ba9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1184; i=brauner@kernel.org; h=from:subject:message-id; bh=OKRSLZg7P9zOd0NxN52EI30tXAwi2KRvt/ZPHX2qB8o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQdXdjp+Ek16ld4euaZ2QwmIQ2XTlnJbvx72KnzgJAX7 7mplvs2d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkEz8jw5/G+ZMPSjYc1lt6 vuzh/ugyz4Mi689sk7lUtDFvSvuJiikMv9k7TDb5/Dls0eaer3nP12GHcU35ekfFPnPLrtXuPWV l7AA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b316422-7f88-4f5d-a691-eb9209ec4ba9@sirena.org.uk>
 
-On Wed, 21 Aug 2024 00:26:22 +0100, Phillip Lougher wrote:
-> In the recent work to remove page->index, a sanity check
-> that ensured all the readhead pages were covered by the
-> Squashfs data block was removed [1].
+On Tue, Aug 20, 2024 at 06:56:19PM +0100, Mark Brown wrote:
+> On Mon, Aug 19, 2024 at 04:44:52PM +0100, Mark Brown wrote:
+> > On Mon, Aug 19, 2024 at 12:46:13PM +0100, Catalin Marinas wrote:
+> > > On Thu, Aug 01, 2024 at 01:06:46PM +0100, Mark Brown wrote:
 > 
-> To avoid any regression, this commit adds the sanity check
-> back in an equivalent way.  Namely the page actor will now
-> return error if any pages are unused after completion.
+> > > > +	/*
+> > > > +	 * Ensure that GCS changes are observable by/from other PEs in
+> > > > +	 * case of migration.
+> > > > +	 */
+> > > > +	if (task_gcs_el0_enabled(current) || task_gcs_el0_enabled(next))
+> > > > +		gcsb_dsync();
 > 
-> [...]
+> > > Could we do the sysreg writing under this 'if' block? If no app is using
+> > > GCS (which would be the case for a while), it looks like unnecessary
+> > > sysreg accesses.
+> 
+> > Yes, that should be fine I think.
+> 
+> I forgot when writing the above that we always allow reads from
+> GCSPR_EL0 in order to avoid corner cases for unwinders in the case of
+> asynchronous disable.  I'd expect that to be cheap to access though.
 
-Applied to the vfs.folio branch of the vfs/vfs.git tree.
-Patches in the vfs.folio branch should appear in linux-next soon.
+But then gcs_preserve_current_state() doesn't save the GCSPR_EL0 value
+if the shadow stack was disabled. At the subsequent switch to this task,
+we write some stale value.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.folio
-
-[5/5] Squashfs: Ensure all readahead pages have been used
-      https://git.kernel.org/vfs/vfs/c/5d85f9c952d8
+-- 
+Catalin
 
