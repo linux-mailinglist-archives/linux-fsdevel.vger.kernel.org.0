@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-26487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492D795A209
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 17:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D48DB95A20A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 17:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0636E28F3DD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 15:55:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9219228F691
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 15:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65B71BAEC6;
-	Wed, 21 Aug 2024 15:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1092A1BAECE;
+	Wed, 21 Aug 2024 15:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0tBarSm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mttaVOPU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2681B1B2EC2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B9981727
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724255277; cv=none; b=CkMzSTYFk0Flh6lf88m3aQmaMbpDj9wEcTIIr63woOyiYHnVBGRYrWGhGD3vzZH6tXPBQZLUC24h4RskLPuf/3qLpdeEFaeV/JQCL97gtOJ478OfMENxUHhTIZ7WRVAHQLLCZClgEwHAQYU5lI3AD/7igdT25p2P7lxu3ZcVa8A=
+	t=1724255280; cv=none; b=rbmKvejh+Xi6fWbvhEKI4GD53vnEjhLnNMNtKonHx3zlXMCOpWJ09NUYF8AoJOVZ/UTBmTUNKQyEmI0vHGmo3lhVa26ZpN4sN9AEpp1aUzxueDbGncAPGGst2Eag1zEbpGd/Y5ve6JUMk2xRAdYT5+Q1FB37M98xgY5lnNaOYv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724255277; c=relaxed/simple;
-	bh=/3yj47Hfp+aYIGBiKeBK2KYt5E2v876vvMCX+8FWM1w=;
+	s=arc-20240116; t=1724255280; c=relaxed/simple;
+	bh=VCSkbbH6FAb5Kc1A8Ex+KDjB6tcNSXukDqw5rZQc1lI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nwbiQfJDG/3qwGmmNdRmEB2a088iVBuBJbY2CIV1XrEDa5XgYi3P6HbImCGetU83c7DSyAaE+zOjNIm6v8OzLZ08R1uYVFp5oJOuTSTqJOI+ryjERbbpvA4u+BKAUY/WqjHyEKuuHxrxjI5tGKdePQsZ2lz5kUbzCaz8wrC/iEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0tBarSm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC840C32786;
-	Wed, 21 Aug 2024 15:47:54 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=euzVg75NSsOI5OTQNUJdrsqB3XRCiu9TwwsRLcsRVn90tRCjqoQt6KhQKclWRGLmvY1zCB4v6pDQxGf0DStRd4KMgxA4Sd2hOwC7BHEm/Nw/NI2qfOFoiRJO/AcQNOjoBPKZ2an0l3Xoh2TV775EZ0Sb2U+h2biWEkYcySLlDvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mttaVOPU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41528C4AF09;
+	Wed, 21 Aug 2024 15:47:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724255276;
-	bh=/3yj47Hfp+aYIGBiKeBK2KYt5E2v876vvMCX+8FWM1w=;
+	s=k20201202; t=1724255279;
+	bh=VCSkbbH6FAb5Kc1A8Ex+KDjB6tcNSXukDqw5rZQc1lI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=l0tBarSm9QbWx/vWUbQkYAgiXSzo1cxUcBKBxCFCdAYnTV3Dn4Hk1LlvQmEi5ckaa
-	 Kk2Kcmckux/k/TlI00NgHyFvAoV4ZdmXOwHqbBFNTvgc9P7w20Qn22L9VbqdU3ldAm
-	 ODOpm8N/28K/C1ax7AGcLvVreEeazoHhSdthyESoukKLLpTwHaDTmX0JLz8l95iGaF
-	 Zi55VpbWHeNQ3vO+Ie1mkeDwhCgB6uwdmJNv8aeyq+TUqJUy/0S/6vNT+647T5yF6g
-	 41joKWkviTYBvZjWQhO7dtzKwnDh0dGP6pR4rcWhfwoTF4jCm0l5zpUTR/bMf3GswH
-	 hRQoq2hDRKjag==
+	b=mttaVOPUnxRls3B++od4RR+NmunDIKemfrcGWlFL6/R0PpbemIhtg+FDs1pm8GSJj
+	 RJk1CQENI21RYlgdY7HCvHjF6hLwIj5jYj7wNRJRtDIrSCURHFO6ces5OIZQsydmRo
+	 1WB9wWcRHQthM+Fiiff4LD6Ty0RnE7ZFZxfyCENmojhZNY1TIjWTWv3FbuNsq/Ce5K
+	 iPTRt2bFra7u+1O//QIIVxYeqPki7lLVzQVEORiLiswOVOrcUEWFSMZurCVK3rltre
+	 YHnYCDZswqzZ9n5zvwJrgbwi9i5V9eIgREnfAY9S4DUcNCpLgytZdwV9Ju56jj2WVe
+	 Yq5BQtCAX5V4Q==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 21 Aug 2024 17:47:32 +0200
-Subject: [PATCH RFC v2 2/6] fs: reorder i_state bits
+Date: Wed, 21 Aug 2024 17:47:33 +0200
+Subject: [PATCH RFC v2 3/6] writeback: port __I_SYNC to var event
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240821-work-i_state-v2-2-67244769f102@kernel.org>
+Message-Id: <20240821-work-i_state-v2-3-67244769f102@kernel.org>
 References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
 In-Reply-To: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
@@ -61,77 +61,92 @@ Cc: NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>,
  Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
  linux-fsdevel@vger.kernel.org
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2105; i=brauner@kernel.org;
- h=from:subject:message-id; bh=/3yj47Hfp+aYIGBiKeBK2KYt5E2v876vvMCX+8FWM1w=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd41GZ+lmG80Uza8X8KzdbM1pN/cKrnSpdnMrSjDzXL
- H8tVvGvo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCIl3owMRz5ePzqJO+LG5Z3F
- C5gXtc0Rij/2afIJi+qNFoaBXPl59Qz/062sNl5iqHt4yqN6kf4jt8NTNXe9jc18e/LWVfuqotj
- /XAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2530; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=VCSkbbH6FAb5Kc1A8Ex+KDjB6tcNSXukDqw5rZQc1lI=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd41EV0F9Zq+PCf/EO/zcPi9PLY3mW5nF+93O4x1ibn
+ lQQJGbdUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBH7fwz/fT64+WbG2i7dqpTo
+ vjfd2qEtecmt206zQ2pKliz+4xj8g5FhD2vWmdRm2WIdvYfCegaaL18sK7ue6Lso5PGtG1Mffp3
+ PAAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-so that we can use the first bits to derive unique addresses from
-i_state.
+Port the __I_SYNC mechanism to use the new var event mechanism.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- include/linux/fs.h | 38 +++++++++++++++++++++-----------------
- 1 file changed, 21 insertions(+), 17 deletions(-)
+ fs/fs-writeback.c | 39 +++++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a5b036714d74..8525f8bfd7b9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2418,28 +2418,32 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
-  *			i_count.
-  *
-  * Q: What is the difference between I_WILL_FREE and I_FREEING?
-+ *
-+ * __I_{SYNC,NEW,LRU_ISOLATING} are used to derive unique addresses to wait
-+ * upon. There's one free address left.
-  */
--#define I_DIRTY_SYNC		(1 << 0)
--#define I_DIRTY_DATASYNC	(1 << 1)
--#define I_DIRTY_PAGES		(1 << 2)
--#define __I_NEW			3
-+#define __I_NEW			0
- #define I_NEW			(1 << __I_NEW)
--#define I_WILL_FREE		(1 << 4)
--#define I_FREEING		(1 << 5)
--#define I_CLEAR			(1 << 6)
--#define __I_SYNC		7
-+#define __I_SYNC		1
- #define I_SYNC			(1 << __I_SYNC)
--#define I_REFERENCED		(1 << 8)
-+#define __I_LRU_ISOLATING	2
-+#define I_LRU_ISOLATING		(1 << __I_LRU_ISOLATING)
-+
-+#define I_DIRTY_SYNC		(1 << 3)
-+#define I_DIRTY_DATASYNC	(1 << 4)
-+#define I_DIRTY_PAGES		(1 << 5)
-+#define I_WILL_FREE		(1 << 6)
-+#define I_FREEING		(1 << 7)
-+#define I_CLEAR			(1 << 8)
-+#define I_REFERENCED		(1 << 9)
- #define I_LINKABLE		(1 << 10)
- #define I_DIRTY_TIME		(1 << 11)
--#define I_WB_SWITCH		(1 << 13)
--#define I_OVL_INUSE		(1 << 14)
--#define I_CREATING		(1 << 15)
--#define I_DONTCACHE		(1 << 16)
--#define I_SYNC_QUEUED		(1 << 17)
--#define I_PINNING_NETFS_WB	(1 << 18)
--#define __I_LRU_ISOLATING	19
--#define I_LRU_ISOLATING		(1 << __I_LRU_ISOLATING)
-+#define I_WB_SWITCH		(1 << 12)
-+#define I_OVL_INUSE		(1 << 13)
-+#define I_CREATING		(1 << 14)
-+#define I_DONTCACHE		(1 << 15)
-+#define I_SYNC_QUEUED		(1 << 16)
-+#define I_PINNING_NETFS_WB	(1 << 17)
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 1a5006329f6f..3619c86273a4 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1389,9 +1389,7 @@ static void inode_sync_complete(struct inode *inode)
+ 	inode->i_state &= ~I_SYNC;
+ 	/* If inode is clean an unused, put it into LRU now... */
+ 	inode_add_lru(inode);
+-	/* Waiters must see I_SYNC cleared before being woken up */
+-	smp_mb();
+-	wake_up_bit(&inode->i_state, __I_SYNC);
++	inode_wake_up_bit(inode, __I_SYNC);
+ }
  
- #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
- #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+ static bool inode_dirtied_after(struct inode *inode, unsigned long t)
+@@ -1512,17 +1510,21 @@ static int write_inode(struct inode *inode, struct writeback_control *wbc)
+  */
+ void inode_wait_for_writeback(struct inode *inode)
+ {
+-	DEFINE_WAIT_BIT(wq, &inode->i_state, __I_SYNC);
+-	wait_queue_head_t *wqh;
++	struct wait_bit_queue_entry wqe;
++	struct wait_queue_head *wq_head;
+ 
+-	lockdep_assert_held(&inode->i_lock);
+-	wqh = bit_waitqueue(&inode->i_state, __I_SYNC);
+-	while (inode->i_state & I_SYNC) {
+-		spin_unlock(&inode->i_lock);
+-		__wait_on_bit(wqh, &wq, bit_wait,
+-			      TASK_UNINTERRUPTIBLE);
+-		spin_lock(&inode->i_lock);
++	wq_head = inode_bit_waitqueue(&wqe, inode, __I_SYNC);
++	for (;;) {
++		prepare_to_wait_event(wq_head, &wqe.wq_entry, TASK_UNINTERRUPTIBLE);
++		if (inode->i_state & I_SYNC) {
++			spin_unlock(&inode->i_lock);
++			schedule();
++			spin_lock(&inode->i_lock);
++			continue;
++		}
++		break;
+ 	}
++	finish_wait(wq_head, &wqe.wq_entry);
+ }
+ 
+ /*
+@@ -1533,16 +1535,17 @@ void inode_wait_for_writeback(struct inode *inode)
+ static void inode_sleep_on_writeback(struct inode *inode)
+ 	__releases(inode->i_lock)
+ {
+-	DEFINE_WAIT(wait);
+-	wait_queue_head_t *wqh = bit_waitqueue(&inode->i_state, __I_SYNC);
+-	int sleep;
++	struct wait_bit_queue_entry wqe;
++	struct wait_queue_head *wq_head;
++	bool sleep;
+ 
+-	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
+-	sleep = inode->i_state & I_SYNC;
++	wq_head = inode_bit_waitqueue(&wqe, inode, __I_SYNC);
++	prepare_to_wait_event(wq_head, &wqe.wq_entry, TASK_UNINTERRUPTIBLE);
++	sleep = !!(inode->i_state & I_SYNC);
+ 	spin_unlock(&inode->i_lock);
+ 	if (sleep)
+ 		schedule();
+-	finish_wait(wqh, &wait);
++	finish_wait(wq_head, &wqe.wq_entry);
+ }
+ 
+ /*
 
 -- 
 2.43.0
