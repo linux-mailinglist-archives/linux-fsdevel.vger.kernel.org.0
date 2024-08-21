@@ -1,72 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-26446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB259594D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 08:40:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EB79594F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 08:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1B481C222D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 06:40:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 220C51C21331
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 06:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E0E175D34;
-	Wed, 21 Aug 2024 06:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pszP6qaA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58EB20FAB4;
+	Wed, 21 Aug 2024 06:47:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220DB170A30;
-	Wed, 21 Aug 2024 06:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938F220FAAB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 06:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724222360; cv=none; b=gJr4hWB7QCFbtrDGpoh+zB0Um+2uVtQ1twHftbXijzGSAVsoHHEZJ4yVBMlR1BRpKcbvwaAyh9WjZRMladvbejrpeL6g9JBRtoDaLlvayKKHWlD4X6AA2BDy0JWhe7kl24TY6d/ATqRhcwTp2rzKNJeYRhvFG/9NRJMovkG4hvY=
+	t=1724222855; cv=none; b=L41h5YGPCv+8K3bviFJsIQVjSspe6koLtFgsLO5VX71EZ54RAPXVB0kP8x/nIjVBWqpfaBRo0mWe73EI7TAo17XW0NFOgPU1F7zBaikvBGA0aWHPcI5gEp3CZMkDdtgy4Wg5UlQuw6UClyd9bjGRNJuymMOvd4BTRIpl7CU4Etg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724222360; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0k6dH9U6hp2H3kmCApKq3dhMdBNBmYv+paw2TdtJw325PK1jnsn2Q5Q2bhoQjIynpYjH9zZwCUVZAzQ7aSu0Nd8K/025luRBXwqsxhI171p3X9oCrDJdsVcW5hc4XnMAjYoXnEgZ4FxjbOVwOrkKyggUBPU/bubusYzc0XTeGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pszP6qaA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=pszP6qaAzRBLgDguJQ9OwdSRPm
-	Sg3lWuQ5LejXMq3wTJaC7OjpGBstaMJHveLi0bc3w1Kg74TVpgCcuZhll/58OeOs9gb4EFKJJTFTO
-	QieP0TM8efehe/no8wtyP4VCZe24o8h5KA32ZCqQnDMSyKUH17g33LGyiOGT58rMwXSHEOytBnUIA
-	fyFqELXHpoPNVh+9w3yTJ+791h2B0HsrurQ1DR4evyGqBELRGp8B3SuHXxhEeBVWmDvihOG3qs53D
-	WtcbOl42CA+cJ5L9IEMps6dn7gTJBPY8PK0fdn2Ms+rjPO2O/OH6bZldsHU1Aku3nYrxcQR/a2KP7
-	0nVLZWBQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sgf02-00000007kHx-2qlv;
-	Wed, 21 Aug 2024 06:39:18 +0000
-Date: Tue, 20 Aug 2024 23:39:18 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: fstests@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH fstests v2] generic/755: test that inode's ctime is
- updated on unlink
-Message-ID: <ZsWLlnzcHQj1ih26@infradead.org>
-References: <20240820-master-v2-1-41703dddcc32@kernel.org>
+	s=arc-20240116; t=1724222855; c=relaxed/simple;
+	bh=AuvQZ2MC8S6DLgjsStNe+D6za74WpZCrUCJ4oWJ5s2U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B4D8jKMLn91u1Q0DPwABv+AOjFIeVJMsdFGEMF1riBFYb9AI+R8PmeP5k+6Aj9O6bCeLpnwrGldNPARwoA5kueft99EBW623/gOX3xaAGJrMw6w9HyinF2M9YXwcIMbPDqsT8I535vbFFBW2HzRiiX5NuNyefzDjRKhbDssQgMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WpcMJ41YXzyRCb;
+	Wed, 21 Aug 2024 14:47:08 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0B6E41401F2;
+	Wed, 21 Aug 2024 14:47:31 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
+ (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 21 Aug
+ 2024 14:47:30 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>
+CC: <lihongbo22@huawei.com>, <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH -next] fs: use LIST_HEAD() to simplify code
+Date: Wed, 21 Aug 2024 14:54:56 +0800
+Message-ID: <20240821065456.2294216-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820-master-v2-1-41703dddcc32@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-Looks good:
+list_head can be initialized automatically with LIST_HEAD()
+instead of calling INIT_LIST_HEAD().
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+ fs/buffer.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index e55ad471c530..31a9062cad7e 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -774,12 +774,11 @@ EXPORT_SYMBOL(block_dirty_folio);
+ static int fsync_buffers_list(spinlock_t *lock, struct list_head *list)
+ {
+ 	struct buffer_head *bh;
+-	struct list_head tmp;
+ 	struct address_space *mapping;
+ 	int err = 0, err2;
+ 	struct blk_plug plug;
++	LIST_HEAD(tmp);
+ 
+-	INIT_LIST_HEAD(&tmp);
+ 	blk_start_plug(&plug);
+ 
+ 	spin_lock(lock);
+-- 
+2.34.1
 
 
