@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-26425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97013959308
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 04:48:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF1595930A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 04:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5436A283502
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 02:48:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A0731C2239D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 02:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1819916C689;
-	Wed, 21 Aug 2024 02:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363D8166F28;
+	Wed, 21 Aug 2024 02:47:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366DC166305;
-	Wed, 21 Aug 2024 02:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A41E16B390;
+	Wed, 21 Aug 2024 02:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724208469; cv=none; b=sPjYvOK28rQDj5cQZgAtgurP12b0OkxrUasc5YCH1Q6GAAw5RPuP5+Ci7ex74ad5mHQyOeyxSXZyf5Tsicb3d/gI581PWUF5Sbu0pBiKfiRK5qiIfsPidzkQ6bEOvqe8fJkrgbNqsmboLGYFCW2/0Ojy0sWC0sG5tHhRdp57CG8=
+	t=1724208470; cv=none; b=uFnDTEFyvK3/+C9v8Lj0btYvyIYWUVyWJrr4B5qR95K28Jz0W0JUCxO7HD0AT6ihddqRJ5ODmvwKKJVQwsc7ZxOMtf9x6h6cjL5l2o6xtxlfepWn0VikuFP/NdHhE4+9EvKsFQIB3aUG75l8ph7epXDML+20H+Yubg/zlQVLh0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724208469; c=relaxed/simple;
-	bh=hjf2E9hEQtfxbtL+lBJAXhyw6RPX4xxR1BAZo0HAKdo=;
+	s=arc-20240116; t=1724208470; c=relaxed/simple;
+	bh=fNpQdqiYafe+uT164m+atZ9+6PBDTWdvrJXj+Ayo99o=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X3ijKpFVKf5pB4GGh+LHo2muLFpazIV0RiGO/n7YOCcygETOlalwB1YNPYgkkmoq1dNHtNEP+pAyfzPKLbE44+SSJu8eMi1RYi0o9XlxVd4v1WBESPGT+BwczRySDyXGNq0DNWZN1Lob3pYhleJO522cF/LWjqIWzg7JSJEraTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=JXjqUHLScxEytSMQOjeTJx27bQntHRjRnU9/+TneUlAqQg7DlYph2ghzdg3OuIKNXMAhio7ict4UpBmMDHyFSW2TadWty7iuXKj/BioW/ZfcuHe6JSV9rYnEjlot9YPgkp6bnQctSJdEotcfWMGnQvNRNzLrd4mxmFwTlpWW1A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WpW2J2y81zyQDd;
-	Wed, 21 Aug 2024 10:47:04 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WpW2K4xBHz13cQg;
+	Wed, 21 Aug 2024 10:47:05 +0800 (CST)
 Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 375D01401F4;
-	Wed, 21 Aug 2024 10:47:43 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 3370D1800D4;
+	Wed, 21 Aug 2024 10:47:44 +0800 (CST)
 Received: from localhost.localdomain (10.175.104.67) by
  kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 21 Aug 2024 10:47:42 +0800
+ 15.2.1544.11; Wed, 21 Aug 2024 10:47:43 +0800
 From: Zizhi Wo <wozizhi@huawei.com>
 To: <netfs@lists.linux.dev>, <dhowells@redhat.com>, <jlayton@kernel.org>
 CC: <hsiangkao@linux.alibaba.com>, <jefflexu@linux.alibaba.com>,
@@ -46,9 +46,9 @@ CC: <hsiangkao@linux.alibaba.com>, <jefflexu@linux.alibaba.com>,
 	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<wozizhi@huawei.com>, <libaokun1@huawei.com>, <yangerkun@huawei.com>,
 	<houtao1@huawei.com>, <yukuai3@huawei.com>
-Subject: [PATCH 4/8] cachefiles: Clear invalid cache data in advance
-Date: Wed, 21 Aug 2024 10:42:57 +0800
-Message-ID: <20240821024301.1058918-5-wozizhi@huawei.com>
+Subject: [PATCH 5/8] cachefiles: Clean up in cachefiles_commit_tmpfile()
+Date: Wed, 21 Aug 2024 10:42:58 +0800
+Message-ID: <20240821024301.1058918-6-wozizhi@huawei.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240821024301.1058918-1-wozizhi@huawei.com>
 References: <20240821024301.1058918-1-wozizhi@huawei.com>
@@ -63,78 +63,38 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
  kwepemf100017.china.huawei.com (7.202.181.16)
 
-In the current on-demand loading scenario, when umount is called, the
-cachefiles_commit_tmpfile() is invoked. When checking the inode
-corresponding to object->file is inconsistent with the dentry,
-cachefiles_unlink() is called to perform cleanup to prevent invalid data
-from occupying space.
+Currently, cachefiles_commit_tmpfile() will only be called if object->flags
+is set to CACHEFILES_OBJECT_USING_TMPFILE. Only cachefiles_create_file()
+and cachefiles_invalidate_cookie() set this flag. Both of these functions
+replace object->file with the new tmpfile, and both are called by
+fscache_cookie_state_machine(), so there are no concurrency issues.
 
-The above operation does not apply to the first mount, because the cache
-dentry generated by the first mount must be negative. Moreover, there is no
-need to clear it during the first umount because this part of the data may
-be reusable in the future. But the problem is that, the clean operation can
-currently only be called through cachefiles_withdraw_cookie(), in other
-words the redundant data does not cleaned until the second umount. This
-means that during the second mount, the old cache data generated from the
-first mount still occupies space. So if the user does not manually clean up
-the previous cache before the next mount, it may return insufficient space
-during the second mount phase.
-
-This patch adds an additional cleanup process in the cachefiles_open_file()
-function. When the auxdata check fails, the remaining old cache data is no
-longer needed, the file and dentry corresponding to the object are also
-put. As there is no need to clear it until umount, we can directly clear it
-during the mount process.
+So the equation "d_backing_inode(dentry) == file_inode(object->file)" in
+cachefiles_commit_tmpfile() will never hold true according to the above
+conditions. This patch removes this part of the redundant code and does not
+involve any other logical changes.
 
 Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
 ---
- fs/cachefiles/namei.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ fs/cachefiles/namei.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
 diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index f53977169db4..70b0b3477085 100644
+index 70b0b3477085..ce9d558ae4fa 100644
 --- a/fs/cachefiles/namei.c
 +++ b/fs/cachefiles/namei.c
-@@ -542,7 +542,7 @@ static bool cachefiles_create_file(struct cachefiles_object *object)
-  * stale.
-  */
- static bool cachefiles_open_file(struct cachefiles_object *object,
--				 struct dentry *dentry)
-+				 struct dentry *dir, struct dentry *dentry)
- {
- 	struct cachefiles_cache *cache = object->volume->cache;
- 	struct file *file;
-@@ -601,10 +601,18 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
- check_failed:
- 	fscache_cookie_lookup_negative(object->cookie);
- 	cachefiles_unmark_inode_in_use(object, file);
--	fput(file);
--	dput(dentry);
--	if (ret == -ESTALE)
-+	__fput_sync(file);
-+	if (ret == -ESTALE) {
-+		/* When the auxdata check fails, the remaining old cache data
-+		 * is no longer needed, and we will clear it here first.
-+		 */
-+		inode_lock_nested(d_inode(dir), I_MUTEX_PARENT);
-+		cachefiles_unlink(cache, object, dir, dentry, FSCACHE_OBJECT_IS_STALE);
-+		inode_unlock(d_inode(dir));
-+		dput(dentry);
- 		return cachefiles_create_file(object);
-+	}
-+	dput(dentry);
- 	return false;
- 
- error_fput:
-@@ -654,7 +662,7 @@ bool cachefiles_look_up_object(struct cachefiles_object *object)
- 		goto new_file;
+@@ -700,11 +700,6 @@ bool cachefiles_commit_tmpfile(struct cachefiles_cache *cache,
  	}
  
--	if (!cachefiles_open_file(object, dentry))
-+	if (!cachefiles_open_file(object, fan, dentry))
- 		return false;
- 
- 	_leave(" = t [%lu]", file_inode(object->file)->i_ino);
+ 	if (!d_is_negative(dentry)) {
+-		if (d_backing_inode(dentry) == file_inode(object->file)) {
+-			success = true;
+-			goto out_dput;
+-		}
+-
+ 		ret = cachefiles_unlink(volume->cache, object, fan, dentry,
+ 					FSCACHE_OBJECT_IS_STALE);
+ 		if (ret < 0)
 -- 
 2.39.2
 
