@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-26562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8C295A7E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 00:48:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC9895A7F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 00:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C54B217E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 22:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80209284B05
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 22:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8772717B500;
-	Wed, 21 Aug 2024 22:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8B217BB00;
+	Wed, 21 Aug 2024 22:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qj7axJWH"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P8n/w3Qf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC21D1509A2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 22:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF56168497
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 22:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724280473; cv=none; b=fzj3FyASYWK2/crp5AoAklIVmqz3VCUZa71oqThbNMLDhLItXHgftkjDAKTifBqssoXyTxm/kSKrQg+KKnHSUiG/ihZzMVe43ftqDqyn5HdjsGoscw08GefTDujeDEynZdQf/RnscSO7crvMgCQwrm/SYpsZWAR2GMZbB6StU3g=
+	t=1724280830; cv=none; b=XLg9rmN9z54q/SMJo96GGYnZrL0Z/AWEVDB425C7Q9Qjig83V5s2c/6XdlM8RmCHS81oHJCMxmVbNNLfMPg3lFQ8GVTgIqZn0Jsxlpu5mjxhuj77LaM6bv97LKMDtGErIvU3lZ/+i6J3xUpZ933Y66CmhGxwgvByvw/cpmlfTeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724280473; c=relaxed/simple;
-	bh=NdalNagNvNCviKT/MfsKwgYInEUyLBPXO5i2hlVGEgY=;
+	s=arc-20240116; t=1724280830; c=relaxed/simple;
+	bh=sYHcltixyJC9BU/MLb7HzoJd+QTv9zJpqQlJQYncUPE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7dLO5q4rvh/hm8UC3BNNFuWiXH0tB7izQnlZZtlbl2MkEuiMhRvUnhVzeBwO/m/5YugkFSY1p1ukoOuNitIacirfFL4C7939b9Vyqeb2q9dbPW0P9dIYreOngFz+V9ygZMitnzVrgHbklCs10XAoHH0cu7sh2Wee3xqkVB0tEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qj7axJWH; arc=none smtp.client-ip=209.85.218.45
+	 To:Cc:Content-Type; b=SPdcd7eNf97LUBahrR6zHajdThZbTNlXAvr7K8/C7QkphCsN8VSzQuOMPrrzpDEKQw5H9pYn7Xf3LbqINLRHGQkf01bODCOSIAlFJNzuP6uukQupUmuSLm5kKxt7oidSSDwVPd+1gwqT/4sYH6ksyZffQRHRC6hcMJ4hHroXTjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P8n/w3Qf; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8643235f99so23599166b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:47:51 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f3edb2d908so1760311fa.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:53:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724280470; x=1724885270; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1724280826; x=1724885626; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sw86hX23EFNAtiYY1Ed/9iltoTASNXjR4NLVA2Yz0Zw=;
-        b=Qj7axJWHNrCbgEr+WS1w4zs8Or1BOElrFzZ3WuTWFqtBPA080wKhgq6UKlxIgOLa6x
-         xkwYCbpmbebpYVCwZfkeNGzxYJ4ki/XXs2r5+Dto9wpLN7KsVy0ZF4Bc+H3X5WwS26by
-         +b9P43t1XO4ZJqHGrtFnJ73/teSq46vSeYLa8=
+        bh=p+HYCIGDmbAGvPO4lszl1UyZkDNKUCxUn11dV2OZ4OE=;
+        b=P8n/w3QfT3X9fU/IgPtmksVb4mBU6ia6Mt0siBL0+wggKq7OQ1CcSZCpC/oRXJLLJU
+         xW6drkKvlkih6SVfIg0mqEWoR+lsqPpzcwgSfENuBh83K3n1Vuiv8b2Mdk9Ra3y/E6KT
+         srwXY3xqfdiCtNdQb51kwaHkKGjPGFwllOqsY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724280470; x=1724885270;
+        d=1e100.net; s=20230601; t=1724280826; x=1724885626;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Sw86hX23EFNAtiYY1Ed/9iltoTASNXjR4NLVA2Yz0Zw=;
-        b=eS7af0mJZPHJM10YODMzraojkfNwMieChA3EtCM+oOh+U4ocQmjhF0Qjx7Dh9I5sCl
-         4gBKYIhazQFwgSoqBe35NAVZauIbMwtcGKuOCEktKnBcm4zVcHpWdZc6ueulakTol++j
-         /ndOAp7I6nCktF7A75enFunqeitUgI7fngz0FQwlFfvV2uu2ljVq0oEgzCICOmS065HP
-         XKHHwAiJY0zdLhPFdGWiXjehSRXC5wHqk9farAFGCYyISVC8YVxBpYpmdcKiXI2j33Cq
-         Kpau1Z9LaGNugIlzx38ZTWwr64gtvGi0F7lHXg/SV2/ys3GpZmuvXcPZdPeL78DL223V
-         SoSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmAAAtQ8eh2QbpQicYuLmGxrEvRFRMBFUdtEX2jGBIzc4Wf8cdlwtegzRyF1OfABfpTButpkZQLxpBzi0K@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxfBqc6ymZM0d+y4aXH77HtA/+A9i5T8PM2X3PBR0gJ90E/Z9t
-	l7drJpwyPFrjwKLYK34sgOPKfPE6q2hbeXkCibmv2tPLCf+d0I3L2nMESKBRE8bZYM8jZrgGSp5
-	SwKuQag==
-X-Google-Smtp-Source: AGHT+IGLwS8ifDRpVOBoNN47F5qbVDRW5zaUaQB81zsMA1SAr0aI/9pHYrN/UL6L3R0xj3W4NAJKCg==
-X-Received: by 2002:a17:907:7f1e:b0:a86:7983:a4a7 with SMTP id a640c23a62f3a-a867983b93cmr273848866b.38.1724280469707;
-        Wed, 21 Aug 2024 15:47:49 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f47c579sm21359866b.153.2024.08.21.15.47.48
+        bh=p+HYCIGDmbAGvPO4lszl1UyZkDNKUCxUn11dV2OZ4OE=;
+        b=iB8Jxq7VI7cmkToGcdVmt1vabfeQrT1ac4DgOSFsBkbykK9cqDtoYrMbU+kclR+Kxu
+         ISaW7y4Fhl2VGjxus+iS4BW6F8G2lKLSTwi11c9PD3t9V/tSPmXvK4za/h3y5v5za1Kc
+         W0UPgbHZ5q+lpoQ6WZHJMoanGMeg2haZmnFa3H5nCm6zcYyAFU04VtrWgddYieKAZ4GZ
+         3vfD10HOIVYyZSOAyBNCMxUY0ps7zW/lZfhF1Bjltv75vtQ0qIERe/RLd1BtUunjLaK8
+         W86c4mlBrYE3PetB0wD7sYoAdcIV0W2dGilI3kLGlxydCCkWyPachuKWUa2GpYmhEsDL
+         w+Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgSXPYYUj0bvhWtSvWeFsW5n84L8YQzlHzK+wIsTLLx70Sy4oSRUTyQKL6rZDKgp5JL+MsZRe2TsILX8Gt@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZmWzUir8P3XfmHLUo5tdVJpivO8UvKFk9L2xA+XiuaWvgGUsA
+	Q+X76WbyQiCchtQjrM0Q4o86VJkm3fPh278llcdLTt/c4AKZhhfmB/bdjuYRX8PLSt8HgeXws6W
+	NrFPeZw==
+X-Google-Smtp-Source: AGHT+IFnUZUmNQ6yLm/vsHK0RcSQEyjDCS6vQ9aaorRVyAsq5tmGLn4GpYNkw7YMSuFGW5yPKR3snA==
+X-Received: by 2002:a2e:a9a8:0:b0:2ef:2f19:a8b3 with SMTP id 38308e7fff4ca-2f3f8b5732cmr26772601fa.41.1724280825556;
+        Wed, 21 Aug 2024 15:53:45 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f4048add76sm216701fa.126.2024.08.21.15.53.44
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 15:47:48 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bed0a2ae0fso287292a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:47:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW17zbX1Ul+j2zWBJoxZ7cZCchGkqXpZF+ijRRmRXbLseKdmQmC7OPdXtobcvBpHMOudG1/VefWFib6oMXR@vger.kernel.org
-X-Received: by 2002:a05:6402:430c:b0:5be:fa58:8080 with SMTP id
- 4fb4d7f45d1cf-5bf1f09b94dmr2851980a12.3.1724280467964; Wed, 21 Aug 2024
- 15:47:47 -0700 (PDT)
+        Wed, 21 Aug 2024 15:53:44 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5334879ba28so224193e87.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:53:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVhjAC0sc/dVJjxhLUCDorA5u+hawlMOc9bwhvIjTYr88xa7PrrD2UbIbHDnIjFa63njE5qrWjF3wSHU7he@vger.kernel.org
+X-Received: by 2002:a05:6512:3d86:b0:533:71f:3a53 with SMTP id
+ 2adb3069b0e04-5334855751dmr3079353e87.19.1724280824072; Wed, 21 Aug 2024
+ 15:53:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,68 +78,43 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
- <20240821-work-i_state-v2-1-67244769f102@kernel.org> <172427833589.6062.8614016543522604940@noble.neil.brown.name>
-In-Reply-To: <172427833589.6062.8614016543522604940@noble.neil.brown.name>
+ <20240821-work-i_state-v2-1-67244769f102@kernel.org> <ZsZqCttfl/QtMJqp@dread.disaster.area>
+In-Reply-To: <ZsZqCttfl/QtMJqp@dread.disaster.area>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 22 Aug 2024 06:47:30 +0800
-X-Gmail-Original-Message-ID: <CAHk-=whucKrDiS6JyDLrapC1wJAsTHihqO8QiF4FfRfvCLyBjg@mail.gmail.com>
-Message-ID: <CAHk-=whucKrDiS6JyDLrapC1wJAsTHihqO8QiF4FfRfvCLyBjg@mail.gmail.com>
+Date: Thu, 22 Aug 2024 06:53:27 +0800
+X-Gmail-Original-Message-ID: <CAHk-=whuOCMgsq_VyOfqj=j=AKGv2xHaCFReBwbh6+5VYi6SZw@mail.gmail.com>
+Message-ID: <CAHk-=whuOCMgsq_VyOfqj=j=AKGv2xHaCFReBwbh6+5VYi6SZw@mail.gmail.com>
 Subject: Re: [PATCH RFC v2 1/6] fs: add i_state helpers
-To: NeilBrown <neilb@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neilb@suse.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 22 Aug 2024 at 06:12, NeilBrown <neilb@suse.de> wrote:
+On Thu, 22 Aug 2024 at 06:28, Dave Chinner <david@fromorbit.com> wrote:
 >
-> So this barrier isn't about the bit.  This barrier is about the
-> wait_queue.  In particular it is about waitqueue_active() call
+> wakeup_var() takes the wait queue head spinlock
 
-Correct. The waitqueue_active() call is basically very racy, but it's
-also often a huge deal for performance.
+That's the part you missed.
 
-In *most* cases, wakeups happen with nobody waiting for them at all,
-and taking the waitqueue spinlock just to see that there are no
-waiters is hugely expensive and easily causes lots of pointless cache
-ping-pong.
+wake_up_var() does no such thing. It calles __wake_up_bit(), which does this:
 
-So the waitqueue_active() is there to basically say "if there are no
-waiters, don't bother doing anything".
+        if (waitqueue_active(wq_head))
+                __wake_up(wq_head, TASK_NORMAL, 1, &key);
 
-But *because* it is done - by definition - without holding the
-waitqueue lock, it means that a new waiter might have just checked for
-the condition, and is about to add itself to the wait queue.
+and that waitqueue_active() is lockless.
 
-Now, waiters will then re-check *after* they have added themselves to
-the waitqueue too (that's what all the wait_for_event etc stuff does),
-and the waiter side will have barriers thanks to the spinlocks on the
-waitqueue.
+That's the thing that wants the barrier (or something else that
+guarantees that the waiters actually *see* the new state after they've
+added themselves to the wait-list, and before we then look at the
+wait-list being empty).
 
-But the waker still needs to make sure it's ordered wrt "I changed the
-condition that the waiter is waiting for" and the lockless
-waitqueue_active() test.
+See the comment in <linux/wait.h> above the waitqueue_active().
 
-If waiters and wakers are mutually serialized by some external lock,
-there are no races.
-
-But commonly, the waker will just do an atomic op, or maybe it holds a
-lock (as a writer) that the waiting side does not hold, and the
-waiting side just does a "READ_ONCE()" or a "smp_load_acquire()" or
-whatever.
-
-So the waker needs to make sure that its state setting is serialized
-with the waiter. If it uses our atomics, then typically a
-smp_mb__after_atomic() is appropriate (which often ends up being a
-no-op).
-
-But commonly you end up needing a smp_mb(), which serializes whatever
-action the waker did with the waker then doing that optimistic
-lockless waitqueue_active().
-
->    /* no barrier needs as both waker and waiter are in spin-locked regions */
-
-If all the inode state waiters do indeed hold the lock, then that is fine.
+And yes, this is annoying and subtle and has caused bugs. But taking
+waitqueue locks just to notice nobody is waiting is very expensive
+indeed, and much more expensive than a memory barrier when the common
+case is typically often "nobody is waiting".
 
                Linus
 
