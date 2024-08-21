@@ -1,184 +1,345 @@
-Return-Path: <linux-fsdevel+bounces-26460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE67395989A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 12:55:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C0F9598BC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 12:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68058282068
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 10:55:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90CBB1F21414
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 10:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D301C93D9;
-	Wed, 21 Aug 2024 09:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105D41EA3CC;
+	Wed, 21 Aug 2024 09:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="mfYBsSwL"
+	dkim=pass (1024-bit key) header.d=tiscali.it header.i=@tiscali.it header.b="FHpuGTrD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2072.outbound.protection.outlook.com [40.107.255.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FD71C93A3;
-	Wed, 21 Aug 2024 09:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724231745; cv=fail; b=YUA8VwZs/M4cHLjy/FuZ84YPpXEfIB10cLzsAywMOk76mOePiMPoU2N+521eRkiZKEM46+DC8POxx6JNzHjC28rZMafqLwBB/WbMIvwj4pQsza8NMZqUIBLg6hemUNQK9kStNmC6wejgiLnxDJgtYBBbU3vVR7U5MeROvZRpuGc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724231745; c=relaxed/simple;
-	bh=J+bl/S/JHj1aNxtwT57UinwSgj89xaUkjPVNAvm0RU4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HyUobSMr0zpbAH6oZPiqxCfA0+SjjQVy93Hl/zDpcXzgQFabrREPEHStaNZXlOk7HVyK8M/4czva7eWx+3Axrq1hgIy3Ooaw/0LMZ7t+CNOompycy1l5pqzU1jK49ONOfYxzPi1HQjvf4ddZztKGydpIG2omxe8eWjUSXTXBbGA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=mfYBsSwL; arc=fail smtp.client-ip=40.107.255.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VM5xi5N3ETv0PCnKpCZMOIODFHksY3WoCwQ6uXOa+y2RsAhDMlxdGJp39O+Zz6nX74JQ4CgknH1yh7AwOWhHZBSYaTByHPPeV5o95dnjr4Xl55YqfHhU45QvtBkDOhRd+0ydcd2hpFBWpL5DXuwZUWP4JsHGq28ZD81HmrS8eyiL3VkvgvTY6XZld8b5bRkK+Jl2bPcrQ/sdd43dvw6I6/mSGEVL+c3QAfVMCh+IrCRj6YZe2zC1TAWWcgUp9OxSft+7FA1pvF4pIXLp6uJEbxAm0gJ3nyZHv8+v4UMujk69SDSqurh2eRvvVa59uNYU4RvvGkIxZEGb7PpLDcvRGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=exFMlRT66mjbsZgN1SDS8OZTxNL6AqNmkF//EfNV5P0=;
- b=m2Ry46x4T1Owqqxj8lXkp0PIZeX7jZZvwdfUbjzP0vuGKv3iwqQp5lnvlGQSyTAdDCVvpoamCiG1ezKCrDcyVZPK0oQqHvwmhDGm1OzrxorRQ31oo2WC/8/Q73fBvDnsojnKC2u5qarVBQXL5aEOhiD1yhtSTIdIHW+I4fMAkdpVDZi7x3NwpT9jJyXFQdQPcv75xMcMurmaKRRguPDCVoAsXJEf1Jj/use5Hkyu+HEedTqaDLhj8DIAdHb2qEiABPOWH5gVMygJv0fiEpRpbtpFUebHRHkqAwKPFs0VOVv4A8WT/IQUNil0NRactqAtMAMs6WR9mv3H0r7gBqR3/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=exFMlRT66mjbsZgN1SDS8OZTxNL6AqNmkF//EfNV5P0=;
- b=mfYBsSwL6YXlkjylXhiLmzDFn89VqaZOkDpynnY352uy4B57OsG6gEgXjm+hLNWXJLjv6ezsX6dJWMQSS+vU85XT4FIJTVqUGGjWV5Bnb67EgDX3BDJsFbI2Piz8nn70gSBT42cWqi/hilXv+8tjTSfdbTRT0boZExVPl+r5UlBVzcZJrVR2/PhFVe2FOYV0wt0GSLUQhOJMXW44Y4NEByU4G0+TypLl+wSFnfg3rihi2QzatFRDSliKhk5BYZ1FTRU51G8f7dEZcIXJxkDyy5U82001oYMHMzrM4HcdXlyWDgM4wKTpVVV9sIHnT0/BL+pb+CfuZa2Js18WolynLw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
- by SG2PR06MB5287.apcprd06.prod.outlook.com (2603:1096:4:1df::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Wed, 21 Aug
- 2024 09:15:35 +0000
-Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
- ([fe80::9c62:d1f5:ede3:1b70%6]) with mapi id 15.20.7875.023; Wed, 21 Aug 2024
- 09:15:35 +0000
-From: Yu Jiaoliang <yujiaoliang@vivo.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Seth Forshee <sforshee@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-Subject: [PATCH v1] mnt_idmapping: Use kmemdup_array instead of kmemdup for multiple allocation
-Date: Wed, 21 Aug 2024 17:15:07 +0800
-Message-Id: <20240821091507.158463-1-yujiaoliang@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0006.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::11) To TYZPR06MB4461.apcprd06.prod.outlook.com
- (2603:1096:400:82::8)
+Received: from smtp.tiscali.it (santino-notr.mail.tiscali.it [213.205.33.215])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2C51EA3BC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 09:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.205.33.215
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724232504; cv=none; b=VFRPvVknrRZEYI1CjB9gcGD+KXZUizf1OTPhzMbMR76eLGNNg0TfDTj4cSklMoTFPIPkcvmrL8cYtfrd/1Hg5Ll4vXiAt6JuCIxf+30uYtp1HHzWV/XiT3frgN+0V0JlTAZKiQHzBFt8zIbO8y8dFkEOD0WCOy0cAqfgd+d2FvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724232504; c=relaxed/simple;
+	bh=1QQz6VkSRFxisVwqw2EV348f3q+JpY8aenPnbq4YKJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=osmCKGgTOUjGZU/3+G/Lg/Oat4d+89SsGHaFT/JLLPUx9pdMKWRmztidb23JuUgtrSudQ0z3A7x0PLLLCvXPiYbYLGsk1yC3vYVnaowS/gaBPKeR2SDJoz91QOIPxrWYsaLsDN9+IRMymS+vypUdBeTDvwceWG6P8mJQV3UTgdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tiscali.it; spf=pass smtp.mailfrom=tiscali.it; dkim=pass (1024-bit key) header.d=tiscali.it header.i=@tiscali.it header.b=FHpuGTrD; arc=none smtp.client-ip=213.205.33.215
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tiscali.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tiscali.it
+Received: from [192.168.178.50] ([79.20.196.116])
+	by santino.mail.tiscali.it with 
+	id 2ZT82D01L2X9Uhr01ZT9pH; Wed, 21 Aug 2024 09:27:10 +0000
+X-Spam-Final-Verdict: clean
+X-Spam-State: 0
+X-Spam-Score: -100
+X-Spam-Verdict: clean
+x-auth-user: fantonifabio@tiscali.it
+Message-ID: <d23f8a90-34e1-4c3a-8eaa-2b095e1bea32@tiscali.it>
+Date: Wed, 21 Aug 2024 11:27:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|SG2PR06MB5287:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83843e57-d11d-4d7e-7c3b-08dcc1c1d0d5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sNGR0j1DJhWf40hc1Q1i2WFXAu6P7zfeMWukM2DOU2Wc13FGRIvfMJvPH0yA?=
- =?us-ascii?Q?bvBCuKnDRwZ+JBE8xc/rT87Ej/hRDOG9u+LkU2XyrRsBW7LZnzk43fSNUnl6?=
- =?us-ascii?Q?iQCRBmypdWv0o7CM36d6O8qIu6qbfEKeXYFHQb5Rujp0z++F0um7b+loXVPL?=
- =?us-ascii?Q?NwWf8AsD5xREvN0c37WygTVqSejJnTa5ITEk+EythOHmbq+e9XDTO/PEw4PP?=
- =?us-ascii?Q?e1KKBkCpwuKnTAD5Np5esSbZr6bAOw0HmpXVdh8hixjRnteMDxQSj0D/hVoT?=
- =?us-ascii?Q?8gqI5hCq1wmW/CvPkyA2qUrRhxk0ClLWB3DNNq4Mh2WQeJvIGDU1ATVFCssQ?=
- =?us-ascii?Q?5a3PgP+i//Adds+A5SMMiR4nTfYeXZJo+AZqGoEu+WsLDHUF9AkE5uUMhNZ2?=
- =?us-ascii?Q?4dKmjX4ApNuH3yfGPjReMBaWOd7ML5qV4ssypUuU2zP63KCk7vDIHMlkvJV9?=
- =?us-ascii?Q?/FepmSqAGcUeleQ5kb7KiMd3xU+p27M7jyHA6qgA5HvbPIlQ2HOwHfZ/1wGe?=
- =?us-ascii?Q?hmyvmmaeuM6MPD7ga3d5vFNLQY3bJFPwDnsa1BYKeJzyWUh80uRgmwjvHxHv?=
- =?us-ascii?Q?J2qA7id8Li7N2N5JJ3Mt2g/eo8XfNkcWs6uvthOPxA77eAhGXlmhzgHg+xYv?=
- =?us-ascii?Q?3JoaQvwfO3uo/HHy7Kr7plNPEiNWH716I4oTrQIDBA33mUjb6VUw2sWJXuA2?=
- =?us-ascii?Q?krkCyaYr+HNyjPXFEKC29RJfBzVZCgCOHmc9LCQ0FChmI8BNXpM46acaotP9?=
- =?us-ascii?Q?HJ7RSBXWvjNEVHOpErNypdKMWOt1RNDhqeb1U1SA8bZsKAcHvBRJAGaRfBkg?=
- =?us-ascii?Q?ZhikioFUTkmmyZxM6ZpcqushlA8Yub54lgjdxVHMk2c5dqAfgEn4aSZUo5iZ?=
- =?us-ascii?Q?P6iMPcZS1WQrQ4E5GxC+lKGaWV3IzEIVLv8Fq3v5w5jKkT4xgLWMbHkwXq12?=
- =?us-ascii?Q?J4lUVuhISdMxVbbJsTcosuvi4uXBCzwEPwTUaVgl/NFmK+CdAUyFCn3PWzty?=
- =?us-ascii?Q?2fHMGA3k2cTPUNLOyCXqMaizndYh4XvXGHDk1YsW84OigmibRpri66Dpi/Ny?=
- =?us-ascii?Q?jGd/BbJy2YxpJsTC/bYIFsTCnvOSCr8/nl7wttHDFimCXJknmaN/VvIfYIoy?=
- =?us-ascii?Q?TCivS0Fiy1kqMSt5uHf/KwrOFVB7sXlKM03IG0i8qTsgv77auVWhyIFKh194?=
- =?us-ascii?Q?LI3z1oDmzFV1meAa4sDRyIjRgbVeHYV/f8h895nbILXiRCF3wtrBWVzFW3hq?=
- =?us-ascii?Q?3taE6m5sxbSRBAGrFpS5z5vvcsAyk9d8gyKvBgAbFUJAtUVQyyTJ2zDdmowC?=
- =?us-ascii?Q?qHFW+jyeIk2b/oESWr6GFSjT1PwfJ173kRncFSD6oEpDWvYfTgC0IVgWRn0A?=
- =?us-ascii?Q?JOK4MFRWIZ9s/ATyNYWqPd34R23/hVVXoVUBM7d2KHxwgt5V7w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?o1G9uN+sw9aoe74jT8DsoMuhtBlKBl1ZNUtrflFO28OnQOK/rSo9/fDa27St?=
- =?us-ascii?Q?8tvL+oEet2O6Ei7Qb1qUY2ci+Lqhghwg5z22jFW15HNNJXk8hIjJqvxxT7SW?=
- =?us-ascii?Q?3z/sgEcf4Z6bKh5b5/skXHx1IiksWvgBAAuwLR2OpwXEZVGOqKwBlTrvys+6?=
- =?us-ascii?Q?ZxPiCETbWaEVVS/RAZXUutl3tBhLgHbOS70kRkf1esHjDITU1hBFtQKMLD3e?=
- =?us-ascii?Q?/LcbbNs2wtRtBoyaYV+N/NF0xeYhWbPax8BEZKjH9YdCAZYwJTtNYj0RqPl0?=
- =?us-ascii?Q?tAattq+A7gtGX3TTzgQIGlJiHMfMza7UCyIJw4ER3skLixO24BWjOpUoHAGm?=
- =?us-ascii?Q?KeRMMXDpp/vIFXcw8aUq/7+Q5MP+VTo/nkRi0By0VgmkepDRIICkUwX+clhJ?=
- =?us-ascii?Q?q3FtcvEN6Eq5aiKqJ2/mewAX4GJZkURqsofiiN3W1M+BEOhEYSE0DGpciyal?=
- =?us-ascii?Q?nSi3zZrgCEiccPHJeNZ440HPIro98OF9ZItZjl4hQPbJBt2CIHMAIyP9bvJM?=
- =?us-ascii?Q?oWZzKTUht7/l7fyMGfrutTs/OsvbiUWVGgBKsadbwBqs5OMIz52TH/QtuqS3?=
- =?us-ascii?Q?9WUT01luzKUqRCTcqznRnK2M/mvcQw5G6uO/xcyJaxlpnBH9aGGw6J1V1s9q?=
- =?us-ascii?Q?Ho3zrcWf7a02mztddQN/nPiAIkFknzW/aj0kxdH1EfeTqoY2i9XMMkdcbW/m?=
- =?us-ascii?Q?v3XGZ6FeBdnXoRiT/M3X5446/bNtxCVLgO56IVoTDoQY3deM57aX16aZ4NTs?=
- =?us-ascii?Q?ucBIhqRkk06IxZweiCelfgn4WpkUNsJx36ELF2Y3z+ZXGevcSufmEjfysEn6?=
- =?us-ascii?Q?Gved0MwNM7Lfhl0KpQGo4n5KOhwAdjoqhfv6DxSPK5NjqcmK+NJCK31sCuwa?=
- =?us-ascii?Q?syHAMLpaGRpaI8u4tg4QkclKpl+elwvRnDPXuHyizscq33m99X64CPma9pm7?=
- =?us-ascii?Q?dpSBhxmpmoVMs8TckCnRyR/yJaoJIMrfbWYD/EKH38mhl3F/47ZeFHi0ljxz?=
- =?us-ascii?Q?XBmG2MX/7a7gnyRmehG+uTH9WsxisVCr+xZyWShEny4uf1FbgcpBydfuxuaG?=
- =?us-ascii?Q?Oi4BHItfT4IZMMR9i+qFD9Znnb5DyLU5rHg1nWOT2x3XHXy/ng4hsqQ+8LS7?=
- =?us-ascii?Q?LWYSLsCiWCwanAya10eAeEUaFBvJk11F7u3RwTuxySnMlPDzFFkzLwBchD1r?=
- =?us-ascii?Q?0SYt8/j1NxMAohq+YLkS3SQYD/h4tWyjfSBI36JSqxPijG4z/yjzJF0zW5id?=
- =?us-ascii?Q?sUUHBzOPpCFzXlSU6ePTErXaHOnwF3cjkQ+YcjCHoVOrN1TejRroqZ5YllxO?=
- =?us-ascii?Q?7tvZJQKxieqeeQXexhRdtG1XA5+YMOGO/vKe8QjfujTfMpMdx/ZlASX3IpIl?=
- =?us-ascii?Q?BUhzdMAxPHvc0x35bbbau+whNujdBf3839uvzJPTe+1vLvm02vy7od1OCrXE?=
- =?us-ascii?Q?Rr3FqE0Ax5iuVHNDYugAl1ssiAgKOJq68XQ45+zEvVNlolN0/ESZjVEOVIav?=
- =?us-ascii?Q?cP9qFcCuNjaPGVCdxyKbZQAsiB2ohoYguM+0n+QaTqJvTi49vqn4HmSSOUoK?=
- =?us-ascii?Q?710YWCuamqDfUXMz1eI21AYeLOYttsX7x3O1TJ6t?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83843e57-d11d-4d7e-7c3b-08dcc1c1d0d5
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 09:15:35.8062
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: quhT6/tlJB36ROb/GKSpZffAnKHU523GXulGUeEtJw3+U9ubZ2Wj+oEok3gDXg1/AErzjQiIiHTQYPmzmoCt0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5287
+User-Agent: Mozilla Thunderbird
+Reply-To: fantonifabio@tiscali.it
+Subject: Re: [PATCH v7 0/8] filtering and snapshots of a block devices
+Content-Language: it
+To: Sergei Shtepa <sergei.shtepa@linux.dev>, axboe@kernel.dk,
+ hch@infradead.org, corbet@lwn.net, snitzer@kernel.org
+Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20240209160204.1471421-1-sergei.shtepa@linux.dev>
+From: Fabio Fantoni <fantonifabio@tiscali.it>
+Autocrypt: addr=fantonifabio@tiscali.it; keydata=
+ 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
+In-Reply-To: <20240209160204.1471421-1-sergei.shtepa@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Antivirus: Avast (VPS 240821-0, 21/8/2024), Outbound message
+X-Antivirus-Status: Clean
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tiscali.it; s=smtp;
+	t=1724232430; bh=7qU3MmG7h0G3VOUFuVbnsi9DKbw72im+wMZ4XEuCMTs=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To;
+	b=FHpuGTrDVO8GVZ3X+nvHBCCC2T5OgYU0fnvlxmx8555Kn1vkplGgqHr035jBFSjfJ
+	 Fj4Tk1gNbKDyvOHNkqM1ubq9RxYEHYi92RmQN3Mk6JQ3ttMfDeyKdQ1qoLBc39Kzee
+	 qL8ykRHg9FUpfxQaHyVHaEY9qPLVoZB3e/au5FFw=
 
-Let the kememdup_array() take care about multiplication and possible
-overflows.
+Il 09/02/2024 17:01, Sergei Shtepa ha scritto:
+> Hi all.
+>
+> I am happy to offer an improved version of the block device filtering
+> mechanism (blkfilter) and module for creating snapshots of block devices
+> (blksnap).
+>
+> The filtering block device mechanism is implemented in the block layer.
+> This allows to attach and detach block device filters. Filters extend the
+> functionality of the block layer. See more in
+> Documentation/block/blkfilter.rst.
+>
+> The main purpose of snapshots of block devices is to provide backups of
+> them. See more in Documentation/block/blksnap.rst. The tool, library and
+> tests for working with blksnap can be found on github.
+> Link: https://github.com/veeam/blksnap/tree/stable-v2.0
+> There is also documentation from which you can learn how to manage the
+> module using the library and the console tool.
+>
+> Based on LK v6.8-rc3 with Christoph's patchset "clean up blk_mq_submit_bio".
+> Link: https://lore.kernel.org/linux-block/50fbe76b-d77d-4a7e-bda4-3a3b754fbd7e@kernel.org/T/#t
+>
+> I express my appreciation and gratitude to Christoph. Thanks to his
+> attention to the project, it was possible to raise the quality of the code.
+> I probably wouldn't have made version 7 if it wasn't for his help.
+> I am sure that the blksnap module will improve the quality of backup tools
+> for Linux.
+>
+> v7 changes:
+> - The location of the filtering of I/O units has been changed. This made it
+>    possible to remove the additional call bio_queue_enter().
+> - Remove configs BLKSNAP_DIFF_BLKDEV and BLKSNAP_CHUNK_DIFF_BIO_SYNC.
+> - To process the ioctl, the switch statement is used instead of a table
+>    with functions.
+> - Instead of a file descriptor, the module gets a path on the file system.
+>    This allows the kernel module to correctly open a file or block device
+>    with exclusive access rights.
+> - Fixed a bio leaking bugs.
 
-Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
----
- fs/mnt_idmapping.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hi, looking 
+https://lore.kernel.org/all/20240209160204.1471421-1-sergei.shtepa@linux.dev/ 
+I don't see any response to this latest version of blksnap even though a 
+lot of time has passed, and this seems strange to me.
 
-diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-index 3c60f1eaca61..fea0244a87ce 100644
---- a/fs/mnt_idmapping.c
-+++ b/fs/mnt_idmapping.c
-@@ -228,9 +228,9 @@ static int copy_mnt_idmap(struct uid_gid_map *map_from,
- 		return 0;
- 	}
- 
--	forward = kmemdup(map_from->forward,
--			  nr_extents * sizeof(struct uid_gid_extent),
--			  GFP_KERNEL_ACCOUNT);
-+	forward = kmemdup_array(map_from->forward, nr_extents,
-+				sizeof(struct uid_gid_extent),
-+				GFP_KERNEL_ACCOUNT);
- 	if (!forward)
- 		return -ENOMEM;
- 
--- 
-2.34.1
+ From what I see recipients were less to avoid being blocked by antispam 
+and double shipments like previous versions, and there was an error in 
+subjects from patch 3/8 to patch 8/8, where I think it should be 
+"blksnap:" or "block/blksnap:" instead of "block:" at the beginning of 
+the subjects.
+
+However, the error in the subjects does not seem serious to me to avoid 
+possible replies, or am I wrong?
+
+Isn't there anyone who wants to comment or review?
+
+I want to thank Sergei Shtepa for all his work and others people that 
+helped with previous versions review and advices, especially Christoph 
+Hellwig who helped so much, and I hope the project can proceed.
+
+>
+> v6 changes:
+> - The difference storage has been changed.
+>    In the previous version, the file was created only to reserve sector
+>    ranges on a block device. The data was stored directly to the block
+>    device in these sector ranges. Now saving and reading data is done using
+>    'VFS' using vfs_iter_write() and vfs_iter_read() functions. This allows
+>    not to depend on the filesystem and use, for example, tmpfs. Using an
+>    unnamed temporary file allows hiding it from other processes and
+>    automatically release it when the snapshot is closed.
+>    However, now the module does not allow adding a block device to the
+>    snapshot on which the difference storage is located. There is no way to
+>    ensure the immutability of file metadata when writing data to a file.
+>    This means that the metadata of the filesystem may change, which may
+>    cause damage to the snapshot.
+> - _IOW and _IOR were mixed up - fixed.
+> - Protection against the use of the snapshots for block devices with
+>    hardware inline encryption and data integrity was implemented.
+>    Compatibility with them was not planned and has not been tested at the
+>    moment.
+>
+> v5 changes:
+> - Rebase for "kernel/git/axboe/linux-block.git" branch "for-6.5/block".
+>    Link: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.5/block
+>
+> v4 changes:
+> - Structures for describing the state of chunks are allocated dynamically.
+>    This reduces memory consumption, since the struct chunk is allocated only
+>    for those blocks for which the snapshot image state differs from the
+>    original block device.
+> - The algorithm for calculating the chunk size depending on the size of the
+>    block device has been changed. For large block devices, it is now
+>    possible to allocate a larger number of chunks, and their size is smaller.
+> - For block devices, a 'filter' file has been added to /sys/block/<device>.
+>    It displays the name of the filter that is attached to the block device.
+> - Fixed a problem with the lack of protection against re-adding a block
+>    device to a snapshot.
+> - Fixed a bug in the algorithm of allocating the next bio for a chunk.
+>    This problem was occurred on large disks, for which a chunk consists of
+>    at least two bio.
+> - The ownership mechanism of the diff_area structure has been changed.
+>    This fixed the error of prematurely releasing the diff_area structure
+>    when destroying the snapshot.
+> - Documentation corrected.
+> - The Sparse analyzer is passed.
+> - Use __u64 type instead pointers in UAPI.
+>
+> v3 changes:
+> - New block device I/O controls BLKFILTER_ATTACH and BLKFILTER_DETACH allow
+>    to attach and detach filters.
+> - New block device I/O control BLKFILTER_CTL allow sending command to
+>    attached block device filter.
+> - The copy-on-write algorithm for processing I/O units has been optimized
+>    and has become asynchronous.
+> - The snapshot image reading algorithm has been optimized and has become
+>    asynchronous.
+> - Optimized the finite state machine for processing chunks.
+> - Fixed a tracking block size calculation bug.
+>
+> v2 changes:
+> - Added documentation for Block Device Filtering Mechanism.
+> - Added documentation for Block Devices Snapshots Module (blksnap).
+> - The MAINTAINERS file has been updated.
+> - Optimized queue code for snapshot images.
+> - Fixed comments, log messages and code for better readability.
+>
+> v1 changes:
+> - Forgotten "static" declarations have been added.
+> - The text of the comments has been corrected.
+> - It is possible to connect only one filter, since there are no others in
+>    upstream.
+> - Do not have additional locks for attach/detach filter.
+> - blksnap.h moved to include/uapi/.
+> - #pragma once and commented code removed.
+> - uuid_t removed from user API.
+> - Removed default values for module parameters from the configuration file.
+> - The debugging code for tracking memory leaks has been removed.
+> - Simplified Makefile.
+> - Optimized work with large memory buffers, CBT tables are now in virtual
+>    memory.
+> - The allocation code of minor numbers has been optimized.
+> - The implementation of the snapshot image block device has been
+>    simplified, now it is a bio-based block device.
+> - Removed initialization of global variables with null values.
+> - only one bio is used to copy one chunk.
+> - Checked on ppc64le.
+>
+> Sergei Shtepa (8):
+>    documentation: filtering and snapshots of a block devices
+>    block: filtering of a block devices
+>    block: header file of the blksnap module interface
+>    block: module management interface functions
+>    block: handling and tracking I/O units
+>    block: difference storage implementation
+>    block: snapshot and snapshot image block device
+>    block: Kconfig, Makefile and MAINTAINERS files
+>
+>   Documentation/block/blkfilter.rst             |  66 ++
+>   Documentation/block/blksnap.rst               | 351 ++++++++++
+>   Documentation/block/index.rst                 |   2 +
+>   .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+>   MAINTAINERS                                   |  17 +
+>   block/Makefile                                |   3 +-
+>   block/bdev.c                                  |   2 +
+>   block/blk-core.c                              |  26 +-
+>   block/blk-filter.c                            | 257 +++++++
+>   block/blk-mq.c                                |   7 +-
+>   block/blk-mq.h                                |   2 +-
+>   block/blk.h                                   |  11 +
+>   block/genhd.c                                 |  10 +
+>   block/ioctl.c                                 |   7 +
+>   block/partitions/core.c                       |   9 +
+>   drivers/block/Kconfig                         |   2 +
+>   drivers/block/Makefile                        |   2 +
+>   drivers/block/blksnap/Kconfig                 |  12 +
+>   drivers/block/blksnap/Makefile                |  15 +
+>   drivers/block/blksnap/cbt_map.c               | 225 +++++++
+>   drivers/block/blksnap/cbt_map.h               |  90 +++
+>   drivers/block/blksnap/chunk.c                 | 631 ++++++++++++++++++
+>   drivers/block/blksnap/chunk.h                 | 134 ++++
+>   drivers/block/blksnap/diff_area.c             | 577 ++++++++++++++++
+>   drivers/block/blksnap/diff_area.h             | 175 +++++
+>   drivers/block/blksnap/diff_buffer.c           | 114 ++++
+>   drivers/block/blksnap/diff_buffer.h           |  37 +
+>   drivers/block/blksnap/diff_storage.c          | 290 ++++++++
+>   drivers/block/blksnap/diff_storage.h          | 103 +++
+>   drivers/block/blksnap/event_queue.c           |  81 +++
+>   drivers/block/blksnap/event_queue.h           |  64 ++
+>   drivers/block/blksnap/main.c                  | 481 +++++++++++++
+>   drivers/block/blksnap/params.h                |  16 +
+>   drivers/block/blksnap/snapimage.c             | 135 ++++
+>   drivers/block/blksnap/snapimage.h             |  10 +
+>   drivers/block/blksnap/snapshot.c              | 462 +++++++++++++
+>   drivers/block/blksnap/snapshot.h              |  65 ++
+>   drivers/block/blksnap/tracker.c               | 369 ++++++++++
+>   drivers/block/blksnap/tracker.h               |  78 +++
+>   include/linux/blk-filter.h                    |  72 ++
+>   include/linux/blk_types.h                     |   1 +
+>   include/linux/sched.h                         |   1 +
+>   include/uapi/linux/blk-filter.h               |  35 +
+>   include/uapi/linux/blksnap.h                  | 384 +++++++++++
+>   include/uapi/linux/fs.h                       |   3 +
+>   45 files changed, 5430 insertions(+), 5 deletions(-)
+>   create mode 100644 Documentation/block/blkfilter.rst
+>   create mode 100644 Documentation/block/blksnap.rst
+>   create mode 100644 block/blk-filter.c
+>   create mode 100644 drivers/block/blksnap/Kconfig
+>   create mode 100644 drivers/block/blksnap/Makefile
+>   create mode 100644 drivers/block/blksnap/cbt_map.c
+>   create mode 100644 drivers/block/blksnap/cbt_map.h
+>   create mode 100644 drivers/block/blksnap/chunk.c
+>   create mode 100644 drivers/block/blksnap/chunk.h
+>   create mode 100644 drivers/block/blksnap/diff_area.c
+>   create mode 100644 drivers/block/blksnap/diff_area.h
+>   create mode 100644 drivers/block/blksnap/diff_buffer.c
+>   create mode 100644 drivers/block/blksnap/diff_buffer.h
+>   create mode 100644 drivers/block/blksnap/diff_storage.c
+>   create mode 100644 drivers/block/blksnap/diff_storage.h
+>   create mode 100644 drivers/block/blksnap/event_queue.c
+>   create mode 100644 drivers/block/blksnap/event_queue.h
+>   create mode 100644 drivers/block/blksnap/main.c
+>   create mode 100644 drivers/block/blksnap/params.h
+>   create mode 100644 drivers/block/blksnap/snapimage.c
+>   create mode 100644 drivers/block/blksnap/snapimage.h
+>   create mode 100644 drivers/block/blksnap/snapshot.c
+>   create mode 100644 drivers/block/blksnap/snapshot.h
+>   create mode 100644 drivers/block/blksnap/tracker.c
+>   create mode 100644 drivers/block/blksnap/tracker.h
+>   create mode 100644 include/linux/blk-filter.h
+>   create mode 100644 include/uapi/linux/blk-filter.h
+>   create mode 100644 include/uapi/linux/blksnap.h
+>
 
 
