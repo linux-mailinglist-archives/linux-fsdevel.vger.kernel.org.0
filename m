@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-26535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B7B95A550
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:35:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA61195A553
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51FA71C21F81
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D681F22DDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD1816F0CB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8DE16F0DD;
 	Wed, 21 Aug 2024 19:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aIrktxoI"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vjof5RZh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6270515C159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6279E16DC12
 	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 19:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724268896; cv=none; b=H3IjGDiPQpu+CSquc10fA8CoAUKzsfzNBmQOdI//VJdeYk+Pf4ti6J+4t5qdg7niyId05SJrRY7y3ijDRqHXqljXKBGwMEo2Rtafrkbi3TjnYhYh3ffF2enFKeZXgtFxhWj00kk1MStvlhtHU755kJhGRJI28Z9ZKRGiwzGEb6U=
+	t=1724268897; cv=none; b=gCUNFMVkEivkeyW9Sy4LbWcvTi+oj2gZIZ1y0L6rsqkhD7yZZZ8yl5AafrwS4VFl2DLJweU1wHiqbLXqC5lblSF1uQcI9wONxImWTsO5A3s9POJ3mnStlo9nmYJoab1xeHkTqaHQGE0DUiuLoMtuxIEzJKqkGNqHvVUvMf1Hu9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724268896; c=relaxed/simple;
-	bh=okeipfWeIRteDqHs/F51CaOLIcWGfiDuyV8zMvKKvlM=;
+	s=arc-20240116; t=1724268897; c=relaxed/simple;
+	bh=27rn/nZFzFSkNAIMnk5FQ5GGWC4NbJUaFzjbhmG52cw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pzczmltMlnbIGQ1qZovlQy722MEIbzqoYUuZNYcNIT46NWYHZI5xV93X/lRbLV6eu2uq8QXB1eKhBR0IPcgC++K7mQFQJs/70egzdE0W4Ly5UCTyDVUqWvm+gXM0BQnZQ82xxcVBBtsSS/q84AZE2VbydmcFnSUIbH8GIbVG0AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aIrktxoI; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=E9dk6pEXRZmFLkNLwFXt1EUZFxyypcOXWWZF3vElF7cnDOhtCJ4FAZYjwzfH9Mn9bYh/pKsmbaPoqaIKm7dkyTkXb7T8SvbayMTMGQnzUhJSoW3NarIF7luiFvs/LISp8z9dAjpy9LamwROQPzjcxlQiLfWoi8p0zQhmWLbaV0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Vjof5RZh; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=w4IRfGFkiFrrB3pF7j3Lr77Y/eA+6+Dyb/+szPk1dX8=; b=aIrktxoIwlcDGpbGt35aAZG/EM
-	3nrAiWG+k8rQ1VBGsAzOglgpYNVayUlM0N2pPxOtaoFUNUntpMNBBwpDjf0f33ogajeNZHPjC83vu
-	NhLUdrCxnYatOroIT1+6AdQ82tooWlFaSRwtP9A2EY1o25FmxZioC9E4DMgz9WCryABX1OzVhTIug
-	CMkM7EmHyGj47aoMJO6mSDreAhyHMpYjcaj+7ll5DRT5dycWWQr50fRo8Hi96+rtNBGcJcI4pKWqu
-	RNcFEeN7pOZUIxUZIQ2dyYQlqKQLQy6EAZ4WKyaYDfM+VAVOYeN7Fq2H9NWuJ5PbqRMbmqeR7t40i
-	DNsJT++g==;
+	bh=7V2bV5roZ/7Rqnt/F40jOHr7KxmrZpegYZisQPKdM5k=; b=Vjof5RZhhPS5QZIffxl8qmogr9
+	p70RfChVk3jAbVsrkyyxa7n4sXS9NhofK5bepKsqxla8i7NTXVFHk+Zumc9/MmDxFUAb3LEGFHfDk
+	5IjTtzIknToelA7DkoVqLwmITzeaTvYDzDz6g4sjXK0Y4eqp3AdKR0hc2mPW08uZB/FnbnTyzRMPi
+	JPNKR3yeiJNtl+1GlSuhO+zVRw/yuZY8RREZIGCcEiOwEar60rvX2WkVw7tSi+L69D4AZ/ZVFscY3
+	/yi5TrjyT5nB9NhkChfB6uuhxFdgrCxDaBKNmbssd7f6bDTx4hdNG0NRMANPI+iSz+BD4nGQIE/UE
+	5BiCtH+w==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sgr6V-00000009cqp-1w4I;
+	id 1sgr6V-00000009cr6-2vRi;
 	Wed, 21 Aug 2024 19:34:47 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
@@ -50,9 +50,9 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org,
 	x86@kernel.org
-Subject: [PATCH 08/10] mm: Remove page_has_private()
-Date: Wed, 21 Aug 2024 20:34:41 +0100
-Message-ID: <20240821193445.2294269-9-willy@infradead.org>
+Subject: [PATCH 09/10] mm: Rename PG_mappedtodisk to PG_owner_2
+Date: Wed, 21 Aug 2024 20:34:42 +0100
+Message-ID: <20240821193445.2294269-10-willy@infradead.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240821193445.2294269-1-willy@infradead.org>
 References: <20240821193445.2294269-1-willy@infradead.org>
@@ -64,44 +64,162 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This function has no more callers, except folio_has_private().
-Combine the two functions.
+This flag has similar constraints to PG_owner_priv_1 -- it is ignored
+by core code, and is entirely for the use of the code which allocated
+the folio.  Since the pagecache does not use it, individual filesystems
+can use it.  The bufferhead code does use it, so filesystems which use
+the buffer cache must not use it for another purpose.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/page-flags.h | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ fs/proc/page.c                    |  2 +-
+ include/linux/kernel-page-flags.h |  2 +-
+ include/linux/page-flags.h        | 24 ++++++++++++++++--------
+ include/trace/events/mmflags.h    |  2 +-
+ tools/mm/page-types.c             | 10 +++++-----
+ 5 files changed, 24 insertions(+), 16 deletions(-)
 
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index 73a0f872d97f..e74e639893be 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -211,7 +211,7 @@ u64 stable_page_flags(const struct page *page)
+ #endif
+ 
+ 	u |= kpf_copy_bit(k, KPF_RESERVED,	PG_reserved);
+-	u |= kpf_copy_bit(k, KPF_MAPPEDTODISK,	PG_mappedtodisk);
++	u |= kpf_copy_bit(k, KPF_OWNER_2,	PG_owner_2);
+ 	u |= kpf_copy_bit(k, KPF_PRIVATE,	PG_private);
+ 	u |= kpf_copy_bit(k, KPF_PRIVATE_2,	PG_private_2);
+ 	u |= kpf_copy_bit(k, KPF_OWNER_PRIVATE,	PG_owner_priv_1);
+diff --git a/include/linux/kernel-page-flags.h b/include/linux/kernel-page-flags.h
+index 859f4b0c1b2b..7c587a711be1 100644
+--- a/include/linux/kernel-page-flags.h
++++ b/include/linux/kernel-page-flags.h
+@@ -10,7 +10,7 @@
+  */
+ #define KPF_RESERVED		32
+ #define KPF_MLOCKED		33
+-#define KPF_MAPPEDTODISK	34
++#define KPF_OWNER_2		34
+ #define KPF_PRIVATE		35
+ #define KPF_PRIVATE_2		36
+ #define KPF_OWNER_PRIVATE	37
 diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 5112049cc102..3513aa666c31 100644
+index 3513aa666c31..c001e3c29c4c 100644
 --- a/include/linux/page-flags.h
 +++ b/include/linux/page-flags.h
-@@ -1175,20 +1175,15 @@ static __always_inline void __ClearPageAnonExclusive(struct page *page)
- #define PAGE_FLAGS_PRIVATE				\
- 	(1UL << PG_private | 1UL << PG_private_2)
- /**
-- * page_has_private - Determine if page has private stuff
-- * @page: The page to be checked
-+ * folio_has_private - Determine if folio has private stuff
-+ * @folio: The folio to be checked
-  *
-- * Determine if a page has private stuff, indicating that release routines
-+ * Determine if a folio has private stuff, indicating that release routines
-  * should be invoked upon it.
-  */
--static inline int page_has_private(const struct page *page)
-+static inline int folio_has_private(const struct folio *folio)
- {
--	return !!(page->flags & PAGE_FLAGS_PRIVATE);
--}
--
--static inline bool folio_has_private(const struct folio *folio)
--{
--	return page_has_private(&folio->page);
-+	return !!(folio->flags & PAGE_FLAGS_PRIVATE);
- }
+@@ -101,12 +101,12 @@ enum pageflags {
+ 	PG_waiters,		/* Page has waiters, check its waitqueue. Must be bit #7 and in the same byte as "PG_locked" */
+ 	PG_active,
+ 	PG_workingset,
+-	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
++	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use */
++	PG_owner_2,		/* Owner use. If pagecache, fs may use */
+ 	PG_arch_1,
+ 	PG_reserved,
+ 	PG_private,		/* If pagecache, has fs-private data */
+ 	PG_private_2,		/* If pagecache, has fs aux data */
+-	PG_mappedtodisk,	/* Has blocks allocated on-disk */
+ 	PG_reclaim,		/* To be reclaimed asap */
+ 	PG_swapbacked,		/* Page is backed by RAM/swap */
+ 	PG_unevictable,		/* Page is "unevictable"  */
+@@ -131,6 +131,11 @@ enum pageflags {
  
- #undef PF_ANY
+ 	PG_readahead = PG_reclaim,
+ 
++	/* Anonymous memory (and shmem) */
++	PG_swapcache = PG_owner_priv_1, /* Swap page: swp_entry_t in private */
++	/* Some filesystems */
++	PG_checked = PG_owner_priv_1,
++
+ 	/*
+ 	 * Depending on the way an anonymous folio can be mapped into a page
+ 	 * table (e.g., single PMD/PUD/CONT of the head page vs. PTE-mapped
+@@ -138,13 +143,13 @@ enum pageflags {
+ 	 * tail pages of an anonymous folio. For now, we only expect it to be
+ 	 * set on tail pages for PTE-mapped THP.
+ 	 */
+-	PG_anon_exclusive = PG_mappedtodisk,
+-
+-	/* Filesystems */
+-	PG_checked = PG_owner_priv_1,
++	PG_anon_exclusive = PG_owner_2,
+ 
+-	/* SwapBacked */
+-	PG_swapcache = PG_owner_priv_1,	/* Swap page: swp_entry_t in private */
++	/*
++	 * Set if all buffer heads in the folio are mapped.
++	 * Filesystems which do not use BHs can use it for their own purpose.
++	 */
++	PG_mappedtodisk = PG_owner_2,
+ 
+ 	/* Two page bits are conscripted by FS-Cache to maintain local caching
+ 	 * state.  These bits are set on pages belonging to the netfs's inodes
+@@ -540,6 +545,9 @@ FOLIO_FLAG(swapbacked, FOLIO_HEAD_PAGE)
+ PAGEFLAG(Private, private, PF_ANY)
+ PAGEFLAG(Private2, private_2, PF_ANY) TESTSCFLAG(Private2, private_2, PF_ANY)
+ 
++/* owner_2 can be set on tail pages for anon memory */
++FOLIO_FLAG(owner_2, FOLIO_HEAD_PAGE)
++
+ /*
+  * Only test-and-set exist for PG_writeback.  The unconditional operators are
+  * risky: they bypass page accounting.
+diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+index c151cc21d367..3b51558cdc9b 100644
+--- a/include/trace/events/mmflags.h
++++ b/include/trace/events/mmflags.h
+@@ -107,13 +107,13 @@
+ 	DEF_PAGEFLAG_NAME(active),					\
+ 	DEF_PAGEFLAG_NAME(workingset),					\
+ 	DEF_PAGEFLAG_NAME(owner_priv_1),				\
++	DEF_PAGEFLAG_NAME(owner_2),					\
+ 	DEF_PAGEFLAG_NAME(arch_1),					\
+ 	DEF_PAGEFLAG_NAME(reserved),					\
+ 	DEF_PAGEFLAG_NAME(private),					\
+ 	DEF_PAGEFLAG_NAME(private_2),					\
+ 	DEF_PAGEFLAG_NAME(writeback),					\
+ 	DEF_PAGEFLAG_NAME(head),					\
+-	DEF_PAGEFLAG_NAME(mappedtodisk),				\
+ 	DEF_PAGEFLAG_NAME(reclaim),					\
+ 	DEF_PAGEFLAG_NAME(swapbacked),					\
+ 	DEF_PAGEFLAG_NAME(unevictable)					\
+diff --git a/tools/mm/page-types.c b/tools/mm/page-types.c
+index 8d5595b6c59f..8ca41c41105e 100644
+--- a/tools/mm/page-types.c
++++ b/tools/mm/page-types.c
+@@ -71,7 +71,7 @@
+ /* [32-] kernel hacking assistances */
+ #define KPF_RESERVED		32
+ #define KPF_MLOCKED		33
+-#define KPF_MAPPEDTODISK	34
++#define KPF_OWNER_2		34
+ #define KPF_PRIVATE		35
+ #define KPF_PRIVATE_2		36
+ #define KPF_OWNER_PRIVATE	37
+@@ -129,7 +129,7 @@ static const char * const page_flag_names[] = {
+ 
+ 	[KPF_RESERVED]		= "r:reserved",
+ 	[KPF_MLOCKED]		= "m:mlocked",
+-	[KPF_MAPPEDTODISK]	= "d:mappedtodisk",
++	[KPF_OWNER_2]		= "d:owner_2",
+ 	[KPF_PRIVATE]		= "P:private",
+ 	[KPF_PRIVATE_2]		= "p:private_2",
+ 	[KPF_OWNER_PRIVATE]	= "O:owner_private",
+@@ -472,9 +472,9 @@ static int bit_mask_ok(uint64_t flags)
+ 
+ static uint64_t expand_overloaded_flags(uint64_t flags, uint64_t pme)
+ {
+-	/* Anonymous pages overload PG_mappedtodisk */
+-	if ((flags & BIT(ANON)) && (flags & BIT(MAPPEDTODISK)))
+-		flags ^= BIT(MAPPEDTODISK) | BIT(ANON_EXCLUSIVE);
++	/* Anonymous pages use PG_owner_2 for anon_exclusive */
++	if ((flags & BIT(ANON)) && (flags & BIT(OWNER_2)))
++		flags ^= BIT(OWNER_2) | BIT(ANON_EXCLUSIVE);
+ 
+ 	/* SLUB overloads several page flags */
+ 	if (flags & BIT(SLAB)) {
 -- 
 2.43.0
 
