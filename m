@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-26546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641A595A560
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:41:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 945FE95A561
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E6951C22133
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:41:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16C0CB21789
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12CD16EB5A;
-	Wed, 21 Aug 2024 19:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854A616EB79;
+	Wed, 21 Aug 2024 19:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsNkue1b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNkYKVh3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFF016DC11
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 19:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59D416DC11
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 19:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724269307; cv=none; b=RkwWToL0k6EZBqZZfzKxaETAdrW6LT6DI/btN6BHnMhFPjQhrigGUuzE/F6PxlF5+3YMEZ0GgMjlpNey3QUGLAiJWvcKRmTQ2ckL4SA3hCjlTwz05r457sTx5JWtsvleL7NHZC4GTKWPWTRmdPA18mHnIOf4fIKd7uQVyvhga28=
+	t=1724269364; cv=none; b=gQoHp2xxCNSzapp28D21PI7gTm9lE1Pv3wbn8yLQnQMIaDvH/NGVsDRfeHjFpRc6sYDW9t9qxV+br1ZPu3t/6qEZ8CyCxIShA2gzCAQJkT3uWc7xzk4/QXfV3ksKkDlhrGvrqlmBUGyQ1sMfuvv5Rx2eSdjK7yIw+86M9lj6yE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724269307; c=relaxed/simple;
-	bh=j2jShfv4jzx+/FKAiFx+bXi6W9s8Zpr02Md6vWOru5k=;
+	s=arc-20240116; t=1724269364; c=relaxed/simple;
+	bh=ecQgf81mI2iGpBoXkQT7nsNpaMAqA3gQdBY/bSFIK1Q=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M4bDkfpeUkerfZsBI6cxc2dWxv05GZ/QkTGjhELro6O/LeX4r+8/EK6if/YOc/XhroU21ZbNnj8OjnEvoKGNFKH2UXam4ayrqnTJyLs8KHaW25RKKxDNNQ6iij1omEE7Dylut/0hwGBi4qko0YhLsoFVqZWLT1CXr7LlJ/iJn3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsNkue1b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29025C32781;
-	Wed, 21 Aug 2024 19:41:46 +0000 (UTC)
+	 Content-Type:MIME-Version; b=hOetbMfsUa/k/drTzScH/yuu/UVcCcj5oJ0ETrvFwFSYAWjdLZwPawI5L/aI/E17JBgMqlnyZ/uGDxoAiaCoXDaf/b3A6wMC/Pzjo/855tuy7GrxfEkHQfEHlhSxyx2zNtzQJnPQKLqVl4ClSXLwFhEZPReDmefCZvYS6uIFAkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNkYKVh3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A67D4C32781;
+	Wed, 21 Aug 2024 19:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724269306;
-	bh=j2jShfv4jzx+/FKAiFx+bXi6W9s8Zpr02Md6vWOru5k=;
+	s=k20201202; t=1724269363;
+	bh=ecQgf81mI2iGpBoXkQT7nsNpaMAqA3gQdBY/bSFIK1Q=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=BsNkue1b/RP+R6LCxnsXth71OolhiGnoGNy/s7ywZiwQ2cNcqhVBA1yQw7H5O94H1
-	 XCuECu1PsmU0SigGwc6bKFHL3fMIdPZNhOr6XIBPVK5QpONrK7f9QiKaEKoPqkXopf
-	 AxCBzCJd1N/48qs9Pm5cJJ+PaiixmOTBrnwMdkzbP9tiT5pCpa1L3+J1EqTL5JRqTV
-	 UmoUzLT0X6K0bDC3HefdC6+rDlWrg/kxrewF24X0G9DAhoj88GNmwZ/r3mBapwdWBr
-	 hZtnOFTw5d2p8yl1r5Ts6fPLCJ2EoKjIx/JiBC6hDpDNl8ZgW+N7cYtMB+WV4RD0Ql
-	 4c1ATWSS8G/Bg==
-Message-ID: <fcf964b8b46af36e31f9dda2a8f2180eb999f35c.camel@kernel.org>
-Subject: Re: [PATCH RFC v2 5/6] inode: port __I_LRU_ISOLATING to var event
+	b=SNkYKVh3Eyh0uA6cdYvrrBGPLjTR4vYw0fPs9eNtVRWguZnpU1oeC7WMHCqXcgO6s
+	 pKz91SadyR1Pr6KJujUY/G5flhHpQeol8tZCjB/nlGNeeemceAp9Pf8FSBciOMmyWu
+	 OKaO1ymAs3dt9l9Jm5XTUtOvqlMthbJzzh0dPiajZSpNDDIB1pVtKk1pgPpCdzGvXD
+	 P0efnGy++hB/rigzjPjVZ6/Fvk3EVHKWGc94LAX7mpr1PnE5urUX9nK+byH9bkipHx
+	 2rK5o7FOcQYz97oEXW1E/mPkN+qBFqOYMG1PR+NfJhoyfoA97c+YhR9lHcicZdNrAs
+	 MSEEI3NKeg4SA==
+Message-ID: <5d1e3147349749a374c2a412efeb22e2754aa834.camel@kernel.org>
+Subject: Re: [PATCH RFC v2 0/6] inode: turn i_state into u32
 From: Jeff Layton <jlayton@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, Linus Torvalds
 	 <torvalds@linux-foundation.org>
 Cc: NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>, Ingo
  Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
  linux-fsdevel@vger.kernel.org
-Date: Wed, 21 Aug 2024 15:41:45 -0400
-In-Reply-To: <20240821-work-i_state-v2-5-67244769f102@kernel.org>
+Date: Wed, 21 Aug 2024 15:42:41 -0400
+In-Reply-To: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
 References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
-	 <20240821-work-i_state-v2-5-67244769f102@kernel.org>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -138,71 +137,55 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Wed, 2024-08-21 at 17:47 +0200, Christian Brauner wrote:
-> Port the __I_LRU_ISOLATING mechanism to use the new var event mechanism.
+> Hey,
 >=20
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> So first time I managed to send out my personal wip branch.
+> So for the record: The intention is to send what's in work.i_state on
+> vfs/vfs.git.
+>=20
 > ---
-> =C2=A0fs/inode.c | 26 +++++++++++++++++---------
-> =C2=A01 file changed, 17 insertions(+), 9 deletions(-)
+> I've recently looked for some free space in struct inode again
+> because
+> of some exec kerfuffle we recently had and while my idea didn't turn
+> into anything I noticed that we often waste bytes when using wait bit
+> operations. So I set out to switch that to another mechanism that
+> would
+> allow us to free up bytes. So this is an attempt to turn i_state from
+> an unsigned long into an u32 using the individual bytes of i_state as
+> addresses for the wait var event mechanism (Thanks to Linus for that
+> idea.).
 >=20
-> diff --git a/fs/inode.c b/fs/inode.c
-> index d18e1567c487..c8a5c63dc980 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -510,8 +510,7 @@ static void inode_unpin_lru_isolating(struct inode *i=
-node)
-> =C2=A0	spin_lock(&inode->i_lock);
-> =C2=A0	WARN_ON(!(inode->i_state & I_LRU_ISOLATING));
-> =C2=A0	inode->i_state &=3D ~I_LRU_ISOLATING;
-> -	smp_mb();
-> -	wake_up_bit(&inode->i_state, __I_LRU_ISOLATING);
-> +	inode_wake_up_bit(inode, __I_LRU_ISOLATING);
-> =C2=A0	spin_unlock(&inode->i_lock);
-> =C2=A0}
-> =C2=A0
-> @@ -519,13 +518,22 @@ static void inode_wait_for_lru_isolating(struct ino=
-de *inode)
-> =C2=A0{
-> =C2=A0	lockdep_assert_held(&inode->i_lock);
-> =C2=A0	if (inode->i_state & I_LRU_ISOLATING) {
-> -		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
-> -		wait_queue_head_t *wqh;
-> -
-> -		wqh =3D bit_waitqueue(&inode->i_state, __I_LRU_ISOLATING);
-> -		spin_unlock(&inode->i_lock);
-> -		__wait_on_bit(wqh, &wq, bit_wait, TASK_UNINTERRUPTIBLE);
-> -		spin_lock(&inode->i_lock);
-> +		struct wait_bit_queue_entry wqe;
-> +		struct wait_queue_head *wq_head;
-> +
-> +		wq_head =3D inode_bit_waitqueue(&wqe, inode, __I_LRU_ISOLATING);
-> +		for (;;) {
-> +			prepare_to_wait_event(wq_head, &wqe.wq_entry,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 TASK_UNINTERRUPTIBLE);
-> +			if (inode->i_state & I_LRU_ISOLATING) {
-> +				spin_unlock(&inode->i_lock);
-> +				schedule();
-> +				spin_lock(&inode->i_lock);
-> +				continue;
-> +			}
-> +			break;
-> +		}
-
-nit: personally, I'd prefer this, since you wouldn't need the brackets
-or the continue:
-
-			if (!(inode->i_state & LRU_ISOLATING))
-				break;
-			spin_unlock();
-			schedule();
-			...
-
-> +		finish_wait(wq_head, &wqe.wq_entry);
-> =C2=A0		WARN_ON(inode->i_state & I_LRU_ISOLATING);
-> =C2=A0	}
-> =C2=A0}
+> This survives LTP, xfstests on various filesystems, and will-it-
+> scale.
+>=20
+> To: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: NeilBrown <neilb@suse.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+>=20
+> ---
+> Changes in v2:
+> - Actually send out the correct branch.
+> - Link to v1:
+> https://lore.kernel.org/r/20240816-vfs-misc-dio-v1-1-80fe21a2c710@kernel.=
+org
+>=20
+> ---
+>=20
+>=20
+>=20
+> ---
+> base-commit: 01e603fb789c75b3a0c63bddd42a42a710da7a52
+> change-id: 20240820-work-i_state-4e34db39bcf8
 >=20
 
---=20
-Jeff Layton <jlayton@kernel.org>
+This all looks good to me, modulo one minor nit in patch #5 that you
+can take or leave.
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
