@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-26485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED33695A207
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 17:55:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012B195A208
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 17:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59048B26EE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 15:55:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7131F2285E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 15:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A5A1B2534;
-	Wed, 21 Aug 2024 15:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E60B1B253C;
+	Wed, 21 Aug 2024 15:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVJYTxVf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYy42BsQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2F81B2515
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818A014E2DE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 15:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724255272; cv=none; b=huTReXTj+dbqNO8xHk+OV9YNIqTo6uTcjUiX9JJ9WahP3KZeoSF/lvH1lHdM3Mk1I9No3ziRNqvWEOvqrc84uqw5w459dZMXhOHXvgg+SCQuKkz3Gvkf6tROZ7AXo/GJX1bwnA/JVa8mvIi/rFYdKb0lOyWLPJR0qTpWhJFMPK0=
+	t=1724255274; cv=none; b=JM1YHSgDFkNIjF/iRxhOTySTTWUkO5gq4QtvwB73twmvi5FoQZI4YYsMM2GS5vwb4X6gjUea0pIMEoCg7/CesvMOB4+4zqNOzF5h6XWL3TJIk+PEkg3D2XK4HocOP0912Tvb7Yf0oMkUZDFkRddygjxKD2EH/X1E9TJsbY80e9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724255272; c=relaxed/simple;
-	bh=0oUreKNx0Pdw8S7qqAOwewKD13Uzadtr6SlTU6MvFI4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MIqHrpt/4c4yVAABP2DJObtBSbxxpy61DcXqXNqOikm/guX+YbjR0qOb6C7WmTU2H4KiK2N8V6SenBrZtNgEJNOuyWed/nSKUWQiLAq/RHwBJPQ2ZC6Af8LO+OptK4qUTCaDtfmq2FV2XfwdHWThOh4A4S84e8aFcEeORVY+74U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVJYTxVf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD1BC32781;
-	Wed, 21 Aug 2024 15:47:49 +0000 (UTC)
+	s=arc-20240116; t=1724255274; c=relaxed/simple;
+	bh=XF9SEBq1qMuC+NzeqEU27oTFpHcRw695qJXpLUMxlVQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tINCr3bYQTwAuvHWZ+M5PL5OOG1Uqb/B8gTGUFoCPjvwpHqoZSzDho5EZbt8jPkWqokJzDzK2QuFNufyaqYxiwLFIxJkQub0Gi9wnv6js838r2UUVy+GA906ELJEgwai/Qa4kjax6J5qPrLrVEf+msbztppRNxs/xOkMTTEpINA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYy42BsQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C93CC4AF0E;
+	Wed, 21 Aug 2024 15:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724255271;
-	bh=0oUreKNx0Pdw8S7qqAOwewKD13Uzadtr6SlTU6MvFI4=;
-	h=From:Subject:Date:To:Cc:From;
-	b=DVJYTxVfT1nwNHxO1acFTgZxT5iRhDRAhO1zInnAQnyIASz5FRrEvAQ3FQmWOsX6a
-	 g20WlWck3QebOtiqPKhZLmzHEzkTJN7zcibFy8s1a3fFNNIiWk42nyEL6DNA6+Abhg
-	 0pQ6PZq2OKlVUVJmd/o6G0/QWcQALcTmjIE+FR6eqifMdCv8HVuiWTk7+hVE2952A7
-	 wtdOLCyQmZSkkwfsymaEjhaNXu0+CXCK3+01n99tUGjZkQGRf0xk7FNPOtuwNmgyz8
-	 TNzF1/Ge3WmOzfwxoVyba8U6VivOjbB2u5bR33o8ex1YCtzD5Kvzd3BqrQ1ILFhqwV
-	 vIK7yTLEpDoaw==
+	s=k20201202; t=1724255274;
+	bh=XF9SEBq1qMuC+NzeqEU27oTFpHcRw695qJXpLUMxlVQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=lYy42BsQ+msJi3j1D1SAl20L+VHNHIZUwqprOVxxa3R7O4PdJbZgzaP7O85JJTfaP
+	 1tcSd2C+ZMncoNaHZvDDnpAWIaLdTRiWGSkdhLrzc1Sga0RAZQ/55HfApBYdnX1j7k
+	 o1GOpCGy5Q0VQBksnB982Mc0G3Qo21rYxIyqmjLmwrWTeMWsVpeq/gKupQaZpODzci
+	 mg5iWdikxIeBOnOtvlou2MHDIQv+wQ5R6Hp6rxFlynNBGpLbn6iM6qcvxqwXwD9Uzt
+	 pvlsywoxmhyUoo/w+LnzaHIH8AuAqT9oE8+NtW9Fj5nqOCii6CiiCeta0Bk7tW+wht
+	 uL3m0IANzlXhw==
 From: Christian Brauner <brauner@kernel.org>
-Subject: [PATCH RFC v2 0/6] inode: turn i_state into u32
-Date: Wed, 21 Aug 2024 17:47:30 +0200
-Message-Id: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
+Date: Wed, 21 Aug 2024 17:47:31 +0200
+Subject: [PATCH RFC v2 1/6] fs: add i_state helpers
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,63 +52,86 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABMMxmYC/22NQQ6CMBREr2L+2pJSGgFXJiYewK0hpi0f+EFb0
- 5KqIdzdwtrlm8y8mSGgJwxw3M3gMVIgZxOI/Q7MoGyPjNrEILiQvBKcvZ0fGd3DpCZkEgvZ6qL
- WpqsgTV4eO/psuhtcL2doUqhVQKa9smZYTbEL2ZOCWfsDhcn57/Ye8231/yjmjLOylsWBl7msR
- H0a0Vt8ZM730CzL8gM7AdnJyQAAAA==
+Message-Id: <20240821-work-i_state-v2-1-67244769f102@kernel.org>
+References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
+In-Reply-To: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>, 
  Ingo Molnar <mingo@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
  Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, 
  linux-fsdevel@vger.kernel.org
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1382; i=brauner@kernel.org;
- h=from:subject:message-id; bh=0oUreKNx0Pdw8S7qqAOwewKD13Uzadtr6SlTU6MvFI4=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd41F5f9V10TvdqvQ3wlGOS+1vXfmj5l8hfMu+dxmTT
- Gbqgx+zOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZybh7DH+7lU3mdfnhNDzgd
- aCpdmftI61fjQy0jr6P/5H41lzfkyTMyLGJIfv6f59fjoMDrx5sU///87Xv34Or5ZUenHHe2e6o
- swgoA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2079; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=XF9SEBq1qMuC+NzeqEU27oTFpHcRw695qJXpLUMxlVQ=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd41ERmPS1/4Wqk5ZXxYkZQscVNrG8XsOwYXWM2Ipfy
+ 7wE/esEO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSdJSRYa3D4UaBaydlkiaF
+ +c/cvpvxxwGmjBCtCzP6qtbtVroSX8vw37ni/mzW1Hs7uGderGqMerbnlaOJ0uTy/dMYzpx4+U3
+ clAMA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Hey,
+The i_state member is an unsigned long so that it can be used with the
+wait bit infrastructure which expects unsigned long. This wastes 4 bytes
+which we're unlikely to ever use. Switch to using the var event wait
+mechanism using the address of the bit. Thanks to Linus for the address
+idea.
 
-So first time I managed to send out my personal wip branch.
-So for the record: The intention is to send what's in work.i_state on
-vfs/vfs.git.
-
----
-I've recently looked for some free space in struct inode again because
-of some exec kerfuffle we recently had and while my idea didn't turn
-into anything I noticed that we often waste bytes when using wait bit
-operations. So I set out to switch that to another mechanism that would
-allow us to free up bytes. So this is an attempt to turn i_state from
-an unsigned long into an u32 using the individual bytes of i_state as
-addresses for the wait var event mechanism (Thanks to Linus for that idea.).
-
-This survives LTP, xfstests on various filesystems, and will-it-scale.
-
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: NeilBrown <neilb@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <brauner@kernel.org>
-
 ---
-Changes in v2:
-- Actually send out the correct branch.
-- Link to v1: https://lore.kernel.org/r/20240816-vfs-misc-dio-v1-1-80fe21a2c710@kernel.org
+ fs/inode.c         | 10 ++++++++++
+ include/linux/fs.h | 16 ++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
----
+diff --git a/fs/inode.c b/fs/inode.c
+index 154f8689457f..f2a2f6351ec3 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -472,6 +472,16 @@ static void __inode_add_lru(struct inode *inode, bool rotate)
+ 		inode->i_state |= I_REFERENCED;
+ }
+ 
++struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entry *wqe,
++					    struct inode *inode, u32 bit)
++{
++        void *bit_address;
++
++        bit_address = inode_state_wait_address(inode, bit);
++        init_wait_var_entry(wqe, bit_address, 0);
++        return __var_waitqueue(bit_address);
++}
++
+ /*
+  * Add inode to LRU if needed (inode is unused and clean).
+  *
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 23e7d46b818a..a5b036714d74 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -744,6 +744,22 @@ struct inode {
+ 	void			*i_private; /* fs or device private pointer */
+ } __randomize_layout;
+ 
++/*
++ * Get bit address from inode->i_state to use with wait_var_event()
++ * infrastructre.
++ */
++#define inode_state_wait_address(inode, bit) ((char *)&(inode)->i_state + (bit))
++
++struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entry *wqe,
++					    struct inode *inode, u32 bit);
++
++static inline void inode_wake_up_bit(struct inode *inode, u32 bit)
++{
++	/* Ensure @bit will be seen cleared/set when caller is woken up. */
++	smp_mb();
++	wake_up_var(inode_state_wait_address(inode, bit));
++}
++
+ struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode);
+ 
+ static inline unsigned int i_blocksize(const struct inode *node)
 
-
-
----
-base-commit: 01e603fb789c75b3a0c63bddd42a42a710da7a52
-change-id: 20240820-work-i_state-4e34db39bcf8
+-- 
+2.43.0
 
 
