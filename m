@@ -1,115 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-26462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A52E6959973
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 13:19:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0D7959A88
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 13:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C22D284135
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 11:19:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE7E8281F89
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 11:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D651CEAB3;
-	Wed, 21 Aug 2024 09:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Ox60FBZB"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC691B5EBF;
+	Wed, 21 Aug 2024 11:24:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC111C3304
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 09:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E23165EEB;
+	Wed, 21 Aug 2024 11:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724234213; cv=none; b=nx2aA5hi4vcv7rDAzjrqyd/bXhNAkZAwbMCODCWZYQqgZXPQ6f5C1D+9iSriaLCcfp+asIdZBLAtxVQ4ZsoGVw982FBBBOBCTCVaZe9+9mQ/kHCACY6j5qa0gwvQAwOQV2bvyh6H0csxioThq2cAOVQtQ0PwxggkZritpbOZIDE=
+	t=1724239494; cv=none; b=EL4tuxGiaNHpeb15Neb+5MTjd/alaia9ZuqUV+dkkftJ5CYKEcxPqfT1lqYmLUcdl78Bi+Yh36St1Jyf/hLXwAqhHwwS2xt2nzUuOTPbA3fKsv6ysCaZqTv1llJocV0fyihIb8u2EqMTiO6BAa7NWfPAncxXtBVpEb/SzVm26LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724234213; c=relaxed/simple;
-	bh=QWrZEraJ1HdvGTLjL05egrMJ/0TxPWXDxYriLvhDu0w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IBCy2vcfO56zKjWNjeDBnMNxRYKz8HWOHGcX1eKmgIqr97db9uETYc7O6pkNGA1p/0j8nwr4BsD4RlFPp7mqCAHNsTB4XG/NYnluSEEEt/BbVBo7oAPvBdYM1XvT2lo3BbtOsOSXQ5XLZY1LPgZAzlZ7+23d6zMZh91RFiHliuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Ox60FBZB; arc=none smtp.client-ip=83.166.143.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WphYn0kLFzWr;
-	Wed, 21 Aug 2024 11:56:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1724234188;
-	bh=nSXgzhxaLWXtS2g1+LQLG+mkFQcvxD/SuRCRuRZ9I3w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ox60FBZBAhLUmU0Qbe8PAyseSF2sVRUoG3ei5pRkq/l8y3kMj2h31WAJ6Lq79E/UR
-	 VEpapKtSqCn8b4g2xBCTmnQ96qIipyR5rXApErtx0BCUoEWmZiYrKrPuIG3vM5KO1z
-	 mjLnD3zJclWQb6ofxDhrPKpyrGKxV314B6+5mt88=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WphYm1kMYzK84;
-	Wed, 21 Aug 2024 11:56:28 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	Jan Kara <jack@suse.cz>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	James Morris <jmorris@namei.org>,
-	Jann Horn <jannh@google.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: [PATCH v3 2/2] security: Update file_set_fowner documentation
-Date: Wed, 21 Aug 2024 11:56:06 +0200
-Message-ID: <20240821095609.365176-2-mic@digikod.net>
-In-Reply-To: <20240821095609.365176-1-mic@digikod.net>
-References: <20240821095609.365176-1-mic@digikod.net>
+	s=arc-20240116; t=1724239494; c=relaxed/simple;
+	bh=0Oa6GA6RXoiqPHaf6R9MMDIqIwy5sj0l1kCiHUBrnIg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JXKgFG5Gu5t1ZCQPbsL7YOpVzQDowFwLHYL8UP+7wI91xBenkT5FjstYIir+hbStXM05WsvBv/fZ6B0wYvKjh2VDpcvENElrNdVxU9bORnu1m8SeJjq/QaqvZAiX+zhtyZrc4tyDMU9jyijD8Sl/gdh76IQiiiYfXqGEWTarIAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 47LBN62v099503;
+	Wed, 21 Aug 2024 19:23:06 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WpkL80Wdzz2K6x7r;
+	Wed, 21 Aug 2024 19:16:32 +0800 (CST)
+Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 21 Aug 2024 19:23:04 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Theodore Ts'o"
+	<tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        Zhaoyang Huang
+	<huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: [RFC PATCH 1/1] fs: ext4: Don't use CMA for buffer_head
+Date: Wed, 21 Aug 2024 19:22:54 +0800
+Message-ID: <20240821112254.624814-1-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 47LBN62v099503
 
-Highlight that the file_set_fowner hook is now called with a lock held.
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
+cma_alloc() keep failed in our system which thanks to a jh->bh->b_page
+can not be migrated out of CMA area as the jh has one cp_transaction
+pending on it. We solve this by launching jbd2_log_do_checkpoint forcefully
+somewhere. Since journal is common mechanism to all JFSs and
+cp_transaction has a little fewer opportunity to be launched, this patch
+would like to have buffer_head of ext4 not use CMA pages.
+
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 ---
+ fs/ext4/inode.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Changes since v2:
-- Split the doc update into a separate patch to ease backporting.
----
- security/security.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/security.c b/security/security.c
-index 8cee5b6c6e6d..dc2cd7354015 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2931,6 +2931,8 @@ int security_file_fcntl(struct file *file, unsigned int cmd, unsigned long arg)
-  * Save owner security information (typically from current->security) in
-  * file->f_security for later use by the send_sigiotask hook.
-  *
-+ * This hook is called with file->f_owner.lock held.
-+ *
-  * Return: Returns 0 on success.
-  */
- void security_file_set_fowner(struct file *file)
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 941c1c0d5c6e..4422246851fe 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -869,7 +869,11 @@ struct buffer_head *ext4_getblk(handle_t *handle, struct inode *inode,
+ 	if (nowait)
+ 		return sb_find_get_block(inode->i_sb, map.m_pblk);
+ 
++#ifndef CONFIG_CMA
+ 	bh = sb_getblk(inode->i_sb, map.m_pblk);
++#else
++	bh = sb_getblk_gfp(inode->i_sb, map.m_pblk, 0);
++#endif
+ 	if (unlikely(!bh))
+ 		return ERR_PTR(-ENOMEM);
+ 	if (map.m_flags & EXT4_MAP_NEW) {
 -- 
-2.46.0
+2.25.1
 
 
