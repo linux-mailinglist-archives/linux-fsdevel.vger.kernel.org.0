@@ -1,442 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-26437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B9F9594A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 08:32:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56AB9594A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 08:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29C67B224A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 06:32:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1ECFB22DAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 06:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1274816DEA3;
-	Wed, 21 Aug 2024 06:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770A5170A29;
+	Wed, 21 Aug 2024 06:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dfH/rXdl"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="N0tMedNO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2061.outbound.protection.outlook.com [40.107.117.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BDD16DC34;
-	Wed, 21 Aug 2024 06:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724221890; cv=none; b=sxlOKZQDYqnW0k4oKt4+UUnZ2C+QdYSZE44Bg1AfGXnsQe8aXAOm0t5o571swPkdW7Sn8UFJUrh5fO4G38eULToggdSKn25utDp1+cQxKtUioHcEuMjhrtdPGzwANuXFwvd8SnjL7bBzT/s5M5OqCkz2SQjx2RmcI7vwdUEWDbo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724221890; c=relaxed/simple;
-	bh=WNDTWIYVoeTaQc8ip6uIYTr3sUeaMNBX5kglkTVyBD4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BoTIe12mjwlfwHoPEXbDO7R3doks5p7qZOFdAQJ8Dcdw/7WHuFpCY7Vl6vnSzDlobq0dL61FwjsmkmqmAdOdYuGECaFTF3fjkU3sbSiGkFH2K044mHQFAqPYSaurVPOHYFf+ISYgPdHzSMAoxE9Nc59xya4zxEp9Am7B6V+B9xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dfH/rXdl; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=V9mgMURNOhTBMKoMnincYbZsHjdjqPlsl4d8zlD52Ow=; b=dfH/rXdlXYUKMMctA5aC5+/rfo
-	9p8qhYQcC+po2NXjTV8UNrcH9cQdGg9pksAm+9Xqw9Cdd5lYNHTiSPrlwcTR1okHP4v3jx5qdyuPo
-	n47ZzCnT5CYeJPlAzijW/OVZ1s83iqPMWGsozt7BFxguq3WWhIyVVyJjqAUDYD6IGKgCG6XThIUBG
-	ULCNz4xEcJhgl4I8NTI+EkgFehsw9OO95ORx2Zn5nRJ8lO8y0jBi7pKUrAdLkTiCU/QQJDlQyPwNe
-	KZdlxnju1zCB63hByai4IhgXLV+fC2b+YKl/wjBChHEfaitmFRHgCUCdSQWTWvNddqfjlP9C4n/h3
-	N11Hbj+Q==;
-Received: from 2a02-8389-2341-5b80-94d5-b2c4-989b-ff6e.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:94d5:b2c4:989b:ff6e] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sgesQ-00000007iUI-20Gf;
-	Wed, 21 Aug 2024 06:31:26 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Chandan Babu R <chandan.babu@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Jan Kara <jack@suse.cz>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH 6/6] xfs: refactor xfs_file_fallocate
-Date: Wed, 21 Aug 2024 08:30:32 +0200
-Message-ID: <20240821063108.650126-7-hch@lst.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240821063108.650126-1-hch@lst.de>
-References: <20240821063108.650126-1-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905841876;
+	Wed, 21 Aug 2024 06:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724221891; cv=fail; b=UYDC52ki7RfHkIAeVXmMq8Pl4Ho9jYpxXQdUG+7GfAq9qJ9GcrBctQqTgHASX0lBKIt+MQh0MzISzRj43ExNBV5SOMvjnUcBusQBIyuG/LnFgWddW85SntbYCUfOj6JfbkrlsBb2rUoYuehxlkLVu06Dgo91NRPbkhWFeCrY3Og=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724221891; c=relaxed/simple;
+	bh=VwEOjeT2aw2+o4gr6xztVfFXeJR5Jgm5wFnifXhJvM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=F/eUyNLmP1x8XFyPoHDSOdjs2fgAgHzmRoMs6eLbc/8nrpDN7+XQCevZ6HCOuz68e/nK8CRdf2ns+oVOQ+aeiM6e1SPIuGmFsn9ceB1YsU8RBJO3kD1y79d8WwL8C9TLqqnB8gOJcX/8/2eO9+Kc8/vDuxODzSU+iiU6J3YBasY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=N0tMedNO; arc=fail smtp.client-ip=40.107.117.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TO5SZq3wFDkqkm50li7kS0xw4RBG6zsjHQYnZ/Li50LCPegiHXCifseEjqk6NEgJAFh9/6dGqghOXTpxNPkX4+KVZeUTqPCJa3pvjkioIvVryBVf+jR7bA1z+WhU/uxC5WBS7olCb2V2PlkjpTUVB+U3GupC/F5cjPcNzqdXYKRBcppbaEC/nC465srujEXG0YUUzI7C74RvmrOZ943ATy2BhwQLTlQsZBbLXSWOfh4y6ayN770mgSqpK6PGDOyYGq0F7I7bd9cKPrk4/6aaVR8Nr9d5xdFAwh5rj2bnwh5c3B7oDX/Wx/jdxpv7k2a2i8DAK1IgCmMYW0HUJNWyDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wGPtZ5KHbaI10cXw35+KH7JHE9/GgkJqiSKmSqZngB8=;
+ b=si99n7+fPi0WnIXEatJvuWMKyVzlaP6v1A5J3kfeTq5igeIKRigHoWvkdRw5TWzZODoghr3n+XtAuSZ2Gxgdpfm8vY0kqpD31XmTLQAgXWpZHiwedtJHyxaSacj0OpJVPxYTh7EVn+GwYCMttvthHCEAKte3RE8R0B/JNYs2b3rSIjj7uFdx0uno+9vMEuLi/nM2rr8FRwcp0jT2uHxxK7lvWJcd6QqR6hJw5YIk8V9uk0qlTq40rxegOpV697Y8S614jXwwNaRz6XsruvSU0/UiQm8fcJ+7MreXsnpSm7rNjV3Yb2ATRcVOXPEZfPlbjROTcECJlBMI2ah4mBAihw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wGPtZ5KHbaI10cXw35+KH7JHE9/GgkJqiSKmSqZngB8=;
+ b=N0tMedNOSXt6CAb4OOU7q1KZLI+jeTzX6m8JQ/Yip/xh0EJDY37kmQN78t2sxM6GK2aa+OSTBCs5ZJwDqxTUyCxASoVOFDO+LA3C0VXyixA/GmO0g2VFqbCxzin4fPlsevWeNW6enHEsuygzO1JJ4InFm06gopB5QaTJuit1e+gVIR4Vw/nR2c4JcpS862G05kZ6Jk/OdElvrJdFeremTp5t6yE4AvWyre2bY7cM8rHQA1F1sb0PZHxQGI1nfmkEOmcU5g7eBAJL1YBHCW9lCVqLDIJIcHYQJhNxGVJ/qQnd6oCWkFYKSZ6eQy7Mjq0OVjJdCoDvNha2untPJx8wpw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com (2603:1096:400:283::14)
+ by KL1PR06MB6520.apcprd06.prod.outlook.com (2603:1096:820:fd::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.22; Wed, 21 Aug
+ 2024 06:31:24 +0000
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a]) by TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a%7]) with mapi id 15.20.7849.021; Wed, 21 Aug 2024
+ 06:31:24 +0000
+From: Yuesong Li <liyuesong@vivo.com>
+To: akpm@linux-foundation.org,
+	willy@infradead.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yuesong Li <liyuesong@vivo.com>
+Subject: [PATCH v1] mm:page-writeback:use folio_next_index() helper in writeback_iter()
+Date: Wed, 21 Aug 2024 14:31:12 +0800
+Message-Id: <20240821063112.4053157-1-liyuesong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0233.apcprd06.prod.outlook.com
+ (2603:1096:4:ac::17) To TYZPR06MB5709.apcprd06.prod.outlook.com
+ (2603:1096:400:283::14)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB5709:EE_|KL1PR06MB6520:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb3e7855-b544-4d13-0bdc-08dcc1aae0f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DXr7+SQTxa+N3Q3viKUp44dHaZ8IpDQAXjWw9Dw/j1VrRH6texa1murNNQKx?=
+ =?us-ascii?Q?ptfBvOUABgj6WChtC+eIoEBdCetszAiZkru93j7msHCmUAMWxeViWANAPf6z?=
+ =?us-ascii?Q?ZCNhX4wySgDwymGP1EswrsocsqsCLIYCqO+frH/SYjK2ewyYuAP9XSZVCEIf?=
+ =?us-ascii?Q?ujYrBM+5iA/HIwX4zyvhAMPVHr7H/s5YPR+f/rzfDT1YeJdcz0JDPaokiNKe?=
+ =?us-ascii?Q?UMqZyei/JTFnDiWQ+FYDCBiqTNH5iEiRqlsVTDWLZmhTJNlXHqD70ady6YZI?=
+ =?us-ascii?Q?1/v9zaE8gjcksxoA1VwAbz9tNiIrletJu6GdwNKUONYb9RqzPSNYTsU9alMf?=
+ =?us-ascii?Q?EjVCg45d0cthl+uxAirBWW5aJCc3Khv6ZEkGL+1vskpRosc97AFLVQvp1yni?=
+ =?us-ascii?Q?UpU+/fg2SJvB/5VSeHvqOF0D5+h2mcvo70waxIdwTLBupTcqf586H62GEDa6?=
+ =?us-ascii?Q?2fl31as6OFkjkdz9vpGkllv0DxzkA+5NurEqwF+egUlpk+ZrJUjeYFRgsijz?=
+ =?us-ascii?Q?K5LJvebanoddOJ6pKe3RlFtGpJRHxaAjEyj3K2J9W9b4NVC/aN2tYYyusSeS?=
+ =?us-ascii?Q?Zmj5t67m1KUNfcvuHqz2HZZoZKU77SG2IjG365Q3/6z/rCic+3OhLJAHTg+f?=
+ =?us-ascii?Q?6QAs24Isc2wFLKySPHtNA03jEPKFr0h4RbCn/eoCXghMZQtOJZLLNinBshDD?=
+ =?us-ascii?Q?5ECsQC5rru7+mflt3Gp52vcuXJK0gn1+C2p1HTCvq3GR/nqca+4sN8jgyia8?=
+ =?us-ascii?Q?zUD/lSlbgIkMn7bJbCcs0MTLTYzP2+AJQUjvTJN1L2vFRrozDbOMqX2l2f2i?=
+ =?us-ascii?Q?aP/okeCjK3MGNvW64pGZ+bU5qwC2cLaHqAua5QICu/bEXWs0ToH81jdPQLnM?=
+ =?us-ascii?Q?c6CqsvVAX7BGPGzp33fYq3likfFb4+0wxGmX6Ax56EKEteWKSpvu18TNEXve?=
+ =?us-ascii?Q?/ojV+QblgjYZ6H1LGcQsnSxU+VsG8zJ0UhbTwN/xp0v1GKgeO87ugMrIoQei?=
+ =?us-ascii?Q?LQPaDeD3gYoh9Ozv+RP4L3wMYhIR+ac+MiTMyq5K75y8YTcL0YsE0HB6M6wq?=
+ =?us-ascii?Q?gkj2vThwe2iCQgvIZzLjPZlyyq9al4deZNYokI/mi9+1xUSeALAYbQa3LP9P?=
+ =?us-ascii?Q?q2ykYJ4yBwLp/+9RZUzDbzD9t/wbUWZuhuUcwwFHLN3rlywJuur6dWTVAcjG?=
+ =?us-ascii?Q?LVD3fSCKCU+aXj6sYZO+qNRY4UuGl/oX9qynRmkgy5K1QEH/vtPz+u923KlY?=
+ =?us-ascii?Q?rA9fE0MS1hph+l0y2BN1K7ksIbQJP0c4Bd8j/09mrSMV4N7kPLFnNTIr23fH?=
+ =?us-ascii?Q?1mgBxcvipXjDbr7cO9QGyMusZL+D2jVX0SGcxaX8SabwVRB1QllKX+pB9dNM?=
+ =?us-ascii?Q?kc8homeHB9MUApwiRdoV2idzE4Hy3RW3grggX60yyMCRlKTLfw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB5709.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?025YgeqA4K3IhqXPiPPCTWstlhiqwnhgRMvgkm+MH2oGqd73P/x4iJUI3t/E?=
+ =?us-ascii?Q?EjeMT+5Vr0NVg3vQEOzN9d3k2ent1l+BomkyMMSyR6Ff12q0CC7BBtA6DXzG?=
+ =?us-ascii?Q?ra5KfLOIU2lImlxmlLsBsYYM/wHyrTGZpsvBX6Qq69fmYQ9GX+0xBbZES1Tu?=
+ =?us-ascii?Q?Nb8q1Thfw8rwsDUP+6CbdSGTW2pKyLn5CPjQKkVxN0Ai94oMtqZ8ipCvaPBh?=
+ =?us-ascii?Q?527WvFy9k/i9DQXPK/RWoJpAH71sJyKMjhQddj8yIHihXAldHmncuvT0hon+?=
+ =?us-ascii?Q?bXTA0qmXOsOLKdrx0tZ6J3ZdW7jGMtQFyp1M362bUXS+M6t8QqTMuGh+s7i4?=
+ =?us-ascii?Q?UKmnGJ+enGIPl5zVtMQkfs7NbMRmT4ivQbvH6/nCSQ87syJXeZisQktO5eOr?=
+ =?us-ascii?Q?5Gq6PZWuyiIvvZh7AYI8+ksPnMPODyeQPX01BHuBIFm2qpU0PqgFBwM3/w7a?=
+ =?us-ascii?Q?J6lniXsv/rK0JO06Gso7t8QhWEmkxfZM+OxvgL+4Tnvtf/kdcGu1E6MKYqBN?=
+ =?us-ascii?Q?+Il5GHT7CE8xuJpSuZTZJp5uvh596PzdjUS/YMJwnUL3zksPMOCpkiW++ba7?=
+ =?us-ascii?Q?lAR065LeMA6PEihbYExk18SI/VBxySgQZLkaCyB2JVxLu4NR3Ut+i4/68Jmz?=
+ =?us-ascii?Q?KO1hweknE+h8uSnplcNzekrHna/3T0QEOTKTt/GTYNBF82ebKx00xpSqAzcD?=
+ =?us-ascii?Q?G6D4mJP0MvmrXVa9FOIxoFnzxq/Ikn/4nZMG9H+kQxk4dEiYiLezvV49vpMq?=
+ =?us-ascii?Q?fop2lPJ0tQ0YWtNTi27nCil/ejFXQy6qqjqMnpuR4KP+R5lQMJyglNrawE8o?=
+ =?us-ascii?Q?CkbpUfCuW/9H+exXaHVD0AjKPuK04WMEmTtIOfgbgcyYZSq2FM1GNTqg1ERv?=
+ =?us-ascii?Q?ZPfnezw4jTW/rDnVKrCLcHsDdZLMNWfS21Wcn6mzhHMWHqUh/sgm6AtT+nk4?=
+ =?us-ascii?Q?fqQORt0UOzT0COBOkQWEg7TS/HhIAdHOwf1SX6UYDUGukEtJHtRXn3OP9rW9?=
+ =?us-ascii?Q?PLYrd6VxYU7rhq/xpVvNuJjjSSOXXUAOtg2fEzUihAeYcrLhMpa3YuajjVIe?=
+ =?us-ascii?Q?bQk/q5gwFbXjO/wTQBXhIuGY4ZtfGqZnMrXm4i0k0ykKakqzw6Q3rAe9HVeL?=
+ =?us-ascii?Q?txuAeTfsnViRRKyoM4v3yj+ifHJt9+AGucBuCETH1575rYtcJgj/QmUqa9i2?=
+ =?us-ascii?Q?jmOBZ5cAkQ8HEqmVr7T+JyPkgE10n/Cofye6GbioUqJyS0FvmFspLCDV1q0M?=
+ =?us-ascii?Q?1z2o706R3qLFEtbYBODuy8kLbKo3wU+hf/4yk3vwKCz+N7uh+6WCqzq9scvf?=
+ =?us-ascii?Q?wz1ZWkWoa9nCuyx4b2ICykh0EY26KHLma0OE/ppJOMFinmZ+udEjE+jUKtit?=
+ =?us-ascii?Q?fiwNuj9PdlqtuEE113lmZfGPEEvQyQ7t5QcQL5iR+NKc7P29+MXi2Y9pCqed?=
+ =?us-ascii?Q?9OTnoECyfCzF8KiX932oXokThh51PBFoZa8Jwdkj2o+lCvLvkIschkXLwU/u?=
+ =?us-ascii?Q?4OG8TAftsimCmCL/gnGEpDEjfscwcp7g5yxvvn8OvL+1/bBh8RVxmrBvjFX0?=
+ =?us-ascii?Q?BohHAV/gqcuWmSx6MYkZRSZFqQf9DL7ZtrTZfFwR?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb3e7855-b544-4d13-0bdc-08dcc1aae0f5
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB5709.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 06:31:24.4453
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jvb3L+KwD8KlRf5gLLrXi29rnNX8A5TBeRU5EdEVU6HGVY7KxSeq0ZWthJjoaqV0gHsWiF6GDd2MJVTPGXviFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6520
 
-Refactor xfs_file_fallocate into separate helpers for each mode,
-two factors for i_size handling and a single switch statement over the
-supported modes.
+Simplify code pattern of 'folio->index + folio_nr_pages(folio)' by using
+the existing helper folio_next_index().
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Yuesong Li <liyuesong@vivo.com>
 ---
- fs/xfs/xfs_file.c | 327 +++++++++++++++++++++++++++++-----------------
- 1 file changed, 205 insertions(+), 122 deletions(-)
+ mm/page-writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 489bc1b173c268..9d3bac7731bdcb 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -852,6 +852,189 @@ static inline bool xfs_file_sync_writes(struct file *filp)
- 	return false;
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 7a04cb1918fd..fcd4c1439cb9 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2612,7 +2612,7 @@ struct folio *writeback_iter(struct address_space *mapping,
+ 
+ done:
+ 	if (wbc->range_cyclic)
+-		mapping->writeback_index = folio->index + folio_nr_pages(folio);
++		mapping->writeback_index = folio_next_index(folio);
+ 	folio_batch_release(&wbc->fbatch);
+ 	return NULL;
  }
- 
-+static int
-+xfs_falloc_newsize(
-+	struct file		*file,
-+	int			mode,
-+	loff_t			offset,
-+	loff_t			len,
-+	loff_t			*new_size)
-+{
-+	struct inode		*inode = file_inode(file);
-+
-+	if ((mode & FALLOC_FL_KEEP_SIZE) || offset + len <= i_size_read(inode))
-+		return 0;
-+	*new_size = offset + len;
-+	return inode_newsize_ok(inode, *new_size);
-+}
-+
-+static int
-+xfs_falloc_setsize(
-+	struct file		*file,
-+	loff_t			new_size)
-+{
-+	struct iattr iattr = {
-+		.ia_valid	= ATTR_SIZE,
-+		.ia_size	= new_size,
-+	};
-+
-+	if (!new_size)
-+		return 0;
-+	return xfs_vn_setattr_size(file_mnt_idmap(file), file_dentry(file),
-+			&iattr);
-+}
-+
-+static int
-+xfs_falloc_collapse_range(
-+	struct file		*file,
-+	loff_t			offset,
-+	loff_t			len)
-+{
-+	struct inode		*inode = file_inode(file);
-+	loff_t			new_size = i_size_read(inode) - len;
-+	int			error;
-+
-+	if (!xfs_is_falloc_aligned(XFS_I(inode), offset, len))
-+		return -EINVAL;
-+
-+	/*
-+	 * There is no need to overlap collapse range with EOF, in which case it
-+	 * is effectively a truncate operation
-+	 */
-+	if (offset + len >= i_size_read(inode))
-+		return -EINVAL;
-+
-+	error = xfs_collapse_file_space(XFS_I(inode), offset, len);
-+	if (error)
-+		return error;
-+	return xfs_falloc_setsize(file, new_size);
-+}
-+
-+static int
-+xfs_falloc_insert_range(
-+	struct file		*file,
-+	loff_t			offset,
-+	loff_t			len)
-+{
-+	struct inode		*inode = file_inode(file);
-+	loff_t			isize = i_size_read(inode);
-+	int			error;
-+
-+	if (!xfs_is_falloc_aligned(XFS_I(inode), offset, len))
-+		return -EINVAL;
-+
-+	/*
-+	 * New inode size must not exceed ->s_maxbytes, accounting for
-+	 * possible signed overflow.
-+	 */
-+	if (inode->i_sb->s_maxbytes - isize < len)
-+		return -EFBIG;
-+
-+	/* Offset should be less than i_size */
-+	if (offset >= isize)
-+		return -EINVAL;
-+
-+	error = xfs_falloc_setsize(file, isize + len);
-+	if (error)
-+		return error;
-+
-+	/*
-+	 * Perform hole insertion now that the file size has been updated so
-+	 * that if we crash during the operation we don't leave shifted extents
-+	 * past EOF and hence losing access to the data that is contained within
-+	 * them.
-+	 */
-+	return xfs_insert_file_space(XFS_I(inode), offset, len);
-+}
-+
-+/*
-+ * Punch a hole and prealloc the range.  We use a hole punch rather than
-+ * unwritten extent conversion for two reasons:
-+ *
-+ *   1.) Hole punch handles partial block zeroing for us.
-+ *   2.) If prealloc returns ENOSPC, the file range is still zero-valued by
-+ *	 virtue of the hole punch.
-+ */
-+static int
-+xfs_falloc_zero_range(
-+	struct file		*file,
-+	int			mode,
-+	loff_t			offset,
-+	loff_t			len)
-+{
-+	struct inode		*inode = file_inode(file);
-+	unsigned int		blksize = i_blocksize(inode);
-+	loff_t			new_size = 0;
-+	int			error;
-+
-+	trace_xfs_zero_file_space(XFS_I(inode));
-+
-+	error = xfs_falloc_newsize(file, mode, offset, len, &new_size);
-+	if (error)
-+		return error;
-+
-+	error = xfs_free_file_space(XFS_I(inode), offset, len);
-+	if (error)
-+		return error;
-+
-+	len = round_up(offset + len, blksize) - round_down(offset, blksize);
-+	offset = round_down(offset, blksize);
-+	error = xfs_alloc_file_space(XFS_I(inode), offset, len);
-+	if (error)
-+		return error;
-+	return xfs_falloc_setsize(file, new_size);
-+}
-+
-+static int
-+xfs_falloc_unshare_range(
-+	struct file		*file,
-+	int			mode,
-+	loff_t			offset,
-+	loff_t			len)
-+{
-+	struct inode		*inode = file_inode(file);
-+	loff_t			new_size = 0;
-+	int			error;
-+
-+	error = xfs_falloc_newsize(file, mode, offset, len, &new_size);
-+	if (error)
-+		return error;
-+
-+	error = xfs_reflink_unshare(XFS_I(inode), offset, len);
-+	if (error)
-+		return error;
-+
-+	return xfs_falloc_setsize(file, new_size);
-+}
-+
-+static int
-+xfs_falloc_allocate_range(
-+	struct file		*file,
-+	int			mode,
-+	loff_t			offset,
-+	loff_t			len)
-+{
-+	struct inode		*inode = file_inode(file);
-+	loff_t			new_size = 0;
-+	int			error;
-+
-+	/*
-+	 * If always_cow mode we can't use preallocations and thus should not
-+	 * create them.
-+	 */
-+	if (xfs_is_always_cow_inode(XFS_I(inode)))
-+		return -EOPNOTSUPP;
-+
-+	error = xfs_falloc_newsize(file, mode, offset, len, &new_size);
-+	if (error)
-+		return error;
-+
-+	error = xfs_alloc_file_space(XFS_I(inode), offset, len);
-+	if (error)
-+		return error;
-+	return xfs_falloc_setsize(file, new_size);
-+}
-+
- #define	XFS_FALLOC_FL_SUPPORTED						\
- 		(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |		\
- 		 FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_ZERO_RANGE |	\
-@@ -868,8 +1051,6 @@ xfs_file_fallocate(
- 	struct xfs_inode	*ip = XFS_I(inode);
- 	long			error;
- 	uint			iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
--	loff_t			new_size = 0;
--	bool			do_file_insert = false;
- 
- 	if (!S_ISREG(inode->i_mode))
- 		return -EINVAL;
-@@ -894,129 +1075,31 @@ xfs_file_fallocate(
- 	if (error)
- 		goto out_unlock;
- 
--	if (mode & FALLOC_FL_PUNCH_HOLE) {
-+	switch (mode & FALLOC_FL_MODE_MASK) {
-+	case FALLOC_FL_PUNCH_HOLE:
- 		error = xfs_free_file_space(ip, offset, len);
--		if (error)
--			goto out_unlock;
--	} else if (mode & FALLOC_FL_COLLAPSE_RANGE) {
--		if (!xfs_is_falloc_aligned(ip, offset, len)) {
--			error = -EINVAL;
--			goto out_unlock;
--		}
--
--		/*
--		 * There is no need to overlap collapse range with EOF,
--		 * in which case it is effectively a truncate operation
--		 */
--		if (offset + len >= i_size_read(inode)) {
--			error = -EINVAL;
--			goto out_unlock;
--		}
--
--		new_size = i_size_read(inode) - len;
--
--		error = xfs_collapse_file_space(ip, offset, len);
--		if (error)
--			goto out_unlock;
--	} else if (mode & FALLOC_FL_INSERT_RANGE) {
--		loff_t		isize = i_size_read(inode);
--
--		if (!xfs_is_falloc_aligned(ip, offset, len)) {
--			error = -EINVAL;
--			goto out_unlock;
--		}
--
--		/*
--		 * New inode size must not exceed ->s_maxbytes, accounting for
--		 * possible signed overflow.
--		 */
--		if (inode->i_sb->s_maxbytes - isize < len) {
--			error = -EFBIG;
--			goto out_unlock;
--		}
--		new_size = isize + len;
--
--		/* Offset should be less than i_size */
--		if (offset >= isize) {
--			error = -EINVAL;
--			goto out_unlock;
--		}
--		do_file_insert = true;
--	} else {
--		if (!(mode & FALLOC_FL_KEEP_SIZE) &&
--		    offset + len > i_size_read(inode)) {
--			new_size = offset + len;
--			error = inode_newsize_ok(inode, new_size);
--			if (error)
--				goto out_unlock;
--		}
--
--		if (mode & FALLOC_FL_ZERO_RANGE) {
--			/*
--			 * Punch a hole and prealloc the range.  We use a hole
--			 * punch rather than unwritten extent conversion for two
--			 * reasons:
--			 *
--			 *   1.) Hole punch handles partial block zeroing for us.
--			 *   2.) If prealloc returns ENOSPC, the file range is
--			 *       still zero-valued by virtue of the hole punch.
--			 */
--			unsigned int blksize = i_blocksize(inode);
--
--			trace_xfs_zero_file_space(ip);
--
--			error = xfs_free_file_space(ip, offset, len);
--			if (error)
--				goto out_unlock;
--
--			len = round_up(offset + len, blksize) -
--			      round_down(offset, blksize);
--			offset = round_down(offset, blksize);
--		} else if (mode & FALLOC_FL_UNSHARE_RANGE) {
--			error = xfs_reflink_unshare(ip, offset, len);
--			if (error)
--				goto out_unlock;
--		} else {
--			/*
--			 * If always_cow mode we can't use preallocations and
--			 * thus should not create them.
--			 */
--			if (xfs_is_always_cow_inode(ip)) {
--				error = -EOPNOTSUPP;
--				goto out_unlock;
--			}
--		}
--
--		error = xfs_alloc_file_space(ip, offset, len);
--		if (error)
--			goto out_unlock;
--	}
--
--	/* Change file size if needed */
--	if (new_size) {
--		struct iattr iattr;
--
--		iattr.ia_valid = ATTR_SIZE;
--		iattr.ia_size = new_size;
--		error = xfs_vn_setattr_size(file_mnt_idmap(file),
--					    file_dentry(file), &iattr);
--		if (error)
--			goto out_unlock;
--	}
--
--	/*
--	 * Perform hole insertion now that the file size has been
--	 * updated so that if we crash during the operation we don't
--	 * leave shifted extents past EOF and hence losing access to
--	 * the data that is contained within them.
--	 */
--	if (do_file_insert) {
--		error = xfs_insert_file_space(ip, offset, len);
--		if (error)
--			goto out_unlock;
-+		break;
-+	case FALLOC_FL_COLLAPSE_RANGE:
-+		error = xfs_falloc_collapse_range(file, offset, len);
-+		break;
-+	case FALLOC_FL_INSERT_RANGE:
-+		error = xfs_falloc_insert_range(file, offset, len);
-+		break;
-+	case FALLOC_FL_ZERO_RANGE:
-+		error = xfs_falloc_zero_range(file, mode, offset, len);
-+		break;
-+	case FALLOC_FL_UNSHARE_RANGE:
-+		error = xfs_falloc_unshare_range(file, mode, offset, len);
-+		break;
-+	case FALLOC_FL_ALLOCATE_RANGE:
-+		error = xfs_falloc_allocate_range(file, mode, offset, len);
-+		break;
-+	default:
-+		error = -EOPNOTSUPP;
-+		break;
- 	}
- 
--	if (xfs_file_sync_writes(file))
-+	if (!error && xfs_file_sync_writes(file))
- 		error = xfs_log_force_inode(ip);
- 
- out_unlock:
 -- 
-2.43.0
+2.34.1
 
 
