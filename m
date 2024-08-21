@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-26545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19B495A55B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:35:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4784B95A558
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1020DB21511
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9EC283896
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB5516F0D0;
-	Wed, 21 Aug 2024 19:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E06170822;
+	Wed, 21 Aug 2024 19:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DjAQCtnV"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i2MhATVc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC20016EC1B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 19:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71BE16E895
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 19:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724268911; cv=none; b=Qebgzu/il6QXfAWxS4d8tCqGo5lhgsSCMEjebJBIVWtXaOtjFMW+bDi4/VRhbtnaxoXPzVIm6DEDKZ9I022vOflBmCxf5SiiDzrMuj+KF4GcNIgSVBb7aZ2hM0QiZe0cO6IeXD8HjlsEBx25IVqRBBYzp3YWl/7wqUB6j/BpVr8=
+	t=1724268902; cv=none; b=CTucV2uEebAm+W0KqBLKz0rfhnhN6/Iegk73ygFYzlwnCpdifWbx3Y4tWsIjrD2i9UvNvzEtms2NZjcTGpM4WYomYSL4V9cWdj6ap9NYwM0O5e4GTXjg7bxszt/2rF3zgWCIbjnCJafjFyzABduyUNuvtI5Xj6d8dnRCM0wvjbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724268911; c=relaxed/simple;
-	bh=wtH1AjxGt8vYQLDKVnTMA95IJzj/nJ1aUZEg7EXtr0Q=;
+	s=arc-20240116; t=1724268902; c=relaxed/simple;
+	bh=O60Ye10YS1Hh5fAmnRaDhm2ZgP7wF4F0tt9akH31hfE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aUcAeiQcGytJA6ZxvajNsM7D35m/CjLHGTu7ahFc0Fecp02hi+83SocuhRhiOSKzDipTdZ8dSM981PiCQWl4ySwwtac456vadLj2vrGk+I59Y5M5GJtgOSjAr8hZAbTDvBBLV09R8ZGpE2LBKb5UeUxb6z5ERgMFcMG1Jy7cSYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DjAQCtnV; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=ozurFkR6A9vLz3g14vD+ZDzk8K6Ijc3vuVjcghKtjHxCbnmMwOkOS2F6DGYvavLfDh5jKT3kW8gXFMhC2YgqZJkT8JF5G7fPMsnQ1BGvhUF+wUB2LdsI4pEUeQlEHPukJsqkB5RfA6aBtraf9KuHzmrD0R5o1lAO7kTXlGjFm48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i2MhATVc; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=WTfKAvywvhG7fx5/3Y/15ASwygZFYxxage+aqiSBrsU=; b=DjAQCtnV3jMm8iu067wu+Qr5Cu
-	CjerHrxRxu836V35pS0wiXRDF4UYquh2YNJp3b3fCuu5mWuvXOP5xwgyAXjwCXgi4zazW9XsFqUaq
-	YybU3J67oxBHAr/ISIvG0C4729Wo8A/KDerpkOCJuTl82sMdMXlFiPMPUKvrUn+PMAvHhMEruW3hF
-	5U+uX86iARzUbClb28wJuZ/nehUlFmwOQfE6JWzEc7Ji2mlb+cIaQmXBaWCyCcGadbpUO4aiI7p0+
-	+6KgZqGe/GR2u4HZALZetISi1tz6x89FZXjQ9Tt71ekeyResehRCRbW0xi9RXFhUqozRKeB6BeewN
-	Z2OEaoxg==;
+	bh=Z1DuzeAr1D4ZoS8EJ71yYTgQwfxw4lV4F5mPx3QubfY=; b=i2MhATVc9Iivb+xtCGY94TQ6Zm
+	7FRxDEnCniqrIenwJbxD8HymbGZeWIEBbT8UW7HfQkG1TCCmdHazSXeIzDRkTHOMN9oq5644o9BPj
+	hSg1J0ZoRSA5ENZuS7GJITb36NyCvjm65bVZJGBIVWHst+kjQdl7mZwGSBkSGr0HLA0oraGuJI6s8
+	zyuYwfDNvmJppUp+RuejqII6yyVZTdlrk7poknJ2jRb1WGb4War8zfLaXhdEfNsUfPsHmuVrvYsV6
+	NpMx0s5Qmf6ZbN7zFPxy54ZxJlkF/PNiaDlRlensptJUSgEWvVZjLZOo/+D53bd5esqFL8T8/28G+
+	BTFlyHqQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sgr6U-00000009cqb-3Pnq;
+	id 1sgr6U-00000009cqd-3niY;
 	Wed, 21 Aug 2024 19:34:46 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
@@ -50,9 +50,9 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org,
 	x86@kernel.org
-Subject: [PATCH 01/10] mm: Remove PageActive
-Date: Wed, 21 Aug 2024 20:34:34 +0100
-Message-ID: <20240821193445.2294269-2-willy@infradead.org>
+Subject: [PATCH 02/10] mm: Remove PageSwapBacked
+Date: Wed, 21 Aug 2024 20:34:35 +0100
+Message-ID: <20240821193445.2294269-3-willy@infradead.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240821193445.2294269-1-willy@infradead.org>
 References: <20240821193445.2294269-1-willy@infradead.org>
@@ -69,25 +69,26 @@ accessors.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/page-flags.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/linux/page-flags.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 0c738bda5d98..65171b8fd661 100644
+index 65171b8fd661..5558d35cdcc3 100644
 --- a/include/linux/page-flags.h
 +++ b/include/linux/page-flags.h
-@@ -510,8 +510,9 @@ PAGEFLAG(Dirty, dirty, PF_HEAD) TESTSCFLAG(Dirty, dirty, PF_HEAD)
- 	__CLEARPAGEFLAG(Dirty, dirty, PF_HEAD)
- PAGEFLAG(LRU, lru, PF_HEAD) __CLEARPAGEFLAG(LRU, lru, PF_HEAD)
- 	TESTCLEARFLAG(LRU, lru, PF_HEAD)
--PAGEFLAG(Active, active, PF_HEAD) __CLEARPAGEFLAG(Active, active, PF_HEAD)
--	TESTCLEARFLAG(Active, active, PF_HEAD)
-+FOLIO_FLAG(active, FOLIO_HEAD_PAGE)
-+	__FOLIO_CLEAR_FLAG(active, FOLIO_HEAD_PAGE)
-+	FOLIO_TEST_CLEAR_FLAG(active, FOLIO_HEAD_PAGE)
- PAGEFLAG(Workingset, workingset, PF_HEAD)
- 	TESTCLEARFLAG(Workingset, workingset, PF_HEAD)
- PAGEFLAG(Checked, checked, PF_NO_COMPOUND)	   /* Used by some filesystems */
+@@ -528,9 +528,9 @@ PAGEFLAG(XenRemapped, xen_remapped, PF_NO_COMPOUND)
+ PAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
+ 	__CLEARPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
+ 	__SETPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
+-PAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+-	__CLEARPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+-	__SETPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
++FOLIO_FLAG(swapbacked, FOLIO_HEAD_PAGE)
++	__FOLIO_CLEAR_FLAG(swapbacked, FOLIO_HEAD_PAGE)
++	__FOLIO_SET_FLAG(swapbacked, FOLIO_HEAD_PAGE)
+ 
+ /*
+  * Private page markings that may be used by the filesystem that owns the page
 -- 
 2.43.0
 
