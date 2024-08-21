@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-26531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E27895A4F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:03:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A4695A50D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831291C219D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:03:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC0711C220FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDD416DC20;
-	Wed, 21 Aug 2024 19:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8A216DEBC;
+	Wed, 21 Aug 2024 19:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0uyQJMx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KguwXKDy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A63A14D2B5;
-	Wed, 21 Aug 2024 19:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F00C1607A1;
+	Wed, 21 Aug 2024 19:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724266989; cv=none; b=dY91vhpJpc17oMNvSLDaSJ0F+ScVhOn6pkVjgz2gGz4GooRYYfPgSAIxQ6mAhN7jao8vPYK22LRza8wmmMJdnVYhpXHiI6NX19XlHjEXOesAYZCm68ASEnRFTxGjiq0+5k46d5kEj23hBply0E14aFvM1EaV5CDS0HQkWRtyM+Y=
+	t=1724267259; cv=none; b=QutL3PXr550rg3w++QR8aLfRJFN+6Lh7GFn1+hL957hgdbx+5Oqe9S0MVZOm0eFuAS4R9VuigbqzPsWhi2MyHj1gPzvIpT5AJwJFqwRF6gkhJ4STZi/+UFRMkQfRzs3WKulaqU17T/N8wyYg/l9QDWabVsXidWkC9NVd/+8f3Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724266989; c=relaxed/simple;
-	bh=aVndDEUZQBS3oS1ccDgfyxAB006j9n8NaXzpjCXEQEw=;
+	s=arc-20240116; t=1724267259; c=relaxed/simple;
+	bh=O9RY1Ove902GZVITFaQMiLtItTTYUrbs9eofkn1Yd7U=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=X0rqiH1dazRPSQrNg+83qwSiWJE3Sz6L+lK+bZ0n/26nwHY2SZUvy0XqVo0z5kusNBlFI+xP8dzx++3sJ/Zqc9YuNCI1jmeN+iPlXuznh/QSFyutnhkCFwLVZnS8d1Nc1dT7XtYNj1clytUIx7PnAozKv6klybbHxPE9bpTV8u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0uyQJMx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7945BC32781;
-	Wed, 21 Aug 2024 19:03:08 +0000 (UTC)
+	 Content-Type:MIME-Version; b=oqRrB9y0z96gBjSTjaAhq6/86ink+tH8I0SUmQ1sFDg0JgJdgmbqHwka1s7khyRY3fLrV75cZLSgzXXTyYTrqB76UaBRL68vbw5IykVy8KUsSnkt0CtbEC8SwKklK4kCbGX/3bVITf+z+tiapCRIAtnsKKU7SQIwaRP6pov8eiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KguwXKDy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFFA8C32781;
+	Wed, 21 Aug 2024 19:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724266989;
-	bh=aVndDEUZQBS3oS1ccDgfyxAB006j9n8NaXzpjCXEQEw=;
+	s=k20201202; t=1724267259;
+	bh=O9RY1Ove902GZVITFaQMiLtItTTYUrbs9eofkn1Yd7U=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=B0uyQJMx8ni15ShOIXWZmjiRE4rLibUV34QSvaT8mxAw3TOHqCYeJLjFeIrKE94bN
-	 B8QuzAUboVESwSs82LVSB4++vGZxO5uzW+twZTe1afpLC+9gdcC38EySwpjveVifj2
-	 hOD3NOyRk+D5cgf8IbY8Kjp4GoKrHHrMW15sE2gMYy2uqnoPXfQD4G6KHOo/eGrLyL
-	 kb0B3FiR/PPVDCe//OpsgoqUWBDVCAwenNCwkJTZoR9JNr84OzJqlYExFum0s4A9ER
-	 J00IhKBWp2fbhW8+0i8x5uBOvw5qTMfeXFbvBXTbNVfMe8FTxJberf38GUWJGb/EGc
-	 PlTPm0DMTvy8A==
-Message-ID: <115f7c93d81d080ce6aac64eaa4e8616a5fe0cdd.camel@kernel.org>
-Subject: Re: [PATCH v12 24/24] nfs: add FAQ section to
- Documentation/filesystems/nfs/localio.rst
+	b=KguwXKDyQ94nUbwlRogaiPKldLON+Qq2M0W2viol7NuxE90rdfBmfo1LJOJOaPgoJ
+	 cSF79EsGUFXo0RNmFG/IxfF4d/hCsYU7XOK0BgsmRmgN3F6SmL/LcKO/XZW9YSKk6w
+	 8QV5MlMb64YdhDrkCv1qLVGoVhSBU2xA4Az1w0xJ9XdzprZ89T7xX66Zs/PZWN1jmp
+	 leze0y/IDz0hM4rpcPLRboWOPbpBw1xUln+rMIhTeZEXRFILH5xE8nSe99JT4vQUrg
+	 0EV7fdxvp6aiwbHTDItP35n6HQiuHHMhTc8W61shoACNh8GujtWlYY15Q5wCRHlEng
+	 ohv1nn4aLXDZQ==
+Message-ID: <74ec1679e53801d427490cac363a5b2e97c3a452.camel@kernel.org>
+Subject: Re: [PATCH fstests v2] generic/755: test that inode's ctime is
+ updated on unlink
 From: Jeff Layton <jlayton@kernel.org>
-To: Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org
-Cc: Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <anna@kernel.org>, 
- Trond Myklebust <trondmy@hammerspace.com>, NeilBrown <neilb@suse.de>,
- linux-fsdevel@vger.kernel.org
-Date: Wed, 21 Aug 2024 15:03:07 -0400
-In-Reply-To: <20240819181750.70570-25-snitzer@kernel.org>
-References: <20240819181750.70570-1-snitzer@kernel.org>
-	 <20240819181750.70570-25-snitzer@kernel.org>
+To: Zorro Lang <zlang@redhat.com>
+Cc: fstests@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+Date: Wed, 21 Aug 2024 15:07:37 -0400
+In-Reply-To: <20240821184653.dbwzyp2tiblsmkzw@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20240820-master-v2-1-41703dddcc32@kernel.org>
+	 <20240821184653.dbwzyp2tiblsmkzw@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -137,154 +136,122 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Mon, 2024-08-19 at 14:17 -0400, Mike Snitzer wrote:
-> From: Trond Myklebust <trond.myklebust@hammerspace.com>
->=20
-> Add a FAQ section to give answers to questions that have been raised
-> during review of the localio feature.
->=20
-> Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-> Co-developed-by: Mike Snitzer <snitzer@kernel.org>
-> Signed-off-by: Mike Snitzer <snitzer@kernel.org>
-> ---
-> =C2=A0Documentation/filesystems/nfs/localio.rst | 77 ++++++++++++++++++++=
-+++
-> =C2=A01 file changed, 77 insertions(+)
->=20
-> diff --git a/Documentation/filesystems/nfs/localio.rst b/Documentation/fi=
-lesystems/nfs/localio.rst
-> index d8bdab88f1db..acd8f3e5d87a 100644
-> --- a/Documentation/filesystems/nfs/localio.rst
-> +++ b/Documentation/filesystems/nfs/localio.rst
-> @@ -40,6 +40,83 @@ fio for 20 secs with 24 libaio threads, 128k directio =
-reads, qd of 8,
-> =C2=A0- Without LOCALIO:
-> =C2=A0=C2=A0 read: IOPS=3D12.0k, BW=3D1495MiB/s (1568MB/s)(29.2GiB/20015m=
-sec)
-> =C2=A0
-> +FAQ
-> +=3D=3D=3D
-> +
-> +1. What are the use cases for LOCALIO?
-> +
-> +=C2=A0=C2=A0 a. Workloads where the NFS client and server are on the sam=
-e host
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 realize improved IO performance. In parti=
-cular, it is common when
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 running containerised workloads for jobs =
-to find themselves
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 running on the same host as the knfsd ser=
-ver being used for
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 storage.
-> +
-> +2. What are the requirements for LOCALIO?
-> +
-> +=C2=A0=C2=A0 a. Bypass use of the network RPC protocol as much as possib=
-le. This
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 includes bypassing XDR and RPC for open, =
-read, write and commit
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 operations.
-> +=C2=A0=C2=A0 b. Allow client and server to autonomously discover if they=
- are
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 running local to each other without makin=
-g any assumptions about
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the local network topology.
-> +=C2=A0=C2=A0 c. Support the use of containers by being compatible with r=
-elevant
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 namespaces (e.g. network, user, mount).
-> +=C2=A0=C2=A0 d. Support all versions of NFS. NFSv3 is of particular impo=
-rtance
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 because it has wide enterprise usage and =
-pNFS flexfiles makes use
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of it for the data path.
-> +
-> +3. Why doesn=E2=80=99t LOCALIO just compare IP addresses or hostnames wh=
-en
-> +=C2=A0=C2=A0 deciding if the NFS client and server are co-located on the=
- same
-> +=C2=A0=C2=A0 host?
-> +
-> +=C2=A0=C2=A0 Since one of the main use cases is containerised workloads,=
- we cannot
-> +=C2=A0=C2=A0 assume that IP addresses will be shared between the client =
-and
-> +=C2=A0=C2=A0 server. This sets up a requirement for a handshake protocol=
- that
-> +=C2=A0=C2=A0 needs to go over the same connection as the NFS traffic in =
-order to
-> +=C2=A0=C2=A0 identify that the client and the server really are running =
-on the
-> +=C2=A0=C2=A0 same host. The handshake uses a secret that is sent over th=
-e wire,
-> +=C2=A0=C2=A0 and can be verified by both parties by comparing with a val=
-ue stored
-> +=C2=A0=C2=A0 in shared kernel memory if they are truly co-located.
-> +
-> +4. Does LOCALIO improve pNFS flexfiles?
-> +
-> +=C2=A0=C2=A0 Yes, LOCALIO complements pNFS flexfiles by allowing it to t=
-ake
-> +=C2=A0=C2=A0 advantage of NFS client and server locality.=C2=A0 Policy t=
-hat initiates
-> +=C2=A0=C2=A0 client IO as closely to the server where the data is stored=
- naturally
-> +=C2=A0=C2=A0 benefits from the data path optimization LOCALIO provides.
-> +
-> +5. Why not develop a new pNFS layout to enable LOCALIO?
-> +
-> +=C2=A0=C2=A0 A new pNFS layout could be developed, but doing so would pu=
-t the
-> +=C2=A0=C2=A0 onus on the server to somehow discover that the client is c=
-o-located
-> +=C2=A0=C2=A0 when deciding to hand out the layout.
-> +=C2=A0=C2=A0 There is value in a simpler approach (as provided by LOCALI=
-O) that
-> +=C2=A0=C2=A0 allows the NFS client to negotiate and leverage locality wi=
-thout
-> +=C2=A0=C2=A0 requiring more elaborate modeling and discovery of such loc=
-ality in a
-> +=C2=A0=C2=A0 more centralized manner.
-> +
-> +6. Why is having the client perform a server-side file OPEN, without
-> +=C2=A0=C2=A0 using RPC, beneficial?=C2=A0 Is the benefit pNFS specific?
-> +
-> +=C2=A0=C2=A0 Avoiding the use of XDR and RPC for file opens is beneficia=
-l to
-> +=C2=A0=C2=A0 performance regardless of whether pNFS is used. However add=
-ing a
-> +=C2=A0=C2=A0 requirement to go over the wire to do an open and/or close =
-ends up
-> +=C2=A0=C2=A0 negating any benefit of avoiding the wire for doing the I/O=
- itself
-> +=C2=A0=C2=A0 when we=E2=80=99re dealing with small files. There is no be=
-nefit to replacing
-> +=C2=A0=C2=A0 the READ or WRITE with a new open and/or close operation th=
-at still
-> +=C2=A0=C2=A0 needs to go over the wire.
-> +
-> +7. Why is LOCALIO only supported with UNIX Authentication (AUTH_UNIX)?
-> +
-> +=C2=A0=C2=A0 Strong authentication is usually tied to the connection its=
-elf. It
-> +=C2=A0=C2=A0 works by establishing a context that is cached by the serve=
-r, and
-> +=C2=A0=C2=A0 that acts as the key for discovering the authorisation toke=
-n, which
-> +=C2=A0=C2=A0 can then be passed to rpc.mountd to complete the authentica=
-tion
-> +=C2=A0=C2=A0 process. On the other hand, in the case of AUTH_UNIX, the c=
-redential
-> +=C2=A0=C2=A0 that was passed over the wire is used directly as the key i=
-n the
-> +=C2=A0=C2=A0 upcall to rpc.mountd. This simplifies the authentication pr=
-ocess, and
-> +=C2=A0=C2=A0 so makes AUTH_UNIX easier to support.
-> +
-> =C2=A0RPC
-> =C2=A0=3D=3D=3D
-> =C2=A0
+On Thu, 2024-08-22 at 02:46 +0800, Zorro Lang wrote:
+> On Tue, Aug 20, 2024 at 03:48:25PM -0400, Jeff Layton wrote:
+> > I recently found and fixed a bug in btrfs where it wasn't updating
+> > the
+> > citme on the target inode when unlinking [1]. Add a fstest for
+> > this.
+> >=20
+> > [1]:
+> > https://lore.kernel.org/linux-btrfs/20240812-btrfs-unlink-v1-1-ee5c2ef5=
+38eb@kernel.org/
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> > HCH suggested I roll a fstest for this problem that I found in
+> > btrfs the
+> > other day. This just creates a file and a hardlink to it, statx's
+> > it and
+> > then unlinks the hardlink and statx's it again. The ctimes are then
+> > compared.
+> > ---
+> > Changes in v2:
+> > - Turn it into a shell script.
+> > - Link to v1:
+> > https://lore.kernel.org/r/20240813-master-v1-1-862678cc4000@kernel.org
+> > ---
+> > =C2=A0tests/generic/755=C2=A0=C2=A0=C2=A0=C2=A0 | 38 ++++++++++++++++++=
+++++++++++++++++++++
+> > =C2=A0tests/generic/755.out |=C2=A0 2 ++
+> > =C2=A02 files changed, 40 insertions(+)
+> >=20
+> > diff --git a/tests/generic/755 b/tests/generic/755
+> > new file mode 100755
+> > index 000000000000..68da3b20073f
+> > --- /dev/null
+> > +++ b/tests/generic/755
+> > @@ -0,0 +1,38 @@
+> > +#! /bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (c) 2024, Jeff Layton <jlayton@kernel.org>
+> > +#
+> > +# FS QA Test No. 755
+> > +#
+> > +# Create a file, stat it and then unlink it. Does the ctime of the
+> > +# target inode change?
+> > +#
+> > +. ./common/preamble
+> > +_begin_fstest auto quick
+> > +
+> > +_require_test
+> > +_require_test_program unlink-ctime
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^^=
+^^
+> This V2 shouldn't require this program, it's cause this case _notrun
+> directly.
 
-I'd just squash this into patch #19.
+Doh! I removed that line on my test box, but forgot to fix it in tree.
+
+> The 3bc2ac2f8f0b ("btrfs: update target inode's ctime on unlink") has
+> been merged,
+>=20
+> I'll remove this "_require_test_program" line, and add:
+> [ "$FSTYP =3D btrfs"] && _fixed_by_kernel_commit 3bc2ac2f8f0b \
+> 	"btrfs: update target inode's ctime on unlink"
+>=20
+> when I merge this patch. Others looks good to me.
+>=20
+> Reviewed-by: Zorro Lang <zlang@redhat.com>
+>=20
+
+Thanks, that sounds great.
+
+> > +
+> > +testfile=3D"$TEST_DIR/unlink-ctime1.$$"
+> > +testlink=3D"$TEST_DIR/unlink-ctime2.$$"
+> > +
+> > +rm -f $testfile $testlink
+> > +touch $testfile
+> > +ln $testfile $testlink
+> > +
+> > +time1=3D$(stat -c "%Z" $testfile)
+> > +
+> > +sleep 2
+> > +unlink $testlink
+> > +
+> > +time2=3D$(stat -c "%Z" $testfile)
+> > +
+> > +unlink $testfile
+> > +
+> > +if [ $time1 -eq $time2 ]; then
+> > +	echo "Target's ctime did not change after unlink!"
+> > +fi
+> > +
+> > +echo Silence is golden
+> > +status=3D0
+> > +exit
+> > diff --git a/tests/generic/755.out b/tests/generic/755.out
+> > new file mode 100644
+> > index 000000000000..7c9ea51cd298
+> > --- /dev/null
+> > +++ b/tests/generic/755.out
+> > @@ -0,0 +1,2 @@
+> > +QA output created by 755
+> > +Silence is golden
+> >=20
+> > ---
+> > base-commit: f5ada754d5838d29fd270257003d0d123a9d1cd2
+> > change-id: 20240813-master-e3b46de630bd
+> >=20
+> > Best regards,
+> > --=20
+> > Jeff Layton <jlayton@kernel.org>
+> >=20
+> >=20
+>=20
+>=20
 
 --=20
 Jeff Layton <jlayton@kernel.org>
