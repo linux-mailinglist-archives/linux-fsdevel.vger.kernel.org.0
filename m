@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-26537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA61195A553
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:35:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CC095A554
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D681F22DDB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:35:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEFAB1C21F9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8DE16F0DD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9A916F0EF;
 	Wed, 21 Aug 2024 19:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vjof5RZh"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LpRahv8d"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6279E16DC12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBD516DEAD
 	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 19:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724268897; cv=none; b=gCUNFMVkEivkeyW9Sy4LbWcvTi+oj2gZIZ1y0L6rsqkhD7yZZZ8yl5AafrwS4VFl2DLJweU1wHiqbLXqC5lblSF1uQcI9wONxImWTsO5A3s9POJ3mnStlo9nmYJoab1xeHkTqaHQGE0DUiuLoMtuxIEzJKqkGNqHvVUvMf1Hu9A=
+	t=1724268897; cv=none; b=H0DKBX1Gpt1DLJrfb1hEFdxDmlcNMsRAO8+lrnomOe86ZJWTS4bpKc32LnJjtI8Jpzdvzq8JLEevjtV9HhplfRT/G3epjg+mQ5yzmEo2Ih+79ui2h/6BzxQgR6qxjmyAWMgqzhzcuDNUmuWsVS5m/exM1kNRPfaOYX11QGMDvmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724268897; c=relaxed/simple;
-	bh=27rn/nZFzFSkNAIMnk5FQ5GGWC4NbJUaFzjbhmG52cw=;
+	bh=PZlGaQMfg63SN72PQLp8ln9M/dpZDGY7AHG2e3uN+pM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E9dk6pEXRZmFLkNLwFXt1EUZFxyypcOXWWZF3vElF7cnDOhtCJ4FAZYjwzfH9Mn9bYh/pKsmbaPoqaIKm7dkyTkXb7T8SvbayMTMGQnzUhJSoW3NarIF7luiFvs/LISp8z9dAjpy9LamwROQPzjcxlQiLfWoi8p0zQhmWLbaV0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Vjof5RZh; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=PleEav4ywL+S0RwtZl+Tt+L5K4Sar4I1iPAcMTMrqUa3Elah9CCXVQ10qaUUNqgIh5qHKWW8JanDi2nFpkOIytuk3ZO7c8rlCnL8Lg156YQ9JllvcsuiRfVgAZLz5T5ids3nX0iMoP8UK/5smAmTUvHKUWh70/zovm146zGrtjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LpRahv8d; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=7V2bV5roZ/7Rqnt/F40jOHr7KxmrZpegYZisQPKdM5k=; b=Vjof5RZhhPS5QZIffxl8qmogr9
-	p70RfChVk3jAbVsrkyyxa7n4sXS9NhofK5bepKsqxla8i7NTXVFHk+Zumc9/MmDxFUAb3LEGFHfDk
-	5IjTtzIknToelA7DkoVqLwmITzeaTvYDzDz6g4sjXK0Y4eqp3AdKR0hc2mPW08uZB/FnbnTyzRMPi
-	JPNKR3yeiJNtl+1GlSuhO+zVRw/yuZY8RREZIGCcEiOwEar60rvX2WkVw7tSi+L69D4AZ/ZVFscY3
-	/yi5TrjyT5nB9NhkChfB6uuhxFdgrCxDaBKNmbssd7f6bDTx4hdNG0NRMANPI+iSz+BD4nGQIE/UE
-	5BiCtH+w==;
+	bh=aoXvUmQZxLcraskxyzdekmS4BRurnqvUbN7H813e5kc=; b=LpRahv8dh1ob/VeW17tRjYPGpG
+	igxvOqSKuTJD3wIFuIWQne6MAKif/tVHp0+fs268oqusqfJAbKjr2vUpV85Caym9W7bQRbzcS9W9m
+	oaINq9hAOpBYVA5vUaFii9Rjgr0ynO9qawSf/BiD1Dh3OUp5bAfRI1jLdarXXYjhIFFInPlySpvCO
+	O6jBWft+rQho+uQTUDmEAUDY2CYWjW4ONBONFZx5nswQfDpuulqgM447ZndGjnSiDQTM9+JVdOjFO
+	ifbPlb5p5ejYZnODgJN790oIjfw2LFPW1RvntCfRzf/4a/pAgv+JUqBATUl0bUJ9U7UpZFfdfcZpk
+	b0Ijj6/A==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sgr6V-00000009cr6-2vRi;
+	id 1sgr6V-00000009crE-3TtL;
 	Wed, 21 Aug 2024 19:34:47 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
@@ -50,9 +50,9 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org,
 	x86@kernel.org
-Subject: [PATCH 09/10] mm: Rename PG_mappedtodisk to PG_owner_2
-Date: Wed, 21 Aug 2024 20:34:42 +0100
-Message-ID: <20240821193445.2294269-10-willy@infradead.org>
+Subject: [PATCH 10/10] x86: Remove PG_uncached
+Date: Wed, 21 Aug 2024 20:34:43 +0100
+Message-ID: <20240821193445.2294269-11-willy@infradead.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240821193445.2294269-1-willy@infradead.org>
 References: <20240821193445.2294269-1-willy@infradead.org>
@@ -64,162 +64,311 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This flag has similar constraints to PG_owner_priv_1 -- it is ignored
-by core code, and is entirely for the use of the code which allocated
-the folio.  Since the pagecache does not use it, individual filesystems
-can use it.  The bufferhead code does use it, so filesystems which use
-the buffer cache must not use it for another purpose.
+Convert x86 to use PG_arch_2 instead of PG_uncached and remove
+PG_uncached.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/proc/page.c                    |  2 +-
- include/linux/kernel-page-flags.h |  2 +-
- include/linux/page-flags.h        | 24 ++++++++++++++++--------
- include/trace/events/mmflags.h    |  2 +-
- tools/mm/page-types.c             | 10 +++++-----
- 5 files changed, 24 insertions(+), 16 deletions(-)
+ .../features/vm/PG_uncached/arch-support.txt  | 30 -------------------
+ arch/arm64/Kconfig                            |  3 +-
+ arch/x86/Kconfig                              |  5 +---
+ arch/x86/mm/pat/memtype.c                     |  8 ++---
+ fs/proc/page.c                                |  8 ++---
+ include/linux/kernel-page-flags.h             |  1 -
+ include/linux/page-flags.h                    | 13 ++------
+ include/trace/events/mmflags.h                | 23 +++++++-------
+ mm/Kconfig                                    |  9 ++----
+ mm/huge_memory.c                              |  4 ++-
+ tools/mm/page-types.c                         |  3 +-
+ 11 files changed, 31 insertions(+), 76 deletions(-)
+ delete mode 100644 Documentation/features/vm/PG_uncached/arch-support.txt
 
+diff --git a/Documentation/features/vm/PG_uncached/arch-support.txt b/Documentation/features/vm/PG_uncached/arch-support.txt
+deleted file mode 100644
+index 5a7508b8c967..000000000000
+--- a/Documentation/features/vm/PG_uncached/arch-support.txt
++++ /dev/null
+@@ -1,30 +0,0 @@
+-#
+-# Feature name:          PG_uncached
+-#         Kconfig:       ARCH_USES_PG_UNCACHED
+-#         description:   arch supports the PG_uncached page flag
+-#
+-    -----------------------
+-    |         arch |status|
+-    -----------------------
+-    |       alpha: | TODO |
+-    |         arc: | TODO |
+-    |         arm: | TODO |
+-    |       arm64: | TODO |
+-    |        csky: | TODO |
+-    |     hexagon: | TODO |
+-    |   loongarch: | TODO |
+-    |        m68k: | TODO |
+-    |  microblaze: | TODO |
+-    |        mips: | TODO |
+-    |       nios2: | TODO |
+-    |    openrisc: | TODO |
+-    |      parisc: | TODO |
+-    |     powerpc: | TODO |
+-    |       riscv: | TODO |
+-    |        s390: | TODO |
+-    |          sh: | TODO |
+-    |       sparc: | TODO |
+-    |          um: | TODO |
+-    |         x86: |  ok  |
+-    |      xtensa: | TODO |
+-    -----------------------
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a2f8ff354ca6..6494848019a0 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -2100,7 +2100,8 @@ config ARM64_MTE
+ 	depends on ARM64_PAN
+ 	select ARCH_HAS_SUBPAGE_FAULTS
+ 	select ARCH_USES_HIGH_VMA_FLAGS
+-	select ARCH_USES_PG_ARCH_X
++	select ARCH_USES_PG_ARCH_2
++	select ARCH_USES_PG_ARCH_3
+ 	help
+ 	  Memory Tagging (part of the ARMv8.5 Extensions) provides
+ 	  architectural support for run-time, always-on detection of
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 09f8fbcfe000..42edf11f5166 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1800,6 +1800,7 @@ config X86_PAT
+ 	def_bool y
+ 	prompt "x86 PAT support" if EXPERT
+ 	depends on MTRR
++	select ARCH_USES_PG_ARCH_2
+ 	help
+ 	  Use PAT attributes to setup page level cache control.
+ 
+@@ -1811,10 +1812,6 @@ config X86_PAT
+ 
+ 	  If unsure, say Y.
+ 
+-config ARCH_USES_PG_UNCACHED
+-	def_bool y
+-	depends on X86_PAT
+-
+ config X86_UMIP
+ 	def_bool y
+ 	prompt "User Mode Instruction Prevention" if EXPERT
+diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
+index bdc2a240c2aa..1fa0bf6ed295 100644
+--- a/arch/x86/mm/pat/memtype.c
++++ b/arch/x86/mm/pat/memtype.c
+@@ -104,7 +104,7 @@ __setup("debugpat", pat_debug_setup);
+ 
+ #ifdef CONFIG_X86_PAT
+ /*
+- * X86 PAT uses page flags arch_1 and uncached together to keep track of
++ * X86 PAT uses page flags arch_1 and arch_2 together to keep track of
+  * memory type of pages that have backing page struct.
+  *
+  * X86 PAT supports 4 different memory types:
+@@ -118,9 +118,9 @@ __setup("debugpat", pat_debug_setup);
+ 
+ #define _PGMT_WB		0
+ #define _PGMT_WC		(1UL << PG_arch_1)
+-#define _PGMT_UC_MINUS		(1UL << PG_uncached)
+-#define _PGMT_WT		(1UL << PG_uncached | 1UL << PG_arch_1)
+-#define _PGMT_MASK		(1UL << PG_uncached | 1UL << PG_arch_1)
++#define _PGMT_UC_MINUS		(1UL << PG_arch_2)
++#define _PGMT_WT		(1UL << PG_arch_2 | 1UL << PG_arch_1)
++#define _PGMT_MASK		(1UL << PG_arch_2 | 1UL << PG_arch_1)
+ #define _PGMT_CLEAR_MASK	(~_PGMT_MASK)
+ 
+ static inline enum page_cache_mode get_page_memtype(struct page *pg)
 diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 73a0f872d97f..e74e639893be 100644
+index e74e639893be..a55f5acefa97 100644
 --- a/fs/proc/page.c
 +++ b/fs/proc/page.c
-@@ -211,7 +211,7 @@ u64 stable_page_flags(const struct page *page)
+@@ -206,18 +206,16 @@ u64 stable_page_flags(const struct page *page)
+ 		u |= kpf_copy_bit(page->flags, KPF_HWPOISON,	PG_hwpoison);
  #endif
  
+-#ifdef CONFIG_ARCH_USES_PG_UNCACHED
+-	u |= kpf_copy_bit(k, KPF_UNCACHED,	PG_uncached);
+-#endif
+-
  	u |= kpf_copy_bit(k, KPF_RESERVED,	PG_reserved);
--	u |= kpf_copy_bit(k, KPF_MAPPEDTODISK,	PG_mappedtodisk);
-+	u |= kpf_copy_bit(k, KPF_OWNER_2,	PG_owner_2);
+ 	u |= kpf_copy_bit(k, KPF_OWNER_2,	PG_owner_2);
  	u |= kpf_copy_bit(k, KPF_PRIVATE,	PG_private);
  	u |= kpf_copy_bit(k, KPF_PRIVATE_2,	PG_private_2);
  	u |= kpf_copy_bit(k, KPF_OWNER_PRIVATE,	PG_owner_priv_1);
+ 	u |= kpf_copy_bit(k, KPF_ARCH,		PG_arch_1);
+-#ifdef CONFIG_ARCH_USES_PG_ARCH_X
++#ifdef CONFIG_ARCH_USES_PG_ARCH_2
+ 	u |= kpf_copy_bit(k, KPF_ARCH_2,	PG_arch_2);
++#endif
++#ifdef CONFIG_ARCH_USES_PG_ARCH_3
+ 	u |= kpf_copy_bit(k, KPF_ARCH_3,	PG_arch_3);
+ #endif
+ 
 diff --git a/include/linux/kernel-page-flags.h b/include/linux/kernel-page-flags.h
-index 859f4b0c1b2b..7c587a711be1 100644
+index 7c587a711be1..196778a087c4 100644
 --- a/include/linux/kernel-page-flags.h
 +++ b/include/linux/kernel-page-flags.h
-@@ -10,7 +10,7 @@
-  */
- #define KPF_RESERVED		32
- #define KPF_MLOCKED		33
--#define KPF_MAPPEDTODISK	34
-+#define KPF_OWNER_2		34
- #define KPF_PRIVATE		35
+@@ -15,7 +15,6 @@
  #define KPF_PRIVATE_2		36
  #define KPF_OWNER_PRIVATE	37
+ #define KPF_ARCH		38
+-#define KPF_UNCACHED		39
+ #define KPF_SOFTDIRTY		40
+ #define KPF_ARCH_2		41
+ #define KPF_ARCH_3		42
 diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 3513aa666c31..c001e3c29c4c 100644
+index c001e3c29c4c..7b90a700b26a 100644
 --- a/include/linux/page-flags.h
 +++ b/include/linux/page-flags.h
-@@ -101,12 +101,12 @@ enum pageflags {
- 	PG_waiters,		/* Page has waiters, check its waitqueue. Must be bit #7 and in the same byte as "PG_locked" */
- 	PG_active,
- 	PG_workingset,
--	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
-+	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use */
-+	PG_owner_2,		/* Owner use. If pagecache, fs may use */
- 	PG_arch_1,
- 	PG_reserved,
- 	PG_private,		/* If pagecache, has fs-private data */
- 	PG_private_2,		/* If pagecache, has fs aux data */
--	PG_mappedtodisk,	/* Has blocks allocated on-disk */
- 	PG_reclaim,		/* To be reclaimed asap */
- 	PG_swapbacked,		/* Page is backed by RAM/swap */
- 	PG_unevictable,		/* Page is "unevictable"  */
-@@ -131,6 +131,11 @@ enum pageflags {
+@@ -113,9 +113,6 @@ enum pageflags {
+ #ifdef CONFIG_MMU
+ 	PG_mlocked,		/* Page is vma mlocked */
+ #endif
+-#ifdef CONFIG_ARCH_USES_PG_UNCACHED
+-	PG_uncached,		/* Page has been mapped as uncached */
+-#endif
+ #ifdef CONFIG_MEMORY_FAILURE
+ 	PG_hwpoison,		/* hardware poisoned page. Don't touch */
+ #endif
+@@ -123,8 +120,10 @@ enum pageflags {
+ 	PG_young,
+ 	PG_idle,
+ #endif
+-#ifdef CONFIG_ARCH_USES_PG_ARCH_X
++#ifdef CONFIG_ARCH_USES_PG_ARCH_2
+ 	PG_arch_2,
++#endif
++#ifdef CONFIG_ARCH_USES_PG_ARCH_3
+ 	PG_arch_3,
+ #endif
+ 	__NR_PAGEFLAGS,
+@@ -602,12 +601,6 @@ FOLIO_FLAG_FALSE(mlocked)
+ 	FOLIO_TEST_SET_FLAG_FALSE(mlocked)
+ #endif
  
- 	PG_readahead = PG_reclaim,
- 
-+	/* Anonymous memory (and shmem) */
-+	PG_swapcache = PG_owner_priv_1, /* Swap page: swp_entry_t in private */
-+	/* Some filesystems */
-+	PG_checked = PG_owner_priv_1,
-+
- 	/*
- 	 * Depending on the way an anonymous folio can be mapped into a page
- 	 * table (e.g., single PMD/PUD/CONT of the head page vs. PTE-mapped
-@@ -138,13 +143,13 @@ enum pageflags {
- 	 * tail pages of an anonymous folio. For now, we only expect it to be
- 	 * set on tail pages for PTE-mapped THP.
- 	 */
--	PG_anon_exclusive = PG_mappedtodisk,
+-#ifdef CONFIG_ARCH_USES_PG_UNCACHED
+-PAGEFLAG(Uncached, uncached, PF_NO_COMPOUND)
+-#else
+-PAGEFLAG_FALSE(Uncached, uncached)
+-#endif
 -
--	/* Filesystems */
--	PG_checked = PG_owner_priv_1,
-+	PG_anon_exclusive = PG_owner_2,
- 
--	/* SwapBacked */
--	PG_swapcache = PG_owner_priv_1,	/* Swap page: swp_entry_t in private */
-+	/*
-+	 * Set if all buffer heads in the folio are mapped.
-+	 * Filesystems which do not use BHs can use it for their own purpose.
-+	 */
-+	PG_mappedtodisk = PG_owner_2,
- 
- 	/* Two page bits are conscripted by FS-Cache to maintain local caching
- 	 * state.  These bits are set on pages belonging to the netfs's inodes
-@@ -540,6 +545,9 @@ FOLIO_FLAG(swapbacked, FOLIO_HEAD_PAGE)
- PAGEFLAG(Private, private, PF_ANY)
- PAGEFLAG(Private2, private_2, PF_ANY) TESTSCFLAG(Private2, private_2, PF_ANY)
- 
-+/* owner_2 can be set on tail pages for anon memory */
-+FOLIO_FLAG(owner_2, FOLIO_HEAD_PAGE)
-+
- /*
-  * Only test-and-set exist for PG_writeback.  The unconditional operators are
-  * risky: they bypass page accounting.
+ #ifdef CONFIG_MEMORY_FAILURE
+ PAGEFLAG(HWPoison, hwpoison, PF_ANY)
+ TESTSCFLAG(HWPoison, hwpoison, PF_ANY)
 diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index c151cc21d367..3b51558cdc9b 100644
+index 3b51558cdc9b..58f2699331b6 100644
 --- a/include/trace/events/mmflags.h
 +++ b/include/trace/events/mmflags.h
-@@ -107,13 +107,13 @@
- 	DEF_PAGEFLAG_NAME(active),					\
- 	DEF_PAGEFLAG_NAME(workingset),					\
- 	DEF_PAGEFLAG_NAME(owner_priv_1),				\
-+	DEF_PAGEFLAG_NAME(owner_2),					\
- 	DEF_PAGEFLAG_NAME(arch_1),					\
- 	DEF_PAGEFLAG_NAME(reserved),					\
- 	DEF_PAGEFLAG_NAME(private),					\
- 	DEF_PAGEFLAG_NAME(private_2),					\
- 	DEF_PAGEFLAG_NAME(writeback),					\
- 	DEF_PAGEFLAG_NAME(head),					\
--	DEF_PAGEFLAG_NAME(mappedtodisk),				\
- 	DEF_PAGEFLAG_NAME(reclaim),					\
+@@ -71,12 +71,6 @@
+ #define IF_HAVE_PG_MLOCK(_name)
+ #endif
+ 
+-#ifdef CONFIG_ARCH_USES_PG_UNCACHED
+-#define IF_HAVE_PG_UNCACHED(_name) ,{1UL << PG_##_name, __stringify(_name)}
+-#else
+-#define IF_HAVE_PG_UNCACHED(_name)
+-#endif
+-
+ #ifdef CONFIG_MEMORY_FAILURE
+ #define IF_HAVE_PG_HWPOISON(_name) ,{1UL << PG_##_name, __stringify(_name)}
+ #else
+@@ -89,10 +83,16 @@
+ #define IF_HAVE_PG_IDLE(_name)
+ #endif
+ 
+-#ifdef CONFIG_ARCH_USES_PG_ARCH_X
+-#define IF_HAVE_PG_ARCH_X(_name) ,{1UL << PG_##_name, __stringify(_name)}
++#ifdef CONFIG_ARCH_USES_PG_ARCH_2
++#define IF_HAVE_PG_ARCH_2(_name) ,{1UL << PG_##_name, __stringify(_name)}
++#else
++#define IF_HAVE_PG_ARCH_2(_name)
++#endif
++
++#ifdef CONFIG_ARCH_USES_PG_ARCH_3
++#define IF_HAVE_PG_ARCH_3(_name) ,{1UL << PG_##_name, __stringify(_name)}
+ #else
+-#define IF_HAVE_PG_ARCH_X(_name)
++#define IF_HAVE_PG_ARCH_3(_name)
+ #endif
+ 
+ #define DEF_PAGEFLAG_NAME(_name) { 1UL <<  PG_##_name, __stringify(_name) }
+@@ -118,12 +118,11 @@
  	DEF_PAGEFLAG_NAME(swapbacked),					\
  	DEF_PAGEFLAG_NAME(unevictable)					\
+ IF_HAVE_PG_MLOCK(mlocked)						\
+-IF_HAVE_PG_UNCACHED(uncached)						\
+ IF_HAVE_PG_HWPOISON(hwpoison)						\
+ IF_HAVE_PG_IDLE(idle)							\
+ IF_HAVE_PG_IDLE(young)							\
+-IF_HAVE_PG_ARCH_X(arch_2)						\
+-IF_HAVE_PG_ARCH_X(arch_3)
++IF_HAVE_PG_ARCH_2(arch_2)						\
++IF_HAVE_PG_ARCH_3(arch_3)
+ 
+ #define show_page_flags(flags)						\
+ 	(flags) ? __print_flags(flags, "|",				\
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 5946dcdcaeda..8078a4b3c509 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1079,13 +1079,10 @@ config ARCH_USES_HIGH_VMA_FLAGS
+ config ARCH_HAS_PKEYS
+ 	bool
+ 
+-config ARCH_USES_PG_ARCH_X
++config ARCH_USES_PG_ARCH_2
++	bool
++config ARCH_USES_PG_ARCH_3
+ 	bool
+-	help
+-	  Enable the definition of PG_arch_x page flags with x > 1. Only
+-	  suitable for 64-bit architectures with CONFIG_FLATMEM or
+-	  CONFIG_SPARSEMEM_VMEMMAP enabled, otherwise there may not be
+-	  enough room for additional bits in page->flags.
+ 
+ config VM_EVENT_COUNTERS
+ 	default y
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index d92f19812c89..389d619845c9 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3078,8 +3078,10 @@ static void __split_huge_page_tail(struct folio *folio, int tail,
+ 			 (1L << PG_workingset) |
+ 			 (1L << PG_locked) |
+ 			 (1L << PG_unevictable) |
+-#ifdef CONFIG_ARCH_USES_PG_ARCH_X
++#ifdef CONFIG_ARCH_USES_PG_ARCH_2
+ 			 (1L << PG_arch_2) |
++#endif
++#ifdef CONFIG_ARCH_USES_PG_ARCH_3
+ 			 (1L << PG_arch_3) |
+ #endif
+ 			 (1L << PG_dirty) |
 diff --git a/tools/mm/page-types.c b/tools/mm/page-types.c
-index 8d5595b6c59f..8ca41c41105e 100644
+index 8ca41c41105e..fa050d5a48cd 100644
 --- a/tools/mm/page-types.c
 +++ b/tools/mm/page-types.c
-@@ -71,7 +71,7 @@
- /* [32-] kernel hacking assistances */
- #define KPF_RESERVED		32
- #define KPF_MLOCKED		33
--#define KPF_MAPPEDTODISK	34
-+#define KPF_OWNER_2		34
- #define KPF_PRIVATE		35
+@@ -76,7 +76,7 @@
  #define KPF_PRIVATE_2		36
  #define KPF_OWNER_PRIVATE	37
-@@ -129,7 +129,7 @@ static const char * const page_flag_names[] = {
+ #define KPF_ARCH		38
+-#define KPF_UNCACHED		39
++#define KPF_UNCACHED		39	/* unused */
+ #define KPF_SOFTDIRTY		40
+ #define KPF_ARCH_2		41
  
- 	[KPF_RESERVED]		= "r:reserved",
- 	[KPF_MLOCKED]		= "m:mlocked",
--	[KPF_MAPPEDTODISK]	= "d:mappedtodisk",
-+	[KPF_OWNER_2]		= "d:owner_2",
- 	[KPF_PRIVATE]		= "P:private",
+@@ -134,7 +134,6 @@ static const char * const page_flag_names[] = {
  	[KPF_PRIVATE_2]		= "p:private_2",
  	[KPF_OWNER_PRIVATE]	= "O:owner_private",
-@@ -472,9 +472,9 @@ static int bit_mask_ok(uint64_t flags)
+ 	[KPF_ARCH]		= "h:arch",
+-	[KPF_UNCACHED]		= "c:uncached",
+ 	[KPF_SOFTDIRTY]		= "f:softdirty",
+ 	[KPF_ARCH_2]		= "H:arch_2",
  
- static uint64_t expand_overloaded_flags(uint64_t flags, uint64_t pme)
- {
--	/* Anonymous pages overload PG_mappedtodisk */
--	if ((flags & BIT(ANON)) && (flags & BIT(MAPPEDTODISK)))
--		flags ^= BIT(MAPPEDTODISK) | BIT(ANON_EXCLUSIVE);
-+	/* Anonymous pages use PG_owner_2 for anon_exclusive */
-+	if ((flags & BIT(ANON)) && (flags & BIT(OWNER_2)))
-+		flags ^= BIT(OWNER_2) | BIT(ANON_EXCLUSIVE);
- 
- 	/* SLUB overloads several page flags */
- 	if (flags & BIT(SLAB)) {
 -- 
 2.43.0
 
