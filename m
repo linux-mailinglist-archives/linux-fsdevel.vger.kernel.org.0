@@ -1,99 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-26481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF85959FE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 16:30:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4F495A03C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 16:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F5851C226E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 14:30:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B630D1F231BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 14:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7511B3B3D;
-	Wed, 21 Aug 2024 14:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838861B1D71;
+	Wed, 21 Aug 2024 14:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="QgHYXfZG"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="aG39Y+WP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ma3B3DrG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7AE1B5301
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 14:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EAA19993B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 14:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724250524; cv=none; b=iz3b1T9BpBmubtNrMNkxxbd7qbhou0j5Ou1A+AZYk8avQb34IggdDV1i26GvzHafiQaun6LFKZsyEPxrGvd38+cgpd+lzeLRGjxGMz1+nhbN7hKUE2K8BIgjPzbSw1POMJi8cynlv2BEdxzRlB0ZzRCgUkxMqIryXZ0kI56i9jc=
+	t=1724251462; cv=none; b=dZqXgXHYXeHpijFoK9Dl3W1Ni0WVRZKRN5n1cPhadPnn7nwNiNQP0MRTCjyJUXrZ3XeiDFr2dijDmwXFTuR/li1UecFMSau/kba1huZg0rLn+YJ9amrU0LRs7IwbcurHEmjgqmBmcWxrblGNsFp8zMaXDyUn4CdnTlNA50HeibE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724250524; c=relaxed/simple;
-	bh=0usleXSjtqWB3cCO9177/ecHC+tSdMcbeJ2QL/I7BUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N6SKui3n7vxfedBY6dpQhgcg/SRjS8qfE0DGRfsWjt6s/AzTpkJEp4dpaVHGEzXtKvHYIBvqaEZMOyujzqde2pZzEF/mAUKxlb+qralww+oMzlQgsmG1GUrOM/+vwuSmBqGu7GJ/Y7pUsRhD8Ehl6OTG+XGap9gejbXuz0/IFPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=QgHYXfZG; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a83597ce5beso144797966b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 07:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724250520; x=1724855320; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0usleXSjtqWB3cCO9177/ecHC+tSdMcbeJ2QL/I7BUI=;
-        b=QgHYXfZGbB3IFxBdSAc/tkLivmTn9r/QyaHkImcwDmsZNJmaXVi1XLU5OzhUtWBziM
-         x2I2N5TsFY+Y63FWtIagZRLhVWYDWWRtaNPl1ETPc2klXCfGjhX+DMlsUsR0f3dHRkzi
-         iBXEkBScv+zdbiWZUnIsweVdjLiiYU1jZmKdU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724250520; x=1724855320;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0usleXSjtqWB3cCO9177/ecHC+tSdMcbeJ2QL/I7BUI=;
-        b=ppKscbw2AcYSy3zjRMHtglJaXbo6ts4p/TLifasFejhCxFN0D6vBZGzqum43YV6o9D
-         4zDg28hQjvCFv+y19Ch7rsd26Q+cbUU1d41kCGCyA23U8Ia52iIddGfSxDUI6bd9uRXP
-         /Yd3CDR36VtZnAoxDCwLpLhMbtTSzb706yEbUEmTeEUMvmcTS1YrPCBrKluhRz2GBxkG
-         Kov3ko7s9qrjS8Cz3MQBotM11ZZZyW+7+SJHNjNcSiQKgEs/3bLRMLDUMVSat+RpcA8q
-         EiEfqQK0a/7YCfsRFpTveord+pwns9eQWrdcSmbo29GL5pVFALr10eUc7ewqqztpCRhp
-         7Klw==
-X-Gm-Message-State: AOJu0YzdDbZErbaCHvF8iTjZdU0rsDEctKsmWWm4dZmAyfdNIRAdoLz4
-	+2UwScQGuDt1wbhqIfmrZngH4gqX2aQwXLbJHQ9OIdSvut/O0iJI2WtCsq+gcxHbDuQpjNhEjIt
-	4S3mIMFk+9hrgyg/WkEGJ3w8yurwLCY8rI74DeQ==
-X-Google-Smtp-Source: AGHT+IEMSkPUwVbhP6KLl2OaW1JgeiMJcEo5tXaQvHUmQLXRie2wkW1EAaSlCPATtfgoiGvSz8wl4ROOl/OHOcY9Lgo=
-X-Received: by 2002:a17:907:97d3:b0:a77:ce4c:8c9c with SMTP id
- a640c23a62f3a-a866ff4b56bmr226808466b.8.1724250520207; Wed, 21 Aug 2024
- 07:28:40 -0700 (PDT)
+	s=arc-20240116; t=1724251462; c=relaxed/simple;
+	bh=YCFu21n5HaqSbYOFITxCLNKaDOalX/5NHGlceASAOyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vv5nh1AOpsCLYpu8HTgT3IxZX6n4ObrFLdlVj1OdSa/jszbIp+gw9bLY/jPdDC+uPb6e6YYnhDT2Jm0e6d57P2P0J5ASSkKpVltO6yQcz8xp0xAgklXB32Y8zy6WR5jo3tMpuL1VRyrSpdwqjvfOfgm63UplHSKelrVLQnAMZa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=aG39Y+WP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ma3B3DrG; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 1370A1151237;
+	Wed, 21 Aug 2024 10:44:20 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Wed, 21 Aug 2024 10:44:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1724251460;
+	 x=1724337860; bh=VU72slKza1P7qxt50gKCKcAboknq5JZ6SLJtbSaynUM=; b=
+	aG39Y+WPg4s5zG40oCJcpsVQDfuUj5dQ1cGpsCUfJLl5xFY1MTT3xepMjNxp8fo7
+	ryGavSnducDIEEc/ZMGzN59agHFA80ebDjZcTkl5zKHlTG/SG3SxnMEwSDbALciO
+	fqPnmCm+ZBK7NLqW4fVK2PspJ2LuyO3kvhbt9MyOCQiqm7x5WbcDYZu9xbuHddc2
+	Lv4irj856Kzgo2vw6XdyYlBfVnvBX3MtJY3oaHP+WdC1ggyayvhosxop+4N/V+8I
+	mPleYpajJtBh670Q8jt82Rr7YZxUYR4l4eQKoEE5Tl++hAjCxgsovj1LDqjdM2Gk
+	4ecx6/jjHqW5yM1ANLBWNg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724251460; x=
+	1724337860; bh=VU72slKza1P7qxt50gKCKcAboknq5JZ6SLJtbSaynUM=; b=m
+	a3B3DrG9+AE0QZqbgYIxICeqmsItX+BSIqkOqFaAucRp+10xjF4zkJ0Z5Iu1AtNq
+	cUjZIJUtIyNaUl666+3j8QqTeAlzuwLosEijp2YnEp8hosCmi2MMGgsd52hbVbxq
+	GPuBqL4iFNWQqy4UIS0wBp8To4LuLpGvz9N+0faJEdD0ZFKQYlFLniuq4njGW1rt
+	LkCTll0TzNUW0y8AOII/bgpsDrOP3GTQTZX84Jmhl/k7AVQinWgOv+kMRc9LsSQJ
+	vhFJdHFkrJ9CxnvlkvmvDhATuE09NdnK20EmKJ6WgjY3x9daxu5pGoIhI2VpNRuF
+	kLu4ncG78lh1npJyLzaZQ==
+X-ME-Sender: <xms:Q_3FZj9t7bXy-JGLmS7moq8sUygV4WS3-VewrCeKZI1QsfrxyPkHVA>
+    <xme:Q_3FZvs5SGYKN_OCB0KtD9XskKdmJzfE8bnP-S5jbmmYDj0EZLFIqLVUcxbtIbGVQ
+    a6vJgXzH56OxALI>
+X-ME-Received: <xmr:Q_3FZhCKnIWGzcls4aSPwaDxkVFrbCVg7h2t27r1VUDYbLhGHxJMBdxG_YNP_CqjCYe1bx1Uo3-nLgEf5-NSqqCJCCjmj9pR40lex6QSGDN_Wbw7ITM5t4Wm>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddukedgkedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvg
+    hrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnheptddugefgjeefkedt
+    gefhheegvddtfeejheehueeufffhfeelfeeuheetfedutdeinecuffhomhgrihhnpehgih
+    hthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdpnhgspg
+    hrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhikhhlohhs
+    sehsiigvrhgvughirdhhuhdprhgtphhtthhopegsshgthhhusggvrhhtseguughnrdgtoh
+    hmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtph
+    htthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehj
+    vghffhhlvgiguheslhhinhhugidrrghlihgsrggsrgdrtghomh
+X-ME-Proxy: <xmx:Q_3FZveUVPPXAlcyPg-vlD3cL_wNDGjqLXzw0TWDgkuRkD2H7CsIdA>
+    <xmx:Q_3FZoMb0VrxXEl_KCpPDET2CoPuSAealLYnAbOkxLzguZddg5BNmA>
+    <xmx:Q_3FZhkFawHaPfKZ-FHz6L_eJTni8YUw09CPPXayBkN0dkvqCUXbmA>
+    <xmx:Q_3FZiszz5QPQczcnfoNoyL-4IUzVEs5uq9ouXeIrtEC-KkCmOkF4A>
+    <xmx:RP3FZkCgHNhZSiAqv_x_pWy-dizuZAI5sK1Q2Drx-e0sZvEnyJ2day2t>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 21 Aug 2024 10:44:18 -0400 (EDT)
+Message-ID: <38c1583f-aa19-4c8a-afb7-a0528d1035b0@fastmail.fm>
+Date: Wed, 21 Aug 2024 16:44:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820211735.2098951-1-bschubert@ddn.com>
-In-Reply-To: <20240820211735.2098951-1-bschubert@ddn.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 21 Aug 2024 16:28:28 +0200
-Message-ID: <CAJfpegvdXpkaxL9sdDCE=MePdDDoLVGfLsJrTafk=9L1iSQ0vg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] fuse: Add open-gettr for fuse-file-open
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm, 
-	josef@toxicpanda.com, joannelkoong@gmail.com, jefflexu@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
+To: Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>
+Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com,
+ joannelkoong@gmail.com, jefflexu@linux.alibaba.com
+References: <20240820211735.2098951-1-bschubert@ddn.com>
+ <CAJfpegvdXpkaxL9sdDCE=MePdDDoLVGfLsJrTafk=9L1iSQ0vg@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAJfpegvdXpkaxL9sdDCE=MePdDDoLVGfLsJrTafk=9L1iSQ0vg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 20 Aug 2024 at 23:18, Bernd Schubert <bschubert@ddn.com> wrote:
->
-> This is to update attributes on open to achieve close-to-open
-> coherency even if an inode has a attribute cache timeout.
->
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
->
-> ---
-> libfuse patch:
-> https://github.com/libfuse/libfuse/pull/1020
-> (FUSE_OPENDIR_GETATTR still missing at time of writing)
->
-> Note: This does not make use of existing atomic-open patches
-> as these are more complex than two new opcodes for open-getattr.
 
-The format of the requests would be very similar to the atomic open ones, right?
+
+On 8/21/24 16:28, Miklos Szeredi wrote:
+> On Tue, 20 Aug 2024 at 23:18, Bernd Schubert <bschubert@ddn.com> wrote:
+>>
+>> This is to update attributes on open to achieve close-to-open
+>> coherency even if an inode has a attribute cache timeout.
+>>
+>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+>>
+>> ---
+>> libfuse patch:
+>> https://github.com/libfuse/libfuse/pull/1020
+>> (FUSE_OPENDIR_GETATTR still missing at time of writing)
+>>
+>> Note: This does not make use of existing atomic-open patches
+>> as these are more complex than two new opcodes for open-getattr.
+> 
+> The format of the requests would be very similar to the atomic open ones, right?
+
+Atomic open patches are using fuse_open_out + fuse_entry_out
+
+open-getattr is using fuse_open_out + attr_outarg
+
+We could switch open-getattr to the atomic-open format, but then need to
+introduce a flag to tell fuse-server that this is a plain atomic and
+much simpler than atomic-open (atomic-open is also on the server side
+rather complex).
+For open-getattr we need don't need to revalidate the entry with all the
+fields provided by fuse_entry_out.
+
+Fine with me if you prefer a new struct to be used by atomic-open and
+open-getattr with a flag and padding. Like
+
+enum atomic_open_flags
+{
+     ATOMIC_OPEN_IS_OPEN_GETATTR = 1ULL < 0;
+};
+
+struct atomic_open
+{
+        uint64_t atomic_open_flags;
+        struct fuse_open_out open_out;
+        uint8_t future_padding1[16];
+        struct fuse_entry_out entry_out;
+        uint8_t future_padding2[16];
+}
+
+
+What do you think?
+
 
 Thanks,
-Miklos
+Bernd
+
 
