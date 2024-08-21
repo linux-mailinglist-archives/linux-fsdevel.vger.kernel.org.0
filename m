@@ -1,185 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-26552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A00295A5B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 22:15:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A8995A5C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 22:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F41F3B22A7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 20:14:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 202081C22365
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 20:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D39616F830;
-	Wed, 21 Aug 2024 20:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8E416FF41;
+	Wed, 21 Aug 2024 20:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="njgTdnmh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEgXiMa6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6A41D12F4;
-	Wed, 21 Aug 2024 20:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D72B28DCB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 20:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724271290; cv=none; b=CwfcuVDo7vQ/bGASnr/kzONYdi8URs7QkeNUu1QMtMYNqyr32KRsjvMv0hVygLlNkNAEOV7KdFAxVxhI8WG7pKySAA6k2Ew0OUkOXcJ4v1oZs4SMDQxiJhA73fwdRGBZBuFjax2CA0gYUABFOBqiSAJUu1/2YxLYft5RT4e3z1g=
+	t=1724271752; cv=none; b=TtXtr93BOgQk6J7CJBDz/GRCkE5UqS3IoatJSy2BjMw2jKKbWwGV7DJcvL8XfdMkiUOJZNzjxfLykRX1VYQXyofDY0Sr/mhj13ZR5ksqBXbO6Nqz4PyuCP1/NDLDKN9R772xtXlRwDNAUve8LA1ECW7FfDKxAtSr1zFbgOen+9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724271290; c=relaxed/simple;
-	bh=27okc9Z8VqzyGucSMkZIzant9+TRx4eRZtUbKLZ/s0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qYpVz5DptVzwNEPBYlI2oinzSQKZPKR7ItPAc9IZ9ZDT1jd6CIahKPuf/G7jOYKpx/SuLD0Zruu5ASGxrD5uhODwrpnIEsmBdIav1viOP2rQjkWPSmH/AEtmnJXDigp8pJL+dl0apOjqBPsiDcoSqiuQPLWRzyiDciQwC2HABjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=njgTdnmh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAFE1C32781;
-	Wed, 21 Aug 2024 20:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724271290;
-	bh=27okc9Z8VqzyGucSMkZIzant9+TRx4eRZtUbKLZ/s0A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=njgTdnmh368stv/IWNxhUQyBxr1HxRx8Z2y0biKHYXMORcjDqrwEK3jSPrSWbtYua
-	 m4OG/24mitWRsmnZyiEozgf5FVHrvFWzukXWxeKDW0cGNTAB2G4NVzWhcyFdHmv2VS
-	 BqIRVQI9PTiDX9ognw4IUYC3Cphjnsjfog7lcPnMaKUYwbRqqGff1D5KCU2y60Ugnk
-	 EH1MB+ygI9pmIzPQiL9rzxc74fnSp+4ASMph55UFsw65xKmBXk75GrBFGSozQO5ry3
-	 Y1JPDPBD3/2sMUposWbNkgukVYa45A4kH3LugHdInwY1mjNHHQHcvFRyqoONPMbpKn
-	 0ppfQckWQxG/Q==
-Date: Wed, 21 Aug 2024 16:14:48 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-	Anna Schumaker <anna@kernel.org>,
-	Trond Myklebust <trondmy@hammerspace.com>,
-	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v12 24/24] nfs: add FAQ section to
- Documentation/filesystems/nfs/localio.rst
-Message-ID: <ZsZKuPopU32Rlq4t@kernel.org>
-References: <20240819181750.70570-1-snitzer@kernel.org>
- <20240819181750.70570-25-snitzer@kernel.org>
- <115f7c93d81d080ce6aac64eaa4e8616a5fe0cdd.camel@kernel.org>
- <ZsZKQV8qRVQY8g00@kernel.org>
+	s=arc-20240116; t=1724271752; c=relaxed/simple;
+	bh=tXnVCUtfD3pdyXKOPA9ZrBRP+RfhQs+o+WmyXOe8qH0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kDsumNrFh9l8s1UQXa539s++pep1o6vjlkYCBlpG5E1KmhOXiMr8SefvJ95fXLW78NN6hcXwRs+kWXonaWxS+o57bF9g91e5nxJZ8JYXFav3+89AeCPyfhOBDbTyTAHTkCnZGSONBP0jXj8DhIefscbz1tyJsiKy1p7sRycnF24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WEgXiMa6; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44feaa08040so752551cf.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 13:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724271749; x=1724876549; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V6F94HxVRYFkRVTa6eZ28JCGZzeYOMLrnrckQsOyjsU=;
+        b=WEgXiMa6pyewl6svkb4U17OzAgCJsXsiVDlZqjVLCkUqQlmENrjJrLqaNLZSQ9OZ7Q
+         NcynuolAXUwfV6issFgV+O1zOxnY3URwguQlOlPa8gB6JznDcj3PmDHiaVAg+IbncCrc
+         AYzouClEsPt0JZmUDalND75/DDfQ8h+3cWd7FpQKmJD3upQiy3XbUDjrgKjYExc6hSV2
+         NvKuStcOTmLeEZo9C4356La1Tsec9xxJz+41yCENiLg90H34s+nn4qzaTzkPCbgaYoRj
+         QMadvntC655JZI3bXjbasRcaakgHUBsLiBOfWN6L/YqAuEL8iVRO+v2lC6IZJglSC9g3
+         Z6SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724271749; x=1724876549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V6F94HxVRYFkRVTa6eZ28JCGZzeYOMLrnrckQsOyjsU=;
+        b=iCyVNrPQORRYiNjy7tttYg54D/oXlJgeBV5Mlea9X4q5J0TXVY9anwC9gdJWUyMhFb
+         dB3l/Li/LFAZw7ARGZNqzsvOs6PEMx4PwCDRMJQ0Xp3OHFMahJO8nWU603S5BJz4dKJX
+         HNap5M7msc5tnokjbFhPPCJEUcGTS9fNckqRaLAKoiiQfJV71UxVqO9Sk3zfHFeVADuU
+         7Hnn5rTBWcgL2esd5HH+aGPheQ8thL/7XwvhVpZKm9Za0zR4VkqFDHZPDTUBH2IVJmgC
+         MBxC8ZI+PkLScHE3ed1ibkOXtQErB8nJqa9Whysc1f1d8lUt1sh0f0ThWt0xOE74asnX
+         3Y/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUVZgTAGm87RvM1XyW4k+MvrST2LvXFn40ubKZ64yPpverTRx6aeFD2hVpNZKyE0SUmR5uLUhV7K701rmnF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHYOuAVT9qWQ4xcKCOPncPUd4bWRboO5fpaERK9ECjdRKEo71l
+	3/neHXis2qvaA6r799y5BB+42ga1AobdBOc/njBmGVtw3ERrJ4kIPuhZYjp+GazGAYrjUnwLvW1
+	6EJuco6OJ6FMSCKNT+5GK6JqUQhc=
+X-Google-Smtp-Source: AGHT+IGsuU9N7vz0ZfmOB2t53aML4ZAvIF9nqgHppcw7zSbyYF+THzbkdU8Y6J8UWA4Hi3sFr8vNFeovIltU3bXoXFQ=
+X-Received: by 2002:a05:622a:5b97:b0:447:eb43:5d0c with SMTP id
+ d75a77b69052e-454f268e15cmr38219701cf.59.1724271749287; Wed, 21 Aug 2024
+ 13:22:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZsZKQV8qRVQY8g00@kernel.org>
+References: <20240819182417.504672-1-joannelkoong@gmail.com>
+ <20240819182417.504672-2-joannelkoong@gmail.com> <CAJfpegswvvE5oid-hPXsSXQpFezq3NLVdJWTr_eb4shFLJ2j4A@mail.gmail.com>
+ <6d1c802e-1635-414a-b0d7-ad5306bfaf8f@fastmail.fm>
+In-Reply-To: <6d1c802e-1635-414a-b0d7-ad5306bfaf8f@fastmail.fm>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 21 Aug 2024 13:22:18 -0700
+Message-ID: <CAJnrk1YkAggwb94bojbxhsLLcQj3TPM3CdO2v4h9H_y0firrwg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fuse: update stats for pages in dropped aux writeback list
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 04:12:49PM -0400, Mike Snitzer wrote:
-> On Wed, Aug 21, 2024 at 03:03:07PM -0400, Jeff Layton wrote:
-> > On Mon, 2024-08-19 at 14:17 -0400, Mike Snitzer wrote:
-> > > From: Trond Myklebust <trond.myklebust@hammerspace.com>
-> > > 
-> > > Add a FAQ section to give answers to questions that have been raised
-> > > during review of the localio feature.
-> > > 
-> > > Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-> > > Co-developed-by: Mike Snitzer <snitzer@kernel.org>
-> > > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
-> > > ---
-> > >  Documentation/filesystems/nfs/localio.rst | 77 +++++++++++++++++++++++
-> > >  1 file changed, 77 insertions(+)
-> > > 
-> > > diff --git a/Documentation/filesystems/nfs/localio.rst b/Documentation/filesystems/nfs/localio.rst
-> > > index d8bdab88f1db..acd8f3e5d87a 100644
-> > > --- a/Documentation/filesystems/nfs/localio.rst
-> > > +++ b/Documentation/filesystems/nfs/localio.rst
-> > > @@ -40,6 +40,83 @@ fio for 20 secs with 24 libaio threads, 128k directio reads, qd of 8,
-> > >  - Without LOCALIO:
-> > >    read: IOPS=12.0k, BW=1495MiB/s (1568MB/s)(29.2GiB/20015msec)
-> > >  
-> > > +FAQ
-> > > +===
-> > > +
-> > > +1. What are the use cases for LOCALIO?
-> > > +
-> > > +   a. Workloads where the NFS client and server are on the same host
-> > > +      realize improved IO performance. In particular, it is common when
-> > > +      running containerised workloads for jobs to find themselves
-> > > +      running on the same host as the knfsd server being used for
-> > > +      storage.
-> > > +
-> > > +2. What are the requirements for LOCALIO?
-> > > +
-> > > +   a. Bypass use of the network RPC protocol as much as possible. This
-> > > +      includes bypassing XDR and RPC for open, read, write and commit
-> > > +      operations.
-> > > +   b. Allow client and server to autonomously discover if they are
-> > > +      running local to each other without making any assumptions about
-> > > +      the local network topology.
-> > > +   c. Support the use of containers by being compatible with relevant
-> > > +      namespaces (e.g. network, user, mount).
-> > > +   d. Support all versions of NFS. NFSv3 is of particular importance
-> > > +      because it has wide enterprise usage and pNFS flexfiles makes use
-> > > +      of it for the data path.
-> > > +
-> > > +3. Why doesn´t LOCALIO just compare IP addresses or hostnames when
-> > > +   deciding if the NFS client and server are co-located on the same
-> > > +   host?
-> > > +
-> > > +   Since one of the main use cases is containerised workloads, we cannot
-> > > +   assume that IP addresses will be shared between the client and
-> > > +   server. This sets up a requirement for a handshake protocol that
-> > > +   needs to go over the same connection as the NFS traffic in order to
-> > > +   identify that the client and the server really are running on the
-> > > +   same host. The handshake uses a secret that is sent over the wire,
-> > > +   and can be verified by both parties by comparing with a value stored
-> > > +   in shared kernel memory if they are truly co-located.
-> > > +
-> > > +4. Does LOCALIO improve pNFS flexfiles?
-> > > +
-> > > +   Yes, LOCALIO complements pNFS flexfiles by allowing it to take
-> > > +   advantage of NFS client and server locality.  Policy that initiates
-> > > +   client IO as closely to the server where the data is stored naturally
-> > > +   benefits from the data path optimization LOCALIO provides.
-> > > +
-> > > +5. Why not develop a new pNFS layout to enable LOCALIO?
-> > > +
-> > > +   A new pNFS layout could be developed, but doing so would put the
-> > > +   onus on the server to somehow discover that the client is co-located
-> > > +   when deciding to hand out the layout.
-> > > +   There is value in a simpler approach (as provided by LOCALIO) that
-> > > +   allows the NFS client to negotiate and leverage locality without
-> > > +   requiring more elaborate modeling and discovery of such locality in a
-> > > +   more centralized manner.
-> > > +
-> > > +6. Why is having the client perform a server-side file OPEN, without
-> > > +   using RPC, beneficial?  Is the benefit pNFS specific?
-> > > +
-> > > +   Avoiding the use of XDR and RPC for file opens is beneficial to
-> > > +   performance regardless of whether pNFS is used. However adding a
-> > > +   requirement to go over the wire to do an open and/or close ends up
-> > > +   negating any benefit of avoiding the wire for doing the I/O itself
-> > > +   when we´re dealing with small files. There is no benefit to replacing
-> > > +   the READ or WRITE with a new open and/or close operation that still
-> > > +   needs to go over the wire.
-> > > +
-> > > +7. Why is LOCALIO only supported with UNIX Authentication (AUTH_UNIX)?
-> > > +
-> > > +   Strong authentication is usually tied to the connection itself. It
-> > > +   works by establishing a context that is cached by the server, and
-> > > +   that acts as the key for discovering the authorisation token, which
-> > > +   can then be passed to rpc.mountd to complete the authentication
-> > > +   process. On the other hand, in the case of AUTH_UNIX, the credential
-> > > +   that was passed over the wire is used directly as the key in the
-> > > +   upcall to rpc.mountd. This simplifies the authentication process, and
-> > > +   so makes AUTH_UNIX easier to support.
-> > > +
-> > >  RPC
-> > >  ===
-> > >  
-> > 
-> > I'd just squash this into patch #19.
-> 
-> That'd use the fact Trond is the author.
+On Wed, Aug 21, 2024 at 11:26=E2=80=AFAM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 8/21/24 17:56, Miklos Szeredi wrote:
+> > On Mon, 19 Aug 2024 at 20:25, Joanne Koong <joannelkoong@gmail.com> wro=
+te:
+> >>
+> >> In the case where the aux writeback list is dropped (eg the pages
+> >> have been truncated or the connection is broken), the stats for
+> >> its pages and backing device info need to be updated as well.
+> >
+> > Patch looks good.  Thanks.
+> >
+> > Do you have a reproducer or was this found by code review only?
 
-s/use/lose/
+Hi Miklos!
 
-> 
-> Does linux have a shortage on commit ids I'm unaware of? ;)
-> 
+I unfortunately don't have a repro, this was found by code review. I
+started looking at the writeback code after reading through this
+thread
+https://lore.kernel.org/all/495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alib=
+aba.com/#t
 
-Anyway, I'd prefer the FAQ be left split out as a separate commit
-given the author is different.
+For v2 of this patchset, I am planning to add a few more refactoring
+patches like abstracting out the shared logic between
+fuse_writepages_fill() and fuse_writepage_locked(). My plan is to
+submit v2 this week.
+
+>
+> That's indeed a nice catch from Joanne!.
+>
+> I would have expected that writing to a file and in parallel truncating
+> it would leak WritebackTmp in /proc/meminfo. But I see it going up and
+> always to 0 again.
+
+I think we only hit this leaked case when we're writing back to a page
+that is already in writeback (which then leads it to being placed on
+the auxiliary list). I think in your example, the page isn't already
+in writeback?
+
+>
+>
+> Thanks,
+> Bernd
+
+Thanks,
+Joanne
 
