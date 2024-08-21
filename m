@@ -1,176 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-26468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4194959C23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 14:44:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6791959C54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 14:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8032823A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 12:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4F91F21E69
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 12:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6923192D8B;
-	Wed, 21 Aug 2024 12:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8495192D87;
+	Wed, 21 Aug 2024 12:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d8Qv0/5R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2vqtqLz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A793018C348
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 12:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEC31917C7;
+	Wed, 21 Aug 2024 12:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724244230; cv=none; b=fSj7kIi3l/RziYj1LJ6RtXTTqk4YXWo1VFpxpfyTwBy94ZneQO6UHU0epwWL9fynakSfBL/jJfCbWOr9skNlPr6SATRoT6gZI2QEWtkfXXdrftLWCY96AAzYyU3w5XqExGdcD9xPAbaaVJ6z3tgjHiegFdgKabnIM50VKqTzAec=
+	t=1724244512; cv=none; b=JX+w2oJ6v0qH6V/y75HVAeCpv2Oj1hsOHzHlvrCFRRT5qwYtPkDXL3XQ+W+6buMGalPG7JaD8/QvMv9eTZtDAJroyNCJPAPobNb9cgG6K6gsSi8OkPNi4zMJvuM7xhwvY7Ifu+j2Z5wyp6jbjVEHirqbd7RbKHJjwNQk+9iMNmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724244230; c=relaxed/simple;
-	bh=V/1oc2fbb0estl1MZgYt8u2OmDkuEWS18pmSpE3Rj3U=;
+	s=arc-20240116; t=1724244512; c=relaxed/simple;
+	bh=j9HZBA2/5Wb2g40y9Oti29HTzjGioJbne5mKkeX2ur8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BkdwVfqInWoyxdHz3JshyqF0GNSkftZTwto//voNpKjf1+OKJezpfqAI1iXE4J534fKNbI7KpCFRVJcMoFI+SN8z/q1QR0yHNST/JQG32BC395vjqhh/43mlCrHz9YDD/m6SFxtAjmM5VivC4W7g8sLfByaA90CWiC7/VZBkw1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d8Qv0/5R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724244227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mtlGwLEu5OGOzf4IChunQgRpb70NSVVBOCCeIPeHN3c=;
-	b=d8Qv0/5ROcjmVPtTDnyD+ykwU9b7+3M+5iELOhMExOdjj2LGc7LI9cOMjBnQ9jxlgGfNbF
-	r1D/q8y3ZRGRS6xrQH56FbbRNej/PLB4sFbYWneRxkJVzXFE0XhLlmxGvYLbzptrDl79Kc
-	ulAxz/EDRboTWLZ5EpW2xsaThvTcjVI=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-106-prwkk3vMMD2VBRICFVTlHQ-1; Wed,
- 21 Aug 2024 08:43:40 -0400
-X-MC-Unique: prwkk3vMMD2VBRICFVTlHQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BFFB01955BEE;
-	Wed, 21 Aug 2024 12:43:37 +0000 (UTC)
-Received: from bfoster (unknown [10.22.33.147])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1389E19560AD;
-	Wed, 21 Aug 2024 12:43:34 +0000 (UTC)
-Date: Wed, 21 Aug 2024 08:44:31 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 6/6] xfs: refactor xfs_file_fallocate
-Message-ID: <ZsXhL_pJhq2qyy-l@bfoster>
-References: <20240821063108.650126-1-hch@lst.de>
- <20240821063108.650126-7-hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A80GpX62+fOBxHDYX0Ou5X4S770j0ck6qEMMCqkm33ZcNdhNEIMoRG/fyJneckYGGD/ymO86b60gH2EmpUgDpqDBttkGSQKneRr+fFhw1TkTzwVpa+iVoJt0mSnAdM2j71tYg/NJzxwKk7pHyQ3ENC9KCc2u6eOYCcMU9KBjCDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2vqtqLz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34586C4AF0C;
+	Wed, 21 Aug 2024 12:48:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724244511;
+	bh=j9HZBA2/5Wb2g40y9Oti29HTzjGioJbne5mKkeX2ur8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c2vqtqLzx77yK+jri4pI05ZBvo2YloFCkoCVtCEjRuNnOxfTyJdeVqAID+oks/Got
+	 k/MOAywNrA9LkLm2vhxFrX8HojrmEpCpPMFZ8usZAOfEXdFUi9ZJwugyMFj8wDYOpP
+	 J1p1m7nAlRo1BJ53vsZ41xGztHqtr9cQpA/9TG6W3AYjgGVSZYvjFqKjCbFotL/+sN
+	 WOBnbQJNg1ix3kDwZLLHWgSh5TWlK3ROmZdRmEhC1vOJVT/Udnx4TyTf9FOU8SDCdC
+	 IYiUPSkNc7T8xR3pNt74QmD397GNbk0kklwH3BlYq4s8DCTEhzbg4+mFWP0qXvQSXc
+	 HGPkV5gyPIOuA==
+Date: Wed, 21 Aug 2024 13:48:22 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 19/40] arm64/gcs: Context switch GCS state for EL0
+Message-ID: <3bc63a7e-0cb7-483b-9054-b52727997b6d@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-19-699e2bd2190b@kernel.org>
+ <ZsMwhdmE_Ai9BbM9@arm.com>
+ <0f6fd3ec-2481-4507-af0e-3cbbb7406b54@sirena.org.uk>
+ <3b316422-7f88-4f5d-a691-eb9209ec4ba9@sirena.org.uk>
+ <ZsWqTtCq1mNJH1vz@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qtdMReCOgtjtAPvI"
+Content-Disposition: inline
+In-Reply-To: <ZsWqTtCq1mNJH1vz@arm.com>
+X-Cookie: You are false data.
+
+
+--qtdMReCOgtjtAPvI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240821063108.650126-7-hch@lst.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Aug 21, 2024 at 08:30:32AM +0200, Christoph Hellwig wrote:
-> Refactor xfs_file_fallocate into separate helpers for each mode,
-> two factors for i_size handling and a single switch statement over the
-> supported modes.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/xfs_file.c | 327 +++++++++++++++++++++++++++++-----------------
->  1 file changed, 205 insertions(+), 122 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 489bc1b173c268..9d3bac7731bdcb 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -852,6 +852,189 @@ static inline bool xfs_file_sync_writes(struct file *filp)
->  	return false;
->  }
->  
-...
-> +
-> +static int
-> +xfs_falloc_unshare_range(
-> +	struct file		*file,
-> +	int			mode,
-> +	loff_t			offset,
-> +	loff_t			len)
-> +{
-> +	struct inode		*inode = file_inode(file);
-> +	loff_t			new_size = 0;
-> +	int			error;
-> +
-> +	error = xfs_falloc_newsize(file, mode, offset, len, &new_size);
-> +	if (error)
-> +		return error;
-> +
-> +	error = xfs_reflink_unshare(XFS_I(inode), offset, len);
-> +	if (error)
-> +		return error;
-> +
+On Wed, Aug 21, 2024 at 09:50:22AM +0100, Catalin Marinas wrote:
+> On Tue, Aug 20, 2024 at 06:56:19PM +0100, Mark Brown wrote:
 
-Doesn't unshare imply alloc?
+> > I forgot when writing the above that we always allow reads from
+> > GCSPR_EL0 in order to avoid corner cases for unwinders in the case of
+> > asynchronous disable.  I'd expect that to be cheap to access though.
 
-> +	return xfs_falloc_setsize(file, new_size);
-> +}
-> +
-...
-> @@ -894,129 +1075,31 @@ xfs_file_fallocate(
->  	if (error)
->  		goto out_unlock;
->  
-> -	if (mode & FALLOC_FL_PUNCH_HOLE) {
-> +	switch (mode & FALLOC_FL_MODE_MASK) {
-> +	case FALLOC_FL_PUNCH_HOLE:
->  		error = xfs_free_file_space(ip, offset, len);
-...
-> +		break;
-> +	case FALLOC_FL_COLLAPSE_RANGE:
-> +		error = xfs_falloc_collapse_range(file, offset, len);
-> +		break;
-> +	case FALLOC_FL_INSERT_RANGE:
-> +		error = xfs_falloc_insert_range(file, offset, len);
-> +		break;
-> +	case FALLOC_FL_ZERO_RANGE:
-> +		error = xfs_falloc_zero_range(file, mode, offset, len);
-> +		break;
-> +	case FALLOC_FL_UNSHARE_RANGE:
-> +		error = xfs_falloc_unshare_range(file, mode, offset, len);
-> +		break;
-> +	case FALLOC_FL_ALLOCATE_RANGE:
-> +		error = xfs_falloc_allocate_range(file, mode, offset, len);
-> +		break;
-> +	default:
-> +		error = -EOPNOTSUPP;
-> +		break;
->  	}
->  
-> -	if (xfs_file_sync_writes(file))
-> +	if (!error && xfs_file_sync_writes(file))
->  		error = xfs_log_force_inode(ip);
+> But then gcs_preserve_current_state() doesn't save the GCSPR_EL0 value
+> if the shadow stack was disabled. At the subsequent switch to this task,
+> we write some stale value.
 
-I'd think if you hit -ENOSPC or something after doing a partial alloc to
-a sync inode, you'd still want to flush the changes that were made..?
+True, we should make the disable save the current value.
 
-Brian
+--qtdMReCOgtjtAPvI
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  
->  out_unlock:
-> -- 
-> 2.43.0
-> 
-> 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbF4hUACgkQJNaLcl1U
+h9DrbQf/SQgnftiL0Tbvv1xffP9U4UoVPIul2GtdtgQHIDIzT1ukcsmQhdRliW8p
+YkPVH3S3HbTM+Qtdp/kLSqVJHoK9rDDUsUJYlLAIBhC0dxhz6vEeOekbUti1UKFB
+hdq/nUQDHb0LMufsGWvFir+5WNZkrUMFajAkS8FQ/0RFAA8IXmWgihu6T+Lf1wu2
+TVR7gLXkxw51w03S8rD5D4xGzNLF6xXKU50cftHNVPwu8zsPbXCbu1jIpaPVPCXM
+oWKLc3IOSmG0w3XNoWb7Ki07+H0OmcAbrXvIDK/8FLyyHrcehyy+teM/H/AJqJtt
+gDCFIXYlvUlLXHmodMUWCk2uNYAYXA==
+=msk7
+-----END PGP SIGNATURE-----
+
+--qtdMReCOgtjtAPvI--
 
