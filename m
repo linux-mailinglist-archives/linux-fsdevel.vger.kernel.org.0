@@ -1,191 +1,389 @@
-Return-Path: <linux-fsdevel+bounces-26547-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 945FE95A561
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:42:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0867595A58E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16C0CB21789
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:42:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA9A5B21960
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 19:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854A616EB79;
-	Wed, 21 Aug 2024 19:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE1E16F0F0;
+	Wed, 21 Aug 2024 19:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNkYKVh3"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Rdh2zTc/";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="m0PU8vpw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59D416DC11
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 19:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724269364; cv=none; b=gQoHp2xxCNSzapp28D21PI7gTm9lE1Pv3wbn8yLQnQMIaDvH/NGVsDRfeHjFpRc6sYDW9t9qxV+br1ZPu3t/6qEZ8CyCxIShA2gzCAQJkT3uWc7xzk4/QXfV3ksKkDlhrGvrqlmBUGyQ1sMfuvv5Rx2eSdjK7yIw+86M9lj6yE8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724269364; c=relaxed/simple;
-	bh=ecQgf81mI2iGpBoXkQT7nsNpaMAqA3gQdBY/bSFIK1Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hOetbMfsUa/k/drTzScH/yuu/UVcCcj5oJ0ETrvFwFSYAWjdLZwPawI5L/aI/E17JBgMqlnyZ/uGDxoAiaCoXDaf/b3A6wMC/Pzjo/855tuy7GrxfEkHQfEHlhSxyx2zNtzQJnPQKLqVl4ClSXLwFhEZPReDmefCZvYS6uIFAkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNkYKVh3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A67D4C32781;
-	Wed, 21 Aug 2024 19:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724269363;
-	bh=ecQgf81mI2iGpBoXkQT7nsNpaMAqA3gQdBY/bSFIK1Q=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SNkYKVh3Eyh0uA6cdYvrrBGPLjTR4vYw0fPs9eNtVRWguZnpU1oeC7WMHCqXcgO6s
-	 pKz91SadyR1Pr6KJujUY/G5flhHpQeol8tZCjB/nlGNeeemceAp9Pf8FSBciOMmyWu
-	 OKaO1ymAs3dt9l9Jm5XTUtOvqlMthbJzzh0dPiajZSpNDDIB1pVtKk1pgPpCdzGvXD
-	 P0efnGy++hB/rigzjPjVZ6/Fvk3EVHKWGc94LAX7mpr1PnE5urUX9nK+byH9bkipHx
-	 2rK5o7FOcQYz97oEXW1E/mPkN+qBFqOYMG1PR+NfJhoyfoA97c+YhR9lHcicZdNrAs
-	 MSEEI3NKeg4SA==
-Message-ID: <5d1e3147349749a374c2a412efeb22e2754aa834.camel@kernel.org>
-Subject: Re: [PATCH RFC v2 0/6] inode: turn i_state into u32
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Linus Torvalds
-	 <torvalds@linux-foundation.org>
-Cc: NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>, Ingo
- Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-Date: Wed, 21 Aug 2024 15:42:41 -0400
-In-Reply-To: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
-References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F861137745;
+	Wed, 21 Aug 2024 19:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724270221; cv=fail; b=PGsvs+pixmpGUHLJsYT+iFeYfoj2U7wJvfh2l/DCrL02Ef8wFOWbz8zDZmdzdNFtQYtP1WPGeCrek/EuOfKsZkBi9vzyfdwxe9L9da1YQSnndKQwpHzdDj19nuMuUqH54OU7HdjSxffyXjVgzD4VE8gjTEOW6KzMZPr7ACINlFA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724270221; c=relaxed/simple;
+	bh=GGcWXqOCEkgw6tWtCTNkHgXoDaqnnrqpA0UOPWE5slo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lUQ1Uj7SInrqZ0BaTlJgIhvnARIpc7JKg995e1j0hj37T5JEoIiUdniAoCTnFdD3MyGC7HDXxos1NoRvU+uVsfv33Py6bDX55MfjWS3yZd4FtEdIU8CcSsgUYAA+3QyXKSEHHyXcpUMQEBDxwFY55qi7Nu36UQvkkD3SSvPxlEA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Rdh2zTc/; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=m0PU8vpw; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LJcpHj018099;
+	Wed, 21 Aug 2024 19:56:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=QToJyjbdngcsqtz
+	PVuWgs/6TtLhcCjbBg8jk5f5HbHs=; b=Rdh2zTc/2pKvLADJOuOk9V0uNRMtWBw
+	Mc5zT2RL/19i1F9JFlIvOEoO/v2Q/LTdP6Y8BZUysge1zgKHv9Hgbgt8z3AxwEiY
+	AnomP3JWjsmvv+5RzOAvQPBHNPRhZH2WzoWS17pAJ/Vx1Yp6F+yHn/8Q+Nj0tg+/
+	xZW7YJMwf6F/RhhS97jepot5SDrthN0BbWOD/eO4zSvdVosprIDdPOXukn5L7dFu
+	i8KjotM5o3ds65xw6P7rTC9d4BomhodelLI+3M2piOX50tQIEyx7Qv96mCparAvR
+	3JM3y7dhvyLuKuGpOXvY/EESfeBsueKJfWyZADHB7RMbS5qoIZEREzw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 412m67gc1q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 Aug 2024 19:56:51 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47LJIjbw032263;
+	Wed, 21 Aug 2024 19:56:51 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2174.outbound.protection.outlook.com [104.47.58.174])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 415p9m1d47-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 21 Aug 2024 19:56:51 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WKos2arm74bpGM7AJNTWiefeQMX6Avj089bUvQHmur98xtDVTP/hrjTv+yGLQLPPbklL6i7K+9kAyG5ZauTrrW87inYVZQ08Wb5Pdq1pS/1bz9+cX1kPVO5J7SNs9pjrK3ww5G6fZfAy+tLPDA0+yqIW8GaZ60k5fFGNWn+D6sDOU3DLrdBVjDQt297QoWomqJaFn/E1Rjj+yCyzMMuaRwcMhzvao4B4QkBKuot1lEYcsP4zOxQgC2HdIkpdX6t8V+8m7S6C82QBRKLvE8Hr869eKoWNqanKCbrDDSKTSG7kyQzQGZ9F8/sOL/TRdtyNWrNtQsKfCgupknT60SAVQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QToJyjbdngcsqtzPVuWgs/6TtLhcCjbBg8jk5f5HbHs=;
+ b=v0oxeI9o9y03JKiNA35zXMITyO2ktzB7Pk7QxLY/O+amGI9KqWn+UNFC1MGlr0ap8YJCR/N1uA6320B0rQYx5+jwvch3hexr1WWk4b+3ZETy8r1UXMWW8Mli4RasxbNLWAc2bOlVH174roDIo5q4MDr7JLhHH79VyHw0+LA1UTJ1Oy1I0s+tSHNUlyH0dwHNeg5eW/JUK/3o38R1+4yP5gawUlHQnMYPGKoGnTsBV1W+vKOmIFpVfin0V58XQMv4GjNc1LjQdcz0mAgaqbeOnPtSVOwGNXSUSSRBOLs/1+ztmiz+iLmsmsf0A64ZcXngNJdgxcDwiGsSouHX/l+aIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QToJyjbdngcsqtzPVuWgs/6TtLhcCjbBg8jk5f5HbHs=;
+ b=m0PU8vpwvC/23RIphA9R9U+4Qf/gsHTS7wtJdZu9F6Y5r8c+82gKMUjR+b0XOWTVcpQauXRhkJ15WhWwfpgfKjnQTBZToETnpcsk3KMGWeHyZJjRsa8IEgCUTTIaJEJwBoiDFToRHTznkepqv2PxkPyMHvGyO2128+Is1QN0Nb4=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by IA1PR10MB6898.namprd10.prod.outlook.com (2603:10b6:208:422::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.13; Wed, 21 Aug
+ 2024 19:56:48 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%6]) with mapi id 15.20.7897.014; Wed, 21 Aug 2024
+ 19:56:48 +0000
+Date: Wed, 21 Aug 2024 15:56:44 -0400
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Mike Snitzer <snitzer@kernel.org>
+Cc: linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Anna Schumaker <anna@kernel.org>,
+        Trond Myklebust <trondmy@hammerspace.com>, NeilBrown <neilb@suse.de>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v12 00/24] nfs/nfsd: add support for localio
+Message-ID: <ZsZGfNj0QOhIFtiV@tissot.1015granger.net>
+References: <20240819181750.70570-1-snitzer@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819181750.70570-1-snitzer@kernel.org>
+X-ClientProxiedBy: CH5P222CA0012.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:610:1ee::7) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|IA1PR10MB6898:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37f52f18-9ec3-4975-e1b2-08dcc21b6434
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?eSrMefFeHRGb5Pi5guObiD+Lv2zeDum/w2sQeZSCwh96QLiLuIxtXCuHqV1P?=
+ =?us-ascii?Q?05NdifqFVg7GGjZBIRN7t45fIPyDqrJpYZ5YKuCKw37n/cc7cuEvpv71LmSO?=
+ =?us-ascii?Q?JFMTJOaUxxvGp4W4WYHd/Mr+VORW8Zs/VHxFY6yRi5EbZRls9AzYzmHV1h70?=
+ =?us-ascii?Q?SLAxHlEUlWO21CY4i4ZHHaAzkyQAoA8KX0q/e3TKfFw8m/0UX44y1+MQgygA?=
+ =?us-ascii?Q?69d/buwkjybj3dNkJ9yA6iTDGhRzZpH9cmkDJfj3VbahxhqGkCLnT4wdlL//?=
+ =?us-ascii?Q?qOKoU/LhWDUL7/sphJYxAPK1FrRAQvsRMKViDpsyMWvIkxhoh4G1+fmGSYEF?=
+ =?us-ascii?Q?7TDWHbzM3YmNVQ182oPGWOBFUi1Cv752DwVDtabgGGjIFtHNv75nIzb6GD6z?=
+ =?us-ascii?Q?x8/0ry9GNvXiEtV38pOYeqlR+ztOw0xWHLoN3evrrFPSsaLvTeWXiSFtr2Wz?=
+ =?us-ascii?Q?jjbDwd4kgCRWcGxBttwcJENiLVMHjhPFTd5+hOsqK/JDfYDEtW/twoN93mCB?=
+ =?us-ascii?Q?j+KBiS1UhuwE9yU1bFpD/adQDiBCK70KraWp0IL00Rd5JivRMBqhNVyVduej?=
+ =?us-ascii?Q?TONPBkKOoLL/zU6F8Zwrrwm6UOtoYPb8qCBFLTnFoDZp5yBqpKFpE4EYwaEX?=
+ =?us-ascii?Q?X/a75r8a1hE863k+GMp9ZW5R9UBYbpe3/H8Z6R2ISGGupAzbLeHq1CYavt8M?=
+ =?us-ascii?Q?2sGGYnk5h50dONGxniZD28Mll0E3y/Zw5KP+lJxtb4d88U2YHNCfjRHuJ9xg?=
+ =?us-ascii?Q?v6AwKQt49GDcrKSBhoDXnOpTBfIiCgpYsKnJbskyhJEF0B4941zLeqO1N19a?=
+ =?us-ascii?Q?w4BtYUZa2mt3S2qYvRZvFLeRcwAZh2iBFvG+n7YvqvbTg7RqsTa9xWqUEA6L?=
+ =?us-ascii?Q?w5gGs/DCe0CNtwP4h9x15o3MKmoN5NmAtuBRpSQamWB2kjSFxzY/UDwyHo6Z?=
+ =?us-ascii?Q?ZDsIWyt/JJb0J1y5ACiKdR0HQOUHARfleYBeZprxWxLN+GqATEkntNPGoBFB?=
+ =?us-ascii?Q?/8cGREHSdflxp3HvKHTd58owh1ZVvdzHf5VQjlnkvMTzL+6ZXKGKuxY5JcjP?=
+ =?us-ascii?Q?+3yjsJpY4jYHxDhP2/Oa5EBqrs34QHOosVcBwOcSQ1bCzUSKl/HdRYaSgUqR?=
+ =?us-ascii?Q?elUm1kX9tJEcATOmmdrpjESqb5vdbUGCQU5+2L2s3X1R1ZzBc7VFnJ34l6eF?=
+ =?us-ascii?Q?Eh/iX2woVhA8fEYCdN9rxnlefGcHGSCDY8QPsf+qy9vvdtks/rFQ1dLOn0UV?=
+ =?us-ascii?Q?c5v21EB7tdbx+FsEvvRaGvvoemRSWa9LaMdJighxpnb6j6kA4LiBZV+tqJz2?=
+ =?us-ascii?Q?2Rg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8DCtrgbKi40LbIqVyZwlbAb94g+UC6WvCDhhOCZcZJYqeQUv5yK/IvoTxLY4?=
+ =?us-ascii?Q?IokA4wdrdPo6hBTS8kj3iUPTxNRAxcjWL1mGH3PX/PCm6OAMLVCxcXKpFO22?=
+ =?us-ascii?Q?tuBAomM8XYzjnLhL56tSDqtBfYIbH7UKKInoI3fM8Abwx0xhtqekgC4PwgSS?=
+ =?us-ascii?Q?3Vj5vU+/eMTu5YCBgjjFvSdD9MhcJAOepNsxEx/Dd7Icss1/lH21/ZV3RVY/?=
+ =?us-ascii?Q?SEUhH7CllVydXtOyrXb9jXVtnfUqU1we2CBzkIlQ3phnH8Nj0Mxfuq7Viu1K?=
+ =?us-ascii?Q?tWR6oXu/gs9+KjJk2+TFvJN9cLx346uAGhg35nggKAxBm2urz22Hyoi3D8YL?=
+ =?us-ascii?Q?CE/j7GjI0I0ZM+EyofLdrnLukzjuKj592Dreoxtcx87IhfSKAjYFLXUP5fCf?=
+ =?us-ascii?Q?eR2uoy/ktwgj8dDc0yTakqiKZD54H8nZAjWKBpQJJAuytbJAbIDiEQLc9/zD?=
+ =?us-ascii?Q?IrnaoqbLaAze3hpYBG4skQW/h2vssD8DRYprz30wrJLCmefe109MpPeKJrDh?=
+ =?us-ascii?Q?NbOIOG3EoEybFHs7qQ4b/624rvX0r6722uudYnqoE7iUu8ycsQRzVwhhdmgo?=
+ =?us-ascii?Q?N9RgPdlJzkj8ui5T95mz8z2iKuAO1RoVBVaGRF2XVt0xiKkWjEeIiZC1W3ft?=
+ =?us-ascii?Q?WbNEU2y9BJlT9wW9NcsYStCmcLQUg+k9SGUNarLchWAJpAoz2hSLbL+VaIV+?=
+ =?us-ascii?Q?1uzq5V7wPaiWbikmGUxazX3EFSxg/84pUKpuLxdrX9sxeXMDZ6V/wV2nqL3O?=
+ =?us-ascii?Q?JLfwH23PIFcB75aE+Bbsg7CmyUnQWbbiTBZbp5m59IB/VZzqaYKy2noHc9+Q?=
+ =?us-ascii?Q?WontiGkbVTy/dQNSYvynlgOit8WN1FgvPzq7dB7MICJ+EqKuDjftcyZpzQJR?=
+ =?us-ascii?Q?oCXsxSEhKj4TazqlRjfphr7sbH9QKQc3cPZRIdMICgWjZwJEEynsWTPpk4uR?=
+ =?us-ascii?Q?7ti7Bm/HLSEH1KUy7zEu7rCM+JK4b1wXli3pmMa1h6EZh22x3uGVUKcavm55?=
+ =?us-ascii?Q?iX1dU+Xd7ShGML1127q4sEcds/KnOMumJCE44JzqrHb0fCRI7IKL563MY6hy?=
+ =?us-ascii?Q?hx+P7Tx/+ne2Dz3P3xaYorltzabxzb7bHPInptpjwatziU/Qghv1DczuqAki?=
+ =?us-ascii?Q?qeJESPvWUpBRsaeUSZyyMZZObinR0vE8vTFDY4F1qOUplS9KqJmW8EqcVYG+?=
+ =?us-ascii?Q?tHdKtJ/HTcG7eWf5wqBjmrXycvxO1YHTo9/8q82ult8q9A1ABeg968SUN0Dl?=
+ =?us-ascii?Q?yo4wy6O0gOgWswcxHHQK0DZRn8Z1273QZ78Bsf/eGcvP3DivzqQS0L7IouJv?=
+ =?us-ascii?Q?pXlFZQb2RJM6GqL/9/wtspS4uUhM3FpvReeGmSQtnaDfSEyBppX/vZe3tUSI?=
+ =?us-ascii?Q?4I/jp+JqrpQBz9CbufUW5gFT7Ud4H6Btrj6ZYD5XJXAOUAnyAZBuLmtDZ8RG?=
+ =?us-ascii?Q?klcbrtd0lBfCbwg9l5LkNFfyivTlMHN3wi+mIoMJX33aPrSodl4GSCKfT4ht?=
+ =?us-ascii?Q?CLZLpQ1R1l9YuZmqeykInaJzs64VLnlBuABa+/MfONoe2ej4EyOXC8TxqVDX?=
+ =?us-ascii?Q?JlDn0iacg/VtXnxJ5N2xKZvoNOjDb2szIcgwMpNBEjb5A1NqoOPWbON2+G52?=
+ =?us-ascii?Q?9A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	gHwIr7W64Dl8D43GE7uuMM/eKwmRSm9Z8gIvwU4tdnX8akFWM7XQC1RcgkRsrJsxNeT/2O1vIMr00uhA0x6EKabYsk66PwpvWWJQ/hdR5jKz2ser1gjYwZXhtv34iU8C0rgeIywQgw0oH1qidOqlZMDw0m9CS4rVPEJobkMGZhrEZ1kSsOt8tPmotXq6+fc6dbfj2VIUjoXhd6J0wnhAW8lyIo8pM/g8m2/g8owN2Cp1yXSleSDErV+M6QvfyghODGM7c0w6sERe1zSNxDvFxNtvoEqLvxBc+2yti/cjlzd3Abt/mRmSpJ3orbId+dS50rQAiCFKptl4f41jDwGrZeMMLz69OodOgSSs9uU0FNRT0F5V8GvfgBQvZvjPL1vXjXYgcp3a3TCkA966LSfOE9j+mlsU4KM5YDa5FgwKJMYUn+edAv9+LYTh3ho2yOjvnNZNPFmKp8uvXjqVfsXU2vfg/PfU9rR/5Ra6IclpEx/lkG9EJJk0Gu+cjrg9Cte+ISSBwhDKkHi6OhoT4JYkfSsusMBEwhVEvKzRnQerGShaMAf9Z1waRZ6hlZIvmjLf/15t+vpD3g/egH2Vfmj+5nkmO8m+KZiw6YfQ6uqaWPk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37f52f18-9ec3-4975-e1b2-08dcc21b6434
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2024 19:56:48.2479
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: z1GaDSBgh5Qbh+3iRaltbulqrEjIqDzTlygJG7QfHN1x6R0ckHdXVuPqKXkpZtKg0oRRZ471KB3HsjZeMrYObQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6898
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_13,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ bulkscore=0 adultscore=0 spamscore=0 mlxscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2408210146
+X-Proofpoint-ORIG-GUID: t8kh4iP6jGylQBf48fjqh_6itWNwihW-
+X-Proofpoint-GUID: t8kh4iP6jGylQBf48fjqh_6itWNwihW-
 
-On Wed, 2024-08-21 at 17:47 +0200, Christian Brauner wrote:
-> Hey,
->=20
-> So first time I managed to send out my personal wip branch.
-> So for the record: The intention is to send what's in work.i_state on
-> vfs/vfs.git.
->=20
-> ---
-> I've recently looked for some free space in struct inode again
-> because
-> of some exec kerfuffle we recently had and while my idea didn't turn
-> into anything I noticed that we often waste bytes when using wait bit
-> operations. So I set out to switch that to another mechanism that
-> would
-> allow us to free up bytes. So this is an attempt to turn i_state from
-> an unsigned long into an u32 using the individual bytes of i_state as
-> addresses for the wait var event mechanism (Thanks to Linus for that
-> idea.).
->=20
-> This survives LTP, xfstests on various filesystems, and will-it-
-> scale.
->=20
-> To: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: NeilBrown <neilb@suse.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
->=20
-> ---
-> Changes in v2:
-> - Actually send out the correct branch.
-> - Link to v1:
-> https://lore.kernel.org/r/20240816-vfs-misc-dio-v1-1-80fe21a2c710@kernel.=
-org
->=20
-> ---
->=20
->=20
->=20
-> ---
-> base-commit: 01e603fb789c75b3a0c63bddd42a42a710da7a52
-> change-id: 20240820-work-i_state-4e34db39bcf8
->=20
+On Mon, Aug 19, 2024 at 02:17:05PM -0400, Mike Snitzer wrote:
+> These latest changes are available in my git tree here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/snitzer/linux.git/log/?h=nfs-localio-for-next
+> 
+> Significant progress was made on the entire series, I implemented all
+> 3 changes NeilBrown suggested here:
+> https://marc.info/?l=linux-nfs&m=172004547710968&w=2
+> 
+> And Neil kindly provided review of a preliminary v12 that I then used
+> to refine this final v12 further.  Neil found the series much cleaner
+> and approachable.
+> 
+> This v12 also switches the NFS client's localio code over to driving
+> IO in terms of nfsd's nfsd_file (rather than a simple file pointer).
+> I checked with Jeff Layton and he likes the switch to using nfsd_file
+> (Jeff did suggest I make sure to keep struct nfsd_file completely
+> opaque to the client).  Proper use of nfsd_file provides a solid
+> performance improvement (as detailed in the last patch's commit
+> header) thanks especially to the nfsd filecache's GC feature (which
+> localio now makes use of).
+> 
+> Testing:
+> - Chuck's kdevops NFS testing has been operating against the
+>   nfs-localio-for-next branch for a while now (not sure if LOCALIO is
+>   enabled or if Chuck is just verifying the branch works with LOCALIO
+>   disabled).
+> - Verified all of Hammerspace's various sanity tests pass (this
+>   includes numerous pNFS and flexfiles tests).
+> 
+> Please review, I'm hopeful I've addressed any outstanding issues and
+> that these changes worthy of being merged for v6.12.  If you see
+> something, say something ;)
+> 
+> Changes since v11:
+> - The required localio specific changes in fs/nfsd/ are much simpler
+>   (thanks to the prelim patches that update common code to support the
+>    the localio case, fs/nfsd/localio.c in particular is now very lean)
+> - Improved the localio protocol to address NeilBrown's issue #1.
+>   Replaced GETUUID with UUID_IS_LOCAL RPC, which inverts protocol such
+>   that client generates a nonce (shortlived single-use UUID) and
+>   proceeds to verify the server sees it in nfs_common.
+>   - this eliminated the need to add 'struct nfsd_uuid' to nfsd_net
+> - Finished the RFC series NeilBrown started to introduce
+>   nfsd_file_acquire_local(), enables the use of a "fake" svc_rqst to
+>   be eliminated: https://marc.info/?l=linux-nfs&m=171980269529965&w=2 
+>   (uses auth_domain as suggested, addresses NeilBrown's issue #2)
+> - rpcauth_map_clnt_to_svc_cred_local now uses userns of client and
+>   from_{kuid,kgid}_munged (hopefully addresses NeilBrown's issue #3)
+> - Updated nfs_local_call_write() to override_creds() with the cred
+>   used by the client to open the localio file.
+> - To avoid localio hitting writeback deadlock (same as is done for
+>   existing loopback NFSD support in nfsd_vfs_write() function): set
+>   PF_LOCAL_THROTTLE | PF_MEMALLOC_NOIO in nfs_local_call_write() and
+>   restore current->flags before return.
+> - Factored nfs_stat_to_errno and nfs4_stat_to_errno out to nfs_common
+>   to eliminate localio code creating yet another copy of them.
+>   (eliminates existing duplication between fs/nfs/nfs[23]xdr.c)
+> - Simplified Kconfig so that NFS_LOCALIO depends on NFS_FS and
+>   NFSD_LOCALIO depends on NFSD.
+> - Only support localio if UNIX Authentication (AUTH_UNIX) is used.
+> - Improved workqueue patch to not use wait_for_completion().
+> - Dropped 2 prelim fs/nfs/ patches that weren't actually needed.
+> - Updated localio.rst to reflect the various changes listed above,
+>   also added a new "FAQ" section from Trond (which was informed by an
+>   in-person discussion about localio that Trond had with Christoph).
+> - Fixed "nfsd: add nfsd_file_acquire_local()" commit to work with
+>   NFSv3 (had been testing with NFSv4.2 and the fact that NFSv3
+>   regressed due to 'nfs_ver' not being properly initialized for
+>   non-LOCALIO callers was missed.
+> - Fixed issue Neil reported where "When using localio, if I open,
+>   read, don't close, then try to stop the server and umount the
+>   exported filesystem I get EBUSY for the umount."
+>   - fix by removing refcount on localio file (no longer cache open
+>     localio file in the client).
+> - Fixed nfsd tracepoints that were impacted by the possibility they'd
+>   be passed a NULL rqstp when using localio.
+> - Rebased on cel/nfsd-next (based on v6.11-rc4) to layer upon Neil's
+>   various changes that were originally motivated by LOCALIO, reduces
+>   footprint of this patchset.
+> - Exported nfsd_file interfaces needed to switch the nfs client's
+>   localio code over to using it.
+> - Switched the the nfs client's localio code over to using nfsd_file.
+> 
+> Thanks,
+> Mike
+> 
+> Mike Snitzer (13):
+>   nfs_common: factor out nfs_errtbl and nfs_stat_to_errno
+>   nfs_common: factor out nfs4_errtbl and nfs4_stat_to_errno
+>   nfs: factor out {encode,decode}_opaque_fixed to nfs_xdr.h
+>   nfsd: fix nfsfh tracepoints to properly handle NULL rqstp
+>   SUNRPC: remove call_allocate() BUG_ONs
+>   nfs_common: add NFS LOCALIO auxiliary protocol enablement
+>   nfsd: implement server support for NFS_LOCALIO_PROGRAM
+>   nfs: implement client support for NFS_LOCALIO_PROGRAM
+>   nfs: add Documentation/filesystems/nfs/localio.rst
+>   nfsd: use GC for nfsd_file returned by nfsd_file_acquire_local
+>   nfs_common: expose localio's required nfsd symbols to nfs client
+>   nfs: push localio nfsd_file_put call out to client
+>   nfs: switch client to use nfsd_file for localio
+> 
+> NeilBrown (3):
+>   nfsd: factor out __fh_verify to allow NULL rqstp to be passed
+>   nfsd: add nfsd_file_acquire_local()
+>   SUNRPC: replace program list with program array
+> 
+> Trond Myklebust (4):
+>   nfs: enable localio for non-pNFS IO
+>   pnfs/flexfiles: enable localio support
+>   nfs/localio: use dedicated workqueues for filesystem read and write
+>   nfs: add FAQ section to Documentation/filesystems/nfs/localio.rst
+> 
+> Weston Andros Adamson (4):
+>   SUNRPC: add rpcauth_map_clnt_to_svc_cred_local
+>   nfsd: add localio support
+>   nfs: pass struct file to nfs_init_pgio and nfs_init_commit
+>   nfs: add localio support
+> 
+>  Documentation/filesystems/nfs/localio.rst | 255 +++++++
+>  fs/Kconfig                                |   3 +
+>  fs/nfs/Kconfig                            |  15 +
+>  fs/nfs/Makefile                           |   1 +
+>  fs/nfs/client.c                           |  15 +-
+>  fs/nfs/filelayout/filelayout.c            |   6 +-
+>  fs/nfs/flexfilelayout/flexfilelayout.c    | 142 +++-
+>  fs/nfs/flexfilelayout/flexfilelayout.h    |   2 +
+>  fs/nfs/flexfilelayout/flexfilelayoutdev.c |   6 +
+>  fs/nfs/inode.c                            |  57 +-
+>  fs/nfs/internal.h                         |  61 +-
+>  fs/nfs/localio.c                          | 784 ++++++++++++++++++++++
+>  fs/nfs/nfs2xdr.c                          |  70 +-
+>  fs/nfs/nfs3xdr.c                          | 108 +--
+>  fs/nfs/nfs4xdr.c                          |  84 +--
+>  fs/nfs/nfstrace.h                         |  61 ++
+>  fs/nfs/pagelist.c                         |  16 +-
+>  fs/nfs/pnfs_nfs.c                         |   2 +-
+>  fs/nfs/write.c                            |  12 +-
+>  fs/nfs_common/Makefile                    |   5 +
+>  fs/nfs_common/common.c                    | 134 ++++
+>  fs/nfs_common/nfslocalio.c                | 194 ++++++
+>  fs/nfsd/Kconfig                           |  15 +
+>  fs/nfsd/Makefile                          |   1 +
+>  fs/nfsd/export.c                          |   8 +-
+>  fs/nfsd/filecache.c                       |  90 ++-
+>  fs/nfsd/filecache.h                       |   5 +
+>  fs/nfsd/localio.c                         | 183 +++++
+>  fs/nfsd/netns.h                           |   8 +-
+>  fs/nfsd/nfsctl.c                          |   2 +-
+>  fs/nfsd/nfsd.h                            |   6 +-
+>  fs/nfsd/nfsfh.c                           | 114 ++--
+>  fs/nfsd/nfsfh.h                           |   5 +
+>  fs/nfsd/nfssvc.c                          | 100 ++-
+>  fs/nfsd/trace.h                           |  39 +-
+>  fs/nfsd/vfs.h                             |  10 +
+>  include/linux/nfs.h                       |   9 +
+>  include/linux/nfs_common.h                |  17 +
+>  include/linux/nfs_fs_sb.h                 |  10 +
+>  include/linux/nfs_xdr.h                   |  20 +-
+>  include/linux/nfslocalio.h                |  56 ++
+>  include/linux/sunrpc/auth.h               |   4 +
+>  include/linux/sunrpc/svc.h                |   7 +-
+>  net/sunrpc/auth.c                         |  22 +
+>  net/sunrpc/clnt.c                         |   6 -
+>  net/sunrpc/svc.c                          |  68 +-
+>  net/sunrpc/svc_xprt.c                     |   2 +-
+>  net/sunrpc/svcauth_unix.c                 |   3 +-
+>  48 files changed, 2428 insertions(+), 415 deletions(-)
+>  create mode 100644 Documentation/filesystems/nfs/localio.rst
+>  create mode 100644 fs/nfs/localio.c
+>  create mode 100644 fs/nfs_common/common.c
+>  create mode 100644 fs/nfs_common/nfslocalio.c
+>  create mode 100644 fs/nfsd/localio.c
+>  create mode 100644 include/linux/nfs_common.h
+>  create mode 100644 include/linux/nfslocalio.h
+> 
+> -- 
+> 2.44.0
+> 
+> 
 
-This all looks good to me, modulo one minor nit in patch #5 that you
-can take or leave.
+Hi Mike-
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+I've started familiarizing myself with v12. I'm happy to see that
+the fake svc_rqst code is gone, and I thank you, Neil, and Trond
+for your effort replacing that code.
+
+I think I understand why we have to use an ephemeral garbage-
+collected nfsd_file rather than having the client hold one open
+while it has an open file descriptor for that file.
+
+Next I want to start auditing the client's open path for security
+issues. I will hold any specific comments until I've done that.
+
+It's great that Jeff has reviewed these already! I concur that a
+little patch re-organization will be helpful.
+
+
+-- 
+Chuck Lever
 
