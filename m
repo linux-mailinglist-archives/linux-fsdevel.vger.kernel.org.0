@@ -1,169 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-26555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2250B95A647
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 23:02:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B523E95A672
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 23:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93ACA1F228B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1752859E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Aug 2024 21:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF360170A19;
-	Wed, 21 Aug 2024 21:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9FC175D30;
+	Wed, 21 Aug 2024 21:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="DppD+lqN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXkwfR/y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B593B7405A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 21:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1D6170A3F
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 21:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724274130; cv=none; b=IJ2ZDJPabHuSO2oGYQgIJMsNCvfB95thKFPZUFBbtY5KrVvHY2v7/l9Q4U/xLgMeQ/3zaRstAVRC6ArB8Xd9j7eb4BYIonr7CpiAJKqXt+P77fTj0f9rsDHbUWU81CxCN6qZd2t5n/cMMoKnsEYyWY34Aqj7TYMzXbVS6aI05iI=
+	t=1724275339; cv=none; b=rEXx+kv2hpprFLAkuXwKWN5FuNU35pLPN4dTWbnO8XZA+66fPa2vaWyROext9CAQbiGa45EIa/6ifJCShiKVFy9aWcMLGx5w0KX4gcWSxATcSEzqeKCPp+nhVIAVUQZA4HGSbn/hgz2U0s+J9mDQX13ER0zabGR1Jn5VSgSlOLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724274130; c=relaxed/simple;
-	bh=qo3HfyxgYz+ARn5brrQ1qCZSvZDjomJ/B63GAA/ekcc=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=BlMYv+CLfnIeQ5VL1bqNidCTziNXOVBCA8bWcE1+MDQETkhnlbPv6XMPTByZZ81i+R8vZ+WCDZIpMLFdkMb1bMVp36SFbffylBeV72GmUlCJNv4TrlheHQQGOXBuSZ8V2y0yMbf0szZt6yrzYlbtNyqC8fAKRbpWTF0jlQ1eqZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=DppD+lqN; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7a1c7857a49so106617a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 14:02:07 -0700 (PDT)
+	s=arc-20240116; t=1724275339; c=relaxed/simple;
+	bh=WL80mV1UUyNJSz4OFt4b8PaU0xtyGSYxFPA7bJTkFX8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dSdBQCh/XZwTyn0vFFGa+67/5aiCBdd4/kFWeNkDM74y2rf1zmzeP6kWiTWjV6JzHmV7vVnuMuvLQlNXkWKMjg8Excg7XlnzsZCV+9s+C/alf58kntqjsMXUMzOK/GrK5n+6oVVtXt8Bfbf58/eleIGdZ0O0Wero1Sxx/6kY7PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXkwfR/y; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44fdde0c8dcso1156731cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Aug 2024 14:22:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1724274127; x=1724878927; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5gkZVhDgiENeIhudma772OretQnBA4LLyV2LWCGjhwA=;
-        b=DppD+lqNqLOhUhwFiD3AwwcvOVJt8sPpiEswS1FSELDKxz3kv0pGCZm//BjKp9i6vI
-         n1B1IotROnbhv2M+pMn4SDxpqp5x2u5bBWl+2K6fuwxtPvR3i0Z9MZ7rdy0+XrqPYMCx
-         oirHmBJY93+3HFu9c2JNXL1/kgX+tBxx9Yie+oGAkdAbWV87oujv4W2fMzWPS3AGUQqQ
-         1vFj706V/4SdDNG7olFEYpeXHOeH2yZeVkTU+G7q56mLakppmEJkurnbR5ikQXolIIdt
-         NkK1boi/fAjK2MwIfrwPnGs5JszqlOfODkEcIie4ZP1m0l765Clcl0ikTKMjgxsDWxQm
-         LOMg==
+        d=gmail.com; s=20230601; t=1724275337; x=1724880137; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mj1PhoR9rtoU/lUgrWxnap0uTdahI0KgFEDWZkDpU/g=;
+        b=UXkwfR/yurD9Rl3dBIMi2xFtJIPClsu4Dss8YBnStdXXs1xzeDod38KVgjlaEEma9k
+         5NYHw7YqBuhuzkZ+Nb2Cf0cFPLNaUiDz0WJ3gBc2pn8kdAzjibRKHoi6P1HNnB4sPV+Y
+         ESJeDnFo9GwEvD4o6S7Dr5EtHOXICJFSmwt2nTJXjf0AfBHRuQDiJdYp2RxkwdAPd8Bb
+         0sRr3BeqNWEtyuT4/ndNufZHRI5hdGk4SC6W7nv7j7+LuF4E4XEj1LYRSFSeky/5nIuw
+         cfBj6SG258wIfZ+PbzxpwUO+pqmeX1GF4tOfme5YNs4HHob8PqLKNkmoTNpMNWWew03l
+         QCUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724274127; x=1724878927;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5gkZVhDgiENeIhudma772OretQnBA4LLyV2LWCGjhwA=;
-        b=fZdP+LXuInToxj/VpKR4cQu/Ska6qMcoC9sV5iGisns8K2T5ziGRuS/J3ZJGQVmkDa
-         5wMd7nPiA/8JG5/l/SBU9ZPpMbcrG9o/W1CykrR8fnG5C3BevyC1aoSsUWo/gI99zVXm
-         y294W0nmo3cApuFJtd90OfR8aZHkvmaQLDks/1BOWrw8xmY779TI3yTWEDMXweYioJnZ
-         8odgNe9UntyYygEew/1Mi8cvgWJYJCDXZagdvVXZBQbCUs2NwuPr8HzDElSmP317Ye9d
-         cZ3aLFt0OtWd5KmXdfv7uqzUZ9Z9m1Goi1cUf0zxMqWb7KmQQ/YhUV3UeBq2I1AjFWjN
-         6+YA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2CoxNGmWHscSOE5yHiVPHZBFVU0Vo7FUpZlYdOIcigV0Fm15+82OFXM1vrkrMSqS/aU9Bdwn416kNT873@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGHkrhwMOtu7y8LHjPf6LRFznrdzlfPpI0XfwhA4iPXBKJliqv
-	Yju/SpZd0vfwthFHtN/2sKFcaFXGPlKwq7u/r48m/ykGvESYdG/PUzs/W9GBk5g=
-X-Google-Smtp-Source: AGHT+IFaMDauIiJXABxwEORKbXngDgS4LbM9Z4c0yPOy/Sqzv12pUasP8fV1sAizSF0ARDZOQZlhNA==
-X-Received: by 2002:a17:90b:17c8:b0:2d3:da6d:8328 with SMTP id 98e67ed59e1d1-2d5e9a1f2fcmr3849075a91.21.1724274126514;
-        Wed, 21 Aug 2024 14:02:06 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d5ebbb0b27sm2374106a91.45.2024.08.21.14.02.05
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Aug 2024 14:02:05 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <9BA2DBC4-0DB3-406C-A88D-B816C421EF1D@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_4DB06D7F-E9DD-49B0-9742-25CD056E7ED8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        d=1e100.net; s=20230601; t=1724275337; x=1724880137;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mj1PhoR9rtoU/lUgrWxnap0uTdahI0KgFEDWZkDpU/g=;
+        b=uIpmMeGKQUiI55J8kvCskvrQ/OlojLbi2BXP/2uHcISz0nUYSmHIe9vp5RvSJp4oMG
+         7n7rH2XR9FR68BO/LzOPGYY0YUTfjBpUWkk3hEvkAHxKTtwpKgCYxsj1nnwP+Rg35rV9
+         6binNZWoFlZVW+xA7f6bBgAKd/ZeEXhx6BroPwo/wLua/aanrBsVfWfPs7CT++bXfvps
+         PwGD1ka862w8V2mpJxzfDhOcsgyibbwFmnXkkbm04zQ+OoPn8QV3x7aK/4H7zmJ4OSgN
+         kR+xDtaGJ2KcfB2wI/u5cBcDKJILPCmtw1YsbAEySOwE4BujhLkMzXcnw3fqOu9cnb+L
+         j7+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWu4q1HXsfueNG77aQy0dQsF7GX33kjG1uVez2O20HruEWEeIcg1yT+Sstpa172IfO9D/8L7d1Z8rtSFWNE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1/j1+YattuyzRiVSem285Hxq3NPKPU6YHwMU2PfB6j2qssZ/d
+	WYeWVftA93Y7cFn3R55XhGxj/3JkTur66NqN2nSu4pgOwIGsqu4Zmd7ucMzbQOi5nZduREAqFgG
+	rKViXbqhujhr+KH01Dug67yiG5CVPWuq3
+X-Google-Smtp-Source: AGHT+IHmgUFPO1gjdXGN/e3BYhsvWeKiJcA1qcaV7Vl+wSGK4GLB68KXrBNGOZmmpdza/tYOWn79oKj4MWBbtlGydQ8=
+X-Received: by 2002:a05:622a:5106:b0:453:74cc:ce09 with SMTP id
+ d75a77b69052e-454f21d2e44mr37091821cf.8.1724275336646; Wed, 21 Aug 2024
+ 14:22:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH RFC v2 6/6] inode: make i_state a u32
-Date: Wed, 21 Aug 2024 15:03:01 -0600
-In-Reply-To: <20240821-work-i_state-v2-6-67244769f102@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- NeilBrown <neilb@suse.de>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Jeff Layton <jlayton@kernel.org>,
- Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org
-To: Christian Brauner <brauner@kernel.org>
-References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
- <20240821-work-i_state-v2-6-67244769f102@kernel.org>
-X-Mailer: Apple Mail (2.3273)
+MIME-Version: 1.0
+References: <20240813232241.2369855-1-joannelkoong@gmail.com>
+ <CAJfpegvPMEsHFUCzV6rZ9C3hE7zyhMmCnhO6bUZk7BtG8Jt70w@mail.gmail.com>
+ <20240821181130.GG1998418@perftesting> <CAJfpegsiRNnJx7OAoH58XRq3zujrcXx94S2JACFdgJJ_b8FdHw@mail.gmail.com>
+In-Reply-To: <CAJfpegsiRNnJx7OAoH58XRq3zujrcXx94S2JACFdgJJ_b8FdHw@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Wed, 21 Aug 2024 14:22:05 -0700
+Message-ID: <CAJnrk1b7DUTMqprx1GNtV59umQh2G5cY8Qv7ExEXRP5fCA41PQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] fuse: add timeout option for requests
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 21, 2024 at 11:54=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu>=
+ wrote:
+>
+> On Wed, 21 Aug 2024 at 20:11, Josef Bacik <josef@toxicpanda.com> wrote:
+>
+> > "A well written server" is the key part here ;).  In our case we had a =
+"well
+> > written server" that ended up having a deadlock and we had to run aroun=
+d with a
+> > drgn script to find those hung mounts and kill them manually.  The usec=
+ase here
+> > is specifically for bugs in the FUSE server to allow us to cleanup auto=
+matically
+> > with EIO's rather than a drgn script to figure out if the mount is hung=
+.
+>
+> So you 'd like to automatically abort the connection to an
+> unresponsive server?  I'm okay with that.
+>
+> What I'm worried about is the unintended side effects of timed out
+> request without the server's knowledge (i.e. VFS locks released, then
+> new request takes VFS lock).   If the connection to the server is
+> aborted, then that's not an issue.
+>
+> It's also much simpler to just time out any response from the server
+> (either read or write on /dev/fuse) than having to do per-request
+> timeouts.
 
---Apple-Mail=_4DB06D7F-E9DD-49B0-9742-25CD056E7ED8
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+In our case, the deadlock was triggered by invalidating the inode in
+the middle of handling the write request. The server becomes stuck
+since the inode invalidation (eg fuse_reverse_inval_inode())  is
+attempting to acquire the folio lock but the lock was acquired when
+servicing the write request (eg fuse_fill_write_pages()) and only gets
+released after the server has replied to the write request (eg in
+fuse_send_write_pages()).
 
-On Aug 21, 2024, at 9:47 AM, Christian Brauner <brauner@kernel.org> wrote:
-> 
-> Now that we use the wait var event mechanism make i_state a u32 and free
-> up 4 bytes. This means we currently have two 4 byte holes in struct
-> inode which we can pack.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
-> include/linux/fs.h | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 8525f8bfd7b9..a673173b6896 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -681,7 +681,7 @@ struct inode {
-> #endif
-> 
-> 	/* Misc */
-> -	unsigned long		i_state;
-> +	u32			i_state;
+Without a kernel enforced timeout, the only way out of this is to
+abort the connection. A userspace timeout wouldn't help in this case
+with getting the server unstuck. With the kernel timeout, this forces
+the kernel handling of the write request to proceed, whihc will drop
+the folio lock and resume the server back to a functioning state.
 
-Is it worthwhile to add a comment that there is a hole here, instead
-of leaving it for future re-discovery?
+I don't think situations like this are uncommon. For example, it's not
+obvious or clear to developers that fuse_lowlevel_notify_inval_inode()
+shouldn't be called inside of a write handler in their server code.
 
-        /* 32-bit hole */
+I believe Yafang had a use case for this as well in
+https://lore.kernel.org/linux-fsdevel/20240724071156.97188-1-laoar.shao@gma=
+il.com/
+where they were seeing fuse connections becoming indefinitely stuck.
 
-> 	struct rw_semaphore	i_rwsem;
-> 
-> 	unsigned long		dirtied_when; /* jiffies of first dirtying */
+For your concern about potential unintended side effects of timed out
+requests without the server's knowledge, could you elaborate more on
+the VFS locking example? In my mind, a request that times out is the
+same thing as a request that behaves normally and completes with an
+error code, but perhaps not?
 
-Normally this would be excess noise, but since struct inode is
-micro-optimized (like struct page) it probably makes sense to
-document this case.
+I think also, having some way for system admins to enforce request
+timeouts across the board might be useful as well - for example, if a
+malignant fuse server doesn't reply to any requests, the requests hog
+memory until the server is killed.
 
-Cheers, Andreas
+Thanks,
+Joanne
 
-
-
-
-
-
---Apple-Mail=_4DB06D7F-E9DD-49B0-9742-25CD056E7ED8
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmbGVgUACgkQcqXauRfM
-H+Afhw//U72bgO23Or3tE6jiWaErkgepZfqBu4gQJ+fckFyWdaY9SKs7TCJqphhf
-TYmu3jm2hkva5qpSvuYDgMTk+pGNRfZV0y1MkoWrecKSkSY+XmhS493FPlM4lCrB
-crJQDbhUdJOPFbzNp4ThUh4akZJcwkkU1k6gYcf6PofeSbYojNu17pSKhibpMknD
-YCniN4aIpycjVBdDVzn5gmEzAfOOtx6YqdOtdOknGNS9IeOtcb3SorICG6pLPRah
-WDCL1oQSNa1uUwynenCvprvsBnKajzouQ3Zd4Uy8Z7hOCfrg4HJYhIHib3yhwuNa
-ceOpd42QQxieQtqdC3LAZWIpJbYx/X8YV8VRgkfKj4BMGLwrryISXZdF3M7GMAH7
-TGu8x98jVJuaPSrY87ZEXN68gEZ/y+Ff2s7slc9uOY1jNFLOSWyR/5JlqAReNuWY
-4o+C1LwBj0JxLBkIkW0Xq+ODO1J9362SOYfQHI+AVVNjOyh6+YJbxLTEfqRFUKuw
-/NK5YUTK43ubRN/lALOO9lvIHFtWs4NenRoTCRuHx2N0+BonKg40fbfZs3lyLRdP
-UAogKCj78x989wOBCDujEm7nDX1zkwzDOH9/m0hzNhTUOYnG001qlEMakGMOUOYQ
-kRfZ2nEkYdBoEl9TokxkHNSewAQuGNwQ995Xh4s1j26Kz+AJGus=
-=Lph7
------END PGP SIGNATURE-----
-
---Apple-Mail=_4DB06D7F-E9DD-49B0-9742-25CD056E7ED8--
+>
+> > It also gives us the opportunity to do the things that Bernd points out=
+,
+> > specifically remove the double buffering downside as we can trust that
+> > eventually writeback will either succeed or timeout.  Thanks,
+>
+> Well see this explanation for how this might deadlock on a memory
+> allocation by the server:
+>
+>  https://lore.kernel.org/all/CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZt=
+wFeRuYw@mail.gmail.com/
+>
+> Having a timeout would fix the deadlock, but it doesn't seem to me a
+> proper solution.
+>
+> Thanks,
+> Miklos
 
