@@ -1,95 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-26715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61FBA95B3E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 13:32:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F2A95B463
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 13:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE8F283A2F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 11:32:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62201C20983
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 11:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54941C93CF;
-	Thu, 22 Aug 2024 11:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1541C9428;
+	Thu, 22 Aug 2024 11:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gqlYIkhG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3295E17DE06;
-	Thu, 22 Aug 2024 11:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FA613A244
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 11:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724326323; cv=none; b=DGiCw51+SC5f5FylkrsuaVQ4o1V5LC4hfNf32jSu7TVV3hyxXveJlT2GBea7wPXncFVnDh3HfBlaPznoze3V1xLIGkGStPFsVz53obdE87ElmKQ2x56u50Jr2masHmHd3H6Ul8pTUdypS5Z/QDeS5jp3WFJWipCF/JDBfHJ2KH0=
+	t=1724327923; cv=none; b=P80Pw+AgcbOgmQaXtUyPhDpFYxvsbEkUU26j4fSookEtLpbJgfomjPSI+ECdSHoRk0uW6fYfE//WZi+IL0YfqQF+pikDoGxEiTmZNbXRRcy2d89t4sdoQ3n18R6z/W8IOIHui72nmPcPKc0BO1PE2eHmUfVosdrr9P0deex51X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724326323; c=relaxed/simple;
-	bh=ahYQxnZlDKF67DiooDXeohmk++gTfdE7lJjaYpBT67Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVvTAjIPLxySkIKyp3iITiHnm7P3BBE6aH1RmXTwQBNq4B18v4jghgNP4gh91JZRfCsvI8duDGKxoAa27zyALAkULCnB9Oa5g6lNtE4s+Ozn1uihPi+/lgtzgbFhF8qKqB36Y9GorFHnsY0r3cqtB4wyNQPVWGh9iutSYUGlUKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3579BC32782;
-	Thu, 22 Aug 2024 11:31:57 +0000 (UTC)
-Date: Thu, 22 Aug 2024 12:31:55 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 18/39] arm64/traps: Handle GCS exceptions
-Message-ID: <Zschq9JbvIRjmXVR@arm.com>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-18-41b81947ecb5@kernel.org>
+	s=arc-20240116; t=1724327923; c=relaxed/simple;
+	bh=8QOSVQfhI4ghqzZ+0/BoKgeZXy0qO0h1sc+F1bSMlh8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FACofWEZ/kXuXWlzrrAFSTt07L2KJSeeD0rlvtmw6OFv2XdHow4Vz3wazN5xRmpYzFML29zbZ/F6dXY12k0wSZxJc4f3XcQXu3ZafMbPD3BX9MUgqTiuPoAnwaUqa/I4KSyUkFIk39EkZf2Q2xUAw84HB02PRvuqAbZkNYG+uSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gqlYIkhG; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so108696266b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 04:58:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724327920; x=1724932720; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=f+x/sMb5R5w3S0A0GZNua6/EwG+VnrzQkBOlWTvRJf8=;
+        b=gqlYIkhGTuGE4rb4UzrWjhrxXpIV1FATie37z5pVdNaIty1DcEFm6LcCVDiMF/yDUg
+         8ZZj4OYspC7kMPblI4MsJM5LzZAqreZK8sVqf5nUN5pKG5xjephU5jY0IN/1PvYq1F0N
+         SGm91YQQ3tsNvO+mAjypzsvMVE+Aa+xMuCQ4Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724327920; x=1724932720;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f+x/sMb5R5w3S0A0GZNua6/EwG+VnrzQkBOlWTvRJf8=;
+        b=O0ZOhhUusEBtHpoUUXqn0idhKZhb2wxAXPIv5uFrywLcvijcSBphWGvBSWl7pSTpwB
+         BpY6oBVGLuwKl7Q8hX5rB0OZbQg277KHVu4EUJmMJyQ/hHrxlCCb3bU3EVa7Z0I+7A15
+         9FISYkbN3k7qG+qXKtbBNGysg3A/MV1QrwRhUwIRrxa8wUxqj7/OiQYeSK49aBjX6EZp
+         qJZd0KuybvNCIppU/4qMzN43n9t5HCc113papRrsGi/f86kq8t1o9RAR6RDZLmzdQTXQ
+         ojLJqNaIKU+rtPcL5L8rrLhhXqPKHCH08Whmwd4dXZKhZKipnX3C2yb+1N0IHGoVAYza
+         Dl0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVlpIhaLRnCzfzk3v8IYrN1ZQbV9FnHjo5VtruoTAIlvboXTEHnQclYHDq4oKHDGshtQFmfX50tdy2tHdc6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV2CuAZJxldKo6HVSBSy1zzxnmU2pWTSnTEUKp72CxLzwAiJ/S
+	nF0uEgXo6qOkFCE2fu1mtDWmbnP/vsLDlbHDgduRa9TdAYsJLdiuTkBVMaoE2XJoAWdWWUjxq9s
+	QQSfaEOHS6PswAal5eMaxYy+EXPPHIGdUmPxAUg==
+X-Google-Smtp-Source: AGHT+IH1ZjV+4N1cMdL2Z+NBLD6gvi5LhpxntgZq4C+TBlvsnLZVvigl5bqMT8dgUNGkxC1jmVa+/42PEtucVch/eNM=
+X-Received: by 2002:a17:906:6a1c:b0:a7a:acae:3415 with SMTP id
+ a640c23a62f3a-a866f11db61mr391225766b.10.1724327919985; Thu, 22 Aug 2024
+ 04:58:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822-arm64-gcs-v11-18-41b81947ecb5@kernel.org>
+References: <ZrY97Pq9xM-fFhU2@casper.infradead.org> <20240809162221.2582364-3-willy@infradead.org>
+ <d0844e7465a12eef0e2998b5f44b350ee9e185be.camel@bitron.ch>
+ <2aeca29ce9b17f67e1fac32b49c3c6ec19fdb035.camel@bitron.ch> <ZsSfEJA5omArfbQV@casper.infradead.org>
+In-Reply-To: <ZsSfEJA5omArfbQV@casper.infradead.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 22 Aug 2024 13:58:28 +0200
+Message-ID: <CAJfpegvFpADCWYwBdeAK3uofXL-cwmXr=WfRir7PP7hjkAr0Wg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] fuse: use folio_end_read
+To: Matthew Wilcox <willy@infradead.org>
+Cc: =?UTF-8?Q?J=C3=BCrg_Billeter?= <j@bitron.ch>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 22, 2024 at 02:15:21AM +0100, Mark Brown wrote:
-> A new exception code is defined for GCS specific faults other than
-> standard load/store faults, for example GCS token validation failures,
-> add handling for this. These faults are reported to userspace as
-> segfaults with code SEGV_CPERR (protection error), mirroring the
-> reporting for x86 shadow stack errors.
-> 
-> GCS faults due to memory load/store operations generate data aborts with
-> a flag set, these will be handled separately as part of the data abort
-> handling.
-> 
-> Since we do not currently enable GCS for EL1 we should not get any faults
-> there but while we're at it we wire things up there, treating any GCS
-> fault as fatal.
-> 
-> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+On Tue, 20 Aug 2024 at 15:50, Matthew Wilcox <willy@infradead.org> wrote:
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> > Would it make sense to get a revert of this part (or a full revert of
+> > commit 413e8f014c8b) into mainline and also 6.10 stable if a proper fix
+> > will take more time?
+>
+> As far as I'm concerned, I've found the fix.  It's just that Miklos
+> isn't responding.  On holiday, perhaps?
+
+I was, but not anymore.
+
+I'm trying to dig though the unread pile, but haven't seen your fix.
+
+Can you please point me in the right direction?
+
+Thanks,
+Miklos
 
