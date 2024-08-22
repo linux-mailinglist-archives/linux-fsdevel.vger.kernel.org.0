@@ -1,125 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-26691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DBD95B0F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:54:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763DE95B0FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6B91F22078
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 08:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32023282DFD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 08:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB54216EBED;
-	Thu, 22 Aug 2024 08:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTysZ2OU"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BDE178398;
+	Thu, 22 Aug 2024 08:59:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBCB16DEB4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 08:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0B219470;
+	Thu, 22 Aug 2024 08:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724316835; cv=none; b=C9EOg9D1vIOfjyCWWL6ATjEBlrB8WSO4Vn7YrdBiHeGaqS262bLazOm8SvtfVozGKnNMncscSQGuFGx6nOJseVIau3agTTVrUDfhP+1LubCb+GuRoaM6N5tnSAADO1BGphcfAxX0ufFkz+0JbMdatKo73HfGOSopVvMqGEe9Rl0=
+	t=1724317144; cv=none; b=APwsXk/lkXVLnbgnxsi+ZdbYJ8+hMuykLQG9FB+ictV/FM4Izq/kodz4MUsEa01Y6so3A6a2kQT6GOijhx0Lt8fRkjatVWdpn2xTYLD4jFmHIGj2Tgo2lyX+MqlejHkGzhEUJ9rrdV8UcHsm5DPndfcaKhPVD90AJg4OsP1NmM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724316835; c=relaxed/simple;
-	bh=VBUZ9a94snb1UwxfdooO1UuV32+v4Cy7G2iDXQB5k9c=;
+	s=arc-20240116; t=1724317144; c=relaxed/simple;
+	bh=DpcDNDe+KZn/iuhwArlRSzqBJ/Xnc+TAR6oqznVkNwQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q7OXRvJGGCrftLNvfd9Ll5SR7X8W/PdvU4aLxwyI9TXT3Rk/SpqvR5M949XUfe5WuvyOd09WzWnQY1Y7U3imRZ/z7drcJaK2Hjw7pL1ZczoPJJ8lezHi1RVQkBtp03vqn1Ndl8oaUVPdfYfA4FgJc4PZqQmBLwSJWQEIcMKee0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTysZ2OU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C234C4AF0B;
-	Thu, 22 Aug 2024 08:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724316834;
-	bh=VBUZ9a94snb1UwxfdooO1UuV32+v4Cy7G2iDXQB5k9c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pTysZ2OUzSQbUGrHxQTBprKKlgI79jpKWvxTSZu0qwY+DP2/h0lEsvLN3aMLzzjXr
-	 DHKGxLscQImhHPO7QxTRIWXYE8p2Pg9fM2Y0CtV1jPTOuZR+GDW5jY4KcZUA6aozj/
-	 ugr/ozKJkXorJsu4DePnecv1buGWIOR8IGHaMA5mXllu7Khr0DLOPUMMw1+azUON/U
-	 o3E1UoqqQBvj1JgszOn+O8wS+MxUl/TzhnBKgvvL5lAPGy7LKDg9BxVl9pq80YoS5G
-	 pMRp4ekxsn19Wz/STu4B27Y1Uh0551zVvKBRuKMekFJkEeEtiz7UOcNJMuBA57v328
-	 g8sHB4kJeWMPw==
-Date: Thu, 22 Aug 2024 10:53:50 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 5/6] inode: port __I_LRU_ISOLATING to var event
-Message-ID: <20240822-wachdienst-mahnmal-b25d2f0fb350@brauner>
-References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
- <20240821-work-i_state-v2-5-67244769f102@kernel.org>
- <fcf964b8b46af36e31f9dda2a8f2180eb999f35c.camel@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvdGvfKVcprgHzwvOmlghkxJ8t8tPNQIK2tP07h4I1OgjK+/YDYC78oCdz3qiyIj13twSlon5xlqdoxMYOGMFkzE7bFaYhYa4zD9AU5iiLcBBkiYp8kxVUWQUBb2XhWgSUJ5K8hAcAKbmrk0QrqsCPElU0hQUmlq76deb5bcS+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35801C4AF0B;
+	Thu, 22 Aug 2024 08:58:58 +0000 (UTC)
+Date: Thu, 22 Aug 2024 09:58:55 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 05/39] arm64: Document boot requirements for Guarded
+ Control Stacks
+Message-ID: <Zsb9z2giUQbUTH5a@arm.com>
+References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
+ <20240822-arm64-gcs-v11-5-41b81947ecb5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fcf964b8b46af36e31f9dda2a8f2180eb999f35c.camel@kernel.org>
+In-Reply-To: <20240822-arm64-gcs-v11-5-41b81947ecb5@kernel.org>
 
-On Wed, Aug 21, 2024 at 03:41:45PM GMT, Jeff Layton wrote:
-> On Wed, 2024-08-21 at 17:47 +0200, Christian Brauner wrote:
-> > Port the __I_LRU_ISOLATING mechanism to use the new var event mechanism.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/inode.c | 26 +++++++++++++++++---------
-> >  1 file changed, 17 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index d18e1567c487..c8a5c63dc980 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -510,8 +510,7 @@ static void inode_unpin_lru_isolating(struct inode *inode)
-> >  	spin_lock(&inode->i_lock);
-> >  	WARN_ON(!(inode->i_state & I_LRU_ISOLATING));
-> >  	inode->i_state &= ~I_LRU_ISOLATING;
-> > -	smp_mb();
-> > -	wake_up_bit(&inode->i_state, __I_LRU_ISOLATING);
-> > +	inode_wake_up_bit(inode, __I_LRU_ISOLATING);
-> >  	spin_unlock(&inode->i_lock);
-> >  }
-> >  
-> > @@ -519,13 +518,22 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
-> >  {
-> >  	lockdep_assert_held(&inode->i_lock);
-> >  	if (inode->i_state & I_LRU_ISOLATING) {
-> > -		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
-> > -		wait_queue_head_t *wqh;
-> > -
-> > -		wqh = bit_waitqueue(&inode->i_state, __I_LRU_ISOLATING);
-> > -		spin_unlock(&inode->i_lock);
-> > -		__wait_on_bit(wqh, &wq, bit_wait, TASK_UNINTERRUPTIBLE);
-> > -		spin_lock(&inode->i_lock);
-> > +		struct wait_bit_queue_entry wqe;
-> > +		struct wait_queue_head *wq_head;
-> > +
-> > +		wq_head = inode_bit_waitqueue(&wqe, inode, __I_LRU_ISOLATING);
-> > +		for (;;) {
-> > +			prepare_to_wait_event(wq_head, &wqe.wq_entry,
-> > +					      TASK_UNINTERRUPTIBLE);
-> > +			if (inode->i_state & I_LRU_ISOLATING) {
-> > +				spin_unlock(&inode->i_lock);
-> > +				schedule();
-> > +				spin_lock(&inode->i_lock);
-> > +				continue;
-> > +			}
-> > +			break;
-> > +		}
+On Thu, Aug 22, 2024 at 02:15:08AM +0100, Mark Brown wrote:
+> FEAT_GCS introduces a number of new system registers, we require that
+> access to these registers is not trapped when we identify that the feature
+> is present.  There is also a HCRX_EL2 control to make GCS operations
+> functional.
 > 
-> nit: personally, I'd prefer this, since you wouldn't need the brackets
-> or the continue:
+> Since if GCS is enabled any function call instruction will cause a fault
+> we also require that the feature be specifically disabled, existing
+> kernels implicitly have this requirement and especially given that the
+> MMU must be disabled it is difficult to see a situation where leaving
+> GCS enabled would be reasonable.
 > 
-> 			if (!(inode->i_state & LRU_ISOLATING))
-> 				break;
-> 			spin_unlock();
-> 			schedule();
+> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Yeah, that's nicer. I'll use that.
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
