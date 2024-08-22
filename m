@@ -1,268 +1,246 @@
-Return-Path: <linux-fsdevel+bounces-26802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BBF95BB49
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:04:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F4195BB48
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70C87B2867B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:01:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA542843FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8DA1CDA00;
-	Thu, 22 Aug 2024 16:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF841CCEC1;
+	Thu, 22 Aug 2024 16:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="SyT41BUl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gBHmJRXd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79F51CCB35;
-	Thu, 22 Aug 2024 16:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBE513A86C;
+	Thu, 22 Aug 2024 16:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724342491; cv=none; b=hJHJ8K8JLuLP98PBucNpjk5yCQlKmbdqMKEG1tA0Rnjr9Y0LLD+JXa8bzTpRMrlGMlwm3w0x7AlsiHy1WQsKSY7DeSQOYmQUzVk3ouOF/Zth2a48UMf9Pd+2DcyUIE+ZX3q9dvVbf6tIEl3P4lr8u5trum63LyiJkR/wCd9q/dU=
+	t=1724342662; cv=none; b=Pm/q23uc4ZF2OnV8CnuHrIonA63BCiZQKzJt4h1V2BBifdjNOLJN6Cs6ne2/5Y/eP+IFWsln+LNl7T1KBTS+1Uxx+SYy1QqxyXdeHOEuKCIzVt2VJ0CDD+vmm9xmu/rI7Rvdwa41mwv4pLwKeyJhE0dcW9wZQdjUomfGSLIrDRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724342491; c=relaxed/simple;
-	bh=Jfq1MZlSgGGrlPD8Z3vKkb/RmId0zw2x3I5tk4DbX5g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H9Kk2W1YPu7J5O0u8Vr8gRxB7lFbGs539dSrEEOTMyVZrbf75d4BJVbjQjOY3x/iKIYfErOhBxbdTR5TT6K+x2jw8yX7FOAlcuaAojvrbClhrOWn4z3tCdgSedYcoZmWnX77moqo/nDrioniVRiee1vkevs3wJinXwc6UrKycZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=SyT41BUl; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 6DF4821D7;
-	Thu, 22 Aug 2024 15:44:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1724341463;
-	bh=iQBbo0cE9rzhyZt5Z1w6ZWxA0nXj4w9QVoU8WkNcpxU=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=SyT41BUlBJgpSnGkWFYtURS/3tawhLdjSrjmG4siFrwrw3ESRE++RIX5biZsxTFrv
-	 HE7fFc0faEOUalqenQXw/OqaHew0kpZs3rX8xB6aDtjBxl9R9Kguuu/CzLrQTBBgPI
-	 dTrXRoEOGVwWsfAT7v9kbUBs1bgeFECyqcCPFrac=
-Received: from ntfs3vm.paragon-software.com (192.168.211.133) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Thu, 22 Aug 2024 18:52:19 +0300
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To: <ntfs3@lists.linux.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH 03/14] fs/ntfs3: Separete common code for file_read/write iter/splice
-Date: Thu, 22 Aug 2024 18:51:56 +0300
-Message-ID: <20240822155207.600355-4-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240822155207.600355-1-almaz.alexandrovich@paragon-software.com>
-References: <20240822155207.600355-1-almaz.alexandrovich@paragon-software.com>
+	s=arc-20240116; t=1724342662; c=relaxed/simple;
+	bh=xG/Y4m7UkLbKHl/IZwRhtiEKv0Nt2MuuW46bOqWCLqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FEiLr8ka0M1K/PLoIafEXE6wScWd2Ewbp2ExsS3a3L30dAv++MBkrUbu+VM4PpVz2btDYcSXQ5DFGwlb6QGuAT6OyjGnPH5DMHBhfta/y7gNo3pycFh0BZZHi89oQhSxNPafzto7AsrM379dVCrpYwYm1QPnePQv5Jc3aoxsrE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gBHmJRXd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 481B0C32782;
+	Thu, 22 Aug 2024 16:04:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724342661;
+	bh=xG/Y4m7UkLbKHl/IZwRhtiEKv0Nt2MuuW46bOqWCLqQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gBHmJRXdek0AH40mQbdUiLIWWTp7RbnmSQNqjIV8uwsjdG2MIlmvD1/CZEiI0hf5B
+	 XI/IyrDfH76ltCXosN4Bgrs7cn7FnnAxhrIdUYve/xr711y2mPuQ0vRYuA3jia5QuV
+	 v28AHgX1e1Y0wBeDqUfsjVcIYxF6nhH8VKGn62wvSDyObSPyZNaTlHI0hZ4bWLsfUj
+	 U4jTlC7qEkMWbI6eOyMAWDycBkiE7tSi+YrpK5A5rXZPm8YKjjgeESTUGR1/rC3Ibg
+	 dc0whXmYxuj4XIVRGNxf0XFSJL4kEUhnWyazBsRxzKzBgbe/g/1Yxsfjedj1x/uwKY
+	 2crBW3SvA9PFg==
+Date: Thu, 22 Aug 2024 12:04:20 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
+	Anna Schumaker <anna@kernel.org>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	NeilBrown <neilb@suse.de>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v12 05/24] nfsd: fix nfsfh tracepoints to properly handle
+ NULL rqstp
+Message-ID: <ZsdhhIY8WQCPWete@kernel.org>
+References: <20240819181750.70570-1-snitzer@kernel.org>
+ <20240819181750.70570-6-snitzer@kernel.org>
+ <4ab36f95604da25d8c5b419c927d85d362bca2e8.camel@kernel.org>
+ <ZsZa7PX0QtZKWt_R@kernel.org>
+ <ZsdUQ1t4L8dfB0BF@tissot.1015granger.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+In-Reply-To: <ZsdUQ1t4L8dfB0BF@tissot.1015granger.net>
 
-The common code for handling encrypted, dedup, and compressed files
-has been moved to check_read_restriction() and check_write_restriction().
+On Thu, Aug 22, 2024 at 11:07:47AM -0400, Chuck Lever wrote:
+> On Wed, Aug 21, 2024 at 05:23:56PM -0400, Mike Snitzer wrote:
+> > On Wed, Aug 21, 2024 at 01:46:02PM -0400, Jeff Layton wrote:
+> > > On Mon, 2024-08-19 at 14:17 -0400, Mike Snitzer wrote:
+> > > > Fixes stop-gap used in previous commit where caller avoided using
+> > > > tracepoint if rqstp is NULL.  Instead, have each tracepoint avoid
+> > > > dereferencing NULL rqstp.
+> > > > 
+> > > > Signed-off-by: Mike Snitzer <snitzer@kernel.org>
+> > > > ---
+> > > >  fs/nfsd/nfsfh.c | 12 ++++--------
+> > > >  fs/nfsd/trace.h | 36 +++++++++++++++++++++---------------
+> > > >  2 files changed, 25 insertions(+), 23 deletions(-)
+> > > > 
+> > > > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> > > > index 19e173187ab9..bae727e65214 100644
+> > > > --- a/fs/nfsd/nfsfh.c
+> > > > +++ b/fs/nfsd/nfsfh.c
+> > > > @@ -195,8 +195,7 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst
+> > > > *rqstp, struct net *net,
+> > > >  
+> > > >  	error = nfserr_stale;
+> > > >  	if (IS_ERR(exp)) {
+> > > > -		if (rqstp)
+> > > > -			trace_nfsd_set_fh_dentry_badexport(rqstp,
+> > > > fhp, PTR_ERR(exp));
+> > > > +		trace_nfsd_set_fh_dentry_badexport(rqstp, fhp,
+> > > > PTR_ERR(exp));
+> > > >  
+> > > >  		if (PTR_ERR(exp) == -ENOENT)
+> > > >  			return error;
+> > > > @@ -244,8 +243,7 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst
+> > > > *rqstp, struct net *net,
+> > > >  						data_left,
+> > > > fileid_type, 0,
+> > > >  						nfsd_acceptable,
+> > > > exp);
+> > > >  		if (IS_ERR_OR_NULL(dentry)) {
+> > > > -			if (rqstp)
+> > > > -
+> > > > 				trace_nfsd_set_fh_dentry_badhandle(rqstp, fhp,
+> > > > +			trace_nfsd_set_fh_dentry_badhandle(rqstp,
+> > > > fhp,
+> > > >  					dentry ?  PTR_ERR(dentry) :
+> > > > -ESTALE);
+> > > >  			switch (PTR_ERR(dentry)) {
+> > > >  			case -ENOMEM:
+> > > > @@ -321,8 +319,7 @@ __fh_verify(struct svc_rqst *rqstp,
+> > > >  	dentry = fhp->fh_dentry;
+> > > >  	exp = fhp->fh_export;
+> > > >  
+> > > > -	if (rqstp)
+> > > > -		trace_nfsd_fh_verify(rqstp, fhp, type, access);
+> > > > +	trace_nfsd_fh_verify(net, rqstp, fhp, type, access);
+> > > >  
+> > > >  	/*
+> > > >  	 * We still have to do all these permission checks, even
+> > > > when
+> > > > @@ -376,8 +373,7 @@ __fh_verify(struct svc_rqst *rqstp,
+> > > >  	/* Finally, check access permissions. */
+> > > >  	error = nfsd_permission(cred, exp, dentry, access);
+> > > >  out:
+> > > > -	if (rqstp)
+> > > > -		trace_nfsd_fh_verify_err(rqstp, fhp, type, access,
+> > > > error);
+> > > > +	trace_nfsd_fh_verify_err(net, rqstp, fhp, type, access,
+> > > > error);
+> > > >  	if (error == nfserr_stale)
+> > > >  		nfsd_stats_fh_stale_inc(nn, exp);
+> > > >  	return error;
+> > > > diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
+> > > > index 77bbd23aa150..d49b3c1e3ba9 100644
+> > > > --- a/fs/nfsd/trace.h
+> > > > +++ b/fs/nfsd/trace.h
+> > > > @@ -195,12 +195,13 @@ TRACE_EVENT(nfsd_compound_encode_err,
+> > > >  
+> > > >  TRACE_EVENT(nfsd_fh_verify,
+> > > >  	TP_PROTO(
+> > > > +		const struct net *net,
+> > > >  		const struct svc_rqst *rqstp,
+> > > >  		const struct svc_fh *fhp,
+> > > >  		umode_t type,
+> > > >  		int access
+> > > >  	),
+> > > > -	TP_ARGS(rqstp, fhp, type, access),
+> > > > +	TP_ARGS(net, rqstp, fhp, type, access),
+> > > >  	TP_STRUCT__entry(
+> > > >  		__field(unsigned int, netns_ino)
+> > > >  		__sockaddr(server, rqstp->rq_xprt->xpt_remotelen)
+> > > > @@ -212,12 +213,14 @@ TRACE_EVENT(nfsd_fh_verify,
+> > > >  		__field(unsigned long, access)
+> > > >  	),
+> > > >  	TP_fast_assign(
+> > > > -		__entry->netns_ino = SVC_NET(rqstp)->ns.inum;
+> > > > -		__assign_sockaddr(server, &rqstp->rq_xprt-
+> > > > >xpt_local,
+> > > > -		       rqstp->rq_xprt->xpt_locallen);
+> > > > -		__assign_sockaddr(client, &rqstp->rq_xprt-
+> > > > >xpt_remote,
+> > > > -				  rqstp->rq_xprt->xpt_remotelen);
+> > > > -		__entry->xid = be32_to_cpu(rqstp->rq_xid);
+> > > > +		__entry->netns_ino = net->ns.inum;
+> > > > +		if (rqstp) {
+> > > > +			__assign_sockaddr(server, &rqstp->rq_xprt-
+> > > > >xpt_local,
+> > > > +					  rqstp->rq_xprt-
+> > > > >xpt_locallen);
+> > > > +			__assign_sockaddr(client, &rqstp->rq_xprt-
+> > > > >xpt_remote,
+> > > > +					  rqstp->rq_xprt-
+> > > > >xpt_remotelen);
+> > > > +		}
+> > > 
+> > > Does this need an else branch to set these values to something when
+> > > rqstp is NULL, or are we guaranteed that they are already zeroed out
+> > > when they aren't assigned?
+> > 
+> > I'm not sure.  It isn't immediately clear what is actually using these.
+> > 
+> > But I did just notice an inconsistency, these entry members are defined:
+> > 
+> >                 __sockaddr(server, rqstp->rq_xprt->xpt_remotelen)
+> >                 __sockaddr(client, rqstp->rq_xprt->xpt_remotelen)
+> > 
+> > Yet they go on to use rqstp->rq_xprt->xpt_locallen and
+> > rqstp->rq_xprt->xpt_remotelen respectively.
+> > 
+> > Chuck, would welcome your feedback on how to properly fix these
+> > tracepoints to handle rqstp being NULL.  And the inconsistency I just
+> > noted is something extra.
+> 
+> First, a comment about patch ordering: I think you can preserve
+> attribution but make these a little easier to digest if you reverse
+> 4/ and 5/. Fix the problem before it becomes a problem, as it were.
+> 
+> As a general remark, I would prefer to retain the trace points and
+> even the address information in the local I/O case: the client
+> address is an important part of the decision to permit or deny
+> access to the FH in question. The issue is how to make that
+> happen...
+> 
+> The __sockaddr() macros I think will trigger an oops if
+> rqstp == NULL. The second argument determines the size of a
+> variable-length trace field IIRC. One way to avoid that is to use a
+> fixed size field for the addresses (big enough to store an IPv6
+> address?  or an abstract address? those can get pretty big)
+> 
+> I need to study 4/ more closely; perhaps it is doing too much in a
+> single patch. (ie, the code ends up in a better place, but the
+> details of the transition are obscured by being lumped together into
+> one patch).
+> 
+> So, can you or Neil answer: what would appear as the client address
+> for local I/O ?
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
- fs/ntfs3/file.c | 116 +++++++++++++++++++++++++++++++-----------------
- 1 file changed, 76 insertions(+), 40 deletions(-)
+Before when there was the "fake" svc_rqst it was initialized with:
 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index d31eae611fe0..1cbaab1163b9 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -842,10 +842,12 @@ int ntfs3_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	return err;
- }
- 
--static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-+/*
-+ * check_read_restriction:
-+ * common code for ntfs_file_read_iter and ntfs_file_splice_read
-+ */
-+static int check_read_restriction(struct inode *inode)
- {
--	struct file *file = iocb->ki_filp;
--	struct inode *inode = file_inode(file);
- 	struct ntfs_inode *ni = ntfs_i(inode);
- 
- 	if (unlikely(ntfs3_forced_shutdown(inode->i_sb)))
-@@ -856,11 +858,6 @@ static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		return -EOPNOTSUPP;
- 	}
- 
--	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
--		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
--		return -EOPNOTSUPP;
--	}
--
- #ifndef CONFIG_NTFS3_LZX_XPRESS
- 	if (ni->ni_flags & NI_FLAG_COMPRESSED_MASK) {
- 		ntfs_inode_warn(
-@@ -875,37 +872,44 @@ static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		return -EOPNOTSUPP;
- 	}
- 
--	return generic_file_read_iter(iocb, iter);
-+	return 0;
- }
- 
--static ssize_t ntfs_file_splice_read(struct file *in, loff_t *ppos,
--				     struct pipe_inode_info *pipe, size_t len,
--				     unsigned int flags)
-+/*
-+ * ntfs_file_read_iter - file_operations::read_iter
-+ */
-+static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- {
--	struct inode *inode = file_inode(in);
-+	struct file *file = iocb->ki_filp;
-+	struct inode *inode = file_inode(file);
- 	struct ntfs_inode *ni = ntfs_i(inode);
-+	ssize_t err;
- 
--	if (unlikely(ntfs3_forced_shutdown(inode->i_sb)))
--		return -EIO;
-+	err = check_read_restriction(inode);
-+	if (err)
-+		return err;
- 
--	if (is_encrypted(ni)) {
--		ntfs_inode_warn(inode, "encrypted i/o not supported");
-+	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
-+		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
- 		return -EOPNOTSUPP;
- 	}
- 
--#ifndef CONFIG_NTFS3_LZX_XPRESS
--	if (ni->ni_flags & NI_FLAG_COMPRESSED_MASK) {
--		ntfs_inode_warn(
--			inode,
--			"activate CONFIG_NTFS3_LZX_XPRESS to read external compressed files");
--		return -EOPNOTSUPP;
--	}
--#endif
-+	return generic_file_read_iter(iocb, iter);
-+}
- 
--	if (is_dedup(ni)) {
--		ntfs_inode_warn(inode, "read deduplicated not supported");
--		return -EOPNOTSUPP;
--	}
-+/*
-+ * ntfs_file_splice_read - file_operations::splice_read
-+ */
-+static ssize_t ntfs_file_splice_read(struct file *in, loff_t *ppos,
-+				     struct pipe_inode_info *pipe, size_t len,
-+				     unsigned int flags)
-+{
-+	struct inode *inode = file_inode(in);
-+	ssize_t err;
-+
-+	err = check_read_restriction(inode);
-+	if (err)
-+		return err;
- 
- 	return filemap_splice_read(in, ppos, pipe, len, flags);
- }
-@@ -1173,14 +1177,11 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- }
- 
- /*
-- * ntfs_file_write_iter - file_operations::write_iter
-+ * check_write_restriction:
-+ * common code for ntfs_file_write_iter and ntfs_file_splice_write
-  */
--static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-+static int check_write_restriction(struct inode *inode)
- {
--	struct file *file = iocb->ki_filp;
--	struct inode *inode = file_inode(file);
--	ssize_t ret;
--	int err;
- 	struct ntfs_inode *ni = ntfs_i(inode);
- 
- 	if (unlikely(ntfs3_forced_shutdown(inode->i_sb)))
-@@ -1191,13 +1192,31 @@ static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		return -EOPNOTSUPP;
- 	}
- 
--	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
--		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
-+	if (is_dedup(ni)) {
-+		ntfs_inode_warn(inode, "write into deduplicated not supported");
- 		return -EOPNOTSUPP;
- 	}
- 
--	if (is_dedup(ni)) {
--		ntfs_inode_warn(inode, "write into deduplicated not supported");
-+	return 0;
-+}
-+
-+/*
-+ * ntfs_file_write_iter - file_operations::write_iter
-+ */
-+static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	struct file *file = iocb->ki_filp;
-+	struct inode *inode = file_inode(file);
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	ssize_t ret;
-+	int err;
-+
-+	err = check_write_restriction(inode);
-+	if (err)
-+		return err;
-+
-+	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
-+		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
- 		return -EOPNOTSUPP;
- 	}
- 
-@@ -1321,6 +1340,23 @@ int ntfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	return err;
- }
- 
-+/*
-+ * ntfs_file_splice_write - file_operations::splice_write
-+ */
-+static ssize_t ntfs_file_splice_write(struct pipe_inode_info *pipe,
-+				      struct file *file, loff_t *ppos,
-+				      size_t len, unsigned int flags)
-+{
-+	ssize_t err;
-+	struct inode *inode = file_inode(file);
-+
-+	err = check_write_restriction(inode);
-+	if (err)
-+		return err;
-+
-+	return iter_file_splice_write(pipe, file, ppos, len, flags);
-+}
-+
- // clang-format off
- const struct inode_operations ntfs_file_inode_operations = {
- 	.getattr	= ntfs_getattr,
-@@ -1342,10 +1378,10 @@ const struct file_operations ntfs_file_operations = {
- 	.compat_ioctl	= ntfs_compat_ioctl,
- #endif
- 	.splice_read	= ntfs_file_splice_read,
-+	.splice_write	= ntfs_file_splice_write,
- 	.mmap		= ntfs_file_mmap,
- 	.open		= ntfs_file_open,
- 	.fsync		= generic_file_fsync,
--	.splice_write	= iter_file_splice_write,
- 	.fallocate	= ntfs_fallocate,
- 	.release	= ntfs_file_release,
- };
--- 
-2.34.1
+       /* Note: we're connecting to ourself, so source addr == peer addr */
+       rqstp->rq_addrlen = rpc_peeraddr(rpc_clnt,
+                       (struct sockaddr *)&rqstp->rq_addr,
+                       sizeof(rqstp->rq_addr));
 
+Anyway, as the code is also now: the rpc_clnt passed to
+nfsd_open_local_fh() will reflect the same address as the server.
+
+My thinking was that for localio there doesn't need to be any explicit
+listing of the address info in the tracepoints (but that'd be more
+convincing if we at least logged localio by looking for and logging
+NFSD_MAY_LOCALIO in mayflags passed to nfsd_file_acquire_local).
+
+But I agree it'd be nice to have tracepoints log matching 127.0.0.1 or
+::1, etc -- just don't think it strictly necessary.
+
+Open to whatever you think best.
+
+Mike
 
