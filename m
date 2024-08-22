@@ -1,139 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-26708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26709-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB4195B2CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 12:21:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494E195B33A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 12:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24E2C1F22C8D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:21:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E18284012
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FB417E8E2;
-	Thu, 22 Aug 2024 10:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76301183CA0;
+	Thu, 22 Aug 2024 10:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZG528NqD"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="cbIm6M0X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0112D364A4;
-	Thu, 22 Aug 2024 10:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1765D17E918
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 10:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724322110; cv=none; b=lxMXz1n6PGfkT5/r+sRleJaDw2vbQYrXHmaw6vdOCg/faApNVYSON/RbkInw3RdfmC7BOcHHdQ+YQwBjuL4rhyhrrm+f9ewWvO7eux+uWIwyPtN/ErZK9HvVRIeOv9e9YQjfeJA80XopRsWyew3oMFiG3Vf+pjG8PdKhCZQBOxU=
+	t=1724323974; cv=none; b=i7gahzDworpWYBcZBSV9bx807WCPnpt2h5Tsj6N2j4C5FJYBTkBn0XT42RrRFB2yNv+OcCy9NJg4sYcFKtsuqIjd8EFK07bP+qEK5OAgTvlFqJS3SKqiNkgN4Jb/cH5Fz3fRkCLTKMKEAkZ+dcaSA9aHt2uzZSYHgw9keTjutU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724322110; c=relaxed/simple;
-	bh=UvnmyoORO8Qlvqn0VCeIiPZzTWkIxDwy8sX3YeOfxNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ajW79nZ5fBlhn6LIMrDB9s1Mea7BHx/qCyAVc6ybd7nWJRdujuK7BHMsc82SUPCR/k90Ar9Z1J0CkTx1WuneCMiiesUNLwldiwDrMtkHx4/az78QNTbWwhp5OJnxmaQ+FrYn/XaSJjzG43ezA0Qaqgg1JNYvTu1w+p+3ja6Ghnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZG528NqD; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so942769a12.2;
-        Thu, 22 Aug 2024 03:21:48 -0700 (PDT)
+	s=arc-20240116; t=1724323974; c=relaxed/simple;
+	bh=y605vAXATkbSnPLc32TQO2yOHICqbI07MCILSXKyu2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IxGfkYGaPoPo9mvKXTPC5P36u44iTFsWn9H7Eyw4l0F72dspHzLLuwh1sT2pg+5AaRIxh3mMf4Xrw555skl2FmTcMQMjCMjuC7pRRf6EuD6y7HY34OSV4rxX8GWG0IBmHCG4wpHCtneBz/4HAXDeI21p3qwrVS1A0/6OMU3g+E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=cbIm6M0X; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a83597ce5beso102556866b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 03:52:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724322107; x=1724926907; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4HpUPm5maP5njGxqT2EPfesiPfuO4nNvXVn6FksK0GY=;
-        b=ZG528NqDfL7JotubUSlkH2oR4mJ2IXf/ldBma/cpeIi+iklvhspNxb8GOxyG0PSW6V
-         kCQTXTdzVyzaBQvyDa6Dyt0KZrWtVg6DoUgeQUJP11L/U3cjiRnJ4zfhCOw+yuBDkAk7
-         FvNBomspLgbRGxvwYcEU4PVVBzjpgb3uinhbld6URaAKiyr6km5YgpmcDqKJ3pRlXVBD
-         +efy6pCBHI73OvY1TKy9h/utXD1jnKoPM3QPO47VpUaErmhQyf+3KuHLLfzeqpXXU3xJ
-         2ez5i9yNQ4FQfx6Or+QLJd3lrcssfquG/cxi6QGK8eSHsv5cxc0YuzfUjKKfozGAa/c9
-         OosQ==
+        d=szeredi.hu; s=google; t=1724323971; x=1724928771; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=m/5OwHe6fl0710PXrnPDc64BRDoGhRYKmT1gfkjMADc=;
+        b=cbIm6M0XrYGDfevggTsbi5e9WqYctamn26U08akYLcyw4y3cequ6v4jK+iLEPNjGEx
+         vVJJdQVr8ygnCjI3BOKUsjraPdN99rlp2i/SFk9bT4JmTByhgYuBhaXNAEiC6r9fr1p9
+         YwvQAgmRSZdqm7AVDfpFLW6SDJ5FH55AzhkL4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724322107; x=1724926907;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4HpUPm5maP5njGxqT2EPfesiPfuO4nNvXVn6FksK0GY=;
-        b=SMstXkZeCO8HzO9sfvxFEofXeL2zix0nXbJMhEJQVo8GhXGUMU215GV+ZvegqATct5
-         0UBFDLd0c9q3OudAuyCsGSjdcH5GHSoQVfynrWeYmSRaoFhLJCPsbk86L0h3E/0Ltm7t
-         +lF7Pah83J89586WJ1Gfb9UY9+EmkMP5DV0c83N9M5ptmwYtUmHGPuICQ1OeSPWrJ+6w
-         eodvjy5CnaelN7MIX7bncpTQNlpUtdxJCrVOo2Or+176Eqk+9/BzkgmTnoql96w1h5gr
-         hxLn6jwg6XLSPH6RTGUB3l96oEV6YBEdIGVNo7YBn2/mMKOTDKcf0RF+t1zvtHKMb2XB
-         klxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKEXbuPjO3ITeSyQoxzopG/zSUECPiMs9AVNQUKAyBe9JRbbN46ahryBTVVXxEOZ47b4MJI5qwr7AGzTEP@vger.kernel.org, AJvYcCW46gh0xmLP8xk6x/KYSQWM4S6697RHkzVQIahQByeBS1rAOLTyCLJaGDVRfaBgJqNSHA/3F38l49RwAv2X@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9Ygb3BfchrnRt8QBNSzkQCtj1lEB5mMvaln5p3qdQmTTDnMvZ
-	gS6W0DhyuCTtMrxVcYWapYfgif+A40vH94kmCkYM7AN/CEmr6D9CpwxHVw==
-X-Google-Smtp-Source: AGHT+IH7cxLf7SLbT+duZmRQ8/OxZhpJzcy4IUnNX0FVEwpl6kAbYyUk2yogRoHtbNd15kJmyRa7YQ==
-X-Received: by 2002:a05:6402:4308:b0:5be:fc2e:b7d4 with SMTP id 4fb4d7f45d1cf-5c0791ebb13mr928332a12.13.1724322107097;
-        Thu, 22 Aug 2024 03:21:47 -0700 (PDT)
-Received: from f (cst-prg-86-203.cust.vodafone.cz. [46.135.86.203])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddbee6sm773164a12.9.2024.08.22.03.21.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 03:21:46 -0700 (PDT)
-Date: Thu, 22 Aug 2024 12:21:39 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] avoid extra path_get/path_put cycle in path_openat()
-Message-ID: <o2uu6mzozjaruja5udzfnv2p5fwfoeud5movtve7gyuj57xlz3@aqy6sil3o2ze>
-References: <20240807070552.GW5334@ZenIV>
- <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
- <20240807075218.GX5334@ZenIV>
- <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
- <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
- <20240807124348.GY5334@ZenIV>
- <20240807203814.GA5334@ZenIV>
- <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com>
- <20240822003359.GO504335@ZenIV>
- <20240822004149.GR504335@ZenIV>
+        d=1e100.net; s=20230601; t=1724323971; x=1724928771;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m/5OwHe6fl0710PXrnPDc64BRDoGhRYKmT1gfkjMADc=;
+        b=vymbU+UvTUE7fyG3aRR+pyKIcA7C0gCoNpHHtMJkjiaEqWjyAoskrCvTV/6fd1di63
+         A5HPszWMhrRlnF+6V6UjR72bth6pCkkS1MxHdRdZXtVm6GNHXUSOj8ifI+/I7NEtY883
+         nUGt4W8Uge584IS3BmfT3nDncIbu5am5/VoGDPGNuBzO1pEJ2M9BH4RIkEXYrsVj6AOO
+         ZRA07lJCL8Yc5pDCrCj7I8gif9Vb9AKPNEJgr2Y+fcRM2BNiwHc8URtKqCVDCvyN1aJa
+         S6wIIIPQgbSzut5Ofd54DkYRdmajZdZO3b8LdBBeMCUbpdlu0yq3v853dSEe21SvCqin
+         p96g==
+X-Forwarded-Encrypted: i=1; AJvYcCV/FlrVUtNiw9oqjzTAfXmgu2vQHYiEcxNsM2reFToMPail5dAzFk0eHV1H3MFhnOVCfkv05Vj1C3UDxjuf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfiznPE7X+JqAJ+3RwPVzk5//mcAuke7cTmBET9sYXo3Jz23jD
+	6nmgw5nMqmgJHP2HI0ZFUhz3QiBOFDLoiP1wep0susJrEnKaOHkAFuTZrowImRjRBTT+4/ck6jD
+	+mwO/siFyIirop4lHYtzIRa2ji7Fmv/JYTt8L9g==
+X-Google-Smtp-Source: AGHT+IFB+FK7vHiB2mMwezh2Tjpw8TOxde0/EX3xwIeaS18J2MN/FaMhj9gKgYGaGppL2P/eZGpOuxaLsSsznNVS6g4=
+X-Received: by 2002:a17:907:7fa0:b0:a7a:b18a:6c with SMTP id
+ a640c23a62f3a-a868a6779dbmr294987866b.16.1724323971438; Thu, 22 Aug 2024
+ 03:52:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240822004149.GR504335@ZenIV>
+References: <20240813232241.2369855-1-joannelkoong@gmail.com>
+ <CAJfpegvPMEsHFUCzV6rZ9C3hE7zyhMmCnhO6bUZk7BtG8Jt70w@mail.gmail.com>
+ <20240821181130.GG1998418@perftesting> <CAJfpegsiRNnJx7OAoH58XRq3zujrcXx94S2JACFdgJJ_b8FdHw@mail.gmail.com>
+ <CAJnrk1b7DUTMqprx1GNtV59umQh2G5cY8Qv7ExEXRP5fCA41PQ@mail.gmail.com>
+In-Reply-To: <CAJnrk1b7DUTMqprx1GNtV59umQh2G5cY8Qv7ExEXRP5fCA41PQ@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 22 Aug 2024 12:52:39 +0200
+Message-ID: <CAJfpegsPvb6KLcpp8wuP96gFhV3cH4a4DfRp1ZztpeGwugz=UQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] fuse: add timeout option for requests
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 22, 2024 at 01:41:49AM +0100, Al Viro wrote:
-> Once we'd opened the file, nd->path and file->f_path have the
-> same contents.  Rather than having both pinned and nd->path
-> dropped by terminate_walk(), let's have them share the
-> references from the moment when FMODE_OPENED is set and
-> clear nd->path just before the terminate_walk() in such case.
-> 
-> To do that, we
-> 	* add a variant of vfs_open() that does *not* do conditional
-> path_get() (vfs_open_borrow()); use it in do_open().
-> 	* don't grab f->f_path.mnt in finish_open() - only
-> f->f_path.dentry.  Have atomic_open() drop the child dentry
-> in FMODE_OPENED case and return f->path.dentry without grabbing it.
-> 	* adjust vfs_tmpfile() for finish_open() change (it
-> is called from ->tmpfile() instances).
-> 	* make do_o_path() use vfs_open_borrow(), collapse path_put()
-> there with the conditional path_get() we would've get in vfs_open().
-> 	* in FMODE_OPENED case clear nd->path before calling
-> terminate_walk().
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index 0ec2e9a33856..f9988427fb97 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -1046,7 +1046,7 @@ int finish_open(struct file *file, struct dentry *dentry,
->  	file->f_path.dentry = dentry;
->  	err = do_dentry_open(file, open);
->  	if (file->f_mode & FMODE_OPENED)
-> -		path_get(&file->f_path);
-> +		dget(&file->f_path.dentry);
->  	return err;
->  }
+On Wed, 21 Aug 2024 at 23:22, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-There are numerous consumers of finish_open(), I don't see how they got
-adjusted to cope with this (or why they would not need adjustment).
+> Without a kernel enforced timeout, the only way out of this is to
+> abort the connection. A userspace timeout wouldn't help in this case
+> with getting the server unstuck. With the kernel timeout, this forces
+> the kernel handling of the write request to proceed, whihc will drop
+> the folio lock and resume the server back to a functioning state.
+>
+> I don't think situations like this are uncommon. For example, it's not
+> obvious or clear to developers that fuse_lowlevel_notify_inval_inode()
+> shouldn't be called inside of a write handler in their server code.
 
-For example fuse_create_open().
+Documentation is definitely lacking.  In fact a simple rule is: never
+call a notification function from within a request handling function.
+Notifications are async events that should happen independently of
+handling regular operations.  Anything else is an abuse of the
+interface.
 
-If this is sorted out I would argue it needs to be explained in the
-commit message.
+>
+> For your concern about potential unintended side effects of timed out
+> requests without the server's knowledge, could you elaborate more on
+> the VFS locking example? In my mind, a request that times out is the
+> same thing as a request that behaves normally and completes with an
+> error code, but perhaps not?
 
-fwiw I don't think patching up the convention of finish_open() is needed
-for avoiding the extra ref cycle to work.
+- user calls mknod(2) on fuse directory
+- VFS takes inode lock on parent directory
+- calls into fuse to create the file
+- fuse sends request to server
+- file creation is slow and times out in the kernel
+- fuse returns -ETIMEDOUT
+- VFS releases inode lock
+- meanwhile the server is still working on creating the file and has
+no idea that something went wrong
+- user calls the same mknod(2) again
+- same things happen as last time
+- server starts to create the file *again* knowing that the VFS takes
+care of concurrency
+- server crashes due to corruption
+
+
+> I think also, having some way for system admins to enforce request
+> timeouts across the board might be useful as well - for example, if a
+> malignant fuse server doesn't reply to any requests, the requests hog
+> memory until the server is killed.
+
+As I said, I'm not against enforcing a response time for fuse servers,
+as long as a timeout results in a complete abort and not just an error
+on the timed out request.
+
+Thanks,
+Miklos
 
