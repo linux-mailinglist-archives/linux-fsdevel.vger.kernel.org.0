@@ -1,95 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-26699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA2595B1B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 11:31:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED5295B1FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 11:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4961C21166
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 09:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15AE81F21A7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 09:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655A917C7C9;
-	Thu, 22 Aug 2024 09:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DBA187875;
+	Thu, 22 Aug 2024 09:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFZxyCje"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="dEw5xY+M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3886175D51;
-	Thu, 22 Aug 2024 09:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BD0187874
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 09:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724319105; cv=none; b=MVJXy6jTZj945ayCfuajr0R2TgaZqNLnqgKIcJ0/MH+V+73mC6ITsAz11tHextMxsn8Qw6A+JSFp4wXVjco8fdKM03rQ4Z2Bg0+5yGRhsl2LQ8l5+mHS+gAiRV3BF4/o+zyTPjXeX+ogY84vn92YIG6FPEjdSEdVUZp5K4iRxGY=
+	t=1724319601; cv=none; b=CWyglJpTsM/X5NDj6Ehtn8Q+pVc7jYr/qseb46zlRtHXL/lOdKYOqVVbCbV+HzLbQsZG3A8sWlguYPkeMOP2oANXrUwDKb9D6SopLeXgBTkVICoJxKGQ3R/GXMYvwbo0pJqjjuaZ2BlE07aLZaI1JSfnhqFsHEakckRyl0Pfr5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724319105; c=relaxed/simple;
-	bh=3x6waZzZjuxXbrx2LCK6ZgsqB/Sz+tWaR85KaEWKZro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AMhUvMbMnsdR26FkI5ZbnTZF4XRq6GPDDdyNDcbb4d6Nd70b6MwxrP8ykamkEqvrIhav/zW4apOAnnzJDKHJ8Wbmp8GHCH0ad9EUpZzUt3sB8GVMSz/L7+2u1iImv0+yaMucwkyL0v9isLkZxLIy+dTkDwyc5GqK18BW2pYnC1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFZxyCje; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C837C32782;
-	Thu, 22 Aug 2024 09:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724319105;
-	bh=3x6waZzZjuxXbrx2LCK6ZgsqB/Sz+tWaR85KaEWKZro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rFZxyCjeFHNi2ReXcYwrCRg0pl/S+TVgavLdAnEsNxO4OHONM8KFECwNth84fuFPa
-	 LyNSG62sZp5tzLmUwrp3/lefGDcKAN+yEqsNFGNnX5MWCqnBgcazMxG1ds1RvDznte
-	 ulm8mQ4Sc4ltWyfvPMBEUQ1RiT+VaHga5hDtA6ZuVK0C1B+5LSJmAZHM9l5FOmkdGz
-	 Q4S+z30QNcdw/L7gMaiyrx6M2x063I5TkJCQyOzopDMOD8L6BFH0WOB/zQ083G/hQR
-	 9dr1I23ogReegIs4aNs6n2Pul0mdiogBXJllkiXBrkl1WDLNoXPahLSbyf7Puta18g
-	 FOevYGAnnmIUw==
-Date: Thu, 22 Aug 2024 11:31:41 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] avoid extra path_get/path_put cycle in path_openat()
-Message-ID: <20240822-notbremse-monitor-c8b88eb60fd2@brauner>
-References: <20240807070552.GW5334@ZenIV>
- <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
- <20240807075218.GX5334@ZenIV>
- <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
- <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
- <20240807124348.GY5334@ZenIV>
- <20240807203814.GA5334@ZenIV>
- <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com>
- <20240822003359.GO504335@ZenIV>
- <20240822004149.GR504335@ZenIV>
+	s=arc-20240116; t=1724319601; c=relaxed/simple;
+	bh=RhFz+Z3jpnxzYaSzDOAVvmJjK2SCsbAP2VQNVckmDUc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aVfT6okyFmLe8tCr+uZ+FG/DnaIURNjsJF9TFcDUHdCRTmmGMb/XqlL9nBT2SleDo6NmVRvuhaLDOoUgo4/97WbXcvBHMfr0ndHgfI20fWNe3Lhz3VvXzjsaMSuX9CMJuL1puJ85SxNJWWMwdftqUaOgIEtM3Y0t3KVCEMGMI7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=dEw5xY+M; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a843bef98so71911666b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 02:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724319598; x=1724924398; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3J76NjLOb4JrXPKvUTSl+xn61TpvQ/dAS4Pfke9ck0I=;
+        b=dEw5xY+Mwqh0WT1v57JOKCoQv/GCoVDXvaHSh3SqbPgVBfx1W6NR+2GPV0hnA53mKr
+         H7+hQCxTNwMJDyqGhsChn9ZhWTEQUxRuRBoM9W3R/P2KjtI4HMwHBIV0SB9o8eiM4IVe
+         asB4P/D+hKFJ9k/tjtggqQTrAziD0arcOIgdQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724319598; x=1724924398;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3J76NjLOb4JrXPKvUTSl+xn61TpvQ/dAS4Pfke9ck0I=;
+        b=IIKZGWRlov+aqsOWcXD1TgzbHy0M1MgPgep5aR4vvZI4cUTtFAHSEV4dXu+mwO+bIr
+         XOn/hRI8CLZX6jJpgvEz/RCG0BKj4mWZMKXiX6sieZkPCu5H7yxMv2Fc6W0s7MvEGy5D
+         vdeemVx5rDRT0ApPjbdCfHMrf0AAx9NRaLu7pRX0twid9f0B0ic8Px4qgplQaNaSkYMi
+         nTQid49jsAKkbv1Zd+IQP+GX30PkCd3NPNB+bRoWN8HMGSsmtNOI2t+dtHllfOACdqc4
+         GaarzX1IYVm+gItmsPEEdKovmkAaF/w/RH9FzeH10NTu6E95VkiR2FldMxvYowdEUT7L
+         Dd/g==
+X-Gm-Message-State: AOJu0YzZQB2sblv5QhTOytkHW5qQhLNgZLmtcLmEslgrQ6//kMvv3grs
+	IOtBMmOKepIzS9eDorkDKjlUqfiBs2J4sSQnWQi0Yn3aR/0upBogypZUIUrHAGy7j/GJUTQG1p8
+	i/p03G0AA3z1ZQDJTqvzpNUqxX82G/CTHYa46yg==
+X-Google-Smtp-Source: AGHT+IGKhBe49vLtSwlDkYUu7GdcBQlsOQQjhhxR/BNQ4l9YUrpx6GOfPuniCpykUAtCtewGEfHZLVAIwjLUXZHB24Q=
+X-Received: by 2002:a17:907:2da9:b0:a86:8ec7:11b2 with SMTP id
+ a640c23a62f3a-a8691cbab9cmr99230866b.59.1724319597616; Thu, 22 Aug 2024
+ 02:39:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240822004149.GR504335@ZenIV>
+References: <20240821232241.3573997-1-joannelkoong@gmail.com> <20240821232241.3573997-6-joannelkoong@gmail.com>
+In-Reply-To: <20240821232241.3573997-6-joannelkoong@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 22 Aug 2024 11:39:45 +0200
+Message-ID: <CAJfpegtWqJZTum-v4tP0inZ0tU5fV1C9xsKkHfiniKKW-ZuU3g@mail.gmail.com>
+Subject: Re: [PATCH v2 5/9] fuse: move initialization of fuse_file to
+ fuse_writepages() instead of in callback
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 22, 2024 at 01:41:49AM GMT, Al Viro wrote:
-> Once we'd opened the file, nd->path and file->f_path have the
-> same contents.  Rather than having both pinned and nd->path
-> dropped by terminate_walk(), let's have them share the
-> references from the moment when FMODE_OPENED is set and
-> clear nd->path just before the terminate_walk() in such case.
-> 
-> To do that, we
-> 	* add a variant of vfs_open() that does *not* do conditional
-> path_get() (vfs_open_borrow()); use it in do_open().
-> 	* don't grab f->f_path.mnt in finish_open() - only
-> f->f_path.dentry.  Have atomic_open() drop the child dentry
-> in FMODE_OPENED case and return f->path.dentry without grabbing it.
-> 	* adjust vfs_tmpfile() for finish_open() change (it
-> is called from ->tmpfile() instances).
-> 	* make do_o_path() use vfs_open_borrow(), collapse path_put()
-> there with the conditional path_get() we would've get in vfs_open().
-> 	* in FMODE_OPENED case clear nd->path before calling
-> terminate_walk().
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
+On Thu, 22 Aug 2024 at 01:25, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+> @@ -2361,21 +2355,25 @@ static int fuse_writepages(struct address_space *mapping,
+>
+>         data.inode = inode;
+>         data.wpa = NULL;
+> -       data.ff = NULL;
+> +       data.ff = fuse_write_file_get(fi);
+> +       if (!data.ff)
+> +               return -EIO;
+>
+>         data.orig_pages = kcalloc(fc->max_pages,
+>                                   sizeof(struct page *),
+>                                   GFP_NOFS);
+> -       if (!data.orig_pages)
+> +       if (!data.orig_pages) {
+> +               fuse_file_put(data.ff, false);
+
+I'd prefer a cleanup label at the end of the function.
+
+Thanks,
+Miklos
 
