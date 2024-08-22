@@ -1,38 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-26811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09E195BBAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:19:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4DA95BBB0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE4A286EC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882961C21A6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EC31CDA08;
-	Thu, 22 Aug 2024 16:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC511CDFA7;
+	Thu, 22 Aug 2024 16:19:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C50A2D03B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4D929CE8;
 	Thu, 22 Aug 2024 16:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343578; cv=none; b=d1fBbtIIBdAnx2if0cOf8HhLTjWLRP1V3z94G4Vmf9bi2wBUTdYCwh41TgP7ErF7cQ4uNjV1vlPbtJ4pYO/XjaRIEPwkgGbMtH7FkjsnUeVO/IM9cX6btKyFqL7+m+znnI0SkNQwoMaZ/q5nJB+7P01Y2YbTN5BaieKAdFU9xok=
+	t=1724343578; cv=none; b=RUmx0XPawuGYZLDDXBjvtjT1kSwTrhyoe68sSQzCrxKPxscPQUJj88PJuvntrosJ/CFZohS5+ZDaI22gD2wsHg/99r9lV4eepFSssXhL/7D+lkOOB44RsKzl0eu4l/d06HKxsO6yLFA6j07lGHPFDZWCk2pYQFjFAg5oqwRjPrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724343578; c=relaxed/simple;
-	bh=HKnYnEp9SMc1JK+IvT1gCFMlsvvD8dfnpP8W9c6erxk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V9Gj5TA8CV/WgmossXJUEZgDYWZy8aizI+y0m1zGVauI+V44fsOmOKjM4sA7Eq39EsWb0H3xpdR2nVkXXUFudD1nnFNHbEwIv3FK7pGWqDLrsG5tznrUSoV5t1kQUUjYKIDvu6o06rDLY3J2UXzZgyOYgr5hGdgKFcMCD7vUKys=
+	bh=29iFkZR0+8piizM7eOLaTOEEcC+Kohez/RRszdWp+sc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ONStGw4jg/muyQAO9qvQ8J6ucTr8oRhDu9qvXZSHebtuDb17km+pDNdhbyIs9GawGptfCS6mHbM1ZkuO6XINXvRXs/4KSZ1bZNAxWrnVpMj8N3YngM8fIeZArVkVMqjTfHdpwPWYqtDIHZl22uVXujJXbUUT9P0XaYk1qw5Pyaw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
 Received: by air.basealt.ru (Postfix, from userid 490)
-	id 3C3202F20249; Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
+	id 62DDD2F2024E; Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
 X-Spam-Level: 
 Received: from altlinux.malta.altlinux.ru (obninsk.basealt.ru [217.15.195.17])
-	by air.basealt.ru (Postfix) with ESMTPSA id 0A2E82F20249;
+	by air.basealt.ru (Postfix) with ESMTPSA id 23D162F2024C;
 	Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
 From: kovalev@altlinux.org
 To: linux-fsdevel@vger.kernel.org,
@@ -41,11 +42,14 @@ To: linux-fsdevel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: lvc-patches@linuxtesting.org,
 	dutyrok@altlinux.org,
-	kovalev@altlinux.org
-Subject: [PATCH v3  0/2] bfs: fix null-ptr-deref and possible warning in bfs_move_block() func
-Date: Thu, 22 Aug 2024 19:12:17 +0300
-Message-Id: <20240822161219.459054-1-kovalev@altlinux.org>
+	kovalev@altlinux.org,
+	syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
+Subject: [PATCH v3 1/2] bfs: prevent null pointer dereference in bfs_move_block()
+Date: Thu, 22 Aug 2024 19:12:18 +0300
+Message-Id: <20240822161219.459054-2-kovalev@altlinux.org>
 X-Mailer: git-send-email 2.33.8
+In-Reply-To: <20240822161219.459054-1-kovalev@altlinux.org>
+References: <20240822161219.459054-1-kovalev@altlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,13 +58,73 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-https://syzkaller.appspot.com/bug?extid=d98fd19acd08b36ff422
+From: Vasiliy Kovalev <kovalev@altlinux.org>
 
-[PATCH v3 1/2] bfs: prevent null pointer dereference in bfs_move_block()
-v3: Changed the error handling
+Detect a failed sb_getblk() call (before copying data)
+so that null pointer dereferences should not happen any more.
+We also decrement (brelse) the bh counter in this case.
 
-[PATCH v3 2/2] bfs: ensure buffer is marked uptodate before marking it dirty
-v3: Replaced the buffer up-to-date check with an error exit by forcefully
-setting the buffer as up-to-date before call mark_buffer_dirty()
+Found when launching the reproducer generated by Syzkaller:
+
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+Comm: mark_buffer_dir Tainted: G  W  6.1.105-un-def-alt1.kasan #1
+RIP: 0010:bfs_get_block+0x35b/0xdf0 (fs/bfs/file.c:42) [bfs]
+Call Trace:
+<TASK>
+ __die_body.cold (arch/x86/kernel/dumpstack.c:478)
+ die_addr (arch/x86/kernel/dumpstack.c:462)
+ exc_general_protection (arch/x86/kernel/traps.c:787)
+ asm_exc_general_protection (./arch/x86/include/asm/idtentry.h:564)
+ __getblk_gfp (fs/buffer.c:1335)
+ bfs_get_block (fs/bfs/file.c:42) bfs
+ bfs_get_block (fs/bfs/file.c:56) bfs
+ bfs_get_block (fs/bfs/file.c:125) bfs
+ bfs_write_begin (fs/bfs/file.c:66) bfs
+ __block_write_begin_int (fs/buffer.c:1991)
+ bfs_write_begin (fs/bfs/file.c:66) bfs
+ invalidate_bh_lrus_cpu (fs/buffer.c:1955)
+ fault_in_readable (mm/gup.c:1898)
+ PageHeadHuge (mm/hugetlb.c:2123)
+ bfs_write_begin (fs/bfs/file.c:66) bfs
+ block_write_begin (fs/buffer.c:2103)
+ bfs_write_begin (fs/bfs/file.c:178) bfs
+ generic_perform_write (mm/filemap.c:3817)
+ generic_file_readonly_mmap (mm/filemap.c:3781)
+ new_inode (fs/inode.c:2126)
+ generic_write_checks (fs/read_write.c:1687)
+ __generic_file_write_iter (mm/filemap.c:3946)
+ generic_file_write_iter (./include/linux/fs.h:763 mm/filemap.c:3978)
+ vfs_write (./include/linux/fs.h:2265 fs/read_write.c:491)
+ kernel_write (fs/read_write.c:565)
+ __fget_files (fs/file.c:918)
+ ksys_write (fs/read_write.c:638)
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=d98fd19acd08b36ff422
+Link: https://syzkaller.appspot.com/text?tag=ReproC&x=16515ba3e80000
+Cc: stable@vger.kernel.org
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+ fs/bfs/file.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/bfs/file.c b/fs/bfs/file.c
+index 57ae5ee6deec12..23773e62994024 100644
+--- a/fs/bfs/file.c
++++ b/fs/bfs/file.c
+@@ -39,6 +39,10 @@ static int bfs_move_block(unsigned long from, unsigned long to,
+ 	if (!bh)
+ 		return -EIO;
+ 	new = sb_getblk(sb, to);
++	if (!new) {
++		brelse(bh);
++		return -EIO;
++	}
+ 	memcpy(new->b_data, bh->b_data, bh->b_size);
+ 	mark_buffer_dirty(new);
+ 	bforget(bh);
+-- 
+2.33.8
 
 
