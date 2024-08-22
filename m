@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-26648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BCB95AA60
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:32:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3374C95AA62
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA521F23760
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:32:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4791C21004
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BF017E014;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D54D17E8E5;
 	Thu, 22 Aug 2024 01:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iBfzmNxH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iw/TxV9q"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA42E13A86C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52D713AA3E;
 	Thu, 22 Aug 2024 01:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724289941; cv=none; b=KQi5VGCMd7KHlJdwOyx7ZupuksXikTdreh7j1Uo2Iss1e2ojCYhuBCIBzBQqoJnQP+GjIpObtVcqSLGBppRjC2IRRgGchqExqMkwXyn+OrirFVOj9X/iEdiKrtpC1Jf7T5ajwdl3HJTW/Nufa/+kTihX0z4YkFSrZpO74kiDCSg=
+	t=1724289941; cv=none; b=oq4oishkEFJeOBNr3aquUn+j579H1PvTO+LPcaeMo7c5d8meal1f9hVojlkvhUhxFn/ME+gvxOJZ5SgKlAOiHJOUbAxwCjcH2mpWz7op1ApTCsgZ6bwZ/4sS9Jy2wclwEmdDGbRJbJmZuRZamR4x+JcIvrWRzxHaghJlwB+zGPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724289941; c=relaxed/simple;
-	bh=hCCt2JYtwosbUEZibFLaQvSFYiptbQfDlsFFgg6wgIE=;
+	bh=7DveBzB7W1KL7ipOUxxizYtH0r2UaXXCB9/K9sjQz2k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gmP00ty/bxs9MYGoFWcEsShzIVnjU71L1sw4vuIhktywAVlg1t153LCoPRoWncMJoEsyhbmFY2D0QSAmrnGM3RvoEzyprfdT7Q8r7DCpvaPHf2Umk92q6U+UX2E+rLbN/8lwK+Wx4P/czVqaE05+bmKsVx2G0eHZ1XZ17bBC340=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iBfzmNxH; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=CjjIDFvhF5EZKhRwt5roiho+Nm26NJh/IqtyXOtHXTyFwtIKTVQqWGeUURDczCNfgWIS9DL+jf4HjCRfW+m7poHhCoieGWAhozFMR50Cy6GGLs7eVmB8L/nDFbyvH1xKl5ISwfAZDx+1VSGu0fvyrfwYcrzjRKpVYu2FSA/0dkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iw/TxV9q; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -36,26 +36,26 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1724289940; x=1755825940;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=hCCt2JYtwosbUEZibFLaQvSFYiptbQfDlsFFgg6wgIE=;
-  b=iBfzmNxHQESdmCUNC7jLrGYlaBRw7xvIjC++5u7a8Yhe8tA8o9fb/UCV
-   jaYmUUlHk7GhraDuRz8PoXXqo8rXvB6tOOldGzwSDPBjIooB00Uzl6MTQ
-   0T7eqyOWuSNn5cZs+RSHAviF70Cirm2JdGF8rmvZtC7W9LrQAbq8fJtDO
-   Z+ONd3fTyox/Uql1QuAIpFAqJ2V3cjgtFsJQOKjD7BVA/APscelHtJ2xk
-   S/ZuLA2lqny4fptcvKGtTwlXhB1GaNQi/dyXwpDtOn2sDg0lSsE6oV0I5
-   zKAMbKj5jdhpFJd7Vi2QQiMNl6SnY/nfQ4O+UnfhUw0oLZdFW0bay5lp2
-   w==;
-X-CSE-ConnectionGUID: gTqdWfumSFedWkj7lX5cVA==
-X-CSE-MsgGUID: UDnrOHpvRb2N//N0uXPk2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="25574756"
+  bh=7DveBzB7W1KL7ipOUxxizYtH0r2UaXXCB9/K9sjQz2k=;
+  b=iw/TxV9qT1bBC1cPXC+Q3yU6abZQpl8AWGO3MEcPF+NsxQrc1KchQMQ2
+   kjc0A6nd0FkBV1J6GeTBE8hrY/88xtqkFOISDpIgVPngiSzZ69Zi20SPC
+   OkWDSY121o94kIRtxmkQCWt42jNT2Q/zsPsXy99imWaryb8q4OgnOg0wh
+   Pjt9Jlx+AXotJfArtcXKtAMAzf9PsL6dfQ5wCaR7UhZCP1tb1ObvoMq6f
+   4nsglRttnxf/vYxAu8xgvSAx/ZouE47Ufd33637LIuoMIP1ZTPJPC2lkN
+   w4QW04f/JZ7mcZE5GW+m3xDapB6QebtEYc3ER9yWspIgsj7PIECBEp604
+   Q==;
+X-CSE-ConnectionGUID: JrQzlUkcTUW01Qp3QF+qWQ==
+X-CSE-MsgGUID: 2axf8dTsSzKk+SB89YCWBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="25574760"
 X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="25574756"
+   d="scan'208";a="25574760"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
   by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 18:25:33 -0700
-X-CSE-ConnectionGUID: Gtl0DjLhSfu7/XwFYEwnBw==
-X-CSE-MsgGUID: 15/t8TZ5QaSd03ToyA8eHg==
+X-CSE-ConnectionGUID: jsnb3tybQX2n/2LWanMgPQ==
+X-CSE-MsgGUID: iY9/F+LHSbu4vM3g/4xQcQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="61811048"
+   d="scan'208";a="61811051"
 Received: from unknown (HELO vcostago-mobl3.jf.intel.com) ([10.241.225.92])
   by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 18:25:32 -0700
 From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
@@ -71,9 +71,9 @@ Cc: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: [PATCH v2 09/16] overlayfs/dir: Convert to cred_guard()
-Date: Wed, 21 Aug 2024 18:25:16 -0700
-Message-ID: <20240822012523.141846-10-vinicius.gomes@intel.com>
+Subject: [PATCH v2 10/16] overlayfs/file: Convert to cred_guard()
+Date: Wed, 21 Aug 2024 18:25:17 -0700
+Message-ID: <20240822012523.141846-11-vinicius.gomes@intel.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240822012523.141846-1-vinicius.gomes@intel.com>
 References: <20240822012523.141846-1-vinicius.gomes@intel.com>
@@ -88,60 +88,192 @@ Content-Transfer-Encoding: 8bit
 Replace the override_creds_light()/revert_creds_light() pairs of
 operations with cred_guard()/cred_scoped_guard().
 
-In ovl_do_remove(), cred_scoped_guard() was used because mixing
-cred_guard() with 'goto' can cause the cleanup part of the guard to
-run with garbage values.
+Only ovl_copyfile() and ovl_fallocate() use cred_scoped_guard(),
+because of 'goto', which can cause the cleanup flow to run on garbage
+memory.
 
 Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 ---
- fs/overlayfs/dir.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ fs/overlayfs/file.c | 64 ++++++++++++++++++---------------------------
+ 1 file changed, 25 insertions(+), 39 deletions(-)
 
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 52021e56b235..28ea6bc0a298 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -698,12 +698,10 @@ static int ovl_symlink(struct mnt_idmap *idmap, struct inode *dir,
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 5533fedcbc47..97aa657e6916 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -31,7 +31,6 @@ static struct file *ovl_open_realfile(const struct file *file,
+ 	struct inode *inode = file_inode(file);
+ 	struct mnt_idmap *real_idmap;
+ 	struct file *realfile;
+-	const struct cred *old_cred;
+ 	int flags = file->f_flags | OVL_OPEN_FLAGS;
+ 	int acc_mode = ACC_MODE(flags);
+ 	int err;
+@@ -39,7 +38,7 @@ static struct file *ovl_open_realfile(const struct file *file,
+ 	if (flags & O_APPEND)
+ 		acc_mode |= MAY_APPEND;
  
- static int ovl_set_link_redirect(struct dentry *dentry)
+-	old_cred = ovl_override_creds_light(inode->i_sb);
++	cred_guard(ovl_creds(inode->i_sb));
+ 	real_idmap = mnt_idmap(realpath->mnt);
+ 	err = inode_permission(real_idmap, realinode, MAY_OPEN | acc_mode);
+ 	if (err) {
+@@ -51,7 +50,6 @@ static struct file *ovl_open_realfile(const struct file *file,
+ 		realfile = backing_file_open(&file->f_path, flags, realpath,
+ 					     current_cred());
+ 	}
+-	revert_creds_light(old_cred);
+ 
+ 	pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
+ 		 file, file, ovl_whatisit(inode, realinode), file->f_flags,
+@@ -182,7 +180,6 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
  {
+ 	struct inode *inode = file_inode(file);
+ 	struct fd real;
+-	const struct cred *old_cred;
+ 	loff_t ret;
+ 
+ 	/*
+@@ -211,9 +208,8 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+ 	ovl_inode_lock(inode);
+ 	real.file->f_pos = file->f_pos;
+ 
+-	old_cred = ovl_override_creds_light(inode->i_sb);
++	cred_guard(ovl_creds(inode->i_sb));
+ 	ret = vfs_llseek(real.file, offset, whence);
+-	revert_creds_light(old_cred);
+ 
+ 	file->f_pos = real.file->f_pos;
+ 	ovl_inode_unlock(inode);
+@@ -385,7 +381,6 @@ static ssize_t ovl_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ {
+ 	struct fd real;
+-	const struct cred *old_cred;
+ 	int ret;
+ 
+ 	ret = ovl_sync_status(OVL_FS(file_inode(file)->i_sb));
+@@ -398,9 +393,8 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ 
+ 	/* Don't sync lower file for fear of receiving EROFS error */
+ 	if (file_inode(real.file) == ovl_inode_upper(file_inode(file))) {
+-		old_cred = ovl_override_creds_light(file_inode(file)->i_sb);
++		cred_guard(ovl_creds(file_inode(file)->i_sb));
+ 		ret = vfs_fsync_range(real.file, start, end, datasync);
+-		revert_creds_light(old_cred);
+ 	}
+ 
+ 	fdput(real);
+@@ -424,7 +418,6 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ {
+ 	struct inode *inode = file_inode(file);
+ 	struct fd real;
+-	const struct cred *old_cred;
+ 	int ret;
+ 
+ 	inode_lock(inode);
+@@ -438,9 +431,8 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ 	if (ret)
+ 		goto out_unlock;
+ 
+-	old_cred = ovl_override_creds_light(file_inode(file)->i_sb);
+-	ret = vfs_fallocate(real.file, mode, offset, len);
+-	revert_creds_light(old_cred);
++	cred_scoped_guard(ovl_creds(file_inode(file)->i_sb))
++		ret = vfs_fallocate(real.file, mode, offset, len);
+ 
+ 	/* Update size */
+ 	ovl_file_modified(file);
+@@ -456,16 +448,14 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+ static int ovl_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
+ {
+ 	struct fd real;
+-	const struct cred *old_cred;
+ 	int ret;
+ 
+ 	ret = ovl_real_fdget(file, &real);
+ 	if (ret)
+ 		return ret;
+ 
+-	old_cred = ovl_override_creds_light(file_inode(file)->i_sb);
++	cred_guard(ovl_creds(file_inode(file)->i_sb));
+ 	ret = vfs_fadvise(real.file, offset, len, advice);
+-	revert_creds_light(old_cred);
+ 
+ 	fdput(real);
+ 
+@@ -484,7 +474,6 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+ {
+ 	struct inode *inode_out = file_inode(file_out);
+ 	struct fd real_in, real_out;
+-	const struct cred *old_cred;
+ 	loff_t ret;
+ 
+ 	inode_lock(inode_out);
+@@ -506,26 +495,25 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+ 		goto out_unlock;
+ 	}
+ 
+-	old_cred = ovl_override_creds_light(file_inode(file_out)->i_sb);
+-	switch (op) {
+-	case OVL_COPY:
+-		ret = vfs_copy_file_range(real_in.file, pos_in,
+-					  real_out.file, pos_out, len, flags);
+-		break;
+-
+-	case OVL_CLONE:
+-		ret = vfs_clone_file_range(real_in.file, pos_in,
+-					   real_out.file, pos_out, len, flags);
+-		break;
+-
+-	case OVL_DEDUPE:
+-		ret = vfs_dedupe_file_range_one(real_in.file, pos_in,
+-						real_out.file, pos_out, len,
+-						flags);
+-		break;
++	cred_scoped_guard(ovl_creds(file_inode(file_out)->i_sb)) {
++		switch (op) {
++		case OVL_COPY:
++			ret = vfs_copy_file_range(real_in.file, pos_in,
++						  real_out.file, pos_out, len, flags);
++			break;
++
++		case OVL_CLONE:
++			ret = vfs_clone_file_range(real_in.file, pos_in,
++						   real_out.file, pos_out, len, flags);
++			break;
++
++		case OVL_DEDUPE:
++			ret = vfs_dedupe_file_range_one(real_in.file, pos_in,
++							real_out.file, pos_out, len,
++							flags);
++			break;
++		}
+ 	}
+-	revert_creds_light(old_cred);
+-
+ 	/* Update size */
+ 	ovl_file_modified(file_out);
+ 
+@@ -576,7 +564,6 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
+ static int ovl_flush(struct file *file, fl_owner_t id)
+ {
+ 	struct fd real;
 -	const struct cred *old_cred;
  	int err;
  
--	old_cred = ovl_override_creds_light(dentry->d_sb);
-+	cred_guard(ovl_creds(dentry->d_sb));
- 	err = ovl_set_redirect(dentry, false);
--	revert_creds_light(old_cred);
+ 	err = ovl_real_fdget(file, &real);
+@@ -584,9 +571,8 @@ static int ovl_flush(struct file *file, fl_owner_t id)
+ 		return err;
  
- 	return err;
- }
-@@ -889,7 +887,6 @@ static void ovl_drop_nlink(struct dentry *dentry)
- static int ovl_do_remove(struct dentry *dentry, bool is_dir)
- {
- 	int err;
--	const struct cred *old_cred;
- 	bool lower_positive = ovl_lower_positive(dentry);
- 	LIST_HEAD(list);
+ 	if (real.file->f_op->flush) {
+-		old_cred = ovl_override_creds_light(file_inode(file)->i_sb);
++		cred_guard(ovl_creds(file_inode(file)->i_sb));
+ 		err = real.file->f_op->flush(real.file, id);
+-		revert_creds_light(old_cred);
+ 	}
+ 	fdput(real);
  
-@@ -908,12 +905,12 @@ static int ovl_do_remove(struct dentry *dentry, bool is_dir)
- 	if (err)
- 		goto out;
- 
--	old_cred = ovl_override_creds_light(dentry->d_sb);
--	if (!lower_positive)
--		err = ovl_remove_upper(dentry, is_dir, &list);
--	else
--		err = ovl_remove_and_whiteout(dentry, &list);
--	revert_creds_light(old_cred);
-+	cred_scoped_guard(ovl_creds(dentry->d_sb)) {
-+		if (!lower_positive)
-+			err = ovl_remove_upper(dentry, is_dir, &list);
-+		else
-+			err = ovl_remove_and_whiteout(dentry, &list);
-+	}
- 	if (!err) {
- 		if (is_dir)
- 			clear_nlink(dentry->d_inode);
 -- 
 2.46.0
 
