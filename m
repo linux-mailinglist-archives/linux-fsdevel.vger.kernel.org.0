@@ -1,146 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-26822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A1295BD4E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 19:31:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECE195BD51
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 19:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5C3FB22B64
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78905287FB3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304B01CEAD2;
-	Thu, 22 Aug 2024 17:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CE21CE704;
+	Thu, 22 Aug 2024 17:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikqtAQwt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxDXsgLn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2DA1D12E4;
-	Thu, 22 Aug 2024 17:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBC4487AE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 17:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724347859; cv=none; b=EN4vgeKd9UBvupeYtuj48maAkCelVdXmx5QJJNoqD6Rrad3KUuQo0OmPW6W5eUQ9FR2SfCYzpha6qxYxvuKofBcHjjXaAl1iPfcVjr3A/Al52rSgmICLjR8pBOXrCQe67hrrXBiLc8PMLcWQQPDbvDNKTA8+X+7L1kP+BfofmuU=
+	t=1724347894; cv=none; b=tf48GJWw2yh/2+uziYM98Sr+vLf/TtJvLGeq2lrGagOBFW7xVDoiifhQQOLO/6bxWyXSVREtkslX7yOU7jyxqI8/birBZ2eZzdDYINZh/fQulGX0k5bcuNo2mZ4KaL6P9nldJLbTeGQJeZm/FZBIPqQRT9583ZbRsCD2ho8UXog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724347859; c=relaxed/simple;
-	bh=NEmbbg8L2Bfrsg3LdNNpLmYp7+z/wYUOhdnFgomJAhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gybwa6OqavMFZ0iZ7crZJrRWkBs9xfd0n3tvXGTmJNp2z4d0g+D++906PbqBV+9uy5V9jxUeWAJ9fphWB0iZRQOWo1abM180D9B5H3qybzkcowG8e4F1x5QSntP6ZJ0B1P2nkhYsciW5+S+EcKPOKT263VwJP4JMt9wEWi7xvsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikqtAQwt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85044C32782;
-	Thu, 22 Aug 2024 17:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724347859;
-	bh=NEmbbg8L2Bfrsg3LdNNpLmYp7+z/wYUOhdnFgomJAhI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ikqtAQwtRrEpLzRohAGA+qNmOG+TVb1qThYeB20Y/Rk8LI7FU0VJET/gHeWL16BXq
-	 QZJfX39NMfafJ1FzVkN4ltE2CZW3ItKeVYt8IycDgCeLLfuh0r2uRLDWZ04/PypHs6
-	 s+MGNZPewB6jtWVhV7hrSdK3dA9ZJDHvvHhPAtsfxbo5lcriqWLIPch63YvNEb7bvj
-	 mKT4+II0xSVQPbirmPqGpXOCJtrJ5BOwbz+S2JpDOkZcFSQI6txfB5pByPQr/Jo0Mu
-	 8SvR/xM9sWHMARckle6xSHr228r6G6hj9zO2NXqWhsK7TG51FQwJDp+RQ7WZOdHsEf
-	 rIBkFTrNQkZOg==
-Date: Thu, 22 Aug 2024 18:30:55 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 19/39] arm64/mm: Handle GCS data aborts
-Message-ID: <Zsd1zxJ1n5-_lpbx@finisterre.sirena.org.uk>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-19-41b81947ecb5@kernel.org>
- <ZsdjbsDrMWgBU9Hj@arm.com>
- <Zsdq4ymaW0vQffH_@finisterre.sirena.org.uk>
- <ZsdzKrTbrolW0lHn@arm.com>
+	s=arc-20240116; t=1724347894; c=relaxed/simple;
+	bh=c0nr403uwtt3kH4Pmjf2ebxnxMXxZ4y5Ky93Fq/haso=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lXzCP1cWPdv+4YQ6xRxyOl5iolQ1SUgeQgtyRWQ/xllLI2x9Kl89WR7xGONYRZkJ+zDYeIUX9tBn4geD4Vu6pHiTfna1NdJbcCrL/nWWhTKci0hxP+XVzWTdGuE2hV1BjIZSBQ855dzHwFrSkcIy3l5rkMdgSLAVu9u0wXaOPqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxDXsgLn; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-44fe9aa3bfaso6627221cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 10:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724347890; x=1724952690; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T2P5YaZZxw/xfoYA/EvziF0lrs4pwX/YSmpkaiL/oe4=;
+        b=cxDXsgLn8K2SRpt2Kit/3gmJcCIboyTrHoGBmHbooiRM1MWljQbr5XYV633Cb9VXRb
+         qnjR2bE56qpx3gT9SRv+p9Fnk6RKZODIYJq5voVW1OObkU1PxGAbbttKT18oNj8FRsNZ
+         Z/Xb1l5oFbcpqisNDGpHdDJWtEyPSZzsjvqC38Y4us2A8F+osoRTK/0pKcpqMVB1GMli
+         Qb16fIRDcnxVLjoAElRUoLUuVkSdVNo4XzC+wtGVWeFdyKjqMQP/c1yakHaDAXNDxZtv
+         cnXYr+QsNZPePFAlfXAZVup4xirmwnzohEb9xAorVIRGQ6skBynccnJyYRz+tYitpze4
+         //vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724347890; x=1724952690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T2P5YaZZxw/xfoYA/EvziF0lrs4pwX/YSmpkaiL/oe4=;
+        b=XXyoYlY3cRhAgx9t9ao8G4pRo5Bhq26hDgCBOU5vmgqQgLgJX9yDO1Ja7PxtpT6x7G
+         RmusCnJQftPevbBmyQjipXhsJINU30PfrP5ysaPH0XDZehXsarp5M/VPtBQRYO+LIFx7
+         gbExUn0UXTJq1AzMZN4+eaBDwijZDJaJW4MSLMy74Q+G2sVH3PP0Io25ujSv/fZibej8
+         zissXFyFDrRTAuz+1Z3fUqubWgK+xvfp2xNWxikU9RmTJZnd7y4cfE0Nec7ZUVaMSLYB
+         KsXvVioHkZndZphIficgsG4662vwEiaClOaR4kQR356P4ForgOVhCcnVVUluFAqztNWN
+         mfEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ+HOwrrPAeCgCcVNltgDiPqkrIwytxQdLce5yCoKoXsSMB2oNFGPf7KOfTLQ1ZFM+VoCOi4CZhE5G3UWs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5nZ0PklHjRRmS8pYL0R/yxYIy1awympd1puQahJmVGeBi9OYC
+	c3IcRwppzQJPdiUjG93T4rtQfVU7eOADh4VoNUQygWj8xpH8RMYqdGisyiFN8cBuExMc2zKqEmo
+	e3PnpV2jj7vCVKQqjnObJgMncfac=
+X-Google-Smtp-Source: AGHT+IHaoXlBI+s3y9C0JWaEqQ7SkrvkMxXxrlthKHubNrY3rAonTNXKKm1+n/9xnwBsHcr+BOSGLs663Ilf6Q7vnZ8=
+X-Received: by 2002:a05:622a:5c09:b0:453:5797:3658 with SMTP id
+ d75a77b69052e-454f22819b2mr80037961cf.46.1724347890015; Thu, 22 Aug 2024
+ 10:31:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QBL8uS70EYGjHk3p"
-Content-Disposition: inline
-In-Reply-To: <ZsdzKrTbrolW0lHn@arm.com>
-X-Cookie: Your love life will be... interesting.
-
-
---QBL8uS70EYGjHk3p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240813232241.2369855-1-joannelkoong@gmail.com>
+ <CAJfpegvPMEsHFUCzV6rZ9C3hE7zyhMmCnhO6bUZk7BtG8Jt70w@mail.gmail.com>
+ <20240821181130.GG1998418@perftesting> <CAJfpegsiRNnJx7OAoH58XRq3zujrcXx94S2JACFdgJJ_b8FdHw@mail.gmail.com>
+ <CAJnrk1b7DUTMqprx1GNtV59umQh2G5cY8Qv7ExEXRP5fCA41PQ@mail.gmail.com> <CAJfpegsPvb6KLcpp8wuP96gFhV3cH4a4DfRp1ZztpeGwugz=UQ@mail.gmail.com>
+In-Reply-To: <CAJfpegsPvb6KLcpp8wuP96gFhV3cH4a4DfRp1ZztpeGwugz=UQ@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 22 Aug 2024 10:31:19 -0700
+Message-ID: <CAJnrk1b5_7ZAN8wiA_H5YgBb0j=hN4Mdzjcc1_t0L_Pj9BYGGA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] fuse: add timeout option for requests
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, laoar.shao@gmail.com, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 06:19:38PM +0100, Catalin Marinas wrote:
-> On Thu, Aug 22, 2024 at 05:44:19PM +0100, Mark Brown wrote:
-> > On Thu, Aug 22, 2024 at 05:12:30PM +0100, Catalin Marinas wrote:
-> > > On Thu, Aug 22, 2024 at 02:15:22AM +0100, Mark Brown wrote:
-> >=20
-> > > > +static bool is_invalid_gcs_access(struct vm_area_struct *vma, u64 =
-esr)
-> >=20
-> > > > +	} else if (unlikely(vma->vm_flags & VM_SHADOW_STACK)) {
-> > > > +		/* Only GCS operations can write to a GCS page */
-> > > > +		return is_write_abort(esr);
-> > > > +	}
+On Thu, Aug 22, 2024 at 3:52=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Wed, 21 Aug 2024 at 23:22, Joanne Koong <joannelkoong@gmail.com> wrote=
+:
+>
+> > Without a kernel enforced timeout, the only way out of this is to
+> > abort the connection. A userspace timeout wouldn't help in this case
+> > with getting the server unstuck. With the kernel timeout, this forces
+> > the kernel handling of the write request to proceed, whihc will drop
+> > the folio lock and resume the server back to a functioning state.
+> >
+> > I don't think situations like this are uncommon. For example, it's not
+> > obvious or clear to developers that fuse_lowlevel_notify_inval_inode()
+> > shouldn't be called inside of a write handler in their server code.
+>
+> Documentation is definitely lacking.  In fact a simple rule is: never
+> call a notification function from within a request handling function.
+> Notifications are async events that should happen independently of
+> handling regular operations.  Anything else is an abuse of the
+> interface.
+>
+> >
+> > For your concern about potential unintended side effects of timed out
+> > requests without the server's knowledge, could you elaborate more on
+> > the VFS locking example? In my mind, a request that times out is the
+> > same thing as a request that behaves normally and completes with an
+> > error code, but perhaps not?
+>
+> - user calls mknod(2) on fuse directory
+> - VFS takes inode lock on parent directory
+> - calls into fuse to create the file
+> - fuse sends request to server
+> - file creation is slow and times out in the kernel
+> - fuse returns -ETIMEDOUT
+> - VFS releases inode lock
+> - meanwhile the server is still working on creating the file and has
+> no idea that something went wrong
+> - user calls the same mknod(2) again
+> - same things happen as last time
+> - server starts to create the file *again* knowing that the VFS takes
+> care of concurrency
+> - server crashes due to corruption
 
-> > Yes, that should check for a data abort.  I think I'd formed the
-> > impression that is_write_abort() included that check somehow.  As you
-> > say it's to avoid spinning trying to resolve a permission fault for a
-> > write (non-GCS reads to a GCS page are valid), I do think we need the=
-=20
-> > is_write_abort() since non-GCS reads are valid so something like:
-> >=20
-> > 	if (!esr_is_data_abort(esr))
-> > 		return false;
-> >=20
-> > 	return is_write_abort(esr);
->=20
-> We do need the write abort check but not unconditionally, only if to a
-> GCS page (you can have other genuine write aborts).
+Thanks for the details.
 
-tThat was to replace the checks in the above case, not the function as a
-whole.
+For cases like these though, isn't the server already responsible for
+handling errors properly to avoid potential corruption if their reply
+to the request fails? In your example above, it seems like the server
+would already need to have the error handling in place to roll back
+the file creation if their fuse_reply_create() call returned an error
+(eg -EIO if copying out args in the kernel had an issue). If the
+request timed out, then the server would get back -ENOENT to their
+reply.
 
---QBL8uS70EYGjHk3p
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+Joanne
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbHdcwACgkQJNaLcl1U
-h9DRZgf/cfCggcnTIkzrBOCGpdBnnvrHenLxqYdUHuYxfAA/f/+OY6Ryiz7GiVVN
-dsEg7gYHWwsk0cTwEgGm++++b84foIZ1WeBZ46XlkFKSK0McT1h01SxvUqi6bu3R
-Mj62HWq2M43bg8tVzjIsNFMIZKxKg/8RJVKFsg0KTx/Y4JLXoJkLtplgh4eCuxh0
-Xg0yYgmx4aE7JOYegrvzRVUuj0F6rT8Io3eU7LbdJ4GpP28wCf6jVymCjyhQOHav
-sWHIP3j85jUutzI9HQAsfUt9BnT6GMnKfu16R9nOAdGgfc/XMzzW7lgzRJhLeroa
-kebp1dN/8F8ek5AKqLqstfOmgDdTzg==
-=+1Rr
------END PGP SIGNATURE-----
-
---QBL8uS70EYGjHk3p--
+>
+>
+> > I think also, having some way for system admins to enforce request
+> > timeouts across the board might be useful as well - for example, if a
+> > malignant fuse server doesn't reply to any requests, the requests hog
+> > memory until the server is killed.
+>
+> As I said, I'm not against enforcing a response time for fuse servers,
+> as long as a timeout results in a complete abort and not just an error
+> on the timed out request.
+>
+> Thanks,
+> Miklos
 
