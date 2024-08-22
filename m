@@ -1,95 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-26686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415D895B06D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:32:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C57B95B06F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2051286344
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 08:31:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172DD2863BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 08:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CA7170A10;
-	Thu, 22 Aug 2024 08:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E6D16EBE6;
+	Thu, 22 Aug 2024 08:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="d6UcsoVa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBN3PMjy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB87364A4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 08:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709C516A955
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 08:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724315493; cv=none; b=q4ydkXsBpyA7tGUa4hl8awWkqQpE/Hi744u4+16bYtgG/Ga8OKi0EXH4Ok7hXNK73OHEb8go1OxRjbuiSBtQjkpbAAJSQCgGvqUU4e8+Hoo5FL0jjApSYbbKq0MQFXZhedC7k15wEXdGUt/514OstsisVYtYc0rYDlrarFoDtNo=
+	t=1724315513; cv=none; b=hgXKhRLRBxQ9fJ2Sp7fPQZroA56Yhb+wcPZSIyvVjoUn/A3+bk0ILi71xE6vnOnI5t/R/US5rP9P7FR7eItKdlNyna9jLNyzbGhdhM6R7SblyV2zL00pSewMi+qUmMMpv/NooOyc2W2PyL/CNC9l1U3RyhyJzQWkppZG3PGRtvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724315493; c=relaxed/simple;
-	bh=qfO68ABr8YmkVT3Xwko9ThKTkCQPRAKkOQzFlC/guPA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rSQFC2YJOmZM2iMk+2Sd2urdK37Zbt+HUMIfBULnTcaEVFtY4EwF30clKnoz1SCKVe4J3bAF1P3fJaMsiHvMcJScLCBGXlKehuakZlvCr/gG1iHxPNSCROFeyopd6SB1iFyxq5p+N0fxN8hDRyII1ncj0CWtfoZA3FSjYnL8ryg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=d6UcsoVa; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e1161ee54f7so631680276.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 01:31:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724315490; x=1724920290; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qfO68ABr8YmkVT3Xwko9ThKTkCQPRAKkOQzFlC/guPA=;
-        b=d6UcsoVagWmOg4gMtyyrnX4ashxi+QonesqW/lWQrZQaJ3U/jyzdz1puaNu0MvuPao
-         AyPTazPWZRwDP+l2FDG/+7q9R1SOHQRb2cwfvKTvBjKOM6QpK96ZK3Ac6UDuBNc8lPMo
-         AM66VnB3EjJu02kpOv5CHM0TZ594YJAD8O/XA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724315490; x=1724920290;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qfO68ABr8YmkVT3Xwko9ThKTkCQPRAKkOQzFlC/guPA=;
-        b=L5NN7f2ZpNc3w2D1iCqgv8kKEQ6DYISrGaz68/1Jc2n9p7b+VfYVQPAOVuOgV/HRu1
-         ayBiUrVE8+WViy0K5jaUOD2Usncm9Zgk57ERsZVD4+AuZZH21Ac2Wg6Nt1OV/UYJhTGm
-         TtzFm8Y+w+54uop/vjLNQyPWbQP3cEqPMgCEwehjMTHQAAQfKlcPy1m5cpSOo4NW1Zbd
-         o8pUdpmQaUD27yKCqc774Z27Kq7MZsZXuxq/bDJuHIlvX4YqGWnaDiRYKijNUauqmliC
-         q9srBrR24dw1A4Kf1SDXx6dQvegUmUor3y1cMzZgCuNWLWkD4LHfdtKu61XQZ4Ntz23r
-         MYhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqV6vcDpXwdqLQttmIwXoCbOvQU2QNHSgVd9biLz/W00eJwINuzFqV9dK8m/+qQ1/TwEi/4Ky/f7Z1yhQv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoC7jsRtoe782Q0M3ZDLK0tfSysmLs+zB64RXWci8fxxj1rrvO
-	CCdhu5VsFevRtlTNRfYGSLmW2fns1ZRKUTR9GA7y1QYDkHn0XRe7UGcWAl4nhZqgtHQQOuSguIH
-	bX8uJ61Lzz+ADqLb6bwr98dIxNd79vbr5IyIa3w==
-X-Google-Smtp-Source: AGHT+IFF9x0kcV4O4K6ZspVN57UUPh5M6n3DoRW/LKTTDP4y3eH/KtTeC1NTvVIbWLwiW99ntfIxagBPmHeZAstrCBQ=
-X-Received: by 2002:a05:6902:250f:b0:e13:c8e7:5bd4 with SMTP id
- 3f1490d57ef6-e166640f1famr6031982276.22.1724315490296; Thu, 22 Aug 2024
- 01:31:30 -0700 (PDT)
+	s=arc-20240116; t=1724315513; c=relaxed/simple;
+	bh=WtmLzHENyzJ0oqzjTV5PcuOx2yCwd1M8gNFXbqzoayc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lL4DuPmsUSqtO8hfy81aNaFVG2z+wfbxpo3UXBBrEmNZQOKqAlkR18UrmFmgSsTgpamBZiZkyw6BeQoCNQTuyKamBgDiDYBI6QKNUTLaaubJF+X5fdB5tUjYLGSRjX3g8K6KaJPZwy0nKJ4g69/vlnYHbJe1jdJGvmwJL4cAPMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBN3PMjy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C6F1C4AF09;
+	Thu, 22 Aug 2024 08:31:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724315513;
+	bh=WtmLzHENyzJ0oqzjTV5PcuOx2yCwd1M8gNFXbqzoayc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eBN3PMjyiqZz85GkH906ilgK7doj1qcYKl3zTW9rjmOIMep19wqXQvjKcd+AAWOLU
+	 QDfqPDgT9+cFtKlicTPEi+2JevNv9tl1b1po0r8mKQxqQmfdXCAXHy4bmUpkhQiU6u
+	 Xm9+QzFoL+BBmcqqe2/p2ByyVoNEl+twZXV3M07x0wU0EbW9iv4YQWedfZFbnXW0Kl
+	 La5c0KdU2UxKVryZ3ug8uOgmLmGoTb/ZX/zMcZ0adxSQ9Wod3nY88x+93MrAzoWLOw
+	 A1nzbBJQ8ohjxPzEUwosjoD1l87v7j47qIDBLGOv3QHD1HUs5kjmd2s2h4XWoLuu7J
+	 cxNPfKYN3H2rw==
+Date: Thu, 22 Aug 2024 10:31:47 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Andreas Dilger <adilger@dilger.ca>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 6/6] inode: make i_state a u32
+Message-ID: <20240822-differenz-reihum-0e9f9e265020@brauner>
+References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
+ <20240821-work-i_state-v2-6-67244769f102@kernel.org>
+ <9BA2DBC4-0DB3-406C-A88D-B816C421EF1D@dilger.ca>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822012523.141846-1-vinicius.gomes@intel.com> <20240822012523.141846-8-vinicius.gomes@intel.com>
-In-Reply-To: <20240822012523.141846-8-vinicius.gomes@intel.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 22 Aug 2024 10:31:18 +0200
-Message-ID: <CAJfpegs5+2DadbB6tfwLD+DAFzqfOTi7bZMxJCoj_r5Tu7jcfw@mail.gmail.com>
-Subject: Re: [PATCH v2 07/16] fs/backing-file: Convert to cred_guard()
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com, 
-	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9BA2DBC4-0DB3-406C-A88D-B816C421EF1D@dilger.ca>
 
-On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
-<vinicius.gomes@intel.com> wrote:
->
-> Replace the override_creds_light()/revert_creds_light() pairs of
-> operations to cred_guard().
+On Wed, Aug 21, 2024 at 03:03:01PM GMT, Andreas Dilger wrote:
+> On Aug 21, 2024, at 9:47 AM, Christian Brauner <brauner@kernel.org> wrote:
+> > 
+> > Now that we use the wait var event mechanism make i_state a u32 and free
+> > up 4 bytes. This means we currently have two 4 byte holes in struct
+> > inode which we can pack.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> > include/linux/fs.h | 2 +-
+> > 1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 8525f8bfd7b9..a673173b6896 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -681,7 +681,7 @@ struct inode {
+> > #endif
+> > 
+> > 	/* Misc */
+> > -	unsigned long		i_state;
+> > +	u32			i_state;
+> 
+> Is it worthwhile to add a comment that there is a hole here, instead
+> of leaving it for future re-discovery?
+> 
+>         /* 32-bit hole */
+> 
+> > 	struct rw_semaphore	i_rwsem;
+> > 
+> > 	unsigned long		dirtied_when; /* jiffies of first dirtying */
+> 
+> Normally this would be excess noise, but since struct inode is
+> micro-optimized (like struct page) it probably makes sense to
+> document this case.
 
-I'd note here, that in some cases the revert will happen later than
-previously, but (hopefully) you have verified that in these cases it
-won't make a difference.
-
-Thanks,
-Miklos
+Good idea. Added now!
 
