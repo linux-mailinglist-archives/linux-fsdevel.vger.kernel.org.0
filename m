@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-26659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092CE95AC39
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 05:46:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17C695AC3E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 05:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC2DC280E6A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D98C280CE7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1A036AFE;
-	Thu, 22 Aug 2024 03:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6600437160;
+	Thu, 22 Aug 2024 03:47:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619111A277;
-	Thu, 22 Aug 2024 03:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715F92E64B;
+	Thu, 22 Aug 2024 03:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724298354; cv=none; b=HnQeA9zEy337/JueWUISZsd6FycgZ4fPicuhtaidiKXMnnVysIDGDwkYZJ5R67BLwLjZxLOnIQ/xNPI1MpylYiZECHGB153D9aEvb9KUt7cPKX+MDsNT3nZVOAdWeSYAdkUMMZV4BUvnyljrBa2uVNq4kqDyY/LbPzkBiMbRHdY=
+	t=1724298462; cv=none; b=s9kBGtbt3+0x7CLn/ZWbv6ifYXaxI8CJpOSisd3baQ+OANswYLysqrtjdJ4XR139yDO6Y9QKhRlitqM1ouiNJppVMepL/cyxO6ZTb/4OiTEr03BvvL/da+BIFgnKdoKZ/+soCMe31jKvpCvGa5+EWGUuONjMwP8T1L8FNrJw6Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724298354; c=relaxed/simple;
-	bh=mIa9JYfzAipUBzgVYDV97c9fmgtfHXkkKjtZyodpapM=;
+	s=arc-20240116; t=1724298462; c=relaxed/simple;
+	bh=vSMh5gGAamqPj3RXPyE8JcxikLlbDcEem2LdJZ5rw4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iy908eHdN2dOB1A8aTtWpwuZqMIU8YHuTSSqSWH6z5YMbj0gBTA2My0YB5U3/BdaRA/H6x8kIp/p/etJ5UR28Gdqfe+2Lm2Wn8M20OK/x8PrE/JjR9kcmc7BO+KgXlljfSMMaHeUccQ/exABUqFlEdcj2XPiB8AGBHswVKEoeFY=
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOZpOznNH7RWfuyDAw6cMtMs70wvPpW2gFkcQ8ySvuyZlB5pSxKEFZP/pRALKE+sUVtujFvHWvuftSmz3qC29aN52ntEVY9N2C8PUcpnGk8pTF+u4I4kUNPC3Zsecckm2+Me2DLBJExXkaMU81rAq3mcC2AQ3aTRb5I84ac6QmA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 671CB227A8E; Thu, 22 Aug 2024 05:45:48 +0200 (CEST)
-Date: Thu, 22 Aug 2024 05:45:48 +0200
+	id C6762227A8E; Thu, 22 Aug 2024 05:47:35 +0200 (CEST)
+Date: Thu, 22 Aug 2024 05:47:35 +0200
 From: Christoph Hellwig <hch@lst.de>
 To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: Christoph Hellwig <hch@lst.de>,
@@ -40,9 +40,10 @@ Cc: Christoph Hellwig <hch@lst.de>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/5] xfs: convert perag lookup to xarray
-Message-ID: <20240822034548.GD32681@lst.de>
-References: <20240821063901.650776-1-hch@lst.de> <20240821063901.650776-5-hch@lst.de> <20240821162810.GF865349@frogsfrogsfrogs>
+Subject: Re: [PATCH 2/5] xfs: move the tagged perag lookup helpers to
+ xfs_icache.c
+Message-ID: <20240822034735.GE32681@lst.de>
+References: <20240821063901.650776-1-hch@lst.de> <20240821063901.650776-3-hch@lst.de> <20240821163407.GH865349@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,28 +52,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240821162810.GF865349@frogsfrogsfrogs>
+In-Reply-To: <20240821163407.GH865349@frogsfrogsfrogs>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Aug 21, 2024 at 09:28:10AM -0700, Darrick J. Wong wrote:
-> On Wed, Aug 21, 2024 at 08:38:31AM +0200, Christoph Hellwig wrote:
-> > Convert the perag lookup from the legacy radix tree to the xarray,
-> > which allows for much nicer iteration and bulk lookup semantics.
+On Wed, Aug 21, 2024 at 09:34:07AM -0700, Darrick J. Wong wrote:
+> On Wed, Aug 21, 2024 at 08:38:29AM +0200, Christoph Hellwig wrote:
+> > The tagged perag helpers are only used in xfs_icache.c in the kernel code
+> > and not at all in xfsprogs.  Move them to xfs_icache.c in preparation for
+> > switching to an xarray, for which I have no plan to implement the tagged
+> > lookup functions for userspace.
 > 
-> Looks like a pretty straightforward covnersion.  Is there a good
-> justification for converting the ici radix tree too?  Or is it too
-> sparse to be worth doing?
+> I don't particularly like moving these functions to another file, but I
+> suppose the icache is the only user of these tags.  How hard is it to
+> make userspace stubs that assert if anyone ever tries to use it?
 
-radix trees and xarrays have pretty similar behavior related to
-sparseness or waste of interior nodes due to it.  So unless we find a
-better data structure for it, it would be worthwhile.
-
-But the ici radix tree does pretty funny things in terms of also
-protecting other fields with the lock synchronizing it, so the conversion
-is fairly complicated and I don't feel like doing it right now, at least
-no without evaluating if for example a rthashtable might actually be
-the better data structure here.  The downside of the rthashtable is
-that it doens't support tags/masks and isn't great for iteration, so it
-might very much not be very suitable.
+It might be easier to just implement them in that case like the underlying
+radix tree ones.  But given that they are unused I'd feel rather
+uncomfortable about it.  And more importantly I like to have the
+function (only one is left by the end) close to the callers as that makes
+reading and understanding the code easier.
 
 
