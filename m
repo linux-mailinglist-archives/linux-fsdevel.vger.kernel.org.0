@@ -1,89 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-26702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDED95B266
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 11:53:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F3995B279
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 11:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C02B4B255D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 09:53:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A24C281F11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 09:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFED17C7C1;
-	Thu, 22 Aug 2024 09:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F0C17B4EC;
+	Thu, 22 Aug 2024 09:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiGnE4B8"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jL3jNWRe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1848B1CF8B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 09:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038A11CF8B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 09:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724320373; cv=none; b=aYakJL4pakg3SvrpwVprqfWgnMRoMaz7nvzBrbO62dqCOlbT1MOJXLvKZtNLBySzJcvs80JflIwT1dYi7evJ/d6PR9H2EJgBj427I+3f5nPrLtShd8DSgT8LAuxzcQf11jGgKUSL3cYnBEzo3J7EZB2emBZiCoZ4Z0Q/qGmABIs=
+	t=1724320720; cv=none; b=qQ/u0I6rfxCtis54k/yQHbPD5359gpkywZsluU6TavzfuREJT08OzSj6veJepJQRLWOXj/mR8lczgEIA1g8FQ2pjeo1rGw57CwEbd/kjcQzgTd0FfbNgfT/L1BD6z8WW/Td9IBtBiONEhu+srsIqNNMhKKRtPOlKGG5szkpd/58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724320373; c=relaxed/simple;
-	bh=qp37Tn+39PzqspjjHNSOY/MNTOIrYHTbf22AtF94CQA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=usH0DHxmcJRYZALnxRHEDiZ+14FKanoFcr3YndfyDoKqKXvn19cPrzqa8tIxuLXPuId/GWQ+tvm1NY2tCqQ4s8kYQ9Sdh30/sz5MoX/5kKzgV2LCI+cPSSKcCuBXcLZ2D+kEFFOqyzYgw0zlxaYhVW6oDo7E0tNzrebsmtQeEk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiGnE4B8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398C6C32782;
-	Thu, 22 Aug 2024 09:52:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724320372;
-	bh=qp37Tn+39PzqspjjHNSOY/MNTOIrYHTbf22AtF94CQA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hiGnE4B8bKwBrHFgxZABI7UkFG4U8lvIPlvKpXXVPbUrhDWG4xRcVLqhCJe5a88Q2
-	 Kpe6LpzdPxWyK7Glcjqoglf4/qeg1ZsUJl8z8vYzsNSzVn2HN2XuJ5TYDHZ00t63zo
-	 wU1T0x61vfFuXCu/H7abN3RPPu3/RvwpLxnpX3uEdqBzymTju2Co7XjXTJa8Y3a6AA
-	 HyIG2+qy2gXDFhts7dx+P+CxJ99yAFZtxKtvJ1ge8BlHw/ClJ/BI73EzTAXkaV5ddU
-	 ioIKai55WmfJDDn92ekMg1XJWH76hNt21NdUFZAE1wGJgNLUegpFebi1s31ddbaMQw
-	 qeA+ewseMKvqA==
-From: Christian Brauner <brauner@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: add the VFS git tree
-Date: Thu, 22 Aug 2024 11:52:39 +0200
-Message-ID: <20240822-zusichern-plexiglas-b6c978527bae@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240820195109.38906-1-ebiggers@kernel.org>
-References: <20240820195109.38906-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1724320720; c=relaxed/simple;
+	bh=50AcvFP/dKvjehJ4VbdySJ1rkwRAjSt2ld/cePdn1Lg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IhqMIBBQ5XGj7EaoEykPGQyHOGW7WlQrGJ1BzE8HoVbedFy13chyUAXoLIG8WIIB8homx9F+HBNtl3nK0Ef7svSgPgDmstc49rcnEGKFAbbfaf+2TkGynwqGDRMdUo/xEr51wNuBFWJjfz2O0T3cMqo/eKJw0GgyJ5b37MlgMkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jL3jNWRe; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e1654a42cb8so635921276.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 02:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724320718; x=1724925518; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pKUAhsCvvZcXbo7ND7fwsh9PHN8viGomUNBGSlHzOqI=;
+        b=jL3jNWRe6sHjLN2uoH/Z41kpFw/g8Jpcq43y/42IetRlwjK7N+6EgyFf5QqfwcLqGs
+         0V5evTfMqK3PJCSunHE3wk+A0mpwlFbKdByqDRDP9fptSVhWG4iQaaf0Mc2b45MgZkbC
+         1i+pppxQLmmIiHAk7z1ePlXU3tVI+e79FJS+o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724320718; x=1724925518;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pKUAhsCvvZcXbo7ND7fwsh9PHN8viGomUNBGSlHzOqI=;
+        b=nXOmxuRdpdkPEmcNDxgFKhqDMtl4DOGcFruyWjQneZli5/P+L/z41sRIDDVuRCy6xQ
+         MS8V/a0NpByKwBonYag2sc70GZfYQDG5sfjaTAqVRfAAZmRIFPEgWIjqF832704QxZ15
+         fgIaqq96P3XgU5wk5Z66l9NHFwAeYKGoY3wu6ZACI4CJGH1QBReaSISLnd83oUIyWaEU
+         5bid0Xk0kbCndgu5OGBHcs433HOliKC+muKWgqiqkviTu6/3L7hZalB0SJnds4H3l2P2
+         w6Djo9Y6HQCuQyW+JMG4Eu8dHQ8mFQLQHf1811AGj4smHzHdN6S8ThtP28KbcXnjZQXy
+         0qvQ==
+X-Gm-Message-State: AOJu0YzvJ/WIW19qztDa5etX+lQBQ9Z+G+AQVEttZjdYzF39UQ2CZ74w
+	5whby/KFHsnk7k2jvb0ZH7NZ93T+BHD3WTSNw68FpjZg7gB7W+RvnjNjwHLsPjR3CyewEPDQW9Y
+	63LTen6ga+mxZOhrNlKU/IlWbXWyLmL9cRzmJn3XlyTCc+OzDHeI=
+X-Google-Smtp-Source: AGHT+IFqvRvfyYHgi38CCbk+rVO/dKvvHFdwCAWxM3d3C1KpBwMD93KR3djN4kz9EnZjd6c7naDLn/P41z/+PzJ5Jc0=
+X-Received: by 2002:a25:9744:0:b0:e16:680f:a67a with SMTP id
+ 3f1490d57ef6-e16680fb01amr4447839276.42.1724320717986; Thu, 22 Aug 2024
+ 02:58:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=868; i=brauner@kernel.org; h=from:subject:message-id; bh=qp37Tn+39PzqspjjHNSOY/MNTOIrYHTbf22AtF94CQA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQd58pVz3TZfS91m+fG3dYCZ35+LNsnsS7j6NRLJ2TL7 Zb4f/zwuqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi/JmMDPf+Pp75mkU1R6qn 6vwdU56kxEP6nN/UtSfe+jP9eEPW/iCGf4bK/lvuyomFbva6cFH+7dJ5mjYtf+9NLrond7Xbey3 /C1YA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240821232241.3573997-1-joannelkoong@gmail.com> <20240821232241.3573997-9-joannelkoong@gmail.com>
+In-Reply-To: <20240821232241.3573997-9-joannelkoong@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 22 Aug 2024 11:58:25 +0200
+Message-ID: <CAJfpegt6eZrXC6PAa8dvb6duPSTxhSOm3_JzXjzB6hzOnw6z9A@mail.gmail.com>
+Subject: Re: [PATCH v2 8/9] fuse: refactor out shared logic in
+ fuse_writepages_fill() and fuse_writepage_locked()
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 20 Aug 2024 12:51:09 -0700, Eric Biggers wrote:
-> The VFS git tree is missing from MAINTAINERS.  Add it.
-> 
-> 
+On Thu, 22 Aug 2024 at 01:25, Joanne Koong <joannelkoong@gmail.com> wrote:
+>
+> This change refactors the shared logic in fuse_writepages_fill() and
+> fuse_writepages_locked() into two separate helper functions,
+> fuse_writepage_args_page_fill() and fuse_writepage_args_setup().
+>
+> No functional changes added.
+>
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> ---
+>  fs/fuse/file.c | 102 +++++++++++++++++++++++++++----------------------
+>  1 file changed, 57 insertions(+), 45 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 812b3d043b26..fe8ae19587fb 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1936,7 +1936,6 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+>
+>                 wpa->next = next->next;
+>                 next->next = NULL;
+> -               next->ia.ff = fuse_file_get(wpa->ia.ff);
+>                 tree_insert(&fi->writepages, next);
+>
+>                 /*
+> @@ -2049,50 +2048,78 @@ static void fuse_writepage_add_to_bucket(struct fuse_conn *fc,
+>         rcu_read_unlock();
+>  }
+>
+> +static void fuse_writepage_args_page_fill(struct fuse_writepage_args *wpa, struct folio *folio,
+> +                                         struct folio *tmp_folio, uint32_t page_index)
+> +{
+> +       struct inode *inode = folio->mapping->host;
+> +       struct fuse_args_pages *ap = &wpa->ia.ap;
+> +
+> +       folio_copy(tmp_folio, folio);
+> +
+> +       ap->pages[page_index] = &tmp_folio->page;
+> +       ap->descs[page_index].offset = 0;
+> +       ap->descs[page_index].length = PAGE_SIZE;
+> +
+> +       inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
+> +       inc_node_page_state(&tmp_folio->page, NR_WRITEBACK_TEMP);
+> +}
+> +
+> +static struct fuse_writepage_args *fuse_writepage_args_setup(struct folio *folio,
+> +                                                            struct fuse_file *ff)
+> +{
+> +       struct inode *inode = folio->mapping->host;
+> +       struct fuse_conn *fc = get_fuse_conn(inode);
+> +       struct fuse_writepage_args *wpa;
+> +       struct fuse_args_pages *ap;
+> +
+> +       wpa = fuse_writepage_args_alloc();
+> +       if (!wpa)
+> +              return NULL;
+> +
+> +       fuse_writepage_add_to_bucket(fc, wpa);
+> +       fuse_write_args_fill(&wpa->ia, ff, folio_pos(folio), 0);
+> +       wpa->ia.write.in.write_flags |= FUSE_WRITE_CACHE;
+> +       wpa->inode = inode;
+> +       wpa->ia.ff = ff;
+> +
+> +       ap = &wpa->ia.ap;
+> +       ap->args.in_pages = true;
+> +       ap->args.end = fuse_writepage_end;
+> +
+> +       return wpa;
+> +}
+> +
+>  static int fuse_writepage_locked(struct folio *folio)
+>  {
+>         struct address_space *mapping = folio->mapping;
+>         struct inode *inode = mapping->host;
+> -       struct fuse_conn *fc = get_fuse_conn(inode);
+>         struct fuse_inode *fi = get_fuse_inode(inode);
+>         struct fuse_writepage_args *wpa;
+>         struct fuse_args_pages *ap;
+>         struct folio *tmp_folio;
+> +       struct fuse_file *ff;
+>         int error = -ENOMEM;
+>
+> -       wpa = fuse_writepage_args_alloc();
+> -       if (!wpa)
+> -               goto err;
+> -
+>         tmp_folio = folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
+>         if (!tmp_folio)
+> -               goto err_free;
+> +               goto err;
+>
+>         error = -EIO;
+> -       wpa->ia.ff = fuse_write_file_get(fi);
+> -       if (!wpa->ia.ff)
+> +       ff = fuse_write_file_get(fi);
+> +       if (!ff)
+>                 goto err_nofile;
+>
+> -       fuse_writepage_add_to_bucket(fc, wpa);
+> -       fuse_write_args_fill(&wpa->ia, wpa->ia.ff, folio_pos(folio), 0);
+> -
+> -       wpa->ia.write.in.write_flags |= FUSE_WRITE_CACHE;
+> -       wpa->next = NULL;
+> -       wpa->inode = inode;
+> +       wpa = fuse_writepage_args_setup(folio, ff);
+> +       if (!wpa) {
+> +               error = -ENOMEM;
+> +               goto err_writepage_args;
+> +       }
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Please use the following pattern, unless there's a good reason not to:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] MAINTAINERS: add the VFS git tree
-      https://git.kernel.org/vfs/vfs/c/abadcddedcec
++       error = -ENOMEM;
++       if (!wpa)
++               goto err_writepage_args;
 
