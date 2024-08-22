@@ -1,114 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-26723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2957795B638
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:15:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB4B95B677
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0B41F26CA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 13:15:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51E642848BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 13:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441391CB15A;
-	Thu, 22 Aug 2024 13:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8681CB151;
+	Thu, 22 Aug 2024 13:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HpkN4Nia"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jd9E+dne"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF481C9EC5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 13:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA42D1CB121
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 13:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724332508; cv=none; b=bH30+o8JPyLEZD3QpjJr+dmKRCSV+sah+H4wynlGqogr8PReSWMjkCBS9xW7xZFMSbYOlN9MlUXOoG+N7uPRJdgjZNwNMBojT14F/bJEWtPpOlFQ8Mpf1Fv/iwyCLO7ci2AWlgV2nSR1/RaY5JQ92OIonZTF0tpXs4PESvv8oVU=
+	t=1724332992; cv=none; b=B3K6/Bi4EISYY6vkBdIvJJfBxmrxl4bMxT7g2kHqnYKOGO75SsBMyXuHd/HIRrbVhcDveK/oCyP2T2JQ6K/fCzatuvjxAeFJryIQga7n7zw4rDAiLxzH3cEkE6e9hEvTiBkT+wBTccB1z0xbYx2z+IFtmXE+5Ckp74SPpN/Gdq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724332508; c=relaxed/simple;
-	bh=JLR5XN8uPapW+jGPHfnnP6iSyGSSHrWe2Q3eKtDUGUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s84jI4J8nANCIUM5nKnHBBa2obhLJIwEoETlSmjKog9Qb6nePQ+aMbwHBzPNTjJLl7AL6xAaXAcQEUnF1D7ehd5IRl31D/hwaHE823dglpmIP7b0jmED7PoPmopTQX5D6/PhwcFzNbU1iBlWdceCcbOHMpAUxQAPUdT5xxFRdBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=HpkN4Nia; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-533463f6b16so1040356e87.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 06:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724332505; x=1724937305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U9KRMSVPaqZO1TNrx4pIrSfA8dcRqpzS+a6vGuAD6mU=;
-        b=HpkN4NiatB42lMYMHPTzufIfnTaIN7UAUykMYnDzsur81/oiEc8DqTysC8sk3ZN7eu
-         EIXNaMU/o8VlUKM8Bj52KwWbAf824KsvrD0oirW9szWRV9UK6nc0PX2qAz2sYmLsAuOp
-         mw/7GPlJaXYdgxnPTyNFH6cObDzZ5GLJ/Z07Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724332505; x=1724937305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U9KRMSVPaqZO1TNrx4pIrSfA8dcRqpzS+a6vGuAD6mU=;
-        b=B+z+xzZm0JztdnQjjHY7ufiMwbNkuro4bsMPlppjT8Lsig7PzlOlPptUe2q4LHFiuW
-         tB+MDFHP2vY7/7JcE2jzj809DfViyMsHem/JLOI6eOOgmVH4q9ZhYNfMchgbxUCfvOkz
-         F2SH0bmsRJ5dz7r1WbiPEn67T7D3od5BIect1cTjiYbrFkYfBAKMQZudSHzwY1umNriE
-         OpbWquI08H6L1fKEWyCpbQnkW/jSg+kKyfpZwNMEB6n79aKsLOuN1ae0yvL6NkcgjZKp
-         kEYWeM0fQT8IMwYqscnKpoAKnjbOBGKs0lWNNqLOrLE3xOgtf8QNc6TRS/Ocvhm2Oilx
-         XRpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUONKPrWAe3YNJ31/pawvnUSEWesp0Kxp9BKrLiEQd65/A9OJD9JlN9hosn/ViDH1JPKrNNubtveDSxZKfM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHhHg7N+UO7Ay2+0vl3VdI2q9XrBp3m0YuaE3iXso8AtRcAN3k
-	8z4NBUzo5abmgLaWkmVdGPxVQgfQp4LO5Zm7CH0Hy7LRmGGtVQ/6cZbtlpKmDhGDy8wg6nnjEED
-	VH7BLFSj9DnHoYw1Y4M0yxy56RfN9PLma5uenUg==
-X-Google-Smtp-Source: AGHT+IFQu2aJ42dHK1Z1+2uPmeklOwGyLwUpaqn5jLGSzisWf/Jt2pe/jwo3NJQ6UOHcAFDcAl4kEdNp94Hdh3Dj/Xk=
-X-Received: by 2002:a05:6512:3e10:b0:52c:80f6:d384 with SMTP id
- 2adb3069b0e04-5334854a39cmr3726537e87.3.1724332504893; Thu, 22 Aug 2024
- 06:15:04 -0700 (PDT)
+	s=arc-20240116; t=1724332992; c=relaxed/simple;
+	bh=ihfoIIwBY7vjnM53NdhthRQd9G4rdan23hMoqFFnwRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJrUHSzDqU1Jqb2uZSj7Pzi6jcUKDS5SqihUBt2fz+NWN6neORSTsezlSrXsS01J8BXZokHjEx1eH2AgVotv1TiDuSfuRdqM9o1s3VsoO4+BoI3yb5I93M8Q3YyuUjzNHht9eW4wIMaYxGeIr5f/vsJlYqbE8YWOB2493PwqJSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jd9E+dne; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724332990; x=1755868990;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ihfoIIwBY7vjnM53NdhthRQd9G4rdan23hMoqFFnwRU=;
+  b=Jd9E+dneNRI2bU/rDxl6XkKCUhL0Gz4oIrLGunotQOdQDqe0jd4ajLJE
+   MdXK6yJVSbjKDSRJ+NGvVnnP95EBf0lvzlEhXaVv4drB6pXP0od8eHy4L
+   mj/A+jenO15Ow6q/gFNRDshhA1Wo1o6ylOzXq+JF/HIsk8ofQxWogdKpL
+   qHWMq2M+r6FEdEIQoB2h4KetT6adOB0liwIqg10C6yFQMAjbaTTUwnZAs
+   G+9xtH+/LRT1g7N5FaTXy8q1UTvbqR3HEbtsQ3nUnIqvqmj9681o4qcf5
+   wkBuriBOIMVoHMCGRQLZEKqc4x8Ufm6uzdXr8M2xSJ7SSfYfhiv9YS1I6
+   w==;
+X-CSE-ConnectionGUID: JHKvpy5BRtK69vql1gRrLg==
+X-CSE-MsgGUID: yL4dru9UR1mICNOaCfU75w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="33898396"
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="33898396"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 06:23:09 -0700
+X-CSE-ConnectionGUID: 2ZdZ/EYTT7aGUaUazgxAXw==
+X-CSE-MsgGUID: vZp1On1BRwebNdaaRu+52A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="92186233"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 22 Aug 2024 06:23:07 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sh7mL-000CmR-1O;
+	Thu, 22 Aug 2024 13:23:05 +0000
+Date: Thu, 22 Aug 2024 21:22:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH 01/10] mm: Remove PageActive
+Message-ID: <202408222044.zZMToCKk-lkp@intel.com>
+References: <20240821193445.2294269-2-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <792a3f54b1d528c2b056ae3c4ebaefe46bca8ef9.camel@bitron.ch>
- <ZrY97Pq9xM-fFhU2@casper.infradead.org> <5b54cb7e5bfdd5439c3a431d4f86ad20c9b22e76.camel@bitron.ch>
- <ZreDcghI8t_1iXzQ@casper.infradead.org> <CAJfpegvVc_bZbL1bjcEbEh4+WU=XVS94NMyBPKbcHzAzyxM6_Q@mail.gmail.com>
- <ea297a16508dbf8ecfa4417cc88eef95b5d697e8.camel@bitron.ch>
-In-Reply-To: <ea297a16508dbf8ecfa4417cc88eef95b5d697e8.camel@bitron.ch>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 22 Aug 2024 15:14:53 +0200
-Message-ID: <CAJfpegsvQLtxk-2zEqa_ZsY5J_sLd0m4XhWXn1nVoLoSs8tjrw@mail.gmail.com>
-Subject: Re: [REGRESSION] fuse: copy_file_range() fails with EIO
-To: =?UTF-8?Q?J=C3=BCrg_Billeter?= <j@bitron.ch>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
-	regressions@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821193445.2294269-2-willy@infradead.org>
 
-On Thu, 22 Aug 2024 at 15:12, J=C3=BCrg Billeter <j@bitron.ch> wrote:
->
-> On Thu, 2024-08-22 at 15:04 +0200, Miklos Szeredi wrote:
-> > On Sat, 10 Aug 2024 at 17:12, Matthew Wilcox <willy@infradead.org> wrot=
-e:
-> > > That's what I suspected was going wrong -- we're trying to end a read=
- on
-> > > a folio that is already uptodate.  Miklos, what the hell is FUSE doin=
-g
-> > > here?
-> >
-> > Ah, this is the fancy page cache replacement done in
-> > fuse_try_move_page().
-> >
-> > I understand how this triggers VM_BUG_ON_FOLIO() in folio_end_read().
-> >
-> > What I don't understand is how this results in the -EIO that J=C3=BCrg
-> > reported.
->
-> I'm not really familiar with this code but it seems `folio_end_read()`
-> uses xor to update the `PG_uptodate` flag. So if it was already set, it
-> will incorrectly clear the `PG_uptodate` set, which I guess triggers
-> the issue.
+Hi Matthew,
 
-Indeed, that would explain this.
+kernel test robot noticed the following build errors:
 
-Thanks,
-Miklos
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on arm64/for-next/core tip/x86/core tip/x86/mm linus/master v6.11-rc4 next-20240822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/mm-Remove-PageActive/20240822-033717
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240821193445.2294269-2-willy%40infradead.org
+patch subject: [PATCH 01/10] mm: Remove PageActive
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20240822/202408222044.zZMToCKk-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240822/202408222044.zZMToCKk-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408222044.zZMToCKk-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   arch/powerpc/mm/pgtable-frag.c: In function 'pte_free_defer':
+>> arch/powerpc/mm/pgtable-frag.c:142:9: error: implicit declaration of function 'SetPageActive' [-Wimplicit-function-declaration]
+     142 |         SetPageActive(page);
+         |         ^~~~~~~~~~~~~
+
+
+vim +/SetPageActive +142 arch/powerpc/mm/pgtable-frag.c
+
+32cc0b7c9d508e Hugh Dickins 2023-07-11  135  
+32cc0b7c9d508e Hugh Dickins 2023-07-11  136  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+32cc0b7c9d508e Hugh Dickins 2023-07-11  137  void pte_free_defer(struct mm_struct *mm, pgtable_t pgtable)
+32cc0b7c9d508e Hugh Dickins 2023-07-11  138  {
+32cc0b7c9d508e Hugh Dickins 2023-07-11  139  	struct page *page;
+32cc0b7c9d508e Hugh Dickins 2023-07-11  140  
+32cc0b7c9d508e Hugh Dickins 2023-07-11  141  	page = virt_to_page(pgtable);
+32cc0b7c9d508e Hugh Dickins 2023-07-11 @142  	SetPageActive(page);
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
