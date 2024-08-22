@@ -1,119 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-26810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D5E95BBAC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:19:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3DA95BB7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23BEF28A4EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:19:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87398B22A62
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984731CDA06;
-	Thu, 22 Aug 2024 16:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4F61CDA30;
+	Thu, 22 Aug 2024 16:12:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C54F4206E;
-	Thu, 22 Aug 2024 16:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865241CDA08;
+	Thu, 22 Aug 2024 16:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343578; cv=none; b=kY8DglZJCEAlwt2ET/PoQeRzV9WKzIFeAECpErEpfDYna/jb2mUs696tK1ShdH0NMg524QCtYsiTnDyBqQlhzAb3FkcjaN+UhHtUXxkcOE1VM0h2lALQ0vAQH/F7HgyG+LUR17bxo0ygqYmwyYND4YtjcddAJ+gtOs/zu4Gk4NU=
+	t=1724343159; cv=none; b=rBAFsucXbSQo+GNqrGXDl5lYGSK+u2TdPXXlh3HGj8EQwXZNvoJeFWvYd1HWOVSQENIp6bFg8ZjMFukFJ0bNVFdHUCsNQY/ZUnltwlxfFiZXtdzNpFgyeP/X37pp/on+goxIzbw3VMKscnrWKpZsRI7KYpLUBcGbjNA5COS3ays=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724343578; c=relaxed/simple;
-	bh=dxPZv2Aio0a3aAwHBW4baonIUHBW0jWQCPIJdVeW6xk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UWT3dMaFgPePRW4XP4Zf1ecE5n/HN2UJJE12uAHvTGry9aFvUrvjZr+W2XyI82CoCdbfOUW2QC0Jhj1h9ojaDUf6mi5Zdox/RKsdu0hKuZWOd2K4ULHWLSNOAiudIMTK4nKQO03plJoeR4aJFY+pDvGeCxaK2DPCn7FkzesMeAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: by air.basealt.ru (Postfix, from userid 490)
-	id 7C8062F2024C; Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
-X-Spam-Level: 
-Received: from altlinux.malta.altlinux.ru (obninsk.basealt.ru [217.15.195.17])
-	by air.basealt.ru (Postfix) with ESMTPSA id 331562F2024D;
-	Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
-From: kovalev@altlinux.org
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	aivazian.tigran@gmail.com,
-	stable@vger.kernel.org
-Cc: lvc-patches@linuxtesting.org,
-	dutyrok@altlinux.org,
-	kovalev@altlinux.org,
-	syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
-Subject: [PATCH v3 2/2] bfs: ensure buffer is marked uptodate before marking it dirty
-Date: Thu, 22 Aug 2024 19:12:19 +0300
-Message-Id: <20240822161219.459054-3-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
-In-Reply-To: <20240822161219.459054-1-kovalev@altlinux.org>
-References: <20240822161219.459054-1-kovalev@altlinux.org>
+	s=arc-20240116; t=1724343159; c=relaxed/simple;
+	bh=arNvsRUXm7jY00uvGkAwSitSYm9UxPvScMuijKZi0Fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F5e2AsFFZQJTuID5ka9rGZrp7RiQO8LfhXnbZ3Bo6xmclRchzH0THPvqxNSImvWAs9At1v+UlPtDCjF8od0qi2seVRAkqJtYbKLqAfke5aYyo/HgoRTZ/pLIE4W6x6s4JfxHqE1iHpzYkQphgiMajeE5PGEg8JvEEJ2CBI+v6og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A751C4AF0C;
+	Thu, 22 Aug 2024 16:12:33 +0000 (UTC)
+Date: Thu, 22 Aug 2024 17:12:30 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 19/39] arm64/mm: Handle GCS data aborts
+Message-ID: <ZsdjbsDrMWgBU9Hj@arm.com>
+References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
+ <20240822-arm64-gcs-v11-19-41b81947ecb5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822-arm64-gcs-v11-19-41b81947ecb5@kernel.org>
 
-From: Vasiliy Kovalev <kovalev@altlinux.org>
+On Thu, Aug 22, 2024 at 02:15:22AM +0100, Mark Brown wrote:
+> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> index 451ba7cbd5ad..3ada31c2ac12 100644
+> --- a/arch/arm64/mm/fault.c
+> +++ b/arch/arm64/mm/fault.c
+> @@ -486,6 +486,14 @@ static void do_bad_area(unsigned long far, unsigned long esr,
+>  	}
+>  }
+>  
+> +static bool is_gcs_fault(unsigned long esr)
+> +{
+> +	if (!esr_is_data_abort(esr))
+> +		return false;
+> +
+> +	return ESR_ELx_ISS2(esr) & ESR_ELx_GCS;
+> +}
+> +
+>  static bool is_el0_instruction_abort(unsigned long esr)
+>  {
+>  	return ESR_ELx_EC(esr) == ESR_ELx_EC_IABT_LOW;
+> @@ -500,6 +508,23 @@ static bool is_write_abort(unsigned long esr)
+>  	return (esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM);
+>  }
+>  
+> +static bool is_invalid_gcs_access(struct vm_area_struct *vma, u64 esr)
+> +{
+> +	if (!system_supports_gcs())
+> +		return false;
+> +
+> +	if (unlikely(is_gcs_fault(esr))) {
+> +		/* GCS accesses must be performed on a GCS page */
+> +		if (!(vma->vm_flags & VM_SHADOW_STACK))
+> +			return true;
 
-Add a call to `set_buffer_uptodate(new)` in `bfs_move_block` before
-marking the buffer as dirty. This change ensures the buffer is correctly
-flagged as containing valid data after copying, preventing potential data
-inconsistencies or corruption during writeback.
+This first check covers the GCSPOPM/RET etc. permission faults on
+non-GCS vmas. It looks correct.
 
-Found by Syzkaller:
+> +	} else if (unlikely(vma->vm_flags & VM_SHADOW_STACK)) {
+> +		/* Only GCS operations can write to a GCS page */
+> +		return is_write_abort(esr);
+> +	}
 
-WARNING: CPU: 1 PID: 5055 at fs/buffer.c:1176 mark_buffer_dirty+0x37b/0x3f0 fs/buffer.c:1176
-Modules linked in:
-CPU: 1 PID: 5055 Comm: syz-executor162 Not tainted 6.8.0-rc1-syzkaller-00049-g6098d87eaf31 #0
-Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
-RIP: 0010:mark_buffer_dirty+0x37b/0x3f0 fs/buffer.c:1176
-Call Trace:
+I don't think that's right. The ESR on this path may not even indicate a
+data abort and ESR.WnR bit check wouldn't make sense.
 
- bfs_move_block fs/bfs/file.c:44 [inline]
- bfs_move_blocks fs/bfs/file.c:57 [inline]
- bfs_get_block+0x3e5/0xeb0 fs/bfs/file.c:126
- __block_write_begin_int+0x4fb/0x16e0 fs/buffer.c:2103
- __block_write_begin fs/buffer.c:2152 [inline]
- block_write_begin+0xb1/0x490 fs/buffer.c:2211
- bfs_write_begin+0x31/0xd0 fs/bfs/file.c:179
- generic_perform_write+0x278/0x600 mm/filemap.c:3930
- __generic_file_write_iter+0x1f9/0x240 mm/filemap.c:4025
- generic_file_write_iter+0xe3/0x350 mm/filemap.c:4051
- call_write_iter include/linux/fs.h:2085 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0x6d5/0x1100 fs/read_write.c:590
- ksys_write+0x12f/0x250 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xd3/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+I presume we want to avoid an infinite loop on a (writeable) GCS page
+when the user does a normal STR but the CPU raises a permission fault. I
+think this function needs to just return false if !esr_is_data_abort().
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=d98fd19acd08b36ff422
-Cc: stable@vger.kernel.org
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
----
- fs/bfs/file.c | 1 +
- 1 file changed, 1 insertion(+)
+> +
+> +	return false;
+> +}
+> +
+>  static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+>  				   struct pt_regs *regs)
+>  {
+> @@ -535,6 +560,14 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+>  		/* It was exec fault */
+>  		vm_flags = VM_EXEC;
+>  		mm_flags |= FAULT_FLAG_INSTRUCTION;
+> +	} else if (is_gcs_fault(esr)) {
+> +		/*
+> +		 * The GCS permission on a page implies both read and
+> +		 * write so always handle any GCS fault as a write fault,
+> +		 * we need to trigger CoW even for GCS reads.
+> +		 */
+> +		vm_flags = VM_WRITE;
+> +		mm_flags |= FAULT_FLAG_WRITE;
+>  	} else if (is_write_abort(esr)) {
+>  		/* It was write fault */
+>  		vm_flags = VM_WRITE;
+> @@ -568,6 +601,13 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+>  	if (!vma)
+>  		goto lock_mmap;
+>  
+> +	if (is_invalid_gcs_access(vma, esr)) {
+> +		vma_end_read(vma);
+> +		fault = 0;
+> +		si_code = SEGV_ACCERR;
+> +		goto bad_area;
+> +	}
 
-diff --git a/fs/bfs/file.c b/fs/bfs/file.c
-index 23773e62994024..3f0c506584560e 100644
---- a/fs/bfs/file.c
-+++ b/fs/bfs/file.c
-@@ -44,6 +44,7 @@ static int bfs_move_block(unsigned long from, unsigned long to,
- 		return -EIO;
- 	}
- 	memcpy(new->b_data, bh->b_data, bh->b_size);
-+	set_buffer_uptodate(new);
- 	mark_buffer_dirty(new);
- 	bforget(bh);
- 	brelse(new);
+Here there's a risk that the above function returns true for some
+unrelated fault that happens to have bit 6 in ESR set.
+
 -- 
-2.33.8
-
+Catalin
 
