@@ -1,135 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-26847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEF195C13C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 01:05:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29CE95C149
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 01:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812D7285588
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 23:05:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D99811C220AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 23:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6971D1F4C;
-	Thu, 22 Aug 2024 23:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788751D1F78;
+	Thu, 22 Aug 2024 23:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8jsm1LY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sxb1plsmtpa01-15.prod.sxb1.secureserver.net (sxb1plsmtpa01-15.prod.sxb1.secureserver.net [188.121.53.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC87918AEA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 23:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CB01CFEB3;
+	Thu, 22 Aug 2024 23:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724367949; cv=none; b=Mm4aCjBVf+OUIR15eHqVo9waVJ3NERi8zck9y18yWqMSn6saMDJr0IgnFWScK3zJxX7711d+dDWiRXX2+LSxM0gkydN/D2TmYXgc1sBPHkwkKg+zl/PrH9KtYvugjJr11Pyz9XGTykAn9/8CPqNyjjPOlFdkenB/K01zPh3g8GQ=
+	t=1724368036; cv=none; b=nvDVs4Lr70V9927WUnKBd1l8DkQCYN78XHUUtRHaIQVk7nTIzsj/FT4JucQcKib8uCrVJ6UEMP7Zb1owx4DaqVtWRrdac8CsyWs9E2xcb+PA2gI5JPyCKiCZjkq9AGZjLk8EZMEVjZ41c8CBGxHqEMqVHLIv3Akzq8m6Iag+MtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724367949; c=relaxed/simple;
-	bh=lxAwp9I3kfoBzyu+yEC6APrB0bUQmLjjzHwWOjiCeHY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CToRd9A7U955UgthQYJdZR+AfYKmE7URYro7ncTndN8P6oHcAXqUgJUj9mUlk/48giIeLQprXnG/4u8gD5o2MtsMHy1W+3hRp3vmAQl97Dn5R0jLAsEFzkdn1yUDKn1QJVKlfmjwgBYAticymkxUlb6Kh8aE7edPWaeAZIcTfKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from phoenix.fritz.box ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPA
-	id hGkfsDg1Wp0VxhGktsYyjL; Thu, 22 Aug 2024 15:58:12 -0700
-X-CMAE-Analysis: v=2.4 cv=C+4iyhP+ c=1 sm=1 tr=0 ts=66c7c284
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=VwQbUJbxAAAA:8
- a=FXvPX3liAAAA:8 a=s94iO8TKwuVpzBr5ofsA:9 a=AjGcO6oz07-iQ99wixmX:22
- a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: akpm@linux-foundation.org,
-	brauner@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Phillip Lougher <phillip@squashfs.org.uk>
-Subject: [PATCH V2] Squashfs: Ensure all readahead pages have been used
-Date: Thu, 22 Aug 2024 23:58:12 +0100
-Message-Id: <20240822225812.78755-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724368036; c=relaxed/simple;
+	bh=g/yR1oyuW5dUfE1pGvUUNWlna3e+UQ6zvNvV2ID79dw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jCqcVJ4NwUcf9AFr/fgAEQZSGNNdi8lzDkGc7tTVGEeNSBGly0yDySjibcE9/nT4t1h/2ZFiAAIw3JJ4YqRs9gthPI/kO6ZUBKI71Sof4Pa5StEgbsbP5qVX1c5p6IbXx2BPAEo/k6h/NRcOpoWyPNP+P/LrJRNFU1E7CH2IjiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8jsm1LY; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20231aa8908so12568725ad.0;
+        Thu, 22 Aug 2024 16:07:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724368035; x=1724972835; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=25rria9l2Vxvu8mBrpTAlGGFpCc8saIzLflzJLJIDtk=;
+        b=O8jsm1LYJdFzo3Hcx14m5vJHZIMKKi7WQ0+9HGwEfFYgSCvJC/86o+4Oy4jYzxq0Jh
+         CSL00roDC0VaIPXzqjJhOPpGzIkIhskPXh0xAd4+bikHNF5Q219CwW3ouPbRPyPC0i4G
+         WyJ2EZ7lWFsKr/7dxsgkQ69ZltN382FCp7NW3dqwgRgjU1/gs6cW5YER35d7uRpxvYI4
+         ZuDDgkj4YfLK0SRJsjgmnbngLFqU86LcaCx/xzL3opGd/MydA2ov8YiGl5TexX67C2Xa
+         YtCh1VoQfsj6euaBI1xKEgFak2qJfHpuloTCEbFrbxVm9K5fXwPdwth+FuNn79ymeQG2
+         U7Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724368035; x=1724972835;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=25rria9l2Vxvu8mBrpTAlGGFpCc8saIzLflzJLJIDtk=;
+        b=DjW/5w3GT448AoI+sTojkjZEhiwA8huIjDTdSitzf/Iz981QW5a8T59JBUgk7WbxYC
+         0LmjGy1SoWgGU/AmCF1Lof5c6zdccULaeWq/q+/6wk3SliyJP6PeN3Fz2Qx/tgTrhZ1v
+         mofai/GvCvU96cpv2Oqz6iLTtZd3fQAxWO+AborCVHb1A41vIpPn8d0++r8lnZ2TT+rl
+         hYuXNKJtj0ftC4ZUFRwNqmTGRmd5CIS/O+Kgn/D7XrkaSvoqk9k+5J5Ucrs8qyD1WSGi
+         XoN++uinhIY8DquaINQo8BIsFFcaSyGdoV5diOXiylKupG9/vHmpVN8T34uiqLJ/LE3s
+         ftag==
+X-Forwarded-Encrypted: i=1; AJvYcCVDgQ9mWTlEpxi55JhiAKt6P6UKFDDZZ9RxugkZdO7T8oibxnihrwNh35zM2hWuGX0KldY=@vger.kernel.org, AJvYcCW6OkuATcxw16JwMkw/JqZUPhQ5PqVTomcMdpTZxbPVBQfDJ7hXgAv3eTX1Eb+1/egbSrSCd43MjFextgNGIA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYYgtOMdCVN6/xpfWBLmPqznRs9me9XdpVSI/mPwYBKos2jopj
+	+AM4fpOxyx0LCUWzN6kIP1WHXBdFdPHtqIhorJ8I0w7QfZ3LqhA6
+X-Google-Smtp-Source: AGHT+IFCVbd+O3+tHUHIumODpX/x3CNRWRbS+1Xjcmu9d5sXHxkUM1SuMaz4FJz3A96sMQasxNxBSA==
+X-Received: by 2002:a17:902:ea03:b0:201:f8b4:3e3c with SMTP id d9443c01a7336-2039e4a7777mr3572875ad.12.1724368034736;
+        Thu, 22 Aug 2024 16:07:14 -0700 (PDT)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203859f0121sm17496865ad.246.2024.08.22.16.07.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 16:07:14 -0700 (PDT)
+Message-ID: <bb022c5f9672c0c54303cee5465e3a4542f73cdf.camel@gmail.com>
+Subject: Re: [PATCH v6 bpf-next 10/10] selftests/bpf: add build ID tests
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, adobriyan@gmail.com, 
+	shakeel.butt@linux.dev, hannes@cmpxchg.org, ak@linux.intel.com, 
+	osandov@osandov.com, song@kernel.org, jannh@google.com, 
+	linux-fsdevel@vger.kernel.org, willy@infradead.org
+Date: Thu, 22 Aug 2024 16:07:09 -0700
+In-Reply-To: <CAEf4BzZULffF9_6Mz4dxm=owvSkyErt3kShZpxjFnCySzGDWNw@mail.gmail.com>
+References: <20240814185417.1171430-1-andrii@kernel.org>
+	 <20240814185417.1171430-11-andrii@kernel.org>
+	 <e973f93d1dc2ebf54de285a7d83833ea6c47f2a2.camel@gmail.com>
+	 <CAEf4BzZULffF9_6Mz4dxm=owvSkyErt3kShZpxjFnCySzGDWNw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfMN4Lk1lDEx9iRxHOcWKbqDtEBWRs3PTPMO5JNix4YyfPx6pa+f53zRF4//2lnjzMogCrYMBUK8PqqdiB9IAuAgsmrPlf9HNKnx399rcIMtVsxxFAjUE
- dbPTSLtEL14briK3AhHcnzuSb1r2QrdHQwE5Uf7yl8te67El/19UqzC1mOdmWDKkx5cHmZiFeGjASReAlEj22LYxmzH20IrLoK6+hd+ZxxEU+9dNFCDLbs4K
- 3xoOFlN/8up40SwqCaDXTGSvXg++uH4THYj4VehZ7gSjXh4jFWEUgV0YjgQrapq9gneJSCn1bz78IfqwStpTtDsdmf/8A+BkUS9Vvbefs0Qh9H2X3zNKLzaQ
- WUW956Bg
 
-In the recent work to remove page->index, a sanity check
-that ensured all the readhead pages were covered by the
-Squashfs data block was removed [1].
+On Thu, 2024-08-22 at 15:55 -0700, Andrii Nakryiko wrote:
 
-To avoid any regression, this commit adds the sanity check
-back in an equivalent way.  Namely the page actor will now
-return error if any pages are unused after completion.
+> > > +     madvise(addr, page_sz, MADV_POPULATE_READ);
+> >=20
+> > Nit: check error code?
+>
+> Well, even if this errors out there is no one to notice and do
+> anything about it, given this is in a forked process. The idea,
+> though, is that if this doesn't work, we'll catch it as part of the
+> actual selftest.
 
-[1] https://lore.kernel.org/all/20240818235847.170468-3-phillip@squashfs.org.uk/
+Ok.
 
-Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
---
-V2: fix use after free thinko.
----
- fs/squashfs/file.c        | 4 ++--
- fs/squashfs/file_direct.c | 2 +-
- fs/squashfs/page_actor.h  | 3 ++-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+[...]
 
-diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-index 5a3745e52025..21aaa96856c1 100644
---- a/fs/squashfs/file.c
-+++ b/fs/squashfs/file.c
-@@ -535,7 +535,7 @@ static int squashfs_readahead_fragment(struct page **page,
- 
- 	last_page = squashfs_page_actor_free(actor);
- 
--	if (copied == expected) {
-+	if (copied == expected && !IS_ERR(last_page)) {
- 		/* Last page (if present) may have trailing bytes not filled */
- 		bytes = copied % PAGE_SIZE;
- 		if (bytes && last_page)
-@@ -625,7 +625,7 @@ static void squashfs_readahead(struct readahead_control *ractl)
- 
- 		last_page = squashfs_page_actor_free(actor);
- 
--		if (res == expected) {
-+		if (res == expected && !IS_ERR(last_page)) {
- 			int bytes;
- 
- 			/* Last page (if present) may have trailing bytes not filled */
-diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
-index 646d4d421f99..22251743fadf 100644
---- a/fs/squashfs/file_direct.c
-+++ b/fs/squashfs/file_direct.c
-@@ -80,7 +80,7 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
- 	if (res < 0)
- 		goto mark_errored;
- 
--	if (res != expected) {
-+	if (res != expected || IS_ERR(last_page)) {
- 		res = -EIO;
- 		goto mark_errored;
- 	}
-diff --git a/fs/squashfs/page_actor.h b/fs/squashfs/page_actor.h
-index c6d837f0e9ca..aa0d0e583634 100644
---- a/fs/squashfs/page_actor.h
-+++ b/fs/squashfs/page_actor.h
-@@ -33,10 +33,11 @@ extern struct squashfs_page_actor *squashfs_page_actor_init_special(
- 				loff_t start_index);
- static inline struct page *squashfs_page_actor_free(struct squashfs_page_actor *actor)
- {
--	struct page *last_page = actor->last_page;
-+	struct page *last_page = actor->next_page == actor->pages ? last_page : ERR_PTR(-EIO);
- 
- 	kfree(actor->tmp_buffer);
- 	kfree(actor);
-+
- 	return last_page;
- }
- static inline void *squashfs_first_page(struct squashfs_page_actor *actor)
--- 
-2.39.2
+> In my QEMU I only get 3:
+>=20
+> FRAME #00: BUILD ID =3D d370860567af6d28316d45726045f1c59bbfc416 OFFSET =
+=3D 2c4156
+> FRAME #01: BUILD ID =3D d370860567af6d28316d45726045f1c59bbfc416 OFFSET =
+=3D 393ac7
+> FRAME #02: BUILD ID =3D 8bfe03f6bf9b6a6e2591babd0bbc266837d8f658 OFFSET =
+=3D 27cd0
+>=20
+> But see below, for my actual devserver there are 4 frames. My bet
+> would be that 568ef is libc. A bit confused why you get frame 04 from
+> uprobe_multi, but maybe that's how things work with musl or whatever?
+> Don't know. Check libc.so.
+
+Oh, right, I had to check libc build-id inside QEMU, not outside...
+Yes, this is libc signature.
+This figures, thank you for explaining.
+
+[...]
 
 
