@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-26763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FA995B9E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:17:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80C395B997
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FA2CB2BCA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:13:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 527081F239EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620371CCED8;
-	Thu, 22 Aug 2024 15:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48611CCED0;
+	Thu, 22 Aug 2024 15:12:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B161CCED0;
-	Thu, 22 Aug 2024 15:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB921CC89F;
+	Thu, 22 Aug 2024 15:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724339542; cv=none; b=CxuzWrAuluchAe6Y5PGVFSuSDOZiMquE7hVq0sgUOmeyCEtTtmX2ftpv8E96hdpNxa9tcsCZEZ8Vs3NPA1jHDO3nMMF0I4UHQuDNkXnTO63G4/6EU0q8/o1AIY0vh4VKxO2oBV/E3Vk5e1kSKN39qrAawov1Yfyl87WW5C/s/tU=
+	t=1724339546; cv=none; b=MOZiPvLSeMR7+uV2WUeD2JeduTXDA/af6vzt3yVbwW7E0a7913pIcGDz3fyu+MvgVk9dtgdZE254oR8BQHXeII8d4806gGpK42HTdm/tWNDDsA+IMzJec2ZYKMO6cf1OxeZdf9IQheHMd1+kThqHJMaFIjlOlLJHHQ1viHrydO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724339542; c=relaxed/simple;
-	bh=d5EDjmoqzjrfByMJNskHdKnb1OZVMl/nmgNSyNFXk/A=;
+	s=arc-20240116; t=1724339546; c=relaxed/simple;
+	bh=oxK4apeB6PctHJDE2KoEn3Z2oS0U4qEcHZJWMtXLdiU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bYku/DHM3h55tkSUMset6IQwmcGwB2fcldOD6izGKGIyQ3KsFJ/U9DPm9XAy6dMjcxQVeqk5MRzNOKU4vR+DMJzAlk7Cn4CCxZs09WboI2Opdyusdlh+dOFWRNEIxTphpuNG37geFJrA4F+/kp9revnlUUx99WNz2exQnhAOd/M=
+	 MIME-Version; b=XY5/8qx7alzTdISivb4ZLLhmdFPQyZSWlCfrLSl3bEV7OxJvtgZ3pR9xm6E6Fb4xrEuxGpE1+NqfBxmH+x5YJXimkYjPQWd0wdnJIUCf93BUIEek7Hsaw79Szag3HGeTMZQatuUdPtU8GE4XSwUVVMqqMrsNLBSWXYPghA8TUFs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 830E21596;
-	Thu, 22 Aug 2024 08:12:46 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D16131655;
+	Thu, 22 Aug 2024 08:12:50 -0700 (PDT)
 Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64D793F58B;
-	Thu, 22 Aug 2024 08:12:16 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2D423F58B;
+	Thu, 22 Aug 2024 08:12:20 -0700 (PDT)
 From: Joey Gouly <joey.gouly@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: nd@arm.com,
@@ -64,9 +64,9 @@ Cc: nd@arm.com,
 	x86@kernel.org,
 	kvmarm@lists.linux.dev,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 13/30] arm64: add POIndex defines
-Date: Thu, 22 Aug 2024 16:10:56 +0100
-Message-Id: <20240822151113.1479789-14-joey.gouly@arm.com>
+Subject: [PATCH v5 14/30] arm64: convert protection key into vm_flags and pgprot values
+Date: Thu, 22 Aug 2024 16:10:57 +0100
+Message-Id: <20240822151113.1479789-15-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240822151113.1479789-1-joey.gouly@arm.com>
 References: <20240822151113.1479789-1-joey.gouly@arm.com>
@@ -78,37 +78,67 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The 3-bit POIndex is stored in the PTE at bits 60..62.
+Modify arch_calc_vm_prot_bits() and vm_get_page_prot() such that the pkey
+value is set in the vm_flags and then into the pgprot value.
 
 Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 ---
- arch/arm64/include/asm/pgtable-hwdef.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/include/asm/mman.h | 10 +++++++++-
+ arch/arm64/mm/mmap.c          | 11 +++++++++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git arch/arm64/include/asm/pgtable-hwdef.h arch/arm64/include/asm/pgtable-hwdef.h
-index 1f60aa1bc750..3f0c3f5c5cef 100644
---- arch/arm64/include/asm/pgtable-hwdef.h
-+++ arch/arm64/include/asm/pgtable-hwdef.h
-@@ -199,6 +199,16 @@
- #define PTE_PI_IDX_2	53	/* PXN */
- #define PTE_PI_IDX_3	54	/* UXN */
+diff --git arch/arm64/include/asm/mman.h arch/arm64/include/asm/mman.h
+index 5966ee4a6154..52791715f6e6 100644
+--- arch/arm64/include/asm/mman.h
++++ arch/arm64/include/asm/mman.h
+@@ -7,7 +7,7 @@
+ #include <uapi/asm/mman.h>
  
-+/*
-+ * POIndex[2:0] encoding (Permission Overlay Extension)
-+ */
-+#define PTE_PO_IDX_0	(_AT(pteval_t, 1) << 60)
-+#define PTE_PO_IDX_1	(_AT(pteval_t, 1) << 61)
-+#define PTE_PO_IDX_2	(_AT(pteval_t, 1) << 62)
+ static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+-	unsigned long pkey __always_unused)
++	unsigned long pkey)
+ {
+ 	unsigned long ret = 0;
+ 
+@@ -17,6 +17,14 @@ static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+ 	if (system_supports_mte() && (prot & PROT_MTE))
+ 		ret |= VM_MTE;
+ 
++#ifdef CONFIG_ARCH_HAS_PKEYS
++	if (system_supports_poe()) {
++		ret |= pkey & BIT(0) ? VM_PKEY_BIT0 : 0;
++		ret |= pkey & BIT(1) ? VM_PKEY_BIT1 : 0;
++		ret |= pkey & BIT(2) ? VM_PKEY_BIT2 : 0;
++	}
++#endif
 +
-+#define PTE_PO_IDX_MASK		GENMASK_ULL(62, 60)
+ 	return ret;
+ }
+ #define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
+diff --git arch/arm64/mm/mmap.c arch/arm64/mm/mmap.c
+index 642bdf908b22..7e3ad97e27d8 100644
+--- arch/arm64/mm/mmap.c
++++ arch/arm64/mm/mmap.c
+@@ -102,6 +102,17 @@ pgprot_t vm_get_page_prot(unsigned long vm_flags)
+ 	if (vm_flags & VM_MTE)
+ 		prot |= PTE_ATTRINDX(MT_NORMAL_TAGGED);
+ 
++#ifdef CONFIG_ARCH_HAS_PKEYS
++	if (system_supports_poe()) {
++		if (vm_flags & VM_PKEY_BIT0)
++			prot |= PTE_PO_IDX_0;
++		if (vm_flags & VM_PKEY_BIT1)
++			prot |= PTE_PO_IDX_1;
++		if (vm_flags & VM_PKEY_BIT2)
++			prot |= PTE_PO_IDX_2;
++	}
++#endif
 +
-+
- /*
-  * Memory Attribute override for Stage-2 (MemAttr[3:0])
-  */
+ 	return __pgprot(prot);
+ }
+ EXPORT_SYMBOL(vm_get_page_prot);
 -- 
 2.25.1
 
