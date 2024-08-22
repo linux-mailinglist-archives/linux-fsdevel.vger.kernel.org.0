@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-26770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A0595B9AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:13:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5832195B9AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970D81F23DE4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:13:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16898286DF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E2D1CCB46;
-	Thu, 22 Aug 2024 15:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE691CCB53;
+	Thu, 22 Aug 2024 15:12:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1091CC89A;
-	Thu, 22 Aug 2024 15:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A497F1CCB4D;
+	Thu, 22 Aug 2024 15:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724339572; cv=none; b=pD15WqJttdXZQFDwPGZgA4ySJ29wJd4iAKg7UKJai6wMHq0wpKxrCSXZGcaznv44Sz6r7vW4CQmd7s1D9cOsOJ3Ppo6OZWhhWjZTz5l44uQMX+8EltOMJmoro8FBlB4JzGnY65C5tUe7FxRJdtWnNW/R3DWktL+fvuerP8syHdQ=
+	t=1724339576; cv=none; b=dOh5Nu4/AwOQgSKdBW9TivU4j8im0jv6a8vR0SxGVabjUJXLkx1dEar2+9wVjwxq2qyaqw1q/2sc2AbjRMCzblYHec9tq4YuhLrF8ijRguhwnwLm6KJxkPRenXBa6DHiCUGydktu/47LsB9fBz8VCGsn/2VPYFEMy8ktFyeTTec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724339572; c=relaxed/simple;
-	bh=8nPRni2xltnzTlqayiVB7yt/85OtPwDZ7TGcNNqWoFA=;
+	s=arc-20240116; t=1724339576; c=relaxed/simple;
+	bh=36jbklWViHxEkI9yGEewgF3mMMbuHF8HiNV0XHzXOGk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qO7m/VhPnzhOV62UAk9Ih6G0uLKfzew7cbHLXQZgbS9XjJPQtSDML8eH+ruwSmk45MyyX5nEKMHPdfV8SuN7V0JF81uMZ43NFajHSPnrV/Zi3ryAnXFQ0ecEllnfRCyrtEclwcJySUe7PeL57vEfIRlPCyS6/QDmpWqK2/be06M=
+	 MIME-Version; b=aCCDj5YoQFctkUg9YwKI3wMYTW3x4vAC9e9tq83ZKEnHOuZ+c48TeU5gZvGE7I7Ywsn5/UHv3+w5kMgG30IN+oAuDkLOT/wBOCL1Q3rK5vtfTNJoA3m1A40q5Q+S1LWUWBXhnVg8q9bSdH5P05SstGvRtibx1rB5bozd8osFMdo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E136A1595;
-	Thu, 22 Aug 2024 08:13:16 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AF6E1596;
+	Thu, 22 Aug 2024 08:13:21 -0700 (PDT)
 Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C28523F58B;
-	Thu, 22 Aug 2024 08:12:46 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CD163F58B;
+	Thu, 22 Aug 2024 08:12:50 -0700 (PDT)
 From: Joey Gouly <joey.gouly@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: nd@arm.com,
@@ -64,9 +64,9 @@ Cc: nd@arm.com,
 	x86@kernel.org,
 	kvmarm@lists.linux.dev,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 20/30] arm64/ptrace: add support for FEAT_POE
-Date: Thu, 22 Aug 2024 16:11:03 +0100
-Message-Id: <20240822151113.1479789-21-joey.gouly@arm.com>
+Subject: [PATCH v5 21/30] arm64: enable POE and PIE to coexist
+Date: Thu, 22 Aug 2024 16:11:04 +0100
+Message-Id: <20240822151113.1479789-22-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240822151113.1479789-1-joey.gouly@arm.com>
 References: <20240822151113.1479789-1-joey.gouly@arm.com>
@@ -78,102 +78,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a regset for POE containing POR_EL0.
+Permission Indirection Extension and Permission Overlay Extension can be
+enabled independently.
+
+When PIE is disabled and POE is enabled, the permissions set by POR_EL0 will be
+applied on top of the permissions set in the PTE.
+
+When both PIE and POE are enabled, the permissions set by POR_EL0 will be
+applied on top of the permissions set by the PIRE0_EL1 register.
+However PIRE0_EL1 has encodings that specifically enable and disable the
+overlay from applying.
+
+For example:
+	0001	Read, Overlay applied.
+	1000	Read, Overlay not applied.
+
+Switch to using the 'Overlay applied' encodings in PIRE0_EL1, so that PIE and
+POE can coexist.
 
 Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
 Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- arch/arm64/kernel/ptrace.c | 46 ++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/elf.h   |  1 +
- 2 files changed, 47 insertions(+)
+ arch/arm64/include/asm/pgtable-prot.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git arch/arm64/kernel/ptrace.c arch/arm64/kernel/ptrace.c
-index 0d022599eb61..b756578aeaee 100644
---- arch/arm64/kernel/ptrace.c
-+++ arch/arm64/kernel/ptrace.c
-@@ -1440,6 +1440,39 @@ static int tagged_addr_ctrl_set(struct task_struct *target, const struct
- }
- #endif
+diff --git arch/arm64/include/asm/pgtable-prot.h arch/arm64/include/asm/pgtable-prot.h
+index b11cfb9fdd37..2a11d0c10760 100644
+--- arch/arm64/include/asm/pgtable-prot.h
++++ arch/arm64/include/asm/pgtable-prot.h
+@@ -154,10 +154,10 @@ static inline bool __pure lpa2_is_enabled(void)
  
-+#ifdef CONFIG_ARM64_POE
-+static int poe_get(struct task_struct *target,
-+		   const struct user_regset *regset,
-+		   struct membuf to)
-+{
-+	if (!system_supports_poe())
-+		return -EINVAL;
-+
-+	return membuf_write(&to, &target->thread.por_el0,
-+			    sizeof(target->thread.por_el0));
-+}
-+
-+static int poe_set(struct task_struct *target, const struct
-+		   user_regset *regset, unsigned int pos,
-+		   unsigned int count, const void *kbuf, const
-+		   void __user *ubuf)
-+{
-+	int ret;
-+	long ctrl;
-+
-+	if (!system_supports_poe())
-+		return -EINVAL;
-+
-+	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &ctrl, 0, -1);
-+	if (ret)
-+		return ret;
-+
-+	target->thread.por_el0 = ctrl;
-+
-+	return 0;
-+}
-+#endif
-+
- enum aarch64_regset {
- 	REGSET_GPR,
- 	REGSET_FPR,
-@@ -1469,6 +1502,9 @@ enum aarch64_regset {
- #ifdef CONFIG_ARM64_TAGGED_ADDR_ABI
- 	REGSET_TAGGED_ADDR_CTRL,
- #endif
-+#ifdef CONFIG_ARM64_POE
-+	REGSET_POE
-+#endif
- };
+ #define PIE_E0	( \
+ 	PIRx_ELx_PERM(pte_pi_index(_PAGE_EXECONLY),      PIE_X_O) | \
+-	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY_EXEC), PIE_RX)  | \
+-	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RWX) | \
+-	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY),      PIE_R)   | \
+-	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED),        PIE_RW))
++	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY_EXEC), PIE_RX_O)  | \
++	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED_EXEC),   PIE_RWX_O) | \
++	PIRx_ELx_PERM(pte_pi_index(_PAGE_READONLY),      PIE_R_O)   | \
++	PIRx_ELx_PERM(pte_pi_index(_PAGE_SHARED),        PIE_RW_O))
  
- static const struct user_regset aarch64_regsets[] = {
-@@ -1628,6 +1664,16 @@ static const struct user_regset aarch64_regsets[] = {
- 		.set = tagged_addr_ctrl_set,
- 	},
- #endif
-+#ifdef CONFIG_ARM64_POE
-+	[REGSET_POE] = {
-+		.core_note_type = NT_ARM_POE,
-+		.n = 1,
-+		.size = sizeof(long),
-+		.align = sizeof(long),
-+		.regset_get = poe_get,
-+		.set = poe_set,
-+	},
-+#endif
- };
- 
- static const struct user_regset_view user_aarch64_view = {
-diff --git include/uapi/linux/elf.h include/uapi/linux/elf.h
-index b54b313bcf07..81762ff3c99e 100644
---- include/uapi/linux/elf.h
-+++ include/uapi/linux/elf.h
-@@ -441,6 +441,7 @@ typedef struct elf64_shdr {
- #define NT_ARM_ZA	0x40c		/* ARM SME ZA registers */
- #define NT_ARM_ZT	0x40d		/* ARM SME ZT registers */
- #define NT_ARM_FPMR	0x40e		/* ARM floating point mode register */
-+#define NT_ARM_POE	0x40f		/* ARM POE registers */
- #define NT_ARC_V2	0x600		/* ARCv2 accumulator/extra registers */
- #define NT_VMCOREDD	0x700		/* Vmcore Device Dump Note */
- #define NT_MIPS_DSP	0x800		/* MIPS DSP ASE registers */
+ #define PIE_E1	( \
+ 	PIRx_ELx_PERM(pte_pi_index(_PAGE_EXECONLY),      PIE_NONE_O) | \
 -- 
 2.25.1
 
