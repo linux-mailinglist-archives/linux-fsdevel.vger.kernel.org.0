@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-26637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B56A95AA2B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:29:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D516895AA31
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B6651C22D6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:29:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59BC91F214AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0535F170A18;
-	Thu, 22 Aug 2024 01:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164BA200AE;
+	Thu, 22 Aug 2024 01:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9zzjzMV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEBEIs5j"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5720211712;
-	Thu, 22 Aug 2024 01:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6582536B11;
+	Thu, 22 Aug 2024 01:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724289831; cv=none; b=rta2EKHvqiUBqHDM+Qftej+wCEnolZHg/xjApVP4dcydULxuE/RcYD+7tLJLH5pz18vpk4NNmTUhCieTav6ZF3B7mq/s+ySWl7vMzKk0CWKWaIJ5wxRRtxuhtp7Wr8eZr1kMqt0xEePCGF8q4iKpzYdqutUquUiFteQiALcj3DM=
+	t=1724289844; cv=none; b=oFnsEIGeHhiqqqkNeCDRyR0eT2+pQIsPkfCN0xrtfXByWrklNdqT63wLl8eqsCFgLKNm5Wq9EQigg3c6LpXRN49qqS57r3BlX59ti6A6eLtYcoQ14UqoYy63Aa4Smu4U0mP0nMNONb/QOGIxlvo9GdbkeYl9o7pMGy/OaPXerO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724289831; c=relaxed/simple;
-	bh=YYz6vJzvFivBjzQl/oYVfPbzMadH/24Qr7CyuKANnYA=;
+	s=arc-20240116; t=1724289844; c=relaxed/simple;
+	bh=W5oN69xYg0RDvkVAq7OBhN9me4eHC7ENTR8wdYTObEg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=exEhhupk0AX7GKuHzyUNkb2P4mrb2PHL2Awbri9+TZwFR8Y/yL6c0DExMnLgAYIPsr0EQmfjohTWdC7l82kFCXGdlPHh325Sb8Op8DW4eOIJmeT0F0hOs1rBY1WxEFe5Opvg4Pe7kVGWethNPhr5LUzpsnSsl0AOKpvc/wqzOjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9zzjzMV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 599F6C4AF11;
-	Thu, 22 Aug 2024 01:23:39 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=cLM05Qpn12w1dHTyyDzPWnb0P1CrLhNE7OXsbmLfun8ifjyhyVbIKd+4487W+LRZKcIvzEuWL5B6wcczPiveH9hswAmF5PEQCypTOwbgHKlAWmcMQQUPzFb94tYw0CdHxv3e6nFup/fLeHljjbLnUPNgpdNjVZSNeiMU4Kg4V3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEBEIs5j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B08CC32781;
+	Thu, 22 Aug 2024 01:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724289830;
-	bh=YYz6vJzvFivBjzQl/oYVfPbzMadH/24Qr7CyuKANnYA=;
+	s=k20201202; t=1724289844;
+	bh=W5oN69xYg0RDvkVAq7OBhN9me4eHC7ENTR8wdYTObEg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=R9zzjzMV70LpzGfyvhuJYpabIKzUcvQf9MHXQHntpuj1/nRe8ImXDZhtco4U+GIWD
-	 H/L1Qr3+s6la2xkwMiwv798l3hafjyZcYnb5FNpK192mgBXdYzu+Bz8JO+OMCH0tl0
-	 71TA36KOD9qaSkQfQoJhVnSvi5LbUD0bV8A8LPKdlGPGXVs18IJe6gCLyZ7N9g0SOe
-	 EFr4BQDg2i2AW1eBJ2U1sOPB0uc5gGjI9YFKmUdRUTppOPzjjYeyns0b5abb8cLyWy
-	 YIgowAAhiLYAlPnSvCEV/7XHRUHMT9JceVGBH/s3O9yv9jhRwLAHZX5xJ7XjUNeJGF
-	 5LICH7Hd2wa/g==
+	b=iEBEIs5j4ESOyOuAI+C1WdLslac5LfFf4kq+lkNdmDRnyIC5yWmiqWDSMJJspLip0
+	 ml9uTFJFpjA0iZB8kpDqcRdUVrEAN3rgae1b0KWClRy/Dt5K3C0ScTk7Y4SWdSQ+0J
+	 J9ynhy9+9DciCFx1xbPMettqUNcK0C/8oPiqZYnE2aLmN//nbDx9gRXLGbrz6FOC9N
+	 QJZK6dQb2Eneww26LRoFWKUpXmLr8bA0krMzkGL40Umad43ef518YlBAcLdGrQ/xva
+	 UmXJOYn+WGgW0hN/+th9qactP+9HaSOVf/vKYQVY8GyrjynJ7JP8i2m+nC2YGho1yB
+	 C5cIrr/0/qsMQ==
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Aug 2024 02:15:41 +0100
-Subject: [PATCH v11 38/39] kselftest/arm64: Enable GCS for the FP stress
- tests
+Date: Thu, 22 Aug 2024 02:15:42 +0100
+Subject: [PATCH v11 39/39] KVM: selftests: arm64: Add GCS registers to
+ get-reg-list
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240822-arm64-gcs-v11-38-41b81947ecb5@kernel.org>
+Message-Id: <20240822-arm64-gcs-v11-39-41b81947ecb5@kernel.org>
 References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
 In-Reply-To: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -80,110 +80,87 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3151; i=broonie@kernel.org;
- h=from:subject:message-id; bh=YYz6vJzvFivBjzQl/oYVfPbzMadH/24Qr7CyuKANnYA=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmxpFB+A0WlwPqvXouPNNAgEUHNQxzIPyeeifSv05V
- CgED102JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZsaRQQAKCRAk1otyXVSH0IFqB/
- 9O2YNN8PESOQ8WpkX3izDmeZcNEc1mXsl6dcYRSuYE00J6cl60UTAoBD2c+1iffUZZvHYOq08x9TYH
- NkZIB/U7bSX8x3OqTPM6omT3YbnF/GLaFbmWaz+J246wqay/dsccm5RWIqd7KpL36dESEg81pFOePd
- iMbsQP0jR6Oy9Pr/a8zLX0C8z851QwxecQ2bDMezJ8pTuATnSOHt8TymMguDghQvxihb/rrd9XsoE6
- OYyEldzAk187hNE56iYGryyL5b+P6sxtmplrhEfvR7kdK1liKjgs9r35hP5hRyhEJPyfpoJqyfcIYb
- cpqV42uhrlGB8tPJHDynJyu4CRAyZ2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2418; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=W5oN69xYg0RDvkVAq7OBhN9me4eHC7ENTR8wdYTObEg=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhrRjE52aWuqWJvl43G370Cb14vXG7leGPtlWHj9eFSeamTBo
+ X9LqZDRiYWDkYpAVU2RZ+yxjVXq4xNb5j+a/ghnEygQyhYGLUwAu0sP+veD2HY0mXtEA/3Nzfa4Jyf
+ PZBDNMzlaYvXxd9UdPmQeKau5R/7pmxk1bVJ80KV7nZ/iJg4lH3l6T79aqUAtX1T7NdHV6wdU22f2z
+ DoV6ifrOnBJdf1xGTvvHPIXgYzx+IXyfDnGuTNt9Jn1zzH2fmQqTrCclRJxxLr+9bOLp1XfPyQj6yc
+ /iSVB6KvkueNHaLp8L5yP/BqR1nWaqPGK77aHK4sT4ptQ/SlOm5x6/HTXHf7th4Q1tZn217NVH7xju
+ 0hSU+cvxlVlNNSErf+uMqFO19qckeCd42zv9/LSrXmn+w9OaR+uVBaI+iD31MpvczNFmEhmVLF5/wT
+ fTwpAtSN7+ZuDJ9Z9Es+4WMQIA
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-While it's a bit off topic for them the floating point stress tests do give
-us some coverage of context thrashing cases, and also of active signal
-delivery separate to the relatively complicated framework in the actual
-signals tests. Have the tests enable GCS on startup, ignoring failures so
-they continue to work as before on systems without GCS.
+GCS adds new registers GCSCR_EL1, GCSCRE0_EL1, GCSPR_EL1 and GCSPR_EL0. Add
+these to those validated by get-reg-list.
 
 Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- tools/testing/selftests/arm64/fp/assembler.h   | 15 +++++++++++++++
- tools/testing/selftests/arm64/fp/fpsimd-test.S |  2 ++
- tools/testing/selftests/arm64/fp/sve-test.S    |  2 ++
- tools/testing/selftests/arm64/fp/za-test.S     |  2 ++
- tools/testing/selftests/arm64/fp/zt-test.S     |  2 ++
- 5 files changed, 23 insertions(+)
+ tools/testing/selftests/kvm/aarch64/get-reg-list.c | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/tools/testing/selftests/arm64/fp/assembler.h b/tools/testing/selftests/arm64/fp/assembler.h
-index 9b38a0da407d..1fc46a5642c2 100644
---- a/tools/testing/selftests/arm64/fp/assembler.h
-+++ b/tools/testing/selftests/arm64/fp/assembler.h
-@@ -65,4 +65,19 @@ endfunction
- 	bl	puts
- .endm
+diff --git a/tools/testing/selftests/kvm/aarch64/get-reg-list.c b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
+index 709d7d721760..9785f41e6042 100644
+--- a/tools/testing/selftests/kvm/aarch64/get-reg-list.c
++++ b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
+@@ -29,6 +29,24 @@ static struct feature_id_reg feat_id_regs[] = {
+ 		0,
+ 		1
+ 	},
++	{
++		ARM64_SYS_REG(3, 0, 2, 5, 0),	/* GCSCR_EL1 */
++		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
++		44,
++		1
++	},
++	{
++		ARM64_SYS_REG(3, 0, 2, 5, 1),	/* GCSPR_EL1 */
++		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
++		44,
++		1
++	},
++	{
++		ARM64_SYS_REG(3, 0, 2, 5, 2),	/* GCSCRE0_EL1 */
++		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
++		44,
++		1
++	},
+ 	{
+ 		ARM64_SYS_REG(3, 0, 10, 2, 2),	/* PIRE0_EL1 */
+ 		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
+@@ -40,6 +58,12 @@ static struct feature_id_reg feat_id_regs[] = {
+ 		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
+ 		4,
+ 		1
++	},
++	{
++		ARM64_SYS_REG(3, 3, 2, 5, 1),	/* GCSPR_EL0 */
++		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
++		44,
++		1
+ 	}
+ };
  
-+#define PR_SET_SHADOW_STACK_STATUS      75
-+# define PR_SHADOW_STACK_ENABLE         (1UL << 0)
-+
-+.macro enable_gcs
-+	// Run with GCS
-+	mov	x0, PR_SET_SHADOW_STACK_STATUS
-+	mov	x1, PR_SHADOW_STACK_ENABLE
-+	mov	x2, xzr
-+	mov	x3, xzr
-+	mov	x4, xzr
-+	mov	x5, xzr
-+	mov	x8, #__NR_prctl
-+	svc	#0
-+.endm
-+
- #endif /* ! ASSEMBLER_H */
-diff --git a/tools/testing/selftests/arm64/fp/fpsimd-test.S b/tools/testing/selftests/arm64/fp/fpsimd-test.S
-index 8b960d01ed2e..b16fb7f42e3e 100644
---- a/tools/testing/selftests/arm64/fp/fpsimd-test.S
-+++ b/tools/testing/selftests/arm64/fp/fpsimd-test.S
-@@ -215,6 +215,8 @@ endfunction
- // Main program entry point
- .globl _start
- function _start
-+	enable_gcs
-+
- 	mov	x23, #0		// signal count
- 
- 	mov	w0, #SIGINT
-diff --git a/tools/testing/selftests/arm64/fp/sve-test.S b/tools/testing/selftests/arm64/fp/sve-test.S
-index fff60e2a25ad..2fb4f0b84476 100644
---- a/tools/testing/selftests/arm64/fp/sve-test.S
-+++ b/tools/testing/selftests/arm64/fp/sve-test.S
-@@ -378,6 +378,8 @@ endfunction
- // Main program entry point
- .globl _start
- function _start
-+	enable_gcs
-+
- 	mov	x23, #0		// Irritation signal count
- 
- 	mov	w0, #SIGINT
-diff --git a/tools/testing/selftests/arm64/fp/za-test.S b/tools/testing/selftests/arm64/fp/za-test.S
-index 095b45531640..b2603aba99de 100644
---- a/tools/testing/selftests/arm64/fp/za-test.S
-+++ b/tools/testing/selftests/arm64/fp/za-test.S
-@@ -231,6 +231,8 @@ endfunction
- // Main program entry point
- .globl _start
- function _start
-+	enable_gcs
-+
- 	mov	x23, #0		// signal count
- 
- 	mov	w0, #SIGINT
-diff --git a/tools/testing/selftests/arm64/fp/zt-test.S b/tools/testing/selftests/arm64/fp/zt-test.S
-index b5c81e81a379..8d9609a49008 100644
---- a/tools/testing/selftests/arm64/fp/zt-test.S
-+++ b/tools/testing/selftests/arm64/fp/zt-test.S
-@@ -200,6 +200,8 @@ endfunction
- // Main program entry point
- .globl _start
- function _start
-+	enable_gcs
-+
- 	mov	x23, #0		// signal count
- 
- 	mov	w0, #SIGINT
+@@ -460,6 +484,9 @@ static __u64 base_regs[] = {
+ 	ARM64_SYS_REG(3, 0, 2, 0, 1),	/* TTBR1_EL1 */
+ 	ARM64_SYS_REG(3, 0, 2, 0, 2),	/* TCR_EL1 */
+ 	ARM64_SYS_REG(3, 0, 2, 0, 3),	/* TCR2_EL1 */
++	ARM64_SYS_REG(3, 0, 2, 5, 0),	/* GCSCR_EL1 */
++	ARM64_SYS_REG(3, 0, 2, 5, 1),	/* GCSPR_EL1 */
++	ARM64_SYS_REG(3, 0, 2, 5, 2),	/* GCSCRE0_EL1 */
+ 	ARM64_SYS_REG(3, 0, 5, 1, 0),	/* AFSR0_EL1 */
+ 	ARM64_SYS_REG(3, 0, 5, 1, 1),	/* AFSR1_EL1 */
+ 	ARM64_SYS_REG(3, 0, 5, 2, 0),	/* ESR_EL1 */
+@@ -475,6 +502,7 @@ static __u64 base_regs[] = {
+ 	ARM64_SYS_REG(3, 0, 13, 0, 4),	/* TPIDR_EL1 */
+ 	ARM64_SYS_REG(3, 0, 14, 1, 0),	/* CNTKCTL_EL1 */
+ 	ARM64_SYS_REG(3, 2, 0, 0, 0),	/* CSSELR_EL1 */
++	ARM64_SYS_REG(3, 3, 2, 5, 1),	/* GCSPR_EL0 */
+ 	ARM64_SYS_REG(3, 3, 13, 0, 2),	/* TPIDR_EL0 */
+ 	ARM64_SYS_REG(3, 3, 13, 0, 3),	/* TPIDRRO_EL0 */
+ 	ARM64_SYS_REG(3, 3, 14, 0, 1),	/* CNTPCT_EL0 */
 
 -- 
 2.39.2
