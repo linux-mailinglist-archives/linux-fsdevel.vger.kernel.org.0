@@ -1,110 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-26744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B408495B91D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B4C95B92C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544FC1F27A5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 14:56:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 954C41F24BFA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 14:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7481CC175;
-	Thu, 22 Aug 2024 14:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C161CCB26;
+	Thu, 22 Aug 2024 14:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HJzhsRQC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HKetKRSe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98831CB329
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 14:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77421CC891
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 14:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724338560; cv=none; b=ZbxUBw48F/NuVAc7JV3VwUT+0m6/jRhpM8JGaeiz9rX5OzBQ7VFisDy3u3sxpTAZFUlQrvNQVnx/hG7upzSDO9+L80Xo8QjYhWfjbHsnvl54fSvCXQzEwqaMxA80eFuys1RVt4weaaPnoQCrTm1hUnrkHiOqF+cGG1iHnWzwWec=
+	t=1724338703; cv=none; b=axl8Oh55iIharHK3h9+MmeGBJ1apBpr1ANhiQzLoNJ7SHOYhzyMJmFElfAnb7Kc9PbnbSfZGzpw7pusXl3snmbjTj5tfg6FavEd2rs2w4JhKkemrYXG0CXHbnyYR7rrmQm56andr/EiEPQX03Ox8O0X+aJM1EoAanhtrhc54gPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724338560; c=relaxed/simple;
-	bh=6FzjtsfczkeDzqfflnaL28HSvRkafCDBfhrn77H5NEY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vF0AX+ZVutAMRuADyFVlBaPQAe62VKdHIOOkYP22p9a+lrjYBGjraiiGdwKUkqZ4YFA7edOtGb2L/PQU8PYHMpcgKeE7x/pglyamm7TrjuqAziPj4wSpw5KRstUkhRwcPNngYqF4J/uvvMl2iluP160iolyrUr0kTqi14RfH2JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HJzhsRQC; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-81f96eaa02aso49184339f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 07:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724338557; x=1724943357; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cCjgk4zbnA01advQFiVaD59nntzMj0pgK0o5XLauJg0=;
-        b=HJzhsRQCWlHhnhyntbQ2OZjcrTRhbFQ2VJrwpKyFh72p3dyUZMJhjwSeYPUda8FUXf
-         B0DrTSj1rCwET72bXoU2ABtUlzFzKnSEiWD6SP0itgybFp/8K73cQ/p1oNGibrI2I6I/
-         13cHSOCnP8f188Tl1BERcZ+rZqObaU24R4qvBWWra5wED0n2vsTEjcLg5SJRYBxDuUOV
-         oH9Cuk/OsIdaEg7DYa7/NmJyXclIGu0M2idZmjprpmS0aIXlUM6D9GIrSdMIc3ohYJ8H
-         5oxOvno/XA9gNwEEnqXBgijtnSExOhxCQGAVGgljYdyjigrCGtZWK1/6w6v1MJd4bXPz
-         /TLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724338557; x=1724943357;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cCjgk4zbnA01advQFiVaD59nntzMj0pgK0o5XLauJg0=;
-        b=TABGAg7McVL8CWjbOdsBrpVeectLEZ+JQd2MWLsXhWIn3k0cqKc2UtY+LKnPcTwwuy
-         tRSEX3q388ul6E7Q6DSwSMf3hUajY+PM2P2BdCJP52agWUw+bvQtRN6asg6NSmxOTjJa
-         TEPoX2uwoJMKGwXYr88jJSUWmtrynqftbYc2DT3eZ/0nWYB/vZfLaPk0JY+lrYgKd21F
-         GvVubDwlKtI02y7KY2zS4LJ01yHYH00rDnKvb7nztLziZkHKcTV6cksevBPho7qp9G/h
-         s997ICdkv+Ynf1l3n7KIyC3gZShOI2RVeShxS+28psEPfcOsLU2EQEQyNdyDlbkHvcud
-         MKdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgH41XeYqEouBldKV94d3gUi9Bo/kKDJ3yCZyUyLFy4mbqvI+AduUXDXhGJ7qyGTtp+y2YWFa5ik33FysK@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRcI4tDB/VuminqZT1ON9RXb9mlThjD2kFcUOtz4Ev92goK2Qe
-	Ov20icrzsbBh7aF/cL0lpOiG6otzCI787nSNmhMyVEyZ5lycCBa1N5YVKDYHJFo=
-X-Google-Smtp-Source: AGHT+IGtpJsIoM9eezAPjrEjuFlYb1Ps4Q4uC8eJl1JVJxdqqIA2WOAu+OjuZJtUzvGqfdlZEfZbkA==
-X-Received: by 2002:a05:6602:3c5:b0:807:f0fb:11a2 with SMTP id ca18e2360f4ac-82531921dabmr681720539f.13.1724338556818;
-        Thu, 22 Aug 2024 07:55:56 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ce71140ee6sm510403173.170.2024.08.22.07.55.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 07:55:56 -0700 (PDT)
-Message-ID: <19488597-8585-4875-8fa5-732f5cd9f2ee@kernel.dk>
-Date: Thu, 22 Aug 2024 08:55:55 -0600
+	s=arc-20240116; t=1724338703; c=relaxed/simple;
+	bh=E6/pHohiOwWz1LLCF0Rh134Av/JRwWDiOi+lUZb6zYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X0VCax45BVr5Ic6fVeG04lX9E0v/f1oWAQCtANApJR9EyyZoq80d18dYX4xpj6i4P+TkrIfyNAXKa9vkOVkDXBJxUgC5gjPBr1NZ6/WgUM7f3gzxTiLKVTtBp7WpouBXrtFjp3jB7Nns62fATsna5ud0zrvFgEWTRV+g6rBwwUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HKetKRSe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724338700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=L0ItGqJc+pE5VVBZpro+zT6jGmAybdoIjBREv6SAiFM=;
+	b=HKetKRSedXBZUe+YOo+4a0aM436TU+2p/SGOWkGMbFaGAwRSwSPc3r82B0MBTyIlSRSRq/
+	Ji78sWbwf1foF7h8Bj1YHkU54fjpJc5F5AsgLo/yQYYpuYz3MaQnoui3WYEMiodEdplorw
+	r3F0LdhAvowajoWj6htpnF0H6/yuPi8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-WxrO2GseN0-pj5a6ALcqwg-1; Thu,
+ 22 Aug 2024 10:58:15 -0400
+X-MC-Unique: WxrO2GseN0-pj5a6ALcqwg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E0A0C1955F3B;
+	Thu, 22 Aug 2024 14:58:13 +0000 (UTC)
+Received: from bfoster.redhat.com (unknown [10.22.33.147])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B57E63002242;
+	Thu, 22 Aug 2024 14:58:12 +0000 (UTC)
+From: Brian Foster <bfoster@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	djwong@kernel.org,
+	josef@toxicpanda.com,
+	david@fromorbit.com
+Subject: [PATCH 0/2] iomap: flush dirty cache over unwritten mappings on zero range
+Date: Thu, 22 Aug 2024 10:59:08 -0400
+Message-ID: <20240822145910.188974-1-bfoster@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: switch f_iocb_flags and f_version
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>
-References: <20240822-mutig-kurznachrichten-68d154f25f41@brauner>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240822-mutig-kurznachrichten-68d154f25f41@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 8/22/24 8:14 AM, Christian Brauner wrote:
-> Now that we shrank struct file by 24 bytes we still have a 4 byte hole.
-> Move f_version into the union and f_iocb_flags out of the union to fill
-> that hole and shrink struct file by another 4 bytes. This brings struct
-> file to 200 bytes down from 232 bytes.
+Hi all,
 
-Nice! Now you just need to find 8 more bytes and we'll be down to 3
-cachelines for struct file.
+This is the alternative flushing solution to the iomap zero range
+problem with dirty pagecache over unwritten mappings. This is done in
+two steps. Patch 1 lifts the XFS workaround into iomap, flushing the
+range unconditionally and providing an easily backportable fix for
+stable kernels. Patch 2 buries the flush further down into iomap, making
+it conditional on the combined presence of dirty cache and unwritten
+mappings in the target range. This may be reasonable backportable as
+well, but is only required if performance is a concern.
 
-> I've tried to audit all codepaths that use f_version and none of them
-> rely on it in file->f_op->release() and never have since commit
-> 1da177e4c3f4 ("Linux-2.6.12-rc2").
+I still have to look into the improved revalidation approach discussed
+in the RFC thread, but given that requires validation support and this
+is intended to be a generic fallback, I wanted to get this nailed down
+first.
 
-Do we want to add a comment to this effect? I know it's obvious from
-sharing with f_task_work, but...
+fstests coverage for this problem is posted here [1]. Thoughts, reviews,
+flames appreciated.
+
+Brian
+
+v1:
+- Alternative approach, flush instead of revalidate.
+rfc: https://lore.kernel.org/linux-fsdevel/20240718130212.23905-1-bfoster@redhat.com/
+
+[1] https://lore.kernel.org/fstests/20240822144422.188462-1-bfoster@redhat.com/
+
+Brian Foster (2):
+  iomap: fix handling of dirty folios over unwritten extents
+  iomap: make zero range flush conditional on unwritten mappings
+
+ fs/iomap/buffered-io.c | 52 ++++++++++++++++++++++++++++++++++++++----
+ fs/xfs/xfs_iops.c      | 10 --------
+ 2 files changed, 48 insertions(+), 14 deletions(-)
 
 -- 
-Jens Axboe
+2.45.0
 
 
