@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-26812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4DA95BBB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:20:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D5E95BBAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882961C21A6A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23BEF28A4EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC511CDFA7;
-	Thu, 22 Aug 2024 16:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984731CDA06;
+	Thu, 22 Aug 2024 16:19:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4D929CE8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C54F4206E;
 	Thu, 22 Aug 2024 16:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724343578; cv=none; b=RUmx0XPawuGYZLDDXBjvtjT1kSwTrhyoe68sSQzCrxKPxscPQUJj88PJuvntrosJ/CFZohS5+ZDaI22gD2wsHg/99r9lV4eepFSssXhL/7D+lkOOB44RsKzl0eu4l/d06HKxsO6yLFA6j07lGHPFDZWCk2pYQFjFAg5oqwRjPrc=
+	t=1724343578; cv=none; b=kY8DglZJCEAlwt2ET/PoQeRzV9WKzIFeAECpErEpfDYna/jb2mUs696tK1ShdH0NMg524QCtYsiTnDyBqQlhzAb3FkcjaN+UhHtUXxkcOE1VM0h2lALQ0vAQH/F7HgyG+LUR17bxo0ygqYmwyYND4YtjcddAJ+gtOs/zu4Gk4NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724343578; c=relaxed/simple;
-	bh=29iFkZR0+8piizM7eOLaTOEEcC+Kohez/RRszdWp+sc=;
+	bh=dxPZv2Aio0a3aAwHBW4baonIUHBW0jWQCPIJdVeW6xk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ONStGw4jg/muyQAO9qvQ8J6ucTr8oRhDu9qvXZSHebtuDb17km+pDNdhbyIs9GawGptfCS6mHbM1ZkuO6XINXvRXs/4KSZ1bZNAxWrnVpMj8N3YngM8fIeZArVkVMqjTfHdpwPWYqtDIHZl22uVXujJXbUUT9P0XaYk1qw5Pyaw=
+	 MIME-Version; b=UWT3dMaFgPePRW4XP4Zf1ecE5n/HN2UJJE12uAHvTGry9aFvUrvjZr+W2XyI82CoCdbfOUW2QC0Jhj1h9ojaDUf6mi5Zdox/RKsdu0hKuZWOd2K4ULHWLSNOAiudIMTK4nKQO03plJoeR4aJFY+pDvGeCxaK2DPCn7FkzesMeAo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
 Received: by air.basealt.ru (Postfix, from userid 490)
-	id 62DDD2F2024E; Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
+	id 7C8062F2024C; Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
 X-Spam-Level: 
 Received: from altlinux.malta.altlinux.ru (obninsk.basealt.ru [217.15.195.17])
-	by air.basealt.ru (Postfix) with ESMTPSA id 23D162F2024C;
+	by air.basealt.ru (Postfix) with ESMTPSA id 331562F2024D;
 	Thu, 22 Aug 2024 16:12:23 +0000 (UTC)
 From: kovalev@altlinux.org
 To: linux-fsdevel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc: lvc-patches@linuxtesting.org,
 	dutyrok@altlinux.org,
 	kovalev@altlinux.org,
 	syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
-Subject: [PATCH v3 1/2] bfs: prevent null pointer dereference in bfs_move_block()
-Date: Thu, 22 Aug 2024 19:12:18 +0300
-Message-Id: <20240822161219.459054-2-kovalev@altlinux.org>
+Subject: [PATCH v3 2/2] bfs: ensure buffer is marked uptodate before marking it dirty
+Date: Thu, 22 Aug 2024 19:12:19 +0300
+Message-Id: <20240822161219.459054-3-kovalev@altlinux.org>
 X-Mailer: git-send-email 2.33.8
 In-Reply-To: <20240822161219.459054-1-kovalev@altlinux.org>
 References: <20240822161219.459054-1-kovalev@altlinux.org>
@@ -60,70 +60,59 @@ Content-Transfer-Encoding: 8bit
 
 From: Vasiliy Kovalev <kovalev@altlinux.org>
 
-Detect a failed sb_getblk() call (before copying data)
-so that null pointer dereferences should not happen any more.
-We also decrement (brelse) the bh counter in this case.
+Add a call to `set_buffer_uptodate(new)` in `bfs_move_block` before
+marking the buffer as dirty. This change ensures the buffer is correctly
+flagged as containing valid data after copying, preventing potential data
+inconsistencies or corruption during writeback.
 
-Found when launching the reproducer generated by Syzkaller:
+Found by Syzkaller:
 
-KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-Comm: mark_buffer_dir Tainted: G  W  6.1.105-un-def-alt1.kasan #1
-RIP: 0010:bfs_get_block+0x35b/0xdf0 (fs/bfs/file.c:42) [bfs]
+WARNING: CPU: 1 PID: 5055 at fs/buffer.c:1176 mark_buffer_dirty+0x37b/0x3f0 fs/buffer.c:1176
+Modules linked in:
+CPU: 1 PID: 5055 Comm: syz-executor162 Not tainted 6.8.0-rc1-syzkaller-00049-g6098d87eaf31 #0
+Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+RIP: 0010:mark_buffer_dirty+0x37b/0x3f0 fs/buffer.c:1176
 Call Trace:
-<TASK>
- __die_body.cold (arch/x86/kernel/dumpstack.c:478)
- die_addr (arch/x86/kernel/dumpstack.c:462)
- exc_general_protection (arch/x86/kernel/traps.c:787)
- asm_exc_general_protection (./arch/x86/include/asm/idtentry.h:564)
- __getblk_gfp (fs/buffer.c:1335)
- bfs_get_block (fs/bfs/file.c:42) bfs
- bfs_get_block (fs/bfs/file.c:56) bfs
- bfs_get_block (fs/bfs/file.c:125) bfs
- bfs_write_begin (fs/bfs/file.c:66) bfs
- __block_write_begin_int (fs/buffer.c:1991)
- bfs_write_begin (fs/bfs/file.c:66) bfs
- invalidate_bh_lrus_cpu (fs/buffer.c:1955)
- fault_in_readable (mm/gup.c:1898)
- PageHeadHuge (mm/hugetlb.c:2123)
- bfs_write_begin (fs/bfs/file.c:66) bfs
- block_write_begin (fs/buffer.c:2103)
- bfs_write_begin (fs/bfs/file.c:178) bfs
- generic_perform_write (mm/filemap.c:3817)
- generic_file_readonly_mmap (mm/filemap.c:3781)
- new_inode (fs/inode.c:2126)
- generic_write_checks (fs/read_write.c:1687)
- __generic_file_write_iter (mm/filemap.c:3946)
- generic_file_write_iter (./include/linux/fs.h:763 mm/filemap.c:3978)
- vfs_write (./include/linux/fs.h:2265 fs/read_write.c:491)
- kernel_write (fs/read_write.c:565)
- __fget_files (fs/file.c:918)
- ksys_write (fs/read_write.c:638)
+
+ bfs_move_block fs/bfs/file.c:44 [inline]
+ bfs_move_blocks fs/bfs/file.c:57 [inline]
+ bfs_get_block+0x3e5/0xeb0 fs/bfs/file.c:126
+ __block_write_begin_int+0x4fb/0x16e0 fs/buffer.c:2103
+ __block_write_begin fs/buffer.c:2152 [inline]
+ block_write_begin+0xb1/0x490 fs/buffer.c:2211
+ bfs_write_begin+0x31/0xd0 fs/bfs/file.c:179
+ generic_perform_write+0x278/0x600 mm/filemap.c:3930
+ __generic_file_write_iter+0x1f9/0x240 mm/filemap.c:4025
+ generic_file_write_iter+0xe3/0x350 mm/filemap.c:4051
+ call_write_iter include/linux/fs.h:2085 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0x6d5/0x1100 fs/read_write.c:590
+ ksys_write+0x12f/0x250 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xd3/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
 Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Reported-by: syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=d98fd19acd08b36ff422
-Link: https://syzkaller.appspot.com/text?tag=ReproC&x=16515ba3e80000
+Closes: https://syzkaller.appspot.com/bug?extid=d98fd19acd08b36ff422
 Cc: stable@vger.kernel.org
 Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
 ---
- fs/bfs/file.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/bfs/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/fs/bfs/file.c b/fs/bfs/file.c
-index 57ae5ee6deec12..23773e62994024 100644
+index 23773e62994024..3f0c506584560e 100644
 --- a/fs/bfs/file.c
 +++ b/fs/bfs/file.c
-@@ -39,6 +39,10 @@ static int bfs_move_block(unsigned long from, unsigned long to,
- 	if (!bh)
+@@ -44,6 +44,7 @@ static int bfs_move_block(unsigned long from, unsigned long to,
  		return -EIO;
- 	new = sb_getblk(sb, to);
-+	if (!new) {
-+		brelse(bh);
-+		return -EIO;
-+	}
+ 	}
  	memcpy(new->b_data, bh->b_data, bh->b_size);
++	set_buffer_uptodate(new);
  	mark_buffer_dirty(new);
  	bforget(bh);
+ 	brelse(new);
 -- 
 2.33.8
 
