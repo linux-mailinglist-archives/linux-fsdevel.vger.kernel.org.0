@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-26640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA37A95AA41
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:30:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C0195AA4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2651F21486
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:30:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398541C22CD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDBE1EB27;
-	Thu, 22 Aug 2024 01:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A36023741;
+	Thu, 22 Aug 2024 01:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="af5on3lb"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HzOxQFO3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AFD1BC46;
-	Thu, 22 Aug 2024 01:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABA411711;
+	Thu, 22 Aug 2024 01:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724289935; cv=none; b=O2lVTabkDxsLjgF0SV+jlDGDFVMGcXmQNCIS2QDbpsRMRpfXFy7k6vfgAiXby36Ejn80RhUWw/WbdHBoAFgQe4QYEAgeEaQ/2MOuIWmOrGJxPpC+dVLFVLJmOh9BZ99eZikvki6TIMn919/lA7Jj3MFhAjZEn8bkgxKwXipb2Rg=
+	t=1724289936; cv=none; b=VJbjUlz4Ga4dIPnmx0/LMpbHLiI+E1IfK2aI9wzeSQoErbcet5FI0x9xp6qio3rbt6PHv39UsveKWIxErJpBirlSsn5jKnP94pFVHujsScJ4BpKtwd5KEFdUjWtPK6aWkajh7cZIZPrrg+Ajwg8ixzt8P7jUNYZ+HPzckDyAzzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724289935; c=relaxed/simple;
-	bh=UfnD/vwYhJAG5eeyMGChyi/Mvp0W7sWbhsiXsNf8YOk=;
+	s=arc-20240116; t=1724289936; c=relaxed/simple;
+	bh=g3uaeVAsHyJeu5Tz3K7D6oV17IZ4IoQOeVs6zyE83IA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JVtgrkkrnxdH+9VFViKybccF0UoBeGqNifdBX5YMQ4Wn+tpmeW1Nzc502i6ec2+DidR1nHrhVPZPURhgCDw+Iq6xMm6qltdMxLFvwm2M6YzbE8/P3GLq7ei+kOx/yEWuF8krcBFMiNPfM7Pdjk6sZlMq0YYPMTx7x5D6w6b6H7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=af5on3lb; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=W79okamGV4uc33JVGnyjwMSKnlmx2XCT0JBDaIq4Q8ewHchWdFBNruaLy+4eEGoXsJqmYPNRyrYLMeYlSNvgOlmh+I/smGfwVCXN5qGCZ+E+4tA2YpIbO2sEU0Wcyhvn65Xau4CtXYJP6tBwIaSKtvB1QXsqsBy9ZfqrcJWaEl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HzOxQFO3; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724289934; x=1755825934;
+  t=1724289935; x=1755825935;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=UfnD/vwYhJAG5eeyMGChyi/Mvp0W7sWbhsiXsNf8YOk=;
-  b=af5on3lb6h1eRWVP86qYOEpSwPqEfRU8ewU3fob7Ur060RB3k7a6esZb
-   88BiEIIR3xdGiA7GTdQTULoLLh901gHMgssiWLzpjR+Id1EbH6b11OR8n
-   yXvSvTVsxIkVRP1P3jlweQnd/JNIikbSCFxCoK1iktXrTOpOdNTNJjfNy
-   iRR20SDPK19Y5iOJixvIHlNFcOsVYwz/qEzQiRAYuTo6YQ7jRv4MZYMCu
-   BD+nfvKMfZJl0I6ElKVG3WB4cmOqNRxn22ki1/WOD1ukdatDAbJu3yTc9
-   6pLihuefb0YcCqqcyp/a+Wl+wat0ND/nsM91ZtUG8cI3evdQ9D45ZLe/r
-   w==;
-X-CSE-ConnectionGUID: zTTbIjFDThS8pk8k2dZs+g==
-X-CSE-MsgGUID: jma/l9S8Rq6oYkXvFTXhog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="25574722"
+  bh=g3uaeVAsHyJeu5Tz3K7D6oV17IZ4IoQOeVs6zyE83IA=;
+  b=HzOxQFO3E8Ng7EkRfZ/q6ajnJ8+H+QcJLfkh47MGnPcifMrI1xQQ9i+n
+   /uUUtyJ2VAFwub8AXxTb1FUQ1z4PUrxxEvMtiFBCiOzKjPtKCKNgc6CuT
+   hBohdXBX3KxBBMgbyvOy8euLS0DWbC14tAgmI2QwYoOwP1es2yx16/thp
+   IfxSq1w7iPPH6QPBfoofM9cepKz8mdJWYF9hT0qGM+jQul/FVcer61M0v
+   G0mymfUf3FjMvZsWKHrjMqbUD7OqDgoE/7Z83vSz/aRKedC26SsVnmx8J
+   8KqpNpdifHrQq0VflbU+yRQKg8oaZhQtnRWe6LUo/Ro2f78Q4dsb0gs6P
+   A==;
+X-CSE-ConnectionGUID: NiCt7usnRjiHnPlmUSjM6A==
+X-CSE-MsgGUID: cgrMSoouTriYYNCWnbhACg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="25574725"
 X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="25574722"
+   d="scan'208";a="25574725"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
   by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 18:25:32 -0700
-X-CSE-ConnectionGUID: U/zxtZH3Sxawzi2S62cYuQ==
-X-CSE-MsgGUID: Cw+QmJQoSQuaebyuzQT6IQ==
+X-CSE-ConnectionGUID: HWCknlldRFaxd9pasFUZVA==
+X-CSE-MsgGUID: P0nBnFf+SB29clGzd6sB1A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="61811017"
+   d="scan'208";a="61811021"
 Received: from unknown (HELO vcostago-mobl3.jf.intel.com) ([10.241.225.92])
   by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 18:25:32 -0700
 From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
@@ -71,9 +71,9 @@ Cc: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: [PATCH v2 01/16] cred: Add a light version of override/revert_creds()
-Date: Wed, 21 Aug 2024 18:25:08 -0700
-Message-ID: <20240822012523.141846-2-vinicius.gomes@intel.com>
+Subject: [PATCH v2 02/16] fs/backing-file: Convert to revert/override_creds_light()
+Date: Wed, 21 Aug 2024 18:25:09 -0700
+Message-ID: <20240822012523.141846-3-vinicius.gomes@intel.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240822012523.141846-1-vinicius.gomes@intel.com>
 References: <20240822012523.141846-1-vinicius.gomes@intel.com>
@@ -85,78 +85,93 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a light version of override/revert_creds(), this should only be
-used when the credentials in question will outlive the critical
-section and the critical section doesn't change the ->usage of the
-credentials.
+As the credentials used by backing-file are long lived in relation to
+the critical section (override_creds() -> revert_creds()) we can
+replace them by their lighter alternatives.
 
-Suggested-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 ---
- include/linux/cred.h | 18 ++++++++++++++++++
- kernel/cred.c        |  6 +++---
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ fs/backing-file.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 2976f534a7a3..e4a3155fe409 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -172,6 +172,24 @@ static inline bool cap_ambient_invariant_ok(const struct cred *cred)
- 					  cred->cap_inheritable));
- }
+diff --git a/fs/backing-file.c b/fs/backing-file.c
+index afb557446c27..bc19e8e28e58 100644
+--- a/fs/backing-file.c
++++ b/fs/backing-file.c
+@@ -176,7 +176,7 @@ ssize_t backing_file_read_iter(struct file *file, struct iov_iter *iter,
+ 	    !(file->f_mode & FMODE_CAN_ODIRECT))
+ 		return -EINVAL;
  
-+/*
-+ * Override creds without bumping reference count. Caller must ensure
-+ * reference remains valid or has taken reference. Almost always not the
-+ * interface you want. Use override_creds()/revert_creds() instead.
-+ */
-+static inline const struct cred *override_creds_light(const struct cred *override_cred)
-+{
-+	const struct cred *old = current->cred;
-+
-+	rcu_assign_pointer(current->cred, override_cred);
-+	return old;
-+}
-+
-+static inline void revert_creds_light(const struct cred *revert_cred)
-+{
-+	rcu_assign_pointer(current->cred, revert_cred);
-+}
-+
- /**
-  * get_new_cred_many - Get references on a new set of credentials
-  * @cred: The new credentials to reference
-diff --git a/kernel/cred.c b/kernel/cred.c
-index 075cfa7c896f..da7da250f7c8 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -485,7 +485,7 @@ EXPORT_SYMBOL(abort_creds);
-  */
- const struct cred *override_creds(const struct cred *new)
- {
--	const struct cred *old = current->cred;
-+	const struct cred *old;
+-	old_cred = override_creds(ctx->cred);
++	old_cred = override_creds_light(ctx->cred);
+ 	if (is_sync_kiocb(iocb)) {
+ 		rwf_t rwf = iocb_to_rw_flags(flags);
  
- 	kdebug("override_creds(%p{%ld})", new,
- 	       atomic_long_read(&new->usage));
-@@ -499,7 +499,7 @@ const struct cred *override_creds(const struct cred *new)
- 	 * visible to other threads under RCU.
+@@ -197,7 +197,7 @@ ssize_t backing_file_read_iter(struct file *file, struct iov_iter *iter,
+ 			backing_aio_cleanup(aio, ret);
+ 	}
+ out:
+-	revert_creds(old_cred);
++	revert_creds_light(old_cred);
+ 
+ 	if (ctx->accessed)
+ 		ctx->accessed(ctx->user_file);
+@@ -233,7 +233,7 @@ ssize_t backing_file_write_iter(struct file *file, struct iov_iter *iter,
  	 */
- 	get_new_cred((struct cred *)new);
--	rcu_assign_pointer(current->cred, new);
-+	old = override_creds_light(new);
+ 	flags &= ~IOCB_DIO_CALLER_COMP;
  
- 	kdebug("override_creds() = %p{%ld}", old,
- 	       atomic_long_read(&old->usage));
-@@ -521,7 +521,7 @@ void revert_creds(const struct cred *old)
- 	kdebug("revert_creds(%p{%ld})", old,
- 	       atomic_long_read(&old->usage));
+-	old_cred = override_creds(ctx->cred);
++	old_cred = override_creds_light(ctx->cred);
+ 	if (is_sync_kiocb(iocb)) {
+ 		rwf_t rwf = iocb_to_rw_flags(flags);
  
--	rcu_assign_pointer(current->cred, old);
-+	revert_creds_light(old);
- 	put_cred(override);
+@@ -264,7 +264,7 @@ ssize_t backing_file_write_iter(struct file *file, struct iov_iter *iter,
+ 			backing_aio_cleanup(aio, ret);
+ 	}
+ out:
+-	revert_creds(old_cred);
++	revert_creds_light(old_cred);
+ 
+ 	return ret;
  }
- EXPORT_SYMBOL(revert_creds);
+@@ -281,9 +281,9 @@ ssize_t backing_file_splice_read(struct file *in, loff_t *ppos,
+ 	if (WARN_ON_ONCE(!(in->f_mode & FMODE_BACKING)))
+ 		return -EIO;
+ 
+-	old_cred = override_creds(ctx->cred);
++	old_cred = override_creds_light(ctx->cred);
+ 	ret = vfs_splice_read(in, ppos, pipe, len, flags);
+-	revert_creds(old_cred);
++	revert_creds_light(old_cred);
+ 
+ 	if (ctx->accessed)
+ 		ctx->accessed(ctx->user_file);
+@@ -307,11 +307,11 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
+ 	if (ret)
+ 		return ret;
+ 
+-	old_cred = override_creds(ctx->cred);
++	old_cred = override_creds_light(ctx->cred);
+ 	file_start_write(out);
+ 	ret = iter_file_splice_write(pipe, out, ppos, len, flags);
+ 	file_end_write(out);
+-	revert_creds(old_cred);
++	revert_creds_light(old_cred);
+ 
+ 	if (ctx->end_write)
+ 		ctx->end_write(ctx->user_file);
+@@ -335,9 +335,9 @@ int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
+ 
+ 	vma_set_file(vma, file);
+ 
+-	old_cred = override_creds(ctx->cred);
++	old_cred = override_creds_light(ctx->cred);
+ 	ret = call_mmap(vma->vm_file, vma);
+-	revert_creds(old_cred);
++	revert_creds_light(old_cred);
+ 
+ 	if (ctx->accessed)
+ 		ctx->accessed(ctx->user_file);
 -- 
 2.46.0
 
