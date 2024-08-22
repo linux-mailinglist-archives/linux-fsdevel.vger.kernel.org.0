@@ -1,62 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-26579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FB695A8A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 02:15:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB4495A8B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 02:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 471D5282739
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 00:15:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB551C21EBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 00:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9211D4C74;
-	Thu, 22 Aug 2024 00:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294BE4405;
+	Thu, 22 Aug 2024 00:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VYFkP06w"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="eCSjSdcK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AB515A8;
-	Thu, 22 Aug 2024 00:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84D115A8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 00:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724285741; cv=none; b=pq2hZz4aTOikUJxKeZmF5Re1YWlt22LsMGHKtu+UW7KRhngIBKBsmybh0NE9UJmsKScZLGXNe7oua/36AAFmPS3h9CqAuyWRRevQFvrmLHOlrr0Pm5wQ6Txy30HDXHD74cf0Mao9XBJD1v3Q0/yz9y3pPHpAwI4AfECVnK+lYr4=
+	t=1724286016; cv=none; b=DEBN8mGa09mryi3CidoO6jTIgCKeFBYMFjOfKsxiKEE55BlvxTGJUe70HEJ0lOAbeSiU0TEspKMVWZY2mPKdjvOEyeJjQUoMME7z71jt/xybTZZQtUnU4gLfQk+UuN896ZptCi+jrrOpox6sQZ9UC1xXYcPd4wjwd3khibPZkus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724285741; c=relaxed/simple;
-	bh=OdM38FkNTcBPHl7pFSwql2F4vrUHZrxewqYWJilfLzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iX1MXYbQt0Uaah2cqZF0VhrVjNDEos30+7ZrCX6Yt4e52FFm7MPHFZktgMP7Zn488Yvyu7n0CNflLyOwEnyPPv6kOHyYzfjGUoVzCYF0gC78sYuFxBsP7P4wett90lV6gFuvpNCGejb9eUgjFoDbKGsbiV+croekbvXjjJDNLAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VYFkP06w; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1724286016; c=relaxed/simple;
+	bh=0WVVoSSOd1km+/C1UeTllxRoa8k/APE+U6bHa8Y5g/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LyGtf4ixPZ9cUR0p68LO/xaHDj6zNuT+H/yS58kBW9kl8x5jWShZtax+m8YsalGd7+joWcyZMkUE5wu1bQ3w/vWuXLHU/PETiPO4xJiUAsIWuBK6dtayXEDfHP8V+dtyjzQIa+bnabCx110cytLW7jcBxbEs3jKvzTCV2r8WXTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=eCSjSdcK; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4a0JEl55wyrWU4+T/Db8ieIP2AEXOZlCwxjkTfa2lPI=; b=VYFkP06wHX6YzgSWCOvmB/AEac
-	+4MDovWSQi/7RqC3QRLEcV26+KM4ZcMtZdiNS1Acc8VPIJkH92dI61BkiGhaXSHZ63hGR0CIzPSNr
-	g7Jo2zdCdORw2pO2poqc//4LbofkNPZOzJJ9lu/rm1fveMOniacJNv21e3lsWezB0FElHikfh2GdO
-	c9KcbbHnIkpg2sKLXeeFM1barlPKNICecvYKoCxj0MtD9GvWPaKCP6W/Hxzldit+eccois7WQlzky
-	xL7Z+LiJZo2XvIJo5+pyxo7zs8k4uOC1mHXGDZM4IWFV29FVjCA5nLZFA2LFMIo8s+DjythTyGG8g
-	YmJe6w3A==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=wLY7/k2dfP6+usyIVedJCWqrzVRxA2BLP23fiOnSJLc=; b=eCSjSdcK554ZiutpECDZRwpvHi
+	2sg3UCTDPERyT4ycgACHdiZ7pa4qy8ylY1ZXz+tJqfASaupzrPebbpDx49V8TfVK9vLs/5v02EVlV
+	2Bp/Az6UhdR1knL4I/+9fJeedt8fKgnEWGzv3Ylv1BC03dyvtplwcAkdzEpUAd79EY6LjppPmyWbk
+	0DwNX4/xtU8h88Sc/1vjV+yhAHoMgwFBIfZtFuU4vzkVOUhzVnCU9njTCPWnlGO9IjYadM/HPxovB
+	dzV26BbUFWMOzYT9toKSl6Co/OPpsRpA+GAYMPn/1PKhxuohaeZ4BvRK8+nCBiM0FoC/CwrtVLtSB
+	zLjzTkIw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sgvUG-00000003w2k-1Yec;
-	Thu, 22 Aug 2024 00:15:36 +0000
-Date: Thu, 22 Aug 2024 01:15:36 +0100
+	id 1sgvYi-00000003w4c-3yMy;
+	Thu, 22 Aug 2024 00:20:13 +0000
+Date: Thu, 22 Aug 2024 01:20:12 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
-	lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-Subject: Re: [viro-vfs:work.fdtable 13/13] kernel/fork.c:3242 unshare_fd()
- warn: passing a valid pointer to 'PTR_ERR'
-Message-ID: <20240822001536.GL504335@ZenIV>
-References: <020d5bd0-2fae-481f-bc82-88e71de1137c@stanley.mountain>
- <20240813181600.GK13701@ZenIV>
- <20240814010321.GL13701@ZenIV>
- <7bf93dfd-1536-438c-9ffd-f7dcfce0b3f5@linuxfoundation.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCHES] fdtable series v2
+Message-ID: <20240822002012.GM504335@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,31 +59,65 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7bf93dfd-1536-438c-9ffd-f7dcfce0b3f5@linuxfoundation.org>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Aug 21, 2024 at 12:38:48AM -0600, Shuah Khan wrote:
-> On 8/13/24 19:03, Al Viro wrote:
-> > On Tue, Aug 13, 2024 at 07:16:00PM +0100, Al Viro wrote:
-> > > On Tue, Aug 13, 2024 at 11:00:04AM +0300, Dan Carpenter wrote:
-> > > > 3f4b0acefd818e Al Viro           2024-08-06  3240  		if (IS_ERR(*new_fdp)) {
-> > > > 3f4b0acefd818e Al Viro           2024-08-06  3241  			*new_fdp = NULL;
-> > > > 3f4b0acefd818e Al Viro           2024-08-06 @3242  			return PTR_ERR(new_fdp);
-> > > >                                                                                 ^^^^^^^^^^^^^^^^
-> > > > 	err = PTR_ERR(*new_fdp);
-> > > > 	*new_fdp = NULL;
-> > > > 	return err;
-> > > 
-> > > Argh...  Obvious braino, but what it shows is that failures of that
-> > > thing are not covered by anything in e.g. LTP.  Or in-kernel
-> > > self-tests, for that matter...
-> > 
-> > FWIW, this does exercise that codepath, but I would really like to
-> > have kselftest folks to comment on the damn thing - I'm pretty sure
-> > that it's _not_ a good style for those.
-> 
-> Looks good to me. Would you be able to send a patch for this new test?
+	close_range() fix added in the beginning of the series,
+dup_fd() calling convention change folded into it (as requested
+by Linus), the rest rebased on top of that.
+	sane_fdtable_size() change is dropped, as it's obsoleted
+by close_range() fix.  Several patches added at the end of
+series.
 
-Umm...  Send as in "mail somewhere specific", or as "push into vfs.git",
-or...?
+	Same branch -
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.fdtable
+individual patches in followups.  If nobody objects, I'm adding that
+pile to #for-next
+
+Shortlog:
+
+Al Viro (9):
+      close_range(): fix the logics in descriptor table trimming
+      get rid of ...lookup...fdget_rcu() family
+      remove pointless includes of <linux/fdtable.h>
+      close_files(): don't bother with xchg()
+      move close_range(2) into fs/file.c, fold __close_range() into it
+      alloc_fdtable(): change calling conventions.
+      file.c: merge __{set,clear}_close_on_exec()
+      make __set_open_fd() set cloexec state as well
+      expand_files(): simplify calling conventions
+
+Yu Ma (3):
+      fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()
+      fs/file.c: conditionally clear full_fds
+      fs/file.c: add fast path in find_next_fd()
+
+Diffstat:
+ arch/powerpc/platforms/cell/spufs/coredump.c |   4 +-
+ fs/fcntl.c                                   |   1 -
+ fs/file.c                                    | 291 ++++++++++-----------------
+ fs/file_table.c                              |   1 -
+ fs/gfs2/glock.c                              |  12 +-
+ fs/notify/dnotify/dnotify.c                  |   5 +-
+ fs/notify/fanotify/fanotify.c                |   1 -
+ fs/notify/fanotify/fanotify_user.c           |   1 -
+ fs/open.c                                    |  17 --
+ fs/overlayfs/copy_up.c                       |   1 -
+ fs/proc/base.c                               |   1 -
+ fs/proc/fd.c                                 |  12 +-
+ include/linux/fdtable.h                      |  13 +-
+ include/linux/file.h                         |   1 +
+ io_uring/io_uring.c                          |   1 -
+ kernel/bpf/bpf_inode_storage.c               |   1 -
+ kernel/bpf/bpf_task_storage.c                |   1 -
+ kernel/bpf/task_iter.c                       |   6 +-
+ kernel/bpf/token.c                           |   1 -
+ kernel/exit.c                                |   1 -
+ kernel/fork.c                                |  32 ++-
+ kernel/kcmp.c                                |   4 +-
+ kernel/module/dups.c                         |   1 -
+ kernel/module/kmod.c                         |   1 -
+ kernel/umh.c                                 |   1 -
+ net/handshake/request.c                      |   1 -
+ security/apparmor/domain.c                   |   1 -
+ 27 files changed, 136 insertions(+), 277 deletions(-)
 
