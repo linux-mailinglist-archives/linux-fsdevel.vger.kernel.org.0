@@ -1,103 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-26741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCF595B85B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:27:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C8595B860
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465C91F2610F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 14:27:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9E01F25B04
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 14:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C69F1CC153;
-	Thu, 22 Aug 2024 14:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7279E1CBE94;
+	Thu, 22 Aug 2024 14:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="gtuUB3GY"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="LSEcGloE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-gcp.globallogic.com (smtp-gcp.globallogic.com [34.141.19.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DBF1CBEA2;
-	Thu, 22 Aug 2024 14:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.141.19.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241511C93BC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 14:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724336791; cv=none; b=doK7LBpS066IaOBIhr5IoeY1Of5pjpYK3fZ+78/9m1CZxSAMwp5KyDIaXQ/PSuJoh25oF+4G09ly/ckLW799YZAOTthD+zCqSsPOgBDudhBT8NwKCwfvLUuh4cdYPBb0BnaH25UVUBU2MsfaO93j38NPWuv4igNPNwWMnffFiDs=
+	t=1724336969; cv=none; b=iTom9OpnYRSbFakF7PM7PoaVQycXwDmH6Xxdyj+XC2EpHq4OCZ2jdSpaz0nhzyCbvPiAYqJwcyJQi5t2secEUTOWDg5+YZZWEDXCY/P7Ab0FyubsmufqZOnH8cNLNQBC6EWuifzD1pR6Ot7jBtSoXZd4gbygyP7D3dMW1ICu+ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724336791; c=relaxed/simple;
-	bh=YJcgWbnziyKRxRr1FBzBeoShrhWvBNrpXICScQ0851w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pz+Nq/P43+eR+2HhFg0P/VGojMEXkyrYcVb8M5pViNm/t5RyW8iW1O/v9zkW+gGPzrDrJTIKhY6uy1DgJniXxKOBqsGymgNmq1xcyC7p7RlB74daFNBRkk+i/NKFofjnr9qVL08usjjGaj3+wXhAdkfH4M2k0CZQ4FHMTfHGx8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=globallogic.com; spf=pass smtp.mailfrom=globallogic.com; dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b=gtuUB3GY; arc=none smtp.client-ip=34.141.19.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=globallogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=globallogic.com
-Received: from LWO1-LHP-A14530.synapse.com (unknown [172.22.130.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-gcp.globallogic.com (Postfix) with ESMTPSA id 8909D10ACE21;
-	Thu, 22 Aug 2024 14:26:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=globallogic.com;
-	s=smtp-kbp; t=1724336781;
-	bh=zQ2mIMR4NFT3ycvil4nrM/oj7F5q3LrHKDGgtxqSRew=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gtuUB3GY8rJPm19GTvQyBTbi3S7Lde4j+L7ZUyCOzaFZoZZFy3NyiRqE56IXT5bZ/
-	 Yfc1AgyVJy2qYOobMpkJUrrALz3hUGWf4aNxf9ocPS9UGcr+07yCxlM2Xqx5rlCBje
-	 xqOy6PJVYquiw/jXItgPUP1wtvdmokPsZmAjJfEW8gcdThb5qjxgaVO5KhRDX44Qlo
-	 mc4svtbQnxKKCuDWNqTbyNLJisHeOhwxyZ4/BZMFPZAH/8oZRv8b3nAhi1tGYbvRtk
-	 uaI4Loj8XaxbtmgLdGAU8KUFWeje6HY4GlDmGV6bkLFN5SY6RpBK6G9o/ezRYfZ02P
-	 xH1isjlZvhHPA==
-From: sergii.boryshchenko@globallogic.com
-To: dushistov@mail.ru
-Cc: linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
-Subject: [PATCH] ufs: Remove redundant inode number check from ufs_nfs_get_inode
-Date: Thu, 22 Aug 2024 17:26:10 +0300
-Message-Id: <20240822142610.129668-1-sergii.boryshchenko@globallogic.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724336969; c=relaxed/simple;
+	bh=yq8YOWm31MPhCHGBDhkey78Q/SwB6I8LQLcE5bjfj0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QZ2qliu0EODSmLa7JuB3VVj9Btb0DlWqKC9SXK/VHhcOY11ctoQtzn2Li1LwR2TJdzHfFkMog1h2DA2+RMswaxajKvS3CJZ+p1Xk0Xtv26EXygqbeqncTior9TTRzAdMh7Ci9XDiQMXjMNt52j+C/lj1Lhux8BKgtRs24AvqENA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=LSEcGloE; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a86883231b4so119212966b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 07:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724336965; x=1724941765; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yq8YOWm31MPhCHGBDhkey78Q/SwB6I8LQLcE5bjfj0g=;
+        b=LSEcGloEQI5DIZ6Da8EOFbh5F9i/yghZYeuDix7Eork6V3VcNiMcXRQEAK7y67EtUB
+         x4n/qNPeV/QKYu/bu1tHOG5YRnHGp7diIqkpisyTDfp4eDhx6JzUKGTb6IbgqlyoUz46
+         2JlB+1D4HH0Re2TdSPuJda9Hduns8h9mZh/sY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724336965; x=1724941765;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yq8YOWm31MPhCHGBDhkey78Q/SwB6I8LQLcE5bjfj0g=;
+        b=QsXj9a5kY6xqUsjuGMEMKczQFuRXZ//WKpO2YiLvZn7PKzgRMCLRhqm701I3EEoSCP
+         I2GuKBDD0PlJF5TKlgHXKTS/nAGSw/0C5Gcfa+/mamb2WrA3d9j65MrMWhPoc8tBtJh3
+         gvmrjDAPeINhZqw6YFZQN0dipc2W5vRVBQJQ7j/HpWqQbQNw2Dhb3eO66mhO+RjuIadd
+         QZ04AgQpSF3Y+83zRn90TgPzk5nGNidclvdt373OJ92EHoLBW0SEgSYkIloJOHEnAtFI
+         JUz1kguV3utf9qFgB5La4FV0cuHNiXh16Tz1QFpqHN+jogdPvRQ3oxeWAX8wlIneY+ky
+         f2Ow==
+X-Gm-Message-State: AOJu0Yx5xOMP2aAT4IbMCXkHrtuhd51H6VBhyZxleFvhawDkF7vxncZh
+	gioOpoc57H+/2hPpA5zWjAfgiAUc52SnFXBeRTRU4czH0yjRqH/qcPJ4lqTyAR96B8YsXxEUZiq
+	bXOyJNSNr36Ji+4nYcfmVX25pzygpUAe4yuk7ag==
+X-Google-Smtp-Source: AGHT+IHrHu0J+uUBa63q76YlnUDu2hyONi2orrmSzrJ4EBPVRFTufw4odXpjiVy/IvdRaB013c+dmX1+P0XHWb+3Keo=
+X-Received: by 2002:a17:907:3ea2:b0:a86:6b97:d95c with SMTP id
+ a640c23a62f3a-a8691cbcf08mr144969566b.67.1724336965076; Thu, 22 Aug 2024
+ 07:29:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240725175334.473546-1-joannelkoong@gmail.com>
+In-Reply-To: <20240725175334.473546-1-joannelkoong@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 22 Aug 2024 16:29:13 +0200
+Message-ID: <CAJfpegu_u367bywXjsmfDnDLXwx5NGy-o=8X7uDVgyK=WSmUGA@mail.gmail.com>
+Subject: Re: [PATCH] fuse: check aborted connection before adding requests to
+ pending list for resending
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, winters.zc@antgroup.com, 
+	josef@toxicpanda.com, bs_lists@aakef.fastmail.fm, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
+On Thu, 25 Jul 2024 at 19:53, Joanne Koong <joannelkoong@gmail.com> wrote:
+>
+> There is a race condition where inflight requests will not be aborted if
+> they are in the middle of being re-sent when the connection is aborted.
+>
+> If fuse_resend has already moved all the requests in the fpq->processing
+> lists to its private queue ("to_queue") and then the connection starts
+> and finishes aborting, these requests will be added to the pending queue
+> and remain on it indefinitely.
+>
+> Fixes: 760eac73f9f6 ("fuse: Introduce a new notification type for resend pending requests")
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 
-The `ufs_nfs_get_inode` function contains a check to validate the inode number
-(`ino`) against the valid range of inode numbers. However, this check is
-redundant because the same validation is already performed in the `ufs_iget`
-function, which is called immediately afterward.
+Applied, thanks.
 
-By removing this redundant check, we simplify the code and avoid unnecessary
-double-checking of the inode number, while still ensuring that invalid inode
-numbers are properly handled by the `ufs_iget` function.
-
-This change has no impact on the functionality since `ufs_iget` provides the
-necessary validation for all callers.
-
-Signed-off-by: Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
----
- fs/ufs/super.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index bc625788589c..11e8b869e0ba 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -101,9 +101,6 @@ static struct inode *ufs_nfs_get_inode(struct super_block *sb, u64 ino, u32 gene
- 	struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
- 	struct inode *inode;
- 
--	if (ino < UFS_ROOTINO || ino > (u64)uspi->s_ncg * uspi->s_ipg)
--		return ERR_PTR(-ESTALE);
--
- 	inode = ufs_iget(sb, ino);
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
--- 
-2.25.1
-
+Miklos
 
