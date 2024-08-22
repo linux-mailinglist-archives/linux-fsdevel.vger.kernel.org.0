@@ -1,138 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-26780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA7995B9C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:14:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B7795B9EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CF151C24096
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:14:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C581F242B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4A41CDA29;
-	Thu, 22 Aug 2024 15:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F321E1C9DF6;
+	Thu, 22 Aug 2024 15:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="V/QAxIym"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9A71CDA17;
-	Thu, 22 Aug 2024 15:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52E52D05E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 15:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724339615; cv=none; b=ElfwzrRXbetU5k38CVtSgXJ8DbdXGSclyKxDROUdtkEcmEmyISbRA4lUsdYF1zPA0qzyeZ6X5VJZSGPtoNCoo5Z07VQfohaKQa1qdMpjzmcTTk7BaspCWzubs3yVnLylkL4dV66Y+fKRG0ee6OIMUBpJoQe68fw1lqrA0gk4f3c=
+	t=1724339885; cv=none; b=pYZvp0fm/fNyaMytrqbGgjfmuJHrvmiUZRQTMRjkRugDwW0jooGWss44zZGD0S3vS/GxS0HA0VDNKy8Hni0aSlMBcR5vumj5XYM9NKnTPriKjJPtpTt3NEcxkS9Wx4ZWQIwLaYhkGOUsKlW+SItEq7Ml9N1+zaSIhlNh95SQgvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724339615; c=relaxed/simple;
-	bh=FYuGbzi8wqAHYjLVxSo7ckNrfQddZ1WoKb3IjN/XxjI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nZ/l7q2cQq1oazYUPm3TmrBe5qgnFDkv66NkRKCzlIDuE8uXrne4LCGCrkGP1CKnqaf5i8j2pxJPRPCMJX0sCt5npv0e/rh3ME4sBr5eOzpMqaYgww4pXsenLOSOskvBDjTBOAnO4k3g6J0Nc1mkaTNe2J/sCt70OOrhyDPvU2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EC09169C;
-	Thu, 22 Aug 2024 08:14:00 -0700 (PDT)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00D0F3F58B;
-	Thu, 22 Aug 2024 08:13:29 -0700 (PDT)
-From: Joey Gouly <joey.gouly@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: nd@arm.com,
-	akpm@linux-foundation.org,
-	aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com,
-	anshuman.khandual@arm.com,
-	bp@alien8.de,
-	broonie@kernel.org,
-	catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	joey.gouly@arm.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	maz@kernel.org,
-	mingo@redhat.com,
-	mpe@ellerman.id.au,
-	naveen.n.rao@linux.ibm.com,
-	npiggin@gmail.com,
-	oliver.upton@linux.dev,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org,
-	szabolcs.nagy@arm.com,
-	tglx@linutronix.de,
-	will@kernel.org,
-	x86@kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 30/30] KVM: selftests: get-reg-list: add Permission Overlay registers
-Date: Thu, 22 Aug 2024 16:11:13 +0100
-Message-Id: <20240822151113.1479789-31-joey.gouly@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240822151113.1479789-1-joey.gouly@arm.com>
-References: <20240822151113.1479789-1-joey.gouly@arm.com>
+	s=arc-20240116; t=1724339885; c=relaxed/simple;
+	bh=Fl1xClMzidzVLaAGhQIy4FMjfSjkpp459jOzZzWS8YE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t+m31qoVfPggrdBzg931owLfuX288c+VAgkaOOL4Zt5V8a8XOChNCdFMjvCZUBgi6fniAitLR2gZIMackEJYrRNTyFVb5QgyWgAaptvHO3UwOUSCPqSDpM85PBe5ZC1/WyZ5Mq2V7k4c+9HIqsS0Cmmja93hmGXHtv29tYIrb4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=V/QAxIym; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86910caf9cso140326866b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 08:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724339881; x=1724944681; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fl1xClMzidzVLaAGhQIy4FMjfSjkpp459jOzZzWS8YE=;
+        b=V/QAxIymVYh4HxgWZGdI9KaIyh9unWJyHte6KuzCTX53e0qnQD4Wta8WV9eqrl7b1j
+         dOj15Xd/mUEcyL4MCh7lVteU+VcGtLzR6iCuS3vtVZGMgWaR/Mb+rtLwoPjs3eBml8QQ
+         PofK7IIIxpL4uYA/jL0w0kY2C9hKIDsFrvzNk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724339881; x=1724944681;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fl1xClMzidzVLaAGhQIy4FMjfSjkpp459jOzZzWS8YE=;
+        b=Zf8E85iGjS/DhdrFrqS7MtJLuDIrL9qYTkSkSTe81Z1UoPloHytEz/rgRZZ0x/AyJC
+         bWZbIz2Z/VlaEAnYJvNfljzChT6bbKBQXHxeDULd9N+86J8q79OuG6es6TBheWQnMM3h
+         gB4GhdJVz6QOy2R9yw9DzZmHrDfa0BK1uW6Pg5itnqtgfdviJB6fDVOc0m8XtFFcLfOT
+         /Lep/i75aA1muma9NJ64RtrrKBaU7z8fZCvLl/0ItlmXXCPq+RlbLqu7HnKPZarzNCSt
+         pBFHegESLNHNJjqj0vYWmwOBKWkAlj4iWEh74/EI7b/vv+bxa6du86hI5SZxR8O5Gix0
+         91mQ==
+X-Gm-Message-State: AOJu0Yxk+jZKBg8rc2myR6GeW9W4QA6Le3+4cZ+O25JyD4YyWPf2wCEW
+	4/JqYU/VCWsIVc4yBFBhmZZVTy7z9fHLMSXghy/loV2snVUOSqFzISnWE4t+clfZ+IPlknZlHOn
+	raKNi7SLpCudo0V40dsqOWqo9WP+euP+bvLV+Pf8lYeZvpQUB
+X-Google-Smtp-Source: AGHT+IGOx2S8RYrrO2KmV5F8eBX2ZNmhKR2OsBP7+OLhFCzIcQYvq7+iqWL3yTCj0laN2dze78uRVHH1qdmvhG/fKm8=
+X-Received: by 2002:a17:907:3f99:b0:a86:9e85:2619 with SMTP id
+ a640c23a62f3a-a869e8528b0mr24515266b.25.1724339881256; Thu, 22 Aug 2024
+ 08:18:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240810034209.552795-1-yangyun50@huawei.com>
+In-Reply-To: <20240810034209.552795-1-yangyun50@huawei.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 22 Aug 2024 17:17:49 +0200
+Message-ID: <CAJfpegtgp1brE3kY+juseZ+P_hfzbgYwG52eGc1BvR0XsBq2Bw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix race conditions on fi->nlookup
+To: yangyun <yangyun50@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lixiaokeng@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add new system registers:
-  - POR_EL1
-  - POR_EL0
+On Sat, 10 Aug 2024 at 05:42, yangyun <yangyun50@huawei.com> wrote:
+>
+> Lock on fi->nlookup is missed in fuse_fill_super_submount(). Add lock
+> on it to prevent race conditions.
 
-Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: Shuah Khan <shuah@kernel.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/aarch64/get-reg-list.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+It's okay to do this without lockinghere, because this is a brand new
+superblock and and a brand new root inode for that superblock, so
+there's no possible access from outside this function.
 
-diff --git tools/testing/selftests/kvm/aarch64/get-reg-list.c tools/testing/selftests/kvm/aarch64/get-reg-list.c
-index 4abebde78187..d43fb3f49050 100644
---- tools/testing/selftests/kvm/aarch64/get-reg-list.c
-+++ tools/testing/selftests/kvm/aarch64/get-reg-list.c
-@@ -40,6 +40,18 @@ static struct feature_id_reg feat_id_regs[] = {
- 		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
- 		8,
- 		1
-+	},
-+	{
-+		ARM64_SYS_REG(3, 0, 10, 2, 4),	/* POR_EL1 */
-+		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
-+		16,
-+		1
-+	},
-+	{
-+		ARM64_SYS_REG(3, 3, 10, 2, 4),	/* POR_EL0 */
-+		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
-+		16,
-+		1
- 	}
- };
- 
-@@ -468,6 +480,7 @@ static __u64 base_regs[] = {
- 	ARM64_SYS_REG(3, 0, 10, 2, 0),	/* MAIR_EL1 */
- 	ARM64_SYS_REG(3, 0, 10, 2, 2),	/* PIRE0_EL1 */
- 	ARM64_SYS_REG(3, 0, 10, 2, 3),	/* PIR_EL1 */
-+	ARM64_SYS_REG(3, 0, 10, 2, 4),	/* POR_EL1 */
- 	ARM64_SYS_REG(3, 0, 10, 3, 0),	/* AMAIR_EL1 */
- 	ARM64_SYS_REG(3, 0, 12, 0, 0),	/* VBAR_EL1 */
- 	ARM64_SYS_REG(3, 0, 12, 1, 1),	/* DISR_EL1 */
-@@ -475,6 +488,7 @@ static __u64 base_regs[] = {
- 	ARM64_SYS_REG(3, 0, 13, 0, 4),	/* TPIDR_EL1 */
- 	ARM64_SYS_REG(3, 0, 14, 1, 0),	/* CNTKCTL_EL1 */
- 	ARM64_SYS_REG(3, 2, 0, 0, 0),	/* CSSELR_EL1 */
-+	ARM64_SYS_REG(3, 3, 10, 2, 4),	/* POR_EL0 */
- 	ARM64_SYS_REG(3, 3, 13, 0, 2),	/* TPIDR_EL0 */
- 	ARM64_SYS_REG(3, 3, 13, 0, 3),	/* TPIDRRO_EL0 */
- 	ARM64_SYS_REG(3, 3, 14, 0, 1),	/* CNTPCT_EL0 */
--- 
-2.25.1
+So just a comment should suffice.
 
+Thanks,
+Miklos
 
