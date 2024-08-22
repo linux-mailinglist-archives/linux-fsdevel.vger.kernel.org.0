@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-26679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA8CD95AEFA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 09:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 561B095AF1B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 09:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17F74B25481
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 07:20:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87B41B255C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 07:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1475187860;
-	Thu, 22 Aug 2024 07:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95532188586;
+	Thu, 22 Aug 2024 07:14:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046BC18755F;
-	Thu, 22 Aug 2024 07:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38C3187FEF;
+	Thu, 22 Aug 2024 07:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724310879; cv=none; b=BHoR4ksUP2sXCcVyaGX/om+ZPrLHzH8vYlmygIrKxqzPK46NZI734xuB+3kGwZM1XVsTu7+dwYpm+rbVycLQWIPj1ItFnLv1beT/8zHL0OQvbYnJobbdx/XGnhyFXlmtkGx5qCzVbc8SfMqqxE+V+ZVd0IcOTsRS/e5V+0tLVVU=
+	t=1724310884; cv=none; b=u4MdGpRUMhEjvA7Yb+nsqYncTbV/+H1RmLB9XrExyuTx3BzuFQca3YSopd0UXaIMBAiV8TxJHpZJQytigrQcRkHH7W1R1n12cJT/kYFbRPKwpxCDEOVjtaR+ZXcQgTzNykp/ttA+YlCIXBkXCpfdoVuuW3nlWmB4f20tf9TSgSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724310879; c=relaxed/simple;
-	bh=Rn9d/ML2os7fiyWcUOGlavHd5OPzN/t1RfDUsN+0Qrg=;
+	s=arc-20240116; t=1724310884; c=relaxed/simple;
+	bh=yXWU/vOrVCh1tH6IvVskRabYNHCoI2MUD+0kW8f8BRY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VCL5B7+5ZNvwwBToioJE+HiAEv2oq2V+MUd2OqHIOQVd8e98iUu2Iam+NN4gadF/1JPKys+QsWGGugHH3sP3jCdRZbcHPXb9zySuNmK0oE4TaIOTLYiXD+pV9ili72jMeUzp0NxfH528we6mUIDyqBSg0Nmxk1LFrKdIKmN/xDw=
+	 MIME-Version; b=N2NRfjVnzkrq+s41/HWxNTmlvZjAgOKieInbMf1QybnyvJf0uLMMfxWHxibt/MtUXuwKefXjN/oVEeK7ZxdXVdFS0WU3PJiDdIY+aXYXUKfFxHnByZVe1zeOWDvQQZ+bsOkstiiYNwinL9P2eG2I1+sR3k6bZabmz4K9CnkV7p4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WqDvR5CX1z9sT8;
-	Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4WqDvS5M5gz9sTD;
+	Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 21DgOl8Lk8Ri; Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+	with ESMTP id 5BXvRolJCPmB; Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqDvR4LvYz9sSy;
-	Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WqDvS4Ts4z9sSy;
+	Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 83ED38B77E;
-	Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 898D68B763;
+	Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id WGcMRiOmQSwe; Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
+	with ESMTP id M06ncktVG1Is; Thu, 22 Aug 2024 09:13:40 +0200 (CEST)
 Received: from PO20335.idsi0.si.c-s.fr (PO16920.IDSI0.si.c-s.fr [192.168.232.181])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6F6158B763;
-	Thu, 22 Aug 2024 09:13:38 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7999F8B77D;
+	Thu, 22 Aug 2024 09:13:39 +0200 (CEST)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 To: Michael Ellerman <mpe@ellerman.id.au>,
 	Nicholas Piggin <npiggin@gmail.com>,
@@ -77,9 +77,9 @@ Cc: linuxppc-dev@lists.ozlabs.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 16/17] selftests: vdso: Make VDSO function call more generic
-Date: Thu, 22 Aug 2024 09:13:24 +0200
-Message-ID: <bd05c8faee64972a9e01f9497d1870dc267a55f4.1724309198.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH v2 17/17] selftests: vdso: Add support for vdso_test_random for powerpc
+Date: Thu, 22 Aug 2024 09:13:25 +0200
+Message-ID: <7a612370f645d6f8defd4dc8c1ebf31ee39dfb1f.1724309198.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <cover.1724309198.git.christophe.leroy@csgroup.eu>
 References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
@@ -89,64 +89,102 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724310795; l=2025; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=Rn9d/ML2os7fiyWcUOGlavHd5OPzN/t1RfDUsN+0Qrg=; b=4ocv1Gynupmkdok/Yucd3J51RkIKkwAAgn+EGWRtuZhZI5J46ZOVIQ7c0ay2qC0zGA01fJtbr LHl2STYwXzSBtCp1j1FM7keZHQwVVi86v7ufMShJDfdkWwIamam+Wbi
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724310795; l=2831; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=yXWU/vOrVCh1tH6IvVskRabYNHCoI2MUD+0kW8f8BRY=; b=KS6Wqd4DIG71241Ra4HKWqyJqfA08PcnWHdqJqXSzHx1GQ2rQRMw4i3n5nKIJ8DUdMbYpgKlH PcZJDDWZcGgD4/4e4J7ugbtDnH9tX2JYCnkXxsBKExFDkk4hm1KeDA9
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-On powerpc, a call to a VDSO function is not a standard C function
-call. Unlike x86 that returns a negated error code in case of an
-error, powerpc sets CR[SO] and returns the error code as a
-positive value.
+Add the necessary symbolic link and tell Makefile to build
+vdso_test_random for powerpc.
 
-So use a macro called VDSO_CALL() which takes a pointer to the
-function to call, the number of arguments and the arguments.
+In makefile, don't use $(uname_M) which is wrong when cross-building
+for powerpc on an x86_64.
+
+Implement the required VDSO_CALL macro to correctly handle errors.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- tools/testing/selftests/vDSO/vdso_call.h           | 12 ++++++++++++
- tools/testing/selftests/vDSO/vdso_test_getrandom.c |  3 ++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/vDSO/vdso_call.h
+ tools/arch/powerpc/vdso                  |  1 +
+ tools/testing/selftests/vDSO/Makefile    |  6 ++++
+ tools/testing/selftests/vDSO/vdso_call.h | 40 ++++++++++++++++++++++++
+ 3 files changed, 47 insertions(+)
+ create mode 120000 tools/arch/powerpc/vdso
 
-diff --git a/tools/testing/selftests/vDSO/vdso_call.h b/tools/testing/selftests/vDSO/vdso_call.h
-new file mode 100644
-index 000000000000..ca5db2220925
+diff --git a/tools/arch/powerpc/vdso b/tools/arch/powerpc/vdso
+new file mode 120000
+index 000000000000..d31004bf8f55
 --- /dev/null
++++ b/tools/arch/powerpc/vdso
+@@ -0,0 +1 @@
++../../../arch/powerpc/kernel/vdso/
+\ No newline at end of file
+diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+index 10ffdda3f2fa..7e7c9fd200d3 100644
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -17,6 +17,12 @@ ifneq ($(SODIUM),)
+ TEST_GEN_PROGS += vdso_test_chacha
+ endif
+ endif
++ifeq ($(ARCH),powerpc)
++TEST_GEN_PROGS += vdso_test_getrandom
++ifneq ($(SODIUM),)
++TEST_GEN_PROGS += vdso_test_chacha
++endif
++endif
+ 
+ CFLAGS := -std=gnu99
+ 
+diff --git a/tools/testing/selftests/vDSO/vdso_call.h b/tools/testing/selftests/vDSO/vdso_call.h
+index ca5db2220925..2a33c25756dc 100644
+--- a/tools/testing/selftests/vDSO/vdso_call.h
 +++ b/tools/testing/selftests/vDSO/vdso_call.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Macro to call vDSO functions
-+ *
-+ * Copyright (C) 2024 Christophe Leroy <christophe.leroy@csgroup.eu>, CS GROUP France
-+ */
-+#ifndef __VDSO_CALL_H__
-+#define __VDSO_CALL_H__
+@@ -7,6 +7,46 @@
+ #ifndef __VDSO_CALL_H__
+ #define __VDSO_CALL_H__
+ 
++#ifdef __powerpc__
 +
-+#define VDSO_CALL(fn, nr, args...)	fn(args)
++#define LOADARGS_5(fn, __arg1, __arg2, __arg3, __arg4, __arg5) do { 	\
++	_r0 = fn;							\
++	_r3 = (long)__arg1;						\
++	_r4 = (long)__arg2;						\
++	_r5 = (long)__arg3;						\
++	_r6 = (long)__arg4;						\
++	_r7 = (long)__arg5;						\
++} while (0)
 +
++#define VDSO_CALL(fn, nr, args...) ({					\
++	register void *_r0 asm ("r0");					\
++	register long _r3 asm ("r3");					\
++	register long _r4 asm ("r4");					\
++	register long _r5 asm ("r5");					\
++	register long _r6 asm ("r6");					\
++	register long _r7 asm ("r7");					\
++	register long _r8 asm ("r8");					\
++	register long _rval asm ("r3");					\
++									\
++	LOADARGS_##nr(fn, args);					\
++									\
++	asm volatile(							\
++		"	mtctr %0\n"					\
++		"	bctrl\n"					\
++		"	bns+	1f\n"					\
++		"	neg	3, 3\n"					\
++		"1:"							\
++		: "+r" (_r0), "=r" (_r3), "+r" (_r4), "+r" (_r5),	\
++		  "+r" (_r6), "+r" (_r7), "+r" (_r8)			\
++		: "r" (_rval)						\
++		: "r9", "r10", "r11", "r12", "cr0", "cr1", "cr5",	\
++		  "cr6", "cr7", "xer", "lr", "ctr", "memory"		\
++	);								\
++	_rval;								\
++})
++
++#else
+ #define VDSO_CALL(fn, nr, args...)	fn(args)
 +#endif
-diff --git a/tools/testing/selftests/vDSO/vdso_test_getrandom.c b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-index 02bcffc23e0c..16ad400721c3 100644
---- a/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-@@ -22,6 +22,7 @@
- #include "../kselftest.h"
- #include "parse_vdso.h"
- #include "vdso_config.h"
-+#include "vdso_call.h"
  
- #ifndef timespecsub
- #define	timespecsub(tsp, usp, vsp)					\
-@@ -147,7 +148,7 @@ static ssize_t vgetrandom(void *buf, size_t len, unsigned long flags)
- 			exit(KSFT_FAIL);
- 		}
- 	}
--	return grnd_ctx.fn(buf, len, flags, state, grnd_ctx.params.size_of_opaque_state);
-+	return VDSO_CALL(grnd_ctx.fn, 5, buf, len, flags, state, grnd_ctx.params.size_of_opaque_state);
- }
- 
- enum { TRIALS = 25000000, THREADS = 256 };
+ #endif
 -- 
 2.44.0
 
