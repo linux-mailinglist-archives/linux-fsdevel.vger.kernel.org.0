@@ -1,146 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-26739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F6395B81A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCF595B85B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8831F22A19
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 14:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465C91F2610F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 14:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92781CBE96;
-	Thu, 22 Aug 2024 14:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C69F1CC153;
+	Thu, 22 Aug 2024 14:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZZa9f1g"
+	dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="gtuUB3GY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-gcp.globallogic.com (smtp-gcp.globallogic.com [34.141.19.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5813A1C9EA9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 14:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DBF1CBEA2;
+	Thu, 22 Aug 2024 14:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.141.19.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724336094; cv=none; b=GwEkeGzsQMJ3y23wq7GWoML6b/ZTt7UVjBGLuBPc9LPBRd2nbUpp9id2lDp0xW7e2y4E+6retiopm2657Rpy8BeQWFFnvHoGRL25gcYwxnIHKhodl+oZBu0ptyaJJ1e0zKDXL/ySlePLx71jBZs/f2tEV7UTY94nR0kc+JFs/nY=
+	t=1724336791; cv=none; b=doK7LBpS066IaOBIhr5IoeY1Of5pjpYK3fZ+78/9m1CZxSAMwp5KyDIaXQ/PSuJoh25oF+4G09ly/ckLW799YZAOTthD+zCqSsPOgBDudhBT8NwKCwfvLUuh4cdYPBb0BnaH25UVUBU2MsfaO93j38NPWuv4igNPNwWMnffFiDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724336094; c=relaxed/simple;
-	bh=ATd+UQYAmuNiL/lyQdGPVyVOibxPMvZX63RWsxDEi4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q6Yg1aqeWwJe8gCNWtvbMVRzwzgNnRx2JOu8EnhTxOMQ2MawO+1i+7KwAfH+UUXquQ9fCVCW3zK3QyR6L9L30nx+6SiEOEiN67jzZVdSNqbCsa9gmxkwYhCfIRfGOs5rWFFWxYgOVXS/COk9raPrGj5nXqc6J+E4u6csFjK66K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZZa9f1g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F185C32782;
-	Thu, 22 Aug 2024 14:14:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724336093;
-	bh=ATd+UQYAmuNiL/lyQdGPVyVOibxPMvZX63RWsxDEi4o=;
+	s=arc-20240116; t=1724336791; c=relaxed/simple;
+	bh=YJcgWbnziyKRxRr1FBzBeoShrhWvBNrpXICScQ0851w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pz+Nq/P43+eR+2HhFg0P/VGojMEXkyrYcVb8M5pViNm/t5RyW8iW1O/v9zkW+gGPzrDrJTIKhY6uy1DgJniXxKOBqsGymgNmq1xcyC7p7RlB74daFNBRkk+i/NKFofjnr9qVL08usjjGaj3+wXhAdkfH4M2k0CZQ4FHMTfHGx8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=globallogic.com; spf=pass smtp.mailfrom=globallogic.com; dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b=gtuUB3GY; arc=none smtp.client-ip=34.141.19.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=globallogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=globallogic.com
+Received: from LWO1-LHP-A14530.synapse.com (unknown [172.22.130.14])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-gcp.globallogic.com (Postfix) with ESMTPSA id 8909D10ACE21;
+	Thu, 22 Aug 2024 14:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=globallogic.com;
+	s=smtp-kbp; t=1724336781;
+	bh=zQ2mIMR4NFT3ycvil4nrM/oj7F5q3LrHKDGgtxqSRew=;
 	h=From:To:Cc:Subject:Date:From;
-	b=tZZa9f1ge+c38Bo2SLRaLjfxEfStGw7WoDzkyRrQrs6qeFGjDd3Q2wfj8gke3amJ1
-	 vm4dL+k0tEl6QEbCmQp8UIMN6zPxrBXHA3a6jxK25Iq6B7ogOBK+R3v41C6YJcLpBu
-	 QrDs5uGcKZGCM10z6a7lbcBiXpYbSo358+UNU0gCRha8q4309fgkrSYUV1mElKdNV+
-	 jzDvzIltshQ4z+AtzObw4S2zLq4EyTwJJ+gi1gammWlNWGLgxG2DAUNeig3KnbKD1z
-	 CiYEqyZv2FBt91LaB50OsMpxRjKlo11E5KmPbOKsOXu/9qsh8u7SUAWHnTPNKrwe5D
-	 f4mEtBMlvYP+w==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH] fs: switch f_iocb_flags and f_version
-Date: Thu, 22 Aug 2024 16:14:46 +0200
-Message-ID: <20240822-mutig-kurznachrichten-68d154f25f41@brauner>
-X-Mailer: git-send-email 2.43.0
+	b=gtuUB3GY8rJPm19GTvQyBTbi3S7Lde4j+L7ZUyCOzaFZoZZFy3NyiRqE56IXT5bZ/
+	 Yfc1AgyVJy2qYOobMpkJUrrALz3hUGWf4aNxf9ocPS9UGcr+07yCxlM2Xqx5rlCBje
+	 xqOy6PJVYquiw/jXItgPUP1wtvdmokPsZmAjJfEW8gcdThb5qjxgaVO5KhRDX44Qlo
+	 mc4svtbQnxKKCuDWNqTbyNLJisHeOhwxyZ4/BZMFPZAH/8oZRv8b3nAhi1tGYbvRtk
+	 uaI4Loj8XaxbtmgLdGAU8KUFWeje6HY4GlDmGV6bkLFN5SY6RpBK6G9o/ezRYfZ02P
+	 xH1isjlZvhHPA==
+From: sergii.boryshchenko@globallogic.com
+To: dushistov@mail.ru
+Cc: linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
+Subject: [PATCH] ufs: Remove redundant inode number check from ufs_nfs_get_inode
+Date: Thu, 22 Aug 2024 17:26:10 +0300
+Message-Id: <20240822142610.129668-1-sergii.boryshchenko@globallogic.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3530; i=brauner@kernel.org; h=from:subject:message-id; bh=ATd+UQYAmuNiL/lyQdGPVyVOibxPMvZX63RWsxDEi4o=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQdd79WkPaJ9TPfn20Hr+ep3Jd4l18gF6y7dLpepEWFO ZsDdztfRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETm5TL8Ytr+WtRrhtS3QiH/ 1j9XW1dl9czz4i/lUgxutNq95PGvU4wM7R8Xvjrfwa/xkX3d0sZnvF8MGrXLi+01eNcZMMozPVL gBQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Now that we shrank struct file by 24 bytes we still have a 4 byte hole.
-Move f_version into the union and f_iocb_flags out of the union to fill
-that hole and shrink struct file by another 4 bytes. This brings struct
-file to 200 bytes down from 232 bytes.
+From: Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
 
-I've tried to audit all codepaths that use f_version and none of them
-rely on it in file->f_op->release() and never have since commit
-1da177e4c3f4 ("Linux-2.6.12-rc2").
+The `ufs_nfs_get_inode` function contains a check to validate the inode number
+(`ino`) against the valid range of inode numbers. However, this check is
+redundant because the same validation is already performed in the `ufs_iget`
+function, which is called immediately afterward.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+By removing this redundant check, we simplify the code and avoid unnecessary
+double-checking of the inode number, while still ensuring that invalid inode
+numbers are properly handled by the `ufs_iget` function.
+
+This change has no impact on the functionality since `ufs_iget` provides the
+necessary validation for all callers.
+
+Signed-off-by: Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
 ---
-struct file {
-        union {
-                struct callback_head f_task_work;        /*     0    16 */
-                struct llist_node  f_llist;              /*     0     8 */
-                u64                f_version;            /*     0     8 */
-        };                                               /*     0    16 */
-        spinlock_t                 f_lock;               /*    16     4 */
-        fmode_t                    f_mode;               /*    20     4 */
-        atomic_long_t              f_count;              /*    24     8 */
-        struct mutex               f_pos_lock;           /*    32    32 */
-        /* --- cacheline 1 boundary (64 bytes) --- */
-        loff_t                     f_pos;                /*    64     8 */
-        unsigned int               f_flags;              /*    72     4 */
-        unsigned int               f_iocb_flags;         /*    76     4 */
-        struct fown_struct *       f_owner;              /*    80     8 */
-        const struct cred  *       f_cred;               /*    88     8 */
-        struct file_ra_state       f_ra;                 /*    96    32 */
-        /* --- cacheline 2 boundary (128 bytes) --- */
-        struct path                f_path;               /*   128    16 */
-        struct inode *             f_inode;              /*   144     8 */
-        const struct file_operations  * f_op;            /*   152     8 */
-        void *                     f_security;           /*   160     8 */
-        void *                     private_data;         /*   168     8 */
-        struct hlist_head *        f_ep;                 /*   176     8 */
-        struct address_space *     f_mapping;            /*   184     8 */
-        /* --- cacheline 3 boundary (192 bytes) --- */
-        errseq_t                   f_wb_err;             /*   192     4 */
-        errseq_t                   f_sb_err;             /*   196     4 */
+ fs/ufs/super.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-        /* size: 200, cachelines: 4, members: 20 */
-        /* last cacheline: 8 bytes */
-};
----
- include/linux/fs.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7eb4f706d59f..7a2994405e8e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -998,9 +998,8 @@ struct file {
- 		struct callback_head 	f_task_work;
- 		/* fput() must use workqueue (most kernel threads). */
- 		struct llist_node	f_llist;
--		unsigned int 		f_iocb_flags;
-+		u64			f_version;
- 	};
--
- 	/*
- 	 * Protects f_ep, f_flags.
- 	 * Must not be taken from IRQ context.
-@@ -1011,6 +1010,7 @@ struct file {
- 	struct mutex		f_pos_lock;
- 	loff_t			f_pos;
- 	unsigned int		f_flags;
-+	unsigned int 		f_iocb_flags;
- 	struct fown_struct	*f_owner;
- 	const struct cred	*f_cred;
- 	struct file_ra_state	f_ra;
-@@ -1018,7 +1018,6 @@ struct file {
- 	struct inode		*f_inode;	/* cached value */
- 	const struct file_operations	*f_op;
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index bc625788589c..11e8b869e0ba 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -101,9 +101,6 @@ static struct inode *ufs_nfs_get_inode(struct super_block *sb, u64 ino, u32 gene
+ 	struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
+ 	struct inode *inode;
  
--	u64			f_version;
- #ifdef CONFIG_SECURITY
- 	void			*f_security;
- #endif
+-	if (ino < UFS_ROOTINO || ino > (u64)uspi->s_ncg * uspi->s_ipg)
+-		return ERR_PTR(-ESTALE);
+-
+ 	inode = ufs_iget(sb, ino);
+ 	if (IS_ERR(inode))
+ 		return ERR_CAST(inode);
 -- 
-2.43.0
+2.25.1
 
 
