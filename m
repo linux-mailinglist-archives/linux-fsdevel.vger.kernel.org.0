@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-26615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263BC95A9BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:21:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B20A95A9C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48978288832
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:21:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5076E1C2098E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA791BC46;
-	Thu, 22 Aug 2024 01:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610752745D;
+	Thu, 22 Aug 2024 01:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivuKgD4o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DwFM/rF8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501C5AD31;
-	Thu, 22 Aug 2024 01:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A930D433B9;
+	Thu, 22 Aug 2024 01:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724289562; cv=none; b=Id2hXCKg6pWs4cWM6RJqncw4H7M2ZQMfrjPBQV7Dc+tAn6COfF+O4RU5RdaYBw68wQORF0KKqmZ71db4DhnyzGAMcs264nhd7f9CNrWUvZ/RzCDCyGRQMM7ZgPcm+4NGXxMuqkyO2Ta2RNZgVEQ+3w8RvhP+PS3fFDLE05k0Jts=
+	t=1724289573; cv=none; b=LPT1lk9iXfJW3TvUKu0kSeo0Do1/DPa5w+GZiHP150gN2FLJGdwfVzGkl9gI6kIl+jrONxUiOXEIQYAnl+GguEZn8yBkgmmvIR6HfbLilfdQk/WVO3XRn/l4qMTsNkB2qwkJCoRltbNbkhu8Buo8iakPDVqTRAsO75OAT4YoLHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724289562; c=relaxed/simple;
-	bh=sM6ARMSzs2g0dbHkgGbbEwKAjUQqEhC4Xbb3feAOKmM=;
+	s=arc-20240116; t=1724289573; c=relaxed/simple;
+	bh=p+k0jTbaEA99trdr4pz3NzAF7Yf9BBO+B19MeJlSzs4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sn+X8e6m8FJgQKzzLYfgFSCddVzeRWSn8FTmax1x3bw0JKn5aoiAXp/zUe8W2nMQ4oXEW7nSqk5J3NUclG6Pz0tPb/RaFB7cnL4mmiqN8qmALIlryyYLUOme/LWmNOlv9QePIJVf+rLfT1F546mJ7qe4gygV7QiA1kMCeytJQDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivuKgD4o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E48B0C32781;
-	Thu, 22 Aug 2024 01:19:09 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=JVhyENZ/ulwGqCZijhnCuXCcQdFJwqj8Lh6+Psw97mlSCI9AzHCHiYH421GWficNfk6KaG6HvXMXe37CsFGeE/UfoPOGyrBrCVqbhq374T5avz2tVZGIfs3UKJpmEeFbbKScAYmPB1COJqgnQW66jxfa91YV3AyMWeSr8CrTslQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DwFM/rF8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA7EC32782;
+	Thu, 22 Aug 2024 01:19:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724289561;
-	bh=sM6ARMSzs2g0dbHkgGbbEwKAjUQqEhC4Xbb3feAOKmM=;
+	s=k20201202; t=1724289573;
+	bh=p+k0jTbaEA99trdr4pz3NzAF7Yf9BBO+B19MeJlSzs4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ivuKgD4on+C7+YhBbtby4IvVq0RxF5/bBnr2MIUKiL3RfsjHRaLfUWjrd/hoOkypi
-	 e5oVdrksEIE09GHZZ1grqgllXSGlEDPePmVsU7M80fXrCJvMLa+IOAqlM1+qRPyefT
-	 NDUMeFDAHPBoXvktlWhOxdzO2rdFQlY178qnfUC3rm4Z+F/Utr6VLItE1zn9NpiWjM
-	 tyFC+TuvGcYhcMAJweOwV0VqEtP1ItN5OzDAcmWealbnPLZYZTVCmu5TDgUX36j+xm
-	 hBL+YaIBVHz4YB32atTfhUVZDEps5Lz+5jhEsIfqxzoZtgyLuLZph2EmpqaRb2tecw
-	 P/DJmri42EczA==
+	b=DwFM/rF8dbxF5iAiJQBkNcyl4MpQCNPo/7h0ijDZEC2DQwX6P9MCQJsdLQmYTo3w4
+	 kN4XMcgPS2+Nspg04WpyMwQwYWuchJLA1u1F9LpbzcJyk4SC/i/91VJTbuWn3rtzAt
+	 VpyNFub3O4QF2XvVSbLUSDsC9s2WN1aGQDuRu0kbT6dN8Y8pNyKsAikEC/usnkkjoq
+	 oYOW1xC4zVRaLJoVH1YEwGK9uwA7iEDdO/7V5k+wsLwg3MbJLU8s9XwWsvX19Q49Yc
+	 vW0VQAElmyecYsp8uUWzpK8uNtNd5HA9mIXI4uZxTEQmHL5tLYrAUkMW5KpB5drC8e
+	 OCmI3NfA5JKKg==
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Aug 2024 02:15:19 +0100
-Subject: [PATCH v11 16/39] arm64/idreg: Add overrride for GCS
+Date: Thu, 22 Aug 2024 02:15:20 +0100
+Subject: [PATCH v11 17/39] arm64/hwcap: Add hwcap for GCS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240822-arm64-gcs-v11-16-41b81947ecb5@kernel.org>
+Message-Id: <20240822-arm64-gcs-v11-17-41b81947ecb5@kernel.org>
 References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
 In-Reply-To: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -79,62 +79,92 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1899; i=broonie@kernel.org;
- h=from:subject:message-id; bh=sM6ARMSzs2g0dbHkgGbbEwKAjUQqEhC4Xbb3feAOKmM=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmxpEwGtjAb+Lbq6W5IxNjQfUxybDiSmB4j0xd4UwH
- +MPuN7mJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZsaRMAAKCRAk1otyXVSH0OdpCA
- CEOwzdvcro2Y/zsVAkDS1Gh8cqiwIlyIDREbBn+Y1Fsz928BKFuNCbEKy7zALRTxwtRrlYxNM9ZJl8
- v6kBCKRDXGCRs98LRzPScxPU+FhtqEHbzd58yzE/ITWCObVM3dIfqSk1nd5rqSljitoRrI5Kx1XQYV
- reoDx/QxEVXfbj+YAbA297F3QOBTCghWQDCw4v4wkEH9Z7B/dOGjQVjJmxl9Wejbw9+9iT0x0PJDnN
- SwIXivwFaJ7YaXO7TSqvUYuVOOn7lmltxhmeimqnTp36IqnALj79krb8UmEeBQbeBn5DHxK5DgJzy6
- WY4Wviz9IEqS1ZQnNP7EKG/eX+Mm1s
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3096; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=p+k0jTbaEA99trdr4pz3NzAF7Yf9BBO+B19MeJlSzs4=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhrRjEw1DBY8JsZhfUkz7zMLPotW9MILVab/efK+acqsQxtNf
+ nsp0MhqzMDByMciKKbKsfZaxKj1cYuv8R/NfwQxiZQKZwsDFKQAT8Upl/yuzWbS/+865EpdD2g498z
+ w3P/6+U/jpagZd/3Lfla+CD88SiPb2SjaTYyl4HuGy3VWd4Z77x2pO0yk2u93KX2TNWZvNnHVgPUfc
+ g/2Oh7JPOj0tMYzcy5q2RWum69L4Hdz2e5qFCw9z/IxuDv56fAZL3YGCuiKb2aIltw/yvpmoLjFr4V
+ 6RCA9d9aV/rheX/57psfC3DM/klQLzpLbaWSruccnP3rqR9Yva9sdJqoVq89ryFSIy22MlImVtfZ7U
+ V2//v+Zualed3eN8E7W66XEz5Xqm7lgwxeTN/tInxs+vsZbnze+rZj/lcWPT2mrDqSfjVAU7OMxbmD
+ SKRU89ip8QE6tRGrlg/qnWXx0XAQ==
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Hook up an override for GCS, allowing it to be disabled from the command
-line by specifying arm64.nogcs in case there are problems.
+Provide a hwcap to enable userspace to detect support for GCS.
 
 Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 3 +++
- arch/arm64/kernel/pi/idreg-override.c           | 2 ++
- 2 files changed, 5 insertions(+)
+ Documentation/arch/arm64/elf_hwcaps.rst | 2 ++
+ arch/arm64/include/asm/hwcap.h          | 1 +
+ arch/arm64/include/uapi/asm/hwcap.h     | 1 +
+ arch/arm64/kernel/cpufeature.c          | 3 +++
+ arch/arm64/kernel/cpuinfo.c             | 1 +
+ 5 files changed, 8 insertions(+)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 09126bb8cc9f..e6413bb8e6e1 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -441,6 +441,9 @@
- 	arm64.nobti	[ARM64] Unconditionally disable Branch Target
- 			Identification support
+diff --git a/Documentation/arch/arm64/elf_hwcaps.rst b/Documentation/arch/arm64/elf_hwcaps.rst
+index 448c1664879b..cf87be078f33 100644
+--- a/Documentation/arch/arm64/elf_hwcaps.rst
++++ b/Documentation/arch/arm64/elf_hwcaps.rst
+@@ -365,6 +365,8 @@ HWCAP2_SME_SF8DP2
+ HWCAP2_SME_SF8DP4
+     Functionality implied by ID_AA64SMFR0_EL1.SF8DP4 == 0b1.
  
-+	arm64.nogcs	[ARM64] Unconditionally disable Guarded Control Stack
-+			support
-+
- 	arm64.nomops	[ARM64] Unconditionally disable Memory Copy and Memory
- 			Set instructions support
++HWCAP2_GCS
++    Functionality implied by ID_AA64PFR1_EL1.GCS == 0b1
  
-diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
-index 29d4b6244a6f..2bb709d78405 100644
---- a/arch/arm64/kernel/pi/idreg-override.c
-+++ b/arch/arm64/kernel/pi/idreg-override.c
-@@ -133,6 +133,7 @@ static const struct ftr_set_desc pfr1 __prel64_initconst = {
- 	.override	= &id_aa64pfr1_override,
- 	.fields		= {
- 		FIELD("bt", ID_AA64PFR1_EL1_BT_SHIFT, NULL ),
-+		FIELD("gcs", ID_AA64PFR1_EL1_GCS_SHIFT, NULL),
- 		FIELD("mte", ID_AA64PFR1_EL1_MTE_SHIFT, NULL),
- 		FIELD("sme", ID_AA64PFR1_EL1_SME_SHIFT, pfr1_sme_filter),
- 		{}
-@@ -215,6 +216,7 @@ static const struct {
- 	{ "arm64.nosve",		"id_aa64pfr0.sve=0" },
- 	{ "arm64.nosme",		"id_aa64pfr1.sme=0" },
- 	{ "arm64.nobti",		"id_aa64pfr1.bt=0" },
-+	{ "arm64.nogcs",		"id_aa64pfr1.gcs=0" },
- 	{ "arm64.nopauth",
- 	  "id_aa64isar1.gpi=0 id_aa64isar1.gpa=0 "
- 	  "id_aa64isar1.api=0 id_aa64isar1.apa=0 "
+ 4. Unused AT_HWCAP bits
+ -----------------------
+diff --git a/arch/arm64/include/asm/hwcap.h b/arch/arm64/include/asm/hwcap.h
+index 4edd3b61df11..fd7e162e7e39 100644
+--- a/arch/arm64/include/asm/hwcap.h
++++ b/arch/arm64/include/asm/hwcap.h
+@@ -157,6 +157,7 @@
+ #define KERNEL_HWCAP_SME_SF8FMA		__khwcap2_feature(SME_SF8FMA)
+ #define KERNEL_HWCAP_SME_SF8DP4		__khwcap2_feature(SME_SF8DP4)
+ #define KERNEL_HWCAP_SME_SF8DP2		__khwcap2_feature(SME_SF8DP2)
++#define KERNEL_HWCAP_GCS		__khwcap2_feature(GCS)
+ 
+ /*
+  * This yields a mask that user programs can use to figure out what
+diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
+index 285610e626f5..328fb7843e2f 100644
+--- a/arch/arm64/include/uapi/asm/hwcap.h
++++ b/arch/arm64/include/uapi/asm/hwcap.h
+@@ -122,5 +122,6 @@
+ #define HWCAP2_SME_SF8FMA	(1UL << 60)
+ #define HWCAP2_SME_SF8DP4	(1UL << 61)
+ #define HWCAP2_SME_SF8DP2	(1UL << 62)
++#define HWCAP2_GCS		(1UL << 63)
+ 
+ #endif /* _UAPI__ASM_HWCAP_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 315bd7be1106..e3e8290a4447 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -2994,6 +2994,9 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+ 	HWCAP_CAP(ID_AA64ZFR0_EL1, I8MM, IMP, CAP_HWCAP, KERNEL_HWCAP_SVEI8MM),
+ 	HWCAP_CAP(ID_AA64ZFR0_EL1, F32MM, IMP, CAP_HWCAP, KERNEL_HWCAP_SVEF32MM),
+ 	HWCAP_CAP(ID_AA64ZFR0_EL1, F64MM, IMP, CAP_HWCAP, KERNEL_HWCAP_SVEF64MM),
++#endif
++#ifdef CONFIG_ARM64_GCS
++	HWCAP_CAP(ID_AA64PFR1_EL1, GCS, IMP, CAP_HWCAP, KERNEL_HWCAP_GCS),
+ #endif
+ 	HWCAP_CAP(ID_AA64PFR1_EL1, SSBS, SSBS2, CAP_HWCAP, KERNEL_HWCAP_SSBS),
+ #ifdef CONFIG_ARM64_BTI
+diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+index 09eeaa24d456..2f539e3101ee 100644
+--- a/arch/arm64/kernel/cpuinfo.c
++++ b/arch/arm64/kernel/cpuinfo.c
+@@ -143,6 +143,7 @@ static const char *const hwcap_str[] = {
+ 	[KERNEL_HWCAP_SME_SF8FMA]	= "smesf8fma",
+ 	[KERNEL_HWCAP_SME_SF8DP4]	= "smesf8dp4",
+ 	[KERNEL_HWCAP_SME_SF8DP2]	= "smesf8dp2",
++	[KERNEL_HWCAP_GCS]		= "gcs",
+ };
+ 
+ #ifdef CONFIG_COMPAT
 
 -- 
 2.39.2
