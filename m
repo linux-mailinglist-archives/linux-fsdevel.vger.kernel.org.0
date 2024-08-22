@@ -1,110 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-26783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4EA395B9F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:20:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D7B95BA0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB991C23290
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E0528496B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459153D3BF;
-	Thu, 22 Aug 2024 15:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE50B1CB30F;
+	Thu, 22 Aug 2024 15:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="U+8y7g7m"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="GOl5+j1u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEC7182DF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 15:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F021CB12F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 15:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724340027; cv=none; b=phVXW1dY1C3MyAgMPZE9crGsdIBOvRvtCG5SrbyyuME6xR24bZZ23OmnhwH3Jb0cPqUjtlnL/Dcqjb0Hrdb0Jle6u/q2QdTm9rlis9ZbZFcoEAYsvc7Zmh9udL23Yzu9gyjHBwMo+CiZenfe/lebWq0N0B+AU4RGD4mVfHhRqM0=
+	t=1724340376; cv=none; b=jyASoCAcaLqzSuXQQOvfD2JUACQ+q+s1f8lQqLA4mifEgnAon2xctkTBXlRRkCe2joMXIq4uf+kyswgSeLTDlmgiSCx+KL3AXmOHIxjiT87T7Y9VK1CFKJGFG05cxMA0Szv5FKfaJxav3UhCPIR92X2zRbAbjgCom030fKuvY/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724340027; c=relaxed/simple;
-	bh=5rJxjEJo8luZroawJHYSYN9taAtECAm3Yb0J4151ku0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9CPKZSz16cLNV50eRxYgZnefuKIoRJACRwRqM6hQk7Lz4SGUm1bEPDjXV/k0Ins7RIToGj5VuknpRMI0KEcd84o2TGLT5IxzVj+IjB5OjKklzibTyZyil18PnAzLsTrmXm5GqQjGIVUIwtmMeLiXw2SyaE43fcbpMvrE2uQjdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=U+8y7g7m; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=28CByVoDKbmSRRoAthE7OCIveD+kuGlPjlnsnOxE2WQ=; b=U+8y7g7mJU3YIDPNhHd6YX145o
-	S6ebhlQ3NAZ6TWcOC6QNny5FyE+2w5iFlzB667o8Jd0g6jScASoWP6RF3M9j0CXqTNW6ON9nH+IEz
-	rMscFLTn3peq7N0O81iSD7RDymYz2HpjOoA/CPvfC1xfiHj7iGBe37ULh7jdQtDaJnczCQDL8EN4/
-	BBHQl6jENKs8BgTOGztSqgyM+0I14aZ869U3+hXWv2/+zykm225FvgVMQCmjzDwnhBWu1Lx3lDCOo
-	XuNzCVorUvEU4e66WLtJI6WQX89u0/ANZBqIdwaJRYsptYazPEx7fe1Vrbs+b5FG+7B1Z4/rtS9p2
-	qjWRbB4Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sh9bq-00000004FKl-0LTH;
-	Thu, 22 Aug 2024 15:20:22 +0000
-Date: Thu, 22 Aug 2024 16:20:22 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/4] new helper: drm_gem_prime_handle_to_dmabuf()
-Message-ID: <20240822152022.GU504335@ZenIV>
-References: <20240812065656.GI13701@ZenIV>
- <20240812065906.241398-1-viro@zeniv.linux.org.uk>
- <57520a28-fff2-41ae-850b-fa820d2b0cfa@suse.de>
+	s=arc-20240116; t=1724340376; c=relaxed/simple;
+	bh=7G70Y1kwrug6t/zXK9CVL0QCx41TGdO9hj+d+WwvsgY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MKwBQINnXf/yCth5+/PxJLexou3QHVxiSsDhPa0seQNjmnn5oI2HOt4VmpjlTzTGOLSsoL7XLCS3JgXoMRzF5/rs9G5ZdUzS/YA1ltQ5/wpuSnQWjy6sJnERVLYpKG5BCnR/HG13LTGTB5NFF6hFUk3gqoDkswKDHI3TOMA4TVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=GOl5+j1u; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e13cce6dc85so1005367276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 08:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724340373; x=1724945173; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7G70Y1kwrug6t/zXK9CVL0QCx41TGdO9hj+d+WwvsgY=;
+        b=GOl5+j1uRGLlJNIKPATQb3GlmK4rIB3cOZec4vJDFkXHYpPvbMfYBx6SaJBTCY3wH2
+         mLYZoyRtiCRogc5Gm2jbIiPTxRcTGfGMgK/Gl/HsOG/FVZBwiajfaq/9erc4CU+UOScQ
+         rmWuh2h7d0RwICkkTrfKWFnm5xk+iGehLeLds=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724340373; x=1724945173;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7G70Y1kwrug6t/zXK9CVL0QCx41TGdO9hj+d+WwvsgY=;
+        b=SAfT9uC0/iXHHX4MaBsg0ieqWpmiPl1XHYelDzRcQ9sCiZg08s98KeFxnTTCj/YlJ+
+         EIhkhAqMj+C5rGa4ICszYs8UwOuHdO743iv/p/BrKY3gIKuhfm+S9xo79YDSmFDULB1s
+         0ikOadOaFzjAk2mcZ27Pzx1ncPqoYkT8gOug5ekVzHQGbFwoEEOqFJr080J4+bTkLgwJ
+         OcqmnbAGtMvPan6WTQ58pmbd0dmUAU4ZaeS2E2MRww3qnzsH32nUDmv/jEf1hLYCA3DN
+         zNOPbwkoG9uhuATXHzyqhK0N2h50lDoXaMYeoC8PzLAsawdkBK14+4HwQZ0oGk8li4wU
+         U2Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCxjnAJSnNWxi2eXGeTfzUvouf0m3nmZ3tt5gcGZ08fqAcwVvHDCHCX1MoAT4G0233YSoxS1orThJnx7QX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSGFo8V5M7IISvUuwyeJqbovDZEb4CrL80xl/Cdk8R2froOr8H
+	g4ObhUqNTwYnmw9BZzTzTAiRIyWvMgLSAYs1ZxCqa/Ics1aRhtSncQI2fsYT+q1h40t216Xi2o3
+	484ZHxCitifVCidBT9GfOXjTBRNIRwj0JepirPw==
+X-Google-Smtp-Source: AGHT+IHUZVfR6/m/APaLku+dmtsB9iZadnsoW/9YF1iuHVYaYLDkri0m8FvJv1N8YqiNcBx+Ea1hdKIYPDE/P7W1o/4=
+X-Received: by 2002:a05:690c:2fc4:b0:64a:3d6c:476d with SMTP id
+ 00721157ae682-6c09dbc01bfmr55703217b3.25.1724340373732; Thu, 22 Aug 2024
+ 08:26:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <57520a28-fff2-41ae-850b-fa820d2b0cfa@suse.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240726153908.GD3432726@perftesting> <20240727100556.1225580-1-yangyun50@huawei.com>
+In-Reply-To: <20240727100556.1225580-1-yangyun50@huawei.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 22 Aug 2024 17:26:01 +0200
+Message-ID: <CAJfpegviwk5F+39Vz2D4UjLaGpsFZ-26WeDwetjL=hWV4T6S7A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fuse: replace fuse_queue_forget with
+ fuse_force_forget if error
+To: yangyun <yangyun50@huawei.com>
+Cc: josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 22, 2024 at 04:41:59PM +0200, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 12.08.24 um 08:59 schrieb Al Viro:
-> > Once something had been put into descriptor table, the only thing you
-> > can do with it is returning descriptor to userland - you can't withdraw
-> > it on subsequent failure exit, etc.  You certainly can't count upon
-> > it staying in the same slot of descriptor table - another thread
-> > could've played with close(2)/dup2(2)/whatnot.
-> 
-> This paragraph appears to refer to the newly added call to fd_install().
+On Sat, 27 Jul 2024 at 12:06, yangyun <yangyun50@huawei.com> wrote:
+> Since forget is not necessarily synchronous (In my opinion, the pre-this patch use of
+> synchronous 'fuse_force_forget' is an error case and also not necessarily synchronous),
+> what about just changing the 'fuse_force_forget' to be asynchronous?
 
-It refers to dma_buf_fd() call that had been there all along, actually.
-dma_buf_fd() is get_unused_fd_flags() + fd_install().  The reason
-for splitting it in new variant and calling get_unused_fd_flags() and
-fd_install() separately is that it makes for simpler cleanup; we could
-use dma_buf_fd() instead - it would be a bit more clumsy, but that's
-it.
+Even less impact would be to move the allocation inside
+fuse_force_forget (make it GFP_NOFAIL) and still use the
+fuse_queue_forget() function to send the forget as e.g. virtiofs
+handles them differently from regular requests.
 
-The real issue is that drm_gem_prime_handle_to_fd() forces us to make
-the thing reachable via descriptor table; it's just what we need when
-all we are going to do is returning descriptor to userland, but it's
-inherently racy for internal uses - anything put into descriptor table,
-be it by fd_install() or by dma_buf_fd(), is fair game for all syscalls
-by other threads.
- 
-> > Add drm_gem_prime_handle_to_dmabuf() - the "set dmabuf up" parts of
-> > drm_gem_prime_handle_to_fd() without the descriptor-related ones.
-> > Instead of inserting into descriptor table and returning the file
-> > descriptor it just returns the struct file.
-> > 
-> > drm_gem_prime_handle_to_fd() becomes a wrapper for it.  Other users
-> > will be introduced in the next commit.
-
-> > -int drm_gem_prime_handle_to_fd(struct drm_device *dev,
-> > +struct dma_buf *drm_gem_prime_handle_to_dmabuf(struct drm_device *dev,
-> 
-> If it's exported it should have kernel docs. At least copy-paste the docs
-> from drm_gem_prime_handle_to_fd()
-> and reword a few bits.
-
-Point...
+Thanks,
+Miklos
 
