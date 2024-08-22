@@ -1,171 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-26685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09BF395B057
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:29:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415D895B06D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 642F8B25228
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 08:29:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2051286344
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 08:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E0516EBE8;
-	Thu, 22 Aug 2024 08:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CA7170A10;
+	Thu, 22 Aug 2024 08:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iz+OASuy"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="d6UcsoVa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5061916A955
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 08:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB87364A4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 08:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724315242; cv=none; b=XGbtwzqea8QxW0fkarBT1R6mMDgJ27cJmkm+K3CoEzf33iF6XZr8h/Lm1Sgo/IwzjA22sDIblE4QBGXW5MCevf21BwnemiY+8rRorLZ/h/oJl6tGqpjfA8i1CayEYkgwIbJdfUMQwYSlFNRkg8ZV+n16YDQCunUf69/ZHR60LXY=
+	t=1724315493; cv=none; b=q4ydkXsBpyA7tGUa4hl8awWkqQpE/Hi744u4+16bYtgG/Ga8OKi0EXH4Ok7hXNK73OHEb8go1OxRjbuiSBtQjkpbAAJSQCgGvqUU4e8+Hoo5FL0jjApSYbbKq0MQFXZhedC7k15wEXdGUt/514OstsisVYtYc0rYDlrarFoDtNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724315242; c=relaxed/simple;
-	bh=Dwnsf4UNWYevThDQcTTMYDhQgYmmLs3HUaaYf/F85sE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AjmQUMZhHV3d5ixbqADlZRr5eO688eOG0dRH2zewigA7u4sqsC/zTf0u9ZuHYBbU7k+eNfs+0YBBvEYZ/KFxyVO3GHslli+zA2212yvg9K/I+4u4gfm6g2KIOFM4SFM2CfEGS5xwjVifnNy2jAm8Wo+zbpvHG2VvYLHv9LSnfUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iz+OASuy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF08C4AF0B;
-	Thu, 22 Aug 2024 08:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724315241;
-	bh=Dwnsf4UNWYevThDQcTTMYDhQgYmmLs3HUaaYf/F85sE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iz+OASuyhRUzTBAhlWpHofJdyfHOf0/CE2fFgnBS/y73SMTZw8M5XkkPZkL98Tcpk
-	 rzMRaI3+gcZNOMPweanDpY/GIgmDlxRS9jhgl2qIkDMdI9kCHDEeX21K8FWSpr5JYN
-	 S6dhsVDHxDZYDs78amgxXL5NgQFPs8YDP8XcdpnkKMbMzYivBG55VsGMqWGlGIP+hy
-	 yGaJfo43R2LVPcfasHL/Opo7nFHjf7dfLUPXSS1oPtcJcTPw/yNjRP0HYPWxUjH15S
-	 76oKk+Q4ULA+ll/+j9DHNQgyzgt4WRAlM356R/BK3gNrn3M5r1Z8GPL4NMBxrzAct/
-	 8/xkPRSeXy5Kw==
-Date: Thu, 22 Aug 2024 10:27:17 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
-	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/6] fs: add i_state helpers
-Message-ID: <20240822-knipsen-bebildert-b6f94efcb429@brauner>
-References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
- <20240821-work-i_state-v2-1-67244769f102@kernel.org>
- <172427833589.6062.8614016543522604940@noble.neil.brown.name>
+	s=arc-20240116; t=1724315493; c=relaxed/simple;
+	bh=qfO68ABr8YmkVT3Xwko9ThKTkCQPRAKkOQzFlC/guPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rSQFC2YJOmZM2iMk+2Sd2urdK37Zbt+HUMIfBULnTcaEVFtY4EwF30clKnoz1SCKVe4J3bAF1P3fJaMsiHvMcJScLCBGXlKehuakZlvCr/gG1iHxPNSCROFeyopd6SB1iFyxq5p+N0fxN8hDRyII1ncj0CWtfoZA3FSjYnL8ryg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=d6UcsoVa; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e1161ee54f7so631680276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 01:31:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724315490; x=1724920290; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfO68ABr8YmkVT3Xwko9ThKTkCQPRAKkOQzFlC/guPA=;
+        b=d6UcsoVagWmOg4gMtyyrnX4ashxi+QonesqW/lWQrZQaJ3U/jyzdz1puaNu0MvuPao
+         AyPTazPWZRwDP+l2FDG/+7q9R1SOHQRb2cwfvKTvBjKOM6QpK96ZK3Ac6UDuBNc8lPMo
+         AM66VnB3EjJu02kpOv5CHM0TZ594YJAD8O/XA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724315490; x=1724920290;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qfO68ABr8YmkVT3Xwko9ThKTkCQPRAKkOQzFlC/guPA=;
+        b=L5NN7f2ZpNc3w2D1iCqgv8kKEQ6DYISrGaz68/1Jc2n9p7b+VfYVQPAOVuOgV/HRu1
+         ayBiUrVE8+WViy0K5jaUOD2Usncm9Zgk57ERsZVD4+AuZZH21Ac2Wg6Nt1OV/UYJhTGm
+         TtzFm8Y+w+54uop/vjLNQyPWbQP3cEqPMgCEwehjMTHQAAQfKlcPy1m5cpSOo4NW1Zbd
+         o8pUdpmQaUD27yKCqc774Z27Kq7MZsZXuxq/bDJuHIlvX4YqGWnaDiRYKijNUauqmliC
+         q9srBrR24dw1A4Kf1SDXx6dQvegUmUor3y1cMzZgCuNWLWkD4LHfdtKu61XQZ4Ntz23r
+         MYhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqV6vcDpXwdqLQttmIwXoCbOvQU2QNHSgVd9biLz/W00eJwINuzFqV9dK8m/+qQ1/TwEi/4Ky/f7Z1yhQv@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoC7jsRtoe782Q0M3ZDLK0tfSysmLs+zB64RXWci8fxxj1rrvO
+	CCdhu5VsFevRtlTNRfYGSLmW2fns1ZRKUTR9GA7y1QYDkHn0XRe7UGcWAl4nhZqgtHQQOuSguIH
+	bX8uJ61Lzz+ADqLb6bwr98dIxNd79vbr5IyIa3w==
+X-Google-Smtp-Source: AGHT+IFF9x0kcV4O4K6ZspVN57UUPh5M6n3DoRW/LKTTDP4y3eH/KtTeC1NTvVIbWLwiW99ntfIxagBPmHeZAstrCBQ=
+X-Received: by 2002:a05:6902:250f:b0:e13:c8e7:5bd4 with SMTP id
+ 3f1490d57ef6-e166640f1famr6031982276.22.1724315490296; Thu, 22 Aug 2024
+ 01:31:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <172427833589.6062.8614016543522604940@noble.neil.brown.name>
+References: <20240822012523.141846-1-vinicius.gomes@intel.com> <20240822012523.141846-8-vinicius.gomes@intel.com>
+In-Reply-To: <20240822012523.141846-8-vinicius.gomes@intel.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 22 Aug 2024 10:31:18 +0200
+Message-ID: <CAJfpegs5+2DadbB6tfwLD+DAFzqfOTi7bZMxJCoj_r5Tu7jcfw@mail.gmail.com>
+Subject: Re: [PATCH v2 07/16] fs/backing-file: Convert to cred_guard()
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com, 
+	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 22, 2024 at 08:12:15AM GMT, NeilBrown wrote:
-> On Thu, 22 Aug 2024, Christian Brauner wrote:
-> > The i_state member is an unsigned long so that it can be used with the
-> > wait bit infrastructure which expects unsigned long. This wastes 4 bytes
-> > which we're unlikely to ever use. Switch to using the var event wait
-> > mechanism using the address of the bit. Thanks to Linus for the address
-> > idea.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/inode.c         | 10 ++++++++++
-> >  include/linux/fs.h | 16 ++++++++++++++++
-> >  2 files changed, 26 insertions(+)
-> > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 154f8689457f..f2a2f6351ec3 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -472,6 +472,16 @@ static void __inode_add_lru(struct inode *inode, bool rotate)
-> >  		inode->i_state |= I_REFERENCED;
-> >  }
-> >  
-> > +struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entry *wqe,
-> > +					    struct inode *inode, u32 bit)
-> > +{
-> > +        void *bit_address;
-> > +
-> > +        bit_address = inode_state_wait_address(inode, bit);
-> > +        init_wait_var_entry(wqe, bit_address, 0);
-> > +        return __var_waitqueue(bit_address);
-> > +}
-> > +
-> >  /*
-> >   * Add inode to LRU if needed (inode is unused and clean).
-> >   *
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 23e7d46b818a..a5b036714d74 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -744,6 +744,22 @@ struct inode {
-> >  	void			*i_private; /* fs or device private pointer */
-> >  } __randomize_layout;
-> >  
-> > +/*
-> > + * Get bit address from inode->i_state to use with wait_var_event()
-> > + * infrastructre.
-> > + */
-> > +#define inode_state_wait_address(inode, bit) ((char *)&(inode)->i_state + (bit))
-> > +
-> > +struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entry *wqe,
-> > +					    struct inode *inode, u32 bit);
-> > +
-> > +static inline void inode_wake_up_bit(struct inode *inode, u32 bit)
-> > +{
-> > +	/* Ensure @bit will be seen cleared/set when caller is woken up. */
-> 
-> The above comment is wrong.  I think I once thought it was correct too
-> but now I know better (I hope).
-> A better comment might be
->        /* Insert memory barrier as recommended by wake_up_var() */
-> but even that is unnecessary as we don't need the memory barrier.
-> 
-> A careful reading of memory-barriers.rst shows that *when the process is
-> actually woken* there are sufficient barriers in wake_up_process() and
-> prepare_wait_event() and the scheduler and (particularly)
-> set_current_state() so that a value set before the wake_up is seen after
-> the schedule().
-> 
-> So this barrier isn't about the bit.  This barrier is about the
-> wait_queue.  In particular it is about waitqueue_active() call at the
-> start of wake_up_var().  If that test wasn't there and if instead
-> wake_up_var() conditionally called __wake_up(), then there would be no
+On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
+<vinicius.gomes@intel.com> wrote:
+>
+> Replace the override_creds_light()/revert_creds_light() pairs of
+> operations to cred_guard().
 
-Did you mean "unconditionally called"?
+I'd note here, that in some cases the revert will happen later than
+previously, but (hopefully) you have verified that in these cases it
+won't make a difference.
 
-> need for any barrier.  A comment near wake_up_bit() makes it clear that
-> the barrier is only needed when the spinlock is avoided.
-> 
-> On a weakly ordered arch, this test can be effected *before* the write
-> of the bit.  If the waiter adds itself to the wait queue and then tests
-> the bit before the bit is set, but after the waitqueue_active() test is
-> put in effect, then the wake_up will never be sent.
-> 
-> But ....  this is all academic of this code because you don't need a
-> barrier at all.  The wake_up happens in a spin_locked region, and the
-> wait is entirely inside the same spin_lock, except for the schedule.  A
-> later patch has:
->      spin_unlock(); schedule(); spin_lock();
-> 
-> So there is no room for a race.  If the bit is cleared before the
-> wait_var_event() equivalent, then no wakeup is needed.  When the lock is
-> dropped after the bit is cleared the unlock will have all the barriers
-> needed for the bit to be visible.
-> 
-> The only other place that the bit can be cleared is concurrent with the
-> above schedule() while the spinlock isn't held by the waiter.  In that
-> case it is again clear that no barrier is needed - or that the
-> spin_unlock/lock provide all the needed barriers.
-> 
-> So a better comment would be
-> 
->    /* no barrier needs as both waker and waiter are in spin-locked regions */
-
-Thanks for the analysis. I was under the impression that wait_on_inode()
-was called in contexts where no barrier is guaranteed and the bit isn't
-checked with spin_lock() held.
+Thanks,
+Miklos
 
