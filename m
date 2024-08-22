@@ -1,96 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-26840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E94395C023
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 23:24:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4E795C098
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 00:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 725961C20BA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 21:24:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245C61F23178
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 22:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF9A1D1724;
-	Thu, 22 Aug 2024 21:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3461D1F51;
+	Thu, 22 Aug 2024 22:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3ekiuWiF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GWPAzyBz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455C2171A7;
-	Thu, 22 Aug 2024 21:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981C81D173E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 22:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724361832; cv=none; b=G5VBo4PUFP6e9XPguWDTkvStNCnVUWVytFESe3cpR7TxL9z30ac5vNqJYbByFNiW2f8W4WEJ3rtrfDh82LTk2vUBEZEQ09eA8B+RCqc+NwHkW/emH9GqFkovU6CUaAHOE3xTkGFEwIqH1hLvgJASsdO8VaZ+shUpiNDkPSFjCpg=
+	t=1724364429; cv=none; b=QOoZipYVxK/D22pwYKsUsauOloV8qTMRN5anTG57eQwuffdY4qo+xS2trj4a+aVopUZSAUg++2xBChTpdtSMEkiZIOFazbwBmp/zpJRJZdKDntgM3WAvq24qIufSoSc29s7/CVYH0AcaEGW2C0xE5YKxuRA1eZEdQxh9qIePhAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724361832; c=relaxed/simple;
-	bh=HN1xBVZLE3f1sAjk8xE5JEoHDgbt0F1gZsiaf4ullkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=usIdeL+TlesZGmmBW5e9+bHlR2uPPYs5XXfDQjZDCawMSzcTLDZ3NLFI0DaZE734UO1cS38WYtWnQBr1Rv8UyNR2dyjarJ97fV0pWQFgPNRY9hr0y9AR8Zb0nHp2vgtxiN6riMb5yw/nbO9qUb2CW7pTjdCW+ZIUybQIsnkesdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3ekiuWiF; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OvL0cDQRRZcsjqitDDNhwyuFsI+775ltV1T5OI53uko=; b=3ekiuWiFd1cyQXu09+aZB8desx
-	MdgicvngIggXnCHUlmvJWT44SmXVmzDwNgo3KErf8cBlbVctfEy4ZR0623bvubOgNTKh3wrHrjS+A
-	Dm5P8OEbvCp7nd8tbvqjungtvDzhVMbQ9Ubmun5qws+oeLX5eAG68mHwxf6eKvb2ed7Q4dQbyTG2Y
-	lLxkXQNwbhiabt++fmczf+PZ6b/++ZGdVRdYz3RJZo57iAwpR913ThIENwQ8gK11ajbeHLafcsUk8
-	+iKNgkQh4D+p1baO2PW8AXkNsgy2FVWHxBOrxWjc7MSdZXojzKCdWbM03duSoRcEbj6FHKLap8wYS
-	i4ulvt6A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1shFHW-0000000ELWk-1g5D;
-	Thu, 22 Aug 2024 21:23:46 +0000
-Date: Thu, 22 Aug 2024 14:23:46 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, gost.dev@samsung.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, david@fromorbit.com,
-	Zi Yan <ziy@nvidia.com>, yang@os.amperecomputing.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	willy@infradead.org, john.g.garry@oracle.com,
-	cl@os.amperecomputing.com, p.raghav@samsung.com,
-	ryan.roberts@arm.com, mcgrof@kernel.org
-Subject: Re: [PATCH v13 00/10] enable bs > ps in XFS
-Message-ID: <ZsesYqVivEAToPUI@bombadil.infradead.org>
-References: <20240822135018.1931258-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1724364429; c=relaxed/simple;
+	bh=+0x8ptk6GZdmaYlM4GZuzBtebAeg0Fj/q0AjPybMKm4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZFAxOu5ZomIws+90zYG6EWgXfgElYM43Wh2yUyumlUi30EIGmL3kUGieczIz9Cc8PWNgn0rWoQcTuGYbDCUMbhtJnkRuWhJcW216KNOxhsnTY7YvNxNEJOxpMLcnAaMqlml52YArPcJxoNKgwLAJpLJYDBUGCCjL1CeMdYRgIws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GWPAzyBz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724364426;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kxWA4xqBbcQ0SKYTS5195o7goMEsBuv2jCniBGikgOg=;
+	b=GWPAzyBzc4C9UinSGfDX9E5FsyZWX1t7y6b3/Fo7GOyryueSKWvgJIBXYXdJHFjFJTTH99
+	RmE83qjrE7jbE9laVj5gYYtPbVnaOb2TBDyrmSAhhdxU8kOx97MezHu39hZLP0Chrkz5Ps
+	btEpfF3xVQQlXwneN7K6LIDnN0o1VKM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-VBKT_YO7Mp2TNuZc4LfykA-1; Thu,
+ 22 Aug 2024 18:07:01 -0400
+X-MC-Unique: VBKT_YO7Mp2TNuZc4LfykA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AAE351955F45;
+	Thu, 22 Aug 2024 22:06:58 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 95CA019560A3;
+	Thu, 22 Aug 2024 22:06:53 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: David Howells <dhowells@redhat.com>,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] netfs, cifs: DIO read and read-retry fixes
+Date: Thu, 22 Aug 2024 23:06:47 +0100
+Message-ID: <20240822220650.318774-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822135018.1931258-1-kernel@pankajraghav.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Aug 22, 2024 at 03:50:08PM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> This is the 13th version of the series that enables block size > page size
-> (Large Block Size) experimental support in XFS. Please consider this for
-> the inclusion in 6.12.
+Hi Christian, Steve,
 
-Christian, Andrew,
+Here are a couple of fixes to DIO read handling and the retrying of reads,
+particularly in relation to cifs.
 
-we believe this is ready for integration, and at the last XFS BoF we
-were wondering what tree this should go through. I see fs-next is
-actually just a branch on linux-next with the merge of a few select
-trees [0], but this touches mm, so its not clear what tree would be be
-most appropriate to consider.
+ (1) Fix the missing credit renegotiation in cifs on the retrying of reads.
+     The credits we had ended with the original read (or the last retry)
+     and to perform a new read we need more credits otherwise the server
+     can reject our read with EINVAL.
 
-Please let us know what you think, it would be great to get this into
-fs-next somehow to get more exposure / testing.
+ (2) Fix the handling of short DIO reads to avoid ENODATA when the read
+     retry tries to access a portion of the file after the EOF.
 
-[0] https://lore.kernel.org/all/20240528091629.3b8de7e0@canb.auug.org.au/
+These were both accessible by simply trying to do a DIO read of a remote
+file where the read was larger than the file.
 
-  Luis
+Note that (2) might also apply to other netfslib-using filesystems.
+
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
+
+Thanks,
+David
+
+David Howells (2):
+  cifs: Fix lack of credit renegotiation on read retry
+  netfs, cifs: Fix handling of short DIO read
+
+ fs/netfs/io.c            | 19 ++++++++++++------
+ fs/smb/client/cifsglob.h |  1 +
+ fs/smb/client/file.c     | 28 ++++++++++++++++++++++----
+ fs/smb/client/smb2pdu.c  | 43 +++++++++++++++++++++++++++++-----------
+ include/linux/netfs.h    |  1 +
+ 5 files changed, 70 insertions(+), 22 deletions(-)
+
 
