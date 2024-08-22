@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-26588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D026195A8BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 02:23:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B14095A8B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 02:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 417BFB211F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 00:23:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28CD7281ECE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 00:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A490610A19;
-	Thu, 22 Aug 2024 00:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CD7AD2D;
+	Thu, 22 Aug 2024 00:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gEqXUAEx"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="drer9Ez1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF514405
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0524C8C
 	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 00:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724286175; cv=none; b=UQkGPhkajZf/4OYDzh65+E8xHBKw5Pa4AIbe5SRBd4Co/udluEV7prAcVKZFIAL2Mh+r4xinBb9TbzUborF7D3L9SXIqStXHCYjaXLn9GKL8jlrdaHlP/ydTYFk/zCKdCIx3QTvlgI4IQXrMeQGPO7IQM/mmxNHPwT/KJhbOHjg=
+	t=1724286174; cv=none; b=A+8eF12ArBi20cUMDIcjbOedwiaXuUOqxJfBexiVlauu68eJTFXUw8UJo9XUjMgIqI4SrE6k+jEvM74MpRP7nNrK725jjJ7BgNwFlBoJKtqcRrdhHDzdXLkUfieplkSCbqlq4eA4Vndm3pPc8Uq70Zj75WJdDqeTif+c6159eIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724286175; c=relaxed/simple;
-	bh=BQXjtD8LhaCuVEINpvWikngK7LcyGZzZMi42iMqWYPo=;
+	s=arc-20240116; t=1724286174; c=relaxed/simple;
+	bh=WXy6/ngYjj/lddFtSfdj4BtSgOukvp5CSn6M8009Vmc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tW4gNYZt4Ou04Zen6Yz/jEDHhigV8w7LjW/uiTsIyG/r67PVcJRD0Gsvhca8qJ3ahN80e2sSaPchEKrOk6aWfGSrzJ4P/JY2ZNJzrMBxly2xAPUQOvl/W+CqAwrRPzIuRwU8ct+ewT4PQieHEk+yArHOcrXrDC1MeJjOpi7a5zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gEqXUAEx; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=tOf8viwO80ifN2xQwMxMBu2ZsSFEksO20KbBBtvdL0Jb1debdO5+hh6nja94YPmBYICiC9jAevgx2pj5KZkb0NW5FKGhbsyYPcn9In/PA87Vo2JIMFTsKuIn7kUeKFfOCha9pIGjLRWhJUxRSovyZIR1DY1kBxuOeF88uxSrohI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=drer9Ez1; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=AmEZMTVrJ3Qgs6hY44S/27dH/rGCHngnJzHLMYmIZWw=; b=gEqXUAExeerPDjAiGCGtJnVM7n
-	yWQZDMnkyABxnFrpmU0NBRq+UMHV9f6DIAy/3xPQH8ZLDbwYmDWq+e6QFYXBcswxP3/JPZKevmcP0
-	vxuVhJtOW+xEOHC42GVxqWnOFKG6KXH6QaQmFsAa/qKbWJKsKR/k98x9o/O91zl6nYaxzrl244rqT
-	7KkBDLV7qqh/AQg7iRFhIwjEZ7bwvI4RzO1CTRnzNWxzP/s9fz5BPpUHQ8pnL5y0HbscjThgKdgYK
-	BIWo3ODJcjhZtuhVwjhsblweEPM8jg6cwhsvE6rZ4Lps5fXq0RhMdBI3SUJG0B8fo3vHiAGOFKqbU
-	FZnFUhfw==;
+	bh=tNfbAUFh70wPE4DQK3nYcBrgEEzv4kA+knTD/1o87ao=; b=drer9Ez1djS1hjhNhWXN65zzGU
+	fOrFoG3AUSfx/zRb3GUO4ltavvR7ay+jfeZ5G+UJxBfcJ///rShmJSeWO52tXth9QZ1n8iK36GnpW
+	94unwJigDcZFvdroEcHgQJ5Rp2tNqr78NSaZZ7xlfRttbnW40w2ZJl2/K+wLwJDo62nMEe3jCLcPD
+	qYLBlk7D3R0AbNAKEGrQrigHIeiWRXHVCESxwy9z7pSpiS9hRRC9tZnc5oHDYetsns+mfVnYduNeN
+	u9aISAiSuFMYqeMcbSmPrHsJZaCmHwq6a17pJcbPUnII2AT5JfXRPWK164KXWniIUmENMn4VJno/D
+	CxB50ZFQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sgvbG-00000003w7p-40sE;
-	Thu, 22 Aug 2024 00:22:50 +0000
+	id 1sgvbH-00000003w7u-0CPY;
+	Thu, 22 Aug 2024 00:22:51 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 05/12] move close_range(2) into fs/file.c, fold __close_range() into it
-Date: Thu, 22 Aug 2024 01:22:43 +0100
-Message-ID: <20240822002250.938396-5-viro@zeniv.linux.org.uk>
+Subject: [PATCH 06/12] fs/file.c: remove sanity_check and add likely/unlikely in alloc_fd()
+Date: Thu, 22 Aug 2024 01:22:44 +0100
+Message-ID: <20240822002250.938396-6-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240822002250.938396-1-viro@zeniv.linux.org.uk>
 References: <20240822002012.GM504335@ZenIV>
@@ -64,83 +64,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-	We never had callers for __close_range() except for close_range(2)
-itself.  Nothing of that sort has appeared in four years and if any users
-do show up, we can always separate those suckers again.
+From: Yu Ma <yu.ma@intel.com>
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+alloc_fd() has a sanity check inside to make sure the struct file mapping to the
+allocated fd is NULL. Remove this sanity check since it can be assured by
+exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
+likely/unlikely and expand_file() call avoidance to reduce the work under
+file_lock.
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Yu Ma <yu.ma@intel.com>
+Link: https://lore.kernel.org/r/20240717145018.3972922-2-yu.ma@intel.com
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/file.c               |  6 ++++--
- fs/open.c               | 17 -----------------
- include/linux/fdtable.h |  1 -
- 3 files changed, 4 insertions(+), 20 deletions(-)
+ fs/file.c | 33 ++++++++++++++-------------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
 
 diff --git a/fs/file.c b/fs/file.c
-index 4ea7afce828c..dcafae2acae8 100644
+index dcafae2acae8..9b8df3bc6fea 100644
 --- a/fs/file.c
 +++ b/fs/file.c
-@@ -713,7 +713,7 @@ static inline void __range_close(struct files_struct *files, unsigned int fd,
- }
+@@ -496,7 +496,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+ 	if (fd < files->next_fd)
+ 		fd = files->next_fd;
  
- /**
-- * __close_range() - Close all file descriptors in a given range.
-+ * sys_close_range() - Close all file descriptors in a given range.
-  *
-  * @fd:     starting file descriptor to close
-  * @max_fd: last file descriptor to close
-@@ -721,8 +721,10 @@ static inline void __range_close(struct files_struct *files, unsigned int fd,
-  *
-  * This closes a range of file descriptors. All file descriptors
-  * from @fd up to and including @max_fd are closed.
-+ * Currently, errors to close a given file descriptor are ignored.
-  */
--int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
-+SYSCALL_DEFINE3(close_range, unsigned int, fd, unsigned int, max_fd,
-+		unsigned int, flags)
- {
- 	struct task_struct *me = current;
- 	struct files_struct *cur_fds = me->files, *fds = NULL;
-diff --git a/fs/open.c b/fs/open.c
-index 22adbef7ecc2..25443d846d5e 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1575,23 +1575,6 @@ SYSCALL_DEFINE1(close, unsigned int, fd)
- 	return retval;
- }
+-	if (fd < fdt->max_fds)
++	if (likely(fd < fdt->max_fds))
+ 		fd = find_next_fd(fdt, fd);
  
--/**
-- * sys_close_range() - Close all file descriptors in a given range.
-- *
-- * @fd:     starting file descriptor to close
-- * @max_fd: last file descriptor to close
-- * @flags:  reserved for future extensions
-- *
-- * This closes a range of file descriptors. All file descriptors
-- * from @fd up to and including @max_fd are closed.
-- * Currently, errors to close a given file descriptor are ignored.
-- */
--SYSCALL_DEFINE3(close_range, unsigned int, fd, unsigned int, max_fd,
--		unsigned int, flags)
--{
--	return __close_range(fd, max_fd, flags);
--}
--
- /*
-  * This routine simulates a hangup on the tty, to arrange that users
-  * are given clean terminals at login time.
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index e25e2cb65d30..c45306a9f007 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -111,7 +111,6 @@ int iterate_fd(struct files_struct *, unsigned,
- 		const void *);
+ 	/*
+@@ -504,19 +504,21 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+ 	 * will limit the total number of files that can be opened.
+ 	 */
+ 	error = -EMFILE;
+-	if (fd >= end)
++	if (unlikely(fd >= end))
+ 		goto out;
  
- extern int close_fd(unsigned int fd);
--extern int __close_range(unsigned int fd, unsigned int max_fd, unsigned int flags);
- extern struct file *file_close_fd(unsigned int fd);
+-	error = expand_files(files, fd);
+-	if (error < 0)
+-		goto out;
++	if (unlikely(fd >= fdt->max_fds)) {
++		error = expand_files(files, fd);
++		if (error < 0)
++			goto out;
  
- extern struct kmem_cache *files_cachep;
+-	/*
+-	 * If we needed to expand the fs array we
+-	 * might have blocked - try again.
+-	 */
+-	if (error)
+-		goto repeat;
++		/*
++		 * If we needed to expand the fs array we
++		 * might have blocked - try again.
++		 */
++		if (error)
++			goto repeat;
++	}
+ 
+ 	if (start <= files->next_fd)
+ 		files->next_fd = fd + 1;
+@@ -527,13 +529,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+ 	else
+ 		__clear_close_on_exec(fd, fdt);
+ 	error = fd;
+-#if 1
+-	/* Sanity check */
+-	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
+-		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
+-		rcu_assign_pointer(fdt->fd[fd], NULL);
+-	}
+-#endif
+ 
+ out:
+ 	spin_unlock(&files->file_lock);
+@@ -599,7 +594,7 @@ void fd_install(unsigned int fd, struct file *file)
+ 		rcu_read_unlock_sched();
+ 		spin_lock(&files->file_lock);
+ 		fdt = files_fdtable(files);
+-		BUG_ON(fdt->fd[fd] != NULL);
++		WARN_ON(fdt->fd[fd] != NULL);
+ 		rcu_assign_pointer(fdt->fd[fd], file);
+ 		spin_unlock(&files->file_lock);
+ 		return;
 -- 
 2.39.2
 
