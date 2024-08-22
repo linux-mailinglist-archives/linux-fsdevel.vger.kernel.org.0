@@ -1,168 +1,296 @@
-Return-Path: <linux-fsdevel+bounces-26638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D516895AA31
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:29:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC1F95AA34
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59BC91F214AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:29:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF1C1C22D5A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164BA200AE;
-	Thu, 22 Aug 2024 01:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52A8179AE;
+	Thu, 22 Aug 2024 01:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEBEIs5j"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TRjhstY4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6582536B11;
-	Thu, 22 Aug 2024 01:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA3C1BC43;
+	Thu, 22 Aug 2024 01:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724289844; cv=none; b=oFnsEIGeHhiqqqkNeCDRyR0eT2+pQIsPkfCN0xrtfXByWrklNdqT63wLl8eqsCFgLKNm5Wq9EQigg3c6LpXRN49qqS57r3BlX59ti6A6eLtYcoQ14UqoYy63Aa4Smu4U0mP0nMNONb/QOGIxlvo9GdbkeYl9o7pMGy/OaPXerO4=
+	t=1724289935; cv=none; b=NRHvo6DNkOSsiLqIChWyct7mlwF5uZeiNubtEsn7ylPu0Pugn6LsMKD7/dWIhWHSqmgijCUGUNUOQcrzh2OP6MbdCR29JLxWMjBok8ZyJb1cxPXkKAYCof0LZB1rDaoKJnfMPYi3ciUwcRicishSQItc77QXCQMWLQw2GrBeHso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724289844; c=relaxed/simple;
-	bh=W5oN69xYg0RDvkVAq7OBhN9me4eHC7ENTR8wdYTObEg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cLM05Qpn12w1dHTyyDzPWnb0P1CrLhNE7OXsbmLfun8ifjyhyVbIKd+4487W+LRZKcIvzEuWL5B6wcczPiveH9hswAmF5PEQCypTOwbgHKlAWmcMQQUPzFb94tYw0CdHxv3e6nFup/fLeHljjbLnUPNgpdNjVZSNeiMU4Kg4V3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEBEIs5j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B08CC32781;
-	Thu, 22 Aug 2024 01:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724289844;
-	bh=W5oN69xYg0RDvkVAq7OBhN9me4eHC7ENTR8wdYTObEg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=iEBEIs5j4ESOyOuAI+C1WdLslac5LfFf4kq+lkNdmDRnyIC5yWmiqWDSMJJspLip0
-	 ml9uTFJFpjA0iZB8kpDqcRdUVrEAN3rgae1b0KWClRy/Dt5K3C0ScTk7Y4SWdSQ+0J
-	 J9ynhy9+9DciCFx1xbPMettqUNcK0C/8oPiqZYnE2aLmN//nbDx9gRXLGbrz6FOC9N
-	 QJZK6dQb2Eneww26LRoFWKUpXmLr8bA0krMzkGL40Umad43ef518YlBAcLdGrQ/xva
-	 UmXJOYn+WGgW0hN/+th9qactP+9HaSOVf/vKYQVY8GyrjynJ7JP8i2m+nC2YGho1yB
-	 C5cIrr/0/qsMQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Aug 2024 02:15:42 +0100
-Subject: [PATCH v11 39/39] KVM: selftests: arm64: Add GCS registers to
- get-reg-list
+	s=arc-20240116; t=1724289935; c=relaxed/simple;
+	bh=3nAzV8OXEFjCpYDcGDX5PpwOU7eV4Hm4imbTPt42bhM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EvglKUYSoxPYdiZx4oJRdmiGIlyxnz1w1of3c9n9tfUrePvfr90zsq/kSjyi7yHMOkyEQzmg4+QUXlktIvmSTmcxSZzbf956qWj2630cPFH3c1MTlkE3QUskqptmdrJnZ1s/wQreHZuvncQc7CzT31eSk9zidPVqsOP7t+7mPd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TRjhstY4; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724289933; x=1755825933;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3nAzV8OXEFjCpYDcGDX5PpwOU7eV4Hm4imbTPt42bhM=;
+  b=TRjhstY47ZJpis/XF2kAwW074Za53K4xEDZtbGKjpQvc9ns2z6SxrgF5
+   nkBkOPxC0/tVISKlwY+LY5DHAw0wqRwG0arBQ4egzQkyk6z/F9JSLjcns
+   G4h7bi9zlXDzZG7jFUgm1evm1hyCNMonQLk+MUqR5PPjhjySnNZ8fIHIp
+   coQvDczhOts4StIj7zaHes93PVajv71IKji0QIs6bORC2+W6tSF7njY8U
+   vvaig7hsPdzvnrNiFW6i91+N4RYLgnORCtBGHi1cyVpzxU8xUmvOTkTLg
+   1spZOojSzw5xJEnvadl+Cs7iCdJqEvPqebrZY18m3sLyEqAY7PdnvuA/N
+   w==;
+X-CSE-ConnectionGUID: m+63nfhNShWmLzzWAYKNUg==
+X-CSE-MsgGUID: NJXZgEEXRUWGDtBpd4cmyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="25574718"
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="25574718"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 18:25:32 -0700
+X-CSE-ConnectionGUID: SRcX0N8nSeGScyywQ4EFsg==
+X-CSE-MsgGUID: Nv3gsHxeSsOk47numpR2KA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
+   d="scan'208";a="61811013"
+Received: from unknown (HELO vcostago-mobl3.jf.intel.com) ([10.241.225.92])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 18:25:31 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: brauner@kernel.org,
+	amir73il@gmail.com,
+	hu1.chen@intel.com
+Cc: miklos@szeredi.hu,
+	malini.bhandaru@intel.com,
+	tim.c.chen@intel.com,
+	mikko.ylinen@intel.com,
+	lizhen.you@intel.com,
+	linux-unionfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: [PATCH v2 00/16] overlayfs: Optimize override/revert creds
+Date: Wed, 21 Aug 2024 18:25:07 -0700
+Message-ID: <20240822012523.141846-1-vinicius.gomes@intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240822-arm64-gcs-v11-39-41b81947ecb5@kernel.org>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
-In-Reply-To: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Andrew Morton <akpm@linux-foundation.org>, Marc Zyngier <maz@kernel.org>, 
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
- Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, 
- Shuah Khan <shuah@kernel.org>, 
- "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
- Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>, 
- Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>
-Cc: "H.J. Lu" <hjl.tools@gmail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Florian Weimer <fweimer@redhat.com>, Christian Brauner <brauner@kernel.org>, 
- Thiago Jung Bauermann <thiago.bauermann@linaro.org>, 
- Ross Burton <ross.burton@arm.com>, 
- Yury Khrustalev <yury.khrustalev@arm.com>, 
- Wilco Dijkstra <wilco.dijkstra@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
- linux-arch@vger.kernel.org, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2418; i=broonie@kernel.org;
- h=from:subject:message-id; bh=W5oN69xYg0RDvkVAq7OBhN9me4eHC7ENTR8wdYTObEg=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhrRjE52aWuqWJvl43G370Cb14vXG7leGPtlWHj9eFSeamTBo
- X9LqZDRiYWDkYpAVU2RZ+yxjVXq4xNb5j+a/ghnEygQyhYGLUwAu0sP+veD2HY0mXtEA/3Nzfa4Jyf
- PZBDNMzlaYvXxd9UdPmQeKau5R/7pmxk1bVJ80KV7nZ/iJg4lH3l6T79aqUAtX1T7NdHV6wdU22f2z
- DoV6ifrOnBJdf1xGTvvHPIXgYzx+IXyfDnGuTNt9Jn1zzH2fmQqTrCclRJxxLr+9bOLp1XfPyQj6yc
- /iSVB6KvkueNHaLp8L5yP/BqR1nWaqPGK77aHK4sT4ptQ/SlOm5x6/HTXHf7th4Q1tZn217NVH7xju
- 0hSU+cvxlVlNNSErf+uMqFO19qckeCd42zv9/LSrXmn+w9OaR+uVBaI+iD31MpvczNFmEhmVLF5/wT
- fTwpAtSN7+ZuDJ9Z9Es+4WMQIA
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 
-GCS adds new registers GCSCR_EL1, GCSCRE0_EL1, GCSPR_EL1 and GCSPR_EL0. Add
-these to those validated by get-reg-list.
+Hi,
 
-Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/aarch64/get-reg-list.c | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Changes from v1:
+ - Re-organized the series to be easier to follow, more details below
+   (Miklos Szeredi and Amir Goldstein);
 
-diff --git a/tools/testing/selftests/kvm/aarch64/get-reg-list.c b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-index 709d7d721760..9785f41e6042 100644
---- a/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-@@ -29,6 +29,24 @@ static struct feature_id_reg feat_id_regs[] = {
- 		0,
- 		1
- 	},
-+	{
-+		ARM64_SYS_REG(3, 0, 2, 5, 0),	/* GCSCR_EL1 */
-+		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
-+		44,
-+		1
-+	},
-+	{
-+		ARM64_SYS_REG(3, 0, 2, 5, 1),	/* GCSPR_EL1 */
-+		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
-+		44,
-+		1
-+	},
-+	{
-+		ARM64_SYS_REG(3, 0, 2, 5, 2),	/* GCSCRE0_EL1 */
-+		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
-+		44,
-+		1
-+	},
- 	{
- 		ARM64_SYS_REG(3, 0, 10, 2, 2),	/* PIRE0_EL1 */
- 		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
-@@ -40,6 +58,12 @@ static struct feature_id_reg feat_id_regs[] = {
- 		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
- 		4,
- 		1
-+	},
-+	{
-+		ARM64_SYS_REG(3, 3, 2, 5, 1),	/* GCSPR_EL0 */
-+		ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
-+		44,
-+		1
- 	}
- };
- 
-@@ -460,6 +484,9 @@ static __u64 base_regs[] = {
- 	ARM64_SYS_REG(3, 0, 2, 0, 1),	/* TTBR1_EL1 */
- 	ARM64_SYS_REG(3, 0, 2, 0, 2),	/* TCR_EL1 */
- 	ARM64_SYS_REG(3, 0, 2, 0, 3),	/* TCR2_EL1 */
-+	ARM64_SYS_REG(3, 0, 2, 5, 0),	/* GCSCR_EL1 */
-+	ARM64_SYS_REG(3, 0, 2, 5, 1),	/* GCSPR_EL1 */
-+	ARM64_SYS_REG(3, 0, 2, 5, 2),	/* GCSCRE0_EL1 */
- 	ARM64_SYS_REG(3, 0, 5, 1, 0),	/* AFSR0_EL1 */
- 	ARM64_SYS_REG(3, 0, 5, 1, 1),	/* AFSR1_EL1 */
- 	ARM64_SYS_REG(3, 0, 5, 2, 0),	/* ESR_EL1 */
-@@ -475,6 +502,7 @@ static __u64 base_regs[] = {
- 	ARM64_SYS_REG(3, 0, 13, 0, 4),	/* TPIDR_EL1 */
- 	ARM64_SYS_REG(3, 0, 14, 1, 0),	/* CNTKCTL_EL1 */
- 	ARM64_SYS_REG(3, 2, 0, 0, 0),	/* CSSELR_EL1 */
-+	ARM64_SYS_REG(3, 3, 2, 5, 1),	/* GCSPR_EL0 */
- 	ARM64_SYS_REG(3, 3, 13, 0, 2),	/* TPIDR_EL0 */
- 	ARM64_SYS_REG(3, 3, 13, 0, 3),	/* TPIDRRO_EL0 */
- 	ARM64_SYS_REG(3, 3, 14, 0, 1),	/* CNTPCT_EL0 */
+The series now reads as follows:
+
+Patch 1: Introduce the _light() version of the override/revert cred operations;
+Patch 2: Convert backing-file.c to use those;
+Patch 3: Introduce the overlayfs specific _light() helper;
+Patch 4: Document the cases that the helper cannot be used (critical
+      section may change the cred->usage counter);
+Patch 5: Convert the "rest" of overlayfs to the _light() helpers (mostly mechanical);
+Patch 6: Introduce the GUARD() helpers;
+Patch 7: Convert backing-file.c to the GUARD() helpers;
+Patch 8-15: Convert each overlayfs/ file to use the GUARD() helpers,
+      also explain the cases in which the scoped_guard() helper is
+      used. Note that a 'goto' jump that crosses the guard() should
+      fail to compile, gcc has a bug that fails to detect the
+      error[1].
+Patch 16: Remove the helper introduced in Patch 3 to close the series,
+      as it is no longer used, everything was converted to use the
+      safer/shorter GUARD() helpers.
+
+[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91951
+
+This bug was also noticed here:
+
+https://lore.kernel.org/all/20240730050927.GC5334@ZenIV/
+
+Link to v1:
+
+https://lore.kernel.org/r/20240403021808.309900-1-vinicius.gomes@intel.com/
+
+Changes from RFC v3:
+ - Removed the warning "fixes" patches, as they could hide potencial
+   bugs (Christian Brauner);
+ - Added "cred-specific" macros (Christian Brauner), from my side,
+   added a few '_' to the guards to signify that the newly introduced
+   helper macros are preferred.
+ - Changed a few guard() to scoped_guard() to fix the clang (17.0.6)
+   compilation error about 'goto' bypassing variable initialization;
+
+Link to RFC v3:
+
+https://lore.kernel.org/r/20240216051640.197378-1-vinicius.gomes@intel.com/
+
+Changes from RFC v2:
+ - Added separate patches for the warnings for the discarded const
+   when using the cleanup macros: one for DEFINE_GUARD() and one for
+   DEFINE_LOCK_GUARD_1() (I am uncertain if it's better to squash them
+   together);
+ - Reordered the series so the backing file patch is the first user of
+   the introduced helpers (Amir Goldstein);
+ - Change the definition of the cleanup "class" from a GUARD to a
+   LOCK_GUARD_1, which defines an implicit container, that allows us
+   to remove some variable declarations to store the overriden
+   credentials (Amir Goldstein);
+ - Replaced most of the uses of scoped_guard() with guard(), to reduce
+   the code churn, the remaining ones I wasn't sure if I was changing
+   the behavior: either they were nested (overrides "inside"
+   overrides) or something calls current_cred() (Amir Goldstein).
+
+New questions:
+ - The backing file callbacks are now called with the "light"
+   overriden credentials, so they are kind of restricted in what they
+   can do with their credentials, is this acceptable in general?
+ - in ovl_rename() I had to manually call the "light" the overrides,
+   both using the guard() macro or using the non-light version causes
+   the workload to crash the kernel. I still have to investigate why
+   this is happening. Hints are appreciated.
+
+Link to the RFC v2:
+
+https://lore.kernel.org/r/20240125235723.39507-1-vinicius.gomes@intel.com/
+
+Original cover letter (lightly edited):
+
+It was noticed that some workloads suffer from contention on
+increasing/decrementing the ->usage counter in their credentials,
+those refcount operations are associated with overriding/reverting the
+current task credentials. (the linked thread adds more context)
+
+In some specialized cases, overlayfs is one of them, the credentials
+in question have a longer lifetime than the override/revert "critical
+section". In the overlayfs case, the credentials are created when the
+fs is mounted and destroyed when it's unmounted. In this case of long
+lived credentials, the usage counter doesn't need to be
+incremented/decremented.
+
+Add a lighter version of credentials override/revert to be used in
+these specialized cases. To make sure that the override/revert calls
+are paired, add a cleanup guard macro. This was suggested here:
+
+https://lore.kernel.org/all/20231219-marken-pochen-26d888fb9bb9@brauner/
+
+With a small number of tweaks:
+ - Used inline functions instead of macros;
+ - A small change to store the credentials into the passed argument,
+   the guard is now defined as (note the added '_T ='):
+
+      DEFINE_GUARD(cred, const struct cred *, _T = override_creds_light(_T),
+		  revert_creds_light(_T));
+
+ - Allow "const" arguments to be used with these kind of guards;
+
+Some comments:
+ - If patch 1/5 and 2/5 are not a good idea (adding the cast), the
+   alternative I can see is using some kind of container for the
+   credentials;
+ - The only user for the backing file ops is overlayfs, so these
+   changes make sense, but may not make sense in the most general
+   case;
+
+For the numbers, some from 'perf c2c', before this series:
+(edited to fit)
+
+#
+#        ----- HITM -----                                        Shared                          
+#   Num  RmtHitm  LclHitm                      Symbol            Object         Source:Line  Node
+# .....  .......  .......  ..........................  ................  ..................  ....
+#
+  -------------------------
+      0      412     1028  
+  -------------------------
+	  41.50%   42.22%  [k] revert_creds            [kernel.vmlinux]  atomic64_64.h:39     0  1
+	  15.05%   10.60%  [k] override_creds          [kernel.vmlinux]  atomic64_64.h:25     0  1
+	   0.73%    0.58%  [k] init_file               [kernel.vmlinux]  atomic64_64.h:25     0  1
+	   0.24%    0.10%  [k] revert_creds            [kernel.vmlinux]  cred.h:266           0  1
+	  32.28%   37.16%  [k] generic_permission      [kernel.vmlinux]  mnt_idmapping.h:81   0  1
+	   9.47%    8.75%  [k] generic_permission      [kernel.vmlinux]  mnt_idmapping.h:81   0  1
+	   0.49%    0.58%  [k] inode_owner_or_capable  [kernel.vmlinux]  mnt_idmapping.h:81   0  1
+	   0.24%    0.00%  [k] generic_permission      [kernel.vmlinux]  namei.c:354          0
+
+  -------------------------
+      1       50      103  
+  -------------------------
+	 100.00%  100.00%  [k] update_cfs_group  [kernel.vmlinux]  atomic64_64.h:15   0  1
+
+  -------------------------
+      2       50       98  
+  -------------------------
+	  96.00%   96.94%  [k] update_cfs_group  [kernel.vmlinux]  atomic64_64.h:15   0  1
+	   2.00%    1.02%  [k] update_load_avg   [kernel.vmlinux]  atomic64_64.h:25   0  1
+	   0.00%    2.04%  [k] update_load_avg   [kernel.vmlinux]  fair.c:4118        0
+	   2.00%    0.00%  [k] update_cfs_group  [kernel.vmlinux]  fair.c:3932        0  1
+
+after this series:
+
+#
+#        ----- HITM -----                                   Shared                        
+#   Num  RmtHitm  LclHitm                 Symbol            Object       Source:Line  Node
+# .....  .......  .......   ....................  ................  ................  ....
+#
+  -------------------------
+      0       54       88  
+  -------------------------
+	 100.00%  100.00%   [k] update_cfs_group  [kernel.vmlinux]  atomic64_64.h:15   0  1
+
+  -------------------------
+      1       48       83  
+  -------------------------
+	  97.92%   97.59%   [k] update_cfs_group  [kernel.vmlinux]  atomic64_64.h:15   0  1
+	   2.08%    1.20%   [k] update_load_avg   [kernel.vmlinux]  atomic64_64.h:25   0  1
+	   0.00%    1.20%   [k] update_load_avg   [kernel.vmlinux]  fair.c:4118        0  1
+
+  -------------------------
+      2       28       44  
+  -------------------------
+	  85.71%   79.55%   [k] generic_permission      [kernel.vmlinux]  mnt_idmapping.h:81   0  1
+	  14.29%   20.45%   [k] generic_permission      [kernel.vmlinux]  mnt_idmapping.h:81   0  1
+
+The contention is practically gone.
+
+Link: https://lore.kernel.org/all/20231018074553.41333-1-hu1.chen@intel.com/
+
+Vinicius Costa Gomes (16):
+  cred: Add a light version of override/revert_creds()
+  fs/backing-file: Convert to revert/override_creds_light()
+  fs/overlayfs: Introduce ovl_override_creds_light()
+  overlayfs: Document critical override_creds() operations
+  overlayfs: Use ovl_override_creds_light()/revert_creds_light()
+  cred: Introduce cred_guard() and cred_scoped_guard() helpers
+  fs/backing-file: Convert to cred_guard()
+  overlayfs/copy_up: Convert to cred_guard()
+  overlayfs/dir: Convert to cred_guard()
+  overlayfs/file: Convert to cred_guard()
+  overlayfs/inode: Convert to cred_guard()
+  overlayfs/namei: Convert to cred_guard()
+  overlayfs/readdir: Convert to cred_guard()
+  overlayfs/xattrs: Convert to cred_guard()
+  overlayfs/util: Convert to cred_guard()
+  overlayfs: Remove ovl_override_creds_light()
+
+ fs/backing-file.c      | 22 +++----------
+ fs/overlayfs/copy_up.c | 10 +++---
+ fs/overlayfs/dir.c     | 20 ++++++------
+ fs/overlayfs/file.c    | 64 +++++++++++++++---------------------
+ fs/overlayfs/inode.c   | 73 ++++++++++++++++--------------------------
+ fs/overlayfs/namei.c   | 20 +++---------
+ fs/overlayfs/readdir.c | 16 +++------
+ fs/overlayfs/util.c    | 24 ++++++--------
+ fs/overlayfs/xattrs.c  | 32 ++++++++----------
+ include/linux/cred.h   | 25 +++++++++++++++
+ kernel/cred.c          |  6 ++--
+ 11 files changed, 134 insertions(+), 178 deletions(-)
 
 -- 
-2.39.2
+2.46.0
 
 
