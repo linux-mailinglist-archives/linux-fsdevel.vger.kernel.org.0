@@ -1,59 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-26581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0EB95A8B4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 02:23:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F09F995A8BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 02:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE587281F03
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 00:23:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D001B21446
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 00:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F7479F2;
-	Thu, 22 Aug 2024 00:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA5712B64;
+	Thu, 22 Aug 2024 00:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="O1A8Xhco"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="m/ww943d"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2504C1D12FA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 00:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25076320B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 00:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724286174; cv=none; b=Uc5Tzqx3QtH1EM8uef6RCzWZ7KrHOgkO8v4z+zFXPE/pvjT0Bi7A6+pDGqk4VITHgiGMe+cvC6H47uptk1ioP0N+MUc1mY2nrtlbudInVSx5LQ+PGXKV9srIlqUOtDPIIcu0wm+TevJXuACZlA3iM188sLzpIwsP93rypLwiEOc=
+	t=1724286175; cv=none; b=BWgz4OMISZN5HsfhBZOPTepIuKnmZ24GRN6XxQUoD6fTILfy0XM4gSB+pcT3OpQdilAjr0CyCksN1GAMnq7hdMbT3K06NTPC37wXVo/2goQ60T1npHSYIAeCQVsB6jwf5daBkR4ncaYKCWS4fs3bmsZirgfZ1zLdo7HYAo8iWD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724286174; c=relaxed/simple;
-	bh=ZieAIbjvYC0FIn+amotA5ukdDh0M3bKfMB+V9gGwAaI=;
+	s=arc-20240116; t=1724286175; c=relaxed/simple;
+	bh=vZNZV/4OLDXQ2Fk/8oT+WLSO+yjULwF+NFxG/C3s/rg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ipKdRpv4sDOcnp5uYb9CIkMhdd8F7upYU40JyVeNnDcEqKHLmgnyXL/MMuFXR7nMZs1pwnJI7SHPelxsrqLqifXrA/KpNwWS7cjq20JOZ73NDD1zMvq3Q0HiEC70+6dLr2gViNWEL7SzTcbLVZw+tuqALyHM8/wRX1mPAXeQ0ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=O1A8Xhco; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=tjQ5CWtjZfeiylMM7B/XAHRxkC/8Pfw4SsefsIWgu5Sp4scO5bp4GrcTY1X99SX8IzJUws5IG5sHeWiduZqLjwv1n36+Dm5cyhiRHaEKzLYZMaqC6io4ry6PfID8JlVVgrDWo2XWq452qWG9HJ0SAr/mnyV6hq/0FZiCmvAH3pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=m/ww943d; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ziR8a8UdFQ5jxd9C2HBxYFLV/chzydtuqy+4doFrU+M=; b=O1A8XhcoHjIt+AR1+QfDITfenl
-	UnVziHm/+eOiFGXIM9d9Pp575eRmdkkYJYVQ4JQHKexLDT+qX5h0h0ytCgUqxTcvwmg9rcNPyecdx
-	PumkRznjToaHOSq5kiy0iztdhCNz1jHNhkvTTSE5nEMqq+ELt0bWzhzN3Dg2tXsAZKGJk1wkUWqc8
-	Ljgx+i4SOE79+Q6bdoGe4p8eETSjZSTLY5JoQ07dY/9pGpWqVZr5dR4aMNBvhy7aYVWZmfmeBKLrA
-	raJZ6Px+KgJ4cLM7uVMPtZ5vN0bHpEpcPF3AqcAOlnIa3KUQpwf9HeK/RfXrdKvSJGZ+D7TAI5UzS
-	683ghSdA==;
+	bh=pziBuNjCDZIQ4PmsoZL4n2VKnFalxwY2gcOm8FzBHUQ=; b=m/ww943dRmvWQxF+nPv+/NKlfp
+	KfFAfR7YHZEOuMiuSJYLMzgHiEVAQbjLeYe4QrxNchKtjs79ezJM2gL/LLP+9vMSdSNIM6neBeVi0
+	67KeYBUFN0GHLRtyrgxRomfT2ksNV5Hh9dU8IUG0UcuMl+luEBbhuOb49tVpiNs8V7V9sQg3XwR0v
+	92i26w0kaqhs+UEPgZMqnAlkvMAYk/wbDI2sPapKrs+bf971hfjEzVUmBnGsvaEVWyz/zuL2Ri061
+	txcLEniw2DvB8w/64YhTRVcsJjtXSKbZBkD/mQCKyzOBqqyPrWMIgrPeli7NEAwtmX0D/w2bBg01Z
+	cNR/UtKw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sgvbG-00000003w7X-1blU;
+	id 1sgvbG-00000003w7Z-2VAO;
 	Thu, 22 Aug 2024 00:22:50 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 01/12] close_range(): fix the logics in descriptor table trimming
-Date: Thu, 22 Aug 2024 01:22:39 +0100
-Message-ID: <20240822002250.938396-1-viro@zeniv.linux.org.uk>
+Subject: [PATCH 02/12] get rid of ...lookup...fdget_rcu() family
+Date: Thu, 22 Aug 2024 01:22:40 +0100
+Message-ID: <20240822002250.938396-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240822002012.GM504335@ZenIV>
+In-Reply-To: <20240822002250.938396-1-viro@zeniv.linux.org.uk>
 References: <20240822002012.GM504335@ZenIV>
+ <20240822002250.938396-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,354 +64,295 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Cloning a descriptor table picks the size that would cover all currently
-opened files.  That's fine for clone() and unshare(), but for close_range()
-there's an additional twist - we clone before we close, and it would be
-a shame to have
-	close_range(3, ~0U, CLOSE_RANGE_UNSHARE)
-leave us with a huge descriptor table when we are not going to keep
-anything past stderr, just because some large file descriptor used to
-be open before our call has taken it out.
+Once upon a time, predecessors of those used to do file lookup
+without bumping a refcount, provided that caller held rcu_read_lock()
+across the lookup and whatever it wanted to read from the struct
+file found.  When struct file allocation switched to SLAB_TYPESAFE_BY_RCU,
+that stopped being feasible and these primitives started to bump the
+file refcount for lookup result, requiring the caller to call fput()
+afterwards.
 
-Unfortunately, it had been dealt with in an inherently racy way -
-sane_fdtable_size() gets a "don't copy anything past that" argument
-(passed via unshare_fd() and dup_fd()), close_range() decides how much
-should be trimmed and passes that to unshare_fd().
+But that turned them pointless - e.g.
+	rcu_read_lock();
+	file = lookup_fdget_rcu(fd);
+	rcu_read_unlock();
+is equivalent to
+	file = fget_raw(fd);
+and all callers of lookup_fdget_rcu() are of that form.  Similarly,
+task_lookup_fdget_rcu() calls can be replaced with calling fget_task().
+task_lookup_next_fdget_rcu() doesn't have direct counterparts, but
+its callers would be happier if we replaced it with an analogue that
+deals with RCU internally.
 
-The problem is, a range that used to extend to the end of descriptor
-table back when close_range() had looked at it might very well have stuff
-grown after it by the time dup_fd() has allocated a new files_struct
-and started to figure out the capacity of fdtable to be attached to that.
-
-That leads to interesting pathological cases; at the very least it's a
-QoI issue, since unshare(CLONE_FILES) is atomic in a sense that it takes
-a snapshot of descriptor table one might have observed at some point.
-Since CLOSE_RANGE_UNSHARE close_range() is supposed to be a combination
-of unshare(CLONE_FILES) with plain close_range(), ending up with a
-weird state that would never occur with unshare(2) is confusing, to put
-it mildly.
-
-It's not hard to get rid of - all it takes is passing both ends of the
-range down to sane_fdtable_size().  There we are under ->files_lock,
-so the race is trivially avoided.
-
-So we do the following:
-	* switch close_files() from calling unshare_fd() to calling
-dup_fd().
-	* undo the calling convention change done to unshare_fd() in
-60997c3d45d9 "close_range: add CLOSE_RANGE_UNSHARE"
-	* introduce struct fd_range, pass a pointer to that to dup_fd()
-and sane_fdtable_size() instead of "trim everything past that point"
-they are currently getting.  NULL means "we are not going to be punching
-any holes"; NR_OPEN_MAX is gone.
-	* make sane_fdtable_size() use find_last_bit() instead of
-open-coding it; it's easier to follow that way.
-	* while we are at it, have dup_fd() report errors by returning
-ERR_PTR(), no need to use a separate int *errorp argument.
-
-Fixes: 60997c3d45d9 "close_range: add CLOSE_RANGE_UNSHARE"
-Cc: stable@vger.kernel.org
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/file.c               | 95 +++++++++++++++--------------------------
- include/linux/fdtable.h |  8 ++--
- kernel/fork.c           | 32 ++++++--------
- 3 files changed, 52 insertions(+), 83 deletions(-)
+ arch/powerpc/platforms/cell/spufs/coredump.c |  4 +--
+ fs/file.c                                    | 28 +++-----------------
+ fs/gfs2/glock.c                              | 12 ++-------
+ fs/notify/dnotify/dnotify.c                  |  5 +---
+ fs/proc/fd.c                                 | 12 +++------
+ include/linux/fdtable.h                      |  4 ---
+ include/linux/file.h                         |  1 +
+ kernel/bpf/task_iter.c                       |  6 +----
+ kernel/kcmp.c                                |  4 +--
+ 9 files changed, 14 insertions(+), 62 deletions(-)
 
+diff --git a/arch/powerpc/platforms/cell/spufs/coredump.c b/arch/powerpc/platforms/cell/spufs/coredump.c
+index 18daafbe2e65..301ee7d8b7df 100644
+--- a/arch/powerpc/platforms/cell/spufs/coredump.c
++++ b/arch/powerpc/platforms/cell/spufs/coredump.c
+@@ -73,9 +73,7 @@ static struct spu_context *coredump_next_context(int *fd)
+ 		return NULL;
+ 	*fd = n - 1;
+ 
+-	rcu_read_lock();
+-	file = lookup_fdget_rcu(*fd);
+-	rcu_read_unlock();
++	file = fget_raw(*fd);
+ 	if (file) {
+ 		ctx = SPUFS_I(file_inode(file))->i_ctx;
+ 		get_spu_context(ctx);
 diff --git a/fs/file.c b/fs/file.c
-index 655338effe9c..c2403cde40e4 100644
+index c2403cde40e4..8c5b8569045c 100644
 --- a/fs/file.c
 +++ b/fs/file.c
-@@ -272,59 +272,45 @@ static inline bool fd_is_open(unsigned int fd, const struct fdtable *fdt)
- 	return test_bit(fd, fdt->open_fds);
+@@ -1037,29 +1037,7 @@ struct file *fget_task(struct task_struct *task, unsigned int fd)
+ 	return file;
  }
  
--static unsigned int count_open_files(struct fdtable *fdt)
+-struct file *lookup_fdget_rcu(unsigned int fd)
 -{
--	unsigned int size = fdt->max_fds;
--	unsigned int i;
+-	return __fget_files_rcu(current->files, fd, 0);
 -
--	/* Find the last open fd */
--	for (i = size / BITS_PER_LONG; i > 0; ) {
--		if (fdt->open_fds[--i])
--			break;
--	}
--	i = (i + 1) * BITS_PER_LONG;
--	return i;
+-}
+-EXPORT_SYMBOL_GPL(lookup_fdget_rcu);
+-
+-struct file *task_lookup_fdget_rcu(struct task_struct *task, unsigned int fd)
+-{
+-	/* Must be called with rcu_read_lock held */
+-	struct files_struct *files;
+-	struct file *file = NULL;
+-
+-	task_lock(task);
+-	files = task->files;
+-	if (files)
+-		file = __fget_files_rcu(files, fd, 0);
+-	task_unlock(task);
+-
+-	return file;
 -}
 -
- /*
-  * Note that a sane fdtable size always has to be a multiple of
-  * BITS_PER_LONG, since we have bitmaps that are sized by this.
-  *
-- * 'max_fds' will normally already be properly aligned, but it
-- * turns out that in the close_range() -> __close_range() ->
-- * unshare_fd() -> dup_fd() -> sane_fdtable_size() we can end
-- * up having a 'max_fds' value that isn't already aligned.
-- *
-- * Rather than make close_range() have to worry about this,
-- * just make that BITS_PER_LONG alignment be part of a sane
-- * fdtable size. Becuase that's really what it is.
-+ * punch_hole is optional - when close_range() is asked to unshare
-+ * and close, we don't need to copy descriptors in that range, so
-+ * a smaller cloned descriptor table might suffice if the last
-+ * currently opened descriptor falls into that range.
-  */
--static unsigned int sane_fdtable_size(struct fdtable *fdt, unsigned int max_fds)
-+static unsigned int sane_fdtable_size(struct fdtable *fdt, struct fd_range *punch_hole)
+-struct file *task_lookup_next_fdget_rcu(struct task_struct *task, unsigned int *ret_fd)
++struct file *fget_task_next(struct task_struct *task, unsigned int *ret_fd)
  {
--	unsigned int count;
--
--	count = count_open_files(fdt);
--	if (max_fds < NR_OPEN_DEFAULT)
--		max_fds = NR_OPEN_DEFAULT;
--	return ALIGN(min(count, max_fds), BITS_PER_LONG);
-+	unsigned int last = find_last_bit(fdt->open_fds, fdt->max_fds);
-+
-+	if (last == fdt->max_fds)
-+		return NR_OPEN_DEFAULT;
-+	if (punch_hole && punch_hole->to >= last && punch_hole->from <= last) {
-+		last = find_last_bit(fdt->open_fds, punch_hole->from);
-+		if (last == punch_hole->from)
-+			return NR_OPEN_DEFAULT;
-+	}
-+	return ALIGN(last + 1, BITS_PER_LONG);
+ 	/* Must be called with rcu_read_lock held */
+ 	struct files_struct *files;
+@@ -1069,17 +1047,19 @@ struct file *task_lookup_next_fdget_rcu(struct task_struct *task, unsigned int *
+ 	task_lock(task);
+ 	files = task->files;
+ 	if (files) {
++		rcu_read_lock();
+ 		for (; fd < files_fdtable(files)->max_fds; fd++) {
+ 			file = __fget_files_rcu(files, fd, 0);
+ 			if (file)
+ 				break;
+ 		}
++		rcu_read_unlock();
+ 	}
+ 	task_unlock(task);
+ 	*ret_fd = fd;
+ 	return file;
  }
+-EXPORT_SYMBOL(task_lookup_next_fdget_rcu);
++EXPORT_SYMBOL(fget_task_next);
  
  /*
-- * Allocate a new files structure and copy contents from the
-- * passed in files structure.
-- * errorp will be valid only when the returned files_struct is NULL.
-+ * Allocate a new descriptor table and copy contents from the passed in
-+ * instance.  Returns a pointer to cloned table on success, ERR_PTR()
-+ * on failure.  For 'punch_hole' see sane_fdtable_size().
-  */
--struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int *errorp)
-+struct files_struct *dup_fd(struct files_struct *oldf, struct fd_range *punch_hole)
- {
- 	struct files_struct *newf;
- 	struct file **old_fds, **new_fds;
- 	unsigned int open_files, i;
- 	struct fdtable *old_fdt, *new_fdt;
-+	int error;
+  * Lightweight file lookup - no refcnt increment if fd table isn't shared.
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index 12a769077ea0..a4f5940c3e0a 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -34,7 +34,6 @@
+ #include <linux/lockref.h>
+ #include <linux/rhashtable.h>
+ #include <linux/pid_namespace.h>
+-#include <linux/fdtable.h>
+ #include <linux/file.h>
  
--	*errorp = -ENOMEM;
- 	newf = kmem_cache_alloc(files_cachep, GFP_KERNEL);
- 	if (!newf)
--		goto out;
-+		return ERR_PTR(-ENOMEM);
- 
- 	atomic_set(&newf->count, 1);
- 
-@@ -341,7 +327,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
- 
- 	spin_lock(&oldf->file_lock);
- 	old_fdt = files_fdtable(oldf);
--	open_files = sane_fdtable_size(old_fdt, max_fds);
-+	open_files = sane_fdtable_size(old_fdt, punch_hole);
- 
- 	/*
- 	 * Check whether we need to allocate a larger fd array and fd set.
-@@ -354,14 +340,14 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
- 
- 		new_fdt = alloc_fdtable(open_files - 1);
- 		if (!new_fdt) {
--			*errorp = -ENOMEM;
-+			error = -ENOMEM;
- 			goto out_release;
- 		}
- 
- 		/* beyond sysctl_nr_open; nothing to do */
- 		if (unlikely(new_fdt->max_fds < open_files)) {
- 			__free_fdtable(new_fdt);
--			*errorp = -EMFILE;
-+			error = -EMFILE;
- 			goto out_release;
- 		}
- 
-@@ -372,7 +358,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
- 		 */
- 		spin_lock(&oldf->file_lock);
- 		old_fdt = files_fdtable(oldf);
--		open_files = sane_fdtable_size(old_fdt, max_fds);
-+		open_files = sane_fdtable_size(old_fdt, punch_hole);
+ #include "gfs2.h"
+@@ -2765,25 +2764,18 @@ static struct file *gfs2_glockfd_next_file(struct gfs2_glockfd_iter *i)
+ 		i->file = NULL;
  	}
  
- 	copy_fd_bitmaps(new_fdt, old_fdt, open_files / BITS_PER_LONG);
-@@ -406,8 +392,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
+-	rcu_read_lock();
+ 	for(;; i->fd++) {
+-		struct inode *inode;
+-
+-		i->file = task_lookup_next_fdget_rcu(i->task, &i->fd);
++		i->file = fget_task_next(i->task, &i->fd);
+ 		if (!i->file) {
+ 			i->fd = 0;
+ 			break;
+ 		}
  
- out_release:
- 	kmem_cache_free(files_cachep, newf);
--out:
--	return NULL;
-+	return ERR_PTR(error);
+-		inode = file_inode(i->file);
+-		if (inode->i_sb == i->sb)
++		if (file_inode(i->file)->i_sb == i->sb)
+ 			break;
+ 
+-		rcu_read_unlock();
+ 		fput(i->file);
+-		rcu_read_lock();
+ 	}
+-	rcu_read_unlock();
+ 	return i->file;
  }
  
- static struct fdtable *close_files(struct files_struct * files)
-@@ -748,37 +733,25 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
- 	if (fd > max_fd)
- 		return -EINVAL;
+diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+index f3669403fabf..65521c01d2a4 100644
+--- a/fs/notify/dnotify/dnotify.c
++++ b/fs/notify/dnotify/dnotify.c
+@@ -16,7 +16,6 @@
+ #include <linux/security.h>
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+-#include <linux/fdtable.h>
+ #include <linux/fsnotify_backend.h>
  
--	if (flags & CLOSE_RANGE_UNSHARE) {
--		int ret;
--		unsigned int max_unshare_fds = NR_OPEN_MAX;
-+	if ((flags & CLOSE_RANGE_UNSHARE) && atomic_read(&cur_fds->count) > 1) {
-+		struct fd_range range = {fd, max_fd}, *punch_hole = &range;
- 
- 		/*
- 		 * If the caller requested all fds to be made cloexec we always
- 		 * copy all of the file descriptors since they still want to
- 		 * use them.
- 		 */
--		if (!(flags & CLOSE_RANGE_CLOEXEC)) {
--			/*
--			 * If the requested range is greater than the current
--			 * maximum, we're closing everything so only copy all
--			 * file descriptors beneath the lowest file descriptor.
--			 */
--			rcu_read_lock();
--			if (max_fd >= last_fd(files_fdtable(cur_fds)))
--				max_unshare_fds = fd;
--			rcu_read_unlock();
--		}
--
--		ret = unshare_fd(CLONE_FILES, max_unshare_fds, &fds);
--		if (ret)
--			return ret;
-+		if (flags & CLOSE_RANGE_CLOEXEC)
-+			punch_hole = NULL;
- 
-+		fds = dup_fd(cur_fds, punch_hole);
-+		if (IS_ERR(fds))
-+			return PTR_ERR(fds);
- 		/*
- 		 * We used to share our file descriptor table, and have now
- 		 * created a private one, make sure we're using it below.
- 		 */
--		if (fds)
--			swap(cur_fds, fds);
-+		swap(cur_fds, fds);
+ static int dir_notify_enable __read_mostly = 1;
+@@ -343,9 +342,7 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned int arg)
+ 		new_fsn_mark = NULL;
  	}
  
- 	if (flags & CLOSE_RANGE_CLOEXEC)
+-	rcu_read_lock();
+-	f = lookup_fdget_rcu(fd);
+-	rcu_read_unlock();
++	f = fget_raw(fd);
+ 
+ 	/* if (f != filp) means that we lost a race and another task/thread
+ 	 * actually closed the fd we are still playing with before we grabbed
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 586bbc84ca04..077c51ba1ba7 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -116,9 +116,7 @@ static bool tid_fd_mode(struct task_struct *task, unsigned fd, fmode_t *mode)
+ {
+ 	struct file *file;
+ 
+-	rcu_read_lock();
+-	file = task_lookup_fdget_rcu(task, fd);
+-	rcu_read_unlock();
++	file = fget_task(task, fd);
+ 	if (file) {
+ 		*mode = file->f_mode;
+ 		fput(file);
+@@ -258,19 +256,17 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ 	if (!dir_emit_dots(file, ctx))
+ 		goto out;
+ 
+-	rcu_read_lock();
+ 	for (fd = ctx->pos - 2;; fd++) {
+ 		struct file *f;
+ 		struct fd_data data;
+ 		char name[10 + 1];
+ 		unsigned int len;
+ 
+-		f = task_lookup_next_fdget_rcu(p, &fd);
++		f = fget_task_next(p, &fd);
+ 		ctx->pos = fd + 2LL;
+ 		if (!f)
+ 			break;
+ 		data.mode = f->f_mode;
+-		rcu_read_unlock();
+ 		fput(f);
+ 		data.fd = fd;
+ 
+@@ -278,11 +274,9 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ 		if (!proc_fill_cache(file, ctx,
+ 				     name, len, instantiate, p,
+ 				     &data))
+-			goto out;
++			break;
+ 		cond_resched();
+-		rcu_read_lock();
+ 	}
+-	rcu_read_unlock();
+ out:
+ 	put_task_struct(p);
+ 	return 0;
 diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index 2944d4aa413b..b1c5722f2b3c 100644
+index b1c5722f2b3c..e25e2cb65d30 100644
 --- a/include/linux/fdtable.h
 +++ b/include/linux/fdtable.h
-@@ -22,7 +22,6 @@
-  * as this is the granularity returned by copy_fdset().
-  */
- #define NR_OPEN_DEFAULT BITS_PER_LONG
--#define NR_OPEN_MAX ~0U
- 
- struct fdtable {
- 	unsigned int max_fds;
-@@ -106,7 +105,10 @@ struct task_struct;
- 
- void put_files_struct(struct files_struct *fs);
- int unshare_files(void);
--struct files_struct *dup_fd(struct files_struct *, unsigned, int *) __latent_entropy;
-+struct fd_range {
-+	unsigned int from, to;
-+};
-+struct files_struct *dup_fd(struct files_struct *, struct fd_range *) __latent_entropy;
- void do_close_on_exec(struct files_struct *);
- int iterate_fd(struct files_struct *, unsigned,
- 		int (*)(const void *, struct file *, unsigned),
-@@ -115,8 +117,6 @@ int iterate_fd(struct files_struct *, unsigned,
- extern int close_fd(unsigned int fd);
- extern int __close_range(unsigned int fd, unsigned int max_fd, unsigned int flags);
- extern struct file *file_close_fd(unsigned int fd);
--extern int unshare_fd(unsigned long unshare_flags, unsigned int max_fds,
--		      struct files_struct **new_fdp);
- 
- extern struct kmem_cache *files_cachep;
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index cc760491f201..6b97fb2ac4af 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1754,33 +1754,30 @@ static int copy_files(unsigned long clone_flags, struct task_struct *tsk,
- 		      int no_files)
- {
- 	struct files_struct *oldf, *newf;
--	int error = 0;
- 
- 	/*
- 	 * A background process may not have any files ...
- 	 */
- 	oldf = current->files;
- 	if (!oldf)
--		goto out;
-+		return 0;
- 
- 	if (no_files) {
- 		tsk->files = NULL;
--		goto out;
-+		return 0;
- 	}
- 
- 	if (clone_flags & CLONE_FILES) {
- 		atomic_inc(&oldf->count);
--		goto out;
-+		return 0;
- 	}
- 
--	newf = dup_fd(oldf, NR_OPEN_MAX, &error);
--	if (!newf)
--		goto out;
-+	newf = dup_fd(oldf, NULL);
-+	if (IS_ERR(newf))
-+		return PTR_ERR(newf);
- 
- 	tsk->files = newf;
--	error = 0;
--out:
--	return error;
-+	return 0;
+@@ -92,10 +92,6 @@ static inline struct file *files_lookup_fd_locked(struct files_struct *files, un
+ 	return files_lookup_fd_raw(files, fd);
  }
  
- static int copy_sighand(unsigned long clone_flags, struct task_struct *tsk)
-@@ -3232,17 +3229,16 @@ static int unshare_fs(unsigned long unshare_flags, struct fs_struct **new_fsp)
- /*
-  * Unshare file descriptor table if it is being shared
-  */
--int unshare_fd(unsigned long unshare_flags, unsigned int max_fds,
--	       struct files_struct **new_fdp)
-+static int unshare_fd(unsigned long unshare_flags, struct files_struct **new_fdp)
+-struct file *lookup_fdget_rcu(unsigned int fd);
+-struct file *task_lookup_fdget_rcu(struct task_struct *task, unsigned int fd);
+-struct file *task_lookup_next_fdget_rcu(struct task_struct *task, unsigned int *fd);
+-
+ static inline bool close_on_exec(unsigned int fd, const struct files_struct *files)
  {
- 	struct files_struct *fd = current->files;
--	int error = 0;
- 
- 	if ((unshare_flags & CLONE_FILES) &&
- 	    (fd && atomic_read(&fd->count) > 1)) {
--		*new_fdp = dup_fd(fd, max_fds, &error);
--		if (!*new_fdp)
--			return error;
-+		fd = dup_fd(fd, NULL);
-+		if (IS_ERR(fd))
-+			return PTR_ERR(fd);
-+		*new_fdp = fd;
+ 	return test_bit(fd, files_fdtable(files)->close_on_exec);
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 237931f20739..006005f621d1 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -51,6 +51,7 @@ static inline void fdput(struct fd fd)
+ extern struct file *fget(unsigned int fd);
+ extern struct file *fget_raw(unsigned int fd);
+ extern struct file *fget_task(struct task_struct *task, unsigned int fd);
++extern struct file *fget_task_next(struct task_struct *task, unsigned int *fd);
+ extern unsigned long __fdget(unsigned int fd);
+ extern unsigned long __fdget_raw(unsigned int fd);
+ extern unsigned long __fdget_pos(unsigned int fd);
+diff --git a/kernel/bpf/task_iter.c b/kernel/bpf/task_iter.c
+index 02aa9db8d796..7fe602ca74a0 100644
+--- a/kernel/bpf/task_iter.c
++++ b/kernel/bpf/task_iter.c
+@@ -5,7 +5,6 @@
+ #include <linux/namei.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/fs.h>
+-#include <linux/fdtable.h>
+ #include <linux/filter.h>
+ #include <linux/bpf_mem_alloc.h>
+ #include <linux/btf_ids.h>
+@@ -286,17 +285,14 @@ task_file_seq_get_next(struct bpf_iter_seq_task_file_info *info)
+ 			curr_fd = 0;
  	}
  
- 	return 0;
-@@ -3300,7 +3296,7 @@ int ksys_unshare(unsigned long unshare_flags)
- 	err = unshare_fs(unshare_flags, &new_fs);
- 	if (err)
- 		goto bad_unshare_out;
--	err = unshare_fd(unshare_flags, NR_OPEN_MAX, &new_fd);
-+	err = unshare_fd(unshare_flags, &new_fd);
- 	if (err)
- 		goto bad_unshare_cleanup_fs;
- 	err = unshare_userns(unshare_flags, &new_cred);
-@@ -3392,7 +3388,7 @@ int unshare_files(void)
- 	struct files_struct *old, *copy = NULL;
- 	int error;
+-	rcu_read_lock();
+-	f = task_lookup_next_fdget_rcu(curr_task, &curr_fd);
++	f = fget_task_next(curr_task, &curr_fd);
+ 	if (f) {
+ 		/* set info->fd */
+ 		info->fd = curr_fd;
+-		rcu_read_unlock();
+ 		return f;
+ 	}
  
--	error = unshare_fd(CLONE_FILES, NR_OPEN_MAX, &copy);
-+	error = unshare_fd(CLONE_FILES, &copy);
- 	if (error || !copy)
- 		return error;
+ 	/* the current task is done, go to the next task */
+-	rcu_read_unlock();
+ 	put_task_struct(curr_task);
+ 
+ 	if (info->common.type == BPF_TASK_ITER_TID) {
+diff --git a/kernel/kcmp.c b/kernel/kcmp.c
+index b0639f21041f..2c596851f8a9 100644
+--- a/kernel/kcmp.c
++++ b/kernel/kcmp.c
+@@ -63,9 +63,7 @@ get_file_raw_ptr(struct task_struct *task, unsigned int idx)
+ {
+ 	struct file *file;
+ 
+-	rcu_read_lock();
+-	file = task_lookup_fdget_rcu(task, idx);
+-	rcu_read_unlock();
++	file = fget_task(task, idx);
+ 	if (file)
+ 		fput(file);
  
 -- 
 2.39.2
