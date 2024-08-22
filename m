@@ -1,130 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-26712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE4995B382
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 13:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE0895B3D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 13:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A3D1C22D37
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 11:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B38B2820C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 11:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAC918308D;
-	Thu, 22 Aug 2024 11:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bc6+fvKa"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE491C93D9;
+	Thu, 22 Aug 2024 11:30:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A1518C31
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 11:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F621A2C10;
+	Thu, 22 Aug 2024 11:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724325049; cv=none; b=YW91MBnO343f/0wqnhaLqx9jCWhJjVo35aTEzYWVewqU01sKdhaTdPQfwKa+VWD2n74cwR5h576RCAMWbKfN21o/fa4Hf5Et4J4DYZYew5CMyklCywxnyMyTEUiD2PhdKSZ3lk/FXi1pVbpCwCYDP0HA84AQgePw289A6RTSEzw=
+	t=1724326213; cv=none; b=k4iZstPRHIoxTpeJeEMqMSzduv2vcpXxgU1qcCvOJR7wNJcn8opMSWzrv+5xl24TL3ZzQDDXwthfYxdMRjojqcXq86nq9pgjdNh8jLNJhkLkq/JR6Y0OOvYVfaZgfIx042vWVfIguuWdVQIHpUuSAN8OfwaQx6gTFVQKkefYY+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724325049; c=relaxed/simple;
-	bh=YjJHWudxNHFCAoRjx9l0alMNcNeozwjSQcVlndNu2Hw=;
+	s=arc-20240116; t=1724326213; c=relaxed/simple;
+	bh=BDrs6Un52wYeKJaaHzXRq/2axxKAwlrLJwTQCz0kT6M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sYPZMaBXuQBDPI311Wf9mrIRLRbJRN5peQdoEDUis12LA+H9wDJ2a6EVcsz+b9Wk1kkBkRCf7yxbB9Hg1tn2VVZ5ukpJbmQAFoIFESkkXSXMvhaBmyQ7990Fdiii7WNFb4fZ5uzZnBNdPeJUrgjAXN63vvusk+nFIYz6INDoZZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bc6+fvKa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F66C32782;
-	Thu, 22 Aug 2024 11:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724325048;
-	bh=YjJHWudxNHFCAoRjx9l0alMNcNeozwjSQcVlndNu2Hw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bc6+fvKac4hBMOqiSKP85t0SP8p4iLTWg5KX8RNr9mq6g0ihkzFexkNaF4eiO3gSl
-	 Zd/2sWy9JH73VdRsob5W35WtLxvu1s76nHutej/Rt4N4RkgjpLuaZO/r6rnrq1Elvk
-	 ENXoCcmDchi29M8QAUQPBzELgxI+jP+xMc9evh/e/INgj7cOOHnfqVt8wv5RaeaXGd
-	 SgF1LK57MnlLSL7/8Oij374pCpA/0F+sRUL1I1Os3NzeGoT0dmxbTkmNwbikCmVAjT
-	 JhWGYUKR2IpAzWdcZhUwag5Qb8OgGn69m5z5qWI+LU2DUg/DRpAg4v/QiZkjIdePTB
-	 JxnONsPbwHAUg==
-Date: Thu, 22 Aug 2024 13:10:43 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 5/6] inode: port __I_LRU_ISOLATING to var event
-Message-ID: <20240822-nickt-pracht-3bfab23d1f57@brauner>
-References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
- <20240821-work-i_state-v2-5-67244769f102@kernel.org>
- <fcf964b8b46af36e31f9dda2a8f2180eb999f35c.camel@kernel.org>
- <20240822-wachdienst-mahnmal-b25d2f0fb350@brauner>
- <g2o4dwrlhgsu7wszchfqkpu6i6f2caqt3yj66ondmvzuyhvxys@b6mqm4rjzwwr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B723+2i+PMNAJMx9jGVZ3vCKGMXYj+1P0ClQOpJvzNDQ3Vg3Iu7UG8cMf90zRA6ZP3YxUgDrv7DeX0m/a+4oDb064p9+EDP4H/JStt/D1nxRvP3nWmZSSjBzrbSZfsRRoY9vadszX/X/dCJLHFrWR3Lw3qHj5HgQIjLfgEgfK3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E549C32782;
+	Thu, 22 Aug 2024 11:30:06 +0000 (UTC)
+Date: Thu, 22 Aug 2024 12:30:04 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 16/39] arm64/idreg: Add overrride for GCS
+Message-ID: <ZschPLEzEq2dOpgN@arm.com>
+References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
+ <20240822-arm64-gcs-v11-16-41b81947ecb5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <g2o4dwrlhgsu7wszchfqkpu6i6f2caqt3yj66ondmvzuyhvxys@b6mqm4rjzwwr>
+In-Reply-To: <20240822-arm64-gcs-v11-16-41b81947ecb5@kernel.org>
 
-On Thu, Aug 22, 2024 at 11:48:45AM GMT, Mateusz Guzik wrote:
-> On Thu, Aug 22, 2024 at 10:53:50AM +0200, Christian Brauner wrote:
-> > On Wed, Aug 21, 2024 at 03:41:45PM GMT, Jeff Layton wrote:
-> > > >  	if (inode->i_state & I_LRU_ISOLATING) {
-> > > > -		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
-> > > > -		wait_queue_head_t *wqh;
-> > > > -
-> > > > -		wqh = bit_waitqueue(&inode->i_state, __I_LRU_ISOLATING);
-> > > > -		spin_unlock(&inode->i_lock);
-> > > > -		__wait_on_bit(wqh, &wq, bit_wait, TASK_UNINTERRUPTIBLE);
-> > > > -		spin_lock(&inode->i_lock);
-> > > > +		struct wait_bit_queue_entry wqe;
-> > > > +		struct wait_queue_head *wq_head;
-> > > > +
-> > > > +		wq_head = inode_bit_waitqueue(&wqe, inode, __I_LRU_ISOLATING);
-> > > > +		for (;;) {
-> > > > +			prepare_to_wait_event(wq_head, &wqe.wq_entry,
-> > > > +					      TASK_UNINTERRUPTIBLE);
-> > > > +			if (inode->i_state & I_LRU_ISOLATING) {
-> > > > +				spin_unlock(&inode->i_lock);
-> > > > +				schedule();
-> > > > +				spin_lock(&inode->i_lock);
-> > > > +				continue;
-> > > > +			}
-> > > > +			break;
-> > > > +		}
-> > > 
-> > > nit: personally, I'd prefer this, since you wouldn't need the brackets
-> > > or the continue:
-> > > 
-> > > 			if (!(inode->i_state & LRU_ISOLATING))
-> > > 				break;
-> > > 			spin_unlock();
-> > > 			schedule();
-> > 
-> > Yeah, that's nicer. I'll use that.
+On Thu, Aug 22, 2024 at 02:15:19AM +0100, Mark Brown wrote:
+> Hook up an override for GCS, allowing it to be disabled from the command
+> line by specifying arm64.nogcs in case there are problems.
 > 
-> In that case may I suggest also short-circuiting the entire func?
-> 
-> 	if (!(inode->i_state & I_LRU_ISOLATING))
-> 		return;
+> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-Afaict, if prepare_to_wait_event() has been called finish_wait() must be
-called.
-
-> 
-> then the entire thing loses one indentation level
-> 
-> Same thing is applicable to the I_SYNC flag.
-> 
-> A non-cosmetic is as follows: is it legal for a wake up to happen
-> spuriously?
-
-So, I simply mimicked ___wait_var_event() and __wait_on_bit() - both
-loop. I reasoned that ___wait_var_event() via @state and __wait_on_bit()
-via @mode take the task state into account to wait in. And my conclusion
-was that they don't loop on TASK_UNINTERRUPTIBLE but would loop on e.g.,
-TASK_INTERRUPTIBLE. Iow, I assume that spurious wakeups shouldn't happen
-with TASK_UNINTERRUPTIBLE.
-
-But it's not something I'm able to assert with absolute confidence so I
-erred on the side of caution.
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
