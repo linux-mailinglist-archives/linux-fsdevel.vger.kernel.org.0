@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-26772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C2895B9C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:14:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0042E95B9B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AA56B2C15C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:14:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A84E11F24AE6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF4E1CCEF8;
-	Thu, 22 Aug 2024 15:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9321CCEC2;
+	Thu, 22 Aug 2024 15:13:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9991CCB49;
-	Thu, 22 Aug 2024 15:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217401CC89B;
+	Thu, 22 Aug 2024 15:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724339581; cv=none; b=iq2ivaoQ2E+j1aliou4/+MDKcqS4Kwm1CcJoSRC9mBBBaHDlmE8VNbV8bCw8KnnOzHGqW4RRPFnvv/6ea5zSaoRqGA8XQIupNS8dq2pf+byG90Q+Jb18Kf1f2XxUMFxyASgEYgSA3vfLnn5SDAVZaPHN0CLjIbH4+DSr/vqpfek=
+	t=1724339585; cv=none; b=FpdTT//kJhxKHJA4wTZ+Yoj8F9vqBME8e7ufJUVT6vBdSAEcpUTxkxfz3dDzXNCRmfqtAviUH1QgEp7BDQLO0GRCPjJd1uShn1o4YtgEc7Dq3UOOYlTxJN6TjQSyIf1ROpZQMYlUn2Dl02icXhS+OftoH8bv3UlRBPHF0XeFPSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724339581; c=relaxed/simple;
-	bh=GEgM8e6HZLCBlCA0OtCklFgFI1x3Wij2yNL2hH7fStc=;
+	s=arc-20240116; t=1724339585; c=relaxed/simple;
+	bh=01R1Iyq6ziUFGEz2FQMkgk+bYCtZVZAHa8k1QgHsKVQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AYj3V6M1a6DFWsvvW3c4U4uUx7Htr5ORHT0nEa2tP3a6csHjb4wKQRmiU++DbSHV47oe8pYKmsjpM8w3Zmy4CmnQkc5H3Ete9KceikSSZ10n7DU0NnpP0RY2DCaUX3nuGR3AG9+yEj6zeK4Oe5UpnVpeQlW6fRpiU3qNAJMrxiw=
+	 MIME-Version; b=VlkS04Ypa+dmqlWgSQpzgQH8OfwA+t2/Ua7U+a9LW4kEJWKRxs4vBh46yWZZtqmz3mSZU5JpvjFOswr/T65d4U7yWzDjVvu2rDRgd3012IB0gYiDj2P7xL0YCFBYhd3EcuZ4gzURGq4XwBH3HPlBrPUhkZa/jQRmO1G7xCUOMBE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 893C615BF;
-	Thu, 22 Aug 2024 08:13:25 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6BB01650;
+	Thu, 22 Aug 2024 08:13:29 -0700 (PDT)
 Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6ADCB3F58B;
-	Thu, 22 Aug 2024 08:12:55 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B8D833F58B;
+	Thu, 22 Aug 2024 08:12:59 -0700 (PDT)
 From: Joey Gouly <joey.gouly@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: nd@arm.com,
@@ -64,9 +64,9 @@ Cc: nd@arm.com,
 	x86@kernel.org,
 	kvmarm@lists.linux.dev,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 22/30] arm64: enable PKEY support for CPUs with S1POE
-Date: Thu, 22 Aug 2024 16:11:05 +0100
-Message-Id: <20240822151113.1479789-23-joey.gouly@arm.com>
+Subject: [PATCH v5 23/30] arm64: add Permission Overlay Extension Kconfig
+Date: Thu, 22 Aug 2024 16:11:06 +0100
+Message-Id: <20240822151113.1479789-24-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240822151113.1479789-1-joey.gouly@arm.com>
 References: <20240822151113.1479789-1-joey.gouly@arm.com>
@@ -78,31 +78,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that PKEYs support has been implemented, enable it for CPUs that
-support S1POE.
+Now that support for POE and Protection Keys has been implemented, add a
+config to allow users to actually enable it.
 
 Signed-off-by: Joey Gouly <joey.gouly@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 ---
- arch/arm64/include/asm/pkeys.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/Kconfig | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git arch/arm64/include/asm/pkeys.h arch/arm64/include/asm/pkeys.h
-index 32c352bb36b9..19eb1b12b7fc 100644
---- arch/arm64/include/asm/pkeys.h
-+++ arch/arm64/include/asm/pkeys.h
-@@ -17,7 +17,7 @@ int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+diff --git arch/arm64/Kconfig arch/arm64/Kconfig
+index a2f8ff354ca6..35dfc6275328 100644
+--- arch/arm64/Kconfig
++++ arch/arm64/Kconfig
+@@ -2137,6 +2137,29 @@ config ARM64_EPAN
+ 	  if the cpu does not implement the feature.
+ endmenu # "ARMv8.7 architectural features"
  
- static inline bool arch_pkeys_enabled(void)
- {
--	return false;
-+	return system_supports_poe();
- }
- 
- static inline int vma_pkey(struct vm_area_struct *vma)
++menu "ARMv8.9 architectural features"
++
++config ARM64_POE
++	prompt "Permission Overlay Extension"
++	def_bool y
++	select ARCH_USES_HIGH_VMA_FLAGS
++	select ARCH_HAS_PKEYS
++	help
++	  The Permission Overlay Extension is used to implement Memory
++	  Protection Keys. Memory Protection Keys provides a mechanism for
++	  enforcing page-based protections, but without requiring modification
++	  of the page tables when an application changes protection domains.
++
++	  For details, see Documentation/core-api/protection-keys.rst
++
++	  If unsure, say y.
++
++config ARCH_PKEY_BITS
++	int
++	default 3
++
++endmenu # "ARMv8.9 architectural features"
++
+ config ARM64_SVE
+ 	bool "ARM Scalable Vector Extension support"
+ 	default y
 -- 
 2.25.1
 
