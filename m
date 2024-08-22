@@ -1,188 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-26821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946C195BD24
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 19:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A1295BD4E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 19:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA705B2670E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:25:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5C3FB22B64
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8871CEAD2;
-	Thu, 22 Aug 2024 17:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304B01CEAD2;
+	Thu, 22 Aug 2024 17:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t7bRC+77";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1vOjQtg2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ho8VzL9h";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TVNg7y82"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikqtAQwt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC8E1CEABB;
-	Thu, 22 Aug 2024 17:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2DA1D12E4;
+	Thu, 22 Aug 2024 17:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724347539; cv=none; b=kmW1KaVl2GLsX68YXLgN6ZionvKOZjxBIQglUTirplREuJMD5NdWDjYO5Zt2WTCiQGDXdo/KQ3W4ysoYoAjiQ8qQL/Iq144TztWpMvAICWb2+Jv93XRi9niLuppPYnshM+6dnnMmQc3/YoVVOQGzcP10/zmis/vv2V+3w8sFbQs=
+	t=1724347859; cv=none; b=EN4vgeKd9UBvupeYtuj48maAkCelVdXmx5QJJNoqD6Rrad3KUuQo0OmPW6W5eUQ9FR2SfCYzpha6qxYxvuKofBcHjjXaAl1iPfcVjr3A/Al52rSgmICLjR8pBOXrCQe67hrrXBiLc8PMLcWQQPDbvDNKTA8+X+7L1kP+BfofmuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724347539; c=relaxed/simple;
-	bh=lZz2b+UIfcm76DYpcUn3AC660hwcw/loySTha54lQR4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pLRhqaPFs2t/gfMouMPpwwyk4fd9MngCZrvmUZah5LIcea1v+48T9Dl0bXhPAs0MxwdeVIozcRp2AZ/1eSKxx8itlupq0tlUTkuY26BYoGwvc8zJEl5AJF0U5cqCW8pc/7F31A2YsTBRGneRu57gtfJRn1PUCd4FDwtBVqyZw+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t7bRC+77; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1vOjQtg2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ho8VzL9h; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TVNg7y82; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E82782020D;
-	Thu, 22 Aug 2024 17:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724347535; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BObgr4Z1nBzmg7iQR4vsFNHe/0eQMqqJIKMig54d+WY=;
-	b=t7bRC+77OR6/NWFx47bUZGgve7AI/XiZjiO1dppmXhr6x/cdGJvzxIjlftga0lsoPWxYbc
-	XrE2SLnexdMzA61Bya8KlA0rHmbxVengX6jtYmwUALgn2HhEKSmmho9RErcB/SWTaN+EK3
-	HePBOutOXfVOwCopgx9/h4OFk2Jx0ug=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724347535;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BObgr4Z1nBzmg7iQR4vsFNHe/0eQMqqJIKMig54d+WY=;
-	b=1vOjQtg2+4yPFcrKWikFzyDAABw4sAJGqrPJhX13v+P+YE1RNnWBbDEng9jalzaEuwdjFc
-	1BZ6+dZG40KdIICw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ho8VzL9h;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=TVNg7y82
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724347534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BObgr4Z1nBzmg7iQR4vsFNHe/0eQMqqJIKMig54d+WY=;
-	b=ho8VzL9haiPDdrXvqolJg/wNSKS0UVG9hXShBWklDjZ5/jm4fKz7wEDhxdxpj6jitIZ3W9
-	a0ZT2N5pgfgTTj9cUQ0Er2PtCK/jDzG4lAuUKzkmKYaNGaP/itfKLEa5yWHZ43AM++Bvaw
-	aECvA0erDCb55TJ0CQ8wN7xknDBPZK8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724347534;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BObgr4Z1nBzmg7iQR4vsFNHe/0eQMqqJIKMig54d+WY=;
-	b=TVNg7y82VmpzTXpW7vXGdIN0hR3jJVeb/JEGCLUiYt9qsSEM9Zsiqtk4mPm+ivC2YTl+ea
-	QkCCKCLXqItDm9Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC53113A1F;
-	Thu, 22 Aug 2024 17:25:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id B98pJI50x2bmFwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Thu, 22 Aug 2024 17:25:34 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Eugen Hristev <eugen.hristev@collabora.com>,  brauner@kernel.org,
-  tytso@mit.edu,  linux-ext4@vger.kernel.org,  jack@suse.cz,
-  adilger.kernel@dilger.ca,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel@collabora.com,
-  shreeya.patel@collabora.com
-Subject: Re: [PATCH 1/2] fs/dcache: introduce d_alloc_parallel_check_existing
-In-Reply-To: <20240822011345.GS504335@ZenIV> (Al Viro's message of "Thu, 22
-	Aug 2024 02:13:45 +0100")
-Organization: SUSE
-References: <20240705062621.630604-1-eugen.hristev@collabora.com>
-	<20240705062621.630604-2-eugen.hristev@collabora.com>
-	<87zfp7rltx.fsf@mailhost.krisman.be>
-	<2df894de-8fa9-40c2-ba2c-f9ae65520656@collabora.com>
-	<87jzg9wjeo.fsf@mailhost.krisman.be> <20240822011345.GS504335@ZenIV>
-Date: Thu, 22 Aug 2024 13:25:33 -0400
-Message-ID: <87frqwwjua.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1724347859; c=relaxed/simple;
+	bh=NEmbbg8L2Bfrsg3LdNNpLmYp7+z/wYUOhdnFgomJAhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gybwa6OqavMFZ0iZ7crZJrRWkBs9xfd0n3tvXGTmJNp2z4d0g+D++906PbqBV+9uy5V9jxUeWAJ9fphWB0iZRQOWo1abM180D9B5H3qybzkcowG8e4F1x5QSntP6ZJ0B1P2nkhYsciW5+S+EcKPOKT263VwJP4JMt9wEWi7xvsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikqtAQwt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85044C32782;
+	Thu, 22 Aug 2024 17:30:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724347859;
+	bh=NEmbbg8L2Bfrsg3LdNNpLmYp7+z/wYUOhdnFgomJAhI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ikqtAQwtRrEpLzRohAGA+qNmOG+TVb1qThYeB20Y/Rk8LI7FU0VJET/gHeWL16BXq
+	 QZJfX39NMfafJ1FzVkN4ltE2CZW3ItKeVYt8IycDgCeLLfuh0r2uRLDWZ04/PypHs6
+	 s+MGNZPewB6jtWVhV7hrSdK3dA9ZJDHvvHhPAtsfxbo5lcriqWLIPch63YvNEb7bvj
+	 mKT4+II0xSVQPbirmPqGpXOCJtrJ5BOwbz+S2JpDOkZcFSQI6txfB5pByPQr/Jo0Mu
+	 8SvR/xM9sWHMARckle6xSHr228r6G6hj9zO2NXqWhsK7TG51FQwJDp+RQ7WZOdHsEf
+	 rIBkFTrNQkZOg==
+Date: Thu, 22 Aug 2024 18:30:55 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v11 19/39] arm64/mm: Handle GCS data aborts
+Message-ID: <Zsd1zxJ1n5-_lpbx@finisterre.sirena.org.uk>
+References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
+ <20240822-arm64-gcs-v11-19-41b81947ecb5@kernel.org>
+ <ZsdjbsDrMWgBU9Hj@arm.com>
+ <Zsdq4ymaW0vQffH_@finisterre.sirena.org.uk>
+ <ZsdzKrTbrolW0lHn@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: E82782020D
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QBL8uS70EYGjHk3p"
+Content-Disposition: inline
+In-Reply-To: <ZsdzKrTbrolW0lHn@arm.com>
+X-Cookie: Your love life will be... interesting.
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
 
-> On Wed, Aug 21, 2024 at 07:22:39PM -0400, Gabriel Krisman Bertazi wrote:
->
->> Would it be acceptable to just change the dentry->d_name here in a new
->> flavor of d_add_ci used only by these filesystems? We are inside the
->> creation path, so the dentry has never been hashed.  Concurrent lookups
->> will be stuck in d_wait_lookup() until we are done and will never become
->> invalid after the change because the lookup was already done
->> case-insensitively, so they all match the same dentry, per-definition,
->> and we know there is no other matching dentries in the directory.  We'd
->> only need to be careful not to expose partial names to concurrent
->> parallel lookups.
->
-> *Ow*
->
-> ->d_name stability rules are already convoluted as hell; that would make
-> them even more painful.
->
-> What locking are you going to use there?
+--QBL8uS70EYGjHk3p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since we are in the ->d_lookup() during the rename, and we use the
-dcache-insensitively for the filesystems that will do the rename, we
-know there is nothing in the dcache and the dentry is still in the
-parallel lookup table.  So we are not racing with a creation of the same
-name in the same directory.  A parallel lookup will either find that
-dentry (old or new name, doesn't matter) or not find anything, in case
-it sees a partial ->d_name.  Therefore, the only possible problem is a
-false negative/positive in parent->d_in_lookup_hash.
+On Thu, Aug 22, 2024 at 06:19:38PM +0100, Catalin Marinas wrote:
+> On Thu, Aug 22, 2024 at 05:44:19PM +0100, Mark Brown wrote:
+> > On Thu, Aug 22, 2024 at 05:12:30PM +0100, Catalin Marinas wrote:
+> > > On Thu, Aug 22, 2024 at 02:15:22AM +0100, Mark Brown wrote:
+> >=20
+> > > > +static bool is_invalid_gcs_access(struct vm_area_struct *vma, u64 =
+esr)
+> >=20
+> > > > +	} else if (unlikely(vma->vm_flags & VM_SHADOW_STACK)) {
+> > > > +		/* Only GCS operations can write to a GCS page */
+> > > > +		return is_write_abort(esr);
+> > > > +	}
 
-Can we extend the rename_lock seqlock protection that already exists in
-d_alloc_parallel to include the d_in_lookup_hash walk?  d_add_ci then
-acquires the rename_lock before writing ->d_name and d_alloc_parallel
-will see it changed after iterating over d_in_lookup_hash, in case it
-didn't find anything, and retry the entire sequence.
+> > Yes, that should check for a data abort.  I think I'd formed the
+> > impression that is_write_abort() included that check somehow.  As you
+> > say it's to avoid spinning trying to resolve a permission fault for a
+> > write (non-GCS reads to a GCS page are valid), I do think we need the=
+=20
+> > is_write_abort() since non-GCS reads are valid so something like:
+> >=20
+> > 	if (!esr_is_data_abort(esr))
+> > 		return false;
+> >=20
+> > 	return is_write_abort(esr);
+>=20
+> We do need the write abort check but not unconditionally, only if to a
+> GCS page (you can have other genuine write aborts).
 
-Case-inexact lookups are not supposed to be frequent. Most lookups
-should be done in a case-exact way, so the extra acquisition of
-rename_lock shouldn't create more contention on the rename_lock for the
-regular path or for non-case-insensitive filesystems.  The overhead in
-d_alloc_parallel is another read_seqretry() that is done only in the
-case where the dentry is not found anywhere and should be created.
+tThat was to replace the checks in the above case, not the function as a
+whole.
 
--- 
-Gabriel Krisman Bertazi
+--QBL8uS70EYGjHk3p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbHdcwACgkQJNaLcl1U
+h9DRZgf/cfCggcnTIkzrBOCGpdBnnvrHenLxqYdUHuYxfAA/f/+OY6Ryiz7GiVVN
+dsEg7gYHWwsk0cTwEgGm++++b84foIZ1WeBZ46XlkFKSK0McT1h01SxvUqi6bu3R
+Mj62HWq2M43bg8tVzjIsNFMIZKxKg/8RJVKFsg0KTx/Y4JLXoJkLtplgh4eCuxh0
+Xg0yYgmx4aE7JOYegrvzRVUuj0F6rT8Io3eU7LbdJ4GpP28wCf6jVymCjyhQOHav
+sWHIP3j85jUutzI9HQAsfUt9BnT6GMnKfu16R9nOAdGgfc/XMzzW7lgzRJhLeroa
+kebp1dN/8F8ek5AKqLqstfOmgDdTzg==
+=+1Rr
+-----END PGP SIGNATURE-----
+
+--QBL8uS70EYGjHk3p--
 
