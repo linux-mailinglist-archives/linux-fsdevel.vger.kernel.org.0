@@ -1,130 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-26707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF0695B2C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 12:20:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB4195B2CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 12:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CCCB283651
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24E2C1F22C8D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991D517E91A;
-	Thu, 22 Aug 2024 10:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FB417E8E2;
+	Thu, 22 Aug 2024 10:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZG528NqD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2594E14F9DA;
-	Thu, 22 Aug 2024 10:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0112D364A4;
+	Thu, 22 Aug 2024 10:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724321999; cv=none; b=l2YRJ95h3hknl/aJqDCA2EhBlIJ9bw4MY9qyB13uPCVCCMfFcAf0IY35PS4rPq6UW2J1Ld+RYvw5iOY3ZOjTKm5fU1HPlnGE6YYJ8LUTjSTJ4IJ5xNtS9fix6fgT24khryNaFmOIHN5GLE0VPshstDwEiJrok1M25GI5GYUk0zk=
+	t=1724322110; cv=none; b=lxMXz1n6PGfkT5/r+sRleJaDw2vbQYrXHmaw6vdOCg/faApNVYSON/RbkInw3RdfmC7BOcHHdQ+YQwBjuL4rhyhrrm+f9ewWvO7eux+uWIwyPtN/ErZK9HvVRIeOv9e9YQjfeJA80XopRsWyew3oMFiG3Vf+pjG8PdKhCZQBOxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724321999; c=relaxed/simple;
-	bh=EKZr39InrxJs348PMtmf9ETHw+B/7T2Vh8xHcpRmmoQ=;
+	s=arc-20240116; t=1724322110; c=relaxed/simple;
+	bh=UvnmyoORO8Qlvqn0VCeIiPZzTWkIxDwy8sX3YeOfxNo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJZSsnJ3imtC3alLBS6o1YozqRtyUrPTf6wnmua0z6lN/VOmmqFu2EBK68UL8CUm2UXiBto6OdhzO0AqSWDHJ/kukZjpWUDPEft9rlx59KlIhE6gnmg1e3/NMaopZZXoQrrc7+D1icKc4WpqSblmH7b7+abtFJ4TCw+/NAcDcro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBE0C32782;
-	Thu, 22 Aug 2024 10:19:52 +0000 (UTC)
-Date: Thu, 22 Aug 2024 11:19:50 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 14/39] arm64/mm: Map pages for guarded control stack
-Message-ID: <ZscQxkigY0uNM6Xc@arm.com>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-14-41b81947ecb5@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ajW79nZ5fBlhn6LIMrDB9s1Mea7BHx/qCyAVc6ybd7nWJRdujuK7BHMsc82SUPCR/k90Ar9Z1J0CkTx1WuneCMiiesUNLwldiwDrMtkHx4/az78QNTbWwhp5OJnxmaQ+FrYn/XaSJjzG43ezA0Qaqgg1JNYvTu1w+p+3ja6Ghnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZG528NqD; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so942769a12.2;
+        Thu, 22 Aug 2024 03:21:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724322107; x=1724926907; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4HpUPm5maP5njGxqT2EPfesiPfuO4nNvXVn6FksK0GY=;
+        b=ZG528NqDfL7JotubUSlkH2oR4mJ2IXf/ldBma/cpeIi+iklvhspNxb8GOxyG0PSW6V
+         kCQTXTdzVyzaBQvyDa6Dyt0KZrWtVg6DoUgeQUJP11L/U3cjiRnJ4zfhCOw+yuBDkAk7
+         FvNBomspLgbRGxvwYcEU4PVVBzjpgb3uinhbld6URaAKiyr6km5YgpmcDqKJ3pRlXVBD
+         +efy6pCBHI73OvY1TKy9h/utXD1jnKoPM3QPO47VpUaErmhQyf+3KuHLLfzeqpXXU3xJ
+         2ez5i9yNQ4FQfx6Or+QLJd3lrcssfquG/cxi6QGK8eSHsv5cxc0YuzfUjKKfozGAa/c9
+         OosQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724322107; x=1724926907;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4HpUPm5maP5njGxqT2EPfesiPfuO4nNvXVn6FksK0GY=;
+        b=SMstXkZeCO8HzO9sfvxFEofXeL2zix0nXbJMhEJQVo8GhXGUMU215GV+ZvegqATct5
+         0UBFDLd0c9q3OudAuyCsGSjdcH5GHSoQVfynrWeYmSRaoFhLJCPsbk86L0h3E/0Ltm7t
+         +lF7Pah83J89586WJ1Gfb9UY9+EmkMP5DV0c83N9M5ptmwYtUmHGPuICQ1OeSPWrJ+6w
+         eodvjy5CnaelN7MIX7bncpTQNlpUtdxJCrVOo2Or+176Eqk+9/BzkgmTnoql96w1h5gr
+         hxLn6jwg6XLSPH6RTGUB3l96oEV6YBEdIGVNo7YBn2/mMKOTDKcf0RF+t1zvtHKMb2XB
+         klxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKEXbuPjO3ITeSyQoxzopG/zSUECPiMs9AVNQUKAyBe9JRbbN46ahryBTVVXxEOZ47b4MJI5qwr7AGzTEP@vger.kernel.org, AJvYcCW46gh0xmLP8xk6x/KYSQWM4S6697RHkzVQIahQByeBS1rAOLTyCLJaGDVRfaBgJqNSHA/3F38l49RwAv2X@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9Ygb3BfchrnRt8QBNSzkQCtj1lEB5mMvaln5p3qdQmTTDnMvZ
+	gS6W0DhyuCTtMrxVcYWapYfgif+A40vH94kmCkYM7AN/CEmr6D9CpwxHVw==
+X-Google-Smtp-Source: AGHT+IH7cxLf7SLbT+duZmRQ8/OxZhpJzcy4IUnNX0FVEwpl6kAbYyUk2yogRoHtbNd15kJmyRa7YQ==
+X-Received: by 2002:a05:6402:4308:b0:5be:fc2e:b7d4 with SMTP id 4fb4d7f45d1cf-5c0791ebb13mr928332a12.13.1724322107097;
+        Thu, 22 Aug 2024 03:21:47 -0700 (PDT)
+Received: from f (cst-prg-86-203.cust.vodafone.cz. [46.135.86.203])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c044ddbee6sm773164a12.9.2024.08.22.03.21.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 03:21:46 -0700 (PDT)
+Date: Thu, 22 Aug 2024 12:21:39 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/3] avoid extra path_get/path_put cycle in path_openat()
+Message-ID: <o2uu6mzozjaruja5udzfnv2p5fwfoeud5movtve7gyuj57xlz3@aqy6sil3o2ze>
+References: <20240807070552.GW5334@ZenIV>
+ <CAGudoHGMF=nt=Dr+0UDVOsd4nfGRr4xC8=oeQqs=Av9s0tXXXA@mail.gmail.com>
+ <20240807075218.GX5334@ZenIV>
+ <CAGudoHE1dPb4m=FsTPeMBiqittNOmFrD-fJv9CmX8Nx8_=njcQ@mail.gmail.com>
+ <CAGudoHFm07iqjhagt-SRFcWsnjqzOtVD4bQC86sKBFEFQRt3kA@mail.gmail.com>
+ <20240807124348.GY5334@ZenIV>
+ <20240807203814.GA5334@ZenIV>
+ <CAGudoHHF-j5kLQpbkaFUUJYLKZiMcUUOFMW1sRtx9Y=O9WC4qw@mail.gmail.com>
+ <20240822003359.GO504335@ZenIV>
+ <20240822004149.GR504335@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240822-arm64-gcs-v11-14-41b81947ecb5@kernel.org>
+In-Reply-To: <20240822004149.GR504335@ZenIV>
 
-On Thu, Aug 22, 2024 at 02:15:17AM +0100, Mark Brown wrote:
-> diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
-> index c21849ffdd88..37dfd2882f04 100644
-> --- a/arch/arm64/include/asm/mman.h
-> +++ b/arch/arm64/include/asm/mman.h
-> @@ -61,6 +61,15 @@ static inline bool arch_validate_flags(unsigned long vm_flags)
->  			return false;
->  	}
->  
-> +	if (system_supports_gcs() && (vm_flags & VM_SHADOW_STACK)) {
-> +		/* An executable GCS isn't a good idea. */
-> +		if (vm_flags & VM_EXEC)
-> +			return false;
-
-Later we should look at clear VM_MAYEXEC in the core code (if the x86
-folk agree).
-
-> +
-> +		/* The memory management core should prevent this */
-> +		VM_WARN_ON(vm_flags & VM_SHARED);
-> +	}
-> +
->  	return true;
->  
+On Thu, Aug 22, 2024 at 01:41:49AM +0100, Al Viro wrote:
+> Once we'd opened the file, nd->path and file->f_path have the
+> same contents.  Rather than having both pinned and nd->path
+> dropped by terminate_walk(), let's have them share the
+> references from the moment when FMODE_OPENED is set and
+> clear nd->path just before the terminate_walk() in such case.
+> 
+> To do that, we
+> 	* add a variant of vfs_open() that does *not* do conditional
+> path_get() (vfs_open_borrow()); use it in do_open().
+> 	* don't grab f->f_path.mnt in finish_open() - only
+> f->f_path.dentry.  Have atomic_open() drop the child dentry
+> in FMODE_OPENED case and return f->path.dentry without grabbing it.
+> 	* adjust vfs_tmpfile() for finish_open() change (it
+> is called from ->tmpfile() instances).
+> 	* make do_o_path() use vfs_open_borrow(), collapse path_put()
+> there with the conditional path_get() we would've get in vfs_open().
+> 	* in FMODE_OPENED case clear nd->path before calling
+> terminate_walk().
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index 0ec2e9a33856..f9988427fb97 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1046,7 +1046,7 @@ int finish_open(struct file *file, struct dentry *dentry,
+>  	file->f_path.dentry = dentry;
+>  	err = do_dentry_open(file, open);
+>  	if (file->f_mode & FMODE_OPENED)
+> -		path_get(&file->f_path);
+> +		dget(&file->f_path.dentry);
+>  	return err;
 >  }
-> diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
-> index 642bdf908b22..3ed63fc8cd0a 100644
-> --- a/arch/arm64/mm/mmap.c
-> +++ b/arch/arm64/mm/mmap.c
-> @@ -83,9 +83,17 @@ arch_initcall(adjust_protection_map);
->  
->  pgprot_t vm_get_page_prot(unsigned long vm_flags)
->  {
-> -	pteval_t prot = pgprot_val(protection_map[vm_flags &
-> +	pteval_t prot;
-> +
-> +	/* Short circuit GCS to avoid bloating the table. */
-> +	if (system_supports_gcs() && (vm_flags & VM_SHADOW_STACK)) {
-> +		prot = _PAGE_GCS_RO;
-> +	} else {
-> +		prot = pgprot_val(protection_map[vm_flags &
->  				   (VM_READ|VM_WRITE|VM_EXEC|VM_SHARED)]);
-> +	}
->  
-> +	/* VM_ARM64_BTI on a GCS is rejected in arch_validate_flags() */
 
-Not anymore.
+There are numerous consumers of finish_open(), I don't see how they got
+adjusted to cope with this (or why they would not need adjustment).
 
->  	if (vm_flags & VM_ARM64_BTI)
->  		prot |= PTE_GP;
+For example fuse_create_open().
 
-Other than the comment above, it looks good.
+If this is sorted out I would argue it needs to be explained in the
+commit message.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+fwiw I don't think patching up the convention of finish_open() is needed
+for avoiding the extra ref cycle to work.
 
