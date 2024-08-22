@@ -1,143 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-26815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440DA95BC31
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:44:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC7695BC9B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 19:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0A2828417A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 879991F238C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD4E1CDFAF;
-	Thu, 22 Aug 2024 16:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0841CDFBE;
+	Thu, 22 Aug 2024 17:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pF/ody/9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQ1Ci2lu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7261F1CDA26;
-	Thu, 22 Aug 2024 16:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D69826AC1;
+	Thu, 22 Aug 2024 17:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724345064; cv=none; b=k0RBbmAHZs25X46ac6XS8bJGzpdHsaOpF9AT5pk1RQvSYxWALCPPZP/jqXGPbo6GHYPvpHHMC04qRXCx51+EFib8pnNYct0rNcybbDGHGb5nenwAfjpPd4GteC4eNc2epAPq/TveWx2Sl8o5qtk77xh6wW+BxmxfQqGI9TRwvKk=
+	t=1724346068; cv=none; b=lqitahIgXo196+IVaswo5Y8HtJTpY4v+5KkKvO/F6XFYVSgdSN2S7qT5GnU2/qbI/HF0RDMb6mbOna0YXMs0+BqPVW2HhVkb1NCoGdQYb0z+S3xS3r3+e0nu0BdpaLk56DBZ/YFW7owYDebyFqjR0pZ+qHLahy5d4nstuXitI7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724345064; c=relaxed/simple;
-	bh=5nVMn4LkuuoZiKq1lrBVs6QotPTnawufcHvhIzc/8+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jq//lLXZVsbPaA3rhQd8AU4OURLS2MTjt3Z6SRTdlKNRQ9XtlvHLAAKM5hncpkKzOdJL6ewIOSQrK77xnmZvba0gCnyjWz1s1c00vkymeBn8OZ8TL8ND9DFLr9XSSYeEzQ9vHDCGBZO29yZnIBkJKQbTDEJJVdWTBvtJnK6Ss3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pF/ody/9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80409C32782;
-	Thu, 22 Aug 2024 16:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724345064;
-	bh=5nVMn4LkuuoZiKq1lrBVs6QotPTnawufcHvhIzc/8+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pF/ody/9/o+/aOJwArsMCPFpQwT0EV8UZiSyMkWuRkDtaA9zA98X+68GNesul+qdI
-	 j359/Vz+Gg/HlVhmwMmcZDq+MII6ZkB1sdpS+muocrnk+e0OetqMq6OMevkFZ1wlxw
-	 rJjRMNbBUPb0hCeLZmKDpONpxkKiB4/L1XTe4iir3IjqZ+wS5gH/zukRsz1HNYuV/A
-	 L0BeUNIgcvmdLlyd6iSWGzrpfaaUh5HgC27f/N/wW7ML7feQU/1eiGe0y6HbmsDWuP
-	 3Y10FUYq+KJSsnWRAfZrVTfTipSHpXYxMFaMZ/BuKVufWhHKBlEVXQWq6Vosu32jb/
-	 3WGuBDHl/XkYg==
-Date: Thu, 22 Aug 2024 17:44:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 19/39] arm64/mm: Handle GCS data aborts
-Message-ID: <Zsdq4ymaW0vQffH_@finisterre.sirena.org.uk>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-19-41b81947ecb5@kernel.org>
- <ZsdjbsDrMWgBU9Hj@arm.com>
+	s=arc-20240116; t=1724346068; c=relaxed/simple;
+	bh=WQ8zCuBhOHR9wajWVBcM08hu3l43u/iVVkRgQ5fkTcM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MlwmDrRhGZZgG/t4P66eh959S4A1LTvlsXfyJPWjAjK5M9iXf5Vm+rJfWarpUzKTKsJnQNwVfHwXnRcdEK+G41uz9+/sogFtpAE0fbGCRJj+beX3Jinv4jM/wNRsvbonQywpImL/TH4+AChK4+3k55dsrs0HvkIkCNjdFWHNUdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQ1Ci2lu; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44fe9cf83c7so5987061cf.0;
+        Thu, 22 Aug 2024 10:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724346065; x=1724950865; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tuwl4rzkAcyRVZqp56l8KyXW3qwZYMG4uOgDY/0J1+4=;
+        b=aQ1Ci2lurGg1FSHN6/FiJmm5QOSgiL2wJ2jsjxovA+xDtdFVoiTEWpa0ZS8KaccuJi
+         psOX83yoXfoT2C7ZgxuEHHwArOX694VAfxpPiD2O97QGaf+c9LaPyLyrhD5aWCfS3eCg
+         MRNp6TI7YFOYvprA2z0cAfE7VMmxwxnfa6gEHHUdm7x8GWeHnPhcgrPg++sD2upAWKn5
+         yYiB5yPfjl0Miyor6kOURTocaSFi/+QDzK64z/HYfNQYK9mCca30botSMw5mKdC4ZNwU
+         if0euvHSuX9lPN0TCWB31ZxoOFlA28l4yDKopzGmb2HCHDGykhcrhmtEp77U2XAKp11U
+         PuVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724346065; x=1724950865;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tuwl4rzkAcyRVZqp56l8KyXW3qwZYMG4uOgDY/0J1+4=;
+        b=maarPIC4RPl59GsbONKcYLtjcvRqK1rreJL/205VwXpG/42J23MylBJZN/rTnFJzku
+         g63UiWpwwpyOImLKDdM4GaKzBxymaIOSkXy1T8VeXZ+D0qe57ZkpAK/cZaFAVUy2tFFk
+         W0hMrKl/CtNbR1SaB0BTqSUI5y8yIESsP8biQulXPs2TmxJOz8jToslBp0ZiOz2MAckE
+         JV0/Y0ggUKRNrmUcv8JpOR6rnm6SCBKwn7xuXPYzKH0OCH+koMUqutIf8zP2V7GTRi08
+         MmPs8kRCOUaaMrTbzsG2Ncy0tNDCDD4KsS9B7f2nX6nbq0cbjEqsEkn4wIJvYYXmPwQv
+         EFcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHBtXVzE0I+acReGyTzg1raWEw5XBTAAr09IHcJWllcfb2bRpWf+eCZ0G0KILauEf61uKxhjCAhHHaT25B@vger.kernel.org, AJvYcCXp09WlYaUH/msHskUxC+EveSGkqsV2u5JeuHGKJ6Dw+5APhQm76OKsrJEX9xeeUIQ811ug75rd2wIASy5q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMQNFcVI/lo89/5i6pHLloP24nC/f004EUZDjNHRkhYH/op1xW
+	W1qqeZzjSBqRBO5rg738PCHKQDa9s+q4U+b9/n70JVEFQ0Ev2xOoKnMEMYkHK1BoNt/wZf5mh54
+	76kECJu67DvE9wamx0B/jHzcU4Rg=
+X-Google-Smtp-Source: AGHT+IHUeiRGLKAv+AloQUOB3Dht/6V5uELOuqjosFjmD4sPq3W1dSn1FBnAJBuZA0EHHirrfld/27lV5HUwqUvKI20=
+X-Received: by 2002:a05:622a:518f:b0:453:17e0:5516 with SMTP id
+ d75a77b69052e-454ff7cbcd2mr32573891cf.36.1724346065050; Thu, 22 Aug 2024
+ 10:01:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="coW1UanIXdwHEo32"
-Content-Disposition: inline
-In-Reply-To: <ZsdjbsDrMWgBU9Hj@arm.com>
-X-Cookie: Your love life will be... interesting.
-
-
---coW1UanIXdwHEo32
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm> <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+ <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com> <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
+ <ffca9534-cb75-4dc6-9830-fe8e84db2413@linux.alibaba.com> <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
+ <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
+In-Reply-To: <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 22 Aug 2024 10:00:54 -0700
+Message-ID: <CAJnrk1aa=fv3H7pjmerrHD1fVkrD2inPhXf8DNdfeQpfSbUzdA@mail.gmail.com>
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Jingbo Xu <jefflexu@linux.alibaba.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, lege.wang@jaguarmicro.com, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2024 at 05:12:30PM +0100, Catalin Marinas wrote:
-> On Thu, Aug 22, 2024 at 02:15:22AM +0100, Mark Brown wrote:
+On Tue, Jun 4, 2024 at 3:02=E2=80=AFAM Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
+>
+> On Tue, 4 Jun 2024 at 11:32, Bernd Schubert <bernd.schubert@fastmail.fm> =
+wrote:
+>
+> > Back to the background for the copy, so it copies pages to avoid
+> > blocking on memory reclaim. With that allocation it in fact increases
+> > memory pressure even more. Isn't the right solution to mark those pages
+> > as not reclaimable and to avoid blocking on it? Which is what the tmp
+> > pages do, just not in beautiful way.
+>
+> Copying to the tmp page is the same as marking the pages as
+> non-reclaimable and non-syncable.
+>
+> Conceptually it would be nice to only copy when there's something
+> actually waiting for writeback on the page.
+>
+> Note: normally the WRITE request would be copied to userspace along
+> with the contents of the pages very soon after starting writeback.
+> After this the contents of the page no longer matter, and we can just
+> clear writeback without doing the copy.
+>
+> But if the request gets stuck in the input queue before being copied
+> to userspace, then deadlock can still happen if the server blocks on
+> direct reclaim and won't continue with processing the queue.   And
+> sync(2) will also block in that case.
 
-> > +static bool is_invalid_gcs_access(struct vm_area_struct *vma, u64 esr)
+Why doesn't it suffice to just check if the page is being reclaimed
+and do the tmp page allocation only if it's under reclaim?
 
-> > +	} else if (unlikely(vma->vm_flags & VM_SHADOW_STACK)) {
-> > +		/* Only GCS operations can write to a GCS page */
-> > +		return is_write_abort(esr);
-> > +	}
-
-> I don't think that's right. The ESR on this path may not even indicate a
-> data abort and ESR.WnR bit check wouldn't make sense.
-
-> I presume we want to avoid an infinite loop on a (writeable) GCS page
-> when the user does a normal STR but the CPU raises a permission fault. I
-> think this function needs to just return false if !esr_is_data_abort().
-
-Yes, that should check for a data abort.  I think I'd formed the
-impression that is_write_abort() included that check somehow.  As you
-say it's to avoid spinning trying to resolve a permission fault for a
-write (non-GCS reads to a GCS page are valid), I do think we need the=20
-is_write_abort() since non-GCS reads are valid so something like:
-
-	if (!esr_is_data_abort(esr))
-		return false;
-
-	return is_write_abort(esr);
-
-
-
---coW1UanIXdwHEo32
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbHauIACgkQJNaLcl1U
-h9A+Rwf/dhRu5UsqpoCA6/xq9A0Cnab5ynXnvR1EzbaEJwCP9rNRs+GxUHMjS602
-nhOn9hOMoiPZGQf6EXx1EQEKVTrRMdcKY6xmuJMvanSHbsVrmiYd/O9gy1dfNkSM
-TDmxmZ7Xc0G+qStZRZgpooJVDlbVRaCux4cNvKFjYcDX3wVF2Liq1NrHD3xrfelV
-vIRbUgCxo+LVDAkpsO/OOc1EK99EzOcV2xAnCddVDud02JsIW+KsG4/9MvW1YIJP
-NfpjBpbB/8mwaQfrssODC3R5By97ak392CJHPuTEhr6ymNONeJyVtB9c/2UiROsd
-A+w312rp0+u9/cY9Ul958kpl56JVdw==
-=+JCX
------END PGP SIGNATURE-----
-
---coW1UanIXdwHEo32--
+>
+> So we'd somehow need to handle stuck WRITE requests.   I don't see an
+> easy way to do this "on demand", when something actually starts
+> waiting on PG_writeback.  Alternatively the page copy could be done
+> after a timeout, which is ugly, but much easier to implement.
+>
+> Also splice from the fuse dev would need to copy those pages, but that
+> shouldn't be a problem, since it's just moving the copy from one place
+> to another.
+>
+> Thanks,
+> Miklos
 
