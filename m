@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-26628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A74395A9FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:26:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BA895AA02
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 03:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD426B2424F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:26:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D57D2826A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 01:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E3C42AA8;
-	Thu, 22 Aug 2024 01:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9081BC49;
+	Thu, 22 Aug 2024 01:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2SzzZlW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uAC6VEWh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE0E171D2;
-	Thu, 22 Aug 2024 01:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F90E13C90A;
+	Thu, 22 Aug 2024 01:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724289719; cv=none; b=GHR086GWQq2aKxSw+DtZ5QI/zj/fvVnkq0sYQ3Ap9v7b03tVtEHOQcEv19BHieGZlkgmDvAzRY/pltTNYLSPS9wum64JisF/aiVFdtpByiNTPERIEGlvZ20xtDEsqfAaiyx79vbDfg+0GJ76k4kdRLl5ot0UOLkS1HrnEkWySdw=
+	t=1724289730; cv=none; b=tUrYlMPpIXrRBi3RW5jdvX8Gv/E26oiYY7MKeD0AnV48NHLvWVQaumMBnl296IcUbgJ7v6JLPCHKpcapVjHzSpQmlVl17bSHmer7qFcoNXKx8aLUjX1pQjvEXhztqqsvgP2YtAt+iJaqqe7R1yhWXpAJFx9pCQ+e3nImyh7U9aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724289719; c=relaxed/simple;
-	bh=daws7+gY8b6XFlV57O+J5ZaQ5dAS4S0GI4Vh7sgzmHk=;
+	s=arc-20240116; t=1724289730; c=relaxed/simple;
+	bh=sPSz542BQgC8GDr8WCulUI2iE6roG4Js5HwD3OcoqCo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=emiFVf6Ngxl2+Wo6jwXoliZrqvXx4P6P4KHejsgqQ8XQ2ZaoLJLwl5/FwZg7k1KsIR0HK8PbmqCexJ20fbI97yvmOtV6QTfmX9mvybRLysRLU46ePH/b9k1hsfLtN665cfDlch4pZ+vnpCN6WyUfxwsH1YZqsrVNjhVAta93e14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2SzzZlW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C13CC4AF0E;
-	Thu, 22 Aug 2024 01:21:47 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=E/VaYWgeT7FuKOJd4sf+aJN69Jma/lCNH4NhJ2gnTvn+XxLDEvph14Dl3xgOeR5wu6xQtsX8JhYvtKKA7zrBTiGF00MVtmtLXUxNYn+P2wQXk8ws0sOeWip4T8fz8uM7cf3knffRFuoA005rOHdm7wofZtW7AJ0QEHznXGZ10r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uAC6VEWh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35A24C32781;
+	Thu, 22 Aug 2024 01:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724289718;
-	bh=daws7+gY8b6XFlV57O+J5ZaQ5dAS4S0GI4Vh7sgzmHk=;
+	s=k20201202; t=1724289729;
+	bh=sPSz542BQgC8GDr8WCulUI2iE6roG4Js5HwD3OcoqCo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=N2SzzZlWrpt8Jm3M9Lk0RsbKbQsbQOKF56oki6goMGe+JUZiRuo86HjvdiymYMFgi
-	 aJGqqpt2rFwDOoJQeRUAQVaZucCfYDLOxUJPi5owOYTQiwlNbrEq40xmYHjGSI2n9t
-	 tqNXhiOB945uEVnrvJLv7aEOyXWskAmrbT9APLO0I5FFhsOBU+6TsVn9pfHQ3+DjnW
-	 Hqbx3gVbORp9mxO2OTY1Racr8K60gIqCK3hfR3XWO2mYpIFWKbNY+jkf/2MWbfgdfF
-	 eEgU80bFrgRrSTRlX0IEXVyzom1m5wg1/6qNlhmLQlThbBMv4jrTZ3c2JKj0MxIrQy
-	 a/9VX4dZlq6ng==
+	b=uAC6VEWhqTL+cBNI2eAUFI40yJ6zaIbicFzZHIA9aVQhz9+Nmj1EPHgtejkleUwU2
+	 9eoLbSp2FoFQTA9mHeTOqm6a/cmAGA0AFvzkvpmrMcOK0GOF4qWO+Sg5XE5dDs7fdY
+	 DjtdvHZaCyv1G/PS0AfMPwUsDQCeuOC58d/2Qe1JQN/XW4WpNaD3f9ZrtCM2FB3Tgf
+	 u6GwLRRCSsqUp/M1on4cDxitAMb4pBdeTW2QVEyeDMzaaLfINMhdkjGI5CIBxaIi9M
+	 4abWcFCb9kARtAD6hw6hMCqfdRGtMxnPISIgSGFhJn1v1uNlGlpwE5OA9wUTgn4u+2
+	 dQ8Lz1RMoBGvA==
 From: Mark Brown <broonie@kernel.org>
-Date: Thu, 22 Aug 2024 02:15:32 +0100
-Subject: [PATCH v11 29/39] kselftest/arm64: Add GCS as a detected feature
- in the signal tests
+Date: Thu, 22 Aug 2024 02:15:33 +0100
+Subject: [PATCH v11 30/39] kselftest/arm64: Add framework support for GCS
+ to signal handling tests
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240822-arm64-gcs-v11-29-41b81947ecb5@kernel.org>
+Message-Id: <20240822-arm64-gcs-v11-30-41b81947ecb5@kernel.org>
 References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
 In-Reply-To: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -80,69 +80,58 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1894; i=broonie@kernel.org;
- h=from:subject:message-id; bh=daws7+gY8b6XFlV57O+J5ZaQ5dAS4S0GI4Vh7sgzmHk=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmxpE6+uDGXOrHu7dWlfoHceJS64ORE2ytQeM2CSbG
- WOSbh+qJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZsaROgAKCRAk1otyXVSH0FJ8B/
- 950p7I6dTc2xdrp9nDT25KJnOmX295fGMFlkIfUWIW2tE0A5Ek+ot64DwjGY2JUq/YwvDTiUQDvIfU
- JSdzn16tYWbpgeAZoWxSoZ9gWQ9JKvG7hN4EvL07eAnO/JTWgTafP0RFKe0CMi18aYtZlaTXKYN1Ef
- i7YqaDOz0tr2hqdWRxMH91NN9GXHWaSzbJqiCmzYu1M9tilqxYl6OUtnqgRijV3W+9bE42WVJmVdVe
- eWgHCgaCg79Rf/S3zmhKi5n++WuNGiDG+iaR2nPkDHfivx6gOizpcWK5krV9WkRpXqqgFxvnhUbdCQ
- ao4AZ6l38aB1w6FTfVNB/3v+VPO9WS
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1664; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=sPSz542BQgC8GDr8WCulUI2iE6roG4Js5HwD3OcoqCo=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmxpE7VRZgG2Z7/DOjWxHR2ISARiB0523hr1ytG8M7
+ JL8y1+CJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZsaROwAKCRAk1otyXVSH0EQUB/
+ 4keLewH0EzA9rHUse6NUxquX1JhR5vNrTj+fWGR0Iuq3Jd7vUcyPg1KOgUkrJbapQqOa7/MvsfkH2P
+ snPa1PsqGlRCYJMszDiUb4y9NmpGrG5vtHoctMSNxgEm/2WdgD9KAN5LP/WVJLijPAQ1QfXhodpTx7
+ FvXCsBAOmHxJ0BypQiv2yDwUhqLqUzlbsaGWGtuye5kO5OT8o/pRmysdBh/1U2FW92ZtKNo+iB3qNZ
+ jEFOn4MtGN+pUdl1PvzyJGXfiPOA0Ry9FrSkLzpgvro1tLNymg+WYe3FBnZDoDsaOVGmDDz/+05kZY
+ yqMAf+H3DK8lyrZ396WQp3EudgGO+V
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-In preparation for testing GCS related signal handling add it as a feature
-we check for in the signal handling support code.
+Teach the framework about the GCS signal context, avoiding warnings on
+the unknown context.
 
 Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- tools/testing/selftests/arm64/signal/test_signals.h       | 2 ++
- tools/testing/selftests/arm64/signal/test_signals_utils.c | 3 +++
- 2 files changed, 5 insertions(+)
+ tools/testing/selftests/arm64/signal/testcases/testcases.c | 7 +++++++
+ tools/testing/selftests/arm64/signal/testcases/testcases.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/tools/testing/selftests/arm64/signal/test_signals.h b/tools/testing/selftests/arm64/signal/test_signals.h
-index 1e6273d81575..7ada43688c02 100644
---- a/tools/testing/selftests/arm64/signal/test_signals.h
-+++ b/tools/testing/selftests/arm64/signal/test_signals.h
-@@ -35,6 +35,7 @@ enum {
- 	FSME_BIT,
- 	FSME_FA64_BIT,
- 	FSME2_BIT,
-+	FGCS_BIT,
- 	FMAX_END
- };
+diff --git a/tools/testing/selftests/arm64/signal/testcases/testcases.c b/tools/testing/selftests/arm64/signal/testcases/testcases.c
+index 674b88cc8c39..49d036e97996 100644
+--- a/tools/testing/selftests/arm64/signal/testcases/testcases.c
++++ b/tools/testing/selftests/arm64/signal/testcases/testcases.c
+@@ -217,6 +217,13 @@ bool validate_reserved(ucontext_t *uc, size_t resv_sz, char **err)
+ 				*err = "Bad size for fpmr_context";
+ 			new_flags |= FPMR_CTX;
+ 			break;
++		case GCS_MAGIC:
++			if (flags & GCS_CTX)
++				*err = "Multiple GCS_MAGIC";
++			if (head->size != sizeof(struct gcs_context))
++				*err = "Bad size for gcs_context";
++			new_flags |= GCS_CTX;
++			break;
+ 		case EXTRA_MAGIC:
+ 			if (flags & EXTRA_CTX)
+ 				*err = "Multiple EXTRA_MAGIC";
+diff --git a/tools/testing/selftests/arm64/signal/testcases/testcases.h b/tools/testing/selftests/arm64/signal/testcases/testcases.h
+index 7727126347e0..dc3cf777dafe 100644
+--- a/tools/testing/selftests/arm64/signal/testcases/testcases.h
++++ b/tools/testing/selftests/arm64/signal/testcases/testcases.h
+@@ -20,6 +20,7 @@
+ #define EXTRA_CTX	(1 << 3)
+ #define ZT_CTX		(1 << 4)
+ #define FPMR_CTX	(1 << 5)
++#define GCS_CTX		(1 << 6)
  
-@@ -43,6 +44,7 @@ enum {
- #define FEAT_SME		(1UL << FSME_BIT)
- #define FEAT_SME_FA64		(1UL << FSME_FA64_BIT)
- #define FEAT_SME2		(1UL << FSME2_BIT)
-+#define FEAT_GCS		(1UL << FGCS_BIT)
+ #define KSFT_BAD_MAGIC	0xdeadbeef
  
- /*
-  * A descriptor used to describe and configure a test case.
-diff --git a/tools/testing/selftests/arm64/signal/test_signals_utils.c b/tools/testing/selftests/arm64/signal/test_signals_utils.c
-index 0dc948db3a4a..89ef95c1af0e 100644
---- a/tools/testing/selftests/arm64/signal/test_signals_utils.c
-+++ b/tools/testing/selftests/arm64/signal/test_signals_utils.c
-@@ -30,6 +30,7 @@ static char const *const feats_names[FMAX_END] = {
- 	" SME ",
- 	" FA64 ",
- 	" SME2 ",
-+	" GCS ",
- };
- 
- #define MAX_FEATS_SZ	128
-@@ -329,6 +330,8 @@ int test_init(struct tdescr *td)
- 			td->feats_supported |= FEAT_SME_FA64;
- 		if (getauxval(AT_HWCAP2) & HWCAP2_SME2)
- 			td->feats_supported |= FEAT_SME2;
-+		if (getauxval(AT_HWCAP2) & HWCAP2_GCS)
-+			td->feats_supported |= FEAT_GCS;
- 		if (feats_ok(td)) {
- 			if (td->feats_required & td->feats_supported)
- 				fprintf(stderr,
 
 -- 
 2.39.2
