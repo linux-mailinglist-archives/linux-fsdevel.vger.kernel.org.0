@@ -1,128 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-26690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C361795B0C3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99DBD95B0F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 10:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80387284EB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 08:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6B91F22078
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 08:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F794171088;
-	Thu, 22 Aug 2024 08:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB54216EBED;
+	Thu, 22 Aug 2024 08:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FJI970c3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTysZ2OU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B3D16D4EF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 08:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBCB16DEB4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 08:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724316131; cv=none; b=Au9ewYjpYR321qXiG/HXhyxg7SjOVyBIxyZUIu6jhOslZGYWfsd4/L3dE3uIWHWnqPNdO5jMTrDVWjpGUvbcuHWX0xIq5+Zb+gTRXc3Rl3N47+Y5yOOlePSdmg8+WBpKW45MoqxGotelOtJCA61F4fkccoJpK40dfaPxrol6RVQ=
+	t=1724316835; cv=none; b=C9EOg9D1vIOfjyCWWL6ATjEBlrB8WSO4Vn7YrdBiHeGaqS262bLazOm8SvtfVozGKnNMncscSQGuFGx6nOJseVIau3agTTVrUDfhP+1LubCb+GuRoaM6N5tnSAADO1BGphcfAxX0ufFkz+0JbMdatKo73HfGOSopVvMqGEe9Rl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724316131; c=relaxed/simple;
-	bh=zOwZKwgQbYh9I6K5vOjV4zHXa+b8rQusxeapSFGjSGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AN4yfUyM3oE880UGHw5yxko/4FcynXuzWTHY4q18I1wh0z0lWrEFeOZ1bpBZhdsvIn9uvHSLHRw+cBQtrxfooLOkzlseDf/YlId+FhTiOXDjhZQ/X6P8pvR+Yn4pNJR1uU1rpYwIh5Nvg206DNAYi/lamZGJ4Sg5vFl+uGipijs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=FJI970c3; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f3e071eb64so7329641fa.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 01:42:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724316127; x=1724920927; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bn43WhWNELjWx/Xqi85FuxI5tpjHJSqlZGW7dAS/4hA=;
-        b=FJI970c3Rer+TpNqutIKvgcFJ3eJ0WNhfdY+CR2GmgWu4kHbJgXDh1uYJ7sd3Be0bz
-         y533t2b2Jrph83IOJg2z+MIH3KsPKSkFhIi4n+GDxBVu+MYF4b+4UJ3MTHlo22imD8lM
-         /YDVDXpsv0bsaX8xoowaXipeRCxh6a6aQTEoE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724316127; x=1724920927;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bn43WhWNELjWx/Xqi85FuxI5tpjHJSqlZGW7dAS/4hA=;
-        b=hVWRttr6xJPkJZiLv/jCnLmRTc+1XalJHUDqeLFKu5RvZ9wcgsQnCgBdQCJeViWJp/
-         ajO2N6jhGdUfC8mYlLZz8kjfFDzOyQYB4jg27S65+Yq0QUu7OxyhH5TzpbIB7lu/uuZp
-         8LV7lgj7K4BZe2qbz5Ec0DTZ3iFjnjLy5KMohjDPbMVt5lxuQi25i4DXfQaJIKctrGYk
-         bwGcOQ5hsrTjG67KFqxsB6hG73us7TH3ArK8jmDfNh5OCnCRLkBvADfyd91ZFYcPCZr7
-         4jRDXEExmKzLrfoeGkbE5Gvkql7WEZjHPufYE6m8jo3/+CT1aKg79CaACepXJPYTiHOW
-         xeZA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3+nVGnTvELtuKQNdFglyzkr9G8j8/10urN/y1S4599q2Z6GkknPDKY4FQRkc6pXPy4wvRCSs+Pw66024R@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGIfVFjDP/iYBhCKC1Y2/UAZDYe0OSYmOcivZFYzdU8YkOD3Kp
-	dmga65SSmmlwGRq3uKU55zqKzSdnwB4D44xU3AWtF6gBBY+rUtiNsdYrMCGzZtG/seavnSzsG6W
-	DNbb9F2PYpY+yLqC3kJ4RvqTNHLArHrOKnb4O5w==
-X-Google-Smtp-Source: AGHT+IG/YZ/WLpUENQ2C2Qgrv8N5KPSpA05zNxhVmjt9aj0GznyncRlTONhGYjX9dV5Eh1HlsEUMjsLQEPEEDjHgszQ=
-X-Received: by 2002:a2e:4c11:0:b0:2f3:ed2d:a944 with SMTP id
- 38308e7fff4ca-2f405d962c7mr8408181fa.15.1724316127228; Thu, 22 Aug 2024
- 01:42:07 -0700 (PDT)
+	s=arc-20240116; t=1724316835; c=relaxed/simple;
+	bh=VBUZ9a94snb1UwxfdooO1UuV32+v4Cy7G2iDXQB5k9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q7OXRvJGGCrftLNvfd9Ll5SR7X8W/PdvU4aLxwyI9TXT3Rk/SpqvR5M949XUfe5WuvyOd09WzWnQY1Y7U3imRZ/z7drcJaK2Hjw7pL1ZczoPJJ8lezHi1RVQkBtp03vqn1Ndl8oaUVPdfYfA4FgJc4PZqQmBLwSJWQEIcMKee0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTysZ2OU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C234C4AF0B;
+	Thu, 22 Aug 2024 08:53:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724316834;
+	bh=VBUZ9a94snb1UwxfdooO1UuV32+v4Cy7G2iDXQB5k9c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pTysZ2OUzSQbUGrHxQTBprKKlgI79jpKWvxTSZu0qwY+DP2/h0lEsvLN3aMLzzjXr
+	 DHKGxLscQImhHPO7QxTRIWXYE8p2Pg9fM2Y0CtV1jPTOuZR+GDW5jY4KcZUA6aozj/
+	 ugr/ozKJkXorJsu4DePnecv1buGWIOR8IGHaMA5mXllu7Khr0DLOPUMMw1+azUON/U
+	 o3E1UoqqQBvj1JgszOn+O8wS+MxUl/TzhnBKgvvL5lAPGy7LKDg9BxVl9pq80YoS5G
+	 pMRp4ekxsn19Wz/STu4B27Y1Uh0551zVvKBRuKMekFJkEeEtiz7UOcNJMuBA57v328
+	 g8sHB4kJeWMPw==
+Date: Thu, 22 Aug 2024 10:53:50 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	NeilBrown <neilb@suse.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 5/6] inode: port __I_LRU_ISOLATING to var event
+Message-ID: <20240822-wachdienst-mahnmal-b25d2f0fb350@brauner>
+References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
+ <20240821-work-i_state-v2-5-67244769f102@kernel.org>
+ <fcf964b8b46af36e31f9dda2a8f2180eb999f35c.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822012523.141846-1-vinicius.gomes@intel.com> <20240822012523.141846-11-vinicius.gomes@intel.com>
-In-Reply-To: <20240822012523.141846-11-vinicius.gomes@intel.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 22 Aug 2024 10:41:55 +0200
-Message-ID: <CAJfpegsq5NruDeL6HRgkpj=QvdOKdnqOwZiRS0VY092=h0RSkg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/16] overlayfs/file: Convert to cred_guard()
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com, 
-	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fcf964b8b46af36e31f9dda2a8f2180eb999f35c.camel@kernel.org>
 
-On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
-<vinicius.gomes@intel.com> wrote:
->
-> Replace the override_creds_light()/revert_creds_light() pairs of
-> operations with cred_guard()/cred_scoped_guard().
->
-> Only ovl_copyfile() and ovl_fallocate() use cred_scoped_guard(),
-> because of 'goto', which can cause the cleanup flow to run on garbage
-> memory.
+On Wed, Aug 21, 2024 at 03:41:45PM GMT, Jeff Layton wrote:
+> On Wed, 2024-08-21 at 17:47 +0200, Christian Brauner wrote:
+> > Port the __I_LRU_ISOLATING mechanism to use the new var event mechanism.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/inode.c | 26 +++++++++++++++++---------
+> >  1 file changed, 17 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index d18e1567c487..c8a5c63dc980 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -510,8 +510,7 @@ static void inode_unpin_lru_isolating(struct inode *inode)
+> >  	spin_lock(&inode->i_lock);
+> >  	WARN_ON(!(inode->i_state & I_LRU_ISOLATING));
+> >  	inode->i_state &= ~I_LRU_ISOLATING;
+> > -	smp_mb();
+> > -	wake_up_bit(&inode->i_state, __I_LRU_ISOLATING);
+> > +	inode_wake_up_bit(inode, __I_LRU_ISOLATING);
+> >  	spin_unlock(&inode->i_lock);
+> >  }
+> >  
+> > @@ -519,13 +518,22 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
+> >  {
+> >  	lockdep_assert_held(&inode->i_lock);
+> >  	if (inode->i_state & I_LRU_ISOLATING) {
+> > -		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
+> > -		wait_queue_head_t *wqh;
+> > -
+> > -		wqh = bit_waitqueue(&inode->i_state, __I_LRU_ISOLATING);
+> > -		spin_unlock(&inode->i_lock);
+> > -		__wait_on_bit(wqh, &wq, bit_wait, TASK_UNINTERRUPTIBLE);
+> > -		spin_lock(&inode->i_lock);
+> > +		struct wait_bit_queue_entry wqe;
+> > +		struct wait_queue_head *wq_head;
+> > +
+> > +		wq_head = inode_bit_waitqueue(&wqe, inode, __I_LRU_ISOLATING);
+> > +		for (;;) {
+> > +			prepare_to_wait_event(wq_head, &wqe.wq_entry,
+> > +					      TASK_UNINTERRUPTIBLE);
+> > +			if (inode->i_state & I_LRU_ISOLATING) {
+> > +				spin_unlock(&inode->i_lock);
+> > +				schedule();
+> > +				spin_lock(&inode->i_lock);
+> > +				continue;
+> > +			}
+> > +			break;
+> > +		}
+> 
+> nit: personally, I'd prefer this, since you wouldn't need the brackets
+> or the continue:
+> 
+> 			if (!(inode->i_state & LRU_ISOLATING))
+> 				break;
+> 			spin_unlock();
+> 			schedule();
 
-This doesn't sound good.  Is this a compiler bug or a limitation of guards?
-
-> @@ -211,9 +208,8 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
->         ovl_inode_lock(inode);
->         real.file->f_pos = file->f_pos;
->
-> -       old_cred = ovl_override_creds_light(inode->i_sb);
-> +       cred_guard(ovl_creds(inode->i_sb));
->         ret = vfs_llseek(real.file, offset, whence);
-> -       revert_creds_light(old_cred);
-
-Why not use scoped guard, like in fallocate?
-
-> @@ -398,9 +393,8 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
->
->         /* Don't sync lower file for fear of receiving EROFS error */
->         if (file_inode(real.file) == ovl_inode_upper(file_inode(file))) {
-> -               old_cred = ovl_override_creds_light(file_inode(file)->i_sb);
-> +               cred_guard(ovl_creds(file_inode(file)->i_sb));
->                 ret = vfs_fsync_range(real.file, start, end, datasync);
-> -               revert_creds_light(old_cred);
-
-Same here.
-
-> @@ -584,9 +571,8 @@ static int ovl_flush(struct file *file, fl_owner_t id)
->                 return err;
->
->         if (real.file->f_op->flush) {
-> -               old_cred = ovl_override_creds_light(file_inode(file)->i_sb);
-> +               cred_guard(ovl_creds(file_inode(file)->i_sb));
-
-What's the scope of this?  The function or the inner block?
-
-Thanks,
-Miklos
+Yeah, that's nicer. I'll use that.
 
