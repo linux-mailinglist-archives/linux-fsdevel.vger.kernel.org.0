@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-26759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0485195B97F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:12:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D96595B980
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CAAB1C2107A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 246671F237CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453531CB31B;
-	Thu, 22 Aug 2024 15:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6F01CC897;
+	Thu, 22 Aug 2024 15:12:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FA71C9EBB;
-	Thu, 22 Aug 2024 15:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD311CC898;
+	Thu, 22 Aug 2024 15:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724339524; cv=none; b=VHtV9yDdLOQGQyEcnhgdlXm18WsHtXywJgbX5080hvrdiyYxzO25Ka1BtTCfWK+Blg6k0kySla2GtdHYxjjwN5d+xjupiF1Yru1TkseAnfsae9iCqMEaoij9EDmxCRSDIdKhNNU0mTMs4ASoSvPzzWhXgjB7grqhlPPhIbIRP6o=
+	t=1724339529; cv=none; b=nvZoShR6v5ymKvxFjkd7cUO1rQk6P/3knRkvr4xYAsScaQ0XPgamlWBsquQMfgppTIo1FLf9H7I+MXm4ZEbtD6BpOMtM0eUbxaJe0QR4DYY9t8yFvxT2yCgMGnzg05qRir5yrRCJW02RY8eLlhi3ET6lPJM2Mv/enQiWtIvVVlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724339524; c=relaxed/simple;
-	bh=F8HWYYiT71JftKhM7UvrdMTjkoi+V8aWLXnOuQKgtOE=;
+	s=arc-20240116; t=1724339529; c=relaxed/simple;
+	bh=ZjlTg9IfHwj+Pg2E7QLQpREY4z75u3xVAtdDaVM12eQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GD4BxIQeOdSw/0PiOeAAP0W9QCiJNDnjrFItWwYhjnKk1hA/pXn04TzUhsEikPnBmerqO3kgiO5EXbfvZCXtC0CbfUk88Qiet8XVnyW5a65MsUH9xorEvEMl+tbHH//wtr/j58IxztCE+BTdy50mr56yn3ECw/2/ANkZbTIEYYA=
+	 MIME-Version; b=itHBIo99skQmy7DongyfFfg5oCYLHXJxumVfaaXF6UCxeOp4e9y3hA0BazaK9ayaetMfeGFNrTP6E59JJIKg7nNB1v9YXMIAAui5cmpxUGoPRTIE0PggPa65GOqxgYWNDY1VX2az/p+HEWV7Y+ZKWOy74pSZ069hUy5JwC1KnSs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A265DA7;
-	Thu, 22 Aug 2024 08:12:29 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BA89FEC;
+	Thu, 22 Aug 2024 08:12:33 -0700 (PDT)
 Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F69E3F58B;
-	Thu, 22 Aug 2024 08:11:59 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CF9D3F58B;
+	Thu, 22 Aug 2024 08:12:03 -0700 (PDT)
 From: Joey Gouly <joey.gouly@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: nd@arm.com,
@@ -64,9 +64,9 @@ Cc: nd@arm.com,
 	x86@kernel.org,
 	kvmarm@lists.linux.dev,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 09/30] KVM: arm64: use `at s1e1a` for POE
-Date: Thu, 22 Aug 2024 16:10:52 +0100
-Message-Id: <20240822151113.1479789-10-joey.gouly@arm.com>
+Subject: [PATCH v5 10/30] KVM: arm64: Sanitise ID_AA64MMFR3_EL1
+Date: Thu, 22 Aug 2024 16:10:53 +0100
+Message-Id: <20240822151113.1479789-11-joey.gouly@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240822151113.1479789-1-joey.gouly@arm.com>
 References: <20240822151113.1479789-1-joey.gouly@arm.com>
@@ -78,48 +78,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-FEAT_ATS1E1A introduces a new instruction: `at s1e1a`.
-This is an address translation, without permission checks.
+Add the missing sanitisation of ID_AA64MMFR3_EL1, making sure we
+solely expose S1POE and TCRX (we currently don't support anything
+else).
 
-POE allows read permissions to be removed from S1 by the guest.  This means
-that an `at` instruction could fail, and not get the IPA.
+[joey: Took Marc's patch for S1PIE, and changed it for S1POE]
 
-Switch to using `at s1e1a` so that KVM can get the IPA regardless of S1
-permissions.
-
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Reviewed-by: Marc Zyngier <maz@kernel.org>
 ---
- arch/arm64/kvm/hyp/include/hyp/fault.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm64/kvm/sys_regs.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git arch/arm64/kvm/hyp/include/hyp/fault.h arch/arm64/kvm/hyp/include/hyp/fault.h
-index 487c06099d6f..17df94570f03 100644
---- arch/arm64/kvm/hyp/include/hyp/fault.h
-+++ arch/arm64/kvm/hyp/include/hyp/fault.h
-@@ -14,6 +14,7 @@
- 
- static inline bool __translate_far_to_hpfar(u64 far, u64 *hpfar)
- {
-+	int ret;
- 	u64 par, tmp;
- 
- 	/*
-@@ -27,7 +28,9 @@ static inline bool __translate_far_to_hpfar(u64 far, u64 *hpfar)
- 	 * saved the guest context yet, and we may return early...
- 	 */
- 	par = read_sysreg_par();
--	if (!__kvm_at(OP_AT_S1E1R, far))
-+	ret = system_supports_poe() ? __kvm_at(OP_AT_S1E1A, far) :
-+	                              __kvm_at(OP_AT_S1E1R, far);
-+	if (!ret)
- 		tmp = read_sysreg_par();
- 	else
- 		tmp = SYS_PAR_EL1_F; /* back to the guest */
+diff --git arch/arm64/kvm/sys_regs.c arch/arm64/kvm/sys_regs.c
+index e7208b59ea12..0f13378e761c 100644
+--- arch/arm64/kvm/sys_regs.c
++++ arch/arm64/kvm/sys_regs.c
+@@ -1556,6 +1556,9 @@ static u64 __kvm_read_sanitised_id_reg(const struct kvm_vcpu *vcpu,
+ 	case SYS_ID_AA64MMFR2_EL1:
+ 		val &= ~ID_AA64MMFR2_EL1_CCIDX_MASK;
+ 		break;
++	case SYS_ID_AA64MMFR3_EL1:
++		val &= ID_AA64MMFR3_EL1_TCRX | ID_AA64MMFR3_EL1_S1POE;
++		break;
+ 	case SYS_ID_MMFR4_EL1:
+ 		val &= ~ARM64_FEATURE_MASK(ID_MMFR4_EL1_CCIDX);
+ 		break;
+@@ -2427,7 +2430,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+ 					ID_AA64MMFR2_EL1_IDS |
+ 					ID_AA64MMFR2_EL1_NV |
+ 					ID_AA64MMFR2_EL1_CCIDX)),
+-	ID_SANITISED(ID_AA64MMFR3_EL1),
++	ID_WRITABLE(ID_AA64MMFR3_EL1, (ID_AA64MMFR3_EL1_TCRX	|
++				       ID_AA64MMFR3_EL1_S1POE)),
+ 	ID_SANITISED(ID_AA64MMFR4_EL1),
+ 	ID_UNALLOCATED(7,5),
+ 	ID_UNALLOCATED(7,6),
 -- 
 2.25.1
 
