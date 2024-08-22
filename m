@@ -1,221 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-26799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F86695BB1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 17:56:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BBF95BB49
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 18:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C59D22846F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 15:56:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70C87B2867B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Aug 2024 16:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2B31CDA24;
-	Thu, 22 Aug 2024 15:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8DA1CDA00;
+	Thu, 22 Aug 2024 16:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+bjkfa+"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="SyT41BUl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FBF1C9EC4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 15:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79F51CCB35;
+	Thu, 22 Aug 2024 16:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724342081; cv=none; b=D2qyxQAQL26qG/b/YK0dxnKWTDIszur3ueEoYlZOSweHbQsvw131IurCqY0Xht0DPGzEqnNDEdvlE+GO5C/IzRZZBY38hlqoVcZegri+JiDOc5j3uj/Y2pIUEX8mLZQxhdieO4ji/BRA8vK05fZ12/CCh4bOVCMPGz2x7kJibwM=
+	t=1724342491; cv=none; b=hJHJ8K8JLuLP98PBucNpjk5yCQlKmbdqMKEG1tA0Rnjr9Y0LLD+JXa8bzTpRMrlGMlwm3w0x7AlsiHy1WQsKSY7DeSQOYmQUzVk3ouOF/Zth2a48UMf9Pd+2DcyUIE+ZX3q9dvVbf6tIEl3P4lr8u5trum63LyiJkR/wCd9q/dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724342081; c=relaxed/simple;
-	bh=7lQjj5dCi8eEyKQjuIV+5YAL27d0fBI+oJIjaO8r5pc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qFPmNEf9EPKKGIfhktU27258vwNdV1VXw18N/Cq7oAMc/P/iUXuICBthI0HVck28jTteGruml4rJ7PgNIbmF7Hq7yTi51nKGwYn56W8f7YZx9nHQS2IYNdKF0hp4fekNgBBq6yGSGfdsiN1HQMrhIHqwwz1tRng0yDPjeigD6ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+bjkfa+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9009C32782;
-	Thu, 22 Aug 2024 15:54:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724342081;
-	bh=7lQjj5dCi8eEyKQjuIV+5YAL27d0fBI+oJIjaO8r5pc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=c+bjkfa+Y/5+jYT9klYoACZX8JtINJkWc+r4KLt4INsxObIg+mR5wUdQ399RSj2J1
-	 JI/dDr3oHrdYUsu5G7R1QVNAdgcGhUmQd1W2xO2z9kcfLb1K+FIqEZGgjmmLwoXlkk
-	 N5RJGo7Ja+Pb7kp6TQHROfa2tr/s/weuc2nkObQUYMyeMszsirbI3M16A2Y0+HEaYV
-	 KqyEGJYJUsYsSob7yjDVAVtwDrOj5rc4TWZtSF7av4I4yCmbz1DdV3r2zRLUVJ3Gu4
-	 5oxVGeaZvXSk9lodC2Xj2mYQb4pvXjbefAJ/6/elyjTu0tIMOigV5ayyQWhpruj0/B
-	 WLEhvFExPyNdw==
-Message-ID: <356da6069aded21b5bec3978dff2700273d68ca8.camel@kernel.org>
-Subject: Re: [PATCH] fs: switch f_iocb_flags and f_version
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>, Linus
- Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>
-Date: Thu, 22 Aug 2024 11:54:33 -0400
-In-Reply-To: <20240822-mutig-kurznachrichten-68d154f25f41@brauner>
-References: <20240822-mutig-kurznachrichten-68d154f25f41@brauner>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1724342491; c=relaxed/simple;
+	bh=Jfq1MZlSgGGrlPD8Z3vKkb/RmId0zw2x3I5tk4DbX5g=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H9Kk2W1YPu7J5O0u8Vr8gRxB7lFbGs539dSrEEOTMyVZrbf75d4BJVbjQjOY3x/iKIYfErOhBxbdTR5TT6K+x2jw8yX7FOAlcuaAojvrbClhrOWn4z3tCdgSedYcoZmWnX77moqo/nDrioniVRiee1vkevs3wJinXwc6UrKycZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=SyT41BUl; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 6DF4821D7;
+	Thu, 22 Aug 2024 15:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1724341463;
+	bh=iQBbo0cE9rzhyZt5Z1w6ZWxA0nXj4w9QVoU8WkNcpxU=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=SyT41BUlBJgpSnGkWFYtURS/3tawhLdjSrjmG4siFrwrw3ESRE++RIX5biZsxTFrv
+	 HE7fFc0faEOUalqenQXw/OqaHew0kpZs3rX8xB6aDtjBxl9R9Kguuu/CzLrQTBBgPI
+	 dTrXRoEOGVwWsfAT7v9kbUBs1bgeFECyqcCPFrac=
+Received: from ntfs3vm.paragon-software.com (192.168.211.133) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Thu, 22 Aug 2024 18:52:19 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <ntfs3@lists.linux.dev>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH 03/14] fs/ntfs3: Separete common code for file_read/write iter/splice
+Date: Thu, 22 Aug 2024 18:51:56 +0300
+Message-ID: <20240822155207.600355-4-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240822155207.600355-1-almaz.alexandrovich@paragon-software.com>
+References: <20240822155207.600355-1-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-T24gVGh1LCAyMDI0LTA4LTIyIGF0IDE2OjE0ICswMjAwLCBDaHJpc3RpYW4gQnJhdW5lciB3cm90
-ZToKPiBOb3cgdGhhdCB3ZSBzaHJhbmsgc3RydWN0IGZpbGUgYnkgMjQgYnl0ZXMgd2Ugc3RpbGwg
-aGF2ZSBhIDQgYnl0ZSBob2xlLgo+IE1vdmUgZl92ZXJzaW9uIGludG8gdGhlIHVuaW9uIGFuZCBm
-X2lvY2JfZmxhZ3Mgb3V0IG9mIHRoZSB1bmlvbiB0byBmaWxsCj4gdGhhdCBob2xlIGFuZCBzaHJp
-bmsgc3RydWN0IGZpbGUgYnkgYW5vdGhlciA0IGJ5dGVzLiBUaGlzIGJyaW5ncyBzdHJ1Y3QKPiBm
-aWxlIHRvIDIwMCBieXRlcyBkb3duIGZyb20gMjMyIGJ5dGVzLgo+IAo+IEkndmUgdHJpZWQgdG8g
-YXVkaXQgYWxsIGNvZGVwYXRocyB0aGF0IHVzZSBmX3ZlcnNpb24gYW5kIG5vbmUgb2YgdGhlbQo+
-IHJlbHkgb24gaXQgaW4gZmlsZS0+Zl9vcC0+cmVsZWFzZSgpIGFuZCBuZXZlciBoYXZlIHNpbmNl
-IGNvbW1pdAo+IDFkYTE3N2U0YzNmNCAoIkxpbnV4LTIuNi4xMi1yYzIiKS4KPiAKPiBTaWduZWQt
-b2ZmLWJ5OiBDaHJpc3RpYW4gQnJhdW5lciA8YnJhdW5lckBrZXJuZWwub3JnPgo+IC0tLQo+IHN0
-cnVjdCBmaWxlIHsKPiDCoMKgwqDCoMKgwqDCoCB1bmlvbiB7Cj4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgIHN0cnVjdCBjYWxsYmFja19oZWFkIGZfdGFza193b3JrO8KgwqDCoMKgwqDC
-oMKgIC8qwqDCoMKgwqAgMMKgwqDCoCAxNiAqLwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBzdHJ1Y3QgbGxpc3Rfbm9kZcKgIGZfbGxpc3Q7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgLyrCoMKgwqDCoCAwwqDCoMKgwqAgOCAqLwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCB1NjTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZl92ZXJzaW9uO8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgLyrCoMKgwqDCoCAwwqDCoMKgwqAgOCAqLwo+IMKgwqDCoMKgwqDCoMKg
-IH07wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLyrCoMKgwqDCoCAwwqDCoMKg
-IDE2ICovCj4gwqDCoMKgwqDCoMKgwqAgc3BpbmxvY2tfdMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIGZfbG9jazvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC8qwqDCoMKgIDE2
-wqDCoMKgwqAgNCAqLwo+IMKgwqDCoMKgwqDCoMKgIGZtb2RlX3TCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCBmX21vZGU7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAv
-KsKgwqDCoCAyMMKgwqDCoMKgIDQgKi8KPiDCoMKgwqDCoMKgwqDCoCBhdG9taWNfbG9uZ190wqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZl9jb3VudDvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCAvKsKgwqDCoCAyNMKgwqDCoMKgIDggKi8KPiDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgbXV0ZXjC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZfcG9zX2xvY2s7wqDCoMKgwqDCoMKgwqDCoMKg
-wqAgLyrCoMKgwqAgMzLCoMKgwqAgMzIgKi8KPiDCoMKgwqDCoMKgwqDCoCAvKiAtLS0gY2FjaGVs
-aW5lIDEgYm91bmRhcnkgKDY0IGJ5dGVzKSAtLS0gKi8KPiDCoMKgwqDCoMKgwqDCoCBsb2ZmX3TC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZfcG9zO8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCAvKsKgwqDCoCA2NMKgwqDCoMKgIDggKi8KPiDCoMKgwqDCoMKg
-wqDCoCB1bnNpZ25lZCBpbnTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZfZmxhZ3M7wqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLyrCoMKgwqAgNzLCoMKgwqDCoCA0ICovCj4gwqDCoMKg
-wqDCoMKgwqAgdW5zaWduZWQgaW50wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmX2lvY2Jf
-ZmxhZ3M7wqDCoMKgwqDCoMKgwqDCoCAvKsKgwqDCoCA3NsKgwqDCoMKgIDQgKi8KPiDCoMKgwqDC
-oMKgwqDCoCBzdHJ1Y3QgZm93bl9zdHJ1Y3QgKsKgwqDCoMKgwqDCoCBmX293bmVyO8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIC8qwqDCoMKgIDgwwqDCoMKgwqAgOCAqLwo+IMKgwqDCoMKgwqDC
-oMKgIGNvbnN0IHN0cnVjdCBjcmVkwqAgKsKgwqDCoMKgwqDCoCBmX2NyZWQ7wqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoCAvKsKgwqDCoCA4OMKgwqDCoMKgIDggKi8KPiDCoMKgwqDCoMKgwqDC
-oCBzdHJ1Y3QgZmlsZV9yYV9zdGF0ZcKgwqDCoMKgwqDCoCBmX3JhO8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIC8qwqDCoMKgIDk2wqDCoMKgIDMyICovCj4gwqDCoMKgwqDCoMKgwqAg
-LyogLS0tIGNhY2hlbGluZSAyIGJvdW5kYXJ5ICgxMjggYnl0ZXMpIC0tLSAqLwo+IMKgwqDCoMKg
-wqDCoMKgIHN0cnVjdCBwYXRowqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZfcGF0aDvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC8qwqDCoCAxMjjCoMKgwqAgMTYgKi8KPiDCoMKg
-wqDCoMKgwqDCoCBzdHJ1Y3QgaW5vZGUgKsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmX2lub2Rl
-O8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC8qwqDCoCAxNDTCoMKgwqDCoCA4ICovCj4gwqDC
-oMKgwqDCoMKgwqAgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9uc8KgICogZl9vcDvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIC8qwqDCoCAxNTLCoMKgwqDCoCA4ICovCj4gwqDCoMKgwqDCoMKgwqAg
-dm9pZCAqwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmX3NlY3VyaXR5
-O8KgwqDCoMKgwqDCoMKgwqDCoMKgIC8qwqDCoCAxNjDCoMKgwqDCoCA4ICovCj4gwqDCoMKgwqDC
-oMKgwqAgdm9pZCAqwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwcml2
-YXRlX2RhdGE7wqDCoMKgwqDCoMKgwqDCoCAvKsKgwqAgMTY4wqDCoMKgwqAgOCAqLwo+IMKgwqDC
-oMKgwqDCoMKgIHN0cnVjdCBobGlzdF9oZWFkICrCoMKgwqDCoMKgwqDCoCBmX2VwO8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC8qwqDCoCAxNzbCoMKgwqDCoCA4ICovCj4gwqDCoMKg
-wqDCoMKgwqAgc3RydWN0IGFkZHJlc3Nfc3BhY2UgKsKgwqDCoMKgIGZfbWFwcGluZzvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIC8qwqDCoCAxODTCoMKgwqDCoCA4ICovCj4gwqDCoMKgwqDCoMKgwqAg
-LyogLS0tIGNhY2hlbGluZSAzIGJvdW5kYXJ5ICgxOTIgYnl0ZXMpIC0tLSAqLwo+IMKgwqDCoMKg
-wqDCoMKgIGVycnNlcV90wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZfd2Jf
-ZXJyO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAvKsKgwqAgMTkywqDCoMKgwqAgNCAqLwo+IMKg
-wqDCoMKgwqDCoMKgIGVycnNlcV90wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IGZfc2JfZXJyO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAvKsKgwqAgMTk2wqDCoMKgwqAgNCAq
-Lwo+IAo+IMKgwqDCoMKgwqDCoMKgIC8qIHNpemU6IDIwMCwgY2FjaGVsaW5lczogNCwgbWVtYmVy
-czogMjAgKi8KPiDCoMKgwqDCoMKgwqDCoCAvKiBsYXN0IGNhY2hlbGluZTogOCBieXRlcyAqLwo+
-IH07Cj4gLS0tCj4gwqBpbmNsdWRlL2xpbnV4L2ZzLmggfCA1ICsrLS0tCj4gwqAxIGZpbGUgY2hh
-bmdlZCwgMiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9p
-bmNsdWRlL2xpbnV4L2ZzLmggYi9pbmNsdWRlL2xpbnV4L2ZzLmgKPiBpbmRleCA3ZWI0ZjcwNmQ1
-OWYuLjdhMjk5NDQwNWU4ZSAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2xpbnV4L2ZzLmgKPiArKysg
-Yi9pbmNsdWRlL2xpbnV4L2ZzLmgKPiBAQCAtOTk4LDkgKzk5OCw4IEBAIHN0cnVjdCBmaWxlIHsK
-PiDCoAkJc3RydWN0IGNhbGxiYWNrX2hlYWTCoAlmX3Rhc2tfd29yazsKPiDCoAkJLyogZnB1dCgp
-IG11c3QgdXNlIHdvcmtxdWV1ZSAobW9zdCBrZXJuZWwgdGhyZWFkcykuICovCj4gwqAJCXN0cnVj
-dCBsbGlzdF9ub2RlCWZfbGxpc3Q7Cj4gLQkJdW5zaWduZWQgaW50wqAJCWZfaW9jYl9mbGFnczsK
-PiArCQl1NjQJCQlmX3ZlcnNpb247Cj4gwqAJfTsKPiAtCj4gwqAJLyoKPiDCoAkgKiBQcm90ZWN0
-cyBmX2VwLCBmX2ZsYWdzLgo+IMKgCSAqIE11c3Qgbm90IGJlIHRha2VuIGZyb20gSVJRIGNvbnRl
-eHQuCj4gQEAgLTEwMTEsNiArMTAxMCw3IEBAIHN0cnVjdCBmaWxlIHsKPiDCoAlzdHJ1Y3QgbXV0
-ZXgJCWZfcG9zX2xvY2s7Cj4gwqAJbG9mZl90CQkJZl9wb3M7Cj4gwqAJdW5zaWduZWQgaW50CQlm
-X2ZsYWdzOwo+ICsJdW5zaWduZWQgaW50wqAJCWZfaW9jYl9mbGFnczsKPiDCoAlzdHJ1Y3QgZm93
-bl9zdHJ1Y3QJKmZfb3duZXI7Cj4gwqAJY29uc3Qgc3RydWN0IGNyZWQJKmZfY3JlZDsKPiDCoAlz
-dHJ1Y3QgZmlsZV9yYV9zdGF0ZQlmX3JhOwo+IEBAIC0xMDE4LDcgKzEwMTgsNiBAQCBzdHJ1Y3Qg
-ZmlsZSB7Cj4gwqAJc3RydWN0IGlub2RlCQkqZl9pbm9kZTsJLyogY2FjaGVkIHZhbHVlICovCj4g
-wqAJY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucwkqZl9vcDsKPiDCoAo+IC0JdTY0CQkJZl92
-ZXJzaW9uOwo+IMKgI2lmZGVmIENPTkZJR19TRUNVUklUWQo+IMKgCXZvaWQJCQkqZl9zZWN1cml0
-eTsKPiDCoCNlbmRpZgoKUmV2aWV3ZWQtYnk6IEplZmYgTGF5dG9uIDxqbGF5dG9uQGtlcm5lbC5v
-cmc+Cg==
+The common code for handling encrypted, dedup, and compressed files
+has been moved to check_read_restriction() and check_write_restriction().
+
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+---
+ fs/ntfs3/file.c | 116 +++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 76 insertions(+), 40 deletions(-)
+
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index d31eae611fe0..1cbaab1163b9 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -842,10 +842,12 @@ int ntfs3_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	return err;
+ }
+ 
+-static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
++/*
++ * check_read_restriction:
++ * common code for ntfs_file_read_iter and ntfs_file_splice_read
++ */
++static int check_read_restriction(struct inode *inode)
+ {
+-	struct file *file = iocb->ki_filp;
+-	struct inode *inode = file_inode(file);
+ 	struct ntfs_inode *ni = ntfs_i(inode);
+ 
+ 	if (unlikely(ntfs3_forced_shutdown(inode->i_sb)))
+@@ -856,11 +858,6 @@ static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+-	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
+-		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
+-		return -EOPNOTSUPP;
+-	}
+-
+ #ifndef CONFIG_NTFS3_LZX_XPRESS
+ 	if (ni->ni_flags & NI_FLAG_COMPRESSED_MASK) {
+ 		ntfs_inode_warn(
+@@ -875,37 +872,44 @@ static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+-	return generic_file_read_iter(iocb, iter);
++	return 0;
+ }
+ 
+-static ssize_t ntfs_file_splice_read(struct file *in, loff_t *ppos,
+-				     struct pipe_inode_info *pipe, size_t len,
+-				     unsigned int flags)
++/*
++ * ntfs_file_read_iter - file_operations::read_iter
++ */
++static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ {
+-	struct inode *inode = file_inode(in);
++	struct file *file = iocb->ki_filp;
++	struct inode *inode = file_inode(file);
+ 	struct ntfs_inode *ni = ntfs_i(inode);
++	ssize_t err;
+ 
+-	if (unlikely(ntfs3_forced_shutdown(inode->i_sb)))
+-		return -EIO;
++	err = check_read_restriction(inode);
++	if (err)
++		return err;
+ 
+-	if (is_encrypted(ni)) {
+-		ntfs_inode_warn(inode, "encrypted i/o not supported");
++	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
++		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+-#ifndef CONFIG_NTFS3_LZX_XPRESS
+-	if (ni->ni_flags & NI_FLAG_COMPRESSED_MASK) {
+-		ntfs_inode_warn(
+-			inode,
+-			"activate CONFIG_NTFS3_LZX_XPRESS to read external compressed files");
+-		return -EOPNOTSUPP;
+-	}
+-#endif
++	return generic_file_read_iter(iocb, iter);
++}
+ 
+-	if (is_dedup(ni)) {
+-		ntfs_inode_warn(inode, "read deduplicated not supported");
+-		return -EOPNOTSUPP;
+-	}
++/*
++ * ntfs_file_splice_read - file_operations::splice_read
++ */
++static ssize_t ntfs_file_splice_read(struct file *in, loff_t *ppos,
++				     struct pipe_inode_info *pipe, size_t len,
++				     unsigned int flags)
++{
++	struct inode *inode = file_inode(in);
++	ssize_t err;
++
++	err = check_read_restriction(inode);
++	if (err)
++		return err;
+ 
+ 	return filemap_splice_read(in, ppos, pipe, len, flags);
+ }
+@@ -1173,14 +1177,11 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+ }
+ 
+ /*
+- * ntfs_file_write_iter - file_operations::write_iter
++ * check_write_restriction:
++ * common code for ntfs_file_write_iter and ntfs_file_splice_write
+  */
+-static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
++static int check_write_restriction(struct inode *inode)
+ {
+-	struct file *file = iocb->ki_filp;
+-	struct inode *inode = file_inode(file);
+-	ssize_t ret;
+-	int err;
+ 	struct ntfs_inode *ni = ntfs_i(inode);
+ 
+ 	if (unlikely(ntfs3_forced_shutdown(inode->i_sb)))
+@@ -1191,13 +1192,31 @@ static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+-	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
+-		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
++	if (is_dedup(ni)) {
++		ntfs_inode_warn(inode, "write into deduplicated not supported");
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+-	if (is_dedup(ni)) {
+-		ntfs_inode_warn(inode, "write into deduplicated not supported");
++	return 0;
++}
++
++/*
++ * ntfs_file_write_iter - file_operations::write_iter
++ */
++static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct file *file = iocb->ki_filp;
++	struct inode *inode = file_inode(file);
++	struct ntfs_inode *ni = ntfs_i(inode);
++	ssize_t ret;
++	int err;
++
++	err = check_write_restriction(inode);
++	if (err)
++		return err;
++
++	if (is_compressed(ni) && (iocb->ki_flags & IOCB_DIRECT)) {
++		ntfs_inode_warn(inode, "direct i/o + compressed not supported");
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+@@ -1321,6 +1340,23 @@ int ntfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	return err;
+ }
+ 
++/*
++ * ntfs_file_splice_write - file_operations::splice_write
++ */
++static ssize_t ntfs_file_splice_write(struct pipe_inode_info *pipe,
++				      struct file *file, loff_t *ppos,
++				      size_t len, unsigned int flags)
++{
++	ssize_t err;
++	struct inode *inode = file_inode(file);
++
++	err = check_write_restriction(inode);
++	if (err)
++		return err;
++
++	return iter_file_splice_write(pipe, file, ppos, len, flags);
++}
++
+ // clang-format off
+ const struct inode_operations ntfs_file_inode_operations = {
+ 	.getattr	= ntfs_getattr,
+@@ -1342,10 +1378,10 @@ const struct file_operations ntfs_file_operations = {
+ 	.compat_ioctl	= ntfs_compat_ioctl,
+ #endif
+ 	.splice_read	= ntfs_file_splice_read,
++	.splice_write	= ntfs_file_splice_write,
+ 	.mmap		= ntfs_file_mmap,
+ 	.open		= ntfs_file_open,
+ 	.fsync		= generic_file_fsync,
+-	.splice_write	= iter_file_splice_write,
+ 	.fallocate	= ntfs_fallocate,
+ 	.release	= ntfs_file_release,
+ };
+-- 
+2.34.1
 
 
