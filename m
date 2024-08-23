@@ -1,70 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-26921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF5F95D23B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 17:59:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2056395D25E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 18:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582411F2543A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 15:59:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E5D7B28351
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 16:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEEB18BB9D;
-	Fri, 23 Aug 2024 15:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD83218A6DA;
+	Fri, 23 Aug 2024 16:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IN50sgtq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2FB189535;
-	Fri, 23 Aug 2024 15:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2837F18953D;
+	Fri, 23 Aug 2024 16:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428760; cv=none; b=Ha3sJI0A4EAEBlngAZBusI0R5miEhdRwj0ynJeVq3tZtP8dXS37jktwO9KMGqnR5FD06YDKN4DpJIrZwklmpI/U3EUfywb5AK6t1oyMGP1q9NrXAjjMki8AA0OP5GhyE/lPY5VZK8JyP/AjSCNzmN6F5KDsZ0eHi6nmtzIYkL34=
+	t=1724429018; cv=none; b=AMm15MCf/CR6IWjco5xpJUCFwAVYYh6nQI0/CHWjji22qs4p4K7U45JAZjQlQ6QdtY/9LPess59x29qV2IALQ4TqgDzBHUm8kiICyWEi0RiPRzgvjhs734DVc1oY6EGqw1jofIPgXdiB8A/+wrDStDygTtE6bu8L7tsPvqAb7EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428760; c=relaxed/simple;
-	bh=yTzD+B1z/7Em4lUy5BYRbkbEdL3Ho0yTaWOm/CmXCIw=;
+	s=arc-20240116; t=1724429018; c=relaxed/simple;
+	bh=sAXWLmq5dCO5ShdooN53JdvnZT7SiGU/RUtmqaz6qbA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cJMCOE2izDzMywFqc3DbRIF8HbFWhSd2S3sL1R/vtoV2S8ranaIPxMXOkwznXRYRAmXwEZZxuy+i9FIBZSQkaElZSidVXivOcMpBnQ15o/dmMZcKP3xIVBocsyLa1LvIUNHXgOf+jYDkWfV/85OmhOoggz/uFupLOnYW3yNq+9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B7C1C32786;
-	Fri, 23 Aug 2024 15:59:14 +0000 (UTC)
-Date: Fri, 23 Aug 2024 16:59:11 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 25/39] arm64/signal: Expose GCS state in signal frames
-Message-ID: <Zsixz6Y9xWxqaQaV@arm.com>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-25-41b81947ecb5@kernel.org>
- <ZshYTyNbveD7WMyJ@arm.com>
- <ZshjmuYcejbhaSBg@finisterre.sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ekJXDT1X4Asd/R5pQdFjHYoX0YXuzehE8NsUxbOrvWJ12pATtwDcketiV8U8pJKTS9SApHSDy0PK6rJmngL7/ktV418bjs67F6L/j6adQ7OvjfcYsmllrEsQo3voq9BNsflOZQhZbPWix83Mr+a90XGqt8R2iYUzFeraLJz+vzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IN50sgtq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A46A2C4AF0B;
+	Fri, 23 Aug 2024 16:03:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724429017;
+	bh=sAXWLmq5dCO5ShdooN53JdvnZT7SiGU/RUtmqaz6qbA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IN50sgtqrPVIzkoHO4a0F3/Y59lc8ASOmMQbGkDUnDwpfB5fDG9+W2giqHuleMonm
+	 lnPbpvKgNhnbEN7JH6Rcv8xCMn++bj2xTAeRfVU8EIKfJp6QkL0yPeqY6wv07YDw7n
+	 p8yPQgNHlPUieuuFDmB7y2Dsz63NsKzyBr2RZLfvAoZTALAhjobDtKgYF0auRAgoNp
+	 9OYoZ868xAeDxMYBjYiwZZEcQxeoy9ej795pxgvFQqC/aqdVtuPJAzNGcJdc1mL8SJ
+	 xjQEaCnVm2cu7e1xKd/8QuRfU5TMaSddx5ibXvXFNQ3BY1SByH5H63oTj2LhHcONgD
+	 o/GuGB996tc8w==
+Date: Fri, 23 Aug 2024 09:03:37 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, chandan.babu@oracle.com, dchinner@redhat.com,
+	hch@lst.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hare@suse.de,
+	martin.petersen@oracle.com, catherine.hoang@oracle.com,
+	kbusch@kernel.org
+Subject: Re: [PATCH v5 4/7] xfs: Support FS_XFLAG_ATOMICWRITES for forcealign
+Message-ID: <20240823160337.GA865349@frogsfrogsfrogs>
+References: <20240817094800.776408-1-john.g.garry@oracle.com>
+ <20240817094800.776408-5-john.g.garry@oracle.com>
+ <20240821170734.GJ865349@frogsfrogsfrogs>
+ <a2a0ec49-37e5-4e0f-9916-d9d05cf5bb96@oracle.com>
+ <20240822203842.GT865349@frogsfrogsfrogs>
+ <d4e9baa3-d7d2-4e89-bc5d-91c85dbd4b8b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,79 +67,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZshjmuYcejbhaSBg@finisterre.sirena.org.uk>
+In-Reply-To: <d4e9baa3-d7d2-4e89-bc5d-91c85dbd4b8b@oracle.com>
 
-On Fri, Aug 23, 2024 at 11:25:30AM +0100, Mark Brown wrote:
-> On Fri, Aug 23, 2024 at 10:37:19AM +0100, Catalin Marinas wrote:
-> > On Thu, Aug 22, 2024 at 02:15:28AM +0100, Mark Brown wrote:
+On Fri, Aug 23, 2024 at 09:39:44AM +0100, John Garry wrote:
+> On 22/08/2024 21:38, Darrick J. Wong wrote:
+> > > > This (atomicwrites && !forcealign) ought to be checked in the superblock
+> > > > verifier.
+> > > You mean in xfs_fs_validate_params(), right?
+> > xfs_validate_sb_common, where we do all the other ondisk superblock
+> > validation.
 > 
-> > > +	gcs_preserve_current_state();
-> > > +	gcspr = current->thread.gcspr_el0 - 8;
+> I don't see any other xfs_has_XXX checks in xfs_validate_sb_common(), but
+> this could be the first...
+
+The superblock verifier runs at a lower level in the filesystem -- it
+checks that the ondisk superblock doesn't contain any inconsistent
+fields or impossible feature combinations, etc.  Once the ondisk
+superblock is verified, the information there is used to set XFS_FEAT_*
+bits in m_features, which is what the xfs_has_* predicates access.
+
+Therefore, you have to look at the raw superblock fields, not the
+xfs_has_ predicates:
+
+	if ((sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES) &&
+	    !(sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_FORCEALIGN)) {
+		xfs_warn(mp, "atomic writes feature requires force align feature.");
+		return -EINVAL;
+	}
+
+The reason for checking this state here is that atomicwrites absolutely
+requires forcealign and that dependency will always be true.
+
+> The only other place in which I see a pattern of similar SB feature flag
+> checks is in xfs_finish_flags() for checking xfs_has_crc() &&
+> xfs_has_noattr2().
 > 
-> > > +	__put_user_error(gcspr, &ctx->gcspr, err);
+> So if we go with xfs_validate_sb_common(), then should the check in
+> xfs_fs_fill_super() for xfs_has_forcealign() && xfs_has_realtime()/reflink()
+> be relocated to xfs_validate_sb_common() also:
+
+No.  Contrast the above with (forcealign && !realtime), which at least
+in theory is temporary, so that should live in xfs_fs_fill_super.  Or
+put another way, xfs_fs_fill_super is where we screen out the kernel
+being too stupid to support something it found on disk.
+
+--D
+
 > 
-> > Do we actually need to store the gcspr value after the cap token has
-> > been pushed or just the value of the interrupted context? If we at some
-> > point get a sigaltshadowstack() syscall, the saved GCS wouldn't point to
-> > the new stack but rather the original one. Unwinders should be able to
-> > get the actual GCSPR_EL0 register, no need for the sigcontext to point
-> > to the new shadow stack.
+> https://lore.kernel.org/linux-xfs/20240813163638.3751939-8-john.g.garry@oracle.com/
 > 
-> We could store either the cap token or the interrupted GCSPR_EL0 (the
-> address below the cap token).  It felt more joined up to go with the cap
-> token since notionally signal return is consuming the cap token but
-> either way would work, we could just add an offset when looking at the
-> pointer.
-
-In a hypothetical sigaltshadowstack() scenario, would the cap go on the
-new signal shadow stack or on the old one? I assume on the new one but
-in sigcontext we'd save the original GCSPR_EL0. In such hypothetical
-case, the original GCSPR_EL0 would not need 8 subtracted.
-
-I need to think some more about this. The gcs_restore_signal() function
-makes sense, it starts with the current GCSPR_EL0 on the signal stack
-and consumes the token, adds 8 to the shadow stack pointer. The
-restore_gcs_context() one is confusing as it happens before consuming
-the cap token and assumes that the GCSPR_EL0 value actually points to
-the signal stack. If we ever implement an alternative shadow stack, the
-original GCSPR_EL0 of the interrupted context would be lost. I know it's
-not planned for now but the principles should be the same. The
-sigframe.uc should store the interrupted state.
-
-To me the order for sigreturn should be first to consume the cap token,
-validate it etc. and then restore GCSPR_EL0 to whatever was saved in the
-sigframe.uc prior to the signal being delivered.
-
-> > Also in gcs_signal_entry() in the previous patch, we seem to subtract 16
-> > rather than 8.
+> Cheers,
+> John
 > 
-> We need to not only place a cap but also a GCS frame for the sigreturn
-> trampoline, the sigreturn trampoline isn't part of the interrupted
-> context so isn't included in the signal frame but it needs to have a
-> record on the GCS so that the signal handler doesn't just generate a GCS
-> fault if it tries to return to the trampoline.  This means that the
-> GCSPR_EL0 that is set for the signal handler needs to move two entries,
-> one for the cap token and one for the trampoline.
-
-Yes, this makes sense.
-
-> > What I find confusing is that both restore_gcs_context() and
-> > gcs_restore_signal() seem to touch current->thread.gcspr_el0 and the
-> > sysreg. Which one takes priority? I should probably check the branch out
-> > to see the end result.
-> 
-> restore_gcs_context() is loading values from the signal frame in memory
-> (which will only happen if a GCS context is present) then
-> gcs_restore_signal() consumes the token at the top of the stack.  The
-> split is because userspace can skip the restore_X_context() functions
-> for the optional signal frame elements by removing them from the context
-> but we want to ensure that we always consume a token.
-
-I agree we should always consume a token but this should be done from
-the actual hardware GCSPR_EL0 value on the sigreturn call rather than
-the one restored from sigframe.uc. The restoring should be the last
-step.
-
--- 
-Catalin
 
