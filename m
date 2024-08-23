@@ -1,136 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-26914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF6795D005
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 16:35:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB96A95D02E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 16:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE8551C242EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 14:35:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89DBEB2CD94
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 14:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43E11917D0;
-	Fri, 23 Aug 2024 14:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491F6188902;
+	Fri, 23 Aug 2024 14:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWd+f4b2"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ozuKZJeI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F87188937;
-	Fri, 23 Aug 2024 14:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66C118786B;
+	Fri, 23 Aug 2024 14:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724423046; cv=none; b=brsPWpRoVCz9EMskndFyFSWjhXXlAyWueD5EwxaekBGNYizWgGfpevBjqWCjs5vjH8a1Cms5fGyDMt6HXgssrJ0r+M0m+ncrmMMFN0ZO2ZbLvxfQKhnN79kgC9Mg7DXYp49O5NwSXpO2LFbXRYdLDLA5oYVh/EKkIxMmu+7aqy0=
+	t=1724423353; cv=none; b=bmhHBGvJBToz+7l2yuVAaCee1FX0s5LcR00q9pW4aS0iUlLs1ysBAxGHfEPVqwNt6Gx9+4tVHP6Jp38Y9lwKQDRm7931+hSlxQAZz2uBDnPeHnkQEX5ZsciYTeLQ+XJ8lnJLafLjt5S/A8mp/CWpGuoftUO1xhjBMp9MRcommt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724423046; c=relaxed/simple;
-	bh=SLKDSke/wUGBLMnN3vAtRLfAoCEBzo3yPCvhIy66cMs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TSx1XSDl6WzM14ShLxg9yTAfcaoiNbqbgFB5mB+QXN8OKxxaU/kqowuwlCe0wx1KlowQz6bsWZp1nQLoePF0FYPJ/uFPotLH1PQ4hCn/6ezMMbaG0UHmDwJdzEHXWCT1GoQV/WN/mRJ8Sb0VCmfDcPHxR52pI5O9YduDjJgcTQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWd+f4b2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35ACC32786;
-	Fri, 23 Aug 2024 14:24:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724423045;
-	bh=SLKDSke/wUGBLMnN3vAtRLfAoCEBzo3yPCvhIy66cMs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VWd+f4b2S+YOt8PKvFw5i15F+pg7C+6aSIQa9MizkvCFuKxRrud1ZrCcdJw/AD8xf
-	 /ciMYGVTP9SSf+vfKrx0qnwjy7dWxFvcVJPSQpWaB/HEu+TDMG96BQBTJQkCPLWquS
-	 5pDyqFoAfYqdYLcl4qlUcydaXnm37OR69LPY+4+DXAp/jUN7D+5lMBrtrArsId1mi4
-	 pW9OA1PmIwTosxByk06YAlOi3xUJADfAVKbLQUwhj5xm/pWHgmCSI5EcY+7t6E50o/
-	 p6JoNnNhp5kL7TURfNRLZsw2sWTD74MEIxhFolJNAITP7r9wHti3u4tjeIEseeXYi8
-	 YypkKASN5KcaA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1shVCt-006ICL-3b;
-	Fri, 23 Aug 2024 15:24:03 +0100
-Date: Fri, 23 Aug 2024 15:24:02 +0100
-Message-ID: <86y14nwc59.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	nd@arm.com,
-	akpm@linux-foundation.org,
-	aneesh.kumar@kernel.org,
-	aneesh.kumar@linux.ibm.com,
-	anshuman.khandual@arm.com,
-	bp@alien8.de,
-	broonie@kernel.org,
-	catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
+	s=arc-20240116; t=1724423353; c=relaxed/simple;
+	bh=YCwmfOQ4+j5ZTua/y1w9BRTVk9yDOdoM0dPoqpyi2pM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lqKiFnEwUH8e/IedwETFBpOIaKZyQrlB+AWnPplIUls7Onz6JsTL7tPjAwhGiHHB+t9k3CR7whwV9lJXKNr3+x//l+NTr1D4dkVHS+i/EACod8I8O1g0WWMLaQajrHABTqzbNjANnu8swUrAGEfCllX/EBiYfCw/rqqk9teplN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ozuKZJeI; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=s7YPy+QRRfbLk38fcA19eeP3a4qxXdeXDpbv4x1kpi0=; b=ozuKZJeIB1KUMIczATebdsWN3P
+	aefS7hQGqVuJlxfTVgpH22EUXlsTymgj+GsNfBMCaI8GiwjUMXvT1wy9Z7aNXTIUNYnSIf7HIIjCc
+	n+AYUjOoW6rkw4JZXOOHX87CknOHrw2adzCqzQcE6Rq6qChGkqTGfj6wDuXBRk67FIuOKsLmqeffW
+	E4dCtAyB40n8by8IgpTZ7tY4LZbL29Sk2J655LHStRXCR/BkJZGam6gk9JTrBvwDvGAGuMOto3wxO
+	OdlOMi4wbz+lxQ8T7367hCQoe+nO8VzebTV9/qwXu3r9Zd3nAvusno1M8aJhcH8i7+z9r7Qva9hhJ
+	F6/GXBMg==;
+Received: from [177.76.152.96] (helo=localhost)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1shVHa-00458Y-5f; Fri, 23 Aug 2024 16:28:54 +0200
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+To: linux-doc@vger.kernel.org
+Cc: corbet@lwn.net,
 	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linuxppc-dev@lists.ozlabs.org,
-	mingo@redhat.com,
-	mpe@ellerman.id.au,
-	naveen.n.rao@linux.ibm.com,
-	npiggin@gmail.com,
-	oliver.upton@linux.dev,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org,
-	szabolcs.nagy@arm.com,
-	tglx@linutronix.de,
-	x86@kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 08/30] KVM: arm64: make kvm_at() take an OP_AT_*
-In-Reply-To: <20240823134811.GG32156@willie-the-truck>
-References: <20240822151113.1479789-1-joey.gouly@arm.com>
-	<20240822151113.1479789-9-joey.gouly@arm.com>
-	<20240823134811.GG32156@willie-the-truck>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linux-block@vger.kernel.org,
+	kernel-dev@igalia.com,
+	kernel@gpiccoli.net,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH V2] Documentation: Document the kernel flag bdev_allow_write_mounted
+Date: Fri, 23 Aug 2024 11:26:07 -0300
+Message-ID: <20240823142840.63234-1-gpiccoli@igalia.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: will@kernel.org, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, nd@arm.com, akpm@linux-foundation.org, aneesh.kumar@kernel.org, aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de, broonie@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, mingo@redhat.com, mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com, oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org, szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 23 Aug 2024 14:48:11 +0100,
-Will Deacon <will@kernel.org> wrote:
-> 
-> On Thu, Aug 22, 2024 at 04:10:51PM +0100, Joey Gouly wrote:
-> > To allow using newer instructions that current assemblers don't know about,
-> > replace the `at` instruction with the underlying SYS instruction.
-> > 
-> > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Oliver Upton <oliver.upton@linux.dev>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Reviewed-by: Marc Zyngier <maz@kernel.org>
-> > ---
-> >  arch/arm64/include/asm/kvm_asm.h       | 3 ++-
-> >  arch/arm64/kvm/hyp/include/hyp/fault.h | 2 +-
-> >  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> Marc -- what would you like to do with this patch? I think the POE series
-> is really close now, so ideally I'd queue the lot on a branch in arm64
-> and you could pull the first ~10 patches into kvmarm if you need 'em.
->
-> Would what work for you, or did you have something else in mind (since
-> this one is also included in your series adding nv support for AT).
+Commit ed5cc702d311 ("block: Add config option to not allow writing to mounted
+devices") added a Kconfig option along with a kernel command-line tuning to
+control writes to mounted block devices, as a means to deal with fuzzers like
+Syzkaller, that provokes kernel crashes by directly writing on block devices
+bypassing the filesystem (so the FS has no awareness and cannot cope with that).
 
-Yup, that works for me. I can take that prefix as the base for the AT
-series and drop my copy of this patch.
+The patch just missed adding such kernel command-line option to the kernel
+documentation, so let's fix that.
 
-Thanks,
+Cc: Darrick J. Wong <djwong@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+---
 
-	M.
+V2: Improved wording (thanks Darrick!)
 
+V1 link: https://lore.kernel.org/r/20240819225626.2000752-2-gpiccoli@igalia.com
+
+
+ Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 09126bb8cc9f..7c5283f11308 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -517,6 +517,18 @@
+ 			Format: <io>,<irq>,<mode>
+ 			See header of drivers/net/hamradio/baycom_ser_hdx.c.
+ 
++	bdev_allow_write_mounted=
++			Format: <bool>
++			Control the ability of directly writing to mounted block
++			devices' page cache, i.e., allow / disallow writes that
++			bypasses the FS. This was implemented as a means to
++			prevent fuzzers from crashing the kernel by overwriting
++			the metadata underneath a mounted FS without its awareness.
++			This also prevents destructive formatting of mounted
++			filesystems by naive storage tooling that don't use
++			O_EXCL. Default is Y and can be changed through the
++			Kconfig option CONFIG_BLK_DEV_WRITE_MOUNTED.
++
+ 	bert_disable	[ACPI]
+ 			Disable BERT OS support on buggy BIOSes.
+ 
 -- 
-Without deviation from the norm, progress is not possible.
+2.46.0
+
 
