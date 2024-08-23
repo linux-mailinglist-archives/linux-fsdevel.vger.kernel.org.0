@@ -1,181 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-27001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA66F95D8ED
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 00:01:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6858895D936
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 00:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C4B2B2118E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 22:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C2C284AC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 22:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8911C86F5;
-	Fri, 23 Aug 2024 22:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8257C1C871D;
+	Fri, 23 Aug 2024 22:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJhUw/1q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVIUBaMa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1A1195;
-	Fri, 23 Aug 2024 22:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3011139CFC;
+	Fri, 23 Aug 2024 22:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724450477; cv=none; b=Tts6HZLrgTPuVNecKVK3rEdEwtnxg+okY1lzAv/Rk/uVw6alQu8n+KHrxCCnR/+r7go9OzjaEFtUd0P2E3WE3BxTIwewcgwtyWUGTmeKg3eYbk3BD7GDiK6BBl1vTOUDB0c79Pqj6DEFGawwZh6AaJ01TorZiK68WhM8UGgIRug=
+	t=1724451728; cv=none; b=kESFMM5qDMRfWpYbEQTMztxM4fLXBdV2yDwKoyWWaERxYuYw5cBNn+DVxcjKiFEvqWaTNuWkDuEDCq5vxB/HJNyaty5AlBkaTX9hQBqp6LMEF81iVPiJ/XO0DF1RBGF24cE/e8/iuYmhPBjOz7g2bpnLiijJBSJwp0ke7NzKRB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724450477; c=relaxed/simple;
-	bh=4E2/SMw5ipU2qtwXN1Uwic3Rzbvi3xioIyGpbAx2lVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EcgypmTIJU0XR7o0nULt7S3/QGG12G6OV8vEQhZx81mjKR7K0cTyMjWUuGRyl7i08hyCJB7QDB92eixgkyvSzJUKQwLGoOh6k0akNFAuZKsuDPzbNsJlTqudtNKFnW4ZXUQRpcxW0qr6ax7oU2GLUsUmL6NtllOjGM1sqYzAp7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJhUw/1q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71569C32786;
-	Fri, 23 Aug 2024 22:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724450477;
-	bh=4E2/SMw5ipU2qtwXN1Uwic3Rzbvi3xioIyGpbAx2lVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DJhUw/1qZ9BDQyGdrwh4ZFy64bp7OwurHPaIZF/8dlHGGMyUg6oD3nsAesh264NNS
-	 FoGyn2Rq2QL39OrogIEFtmo21ioxgFBgEj7Es9kG5Qpgra3wSXqqpYQ1pNK2A8IoYg
-	 Z8fN8zNIL9aOQlXGKDnm0SrmFwR/DdFSAkSXCqRoUqve0c9CIlohY5Kez50qcxZXm+
-	 BBy4p4qNCrGMIXT5+V5RxKrFG95GKkg8ilN9BZLYBhNJwhkvW2QkCMhzkT8j4erCII
-	 zjx/mdrol0O8/FIK5z9vPsPhmzvc3K733r3dtwz1kN8Njo8cs83m645QMmL+XqdHr7
-	 WVHT/FDFTov3Q==
-Date: Fri, 23 Aug 2024 23:01:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 25/39] arm64/signal: Expose GCS state in signal frames
-Message-ID: <ZskGqU8BSvR01W30@finisterre.sirena.org.uk>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-25-41b81947ecb5@kernel.org>
- <ZshYTyNbveD7WMyJ@arm.com>
- <ZshjmuYcejbhaSBg@finisterre.sirena.org.uk>
- <Zsixz6Y9xWxqaQaV@arm.com>
+	s=arc-20240116; t=1724451728; c=relaxed/simple;
+	bh=z42+Q8AZanZAyEhdmQQpfFOP7RxuncrUYLIRyjSCh9o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C38aPCPHea+nMGaWt+uYWIwqb7/Lu87jkUC7RWgOCC+1+4e9vkgtXjevIwT/bdpqqjMlGEsuvJS5Dyt+opx3e9muSjJDhao7aBq0muBMOaeniM0bhYMPtVwy43mS/wNpUlcmXaSfr9NEtW676Vxj6I+Nnr3S7KNyRqFPBlD8sCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVIUBaMa; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7cd9e634ea9so1486912a12.0;
+        Fri, 23 Aug 2024 15:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724451726; x=1725056526; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=z42+Q8AZanZAyEhdmQQpfFOP7RxuncrUYLIRyjSCh9o=;
+        b=VVIUBaMaktKP9nz8snJlPUlrdtL0V6tViSNgHLtce/i8hJCHnPiTkMt4jtBDF1Cbza
+         gIChOUxuGFWyMcU5ZHDIll9/Oj3DE2YTGqxkauoD7Ru8PG+Qgjx0sLtOlc26u0Ao4It8
+         QYO/Hims1YqkAvJPh5azVmFjQCVvtAQ1twOIi7za9dbK5e4OQj236JXOVOEVa4xC9U6n
+         NqeYnd4p66poBn7tGELW+uLxqjwcoj7k2eee5kGyTAcartNf1xXRBsfJhvxy94HvJCZ3
+         KkQ6sLDYpigdpFEZbAvm9340eRGPwWw6OBcNujfaxqavx4p5hyaCJlVd4ooIz5cn4ta9
+         bSDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724451726; x=1725056526;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z42+Q8AZanZAyEhdmQQpfFOP7RxuncrUYLIRyjSCh9o=;
+        b=E680AjRAVjax+9sMNQs70o/T2qfnaHDyxq4Lpw5gJyEosq01zswm4viFz36GRMhxg5
+         nD+hGvjd2QAoNb4Buupu+cK7ia47jrCupvUJtTgTtss8qdLzENCcOh+CQzfeBx2Mmco8
+         LlgMsprGELCsqz0/FEPd0cdH1XCL3J4ZvoyH94wnqYG8qtOjouUoOBoNq+6oJ5B23NHO
+         e3khFDzU6BIisuGpMcPMY7jLmp4nQO368sY0gRJC88MbsgGmdKZeP22UFfpBwbnTKaS8
+         Io8Yit6NnF1AALc5IZzjhBsMX6idorBFsiqeMKRlUYxL6GmMqQR9mA1B6F1Wjm+5DBgB
+         tQjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTWu5y3n9Fr3oBi3bTdpXoChzYQC8I66m/3fimCxHvEh6q2zBxqQxbroiZ0qxfrIXl90A=@vger.kernel.org, AJvYcCVyij9FjGv4GwkxfEtGYJMO/9D/PVOALC1ivmzj1iU/bxvL7Bknr+TJC/hEwk91FLnRZo9UCEa9TMu4COjUSw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAB2/dh3nrcr3oOSUz9ApdrRadF/STOyY5GeNRGgsdbgE/zEZs
+	P6ayMpLfVdjhYvgM2y+JAUinps+seC/XhXgup4BYfl57rMrjlc29
+X-Google-Smtp-Source: AGHT+IHe2MZNqfdwKxtjHPiq7/ZoqoBvwMUroZDtf9P1IkJ3Smw4qpWQdX0dyd5EQEp0cv9vlkwxkQ==
+X-Received: by 2002:a05:6a20:c793:b0:1c6:f213:83b with SMTP id adf61e73a8af0-1cc89ed955emr3749733637.37.1724451725696;
+        Fri, 23 Aug 2024 15:22:05 -0700 (PDT)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d613a420cdsm4691284a91.28.2024.08.23.15.22.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 15:22:04 -0700 (PDT)
+Message-ID: <8fc31d49d4666599cc2ac6815ff3e0b09adc8a94.camel@gmail.com>
+Subject: Re: [PATCH v6 bpf-next 09/10] bpf: wire up sleepable
+ bpf_get_stack() and bpf_get_task_stack() helpers
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, adobriyan@gmail.com, 
+	shakeel.butt@linux.dev, hannes@cmpxchg.org, ak@linux.intel.com, 
+	osandov@osandov.com, song@kernel.org, jannh@google.com, 
+	linux-fsdevel@vger.kernel.org, willy@infradead.org
+Date: Fri, 23 Aug 2024 15:22:00 -0700
+In-Reply-To: <20240814185417.1171430-10-andrii@kernel.org>
+References: <20240814185417.1171430-1-andrii@kernel.org>
+	 <20240814185417.1171430-10-andrii@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BjuuYVXdnzsl9n3l"
-Content-Disposition: inline
-In-Reply-To: <Zsixz6Y9xWxqaQaV@arm.com>
-X-Cookie: Your love life will be... interesting.
 
+On Wed, 2024-08-14 at 11:54 -0700, Andrii Nakryiko wrote:
+> Add sleepable implementations of bpf_get_stack() and
+> bpf_get_task_stack() helpers and allow them to be used from sleepable
+> BPF program (e.g., sleepable uprobes).
+>=20
+> Note, the stack trace IPs capturing itself is not sleepable (that would
+> need to be a separate project), only build ID fetching is sleepable and
+> thus more reliable, as it will wait for data to be paged in, if
+> necessary. For that we make use of sleepable build_id_parse()
+> implementation.
+>=20
+> Now that build ID related internals in kernel/bpf/stackmap.c can be used
+> both in sleepable and non-sleepable contexts, we need to add additional
+> rcu_read_lock()/rcu_read_unlock() protection around fetching
+> perf_callchain_entry, but with the refactoring in previous commit it's
+> now pretty straightforward. We make sure to do rcu_read_unlock (in
+> sleepable mode only) right before stack_map_get_build_id_offset() call
+> which can sleep. By that time we don't have any more use of
+> perf_callchain_entry.
+>=20
+> Note, bpf_get_task_stack() will fail for user mode if task !=3D current.
+> And for kernel mode build ID are irrelevant. So in that sense adding
+> sleepable bpf_get_task_stack() implementation is a no-op. It feel right
+> to wire this up for symmetry and completeness, but I'm open to just
+> dropping it until we support `user && crosstask` condition.
+>=20
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
 
---BjuuYVXdnzsl9n3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+All seems logical.
+You skip wiring up support for sleepable bpf_get_task_stack() in
+tp_prog_func_proto(), pe_prog_func_proto() and
+raw_tp_prog_func_proto(), this is because these are used for programs
+that are never run in sleepable context, right?
 
-On Fri, Aug 23, 2024 at 04:59:11PM +0100, Catalin Marinas wrote:
-> On Fri, Aug 23, 2024 at 11:25:30AM +0100, Mark Brown wrote:
+Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
 
-> > We could store either the cap token or the interrupted GCSPR_EL0 (the
-> > address below the cap token).  It felt more joined up to go with the cap
-> > token since notionally signal return is consuming the cap token but
-> > either way would work, we could just add an offset when looking at the
-> > pointer.
+[...]
 
-> In a hypothetical sigaltshadowstack() scenario, would the cap go on the
-> new signal shadow stack or on the old one? I assume on the new one but
-> in sigcontext we'd save the original GCSPR_EL0. In such hypothetical
-> case, the original GCSPR_EL0 would not need 8 subtracted.
-
-I would have put the token on the old stack since that's what we'd be
-returning to.  This raises interesting questions about what happens if
-the reason for the signal is that we just overflowed the normal stack
-(which are among the issues that have got in the way of working out if
-or how we do something with sigaltshadowstack).  I'm not clear what the
-purpose of the token would be on the new stack, the token basically says
-"this is somewhere we can sigreturn to", that's not the case for the
-alternative stack.
-
-> I need to think some more about this. The gcs_restore_signal() function
-> makes sense, it starts with the current GCSPR_EL0 on the signal stack
-> and consumes the token, adds 8 to the shadow stack pointer. The
-> restore_gcs_context() one is confusing as it happens before consuming
-> the cap token and assumes that the GCSPR_EL0 value actually points to
-> the signal stack. If we ever implement an alternative shadow stack, the
-> original GCSPR_EL0 of the interrupted context would be lost. I know it's
-> not planned for now but the principles should be the same. The
-> sigframe.uc should store the interrupted state.
-
-I think the issues you're pointing out here go to the thing with the cap
-token marking a place we can sigreturn to and therefore being on the
-original stack.
-
-> To me the order for sigreturn should be first to consume the cap token,
-> validate it etc. and then restore GCSPR_EL0 to whatever was saved in the
-> sigframe.uc prior to the signal being delivered.
-
-To me what we're doing here is that the signal frame says where
-userspace wants to point GCSPR_EL0 in the returned context, we then go
-and confirm that this is a valid address by looking at it and checking
-for a token.  The token serves to validate what was saved in sigframe.uc
-so that it can't just be pointed at some random address.
-
-> > restore_gcs_context() is loading values from the signal frame in memory
-> > (which will only happen if a GCS context is present) then
-> > gcs_restore_signal() consumes the token at the top of the stack.  The
-> > split is because userspace can skip the restore_X_context() functions
-> > for the optional signal frame elements by removing them from the context
-> > but we want to ensure that we always consume a token.
-
-> I agree we should always consume a token but this should be done from
-> the actual hardware GCSPR_EL0 value on the sigreturn call rather than
-> the one restored from sigframe.uc. The restoring should be the last
-> step.
-
-If we look for a token at the GCSPR_EL0 on sigreturn then it wouldn't be
-valid to call sigreturn() (well, without doing something first to unwind
-the stack which seems hostile and would require code to become GCS aware
-that wouldn't otherwise), if you do a sigreturn from somewhere other
-than the vDSO then you'd have at least the vDSO signal frame left in the
-GCS.  You'd also be able to point GCSPR_EL0 to anywhere since we'd just
-load a value from the signal frame but not do the cap verification.
-
---BjuuYVXdnzsl9n3l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbJBqgACgkQJNaLcl1U
-h9BLswf/SWEpbfZkH/LtOITztzCmYc/9r1ewDv1+OENkYT92eXaB9xbvJoP9TSK7
-9L5zc2aRpMs8ND7Z79oBC2ukkLkNGlZgk50jrxAj/ABNYEwGhWr6WCEURjpJCREV
-waO+TZDL2bO84z/f9ES1W4aKPZfTVfDArJ7orEQM8OgkSdql3wE/D9qqw2FgivU+
-pO4BYgkO67qg2p1/UIlgWEJAQAgYLI60IZkP2g6CawlFdze3kHo5cnIBh0Ou3sxa
-+HfHlY5BIjhQvlSdEx5GfhZuGdRSUlZdYwbbJGKAXt9sB80z6QbAet3BfFUGt83I
-CqP6WBYkc5NW8mLg/8gZCbn3Quh5Xg==
-=fp7z
------END PGP SIGNATURE-----
-
---BjuuYVXdnzsl9n3l--
 
