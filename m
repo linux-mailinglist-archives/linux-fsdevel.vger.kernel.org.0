@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-26939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C94895D358
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 18:28:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D149D95D359
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 18:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4E61C22F96
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 16:28:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9091F23240
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 16:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB82D18EFF4;
-	Fri, 23 Aug 2024 16:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E0F18E022;
+	Fri, 23 Aug 2024 16:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNn2Hq9B"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQGF0+Aa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B133418E35F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 16:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BFE18B49C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 16:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724430470; cv=none; b=JIpqjniuK9C24Abcu+8ER6JwENtZRET5Cf7VRxvRUyRfOiYwajWsWqBjNpVTrHt9YUeHk29c7e1BZXKJINl0HyYOuOBYJA4hDPFr3xJxwvkDXMl3xfi3WONJh83PvFZMNQlem2zEMt8hN9cxdLqPZvAw6B0GZhYxEonFnzllkHY=
+	t=1724430471; cv=none; b=TFra9wSYWrf3EcRB/LiuuRfkP0rlCFyWkX2YnPRY/IPzXKKz+cvMQ/MIpsroOEHU/mQ65fKfoHxMxsX7Tqwu6mYtonYCt7a8bVwUb23uddJm305QF2kr6d+w9AHTLZSwDvQ21tJDz6Yu7QEIbaiWGDG8AGGfXaLyGtbPBzsby1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724430470; c=relaxed/simple;
-	bh=82eYQz6sfyzy/Ia5s7CuFQJu0fKMz2l5LMKTvCenvhs=;
+	s=arc-20240116; t=1724430471; c=relaxed/simple;
+	bh=eb/8qpiT7j/DhU8t5pSUawoZtru9OVDFDwQx8cVOuv0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MaBkd8je3WIil50YUu3qbmw/vZwBdUG6vTSl/IqMi+7qjGhCmV1AJiyA7RiA7QPM74XDwq4DgCjFPuVZ8/DVMazBeAV9JRsriUu0hgZS+qOvKYSB99B1xIztGwQAU3SCBf2frQTqweQ8riruJAQIQ46Qc2fiun/agyWmxj5YvTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNn2Hq9B; arc=none smtp.client-ip=209.85.128.182
+	 MIME-Version; b=et1r9U7+qP0arCdQoz9htOuZAXPI66viEXTQB8xJd/PpLex82m/UelPMZY4zDmDDQvJfKmx9WocZ34t6tD90uxoven3TOKe+l2s01STzdcRANMTT2ehDujeSb//Z76psBt50BcEG5tXNKz2Ndpo2pM9sDwqrSJFkXurQCtZVBrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQGF0+Aa; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6b99988b6ceso23441467b3.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 09:27:48 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b44dd520ceso22054847b3.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 09:27:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724430468; x=1725035268; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724430469; x=1725035269; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RPPFzN7yYaPQyq6TUhQbGJPQE9oLj4GQdoaKu6JHvz8=;
-        b=UNn2Hq9BcQ6meO8+uSanvaUbN8fhMSgTjV1hWo0wDM8yBuEZUnmwSoDwSQlYb5RQsq
-         D9AmPpWfuLz8WMcP0mD8f0eH0LfOeqZT/xblJFL37OnhmM0IFR5dPE0/esu77u9qolKD
-         48tNtqlqOIQSYngD6x9LyweTlB1WdpFK9hq869JKYSSC6HM8ZtcOp60R+tAQBaBpP7cR
-         F8qTf+yCS+5Ez0fVt0YNVwOuLM2VNwWEucMx0lpaohS95+5+TYro9soTeuhTaOjELVKJ
-         ejvtzlAcVTRowclllS7LZmAlSDhuR8hQ94+4GWHm5bopQfwRgGPwT3VW0YL5+n9zhIQj
-         +KMg==
+        bh=I217fz16cOnt5oEHhpWUdlzv47nxJBvXhKdCBirV+no=;
+        b=XQGF0+Aa3DjYQT0PJpcrvKxIQG4J+ffWY2t4dHyP96jgwpO5Nq3H8GTkLf3zFaKaLa
+         MMnut8s2AzXukjEHJAQrLzC9G57q7U+14EYzvJJRab4nSuu7InclYeqThBqXqvGv1qbx
+         czuvQqty/kAcfilyvPVm32S64qlsgmAT3Afd3gp1IESwaYj3aCduQz8F0o+30yx9GpUv
+         4rHr8K0WvP2z+S8U3hkZmNzmBWRnqaaxqXfQXFebysxd3kDeoqr4ZjuFYYJan//e2OaY
+         CLow5dZ+VmDr1QTs5CewFHhtmP61faQINcG3ZMCFk7ki0/p1kLw+71Xz03moHIX36tS/
+         zMsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724430468; x=1725035268;
+        d=1e100.net; s=20230601; t=1724430469; x=1725035269;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RPPFzN7yYaPQyq6TUhQbGJPQE9oLj4GQdoaKu6JHvz8=;
-        b=HlnnX1yLark48UBbRtAez1tD/DBgRihWidiNBYSQ3AHSEA3ZHqAwOGrB/yUPR0+gLg
-         Gup5AURaOdwlezbinJL5spYjQyRlS5q02+88aV6m1N8fYvtjuv9LU3XeuxB4jAeIvgPV
-         y3lv1oOGvT24GelbCSOyglYEydK5pwFJM9+sqpjCrZ/pkO1ah1LbEpea10EB0YKmWivC
-         O3AnuRPO19XLAAshCH1flC9KPTZoGqqySsH5HeJSnHZ+SI6meK7+N0oP+ONA4ytoWYs+
-         PjhN1UT82AxNRR7QCSqLVRyRFmBQNW//VhIlFJDiicPs9l6TwoCp2Sb0YJe3pnD1M5Gp
-         0feA==
-X-Forwarded-Encrypted: i=1; AJvYcCXS1DwZzGscNcwDmSyYzJtjS1I5i0CBUN8kiJADU5C18IN2f+evFMf5e76cncp4w2Y/pBqFPt7lL8Ip9YZ2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx03AzLXlf90i/UOFsOSopdZTohKHfcUVP8oi7SDCOkOHndH9GO
-	Pt8jj79I/mynFy9FRno5YU8Gsbcb209BGbJc5NNIZx66QMvkM8VU
-X-Google-Smtp-Source: AGHT+IETIeMkCLjHGvZrv2SPjsTSeQvY2a9vf5E7YJ6a5bqCKnarAi6jF1vPhPJklznZ72s5wKrF3A==
-X-Received: by 2002:a05:690c:3806:b0:6a9:4fdd:94e5 with SMTP id 00721157ae682-6c62557b877mr35733757b3.13.1724430467720;
-        Fri, 23 Aug 2024 09:27:47 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-003.fbsv.net. [2a03:2880:25ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c399cb4f82sm5997117b3.1.2024.08.23.09.27.47
+        bh=I217fz16cOnt5oEHhpWUdlzv47nxJBvXhKdCBirV+no=;
+        b=sY3YSbeisVoxphG+GGcyGR+xIaS62wbI7PavvW4vvPNAy1n5Hu9WdoF+ZJfUDd7sF6
+         AB136WA+7WHnwizcBEzXIcplvbD+5KG3P3pGrE3wNl9dcKu6z0ajYeGJUOs9noceEY3e
+         YPsJOKT7wm6+yINbTKWLz983A5LaqjUcUk1znyvmdTuZ5bKEb9golji/h8mlWSHOYOR7
+         2kQTQ0KmjOlMy+ATJ45DnTRQ0ILpjGqnRa3xTU3WyIqJ/TaD3rTpxqyiSOZxqqGHL6Od
+         Pp1nfK9VL0PWDX42tDSyVqNUIGh0femOB5Fg2xIAKgjk2eE2ZjhBbIzWUHPy3wowODq/
+         VlEw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+5HROn64w97C7utwfJag8JBM0/efMObfqyKz1KJnQCXUmnXID1oTP4urW7WiiCG2cWTk207HWYu+dR46h@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjUjzG1FIU6aNljlx+z8tAUdDA9TozzE2PZRPaTjbZEu6iMuUE
+	uq2Zyc1EXipGEUbecJRmniUxWjpYMKc42NGgRa1Eu2cEe5LEJnjMCvzVpA==
+X-Google-Smtp-Source: AGHT+IHhdaKfwtyUoIAJINT1DlUaufdaxfmwinGtrbSzZz1cpKfww319rOg9jI+lBGcXMsW+F4j82A==
+X-Received: by 2002:a05:690c:3303:b0:6b7:f467:e09d with SMTP id 00721157ae682-6c625a4c8d4mr26187577b3.22.1724430469156;
+        Fri, 23 Aug 2024 09:27:49 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-009.fbsv.net. [2a03:2880:25ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39b006490sm5970097b3.63.2024.08.23.09.27.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 09:27:47 -0700 (PDT)
+        Fri, 23 Aug 2024 09:27:48 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
@@ -74,9 +74,9 @@ Cc: josef@toxicpanda.com,
 	bernd.schubert@fastmail.fm,
 	jefflexu@linux.alibaba.com,
 	kernel-team@meta.com
-Subject: [PATCH v3 8/9] fuse: move fuse file initialization to wpa allocation time
-Date: Fri, 23 Aug 2024 09:27:29 -0700
-Message-ID: <20240823162730.521499-9-joannelkoong@gmail.com>
+Subject: [PATCH v3 9/9] fuse: refactor out shared logic in fuse_writepages_fill() and fuse_writepage_locked()
+Date: Fri, 23 Aug 2024 09:27:30 -0700
+Message-ID: <20240823162730.521499-10-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20240823162730.521499-1-joannelkoong@gmail.com>
 References: <20240823162730.521499-1-joannelkoong@gmail.com>
@@ -88,61 +88,175 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Before this change, wpa->ia.ff is initialized with an acquired reference
-on the fuse file right before it submits the writeback request. If there
-are auxiliary writebacks, then the initialization and reference
-acquisition needs to also be set before we submit the auxiliary writeback
-request.
-
-To make the logic simpler and to pave the way for a subsequent
-refactoring of fuse_writepages_fill() and fuse_writepage_locked(), this
-change initializes and acquires wpa->ia.ff when the wpa is allocated.
+This change refactors the shared logic in fuse_writepages_fill() and
+fuse_writepages_locked() into two separate helper functions,
+fuse_writepage_args_page_fill() and fuse_writepage_args_setup().
 
 No functional changes added.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/file.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/fuse/file.c | 99 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 55 insertions(+), 44 deletions(-)
 
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 3d84cbb1a2d9..2348baf2521c 100644
+index 2348baf2521c..88f872c02349 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -1762,8 +1762,7 @@ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
- 	for (i = 0; i < ap->num_pages; i++)
- 		__free_page(ap->pages[i]);
+@@ -2047,50 +2047,77 @@ static void fuse_writepage_add_to_bucket(struct fuse_conn *fc,
+ 	rcu_read_unlock();
+ }
  
--	if (wpa->ia.ff)
--		fuse_file_put(wpa->ia.ff, false);
-+	fuse_file_put(wpa->ia.ff, false);
++static void fuse_writepage_args_page_fill(struct fuse_writepage_args *wpa, struct folio *folio,
++					  struct folio *tmp_folio, uint32_t page_index)
++{
++	struct inode *inode = folio->mapping->host;
++	struct fuse_args_pages *ap = &wpa->ia.ap;
++
++	folio_copy(tmp_folio, folio);
++
++	ap->pages[page_index] = &tmp_folio->page;
++	ap->descs[page_index].offset = 0;
++	ap->descs[page_index].length = PAGE_SIZE;
++
++	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
++	inc_node_page_state(&tmp_folio->page, NR_WRITEBACK_TEMP);
++}
++
++static struct fuse_writepage_args *fuse_writepage_args_setup(struct folio *folio,
++							     struct fuse_file *ff)
++{
++	struct inode *inode = folio->mapping->host;
++	struct fuse_conn *fc = get_fuse_conn(inode);
++	struct fuse_writepage_args *wpa;
++	struct fuse_args_pages *ap;
++
++	wpa = fuse_writepage_args_alloc();
++	if (!wpa)
++	       return NULL;
++
++	fuse_writepage_add_to_bucket(fc, wpa);
++	fuse_write_args_fill(&wpa->ia, ff, folio_pos(folio), 0);
++	wpa->ia.write.in.write_flags |= FUSE_WRITE_CACHE;
++	wpa->inode = inode;
++	wpa->ia.ff = ff;
++
++	ap = &wpa->ia.ap;
++	ap->args.in_pages = true;
++	ap->args.end = fuse_writepage_end;
++
++	return wpa;
++}
++
+ static int fuse_writepage_locked(struct folio *folio)
+ {
+ 	struct address_space *mapping = folio->mapping;
+ 	struct inode *inode = mapping->host;
+-	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+ 	struct fuse_writepage_args *wpa;
+ 	struct fuse_args_pages *ap;
+ 	struct folio *tmp_folio;
++	struct fuse_file *ff;
+ 	int error = -ENOMEM;
  
- 	kfree(ap->pages);
- 	kfree(wpa);
-@@ -1936,7 +1935,6 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+-	wpa = fuse_writepage_args_alloc();
+-	if (!wpa)
+-		goto err;
+-
+ 	tmp_folio = folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
+ 	if (!tmp_folio)
+-		goto err_free;
++		goto err;
  
- 		wpa->next = next->next;
- 		next->next = NULL;
--		next->ia.ff = fuse_file_get(wpa->ia.ff);
- 		tree_insert(&fi->writepages, next);
+ 	error = -EIO;
+-	wpa->ia.ff = fuse_write_file_get(fi);
+-	if (!wpa->ia.ff)
++	ff = fuse_write_file_get(fi);
++	if (!ff)
+ 		goto err_nofile;
  
- 		/*
-@@ -2155,7 +2153,6 @@ static void fuse_writepages_send(struct fuse_fill_wb_data *data)
- 	int num_pages = wpa->ia.ap.num_pages;
- 	int i;
+-	fuse_writepage_add_to_bucket(fc, wpa);
+-	fuse_write_args_fill(&wpa->ia, wpa->ia.ff, folio_pos(folio), 0);
+-
+-	wpa->ia.write.in.write_flags |= FUSE_WRITE_CACHE;
+-	wpa->next = NULL;
+-	wpa->inode = inode;
++	wpa = fuse_writepage_args_setup(folio, ff);
++	error = -ENOMEM;
++	if (!wpa)
++		goto err_writepage_args;
  
--	wpa->ia.ff = fuse_file_get(data->ff);
+ 	ap = &wpa->ia.ap;
+-	ap->args.in_pages = true;
+ 	ap->num_pages = 1;
+-	ap->args.end = fuse_writepage_end;
+ 
+ 	folio_start_writeback(folio);
+-	folio_copy(tmp_folio, folio);
+-	ap->pages[0] = &tmp_folio->page;
+-	ap->descs[0].offset = 0;
+-	ap->descs[0].length = PAGE_SIZE;
+-
+-	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
+-	node_stat_add_folio(tmp_folio, NR_WRITEBACK_TEMP);
++	fuse_writepage_args_page_fill(wpa, folio, tmp_folio, 0);
+ 
  	spin_lock(&fi->lock);
- 	list_add_tail(&wpa->queue_entry, &fi->queued_writes);
- 	fuse_flush_writepages(inode);
-@@ -2300,6 +2297,7 @@ static int fuse_writepages_fill(struct folio *folio,
+ 	tree_insert(&fi->writepages, wpa);
+@@ -2102,10 +2129,10 @@ static int fuse_writepage_locked(struct folio *folio)
+ 
+ 	return 0;
+ 
++err_writepage_args:
++	fuse_file_put(ff, false);
+ err_nofile:
+ 	folio_put(tmp_folio);
+-err_free:
+-	kfree(wpa);
+ err:
+ 	mapping_set_error(folio->mapping, error);
+ 	return error;
+@@ -2285,36 +2312,20 @@ static int fuse_writepages_fill(struct folio *folio,
+ 	 */
+ 	if (data->wpa == NULL) {
+ 		err = -ENOMEM;
+-		wpa = fuse_writepage_args_alloc();
++		wpa = fuse_writepage_args_setup(folio, data->ff);
+ 		if (!wpa) {
+ 			folio_put(tmp_folio);
+ 			goto out_unlock;
+ 		}
+-		fuse_writepage_add_to_bucket(fc, wpa);
+-
++		fuse_file_get(wpa->ia.ff);
+ 		data->max_pages = 1;
+-
  		ap = &wpa->ia.ap;
- 		fuse_write_args_fill(&wpa->ia, data->ff, folio_pos(folio), 0);
- 		wpa->ia.write.in.write_flags |= FUSE_WRITE_CACHE;
-+		wpa->ia.ff = fuse_file_get(data->ff);
- 		wpa->next = NULL;
- 		ap->args.in_pages = true;
- 		ap->args.end = fuse_writepage_end;
+-		fuse_write_args_fill(&wpa->ia, data->ff, folio_pos(folio), 0);
+-		wpa->ia.write.in.write_flags |= FUSE_WRITE_CACHE;
+-		wpa->ia.ff = fuse_file_get(data->ff);
+-		wpa->next = NULL;
+-		ap->args.in_pages = true;
+-		ap->args.end = fuse_writepage_end;
+-		ap->num_pages = 0;
+-		wpa->inode = inode;
+ 	}
+ 	folio_start_writeback(folio);
+ 
+-	folio_copy(tmp_folio, folio);
+-	ap->pages[ap->num_pages] = &tmp_folio->page;
+-	ap->descs[ap->num_pages].offset = 0;
+-	ap->descs[ap->num_pages].length = PAGE_SIZE;
++	fuse_writepage_args_page_fill(wpa, folio, tmp_folio, ap->num_pages);
+ 	data->orig_pages[ap->num_pages] = &folio->page;
+ 
+-	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
+-	inc_node_page_state(&tmp_folio->page, NR_WRITEBACK_TEMP);
+-
+ 	err = 0;
+ 	if (data->wpa) {
+ 		/*
 -- 
 2.43.5
 
