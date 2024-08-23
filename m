@@ -1,170 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-26978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F95B95D517
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 20:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF1895D537
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 20:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF6771F23338
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 18:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D36DB1F215D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 18:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D899194A49;
-	Fri, 23 Aug 2024 18:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C38191F64;
+	Fri, 23 Aug 2024 18:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5krzMvD"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GfUlYxIh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED341946B1;
-	Fri, 23 Aug 2024 18:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8D81922F0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 18:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724436891; cv=none; b=WAE36S+cwLPKWHupchqL03bvjz1ISDanHz/ghmeRG4A7VSzMpSueyCptoxnmUG9docg6oJW4iFzQkOMdREEcWYr3ZoHTBaNQXwR8Awaiz8yaW7NUJ3Kp+qeAGtpzAkJ8847gKEQdKsCosrTeb1Zgk55ivST40epUd2+v+Z4BACc=
+	t=1724437079; cv=none; b=ZzAFMwssISEvH8LFvwHl5bd2mpFOxzLGqaBvBP6iEhGMvxqzBe5YmL3w+g/m88SrKR+1sSsLkEkTuZdj0N926oDc+0VHySgqGamPAki0N1LwW9GdI12ZjJrekYKcOnG30AtdBFi066V9UKr+f+iaRCsisDYNWtUhjHiIPtMiz6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724436891; c=relaxed/simple;
-	bh=xB08nBAPl61OofPOGvwFRENxEZD1qCG61thY+k7r1kw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MbQGRo2Z5sQexZ/T9GfvK0EtI73XRoXfNruvEqWJZSXVuZ5i8PJvfTdG41o/Kab4b/dANBxlaU47KwFWdavpsl522YyYu/DnS+RSr2pxH0y8QKnoQjRdrLSrIOxPIYsMOhMMjpuYvBvJAig1p+snSWUmKwsLEb1NpsWsC+5LQVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5krzMvD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD62C4AF0C;
-	Fri, 23 Aug 2024 18:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724436890;
-	bh=xB08nBAPl61OofPOGvwFRENxEZD1qCG61thY+k7r1kw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n5krzMvDfhao3OERw4Ld4T448F4inIFoAL4ZK16f2YpbdcA5oeP0Y3jNm24uzmfb0
-	 FrfDtmu2n67YWwwvZohrqZ2MQ21+h7yO8SdOQgcnT4FCNXjBxsIOv94UVvhb2xDKWX
-	 8J/nOCwpiFDGDvZi0vCy03SD9gx3jiKllw+hDRqzIZgyVOZ6p7/PMSLbB1PE79nbxa
-	 TG0Olqr1V8sTxaBxNuTA/HzapC+AZuDUFprZXiJnEpN08slZx7hyjFIuaasgDOMgzL
-	 Eqk1xvm0mx+5QNQv4+0vuzi/+9PwRKhB38PAAcdRnJN323hOzf65uNSzfC9vuEfYJX
-	 sBZBq/gaS/zTg==
-From: Mike Snitzer <snitzer@kernel.org>
-To: linux-nfs@vger.kernel.org
-Cc: Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Anna Schumaker <anna@kernel.org>,
-	Trond Myklebust <trondmy@hammerspace.com>,
-	NeilBrown <neilb@suse.de>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v13 19/19] nfs: add FAQ section to Documentation/filesystems/nfs/localio.rst
-Date: Fri, 23 Aug 2024 14:14:17 -0400
-Message-ID: <20240823181423.20458-20-snitzer@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240823181423.20458-1-snitzer@kernel.org>
-References: <20240823181423.20458-1-snitzer@kernel.org>
+	s=arc-20240116; t=1724437079; c=relaxed/simple;
+	bh=us2rdXys21oFgrc3lIMa0w1LdWVH/OnjI7GaLqu0mi0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IKag1ekzlEFc2g4ePyTfxyRVCa2Xt9MTGrqdNDADISCx93BZt4uvFwcEMVYz2JBqsv9PyXSTwfOmtVrdYMRPxX6UJkU5asb/DQic2e1GfU+GucRg9DoPZR/6OpSS7WQ2xCoLD556nijaEEUqU4Wc7WwIzbkR60clB8PdGr/naoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GfUlYxIh; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-81f8f0197abso111188339f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 11:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724437076; x=1725041876; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1L2UbMyeA6ZtpjTTf28qzgxKAoNSjMt5tsfvJ8hB874=;
+        b=GfUlYxIhh/Nu/xAZbJn7bjXK45QogWB3VoLR+TZC+3pATI157oIPXO8X3vTwdJxnHL
+         BmGfP+/t72P3wS6LqhmF/CwYlYMHr8dQFd21VuAy+G3vwbFEDPCH2HhugdSVh3ujiwIL
+         YZzwdemqMNuONPNjwvmCnbAKS2GZkLCbKSmLKbIGy6GW2SL6jMgOfjzsBKFd8npRfhKv
+         PzOXjb7H5oBvThdjJk9SLZgXOr0Y7dTujowLcl48jPu3grKS+ME7iU6um/f1jXd/nYEq
+         +cdx1KQDBcEUbCookwApuOVBqlyB/owwidnlJwE0lMu+gssQP7IOBOf6H94BiesIL7S0
+         Q8BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724437076; x=1725041876;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1L2UbMyeA6ZtpjTTf28qzgxKAoNSjMt5tsfvJ8hB874=;
+        b=wigqufpnqIQMxRag4noXAgpnS8ZTHo+zvd0x7dCZcwHSPQ5tSaoKMeRf5VG4mf/BlN
+         zGkd+qEl7zMyENfpsbdQ9BWXFquu+w2iRSaPwJPcg7w97FjuRzdqVo16G/jrxVwRkMJm
+         2ZoGlZTuhd65PDOqn48tMq+eb6P8f14e+TEhIDJmz9Y6Gfgctvlu2OxkudOkH/nz94z6
+         WVLDMMG06gJHMD9ilE5xLX9TNumWrJ1gH7N/+YjQhQ7HF2CWMXdGgSjDYfJqmQo9zjIu
+         oInYYXwiQxEVsuz4lqW0EZjVADHMftpBMsHunuLtVkYiDJJQutCZCrI2Z6czgBHECjPD
+         Qj6w==
+X-Forwarded-Encrypted: i=1; AJvYcCURBQu2H0h7mQUqcOjxtPx2MMCOCq2XMvp/2fTPTVKwmiWszZJXWFFM15TB1Y0PPeePd0xOjqP1i35lVl82@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1Dp/i1Excat0kucAceFdTu9yAyFnhm71dhqfLw8mtAcd6I+NI
+	slbGQBhICJMnIT80EvO7e773TQpHCmD5L0Isnt+SE9RGQ5OJrlyKGKeDpAbn3dw=
+X-Google-Smtp-Source: AGHT+IE/2G50xW++565D0QEbsbBjpVPhWGeJ2rBDoGBZkDXHAPhG03bCJzSak3QpcUe2p4QHftCocw==
+X-Received: by 2002:a92:ca4c:0:b0:374:aa87:bcaa with SMTP id e9e14a558f8ab-39e3c98c6fcmr38850175ab.14.1724437076349;
+        Fri, 23 Aug 2024 11:17:56 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ce70f5c54dsm1036027173.55.2024.08.23.11.17.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 11:17:55 -0700 (PDT)
+Message-ID: <6f303c9f-7180-45ef-961e-6f235ed57553@kernel.dk>
+Date: Fri, 23 Aug 2024 12:17:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] Documentation: Document the kernel flag
+ bdev_allow_write_mounted
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-doc@vger.kernel.org
+Cc: corbet@lwn.net, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+ Bart Van Assche <bvanassche@acm.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ Jan Kara <jack@suse.cz>
+References: <20240823180635.86163-1-gpiccoli@igalia.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240823180635.86163-1-gpiccoli@igalia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+On 8/23/24 12:05 PM, Guilherme G. Piccoli wrote:
+> Commit ed5cc702d311 ("block: Add config option to not allow writing to mounted
+> devices") added a Kconfig option along with a kernel command-line tuning to
+> control writes to mounted block devices, as a means to deal with fuzzers like
+> Syzkaller, that provokes kernel crashes by directly writing on block devices
+> bypassing the filesystem (so the FS has no awareness and cannot cope with that).
+> 
+> The patch just missed adding such kernel command-line option to the kernel
+> documentation, so let's fix that.
+> 
+> Cc: Bart Van Assche <bvanassche@acm.org>
+> Cc: Darrick J. Wong <djwong@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> ---
+> 
+> V3: Dropped reference to page cache (thanks Bart!).
+> 
+> V2 link: https://lore.kernel.org/r/20240823142840.63234-1-gpiccoli@igalia.com
+> 
+> 
+>  Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 09126bb8cc9f..58b9455baf4a 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -517,6 +517,18 @@
+>  			Format: <io>,<irq>,<mode>
+>  			See header of drivers/net/hamradio/baycom_ser_hdx.c.
+>  
+> +	bdev_allow_write_mounted=
+> +			Format: <bool>
+> +			Control the ability of directly writing to mounted block
 
-Add a FAQ section to give answers to questions that have been raised
-during review of the localio feature.
+Since we're nit picking...
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Co-developed-by: Mike Snitzer <snitzer@kernel.org>
-Signed-off-by: Mike Snitzer <snitzer@kernel.org>
----
- Documentation/filesystems/nfs/localio.rst | 77 +++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+Control the ability to directly write [...]
 
-diff --git a/Documentation/filesystems/nfs/localio.rst b/Documentation/filesystems/nfs/localio.rst
-index 8cceb3db386a..4b6d63246479 100644
---- a/Documentation/filesystems/nfs/localio.rst
-+++ b/Documentation/filesystems/nfs/localio.rst
-@@ -61,6 +61,83 @@ fio for 20 secs with directio, qd of 8, 1 libaio thread:
-   128K read:  IOPS=24.4k, BW=3050MiB/s (3198MB/s)(59.6GiB/20001msec)
-   128K write: IOPS=11.4k, BW=1430MiB/s (1500MB/s)(27.9GiB/20001msec)
- 
-+FAQ
-+===
-+
-+1. What are the use cases for LOCALIO?
-+
-+   a. Workloads where the NFS client and server are on the same host
-+      realize improved IO performance. In particular, it is common when
-+      running containerised workloads for jobs to find themselves
-+      running on the same host as the knfsd server being used for
-+      storage.
-+
-+2. What are the requirements for LOCALIO?
-+
-+   a. Bypass use of the network RPC protocol as much as possible. This
-+      includes bypassing XDR and RPC for open, read, write and commit
-+      operations.
-+   b. Allow client and server to autonomously discover if they are
-+      running local to each other without making any assumptions about
-+      the local network topology.
-+   c. Support the use of containers by being compatible with relevant
-+      namespaces (e.g. network, user, mount).
-+   d. Support all versions of NFS. NFSv3 is of particular importance
-+      because it has wide enterprise usage and pNFS flexfiles makes use
-+      of it for the data path.
-+
-+3. Why doesn’t LOCALIO just compare IP addresses or hostnames when
-+   deciding if the NFS client and server are co-located on the same
-+   host?
-+
-+   Since one of the main use cases is containerised workloads, we cannot
-+   assume that IP addresses will be shared between the client and
-+   server. This sets up a requirement for a handshake protocol that
-+   needs to go over the same connection as the NFS traffic in order to
-+   identify that the client and the server really are running on the
-+   same host. The handshake uses a secret that is sent over the wire,
-+   and can be verified by both parties by comparing with a value stored
-+   in shared kernel memory if they are truly co-located.
-+
-+4. Does LOCALIO improve pNFS flexfiles?
-+
-+   Yes, LOCALIO complements pNFS flexfiles by allowing it to take
-+   advantage of NFS client and server locality.  Policy that initiates
-+   client IO as closely to the server where the data is stored naturally
-+   benefits from the data path optimization LOCALIO provides.
-+
-+5. Why not develop a new pNFS layout to enable LOCALIO?
-+
-+   A new pNFS layout could be developed, but doing so would put the
-+   onus on the server to somehow discover that the client is co-located
-+   when deciding to hand out the layout.
-+   There is value in a simpler approach (as provided by LOCALIO) that
-+   allows the NFS client to negotiate and leverage locality without
-+   requiring more elaborate modeling and discovery of such locality in a
-+   more centralized manner.
-+
-+6. Why is having the client perform a server-side file OPEN, without
-+   using RPC, beneficial?  Is the benefit pNFS specific?
-+
-+   Avoiding the use of XDR and RPC for file opens is beneficial to
-+   performance regardless of whether pNFS is used. However adding a
-+   requirement to go over the wire to do an open and/or close ends up
-+   negating any benefit of avoiding the wire for doing the I/O itself
-+   when we’re dealing with small files. There is no benefit to replacing
-+   the READ or WRITE with a new open and/or close operation that still
-+   needs to go over the wire.
-+
-+7. Why is LOCALIO only supported with UNIX Authentication (AUTH_UNIX)?
-+
-+   Strong authentication is usually tied to the connection itself. It
-+   works by establishing a context that is cached by the server, and
-+   that acts as the key for discovering the authorisation token, which
-+   can then be passed to rpc.mountd to complete the authentication
-+   process. On the other hand, in the case of AUTH_UNIX, the credential
-+   that was passed over the wire is used directly as the key in the
-+   upcall to rpc.mountd. This simplifies the authentication process, and
-+   so makes AUTH_UNIX easier to support.
-+
- RPC
- ===
- 
+The directly may be a bit confusing ("does it mean O_DIRECT?"), so maybe
+just
+
+Control the ability to write [...]
+
+would be better and more clear.
+
+> +			devices, i.e., allow / disallow writes that bypasses the
+
+Since we're nit picking, s/bypasses/bypass
+
+> +			FS. This was implemented as a means to prevent fuzzers
+> +			from crashing the kernel by overwriting the metadata
+> +			underneath a mounted FS without its awareness. This
+> +			also prevents destructive formatting of mounted
+> +			filesystems by naive storage tooling that don't use
+> +			O_EXCL. Default is Y and can be changed through the
+> +			Kconfig option CONFIG_BLK_DEV_WRITE_MOUNTED.
+> +
+>  	bert_disable	[ACPI]
+>  			Disable BERT OS support on buggy BIOSes.
+
 -- 
-2.44.0
+Jens Axboe
 
 
