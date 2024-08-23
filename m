@@ -1,52 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-26982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FEC95D5A1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 20:55:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2216D95D5A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 21:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74EAD2859DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 18:55:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A481AB22FBF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 19:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B5D192B98;
-	Fri, 23 Aug 2024 18:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036FE191F8F;
+	Fri, 23 Aug 2024 18:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cqmz/Ojv"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="cJ4gal7G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205FB2D7B8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 18:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7587E191F7E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 18:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724439283; cv=none; b=pvlW4jPaoNq+DnXSQgBLDNfmIPUYiJR4oXOQAktkBpfEQddXcpXjCF9IvI5TZU1jpuFKxn1iYqpXD5Y2UUkMskWgFdqYbwg8hfs3DAC7EqGDZj/ThDZv+ZtsvNSHEV1NMDmIWWwwxu/WsdwEovYhTM9A45n5rGHcJAIS61WLW8M=
+	t=1724439598; cv=none; b=maTWcv7U41dKvMrFu6fShDa1kP/STsUorQZpx1bJYnTQ96UJEuvOR5+0DMxPKGglAXCz+OhERC2g2X/cqSeMyKje2Z1qskopWCznJjJoQqaQY6bOQaXErAQc3rbWA4G3+sYFfGZ+BkXdm+htP7Jb5z0HogMWSMYWnWhX4ksJVag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724439283; c=relaxed/simple;
-	bh=/DdMYTjwstrBylwKPuC2pFIafnNcMvM2MnZ06dk1UmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=g6AIviTpr7hwMOlglj/I3tfQxdpI6hDBl9ItSC5QyS6hEMQVrmsixDe7QJrH4vMDjZAKVf+8I4zZ0Bl0FdZ3zBsnSECHqcjInylm1Eq+VqiyD2s9h/2+eCXsf6jt387O7EmQGvQTl0R1DrdbyPzvaQO5WfS4tvX4sO1Lu6Jcfuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cqmz/Ojv; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 23 Aug 2024 14:54:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724439278;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=ewITys7TI497HKJmvYcop9fBCsPv2oU9A0QT2PIx4Fg=;
-	b=cqmz/OjvP1l+Xib5cy4oiaIfcB6/Rs/rVysfV9o7gtjxxbfAxgym6KR3GqknhZxrLxWN/6
-	GzdnGfMpZYva7Le5atWFC5Vmpc/vBMzKhw4wU9nkwP0hsSr7beC1DQMV89+ABmgrnyijPQ
-	ooDOJSAvhFBJxNbJf77rq/vtNC7Caxg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.11-rc5
-Message-ID: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
+	s=arc-20240116; t=1724439598; c=relaxed/simple;
+	bh=UgAEHb+ebP0qM6znvad7G7LOp4QV1oMYjp0DNy5GyKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CfF4qv5aC2+J05J8xbkMed1Sz7hMkKnc0I1GZW6XMcbHFqrBZXxE1KaNHP/oywrxCm/11vv4K09ZbJOSU5OKGVrHt5waDebAsQX/83Oyj59d8zle2f9DpAs91H+mL+oTtRHpHCG5kx42UE1IizOFUywPJdKHyhh2CWxplvluMZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=cJ4gal7G; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6b59a67ba12so22234677b3.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 11:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724439595; x=1725044395; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wwskh2uEmBGcXGkfO/th/OAK+Lp3JeknT5m2w3ogFCY=;
+        b=cJ4gal7G7YOjjMiXH61eAgwWSDnsqDvHhQxpd/V7MRESLl92SoK53S3xFonfAvjgW3
+         poxwV3Y2K0s4a3Hc4YkbSA0Z7qMwELS27wqqzlIvusw1aBvxp7yjkUj/sY10f8IjBnDj
+         XatDR17a+lk1pMwnZxYboIeLkJXQxWo3CmUZsE17tABgFtrqgNDVpz0bVw/woUS49axp
+         NPVEH5LEwLbCjcSZQVtX8d5ec7JkkkHnEHYwzL7Tnl/mxXs2/pcg4Oa3aG3LEalUSOd7
+         9Hm3tNdnqDMHNe94ov9I8MBhtLkPQAnXbxcuj+afSMVNPMwqmoM1TJEtUss+TnCLvkf5
+         VcBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724439595; x=1725044395;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wwskh2uEmBGcXGkfO/th/OAK+Lp3JeknT5m2w3ogFCY=;
+        b=qr7gOqsfddAJk/hCZujYMrfdHoKeT87XgKPCQt3Sc5R3Bb34QiQlklAzetwoOBwaqQ
+         P7dCFVzNEjAmuerkKpsOL5wQYynPq381/OeovSM5IoO0rRnrQF9J+BeSwnSmbDSbuXYG
+         d1As0weMha6rdIvf/SSWhFzCC5vgI9Ncr2rNTHKIbB/YTB6z7DSlO6vmjdh43n4JdJrh
+         cZkY4CZWicRmHPS5pwLD04T9Uk5hLt3bRnxSXzMAlVdKqjGK28pgxprnSDDUMw02O3sX
+         3ahpjzC4Kn7MJqwp78HqaMzUp8DUYHe2X8AgGjzv/ZeQYfz/Mr18O21QsnvIOINGGD1+
+         gOwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyaq+1wkmbFzfTru6S+e7n2O8VMpi8z+sMRgVCBarFCV+UDiefhdQhT5eKrej4upJv3Q2LTME1vB2V9+DN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwbelBr2CCrSN4AQwiYaFeOKpJucOls0WiS4SCY8l0znjkk2J4
+	Qz9E1TnofZjTirKLV7+gQQT5BWzeOlP4d1Rv17n8PnbL4Qeua2vrlORFwEtKw5g=
+X-Google-Smtp-Source: AGHT+IHx8bKGp8hPPGrFgTmfCMzcvDsV2wzPVRUJeUNoxzph7mdGMjYwKxGdAcFBSnnukflYDe+/kw==
+X-Received: by 2002:a05:690c:f01:b0:6b1:1c30:7ea1 with SMTP id 00721157ae682-6c62538d722mr38340737b3.8.1724439595304;
+        Fri, 23 Aug 2024 11:59:55 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39a753839sm6386057b3.50.2024.08.23.11.59.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 11:59:54 -0700 (PDT)
+Date: Fri, 23 Aug 2024 14:59:53 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
+	kernel-team@meta.com
+Subject: Re: [PATCH v3 5/9] fuse: move initialization of fuse_file to
+ fuse_writepages() instead of in callback
+Message-ID: <20240823185953.GA2237731@perftesting>
+References: <20240823162730.521499-1-joannelkoong@gmail.com>
+ <20240823162730.521499-6-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,140 +85,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240823162730.521499-6-joannelkoong@gmail.com>
 
-Hi Linus, big one this time...
+On Fri, Aug 23, 2024 at 09:27:26AM -0700, Joanne Koong wrote:
+> Prior to this change, data->ff is checked and if not initialized then
+> initialized in the fuse_writepages_fill() callback, which gets called
+> for every dirty page in the address space mapping.
+> 
+> This logic is better placed in the main fuse_writepages() caller where
+> data.ff is initialized before walking the dirty pages.
+> 
+> No functional changes added.
+> 
+> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 
-no more bug reports related to the disk accounting rewrite, things are
-looking good over here as far as regressions go
+You remove the out label in the previous patch, and then add it back here, you
+can probably merge the previous patch and this patch into one patch and it would
+look fine, and reduce the churn a bit.  Thanks,
 
-The following changes since commit 0e49d3ff12501adaafaf6fdb19699f021d1eda1c:
-
-  bcachefs: Fix locking in __bch2_trans_mark_dev_sb() (2024-08-16 20:45:15 -0400)
-
-are available in the Git repository at:
-
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-08-23
-
-for you to fetch changes up to 4d8ead60ffd937a73b50f42f6bd776b6a7919dde:
-
-  bcachefs: key cache can now allocate from pending (2024-08-22 11:51:55 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.11-rc5
-
-Lots of little fixes and two big items, which were orgiinally slated for
-the 6.12 merge window but turned out to be pretty important.
-
-The little stuff includes assorted syzbot fixes and some upgrade fixes
-for old (pre 1.0) filesystems, and a fix for moving data off a device
-that was switched to durability=0 after data had been written to it.
-
-The big items are:
-- rhashtable conversion for VFS inodes cache
-  Thas was slated for the 6.12 merge window, but a deadlock was
-  uncovered in __wait_for_freeing_inode(); bcachefs inverts the usual
-  locking between the VFS inode cache and on disk (btree) locking, with
-  some advantages and some extra trickyness. The result was that we were
-  waiting (via __wait_for_freeing_inode()) on the evict -> clear_inode()
-  path with btree locks held, which was a rare deadlock but undoubtedly
-  also one of the sources of the SRCU warnings.
-
-- new data structure for managing freelists in btree key cache
-  This eliminates the btree key cache lock, and associated lock
-  contention. User feedback is that this resolves the main source of the
-  SRCU warnings we've been seeing - which means that on some of the big
-  multithreaded workloads people are running the lock contention was
-  really bad (threads piling up and causing O(n^2) wait times), if it
-  was able to trigger a 10 second delay warning.
-
-On the test reported by
-https://lore.kernel.org/linux-bcachefs/CAGudoHGenxzk0ZqPXXi1_QDbfqQhGHu+wUwzyS6WmfkUZ1HiXA@mail.gmail.com/
-
-We're now 4x faster than xfs on creatrees, roughly even on walktrees,
-with consistent run to run performance; dominant factor in profiles is
-lru lock contention.
-
-----------------------------------------------------------------
-Kent Overstreet (34):
-      bcachefs: Reallocate table when we're increasing size
-      bcachefs: fix field-spanning write warning
-      bcachefs: Fix incorrect gfp flags
-      bcachefs: Extra debug for data move path
-      bcachefs: bch2_data_update_init() cleanup
-      bcachefs: Fix "trying to move an extent, but nr_replicas=0"
-      bcachefs: setting bcachefs_effective.* xattrs is a noop
-      bcachefs: Fix failure to relock in btree_node_get()
-      bcachefs: Fix bch2_trigger_alloc assert
-      bcachefs: Fix bch2_bucket_gens_init()
-      bcachefs: fix time_stats_to_text()
-      bcachefs: fix missing bch2_err_str()
-      bcachefs: unlock_long() before resort in journal replay
-      bcachefs: fix failure to relock in bch2_btree_node_mem_alloc()
-      bcachefs: fix failure to relock in btree_node_fill()
-      bcachefs: Fix locking in bch2_ioc_setlabel()
-      bcachefs: Fix replay_now_at() assert
-      bcachefs: Fix missing validation in bch2_sb_journal_v2_validate()
-      fs/super.c: improve get_tree() error message
-      bcachefs: Fix warning in bch2_fs_journal_stop()
-      bcachefs: Fix compat issue with old alloc_v4 keys
-      bcachefs: Fix refcounting in discard path
-      bcachefs: clear path->should_be_locked in bch2_btree_key_cache_drop()
-      bcachefs: add missing inode_walker_exit()
-      bcachefs: don't use rht_bucket() in btree_key_cache_scan()
-      inode: make __iget() a static inline
-      bcachefs: switch to rhashtable for vfs inodes hash
-      bcachefs: Fix deadlock in __wait_on_freeing_inode()
-      bcachefs: journal_entry_replicas_not_marked is now autofix
-      lib/generic-radix-tree.c: genradix_ptr_inlined()
-      lib/generic-radix-tree.c: add preallocation
-      bcachefs: rcu_pending
-      bcachefs: Rip out freelists from btree key cache
-      bcachefs: key cache can now allocate from pending
-
-Yuesong Li (1):
-      bcachefs: Fix double assignment in check_dirent_to_subvol()
-
- fs/bcachefs/Makefile                      |   1 +
- fs/bcachefs/acl.c                         |   2 +-
- fs/bcachefs/alloc_background.c            |  66 ++--
- fs/bcachefs/alloc_background_format.h     |   1 +
- fs/bcachefs/bcachefs.h                    |   1 +
- fs/bcachefs/btree_cache.c                 |  25 ++
- fs/bcachefs/btree_cache.h                 |   2 +
- fs/bcachefs/btree_iter.h                  |   9 +
- fs/bcachefs/btree_key_cache.c             | 426 ++++++---------------
- fs/bcachefs/btree_key_cache_types.h       |  18 +-
- fs/bcachefs/btree_types.h                 |   3 +-
- fs/bcachefs/btree_update_interior.c       |  46 +--
- fs/bcachefs/buckets_waiting_for_journal.c |   4 +-
- fs/bcachefs/data_update.c                 | 209 ++++++-----
- fs/bcachefs/extents.c                     |   2 +
- fs/bcachefs/fs-io-buffered.c              |   4 +-
- fs/bcachefs/fs-io-direct.c                |   2 +-
- fs/bcachefs/fs-io.c                       |   6 +-
- fs/bcachefs/fs-ioctl.c                    |   7 +-
- fs/bcachefs/fs.c                          | 234 ++++++++----
- fs/bcachefs/fs.h                          |  18 +-
- fs/bcachefs/fsck.c                        |   6 +-
- fs/bcachefs/inode.c                       |   2 +-
- fs/bcachefs/journal.c                     |   2 +-
- fs/bcachefs/journal_sb.c                  |  15 +
- fs/bcachefs/rcu_pending.c                 | 603 ++++++++++++++++++++++++++++++
- fs/bcachefs/rcu_pending.h                 |  25 ++
- fs/bcachefs/recovery.c                    |   9 +-
- fs/bcachefs/replicas.c                    |   3 +-
- fs/bcachefs/sb-errors_format.h            |   2 +-
- fs/bcachefs/subvolume_types.h             |   3 +-
- fs/bcachefs/super.c                       |   2 +
- fs/bcachefs/util.c                        |   1 -
- fs/bcachefs/xattr.c                       |  14 +-
- fs/inode.c                                |   8 -
- fs/super.c                                |   4 +-
- include/linux/fs.h                        |   9 +-
- include/linux/generic-radix-tree.h        | 106 +++++-
- lib/generic-radix-tree.c                  |  80 +---
- 39 files changed, 1309 insertions(+), 671 deletions(-)
- create mode 100644 fs/bcachefs/rcu_pending.c
- create mode 100644 fs/bcachefs/rcu_pending.h
+Josef
 
