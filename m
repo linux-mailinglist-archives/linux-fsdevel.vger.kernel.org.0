@@ -1,151 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-26996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B98195D799
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 22:20:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F35895D7A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 22:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61CB5B24589
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 20:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40861F22FE9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 20:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E006219FA8C;
-	Fri, 23 Aug 2024 20:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109D71A08C2;
+	Fri, 23 Aug 2024 20:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IeDeQaUh"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c2cL3/nI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD5519FA86
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 20:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B58193406;
+	Fri, 23 Aug 2024 20:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724443773; cv=none; b=KfXgR/OKqECbFe1jrKzfUBj669V3CASRpLPzCRrBynx4xHHEPSbvuJT4uJIje8QWuLqy98Dd+BWRMd1Pk+1CGN/LxaBXYv8TcmuBvrYtTBHZqPWdVMPA6XqEHGZMqDLaVP8VT1fB8ElriP/KV+9r7O4KsN2BrwNQDsJVuYTA0OQ=
+	t=1724443979; cv=none; b=IzBHqMFhvMAov+x50gPba8tWJSFxJOpvdA0UGunBKyRWKVCRGb3ZQUhSR2q1Nq712cyBEeQR7gtZPOGe1vBKTcwEgj9Qgo9viSOc4sfcGM6xTEOy6EtXmmHa3FslG80OApKF1uz5JF0e5IH3jC2d5cDuynHTZsaHQfpG466dghY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724443773; c=relaxed/simple;
-	bh=urr6E/8rF5Ax2jrUKfHT3GcC6Ya417D3++tj8xbY6gE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n9mCQfiqWvw4uQFq98kmYStRPQqFUo0IvdGkMti0lQrkW17zJagX0WTEskQy3lrC16ckPPy3B7voEm+4BRmEz/J2up3miJp+ZKn4NwUc82/hmUycfcmC+T7kk3wfylD5Q2cL/TfeVqaYt3kWQJTDygI3Mj1DypnMSiPdL2LwNB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IeDeQaUh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724443771;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FAmCIU0bJDpl8o1iuVK4ffMXJRGL1l5OGSxq2KqoTWQ=;
-	b=IeDeQaUhi2sStu4lfSqaPJmBw2UHbVVViNTfeY6LGuUvNQVfXRERDvB3jrhSP7t9OT9Ziu
-	51PYWkIiRnrTgyEvxm0v0uWU+0wYrU4oOA25qVwD+i8rynNhT4iksNklyubNqzUMn8omwW
-	UXf4/W8flbvy1c6d07u3lwffdTX98DI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-154-Dvwmp2x-PPyrCItiYsUPfQ-1; Fri,
- 23 Aug 2024 16:09:29 -0400
-X-MC-Unique: Dvwmp2x-PPyrCItiYsUPfQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5AD3B19560B7;
-	Fri, 23 Aug 2024 20:09:27 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EDBE11956053;
-	Fri, 23 Aug 2024 20:09:17 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <sfrench@samba.org>
-Cc: David Howells <dhowells@redhat.com>,
+	s=arc-20240116; t=1724443979; c=relaxed/simple;
+	bh=e5lS3vPzKsBpQRZEa76gnk065x/jmm7jG3irunJlXX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N3662/dCUBjUkHqDAfNkZ/EtTEl7vJ9vPVZ8OkpyND7IRQQAt7Y1k3wDUqjC4h8a3c1bZJTkRttXOHle0ZhgLzC5Yp7OnrQORiQHIF4XFt8Bkh8/UgyZzVJXmZpD0z4C8k3FVfR3zGWydrmqXN380ONz1dwpUtVxpHOgHn/37zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c2cL3/nI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JsVlpGeKYbg4pM/Q7waOkd0NZPoyLhoXi4BOdIXNLpY=; b=c2cL3/nIR787l++dJM5LnaWXeW
+	5dJMUyI901WBryZBvo6lRG2cxhxydHjFy3QTpizCQwEC/54YFz67jxnF/I5qszT9dqo0dsCCv4bhA
+	dEMDmoaTGmh5pW4lvMOjCT91apPyQE4b24ZkMYKZ/FNipFwrhETEx8OgNkQFTi5jLsCgTVFQ3QDbd
+	FM2OqcrPBsmNW/FsNsoGQn3qZNhtl0oRKzR3YOuY8XFJb2NKoje+ZfRlO+UrdlPKSiBRRywGoWFES
+	NA0RleWtfD87vB2hp7AObXu6t74Rjpsc6agZ6/B/bIYAzbDXZ0pQnzK28mFgU+JbZqvvFGoQCjhP0
+	r9Y6Rv8Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1shaeH-0000000C8f0-18u9;
+	Fri, 23 Aug 2024 20:12:41 +0000
+Date: Fri, 23 Aug 2024 21:12:41 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>,
+	Steve French <sfrench@samba.org>,
 	Pankaj Raghav <p.raghav@samsung.com>,
 	Paulo Alcantara <pc@manguebit.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] netfs, cifs: Improve some debugging bits
-Date: Fri, 23 Aug 2024 21:08:17 +0100
-Message-ID: <20240823200819.532106-10-dhowells@redhat.com>
-In-Reply-To: <20240823200819.532106-1-dhowells@redhat.com>
+	Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Marc Dionne <marc.dionne@auristor.com>
+Subject: Re: [PATCH 1/9] mm: Fix missing folio invalidation calls during
+ truncation
+Message-ID: <ZsjtOVMD2dxRw68H@casper.infradead.org>
 References: <20240823200819.532106-1-dhowells@redhat.com>
+ <20240823200819.532106-2-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823200819.532106-2-dhowells@redhat.com>
 
-Improve some debugging bits:
+On Fri, Aug 23, 2024 at 09:08:09PM +0100, David Howells wrote:
+> When AS_RELEASE_ALWAYS is set on a mapping, the ->release_folio() and
+> ->invalidate_folio() calls should be invoked even if PG_private and
+> PG_private_2 aren't set.  This is used by netfslib to keep track of the
+> point above which reads can be skipped in favour of just zeroing pagecache
+> locally.
+> 
+> There are a couple of places in truncation in which invalidation is only
+> called when folio_has_private() is true.  Fix these to check
+> folio_needs_release() instead.
 
- (1) The netfslib _debug() macro doesn't need a newline in its format
-     string.
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
- (2) Display the request debug ID and subrequest index in messages emitted
-     in smb2_adjust_credits() to make it easier to reference in traces.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/io.c           | 2 +-
- fs/smb/client/smb2ops.c | 8 +++++---
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-index 943128507af5..d6ada4eba744 100644
---- a/fs/netfs/io.c
-+++ b/fs/netfs/io.c
-@@ -270,7 +270,7 @@ static void netfs_reset_subreq_iter(struct netfs_io_request *rreq,
- 	if (count == remaining)
- 		return;
- 
--	_debug("R=%08x[%u] ITER RESUB-MISMATCH %zx != %zx-%zx-%llx %x\n",
-+	_debug("R=%08x[%u] ITER RESUB-MISMATCH %zx != %zx-%zx-%llx %x",
- 	       rreq->debug_id, subreq->debug_index,
- 	       iov_iter_count(&subreq->io_iter), subreq->transferred,
- 	       subreq->len, rreq->i_size,
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index 8fb68c47c218..2741f7d63fe7 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -316,7 +316,8 @@ smb2_adjust_credits(struct TCP_Server_Info *server,
- 				      cifs_trace_rw_credits_no_adjust_up);
- 		trace_smb3_too_many_credits(server->CurrentMid,
- 				server->conn_id, server->hostname, 0, credits->value - new_val, 0);
--		cifs_server_dbg(VFS, "request has less credits (%d) than required (%d)",
-+		cifs_server_dbg(VFS, "R=%x[%x] request has less credits (%d) than required (%d)",
-+				subreq->rreq->debug_id, subreq->subreq.debug_index,
- 				credits->value, new_val);
- 
- 		return -EOPNOTSUPP;
-@@ -338,8 +339,9 @@ smb2_adjust_credits(struct TCP_Server_Info *server,
- 		trace_smb3_reconnect_detected(server->CurrentMid,
- 			server->conn_id, server->hostname, scredits,
- 			credits->value - new_val, in_flight);
--		cifs_server_dbg(VFS, "trying to return %d credits to old session\n",
--			 credits->value - new_val);
-+		cifs_server_dbg(VFS, "R=%x[%x] trying to return %d credits to old session\n",
-+				subreq->rreq->debug_id, subreq->subreq.debug_index,
-+				credits->value - new_val);
- 		return -EAGAIN;
- 	}
- 
-
+I think we also want to change the folio_has_private() call in
+mapping_evict_folio() to folio_test_private().  Same for the one
+in migrate_vma_check_page().
 
