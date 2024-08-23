@@ -1,141 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-26955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4961C95D470
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 19:37:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A6B95D491
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 19:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91701F23FD4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 17:36:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C113B22377
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 17:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF76F194AF0;
-	Fri, 23 Aug 2024 17:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BD98488;
+	Fri, 23 Aug 2024 17:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="e8//f4fU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1zf/04A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6E9194ACF;
-	Fri, 23 Aug 2024 17:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825C4188939;
+	Fri, 23 Aug 2024 17:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724434446; cv=none; b=dB6kF+4Rf24kpC5qjOB7m+ricXIHHpaN2q4KK9HSoYkMyXrh87C8cDlSL8hHhuRF6NdjmxwfrKAJ6T4a3pc8nr3GQFB/SLbwL4jSOuuYmfwLG7JWgxeJS6nGlvy0fSwUWseXDXcFircuHUVRG0EbXmpC0cFVlIPsmlGXVYw/tg4=
+	t=1724434901; cv=none; b=j0F5LlEF2BWjulNshjD2EZ9y21L7mW7+kUu0Tjp9fkYwHBuue8qmZVAGMabiQ70kfi4OiTWZX0KlrN2R+o27x+5Cr6S0tpipgGbmvxH5EnjSRC32uPycYAWKcnUdsdzfY9QFModEkyp/GloBcWiUi0fhNalzi4Q00Yhf/NygaFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724434446; c=relaxed/simple;
-	bh=SGEJQAX7zN+2ZikPoQ/1/lVDHKXUFqezT0IpKco/jLk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ukI+61NALA8nTABzb0PgTSPPf56lx1gOC283jZqW/OCtyynPNyZVnC41GOxvfVtcZsBMWLspbgJYHcApnvrguxPcYVETWAlOSVVuFtN6X2lk1d9zuq3YhDj32RQKxUutjfHwVvHfGvnfr0GOO6IIK69j+5uBlYT8JUUfJ2lmvds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=e8//f4fU; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=2uckVKN0pdzCghR0p6/g82d2/8anRVmY8PvlKYt2nuo=; b=e8//f4fU6MKCA9/tuu/dsGqQQ3
-	10S/BJHzanaeCer9+DrWQVreL3F7xlH9HYJd0vxHwUaIRtL/OucvWMqQwlqWVqrCvj3VSIUVSlitE
-	UbhWC8PtfsjPdD39u5eU6XrL+u0fb99yGwGCoVh01Uf1P2QOX/PSQ2OZfivbUlOBF+vgNq+pe3TD4
-	MSoXXhtt7JjGQd4gTbRCq+hDgqxXWCqY21pgTTEKwILl5CDL2g38xAca75f4hbuj2TOcKjXvKnnzV
-	LLezTv2tJ49sZBQKp2/u0m6i+E8bKg2Avu4NtztNs8tb1rnOLjECeS6kcvVsXYCS07oBAweVfjgOe
-	2iDDM1Qw==;
-Received: from [179.118.186.198] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1shYAe-0048Ww-Fj; Fri, 23 Aug 2024 19:33:56 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	krisman@kernel.org,
-	Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH 5/5] docs: tmpfs: Add casefold options
-Date: Fri, 23 Aug 2024 14:33:32 -0300
-Message-ID: <20240823173332.281211-6-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240823173332.281211-1-andrealmeid@igalia.com>
-References: <20240823173332.281211-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1724434901; c=relaxed/simple;
+	bh=2p3QEMWRfgv2vPL3sfcPViAEuSutcnGMSODw4D6OGso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJRz1RANXuNfdWXaFqfYckmRnj0uxLtZ1wsytlYv4jIAfw5COZBnm9vJjYyyUXJzFneCQaxVCMOGmi17M6rdzKhhqma+yTgyxhEqFtwNIBREzUU6swK5Od6J0QyFqoohRj+RwqFfekITnbyiTyOsDVHfvWOoOwT0Je5GN9X9Dks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J1zf/04A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0D5BC32786;
+	Fri, 23 Aug 2024 17:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724434901;
+	bh=2p3QEMWRfgv2vPL3sfcPViAEuSutcnGMSODw4D6OGso=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J1zf/04ABhuZP2uUpMSTPaL7c6KTEA/o22z9pb5OD0dlijGdTAwMvu2yw24SotERm
+	 3Tyo3hwj//N1okj4sTV72xtAGhGofc7JsOwNRpN7c+TYlhyiozMrInFwHunsvIRY6T
+	 P+DGOOwIUUJ+cXVFGgHduY8qmEsQct888Xwd/8chf37buP3/1oT6BNI8nX6/WCZH7a
+	 rlb/aAGc6XPvqbXXikt91lSq/RJAfl96i+XsAPEOZ8RdBRT0vKmzYcfaln0ldvh1yH
+	 MWASKT2rjKw/5/+ubXtHk6SKO2a5A2YOn8OtJXjsupWxO/DRMqowGv9kW4QU1R91p+
+	 o98FUe9ne521A==
+Date: Fri, 23 Aug 2024 10:41:40 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/1] xfs: introduce new file range commit ioctls
+Message-ID: <20240823174140.GJ865349@frogsfrogsfrogs>
+References: <172437084258.57211.13522832162579952916.stgit@frogsfrogsfrogs>
+ <172437084278.57211.4355071581143024290.stgit@frogsfrogsfrogs>
+ <ZsgMRrOBlBwsHBdZ@infradead.org>
+ <e167fb368b8a54b0716ae35730ddc61a658f6f6a.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e167fb368b8a54b0716ae35730ddc61a658f6f6a.camel@kernel.org>
 
-Document mounting options for casefold support in tmpfs.
+On Fri, Aug 23, 2024 at 09:20:15AM -0400, Jeff Layton wrote:
+> On Thu, 2024-08-22 at 21:12 -0700, Christoph Hellwig wrote:
+> > On Thu, Aug 22, 2024 at 05:01:22PM -0700, Darrick J. Wong wrote:
+> > > From: Darrick J. Wong <djwong@kernel.org>
+> > > 
+> > > This patch introduces two more new ioctls to manage atomic updates to
+> > > file contents -- XFS_IOC_START_COMMIT and XFS_IOC_COMMIT_RANGE.  The
+> > > commit mechanism here is exactly the same as what XFS_IOC_EXCHANGE_RANGE
+> > > does, but with the additional requirement that file2 cannot have changed
+> > > since some sampling point.  The start-commit ioctl performs the sampling
+> > > of file attributes.
+> > 
+> > The code itself looks simply enough now, but how do we guarantee
+> > that ctime actually works as a full change count and not just by
+> > chance here?
+> > 
+> 
+> With current mainline kernels it won't, but the updated multigrain
+> timestamp series is in linux-next and is slated to go into v6.12. At
+> that point it should be fine for this purpose.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- Documentation/filesystems/tmpfs.rst | 37 +++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+<nod> If these both get merged for 6.12, I think the appropriate port
+for this patch is to change xfs_ioc_start_commit to do:
 
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 56a26c843dbe..ce24fb16979a 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -241,6 +241,41 @@ So 'mount -t tmpfs -o size=10G,nr_inodes=10k,mode=700 tmpfs /mytmpfs'
- will give you tmpfs instance on /mytmpfs which can allocate 10GB
- RAM/SWAP in 10240 inodes and it is only accessible by root.
- 
-+tmpfs has the following mounting options for case-insesitive lookups support:
-+
-+================= ==============================================================
-+casefold          Enable casefold support at this mount point using the given
-+                  argument as the encoding standard. Currently only utf8
-+                  encodings are supported.
-+strict_encoding   Enable strict encoding at this mount point (disabled by
-+                  default). This means that invalid sequences will be rejected
-+                  by the file system.
-+================= ==============================================================
-+
-+Note that this option doesn't enable casefold by default; one needs to set
-+casefold flag per directory, setting the +F attribute in an empty directory. New
-+directories within a casefolded one will inherit the flag.
-+
-+Example::
-+
-+    $ mount -t tmpfs -o casefold=utf8-12.1.0,cf_strict fs_name /mytmpfs
-+    $ cd /mytmpfs # case-sensitive by default
-+    $ touch a; touch A
-+    $ ls
-+    A  a
-+    $ mkdir B
-+    $ cd b
-+    cd: The directory 'b' does not exist
-+    $ mkdir casefold_dir
-+    $ chattr +F casefold_dir/ # marking it as case-insensitive
-+    $ cd
-+    $ touch dir/a; touch dir/A
-+    $ ls dir
-+    a
-+    $ mkdir B
-+    $ cd b
-+    $ pwd
-+    /home/user/mytmpfs/casefold_dir/B
- 
- :Author:
-    Christoph Rohland <cr@sap.com>, 1.12.01
-@@ -250,3 +285,5 @@ RAM/SWAP in 10240 inodes and it is only accessible by root.
-    KOSAKI Motohiro, 16 Mar 2010
- :Updated:
-    Chris Down, 13 July 2020
-+:Updated:
-+   André Almeida, 23 Aug 2024
--- 
-2.46.0
+	struct kstat	kstat;
 
+	fill_mg_cmtime(&kstat, STATX_CTIME | STATX_MTIME, XFS_I(ip2));
+	kern_f->file2_ctime		= kstat.ctime.tv_sec;
+	kern_f->file2_ctime_nsec	= kstat.ctime.tv_nsec;
+	kern_f->file2_mtime		= kstat.mtime.tv_sec;
+	kern_f->file2_mtime_nsec	= kstat.mtime.tv_nsec;
+
+instead of open-coding the inode_get_[cm]time calls.  The entire
+exchangerange feature is still marked experimental, so I didn't think it
+was worth rebasing my entire dev branch on the multigrain timestamp
+redux series; we can just fix it later.
+
+--D
+
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
 
