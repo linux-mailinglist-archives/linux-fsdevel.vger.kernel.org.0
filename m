@@ -1,107 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-26956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A6B95D491
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 19:41:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736BE95D4D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 20:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C113B22377
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 17:41:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E32F2847F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 18:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BD98488;
-	Fri, 23 Aug 2024 17:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190AB18BBB6;
+	Fri, 23 Aug 2024 18:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1zf/04A"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="AP6ZkFLP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825C4188939;
-	Fri, 23 Aug 2024 17:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82485191477;
+	Fri, 23 Aug 2024 18:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724434901; cv=none; b=j0F5LlEF2BWjulNshjD2EZ9y21L7mW7+kUu0Tjp9fkYwHBuue8qmZVAGMabiQ70kfi4OiTWZX0KlrN2R+o27x+5Cr6S0tpipgGbmvxH5EnjSRC32uPycYAWKcnUdsdzfY9QFModEkyp/GloBcWiUi0fhNalzi4Q00Yhf/NygaFU=
+	t=1724436149; cv=none; b=JsSbVGwnOi0EjQZyGK8MghG033f8AOLrhk6JkhDwSMDJNXOAeePGGm49wa7Zs8WrsrhOWWFyyO71xysO8oYwXtDHK7w/IGEuL2IV9t4mNJsXKU/UChyS6CEjUXpd4Qg2ddWKy/+xi3KG2F7a2ofCBlzrW69ZchyKtWnegDUBWbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724434901; c=relaxed/simple;
-	bh=2p3QEMWRfgv2vPL3sfcPViAEuSutcnGMSODw4D6OGso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DJRz1RANXuNfdWXaFqfYckmRnj0uxLtZ1wsytlYv4jIAfw5COZBnm9vJjYyyUXJzFneCQaxVCMOGmi17M6rdzKhhqma+yTgyxhEqFtwNIBREzUU6swK5Od6J0QyFqoohRj+RwqFfekITnbyiTyOsDVHfvWOoOwT0Je5GN9X9Dks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J1zf/04A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0D5BC32786;
-	Fri, 23 Aug 2024 17:41:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724434901;
-	bh=2p3QEMWRfgv2vPL3sfcPViAEuSutcnGMSODw4D6OGso=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J1zf/04ABhuZP2uUpMSTPaL7c6KTEA/o22z9pb5OD0dlijGdTAwMvu2yw24SotERm
-	 3Tyo3hwj//N1okj4sTV72xtAGhGofc7JsOwNRpN7c+TYlhyiozMrInFwHunsvIRY6T
-	 P+DGOOwIUUJ+cXVFGgHduY8qmEsQct888Xwd/8chf37buP3/1oT6BNI8nX6/WCZH7a
-	 rlb/aAGc6XPvqbXXikt91lSq/RJAfl96i+XsAPEOZ8RdBRT0vKmzYcfaln0ldvh1yH
-	 MWASKT2rjKw/5/+ubXtHk6SKO2a5A2YOn8OtJXjsupWxO/DRMqowGv9kW4QU1R91p+
-	 o98FUe9ne521A==
-Date: Fri, 23 Aug 2024 10:41:40 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/1] xfs: introduce new file range commit ioctls
-Message-ID: <20240823174140.GJ865349@frogsfrogsfrogs>
-References: <172437084258.57211.13522832162579952916.stgit@frogsfrogsfrogs>
- <172437084278.57211.4355071581143024290.stgit@frogsfrogsfrogs>
- <ZsgMRrOBlBwsHBdZ@infradead.org>
- <e167fb368b8a54b0716ae35730ddc61a658f6f6a.camel@kernel.org>
+	s=arc-20240116; t=1724436149; c=relaxed/simple;
+	bh=6iE6EpMVFQTnomSfD6spVViCNx0E+yjK/1fwwMWESyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TH8d1aeBk4INjKrIOQIVons/mtEp0hKSwSerr2OTZm9EcFUOpPAZG1GFwnByUMrRMD4itGYEMKds0Ffh8W5LVyr3BuajX3ebg60MTKwRGxQtcS8mosa3yLkeYdwhY97H/HLcWYoUHoC+4RiI9Wv5TcmC//Igo6PZfY9jahpGzPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=AP6ZkFLP; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=clCmG8G9dBvwhH0tbo2GwrYwc3bQaYwK9UUpCfBe/8c=; b=AP6ZkFLP9gj6Pi7g0IhDwnymUc
+	WJFMX2oLma17PmeKhgOMFJYTb/e0iNL3UaOKSfnnV7gqc9VYuZoy2BOILRvztPYbDbMHO0X9OoN0S
+	hnoYeOhRBcfNTGXNhEcI2fFjPadZn8TamTbWylctmT/vjC/ETNZ+kM+LzkeGPgAnTvebxpvh6IUKz
+	i/bamH0/6LpQ56JlciAdnBs2YlWQnK/0BvwYeHFAQwHrZrT4zSCSTgxJ1JxTnJXyQjTNDL7kePGdA
+	Na+dmL94M57QHWylan6JIRPoX9/5Hl7EiRsZF5dLnPqI3JGGbw6zwRkTrM54IDJAnSiFquLY3Yn2O
+	sB+DpH0Q==;
+Received: from [177.76.152.96] (helo=[192.168.1.60])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1shYc8-00491P-BK; Fri, 23 Aug 2024 20:02:20 +0200
+Message-ID: <ebc06acd-f729-dcbf-b8b3-faf0b6cab9d2@igalia.com>
+Date: Fri, 23 Aug 2024 15:02:13 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e167fb368b8a54b0716ae35730ddc61a658f6f6a.camel@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V2] Documentation: Document the kernel flag
+ bdev_allow_write_mounted
+Content-Language: en-US
+To: "Darrick J. Wong" <djwong@kernel.org>,
+ Bart Van Assche <bvanassche@acm.org>
+Cc: linux-doc@vger.kernel.org, corbet@lwn.net, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+ Jan Kara <jack@suse.cz>
+References: <20240823142840.63234-1-gpiccoli@igalia.com>
+ <35febff2-e7cc-4b57-9ba5-798271fe0e3b@acm.org>
+ <20240823170559.GZ6082@frogsfrogsfrogs>
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20240823170559.GZ6082@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 23, 2024 at 09:20:15AM -0400, Jeff Layton wrote:
-> On Thu, 2024-08-22 at 21:12 -0700, Christoph Hellwig wrote:
-> > On Thu, Aug 22, 2024 at 05:01:22PM -0700, Darrick J. Wong wrote:
-> > > From: Darrick J. Wong <djwong@kernel.org>
-> > > 
-> > > This patch introduces two more new ioctls to manage atomic updates to
-> > > file contents -- XFS_IOC_START_COMMIT and XFS_IOC_COMMIT_RANGE.  The
-> > > commit mechanism here is exactly the same as what XFS_IOC_EXCHANGE_RANGE
-> > > does, but with the additional requirement that file2 cannot have changed
-> > > since some sampling point.  The start-commit ioctl performs the sampling
-> > > of file attributes.
-> > 
-> > The code itself looks simply enough now, but how do we guarantee
-> > that ctime actually works as a full change count and not just by
-> > chance here?
-> > 
+On 23/08/2024 14:05, Darrick J. Wong wrote:
+> On Fri, Aug 23, 2024 at 09:11:22AM -0700, Bart Van Assche wrote:
+>> On 8/23/24 7:26 AM, Guilherme G. Piccoli wrote:
+>>> +	bdev_allow_write_mounted=
+>>> +			Format: <bool>
+>>> +			Control the ability of directly writing to mounted block
+>>> +			devices' page cache, i.e., allow / disallow writes that
+>>> +			bypasses the FS. This was implemented as a means to
+>>> +			prevent fuzzers from crashing the kernel by overwriting
+>>> +			the metadata underneath a mounted FS without its awareness.
+>>> +			This also prevents destructive formatting of mounted
+>>> +			filesystems by naive storage tooling that don't use
+>>> +			O_EXCL. Default is Y and can be changed through the
+>>> +			Kconfig option CONFIG_BLK_DEV_WRITE_MOUNTED.
+>>> +
+>>
+>> Does this flag also affect direct I/O? If so, does this mean that the
+>> reference to the page cache should be left out?
 > 
-> With current mainline kernels it won't, but the updated multigrain
-> timestamp series is in linux-next and is slated to go into v6.12. At
-> that point it should be fine for this purpose.
-
-<nod> If these both get merged for 6.12, I think the appropriate port
-for this patch is to change xfs_ioc_start_commit to do:
-
-	struct kstat	kstat;
-
-	fill_mg_cmtime(&kstat, STATX_CTIME | STATX_MTIME, XFS_I(ip2));
-	kern_f->file2_ctime		= kstat.ctime.tv_sec;
-	kern_f->file2_ctime_nsec	= kstat.ctime.tv_nsec;
-	kern_f->file2_mtime		= kstat.mtime.tv_sec;
-	kern_f->file2_mtime_nsec	= kstat.mtime.tv_nsec;
-
-instead of open-coding the inode_get_[cm]time calls.  The entire
-exchangerange feature is still marked experimental, so I didn't think it
-was worth rebasing my entire dev branch on the multigrain timestamp
-redux series; we can just fix it later.
-
---D
-
-> -- 
-> Jeff Layton <jlayton@kernel.org>
+> I think it does affect directio, since the validation is done at open
+> time via bdev_may_open, right?
 > 
+
+Indeed, good point! It does affect direct I/O, I've just tested in
+6.11-rc3 using dd (with and w/o oflags=direct), same result.
+
+I'll resend, dropping the mention to page cache - thanks!
+
+Guilherme
 
