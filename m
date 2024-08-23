@@ -1,108 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-26872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599A595C534
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 08:13:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C3C95C553
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 08:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5388F1F22C8D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 06:13:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2756E1C23E05
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 06:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEB374BE1;
-	Fri, 23 Aug 2024 06:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2cg4pVeJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97F95381E;
+	Fri, 23 Aug 2024 06:20:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31A555C3E;
-	Fri, 23 Aug 2024 06:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78324AEF6;
+	Fri, 23 Aug 2024 06:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724393575; cv=none; b=SVHekzoHjXOseAEkFBovaqeCc9GsyEnZ7aDYZ+sCFTr9hvE8oUSyf+X/aCRZEAwzz7AXooJysy6FLQ/Y8O9zSIK819CsN/7lnMJDgP/YJdh2y46IPKAfkBWzOAd2uHWbqqJ3+aSXUASOAPjgjF/OSoN0gDJHk5CHIoGZ701AG0A=
+	t=1724394012; cv=none; b=gwHGiEzD/9FyAB/xtpKE1Pl39aAzkB25FhfKGEue5okwRSs2ez/wJWA4Uzb0ss6ETdzEjdHMKwJ2z5IElzRIJ+3OUbcI6AFaz85SWY4ZxaLF9aCHiGxOWsm0rpCzrwkZZ6yXONOt+HVn9bsqxE5JqjyXSYGjPy5znZkuUv+Ie4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724393575; c=relaxed/simple;
-	bh=VuaMXq/ic8X2m9kV83mf6YFYaszIuxekeGJm8Pfrrqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R8wYm/TplyQcHaOZ/hFC5CeC8gB18imQ0wv59Juxykcjjufj01tqZ1vbLpRDBO4hGPPCjIuxcEz0b125va5sEaQEBns8+M/4u+tsK/+DG5msPWCo0qWqIOhOaXq9PdR2uW3JPcr9odojUPomL4FXk2PfaImz+XDRqCswnCD2rNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2cg4pVeJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED127C32786;
-	Fri, 23 Aug 2024 06:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724393574;
-	bh=VuaMXq/ic8X2m9kV83mf6YFYaszIuxekeGJm8Pfrrqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2cg4pVeJFoWhnJgcePmo6lZ4QBf+Lldz1O2gqcR/cj3fMPRDY1/5S+lSIdzQoJtx3
-	 liKnuqDEGtLZZVcWJrNXb4M6jpnSXRiNfXo2zpbMigL6yzFNkrUPrSmEbyKRfzi/op
-	 kuCgxH38zblAdnNsML67kVhuBCYId0ei/JDy9xO8=
-Date: Fri, 23 Aug 2024 14:12:51 +0800
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Tejun Heo <tj@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] pidfd: prevent creation of pidfds for kthreads
-Message-ID: <2024082313-throttle-snuggle-6238@gregkh>
-References: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
- <20240818035818.GA1929@sol.localdomain>
- <20240819-staudamm-rederei-cb7092f54e76@brauner>
- <93296f30-1a3c-44b6-91d1-61408e1d9270@leemhuis.info>
+	s=arc-20240116; t=1724394012; c=relaxed/simple;
+	bh=ULRbx2jnc4yTbYjPxK7xDHYGjcHglRvCqTTaxx9Ufjc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XIv40NJLNNl9xJ5HI9Rwz8F2seGrxT/2y0HOGDaufqHIsclMjSp9q0thVWvi1XycKfyX2xvUr7QVRxmSPQqR7aOFnGNIMDPB9Gi9P2VC3+he195MEnubyKRmcHE7yAqp/BUusvqoOoj7HRRcmZCqJjv6NuvGW/UrgU7aJLHq9JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WqqYd0XlNzQqNt;
+	Fri, 23 Aug 2024 14:15:17 +0800 (CST)
+Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2715C180106;
+	Fri, 23 Aug 2024 14:20:01 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
+ (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 23 Aug
+ 2024 14:20:00 +0800
+From: yangyun <yangyun50@huawei.com>
+To: <jefflexu@linux.alibaba.com>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lixiaokeng@huawei.com>, <miklos@szeredi.hu>, <yangyun50@huawei.com>
+Subject: Re: [PATCH] fuse: add fast path for fuse_range_is_writeback
+Date: Fri, 23 Aug 2024 14:19:13 +0800
+Message-ID: <20240823061913.3921169-1-yangyun50@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <8e235c73-faac-4cb7-bc6a-e1eea5075cbe@linux.alibaba.com>
+References: <8e235c73-faac-4cb7-bc6a-e1eea5075cbe@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93296f30-1a3c-44b6-91d1-61408e1d9270@leemhuis.info>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd100024.china.huawei.com (7.221.188.41)
 
-On Fri, Aug 23, 2024 at 07:23:12AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 19.08.24 10:41, Christian Brauner wrote:
-> > On Sat, Aug 17, 2024 at 08:58:18PM GMT, Eric Biggers wrote:
-> >> On Wed, Jul 31, 2024 at 12:01:12PM +0200, Christian Brauner wrote:
-> >>> It's currently possible to create pidfds for kthreads but it is unclear
-> >>> what that is supposed to mean. Until we have use-cases for it and we
-> >>> figured out what behavior we want block the creation of pidfds for
-> >>> kthreads.
-> >>>
-> >>> Fixes: 32fcb426ec00 ("pid: add pidfd_open()")
-> >>> Cc: stable@vger.kernel.org
-> >>> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> >>> ---
-> >>>  kernel/fork.c | 25 ++++++++++++++++++++++---
-> >>>  1 file changed, 22 insertions(+), 3 deletions(-)
-> >>
-> >> Unfortunately this commit broke systemd-shutdown's ability to kill processes,
-> >> which makes some filesystems no longer get unmounted at shutdown.
-> >>
-> >> It looks like systemd-shutdown relies on being able to create a pidfd for any
-> >> process listed in /proc (even a kthread), and if it gets EINVAL it treats it a
-> >> fatal error and stops looking for more processes...
-> > 
-> > Thanks for the report!
-> > I talked to Daan De Meyer who made that change and he said that this
-> > must a systemd version that hasn't gotten his fixes yet. In any case, if
-> > this causes regression then I'll revert it right now. See the appended
-> > revert.
+Sorry for the late reply.
+
+On Wed, Aug 14, 2024 at 05:56:06PM +0800, Jingbo Xu wrote:
 > 
-> Greg, Sasha, JFYI in case you are not already aware of it: I by
-> chance[1] noticed that the patch Christian plans to revert is still in
-> the 6.10-queue. You might want to drop it (or apply the revert as well,
-> which is in -next, but not yet in mainline afaics).
+> 
+> On 8/14/24 5:36 PM, yangyun wrote:
+> > In some cases, the fi->writepages may be empty. And there is no need
+> > to check fi->writepages with spin_lock, which may have an impact on
+> > performance due to lock contention. For example, in scenarios where
+> > multiple readers read the same file without any writers, or where
+> > the page cache is not enabled.
+> > 
+> > Also remove the outdated comment since commit 6b2fb79963fb ("fuse:
+> > optimize writepages search") has optimize the situation by replacing
+> > list with rb-tree.
+> > 
+> > Signed-off-by: yangyun <yangyun50@huawei.com>
+> > ---
+> >  fs/fuse/file.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index f39456c65ed7..59c911b61000 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -448,9 +448,6 @@ static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
+> >  
+> >  /*
+> >   * Check if any page in a range is under writeback
+> > - *
+> > - * This is currently done by walking the list of writepage requests
+> > - * for the inode, which can be pretty inefficient.
+> >   */
+> >  static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
+> >  				   pgoff_t idx_to)
+> > @@ -458,6 +455,9 @@ static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
+> >  	struct fuse_inode *fi = get_fuse_inode(inode);
+> >  	bool found;
+> >  
+> > +	if (RB_EMPTY_ROOT(&fi->writepages))
+> > +		return false;
+> 
+> fi->lock is held when inserting wpa into fi->writepages rbtree (see
+> fuse_writepage_add()).  I doubt if there is race condition when checking
+> if fi->writepages rbtree is empty without fi->lock held.
 
-I was hoping it would get into Linus's tree "soon" so I could take the
-revert too.  As it's in -next, I'll grab it from there when I get a
-chance.
+The code can make sure that there are no race conditions because:
+1. For O_DIRECT and FOPEN_DIRECT_IO with fc->direct_io_allow_mmap, the `filemap_write_and_wait_range` before can make the insert operation to be happend before the check operation.
+2. For other cases, there are no pagecache operaions so the fi->writepages is always empty.
 
-thanks,
-
-greg k-h
+In my usercase, the fi->writepages is usually empty but the spin_lock associated with it contributes a great impact on the performace of my filesystem due to lock contention. So optimize it.
+> 
+> -- 
+> Thanks,
+> Jingbo
 
