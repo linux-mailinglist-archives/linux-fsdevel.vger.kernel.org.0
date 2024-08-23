@@ -1,189 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-26893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E34B95CA71
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 12:25:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90A195CA98
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 12:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6B32281CCB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 10:25:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542041F23429
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 10:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AD517E01F;
-	Fri, 23 Aug 2024 10:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9AA187323;
+	Fri, 23 Aug 2024 10:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p85uLFPz"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pjAkK2Oi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA1714A092;
-	Fri, 23 Aug 2024 10:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3320F16DEA7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 10:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724408734; cv=none; b=icb+AlQGbLFJyH9agcM1YbjIIi/UsMaM0Z9zYJPIxjVnUXjiJkw3IGkXhd/J3qpoa4aocaVwSl+w47nnEYghyKW64SzAuREwivIxcamt96qTmH0Z9N8e/WWaoe0MVAEuLeZMhX2s/aT6sYkKdCv5m4WJEQBtROORtUswsQRwU8U=
+	t=1724409534; cv=none; b=fpstaelNPeQLt7p43FDjatU0deWE31WdAlBhO4K3fYxKjxs0cQxSTTHLzILr92hN3J2gQ/pPOXVMO5WvgU4U/RJMI+PfXyZU3+JZXEojUeG1yOveBvmUcl+1Ss6RKw4ERnSB02aNfC4/eBDo2JzSD+YBPGneQaddpLzruNEOVPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724408734; c=relaxed/simple;
-	bh=sQqhNYedR1BK3builnVoyg4SxBnBW3yPxbGa623Z0Lg=;
+	s=arc-20240116; t=1724409534; c=relaxed/simple;
+	bh=YBqL3sN6Z30EdGp/SNi7tkoBNbgiS7ggY2BAQok1vVg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lP1lPRtw1p11txD32uRLQPxZP5MHBrnbKuSIRF43qLF6iz0YsRJq5Y7rRyih1+F8GAhAMWU868DY/jOwnsSKugONwNZnKil8xDGibTKVLL9Sch165vEsFK62qgOP0coPig6pEt8cgTJEC4mmTm7sGOUToteZaX3cEfFiE5xthC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p85uLFPz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73EFEC32786;
-	Fri, 23 Aug 2024 10:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724408733;
-	bh=sQqhNYedR1BK3builnVoyg4SxBnBW3yPxbGa623Z0Lg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqdP8knrrC3bfbWG8w8oUs74hT37x08Dr5hV6agbqCAJIr9QWB7XRZr0RASyvcApdNpwGb/zeo1W4egakzBgn8PrhdaM8uE2BqES5jGm8awq/N4uk3R/kYg0QeN1bbj1VcDD5V4G+/SsoT5TU6uNNbtehTcBzvHBAw3HIKEcesw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pjAkK2Oi; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WqxPZ3rgHz6bJ;
+	Fri, 23 Aug 2024 12:38:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1724409522;
+	bh=ZJi/0dhpThM5/X8AiDcSNY58hEt/BED8l/BaMzmo8kQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p85uLFPzRzTjF8TlOpeiA4rumcvxDEt5Fylq/9D05p3sIyY+055i0xe3zxSZLAoqN
-	 QZHNkumhB+xPzgZ/sxTPyBYYrNrG8f5anr2pue94kpefrN+CCKb4iLhzMhRTBpSA0K
-	 sVYCVfW5FfB2qLD+0FFI6UGF0ZbAxjh5/DQ4oH00TXYoDQs14NRelVjlKHMrBh/wqb
-	 WIAQ2tuAChr2+JPT3qMr5aq++L4A6q4aPfN6kAHB7/S6XhE8E13elQ+Sv0HMTl8mQd
-	 AV1ckfw3bNkrK34vkLNFaaA8WrSpMbnM/HArzMkeG+5njHE00+M1umnvsYvWZyPQyj
-	 cpi/uhsdQGqjA==
-Date: Fri, 23 Aug 2024 11:25:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 25/39] arm64/signal: Expose GCS state in signal frames
-Message-ID: <ZshjmuYcejbhaSBg@finisterre.sirena.org.uk>
-References: <20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org>
- <20240822-arm64-gcs-v11-25-41b81947ecb5@kernel.org>
- <ZshYTyNbveD7WMyJ@arm.com>
+	b=pjAkK2OiTa6P9V+HF4aDH6oUsbs6RfZZypdrCxIpWzDoLxMBuRbN75o+RXX3hilRb
+	 jrNOqAv91KVir9uprm/0rqhF4+pNLj7HG7y6iUIYh+LDiFkHcIqqXbDiN1RHAQJ+yb
+	 iPOpD4bBGkIoAZmYQIO+Gy17jUv3AcRaCxZsV5Aw=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WqxPY24mmzCRw;
+	Fri, 23 Aug 2024 12:38:41 +0200 (CEST)
+Date: Fri, 23 Aug 2024 12:38:36 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <songliubraving@meta.com>
+Cc: Paul Moore <paul@paul-moore.com>, 
+	Christian Brauner <brauner@kernel.org>, Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, "andrii@kernel.org" <andrii@kernel.org>, 
+	"eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	Liam Wisehart <liamwisehart@meta.com>, Liang Tang <lltang@meta.com>, 
+	Shankaran Gnanashanmugam <shankaran@meta.com>, LSM List <linux-security-module@vger.kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add tests for
+ bpf_get_dentry_xattr
+Message-ID: <20240823.zeiC0zauhah1@digikod.net>
+References: <20240729-zollfrei-verteidigen-cf359eb36601@brauner>
+ <8DFC3BD2-84DC-4A0C-A997-AA9F57771D92@fb.com>
+ <20240819-keilen-urlaub-2875ef909760@brauner>
+ <20240819.Uohee1oongu4@digikod.net>
+ <370A8DB0-5636-4365-8CAC-EF35F196B86F@fb.com>
+ <20240820.eeshaiz3Zae6@digikod.net>
+ <1FFB2F15-EB60-4EAD-AEB0-6895D3E216C1@fb.com>
+ <CAHC9VhQ3Sq_vOCo_XJ4hEo6fA8RvRn28UDaxwXAM52BAdCkUSg@mail.gmail.com>
+ <7A37AEE2-7DEA-4CC4-B0DB-6F6326BE6596@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/CrZc0/PCTYKFxlL"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZshYTyNbveD7WMyJ@arm.com>
-X-Cookie: Your love life will be... interesting.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7A37AEE2-7DEA-4CC4-B0DB-6F6326BE6596@fb.com>
+X-Infomaniak-Routing: alpha
 
+On Wed, Aug 21, 2024 at 03:43:48AM +0000, Song Liu wrote:
+> 
+> 
+> > On Aug 20, 2024, at 2:11 PM, Paul Moore <paul@paul-moore.com> wrote:
+> > 
+> > On Tue, Aug 20, 2024 at 1:43 PM Song Liu <songliubraving@meta.com> wrote:
+> >>> On Aug 20, 2024, at 5:45 AM, Mickaël Salaün <mic@digikod.net> wrote:
+> > 
+> > ...
+> > 
+> >>> What about adding BPF hooks to Landlock?  User space could create
+> >>> Landlock sandboxes that would delegate the denials to a BPF program,
+> >>> which could then also allow such access, but without directly handling
+> >>> nor reimplementing filesystem path walks.  The Landlock user space ABI
+> >>> changes would mainly be a new landlock_ruleset_attr field to explicitly
+> >>> ask for a (system-wide) BPF program to handle access requests if no
+> >>> Landlock rule allow them.  We could also tie a BPF data (i.e. blob) to
+> >>> Landlock domains for consistent sandbox management.  One of the
+> >>> advantage of this approach is to only run related BPF programs if the
+> >>> sandbox policy would deny the request.  Another advantage would be to
+> >>> leverage the Landlock user space interface to let any program partially
+> >>> define and extend their security policy.
+> >> 
+> >> Given there is BPF LSM, I have never thought about adding BPF hooks to
+> >> Landlock or other LSMs. I personally would prefer to have a common API
+> >> to walk the path, maybe something like vma_iterator. But I need to read
+> >> more code to understand whether this makes sense?
 
---/CrZc0/PCTYKFxlL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I think it would not be an issue to use BPF Landlock hooks along with
+BPF LSM hooks for the same global policy.  This could also use the
+Landlock domain concept for your use case, including domain inheritance,
+domain identification, cross-domain protections... to avoid
+reimplementing the same semantic (and going through the same issues).
+Limiting the BPF program calls could also improve performance.
 
-On Fri, Aug 23, 2024 at 10:37:19AM +0100, Catalin Marinas wrote:
-> On Thu, Aug 22, 2024 at 02:15:28AM +0100, Mark Brown wrote:
+> > 
+> > Just so there isn't any confusion, I want to make sure that everyone
+> > is clear that "adding BPF hooks to Landlock" should mean "add a new
+> > Landlock specific BPF hook inside Landlock" and not "reuse existing
+> > BPF LSM hooks inside Landlock".
+> 
+> I think we are on the same page. My understanding of Mickaël's idea is
+> to add some brand new hooks to Landlock code, so that Landlock can
+> use BPF program to make some decisions. 
 
-> > +	gcs_preserve_current_state();
-> > +	gcspr = current->thread.gcspr_el0 - 8;
-
-> > +	__put_user_error(gcspr, &ctx->gcspr, err);
-
-> Do we actually need to store the gcspr value after the cap token has
-> been pushed or just the value of the interrupted context? If we at some
-> point get a sigaltshadowstack() syscall, the saved GCS wouldn't point to
-> the new stack but rather the original one. Unwinders should be able to
-> get the actual GCSPR_EL0 register, no need for the sigcontext to point
-> to the new shadow stack.
-
-We could store either the cap token or the interrupted GCSPR_EL0 (the
-address below the cap token).  It felt more joined up to go with the cap
-token since notionally signal return is consuming the cap token but
-either way would work, we could just add an offset when looking at the
-pointer.
-
-> Also in gcs_signal_entry() in the previous patch, we seem to subtract 16
-> rather than 8.
-
-We need to not only place a cap but also a GCS frame for the sigreturn
-trampoline, the sigreturn trampoline isn't part of the interrupted
-context so isn't included in the signal frame but it needs to have a
-record on the GCS so that the signal handler doesn't just generate a GCS
-fault if it tries to return to the trampoline.  This means that the
-GCSPR_EL0 that is set for the signal handler needs to move two entries,
-one for the cap token and one for the trampoline.
-
-> What I find confusing is that both restore_gcs_context() and
-> gcs_restore_signal() seem to touch current->thread.gcspr_el0 and the
-> sysreg. Which one takes priority? I should probably check the branch out
-> to see the end result.
-
-restore_gcs_context() is loading values from the signal frame in memory
-(which will only happen if a GCS context is present) then
-gcs_restore_signal() consumes the token at the top of the stack.  The
-split is because userspace can skip the restore_X_context() functions
-for the optional signal frame elements by removing them from the context
-but we want to ensure that we always consume a token.
-
-> > +	/*
-> > +	 * We let userspace set GCSPR_EL0 to anything here, we will
-> > +	 * validate later in gcs_restore_signal().
-> > +	 */
-> > +	current->thread.gcspr_el0 = gcspr;
-> > +	write_sysreg_s(current->thread.gcspr_el0, SYS_GCSPR_EL0);
-
-> So in preserve_gcs_context(), we subtract 8 from the gcspr_el0 value.
-> Where is it added back?
-
-When we consumed the GCS cap token.
-
-> > +	if (add_all || task_gcs_el0_enabled(current)) {
-> > +		err = sigframe_alloc(user, &user->gcs_offset,
-> > +				     sizeof(struct gcs_context));
-> > +		if (err)
-> > +			return err;
-> > +	}
-
-> I'm still not entirely convinced of this conditional saving and the
-> interaction with unwinders. In a previous thread you mentioned that we
-> need to keep the GCSPR_EL0 sysreg value up to date even after disabling
-> GCS for a thread as not to confuse the unwinders. We could get a signal
-> delivered together with a sigreturn without any context switch. Do we
-> lose any state?
-
-> It might help if you describe the scenario, maybe even adding a comment
-> in the code, otherwise I'm sure we'll forget in a few months time.
-
-We should probably just change that back to saving unconditionally - it
-looks like the decision on worrying about overflowing the default signal
-frame is that we just shouldn't.
-
---/CrZc0/PCTYKFxlL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbIY5MACgkQJNaLcl1U
-h9Bi+gf8CXq7dITB6mfDzRqVPcrdnIF0zDFjmHC8iIhqzkArOPeUrHuV8v1JvQKo
-xxY+T75lyZYVhNmi/4AnCvx2NQ+73+wmg5ZJyg3MMYv67UP5A4Gk8cOO3DP4gNZp
-GkinUu6g/33nKttu0Z8bNrylbmSVqqtFnh3Bzbv74LhYyKDe/dQ9CuCtZBEgjcQN
-U3x2p8TYyhcqu6/7OkT7MNJtI825nOVxVQh2B4Rlfp0ea+z2UNkTocgU12qsyZRt
-ew3ERI/4vdbAgPIIvqX5hmkLCEn6GNpyohGHm6LJ1BEZx3DGM9Ev6Q/ImtCMF+ty
-5N4sxm/JaJbA6ExZyirRb8m7CyRISQ==
-=OryW
------END PGP SIGNATURE-----
-
---/CrZc0/PCTYKFxlL--
+Correct
 
