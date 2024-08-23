@@ -1,95 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-26898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D5895CB35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 13:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D36195CBD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 13:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9DD01F22F11
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 11:12:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25DC91F21012
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 11:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8DB187342;
-	Fri, 23 Aug 2024 11:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLWb/qFK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55C3188591;
+	Fri, 23 Aug 2024 11:59:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AD6149C46;
-	Fri, 23 Aug 2024 11:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED16188001;
+	Fri, 23 Aug 2024 11:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724411545; cv=none; b=XNgMymijCxLlBmEv812qZyXmXSU92fxj67qLkJboOjn2LFih9v2cvOta6DE0eSngVdtHR7clcGuBV25aAbO9wsdYpOSUPlJlIRkOM7vM+pHDc7xd9L/llnBMd1IMNJ62Zzy/IyTgVm72ZTr4d0GxuaryJyVangGVt9IG5kLpdGk=
+	t=1724414346; cv=none; b=MdfDdkBV1SeOlMGEevS6taPUW9byDtgAhcQs43rsM77383c9SwwXitn7dloRAjCt/N9gLXJY3MSEEqnRoPlrBIYwnMv+wQTVLp0+RZtLagUqKTJJyhMIyvvDsQ5081ibEWliKKw5gDxXCm4wx4Yvc7nJZgfWo+ZeBBZtH7u3JLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724411545; c=relaxed/simple;
-	bh=ewqXtkCTnp3DPbG11UD8KFbqosDFXT8dcMAnfnfjGX0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jwaT6rd8KfNO8QZokVE/G/nveCBpinRQKpBPzSmUimsszd3UJR9glkGfxN7i2Wc8wAi2aDYROEmWPlYTqXYoBYsnW+AgRhvvia9LNDT1G3+5Ouyhtu0Ts8tyoyDOqU4L+A+onJH3qff0a/0WotfDN1nvNZZE+ndKYPwYwSmmcaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WLWb/qFK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B32C32786;
-	Fri, 23 Aug 2024 11:12:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724411544;
-	bh=ewqXtkCTnp3DPbG11UD8KFbqosDFXT8dcMAnfnfjGX0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WLWb/qFK0pLiDbG2NIGglhkAaFxYKRihCSFU3n5phFdWrFERtpzV+YDTjpx++atJv
-	 FI36HuuTR8cBLkThPR8KCMPYJgtVOl2PBiNGduoWR8+SM089uzMNieSiKeTrmHqRlx
-	 yzxmypXvssnZSAMSDeN+TJjiKpOMGeCI6EK5aJW5oWRoU+fLrHggfhf9lGNEwmKs9J
-	 dFxc5lGc/xqVfPPWfYf0njo4sm07QIsSEhCpStQioJ0Boa0ub69kY74vyN2rNOUpy4
-	 DP3aYAWHio3iwJOFN4yM6PXLWBgz6PiyRcYTvQLvqLUw4MxDE8WUgU8ZRX1ePsHDNR
-	 Juz02TiRHdruA==
-From: Christian Brauner <brauner@kernel.org>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V3] Squashfs: Ensure all readahead pages have been used
-Date: Fri, 23 Aug 2024 13:12:06 +0200
-Message-ID: <20240823-satirisch-pseudologie-689e0a05bc51@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240822233106.121522-1-phillip@squashfs.org.uk>
-References: <20240822233106.121522-1-phillip@squashfs.org.uk>
+	s=arc-20240116; t=1724414346; c=relaxed/simple;
+	bh=J6uKXwEWLbE5yHpPJ8L1Zbn5ZceS6YRpK7tmfGN4JP4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k2duQT5aCn8A5Zq2gL9gs4q0M5ULPd1GRWVLAs3HKQUwjtbyOMuAIlQcg/+Bhkk8jaPgQVsiK14PTjznBQu53EvRWy7C4N0eN+2/vNUUGW1k4C3LMwyV6M6cPdxTBgFGiXkA7KRYMrgSesQTeQKCwcl9umr9+yl9ggiMTgWnu78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wqz8Q5xRXzpTNf;
+	Fri, 23 Aug 2024 19:57:26 +0800 (CST)
+Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 51AA5140390;
+	Fri, 23 Aug 2024 19:59:01 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
+ (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 23 Aug
+ 2024 19:59:00 +0800
+From: yangyun <yangyun50@huawei.com>
+To: <miklos@szeredi.hu>
+CC: <josef@toxicpanda.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yangyun50@huawei.com>,
+	<lixiaokeng@huawei.com>
+Subject: Re:[PATCH 1/2] fuse: replace fuse_queue_forget with fuse_force_forget if error
+Date: Fri, 23 Aug 2024 19:58:13 +0800
+Message-ID: <20240823115813.4138001-1-yangyun50@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <CAJfpegviwk5F+39Vz2D4UjLaGpsFZ-26WeDwetjL=hWV4T6S7A@mail.gmail.com>
+References: <CAJfpegviwk5F+39Vz2D4UjLaGpsFZ-26WeDwetjL=hWV4T6S7A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1184; i=brauner@kernel.org; h=from:subject:message-id; bh=ewqXtkCTnp3DPbG11UD8KFbqosDFXT8dcMAnfnfjGX0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdyJtoVXh91rq7yRtEilI2zPASr3pQLyZ5Vl5Dtr9oZ avOB+9tHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOxrWD4X32d88OKx398vh2U EPovfl9DmLOngDt+Wc/t44uCtbamNzIy/BLgFbFL+WfrbvDvb9CaHntZ1qlmLu9dpZ4/ii+feSm eGQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd100024.china.huawei.com (7.221.188.41)
 
-On Fri, 23 Aug 2024 00:31:06 +0100, Phillip Lougher wrote:
-> In the recent work to remove page->index, a sanity check
-> that ensured all the readhead pages were covered by the
-> Squashfs data block was removed [1].
+On Thu, Aug 22, 2024 at 05:26:01PM +0200, Miklos Szeredi wrote:
+> On Sat, 27 Jul 2024 at 12:06, yangyun <yangyun50@huawei.com> wrote:
+> > Since forget is not necessarily synchronous (In my opinion, the pre-this patch use of
+> > synchronous 'fuse_force_forget' is an error case and also not necessarily synchronous),
+> > what about just changing the 'fuse_force_forget' to be asynchronous?
 > 
-> To avoid any regression, this commit adds the sanity check
-> back in an equivalent way.  Namely the page actor will now
-> return error if any pages are unused after completion.
+> Even less impact would be to move the allocation inside
+> fuse_force_forget (make it GFP_NOFAIL) and still use the
+> fuse_queue_forget() function to send the forget as e.g. virtiofs
+> handles them differently from regular requests.
+
+fuse_force_forget uses the fuse_simple_request with args.force=true and it does not need allocation outside originally, so it is strange for what you said "move the allocation inside fuse_force_forge".
+
+I think what you mean is moving the allocation inside fuse_queue_forget, not fuse_force_forget. This can make sense.
+
+Thanks for your advice. I will update this patch.
+
 > 
-> [...]
-
-Applied to the vfs.folio branch of the vfs/vfs.git tree.
-Patches in the vfs.folio branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.folio
-
-[1/1] Squashfs: Ensure all readahead pages have been used
-      https://git.kernel.org/vfs/vfs/c/84e0e03b3088
+> Thanks,
+> Miklos
 
