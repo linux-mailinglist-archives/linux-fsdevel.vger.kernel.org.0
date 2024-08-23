@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-26856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5428E95C27B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 02:32:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F010D95C281
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 02:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C90FE2847E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 00:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5F892849C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 00:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4200BA46;
-	Fri, 23 Aug 2024 00:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCE0BA46;
+	Fri, 23 Aug 2024 00:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A0kMJ8wW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uy5I5KAV";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A0kMJ8wW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uy5I5KAV"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SpkuuldI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Qt6+w0pa";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SpkuuldI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Qt6+w0pa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A194B1C36
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 00:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59D71CA96
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 00:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724373124; cv=none; b=a4oscs+0Uf3yMDf7k1rYK5E/N7ThmNAqi6kPudm0fwm6Pm2CJYQkADcsamXQjGhaQ6kStsikIZrliPNniBK+MIjIOqYKf7ZRZygN/6bGpCggkVeHjtDSm6GkGrX/POg4YyEa5WNdZb3YAHsXOSnHFtjHuWIAtvgsuflY5+aS15U=
+	t=1724373424; cv=none; b=fGof/UbwMgd0V+K9G4D4I4J9ZQ/Qfvx9Ew+9o8tjKmB//OdCJ92RfdAeE4ryN1S3J2cr67Czqw9UpqpoGQGw817vPaysS0ybLa6lYJNpsyrPAmf60J+ZP6n/2Vl3w7WJvc+0yfdnsYzAlonYbJYhDgtGmFaLEAk1/RCKjef3QNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724373124; c=relaxed/simple;
-	bh=E8yMrR8PXvsjBMb1lg0SkuIhXdkOQtdDAxMDsikVcxY=;
+	s=arc-20240116; t=1724373424; c=relaxed/simple;
+	bh=FpjHkCHpdzp/LBDzVsrGmt3YZworrFMaDbEWHs6FZzY=;
 	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=YtLD+9mJMR8JKssy6MmS4LLV6aKBaruLnSll4LJm8TFRtQDeuP3NrHOhaQ/shL4PlF+sOBMsxkhLerEcxx5Ug7IGYNSi/cPV8OhtSwu5JrPg3FA9UDJGIrYksx8tnyPGt/D45dCuQO1779/pkH3KHyr3OUtSoxy1tWiqKE/tL2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A0kMJ8wW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uy5I5KAV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A0kMJ8wW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uy5I5KAV; arc=none smtp.client-ip=195.135.223.130
+	 References:Date:Message-id; b=NKE+O+aAfcN93ZVUqqGEu5dXSlGQxLLDoi755ydXiEWZag34sU+X1m8yQv/c3dGsJcy2Yz7EpzQOLLUytESci3ezRalSY49dhOmvZ6sNm/EttjzLs06K6O3ako+sxufJ3tqkubp+8pjC+weq1nDjuTQmxBrRzEF0oXEREKblFg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SpkuuldI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Qt6+w0pa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SpkuuldI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Qt6+w0pa; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B5A8A2257E;
-	Fri, 23 Aug 2024 00:32:00 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2909B223E2;
+	Fri, 23 Aug 2024 00:37:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724373120; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724373421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=muIVLgLFtGvvIjyFDP9TbZqdc/tKjSKeLLz0SSRZcOY=;
-	b=A0kMJ8wWrZrDDINB4+4iZcwBhoWPFy15BwQP053cAzopC6jI/T1OU3xcGusXvvElwB9ioQ
-	/TrDt5VxtQvc/Ob7g2Ex8y0jSpYqnZlvgHD4qgb2RvQKtmeOumJRKt/gz7cdqFAEGtERJi
-	ov8xLv0xDorDHLfLC5tH5Vl5wEGVf6o=
+	bh=QEMmiGGSoY9hJU/rTR77tOeSaryfobSDoTxeYppJjS8=;
+	b=SpkuuldIvafSYA7W7ZloLXj7xiiWehuWibLswToRIRmlpXrXqJaD5oQdNWzzHhcbCqQNTM
+	GwQO6EhyJpBlUEF2HQEDPaEq8WSWDD0LqDFk/zFx3wqe3VoWCavGMLIZknKF3JV0FStiNd
+	Ytl9/9NCNDyiKKcB9rPb3JwtMRA04x8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724373120;
+	s=susede2_ed25519; t=1724373421;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=muIVLgLFtGvvIjyFDP9TbZqdc/tKjSKeLLz0SSRZcOY=;
-	b=uy5I5KAVsT9KhJHLRqg7eBRiN1ZkoD8DYwZt1rvhVtb0JWTTh05dGFBfD4r+ZAPlIm1DuH
-	UpBpdR53tYGU2iCA==
+	bh=QEMmiGGSoY9hJU/rTR77tOeSaryfobSDoTxeYppJjS8=;
+	b=Qt6+w0paR5z6tKb9dvaRHUDk0nRJejh/eDxf1z0VqqPMGtBN35KoNrU7NDIU+rPC9IkOQ6
+	b9EFMdS/PvFjWqDw==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724373120; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1724373421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=muIVLgLFtGvvIjyFDP9TbZqdc/tKjSKeLLz0SSRZcOY=;
-	b=A0kMJ8wWrZrDDINB4+4iZcwBhoWPFy15BwQP053cAzopC6jI/T1OU3xcGusXvvElwB9ioQ
-	/TrDt5VxtQvc/Ob7g2Ex8y0jSpYqnZlvgHD4qgb2RvQKtmeOumJRKt/gz7cdqFAEGtERJi
-	ov8xLv0xDorDHLfLC5tH5Vl5wEGVf6o=
+	bh=QEMmiGGSoY9hJU/rTR77tOeSaryfobSDoTxeYppJjS8=;
+	b=SpkuuldIvafSYA7W7ZloLXj7xiiWehuWibLswToRIRmlpXrXqJaD5oQdNWzzHhcbCqQNTM
+	GwQO6EhyJpBlUEF2HQEDPaEq8WSWDD0LqDFk/zFx3wqe3VoWCavGMLIZknKF3JV0FStiNd
+	Ytl9/9NCNDyiKKcB9rPb3JwtMRA04x8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724373120;
+	s=susede2_ed25519; t=1724373421;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=muIVLgLFtGvvIjyFDP9TbZqdc/tKjSKeLLz0SSRZcOY=;
-	b=uy5I5KAVsT9KhJHLRqg7eBRiN1ZkoD8DYwZt1rvhVtb0JWTTh05dGFBfD4r+ZAPlIm1DuH
-	UpBpdR53tYGU2iCA==
+	bh=QEMmiGGSoY9hJU/rTR77tOeSaryfobSDoTxeYppJjS8=;
+	b=Qt6+w0paR5z6tKb9dvaRHUDk0nRJejh/eDxf1z0VqqPMGtBN35KoNrU7NDIU+rPC9IkOQ6
+	b9EFMdS/PvFjWqDw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 50154139D3;
-	Fri, 23 Aug 2024 00:31:58 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4EB7139D3;
+	Fri, 23 Aug 2024 00:36:58 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id D1fIAX7Yx2YpCgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Fri, 23 Aug 2024 00:31:58 +0000
+	id J0sEGqrZx2ZkCwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Fri, 23 Aug 2024 00:36:58 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -102,17 +102,17 @@ Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
  "Peter Zijlstra" <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>,
  "Jeff Layton" <jlayton@kernel.org>, "Jan Kara" <jack@suse.cz>,
  "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 4/6] inode: port __I_NEW to var event
-In-reply-to: <20240821-work-i_state-v2-4-67244769f102@kernel.org>
+Subject: Re: [PATCH RFC v2 5/6] inode: port __I_LRU_ISOLATING to var event
+In-reply-to: <20240821-work-i_state-v2-5-67244769f102@kernel.org>
 References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>,
- <20240821-work-i_state-v2-4-67244769f102@kernel.org>
-Date: Fri, 23 Aug 2024 10:31:55 +1000
-Message-id: <172437311532.6062.13754145971447516576@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.27 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
+ <20240821-work-i_state-v2-5-67244769f102@kernel.org>
+Date: Fri, 23 Aug 2024 10:36:55 +1000
+Message-id: <172437341576.6062.4865045633122673711@noble.neil.brown.name>
+X-Spam-Score: -4.26
+X-Spamd-Result: default: False [-4.26 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.17)[-0.835];
+	NEURAL_HAM_SHORT(-0.16)[-0.822];
 	MIME_GOOD(-0.10)[text/plain];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
@@ -127,52 +127,91 @@ X-Spamd-Result: default: False [-4.27 / 50.00];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_DN_SOME(0.00)[]
-X-Spam-Score: -4.27
 X-Spam-Flag: NO
+X-Spam-Level: 
 
 On Thu, 22 Aug 2024, Christian Brauner wrote:
-> Port the __I_NEW mechanism to use the new var event mechanism.
+> Port the __I_LRU_ISOLATING mechanism to use the new var event mechanism.
 >=20
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  fs/bcachefs/fs.c          | 10 ++++++----
->  fs/dcache.c               |  3 +--
->  fs/inode.c                | 18 ++++++++----------
->  include/linux/writeback.h |  3 ++-
->  4 files changed, 17 insertions(+), 17 deletions(-)
+>  fs/inode.c | 26 +++++++++++++++++---------
+>  1 file changed, 17 insertions(+), 9 deletions(-)
 >=20
-> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-> index 94c392abef65..c0900c0c0f8a 100644
-> --- a/fs/bcachefs/fs.c
-> +++ b/fs/bcachefs/fs.c
-> @@ -1644,14 +1644,16 @@ void bch2_evict_subvolume_inodes(struct bch_fs *c, =
-snapshot_id_list *s)
->  				break;
->  			}
->  		} else if (clean_pass && this_pass_clean) {
-> -			wait_queue_head_t *wq =3D bit_waitqueue(&inode->v.i_state, __I_NEW);
-> -			DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
-> +			struct wait_bit_queue_entry wqe;
-> +			struct wait_queue_head *wq_head;
+> diff --git a/fs/inode.c b/fs/inode.c
+> index d18e1567c487..c8a5c63dc980 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -510,8 +510,7 @@ static void inode_unpin_lru_isolating(struct inode *ino=
+de)
+>  	spin_lock(&inode->i_lock);
+>  	WARN_ON(!(inode->i_state & I_LRU_ISOLATING));
+>  	inode->i_state &=3D ~I_LRU_ISOLATING;
+> -	smp_mb();
+> -	wake_up_bit(&inode->i_state, __I_LRU_ISOLATING);
+> +	inode_wake_up_bit(inode, __I_LRU_ISOLATING);
+>  	spin_unlock(&inode->i_lock);
+>  }
 > =20
-> -			prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
-> +			wq_head =3D inode_bit_waitqueue(&wqe, &inode->v, __I_NEW);
+> @@ -519,13 +518,22 @@ static void inode_wait_for_lru_isolating(struct inode=
+ *inode)
+>  {
+>  	lockdep_assert_held(&inode->i_lock);
+>  	if (inode->i_state & I_LRU_ISOLATING) {
+> -		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
+> -		wait_queue_head_t *wqh;
+> -
+> -		wqh =3D bit_waitqueue(&inode->i_state, __I_LRU_ISOLATING);
+> -		spin_unlock(&inode->i_lock);
+> -		__wait_on_bit(wqh, &wq, bit_wait, TASK_UNINTERRUPTIBLE);
+> -		spin_lock(&inode->i_lock);
+> +		struct wait_bit_queue_entry wqe;
+> +		struct wait_queue_head *wq_head;
+> +
+> +		wq_head =3D inode_bit_waitqueue(&wqe, inode, __I_LRU_ISOLATING);
+> +		for (;;) {
+> +			prepare_to_wait_event(wq_head, &wqe.wq_entry,
+> +					      TASK_UNINTERRUPTIBLE);
+> +			if (inode->i_state & I_LRU_ISOLATING) {
+> +				spin_unlock(&inode->i_lock);
+> +				schedule();
+> +				spin_lock(&inode->i_lock);
+> +				continue;
+> +			}
+> +			break;
+> +		}
+> +		finish_wait(wq_head, &wqe.wq_entry);
 
-I don't think you EXPORT inode_bit_waitqueue() so you cannot use it in
-this module.
+I would really like to add
 
-And maybe it would be good to not export it so that this code can get
-cleaned up.
-Maybe I'm missing something obvious but it seems weird.
-Earlier in this file a comment tells use that bcache doesn't use I_NEW,
-but here is bcache explicitly waiting for it.
+  wait_var_event_locked(variable, conditon, spinlock)
 
-If bch2_inode_insert() called unlock_new_inode() immediately *before*
-adding the inode to vfs_inodes_list instead of just after, this loop
-that walks vfs_inodes_list would never need to wait for I_NEW to be
-cleared.
+so that above would be one or two lines.
 
-I wonder if I am missing something.
+ #define  wait_var_event_locked(var, condition, lock) \
+    do { \
+	might_sleep(); \
+	if (condition) \
+		break; \
+	___wait_var_event(var, condition, TASK_UNINTERRUPTIBLE, \
+			  0, 0,  \
+			  spin_unlock(lock);schedule();spin_lock(lock)); \
+    } while(0)
+
+That can happen after you series lands though.
+
+The wake_up here don't need a memory barrier either.
 
 NeilBrown
+
+
+>  		WARN_ON(inode->i_state & I_LRU_ISOLATING);
+>  	}
+>  }
+>=20
+> --=20
+> 2.43.0
+>=20
+>=20
+
 
