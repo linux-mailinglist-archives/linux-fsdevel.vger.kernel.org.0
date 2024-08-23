@@ -1,121 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-26863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58AF795C334
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 04:25:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB49095C36C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 04:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1655928472F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 02:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 178541C20C04
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 02:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14B21F94D;
-	Fri, 23 Aug 2024 02:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F06D20B33;
+	Fri, 23 Aug 2024 02:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="X0To8DhE"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Rd8TW0Sd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB741BDD0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 02:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF06117C66
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Aug 2024 02:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724379920; cv=none; b=QCAyNm7ILS1hLEcirLDFuNIUdX7UNvF2p2/yRzMg5D9gM3oXYFiG8VI9nmii5ieGyF46vp7s94R2mF53WqJAbhRWm1dnxG2DHwrTpaOql2da15HVmlwmb0TEoCLi2eZyQpgfU92/dhBoXURDRP/dWsyK0BaWX+Cec5P3BJwTFBk=
+	t=1724381590; cv=none; b=bZmywOhGyPlcPtdNikG4Q5YQqVRpWM/mTmFzAJv2gBZe0pD1ujMV/VMcqk44aDdScqbHP9moIzwYhriBjS6uStD6RiWVLZRC6jJKj75NB1mh5GyGE6SPG/3QVlMmsxstNtbv/MeZgXlOk3sjHmi/IdFrH1kFMsDVqh+Nvlh4sGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724379920; c=relaxed/simple;
-	bh=o6S2YN549uQf7G8z1LSHPJ6PU5yIB0HjNFW98uVChrw=;
+	s=arc-20240116; t=1724381590; c=relaxed/simple;
+	bh=7PRkr6VvPFYyLoCXiGAEOnb+Y78pc/uxRrFjOz6Mw9s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M4MYi41z99QjWEElbYlD0UDgTrwzzEqdao1ahGV86LHFuVVEff9UcIlD2ilZf1jQ+0OVyJilxpmNjjA2fvp/HL6P9TgfASP1vDf5swfk1k54GZpJtR3moiIUzOocTps8Qu9YAZ2DjnuPmZAbsyBVJga+jEyQ9Hx9bXidunb0wGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=X0To8DhE; arc=none smtp.client-ip=209.85.218.46
+	 To:Cc:Content-Type; b=jR4xe3RSeeG25QpWTQ03qnRYkb04NHM5ss3qoSo7xIazwhItDxSsUzVQ2v6u7tCbGlMkjI9SmyK0gMM2S9rdjwrtKHQzlM2wMJTMk8qcMfQsY1DBAcubdvE5XnnV7sHYWaESemILvT3KMY+eSij6L7kC8YXGCPiXDnBAeC3t/YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Rd8TW0Sd; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso175206566b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 19:25:17 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-533521cd1c3so1665382e87.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 19:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1724379916; x=1724984716; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1724381586; x=1724986386; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wjdocqlSu23OEKTJsnRFrf5F6bKR+cZ42qsi4I12ADE=;
-        b=X0To8DhE8ZgRGU5LFTwN3IsBismTeaH2LHRjWm2JRdnTolotmlK0E4hUAR+Qa7S2Zt
-         0cWyyWE1L/Q4P8SUNk+ftY9cBM8uMDg8mSSXE1DkQdfdgALPFWOPNHv8krwvgyFoDsEL
-         VxVhv6Emn8zzzR0lu/uF7qcqoRPxeoLIqNbPw=
+        bh=kF1+47TlUU/uK1fjiDCNYBGiVa//PsIDCiNE7w2PM7s=;
+        b=Rd8TW0Sdgm92YqbypEECv5E/ycs9XGMqv0R/okhmCjSZN+CHqt7lMv3CmAw8Tq+KWL
+         hhwznRacc/HS5UO1DVUndR6mnkcRr/Co4ieTgovIV8kwfDPSKfL7p+aV40C4b2iI2MxD
+         Ln+HFKJ+/EpSjZ7QidTgs4AelUbA7mg5fXvw4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724379916; x=1724984716;
+        d=1e100.net; s=20230601; t=1724381586; x=1724986386;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wjdocqlSu23OEKTJsnRFrf5F6bKR+cZ42qsi4I12ADE=;
-        b=NrssoETCHL9FM524wt6DDM26QPS2c7xq4QAXnXWqqwO/PVHISGjnMLcdg922PmCaQg
-         dXvAMykeOX+sQQlL6eRXBmb8B87bQO39d6ummwopF7K5yd0neTgeyy9SBlNLispRsau+
-         fZ/YH7xp9vspKiVnDWb1HJWhrgGUzVFyJXTnFKJYrdBXkFvMFH9MJMx8oSs5nXnJeNNK
-         GotKKJjkn2GukaQ/UqR+HjUlwkTSpg0zdpUOqbxB1GsYnVdh6oDvA6Mk8fgT28310Ptw
-         BEmJKacD39VV7TwvNAjvZQANVN5uCC4eRXMQrHIQxO5BIuj+169dMUrcYAmAQFgAQsWd
-         ua8g==
-X-Forwarded-Encrypted: i=1; AJvYcCU1XyjkmcWIrGL9gYsTmMWTaR+8L0UDdvR/ejuOEKRl5K42sJisxfzQijjTY+3YsEq/NIReGn6Vzwn9aMvP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGg7OCgW2RRkJ9J5EJ7mYCo/ek3JwRlcH277ghShzkDk4UchRY
-	hOtHxR1ZRLeSWCqclYTGgr1vF77UWj/0eic2AvNHJKlH7kA/D/UK6r/nhN2jVn7qM2npGG+JQs+
-	dL2jRUg==
-X-Google-Smtp-Source: AGHT+IH1RoLLfJvdtjKY/DxLSIfWufLS0gtTHb4ZCl+y27Tsi3F3DSujU1flB7R+EoxLDZU4w7qygw==
-X-Received: by 2002:a17:906:d54c:b0:a86:9ac9:f3fa with SMTP id a640c23a62f3a-a86a54aa691mr49510566b.50.1724379915922;
-        Thu, 22 Aug 2024 19:25:15 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2a5903sm190224666b.78.2024.08.22.19.25.14
+        bh=kF1+47TlUU/uK1fjiDCNYBGiVa//PsIDCiNE7w2PM7s=;
+        b=N9SSyAgzDPmvxGZRH9mxJ5NHuOlNk6/f3Jb6DqgTi56D++YDtEIXhocEi4ov/Wyu/g
+         TeicmyZlGszZHLVww8fAaQlORphymPa0exyyoRKekvfM4l2Ke+cEbGVYlibRYip3Xo2O
+         NotmmYQPLiOg4P1mU19yBWNkp/UgToDfEFYyCvONikxYLm5FSheNWv860bPxsJBq8d1W
+         uslu266CNY9E2/PNAQCos/orbZfTyC0JJOKN8bVf+LmGQeimRKRUJ3keNUW5tzA75q+5
+         8A936OLZEthfhoQzgNJv1ud0ofeg8BWpvkbgF5GCmPmOkPfvzI4eMmm975K7YiiAxKWb
+         k/ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURrmaQi0XPvc0E7p4ZFWuSKOUok5wOOsP4giKuUUwvV+CuAYCrb7JBq+bygAKlmDXRWBqJvBOvat+Si8k7@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXn7zD2TSp2SK/iBRUwIpCZhWBeD1zMqBSdlrB38RGHVg06KfV
+	IO4Nz/ovNXsp8+kAAb3tdFzdkEoTmEP7XLtiiZBsn0SANzLYk2Oa4+dPbyg3Um0rDIaOiGkczQO
+	DVWZ+qA==
+X-Google-Smtp-Source: AGHT+IGL84vN2iXy6BSd+Wusqc+0vEiKPeUuw6fOx6vye61IN2ewk58Sb6MAXl/JqDAKmU8TixzNqg==
+X-Received: by 2002:a05:6512:1596:b0:52c:deb9:904b with SMTP id 2adb3069b0e04-5343887e17bmr707018e87.38.1724381586070;
+        Thu, 22 Aug 2024 19:53:06 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4f826dsm190833466b.223.2024.08.22.19.53.05
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2024 19:25:15 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff2f2so1980495a12.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 19:25:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVqleebseTaasy2KuFZTnFXyL0AuMPY+73nHEpZp6HnH+6UnN/utG5qf0CewSka6VNQRg7AU2BxQgNxsfH/@vger.kernel.org
-X-Received: by 2002:a05:6402:2115:b0:5be:de37:80dc with SMTP id
- 4fb4d7f45d1cf-5c0891ac3b1mr304940a12.37.1724379914551; Thu, 22 Aug 2024
- 19:25:14 -0700 (PDT)
+        Thu, 22 Aug 2024 19:53:05 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a83856c6f51so105187666b.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Aug 2024 19:53:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAqXKEns7OHmXf+n+fVnTfl7cIITAOtQ/cham81qwdFWq87MSK7k7CZKca+XUJqYByamSLwdXjJkIoCRgx@vger.kernel.org
+X-Received: by 2002:a05:6402:2811:b0:5bf:13df:1580 with SMTP id
+ 4fb4d7f45d1cf-5c0891756d9mr528887a12.18.1724381584716; Thu, 22 Aug 2024
+ 19:53:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821-work-i_state-v2-0-67244769f102@kernel.org>
- <20240821-work-i_state-v2-5-67244769f102@kernel.org> <172437341576.6062.4865045633122673711@noble.neil.brown.name>
-In-Reply-To: <172437341576.6062.4865045633122673711@noble.neil.brown.name>
+References: <20240822-knipsen-bebildert-b6f94efcb429@brauner> <172437209004.6062.17184722714391055041@noble.neil.brown.name>
+In-Reply-To: <172437209004.6062.17184722714391055041@noble.neil.brown.name>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 23 Aug 2024 10:24:57 +0800
-X-Gmail-Original-Message-ID: <CAHk-=wgocMvG7Lcrju7PgnWfUfsr3fEVOk=gwmGOhtTOdYdNjA@mail.gmail.com>
-Message-ID: <CAHk-=wgocMvG7Lcrju7PgnWfUfsr3fEVOk=gwmGOhtTOdYdNjA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 5/6] inode: port __I_LRU_ISOLATING to var event
+Date: Fri, 23 Aug 2024 10:52:48 +0800
+X-Gmail-Original-Message-ID: <CAHk-=wjTYN4tr9cjc2ROA1AJP5LzMh6OoNAz8pVSUMP0Kd7AFA@mail.gmail.com>
+Message-ID: <CAHk-=wjTYN4tr9cjc2ROA1AJP5LzMh6OoNAz8pVSUMP0Kd7AFA@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 1/6] fs: add i_state helpers
 To: NeilBrown <neilb@suse.de>
 Cc: Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
 	Ingo Molnar <mingo@redhat.com>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, 
 	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 23 Aug 2024 at 08:37, NeilBrown <neilb@suse.de> wrote:
+On Fri, 23 Aug 2024 at 08:14, NeilBrown <neilb@suse.de> wrote:
 >
-> I would really like to add
->
->   wait_var_event_locked(variable, condition, spinlock)
->
-> so that above would be one or two lines.
+> Maybe inode_wake_up_bit() should not have a barrier and the various
+> callers should add whichever barrier is appropriate.  That is the model
+> that Linus prefers for wake_up_bit() and for consistency it should apply
+> to inode_wake_up_bit() too.
 
-We don't even have that for the regular wait_event, but we do have
+I think that for the wake_up_bit() cases in particular, it's fairly
+easy to add whatever "clear_and_wakeup()" helpers. After all, there's
+only so much you can do to one bit, and I think merging the "act" with
+the "wakeup" into one routine is not only going to help fix the memory
+ordering problem, I think it's going to result in more readable code
+even aside from any memory ordering issues.
 
-  wait_event_interruptible_locked
-  wait_event_interruptible_locked_irq
+The wake_up_var() infrastructure that the inode code uses is a bit
+more involved. Not only can the variable be anything at all (so the
+operations you can do on it are obviously largely unbounded), but the
+inode hack in particular then uses one thing for the actual variable,
+and another thing for the address that is used to match up waits and
+wakeups.
 
-but they actually only work on the wait-queue lock, not on some
-generic "use this lock".
+So I suspect the inode code will have to do its thing explcitly with
+the low-level helpers and deal with the memory ordering issues on its
+own, adding the smp_mb() manually.
 
-Honestly, I like your version much better, but having two *very*
-different models for what "locked" means looks wrong.
-
-The wait-queue lock (our current "locked" event version) is a rather
-important special case, though, and takes advantage of holding the
-waitqueue lock by then using __add_wait_queue_entry_tail() without
-locking.
-
-"You are in a maze of twisty little functions, all alike".
-
-              Linus
+                  Linus
 
