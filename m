@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-26966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4875295D4FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 20:15:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAAB95D501
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 20:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B2731C2269F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 18:15:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925D91F21204
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 18:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A36192B8C;
-	Fri, 23 Aug 2024 18:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1468192D6B;
+	Fri, 23 Aug 2024 18:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtQfT5iC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTcfFYyK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D169191F80;
-	Fri, 23 Aug 2024 18:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A987192B99;
+	Fri, 23 Aug 2024 18:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724436875; cv=none; b=TsZuRtaEsDoLX+q7bXX5XIOTuVKZ0jV+RIaVDSpObla8jkosX1aX+0mx9GkW8kviLNZRixP0GBeX0CPBV2wyj5yzffCxfTP81uYd/JS9HbI70EYcEu7p/kHE7qEcl50/xGqgERWB3y7AzXnKeRrXwv9ba8SLwRHEm1o6k0yXnzw=
+	t=1724436876; cv=none; b=AHRF37dC3s3rngTYFsHAof6GhLbFHt9dhp/j14yjQP3vrryNLQ0HG+uMmVI6XFIpp02DucvkpB4pjGDM7KAcFP0BQDmBMNNoDnb9HeJHtAGTSyWKw1sOlX2AN8hzxbBWDzNnZpOfN7OI6lBqvx/csMsLSwzUxbd16t3m/Q9kUSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724436875; c=relaxed/simple;
-	bh=eKSyo4M/PwL7v/TFiclRIphm4rgipy9E/7hryKERvTk=;
+	s=arc-20240116; t=1724436876; c=relaxed/simple;
+	bh=VZlia48noGUXRwEjyS4Xepo9FiSb/8V4vDLSqflhrOk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z0l3karmhiXQb4QioWmS0S2SwdRTm9gfTsbM9Eumk4C0Kv3qj0qWNL3l/PfxF/4lBMZsmnX786olSYMflC88PB0pXSURlqIfcbSVNyswTw2evZoKyGCu7YJpeG+lyhcrrMYc2mELPG3CHS0k9DWUOHvHco7QLJaHPpSaDmA3o30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtQfT5iC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 700D6C4AF09;
-	Fri, 23 Aug 2024 18:14:34 +0000 (UTC)
+	 MIME-Version; b=lxOFGIPZoCOcEnczHkot9Ey+MG+xWSND2It2YnIglGKfZpTTfNmSlVrNTCXzgouukk3Vm9l8bk4kdf1xTxY2pRpp0c6UJ8YoXh87OD3WQPBEaAf5hDRtLM8ZlNyZSyK6ZQPlqX+4bmBUfw9xWpaXHOdZVOZI6rdEiUdFr9aKLk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTcfFYyK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0986C4AF09;
+	Fri, 23 Aug 2024 18:14:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724436874;
-	bh=eKSyo4M/PwL7v/TFiclRIphm4rgipy9E/7hryKERvTk=;
+	s=k20201202; t=1724436876;
+	bh=VZlia48noGUXRwEjyS4Xepo9FiSb/8V4vDLSqflhrOk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YtQfT5iCxXE7SsJffXvpdDiZUDJE1UCHgkxXDFTUbJtWi5JyDtXPWOZXcU2c+AjiZ
-	 dIrfL0dvZbPfux/kL7FX9vBUlBOedFm5V3GHEX+POgKu/3DwS2kRA8zZwQ+NIN+3ch
-	 Yb+ffuRK3vgeGqCavR4TdF5m0AazRzuxpi3SOptQ8F/8fu9XBshzVE6AgIJT2GU/T9
-	 8+ZpKw8RZ5cLvRxtQ4mMU5H5vileQ7Ym63QhRd2rCdyYjKzGs9k1yiBjouG0K5yR8z
-	 e91rxf5iUKKbHsxQEPz4sUykX6xfF8n9KG0DJ21EqWmJ5gAWoFzVopcG1u67L6Hblk
-	 w3S+94U4ogBwg==
+	b=MTcfFYyKrVqR+sSgnR6v5Zb5FVaTyA0tVGVXJjDkOWWLJZlvluBbftxaAqhyF9Js/
+	 lSH5la3IwQcLBakeeXog3MRfAIrgXCm/5hRuyJPmfcwYJeLQ6dL+6gTODfxx6PaMwi
+	 ldcbF3h1x2IfX1DLmIcfwae8nf9JaWPdsYam00HaQacJ5TYigkZoNLJJgMA1jMcOTO
+	 XccOH5YpB+lZvj9xByCyWYyiR7bczrt+uL6NowP3l3x8CZ8Mxu1BOpq5Za6gj5U4EZ
+	 sKzV7Ptvds40C9Ums8szq10N4fg8szRRpbY/PMpimOROSiIZP5X/Cq0R/V/Yv4iL31
+	 iu7U1pvWiSBdA==
 From: Mike Snitzer <snitzer@kernel.org>
 To: linux-nfs@vger.kernel.org
 Cc: Jeff Layton <jlayton@kernel.org>,
@@ -49,9 +49,9 @@ Cc: Jeff Layton <jlayton@kernel.org>,
 	Trond Myklebust <trondmy@hammerspace.com>,
 	NeilBrown <neilb@suse.de>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v13 07/19] SUNRPC: add rpcauth_map_clnt_to_svc_cred_local
-Date: Fri, 23 Aug 2024 14:14:05 -0400
-Message-ID: <20240823181423.20458-8-snitzer@kernel.org>
+Subject: [PATCH v13 08/19] SUNRPC: replace program list with program array
+Date: Fri, 23 Aug 2024 14:14:06 -0400
+Message-ID: <20240823181423.20458-9-snitzer@kernel.org>
 X-Mailer: git-send-email 2.44.0
 In-Reply-To: <20240823181423.20458-1-snitzer@kernel.org>
 References: <20240823181423.20458-1-snitzer@kernel.org>
@@ -63,91 +63,380 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Weston Andros Adamson <dros@primarydata.com>
+From: NeilBrown <neil@brown.name>
 
-Add new funtion rpcauth_map_clnt_to_svc_cred_local which maps a
-generic cred to a svc_cred suitable for use in nfsd.
+A service created with svc_create_pooled() can be given a linked list of
+programs and all of these will be served.
 
-This is needed by the localio code to map nfs client creds to nfs
-server credentials.
+Using a linked list makes it cumbersome when there are several programs
+that can be optionally selected with CONFIG settings.
 
-Following from net/sunrpc/auth_unix.c:unx_marshal() it is clear that
-->fsuid and ->fsgid must be used (rather than ->uid and ->gid).  In
-addition, these uid and gid must be translated with from_kuid_munged()
-so local client uses correct uid and gid when acting as local server.
+After this patch is applied, API consumers must use only
+svc_create_pooled() when creating an RPC service that listens for more
+than one RPC program.
 
-Suggested-by: NeilBrown <neilb@suse.de> # to approximate unx_marshal()
-Signed-off-by: Weston Andros Adamson <dros@primarydata.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Co-developed-by: Mike Snitzer <snitzer@kernel.org>
+Signed-off-by: NeilBrown <neil@brown.name>
 Signed-off-by: Mike Snitzer <snitzer@kernel.org>
 ---
- include/linux/sunrpc/auth.h |  4 ++++
- net/sunrpc/auth.c           | 22 ++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
+ fs/nfsd/nfsctl.c           |  2 +-
+ fs/nfsd/nfsd.h             |  2 +-
+ fs/nfsd/nfssvc.c           | 38 ++++++++++-----------
+ include/linux/sunrpc/svc.h |  7 ++--
+ net/sunrpc/svc.c           | 68 ++++++++++++++++++++++----------------
+ net/sunrpc/svc_xprt.c      |  2 +-
+ net/sunrpc/svcauth_unix.c  |  3 +-
+ 7 files changed, 67 insertions(+), 55 deletions(-)
 
-diff --git a/include/linux/sunrpc/auth.h b/include/linux/sunrpc/auth.h
-index 61e58327b1aa..4cfb68f511db 100644
---- a/include/linux/sunrpc/auth.h
-+++ b/include/linux/sunrpc/auth.h
-@@ -11,6 +11,7 @@
- #define _LINUX_SUNRPC_AUTH_H
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 1c9e5b4bcb0a..64c1b4d649bc 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -2246,7 +2246,7 @@ static __net_init int nfsd_net_init(struct net *net)
+ 	if (retval)
+ 		goto out_repcache_error;
+ 	memset(&nn->nfsd_svcstats, 0, sizeof(nn->nfsd_svcstats));
+-	nn->nfsd_svcstats.program = &nfsd_program;
++	nn->nfsd_svcstats.program = &nfsd_programs[0];
+ 	for (i = 0; i < sizeof(nn->nfsd_versions); i++)
+ 		nn->nfsd_versions[i] = nfsd_support_version(i);
+ 	for (i = 0; i < sizeof(nn->nfsd4_minorversions); i++)
+diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
+index 4ccbf014a2c7..b0d3e82d6dcd 100644
+--- a/fs/nfsd/nfsd.h
++++ b/fs/nfsd/nfsd.h
+@@ -85,7 +85,7 @@ struct nfsd_genl_rqstp {
+ 	u32			rq_opnum[NFSD_MAX_OPS_PER_COMPOUND];
+ };
  
- #include <linux/sunrpc/sched.h>
-+#include <linux/sunrpc/svcauth.h>
- #include <linux/sunrpc/msg_prot.h>
- #include <linux/sunrpc/xdr.h>
+-extern struct svc_program	nfsd_program;
++extern struct svc_program	nfsd_programs[];
+ extern const struct svc_version	nfsd_version2, nfsd_version3, nfsd_version4;
+ extern struct mutex		nfsd_mutex;
+ extern spinlock_t		nfsd_drc_lock;
+diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
+index defc430f912f..b02eaaea7d62 100644
+--- a/fs/nfsd/nfssvc.c
++++ b/fs/nfsd/nfssvc.c
+@@ -35,7 +35,6 @@
+ #define NFSDDBG_FACILITY	NFSDDBG_SVC
  
-@@ -184,6 +185,9 @@ int			rpcauth_uptodatecred(struct rpc_task *);
- int			rpcauth_init_credcache(struct rpc_auth *);
- void			rpcauth_destroy_credcache(struct rpc_auth *);
- void			rpcauth_clear_credcache(struct rpc_cred_cache *);
-+void			rpcauth_map_clnt_to_svc_cred_local(struct rpc_clnt *clnt,
-+							   const struct cred *,
-+							   struct svc_cred *);
- char *			rpcauth_stringify_acceptor(struct rpc_cred *);
+ atomic_t			nfsd_th_cnt = ATOMIC_INIT(0);
+-extern struct svc_program	nfsd_program;
+ static int			nfsd(void *vrqstp);
+ #if defined(CONFIG_NFSD_V2_ACL) || defined(CONFIG_NFSD_V3_ACL)
+ static int			nfsd_acl_rpcbind_set(struct net *,
+@@ -90,20 +89,9 @@ static const struct svc_version *nfsd_acl_version[] = {
+ # endif
+ };
  
- static inline
-diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-index 04534ea537c8..3b6d91b36589 100644
---- a/net/sunrpc/auth.c
-+++ b/net/sunrpc/auth.c
-@@ -17,6 +17,7 @@
- #include <linux/sunrpc/clnt.h>
- #include <linux/sunrpc/gss_api.h>
- #include <linux/spinlock.h>
-+#include <linux/user_namespace.h>
+-#define NFSD_ACL_MINVERS            2
++#define NFSD_ACL_MINVERS	2
+ #define NFSD_ACL_NRVERS		ARRAY_SIZE(nfsd_acl_version)
  
- #include <trace/events/sunrpc.h>
+-static struct svc_program	nfsd_acl_program = {
+-	.pg_prog		= NFS_ACL_PROGRAM,
+-	.pg_nvers		= NFSD_ACL_NRVERS,
+-	.pg_vers		= nfsd_acl_version,
+-	.pg_name		= "nfsacl",
+-	.pg_class		= "nfsd",
+-	.pg_authenticate	= &svc_set_client,
+-	.pg_init_request	= nfsd_acl_init_request,
+-	.pg_rpcbind_set		= nfsd_acl_rpcbind_set,
+-};
+-
+ #endif /* defined(CONFIG_NFSD_V2_ACL) || defined(CONFIG_NFSD_V3_ACL) */
  
-@@ -308,6 +309,27 @@ rpcauth_init_credcache(struct rpc_auth *auth)
- }
- EXPORT_SYMBOL_GPL(rpcauth_init_credcache);
+ static const struct svc_version *nfsd_version[NFSD_MAXVERS+1] = {
+@@ -116,18 +104,29 @@ static const struct svc_version *nfsd_version[NFSD_MAXVERS+1] = {
+ #endif
+ };
  
-+void
-+rpcauth_map_clnt_to_svc_cred_local(struct rpc_clnt *clnt,
-+				   const struct cred *cred,
-+				   struct svc_cred *svc)
-+{
-+	struct user_namespace *userns = clnt->cl_cred ?
-+		clnt->cl_cred->user_ns : &init_user_ns;
-+
-+	memset(svc, 0, sizeof(struct svc_cred));
-+
-+	svc->cr_uid = KUIDT_INIT(from_kuid_munged(userns, cred->fsuid));
-+	svc->cr_gid = KGIDT_INIT(from_kgid_munged(userns, cred->fsgid));
-+	svc->cr_flavor = clnt->cl_auth->au_flavor;
-+	if (cred->group_info)
-+		svc->cr_group_info = get_group_info(cred->group_info);
-+	/* These aren't relevant for local (network is bypassed) */
-+	svc->cr_principal = NULL;
-+	svc->cr_gss_mech = NULL;
-+}
-+EXPORT_SYMBOL_GPL(rpcauth_map_clnt_to_svc_cred_local);
-+
- char *
- rpcauth_stringify_acceptor(struct rpc_cred *cred)
+-struct svc_program		nfsd_program = {
+-#if defined(CONFIG_NFSD_V2_ACL) || defined(CONFIG_NFSD_V3_ACL)
+-	.pg_next		= &nfsd_acl_program,
+-#endif
++struct svc_program		nfsd_programs[] = {
++	{
+ 	.pg_prog		= NFS_PROGRAM,		/* program number */
+ 	.pg_nvers		= NFSD_MAXVERS+1,	/* nr of entries in nfsd_version */
+ 	.pg_vers		= nfsd_version,		/* version table */
+ 	.pg_name		= "nfsd",		/* program name */
+ 	.pg_class		= "nfsd",		/* authentication class */
+-	.pg_authenticate	= &svc_set_client,	/* export authentication */
++	.pg_authenticate	= svc_set_client,	/* export authentication */
+ 	.pg_init_request	= nfsd_init_request,
+ 	.pg_rpcbind_set		= nfsd_rpcbind_set,
++	},
++#if defined(CONFIG_NFSD_V2_ACL) || defined(CONFIG_NFSD_V3_ACL)
++	{
++	.pg_prog		= NFS_ACL_PROGRAM,
++	.pg_nvers		= NFSD_ACL_NRVERS,
++	.pg_vers		= nfsd_acl_version,
++	.pg_name		= "nfsacl",
++	.pg_class		= "nfsd",
++	.pg_authenticate	= svc_set_client,
++	.pg_init_request	= nfsd_acl_init_request,
++	.pg_rpcbind_set		= nfsd_acl_rpcbind_set,
++	},
++#endif /* defined(CONFIG_NFSD_V2_ACL) || defined(CONFIG_NFSD_V3_ACL) */
+ };
+ 
+ bool nfsd_support_version(int vers)
+@@ -598,7 +597,8 @@ int nfsd_create_serv(struct net *net)
+ 	if (nfsd_max_blksize == 0)
+ 		nfsd_max_blksize = nfsd_get_default_max_blksize();
+ 	nfsd_reset_versions(nn);
+-	serv = svc_create_pooled(&nfsd_program, &nn->nfsd_svcstats,
++	serv = svc_create_pooled(nfsd_programs, ARRAY_SIZE(nfsd_programs),
++				 &nn->nfsd_svcstats,
+ 				 nfsd_max_blksize, nfsd);
+ 	if (serv == NULL)
+ 		return -ENOMEM;
+diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
+index 437672bcaa22..c7ad2fb2a155 100644
+--- a/include/linux/sunrpc/svc.h
++++ b/include/linux/sunrpc/svc.h
+@@ -67,9 +67,10 @@ enum {
+  * We currently do not support more than one RPC program per daemon.
+  */
+ struct svc_serv {
+-	struct svc_program *	sv_program;	/* RPC program */
++	struct svc_program *	sv_programs;	/* RPC programs */
+ 	struct svc_stat *	sv_stats;	/* RPC statistics */
+ 	spinlock_t		sv_lock;
++	unsigned int		sv_nprogs;	/* Number of sv_programs */
+ 	unsigned int		sv_nrthreads;	/* # of server threads */
+ 	unsigned int		sv_maxconn;	/* max connections allowed or
+ 						 * '0' causing max to be based
+@@ -357,10 +358,9 @@ struct svc_process_info {
+ };
+ 
+ /*
+- * List of RPC programs on the same transport endpoint
++ * RPC program - an array of these can use the same transport endpoint
+  */
+ struct svc_program {
+-	struct svc_program *	pg_next;	/* other programs (same xprt) */
+ 	u32			pg_prog;	/* program number */
+ 	unsigned int		pg_lovers;	/* lowest version */
+ 	unsigned int		pg_hivers;	/* highest version */
+@@ -438,6 +438,7 @@ bool		   svc_rqst_replace_page(struct svc_rqst *rqstp,
+ void		   svc_rqst_release_pages(struct svc_rqst *rqstp);
+ void		   svc_exit_thread(struct svc_rqst *);
+ struct svc_serv *  svc_create_pooled(struct svc_program *prog,
++				     unsigned int nprog,
+ 				     struct svc_stat *stats,
+ 				     unsigned int bufsize,
+ 				     int (*threadfn)(void *data));
+diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
+index ff6f3e35b36d..b33386d249c2 100644
+--- a/net/sunrpc/svc.c
++++ b/net/sunrpc/svc.c
+@@ -440,10 +440,11 @@ EXPORT_SYMBOL_GPL(svc_rpcb_cleanup);
+ 
+ static int svc_uses_rpcbind(struct svc_serv *serv)
  {
+-	struct svc_program	*progp;
+-	unsigned int		i;
++	unsigned int		p, i;
++
++	for (p = 0; p < serv->sv_nprogs; p++) {
++		struct svc_program *progp = &serv->sv_programs[p];
+ 
+-	for (progp = serv->sv_program; progp; progp = progp->pg_next) {
+ 		for (i = 0; i < progp->pg_nvers; i++) {
+ 			if (progp->pg_vers[i] == NULL)
+ 				continue;
+@@ -480,7 +481,7 @@ __svc_init_bc(struct svc_serv *serv)
+  * Create an RPC service
+  */
+ static struct svc_serv *
+-__svc_create(struct svc_program *prog, struct svc_stat *stats,
++__svc_create(struct svc_program *prog, int nprogs, struct svc_stat *stats,
+ 	     unsigned int bufsize, int npools, int (*threadfn)(void *data))
+ {
+ 	struct svc_serv	*serv;
+@@ -491,7 +492,8 @@ __svc_create(struct svc_program *prog, struct svc_stat *stats,
+ 	if (!(serv = kzalloc(sizeof(*serv), GFP_KERNEL)))
+ 		return NULL;
+ 	serv->sv_name      = prog->pg_name;
+-	serv->sv_program   = prog;
++	serv->sv_programs  = prog;
++	serv->sv_nprogs    = nprogs;
+ 	serv->sv_stats     = stats;
+ 	if (bufsize > RPCSVC_MAXPAYLOAD)
+ 		bufsize = RPCSVC_MAXPAYLOAD;
+@@ -499,17 +501,18 @@ __svc_create(struct svc_program *prog, struct svc_stat *stats,
+ 	serv->sv_max_mesg  = roundup(serv->sv_max_payload + PAGE_SIZE, PAGE_SIZE);
+ 	serv->sv_threadfn = threadfn;
+ 	xdrsize = 0;
+-	while (prog) {
+-		prog->pg_lovers = prog->pg_nvers-1;
+-		for (vers=0; vers<prog->pg_nvers ; vers++)
+-			if (prog->pg_vers[vers]) {
+-				prog->pg_hivers = vers;
+-				if (prog->pg_lovers > vers)
+-					prog->pg_lovers = vers;
+-				if (prog->pg_vers[vers]->vs_xdrsize > xdrsize)
+-					xdrsize = prog->pg_vers[vers]->vs_xdrsize;
++	for (i = 0; i < nprogs; i++) {
++		struct svc_program *progp = &prog[i];
++
++		progp->pg_lovers = progp->pg_nvers-1;
++		for (vers = 0; vers < progp->pg_nvers ; vers++)
++			if (progp->pg_vers[vers]) {
++				progp->pg_hivers = vers;
++				if (progp->pg_lovers > vers)
++					progp->pg_lovers = vers;
++				if (progp->pg_vers[vers]->vs_xdrsize > xdrsize)
++					xdrsize = progp->pg_vers[vers]->vs_xdrsize;
+ 			}
+-		prog = prog->pg_next;
+ 	}
+ 	serv->sv_xdrsize   = xdrsize;
+ 	INIT_LIST_HEAD(&serv->sv_tempsocks);
+@@ -558,13 +561,14 @@ __svc_create(struct svc_program *prog, struct svc_stat *stats,
+ struct svc_serv *svc_create(struct svc_program *prog, unsigned int bufsize,
+ 			    int (*threadfn)(void *data))
+ {
+-	return __svc_create(prog, NULL, bufsize, 1, threadfn);
++	return __svc_create(prog, 1, NULL, bufsize, 1, threadfn);
+ }
+ EXPORT_SYMBOL_GPL(svc_create);
+ 
+ /**
+  * svc_create_pooled - Create an RPC service with pooled threads
+- * @prog: the RPC program the new service will handle
++ * @prog:  Array of RPC programs the new service will handle
++ * @nprogs: Number of programs in the array
+  * @stats: the stats struct if desired
+  * @bufsize: maximum message size for @prog
+  * @threadfn: a function to service RPC requests for @prog
+@@ -572,6 +576,7 @@ EXPORT_SYMBOL_GPL(svc_create);
+  * Returns an instantiated struct svc_serv object or NULL.
+  */
+ struct svc_serv *svc_create_pooled(struct svc_program *prog,
++				   unsigned int nprogs,
+ 				   struct svc_stat *stats,
+ 				   unsigned int bufsize,
+ 				   int (*threadfn)(void *data))
+@@ -579,7 +584,7 @@ struct svc_serv *svc_create_pooled(struct svc_program *prog,
+ 	struct svc_serv *serv;
+ 	unsigned int npools = svc_pool_map_get();
+ 
+-	serv = __svc_create(prog, stats, bufsize, npools, threadfn);
++	serv = __svc_create(prog, nprogs, stats, bufsize, npools, threadfn);
+ 	if (!serv)
+ 		goto out_err;
+ 	serv->sv_is_pooled = true;
+@@ -602,16 +607,16 @@ svc_destroy(struct svc_serv **servp)
+ 
+ 	*servp = NULL;
+ 
+-	dprintk("svc: svc_destroy(%s)\n", serv->sv_program->pg_name);
++	dprintk("svc: svc_destroy(%s)\n", serv->sv_programs->pg_name);
+ 	timer_shutdown_sync(&serv->sv_temptimer);
+ 
+ 	/*
+ 	 * Remaining transports at this point are not expected.
+ 	 */
+ 	WARN_ONCE(!list_empty(&serv->sv_permsocks),
+-		  "SVC: permsocks remain for %s\n", serv->sv_program->pg_name);
++		  "SVC: permsocks remain for %s\n", serv->sv_programs->pg_name);
+ 	WARN_ONCE(!list_empty(&serv->sv_tempsocks),
+-		  "SVC: tempsocks remain for %s\n", serv->sv_program->pg_name);
++		  "SVC: tempsocks remain for %s\n", serv->sv_programs->pg_name);
+ 
+ 	cache_clean_deferred(serv);
+ 
+@@ -1149,15 +1154,16 @@ int svc_register(const struct svc_serv *serv, struct net *net,
+ 		 const int family, const unsigned short proto,
+ 		 const unsigned short port)
+ {
+-	struct svc_program	*progp;
+-	unsigned int		i;
++	unsigned int		p, i;
+ 	int			error = 0;
+ 
+ 	WARN_ON_ONCE(proto == 0 && port == 0);
+ 	if (proto == 0 && port == 0)
+ 		return -EINVAL;
+ 
+-	for (progp = serv->sv_program; progp; progp = progp->pg_next) {
++	for (p = 0; p < serv->sv_nprogs; p++) {
++		struct svc_program *progp = &serv->sv_programs[p];
++
+ 		for (i = 0; i < progp->pg_nvers; i++) {
+ 
+ 			error = progp->pg_rpcbind_set(net, progp, i,
+@@ -1209,13 +1215,14 @@ static void __svc_unregister(struct net *net, const u32 program, const u32 versi
+ static void svc_unregister(const struct svc_serv *serv, struct net *net)
+ {
+ 	struct sighand_struct *sighand;
+-	struct svc_program *progp;
+ 	unsigned long flags;
+-	unsigned int i;
++	unsigned int p, i;
+ 
+ 	clear_thread_flag(TIF_SIGPENDING);
+ 
+-	for (progp = serv->sv_program; progp; progp = progp->pg_next) {
++	for (p = 0; p < serv->sv_nprogs; p++) {
++		struct svc_program *progp = &serv->sv_programs[p];
++
+ 		for (i = 0; i < progp->pg_nvers; i++) {
+ 			if (progp->pg_vers[i] == NULL)
+ 				continue;
+@@ -1321,7 +1328,7 @@ svc_process_common(struct svc_rqst *rqstp)
+ 	struct svc_process_info process;
+ 	enum svc_auth_status	auth_res;
+ 	unsigned int		aoffset;
+-	int			rc;
++	int			pr, rc;
+ 	__be32			*p;
+ 
+ 	/* Will be turned off only when NFSv4 Sessions are used */
+@@ -1345,9 +1352,12 @@ svc_process_common(struct svc_rqst *rqstp)
+ 	rqstp->rq_vers = be32_to_cpup(p++);
+ 	rqstp->rq_proc = be32_to_cpup(p);
+ 
+-	for (progp = serv->sv_program; progp; progp = progp->pg_next)
++	for (pr = 0; pr < serv->sv_nprogs; pr++) {
++		progp = &serv->sv_programs[pr];
++
+ 		if (rqstp->rq_prog == progp->pg_prog)
+ 			break;
++	}
+ 
+ 	/*
+ 	 * Decode auth data, and add verifier to reply buffer.
+diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+index 53ebc719ff5a..43c57124de52 100644
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -268,7 +268,7 @@ static int _svc_xprt_create(struct svc_serv *serv, const char *xprt_name,
+ 		spin_unlock(&svc_xprt_class_lock);
+ 		newxprt = xcl->xcl_ops->xpo_create(serv, net, sap, len, flags);
+ 		if (IS_ERR(newxprt)) {
+-			trace_svc_xprt_create_err(serv->sv_program->pg_name,
++			trace_svc_xprt_create_err(serv->sv_programs->pg_name,
+ 						  xcl->xcl_name, sap, len,
+ 						  newxprt);
+ 			module_put(xcl->xcl_owner);
+diff --git a/net/sunrpc/svcauth_unix.c b/net/sunrpc/svcauth_unix.c
+index 04b45588ae6f..8ca98b146ec8 100644
+--- a/net/sunrpc/svcauth_unix.c
++++ b/net/sunrpc/svcauth_unix.c
+@@ -697,7 +697,8 @@ svcauth_unix_set_client(struct svc_rqst *rqstp)
+ 	rqstp->rq_auth_stat = rpc_autherr_badcred;
+ 	ipm = ip_map_cached_get(xprt);
+ 	if (ipm == NULL)
+-		ipm = __ip_map_lookup(sn->ip_map_cache, rqstp->rq_server->sv_program->pg_class,
++		ipm = __ip_map_lookup(sn->ip_map_cache,
++				      rqstp->rq_server->sv_programs->pg_class,
+ 				    &sin6->sin6_addr);
+ 
+ 	if (ipm == NULL)
 -- 
 2.44.0
 
