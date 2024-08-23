@@ -1,164 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-26911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-26912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BD695CDA4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 15:20:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6819195CE33
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 15:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F0971F23775
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 13:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1CA282B19
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Aug 2024 13:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE49185B5E;
-	Fri, 23 Aug 2024 13:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D850187877;
+	Fri, 23 Aug 2024 13:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHg5Im/R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="diJF9KTv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779C018562A;
-	Fri, 23 Aug 2024 13:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72C24430;
+	Fri, 23 Aug 2024 13:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724419217; cv=none; b=HBWvjfdcI2RtW2HHco3qy9b32FP0bn5uidt/0naSmplNWjzN+RD6oX8psFPxOdFovUeEvrYpv787ACENJn4TTCWXae5YhsjLfcZXYBklhPlnzQsagKjIWYjjK1XXmAje/9ShKoxUiiqOws3ermpNKcFMWZdLHMY6x2oGl54doiQ=
+	t=1724420540; cv=none; b=RwLAtvl+w/zBqvykUFZvNBQLWWay2Jgw74ldhLg9LvZJbj4x9TfDlNY4hRS9spbo8clDJ7TMpqyqxzIdUC8s/lGv9+6ik8CZYN7hnp2FkcQL5XdZkcGy08Fm46RuvNpHVJNlxd6gxKPa6bjxftMcQzsNp39XQ44gnuNc4lVIrAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724419217; c=relaxed/simple;
-	bh=yaIYtRS5UcwYeIUCrUscF8Vv+yPDX3MF59L4So1ORIo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b+y8pLII7+Uh7Ens+rSQhTn7+uY3kFSGszh/yEwmsqOTOrNXqtfrf3PX6CNz8LpiNqUa8CwjVk3qy42N+Tz30fa9ctQPeq4urrugy2pBDlgzI8pAnNr0w8dr7X49TzHlfD2f2yNwcZ++IDJLcynNV0HXYImrrxCsZD/cF4loEpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dHg5Im/R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 771A6C32786;
-	Fri, 23 Aug 2024 13:20:16 +0000 (UTC)
+	s=arc-20240116; t=1724420540; c=relaxed/simple;
+	bh=p7ZIANVfDlXfoD29LXtd0evBx7y2j+mvpMRvoiijjDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcTDaNrY7up4L9SptN/FfubtJ3StHIhfb9xHkVjtLXmxVzzJWC6pjJExwWI4lWPIr6jQHP5fx35lZeJaTfnmYDQhoHK7lpc9OiGv6QkTsTwWf0VYJYJAE3khcsniIKmr59GOdlqHL9rrZNZzkYRaJwlcnt44m0W8KQwEMx9a3wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=diJF9KTv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E33C32786;
+	Fri, 23 Aug 2024 13:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724419217;
-	bh=yaIYtRS5UcwYeIUCrUscF8Vv+yPDX3MF59L4So1ORIo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=dHg5Im/R36IWe+1qmqED4ta9013HNkxDbDFkoj2hzHoghyT5UL3O7tiWXq871CKU+
-	 /M5uIJLamaHFc+zztwUr97ZflQeP9hO8eNAYCAvbo5/m2mmDWONrF+GZ/RWm9HqAwQ
-	 pyXoK2j6NTYZH66xHJwIDmzhiylRhOh0tT6Imv3wP6HCG3e761f6RG9diEoVBnkh9i
-	 wH3K+bgj4PFDmlzzesJJrI/WIPWocsfQMkbFofPZmO6MbNBsIhu8O5+q9IKO1LETna
-	 tNKjbBKqrQZ+Y5KL8O6M1nLVhwVwvDL0Nl5k034R5GmwRhdtFVK2I3I+1ql7BcpJPK
-	 ub0lPO3gL3e3w==
-Message-ID: <e167fb368b8a54b0716ae35730ddc61a658f6f6a.camel@kernel.org>
-Subject: Re: [PATCH 1/1] xfs: introduce new file range commit ioctls
-From: Jeff Layton <jlayton@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
- <djwong@kernel.org>
-Cc: hch@lst.de, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date: Fri, 23 Aug 2024 09:20:15 -0400
-In-Reply-To: <ZsgMRrOBlBwsHBdZ@infradead.org>
-References: <172437084258.57211.13522832162579952916.stgit@frogsfrogsfrogs>
-	 <172437084278.57211.4355071581143024290.stgit@frogsfrogsfrogs>
-	 <ZsgMRrOBlBwsHBdZ@infradead.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
+	s=k20201202; t=1724420540;
+	bh=p7ZIANVfDlXfoD29LXtd0evBx7y2j+mvpMRvoiijjDI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=diJF9KTvNtOkFxSbJXKbytkFAtignBqhPmYEolOHprLDUViiVjuKDHUVvblLiJoQK
+	 cYAq2OFQ1lC4Ob4pfq5sgJpfMW0nC0GYloyNujsF8966uVxZOtpAfbh+JXp4NFAXi6
+	 zGYX9PXuywc/Nn2EaTGKd9Kg3OUZAfcHhEG+bSe3hFweisJRBzWLqXIhMjTnOFsE0k
+	 BYfyDcsS8zmIES3CMBMtscVY670iajmo99zrDiLGTOeSpVKhmRvfeA06Kvp3uAINuA
+	 cgeKenNlP7lid7lc7d1aVOD3AdNXVJOFk/vBTQVF0s7Q5L+YUfHHd/MdBxMETD+T+T
+	 +SkkSJYuyEi6A==
+Date: Fri, 23 Aug 2024 14:42:12 +0100
+From: Will Deacon <will@kernel.org>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, nd@arm.com,
+	akpm@linux-foundation.org, aneesh.kumar@kernel.org,
+	aneesh.kumar@linux.ibm.com, anshuman.khandual@arm.com, bp@alien8.de,
+	broonie@kernel.org, catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
+	hpa@zytor.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org, maz@kernel.org, mingo@redhat.com,
+	mpe@ellerman.id.au, naveen.n.rao@linux.ibm.com, npiggin@gmail.com,
+	oliver.upton@linux.dev, shuah@kernel.org, skhan@linuxfoundation.org,
+	szabolcs.nagy@arm.com, tglx@linutronix.de, x86@kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 04/30] arm64: disable trapping of POR_EL0 to EL2
+Message-ID: <20240823134211.GF32156@willie-the-truck>
+References: <20240822151113.1479789-1-joey.gouly@arm.com>
+ <20240822151113.1479789-5-joey.gouly@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822151113.1479789-5-joey.gouly@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, 2024-08-22 at 21:12 -0700, Christoph Hellwig wrote:
-> On Thu, Aug 22, 2024 at 05:01:22PM -0700, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <djwong@kernel.org>
-> >=20
-> > This patch introduces two more new ioctls to manage atomic updates to
-> > file contents -- XFS_IOC_START_COMMIT and XFS_IOC_COMMIT_RANGE.  The
-> > commit mechanism here is exactly the same as what XFS_IOC_EXCHANGE_RANG=
-E
-> > does, but with the additional requirement that file2 cannot have change=
-d
-> > since some sampling point.  The start-commit ioctl performs the samplin=
-g
-> > of file attributes.
->=20
-> The code itself looks simply enough now, but how do we guarantee
-> that ctime actually works as a full change count and not just by
-> chance here?
->=20
+On Thu, Aug 22, 2024 at 04:10:47PM +0100, Joey Gouly wrote:
+> Allow EL0 or EL1 to access POR_EL0 without being trapped to EL2.
+> 
+> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arm64/include/asm/el2_setup.h | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git arch/arm64/include/asm/el2_setup.h arch/arm64/include/asm/el2_setup.h
+> index fd87c4b8f984..212191ecad40 100644
+> --- arch/arm64/include/asm/el2_setup.h
+> +++ arch/arm64/include/asm/el2_setup.h
+> @@ -185,12 +185,20 @@
+>  .Lset_pie_fgt_\@:
+>  	mrs_s	x1, SYS_ID_AA64MMFR3_EL1
+>  	ubfx	x1, x1, #ID_AA64MMFR3_EL1_S1PIE_SHIFT, #4
+> -	cbz	x1, .Lset_fgt_\@
+> +	cbz	x1, .Lset_poe_fgt_\@
+>  
+>  	/* Disable trapping of PIR_EL1 / PIRE0_EL1 */
+>  	orr	x0, x0, #HFGxTR_EL2_nPIR_EL1
+>  	orr	x0, x0, #HFGxTR_EL2_nPIRE0_EL1
+>  
+> +.Lset_poe_fgt_\@:
+> +	mrs_s	x1, SYS_ID_AA64MMFR3_EL1
+> +	ubfx	x1, x1, #ID_AA64MMFR3_EL1_S1POE_SHIFT, #4
+> +	cbz	x1, .Lset_fgt_\@
+> +
+> +	/* Disable trapping of POR_EL0 */
+> +	orr	x0, x0, #HFGxTR_EL2_nPOR_EL0
 
-With current mainline kernels it won't, but the updated multigrain
-timestamp series is in linux-next and is slated to go into v6.12. At
-that point it should be fine for this purpose.
+Dave's reworking the labels here on for-next/misc:
 
---=20
-Jeff Layton <jlayton@kernel.org>
+https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/commit/?h=for-next/misc&id=5b39db6037e7cba1659f2149aef76934370aa6d5
+
+Please can you follow that new style for the new label so that we don't
+end up with an immediate inconsistency? Leave the '.Lset_fgt' label
+as-is and I'll fix it when we merge the branches.
+
+Cheers,
+
+Will
 
