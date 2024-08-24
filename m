@@ -1,55 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-27034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DD695DF5F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 20:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A33895DF60
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 20:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D8871F214E0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 18:05:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AB551C20756
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 18:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7A156B72;
-	Sat, 24 Aug 2024 18:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1171664C6;
+	Sat, 24 Aug 2024 18:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HAaML1t1"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PA8TAr8Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B062C433A2
-	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2024 18:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A7352F70
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2024 18:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724522706; cv=none; b=bsVLfvJ70WtPrT2Ev6PFzhst5Y1j8n1udc8YU+Dv7c4D2aBh/lD5V3PnWwzUUKU5sZMs9E9tO2wWQcWXOeVHqO8UN+A+lK4II6iSHi4SCg/81EzKJNYCKL1fL5kk1fURyHTOPQlY6DnIQ6Q1YYm8WpGXspfO53z+IHC2ZuSJ7E4=
+	t=1724522708; cv=none; b=c8uEiLfFsEonKWASWQeEQjHyYcuqSkC/F6sIM5wKsSJFSGq5b5+Y7AfDbyfeOIK//kp8DAQfvyIJQRfoks0vWYQrXpvkzb410bm+icPXLUFvrUfjCxZFRfH4nlneyoSL3S1hId1bOIFiGCWPf/uDpvxq63EswzN0Z6CP0EvhUj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724522706; c=relaxed/simple;
-	bh=dTn8qEYS+s/QZfynwJqRJ0yufElOQv3URjcdgqiU2zc=;
+	s=arc-20240116; t=1724522708; c=relaxed/simple;
+	bh=+tUik1Nv/hsGR6qHXEPJn1X6ybWgLRg/Rywa850NncI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C3eadjwxhGK96vfuA5aK2NQgZjQ0N74ztbUx26uTxRwLfyN4n4MTsdAn6xsP6wHtbRWW79hQtogtknPVMux6YkkxoK3nYqX8AZndHFJbYsmvCD26x3ZBOFE6YaFiRTXErBLHbuiF34czuvoK1e/7102EyysCZebbtwPzht5rLvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HAaML1t1; arc=none smtp.client-ip=91.218.175.183
+	 MIME-Version; b=PJH84PQVV27fGJH0d5cPnwnrJMw0ctFm6JabIH1vTXFj1XgXQr1jEtHHJprbMhtSLd0gF1FcqJm9bqdiAn5g3jFmuwJ2llrKhRLUtS/tDYQHxGiDCr8yDWfDnxHBh0ZSqYblMuZeFzU8u278SoseitdWs7ZCGLK5dEXKn+Tw9e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PA8TAr8Z; arc=none smtp.client-ip=91.218.175.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724522702;
+	t=1724522704;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=z4DTT9AInmX29fCUItJ/fQQQ+2P1VUsJ4Sn1mHHvlmQ=;
-	b=HAaML1t1RV19xB12Xqwl4Rmu43uMqkE1khFSE0/turbXOvDnpQOsKjX1AcZWmsX0vsX2yO
-	JyeNNLt5AEc7bMxo7/FTrn7IBF9BnP73eaPmCmuQF5ZqMScLv50ysRdKDVd7ptzJfmPn9J
-	/yj9/filyYtaTXi+EhlAW37MIZ/fwrg=
+	bh=5EwinnhQJWLN2dpAsOdfTffV0dyCCM/ESmRUthjs8fA=;
+	b=PA8TAr8ZBwgEDgS3dUduPbEF9QAcFTyYQrLdS+F6lb/qJjT5BGllUtY7YTKcmWlNrK0BCN
+	BtjA9L1dgvKCxHgm2n8T3qLkBM6Hs85YLVJ0tbuZaS3AVU1RMNAH8NASKH8/c/EEhzVlJc
+	/rtRv8/XbP6iq2PnOXKIUfq5AQ7p7YY=
 From: Kent Overstreet <kent.overstreet@linux.dev>
 To: david@fromorbit.com,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 01/10] seq_buf: seq_buf_human_readable_u64()
-Date: Sat, 24 Aug 2024 14:04:43 -0400
-Message-ID: <20240824180454.3160385-2-kent.overstreet@linux.dev>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	linux-mm@kvack.org
+Subject: [PATCH 02/10] mm: shrinker: Add a .to_text() method for shrinkers
+Date: Sat, 24 Aug 2024 14:04:44 -0400
+Message-ID: <20240824180454.3160385-3-kent.overstreet@linux.dev>
 In-Reply-To: <20240824180454.3160385-1-kent.overstreet@linux.dev>
 References: <20240824180454.3160385-1-kent.overstreet@linux.dev>
 Precedence: bulk
@@ -61,45 +65,156 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-This adds a seq_buf wrapper for string_get_size().
+This adds a new callback method to shrinkers which they can use to
+describe anything relevant to memory reclaim about their internal state,
+for example object dirtyness.
 
+This patch also adds shrinkers_to_text(), which reports on the top 10
+shrinkers - by object count - in sorted order, to be used in OOM
+reporting.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: linux-mm@kvack.org
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- include/linux/seq_buf.h |  4 ++++
- lib/seq_buf.c           | 10 ++++++++++
- 2 files changed, 14 insertions(+)
+ include/linux/shrinker.h |  7 +++-
+ mm/shrinker.c            | 73 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 78 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
-index fe41da005970..1cba369e1821 100644
---- a/include/linux/seq_buf.h
-+++ b/include/linux/seq_buf.h
-@@ -173,4 +173,8 @@ seq_buf_bprintf(struct seq_buf *s, const char *fmt, const u32 *binary);
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 1a00be90d93a..6193612617a1 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -24,6 +24,8 @@ struct shrinker_info {
+ 	struct shrinker_info_unit *unit[];
+ };
  
- void seq_buf_do_printk(struct seq_buf *s, const char *lvl);
- 
-+enum string_size_units;
-+void seq_buf_human_readable_u64(struct seq_buf *s, u64 v,
-+				const enum string_size_units units);
++struct seq_buf;
 +
- #endif /* _LINUX_SEQ_BUF_H */
-diff --git a/lib/seq_buf.c b/lib/seq_buf.c
-index f3f3436d60a9..3c41ca83a0c3 100644
---- a/lib/seq_buf.c
-+++ b/lib/seq_buf.c
-@@ -436,3 +436,13 @@ int seq_buf_hex_dump(struct seq_buf *s, const char *prefix_str, int prefix_type,
- 	}
- 	return 0;
+ /*
+  * This struct is used to pass information from page reclaim to the shrinkers.
+  * We consolidate the values for easier extension later.
+@@ -80,10 +82,12 @@ struct shrink_control {
+  * @flags determine the shrinker abilities, like numa awareness
+  */
+ struct shrinker {
++	const char *name;
+ 	unsigned long (*count_objects)(struct shrinker *,
+ 				       struct shrink_control *sc);
+ 	unsigned long (*scan_objects)(struct shrinker *,
+ 				      struct shrink_control *sc);
++	void (*to_text)(struct seq_buf *, struct shrinker *);
+ 
+ 	long batch;	/* reclaim batch size, 0 = default */
+ 	int seeks;	/* seeks to recreate an obj */
+@@ -110,7 +114,6 @@ struct shrinker {
+ #endif
+ #ifdef CONFIG_SHRINKER_DEBUG
+ 	int debugfs_id;
+-	const char *name;
+ 	struct dentry *debugfs_entry;
+ #endif
+ 	/* objs pending delete, per node */
+@@ -135,6 +138,8 @@ __printf(2, 3)
+ struct shrinker *shrinker_alloc(unsigned int flags, const char *fmt, ...);
+ void shrinker_register(struct shrinker *shrinker);
+ void shrinker_free(struct shrinker *shrinker);
++void shrinker_to_text(struct seq_buf *, struct shrinker *);
++void shrinkers_to_text(struct seq_buf *);
+ 
+ static inline bool shrinker_try_get(struct shrinker *shrinker)
+ {
+diff --git a/mm/shrinker.c b/mm/shrinker.c
+index dc5d2a6fcfc4..ad52c269bb48 100644
+--- a/mm/shrinker.c
++++ b/mm/shrinker.c
+@@ -1,8 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/memcontrol.h>
++#include <linux/rculist.h>
+ #include <linux/rwsem.h>
++#include <linux/seq_buf.h>
+ #include <linux/shrinker.h>
+-#include <linux/rculist.h>
+ #include <trace/events/vmscan.h>
+ 
+ #include "internal.h"
+@@ -807,3 +808,73 @@ void shrinker_free(struct shrinker *shrinker)
+ 	call_rcu(&shrinker->rcu, shrinker_free_rcu_cb);
  }
+ EXPORT_SYMBOL_GPL(shrinker_free);
 +
-+void seq_buf_human_readable_u64(struct seq_buf *s, u64 v, const enum string_size_units units)
++void shrinker_to_text(struct seq_buf *out, struct shrinker *shrinker)
 +{
-+	char *buf;
-+	size_t size = seq_buf_get_buf(s, &buf);
-+	int wrote = string_get_size(v, 1, units, buf, size);
++	struct shrink_control sc = { .gfp_mask = GFP_KERNEL, };
 +
-+	seq_buf_commit(s, wrote);
++	seq_buf_puts(out, shrinker->name);
++	seq_buf_printf(out, " objects: %lu\n", shrinker->count_objects(shrinker, &sc));
++
++	if (shrinker->to_text) {
++		shrinker->to_text(out, shrinker);
++		seq_buf_puts(out, "\n");
++	}
 +}
-+EXPORT_SYMBOL(seq_buf_human_readable_u64);
++
++/**
++ * shrinkers_to_text - Report on shrinkers with highest usage
++ *
++ * This reports on the top 10 shrinkers, by object counts, in sorted order:
++ * intended to be used for OOM reporting.
++ */
++void shrinkers_to_text(struct seq_buf *out)
++{
++	struct shrinker *shrinker;
++	struct shrinker_by_mem {
++		struct shrinker	*shrinker;
++		unsigned long	mem;
++	} shrinkers_by_mem[10];
++	int i, nr = 0;
++
++	if (!mutex_trylock(&shrinker_mutex)) {
++		seq_buf_puts(out, "(couldn't take shrinker lock)");
++		return;
++	}
++
++	list_for_each_entry(shrinker, &shrinker_list, list) {
++		struct shrink_control sc = { .gfp_mask = GFP_KERNEL, };
++		unsigned long mem = shrinker->count_objects(shrinker, &sc);
++
++		if (!mem || mem == SHRINK_STOP || mem == SHRINK_EMPTY)
++			continue;
++
++		for (i = 0; i < nr; i++)
++			if (mem < shrinkers_by_mem[i].mem)
++				break;
++
++		if (nr < ARRAY_SIZE(shrinkers_by_mem)) {
++			memmove(&shrinkers_by_mem[i + 1],
++				&shrinkers_by_mem[i],
++				sizeof(shrinkers_by_mem[0]) * (nr - i));
++			nr++;
++		} else if (i) {
++			i--;
++			memmove(&shrinkers_by_mem[0],
++				&shrinkers_by_mem[1],
++				sizeof(shrinkers_by_mem[0]) * i);
++		} else {
++			continue;
++		}
++
++		shrinkers_by_mem[i] = (struct shrinker_by_mem) {
++			.shrinker = shrinker,
++			.mem = mem,
++		};
++	}
++
++	for (i = nr - 1; i >= 0; --i)
++		shrinker_to_text(out, shrinkers_by_mem[i].shrinker);
++
++	mutex_unlock(&shrinker_mutex);
++}
 -- 
 2.45.2
 
