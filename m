@@ -1,228 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-27023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8228295DD27
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 11:27:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00EE095DD9B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 13:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059871F226CC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 09:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B0D21C212F6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 11:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F07155A34;
-	Sat, 24 Aug 2024 09:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784501714A4;
+	Sat, 24 Aug 2024 11:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJibrq5a"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fiLzNgkT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349A0153BE8
-	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2024 09:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744C1156C4D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2024 11:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724491610; cv=none; b=CJ7oPwPoTJReKuVRp9fi/aEmBMtd3tJNiVaPR6QmrSugzHRf64sd8e8esBGVp7z29HuX/nDbBUbJxv/xWc8CFzU5DNCviMP3eEVJGm78gX7kJZrXE/LC0SrmRwdnaTok6YdKWXtMVGCJvKxlhwF1zZLSxu50aOirAb06zxUE3Mg=
+	t=1724500116; cv=none; b=B/07XbJydWffSERrrMr+aJ+7slWEv3MpZogVLhgeHtSu1W0ndFK4Z751jb0iXd+jyhDrLbT4I7Fkj6EENMGPqPEQdOm8exum6ouwCgN98KJXrmzn1Y5f4QjFN30kJmyTUA+p7tvxFEYbsJQ1W4JuXAUUmvjnTvqTlKPXKoLw9Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724491610; c=relaxed/simple;
-	bh=ziICq6DFNB78GoIcDhpa2GzEKQONvFJRJOFerp0CyXI=;
+	s=arc-20240116; t=1724500116; c=relaxed/simple;
+	bh=weh4v49Y8RDcsT98terEAy02b7b0x/RdxZoa+N/uwY8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cowmuUEGrpi2IhFaetozGc0W7y7+cxYk/SBtbx6hFGu5va7MElYBs24tAqe+sIbutv2o/lbjZrzUhbvWkA8BJLEFSHnJIfCWImVlgchTEZ8FnzE3za4svkRL6eBy4gFWoOYB1iue1tiVkPp00JdrhXM9GGpHKtPEBnOQPuiydVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJibrq5a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 201DCC32781;
-	Sat, 24 Aug 2024 09:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724491609;
-	bh=ziICq6DFNB78GoIcDhpa2GzEKQONvFJRJOFerp0CyXI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZJibrq5a4cnWtXWKeG1KJuDM9IOAjUFGhM+tZE9ruekxZampEuK+RMFvVohPm2sZ0
-	 pIiZjf0z0YOYSPrcclLLzqZm4X15mm64N7YRILXN+ykeOH0IpdOJYkaYumxEqr8ni8
-	 6K9J7iE3tGgc2TNrny0siEHYso9kONOZxwIrPBDWzA0E/Ot7Ghgq2cbs1iV98fPk8p
-	 el7vT4YmuB1/OCKNsrQ9r6q1PiAfatnTw1gIVZTXFZnev38QkKcKfBgLWNOYLL7QoY
-	 Z0czDtWmPtIjlrfglCfOeHDNvo2Gk0U+dLIGGNpt/mq576yMtR02RnT0ec6gGP2xQu
-	 Jfq+XWeqs1Itw==
-Date: Sat, 24 Aug 2024 11:26:45 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] fs: switch f_iocb_flags and f_version
-Message-ID: <20240824-peinigen-hocken-7384b977c643@brauner>
-References: <20240822-mutig-kurznachrichten-68d154f25f41@brauner>
- <19488597-8585-4875-8fa5-732f5cd9f2ee@kernel.dk>
- <20240822-soviel-rohmaterial-210aef53569b@brauner>
- <47187d8f-483b-45e6-a2be-ea7826bebb62@kernel.dk>
- <20240823-luftdicht-berappen-d69a2166a0db@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lj0VzcL28vJbz7aHul7lLTIam+zh4aldNSqX7MyfdvMm8EXmcR0kd/hurg2EBp9OZsv1tAgxtfle1qzb11eMrcgDYb3QXUL+AYCqdZkTmp9xP8nEJO/dYHgNXOngsGLMxeDMNx8NlwAMrQbij5Cx+pqDAYh1mlWKBksDHqAytmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fiLzNgkT; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 24 Aug 2024 07:48:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724500112;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=weh4v49Y8RDcsT98terEAy02b7b0x/RdxZoa+N/uwY8=;
+	b=fiLzNgkTkKmthEsPyMorc+MC3akPLmXVoObq0LCbhpe9U34oZQR8pEaDO3r6oH2JGrifBU
+	vfxbcR+zD2lJmDZKW29Ii8UDAuJb5ImrOQT54s6UT94VrFmsDduVVDT2Gmi91oQ9NWjwo+
+	SDX7c4/ePHnN4/YvF3tZ3NfqLkg0JmM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
+Message-ID: <7dwjsfnrxyxewrxsyznkl6kbgilnfisom7igpeyesmihktejqt@njz4xjtpcgw5>
+References: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
+ <CAHk-=wj1Oo9-g-yuwWuHQZU8v=VAsBceWCRLhWxy7_-QnSa1Ng@mail.gmail.com>
+ <kj5vcqbx5ztolv5y3g4csc6te4qmi7y7kmqfora2sxbobnrbrm@rcuffqncku74>
+ <CAHk-=wjuLtz5F12hgCb1Yp1OVr4Bbo481m-k3YhheHWJQLpA0g@mail.gmail.com>
+ <nxyp62x2ruommzyebdwincu26kmi7opqq53hbdv53hgqa7zsvp@dcveluxhuxsd>
+ <CAHk-=wgpb0UPYYSe6or8_NHKQD+VooTxpfgSpHwKydhm3GkS0A@mail.gmail.com>
+ <CAHk-=wghvQQyWKg50XL1LRxc+mg25mSTypGNrRsX3ptm+aKF3w@mail.gmail.com>
+ <ihakmznu2sei3wfx2kep3znt7ott5bkvdyip7gux35gplmnptp@3u26kssfae3z>
+ <1816164937.417.1724473375169@mail.carlthompson.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="tqv6c5l7nrp7v7pf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823-luftdicht-berappen-d69a2166a0db@brauner>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1816164937.417.1724473375169@mail.carlthompson.net>
+X-Migadu-Flow: FLOW_OUT
 
+On Fri, Aug 23, 2024 at 09:22:55PM GMT, Carl E. Thompson wrote:
+> Kent, I'm not a kernel developer I'm just a user that is impressed with b=
+cachefs, uses it on his personal systems, and eagerly waits for new feature=
+s. I am one of the users who's been using bcachefs for years and has never =
+lost any data using it.
+>=20
+> However I am going to be blunt: as someone who designs and builds Linux-b=
+ased storage servers (well, I used to) as part of their job I would never, =
+ever consider using bcachefs professionally as it is now and the way it app=
+ears to be developed currently. It is simply too much changed too fast with=
+out any separation between what is currently stable and working for custome=
+rs and new development. Your work is excellent but **process** is equally a=
+nd sometimes even more important. Some of the other hats I've worn professi=
+onally include as a lead C/C++ developer and as a product release manager s=
+o I've learned from very painful experience that large projects absolutely =
+**must** have strict rules for process. I'm sure you realize that. Linus is=
+ not being a jerk about this. Just a couple of months ago Linus had to tell=
+ you the exact same thing he's telling you again here. And that wasn't the =
+first time. Is your plan to just continue to break the rules and do whateve=
+r the heck you want until
 
---tqv6c5l7nrp7v7pf
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+You guys are freaked out because I'm moving quickly and you don't have
+visibility into my own internal process, that's all.
 
-On Fri, Aug 23, 2024 at 10:16:28AM GMT, Christian Brauner wrote:
-> On Thu, Aug 22, 2024 at 10:17:37AM GMT, Jens Axboe wrote:
-> > On 8/22/24 9:10 AM, Christian Brauner wrote:
-> > >> Do we want to add a comment to this effect? I know it's obvious from
-> > >> sharing with f_task_work, but...
-> > > 
-> > > I'll add one.
-> > 
-> > Sounds good. You can add my:
-> > 
-> > Reviewed-by: Jens Axboe <axboe@kernel.dk>
-> > 
-> > as well, forgot to mention that in the original reply.
-> 
-> I think we can deliver 192 bytes aka 3 cachelines.
-> Afaict we can move struct file_ra_state into the union instead of
-> f_version. See the appended patch I'm testing now. If that works then
-> we're down by 40 bytes this cycle.
+I've got a test clusture, a community testing my code before I send it
+to Linus, and a codebase that I own and know like the back of my hand
+that's stuffed with assertions. And, the changes in question are
+algorithmically fairly simple and things that I have excellent test
+coverage for. These are all factors that let me say, with confidence,
+that there really aren't any bugs in this this pull request.
 
-Seems to hold up. I've reorderd things so that no member crosses a
-cacheline. Patch appended and in vfs.misc.
+Look, there will always be a natural tension between "strict rules and
+processes" vs. "weighing the situations and using your judgement". There
+isn't a right or wrong answer as to where on the spectrum we should be,
+we just all have to use our brains.
 
---tqv6c5l7nrp7v7pf
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment; filename="0001-fs-pack-struct-file.patch"
-
-From 88dad26dcadd9e8a47ff0cd85e9aef5a5b1667f7 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 23 Aug 2024 21:06:58 +0200
-Subject: [PATCH] fs: pack struct file
-
-Now that we shrunk struct file to 192 bytes aka 3 cachelines reorder
-struct file to not leave any holes or have members cross cachelines.
-
-Add a short comment to each of the fields and mark the cachelines.
-It's possible that we may have to tweak this based on profiling in the
-future. So far I had Jens test this comparing io_uring with non-fixed
-and fixed files and it improved performance. The layout is a combination
-of Jens' and my changes.
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- include/linux/fs.h | 90 +++++++++++++++++++++++++---------------------
- 1 file changed, 50 insertions(+), 40 deletions(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6c19f87ea615..ace14421d7dc 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -986,52 +986,62 @@ static inline int ra_has_index(struct file_ra_state *ra, pgoff_t index)
- 		index <  ra->start + ra->size);
- }
- 
--/*
-- * f_{lock,count,pos_lock} members can be highly contended and share
-- * the same cacheline. f_{lock,mode} are very frequently used together
-- * and so share the same cacheline as well. The read-mostly
-- * f_{path,inode,op} are kept on a separate cacheline.
-+/**
-+ * struct file - Represents a file
-+ * @f_lock: Protects f_ep, f_flags. Must not be taken from IRQ context.
-+ * @f_mode: FMODE_* flags often used in hotpaths
-+ * @f_mapping: Contents of a cacheable, mappable object.
-+ * @f_flags: file flags
-+ * @f_iocb_flags: iocb flags
-+ * @private_data: filesystem or driver specific data
-+ * @f_path: path of the file
-+ * @f_inode: cached inode
-+ * @f_count: reference count
-+ * @f_pos_lock: lock protecting file position
-+ * @f_pos: file position
-+ * @f_version: file version
-+ * @f_security: LSM security context of this file
-+ * @f_owner: file owner
-+ * @f_cred: stashed credentials of creator/opener
-+ * @f_wb_err: writeback error
-+ * @f_sb_err: per sb writeback errors
-+ * @f_ep: link of all epoll hooks for this file
-+ * @f_task_work: task work entry point
-+ * @f_llist: work queue entrypoint
-+ * @f_ra: file's readahead state
-  */
- struct file {
--	union {
--		/* fput() uses task work when closing and freeing file (default). */
--		struct callback_head 	f_task_work;
--		/* fput() must use workqueue (most kernel threads). */
--		struct llist_node	f_llist;
--		/* Invalid after last fput(). */
--		struct file_ra_state	f_ra;
--	};
--	/*
--	 * Protects f_ep, f_flags.
--	 * Must not be taken from IRQ context.
--	 */
--	spinlock_t		f_lock;
--	fmode_t			f_mode;
--	atomic_long_t		f_count;
--	struct mutex		f_pos_lock;
--	loff_t			f_pos;
--	unsigned int		f_flags;
--	unsigned int 		f_iocb_flags;
--	struct fown_struct	*f_owner;
--	const struct cred	*f_cred;
--	struct path		f_path;
--	struct inode		*f_inode;	/* cached value */
-+	spinlock_t			f_lock;
-+	fmode_t				f_mode;
- 	const struct file_operations	*f_op;
--
--	u64			f_version;
-+	struct address_space		*f_mapping;
-+	unsigned int			f_flags;
-+	unsigned int			f_iocb_flags;
-+	void				*private_data;
-+	struct path			f_path;
-+	struct inode			*f_inode;
-+	/* --- cacheline 1 boundary (64 bytes) --- */
-+	atomic_long_t			f_count;
-+	struct mutex			f_pos_lock;
-+	loff_t				f_pos;
-+	u64				f_version;
- #ifdef CONFIG_SECURITY
--	void			*f_security;
-+	void				*f_security;
- #endif
--	/* needed for tty driver, and maybe others */
--	void			*private_data;
--
-+	/* --- cacheline 2 boundary (128 bytes) --- */
-+	struct fown_struct		*f_owner;
-+	const struct cred		*f_cred;
-+	errseq_t			f_wb_err;
-+	errseq_t			f_sb_err;
- #ifdef CONFIG_EPOLL
--	/* Used by fs/eventpoll.c to link all the hooks to this file */
--	struct hlist_head	*f_ep;
--#endif /* #ifdef CONFIG_EPOLL */
--	struct address_space	*f_mapping;
--	errseq_t		f_wb_err;
--	errseq_t		f_sb_err; /* for syncfs */
-+	struct hlist_head		*f_ep;
-+#endif
-+	union {
-+		struct callback_head	f_task_work;
-+		struct llist_node	f_llist;
-+		struct file_ra_state	f_ra;
-+	};
-+	/* --- cacheline 2 boundary (192 bytes) --- */
- } __randomize_layout
-   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
- 
--- 
-2.43.0
-
-
---tqv6c5l7nrp7v7pf--
+No one is being jerks here, Linus and I are just sitting in different
+places with different perspectives. He has a resonsibility as someone
+managing a huge project to enforce rules as he sees best, while I have a
+responsibility to support users with working code, and to do that to the
+best of my abilities.
 
