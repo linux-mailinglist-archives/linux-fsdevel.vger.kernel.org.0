@@ -1,55 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-27051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3C495DFBC
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B005E95DFBD
 	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 21:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC30D28299A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 19:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFF921C20CF5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 19:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE7113D525;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E459313D530;
 	Sat, 24 Aug 2024 19:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mCLuZi00"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="il4cNM1/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888E1AD2F
-	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2024 19:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935D6770F3
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2024 19:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724526638; cv=none; b=Mg2yIcZ5E2xJVpfs6ginfxsxrNCjG2q6rVS6mP2MTihI1rXR8+eVJs/xYPhARiSoVAnefngLbUsr8XrN5edmWy7IdfgAvUWXfwtfUiyZCmpJ4kCJMzxnMjSoGgcKkPXTW2xhJVw/udAzVXi8C1sWriuiR73M/NdQfUbiYQACWoU=
+	t=1724526638; cv=none; b=eNHJk5N4tYC4eXHsr5YkB6IazwOC4RYbtdD0WPMBMtFSjx0EzImi5ww+X0j26P8wgdUNsceuPU9niGzkw60z6zTrQvyhXanmOSU1TATzNbgGFEVw64LAVTa/31Diz+BzFYXxLNqhV4gIz8F75yH0C2MfcUqXi6z3347UBhC87Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724526638; c=relaxed/simple;
-	bh=oKgFv7Jp7bpJCvOdgPbRzNv4IjcDB5EtoVbMkFkeg50=;
+	bh=Ouoh5lcfvXcRz9Q+Kr1XBHZYw36GPQXPd+4KUL7NuGo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jwY5ONlfqkXorICHVmhh427cGIiSQO5GunOS3Bto6sS6+PG3ohVY6ctT8Hj138UBiUHG879rcfYojNDEt1/5k7GAz70sifivK+IF6ddiqvVk2RSH9lzJSkquYMkfEXUCpnmz31ZpvbenjQx4riCHip3koiwaRP6wImEutHuekpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mCLuZi00; arc=none smtp.client-ip=95.215.58.181
+	 MIME-Version; b=odmYJ8uQCRPozGKIhHinGj5oUCcAMx7mDF8xVesR1710qPuAAuK2PIG0J7qc21FSsiliS6M1BgZCywvQNN3ucm6YZ/jr1R99/Xk5R38/XjaIjywWtBZv+2ig6xhka1MPjt4VYzA5PhDfzMV+5Ykcjgy1AsMBC6cTOnFhq0r/KGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=il4cNM1/; arc=none smtp.client-ip=95.215.58.185
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724526633;
+	t=1724526634;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=zKBGRtsPyUvtp5wY3XaRsK5eF/sYhIfHRSgUQREqSSc=;
-	b=mCLuZi006yPmOyvt4ug0F4H1yPxKHuV9w05Ji8hemfGYpuf7LzRQHiP+mDAQOJd31WpCHF
-	A33rHCZsgG1Pu04hRLc9VGB3RSXW3BcUNa5eYsPdzVsl04tag5XniOIN+/gE/SXw8dJrJ2
-	vqZXONnqFtGa2PzU4Y6k31vMpVt0cu8=
+	bh=dHJr4su3KzsflXo6gchJ2B6JfeJstKzSoEoijiSdexY=;
+	b=il4cNM1/7oj7XYsuHh1W1JNzs4Oq8+fDTy6JvD4Z511p+2xPkkP9wOvvzwe4YnQoziTFYw
+	r0FkAsv8qjNLoGwPvEttI9Y6Q+RRSVD1WBAfURE9dCu6369wU2dC//Sp+tP23BA3CWrQfj
+	Uxn9vImAHZ/0ZmIV1TedThnII+RIVw8=
 From: Kent Overstreet <kent.overstreet@linux.dev>
 To: david@fromorbit.com,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 06/10] bcachefs: shrinker.to_text() methods
-Date: Sat, 24 Aug 2024 15:10:13 -0400
-Message-ID: <20240824191020.3170516-7-kent.overstreet@linux.dev>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.krenel.org,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 07/10] percpu: per_cpu_sum()
+Date: Sat, 24 Aug 2024 15:10:14 -0400
+Message-ID: <20240824191020.3170516-8-kent.overstreet@linux.dev>
 In-Reply-To: <20240824191020.3170516-1-kent.overstreet@linux.dev>
 References: <20240824191020.3170516-1-kent.overstreet@linux.dev>
 Precedence: bulk
@@ -61,92 +64,96 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-This adds shrinker.to_text() methods for our shrinkers and hooks them up
-to our existing to_text() functions.
+Add a little helper to replace open coded versions.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.krenel.org
+Cc: Tejun Heo <tj@kernel.org>
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- fs/bcachefs/btree_cache.c     | 13 +++++++++++++
- fs/bcachefs/btree_key_cache.c | 14 ++++++++++++++
- 2 files changed, 27 insertions(+)
+ fs/bcachefs/util.h     | 10 ----------
+ fs/dcache.c            | 16 +++-------------
+ include/linux/percpu.h | 10 ++++++++++
+ 3 files changed, 13 insertions(+), 23 deletions(-)
 
-diff --git a/fs/bcachefs/btree_cache.c b/fs/bcachefs/btree_cache.c
-index 662f0f79b7af..9f096fdcaf9a 100644
---- a/fs/bcachefs/btree_cache.c
-+++ b/fs/bcachefs/btree_cache.c
-@@ -15,6 +15,7 @@
+diff --git a/fs/bcachefs/util.h b/fs/bcachefs/util.h
+index fb02c1c36004..e90c2f546007 100644
+--- a/fs/bcachefs/util.h
++++ b/fs/bcachefs/util.h
+@@ -584,16 +584,6 @@ do {									\
+ 	}								\
+ } while (0)
  
- #include <linux/prefetch.h>
- #include <linux/sched/mm.h>
-+#include <linux/seq_buf.h>
- 
- #define BTREE_CACHE_NOT_FREED_INCREMENT(counter) \
- do {						 \
-@@ -487,6 +488,17 @@ static unsigned long bch2_btree_cache_count(struct shrinker *shrink,
- 	return btree_cache_can_free(bc);
+-#define per_cpu_sum(_p)							\
+-({									\
+-	typeof(*_p) _ret = 0;						\
+-									\
+-	int cpu;							\
+-	for_each_possible_cpu(cpu)					\
+-		_ret += *per_cpu_ptr(_p, cpu);				\
+-	_ret;								\
+-})
+-
+ static inline u64 percpu_u64_get(u64 __percpu *src)
+ {
+ 	return per_cpu_sum(src);
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 3d8daaecb6d1..64108cbd52f6 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -151,29 +151,19 @@ static struct dentry_stat_t dentry_stat = {
+  */
+ static long get_nr_dentry(void)
+ {
+-	int i;
+-	long sum = 0;
+-	for_each_possible_cpu(i)
+-		sum += per_cpu(nr_dentry, i);
++	long sum = per_cpu_sum(&nr_dentry);
+ 	return sum < 0 ? 0 : sum;
  }
  
-+static void bch2_btree_cache_shrinker_to_text(struct seq_buf *s, struct shrinker *shrink)
-+{
-+	struct bch_fs *c = shrink->private_data;
-+	char *cbuf;
-+	size_t buflen = seq_buf_get_buf(s, &cbuf);
-+	struct printbuf out = PRINTBUF_EXTERN(cbuf, buflen);
-+
-+	bch2_btree_cache_to_text(&out, &c->btree_cache);
-+	seq_buf_commit(s, out.pos);
-+}
-+
- void bch2_fs_btree_cache_exit(struct bch_fs *c)
+ static long get_nr_dentry_unused(void)
  {
- 	struct btree_cache *bc = &c->btree_cache;
-@@ -570,6 +582,7 @@ int bch2_fs_btree_cache_init(struct bch_fs *c)
- 	bc->shrink = shrink;
- 	shrink->count_objects	= bch2_btree_cache_count;
- 	shrink->scan_objects	= bch2_btree_cache_scan;
-+	shrink->to_text		= bch2_btree_cache_shrinker_to_text;
- 	shrink->seeks		= 4;
- 	shrink->private_data	= c;
- 	shrinker_register(shrink);
-diff --git a/fs/bcachefs/btree_key_cache.c b/fs/bcachefs/btree_key_cache.c
-index 2e49ca71194f..af84516fb607 100644
---- a/fs/bcachefs/btree_key_cache.c
-+++ b/fs/bcachefs/btree_key_cache.c
-@@ -13,6 +13,7 @@
- #include "trace.h"
- 
- #include <linux/sched/mm.h>
-+#include <linux/seq_buf.h>
- 
- static inline bool btree_uses_pcpu_readers(enum btree_id id)
- {
-@@ -746,6 +747,18 @@ void bch2_fs_btree_key_cache_init_early(struct btree_key_cache *c)
- {
+-	int i;
+-	long sum = 0;
+-	for_each_possible_cpu(i)
+-		sum += per_cpu(nr_dentry_unused, i);
++	long sum = per_cpu_sum(&nr_dentry_unused);
+ 	return sum < 0 ? 0 : sum;
  }
  
-+static void bch2_btree_key_cache_shrinker_to_text(struct seq_buf *s, struct shrinker *shrink)
-+{
-+	struct bch_fs *c = shrink->private_data;
-+	struct btree_key_cache *bc = &c->btree_key_cache;
-+	char *cbuf;
-+	size_t buflen = seq_buf_get_buf(s, &cbuf);
-+	struct printbuf out = PRINTBUF_EXTERN(cbuf, buflen);
-+
-+	bch2_btree_key_cache_to_text(&out, bc);
-+	seq_buf_commit(s, out.pos);
-+}
-+
- int bch2_fs_btree_key_cache_init(struct btree_key_cache *bc)
+ static long get_nr_dentry_negative(void)
  {
- 	struct bch_fs *c = container_of(bc, struct bch_fs, btree_key_cache);
-@@ -770,6 +783,7 @@ int bch2_fs_btree_key_cache_init(struct btree_key_cache *bc)
- 	bc->shrink = shrink;
- 	shrink->count_objects	= bch2_btree_key_cache_count;
- 	shrink->scan_objects	= bch2_btree_key_cache_scan;
-+	shrink->to_text		= bch2_btree_key_cache_shrinker_to_text;
- 	shrink->batch		= 1 << 14;
- 	shrink->seeks		= 0;
- 	shrink->private_data	= c;
+-	int i;
+-	long sum = 0;
+-
+-	for_each_possible_cpu(i)
+-		sum += per_cpu(nr_dentry_negative, i);
++	long sum = per_cpu_sum(&nr_dentry_negative);
+ 	return sum < 0 ? 0 : sum;
+ }
+ 
+diff --git a/include/linux/percpu.h b/include/linux/percpu.h
+index 4b2047b78b67..0df28ff54f66 100644
+--- a/include/linux/percpu.h
++++ b/include/linux/percpu.h
+@@ -162,4 +162,14 @@ extern phys_addr_t per_cpu_ptr_to_phys(void *addr);
+ 
+ extern unsigned long pcpu_nr_pages(void);
+ 
++#define per_cpu_sum(_p)							\
++({									\
++	typeof(*(_p)) sum = 0;						\
++	int cpu;							\
++									\
++	for_each_possible_cpu(cpu)					\
++		sum += *per_cpu_ptr(_p, cpu);				\
++	sum;								\
++})
++
+ #endif /* __LINUX_PERCPU_H */
 -- 
 2.45.2
 
