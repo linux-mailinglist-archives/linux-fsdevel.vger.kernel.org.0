@@ -1,265 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-27025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A352C95DD2A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 11:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8228295DD27
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 11:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAD291C2140D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 09:27:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059871F226CC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 09:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BA915DBBA;
-	Sat, 24 Aug 2024 09:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F07155A34;
+	Sat, 24 Aug 2024 09:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJibrq5a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3951153BD7;
-	Sat, 24 Aug 2024 09:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349A0153BE8
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2024 09:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724491612; cv=none; b=QVFZ1NQ1/4J92Xf4RkHl5Nm7+gky1Onk2tIVRKR9p99xT7mOI60xr95Ij8eEnPu77oS30OvneSirhiV8Ff8HzSC9OmQFuqM9KFA7Y0znlC/2gfb8Ys2uUc+qozGQ84r4I0DPAVn26pxsjmIEHkhFHI+Mnu5nRJy4TR9h7VLSPcA=
+	t=1724491610; cv=none; b=CJ7oPwPoTJReKuVRp9fi/aEmBMtd3tJNiVaPR6QmrSugzHRf64sd8e8esBGVp7z29HuX/nDbBUbJxv/xWc8CFzU5DNCviMP3eEVJGm78gX7kJZrXE/LC0SrmRwdnaTok6YdKWXtMVGCJvKxlhwF1zZLSxu50aOirAb06zxUE3Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724491612; c=relaxed/simple;
-	bh=7NGoICPxYTf1zWyf5Qgu/5OeHqKWWvm0Wiv8aeOWaqo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J2ri30TlXOF+bHophZMcIja6NkEOYJVjiiL6Tks8MPA8XqdjAiHaW8AnAr2PuF7SAviINex9++I29tQj8K6hyGsE4igQxiioFF9YEeQPnay8A0pt3fCVOKsqBvCNsUip+QdHM/472RqhlP8C6VWKPIP/yz3akOMwSbacCkm6wQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WrWjn3t14zhXZb;
-	Sat, 24 Aug 2024 17:24:45 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7D3AD140137;
-	Sat, 24 Aug 2024 17:26:47 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 24 Aug
- 2024 17:26:46 +0800
-From: yangyun <yangyun50@huawei.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-CC: <josef@toxicpanda.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lixiaokeng@huawei.com>
-Subject: [PATCH v2 2/2] fuse: add support for no forget requests
-Date: Sat, 24 Aug 2024 17:25:53 +0800
-Message-ID: <20240824092553.730338-3-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240824092553.730338-1-yangyun50@huawei.com>
-References: <20240824092553.730338-1-yangyun50@huawei.com>
+	s=arc-20240116; t=1724491610; c=relaxed/simple;
+	bh=ziICq6DFNB78GoIcDhpa2GzEKQONvFJRJOFerp0CyXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cowmuUEGrpi2IhFaetozGc0W7y7+cxYk/SBtbx6hFGu5va7MElYBs24tAqe+sIbutv2o/lbjZrzUhbvWkA8BJLEFSHnJIfCWImVlgchTEZ8FnzE3za4svkRL6eBy4gFWoOYB1iue1tiVkPp00JdrhXM9GGpHKtPEBnOQPuiydVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJibrq5a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 201DCC32781;
+	Sat, 24 Aug 2024 09:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724491609;
+	bh=ziICq6DFNB78GoIcDhpa2GzEKQONvFJRJOFerp0CyXI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZJibrq5a4cnWtXWKeG1KJuDM9IOAjUFGhM+tZE9ruekxZampEuK+RMFvVohPm2sZ0
+	 pIiZjf0z0YOYSPrcclLLzqZm4X15mm64N7YRILXN+ykeOH0IpdOJYkaYumxEqr8ni8
+	 6K9J7iE3tGgc2TNrny0siEHYso9kONOZxwIrPBDWzA0E/Ot7Ghgq2cbs1iV98fPk8p
+	 el7vT4YmuB1/OCKNsrQ9r6q1PiAfatnTw1gIVZTXFZnev38QkKcKfBgLWNOYLL7QoY
+	 Z0czDtWmPtIjlrfglCfOeHDNvo2Gk0U+dLIGGNpt/mq576yMtR02RnT0ec6gGP2xQu
+	 Jfq+XWeqs1Itw==
+Date: Sat, 24 Aug 2024 11:26:45 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs: switch f_iocb_flags and f_version
+Message-ID: <20240824-peinigen-hocken-7384b977c643@brauner>
+References: <20240822-mutig-kurznachrichten-68d154f25f41@brauner>
+ <19488597-8585-4875-8fa5-732f5cd9f2ee@kernel.dk>
+ <20240822-soviel-rohmaterial-210aef53569b@brauner>
+ <47187d8f-483b-45e6-a2be-ea7826bebb62@kernel.dk>
+ <20240823-luftdicht-berappen-d69a2166a0db@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd100024.china.huawei.com (7.221.188.41)
+Content-Type: multipart/mixed; boundary="tqv6c5l7nrp7v7pf"
+Content-Disposition: inline
+In-Reply-To: <20240823-luftdicht-berappen-d69a2166a0db@brauner>
 
-FUSE_FORGET requests are not used if the fuse file system does not
-implement the forget operation in userspace (e.g., fuse file system
-does not cache any inodes).
 
-However, the kernel is invisible to the userspace implementation and
-always sends FUSE_FORGET requests, which can lead to performance
-degradation because of useless contex switch and memory copy in some
-cases (e.g., many inodes are evicted from icache which was described
-in commit 07e77dca8a1f ("fuse: separate queue for FORGET requests")).
+--tqv6c5l7nrp7v7pf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Just like 'no_interrupt' in 'struct fuse_conn', we add 'no_forget'.
-But since FUSE_FORGET request does not have a reply from userspace,
-we can not use ENOSYS to reflect the 'no_forget' assignment. So add
-the FUSE_NO_FORGET_SUPPORT init flag.
+On Fri, Aug 23, 2024 at 10:16:28AM GMT, Christian Brauner wrote:
+> On Thu, Aug 22, 2024 at 10:17:37AM GMT, Jens Axboe wrote:
+> > On 8/22/24 9:10 AM, Christian Brauner wrote:
+> > >> Do we want to add a comment to this effect? I know it's obvious from
+> > >> sharing with f_task_work, but...
+> > > 
+> > > I'll add one.
+> > 
+> > Sounds good. You can add my:
+> > 
+> > Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> > 
+> > as well, forgot to mention that in the original reply.
+> 
+> I think we can deliver 192 bytes aka 3 cachelines.
+> Afaict we can move struct file_ra_state into the union instead of
+> f_version. See the appended patch I'm testing now. If that works then
+> we're down by 40 bytes this cycle.
 
-Besides, if no_forget is enabled, 'nlookup' in 'struct fuse_inode'
-does not used and its value change can be disabled which are protected
-by spin_lock to reduce lock contention.
+Seems to hold up. I've reorderd things so that no member crosses a
+cacheline. Patch appended and in vfs.misc.
 
-Signed-off-by: yangyun <yangyun50@huawei.com>
+--tqv6c5l7nrp7v7pf
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment; filename="0001-fs-pack-struct-file.patch"
+
+From 88dad26dcadd9e8a47ff0cd85e9aef5a5b1667f7 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, 23 Aug 2024 21:06:58 +0200
+Subject: [PATCH] fs: pack struct file
+
+Now that we shrunk struct file to 192 bytes aka 3 cachelines reorder
+struct file to not leave any holes or have members cross cachelines.
+
+Add a short comment to each of the fields and mark the cachelines.
+It's possible that we may have to tweak this based on profiling in the
+future. So far I had Jens test this comparing io_uring with non-fixed
+and fixed files and it improved performance. The layout is a combination
+of Jens' and my changes.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/fuse/dev.c             |  6 +++++-
- fs/fuse/dir.c             |  4 +---
- fs/fuse/fuse_i.h          | 23 +++++++++++++++++++++++
- fs/fuse/inode.c           | 10 +++++-----
- fs/fuse/readdir.c         |  8 ++------
- include/uapi/linux/fuse.h |  3 +++
- 6 files changed, 39 insertions(+), 15 deletions(-)
+ include/linux/fs.h | 90 +++++++++++++++++++++++++---------------------
+ 1 file changed, 50 insertions(+), 40 deletions(-)
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 4b106db2f97f..449c29ef1bce 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -242,8 +242,12 @@ __releases(fiq->lock)
- void fuse_queue_forget(struct fuse_conn *fc, u64 nodeid, u64 nlookup)
- {
- 	struct fuse_iqueue *fiq = &fc->iq;
--	struct fuse_forget_link *forget = fuse_alloc_forget();
-+	struct fuse_forget_link *forget;
- 
-+	if (fc->no_forget)
-+		return;
-+
-+	forget = fuse_alloc_forget();
- 	forget->forget_one.nodeid = nodeid;
- 	forget->forget_one.nlookup = nlookup;
- 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index f070e380fd7b..2cbf96bb8022 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -236,9 +236,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
- 				fuse_queue_forget(fm->fc, outarg.nodeid, 1);
- 				goto invalid;
- 			}
--			spin_lock(&fi->lock);
--			fi->nlookup++;
--			spin_unlock(&fi->lock);
-+			fuse_inc_nlookup(fm->fc, fi);
- 		}
- 		if (ret == -ENOMEM || ret == -EINTR)
- 			goto out;
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 90176133209d..570decd4b8d6 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -854,6 +854,9 @@ struct fuse_conn {
- 	/** Passthrough support for read/write IO */
- 	unsigned int passthrough:1;
- 
-+	/** Is forget not implemented by fs? */
-+	unsigned int no_forget:1;
-+
- 	/** Maximum stack depth for passthrough backing files */
- 	int max_stack_depth;
- 
-@@ -1023,6 +1026,26 @@ static inline void fuse_sync_bucket_dec(struct fuse_sync_bucket *bucket)
- 	rcu_read_unlock();
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 6c19f87ea615..ace14421d7dc 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -986,52 +986,62 @@ static inline int ra_has_index(struct file_ra_state *ra, pgoff_t index)
+ 		index <  ra->start + ra->size);
  }
  
-+static inline void fuse_inc_nlookup(struct fuse_conn *fc, struct fuse_inode *fi)
-+{
-+	if (fc->no_forget)
-+		return;
-+
-+	spin_lock(&fi->lock);
-+	fi->nlookup++;
-+	spin_lock(&fi->lock);
-+}
-+
-+static inline void fuse_dec_nlookup(struct fuse_conn *fc, struct fuse_inode *fi)
-+{
-+	if (fc->no_forget)
-+		return;
-+
-+	spin_lock(&fi->lock);
-+	fi->nlookup--;
-+	spin_lock(&fi->lock);
-+}
-+
- /** Device operations */
- extern const struct file_operations fuse_dev_operations;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index da3e5d4c032c..57fe1bbc9a83 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -458,9 +458,7 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 		}
- 	}
- 	fi = get_fuse_inode(inode);
--	spin_lock(&fi->lock);
--	fi->nlookup++;
--	spin_unlock(&fi->lock);
-+	fuse_inc_nlookup(fc, fi);
- done:
- 	fuse_change_attributes(inode, attr, NULL, attr_valid, attr_version);
- 
-@@ -1306,6 +1304,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
- 			}
- 			if (flags & FUSE_NO_EXPORT_SUPPORT)
- 				fm->sb->s_export_op = &fuse_export_fid_operations;
-+			if (flags & FUSE_NO_FORGET_SUPPORT)
-+				fc->no_forget = 1;
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
- 			fc->no_lock = 1;
-@@ -1353,7 +1353,7 @@ void fuse_send_init(struct fuse_mount *fm)
- 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
- 		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
- 		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
--		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND;
-+		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_NO_FORGET_SUPPORT;
- #ifdef CONFIG_FUSE_DAX
- 	if (fm->fc->dax)
- 		flags |= FUSE_MAP_ALIGNMENT;
-@@ -1568,7 +1568,7 @@ static int fuse_fill_super_submount(struct super_block *sb,
- 	 * that, though, so undo it here.
- 	 */
- 	fi = get_fuse_inode(root);
--	fi->nlookup--;
-+	fuse_dec_nlookup(fm->fc, fi);
- 
- 	sb->s_d_op = &fuse_dentry_operations;
- 	sb->s_root = d_make_root(root);
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index 721fae563c84..6cda9b34a0e1 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -218,9 +218,7 @@ static int fuse_direntplus_link(struct file *file,
- 		}
- 
- 		fi = get_fuse_inode(inode);
--		spin_lock(&fi->lock);
--		fi->nlookup++;
--		spin_unlock(&fi->lock);
-+		fuse_inc_nlookup(fc, fi);
- 
- 		forget_all_cached_acls(inode);
- 		fuse_change_attributes(inode, &o->attr, NULL,
-@@ -247,9 +245,7 @@ static int fuse_direntplus_link(struct file *file,
- 			if (!IS_ERR(inode)) {
- 				struct fuse_inode *fi = get_fuse_inode(inode);
- 
--				spin_lock(&fi->lock);
--				fi->nlookup--;
--				spin_unlock(&fi->lock);
-+				fuse_dec_nlookup(fc, fi);
- 			}
- 			return PTR_ERR(dentry);
- 		}
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index d08b99d60f6f..bf660880bc7a 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -217,6 +217,7 @@
-  *  - add backing_id to fuse_open_out, add FOPEN_PASSTHROUGH open flag
-  *  - add FUSE_NO_EXPORT_SUPPORT init flag
-  *  - add FUSE_NOTIFY_RESEND, add FUSE_HAS_RESEND init flag
-+ *  - add FUSE_NO_FORGET_SUPPORT init flag
+-/*
+- * f_{lock,count,pos_lock} members can be highly contended and share
+- * the same cacheline. f_{lock,mode} are very frequently used together
+- * and so share the same cacheline as well. The read-mostly
+- * f_{path,inode,op} are kept on a separate cacheline.
++/**
++ * struct file - Represents a file
++ * @f_lock: Protects f_ep, f_flags. Must not be taken from IRQ context.
++ * @f_mode: FMODE_* flags often used in hotpaths
++ * @f_mapping: Contents of a cacheable, mappable object.
++ * @f_flags: file flags
++ * @f_iocb_flags: iocb flags
++ * @private_data: filesystem or driver specific data
++ * @f_path: path of the file
++ * @f_inode: cached inode
++ * @f_count: reference count
++ * @f_pos_lock: lock protecting file position
++ * @f_pos: file position
++ * @f_version: file version
++ * @f_security: LSM security context of this file
++ * @f_owner: file owner
++ * @f_cred: stashed credentials of creator/opener
++ * @f_wb_err: writeback error
++ * @f_sb_err: per sb writeback errors
++ * @f_ep: link of all epoll hooks for this file
++ * @f_task_work: task work entry point
++ * @f_llist: work queue entrypoint
++ * @f_ra: file's readahead state
   */
+ struct file {
+-	union {
+-		/* fput() uses task work when closing and freeing file (default). */
+-		struct callback_head 	f_task_work;
+-		/* fput() must use workqueue (most kernel threads). */
+-		struct llist_node	f_llist;
+-		/* Invalid after last fput(). */
+-		struct file_ra_state	f_ra;
+-	};
+-	/*
+-	 * Protects f_ep, f_flags.
+-	 * Must not be taken from IRQ context.
+-	 */
+-	spinlock_t		f_lock;
+-	fmode_t			f_mode;
+-	atomic_long_t		f_count;
+-	struct mutex		f_pos_lock;
+-	loff_t			f_pos;
+-	unsigned int		f_flags;
+-	unsigned int 		f_iocb_flags;
+-	struct fown_struct	*f_owner;
+-	const struct cred	*f_cred;
+-	struct path		f_path;
+-	struct inode		*f_inode;	/* cached value */
++	spinlock_t			f_lock;
++	fmode_t				f_mode;
+ 	const struct file_operations	*f_op;
+-
+-	u64			f_version;
++	struct address_space		*f_mapping;
++	unsigned int			f_flags;
++	unsigned int			f_iocb_flags;
++	void				*private_data;
++	struct path			f_path;
++	struct inode			*f_inode;
++	/* --- cacheline 1 boundary (64 bytes) --- */
++	atomic_long_t			f_count;
++	struct mutex			f_pos_lock;
++	loff_t				f_pos;
++	u64				f_version;
+ #ifdef CONFIG_SECURITY
+-	void			*f_security;
++	void				*f_security;
+ #endif
+-	/* needed for tty driver, and maybe others */
+-	void			*private_data;
+-
++	/* --- cacheline 2 boundary (128 bytes) --- */
++	struct fown_struct		*f_owner;
++	const struct cred		*f_cred;
++	errseq_t			f_wb_err;
++	errseq_t			f_sb_err;
+ #ifdef CONFIG_EPOLL
+-	/* Used by fs/eventpoll.c to link all the hooks to this file */
+-	struct hlist_head	*f_ep;
+-#endif /* #ifdef CONFIG_EPOLL */
+-	struct address_space	*f_mapping;
+-	errseq_t		f_wb_err;
+-	errseq_t		f_sb_err; /* for syncfs */
++	struct hlist_head		*f_ep;
++#endif
++	union {
++		struct callback_head	f_task_work;
++		struct llist_node	f_llist;
++		struct file_ra_state	f_ra;
++	};
++	/* --- cacheline 2 boundary (192 bytes) --- */
+ } __randomize_layout
+   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
  
- #ifndef _LINUX_FUSE_H
-@@ -421,6 +422,7 @@ struct fuse_file_lock {
-  * FUSE_NO_EXPORT_SUPPORT: explicitly disable export support
-  * FUSE_HAS_RESEND: kernel supports resending pending requests, and the high bit
-  *		    of the request ID indicates resend requests
-+ * FUSE_NO_FORGET_SUPPORT: disable forget requests
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -463,6 +465,7 @@ struct fuse_file_lock {
- #define FUSE_PASSTHROUGH	(1ULL << 37)
- #define FUSE_NO_EXPORT_SUPPORT	(1ULL << 38)
- #define FUSE_HAS_RESEND		(1ULL << 39)
-+#define FUSE_NO_FORGET_SUPPORT  (1ULL << 40)
- 
- /* Obsolete alias for FUSE_DIRECT_IO_ALLOW_MMAP */
- #define FUSE_DIRECT_IO_RELAX	FUSE_DIRECT_IO_ALLOW_MMAP
 -- 
-2.33.0
+2.43.0
 
+
+--tqv6c5l7nrp7v7pf--
 
