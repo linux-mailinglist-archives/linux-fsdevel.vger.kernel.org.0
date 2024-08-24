@@ -1,181 +1,433 @@
-Return-Path: <linux-fsdevel+bounces-27020-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27021-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EDE95DB8B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 06:54:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 963C195DC39
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 08:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE351C2109C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 04:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DFB6284EC0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 06:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDC314A639;
-	Sat, 24 Aug 2024 04:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2C61527A7;
+	Sat, 24 Aug 2024 06:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4kAOOgT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+et/Fsm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7735535894;
-	Sat, 24 Aug 2024 04:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559F12CCB4;
+	Sat, 24 Aug 2024 06:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724475268; cv=none; b=e4ZzsPhLLHm25N3+5YDwdTMghm6w56scWGbzLROZEwk4awET50/wHf41bsGu0YZOmpWRn/bUL2Hzvg8HoqE4haZgmvx4AoerjS3Ri+NiwmRh7S9eJhtUvNw76MRKzGNUnLFX0J4g5Ecs6YoKmyNNM4umB4ko6bXwKkgcIs9Ifs4=
+	t=1724480968; cv=none; b=AdJJRPVxZX6MF4FcgAMesfDQmX9BAdjIdpGUGBe7JUIYJf9Vn0puO5KiuLZPhEhXLrAc93ayBNEbpVGmLgUOHwDqeehM6A1mQeKDElgwwgcpTED8eF6/RgqOyCy5ibepcIk88mZlZzHYgLrLd6mFFXoukBqcgTJwKWJmBb+VlDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724475268; c=relaxed/simple;
-	bh=wXpKTZUdoyvJvNJnOIQkfolt/f0qWFXnVsW6rLNH3Xw=;
+	s=arc-20240116; t=1724480968; c=relaxed/simple;
+	bh=dHo1E8sMlhK7BDancwXnbUHu/suXw9mlJpVir/xj/cI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rsh4DE6PDgrGA9Z/owDqb9ICM8IAuw2np1vxwJrxSSMN14ZocSThTIxqgXQaohFXlM7x02vr8O17z8Z9Dxee5BmA3jQfCtgAeM4/6/+AJ1iZL9inHFlyhmBKxEgCrEUW22LoB3Yn+v5nP/zBdSAmFMcTLLikJ3LrptPbQKK5K5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4kAOOgT; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7d26c2297eso326798966b.2;
-        Fri, 23 Aug 2024 21:54:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724475265; x=1725080065; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0agvCFPVlt6qRkbLAkGcHDtqfGgeeJqNkqtO9Zw9IuE=;
-        b=l4kAOOgTg7VvaDTZZ8F90zBJS1a3gsgUMpPMDipJ2/TYRYQib80C4EwjeDFpTe2MRD
-         AT9fNN2Nx0hBQqN4PBjYWJD8iSsycYhaj5+LzTdhrhxbbMWcn59Rv/Qmf3PTmUtuEW1E
-         EuzSe3YYuXnKMKkMzgZ5k91nnM/xNPtJ0xsTTcZh02NxaD6YiSGR1RaInFuBGmZzEXCT
-         hs3YmLjN5fbAKZS0Rw/H6Bd1HUU9+sm+9KlWOVgtZ5JaDoeybvxADiinlYy36rQba32z
-         A00Cq8ZZmTNtCiP8yQYnk0bipFnmVJ5/JcwsvHbVGcjONJ7fUzeL/lmRmzYPUWT9jET7
-         duSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724475265; x=1725080065;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0agvCFPVlt6qRkbLAkGcHDtqfGgeeJqNkqtO9Zw9IuE=;
-        b=qVdpiVyJeeuEsil/ZyKVD9oVLowILq3QOcILj0nASMPM7wrC7cqnPocQpQ6PuYYFL2
-         THIgEYnPScG/QhFacHvYbTdDqjPAo8LsvxCl06Sq6logYd9kYsQdjmd5peNSUL2rUp/a
-         g0PBq8vydB4E0hTz2FaNIsCBeVUsEZntEbxinb3Xs0eo+kgeMBFqoOeGdkvFxM4GIhYZ
-         pT8PTRvbqlmrbd/zBvrL8rKhdBo3hH3MiwVa/Jaj3W1aVlChu1AYcczmdL+K8MHrMnKs
-         0RVgYa9CMD5yp5mg6i2VEpvxvWzHCArsqPdPUxRjLxdxGkx3IEs+hMvGwexpHBgRL9Oi
-         Xcng==
-X-Forwarded-Encrypted: i=1; AJvYcCWn7X4r0EQXn4nyydBUNH2eAopu2QfCMybCJiKn4bTn+89+ks76Tq/ii8PX4Kv7IFzdTxwL2qPR@vger.kernel.org, AJvYcCWyVs3CMR8nnIeD9G1dzH7yVprn2bbAi/6TYWS0lVQaMm0tSn4UUvVa5hrkx2tCpzmndV30jr5DSCyb/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGOw3RwZ/y89MjOw1HUC5zW87WdQC7cOmsgCQozMvP5Qrsojwz
-	LMBx3r1KYUtdCkmm1nQ7KaL8sJpVfwXDbHAIzWZJFrXlTxEMNR0RZ37qr3VX
-X-Google-Smtp-Source: AGHT+IEMcnudO1npIFPBPydVgGxHsU4qAj/nzx8TFAksV2cts2W7KPO++590xK54FO+Us3Kq8nB8Eg==
-X-Received: by 2002:a17:907:7d89:b0:a83:94bd:d913 with SMTP id a640c23a62f3a-a86a516542emr313380266b.10.1724475264194;
-        Fri, 23 Aug 2024 21:54:24 -0700 (PDT)
-Received: from f (cst-prg-86-203.cust.vodafone.cz. [46.135.86.203])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f29a568sm349807166b.53.2024.08.23.21.54.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 21:54:23 -0700 (PDT)
-Date: Sat, 24 Aug 2024 06:54:13 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Julian Sun <sunjunchao2870@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, david@fromorbit.com, 
-	zhuyifei1999@gmail.com, syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] vfs: fix race between evice_inodes() and
- find_inode()&iput()
-Message-ID: <rvorqwxqlpray26yi3epqpxjiijr77nvle3ts5glvwitebrl6e@vcvqfk2bf6sj>
-References: <20240823130730.658881-1-sunjunchao2870@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LRKx80UMQoZRZkXEcwztyPxIbRbeH4Dsq87fiWP2kTsFEUaKbwStNzOATMsqgVGJfJElLwz2gq6rC6XFZPvH1p654uyBUTdA3hlj+MJaIvnDehA645UcHFxG2FLCBdL2B978ZJtlA730xIs6xQWFBHJZUJMcHpStjLiRkf7M/Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+et/Fsm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00E2C32781;
+	Sat, 24 Aug 2024 06:29:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724480967;
+	bh=dHo1E8sMlhK7BDancwXnbUHu/suXw9mlJpVir/xj/cI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C+et/FsmopC46v0p2dCF5vxZbiOvZy1d86XFiySlyvWUo2wNotef50Jp5KokW59SP
+	 M6W/yGpOPRSw+Z/2VfpAvAsM4blkJKimuhgfnQ9ZjfvCFTVHqjIWo4d+iXhfzJMb5I
+	 Oz+F0nLlm9NaZxBCZn8WiqzItF/TLQOpgKaXkNKaxwLt/wYakUrVuhD3pCJ9KdTPXH
+	 lv3QF+ssrI2o5H24hoIMNBdwMba0/s9BdQO8aP+FuE7oGzPf1ZbOOM/Z1ODdBlyBJv
+	 7o/S1P7yJjzYieaChvOivLyUjLaU//yvbryfrnunhMnzKC1FweNhbMqXOhPtTgDN8u
+	 6SYotOAoPFkRg==
+Date: Fri, 23 Aug 2024 23:29:27 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: hch@lst.de
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	jlayton@kernel.org
+Subject: [PATCH v31.0.1 1/1] xfs: introduce new file range commit ioctls
+Message-ID: <20240824062927.GU865349@frogsfrogsfrogs>
+References: <172437084258.57211.13522832162579952916.stgit@frogsfrogsfrogs>
+ <172437084278.57211.4355071581143024290.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240823130730.658881-1-sunjunchao2870@gmail.com>
+In-Reply-To: <172437084278.57211.4355071581143024290.stgit@frogsfrogsfrogs>
 
-On Fri, Aug 23, 2024 at 09:07:30PM +0800, Julian Sun wrote:
-> Hi, all
-> 
-> Recently I noticed a bug[1] in btrfs, after digged it into
-> and I believe it'a race in vfs.
-> 
-> Let's assume there's a inode (ie ino 261) with i_count 1 is
-> called by iput(), and there's a concurrent thread calling
-> generic_shutdown_super().
-> 
-> cpu0:                              cpu1:
-> iput() // i_count is 1
->   ->spin_lock(inode)
->   ->dec i_count to 0
->   ->iput_final()                    generic_shutdown_super()
->     ->__inode_add_lru()               ->evict_inodes()
->       // cause some reason[2]           ->if (atomic_read(inode->i_count)) continue;
->       // return before                  // inode 261 passed the above check
->       // list_lru_add_obj()             // and then schedule out
->    ->spin_unlock()
-> // note here: the inode 261
-> // was still at sb list and hash list,
-> // and I_FREEING|I_WILL_FREE was not been set
-> 
-> btrfs_iget()
->   // after some function calls
->   ->find_inode()
->     // found the above inode 261
->     ->spin_lock(inode)
->    // check I_FREEING|I_WILL_FREE
->    // and passed
->       ->__iget()
->     ->spin_unlock(inode)                // schedule back
->                                         ->spin_lock(inode)
->                                         // check (I_NEW|I_FREEING|I_WILL_FREE) flags,
->                                         // passed and set I_FREEING
-> iput()                                  ->spin_unlock(inode)
->   ->spin_lock(inode)			  ->evict()
->   // dec i_count to 0
->   ->iput_final()
->     ->spin_unlock()
->     ->evict()
-> 
-> Now, we have two threads simultaneously evicting
-> the same inode, which may trigger the BUG(inode->i_state & I_CLEAR)
-> statement both within clear_inode() and iput().
-> 
-> To fix the bug, recheck the inode->i_count after holding i_lock.
-> Because in the most scenarios, the first check is valid, and
-> the overhead of spin_lock() can be reduced.
-> 
-> If there is any misunderstanding, please let me know, thanks.
-> 
-> [1]: https://lore.kernel.org/linux-btrfs/000000000000eabe1d0619c48986@google.com/
-> [2]: The reason might be 1. SB_ACTIVE was removed or 2. mapping_shrinkable()
-> return false when I reproduced the bug.
-> 
-> Reported-by: syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=67ba3c42bcbb4665d3ad
-> CC: stable@vger.kernel.org
-> Fixes: 63997e98a3be ("split invalidate_inodes()")
-> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
-> ---
->  fs/inode.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 3a41f83a4ba5..011f630777d0 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -723,6 +723,10 @@ void evict_inodes(struct super_block *sb)
->  			continue;
->  
->  		spin_lock(&inode->i_lock);
-> +		if (atomic_read(&inode->i_count)) {
-> +			spin_unlock(&inode->i_lock);
-> +			continue;
-> +		}
->  		if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
->  			spin_unlock(&inode->i_lock);
->  			continue;
+From: Darrick J. Wong <djwong@kernel.org>
 
-This looks correct to me, albeit I would argue the commit message is
-overly verbose making it harder to understand the gist of the problem:
-evict_inodes() fails to re-check i_count after acquiring the spin lock,
-while the flags blocking 0->1 i_count transisions are not set yet,
-making it possible to race against such transition.
+This patch introduces two more new ioctls to manage atomic updates to
+file contents -- XFS_IOC_START_COMMIT and XFS_IOC_COMMIT_RANGE.  The
+commit mechanism here is exactly the same as what XFS_IOC_EXCHANGE_RANGE
+does, but with the additional requirement that file2 cannot have changed
+since some sampling point.  The start-commit ioctl performs the sampling
+of file attributes.
 
-The real remark I have here is that evict_inodes(), modulo the bug, is
-identical to invalidate_inodes(). Perhaps a separate patch (*not* for
-stable) to whack it would be prudent?
+Note: This patch currently samples i_ctime during START_COMMIT and
+checks that it hasn't changed during COMMIT_RANGE.  This isn't entirely
+safe in kernels prior to 6.12 because ctime only had coarse grained
+granularity and very fast updates could collide with a COMMIT_RANGE.
+With the multi-granularity ctime introduced by Jeff Layton, it's now
+possible to update ctime such that this does not happen.
+
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+---
+ fs/xfs/libxfs/xfs_fs.h |   26 +++++++++
+ fs/xfs/xfs_exchrange.c |  143 ++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/xfs/xfs_exchrange.h |   16 +++++
+ fs/xfs/xfs_ioctl.c     |    4 +
+ fs/xfs/xfs_trace.h     |   57 +++++++++++++++++++
+ 5 files changed, 243 insertions(+), 3 deletions(-)
+
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index 454b63ef72016..c85c8077fac39 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -825,6 +825,30 @@ struct xfs_exchange_range {
+ 	__u64		flags;		/* see XFS_EXCHANGE_RANGE_* below */
+ };
+ 
++/*
++ * Using the same definition of file2 as struct xfs_exchange_range, commit the
++ * contents of file1 into file2 if file2 has the same inode number, mtime, and
++ * ctime as the arguments provided to the call.  The old contents of file2 will
++ * be moved to file1.
++ *
++ * Returns -EBUSY if there isn't an exact match for the file2 fields.
++ *
++ * Filesystems must be able to restart and complete the operation even after
++ * the system goes down.
++ */
++struct xfs_commit_range {
++	__s32		file1_fd;
++	__u32		pad;		/* must be zeroes */
++	__u64		file1_offset;	/* file1 offset, bytes */
++	__u64		file2_offset;	/* file2 offset, bytes */
++	__u64		length;		/* bytes to exchange */
++
++	__u64		flags;		/* see XFS_EXCHANGE_RANGE_* below */
++
++	/* opaque file2 metadata for freshness checks */
++	__u64		file2_freshness[6];
++};
++
+ /*
+  * Exchange file data all the way to the ends of both files, and then exchange
+  * the file sizes.  This flag can be used to replace a file's contents with a
+@@ -997,6 +1021,8 @@ struct xfs_getparents_by_handle {
+ #define XFS_IOC_BULKSTAT	     _IOR ('X', 127, struct xfs_bulkstat_req)
+ #define XFS_IOC_INUMBERS	     _IOR ('X', 128, struct xfs_inumbers_req)
+ #define XFS_IOC_EXCHANGE_RANGE	     _IOW ('X', 129, struct xfs_exchange_range)
++#define XFS_IOC_START_COMMIT	     _IOR ('X', 130, struct xfs_commit_range)
++#define XFS_IOC_COMMIT_RANGE	     _IOW ('X', 131, struct xfs_commit_range)
+ /*	XFS_IOC_GETFSUUID ---------- deprecated 140	 */
+ 
+ 
+diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
+index c8a655c92c92f..d0889190ab7ff 100644
+--- a/fs/xfs/xfs_exchrange.c
++++ b/fs/xfs/xfs_exchrange.c
+@@ -72,6 +72,34 @@ xfs_exchrange_estimate(
+ 	return error;
+ }
+ 
++/*
++ * Check that file2's metadata agree with the snapshot that we took for the
++ * range commit request.
++ *
++ * This should be called after the filesystem has locked /all/ inode metadata
++ * against modification.
++ */
++STATIC int
++xfs_exchrange_check_freshness(
++	const struct xfs_exchrange	*fxr,
++	struct xfs_inode		*ip2)
++{
++	struct inode			*inode2 = VFS_I(ip2);
++	struct timespec64		ctime = inode_get_ctime(inode2);
++	struct timespec64		mtime = inode_get_mtime(inode2);
++
++	trace_xfs_exchrange_freshness(fxr, ip2);
++
++	/* Check that file2 hasn't otherwise been modified. */
++	if (fxr->file2_ino != ip2->i_ino ||
++	    fxr->file2_gen != inode2->i_generation ||
++	    !timespec64_equal(&fxr->file2_ctime, &ctime) ||
++	    !timespec64_equal(&fxr->file2_mtime, &mtime))
++		return -EBUSY;
++
++	return 0;
++}
++
+ #define QRETRY_IP1	(0x1)
+ #define QRETRY_IP2	(0x2)
+ 
+@@ -607,6 +635,12 @@ xfs_exchrange_prep(
+ 	if (error || fxr->length == 0)
+ 		return error;
+ 
++	if (fxr->flags & __XFS_EXCHANGE_RANGE_CHECK_FRESH2) {
++		error = xfs_exchrange_check_freshness(fxr, ip2);
++		if (error)
++			return error;
++	}
++
+ 	/* Attach dquots to both inodes before changing block maps. */
+ 	error = xfs_qm_dqattach(ip2);
+ 	if (error)
+@@ -719,7 +753,8 @@ xfs_exchange_range(
+ 	if (fxr->file1->f_path.mnt != fxr->file2->f_path.mnt)
+ 		return -EXDEV;
+ 
+-	if (fxr->flags & ~XFS_EXCHANGE_RANGE_ALL_FLAGS)
++	if (fxr->flags & ~(XFS_EXCHANGE_RANGE_ALL_FLAGS |
++			 __XFS_EXCHANGE_RANGE_CHECK_FRESH2))
+ 		return -EINVAL;
+ 
+ 	/* Userspace requests only honored for regular files. */
+@@ -802,3 +837,109 @@ xfs_ioc_exchange_range(
+ 	fdput(file1);
+ 	return error;
+ }
++
++/* Opaque freshness blob for XFS_IOC_COMMIT_RANGE */
++struct xfs_commit_range_fresh {
++	xfs_fsid_t	fsid;		/* m_fixedfsid */
++	__u64		file2_ino;	/* inode number */
++	__s64		file2_mtime;	/* modification time */
++	__s64		file2_ctime;	/* change time */
++	__s32		file2_mtime_nsec; /* mod time, nsec */
++	__s32		file2_ctime_nsec; /* change time, nsec */
++	__u32		file2_gen;	/* inode generation */
++	__u32		magic;		/* zero */
++};
++#define XCR_FRESH_MAGIC	0x444F524B	/* DORK */
++
++/* Set up a commitrange operation by sampling file2's write-related attrs */
++long
++xfs_ioc_start_commit(
++	struct file			*file,
++	struct xfs_commit_range __user	*argp)
++{
++	struct xfs_commit_range		args = { };
++	struct timespec64		ts;
++	struct xfs_commit_range_fresh	*kern_f;
++	struct xfs_commit_range_fresh	__user *user_f;
++	struct inode			*inode2 = file_inode(file);
++	struct xfs_inode		*ip2 = XFS_I(inode2);
++	const unsigned int		lockflags = XFS_IOLOCK_SHARED |
++						    XFS_MMAPLOCK_SHARED |
++						    XFS_ILOCK_SHARED;
++
++	BUILD_BUG_ON(sizeof(struct xfs_commit_range_fresh) !=
++		     sizeof(args.file2_freshness));
++
++	kern_f = (struct xfs_commit_range_fresh *)&args.file2_freshness;
++
++	memcpy(&kern_f->fsid, ip2->i_mount->m_fixedfsid, sizeof(xfs_fsid_t));
++
++	xfs_ilock(ip2, lockflags);
++	ts = inode_get_ctime(inode2);
++	kern_f->file2_ctime		= ts.tv_sec;
++	kern_f->file2_ctime_nsec	= ts.tv_nsec;
++	ts = inode_get_mtime(inode2);
++	kern_f->file2_mtime		= ts.tv_sec;
++	kern_f->file2_mtime_nsec	= ts.tv_nsec;
++	kern_f->file2_ino		= ip2->i_ino;
++	kern_f->file2_gen		= inode2->i_generation;
++	kern_f->magic			= XCR_FRESH_MAGIC;
++	xfs_iunlock(ip2, lockflags);
++
++	user_f = (struct xfs_commit_range_fresh __user *)&argp->file2_freshness;
++	if (copy_to_user(user_f, kern_f, sizeof(*kern_f)))
++		return -EFAULT;
++
++	return 0;
++}
++
++/*
++ * Exchange file1 and file2 contents if file2 has not been written since the
++ * start commit operation.
++ */
++long
++xfs_ioc_commit_range(
++	struct file			*file,
++	struct xfs_commit_range __user	*argp)
++{
++	struct xfs_exchrange		fxr = {
++		.file2			= file,
++	};
++	struct xfs_commit_range		args;
++	struct xfs_commit_range_fresh	*kern_f;
++	struct xfs_inode		*ip2 = XFS_I(file_inode(file));
++	struct xfs_mount		*mp = ip2->i_mount;
++	struct fd			file1;
++	int				error;
++
++	kern_f = (struct xfs_commit_range_fresh *)&args.file2_freshness;
++
++	if (copy_from_user(&args, argp, sizeof(args)))
++		return -EFAULT;
++	if (args.flags & ~XFS_EXCHANGE_RANGE_ALL_FLAGS)
++		return -EINVAL;
++	if (kern_f->magic != XCR_FRESH_MAGIC)
++		return -EBUSY;
++	if (memcmp(&kern_f->fsid, mp->m_fixedfsid, sizeof(xfs_fsid_t)))
++		return -EBUSY;
++
++	fxr.file1_offset	= args.file1_offset;
++	fxr.file2_offset	= args.file2_offset;
++	fxr.length		= args.length;
++	fxr.flags		= args.flags | __XFS_EXCHANGE_RANGE_CHECK_FRESH2;
++	fxr.file2_ino		= kern_f->file2_ino;
++	fxr.file2_gen		= kern_f->file2_gen;
++	fxr.file2_mtime.tv_sec	= kern_f->file2_mtime;
++	fxr.file2_mtime.tv_nsec	= kern_f->file2_mtime_nsec;
++	fxr.file2_ctime.tv_sec	= kern_f->file2_ctime;
++	fxr.file2_ctime.tv_nsec	= kern_f->file2_ctime_nsec;
++
++	file1 = fdget(args.file1_fd);
++	if (!file1.file)
++		return -EBADF;
++	fxr.file1 = file1.file;
++
++	error = xfs_exchange_range(&fxr);
++	fdput(file1);
++	return error;
++}
+diff --git a/fs/xfs/xfs_exchrange.h b/fs/xfs/xfs_exchrange.h
+index 039abcca546e8..bc1298aba806b 100644
+--- a/fs/xfs/xfs_exchrange.h
++++ b/fs/xfs/xfs_exchrange.h
+@@ -10,8 +10,12 @@
+ #define __XFS_EXCHANGE_RANGE_UPD_CMTIME1	(1ULL << 63)
+ #define __XFS_EXCHANGE_RANGE_UPD_CMTIME2	(1ULL << 62)
+ 
++/* Freshness check required */
++#define __XFS_EXCHANGE_RANGE_CHECK_FRESH2	(1ULL << 61)
++
+ #define XFS_EXCHANGE_RANGE_PRIV_FLAGS	(__XFS_EXCHANGE_RANGE_UPD_CMTIME1 | \
+-					 __XFS_EXCHANGE_RANGE_UPD_CMTIME2)
++					 __XFS_EXCHANGE_RANGE_UPD_CMTIME2 | \
++					 __XFS_EXCHANGE_RANGE_CHECK_FRESH2)
+ 
+ struct xfs_exchrange {
+ 	struct file		*file1;
+@@ -22,10 +26,20 @@ struct xfs_exchrange {
+ 	u64			length;
+ 
+ 	u64			flags;	/* XFS_EXCHANGE_RANGE flags */
++
++	/* file2 metadata for freshness checks */
++	u64			file2_ino;
++	struct timespec64	file2_mtime;
++	struct timespec64	file2_ctime;
++	u32			file2_gen;
+ };
+ 
+ long xfs_ioc_exchange_range(struct file *file,
+ 		struct xfs_exchange_range __user *argp);
++long xfs_ioc_start_commit(struct file *file,
++		struct xfs_commit_range __user *argp);
++long xfs_ioc_commit_range(struct file *file,
++		struct xfs_commit_range __user	*argp);
+ 
+ struct xfs_exchmaps_req;
+ 
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 6b13666d4e963..90b3ee21e7fe6 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1518,6 +1518,10 @@ xfs_file_ioctl(
+ 
+ 	case XFS_IOC_EXCHANGE_RANGE:
+ 		return xfs_ioc_exchange_range(filp, arg);
++	case XFS_IOC_START_COMMIT:
++		return xfs_ioc_start_commit(filp, arg);
++	case XFS_IOC_COMMIT_RANGE:
++		return xfs_ioc_commit_range(filp, arg);
+ 
+ 	default:
+ 		return -ENOTTY;
+diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+index 180ce697305a9..4cf0fa71ba9ce 100644
+--- a/fs/xfs/xfs_trace.h
++++ b/fs/xfs/xfs_trace.h
+@@ -4926,7 +4926,8 @@ DEFINE_INODE_ERROR_EVENT(xfs_exchrange_error);
+ 	{ XFS_EXCHANGE_RANGE_DRY_RUN,		"DRY_RUN" }, \
+ 	{ XFS_EXCHANGE_RANGE_FILE1_WRITTEN,	"F1_WRITTEN" }, \
+ 	{ __XFS_EXCHANGE_RANGE_UPD_CMTIME1,	"CMTIME1" }, \
+-	{ __XFS_EXCHANGE_RANGE_UPD_CMTIME2,	"CMTIME2" }
++	{ __XFS_EXCHANGE_RANGE_UPD_CMTIME2,	"CMTIME2" }, \
++	{ __XFS_EXCHANGE_RANGE_CHECK_FRESH2,	"FRESH2" }
+ 
+ /* file exchange-range tracepoint class */
+ DECLARE_EVENT_CLASS(xfs_exchrange_class,
+@@ -4986,6 +4987,60 @@ DEFINE_EXCHRANGE_EVENT(xfs_exchrange_prep);
+ DEFINE_EXCHRANGE_EVENT(xfs_exchrange_flush);
+ DEFINE_EXCHRANGE_EVENT(xfs_exchrange_mappings);
+ 
++TRACE_EVENT(xfs_exchrange_freshness,
++	TP_PROTO(const struct xfs_exchrange *fxr, struct xfs_inode *ip2),
++	TP_ARGS(fxr, ip2),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(xfs_ino_t, ip2_ino)
++		__field(long long, ip2_mtime)
++		__field(long long, ip2_ctime)
++		__field(int, ip2_mtime_nsec)
++		__field(int, ip2_ctime_nsec)
++
++		__field(xfs_ino_t, file2_ino)
++		__field(long long, file2_mtime)
++		__field(long long, file2_ctime)
++		__field(int, file2_mtime_nsec)
++		__field(int, file2_ctime_nsec)
++	),
++	TP_fast_assign(
++		struct timespec64	ts64;
++		struct inode		*inode2 = VFS_I(ip2);
++
++		__entry->dev = inode2->i_sb->s_dev;
++		__entry->ip2_ino = ip2->i_ino;
++
++		ts64 = inode_get_ctime(inode2);
++		__entry->ip2_ctime = ts64.tv_sec;
++		__entry->ip2_ctime_nsec = ts64.tv_nsec;
++
++		ts64 = inode_get_mtime(inode2);
++		__entry->ip2_mtime = ts64.tv_sec;
++		__entry->ip2_mtime_nsec = ts64.tv_nsec;
++
++		__entry->file2_ino = fxr->file2_ino;
++		__entry->file2_mtime = fxr->file2_mtime.tv_sec;
++		__entry->file2_ctime = fxr->file2_ctime.tv_sec;
++		__entry->file2_mtime_nsec = fxr->file2_mtime.tv_nsec;
++		__entry->file2_ctime_nsec = fxr->file2_ctime.tv_nsec;
++	),
++	TP_printk("dev %d:%d "
++		  "ino 0x%llx mtime %lld:%d ctime %lld:%d -> "
++		  "file 0x%llx mtime %lld:%d ctime %lld:%d",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __entry->ip2_ino,
++		  __entry->ip2_mtime,
++		  __entry->ip2_mtime_nsec,
++		  __entry->ip2_ctime,
++		  __entry->ip2_ctime_nsec,
++		  __entry->file2_ino,
++		  __entry->file2_mtime,
++		  __entry->file2_mtime_nsec,
++		  __entry->file2_ctime,
++		  __entry->file2_ctime_nsec)
++);
++
+ TRACE_EVENT(xfs_exchmaps_overhead,
+ 	TP_PROTO(struct xfs_mount *mp, unsigned long long bmbt_blocks,
+ 		 unsigned long long rmapbt_blocks),
 
