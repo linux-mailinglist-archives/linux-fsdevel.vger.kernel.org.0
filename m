@@ -1,113 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-27017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C113C95DB7A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 06:28:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 463B595DB83
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 06:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8211F24891
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 04:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BD29284236
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 04:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0563CF6A;
-	Sat, 24 Aug 2024 04:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEEE14A4D8;
+	Sat, 24 Aug 2024 04:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuFQZx+D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.carlthompson.net (charon.carlthompson.net [45.77.7.122])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154ED1E4B2;
-	Sat, 24 Aug 2024 04:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.77.7.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C705D182B4;
+	Sat, 24 Aug 2024 04:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724473690; cv=none; b=kwuc58i6wPWdDp8cGMG1lCFwutq1lMFHvfGpWXmk5/i2Kvr3fj3onfMqEqslYk8bR+i/EmTNhU443rFKnVtpJsNJNyfyYCxWjDceR+ZXRPekVaZ7lpIqPltps3LC3MLsJAjGdVjRCz0JWKDHY2lJuILsQpaZaNOij1mHa0GLS7c=
+	t=1724474804; cv=none; b=lCOFc0LfrmuZ6dUX+z9RgvTUhLOeS6e/w5LWLA/drBnWCSfsuCkFoLz5BnIeAh6m0vo6JgVEoeX56x4qujx0d5lss3lscqWhHqRKprU3IVhBgSntUJJNI5phTQpO5DrGvvq6aZJrO3t4MYCKsc4UCeq02RhQaZHgzrX4CNCdPu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724473690; c=relaxed/simple;
-	bh=Hi71OaJteC/N9IfhmdoVU8bV7ZIddzlMy5w19qoPLcI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=XLiAQR+SwR1UKMNpWrwRPJH+LE1CY3QCixlYTiJd6Bwn8G8dmI6+BU+Rw//FvwIYV64QgD5cpwEVkgJv0l+mTvMwWzb/1gyNW3/vxWeSOzjSDJeo+t770wa/v2ZjPcnynUpJGQ59qXIGgldBMFGXJY94JAeVLKMxhk9ma0GtP+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net; spf=pass smtp.mailfrom=carlthompson.net; arc=none smtp.client-ip=45.77.7.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlthompson.net
-Received: from mail.carlthompson.net (mail.home [10.35.20.252])
-	(Authenticated sender: cet@carlthompson.net)
-	by smtp.carlthompson.net (Postfix) with ESMTPSA id 5869C100EB1D4;
-	Fri, 23 Aug 2024 21:22:55 -0700 (PDT)
-Date: Fri, 23 Aug 2024 21:22:55 -0700 (PDT)
-From: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Message-ID: <1816164937.417.1724473375169@mail.carlthompson.net>
-In-Reply-To: <ihakmznu2sei3wfx2kep3znt7ott5bkvdyip7gux35gplmnptp@3u26kssfae3z>
-References: <sctzes5z3s2zoadzldrpw3yfycauc4kpcsbpidjkrew5hkz7yf@eejp6nunfpin>
- <CAHk-=wj1Oo9-g-yuwWuHQZU8v=VAsBceWCRLhWxy7_-QnSa1Ng@mail.gmail.com>
- <kj5vcqbx5ztolv5y3g4csc6te4qmi7y7kmqfora2sxbobnrbrm@rcuffqncku74>
- <CAHk-=wjuLtz5F12hgCb1Yp1OVr4Bbo481m-k3YhheHWJQLpA0g@mail.gmail.com>
- <nxyp62x2ruommzyebdwincu26kmi7opqq53hbdv53hgqa7zsvp@dcveluxhuxsd>
- <CAHk-=wgpb0UPYYSe6or8_NHKQD+VooTxpfgSpHwKydhm3GkS0A@mail.gmail.com>
- <CAHk-=wghvQQyWKg50XL1LRxc+mg25mSTypGNrRsX3ptm+aKF3w@mail.gmail.com>
- <ihakmznu2sei3wfx2kep3znt7ott5bkvdyip7gux35gplmnptp@3u26kssfae3z>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.11-rc5
+	s=arc-20240116; t=1724474804; c=relaxed/simple;
+	bh=s7xdtysKKGZbwDUnaPeYWK3s+KmjLTpVXaCfvp3YpeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OgKr5pLNCPJbmsc++ip9H/tSEnc+vEmiqIhM2LTIH1SP6Kxa45p6BtGQJ8tgcKzYId5vMhqpkvRz3bAwgumlvLHuR3ZqyOXwBSYbgo1FKLj1fVb5UnFJjGDU767mmvtW/EmhdY9I408JgXB1p/mhHRg2soxoRl2Vu4mLSAcib88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuFQZx+D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31EF5C32781;
+	Sat, 24 Aug 2024 04:46:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724474804;
+	bh=s7xdtysKKGZbwDUnaPeYWK3s+KmjLTpVXaCfvp3YpeY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iuFQZx+D9EgidxuPZ/uU0kAI6aq9Ze95SAzRK8D/peebcha4jjmBb05kQOP8/5jzS
+	 zyE3v/5uPlo/lV2sfNOm1vPEKt/lbdspQVSILJlprqmy9Kc+B2bp3XDFCR8eyWPc9m
+	 WFQq7NlSzFWvA4fAMyfs2jaOLbnVRklBgz6EhTgr1Fc6Unxt02FrtV+JHEvqy9L74z
+	 kgcK0ucbA88d8BLMTHMKeMXNwXWC68c7GUMxlN35VOll+Ths19HQeMPvSDXlKEp/lx
+	 kYH/MjCOsyXDFTGELy/F123Qiy6Awsxmi9QCPl83g1TgGAMRgFjcuB8h3tbi1blYyp
+	 MUWEelq7iSmZw==
+Date: Fri, 23 Aug 2024 21:46:43 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jeff Layton <jlayton@kernel.org>, hch@lst.de, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/1] xfs: introduce new file range commit ioctls
+Message-ID: <20240824044643.GS865349@frogsfrogsfrogs>
+References: <172437084258.57211.13522832162579952916.stgit@frogsfrogsfrogs>
+ <172437084278.57211.4355071581143024290.stgit@frogsfrogsfrogs>
+ <ZsgMRrOBlBwsHBdZ@infradead.org>
+ <e167fb368b8a54b0716ae35730ddc61a658f6f6a.camel@kernel.org>
+ <20240823174140.GJ865349@frogsfrogsfrogs>
+ <ZslTjr9P-2JUKVg7@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev53
-X-Originating-Client: open-xchange-appsuite
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZslTjr9P-2JUKVg7@infradead.org>
 
-Kent, I'm not a kernel developer I'm just a user that is impressed with bcachefs, uses it on his personal systems, and eagerly waits for new features. I am one of the users who's been using bcachefs for years and has never lost any data using it.
-
-However I am going to be blunt: as someone who designs and builds Linux-based storage servers (well, I used to) as part of their job I would never, ever consider using bcachefs professionally as it is now and the way it appears to be developed currently. It is simply too much changed too fast without any separation between what is currently stable and working for customers and new development. Your work is excellent but **process** is equally and sometimes even more important. Some of the other hats I've worn professionally include as a lead C/C++ developer and as a product release manager so I've learned from very painful experience that large projects absolutely **must** have strict rules for process. I'm sure you realize that. Linus is not being a jerk about this. Just a couple of months ago Linus had to tell you the exact same thing he's telling you again here. And that wasn't the first time. Is your plan to just continue to break the rules and do whatever the heck you want until
-  Linus stops bothering you? I don't think that's a good plan.
-
-
-Since I'm already being blunt I'm going to be even more blunt: you have a serious problem working with others. In the past and in this thread I've read where you seem to imply that other kernel developers are gatekeeping and resist some of your ideas because you've created something that (in your opinion) is already better in some ways than some of things they've created. But from where I'm sitting the problems you've experienced are 90% because of **you**. You're an adult and you need to understand that about yourself so you can do something about it.
-
-
-I get that I've way overstepped my bounds here. If the kernel developers wish to ban me from the kernel lists I understand.
-
-Carl
-
-
-> On 2024-08-23 7:59 PM PDT Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> 
->  
-> On Sat, Aug 24, 2024 at 10:40:33AM GMT, Linus Torvalds wrote:
-> > On Sat, 24 Aug 2024 at 10:35, Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > > What is to be gained by having release rules and a stable development
-> > > environment? I wonder.
+On Fri, Aug 23, 2024 at 08:29:18PM -0700, Christoph Hellwig wrote:
+> On Fri, Aug 23, 2024 at 10:41:40AM -0700, Darrick J. Wong wrote:
+> > <nod> If these both get merged for 6.12, I think the appropriate port
+> > for this patch is to change xfs_ioc_start_commit to do:
 > > 
-> > But seriously - thinking that "I changed a thousand lines, there's no
-> > way that introduces new bugs" is the kind of thinking that I DO NOT
-> > WANT TO HEAR from a maintainer.
+> > 	struct kstat	kstat;
 > > 
-> > What planet ARE you from? Stop being obtuse.
+> > 	fill_mg_cmtime(&kstat, STATX_CTIME | STATX_MTIME, XFS_I(ip2));
+> > 	kern_f->file2_ctime		= kstat.ctime.tv_sec;
+> > 	kern_f->file2_ctime_nsec	= kstat.ctime.tv_nsec;
+> > 	kern_f->file2_mtime		= kstat.mtime.tv_sec;
+> > 	kern_f->file2_mtime_nsec	= kstat.mtime.tv_nsec;
+> > 
+> > instead of open-coding the inode_get_[cm]time calls.  The entire
+> > exchangerange feature is still marked experimental, so I didn't think it
+> > was worth rebasing my entire dev branch on the multigrain timestamp
+> > redux series; we can just fix it later.
 > 
-> Heh.
-> 
-> No, I can't write 1000 lines of bug free code (I think when I was
-> younger I pulled it off a few times...).
-> 
-> But I do have really good automated testing (I put everything through
-> lockdep, kasan, ubsan, and other variants now), and a bunch of testers
-> willing to run my git branches on their crazy (and huge) filesystems.
-> 
-> And enough experience to know when code is likely to be solid and when I
-> should hold back on it.
-> 
-> Are you seeing a ton of crazy last minute fixes for regressions in my
-> pull requests? No, there's a few fixes for recent regressions here and
-> there, but nothing that would cause major regrets. The worst in terms of
-> needing last minute fixes was the member info btree bitmap stuff, and
-> the superblock downgrade section... but those we did legitimately need.
+> But the commit log could really note this dependency.  This will be
+> especially useful for backports, but also for anyone reading through
+> code history.
+
+Ok, how about this for a commit message:
+
+"This patch introduces two more new ioctls to manage atomic updates to
+file contents -- XFS_IOC_START_COMMIT and XFS_IOC_COMMIT_RANGE.  The
+commit mechanism here is exactly the same as what XFS_IOC_EXCHANGE_RANGE
+does, but with the additional requirement that file2 cannot have changed
+since some sampling point.  The start-commit ioctl performs the sampling
+of file attributes.
+
+"Note: This patch currently samples i_ctime during START_COMMIT and
+checks that it hasn't changed during COMMIT_RANGE.  This isn't entirely
+safe in kernels prior to 6.12 because ctime only had coarse grained
+granularity and very fast updates could collide with a COMMIT_RANGE.
+With the multi-granularity ctime introduced in that release by Jeff
+Layton, it's now possible to update ctime such that this does not
+happen.
+
+"It is critical, then, that this patch must not be backported to any
+kernel that does not support fine-grained file change timestamps."
+
+Will that pass muster?
+
+--D
 
