@@ -1,142 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-27068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2081495E4ED
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2024 21:36:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8DC95E511
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2024 22:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8AAE283890
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2024 19:36:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95AE7B20F94
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2024 20:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792165473E;
-	Sun, 25 Aug 2024 19:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595A26A8D2;
+	Sun, 25 Aug 2024 20:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmxGT41P"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bWQX7wKu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437033207;
-	Sun, 25 Aug 2024 19:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A06C801;
+	Sun, 25 Aug 2024 20:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724614558; cv=none; b=se0ppFz7ee31DNnZVJ9r5ginT7JH8FzuQFNML0WT2aIycQ7MEa+TL5jTxjmLEI+3AGXZFhFmjhA6VC4rL8GehTHkSo26YHurn+9jDRcm9YtXb2AnsxcDWyqRXv82xetaqcR/yYYC5ZafmGL/L+mqlc7vj8jSVvFLR79MgCLFLTU=
+	t=1724617138; cv=none; b=NpydjDQOBRc+A9wEtzThri9mGDyxao0s8jJI3SbGHEl/ZIBnAaMYJmxOKMNIZ/ZYbfsXNBx1v7vJG8c4omou2pbaLvBJypoqxj7sJXGgk6HoUVbcpads8nyPDwDaCy8HpSCtzaeveuLf8k5BkEj6M+09ZcKu3hr/aqcBtsS3df4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724614558; c=relaxed/simple;
-	bh=/rL16dZNhfwqG9czxx8m676FTaW9Dj5RHYajQCdYwhQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gqg0IiPoa2nnEgw8/4gMpgluY+XAvIgYC72B6/lzOouryo093wEaOVEHPVlFZACuR/gHeQ4taMp2YoMtMb+qVVDVO2W7tcDbhaBqxwEmi3WmXPM0aDwVLKQByX3iag3+mfLLzYn2A/wfWWW00Y0L7nG2pWYk9CyejLBfxSlwLJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LmxGT41P; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1724617138; c=relaxed/simple;
+	bh=pQvsKRIzaaFuutRjgT2m6bCC+cy9chyHQSgPUu6BMeE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jzhafjyEmrylC92IeILcUraCN2khWSISEyrNXBWGhXDGE4B27Ro1LW6uPcFeGtWHZUluvIg206glP9Rufme2FEjDAQ3UTV60jNbThnib7ewk7qh+fydcsA0iL9zg9wsMxyE+0sgTG/rp/INwfu4LCeP5bHnVdhtyNzGFU53qIGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bWQX7wKu; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso31249205e9.0;
-        Sun, 25 Aug 2024 12:35:56 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-533496017f8so4901729e87.0;
+        Sun, 25 Aug 2024 13:18:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724614555; x=1725219355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/4fYJT8DmjFd+6l6gWF+nGq3GZh2Sq1k6f9Xf+Fjxl4=;
-        b=LmxGT41P/e4gSWvwEnmNJlvP2eEoRUd2K738S1/yy8ALp/UxgyAk6muMx/yf3Cnted
-         NRLxP5v8A8Ii9XYt4rFEYhM/Su1U5FMbhsDFInJ7Hu+waFZr6zUqJH7QdCVmI5elwZoS
-         rS2Y62llZ0hYmkr14xJOYBTHB99eCbKr/XwYWupbov29JcDrC0PjN0jWa6zpaj+zOL0k
-         OJEPgsaAIEadLfWGLMEEWowdJ2vI6Eno1WJlFHedeRuWG65hQFIlUVvb38+bb8eKTOii
-         p5BQ+eFedffQwfCo0qRhVLsCe7joSDwlUfyjrZ1gk4qeDt8gKbwaYlIs97LAgo7kxCWN
-         c/dA==
+        d=gmail.com; s=20230601; t=1724617135; x=1725221935; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4P7XXm9eSrgZ/kl6du4jTDJpa0x1cOivnQTsm8g2HSM=;
+        b=bWQX7wKu9peW05SMNYyjEyW9oooDwmYXQXy1o1u5Jk5PZuvGh8kWttJ4aolaUId59B
+         FHkWFavLKCJFnJzaZjpYSWbudeBRs3ijA8qoxdjGidscMdLZqORdW62NC4znAQek+RuG
+         j57IO/YpPG5ShwER6i/7ToLe9wIf/zaiVTYVlk6e31ugCu49AKRgR4sXfIJmLjU33pm/
+         a1QV/aT+UtP0rZwh9M5x8uTezPHuqwlO4fYnjrwFKjnfdNEKW1lr0FvKEpxexFhK7dhx
+         Lx7Ijtqo/hEcurM2wmNb6x7SncA0KXsxxOiu19NNC4iGSDNmvaHHSuCmgiG3l2UOkyqk
+         ZB4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724614555; x=1725219355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/4fYJT8DmjFd+6l6gWF+nGq3GZh2Sq1k6f9Xf+Fjxl4=;
-        b=wQ4suhGE+pZysTqre0Ni/GE6rDwFQ9v3WoIAZDXQhDymfETpj2BGimjKCz6QuVnYgU
-         KzZum0gUNFCzsqtn8Rc5yGKkhohWgKaBWRceGvgWSW8W+hOgf/HNs2t+LqsHyOPPuiGc
-         5YzW38OtHfbacAsHR/jdBnap/OZOEVcJiP0c4TbM/7ZXwmAXc824XHTODF2lfyb91CQ5
-         gPcshLFpidb9bJ0k3bHhPyWnW6h1PTOYRk0IK1w7wfoxjkCoDorIu10sHIgwCpgnaGC3
-         Mqy4xFN0CCoDhbyJKf+4483ew9ocLsQaPaJKGwo68NL8RdGmSPDXzBJXuIBeyMahroSz
-         zSvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWB9OsmuoT6lItukVoFZ3AMf9jiwiSU244fxAu3cmupSL0A5ZGIBwKVFtWHp3e65mlwRRW1i1tD+qGJvwUn0w==@vger.kernel.org, AJvYcCX3Imc88k9T3/qbTUtanqkX9cT4TfpnSAvLrJdUy8fLaOZbNwjBGxnFSUKmWWldUgTvIhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNKElTKJpl5O4asZlKBHEuZUKtNPw2a7wl9NvtOJ4fujDEG09W
-	ddglpAMAklJVLpFt4JYZWC6BDm1ZC11Zb6SSPiucs5ShpsZOnEIn3WmxP15n5PHqr6w3rwvNTtn
-	jYIF/foZ+8fp5CmDJoex+IaVhSso=
-X-Google-Smtp-Source: AGHT+IHvzjxCZw2mTuuhYMtFZiC9e77Uqjlp5fVEBcyYyq1vEc7ciikKkVKG/oHglz001SGQ5S4BKiPRRyBuAtn0gRM=
-X-Received: by 2002:a05:600c:1992:b0:425:69b7:3361 with SMTP id
- 5b1f17b1804b1-42acc8e121fmr61732195e9.18.1724614555024; Sun, 25 Aug 2024
- 12:35:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724617135; x=1725221935;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4P7XXm9eSrgZ/kl6du4jTDJpa0x1cOivnQTsm8g2HSM=;
+        b=RZNKY58fKnhBkss7vth9D0iChtHB4CwnldfN8s+VG+jQNp841IO7uIBOcX11Zghv1r
+         D+4yaeVyHOroUIbarpesQxXsto35Nfmgbr59mo9rUalhOGZZcfcVhMJrqRpnkEAmfOXf
+         h1y6tiPGoAg0zZLF+ACHsLk+hRK5WQBljpaT6Ru37OkY5XCY8mLNST5UcqZHIf9Hyxzr
+         68DbunHAnv/e9KfRHT4JqpcTzH8iYC1+nmexHO57xgdC71TizkKwKmU6fxdpz1rVUDbQ
+         52hCSm/Hk4lXanSHu7UF6rTJ0sRNIyDk/TtDRBBDq3b4S2046t63pKiFvipWNLE44z4B
+         Xojw==
+X-Gm-Message-State: AOJu0Yy3oIV/B1+ffLjFXfZ3mF1tFbfQpbeaa6r/hndORKgaQOas2cmO
+	QDEaDQ9ksvVBJnON0WGXZgMawxlyuWu0NB2UuONSsP6oW5ugIQ8CIYzgdPt3iHv1hZwvOn+YClf
+	Lc1JUw6fTCchVdjXqvypG9Rnd4ey2fUpg
+X-Google-Smtp-Source: AGHT+IFccCq9i2PBJDvVPN83Iaf58GPmFBLNgdMRedz6h3BxVSGQf4X8gQprHFB2bvMlUCxVVQjNEQ0piO2hTYDaaj0=
+X-Received: by 2002:a05:6512:1248:b0:533:460c:e42f with SMTP id
+ 2adb3069b0e04-5343882d110mr5793542e87.4.1724617134486; Sun, 25 Aug 2024
+ 13:18:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814185417.1171430-1-andrii@kernel.org> <d9a46f4d54df8d5ac57011222ebdf21b0f15f52d.camel@gmail.com>
-In-Reply-To: <d9a46f4d54df8d5ac57011222ebdf21b0f15f52d.camel@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 25 Aug 2024 12:35:43 -0700
-Message-ID: <CAADnVQL5GyqMfaBsAH+XxNv5n3JySVdEGTee+cY=dZGNr-t7xg@mail.gmail.com>
-Subject: Re: [PATCH v6 bpf-next 00/10] Harden and extend ELF build ID parsing logic
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alexey Dobriyan <adobriyan@gmail.com>, shakeel.butt@linux.dev, 
-	Johannes Weiner <hannes@cmpxchg.org>, Andi Kleen <ak@linux.intel.com>, 
-	Omar Sandoval <osandov@osandov.com>, Song Liu <song@kernel.org>, Jann Horn <jannh@google.com>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 25 Aug 2024 15:18:43 -0500
+Message-ID: <CAH2r5msDdpEruQXAtDXimonHKF7CVwO8bnghwXwrUX6K3xkFcg@mail.gmail.com>
+Subject: Hang in generic/113 starting in 6.11-rc3 or rc4
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 4:23=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com=
-> wrote:
->
-> On Wed, 2024-08-14 at 11:54 -0700, Andrii Nakryiko wrote:
->
-> [...]
->
-> > Andrii Nakryiko (10):
-> >   lib/buildid: harden build ID parsing logic
-> >   lib/buildid: add single folio-based file reader abstraction
-> >   lib/buildid: take into account e_phoff when fetching program headers
-> >   lib/buildid: remove single-page limit for PHDR search
-> >   lib/buildid: rename build_id_parse() into build_id_parse_nofault()
-> >   lib/buildid: implement sleepable build_id_parse() API
-> >   lib/buildid: don't limit .note.gnu.build-id to the first page in ELF
->
-> Never worked with lib/buildid before, so not sure how valuable my input i=
-s.
-> Anyways:
-> - I compared the resulting parser with ELF specification and available
->   documentation for buildid, all seems correct.
->   (with a small caveat that ELF defines Elf{32,64}_Ehdr->e_ehsize field
->    to encode actual size of the elf header, and e_phentsize
->    to encode actual size of the program header.
->    Parser uses sizeof(Elf{32,64}_{Ehdr,Phdr}) instead,
->    and this is how it was before, so probably does not matter).
->
-> - The `freader` abstraction nicely hides away difference between
->   sleepable and non-sleepable contexts.
->   (with a caveat, that freader_get_folio() uses read_cache_folio()
->    which is documented as expecting mapping->invalidate_lock to be held.
->    I assume that this is true for vma's passed to build_id_parse(), right=
-?)
->
-> For what it's worth, full patch-set looks good to me.
->
-> Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
+I noticed a hung fstest (process hung in a syscall before it gets down
+to the fs) running generic/113 on mounts to Samba (the mount still
+works, but the test hangs) starting after 6.11-rc2 kernel (it fails on
+6.11-rc4 but works on rc2).   It is unlikely to be cifs.ko related
+since it still fails with 6.11-rc2 version of cifs.ko where kernel/VFS
+is rc4 but works if kernel/VFS is rc2 (ie fails even with older
+cifs.ko source built and run on 6.11-rc4 kernel) so is probably
+related to a VFS or netfs change.
 
-Thank you for the review.
-The patch set looks good to me as well, but I think it needs
-a bit more Acks to land it through bpf-next.
+It also doesn't appear to be hung inside cifs.ko, but in the VFS layer:
+
+# cat /proc/fs/cifs/DebugData  | grep "Active VFS Requests"
+Active VFS Requests: 0
+
+it works on 6.11-rc2 but fails (hangs) on 6.11-rc4 in my tests to
+Samba localhost running generic/113
 
 
-Andrew,
+# cat /proc/fs/cifs/open_files
+# Version:1
+# Format:
+# <tree id> <ses id> <persistent fid> <flags> <count> <pid> <uid> <filename>
+0x4a8de66a 0x2cf91d3e 0x24d0faab 0xc002 1 5678 0 aiostress.5454.3.12
+0x4a8de66a 0x2cf91d3e 0x36a30cae 0xc002 1 5678 0 aiostress.5454.3.14
 
-since lib/ is under your supervision, please review and hopefully ack.
+# cat /proc/5678/stack
+[<0>] futex_wait_queue+0x66/0xa0
+[<0>] __futex_wait+0x15b/0x1d0
+[<0>] futex_wait+0x73/0x130
+[<0>] do_futex+0x105/0x260
+[<0>] __x64_sys_futex+0x128/0x200
+[<0>] x64_sys_call+0x224c/0x22b0
+[<0>] do_syscall_64+0x7e/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
+I also didn't see anything obvious suspicious using trace-cmd tracing
+all cifs.ko tracepoints, but is there a trick to try to narrow down
+the hung syscall (and where) a little more easily?
 
-Matthew,
+Any ideas?
 
-since you commented on the previous version pls double check
-that patch 2 plus patch 6 make the right use of folio apis.
+-- 
+Thanks,
+
+Steve
 
