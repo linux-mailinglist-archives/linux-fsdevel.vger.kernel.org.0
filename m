@@ -1,117 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-27055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B463495DFC0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 21:11:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFE795E0B3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2024 04:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 500CBB21A90
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Aug 2024 19:11:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89DCB1F21AF0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2024 02:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA1B143C46;
-	Sat, 24 Aug 2024 19:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uLTTvEzA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F778489;
+	Sun, 25 Aug 2024 02:01:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from d.mail.sonic.net (d.mail.sonic.net [64.142.111.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D6EAD2F
-	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Aug 2024 19:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FBA1FA5
+	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Aug 2024 02:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.142.111.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724526641; cv=none; b=A5CYSoN360fLWFtGsOLXy27oamCK2WoVZTx1KSEfg95McA1/4Ez6/IIHn2yVdyhe881UiFv/A+LMy0drz+S/GhOCCi9zp8t6Y7rKLZjocKwz5TG3Birh5E2VxxEN/w9nMVsZfr7XIyJdxOCirUMveu2Ab7wU5xOgoIkJA00ddiM=
+	t=1724551302; cv=none; b=ln+ZJhWO5qL6Fh2feikqDA4awY/rR+/vQEnNmCPXxvYC7Et/bpwuTf7AD2pzcl3bLr39gPP/0zr32zHMy4WYVp1fTjNt3GG6HUJHFWdH+Zl5p/JJqK1Vc+EBX9h+uzLzP4gKLtnd8eHjJLvaDkQh59NClW52/4VLh6BkmlZX7YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724526641; c=relaxed/simple;
-	bh=yx2TTPkWQYx/+NBdt0PltJw5AhCZpih5oQlFHWE9ZOQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jfJp1krXwHrRCuclz1B3WhZdayddzL3JDwDD0rPOiiUCPuLDhBQhquO8YLOHxEOFmp0nFekqrw4gIbbAq7p7fNkgGnje95Va7rlhzwLMB61+MvUow+NOmcTOeY5u57LKyni/XEbMP13FVjW11WcvNQylhXLfUr9dWcCTLC14cEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uLTTvEzA; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724526637;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4/6BjvYC74gmac1jn75OzS49TGeIbW4Qt8X6sz89g0E=;
-	b=uLTTvEzAmARYGg6WMItjxULIrOooAHWcR1U1Iq5IWriDIXInrJPfTm7cifzOilxCeEAm2U
-	5IZXCh2j9e45pp9trnFvC3jeTQXWCfhgFsuZf/WIY7+metYuj+pGV7w7VUPQA5h7y/Yo5r
-	z4rS4OOztEOz0kMF8FXMpgTNMw7IC4w=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: david@fromorbit.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 10/10] fs: super_cache_to_text()
-Date: Sat, 24 Aug 2024 15:10:17 -0400
-Message-ID: <20240824191020.3170516-11-kent.overstreet@linux.dev>
-In-Reply-To: <20240824191020.3170516-1-kent.overstreet@linux.dev>
-References: <20240824191020.3170516-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1724551302; c=relaxed/simple;
+	bh=4xAUDQ5Xa1nBWD0nbczHkPr0m3ym6tcLEMSWnybSeoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ePJyp5q6GDKr7S26QcmvxqQSelUhfwjo/PlrTKC+YN/bX+SdW7DVpbv4th1V6XBr3CI4OWxnDENFiS76V82kGJ8YqhFsXa003jvKOeJHFBOB1HfyRpxKshK0Mip2DkQVqzoRTd/TNRL5a9d5UyZi6Waf1eYHBcfKD0Y49VAgdGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nom.one; spf=pass smtp.mailfrom=nom.one; arc=none smtp.client-ip=64.142.111.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nom.one
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nom.one
+Received: from 192-184-190-65.static.sonic.net (192-184-190-65.static.sonic.net [192.184.190.65])
+	(authenticated bits=0)
+	by d.mail.sonic.net (8.16.1/8.16.1) with ESMTPA id 47P1oeJg025924;
+	Sat, 24 Aug 2024 18:50:41 -0700
+From: Forest <forestix@nom.one>
+To: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Cc: linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        stable@vger.kernel.org, regressions@lists.linux.dev
+Subject: [REGRESSION] cifs: triggers bad flatpak & ostree signatures, corrupts ffmpeg & mkvmerge outputs
+Date: Sat, 24 Aug 2024 18:50:40 -0700
+Message-ID: <pv2lcjhveti4sfua95o0u6r4i73r39srra@sonic.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Sonic-CAuth: UmFuZG9tSVbLHoUERX1vtYlwpdseB4XYWtL2dShvfjUov/JNCh945aBnRL4VeQXkDwI4V2nIoHpMTu1rLsWf2EGRvohwCNK8
+X-Sonic-ID: C;pEX8boRi7xGqg65Sr7edkQ== M;NEsRb4Ri7xGqg65Sr7edkQ==
+X-Spam-Flag: No
+X-Sonic-Spam-Details: -0.0/5.0 by cerberusd
 
-Implement shrinker.to_text() for the superblock shrinker: print out nr
-of dentries and inodes, total and shrinkable.
+#regzbot introduced: 3ee1a1fc3981
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- fs/super.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Dear maintainers,
 
-diff --git a/fs/super.c b/fs/super.c
-index 5b0fea6ff1cd..d3e43127e311 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -36,6 +36,7 @@
- #include <linux/lockdep.h>
- #include <linux/user_namespace.h>
- #include <linux/fs_context.h>
-+#include <linux/seq_buf.h>
- #include <uapi/linux/mount.h>
- #include "internal.h"
- 
-@@ -270,6 +271,16 @@ static unsigned long super_cache_count(struct shrinker *shrink,
- 	return total_objects;
- }
- 
-+static void super_cache_to_text(struct seq_buf *out, struct shrinker *shrink)
-+{
-+	struct super_block *sb = shrink->private_data;
-+
-+	seq_buf_printf(out, "inodes:   total %zu shrinkable %lu\n",
-+		       per_cpu_sum(sb->s_inodes_nr), list_lru_count(&sb->s_inode_lru));
-+	seq_buf_printf(out, "dentries: toal %zu shrinkbale %lu\n",
-+		       per_cpu_sum(sb->s_dentry_nr), list_lru_count(&sb->s_dentry_lru));
-+}
-+
- static void destroy_super_work(struct work_struct *work)
- {
- 	struct super_block *s = container_of(work, struct super_block,
-@@ -394,6 +405,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
- 
- 	s->s_shrink->scan_objects = super_cache_scan;
- 	s->s_shrink->count_objects = super_cache_count;
-+	s->s_shrink->to_text = super_cache_to_text;
- 	s->s_shrink->batch = 1024;
- 	s->s_shrink->private_data = s;
- 
--- 
-2.45.2
+I think I have found a cifs regression in the 6.10 kernel series, which leads
+certain programs to write corrupt data.
+
+After upgrading from kernel 6.9.12 to 6.10.6, flatpak and ostree are now
+writing bad gpg signatures when exporting signed packages or signing their
+repository metadata/summary files, whenever the repository is on a cifs mount.
+Instead of writing the signature data, null bytes are written in its place.
+
+Furthermore, ffmpeg and mkvmerge are now intermittently writing corrupt files
+to cifs mounts.
+
+No error is reported by the applications or the kernel when it happens.
+In the case of flatpak, the problem isn't revealed until something tries to use
+the repository and finds signatures full of null bytes. (Of course, this means
+the affected repositories have been rendered useless.) In the case of ffmpeg
+and mkvmerge, the problem isn't revealed until someone plays the video file and
+reaches a corrupt section.
+
+
+A kernel bisect reveals this:
+
+3ee1a1fc39819906f04d6c62c180e760cd3a689d is the first bad commit
+commit 3ee1a1fc39819906f04d6c62c180e760cd3a689d
+Author: David Howells <dhowells@redhat.com>
+Date:   Fri Oct 6 18:29:59 2023 +0100
+    cifs: Cut over to using netfslib
+
+I was unable to determine whether 6.11.0-rc4 fixes it, due to another cifs bug
+in that version (which I hope to report soon).
+
+
+An strace of flatpak (which uses libostree) shows it generating correct
+signatures internally, but behaving differently on cifs vs. ext4 when working
+with memory-mapped temp files, in which the signatures are stored before being
+written to their final outputs. Here's where I reported my initial findings to
+those projects:
+https://github.com/flatpak/flatpak/issues/5911
+https://github.com/ostreedev/ostree/issues/3288
+
+Debian Testing and Unstable kernels (6.10.4-1 and 6.10.6-1) are affected:
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1079394
+
+
+The following reproducer script consistently triggers the problem for me. Run
+it with two arguments: a path on a cifs mount where an ostree repo should be
+created, and a GPG key ID with which to sign a commit.
+
+
+#!/bin/sh
+set -e
+
+if [ "$#" -lt 2 ] || [ "$1" = "-h" ] ; then
+    echo "usage: $(basename "$0") <repo-dir> <gpg-key-id>"
+    exit 2
+fi
+
+repo=$1
+keyid=$2
+src="./foo"
+
+echo "creating ostree repo at $repo"
+ostree init --repo="$repo"
+
+echo "creating source file tree at $src"
+mkdir -p "$src"
+echo hi > "$src"/hello
+
+ostree commit --repo="$repo" --branch=foo --gpg-sign="$keyid" "$src"
+
+if ostree show --repo="$repo" foo; then
+    echo ---
+    echo success!
+else
+    echo ---
+    ostree show --repo="$repo" --print-detached-metadata-key=ostree.gpgsigs foo
+    echo failure!
+    echo look for null bytes in the above commit signature
+fi
+
 
 
