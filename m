@@ -1,143 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-27172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C6795F267
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 15:09:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4D295F27A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 15:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14A428281C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 13:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A40D81F224EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 13:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFB317BEDB;
-	Mon, 26 Aug 2024 13:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7F317C9AB;
+	Mon, 26 Aug 2024 13:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jW2kLdfk"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kcRs0Up6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D084810F7;
-	Mon, 26 Aug 2024 13:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A7713C695;
+	Mon, 26 Aug 2024 13:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677734; cv=none; b=UqTWmQ043gk8GrIAlG0VMUgEZh6doHBgiuvN4uTXCISg400vFnRvASymP4eAw8l2JeYR7M9kpvyoApCpdE2jtBqyCNeZ6ZWXS7D0tBTkfW2nHRGm9VidrXJ0On18l4apPHTplRXBDHpXCRsDiMPC4oLbE6Y7TgLNZ9MCSVabJz0=
+	t=1724677921; cv=none; b=FY3D3ucbfs4TZNJujs/oPNK0aCes3vBImZdTEt0HqwaMp5rLzSuStmRWgW8VRLNw+MSoZjnIO8VtbQF21xLSE5Nea2FCZw7dFC6xyMFQLwUdZ7vMxquqCZlvPQVLzVI1NhsKyqEFJBZSgdMCt+PVQVBNO4qDrhboOTkSsUzgVDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677734; c=relaxed/simple;
-	bh=BRONPixzBL0ZszZpb2xwZFsJg5ZB3SZbawc7G5yzV58=;
+	s=arc-20240116; t=1724677921; c=relaxed/simple;
+	bh=ivF/jbpHiVz5xnl0u7eRNCvvm7IVCf7GHqjOdoyEiJ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sRGZ/U+j2jq5wBnbfzwdkmW6cm7dT73xmgHnQgycxZDqphko3pxI4F2mgmVMM3ZoGrpV3DFSpHYVBDOMtz75fqvWJqkmiHGhLyKAbFVjm6nK5gFiioX5uQ+Xm41IYBSVpcLJxYikD2U3BmOxNWpEz9eybSS6vorw8ZX3oLRh2Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jW2kLdfk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C6AAC56890;
-	Mon, 26 Aug 2024 13:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724677733;
-	bh=BRONPixzBL0ZszZpb2xwZFsJg5ZB3SZbawc7G5yzV58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jW2kLdfk+I4ftnJrw0QXlqy0m0RbtkcKqstKGg9L0LO15XukG4H2837ido4aW1/7b
-	 1QzNh/4RZBwzRJBxqY5LeSmqhT2M6BVwzuY2BXjYRFtBL+bRlmnWLs+JUwiNL5mrKW
-	 xPprQHb1eJWlgwG+IRLJKB+CheIJKWQ6tx7dadhd7uhvdySh43ozmc6varjD9/16sO
-	 hRuJb7LL87s/oE52O65CVi/dLuRwvrzdZucfBPsO8ZpJeIi8ftxNqYGhSjUOg2hdi5
-	 EJ79JRHTCfDaPr2axXLEyCOWEX+WBJn7sgeznyW07INKQaUsg6NxKbodAPYU2fGu8J
-	 yAoMtZx3MrJ1A==
-Date: Mon, 26 Aug 2024 15:08:45 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>, Tom Haynes <loghyr@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] fs: add an ATTR_CTIME_DLG flag
-Message-ID: <20240826-glasdach-zaudern-ee3d4761973c@brauner>
-References: <20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org>
- <20240826-delstid-v2-5-e8ab5c0e39cc@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FYu5O0bMaTDpm3cnYDh1waqo05FxFKSXgiwr8Al9X6jdK0yV9SFDEuHYl4sEttcq+WxGeS+lpG/WMQoyO/vilwKNINcZE7Aacxw6s//I6JypqwkMY9lqHaJ7m/O2AucAxlw8Ap4+jUqAAxp18YwBLrUeIvZ8kpLmR2N4+2+ok8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kcRs0Up6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CnEqIrJf/5Uvl3Jm/q/BrEQtwg9oxHJd/L725YJbtSg=; b=kcRs0Up6Cpe13NcGd7CsxcTXEg
+	wfUx33ph4ytvCOW5PBAgqcDvh4o1EGSJoK5TGxQCgPNeuG/v3D6JkU/rF2hdYZcbDhu6XmX0Y461C
+	LZZ8BwGkStTknZyAzOa9dQgtUckbdxeGFNrcU3twnz5o7iteGmZ3xjv70tJkt3u7oT/lbuXQlLbzO
+	oSF3vL64NTiTdj3Z70gPw8W2W86zGz3Rd9OF/5fwwtq68NRPdXcEq+NKFk1zhI15jjtzu+HtZn8pt
+	H5KbjDahvkUiYuDiMfOr8HwTsFriXnImrEp4FssGplhuGTpXTswtIQPfYPK+il474iHx5lr1OO8mC
+	ZMNhtxgw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1siZVT-0000000FQMj-2njG;
+	Mon, 26 Aug 2024 13:11:39 +0000
+Date: Mon, 26 Aug 2024 14:11:39 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <Zsx_C0QuecO1C0dB@casper.infradead.org>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240826-delstid-v2-5-e8ab5c0e39cc@kernel.org>
+In-Reply-To: <20240826085347.1152675-2-mhocko@kernel.org>
 
-On Mon, Aug 26, 2024 at 08:46:15AM GMT, Jeff Layton wrote:
-> When updating the ctime on an inode for a setattr with a multigrain
-> filesystem, we usually want to take the latest time we can get for the
-> ctime. The exception to this rule is when there is a nfsd write
-> delegation and the server is proxying timestamps from the client.
-> 
-> When nfsd gets a CB_GETATTR response, we want to update the timestamp
-> value in the inode to the values that the client is tracking. The client
-> doesn't send a ctime value (since that's always determined by the
-> exported filesystem), but it does send a mtime value. In the case where
-> it does, then we may also need to update the ctime to a value
-> commensurate with that.
-> 
-> Add a ATTR_CTIME_DELEG flag, which tells the underlying setattr
+On Mon, Aug 26, 2024 at 10:47:12AM +0200, Michal Hocko wrote:
+> @@ -258,12 +258,10 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
+>   */
+>  static struct bch_inode_info *bch2_new_inode(struct btree_trans *trans)
+>  {
+> -	struct bch_inode_info *inode =
+> -		memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN,
+> -				  __bch2_new_inode(trans->c));
+> +	struct bch_inode_info *inode = __bch2_new_inode(trans->c, GFP_NOWARN | GFP_NOWAIT);
 
-Fwiw: disconnect between commit message and actually used ATTR_CTIME_DLG.
+GFP_NOWAIT include GFP_NOWARN these days (since 16f5dfbc851b)
 
-> machinery to respect that value and not to set it to the current time.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
+> +++ b/fs/inode.c
+> @@ -153,7 +153,7 @@ static int no_open(struct inode *inode, struct file *file)
+>   * These are initializations that need to be done on every inode
+>   * allocation as the fields are not initialised by slab allocation.
+>   */
+> -int inode_init_always(struct super_block *sb, struct inode *inode)
+> +int inode_init_always(struct super_block *sb, struct inode *inode, gfp_t gfp)
 
-Are you set on sending us on a mission to free up ATTR_* bits after
-freeing up FMODE_* bits? ;)
+Did you send the right version of this patch?  There should be a "_gfp"
+appended to this function name.
 
-If there's going to be more ATTR_*DELEG* flags that modify the
-behavior when delegation is in effect then we could consider adding
-another unsigned int ia_deleg field to struct iattr so that you can check:
-
-if (ia_valid & ATTR_CTIME) {
-	if (unlikely(iattr->ia_deleg & ATTR_CTIME))
-		// do some special stuff
-	else
-		// do the regular stuff
-}
-
-or some such variant.
-
->  fs/attr.c          | 10 +++++++++-
->  include/linux/fs.h |  1 +
->  2 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 7144b207e715..0eb7b228b94d 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -295,7 +295,15 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
->  		return;
->  	}
->  
-> -	now = inode_set_ctime_current(inode);
-> +	/*
-> +	 * In the case of an update for a write delegation, we must respect
-> +	 * the value in ia_ctime and not use the current time.
-> +	 */
-> +	if (ia_valid & ATTR_CTIME_DLG)
-> +		inode_set_ctime_to_ts(inode, attr->ia_ctime);
-> +	else
-> +		now = inode_set_ctime_current(inode);
-> +
->  	if (ia_valid & ATTR_ATIME_SET)
->  		inode_set_atime_to_ts(inode, attr->ia_atime);
->  	else if (ia_valid & ATTR_ATIME)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 7c1da3c687bd..43a802b2cb0d 100644
-> --- a/include/linux/fs.h
 > +++ b/include/linux/fs.h
-> @@ -211,6 +211,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define ATTR_TIMES_SET	(1 << 16)
->  #define ATTR_TOUCH	(1 << 17)
->  #define ATTR_DELEG	(1 << 18) /* Delegated attrs (don't break) */
-> +#define ATTR_CTIME_DLG	(1 << 19) /* Delegation in effect */
+> @@ -3027,7 +3027,12 @@ extern loff_t default_llseek(struct file *file, loff_t offset, int whence);
+>  
+>  extern loff_t vfs_llseek(struct file *file, loff_t offset, int whence);
+>  
+> -extern int inode_init_always(struct super_block *, struct inode *);
+> +extern int inode_init_always_gfp(struct super_block *, struct inode *, gfp_t);
 
-What's the interaction between ATTR_DELEG and ATTR_CTIME_DLG? I think
-that's potentially confusing.
+You can drop the "extern" while you're changing this line.
+
+> +static inline int inode_init_always(struct super_block *sb, struct inode *inode)
+> +{
+> +	return inode_init_always_gfp(sb, inode, GFP_NOFS);
+> +}
 
