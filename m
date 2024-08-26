@@ -1,138 +1,297 @@
-Return-Path: <linux-fsdevel+bounces-27128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 792EA95ECD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 11:13:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7180395ED02
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 11:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC3CC1C2178F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F21141F22296
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638D8142915;
-	Mon, 26 Aug 2024 09:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB604145FE4;
+	Mon, 26 Aug 2024 09:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YMqQu3GE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBKObYzu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F0A13F441;
-	Mon, 26 Aug 2024 09:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8FC14375D;
+	Mon, 26 Aug 2024 09:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724663600; cv=none; b=eO1or5xvMkMNQB3lRBIDA2PfQMeBhhh5+F0mf78SpERKIuyxDLqkQlsytsBxpda7WdYCn82RKZDonTtnvAreJz2ZaHUEnpvl+c/6axVynH5BsT5CIsw3PmSrOl9Ky/BNVDDWaaD+mT5Hre6oqNYuStQDt/urhG8hLghRB7mARS8=
+	t=1724664033; cv=none; b=PWzF0hE9TwBQq6//IHE84onOZcarVS8iMhQ6s7yTOfokW9DZa4wHHO0vY/F5orsNW5vtJFUATpg5SRaThFHZRf2NZBpFrSwhKcJ64y3kcqgt1i5pnWXKQrmUVlzd/qs5i8Mobzcgi7iD8nWb9XQF24URuY1H+ggR/QPmlorhDNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724663600; c=relaxed/simple;
-	bh=4nA4jNEDm6SLdH7kYlQhANzKqtqdhCy8HMruQkw4a38=;
+	s=arc-20240116; t=1724664033; c=relaxed/simple;
+	bh=rwXP+5eSF7J7wNGs6IQQcMn0Z+ZA7RlktZ3B5d40Kzs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VPXOn8HRfCZgXmZkH5qoTjpYeX+arC8QZcMmhoCZsTZ57DHSSwt1dgGp1q3paWrkO7CE4kYNvR0OBYmaxrFJ6etbG3Tv/VFISjlysMwQRwR+qJkJctwUKirLugQswXZDAXpobIi4U8J+wKxGaqvCRMAXg7b4zptfo78C72DJa0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YMqQu3GE; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724663599; x=1756199599;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4nA4jNEDm6SLdH7kYlQhANzKqtqdhCy8HMruQkw4a38=;
-  b=YMqQu3GE+SO+wcb5Rr20FBi1LawGEh2sWdvNzJFXpg7hDS2FH+Qe6U+H
-   tY3aDZi2FZ9z1Wb3EPcyyBYzOaTUMYk3vP02A5aN3Yqa6ZrRyEVsUwNXP
-   gVSvvCVEeVxulB7e8Hy8GIB2QHcrwCvBV0gJdn/cTNePyf6EKh+mXK0FG
-   ewE145e13oaOoWz9CI1R0EqnhMDfn4NcIWamYRY3xzjRnJJzrNmDoXBVE
-   H1F0yXTcmR1PN6puiK/sz76GavwDsdxsLzsoFwgr5d0AhfDn2Q3oH6dBp
-   LRCqr6Sst7OZnkV+t8FbHE4m33Vk/T8uFQzjgyFiYQuSQVGjCvoNN2+cV
-   w==;
-X-CSE-ConnectionGUID: VDTinndkQ+a7Czynw8oB4Q==
-X-CSE-MsgGUID: pe2uhRrUQSO2qFDj3THYKA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11175"; a="40544221"
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="40544221"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 02:12:53 -0700
-X-CSE-ConnectionGUID: Nox2pa3eRfOZXOnsj0pspg==
-X-CSE-MsgGUID: yZyvcUs2SMG63Lg3QNqQZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,177,1719903600"; 
-   d="scan'208";a="62288980"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 26 Aug 2024 02:12:51 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1siVmK-000GoG-1W;
-	Mon, 26 Aug 2024 09:12:48 +0000
-Date: Mon, 26 Aug 2024 17:12:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: sergii.boryshchenko@globallogic.com, dushistov@mail.ru
-Cc: oe-kbuild-all@lists.linux.dev, linux-nfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sergii Boryshchenko <sergii.boryshchenko@globallogic.com>
-Subject: Re: [PATCH] ufs: Remove redundant inode number check from
- ufs_nfs_get_inode
-Message-ID: <202408261605.ARxTA9jX-lkp@intel.com>
-References: <20240822142610.129668-1-sergii.boryshchenko@globallogic.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnof7Wrt6UtCq/2+bmv6CSc7GfsKyi0hrzegnUxuRR9SJzhXnu19jST+ViS/87DCuhbgMp98e8CLQY0GNYId7gJeNuADGOAJFXNWZcsdTD5xJAapUHm76+ZKS/hFHxZwRIT0fm2oHFYZPjjcWKzn5uEwP2DDvTYKGW+JjiCMVrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBKObYzu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D866AC567F3;
+	Mon, 26 Aug 2024 09:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724664032;
+	bh=rwXP+5eSF7J7wNGs6IQQcMn0Z+ZA7RlktZ3B5d40Kzs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iBKObYzuSp3BAhGOIaeeqPeyFwX6izp/CzVO7M8RvdNK3JPks06o2TiJ+t8CcU1m3
+	 XC2jxvvLE+LrcQsgITEHaeINvLSs3UupG1w1zm7DJVCemGYK8PyENOjRP+4VWyK4rW
+	 6+96F9UQ66WtJDHBUhXDroLekZ1v9QlaDlSf7WyqIV33fYeV/H/LAj2gZ4XB5nQq9g
+	 0csBKvjOUBdCLOE8XGNGPoYI2Q5lXCvZd0ZkB+xpUwXtoitcg0Cap60IRO4xzF+pY2
+	 zKBYqCf+TuOJOF9hFXPAXseDtApOVbZA4ykbdbiPOrERygoEXm94IYMk4f1Ml1OAvd
+	 ou7qaxJH4vXgg==
+Date: Mon, 26 Aug 2024 11:20:26 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v7 6/8] mm/util: Deduplicate code in
+ {kstrdup,kstrndup,kmemdup_nul}
+Message-ID: <ep44ahlsa2krmpjcqrsvoi5vfoesvnvly44icavup7dsfolewm@flnm5rl23diz>
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+ <20240817025624.13157-7-laoar.shao@gmail.com>
+ <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fr6yymnvpqcqqdt5"
 Content-Disposition: inline
-In-Reply-To: <20240822142610.129668-1-sergii.boryshchenko@globallogic.com>
-
-Hi,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on viro-vfs/for-next v6.11-rc5 next-20240823]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/sergii-boryshchenko-globallogic-com/ufs-Remove-redundant-inode-number-check-from-ufs_nfs_get_inode/20240826-120030
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240822142610.129668-1-sergii.boryshchenko%40globallogic.com
-patch subject: [PATCH] ufs: Remove redundant inode number check from ufs_nfs_get_inode
-config: arc-randconfig-001-20240826 (https://download.01.org/0day-ci/archive/20240826/202408261605.ARxTA9jX-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240826/202408261605.ARxTA9jX-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408261605.ARxTA9jX-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   fs/ufs/super.c: In function 'ufs_nfs_get_inode':
->> fs/ufs/super.c:101:37: warning: unused variable 'uspi' [-Wunused-variable]
-     101 |         struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
-         |                                     ^~~~
+In-Reply-To: <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
 
 
-vim +/uspi +101 fs/ufs/super.c
+--fr6yymnvpqcqqdt5
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
+	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
+	rostedt@goodmis.org, catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v7 6/8] mm/util: Deduplicate code in
+ {kstrdup,kstrndup,kmemdup_nul}
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+ <20240817025624.13157-7-laoar.shao@gmail.com>
+ <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
+MIME-Version: 1.0
+In-Reply-To: <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre>
 
-^1da177e4c3f41 Linus Torvalds  2005-04-16   98  
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15   99  static struct inode *ufs_nfs_get_inode(struct super_block *sb, u64 ino, u32 generation)
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  100  {
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15 @101  	struct ufs_sb_private_info *uspi = UFS_SB(sb)->s_uspi;
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  102  	struct inode *inode;
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  103  
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  104  	inode = ufs_iget(sb, ino);
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  105  	if (IS_ERR(inode))
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  106  		return ERR_CAST(inode);
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  107  	if (generation && inode->i_generation != generation) {
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  108  		iput(inode);
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  109  		return ERR_PTR(-ESTALE);
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  110  	}
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  111  	return inode;
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  112  }
-f3e2a520f5fb1a Alexey Dobriyan 2009-12-15  113  
+Hi Yafang,
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Sat, Aug 17, 2024 at 10:58:02AM GMT, Alejandro Colomar wrote:
+> Hi Yafang,
+>=20
+> On Sat, Aug 17, 2024 at 10:56:22AM GMT, Yafang Shao wrote:
+> > These three functions follow the same pattern. To deduplicate the code,
+> > let's introduce a common helper __kmemdup_nul().
+> >=20
+> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Simon Horman <horms@kernel.org>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > ---
+> >  mm/util.c | 67 +++++++++++++++++++++----------------------------------
+> >  1 file changed, 26 insertions(+), 41 deletions(-)
+> >=20
+> > diff --git a/mm/util.c b/mm/util.c
+> > index 4542d8a800d9..310c7735c617 100644
+> > --- a/mm/util.c
+> > +++ b/mm/util.c
+> > @@ -45,33 +45,40 @@ void kfree_const(const void *x)
+> >  EXPORT_SYMBOL(kfree_const);
+> > =20
+> >  /**
+> > - * kstrdup - allocate space for and copy an existing string
+> > - * @s: the string to duplicate
+> > + * __kmemdup_nul - Create a NUL-terminated string from @s, which might=
+ be unterminated.
+> > + * @s: The data to copy
+> > + * @len: The size of the data, including the null terminator
+> >   * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+> >   *
+> > - * Return: newly allocated copy of @s or %NULL in case of error
+> > + * Return: newly allocated copy of @s with NUL-termination or %NULL in
+> > + * case of error
+> >   */
+> > -noinline
+> > -char *kstrdup(const char *s, gfp_t gfp)
+> > +static __always_inline char *__kmemdup_nul(const char *s, size_t len, =
+gfp_t gfp)
+> >  {
+> > -	size_t len;
+> >  	char *buf;
+> > =20
+> > -	if (!s)
+> > +	buf =3D kmalloc_track_caller(len, gfp);
+> > +	if (!buf)
+> >  		return NULL;
+> > =20
+> > -	len =3D strlen(s) + 1;
+> > -	buf =3D kmalloc_track_caller(len, gfp);
+> > -	if (buf) {
+> > -		memcpy(buf, s, len);
+> > -		/* During memcpy(), the string might be updated to a new value,
+> > -		 * which could be longer than the string when strlen() is
+> > -		 * called. Therefore, we need to add a null termimator.
+> > -		 */
+> > -		buf[len - 1] =3D '\0';
+> > -	}
+> > +	memcpy(buf, s, len);
+> > +	/* Ensure the buf is always NUL-terminated, regardless of @s. */
+> > +	buf[len - 1] =3D '\0';
+> >  	return buf;
+> >  }
+> > +
+> > +/**
+> > + * kstrdup - allocate space for and copy an existing string
+> > + * @s: the string to duplicate
+> > + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+> > + *
+> > + * Return: newly allocated copy of @s or %NULL in case of error
+> > + */
+> > +noinline
+> > +char *kstrdup(const char *s, gfp_t gfp)
+> > +{
+> > +	return s ? __kmemdup_nul(s, strlen(s) + 1, gfp) : NULL;
+> > +}
+> >  EXPORT_SYMBOL(kstrdup);
+> > =20
+> >  /**
+> > @@ -106,19 +113,7 @@ EXPORT_SYMBOL(kstrdup_const);
+> >   */
+> >  char *kstrndup(const char *s, size_t max, gfp_t gfp)
+> >  {
+> > -	size_t len;
+> > -	char *buf;
+> > -
+> > -	if (!s)
+> > -		return NULL;
+> > -
+> > -	len =3D strnlen(s, max);
+> > -	buf =3D kmalloc_track_caller(len+1, gfp);
+> > -	if (buf) {
+> > -		memcpy(buf, s, len);
+> > -		buf[len] =3D '\0';
+> > -	}
+> > -	return buf;
+> > +	return s ? __kmemdup_nul(s, strnlen(s, max) + 1, gfp) : NULL;
+> >  }
+> >  EXPORT_SYMBOL(kstrndup);
+> > =20
+> > @@ -192,17 +187,7 @@ EXPORT_SYMBOL(kvmemdup);
+> >   */
+> >  char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
+> >  {
+> > -	char *buf;
+> > -
+> > -	if (!s)
+> > -		return NULL;
+> > -
+> > -	buf =3D kmalloc_track_caller(len + 1, gfp);
+> > -	if (buf) {
+> > -		memcpy(buf, s, len);
+> > -		buf[len] =3D '\0';
+> > -	}
+> > -	return buf;
+> > +	return s ? __kmemdup_nul(s, len + 1, gfp) : NULL;
+> >  }
+> >  EXPORT_SYMBOL(kmemdup_nul);
+>=20
+> I like the idea of the patch, but it's plagued with all those +1 and -1.
+> I think that's due to a bad choice of value being passed by.  If you
+> pass the actual length of the string (as suggested in my reply to the
+> previous patch) you should end up with a cleaner set of APIs.
+>=20
+> The only remaining +1 is for kmalloc_track_caller(), which I ignore what
+> it does.
+>=20
+> 	char *
+> 	__kmemdup_nul(const char *s, size_t len, gfp_t gfp)
+> 	{
+> 		char *buf;
+>=20
+> 		buf =3D kmalloc_track_caller(len + 1, gfp);
+> 		if (!buf)
+> 			return NULL;
+>=20
+> 		strcpy(mempcpy(buf, s, len), "");
+
+Changing these strcpy(, "") to the usual; =3D'\0' or =3D0, but I'd still
+recommend the rest of the changes, that is, changing the value passed in
+len, to remove several +1 and -1s.
+
+What do you think?
+
+Have a lovely day!
+Alex
+
+> 		return buf;
+> 	}
+>=20
+> 	char *
+> 	kstrdup(const char *s, gfp_t gfp)
+> 	{
+> 		return s ? __kmemdup_nul(s, strlen(s), gfp) : NULL;
+> 	}
+>=20
+> 	char *
+> 	kstrndup(const char *s, size_t n, gfp_t gfp)
+> 	{
+> 		return s ? __kmemdup_nul(s, strnlen(s, n), gfp) : NULL;
+> 	}
+>=20
+> 	char *
+> 	kmemdup_nul(const char *s, size_t len, gfp_t gfp)
+> 	{
+> 		return s ? __kmemdup_nul(s, len, gfp) : NULL;
+> 	}
+>=20
+> Have a lovely day!
+> Alex
+>=20
+> --=20
+> <https://www.alejandro-colomar.es/>
+
+
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--fr6yymnvpqcqqdt5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmbMSNoACgkQnowa+77/
+2zLIExAAowwDvn4fGttE88cvxlhQwOy8jHj4erHbWDOLMcKFNLpWhwWRqOaVZyMN
+dseuMqjKxp0vlIjA+QRvwtCSfMPrfGFrF+hSal8nEVG5YPp02IJFeKPVs2UIMirG
+WQfz7OkEGY6BN61CHuNhXQL+WLCzEuP/jqqh6bZ5/l9elU7H+CAEGJgWMq5QeyRo
+eVljlfkFRxJkdzcKPJJFc/wK95vSKXFPe5mE7UGfJx1oO3m6q3j5i2aaBFQcIjm3
+QiBGQ8aXepDV7L3XLJaRPa/Tkm7Cc5fdL6B9KEN4SvxOXn7V5VDRVOlrT8Du9YQ1
+G77o8rFyZ9MNFsPcZh5g6DgqQyK7RWTZLm/Xq8GjfB5/iQ8FeZ7gaLye6d52vDub
+vsvIk9D/L3iWDeGTahM9+5bHe8AHr3sI9eCnKbLayJrZ0TA03KgCEKhj8Sp1kkdu
+hai6+ym4Wc9aAYAGEHdJFI/8Gu93uqXT35bT270ov2E77VMyhVltprOCW6qbziTr
+ebt5iKyJ6f2e/rXOCOlqP4CTLSTtRfo2padaLlAJCSEJLs4Q1YsqZMIyLbn7PYuD
+MpkrWxeysR2d3KsKcb1MYCZoKqsQ+hWtkEHZWqHgygI3fbBPE5tkmCS/ustkAk1s
+15ry+Az65a6wiEv5w38JrVCJnzZ/x0aPwOCDNdgYwS/amQEQP10=
+=I3ve
+-----END PGP SIGNATURE-----
+
+--fr6yymnvpqcqqdt5--
 
