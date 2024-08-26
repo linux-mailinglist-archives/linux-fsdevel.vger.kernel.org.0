@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-27229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEFC395FA5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 22:06:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1037295FA61
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 22:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9344B1F21197
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 20:06:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EC251C21F6A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 20:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CB1199EA7;
-	Mon, 26 Aug 2024 20:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28A2199E9F;
+	Mon, 26 Aug 2024 20:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ei6CbuRA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gchhyvNc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60AD199259;
-	Mon, 26 Aug 2024 20:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D039824BB;
+	Mon, 26 Aug 2024 20:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724702768; cv=none; b=Wqc+7igizLDOpqtRILI6x59TpwIpOSxdjM9JXBn0emL6oQOt7fQMfNis2uJhpZNA6Wtzj8GqyPcutxPUOcPSsYa1LfaNy5WQmI7VQO1auZ/US9VJ8P+mxSGji84D9vS/r9Z4LYFBkYd6lUY/3U9JOGYktpXHLIMhf8COiks2ytA=
+	t=1724702886; cv=none; b=Y3YvxCNa/Oq4iZQPFZ/oGsRkbNdPg/cBaexBQl1zyqQl8U7/oNB2PjWV8ItjL0Da/r7uQphlO206zm8Fg7tC/drebSMGY+wzxJHy3BZNiheMYYeyTPcMLASV5KxQYev9G09f7Rck2/Yo6EF5XA1bneba4P/Sh2B0r1GHNxAFJF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724702768; c=relaxed/simple;
-	bh=4HdFyJdvZKE0tNyptE2wGNNoK+nN5uPzYDUa2pU7TkU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gTrjSm1Usy4b1NRvsTWiPmDeriQSFh/Ss/FEjUUyfovjBPb/xHkvhDA673UkxL4ODKsAJ7NHDKkO26moK08Ww2yT5lZBB8hsBVH0xZ2EJnQauQ0l4NINr17yowFSfCsyecvZ8zpHFyzUU6bY+LhMOKnxnhywJg8UWrmSoDKVppY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ei6CbuRA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C9A0C4FF72;
-	Mon, 26 Aug 2024 20:06:08 +0000 (UTC)
+	s=arc-20240116; t=1724702886; c=relaxed/simple;
+	bh=vDvvgp+txOyPsIguFMIiO4KR+nmBRNihIrQLqrAgMy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqGztADbi6Pt4fdXEonwl4E+y7XYvqa73zzSTC8T/fIfIen1fdNaUo3Tx8t7WuponiYk9+x7otS3CcnJ7BWzkXx6WduOIq6XLKG41evNFnnDlY9qSLZQnEdXibLrJR9SPjSVUCF2YbEd4qGXMlhwjfjffGJJ2wX20lkTaOu0wOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gchhyvNc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5724C8B7AA;
+	Mon, 26 Aug 2024 20:08:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724702768;
-	bh=4HdFyJdvZKE0tNyptE2wGNNoK+nN5uPzYDUa2pU7TkU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ei6CbuRAuetpbe48frNv0DGa8REv90njY+nqhLw9yxilYkyp3e26ljbYaR+3K2zeE
-	 K0scN4JEpuWiDqj8Gd1HCwWF5EmuSjUnvWPgv5gs/ZjwSf0tScodjn/Ol2B2lZ+5C5
-	 Zo32ZQ0GNsXJSrHkV2I42Utxcr74h7YUaGg8pkMhxqUBdOXyu/Lyr9WPqupBgVi9KM
-	 q4ssm3PFUmJpJ6PIMXjvkir5hOPbMmnOKIICyxEYdLtaL9l+biaARTkEuZuB854jkR
-	 774AMH7bUIqMnszhvR4MB1rt/hHCLdKPg20oy48XlqMoylPjWpeMaYnyLyx7qeBmdr
-	 9RPFZHdGDUSuA==
+	s=k20201202; t=1724702885;
+	bh=vDvvgp+txOyPsIguFMIiO4KR+nmBRNihIrQLqrAgMy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gchhyvNc1VF/l6IS2hqcDNcCf0+3xp8ZzQMcQPPj8IPVVRiPBizxQ5aSDPLyrqRM8
+	 TciptEcFqnfUB3O+zpSTNMcj+O1WkO5JBdamz2EBaVIH+a1TLHp1PHmSwovksXiet/
+	 wMh+Mqk4RGl9vbdJ1pPCHdgm0df/DUHfbLXCCSRAsVwnzUqu1E6otKTRMSpAkWcsjZ
+	 alOqyvr1jmjW0YuXRn+7xlX6Q/bfq8F5clXWXPDdp31rWCn7MjE91XccNDgxry8gun
+	 hutcyvRdxWXUDyfpuRR/1Rm7B4fPftJlBo3/UxV3czPmOSqbT8StYXTBsvsdGwU2+i
+	 ne0Mlcre+DZmg==
+Date: Mon, 26 Aug 2024 13:08:05 -0700
 From: Kees Cook <kees@kernel.org>
-To: Greg Ungerer <gregungerer@westnet.com.au>,
-	linux-kernel@vger.kernel.org,
-	Max Filippov <jcmvbkbc@gmail.com>
-Cc: Kees Cook <kees@kernel.org>,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] binfmt_elf_fdpic: fix AUXV size calculation when ELF_HWCAP2 is defined
-Date: Mon, 26 Aug 2024 13:06:04 -0700
-Message-Id: <172470276219.1124110.5967273192476181059.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240826032745.3423812-1-jcmvbkbc@gmail.com>
-References: <20240826032745.3423812-1-jcmvbkbc@gmail.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: dsterba@suse.com, gustavoars@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] affs: Remove unused struct members in affs_root_head
+Message-ID: <202408261307.F7D2AD650@keescook>
+References: <20240826142735.64490-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826142735.64490-2-thorsten.blum@toblux.com>
 
-On Sun, 25 Aug 2024 20:27:45 -0700, Max Filippov wrote:
-> create_elf_fdpic_tables() does not correctly account the space for the
-> AUX vector when an architecture has ELF_HWCAP2 defined. Prior to the
-> commit 10e29251be0e ("binfmt_elf_fdpic: fix /proc/<pid>/auxv") it
-> resulted in the last entry of the AUX vector being set to zero, but with
-> that change it results in a kernel BUG.
+On Mon, Aug 26, 2024 at 04:27:36PM +0200, Thorsten Blum wrote:
+> Only ptype is actually used. Remove the other struct members.
 > 
-> Fix that by adding one to the number of AUXV entries (nitems) when
-> ELF_HWCAP2 is defined.
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  fs/affs/amigaffs.h | 6 ------
+>  1 file changed, 6 deletions(-)
 > 
-> [...]
+> diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
+> index 1b973a669d23..9b40ae618852 100644
+> --- a/fs/affs/amigaffs.h
+> +++ b/fs/affs/amigaffs.h
+> @@ -49,12 +49,6 @@ struct affs_short_date {
+>  
+>  struct affs_root_head {
+>  	__be32 ptype;
+> -	__be32 spare1;
+> -	__be32 spare2;
+> -	__be32 hash_size;
+> -	__be32 spare3;
+> -	__be32 checksum;
+> -	__be32 hashtable[1];
+>  };
 
-Applied to for-linus/execve, thanks!
-
-[1/1] binfmt_elf_fdpic: fix AUXV size calculation when ELF_HWCAP2 is defined
-      https://git.kernel.org/kees/c/c6a09e342f8e
-
-Take care,
+This is removing documentation, in a way. Since I suspect you were
+looking at this due to hashtable, maybe just change that to [] and note
+that it (and the other fields) aren't used, but they're kept around to
+help document the format.
 
 -- 
 Kees Cook
-
 
