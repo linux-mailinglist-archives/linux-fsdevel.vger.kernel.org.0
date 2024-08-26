@@ -1,190 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-27071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F7F195E5B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 01:45:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A691B95E5F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 02:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BEE81C20A5A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Aug 2024 23:45:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64AD92810D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 00:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272567BB01;
-	Sun, 25 Aug 2024 23:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A555139D;
+	Mon, 26 Aug 2024 00:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z1qYr2e1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ynf25fZf";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DK0plsvh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dHbOwWxO"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="pjQB+mnv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20EA770F1;
-	Sun, 25 Aug 2024 23:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A81D623;
+	Mon, 26 Aug 2024 00:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724629504; cv=none; b=SIs6wgLdSqMo1g8NlbAVNi1E8LKePrG27/35Z3cX9kCpd5K5rsyyfORN+xipOxO7gnB4l78GpsHOZUD7/2FMzp8KN79auPqQ/cBpkxQf3awjX578o/irWntnKMcuvqKKgtbWXrW5o3h7u2ovwiUvCTKrYOBI3qcBYUbMZ5mk6mk=
+	t=1724631408; cv=none; b=MKy2jY1uVGFpQtbMw4ToNDIFo9jkZfz3dulTmOO+MTzBGwu8YR6egh01jNhelOa9+SumtQkYsQV4VGvUNf2/8Qkk2TKK1PemItKxKfVhwwcer6fpoPdTcxu3skdHb8lcmm7L8VVSxJ+YYAwPmLag0C3qGKzxZiYcMzan3jtk5lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724629504; c=relaxed/simple;
-	bh=JvqXyZhjMJCcx0sH9AFyA6BwUuH3aXipFR175yGZZqU=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=jAzVbvXk0W4nQGt8slpxgshEqd59ic7U2M/ocYvDs7gefHfdN0cl2LHTsFLXZ8ddrPa67iNa0IAUtLE4x79QTmpZMhfUPJyOp0C9ROLs3lUxTJPw1bsXnyCiErXqeDilje5bw6iCvA2bzWIwKAVOnda/NbkV3QNLeMnAsM5bJ4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z1qYr2e1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ynf25fZf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DK0plsvh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dHbOwWxO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6EDC91F80F;
-	Sun, 25 Aug 2024 23:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724629499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K/sjBBsaqlCWY83uGnV+zDoVtHJsjjDXpe6cyVb3Ka4=;
-	b=z1qYr2e1Ivq0I3RNQlaWYtXODDUBcCl9MRvag+8sEwgLPGF1+7C5xcD9ldHiheLQsJ/pIG
-	cx4PqVGXnWSNqYJJQwMd03hMWMFqJeNael8GA+gNdXmHP8WpwDCOEwksvDmHnGUjMAQhR0
-	FeBZdmyZlcCfke5j8vogJPWLA+Q7Sgo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724629499;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K/sjBBsaqlCWY83uGnV+zDoVtHJsjjDXpe6cyVb3Ka4=;
-	b=ynf25fZfXhGFPV9WwfxJiCRUas42OTE4uLHFmvg44htFILi4ALwc/cqvIngLYvQF1N/AJ3
-	RjsWy5fDM15FH3Cg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=DK0plsvh;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=dHbOwWxO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724629498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K/sjBBsaqlCWY83uGnV+zDoVtHJsjjDXpe6cyVb3Ka4=;
-	b=DK0plsvhRPJl2pVu9+0h1yYp1YDQAu2Gc2ZLAATVQvitCIN2aR/cI28MsBXOgRsV7WOByL
-	MDyqTHy2e8kQiMuKLjuVuyyP/AtxD0PXdDyl4Db8XsJJPJX1QmKhlEy+9SO2Fc+UzJSA2J
-	IRU6/rWCFLjs6n4sT6Vb28GgZAT6Adw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724629498;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K/sjBBsaqlCWY83uGnV+zDoVtHJsjjDXpe6cyVb3Ka4=;
-	b=dHbOwWxOU26DLFvLRB+SbJyF0dAXN2Cv1QZFyq1QxvDpAKMPcPdMH/0qBWzpj5/CsJ92IH
-	AUsAxvY6tLEtYEBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 03DE813704;
-	Sun, 25 Aug 2024 23:44:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tFjYKffBy2YuTwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Sun, 25 Aug 2024 23:44:55 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1724631408; c=relaxed/simple;
+	bh=h3oFpfXf51AqeUkuOeTEcLoxvTmO/wb6NbJewe8704c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FP2GarUNTgnyA0XUG0P/Omwsj8XEu468svRIpnHT0x0/Tok/qLg5Et2FWRnYMYFr8ipsoceGCREz7ZRw3h4/ohWm93nR3VYu6HQKdZzaOBYq67TUKmASGrggR4eEZJY/ghEF19Vg3cjNX/Fx5AKOd1WUjYbvQHXCr7wLtCsdxPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=pjQB+mnv; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=eVEfY25bFaaUmkSSv/dQYk+QOj18buGsOyCj0zIKmiw=; b=pjQB+mnvS7U8IX9flc3mqQIa1Z
+	WiBaT1OIqImCGq5W+ZwEJJweDFlYNnCjLoFtr0Cx1reF0qXdZ4D4lcYZPmrqza1DbT3QUz/C7OI16
+	QW+GZ2PfKFX0IWfTVNGrVDoJ6es+LeZD2rgKU7k7Sx3aq/7k0DmYrfhAud5yq/+gCUOnR8Wj0+oFy
+	wIOsNv6ZFSAQispfXZSF4qTLdpVr2RiOSlVEEodNdCAGgbSR5P3B8wNi2is52+/b2Yb5AwjieMec8
+	Br427Zzswa7dhpPecevQvdrlRg/FW1vPmcnt+NC9ZCVQjhlczi5cm1dej7ToALSSHU2HEfIBJMAs9
+	TI09NspQ==;
+Received: from [177.76.152.96] (helo=localhost)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1siNPN-0053Td-8f; Mon, 26 Aug 2024 02:16:33 +0200
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+To: linux-doc@vger.kernel.org
+Cc: corbet@lwn.net,
+	linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	kernel-dev@igalia.com,
+	kernel@gpiccoli.net,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH V4] Documentation: Document the kernel flag bdev_allow_write_mounted
+Date: Sun, 25 Aug 2024 21:15:11 -0300
+Message-ID: <20240826001624.188581-1-gpiccoli@igalia.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever" <chuck.lever@oracle.com>
-Cc: "Mike Snitzer" <snitzer@kernel.org>, linux-nfs@vger.kernel.org,
- "Jeff Layton" <jlayton@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Trond Myklebust" <trondmy@hammerspace.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v13 04/19] nfsd: factor out __fh_verify to allow NULL
- rqstp to be passed
-In-reply-to: <ZstOonct0HiaRCBM@tissot.1015granger.net>
-References: <>, <ZstOonct0HiaRCBM@tissot.1015granger.net>
-Date: Mon, 26 Aug 2024 09:44:48 +1000
-Message-id: <172462948890.6062.12952329291740788286@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 6EDC91F80F
-X-Spam-Score: -6.50
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-6.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.19)[-0.961];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,noble.neil.brown.name:mid,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Mon, 26 Aug 2024, Chuck Lever wrote:
-> On Fri, Aug 23, 2024 at 02:14:02PM -0400, Mike Snitzer wrote:
-> > +	exp =3D rqst_exp_find(rqstp ? &rqstp->rq_chandle : NULL,
-> > +			    net, client, gssclient,
-> >  			    fh->fh_fsid_type, fh->fh_fsid);
->=20
-> Question: Would rqst_exp_find() be the function that would prevent
-> a LOCALIO open to a file handle where the client's IP address is not
-> listed on the export?
+Commit ed5cc702d311 ("block: Add config option to not allow writing to mounted
+devices") added a Kconfig option along with a kernel command-line tuning to
+control writes to mounted block devices, as a means to deal with fuzzers like
+Syzkaller, that provokes kernel crashes by directly writing on block devices
+bypassing the filesystem (so the FS has no awareness and cannot cope with that).
 
-Yes.
+The patch just missed adding such kernel command-line option to the kernel
+documentation, so let's fix that.
 
->=20
-> I don't really see how IP address-related export access control is
-> being enforced, but it's possible I'm missing something.
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Darrick J. Wong <djwong@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+---
 
-The "client" is key.  The LOCALIO RPC protocol allows the server to
-determine a "client" which matches the network connection.  It passes
-this to the client code which uses it for future authentication.
+V4: More improvements in the wording (thanks Jens and Darrick!)
 
-> See comment on 5/N: since that patch makes this a public API again,
-> consider not removing this kdoc comment but rather updating it.
-
-What exactly do you consider to be a "public API"??  Anything without
-"static"?  That seems somewhat arbitrary.
-
-I think of __fh_verify() as a private API used by fh_verify() and
-nfsd_file_acquire_local() and nothing else.
-
-It seems pointless duplication the documentation for __fh_verify() and
-fh_verify().  Maybe one could refer to the other "fh_verify is like
-fh_verify except ....."
-
-??
-
->=20
->=20
-> > -__be32
-> > -fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type, int =
-access)
-> > +static __be32
-> > +__fh_verify(struct svc_rqst *rqstp,
+V3 link: https://lore.kernel.org/r/20240823180635.86163-1-gpiccoli@igalia.com
 
 
-Thanks,
-NeilBrown
+ Documentation/admin-guide/kernel-parameters.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 09126bb8cc9f..d521d444a35c 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -517,6 +517,18 @@
+ 			Format: <io>,<irq>,<mode>
+ 			See header of drivers/net/hamradio/baycom_ser_hdx.c.
+ 
++	bdev_allow_write_mounted=
++			Format: <bool>
++			Control the ability to open a block device for
++			writing, i.e., allow / disallow writes that bypass
++			the FS. This was implemented as a means to prevent
++			fuzzers from crashing the kernel by overwriting the
++			metadata underneath a mounted FS without its awareness.
++			This also prevents destructive formatting of mounted
++			filesystems by naive storage tooling that don't use
++			O_EXCL. Default is Y and can be changed through the
++			Kconfig option CONFIG_BLK_DEV_WRITE_MOUNTED.
++
+ 	bert_disable	[ACPI]
+ 			Disable BERT OS support on buggy BIOSes.
+ 
+-- 
+2.46.0
+
 
