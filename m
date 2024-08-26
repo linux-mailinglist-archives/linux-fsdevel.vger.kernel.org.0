@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-27107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4939C95EA58
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:27:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB2695EA6D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05FBB286ABE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 07:27:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1D59B21D8A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 07:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EAC13212B;
-	Mon, 26 Aug 2024 07:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC705136E01;
+	Mon, 26 Aug 2024 07:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eYAnrPy3"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fGS4lsQP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CACD12BEBE;
-	Mon, 26 Aug 2024 07:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFAC12CDAE;
+	Mon, 26 Aug 2024 07:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657214; cv=none; b=mMQ1Sq6W9sNAKgp6twW9C/f5AfzlZHM6tZ+jYxDWhAWitShKfik3NB/F6mOemoDUl4VQuVCRhd00WcwXi+zK40ENJSkmEpxVSzltbTu7J7mjoGWENIteS0wYDyQu/LVBremcac5K7cx4jPt7tykeW4CPYOkII8NM3Bg+vfN+8sg=
+	t=1724657336; cv=none; b=OfsvaGzutC38nAVxAgAHexPayynCy/NlIjfmYqYhcytpovN1hRjUv+hrnEacsMypOZMI33sdQw0YAU05IS3ElAs1gugk9Os7MMGjETPKq8eIIhRhnN4Ko5X94xXqFgecQyxg0rWgtvNNBxHDGnk/eyG5EwPGW1kdrw/FIsPEnjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657214; c=relaxed/simple;
-	bh=OyH99wmO5mv066v8pAidbzidLzJx3ynfsY7lGCuhtNA=;
+	s=arc-20240116; t=1724657336; c=relaxed/simple;
+	bh=E00tzGpDJcjYlSMLb3KbCmafy2KSXv+2OjPe3U447Io=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEZz/okHFVg9dtt0wEtAuD/kr0NVIs6s1dHTFkrUgEqHesRiODLUHMToHywwNGBnNXETCF3zLTKQKUpwN2dw6IkfzxowVu8T+k+/mdQ3KQum+aGo+sPwk7KoWSrIno+h7bgADqBfH/kY+FtFY/zlWx+imjNdIZViyM8J4/4YJuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eYAnrPy3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2BEC4FDF3;
-	Mon, 26 Aug 2024 07:26:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UVDLcbc5xV/sSaXRNGceczMnXkFmLdMEpxeD9FG66y8jYvWGjn7Gq9ooVyCLj1zJRVE4my3bezXapLPjrxrjAasIH8vhj2rDD9zMbivp9Aw+ASaIwKURZ4JLDMEQTw/uveyevXvbTEgyiDXS64zjD9xozu1rB3NHSFFq8qpu8JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=fGS4lsQP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880B9C8CDC1;
+	Mon, 26 Aug 2024 07:28:53 +0000 (UTC)
 Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eYAnrPy3"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fGS4lsQP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724657210;
+	t=1724657332;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=w24dLA36c/d+xQ7ZOImOMWGl1II9pRfdgFurGBE0teA=;
-	b=eYAnrPy37tSdpNsOmLxnE9vtVohlmjxR65Olke78XoDNkBDbyRAPVZ8yVj5TfBfvzC93iz
-	U17fXHlJI9Qzp1HLsBACdsK6/LpPt0sDt6PMsbbcE1euKmR/4Icub25zv3gIElrlQ9wXEB
-	9UYlaBoAY1m9Yx1tf5dw5a/jQPgDNBY=
+	bh=cIIjB88DbOJOvuZ2jjU6lJJKiyoqxEyU/0md06aOA9Y=;
+	b=fGS4lsQPmJ47S4KPzgxk3QvyNtKhSk0/NSOVe7mmBsaTQCOpf8LdeOZ8NRFSZVGvJlo+6S
+	zya3q8/MC3vnj7W6QkSb/tQ7ibwWIO7gaTmCFFEUbZBJZ4gTKo0ADc09YExEQZvcI0SprG
+	MnhV/Nlqebjptb73hPDfjdwYVd0Acps=
 Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id d127c021 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 26 Aug 2024 07:26:50 +0000 (UTC)
-Date: Mon, 26 Aug 2024 09:26:40 +0200
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 087983a8 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 07:28:51 +0000 (UTC)
+Date: Mon, 26 Aug 2024 09:28:42 +0200
 From: "Jason A. Donenfeld" <Jason@zx2c4.com>
 To: Christophe Leroy <christophe.leroy@csgroup.eu>
 Cc: Michael Ellerman <mpe@ellerman.id.au>,
@@ -65,11 +65,11 @@ Cc: Michael Ellerman <mpe@ellerman.id.au>,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-arch@vger.kernel.org, linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 13/17] selftests: vdso: Don't hard-code location of
- vDSO sources
-Message-ID: <ZswuMITw0PLJJBuU@zx2c4.com>
+Subject: Re: [PATCH v2 14/17] selftests: vdso: Make test_vdso_getrandom look
+ for the right vDSO function
+Message-ID: <ZswuqjC8T8TwF8LJ@zx2c4.com>
 References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <a40d859dba5654239650eec44d75ab45c98221f4.1724309198.git.christophe.leroy@csgroup.eu>
+ <04d1de23a2ff14e2709edd8b75e27b81d703bc57.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,31 +78,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a40d859dba5654239650eec44d75ab45c98221f4.1724309198.git.christophe.leroy@csgroup.eu>
+In-Reply-To: <04d1de23a2ff14e2709edd8b75e27b81d703bc57.1724309198.git.christophe.leroy@csgroup.eu>
 
-On Thu, Aug 22, 2024 at 09:13:21AM +0200, Christophe Leroy wrote:
-> Architectures use different location for vDSO sources:
-> 	arch/mips/vdso
-> 	arch/sparc/vdso
-> 	arch/arm64/kernel/vdso
-> 	arch/riscv/kernel/vdso
-> 	arch/csky/kernel/vdso
-> 	arch/x86/um/vdso
-> 	arch/x86/entry/vdso
-> 	arch/powerpc/kernel/vdso
-> 	arch/arm/vdso
-> 	arch/loongarch/vdso
+On Thu, Aug 22, 2024 at 09:13:22AM +0200, Christophe Leroy wrote:
+> Don't hard-code x86 specific names, use vdso_config definitions
+> to find the correct function matching the architecture.
 > 
-> Don't hard-code vdso sources location in selftest Makefile,
-> instead create a vdso/ symbolic link in tools/arch/$arch/ and
-> update Makefile accordingly.
+> Add random VDSO function names in names[][]. Remove the #ifdef
+> CONFIG_VDSO32, having the name there all the time is harmless
+> and guaranties a steady index for following strings.
 
-That seems like a good way of handling it. As archs add their
-implementations, they can just add the symlink and do no more work. It
-will also make review slightly easier: if I don't see the symlink added,
-I'll know the submitter didn't actually test their chacha :-P.
+This is indeed the right way of doing it. Thanks. I'll take this now,
+though with one small fixup:
 
-I'll take this into my random.git tree now as a fix.
+> +	const char *version = versions[VDSO_VERSION];
+> +	const char **name = (const char **)&names[VDSO_NAMES];
+
+I'll just do:
+
+        const char *name = names[VDSO_NAMES][6];
+
+Instead of referring to name[6] everywhere after. Seems more straight
+forward.
 
 Jason
 
