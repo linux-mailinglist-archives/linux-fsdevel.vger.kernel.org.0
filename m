@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-27143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964C395EFD3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 13:35:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A93595F0A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 14:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D0E28128C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 11:35:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55441F23EEE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 12:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF301547D8;
-	Mon, 26 Aug 2024 11:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51300192B79;
+	Mon, 26 Aug 2024 12:06:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60A214D6ED;
-	Mon, 26 Aug 2024 11:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36941714B8;
+	Mon, 26 Aug 2024 12:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724672114; cv=none; b=mBq9lyiJDoM1xrxGA321hw2Qzo8XOgSmpVjtG7N/CDrYWRDIn5nKQH26MSN+mYWEvj9MZakRNnCIygaqlSbRzfyIEBlyuZLqqriNYPGm5jjf+p5aUGsnqv7CojSLrsCa6Q3cYTP66ENKneKnRRocdp35+HEhRrsLriU+CrcEcC8=
+	t=1724673961; cv=none; b=XYwegzUvQk/SRdokgkMJ1QaVH23WemnJhomb4SRXiOHNuoYgwMDVmoWnQ9bca/q6HIc3ZK11/z5hOR++jX7TpNojI0u4AWscwKT45zhRQ3myNUIDwBmxgtPcTKTS7fye/9aikCBEudDPsd7UdtLz6iuwVeqlC5JbZpAHnAlv7t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724672114; c=relaxed/simple;
-	bh=mLBT6mTdBJnwc+dF9PGzGVBQ3Av2W02Ffrkq0yV/usw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rzeP4oXzKg8r88RTvmUQgvY1Hz7zVzyk+gDSggIr8kYL3wX9+iAH8TLu0U7glUPZHM/6Etm0uQK9P9ED1suO8gjNwNc0eEQa2v9Ng4XGxcz537BwH0zfgnX+Qk90NOQa+Z4vqAj/WkKWdPK3vnPc7LkSmb7T5lYB8XN+wp9Wxg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WspW06z8yz4f3jHh;
-	Mon, 26 Aug 2024 19:34:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6E72F1A0568;
-	Mon, 26 Aug 2024 19:35:07 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3n4VoaMxmkUITCw--.22524S4;
-	Mon, 26 Aug 2024 19:35:07 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: netfs@lists.linux.dev,
-	dhowells@redhat.com,
-	jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com,
-	jefflexu@linux.alibaba.com,
-	linux-erofs@lists.ozlabs.org,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	libaokun@huaweicloud.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	yukuai3@huawei.com,
-	wozizhi@huawei.com,
-	Baokun Li <libaokun1@huawei.com>,
-	stable@kernel.org
-Subject: [PATCH] netfs: Delete subtree of 'fs/netfs' when netfs module exits
-Date: Mon, 26 Aug 2024 19:34:04 +0800
-Message-Id: <20240826113404.3214786-1-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724673961; c=relaxed/simple;
+	bh=jYSQ6pJxpSYwMpwZDbbEJZOSv/YbXrBVP6F9ORiCQek=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RJcMMI2eobD2PV7TFs84x2Al4jmSQp8BcaGgWuVWwTgy4Tk0P6ljkNNcRvadx8G2xbYN6Jqq87shaEVR8aC38WLSxdzA3TdxZjKNpze63uBUAOH9Mi32YR5rqPwRGF+isZlxf8ifUeydoRgszAlBNIcr+vmJdFVc29h0Gfr9zIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WsqB02FC8z1j7CK;
+	Mon, 26 Aug 2024 20:05:12 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id E18471402E1;
+	Mon, 26 Aug 2024 20:05:20 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
+ (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
+ 2024 20:05:18 +0800
+From: Kaixiong Yu <yukaixiong@huawei.com>
+To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
+CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<kees@kernel.org>, <j.granados@samsung.com>, <willy@infradead.org>,
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>,
+	<trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
+	<jlayton@kernel.org>, <neilb@suse.de>, <okorniev@redhat.com>,
+	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <linux-sh@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
+Subject: [PATCH -next 00/15] sysctl: move sysctls from vm_table into its own files
+Date: Mon, 26 Aug 2024 20:04:34 +0800
+Message-ID: <20240826120449.1666461-1-yukaixiong@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,78 +65,64 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3n4VoaMxmkUITCw--.22524S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4xXr1kCFyxXr1UCrWxJFb_yoW8ZFWxp3
-	ZrZryxGr1jqryUJF45Ja1Utr1UZF1qg3W7GryxCr1fZan7Aw1UX3W0qr15ZFy2kF48AFs8
-	t3W8trnYvr15Z3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1bdb5UUUUU==
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgADBWbFpZhEIwADs+
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-From: Baokun Li <libaokun1@huawei.com>
+This patch series moves sysctls of vm_table in kernel/sysctl.c to
+places where they actually belong, and do some related code clean-ups.
+After this patch series, all sysctls in vm_table have been moved into its
+own files, meanwhile, delete vm_table.
 
-In netfs_init() or fscache_proc_init(), we create dentry under 'fs/netfs',
-but in netfs_exit(), we only delete the proc entry of 'fs/netfs' without
-deleting its subtree. This triggers the following WARNING:
+All the modifications of this patch series base on
+linux-next(tags/next-20240823). To test this patch series, the code was
+compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+x86_64 architectures. After this patch series is applied, all files
+under /proc/sys/vm can be read or written normally.
 
-==================================================================
-remove_proc_entry: removing non-empty directory 'fs/netfs', leaking at least 'requests'
-WARNING: CPU: 4 PID: 566 at fs/proc/generic.c:717 remove_proc_entry+0x160/0x1c0
-Modules linked in: netfs(-)
-CPU: 4 UID: 0 PID: 566 Comm: rmmod Not tainted 6.11.0-rc3 #860
-RIP: 0010:remove_proc_entry+0x160/0x1c0
-Call Trace:
- <TASK>
- netfs_exit+0x12/0x620 [netfs]
- __do_sys_delete_module.isra.0+0x14c/0x2e0
- do_syscall_64+0x4b/0x110
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-==================================================================
+Kaixiong Yu (15):
+  mm: vmstat: move sysctls to its own files
+  mm: filemap: move sysctl to its own file
+  mm: swap: move sysctl to its own file
+  mm: vmscan: move vmscan sysctls to its own file
+  mm: util: move sysctls into it own files
+  mm: mmap: move sysctl into its own file
+  security: min_addr: move sysctl into its own file
+  mm: nommu: move sysctl to its own file
+  fs: fs-writeback: move sysctl to its own file
+  fs: drop_caches: move sysctl to its own file
+  sunrpc: use vfs_pressure_ratio() helper
+  fs: dcache: move the sysctl into its own file
+  x86: vdso: move the sysctl into its own file
+  sh: vdso: move the sysctl into its own file
+  sysctl: remove unneeded include
 
-Therefore use remove_proc_subtree instead() of remove_proc_entry() to
-fix the above problem.
+ arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+ arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+ fs/dcache.c                        |  21 ++-
+ fs/drop_caches.c                   |  23 ++-
+ fs/fs-writeback.c                  |  28 ++--
+ include/linux/dcache.h             |   7 +-
+ include/linux/mm.h                 |  42 ------
+ include/linux/mman.h               |   2 -
+ include/linux/swap.h               |   9 --
+ include/linux/vmstat.h             |  11 --
+ include/linux/writeback.h          |   4 -
+ kernel/sysctl.c                    | 221 -----------------------------
+ mm/filemap.c                       |  18 ++-
+ mm/internal.h                      |  10 ++
+ mm/mmap.c                          |  75 ++++++++++
+ mm/nommu.c                         |  15 +-
+ mm/swap.c                          |  16 ++-
+ mm/swap.h                          |   1 +
+ mm/util.c                          |  68 +++++++--
+ mm/vmscan.c                        |  23 +++
+ mm/vmstat.c                        |  42 +++++-
+ net/sunrpc/auth.c                  |   2 +-
+ security/min_addr.c                |  11 ++
+ 23 files changed, 349 insertions(+), 330 deletions(-)
 
-Fixes: 7eb5b3e3a0a5 ("netfs, fscache: Move /proc/fs/fscache to /proc/fs/netfs and put in a symlink")
-Cc: stable@kernel.org
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
- fs/netfs/main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/netfs/main.c b/fs/netfs/main.c
-index 5f0f438e5d21..9d6b49dc6694 100644
---- a/fs/netfs/main.c
-+++ b/fs/netfs/main.c
-@@ -142,7 +142,7 @@ static int __init netfs_init(void)
- 
- error_fscache:
- error_procfile:
--	remove_proc_entry("fs/netfs", NULL);
-+	remove_proc_subtree("fs/netfs", NULL);
- error_proc:
- 	mempool_exit(&netfs_subrequest_pool);
- error_subreqpool:
-@@ -159,7 +159,7 @@ fs_initcall(netfs_init);
- static void __exit netfs_exit(void)
- {
- 	fscache_exit();
--	remove_proc_entry("fs/netfs", NULL);
-+	remove_proc_subtree("fs/netfs", NULL);
- 	mempool_exit(&netfs_subrequest_pool);
- 	kmem_cache_destroy(netfs_subrequest_slab);
- 	mempool_exit(&netfs_request_pool);
 -- 
-2.39.2
+2.25.1
 
 
