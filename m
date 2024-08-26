@@ -1,70 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-27241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6630195FB8A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 23:20:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0393E95FB8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 23:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98BE81C21BD2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 21:20:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2CF7280FC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 21:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21938189500;
-	Mon, 26 Aug 2024 21:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21621993BA;
+	Mon, 26 Aug 2024 21:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1k7Gwm3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5uAnZld"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC98881E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 21:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C44881E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 21:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724707202; cv=none; b=FQCW8vUuC3OhjGosll0lWU5QKUlNhy6Uu0W9iATaTH3SUgmwztoxPZQPNsVz/+GEPAxz1g6l4mx4v+OvrQZVCvfEJrSY/1RknUdYsPETvN8LAV9Yv78adKlflM/yYJXt0WfEu8oK0HDGwCwHWWS9b8GIaoZzM2n4Ez2VrX2NQVQ=
+	t=1724707205; cv=none; b=m8PDq86U22ezsHimdBZJNi5rZISqt/2Vjvo1VwLW19g7W4XEgXSQXQySmfZgxshAZO2bsUlbJ1Y1yNtpRcR4gWo47AMGT/ETYcu9iYlb/IGAYRjwrUAweaXUzgWS+SUuZi5RlxCy6X1QP+GT6bEvWljTVQvhUeo2e9duB8F3BVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724707202; c=relaxed/simple;
-	bh=v5nidNbhRUSt5upFxqIVRK7gv9s0YSfomEnYbErO5m4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TCnKUK40JosEgkhMXDVOpxp+m0d936JUHamuyxYmzUOGvuqI1oRyTOL/t975jnIR8ZH3SPgH5XFME5OaAU4tyQT9K41m9uSMq4Sbn76nsu/a+N4pYdRxvtQXWbDbo6+hoXUFh8WALcJqqCycXond1ZVHKEUniU33SiX08Xz7ZWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e1k7Gwm3; arc=none smtp.client-ip=209.85.128.172
+	s=arc-20240116; t=1724707205; c=relaxed/simple;
+	bh=d1sw3RklYepjEi8jrs758o0Ste9SePDfyolWUw0Jdxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FMZUfZXQGAPTd7y2AhLt23DcqNd/FRgbzo64d0BkQeOKoZnVECJ+QcOTZssdGdxtkWEV3PuJQCtMg3M7GNwmLNKZUFs3tA3gsWPm4lYuQMvAHQ/7XBFtE6ILwPvYDLVUhZjJr561QXtj936JJxSXsl/FMb6F5fDx2hBU0nu6V3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5uAnZld; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6bd3407a12aso44946247b3.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 14:20:00 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e1633202008so4727146276.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 14:20:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724707200; x=1725312000; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qD7THDjTDIU2AjIylt04B4Gu7qWJZDOizaR6D8TTkYc=;
-        b=e1k7Gwm3G7atjJBgJMCT4ybj0rZ5jYSpKq3n6MlcMz3unWnMvKnPPC0NcflzggTBlw
-         7X65WO1V5Q1uKHFLWY5BGu2UO/YmJMwSKO3WozVXZTguwoUTq1qURNCh3wR9eRPWjRDV
-         MFFG3epPZCAfHXMYww/v29y1YpjFZAdsqqq8Bl8D4QufqkCb+s3ozuKc7kh8JvVe/Qmi
-         Pg/16B1NNydu6MVFA1t3Lbo/QFeo0pKqYCGLS/gS2yoAE3/akw7NqejGscwRaLIqGIFN
-         0ZCkUTNw3A6VuVfEp22kh8mWdXGn+H61pHRRm+cK3SFh8ZXdYyHvzmuMA2SRCp92fVD2
-         Kw8g==
+        d=gmail.com; s=20230601; t=1724707203; x=1725312003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=grTnWehlIm/aEMMtVTYddChEg6d1BbxYt+fz0gv8hQY=;
+        b=a5uAnZldFb4U0bUld0PZQZjFudKPHnojFCT4Pnnr4Cpa9CfwX9Q2GCrOfhZhT1Jb1O
+         nvoXKlyc5AbtmsEHNxWkTJeOm0sPjJN82YX8FQK1FuOJTom9OeFu1hDlzOpjefys27Gq
+         QFu6oj6m2TrAI54nR8+ikofgPCk0Pmg6og9xRG0XQpUYqjOK8N5MDp90sbjDcNhH+gIS
+         L9nTR0QPLUd6gjKfL27AAbinRS/bdtiGHJ/gvpNhlblst49JSC/Png8mQhDZztIn02kh
+         rTvEWsTRBh1P2q4mbGp3Y96j6xq6ClHDFZye+H2u8yD0XuMzRmtN9Vti8FydfdsPLNLd
+         F1gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724707200; x=1725312000;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qD7THDjTDIU2AjIylt04B4Gu7qWJZDOizaR6D8TTkYc=;
-        b=oir8Yvkz4r8AYVd7zMUDh/v6JMFBPyUTMuih2ra6kWhDt3d0BAIys5eY5oC8j48AYx
-         4IjhewhNJs6qwKdhfLxaxlerm4iHsxVARAn6jPVFR/Pg46yoXho/C409WIRg3vbksRQV
-         gXKbwYklwDCGNnc06GPLrMhabvY5HeTV2WeY5upYw9FjV3H2yyScqDDu8XN6TuHC2Lmf
-         2wYDDNcKQ00ruNmF3a6ahsKPx2nj9IaeqRyAAGE0rwcLVHudfsUgQhZmsbVI0ExOFmK2
-         1REt1qkSfXp8idAQGK0OS/q9BdMttlrlUElJAfjcUpTfN7+4fCJGs+XC63UbcaK6vPw4
-         D/eA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVgTb0evgiBjd6RBZIDp3eV4grrOB+nSsD9MRpnmV78WEv5g8Yn122y2hV+XNm/3YLJZ6QepH4bl9ohnIM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqfRyThvIONvO2KjfNO410v5yuG8GNg71iKfID3pFoypiNNkUp
-	jhq7AaldLdjWAA6+3J60zhK0Xs3LprJUDr3yAgMN/x+QmvQ6UzQH
-X-Google-Smtp-Source: AGHT+IFmjaxxzK2z4YSUKa50R9EUSPFRZm3qubNXFVnqS3XzjIknEIYEIZnHTU+EoAGpWHJu0tez2g==
-X-Received: by 2002:a05:690c:2b02:b0:6ad:ba92:1731 with SMTP id 00721157ae682-6c6288aa596mr95830297b3.41.1724707199957;
-        Mon, 26 Aug 2024 14:19:59 -0700 (PDT)
-Received: from localhost (fwdproxy-nha-115.fbsv.net. [2a03:2880:25ff:73::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c399cb5020sm16975427b3.26.2024.08.26.14.19.59
+        d=1e100.net; s=20230601; t=1724707203; x=1725312003;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=grTnWehlIm/aEMMtVTYddChEg6d1BbxYt+fz0gv8hQY=;
+        b=siiiym/A5KTyclrgCAI2hNEpKF/d9AAqFDPwZoGDIhM1Q2Yo3Ucvmodco4nv9I6As2
+         DYDI29ST1JqVyXu7hCZIff8tDuOJE6UFUj1a0X4vZzvZkIwZI+Bx4CYiPiqA+n4/jjlw
+         ZHD0rPIHwyCjLDct/Uc880S+AG6i4dbAE9KQwz3VrIU4Dj8pA7BnTLz5XqKFzoIZZO+e
+         sDVm1qZXZfSUCq8BaMOlantDwvx41sKYEDlj8JBhL0ml2wPvhQkvuwyk/OcsTd1YnA9u
+         M0klc9JgFGN9yXqGUBBdLLrWDlersdZpzl91hOdZsHIFcu+YS6n8NoFhJfrXtQANcKgg
+         sALQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcFCJmJYAb4WA8xeRVCsHLXnf103EdcZu+qgeEgOGoHjBk08PisSwS+F0cFMSF37D1ELb2TCpdRLfzzEF5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfa6snRO5fjV0d5gHHqiPdmNChqhxs8Ga+K5qBeL+858Qxs6En
+	BCj60u+4B9HNfH4xQ4+Sbea4chspGClYOZ8Y2dbJ6L46sAllvp0s
+X-Google-Smtp-Source: AGHT+IETDX8+GE+Kwr0asbT4H3r3OxV1hmmp7+osRDVF3LTxazxEZzjHT6ReLXdInHEVRA81eYHV2g==
+X-Received: by 2002:a05:6902:102e:b0:e0e:3ee7:751d with SMTP id 3f1490d57ef6-e1a2a5a6a10mr921048276.11.1724707202790;
+        Mon, 26 Aug 2024 14:20:02 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-116.fbsv.net. [2a03:2880:25ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e43fc98sm2232312276.11.2024.08.26.14.20.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 14:19:59 -0700 (PDT)
+        Mon, 26 Aug 2024 14:20:02 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
@@ -72,10 +74,12 @@ Cc: josef@toxicpanda.com,
 	bernd.schubert@fastmail.fm,
 	jefflexu@linux.alibaba.com,
 	kernel-team@meta.com
-Subject: [PATCH v4 0/7] fuse: writeback clean up / refactoring
-Date: Mon, 26 Aug 2024 14:19:01 -0700
-Message-ID: <20240826211908.75190-1-joannelkoong@gmail.com>
+Subject: [PATCH v4 1/7] fuse: drop unused fuse_mount arg in fuse_writepage_finish()
+Date: Mon, 26 Aug 2024 14:19:02 -0700
+Message-ID: <20240826211908.75190-2-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20240826211908.75190-1-joannelkoong@gmail.com>
+References: <20240826211908.75190-1-joannelkoong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,53 +88,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patchset contains some minor clean up / refactoring for the fuse
-writeback code.
+Drop the unused "struct fuse_mount *fm" arg in
+fuse_writepage_finish().
 
-As a sanity check, I ran fio to check against crashes -
-./libfuse/build/example/passthrough_ll -o cache=always -o writeback -o
-source=~/fstests ~/tmp_mount
-fio --name=test --ioengine=psync --iodepth=1 --rw=randwrite --bs=1M --direct=0
---size=2G --numjobs=2 --directory=/home/user/tmp_mount
+No functional changes added.
 
-and (suggested by Miklos) fsx test -
-sudo HOST_OPTIONS=fuse.config ./check -fuse generic/616
-generic/616 (soak buffered fsx test) without the -U (io_uring) flag
-(verified this uses the fuse_writepages_fill path)
+Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+---
+ fs/fuse/file.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-v3:
-https://lore.kernel.org/linux-fsdevel/20240823162730.521499-1-joannelkoong@gmail.com/
-Changes from v3 -> v4:
-* Merge v3's 4/9 and 5/9 into 1 patch (Josef)
-* Merge v3's 7/9 and 9/9 into 1 patch
-
-v2:
-https://lore.kernel.org/linux-fsdevel/20240821232241.3573997-1-joannelkoong@gmail.com/
-Changes from v2 -> v3:
-* Drop v2 9/9 (Miklos)
-* Split v2 8/9 into 2 patches (v3 8/9 and 9/9) to make review easier
-* Change error pattern usage (Miklos)
-
-v1:
-https://lore.kernel.org/linux-fsdevel/20240819182417.504672-1-joannelkoong@gmail.com/
-Changes from v1 -> v2:
-* Added patches 2 and 4-9
-* Add commit message to patch 1 (Jingbo)
-
-Joanne Koong (7):
-  fuse: drop unused fuse_mount arg in fuse_writepage_finish()
-  fuse: refactor finished writeback stats updates into helper function
-  fuse: update stats for pages in dropped aux writeback list
-  fuse: move initialization of fuse_file to fuse_writepages() instead of
-    in callback
-  fuse: convert fuse_writepages_fill() to use a folio for its tmp page
-  fuse: move fuse file initialization to wpa allocation time
-  fuse: refactor out shared logic in fuse_writepages_fill() and
-    fuse_writepage_locked()
-
- fs/fuse/file.c | 167 +++++++++++++++++++++++++------------------------
- 1 file changed, 86 insertions(+), 81 deletions(-)
-
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index f39456c65ed7..63fd5fc6872e 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1769,8 +1769,7 @@ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
+ 	kfree(wpa);
+ }
+ 
+-static void fuse_writepage_finish(struct fuse_mount *fm,
+-				  struct fuse_writepage_args *wpa)
++static void fuse_writepage_finish(struct fuse_writepage_args *wpa)
+ {
+ 	struct fuse_args_pages *ap = &wpa->ia.ap;
+ 	struct inode *inode = wpa->inode;
+@@ -1829,7 +1828,7 @@ __acquires(fi->lock)
+  out_free:
+ 	fi->writectr--;
+ 	rb_erase(&wpa->writepages_entry, &fi->writepages);
+-	fuse_writepage_finish(fm, wpa);
++	fuse_writepage_finish(wpa);
+ 	spin_unlock(&fi->lock);
+ 
+ 	/* After fuse_writepage_finish() aux request list is private */
+@@ -1959,7 +1958,7 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+ 		fuse_send_writepage(fm, next, inarg->offset + inarg->size);
+ 	}
+ 	fi->writectr--;
+-	fuse_writepage_finish(fm, wpa);
++	fuse_writepage_finish(wpa);
+ 	spin_unlock(&fi->lock);
+ 	fuse_writepage_free(wpa);
+ }
 -- 
 2.43.5
 
