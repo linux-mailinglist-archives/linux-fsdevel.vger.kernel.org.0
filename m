@@ -1,95 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-27208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFA795F875
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 19:44:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7D695F886
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 19:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2BD1F21D34
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 17:44:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04A5F1C22691
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 17:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C2C1991BA;
-	Mon, 26 Aug 2024 17:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A40198E90;
+	Mon, 26 Aug 2024 17:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="h8BmHZmw"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lv5whbQa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89015198E96;
-	Mon, 26 Aug 2024 17:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A783B189514;
+	Mon, 26 Aug 2024 17:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724694257; cv=none; b=j53AmNwdZxdaDOFWZok581rxVhdhKLp/jdiPhGI/ux4D4g9kT5fNL8TueHRgxe4EosJG0f+avgiPTLrGPybfKd8OMJJug/4xFN4So7N93M7I2TSESWFkOG7mDJfY7zZFK4CAqbH4MSLgFMLUwMNjPyqiMR8XnTlNclsgnGjZOKo=
+	t=1724694574; cv=none; b=KBkJ7URuMxwup7m6ZkM5h1ZXXr34SLdXXLFB8VzPqDTIOofMgdYNlGMI2NT1ygtxao2vDKC6wcbQ/dFftFIKh+ZyOcrYHdWEQej97m0EpZmbtn4X8ULhlsTwttp3i+2LtC3BY6GHTn8/v7cLbto4xowWZJ5g6ZaBQNH5ju/q85Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724694257; c=relaxed/simple;
-	bh=Ky1WtZTB1vAFitwSZSr9oE2Lkfv8g9tc5SCDtUd5Igw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SNP17xEU/LDu5nqMIpLB/rxXXF6w2CxTiT7RYS54kLhWwQXSmIaSip/SyqCCh+in/K5dhc9FwvcVw841n5iw3whfq+aSobqb4rtkTvFEDqPGhsRv/gYUQxtv/hFDNhjCKmRP6qvMAbwLq4V3ONOcqigaTOuPkGH3aq2kdGNxWcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=h8BmHZmw; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Wsyj54Rwmz6ClY9F;
-	Mon, 26 Aug 2024 17:44:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1724694244; x=1727286245; bh=Ky1WtZTB1vAFitwSZSr9oE2L
-	kfv8g9tc5SCDtUd5Igw=; b=h8BmHZmwBPtHY/5huyweT7LC/hAMCyRbF8I/nDUc
-	eInWFOIaDBLKsf8lBA747JuClgmy4aunEUTem/G+Zb1CBh1IASDyPUTvkMLdO9+X
-	qf9Im9LfJJDOPEtLBbARVpojuH0XyhSxuH+s1pxtSSbzb0ndrXh6q9dJydWXuOEf
-	9bkLSmmHa0O14/T+VRXR3GRbmD3jhZEV7dDoa8tyenLHf80v0Pa1BDJnwxoLR7YF
-	vRgyjI5dlCOoXvve3MUZyzxLD0S6dzNucYTg+phQSn2J5HNK6zgcaHT7GQr3m8oI
-	ZBY8H2kdtb4aZJ1oadDKSG/M5XNQpbawLnms14gmqV/TJw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id TfuIq-julCUO; Mon, 26 Aug 2024 17:44:04 +0000 (UTC)
-Received: from [172.31.110.201] (unknown [216.9.110.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Wsyhx6Vmgz6ClY98;
-	Mon, 26 Aug 2024 17:44:01 +0000 (UTC)
-Message-ID: <d0e017ac-8367-4bb8-9b7f-d72dd068fdb1@acm.org>
-Date: Mon, 26 Aug 2024 10:44:00 -0700
+	s=arc-20240116; t=1724694574; c=relaxed/simple;
+	bh=/fvHumsZRk/iQRklCYhfM+dnrHnoK56xzQNPOdXJCqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NacqAG2PWk3mUpl0i7YK9vvcFykqE6bRidChGtvkVQSxuC+587Gzk5cC6sTTuhy6X2vCwuQcRLnpztDm9kt/PzfTdG4L8tFjx5eMvtL85R2yapEPlL0ct0D2DvN+SdKCxYxlw/3ybxbFaaMEAGX7ILAEhevfPpl3pLiSZ+t+Ryo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Lv5whbQa; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7xddByF+J259CfYZChb9DiOYTiqHH+VZ+4O/gx155pM=; b=Lv5whbQaKS5ynYmO3e+1slhM9I
+	8JO8hXToy/OoACu0csu+2YFyGLla4Q1sT3y3FQYtgMEMLgGIQnhiSGUkkKFzOTfGXCSy8kNP5NCo9
+	Y499QZUW2oNdniKK/d1MSSsAtmfFcI+ZZhxUUQpRsLoJpaLMRsxEt8iW1FT0DkOcS8Hl6y7ItK8ee
+	V3i4cNl7KcykQXodCJwQubaKoAIsG6ZLX3txCTN1SKM+tSskDpuOljPPcZyLGv/Enfp5Nh87Witu/
+	S7iSSk1TQQ5RN9WNOzfkltDo7lp2Lh98YgBEU9cna16scOeqk3bFkPpeHuyDBphlMckSbGoRg67H5
+	vFiXn/pw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sidqG-0000000FhWF-0URm;
+	Mon, 26 Aug 2024 17:49:24 +0000
+Date: Mon, 26 Aug 2024 18:49:23 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
+Message-ID: <ZszAI7oYsh7FvGgg@casper.infradead.org>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-3-mhocko@kernel.org>
+ <ZsyKQSesqc5rDFmg@casper.infradead.org>
+ <ZsyyqxSv3-IbaAAO@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/5] fs, block: refactor enum rw_hint
-To: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, sagi@grimberg.me, martin.petersen@oracle.com,
- James.Bottomley@HansenPartnership.com, brauner@kernel.org, jack@suse.cz,
- jaegeuk@kernel.org, jlayton@kernel.org, chuck.lever@oracle.com
-Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
- javier.gonz@samsung.com
-References: <20240826170606.255718-1-joshi.k@samsung.com>
- <CGME20240826171413epcas5p3f62c2cc57b50d6df8fa66af5fe5996c5@epcas5p3.samsung.com>
- <20240826170606.255718-2-joshi.k@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240826170606.255718-2-joshi.k@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsyyqxSv3-IbaAAO@tiehlicka>
 
-On 8/26/24 10:06 AM, Kanchan Joshi wrote:
-> Change i_write_hint (in inode), bi_write_hint (in bio) and write_hint
-> (in request) to use u8 data-type rather than this enum.
+On Mon, Aug 26, 2024 at 06:51:55PM +0200, Michal Hocko wrote:
+> On Mon 26-08-24 14:59:29, Matthew Wilcox wrote:
+> > On Mon, Aug 26, 2024 at 10:47:13AM +0200, Michal Hocko wrote:
+> > > From: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > There is no existing user of the flag and the flag is dangerous because
+> > > a nested allocation context can use GFP_NOFAIL which could cause
+> > > unexpected failure. Such a code would be hard to maintain because it
+> > > could be deeper in the call chain.
+> > > 
+> > > PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
+> > > that such a allocation contex is inherently unsafe if the context
+> > > doesn't fully control all allocations called from this context.
+> > 
+> > Wouldn't a straight-up revert of eab0af905bfc be cleaner?  Or is there
+> > a reason to keep PF_MEMALLOC_NOWARN?
+> 
+> I wanted to make it PF_MEMALLOC_NORECLAIM specific. I do not have a
+> strong case against PF_MEMALLOC_NOWARN TBH. It is a hack because the
+> scope is claiming something about all allocations within the scope
+> without necessarily knowing all of them (including potential future
+> changes). But NOWARN is not really harmful so I do not care strongly.
+> 
+> If a plan revert is preferably, I will go with it.
 
-That sounds fishy to me. Why to increase the size of this enum? Why to
-reduce the ability of the compiler to perform type checking? I think
-this needs to be motivated clearly in the patch description.
-
-Bart.
+There aren't any other users of PF_MEMALLOC_NOWARN and it definitely
+seems like something you want at a callsite rather than blanket for every
+allocation below this point.  We don't seem to have many PF_ flags left,
+so let's not keep it around if there's no immediate plans for it.
 
