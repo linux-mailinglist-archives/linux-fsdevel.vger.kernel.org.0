@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-27147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC8095F07C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 14:07:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A603395F0CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 14:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F1F11C21D4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 12:07:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A8E285DCD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 12:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A9817C9B2;
-	Mon, 26 Aug 2024 12:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E35197A8A;
+	Mon, 26 Aug 2024 12:06:10 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA34717B51A;
-	Mon, 26 Aug 2024 12:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C87C19752C;
+	Mon, 26 Aug 2024 12:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724673943; cv=none; b=leKoRiQ9BJCwGsY4qdBVPupyBorF7HeR9E0arU3e+IYYeXjlJiIJS8cBzMfXzmhQ2FADUgRts3F2msJ1ymoyBfuMAB0k4LzyT9Rowm/HSIlPC/7JIfCae5oboiBbU3SKQHPXrpOla1rzvQ6ns+RLjk9SueqkvJdmouvR4HkZR3A=
+	t=1724673970; cv=none; b=avUJNHdUJRmCSi3IwWzT9sJGrA1gITJHcyH5p+UxhU7HQigrgTrfsgIiduiO9KxFh1HTMoF0GXuSimHujzUzfyYCy/VQ/QUM/TFyu5TDdWUd4ee8lwjENIIsB70+ntRLAe/tEoY0QFj2G/2aKdsUIU3oD/gYxsKdhTu5mIBFnJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724673943; c=relaxed/simple;
-	bh=8C6V24t9B/ZAyaa2lnsXhkKXChe6T09hukyJHd+vfmo=;
+	s=arc-20240116; t=1724673970; c=relaxed/simple;
+	bh=wKDgTxR9gBu6cta0yrIZtodQka8ta6dX+hbZduFZk6Q=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G5wAkrr+rOEx8GfxvWVovDiWlLJjYOkB6GD0sO2KeqsvzqvTnXCgkpNcvCbtPsx9Wk0eC3ulkAwhtj3mO8b9I7IZCpWj6LPeBuEnP8s9xZLHZff7zdBzUp3keTtGmbsfn/f4K58idcS4qrU7WsiIyHOY9i4XA3WMqW/hZ9dGB1s=
+	 MIME-Version:Content-Type; b=W86TWWh6/A7HubFwfdI7j47ipYQ77LWBpazyd854y5Q3qZwmkCP3bFnm8lZRhuXpGevL8pxZ0rjxqDgbtfIfKFb92nLjcAeKJWLF2ECbwzRMpFJpEiYyK3AWBm14NxH4uxnqPJRjjbZNDw/hKgo8bqUK6iBDLIFnpdB/WJhEO68=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wsq9d3wqzzyQKn;
-	Mon, 26 Aug 2024 20:04:53 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WsqB146phzyR5w;
+	Mon, 26 Aug 2024 20:05:13 +0800 (CST)
 Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6A46E1404FC;
-	Mon, 26 Aug 2024 20:05:39 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id B6D8A1800A5;
+	Mon, 26 Aug 2024 20:05:41 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
  (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
- 2024 20:05:36 +0800
+ 2024 20:05:39 +0800
 From: Kaixiong Yu <yukaixiong@huawei.com>
 To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
 CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
@@ -55,9 +55,9 @@ CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
 	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
 	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
 	<linux-security-module@vger.kernel.org>, <wangkefeng.wang@huawei.com>
-Subject: [PATCH -next 08/15] mm: nommu: move sysctl to its own file
-Date: Mon, 26 Aug 2024 20:04:42 +0800
-Message-ID: <20240826120449.1666461-9-yukaixiong@huawei.com>
+Subject: [PATCH -next 09/15] fs: fs-writeback: move sysctl to its own file
+Date: Mon, 26 Aug 2024 20:04:43 +0800
+Message-ID: <20240826120449.1666461-10-yukaixiong@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240826120449.1666461-1-yukaixiong@huawei.com>
 References: <20240826120449.1666461-1-yukaixiong@huawei.com>
@@ -72,91 +72,99 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemh100016.china.huawei.com (7.202.181.102)
 
-The sysctl_nr_trim_pages belongs to nommu.c, move it into its own file
-from /kernel/sysctl.c. And remove the useless extern variable declaration
-from include/linux/mm.h
+The dirtytime_expire_interval belongs to fs/fs-writeback.c, move it into
+its own file from /kernel/sysctl.c. And remove the useless extern variable
+declaration and the function declaration from include/linux/writeback.h
 
 Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
 ---
- include/linux/mm.h |  2 --
- kernel/sysctl.c    | 10 ----------
- mm/nommu.c         | 15 ++++++++++++++-
- 3 files changed, 14 insertions(+), 13 deletions(-)
+ fs/fs-writeback.c         | 28 ++++++++++++++++++++--------
+ include/linux/writeback.h |  4 ----
+ kernel/sysctl.c           |  8 --------
+ 3 files changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 9400c92b4522..9e37d46fa666 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3972,8 +3972,6 @@ unsigned long wp_shared_mapping_range(struct address_space *mapping,
- 				      pgoff_t first_index, pgoff_t nr);
- #endif
- 
--extern int sysctl_nr_trim_pages;
--
- #ifdef CONFIG_PRINTK
- void mem_dump_obj(void *object);
- #else
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 0c0bab3dad7d..d3de31ec74bf 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2041,16 +2041,6 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= SYSCTL_FOUR,
- 	},
--#ifndef CONFIG_MMU
--	{
--		.procname	= "nr_trim_pages",
--		.data		= &sysctl_nr_trim_pages,
--		.maxlen		= sizeof(sysctl_nr_trim_pages),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--	},
--#endif
- 	{
- 		.procname	= "vfs_cache_pressure",
- 		.data		= &sysctl_vfs_cache_pressure,
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 385b0c15add8..983ee961dd67 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -48,7 +48,6 @@ struct page *mem_map;
- unsigned long max_mapnr;
- EXPORT_SYMBOL(max_mapnr);
- unsigned long highest_memmap_pfn;
--int sysctl_nr_trim_pages = CONFIG_NOMMU_INITIAL_TRIM_EXCESS;
- int heap_stack_gap = 0;
- 
- atomic_long_t mmap_pages_allocated;
-@@ -392,6 +391,19 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
- 	return mm->brk = brk;
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 1a5006329f6f..71ff73552323 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2400,14 +2400,7 @@ static void wakeup_dirtytime_writeback(struct work_struct *w)
+ 	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
  }
  
-+static int sysctl_nr_trim_pages = CONFIG_NOMMU_INITIAL_TRIM_EXCESS;
-+
-+static struct ctl_table nommu_table[] = {
+-static int __init start_dirtytime_writeback(void)
+-{
+-	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
+-	return 0;
+-}
+-__initcall(start_dirtytime_writeback);
+-
+-int dirtytime_interval_handler(const struct ctl_table *table, int write,
++static int dirtytime_interval_handler(const struct ctl_table *table, int write,
+ 			       void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	int ret;
+@@ -2418,6 +2411,25 @@ int dirtytime_interval_handler(const struct ctl_table *table, int write,
+ 	return ret;
+ }
+ 
++static struct ctl_table vm_fs_writeback_table[] = {
 +	{
-+		.procname	= "nr_trim_pages",
-+		.data		= &sysctl_nr_trim_pages,
-+		.maxlen		= sizeof(sysctl_nr_trim_pages),
++		.procname	= "dirtytime_expire_seconds",
++		.data		= &dirtytime_expire_interval,
++		.maxlen		= sizeof(dirtytime_expire_interval),
 +		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
++		.proc_handler	= dirtytime_interval_handler,
 +		.extra1		= SYSCTL_ZERO,
 +	},
-+}
++};
 +
- /*
-  * initialise the percpu counter for VM and region record slabs
-  */
-@@ -402,6 +414,7 @@ void __init mmap_init(void)
- 	ret = percpu_counter_init(&vm_committed_as, 0, GFP_KERNEL);
- 	VM_BUG_ON(ret);
- 	vm_region_jar = KMEM_CACHE(vm_region, SLAB_PANIC|SLAB_ACCOUNT);
-+	register_syscall_init("vm", nommu_table);
- }
++static int __init start_dirtytime_writeback(void)
++{
++	schedule_delayed_work(&dirtytime_work, dirtytime_expire_interval * HZ);
++	register_sysctl_init("vm", vm_fs_writeback_table);
++	return 0;
++}
++__initcall(start_dirtytime_writeback);
++
+ /**
+  * __mark_inode_dirty -	internal function to mark an inode dirty
+  *
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index 21dac644d325..22bc047ed91e 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -351,12 +351,8 @@ extern struct wb_domain global_wb_domain;
+ /* These are exported to sysctl. */
+ extern unsigned int dirty_writeback_interval;
+ extern unsigned int dirty_expire_interval;
+-extern unsigned int dirtytime_expire_interval;
+ extern int laptop_mode;
  
- /*
+-int dirtytime_interval_handler(const struct ctl_table *table, int write,
+-		void *buffer, size_t *lenp, loff_t *ppos);
+-
+ void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty);
+ unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh);
+ unsigned long cgwb_calc_thresh(struct bdi_writeback *wb);
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index d3de31ec74bf..373e018b950c 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2024,14 +2024,6 @@ static struct ctl_table kern_table[] = {
+ };
+ 
+ static struct ctl_table vm_table[] = {
+-	{
+-		.procname	= "dirtytime_expire_seconds",
+-		.data		= &dirtytime_expire_interval,
+-		.maxlen		= sizeof(dirtytime_expire_interval),
+-		.mode		= 0644,
+-		.proc_handler	= dirtytime_interval_handler,
+-		.extra1		= SYSCTL_ZERO,
+-	},
+ 	{
+ 		.procname	= "drop_caches",
+ 		.data		= &sysctl_drop_caches,
 -- 
 2.25.1
 
