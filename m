@@ -1,111 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-27171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F96C95F25B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 15:07:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C6795F267
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 15:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2AC91C217AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 13:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14A428281C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 13:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E061217BEB4;
-	Mon, 26 Aug 2024 13:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFB317BEDB;
+	Mon, 26 Aug 2024 13:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jW2kLdfk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64215176AC7;
-	Mon, 26 Aug 2024 13:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D084810F7;
+	Mon, 26 Aug 2024 13:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677632; cv=none; b=H8IyApUveV/34OWP8YHe2eE2C0dA4/RBpX6BLxDZyW584iW1Bm0HyTaq/83snS2drHVAa2mCWSFDpwaSl6NbUcpSAB9MgcRRo14oEt4Xw/K/Udz/MsdfZXDo4kbfI7nL4rPOePgXNNLxMbg3KC7NS6+gJFGGVzi82Xmeqsh/gNw=
+	t=1724677734; cv=none; b=UqTWmQ043gk8GrIAlG0VMUgEZh6doHBgiuvN4uTXCISg400vFnRvASymP4eAw8l2JeYR7M9kpvyoApCpdE2jtBqyCNeZ6ZWXS7D0tBTkfW2nHRGm9VidrXJ0On18l4apPHTplRXBDHpXCRsDiMPC4oLbE6Y7TgLNZ9MCSVabJz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677632; c=relaxed/simple;
-	bh=u2GU0B7E0+MJoDtNYBcEJmfsGvNZQLNwW+EI0SzgLdQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lvTyMDbUFSoLy5GWDSrdIrdDY0/4t96/ChZxbzhwqfGJSoUbSluL8Ro4Td8c1rwIuBoprhNOKnUoHY+VsHetgAFWj/3czzdalK+p9xeeSOazLeIbtb3doX8+NE88mX69UtP1ZrYqhRMEmap2EBYACJxrVdVYBzUjehYbaWRyyxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WsrYD4BKSz2CnZX;
-	Mon, 26 Aug 2024 21:06:56 +0800 (CST)
-Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6ED001A0170;
-	Mon, 26 Aug 2024 21:07:05 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
- (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 26 Aug
- 2024 21:07:04 +0800
-From: yangyun <yangyun50@huawei.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lixiaokeng@huawei.com>
-Subject: [PATCH] fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
-Date: Mon, 26 Aug 2024 21:06:12 +0800
-Message-ID: <20240826130612.2641750-1-yangyun50@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1724677734; c=relaxed/simple;
+	bh=BRONPixzBL0ZszZpb2xwZFsJg5ZB3SZbawc7G5yzV58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sRGZ/U+j2jq5wBnbfzwdkmW6cm7dT73xmgHnQgycxZDqphko3pxI4F2mgmVMM3ZoGrpV3DFSpHYVBDOMtz75fqvWJqkmiHGhLyKAbFVjm6nK5gFiioX5uQ+Xm41IYBSVpcLJxYikD2U3BmOxNWpEz9eybSS6vorw8ZX3oLRh2Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jW2kLdfk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C6AAC56890;
+	Mon, 26 Aug 2024 13:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724677733;
+	bh=BRONPixzBL0ZszZpb2xwZFsJg5ZB3SZbawc7G5yzV58=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jW2kLdfk+I4ftnJrw0QXlqy0m0RbtkcKqstKGg9L0LO15XukG4H2837ido4aW1/7b
+	 1QzNh/4RZBwzRJBxqY5LeSmqhT2M6BVwzuY2BXjYRFtBL+bRlmnWLs+JUwiNL5mrKW
+	 xPprQHb1eJWlgwG+IRLJKB+CheIJKWQ6tx7dadhd7uhvdySh43ozmc6varjD9/16sO
+	 hRuJb7LL87s/oE52O65CVi/dLuRwvrzdZucfBPsO8ZpJeIi8ftxNqYGhSjUOg2hdi5
+	 EJ79JRHTCfDaPr2axXLEyCOWEX+WBJn7sgeznyW07INKQaUsg6NxKbodAPYU2fGu8J
+	 yAoMtZx3MrJ1A==
+Date: Mon, 26 Aug 2024 15:08:45 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>, Tom Haynes <loghyr@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] fs: add an ATTR_CTIME_DLG flag
+Message-ID: <20240826-glasdach-zaudern-ee3d4761973c@brauner>
+References: <20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org>
+ <20240826-delstid-v2-5-e8ab5c0e39cc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100024.china.huawei.com (7.221.188.41)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240826-delstid-v2-5-e8ab5c0e39cc@kernel.org>
 
-Commit 23c94e1cdcbf ("fuse: Switch to using async direct IO
-for FOPEN_DIRECT_IO") gave the async direct IO code path in the
-fuse_direct_read_iter() and fuse_direct_write_iter(). But since
-these two functions are only called under FOPEN_DIRECT_IO is set,
-it seems that we can also use the async direct IO even the flag
-IOCB_DIRECT is not set to enjoy the async direct IO method. Also
-move the definition of fuse_io_priv to where it is used in fuse_
-direct_write_iter.
+On Mon, Aug 26, 2024 at 08:46:15AM GMT, Jeff Layton wrote:
+> When updating the ctime on an inode for a setattr with a multigrain
+> filesystem, we usually want to take the latest time we can get for the
+> ctime. The exception to this rule is when there is a nfsd write
+> delegation and the server is proxying timestamps from the client.
+> 
+> When nfsd gets a CB_GETATTR response, we want to update the timestamp
+> value in the inode to the values that the client is tracking. The client
+> doesn't send a ctime value (since that's always determined by the
+> exported filesystem), but it does send a mtime value. In the case where
+> it does, then we may also need to update the ctime to a value
+> commensurate with that.
+> 
+> Add a ATTR_CTIME_DELEG flag, which tells the underlying setattr
 
-Signed-off-by: yangyun <yangyun50@huawei.com>
----
- fs/fuse/file.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Fwiw: disconnect between commit message and actually used ATTR_CTIME_DLG.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index f39456c65ed7..03809ecc23ec 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1649,7 +1649,7 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
- 	ssize_t res;
- 
--	if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
-+	if (!is_sync_kiocb(iocb)) {
- 		res = fuse_direct_IO(iocb, to);
- 	} else {
- 		struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
-@@ -1663,7 +1663,6 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
- static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct inode *inode = file_inode(iocb->ki_filp);
--	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
- 	ssize_t res;
- 	bool exclusive;
- 
-@@ -1671,9 +1670,11 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	res = generic_write_checks(iocb, from);
- 	if (res > 0) {
- 		task_io_account_write(res);
--		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
-+		if (!is_sync_kiocb(iocb)) {
- 			res = fuse_direct_IO(iocb, from);
- 		} else {
-+			struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
-+
- 			res = fuse_direct_io(&io, from, &iocb->ki_pos,
- 					     FUSE_DIO_WRITE);
- 			fuse_write_update_attr(inode, iocb->ki_pos, res);
--- 
-2.33.0
+> machinery to respect that value and not to set it to the current time.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
 
+Are you set on sending us on a mission to free up ATTR_* bits after
+freeing up FMODE_* bits? ;)
+
+If there's going to be more ATTR_*DELEG* flags that modify the
+behavior when delegation is in effect then we could consider adding
+another unsigned int ia_deleg field to struct iattr so that you can check:
+
+if (ia_valid & ATTR_CTIME) {
+	if (unlikely(iattr->ia_deleg & ATTR_CTIME))
+		// do some special stuff
+	else
+		// do the regular stuff
+}
+
+or some such variant.
+
+>  fs/attr.c          | 10 +++++++++-
+>  include/linux/fs.h |  1 +
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/attr.c b/fs/attr.c
+> index 7144b207e715..0eb7b228b94d 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -295,7 +295,15 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
+>  		return;
+>  	}
+>  
+> -	now = inode_set_ctime_current(inode);
+> +	/*
+> +	 * In the case of an update for a write delegation, we must respect
+> +	 * the value in ia_ctime and not use the current time.
+> +	 */
+> +	if (ia_valid & ATTR_CTIME_DLG)
+> +		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+> +	else
+> +		now = inode_set_ctime_current(inode);
+> +
+>  	if (ia_valid & ATTR_ATIME_SET)
+>  		inode_set_atime_to_ts(inode, attr->ia_atime);
+>  	else if (ia_valid & ATTR_ATIME)
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 7c1da3c687bd..43a802b2cb0d 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -211,6 +211,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+>  #define ATTR_TIMES_SET	(1 << 16)
+>  #define ATTR_TOUCH	(1 << 17)
+>  #define ATTR_DELEG	(1 << 18) /* Delegated attrs (don't break) */
+> +#define ATTR_CTIME_DLG	(1 << 19) /* Delegation in effect */
+
+What's the interaction between ATTR_DELEG and ATTR_CTIME_DLG? I think
+that's potentially confusing.
 
