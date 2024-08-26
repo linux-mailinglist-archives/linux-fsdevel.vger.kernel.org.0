@@ -1,136 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-27250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB1395FBB6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 23:31:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8FF95FBC1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 23:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B43B28416F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 21:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524F51C21EB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 21:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52AA19ADA3;
-	Mon, 26 Aug 2024 21:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0363519B3F9;
+	Mon, 26 Aug 2024 21:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4FpQrjS"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BupbacOo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB4A3B782;
-	Mon, 26 Aug 2024 21:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B5019992B;
+	Mon, 26 Aug 2024 21:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724707871; cv=none; b=OX2DSSrCGmJ9/i3ZUz3MKR1p/uwc48e7xsvP4PP3EGGOy4Z9IufV7016wUh7PnZuEFOc1HOpAtscflehmougKCqpPabLhGIj3G+XIKfPSS8GLsJhe1yjNvPsYkMMW8GDumGaE9AcQ8/aVUZ2bA8h4pJc6TWIwm+GphAlzuy92fM=
+	t=1724708079; cv=none; b=fSqxKXsu7cKZmeLXjqz7W+FWu9tCQaNcz3XSq+RsWQluXgdWKR/rFEvd2oPd1kAfBuooEi6Orhtjb0xYuE3lfH+sgo8H6J0nl8OjjF/SxaOvSHslRoCVq+BjdPaJTNCE34YjUoZ/f67qLm0grPoemT4tovOAKWTJZBR5TE7bfoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724707871; c=relaxed/simple;
-	bh=CGslcxW/Fc3OgcwxasYLSjhCWDJFxMfqqYZBLG8QQnw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EElJarWcE7Bfjj/iK3t056igILt0NHFY8WnoAXLDF0l8YfsZb/+vL3FWoTQ2mHJtImRrQr0HjynjjueCH7rPjGSCzES6r3CNBuuO0o5CxNfHBZX/Rv0iRUd8AjOmylNGeosp+R9pux/ha96x4gUwFFMN6YucJu2m9I+euWXZf1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4FpQrjS; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d3d0b06a2dso3969271a91.0;
-        Mon, 26 Aug 2024 14:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724707869; x=1725312669; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iCVK2T5mefzelGSfsT4oRGKRuwqXKKQitg7slLE3ECY=;
-        b=P4FpQrjSwGPIEpdOcpsMb6JBg7UhSZ5GHVrOuM8SHapnuXlHYoroJNd5pzOUD0XdZS
-         Brg6Ohgbq6qn2oZsyummS7U682LYfytEWC7d19v+KnUp7AqZAyVFgHm//LdqnY7z1RWe
-         FttsTNHSkWEI6oh8gXaVy2PQOkPno6+Ogvl/WCpttEfkUC47hVIvrMeigPmkzC7Om0rq
-         jInq6WHqTTVBT7ILj3LvmQ3jQMXNnBfONCo1+nGyEtmz05KHmCr4XcXe3+ynUnSKSq5M
-         tkp+Sm48xF6Per7++1ceQAf/baEtbj/Y1WPU9vF+TT3zl7xy5bilI3+UG8bWzbn2BAER
-         FsNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724707869; x=1725312669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iCVK2T5mefzelGSfsT4oRGKRuwqXKKQitg7slLE3ECY=;
-        b=rDHwhc048VpVf84d0unTo8AP8RCbspglLc4Wm74aM4iZ3gmZS2uWDFWEzmAyqun1vw
-         WrQJacO26+708NYKZIiW//XQMVjB1FPAM2CjjLF3FhWvWBxAGVFCQ0U19Qa1SiDv/uQc
-         Ftepklw9oM2gYWUC2fsoMajugMRJTlvgdXVDBDzI33QqA7je4Me8Ux5Rfa01X5DFpqln
-         mwYLM9eW+PL+6j4//CFoT2KQM2RNWpBhMSeQmywoooivS68Mnch4rSqAhrmrntRCZw54
-         v3fKg8c5tzEsiQFrWK9ZR00MMjGgfZjKzx1I2p+bkm41/yygWUPJ1JB7JkiBNM3jVdkG
-         Yddw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFxbz6ouPE8oFmezKCFT7QEIr4ZQ84elRV9YyC0dW9h3Dp7XpZ0ILbPqnVSBNDZgrxZZCY9l6y8omIWVGsnA==@vger.kernel.org, AJvYcCXodnOl+1reUWus4NhZAeHU917LOy4WXm5FQfpg4c9o5TXtjdypzZiqV5ORIgWqlJokCQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgSj6VT90IDNJ12DNq6eWWcn9ZtmssjeiEY6FEXdPV20VeAU8I
-	J8dXRsQdVgO7EtkVFXwaxeT513EcnF0ZvpBn3tr42WS+XRD06nOrQAlrmjC2XYZ5U2NOK8c7Z7h
-	1a7nYx89mBK2AGAgUtExo6KvPgCzWBNND
-X-Google-Smtp-Source: AGHT+IHWkDyq5UYH7otLklPuUe/TxIXiUqPZd8sTtaVZCuXfdY7+gvyPYpsarlOWcGqvrmP6yfkD+kFudB8aq4Qqk5s=
-X-Received: by 2002:a17:90a:d14f:b0:2d3:d7f4:8ace with SMTP id
- 98e67ed59e1d1-2d646b946a7mr13646689a91.8.1724707869290; Mon, 26 Aug 2024
- 14:31:09 -0700 (PDT)
+	s=arc-20240116; t=1724708079; c=relaxed/simple;
+	bh=f6QVJ7gqPlOJSdYw6NwfRnwjtN71dpr2Yeva23qqdXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/a6nafIQwPPn/AQ6kGN+n3jyuZBcIlbkAT5S5Ue7wSk8KrLhDIpqMRtYOEyVxAv/HkCH6tLhT4vbTJqPaJm4z0vv2NJwfkJ+jptXBY18sTMiRKlzodxU8Fg8nrHTiKYJHQk9teKdmcRXcgjGKKySB5if2cFkpdW5BSEY6kLKlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BupbacOo; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724708077; x=1756244077;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=f6QVJ7gqPlOJSdYw6NwfRnwjtN71dpr2Yeva23qqdXQ=;
+  b=BupbacOoMmqT3KnKPl/JPcq4K8Brb5EleBhUTGjrfkGTsbNNqj4GHreD
+   hj3iV1Ynrqa2eesLEt49BjRHuKGiAYNIegbw5HjHR+E9cAqL0ihI8ombR
+   Z2UG576G176oSWVlyY+1Tdd9ad16Rvd29JkDhd7lEdobgcc8sCGRod+tj
+   LBPdro3r/y1b7Re+VDvMW8abOZDhLOeoiRI8HIE3++Otr/YzkxDsWvLME
+   gXpcwXjWh72mcydxGvG3C+bz1Dz0o8C/qhRV81lnmnnXLfUxsC3YjHZ6g
+   bzD+5KPv2FDwIDTtdU2PxHS6+JaE6nFI5qum9rbDG8KHG8VLz9Z5uZpHx
+   Q==;
+X-CSE-ConnectionGUID: FqqkaVnbQvqq0cJAkJwvbg==
+X-CSE-MsgGUID: DDdZtAKsRmGoI1w2JYxCxA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23025216"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="23025216"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 14:34:36 -0700
+X-CSE-ConnectionGUID: eZLAVeVBSbC/mqEo8Mbbug==
+X-CSE-MsgGUID: QnvKqTknQ4GeCeBOqGKUpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="66801034"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 26 Aug 2024 14:34:30 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sihM4-000Hcg-1d;
+	Mon, 26 Aug 2024 21:34:28 +0000
+Date: Tue, 27 Aug 2024 05:34:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 07/17] mm: Define VM_DROPPABLE for powerpc/32
+Message-ID: <202408270553.2S5d14Ar-lkp@intel.com>
+References: <315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814185417.1171430-1-andrii@kernel.org> <d9a46f4d54df8d5ac57011222ebdf21b0f15f52d.camel@gmail.com>
-In-Reply-To: <d9a46f4d54df8d5ac57011222ebdf21b0f15f52d.camel@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 26 Aug 2024 14:30:57 -0700
-Message-ID: <CAEf4BzZe-dWzqxpnYs7YOfnQ3--CqDEYDOn1LRZzDBTP1hq1yg@mail.gmail.com>
-Subject: Re: [PATCH v6 bpf-next 00/10] Harden and extend ELF build ID parsing logic
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, adobriyan@gmail.com, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, ak@linux.intel.com, osandov@osandov.com, song@kernel.org, 
-	jannh@google.com, linux-fsdevel@vger.kernel.org, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy@csgroup.eu>
 
-On Fri, Aug 23, 2024 at 4:23=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com=
-> wrote:
->
-> On Wed, 2024-08-14 at 11:54 -0700, Andrii Nakryiko wrote:
->
-> [...]
->
-> > Andrii Nakryiko (10):
-> >   lib/buildid: harden build ID parsing logic
-> >   lib/buildid: add single folio-based file reader abstraction
-> >   lib/buildid: take into account e_phoff when fetching program headers
-> >   lib/buildid: remove single-page limit for PHDR search
-> >   lib/buildid: rename build_id_parse() into build_id_parse_nofault()
-> >   lib/buildid: implement sleepable build_id_parse() API
-> >   lib/buildid: don't limit .note.gnu.build-id to the first page in ELF
->
-> Never worked with lib/buildid before, so not sure how valuable my input i=
-s.
-> Anyways:
-> - I compared the resulting parser with ELF specification and available
->   documentation for buildid, all seems correct.
->   (with a small caveat that ELF defines Elf{32,64}_Ehdr->e_ehsize field
->    to encode actual size of the elf header, and e_phentsize
->    to encode actual size of the program header.
->    Parser uses sizeof(Elf{32,64}_{Ehdr,Phdr}) instead,
->    and this is how it was before, so probably does not matter).
->
-> - The `freader` abstraction nicely hides away difference between
->   sleepable and non-sleepable contexts.
->   (with a caveat, that freader_get_folio() uses read_cache_folio()
->    which is documented as expecting mapping->invalidate_lock to be held.
->    I assume that this is true for vma's passed to build_id_parse(), right=
-?)
+Hi Christophe,
 
-No, I don't think it's automatically true. So good catch, I think I'll
-need to add filemap_invalidate_lock_shared() +
-filemap_invalidate_unlock_shared() around read_cache_folio().
+kernel test robot noticed the following build warnings:
 
-I'll give Matthew and Andrew a chance to reply to Alexei, and will
-post a new revision tomorrow. Thanks for a thorough review!
+[auto build test WARNING on powerpc/next]
+[also build test WARNING on powerpc/fixes shuah-kselftest/next shuah-kselftest/fixes linus/master v6.11-rc5 next-20240826]
+[cannot apply to crng-random/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> For what it's worth, full patch-set looks good to me.
->
-> Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
->
-> [...]
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-Leroy/asm-generic-unaligned-h-Extract-common-header-for-vDSO/20240826-103525
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
+patch link:    https://lore.kernel.org/r/315e3a268b165b6edad7dcb723b0d8a506a56c4e.1724309198.git.christophe.leroy%40csgroup.eu
+patch subject: [PATCH v2 07/17] mm: Define VM_DROPPABLE for powerpc/32
+config: um-randconfig-r122-20240826 (https://download.01.org/0day-ci/archive/20240827/202408270553.2S5d14Ar-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270553.2S5d14Ar-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408270553.2S5d14Ar-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   mm/debug_page_ref.c: note: in included file (through include/trace/events/page_ref.h):
+>> include/trace/events/mmflags.h:168:5: sparse: sparse: undefined preprocessor identifier 'VM_DROPPABLE'
+>> include/trace/events/mmflags.h:168:21: sparse: sparse: undefined preprocessor identifier 'VM_NONE'
+   mm/debug_page_ref.c: note: in included file (through include/trace/events/page_ref.h, include/trace/define_trace.h, include/trace/events/page_ref.h):
+>> include/trace/events/mmflags.h:168:5: sparse: sparse: undefined preprocessor identifier 'VM_DROPPABLE'
+>> include/trace/events/mmflags.h:168:21: sparse: sparse: undefined preprocessor identifier 'VM_NONE'
+   mm/debug_page_ref.c: note: in included file (through include/trace/events/page_ref.h, include/trace/trace_events.h, include/trace/define_trace.h, ...):
+   include/trace/events/mmflags.h:169:10: sparse: sparse: preprocessor token IF_HAVE_VM_DROPPABLE redefined
+   mm/debug_page_ref.c: note: in included file (through include/trace/events/page_ref.h):
+   include/trace/events/mmflags.h:171:10: sparse: this was the original definition
+
+vim +/VM_DROPPABLE +168 include/trace/events/mmflags.h
+
+   167	
+ > 168	#if VM_DROPPABLE != VM_NONE
+   169	# define IF_HAVE_VM_DROPPABLE(flag, name) {flag, name},
+   170	#else
+   171	# define IF_HAVE_VM_DROPPABLE(flag, name)
+   172	#endif
+   173	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
