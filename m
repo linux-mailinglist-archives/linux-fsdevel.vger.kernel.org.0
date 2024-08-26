@@ -1,131 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-27109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83E5D95EA7F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:32:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E3595E9DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED6D1F21ACB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 07:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B78402816BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 07:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDDB13A257;
-	Mon, 26 Aug 2024 07:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D1484A2C;
+	Mon, 26 Aug 2024 07:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b="Hqw5WX4a"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VStFuT99"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from omr08.pc5.atmailcloud.com (omr08.pc5.atmailcloud.com [54.252.57.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102DE548E1;
-	Mon, 26 Aug 2024 07:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.252.57.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF35779DE;
+	Mon, 26 Aug 2024 07:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724657561; cv=none; b=NnV8Spukg9MhwuoHMim6KjY5dt6AcAOo+LwnysBW++0Ps8gSmWOKHzOCTJvXyspHj3I6XgsbdQqwy6L3NPhOMEVtr47haKyDU/ao1Z7qRVGUvuog4U+o1j9yH1n3HgLSm45LiJJcuFJdOS1YOMwcbyDlkAglW+EzgIhZdnU9jbo=
+	t=1724655930; cv=none; b=bdUu5FOqrOUIWWNjguLc8SptoMNagl0KMNnoBepcRINfAxVqikZikglZmj9tX0x4Tmb7k52tdEIAqFTM/6iYOA39wpGlS0RoblrzJs1+oY3rVnx2wRtTy7LiSHqggaK+7tLrKSPnFH0mpDoHU8ba5adAaWivbbp7Z9xT5zeEc7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724657561; c=relaxed/simple;
-	bh=iojfrvhf57dCDTJPpOzKfz8icNONcLHcWrQbweA/6EM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tXwGnMYU/3NI53DMzElrR7eCU2IzLA/l60uoq+lCOVlBihv2XUDJEo0nz7YGDiDpXHgMNgcqyaHUjl3f1hqCWorceRi/tkn3CT1r/5tvVU2vacv4d4a6UbWFVq14e+dVC6GyumYAg0yglVhuwsE17VHpZwy8O564b8/XZbBMJJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au; spf=pass smtp.mailfrom=westnet.com.au; dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b=Hqw5WX4a; arc=none smtp.client-ip=54.252.57.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=westnet.com.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=westnet.com.au; s=202309; h=Content-Type:From:To:Subject:MIME-Version:Date:
-	Message-ID; bh=6tTKEaM8sdRBiX5y2fo+cH7GFaEbUFd+8Q0elSOPc0A=; b=Hqw5WX4asG6LLE
-	qMnfahpCSjBz9bCq2gLidqsBim9VUx1ErvMMazAhWX4PV0mZ86iRV1d58GQTBaGplo+tR0SXfI2TH
-	g2IAb4I0aTdMDsICR3QpbHUaktggeu/dVrEyvvOqptB/0a9fmOAjMlaiFIVmqqENZKGGbuqxn8+Dm
-	zIzG5KEk2A1Uzys7WRu6E8pCMX8XrMFQs199TU7lBRKlZ2FM4as5aCIvfvl1Jb4DdmhGpGB/Hl6YW
-	eu3X4eSRD6jA58iRx32QYJ5NDPLybBIGSqIoMYyn9n4KI+/ReonLE7TNQO/zTkwhPehjI0mS58zw6
-	gQckQNzVVtLLUFntZ83g==;
-Received: from CMR-KAKADU04.i-041f7649e5739ea40
-	 by OMR.i-0e5869b43dfedcea0 with esmtps
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1siTi5-0000xB-Sa;
-	Mon, 26 Aug 2024 07:00:17 +0000
-Received: from [202.125.30.52] (helo=[192.168.0.22])
-	 by CMR-KAKADU04.i-041f7649e5739ea40 with esmtpsa
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1siTi5-0004jR-0q;
-	Mon, 26 Aug 2024 07:00:17 +0000
-Message-ID: <aa4af643-47d3-4c26-8537-d86c1f73af68@westnet.com.au>
-Date: Mon, 26 Aug 2024 17:00:13 +1000
+	s=arc-20240116; t=1724655930; c=relaxed/simple;
+	bh=ujOJ9o0GABnjmX4VsDIZLHYlJjz6IfbPCNomeHPuhg4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a9n3nr684vmD20+KoLfjdRHtc4R+Cxd9PWgvXD+gXJzpwzUiVdp3QpmAhxWbaG7K37P9Ocxv07hoXTZny/nNTFlDSpeukHJXu23W5YC9NLi+vjq7UNu6QXDarsA3X5ysAE5JUcd2Dc/Gqr2Zw1hIWTwC4imkbL/34GZ/88Ptpco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VStFuT99; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a869332c2c2so580131966b.0;
+        Mon, 26 Aug 2024 00:05:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724655927; x=1725260727; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ujOJ9o0GABnjmX4VsDIZLHYlJjz6IfbPCNomeHPuhg4=;
+        b=VStFuT997dhQzh9BDPcZkafn7XyHZKWjUNlEbjsv1sRc06j5h+JYpij0HHzVpqHDLK
+         7LgbtaGtOKxi326vn04DPF5HGr1YGc2Z/SvzjALHX+CIivp3Go0+iGAIb349Gs6xFOqI
+         XhXs7llaWWOOL84eLzzb1HnosuoDbzgbEaVl6syrixHZBulpfoP+GEMvB3jow0qHo+tk
+         JTA02sXhyQiEVyOymeMjF7wnItLXtCkvVl9IczkSu6vYyfnalrVNSrvWioNanFIZVOwH
+         ylzS8Lx7Y6tK/dnrWPLo2+k4EhDyntwh9F3Du77UHxlDfD7UtniuUQCS8dKZp8Y3k3k8
+         Cyyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724655927; x=1725260727;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ujOJ9o0GABnjmX4VsDIZLHYlJjz6IfbPCNomeHPuhg4=;
+        b=oqVRPGpB06N4WDwNFnULKlQS6C2/moResM/dJHnwO30r5+urfVsDCsvkc1csvEFgXF
+         boDh60mYXK4jLwObiWNV3aKMh+/F1LU5CPMXme3sGVuyqtjjYyS6UuHaUjY7tLwqpbxR
+         Hq51iY4BdxPSKWjQHJUc6liVzkPTQyyeYSgDgQor4VFY/xTaH78TrQVT1SJwqcnSjFz5
+         3EZmhfrxx5ekqARsT/EkVHszo+vZmnCA53Ew78b6xQlIhos+CKOQbLQ/bIkvL5IKzIZk
+         yFeGl9dAdqZnFboypWVuQk75KO9ynQmcILMfa1wQpN2jhw8gWUqA76sD6w7/zBpeS7x+
+         csuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4R7uSEtx7MaK9KEKwpNlD44+iJMUN6wzYXFJboH4j2pl0fSGSJ7RDMueL3Elh5VEP8Sbquko/@vger.kernel.org, AJvYcCW0/nYmMJoUtdQ8a4gIyTb8IWZ2OIifiirkeTT+NLSI0pj77yNWd6K5RJB4/TMcIsKKY/mZBJAQyJ31Gw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsNGlS6g3ezR6T2jJu4Ijg1S42gKhETGW1SprXlK6DsQC/VgJt
+	ljvtyoJGEMZywNH4tkk2GJx7FXdz2bWmETE5bKJWF0eNQ665KTs/YosXd2XVOtP0iq7mIXS2o0J
+	n5ienlXNrB4Zf15/gGtPwnsrqUH8=
+X-Google-Smtp-Source: AGHT+IEHoceLx9JkZLnntrfxUgsOUHXNxDNks2yb+WAxgrLatcWBzS+MdMlzDQ+nGrRSq305WgI/YzNsrNmLFTPuPz8=
+X-Received: by 2002:a17:906:c144:b0:a86:91a5:4d09 with SMTP id
+ a640c23a62f3a-a86a309ae59mr800136666b.26.1724655926868; Mon, 26 Aug 2024
+ 00:05:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] binfmt_elf_fdpic: fix AUXV size calculation when
- ELF_HWCAP2 is defined
-To: Max Filippov <jcmvbkbc@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- stable@vger.kernel.org
-References: <20240826032745.3423812-1-jcmvbkbc@gmail.com>
-Content-Language: en-US
-From: Greg Ungerer <gregungerer@westnet.com.au>
-In-Reply-To: <20240826032745.3423812-1-jcmvbkbc@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Atmail-Id: gregungerer@westnet.com.au
-X-atmailcloud-spam-action: no action
-X-Cm-Analysis: v=2.4 cv=H9/dwfYi c=1 sm=1 tr=0 ts=66cc2801 a=7K0UZV/HFv9j2j1oDe/kdQ==:117 a=7K0UZV/HFv9j2j1oDe/kdQ==:17 a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=80-xaVIC0AIA:10 a=x7bEGLp0ZPQA:10 a=VwQbUJbxAAAA:8 a=8-D65JXZAAAA:8 a=pGLkceISAAAA:8 a=IAVgKGYuzIukzJpoevsA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-Cm-Envelope: MS4xfAEQRyZOM7Ozk2Q30aT2s8+z5DSkcoTMnkpPaNgnkdmyxjHDCcOXh/ehMGleTLiP+Ky4uEwbkGP5ldYJHOzoQ/6yNr65xYwz4W4DbXCnREQN+zb3rj2c Qd64FsCwD8ebrOp90dVjYxlWAzbKDeZwfBftLayC7ZN8re8eamhmSdKAmGM/exVui2lf1wMiZYH5lw==
-X-atmailcloud-route: unknown
+References: <20240823130730.658881-1-sunjunchao2870@gmail.com>
+ <rvorqwxqlpray26yi3epqpxjiijr77nvle3ts5glvwitebrl6e@vcvqfk2bf6sj> <e8c68d82d7209fc64823bd25eee3175c2a7e8ec4.camel@gmail.com>
+In-Reply-To: <e8c68d82d7209fc64823bd25eee3175c2a7e8ec4.camel@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 26 Aug 2024 09:05:14 +0200
+Message-ID: <CAGudoHFhSD=nXgrx+zz2iOFntiGH-MHUbTyOzVMHEVtkvjcbCw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: fix race between evice_inodes() and find_inode()&iput()
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	david@fromorbit.com, zhuyifei1999@gmail.com, 
+	syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Max,
+On Mon, Aug 26, 2024 at 6:11=E2=80=AFAM Julian Sun <sunjunchao2870@gmail.co=
+m> wrote:
+>
+> On Sat, 2024-08-24 at 06:54 +0200, Mateusz Guzik wrote:
+> > evict_inodes() fails to re-check i_count after acquiring the spin
+> > lock,
+> > while the flags blocking 0->1 i_count transisions are not set yet,
+> > making it possible to race against such transition.
+> Alright, I think the issue is clearly explained through the above
+> commit message. If you insist, I can send a patch v2 to reorder the
+> commit message.
 
-On 26/8/24 13:27, Max Filippov wrote:
-> create_elf_fdpic_tables() does not correctly account the space for the
-> AUX vector when an architecture has ELF_HWCAP2 defined. Prior to the
-> commit 10e29251be0e ("binfmt_elf_fdpic: fix /proc/<pid>/auxv") it
-> resulted in the last entry of the AUX vector being set to zero, but with
-> that change it results in a kernel BUG.
-> 
-> Fix that by adding one to the number of AUXV entries (nitems) when
-> ELF_HWCAP2 is defined.
-> 
-> Fixes: 10e29251be0e ("binfmt_elf_fdpic: fix /proc/<pid>/auxv")
-> Cc: stable@vger.kernel.org
-> Reported-by: Greg Ungerer <gregungerer@westnet.com.au>
-
-Feel free to use my gerg@kernel.org email for this.
+I'm in no position to insist, merely noting. :)
 
 
-> Closes: https://lore.kernel.org/lkml/5b51975f-6d0b-413c-8b38-39a6a45e8821@westnet.com.au/
-> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-
-Certainly fixes it for all my failing test cases, so:
-
-Tested-by: Greg Ungerer <gerg@kernel.org>
-
-Thanks for looking into it and the fix.
-
-Regards
-Greg
-
-
-> ---
->   fs/binfmt_elf_fdpic.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index c11289e1301b..a5cb45cb30c8 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -594,6 +594,9 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->   
->   	if (bprm->have_execfd)
->   		nitems++;
-> +#ifdef ELF_HWCAP2
-> +	nitems++;
-> +#endif
->   
->   	csp = sp;
->   	sp -= nitems * 2 * sizeof(unsigned long);
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
