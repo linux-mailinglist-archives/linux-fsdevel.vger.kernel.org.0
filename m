@@ -1,107 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-27252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8362295FD74
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 00:51:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CE495FD7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 00:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B66B41C21BFE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 22:51:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926E41F2268C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 22:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9525619EEAA;
-	Mon, 26 Aug 2024 22:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39D519DF5B;
+	Mon, 26 Aug 2024 22:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ff7TDC5i"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GDk9DFy1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854DE19D07B;
-	Mon, 26 Aug 2024 22:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE68E199E9A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 22:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724712496; cv=none; b=CqtauFbdZu9O0X254n7oEDpW/u5ZuLWYFFcsLnKUrLxmMkaYGiz9H4e6v2DWgiHp6bHIcXY7kihssw9+BtlDTHokFqocGXv4U4Q8VFw9lJ/t1xpAUsJ56ocnrlTW3mGTbFisKRzs2JU9G98L8Ev/7MMGDLbvf3/51Tcz42RzaBg=
+	t=1724712571; cv=none; b=mkqVUcy09djBsfDshaYqFVQZTi+E3xffVkr3EH13wYx3zjOmP0W7XZxAjkkzQRhUUxbDbszS/xBP5LJdkgDjzqRKKfD3Ap4MIEK8zqfDn74MaI+UurFULkbWOofDqMsZzXS7SoIfer0m6yGZLLEVZcOlfA4d5bvhvt/pb1t6ZTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724712496; c=relaxed/simple;
-	bh=x1hjh95k0wxaveZBrA+vEUT6erVcu1eYnkXU9yxB4Gg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a80/yYixh3ljkYYDzSvXzFYR7JdbOscsV/VPJNCERJvOrFKF/o60L/38RdqWDy4Xjd7V5aUKrQOM3dYDvzRp40dvY+42raCe8QqUb5AOd5CbL+D7VSweyGUqaNJC84P1Yy2dMsPTBkjbGq4sDh8aRH56AJ21UvULFb5+fq3HSLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ff7TDC5i; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724712495; x=1756248495;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=x1hjh95k0wxaveZBrA+vEUT6erVcu1eYnkXU9yxB4Gg=;
-  b=ff7TDC5iyKLf0y19udb2Y01IPpcUrF4ZvFHWMBO39tywc+FHhB6vFqIn
-   ZrQUp7SjfOcJ4cHF9Xvr8SO5sHaW6+3+a1RWSQAKQcO3pQkwXBX2OyG17
-   UMd6lApXrQ8ReGLPPCDKAxBUtpgdcckary88YHcC+sa3HXj3Py9MlV49q
-   BR9BDiIQWEtSx3guCT3TMvs1akL4JGMiqg8TSQ9UZg0tPj6eaYCu3J5r/
-   rVsCLwlE2QvgTvVUvcvGlkBX6Jyr8OAxzrQZh8AjxnUtUAG14LaVYB9p7
-   eIknopSEd9DKnm7aQ8/xWzZzgtYfV/uPIZtwjyKOtqiohuANn8wsBioo9
-   w==;
-X-CSE-ConnectionGUID: FIUFE4RUTQusfzdwh9JIfQ==
-X-CSE-MsgGUID: k0YRAnUYTKetC9C9LTHtvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="13225200"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="13225200"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:48:14 -0700
-X-CSE-ConnectionGUID: OlW0FGS6T1Sc4Z+Gg1PEvw==
-X-CSE-MsgGUID: kAJuRAjTQquHVlYP0FTDJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="62972252"
-Received: from mesiment-mobl2.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.223.39])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:48:11 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com,
- malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
- lizhen.you@intel.com, linux-unionfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/16] overlayfs: Document critical override_creds()
- operations
-In-Reply-To: <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
-References: <20240822012523.141846-1-vinicius.gomes@intel.com>
- <20240822012523.141846-5-vinicius.gomes@intel.com>
- <CAJfpegvx2nyVpp4kHaxt=VwBb3U4=7GM-pjW_8bu+fm_N8diHQ@mail.gmail.com>
-Date: Mon, 26 Aug 2024 15:48:07 -0700
-Message-ID: <87wmk2lx3s.fsf@intel.com>
+	s=arc-20240116; t=1724712571; c=relaxed/simple;
+	bh=4riBHCy/ul0psyvOkTn7BvHgTDelnSNQyniXCwOavsA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uy9K4Q2vRVS8Ztgv0EKE+v91bkD59/MWiDoiKpsIQPB6GYSFkn8fkZQw7fGml1C8FKMXE6c8/BMs41uNdsy8D5/ym07mTSkHxn834Y4fhmYyPxn5FjXO6USwsTSvOuqZQPctUqHJ9En4oEQptljEtCmkTw56giIlbebBvAI6O4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GDk9DFy1; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e03caab48a2so3746262276.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 15:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1724712569; x=1725317369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nWTFl5f8OPZ9kYIvj+M7W9eYYEXfjlTCvvmN9eeNnFM=;
+        b=GDk9DFy1uU5DEevxf++6WuIvZZ73OSd9X3L1keRyQJcWJE1u6gMs9mSkyo+wW34q7v
+         3Qc1tPefjxRgoUEoNXahf/fPq115S7AyyFTtmSD59YXxRTKb+u3yaSoRA2w//KesDMOS
+         K6xV0y/d/7tx8szAfjEupd2n3oRYlldJMEY+vEo4UIUW/cw/kprydvfFUn17TmGxx2pM
+         R6NefIsW1LMf7WJI1Wee+mSSKx9wnlL4p5TM8v0lOzxMgQ0JaU7IMC3RIbdXYj/X6i8H
+         TMpNiuD+0Nd32e/eZ1HAZo4EouMkv2OcpkeAhKxX1nrHlLKKboztdWFnXzJVCmQGAREN
+         c9/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724712569; x=1725317369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nWTFl5f8OPZ9kYIvj+M7W9eYYEXfjlTCvvmN9eeNnFM=;
+        b=qQMjk7b+mblWLqt3hhP9KsmWFdcKmOkNWilDhOOJQ/b4LVPqMxkeJ8ag0Qd6ao2Q4V
+         avuFZ1dju9B4rh1Lk7a+1U3kvDV0tFlGCS/qCEWfLAdQW7vOLeB5vtNZj9FW8FmwwgGY
+         qwWkTqfmoAXnsN1E5D4JC+06J1EblI+aHKzyPL9Um9K1gr+OPPWY7IamD/ACZ6iuqSYr
+         N6ykclsxvFSDbUMlicBO+zsphtK8U/AUB2NRt5CbIaBNZ6k8it6VNV4yrIX5U7YCVmS2
+         72eXIA6NFj+gzt4TjEegJgQG7yHb9pVn0jtajhlauqMox4gPnCUlaXKw6zrHJNKyO5Tq
+         CoIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXa14mEjQZBVHFtQs0+izrrfheJwSxF0Yr4utftPCmIheFO7gsopOftvu4eeGUK2gRBForcAKY7cboUBCcJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIvJLz2/I5uS0BYRJiF/ia6kIjgZ20hseNJ2qsSLmDBrE1M4Gj
+	ND7YATEgwF0zADByIrGyBeuXbwbXRZq/lOhLoTi1RmSPLomyD5MJ5QIx41LM5knVDs2X4DCMTbW
+	jLAApXcb9fk55R8UtMzKe+gSkuBvRnVXGZWDn
+X-Google-Smtp-Source: AGHT+IFdXwGDNkQJWX/aeiki5niUl6YsOZL7hcKl1t9UskkQFhTdxuBmqzMkoxujlay9La0l7/VeNVTc31ug5dspjrg=
+X-Received: by 2002:a05:6902:1283:b0:e08:6373:dfc8 with SMTP id
+ 3f1490d57ef6-e1a2984666bmr1176664276.23.1724712568754; Mon, 26 Aug 2024
+ 15:49:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240826120449.1666461-1-yukaixiong@huawei.com> <20240826120449.1666461-8-yukaixiong@huawei.com>
+In-Reply-To: <20240826120449.1666461-8-yukaixiong@huawei.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 26 Aug 2024 18:49:17 -0400
+Message-ID: <CAHC9VhS=5k3zZyuuon2c6Lsf5GixAra6+d3A4bG2FVytv33n_w@mail.gmail.com>
+Subject: Re: [PATCH -next 07/15] security: min_addr: move sysctl into its own file
+To: Kaixiong Yu <yukaixiong@huawei.com>
+Cc: akpm@linux-foundation.org, mcgrof@kernel.org, ysato@users.sourceforge.jp, 
+	dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, kees@kernel.org, 
+	j.granados@samsung.com, willy@infradead.org, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
+	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jmorris@namei.org, 
+	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	wangkefeng.wang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Miklos Szeredi <miklos@szeredi.hu> writes:
-
-> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
-> <vinicius.gomes@intel.com> wrote:
->>
->> Add a comment to these operations that cannot use the _light version
->> of override_creds()/revert_creds(), because during the critical
->> section the struct cred .usage counter might be modified.
+On Mon, Aug 26, 2024 at 8:05=E2=80=AFAM Kaixiong Yu <yukaixiong@huawei.com>=
+ wrote:
 >
-> Why is it a problem if the usage counter is modified?  Why is the
-> counter modified in each of these cases?
+> The dac_mmap_min_addr belongs to min_addr.c, move it into
+> its own file from /kernel/sysctl.c. In the previous Linux kernel
+> boot process, sysctl_init_bases needs to be executed before
+> init_mmap_min_addr, So, register_sysctl_init should be executed
+> before update_mmap_min_addr in init_mmap_min_addr.
 >
+> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+> ---
+>  kernel/sysctl.c     |  9 ---------
+>  security/min_addr.c | 11 +++++++++++
+>  2 files changed, 11 insertions(+), 9 deletions(-)
+>
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 41d4afc978e6..0c0bab3dad7d 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2059,15 +2059,6 @@ static struct ctl_table vm_table[] =3D {
+>                 .proc_handler   =3D proc_dointvec_minmax,
+>                 .extra1         =3D SYSCTL_ZERO,
+>         },
+> -#ifdef CONFIG_MMU
+> -       {
+> -               .procname       =3D "mmap_min_addr",
+> -               .data           =3D &dac_mmap_min_addr,
+> -               .maxlen         =3D sizeof(unsigned long),
+> -               .mode           =3D 0644,
+> -               .proc_handler   =3D mmap_min_addr_handler,
+> -       },
+> -#endif
+>  #if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
+>     (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
+>         {
+> diff --git a/security/min_addr.c b/security/min_addr.c
+> index 0ce267c041ab..b2f61649e110 100644
+> --- a/security/min_addr.c
+> +++ b/security/min_addr.c
+> @@ -44,8 +44,19 @@ int mmap_min_addr_handler(const struct ctl_table *tabl=
+e, int write,
+>         return ret;
+>  }
+>
+> +static struct ctl_table min_addr_sysctl_table[] =3D {
+> +       {
+> +               .procname       =3D "mmap_min_addr",
+> +               .data           =3D &dac_mmap_min_addr,
+> +               .maxlen         =3D sizeof(unsigned long),
+> +               .mode           =3D 0644,
+> +               .proc_handler   =3D mmap_min_addr_handler,
+> +       },
+> +};
 
-Working on getting some logs from the crash that I get when I convert
-the remaining cases to use the _light() functions.
+I haven't chased all of the Kconfig deps to see if there is a problem,
+but please provide a quick explanation in the commit description about
+why it is okay to drop the CONFIG_MMU check.
 
-Perhaps I was wrong on my interpretation of the crash.
+>  static int __init init_mmap_min_addr(void)
+>  {
+> +       register_sysctl_init("vm", min_addr_sysctl_table);
+>         update_mmap_min_addr();
+>
+>         return 0;
+> --
+> 2.25.1
 
-Thanks for raising this, I should have added more information about this.
-
-
-Cheers,
--- 
-Vinicius
+--=20
+paul-moore.com
 
