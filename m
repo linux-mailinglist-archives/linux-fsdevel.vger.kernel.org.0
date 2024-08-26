@@ -1,139 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-27201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0E095F732
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 18:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C55F595F7A3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 19:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04A90B20B93
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 16:54:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02B4EB22246
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 17:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5CB197A8B;
-	Mon, 26 Aug 2024 16:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE30198A28;
+	Mon, 26 Aug 2024 17:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NqB7pnFI"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kACi0uut"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B357194AF6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 16:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A44E19409E
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 17:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724691247; cv=none; b=l9JwHhdnIZ8qqCcnNSjD7M38DsKkTlphmmYvtLoubvgvkGOm6aeSaiQObYqDuFWXR0WVlQk1kNDuijGopEk8r1IiB2QaOrlDHJ4bkNI3C/hYaH0GkaqHWppvTvBiII1dG/HyPjG81PrITHfPG/lVse882H4pLlONBl0q+sD/zo0=
+	t=1724692457; cv=none; b=Mbl7p7PvhNoOyxX0LxVeqJ3uRXviAGCYG6XNZbWTAf/HRBy7iUs2Ol/BGkB+WQ/2FxBEBL9PVnWD2cyEhVpiaFKkFbpt9mmmwOvl2qV0yOOncLC1tJ4HTsWB2FQ8C8Pawn0YUZq5LHlpBnlzJUft5GsP7Ko3S6UVPMwMkqMKLNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724691247; c=relaxed/simple;
-	bh=SrrYymcdbDLizvS79/RRUElJG4frmyAuzrjQG6kpUYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VeP8hbGYRwKNK/Y2gvjd2ggiQixPGElP3zSKpdMAV/pDDT48xt4Xlpd+wGhVYHopF3lN9+lvkPZKmFHg/pNT06wvW9Q0R/0gQ42yQ/wL61QQWCNSbNF5dtT33YRh72U0hYAq6Pimz49uSeBx/e3TOQMfcf53EIKfcpQYjRr+YVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NqB7pnFI; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a83562f9be9so413656166b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 09:54:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724691244; x=1725296044; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AuNkNTNASSkVHyZwptKwTsvU1aOshMXolrmNLp6jKyI=;
-        b=NqB7pnFInPxLsopP4yeDHM3L5xm7QFZkJ5UteTNfoADN7u95ugBbLEbUGFXYiGYdYg
-         +as1d0i1H2RIVsr8P2YrX6AR0+FEBLrm87xN1l2XGJU1N1lN4j1CbGXih/ZuyybGYiGT
-         vo1Uv3Hl1eV+Z+vFBxQ4hQ7dxalGJZJg3qIM3PlrHWuSGV9HljD/S+/8A44EhvhZO+ue
-         YlBOtqW5kbAkqPoP050njWJgOv+bmgDbD1YiBLvFu7EuE5QwDaLrCYm9s2Ob11g3GKb7
-         AsIRKBui3RFELkLkrr/rs1QAq3iIX7D8WGiVdCdxDLm7e3/n9XClRkZriSe15u+PSwIR
-         291g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724691244; x=1725296044;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AuNkNTNASSkVHyZwptKwTsvU1aOshMXolrmNLp6jKyI=;
-        b=VuAZDXNbHt/WbQR9n9bwf/davAAlpkseKvVd9eoH6WqtjCfHyPW5vHotAnDVBM2ogc
-         5tYiiK7wZf0ZQfbT3DdP3r5TR1+l98keyuUYBioCstowxMNxudo7W41eBCFSroXoKOlc
-         iWSQ9YbVWa2quxjAuq3DLYXJKudBQRcQdTYeau42bBAih26m59OAuFd8N5AtuV96/YN5
-         B9N31eU/OKP9EPgdGoDOEczWPqW8ZMbpKSVuxQNDqPuMhBRgr18GfSn1XO/0ZJnSA7Xl
-         qH2u+FhFaoaUfwI8xqQqxLxSdB/SkBuCskzSt52nK+oMRlvFWyXSZMy1ZZgP2V38Xr7Y
-         8tbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoNngNEXt8ezNN+XgO3SYZJB9qPbK+HrDppHj2RNPtJJ3BPmDe41Z6CapCKkY7LbYOdqNPmHa3pHwD+7Am@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx19B1Q0Vfb2128n+1s01k86U5MjDlBqQc6MnHK7GLEPFqVQVQA
-	nMU1i9leVqpJQmZfwJHbNCCspDp+7K0Hwlc3gjkeZ6wXUxL/H0k2p5B1g2CyhU3muTRwLOaOf61
-	o
-X-Google-Smtp-Source: AGHT+IGqicfaj3+0I5vKnr31dtF3PG61H07IprF3n2t7ZPxM1+pfgLfSyChrmgA9n5aCTBY9B2eIuA==
-X-Received: by 2002:a17:907:2d0a:b0:a77:f2c5:84b3 with SMTP id a640c23a62f3a-a86a5199093mr691568166b.22.1724691243592;
-        Mon, 26 Aug 2024 09:54:03 -0700 (PDT)
-Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f2e66eesm687492566b.97.2024.08.26.09.54.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 09:54:03 -0700 (PDT)
-Date: Mon, 26 Aug 2024 18:54:02 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm: drop PF_MEMALLOC_NORECLAIM
-Message-ID: <ZsyzKmbmNs06Zrt9@tiehlicka>
-References: <20240826085347.1152675-1-mhocko@kernel.org>
- <20240826085347.1152675-3-mhocko@kernel.org>
- <CALOAHbAU6XwN9ti0A1_KywpPqzgKxykWTxHYcYPQOywJo7FePQ@mail.gmail.com>
+	s=arc-20240116; t=1724692457; c=relaxed/simple;
+	bh=kal5xydGPETFQwQvqncim45a19u2XhkRTCYUkp7F6HA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=WorTcVYr92Ygj9P9gIq6QdkEs4Ql5DoYYe18yy0kpg1FSJTncux8YqdvaAaBkkq9iSwQANwD7I+M2hKbSpEHwlpsyhcKyXA970k5v2soiCirRqPr2+NrsPbmT73h69t3bUtFaIIGmN2xCGFNKwXYuFBTE23F1vP7/dHrWGnOsyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kACi0uut; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240826171412epoutp0403032eea4115c92d0b29b69e36d36911~vVqXqyHtI0751607516epoutp04M
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 17:14:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240826171412epoutp0403032eea4115c92d0b29b69e36d36911~vVqXqyHtI0751607516epoutp04M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724692452;
+	bh=Po2gU7Tj1IXZMxwPWnpQrOZ+vFEA/kofumpkR30jMIU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=kACi0uutz/JVECZ5teosHI8WGM9SKa0OHvbP5bdqcnS1XsN5DvIQH7gv/VushIqJo
+	 fXe0I076oDp1ZjrTkUMy9dq0vVHHdqcwahrhEx8Yl9jDOon1H9PqRTzow2XXug8ynU
+	 msRrbYBTgssUDczi3ZNyDeVvEHKoVogvD5q5c6hc=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240826171412epcas5p3131af6d126d29e121f88274b259a5d35~vVqW6MHli2946129461epcas5p3h;
+	Mon, 26 Aug 2024 17:14:12 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Wsy2V308wz4x9Pt; Mon, 26 Aug
+	2024 17:14:10 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0D.A3.09642.2E7BCC66; Tue, 27 Aug 2024 02:14:10 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240826171409epcas5p306ba210a9815e202556778a4c105b440~vVqUt5c6C2946129461epcas5p3f;
+	Mon, 26 Aug 2024 17:14:09 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240826171409epsmtrp21dff6590920e7f62967e1b0cd6fa8b5f~vVqUs0lps3048030480epsmtrp2V;
+	Mon, 26 Aug 2024 17:14:09 +0000 (GMT)
+X-AuditID: b6c32a4b-613ff700000025aa-42-66ccb7e27d64
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	95.B2.07567.1E7BCC66; Tue, 27 Aug 2024 02:14:09 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240826171405epsmtip2435567b12708596c83fb75f46f239673~vVqRFnxQu0040200402epsmtip2b;
+	Mon, 26 Aug 2024 17:14:05 +0000 (GMT)
+From: Kanchan Joshi <joshi.k@samsung.com>
+To: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+	brauner@kernel.org, jack@suse.cz, jaegeuk@kernel.org, jlayton@kernel.org,
+	chuck.lever@oracle.com, bvanassche@acm.org
+Cc: linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+	linux-scsi@vger.kernel.org, gost.dev@samsung.com, vishak.g@samsung.com,
+	javier.gonz@samsung.com, Kanchan Joshi <joshi.k@samsung.com>
+Subject: [PATCH v4 0/5] Write-placement hints and FDP
+Date: Mon, 26 Aug 2024 22:36:01 +0530
+Message-Id: <20240826170606.255718-1-joshi.k@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALOAHbAU6XwN9ti0A1_KywpPqzgKxykWTxHYcYPQOywJo7FePQ@mail.gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUwTZxz2vTuuh7HkVjS+I4p4zj9gAi3SciyA6Mi8rcvS7DMj2eBWjo8A
+	bddrJ5NNccxNuglSFBUlVkLYLONTQLTDOCo6HA5CkQmIVCwsk4lAtyFCYC2Hm/89v+f9Pb/n
+	eb8IVDKABxAZGgOn17BZFL4aa7EHB4eOXuhKlfaeI+nq4SKcnrDPALp0ag6ll4Z/R+iBKxcR
+	+lx1B0KfOp6P0K66MpRuKCLo+3fcInquyiqiO5Ye4rS5vR/QbYMv0r0Vu+kf2zox+kzVmIj+
+	5rdWnP7u+iJC1048wujustOi+HWMo0/JdN9twJhS8w2ccdw0Mo3WApw5X7mfsVncCGMbyMOZ
+	6bFBjClssgKmy3JVxLgbA1VrEjNj0jk2hdMHcRq1NiVDkxZLKd9KejlJrpDKQmXRdBQVpGGz
+	uVgq4XVV6CsZWZ6dUkGfsFlGD6VieZ4Kj4vRa40GLihdyxtiKU6XkqWL1IXxbDZv1KSFaTjD
+	SzKpNELuaUzOTL+89IuPbprMqXFYRXmgQGwCvgQkI+GR232YCawmJKQNQGf5GBCKGQB76gp8
+	hOIfAO8tTGJPJbVFXSJhoQ3A2YqJFb0bwD+s3R49QeBkMOwpMXr5tWQ+AhtqnuDeAiXNCJx2
+	1uDeUf6kHNrHzyJejJFbYeeXZtSLxWQ0HKipRAW7TfBk76xI4J+DnSddyzFQD5/ffGqlx0XA
+	vkXeawzJBHihWC/Q/vDB9SaRgAOge7INF3AmdI46V3bzGWw9X+gj4B0wb+G2j3cM6slfdylc
+	cPKDh+ddiDBdDA99JRG6N8O75rEV5Xp470TlCmbgoO2vZScJ+QH8YngRPQICy57JX/ZM/rL/
+	zSwAtYLnOR2fncbxct12Dbfnv7tUa7MbwfIbD1G2glHnVFg7QAjQDiCBUmvFgY7OVIk4hf10
+	L6fXJumNWRzfDuSeQy1GA9aptZ5PojEkySKjpZEKhSIyertCRq0XTxwsT5GQaayBy+Q4Had/
+	qkMI34A8pCOnxIb4F2+7LN21Z2jT25c67TbTqqFjlTuZWccPGfLkgzm/qgpZ3TZ13EN3/BVd
+	XGq1wpKLDcms4b0not7YWJi8+YUHrfWHFvubtab63MHTt/oiSlw3+qnivY9JaPlTShlqs0M2
+	+IN9Be+9uiHqnZCRuUeSKHXV8TW6ucF5v6uHvw3rOfN1d8SHd8a79zsyZ/cl6L93XsttPjo3
+	Mr7lLPB9zYx8fPFne+JUUKEzUfXurpjP9cc0t1bV41aVEhnFipw77PL50q2TpqGbse+bp3ya
+	cn5amn1T2accQVuu7VY/ue93IH96p+ujOuPjlvhp00KERBp3YHzLjOXoxih3+d8VfhTGp7Oy
+	EFTPs/8CWXJOt2wEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSvO7D7WfSDHa/VLZYfbefzeL14U+M
+	FtM+/GS2+H/3OZPFzQM7mSxWrj7KZDF7ejOTxZP1s5gtNvZzWDy+85nd4ueyVewWR/+/ZbOY
+	dOgao8XeW9oWlxa5W+zZe5LFYv6yp+wW3dd3sFksP/6PyWLd6/csFudnzWF3EPW4fMXb4/y9
+	jSwe0yadYvO4fLbUY9OqTjaPzUvqPXYv+MzksftmA5vHx6e3WDz6tqxi9Diz4Ai7x+dNcgE8
+	UVw2Kak5mWWpRfp2CVwZ+/6fZi34KFCx9vIq9gbGTt4uRk4OCQETiXX9Z9i7GLk4hAR2M0o8
+	+PCaCSIhLtF87Qc7hC0ssfLfc6iij4wSO56vBHI4ONgENCUuTC4FiYsITGaSaHq4hQXEYRaY
+	wySxvHM7M0i3sICpxOFnC8GmsgioSpxsmQQW5xWwlLi5dgkzxAZ5iZmXvrNDxAUlTs58wgJi
+	MwPFm7fOZp7AyDcLSWoWktQCRqZVjJKpBcW56bnJhgWGeanlesWJucWleel6yfm5mxjB8aal
+	sYPx3vx/eocYmTgYDzFKcDArifDKXT6ZJsSbklhZlVqUH19UmpNafIhRmoNFSZzXcMbsFCGB
+	9MSS1OzU1ILUIpgsEwenVANT+JdsVgHpuo6Uf37BDWufbE2P5Sy227qyK0nWbO4x1qvfvt/e
+	HaWXL2dXdFfvMNv0jAlWt2OLRO0WfqlcJX5VTfvRq7JtqvdijB6eKK79vuXHp82JAdN7fpzc
+	9sf+mbzlrzKpgI4SZu0djevmiTocEd67XfiIRbaerFSlbMemdYW8HzLWrNAwPKayblnpfJ7F
+	okmz55TyiOqblz4wcdgiPX2br+RMnWmtDyq3cuTNFhd/6PxESX3uqRa5T6EvDNc+32kToLI7
+	QOJWUM7u+VGnKh83Hanui5E+VOQvkhq5eSu/6vtgn866PkblELf/quzsLlO8gzUO3u6dkpHq
+	elpvReI/adbq+E/H9+lc71BiKc5INNRiLipOBADy+3UfJgMAAA==
+X-CMS-MailID: 20240826171409epcas5p306ba210a9815e202556778a4c105b440
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240826171409epcas5p306ba210a9815e202556778a4c105b440
+References: <CGME20240826171409epcas5p306ba210a9815e202556778a4c105b440@epcas5p3.samsung.com>
 
-On Mon 26-08-24 21:48:34, Yafang Shao wrote:
-> On Mon, Aug 26, 2024 at 4:53 PM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > From: Michal Hocko <mhocko@suse.com>
-> >
-> > There is no existing user of the flag and the flag is dangerous because
-> > a nested allocation context can use GFP_NOFAIL which could cause
-> > unexpected failure. Such a code would be hard to maintain because it
-> > could be deeper in the call chain.
-> >
-> > PF_MEMALLOC_NORECLAIM has been added even when it was pointed out [1]
-> > that such a allocation contex is inherently unsafe if the context
-> > doesn't fully control all allocations called from this context.
-> >
-> > [1] https://lore.kernel.org/all/ZcM0xtlKbAOFjv5n@tiehlicka/
-> >
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> >  include/linux/sched.h    | 1 -
-> >  include/linux/sched/mm.h | 7 ++-----
-> >  2 files changed, 2 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index f8d150343d42..72dad3a6317a 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -1657,7 +1657,6 @@ extern struct pid *cad_pid;
-> >                                                  * I am cleaning dirty pages from some other bdi. */
-> >  #define PF_KTHREAD             0x00200000      /* I am a kernel thread */
-> >  #define PF_RANDOMIZE           0x00400000      /* Randomize virtual address space */
-> > -#define PF_MEMALLOC_NORECLAIM  0x00800000      /* All allocation requests will clear __GFP_DIRECT_RECLAIM */
-> 
-> To maintain consistency with the other unused bits, it would be better
-> to define PF__HOLE__00800000 instead.
+Current write-hint infrastructure supports 6 temperature-based data life
+hints.
+The series extends the infrastructure with a new temperature-agnostic
+placement-type hint. New fcntl codes F_{SET/GET}_RW_HINT_EX allow to
+send the hint type/value on file. See patch #3 commit description for
+the details.
 
-OK
+Overall this creates 128 placement hint values [*] that users can pass.
+Patch #5 adds the ability to map these new hint values to nvme-specific
+placement-identifiers.
+Patch #4 restricts SCSI to use only life hint values.
+Patch #1 and #2 are simple prep patches.
+
+[*] While the user-interface can support more, this limit is due to the
+in-kernel plumbing consideration of the inode size. Pahole showed 32-bit
+hole in the inode, but the code had this comment too:
+
+/* 32-bit hole reserved for expanding i_fsnotify_mask */
+
+Not must, but it will be good to know if a byte (or two) can be used
+here.
+
+Changes since v3:
+- 4 new patches to introduce write-placement hints
+- Make nvme patch use the placement hints rather than write-life hints
+
+Changes since v2:
+- Base it on nvme-6.11 and resolve a merge conflict
+
+Changes since v1:
+- Reduce the fetched plids from 128 to 6 (Keith)
+- Use struct_size for a calculation (Keith)
+- Handle robot/sparse warning
+
+Kanchan Joshi (4):
+  fs, block: refactor enum rw_hint
+  fcntl: rename rw_hint_* to rw_life_hint_*
+  fcntl: add F_{SET/GET}_RW_HINT_EX
+  nvme: enable FDP support
+
+Nitesh Shetty (1):
+  sd: limit to use write life hints
+
+ drivers/nvme/host/core.c   | 81 ++++++++++++++++++++++++++++++++++++++
+ drivers/nvme/host/nvme.h   |  4 ++
+ drivers/scsi/sd.c          |  7 ++--
+ fs/buffer.c                |  4 +-
+ fs/f2fs/f2fs.h             |  4 +-
+ fs/f2fs/segment.c          |  4 +-
+ fs/fcntl.c                 | 79 ++++++++++++++++++++++++++++++++++---
+ include/linux/blk-mq.h     |  2 +-
+ include/linux/blk_types.h  |  2 +-
+ include/linux/fs.h         |  2 +-
+ include/linux/nvme.h       | 19 +++++++++
+ include/linux/rw_hint.h    | 20 +++++++---
+ include/uapi/linux/fcntl.h | 14 +++++++
+ 13 files changed, 218 insertions(+), 24 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.25.1
+
 
