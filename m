@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-27163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E22A95F1D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 14:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CF495F1DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 14:49:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 333AE1C22766
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 12:49:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5CBE1C227AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 12:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5558E19412F;
-	Mon, 26 Aug 2024 12:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ED5194A68;
+	Mon, 26 Aug 2024 12:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ps9uclU9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grpfIMos"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CCE17C990;
-	Mon, 26 Aug 2024 12:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8521946A9;
+	Mon, 26 Aug 2024 12:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724676397; cv=none; b=QmluDQH011bZLCVHDFcKm8QEJYWzu74ZFC3FuQmNwK7jX9f/22Uo9EwHIIhwUJuUuUsXLyHg2vjyDVY0+RhBdefE5yc71b2TrVo7GFVECBUAhMt/XqY9mSWRq0XIEDDqiURy2hmb2d2z+Ugm2MLXQ1n3weiOo4BFJOD/oHevWJ0=
+	t=1724676399; cv=none; b=OcRZ/RXMa/K91kVsDDneUuM43NnBOKyICF4WPTjtY890+Q3wVpnJeAhQS4I6WTnGLJu5fXwd3TBy5QQGPDPHAvX8Jh/2rIqeEUYjflLhzlPug6yZp/OvCJ4ga1dSyWZq9s0NNgUcniBh2A/2HsU7nCBkw3+UfJ7PBBDt3qTIOq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724676397; c=relaxed/simple;
-	bh=Mqa5mLhpZY/ltSyNSZZhMBfJFukWo5ccxg5oGNVYVKs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HrJ3YQFVeIVnyvEE76cfblOg4g1AT/Qjtp8Rv8S/cEJ9LeFdAmdYcmgsord4BQoB6aYcj7sXKysCbt1kK4vDRRXjQeATLNzzDgE6CmXtYUVZjHOzWGAR8xxnllJ8zBnSAw7GsD31OQ63R3rXo5f+z4GD1gPmr3lfLD7dPn17EmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ps9uclU9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7364C581A8;
-	Mon, 26 Aug 2024 12:46:35 +0000 (UTC)
+	s=arc-20240116; t=1724676399; c=relaxed/simple;
+	bh=7jlrRj4kXPzN3gZjrQ6Cust2gbuDWKwrYdd0gLjRSjQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Ezh/xsI4jJNr8CWCoC7WpvgXNeVedVYg0NZd6OKOm7PE7pUiky+tYl8Ac7FKvR6ZB3L3TX7i8Q7X2ePpiLQv9CMgbe0jX9olumS55m8pPzc0DktiQQ6D903ptBO2O+xcIrX/Iq//vhgRLQujIGHpJ2710jVZf26m0ptKn4tfzEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grpfIMos; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A621C581B7;
+	Mon, 26 Aug 2024 12:46:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724676397;
-	bh=Mqa5mLhpZY/ltSyNSZZhMBfJFukWo5ccxg5oGNVYVKs=;
-	h=From:Subject:Date:To:Cc:From;
-	b=Ps9uclU9vmsyZRIuCMx9HeJBP1eF4frm1kuhfPPZ1IxtxVt9nnjT2IhsEq19cguZS
-	 z6f+FGwT4lP1di7aHYi+K80lJCxRnXa6vVEdwKHEilIcKpZ+CTrFhl7dlf5VxpEi7c
-	 TclzY5HPwAHrmIkJ4KI1be6ykI+kHGeNa0ynzfrgkiuYOeRNfp+UKPUSgpCCTbAcxO
-	 /aHjxi3ja6EieBSZbNPwtgjQXYnOVrKbsB7cHC58PWJ9Vc4LCMEKKmgeszAT63IVOE
-	 EoPYZRXbhgy+RIOCGuSGRXv/rivgsB94HyBOFJNXriO+EwopeUluHpMVj8WJ1llBF7
-	 p7u+R7T5tK6mg==
+	s=k20201202; t=1724676398;
+	bh=7jlrRj4kXPzN3gZjrQ6Cust2gbuDWKwrYdd0gLjRSjQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=grpfIMost5Zj4NU3cY1DoXAukCIX5s4aDblfEEmcMo2gV+D0unW5/Hfr+OuWTXVAM
+	 GlWVEjO8p5qjXljy58qBRrKrj0ZVNmAUt7uwOj9EARdv2WTwdLwVLnGtWRgkOF1V7I
+	 IZf+ggsLs3+SBftDeLbHvo6fPHUOl/BleVsqg+XUS5kQ6F0pqvX0l2tJwaJPXTceXX
+	 73kd3GBTscl+cyj2vDKYCMPBdE5QviCeD8sNe46PL9BM3sPYTg9hOh0dIrB6w6QZqo
+	 J2qQwiLrBpAKba2J9UQeSkFrKINfPphedLF1uFmiIrO5vXVOUdrPE1IA2AcFURWSM7
+	 foM/9Cu5yEgfw==
 From: Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH v2 0/7] nfsd: implement the "delstid" draft
-Date: Mon, 26 Aug 2024 08:46:10 -0400
-Message-Id: <20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org>
+Date: Mon, 26 Aug 2024 08:46:11 -0400
+Subject: [PATCH v2 1/7] nfsd: add pragma public to delegated timestamp
+ types
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,9 +53,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABJ5zGYC/z3MQQrCMBCF4auUWRvJTGsxrryHdFGSsR0siSQlK
- CV3NxZ0+T8e3waJo3CCS7NB5CxJgq9BhwbsPPqJlbjaQJo6fcaTcrykVZwyLRndGxwdItT3M/J
- dXrt0G2rPktYQ3zuc8bv+jP5vZFRaWSK0rbPYWXd9cPS8HEOcYCilfAAUqwsInwAAAA==
+Message-Id: <20240826-delstid-v2-1-e8ab5c0e39cc@kernel.org>
+References: <20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org>
+In-Reply-To: <20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org>
 To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
  Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
  Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
@@ -66,111 +67,120 @@ Cc: Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org,
  linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4176; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Mqa5mLhpZY/ltSyNSZZhMBfJFukWo5ccxg5oGNVYVKs=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmzHklNB/3H06JSbOJk7KWW01IPnZ3Ngolievad
- ZKp6iEEYB2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZsx5JQAKCRAADmhBGVaC
- FeqfD/9/LZnJu/iWR1fcTiBn4raT4I6PpMydkZ64EwU6NnAUGAz/14Cp1ja9MkUrT/M7+RoKkXv
- uHNkyiqHdYozP9mhZadUmy7rFhS/If6y8qVP78JjobU3ghzpvq9pgFBCGCrFErWDC02IYaKdGbV
- EOWuFo0CIIBhADLdnsD2/O9rH0GxvGwJJutog25GZN9AqzciSOzsOs/GZndWKCFaxnmztBYDY8n
- SdzyV/hCTinE3ANhB8aJrowKfnvZkjcJKF71kIeUxDRIZoO+gQnctagtLRfBFxgiq4PCTx6EELc
- OVW9eVhvrbn3GlpjKOMCV3f1QF/W4gXkvE5Tlyc9gnKifIA5yjxSqVnGTXPfybcGajMIeL/sCVe
- s/xqsx+Jg47166qsHhHnOwODivVqs84KjLv5MW4hpG/PG8Igiqeah7qpPK+NLxtysUseg7fsmdF
- rsfN9D18daTBBytJHBBDz2HohjmXuP1etBwl5kfTDyBhTjK5uPfD3DiIgfZt3XFzzjlLQ5j9v5U
- 5kY2YnXQS1QDCXNrJomIJnlymuWHYXBDX7K2W6pmICV6EYXuYFmDtTdwUCNO5xEpNCsjnmmoPFN
- 3wWzBhvOT88hRV4zWOsXDkrLVwGZE4czesL8l674F+glKSLfUHjf5fvg4SDOE1/2igzVac6HVNl
- LkseKZHxMrjs+8g==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3577; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=7jlrRj4kXPzN3gZjrQ6Cust2gbuDWKwrYdd0gLjRSjQ=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmzHkq5SiPS5mfhgWmxd7cOMuuf1SQbfCc16Lo0
+ mpJSYVeTKGJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZsx5KgAKCRAADmhBGVaC
+ FbFOD/9uagwI3lUrGKeYqJcGSp6ls/zpL4e/z5sWK9vOe9+O43vv81HwrtnS1ho6sIXWn1VMVMi
+ kMN6PAylkYhkuxb8o2UvMqNmSGtNkAuqthJIKb0K4X3kN8TZ452xeZktlFnEH3171jyz7VAqW5T
+ iV9l1/FO95U9wGbuAgRuCFmiZVIhgrmsRV3u7V7fPQMfPDsx+geZZHTzVdqIS8oVqrVL30oDwLl
+ z5Q8uFC4t/dCPrkY3IQwmYLxtkcb90hJ4JgqOzau1A/dE5PZh+PAGi6yxWrjxMA9gZlpgHr+8FE
+ 4kAE+Jlx8bWRA3l2D1XEm3R0JuplGwcagcodFUWJRWxpF1BjZ4nkm3bwrwclm9WzE4d8auqHWHj
+ P5UGOyTF+6Vl/ziU9cO/odqrv4PUXCwVzZkyeEu/hUWU2uaB1cw5vjqaGyqIqTdDZE9GH38hdA+
+ 8e9dfzI+uQZGzKWvy4ZRxAnlPG023JTTDRpoed4LklrCGcWXgXFDMqWs9cWIF4Ajs+FeQFXYomI
+ jUSmBYDsqzRXBSHoCr4CUKEdEOp1ZTTa46S2IfKYHI4Z/eEBNf0UIXERAjnpISTQA6MsTicSSl6
+ aIW2zh4OB8UxGJqH7ycm0gd5MgJxBuFNYSD4Bf4pPWjEXllzS5IXSvxNOWYbbF0gJVYFc9EAqfm
+ S9Oktj2Z4bLm+Eg==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-This adds support for most of the "delstid" draft:
-
-    https://datatracker.ietf.org/doc/draft-ietf-nfsv4-delstid/06/
-
-This includes a number of new features around the OPEN call:
-
-- support for FATTR4_OPEN_ARGUMENTS: A new way for clients to discover
-  what OPEN features the server supports at mount time.
-
-- support for OPEN_XOR_DELEGATION: The server can send only a delegation
-  stateid in response to an OPEN (avoiding the useless open stateid in
-  that case).
-
-- support for delegated timestamps: when the client holds a write
-  delegation, it can send an updated atime and mtime in the CB_GETATTR
-  response
-
-FATTR4_OFFLINE is not implemented, since we don't have a way to
-designate that under Linux. [1]
-
-This patchset depends on a number of patchsets still in flight:
-- the multigrain timestamp series [2] (in Christian's vfs.mgtime branch)
-- the nfsd CB_GETATTR fixes [3][4] (in Chuck's nfsd-fixes branch)
-- Chuck's xdrgen patches [5] (in Chuck's lkxdrgen branch)
-
-If you want to test this functionality, you'll also need client-side
-patches that went into v6.11-rc5 [6][7].
-
-I should make special mention of patch #2, which starts integrating the
-xdrgenerated header. That will affect both the client and server, so I
-want to make sure everyone (Trond and Anna, in particular) is on board
-with this scheme before we merge it.
-
-For now, that patch just moves the header from where it was in Chuck's
-tree, but it'd probably be better to add a new "make xdrgen" target for
-that, long term.
-
-[1]: We could add a STATX_ATTR_OFFLINE flag for this, but the userland
-     use-cases are not 100% clear to me.
-[2]: https://lore.kernel.org/linux-fsdevel/20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org/
-[3]: https://lore.kernel.org/linux-nfs/Zsoe%2FD24xvLfKClT@tissot.1015granger.net/T/#t
-[4]: https://lore.kernel.org/linux-nfs/ZsofUUJeB1wbONyi@tissot.1015granger.net/T/#t
-[5]: https://lore.kernel.org/linux-nfs/20240820144600.189744-1-cel@kernel.org/T/#me0207d0b18c19ddbf1cf698acff7e591bb4b100c
-[6]: https://lore.kernel.org/linux-nfs/20240815141841.29620-1-jlayton@kernel.org/
-[7]: https://lore.kernel.org/linux-nfs/20240821-nfs-6-11-v2-1-44478efe1650@kernel.org/
+In a later patch we're going to need the ability to decode the delegated
+timestamp fields.  Make the decoders available for the delgated
+timestamp types, and regenerate the source and header files.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Changes in v2:
-- rebase onto Chuck's lkxdrgen branch, and reworked how autogenerated
-  code is included
-- declare nfsd_open_arguments as a global, so it doesn't have to be
-  set up on the stack each time
-- delegated timestamp support has been added
-- Link to v1: https://lore.kernel.org/r/20240816-delstid-v1-0-c221c3dc14cd@kernel.org
+ fs/nfsd/nfs4_1.x      |  2 ++
+ fs/nfsd/nfs4xdr_gen.c | 10 +++++-----
+ fs/nfsd/nfs4xdr_gen.h |  8 +++++++-
+ 3 files changed, 14 insertions(+), 6 deletions(-)
 
----
-Jeff Layton (7):
-      nfsd: add pragma public to delegated timestamp types
-      nfs_common: make nfs4.h include generated nfs4_1.h
-      nfsd: add support for FATTR4_OPEN_ARGUMENTS
-      nfsd: implement OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION
-      fs: add an ATTR_CTIME_DLG flag
-      nfsd: drop the ncf_cb_bmap field
-      nfsd: add support for delegated timestamps
+diff --git a/fs/nfsd/nfs4_1.x b/fs/nfsd/nfs4_1.x
+index d2fde450de5e..fc37d1ecba0f 100644
+--- a/fs/nfsd/nfs4_1.x
++++ b/fs/nfsd/nfs4_1.x
+@@ -150,6 +150,8 @@ const OPEN4_RESULT_NO_OPEN_STATEID = 0x00000010;
+  */
+ typedef nfstime4        fattr4_time_deleg_access;
+ typedef nfstime4        fattr4_time_deleg_modify;
++pragma public 		fattr4_time_deleg_access;
++pragma public		fattr4_time_deleg_modify;
+ 
+ 
+ %/*
+diff --git a/fs/nfsd/nfs4xdr_gen.c b/fs/nfsd/nfs4xdr_gen.c
+index c22372144a57..0816cfa530e0 100644
+--- a/fs/nfsd/nfs4xdr_gen.c
++++ b/fs/nfsd/nfs4xdr_gen.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Generated by xdrgen. Manual edits will be lost.
+-// XDR specification modification time: Fri Aug 23 17:28:09 2024
++// XDR specification modification time: Fri Aug 23 18:57:46 2024
+ 
+ #include "nfs4xdr_gen.h"
+ 
+@@ -120,13 +120,13 @@ xdrgen_decode_fattr4_open_arguments(struct xdr_stream *xdr, fattr4_open_argument
+ 	return xdrgen_decode_open_arguments4(xdr, ptr);
+ };
+ 
+-static bool __maybe_unused
++bool
+ xdrgen_decode_fattr4_time_deleg_access(struct xdr_stream *xdr, fattr4_time_deleg_access *ptr)
+ {
+ 	return xdrgen_decode_nfstime4(xdr, ptr);
+ };
+ 
+-static bool __maybe_unused
++bool
+ xdrgen_decode_fattr4_time_deleg_modify(struct xdr_stream *xdr, fattr4_time_deleg_modify *ptr)
+ {
+ 	return xdrgen_decode_nfstime4(xdr, ptr);
+@@ -223,13 +223,13 @@ xdrgen_encode_fattr4_open_arguments(struct xdr_stream *xdr, const fattr4_open_ar
+ 	return xdrgen_encode_open_arguments4(xdr, value);
+ };
+ 
+-static bool __maybe_unused
++bool
+ xdrgen_encode_fattr4_time_deleg_access(struct xdr_stream *xdr, const fattr4_time_deleg_access *value)
+ {
+ 	return xdrgen_encode_nfstime4(xdr, value);
+ };
+ 
+-static bool __maybe_unused
++bool
+ xdrgen_encode_fattr4_time_deleg_modify(struct xdr_stream *xdr, const fattr4_time_deleg_modify *value)
+ {
+ 	return xdrgen_encode_nfstime4(xdr, value);
+diff --git a/fs/nfsd/nfs4xdr_gen.h b/fs/nfsd/nfs4xdr_gen.h
+index 48da108a2427..e79935f973ff 100644
+--- a/fs/nfsd/nfs4xdr_gen.h
++++ b/fs/nfsd/nfs4xdr_gen.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /* Generated by xdrgen. Manual edits will be lost. */
+-/* XDR specification modification time: Fri Aug 23 17:28:09 2024 */
++/* XDR specification modification time: Fri Aug 23 18:57:46 2024 */
+ 
+ #ifndef _LINUX_NFS4_XDRGEN_H
+ #define _LINUX_NFS4_XDRGEN_H
+@@ -88,8 +88,14 @@ enum { OPEN4_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION = 0x200000 };
+ enum { OPEN4_RESULT_NO_OPEN_STATEID = 0x00000010 };
+ 
+ typedef struct nfstime4 fattr4_time_deleg_access;
++bool xdrgen_decode_fattr4_time_deleg_access(struct xdr_stream *xdr, fattr4_time_deleg_access *ptr);
++bool xdrgen_encode_fattr4_time_deleg_access(struct xdr_stream *xdr, const fattr4_time_deleg_access *value);
++
+ 
+ typedef struct nfstime4 fattr4_time_deleg_modify;
++bool xdrgen_decode_fattr4_time_deleg_modify(struct xdr_stream *xdr, fattr4_time_deleg_modify *ptr);
++bool xdrgen_encode_fattr4_time_deleg_modify(struct xdr_stream *xdr, const fattr4_time_deleg_modify *value);
++
+ 
+ enum { FATTR4_TIME_DELEG_ACCESS = 84 };
+ 
 
- {fs/nfsd => Documentation/sunrpc/xdr}/nfs4_1.x     |   2 +
- fs/attr.c                                          |  10 +-
- fs/nfsd/Makefile                                   |   2 +-
- fs/nfsd/nfs4callback.c                             |  43 +++++++-
- fs/nfsd/nfs4state.c                                | 115 +++++++++++++++++++--
- fs/nfsd/nfs4xdr.c                                  |  53 +++++++++-
- fs/nfsd/nfs4xdr_gen.c                              |  12 +--
- fs/nfsd/nfsd.h                                     |   6 +-
- fs/nfsd/state.h                                    |   4 +-
- fs/nfsd/xdr4cb.h                                   |  10 +-
- include/linux/fs.h                                 |   1 +
- include/linux/nfs4.h                               |   7 +-
- include/linux/nfs_xdr.h                            |   5 -
- .../linux/sunrpc/xdrgen/nfs4_1.h                   |  14 ++-
- include/uapi/linux/nfs4.h                          |   7 +-
- 15 files changed, 244 insertions(+), 47 deletions(-)
----
-base-commit: 55f9aa30de14b6ec52940adeb4790c15247fed40
-change-id: 20240815-delstid-93290691ad11
-
-Best regards,
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.46.0
 
 
