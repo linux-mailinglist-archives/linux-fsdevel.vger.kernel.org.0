@@ -1,185 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-27184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B8B95F3E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 16:31:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5323295F3EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 16:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B881F2836EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 14:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7851F1C21C16
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 14:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA77017D35B;
-	Mon, 26 Aug 2024 14:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E44818D641;
+	Mon, 26 Aug 2024 14:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="qQj7pA63"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKKGr+X8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F41A3CF5E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 14:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7766A17D35B;
+	Mon, 26 Aug 2024 14:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724682669; cv=none; b=n98cg0+CwU1ju1vP8aAHlwBo3laBT1WH1GzZipWPX9uyBSX9GTufFqrasU1O1Xhseuk9/jqmrn2GjgxrE9GidJs+IxFBogstSVkqjKMnUBILDcvmAom8Zne0DrLmY7yhhF45PDNC/bgV36Y9+kWSDDkXl4mnZYwjU+N8BZBqtLE=
+	t=1724682759; cv=none; b=XgxfSnzzHZ1NfHmUi0K6G4pDshJ6azBOf+2VngMGZS3geokxMOustMMDiGaS9zjQyLdT5MotCOwuoKf3GPGs+2RV3vN+rMW+o32Na1SrJxlvgESmrbkS8Sgq0BXmDpj8j1H63akM1vjtRPND46iIkht/8BHE2Ssy96hjMnEbyjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724682669; c=relaxed/simple;
-	bh=m+DAXiAXRoYXLIl0ntrxCcIEyJVGkUk6cmnHaWHfl4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qyGenhYuCSiYPiOb7DDeAGlP1sPsFgXNSB8tOFFCG5ZZzl2pWRUTZ5NV8a6IHBf/UQo9EkvECpI5Hl6b30pzzroTHpFEe27T5KtnIB1sPS6Kff+Fp0ifROQ9PqbSrNeUnbdxyZEongM6wS4ORup4eHOypITTmRUUmZ0gzJS62vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=qQj7pA63; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6bf66fe9d8bso20605946d6.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 07:31:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1724682666; x=1725287466; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yUafkOkfTF/MtBgnU33NzXr4GUkk/r6kjneCB2AlwMY=;
-        b=qQj7pA63e6V4ASNzRomoZ0b+e+/h4tLCNTReqgChV/eHmJx358MnI9Hm+Sd/GXS8nt
-         aWE9u26Z8Mxj+ptW2o8tL9CCrmNFJTzadSdHJGWr++cYAHVjNbHkAPF0TEM73QKnx0EP
-         iAvgjsaAZ4wFE6U6nDw/v/8plWnEv+d5w2UlgJVZ2XgfvPsyju1I2eRgoZf+yUKogfvF
-         XWgAQ4aCaZ1WRRvSUaOJe2WaKnc8tb5CQmjrnIxL0ubr678RBq2Sd7fyDzp51U//rMV+
-         rMHDYKSJCbeKEw2pnnJfitcCjZxbO8WGo+dUuSym2FV3o2L/NEcwWoTntNqGDzslESbP
-         rcbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724682666; x=1725287466;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yUafkOkfTF/MtBgnU33NzXr4GUkk/r6kjneCB2AlwMY=;
-        b=xSTWw3dTXmL8l0Tacad0/yQLjP8GaY5V93pbS6O9MvOlD5z0iQimVq3e0aRxPWSLth
-         tiAreuYDSq6I7RkTtlXTH0+eoCcnX9RKPqcpxWsF0XkPREIlid7ua/60KsIWus3YipUe
-         blJo6dc1tJBvLFXM8S+YfjJlF3MmyWve3VirXP4o6MgVMAcW+XzqIDk35708X3sOqNy+
-         RmklegccLAluMFNT7TZn8enHH2P4eoZ5FkkvzmkzJPWZwoM0Q5pKUiwoUuQuBXKuXvTL
-         rJqpPjZi733G84LIclvT3uK8H8qvkrQrjNIU/Qc6bvWPmL3WuFBhSfJOgFMju/c3LVRV
-         5wUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOK31h9d5cn5aAhR6u7p/9QCYBamO2WyOXRwMtnhvsNKJXkNHFD5pMPgB/8O1IPzvrxDbklyJOj0RquhGu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrWTAlzMVCiHuAkczR5wYj5XjjfoKa9NyJ0/3v3KWmpOedDHv+
-	yQogu8QOubOkEk57K4U+T/RWhTqDWi+Asdwe7FQWM56ILl2A8GPAOOK4nvF9Olk=
-X-Google-Smtp-Source: AGHT+IGwx921YVklqQfbHvw/93RErEjSG1ES3xWwUzI3HbKc2TTQxWGTod+or+hvI8rbBr5m85j7pg==
-X-Received: by 2002:a05:6214:4803:b0:6c1:5f1f:fea3 with SMTP id 6a1803df08f44-6c16ded56bdmr106437266d6.54.1724682666409;
-        Mon, 26 Aug 2024 07:31:06 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d6548csm46308066d6.68.2024.08.26.07.31.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 07:31:05 -0700 (PDT)
-Date: Mon, 26 Aug 2024 10:31:05 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-	bernd.schubert@fastmail.fm, jefflexu@linux.alibaba.com,
-	kernel-team@meta.com
-Subject: Re: [PATCH v3 6/9] fuse: convert fuse_writepages_fill() to use a
- folio for its tmp page
-Message-ID: <20240826143105.GD2393039@perftesting>
-References: <20240823162730.521499-1-joannelkoong@gmail.com>
- <20240823162730.521499-7-joannelkoong@gmail.com>
- <20240823190346.GB2237731@perftesting>
- <CAJnrk1aU-iY+7v-b+=YJm_ajHFJjm2ZfsT_TwC2EJSy6zSn2uQ@mail.gmail.com>
+	s=arc-20240116; t=1724682759; c=relaxed/simple;
+	bh=YXTK2J5YB64tUBeZ1eHaaaaCG+jc9iYf70n2FydLanQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ozdgu6RCRxN+q7o9MLE/NRmO6IJwKsu+YnlC+SOFRYWcIU5Rl9o3Sf49bqs05RXgdiY4EqQFaCrosp1kLhPoSRUcMsznPdBTK4YGz6va5ZGR87eDKSBrWG+ip+oJ8HOVEPf0fGXS79Qu0YbapLtPlcBRZLMKbQ2QlFJdzVXzuvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKKGr+X8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58069C4AF61;
+	Mon, 26 Aug 2024 14:32:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724682759;
+	bh=YXTK2J5YB64tUBeZ1eHaaaaCG+jc9iYf70n2FydLanQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=nKKGr+X8SMrj1tg3epCw8JidH75RANENFFglcQJn7tmu7sa+2rTFOc8kCyS1ObmGg
+	 kfn309chJ7dOkEuakaz2wseYtRxfvjCDm+Zl/8EQSB0Zul8XZuc4cN0zRXSee09kla
+	 j8m1zEGJAU4zA5i7f1MJKsuEluR0ZmD5JcUoDX9ifG4LICGyXTGDEE5hfaZJg0MHsZ
+	 AWRDKAGWqJ3HHuOXN+yHqVfypaQpFdV/d8EN6Yv7kAPLqTUAJ9cy0jOLkhVVkSH5ES
+	 bQFOjWe2gKQ7Bjzu4+ademRVBzww5VBgMg8ZYByAaQl1o+hzU45Pb4WIPpT+X8hyZn
+	 sKu0Fc2aBAh7g==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Mon, 26 Aug 2024 10:32:34 -0400
+Subject: [PATCH v2] fs/nfsd: fix update of inode attrs in CB_GETATTR
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1aU-iY+7v-b+=YJm_ajHFJjm2ZfsT_TwC2EJSy6zSn2uQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240826-nfsd-fixes-v2-1-709d68447f03@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAGSzGYC/22MzQ7CIBAGX6Xh7BpY+0M9+R6mBwJLSzS0AUM0D
+ e8ubTwY43H225mVRQqOIjtXKwuUXHSzL4CHiulJ+ZHAmcIMOdZc4gm8jQase1KEVliuO9kYgQ0
+ rwhJoH8r/dSg8ufiYw2tvJ7Fd/2aSAA5W971SorWt4pcbBU/34xzGLftx6h9HgO6Qy6asPdK3M
+ +Sc3wSScCjZAAAA
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5889; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=YXTK2J5YB64tUBeZ1eHaaaaCG+jc9iYf70n2FydLanQ=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmzJIGJiACTJdGgL+HUhWx5ffOADerWGR63X019
+ HhfzhSm9GeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZsySBgAKCRAADmhBGVaC
+ FRqKD/9DushojczvJgk9Vmh01eDtqKHvAlb23G13VVYdy6vPviyZNx3N8JuiSbJy/oCXb+aFmbL
+ AZLODCO0zetpwLUe/fzNVXHucycZQn8VVEubPYGJ0j1/TBvR1KscVS8y6gS68TiO0vfSyPUvU4E
+ oS1h5aPDxajNeH8e6EZBHPbv4EEKtZVVcPsHQN/Nlk/AGUxYjMSpp+WyulAFUTgtshA5NO3HkTn
+ Zacj6dsBCYVuvUa+Mg8XQ7cGlBhHckKXeehL8Toa4ih9mLLI87VrO7MFvhcvACTX2R81sVycaJn
+ HASqayamQdjXzWmQSUoE5xooj88oF2iNsL+o+I26xItQsq1X7CRYamlQop52R7QfdaC3NrDwnKV
+ /UKuwIKLvTWTq28r/U9x/slF2N5Z1OA+QJZSjs0AhVu6bZI+JYkLJ07FNDy7+HwhSmHq6aIZe8v
+ vlpROqUE4qyMSHYSeH+vcx6wQvIV+pltx1EbsQMr7b9CYY8QPLoYlLhxalgRxYYwxO2cUsUPZJz
+ cRDNvk3jJlFovmcRjYlRpLfhGFRF6UucuzwGuEhCUbOX/uG5RJtqwrtCSrLhuIfFj1NJAC4TC7W
+ a4qy0JKD+tP6g09pgVYVnMSRSh0iVHzIZIg9FKGzDK9sTdn27i2SCebq0Gt2qQJAU5FupTDALhp
+ A3czQtA4i/cHnxg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Fri, Aug 23, 2024 at 02:38:02PM -0700, Joanne Koong wrote:
-> On Fri, Aug 23, 2024 at 12:03 PM Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> > On Fri, Aug 23, 2024 at 09:27:27AM -0700, Joanne Koong wrote:
-> > > To pave the way for refactoring out the shared logic in
-> > > fuse_writepages_fill() and fuse_writepage_locked(), this change converts
-> > > the temporary page in fuse_writepages_fill() to use the folio API.
-> > >
-> > > This is similar to the change in e0887e095a80 ("fuse: Convert
-> > > fuse_writepage_locked to take a folio"), which converted the tmp page in
-> > > fuse_writepage_locked() to use the folio API.
-> > >
-> > > inc_node_page_state() is intentionally preserved here instead of
-> > > converting to node_stat_add_folio() since it is updating the stat of the
-> > > underlying page and to better maintain API symmetry with
-> > > dec_node_page_stat() in fuse_writepage_finish_stat().
-> > >
-> > > No functional changes added.
-> > >
-> > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > ---
-> > >  fs/fuse/file.c | 14 +++++++-------
-> > >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > > index a51b0b085616..905b202a7acd 100644
-> > > --- a/fs/fuse/file.c
-> > > +++ b/fs/fuse/file.c
-> > > @@ -2260,7 +2260,7 @@ static int fuse_writepages_fill(struct folio *folio,
-> > >       struct inode *inode = data->inode;
-> > >       struct fuse_inode *fi = get_fuse_inode(inode);
-> > >       struct fuse_conn *fc = get_fuse_conn(inode);
-> > > -     struct page *tmp_page;
-> > > +     struct folio *tmp_folio;
-> > >       int err;
-> > >
-> > >       if (wpa && fuse_writepage_need_send(fc, &folio->page, ap, data)) {
-> > > @@ -2269,8 +2269,8 @@ static int fuse_writepages_fill(struct folio *folio,
-> > >       }
-> > >
-> > >       err = -ENOMEM;
-> > > -     tmp_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
-> > > -     if (!tmp_page)
-> > > +     tmp_folio = folio_alloc(GFP_NOFS | __GFP_HIGHMEM, 0);
-> > > +     if (!tmp_folio)
-> > >               goto out_unlock;
-> > >
-> > >       /*
-> > > @@ -2290,7 +2290,7 @@ static int fuse_writepages_fill(struct folio *folio,
-> > >               err = -ENOMEM;
-> > >               wpa = fuse_writepage_args_alloc();
-> > >               if (!wpa) {
-> > > -                     __free_page(tmp_page);
-> > > +                     folio_put(tmp_folio);
-> > >                       goto out_unlock;
-> > >               }
-> > >               fuse_writepage_add_to_bucket(fc, wpa);
-> > > @@ -2308,14 +2308,14 @@ static int fuse_writepages_fill(struct folio *folio,
-> > >       }
-> > >       folio_start_writeback(folio);
-> > >
-> > > -     copy_highpage(tmp_page, &folio->page);
-> > > -     ap->pages[ap->num_pages] = tmp_page;
-> > > +     folio_copy(tmp_folio, folio);
-> > > +     ap->pages[ap->num_pages] = &tmp_folio->page;
-> > >       ap->descs[ap->num_pages].offset = 0;
-> > >       ap->descs[ap->num_pages].length = PAGE_SIZE;
-> > >       data->orig_pages[ap->num_pages] = &folio->page;
-> > >
-> > >       inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
-> > > -     inc_node_page_state(tmp_page, NR_WRITEBACK_TEMP);
-> > > +     inc_node_page_state(&tmp_folio->page, NR_WRITEBACK_TEMP);
-> >
-> > I *think* you can use
-> >
-> > node_stat_add_folio(tmp_folio, NR_WRITEBACK_TEMP);
-> >
-> > here instead of inc_node_page_state().  Thanks,
-> 
-> I was thinking inc_node_page_state() here would be better for
-> preserving the API symmetry with the dec_node_page_state() function
-> that gets called when the writeback gets finished (in
-> fuse_writepage_finish_stat) - I don't think it's immediately obvious
-> that node_stat_add_folio() and dec_node_page_state() are inverses of
-> each other. I don't feel strongly about this though, so i'm happy to
-> change this to node_stat_add_folio as well.
+Currently, we copy the mtime and ctime to the in-core inode and then
+mark the inode dirty. This is fine for certain types of filesystems, but
+not all. Some require a real setattr to properly change these values
+(e.g. ceph or reexported NFS).
 
-Ah yeah that's a good point, probably better to convert those in one shot so
-everything is consistent.  Thanks,
+Fix this code to call notify_change() instead, which is the proper way
+to effect a setattr. There is one problem though:
 
-Josef
+In this case, the client is holding a write delegation and has sent us
+attributes to update our cache. We don't want to break the delegation
+for this since that would defeat the purpose. Add a new ATTR_DELEG flag
+that makes notify_change bypass the try_break_deleg call.
+
+Fixes: c5967721e106 ("NFSD: handle GETATTR conflict with write delegation")
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Just an update to the comments. Chuck, can you drop the old one in favor
+of this one?
+---
+Changes in v2:
+- Add better comments explaining what ATTR_DELEG means
+- Link to v1: https://lore.kernel.org/r/20240824-nfsd-fixes-v1-1-c7208502492e@kernel.org
+---
+ fs/attr.c           | 14 +++++++++++---
+ fs/nfsd/nfs4state.c | 18 +++++++++++++-----
+ fs/nfsd/nfs4xdr.c   |  2 +-
+ fs/nfsd/state.h     |  2 +-
+ include/linux/fs.h  |  1 +
+ 5 files changed, 27 insertions(+), 10 deletions(-)
+
+diff --git a/fs/attr.c b/fs/attr.c
+index 960a310581eb..0dbf43b6555c 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -489,9 +489,17 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	error = security_inode_setattr(idmap, dentry, attr);
+ 	if (error)
+ 		return error;
+-	error = try_break_deleg(inode, delegated_inode);
+-	if (error)
+-		return error;
++
++	/*
++	 * If ATTR_DELEG is set, then these attributes are being set on
++	 * behalf of the holder of a write delegation. We want to avoid
++	 * breaking the delegation in this case.
++	 */
++	if (!(ia_valid & ATTR_DELEG)) {
++		error = try_break_deleg(inode, delegated_inode);
++		if (error)
++			return error;
++	}
+ 
+ 	if (inode->i_op->setattr)
+ 		error = inode->i_op->setattr(idmap, dentry, attr);
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index dafff707e23a..e0e3d3ca0d45 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -8815,7 +8815,7 @@ nfsd4_get_writestateid(struct nfsd4_compound_state *cstate,
+ /**
+  * nfsd4_deleg_getattr_conflict - Recall if GETATTR causes conflict
+  * @rqstp: RPC transaction context
+- * @inode: file to be checked for a conflict
++ * @dentry: dentry of inode to be checked for a conflict
+  * @modified: return true if file was modified
+  * @size: new size of file if modified is true
+  *
+@@ -8830,7 +8830,7 @@ nfsd4_get_writestateid(struct nfsd4_compound_state *cstate,
+  * code is returned.
+  */
+ __be32
+-nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct inode *inode,
++nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
+ 				bool *modified, u64 *size)
+ {
+ 	__be32 status;
+@@ -8840,6 +8840,7 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct inode *inode,
+ 	struct nfs4_delegation *dp;
+ 	struct iattr attrs;
+ 	struct nfs4_cb_fattr *ncf;
++	struct inode *inode = d_inode(dentry);
+ 
+ 	*modified = false;
+ 	ctx = locks_inode_context(inode);
+@@ -8887,15 +8888,22 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct inode *inode,
+ 					ncf->ncf_cur_fsize != ncf->ncf_cb_fsize))
+ 				ncf->ncf_file_modified = true;
+ 			if (ncf->ncf_file_modified) {
++				int err;
++
+ 				/*
+ 				 * Per section 10.4.3 of RFC 8881, the server would
+ 				 * not update the file's metadata with the client's
+ 				 * modified size
+ 				 */
+ 				attrs.ia_mtime = attrs.ia_ctime = current_time(inode);
+-				attrs.ia_valid = ATTR_MTIME | ATTR_CTIME;
+-				setattr_copy(&nop_mnt_idmap, inode, &attrs);
+-				mark_inode_dirty(inode);
++				attrs.ia_valid = ATTR_MTIME | ATTR_CTIME | ATTR_DELEG;
++				inode_lock(inode);
++				err = notify_change(&nop_mnt_idmap, dentry, &attrs, NULL);
++				inode_unlock(inode);
++				if (err) {
++					nfs4_put_stid(&dp->dl_stid);
++					return nfserrno(err);
++				}
+ 				ncf->ncf_cur_fsize = ncf->ncf_cb_fsize;
+ 				*size = ncf->ncf_cur_fsize;
+ 				*modified = true;
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index 43ccf6119cf1..97f583777972 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -3565,7 +3565,7 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 	}
+ 	args.size = 0;
+ 	if (attrmask[0] & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
+-		status = nfsd4_deleg_getattr_conflict(rqstp, d_inode(dentry),
++		status = nfsd4_deleg_getattr_conflict(rqstp, dentry,
+ 					&file_modified, &size);
+ 		if (status)
+ 			goto out;
+diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+index ffc217099d19..ec4559ecd193 100644
+--- a/fs/nfsd/state.h
++++ b/fs/nfsd/state.h
+@@ -781,5 +781,5 @@ static inline bool try_to_expire_client(struct nfs4_client *clp)
+ }
+ 
+ extern __be32 nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp,
+-		struct inode *inode, bool *file_modified, u64 *size);
++		struct dentry *dentry, bool *file_modified, u64 *size);
+ #endif   /* NFSD4_STATE_H */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0283cf366c2a..bafc1d134b94 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -208,6 +208,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define ATTR_OPEN	(1 << 15) /* Truncating from open(O_TRUNC) */
+ #define ATTR_TIMES_SET	(1 << 16)
+ #define ATTR_TOUCH	(1 << 17)
++#define ATTR_DELEG	(1 << 18) /* Delegated attrs. Don't break write delegations */
+ 
+ /*
+  * Whiteout is represented by a char device.  The following constants define the
+
+---
+base-commit: a204501e1743d695ca2930ed25a2be9f8ced96d3
+change-id: 20240823-nfsd-fixes-61f0c785d125
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
