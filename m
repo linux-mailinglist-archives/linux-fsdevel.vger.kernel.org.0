@@ -1,166 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-27253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CE495FD7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 00:52:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5ED695FD8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Aug 2024 00:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926E41F2268C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 22:52:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6401F236F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 22:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39D519DF5B;
-	Mon, 26 Aug 2024 22:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C5319CD0B;
+	Mon, 26 Aug 2024 22:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GDk9DFy1"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KVGCbmi9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE68E199E9A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 22:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B430146A71;
+	Mon, 26 Aug 2024 22:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724712571; cv=none; b=mkqVUcy09djBsfDshaYqFVQZTi+E3xffVkr3EH13wYx3zjOmP0W7XZxAjkkzQRhUUxbDbszS/xBP5LJdkgDjzqRKKfD3Ap4MIEK8zqfDn74MaI+UurFULkbWOofDqMsZzXS7SoIfer0m6yGZLLEVZcOlfA4d5bvhvt/pb1t6ZTQ=
+	t=1724713061; cv=none; b=O4FRX7J6TWE4XPTgCxR9nXrqioxaW1QDrydFXqAifno9IJw+iv9zNO/ZF3H88EmEA5sEHhssCh2YJ9wprKgb9BFbmmjaaksv7jo6/aN3JoYoJr0YmN2I1Aa0AR9U/cfO9YODHHSAvBiadlY7g0UQKSVhQiULAGRhzmW4AWtIIK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724712571; c=relaxed/simple;
-	bh=4riBHCy/ul0psyvOkTn7BvHgTDelnSNQyniXCwOavsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uy9K4Q2vRVS8Ztgv0EKE+v91bkD59/MWiDoiKpsIQPB6GYSFkn8fkZQw7fGml1C8FKMXE6c8/BMs41uNdsy8D5/ym07mTSkHxn834Y4fhmYyPxn5FjXO6USwsTSvOuqZQPctUqHJ9En4oEQptljEtCmkTw56giIlbebBvAI6O4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GDk9DFy1; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e03caab48a2so3746262276.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Aug 2024 15:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1724712569; x=1725317369; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nWTFl5f8OPZ9kYIvj+M7W9eYYEXfjlTCvvmN9eeNnFM=;
-        b=GDk9DFy1uU5DEevxf++6WuIvZZ73OSd9X3L1keRyQJcWJE1u6gMs9mSkyo+wW34q7v
-         3Qc1tPefjxRgoUEoNXahf/fPq115S7AyyFTtmSD59YXxRTKb+u3yaSoRA2w//KesDMOS
-         K6xV0y/d/7tx8szAfjEupd2n3oRYlldJMEY+vEo4UIUW/cw/kprydvfFUn17TmGxx2pM
-         R6NefIsW1LMf7WJI1Wee+mSSKx9wnlL4p5TM8v0lOzxMgQ0JaU7IMC3RIbdXYj/X6i8H
-         TMpNiuD+0Nd32e/eZ1HAZo4EouMkv2OcpkeAhKxX1nrHlLKKboztdWFnXzJVCmQGAREN
-         c9/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724712569; x=1725317369;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nWTFl5f8OPZ9kYIvj+M7W9eYYEXfjlTCvvmN9eeNnFM=;
-        b=qQMjk7b+mblWLqt3hhP9KsmWFdcKmOkNWilDhOOJQ/b4LVPqMxkeJ8ag0Qd6ao2Q4V
-         avuFZ1dju9B4rh1Lk7a+1U3kvDV0tFlGCS/qCEWfLAdQW7vOLeB5vtNZj9FW8FmwwgGY
-         qwWkTqfmoAXnsN1E5D4JC+06J1EblI+aHKzyPL9Um9K1gr+OPPWY7IamD/ACZ6iuqSYr
-         N6ykclsxvFSDbUMlicBO+zsphtK8U/AUB2NRt5CbIaBNZ6k8it6VNV4yrIX5U7YCVmS2
-         72eXIA6NFj+gzt4TjEegJgQG7yHb9pVn0jtajhlauqMox4gPnCUlaXKw6zrHJNKyO5Tq
-         CoIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXa14mEjQZBVHFtQs0+izrrfheJwSxF0Yr4utftPCmIheFO7gsopOftvu4eeGUK2gRBForcAKY7cboUBCcJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIvJLz2/I5uS0BYRJiF/ia6kIjgZ20hseNJ2qsSLmDBrE1M4Gj
-	ND7YATEgwF0zADByIrGyBeuXbwbXRZq/lOhLoTi1RmSPLomyD5MJ5QIx41LM5knVDs2X4DCMTbW
-	jLAApXcb9fk55R8UtMzKe+gSkuBvRnVXGZWDn
-X-Google-Smtp-Source: AGHT+IFdXwGDNkQJWX/aeiki5niUl6YsOZL7hcKl1t9UskkQFhTdxuBmqzMkoxujlay9La0l7/VeNVTc31ug5dspjrg=
-X-Received: by 2002:a05:6902:1283:b0:e08:6373:dfc8 with SMTP id
- 3f1490d57ef6-e1a2984666bmr1176664276.23.1724712568754; Mon, 26 Aug 2024
- 15:49:28 -0700 (PDT)
+	s=arc-20240116; t=1724713061; c=relaxed/simple;
+	bh=fJ7aUPSH5xd0bQ6Ioys5f+Vk+9v/lyGsicxsmq46dAo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=e6fBIkpEsEJ7Vjr5pg/hRdSLpsrv/8QTqq+SALsaosrQqNu5Qjk3JwEsTI/3UVn7FOOs+MxTRlH2c7X+f2luCtxYbS8KqBQLc13VfZ8dSB/86OKhIL1uVT0VB3u8ZsXSVI40gcvj3qzxbcIPkOb0manzzar/irFO+kVnvhlsS1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KVGCbmi9; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724713060; x=1756249060;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=fJ7aUPSH5xd0bQ6Ioys5f+Vk+9v/lyGsicxsmq46dAo=;
+  b=KVGCbmi9OuAhBGzfjG9HqFtGfNvMW03/2IJMAmXK5OHRMst5VQzx3Tvr
+   L+39l7fTrLv03GnUq5YaSQkuAhLCNyR/UtxmovKYZAg+4jsRhX0jzLW0z
+   EH9/G+OnJ65f5w27SCyrNrSeEVZeGz9G//A1zPSY2qfv/72qu+dBdysnL
+   A8387BcVkTJ20VThO4Fwms3p4yYdsRTATma6K3x7zX/uD8USxP9UavZsM
+   doyrjHRwS5a/sWdUjI7yVjZTJBE5vB1FeseN7sF23/mnUZiAuiUjbbb46
+   APMQ1uKEGphyRqkkCauKTrtUlI6mR9FdI/tIr2iW7lakjxxZ68A1YaAiS
+   g==;
+X-CSE-ConnectionGUID: mRuo8UF8RbKejC0XN56w8Q==
+X-CSE-MsgGUID: ppFvggAETaCE3bxZnZL9zQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23031629"
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="23031629"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:57:39 -0700
+X-CSE-ConnectionGUID: NxuhCjigStOj/k3f+ziYHA==
+X-CSE-MsgGUID: S3/nh20vTdS/itS9/Pn2XQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
+   d="scan'208";a="66812928"
+Received: from mesiment-mobl2.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.223.39])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 15:57:35 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: brauner@kernel.org, amir73il@gmail.com, hu1.chen@intel.com,
+ malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
+ lizhen.you@intel.com, linux-unionfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 05/16] overlayfs: Use
+ ovl_override_creds_light()/revert_creds_light()
+In-Reply-To: <CAJfpegtko6VtNpshGUzZixE0jqecwQR91xT=Q7W5sf6HPGVPeQ@mail.gmail.com>
+References: <20240822012523.141846-1-vinicius.gomes@intel.com>
+ <20240822012523.141846-6-vinicius.gomes@intel.com>
+ <CAJfpegtko6VtNpshGUzZixE0jqecwQR91xT=Q7W5sf6HPGVPeQ@mail.gmail.com>
+Date: Mon, 26 Aug 2024 15:57:32 -0700
+Message-ID: <87a5gylwo3.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826120449.1666461-1-yukaixiong@huawei.com> <20240826120449.1666461-8-yukaixiong@huawei.com>
-In-Reply-To: <20240826120449.1666461-8-yukaixiong@huawei.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 26 Aug 2024 18:49:17 -0400
-Message-ID: <CAHC9VhS=5k3zZyuuon2c6Lsf5GixAra6+d3A4bG2FVytv33n_w@mail.gmail.com>
-Subject: Re: [PATCH -next 07/15] security: min_addr: move sysctl into its own file
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, ysato@users.sourceforge.jp, 
-	dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, kees@kernel.org, 
-	j.granados@samsung.com, willy@infradead.org, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jmorris@namei.org, 
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	wangkefeng.wang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Aug 26, 2024 at 8:05=E2=80=AFAM Kaixiong Yu <yukaixiong@huawei.com>=
- wrote:
->
-> The dac_mmap_min_addr belongs to min_addr.c, move it into
-> its own file from /kernel/sysctl.c. In the previous Linux kernel
-> boot process, sysctl_init_bases needs to be executed before
-> init_mmap_min_addr, So, register_sysctl_init should be executed
-> before update_mmap_min_addr in init_mmap_min_addr.
->
-> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> ---
->  kernel/sysctl.c     |  9 ---------
->  security/min_addr.c | 11 +++++++++++
->  2 files changed, 11 insertions(+), 9 deletions(-)
->
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 41d4afc978e6..0c0bab3dad7d 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -2059,15 +2059,6 @@ static struct ctl_table vm_table[] =3D {
->                 .proc_handler   =3D proc_dointvec_minmax,
->                 .extra1         =3D SYSCTL_ZERO,
->         },
-> -#ifdef CONFIG_MMU
-> -       {
-> -               .procname       =3D "mmap_min_addr",
-> -               .data           =3D &dac_mmap_min_addr,
-> -               .maxlen         =3D sizeof(unsigned long),
-> -               .mode           =3D 0644,
-> -               .proc_handler   =3D mmap_min_addr_handler,
-> -       },
-> -#endif
->  #if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
->     (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
->         {
-> diff --git a/security/min_addr.c b/security/min_addr.c
-> index 0ce267c041ab..b2f61649e110 100644
-> --- a/security/min_addr.c
-> +++ b/security/min_addr.c
-> @@ -44,8 +44,19 @@ int mmap_min_addr_handler(const struct ctl_table *tabl=
-e, int write,
->         return ret;
->  }
->
-> +static struct ctl_table min_addr_sysctl_table[] =3D {
-> +       {
-> +               .procname       =3D "mmap_min_addr",
-> +               .data           =3D &dac_mmap_min_addr,
-> +               .maxlen         =3D sizeof(unsigned long),
-> +               .mode           =3D 0644,
-> +               .proc_handler   =3D mmap_min_addr_handler,
-> +       },
-> +};
+Miklos Szeredi <miklos@szeredi.hu> writes:
 
-I haven't chased all of the Kconfig deps to see if there is a problem,
-but please provide a quick explanation in the commit description about
-why it is okay to drop the CONFIG_MMU check.
-
->  static int __init init_mmap_min_addr(void)
->  {
-> +       register_sysctl_init("vm", min_addr_sysctl_table);
->         update_mmap_min_addr();
+> On Thu, 22 Aug 2024 at 03:25, Vinicius Costa Gomes
+> <vinicius.gomes@intel.com> wrote:
+>>
+>> Convert to use ovl_override_creds_light()/revert_creds_light(), these
+>> functions assume that the critical section won't modify the usage
+>> counter of the credentials in question.
+>>
+>> In most overlayfs instances, the credentials lifetime is the duration
 >
->         return 0;
-> --
-> 2.25.1
+> Why most instances?  AFAICS the creds have the same lifetime as the
+> overlayfs superblock.
+>
 
---=20
-paul-moore.com
+I may be reading the code wrong, but on file creation some of the
+credentials that are worked on come from the task(?).
+
+
+Cheers,
+-- 
+Vinicius
 
