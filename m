@@ -1,123 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-27102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD8095E9D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:03:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D97E95EA3C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 09:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A82D41F22ABC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 07:03:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E59DCB20D0D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 07:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E0B139D07;
-	Mon, 26 Aug 2024 07:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD58C12CD89;
+	Mon, 26 Aug 2024 07:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="j1IJS+MS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0F857CBA;
-	Mon, 26 Aug 2024 07:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F72980611;
+	Mon, 26 Aug 2024 07:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724655768; cv=none; b=FDJTRVD7Ll/7oYrrBxgaQV2gcYRQ/CAoLPJWiftr6BJw6p9PBSiuzny4bADBYtgKz16xZMgjg5Tyc4w4vb1iL/qW8jBlJmUki74IWDq7qVcEj90/pXAqpdEtmnnRg+8gTzCZndAbfpPhaPMred4o5Ukck5cc0iIQgx+RUZFRdUI=
+	t=1724656776; cv=none; b=iptdJjJwvkjQ2XJcucF43bDjd5G+UZq+hs3ckCRQ6M7D0/B1KRltTh9OU5uGYnu9MZA6Nf5r3FXsBlzq4F7hg63+kCy9O1yyxKNy3Z/j/jF9ozJeODSLqy2HoIBZ30QNm88b224Upa9h6FEYLQ+Ic58i1foviJya1Rvd2vS1Dg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724655768; c=relaxed/simple;
-	bh=WFHhsIkRmkdGK2QWMeAh5kJ20knoPvV2uJ+PkYCQu1A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gHokE/xPxG/fQc80dqA0IZr3m5dhIitzRv7YWB4/LVExb/IaB/zapi+KfROc1EVkvRTT50MO3fJMDklDa8O5DMxRkoj7R/PLrU3I0Cmoim6e/GgbBvLjCn0Gp4AHnqfbiCnWJqnh1NGBUZozqtk6Db9JV6hwxYe34+uFSS9rYjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WshS52JC7z14G6b;
-	Mon, 26 Aug 2024 15:01:57 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0B5F1401F0;
-	Mon, 26 Aug 2024 15:02:42 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
- (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 26 Aug
- 2024 15:02:42 +0800
-From: Li Zetao <lizetao1@huawei.com>
-To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<willy@infradead.org>, <akpm@linux-foundation.org>
-CC: <lizetao1@huawei.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: [RFC PATCH -next 3/3] splice: Using scope-based resource instead of folio_lock/unlock
-Date: Mon, 26 Aug 2024 15:10:36 +0800
-Message-ID: <20240826071036.2445717-4-lizetao1@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240826071036.2445717-1-lizetao1@huawei.com>
-References: <20240826071036.2445717-1-lizetao1@huawei.com>
+	s=arc-20240116; t=1724656776; c=relaxed/simple;
+	bh=5mnxkRlBDghVp+jV0qHPEpLxDRs2U12I4ncTzaWP+rA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERd825Rg148OQfsn+yGI5bdQw1VUbuR6j4+31hyxAegbEcFcNrhdK4QNycCMGHtGjsDaAaPDOnKRhvPlMR2PO/kcaK/1rc3r36oNMGP2U1ncmhMd0cG9H9h1Ky1G5DVaVu2WbdSa6fK8G0+wGnLkHmGS9JZ05bIskfVDzSI9iSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=j1IJS+MS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53143C8CDCE;
+	Mon, 26 Aug 2024 07:19:33 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="j1IJS+MS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724656771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5mnxkRlBDghVp+jV0qHPEpLxDRs2U12I4ncTzaWP+rA=;
+	b=j1IJS+MSiGszC/AZy4D3uJ/andjVajwkIyrQoUshcUHxGJMb2WL2259Af5/W64kkm2vxcD
+	jF7007HPkvb2yHXa5A2ZPmhxrqe20+doeNB8UTbSMckIY4tAtJ5hFuP4KW3z7N4l7UroHd
+	BfKpnFUeAB/F62oewuRJdbaVwBTyfGM=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 746e735a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 26 Aug 2024 07:19:31 +0000 (UTC)
+Date: Mon, 26 Aug 2024 09:19:22 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 00/17] Wire up getrandom() vDSO implementation on
+ powerpc
+Message-ID: <Zswsennpw6fvigVh@zx2c4.com>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd500012.china.huawei.com (7.221.188.25)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1724309198.git.christophe.leroy@csgroup.eu>
 
-Use guard() to manage locking and unlocking a folio, thus avoiding the
-use of goto unlock code. Remove the out_unlock and error label, and
-return directly when an error occurs, allowing the compiler to release
-the folio's lock.
+Hi Christophe,
 
-Signed-off-by: Li Zetao <lizetao1@huawei.com>
----
- fs/splice.c | 21 +++++----------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
+Thanks for this series. There are quite a few preliminary patches in it,
+before you get to the PPC part, which fix up general build system or test
+harness correctness issues. Since some of those affect all architectures
+that are adding vDSO getrandom() support for 6.12, I'm going to take
+those into my random.git tree as a fix for 6.11 now, in hopes that the
+new archs can mostly go into arch trees without too many tree
+interdependencies.
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 06232d7e505f..bf976f2edfc1 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -120,36 +120,25 @@ static int page_cache_pipe_buf_confirm(struct pipe_inode_info *pipe,
- 				       struct pipe_buffer *buf)
- {
- 	struct folio *folio = page_folio(buf->page);
--	int err;
- 
- 	if (!folio_test_uptodate(folio)) {
--		folio_lock(folio);
-+		guard(folio)(folio);
- 
- 		/*
- 		 * Folio got truncated/unhashed. This will cause a 0-byte
- 		 * splice, if this is the first page.
- 		 */
--		if (!folio->mapping) {
--			err = -ENODATA;
--			goto error;
--		}
-+		if (!folio->mapping)
-+			return -ENODATA;
- 
- 		/*
- 		 * Uh oh, read-error from disk.
- 		 */
--		if (!folio_test_uptodate(folio)) {
--			err = -EIO;
--			goto error;
--		}
--
--		/* Folio is ok after all, we are done */
--		folio_unlock(folio);
-+		if (!folio_test_uptodate(folio))
-+			return -EIO;
- 	}
- 
- 	return 0;
--error:
--	folio_unlock(folio);
--	return err;
- }
- 
- const struct pipe_buf_operations page_cache_pipe_buf_ops = {
--- 
-2.34.1
+So I'll reply to individual patches for that, mentioning which ones I
+extract.
 
+Jason
 
