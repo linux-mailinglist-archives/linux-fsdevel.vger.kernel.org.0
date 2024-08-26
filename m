@@ -1,256 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-27174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7843B95F290
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 15:14:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BAC495F29D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 15:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D9DA1C21CED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 13:14:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2784A28136F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 13:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45262185E7B;
-	Mon, 26 Aug 2024 13:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868CA18660E;
+	Mon, 26 Aug 2024 13:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2aFi+kO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmpkoBt+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBA7183CDA;
-	Mon, 26 Aug 2024 13:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FE0186298;
+	Mon, 26 Aug 2024 13:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724678035; cv=none; b=MaE+grUPrJEEJMVMHdk3eOZ9e3pg0cx2Qd8eRUwajSOH+a5KCm0ADGSzJc/I6xLHFXXuQi92163T1AtDskj16pHx7pVNut4ij08+TX+KpL86m4ToCVo90r1sRPIJ8RCX0cgOX8m2AK8XarWPK3WjccDoMeVn9GN6fhd6I0Fa4uE=
+	t=1724678207; cv=none; b=gLrf2HKylA5F9Qx4OjtR2ddElUQXyyhgyWZcnJSPiow0VuVETakP6VXk9PJcb+YySKMKexdkprJZL2cvuPNiHv7yPzbzNPW3ozAW6Jsk+yBV1vfjlbtc8c1X/zbXcRbUY6Xu4sskk0P3zgsQAvL35SfOOxvqjXbifrM5FvAinZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724678035; c=relaxed/simple;
-	bh=uXndQDCUvnx0Z+cralt3H9P3W4x5FKSzMQBt52DRN90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AbdsifLh+Bssk78WABghf0ZWcZlft1NCMo5ruWx+BdIOSp0jjY8SSJa1dGiGVwfjQNe6ylAQodlwTXOtw5aYRqwy/tRgDKjEcuMOxv6dXQUrO75ZzfF0qve0NAmOU1nJr4DtmAMBmjRMUlBg5jedcBn9S1RQjVD3DVyZMvpkYoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2aFi+kO; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6bf7f4a133aso23042536d6.2;
-        Mon, 26 Aug 2024 06:13:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724678033; x=1725282833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vSwJhEnVRbE/lc1fBQhKHoYSdjJMMB9ydQkFXZg7Wl0=;
-        b=G2aFi+kOco8F7A7ev4siqM77VYWHD1SS+N9xARzk9mXa5Z7M7vt+omxkuFb8DdcgF9
-         zXPRGYJqqrzBLfS1Cas03+0K4qYSKwBBSFD6Bq8nRK5EbZZGNqT1lbQ/l6U/SvIXMV9j
-         zAUTSlgkhhszD4hIHfQENG1EIfyG8eEdi7xPlkqHtO8XHwk4RVSJ1YKHnKCVfbqr2oh0
-         94NBVtwYwm2YjN16k5guBkdrWHDmxpSOXoczIq3F3cCVhfkpkcuLHzyd3pFmkT7n5/8d
-         nKZJUf38vCZMggus3JMlzpoKge0iV5vKealnTfCY5EFgt2EQ4Cr7H76zd3KoY9/DLw/N
-         +WAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724678033; x=1725282833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vSwJhEnVRbE/lc1fBQhKHoYSdjJMMB9ydQkFXZg7Wl0=;
-        b=gs+3hEUa9f7CI0POgR9qS3NcEjGNtCssdrN7CQtTayV1nVcalh9QryoctEctsPGZ7k
-         TMnab61DgsArompmA7uydEewDQEVdPkhyEpACrVSA3cvM0VnmPbYy40RFSvY2dOjZix0
-         EdNPod7kn1rKtxhD7lQbxdKtF58khDCTdW+g/43qcvg6OXDvoML/AyiuNFITehpqZSAT
-         UN4ly2vaWvFM67ugLDggFVAFAsnj3XuMXyJpYUCBxSOfZkGZFpj7OSGmWjPFV4kOKFQb
-         iYzV9BxXE4c2hXNxHU2OUvNHu/YZu/dTQUcGegzQQkp8GiisvUSsI0NTVD5txLNpIkV0
-         6e7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/ClygvLS3mjyt7se83bpFk5tbJjFXdDmm1opJ3v9PS74Ejhon0MuuTu2wAiMKGu+FIFeOQdbbiNK6yco6/saFzwWf@vger.kernel.org, AJvYcCU3p4xPq/zisqMnlMG5IMvdjAz49G7QtULEcD3tBDNl2cYIdDvsqvVN5mRDS4Q/D+T9BQ0+nTIX4e4JT/x7i8eS//EycQeV@vger.kernel.org, AJvYcCULhyl27VLZnSINwLuse687eE1Z/m7G6b14F1vuZoX3UfjlRC1VGsj4tKnVU5lwAM8UpJgpvX4GpMBrHPS8EA==@vger.kernel.org, AJvYcCUsKzmbvn/BTyybb5sUYnPxC7bFDTMi9woll1o+j9UMd+lscRYrkUkRc/R9eogDBA2XpB7rlnFj@vger.kernel.org, AJvYcCVzfSzxNbPxr0OBavXpBvqeNWuUQ2ESoDPgqDH6V7OwMSYs6YPgo18hAXk6YbSQSJwKoNgd@vger.kernel.org, AJvYcCWLflpr/Iba5wwF+1l+jBHBfSCEaqjX5whECpSSKCxyMJdlHDkCoECIltQBoJuSixUsIFAzSQ==@vger.kernel.org, AJvYcCWQK4kkZj9NqeYD7EQUF7bmfLR2E5exJYll96FnCkTFB/FdyajKDqYcLCN5vpsT52zSDxm46O1O3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw65lRZS6hAqREgZ7Haf0AsuxNGiOYB3+S7CQT4ie0ifahAt/LB
-	mF9Mwmduu48rJe9NQh4rLK+cxc9GOcB8FXMX+nO8xnSYy3QJgk8XAd07fYBNa407ZxvtyZoojN5
-	tzehKJK7BU1WH6jxTTMmeYk0CUw4=
-X-Google-Smtp-Source: AGHT+IEMzX23pNCTwUB3oEFnjtXMwQslYwQseElwS5dsww3heTV7mBPQDdBjGem5UqseBxKdUwlhHXFriIKrdvm/EEk=
-X-Received: by 2002:a05:6214:2b82:b0:6bf:78e1:74e7 with SMTP id
- 6a1803df08f44-6c16deb3b70mr122308516d6.50.1724678032741; Mon, 26 Aug 2024
- 06:13:52 -0700 (PDT)
+	s=arc-20240116; t=1724678207; c=relaxed/simple;
+	bh=Rp3d7fyAw2XOLGhssPVDzTiiB+r67Xcmp2z9AktU1hU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lLdaGriNH9pSkxR9XN2YjDla143lr/Bd5x04ArGepU+eVTbIkOqrfDbdayrIagGG5oJvPZr7G4nqs7F9uScdmQj957dt9NdfNt2KGSBoIGDCUUg/w4p23k6/8Vac3SYkkUdUqg8xVr5yvzt1cPTWuv92ls79HN3MlpI7kk9NguE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmpkoBt+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D88C4C8403F;
+	Mon, 26 Aug 2024 13:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724678206;
+	bh=Rp3d7fyAw2XOLGhssPVDzTiiB+r67Xcmp2z9AktU1hU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ZmpkoBt+pqKglcl05xwrfAwpAxqRGgxInVvnFkJar7F2N0BcRzsW2ejUKHMZt9xTH
+	 mnS2JscbmtTWmi/AZCwOQ9UzhmxmVF/ZxZmbl2WjuIthyWvtAPJgyK2DbENYB69gwH
+	 uIpyJ7BQDnb6jYDVSghvcoVkw2fwhznZo/iydKV/HRLpfnRp7AaXNmHkg8HH9Woq6F
+	 0wtvyXP41Z0ve3eRdgJbZ6LKdq26v9KtH44tvh7m7BX7Or5H1dtFRaJh5UlFP25F54
+	 ezXG7bEMV8IglHW+tldAvAj+2RA11X1HVnduOPpOA2LjqodxuFY0+nGM73YMF9B+1G
+	 VUnTSbCPihhHg==
+Message-ID: <09cab08fb871708952d0594d0f13bfb8b334bb8d.camel@kernel.org>
+Subject: Re: [PATCH v2 5/7] fs: add an ATTR_CTIME_DLG flag
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, Olga
+ Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
+ <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
+ <anna@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Jonathan Corbet
+ <corbet@lwn.net>, Tom Haynes <loghyr@gmail.com>, 
+ linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+Date: Mon, 26 Aug 2024 09:16:43 -0400
+In-Reply-To: <20240826-glasdach-zaudern-ee3d4761973c@brauner>
+References: <20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org>
+	 <20240826-delstid-v2-5-e8ab5c0e39cc@kernel.org>
+	 <20240826-glasdach-zaudern-ee3d4761973c@brauner>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817025624.13157-1-laoar.shao@gmail.com> <20240817025624.13157-7-laoar.shao@gmail.com>
- <nmhexn3mkwhgu5e6o3i7gvipboisbuwdoloshf64ulgzdxr5nv@3gwujx2y5jre> <ep44ahlsa2krmpjcqrsvoi5vfoesvnvly44icavup7dsfolewm@flnm5rl23diz>
-In-Reply-To: <ep44ahlsa2krmpjcqrsvoi5vfoesvnvly44icavup7dsfolewm@flnm5rl23diz>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Mon, 26 Aug 2024 21:13:16 +0800
-Message-ID: <CALOAHbA5VDjRYcoMOMKcLMVR0=ZwTz5FBTvQZExi6w8We9JPHg@mail.gmail.com>
-Subject: Re: [PATCH v7 6/8] mm/util: Deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
-To: Alejandro Colomar <alx@kernel.org>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Simon Horman <horms@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 5:25=E2=80=AFPM Alejandro Colomar <alx@kernel.org> =
-wrote:
->
-> Hi Yafang,
->
-> On Sat, Aug 17, 2024 at 10:58:02AM GMT, Alejandro Colomar wrote:
-> > Hi Yafang,
-> >
-> > On Sat, Aug 17, 2024 at 10:56:22AM GMT, Yafang Shao wrote:
-> > > These three functions follow the same pattern. To deduplicate the cod=
-e,
-> > > let's introduce a common helper __kmemdup_nul().
-> > >
-> > > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > Cc: Simon Horman <horms@kernel.org>
-> > > Cc: Matthew Wilcox <willy@infradead.org>
-> > > ---
-> > >  mm/util.c | 67 +++++++++++++++++++++--------------------------------=
---
-> > >  1 file changed, 26 insertions(+), 41 deletions(-)
-> > >
-> > > diff --git a/mm/util.c b/mm/util.c
-> > > index 4542d8a800d9..310c7735c617 100644
-> > > --- a/mm/util.c
-> > > +++ b/mm/util.c
-> > > @@ -45,33 +45,40 @@ void kfree_const(const void *x)
-> > >  EXPORT_SYMBOL(kfree_const);
-> > >
-> > >  /**
-> > > - * kstrdup - allocate space for and copy an existing string
-> > > - * @s: the string to duplicate
-> > > + * __kmemdup_nul - Create a NUL-terminated string from @s, which mig=
-ht be unterminated.
-> > > + * @s: The data to copy
-> > > + * @len: The size of the data, including the null terminator
-> > >   * @gfp: the GFP mask used in the kmalloc() call when allocating mem=
-ory
-> > >   *
-> > > - * Return: newly allocated copy of @s or %NULL in case of error
-> > > + * Return: newly allocated copy of @s with NUL-termination or %NULL =
-in
-> > > + * case of error
-> > >   */
-> > > -noinline
-> > > -char *kstrdup(const char *s, gfp_t gfp)
-> > > +static __always_inline char *__kmemdup_nul(const char *s, size_t len=
-, gfp_t gfp)
-> > >  {
-> > > -   size_t len;
-> > >     char *buf;
-> > >
-> > > -   if (!s)
-> > > +   buf =3D kmalloc_track_caller(len, gfp);
-> > > +   if (!buf)
-> > >             return NULL;
-> > >
-> > > -   len =3D strlen(s) + 1;
-> > > -   buf =3D kmalloc_track_caller(len, gfp);
-> > > -   if (buf) {
-> > > -           memcpy(buf, s, len);
-> > > -           /* During memcpy(), the string might be updated to a new =
-value,
-> > > -            * which could be longer than the string when strlen() is
-> > > -            * called. Therefore, we need to add a null termimator.
-> > > -            */
-> > > -           buf[len - 1] =3D '\0';
-> > > -   }
-> > > +   memcpy(buf, s, len);
-> > > +   /* Ensure the buf is always NUL-terminated, regardless of @s. */
-> > > +   buf[len - 1] =3D '\0';
-> > >     return buf;
-> > >  }
-> > > +
-> > > +/**
-> > > + * kstrdup - allocate space for and copy an existing string
-> > > + * @s: the string to duplicate
-> > > + * @gfp: the GFP mask used in the kmalloc() call when allocating mem=
-ory
-> > > + *
-> > > + * Return: newly allocated copy of @s or %NULL in case of error
-> > > + */
-> > > +noinline
-> > > +char *kstrdup(const char *s, gfp_t gfp)
-> > > +{
-> > > +   return s ? __kmemdup_nul(s, strlen(s) + 1, gfp) : NULL;
-> > > +}
-> > >  EXPORT_SYMBOL(kstrdup);
-> > >
-> > >  /**
-> > > @@ -106,19 +113,7 @@ EXPORT_SYMBOL(kstrdup_const);
-> > >   */
-> > >  char *kstrndup(const char *s, size_t max, gfp_t gfp)
-> > >  {
-> > > -   size_t len;
-> > > -   char *buf;
-> > > -
-> > > -   if (!s)
-> > > -           return NULL;
-> > > -
-> > > -   len =3D strnlen(s, max);
-> > > -   buf =3D kmalloc_track_caller(len+1, gfp);
-> > > -   if (buf) {
-> > > -           memcpy(buf, s, len);
-> > > -           buf[len] =3D '\0';
-> > > -   }
-> > > -   return buf;
-> > > +   return s ? __kmemdup_nul(s, strnlen(s, max) + 1, gfp) : NULL;
-> > >  }
-> > >  EXPORT_SYMBOL(kstrndup);
-> > >
-> > > @@ -192,17 +187,7 @@ EXPORT_SYMBOL(kvmemdup);
-> > >   */
-> > >  char *kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-> > >  {
-> > > -   char *buf;
-> > > -
-> > > -   if (!s)
-> > > -           return NULL;
-> > > -
-> > > -   buf =3D kmalloc_track_caller(len + 1, gfp);
-> > > -   if (buf) {
-> > > -           memcpy(buf, s, len);
-> > > -           buf[len] =3D '\0';
-> > > -   }
-> > > -   return buf;
-> > > +   return s ? __kmemdup_nul(s, len + 1, gfp) : NULL;
-> > >  }
-> > >  EXPORT_SYMBOL(kmemdup_nul);
-> >
-> > I like the idea of the patch, but it's plagued with all those +1 and -1=
-.
-> > I think that's due to a bad choice of value being passed by.  If you
-> > pass the actual length of the string (as suggested in my reply to the
-> > previous patch) you should end up with a cleaner set of APIs.
-> >
-> > The only remaining +1 is for kmalloc_track_caller(), which I ignore wha=
+On Mon, 2024-08-26 at 15:08 +0200, Christian Brauner wrote:
+> On Mon, Aug 26, 2024 at 08:46:15AM GMT, Jeff Layton wrote:
+> > When updating the ctime on an inode for a setattr with a multigrain
+> > filesystem, we usually want to take the latest time we can get for the
+> > ctime. The exception to this rule is when there is a nfsd write
+> > delegation and the server is proxying timestamps from the client.
+> >=20
+> > When nfsd gets a CB_GETATTR response, we want to update the timestamp
+> > value in the inode to the values that the client is tracking. The clien=
 t
-> > it does.
-> >
-> >       char *
-> >       __kmemdup_nul(const char *s, size_t len, gfp_t gfp)
-> >       {
-> >               char *buf;
-> >
-> >               buf =3D kmalloc_track_caller(len + 1, gfp);
-> >               if (!buf)
-> >                       return NULL;
-> >
-> >               strcpy(mempcpy(buf, s, len), "");
->
-> Changing these strcpy(, "") to the usual; =3D'\0' or =3D0, but I'd still
-> recommend the rest of the changes, that is, changing the value passed in
-> len, to remove several +1 and -1s.
->
-> What do you think?
+> > doesn't send a ctime value (since that's always determined by the
+> > exported filesystem), but it does send a mtime value. In the case where
+> > it does, then we may also need to update the ctime to a value
+> > commensurate with that.
+> >=20
+> > Add a ATTR_CTIME_DELEG flag, which tells the underlying setattr
+>=20
+> Fwiw: disconnect between commit message and actually used ATTR_CTIME_DLG.
+>=20
 
-I will update it. Thanks for your suggestion.
+Thanks, will fix.
 
+> > machinery to respect that value and not to set it to the current time.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+>=20
+> Are you set on sending us on a mission to free up ATTR_* bits after
+> freeing up FMODE_* bits? ;)
+>=20
+
+Those aren't usually allocated from the heap, so I wouldn't bother, but
+I get the jest.
+
+> If there's going to be more ATTR_*DELEG* flags that modify the
+> behavior when delegation is in effect then we could consider adding
+> another unsigned int ia_deleg field to struct iattr so that you can check=
+:
+>=20
+> if (ia_valid & ATTR_CTIME) {
+> 	if (unlikely(iattr->ia_deleg & ATTR_CTIME))
+> 		// do some special stuff
+> 	else
+> 		// do the regular stuff
+> }
+>=20
+> or some such variant.
+>=20
+
+I don't forsee other flags being needed, but you never know. For now I
+wouldn't bother.
+
+> >  fs/attr.c          | 10 +++++++++-
+> >  include/linux/fs.h |  1 +
+> >  2 files changed, 10 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/fs/attr.c b/fs/attr.c
+> > index 7144b207e715..0eb7b228b94d 100644
+> > --- a/fs/attr.c
+> > +++ b/fs/attr.c
+> > @@ -295,7 +295,15 @@ static void setattr_copy_mgtime(struct inode *inod=
+e, const struct iattr *attr)
+> >  		return;
+> >  	}
+> > =20
+> > -	now =3D inode_set_ctime_current(inode);
+> > +	/*
+> > +	 * In the case of an update for a write delegation, we must respect
+> > +	 * the value in ia_ctime and not use the current time.
+> > +	 */
+> > +	if (ia_valid & ATTR_CTIME_DLG)
+> > +		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+> > +	else
+> > +		now =3D inode_set_ctime_current(inode);
+> > +
+> >  	if (ia_valid & ATTR_ATIME_SET)
+> >  		inode_set_atime_to_ts(inode, attr->ia_atime);
+> >  	else if (ia_valid & ATTR_ATIME)
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 7c1da3c687bd..43a802b2cb0d 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -211,6 +211,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff=
+_t offset,
+> >  #define ATTR_TIMES_SET	(1 << 16)
+> >  #define ATTR_TOUCH	(1 << 17)
+> >  #define ATTR_DELEG	(1 << 18) /* Delegated attrs (don't break) */
+> > +#define ATTR_CTIME_DLG	(1 << 19) /* Delegation in effect */
+>=20
+> What's the interaction between ATTR_DELEG and ATTR_CTIME_DLG? I think
+> that's potentially confusing.
+>=20
+
+Now that you mention it, I suppose we could just key off of ATTR_DELEG
+instead of declaring a new flag. That should be simpler to reason out
+for everyone. I'll respin this along those lines instead.
+
+Thanks for the review!
 --=20
-Regards
-Yafang
+Jeff Layton <jlayton@kernel.org>
 
