@@ -1,121 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-27140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-27141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C9795EEBE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 12:45:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF44095EEFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 12:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999891C21BE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 10:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C241F24363
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Aug 2024 10:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C2214D2A7;
-	Mon, 26 Aug 2024 10:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B27185B4E;
+	Mon, 26 Aug 2024 10:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qp0ilSam"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356D013A869;
-	Mon, 26 Aug 2024 10:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3423015539F;
+	Mon, 26 Aug 2024 10:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669145; cv=none; b=hWDncWWosqOEAG+D8/TCe3+OFT7qLD6djFYzluR8xnnvzNOmT7vuu3RKsx/Slr8Oez72vim6uiiicDFqzrl5kmlAkbABjUq1/6EZOlW7D12tZ5sibikb8peS2JbJvotBIhFS+OYHdgFgM/2zFpfoS5cX5m1hNuHUtkMHPVc7v5I=
+	t=1724669477; cv=none; b=CbuE2ExnMv+QBWBKgIqQ0E2qmQgKz+ATnXPKoaTFCa6xw58o50jXAEnknEmP09EF4gCSzw3oqjT9GJkRFdKuLvC+C9pX3DsJjmtg51m8G4TErLAwAcSQNeBMHwDzLZfIAgRdCOyoFHU2MTKE+cJ8ulTlzm8NV0naps9Z8bxJgP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669145; c=relaxed/simple;
-	bh=g0USLf+Ak90WITfjotmZss3CJ/mqie6EleQ66n1D8sw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DUtPlkqH7YO+J54ACptvZ542dgNBug5nyxjKFzEjODNlJJYTHKeNQ0ZwFDY4o/19KHScM22GPbdDPrHKVxsqJTcr5MFUMj8LLpfrDrVspGA7CrsbWcsAq9EjGj8JvyoIAcOw/Ldluo18A1uTpCRXdzhStuwtzu7Ps11LgipUSv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WsnQF0ZHkz9sRk;
-	Mon, 26 Aug 2024 12:45:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 8l3J2mPFqWI2; Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WsnQD6mKZz9sPd;
-	Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D56398B779;
-	Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id L__8Kfk3Evvz; Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 86F3C8B763;
-	Mon, 26 Aug 2024 12:45:40 +0200 (CEST)
-Message-ID: <51adbe91-3c3a-4baa-bb39-29df98a6eea5@csgroup.eu>
-Date: Mon, 26 Aug 2024 12:45:40 +0200
+	s=arc-20240116; t=1724669477; c=relaxed/simple;
+	bh=C5Y/qSHgQZACxwKSqcH92sWROtc2L1TL/YZtDg6REHU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bpdTpms7rG8dwXaFTV+fWVfib3faxOrPQplFyrdBD/rgEDYXZikc7rian4R9kkBBXSMZ76nbA0Ad/2S/NCIk3Hc99rCHZFr2dJ22lRKQrKnUPmkiETukjpjvbzjE8JYSjgFBcFt3DmxzhyHiOM3fAG+PRkYygA9nMDZ7VCv++w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qp0ilSam; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2387C51422;
+	Mon, 26 Aug 2024 10:51:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724669476;
+	bh=C5Y/qSHgQZACxwKSqcH92sWROtc2L1TL/YZtDg6REHU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Qp0ilSampHvHO/PKthgFW0Gu0htzhqZ9PlKJkZEM5B+TiK8gdWmCsJg1CBMx4yCH0
+	 av7zhY4GN278cUhfvucrRanVqHUp2NINrP+boJVbFJCQTzbIcsRBiGvUOciiJle7Ny
+	 f0RLW9EYjsJPMN0Act+e/ii83fb2cMlkeqcZ+U4TZEaWXeucI2+BlvDociFIwilPcc
+	 jizA5IXpfrFUgDmECYbUYpLfEPZIpBAk8nr2n7aNtlvgVhtDTSKlVka7YzwTWgQP1Q
+	 xofCJqOWxXW+bZhBS/9X5/M2K9J55rYWj9RY941BSs+hIpiJoEn6oSIkSdJlnF2YDC
+	 znCEBmoYSyrnw==
+From: Christian Brauner <brauner@kernel.org>
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	david@fromorbit.com,
+	zhuyifei1999@gmail.com,
+	syzbot+67ba3c42bcbb4665d3ad@syzkaller.appspotmail.com,
+	stable@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH] vfs: fix race between evice_inodes() and find_inode()&iput()
+Date: Mon, 26 Aug 2024 12:50:59 +0200
+Message-ID: <20240826-irdisch-verflachen-c724c28dfc3c@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240823130730.658881-1-sunjunchao2870@gmail.com>
+References: <20240823130730.658881-1-sunjunchao2870@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/17] vdso: Clean header inclusion in getrandom
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, Shuah Khan
- <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <2a081f1fff5e40f496153f8e0162fc7ec5adab2e.1724309198.git.christophe.leroy@csgroup.eu>
- <Zsw3xMoX2EI5UUs1@zx2c4.com>
- <7e519ba2-0293-4320-84bf-44f930fc286d@csgroup.eu>
- <ZsxDssNPbLkcPetJ@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <ZsxDssNPbLkcPetJ@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1094; i=brauner@kernel.org; h=from:subject:message-id; bh=C5Y/qSHgQZACxwKSqcH92sWROtc2L1TL/YZtDg6REHU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdiZPZ43DQ6OuTrN/pfQ3Pe1/8ua/2jEky4Y23DmvSn u1GZ0uFOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaSn8DI8M0ou/rHJ42GrK/V n88+OPfArquuvKFpwbMHyr0yiX80njL899p8rXSLOzPHx3cBqfn1DTo9XBcWGkuu3+0rsv2HyMM pDAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-
-
-Le 26/08/2024 à 10:58, Jason A. Donenfeld a écrit :
-> On Mon, Aug 26, 2024 at 10:37:49AM +0200, Christophe Leroy wrote:
->>
->>
->> Le 26/08/2024 à 10:07, Jason A. Donenfeld a écrit :
->>> On Thu, Aug 22, 2024 at 09:13:10AM +0200, Christophe Leroy wrote:
->>>>    
->>>> +#define _PAGE_SIZE (1UL << CONFIG_PAGE_SHIFT)
->>>> +#define _PAGE_MASK (~(_PAGE_SIZE - 1))
->>>
->>> If PAGE_SIZE isn't defined at this point, why not just call it PAGE_SIZE
->>> instead of _PAGE_SIZE? But if that's the case, why not put the vdso
->>> definition of PAGE_SIZE into some vdso header included by this file?
->>
->> It was working ok on powerpc but on x86 I got:
+On Fri, 23 Aug 2024 21:07:30 +0800, Julian Sun wrote:
+> Recently I noticed a bug[1] in btrfs, after digged it into
+> and I believe it'a race in vfs.
 > 
-> Seems like there might be some more fiddling to do, then? Or did you
-> conclude it's impossible?
+> Let's assume there's a inode (ie ino 261) with i_count 1 is
+> called by iput(), and there's a concurrent thread calling
+> generic_shutdown_super().
+> 
+> [...]
 
-Maybe someone who knows x86 in details could helps but after a first 
-look I gave up because it looks very x86 specific, indeed that's 
-x86/asm/vdso/gettimeofday.h that pulls several x86/asm/ headers , and 
-the same type of issue might arise for any new architecture coming in.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-For me it looked cleaner to just do as commit cffaefd15a8f ("vdso: Use 
-CONFIG_PAGE_SHIFT in vdso/datapage.h") and not use PAGE_SIZE at all. But 
-I didn't want to directly use (1UL << CONFIG_PAGE_SHIFT) and (~(1UL << 
-(CONFIG_PAGE_SHIFT - 1))) in the code directly hence the new macros with 
-a leading underscore to avoid any conflict with existing macros.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Christophe
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] vfs: fix race between evice_inodes() and find_inode()&iput()
+      https://git.kernel.org/vfs/vfs/c/f37af83281e6
 
